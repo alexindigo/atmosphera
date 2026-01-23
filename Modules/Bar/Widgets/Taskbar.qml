@@ -24,11 +24,13 @@ Rectangle {
   readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
   readonly property real barHeight: Style.getBarHeightForScreen(screen?.name)
+  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screen?.name)
+  readonly property real barFontSize: Style.getBarFontSizeForScreen(screen?.name)
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section];
+      var widgets = Settings.getBarWidgetsForScreen(screen?.name)[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
         return widgets[sectionWidgetIndex];
       }
@@ -44,7 +46,7 @@ Rectangle {
   readonly property bool smartWidth: (widgetSettings.smartWidth !== undefined) ? widgetSettings.smartWidth : widgetMetadata.smartWidth
   readonly property int maxTaskbarWidthPercent: (widgetSettings.maxTaskbarWidth !== undefined) ? widgetSettings.maxTaskbarWidth : widgetMetadata.maxTaskbarWidth
   readonly property real iconScale: (widgetSettings.iconScale !== undefined) ? widgetSettings.iconScale : widgetMetadata.iconScale
-  readonly property int itemSize: Style.toOdd(Style.capsuleHeight * Math.max(0.1, iconScale))
+  readonly property int itemSize: Style.toOdd(capsuleHeight * Math.max(0.1, iconScale))
 
   // Maximum width for the taskbar widget to prevent overlapping with other widgets
   readonly property real maxTaskbarWidth: {
@@ -591,7 +593,7 @@ Rectangle {
     if (!visible)
       return 0;
     if (isVerticalBar)
-      return Style.capsuleHeight;
+      return capsuleHeight;
 
     var calculatedWidth = showTitle ? taskbarLayout.implicitWidth : taskbarLayout.implicitWidth + Style.marginXL;
 
@@ -602,7 +604,7 @@ Rectangle {
 
     return Math.round(calculatedWidth);
   }
-  implicitHeight: visible ? (isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginXL) : Style.capsuleHeight) : 0
+  implicitHeight: visible ? (isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginXL) : capsuleHeight) : 0
   radius: Style.radiusM
   color: Style.capsuleColor
   border.color: Style.capsuleBorderColor
@@ -843,7 +845,7 @@ Rectangle {
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
 
-                pointSize: Style.barFontSize
+                pointSize: barFontSize
                 color: titleFgColor
                 opacity: Style.opacityFull
               }

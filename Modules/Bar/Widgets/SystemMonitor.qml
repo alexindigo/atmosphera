@@ -24,7 +24,7 @@ Rectangle {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section];
+      var widgets = Settings.getBarWidgetsForScreen(screen?.name)[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
         return widgets[sectionWidgetIndex];
       }
@@ -34,6 +34,8 @@ Rectangle {
 
   readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
+  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screen?.name)
+  readonly property real barFontSize: Style.getBarFontSizeForScreen(screen?.name)
 
   readonly property bool compactMode: widgetSettings.compactMode !== undefined ? widgetSettings.compactMode : widgetMetadata.compactMode
   readonly property bool usePrimaryColor: widgetSettings.usePrimaryColor !== undefined ? widgetSettings.usePrimaryColor : widgetMetadata.usePrimaryColor
@@ -50,7 +52,7 @@ Rectangle {
   readonly property string diskPath: (widgetSettings.diskPath !== undefined) ? widgetSettings.diskPath : widgetMetadata.diskPath
   readonly property string fontFamily: useMonospaceFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
 
-  readonly property real iconSize: Style.toOdd(Style.capsuleHeight * 0.48)
+  readonly property real iconSize: Style.toOdd(capsuleHeight * 0.48)
   readonly property real miniGaugeWidth: Math.max(3, Style.toOdd(root.iconSize * 0.25))
 
   function openExternalMonitor() {
@@ -117,8 +119,8 @@ Rectangle {
   readonly property bool diskCritical: showDiskUsage && SystemStatService.isDiskCritical(diskPath)
 
   anchors.centerIn: parent
-  implicitWidth: isVertical ? Style.capsuleHeight : Math.round(mainGrid.implicitWidth + Style.marginXL)
-  implicitHeight: isVertical ? Math.round(mainGrid.implicitHeight + Style.marginXL) : Style.capsuleHeight
+  implicitWidth: isVertical ? capsuleHeight : Math.round(mainGrid.implicitWidth + Style.marginXL)
+  implicitHeight: isVertical ? Math.round(mainGrid.implicitHeight + Style.marginXL) : capsuleHeight
   radius: Style.radiusM
   color: Style.capsuleColor
   border.color: Style.capsuleBorderColor
@@ -246,7 +248,7 @@ Rectangle {
       implicitWidth: cpuUsageContent.implicitWidth
       implicitHeight: cpuUsageContent.implicitHeight
       Layout.preferredWidth: isVertical ? root.width : implicitWidth
-      Layout.preferredHeight: compactMode ? implicitHeight : Style.capsuleHeight
+      Layout.preferredHeight: compactMode ? implicitHeight : capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showCpuUsage
 
@@ -261,7 +263,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
@@ -281,7 +283,7 @@ Rectangle {
           visible: !compactMode
           text: `${Math.round(SystemStatService.cpuUsage)}%`
           family: fontFamily
-          pointSize: Style.barFontSize
+          pointSize: barFontSize
           applyUiScale: false
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
@@ -314,7 +316,7 @@ Rectangle {
       implicitWidth: cpuTempContent.implicitWidth
       implicitHeight: cpuTempContent.implicitHeight
       Layout.preferredWidth: isVertical ? root.width : implicitWidth
-      Layout.preferredHeight: compactMode ? implicitHeight : Style.capsuleHeight
+      Layout.preferredHeight: compactMode ? implicitHeight : capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showCpuTemp
 
@@ -329,7 +331,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
@@ -349,7 +351,7 @@ Rectangle {
           visible: !compactMode
           text: `${Math.round(SystemStatService.cpuTemp)}°`
           family: fontFamily
-          pointSize: Style.barFontSize
+          pointSize: barFontSize
           applyUiScale: false
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
@@ -382,7 +384,7 @@ Rectangle {
       implicitWidth: gpuTempContent.implicitWidth
       implicitHeight: gpuTempContent.implicitHeight
       Layout.preferredWidth: isVertical ? root.width : implicitWidth
-      Layout.preferredHeight: compactMode ? implicitHeight : Style.capsuleHeight
+      Layout.preferredHeight: compactMode ? implicitHeight : capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showGpuTemp && SystemStatService.gpuAvailable
 
@@ -397,7 +399,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
@@ -417,7 +419,7 @@ Rectangle {
           visible: !compactMode
           text: `${Math.round(SystemStatService.gpuTemp)}°`
           family: fontFamily
-          pointSize: Style.barFontSize
+          pointSize: barFontSize
           applyUiScale: false
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
@@ -450,7 +452,7 @@ Rectangle {
       implicitWidth: loadAvgContent.implicitWidth
       implicitHeight: loadAvgContent.implicitHeight
       Layout.preferredWidth: isVertical ? root.width : implicitWidth
-      Layout.preferredHeight: compactMode ? implicitHeight : Style.capsuleHeight
+      Layout.preferredHeight: compactMode ? implicitHeight : capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showLoadAverage && SystemStatService.nproc > 0 && SystemStatService.loadAvg1 > 0
 
@@ -465,7 +467,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
@@ -485,7 +487,7 @@ Rectangle {
           visible: !compactMode
           text: SystemStatService.loadAvg1.toFixed(1)
           family: fontFamily
-          pointSize: Style.barFontSize
+          pointSize: barFontSize
           applyUiScale: false
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
@@ -518,7 +520,7 @@ Rectangle {
       implicitWidth: memoryContent.implicitWidth
       implicitHeight: memoryContent.implicitHeight
       Layout.preferredWidth: isVertical ? root.width : implicitWidth
-      Layout.preferredHeight: compactMode ? implicitHeight : Style.capsuleHeight
+      Layout.preferredHeight: compactMode ? implicitHeight : capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showMemoryUsage
 
@@ -533,7 +535,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
@@ -553,7 +555,7 @@ Rectangle {
           visible: !compactMode
           text: showMemoryAsPercent ? `${Math.round(SystemStatService.memPercent)}%` : SystemStatService.formatMemoryGb(SystemStatService.memGb)
           family: fontFamily
-          pointSize: Style.barFontSize
+          pointSize: barFontSize
           applyUiScale: false
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
@@ -586,7 +588,7 @@ Rectangle {
       implicitWidth: swapContent.implicitWidth
       implicitHeight: swapContent.implicitHeight
       Layout.preferredWidth: isVertical ? root.width : implicitWidth
-      Layout.preferredHeight: compactMode ? implicitHeight : Style.capsuleHeight
+      Layout.preferredHeight: compactMode ? implicitHeight : capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showSwapUsage && SystemStatService.swapTotalGb > 0
 
@@ -601,7 +603,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
@@ -621,7 +623,7 @@ Rectangle {
           visible: !compactMode
           text: `${Math.round(SystemStatService.swapPercent)}%`
           family: fontFamily
-          pointSize: Style.barFontSize
+          pointSize: barFontSize
           applyUiScale: false
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
@@ -653,7 +655,7 @@ Rectangle {
       implicitWidth: downloadContent.implicitWidth
       implicitHeight: downloadContent.implicitHeight
       Layout.preferredWidth: isVertical ? root.width : implicitWidth
-      Layout.preferredHeight: compactMode ? implicitHeight : Style.capsuleHeight
+      Layout.preferredHeight: compactMode ? implicitHeight : capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showNetworkStats
 
@@ -668,7 +670,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
@@ -687,7 +689,7 @@ Rectangle {
           visible: !compactMode
           text: isVertical ? SystemStatService.formatCompactSpeed(SystemStatService.rxSpeed) : SystemStatService.formatSpeed(SystemStatService.rxSpeed)
           family: fontFamily
-          pointSize: Style.barFontSize
+          pointSize: barFontSize
           applyUiScale: false
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
@@ -718,7 +720,7 @@ Rectangle {
       implicitWidth: uploadContent.implicitWidth
       implicitHeight: uploadContent.implicitHeight
       Layout.preferredWidth: isVertical ? root.width : implicitWidth
-      Layout.preferredHeight: compactMode ? implicitHeight : Style.capsuleHeight
+      Layout.preferredHeight: compactMode ? implicitHeight : capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showNetworkStats
 
@@ -733,7 +735,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
@@ -752,7 +754,7 @@ Rectangle {
           visible: !compactMode
           text: isVertical ? SystemStatService.formatCompactSpeed(SystemStatService.txSpeed) : SystemStatService.formatSpeed(SystemStatService.txSpeed)
           family: fontFamily
-          pointSize: Style.barFontSize
+          pointSize: barFontSize
           applyUiScale: false
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
@@ -784,7 +786,7 @@ Rectangle {
       implicitWidth: diskContent.implicitWidth
       implicitHeight: diskContent.implicitHeight
       Layout.preferredWidth: isVertical ? root.width : implicitWidth
-      Layout.preferredHeight: compactMode ? implicitHeight : Style.capsuleHeight
+      Layout.preferredHeight: compactMode ? implicitHeight : capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showDiskUsage
 
@@ -799,7 +801,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
@@ -819,7 +821,7 @@ Rectangle {
           visible: !compactMode
           text: SystemStatService.diskPercents[diskPath] ? `${SystemStatService.diskPercents[diskPath]}%` : "n/a"
           family: fontFamily
-          pointSize: Style.barFontSize
+          pointSize: barFontSize
           applyUiScale: false
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter

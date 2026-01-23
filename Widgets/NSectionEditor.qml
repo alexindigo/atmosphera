@@ -38,6 +38,7 @@ NBox {
 
   property var widgetRegistry: null
   property string settingsDialogComponent: "BarWidgetSettingsDialog.qml"
+  property var screen: null // Screen reference for per-screen widget settings
 
   readonly property int gridColumns: 3
   readonly property real miniButtonSize: Style.baseWidgetSize * 0.65
@@ -445,7 +446,8 @@ NBox {
                                                                 "widgetIndex": index,
                                                                 "widgetData": modelData,
                                                                 "widgetId": modelData.id,
-                                                                "sectionId": root.sectionId
+                                                                "sectionId": root.sectionId,
+                                                                "screen": root.screen
                                                               });
                           if (dialog) {
                             dialog.updateWidgetSettings.connect(root.updateWidgetSettings);

@@ -12,23 +12,27 @@ import qs.Widgets
 NBox {
   id: root
 
-  required property string screenName
+  required property var screen
+  readonly property string screenName: screen?.name || ""
 
   color: Color.mSurfaceVariant
   Layout.fillWidth: true
   implicitHeight: content.implicitHeight + Style.marginL * 2
 
-  // Helper to get/set widgets for this screen
+  // Helper to get widgets for this screen (ensures override exists)
   function _getWidgetsContainer() {
-    // Ensure screen has widget overrides
     if (!Settings.hasScreenOverride(screenName, "widgets")) {
-      // Deep copy current widgets to create override
       var currentWidgets = Settings.getBarWidgetsForScreen(screenName);
       var widgetsCopy = QtObj2JS.qtObjectToPlainObject(currentWidgets);
       Settings.setScreenOverride(screenName, "widgets", widgetsCopy);
     }
     var entry = Settings.getScreenOverrideEntry(screenName);
     return entry ? entry.widgets : Settings.data.bar.widgets;
+  }
+
+  // Persist widget changes by reassigning the override (triggers change detection)
+  function _saveWidgets(widgets) {
+    Settings.setScreenOverride(screenName, "widgets", widgets);
   }
 
   // Widget manipulation functions
@@ -48,6 +52,7 @@ NBox {
     }
     var widgets = _getWidgetsContainer();
     widgets[section].push(newWidget);
+    _saveWidgets(widgets);
   }
 
   function _removeWidgetFromSection(section, index) {
@@ -56,6 +61,7 @@ NBox {
       var newArray = widgets[section].slice();
       var removedWidgets = newArray.splice(index, 1);
       widgets[section] = newArray;
+      _saveWidgets(widgets);
 
       if (removedWidgets[0].id === "ControlCenter" && BarService.lookupWidget("ControlCenter") === undefined) {
         ToastService.showWarning(I18n.tr("toast.missing-control-center.label"), I18n.tr("toast.missing-control-center.description"), 12000);
@@ -71,12 +77,14 @@ NBox {
       newArray.splice(fromIndex, 1);
       newArray.splice(toIndex, 0, item);
       widgets[section] = newArray;
+      _saveWidgets(widgets);
     }
   }
 
   function _updateWidgetSettingsInSection(section, index, settings) {
     var widgets = _getWidgetsContainer();
     widgets[section][index] = settings;
+    _saveWidgets(widgets);
   }
 
   function _moveWidgetBetweenSections(fromSection, index, toSection) {
@@ -89,6 +97,7 @@ NBox {
       var targetArray = widgets[toSection].slice();
       targetArray.push(widget);
       widgets[toSection] = targetArray;
+      _saveWidgets(widgets);
     }
   }
 
@@ -153,6 +162,7 @@ NBox {
     NSectionEditor {
       sectionName: I18n.tr("positions.left")
       sectionId: "left"
+      screen: root.screen
       settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
       widgetRegistry: BarWidgetRegistry
       widgetModel: root.effectiveWidgets.left
@@ -169,6 +179,7 @@ NBox {
     NSectionEditor {
       sectionName: I18n.tr("positions.center")
       sectionId: "center"
+      screen: root.screen
       settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
       widgetRegistry: BarWidgetRegistry
       widgetModel: root.effectiveWidgets.center
@@ -185,6 +196,7 @@ NBox {
     NSectionEditor {
       sectionName: I18n.tr("positions.right")
       sectionId: "right"
+      screen: root.screen
       settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
       widgetRegistry: BarWidgetRegistry
       widgetModel: root.effectiveWidgets.right

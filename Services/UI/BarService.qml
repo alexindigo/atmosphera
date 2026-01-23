@@ -293,16 +293,26 @@ Singleton {
                                             "widgetIndex": index,
                                             "widgetData": widgetData,
                                             "widgetId": widgetId,
-                                            "sectionId": section
+                                            "sectionId": section,
+                                            "screen": screen
                                           });
 
       if (dialog) {
         dialog.updateWidgetSettings.connect((sec, idx, settings) => {
-                                              var widgets = Settings.data.bar.widgets[sec];
-                                              if (widgets && idx < widgets.length) {
-                                                widgets[idx] = Object.assign({}, widgets[idx], settings);
-                                                Settings.data.bar.widgets[sec] = widgets;
-                                                Settings.saveImmediate();
+                                              var screenName = screen?.name || "";
+                                              if (Settings.hasScreenOverride(screenName, "widgets")) {
+                                                var overrideWidgets = Settings.getBarWidgetsForScreen(screenName);
+                                                if (overrideWidgets && overrideWidgets[sec] && idx < overrideWidgets[sec].length) {
+                                                  overrideWidgets[sec][idx] = Object.assign({}, overrideWidgets[sec][idx], settings);
+                                                  Settings.setScreenOverride(screenName, "widgets", overrideWidgets);
+                                                }
+                                              } else {
+                                                var widgets = Settings.data.bar.widgets[sec];
+                                                if (widgets && idx < widgets.length) {
+                                                  widgets[idx] = Object.assign({}, widgets[idx], settings);
+                                                  Settings.data.bar.widgets[sec] = widgets;
+                                                  Settings.saveImmediate();
+                                                }
                                               }
                                             });
         // Enable keyboard focus for the popup menu window when dialog is open

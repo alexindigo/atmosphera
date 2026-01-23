@@ -13,23 +13,11 @@ Popup {
   property var widgetData: null
   property string widgetId: ""
   property string sectionId: ""
+  property var screen: null
 
   signal updateWidgetSettings(string section, int index, var settings)
 
-  // Helper function to find screen from parent chain
-  function findScreen() {
-    var item = parent;
-    while (item) {
-      if (item.screen !== undefined) {
-        return item.screen;
-      }
-      item = item.parent;
-    }
-    return null;
-  }
-
-  readonly property var screen: findScreen()
-  readonly property real maxHeight: screen ? screen.height * 0.9 : (parent ? parent.height * 0.9 : 800)
+  readonly property real maxHeight: screen ? screen.height * 0.9 : 800
   readonly property real defaultContentWidth: Math.round(600 * Style.uiScaleRatio)
   readonly property real settingsContentWidth: {
     if (settingsLoader.item && settingsLoader.item.implicitWidth > 0) {

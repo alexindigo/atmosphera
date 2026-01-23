@@ -215,7 +215,7 @@ ColumnLayout {
             // Inline widget configuration
             BarSettings.MonitorWidgetsConfig {
               visible: widgetConfigButton.expanded
-              screenName: monitorCard.screenName
+              screen: monitorCard.modelData
               Layout.fillWidth: true
               Layout.topMargin: Style.marginS
             }
