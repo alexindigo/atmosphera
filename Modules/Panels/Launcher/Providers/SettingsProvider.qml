@@ -75,6 +75,7 @@ Item {
     let launcherItems = [];
     for (let i = 0; i < results.length; i++) {
       const entry = results[i].obj;
+      const score = results[i].score;
       const tabName = I18n.tr(entry.tabLabel);
       const subTabName = entry.subTabName || "";
       const breadcrumb = subTabName ? (tabName + " › " + subTabName) : tabName;
@@ -85,6 +86,7 @@ Item {
                            "icon": "settings",
                            "isTablerIcon": true,
                            "isImage": false,
+                           "_score": score,
                            "provider": root,
                            "onActivate": createActivateHandler(entry)
                          });

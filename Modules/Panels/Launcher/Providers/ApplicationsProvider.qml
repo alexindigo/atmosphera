@@ -493,7 +493,7 @@ Item {
         else
           nonFav.push(r);
       }
-      return fav.concat(nonFav).map(result => createResultEntry(result.obj));
+      return fav.concat(nonFav).map(result => createResultEntry(result.obj, result.score));
     } else {
       // Fallback to simple search
       const searchTerm = query.toLowerCase();
@@ -531,13 +531,14 @@ Item {
     }
   }
 
-  function createResultEntry(app) {
+  function createResultEntry(app, score) {
     return {
       "appId": getAppKey(app),
       "name": app.name || "Unknown",
       "description": app.genericName || app.comment || "",
       "icon": app.icon || "application-x-executable",
       "isImage": false,
+      "_score": score !== undefined ? score : 0,
       "provider": root,
       "onActivate": function () {
         // Close the launcher/SmartPanel immediately without any animations.

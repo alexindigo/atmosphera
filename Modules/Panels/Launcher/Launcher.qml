@@ -461,12 +461,23 @@ SmartPanel {
       }
     } else {
       // Regular search - let providers contribute results
+      let allResults = [];
       for (let provider of providers) {
         if (provider.handleSearch) {
           const providerResults = provider.getResults(searchText);
-          results = results.concat(providerResults);
+          allResults = allResults.concat(providerResults);
         }
       }
+
+      // Sort by _score (higher = better match), items without _score go first
+      if (searchText.trim() !== "") {
+        allResults.sort((a, b) => {
+                          const sa = a._score !== undefined ? a._score : 0;
+                          const sb = b._score !== undefined ? b._score : 0;
+                          return sb - sa;
+                        });
+      }
+      results = allResults;
     }
 
     // Update activeProvider only after computing new state to avoid UI flicker
