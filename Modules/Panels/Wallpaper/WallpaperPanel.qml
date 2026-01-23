@@ -405,8 +405,9 @@ SmartPanel {
               onEditingFinished: {
                 if (Settings.data.wallpaper.useWallhaven) {
                   wallhavenSearchDebounceTimer.stop();
-                  Settings.data.wallpaper.wallhavenQuery = text;
-                  if (typeof WallhavenService !== "undefined") {
+                  // Only search if the query actually changed
+                  if (typeof WallhavenService !== "undefined" && text !== WallhavenService.currentQuery) {
+                    Settings.data.wallpaper.wallhavenQuery = text;
                     wallhavenView.loading = true;
                     WallhavenService.search(text, 1);
                   }
