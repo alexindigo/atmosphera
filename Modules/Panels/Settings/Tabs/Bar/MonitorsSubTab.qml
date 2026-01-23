@@ -196,10 +196,12 @@ ColumnLayout {
               spacing: Style.marginS
 
               NButton {
+                id: widgetConfigButton
+                property bool expanded: false
                 Layout.fillWidth: true
                 text: I18n.tr("panels.bar.monitor-configure-widgets")
-                icon: "layout-grid"
-                onClicked: widgetDialog.open()
+                icon: expanded ? "chevron-up" : "layout-grid"
+                onClicked: expanded = !expanded
               }
 
               NButton {
@@ -209,15 +211,16 @@ ColumnLayout {
                 onClicked: Settings.clearScreenOverride(monitorCard.screenName)
               }
             }
+
+            // Inline widget configuration
+            BarSettings.MonitorWidgetsConfig {
+              visible: widgetConfigButton.expanded
+              screenName: monitorCard.screenName
+              Layout.fillWidth: true
+              Layout.topMargin: Style.marginS
+            }
           }
         }
-      }
-
-      // Widget configuration dialog
-      BarSettings.MonitorWidgetsDialog {
-        id: widgetDialog
-        screenName: monitorCard.screenName
-        parent: Overlay.overlay
       }
     }
   }
