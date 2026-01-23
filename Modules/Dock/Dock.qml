@@ -106,6 +106,10 @@ Loader {
       // Track the session order of apps (transient reordering)
       property var sessionAppOrder: []
 
+      // Drag and Drop state for visual feedback
+      property int dragSourceIndex: -1
+      property int dragTargetIndex: -1
+
       // Revision counter to force icon re-evaluation
       property int iconRevision: 0
 
@@ -636,7 +640,19 @@ Loader {
                       DropArea {
                         anchors.fill: parent
                         keys: ["dock-app"]
+                        onEntered: function (drag) {
+                          if (drag.source && drag.source.objectName === "dockAppButton") {
+                            root.dragTargetIndex = appButton.modelIndex;
+                          }
+                        }
+                        onExited: function () {
+                          if (root.dragTargetIndex === appButton.modelIndex) {
+                            root.dragTargetIndex = -1;
+                          }
+                        }
                         onDropped: function (drop) {
+                          root.dragSourceIndex = -1;
+                          root.dragTargetIndex = -1;
                           if (drop.source && drop.source.objectName === "dockAppButton" && drop.source !== appButton) {
                             root.reorderApps(drop.source.modelIndex, appButton.modelIndex);
                           }
@@ -661,6 +677,19 @@ Loader {
                         anchors.centerIn: dragging ? undefined : parent
 
                         property bool dragging: appMouseArea.drag.active
+                        onDraggingChanged: {
+                          if (dragging) {
+                            root.dragSourceIndex = index;
+                          } else {
+                            // Reset if not handled by drop (e.g. dropped outside)
+                            Qt.callLater(() => {
+                                           if (!appMouseArea.drag.active && root.dragSourceIndex === index) {
+                                             root.dragSourceIndex = -1;
+                                             root.dragTargetIndex = -1;
+                                           }
+                                         });
+                          }
+                        }
 
                         Drag.active: dragging
                         Drag.source: appButton
@@ -668,13 +697,54 @@ Loader {
                         Drag.hotSpot.y: height / 2
                         Drag.keys: ["dock-app"]
 
-                        z: dragging ? 1000 : 0
+                        z: (root.dragSourceIndex === index) ? 1000 : ((dragging ? 1000 : 0))
                         scale: dragging ? 1.1 : (appButton.hovered ? 1.15 : 1.0)
                         Behavior on scale {
                           NumberAnimation {
                             duration: Style.animationNormal
                             easing.type: Easing.OutBack
                             easing.overshoot: 1.2
+                          }
+                        }
+
+                        // Visual shifting logic
+                        readonly property bool isDragged: root.dragSourceIndex === index
+                        property real shiftOffset: 0
+
+                        Binding on shiftOffset {
+                          value: {
+                            if (root.dragSourceIndex !== -1 && root.dragTargetIndex !== -1 && !iconContainer.isDragged) {
+                              if (root.dragSourceIndex < root.dragTargetIndex) {
+                                // Dragging Forward: Items between source and target shift Backward
+                                if (index > root.dragSourceIndex && index <= root.dragTargetIndex) {
+                                  return -1 * (root.isVertical ? iconSize + Style.marginS : iconSize + Style.marginS);
+                                }
+                              } else if (root.dragSourceIndex > root.dragTargetIndex) {
+                                // Dragging Backward: Items between target and source shift Forward
+                                if (index >= root.dragTargetIndex && index < root.dragSourceIndex) {
+                                  return (root.isVertical ? iconSize + Style.marginS : iconSize + Style.marginS);
+                                }
+                              }
+                            }
+                            return 0;
+                          }
+                        }
+
+                        transform: Translate {
+                          x: !root.isVertical ? iconContainer.shiftOffset : 0
+                          y: root.isVertical ? iconContainer.shiftOffset : 0
+
+                          Behavior on x {
+                            NumberAnimation {
+                              duration: Style.animationFast
+                              easing.type: Easing.OutQuad
+                            }
+                          }
+                          Behavior on y {
+                            NumberAnimation {
+                              duration: Style.animationFast
+                              easing.type: Easing.OutQuad
+                            }
                           }
                         }
 
@@ -779,7 +849,7 @@ Loader {
 
                         // Only allow left-click dragging via axis control
                         drag.target: iconContainer
-                        drag.axis: (pressedButtons & Qt.LeftButton) ? Drag.XAndYAxis : Drag.None
+                        drag.axis: (pressedButtons & Qt.LeftButton) ? (root.isVertical ? Drag.YAxis : Drag.XAxis) : Drag.None
                         preventStealing: true
 
                         onPressed: {
