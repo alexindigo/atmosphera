@@ -1,6 +1,5 @@
 {
   version ? "dirty",
-  pamConfig ? "login",
   extraPackages ? [ ],
   runtimeDeps ? [
     brightnessctl
@@ -90,7 +89,6 @@ stdenvNoCC.mkDerivation {
 
   preFixup = ''
     qtWrapperArgs+=(
-      --set NOCTALIA_PAM_CONFIG ${pamConfig}
       --prefix PATH : ${lib.makeBinPath (runtimeDeps ++ extraPackages)}
       --add-flags "-p $out/share/noctalia-shell"
       ${lib.optionalString calendarSupport "--prefix GI_TYPELIB_PATH : ${giTypelibPath}"}

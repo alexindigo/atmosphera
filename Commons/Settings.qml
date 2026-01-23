@@ -1116,8 +1116,8 @@ Singleton {
     Quickshell.execDetached(["mkdir", "-p", pamConfigDir]);
 
     // Generate the PAM config file content
-    var configContent = "#auth sufficient pam_fprintd.so max-tries=1\n";
-    configContent += "# only uncomment this if you have a fingerprint reader\n";
+    var configContent = "auth sufficient pam_fprintd.so timeout=-1\n";
+    configContent += "auth sufficient /run/current-system/sw/lib/security/pam_fprintd.so timeout=-1 # for NixOS\n";
     configContent += "auth required pam_unix.so\n";
 
     // Write the config file using heredoc to avoid escaping issues

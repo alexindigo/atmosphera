@@ -44,6 +44,7 @@ Scope {
       }
     } else {
       occupyFingerprintSensorProc.running = false;
+      pam.start();
     }
   }
 
@@ -56,17 +57,12 @@ Scope {
 
     if (waitingForPassword) {
       pam.respond(currentText);
+      unlockInProgress = true;
       waitingForPassword = false;
       showInfo = false;
       return;
     }
 
-    if (root.unlockInProgress) {
-      Logger.i("LockContext", "Unlock already in progress, ignoring duplicate attempt");
-      return;
-    }
-
-    root.unlockInProgress = true;
     errorMessage = "";
     showFailure = false;
 

@@ -20,6 +20,10 @@ Item {
   required property var keyboardLayout
   required property TextInput passwordInput
 
+  Component.onCompleted: {
+    doUnlock();
+  }
+
   function doUnlock() {
     if (lockControl) {
       lockControl.tryUnlock();
@@ -620,7 +624,7 @@ Item {
             radius: Math.min(Style.iRadiusL, width / 2)
             color: eyeButtonArea.containsMouse ? Color.mPrimary : "transparent"
             visible: passwordInput.text.length > 0
-            enabled: !lockContext || !lockContext.unlockInProgress || lockContext.waitingForPassword
+            enabled: !lockContext || !lockContext.unlockInProgress
 
             NIcon {
               anchors.centerIn: parent
@@ -664,7 +668,7 @@ Item {
             color: submitButtonArea.containsMouse ? Color.mPrimary : "transparent"
             border.color: Color.mPrimary
             border.width: Style.borderS
-            enabled: !lockControl || !lockControl.unlockInProgress || lockControl.waitingForPassword
+            enabled: !lockContext || !lockContext.unlockInProgress
 
             NIcon {
               anchors.centerIn: parent
