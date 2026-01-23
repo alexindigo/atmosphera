@@ -765,6 +765,16 @@
       "download-success-description": "成功下载 {scheme}",
       "download-success-title": "配色方案已下载",
       "download-title": "下载配色方案",
+      "method-description": {
+        "content": "具有高保真色彩提取的 Material Design 方案，可与源内容的实际颜色紧密匹配。",
+        "faithful": "尝试在生成和谐调色板的同时，尽可能接近源颜色。",
+        "fruit-salad": "Material Design 方案，产生一个俏皮、充满活力的调色板，具有多样和变化的色调。",
+        "monochrome": "使用单色调灰阶和最少色彩内容的 Material Design 方案。",
+        "muted": "生成更柔和、更低饱和度的色调，营造平静而低调的外观。",
+        "rainbow": "Material Design 方案，可在整个光谱中生成颜色，以实现最大的颜色多样性。",
+        "tonal-spot": "Material Design 默认算法。使用源颜色的色调变化创建平衡的调色板。",
+        "vibrant": "最大化色彩饱和度，打造大胆醒目的调色板，呈现生动色调。"
+      },
       "predefined-desc": "从预定义配色方案集合中选择。",
       "predefined-generate-templates-label": "为预定义方案生成模板",
       "predefined-title": "预定义配色方案",

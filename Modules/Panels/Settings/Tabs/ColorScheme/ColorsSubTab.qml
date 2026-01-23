@@ -254,6 +254,22 @@ ColumnLayout {
                 }
   }
 
+  NBox {
+    visible: Settings.data.colorSchemes.useWallpaperColors
+    Layout.fillWidth: true
+    implicitHeight: description.implicitHeight + Style.marginL * 2
+    color: Color.mSurface
+    NText {
+      id: description
+      anchors.fill: parent
+      anchors.margins: Style.marginL
+      wrapMode: Text.WordWrap
+      text: I18n.tr("panels.color-scheme.method-description." + Settings.data.colorSchemes.generationMethod)
+      pointSize: Style.fontSizeS
+      color: Color.mOnSurfaceVariant
+    }
+  }
+
   NDivider {
     Layout.fillWidth: true
   }

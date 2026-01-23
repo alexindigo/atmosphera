@@ -765,6 +765,16 @@
       "download-success-description": "{scheme} téléchargé avec succès",
       "download-success-title": "Jeu de couleurs téléchargé",
       "download-title": "Télécharger des jeux de couleurs",
+      "method-description": {
+        "content": "Schéma Material Design avec extraction de couleurs haute fidélité qui correspond étroitement aux couleurs réelles du contenu source.",
+        "faithful": "Tente de rester proche de la couleur source tout en générant une palette harmonieuse.",
+        "fruit-salad": "Schéma Material Design qui produit une palette ludique et vibrante avec des teintes diverses et variées.",
+        "monochrome": "Schéma Material Design utilisant une échelle de gris à teinte unique avec un contenu chromatique minimal.",
+        "muted": "Génère des tons plus doux et désaturés pour une apparence calme et discrète.",
+        "rainbow": "Schéma Material Design qui génère des couleurs sur tout le spectre pour une diversité de couleurs maximale.",
+        "tonal-spot": "Algorithme par défaut de Material Design. Crée des palettes équilibrées en utilisant les variations tonales de la couleur source.",
+        "vibrant": "Maximise la saturation des couleurs pour des palettes audacieuses et accrocheuses aux tons vifs."
+      },
       "predefined-desc": "Choisissez parmi une collection de jeux de couleurs prédéfinis.",
       "predefined-generate-templates-label": "Générer des modèles pour les schémas prédéfinis",
       "predefined-title": "Jeux de couleurs prédéfinis",

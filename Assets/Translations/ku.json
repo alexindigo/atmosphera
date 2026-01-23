@@ -765,6 +765,16 @@
       "download-success-description": "{scheme} bi serkeftî hate daxistin",
       "download-success-title": "Şêweya rengê hate daxistin",
       "download-title": "Dakêşkirina rengên rengîn",
+      "method-description": {
+        "content": "Şemaya Sêwirana Materyalê bi derxistina rengê ya bi kalîte ku bi rengên rastî yên naveroka çavkaniyê re li hev tê.",
+        "faithful": "Dema hewl dide ku nêzî rengê bingehîn bimîne, di heman demê de paletek hevaheng çêbike.",
+        "fruit-salad": "Şemaya Materyal Dîzaynê ku paletek dilîzîk, geş bi rengên cihêreng û pirrengî çêdike.",
+        "monochrome": "Şemaya Materyal Dîzaynê ya ku bi rengê yekane ya gewr û naveroka kromatîk a hindik bikar tîne.",
+        "muted": "Ji bo xuyangek aram û neberçav, rengên nermtir û bêrengtir çêdike.",
+        "rainbow": "Şemaya Materyal Dîzaynê ku ji bo pirrengiya herî zêde ya rengan, rengan li seranserê spektrumê çêdike.",
+        "tonal-spot": "Algorîtmaya default a Material Design. Bi bikaranîna guhertoyên tonal ên rengê çavkaniyê, paletên hevseng diafirîne.",
+        "vibrant": "Ji bo paletên berbiçav û balkêş ên bi rengên geş, têrbûna rengan zêde dike."
+      },
       "predefined-desc": "Ji berhevokek şemayên rengan ên pêşdiyarkirî hilbijêrin.",
       "predefined-generate-templates-label": "Şablonan ji bo şemayên pêşdiyarkirî çêbike",
       "predefined-title": "Şemayên rengan ên pêşdiyarkirî",

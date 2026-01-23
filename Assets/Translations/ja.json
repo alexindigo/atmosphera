@@ -765,6 +765,16 @@
       "download-success-description": "{scheme} をダウンロードしました",
       "download-success-title": "配色をダウンロードしました",
       "download-title": "配色のダウンロード",
+      "method-description": {
+        "content": "ソースコンテンツの実際の色と厳密に一致する、高忠実度の色抽出を備えたMaterial Designスキーム。",
+        "faithful": "調和のとれたパレットを生成しながら、ソースカラーにできるだけ近い色を維持しようとします。",
+        "fruit-salad": "多様で多彩な色合いを持つ、遊び心のある鮮やかなパレットを生み出すMaterial Designスキーム。",
+        "monochrome": "単一色相のグレースケールと最小限の彩度コンテンツを使用した Material Design スキーム。",
+        "muted": "穏やかで控えめな外観のために、より柔らかく、彩度を落とした色調を生成します。",
+        "rainbow": "最大の色多様性を実現するために、全スペクトルにわたって色を生成するマテリアルデザインスキーム。",
+        "tonal-spot": "Material Designのデフォルトアルゴリズム。ソースカラーの色調変化を使用して、バランスの取れたパレットを作成します。",
+        "vibrant": "色の彩度を最大化し、鮮やかな色調で大胆で目を引くパレットを実現します。"
+      },
       "predefined-desc": "あらかじめ用意された配色から選択します。",
       "predefined-generate-templates-label": "プリセット配色のテンプレートを生成する",
       "predefined-title": "プリセット配色",

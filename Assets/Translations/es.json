@@ -765,6 +765,16 @@
       "download-success-description": "{scheme} descargado correctamente",
       "download-success-title": "Esquema de colores descargado",
       "download-title": "Descargar esquemas de colores",
+      "method-description": {
+        "content": "Esquema de Material Design con extracción de color de alta fidelidad que coincide estrechamente con los colores reales del contenido de origen.",
+        "faithful": "Intenta mantenerse cerca del color original mientras genera una paleta armoniosa.",
+        "fruit-salad": "Esquema de Material Design que produce una paleta alegre y vibrante con matices diversos y variados.",
+        "monochrome": "Esquema de Material Design que utiliza una escala de grises de un solo tono con un contenido cromático mínimo.",
+        "muted": "Genera tonos más suaves y desaturados para una apariencia tranquila y discreta.",
+        "rainbow": "Esquema de Material Design que genera colores en todo el espectro para una máxima diversidad de color.",
+        "tonal-spot": "Algoritmo predeterminado de Material Design. Crea paletas equilibradas utilizando variaciones tonales del color de origen.",
+        "vibrant": "Maximiza la saturación del color para paletas llamativas y audaces con tonos vívidos."
+      },
       "predefined-desc": "Elige entre una colección de esquemas de colores predefinidos.",
       "predefined-generate-templates-label": "Generar plantillas para esquemas predefinidos",
       "predefined-title": "Esquemas de colores predefinidos",

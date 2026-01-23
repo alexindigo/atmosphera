@@ -765,6 +765,16 @@
       "download-success-description": "Successfully downloaded {scheme}",
       "download-success-title": "Color scheme downloaded",
       "download-title": "Download Color Schemes",
+      "method-description": {
+        "content": "Material Design scheme with high-fidelity color extraction that closely matches the source content's actual colors.",
+        "faithful": "Attempts to stay close to the source color while still generating a harmonious palette.",
+        "fruit-salad": "Material Design scheme that produces a playful, vibrant palette with diverse and varied hues.",
+        "monochrome": "Material Design scheme using a single-hue grayscale with minimal chromatic content.",
+        "muted": "Generates softer, desaturated tones for a calm and understated appearance.",
+        "rainbow": "Material Design scheme that generates colors across the full spectrum for maximum color diversity.",
+        "tonal-spot": "Material Design default algorithm. Creates balanced palettes using tonal variations of the source color.",
+        "vibrant": "Maximizes color saturation for bold, eye-catching palettes with vivid tones."
+      },
       "predefined-desc": "Choose from a collection of predefined color schemes.",
       "predefined-generate-templates-label": "Generate templates for predefined schemes",
       "predefined-title": "Predefined color schemes",
