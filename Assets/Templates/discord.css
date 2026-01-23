@@ -320,3 +320,10 @@ body {
 .channelMention:hover {
   color: var(--text-1) !important;
 }
+
+._3b95d7d910416e54-bar._3b95d7d910416e54-mention {
+  background-color: var(--accent-1) !important;
+}
+._3b95d7d910416e54-bar._3b95d7d910416e54-mention ._3b95d7d910416e54-text {
+  color: var(--text-0) !important;
+}
