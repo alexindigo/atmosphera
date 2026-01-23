@@ -75,7 +75,7 @@
       "use-custom-font-label": "Использовать пользовательский шрифт",
       "use-monospaced-font-description": "Если включено, часы будут использовать моноширинный шрифт.",
       "use-monospaced-font-label": "Использовать моноширинный шрифт",
-      "use-primary-color-description": "Если включено, это применит основной цвет для выделения.",
+      "use-primary-color-description": "Если включено, будет использован основной цвет для отображения часов.",
       "use-primary-color-label": "Использовать основной цвет",
       "vertical-bar-description": "Используйте пробел, чтобы разделить каждую часть на новую строку.",
       "vertical-bar-label": "Вертикальная панель"
