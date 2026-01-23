@@ -48,10 +48,10 @@
       "device-default": "Alapértelmezett (Megjelenítő eszköz)",
       "device-description": "Válassza ki, melyik akkumulátor eszközt jelenítse meg.",
       "device-label": "Akkumulátor eszköz",
-      "hide-if-idle-description": "A widget elrejtése, ha az akkumulátor nincs töltés alatt vagy lemerülőben.",
+      "hide-if-idle-description": "Widget elrejtése, ha az akkumulátor nincs töltés alatt vagy lemerülőben.",
       "hide-if-idle-label": "Elrejtés tétlenség esetén",
-      "hide-if-not-detected-description": "Rejtse el a widgetet, ha a rendszer nem észlel akkumulátort.",
-      "hide-if-not-detected-label": "Rejtőzz, ha nem észleltek",
+      "hide-if-not-detected-description": "Widget elrejtése, ha a rendszer nem észlel akkumulátort.",
+      "hide-if-not-detected-label": "Elrejtés, ha nincs észlelve",
       "low-battery-threshold-description": "Figyelmeztetés megjelenítése, ha az akkumulátor töltöttsége e százalék alá esik.",
       "low-battery-threshold-label": "Alacsony akkumulátor töltöttségi figyelmeztetési küszöb",
       "show-noctalia-performance-description": "A Noctalia teljesítménymód kapcsoló megjelenítése az akkumulátor panelen belül.<br>Kikapcsolja az árnyékokat és animációkat a Noctalia-ban az erőforrás-felhasználás csökkentése érdekében.",
@@ -213,7 +213,7 @@
       "storage-usage-label": "Tárhelyhasználat",
       "swap-usage-description": "Cserehely memória használatának megjelenítése.",
       "swap-usage-label": "Cserehely használat",
-      "use-monospace-font-description": "Használj monospace betűtípust az egységes karakter-szélességhez.",
+      "use-monospace-font-description": "Használjon monospace betűtípust az egységes karakter-szélességhez.",
       "use-monospace-font-label": "Monospace betűtípus"
     },
     "taskbar": {
@@ -310,8 +310,8 @@
   },
   "changelog": {
     "error": {
-      "fetch-failed": "Nem sikerült betölteni a változási napló adatait. Kérjük, próbálja újra később.",
-      "rate-limit": "Túllépte a GitHub sebességkorlátját. Kérjük, próbálja újra néhány perc múlva."
+      "fetch-failed": "Nem sikerült betölteni a változási napló adatait. Próbálja újra később.",
+      "rate-limit": "Túllépte a GitHub sebességkorlátját. Próbálja újra néhány perc múlva."
     },
     "panel": {
       "buttons-discord": "Csatlakozzon a Discordunkhoz",
@@ -522,7 +522,7 @@
     "providers": {
       "applications": "Alkalmazások",
       "calculator": "Számológép",
-      "calculator-deprecated": "A >calc parancs elavult, és hamarosan el lesz távolítva. Kérjük, a matematikai kifejezéseket közvetlenül a keresésbe írja be helyette.",
+      "calculator-deprecated": "A >calc parancs elavult, és hamarosan el lesz távolítva. A matematikai kifejezéseket közvetlenül a keresésbe írja be helyette.",
       "calculator-description": "Számológép — matematikai kifejezések kiértékelése",
       "calculator-enter-expression": "Írjon be egy matematikai kifejezést",
       "calculator-press-enter-to-copy": "Nyomja meg az Entert az eredmény másolásához",
@@ -538,7 +538,7 @@
       "command-description": "Shell parancsok futtatása",
       "emoji": "Emoji választó",
       "emoji-loading": "Emojik betöltése...",
-      "emoji-loading-description": "Kérjük, várjon",
+      "emoji-loading-description": "Kis türelmet",
       "emoji-no-recent": "Nincsenek még legutóbbi emojik",
       "emoji-search-description": "Emojik keresése és másolása"
     }
@@ -639,7 +639,7 @@
       "system-packages": "Csomagok:",
       "system-product": "Termék:",
       "system-title": "Rendszerinformációk",
-      "system-uptime": "Üzemidő:",
+      "system-uptime": "Működési idő:",
       "system-wm": "WM:",
       "telemetry-data-copied": "Telemetriai adatok a vágólapra másolva",
       "telemetry-desc": "Segítsen a Noctalia fejlesztésében anonim rendszerinformációk (képernyőfelbontás, kompozitor, disztribúció) megosztásával. Egyszer kerül elküldésre indításkor, nincs nyomon követés, az adatok 30 nap után automatikusan törlődnek.",
@@ -780,7 +780,7 @@
       "title": "Színséma",
       "wallpaper-method-description": "Válassza ki a kedvenc palettagenerálási módszereit.",
       "wallpaper-method-label": "Paletta generálási módszer",
-      "wallpaper-monitor-source-description": "Válaszd ki, melyik monitort használd a háttérkép színeinek kinyeréséhez.",
+      "wallpaper-monitor-source-description": "Válassza ki, melyik monitor legyen használva a háttérkép színeinek kinyeréséhez.",
       "wallpaper-monitor-source-label": "Színgenerálási forrás"
     },
     "control-center": {
@@ -912,7 +912,7 @@
       "appearance-inactive-indicators-label": "Futásjelzők",
       "appearance-pinned-static-description": "A rögzített alkalmazásikonok mindig statikus sorrendben kerüljenek balra.",
       "appearance-pinned-static-label": "Statikus rögzített alkalmazások",
-      "appearance-position-description": "Válaszd ki, hogy hol jelenjen meg a dokk a képernyőn.",
+      "appearance-position-description": "Válassza ki, hogy hol jelenjen meg a dokk a képernyőn.",
       "appearance-position-label": "Pozíció",
       "enabled-description": "A dokk teljes megjelenítése vagy elrejtése.",
       "enabled-label": "Dokk engedélyezése",
@@ -1264,7 +1264,7 @@
       "entry-settings-title": "{entry} konfigurálása",
       "entry-settings-tooltip": "Parancs konfigurálása",
       "general-desc": "A munkamenet menüpanel viselkedésének és megjelenésének konfigurálása.",
-      "large-buttons-layout-description": "Válaszd ki, hogyan jelenjenek meg a munkamenü menügombjai.",
+      "large-buttons-layout-description": "Válassza ki, hogyan jelenjenek meg a munkamenü menügombjai.",
       "large-buttons-layout-label": "Nagy gombok elrendezése",
       "large-buttons-style-description": "A munkamenet menü megjelenítése nagy gombokkal, rácsos elrendezésben.",
       "large-buttons-style-label": "Nagyméretű gombok stílusa",
@@ -1279,7 +1279,7 @@
       "custom-highlight-colors-title-label": "Egyéni kiemelőszínek",
       "disk-section-label": "Lemezhasználat",
       "enable-dgpu-monitoring-description": "Figyelem: Ez felébreszti a dedikált GPU-t (NVIDIA/AMD), ami jelentősen befolyásolhatja az akkumulátor élettartamát a hibrid grafikával rendelkező laptopokon.",
-      "enable-dgpu-monitoring-label": "Dedikált GPU felügyelet engedélyezése",
+      "enable-dgpu-monitoring-label": "Dedikált GPU figyelés engedélyezése",
       "external-monitor-description": "Adja meg a parancsot vagy alkalmazás elérési útját a külső rendszermonitor alkalmazás indításához.",
       "external-monitor-label": "Külső rendszermonitor parancs",
       "external-monitor-placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor",
@@ -1379,7 +1379,7 @@
       "settings-show-hidden-files-tooltip-hide": "Rejtett fájlok elrejtése",
       "settings-show-hidden-files-tooltip-show": "Rejtett fájlok megjelenítése",
       "settings-title": "Háttérkép beállítások",
-      "settings-view-mode-description": "Válaszd ki, hogyan jelenjenek meg a háttérképek a könyvtáradból.",
+      "settings-view-mode-description": "Válassza ki, hogyan jelenjenek meg a háttérképek a könyvtárából.",
       "settings-view-mode-label": "Megtekintési mód",
       "view-mode-browse": "Könyvtárak böngészése",
       "view-mode-cycle-tooltip": "Nézet mód: {mode} (kattintson a módosításhoz)",
@@ -1426,7 +1426,7 @@
   "setup": {
     "all-done": "Kész!",
     "appearance": {
-      "subheader": "Válaszd ki a Dark Mode-ot és a színforrásokat (Háttérkép vagy előre definiált)."
+      "subheader": "Válassza ki a Sötét módot és a színforrásokat (háttérkép vagy előre definiált)."
     },
     "customize": {
       "header": "Tapasztalat testreszabása",
@@ -1464,18 +1464,18 @@
     "scaling-percentage": "{percentage}%",
     "signal-strength": "{signal}%",
     "unknown-app": "Ismeretlen alkalmazás",
-    "uptime": "Üzemidő: {uptime}",
+    "uptime": "Működési idő: {uptime}",
     "user-requested": "Felhasználó kérte",
     "welcome-back": "Üdvözöljük újra,",
     "widget-settings-title": "{widget} beállítások"
   },
   "system-monitor": {
     "cpu-temp": "CPU hőmérséklet",
-    "cpu-usage": "CPU-használat",
+    "cpu-usage": "CPU használat",
     "disk": "Lemez",
     "download-speed": "Letöltési sebesség",
     "gpu-temp": "GPU hőmérséklet",
-    "load-average": "Terh. átl.",
+    "load-average": "Terhelési átlag",
     "title": "Rendszerfigyelő",
     "upload-speed": "Feltöltési sebesség"
   },
@@ -1485,7 +1485,7 @@
     },
     "battery": {
       "low": "Alacsony akkumulátor",
-      "low-desc": "Az akkumulátor {percent}%-on van. Kérjük, csatlakoztassa a töltőt"
+      "low-desc": "Az akkumulátor {percent}%-on van. Csatlakoztassa a töltőt"
     },
     "bluetooth": {
       "address-copied": "Cím a vágólapra másolva",
@@ -1632,7 +1632,7 @@
       "apikey-help": "NSFW tartalom eléréséhez API kulcs szükséges.",
       "apikey-label": "API kulcs",
       "apikey-managed-by-env": "A NOCTALIA_WALLHAVEN_API_KEY környezeti változóval kezelhető.",
-      "apikey-placeholder": "Add meg a Wallhaven API kulcsodat!",
+      "apikey-placeholder": "Adja meg a Wallhaven API kulcsát!",
       "apply-all-monitors-description": "A kiválasztott háttérkép alkalmazása minden monitorra.",
       "apply-all-monitors-label": "Alkalmazás minden monitorra",
       "categories-anime": "Anime",
