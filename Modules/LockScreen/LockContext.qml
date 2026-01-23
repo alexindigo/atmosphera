@@ -39,6 +39,9 @@ Scope {
       infoMessage = "";
       showFailure = false;
       errorMessage = "";
+      if (!waitingForPassword) {
+        pam.abort();
+      }
       if (fprintdAvailable) {
         occupyFingerprintSensorProc.running = true;
       }
