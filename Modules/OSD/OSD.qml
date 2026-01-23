@@ -511,8 +511,7 @@ Variants {
           id: contentLoader
           anchors.fill: background
           anchors.margins: Style.marginM
-          // Delay activation until background has valid dimensions to avoid negative layout sizes
-          active: background.width > 0 && background.height > 0
+          active: true
           sourceComponent: panel.verticalMode ? verticalContent : horizontalContent
         }
 
