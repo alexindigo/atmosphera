@@ -158,6 +158,26 @@ Item {
                                               }
                                             });
     }
+    function command() {
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
+                                              if (!launcherPanel)
+                                              return;
+                                              var searchText = launcherPanel.searchText || "";
+                                              var isInClipMode = searchText.startsWith(">cmd");
+                                              if (!launcherPanel.isPanelOpen) {
+                                                // Closed -> open in clipboard mode
+                                                launcherPanel.open();
+                                                launcherPanel.setSearchText(">cmd ");
+                                              } else if (isInClipMode) {
+                                                // Already in clipboard mode -> close
+                                                launcherPanel.close();
+                                              } else {
+                                                // In another mode -> switch to clipboard mode
+                                                launcherPanel.setSearchText(">cmd ");
+                                              }
+                                            });
+    }
     function emoji() {
       root.screenDetector.withCurrentScreen(screen => {
                                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);
