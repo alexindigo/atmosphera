@@ -430,6 +430,8 @@
     "refresh": "Frissítés",
     "required": "(kötelező)",
     "reset": "Visszaállítás",
+    "result-count": "{count} eredmény",
+    "result-count-plural": "eredmények",
     "resume": "Folytatás",
     "save": "Mentés",
     "scanning": "Szkennelés...",
@@ -539,9 +541,7 @@
       "emoji-loading-description": "Kérjük, várjon",
       "emoji-no-recent": "Nincsenek még legutóbbi emojik",
       "emoji-search-description": "Emojik keresése és másolása"
-    },
-    "result": "eredmény",
-    "results": "eredmények"
+    }
   },
   "lock-screen": {
     "authenticating": "Hitelesítés...",

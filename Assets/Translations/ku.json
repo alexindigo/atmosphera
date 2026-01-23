@@ -430,6 +430,8 @@
     "refresh": "Nûkirin",
     "required": "(pêwîst)",
     "reset": "Vegerandin",
+    "result-count": "{count} encam",
+    "result-count-plural": "{count} encaman",
     "resume": "Berdewam kirin",
     "save": "Tomar bike",
     "scanning": "Lêgerîn...",
@@ -539,9 +541,7 @@
       "emoji-loading-description": "Tika raweste",
       "emoji-no-recent": "Hîna emojiyên dawî tune ne",
       "emoji-search-description": "Lêgerîn û kopîkirina emojiyan"
-    },
-    "result": "encam",
-    "results": "encaman"
+    }
   },
   "lock-screen": {
     "authenticating": "Rastkirin...",

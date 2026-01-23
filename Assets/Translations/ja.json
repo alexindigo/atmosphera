@@ -430,6 +430,8 @@
     "refresh": "更新",
     "required": "(必須)",
     "reset": "リセット",
+    "result-count": "{count} 結果",
+    "result-count-plural": "{count} 結果",
     "resume": "再開",
     "save": "保存",
     "scanning": "スキャン中...",
@@ -539,9 +541,7 @@
       "emoji-loading-description": "お待ちください",
       "emoji-no-recent": "まだ最近使った絵文字はありません",
       "emoji-search-description": "絵文字を検索してコピー"
-    },
-    "result": "結果",
-    "results": "結果"
+    }
   },
   "lock-screen": {
     "authenticating": "認証中...",

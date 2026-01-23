@@ -430,6 +430,8 @@
     "refresh": "Обновить",
     "required": "(обязательно)",
     "reset": "Сброс",
+    "result-count": "{count} результат",
+    "result-count-plural": "{count} результаты",
     "resume": "Продолжить",
     "save": "Сохранить",
     "scanning": "Сканирование...",
@@ -539,9 +541,7 @@
       "emoji-loading-description": "Пожалуйста, подождите",
       "emoji-no-recent": "Недавних эмодзи пока нет",
       "emoji-search-description": "Поиск и копирование эмодзи"
-    },
-    "result": "результат",
-    "results": "результаты"
+    }
   },
   "lock-screen": {
     "authenticating": "Аутентификация...",

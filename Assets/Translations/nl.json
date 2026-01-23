@@ -430,6 +430,8 @@
     "refresh": "Vernieuwen",
     "required": "(vereist)",
     "reset": "Resetten",
+    "result-count": "{count} resultaat",
+    "result-count-plural": "{count} resultaten",
     "resume": "Hervatten",
     "save": "Opslaan",
     "scanning": "Scannen...",
@@ -539,9 +541,7 @@
       "emoji-loading-description": "Even geduld",
       "emoji-no-recent": "Nog geen recente emoji's",
       "emoji-search-description": "Zoek en kopieer emoji's"
-    },
-    "result": "resultaat",
-    "results": "resultaten"
+    }
   },
   "lock-screen": {
     "authenticating": "Bezig met verifiëren...",

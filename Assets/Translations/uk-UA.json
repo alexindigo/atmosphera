@@ -430,6 +430,8 @@
     "refresh": "Оновити",
     "required": "(обов'язково)",
     "reset": "Скинути",
+    "result-count": "{count} результат",
+    "result-count-plural": "{count} результати",
     "resume": "Продовжити",
     "save": "Зберегти",
     "scanning": "Сканування...",
@@ -539,9 +541,7 @@
       "emoji-loading-description": "Зачекайте, будь ласка",
       "emoji-no-recent": "Немає нещодавніх емодзі",
       "emoji-search-description": "Пошук і копіювання емодзі"
-    },
-    "result": "результат",
-    "results": "результати"
+    }
   },
   "lock-screen": {
     "authenticating": "Автентифікація...",

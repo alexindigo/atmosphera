@@ -1476,7 +1476,7 @@ SmartPanel {
                           icon: modelData.icon
                           pointSize: Style.fontSizeXXXL
                           visible: modelData.icon && !modelData.displayString
-                          color: (entry.isSelected && !Settings.data.appLauncher.showIconBackground) ? Color.mOnHover : Color.mOnSurface
+                          color: (gridEntryContainer.isSelected && !Settings.data.appLauncher.showIconBackground) ? Color.mOnHover : Color.mOnSurface
                         }
                       }
 
@@ -1629,7 +1629,7 @@ SmartPanel {
               return "";
             }
             var prefix = activeProvider && activeProvider.name ? activeProvider.name + ": " : "";
-            return prefix + results.length + " " + (results.length === 1 ? I18n.tr("launcher.result") : I18n.tr("launcher.results"));
+            return prefix + I18n.trp("common.result-count", results.length);
           }
           pointSize: Style.fontSizeXS
           color: Color.mOnSurfaceVariant

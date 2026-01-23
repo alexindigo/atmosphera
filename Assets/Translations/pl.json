@@ -430,6 +430,8 @@
     "refresh": "Odśwież",
     "required": "(wymagane)",
     "reset": "Zresetuj",
+    "result-count": "{count} wynik",
+    "result-count-plural": "{count} wyniki",
     "resume": "Wznów",
     "save": "Zapisz",
     "scanning": "Skanowanie...",
@@ -539,9 +541,7 @@
       "emoji-loading-description": "Proszę czekać",
       "emoji-no-recent": "Brak ostatnich emoji",
       "emoji-search-description": "Szukaj i kopiuj emoji"
-    },
-    "result": "wynik",
-    "results": "wyniki"
+    }
   },
   "lock-screen": {
     "authenticating": "Uwierzytelnianie...",
