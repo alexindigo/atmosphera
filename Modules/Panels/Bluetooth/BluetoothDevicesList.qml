@@ -193,9 +193,9 @@ NBox {
               // Info for connected device (placed before the CTA for consistency with Wi‑Fi)
               NIconButton {
                 visible: modelData.connected
-                icon: "info-circle"
+                icon: "info"
                 tooltipText: I18n.tr("common.info")
-                baseSize: Style.baseWidgetSize
+                baseSize: Style.baseWidgetSize * 0.8
                 onClicked: {
                   const key = BluetoothService.deviceKey(modelData);
                   root.expandedDeviceKey = (root.expandedDeviceKey === key) ? "" : key;
@@ -207,7 +207,7 @@ NBox {
                 visible: (modelData.paired || modelData.trusted) && !modelData.connected && !isBusy && !modelData.blocked
                 icon: "trash"
                 tooltipText: I18n.tr("common.unpair")
-                baseSize: Style.baseWidgetSize
+                baseSize: Style.baseWidgetSize * 0.8
                 onClicked: BluetoothService.unpairDevice(modelData)
               }
 
@@ -217,8 +217,7 @@ NBox {
                 visible: (modelData.state !== BluetoothDeviceState.Connecting)
                 enabled: (canConnect || canDisconnect || canPair) && !isBusy
                 outlined: !button.hovered
-                fontSize: Style.fontSizeXS
-                fontWeight: Style.fontWeightMedium
+                fontSize: Style.fontSizeS
                 backgroundColor: {
                   if (device.canDisconnect && !isBusy) {
                     return Color.mError;
@@ -284,6 +283,7 @@ NBox {
               // Use Tabler layout icons; "grid" alone doesn't exist in our font
               icon: root.detailsGrid ? "layout-list" : "layout-grid"
               tooltipText: root.detailsGrid ? I18n.tr("tooltips.list-view") : I18n.tr("tooltips.grid-view")
+              baseSize: Style.baseWidgetSize * 0.8
               onClicked: {
                 root.detailsGrid = !root.detailsGrid;
                 if (Settings.data && Settings.data.ui) {

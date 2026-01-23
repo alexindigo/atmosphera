@@ -134,7 +134,7 @@ Popup {
             spacing: Style.marginS
 
             NIcon {
-              icon: "info-circle"
+              icon: "info"
               color: Color.mOnSurfaceVariant
               pointSize: Style.fontSizeM
             }
