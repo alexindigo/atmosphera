@@ -756,7 +756,7 @@
   {
     "labelKey": "panels.session-menu.countdown-duration-label",
     "descriptionKey": "panels.session-menu.countdown-duration-description",
-    "widget": "NLabel",
+    "widget": "NValueSlider",
     "tab": 11,
     "tabLabel": "panels.lock-screen.title",
     "subTab": null
