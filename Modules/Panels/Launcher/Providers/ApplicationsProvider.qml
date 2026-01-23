@@ -478,7 +478,6 @@ Item {
     if (typeof FuzzySort !== 'undefined') {
       const fuzzyResults = FuzzySort.go(query, filteredEntries, {
                                           "keys": ["name", "comment", "genericName", "executableName"],
-                                          "threshold": -1000,
                                           "limit": 20
                                         });
 
@@ -538,7 +537,7 @@ Item {
       "description": app.genericName || app.comment || "",
       "icon": app.icon || "application-x-executable",
       "isImage": false,
-      "_score": score !== undefined ? score : 0,
+      "_score": (score !== undefined ? score : 0) + 1,
       "provider": root,
       "onActivate": function () {
         // Close the launcher/SmartPanel immediately without any animations.

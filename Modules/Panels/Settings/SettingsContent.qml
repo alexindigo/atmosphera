@@ -125,7 +125,6 @@ Item {
 
     const results = FuzzySort.go(searchText.trim(), items, {
                                    "keys": ["label", "subTabName", "description"],
-                                   "threshold": 0.35,
                                    "limit": 20,
                                    "scoreFn": function (r) {
                                      // r[0]=label, r[1]=subTabName, r[2]=description

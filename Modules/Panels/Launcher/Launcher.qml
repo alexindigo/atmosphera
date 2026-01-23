@@ -443,7 +443,6 @@ SmartPanel {
             // Use fuzzy search to filter commands
             const fuzzyResults = FuzzySort.go(query, allCommands, {
                                                 "keys": ["name"],
-                                                "threshold": -1000,
                                                 "limit": 50
                                               });
 

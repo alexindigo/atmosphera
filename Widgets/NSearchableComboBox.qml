@@ -133,7 +133,6 @@ RowLayout {
     if (typeof FuzzySort !== 'undefined') {
       var fuzzyResults = FuzzySort.go(query, items, {
                                         "key": "name",
-                                        "threshold": -1000,
                                         "limit": 50
                                       });
 
