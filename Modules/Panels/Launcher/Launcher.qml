@@ -1629,7 +1629,7 @@ SmartPanel {
               return "";
             }
             var prefix = activeProvider && activeProvider.name ? activeProvider.name + ": " : "";
-            return prefix + results.length + " " + (results.length === 1 ? I18n.tr("launcher.result") : I18n.tr("launcher.results"));
+            return prefix + I18n.trp("common.result-count", results.length);
           }
           pointSize: Style.fontSizeXS
           color: Color.mOnSurfaceVariant

@@ -430,6 +430,8 @@
     "refresh": "重新整理",
     "required": "(必要)",
     "reset": "重設",
+    "result-count": "{count} 筆結果",
+    "result-count-plural": "{count} 筆結果",
     "resume": "繼續",
     "save": "儲存",
     "scanning": "掃描中...",
@@ -539,9 +541,7 @@
       "emoji-loading-description": "請稍候",
       "emoji-no-recent": "還沒有最近使用的表情符號",
       "emoji-search-description": "搜尋和複製表情符號"
-    },
-    "result": "筆結果",
-    "results": "筆結果"
+    }
   },
   "lock-screen": {
     "authenticating": "驗證中...",

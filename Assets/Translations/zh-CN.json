@@ -430,6 +430,8 @@
     "refresh": "刷新",
     "required": "(必要)",
     "reset": "重置",
+    "result-count": "{count} 结果",
+    "result-count-plural": "{count} 结果",
     "resume": "继续",
     "save": "保存",
     "scanning": "扫描中...",
@@ -539,9 +541,7 @@
       "emoji-loading-description": "请稍候",
       "emoji-no-recent": "尚无最近使用的表情符号",
       "emoji-search-description": "搜索和复制表情符号"
-    },
-    "result": "结果",
-    "results": "结果"
+    }
   },
   "lock-screen": {
     "authenticating": "正在验证...",

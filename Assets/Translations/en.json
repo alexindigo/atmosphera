@@ -430,6 +430,8 @@
     "refresh": "Refresh",
     "required": "(required)",
     "reset": "Reset",
+    "result-count": "{count} result",
+    "result-count-plural": "{count} results",
     "resume": "Resume",
     "save": "Save",
     "scanning": "Scanning...",
@@ -437,7 +439,6 @@
     "search": "Search",
     "security": "Security",
     "select": "Select",
-    "settings": "Settings",
     "shortcuts": "Shortcuts",
     "shutdown": "Shutdown",
     "signal": "Signal",
@@ -540,9 +541,7 @@
       "emoji-loading-description": "Please wait",
       "emoji-no-recent": "No recent emojis yet",
       "emoji-search-description": "Search and copy emojis"
-    },
-    "result": "result",
-    "results": "results"
+    }
   },
   "lock-screen": {
     "authenticating": "Authenticating...",

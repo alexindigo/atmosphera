@@ -430,6 +430,8 @@
     "refresh": "Yenile",
     "required": "(gerekli)",
     "reset": "Sıfırla",
+    "result-count": "{count} sonuç",
+    "result-count-plural": "{count} sonuçlar",
     "resume": "Sürdür",
     "save": "Kaydet",
     "scanning": "Taranıyor...",
@@ -539,9 +541,7 @@
       "emoji-loading-description": "Lütfen bekleyin",
       "emoji-no-recent": "Henüz yeni emoji yok",
       "emoji-search-description": "Emoji arama ve kopyalama"
-    },
-    "result": "sonuç",
-    "results": "sonuçlar"
+    }
   },
   "lock-screen": {
     "authenticating": "Doğrulanıyor...",

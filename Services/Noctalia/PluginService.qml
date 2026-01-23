@@ -1005,19 +1005,13 @@ Singleton {
 
     // ----------------------------------------
     // Plural translation function
-    api.trp = function (key, count, defaultSingular, defaultPlural, interpolations) {
-      if (typeof defaultSingular === 'undefined') {
-        defaultSingular = '';
-      }
-      if (typeof defaultPlural === 'undefined') {
-        defaultPlural = '';
-      }
+    api.trp = function (key, count, interpolations) {
       if (typeof interpolations === 'undefined') {
         interpolations = {};
       }
 
-      // Use key for singular, key_plural for plural
-      var pluralKey = count === 1 ? key : key + '-plural';
+      // Use key for singular, key-plural for plural
+      const realKey = count === 1 ? key : `${key}-plural`;
 
       // Merge interpolations with count
       var finalInterpolations = {
@@ -1028,7 +1022,7 @@ Singleton {
       }
 
       // Use tr() to look up the translation
-      return api.tr(pluralKey, finalInterpolations);
+      return api.tr(realKey, finalInterpolations);
     };
 
     // ----------------------------------------
@@ -1272,27 +1266,25 @@ Singleton {
 
     if (updateCount > 0) {
       Logger.i("PluginService", updateCount, "plugin update(s) available");
-      ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.trp("panels.plugins.update-available", updateCount, "{count} plugin update available:", "{count} plugin updates available:", {
-                                                                          "count": updateCount
-                                                                        }) + "\n\n" + updatesDescription, "plugin", 5000, I18n.tr("panels.plugins.open-plugins-tab"), function () {
-                                                                          // Open settings panel to Plugins tab on the screen where the cursor is
-                                                                          if (root.screenDetector) {
-                                                                            root.screenDetector.withCurrentScreen(function (screen) {
-                                                                              var panel = PanelService.getPanel("settingsPanel", screen);
-                                                                              if (panel) {
-                                                                                panel.requestedTab = SettingsPanel.Tab.Plugins;
-                                                                                panel.open();
-                                                                              }
-                                                                            });
-                                                                          } else {
-                                                                            // Fallback to primary screen if screen detector is not available
-                                                                            var panel = PanelService.getPanel("settingsPanel", Quickshell.screens[0]);
-                                                                            if (panel) {
-                                                                              panel.requestedTab = SettingsPanel.Tab.Plugins;
-                                                                              panel.open();
-                                                                            }
-                                                                          }
-                                                                        });
+      ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.trp("panels.plugins.update-available", updateCount) + "\n\n" + updatesDescription, "plugin", 5000, I18n.tr("panels.plugins.open-plugins-tab"), function () {
+        // Open settings panel to Plugins tab on the screen where the cursor is
+        if (root.screenDetector) {
+          root.screenDetector.withCurrentScreen(function (screen) {
+            var panel = PanelService.getPanel("settingsPanel", screen);
+            if (panel) {
+              panel.requestedTab = SettingsPanel.Tab.Plugins;
+              panel.open();
+            }
+          });
+        } else {
+          // Fallback to primary screen if screen detector is not available
+          var panel = PanelService.getPanel("settingsPanel", Quickshell.screens[0]);
+          if (panel) {
+            panel.requestedTab = SettingsPanel.Tab.Plugins;
+            panel.open();
+          }
+        }
+      });
     } else if (pendingCount > 0) {
       Logger.i("PluginService", pendingCount, "plugin update(s) pending (require newer Noctalia)");
     } else {
