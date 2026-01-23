@@ -86,6 +86,12 @@ Item {
       searchResults = [];
       return;
     }
+
+    // Auto-expand sidebar when searching
+    if (!root.sidebarExpanded) {
+      root.sidebarExpanded = true;
+    }
+
     if (searchIndex.length === 0)
       return;
 
@@ -265,6 +271,10 @@ Item {
   // Save sidebar state when it changes
   onSidebarExpandedChanged: {
     ShellState.setSettingsSidebarExpanded(sidebarExpanded);
+    if (!sidebarExpanded) {
+      root.searchText = "";
+      searchInput.text = "";
+    }
   }
 
   Component.onCompleted: {
@@ -670,6 +680,70 @@ Item {
             }
 
             onTextChanged: root.searchText = text
+          }
+
+          // Search button for collapsed sidebar
+          Item {
+            id: searchCollapsedContainer
+            Layout.fillWidth: true
+            Layout.preferredHeight: Math.round(searchCollapsedRow.implicitHeight + Style.marginS * 2)
+            visible: !root.sidebarExpanded
+            opacity: !root.sidebarExpanded ? 1.0 : 0.0
+
+            Behavior on opacity {
+              NumberAnimation {
+                duration: Style.animationFast
+                easing.type: Easing.InOutQuad
+              }
+            }
+
+            Rectangle {
+              id: searchCollapsedButton
+              width: Math.round(searchCollapsedRow.implicitWidth + Style.marginS * 2)
+              height: parent.height
+              anchors.left: parent.left
+              radius: Style.radiusS
+              color: searchCollapsedMouseArea.containsMouse ? Color.mHover : "transparent"
+
+              Behavior on color {
+                enabled: !Color.isTransitioning
+                ColorAnimation {
+                  duration: Style.animationFast
+                  easing.type: Easing.InOutQuad
+                }
+              }
+
+              RowLayout {
+                id: searchCollapsedRow
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: Style.marginS
+                spacing: 0
+
+                NIcon {
+                  icon: "search"
+                  color: searchCollapsedMouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface
+                  pointSize: Style.fontSizeXL
+                }
+              }
+
+              MouseArea {
+                id: searchCollapsedMouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                  root.sidebarExpanded = true;
+                  Qt.callLater(() => searchInput.inputItem.forceActiveFocus());
+                }
+                onEntered: {
+                  TooltipService.show(searchCollapsedButton, I18n.tr("common.search"));
+                }
+                onExited: {
+                  TooltipService.hide();
+                }
+              }
+            }
           }
 
           Item {
