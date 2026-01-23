@@ -46,7 +46,10 @@ Item {
   property string searchText: ""
   property var searchIndex: []
   property var searchResults: []
+  property int searchSelectedIndex: 0
   property string highlightLabelKey: ""
+
+  onSearchResultsChanged: searchSelectedIndex = 0
 
   // Signal when close button is clicked
   signal closeRequested
@@ -89,14 +92,23 @@ Item {
                    "subTab": entry.subTab,
                    "subTabLabel": entry.subTabLabel || null,
                    "label": I18n.tr(entry.labelKey),
-                   "description": entry.descriptionKey ? I18n.tr(entry.descriptionKey) : ""
+                   "description": entry.descriptionKey ? I18n.tr(entry.descriptionKey) : "",
+                   "subTabName": entry.subTabLabel ? I18n.tr(entry.subTabLabel) : ""
                  });
     }
 
     const results = FuzzySort.go(searchText.trim(), items, {
-                                   "keys": ["label", "description"],
+                                   "keys": ["label", "subTabName", "description"],
                                    "threshold": -1000,
-                                   "limit": 20
+                                   "limit": 20,
+                                   "scoreFn": function (r) {
+                                     // r[0]=label, r[1]=subTabName, r[2]=description
+                                     // Boost subTabName matches by 1.5x
+                                     const labelScore = r[0].score;
+                                     const subTabScore = r[1].score * 1.5;
+                                     const descScore = r[2].score;
+                                     return Math.max(labelScore, subTabScore, descScore);
+                                   }
                                  });
 
     let extracted = [];
@@ -133,6 +145,27 @@ Item {
 
     // Clear highlight after a delay
     highlightClearTimer.restart();
+  }
+
+  function searchSelectNext() {
+    if (searchResults.length === 0)
+      return;
+    searchSelectedIndex = Math.min(searchSelectedIndex + 1, searchResults.length - 1);
+    searchResultsList.positionViewAtIndex(searchSelectedIndex, ListView.Contain);
+  }
+
+  function searchSelectPrevious() {
+    if (searchResults.length === 0)
+      return;
+    searchSelectedIndex = Math.max(searchSelectedIndex - 1, 0);
+    searchResultsList.positionViewAtIndex(searchSelectedIndex, ListView.Contain);
+  }
+
+  function searchActivate() {
+    if (searchSelectedIndex >= 0 && searchSelectedIndex < searchResults.length) {
+      navigateToResult(searchResults[searchSelectedIndex]);
+      searchInput.text = "";
+    }
   }
 
   // Set sub-tab on the currently loaded tab content
@@ -458,6 +491,12 @@ Item {
     ProgramCheckerService.checkAllPrograms();
     updateTabsModel();
     selectTabById(requestedTab);
+    if (sidebarExpanded) {
+      Qt.callLater(() => {
+                     if (searchInput.inputItem)
+                     searchInput.inputItem.forceActiveFocus();
+                   });
+    }
   }
 
   // Scroll functions
@@ -638,7 +677,8 @@ Item {
                 width: searchResultsList.width - (searchResultsList.verticalScrollBarActive ? Style.marginM : 0)
                 height: resultColumn.implicitHeight + Style.marginS * 2
                 radius: Style.iRadiusS
-                color: resultItem.hovering ? Color.mHover : "transparent"
+                readonly property bool selected: index === root.searchSelectedIndex
+                color: (resultItem.hovering || resultItem.selected) ? Color.mHover : "transparent"
                 property bool hovering: false
 
                 Behavior on color {
@@ -662,7 +702,7 @@ Item {
                     text: I18n.tr(modelData.labelKey)
                     pointSize: Style.fontSizeM
                     font.weight: Style.fontWeightSemiBold
-                    color: resultItem.hovering ? Color.mOnHover : Color.mOnSurface
+                    color: (resultItem.hovering || resultItem.selected) ? Color.mOnHover : Color.mOnSurface
                     Layout.fillWidth: true
                     elide: Text.ElideRight
                     maximumLineCount: 1
@@ -676,7 +716,7 @@ Item {
                       return t;
                     }
                     pointSize: Style.fontSizeXS
-                    color: resultItem.hovering ? Color.mOnHover : Color.mOnSurfaceVariant
+                    color: (resultItem.hovering || resultItem.selected) ? Color.mOnHover : Color.mOnSurfaceVariant
                     Layout.fillWidth: true
                     elide: Text.ElideRight
                     maximumLineCount: 1

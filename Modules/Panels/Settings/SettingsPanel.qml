@@ -195,11 +195,25 @@ SmartPanel {
   }
 
   function onUpPressed() {
-    scrollUp();
+    if (_settingsContent && _settingsContent.searchText.trim() !== "") {
+      _settingsContent.searchSelectPrevious();
+    } else {
+      scrollUp();
+    }
   }
 
   function onDownPressed() {
-    scrollDown();
+    if (_settingsContent && _settingsContent.searchText.trim() !== "") {
+      _settingsContent.searchSelectNext();
+    } else {
+      scrollDown();
+    }
+  }
+
+  function onReturnPressed() {
+    if (_settingsContent && _settingsContent.searchText.trim() !== "") {
+      _settingsContent.searchActivate();
+    }
   }
 
   function onPageUpPressed() {
@@ -211,11 +225,19 @@ SmartPanel {
   }
 
   function onCtrlJPressed() {
-    scrollDown();
+    if (_settingsContent && _settingsContent.searchText.trim() !== "") {
+      _settingsContent.searchSelectNext();
+    } else {
+      scrollDown();
+    }
   }
 
   function onCtrlKPressed() {
-    scrollUp();
+    if (_settingsContent && _settingsContent.searchText.trim() !== "") {
+      _settingsContent.searchSelectPrevious();
+    } else {
+      scrollUp();
+    }
   }
 
   panelContent: Rectangle {
