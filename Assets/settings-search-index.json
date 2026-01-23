@@ -750,15 +750,6 @@
     "subTabLabel": "common.general"
   },
   {
-    "labelKey": "panels.launcher.settings-sort-by-usage-label",
-    "descriptionKey": "panels.launcher.settings-sort-by-usage-description",
-    "widget": "NToggle",
-    "tab": 8,
-    "tabLabel": "panels.launcher.title",
-    "subTab": 0,
-    "subTabLabel": "common.general"
-  },
-  {
     "labelKey": "panels.launcher.settings-icon-mode-label",
     "descriptionKey": "panels.launcher.settings-icon-mode-description",
     "widget": "NToggle",
@@ -770,6 +761,24 @@
   {
     "labelKey": "panels.launcher.settings-show-icon-background-label",
     "descriptionKey": "panels.launcher.settings-show-icon-background-description",
+    "widget": "NToggle",
+    "tab": 8,
+    "tabLabel": "panels.launcher.title",
+    "subTab": 0,
+    "subTabLabel": "common.general"
+  },
+  {
+    "labelKey": "panels.launcher.settings-sort-by-usage-label",
+    "descriptionKey": "panels.launcher.settings-sort-by-usage-description",
+    "widget": "NToggle",
+    "tab": 8,
+    "tabLabel": "panels.launcher.title",
+    "subTab": 0,
+    "subTabLabel": "common.general"
+  },
+  {
+    "labelKey": "panels.launcher.settings-enable-settings-search-label",
+    "descriptionKey": "panels.launcher.settings-enable-settings-search-description",
     "widget": "NToggle",
     "tab": 8,
     "tabLabel": "panels.launcher.title",

@@ -1019,6 +1019,8 @@
       "settings-custom-launch-prefix-enabled-label": "Увімкнути користувацький префікс запуску",
       "settings-custom-launch-prefix-label": "Користувацький префікс запуску",
       "settings-desc": "Налаштуйте поведінку та зовнішній вигляд лаунчера.",
+      "settings-enable-settings-search-description": "Показувати результати налаштувань під час пошуку в Launcher.",
+      "settings-enable-settings-search-label": "Увімкнути пошук у налаштуваннях",
       "settings-grid-view-description": "Показувати елементи у вигляді сітки замість списку.",
       "settings-icon-mode-description": "Використовувати нативні системні іконки замість іконок Tabler.",
       "settings-icon-mode-label": "Використовувати нативні іконки",

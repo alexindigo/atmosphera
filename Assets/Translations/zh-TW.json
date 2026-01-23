@@ -1019,6 +1019,8 @@
       "settings-custom-launch-prefix-enabled-label": "啟用自訂的程式啟動前綴",
       "settings-custom-launch-prefix-label": "自訂啟動前綴",
       "settings-desc": "自訂啟動器的外觀及行為",
+      "settings-enable-settings-search-description": "在啟動器中搜尋時顯示設定結果。",
+      "settings-enable-settings-search-label": "啟用設定搜尋",
       "settings-grid-view-description": "將項目以方格排列而不是列表顯示",
       "settings-icon-mode-description": "使用系統原生的圖示而不是自 Tabler 圖示包帶入",
       "settings-icon-mode-label": "使用原生圖示",

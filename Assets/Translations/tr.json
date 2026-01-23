@@ -1019,6 +1019,8 @@
       "settings-custom-launch-prefix-enabled-label": "Özel başlatma ön ekini etkinleştir",
       "settings-custom-launch-prefix-label": "Özel başlatma ön eki",
       "settings-desc": "Başlatıcının davranışını ve görünümünü özelleştirin.",
+      "settings-enable-settings-search-description": "Başlatıcıda arama yaparken ayarlar sonuçlarını göster.",
+      "settings-enable-settings-search-label": "Ayarlar aramasını etkinleştir",
       "settings-grid-view-description": "Öğeleri liste yerine ızgara düzeninde görüntüle.",
       "settings-icon-mode-description": "Tabler simgeleri yerine yerel sistem simgelerini kullanın.",
       "settings-icon-mode-label": "Yerel simgeleri kullan",

@@ -1019,6 +1019,8 @@
       "settings-custom-launch-prefix-enabled-label": "Włącz własny prefiks",
       "settings-custom-launch-prefix-label": "Własny prefiks uruchamiania",
       "settings-desc": "Dostosuj zachowanie i wygląd launchera.",
+      "settings-enable-settings-search-description": "Wyświetlaj wyniki ustawień podczas wyszukiwania w Launcherze.",
+      "settings-enable-settings-search-label": "Włącz wyszukiwanie w ustawieniach",
       "settings-grid-view-description": "Wyświetlaj elementy w układzie siatki zamiast listy.",
       "settings-icon-mode-description": "Używaj natywnych ikon systemowych zamiast ikon Tabler.",
       "settings-icon-mode-label": "Używaj natywnych ikon",

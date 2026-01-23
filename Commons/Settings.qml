@@ -390,6 +390,7 @@ Singleton {
       // Icon mode: "tabler" or "native"
       property string iconMode: "tabler"
       property bool showIconBackground: false
+      property bool enableSettingsSearch: true
       property bool ignoreMouseInput: false
       property string screenshotAnnotationTool: ""
     }

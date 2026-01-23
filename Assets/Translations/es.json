@@ -1019,6 +1019,8 @@
       "settings-custom-launch-prefix-enabled-label": "Habilitar prefijo de lanzamiento personalizado",
       "settings-custom-launch-prefix-label": "Prefijo de lanzamiento personalizado",
       "settings-desc": "Personaliza el comportamiento y la apariencia del lanzador.",
+      "settings-enable-settings-search-description": "Mostrar los resultados de configuración al buscar en el Launcher.",
+      "settings-enable-settings-search-label": "Activar la búsqueda en la configuración",
       "settings-grid-view-description": "Mostrar elementos en una cuadrícula en lugar de una lista.",
       "settings-icon-mode-description": "Usa iconos nativos del sistema en lugar de iconos Tabler.",
       "settings-icon-mode-label": "Usar iconos nativos",

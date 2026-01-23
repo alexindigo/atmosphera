@@ -1019,6 +1019,8 @@
       "settings-custom-launch-prefix-enabled-label": "启用自定义启动前缀",
       "settings-custom-launch-prefix-label": "自定义启动前缀",
       "settings-desc": "自定义启动器的行为和外观。",
+      "settings-enable-settings-search-description": "在启动器中搜索时显示设置结果。",
+      "settings-enable-settings-search-label": "启用设置搜索",
       "settings-grid-view-description": "以网格布局而非列表显示项目。",
       "settings-icon-mode-description": "使用本地系统图标而不是 Tabler 图标。",
       "settings-icon-mode-label": "使用本地图标",

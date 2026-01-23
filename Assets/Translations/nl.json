@@ -1019,6 +1019,8 @@
       "settings-custom-launch-prefix-enabled-label": "Aangepaste startprefix inschakelen",
       "settings-custom-launch-prefix-label": "Aangepaste startprefix",
       "settings-desc": "Pas het gedrag en uiterlijk van de launcher aan.",
+      "settings-enable-settings-search-description": "Toon instellingen in de zoekresultaten van de Launcher.",
+      "settings-enable-settings-search-label": "Instellingen zoeken inschakelen",
       "settings-grid-view-description": "Items in een raster weergeven in plaats van een lijst.",
       "settings-icon-mode-description": "Gebruik native systeemiconen in plaats van Tabler-iconen.",
       "settings-icon-mode-label": "Gebruik native iconen",

@@ -1019,6 +1019,8 @@
       "settings-custom-launch-prefix-enabled-label": "Egyéni indítási előtag engedélyezése",
       "settings-custom-launch-prefix-label": "Egyéni indítási előtag",
       "settings-desc": "Az indító viselkedésének és megjelenésének testreszabása.",
+      "settings-enable-settings-search-description": "Beállítások megjelenítése a találatok között a Launcheren belül.",
+      "settings-enable-settings-search-label": "Beállítások keresésének engedélyezése",
       "settings-grid-view-description": "Elemek megjelenítése rács elrendezésben lista helyett.",
       "settings-icon-mode-description": "Használjon natív rendszerikonokat a Tabler ikonok helyett.",
       "settings-icon-mode-label": "Natív ikonok használata",

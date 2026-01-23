@@ -1019,6 +1019,8 @@
       "settings-custom-launch-prefix-enabled-label": "カスタム起動プレフィックスを有効化",
       "settings-custom-launch-prefix-label": "カスタム起動プレフィックス",
       "settings-desc": "ランチャーの挙動と外観をカスタマイズします。",
+      "settings-enable-settings-search-description": "ランチャーで検索する際に設定結果を表示する。",
+      "settings-enable-settings-search-label": "設定検索を有効にする",
       "settings-grid-view-description": "リスト形式の代わりに、グリッド（格子状）レイアウトで項目を表示します。",
       "settings-icon-mode-description": "Tablerアイコンではなく、ネイティブのシステムアイコンを使用します。",
       "settings-icon-mode-label": "ネイティブアイコンを使用",

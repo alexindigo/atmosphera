@@ -72,14 +72,6 @@ ColumnLayout {
   }
 
   NToggle {
-    label: I18n.tr("panels.launcher.settings-sort-by-usage-label")
-    description: I18n.tr("panels.launcher.settings-sort-by-usage-description")
-    checked: Settings.data.appLauncher.sortByMostUsed
-    onToggled: checked => Settings.data.appLauncher.sortByMostUsed = checked
-    defaultValue: Settings.getDefaultValue("appLauncher.sortByMostUsed")
-  }
-
-  NToggle {
     label: I18n.tr("panels.launcher.settings-icon-mode-label")
     description: I18n.tr("panels.launcher.settings-icon-mode-description")
     checked: Settings.data.appLauncher.iconMode === "native"
@@ -93,6 +85,26 @@ ColumnLayout {
     checked: Settings.data.appLauncher.showIconBackground
     onToggled: checked => Settings.data.appLauncher.showIconBackground = checked
     defaultValue: Settings.getDefaultValue("appLauncher.showIconBackground")
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+  }
+
+  NToggle {
+    label: I18n.tr("panels.launcher.settings-sort-by-usage-label")
+    description: I18n.tr("panels.launcher.settings-sort-by-usage-description")
+    checked: Settings.data.appLauncher.sortByMostUsed
+    onToggled: checked => Settings.data.appLauncher.sortByMostUsed = checked
+    defaultValue: Settings.getDefaultValue("appLauncher.sortByMostUsed")
+  }
+
+  NToggle {
+    label: I18n.tr("panels.launcher.settings-enable-settings-search-label")
+    description: I18n.tr("panels.launcher.settings-enable-settings-search-description")
+    checked: Settings.data.appLauncher.enableSettingsSearch
+    onToggled: checked => Settings.data.appLauncher.enableSettingsSearch = checked
+    defaultValue: Settings.getDefaultValue("appLauncher.enableSettingsSearch")
   }
 
   NToggle {

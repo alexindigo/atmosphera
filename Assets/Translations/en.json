@@ -1019,6 +1019,8 @@
       "settings-custom-launch-prefix-enabled-label": "Enable custom launch prefix",
       "settings-custom-launch-prefix-label": "Custom launch prefix",
       "settings-desc": "Customize the launcher's behavior and appearance.",
+      "settings-enable-settings-search-description": "Show settings results when searching in the launcher.",
+      "settings-enable-settings-search-label": "Enable settings search",
       "settings-grid-view-description": "Display items in a grid layout instead of a list.",
       "settings-icon-mode-description": "Use native system icons instead of Tabler icons.",
       "settings-icon-mode-label": "Use native icons",

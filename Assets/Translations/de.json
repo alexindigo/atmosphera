@@ -1019,6 +1019,8 @@
       "settings-custom-launch-prefix-enabled-label": "Benutzerdefiniertes Start-Präfix aktivieren",
       "settings-custom-launch-prefix-label": "Benutzerdefiniertes Start-Präfix",
       "settings-desc": "Verhalten und Erscheinungsbild des Starters anpassen.",
+      "settings-enable-settings-search-description": "Einstellungen in den Suchergebnissen des Launchers anzeigen.",
+      "settings-enable-settings-search-label": "Einstellungen-Suche aktivieren",
       "settings-grid-view-description": "Elemente in einem Raster statt in einer Liste anzeigen.",
       "settings-icon-mode-description": "Verwende native System-Icons anstelle von Tabler-Icons.",
       "settings-icon-mode-label": "Native Icons verwenden",
