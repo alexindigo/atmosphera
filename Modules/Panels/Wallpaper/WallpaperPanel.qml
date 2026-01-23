@@ -781,7 +781,7 @@ SmartPanel {
           baseSize: 0.8
           Layout.minimumWidth: 200
           minimumWidth: 200
-          tooltip: I18n.tr("panels.color-scheme.wallpaper-method-label")
+          //tooltip: I18n.tr("panels.color-scheme.wallpaper-method-label")
           model: TemplateProcessor.schemeTypes
           currentKey: Settings.data.colorSchemes.generationMethod
           onSelected: key => {
