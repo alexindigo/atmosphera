@@ -20,8 +20,7 @@ SmartPanel {
     var provider = activeProvider;
     if (!provider || !provider.hasPreview)
       return false;
-    if (!Settings.data.appLauncher.enableClipPreview)
-      return false;
+
     return selectedIndex >= 0 && results && !!results[selectedIndex];
   }
 
