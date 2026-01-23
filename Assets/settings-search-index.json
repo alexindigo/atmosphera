@@ -65,16 +65,7 @@
   {
     "labelKey": "panels.osd.types-volume-label",
     "descriptionKey": "panels.audio.volumes-output-volume-description",
-    "widget": "NLabel",
-    "tab": 13,
-    "tabLabel": "panels.audio.title",
-    "subTab": 0,
-    "subTabLabel": "common.volumes"
-  },
-  {
-    "labelKey": "panels.audio.volumes-volume-feedback-label",
-    "descriptionKey": "panels.audio.volumes-volume-feedback-description",
-    "widget": "NToggle",
+    "widget": "NValueSlider",
     "tab": 13,
     "tabLabel": "panels.audio.title",
     "subTab": 0,
@@ -83,6 +74,15 @@
   {
     "labelKey": "panels.audio.volumes-mute-output-label",
     "descriptionKey": "panels.audio.volumes-mute-output-description",
+    "widget": "NToggle",
+    "tab": 13,
+    "tabLabel": "panels.audio.title",
+    "subTab": 0,
+    "subTabLabel": "common.volumes"
+  },
+  {
+    "labelKey": "panels.audio.volumes-volume-feedback-label",
+    "descriptionKey": "panels.audio.volumes-volume-feedback-description",
     "widget": "NToggle",
     "tab": 13,
     "tabLabel": "panels.audio.title",
