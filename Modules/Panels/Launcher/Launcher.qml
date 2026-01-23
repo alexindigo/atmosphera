@@ -1476,7 +1476,7 @@ SmartPanel {
                           icon: modelData.icon
                           pointSize: Style.fontSizeXXXL
                           visible: modelData.icon && !modelData.displayString
-                          color: (entry.isSelected && !Settings.data.appLauncher.showIconBackground) ? Color.mOnHover : Color.mOnSurface
+                          color: (gridEntryContainer.isSelected && !Settings.data.appLauncher.showIconBackground) ? Color.mOnHover : Color.mOnSurface
                         }
                       }
 
