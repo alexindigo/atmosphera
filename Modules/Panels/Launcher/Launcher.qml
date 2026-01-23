@@ -714,6 +714,14 @@ SmartPanel {
     }
   }
 
+  SettingsProvider {
+    id: settingsProvider
+    Component.onCompleted: {
+      registerProvider(this);
+      Logger.d("Launcher", "Registered: SettingsProvider");
+    }
+  }
+
   // ---------------------------------------------------
   panelContent: Rectangle {
     id: ui
