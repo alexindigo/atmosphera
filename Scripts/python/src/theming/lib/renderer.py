@@ -9,7 +9,11 @@ Supports:
 - For loops: <* for name, value in colors *> ... <* endfor *>
 - If/else: <* if {{ expr }} *> ... <* else *> ... <* endif *>
 - Loop variables: loop.index, loop.first, loop.last
-- String filters: replace
+- Color filters: grayscale, invert, set_alpha, set_lightness, set_hue,
+  set_saturation, set_red, set_green, set_blue, lighten, darken,
+  saturate, desaturate, auto_lightness, blend, harmonize, to_color
+- String filters: replace, lower_case, camel_case, pascal_case,
+  snake_case, kebab_case
 """
 
 import re
@@ -24,6 +28,7 @@ except ImportError:
     tomllib = None
 
 from .color import Color, find_closest_color
+from .hct import Hct
 
 
 # --- Node Types for the template AST ---
@@ -117,12 +122,18 @@ class TemplateRenderer:
         "set_lightness": 1,
         "set_hue": 1,
         "set_saturation": 1,
+        "set_red": 1,
+        "set_green": 1,
+        "set_blue": 1,
         "lighten": 1,
         "darken": 1,
         "saturate": 1,
         "desaturate": 1,
         "auto_lightness": 1,
     }
+
+    # Filters that take a hex color argument (+ optional numeric)
+    COLOR_ARG_FILTERS = {"blend", "harmonize"}
 
     # Regex for block delimiters: <* ... *>
     _BLOCK_RE = re.compile(r'<\*\s*(.*?)\s*\*>', re.DOTALL)
@@ -593,8 +604,17 @@ class TemplateRenderer:
                     # Replace works on the formatted string, apply after formatting
                     formatted = self._format_color(color, format_type)
                     return self._apply_replace(formatted, arg, raw_expr)
+                elif filter_name in self.COLOR_ARG_FILTERS:
+                    hex_result = self._apply_color_arg_filter(color.to_hex(), filter_name, arg, raw_expr)
+                    color = Color.from_hex(hex_result)
+                elif filter_name == "to_color":
+                    pass  # Already a color, no-op
                 elif filter_name in self.SUPPORTED_FILTERS:
                     color = self._apply_filter(color, filter_name, arg, raw_expr)
+                elif filter_name in ("lower_case", "camel_case", "pascal_case", "snake_case", "kebab_case"):
+                    # String case filters apply to formatted output
+                    formatted = self._format_color(color, format_type)
+                    return self._apply_string_or_color_filter(formatted, filter_str, raw_expr)
                 else:
                     self._log_warning(f"Unknown filter '{filter_name}'")
 
@@ -692,6 +712,32 @@ class TemplateRenderer:
         if name == "replace":
             return self._apply_replace(value, arg, raw_expr)
 
+        # String case transforms (work on any string)
+        if name == "lower_case":
+            return value.lower()
+        if name == "camel_case":
+            return self._to_camel_case(value)
+        if name == "pascal_case":
+            return self._to_pascal_case(value)
+        if name == "snake_case":
+            return self._to_snake_case(value)
+        if name == "kebab_case":
+            return self._to_kebab_case(value)
+
+        # to_color: treat value as color string (pass-through, validates hex)
+        if name == "to_color":
+            if value.startswith('#') and len(value) in (7, 9):
+                return value
+            self._log_error(f"to_color: value '{value}' is not a valid hex color", raw_expr)
+            return value
+
+        # Color-arg filters (blend, harmonize) - need hex color argument
+        if name in self.COLOR_ARG_FILTERS:
+            if not (value.startswith('#') and len(value) == 7):
+                self._log_error(f"Filter '{name}' requires a hex color value", raw_expr)
+                return value
+            return self._apply_color_arg_filter(value, name, arg, raw_expr)
+
         # Try as color filter if value looks like a hex color
         if name in self.SUPPORTED_FILTERS and value.startswith('#') and len(value) == 7:
             color = Color.from_hex(value)
@@ -700,6 +746,96 @@ class TemplateRenderer:
 
         self._log_warning(f"Cannot apply filter '{name}' to non-color value")
         return value
+
+    def _apply_color_arg_filter(self, value: str, name: str, arg: Optional[str], raw_expr: str) -> str:
+        """Apply blend or harmonize filter (takes hex color argument)."""
+        if not arg:
+            self._log_error(f"Filter '{name}' requires a color argument", raw_expr)
+            return value
+
+        # Parse arguments: "#hexcolor", amount (for blend) or just "#hexcolor" (for harmonize)
+        # Support both quoted and unquoted hex
+        hex_match = re.match(r'["\']?(#[0-9a-fA-F]{6})["\']?\s*(?:,\s*(.+))?', arg)
+        if not hex_match:
+            self._log_error(f"Filter '{name}' requires a hex color argument, got '{arg}'", raw_expr)
+            return value
+
+        target_hex = hex_match.group(1)
+        extra_arg = hex_match.group(2)
+
+        src = Color.from_hex(value)
+        target = Color.from_hex(target_hex)
+
+        src_hct = Hct.from_rgb(src.r, src.g, src.b)
+        target_hct = Hct.from_rgb(target.r, target.g, target.b)
+
+        if name == "blend":
+            # Blend hue in HCT space by amount, keep source chroma/tone
+            if not extra_arg:
+                self._log_error("blend filter requires amount argument: blend: \"#hex\", 0.5", raw_expr)
+                return value
+            try:
+                amount = float(extra_arg.strip().strip('"\''))
+            except ValueError:
+                self._log_error(f"blend amount must be numeric, got '{extra_arg}'", raw_expr)
+                return value
+            amount = max(0.0, min(1.0, amount))
+
+            # Shortest arc hue interpolation
+            diff = target_hct.hue - src_hct.hue
+            if diff > 180.0:
+                diff -= 360.0
+            elif diff < -180.0:
+                diff += 360.0
+            new_hue = (src_hct.hue + diff * amount) % 360.0
+            result_hct = Hct(new_hue, src_hct.chroma, src_hct.tone)
+
+        elif name == "harmonize":
+            # M3 harmonize: rotate hue toward target by min(diff * 0.5, 15°)
+            diff = target_hct.hue - src_hct.hue
+            if diff > 180.0:
+                diff -= 360.0
+            elif diff < -180.0:
+                diff += 360.0
+            max_rotation = 15.0
+            rotation = min(abs(diff) * 0.5, max_rotation)
+            if diff < 0:
+                rotation = -rotation
+            new_hue = (src_hct.hue + rotation) % 360.0
+            result_hct = Hct(new_hue, src_hct.chroma, src_hct.tone)
+        else:
+            return value
+
+        r, g, b = result_hct.to_rgb()
+        return Color(r, g, b).to_hex()
+
+    @staticmethod
+    def _split_words(s: str) -> list[str]:
+        """Split a string into words for case conversion."""
+        # Handle camelCase/PascalCase boundaries
+        s = re.sub(r'([a-z])([A-Z])', r'\1_\2', s)
+        # Split on non-alphanumeric
+        return [w for w in re.split(r'[^a-zA-Z0-9]+', s) if w]
+
+    def _to_camel_case(self, s: str) -> str:
+        words = self._split_words(s)
+        if not words:
+            return s
+        return words[0].lower() + ''.join(w.capitalize() for w in words[1:])
+
+    def _to_pascal_case(self, s: str) -> str:
+        words = self._split_words(s)
+        if not words:
+            return s
+        return ''.join(w.capitalize() for w in words)
+
+    def _to_snake_case(self, s: str) -> str:
+        words = self._split_words(s)
+        return '_'.join(w.lower() for w in words)
+
+    def _to_kebab_case(self, s: str) -> str:
+        words = self._split_words(s)
+        return '-'.join(w.lower() for w in words)
 
     def _apply_replace(self, value: str, args: Optional[str], raw_expr: str) -> str:
         """Apply the replace filter: | replace: "search", "replacement" """
@@ -783,6 +919,12 @@ class TemplateRenderer:
             else:
                 new_l = max(0.0, min(1.0, l - num_arg / 100.0))
             result = Color.from_hsl(h, s, new_l)
+        elif filter_name == "set_red":
+            result = Color(max(0, min(255, int(num_arg))), color.g, color.b)
+        elif filter_name == "set_green":
+            result = Color(color.r, max(0, min(255, int(num_arg))), color.b)
+        elif filter_name == "set_blue":
+            result = Color(color.r, color.g, max(0, min(255, int(num_arg))))
         else:
             result = color
 
