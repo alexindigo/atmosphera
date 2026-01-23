@@ -256,13 +256,12 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    visible: !Settings.data.colorSchemes.useWallpaperColors
   }
 
   ColumnLayout {
     spacing: Style.marginM
     Layout.fillWidth: true
-    visible: !Settings.data.colorSchemes.useWallpaperColors
+    enabled: !Settings.data.colorSchemes.useWallpaperColors
 
     NHeader {
       label: I18n.tr("panels.color-scheme.predefined-title")
@@ -285,6 +284,7 @@ ColumnLayout {
           property string schemePath: modelData
           property string schemeName: root.extractSchemeName(modelData)
 
+          opacity: enabled ? 1.0 : 0.6
           Layout.fillWidth: true
           Layout.alignment: Qt.AlignHCenter
           height: 50 * Style.uiScaleRatio
@@ -292,7 +292,7 @@ ColumnLayout {
           color: root.getSchemeColor(schemeName, "mSurface")
           border.width: Style.borderL
           border.color: {
-            if (Settings.data.colorSchemes.predefinedScheme === schemeName) {
+            if ((Settings.data.colorSchemes.predefinedScheme === schemeName) && schemeItem.enabled) {
               return Color.mSecondary;
             }
             if (itemMouseArea.containsMouse) {
@@ -352,6 +352,7 @@ ColumnLayout {
           MouseArea {
             id: itemMouseArea
             anchors.fill: parent
+            enabled: schemeItem.enabled
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: {
@@ -364,7 +365,7 @@ ColumnLayout {
           }
 
           Rectangle {
-            visible: (Settings.data.colorSchemes.predefinedScheme === schemeItem.schemeName)
+            visible: (Settings.data.colorSchemes.predefinedScheme === schemeItem.schemeName) && schemeItem.enabled
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.rightMargin: 0

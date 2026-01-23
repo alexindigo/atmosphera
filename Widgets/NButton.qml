@@ -15,7 +15,6 @@ Rectangle {
   property color textColor: Color.mOnPrimary
   property color hoverColor: Color.mHover
   property color textHoverColor: Color.mOnHover
-  property bool enabled: true
   property real fontSize: Style.fontSizeM
   property int fontWeight: Style.fontWeightSemiBold
   property real iconSize: Style.fontSizeL
@@ -52,20 +51,20 @@ Rectangle {
   // Appearance
   radius: root.buttonRadius
   color: {
-    if (!enabled)
+    if (!root.enabled)
       return outlined ? "transparent" : Qt.lighter(Color.mSurfaceVariant, 1.2);
-    if (hovered)
+    if (root.hovered)
       return hoverColor;
-    return outlined ? "transparent" : backgroundColor;
+    return root.outlined ? "transparent" : root.backgroundColor;
   }
 
   border.width: outlined ? Style.borderS : 0
   border.color: {
-    if (!enabled)
+    if (!root.enabled)
       return Color.mOutline;
-    if (hovered)
+    if (root.hovered)
       return backgroundColor;
-    return outlined ? backgroundColor : "transparent";
+    return root.outlined ? root.backgroundColor : "transparent";
   }
 
   opacity: enabled ? 1.0 : 0.6
