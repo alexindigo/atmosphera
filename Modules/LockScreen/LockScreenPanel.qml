@@ -323,7 +323,7 @@ Item {
 
           NIcon {
             Layout.alignment: Qt.AlignVCenter
-            icon: LocationService.weatherSymbolFromCode(LocationService.data.weather.current_weather.weathercode)
+            icon: weatherReady ? LocationService.weatherSymbolFromCode(LocationService.data.weather.current_weather.weathercode, LocationService.data.weather.current_weather.is_day) : "weather-cloud-off"
             pointSize: Style.fontSizeXXXL
             color: Color.mPrimary
           }
