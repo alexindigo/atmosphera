@@ -198,7 +198,7 @@ Singleton {
   // Fetch weather data from Open-Meteo API
   function fetchWeatherData(latitude, longitude, errorCallback) {
     Logger.d("Location", "Fetching weather from api.open-meteo.com");
-    var url = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longitude + "&current_weather=true&current=relativehumidity_2m,surface_pressure&daily=temperature_2m_max,temperature_2m_min,weathercode,sunset,sunrise&timezone=auto";
+    var url = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longitude + "&current_weather=true&current=relativehumidity_2m,surface_pressure,is_day&daily=temperature_2m_max,temperature_2m_min,weathercode,sunset,sunrise&timezone=auto";
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
       if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -237,11 +237,11 @@ Singleton {
   }
 
   // --------------------------------
-  function weatherSymbolFromCode(code) {
+  function weatherSymbolFromCode(code, isDay) {
     if (code === 0)
-      return "weather-sun";
+      return isDay ? "weather-sun" : "weather-moon";
     if (code === 1 || code === 2)
-      return "weather-cloud-sun";
+      return isDay ? "weather-cloud-sun" : "weather-moon-stars";
     if (code === 3)
       return "weather-cloud";
     if (code >= 45 && code <= 48)
