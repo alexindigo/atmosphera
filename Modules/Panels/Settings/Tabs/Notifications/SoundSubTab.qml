@@ -53,23 +53,18 @@ ColumnLayout {
   }
 
   // Sound Volume
-  ColumnLayout {
+  NValueSlider {
     enabled: SoundService.multimediaAvailable && (Settings.data.notifications?.sounds?.enabled ?? false)
-    spacing: Style.marginXXS
     Layout.fillWidth: true
-
-    NValueSlider {
-      Layout.fillWidth: true
-      label: I18n.tr("panels.notifications.sounds-volume-label")
-      description: I18n.tr("panels.notifications.sounds-volume-description")
-      from: 0
-      to: 1
-      stepSize: 0.01
-      value: Settings.data.notifications?.sounds?.volume ?? 0.5
-      onMoved: value => Settings.data.notifications.sounds.volume = value
-      text: Math.round((Settings.data.notifications?.sounds?.volume ?? 0.5) * 100) + "%"
-      defaultValue: Settings.getDefaultValue("notifications.sounds.volume")
-    }
+    label: I18n.tr("panels.notifications.sounds-volume-label")
+    description: I18n.tr("panels.notifications.sounds-volume-description")
+    from: 0
+    to: 1
+    stepSize: 0.01
+    value: Settings.data.notifications?.sounds?.volume ?? 0.5
+    onMoved: value => Settings.data.notifications.sounds.volume = value
+    text: Math.round((Settings.data.notifications?.sounds?.volume ?? 0.5) * 100) + "%"
+    defaultValue: Settings.getDefaultValue("notifications.sounds.volume")
   }
 
   // Separate Sounds Toggle
