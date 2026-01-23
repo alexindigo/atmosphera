@@ -269,9 +269,9 @@ class TemplateRenderer:
         """Replace all tags in template text."""
         self._error_count = 0
 
-        # Pattern matches {{ ... }} with any content inside
+        # Pattern matches {{ ... }} with any content inside (single line only)
         # We'll parse the content ourselves for better error reporting
-        pattern = r"\{\{\s*([^}]+?)\s*\}\}"
+        pattern = r"\{\{\s*([^}\n]+?)\s*\}\}"
 
         def replace(match):
             expr = match.group(1).strip()
