@@ -249,19 +249,20 @@ def _read_image_imagemagick(path: Path) -> list[RGB]:
     # ppm: output as PPM format (easy to parse)
 
     # Resize to 112x112 to match matugen's color extraction
+    # Use -filter Box for consistent results across ImageMagick versions
     resize_spec = "112x112!"
 
     try:
         # Try 'magick convert' first (ImageMagick 7+), fallback to 'convert' (ImageMagick 6)
         try:
             result = subprocess.run(
-                ['magick', 'convert', str(path), '-resize', resize_spec, '-depth', '8', 'ppm:-'],
+                ['magick', 'convert', str(path), '-filter', 'Box', '-resize', resize_spec, '-depth', '8', 'ppm:-'],
                 capture_output=True,
                 check=True
             )
         except FileNotFoundError:
             result = subprocess.run(
-                ['convert', str(path), '-resize', resize_spec, '-depth', '8', 'ppm:-'],
+                ['convert', str(path), '-filter', 'Box', '-resize', resize_spec, '-depth', '8', 'ppm:-'],
                 capture_output=True,
                 check=True
             )

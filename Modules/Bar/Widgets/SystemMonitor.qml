@@ -74,27 +74,27 @@ Rectangle {
 
     // Load Average
     if (SystemStatService.loadAvg1 >= 0) {
-      lines.push(`${I18n.tr("system-monitor.load-average")}: ${SystemStatService.loadAvg1.toFixed(2)} ${SystemStatService.loadAvg5.toFixed(2)} ${SystemStatService.loadAvg15.toFixed(2)}`);
+      lines.push(`${I18n.tr("system-monitor.load-average")}: ${SystemStatService.loadAvg1.toFixed(2)} · ${SystemStatService.loadAvg5.toFixed(2)} · ${SystemStatService.loadAvg15.toFixed(2)}`);
     }
 
     // Memory
-    lines.push(`${I18n.tr("common.memory")}: ${Math.round(SystemStatService.memPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.memGb)})`);
+    lines.push(`${I18n.tr("common.memory")}: ${Math.round(SystemStatService.memPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.memGb).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")})`);
 
     // Swap (if available)
     if (SystemStatService.swapTotalGb > 0) {
-      lines.push(`${I18n.tr("bar.system-monitor.swap-usage-label")}: ${Math.round(SystemStatService.swapPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.swapGb)})`);
+      lines.push(`${I18n.tr("bar.system-monitor.swap-usage-label")}: ${Math.round(SystemStatService.swapPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.swapGb).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")})`);
     }
 
     // Network
-    lines.push(`${I18n.tr("system-monitor.download-speed")}: ${SystemStatService.formatSpeed(SystemStatService.rxSpeed)}`);
-    lines.push(`${I18n.tr("system-monitor.upload-speed")}: ${SystemStatService.formatSpeed(SystemStatService.txSpeed)}`);
+    lines.push(`${I18n.tr("system-monitor.download-speed")}: ${SystemStatService.formatSpeed(SystemStatService.rxSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}`);
+    lines.push(`${I18n.tr("system-monitor.upload-speed")}: ${SystemStatService.formatSpeed(SystemStatService.txSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}`);
 
     // Disk
     const diskPercent = SystemStatService.diskPercents[diskPath];
     if (diskPercent !== undefined) {
       const usedGb = SystemStatService.diskUsedGb[diskPath] || 0;
       const sizeGb = SystemStatService.diskSizeGb[diskPath] || 0;
-      lines.push(`${I18n.tr("system-monitor.disk")}: ${usedGb.toFixed(1)}G / ${sizeGb.toFixed(1)}G (${diskPercent}%)`);
+      lines.push(`${I18n.tr("system-monitor.disk")}: ${usedGb.toFixed(1)} G / ${sizeGb.toFixed(1)} G (${diskPercent}%)`);
     }
 
     return lines.join("\n");

@@ -11,7 +11,6 @@ ColumnLayout {
   property string description: ""
   property string inputIconName: ""
   property bool readOnly: false
-  property bool enabled: true
   property color labelColor: Color.mOnSurface
   property color descriptionColor: Color.mOnSurfaceVariant
   property string fontFamily: Settings.data.ui.fontDefault

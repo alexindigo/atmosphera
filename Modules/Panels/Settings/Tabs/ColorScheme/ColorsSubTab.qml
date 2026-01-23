@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
-import "."
 import qs.Commons
 import qs.Services.System
 import qs.Services.Theming
@@ -247,32 +246,7 @@ ColumnLayout {
     label: I18n.tr("panels.color-scheme.wallpaper-method-label")
     description: I18n.tr("panels.color-scheme.wallpaper-method-description")
     enabled: Settings.data.colorSchemes.useWallpaperColors
-    model: [
-      {
-        "key": "tonal-spot",
-        "name": "M3-Tonal Spot" // Do not translate
-      },
-      {
-        "key": "content",
-        "name": "M3-Content" // Do not translate
-      },
-      {
-        "key": "fruit-salad",
-        "name": "M3-Fruit Salad" // Do not translate
-      },
-      {
-        "key": "rainbow",
-        "name": "M3-Rainbow" // Do not translate
-      },
-      {
-        "key": "vibrant",
-        "name": I18n.tr("common.vibrant")
-      },
-      {
-        "key": "faithful",
-        "name": I18n.tr("common.faithful")
-      },
-    ]
+    model: TemplateProcessor.schemeTypes
     currentKey: Settings.data.colorSchemes.generationMethod
     onSelected: key => {
                   Settings.data.colorSchemes.generationMethod = key;
@@ -282,13 +256,12 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    visible: !Settings.data.colorSchemes.useWallpaperColors
   }
 
   ColumnLayout {
     spacing: Style.marginM
     Layout.fillWidth: true
-    visible: !Settings.data.colorSchemes.useWallpaperColors
+    enabled: !Settings.data.colorSchemes.useWallpaperColors
 
     NHeader {
       label: I18n.tr("panels.color-scheme.predefined-title")
@@ -311,6 +284,7 @@ ColumnLayout {
           property string schemePath: modelData
           property string schemeName: root.extractSchemeName(modelData)
 
+          opacity: enabled ? 1.0 : 0.6
           Layout.fillWidth: true
           Layout.alignment: Qt.AlignHCenter
           height: 50 * Style.uiScaleRatio
@@ -318,7 +292,7 @@ ColumnLayout {
           color: root.getSchemeColor(schemeName, "mSurface")
           border.width: Style.borderL
           border.color: {
-            if (Settings.data.colorSchemes.predefinedScheme === schemeName) {
+            if ((Settings.data.colorSchemes.predefinedScheme === schemeName) && schemeItem.enabled) {
               return Color.mSecondary;
             }
             if (itemMouseArea.containsMouse) {
@@ -378,6 +352,7 @@ ColumnLayout {
           MouseArea {
             id: itemMouseArea
             anchors.fill: parent
+            enabled: schemeItem.enabled
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: {
@@ -390,7 +365,7 @@ ColumnLayout {
           }
 
           Rectangle {
-            visible: (Settings.data.colorSchemes.predefinedScheme === schemeItem.schemeName)
+            visible: (Settings.data.colorSchemes.predefinedScheme === schemeItem.schemeName) && schemeItem.enabled
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.rightMargin: 0

@@ -87,6 +87,7 @@ Loader {
             property bool isReady: initializationComplete && BatteryService.batteryReady
             property real percent: BatteryService.batteryPercentage
             property bool charging: BatteryService.batteryCharging
+            property bool pluggedIn: BatteryService.batteryPluggedIn
             property bool batteryVisible: isReady && percent > 0 && BatteryService.hasAnyBattery()
           }
 
@@ -279,6 +280,11 @@ Loader {
               Keys.onPressed: function (event) {
                 if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                   lockContext.tryUnlock();
+                  event.accepted = true;
+                }
+                if (event.key === Qt.Key_Escape && panelComponent.timerActive) {
+                  panelComponent.cancelTimer();
+                  event.accepted = true;
                 }
               }
 

@@ -94,6 +94,7 @@ SmartPanel {
   }
 
   property int requestedTab: SettingsPanel.Tab.General
+  property var requestedEntry: null
 
   // Content state - these are synced with SettingsContent when panel opens
   property int currentTabIndex: 0
@@ -148,8 +149,16 @@ SmartPanel {
   // When the panel opens, initialize content
   onOpened: {
     if (_settingsContent) {
-      _settingsContent.requestedTab = requestedTab;
-      _settingsContent.initialize();
+      if (requestedEntry) {
+        _settingsContent.requestedTab = requestedEntry.tab;
+        _settingsContent.initialize();
+        const entry = requestedEntry;
+        requestedEntry = null;
+        Qt.callLater(() => _settingsContent.navigateToResult(entry));
+      } else {
+        _settingsContent.requestedTab = requestedTab;
+        _settingsContent.initialize();
+      }
     }
   }
 
@@ -195,11 +204,25 @@ SmartPanel {
   }
 
   function onUpPressed() {
-    scrollUp();
+    if (_settingsContent && _settingsContent.searchText.trim() !== "") {
+      _settingsContent.searchSelectPrevious();
+    } else {
+      scrollUp();
+    }
   }
 
   function onDownPressed() {
-    scrollDown();
+    if (_settingsContent && _settingsContent.searchText.trim() !== "") {
+      _settingsContent.searchSelectNext();
+    } else {
+      scrollDown();
+    }
+  }
+
+  function onReturnPressed() {
+    if (_settingsContent && _settingsContent.searchText.trim() !== "") {
+      _settingsContent.searchActivate();
+    }
   }
 
   function onPageUpPressed() {
@@ -211,11 +234,19 @@ SmartPanel {
   }
 
   function onCtrlJPressed() {
-    scrollDown();
+    if (_settingsContent && _settingsContent.searchText.trim() !== "") {
+      _settingsContent.searchSelectNext();
+    } else {
+      scrollDown();
+    }
   }
 
   function onCtrlKPressed() {
-    scrollUp();
+    if (_settingsContent && _settingsContent.searchText.trim() !== "") {
+      _settingsContent.searchSelectPrevious();
+    } else {
+      scrollUp();
+    }
   }
 
   panelContent: Rectangle {

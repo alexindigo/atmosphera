@@ -14,8 +14,9 @@ ColumnLayout {
   property string indicatorTooltip: ""
 
   opacity: enabled ? 1.0 : 0.6
-
   spacing: Style.marginXXS
+  visible: root.label != "" || root.description != ""
+
   Layout.fillWidth: true
 
   RowLayout {

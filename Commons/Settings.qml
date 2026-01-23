@@ -342,6 +342,7 @@ Singleton {
       property string directory: ""
       property list<var> monitorDirectories: []
       property bool enableMultiMonitorDirectories: false
+      property bool showHiddenFiles: false
       property string viewMode: "single" // "single" | "recursive" | "browse"
       property bool setWallpaperOnAllMonitors: true
       property string fillMode: "crop"

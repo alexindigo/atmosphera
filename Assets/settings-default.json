@@ -139,6 +139,7 @@
     "directory": "",
     "monitorDirectories": [],
     "enableMultiMonitorDirectories": false,
+    "showHiddenFiles": false,
     "viewMode": "single",
     "setWallpaperOnAllMonitors": true,
     "fillMode": "crop",

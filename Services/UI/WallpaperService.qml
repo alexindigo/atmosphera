@@ -102,6 +102,9 @@ Singleton {
       root.currentBrowsePaths = {};
       root.refreshWallpapersList();
     }
+    function onShowHiddenFilesChanged() {
+      root.refreshWallpapersList();
+    }
     function onUseSolidColorChanged() {
       if (Settings.data.wallpaper.useSolidColor) {
         var solidPath = root.createSolidColorPath(Settings.data.wallpaper.solidColor.toString());
@@ -488,28 +491,38 @@ Singleton {
   // -------------------------------------------------------------------
   function getCurrentBrowsePath(screenName) {
     if (currentBrowsePaths[screenName] !== undefined) {
-      return currentBrowsePaths[screenName];
+      var stored = currentBrowsePaths[screenName];
+      var root = getMonitorDirectory(screenName);
+      if (root && stored.startsWith(root)) {
+        return stored;
+      }
+      // Stored path is outside the root directory, reset it
+      delete currentBrowsePaths[screenName];
     }
     return getMonitorDirectory(screenName);
   }
 
   function setBrowsePath(screenName, path) {
-    if (!screenName) return;
+    if (!screenName)
+      return;
     currentBrowsePaths[screenName] = path;
     browsePathChanged(screenName, path);
   }
 
   function navigateUp(screenName) {
-    if (!screenName) return;
+    if (!screenName)
+      return;
     var currentPath = getCurrentBrowsePath(screenName);
     var rootPath = getMonitorDirectory(screenName);
 
-    // Don't go above the root directory
-    if (currentPath === rootPath) return;
+    // Don't navigate if root is invalid or we're already at root
+    if (!rootPath || currentPath === rootPath)
+      return;
 
     // Get parent directory
     var parentPath = currentPath.replace(/\/[^\/]+\/?$/, "");
-    if (parentPath === "") parentPath = "/";
+    if (parentPath === "")
+      parentPath = rootPath;
 
     // Don't go above root
     if (!parentPath.startsWith(rootPath)) {
@@ -520,7 +533,8 @@ Singleton {
   }
 
   function navigateToRoot(screenName) {
-    if (!screenName) return;
+    if (!screenName)
+      return;
     var rootPath = getMonitorDirectory(screenName);
     setBrowsePath(screenName, rootPath);
   }
@@ -529,11 +543,17 @@ Singleton {
   // callback receives { files: [], directories: [] }
   function scanDirectoryWithDirs(screenName, directory, callback) {
     if (!directory || directory === "") {
-      callback({ files: [], directories: [] });
+      callback({
+                 files: [],
+                 directories: []
+               });
       return;
     }
 
-    var result = { files: [], directories: [] };
+    var result = {
+      files: [],
+      directories: []
+    };
     var pendingScans = 2;
 
     function checkComplete() {
@@ -547,13 +567,13 @@ Singleton {
     }
 
     // Scan for files
-    _scanDirectoryInternal(screenName, directory, false, false, function(files) {
+    _scanDirectoryInternal(screenName, directory, false, false, function (files) {
       result.files = files;
       checkComplete();
     });
 
     // Scan for directories
-    _scanForDirectories(directory, function(dirs) {
+    _scanForDirectories(directory, function (dirs) {
       result.directories = dirs;
       checkComplete();
     });
@@ -575,14 +595,18 @@ Singleton {
 
     var processObject = Qt.createQmlObject(processString, root, "DirScan");
 
-    processObject.exited.connect(function(exitCode) {
+    processObject.exited.connect(function (exitCode) {
       var dirs = [];
       if (exitCode === 0) {
         var lines = processObject.stdout.text.split('\n');
         for (var i = 0; i < lines.length; i++) {
           var line = lines[i].trim();
           if (line !== '') {
-            dirs.push(line);
+            var showHidden = Settings.data.wallpaper.showHiddenFiles;
+            var name = line.split('/').pop();
+            if (showHidden || !name.startsWith('.')) {
+              dirs.push(line);
+            }
           }
         }
       }
@@ -636,7 +660,8 @@ Singleton {
         wallpaperLists[screenName] = [];
         wallpaperListChanged(screenName, 0);
       }
-      if (callback) callback([]);
+      if (callback)
+        callback([]);
       return;
     }
 
@@ -646,10 +671,12 @@ Singleton {
       recursiveProcesses[screenName].running = false;
       recursiveProcesses[screenName].destroy();
       delete recursiveProcesses[screenName];
-      if (updateList) scanningCount--;
+      if (updateList)
+        scanningCount--;
     }
 
-    if (updateList) scanningCount++;
+    if (updateList)
+      scanningCount++;
     Logger.i("Wallpaper", "Starting scan for", screenName, "in", directory, "recursive:", recursive);
 
     // Build find command args dynamically from ImageCacheService filters
@@ -690,8 +717,9 @@ Singleton {
       recursiveProcesses[screenName] = processObject;
     }
 
-    var handler = function(exitCode) {
-      if (updateList) scanningCount--;
+    var handler = function (exitCode) {
+      if (updateList)
+        scanningCount--;
       Logger.d("Wallpaper", "Process exited with code", exitCode, "for", screenName);
 
       var files = [];
@@ -700,7 +728,11 @@ Singleton {
         for (var i = 0; i < lines.length; i++) {
           var line = lines[i].trim();
           if (line !== '') {
-            files.push(line);
+            var showHidden = Settings.data.wallpaper.showHiddenFiles;
+            var name = line.split('/').pop();
+            if (showHidden || !name.startsWith('.')) {
+              files.push(line);
+            }
           }
         }
         // Sort files for consistent ordering
@@ -735,7 +767,8 @@ Singleton {
         delete recursiveProcesses[screenName];
       }
 
-      if (callback) callback(files);
+      if (callback)
+        callback(files);
       processObject.destroy();
     };
 

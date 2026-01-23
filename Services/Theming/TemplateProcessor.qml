@@ -22,12 +22,40 @@ Singleton {
   property var pendingWallpaperRequest: null
   property var pendingPredefinedRequest: null
 
-  readonly property var schemeNameMap: ({
-                                          "Noctalia (default)": "Noctalia-default",
-                                          "Noctalia (legacy)": "Noctalia-legacy",
-                                          "Tokyo Night": "Tokyo-Night",
-                                          "Rose Pine": "Rosepine"
-                                        })
+  readonly property var schemeTypes: [
+    {
+      "key": "tonal-spot",
+      "name": "M3-Tonal Spot" // Do not translate
+    },
+    {
+      "key": "content",
+      "name": "M3-Content" // Do not translate
+    },
+    {
+      "key": "fruit-salad",
+      "name": "M3-Fruit Salad" // Do not translate
+    },
+    {
+      "key": "rainbow",
+      "name": "M3-Rainbow" // Do not translate
+    },
+    {
+      "key": "monochrome",
+      "name": "M3-Monochrome" // Do not translate
+    },
+    {
+      "key": "vibrant",
+      "name": I18n.tr("common.vibrant")
+    },
+    {
+      "key": "faithful",
+      "name": I18n.tr("common.faithful")
+    },
+    {
+      "key": "muted",
+      "name": I18n.tr("common.color-muted")
+    },
+  ]
 
   // Check if a template is enabled in the activeTemplates array
   function isTemplateEnabled(templateId) {
@@ -279,8 +307,8 @@ Singleton {
   // Get scheme type, defaulting to tonal-spot if not a recognized value
   function getSchemeType() {
     const method = Settings.data.colorSchemes.generationMethod;
-    const validTypes = ["tonal-spot", "content", "fruit-salad", "rainbow", "vibrant", "faithful"];
-    return validTypes.includes(method) ? method : "tonal-spot";
+    const validKeys = root.schemeTypes.map(scheme => scheme.key);
+    return validKeys.includes(method) ? method : "tonal-spot";
   }
 
   function buildGenerationScript(content, wallpaper, mode) {
@@ -380,6 +408,7 @@ Singleton {
 
   /**
   * Old path: Copy pre-rendered terminal files (backward compatibility)
+  * Should be removed in late february 2026
   */
   function handleTerminalThemesCopy(mode, homeDir) {
     const commands = [];
@@ -408,6 +437,13 @@ Singleton {
   }
 
   function getTerminalColorsTemplate(terminal, mode) {
+    const schemeNameMap = ({
+                             "Noctalia (default)": "Noctalia-default",
+                             "Noctalia (legacy)": "Noctalia-legacy",
+                             "Tokyo Night": "Tokyo-Night",
+                             "Rose Pine": "Rosepine"
+                           });
+
     let colorScheme = Settings.data.colorSchemes.predefinedScheme;
     colorScheme = schemeNameMap[colorScheme] || colorScheme;
 

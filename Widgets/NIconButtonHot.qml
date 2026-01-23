@@ -14,7 +14,6 @@ Rectangle {
   property string icon: ""
   property string tooltipText: ""
   property string tooltipDirection: "auto"
-  property bool enabled: true
   property bool allowClickWhenDisabled: false
   property bool hot: false
 
@@ -64,6 +63,7 @@ Rectangle {
   border.width: Style.borderS
 
   Behavior on color {
+    enabled: !Color.isTransitioning
     ColorAnimation {
       duration: Style.animationFast
       easing.type: Easing.InOutQuad
@@ -93,6 +93,7 @@ Rectangle {
     y: (root.height - height) / 2 + (height - contentHeight) / 2
 
     Behavior on color {
+      enabled: !Color.isTransitioning
       ColorAnimation {
         duration: Style.animationFast
         easing.type: Easing.InOutQuad

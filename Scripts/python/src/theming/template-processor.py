@@ -9,14 +9,16 @@ Supported scheme types:
 - content: Preserves source color's chroma with temperature-based tertiary (matugen default)
 - fruit-salad: Bold/playful with -50° hue rotation
 - rainbow: Chromatic accents with grayscale neutrals
+- monochrome: Pure grayscale M3 scheme (chroma = 0, only error has color)
 - vibrant: Prioritizes the most saturated colors regardless of area coverage
 - faithful: Prioritizes dominant colors by area, what you see is what you get
+- muted: Preserves hue but caps saturation low (for monochrome/monotonal wallpapers)
 
 Usage:
     python3 template-processor.py IMAGE_OR_JSON [OPTIONS]
 
 Options:
-    --scheme-type    Scheme type: tonal-spot (default), content, fruit-salad, rainbow, vibrant, faithful
+    --scheme-type    Scheme type: tonal-spot (default), content, fruit-salad, rainbow, monochrome, vibrant, faithful, muted
     --dark           Generate dark theme only
     --light          Generate light theme only
     --both           Generate both themes (default)
@@ -81,7 +83,7 @@ Examples:
     # Scheme type selection
     parser.add_argument(
         '--scheme-type',
-        choices=['tonal-spot', 'content', 'fruit-salad', 'rainbow', 'vibrant', 'faithful'],
+        choices=['tonal-spot', 'content', 'fruit-salad', 'rainbow', 'monochrome', 'vibrant', 'faithful', 'muted'],
         default='tonal-spot',
         help='Color scheme type (default: tonal-spot)'
     )
@@ -265,18 +267,18 @@ def main() -> int:
             #   This matches matugen's color extraction exactly
             # - vibrant: Use k-means clustering for colorful/blended colors
             # - faithful: Use Wu quantizer for primary (dominant by area), k-means for accents
+            # - muted: Like count but without chroma filtering (for monochrome wallpapers)
             if scheme_type == "vibrant":
                 # K-means with chroma scoring for vibrant, blended colors
                 palette = extract_palette(pixels, k=5, scoring="chroma")
             elif scheme_type == "faithful":
-                # Wu quantizer for dominant color (primary), k-means for accent colors
-                # This ensures primary reflects the most visually prominent area
-                source_argb = extract_source_color(pixels)
-                r, g, b = source_color_to_rgb(source_argb)
-                primary = Color(r, g, b)
-                # Get additional colors via k-means for secondary/tertiary
-                additional = extract_palette(pixels, k=4, scoring="chroma-representative")
-                palette = [primary] + additional[:4]
+                # K-means with count scoring - picks dominant color by area coverage
+                # This ensures primary reflects what you actually see in the image
+                palette = extract_palette(pixels, k=5, scoring="count")
+            elif scheme_type == "muted":
+                # K-means with muted scoring - accepts low/zero chroma colors
+                # For monochrome/monotonal wallpapers where dominant color has low saturation
+                palette = extract_palette(pixels, k=5, scoring="muted")
             else:
                 # Wu quantizer + Score algorithm (matches matugen)
                 source_argb = extract_source_color(pixels)

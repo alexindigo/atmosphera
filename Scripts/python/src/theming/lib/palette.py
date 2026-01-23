@@ -175,6 +175,124 @@ def _score_colors_chroma(
     return result_colors
 
 
+def _hue_to_family(hue: float) -> int:
+    """
+    Map hue to perceptual color family.
+
+    Uses non-uniform ranges that match human color perception:
+    - 0: RED (330-30°, wraps around)
+    - 1: ORANGE (30-60°)
+    - 2: YELLOW (60-105°)
+    - 3: GREEN (105-190°, includes green-leaning teal)
+    - 4: BLUE (190-270°, includes cyan)
+    - 5: PURPLE (270-330°)
+    """
+    if hue >= 330 or hue < 30:
+        return 0  # RED
+    elif hue < 60:
+        return 1  # ORANGE
+    elif hue < 105:
+        return 2  # YELLOW
+    elif hue < 190:
+        return 3  # GREEN (includes green-leaning teal)
+    elif hue < 270:
+        return 4  # BLUE (includes cyan)
+    else:
+        return 5  # PURPLE
+
+
+def _score_colors_count(
+    colors_with_counts: list[tuple[RGB, int]],
+) -> list[tuple[Color, float]]:
+    """
+    Score colors prioritizing pixel count (area coverage) by hue family.
+
+    Groups colors into perceptual hue families, sums counts per family,
+    then picks the dominant family. This is more faithful to human perception
+    where we see "green" as a category, not individual shades.
+
+    Args:
+        colors_with_counts: List of (RGB, count) tuples from clustering
+
+    Returns:
+        List of (Color, score) tuples, sorted by family dominance then count
+    """
+    MIN_CHROMA = 10.0  # Filter out near-gray colors
+
+    # First pass: collect colorful colors and group by hue family
+    hue_families: dict[int, list[tuple[Color, float, float, int]]] = {}  # family -> [(color, hue, chroma, count), ...]
+
+    for rgb, count in colors_with_counts:
+        color = Color.from_rgb(rgb)
+        try:
+            hct = color.to_hct()
+            if hct.chroma >= MIN_CHROMA:
+                family = _hue_to_family(hct.hue)
+                if family not in hue_families:
+                    hue_families[family] = []
+                hue_families[family].append((color, hct.hue, hct.chroma, count))
+        except (ValueError, ZeroDivisionError):
+            pass
+
+    # If no colorful colors found, fall back to all colors
+    if not hue_families:
+        result = []
+        for rgb, count in colors_with_counts:
+            color = Color.from_rgb(rgb)
+            result.append((color, float(count)))
+        result.sort(key=lambda x: -x[1])
+        return result
+
+    # Calculate total count per hue family
+    family_totals: list[tuple[int, int]] = []
+    for family, colors in hue_families.items():
+        total = sum(c[3] for c in colors)
+        family_totals.append((family, total))
+
+    # Sort families by total count (dominant family first)
+    family_totals.sort(key=lambda x: -x[1])
+
+    # Build result: colors from dominant families first, sorted by count within each family
+    result_colors = []
+    for family, _ in family_totals:
+        family_colors = hue_families[family]
+        # Sort by count descending, chroma as tiebreaker
+        family_colors.sort(key=lambda x: (-x[3], -x[2]))
+        for color, hue, chroma, count in family_colors:
+            # Score encodes family rank + count for proper ordering
+            family_rank = next(i for i, (f, _) in enumerate(family_totals) if f == family)
+            score = (len(family_totals) - family_rank) * 1000000 + count * 1000 + chroma
+            result_colors.append((color, score))
+
+    result_colors.sort(key=lambda x: -x[1])
+    return result_colors
+
+
+def _score_colors_muted(
+    colors_with_counts: list[tuple[RGB, int]],
+) -> list[tuple[Color, float]]:
+    """
+    Score colors for muted mode - pure pixel count without chroma filtering.
+
+    Unlike count scoring which filters to chroma >= 10, this accepts all colors
+    including grayscale. Designed for monochrome/monotonal wallpapers where
+    the dominant color may have very low or zero saturation.
+
+    Args:
+        colors_with_counts: List of (RGB, count) tuples from clustering
+
+    Returns:
+        List of (Color, score) tuples, sorted by count descending
+    """
+    result = []
+    for rgb, count in colors_with_counts:
+        color = Color.from_rgb(rgb)
+        result.append((color, float(count)))
+
+    result.sort(key=lambda x: -x[1])
+    return result
+
+
 def _score_colors_population(
     colors_with_counts: list[tuple[RGB, int]],
     total_pixels: int
@@ -321,7 +439,8 @@ def extract_palette(
         scoring: Scoring method:
                  - "population": matugen-like, representative colors (M3 schemes)
                  - "chroma": vibrant, chroma-prioritized with centroid averaging
-                 - "chroma-representative": chroma-prioritized with actual pixels (faithful)
+                 - "count": area-dominant, picks by pixel count (faithful mode)
+                 - "muted": like count but without chroma filtering (monochrome wallpapers)
 
     Returns:
         List of Color objects, sorted by score
@@ -338,14 +457,20 @@ def extract_palette(
         # Don't pre-filter for population scoring - let the Score algorithm filter
         # This matches matugen which quantizes all pixels, then filters in scoring
         filtered = sampled
-    elif scoring == "chroma-representative":
-        # Faithful mode: more clusters, no pre-filtering
-        # This picks actual dominant colors from the image without averaging
+    elif scoring == "count":
+        # Faithful mode: many clusters to capture color diversity, no pre-filtering
+        # Scoring will filter to colorful colors and pick by count
         cluster_count = 48
-        filtered = sampled  # No colorfulness filter - let scoring handle it
+        filtered = sampled
+    elif scoring == "muted":
+        # Muted mode: similar to count but accepts low-chroma colors
+        # For monochrome/monotonal wallpapers
+        cluster_count = 24
+        filtered = sampled
     else:
-        # Vibrant mode: fewer clusters with colorfulness pre-filter
-        cluster_count = k
+        # Vibrant mode: more clusters to capture high-chroma colors that might
+        # otherwise get averaged away, with colorfulness pre-filter
+        cluster_count = 20
         # Filter to colorful pixels for smoother averaged results
         filtered = []
         for p in sampled:
@@ -364,16 +489,21 @@ def extract_palette(
 
     # Score colors based on method
     # - chroma: centroid colors (averaged, smoother - vibrant mode)
-    # - chroma-representative: representative pixels with chroma scoring (faithful mode)
+    # - count: representative pixels by area dominance (faithful mode)
+    # - muted: like count but accepts low/zero chroma (monochrome wallpapers)
     # - population: representative colors with Material scoring (M3 schemes)
     if scoring == "chroma":
         # Use centroid colors for vibrant mode (smoother, blended)
         colors_for_scoring = [(c[0], c[2]) for c in clusters]
         scored = _score_colors_chroma(colors_for_scoring)
-    elif scoring == "chroma-representative":
-        # Use representative colors with chroma scoring (faithful mode)
+    elif scoring == "count":
+        # Use representative colors with count scoring (faithful mode)
         colors_for_scoring = [(c[1], c[2]) for c in clusters]
-        scored = _score_colors_chroma(colors_for_scoring)
+        scored = _score_colors_count(colors_for_scoring)
+    elif scoring == "muted":
+        # Use representative colors with muted scoring (no chroma filter)
+        colors_for_scoring = [(c[1], c[2]) for c in clusters]
+        scored = _score_colors_muted(colors_for_scoring)
     else:
         # Use representative colors for M3 schemes
         colors_for_scoring = [(c[1], c[2]) for c in clusters]

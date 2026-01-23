@@ -220,12 +220,12 @@ SmartPanel {
                   icon: "download-speed"
                   suffix: "%"
                   fillColor: Color.mPrimary
-                  tooltipText: I18n.tr("common.download") + `: ${SystemStatService.formatSpeed(SystemStatService.rxSpeed)}`
+                  tooltipText: I18n.tr("common.download") + `: ${SystemStatService.formatSpeed(SystemStatService.rxSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}`
                   Layout.alignment: Qt.AlignHCenter
                 }
 
                 NText {
-                  text: SystemStatService.formatSpeed(SystemStatService.rxSpeed) + "/s"
+                  text: SystemStatService.formatSpeed(SystemStatService.rxSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2") + "/s"
                   pointSize: Style.fontSizeXXS
                   color: Color.mOnSurfaceVariant
                   Layout.alignment: Qt.AlignHCenter
@@ -248,12 +248,12 @@ SmartPanel {
                   icon: "upload-speed"
                   suffix: "%"
                   fillColor: Color.mPrimary
-                  tooltipText: I18n.tr("common.upload") + `: ${SystemStatService.formatSpeed(SystemStatService.txSpeed)}`
+                  tooltipText: I18n.tr("common.upload") + `: ${SystemStatService.formatSpeed(SystemStatService.txSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}`
                   Layout.alignment: Qt.AlignHCenter
                 }
 
                 NText {
-                  text: SystemStatService.formatSpeed(SystemStatService.txSpeed) + "/s"
+                  text: SystemStatService.formatSpeed(SystemStatService.txSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2") + "/s"
                   pointSize: Style.fontSizeXXS
                   color: Color.mOnSurfaceVariant
                   Layout.alignment: Qt.AlignHCenter
@@ -317,7 +317,7 @@ SmartPanel {
                   }
 
                   NText {
-                    text: SystemStatService.formatMemoryGb(SystemStatService.memGb)
+                    text: SystemStatService.formatMemoryGb(SystemStatService.memGb).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")
                     pointSize: Style.fontSizeXS
                     color: Color.mOnSurface
                     Layout.fillWidth: true
@@ -344,7 +344,7 @@ SmartPanel {
                   }
 
                   NText {
-                    text: `${SystemStatService.formatMemoryGb(SystemStatService.swapGb)} / ${SystemStatService.formatMemoryGb(SystemStatService.swapTotalGb)}`
+                    text: `${SystemStatService.formatMemoryGb(SystemStatService.swapGb).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")} / ${SystemStatService.formatMemoryGb(SystemStatService.swapTotalGb).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}`
                     pointSize: Style.fontSizeXS
                     color: Color.mOnSurface
                     Layout.fillWidth: true
@@ -373,7 +373,7 @@ SmartPanel {
                     text: {
                       const usedGb = SystemStatService.diskUsedGb[panelContent.diskPath] || 0;
                       const sizeGb = SystemStatService.diskSizeGb[panelContent.diskPath] || 0;
-                      return `${usedGb.toFixed(1)}G / ${sizeGb.toFixed(1)}G`;
+                      return `${usedGb.toFixed(1)} G / ${sizeGb.toFixed(1)} G`;
                     }
                     pointSize: Style.fontSizeXS
                     color: Color.mOnSurface

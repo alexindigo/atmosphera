@@ -239,3 +239,79 @@ body {
   background-color: var(--accent-3) !important;
   border-color: var(--accent-3) !important;
 }
+
+[data-slate-node="element"],
+[data-slate-node="text"],
+[data-slate-string="true"] {
+  color: var(--text-3) !important;
+}
+
+[class*="eyebrow"][class*="badge"][class*="expressive"] {
+  color: var(--accent-1) !important;
+  background-color: color-mix(in srgb, var(--accent-1) 15%, transparent) !important;
+}
+
+/* Outer circle (non-selected background) */
+._64e6155a0667273d-outerRadioBase {
+    fill: var(--bg-1) !important;      /* background for non-selected radios */
+    stroke: var(--border) !important;  /* ring border */
+    stroke-width: 1px;
+    transition: stroke 0.2s ease;
+}
+
+/* Outer circle fill (selected) */
+._64e6155a0667273d-outerRadioFill {
+    fill: var(--bg-1) !important;  /* accent color for selected */
+    stroke: var(--border) !important;
+    opacity: 0;                        /* hidden by default */
+    transition: opacity 0.2s ease;
+}
+
+/* Inner dot (selected) */
+._64e6155a0667273d-innerDotRadio {
+    fill: var(--accent-1) !important;      /* contrast dot */
+    opacity: 0;                        /* hidden by default */
+    transition: opacity 0.2s ease;
+}
+
+/* Show outer fill + inner dot when selected (handles initial render & clicks) */
+.parentSelected__6e9f8 ._64e6155a0667273d-outerRadioFill,
+.parentSelected__6e9f8 ._64e6155a0667273d-innerDotRadio,
+._64e6155a0667273d-outerRadioFill[aria-checked="true"],
+._64e6155a0667273d-innerDotRadio[aria-checked="true"],
+._64e6155a0667273d-outerRadioFill[data-selected="true"],
+._64e6155a0667273d-innerDotRadio[data-selected="true"] {
+    opacity: 1 !important;
+}
+
+/* Hover effect for base ring */
+._64e6155a0667273d-outerRadioBase:hover {
+    stroke: var(--accent-1) !important;
+}
+
+/* Checkbox checkmark and background for selected */
+._714a9a7abaf0392a-checkboxOption[data-selected="true"] ._714a9a7abaf0392a-checkboxIndicator {
+    background-color: var(--bg-1) !important; /* background of selected checkbox */
+    border-color: var(--border) !important; /* optional: accent border */
+}
+
+._714a9a7abaf0392a-checkboxIndicator {
+    background-color: var(--bg-1) !important;  /* background for non-selected checkboxes */
+    border-color: var(--border) !important;    /* neutral border */
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+._714a9a7abaf0392a-checkboxOption[data-selected="true"] ._714a9a7abaf0392a-checkStroke,
+._714a9a7abaf0392a-checkboxOption[data-selected="true"] ._714a9a7abaf0392a-dot {
+    color: var(--accent-1) !important; /* checkmark/dot color */
+}
+
+/* Hover effect for selected checkbox */
+._714a9a7abaf0392a-checkboxOption[data-selected="true"]:hover ._714a9a7abaf0392a-checkboxIndicator {
+    background-color: var(--bg-1) !important; /* keep background consistent on hover */
+}
+
+._714a9a7abaf0392a-checkboxOption[data-selected="true"]:hover ._714a9a7abaf0392a-checkStroke,
+._714a9a7abaf0392a-checkboxOption[data-selected="true"]:hover ._714a9a7abaf0392a-dot {
+    color: var(--accent-1) !important; /* keep checkmark accent color on hover */
+}

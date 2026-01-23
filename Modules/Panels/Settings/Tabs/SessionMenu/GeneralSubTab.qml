@@ -105,25 +105,17 @@ ColumnLayout {
     defaultValue: Settings.getDefaultValue("sessionMenu.enableCountdown")
   }
 
-  ColumnLayout {
+  NValueSlider {
     visible: Settings.data.sessionMenu.enableCountdown
-    spacing: Style.marginXXS
     Layout.fillWidth: true
-
-    NLabel {
-      label: I18n.tr("panels.session-menu.countdown-duration-label")
-      description: I18n.tr("panels.session-menu.countdown-duration-description")
-    }
-
-    NValueSlider {
-      Layout.fillWidth: true
-      from: 1000
-      to: 30000
-      stepSize: 1000
-      value: Settings.data.sessionMenu.countdownDuration
-      onMoved: value => Settings.data.sessionMenu.countdownDuration = value
-      text: Math.round(Settings.data.sessionMenu.countdownDuration / 1000) + "s"
-      defaultValue: Settings.getDefaultValue("sessionMenu.countdownDuration")
-    }
+    label: I18n.tr("panels.session-menu.countdown-duration-label")
+    description: I18n.tr("panels.session-menu.countdown-duration-description")
+    from: 1000
+    to: 30000
+    stepSize: 1000
+    value: Settings.data.sessionMenu.countdownDuration
+    onMoved: value => Settings.data.sessionMenu.countdownDuration = value
+    text: Math.round(Settings.data.sessionMenu.countdownDuration / 1000) + "s"
+    defaultValue: Settings.getDefaultValue("sessionMenu.countdownDuration")
   }
 }

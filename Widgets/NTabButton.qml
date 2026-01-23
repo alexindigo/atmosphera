@@ -34,6 +34,7 @@ Rectangle {
   border.width: Style.borderS
 
   Behavior on color {
+    enabled: !Color.isTransitioning
     ColorAnimation {
       duration: Style.animationFast
       easing.type: Easing.OutCubic
@@ -57,6 +58,7 @@ Rectangle {
     verticalAlignment: Text.AlignVCenter
 
     Behavior on color {
+      enabled: !Color.isTransitioning
       ColorAnimation {
         duration: Style.animationFast
         easing.type: Easing.OutCubic

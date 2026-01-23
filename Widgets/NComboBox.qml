@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
+import qs.Services.UI
 import qs.Widgets
 
 RowLayout {
@@ -12,19 +13,20 @@ RowLayout {
 
   property string label: ""
   property string description: ""
+  property string tooltip: ""
   property var model
   property string currentKey: ""
   property string placeholder: ""
   property var defaultValue: undefined
   property string settingsPath: ""
+  property real baseSize: 1.0
 
-  readonly property real preferredHeight: Math.round(Style.baseWidgetSize * 1.1)
+  readonly property real preferredHeight: Math.round(Style.baseWidgetSize * 1.1 * root.baseSize)
   readonly property var comboBox: combo
 
   signal selected(string key)
 
   spacing: Style.marginL
-  Layout.fillWidth: true
   opacity: enabled ? 1.0 : 0.6
 
   // Less strict comparison with != (instead of !==) so it can properly compare int vs string (ex for FPS: 30 and "30")
@@ -159,6 +161,22 @@ RowLayout {
           duration: Style.animationFast
         }
       }
+
+      MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        acceptedButtons: Qt.NoButton
+        onEntered: {
+          if (root.tooltip != "") {
+            TooltipService.show(root, root.tooltip);
+          }
+        }
+        onExited: {
+          if (root.tooltip != "") {
+            TooltipService.hide();
+          }
+        }
+      }
     }
 
     contentItem: NText {
@@ -282,8 +300,9 @@ RowLayout {
             anchors.fill: parent
             hoverEnabled: true
             onContainsMouseChanged: {
-              if (containsMouse)
+              if (containsMouse) {
                 listView.currentIndex = delegateRect.index;
+              }
             }
             onClicked: {
               var item = root.getItem(delegateRect.index);
