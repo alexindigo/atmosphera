@@ -24,7 +24,6 @@ Singleton {
                                             "wlsunsetAvailable": ["sh", "-c", "command -v wlsunset"],
                                             "app2unitAvailable": ["sh", "-c", "command -v app2unit"],
                                             "gnomeCalendarAvailable": ["sh", "-c", "command -v gnome-calendar"],
-                                            "gnomeCalendarAvailable": ["sh", "-c", "command -v gnome-calendar"],
                                             "wtypeAvailable": ["sh", "-c", "command -v wtype"],
                                             "pythonAvailable": ["sh", "-c", "command -v python3"]
                                           })
