@@ -441,7 +441,7 @@ NBox {
                         // Handle core widget settings
                         var component = Qt.createComponent(Qt.resolvedUrl(root.settingsDialogComponent));
                         function instantiateAndOpen() {
-                          var dialog = component.createObject(Overlay.overlay, {
+                          var dialog = component.createObject(root, {
                                                                 "widgetIndex": index,
                                                                 "widgetData": modelData,
                                                                 "widgetId": modelData.id,
