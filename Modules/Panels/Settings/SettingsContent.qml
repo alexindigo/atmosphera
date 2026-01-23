@@ -41,6 +41,8 @@ Item {
   property var activeScrollView: null
   property var activeTabContent: null
   property bool sidebarExpanded: true
+  // Track if sidebar was collapsed before searching started
+  property bool wasCollapsedBeforeSearch: false
 
   // Search state
   property string searchText: ""
@@ -84,11 +86,19 @@ Item {
   onSearchTextChanged: {
     if (searchText.trim() === "") {
       searchResults = [];
+      if (wasCollapsedBeforeSearch) {
+        root.sidebarExpanded = false;
+        wasCollapsedBeforeSearch = false;
+      }
       return;
     }
 
     // Auto-expand sidebar when searching
     if (!root.sidebarExpanded) {
+      if (root.activeFocus) {
+        // If we are typing and the sidebar is collapsed and focused, we assume the user is typing to search
+        wasCollapsedBeforeSearch = true;
+      }
       root.sidebarExpanded = true;
     }
 
@@ -274,6 +284,7 @@ Item {
     if (!sidebarExpanded) {
       root.searchText = "";
       searchInput.text = "";
+      root.forceActiveFocus();
     }
   }
 
@@ -520,8 +531,37 @@ Item {
                      if (searchInput.inputItem)
                      searchInput.inputItem.forceActiveFocus();
                    });
+    } else {
+      // Ensure root has focus so it can catch typing
+      Qt.callLater(() => root.forceActiveFocus());
     }
   }
+
+  // Handle typing when sidebar is collapsed
+  focus: true
+  Keys.onPressed: event => {
+                    if (!sidebarExpanded && event.text.length > 0 && event.text.trim() !== "") {
+                      // Only capture if it looks like visible text
+                      if (event.modifiers & (Qt.ControlModifier | Qt.AltModifier | Qt.MetaModifier))
+                      return;
+
+                      // Explicitly ignore backspace and similar keys that might have text but shouldn't trigger search
+                      if (event.key === Qt.Key_Backspace || event.key === Qt.Key_Delete || event.key === Qt.Key_Escape)
+                      return;
+
+                      wasCollapsedBeforeSearch = true;
+                      sidebarExpanded = true;
+                      searchInput.text = event.text;
+                      Qt.callLater(() => {
+                                     if (searchInput.inputItem) {
+                                       searchInput.inputItem.forceActiveFocus();
+                                       // Cursor moves to end automatically usually, but let's be safe
+                                       searchInput.inputItem.cursorPosition = 1;
+                                     }
+                                   });
+                      event.accepted = true;
+                    }
+                  }
 
   // Scroll functions
   function scrollDown() {
@@ -734,6 +774,7 @@ Item {
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
                   root.sidebarExpanded = true;
+                  root.wasCollapsedBeforeSearch = false; // Expanding manually resets this
                   Qt.callLater(() => searchInput.inputItem.forceActiveFocus());
                 }
                 onEntered: {
