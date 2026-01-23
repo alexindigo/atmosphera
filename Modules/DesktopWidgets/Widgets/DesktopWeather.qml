@@ -63,7 +63,7 @@ DraggableDesktopWidget {
 
       NIcon {
         anchors.centerIn: parent
-        icon: weatherReady ? LocationService.weatherSymbolFromCode(currentWeatherCode) : "cloud"
+        icon: weatherReady ? LocationService.weatherSymbolFromCode(currentWeatherCode, LocationService.data.weather.current_weather.is_day) : "weather-cloud-off"
         pointSize: Math.round(Style.fontSizeXXXL * 2 * widgetScale)
         color: weatherReady ? Color.mPrimary : Color.mOnSurfaceVariant
       }
