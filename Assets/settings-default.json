@@ -182,6 +182,7 @@
     "showCategories": true,
     "iconMode": "tabler",
     "showIconBackground": false,
+    "enableSettingsSearch": true,
     "ignoreMouseInput": false,
     "screenshotAnnotationTool": ""
   },
