@@ -109,7 +109,7 @@ Item {
 
     const results = FuzzySort.go(searchText.trim(), items, {
                                    "keys": ["label", "subTabName", "description"],
-                                   "threshold": -1000,
+                                   "threshold": 0.35,
                                    "limit": 20,
                                    "scoreFn": function (r) {
                                      // r[0]=label, r[1]=subTabName, r[2]=description
@@ -729,7 +729,7 @@ Item {
                   anchors.rightMargin: Style.marginS
                   anchors.topMargin: Style.marginXS
                   anchors.bottomMargin: Style.marginXS
-                  spacing: Style.marginXXS
+                  spacing: 0
 
                   NText {
                     text: I18n.tr(modelData.labelKey)
