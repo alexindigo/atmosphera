@@ -6,6 +6,7 @@ import qs.Widgets
 
 Rectangle {
   id: root
+  objectName: "NTabBar"
 
   // Public properties
   property int currentIndex: 0

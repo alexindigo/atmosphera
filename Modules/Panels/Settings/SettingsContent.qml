@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 import qs.Modules.Panels.Settings.Tabs
 import qs.Modules.Panels.Settings.Tabs.About
@@ -38,10 +39,181 @@ Item {
   property int currentTabIndex: 0
   property var tabsModel: []
   property var activeScrollView: null
+  property var activeTabContent: null
   property bool sidebarExpanded: true
+
+  // Search state
+  property string searchText: ""
+  property var searchIndex: []
+  property var searchResults: []
+  property string highlightLabelKey: ""
 
   // Signal when close button is clicked
   signal closeRequested
+
+  // Load search index
+  FileView {
+    id: searchIndexFile
+    path: Quickshell.shellDir + "/Assets/settings-search-index.json"
+    watchChanges: false
+    printErrors: false
+
+    onLoaded: {
+      try {
+        root.searchIndex = JSON.parse(text());
+      } catch (e) {
+        root.searchIndex = [];
+      }
+    }
+  }
+
+  // Search function
+  onSearchTextChanged: {
+    if (searchText.trim() === "") {
+      searchResults = [];
+      return;
+    }
+    if (searchIndex.length === 0)
+      return;
+
+    // Build searchable items with resolved translations
+    let items = [];
+    for (let j = 0; j < searchIndex.length; j++) {
+      const entry = searchIndex[j];
+      items.push({
+                   "labelKey": entry.labelKey,
+                   "descriptionKey": entry.descriptionKey,
+                   "widget": entry.widget,
+                   "tab": entry.tab,
+                   "tabLabel": entry.tabLabel,
+                   "subTab": entry.subTab,
+                   "subTabLabel": entry.subTabLabel || null,
+                   "label": I18n.tr(entry.labelKey),
+                   "description": entry.descriptionKey ? I18n.tr(entry.descriptionKey) : ""
+                 });
+    }
+
+    const results = FuzzySort.go(searchText.trim(), items, {
+                                   "keys": ["label", "description"],
+                                   "threshold": -1000,
+                                   "limit": 20
+                                 });
+
+    let extracted = [];
+    for (let i = 0; i < results.length; i++) {
+      extracted.push(results[i].obj);
+    }
+    searchResults = extracted;
+  }
+
+  // Navigate to a search result
+  property int _pendingSubTab: -1
+
+  function navigateToResult(entry) {
+    if (entry.tab < 0 || entry.tab >= tabsModel.length)
+      return;
+
+    highlightLabelKey = entry.labelKey;
+    _pendingSubTab = (entry.subTab !== null && entry.subTab !== undefined) ? entry.subTab : -1;
+
+    // Check if we're already on this tab
+    const alreadyOnTab = (currentTabIndex === entry.tab);
+
+    currentTabIndex = entry.tab;
+
+    if (alreadyOnTab && activeTabContent) {
+      // Tab is already loaded, apply subtab + highlight directly
+      if (_pendingSubTab >= 0) {
+        setSubTabIndex(_pendingSubTab);
+        _pendingSubTab = -1;
+      }
+      highlightScrollTimer.targetKey = highlightLabelKey;
+      highlightScrollTimer.restart();
+    }
+
+    // Clear highlight after a delay
+    highlightClearTimer.restart();
+  }
+
+  // Set sub-tab on the currently loaded tab content
+  function setSubTabIndex(subTabIndex) {
+    if (activeTabContent) {
+      setSubTabRecursive(activeTabContent, subTabIndex);
+    }
+  }
+
+  function setSubTabRecursive(item, subTabIndex) {
+    if (!item)
+      return false;
+
+    if (item.objectName === "NTabBar") {
+      item.currentIndex = subTabIndex;
+      return true;
+    }
+
+    const childCount = item.children ? item.children.length : 0;
+    for (let i = 0; i < childCount; i++) {
+      if (setSubTabRecursive(item.children[i], subTabIndex))
+        return true;
+    }
+    return false;
+  }
+
+  // Find and highlight a widget by its label key
+  function findAndHighlightWidget(item, labelKey) {
+    if (!item)
+      return null;
+
+    // Check if this item has a matching label
+    if (item.hasOwnProperty("label") && item.label === I18n.tr(labelKey)) {
+      return item;
+    }
+
+    // Recursively search children
+    if (item.children) {
+      for (let i = 0; i < item.children.length; i++) {
+        const found = findAndHighlightWidget(item.children[i], labelKey);
+        if (found)
+          return found;
+      }
+    }
+    return null;
+  }
+
+  Timer {
+    id: highlightClearTimer
+    interval: 3000
+    onTriggered: root.highlightLabelKey = ""
+  }
+
+  Timer {
+    id: highlightScrollTimer
+    interval: 200
+    property string targetKey: ""
+    onTriggered: {
+      if (root.activeTabContent && targetKey) {
+        const widget = root.findAndHighlightWidget(root.activeTabContent, targetKey);
+        if (widget && root.activeScrollView) {
+          // Scroll widget into view
+          const mapped = widget.mapToItem(root.activeScrollView.contentItem, 0, 0);
+          const scrollBar = root.activeScrollView.ScrollBar.vertical;
+          if (scrollBar) {
+            const targetPos = (mapped.y - root.activeScrollView.height / 3) / root.activeScrollView.contentHeight;
+            scrollBar.position = Math.max(0, Math.min(targetPos, 1.0 - scrollBar.size));
+          }
+
+          // Position highlight overlay
+          const overlayPos = widget.mapToItem(tabContentArea, 0, 0);
+          highlightOverlay.x = overlayPos.x - Style.marginM;
+          highlightOverlay.y = overlayPos.y - Style.marginM;
+          highlightOverlay.width = widget.width + Style.marginM * 2;
+          highlightOverlay.height = widget.height + Style.marginM * 2;
+          highlightAnimation.restart();
+        }
+      }
+      targetKey = "";
+    }
+  }
 
   // Save sidebar state when it changes
   onSidebarExpandedChanged: {
@@ -428,13 +600,108 @@ Item {
             }
           }
 
+          // Search input
+          NTextInput {
+            id: searchInput
+            Layout.fillWidth: true
+            placeholderText: I18n.tr("common.search")
+            inputIconName: "search"
+            visible: root.sidebarExpanded
+            opacity: root.sidebarExpanded ? 1.0 : 0.0
+
+            Behavior on opacity {
+              NumberAnimation {
+                duration: Style.animationFast
+                easing.type: Easing.InOutQuad
+              }
+            }
+
+            onTextChanged: root.searchText = text
+          }
+
           Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.bottomMargin: Style.marginXL
 
+            // Search results list
+            NListView {
+              id: searchResultsList
+              anchors.fill: parent
+              model: root.searchResults
+              spacing: Style.marginXS
+              visible: root.searchText.trim() !== ""
+              verticalPolicy: ScrollBar.AsNeeded
+
+              delegate: Rectangle {
+                id: resultItem
+                width: searchResultsList.width - (searchResultsList.verticalScrollBarActive ? Style.marginM : 0)
+                height: resultColumn.implicitHeight + Style.marginS * 2
+                radius: Style.iRadiusS
+                color: resultItem.hovering ? Color.mHover : "transparent"
+                property bool hovering: false
+
+                Behavior on color {
+                  enabled: !Color.isTransitioning
+                  ColorAnimation {
+                    duration: Style.animationFast
+                    easing.type: Easing.InOutQuad
+                  }
+                }
+
+                ColumnLayout {
+                  id: resultColumn
+                  anchors.fill: parent
+                  anchors.leftMargin: Style.marginS
+                  anchors.rightMargin: Style.marginS
+                  anchors.topMargin: Style.marginXS
+                  anchors.bottomMargin: Style.marginXS
+                  spacing: Style.marginXXS
+
+                  NText {
+                    text: I18n.tr(modelData.labelKey)
+                    pointSize: Style.fontSizeM
+                    font.weight: Style.fontWeightSemiBold
+                    color: resultItem.hovering ? Color.mOnHover : Color.mOnSurface
+                    Layout.fillWidth: true
+                    elide: Text.ElideRight
+                    maximumLineCount: 1
+                  }
+
+                  NText {
+                    text: {
+                      let t = I18n.tr(modelData.tabLabel);
+                      if (modelData.subTabLabel)
+                        t += " › " + I18n.tr(modelData.subTabLabel);
+                      return t;
+                    }
+                    pointSize: Style.fontSizeXS
+                    color: resultItem.hovering ? Color.mOnHover : Color.mOnSurfaceVariant
+                    Layout.fillWidth: true
+                    elide: Text.ElideRight
+                    maximumLineCount: 1
+                  }
+                }
+
+                MouseArea {
+                  anchors.fill: parent
+                  hoverEnabled: true
+                  cursorShape: Qt.PointingHandCursor
+                  onEntered: resultItem.hovering = true
+                  onExited: resultItem.hovering = false
+                  onCanceled: resultItem.hovering = false
+                  onClicked: {
+                    root.navigateToResult(modelData);
+                    searchInput.text = "";
+                  }
+                }
+              }
+            }
+
+            // Tab list
             NListView {
               id: sidebarList
+              visible: root.searchText.trim() === ""
               anchors.fill: parent
               model: root.tabsModel
               spacing: Style.marginXS
@@ -633,6 +900,7 @@ Item {
 
           // Tab content area
           Rectangle {
+            id: tabContentArea
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.leftMargin: -Style.marginM
@@ -640,6 +908,7 @@ Item {
             color: "transparent"
 
             Repeater {
+              id: contentRepeater
               model: root.tabsModel
               delegate: Loader {
                 anchors.fill: parent
@@ -676,6 +945,16 @@ Item {
                       onLoaded: {
                         if (item && item.hasOwnProperty("screen")) {
                           item.screen = root.screen;
+                        }
+                        root.activeTabContent = item;
+                        // Handle pending subtab + highlight from search navigation
+                        if (root.highlightLabelKey) {
+                          if (root._pendingSubTab >= 0) {
+                            root.setSubTabIndex(root._pendingSubTab);
+                            root._pendingSubTab = -1;
+                          }
+                          highlightScrollTimer.targetKey = root.highlightLabelKey;
+                          highlightScrollTimer.restart();
                         }
                       }
                     }
@@ -715,6 +994,42 @@ Item {
                 GradientStop {
                   position: 1.0
                   color: Qt.alpha(Color.mSurfaceVariant, 0.95)
+                }
+              }
+            }
+
+            // Highlight overlay for search results
+            Rectangle {
+              id: highlightOverlay
+              visible: opacity > 0
+              opacity: 0
+              color: Qt.alpha(Color.mSecondary, 0.12)
+              border.color: Qt.alpha(Color.mSecondary, 0.4)
+              border.width: Style.borderM
+              radius: Style.radiusS
+              z: 100
+
+              SequentialAnimation {
+                id: highlightAnimation
+
+                NumberAnimation {
+                  target: highlightOverlay
+                  property: "opacity"
+                  to: 1.0
+                  duration: Style.animationFast
+                  easing.type: Easing.OutQuad
+                }
+
+                PauseAnimation {
+                  duration: 2000
+                }
+
+                NumberAnimation {
+                  target: highlightOverlay
+                  property: "opacity"
+                  to: 0
+                  duration: Style.animationSlowest
+                  easing.type: Easing.InQuad
                 }
               }
             }
