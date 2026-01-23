@@ -141,17 +141,6 @@ NBox {
     anchors.margins: Style.marginL
     spacing: Style.marginM
 
-    // Reset to global button
-    NButton {
-      visible: Settings.hasScreenOverride(root.screenName, "widgets")
-      text: I18n.tr("panels.bar.use-global-widgets")
-      icon: "refresh"
-      Layout.fillWidth: true
-      onClicked: {
-        Settings.clearScreenOverride(root.screenName, "widgets");
-      }
-    }
-
     NText {
       text: I18n.tr("panels.bar.widgets-desc")
       wrapMode: Text.WordWrap
