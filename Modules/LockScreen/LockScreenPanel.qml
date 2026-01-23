@@ -132,7 +132,7 @@ Item {
         visible: batteryIndicator.isReady && BatteryService.hasAnyBattery()
 
         NIcon {
-          icon: BatteryService.getIcon(Math.round(batteryIndicator.percent), batteryIndicator.charging, batteryIndicator.isReady)
+          icon: BatteryService.getIcon(Math.round(batteryIndicator.percent), batteryIndicator.charging, batteryIndicator.pluggedIn, batteryIndicator.isReady)
           pointSize: Style.fontSizeM
           color: batteryIndicator.charging ? Color.mPrimary : Color.mOnSurfaceVariant
         }
@@ -457,7 +457,7 @@ Item {
             visible: batteryIndicator.isReady && BatteryService.hasAnyBattery()
 
             NIcon {
-              icon: BatteryService.getIcon(Math.round(batteryIndicator.percent), batteryIndicator.charging, batteryIndicator.isReady)
+              icon: BatteryService.getIcon(Math.round(batteryIndicator.percent), batteryIndicator.charging, batteryIndicator.pluggedIn, batteryIndicator.isReady)
               pointSize: Style.fontSizeM
               color: batteryIndicator.charging ? Color.mPrimary : Color.mOnSurfaceVariant
             }

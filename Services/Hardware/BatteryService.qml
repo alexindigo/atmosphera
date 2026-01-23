@@ -60,6 +60,13 @@ Singleton {
     return primaryDevice.state !== undefined && primaryDevice.state === UPowerDeviceState.Charging;
   }
 
+  readonly property bool batteryPluggedIn: {
+    if (!primaryDevice || !isLaptopBattery) {
+      return false;
+    }
+    return primaryDevice.state !== undefined && (primaryDevice.state === UPowerDeviceState.FullyCharged || primaryDevice.state === UPowerDeviceState.PendingCharge);
+  }
+
   readonly property bool batteryReady: {
     if (!primaryDevice) {
       return false;
@@ -83,13 +90,11 @@ Singleton {
 
   property bool healthAvailable: false
   property int healthPercent: -1
-  property string capacityLevel: ""
 
   function refreshHealth() {
     if (!isLaptopBattery || !primaryDevice) {
       healthAvailable = false;
       healthPercent = -1;
-      capacityLevel = "";
       return;
     }
     healthProcess.running = true;
@@ -98,6 +103,10 @@ Singleton {
   Process {
     id: healthProcess
     command: ["sh", "-c", "upower -i $(upower -e | grep battery | head -n 1) 2>/dev/null | grep -iE 'capacity'"]
+    environment: ({
+                    "LC_ALL": "C"
+                  })
+
     stdout: SplitParser {
       onRead: function (data) {
         var line = data.trim();
@@ -109,12 +118,6 @@ Singleton {
           root.healthPercent = Math.round(parseFloat(capacityMatch[1]));
           root.healthAvailable = true;
           Logger.d("Battery", "Health retrieved from CLI:", root.healthPercent + "%");
-        }
-
-        var levelMatch = line.match(/^\s*capacity-level:\s*(.+)/i);
-        if (levelMatch) {
-          root.capacityLevel = levelMatch[1].trim();
-          Logger.d("Battery", "Capacity level:", root.capacityLevel);
         }
       }
     }
