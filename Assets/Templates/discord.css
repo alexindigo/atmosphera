@@ -315,3 +315,8 @@ body {
 ._714a9a7abaf0392a-checkboxOption[data-selected="true"]:hover ._714a9a7abaf0392a-dot {
     color: var(--accent-1) !important; /* keep checkmark accent color on hover */
 }
+
+/* Fix hover color for channel mentions */
+.channelMention:hover {
+  color: var(--text-1) !important;
+}
