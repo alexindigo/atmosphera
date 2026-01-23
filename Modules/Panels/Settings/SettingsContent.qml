@@ -49,7 +49,17 @@ Item {
   property int searchSelectedIndex: 0
   property string highlightLabelKey: ""
 
-  onSearchResultsChanged: searchSelectedIndex = 0
+  // Mouse hover suppression during keyboard navigation
+  property bool ignoreMouseHover: false
+  property real _lastMouseX: 0
+  property real _lastMouseY: 0
+  property bool _mouseInitialized: false
+
+  onSearchResultsChanged: {
+    searchSelectedIndex = 0;
+    ignoreMouseHover = true;
+    _mouseInitialized = false;
+  }
 
   // Signal when close button is clicked
   signal closeRequested
@@ -150,6 +160,8 @@ Item {
   function searchSelectNext() {
     if (searchResults.length === 0)
       return;
+    ignoreMouseHover = true;
+    _mouseInitialized = false;
     searchSelectedIndex = Math.min(searchSelectedIndex + 1, searchResults.length - 1);
     searchResultsList.positionViewAtIndex(searchSelectedIndex, ListView.Contain);
   }
@@ -157,6 +169,8 @@ Item {
   function searchSelectPrevious() {
     if (searchResults.length === 0)
       return;
+    ignoreMouseHover = true;
+    _mouseInitialized = false;
     searchSelectedIndex = Math.max(searchSelectedIndex - 1, 0);
     searchResultsList.positionViewAtIndex(searchSelectedIndex, ListView.Contain);
   }
@@ -672,14 +686,33 @@ Item {
               visible: root.searchText.trim() !== ""
               verticalPolicy: ScrollBar.AsNeeded
 
+              HoverHandler {
+                onPointChanged: {
+                  if (!root._mouseInitialized) {
+                    root._lastMouseX = point.position.x;
+                    root._lastMouseY = point.position.y;
+                    root._mouseInitialized = true;
+                    return;
+                  }
+
+                  const deltaX = Math.abs(point.position.x - root._lastMouseX);
+                  const deltaY = Math.abs(point.position.y - root._lastMouseY);
+                  if (deltaX + deltaY >= 5) {
+                    root.ignoreMouseHover = false;
+                    root._lastMouseX = point.position.x;
+                    root._lastMouseY = point.position.y;
+                  }
+                }
+              }
+
               delegate: Rectangle {
                 id: resultItem
                 width: searchResultsList.width - (searchResultsList.verticalScrollBarActive ? Style.marginM : 0)
                 height: resultColumn.implicitHeight + Style.marginS * 2
                 radius: Style.iRadiusS
                 readonly property bool selected: index === root.searchSelectedIndex
-                color: (resultItem.hovering || resultItem.selected) ? Color.mHover : "transparent"
-                property bool hovering: false
+                readonly property bool effectiveHover: !root.ignoreMouseHover && resultMouseArea.containsMouse
+                color: (effectiveHover || selected) ? Color.mHover : "transparent"
 
                 Behavior on color {
                   enabled: !Color.isTransitioning
@@ -702,7 +735,7 @@ Item {
                     text: I18n.tr(modelData.labelKey)
                     pointSize: Style.fontSizeM
                     font.weight: Style.fontWeightSemiBold
-                    color: (resultItem.hovering || resultItem.selected) ? Color.mOnHover : Color.mOnSurface
+                    color: (resultItem.effectiveHover || resultItem.selected) ? Color.mOnHover : Color.mOnSurface
                     Layout.fillWidth: true
                     elide: Text.ElideRight
                     maximumLineCount: 1
@@ -716,7 +749,7 @@ Item {
                       return t;
                     }
                     pointSize: Style.fontSizeXS
-                    color: (resultItem.hovering || resultItem.selected) ? Color.mOnHover : Color.mOnSurfaceVariant
+                    color: (resultItem.effectiveHover || resultItem.selected) ? Color.mOnHover : Color.mOnSurfaceVariant
                     Layout.fillWidth: true
                     elide: Text.ElideRight
                     maximumLineCount: 1
@@ -724,13 +757,16 @@ Item {
                 }
 
                 MouseArea {
+                  id: resultMouseArea
                   anchors.fill: parent
                   hoverEnabled: true
                   cursorShape: Qt.PointingHandCursor
-                  onEntered: resultItem.hovering = true
-                  onExited: resultItem.hovering = false
-                  onCanceled: resultItem.hovering = false
+                  onEntered: {
+                    if (!root.ignoreMouseHover)
+                      root.searchSelectedIndex = index;
+                  }
                   onClicked: {
+                    root.searchSelectedIndex = index;
                     root.navigateToResult(modelData);
                     searchInput.text = "";
                   }
