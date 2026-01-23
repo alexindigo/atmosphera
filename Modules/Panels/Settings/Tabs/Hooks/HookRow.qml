@@ -14,27 +14,10 @@ RowLayout {
 
   spacing: Style.marginM
 
-  ColumnLayout {
-    Layout.fillWidth: true
-    spacing: Style.marginXS
-
-    NText {
-      text: root.label
-      font.weight: Style.fontWeightBold
-      Layout.fillWidth: true
-      elide: Text.ElideRight
-    }
-
-    NText {
-      text: root.description
-      color: Color.mOnSurfaceVariant
-      pointSize: Style.fontSizeS
-      Layout.fillWidth: true
-      wrapMode: Text.WordWrap
-    }
-
-    // Optional: Show current value preview if not empty?
-    // For now, let's keep it clean as requested.
+  NLabel {
+    label: root.label
+    description: root.description
+    labelColor: root.value ? Color.mPrimary : Color.mOnSurface
   }
 
   NIconButton {
