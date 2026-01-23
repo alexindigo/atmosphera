@@ -4,13 +4,19 @@ Template rendering for Matugen compatibility.
 This module provides the TemplateRenderer class for processing template files
 using the {{colors.name.mode.format}} syntax compatible with Matugen.
 
-Supports pipe filters: {{ colors.primary.dark.hex | set_alpha 0.5 | grayscale }}
+Supports:
+- Pipe filters: {{ colors.primary.dark.hex | set_alpha 0.5 | grayscale }}
+- For loops: <* for name, value in colors *> ... <* endfor *>
+- If/else: <* if {{ expr }} *> ... <* else *> ... <* endif *>
+- Loop variables: loop.index, loop.first, loop.last
+- String filters: replace
 """
 
 import re
 import sys
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional, Union
 
 try:
     import tomllib
@@ -18,6 +24,65 @@ except ImportError:
     tomllib = None
 
 from .color import Color, find_closest_color
+
+
+# --- Node Types for the template AST ---
+
+@dataclass
+class TextNode:
+    text: str
+
+@dataclass
+class ForNode:
+    variables: list[str]
+    iterable: str
+    body: list
+
+@dataclass
+class IfNode:
+    condition_expr: str
+    negated: bool
+    then_body: list
+    else_body: list = field(default_factory=list)
+
+
+# --- Variable Scope Stack ---
+
+class VariableScope:
+    """Stack-based variable scope for loop variables."""
+
+    def __init__(self):
+        self._scopes: list[dict[str, Any]] = []
+
+    def push(self, bindings: Optional[dict[str, Any]] = None):
+        self._scopes.append(bindings or {})
+
+    def pop(self):
+        if self._scopes:
+            self._scopes.pop()
+
+    def set(self, name: str, value: Any):
+        if self._scopes:
+            self._scopes[-1][name] = value
+
+    def get(self, name: str) -> Optional[Any]:
+        """Look up variable, searching from innermost scope outward."""
+        for scope in reversed(self._scopes):
+            if name in scope:
+                return scope[name]
+        return None
+
+    @property
+    def is_active(self) -> bool:
+        return len(self._scopes) > 0
+
+
+# --- Known color format types ---
+
+KNOWN_FORMATS = frozenset({
+    "hex", "hex_stripped", "rgb", "rgba", "hsl", "hsla",
+    "red", "green", "blue", "alpha", "hue", "saturation", "lightness",
+})
 
 
 class TemplateRenderer:
@@ -29,6 +94,10 @@ class TemplateRenderer:
         {{ colors.primary.dark.hex | grayscale }}
         {{ colors.primary.dark.rgba | set_alpha 0.5 }}
 
+    Supports block constructs:
+        <* for name, value in colors *> ... <* endfor *>
+        <* if {{ loop.first }} *> ... <* else *> ... <* endif *>
+
     Theme data uses snake_case keys (e.g., 'primary', 'surface_container').
     """
 
@@ -38,7 +107,7 @@ class TemplateRenderer:
         "on_hover": "on_surface",
     }
 
-    # Supported filters and their argument requirements
+    # Supported color filters and their argument requirements
     SUPPORTED_FILTERS = {
         # No arguments
         "grayscale": 0,
@@ -54,12 +123,19 @@ class TemplateRenderer:
         "desaturate": 1,
     }
 
+    # Regex for block delimiters: <* ... *>
+    _BLOCK_RE = re.compile(r'<\*\s*(.*?)\s*\*>', re.DOTALL)
+
+    # Regex for expression tags: {{ ... }}
+    _EXPR_RE = re.compile(r"\{\{\s*([^}\n]+?)\s*\}\}")
+
     def __init__(self, theme_data: dict[str, dict[str, str]], verbose: bool = True, default_mode: str = "dark"):
         self.theme_data = theme_data
         self.verbose = verbose
         self.default_mode = default_mode
         self._current_file: Optional[str] = None
         self._error_count = 0
+        self._colors_map: Optional[dict[str, dict[str, str]]] = None
 
     def _log_error(self, message: str, line_hint: str = ""):
         """Log an error to stderr."""
@@ -73,6 +149,449 @@ class TemplateRenderer:
         if self.verbose:
             prefix = f"[{self._current_file}] " if self._current_file else ""
             print(f"Template warning: {prefix}{message}", file=sys.stderr)
+
+    # --- Colors Map ---
+
+    def _build_colors_map(self) -> dict[str, dict[str, str]]:
+        """Build iterable colors map: {name: {mode: hex_value, ...}}."""
+        if self._colors_map is not None:
+            return self._colors_map
+
+        colors_map: dict[str, dict[str, str]] = {}
+        all_names: set[str] = set()
+        for mode_data in self.theme_data.values():
+            all_names.update(mode_data.keys())
+
+        for name in sorted(all_names):
+            color_modes: dict[str, str] = {}
+            for mode, mode_data in self.theme_data.items():
+                if name in mode_data:
+                    color_modes[mode] = mode_data[name]
+            # Add "default" as alias for self.default_mode
+            if self.default_mode in color_modes:
+                color_modes["default"] = color_modes[self.default_mode]
+            colors_map[name] = color_modes
+
+        self._colors_map = colors_map
+        return colors_map
+
+    # --- Palette Support ---
+
+    def _get_palette_entries(self, palette_name: str) -> list[dict[str, str]]:
+        """Get tonal palette entries for iteration."""
+        from .hct import Hct, TonalPalette
+
+        TONES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100]
+
+        palette_color_map = {
+            "primary": "primary",
+            "secondary": "secondary",
+            "tertiary": "tertiary",
+            "error": "error",
+            "neutral": "surface",
+            "neutral_variant": "surface_variant",
+        }
+
+        color_name = palette_color_map.get(palette_name)
+        if not color_name:
+            self._log_warning(f"Unknown palette: {palette_name}")
+            return []
+
+        mode_data = self.theme_data.get(self.default_mode, {})
+        hex_color = mode_data.get(color_name)
+        if not hex_color:
+            return []
+
+        color = Color.from_hex(hex_color)
+        palette = TonalPalette.from_rgb(color.r, color.g, color.b)
+
+        entries = []
+        for tone in TONES:
+            tone_hex = palette.get_hex(tone)
+            # Each entry is a color modes dict (same hex for all modes in palette context)
+            entries.append({"default": tone_hex, "dark": tone_hex, "light": tone_hex})
+
+        return entries
+
+    # --- Block Parser ---
+
+    def _parse_template(self, text: str) -> list:
+        """Parse template text into a tree of nodes."""
+        tokens = self._tokenize(text)
+        nodes, _ = self._parse_nodes(tokens, 0)
+        return nodes
+
+    def _tokenize(self, text: str) -> list[Union[str, tuple[str, str]]]:
+        """Split text into raw text strings and ('block', content) tuples.
+
+        Standalone block tags (only content on their line) consume the entire
+        line including the trailing newline, matching matugen's behavior.
+        """
+        tokens = []
+        last_end = 0
+
+        for match in self._BLOCK_RE.finditer(text):
+            start = match.start()
+            end = match.end()
+
+            # Check if this block tag is standalone on its line:
+            # preceded only by whitespace (after newline or start), followed by optional whitespace + newline
+            line_start = text.rfind('\n', last_end, start)
+            line_start = line_start + 1 if line_start != -1 else (last_end if last_end <= start else 0)
+            before_on_line = text[line_start:start]
+
+            if before_on_line.strip() == '':
+                # Check what follows the block tag
+                after_end = end
+                while after_end < len(text) and text[after_end] in (' ', '\t'):
+                    after_end += 1
+                if after_end < len(text) and text[after_end] == '\n':
+                    # Standalone: consume leading whitespace and trailing newline
+                    start = line_start
+                    end = after_end + 1
+                elif after_end == len(text):
+                    # At end of file, still standalone
+                    start = line_start
+                    end = after_end
+
+            # Text before the block
+            if start > last_end:
+                tokens.append(text[last_end:start])
+            # The block command
+            tokens.append(("block", match.group(1).strip()))
+            last_end = end
+
+        # Remaining text after last block
+        if last_end < len(text):
+            tokens.append(text[last_end:])
+
+        return tokens
+
+    def _parse_nodes(self, tokens: list, pos: int, stop_keywords: Optional[set[str]] = None) -> tuple[list, int]:
+        """Parse tokens into nodes, stopping at specified keywords.
+
+        Returns (nodes, position_after_stop_keyword).
+        """
+        nodes = []
+        stop_keywords = stop_keywords or set()
+
+        while pos < len(tokens):
+            token = tokens[pos]
+
+            if isinstance(token, str):
+                # Raw text
+                if token:
+                    nodes.append(TextNode(token))
+                pos += 1
+            else:
+                # Block command
+                _, cmd = token
+
+                # Check if this is a stop keyword
+                if any(cmd.startswith(kw) for kw in stop_keywords):
+                    return nodes, pos
+
+                if cmd.startswith("for "):
+                    node, pos = self._parse_for(tokens, pos)
+                    nodes.append(node)
+                elif cmd.startswith("if "):
+                    node, pos = self._parse_if(tokens, pos)
+                    nodes.append(node)
+                else:
+                    # Unknown block command - treat as text
+                    self._log_warning(f"Unknown block command: {cmd}")
+                    pos += 1
+
+        return nodes, pos
+
+    def _parse_for(self, tokens: list, pos: int) -> tuple[ForNode, int]:
+        """Parse a for loop block starting at pos."""
+        _, cmd = tokens[pos]
+        pos += 1
+
+        # Parse: for var1, var2 in iterable
+        for_match = re.match(r'for\s+(.+?)\s+in\s+(.+)$', cmd)
+        if not for_match:
+            self._log_error(f"Invalid for syntax: {cmd}")
+            return ForNode([], "", []), pos
+
+        vars_str, iterable = for_match.groups()
+        variables = [v.strip() for v in vars_str.split(',')]
+        iterable = iterable.strip()
+
+        # Parse body until endfor
+        body, pos = self._parse_nodes(tokens, pos, stop_keywords={"endfor"})
+
+        # Skip past 'endfor'
+        if pos < len(tokens):
+            pos += 1
+
+        return ForNode(variables, iterable, body), pos
+
+    def _parse_if(self, tokens: list, pos: int) -> tuple[IfNode, int]:
+        """Parse an if/else/endif block starting at pos."""
+        _, cmd = tokens[pos]
+        pos += 1
+
+        # Parse: if [not] {{ expr }}
+        negated = False
+        condition_part = cmd[3:].strip()  # Remove 'if '
+
+        if condition_part.startswith("not "):
+            negated = True
+            condition_part = condition_part[4:].strip()
+
+        # Extract expression from {{ ... }} if present
+        expr_match = re.match(r'\{\{\s*(.+?)\s*\}\}', condition_part)
+        if expr_match:
+            condition_expr = expr_match.group(1).strip()
+        else:
+            condition_expr = condition_part
+
+        # Parse then body until else or endif
+        then_body, pos = self._parse_nodes(tokens, pos, stop_keywords={"else", "endif"})
+
+        else_body = []
+        if pos < len(tokens):
+            _, stop_cmd = tokens[pos]
+            if stop_cmd.strip() == "else":
+                pos += 1
+                # Parse else body until endif
+                else_body, pos = self._parse_nodes(tokens, pos, stop_keywords={"endif"})
+
+        # Skip past 'endif'
+        if pos < len(tokens):
+            pos += 1
+
+        return IfNode(condition_expr, negated, then_body, else_body), pos
+
+    # --- Node Evaluation ---
+
+    def _evaluate_nodes(self, nodes: list, scope: VariableScope) -> str:
+        """Evaluate a list of nodes with the given variable scope."""
+        parts = []
+        for node in nodes:
+            if isinstance(node, TextNode):
+                parts.append(self._resolve_text(node.text, scope))
+            elif isinstance(node, ForNode):
+                parts.append(self._evaluate_for(node, scope))
+            elif isinstance(node, IfNode):
+                parts.append(self._evaluate_if(node, scope))
+        return ''.join(parts)
+
+    def _evaluate_for(self, node: ForNode, scope: VariableScope) -> str:
+        """Evaluate a for loop node."""
+        iterable = self._resolve_iterable(node.iterable, scope)
+        if not iterable:
+            return ""
+
+        results = []
+        total = len(iterable)
+
+        for index, item in enumerate(iterable):
+            loop_meta = {
+                "index": index,
+                "first": index == 0,
+                "last": index == total - 1,
+            }
+
+            scope.push({"loop": loop_meta})
+
+            if isinstance(item, tuple) and len(item) == 2:
+                # Map iteration: (key, value)
+                if len(node.variables) >= 2:
+                    scope.set(node.variables[0], item[0])
+                    scope.set(node.variables[1], item[1])
+                elif len(node.variables) == 1:
+                    scope.set(node.variables[0], item[0])
+            else:
+                # Array or range iteration
+                if node.variables:
+                    scope.set(node.variables[0], item)
+
+            results.append(self._evaluate_nodes(node.body, scope))
+            scope.pop()
+
+        return ''.join(results)
+
+    def _evaluate_if(self, node: IfNode, scope: VariableScope) -> str:
+        """Evaluate an if/else node."""
+        condition_value = self._resolve_expression(node.condition_expr, scope)
+        is_truthy = self._is_truthy(condition_value)
+
+        if node.negated:
+            is_truthy = not is_truthy
+
+        if is_truthy:
+            return self._evaluate_nodes(node.then_body, scope)
+        else:
+            return self._evaluate_nodes(node.else_body, scope)
+
+    def _is_truthy(self, value: Any) -> bool:
+        """Determine if a value is truthy."""
+        if value is None:
+            return False
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, (int, float)):
+            return value != 0
+        s = str(value).strip().lower()
+        return s not in ("", "false", "0", "none")
+
+    # --- Iterable Resolution ---
+
+    def _resolve_iterable(self, iterable_expr: str, scope: VariableScope) -> list:
+        """Resolve an iterable expression to a list of items."""
+        # Range: "0..10" or "-5..5"
+        range_match = re.match(r'^(-?\d+)\.\.(-?\d+)$', iterable_expr)
+        if range_match:
+            start, end = int(range_match.group(1)), int(range_match.group(2))
+            return list(range(start, end))
+
+        # Colors map: "colors"
+        if iterable_expr == "colors":
+            colors_map = self._build_colors_map()
+            return list(colors_map.items())
+
+        # Palette: "palettes.primary" etc.
+        if iterable_expr.startswith("palettes."):
+            palette_name = iterable_expr.split('.', 1)[1]
+            entries = self._get_palette_entries(palette_name)
+            # Return as list of dicts (each entry is a color modes dict)
+            return entries
+
+        # Check scope for iterable variable
+        val = scope.get(iterable_expr)
+        if val is not None:
+            if isinstance(val, dict):
+                return list(val.items())
+            if isinstance(val, (list, tuple)):
+                return list(val)
+
+        self._log_warning(f"Unknown iterable: {iterable_expr}")
+        return []
+
+    # --- Expression Resolution ---
+
+    def _resolve_text(self, text: str, scope: VariableScope) -> str:
+        """Resolve all {{ expr }} tags in a text segment."""
+        def replace(match):
+            expr = match.group(1).strip()
+            return str(self._resolve_expression(expr, scope))
+
+        return self._EXPR_RE.sub(replace, text)
+
+    def _resolve_expression(self, expr: str, scope: VariableScope) -> Any:
+        """Resolve an expression, checking scope variables first, then colors."""
+        # Split by pipe for filters
+        parts = self._split_pipes(expr)
+
+        if not parts:
+            return ""
+
+        base = parts[0].strip()
+        filters = [p.strip() for p in parts[1:]]
+
+        # Try scope resolution first
+        resolved = self._resolve_from_scope(base, scope)
+        if resolved is not None:
+            result_str = str(resolved)
+            for filter_str in filters:
+                result_str = self._apply_string_or_color_filter(result_str, filter_str, expr)
+            return result_str
+
+        # Fall back to colors.name.mode.format parsing
+        if base.startswith('colors.'):
+            return self._process_color_expression(base, filters, expr)
+
+        # Unknown expression - return as-is
+        return f"{{{{{expr}}}}}"
+
+    def _split_pipes(self, expr: str) -> list[str]:
+        """Split expression by pipe, respecting quoted strings."""
+        parts = []
+        current = []
+        in_quotes = False
+        quote_char = None
+
+        for char in expr:
+            if char in ('"', "'") and not in_quotes:
+                in_quotes = True
+                quote_char = char
+                current.append(char)
+            elif char == quote_char and in_quotes:
+                in_quotes = False
+                quote_char = None
+                current.append(char)
+            elif char == '|' and not in_quotes:
+                parts.append(''.join(current))
+                current = []
+            else:
+                current.append(char)
+
+        if current:
+            parts.append(''.join(current))
+
+        return parts
+
+    def _resolve_from_scope(self, base: str, scope: VariableScope) -> Optional[Any]:
+        """Resolve a dotted path from scope variables."""
+        if not scope.is_active:
+            return None
+
+        parts = base.split('.')
+        first = parts[0]
+
+        val = scope.get(first)
+        if val is None:
+            return None
+
+        # Navigate dotted path
+        for i, part in enumerate(parts[1:], 1):
+            if isinstance(val, dict) and part in val:
+                val = val[part]
+            elif isinstance(val, str) and val.startswith('#') and part in KNOWN_FORMATS:
+                # It's a hex color string and remaining part is a format specifier
+                color = Color.from_hex(val)
+                return self._format_color(color, part)
+            else:
+                return None
+
+        # If the final value is a hex color string, return it as-is
+        return val
+
+    def _process_color_expression(self, base: str, filters: list[str], raw_expr: str) -> str:
+        """Process a colors.name.mode.format expression with optional filters."""
+        base_match = re.match(r'^colors\.([a-z_0-9]+)\.([a-z_0-9]+)\.([a-z_0-9]+)$', base)
+
+        if not base_match:
+            self._log_error(f"Invalid syntax '{base}'. Expected: colors.<name>.<mode>.<format>", raw_expr)
+            return f"{{{{{raw_expr}}}}}"
+
+        color_name, mode, format_type = base_match.groups()
+
+        hex_color = self._get_hex_color(color_name, mode)
+        if not hex_color:
+            return f"{{{{UNKNOWN:{color_name}.{mode}}}}}"
+
+        color = Color.from_hex(hex_color)
+
+        # Apply color filters
+        for filter_str in filters:
+            filter_name, arg = self._parse_filter(filter_str)
+            if filter_name:
+                if filter_name == "replace":
+                    # Replace works on the formatted string, apply after formatting
+                    formatted = self._format_color(color, format_type)
+                    return self._apply_replace(formatted, arg, raw_expr)
+                elif filter_name in self.SUPPORTED_FILTERS:
+                    color = self._apply_filter(color, filter_name, arg, raw_expr)
+                else:
+                    self._log_warning(f"Unknown filter '{filter_name}'")
+
+        return self._format_color(color, format_type)
+
+    # --- Color Access ---
 
     def _get_hex_color(self, color_name: str, mode: str) -> Optional[str]:
         """Get raw hex color value for a color name and mode."""
@@ -133,19 +652,69 @@ class TemplateRenderer:
             self._log_error(f"Unknown format '{format_type}'")
             return color.to_hex()
 
+    # --- Filters ---
+
     def _parse_filter(self, filter_str: str) -> tuple[str, Optional[str]]:
         """Parse a filter string into (name, argument).
 
-        Uses matugen syntax (space-separated): | set_alpha 0.5
+        Supports both syntaxes:
+          | set_alpha 0.5       (space-separated)
+          | set_alpha: 0.5      (colon-separated, matugen-style)
+          | replace: "_", "-"   (colon with quoted args)
         """
         filter_str = filter_str.strip()
+
+        # Check for colon syntax: name: args
+        colon_match = re.match(r'^([a-z_]+)\s*:\s*(.+)$', filter_str)
+        if colon_match:
+            return colon_match.group(1), colon_match.group(2).strip()
+
+        # Space syntax: name arg
         if ' ' in filter_str:
             name, arg = filter_str.split(None, 1)
             return name.strip(), arg.strip()
+
         return filter_str, None
 
+    def _apply_string_or_color_filter(self, value: str, filter_str: str, raw_expr: str) -> str:
+        """Apply a filter to a string value (may be a color hex or plain string)."""
+        name, arg = self._parse_filter(filter_str)
+
+        if name == "replace":
+            return self._apply_replace(value, arg, raw_expr)
+
+        # Try as color filter if value looks like a hex color
+        if name in self.SUPPORTED_FILTERS and value.startswith('#') and len(value) == 7:
+            color = Color.from_hex(value)
+            color = self._apply_filter(color, name, arg, raw_expr)
+            return color.to_hex()
+
+        self._log_warning(f"Cannot apply filter '{name}' to non-color value")
+        return value
+
+    def _apply_replace(self, value: str, args: Optional[str], raw_expr: str) -> str:
+        """Apply the replace filter: | replace: "search", "replacement" """
+        if not args:
+            self._log_error("replace filter requires arguments", raw_expr)
+            return value
+
+        # Parse quoted arguments: "search", "replacement"
+        match = re.match(r'"([^"]*?)"\s*,\s*"([^"]*?)"', args)
+        if match:
+            find_str, replace_str = match.groups()
+            return value.replace(find_str, replace_str)
+
+        # Try single-quoted: 'search', 'replacement'
+        match = re.match(r"'([^']*?)'\s*,\s*'([^']*?)'", args)
+        if match:
+            find_str, replace_str = match.groups()
+            return value.replace(find_str, replace_str)
+
+        self._log_error(f"replace filter syntax: replace: \"find\", \"replacement\"", raw_expr)
+        return value
+
     def _apply_filter(self, color: Color, filter_name: str, arg: Optional[str], raw_expr: str) -> Color:
-        """Apply a single filter to a color."""
+        """Apply a single color filter."""
         if filter_name not in self.SUPPORTED_FILTERS:
             supported = ", ".join(sorted(self.SUPPORTED_FILTERS.keys()))
             self._log_error(f"Unknown filter '{filter_name}'. Supported: {supported}", raw_expr)
@@ -153,14 +722,12 @@ class TemplateRenderer:
 
         expected_args = self.SUPPORTED_FILTERS[filter_name]
 
-        # Validate argument presence
         if expected_args > 0 and arg is None:
             self._log_error(f"Filter '{filter_name}' requires an argument", raw_expr)
             return color
         if expected_args == 0 and arg is not None:
             self._log_warning(f"Filter '{filter_name}' ignores argument '{arg}'")
 
-        # Parse numeric argument if needed
         num_arg = None
         if expected_args > 0:
             try:
@@ -169,125 +736,59 @@ class TemplateRenderer:
                 self._log_error(f"Filter '{filter_name}' requires numeric argument, got '{arg}'", raw_expr)
                 return color
 
-        # Apply the filter
         h, s, l = color.to_hsl()
 
         if filter_name == "grayscale":
-            # Luminance-based grayscale
             gray = int(0.299 * color.r + 0.587 * color.g + 0.114 * color.b)
             result = Color(gray, gray, gray)
-
         elif filter_name == "invert":
             result = Color(255 - color.r, 255 - color.g, 255 - color.b)
-
         elif filter_name == "set_alpha":
             result = Color(color.r, color.g, color.b)
             result.alpha = max(0.0, min(1.0, num_arg))
-
         elif filter_name == "set_lightness":
-            # Argument is 0-100
             new_l = max(0.0, min(1.0, num_arg / 100.0))
             result = Color.from_hsl(h, s, new_l)
-
         elif filter_name == "set_hue":
-            # Argument is 0-360
             new_h = num_arg % 360
             result = Color.from_hsl(new_h, s, l)
-
         elif filter_name == "set_saturation":
-            # Argument is 0-100
             new_s = max(0.0, min(1.0, num_arg / 100.0))
             result = Color.from_hsl(h, new_s, l)
-
         elif filter_name == "lighten":
-            # Increase lightness by percentage points
             new_l = max(0.0, min(1.0, l + num_arg / 100.0))
             result = Color.from_hsl(h, s, new_l)
-
         elif filter_name == "darken":
-            # Decrease lightness by percentage points
             new_l = max(0.0, min(1.0, l - num_arg / 100.0))
             result = Color.from_hsl(h, s, new_l)
-
         elif filter_name == "saturate":
-            # Increase saturation by percentage points
             new_s = max(0.0, min(1.0, s + num_arg / 100.0))
             result = Color.from_hsl(h, new_s, l)
-
         elif filter_name == "desaturate":
-            # Decrease saturation by percentage points
             new_s = max(0.0, min(1.0, s - num_arg / 100.0))
             result = Color.from_hsl(h, new_s, l)
-
         else:
             result = color
 
-        # Preserve alpha if set
         if hasattr(color, 'alpha') and not hasattr(result, 'alpha'):
             result.alpha = color.alpha
 
         return result
 
-    def _process_expression(self, expr: str) -> str:
-        """Process a full template expression like 'colors.primary.dark.hex | filter1 | filter2: arg'."""
-        # Split by pipe, keeping track of the base and filters
-        parts = [p.strip() for p in expr.split('|')]
-
-        if not parts:
-            self._log_error("Empty expression", expr)
-            return f"{{{{{expr}}}}}"
-
-        # Parse the base: colors.name.mode.format
-        base = parts[0]
-        base_match = re.match(r'^colors\.([a-z_0-9]+)\.([a-z_0-9]+)\.([a-z_0-9]+)$', base)
-
-        if not base_match:
-            self._log_error(f"Invalid syntax '{base}'. Expected: colors.<name>.<mode>.<format>", expr)
-            return f"{{{{{expr}}}}}"
-
-        color_name, mode, format_type = base_match.groups()
-
-        # Get the hex color
-        hex_color = self._get_hex_color(color_name, mode)
-        if not hex_color:
-            return f"{{{{UNKNOWN:{color_name}.{mode}}}}}"
-
-        # Start with the color
-        color = Color.from_hex(hex_color)
-
-        # Apply filters if any
-        filters = parts[1:]
-        for filter_str in filters:
-            filter_name, arg = self._parse_filter(filter_str)
-            if filter_name:
-                color = self._apply_filter(color, filter_name, arg, expr)
-
-        # Format the final color
-        return self._format_color(color, format_type)
+    # --- Main Render Methods ---
 
     def render(self, template_text: str) -> str:
-        """Replace all tags in template text."""
+        """Render a template string, processing blocks and expressions."""
         self._error_count = 0
 
-        # Pattern matches {{ ... }} with any content inside (single line only)
-        # We'll parse the content ourselves for better error reporting
-        pattern = r"\{\{\s*([^}\n]+?)\s*\}\}"
+        # Parse template into node tree
+        nodes = self._parse_template(template_text)
 
-        def replace(match):
-            expr = match.group(1).strip()
-
-            # Check if it starts with 'colors.'
-            if not expr.startswith('colors.'):
-                # Not a color expression - could be other template syntax
-                # Return as-is for now (or could log warning)
-                return match.group(0)
-
-            return self._process_expression(expr)
-
-        result = re.sub(pattern, replace, template_text)
+        # Evaluate with empty scope
+        scope = VariableScope()
+        result = self._evaluate_nodes(nodes, scope)
 
         # Process escape sequences (matugen-compatible)
-        # \\ in template becomes \ in output
         result = result.replace('\\\\', '\\')
 
         if self._error_count > 0:
@@ -306,7 +807,6 @@ class TemplateRenderer:
             template_text = input_path.read_text()
             rendered_text = self.render(template_text)
 
-            # Skip writing if there were errors (keeps previous working version)
             if self._error_count > 0:
                 print(f"Skipping {output_path}: template has {self._error_count} error(s)", file=sys.stderr)
             else:
@@ -354,16 +854,13 @@ class TemplateRenderer:
                 compare_to = template.get("compare_to")
 
                 if colors_to_compare and compare_to:
-                    # Render compare_to to get the actual hex color
                     rendered_compare_to = self.render(compare_to)
-                    # Find the closest color name
                     closest_color_value = find_closest_color(rendered_compare_to, colors_to_compare)
 
                 # Execute pre_hook if specified
                 pre_hook = template.get("pre_hook")
                 if pre_hook:
                     import subprocess
-                    # Substitute closest_color first, then render color variables
                     if closest_color_value:
                         pre_hook = self._substitute_closest_color(pre_hook, closest_color_value)
                     pre_hook = self.render(pre_hook)
@@ -376,7 +873,6 @@ class TemplateRenderer:
                 post_hook = template.get("post_hook")
                 if post_hook:
                     import subprocess
-                    # Substitute closest_color first, then render color variables
                     if closest_color_value:
                         post_hook = self._substitute_closest_color(post_hook, closest_color_value)
                     post_hook = self.render(post_hook)
