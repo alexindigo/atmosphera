@@ -62,7 +62,7 @@ Item {
 
     const results = FuzzySort.go(trimmed, items, {
                                    "keys": ["label", "subTabName", "description"],
-                                   "limit": 3,
+                                   "limit": 10,
                                    "scoreFn": function (r) {
                                      const labelScore = r[0].score;
                                      const subTabScore = r[1].score * 1.5;
