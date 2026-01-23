@@ -35,6 +35,7 @@ Item {
   property string pendingAction: ""
   property bool timerActive: false
   property int timeRemaining: 0
+  readonly property bool weatherReady: Settings.data.location.weatherEnabled && (LocationService.data.weather !== null)
 
   // Timer management functions
   function startTimer(action) {
