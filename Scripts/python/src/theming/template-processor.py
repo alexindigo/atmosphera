@@ -308,7 +308,8 @@ def main() -> int:
 
     # Process templates
     if args.render or args.config:
-        renderer = TemplateRenderer(result, default_mode=args.default_mode)
+        image_path = str(args.image) if args.image else None
+        renderer = TemplateRenderer(result, default_mode=args.default_mode, image_path=image_path)
 
         if args.render:
             for render_spec in args.render:

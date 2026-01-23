@@ -121,6 +121,7 @@ class TemplateRenderer:
         "darken": 1,
         "saturate": 1,
         "desaturate": 1,
+        "auto_lightness": 1,
     }
 
     # Regex for block delimiters: <* ... *>
@@ -129,10 +130,11 @@ class TemplateRenderer:
     # Regex for expression tags: {{ ... }}
     _EXPR_RE = re.compile(r"\{\{\s*([^}\n]+?)\s*\}\}")
 
-    def __init__(self, theme_data: dict[str, dict[str, str]], verbose: bool = True, default_mode: str = "dark"):
+    def __init__(self, theme_data: dict[str, dict[str, str]], verbose: bool = True, default_mode: str = "dark", image_path: Optional[str] = None):
         self.theme_data = theme_data
         self.verbose = verbose
         self.default_mode = default_mode
+        self.image_path = image_path
         self._current_file: Optional[str] = None
         self._error_count = 0
         self._colors_map: Optional[dict[str, dict[str, str]]] = None
@@ -500,6 +502,13 @@ class TemplateRenderer:
                 result_str = self._apply_string_or_color_filter(result_str, filter_str, expr)
             return result_str
 
+        # Handle {{image}} tag - resolves to source image path
+        if base == 'image':
+            result_str = self.image_path or ""
+            for filter_str in filters:
+                result_str = self._apply_string_or_color_filter(result_str, filter_str, expr)
+            return result_str
+
         # Fall back to colors.name.mode.format parsing
         if base.startswith('colors.'):
             return self._process_color_expression(base, filters, expr)
@@ -767,6 +776,13 @@ class TemplateRenderer:
         elif filter_name == "desaturate":
             new_s = max(0.0, min(1.0, s - num_arg / 100.0))
             result = Color.from_hsl(h, new_s, l)
+        elif filter_name == "auto_lightness":
+            # If lightness < 50%, lighten; otherwise darken (push toward mid-lightness)
+            if l < 0.5:
+                new_l = max(0.0, min(1.0, l + num_arg / 100.0))
+            else:
+                new_l = max(0.0, min(1.0, l - num_arg / 100.0))
+            result = Color.from_hsl(h, s, new_l)
         else:
             result = color
 
