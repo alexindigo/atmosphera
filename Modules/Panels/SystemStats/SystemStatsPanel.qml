@@ -132,7 +132,7 @@ SmartPanel {
                 target: SystemStatService
                 function onCpuTempChanged() {
                   if (TooltipService.activeTooltip && TooltipService.activeTooltip.targetItem === cpuTempGauge) {
-                    TooltipService.updateText(I18n.tr("system-monitor.cpu-temp") + `: ${Math.round(SystemStatService.cpuTemp)}°C`)
+                    TooltipService.updateText(I18n.tr("system-monitor.cpu-temp") + `: ${Math.round(SystemStatService.cpuTemp)}°C`);
                   }
                 }
               }
@@ -158,7 +158,7 @@ SmartPanel {
                 target: SystemStatService
                 function onGpuTempChanged() {
                   if (TooltipService.activeTooltip && TooltipService.activeTooltip.targetItem === gpuTempGauge) {
-                    TooltipService.updateText(I18n.tr("system-monitor.gpu-temp") + `: ${Math.round(SystemStatService.gpuTemp)}°C`)
+                    TooltipService.updateText(I18n.tr("system-monitor.gpu-temp") + `: ${Math.round(SystemStatService.gpuTemp)}°C`);
                   }
                 }
               }
