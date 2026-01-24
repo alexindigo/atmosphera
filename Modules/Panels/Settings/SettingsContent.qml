@@ -719,6 +719,10 @@ Item {
             }
 
             onTextChanged: root.searchText = text
+            onEditingFinished: {
+              if (root.searchText.trim() !== "")
+                root.searchActivate();
+            }
           }
 
           // Search button for collapsed sidebar
