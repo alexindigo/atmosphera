@@ -579,7 +579,10 @@
       "density-compact": "緊湊",
       "density-default": "預設",
       "density-mini": "迷你",
-      "density-spacious": "寬敞"
+      "density-spacious": "寬敞",
+      "type-simple": "簡約",
+      "type-floating": "懸浮",
+      "type-framed": "邊框"
     },
     "control-center": {
       "quick-settings-style-classic": "古典",
@@ -707,6 +710,10 @@
       "appearance-desc": "自訂工具列的外觀及位置",
       "appearance-floating-description": "將工具列以懸浮的圓弧長條狀顯示",
       "appearance-floating-label": "懸浮工具列",
+      "appearance-frame-radius": "內圓角",
+      "appearance-frame-settings-description": "調整邊框粗細和內圓角半徑",
+      "appearance-frame-settings-label": "邊框設定",
+      "appearance-frame-thickness": "粗細",
       "appearance-hide-on-overview-description": "當在合成器概覽時, 隱藏工具列並關閉面板",
       "appearance-hide-on-overview-label": "概覽時隱藏工具列",
       "appearance-margins-description": "調整懸浮工具列的邊距",
@@ -721,6 +728,8 @@
       "appearance-show-capsule-label": "顯示小容器",
       "appearance-show-outline-description": "讓每個小工具都顯示可視邊框",
       "appearance-show-outline-label": "顯示小工具外框",
+      "appearance-type-description": "選擇欄的樣式：簡約、懸浮或邊框",
+      "appearance-type-label": "欄類型",
       "appearance-use-separate-opacity-description": "啟用後可針對工具列背景使用分開的不透明度數值",
       "appearance-use-separate-opacity-label": "分開設定工具列不透明度",
       "monitor-configure-widgets": "設定小工具",

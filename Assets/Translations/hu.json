@@ -579,7 +579,10 @@
       "density-compact": "Kompakt",
       "density-default": "Alapértelmezett",
       "density-mini": "Mini",
-      "density-spacious": "Tágas"
+      "density-spacious": "Tágas",
+      "type-simple": "Egyszerű",
+      "type-floating": "Lebegő",
+      "type-framed": "Keretes"
     },
     "control-center": {
       "quick-settings-style-classic": "Klasszikus",
@@ -707,6 +710,10 @@
       "appearance-desc": "A sáv megjelenésének és pozíciójának testreszabása.",
       "appearance-floating-description": "Megjeleníti a sávot lebegő „pirulaként”.",
       "appearance-floating-label": "Lebegő sáv",
+      "appearance-frame-radius": "Belső sugár",
+      "appearance-frame-settings-description": "Állítsa be a keret vastagságát és a belső sarok sugarát",
+      "appearance-frame-settings-label": "Keret beállításai",
+      "appearance-frame-thickness": "Vastagság",
       "appearance-hide-on-overview-description": "A sáv elrejtése és a panelek bezárása, amikor a kompozitor áttekintése aktív.",
       "appearance-hide-on-overview-label": "Sáv elrejtése az áttekintésben",
       "appearance-margins-description": "Beállítja a lebegő sáv körüli margókat.",
@@ -721,6 +728,8 @@
       "appearance-show-capsule-label": "Kapszula megjelenítése",
       "appearance-show-outline-description": "Látható szegély megjelenítése minden widget körül.",
       "appearance-show-outline-label": "Widget körvonalak megjelenítése",
+      "appearance-type-description": "Válassza ki a sáv stílusát: Egyszerű, Lebegő vagy Keretes",
+      "appearance-type-label": "Sáv típusa",
       "appearance-use-separate-opacity-description": "Lehetővé teszi egy külön átlátszatlansági érték használatát a sáv hátteréhez.",
       "appearance-use-separate-opacity-label": "Külön oszlop átlátszóság használata",
       "monitor-configure-widgets": "Widgetek konfigurálása",

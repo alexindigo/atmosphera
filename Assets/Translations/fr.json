@@ -579,7 +579,10 @@
       "density-compact": "Compact",
       "density-default": "Défaut",
       "density-mini": "Mini",
-      "density-spacious": "Spacieux"
+      "density-spacious": "Spacieux",
+      "type-simple": "Simple",
+      "type-floating": "Flottante",
+      "type-framed": "Encadrée"
     },
     "control-center": {
       "quick-settings-style-classic": "Classique",
@@ -707,6 +710,10 @@
       "appearance-desc": "Personnalisez l'apparence et la position de la barre.",
       "appearance-floating-description": "Afficher la barre sous forme de 'pilule' flottante.",
       "appearance-floating-label": "Barre flottante",
+      "appearance-frame-radius": "Rayon interne",
+      "appearance-frame-settings-description": "Ajuster l'épaisseur du cadre et le rayon interne",
+      "appearance-frame-settings-label": "Paramètres du cadre",
+      "appearance-frame-thickness": "Épaisseur",
       "appearance-hide-on-overview-description": "Masquer la barre et fermer les panneaux lorsque l'aperçu du compositeur est actif.",
       "appearance-hide-on-overview-label": "Masquer la barre dans l'aperçu",
       "appearance-margins-description": "Ajustez les marges autour de la barre flottante.",
@@ -721,6 +728,8 @@
       "appearance-show-capsule-label": "Afficher la capsule",
       "appearance-show-outline-description": "Affiche une bordure visible autour de chaque widget.",
       "appearance-show-outline-label": "Afficher les contours des widgets",
+      "appearance-type-description": "Choisissez le style de la barre : Simple, Flottante ou Encadrée",
+      "appearance-type-label": "Type de barre",
       "appearance-use-separate-opacity-description": "Activer l'utilisation d'une valeur d'opacité distincte pour l'arrière-plan de la barre.",
       "appearance-use-separate-opacity-label": "Utiliser l'opacité des barres séparément",
       "monitor-configure-widgets": "Configurer les widgets",

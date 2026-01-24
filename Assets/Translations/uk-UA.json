@@ -579,7 +579,10 @@
       "density-compact": "Компактний",
       "density-default": "Стандартний",
       "density-mini": "Міні",
-      "density-spacious": "Просторий"
+      "density-spacious": "Просторий",
+      "type-simple": "Простий",
+      "type-floating": "Плаваючий",
+      "type-framed": "У рамці"
     },
     "control-center": {
       "quick-settings-style-classic": "Класичний",
@@ -707,6 +710,10 @@
       "appearance-desc": "Налаштуйте зовнішній вигляд та положення панелі.",
       "appearance-floating-description": "Відображати панель як плаваючу 'капсулу'. Примітка: Це перемістить кути екрана до країв.",
       "appearance-floating-label": "Плаваюча панель (Острівець)",
+      "appearance-frame-radius": "Внутрішній радіус",
+      "appearance-frame-settings-description": "Налаштуйте товщину рамки та внутрішній радіус кутів",
+      "appearance-frame-settings-label": "Налаштування рамки",
+      "appearance-frame-thickness": "Товщина",
       "appearance-hide-on-overview-description": "Приховати панель і закрити панелі, коли активний огляд компонувальника.",
       "appearance-hide-on-overview-label": "Приховати панель на огляді",
       "appearance-margins-description": "Налаштуйте поля навколо плаваючої панелі.",
@@ -721,6 +728,8 @@
       "appearance-show-capsule-label": "Показувати капсулу",
       "appearance-show-outline-description": "Відображає видиму рамку навколо кожного віджета.",
       "appearance-show-outline-label": "Показувати контури віджетів",
+      "appearance-type-description": "Виберіть стиль панелі: Простий, Плаваючий або У рамці",
+      "appearance-type-label": "Тип панелі",
       "appearance-use-separate-opacity-description": "Увімкнути використання окремого значення прозорості для фону панелі.",
       "appearance-use-separate-opacity-label": "Використовувати окрему прозорість стовпців",
       "monitor-configure-widgets": "Налаштувати віджети",

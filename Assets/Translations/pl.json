@@ -579,7 +579,10 @@
       "density-compact": "Kompaktowy",
       "density-default": "Domyślny",
       "density-mini": "Mini",
-      "density-spacious": "Przestronny"
+      "density-spacious": "Przestronny",
+      "type-simple": "Prosty",
+      "type-floating": "Pływający",
+      "type-framed": "Obramowany"
     },
     "control-center": {
       "quick-settings-style-classic": "Klasyczny",
@@ -707,6 +710,10 @@
       "appearance-desc": "Dostosuj wygląd i pozycję paska.",
       "appearance-floating-description": "Wyświetl pasek jako pływającą 'pigułkę'.",
       "appearance-floating-label": "Pływający pasek",
+      "appearance-frame-radius": "Promień wewnętrzny",
+      "appearance-frame-settings-description": "Dostosuj grubość ramki i wewnętrzny promień narożników",
+      "appearance-frame-settings-label": "Ustawienia ramki",
+      "appearance-frame-thickness": "Grubość",
       "appearance-hide-on-overview-description": "Ukryj pasek i zamknij panele, gdy aktywny jest przegląd kompozytora.",
       "appearance-hide-on-overview-label": "Ukryj pasek w przeglądzie",
       "appearance-margins-description": "Dostosuj marginesy wokół pływającego paska.",
@@ -721,6 +728,8 @@
       "appearance-show-capsule-label": "Pokaż kapsułę",
       "appearance-show-outline-description": "Wyświetla widoczne obramowanie wokół każdego widżetu.",
       "appearance-show-outline-label": "Pokaż obramowanie widżetów",
+      "appearance-type-description": "Wybierz styl paska: Prosty, Pływający lub Obramowany",
+      "appearance-type-label": "Typ paska",
       "appearance-use-separate-opacity-description": "Umożliwia użycie oddzielnej wartości krycia dla tła paska.",
       "appearance-use-separate-opacity-label": "Użyj osobnej przezroczystości słupków",
       "monitor-configure-widgets": "Skonfiguruj widżety",

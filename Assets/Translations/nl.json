@@ -579,7 +579,10 @@
       "density-compact": "Compact",
       "density-default": "Standaard",
       "density-mini": "Mini",
-      "density-spacious": "Ruim"
+      "density-spacious": "Ruim",
+      "type-simple": "Eenvoudig",
+      "type-floating": "Zwevend",
+      "type-framed": "Omkaderd"
     },
     "control-center": {
       "quick-settings-style-classic": "Klassiek",
@@ -707,6 +710,10 @@
       "appearance-desc": "Pas de uitstraling en positie van de balk aan.",
       "appearance-floating-description": "Toon de balk weer als een zwevende 'pil'.",
       "appearance-floating-label": "Zwevende balk",
+      "appearance-frame-radius": "Binnenradius",
+      "appearance-frame-settings-description": "Pas de kaderdikte en binnenste hoekradius aan",
+      "appearance-frame-settings-label": "Kaderinstellingen",
+      "appearance-frame-thickness": "Dikte",
       "appearance-hide-on-overview-description": "Verberg de balk en sluit panelen wanneer het compositoroverzicht actief is.",
       "appearance-hide-on-overview-label": "Balk verbergen in overzicht",
       "appearance-margins-description": "Pas de marges rond de zwevende balk aan.",
@@ -721,6 +728,8 @@
       "appearance-show-capsule-label": "Capsules tonen",
       "appearance-show-outline-description": "Toon een zichtbare rand rondom elke widget.",
       "appearance-show-outline-label": "Toon widget-omtrekken",
+      "appearance-type-description": "Kies de stijl van de balk: Eenvoudig, Zwevend of Omkaderd",
+      "appearance-type-label": "Balktype",
       "appearance-use-separate-opacity-description": "Maak het mogelijk om een aparte dekkingswaarde te gebruiken voor de achtergrond van de balk.",
       "appearance-use-separate-opacity-label": "Gebruik afzonderlijke balkdekking",
       "monitor-configure-widgets": "Widgets configureren",

@@ -579,7 +579,10 @@
       "density-compact": "Compacta",
       "density-default": "Padrão",
       "density-mini": "Mini",
-      "density-spacious": "Espaçoso(a)"
+      "density-spacious": "Espaçoso(a)",
+      "type-simple": "Simples",
+      "type-floating": "Flutuante",
+      "type-framed": "Emoldurada"
     },
     "control-center": {
       "quick-settings-style-classic": "Clássico",
@@ -707,6 +710,10 @@
       "appearance-desc": "Personalize a aparência e a posição da barra.",
       "appearance-floating-description": "Exibe a barra como uma 'pílula' flutuante.",
       "appearance-floating-label": "Barra flutuante",
+      "appearance-frame-radius": "Raio Interno",
+      "appearance-frame-settings-description": "Ajuste a espessura da moldura e o raio interno",
+      "appearance-frame-settings-label": "Configurações da Moldura",
+      "appearance-frame-thickness": "Espessura",
       "appearance-hide-on-overview-description": "Ocultar a barra e fechar os painéis quando a visão geral do compositor estiver ativa.",
       "appearance-hide-on-overview-label": "Ocultar barra na visão geral",
       "appearance-margins-description": "Ajuste as margens ao redor da barra flutuante.",
@@ -721,6 +728,8 @@
       "appearance-show-capsule-label": "Mostrar cápsula",
       "appearance-show-outline-description": "Exibe uma borda visível ao redor de cada widget.",
       "appearance-show-outline-label": "Mostrar contornos do widget",
+      "appearance-type-description": "Escolha o estilo da barra: Simples, Flutuante ou Emoldurada",
+      "appearance-type-label": "Tipo de Barra",
       "appearance-use-separate-opacity-description": "Permitir usar um valor de opacidade separado para o fundo da barra.",
       "appearance-use-separate-opacity-label": "Usar opacidade separada para as barras",
       "monitor-configure-widgets": "Configurar widgets",

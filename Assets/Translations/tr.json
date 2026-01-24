@@ -579,7 +579,10 @@
       "density-compact": "Sıkı",
       "density-default": "Varsayılan",
       "density-mini": "Ufak",
-      "density-spacious": "Geniş"
+      "density-spacious": "Geniş",
+      "type-simple": "Basit",
+      "type-floating": "Yüzen",
+      "type-framed": "Çerçeveli"
     },
     "control-center": {
       "quick-settings-style-classic": "Klasik",
@@ -707,6 +710,10 @@
       "appearance-desc": "Araç çubuğunun görünümünü ve konumunu özelleştirin.",
       "appearance-floating-description": "Araç çubuğunu yüzen bir 'kapsül' olarak görüntüler. Not: Bu, ekran köşelerini kenarlara taşıyacaktır.",
       "appearance-floating-label": "Yüzen araç çubuğu",
+      "appearance-frame-radius": "İç Yarıçap",
+      "appearance-frame-settings-description": "Çerçeve kalınlığını ve iç köşe yarıçapını ayarlayın",
+      "appearance-frame-settings-label": "Çerçeve Ayarları",
+      "appearance-frame-thickness": "Kalınlık",
       "appearance-hide-on-overview-description": "Kompozitör önizlemesi aktif olduğunda çubuğu gizle ve panelleri kapat.",
       "appearance-hide-on-overview-label": "Genel bakışta çubuğu gizle",
       "appearance-margins-description": "Yüzen araç çubuğunun etrafındaki kenar boşluklarını ayarlayın.",
@@ -721,6 +728,8 @@
       "appearance-show-capsule-label": "Kapsülü göster",
       "appearance-show-outline-description": "Her widget'ın etrafında görünür bir kenarlık görüntüler.",
       "appearance-show-outline-label": "Araç kutusu ana hatlarını göster",
+      "appearance-type-description": "Çubuk stilini seçin: Basit, Yüzen veya Çerçeveli",
+      "appearance-type-label": "Çubuk Türü",
       "appearance-use-separate-opacity-description": "Çubuk arka planı için ayrı bir opaklık değeri kullanmayı etkinleştir.",
       "appearance-use-separate-opacity-label": "Ayrı çubuk opaklığı kullan",
       "monitor-configure-widgets": "Araçları yapılandır",
