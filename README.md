@@ -9,7 +9,7 @@
 <p align="center">
   <a href="https://docs.noctalia.dev/getting-started/installation">
     <img
-      src="https://assets.noctalia.dev/install-noctalia-flat.svg"
+      src="https://assets.noctalia.dev/install-noctalia-flat2.svg"
       alt="Install Noctalia"
     />
   </a>
