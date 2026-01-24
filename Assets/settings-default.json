@@ -1,6 +1,7 @@
 {
   "settingsVersion": 0,
   "bar": {
+    "barType": "simple",
     "position": "top",
     "monitors": [],
     "density": "default",
@@ -12,6 +13,8 @@
     "floating": false,
     "marginVertical": 4,
     "marginHorizontal": 4,
+    "frameThickness": 12,
+    "frameRadius": 20,
     "outerCorners": true,
     "exclusive": true,
     "hideOnOverview": false,
