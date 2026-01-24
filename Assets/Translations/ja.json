@@ -1528,12 +1528,12 @@
       "enabled": "おやすみモードを有効化",
       "enabled-desc": "通知は履歴に保存されます"
     },
+    "donation-opened": "寄付ページがブラウザで開かれました",
     "internet-limited": "インターネット未接続",
     "keyboard-layout": {
       "changed": "キーボードレイアウトを {layout} に変更しました",
       "title": "キーボード"
     },
-    "kofi-opened": "ブラウザで Ko-fi ページを開きました",
     "missing-control-center": {
       "description": "コントロールセンターウィジェットがバーから削除されました。再度アクセスするには、ウィジェットを追加し直す必要があります。バーを右クリックして開くことも可能です",
       "label": "最後のコントロールセンターが削除されました"

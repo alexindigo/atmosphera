@@ -1528,12 +1528,12 @@
       "enabled": "勿擾模式已啟用",
       "enabled-desc": "你會在歷史通知找到這些通知"
     },
+    "donation-opened": "捐款頁面已在您的瀏覽器中開啟",
     "internet-limited": "已連接但沒有網際網路",
     "keyboard-layout": {
       "changed": "切換鍵盤佈局為 {layout}",
       "title": "鍵盤"
     },
-    "kofi-opened": "已在瀏覽器打開 Ko-Fi 頁面",
     "missing-control-center": {
       "description": "控制中心小工具已經從工具列移除, 如果想重新自工具列存取, 你必須把小工具加回來; 你也可以在工具列直接點擊右鍵打開",
       "label": "最後一個控制中心小工具已解除"

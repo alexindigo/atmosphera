@@ -1528,12 +1528,12 @@
       "enabled": "Ne zavarjanak bekapcsolva",
       "enabled-desc": "Ezeket az értesítéseket az előzményekben találja"
     },
+    "donation-opened": "Az adományozási oldal megnyílt a böngésződben",
     "internet-limited": "Csatlakoztatva internet nélkül",
     "keyboard-layout": {
       "changed": "Billentyűzetkiosztás megváltozott: {layout}",
       "title": "Billentyűzet"
     },
-    "kofi-opened": "A Ko-fi oldal megnyílt a böngészőjében",
     "missing-control-center": {
       "description": "A vezérlőközpont widget eltávolításra került a sávról. A sávról való újbóli eléréshez újra hozzá kell adnia a widgetet. Jobb kattintással is megnyithatja a sávon",
       "label": "Utolsó vezérlőközpont widget eltávolítva"

@@ -1528,12 +1528,12 @@
       "enabled": "'Rahatsız etme' etin",
       "enabled-desc": "Bu bildirimleri geçmişinizde bulacaksınız"
     },
+    "donation-opened": "Bağış sayfası tarayıcınızda açıldı",
     "internet-limited": "İnternetsiz bağlandı",
     "keyboard-layout": {
       "changed": "Klavye düzeni {layout} olarak değiştirildi",
       "title": "Klavye"
     },
-    "kofi-opened": "Ko-fi sayfası tarayıcınızda açıldı",
     "missing-control-center": {
       "description": "Kontrol merkezi araç takımı araç çubuğundan kaldırıldı. Araç çubuğundan tekrar erişmek için araç takımını yeniden eklemeniz gerekecek. Araç çubuğuna sağ tıklayarak da açabilirsiniz",
       "label": "Son kontrol merkezi araç takımı kaldırıldı"

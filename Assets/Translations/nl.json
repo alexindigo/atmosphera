@@ -1528,12 +1528,12 @@
       "enabled": "'Niet storen' ingeschakeld",
       "enabled-desc": "Je vindt deze meldingen terug in je geschiedenis"
     },
+    "donation-opened": "Donatiepagina geopend in uw browser",
     "internet-limited": "Verbonden zonder internet",
     "keyboard-layout": {
       "changed": "Toetsenbordindeling gewijzigd naar {layout}",
       "title": "Toetsenbord"
     },
-    "kofi-opened": "Ko-fi-pagina geopend in je browser",
     "missing-control-center": {
       "description": "De bedieningscentrumwidget is uit de balk verwijderd. Om er vanuit de balk weer toegang toe te krijgen, moet je de widget opnieuw toevoegen. Je kunt het ook openen door met de rechtermuisknop op de balk te klikken",
       "label": "Laatste bedieningscentrumwidget verwijderd"
