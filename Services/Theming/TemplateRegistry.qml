@@ -363,6 +363,18 @@ Singleton {
         }
       ],
       "postProcess": () => `${templateApplyScript} btop`
+    },
+    {
+      "id": "zathura",
+      "name": "Zathura",
+      "category": "misc",
+      "input": "zathurarc",
+      "outputs": [
+        {
+          "path": "~/.config/zathura/noctaliarc"
+        }
+      ],
+      "postProcess": () => `${templateApplyScript} zathura`
     }
   ]
 
