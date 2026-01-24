@@ -9,12 +9,14 @@
 <p align="center">
   <a href="https://docs.noctalia.dev/getting-started/installation">
     <img
-      src="https://img.shields.io/badge/🌙_Install_Noctalia-A8AEFF?style=for-the-badge&labelColor=0C0D11"
+      src="https://assets.noctalia.dev/install-badge.svg"
       alt="Install Noctalia"
       style="height: 50px"
     />
   </a>
 </p>
+
+<p><br/></p>
 
 <p align="center">
   <a href="https://github.com/noctalia-dev/noctalia-shell/commits">
