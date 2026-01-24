@@ -318,12 +318,32 @@ SmartPanel {
     selectNextPage();
   }
 
+  function onCtrlHPressed() {
+    if (isGridView) {
+      selectPreviousWrapped();
+    }
+  }
+
   function onCtrlJPressed() {
-    selectNextWrapped();
+    if (isGridView) {
+      selectNextRow();
+    } else {
+      selectNextWrapped();
+    }
   }
 
   function onCtrlKPressed() {
-    selectPreviousWrapped();
+    if (isGridView) {
+      selectPreviousRow();
+    } else {
+      selectPreviousWrapped();
+    }
+  }
+
+  function onCtrlLPressed() {
+    if (isGridView) {
+      selectNextWrapped();
+    }
   }
 
   function onCtrlNPressed() {
