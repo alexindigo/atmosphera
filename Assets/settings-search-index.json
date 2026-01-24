@@ -189,9 +189,9 @@
     "subTabLabel": "common.appearance"
   },
   {
-    "labelKey": "panels.bar.appearance-floating-label",
-    "descriptionKey": "panels.bar.appearance-floating-description",
-    "widget": "NToggle",
+    "labelKey": "panels.bar.appearance-type-label",
+    "descriptionKey": "panels.bar.appearance-type-description",
+    "widget": "NComboBox",
     "tab": 4,
     "tabLabel": "panels.bar.title",
     "subTab": 0,
@@ -201,6 +201,33 @@
     "labelKey": "panels.bar.appearance-outer-corners-label",
     "descriptionKey": "panels.bar.appearance-outer-corners-description",
     "widget": "NToggle",
+    "tab": 4,
+    "tabLabel": "panels.bar.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
+    "labelKey": "panels.bar.appearance-frame-settings-label",
+    "descriptionKey": "panels.bar.appearance-frame-settings-description",
+    "widget": "NLabel",
+    "tab": 4,
+    "tabLabel": "panels.bar.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
+    "labelKey": "panels.bar.appearance-frame-thickness",
+    "descriptionKey": null,
+    "widget": "NValueSlider",
+    "tab": 4,
+    "tabLabel": "panels.bar.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
+    "labelKey": "panels.bar.appearance-frame-radius",
+    "descriptionKey": null,
+    "widget": "NValueSlider",
     "tab": 4,
     "tabLabel": "panels.bar.title",
     "subTab": 0,
