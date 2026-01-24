@@ -1103,9 +1103,20 @@ Item {
               delegate: Loader {
                 anchors.fill: parent
                 active: index === root.currentTabIndex
+                opacity: 0
+
+                NumberAnimation on opacity {
+                  id: fadeInAnim
+                  from: 0
+                  to: 1
+                  duration: Style.animationSlowest
+                  easing.type: Easing.OutCubic
+                  running: false
+                }
 
                 onStatusChanged: {
                   if (status === Loader.Ready && item) {
+                    fadeInAnim.start();
                     const scrollView = item.children[0];
                     if (scrollView && scrollView.toString().includes("ScrollView")) {
                       root.activeScrollView = scrollView;
