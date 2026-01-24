@@ -107,35 +107,13 @@ SmartPanel {
     if (view?.gridView?.activeFocus) {
       let gridView = view.gridView;
       if (gridView.currentIndex >= 0 && gridView.currentIndex < gridView.model.length) {
-        let item = gridView.model[gridView.currentIndex];
-        if (item.isDirectory) {
-          WallpaperService.setBrowsePath(view.targetScreen.name, item.path);
-        } else if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
-          WallpaperService.changeWallpaper(item.path, undefined);
-        } else {
-          WallpaperService.changeWallpaper(item.path, view.targetScreen.name);
-        }
+        view.selectItem(gridView.model[gridView.currentIndex]);
       }
     }
   }
 
   function onEnterPressed() {
-    if (!contentItem)
-      return;
-    let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex);
-    if (view?.gridView?.activeFocus) {
-      let gridView = view.gridView;
-      if (gridView.currentIndex >= 0 && gridView.currentIndex < gridView.model.length) {
-        let item = gridView.model[gridView.currentIndex];
-        if (item.isDirectory) {
-          WallpaperService.setBrowsePath(view.targetScreen.name, item.path);
-        } else if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
-          WallpaperService.changeWallpaper(item.path, undefined);
-        } else {
-          WallpaperService.changeWallpaper(item.path, view.targetScreen.name);
-        }
-      }
-    }
+    onReturnPressed();
   }
 
   panelContent: Rectangle {
@@ -722,6 +700,16 @@ SmartPanel {
       }
     }
 
+    function selectItem(item) {
+      if (item.isDirectory) {
+        WallpaperService.setBrowsePath(targetScreen.name, item.path);
+      } else if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
+        WallpaperService.changeWallpaper(item.path, undefined);
+      } else {
+        WallpaperService.changeWallpaper(item.path, targetScreen.name);
+      }
+    }
+
     // Helper function to cycle view modes
     function cycleViewMode() {
       var mode = Settings.data.wallpaper.viewMode;
@@ -910,14 +898,7 @@ SmartPanel {
         Keys.onPressed: event => {
                           if (event.key === Qt.Key_Return || event.key === Qt.Key_Space) {
                             if (currentIndex >= 0 && currentIndex < filteredItems.length) {
-                              let item = filteredItems[currentIndex];
-                              if (item.isDirectory) {
-                                WallpaperService.setBrowsePath(targetScreen.name, item.path);
-                              } else if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
-                                WallpaperService.changeWallpaper(item.path, undefined);
-                              } else {
-                                WallpaperService.changeWallpaper(item.path, targetScreen.name);
-                              }
+                              selectItem(filteredItems[currentIndex]);
                             }
                             event.accepted = true;
                           }
@@ -1124,13 +1105,7 @@ SmartPanel {
                 onTapped: {
                   wallpaperGridView.forceActiveFocus();
                   wallpaperGridView.currentIndex = index;
-                  if (wallpaperItem.isDirectory) {
-                    WallpaperService.setBrowsePath(targetScreen.name, wallpaperItem.wallpaperPath);
-                  } else if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
-                    WallpaperService.changeWallpaper(wallpaperItem.wallpaperPath, undefined);
-                  } else {
-                    WallpaperService.changeWallpaper(wallpaperItem.wallpaperPath, targetScreen.name);
-                  }
+                  selectItem(modelData);
                 }
               }
             }
