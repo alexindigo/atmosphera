@@ -592,6 +592,11 @@ Singleton {
         const description = generateProcess.buildErrorMessage();
         Logger.e("TemplateProcessor", `Process failed with exit code`, exitCode, description);
         Logger.d("TemplateProcessor", "Failed command:", command.join(" ").substring(0, 500));
+        ToastService.showError(I18n.tr("toast.theming-processor-failed.title"), description);
+      } else if (exitCode === 0 && stderr.text && stderr.text.includes("Template error:")) {
+        const errorLines = stderr.text.split("\n").filter(l => l.includes("Template error:"));
+        const errors = errorLines.slice(0, 3).join("\n") + (errorLines.length > 3 ? `\n... (+${errorLines.length - 3} more)` : "");
+        ToastService.showWarning(I18n.tr("toast.theming-processor-failed.title"), errors);
       }
       // Execute any pending request (handles both kill case and 400ms interval case)
       if (pendingWallpaperRequest || pendingPredefinedRequest) {
