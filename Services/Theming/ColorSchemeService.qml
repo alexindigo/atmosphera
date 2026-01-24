@@ -127,10 +127,10 @@ Singleton {
     if (schemeExists) {
       Settings.data.colorSchemes.predefinedScheme = basename;
       applyScheme(schemeName);
-      ToastService.showNotice("Color Scheme", `Set to ${basename}`, "settings-color-scheme");
+      ToastService.showNotice(I18n.tr("panels.color-scheme.title"), basename, "settings-color-scheme");
     } else {
       Logger.e("ColorScheme", "Scheme not found:", schemeName);
-      ToastService.showError("Color Scheme", `Scheme '${basename}' not found!`);
+      ToastService.showError(I18n.tr("panels.color-scheme.title"), `'${basename}' ` + I18n.tr("common.not-found"));
     }
   }
 
