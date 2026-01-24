@@ -1480,7 +1480,7 @@
     "unknown-app": "Aplicativo desconhecido",
     "uptime": "Atividade: {uptime}",
     "user-requested": "Solicitado pelo usuário",
-    "welcome-back": "Bem-vindo(a) de volta, {user}!",
+    "welcome-back": "Bem-vindo(a) de volta,",
     "widget-settings-title": "Configurações de {widget}"
   },
   "system-monitor": {
