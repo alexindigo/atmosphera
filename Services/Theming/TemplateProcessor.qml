@@ -222,17 +222,23 @@ Singleton {
     const homeDir = Quickshell.env("HOME");
     TemplateRegistry.applications.forEach(app => {
                                             if (app.id === "discord") {
-                                              // Handle Discord clients specially
+                                              // Handle Discord clients specially - multiple CSS themes
                                               if (isTemplateEnabled("discord")) {
-                                                app.clients.forEach(client => {
-                                                                      // Check if this specific client is detected
-                                                                      if (isDiscordClientEnabled(client.name)) {
-                                                                        lines.push(`\n[templates.discord_${client.name}]`);
-                                                                        lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${app.input}"`);
-                                                                        const outputPath = client.path.replace("~", homeDir) + "/themes/noctalia.theme.css";
-                                                                        lines.push(`output_path = "${outputPath}"`);
-                                                                      }
-                                                                    });
+                                                const inputs = Array.isArray(app.input) ? app.input : [app.input];
+                                                inputs.forEach((inputFile, idx) => {
+                                                                 // Derive theme suffix from input filename: discord-midnight.css → midnight
+                                                                 const themeSuffix = inputFile.replace(/^discord-/, "").replace(/\.css$/, "");
+                                                                 app.clients.forEach(client => {
+                                                                                       if (isDiscordClientEnabled(client.name)) {
+                                                                                         lines.push(`\n[templates.discord_${themeSuffix}_${client.name}]`);
+                                                                                         lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${inputFile}"`);
+                                                                                         // First input uses legacy name for backward compatibility
+                                                                                         const outputFile = idx === 0 ? "noctalia.theme.css" : `noctalia-${themeSuffix}.theme.css`;
+                                                                                         const outputPath = client.path.replace("~", homeDir) + `/themes/${outputFile}`;
+                                                                                         lines.push(`output_path = "${outputPath}"`);
+                                                                                       }
+                                                                                     });
+                                                               });
                                               }
                                             } else if (app.id === "code") {
                                               // Handle Code clients specially

@@ -51,7 +51,7 @@
       "hide-if-idle-description": "当电池未充电或放电时，隐藏小部件。",
       "hide-if-idle-label": "空闲时隐藏",
       "hide-if-not-detected-description": "当系统未检测到电池时，隐藏该小部件。",
-      "hide-if-not-detected-label": "如果未被发现，则隐藏",
+      "hide-if-not-detected-label": "未检测到电池时隐藏",
       "low-battery-threshold-description": "当电量低于此百分比时显示警告。",
       "low-battery-threshold-label": "低电量警告阈值",
       "show-noctalia-performance-description": "在电池面板中显示 Noctalia 性能模式切换。<br>禁用 Noctalia 中的阴影和动画以减少资源使用。",
@@ -212,7 +212,7 @@
       "storage-usage-description": "显示磁盘空间使用情况。",
       "storage-usage-label": "存储用量",
       "swap-usage-description": "显示 Swap 使用情况。",
-      "swap-usage-label": "Swap 用量",
+      "swap-usage-label": "Swap",
       "use-monospace-font-description": "使用等宽字体以保持字符宽度一致。",
       "use-monospace-font-label": "等宽字体"
     },
@@ -283,7 +283,7 @@
     "no-battery-detected": "未检测到电池",
     "plugged-in": "已接通电源",
     "power-profile": "电源模式",
-    "time-left": "剩余时间：{time}",
+    "time-left": "续航剩余：{time}",
     "time-until-full": "充满所需时间：{time}"
   },
   "bluetooth": {
@@ -1174,7 +1174,7 @@
       "always-on-top-label": "始终置顶",
       "background-opacity-description": "调整 OSD 背景的不透明度。",
       "background-opacity-label": "背景不透明度",
-      "description": "配置状态反馈指示器，例如音量和亮度。",
+      "description": "配置用于在屏幕亮度、音量等状态发生变化时提供反馈的 OSD。",
       "duration-auto-hide-description": "调整 OSD 消失前的时间。",
       "duration-auto-hide-label": "自动隐藏超时",
       "duration-desc": "屏幕显示自动隐藏前保持可见的时长。",
@@ -1185,7 +1185,7 @@
       "general-desc": "配置 OSD 的可见性和行为。",
       "location-description": "OSD 出现的位置。",
       "monitors-desc": "在特定显示器上显示 OSD。若未选择，则默认全部。",
-      "title": "状态反馈 （OSD）",
+      "title": "状态反馈",
       "types-brightness-description": "当屏幕亮度发生变化时显示 OSD。",
       "types-brightness-label": "亮度",
       "types-custom-text-description": "显示来自 IPC 的自定义文本消息的 OSD。",
@@ -1499,8 +1499,8 @@
       "title": "飞行模式"
     },
     "battery": {
-      "low": "电量低",
-      "low-desc": "电量为 {percent}%。请连接充电器"
+      "low": "电池电量低",
+      "low-desc": "电量仅剩 {percent}%，请插上充电器。"
     },
     "bluetooth": {
       "address-copied": "地址已复制到剪贴板",
@@ -1528,12 +1528,12 @@
       "enabled": "'勿扰模式'已启用",
       "enabled-desc": "您可以在历史记录中找到这些通知"
     },
+    "donation-opened": "捐赠页面已在您的浏览器中打开",
     "internet-limited": "已连接但无互联网",
     "keyboard-layout": {
       "changed": "键盘布局已更改为 {layout}",
       "title": "键盘"
     },
-    "kofi-opened": "Ko-fi 页面已在您的浏览器中打开",
     "missing-control-center": {
       "description": "控制中心小部件已从状态栏中移除。要再次从状态栏访问它，您需要重新添加小部件。您也可以通过右键点击状态栏来打开它",
       "label": "最后一个控制中心小部件已移除"
@@ -1647,8 +1647,8 @@
       "apikey-help": "访问 NSFW 内容需要 API 密钥。",
       "apikey-label": "API 密钥",
       "apikey-managed-by-env": "通过 NOCTALIA_WALLHAVEN_API_KEY 环境变量进行管理。",
-      "apikey-placeholder": "输入您的Wallhaven API密钥",
-      "apply-all-monitors-description": "一次性将选定的壁纸应用到所有显示器。",
+      "apikey-placeholder": "输入您的 Wallhaven API 密钥",
+      "apply-all-monitors-description": "将选定的壁纸应用到所有显示器。",
       "apply-all-monitors-label": "应用到所有显示器",
       "categories-anime": "动漫",
       "categories-label": "分类",
@@ -1660,17 +1660,17 @@
       "purity-nsfw": "少儿不宜",
       "purity-sfw": "安全",
       "purity-sketchy": "可疑",
-      "ratios-all-portrait": "全部纵向",
-      "ratios-all-wide": "所有宽幅",
-      "ratios-any": "任何",
+      "ratios-all-portrait": "纵向",
+      "ratios-all-wide": "横向",
+      "ratios-any": "任意",
       "ratios-label": "宽高比",
       "resolution-atleast": "至少",
       "resolution-exact": "精确",
       "resolution-label": "分辨率",
-      "resolution-mode-label": "模式",
+      "resolution-mode-label": "匹配模式",
       "solid-color-tooltip": "纯色背景",
-      "sorting-date-added": "添加日期",
-      "sorting-favorites": "收藏",
+      "sorting-date-added": "上传日期",
+      "sorting-favorites": "收藏量",
       "sorting-label": "排序方式",
       "sorting-relevance": "相关性",
       "sorting-toplist": "排行榜",

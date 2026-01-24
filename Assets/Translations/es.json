@@ -1528,12 +1528,12 @@
       "enabled": "'No molestar' activado",
       "enabled-desc": "Encontrarás estas notificaciones en tu historial"
     },
+    "donation-opened": "Página de donación abierta en tu navegador",
     "internet-limited": "Conectado sin Internet",
     "keyboard-layout": {
       "changed": "Distribución de teclado cambiada a {layout}",
       "title": "Teclado"
     },
-    "kofi-opened": "Página de Ko-fi abierta en tu navegador",
     "missing-control-center": {
       "description": "El widget del centro de control se eliminó de la barra. Para acceder a él nuevamente desde la barra, debes volver a añadir el widget. También puedes abrirlo haciendo clic derecho en la barra",
       "label": "Se eliminó el último widget del centro de control"

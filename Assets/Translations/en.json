@@ -1528,12 +1528,12 @@
       "enabled": "Do Not Disturb enabled",
       "enabled-desc": "You'll find these notifications in your history"
     },
+    "donation-opened": "Donation page opened in your browser",
     "internet-limited": "Connected without internet",
     "keyboard-layout": {
       "changed": "Keyboard layout changed to {layout}",
       "title": "Keyboard"
     },
-    "kofi-opened": "Ko-fi page opened in your browser",
     "missing-control-center": {
       "description": "The control center widget has been removed from the bar. To access it from the bar again, you will need to re-add the widget. You can open it with right clicking on the bar too",
       "label": "Last control center widget removed"

@@ -1528,12 +1528,12 @@
       "enabled": "'Não perturbe' ativado",
       "enabled-desc": "Você encontrará essas notificações no seu histórico"
     },
+    "donation-opened": "Página de doação aberta no seu navegador",
     "internet-limited": "Conectado sem Internet",
     "keyboard-layout": {
       "changed": "Layout de teclado alterado para {layout}",
       "title": "Teclado"
     },
-    "kofi-opened": "Página do Ko-fi aberta no seu navegador",
     "missing-control-center": {
       "description": "O widget da central de controle foi removido da barra. Para acessá-lo novamente pela barra, adicione o widget novamente. Você também pode abri-lo clicando com o botão direito na barra",
       "label": "Último widget da central de controle removido"

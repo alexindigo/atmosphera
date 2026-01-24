@@ -147,7 +147,7 @@ Singleton {
       "id": "discord",
       "name": "Discord",
       "category": "misc",
-      "input": "discord.css",
+      "input": ["discord-midnight.css", "discord-material.css"],
       "clients": [
         {
           "name": "vesktop",

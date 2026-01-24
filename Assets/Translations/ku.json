@@ -1528,12 +1528,12 @@
       "enabled": "Dengê dernexîne çalak e",
       "enabled-desc": "Hûn ê van agahdariyan di dîroka xwe de bibînin"
     },
+    "donation-opened": "Rûpela bexşînê di geroka we de vebû",
     "internet-limited": "Pêwendîdar bê înternetê",
     "keyboard-layout": {
       "changed": "Şêwaza kilîtdankê bo {layout} hat guhertin",
       "title": "Klavyeya"
     },
-    "kofi-opened": "Rûpela Ko-fi di geroka te de vebû",
     "missing-control-center": {
       "description": "Kurteya kontrolê ji barê hatiye rakirin. Ji bo ku hûn dîsa ji barê bigihîjinê, hûn ê hewce ne ku kurteyê ji nû ve zêde bikin. Her weha hûn dikarin bi rast-klîkkirina li ser barê jî vekin",
       "label": "Amûra dawî ya navenda kontrolê hate rakirin"

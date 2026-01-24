@@ -1528,12 +1528,12 @@
       "enabled": "'Nicht stören' aktiviert",
       "enabled-desc": "Sie finden diese Benachrichtigungen in Ihrem Verlauf"
     },
+    "donation-opened": "Spendenseite in Ihrem Browser geöffnet",
     "internet-limited": "Verbunden ohne Internet",
     "keyboard-layout": {
       "changed": "Tastaturlayout geändert zu {layout}",
       "title": "Tastatur"
     },
-    "kofi-opened": "Ko-fi-Seite in Ihrem Browser geöffnet",
     "missing-control-center": {
       "description": "Das Kontrollzentrum-Widget wurde aus der Leiste entfernt. Um es erneut über die Leiste zu öffnen, fügen Sie das Widget wieder hinzu. Sie können es auch durch Rechtsklick auf die Leiste öffnen",
       "label": "Letztes Kontrollzentrum-Widget entfernt"

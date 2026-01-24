@@ -1528,12 +1528,12 @@
       "enabled": "Nie przeszkadzać włączone",
       "enabled-desc": "Powiadomienia znajdziesz w swojej historii"
     },
+    "donation-opened": "Strona darowizny otwarta w Twojej przeglądarce",
     "internet-limited": "Połączono bez dostępu do internetu",
     "keyboard-layout": {
       "changed": "Układ klawiatury zmieniony na {layout}",
       "title": "Klawiatura"
     },
-    "kofi-opened": "Strona Ko-fi otwarta w przeglądarce",
     "missing-control-center": {
       "description": "Widżet centrum sterowania został usunięty z paska. Aby mieć do niego dostęp, musisz go dodać ponownie. Możesz go również otworzyć, klikając prawym przyciskiem na pasek",
       "label": "Ostatni widżet centrum sterowania usunięty"

@@ -1,6 +1,6 @@
 /**
-* @name noctalia-midnight
-* @description a fork of midnight for noctalia-shell
+* @name Noctalia Midnight
+* @description A fork of 'Midnight' for Noctalia Shell
 * @author refact0r
 * @version 2.1.1
 * @invite nz87hXyvcy
@@ -252,7 +252,7 @@ body {
 }
 
 /* Outer circle (non-selected background) */
-._64e6155a0667273d-outerRadioBase {
+[class*="outerRadioBase"] {
     fill: var(--bg-1) !important;      /* background for non-selected radios */
     stroke: var(--border) !important;  /* ring border */
     stroke-width: 1px;
@@ -260,7 +260,7 @@ body {
 }
 
 /* Outer circle fill (selected) */
-._64e6155a0667273d-outerRadioFill {
+[class*="outerRadioFill"] {
     fill: var(--bg-1) !important;  /* accent color for selected */
     stroke: var(--border) !important;
     opacity: 0;                        /* hidden by default */
@@ -268,47 +268,47 @@ body {
 }
 
 /* Inner dot (selected) */
-._64e6155a0667273d-innerDotRadio {
+[class*="innerDotRadio"] {
     fill: var(--accent-1) !important;      /* contrast dot */
     opacity: 0;                        /* hidden by default */
     transition: opacity 0.2s ease;
 }
 
-/* Show outer fill + inner dot when selected (handles initial render & clicks) */
-.parentSelected__6e9f8 ._64e6155a0667273d-outerRadioFill,
-.parentSelected__6e9f8 ._64e6155a0667273d-innerDotRadio,
-._64e6155a0667273d-outerRadioFill[aria-checked="true"],
-._64e6155a0667273d-innerDotRadio[aria-checked="true"],
-._64e6155a0667273d-outerRadioFill[data-selected="true"],
-._64e6155a0667273d-innerDotRadio[data-selected="true"] {
+/* Show outer fill + inner dot when selected */
+[class*="radioSelection"][data-selected="true"] [class*="outerRadioFill"],
+[class*="radioSelection"][data-selected="true"] [class*="innerDotRadio"],
+[class*="radioSelection"][aria-checked="true"] [class*="outerRadioFill"],
+[class*="radioSelection"][aria-checked="true"] [class*="innerDotRadio"],
+.parentSelected__6e9f8 [class*="outerRadioFill"],
+.parentSelected__6e9f8 [class*="innerDotRadio"] {
     opacity: 1 !important;
 }
 
 /* Hover effect for base ring */
-._64e6155a0667273d-outerRadioBase:hover {
+[class*="outerRadioBase"]:hover {
     stroke: var(--accent-1) !important;
 }
 
 /* Checkbox checkmark and background for selected */
-._714a9a7abaf0392a-checkboxOption[data-selected="true"] ._714a9a7abaf0392a-checkboxIndicator {
-    background-color: var(--bg-1) !important; /* background of selected checkbox */
-    border-color: var(--border) !important; /* optional: accent border */
+[class*="checkboxOption"][data-selected="true"] [class*="checkboxIndicator"] {
+    background-color: transparent !important; /* Removes the solid fill when selected */
+    border-color: var(--accent-1) !important; /* Changes border to accent color when selected */
 }
 
-._714a9a7abaf0392a-checkboxIndicator {
-    background-color: var(--bg-1) !important;  /* background for non-selected checkboxes */
-    border-color: var(--border) !important;    /* neutral border */
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+[class*="checkboxIndicator"] {
+    background-color: transparent !important;
+    border-color: var(--border) !important;
+    transition: border-color 0.2s ease;
 }
 
-._714a9a7abaf0392a-checkboxOption[data-selected="true"] ._714a9a7abaf0392a-checkStroke,
-._714a9a7abaf0392a-checkboxOption[data-selected="true"] ._714a9a7abaf0392a-dot {
+[class*="checkboxOption"][data-selected="true"] [class*="checkStroke"],
+[class*="checkboxOption"][data-selected="true"] [class*="dot"] {
     color: var(--accent-1) !important; /* checkmark/dot color */
 }
 
 /* Hover effect for selected checkbox */
-._714a9a7abaf0392a-checkboxOption[data-selected="true"]:hover ._714a9a7abaf0392a-checkboxIndicator {
-    background-color: var(--bg-1) !important; /* keep background consistent on hover */
+[class*="checkboxOption"]:hover [class*="checkboxIndicator"] {
+    border-color: var(--accent-1) /* keep background consistent on hover */
 }
 
 ._714a9a7abaf0392a-checkboxOption[data-selected="true"]:hover ._714a9a7abaf0392a-checkStroke,
@@ -321,9 +321,25 @@ body {
   color: var(--text-1) !important;
 }
 
-._3b95d7d910416e54-bar._3b95d7d910416e54-mention {
-  background-color: var(--accent-1) !important;
+[class*="unreadMentionsBar"] {
+    background-color: var(--accent-1) !important;
+    border: 1px solid var(--border);
 }
-._3b95d7d910416e54-bar._3b95d7d910416e54-mention ._3b95d7d910416e54-text {
-  color: var(--text-0) !important;
+
+[class*="unreadMentionsBar"][class*="mention"] {
+    background-color: var(--accent-1) !important;
+}
+
+[class*="unreadMentionsBar"][class*="unread"] {
+    background-color: var(--bg-1) !important;
+    border-color: var(--accent-1) !important;
+}
+
+[class*="unreadMentionsBar"] [class*="text"] {
+    color: var(--text-0) !important;
+    font-weight: 700;
+}
+
+[class*="unreadMentionsIndicator"] [class*="bar"] {
+    background-color: var(--accent-1) !important;
 }
