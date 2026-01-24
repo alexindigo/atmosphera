@@ -119,6 +119,25 @@ SmartPanel {
     }
   }
 
+  function onEnterPressed() {
+    if (!contentItem)
+      return;
+    let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex);
+    if (view?.gridView?.activeFocus) {
+      let gridView = view.gridView;
+      if (gridView.currentIndex >= 0 && gridView.currentIndex < gridView.model.length) {
+        let item = gridView.model[gridView.currentIndex];
+        if (item.isDirectory) {
+          WallpaperService.setBrowsePath(view.targetScreen.name, item.path);
+        } else if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
+          WallpaperService.changeWallpaper(item.path, undefined);
+        } else {
+          WallpaperService.changeWallpaper(item.path, view.targetScreen.name);
+        }
+      }
+    }
+  }
+
   panelContent: Rectangle {
     id: panelContent
 

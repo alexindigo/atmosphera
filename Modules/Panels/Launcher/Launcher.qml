@@ -302,6 +302,10 @@ SmartPanel {
     activate();
   }
 
+  function onEnterPressed() {
+    activate();
+  }
+
   function onHomePressed() {
     selectFirst();
   }

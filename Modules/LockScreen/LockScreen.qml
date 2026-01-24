@@ -150,9 +150,7 @@ Loader {
               anchors.bottomMargin: (Settings.data.general.compactLockScreen ? 280 : 360) * Style.uiScaleRatio
               radius: Style.radiusL
               color: Color.mTertiary
-              border.color: Color.mTertiary
-              border.width: Style.borderS
-              visible: lockContext.showInfo && lockContext.infoMessage
+              visible: lockContext.showInfo && lockContext.infoMessage && !panelComponent.timerActive
               opacity: visible ? 1.0 : 0.0
 
               RowLayout {
@@ -191,9 +189,7 @@ Loader {
               anchors.bottomMargin: (Settings.data.general.compactLockScreen ? 280 : 360) * Style.uiScaleRatio
               radius: Style.radiusL
               color: Color.mError
-              border.color: Color.mError
-              border.width: Style.borderS
-              visible: lockContext.showFailure && lockContext.errorMessage
+              visible: lockContext.showFailure && lockContext.errorMessage && !panelComponent.timerActive
               opacity: visible ? 1.0 : 0.0
 
               RowLayout {
