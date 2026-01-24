@@ -12,6 +12,21 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
+  opacity: 0
+
+  onSystemInfoLoadingChanged: {
+    if (!systemInfoLoading)
+      tabAppearAnim.start();
+  }
+
+  NumberAnimation on opacity {
+    id: tabAppearAnim
+    from: 0
+    to: 1
+    duration: Style.animationSlowest
+    easing.type: Easing.OutCubic
+    running: false
+  }
 
   property string latestVersion: GitHubService.latestVersion
   property string currentVersion: UpdateService.currentVersion
@@ -505,25 +520,9 @@ ColumnLayout {
     label: I18n.tr("panels.about.system-title")
   }
 
-  // Loading state
-  RowLayout {
-    visible: root.systemInfoLoading
-    Layout.fillWidth: true
-    spacing: Style.marginS
-
-    NBusyIndicator {
-      running: root.systemInfoLoading
-    }
-
-    NText {
-      text: I18n.tr("panels.about.system-loading")
-      color: Color.mOnSurfaceVariant
-    }
-  }
-
   // Error state (fastfetch not installed)
   ColumnLayout {
-    visible: !root.systemInfoLoading && !root.systemInfoAvailable
+    visible: !root.systemInfoAvailable
     Layout.fillWidth: true
     spacing: Style.marginS
 
@@ -544,7 +543,7 @@ ColumnLayout {
     id: sysInfo
     readonly property real textSize: Style.fontSizeS
 
-    visible: !root.systemInfoLoading && root.systemInfoAvailable && root.systemInfo
+    visible: root.systemInfoAvailable && root.systemInfo
     Layout.fillWidth: true
     columns: 2
     rowSpacing: Style.marginXS
