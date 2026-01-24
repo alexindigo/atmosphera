@@ -594,6 +594,9 @@ Singleton {
         Logger.d("TemplateProcessor", "Failed command:", command.join(" ").substring(0, 500));
         ToastService.showError(I18n.tr("toast.theming-processor-failed.title"), description);
       } else if (exitCode === 0 && stderr.text && stderr.text.includes("Template error:")) {
+
+        // Report warning via toast but omit all messages not coming from the templating engine
+        // Post-hook may fail: e.g: calling mmsg outside of mango, or if a binary is not installed.
         const errorLines = stderr.text.split("\n").filter(l => l.includes("Template error:"));
         const errors = errorLines.slice(0, 3).join("\n") + (errorLines.length > 3 ? `\n... (+${errorLines.length - 3} more)` : "");
         ToastService.showWarning(I18n.tr("toast.theming-processor-failed.title"), errors);
