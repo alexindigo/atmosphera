@@ -20,26 +20,7 @@ Loader {
   // Track if the visualizer should be shown (lockscreen active + media playing + non-compact mode)
   readonly property bool needsCava: root.active && !Settings.data.general.compactLockScreen && Settings.data.audio.visualizerType !== "" && Settings.data.audio.visualizerType !== "none"
 
-  // Readiness for suspend - wait a bit to ensure PAM (fprintd) has time to initialize
-  property bool readyForSuspend: false
-
-  Timer {
-    id: suspendReadinessTimer
-    interval: 800 // 800ms should be enough for PAM to start
-    repeat: false
-    running: root.active
-    onTriggered: {
-      root.readyForSuspend = true;
-      Logger.i("LockScreen", "Ready for suspend (PAM initialization time elapsed)");
-    }
-  }
-
   onActiveChanged: {
-    if (root.active) {
-      root.readyForSuspend = false;
-      suspendReadinessTimer.restart();
-    }
-
     if (root.active && root.needsCava) {
       CavaService.registerComponent("lockscreen");
     } else {

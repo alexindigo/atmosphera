@@ -478,29 +478,12 @@ Singleton {
 
       // Check if lock screen is now active
       if (PanelService && PanelService.lockScreen && PanelService.lockScreen.active) {
-        // Verify the lock screen component is loaded AND ready
+        // Verify the lock screen component is loaded
         if (PanelService.lockScreen.item) {
-          // Check if the lock screen says it's ready for suspend (PAM initialized)
-          // If property doesn't exist (older version), assume ready
-          var isReady = true;
-          if (PanelService.lockScreen.item.readyForSuspend !== undefined) {
-            isReady = PanelService.lockScreen.item.readyForSuspend;
-          }
-
-          if (isReady) {
-            Logger.i("Compositor", "Lock screen active and ready, suspending");
-            stop();
-            lockAndSuspendCheckCount = 0;
-            suspend();
-          } else {
-            // Lock screen active but not ready yet (waiting for timer)
-            if (lockAndSuspendCheckCount > 25) { // 2.5 seconds max wait total
-              Logger.w("Compositor", "Lock screen timed out waiting for readiness, suspending anyway");
-              stop();
-              lockAndSuspendCheckCount = 0;
-              suspend();
-            }
-          }
+          Logger.i("Compositor", "Lock screen confirmed active, suspending");
+          stop();
+          lockAndSuspendCheckCount = 0;
+          suspend();
         } else {
           // Lock screen is active but component not loaded yet, wait a bit more
           if (lockAndSuspendCheckCount > 20) {
