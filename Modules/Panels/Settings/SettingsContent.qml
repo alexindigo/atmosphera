@@ -250,7 +250,7 @@ Item {
 
   Timer {
     id: highlightScrollTimer
-    interval: 200
+    interval: 333
     property string targetKey: ""
     onTriggered: {
       if (root.activeTabContent && targetKey) {
@@ -719,6 +719,10 @@ Item {
             }
 
             onTextChanged: root.searchText = text
+            onEditingFinished: {
+              if (root.searchText.trim() !== "")
+                root.searchActivate();
+            }
           }
 
           // Search button for collapsed sidebar
@@ -1103,9 +1107,20 @@ Item {
               delegate: Loader {
                 anchors.fill: parent
                 active: index === root.currentTabIndex
+                opacity: 0
+
+                NumberAnimation on opacity {
+                  id: fadeInAnim
+                  from: 0
+                  to: 1
+                  duration: Style.animationSlowest
+                  easing.type: Easing.OutCubic
+                  running: false
+                }
 
                 onStatusChanged: {
                   if (status === Loader.Ready && item) {
+                    fadeInAnim.start();
                     const scrollView = item.children[0];
                     if (scrollView && scrollView.toString().includes("ScrollView")) {
                       root.activeScrollView = scrollView;
@@ -1193,8 +1208,8 @@ Item {
               id: highlightOverlay
               visible: opacity > 0
               opacity: 0
-              color: Qt.alpha(Color.mSecondary, 0.12)
-              border.color: Qt.alpha(Color.mSecondary, 0.4)
+              color: Qt.alpha(Color.mSecondary, 0.2)
+              border.color: Qt.alpha(Color.mSecondary, 0.6)
               border.width: Style.borderM
               radius: Style.radiusS
               z: 100
@@ -1206,7 +1221,7 @@ Item {
                   target: highlightOverlay
                   property: "opacity"
                   to: 1.0
-                  duration: Style.animationFast
+                  duration: Style.animationSlow
                   easing.type: Easing.OutQuad
                 }
 
