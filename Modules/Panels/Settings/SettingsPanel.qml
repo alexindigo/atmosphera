@@ -219,12 +219,6 @@ SmartPanel {
     }
   }
 
-  function onReturnPressed() {
-    if (_settingsContent && _settingsContent.searchText.trim() !== "") {
-      _settingsContent.searchActivate();
-    }
-  }
-
   function onPageUpPressed() {
     scrollPageUp();
   }
