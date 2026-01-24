@@ -498,6 +498,12 @@ PanelWindow {
   }
 
   Shortcut {
+    sequence: "Ctrl+H"
+    enabled: root.isPanelOpen && (PanelService.openedPanel.onCtrlHPressed !== undefined)
+    onActivated: PanelService.openedPanel.onCtrlHPressed()
+  }
+
+  Shortcut {
     sequence: "Ctrl+J"
     enabled: root.isPanelOpen && (PanelService.openedPanel.onCtrlJPressed !== undefined)
     onActivated: PanelService.openedPanel.onCtrlJPressed()
@@ -507,6 +513,12 @@ PanelWindow {
     sequence: "Ctrl+K"
     enabled: root.isPanelOpen && (PanelService.openedPanel.onCtrlKPressed !== undefined)
     onActivated: PanelService.openedPanel.onCtrlKPressed()
+  }
+
+  Shortcut {
+    sequence: "Ctrl+L"
+    enabled: root.isPanelOpen && (PanelService.openedPanel.onCtrlLPressed !== undefined)
+    onActivated: PanelService.openedPanel.onCtrlLPressed()
   }
 
   Shortcut {
