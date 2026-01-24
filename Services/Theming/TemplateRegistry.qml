@@ -287,7 +287,8 @@ Singleton {
         {
           "path": "~/.config/yazi/flavors/noctalia.yazi/flavor.toml"
         }
-      ]
+      ],
+      "postProcess": () => `${templateApplyScript} yazi`
     },
     {
       "id": "emacs",

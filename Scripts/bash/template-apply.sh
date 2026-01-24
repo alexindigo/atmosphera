@@ -4,7 +4,7 @@
 if [ "$#" -lt 1 ]; then
     # Print usage information to standard error.
     echo "Error: No application specified." >&2
-    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|fuzzel|walker|pywalfox|cava|niri|hyprland|mango} [dark|light]" >&2
+    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|fuzzel|walker|pywalfox|cava|yazi|niri|hyprland|mango} [dark|light]" >&2
     exit 1
 fi
 
@@ -272,6 +272,46 @@ cava)
     else
         echo "Error: cava config file not found at $CONFIG_FILE" >&2
         exit 1
+    fi
+    ;;
+
+yazi)
+    echo "🎨 Applying 'noctalia' flavor to yazi..."
+    CONFIG_FILE="$HOME/.config/yazi/theme.toml"
+
+    # Create config directory if it doesn't exist
+    mkdir -p "$(dirname "$CONFIG_FILE")"
+
+    if [ ! -f "$CONFIG_FILE" ]; then
+        echo "Config file not found, creating $CONFIG_FILE..."
+        cat >"$CONFIG_FILE" <<'EOF'
+[flavor]
+dark  = "noctalia"
+light = "noctalia"
+EOF
+        echo "Created new theme.toml with noctalia flavor."
+    else
+        # Check if [flavor] section exists
+        if grep -q '^\[flavor\]' "$CONFIG_FILE"; then
+            # Update or add dark/light lines under [flavor]
+            if sed -n '/^\[flavor\]/,/^\[/p' "$CONFIG_FILE" | grep -q '^dark\s*='; then
+                sed -i '/^\[flavor\]/,/^\[/{s/^dark\s*=.*/dark  = "noctalia"/}' "$CONFIG_FILE"
+            else
+                sed -i '/^\[flavor\]/a dark  = "noctalia"' "$CONFIG_FILE"
+            fi
+            if sed -n '/^\[flavor\]/,/^\[/p' "$CONFIG_FILE" | grep -q '^light\s*='; then
+                sed -i '/^\[flavor\]/,/^\[/{s/^light\s*=.*/light = "noctalia"/}' "$CONFIG_FILE"
+            else
+                sed -i '/^\[flavor\]/,/^dark/a light = "noctalia"' "$CONFIG_FILE"
+            fi
+        else
+            # Add [flavor] section at the end
+            echo "" >>"$CONFIG_FILE"
+            echo "[flavor]" >>"$CONFIG_FILE"
+            echo 'dark  = "noctalia"' >>"$CONFIG_FILE"
+            echo 'light = "noctalia"' >>"$CONFIG_FILE"
+        fi
+        echo "✅ Updated yazi theme.toml to use noctalia flavor."
     fi
     ;;
 
