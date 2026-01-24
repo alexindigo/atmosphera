@@ -123,8 +123,8 @@ A heartfelt thank you to our incredible community of [**contributors**](https://
 
 While all donations are greatly appreciated, they are completely voluntary.
 
-[buy-me-a-coffee]: https://www.buymeacoffee.com/noctalia
-[![Buy me a Donut](https://assets.noctalia.dev/donate-badge.svg)][buy-me-a-coffee]
+[support-noctalia]: https://www.buymeacoffee.com/noctalia
+[![Support Noctalia](https://assets.noctalia.dev/donate-badge.svg)][support-noctalia]
 
 
 ### Thank you to everyone who supports the project 💜!
