@@ -15,23 +15,11 @@ Popup {
   property var widgetData: null
   property string widgetId: ""
   property string sectionId: "" // Not used for desktop widgets, but required by NSectionEditor
+  property var screen: null
 
   signal updateWidgetSettings(string section, int index, var settings)
 
-  // Helper function to find screen from parent chain
-  function findScreen() {
-    var item = parent;
-    while (item) {
-      if (item.screen !== undefined) {
-        return item.screen;
-      }
-      item = item.parent;
-    }
-    return null;
-  }
-
-  readonly property var screen: findScreen()
-  readonly property real maxHeight: screen ? screen.height * 0.9 : (parent ? parent.height * 0.9 : 800)
+  readonly property real maxHeight: screen ? screen.height * 0.9 : 800
 
   width: Math.max(content.implicitWidth + padding * 2, 500)
   height: Math.min(content.implicitHeight + padding * 2, maxHeight)

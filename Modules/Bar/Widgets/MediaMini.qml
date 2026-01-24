@@ -22,7 +22,7 @@ Item {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section];
+      var widgets = Settings.getBarWidgetsForScreen(screen?.name)[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
         return widgets[sectionWidgetIndex];
       }
@@ -33,6 +33,8 @@ Item {
   // Bar orientation (per-screen)
   readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
+  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screen?.name)
+  readonly property real barFontSize: Style.getBarFontSizeForScreen(screen?.name)
 
   // Widget settings
   readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : "hidden"
@@ -47,9 +49,9 @@ Item {
   readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
 
   // Dimensions
-  readonly property int artSize: Style.toOdd(Style.capsuleHeight * 0.75)
-  readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.75)
-  readonly property int verticalSize: Style.toOdd(Style.capsuleHeight * 0.85)
+  readonly property int artSize: Style.toOdd(capsuleHeight * 0.75)
+  readonly property int iconSize: Style.toOdd(capsuleHeight * 0.75)
+  readonly property int verticalSize: Style.toOdd(capsuleHeight * 0.85)
   readonly property int progressWidth: 2
 
   // State
@@ -99,7 +101,7 @@ Item {
   // For horizontal bars, height is always capsuleHeight (no animation needed to prevent jitter)
   // For vertical bars, collapse to 0 when hidden
   implicitWidth: isVertical ? (isHidden ? 0 : verticalSize) : (isHidden ? 0 : contentWidth)
-  implicitHeight: isVertical ? (isHidden ? 0 : verticalSize) : Style.capsuleHeight
+  implicitHeight: isVertical ? (isHidden ? 0 : verticalSize) : capsuleHeight
   visible: !shouldHideIdle && (hideMode !== "hidden" || opacity > 0)
   opacity: isHidden ? 0.0 : ((hideMode === "transparent" && !hasPlayer) ? 0.0 : 1.0)
 
@@ -230,7 +232,7 @@ Item {
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
     width: isVertical ? (isHidden ? 0 : verticalSize) : (isHidden ? 0 : contentWidth)
-    height: isVertical ? (isHidden ? 0 : verticalSize) : Style.capsuleHeight
+    height: isVertical ? (isHidden ? 0 : verticalSize) : capsuleHeight
     radius: Style.radiusM
     color: Style.capsuleColor
     border.color: Style.capsuleBorderColor
@@ -314,7 +316,7 @@ Item {
           id: titleContainer
           Layout.fillWidth: true
           Layout.alignment: Qt.AlignVCenter
-          Layout.preferredHeight: Style.capsuleHeight
+          Layout.preferredHeight: capsuleHeight
 
           text: title
 
@@ -330,7 +332,7 @@ Item {
           NText {
             // anchors.fill: parent
             color: hasPlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
-            pointSize: Style.barFontSize
+            pointSize: barFontSize
           }
         }
       }

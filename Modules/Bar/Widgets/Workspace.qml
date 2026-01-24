@@ -26,7 +26,7 @@ Item {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section];
+      var widgets = Settings.getBarWidgetsForScreen(screen?.name)[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
         return widgets[sectionWidgetIndex];
       }
@@ -37,6 +37,8 @@ Item {
   readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property real barHeight: Style.getBarHeightForScreen(screen?.name)
+  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screen?.name)
+  readonly property real barFontSize: Style.getBarFontSizeForScreen(screen?.name)
   readonly property real baseDimensionRatio: 0.65 * (widgetSettings.labelMode === "none" ? 0.75 : 1)
 
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
@@ -55,7 +57,7 @@ Item {
   readonly property real iconScale: (widgetSettings.iconScale !== undefined) ? widgetSettings.iconScale : widgetMetadata.iconScale
 
   // Only for grouped mode / show apps
-  readonly property int baseItemSize: Style.toOdd(Style.capsuleHeight * 0.8)
+  readonly property int baseItemSize: Style.toOdd(capsuleHeight * 0.8)
   readonly property int iconSize: Style.toOdd(baseItemSize * iconScale)
   readonly property real textRatio: 0.50
 
@@ -107,7 +109,7 @@ Item {
   implicitHeight: showApplications ? (isVertical ? Math.round(groupedGrid.implicitHeight + horizontalPadding * 0.6 * hasLabel) : barHeight) : (isVertical ? computeHeight() : barHeight)
 
   function getWorkspaceWidth(ws, activeOverride) {
-    const d = Math.round(Style.capsuleHeight * root.baseDimensionRatio);
+    const d = Math.round(capsuleHeight * root.baseDimensionRatio);
     const isActive = activeOverride !== undefined ? activeOverride : ws.isActive;
     const factor = isActive ? 2.2 : 1;
 
@@ -132,7 +134,7 @@ Item {
   }
 
   function getWorkspaceHeight(ws, activeOverride) {
-    const d = Math.round(Style.capsuleHeight * root.baseDimensionRatio);
+    const d = Math.round(capsuleHeight * root.baseDimensionRatio);
     const isActive = activeOverride !== undefined ? activeOverride : ws.isActive;
     const factor = isActive ? 2.2 : 1;
     return Style.toOdd(d * factor);
@@ -452,8 +454,8 @@ Item {
   Rectangle {
     id: workspaceBackground
     visible: !showApplications
-    width: isVertical ? Style.capsuleHeight : parent.width
-    height: isVertical ? parent.height : Style.capsuleHeight
+    width: isVertical ? capsuleHeight : parent.width
+    height: isVertical ? parent.height : capsuleHeight
     radius: Style.radiusM
     color: Style.capsuleColor
     border.color: Style.capsuleBorderColor
@@ -531,7 +533,7 @@ Item {
       model: localWorkspaces
       Item {
         id: workspacePillContainer
-        height: Style.toOdd(Style.capsuleHeight * root.baseDimensionRatio)
+        height: Style.toOdd(capsuleHeight * root.baseDimensionRatio)
 
         states: [
           State {
@@ -707,7 +709,7 @@ Item {
       model: localWorkspaces
       Item {
         id: workspacePillContainerVertical
-        width: Style.toOdd(Style.capsuleHeight * root.baseDimensionRatio)
+        width: Style.toOdd(capsuleHeight * root.baseDimensionRatio)
 
         states: [
           State {
@@ -1110,7 +1112,7 @@ Item {
 
           family: Settings.data.ui.fontFixed
           font {
-            pointSize: Style.barFontSize * 0.75
+            pointSize: barFontSize * 0.75
             weight: Style.fontWeightBold
             capitalization: Font.AllUppercase
           }

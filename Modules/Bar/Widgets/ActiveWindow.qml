@@ -24,7 +24,7 @@ Item {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId] || {}
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section];
+      var widgets = Settings.getBarWidgetsForScreen(screen?.name)[section];
       if (widgets && sectionWidgetIndex < widgets.length && widgets[sectionWidgetIndex]) {
         return widgets[sectionWidgetIndex];
       }
@@ -43,16 +43,18 @@ Item {
 
   readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
+  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screen?.name)
+  readonly property real barFontSize: Style.getBarFontSizeForScreen(screen?.name)
   readonly property bool hasFocusedWindow: CompositorService.getFocusedWindow() !== null
   readonly property string windowTitle: CompositorService.getFocusedWindowTitle() || "No active window"
   readonly property string fallbackIcon: "user-desktop"
 
-  readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.75)
-  readonly property int verticalSize: Style.toOdd(Style.capsuleHeight * 0.85)
+  readonly property int iconSize: Style.toOdd(capsuleHeight * 0.75)
+  readonly property int verticalSize: Style.toOdd(capsuleHeight * 0.85)
 
   // For horizontal bars, height is always capsuleHeight (no animation needed)
   // For vertical bars, collapse to 0 when hidden
-  implicitHeight: isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : verticalSize) : Style.capsuleHeight
+  implicitHeight: isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : verticalSize) : capsuleHeight
   implicitWidth: isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : verticalSize) : (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : dynamicWidth)
 
   // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
@@ -188,7 +190,7 @@ Item {
     x: isVerticalBar ? Style.pixelAlignCenter(parent.width, width) : 0
     y: isVerticalBar ? 0 : Style.pixelAlignCenter(parent.height, height)
     width: isVerticalBar ? ((!hasFocusedWindow) && hideMode === "hidden" ? 0 : verticalSize) : ((!hasFocusedWindow) && (hideMode === "hidden") ? 0 : dynamicWidth)
-    height: isVerticalBar ? ((!hasFocusedWindow) && hideMode === "hidden" ? 0 : verticalSize) : Style.capsuleHeight
+    height: isVerticalBar ? ((!hasFocusedWindow) && hideMode === "hidden" ? 0 : verticalSize) : capsuleHeight
     radius: Style.radiusM
     color: Style.capsuleColor
     border.color: Style.capsuleBorderColor
@@ -263,7 +265,7 @@ Item {
           }
           NText {
             text: windowTitle
-            pointSize: Style.barFontSize
+            pointSize: barFontSize
             applyUiScale: false
             font.weight: Style.fontWeightMedium
             color: Color.mOnSurface

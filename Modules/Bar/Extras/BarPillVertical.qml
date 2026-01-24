@@ -40,6 +40,7 @@ Item {
 
   // Sizing logic for vertical bars
   readonly property int buttonSize: Style.getCapsuleHeightForScreen(screen?.name)
+  readonly property real barFontSize: Style.getBarFontSizeForScreen(screen?.name)
   readonly property int pillHeight: buttonSize
   readonly property int pillOverlap: Math.round(buttonSize * 0.5)
   readonly property int maxPillWidth: rotateText ? Math.max(buttonSize, Math.round(textItem.implicitHeight + Style.marginXL)) : buttonSize
@@ -138,7 +139,7 @@ Item {
       rotation: rotateText ? -90 : 0
       text: root.text + root.suffix
       family: Settings.data.ui.fontFixed
-      pointSize: Style.barFontSize
+      pointSize: root.barFontSize
       applyUiScale: false
       horizontalAlignment: Text.AlignHCenter
       verticalAlignment: Text.AlignVCenter

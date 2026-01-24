@@ -38,6 +38,17 @@ NBox {
 
   property var widgetRegistry: null
   property string settingsDialogComponent: "BarWidgetSettingsDialog.qml"
+  property var screen: null // Screen reference for per-screen widget settings
+  property var _activeDialog: null
+
+  Component.onDestruction: {
+    if (_activeDialog && _activeDialog.close) {
+      var dialog = _activeDialog;
+      _activeDialog = null;
+      dialog.close();
+      dialog.destroy();
+    }
+  }
 
   readonly property int gridColumns: 3
   readonly property real miniButtonSize: Style.baseWidgetSize * 0.65
@@ -441,14 +452,27 @@ NBox {
                         // Handle core widget settings
                         var component = Qt.createComponent(Qt.resolvedUrl(root.settingsDialogComponent));
                         function instantiateAndOpen() {
+                          if (root._activeDialog) {
+                            root._activeDialog.close();
+                            root._activeDialog.destroy();
+                            root._activeDialog = null;
+                          }
                           var dialog = component.createObject(Overlay.overlay, {
                                                                 "widgetIndex": index,
                                                                 "widgetData": modelData,
                                                                 "widgetId": modelData.id,
-                                                                "sectionId": root.sectionId
+                                                                "sectionId": root.sectionId,
+                                                                "screen": root.screen
                                                               });
                           if (dialog) {
+                            root._activeDialog = dialog;
                             dialog.updateWidgetSettings.connect(root.updateWidgetSettings);
+                            dialog.closed.connect(() => {
+                                                    if (root._activeDialog === dialog) {
+                                                      root._activeDialog = null;
+                                                      dialog.destroy();
+                                                    }
+                                                  });
                             dialog.open();
                           } else {
                             Logger.e("NSectionEditor", "Failed to create settings dialog instance");

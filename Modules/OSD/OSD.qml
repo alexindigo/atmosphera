@@ -456,7 +456,6 @@ Variants {
         visible: false
         opacity: 0
         scale: 0.85
-        property bool pendingShow: false
 
         Behavior on opacity {
           NumberAnimation {
@@ -514,13 +513,6 @@ Variants {
           anchors.margins: Style.marginM
           active: true
           sourceComponent: panel.verticalMode ? verticalContent : horizontalContent
-
-          onWidthChanged: {
-            if (width > 0 && height > 0 && osdItem.pendingShow) {
-              osdItem.pendingShow = false;
-              osdItem.show();
-            }
-          }
         }
 
         Component {
@@ -747,25 +739,24 @@ Variants {
           }
         }
 
+        // Delay showing the OSD to allow the layout to settle after activation.
+        // Without this, the percentage text renders outside the box on first
+        // show.
+        Timer {
+          id: showDelayTimer
+          interval: 30
+          onTriggered: {
+            osdItem.visible = true;
+            osdItem.opacity = 1;
+            osdItem.scale = 1.0;
+            hideTimer.start();
+          }
+        }
+
         function show() {
           hideTimer.stop();
           visibilityTimer.stop();
-
-          // Defer show until content layout has valid geometry
-          if (contentLoader.width <= 0 || contentLoader.height <= 0) {
-            pendingShow = true;
-            return;
-          }
-
-          pendingShow = false;
-          osdItem.visible = true;
-
-          Qt.callLater(() => {
-                         osdItem.opacity = 1;
-                         osdItem.scale = 1.0;
-                       });
-
-          hideTimer.start();
+          showDelayTimer.start();
         }
 
         function hide() {
@@ -779,7 +770,6 @@ Variants {
         function hideImmediately() {
           hideTimer.stop();
           visibilityTimer.stop();
-          pendingShow = false;
           osdItem.opacity = 0;
           osdItem.scale = 0.85;
           osdItem.visible = false;

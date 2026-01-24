@@ -519,6 +519,14 @@ Popup {
             "name": I18n.tr("wallpaper.panel.ratios-any")
           },
           {
+            "key": "landscape",
+            "name": I18n.tr("wallpaper.panel.ratios-all-wide")
+          },
+          {
+            "key": "portrait",
+            "name": I18n.tr("wallpaper.panel.ratios-all-portrait")
+          },
+          {
             "key": "16x9",
             "name": "16x9"
           },
@@ -869,7 +877,7 @@ Popup {
         NTextInput {
           id: resolutionWidthInput
           Layout.preferredWidth: 80
-          placeholderText: "Width"
+          placeholderText: I18n.tr("common.width")
           inputMethodHints: Qt.ImhDigitsOnly
           text: Settings.data.wallpaper.wallhavenResolutionWidth || ""
 
@@ -913,7 +921,7 @@ Popup {
         NTextInput {
           id: resolutionHeightInput
           Layout.preferredWidth: 80
-          placeholderText: "Height"
+          placeholderText: I18n.tr("common.height")
           inputMethodHints: Qt.ImhDigitsOnly
           text: Settings.data.wallpaper.wallhavenResolutionHeight || ""
 

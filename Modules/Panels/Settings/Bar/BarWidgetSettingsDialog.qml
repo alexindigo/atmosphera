@@ -14,23 +14,11 @@ Popup {
   property var widgetData: null
   property string widgetId: ""
   property string sectionId: ""
+  property var screen: null
 
   signal updateWidgetSettings(string section, int index, var settings)
 
-  // Helper function to find screen from parent chain
-  function findScreen() {
-    var item = parent;
-    while (item) {
-      if (item.screen !== undefined) {
-        return item.screen;
-      }
-      item = item.parent;
-    }
-    return null;
-  }
-
-  readonly property var screen: findScreen()
-  readonly property real maxHeight: screen ? screen.height * 0.9 : (parent ? parent.height * 0.9 : 800)
+  readonly property real maxHeight: screen ? screen.height * 0.9 : 800
 
   width: Math.max(content.implicitWidth + padding * 2, 500)
   height: Math.min(content.implicitHeight + padding * 2, maxHeight)
@@ -188,7 +176,7 @@ Popup {
     if (source) {
       var currentWidgetData = widgetData;
       if (sectionId && widgetIndex >= 0) {
-        var widgets = Settings.data.bar.widgets[sectionId];
+        var widgets = Settings.getBarWidgetsForScreen(screen?.name || "")[sectionId];
         if (widgets && widgetIndex < widgets.length) {
           currentWidgetData = widgets[widgetIndex];
         }

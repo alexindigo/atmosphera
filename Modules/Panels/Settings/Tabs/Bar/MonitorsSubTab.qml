@@ -199,13 +199,24 @@ ColumnLayout {
                 id: widgetConfigButton
                 property bool expanded: false
                 Layout.fillWidth: true
+                fontSize: Style.fontSizeS
                 text: I18n.tr("panels.bar.monitor-configure-widgets")
                 icon: expanded ? "chevron-up" : "layout-grid"
                 onClicked: expanded = !expanded
               }
 
               NButton {
+                visible: Settings.hasScreenOverride(monitorCard.screenName, "widgets")
                 Layout.fillWidth: true
+                fontSize: Style.fontSizeS
+                text: I18n.tr("panels.bar.use-global-widgets")
+                icon: "refresh"
+                onClicked: Settings.clearScreenOverride(monitorCard.screenName, "widgets")
+              }
+
+              NButton {
+                Layout.fillWidth: true
+                fontSize: Style.fontSizeS
                 text: I18n.tr("panels.bar.monitor-reset-all")
                 icon: "restore"
                 onClicked: Settings.clearScreenOverride(monitorCard.screenName)
@@ -215,7 +226,7 @@ ColumnLayout {
             // Inline widget configuration
             BarSettings.MonitorWidgetsConfig {
               visible: widgetConfigButton.expanded
-              screenName: monitorCard.screenName
+              screen: monitorCard.modelData
               Layout.fillWidth: true
               Layout.topMargin: Style.marginS
             }

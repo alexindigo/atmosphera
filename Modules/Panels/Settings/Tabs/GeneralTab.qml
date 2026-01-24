@@ -18,7 +18,7 @@ ColumnLayout {
 
     // Avatar preview
     NImageRounded {
-      Layout.preferredWidth: 88 * Style.uiScaleRatio
+      Layout.preferredWidth: 128 * Style.uiScaleRatio
       Layout.preferredHeight: width
       radius: width / 2
       imagePath: Settings.preprocessPath(Settings.data.general.avatarImage)
@@ -28,18 +28,24 @@ ColumnLayout {
       Layout.alignment: Qt.AlignTop
     }
 
-    NTextInputButton {
-      label: I18n.tr("panels.general.profile-picture-label", {
-                       "user": HostService.displayName
-                     })
-      description: I18n.tr("panels.general.profile-picture-description")
-      text: Settings.data.general.avatarImage
-      placeholderText: '~/.face' // don't translate path
-      buttonIcon: "photo"
-      buttonTooltip: I18n.tr("panels.general.profile-tooltip")
-      onInputEditingFinished: Settings.data.general.avatarImage = text
-      onButtonClicked: {
-        avatarPicker.openFilePicker();
+    ColumnLayout {
+      NText {
+        text: HostService.displayName
+        pointSize: Style.fontSizeM
+        color: Color.mPrimary
+      }
+
+      NTextInputButton {
+        label: I18n.tr("panels.general.profile-picture-label")
+        description: I18n.tr("panels.general.profile-picture-description")
+        text: Settings.data.general.avatarImage
+        placeholderText: '~/.face' // don't translate path
+        buttonIcon: "photo"
+        buttonTooltip: I18n.tr("panels.general.profile-tooltip")
+        onInputEditingFinished: Settings.data.general.avatarImage = text
+        onButtonClicked: {
+          avatarPicker.openFilePicker();
+        }
       }
     }
   }

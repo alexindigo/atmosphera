@@ -14,6 +14,8 @@ Supports:
   saturate, desaturate, auto_lightness, blend, harmonize, to_color
 - String filters: replace, lower_case, camel_case, pascal_case,
   snake_case, kebab_case
+- Custom colors: [config.custom_colors] in TOML config generates
+  {name}, on_{name}, {name}_container, on_{name}_container tokens
 """
 
 import re
@@ -141,11 +143,12 @@ class TemplateRenderer:
     # Regex for expression tags: {{ ... }}
     _EXPR_RE = re.compile(r"\{\{\s*([^}\n]+?)\s*\}\}")
 
-    def __init__(self, theme_data: dict[str, dict[str, str]], verbose: bool = True, default_mode: str = "dark", image_path: Optional[str] = None):
+    def __init__(self, theme_data: dict[str, dict[str, str]], verbose: bool = True, default_mode: str = "dark", image_path: Optional[str] = None, scheme_type: str = "content"):
         self.theme_data = theme_data
         self.verbose = verbose
         self.default_mode = default_mode
         self.image_path = image_path
+        self.scheme_type = scheme_type
         self._current_file: Optional[str] = None
         self._error_count = 0
         self._colors_map: Optional[dict[str, dict[str, str]]] = None
@@ -981,6 +984,121 @@ class TemplateRenderer:
             self._current_file = None
         return success
 
+    # --- Custom Colors ---
+
+    # Standard M3 tone mappings for primary color group
+    _CUSTOM_COLOR_TONES = {
+        "dark": {
+            "color": 80,
+            "on_color": 20,
+            "color_container": 30,
+            "on_color_container": 90,
+        },
+        "light": {
+            "color": 40,
+            "on_color": 100,
+            "color_container": 90,
+            "on_color_container": 10,
+        },
+    }
+
+    def _apply_custom_colors(self, custom_colors: dict[str, Any]):
+        """Generate and merge custom color tokens into theme_data.
+
+        Matches matugen's [config.custom_colors] behavior:
+        - Each custom color generates 6 tokens per mode
+        - Optional blend (harmonize toward source color)
+        - Uses the same scheme type as the main theme for palette generation
+        - Tokens: {name}_source, {name}_value, {name}, on_{name},
+          {name}_container, on_{name}_container
+        """
+        from .hct import Hct, TonalPalette
+        from .material import (
+            SchemeTonalSpot, SchemeFruitSalad, SchemeRainbow,
+            SchemeContent, SchemeMonochrome
+        )
+
+        SCHEME_CLASSES = {
+            "tonal-spot": SchemeTonalSpot,
+            "content": SchemeContent,
+            "fruit-salad": SchemeFruitSalad,
+            "rainbow": SchemeRainbow,
+            "monochrome": SchemeMonochrome,
+        }
+        scheme_class = SCHEME_CLASSES.get(self.scheme_type, SchemeContent)
+
+        # Get source color for harmonization (primary from default mode)
+        source_hex = None
+        mode_data = self.theme_data.get(self.default_mode, {})
+        source_hex = mode_data.get("primary") or mode_data.get("source_color")
+
+        for name, config in custom_colors.items():
+            # Parse config: either a string "#hex" or {color: "#hex", blend: bool}
+            if isinstance(config, str):
+                color_hex = config
+                blend = True
+            elif isinstance(config, dict):
+                color_hex = config.get("color", "")
+                blend = config.get("blend", True)
+            else:
+                self._log_warning(f"Invalid custom_color config for '{name}': {config}")
+                continue
+
+            # Validate hex color
+            if not (color_hex.startswith('#') and len(color_hex) == 7):
+                self._log_error(f"Custom color '{name}' has invalid hex: '{color_hex}'")
+                continue
+
+            original_color = Color.from_hex(color_hex)
+
+            # Optionally harmonize toward source color
+            if blend and source_hex:
+                src = Color.from_hex(color_hex)
+                target = Color.from_hex(source_hex)
+                src_hct = Hct.from_rgb(src.r, src.g, src.b)
+                target_hct = Hct.from_rgb(target.r, target.g, target.b)
+
+                # M3 harmonize: rotate hue toward target by min(diff * 0.5, 15°)
+                diff = target_hct.hue - src_hct.hue
+                if diff > 180.0:
+                    diff -= 360.0
+                elif diff < -180.0:
+                    diff += 360.0
+                max_rotation = 15.0
+                rotation = min(abs(diff) * 0.5, max_rotation)
+                if diff < 0:
+                    rotation = -rotation
+                new_hue = (src_hct.hue + rotation) % 360.0
+                harmonized_hct = Hct(new_hue, src_hct.chroma, src_hct.tone)
+                r, g, b = harmonized_hct.to_rgb()
+                palette_color = Color(r, g, b)
+            else:
+                palette_color = original_color
+
+            # Generate palette using the scheme class (matches matugen behavior)
+            palette_hct = Hct.from_rgb(palette_color.r, palette_color.g, palette_color.b)
+            scheme = scheme_class(palette_hct)
+            palette = scheme.primary_palette
+
+            # Generate tokens for each mode
+            for mode in self.theme_data:
+                tones = self._CUSTOM_COLOR_TONES.get(mode)
+                if not tones:
+                    continue
+
+                # Source/value tokens (always the original unharmonized color)
+                self.theme_data[mode][f"{name}_source"] = original_color.to_hex()
+                self.theme_data[mode][f"{name}_value"] = original_color.to_hex()
+
+                # Primary role tokens from the tonal palette
+                self.theme_data[mode][name] = palette.get_hex(tones["color"])
+                self.theme_data[mode][f"on_{name}"] = palette.get_hex(tones["on_color"])
+                self.theme_data[mode][f"{name}_container"] = palette.get_hex(tones["color_container"])
+                self.theme_data[mode][f"on_{name}_container"] = palette.get_hex(tones["on_color_container"])
+
+        # Invalidate colors map cache so new colors appear in iterations
+        self._colors_map = None
+
     def _substitute_closest_color(self, text: str, closest_color: str) -> str:
         """Substitute {{closest_color}} in text."""
         return re.sub(r"\{\{\s*closest_color\s*\}\}", closest_color, text)
@@ -994,6 +1112,12 @@ class TemplateRenderer:
         try:
             with open(config_path, "rb") as f:
                 data = tomllib.load(f)
+
+            # Apply custom colors before rendering templates
+            config_section = data.get("config", {})
+            custom_colors = config_section.get("custom_colors")
+            if custom_colors:
+                self._apply_custom_colors(custom_colors)
 
             templates = data.get("templates", {})
             for name, template in templates.items():
