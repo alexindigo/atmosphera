@@ -148,6 +148,48 @@ RowLayout {
         root.selected(item.key);
     }
 
+    Keys.onUpPressed: (event) => {
+      if (combo.popup.visible) {
+        if (listView.currentIndex > 0) {
+          listView.currentIndex--;
+          listView.positionViewAtIndex(listView.currentIndex, ListView.Contain);
+        }
+        event.accepted = true;
+      } else {
+        event.accepted = false;
+      }
+    }
+
+    Keys.onDownPressed: (event) => {
+      if (combo.popup.visible) {
+        if (listView.currentIndex < root.itemCount() - 1) {
+          listView.currentIndex++;
+          listView.positionViewAtIndex(listView.currentIndex, ListView.Contain);
+        }
+        event.accepted = true;
+      } else {
+        event.accepted = false;
+      }
+    }
+
+    Keys.onReturnPressed: (event) => {
+      if (combo.popup.visible) {
+        var item = root.getItem(listView.currentIndex);
+        if (item && item.key !== undefined) {
+          root.selected(item.key);
+          combo.currentIndex = listView.currentIndex;
+          combo.popup.close();
+        }
+        event.accepted = true;
+      } else {
+        event.accepted = false;
+      }
+    }
+
+    Keys.onEnterPressed: (event) => {
+      combo.Keys.returnPressed(event);
+    }
+
     background: Rectangle {
       implicitWidth: Math.round(Style.baseWidgetSize * 3.75 * Style.uiScaleRatio)
       implicitHeight: Math.round(root.preferredHeight * Style.uiScaleRatio)
