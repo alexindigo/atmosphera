@@ -456,6 +456,12 @@ PanelWindow {
   }
 
   Shortcut {
+    sequence: "Enter"
+    enabled: root.isPanelOpen && (PanelService.openedPanel.onEnterPressed !== undefined)
+    onActivated: PanelService.openedPanel.onEnterPressed()
+  }
+
+  Shortcut {
     sequence: "Left"
     enabled: root.isPanelOpen && (PanelService.openedPanel.onLeftPressed !== undefined)
     onActivated: PanelService.openedPanel.onLeftPressed()
