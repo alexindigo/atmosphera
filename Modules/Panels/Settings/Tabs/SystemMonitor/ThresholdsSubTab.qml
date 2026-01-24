@@ -46,7 +46,7 @@ ColumnLayout {
     // CPU Usage
     NText {
       text: I18n.tr("bar.system-monitor.cpu-usage-label")
-      pointSize: Style.fontSizeL
+      pointSize: Style.fontSizeM
     }
 
     NSpinBox {
@@ -79,7 +79,7 @@ ColumnLayout {
     // CPU Temperature
     NText {
       text: I18n.tr("bar.system-monitor.cpu-temperature-label")
-      pointSize: Style.fontSizeL
+      pointSize: Style.fontSizeM
     }
 
     NSpinBox {
@@ -113,7 +113,7 @@ ColumnLayout {
     NText {
       visible: SystemStatService.gpuAvailable
       text: I18n.tr("panels.system-monitor.gpu-section-label")
-      pointSize: Style.fontSizeL
+      pointSize: Style.fontSizeM
     }
 
     NSpinBox {
@@ -148,7 +148,7 @@ ColumnLayout {
     // Memory Usage
     NText {
       text: I18n.tr("bar.system-monitor.memory-usage-label")
-      pointSize: Style.fontSizeL
+      pointSize: Style.fontSizeM
     }
 
     NSpinBox {
@@ -181,7 +181,7 @@ ColumnLayout {
     // Swap Usage
     NText {
       text: I18n.tr("bar.system-monitor.swap-usage-label")
-      pointSize: Style.fontSizeL
+      pointSize: Style.fontSizeM
     }
 
     NSpinBox {
@@ -214,7 +214,7 @@ ColumnLayout {
     // Disk Usage
     NText {
       text: I18n.tr("panels.system-monitor.disk-section-label")
-      pointSize: Style.fontSizeL
+      pointSize: Style.fontSizeM
     }
 
     NSpinBox {
