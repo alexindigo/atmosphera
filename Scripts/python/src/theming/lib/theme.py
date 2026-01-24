@@ -111,8 +111,6 @@ def generate_normal_dark(palette: list[Color]) -> dict[str, str]:
     else:
         tertiary = shift_hue(primary, 60)
 
-    # Quaternary: complementary
-    quaternary = palette[3] if len(palette) > 3 else shift_hue(primary, 180)
     error = find_error_color(palette)
 
     # Keep colors vibrant - preserve saturation
@@ -168,7 +166,7 @@ def generate_normal_dark(palette: list[Color]) -> dict[str, str]:
     base_on_surface = Color.from_hsl(text_h, 0.05, 0.95)
     on_surface = ensure_contrast(base_on_surface, surface, 4.5)
 
-    base_on_surface_variant = Color.from_hsl(text_h, 0.05, 0.80)
+    base_on_surface_variant = Color.from_hsl(text_h, 0.05, 0.70)
     on_surface_variant = ensure_contrast(base_on_surface_variant, surface_variant, 4.5)
 
     outline = ensure_contrast(adjust_surface(palette[0], 0.10, 0.30), surface, 3.0)
@@ -324,7 +322,6 @@ def generate_normal_light(palette: list[Color]) -> dict[str, str]:
     else:
         tertiary = shift_hue(primary, 60)
 
-    quaternary = palette[3] if len(palette) > 3 else shift_hue(primary, 180)
     error = find_error_color(palette)
 
     # Keep colors vibrant - darken for visibility on light bg
@@ -364,7 +361,7 @@ def generate_normal_light(palette: list[Color]) -> dict[str, str]:
     base_on_surface = Color.from_hsl(text_h, 0.05, 0.10)
     on_surface = ensure_contrast(base_on_surface, surface, 4.5)
 
-    base_on_surface_variant = Color.from_hsl(text_h, 0.05, 0.90)  # Light text on darker variant
+    base_on_surface_variant = Color.from_hsl(text_h, 0.05, 0.35)
     on_surface_variant = ensure_contrast(base_on_surface_variant, surface_variant, 4.5)
 
     # Contrasting foregrounds - light text on dark accent colors
@@ -503,7 +500,6 @@ def generate_muted_dark(palette: list[Color]) -> dict[str, str]:
     # Much smaller shifts than normal mode since we want cohesion
     secondary = shift_hue(primary, 15)
     tertiary = shift_hue(primary, 30)
-    quaternary = shift_hue(primary, 180)
     error = find_error_color(palette)
 
     # Cap saturation low - this is the key difference from normal mode
@@ -549,7 +545,7 @@ def generate_muted_dark(palette: list[Color]) -> dict[str, str]:
     base_on_surface = Color.from_hsl(primary_h, 0.03, 0.95)
     on_surface = ensure_contrast(base_on_surface, surface, 4.5)
 
-    base_on_surface_variant = Color.from_hsl(primary_h, 0.03, 0.80)
+    base_on_surface_variant = Color.from_hsl(primary_h, 0.03, 0.70)
     on_surface_variant = ensure_contrast(base_on_surface_variant, surface_variant, 4.5)
 
     outline = ensure_contrast(Color.from_hsl(primary_h, 0.05, 0.30), surface, 3.0)
@@ -682,7 +678,6 @@ def generate_muted_light(palette: list[Color]) -> dict[str, str]:
     # Derive secondary and tertiary with subtle hue shifts
     secondary = shift_hue(primary, 15)
     tertiary = shift_hue(primary, 30)
-    quaternary = shift_hue(primary, 180)
     error = find_error_color(palette)
 
     # Cap saturation low
@@ -725,7 +720,7 @@ def generate_muted_light(palette: list[Color]) -> dict[str, str]:
     base_on_surface = Color.from_hsl(primary_h, 0.03, 0.10)
     on_surface = ensure_contrast(base_on_surface, surface, 4.5)
 
-    base_on_surface_variant = Color.from_hsl(primary_h, 0.03, 0.90)
+    base_on_surface_variant = Color.from_hsl(primary_h, 0.03, 0.35)
     on_surface_variant = ensure_contrast(base_on_surface_variant, surface_variant, 4.5)
 
     # Contrasting foregrounds
