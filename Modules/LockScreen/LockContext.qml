@@ -17,7 +17,6 @@ Scope {
   property bool showInfo: false
   property string errorMessage: ""
   property string infoMessage: ""
-  property bool pamAvailable: typeof PamContext !== "undefined"
   property bool fprintdAvailable: false
 
   readonly property string pamConfigDirectory: Quickshell.env("NOCTALIA_PAM_CONFIG") ? "/etc/pam.d" : Settings.configDir + "pam"
@@ -33,12 +32,22 @@ Scope {
     }
   }
 
+  onShowInfoChanged: {
+    if (showInfo) {
+      showFailure = false;
+    }
+  }
+
+  onShowFailureChanged: {
+    if (showFailure) {
+      showInfo = false;
+    }
+  }
+
   onCurrentTextChanged: {
     if (currentText !== "") {
       showInfo = false;
-      infoMessage = "";
       showFailure = false;
-      errorMessage = "";
       if (!waitingForPassword) {
         pam.abort();
       }
@@ -52,12 +61,6 @@ Scope {
   }
 
   function tryUnlock() {
-    if (!pamAvailable) {
-      errorMessage = "PAM not available";
-      showFailure = true;
-      return;
-    }
-
     if (waitingForPassword) {
       pam.respond(currentText);
       unlockInProgress = true;
@@ -65,9 +68,6 @@ Scope {
       showInfo = false;
       return;
     }
-
-    errorMessage = "";
-    showFailure = false;
 
     Logger.i("LockContext", "Starting PAM authentication for user:", pam.user);
     pam.start();
@@ -95,27 +95,21 @@ Scope {
     onPamMessage: {
       Logger.i("LockContext", "PAM message:", message, "isError:", messageIsError, "responseRequired:", responseRequired);
 
-      if (messageIsError) {
-        errorMessage = message;
-      } else {
-        infoMessage = message;
-      }
-
       if (this.responseRequired) {
         Logger.i("LockContext", "Responding to PAM with password");
         if (root.currentText !== "") {
           this.respond(root.currentText);
+          unlockInProgress = true;
         } else {
           root.waitingForPassword = true;
-          showFailure = false;
           infoMessage = I18n.tr("lock-screen.password");
           showInfo = true;
         }
       } else if (messageIsError) {
-        showInfo = false;
+        errorMessage = message;
         showFailure = true;
       } else {
-        showFailure = false;
+        infoMessage = message;
         showInfo = true;
       }
     }
