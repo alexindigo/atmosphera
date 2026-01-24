@@ -97,8 +97,12 @@ Item {
   function onOpened() {
     // Refresh apps when launcher opens
     loadApplications();
-    // Reset to "all" category when opening
-    selectedCategory = "all";
+    // Default to Pinned if there are pinned apps, otherwise all
+    if (availableCategories.includes("Pinned")) {
+      selectedCategory = "Pinned";
+    } else {
+      selectedCategory = "all";
+    }
     // Set category mode initially (will be updated when getResults is called)
     showsCategories = true;
   }
@@ -297,12 +301,14 @@ Item {
       }
     }
 
-    const result = ["all"];
+    const result = [];
 
     // Add Pinned category first if there are pinned apps
     if (hasPinned) {
       result.push("Pinned");
     }
+
+    result.push("all");
 
     if (hasAudioVideo) {
       categorySet.add("AudioVideo");
