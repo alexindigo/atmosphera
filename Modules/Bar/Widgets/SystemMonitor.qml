@@ -80,23 +80,23 @@ Rectangle {
     }
 
     // Memory
-    lines.push(`${I18n.tr("common.memory")}: ${Math.round(SystemStatService.memPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.memGb).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")})`);
+    lines.push(`${I18n.tr("common.memory")}: ${Math.round(SystemStatService.memPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.memGb).replace(/[^0-9.]/g, "") + " GB"})`);
 
     // Swap (if available)
     if (SystemStatService.swapTotalGb > 0) {
-      lines.push(`${I18n.tr("bar.system-monitor.swap-usage-label")}: ${Math.round(SystemStatService.swapPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.swapGb).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")})`);
+      lines.push(`${I18n.tr("bar.system-monitor.swap-usage-label")}: ${Math.round(SystemStatService.swapPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.swapGb).replace(/[^0-9.]/g, "") + " GB"})`);
     }
 
     // Network
-    lines.push(`${I18n.tr("system-monitor.download-speed")}: ${SystemStatService.formatSpeed(SystemStatService.rxSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}`);
-    lines.push(`${I18n.tr("system-monitor.upload-speed")}: ${SystemStatService.formatSpeed(SystemStatService.txSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}`);
+    lines.push(`${I18n.tr("system-monitor.download-speed")}: ${SystemStatService.formatSpeed(SystemStatService.rxSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}` + "/s");
+    lines.push(`${I18n.tr("system-monitor.upload-speed")}: ${SystemStatService.formatSpeed(SystemStatService.txSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}`+ "/s");
 
     // Disk
     const diskPercent = SystemStatService.diskPercents[diskPath];
     if (diskPercent !== undefined) {
       const usedGb = SystemStatService.diskUsedGb[diskPath] || 0;
       const sizeGb = SystemStatService.diskSizeGb[diskPath] || 0;
-      lines.push(`${I18n.tr("system-monitor.disk")}: ${usedGb.toFixed(1)} G / ${sizeGb.toFixed(1)} G (${diskPercent}%)`);
+      lines.push(`${I18n.tr("system-monitor.disk")}: ${usedGb.toFixed(1)} GB / ${sizeGb.toFixed(1)} GB (${diskPercent}%)`);
     }
 
     return lines.join("\n");
