@@ -274,7 +274,7 @@
   },
   "battery": {
     "battery-health": "Akkuzustand",
-    "battery-level": "Akkustand",
+    "battery-level": "Ladezustand",
     "capacity-level": "Kapazität: {level}",
     "charging-rate": "Laderate: {rate} W",
     "discharging-rate": "Entladerate: {rate} W",
