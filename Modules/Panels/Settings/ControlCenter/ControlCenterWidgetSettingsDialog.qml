@@ -122,7 +122,7 @@ Popup {
       }
 
       NButton {
-        text: I18n.tr("common.cancel", "Cancel")
+        text: I18n.tr("common.close")
         outlined: true
         onClicked: root.close()
       }
@@ -134,7 +134,6 @@ Popup {
           if (settingsLoader.item && settingsLoader.item.saveSettings) {
             var newSettings = settingsLoader.item.saveSettings();
             root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
-            root.close();
           }
         }
       }

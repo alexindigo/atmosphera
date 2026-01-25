@@ -90,7 +90,7 @@ Popup {
         }
 
         NButton {
-          text: I18n.tr("common.cancel")
+          text: I18n.tr("common.close")
           outlined: true
           onClicked: root.close()
         }
@@ -101,7 +101,6 @@ Popup {
           onClicked: {
             if (settingsLoader.item && settingsLoader.item.saveSettings) {
               settingsLoader.item.saveSettings();
-              root.close();
               if (root.showToastOnSave) {
                 ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.settings-saved"));
               }
