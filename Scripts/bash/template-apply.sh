@@ -72,28 +72,29 @@ EOF
 alacritty)
     CONFIG_FILE="$HOME/.config/alacritty/alacritty.toml"
 
-    # Check if the config file exists.
-    if [ -f "$CONFIG_FILE" ]; then
-        # Check if theme is already imported
-        if ! grep -q 'import = \[.*"themes/noctalia.toml".*\]' "$CONFIG_FILE"; then
+    # Check if the config file exists, create it if it doesn't.
+    if [ ! -f "$CONFIG_FILE" ]; then
+        # Create the config directory if it doesn't exist
+        mkdir -p "$(dirname "$CONFIG_FILE")"
+        # Create the config file with the noctalia theme import
+        cat >"$CONFIG_FILE" <<'EOF'
+[general]
+import = [
+    "~/.config/alacritty/themes/noctalia.toml"
+]
+EOF
+    else
+        # Check if theme is already imported (checking for the exact path)
+        if ! grep -q '"~/.config/alacritty/themes/noctalia.toml"' "$CONFIG_FILE"; then
             # Check if [general] section exists
             if grep -q '^\[general\]' "$CONFIG_FILE"; then
-                # Check if import line exists under [general]
-                if sed -n '/^\[general\]/,/^\[/p' "$CONFIG_FILE" | grep -q '^import = \['; then
-                    # Replace existing import line with noctalia theme
-                    sed -i '/^\[general\]/,/^\[/{s|^import = \[.*\]|import = ["themes/noctalia.toml"]|}' "$CONFIG_FILE"
-                else
-                    # Add import line after [general] section
-                    sed -i '/^\[general\]/a import = ["themes/noctalia.toml"]' "$CONFIG_FILE"
-                fi
+                # Add import line after [general] section header
+                sed -i '/^\[general\]/a import = ["~/.config/alacritty/themes/noctalia.toml"]' "$CONFIG_FILE"
             else
                 # Create [general] section with import at the beginning of the file
-                sed -i '1i [general]\nimport = ["themes/noctalia.toml"]\n' "$CONFIG_FILE"
+                sed -i '1i [general]\nimport = ["~/.config/alacritty/themes/noctalia.toml"]\n' "$CONFIG_FILE"
             fi
         fi
-    else
-        echo "Error: alacritty config file not found at $CONFIG_FILE" >&2
-        exit 1
     fi
     ;;
 
