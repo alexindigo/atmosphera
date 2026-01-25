@@ -193,8 +193,8 @@ Singleton {
       property int marginHorizontal: 4
 
       // Framed bar settings
-      property int frameThickness: 12
-      property int frameRadius: 20
+      property int frameThickness: 8
+      property int frameRadius: 12
 
       // Bar outer corners (inverted/concave corners at bar edges when not floating)
       property bool outerCorners: true

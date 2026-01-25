@@ -175,8 +175,8 @@ ColumnLayout {
       NValueSlider {
         Layout.fillWidth: true
         label: I18n.tr("panels.bar.appearance-frame-thickness") ?? "Thickness"
-        from: 6
-        to: 16
+        from: 4
+        to: 24
         stepSize: 1
         value: Settings.data.bar.frameThickness
         defaultValue: Settings.getDefaultValue("bar.frameThickness")
@@ -187,7 +187,7 @@ ColumnLayout {
       NValueSlider {
         Layout.fillWidth: true
         label: I18n.tr("panels.bar.appearance-frame-radius") ?? "Inner Radius"
-        from: 2
+        from: 4
         to: 24
         stepSize: 1
         value: Settings.data.bar.frameRadius
