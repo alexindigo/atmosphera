@@ -826,12 +826,10 @@ Loader {
                         onVisibleChanged: {
                           if (visible) {
                             root.currentContextMenu = contextMenu;
-                            anyAppHovered = false;
                           } else if (root.currentContextMenu === contextMenu) {
                             root.currentContextMenu = null;
                             hideTimer.stop();
                             menuHovered = false;
-                            anyAppHovered = false;
                             // Restart hide timer after menu closes
                             if (autoHide && !dockHovered && !anyAppHovered && !peekHovered && !menuHovered) {
                               hideTimer.restart();
