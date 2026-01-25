@@ -35,23 +35,62 @@ SmartPanel {
     }
 
     readonly property string deviceNativePath: getBatteryDevicePath()
-    readonly property var battery: BatteryService.findUPowerDevice(deviceNativePath)
-    readonly property var bluetoothDevice: deviceNativePath ? BatteryService.findBluetoothDevice(deviceNativePath) : null
-    readonly property var device: bluetoothDevice || battery
+    readonly property var selectedBattery: BatteryService.findUPowerDevice(deviceNativePath)
+    readonly property var selectedBluetoothDevice: deviceNativePath ? BatteryService.findBluetoothDevice(deviceNativePath) : null
+    readonly property var selectedDevice: selectedBluetoothDevice || selectedBattery
 
-    // Check if device is actually present/connected
-    readonly property bool isDevicePresent: BatteryService.isDevicePresent(device)
-    readonly property bool isReady: BatteryService.isDeviceReady(device)
+    // Check if selected device is actually present/connected
+    readonly property bool isDevicePresent: BatteryService.isDevicePresent(selectedDevice)
+    readonly property bool isReady: BatteryService.isDeviceReady(selectedDevice)
 
-    readonly property bool hasBluetoothBattery: BatteryService.isBluetoothDevice(device)
-    readonly property int percent: isReady ? Math.round(BatteryService.getPercentage(device)) : -1
-    readonly property bool isCharging: BatteryService.isCharging(device)
-    readonly property bool isPluggedIn: BatteryService.isPluggedIn(device)
-    readonly property bool healthAvailable: (isReady && battery && battery.healthSupported) || BatteryService.healthAvailable
-    readonly property int healthPercent: (isReady && battery && battery.healthSupported) ? Math.round(battery.healthPercentage) : BatteryService.healthPercent
+    readonly property int percent: isReady ? Math.round(BatteryService.getPercentage(selectedDevice)) : -1
+    readonly property bool isCharging: BatteryService.isCharging(selectedDevice)
+    readonly property bool isPluggedIn: BatteryService.isPluggedIn(selectedDevice)
+    readonly property bool healthAvailable: (isReady && selectedBattery && selectedBattery.healthSupported) || (selectedBattery && BatteryService.healthAvailable)
+    readonly property int healthPercent: (isReady && selectedBattery && selectedBattery.healthSupported) ? Math.round(selectedBattery.healthPercentage) : BatteryService.healthPercent
 
-    readonly property string deviceName: BatteryService.getDeviceName(device)
+    readonly property string deviceName: BatteryService.getDeviceName(selectedDevice)
     readonly property string panelTitle: deviceName ? `${I18n.tr("common.battery")} - ${deviceName}` : I18n.tr("common.battery")
+
+    readonly property var allDevices: {
+      var list = [];
+      var seenPaths = new Set();
+
+      // Add UPower batteries
+      if (UPower.devices) {
+        var upowerArray = UPower.devices.values || [];
+        for (var i = 0; i < upowerArray.length; i++) {
+          var d = upowerArray[i];
+          if (BatteryService.isDevicePresent(d) && d.type === UPowerDeviceType.Battery) {
+            if (d.nativePath && !seenPaths.has(d.nativePath)) {
+              list.push(d);
+              seenPaths.add(d.nativePath);
+            }
+          }
+        }
+      }
+      // Add Bluetooth batteries
+      if (BluetoothService.devices) {
+        var btArray = BluetoothService.devices.values || [];
+        for (var j = 0; j < btArray.length; j++) {
+          var btd = btArray[j];
+          if (BatteryService.isDevicePresent(btd) && btd.batteryAvailable) {
+            // Bluetooth devices use address as unique ID
+            if (btd.address && !seenPaths.has(btd.address)) {
+              list.push(btd);
+              seenPaths.add(btd.address);
+            }
+          }
+        }
+      }
+
+      // Fallback: if no specific batteries found but display device is a battery, use it
+      if (list.length === 0 && UPower.displayDevice && UPower.displayDevice.type === UPowerDeviceType.Battery && BatteryService.isDevicePresent(UPower.displayDevice)) {
+        list.push(UPower.displayDevice);
+      }
+
+      return list;
+    }
 
     readonly property string timeText: {
       if (!isReady || !isDevicePresent)
@@ -59,15 +98,15 @@ SmartPanel {
       if (isPluggedIn) {
         return I18n.tr("battery.plugged-in");
       }
-      if (battery) {
-        if (battery.timeToFull > 0) {
+      if (selectedBattery) {
+        if (selectedBattery.timeToFull > 0) {
           return I18n.tr("battery.time-until-full", {
-                           "time": Time.formatVagueHumanReadableDuration(battery.timeToFull)
+                           "time": Time.formatVagueHumanReadableDuration(selectedBattery.timeToFull)
                          });
         }
-        if (battery.timeToEmpty > 0) {
+        if (selectedBattery.timeToEmpty > 0) {
           return I18n.tr("battery.time-left", {
-                           "time": Time.formatVagueHumanReadableDuration(battery.timeToEmpty)
+                           "time": Time.formatVagueHumanReadableDuration(selectedBattery.timeToEmpty)
                          });
         }
       }
@@ -179,52 +218,63 @@ SmartPanel {
       NBox {
         Layout.fillWidth: true
         implicitHeight: chargeLayout.implicitHeight + Style.marginL * 2
-        visible: isReady
+        visible: allDevices.length > 0
 
         ColumnLayout {
           id: chargeLayout
           anchors.fill: parent
           anchors.margins: Style.marginL
-          spacing: Style.marginS
+          spacing: Style.marginL
 
-          RowLayout {
-            Layout.fillWidth: true
-            spacing: Style.marginS
+          Repeater {
+            model: allDevices
+            delegate: ColumnLayout {
+              Layout.fillWidth: true
+              spacing: Style.marginS
 
-            ColumnLayout {
-              NText {
-                text: I18n.tr("battery.battery-level")
-                color: Color.mOnSurface
-                pointSize: Style.fontSizeS
-              }
-
-              Rectangle {
+              RowLayout {
                 Layout.fillWidth: true
-                height: Math.round(8 * Style.uiScaleRatio)
-                radius: Math.min(Style.radiusL, height / 2)
-                color: Color.mSurfaceVariant
+                spacing: Style.marginS
 
-                Rectangle {
-                  anchors.verticalCenter: parent.verticalCenter
-                  height: parent.height
-                  radius: parent.radius
-                  width: {
-                    var ratio = Math.max(0, Math.min(1, percent / 100));
-                    return parent.width * ratio;
+                ColumnLayout {
+                  NText {
+                    readonly property string dName: BatteryService.getDeviceName(modelData)
+                    text: dName ? dName : (BatteryService.isBluetoothDevice(modelData) ? I18n.tr("common.bluetooth") : I18n.tr("common.battery"))
+                    color: Color.mOnSurface
+                    pointSize: Style.fontSizeS
                   }
-                  color: Color.mPrimary
+
+                  Rectangle {
+                    Layout.fillWidth: true
+                    height: Math.round(8 * Style.uiScaleRatio)
+                    radius: Math.min(Style.radiusL, height / 2)
+                    color: Color.mSurfaceVariant
+
+                    Rectangle {
+                      anchors.verticalCenter: parent.verticalCenter
+                      height: parent.height
+                      radius: parent.radius
+                      width: {
+                        var p = BatteryService.getPercentage(modelData);
+                        var ratio = Math.max(0, Math.min(1, p / 100));
+                        return parent.width * ratio;
+                      }
+                      color: Color.mPrimary
+                    }
+                  }
+                }
+
+                NText {
+                  text: `${Math.round(BatteryService.getPercentage(modelData))}%`
+                  color: Color.mOnSurface
+                  pointSize: Style.fontSizeS
+                  font.weight: Style.fontWeightBold
                 }
               }
             }
-
-            NText {
-              text: percent >= 0 ? `${percent}%` : "--"
-              color: Color.mOnSurface
-              pointSize: Style.fontSizeS
-              font.weight: Style.fontWeightBold
-            }
           }
 
+          // System Battery Health (only if selected device is system battery)
           RowLayout {
             Layout.fillWidth: true
             spacing: Style.marginS
