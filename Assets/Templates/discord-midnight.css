@@ -319,6 +319,6 @@ body {
 
 [class*="unreadBar"] [class*="text"],
 [class*="unreadMentionsBar"] [class*="text"] {
-    color: var(--text-0) !important;
+    color: var(--text-1) !important;
     font-weight: 700;
 }
