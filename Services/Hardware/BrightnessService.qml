@@ -407,7 +407,8 @@ Singleton {
     }
 
     onBusNumChanged: initBrightness()
-    onIsDdcChanged: if (isDdc) initBrightness()
+    onIsDdcChanged: if (isDdc)
+    initBrightness()
     Component.onCompleted: initBrightness()
   }
 }

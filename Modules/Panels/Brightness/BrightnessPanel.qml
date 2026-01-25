@@ -18,10 +18,10 @@ SmartPanel {
   onOpened: {
     // Refresh DDC brightness from monitors (one-time on panel open)
     BrightnessService.monitors.forEach(m => {
-      if (m.isDdc) {
-        m.refreshBrightnessFromSystem();
-      }
-    });
+                                         if (m.isDdc) {
+                                           m.refreshBrightnessFromSystem();
+                                         }
+                                       });
   }
 
   panelContent: Item {

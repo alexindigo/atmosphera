@@ -83,10 +83,10 @@ SmartPanel {
     MediaService.autoSwitchingPaused = true;
     // Refresh DDC brightness from monitors (one-time on QS open)
     BrightnessService.monitors.forEach(m => {
-      if (m.isDdc) {
-        m.refreshBrightnessFromSystem();
-      }
-    });
+                                         if (m.isDdc) {
+                                           m.refreshBrightnessFromSystem();
+                                         }
+                                       });
   }
 
   onClosed: {
