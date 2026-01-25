@@ -39,9 +39,16 @@ Item {
   property real scrollCycleDuration: Math.max(4000, root.text.length * 120)
   property real resettingDuration: 300
 
+  readonly property real contentWidth: {
+    if (!titleText.item)
+      return 0;
+    const implicit = titleText.item.implicitWidth;
+    return implicit > 0 ? implicit : titleText.item.width;
+  }
   readonly property real measuredWidth: scrollContainer.width
 
   clip: true
+  implicitWidth: alwaysMaxWidth ? maxWidth : Math.min(maxWidth, contentWidth)
   implicitHeight: titleText.height
 
   enum ScrollState {
@@ -62,12 +69,9 @@ Item {
     resetState();
   }
   onMaxWidthChanged: resetState()
+  onContentWidthChanged: root.updateState()
 
   function resetState() {
-    root.implicitWidth = Math.min(root.maxWidth, titleText.width);
-    if (alwaysMaxWidth) {
-      root.implicitWidth = root.maxWidth;
-    }
     root.state = NScrollText.ScrollState.None;
     scrollContainer.x = 0;
     scrollTimer.restart();
@@ -99,7 +103,7 @@ Item {
   }
 
   function updateState() {
-    if (titleText.width <= root.maxWidth || scrollMode === NScrollText.ScrollMode.Never) {
+    if (contentWidth <= root.maxWidth || scrollMode === NScrollText.ScrollMode.Never) {
       state = NScrollText.ScrollState.None;
       return;
     }
