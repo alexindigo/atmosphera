@@ -961,7 +961,7 @@ SmartPanel {
             return Color.mOnPrimary;
           return Color.mOnSurface;
         }
-        pointSize: Style.fontSizeXXXL * 2.5
+        pointSize: Style.fontSizeXXXL * 2.25
         width: 90 * Style.uiScaleRatio
         height: 90 * Style.uiScaleRatio
         horizontalAlignment: Text.AlignHCenter
