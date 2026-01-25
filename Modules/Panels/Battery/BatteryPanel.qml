@@ -34,108 +34,23 @@ SmartPanel {
       return "";
     }
 
-    // Helper function to find battery device by nativePath
-    function findBatteryDevice(nativePath) {
-      if (!nativePath || nativePath === "") {
-        return UPower.displayDevice;
-      }
-
-      if (!UPower.devices) {
-        return UPower.displayDevice;
-      }
-
-      var deviceArray = UPower.devices.values || [];
-      for (var i = 0; i < deviceArray.length; i++) {
-        var device = deviceArray[i];
-        if (device && device.nativePath === nativePath) {
-          if (device.type === UPowerDeviceType.LinePower) {
-            continue;
-          }
-          if (device.percentage !== undefined) {
-            return device;
-          }
-        }
-      }
-      return UPower.displayDevice;
-    }
-
-    // Helper function to find Bluetooth device by MAC address from nativePath
-    function findBluetoothDevice(nativePath) {
-      if (!nativePath || !BluetoothService.devices) {
-        return null;
-      }
-
-      var macMatch = nativePath.match(/([0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2})/);
-      if (!macMatch) {
-        return null;
-      }
-
-      var macAddress = macMatch[1].toUpperCase();
-      var deviceArray = BluetoothService.devices.values || [];
-
-      for (var i = 0; i < deviceArray.length; i++) {
-        var device = deviceArray[i];
-        if (device && device.address && device.address.toUpperCase() === macAddress) {
-          return device;
-        }
-      }
-      return null;
-    }
-
     readonly property string deviceNativePath: getBatteryDevicePath()
-    readonly property var battery: findBatteryDevice(deviceNativePath)
-    readonly property var bluetoothDevice: deviceNativePath ? findBluetoothDevice(deviceNativePath) : null
-    readonly property bool hasBluetoothBattery: bluetoothDevice && bluetoothDevice.batteryAvailable && bluetoothDevice.battery !== undefined
-    readonly property bool isBluetoothConnected: bluetoothDevice && bluetoothDevice.connected !== undefined ? bluetoothDevice.connected : false
+    readonly property var battery: BatteryService.findUPowerDevice(deviceNativePath)
+    readonly property var bluetoothDevice: deviceNativePath ? BatteryService.findBluetoothDevice(deviceNativePath) : null
+    readonly property var device: bluetoothDevice || battery
 
     // Check if device is actually present/connected
-    readonly property bool isDevicePresent: {
-      if (deviceNativePath && deviceNativePath !== "") {
-        if (bluetoothDevice) {
-          return isBluetoothConnected;
-        }
-        if (battery && battery.nativePath === deviceNativePath) {
-          if (battery.type === UPowerDeviceType.Battery && battery.isPresent !== undefined) {
-            return battery.isPresent;
-          }
-          return battery.ready && battery.percentage !== undefined && (battery.percentage > 0 || battery.state === UPowerDeviceState.Charging);
-        }
-        return false;
-      }
-      if (battery) {
-        if (battery.type === UPowerDeviceType.Battery && battery.isPresent !== undefined) {
-          return battery.isPresent;
-        }
-        return battery.ready && battery.percentage !== undefined;
-      }
-      return false;
-    }
+    readonly property bool isDevicePresent: BatteryService.isDevicePresent(device)
+    readonly property bool isReady: BatteryService.isDeviceReady(device)
 
-    readonly property bool isReady: battery && battery.ready && isDevicePresent && (battery.percentage !== undefined || hasBluetoothBattery)
-    readonly property int percent: isReady ? Math.round(hasBluetoothBattery ? (bluetoothDevice.battery * 100) : (battery.percentage * 100)) : -1
-    readonly property bool isCharging: isReady ? battery.state === UPowerDeviceState.Charging : false
-    readonly property bool isPluggedIn: isReady ? (battery.state === UPowerDeviceState.FullyCharged || battery.state === UPowerDeviceState.PendingCharge) : false
-    readonly property bool healthAvailable: (isReady && battery.healthSupported) || BatteryService.healthAvailable
-    readonly property int healthPercent: (isReady && battery.healthSupported) ? Math.round(battery.healthPercentage) : BatteryService.healthPercent
+    readonly property bool hasBluetoothBattery: BatteryService.isBluetoothDevice(device)
+    readonly property int percent: isReady ? Math.round(BatteryService.getPercentage(device)) : -1
+    readonly property bool isCharging: BatteryService.isCharging(device)
+    readonly property bool isPluggedIn: BatteryService.isPluggedIn(device)
+    readonly property bool healthAvailable: (isReady && battery && battery.healthSupported) || BatteryService.healthAvailable
+    readonly property int healthPercent: (isReady && battery && battery.healthSupported) ? Math.round(battery.healthPercentage) : BatteryService.healthPercent
 
-    function getDeviceName() {
-      if (!isReady) {
-        return "";
-      }
-      // Don't show name for laptop batteries
-      if (battery && battery.isLaptopBattery) {
-        return "";
-      }
-      if (bluetoothDevice && bluetoothDevice.name) {
-        return bluetoothDevice.name;
-      }
-      if (battery && battery.model) {
-        return battery.model;
-      }
-      return "";
-    }
-
-    readonly property string deviceName: getDeviceName()
+    readonly property string deviceName: BatteryService.getDeviceName(device)
     readonly property string panelTitle: deviceName ? `${I18n.tr("common.battery")} - ${deviceName}` : I18n.tr("common.battery")
 
     readonly property string timeText: {
@@ -144,15 +59,17 @@ SmartPanel {
       if (isPluggedIn) {
         return I18n.tr("battery.plugged-in");
       }
-      if (battery.timeToFull > 0) {
-        return I18n.tr("battery.time-until-full", {
-                         "time": Time.formatVagueHumanReadableDuration(battery.timeToFull)
-                       });
-      }
-      if (battery.timeToEmpty > 0) {
-        return I18n.tr("battery.time-left", {
-                         "time": Time.formatVagueHumanReadableDuration(battery.timeToEmpty)
-                       });
+      if (battery) {
+        if (battery.timeToFull > 0) {
+          return I18n.tr("battery.time-until-full", {
+                           "time": Time.formatVagueHumanReadableDuration(battery.timeToFull)
+                         });
+        }
+        if (battery.timeToEmpty > 0) {
+          return I18n.tr("battery.time-left", {
+                           "time": Time.formatVagueHumanReadableDuration(battery.timeToEmpty)
+                         });
+        }
       }
       return I18n.tr("common.idle");
     }
