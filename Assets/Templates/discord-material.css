@@ -15,6 +15,9 @@
 /* Material You addon */
 @import url("https://capnkitten.github.io/BetterDiscord/Themes/Material-Discord/css/addons/material-you/source.css");
 
+
+
+
 /* MATERIAL YOU DARK THEME SETTINGS */
 .theme-dark {
     --saturation-modifier: 0.31;
@@ -81,4 +84,11 @@
   /* Misc */
   --app-watermark-one: "Noctalia";
   --app-watermark-two: "Discord";
+
+  /* Ensure channels-default is different from the active one - works in dark mode / light mode is another story... */
+  --text-tertiary: hsl(
+        var(--accent-hue),
+        calc(var(--accent-saturation) * var(--saturation-modifier) * 0.78 * var(--saturation-factor)),
+        calc(var(--accent-lightness) * var(--lightness-modifier) * var(--ui-darkness-modifier) * var(--text-lightness-modifier) * 3.0)
+    ) !important;
 }
