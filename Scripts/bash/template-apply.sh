@@ -9,7 +9,7 @@ if [ "$#" -lt 1 ]; then
 fi
 
 APP_NAME="$1"
-MODE="${2:-}"  # Optional second argument for dark/light mode
+MODE="${2:-}" # Optional second argument for dark/light mode
 
 # --- Apply theme based on the application name ---
 case "$APP_NAME" in
@@ -287,18 +287,33 @@ niri)
     ;;
 
 hyprland)
-    CONFIG_FILE="$HOME/.config/hypr/hyprland.conf"
-    INCLUDE_LINE="source = ~/.config/hypr/noctalia/noctalia-colors.conf"
+    echo "🎨 Applying 'noctalia' theme to Hyprland..."
+    CONFIG_DIR="$HOME/.config/hypr"
+    CONFIG_FILE="$CONFIG_DIR/hyprland.conf"
+    THEME_FILE="$CONFIG_DIR/noctalia/noctalia-colors.conf"
+
+    INCLUDE_LINE="source = $THEME_FILE"
 
     # Check if the config file exists.
     if [ ! -f "$CONFIG_FILE" ]; then
+        echo "Config file not found, creating $CONFIG_FILE..."
         mkdir -p "$(dirname "$CONFIG_FILE")"
         echo -e "\n$INCLUDE_LINE\n" >"$CONFIG_FILE"
+        echo "Created new config file with noctalia theme."
     else
+        if [ -L "$CONFIG_FILE" ] && [ ! -w "$CONFIG_FILE" ]; then
+            echo "Detected read-only symlink, converting to local file..."
+            cp --remove-destination "$(readlink -f "$CONFIG_FILE")" "$CONFIG_FILE"
+            chmod +w "$CONFIG_FILE"
+        fi
+
         # Check if include line already exists
-        if ! grep -qF "$INCLUDE_LINE" "$CONFIG_FILE"; then
+        if grep -qF "$INCLUDE_LINE" "$CONFIG_FILE"; then
+            echo "Theme already included, skipping modification."
+        else
             # Add the include line to the end of the file
             echo -e "\n$INCLUDE_LINE\n" >>"$CONFIG_FILE"
+            echo "✅ Added noctalia theme include to config."
         fi
     fi
 
@@ -383,20 +398,20 @@ btop)
 
 zathura)
     ZATHURA_INSTANCES=$(dbus-send --session \
-      --dest=org.freedesktop.DBus \
-      --type=method_call \
-      --print-reply \
-      /org/freedesktop/DBus \
-      org.freedesktop.DBus.ListNames \
-      | grep -o 'org.pwmt.zathura.PID-[0-9]*')
+        --dest=org.freedesktop.DBus \
+        --type=method_call \
+        --print-reply \
+        /org/freedesktop/DBus \
+        org.freedesktop.DBus.ListNames |
+        grep -o 'org.pwmt.zathura.PID-[0-9]*')
 
     for id in $ZATHURA_INSTANCES; do
-      dbus-send --session \
-        --dest="$id" \
-        --type=method_call \
-        /org/pwmt/zathura \
-        org.pwmt.zathura.ExecuteCommand \
-        string:"source"
+        dbus-send --session \
+            --dest="$id" \
+            --type=method_call \
+            /org/pwmt/zathura \
+            org.pwmt.zathura.ExecuteCommand \
+            string:"source"
     done
     ;;
 
