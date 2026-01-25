@@ -257,13 +257,13 @@ SmartPanel {
           anchors.fill: parent
           ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
           ScrollBar.vertical.policy: ScrollBar.AsNeeded
-          clip: true
+          reserveScrollbarSpace: false
 
           // Track which notification is expanded
           property string expandedId: ""
 
           ColumnLayout {
-            width: parent.width
+            width: scrollView.availableWidth
             spacing: Style.marginM
 
             // Empty state when no notifications
