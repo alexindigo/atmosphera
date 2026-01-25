@@ -908,14 +908,7 @@ SmartPanel {
 
     border.width: Style.borderS
     border.color: Color.mOutline
-
-    // Scale transform for hover effect
-    transform: Scale {
-      origin.x: largeButtonRoot.width / 2
-      origin.y: largeButtonRoot.height / 2
-      xScale: hoverScale
-      yScale: hoverScale
-    }
+    scale: hoverScale
 
     Behavior on color {
       ColorAnimation {
@@ -966,12 +959,7 @@ SmartPanel {
 
         property real iconScale: (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover) ? 1.1 : 1.0
 
-        transform: Scale {
-          origin.x: iconElement.width / 2
-          origin.y: iconElement.height / 2
-          xScale: iconElement.iconScale
-          yScale: iconElement.iconScale
-        }
+        scale: iconScale
 
         Behavior on color {
           ColorAnimation {
