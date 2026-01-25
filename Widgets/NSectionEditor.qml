@@ -468,8 +468,14 @@ NBox {
                             root._activeDialog = dialog;
                             dialog.updateWidgetSettings.connect(root.updateWidgetSettings);
                             dialog.closed.connect(() => {
-                                                    if (root._activeDialog === dialog) {
-                                                      root._activeDialog = null;
+                                                    // Use a safe check for root existence
+                                                    if (typeof root !== 'undefined' && root) {
+                                                      if (root._activeDialog === dialog) {
+                                                        root._activeDialog = null;
+                                                      }
+                                                    }
+                                                    // Always ensure dialog is destroyed if it's still around
+                                                    if (dialog) {
                                                       dialog.destroy();
                                                     }
                                                   });
