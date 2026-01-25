@@ -337,7 +337,7 @@ Singleton {
       return;
 
     const target = ensureVersionPrefix(currentVersion.replace(developmentSuffix, ""));
-    const fromVersion = "v3.7.2";
+    const fromVersion = "v3.8.2";
 
     previousVersion = fromVersion;
     changelogCurrentVersion = target;
