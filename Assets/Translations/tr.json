@@ -1090,6 +1090,8 @@
       "weather-show-in-calendar-label": "Takvimde hava durumunu göster"
     },
     "lock-screen": {
+      "auto-start-auth-description": "örneğin, bir tuşa basmaya veya düğmeye tıklamaya gerek kalmadan parmak izi kimlik doğrulamasını otomatik olarak başlatır.",
+      "auto-start-auth-label": "Otomatik kimlik doğrulama başlatma",
       "compact-lockscreen-description": "Sadece giriş girdisini ve sistem kontrollerini göster, hava durumu ve ortam araç takımlarını gizle.",
       "compact-lockscreen-label": "Kompakt ekran kilidi",
       "lock-on-suspend-description": "Sistemi askıya alırken otomatik olarak ekranı kilitler.",

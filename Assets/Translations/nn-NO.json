@@ -464,9 +464,98 @@
     "upload": "Lasta opp",
     "version": "Versjon",
     "vibrant": "Livleg",
-    "visualizer": "Visualiserar"
+    "visualizer": "Visualiserar",
+    "volume": "Ljodstyrke",
+    "volumes": "Ljodstyrke",
+    "wallpaper": "Bakgrunnsbilete",
+    "weather": "Vêr",
+    "weather-loading": "Lastar inn vêr",
+    "week": "Veke",
+    "widgets": "Miniprogram",
+    "width": "Breidde",
+    "yes": "Ja"
+  },
+  "control-center": {
+    "power-profile": {
+      "tooltip-action": "Energiprofil",
+      "tooltip-disabled": "Installer power-profiles-daemon for å bruka energiprofil"
+    },
+    "wifi": {
+      "label-disconnected": "Kopla frå Wi-Fi",
+      "label-ethernet": "Ethernet"
+    }
+  },
+  "display-modes": {
+    "always-hide": "Alltid gøym",
+    "always-show": "Alltid vis",
+    "force-open": "Tving open",
+    "on-hover": "Ved sviv"
+  },
+  "hide-modes": {
+    "hidden": "Gøym når tom",
+    "idle": "Gøym når inaktiv",
+    "transparent": "Gjennomsynleg når tom",
+    "visible": "Alltid synleg"
+  },
+  "launcher": {
+    "categories": {
+      "all": "Alt",
+      "audiovideo": "Ljod & video",
+      "chat": "Samtale",
+      "development": "Utvikling",
+      "education": "Opplæring",
+      "emoji-activity": "Aktivitetar",
+      "emoji-animals": "Dyr",
+      "emoji-flags": "Flagg",
+      "emoji-food": "Mat og drikke",
+      "emoji-nature": "Natur",
+      "emoji-objects": "Ting",
+      "emoji-people": "Folk & kropp",
+      "emoji-recent": "Nyleg",
+      "emoji-symbols": "Symbol",
+      "emoji-travel": "Reiser & stader",
+      "game": "Spel",
+      "graphics": "Grafikk",
+      "misc": "Ymis",
+      "office": "Kontor",
+      "pinned": "Feste",
+      "system": "System",
+      "webbrowser": "Nettlesar"
+    },
+    "providers": {
+      "applications": "Applikasjonar",
+      "calculator": "Kalkulator",
+      "calculator-deprecated": "\">calc\"-kommandoen er deprekert og skal snart slettast. Skriv heller matteuttrykk beinveges i søk.",
+      "calculator-description": "Kalkulator — reknar ut matematiske uttrykk",
+      "calculator-enter-expression": "Skriv inn eit matematisk uttrykk",
+      "calculator-press-enter-to-copy": "Trykk Enter for å kopiera utfallet",
+      "clipboard": "Utklippstavlehistorikk",
+      "clipboard-clear-description": "Tøm heile utklippstavlehistorikken",
+      "clipboard-clear-description-full": "Slett alt frå utklippstavlehistorikken",
+      "clipboard-clear-history": "Tøm utklipsstavlehistorikk",
+      "clipboard-delete": "Slett oppføring på utklippstavla",
+      "clipboard-history-disabled": "Utklippstavlehistorikk avslegen"
+    }
+  },
+  "panels": {
+    "lock-screen": {
+      "auto-start-auth-description": "t.d. startar automatisk fingeravtrykksautentisering utan å krevje eit tastetrykk eller eit knappetrykk.",
+      "auto-start-auth-label": "Autostart autentisering"
+    }
   },
   "toast": {
     "donation-opened": "Donasjonsside opna i nettlesaren din"
+  },
+  "widgets": {
+    "datetime-tokens": {
+      "common-12hour-time-minutes": "Tid i 12-timar med minutt",
+      "common-24hour-time-minutes": "Tid i 24-timar med minutt",
+      "common-24hour-time-seconds": "Tid i 24-timar med sekund",
+      "common-european-date": "Europeisk datoformat",
+      "common-iso-date": "ISO datoformat",
+      "common-us-date": "Amerikansk datoformat",
+      "common-weekday-date": "Vekedag med dato",
+      "common-weekday-month-day": "Vekedag, månad og dag"
+    }
   }
 }

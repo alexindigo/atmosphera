@@ -1090,6 +1090,8 @@
       "weather-show-in-calendar-label": "Exibir clima no calendário"
     },
     "lock-screen": {
+      "auto-start-auth-description": "p. ex., inicia automaticamente a autenticação de impressão digital sem exigir uma pressão de tecla ou um clique de botão.",
+      "auto-start-auth-label": "Autenticação de início automático",
       "compact-lockscreen-description": "Mostrar apenas a entrada de login e os controles do sistema, ocultando os widgets de clima e mídia.",
       "compact-lockscreen-label": "Tela de bloqueio compacta",
       "lock-on-suspend-description": "Bloquear a tela automaticamente ao suspender o sistema.",

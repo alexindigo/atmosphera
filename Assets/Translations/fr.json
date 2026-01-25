@@ -1090,6 +1090,8 @@
       "weather-show-in-calendar-label": "Afficher la météo dans le calendrier"
     },
     "lock-screen": {
+      "auto-start-auth-description": "par exemple, démarre automatiquement l'authentification par empreinte digitale sans nécessiter de pression sur une touche ou un clic de bouton.",
+      "auto-start-auth-label": "Authentification au démarrage automatique",
       "compact-lockscreen-description": "Afficher uniquement le champ de saisie de connexion et les commandes système, en masquant les widgets météo et multimédia.",
       "compact-lockscreen-label": "Écran de verrouillage compact",
       "lock-on-suspend-description": "Verrouiller automatiquement l'écran lors de la mise en veille du système.",
