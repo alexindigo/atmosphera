@@ -1306,6 +1306,7 @@ SmartPanel {
                 }
 
                 NScrollView {
+                  id: descriptionScrollView
                   Layout.alignment: Qt.AlignTop | Qt.AlignLeft
                   Layout.topMargin: Style.fontSizeL + Style.marginXL
                   Layout.fillWidth: true
@@ -1314,7 +1315,7 @@ SmartPanel {
                   reserveScrollbarSpace: false
 
                   NText {
-                    width: parent.availableWidth
+                    width: descriptionScrollView.availableWidth
                     text: root.results.length > 0 ? root.results[0].description : ""
                     pointSize: Style.fontSizeM
                     font.weight: Font.Bold

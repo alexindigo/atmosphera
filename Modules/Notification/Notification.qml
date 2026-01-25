@@ -233,13 +233,12 @@ Variants {
                 height: 2
                 color: "transparent"
 
-                readonly property real availableWidth: parent.width - (2 * parent.radius)
-
                 Rectangle {
                   id: progressBar
+                  readonly property real progressWidth: cardBackground.width - (2 * cardBackground.radius)
                   height: parent.height
-                  x: parent.parent.radius + (parent.availableWidth * (1 - model.progress)) / 2
-                  width: parent.availableWidth * model.progress
+                  x: cardBackground.radius + (progressWidth * (1 - model.progress)) / 2
+                  width: progressWidth * model.progress
 
                   color: {
                     var baseColor = model.urgency === 2 ? Color.mError : model.urgency === 0 ? Color.mOnSurface : Color.mPrimary;

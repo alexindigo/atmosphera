@@ -255,9 +255,10 @@ SmartPanel {
         NScrollView {
           id: scrollView
           anchors.fill: parent
-          ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-          ScrollBar.vertical.policy: ScrollBar.AsNeeded
+          horizontalPolicy: ScrollBar.AlwaysOff
+          verticalPolicy: ScrollBar.AsNeeded
           reserveScrollbarSpace: false
+          gradientColor: Color.mSurface
 
           // Track which notification is expanded
           property string expandedId: ""

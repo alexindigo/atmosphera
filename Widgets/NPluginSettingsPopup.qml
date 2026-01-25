@@ -67,15 +67,16 @@ Popup {
 
       // Settings loader - pluginApi is passed via setSource() in openPluginSettings()
       NScrollView {
+        id: settingsScrollView
         Layout.fillWidth: true
         Layout.fillHeight: true
         Layout.minimumHeight: 100
         horizontalPolicy: ScrollBar.AlwaysOff
-        rightPadding: verticalScrollable ? Style.marginM : 0 // Only add padding when scrollbar is visible
+        gradientColor: Color.mSurface
 
         Loader {
           id: settingsLoader
-          width: parent.width
+          width: settingsScrollView.availableWidth
         }
       }
 

@@ -22,6 +22,7 @@ Popup {
   readonly property real settingsContentWidth: {
     if (settingsLoader.item && settingsLoader.item.implicitWidth > 0) {
       return settingsLoader.item.implicitWidth;
+      d;
     }
     return defaultContentWidth;
   }
@@ -89,9 +90,11 @@ Popup {
       Layout.fillWidth: true
       Layout.fillHeight: true
       Layout.minimumHeight: 100
+      gradientColor: Color.mSurface
+      reserveScrollbarSpace: false
 
       ColumnLayout {
-        width: scrollView.width
+        width: scrollView.availableWidth
         spacing: Style.marginM
 
         Loader {

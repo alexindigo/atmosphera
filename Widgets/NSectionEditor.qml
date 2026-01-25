@@ -37,7 +37,7 @@ NBox {
   }
 
   property var widgetRegistry: null
-  property string settingsDialogComponent: "BarWidgetSettingsDialog.qml"
+  property string settingsDialogComponent: "invalid-settings-dialog"
   property var screen: null // Screen reference for per-screen widget settings
   property var _activeDialog: null
 
