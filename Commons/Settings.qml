@@ -279,6 +279,7 @@ Singleton {
       property bool telemetryEnabled: false
       property bool enableLockScreenCountdown: true
       property int lockScreenCountdownDuration: 10000
+      property bool autoStartAuth: false
     }
 
     // ui
