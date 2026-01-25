@@ -531,8 +531,8 @@ Loader {
           WlrLayershell.namespace: "noctalia-dock-" + (screen?.name || "unknown")
           WlrLayershell.exclusionMode: exclusive ? ExclusionMode.Auto : ExclusionMode.Ignore
 
-          implicitWidth: dockContainerWrapper.width
-          implicitHeight: dockContainerWrapper.height
+          implicitWidth: Math.round(dockContainerWrapper.width + (root.isVertical ? 0 : Style.marginXL * 6))
+          implicitHeight: Math.round(dockContainerWrapper.height)
 
           // Position based on dock setting
           anchors.top: dockPosition === "top"
