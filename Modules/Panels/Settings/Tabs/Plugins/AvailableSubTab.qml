@@ -16,8 +16,8 @@ ColumnLayout {
   property int tagsRefreshCounter: 0
   property int availablePluginsRefreshCounter: 0
 
-  // Pseudo tags for filtering by download status
-  readonly property var pseudoTags: ["downloaded", "notDownloaded"]
+  // Pseudo tags for filtering
+  readonly property var pseudoTags: ["official", "downloaded", "notDownloaded"]
 
   readonly property var availableTags: {
     // Reference counter to force re-evaluation
@@ -55,6 +55,8 @@ ColumnLayout {
     formatTag: function (tag) {
       if (tag === "")
         return I18n.tr("launcher.categories.all");
+      if (tag === "official")
+        return I18n.tr("common.official");
       if (tag === "downloaded")
         return I18n.tr("panels.plugins.filter-downloaded");
       if (tag === "notDownloaded")
@@ -112,6 +114,10 @@ ColumnLayout {
           if (root.selectedTag === "") {
             // "All" - no filter
             filtered.push(plugin);
+          } else if (root.selectedTag === "official") {
+            // Official (team-maintained) pseudo tag
+            if (plugin.official === true)
+              filtered.push(plugin);
           } else if (root.selectedTag === "downloaded") {
             // Downloaded pseudo tag
             if (downloaded)
