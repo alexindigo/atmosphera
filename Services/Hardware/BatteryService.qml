@@ -19,7 +19,7 @@ Singleton {
     var devices = UPower.devices ? (UPower.devices.values || []) : [];
     for (var i = 0; i < devices.length; i++) {
       var device = devices[i];
-      if (device && device.type === UPowerDeviceType.Battery && device.isLaptopBattery && device.percentage !== undefined) {
+      if (device && device.type === UPowerDeviceType.Battery && device.isLaptopBattery) {
         return device;
       }
     }
@@ -30,7 +30,7 @@ Singleton {
     var devices = BluetoothService.devices ? (BluetoothService.devices.values || []) : [];
     for (var i = 0; i < devices.length; i++) {
       var device = devices[i];
-      if (device && device.connected && device.batteryAvailable && device.battery !== undefined) {
+      if (device && device.connected && device.batteryAvailable) {
         return device;
       }
     }
@@ -41,55 +41,142 @@ Singleton {
   readonly property var primaryDevice: _laptopBattery || _bluetoothBattery || null
 
   // Whether the primary device is a laptop battery
-  readonly property bool isLaptopBattery: _laptopBattery !== null
+  readonly property bool isLaptopBattery: _laptopBattery !== null && primaryDevice === _laptopBattery
 
-  readonly property real batteryPercentage: {
-    if (!primaryDevice) {
-      return 0;
-    }
-    if (isLaptopBattery) {
-      return (primaryDevice.percentage || 0) * 100;
-    }
-    return (primaryDevice.battery || 0) * 100;
-  }
+  readonly property real batteryPercentage: getPercentage(primaryDevice)
 
-  readonly property bool batteryCharging: {
-    if (!primaryDevice || !isLaptopBattery) {
-      return false;
-    }
-    return primaryDevice.state !== undefined && primaryDevice.state === UPowerDeviceState.Charging;
-  }
+  readonly property bool batteryCharging: isCharging(primaryDevice)
 
-  readonly property bool batteryPluggedIn: {
-    if (!primaryDevice || !isLaptopBattery) {
-      return false;
-    }
-    return primaryDevice.state !== undefined && (primaryDevice.state === UPowerDeviceState.FullyCharged || primaryDevice.state === UPowerDeviceState.PendingCharge);
-  }
+  readonly property bool batteryPluggedIn: isPluggedIn(primaryDevice)
 
-  readonly property bool batteryReady: {
-    if (!primaryDevice) {
-      return false;
-    }
-    if (isLaptopBattery) {
-      return (primaryDevice.ready === true) && primaryDevice.percentage !== undefined;
-    }
-    return (primaryDevice.connected === true) && (primaryDevice.batteryAvailable === true) && primaryDevice.battery !== undefined;
-  }
+  readonly property bool batteryReady: isDeviceReady(primaryDevice)
 
-  readonly property bool batteryPresent: {
-    if (!primaryDevice) {
-      return false;
-    }
-    if (isLaptopBattery) {
-      var hasIsPresent = primaryDevice.type === UPowerDeviceType.Battery && primaryDevice.isPresent !== undefined;
-      return hasIsPresent ? (primaryDevice.isPresent === true) : (primaryDevice.ready && primaryDevice.percentage !== undefined);
-    }
-    return primaryDevice.connected === true;
-  }
+  readonly property bool batteryPresent: isDevicePresent(primaryDevice)
 
   property bool healthAvailable: false
   property int healthPercent: -1
+
+  function findUPowerDevice(nativePath) {
+    if (!nativePath || nativePath === "") {
+      return UPower.displayDevice;
+    }
+
+    if (!UPower.devices) {
+      return null;
+    }
+
+    var deviceArray = UPower.devices.values || [];
+    for (var i = 0; i < deviceArray.length; i++) {
+      var device = deviceArray[i];
+      if (device && device.nativePath === nativePath) {
+        if (device.type === UPowerDeviceType.LinePower) {
+          continue;
+        }
+        return device;
+      }
+    }
+    return null;
+  }
+
+  function findBluetoothDevice(nativePath) {
+    if (!nativePath || !BluetoothService.devices) {
+      return null;
+    }
+
+    var macMatch = nativePath.match(/([0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2})/);
+    if (!macMatch) {
+      return null;
+    }
+
+    var macAddress = macMatch[1].toUpperCase();
+    var deviceArray = BluetoothService.devices.values || [];
+
+    for (var i = 0; i < deviceArray.length; i++) {
+      var device = deviceArray[i];
+      if (device && device.address && device.address.toUpperCase() === macAddress) {
+        return device;
+      }
+    }
+    return null;
+  }
+
+  function isDevicePresent(device) {
+    if (!device)
+      return false;
+
+    // Handle Bluetooth devices (identified by having batteryAvailable property)
+    if (device.batteryAvailable !== undefined) {
+      return device.connected === true;
+    }
+
+    // Handle UPower devices
+    if (device.type !== undefined) {
+      if (device.type === UPowerDeviceType.Battery && device.isPresent !== undefined) {
+        return device.isPresent === true;
+      }
+
+      // Fallback for non-battery UPower devices or if isPresent is missing
+      return device.ready && device.percentage !== undefined;
+    }
+
+    return false;
+  }
+
+  function isDeviceReady(device) {
+    if (!isDevicePresent(device))
+      return false;
+
+    if (device.batteryAvailable !== undefined) {
+      return device.battery !== undefined;
+    }
+
+    return device.ready && device.percentage !== undefined;
+  }
+
+  function getPercentage(device) {
+    if (!device)
+      return 0;
+    if (device.batteryAvailable !== undefined) {
+      return (device.battery || 0) * 100;
+    }
+    return (device.percentage || 0) * 100;
+  }
+
+  function isCharging(device) {
+    if (!device || device.batteryAvailable !== undefined)
+      return false;
+    return device.state === UPowerDeviceState.Charging;
+  }
+
+  function isPluggedIn(device) {
+    if (!device || device.batteryAvailable !== undefined)
+      return false;
+    return device.state === UPowerDeviceState.FullyCharged || device.state === UPowerDeviceState.PendingCharge;
+  }
+
+  function isBluetoothDevice(device) {
+    return device && device.batteryAvailable !== undefined;
+  }
+
+  function getDeviceName(device) {
+    if (!isDeviceReady(device))
+      return "";
+
+    // Don't show name for laptop batteries
+    if (!isBluetoothDevice(device) && device.isLaptopBattery) {
+      return "";
+    }
+
+    if (isBluetoothDevice(device) && device.name) {
+      return device.name;
+    }
+
+    if (device.model) {
+      return device.model;
+    }
+
+    return "";
+  }
 
   function refreshHealth() {
     if (!isLaptopBattery || !primaryDevice) {
