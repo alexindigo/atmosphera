@@ -195,6 +195,34 @@ ColumnLayout {
               elide: Text.ElideRight
             }
 
+            // Official badge (Noctalia Team maintained)
+            Rectangle {
+              visible: modelData.official === true
+              color: Color.mSecondary
+              radius: Style.radiusXS
+              implicitWidth: officialBadgeRow.implicitWidth + Style.marginS * 2
+              implicitHeight: officialBadgeRow.implicitHeight + Style.marginXS * 2
+
+              RowLayout {
+                id: officialBadgeRow
+                anchors.centerIn: parent
+                spacing: Style.marginXS
+
+                NIcon {
+                  icon: "rosette-discount-check"
+                  pointSize: Style.fontSizeXXS
+                  color: Color.mOnSecondary
+                }
+
+                NText {
+                  text: I18n.tr("common.official")
+                  font.pointSize: Style.fontSizeXXS
+                  font.weight: Style.fontWeightMedium
+                  color: Color.mOnSecondary
+                }
+              }
+            }
+
             // Spacer
             Item {
               Layout.fillWidth: true

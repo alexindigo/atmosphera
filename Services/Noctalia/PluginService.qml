@@ -325,7 +325,7 @@ Singleton {
     }
 
     // For official plugins, also check if any custom version with same base ID exists
-    if (PluginRegistry.isOfficialSource(sourceUrl)) {
+    if (PluginRegistry.isMainSource(sourceUrl)) {
       var allInstalled = PluginRegistry.getAllInstalledPluginIds();
       for (var i = 0; i < allInstalled.length; i++) {
         var parsed = PluginRegistry.parseCompositeKey(allInstalled[i]);
@@ -344,7 +344,7 @@ Singleton {
     }
 
     // For custom plugins, check if official version exists
-    if (!PluginRegistry.isOfficialSource(sourceUrl)) {
+    if (!PluginRegistry.isMainSource(sourceUrl)) {
       if (PluginRegistry.isPluginDownloaded(pluginMetadata.id)) {
         return {
           collision: true,
