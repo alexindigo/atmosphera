@@ -134,7 +134,7 @@ Singleton {
       return "battery-exclamation";
     }
     if (charging) {
-      return "common.charging";
+      return "battery-charging";
     }
     if (pluggedIn) {
       return "battery-charging-2";
@@ -142,10 +142,10 @@ Singleton {
     if (percent >= 90) {
       return "battery-4";
     }
-    if (percent >= 50) {
+    if (percent >= 60) {
       return "battery-3";
     }
-    if (percent >= 25) {
+    if (percent >= 30) {
       return "battery-2";
     }
     if (percent >= 0) {

@@ -78,7 +78,7 @@ Singleton {
     "star": "star",
     "star-off": "star-off",
     "battery-exclamation": "battery-exclamation",
-    "common.charging": "common.charging",
+    "battery.charging": "battery.charging",
     "battery-charging-2": "battery-charging-2",
     "battery-4": "battery-4",
     "battery-3": "battery-3",
@@ -177,7 +177,8 @@ Singleton {
     "filepicker-eye-off": "eye-off",
     "filepicker-folder-current": "checks",
     "plugin": "plug-connected",
-    "info": "file-description"
+    "info": "file-description",
+    "official-plugin": "shield-filled"
   }
 
   // Fonts Codepoints - do not change!
@@ -747,7 +748,7 @@ Singleton {
     "battery-4-filled": "\u{f721}",
     "battery-automotive": "\u{ee07}",
     "battery-automotive-filled": "\u{10029}",
-    "common.charging": "\u{ea33}",
+    "battery.charging": "\u{ea33}",
     "battery-charging-2": "\u{ef3b}",
     "battery-eco": "\u{ef3c}",
     "battery-exclamation": "\u{ff1d}",

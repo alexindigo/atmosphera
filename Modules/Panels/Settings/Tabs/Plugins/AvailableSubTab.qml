@@ -215,7 +215,7 @@ ColumnLayout {
                 spacing: Style.marginXS
 
                 NIcon {
-                  icon: "rosette-discount-check"
+                  icon: "official-plugin"
                   pointSize: Style.fontSizeXXS
                   color: Color.mOnSecondary
                 }
