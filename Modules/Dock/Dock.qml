@@ -110,6 +110,15 @@ Loader {
       property int dragSourceIndex: -1
       property int dragTargetIndex: -1
 
+      // when dragging ended but the cursor is outside the dock area, restart the timer
+      onDragSourceIndexChanged: {
+        if (dragSourceIndex === -1) {
+          if (autoHide && !dockHovered && !anyAppHovered && !peekHovered && !menuHovered) {
+            hideTimer.restart();
+          }
+        }
+      }
+
       // Revision counter to force icon re-evaluation
       property int iconRevision: 0
 
@@ -343,6 +352,11 @@ Loader {
         id: hideTimer
         interval: hideDelay
         onTriggered: {
+          // do not hide if dragging
+          if (root.dragSourceIndex !== -1) {
+            return;
+          }
+
           // Force menuHovered to false if no menu is current or visible
           if (!root.currentContextMenu || !root.currentContextMenu.visible) {
             menuHovered = false;
@@ -572,7 +586,7 @@ Loader {
 
                 onExited: {
                   dockHovered = false;
-                  if (autoHide && !anyAppHovered && !peekHovered && !menuHovered) {
+                  if (autoHide && !anyAppHovered && !peekHovered && !menuHovered && root.dragSourceIndex === -1) {
                     hideTimer.restart();
                   }
                 }
@@ -888,7 +902,7 @@ Loader {
                           if (!root.currentContextMenu || !root.currentContextMenu.visible) {
                             menuHovered = false;
                           }
-                          if (autoHide && !dockHovered && !peekHovered && !menuHovered) {
+                          if (autoHide && !dockHovered && !peekHovered && !menuHovered && root.dragSourceIndex === -1) {
                             hideTimer.restart();
                           }
                         }
