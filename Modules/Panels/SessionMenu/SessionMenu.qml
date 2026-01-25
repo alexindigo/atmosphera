@@ -951,13 +951,11 @@ SmartPanel {
             return Color.mOnPrimary;
           return Color.mOnSurface;
         }
-        pointSize: Style.fontSizeXXXL * 2
-        width: 80 * Style.uiScaleRatio
-        height: 80 * Style.uiScaleRatio
+        pointSize: Style.fontSizeXXXL * 2.5
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
 
-        property real iconScale: (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover) ? 1.1 : 1.0
+        property real iconScale: (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover) ? 1.0 : 0.9
 
         scale: iconScale
 
