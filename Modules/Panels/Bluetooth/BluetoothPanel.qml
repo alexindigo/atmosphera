@@ -90,6 +90,7 @@ SmartPanel {
       }
 
       NScrollView {
+        id: bluetoothScrollView
         Layout.fillWidth: true
         Layout.fillHeight: true
         horizontalPolicy: ScrollBar.AlwaysOff
@@ -99,7 +100,7 @@ SmartPanel {
 
         ColumnLayout {
           id: devicesList
-          width: parent.width
+          width: bluetoothScrollView.availableWidth
           spacing: Style.marginM
 
           // Adapter not available of disabled

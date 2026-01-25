@@ -347,6 +347,7 @@ SmartPanel {
 
         // Applications Tab (Volume)
         NScrollView {
+          id: volumeScrollView
           horizontalPolicy: ScrollBar.AlwaysOff
           verticalPolicy: ScrollBar.AsNeeded
           contentWidth: availableWidth
@@ -355,7 +356,7 @@ SmartPanel {
 
           ColumnLayout {
             spacing: Style.marginM
-            width: parent.width
+            width: volumeScrollView.availableWidth
 
             // Output Volume
             NBox {
@@ -800,6 +801,7 @@ SmartPanel {
 
         // Devices Tab
         NScrollView {
+          id: devicesScrollView
           horizontalPolicy: ScrollBar.AlwaysOff
           verticalPolicy: ScrollBar.AsNeeded
           contentWidth: availableWidth
@@ -809,7 +811,7 @@ SmartPanel {
           // AudioService Devices
           ColumnLayout {
             spacing: Style.marginM
-            width: parent.width
+            width: devicesScrollView.availableWidth
 
             // -------------------------------
             // Output Devices

@@ -289,7 +289,7 @@ SmartPanel {
 
           ColumnLayout {
             id: contentColumn
-            width: parent.width
+            width: contentScroll.availableWidth
             spacing: Style.marginM
 
             // Wi‑Fi disabled state

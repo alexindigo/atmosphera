@@ -57,13 +57,14 @@ ColumnLayout {
   }
 
   NScrollView {
+    id: customizeScrollView
     Layout.fillWidth: true
     Layout.fillHeight: true
     horizontalPolicy: ScrollBar.AlwaysOff
     verticalPolicy: ScrollBar.AsNeeded
 
     ColumnLayout {
-      width: parent.width
+      width: customizeScrollView.availableWidth
       spacing: Style.marginM
 
       // Bar Position section
