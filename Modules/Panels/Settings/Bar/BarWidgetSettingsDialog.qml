@@ -91,9 +91,10 @@ Popup {
         Layout.fillWidth: true
         Layout.fillHeight: true
         Layout.minimumHeight: 100
+        reserveScrollbarSpace: true
 
         ColumnLayout {
-          width: scrollView.width
+          width: scrollView.availableWidth
           spacing: Style.marginM
 
           // Settings based on widget type

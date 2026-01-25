@@ -992,6 +992,8 @@ SmartPanel {
           }
         }
 
+        // --------------------------
+        // LIST VIEW
         Component {
           id: listViewComponent
           NListView {
@@ -999,6 +1001,7 @@ SmartPanel {
 
             horizontalPolicy: ScrollBar.AlwaysOff
             verticalPolicy: ScrollBar.AlwaysOff
+            reserveScrollbarSpace: false
 
             width: parent.width
             height: parent.height
@@ -1031,7 +1034,7 @@ SmartPanel {
                 }
               }
 
-              width: resultsList.width
+              width: resultsList.availableWidth
               implicitHeight: entryHeight
               clip: true
               color: entry.isSelected ? Color.mHover : Color.mSurface
@@ -1271,6 +1274,8 @@ SmartPanel {
           }
         }
 
+        // --------------------------
+        // SINGLE ITEM VIEW, ex: kaggi
         Component {
           id: singleViewComponent
 
@@ -1306,9 +1311,10 @@ SmartPanel {
                   Layout.fillWidth: true
                   Layout.fillHeight: true
                   horizontalPolicy: ScrollBar.AlwaysOff
+                  reserveScrollbarSpace: false
 
                   NText {
-                    width: parent.width
+                    width: parent.availableWidth
                     text: root.results.length > 0 ? root.results[0].description : ""
                     pointSize: Style.fontSizeM
                     font.weight: Font.Bold
@@ -1324,6 +1330,8 @@ SmartPanel {
           }
         }
 
+        // --------------------------
+        // GRID VIEW
         Component {
           id: gridViewComponent
           NGridView {
@@ -1331,6 +1339,7 @@ SmartPanel {
 
             horizontalPolicy: ScrollBar.AlwaysOff
             verticalPolicy: ScrollBar.AlwaysOff
+            reserveScrollbarSpace: false
 
             width: parent.width
             height: parent.height
