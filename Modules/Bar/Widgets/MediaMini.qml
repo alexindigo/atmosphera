@@ -205,9 +205,8 @@ Item {
     }
 
     onTriggered: action => {
-                   var popupWindow = PanelService.getPopupMenuWindow(screen);
-                   if (popupWindow)
-                   popupWindow.close();
+                   contextMenu.close();
+                   PanelService.closeContextMenu(screen);
 
                    if (action === "play-pause")
                    MediaService.playPause();
@@ -377,11 +376,7 @@ Item {
                        PanelService.getPanel("mediaPlayerPanel", screen)?.toggle(container);
                      } else if (mouse.button === Qt.RightButton) {
                        TooltipService.hide();
-                       var popupWindow = PanelService.getPopupMenuWindow(screen);
-                       if (popupWindow) {
-                         popupWindow.showContextMenu(contextMenu);
-                         contextMenu.openAtItem(container, screen);
-                       }
+                       PanelService.showContextMenu(contextMenu, container, screen);
                      } else if (mouse.button === Qt.MiddleButton && hasPlayer) {
                        MediaService.playPause();
                        TooltipService.hide();

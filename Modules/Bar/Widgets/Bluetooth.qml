@@ -53,10 +53,8 @@ Item {
     ]
 
     onTriggered: action => {
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-                   if (popupMenuWindow) {
-                     popupMenuWindow.close();
-                   }
+                   contextMenu.close();
+                   PanelService.closeContextMenu(screen);
 
                    if (action === "toggle-bluetooth") {
                      BluetoothService.setBluetoothEnabled(!BluetoothService.enabled);
@@ -94,11 +92,7 @@ Item {
         p.toggle(this);
     }
     onRightClicked: {
-      var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-      if (popupMenuWindow) {
-        popupMenuWindow.showContextMenu(contextMenu);
-        contextMenu.openAtItem(pill, screen);
-      }
+      PanelService.showContextMenu(contextMenu, pill, screen);
     }
     tooltipText: {
       if (pill.text !== "") {

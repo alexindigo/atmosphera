@@ -60,10 +60,8 @@ NIconButton {
     ]
 
     onTriggered: action => {
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-                   if (popupMenuWindow) {
-                     popupMenuWindow.close();
-                   }
+                   contextMenu.close();
+                   PanelService.closeContextMenu(screen);
 
                    if (action === "launcher-settings") {
                      var panel = PanelService.getPanel("settingsPanel", screen);
@@ -78,10 +76,6 @@ NIconButton {
   onClicked: PanelService.getPanel("launcherPanel", screen)?.toggle()
   onMiddleClicked: PanelService.getPanel("launcherPanel", screen)?.toggle()
   onRightClicked: {
-    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-    if (popupMenuWindow) {
-      popupMenuWindow.showContextMenu(contextMenu);
-      contextMenu.openAtItem(root, screen);
-    }
+    PanelService.showContextMenu(contextMenu, root, screen);
   }
 }

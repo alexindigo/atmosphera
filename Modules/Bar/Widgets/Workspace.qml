@@ -424,10 +424,8 @@ Item {
     }
 
     onTriggered: (action, item) => {
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-                   if (popupMenuWindow) {
-                     popupMenuWindow.close();
-                   }
+                   contextMenu.close();
+                   PanelService.closeContextMenu(screen);
 
                    const selectedWindow = root.getSelectedWindow();
 
@@ -469,11 +467,7 @@ Item {
       acceptedButtons: Qt.RightButton
       onClicked: mouse => {
                    if (mouse.button === Qt.RightButton) {
-                     var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-                     if (popupMenuWindow) {
-                       popupMenuWindow.showContextMenu(contextMenu);
-                       contextMenu.openAtItem(workspaceBackground, screen);
-                     }
+                     PanelService.showContextMenu(contextMenu, workspaceBackground, screen);
                    }
                  }
     }
@@ -1162,10 +1156,6 @@ Item {
   }
 
   function openGroupedContextMenu(item) {
-    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-    if (popupMenuWindow) {
-      popupMenuWindow.showContextMenu(contextMenu);
-      contextMenu.openAtItem(item, screen);
-    }
+    PanelService.showContextMenu(contextMenu, item, screen);
   }
 }

@@ -239,9 +239,7 @@ SmartPanel {
                                return;
                              }
 
-                             if (modelData.hasMenu && modelData.menu && panelContent.popupMenuWindow && panelContent.trayMenu && panelContent.trayMenu.item) {
-                               panelContent.popupMenuWindow.open();
-
+                             if (modelData.hasMenu && modelData.menu && panelContent.trayMenu && panelContent.trayMenu.item) {
                                const barPosition = Settings.getBarPositionForScreen(root.screen?.name);
                                let menuX, menuY;
 
@@ -256,10 +254,7 @@ SmartPanel {
                                  menuY = trayIcon.height + Style.marginS;
                                }
 
-                               panelContent.trayMenu.item.trayItem = modelData;
-                               panelContent.trayMenu.item.widgetSection = root.widgetSection;
-                               panelContent.trayMenu.item.widgetIndex = root.widgetIndex;
-                               panelContent.trayMenu.item.showAt(trayIcon, menuX, menuY);
+                               PanelService.showTrayMenu(root.screen, modelData, panelContent.trayMenu.item, trayIcon, menuX, menuY, root.widgetSection, root.widgetIndex);
                              }
                            }
                          }

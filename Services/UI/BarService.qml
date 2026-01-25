@@ -270,6 +270,21 @@ Singleton {
     }
   }
 
+  // Helper to close any existing dialogs in a popup menu window
+  function closeExistingDialogs(popupMenuWindow) {
+    if (!popupMenuWindow || !popupMenuWindow.dialogParent)
+      return;
+
+    var dialogParent = popupMenuWindow.dialogParent;
+    for (var i = dialogParent.children.length - 1; i >= 0; i--) {
+      var child = dialogParent.children[i];
+      if (child && typeof child.close === "function") {
+        child.close();
+      }
+    }
+    popupMenuWindow.hasDialog = false;
+  }
+
   // Open widget settings dialog for a bar widget
   // Parameters:
   //   screen: The screen to show the dialog on
@@ -284,6 +299,9 @@ Singleton {
       Logger.e("BarService", "No popup menu window found for screen");
       return;
     }
+
+    // Close any existing dialogs first to prevent stacking
+    closeExistingDialogs(popupMenuWindow);
 
     var component = Qt.createComponent(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml");
 
@@ -362,6 +380,9 @@ Singleton {
       Logger.e("BarService", "No popup menu window found for screen");
       return;
     }
+
+    // Close any existing dialogs first to prevent stacking
+    closeExistingDialogs(popupMenuWindow);
 
     var component = Qt.createComponent(Quickshell.shellDir + "/Widgets/NPluginSettingsPopup.qml");
 

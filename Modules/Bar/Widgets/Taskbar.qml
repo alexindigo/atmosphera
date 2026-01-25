@@ -458,10 +458,8 @@ Rectangle {
       return items;
     }
     onTriggered: (action, item) => {
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(root.screen);
-                   if (popupMenuWindow) {
-                     popupMenuWindow.close();
-                   }
+                   contextMenu.close();
+                   PanelService.closeContextMenu(root.screen);
 
                    // Look up the window fresh each time to avoid stale references
                    const selectedWindow = root.getSelectedWindow();
@@ -964,30 +962,6 @@ Rectangle {
     // Set the model directly
     contextMenu.model = items;
 
-    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-    if (popupMenuWindow) {
-      popupMenuWindow.open();
-
-      // Calculate menu position
-      const globalPos = item.mapToItem(root, 0, 0);
-      let menuX, menuY;
-      if (root.barPosition === "top") {
-        menuX = globalPos.x + (item.width / 2) - (contextMenu.implicitWidth / 2);
-        menuY = barHeight + Style.marginS;
-      } else if (root.barPosition === "bottom") {
-        const menuHeight = 12 + contextMenu.model.length * contextMenu.itemHeight;
-        menuX = globalPos.x + (item.width / 2) - (contextMenu.implicitWidth / 2);
-        menuY = -menuHeight - Style.marginS;
-      } else if (root.barPosition === "left") {
-        menuX = barHeight + Style.marginS;
-        menuY = globalPos.y + (item.height / 2) - (contextMenu.implicitHeight / 2);
-      } else {
-        // right
-        menuX = -contextMenu.implicitWidth - Style.marginS;
-        menuY = globalPos.y + (item.height / 2) - (contextMenu.implicitHeight / 2);
-      }
-      popupMenuWindow.showContextMenu(contextMenu);
-      contextMenu.openAtItem(root, screen);
-    }
+    PanelService.showContextMenu(contextMenu, item, screen);
   }
 }

@@ -136,10 +136,9 @@ Rectangle {
     ]
 
     onTriggered: action => {
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-                   if (popupMenuWindow) {
-                     popupMenuWindow.close();
-                   }
+                   // Close the context menu
+                   contextMenu.close();
+                   PanelService.closeContextMenu(screen);
 
                    if (action === "open-calendar") {
                      PanelService.getPanel("clockPanel", screen)?.toggle(root);
@@ -177,11 +176,7 @@ Rectangle {
     onClicked: mouse => {
                  TooltipService.hide();
                  if (mouse.button === Qt.RightButton) {
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-                   if (popupMenuWindow) {
-                     popupMenuWindow.showContextMenu(contextMenu);
-                     contextMenu.openAtItem(root, screen);
-                   }
+                   PanelService.showContextMenu(contextMenu, root, screen);
                  } else {
                    PanelService.getPanel("clockPanel", screen)?.toggle(this);
                  }

@@ -91,11 +91,8 @@ Item {
     ]
 
     onTriggered: action => {
-                   // Close the popup menu window before handling the action
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-                   if (popupMenuWindow) {
-                     popupMenuWindow.close();
-                   }
+                   contextMenu.close();
+                   PanelService.closeContextMenu(screen);
 
                    if (action === "toggle-mute") {
                      AudioService.setOutputMuted(!AudioService.muted);
@@ -147,12 +144,7 @@ Item {
       PanelService.getPanel("audioPanel", screen)?.toggle(this);
     }
     onRightClicked: {
-      // Get the shared popup menu window for this screen
-      var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-      if (popupMenuWindow) {
-        popupMenuWindow.showContextMenu(contextMenu);
-        contextMenu.openAtItem(pill, screen);
-      }
+      PanelService.showContextMenu(contextMenu, pill, screen);
     }
     onMiddleClicked: {
       Quickshell.execDetached(["sh", "-lc", middleClickCommand]);

@@ -419,9 +419,7 @@ Rectangle {
                              PanelService.openedPanel.close();
                            }
 
-                           if (modelData.hasMenu && modelData.menu && popupMenuWindow && trayMenu && trayMenu.item) {
-                             popupMenuWindow.open();
-
+                           if (modelData.hasMenu && modelData.menu && trayMenu && trayMenu.item) {
                              // Position menu based on bar position
                              let menuX, menuY;
                              if (barPosition === "left") {
@@ -437,10 +435,8 @@ Rectangle {
                                menuX = (width / 2) - (trayMenu.item.width / 2);
                                menuY = (barPosition === "top") ? barHeight + Style.marginS - 2 : barHeight + Style.marginS - 2;
                              }
-                             trayMenu.item.trayItem = modelData;
-                             trayMenu.item.widgetSection = root.section;
-                             trayMenu.item.widgetIndex = root.sectionWidgetIndex;
-                             trayMenu.item.showAt(parent, menuX, menuY);
+
+                             PanelService.showTrayMenu(root.screen, modelData, trayMenu.item, parent, menuX, menuY, root.section, root.sectionWidgetIndex);
                            } else {
                              Logger.d("Tray", "No menu available for", modelData.id, "or trayMenu not set");
                            }

@@ -144,10 +144,8 @@ Item {
     ]
 
     onTriggered: action => {
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-                   if (popupMenuWindow) {
-                     popupMenuWindow.close();
-                   }
+                   contextMenu.close();
+                   PanelService.closeContextMenu(screen);
 
                    if (action === "cycle-visualizer") {
                      const types = ["linear", "mirrored", "wave"];
@@ -170,11 +168,7 @@ Item {
 
     onClicked: mouse => {
                  if (mouse.button === Qt.RightButton) {
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-                   if (popupMenuWindow) {
-                     popupMenuWindow.showContextMenu(contextMenu);
-                     contextMenu.openAtItem(root, screen);
-                   }
+                   PanelService.showContextMenu(contextMenu, root, screen);
                  } else {
                    const types = ["linear", "mirrored", "wave"];
                    const currentIndex = types.indexOf(currentVisualizerType);
