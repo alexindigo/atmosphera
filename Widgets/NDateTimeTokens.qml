@@ -21,11 +21,18 @@ Rectangle {
     anchors.margins: Style.marginS
     spacing: Style.marginS
 
-    NListView {
-      id: tokensList
+    Flickable {
       Layout.fillWidth: true
       Layout.fillHeight: true
-      model: [
+      contentHeight: tokensColumn.implicitHeight
+      clip: true
+
+      Column {
+        id: tokensColumn
+        width: parent.width
+
+        Repeater {
+          model: [
         // Common format combinations
         {
           "category": "Common",
@@ -201,7 +208,7 @@ Rectangle {
 
       delegate: Rectangle {
         id: tokenDelegate
-        width: tokensList.width
+        width: tokensColumn.width
         height: layout.implicitHeight + Style.marginS
         radius: Style.iRadiusS
         color: {
@@ -353,6 +360,8 @@ Rectangle {
           }
         }
       }
+      }
+    }
     }
   }
 
