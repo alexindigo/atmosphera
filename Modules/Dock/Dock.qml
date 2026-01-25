@@ -566,6 +566,7 @@ Loader {
                     showTimer.stop();
                     hideTimer.stop();
                     unloadTimer.stop(); // Cancel unload if hovering
+                    hidden = false; // Make sure dock is visible
                   }
                 }
 
@@ -878,6 +879,7 @@ Loader {
                             showTimer.stop();
                             hideTimer.stop();
                             unloadTimer.stop(); // Cancel unload if hovering app
+                            hidden = false; // Make sure dock is visible
                           }
                         }
 
