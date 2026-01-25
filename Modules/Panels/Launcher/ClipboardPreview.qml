@@ -159,7 +159,6 @@ Item {
       NScrollView {
         Layout.fillWidth: true
         Layout.fillHeight: true
-        clip: true
         horizontalPolicy: Settings.data.appLauncher.clipboardWrapText ? ScrollBar.AlwaysOff : ScrollBar.AsNeeded
 
         NText {

@@ -339,8 +339,6 @@ SmartPanel {
         }
       }
 
-      // Tab Bar
-
       // Content Stack
       StackLayout {
         Layout.fillWidth: true
@@ -351,8 +349,9 @@ SmartPanel {
         NScrollView {
           horizontalPolicy: ScrollBar.AlwaysOff
           verticalPolicy: ScrollBar.AsNeeded
-          clip: true
           contentWidth: availableWidth
+          reserveScrollbarSpace: false
+          gradientColor: Color.mSurface
 
           ColumnLayout {
             spacing: Style.marginM
@@ -803,8 +802,9 @@ SmartPanel {
         NScrollView {
           horizontalPolicy: ScrollBar.AlwaysOff
           verticalPolicy: ScrollBar.AsNeeded
-          clip: true
           contentWidth: availableWidth
+          reserveScrollbarSpace: false
+          gradientColor: Color.mSurface
 
           // AudioService Devices
           ColumnLayout {

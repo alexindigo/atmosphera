@@ -91,6 +91,7 @@ Popup {
         Layout.fillWidth: true
         Layout.fillHeight: true
         Layout.minimumHeight: 100
+        gradientColor: Color.mSurface
 
         ColumnLayout {
           width: scrollView.availableWidth
