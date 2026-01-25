@@ -96,11 +96,12 @@ ColumnLayout {
   }
 
   // List of current blacklist items
-  ListView {
+  NListView {
     Layout.fillWidth: true
     Layout.preferredHeight: 150
     Layout.topMargin: Style.marginL // Increased top margin
-    clip: true
+    gradientColor: Color.mSurface
+
     model: blacklistModel
     delegate: Item {
       width: ListView.width

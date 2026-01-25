@@ -1300,14 +1300,12 @@ SmartPanel {
                   }
                 }
 
-                ScrollView {
+                NScrollView {
                   Layout.alignment: Qt.AlignTop | Qt.AlignLeft
                   Layout.topMargin: Style.fontSizeL + Style.marginXL
                   Layout.fillWidth: true
                   Layout.fillHeight: true
-                  clip: true
-                  ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                  contentWidth: availableWidth
+                  horizontalPolicy: ScrollBar.AlwaysOff
 
                   NText {
                     width: parent.width

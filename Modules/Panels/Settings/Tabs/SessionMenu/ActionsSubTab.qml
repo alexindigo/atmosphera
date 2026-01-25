@@ -19,12 +19,11 @@ ColumnLayout {
     Layout.fillWidth: true
     implicitHeight: listView.contentHeight
 
-    ListView {
+    NListView {
       id: listView
       anchors.fill: parent
       spacing: Style.marginS
       interactive: false
-      clip: true
       model: root.entriesModel
 
       delegate: Item {

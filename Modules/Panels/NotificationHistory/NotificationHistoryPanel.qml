@@ -541,39 +541,6 @@ SmartPanel {
             }
           }
         }
-
-        // Overlay gradient to smooth the hard cut due to scrolling at the bottom (only visible when scrollable)
-        Rectangle {
-          anchors.fill: parent
-          color: "transparent"
-          visible: scrollView.ScrollBar.vertical && scrollView.ScrollBar.vertical.size < 1.0
-          opacity: {
-            const scrollBar = scrollView.ScrollBar.vertical;
-            return (scrollBar.position + scrollBar.size >= 0.99) ? 0 : 1;
-          }
-
-          Behavior on opacity {
-            NumberAnimation {
-              duration: Style.animationFast
-              easing.type: Easing.InOutQuad
-            }
-          }
-
-          gradient: Gradient {
-            GradientStop {
-              position: 0.0
-              color: "transparent"
-            }
-            GradientStop {
-              position: 0.85
-              color: "transparent"
-            }
-            GradientStop {
-              position: 1.0
-              color: Qt.alpha(Color.mSurface, 0.95)
-            }
-          }
-        }
       }
     }
   }
