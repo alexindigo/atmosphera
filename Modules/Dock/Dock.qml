@@ -566,6 +566,7 @@ Loader {
                     showTimer.stop();
                     hideTimer.stop();
                     unloadTimer.stop(); // Cancel unload if hovering
+                    hidden = false; // Make sure dock is visible
                   }
                 }
 
@@ -825,12 +826,10 @@ Loader {
                         onVisibleChanged: {
                           if (visible) {
                             root.currentContextMenu = contextMenu;
-                            anyAppHovered = false;
                           } else if (root.currentContextMenu === contextMenu) {
                             root.currentContextMenu = null;
                             hideTimer.stop();
                             menuHovered = false;
-                            anyAppHovered = false;
                             // Restart hide timer after menu closes
                             if (autoHide && !dockHovered && !anyAppHovered && !peekHovered && !menuHovered) {
                               hideTimer.restart();
@@ -878,6 +877,7 @@ Loader {
                             showTimer.stop();
                             hideTimer.stop();
                             unloadTimer.stop(); // Cancel unload if hovering app
+                            hidden = false; // Make sure dock is visible
                           }
                         }
 

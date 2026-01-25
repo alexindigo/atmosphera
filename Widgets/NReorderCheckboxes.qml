@@ -20,7 +20,9 @@ Item {
   signal dragPotentialStarted
   signal dragPotentialEnded
 
-  implicitHeight: listView.contentHeight
+  readonly property real itemHeight: root.baseSize
+  readonly property real contentHeight: root.model.length > 0 ? root.model.length * itemHeight + (root.model.length - 1) * root.spacing : 0
+  implicitHeight: contentHeight
 
   function toggleItem(index) {
     if (index < 0 || index >= root.model.length)
@@ -56,19 +58,19 @@ Item {
     root.itemsReordered(fromIndex, toIndex);
   }
 
-  ListView {
-    id: listView
-
+  Item {
+    id: itemsContainer
     anchors.fill: parent
-    spacing: root.spacing
-    interactive: false
     clip: true
-    model: root.model
 
-    delegate: Item {
+    Repeater {
+      id: repeater
+      model: root.model
+
+      delegate: Item {
       id: delegateItem
 
-      width: listView.width
+      width: itemsContainer.width
       height: checkboxRow.height
 
       required property int index
@@ -153,12 +155,12 @@ Item {
                                    var newY = delegateItem.y + dy;
 
                                    // Constrain within bounds
-                                   newY = Math.max(0, Math.min(newY, listView.contentHeight - delegateItem.height));
+                                   newY = Math.max(0, Math.min(newY, root.contentHeight - delegateItem.height));
                                    delegateItem.y = newY;
 
                                    // Calculate target index (but don't apply yet)
                                    var targetIndex = Math.floor((newY + delegateItem.height / 2) / (delegateItem.height + delegateItem.itemSpacing));
-                                   targetIndex = Math.max(0, Math.min(targetIndex, listView.count - 1));
+                                   targetIndex = Math.max(0, Math.min(targetIndex, repeater.count - 1));
 
                                    delegateItem.dragTargetIndex = targetIndex;
                                  }
@@ -266,8 +268,8 @@ Item {
         // Check if any item is being dragged
         var draggedIndex = -1;
         var targetIndex = -1;
-        for (var i = 0; i < listView.count; i++) {
-          var item = listView.itemAtIndex(i);
+        for (var i = 0; i < repeater.count; i++) {
+          var item = repeater.itemAt(i);
           if (item && item.dragging) {
             draggedIndex = item.dragStartIndex;
             targetIndex = item.dragTargetIndex;
@@ -302,6 +304,7 @@ Item {
           easing.type: Easing.OutQuad
         }
       }
+    }
     }
   }
 }

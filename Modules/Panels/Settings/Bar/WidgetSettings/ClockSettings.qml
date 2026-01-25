@@ -283,7 +283,7 @@ ColumnLayout {
 
   NDateTimeTokens {
     Layout.fillWidth: true
-    height: 200
+    Layout.preferredHeight: 300
 
     // Connect to token clicked signal if NDateTimeTokens provides it
     onTokenClicked: token => root.insertToken(token)
