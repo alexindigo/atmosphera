@@ -893,7 +893,7 @@ SmartPanel {
 
     signal clicked
 
-    property real hoverScale: (isSelected || effectiveHover) ? 1.05 : 1.0
+    property real hoverScale: (isSelected || effectiveHover) ? 1.00 : 0.95
 
     radius: Style.radiusL
     color: {
