@@ -249,8 +249,9 @@ NBox {
               // Info toggle for connected network
               NIconButton {
                 visible: modelData.connected && NetworkService.disconnectingFrom !== modelData.ssid
-                icon: "info-circle"
+                icon: "info"
                 tooltipText: I18n.tr("common.info")
+                baseSize: Style.baseWidgetSize * 0.8
                 onClicked: {
                   if (root.infoSsid === modelData.ssid) {
                     root.infoSsid = "";
@@ -265,6 +266,7 @@ NBox {
                 visible: (modelData.existing || modelData.cached) && !modelData.connected && NetworkService.connectingTo !== modelData.ssid && NetworkService.forgettingNetwork !== modelData.ssid && NetworkService.disconnectingFrom !== modelData.ssid
                 icon: "trash"
                 tooltipText: I18n.tr("tooltips.forget-network")
+                baseSize: Style.baseWidgetSize * 0.8
                 onClicked: root.forgetRequested(modelData.ssid)
               }
 
@@ -278,7 +280,7 @@ NBox {
                   return I18n.tr("common.password");
                 }
                 outlined: !hovered
-                fontSize: Style.fontSizeXS
+                fontSize: Style.fontSizeS
                 enabled: !NetworkService.connecting
                 onClicked: {
                   if (modelData.existing || modelData.cached || !NetworkService.isSecured(modelData.security)) {
@@ -327,6 +329,7 @@ NBox {
               // Use Tabler layout icons; "grid" alone doesn't exist in our font
               icon: root.detailsGrid ? "layout-list" : "layout-grid"
               tooltipText: root.detailsGrid ? I18n.tr("tooltips.list-view") : I18n.tr("tooltips.grid-view")
+              baseSize: Style.baseWidgetSize * 0.8
               onClicked: {
                 root.detailsGrid = !root.detailsGrid;
                 if (Settings.data && Settings.data.ui) {
@@ -642,7 +645,7 @@ NBox {
 
               NButton {
                 text: I18n.tr("common.connect")
-                fontSize: Style.fontSizeXXS
+                fontSize: Style.fontSizeS
                 enabled: pwdInput.text.length > 0 && !NetworkService.connecting
                 outlined: true
                 onClicked: root.passwordSubmitted(modelData.ssid, pwdInput.text)
@@ -650,7 +653,7 @@ NBox {
 
               NIconButton {
                 icon: "close"
-                baseSize: Style.baseWidgetSize
+                baseSize: Style.baseWidgetSize * 0.8
                 onClicked: root.passwordCancelled()
               }
             }
@@ -698,7 +701,7 @@ NBox {
 
               NIconButton {
                 icon: "close"
-                baseSize: Style.baseWidgetSize
+                baseSize: Style.baseWidgetSize * 0.8
                 onClicked: root.forgetCancelled()
               }
             }

@@ -59,6 +59,13 @@ Item {
     sendSocketCommand(niriCommandSocket, "Windows");
   }
 
+  Timer {
+    id: workspaceUpdateTimer
+    interval: 50
+    repeat: false
+    onTriggered: updateWorkspaces()
+  }
+
   function queryDisplayScales() {
     sendSocketCommand(niriCommandSocket, "Outputs");
   }
@@ -186,7 +193,7 @@ Item {
                   } else if (event.WindowsChanged) {
                     handleWindowsChanged(event.WindowsChanged);
                   } else if (event.WorkspaceActivated) {
-                    updateWorkspaces();
+                    workspaceUpdateTimer.restart();
                   } else if (event.WindowFocusChanged) {
                     handleWindowFocusChanged(event.WindowFocusChanged);
                   } else if (event.WindowLayoutsChanged) {
@@ -328,6 +335,7 @@ Item {
       }
 
       windowListChanged();
+      workspaceUpdateTimer.restart();
     } catch (e) {
       Logger.e("NiriService", "Error handling WindowOpenedOrChanged:", e);
     }
@@ -348,6 +356,7 @@ Item {
 
         windows.splice(windowIndex, 1);
         windowListChanged();
+        workspaceUpdateTimer.restart();
       }
     } catch (e) {
       Logger.e("NiriService", "Error handling WindowClosed:", e);
@@ -467,6 +476,14 @@ Item {
       Quickshell.execDetached(["niri", "msg", "action", "quit", "--skip-confirmation"]);
     } catch (e) {
       Logger.e("NiriService", "Failed to logout:", e);
+    }
+  }
+
+  function cycleKeyboardLayout() {
+    try {
+      Quickshell.execDetached(["niri", "msg", "action", "switch-layout", "next"]);
+    } catch (e) {
+      Logger.e("NiriService", "Failed to cycle keyboard layout:", e);
     }
   }
 }

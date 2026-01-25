@@ -5,7 +5,6 @@ import Quickshell
 import Quickshell.Bluetooth
 import Quickshell.Io
 import "../../Helpers/BluetoothUtils.js" as BluetoothUtils
-import "."
 import qs.Commons
 import qs.Services.UI
 

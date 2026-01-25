@@ -26,7 +26,7 @@ Item {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section];
+      var widgets = Settings.getBarWidgetsForScreen(screen?.name)[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
         return widgets[sectionWidgetIndex];
       }
@@ -37,6 +37,8 @@ Item {
   readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property real barHeight: Style.getBarHeightForScreen(screen?.name)
+  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screen?.name)
+  readonly property real barFontSize: Style.getBarFontSizeForScreen(screen?.name)
   readonly property real baseDimensionRatio: 0.65 * (widgetSettings.labelMode === "none" ? 0.75 : 1)
 
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
@@ -55,7 +57,7 @@ Item {
   readonly property real iconScale: (widgetSettings.iconScale !== undefined) ? widgetSettings.iconScale : widgetMetadata.iconScale
 
   // Only for grouped mode / show apps
-  readonly property int baseItemSize: Style.toOdd(Style.capsuleHeight * 0.8)
+  readonly property int baseItemSize: Style.toOdd(capsuleHeight * 0.8)
   readonly property int iconSize: Style.toOdd(baseItemSize * iconScale)
   readonly property real textRatio: 0.50
 
@@ -89,6 +91,7 @@ Item {
   property int iconRevision: 0
 
   property ListModel localWorkspaces: ListModel {}
+  property int lastFocusedWorkspaceId: -1
   property real masterProgress: 0.0
   property bool effectsActive: false
   property color effectColor: Color.mPrimary
@@ -105,9 +108,10 @@ Item {
   implicitWidth: showApplications ? (isVertical ? groupedGrid.implicitWidth : Math.round(groupedGrid.implicitWidth + horizontalPadding * hasLabel)) : (isVertical ? barHeight : computeWidth())
   implicitHeight: showApplications ? (isVertical ? Math.round(groupedGrid.implicitHeight + horizontalPadding * 0.6 * hasLabel) : barHeight) : (isVertical ? computeHeight() : barHeight)
 
-  function getWorkspaceWidth(ws) {
-    const d = Math.round(Style.capsuleHeight * root.baseDimensionRatio);
-    const factor = ws.isActive ? 2.2 : 1;
+  function getWorkspaceWidth(ws, activeOverride) {
+    const d = Math.round(capsuleHeight * root.baseDimensionRatio);
+    const isActive = activeOverride !== undefined ? activeOverride : ws.isActive;
+    const factor = isActive ? 2.2 : 1;
 
     // Don't calculate text width if labels are off
     if (labelMode === "none") {
@@ -129,9 +133,10 @@ Item {
     return Style.toOdd(Math.max(d * factor, textWidth + padding));
   }
 
-  function getWorkspaceHeight(ws) {
-    const d = Math.round(Style.capsuleHeight * root.baseDimensionRatio);
-    const factor = ws.isActive ? 2.2 : 1;
+  function getWorkspaceHeight(ws, activeOverride) {
+    const d = Math.round(capsuleHeight * root.baseDimensionRatio);
+    const isActive = activeOverride !== undefined ? activeOverride : ws.isActive;
+    const factor = isActive ? 2.2 : 1;
     return Style.toOdd(d * factor);
   }
 
@@ -230,7 +235,6 @@ Item {
     target: CompositorService
     function onWorkspacesChanged() {
       refreshWorkspaces();
-      root.triggerUnifiedWave();
     }
     function onWindowListChanged() {
       if (showApplications || showLabelsOnlyWhenOccupied) {
@@ -253,8 +257,7 @@ Item {
   }
 
   function refreshWorkspaces() {
-    localWorkspaces.clear();
-
+    var targetList = [];
     var focusedOutput = null;
     if (followFocusedScreen) {
       for (var i = 0; i < CompositorService.workspaces.count; i++) {
@@ -275,18 +278,51 @@ Item {
         if (hideUnoccupied && !ws.isOccupied && !ws.isFocused)
           continue;
 
+        // Create a plain JS object for the workspace data
+        var workspaceData = {
+          id: ws.id,
+          idx: ws.idx,
+          name: ws.name,
+          output: ws.output,
+          isFocused: ws.isFocused,
+          isActive: ws.isActive,
+          isUrgent: ws.isUrgent,
+          isOccupied: ws.isOccupied
+        };
+
         if (showApplications) {
-          // For grouped mode, attach windows to each workspace
-          var workspaceData = Object.assign({}, ws);
           workspaceData.windows = CompositorService.getWindowsForWorkspace(ws.id);
-          localWorkspaces.append(workspaceData);
-        } else {
-          localWorkspaces.append(ws);
         }
+
+        targetList.push(workspaceData);
       }
     }
-    workspaceRepeaterHorizontal.model = localWorkspaces;
-    workspaceRepeaterVertical.model = localWorkspaces;
+
+    // In-place update to preserve delegates for animations
+    var i = 0;
+    while (i < localWorkspaces.count || i < targetList.length) {
+      if (i < localWorkspaces.count && i < targetList.length) {
+        var existing = localWorkspaces.get(i);
+        var target = targetList[i];
+        if (existing.id === target.id) {
+          // Use set() to update all properties, including arrays like 'windows'
+          // This is more reliable than repeated setProperty calls for complex types
+          localWorkspaces.set(i, target);
+          i++;
+        } else {
+          // ID mismatch, remove existing and re-evaluate this index
+          localWorkspaces.remove(i);
+        }
+      } else if (i < localWorkspaces.count) {
+        // Excess items in local, remove them
+        localWorkspaces.remove(i);
+      } else {
+        // More items in target, append them
+        localWorkspaces.append(targetList[i]);
+        i++;
+      }
+    }
+
     updateWorkspaceFocus();
   }
 
@@ -299,6 +335,10 @@ Item {
     for (var i = 0; i < localWorkspaces.count; i++) {
       const ws = localWorkspaces.get(i);
       if (ws.isFocused === true) {
+        if (root.lastFocusedWorkspaceId !== -1 && root.lastFocusedWorkspaceId !== ws.id) {
+          root.triggerUnifiedWave();
+        }
+        root.lastFocusedWorkspaceId = ws.id;
         root.workspaceChanged(ws.id, Color.mPrimary);
         break;
       }
@@ -414,8 +454,8 @@ Item {
   Rectangle {
     id: workspaceBackground
     visible: !showApplications
-    width: isVertical ? Style.capsuleHeight : parent.width
-    height: isVertical ? parent.height : Style.capsuleHeight
+    width: isVertical ? capsuleHeight : parent.width
+    height: isVertical ? parent.height : capsuleHeight
     radius: Style.radiusM
     color: Style.capsuleColor
     border.color: Style.capsuleBorderColor
@@ -493,8 +533,47 @@ Item {
       model: localWorkspaces
       Item {
         id: workspacePillContainer
-        width: root.getWorkspaceWidth(model)
-        height: Style.toOdd(Style.capsuleHeight * root.baseDimensionRatio)
+        height: Style.toOdd(capsuleHeight * root.baseDimensionRatio)
+
+        states: [
+          State {
+            name: "active"
+            when: model.isActive
+            PropertyChanges {
+              target: workspacePillContainer
+              width: root.getWorkspaceWidth(model, true)
+            }
+          },
+          State {
+            name: "inactive"
+            when: !model.isActive
+            PropertyChanges {
+              target: workspacePillContainer
+              width: root.getWorkspaceWidth(model, false)
+            }
+          }
+        ]
+
+        transitions: [
+          Transition {
+            from: "inactive"
+            to: "active"
+            NumberAnimation {
+              property: "width"
+              duration: Style.animationNormal
+              easing.type: Easing.OutBack
+            }
+          },
+          Transition {
+            from: "active"
+            to: "inactive"
+            NumberAnimation {
+              property: "width"
+              duration: Style.animationNormal
+              easing.type: Easing.OutBack
+            }
+          }
+        ]
 
         Rectangle {
           id: pill
@@ -559,19 +638,7 @@ Item {
             }
             hoverEnabled: true
           }
-          // Material 3-inspired smooth animation for width, height, scale, color, opacity, and radius
-          Behavior on width {
-            NumberAnimation {
-              duration: Style.animationNormal
-              easing.type: Easing.OutBack
-            }
-          }
-          Behavior on height {
-            NumberAnimation {
-              duration: Style.animationNormal
-              easing.type: Easing.OutBack
-            }
-          }
+          // Material 3-inspired smooth animation for scale, color, opacity, and radius
           Behavior on scale {
             NumberAnimation {
               duration: Style.animationNormal
@@ -579,6 +646,7 @@ Item {
             }
           }
           Behavior on color {
+            enabled: !Color.isTransitioning
             ColorAnimation {
               duration: Style.animationFast
               easing.type: Easing.InOutCubic
@@ -641,8 +709,47 @@ Item {
       model: localWorkspaces
       Item {
         id: workspacePillContainerVertical
-        width: Style.toOdd(Style.capsuleHeight * root.baseDimensionRatio)
-        height: root.getWorkspaceHeight(model)
+        width: Style.toOdd(capsuleHeight * root.baseDimensionRatio)
+
+        states: [
+          State {
+            name: "active"
+            when: model.isActive
+            PropertyChanges {
+              target: workspacePillContainerVertical
+              height: root.getWorkspaceHeight(model, true)
+            }
+          },
+          State {
+            name: "inactive"
+            when: !model.isActive
+            PropertyChanges {
+              target: workspacePillContainerVertical
+              height: root.getWorkspaceHeight(model, false)
+            }
+          }
+        ]
+
+        transitions: [
+          Transition {
+            from: "inactive"
+            to: "active"
+            NumberAnimation {
+              property: "height"
+              duration: Style.animationNormal
+              easing.type: Easing.OutBack
+            }
+          },
+          Transition {
+            from: "active"
+            to: "inactive"
+            NumberAnimation {
+              property: "height"
+              duration: Style.animationNormal
+              easing.type: Easing.OutBack
+            }
+          }
+        ]
 
         Rectangle {
           id: pillVertical
@@ -707,19 +814,7 @@ Item {
             }
             hoverEnabled: true
           }
-          // Material 3-inspired smooth animation for width, height, scale, color, opacity, and radius
-          Behavior on width {
-            NumberAnimation {
-              duration: Style.animationNormal
-              easing.type: Easing.OutBack
-            }
-          }
-          Behavior on height {
-            NumberAnimation {
-              duration: Style.animationNormal
-              easing.type: Easing.OutBack
-            }
-          }
+          // Material 3-inspired smooth animation for scale, color, opacity, and radius
           Behavior on scale {
             NumberAnimation {
               duration: Style.animationNormal
@@ -727,6 +822,7 @@ Item {
             }
           }
           Behavior on color {
+            enabled: !Color.isTransitioning
             ColorAnimation {
               duration: Style.animationFast
               easing.type: Easing.InOutCubic
@@ -788,7 +884,7 @@ Item {
 
       required property var model
       property var workspaceModel: model
-      property bool hasWindows: (workspaceModel?.windows?.count ?? 0) > 0
+      property bool hasWindows: (workspaceModel?.windows?.length > 0 || workspaceModel?.windows?.count > 0)
 
       width: Style.toOdd((hasWindows ? groupedIconsFlow.implicitWidth : root.iconSize) + (root.isVertical ? (root.baseItemSize - root.iconSize + Style.marginXS) : Style.marginXL))
       height: Style.toOdd((hasWindows ? groupedIconsFlow.implicitHeight : root.iconSize) + (root.isVertical ? Style.marginL : (root.baseItemSize - root.iconSize + Style.marginXS)))
@@ -796,6 +892,19 @@ Item {
       radius: Style.radiusS
       border.color: Settings.data.bar.showOutline ? Style.capsuleBorderColor : Qt.alpha((workspaceModel.isFocused ? Color.mPrimary : Color.mOutline), root.groupedBorderOpacity)
       border.width: Style.borderS
+
+      Behavior on width {
+        NumberAnimation {
+          duration: Style.animationNormal
+          easing.type: Easing.OutBack
+        }
+      }
+      Behavior on height {
+        NumberAnimation {
+          duration: Style.animationNormal
+          easing.type: Easing.OutBack
+        }
+      }
 
       MouseArea {
         anchors.fill: parent
@@ -846,16 +955,17 @@ Item {
               height: parent.height
               source: {
                 root.iconRevision; // Force re-evaluation when revision changes
-                return ThemeIcons.iconForAppId(model.appId?.toLowerCase());
+                const win = (typeof modelData !== "undefined") ? modelData : model;
+                return ThemeIcons.iconForAppId(win.appId?.toLowerCase());
               }
               smooth: true
               asynchronous: true
-              opacity: model.isFocused ? Style.opacityFull : unfocusedIconsOpacity
-              layer.enabled: root.colorizeIcons && !model.isFocused
+              opacity: (typeof modelData !== "undefined" ? modelData.isFocused : model.isFocused) ? Style.opacityFull : unfocusedIconsOpacity
+              layer.enabled: root.colorizeIcons && !(typeof modelData !== "undefined" ? modelData.isFocused : model.isFocused)
 
               Rectangle {
                 id: groupedFocusIndicator
-                visible: model.isFocused
+                visible: (typeof modelData !== "undefined" ? modelData.isFocused : model.isFocused)
                 anchors.bottomMargin: -2
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -880,27 +990,30 @@ Item {
               preventStealing: true
 
               onPressed: mouse => {
-                           if (!model)
+                           const win = (typeof modelData !== "undefined") ? modelData : model;
+                           if (!win)
                            return;
                            if (mouse.button === Qt.LeftButton) {
-                             CompositorService.focusWindow(model);
+                             CompositorService.focusWindow(win);
                            }
                          }
 
               onReleased: mouse => {
-                            if (!model)
+                            const win = (typeof modelData !== "undefined") ? modelData : model;
+                            if (!win)
                             return;
                             if (mouse.button === Qt.RightButton) {
                               mouse.accepted = true;
                               TooltipService.hide();
-                              root.selectedWindowId = model.id || model.address || "";
-                              root.selectedAppId = model.appId;
+                              root.selectedWindowId = win.id || win.address || "";
+                              root.selectedAppId = win.appId;
                               openGroupedContextMenu(groupedTaskbarItem);
                             }
                           }
               onEntered: {
+                const win = (typeof modelData !== "undefined") ? modelData : model;
                 groupedTaskbarItem.itemHovered = true;
-                TooltipService.show(groupedTaskbarItem, model.title || model.appId || "Unknown app.", BarService.getTooltipDirection(root.screen?.name));
+                TooltipService.show(groupedTaskbarItem, win.title || win.appId || "Unknown app.", BarService.getTooltipDirection(root.screen?.name));
               }
               onExited: {
                 groupedTaskbarItem.itemHovered = false;
@@ -957,6 +1070,7 @@ Item {
           }
 
           Behavior on color {
+            enabled: !Color.isTransitioning
             ColorAnimation {
               duration: Style.animationFast
               easing.type: Easing.InOutCubic
@@ -998,7 +1112,7 @@ Item {
 
           family: Settings.data.ui.fontFixed
           font {
-            pointSize: Style.barFontSize * 0.75
+            pointSize: barFontSize * 0.75
             weight: Style.fontWeightBold
             capitalization: Font.AllUppercase
           }

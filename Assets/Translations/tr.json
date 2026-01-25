@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "Pil sağlığı",
     "battery-level": "Pil seviyesi",
+    "capacity-level": "Kapasite: {level}",
     "charging-rate": "Şarj oranı: {rate} W",
     "discharging-rate": "Deşarj oranı: {rate} W",
     "health": "Sağlık: {percent}%",
@@ -352,6 +354,7 @@
     "clear": "Temizle",
     "clipboard": "Panoya",
     "close": "Kapat",
+    "color-muted": "Sessiz",
     "colors": "Renkler",
     "command": "Komut",
     "connect": "Bağlan",
@@ -359,6 +362,7 @@
     "connecting": "Bağlanıyor...",
     "continue": "Devam Et",
     "contributors": "Katkıda bulunanlar",
+    "copied-to-clipboard": "Panoya kopyalandı",
     "countdown": "Geri sayım",
     "date": "Tarih",
     "default": "Varsayılan",
@@ -371,6 +375,7 @@
     "disconnecting": "Bağlantı kesiliyor...",
     "download": "İndir",
     "duration": "Süre",
+    "edit": "Düzenle",
     "enabled": "Etkinleştirildi",
     "events": "Etkinlikler",
     "execute": "Yürüt",
@@ -379,6 +384,7 @@
     "frequency": "Sıklık",
     "gateway": "Geçit",
     "general": "Genel",
+    "height": "Yükseklik",
     "hibernate": "Hazırda beklet",
     "history": "Tarih",
     "icon": "Simge",
@@ -407,6 +413,7 @@
     "no-results": "Sonuç bulunamadı",
     "no-summary": "Özet yok",
     "none": "Hiçbiri",
+    "not-found": "Bulunamadı",
     "notifications": "Bildirimler",
     "official": "Resmi",
     "output": "Çıktı",
@@ -426,6 +433,8 @@
     "refresh": "Yenile",
     "required": "(gerekli)",
     "reset": "Sıfırla",
+    "result-count": "{count} sonuç",
+    "result-count-plural": "{count} sonuçlar",
     "resume": "Sürdür",
     "save": "Kaydet",
     "scanning": "Taranıyor...",
@@ -535,9 +544,7 @@
       "emoji-loading-description": "Lütfen bekleyin",
       "emoji-no-recent": "Henüz yeni emoji yok",
       "emoji-search-description": "Emoji arama ve kopyalama"
-    },
-    "result": "sonuç",
-    "results": "sonuçlar"
+    }
   },
   "lock-screen": {
     "authenticating": "Doğrulanıyor...",
@@ -761,6 +768,16 @@
       "download-success-description": "{scheme} başarıyla indirildi",
       "download-success-title": "Renk şeması indirildi",
       "download-title": "Renk şemalarını indir",
+      "method-description": {
+        "content": "Kaynak içeriğin gerçek renkleriyle yakından eşleşen, yüksek doğruluklu renk çıkarma özelliğine sahip Material Design şeması.",
+        "faithful": "Uyumlu bir palet oluştururken kaynak rengine yakın kalmaya çalışır.",
+        "fruit-salad": "Çeşitli ve farklı tonlara sahip, eğlenceli, canlı bir palet üreten Material Design şeması.",
+        "monochrome": "Minimal kromatik içerikli tek tonlu gri tonlamalı Material Design şeması.",
+        "muted": "Sakin ve mütevazı bir görünüm için daha yumuşak, doygunluğu azaltılmış tonlar oluşturur.",
+        "rainbow": "Maksimum renk çeşitliliği için tüm spektrumda renkler üreten Materyal Tasarımı şeması.",
+        "tonal-spot": "Varsayılan Material Design algoritması. Kaynak rengin ton varyasyonlarını kullanarak dengeli paletler oluşturur.",
+        "vibrant": "Canlı tonlara sahip, cesur, göz alıcı paletler için renk doygunluğunu en üst düzeye çıkarır."
+      },
       "predefined-desc": "Önceden tanımlanmış renk şemaları koleksiyonundan seçim yapın.",
       "predefined-generate-templates-label": "Önceden tanımlanmış şemalar için şablonlar oluşturun",
       "predefined-title": "Önceden tanımlanmış renk şemaları",
@@ -775,7 +792,9 @@
       "templates-write-path": "Yazıyor: {filepath}",
       "title": "Renk şeması",
       "wallpaper-method-description": "Favori palet oluşturma yönteminizi seçin.",
-      "wallpaper-method-label": "Palet oluşturma yöntemi"
+      "wallpaper-method-label": "Palet oluşturma yöntemi",
+      "wallpaper-monitor-source-description": "Duvar kağıdı renklerini çıkarmak için hangi monitörün kullanılacağını seçin.",
+      "wallpaper-monitor-source-label": "Renk oluşturma kaynağı"
     },
     "control-center": {
       "cards-desc": "Kontrol merkezinde hangi kontrollerin ve hangi sırada görüneceğini özelleştirin.",
@@ -940,7 +959,7 @@
       "launch-setup-wizard": "Kurulum sihirbazını başlat",
       "profile-desc": "Kullanıcı detaylarınızı ve avatarınızı düzenleyin.",
       "profile-picture-description": "Arayüzün tamamında görünen profil fotoğrafınız.",
-      "profile-picture-label": "{user} profil fotoğrafı",
+      "profile-picture-label": "Profil resmi",
       "profile-select-avatar": "Avatar resmini seç",
       "profile-title": "Avatar",
       "profile-tooltip": "Avatar resmi",
@@ -957,9 +976,11 @@
     },
     "hooks": {
       "info-command-info-description": "• Komutlar kabuk (sh -lc) ile yürütülür<br>• Komutlar arka planda yürütülür (ayrık)<br>• Test düğmeleri mevcut değerlerle yürütülür",
-      "info-command-info-label": "Hook komut bilgisi",
       "info-parameters-description": "• Duvar kağıdı kancası: $1 = duvar kağıdı yolu, $2 = ekran adı<br>• Tema değiştirme kancası: $1 = doğru/yanlış (Karanlık Mod durumu)<br>• Ekran kilitleme/kilidi açma kancaları: Parametre yok<br>• Performans modu kancaları: Parametre yok<br>• Oturum kancası: $1 = eylem (kapatma/yeniden başlatma)",
       "info-parameters-label": "Kullanılabilir parametreler",
+      "noctalia-started-description": "Noctalia yüklendiğinde çalıştırılacak komut.",
+      "noctalia-started-label": "Noctalia Başladı",
+      "noctalia-started-placeholder": "örn. notify-send 'Noctalia Yüklendi'",
       "performance-mode-disabled-description": "Noctalia performans modu devre dışı bırakıldığında çalıştırılacak komut.",
       "performance-mode-disabled-label": "Performans modu devre dışı bırakıldı",
       "performance-mode-disabled-placeholder": "örn., notify-send \"Performans\" \"Mod devre dışı\"",
@@ -1011,6 +1032,8 @@
       "settings-custom-launch-prefix-enabled-label": "Özel başlatma ön ekini etkinleştir",
       "settings-custom-launch-prefix-label": "Özel başlatma ön eki",
       "settings-desc": "Başlatıcının davranışını ve görünümünü özelleştirin.",
+      "settings-enable-settings-search-description": "Başlatıcıda arama yaparken ayarlar sonuçlarını göster.",
+      "settings-enable-settings-search-label": "Ayarlar aramasını etkinleştir",
       "settings-grid-view-description": "Öğeleri liste yerine ızgara düzeninde görüntüle.",
       "settings-icon-mode-description": "Tabler simgeleri yerine yerel sistem simgelerini kullanın.",
       "settings-icon-mode-label": "Yerel simgeleri kullan",
@@ -1368,7 +1391,15 @@
       "settings-select-monitor-folder": "Ekran duvar kâğıdı klasörünü seç",
       "settings-selector-description": "Duvar kâğıdınızı seçin.",
       "settings-selector-position-description": "Duvar kâğıdı seçici panelinin nerede görüneceğini seçin.",
-      "settings-title": "Duvar kâğıdı ayarları"
+      "settings-show-hidden-files-tooltip-hide": "Gizli dosyaları gizle",
+      "settings-show-hidden-files-tooltip-show": "Gizli dosyaları göster",
+      "settings-title": "Duvar kâğıdı ayarları",
+      "settings-view-mode-description": "Duvar kağıtlarının dizininizden nasıl görüntüleneceğini seçin.",
+      "settings-view-mode-label": "Görüntüleme modu",
+      "view-mode-browse": "Dizinlere göz at",
+      "view-mode-cycle-tooltip": "Görünüm modu: {mode} (değiştirmek için tıklayın)",
+      "view-mode-recursive": "Düzleştirilmiş alt dizinler",
+      "view-mode-single": "Kök dizin"
     }
   },
   "placeholders": {
@@ -1497,12 +1528,12 @@
       "enabled": "'Rahatsız etme' etin",
       "enabled-desc": "Bu bildirimleri geçmişinizde bulacaksınız"
     },
+    "donation-opened": "Bağış sayfası tarayıcınızda açıldı",
     "internet-limited": "İnternetsiz bağlandı",
     "keyboard-layout": {
       "changed": "Klavye düzeni {layout} olarak değiştirildi",
       "title": "Klavye"
     },
-    "kofi-opened": "Ko-fi sayfası tarayıcınızda açıldı",
     "missing-control-center": {
       "description": "Kontrol merkezi araç takımı araç çubuğundan kaldırıldı. Araç çubuğundan tekrar erişmek için araç takımını yeniden eklemeniz gerekecek. Araç çubuğuna sağ tıklayarak da açabilirsiniz",
       "label": "Son kontrol merkezi araç takımı kaldırıldı"
@@ -1567,9 +1598,6 @@
     "manage-wifi": "Kablosuz bağlantı",
     "max-widgets-reached": "Maksimum araç sayısına ulaşıldı",
     "microphone-volume-at": "Mikrofon sesi: %{volume}",
-    "move-to-center-section": "Orta bölüm",
-    "move-to-left-section": "Sol bölüm",
-    "move-to-right-section": "Sağ bölüm",
     "move-to-section": "{section} bölümüne git",
     "mute": "Sessiz",
     "next-media": "Sonraki parça",
@@ -1600,6 +1628,12 @@
     "wallpaper-selector": "Duvar kâğıdı seçici"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "Bu dizin boş.",
+      "go-root": "Duvar kağıdı köküne git",
+      "go-up": "Üst klasöre git",
+      "go-up-hint": "Yukarı gitmek için geri düğmesini kullanın."
+    },
     "configure-directory": "Resimler içeren duvar kâğıdı dizininizi yapılandırın.",
     "fill-modes": {
       "crop": "Kırp (Doldur)",
@@ -1626,7 +1660,9 @@
       "purity-nsfw": "NSFW",
       "purity-sfw": "SFW",
       "purity-sketchy": "Sketchy",
-      "ratios-any": "Herhangi",
+      "ratios-all-portrait": "Tüm dikey",
+      "ratios-all-wide": "Tüm geniş",
+      "ratios-any": "Herhangi biri",
       "ratios-label": "En boy oranı",
       "resolution-atleast": "En az",
       "resolution-exact": "Tam",

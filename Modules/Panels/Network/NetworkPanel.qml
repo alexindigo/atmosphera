@@ -178,7 +178,7 @@ SmartPanel {
               visible: panelViewMode === "wifi"
               checked: Settings.data.network.wifiEnabled
               onToggled: checked => NetworkService.setWifiEnabled(checked)
-              baseSize: Style.baseWidgetSize * 0.65
+              baseSize: Style.baseWidgetSize * 0.7 // Slightly smaller
             }
 
             NIconButton {
@@ -600,9 +600,9 @@ SmartPanel {
 
                         // Info button on the right
                         NIconButton {
-                          icon: "info-circle"
-                          baseSize: Style.baseWidgetSize * 0.7
+                          icon: "info"
                           tooltipText: I18n.tr("common.info")
+                          baseSize: Style.baseWidgetSize * 0.8
                           enabled: true
                           onClicked: {
                             if (NetworkService.activeEthernetIf === modelData.ifname && ethernetInfoExpanded) {
@@ -656,6 +656,7 @@ SmartPanel {
                           anchors.margins: Style.marginS
                           icon: ethernetDetailsGrid ? "layout-list" : "layout-grid"
                           tooltipText: ethernetDetailsGrid ? I18n.tr("tooltips.list-view") : I18n.tr("tooltips.grid-view")
+                          baseSize: Style.baseWidgetSize * 0.8
                           onClicked: {
                             ethernetDetailsGrid = !ethernetDetailsGrid;
                             if (Settings.data && Settings.data.ui) {

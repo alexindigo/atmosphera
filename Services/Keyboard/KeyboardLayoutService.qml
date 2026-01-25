@@ -10,45 +10,53 @@ import qs.Services.UI
 Singleton {
   id: root
   property string currentLayout: I18n.tr("common.unknown")
+  property string fullLayoutName: I18n.tr("common.unknown")
   property string previousLayout: ""
   property bool isInitialized: false
 
   // Updates current layout from various format strings. Called by compositors
   function setCurrentLayout(layoutString) {
+    root.fullLayoutName = layoutString || I18n.tr("common.unknown");
     root.currentLayout = extractLayoutCode(layoutString);
   }
 
-  // Extract layout code from various format strings using Commons data
+  // Extract layout code from various format strings
+  // Priority: variant > country code > language lookup > fallback
   function extractLayoutCode(layoutString) {
     if (!layoutString)
       return I18n.tr("common.unknown");
 
     const str = layoutString.toLowerCase();
 
-    // If it's already a short code (2-3 chars), return as-is
+    // If it's already a short code (2-3 chars), return uppercase
     if (/^[a-z]{2,3}(\+.*)?$/.test(str)) {
-      return str.split('+')[0];
+      return str.split('+')[0].toUpperCase();
     }
 
-    // Extract from parentheses like "English (US)"
-    const parenMatch = str.match(/\(([a-z]{2,3})\)/);
-    if (parenMatch) {
-      return parenMatch[1];
+    // Check for layout variants first - these are more meaningful than country codes
+    // when distinguishing between multiple layouts of the same language
+    for (const [pattern, display] of Object.entries(variantMap)) {
+      if (str.includes(pattern)) {
+        return display;
+      }
     }
 
-    // Check for exact matches or partial matches in language map from Commons
-    const entries = Object.entries(languageMap);
-    for (var i = 0; i < entries.length; i++) {
-      const lang = entries[i][0];
-      const code = entries[i][1];
+    // Extract short code from parentheses like "English (US)"
+    const shortCodeMatch = str.match(/\(([a-z]{2,3})\)/i);
+    if (shortCodeMatch) {
+      return shortCodeMatch[1].toUpperCase();
+    }
+
+    // Check for language/country names in the language map
+    for (const [lang, code] of Object.entries(languageMap)) {
       if (str.includes(lang)) {
-        return code;
+        return code.toUpperCase();
       }
     }
 
     // If nothing matches, try first 2-3 characters if they look like a code
     const codeMatch = str.match(/^([a-z]{2,3})/);
-    return codeMatch ? codeMatch[1] : I18n.tr("common.unknown");
+    return codeMatch ? codeMatch[1].toUpperCase() : I18n.tr("common.unknown");
   }
 
   // Watch for layout changes and show toast
@@ -59,7 +67,7 @@ Singleton {
     if (layoutChanged) {
       if (Settings.data.notifications.enableKeyboardLayoutToast) {
         const message = I18n.tr("toast.keyboard-layout.changed", {
-                                  "layout": currentLayout.toUpperCase()
+                                  "layout": currentLayout
                                 });
         ToastService.showNotice(I18n.tr("toast.keyboard-layout.title"), message, "", 2000);
       }
@@ -88,25 +96,49 @@ Singleton {
     }
   }
 
-  // Comprehensive language name to ISO code mapping
+  // Layout variants - checked BEFORE country codes
+  // These display the variant name when it's more meaningful than the country
+  property var variantMap: {
+    // Alternative keyboard layouts
+    "colemak": "Colemak",
+    "dvorak": "Dvorak",
+    "workman": "Workman",
+    "programmer dvorak": "Dvk-P",
+    "norman": "Norman",
+    // International variants
+    "intl": "Intl",
+    "international": "Intl",
+    "altgr-intl": "Intl",
+    "with dead keys": "Dead",
+    // Common variants
+    "phonetic": "Phon",
+    "extended": "Ext",
+    "ergonomic": "Ergo",
+    "legacy": "Legacy",
+    // Input methods
+    "pinyin": "Pinyin",
+    "cangjie": "Cangjie",
+    "romaji": "Romaji",
+    "kana": "Kana"
+  }
+
+  // Language/country name to ISO code mapping
   property var languageMap: {
-    "english"// English variants
-    : "us",
+    // English variants
+    "english": "us",
     "american": "us",
     "united states": "us",
     "us english": "us",
     "british": "gb",
-    "uk": "ua",
-    "united kingdom"// FIXED: Ukrainian language code should map to Ukraine
-    : "gb",
+    "united kingdom": "gb",
     "english (uk)": "gb",
     "canadian": "ca",
     "canada": "ca",
     "canadian english": "ca",
     "australian": "au",
     "australia": "au",
-    "swedish"// Nordic countries
-    : "se",
+    // Nordic countries
+    "swedish": "se",
     "svenska": "se",
     "sweden": "se",
     "norwegian": "no",
@@ -121,8 +153,8 @@ Singleton {
     "icelandic": "is",
     "íslenska": "is",
     "iceland": "is",
-    "german"// Western/Central European Germanic
-    : "de",
+    // Western/Central European Germanic
+    "german": "de",
     "deutsch": "de",
     "germany": "de",
     "austrian": "at",
@@ -140,8 +172,8 @@ Singleton {
     "belgium": "be",
     "belgië": "be",
     "belgique": "be",
-    "french"// Romance languages (Western/Southern Europe)
-    : "fr",
+    // Romance languages (Western/Southern Europe)
+    "french": "fr",
     "français": "fr",
     "france": "fr",
     "canadian french": "ca",
@@ -158,12 +190,12 @@ Singleton {
     "catalan": "ad",
     "català": "ad",
     "andorra": "ad",
-    "romanian"// Eastern European Romance
-    : "ro",
+    // Eastern European Romance
+    "romanian": "ro",
     "română": "ro",
     "romania": "ro",
-    "russian"// Slavic languages (Eastern Europe)
-    : "ru",
+    // Slavic languages (Eastern Europe)
+    "russian": "ru",
     "русский": "ru",
     "russia": "ru",
     "polish": "pl",
@@ -175,11 +207,10 @@ Singleton {
     "slovak": "sk",
     "slovenčina": "sk",
     "slovakia": "sk",
-    "uk": "ua",
-    "ukrainian"// Ukrainian language code
-    : "ua",
-    "українська": "ua",
+    // Ukrainian
     "ukraine": "ua",
+    "ukrainian": "ua",
+    "українська": "ua",
     "bulgarian": "bg",
     "български": "bg",
     "bulgaria": "bg",
@@ -198,8 +229,8 @@ Singleton {
     "macedonian": "mk",
     "македонски": "mk",
     "macedonia": "mk",
-    "irish"// Celtic languages (Western Europe)
-    : "ie",
+    // Celtic languages (Western Europe)
+    "irish": "ie",
     "gaeilge": "ie",
     "ireland": "ie",
     "welsh": "gb",
@@ -208,8 +239,8 @@ Singleton {
     "scottish": "gb",
     "gàidhlig": "gb",
     "scotland": "gb",
-    "estonian"// Baltic languages (Northern Europe)
-    : "ee",
+    // Baltic languages (Northern Europe)
+    "estonian": "ee",
     "eesti": "ee",
     "estonia": "ee",
     "latvian": "lv",
@@ -218,8 +249,8 @@ Singleton {
     "lithuanian": "lt",
     "lietuvių": "lt",
     "lithuania": "lt",
-    "hungarian"// Other European languages
-    : "hu",
+    // Other European languages
+    "hungarian": "hu",
     "magyar": "hu",
     "hungary": "hu",
     "greek": "gr",
@@ -231,8 +262,8 @@ Singleton {
     "maltese": "mt",
     "malti": "mt",
     "malta": "mt",
-    "turkish"// West/Southwest Asian languages
-    : "tr",
+    // West/Southwest Asian languages
+    "turkish": "tr",
     "türkçe": "tr",
     "turkey": "tr",
     "arabic": "ar",
@@ -241,13 +272,13 @@ Singleton {
     "hebrew": "il",
     "עברית": "il",
     "israel": "il",
-    "brazilian"// South American languages
-    : "br",
+    // South American languages
+    "brazilian": "br",
     "brazilian portuguese": "br",
     "brasil": "br",
     "brazil": "br",
-    "japanese"// East Asian languages
-    : "jp",
+    // East Asian languages
+    "japanese": "jp",
     "日本語": "jp",
     "japan": "jp",
     "korean": "kr",
@@ -261,28 +292,20 @@ Singleton {
     "traditional chinese": "tw",
     "taiwan": "tw",
     "繁體中文": "tw",
-    "thai"// Southeast Asian languages
-    : "th",
+    // Southeast Asian languages
+    "thai": "th",
     "ไทย": "th",
     "thailand": "th",
     "vietnamese": "vn",
     "tiếng việt": "vn",
     "vietnam": "vn",
-    "hindi"// South Asian languages
-    : "in",
+    // South Asian languages
+    "hindi": "in",
     "हिन्दी": "in",
     "india": "in",
-    "afrikaans"// African languages
-    : "za",
+    // African languages
+    "afrikaans": "za",
     "south africa": "za",
-    "south african": "za",
-    "qwerty"// Layout variants
-    : "us",
-    "dvorak": "us",
-    "colemak": "us",
-    "workman": "us",
-    "azerty": "fr",
-    "norman": "fr",
-    "qwertz": "de"
+    "south african": "za"
   }
 }

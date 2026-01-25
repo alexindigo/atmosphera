@@ -20,6 +20,10 @@ Item {
   required property var keyboardLayout
   required property TextInput passwordInput
 
+  Component.onCompleted: {
+    doUnlock();
+  }
+
   function doUnlock() {
     if (lockControl) {
       lockControl.tryUnlock();
@@ -31,6 +35,7 @@ Item {
   property string pendingAction: ""
   property bool timerActive: false
   property int timeRemaining: 0
+  readonly property bool weatherReady: Settings.data.location.weatherEnabled && (LocationService.data.weather !== null)
 
   // Timer management functions
   function startTimer(action) {
@@ -132,7 +137,7 @@ Item {
         visible: batteryIndicator.isReady && BatteryService.hasAnyBattery()
 
         NIcon {
-          icon: BatteryService.getIcon(Math.round(batteryIndicator.percent), batteryIndicator.charging, batteryIndicator.isReady)
+          icon: BatteryService.getIcon(Math.round(batteryIndicator.percent), batteryIndicator.charging, batteryIndicator.pluggedIn, batteryIndicator.isReady)
           pointSize: Style.fontSizeM
           color: batteryIndicator.charging ? Color.mPrimary : Color.mOnSurfaceVariant
         }
@@ -323,7 +328,7 @@ Item {
 
           NIcon {
             Layout.alignment: Qt.AlignVCenter
-            icon: LocationService.weatherSymbolFromCode(LocationService.data.weather.current_weather.weathercode)
+            icon: weatherReady ? LocationService.weatherSymbolFromCode(LocationService.data.weather.current_weather.weathercode, LocationService.data.weather.current_weather.is_day) : "weather-cloud-off"
             pointSize: Style.fontSizeXXXL
             color: Color.mPrimary
           }
@@ -457,7 +462,7 @@ Item {
             visible: batteryIndicator.isReady && BatteryService.hasAnyBattery()
 
             NIcon {
-              icon: BatteryService.getIcon(Math.round(batteryIndicator.percent), batteryIndicator.charging, batteryIndicator.isReady)
+              icon: BatteryService.getIcon(Math.round(batteryIndicator.percent), batteryIndicator.charging, batteryIndicator.pluggedIn, batteryIndicator.isReady)
               pointSize: Style.fontSizeM
               color: batteryIndicator.charging ? Color.mPrimary : Color.mOnSurfaceVariant
             }
@@ -620,7 +625,7 @@ Item {
             radius: Math.min(Style.iRadiusL, width / 2)
             color: eyeButtonArea.containsMouse ? Color.mPrimary : "transparent"
             visible: passwordInput.text.length > 0
-            enabled: !lockContext || !lockContext.unlockInProgress || lockContext.waitingForPassword
+            enabled: !lockContext || !lockContext.unlockInProgress
 
             NIcon {
               anchors.centerIn: parent
@@ -664,7 +669,7 @@ Item {
             color: submitButtonArea.containsMouse ? Color.mPrimary : "transparent"
             border.color: Color.mPrimary
             border.width: Style.borderS
-            enabled: !lockControl || !lockControl.unlockInProgress || lockControl.waitingForPassword
+            enabled: !lockContext || !lockContext.unlockInProgress
 
             NIcon {
               anchors.centerIn: parent

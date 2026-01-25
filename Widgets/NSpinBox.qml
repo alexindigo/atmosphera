@@ -16,7 +16,6 @@ RowLayout {
   property string prefix: ""
   property string label: ""
   property string description: ""
-  property bool enabled: true
   property bool hovering: false
   property int baseSize: Style.baseWidgetSize
   property var defaultValue: undefined

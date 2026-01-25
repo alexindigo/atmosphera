@@ -464,4 +464,12 @@ Item {
       Logger.e("HyprlandService", "Failed to logout:", e);
     }
   }
+
+  function cycleKeyboardLayout() {
+    try {
+      Quickshell.execDetached(["hyprctl", "switchxkblayout", "all", "next"]);
+    } catch (e) {
+      Logger.e("HyprlandService", "Failed to cycle keyboard layout:", e);
+    }
+  }
 }

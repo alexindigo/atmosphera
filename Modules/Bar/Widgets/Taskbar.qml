@@ -6,6 +6,7 @@ import Quickshell.Wayland
 import Quickshell.Widgets
 import qs.Commons
 import qs.Services.Compositor
+import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
 
@@ -23,11 +24,13 @@ Rectangle {
   readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
   readonly property real barHeight: Style.getBarHeightForScreen(screen?.name)
+  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screen?.name)
+  readonly property real barFontSize: Style.getBarFontSizeForScreen(screen?.name)
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section];
+      var widgets = Settings.getBarWidgetsForScreen(screen?.name)[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
         return widgets[sectionWidgetIndex];
       }
@@ -43,7 +46,7 @@ Rectangle {
   readonly property bool smartWidth: (widgetSettings.smartWidth !== undefined) ? widgetSettings.smartWidth : widgetMetadata.smartWidth
   readonly property int maxTaskbarWidthPercent: (widgetSettings.maxTaskbarWidth !== undefined) ? widgetSettings.maxTaskbarWidth : widgetMetadata.maxTaskbarWidth
   readonly property real iconScale: (widgetSettings.iconScale !== undefined) ? widgetSettings.iconScale : widgetMetadata.iconScale
-  readonly property int itemSize: Style.toOdd(Style.capsuleHeight * Math.max(0.1, iconScale))
+  readonly property int itemSize: Style.toOdd(capsuleHeight * Math.max(0.1, iconScale))
 
   // Maximum width for the taskbar widget to prevent overlapping with other widgets
   readonly property real maxTaskbarWidth: {
@@ -98,6 +101,91 @@ Rectangle {
   // Wheel scroll handling
   property int wheelAccumulatedDelta: 0
   property bool wheelCooldown: false
+
+  // Drag and Drop state for visual feedback
+  property int dragSourceIndex: -1
+  property int dragTargetIndex: -1
+
+  // Track the session order of apps (transient reordering)
+  property var sessionAppOrder: []
+
+  function getAppKey(appData) {
+    if (!appData)
+      return null;
+    // prefer window object identity for running apps to distinguish instances
+    if (appData.window)
+      return appData.window;
+    // fallback to appId for pinned-only apps
+    return appData.appId;
+  }
+
+  function sortApps(apps) {
+    if (!sessionAppOrder || sessionAppOrder.length === 0) {
+      return apps;
+    }
+
+    const sorted = [];
+    const remaining = [...apps];
+
+    // 1. Pick apps that are in the session order
+    for (let i = 0; i < sessionAppOrder.length; i++) {
+      const key = sessionAppOrder[i];
+      const idx = remaining.findIndex(app => getAppKey(app) === key);
+      if (idx !== -1) {
+        sorted.push(remaining[idx]);
+        remaining.splice(idx, 1);
+      }
+    }
+
+    // 2. Append any new/remaining apps
+    remaining.forEach(app => sorted.push(app));
+
+    return sorted;
+  }
+
+  function reorderApps(fromIndex, toIndex) {
+    Logger.d("Taskbar", "Reordering apps from " + fromIndex + " to " + toIndex);
+    if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0 || fromIndex >= combinedModel.length || toIndex >= combinedModel.length)
+      return;
+
+    const list = [...combinedModel];
+    const item = list.splice(fromIndex, 1)[0];
+    list.splice(toIndex, 0, item);
+
+    combinedModel = list;
+    sessionAppOrder = combinedModel.map(getAppKey);
+    savePinnedOrder();
+  }
+
+  function savePinnedOrder() {
+    const currentPinned = Settings.data.dock.pinnedApps || [];
+    const newPinned = [];
+    const seen = new Set();
+
+    // Extract pinned apps in their current visual order
+    combinedModel.forEach(app => {
+                            if (app.appId && !seen.has(app.appId)) {
+                              const isPinned = currentPinned.some(p => normalizeAppId(p) === normalizeAppId(app.appId));
+
+                              if (isPinned) {
+                                newPinned.push(app.appId);
+                                seen.add(app.appId);
+                              }
+                            }
+                          });
+
+    // Check if any pinned apps were missed (e.g. filtered out by workspace)
+    currentPinned.forEach(p => {
+                            if (!seen.has(p)) {
+                              newPinned.push(p);
+                              seen.add(p);
+                            }
+                          });
+
+    if (JSON.stringify(currentPinned) !== JSON.stringify(newPinned)) {
+      Settings.data.dock.pinnedApps = newPinned;
+    }
+  }
 
   // Helper function to normalize app IDs for case-insensitive matching
   function normalizeAppId(appId) {
@@ -262,7 +350,12 @@ Rectangle {
                          });
     }
 
-    combinedModel = runningWindows;
+    combinedModel = sortApps(runningWindows);
+
+    // Sync session order if needed (e.g. first run or new apps added)
+    if (!sessionAppOrder || sessionAppOrder.length === 0 || sessionAppOrder.length !== combinedModel.length) {
+      sessionAppOrder = combinedModel.map(getAppKey);
+    }
     updateHasWindow();
   }
 
@@ -286,7 +379,7 @@ Rectangle {
           const command = prefix.concat(app.command);
           Quickshell.execDetached(command);
         }
-      } else if (Settings.data.appLauncher.useApp2Unit && app.id) {
+      } else if (Settings.data.appLauncher.useApp2Unit && ProgramCheckerService.app2unitAvailable && app.id) {
         Logger.d("Taskbar", `Using app2unit for: ${app.id}`);
         if (app.runInTerminal)
           Quickshell.execDetached(["app2unit", "--", app.id + ".desktop"]);
@@ -500,7 +593,7 @@ Rectangle {
     if (!visible)
       return 0;
     if (isVerticalBar)
-      return Style.capsuleHeight;
+      return capsuleHeight;
 
     var calculatedWidth = showTitle ? taskbarLayout.implicitWidth : taskbarLayout.implicitWidth + Style.marginXL;
 
@@ -511,7 +604,7 @@ Rectangle {
 
     return Math.round(calculatedWidth);
   }
-  implicitHeight: visible ? (isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginXL) : Style.capsuleHeight) : 0
+  implicitHeight: visible ? (isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginXL) : capsuleHeight) : 0
   radius: Style.radiusM
   color: Style.capsuleColor
   border.color: Style.capsuleBorderColor
@@ -536,6 +629,7 @@ Rectangle {
       delegate: Item {
         id: taskbarItem
         required property var modelData
+        required property int index
         property ShellScreen screen: root.screen
 
         readonly property bool isRunning: modelData.window !== null
@@ -556,95 +650,231 @@ Rectangle {
         Layout.preferredHeight: root.itemSize
         Layout.alignment: Qt.AlignCenter
 
-        Rectangle {
-          id: titleBackground
-          visible: shouldShowTitle
-          anchors.centerIn: parent
-          width: parent.width
-          height: root.height
-          color: titleBgColor
-          radius: Style.radiusM
+        // Ensure dragged item is on top
+        z: (root.dragSourceIndex === index) ? 1000 : 1
 
-          Behavior on color {
-            ColorAnimation {
-              duration: Style.animationFast
-              easing.type: Easing.InOutQuad
+        property int modelIndex: index
+        objectName: "taskbarAppItem"
+
+        DropArea {
+          anchors.fill: parent
+          keys: ["taskbar-app"]
+          onEntered: function (drag) {
+            if (drag.source && drag.source.objectName === "taskbarAppItem") {
+              root.dragTargetIndex = taskbarItem.modelIndex;
+            }
+          }
+          onExited: function () {
+            if (root.dragTargetIndex === taskbarItem.modelIndex) {
+              root.dragTargetIndex = -1;
+            }
+          }
+          onDropped: function (drop) {
+            root.dragSourceIndex = -1;
+            root.dragTargetIndex = -1;
+            Logger.d("Taskbar", "Dropped! Source: " + (drop.source ? drop.source.objectName : "null") + " Index: " + (drop.source ? drop.source.modelIndex : "?") + " -> Target Index: " + taskbarItem.modelIndex);
+            if (drop.source && drop.source.objectName === "taskbarAppItem" && drop.source !== taskbarItem) {
+              root.reorderApps(drop.source.modelIndex, taskbarItem.modelIndex);
+            } else {
+              Logger.d("Taskbar", "Drop ignored. Source objectName: " + (drop.source ? drop.source.objectName : "null"));
             }
           }
         }
 
-        Rectangle {
-          anchors.centerIn: parent
-          width: taskbarItem.contentWidth
+        Item {
+          id: draggableContent
+          width: parent.width
           height: parent.height
-          color: "transparent"
+          anchors.centerIn: dragging ? undefined : parent
 
-          RowLayout {
-            id: itemLayout
-            anchors.fill: parent
-            spacing: taskbarItem.itemSpacing
+          // Visual shifting logic
+          readonly property bool isDragged: root.dragSourceIndex === index
+          property real shiftOffset: 0
 
-            Item {
-              Layout.preferredWidth: root.itemSize
-              Layout.preferredHeight: root.itemSize
-              Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+          // Calculate shift based on drag state
+          // If I am NOT the dragged item, but I am in the path of the drag
+          Binding on shiftOffset {
+            value: {
+              if (root.dragSourceIndex !== -1 && root.dragTargetIndex !== -1 && !draggableContent.isDragged) {
+                if (root.dragSourceIndex < root.dragTargetIndex) {
+                  // Dragging Right: Items between source and target shift Left
+                  if (index > root.dragSourceIndex && index <= root.dragTargetIndex) {
+                    return -1 * (root.isVerticalBar ? root.itemSize : draggableContent.width); // Simple approximation, could be refined
+                  }
+                } else if (root.dragSourceIndex > root.dragTargetIndex) {
+                  // Dragging Left: Items between target and source shift Right
+                  if (index >= root.dragTargetIndex && index < root.dragSourceIndex) {
+                    return (root.isVerticalBar ? root.itemSize : draggableContent.width);
+                  }
+                }
+              }
+              return 0;
+            }
+          }
 
-              IconImage {
-                id: appIcon
-                anchors.fill: parent
+          transform: Translate {
+            x: !root.isVerticalBar ? draggableContent.shiftOffset : 0
+            y: root.isVerticalBar ? draggableContent.shiftOffset : 0
 
-                source: ThemeIcons.iconForAppId(taskbarItem.modelData.appId)
-                smooth: true
-                asynchronous: true
+            Behavior on x {
+              NumberAnimation {
+                duration: Style.animationFast
+                easing.type: Easing.OutQuad
+              }
+            }
+            Behavior on y {
+              NumberAnimation {
+                duration: Style.animationFast
+                easing.type: Easing.OutQuad
+              }
+            }
+          }
 
-                // Apply dock shader to all taskbar icons
-                layer.enabled: widgetSettings.colorizeIcons !== false
-                layer.effect: ShaderEffect {
-                  property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
-                  property real colorizeMode: 0.0 // Dock mode (grayscale)
+          property bool dragging: taskbarMouseArea.drag.active
+          onDraggingChanged: {
+            if (dragging) {
+              root.dragSourceIndex = index;
+            } else {
+              // Don't reset immediately on release to allow drop to handle it,
+              // or use a timer if needed, but drop handler usually fires.
+              // However, if dropped outside, we need to reset.
+              // Let's reset if not handled by drop area quickly?
+              // Actually, drag.active becomes false on release.
+              // We might want to clear it if no drop happened.
+              if (root.dragSourceIndex === index) {
+                // Slight delay/check? For now, let DropArea handle reset on success.
+                // If cancelled (dropped nowhere), we should reset.
+                Qt.callLater(() => {
+                               if (!taskbarMouseArea.drag.active && root.dragSourceIndex === index) {
+                                 root.dragSourceIndex = -1;
+                                 root.dragTargetIndex = -1;
+                               }
+                             });
+              }
+            }
+          }
 
-                  fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+          Drag.active: dragging
+          Drag.source: taskbarItem
+          Drag.hotSpot.x: width / 2
+          Drag.hotSpot.y: height / 2
+          Drag.keys: ["taskbar-app"]
+
+          z: dragging ? 1000 : 0
+          scale: dragging ? 1.05 : 1.0
+          Behavior on scale {
+            NumberAnimation {
+              duration: Style.animationFast
+            }
+          }
+
+          Rectangle {
+            id: titleBackground
+            visible: shouldShowTitle
+            anchors.centerIn: parent
+            width: parent.width
+            height: root.height
+            color: titleBgColor
+            radius: Style.radiusM
+
+            Behavior on color {
+              ColorAnimation {
+                duration: Style.animationFast
+                easing.type: Easing.InOutQuad
+              }
+            }
+          }
+
+          Rectangle {
+            anchors.centerIn: parent
+            width: taskbarItem.contentWidth
+            height: parent.height
+            color: "transparent"
+
+            RowLayout {
+              id: itemLayout
+              anchors.fill: parent
+              spacing: taskbarItem.itemSpacing
+
+              Item {
+                Layout.preferredWidth: root.itemSize
+                Layout.preferredHeight: root.itemSize
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+
+                IconImage {
+                  id: appIcon
+                  anchors.fill: parent
+
+                  source: ThemeIcons.iconForAppId(taskbarItem.modelData.appId)
+                  smooth: true
+                  asynchronous: true
+
+                  // Apply dock shader to all taskbar icons
+                  layer.enabled: widgetSettings.colorizeIcons !== false
+                  layer.effect: ShaderEffect {
+                    property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
+                    property real colorizeMode: 0.0 // Dock mode (grayscale)
+
+                    fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+                  }
+                }
+
+                Rectangle {
+                  id: iconBackground
+                  visible: !shouldShowTitle
+                  anchors.bottomMargin: -2
+                  anchors.bottom: parent.bottom
+                  anchors.horizontalCenter: parent.horizontalCenter
+                  width: Style.toOdd(root.itemSize * 0.25)
+                  height: 4
+                  color: taskbarItem.isFocused ? Color.mPrimary : "transparent"
+                  radius: Math.min(Style.radiusXXS, width / 2)
                 }
               }
 
-              Rectangle {
-                id: iconBackground
-                visible: !shouldShowTitle
-                anchors.bottomMargin: -2
-                anchors.bottom: parent.bottom
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: Style.toOdd(root.itemSize * 0.25)
-                height: 4
-                color: taskbarItem.isFocused ? Color.mPrimary : "transparent"
-                radius: Math.min(Style.radiusXXS, width / 2)
+              NText {
+                id: titleText
+                visible: shouldShowTitle
+                Layout.preferredWidth: root.titleWidth
+                Layout.preferredHeight: root.itemSize
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                Layout.fillWidth: false
+
+                text: taskbarItem.title
+                elide: Text.ElideRight
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignLeft
+
+                pointSize: barFontSize
+                color: titleFgColor
+                opacity: Style.opacityFull
               }
-            }
-
-            NText {
-              id: titleText
-              visible: shouldShowTitle
-              Layout.preferredWidth: root.titleWidth
-              Layout.preferredHeight: root.itemSize
-              Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-              Layout.fillWidth: false
-
-              text: taskbarItem.title
-              elide: Text.ElideRight
-              verticalAlignment: Text.AlignVCenter
-              horizontalAlignment: Text.AlignLeft
-
-              pointSize: Style.barFontSize
-              color: titleFgColor
-              opacity: Style.opacityFull
             }
           }
         }
 
         MouseArea {
+          id: taskbarMouseArea
+          objectName: "taskbarMouseArea"
           anchors.fill: parent
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
           acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+          drag.target: draggableContent
+          drag.axis: root.isVerticalBar ? Drag.YAxis : Drag.XAxis
+          preventStealing: true
+
+          onPressed: {
+            // Constrain drag to roughly the taskbar area but allow some freedom
+            // Or just let it be free since we only care about drops
+          }
+
+          onReleased: {
+            if (draggableContent.Drag.active) {
+              draggableContent.Drag.drop();
+            }
+          }
 
           onClicked: function (mouse) {
             if (!modelData)

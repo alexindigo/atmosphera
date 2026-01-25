@@ -24,7 +24,6 @@ Singleton {
                                             "wlsunsetAvailable": ["sh", "-c", "command -v wlsunset"],
                                             "app2unitAvailable": ["sh", "-c", "command -v app2unit"],
                                             "gnomeCalendarAvailable": ["sh", "-c", "command -v gnome-calendar"],
-                                            "gnomeCalendarAvailable": ["sh", "-c", "command -v gnome-calendar"],
                                             "wtypeAvailable": ["sh", "-c", "command -v wtype"],
                                             "pythonAvailable": ["sh", "-c", "command -v python3"]
                                           })
@@ -37,6 +36,28 @@ Singleton {
 
   // Signal emitted when all checks are complete
   signal checksCompleted
+
+  // disable app2unit in settings if it is not available
+  onChecksCompleted: {
+    if (!app2unitAvailable && Settings.data.appLauncher.useApp2Unit) {
+      Settings.data.appLauncher.useApp2Unit = false;
+    }
+    if (!wlsunsetAvailable && Settings.data.nightLight.enabled) {
+      Settings.data.nightLight.enabled = false;
+    }
+  }
+
+  onApp2unitAvailableChanged: {
+    if (!app2unitAvailable && Settings.data.appLauncher.useApp2Unit) {
+      Settings.data.appLauncher.useApp2Unit = false;
+    }
+  }
+
+  onWlsunsetAvailableChanged: {
+    if (!wlsunsetAvailable && Settings.data.nightLight.enabled) {
+      Settings.data.nightLight.enabled = false;
+    }
+  }
 
   // Function to detect Discord client by checking config directories
   function detectDiscordClient() {
@@ -51,12 +72,7 @@ Singleton {
       // Use the actual config path from the client, removing ~ prefix
       var checkPath = configPath.startsWith("~") ? configPath.substring(2) : configPath.substring(1);
 
-      // Check if this client requires themes folder to exist
-      if (client.requiresThemesFolder) {
-        scriptParts.push("if [ -d \"$HOME/" + checkPath + "/themes\" ]; then available_clients=\"$available_clients " + clientName + "\"; fi;");
-      } else {
-        scriptParts.push("if [ -d \"$HOME/" + checkPath + "\" ]; then available_clients=\"$available_clients " + clientName + "\"; fi;");
-      }
+      scriptParts.push("if [ -d \"$HOME/" + checkPath + "\" ]; then available_clients=\"$available_clients " + clientName + "\"; fi;");
     }
 
     scriptParts.push("echo \"$available_clients\"");

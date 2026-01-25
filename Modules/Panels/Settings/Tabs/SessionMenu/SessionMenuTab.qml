@@ -10,6 +10,7 @@ ColumnLayout {
   id: root
   spacing: 0
 
+  property var _activeDialog: null
   property list<var> entriesModel: []
   property list<var> entriesDefault: [
     {
@@ -78,6 +79,15 @@ ColumnLayout {
     saveEntries();
   }
 
+  Component.onDestruction: {
+    if (_activeDialog && _activeDialog.close) {
+      var dialog = _activeDialog;
+      _activeDialog = null;
+      dialog.close();
+      dialog.destroy();
+    }
+  }
+
   function openEntrySettingsDialog(index) {
     if (index < 0 || index >= entriesModel.length) {
       return;
@@ -87,6 +97,12 @@ ColumnLayout {
     var component = Qt.createComponent(Quickshell.shellDir + "/Modules/Panels/Settings/Tabs/SessionMenu/SessionMenuEntrySettingsDialog.qml");
 
     function instantiateAndOpen() {
+      if (root._activeDialog) {
+        root._activeDialog.close();
+        root._activeDialog.destroy();
+        root._activeDialog = null;
+      }
+
       var dialog = component.createObject(Overlay.overlay, {
                                             "entryIndex": index,
                                             "entryData": entry,
@@ -95,11 +111,18 @@ ColumnLayout {
                                           });
 
       if (dialog) {
+        root._activeDialog = dialog;
         dialog.updateEntryCommand.connect((idx, command) => {
                                             root.updateEntry(idx, {
                                                                "command": command
                                                              });
                                           });
+        dialog.closed.connect(() => {
+                                if (root._activeDialog === dialog) {
+                                  root._activeDialog = null;
+                                  dialog.destroy();
+                                }
+                              });
         dialog.open();
       } else {
         Logger.e("SessionMenuTab", "Failed to create entry settings dialog");

@@ -9,41 +9,45 @@ Singleton {
   id: root
 
   readonly property string templateApplyScript: Quickshell.shellDir + '/Scripts/bash/template-apply.sh'
-  readonly property string gtkRefreshScript: Quickshell.shellDir + '/Scripts/bash/gtk-refresh.sh'
+  readonly property string gtkRefreshScript: Quickshell.shellDir + '/Scripts/python/src/theming/gtk-refresh.py'
 
   // Terminal configurations (for wallpaper-based templates)
+  // Each terminal must define a postHook that sets up config includes and triggers reload
   readonly property var terminals: [
     {
       "id": "foot",
       "name": "Foot",
-      "templatePath": "Terminal/foot",
-      "outputPath": "~/.config/foot/themes/noctalia"
+      "templatePath": "terminal/foot",
+      "outputPath": "~/.config/foot/themes/noctalia",
+      "postHook": `${templateApplyScript} foot`
     },
     {
       "id": "ghostty",
       "name": "Ghostty",
-      "templatePath": "Terminal/ghostty",
+      "templatePath": "terminal/ghostty",
       "outputPath": "~/.config/ghostty/themes/noctalia",
-      "postHook": "bash -c 'pgrep -f ghostty >/dev/null && pkill -SIGUSR2 ghostty || true'"
+      "postHook": `${templateApplyScript} ghostty`
     },
     {
       "id": "kitty",
       "name": "Kitty",
-      "templatePath": "Terminal/kitty.conf",
-      "outputPath": "~/.config/kitty/themes/noctalia.conf"
+      "templatePath": "terminal/kitty.conf",
+      "outputPath": "~/.config/kitty/themes/noctalia.conf",
+      "postHook": `${templateApplyScript} kitty`
     },
     {
       "id": "alacritty",
       "name": "Alacritty",
-      "templatePath": "Terminal/alacritty.toml",
-      "outputPath": "~/.config/alacritty/themes/noctalia.toml"
+      "templatePath": "terminal/alacritty.toml",
+      "outputPath": "~/.config/alacritty/themes/noctalia.toml",
+      "postHook": `${templateApplyScript} alacritty`
     },
     {
       "id": "wezterm",
       "name": "Wezterm",
-      "templatePath": "Terminal/wezterm.toml",
+      "templatePath": "terminal/wezterm.toml",
       "outputPath": "~/.config/wezterm/colors/Noctalia.toml",
-      "postHook": "touch ~/.config/wezterm/wezterm.lua"
+      "postHook": `${templateApplyScript} wezterm`
     }
   ]
 
@@ -62,7 +66,7 @@ Singleton {
           "path": "~/.config/gtk-4.0/noctalia.css"
         }
       ],
-      "postProcess": mode => `gsettings set org.gnome.desktop.interface color-scheme prefer-${mode} && ${gtkRefreshScript}`
+      "postProcess": mode => `gsettings set org.gnome.desktop.interface color-scheme prefer-${mode} && python3 ${gtkRefreshScript}`
     },
     {
       "id": "qt",
@@ -143,52 +147,43 @@ Singleton {
       "id": "discord",
       "name": "Discord",
       "category": "misc",
-      "input": "vesktop.css",
+      "input": ["discord-midnight.css", "discord-material.css"],
       "clients": [
         {
           "name": "vesktop",
-          "path": "~/.config/vesktop",
-          "requiresThemesFolder": false
+          "path": "~/.config/vesktop"
         },
         {
           "name": "webcord",
-          "path": "~/.config/webcord",
-          "requiresThemesFolder": false
+          "path": "~/.config/webcord"
         },
         {
           "name": "armcord",
-          "path": "~/.config/armcord",
-          "requiresThemesFolder": false
+          "path": "~/.config/armcord"
         },
         {
           "name": "equibop",
-          "path": "~/.config/equibop",
-          "requiresThemesFolder": false
+          "path": "~/.config/equibop"
         },
         {
           "name": "equicord",
-          "path": "~/.config/Equicord",
-          "requiresThemesFolder": false
+          "path": "~/.config/Equicord"
         },
         {
           "name": "lightcord",
-          "path": "~/.config/lightcord",
-          "requiresThemesFolder": false
+          "path": "~/.config/lightcord"
         },
         {
           "name": "dorion",
-          "path": "~/.config/dorion",
-          "requiresThemesFolder": false
+          "path": "~/.config/dorion"
         },
         {
           "name": "vencord",
-          "path": "~/.config/Vencord",
-          "requiresThemesFolder": false
+          "path": "~/.config/Vencord"
         },
         {
           "name": "betterdiscord",
-          "path": "~/.config/BetterDiscord",
-          "requiresThemesFolder": false
+          "path": "~/.config/BetterDiscord"
         }
       ]
     },
@@ -292,7 +287,8 @@ Singleton {
         {
           "path": "~/.config/yazi/flavors/noctalia.yazi/flavor.toml"
         }
-      ]
+      ],
+      "postProcess": () => `${templateApplyScript} yazi`
     },
     {
       "id": "emacs",
@@ -367,6 +363,18 @@ Singleton {
         }
       ],
       "postProcess": () => `${templateApplyScript} btop`
+    },
+    {
+      "id": "zathura",
+      "name": "Zathura",
+      "category": "misc",
+      "input": "zathurarc",
+      "outputs": [
+        {
+          "path": "~/.config/zathura/noctaliarc"
+        }
+      ],
+      "postProcess": () => `${templateApplyScript} zathura`
     }
   ]
 
@@ -379,8 +387,7 @@ Singleton {
                                    clients.push({
                                                   "name": client.name,
                                                   "configPath": client.path,
-                                                  "themePath": `${client.path}/themes/noctalia.theme.css`,
-                                                  "requiresThemesFolder": client.requiresThemesFolder || false
+                                                  "themePath": `${client.path}/themes/noctalia.theme.css`
                                                 });
                                  });
     }
@@ -406,8 +413,7 @@ Singleton {
                                 clients.push({
                                                "name": client.name,
                                                "configPath": baseConfigDir,
-                                               "themePath": themePath,
-                                               "requiresThemesFolder": false
+                                               "themePath": themePath
                                              });
                               });
     }

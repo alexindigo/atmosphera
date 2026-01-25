@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "Accuconditie",
     "battery-level": "Accuniveau",
+    "capacity-level": "Capaciteit: {level}",
     "charging-rate": "Laadsnelheid: {rate} W",
     "discharging-rate": "Ontlaadsnelheid: {rate} W",
     "health": "Gezondheid: {percent}%",
@@ -352,6 +354,7 @@
     "clear": "Wissen",
     "clipboard": "Klembord",
     "close": "Sluiten",
+    "color-muted": "Gedempt",
     "colors": "Kleuren",
     "command": "Commando",
     "connect": "Verbinden",
@@ -359,6 +362,7 @@
     "connecting": "Verbinden...",
     "continue": "Doorgaan",
     "contributors": "Medewerkers",
+    "copied-to-clipboard": "Gekopieerd naar klembord",
     "countdown": "Aftellen",
     "date": "Datum",
     "default": "Standaard",
@@ -371,6 +375,7 @@
     "disconnecting": "Verbinding verbroken...",
     "download": "Downloaden",
     "duration": "Duur",
+    "edit": "Bewerken",
     "enabled": "Ingeschakeld",
     "events": "Evenementen",
     "execute": "Uitvoeren",
@@ -379,6 +384,7 @@
     "frequency": "Frequentie",
     "gateway": "Poort",
     "general": "Algemeen",
+    "height": "Hoogte",
     "hibernate": "Sluimeren",
     "history": "Geschiedenis",
     "icon": "Icoon",
@@ -407,6 +413,7 @@
     "no-results": "Geen resultaten",
     "no-summary": "Geen samenvatting",
     "none": "Geen",
+    "not-found": "Niet gevonden",
     "notifications": "Meldingen",
     "official": "Officieel",
     "output": "Uitvoer",
@@ -426,6 +433,8 @@
     "refresh": "Vernieuwen",
     "required": "(vereist)",
     "reset": "Resetten",
+    "result-count": "{count} resultaat",
+    "result-count-plural": "{count} resultaten",
     "resume": "Hervatten",
     "save": "Opslaan",
     "scanning": "Scannen...",
@@ -535,9 +544,7 @@
       "emoji-loading-description": "Even geduld",
       "emoji-no-recent": "Nog geen recente emoji's",
       "emoji-search-description": "Zoek en kopieer emoji's"
-    },
-    "result": "resultaat",
-    "results": "resultaten"
+    }
   },
   "lock-screen": {
     "authenticating": "Bezig met verifiëren...",
@@ -761,6 +768,16 @@
       "download-success-description": "{scheme} succesvol gedownload",
       "download-success-title": "Kleurenschema gedownload",
       "download-title": "Kleurenschema's downloaden",
+      "method-description": {
+        "content": "Material Design-schema met high-fidelity kleurextractie die nauw aansluit bij de werkelijke kleuren van de broninhoud.",
+        "faithful": "Probeert dicht bij de bronkleur te blijven en tegelijkertijd een harmonieus palet te genereren.",
+        "fruit-salad": "Material Design-schema dat een speels, levendig palet produceert met diverse en gevarieerde tinten.",
+        "monochrome": "Material Design-schema met een grijswaarde met één tint en minimale chromatische inhoud.",
+        "muted": "Genereert zachtere, minder verzadigde tinten voor een kalme en ingetogen uitstraling.",
+        "rainbow": "Material Design-schema dat kleuren over het volledige spectrum genereert voor maximale kleurdiversiteit.",
+        "tonal-spot": "Standaard Material Design algoritme. Creëert gebalanceerde paletten met behulp van tonale variaties van de bronkleur.",
+        "vibrant": "Maximaliseert de kleurverzadiging voor gedurfde, opvallende paletten met levendige tinten."
+      },
       "predefined-desc": "Kies uit een verzameling vooraf gedefinieerde kleurenschema's.",
       "predefined-generate-templates-label": "Sjablonen genereren voor vooraf gedefinieerde schema's",
       "predefined-title": "Vooraf gedefinieerde kleurenschema's",
@@ -775,7 +792,9 @@
       "templates-write-path": "Schrijft: {filepath}",
       "title": "Kleurschema",
       "wallpaper-method-description": "Kies je favoriete methode voor het genereren van paletten.",
-      "wallpaper-method-label": "Paletgeneratiemethode"
+      "wallpaper-method-label": "Paletgeneratiemethode",
+      "wallpaper-monitor-source-description": "Selecteer welke monitor te gebruiken voor het extraheren van wallpaperkleuren.",
+      "wallpaper-monitor-source-label": "Bron van kleurgeneratie"
     },
     "control-center": {
       "cards-desc": "Pas aan welke bedieningselementen in het bedieningscentrum verschijnen en in welke volgorde.",
@@ -940,7 +959,7 @@
       "launch-setup-wizard": "Het configuratieprogramma starten",
       "profile-desc": "Bewerk je gebruikersgegevens en avatar.",
       "profile-picture-description": "Je profielfoto die overal in de interface verschijnt.",
-      "profile-picture-label": "Profielfoto van {user}",
+      "profile-picture-label": "Profielfoto",
       "profile-select-avatar": "Avatarafbeelding selecteren",
       "profile-title": "Profiel",
       "profile-tooltip": "Profielfoto",
@@ -957,9 +976,11 @@
     },
     "hooks": {
       "info-command-info-description": "• Commando's worden uitgevoerd via shell (sh -lc)<br>• Commando's draaien op de achtergrond (losgekoppeld)<br>• Testknoppen worden uitgevoerd met de huidige waarden",
-      "info-command-info-label": "Informatie over hook-commando's",
       "info-parameters-description": "• Achtergrond-hook: $1 = pad naar achtergrond, $2 = schermnaam<br>• Thema-schakel-hook: $1 = true/false (Dark Mode-status)<br>• Schermvergrendeling/ontgrendeling-hooks: Geen parameters<br>• Prestatiemodus-hooks: Geen parameters<br>• Sessie-hook: $1 = actie (afsluiten/opnieuw opstarten)",
       "info-parameters-label": "Beschikbare parameters",
+      "noctalia-started-description": "Opdracht die moet worden uitgevoerd wanneer Noctalia volledig is geladen.",
+      "noctalia-started-label": "Noctalia gestart",
+      "noctalia-started-placeholder": "bijv. notify-send 'Noctalia geladen'",
       "performance-mode-disabled-description": "Commando dat wordt uitgevoerd wanneer de Noctalia prestatiemodus wordt uitgeschakeld.",
       "performance-mode-disabled-label": "Prestatiemodus uitgeschakeld",
       "performance-mode-disabled-placeholder": "bijv. notify-send \"Prestatie\" \"Modus uitgeschakeld\"",
@@ -1011,6 +1032,8 @@
       "settings-custom-launch-prefix-enabled-label": "Aangepaste startprefix inschakelen",
       "settings-custom-launch-prefix-label": "Aangepaste startprefix",
       "settings-desc": "Pas het gedrag en uiterlijk van de launcher aan.",
+      "settings-enable-settings-search-description": "Toon instellingen in de zoekresultaten van de Launcher.",
+      "settings-enable-settings-search-label": "Instellingen zoeken inschakelen",
       "settings-grid-view-description": "Items in een raster weergeven in plaats van een lijst.",
       "settings-icon-mode-description": "Gebruik native systeemiconen in plaats van Tabler-iconen.",
       "settings-icon-mode-label": "Gebruik native iconen",
@@ -1368,7 +1391,15 @@
       "settings-select-monitor-folder": "Achtergrondmap voor monitor selecteren",
       "settings-selector-description": "Kies je achtergrond.",
       "settings-selector-position-description": "Kies waar het achtergrondselectiepaneel verschijnt.",
-      "settings-title": "Achtergrondinstellingen"
+      "settings-show-hidden-files-tooltip-hide": "Verborgen bestanden verbergen",
+      "settings-show-hidden-files-tooltip-show": "Verborgen bestanden weergeven",
+      "settings-title": "Achtergrondinstellingen",
+      "settings-view-mode-description": "Kies hoe achtergronden uit uw map worden weergegeven.",
+      "settings-view-mode-label": "Weergavemodus",
+      "view-mode-browse": "Blader door mappen",
+      "view-mode-cycle-tooltip": "Weergavemodus: {mode} (klik om te wijzigen)",
+      "view-mode-recursive": "Afgevlakte submappen",
+      "view-mode-single": "Rootdirectory"
     }
   },
   "placeholders": {
@@ -1497,12 +1528,12 @@
       "enabled": "'Niet storen' ingeschakeld",
       "enabled-desc": "Je vindt deze meldingen terug in je geschiedenis"
     },
+    "donation-opened": "Donatiepagina geopend in uw browser",
     "internet-limited": "Verbonden zonder internet",
     "keyboard-layout": {
       "changed": "Toetsenbordindeling gewijzigd naar {layout}",
       "title": "Toetsenbord"
     },
-    "kofi-opened": "Ko-fi-pagina geopend in je browser",
     "missing-control-center": {
       "description": "De bedieningscentrumwidget is uit de balk verwijderd. Om er vanuit de balk weer toegang toe te krijgen, moet je de widget opnieuw toevoegen. Je kunt het ook openen door met de rechtermuisknop op de balk te klikken",
       "label": "Laatste bedieningscentrumwidget verwijderd"
@@ -1567,9 +1598,6 @@
     "manage-wifi": "Wi-Fi",
     "max-widgets-reached": "Maximum aantal widgets bereikt",
     "microphone-volume-at": "Microfoonvolume: {volume}%",
-    "move-to-center-section": "Middelste sectie",
-    "move-to-left-section": "Linker sectie",
-    "move-to-right-section": "Rechter sectie",
     "move-to-section": "Ga naar {section}",
     "mute": "Dempen",
     "next-media": "Volgende track",
@@ -1600,6 +1628,12 @@
     "wallpaper-selector": "Achtergrondkiezer"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "Deze map is leeg.",
+      "go-root": "Ga naar de root van de achtergrond",
+      "go-up": "Ga naar de bovenliggende map",
+      "go-up-hint": "Gebruik de terugknop om omhoog te navigeren."
+    },
     "configure-directory": "Configureer je achtergrondmap met afbeeldingen.",
     "fill-modes": {
       "crop": "Bijsnijden (vullend)",
@@ -1626,7 +1660,9 @@
       "purity-nsfw": "NSFW",
       "purity-sfw": "SFW",
       "purity-sketchy": "Sketchy",
-      "ratios-any": "Elke",
+      "ratios-all-portrait": "Alle portret",
+      "ratios-all-wide": "Alle brede",
+      "ratios-any": "Alle",
       "ratios-label": "Beeldverhouding",
       "resolution-atleast": "Ten minste",
       "resolution-exact": "Exact",

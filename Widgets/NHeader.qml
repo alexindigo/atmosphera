@@ -18,7 +18,7 @@ ColumnLayout {
     text: root.label
     pointSize: Style.fontSizeXL
     font.weight: Style.fontWeightSemiBold
-    color: Color.mSecondary
+    color: Color.mPrimary
     visible: root.label !== ""
   }
 

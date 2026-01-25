@@ -45,7 +45,7 @@ Rectangle {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section];
+      var widgets = Settings.getBarWidgetsForScreen(screen?.name)[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
         return widgets[sectionWidgetIndex];
       }
@@ -56,11 +56,12 @@ Rectangle {
   readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property real barHeight: Style.getBarHeightForScreen(screen?.name)
+  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screen?.name)
   readonly property bool density: Settings.data.bar.density
-  readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.65)
+  readonly property int iconSize: Style.toOdd(capsuleHeight * 0.65)
 
-  property list<string> blacklist: widgetSettings.blacklist || widgetMetadata.blacklist || [] // Read from settings
-  property list<string> pinned: widgetSettings.pinned || widgetMetadata.pinned || [] // Pinned items (shown inline)
+  property var blacklist: widgetSettings.blacklist || widgetMetadata.blacklist || [] // Read from settings
+  property var pinned: widgetSettings.pinned || widgetMetadata.pinned || [] // Pinned items (shown inline)
   property bool drawerEnabled: widgetSettings.drawerEnabled !== undefined ? widgetSettings.drawerEnabled : (widgetMetadata.drawerEnabled !== undefined ? widgetMetadata.drawerEnabled : true) // Enable drawer panel
   property bool hidePassive: widgetSettings.hidePassive !== undefined ? widgetSettings.hidePassive : true // Hide passive status items
   property var filteredItems: [] // Items to show inline (pinned)
@@ -112,6 +113,21 @@ Rectangle {
   }
 
   function _performFilteredItemsUpdate() {
+    // Force a fresh read of settings to ensure we have the latest blacklist
+    var currentSettings = {};
+    if (section && sectionWidgetIndex >= 0) {
+      var w = Settings.getBarWidgetsForScreen(screen?.name)[section];
+      if (w && sectionWidgetIndex < w.length) {
+        currentSettings = w[sectionWidgetIndex];
+      }
+    }
+
+    // Update local properties with fresh data
+    if (currentSettings.blacklist !== undefined)
+      root.blacklist = currentSettings.blacklist;
+    if (currentSettings.pinned !== undefined)
+      root.pinned = currentSettings.pinned;
+
     let newItems = [];
     if (SystemTray.items && SystemTray.items.values) {
       const trayItems = SystemTray.items.values;
@@ -268,8 +284,8 @@ Rectangle {
   Component.onCompleted: {
     root.updateFilteredItems(); // Initial update
   }
-  implicitWidth: isVertical ? Style.capsuleHeight : Math.round(trayFlow.implicitWidth)
-  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight) : Style.capsuleHeight
+  implicitWidth: isVertical ? capsuleHeight : Math.round(trayFlow.implicitWidth)
+  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight) : capsuleHeight
   radius: Style.radiusM
   color: Style.capsuleColor
   border.color: Style.capsuleBorderColor
@@ -292,7 +308,7 @@ Rectangle {
       visible: root.drawerEnabled && dropdownItems.length > 0 && BarService.getPillDirection(root)
       tooltipText: I18n.tr("tooltips.open-tray-dropdown")
       tooltipDirection: BarService.getTooltipDirection(root.screen?.name)
-      baseSize: Style.capsuleHeight
+      baseSize: capsuleHeight
       applyUiScale: false
       customRadius: Style.radiusL
       colorBg: "transparent"
@@ -322,8 +338,8 @@ Rectangle {
       model: root.filteredItems
 
       delegate: Item {
-        width: Style.capsuleHeight
-        height: Style.capsuleHeight
+        width: capsuleHeight
+        height: capsuleHeight
         visible: modelData
 
         IconImage {
@@ -448,7 +464,7 @@ Rectangle {
       visible: root.drawerEnabled && dropdownItems.length > 0 && !BarService.getPillDirection(root)
       tooltipText: I18n.tr("tooltips.open-tray-dropdown")
       tooltipDirection: BarService.getTooltipDirection(root.screen?.name)
-      baseSize: Style.capsuleHeight
+      baseSize: capsuleHeight
       applyUiScale: false
       customRadius: Style.radiusL
       colorBg: "transparent"

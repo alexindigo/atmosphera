@@ -43,7 +43,7 @@ Item {
               "onActivate": function () {
                 // Copy result to clipboard via xclip
                 Quickshell.execDetached(["sh", "-c", "echo -n '" + formattedResult.replace(/'/g, "'\\''") + "' | wl-copy"]);
-                ToastService.showNotice("Copied", formattedResult);
+                ToastService.showNotice(I18n.tr("common.copied-to-clipboard"), formattedResult);
                 if (launcher)
                   launcher.close();
               }

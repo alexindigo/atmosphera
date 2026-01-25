@@ -126,6 +126,10 @@ Item {
     }
   }
 
+  function cycleKeyboardLayout() {
+    Logger.w("LabwcService", "Keyboard layout cycling not supported");
+  }
+
   function queryDisplayScales() {
     Logger.w("LabwcService", "Display scale queries not supported via ToplevelManager");
   }

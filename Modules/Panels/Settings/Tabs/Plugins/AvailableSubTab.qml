@@ -133,7 +133,6 @@ ColumnLayout {
         if (query !== "") {
           var results = FuzzySort.go(query, filtered, {
                                        "keys": ["name", "description"],
-                                       "threshold": 0.35,
                                        "limit": 50
                                      });
           filtered = [];

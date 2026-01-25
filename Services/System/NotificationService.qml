@@ -140,7 +140,7 @@ Singleton {
 
     // Check if we should save to history based on urgency
     const saveToHistorySettings = Settings.data.notifications?.saveToHistory;
-    if (saveToHistorySettings) {
+    if (saveToHistorySettings && !notification.transient) {
       let shouldSave = true;
       switch (data.urgency) {
       case 0: // low
@@ -156,7 +156,7 @@ Singleton {
       if (shouldSave) {
         addToHistory(data);
       }
-    } else {
+    } else if (!notification.transient) {
       // Default behavior: save all if settings not configured
       addToHistory(data);
     }

@@ -10,14 +10,16 @@ This package provides:
 """
 
 from .color import Color, rgb_to_hsl, hsl_to_rgb, adjust_surface
-from .hct import Hct, Cam16, TonalPalette
-from .material import MaterialScheme, harmonize_color
+from .hct import Hct, Cam16, TonalPalette, TemperatureCache, fix_if_disliked
+from .material import MaterialScheme, SchemeContent, harmonize_color
 from .contrast import ensure_contrast, contrast_ratio, is_dark
 from .image import read_image, ImageReadError
 from .palette import extract_palette
+from .quantizer import extract_source_color, source_color_to_rgb
 from .theme import generate_theme
 from .renderer import TemplateRenderer
 from .scheme import expand_predefined_scheme
+from .terminal import TerminalColors, TerminalGenerator
 
 __all__ = [
     # Color
@@ -29,8 +31,11 @@ __all__ = [
     "Hct",
     "Cam16",
     "TonalPalette",
+    "TemperatureCache",
+    "fix_if_disliked",
     # Material
     "MaterialScheme",
+    "SchemeContent",
     "harmonize_color",
     # Contrast
     "ensure_contrast",
@@ -41,10 +46,16 @@ __all__ = [
     "ImageReadError",
     # Palette
     "extract_palette",
+    # Quantizer (Wu + Score algorithm matching matugen)
+    "extract_source_color",
+    "source_color_to_rgb",
     # Theme
     "generate_theme",
     # Renderer
     "TemplateRenderer",
     # Scheme
     "expand_predefined_scheme",
+    # Terminal
+    "TerminalColors",
+    "TerminalGenerator",
 ]

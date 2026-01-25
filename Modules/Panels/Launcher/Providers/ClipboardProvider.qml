@@ -17,7 +17,7 @@ Item {
   property bool handleSearch: false // Don't handle regular search
 
   // Preview support
-  property bool hasPreview: true
+  property bool hasPreview: Settings.data.appLauncher.enableClipPreview
   property string previewComponentPath: "./ClipboardPreview.qml"
 
   // Image handling - expose revision for reactive updates in delegates

@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "Стан батареї",
     "battery-level": "Рівень заряду акумулятора",
+    "capacity-level": "Місткість: {level}",
     "charging-rate": "Швидкість зарядки: {rate} Вт",
     "discharging-rate": "Швидкість розрядки: {rate} Вт",
     "health": "Стан: {percent}%",
@@ -352,6 +354,7 @@
     "clear": "Очистити",
     "clipboard": "Буфер обміну",
     "close": "Закрити",
+    "color-muted": "Вимкнено звук",
     "colors": "Кольори",
     "command": "Команда",
     "connect": "Підключити",
@@ -359,6 +362,7 @@
     "connecting": "Підключення...",
     "continue": "Продовжити",
     "contributors": "Учасники",
+    "copied-to-clipboard": "Скопійовано до буфера обміну",
     "countdown": "Зворотний відлік",
     "date": "Дата",
     "default": "За замовчуванням",
@@ -371,6 +375,7 @@
     "disconnecting": "Від'єднання...",
     "download": "Завантажити",
     "duration": "Тривалість",
+    "edit": "Редагувати",
     "enabled": "Увімкнено",
     "events": "Події",
     "execute": "Виконати",
@@ -379,6 +384,7 @@
     "frequency": "Частота",
     "gateway": "Шлюз",
     "general": "Загальне",
+    "height": "Висота",
     "hibernate": "Гібернація",
     "history": "Історія",
     "icon": "Іконка",
@@ -407,6 +413,7 @@
     "no-results": "Немає результатів",
     "no-summary": "Немає опису",
     "none": "Жоден",
+    "not-found": "Не знайдено",
     "notifications": "Сповіщення",
     "official": "Офіційний",
     "output": "Вихід",
@@ -426,6 +433,8 @@
     "refresh": "Оновити",
     "required": "(обов'язково)",
     "reset": "Скинути",
+    "result-count": "{count} результат",
+    "result-count-plural": "{count} результати",
     "resume": "Продовжити",
     "save": "Зберегти",
     "scanning": "Сканування...",
@@ -535,9 +544,7 @@
       "emoji-loading-description": "Зачекайте, будь ласка",
       "emoji-no-recent": "Немає нещодавніх емодзі",
       "emoji-search-description": "Пошук і копіювання емодзі"
-    },
-    "result": "результат",
-    "results": "результати"
+    }
   },
   "lock-screen": {
     "authenticating": "Автентифікація...",
@@ -761,6 +768,16 @@
       "download-success-description": "{scheme} успішно завантажено",
       "download-success-title": "Кольорову схему завантажено",
       "download-title": "Завантажити кольорові схеми",
+      "method-description": {
+        "content": "Схема Material Design з високоточною екстракцією кольорів, яка точно відповідає фактичним кольорам вихідного контенту.",
+        "faithful": "Намагається залишатися близьким до вихідного кольору, створюючи при цьому гармонійну палітру.",
+        "fruit-salad": "Схема Material Design, яка створює грайливу, яскраву палітру з різноманітними відтінками.",
+        "monochrome": "Схема Material Design, що використовує однотонну градацію сірого з мінімальним хроматичним вмістом.",
+        "muted": "Створює м'якіші, денасичені тони для спокійного та стриманого вигляду.",
+        "rainbow": "Схема Material Design, яка генерує кольори по всьому спектру для максимальної різноманітності кольорів.",
+        "tonal-spot": "Стандартний алгоритм Material Design. Створює збалансовані палітри, використовуючи тональні варіації вихідного кольору.",
+        "vibrant": "Максимізує насиченість кольорів для сміливих, привабливих палітр з яскравими тонами."
+      },
       "predefined-desc": "Виберіть із колекції попередньо визначених колірних схем.",
       "predefined-generate-templates-label": "Генерувати шаблони для попередньо визначених схем",
       "predefined-title": "Попередньо визначені колірні схеми",
@@ -775,7 +792,9 @@
       "templates-write-path": "Записує: {filepath}",
       "title": "Колірна схема",
       "wallpaper-method-description": "Оберіть свій улюблений метод створення палітри.",
-      "wallpaper-method-label": "Метод створення палітри"
+      "wallpaper-method-label": "Метод створення палітри",
+      "wallpaper-monitor-source-description": "Виберіть монітор, який використовувати для вилучення кольорів шпалер.",
+      "wallpaper-monitor-source-label": "Джерело генерації кольору"
     },
     "control-center": {
       "cards-desc": "Налаштуйте, які елементи керування з'являються в центрі керування та в якому порядку.",
@@ -940,7 +959,7 @@
       "launch-setup-wizard": "Запустити майстер налаштування",
       "profile-desc": "Редагуйте дані користувача та аватар.",
       "profile-picture-description": "Ваше фото профілю, що відображається в інтерфейсі.",
-      "profile-picture-label": "Фото профілю користувача {user}",
+      "profile-picture-label": "Фото профілю",
       "profile-select-avatar": "Вибрати зображення аватара",
       "profile-title": "Профіль",
       "profile-tooltip": "Фото профілю",
@@ -957,9 +976,11 @@
     },
     "hooks": {
       "info-command-info-description": "• Команди виконуються через оболонку (sh -lc)<br>• Команди запускаються у фоні (відокремлено)<br>• Кнопки тестування виконують команди з поточними значеннями",
-      "info-command-info-label": "Інформація про команди хуків",
       "info-parameters-description": "• Хук шпалер: $1 = шлях до шпалер, $2 = ім'я екрана<br>• Хук перемикання теми: $1 = true/false (стан темного режиму)<br>• Хуки блокування/розблокування екрана: Без параметрів<br>• Хуки режиму продуктивності: Без параметрів<br>• Хук сеансу: $1 = дія (вимкнення/перезавантаження)",
       "info-parameters-label": "Доступні параметри",
+      "noctalia-started-description": "Команда для виконання після завершення завантаження Noctalia.",
+      "noctalia-started-label": "Noctalia запущено",
+      "noctalia-started-placeholder": "напр. notify-send 'Noctalia завантажено'",
       "performance-mode-disabled-description": "Команда для виконання при вимкненні режиму продуктивності Noctalia.",
       "performance-mode-disabled-label": "Режим продуктивності вимкнено",
       "performance-mode-disabled-placeholder": "напр., notify-send \"Продуктивність\" \"Режим вимкнено\"",
@@ -1011,6 +1032,8 @@
       "settings-custom-launch-prefix-enabled-label": "Увімкнути користувацький префікс запуску",
       "settings-custom-launch-prefix-label": "Користувацький префікс запуску",
       "settings-desc": "Налаштуйте поведінку та зовнішній вигляд лаунчера.",
+      "settings-enable-settings-search-description": "Показувати результати налаштувань під час пошуку в Launcher.",
+      "settings-enable-settings-search-label": "Увімкнути пошук у налаштуваннях",
       "settings-grid-view-description": "Показувати елементи у вигляді сітки замість списку.",
       "settings-icon-mode-description": "Використовувати нативні системні іконки замість іконок Tabler.",
       "settings-icon-mode-label": "Використовувати нативні іконки",
@@ -1368,7 +1391,15 @@
       "settings-select-monitor-folder": "Вибрати теку шпалер монітора",
       "settings-selector-description": "Виберіть свої шпалери.",
       "settings-selector-position-description": "Виберіть, де відображатиметься панель вибору шпалер.",
-      "settings-title": "Налаштування шпалер"
+      "settings-show-hidden-files-tooltip-hide": "Приховати приховані файли",
+      "settings-show-hidden-files-tooltip-show": "Показати приховані файли",
+      "settings-title": "Налаштування шпалер",
+      "settings-view-mode-description": "Оберіть спосіб відображення шпалер з вашого каталогу.",
+      "settings-view-mode-label": "Режим перегляду",
+      "view-mode-browse": "Перегляд каталогів",
+      "view-mode-cycle-tooltip": "Режим перегляду: {mode} (натисніть, щоб змінити)",
+      "view-mode-recursive": "Зведені підкаталоги",
+      "view-mode-single": "Кореневий каталог"
     }
   },
   "placeholders": {
@@ -1497,12 +1528,12 @@
       "enabled": "'Не турбувати' увімкнено",
       "enabled-desc": "Ви знайдете ці сповіщення в своїй історії"
     },
+    "donation-opened": "Сторінка пожертв відкрито у вашому браузері",
     "internet-limited": "Підключено без інтернету",
     "keyboard-layout": {
       "changed": "Розкладка клавіатури змінена на {layout}",
       "title": "Клавіатура"
     },
-    "kofi-opened": "Сторінка Ko-fi відкрита у вашому браузері",
     "missing-control-center": {
       "description": "Віджет центру керування видалено з панелі. Щоб знову отримати до нього доступ з панелі, вам потрібно повторно додати віджет. Ви також можете відкрити його, клацнувши правою кнопкою миші на панелі",
       "label": "Останній віджет центру керування видалено"
@@ -1567,9 +1598,6 @@
     "manage-wifi": "Wi-Fi",
     "max-widgets-reached": "Досягнуто максимальної кількості віджетів",
     "microphone-volume-at": "Гучність мікрофона: {volume}%",
-    "move-to-center-section": "Центральна секція",
-    "move-to-left-section": "Ліва секція",
-    "move-to-right-section": "Права секція",
     "move-to-section": "Перейти до {section}",
     "mute": "Вимкнути звук",
     "next-media": "Наступний трек",
@@ -1600,6 +1628,12 @@
     "wallpaper-selector": "Вибір шпалер"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "Цей каталог порожній.",
+      "go-root": "Перейти до кореневої папки шпалер",
+      "go-up": "Перейти до батьківської папки",
+      "go-up-hint": "Використовуйте кнопку «Назад» для навігації вгору."
+    },
     "configure-directory": "Налаштуйте вашу теку шпалер зі зображеннями.",
     "fill-modes": {
       "crop": "Обрізати (Заповнити)",
@@ -1626,6 +1660,8 @@
       "purity-nsfw": "NSFW",
       "purity-sfw": "SFW",
       "purity-sketchy": "Sketchy",
+      "ratios-all-portrait": "Усі портретні",
+      "ratios-all-wide": "Усі широкі",
       "ratios-any": "Будь-який",
       "ratios-label": "Співвідношення сторін",
       "resolution-atleast": "Принаймні",

@@ -91,10 +91,10 @@ SmartPanel {
             // CPU Usage
             Item {
               Layout.fillWidth: true
-              implicitHeight: cpuGauge.implicitHeight
+              implicitHeight: cpuUsageGauge.implicitHeight
 
               NCircleStat {
-                id: cpuGauge
+                id: cpuUsageGauge
                 anchors.centerIn: parent
                 ratio: SystemStatService.cpuUsage / 100
                 icon: "cpu-usage"
@@ -102,14 +102,24 @@ SmartPanel {
                 fillColor: SystemStatService.cpuColor
                 tooltipText: I18n.tr("system-monitor.cpu-usage") + `: ${Math.round(SystemStatService.cpuUsage)}%`
               }
+
+              Connections {
+                target: SystemStatService
+                function onCpuUsageChanged() {
+                  if (TooltipService.activeTooltip && TooltipService.activeTooltip.targetItem === cpuUsageGauge) {
+                    TooltipService.updateText(I18n.tr("system-monitor.cpu-usage") + `: ${Math.round(SystemStatService.cpuUsage)}%`);
+                  }
+                }
+              }
             }
 
             // CPU Temperature
             Item {
               Layout.fillWidth: true
-              implicitHeight: cpuGauge.implicitHeight
+              implicitHeight: cpuTempGauge.implicitHeight
 
               NCircleStat {
+                id: cpuTempGauge
                 anchors.centerIn: parent
                 ratio: SystemStatService.cpuTemp / 100
                 icon: "cpu-temperature"
@@ -117,15 +127,25 @@ SmartPanel {
                 fillColor: SystemStatService.tempColor
                 tooltipText: I18n.tr("system-monitor.cpu-temp") + `: ${Math.round(SystemStatService.cpuTemp)}°C`
               }
+
+              Connections {
+                target: SystemStatService
+                function onCpuTempChanged() {
+                  if (TooltipService.activeTooltip && TooltipService.activeTooltip.targetItem === cpuTempGauge) {
+                    TooltipService.updateText(I18n.tr("system-monitor.cpu-temp") + `: ${Math.round(SystemStatService.cpuTemp)}°C`);
+                  }
+                }
+              }
             }
 
             // GPU Temperature
             Item {
               Layout.fillWidth: true
-              implicitHeight: cpuGauge.implicitHeight
+              implicitHeight: gpuTempGauge.implicitHeight
               visible: SystemStatService.gpuAvailable
 
               NCircleStat {
+                id: gpuTempGauge
                 anchors.centerIn: parent
                 ratio: SystemStatService.gpuTemp / 100
                 icon: "gpu-temperature"
@@ -133,14 +153,24 @@ SmartPanel {
                 fillColor: SystemStatService.gpuColor
                 tooltipText: I18n.tr("system-monitor.gpu-temp") + `: ${Math.round(SystemStatService.gpuTemp)}°C`
               }
+
+              Connections {
+                target: SystemStatService
+                function onGpuTempChanged() {
+                  if (TooltipService.activeTooltip && TooltipService.activeTooltip.targetItem === gpuTempGauge) {
+                    TooltipService.updateText(I18n.tr("system-monitor.gpu-temp") + `: ${Math.round(SystemStatService.gpuTemp)}°C`);
+                  }
+                }
+              }
             }
 
             // Memory Usage
             Item {
               Layout.fillWidth: true
-              implicitHeight: cpuGauge.implicitHeight
+              implicitHeight: memPercentGauge.implicitHeight
 
               NCircleStat {
+                id: memPercentGauge
                 anchors.centerIn: parent
                 ratio: SystemStatService.memPercent / 100
                 icon: "memory"
@@ -148,15 +178,25 @@ SmartPanel {
                 fillColor: SystemStatService.memColor
                 tooltipText: I18n.tr("common.memory") + `: ${Math.round(SystemStatService.memPercent)}%`
               }
+
+              Connections {
+                target: SystemStatService
+                function onMemPercentChanged() {
+                  if (TooltipService.activeTooltip && TooltipService.activeTooltip.targetItem === memPercentGauge) {
+                    TooltipService.updateText(I18n.tr("common.memory") + `: ${Math.round(SystemStatService.memPercent)}%`);
+                  }
+                }
+              }
             }
 
             // Swap Usage (only visible if swap is enabled)
             Item {
               Layout.fillWidth: true
-              implicitHeight: cpuGauge.implicitHeight
+              implicitHeight: swapPercentGauge.implicitHeight
               visible: SystemStatService.swapTotalGb > 0
 
               NCircleStat {
+                id: swapPercentGauge
                 anchors.centerIn: parent
                 ratio: SystemStatService.swapPercent / 100
                 icon: "exchange"
@@ -164,20 +204,39 @@ SmartPanel {
                 fillColor: SystemStatService.swapColor
                 tooltipText: I18n.tr("bar.system-monitor.swap-usage-label") + `: ${Math.round(SystemStatService.swapPercent)}%`
               }
+
+              Connections {
+                target: SystemStatService
+                function onSwapPercentChanged() {
+                  if (TooltipService.activeTooltip && TooltipService.activeTooltip.targetItem === swapPercentGauge) {
+                    TooltipService.updateText(I18n.tr("bar.system-monitor.swap-usage-label") + `: ${Math.round(SystemStatService.swapPercent)}%`);
+                  }
+                }
+              }
             }
 
             // Disk Usage
             Item {
               Layout.fillWidth: true
-              implicitHeight: cpuGauge.implicitHeight
+              implicitHeight: diskPercentsGauge.implicitHeight
 
               NCircleStat {
+                id: diskPercentsGauge
                 anchors.centerIn: parent
                 ratio: (SystemStatService.diskPercents[panelContent.diskPath] ?? 0) / 100
                 icon: "storage"
                 suffix: "%"
                 fillColor: SystemStatService.getDiskColor(panelContent.diskPath)
                 tooltipText: I18n.tr("system-monitor.disk") + `: ${SystemStatService.diskPercents[panelContent.diskPath] || 0}%\n${panelContent.diskPath}`
+              }
+
+              Connections {
+                target: SystemStatService
+                function onDiskPercentsChanged() {
+                  if (TooltipService.activeTooltip && TooltipService.activeTooltip.targetItem === diskPercentsGauge) {
+                    TooltipService.updateText(I18n.tr("system-monitor.disk") + `: ${SystemStatService.diskPercents[panelContent.diskPath] || 0}%\n${panelContent.diskPath}`);
+                  }
+                }
               }
             }
           }
@@ -216,19 +275,29 @@ SmartPanel {
                 spacing: Style.marginS
 
                 NCircleStat {
+                  id: rxSpeedGauge
                   ratio: SystemStatService.rxRatio
                   icon: "download-speed"
                   suffix: "%"
                   fillColor: Color.mPrimary
-                  tooltipText: I18n.tr("common.download") + `: ${SystemStatService.formatSpeed(SystemStatService.rxSpeed)}`
+                  tooltipText: I18n.tr("common.download") + `: ${SystemStatService.formatSpeed(SystemStatService.rxSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}` + "/s"
                   Layout.alignment: Qt.AlignHCenter
                 }
 
                 NText {
-                  text: SystemStatService.formatSpeed(SystemStatService.rxSpeed) + "/s"
+                  text: SystemStatService.formatSpeed(SystemStatService.rxSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2") + "/s"
                   pointSize: Style.fontSizeXXS
                   color: Color.mOnSurfaceVariant
                   Layout.alignment: Qt.AlignHCenter
+                }
+
+                Connections {
+                  target: SystemStatService
+                  function onRxSpeedChanged() {
+                    if (TooltipService.activeTooltip && TooltipService.activeTooltip.targetItem === rxSpeedGauge) {
+                      TooltipService.updateText(I18n.tr("common.download") + `: ${SystemStatService.formatSpeed(SystemStatService.rxSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}` + "/s");
+                    }
+                  }
                 }
               }
             }
@@ -244,19 +313,29 @@ SmartPanel {
                 spacing: Style.marginS
 
                 NCircleStat {
+                  id: txSpeedGauge
                   ratio: SystemStatService.txRatio
                   icon: "upload-speed"
                   suffix: "%"
                   fillColor: Color.mPrimary
-                  tooltipText: I18n.tr("common.upload") + `: ${SystemStatService.formatSpeed(SystemStatService.txSpeed)}`
+                  tooltipText: I18n.tr("common.upload") + `: ${SystemStatService.formatSpeed(SystemStatService.txSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}` + "/s"
                   Layout.alignment: Qt.AlignHCenter
                 }
 
                 NText {
-                  text: SystemStatService.formatSpeed(SystemStatService.txSpeed) + "/s"
+                  text: SystemStatService.formatSpeed(SystemStatService.txSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2") + "/s"
                   pointSize: Style.fontSizeXXS
                   color: Color.mOnSurfaceVariant
                   Layout.alignment: Qt.AlignHCenter
+                }
+
+                Connections {
+                  target: SystemStatService
+                  function onTxSpeedChanged() {
+                    if (TooltipService.activeTooltip && TooltipService.activeTooltip.targetItem === txSpeedGauge) {
+                      TooltipService.updateText(I18n.tr("common.upload") + `: ${SystemStatService.formatSpeed(SystemStatService.txSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}` + "/s");
+                    }
+                  }
                 }
               }
             }
@@ -317,7 +396,7 @@ SmartPanel {
                   }
 
                   NText {
-                    text: SystemStatService.formatMemoryGb(SystemStatService.memGb)
+                    text: SystemStatService.formatMemoryGb(SystemStatService.memGb).replace(/[^0-9.]/g, "") + " GB"
                     pointSize: Style.fontSizeXS
                     color: Color.mOnSurface
                     Layout.fillWidth: true
@@ -344,7 +423,7 @@ SmartPanel {
                   }
 
                   NText {
-                    text: `${SystemStatService.formatMemoryGb(SystemStatService.swapGb)} / ${SystemStatService.formatMemoryGb(SystemStatService.swapTotalGb)}`
+                    text: `${SystemStatService.formatMemoryGb(SystemStatService.swapGb).replace(/[^0-9.]/g, "") + " GB"} / ${SystemStatService.formatMemoryGb(SystemStatService.swapTotalGb).replace(/[^0-9.]/g, "") + " GB"}`
                     pointSize: Style.fontSizeXS
                     color: Color.mOnSurface
                     Layout.fillWidth: true
@@ -373,7 +452,7 @@ SmartPanel {
                     text: {
                       const usedGb = SystemStatService.diskUsedGb[panelContent.diskPath] || 0;
                       const sizeGb = SystemStatService.diskSizeGb[panelContent.diskPath] || 0;
-                      return `${usedGb.toFixed(1)}G / ${sizeGb.toFixed(1)}G`;
+                      return `${usedGb.toFixed(1)} GB / ${sizeGb.toFixed(1)} GB`;
                     }
                     pointSize: Style.fontSizeXS
                     color: Color.mOnSurface

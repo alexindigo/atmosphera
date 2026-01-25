@@ -56,12 +56,27 @@ ColumnLayout {
       onButtonClicked: root.openMainFolderPicker()
     }
 
-    NToggle {
-      label: I18n.tr("panels.wallpaper.settings-recursive-search-label")
-      description: I18n.tr("panels.wallpaper.settings-recursive-search-description")
-      checked: Settings.data.wallpaper.recursiveSearch
-      onToggled: checked => Settings.data.wallpaper.recursiveSearch = checked
-      defaultValue: Settings.getDefaultValue("wallpaper.recursiveSearch")
+    NComboBox {
+      label: I18n.tr("panels.wallpaper.settings-view-mode-label")
+      description: I18n.tr("panels.wallpaper.settings-view-mode-description")
+      Layout.fillWidth: true
+      model: [
+        {
+          "key": "single",
+          "name": I18n.tr("panels.wallpaper.view-mode-single")
+        },
+        {
+          "key": "recursive",
+          "name": I18n.tr("panels.wallpaper.view-mode-recursive")
+        },
+        {
+          "key": "browse",
+          "name": I18n.tr("panels.wallpaper.view-mode-browse")
+        }
+      ]
+      currentKey: Settings.data.wallpaper.viewMode
+      onSelected: key => Settings.data.wallpaper.viewMode = key
+      defaultValue: Settings.getDefaultValue("wallpaper.viewMode")
     }
 
     NToggle {

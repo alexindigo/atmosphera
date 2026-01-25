@@ -6,16 +6,19 @@ A CLI tool that extracts dominant colors from wallpaper images and generates pal
 
 Supported scheme types:
 - tonal-spot: Default Android 12-13 Material You scheme (recommended)
+- content: Preserves source color's chroma with temperature-based tertiary (matugen default)
 - fruit-salad: Bold/playful with -50° hue rotation
 - rainbow: Chromatic accents with grayscale neutrals
-- vibrant: Colorful with smooth blended colors
-- faithful: Colorful with actual wallpaper pixels
+- monochrome: Pure grayscale M3 scheme (chroma = 0, only error has color)
+- vibrant: Prioritizes the most saturated colors regardless of area coverage
+- faithful: Prioritizes dominant colors by area, what you see is what you get
+- muted: Preserves hue but caps saturation low (for monochrome/monotonal wallpapers)
 
 Usage:
     python3 template-processor.py IMAGE_OR_JSON [OPTIONS]
 
 Options:
-    --scheme-type    Scheme type: tonal-spot (default), fruit-salad, rainbow, vibrant
+    --scheme-type    Scheme type: tonal-spot (default), content, fruit-salad, rainbow, monochrome, vibrant, faithful, muted
     --dark           Generate dark theme only
     --light          Generate light theme only
     --both           Generate both themes (default)
@@ -46,7 +49,12 @@ import sys
 from pathlib import Path
 
 # Import from lib package
-from lib import read_image, ImageReadError, extract_palette, generate_theme, TemplateRenderer, expand_predefined_scheme
+from lib import (
+    read_image, ImageReadError, extract_palette, generate_theme,
+    TemplateRenderer, expand_predefined_scheme,
+    extract_source_color, source_color_to_rgb, Color,
+    TerminalColors, TerminalGenerator
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -57,10 +65,11 @@ def parse_args() -> argparse.Namespace:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python3 template-processor.py wallpaper.png                          # default mode, both themes
-  python3 template-processor.py wallpaper.png --vibrant --dark         # vibrant mode, dark only
-  python3 template-processor.py wallpaper.jpg --dark -o theme.json     # output to file
-  python3 template-processor.py wallpaper.png -r tpl.txt:out.txt       # render template
+  python3 template-processor.py wallpaper.png                                      # tonal-spot (default), both themes
+  python3 template-processor.py wallpaper.png --scheme-type content --dark         # content scheme, dark only
+  python3 template-processor.py wallpaper.jpg --dark -o theme.json                 # output to file
+  python3 template-processor.py wallpaper.png -r template.txt:output.txt           # render template
+  python3 template-processor.py wallpaper.png -c config.toml --mode dark           # render config, dark only
         """
     )
 
@@ -74,21 +83,9 @@ Examples:
     # Scheme type selection
     parser.add_argument(
         '--scheme-type',
-        choices=['tonal-spot', 'fruit-salad', 'rainbow', 'vibrant', 'faithful'],
+        choices=['tonal-spot', 'content', 'fruit-salad', 'rainbow', 'monochrome', 'vibrant', 'faithful', 'muted'],
         default='tonal-spot',
         help='Color scheme type (default: tonal-spot)'
-    )
-
-    # Legacy flags for backward compatibility
-    parser.add_argument(
-        '--material',
-        action='store_true',
-        help='(deprecated) Alias for --scheme-type tonal-spot'
-    )
-    parser.add_argument(
-        '--vibrant',
-        action='store_true',
-        help='(deprecated) Alias for --scheme-type vibrant'
     )
 
     # Theme mode (mutually exclusive)
@@ -137,6 +134,19 @@ Examples:
         '--scheme',
         type=Path,
         help='Path to predefined scheme JSON file (bypasses image extraction)'
+    )
+
+    parser.add_argument(
+        '--default-mode',
+        choices=['dark', 'light'],
+        default='dark',
+        help='Theme mode to use for "default" in templates (default: dark)'
+    )
+
+    parser.add_argument(
+        '--terminal-output',
+        type=str,
+        help='JSON mapping of terminal IDs to output paths: {"foot": "/path/to/output", ...}'
     )
 
     return parser.parse_args()
@@ -206,7 +216,7 @@ def main() -> int:
             print(f"Error: Image not found: {args.image}", file=sys.stderr)
             return 1
 
-        # Check if input is a JSON palette (legacy Predefined Scheme bypass)
+        # Check if input is a JSON palette (Predefined Color Scheme)
         if args.image.suffix.lower() == '.json':
             try:
                 with open(args.image, 'r') as f:
@@ -249,25 +259,31 @@ def main() -> int:
                 print(f"Unexpected error reading image: {e}", file=sys.stderr)
                 return 1
 
-            # Determine scheme type (handle legacy flags)
+            # Determine scheme type
             scheme_type = args.scheme_type
-            if args.vibrant:
-                scheme_type = "vibrant"
-            elif args.material:
-                scheme_type = "tonal-spot"
 
-            # Extract palette with appropriate scoring method
-            # - vibrant: chroma scoring with centroid averaging (smooth blended colors)
-            # - faithful: chroma scoring with representative pixels (actual wallpaper colors)
-            # - M3 schemes: population scoring (most representative colors)
-            k = 5
+            # Extract palette based on scheme type:
+            # - M3 schemes (tonal-spot, fruit-salad, rainbow, content): Use Wu quantizer + Score
+            #   This matches matugen's color extraction exactly
+            # - vibrant: Use k-means clustering for colorful/blended colors
+            # - faithful: Use Wu quantizer for primary (dominant by area), k-means for accents
+            # - muted: Like count but without chroma filtering (for monochrome wallpapers)
             if scheme_type == "vibrant":
-                scoring = "chroma"
+                # K-means with chroma scoring for vibrant, blended colors
+                palette = extract_palette(pixels, k=5, scoring="chroma")
             elif scheme_type == "faithful":
-                scoring = "chroma-representative"
+                # K-means with count scoring - picks dominant color by area coverage
+                # This ensures primary reflects what you actually see in the image
+                palette = extract_palette(pixels, k=5, scoring="count")
+            elif scheme_type == "muted":
+                # K-means with muted scoring - accepts low/zero chroma colors
+                # For monochrome/monotonal wallpapers where dominant color has low saturation
+                palette = extract_palette(pixels, k=5, scoring="muted")
             else:
-                scoring = "population"
-            palette = extract_palette(pixels, k=k, scoring=scoring)
+                # Wu quantizer + Score algorithm (matches matugen)
+                source_argb = extract_source_color(pixels)
+                r, g, b = source_color_to_rgb(source_argb)
+                palette = [Color(r, g, b)]
 
             if not palette:
                 print("Error: Could not extract colors from image", file=sys.stderr)
@@ -292,7 +308,8 @@ def main() -> int:
 
     # Process templates
     if args.render or args.config:
-        renderer = TemplateRenderer(result)
+        image_path = str(args.image) if args.image else None
+        renderer = TemplateRenderer(result, default_mode=args.default_mode, image_path=image_path, scheme_type=args.scheme_type)
 
         if args.render:
             for render_spec in args.render:
@@ -315,6 +332,52 @@ def main() -> int:
                 print(f"Error: Config file not found: {args.config}", file=sys.stderr)
             else:
                 renderer.process_config_file(args.config)
+
+    # Process terminal output if specified
+    if args.terminal_output and args.scheme:
+        try:
+            terminal_outputs = json.loads(args.terminal_output)
+        except json.JSONDecodeError as e:
+            print(f"Error parsing --terminal-output JSON: {e}", file=sys.stderr)
+            return 1
+
+        # Load scheme to check for terminal section
+        with open(args.scheme, 'r') as f:
+            scheme_data = json.load(f)
+
+        # Determine which mode to use for terminal colors
+        mode = args.default_mode
+
+        # Check if scheme has terminal colors
+        mode_data = scheme_data.get(mode, scheme_data)
+        if "terminal" not in mode_data:
+            print(f"Warning: Scheme has no 'terminal' section for mode '{mode}'", file=sys.stderr)
+            return 0
+
+        try:
+            # Extract scheme UI colors for derivation (mPrimary, mOnPrimary, mSecondary)
+            scheme_colors = {
+                "mPrimary": mode_data.get("mPrimary"),
+                "mOnPrimary": mode_data.get("mOnPrimary"),
+                "mSecondary": mode_data.get("mSecondary"),
+            }
+            terminal_colors = TerminalColors.from_dict(mode_data["terminal"], scheme_colors)
+            generator = TerminalGenerator(terminal_colors)
+
+            for terminal_id, output_path in terminal_outputs.items():
+                try:
+                    content = generator.generate(terminal_id)
+                    output_file = Path(output_path).expanduser()
+                    output_file.parent.mkdir(parents=True, exist_ok=True)
+                    output_file.write_text(content)
+                except ValueError as e:
+                    print(f"Error generating {terminal_id}: {e}", file=sys.stderr)
+                except IOError as e:
+                    print(f"Error writing {output_path}: {e}", file=sys.stderr)
+
+        except KeyError as e:
+            print(f"Error: Missing required terminal color: {e}", file=sys.stderr)
+            return 1
 
     return 0
 

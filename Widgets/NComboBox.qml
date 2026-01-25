@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
+import qs.Services.UI
 import qs.Widgets
 
 RowLayout {
@@ -12,19 +13,20 @@ RowLayout {
 
   property string label: ""
   property string description: ""
+  property string tooltip: ""
   property var model
   property string currentKey: ""
   property string placeholder: ""
   property var defaultValue: undefined
   property string settingsPath: ""
+  property real baseSize: 1.0
 
-  readonly property real preferredHeight: Math.round(Style.baseWidgetSize * 1.1)
+  readonly property real preferredHeight: Math.round(Style.baseWidgetSize * 1.1 * root.baseSize)
   readonly property var comboBox: combo
 
   signal selected(string key)
 
   spacing: Style.marginL
-  Layout.fillWidth: true
   opacity: enabled ? 1.0 : 0.6
 
   // Less strict comparison with != (instead of !==) so it can properly compare int vs string (ex for FPS: 30 and "30")
@@ -146,6 +148,48 @@ RowLayout {
         root.selected(item.key);
     }
 
+    Keys.onUpPressed: event => {
+                        if (combo.popup.visible) {
+                          if (listView.currentIndex > 0) {
+                            listView.currentIndex--;
+                            listView.positionViewAtIndex(listView.currentIndex, ListView.Contain);
+                          }
+                          event.accepted = true;
+                        } else {
+                          event.accepted = false;
+                        }
+                      }
+
+    Keys.onDownPressed: event => {
+                          if (combo.popup.visible) {
+                            if (listView.currentIndex < root.itemCount() - 1) {
+                              listView.currentIndex++;
+                              listView.positionViewAtIndex(listView.currentIndex, ListView.Contain);
+                            }
+                            event.accepted = true;
+                          } else {
+                            event.accepted = false;
+                          }
+                        }
+
+    Keys.onReturnPressed: event => {
+                            if (combo.popup.visible) {
+                              var item = root.getItem(listView.currentIndex);
+                              if (item && item.key !== undefined) {
+                                root.selected(item.key);
+                                combo.currentIndex = listView.currentIndex;
+                                combo.popup.close();
+                              }
+                              event.accepted = true;
+                            } else {
+                              event.accepted = false;
+                            }
+                          }
+
+    Keys.onEnterPressed: event => {
+                           combo.Keys.returnPressed(event);
+                         }
+
     background: Rectangle {
       implicitWidth: Math.round(Style.baseWidgetSize * 3.75 * Style.uiScaleRatio)
       implicitHeight: Math.round(root.preferredHeight * Style.uiScaleRatio)
@@ -157,6 +201,22 @@ RowLayout {
       Behavior on border.color {
         ColorAnimation {
           duration: Style.animationFast
+        }
+      }
+
+      MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        acceptedButtons: Qt.NoButton
+        onEntered: {
+          if (root.tooltip != "") {
+            TooltipService.show(root, root.tooltip);
+          }
+        }
+        onExited: {
+          if (root.tooltip != "") {
+            TooltipService.hide();
+          }
         }
       }
     }
@@ -185,10 +245,15 @@ RowLayout {
     }
 
     popup: Popup {
-      y: combo.height
-      implicitWidth: combo.width - Style.marginM
+      y: combo.height + Style.marginS
+      implicitWidth: combo.width
       implicitHeight: Math.min(Math.round(root.popupHeight * Style.uiScaleRatio), listView.contentHeight + Style.marginXL)
       padding: Style.marginM
+
+      onOpened: {
+        listView.currentIndex = combo.currentIndex;
+        listView.positionViewAtIndex(combo.currentIndex, ListView.Beginning);
+      }
 
       contentItem: ListView {
         id: listView
@@ -277,8 +342,9 @@ RowLayout {
             anchors.fill: parent
             hoverEnabled: true
             onContainsMouseChanged: {
-              if (containsMouse)
+              if (containsMouse) {
                 listView.currentIndex = delegateRect.index;
+              }
             }
             onClicked: {
               var item = root.getItem(delegateRect.index);

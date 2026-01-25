@@ -25,7 +25,7 @@ Singleton {
   - Default cache directory: ~/.cache/noctalia
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 41
+  readonly property int settingsVersion: 44
   readonly property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
   readonly property string shellName: "noctalia"
   readonly property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
@@ -342,13 +342,14 @@ Singleton {
       property string directory: ""
       property list<var> monitorDirectories: []
       property bool enableMultiMonitorDirectories: false
-      property bool recursiveSearch: false
+      property bool showHiddenFiles: false
+      property string viewMode: "single" // "single" | "recursive" | "browse"
       property bool setWallpaperOnAllMonitors: true
       property string fillMode: "crop"
       property color fillColor: "#000000"
       property bool useSolidColor: false
       property color solidColor: "#1a1a2e"
-      property bool randomEnabled: false // Deprecated: use wallpaperChangeMode instead
+      property bool automationEnabled: false
       property string wallpaperChangeMode: "random" // "random" or "alphabetical"
       property int randomIntervalSec: 300 // 5 min
       property int transitionDuration: 1500 // 1500 ms
@@ -389,6 +390,7 @@ Singleton {
       // Icon mode: "tabler" or "native"
       property string iconMode: "tabler"
       property bool showIconBackground: false
+      property bool enableSettingsSearch: true
       property bool ignoreMouseInput: false
       property string screenshotAnnotationTool: ""
     }
@@ -617,6 +619,7 @@ Singleton {
       property string manualSunrise: "06:30"
       property string manualSunset: "18:30"
       property string generationMethod: "tonal-spot"
+      property string monitorForColors: ""
     }
 
     // templates toggles
@@ -646,6 +649,7 @@ Singleton {
       property string screenUnlock: ""
       property string performanceModeEnabled: ""
       property string performanceModeDisabled: ""
+      property string startup: ""
       property string session: ""
     }
 
@@ -1113,8 +1117,8 @@ Singleton {
     Quickshell.execDetached(["mkdir", "-p", pamConfigDir]);
 
     // Generate the PAM config file content
-    var configContent = "#auth sufficient pam_fprintd.so max-tries=1\n";
-    configContent += "# only uncomment this if you have a fingerprint reader\n";
+    var configContent = "auth sufficient pam_fprintd.so timeout=-1\n";
+    configContent += "auth sufficient /run/current-system/sw/lib/security/pam_fprintd.so timeout=-1 # for NixOS\n";
     configContent += "auth required pam_unix.so\n";
 
     // Write the config file using heredoc to avoid escaping issues

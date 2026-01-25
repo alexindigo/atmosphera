@@ -139,13 +139,14 @@
     "directory": "",
     "monitorDirectories": [],
     "enableMultiMonitorDirectories": false,
-    "recursiveSearch": false,
+    "showHiddenFiles": false,
+    "viewMode": "single",
     "setWallpaperOnAllMonitors": true,
     "fillMode": "crop",
     "fillColor": "#000000",
     "useSolidColor": false,
     "solidColor": "#1a1a2e",
-    "randomEnabled": false,
+    "automationEnabled": false,
     "wallpaperChangeMode": "random",
     "randomIntervalSec": 300,
     "transitionDuration": 1500,
@@ -181,6 +182,7 @@
     "showCategories": true,
     "iconMode": "tabler",
     "showIconBackground": false,
+    "enableSettingsSearch": true,
     "ignoreMouseInput": false,
     "screenshotAnnotationTool": ""
   },
@@ -390,7 +392,8 @@
     "schedulingMode": "off",
     "manualSunrise": "06:30",
     "manualSunset": "18:30",
-    "generationMethod": "tonal-spot"
+    "generationMethod": "tonal-spot",
+    "monitorForColors": ""
   },
   "templates": {
     "activeTemplates": [],
@@ -413,6 +416,7 @@
     "screenUnlock": "",
     "performanceModeEnabled": "",
     "performanceModeDisabled": "",
+    "startup": "",
     "session": ""
   },
   "desktopWidgets": {

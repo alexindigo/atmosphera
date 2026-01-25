@@ -42,6 +42,7 @@ Item {
   property bool shouldAnimateHide: false
 
   readonly property int pillHeight: Style.getCapsuleHeightForScreen(screen?.name)
+  readonly property real barFontSize: Style.getBarFontSizeForScreen(screen?.name)
   readonly property int pillPaddingHorizontal: Math.round(pillHeight * 0.2)
   readonly property int pillOverlap: Math.round(pillHeight * 0.5)
   readonly property int pillMaxWidth: Math.max(1, Math.round(textItem.implicitWidth + pillPaddingHorizontal * 2 + pillOverlap))
@@ -83,6 +84,7 @@ Item {
     border.width: Style.capsuleBorderWidth
 
     Behavior on color {
+      enabled: !Color.isTransitioning
       ColorAnimation {
         duration: Style.animationFast
         easing.type: Easing.InOutQuad
@@ -129,7 +131,7 @@ Item {
       }
       text: root.text + root.suffix
       family: Settings.data.ui.fontFixed
-      pointSize: Style.barFontSize
+      pointSize: root.barFontSize
       applyUiScale: false
       color: root.fgColor
       visible: revealed

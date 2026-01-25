@@ -98,6 +98,9 @@ Singleton {
     "volume-low": "volume-2",
     "volume-high": "volume",
     "weather-sun": "sun",
+    "weather-moon": "moon",
+    "weather-moon-stars": "moon-stars",
+    "weather-cloud-off": "cloud-off",
     "weather-cloud": "cloud",
     "weather-cloud-haze": "cloud-fog",
     "weather-cloud-lightning": "cloud-bolt",
@@ -173,7 +176,8 @@ Singleton {
     "filepicker-eye": "eye",
     "filepicker-eye-off": "eye-off",
     "filepicker-folder-current": "checks",
-    "plugin": "plug-connected"
+    "plugin": "plug-connected",
+    "info": "file-description"
   }
 
   // Fonts Codepoints - do not change!

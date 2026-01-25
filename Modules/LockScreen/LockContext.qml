@@ -17,12 +17,14 @@ Scope {
   property bool showInfo: false
   property string errorMessage: ""
   property string infoMessage: ""
-  property bool pamAvailable: typeof PamContext !== "undefined"
+  property bool fprintdAvailable: false
 
   readonly property string pamConfigDirectory: Quickshell.env("NOCTALIA_PAM_CONFIG") ? "/etc/pam.d" : Settings.configDir + "pam"
   readonly property string pamConfig: Quickshell.env("NOCTALIA_PAM_CONFIG") || "password.conf"
 
   Component.onCompleted: {
+    checkFprintdProc.running = true;
+
     if (Quickshell.env("NOCTALIA_PAM_CONFIG")) {
       Logger.i("LockContext", "NOCTALIA_PAM_CONFIG is set, using system PAM config: /etc/pam.d/" + pamConfig);
     } else {
@@ -30,43 +32,53 @@ Scope {
     }
   }
 
+  onShowInfoChanged: {
+    if (showInfo) {
+      showFailure = false;
+    }
+  }
+
+  onShowFailureChanged: {
+    if (showFailure) {
+      showInfo = false;
+    }
+  }
+
   onCurrentTextChanged: {
     if (currentText !== "") {
       showInfo = false;
-      infoMessage = "";
       showFailure = false;
-      errorMessage = "";
-      occupyFingerprintSensorProc.running = true;
+      if (!waitingForPassword) {
+        pam.abort();
+      }
+      if (fprintdAvailable) {
+        occupyFingerprintSensorProc.running = true;
+      }
     } else {
       occupyFingerprintSensorProc.running = false;
+      pam.start();
     }
   }
 
   function tryUnlock() {
-    if (!pamAvailable) {
-      errorMessage = "PAM not available";
-      showFailure = true;
-      return;
-    }
-
     if (waitingForPassword) {
       pam.respond(currentText);
+      unlockInProgress = true;
       waitingForPassword = false;
       showInfo = false;
       return;
     }
 
-    if (root.unlockInProgress) {
-      Logger.i("LockContext", "Unlock already in progress, ignoring duplicate attempt");
-      return;
-    }
-
-    root.unlockInProgress = true;
-    errorMessage = "";
-    showFailure = false;
-
     Logger.i("LockContext", "Starting PAM authentication for user:", pam.user);
     pam.start();
+  }
+
+  Process {
+    id: checkFprintdProc
+    command: ["sh", "-c", "command -v fprintd-verify"]
+    onExited: function (exitCode) {
+      fprintdAvailable = (exitCode === 0);
+    }
   }
 
   Process {
@@ -83,27 +95,21 @@ Scope {
     onPamMessage: {
       Logger.i("LockContext", "PAM message:", message, "isError:", messageIsError, "responseRequired:", responseRequired);
 
-      if (messageIsError) {
-        errorMessage = message;
-      } else {
-        infoMessage = message;
-      }
-
       if (this.responseRequired) {
         Logger.i("LockContext", "Responding to PAM with password");
         if (root.currentText !== "") {
           this.respond(root.currentText);
+          unlockInProgress = true;
         } else {
           root.waitingForPassword = true;
-          showFailure = false;
           infoMessage = I18n.tr("lock-screen.password");
           showInfo = true;
         }
       } else if (messageIsError) {
-        showInfo = false;
+        errorMessage = message;
         showFailure = true;
       } else {
-        showFailure = false;
+        infoMessage = message;
         showInfo = true;
       }
     }

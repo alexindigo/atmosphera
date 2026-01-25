@@ -196,28 +196,42 @@ ColumnLayout {
               spacing: Style.marginS
 
               NButton {
+                id: widgetConfigButton
+                property bool expanded: false
                 Layout.fillWidth: true
+                fontSize: Style.fontSizeS
                 text: I18n.tr("panels.bar.monitor-configure-widgets")
-                icon: "layout-grid"
-                onClicked: widgetDialog.open()
+                icon: expanded ? "chevron-up" : "layout-grid"
+                onClicked: expanded = !expanded
+              }
+
+              NButton {
+                visible: Settings.hasScreenOverride(monitorCard.screenName, "widgets")
+                Layout.fillWidth: true
+                fontSize: Style.fontSizeS
+                text: I18n.tr("panels.bar.use-global-widgets")
+                icon: "refresh"
+                onClicked: Settings.clearScreenOverride(monitorCard.screenName, "widgets")
               }
 
               NButton {
                 Layout.fillWidth: true
+                fontSize: Style.fontSizeS
                 text: I18n.tr("panels.bar.monitor-reset-all")
                 icon: "restore"
                 onClicked: Settings.clearScreenOverride(monitorCard.screenName)
               }
             }
+
+            // Inline widget configuration
+            BarSettings.MonitorWidgetsConfig {
+              visible: widgetConfigButton.expanded
+              screen: monitorCard.modelData
+              Layout.fillWidth: true
+              Layout.topMargin: Style.marginS
+            }
           }
         }
-      }
-
-      // Widget configuration dialog
-      BarSettings.MonitorWidgetsDialog {
-        id: widgetDialog
-        screenName: monitorCard.screenName
-        parent: Overlay.overlay
       }
     }
   }

@@ -431,6 +431,12 @@ Singleton {
     Quickshell.execDetached(["sh", "-c", "systemctl hibernate || loginctl hibernate"]);
   }
 
+  function cycleKeyboardLayout() {
+    if (backend && backend.cycleKeyboardLayout) {
+      backend.cycleKeyboardLayout();
+    }
+  }
+
   property int lockAndSuspendCheckCount: 0
 
   function lockAndSuspend() {

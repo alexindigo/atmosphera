@@ -96,7 +96,7 @@
    ;; Basic faces
    `(default ((t (:background ,bg :foreground ,on-background))))
    `(cursor ((t (:background ,primary))))
-   `(highlight ((t (:background ,primary-container :foreground ,on-primary-container))))
+   `(highlight ((t (:background ,surface-container-high))))
    `(region ((t (:background ,primary-container :foreground ,on-primary-container :extend t))))
    `(secondary-selection ((t (:background ,secondary-container :foreground ,on-secondary-container :extend t))))
    `(isearch ((t (:background ,tertiary-container :foreground ,on-tertiary-container :weight bold))))
@@ -132,7 +132,7 @@
    `(show-paren-mismatch ((t (:background ,err-container :foreground ,on-err-container :weight bold))))
    
    ;; Mode line - improved status bar styling
-   `(mode-line ((t (:background ,surface-container :foreground ,on-surface :box nil))))
+   `(mode-line ((t (:background ,surface-container-high :foreground ,on-surface :box nil))))
    `(mode-line-inactive ((t (:background ,surface :foreground ,on-surface-variant :box nil))))
    `(mode-line-buffer-id ((t (:foreground ,primary :weight bold))))
    `(mode-line-emphasis ((t (:foreground ,primary :weight bold))))
@@ -321,17 +321,17 @@
    `(info-node ((t (:foreground ,tertiary :weight bold))))
 
    ;; Tabs
-   `(tab-bar ((t (:background ,surface-container :foreground ,on-surface :box nil))))
+   `(tab-bar ((t (:background ,surface-container-high :foreground ,on-surface :box nil))))
    `(tab-bar-tab ((t (:background ,surface-container-high :foreground ,on-surface :weight bold :box nil))))
    `(tab-bar-tab-inactive ((t (:background ,surface :foreground ,on-surface-variant :box nil))))
 
-   `(tab-line ((t (:background ,surface-container :foreground ,on-surface :box nil))))
+   `(tab-line ((t (:background ,surface-container-high :foreground ,on-surface :box nil))))
    `(tab-line-tab ((t (:background ,surface :foreground ,on-surface-variant :box nil))))
    `(tab-line-tab-current ((t (:background ,surface-container-high :foreground ,on-surface :weight bold :box nil))))
    `(tab-line-tab-inactive ((t (:background ,surface :foreground ,on-surface-variant :box nil))))
    `(tab-line-highlight ((t (:background ,surface-container-highest :foreground ,on-surface))))
 
-   `(centaur-tabs-default ((t (:background ,surface-container :foreground ,on-surface))))
+   `(centaur-tabs-default ((t (:background ,surface-container-high :foreground ,on-surface))))
    `(centaur-tabs-selected ((t (:background ,surface-container-high :foreground ,on-surface :weight bold))))
    `(centaur-tabs-unselected ((t (:background ,surface :foreground ,on-surface-variant))))
    `(centaur-tabs-selected-modified ((t (:background ,surface-container-high :foreground ,tertiary :weight bold))))

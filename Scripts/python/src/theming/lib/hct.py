@@ -786,6 +786,251 @@ class Hct:
         return Hct(self._hue, self._chroma, tone)
 
 
+class TemperatureCache:
+    """
+    Color temperature analysis for finding harmonious colors.
+
+    Based on Material Color Utilities - calculates relative warmth of colors
+    and finds analogous colors based on temperature similarity.
+    """
+
+    def __init__(self, input_hct: Hct):
+        self.input = input_hct
+        self._hcts_by_temp: list[Hct] | None = None
+        self._hcts_by_hue: list[Hct] | None = None
+        self._temps_by_hct: dict[tuple[float, float, float], float] | None = None
+        self._input_relative_temp: float | None = None
+        self._complement: Hct | None = None
+
+    @staticmethod
+    def raw_temperature(hct: Hct) -> float:
+        """
+        Calculate raw temperature of a color using Ou-Woodcock-Wright algorithm.
+
+        Based on material-colors Rust implementation.
+        Uses LAB a* and b* to determine warm-cool factor.
+        Values below 0 are cool, above 0 are warm.
+        """
+        # Convert HCT to RGB then to LAB
+        rgb = hct.to_rgb()
+        x, y, z = rgb_to_xyz(rgb[0], rgb[1], rgb[2])
+
+        # XYZ to LAB
+        def f(t: float) -> float:
+            delta = 6.0 / 29.0
+            if t > delta ** 3:
+                return t ** (1.0 / 3.0)
+            return t / (3 * delta * delta) + 4.0 / 29.0
+
+        xn, yn, zn = 95.047, 100.0, 108.883  # D65 reference
+        lab_a = 500.0 * (f(x / xn) - f(y / yn))
+        lab_b = 200.0 * (f(y / yn) - f(z / zn))
+
+        # Calculate LAB hue and chroma
+        lab_hue = math.degrees(math.atan2(lab_b, lab_a))
+        if lab_hue < 0:
+            lab_hue += 360.0
+        lab_chroma = math.hypot(lab_a, lab_b)
+
+        # Ou-Woodcock-Wright formula for temperature
+        # temp = -0.5 + 0.02 * chroma^1.07 * cos(toRadians(hue - 50))
+        hue_rad = math.radians((lab_hue - 50.0) % 360.0)
+        return -0.5 + 0.02 * (lab_chroma ** 1.07) * math.cos(hue_rad)
+
+    def _get_hcts_by_hue(self) -> list[Hct]:
+        """Generate HCT colors at regular hue intervals."""
+        if self._hcts_by_hue is not None:
+            return self._hcts_by_hue
+
+        hcts = []
+        for hue in range(360):
+            color_at_hue = Hct(float(hue), self.input.chroma, self.input.tone)
+            hcts.append(color_at_hue)
+
+        self._hcts_by_hue = hcts
+        return hcts
+
+    def _get_temps_by_hct(self) -> dict[tuple[float, float, float], float]:
+        """Cache temperatures for all hue variants."""
+        if self._temps_by_hct is not None:
+            return self._temps_by_hct
+
+        hcts = self._get_hcts_by_hue()
+        temps = {}
+        for hct in hcts:
+            key = (hct.hue, hct.chroma, hct.tone)
+            temps[key] = self.raw_temperature(hct)
+
+        self._temps_by_hct = temps
+        return temps
+
+    def _get_hcts_by_temp(self) -> list[Hct]:
+        """Get HCT colors sorted by temperature."""
+        if self._hcts_by_temp is not None:
+            return self._hcts_by_temp
+
+        hcts = list(self._get_hcts_by_hue())
+        temps = self._get_temps_by_hct()
+        hcts.sort(key=lambda h: temps[(h.hue, h.chroma, h.tone)])
+
+        self._hcts_by_temp = hcts
+        return hcts
+
+    def _relative_temperature(self, hct: Hct) -> float:
+        """
+        Calculate relative temperature (0-1) based on position in temperature-sorted list.
+        """
+        temps = self._get_temps_by_hct()
+        hcts_by_temp = self._get_hcts_by_temp()
+
+        key = (hct.hue, hct.chroma, hct.tone)
+        if key in temps:
+            raw = temps[key]
+        else:
+            raw = self.raw_temperature(hct)
+
+        # Find position in sorted list
+        coldest = self.raw_temperature(hcts_by_temp[0])
+        warmest = self.raw_temperature(hcts_by_temp[-1])
+
+        if warmest == coldest:
+            return 0.5
+
+        return (raw - coldest) / (warmest - coldest)
+
+    def _input_relative_temperature_value(self) -> float:
+        """Get relative temperature of the input color."""
+        if self._input_relative_temp is None:
+            self._input_relative_temp = self._relative_temperature(self.input)
+        return self._input_relative_temp
+
+    def complement(self) -> Hct:
+        """
+        Find the complement: color with opposite temperature.
+        """
+        if self._complement is not None:
+            return self._complement
+
+        input_temp = self._input_relative_temperature_value()
+        hcts_by_temp = self._get_hcts_by_temp()
+        temps = self._get_temps_by_hct()
+
+        # Target is opposite temperature
+        target_temp = 1.0 - input_temp
+
+        # Find closest match
+        best_hct = hcts_by_temp[0]
+        best_diff = float('inf')
+
+        for hct in hcts_by_temp:
+            key = (hct.hue, hct.chroma, hct.tone)
+            raw = temps.get(key, self.raw_temperature(hct))
+            rel = self._relative_temperature(hct)
+            diff = abs(rel - target_temp)
+            if diff < best_diff:
+                best_diff = diff
+                best_hct = hct
+
+        self._complement = best_hct
+        return best_hct
+
+    def analogous(self, count: int | None = None, divisions: int | None = None) -> list[Hct]:
+        """
+        Find analogous colors based on temperature.
+
+        Uses material-colors algorithm:
+        1. Build a list of all `divisions` colors at equal temperature steps
+        2. Pick `count` colors from this list, centered around the input
+
+        Args:
+            count: Number of colors to return (default 5)
+            divisions: How many divisions of the temperature range (default 12)
+
+        Returns:
+            List of HCT colors including the input, spread by temperature.
+        """
+        if count is None:
+            count = 5
+        if divisions is None:
+            divisions = 12
+
+        hcts_by_hue = self._get_hcts_by_hue()
+        start_hue = round(self.input.hue) % 360
+        start_hct = hcts_by_hue[start_hue]
+
+        # Calculate total absolute temperature delta around the color wheel
+        last_temp = self._relative_temperature(start_hct)
+        absolute_total_temp_delta = 0.0
+
+        for i in range(360):
+            hue = (start_hue + i) % 360
+            hct = hcts_by_hue[hue]
+            temp = self._relative_temperature(hct)
+            temp_delta = abs(temp - last_temp)
+            last_temp = temp
+            absolute_total_temp_delta += temp_delta
+
+        # Build list of all colors at equal temperature steps
+        temp_step = absolute_total_temp_delta / divisions
+        all_colors: list[Hct] = [start_hct]
+        total_temp_delta = 0.0
+        last_temp = self._relative_temperature(start_hct)
+        hue_addend = 1
+
+        while len(all_colors) < divisions and hue_addend <= 360:
+            hue = (start_hue + hue_addend) % 360
+            hct = hcts_by_hue[hue]
+            temp = self._relative_temperature(hct)
+            temp_delta = abs(temp - last_temp)
+            total_temp_delta += temp_delta
+
+            desired_total = len(all_colors) * temp_step
+
+            # Add this hue until its temperature is insufficient
+            while total_temp_delta >= desired_total and len(all_colors) < divisions:
+                all_colors.append(hct)
+                desired_total = (len(all_colors) + 1) * temp_step
+
+            last_temp = temp
+            hue_addend += 1
+
+        # Fill remaining slots if needed
+        while len(all_colors) < divisions:
+            all_colors.append(all_colors[-1] if all_colors else start_hct)
+
+        # Build final answer list centered around input
+        answers: list[Hct] = [self.input]
+
+        # Counter-clockwise (negative indices)
+        increase_hue_count = int((count - 1) // 2)
+        for i in range(1, increase_hue_count + 1):
+            index = (-i) % len(all_colors)
+            answers.insert(0, all_colors[index])
+
+        # Clockwise (positive indices)
+        decrease_hue_count = count - increase_hue_count - 1
+        for i in range(1, decrease_hue_count + 1):
+            index = i % len(all_colors)
+            answers.append(all_colors[index])
+
+        return answers
+
+
+def fix_if_disliked(hct: Hct) -> Hct:
+    """
+    Fix colors in the "disliked" hue range (yellow-green).
+
+    These colors often look muddy or unpleasant. If detected,
+    shift the hue slightly to improve appearance.
+    """
+    # Disliked range: roughly 80-110 degrees (yellow-green)
+    if hct.hue >= 80.0 and hct.hue <= 110.0 and hct.chroma > 16.0:
+        # Shift towards warmer yellow or cooler green
+        new_hue = 75.0 if hct.hue < 95.0 else 115.0
+        return Hct(new_hue, hct.chroma, hct.tone)
+    return hct
+
+
 class TonalPalette:
     """
     A palette of tones for a single hue and chroma.

@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "Estado de la batería",
     "battery-level": "Nivel de batería",
+    "capacity-level": "Capacidad: {level}",
     "charging-rate": "Tasa de carga: {rate} W",
     "discharging-rate": "Tasa de descarga: {rate} W",
     "health": "Salud: {percent}%",
@@ -352,6 +354,7 @@
     "clear": "Borrar",
     "clipboard": "Portapapeles",
     "close": "Cerrar",
+    "color-muted": "Silenciado",
     "colors": "Colores",
     "command": "Comando",
     "connect": "Conectar",
@@ -359,6 +362,7 @@
     "connecting": "Conectando...",
     "continue": "Continuar",
     "contributors": "Colaboradores",
+    "copied-to-clipboard": "Copiado al portapapeles",
     "countdown": "Cuenta regresiva",
     "date": "Fecha",
     "default": "Predeterminado",
@@ -371,6 +375,7 @@
     "disconnecting": "Desconectando...",
     "download": "Descargar",
     "duration": "Duración",
+    "edit": "Editar",
     "enabled": "Activado",
     "events": "Eventos",
     "execute": "Ejecutar",
@@ -379,6 +384,7 @@
     "frequency": "Frecuencia",
     "gateway": "Puerta de enlace",
     "general": "General",
+    "height": "Altura",
     "hibernate": "Hibernar",
     "history": "Historia",
     "icon": "Icono",
@@ -407,6 +413,7 @@
     "no-results": "Sin resultados",
     "no-summary": "Sin resumen",
     "none": "Ninguno",
+    "not-found": "No encontrado",
     "notifications": "Notificaciones",
     "official": "Oficial",
     "output": "Salida",
@@ -426,6 +433,8 @@
     "refresh": "Refrescar",
     "required": "(obligatorio)",
     "reset": "Restablecer",
+    "result-count": "{count} resultado",
+    "result-count-plural": "{count} resultados",
     "resume": "Reanudar",
     "save": "Guardar",
     "scanning": "Escaneando...",
@@ -535,9 +544,7 @@
       "emoji-loading-description": "Por favor espera",
       "emoji-no-recent": "Aún no hay emojis recientes",
       "emoji-search-description": "Buscar y copiar emojis"
-    },
-    "result": "resultado",
-    "results": "resultados"
+    }
   },
   "lock-screen": {
     "authenticating": "Autenticando...",
@@ -761,6 +768,16 @@
       "download-success-description": "{scheme} descargado correctamente",
       "download-success-title": "Esquema de colores descargado",
       "download-title": "Descargar esquemas de colores",
+      "method-description": {
+        "content": "Esquema de Material Design con extracción de color de alta fidelidad que coincide estrechamente con los colores reales del contenido de origen.",
+        "faithful": "Intenta mantenerse cerca del color original mientras genera una paleta armoniosa.",
+        "fruit-salad": "Esquema de Material Design que produce una paleta alegre y vibrante con matices diversos y variados.",
+        "monochrome": "Esquema de Material Design que utiliza una escala de grises de un solo tono con un contenido cromático mínimo.",
+        "muted": "Genera tonos más suaves y desaturados para una apariencia tranquila y discreta.",
+        "rainbow": "Esquema de Material Design que genera colores en todo el espectro para una máxima diversidad de color.",
+        "tonal-spot": "Algoritmo predeterminado de Material Design. Crea paletas equilibradas utilizando variaciones tonales del color de origen.",
+        "vibrant": "Maximiza la saturación del color para paletas llamativas y audaces con tonos vívidos."
+      },
       "predefined-desc": "Elige entre una colección de esquemas de colores predefinidos.",
       "predefined-generate-templates-label": "Generar plantillas para esquemas predefinidos",
       "predefined-title": "Esquemas de colores predefinidos",
@@ -775,7 +792,9 @@
       "templates-write-path": "Escribe: {filepath}",
       "title": "Esquema de colores",
       "wallpaper-method-description": "Elige tu método de generación de paleta favorito.",
-      "wallpaper-method-label": "Método de generación de paleta"
+      "wallpaper-method-label": "Método de generación de paleta",
+      "wallpaper-monitor-source-description": "Selecciona qué monitor usar para extraer los colores del fondo de pantalla.",
+      "wallpaper-monitor-source-label": "Fuente de generación de color"
     },
     "control-center": {
       "cards-desc": "Personaliza qué controles aparecen en el centro de control y en qué orden.",
@@ -940,7 +959,7 @@
       "launch-setup-wizard": "Inicie el asistente de configuración",
       "profile-desc": "Edita los detalles de tu usuario y tu avatar.",
       "profile-picture-description": "Tu foto de perfil que aparece en toda la interfaz.",
-      "profile-picture-label": "Foto de perfil de {user}",
+      "profile-picture-label": "Foto de perfil",
       "profile-select-avatar": "Seleccionar imagen de avatar",
       "profile-title": "Perfil",
       "profile-tooltip": "Foto de perfil",
@@ -957,9 +976,11 @@
     },
     "hooks": {
       "info-command-info-description": "• Los comandos se ejecutan a través de shell (sh -lc)<br>• Los comandos se ejecutan en segundo plano (desvinculados)<br>• Los botones de prueba se ejecutan con los valores actuales",
-      "info-command-info-label": "Información de comandos de hook",
       "info-parameters-description": "• Hook de fondo de pantalla: $1 = ruta del fondo de pantalla, $2 = nombre de la pantalla<br>• Hook de alternancia de tema: $1 = verdadero/falso (estado del modo oscuro)<br>• Hooks de bloqueo/desbloqueo de pantalla: Sin parámetros<br>• Hooks de modo de rendimiento: Sin parámetros<br>• Hook de sesión: $1 = acción (apagado/reinicio)",
       "info-parameters-label": "Parámetros disponibles",
+      "noctalia-started-description": "Comando para ejecutar cuando Noctalia ha terminado de cargarse.",
+      "noctalia-started-label": "Noctalia Iniciado",
+      "noctalia-started-placeholder": "p. ej. notify-send 'Noctalia cargado'",
       "performance-mode-disabled-description": "Comando a ejecutar cuando se deshabilita el modo de rendimiento de Noctalia.",
       "performance-mode-disabled-label": "Modo de rendimiento deshabilitado",
       "performance-mode-disabled-placeholder": "ej., notify-send \"Rendimiento\" \"Modo deshabilitado\"",
@@ -1011,6 +1032,8 @@
       "settings-custom-launch-prefix-enabled-label": "Habilitar prefijo de lanzamiento personalizado",
       "settings-custom-launch-prefix-label": "Prefijo de lanzamiento personalizado",
       "settings-desc": "Personaliza el comportamiento y la apariencia del lanzador.",
+      "settings-enable-settings-search-description": "Mostrar los resultados de configuración al buscar en el Launcher.",
+      "settings-enable-settings-search-label": "Activar la búsqueda en la configuración",
       "settings-grid-view-description": "Mostrar elementos en una cuadrícula en lugar de una lista.",
       "settings-icon-mode-description": "Usa iconos nativos del sistema en lugar de iconos Tabler.",
       "settings-icon-mode-label": "Usar iconos nativos",
@@ -1368,7 +1391,15 @@
       "settings-select-monitor-folder": "Seleccionar carpeta de fondos de pantalla del monitor",
       "settings-selector-description": "Elige tu fondo de pantalla.",
       "settings-selector-position-description": "Elige dónde aparece el panel selector de fondo de pantalla.",
-      "settings-title": "Configuración del fondo de pantalla"
+      "settings-show-hidden-files-tooltip-hide": "Ocultar archivos ocultos",
+      "settings-show-hidden-files-tooltip-show": "Mostrar archivos ocultos",
+      "settings-title": "Configuración del fondo de pantalla",
+      "settings-view-mode-description": "Elige cómo se muestran los fondos de pantalla desde tu directorio.",
+      "settings-view-mode-label": "Modo de visualización",
+      "view-mode-browse": "Explorar directorios",
+      "view-mode-cycle-tooltip": "Modo de visualización: {mode} (clic para cambiar)",
+      "view-mode-recursive": "Subdirectorios aplanados",
+      "view-mode-single": "Directorio raíz"
     }
   },
   "placeholders": {
@@ -1497,12 +1528,12 @@
       "enabled": "'No molestar' activado",
       "enabled-desc": "Encontrarás estas notificaciones en tu historial"
     },
+    "donation-opened": "Página de donación abierta en tu navegador",
     "internet-limited": "Conectado sin Internet",
     "keyboard-layout": {
       "changed": "Distribución de teclado cambiada a {layout}",
       "title": "Teclado"
     },
-    "kofi-opened": "Página de Ko-fi abierta en tu navegador",
     "missing-control-center": {
       "description": "El widget del centro de control se eliminó de la barra. Para acceder a él nuevamente desde la barra, debes volver a añadir el widget. También puedes abrirlo haciendo clic derecho en la barra",
       "label": "Se eliminó el último widget del centro de control"
@@ -1567,9 +1598,6 @@
     "manage-wifi": "Wi-Fi",
     "max-widgets-reached": "Se ha alcanzado el número máximo de widgets",
     "microphone-volume-at": "Volumen del micrófono: {volume}%",
-    "move-to-center-section": "Sección central",
-    "move-to-left-section": "Sección izquierda",
-    "move-to-right-section": "Sección derecha",
     "move-to-section": "Mover a {section}",
     "mute": "Silenciar",
     "next-media": "Siguiente pista",
@@ -1600,6 +1628,12 @@
     "wallpaper-selector": "Selector de fondos de pantalla"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "Este directorio está vacío.",
+      "go-root": "Ir a la raíz del fondo de pantalla",
+      "go-up": "Ir a la carpeta superior",
+      "go-up-hint": "Usa el botón de atrás para navegar hacia arriba."
+    },
     "configure-directory": "Configura tu directorio de fondos de pantalla con imágenes.",
     "fill-modes": {
       "crop": "Recortar (Rellenar)",
@@ -1626,6 +1660,8 @@
       "purity-nsfw": "NSFW",
       "purity-sfw": "SFW",
       "purity-sketchy": "Sketchy",
+      "ratios-all-portrait": "Todos verticales",
+      "ratios-all-wide": "Todos horizontales",
       "ratios-any": "Cualquiera",
       "ratios-label": "Relación de aspecto",
       "resolution-atleast": "Al menos",

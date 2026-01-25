@@ -133,7 +133,6 @@ RowLayout {
     if (typeof FuzzySort !== 'undefined') {
       var fuzzyResults = FuzzySort.go(query, items, {
                                         "key": "name",
-                                        "threshold": -1000,
                                         "limit": 50
                                       });
 
@@ -218,7 +217,7 @@ RowLayout {
     }
 
     popup: Popup {
-      y: combo.height
+      y: combo.height + Style.marginS
       width: combo.width
       height: Math.round((root.popupHeight + 60) * Style.uiScaleRatio)
       padding: Style.marginM

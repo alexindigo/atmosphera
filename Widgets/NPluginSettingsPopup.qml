@@ -11,8 +11,11 @@ Popup {
   modal: true
   dim: false
   anchors.centerIn: parent
+  property var screen: null
+  readonly property real maxHeight: screen ? screen.height * 0.9 : 800
+
   width: Math.max(settingsContent.implicitWidth + padding * 2, 500 * Style.uiScaleRatio)
-  height: settingsContent.implicitHeight + padding * 2
+  height: Math.min(settingsContent.implicitHeight + padding * 2, maxHeight)
   padding: Style.marginXL
 
   property var currentPlugin: null
@@ -63,9 +66,17 @@ Popup {
       }
 
       // Settings loader - pluginApi is passed via setSource() in openPluginSettings()
-      Loader {
-        id: settingsLoader
+      NScrollView {
         Layout.fillWidth: true
+        Layout.fillHeight: true
+        Layout.minimumHeight: 100
+        horizontalPolicy: ScrollBar.AlwaysOff
+        rightPadding: verticalScrollable ? Style.marginM : 0 // Only add padding when scrollbar is visible
+
+        Loader {
+          id: settingsLoader
+          width: parent.width
+        }
       }
 
       // Action buttons

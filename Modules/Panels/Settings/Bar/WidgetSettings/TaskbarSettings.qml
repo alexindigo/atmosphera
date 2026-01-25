@@ -103,24 +103,16 @@ ColumnLayout {
     onToggled: checked => root.valueShowPinnedApps = checked
   }
 
-  ColumnLayout {
-    spacing: Style.marginXXS
+  NValueSlider {
     Layout.fillWidth: true
-
-    NLabel {
-      label: I18n.tr("bar.taskbar.icon-scale-label")
-      description: I18n.tr("bar.taskbar.icon-scale-description")
-    }
-
-    NValueSlider {
-      Layout.fillWidth: true
-      from: 0.5
-      to: 1
-      stepSize: 0.01
-      value: root.valueIconScale
-      onMoved: value => root.valueIconScale = value
-      text: Math.round(root.valueIconScale * 100) + "%"
-    }
+    label: I18n.tr("bar.taskbar.icon-scale-label")
+    description: I18n.tr("bar.taskbar.icon-scale-description")
+    from: 0.5
+    to: 1
+    stepSize: 0.01
+    value: root.valueIconScale
+    onMoved: value => root.valueIconScale = value
+    text: Math.round(root.valueIconScale * 100) + "%"
   }
 
   NToggle {
@@ -141,25 +133,17 @@ ColumnLayout {
     onToggled: checked => root.valueSmartWidth = checked
   }
 
-  ColumnLayout {
+  NValueSlider {
     visible: root.valueSmartWidth && !isVerticalBar
-    spacing: Style.marginXXS
     Layout.fillWidth: true
-
-    NLabel {
-      label: I18n.tr("bar.taskbar.max-width-label")
-      description: I18n.tr("bar.taskbar.max-width-description")
-    }
-
-    NValueSlider {
-      Layout.fillWidth: true
-      from: 10
-      to: 100
-      stepSize: 5
-      value: root.valueMaxTaskbarWidth
-      onMoved: value => root.valueMaxTaskbarWidth = Math.round(value)
-      text: Math.round(root.valueMaxTaskbarWidth) + "%"
-    }
+    label: I18n.tr("bar.taskbar.max-width-label")
+    description: I18n.tr("bar.taskbar.max-width-description")
+    from: 10
+    to: 100
+    stepSize: 5
+    value: root.valueMaxTaskbarWidth
+    onMoved: value => root.valueMaxTaskbarWidth = Math.round(value)
+    text: Math.round(root.valueMaxTaskbarWidth) + "%"
   }
 
   NTextInput {

@@ -6,6 +6,7 @@ import qs.Widgets
 
 Rectangle {
   id: root
+  objectName: "NTabBar"
 
   // Public properties
   property int currentIndex: 0
@@ -24,7 +25,9 @@ Rectangle {
     var firstVisible = -1;
     var lastVisible = -1;
     for (var i = 0; i < len; i++) {
-      if (kids[i].visible) {
+      var child = kids[i];
+      // Only consider items that have isFirst/isLast (actual tab buttons, not Repeaters)
+      if (child.visible && "isFirst" in child) {
         if (firstVisible === -1)
           firstVisible = i;
         lastVisible = i;

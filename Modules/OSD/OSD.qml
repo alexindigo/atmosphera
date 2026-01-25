@@ -739,17 +739,24 @@ Variants {
           }
         }
 
+        // Delay showing the OSD to allow the layout to settle after activation.
+        // Without this, the percentage text renders outside the box on first
+        // show.
+        Timer {
+          id: showDelayTimer
+          interval: 30
+          onTriggered: {
+            osdItem.visible = true;
+            osdItem.opacity = 1;
+            osdItem.scale = 1.0;
+            hideTimer.start();
+          }
+        }
+
         function show() {
           hideTimer.stop();
           visibilityTimer.stop();
-          osdItem.visible = true;
-
-          Qt.callLater(() => {
-                         osdItem.opacity = 1;
-                         osdItem.scale = 1.0;
-                       });
-
-          hideTimer.start();
+          showDelayTimer.start();
         }
 
         function hide() {

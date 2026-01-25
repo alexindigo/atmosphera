@@ -158,6 +158,26 @@ Item {
                                               }
                                             });
     }
+    function command() {
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
+                                              if (!launcherPanel)
+                                              return;
+                                              var searchText = launcherPanel.searchText || "";
+                                              var isInClipMode = searchText.startsWith(">cmd");
+                                              if (!launcherPanel.isPanelOpen) {
+                                                // Closed -> open in clipboard mode
+                                                launcherPanel.open();
+                                                launcherPanel.setSearchText(">cmd ");
+                                              } else if (isInClipMode) {
+                                                // Already in clipboard mode -> close
+                                                launcherPanel.close();
+                                              } else {
+                                                // In another mode -> switch to clipboard mode
+                                                launcherPanel.setSearchText(">cmd ");
+                                              }
+                                            });
+    }
     function emoji() {
       root.screenDetector.withCurrentScreen(screen => {
                                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);
@@ -356,13 +376,13 @@ Item {
     }
 
     function toggleAutomation() {
-      Settings.data.wallpaper.randomEnabled = !Settings.data.wallpaper.randomEnabled;
+      Settings.data.wallpaper.automationEnabled = !Settings.data.wallpaper.automationEnabled;
     }
     function disableAutomation() {
-      Settings.data.wallpaper.randomEnabled = false;
+      Settings.data.wallpaper.automationEnabled = false;
     }
     function enableAutomation() {
-      Settings.data.wallpaper.randomEnabled = true;
+      Settings.data.wallpaper.automationEnabled = true;
     }
   }
 
@@ -615,6 +635,16 @@ Item {
     }
     function set(name: string) {
       Settings.data.location.name = name;
+    }
+  }
+
+  IpcHandler {
+    target: "systemMonitor"
+    function toggle() {
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var panel = PanelService.getPanel("systemStatsPanel", screen);
+                                              panel?.toggle(null, "SystemMonitor");
+                                            });
     }
   }
 }

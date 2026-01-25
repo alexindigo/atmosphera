@@ -708,7 +708,7 @@ Singleton {
     var searchBitflags = preparedSearch.bitflags;
     var containsSpace = preparedSearch.containsSpace;
 
-    var threshold = _denormalizeScore(options?.threshold || 0);
+    var threshold = _denormalizeScore(options?.threshold ?? 0.35);
     var limit = options?.limit || _INFINITY;
 
     var resultsLen = 0;

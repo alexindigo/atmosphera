@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Services.Power
+import qs.Services.Theming
 import qs.Services.UI
 
 Singleton {
@@ -18,10 +19,42 @@ Singleton {
     }
   }
 
+  // Pending wallpaper hook when waiting for color generation
+  property var pendingWallpaperHook: null
+
   Connections {
     target: WallpaperService
     function onWallpaperChanged(screenName, path) {
+      // Check if we need to wait for color generation
+      if (Settings.data.colorSchemes.useWallpaperColors) {
+        var effectiveMonitor = Settings.data.colorSchemes.monitorForColors;
+        if (effectiveMonitor === "" || effectiveMonitor === undefined) {
+          effectiveMonitor = Screen.name;
+        }
+
+        if (screenName === effectiveMonitor) {
+          // Store pending hook and wait for colors to be generated
+          root.pendingWallpaperHook = {
+            path: path,
+            screenName: screenName
+          };
+          return;
+        }
+      }
+      // No color generation, execute immediately
       executeWallpaperHook(path, screenName);
+    }
+  }
+
+  Connections {
+    target: TemplateProcessor
+    function onColorsGenerated() {
+      // Execute pending wallpaper hook after colors are ready
+      if (root.pendingWallpaperHook) {
+        const hook = root.pendingWallpaperHook;
+        root.pendingWallpaperHook = null;
+        executeWallpaperHook(hook.path, hook.screenName);
+      }
     }
   }
 
@@ -230,6 +263,25 @@ Singleton {
     runPowerHook(`${script} ${action}`, callback);
   }
 
+  // Execute startup hook
+  function executeStartupHook() {
+    if (!Settings.data.hooks?.enabled) {
+      return;
+    }
+
+    const script = Settings.data.hooks?.startup;
+    if (!script || script === "") {
+      return;
+    }
+
+    try {
+      Quickshell.execDetached(["sh", "-lc", script]);
+      Logger.d("HooksService", `Executed startup hook: ${script}`);
+    } catch (e) {
+      Logger.e("HooksService", `Failed to execute startup hook: ${e}`);
+    }
+  }
+
   // Initialize the service
   function init() {
     Logger.i("HooksService", "Service started");
@@ -241,6 +293,8 @@ Singleton {
                    }
                    // Initialize performance mode state tracking
                    wasPerformanceModeEnabled = PowerProfileService.noctaliaPerformanceMode;
+                   // Execute startup hook
+                   executeStartupHook();
                  });
   }
 }

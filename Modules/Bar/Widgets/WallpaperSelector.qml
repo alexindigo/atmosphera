@@ -13,7 +13,7 @@ NIconButton {
   property ShellScreen screen
 
   enabled: Settings.data.wallpaper.enabled
-  baseSize: Style.capsuleHeight
+  baseSize: Style.getCapsuleHeightForScreen(screen?.name)
   applyUiScale: false
   customRadius: Style.radiusL
   icon: "wallpaper-selector"

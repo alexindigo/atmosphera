@@ -377,4 +377,12 @@ Item {
       Logger.e("SwayService", "Failed to logout:", e);
     }
   }
+
+  function cycleKeyboardLayout() {
+    try {
+      Quickshell.execDetached(["swaymsg", "input", "type:keyboard", "xkb_switch_layout", "next"]);
+    } catch (e) {
+      Logger.e("SwayService", "Failed to cycle keyboard layout:", e);
+    }
+  }
 }

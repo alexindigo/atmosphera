@@ -1,0 +1,120 @@
+{
+  "actions": {
+    "clear-history": "Fjern historikk",
+    "close-app": "Steng {app}",
+    "connect-vpn": "Kopla til {app}",
+    "cycle-visualizer": "Skift visualiserar",
+    "disable-bluetooth": "Slå av Bluetooth",
+    "disable-dnd": "Slå av Ikkje forstyrr",
+    "disable-wifi": "Slå av Wi-Fi",
+    "disconnect-vpn": "Kopla frå {name}",
+    "enable-bluetooth": "Slå på Bluetooth",
+    "enable-dnd": "Slå på Ikkje forstyrr",
+    "enable-wifi": "Slå på Wi-Fi",
+    "launcher-settings": "Innstillingar for programveljar",
+    "lower-to-bottom": "Flytt til botnen",
+    "open-calendar": "Opna kalender",
+    "open-display-settings": "Innstillingar for skjerm",
+    "open-launcher": "Opna programveljar",
+    "open-settings": "Opna innstillingar",
+    "raise-to-top": "Flytt til toppen",
+    "random-wallpaper": "Tilfelleleg bakgrunnsbilete",
+    "run-custom-command": "Køyr eigendefinert kommando",
+    "show-active-only": "Vis berre aktive",
+    "show-all": "Vis alle",
+    "toggle-mute": "Slå ljod av/på",
+    "widget-settings": "Innstillingar for miniprogram"
+  },
+  "authentication": {
+    "error": "Autentiseringsfeil",
+    "failed": "Autentisering feila"
+  },
+  "bar": {
+    "active-window": {
+      "colorize-icons-description": "Farga ikonet til det aktive vindauga med temafargane.",
+      "hide-mode-description": "Styrer kva miniprogrammet gjer når det ikkje er eit aktivt vindauga.",
+      "scrolling-mode-description": "Styr når rullande tekst slår på for lange vindaugenamn.",
+      "show-app-icon-description": "Vis programikonet attmed vindaugenamnet.",
+      "show-app-icon-label": "Vis programikon"
+    },
+    "audio-visualizer": {
+      "color-name-description": "Vel farge for visualiseraren.",
+      "color-name-label": "Fyll farge",
+      "hide-when-idle-description": "Når dette er på, gøymer visualiseraren seg med mindre noko aktivt spelar.",
+      "hide-when-idle-label": "Gøym når ingenting spelar av",
+      "width-description": "Eigendefinert komponentbreidd."
+    },
+    "battery": {
+      "device-default": "Standard (Skjermeining)",
+      "device-description": "Vel kva for batterieining å visa.",
+      "device-label": "Batterieining",
+      "hide-if-idle-description": "Gøym miniprogrammet når batteriet ikkje ladar opp eller ut.",
+      "hide-if-idle-label": "Gøym når i dvale",
+      "hide-if-not-detected-description": "Gøym miniprogrammet når inga batterieining er funnen.",
+      "hide-if-not-detected-label": "Gøym når ikkje funnen",
+      "low-battery-threshold-description": "Vis åtvaring når batterinivået fell under dette prosenttalet.",
+      "low-battery-threshold-label": "Varslingsterskel for lågt batterinivå",
+      "show-noctalia-performance-description": "Vis ytingsmodusbrytaren for Noctalia i batterifanen.<br>Slår av skugger og animasjonar i Noctalia for å minka ressursbruk.",
+      "show-noctalia-performance-label": "Vis ytingsmodusbrytaren for Noctalia",
+      "show-power-profile-description": "Vis veljaren for energiprofil i batterifanen.",
+      "show-power-profile-label": "Vis kontrollane for energiprofil"
+    },
+    "clock": {
+      "clock-display-description": "Tilpass klokkevisninga ved å leggja til merke frå lista. For å bruka 12-timarsformat må du ha med 'AP'-merket.",
+      "clock-display-label": "Klokkevisar",
+      "custom-font-description": "Vel eigendefinert skrifttype til klokkevisaren.",
+      "custom-font-label": "Eigendefinert skrifttype",
+      "custom-font-placeholder": "Vel eigendefinert skrifttype...",
+      "custom-font-search-placeholder": "Søk gjennom skrifttypar...",
+      "horizontal-bar-description": "Tips: Skriv \\n for å byrja ei ny linje",
+      "tooltip-format-description": "Formater streng til hjelpeteksten som kjem opp når peikaren er over klokka. Haldt dette tomt for å bruka standardteksten.",
+      "tooltip-format-label": "Hjelpetekstformat",
+      "use-custom-font-description": "Overstyr standardskrifttypen med eigendefinert skrifttype til klokka.",
+      "use-custom-font-label": "Bruk eigendefinert skrifttype",
+      "use-monospaced-font-description": "Når dette er på, brukar klokka fastbreiddeskrift.",
+      "use-monospaced-font-label": "Bruk fastbreiddeskrift",
+      "use-primary-color-description": "Når dette er på, vert primærfargen brukt for å hevja ut.",
+      "use-primary-color-label": "Bruk primærfarge",
+      "vertical-bar-description": "Bruk mellomrom for å skilja kvar del på ei ny linje.",
+      "vertical-bar-label": "Loddrett panel"
+    },
+    "control-center": {
+      "browse-file": "Leita i filene",
+      "browse-library": "Leita i biblioteket",
+      "color-selection-description": "Gjev ikona temafargane.",
+      "enable-colorization-description": "Fargar kontrollsenterikonet med temafargane.",
+      "icon-description": "Vel ikon frå biblioteket eller eigendefinert fil.",
+      "select-custom-icon": "Vel eigendefinert ikon",
+      "use-distro-logo-description": "Bruk kjennemerket til distribusjonen din heller enn eigendefinert ikon.",
+      "use-distro-logo-label": "Bruk distrokjennemerke heller enn ikon"
+    },
+    "custom-button": {
+      "collapse-condition-description": "Dersom utskrifta er lik dette, skyler knappen seg.",
+      "collapse-condition-label": "Skylevilkår",
+      "color-selection-description": "Gjev ikon og tekst temafargane.",
+      "color-selection-label": "Vel farge",
+      "display-command-output-description": "Gjev kommando for å køyra regelrett. Fyrste utskriftslinja vert vist som tekst.",
+      "display-command-output-label": "Vis kommando utskrift",
+      "display-command-output-stream-description": "Gjev kommando for å køyra heile tida.",
+      "dynamic-text": "Dynamisk tekst",
+      "enable-colorization-description": "Gjev temafargane til ikonet og teksten på den eigendefinerte knappen.",
+      "enable-colorization-label": "Slå på fargelegging",
+      "hide-mode-always-expanded": "Alltid utvida",
+      "hide-mode-description": "Styrer om miniprogrammet skal visast når kommandoen ikkje har utskrift.",
+      "hide-mode-expand-with-output": "Utvida med utskrift",
+      "hide-mode-label": "Skjulemodus",
+      "hide-mode-max-transparent": "Heilt utvida men gjennomsynleg",
+      "icon-description": "Vel ikon frå biblioteket.",
+      "ipc-identifier-description": "Særskild identifikator for IPC kommandoar. Bruk denne identifikatoren med 'qs -c noctalia-shell ipc call cb [handling] [identifikator]' for å styra denne knappen med IPC.",
+      "ipc-identifier-label": "IPC-identifikator",
+      "left-click-description": "Kommando som køyrer når knappen er venstreklikka.",
+      "left-click-label": "Venstreklikk",
+      "left-click-update-text": "Oppdater tekst som viser seg med venstreklikk",
+      "max-text-length-horizontal-description": "Øvre grense på kor mange teikn som kan visast i vassrett panel (0 for å skyla tekst).",
+      "max-text-length-horizontal-label": "Øvre grense på tekstlengd (vassrett)"
+    }
+  },
+  "toast": {
+    "donation-opened": "Donasjonsside opna i nettlesaren din"
+  }
+}

@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "Stan baterii",
     "battery-level": "Poziom baterii",
+    "capacity-level": "Pojemność: {level}",
     "charging-rate": "Prędkość ładowania: {rate} W",
     "discharging-rate": "Prędkość rozładowywania: {rate} W",
     "health": "Kondycja: {percent}%",
@@ -352,6 +354,7 @@
     "clear": "Wyczyść",
     "clipboard": "Schowek",
     "close": "Zamknij",
+    "color-muted": "Wyciszony",
     "colors": "Kolory",
     "command": "Komenda",
     "connect": "Połącz",
@@ -359,6 +362,7 @@
     "connecting": "Łączenie...",
     "continue": "Kontynuuj",
     "contributors": "Współtwórcy",
+    "copied-to-clipboard": "Skopiowano do schowka",
     "countdown": "Odliczanie",
     "date": "Data",
     "default": "Domyślny",
@@ -371,6 +375,7 @@
     "disconnecting": "Rozłączanie...",
     "download": "Pobierz",
     "duration": "Czas trwania",
+    "edit": "Edytuj",
     "enabled": "Włączone",
     "events": "Wydarzenia",
     "execute": "Wykonaj",
@@ -379,6 +384,7 @@
     "frequency": "Częstotliwość",
     "gateway": "Brama",
     "general": "Ogólne",
+    "height": "Wysokość",
     "hibernate": "Hibernacja",
     "history": "Historia",
     "icon": "Ikona",
@@ -407,6 +413,7 @@
     "no-results": "Brak wyników",
     "no-summary": "Brak podsumowania",
     "none": "Brak",
+    "not-found": "Nie znaleziono",
     "notifications": "Powiadomienia",
     "official": "Oficjalne",
     "output": "Wyjście",
@@ -426,6 +433,8 @@
     "refresh": "Odśwież",
     "required": "(wymagane)",
     "reset": "Zresetuj",
+    "result-count": "{count} wynik",
+    "result-count-plural": "{count} wyniki",
     "resume": "Wznów",
     "save": "Zapisz",
     "scanning": "Skanowanie...",
@@ -535,9 +544,7 @@
       "emoji-loading-description": "Proszę czekać",
       "emoji-no-recent": "Brak ostatnich emoji",
       "emoji-search-description": "Szukaj i kopiuj emoji"
-    },
-    "result": "wynik",
-    "results": "wyniki"
+    }
   },
   "lock-screen": {
     "authenticating": "Uwierzytelnianie...",
@@ -761,6 +768,16 @@
       "download-success-description": "Pomyślnie pobrano {scheme}",
       "download-success-title": "Schemat kolorów pobrany",
       "download-title": "Pobierz schematy kolorów",
+      "method-description": {
+        "content": "Schemat Material Design z ekstrakcją kolorów o wysokiej wierności, która ściśle odpowiada rzeczywistym kolorom treści źródłowej.",
+        "faithful": "Próbuje pozostać blisko koloru źródłowego, jednocześnie generując harmonijną paletę.",
+        "fruit-salad": "Schemat Material Design, który tworzy radosną, żywą paletę z różnorodnymi odcieniami.",
+        "monochrome": "Schemat Material Design wykorzystujący jednobarwną skalę szarości z minimalną zawartością chromatyczną.",
+        "muted": "Generuje bardziej miękkie, odbarwione tony dla spokojnego i stonowanego wyglądu.",
+        "rainbow": "Schemat Material Design, które generuje kolory w całym spektrum, aby uzyskać maksymalną różnorodność kolorów.",
+        "tonal-spot": "Domyślny algorytm Material Design. Tworzy zbalansowane palety, wykorzystując tonalne wariacje koloru źródłowego.",
+        "vibrant": "Maksymalizuje nasycenie kolorów dla odważnych, przyciągających wzrok palet o żywych tonach."
+      },
       "predefined-desc": "Wybierz z kolekcji predefiniowanych schematów kolorów.",
       "predefined-generate-templates-label": "Generuj szablony dla predefiniowanych schematów",
       "predefined-title": "Predefiniowane schematy kolorów",
@@ -775,7 +792,9 @@
       "templates-write-path": "Zapisuje: {filepath}",
       "title": "Schemat kolorów",
       "wallpaper-method-description": "Wybierz swoją ulubioną metodę generowania palety.",
-      "wallpaper-method-label": "Metoda generowania palety"
+      "wallpaper-method-label": "Metoda generowania palety",
+      "wallpaper-monitor-source-description": "Wybierz monitor, który ma być używany do wydobywania kolorów tapety.",
+      "wallpaper-monitor-source-label": "Źródło generowania kolorów"
     },
     "control-center": {
       "cards-desc": "Dostosuj, które kontrolki pojawiają się w centrum sterowania i w jakiej kolejności.",
@@ -940,7 +959,7 @@
       "launch-setup-wizard": "Uruchom asystenta konfiguracji",
       "profile-desc": "Edytuj dane użytkownika i awatar.",
       "profile-picture-description": "Twoje zdjęcie profilowe pojawiające się w interfejsie.",
-      "profile-picture-label": "Zdjęcie profilowe użytkownika {user}",
+      "profile-picture-label": "Zdjęcie profilowe",
       "profile-select-avatar": "Wybierz obraz awatara",
       "profile-title": "Profil",
       "profile-tooltip": "Zdjęcie profilowe",
@@ -957,9 +976,11 @@
     },
     "hooks": {
       "info-command-info-description": "• Polecenia są wykonywane przez powłokę (sh -lc)<br>• Polecenia działają w tle (detached)<br>• Przyciski testowe wykonują się z aktualnymi wartościami",
-      "info-command-info-label": "Informacje o poleceniach hook",
       "info-parameters-description": "• Hak do tapety: $1 = ścieżka do tapety, $2 = nazwa ekranu<br>• Hak przełączania motywu: $1 = prawda/fałsz (stan trybu ciemnego)<br>• Haki blokowania/odblokowywania ekranu: Brak parametrów<br>• Haki trybu wydajności: Brak parametrów<br>• Hak sesji: $1 = akcja (zamknięcie/ponowne uruchomienie))",
       "info-parameters-label": "Dostępne parametry",
+      "noctalia-started-description": "Polecenie do wykonania po zakończeniu ładowania Noctalii.",
+      "noctalia-started-label": "Noctalia uruchomiona",
+      "noctalia-started-placeholder": "np. notify-send 'Noctalia załadowany'",
       "performance-mode-disabled-description": "Komenda do wykonania, gdy tryb wydajności Noctalia zostanie wyłączony.",
       "performance-mode-disabled-label": "Tryb wydajności wyłączony",
       "performance-mode-disabled-placeholder": "notify-send \"Wydajność\" \"Tryb wyłączony\"",
@@ -1011,6 +1032,8 @@
       "settings-custom-launch-prefix-enabled-label": "Włącz własny prefiks",
       "settings-custom-launch-prefix-label": "Własny prefiks uruchamiania",
       "settings-desc": "Dostosuj zachowanie i wygląd launchera.",
+      "settings-enable-settings-search-description": "Wyświetlaj wyniki ustawień podczas wyszukiwania w Launcherze.",
+      "settings-enable-settings-search-label": "Włącz wyszukiwanie w ustawieniach",
       "settings-grid-view-description": "Wyświetlaj elementy w układzie siatki zamiast listy.",
       "settings-icon-mode-description": "Używaj natywnych ikon systemowych zamiast ikon Tabler.",
       "settings-icon-mode-label": "Używaj natywnych ikon",
@@ -1368,7 +1391,15 @@
       "settings-select-monitor-folder": "Wybierz folder tapet monitora",
       "settings-selector-description": "Wybierz swoją tapetę.",
       "settings-selector-position-description": "Wybierz, gdzie pojawia się panel wyboru tapety.",
-      "settings-title": "Ustawienia tapet"
+      "settings-show-hidden-files-tooltip-hide": "Ukryj ukryte pliki",
+      "settings-show-hidden-files-tooltip-show": "Pokaż ukryte pliki",
+      "settings-title": "Ustawienia tapet",
+      "settings-view-mode-description": "Wybierz sposób wyświetlania tapet z Twojego katalogu.",
+      "settings-view-mode-label": "Tryb wyświetlania",
+      "view-mode-browse": "Przeglądaj katalogi",
+      "view-mode-cycle-tooltip": "Tryb widoku: {mode} (kliknij, aby zmienić)",
+      "view-mode-recursive": "Spłaszczone podkatalogi",
+      "view-mode-single": "Katalog główny"
     }
   },
   "placeholders": {
@@ -1497,12 +1528,12 @@
       "enabled": "Nie przeszkadzać włączone",
       "enabled-desc": "Powiadomienia znajdziesz w swojej historii"
     },
+    "donation-opened": "Strona darowizny otwarta w Twojej przeglądarce",
     "internet-limited": "Połączono bez dostępu do internetu",
     "keyboard-layout": {
       "changed": "Układ klawiatury zmieniony na {layout}",
       "title": "Klawiatura"
     },
-    "kofi-opened": "Strona Ko-fi otwarta w przeglądarce",
     "missing-control-center": {
       "description": "Widżet centrum sterowania został usunięty z paska. Aby mieć do niego dostęp, musisz go dodać ponownie. Możesz go również otworzyć, klikając prawym przyciskiem na pasek",
       "label": "Ostatni widżet centrum sterowania usunięty"
@@ -1567,9 +1598,6 @@
     "manage-wifi": "Wi-Fi",
     "max-widgets-reached": "Osiągnięto maksymalną liczbę widżetów",
     "microphone-volume-at": "Głośność mikrofonu: {volume}%",
-    "move-to-center-section": "Sekcja środkowa",
-    "move-to-left-section": "Sekcja lewa",
-    "move-to-right-section": "Sekcja prawa",
     "move-to-section": "Przejdź do {sekcja}",
     "mute": "Wycisz",
     "next-media": "Następny utwór",
@@ -1600,6 +1628,12 @@
     "wallpaper-selector": "Wybór tapety"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "Ten katalog jest pusty.",
+      "go-root": "Przejdź do katalogu głównego tapety",
+      "go-up": "Przejdź do folderu nadrzędnego",
+      "go-up-hint": "Użyj przycisku wstecz, aby przejść w górę."
+    },
     "configure-directory": "Skonfiguruj swój katalog z obrazami tapet.",
     "fill-modes": {
       "crop": "Przytnij (Wypełnij)",
@@ -1626,7 +1660,9 @@
       "purity-nsfw": "NSFW",
       "purity-sfw": "SFW",
       "purity-sketchy": "Sketchy",
-      "ratios-any": "Jakikolwiek",
+      "ratios-all-portrait": "Wszystkie pionowe",
+      "ratios-all-wide": "Wszystkie szerokie",
+      "ratios-any": "Dowolny",
       "ratios-label": "Współczynnik proporcji",
       "resolution-atleast": "Przynajmniej",
       "resolution-exact": "Dokładnie",

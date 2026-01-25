@@ -4,7 +4,7 @@
 if [ "$#" -lt 1 ]; then
     # Print usage information to standard error.
     echo "Error: No application specified." >&2
-    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|fuzzel|walker|pywalfox|cava|niri|hyprland|mango} [dark|light]" >&2
+    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|fuzzel|walker|pywalfox|cava|yazi|niri|hyprland|mango} [dark|light]" >&2
     exit 1
 fi
 
@@ -37,7 +37,8 @@ ghostty)
             # Add the new theme include line to the end of the file.
             echo "theme = noctalia" >>"$CONFIG_FILE"
         fi
-        pkill -SIGUSR2 ghostty
+        # Only signal if ghostty is running
+        pgrep -f ghostty >/dev/null && pkill -SIGUSR2 ghostty || true
     else
         echo "Error: ghostty config file not found at $CONFIG_FILE" >&2
         exit 1
@@ -274,6 +275,46 @@ cava)
     fi
     ;;
 
+yazi)
+    echo "🎨 Applying 'noctalia' flavor to yazi..."
+    CONFIG_FILE="$HOME/.config/yazi/theme.toml"
+
+    # Create config directory if it doesn't exist
+    mkdir -p "$(dirname "$CONFIG_FILE")"
+
+    if [ ! -f "$CONFIG_FILE" ]; then
+        echo "Config file not found, creating $CONFIG_FILE..."
+        cat >"$CONFIG_FILE" <<'EOF'
+[flavor]
+dark  = "noctalia"
+light = "noctalia"
+EOF
+        echo "Created new theme.toml with noctalia flavor."
+    else
+        # Check if [flavor] section exists
+        if grep -q '^\[flavor\]' "$CONFIG_FILE"; then
+            # Update or add dark/light lines under [flavor]
+            if sed -n '/^\[flavor\]/,/^\[/p' "$CONFIG_FILE" | grep -q '^dark\s*='; then
+                sed -i '/^\[flavor\]/,/^\[/{s/^dark\s*=.*/dark  = "noctalia"/}' "$CONFIG_FILE"
+            else
+                sed -i '/^\[flavor\]/a dark  = "noctalia"' "$CONFIG_FILE"
+            fi
+            if sed -n '/^\[flavor\]/,/^\[/p' "$CONFIG_FILE" | grep -q '^light\s*='; then
+                sed -i '/^\[flavor\]/,/^\[/{s/^light\s*=.*/light = "noctalia"/}' "$CONFIG_FILE"
+            else
+                sed -i '/^\[flavor\]/,/^dark/a light = "noctalia"' "$CONFIG_FILE"
+            fi
+        else
+            # Add [flavor] section at the end
+            echo "" >>"$CONFIG_FILE"
+            echo "[flavor]" >>"$CONFIG_FILE"
+            echo 'dark  = "noctalia"' >>"$CONFIG_FILE"
+            echo 'light = "noctalia"' >>"$CONFIG_FILE"
+        fi
+        echo "✅ Updated yazi theme.toml to use noctalia flavor."
+    fi
+    ;;
+
 niri)
     echo "🎨 Applying 'noctalia' theme to niri..."
     CONFIG_FILE="$HOME/.config/niri/config.kdl"
@@ -391,10 +432,11 @@ mango)
         echo "Warning: mmsg command not found, manual restart may be needed." >&2
     fi
     ;;
+
 btop)
     echo "🎨 Applying 'noctalia' theme to btop..."
     CONFIG_FILE="$HOME/.config/btop/btop.conf"
-    
+
     if [ -f "$CONFIG_FILE" ]; then
         if grep -q '^color_theme = "noctalia"' "$CONFIG_FILE"; then
             echo "Theme already set to noctalia, skipping modification."
@@ -406,7 +448,7 @@ btop)
             fi
             echo "✅ Updated btop config to use noctalia theme."
         fi
-        
+
         if pgrep -x btop >/dev/null; then
             echo "Reloading btop..."
             pkill -SIGUSR2 -x btop
@@ -415,6 +457,28 @@ btop)
         echo "Warning: btop config file not found at $CONFIG_FILE" >&2
     fi
     ;;
+
+zathura)
+    echo "🎨 Applying 'noctalia' theme to zathura..."
+
+    ZATHURA_INSTANCES=$(dbus-send --session \
+      --dest=org.freedesktop.DBus \
+      --type=method_call \
+      --print-reply \
+      /org/freedesktop/DBus \
+      org.freedesktop.DBus.ListNames \
+      | grep -o 'org.pwmt.zathura.PID-[0-9]*')
+
+    for id in $ZATHURA_INSTANCES; do
+      dbus-send --session \
+        --dest="$id" \
+        --type=method_call \
+        /org/pwmt/zathura \
+        org.pwmt.zathura.ExecuteCommand \
+        string:"source"
+    done
+    ;;
+
 *)
     # Handle unknown application names.
     echo "Error: Unknown application '$APP_NAME'." >&2

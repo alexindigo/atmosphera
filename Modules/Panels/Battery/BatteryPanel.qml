@@ -17,6 +17,10 @@ SmartPanel {
   preferredWidth: Math.round(440 * Style.uiScaleRatio)
   preferredHeight: Math.round(460 * Style.uiScaleRatio)
 
+  onOpened: {
+    BatteryService.refreshHealth();
+  }
+
   panelContent: Item {
     id: panelContent
     property real contentPreferredHeight: mainLayout.implicitHeight + Style.marginL * 2
@@ -109,10 +113,10 @@ SmartPanel {
 
     readonly property bool isReady: battery && battery.ready && isDevicePresent && (battery.percentage !== undefined || hasBluetoothBattery)
     readonly property int percent: isReady ? Math.round(hasBluetoothBattery ? (bluetoothDevice.battery * 100) : (battery.percentage * 100)) : -1
-    readonly property bool charging: isReady ? battery.state === UPowerDeviceState.Charging : false
+    readonly property bool isCharging: isReady ? battery.state === UPowerDeviceState.Charging : false
     readonly property bool isPluggedIn: isReady ? (battery.state === UPowerDeviceState.FullyCharged || battery.state === UPowerDeviceState.PendingCharge) : false
-    readonly property bool healthAvailable: isReady && battery.healthSupported
-    readonly property int healthPercent: healthAvailable ? Math.round(battery.healthPercentage) : -1
+    readonly property bool healthAvailable: (isReady && battery.healthSupported) || BatteryService.healthAvailable
+    readonly property int healthPercent: (isReady && battery.healthSupported) ? Math.round(battery.healthPercentage) : BatteryService.healthPercent
 
     function getDeviceName() {
       if (!isReady) {
@@ -137,22 +141,22 @@ SmartPanel {
     readonly property string timeText: {
       if (!isReady || !isDevicePresent)
         return I18n.tr("battery.no-battery-detected");
-      if (charging && battery.timeToFull > 0) {
+      if (isPluggedIn) {
+        return I18n.tr("battery.plugged-in");
+      }
+      if (battery.timeToFull > 0) {
         return I18n.tr("battery.time-until-full", {
                          "time": Time.formatVagueHumanReadableDuration(battery.timeToFull)
                        });
       }
-      if (!charging && battery.timeToEmpty > 0) {
+      if (battery.timeToEmpty > 0) {
         return I18n.tr("battery.time-left", {
                          "time": Time.formatVagueHumanReadableDuration(battery.timeToEmpty)
                        });
       }
-      if (!charging && isPluggedIn) {
-        return I18n.tr("battery.plugged-in"); // i18n: Could be Plugged in, not charging? Ask maintainers if i not forgot
-      }
       return I18n.tr("common.idle");
     }
-    readonly property string iconName: BatteryService.getIcon(percent, charging, isPluggedIn, isReady)
+    readonly property string iconName: BatteryService.getIcon(percent, isCharging, isPluggedIn, isReady)
 
     property var batteryWidgetInstance: BarService.lookupWidget("Battery", screen ? screen.name : null)
     readonly property var batteryWidgetSettings: batteryWidgetInstance ? batteryWidgetInstance.widgetSettings : null
@@ -219,7 +223,7 @@ SmartPanel {
 
           NIcon {
             pointSize: Style.fontSizeXXL
-            color: (charging || isPluggedIn) ? Color.mPrimary : Color.mOnSurface
+            color: (isCharging || isPluggedIn) ? Color.mPrimary : Color.mOnSurface
             icon: iconName
           }
 
@@ -257,7 +261,7 @@ SmartPanel {
       // Charge level + health/time
       NBox {
         Layout.fillWidth: true
-        height: chargeLayout.implicitHeight + Style.marginL * 2
+        implicitHeight: chargeLayout.implicitHeight + Style.marginL * 2
         visible: isReady
 
         ColumnLayout {
@@ -306,17 +310,46 @@ SmartPanel {
 
           RowLayout {
             Layout.fillWidth: true
-            spacing: Style.marginL
+            spacing: Style.marginS
             visible: healthAvailable
 
+            ColumnLayout {
+              RowLayout {
+                spacing: Style.marginXS
+
+                NText {
+                  text: I18n.tr("battery.battery-health")
+                  color: Color.mOnSurface
+                  pointSize: Style.fontSizeS
+                }
+              }
+
+              Rectangle {
+                Layout.fillWidth: true
+                height: Math.round(8 * Style.uiScaleRatio)
+                radius: Math.min(Style.radiusL, height / 2)
+                color: Color.mSurfaceVariant
+
+                Rectangle {
+                  anchors.verticalCenter: parent.verticalCenter
+                  height: parent.height
+                  radius: parent.radius
+                  width: {
+                    if (!healthAvailable || healthPercent <= 0)
+                      return 0;
+                    var ratio = Math.max(0, Math.min(1, healthPercent / 100));
+                    return parent.width * ratio;
+                  }
+                  color: healthPercent >= 80 ? Color.mPrimary : (healthPercent >= 50 ? Color.mTertiary : Color.mError)
+                }
+              }
+            }
+
             NText {
-              text: I18n.tr("battery.health", {
-                              "percent": healthPercent
-                            })
+              text: healthPercent >= 0 ? `${healthPercent}%` : "--"
               color: Color.mOnSurface
               pointSize: Style.fontSizeS
-              font.weight: Style.fontWeightMedium
-              Layout.fillWidth: true
+              font.weight: Style.fontWeightBold
             }
           }
         }
