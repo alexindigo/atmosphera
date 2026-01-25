@@ -226,19 +226,22 @@ Singleton {
     if (pluggedIn) {
       return "battery-charging-2";
     }
-    if (percent >= 90) {
+    if (percent >= 80) {
       return "battery-4";
     }
     if (percent >= 60) {
       return "battery-3";
     }
-    if (percent >= 30) {
+    if (percent >= 40) {
       return "battery-2";
     }
-    if (percent >= 0) {
+    if (percent >= 20) {
       return "battery-1";
     }
-    return "battery";
+    if (percent >= 0) {
+      return "battery";
+    }
+    return "battery-off" // New fallback icon clearly represent if nothing is true here.
   }
 
   function hasAnyBattery() {

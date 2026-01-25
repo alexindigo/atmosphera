@@ -85,6 +85,7 @@ Singleton {
     "battery-2": "battery-2",
     "battery-1": "battery-1",
     "battery": "battery",
+    "battery-off": "battery-off",
     "wifi-0": "wifi-0",
     "wifi-1": "wifi-1",
     "wifi-2": "wifi-2",
