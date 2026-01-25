@@ -1090,6 +1090,8 @@
       "weather-show-in-calendar-label": "在行事曆中顯示天氣"
     },
     "lock-screen": {
+      "auto-start-auth-description": "例如，自動啟動指紋驗證，無需按鍵或點擊按鈕。",
+      "auto-start-auth-label": "自動啟動驗證",
       "compact-lockscreen-description": "只顯示登入欄位及電源控制, 隱藏天氣及媒體小工具",
       "compact-lockscreen-label": "精簡鎖定畫面",
       "lock-on-suspend-description": "在暫停系統時自動鎖定畫面",

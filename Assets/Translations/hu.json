@@ -1090,6 +1090,8 @@
       "weather-show-in-calendar-label": "Időjárás megjelenítése a naptárban"
     },
     "lock-screen": {
+      "auto-start-auth-description": "pl. automatikusan elindítja az ujjlenyomat-hitelesítést anélkül, hogy billentyűt kellene megnyomni vagy gombra kellene kattintani.",
+      "auto-start-auth-label": "Automatikus hitelesítés indításkor",
       "compact-lockscreen-description": "Csak a bejelentkezési beviteli mező és a rendszervezérlők megjelenítése, elrejtve az időjárás és média widgeteket.",
       "compact-lockscreen-label": "Kompakt zárolási képernyő",
       "lock-on-suspend-description": "A képernyő automatikus zárolása a rendszer felfüggesztésekor.",

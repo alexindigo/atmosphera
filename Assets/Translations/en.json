@@ -1090,6 +1090,8 @@
       "weather-show-in-calendar-label": "Display weather in calendar"
     },
     "lock-screen": {
+      "auto-start-auth-description": "e.g., automatically starts fingerprint authentication without requiring a key press or button click.",
+      "auto-start-auth-label": "Auto-start authentication",
       "compact-lockscreen-description": "Show only the login input and system controls, hiding weather and media widgets.",
       "compact-lockscreen-label": "Compact lock screen",
       "lock-on-suspend-description": "Automatically lock the screen when suspending the system.",

@@ -811,6 +811,14 @@
     "subTab": null
   },
   {
+    "labelKey": "panels.lock-screen.auto-start-auth-label",
+    "descriptionKey": "panels.lock-screen.auto-start-auth-description",
+    "widget": "NToggle",
+    "tab": 11,
+    "tabLabel": "panels.lock-screen.title",
+    "subTab": null
+  },
+  {
     "labelKey": "panels.lock-screen.show-session-buttons-label",
     "descriptionKey": "panels.lock-screen.show-session-buttons-description",
     "widget": "NToggle",

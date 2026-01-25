@@ -1090,6 +1090,8 @@
       "weather-show-in-calendar-label": "在日历中显示天气"
     },
     "lock-screen": {
+      "auto-start-auth-description": "例如，自动启动指纹验证，无需按键或单击按钮。",
+      "auto-start-auth-label": "自动启动身份验证",
       "compact-lockscreen-description": "仅显示登录输入和系统控制，隐藏天气和媒体小部件。",
       "compact-lockscreen-label": "紧凑型锁屏",
       "lock-on-suspend-description": "系统挂起时自动锁定屏幕。",

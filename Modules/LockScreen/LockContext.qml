@@ -56,7 +56,9 @@ Scope {
       }
     } else {
       occupyFingerprintSensorProc.running = false;
-      pam.start();
+      if (Settings.data.general.autoStartAuth) {
+        pam.start();
+      }
     }
   }
 

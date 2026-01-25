@@ -1090,6 +1090,8 @@
       "weather-show-in-calendar-label": "Wetter im Kalender anzeigen"
     },
     "lock-screen": {
+      "auto-start-auth-description": "z. B. startet die Fingerabdruckauthentifizierung automatisch, ohne dass ein Tastendruck oder ein Klick erforderlich ist.",
+      "auto-start-auth-label": "Automatische Authentifizierung beim Start",
       "compact-lockscreen-description": "Zeige nur die Login-Eingabe und Systemsteuerung, blende Wetter- und Medien-Widgets aus.",
       "compact-lockscreen-label": "Kompakter Sperrbildschirm",
       "lock-on-suspend-description": "Den Bildschirm beim Energiesparen automatisch sperren.",

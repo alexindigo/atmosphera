@@ -1090,6 +1090,8 @@
       "weather-show-in-calendar-label": "Nîşandanîna hewayê di salnameyê de"
     },
     "lock-screen": {
+      "auto-start-auth-description": "mînak, otomatîkî dest bi rastkirina tiliyê dike bêyî ku pêdivî bi pêlkeyek an klîkek hebe.",
+      "auto-start-auth-label": "Destpêkirina otomatîkî ya rastkirinê",
       "compact-lockscreen-description": "Tenê inputa têketinê û kontrolên pergalê nîşan bide, widgetên hewayê û medyayê veşêre.",
       "compact-lockscreen-label": "Kilîta ekrana berhevkirî",
       "lock-on-suspend-description": "Dema ku pergal tê rawestandin, ekranê bixweber kilît bike.",

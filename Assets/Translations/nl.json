@@ -1090,6 +1090,8 @@
       "weather-show-in-calendar-label": "Weer in kalender weergeven"
     },
     "lock-screen": {
+      "auto-start-auth-description": "start bijvoorbeeld automatisch de vingerafdrukauthenticatie zonder dat er een toetsaanslag of klik nodig is.",
+      "auto-start-auth-label": "Automatische authenticatie bij opstarten",
       "compact-lockscreen-description": "Toon alleen de logininvoer en systeemknoppen, verberg weer- en mediawidgets.",
       "compact-lockscreen-label": "Compact vergrendelscherm",
       "lock-on-suspend-description": "Vergrendel het scherm automatisch wanneer het systeem wordt onderbroken.",

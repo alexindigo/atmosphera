@@ -1090,6 +1090,8 @@
       "weather-show-in-calendar-label": "Wyświetlaj pogodę w kalendarzu"
     },
     "lock-screen": {
+      "auto-start-auth-description": "np. automatycznie uruchamia uwierzytelnianie odciskiem palca bez konieczności naciskania klawisza lub klikania przycisku.",
+      "auto-start-auth-label": "Automatyczne uruchamianie uwierzytelniania",
       "compact-lockscreen-description": "Pokaż tylko logowanie i kontrolki systemowe, ukrywając widżety pogody i mediów.",
       "compact-lockscreen-label": "Kompaktowy ekran blokady",
       "lock-on-suspend-description": "Automatycznie blokuj ekran podczas uśpienia systemu.",
