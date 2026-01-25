@@ -584,30 +584,8 @@ Singleton {
     workingDirectory: Quickshell.shellDir
     running: false
 
-    // Error reporting helpers
-    function buildErrorMessage() {
-      const title = I18n.tr(`toast.theming-processor-failed.title`);
-      const description = (stderr.text && stderr.text.trim() !== "") ? stderr.text.trim() : ((stdout.text && stdout.text.trim() !== "") ? stdout.text.trim() : I18n.tr("toast.theming-processor-failed.desc-generic"));
-      return description;
-    }
-
-    onExited: function (exitCode) {
-      Logger.d("TemplateProcessor", `generateProcess exited: exitCode=${exitCode}`);
-      // Only log errors for non-killed processes (exitCode 0 = success, negative = signal/killed)
-      if (exitCode > 0) {
-        const description = generateProcess.buildErrorMessage();
-        Logger.e("TemplateProcessor", `Process failed with exit code`, exitCode, description);
-        Logger.d("TemplateProcessor", "Failed command:", command.join(" ").substring(0, 500));
-        ToastService.showError(I18n.tr("toast.theming-processor-failed.title"), description);
-      } else if (exitCode === 0 && stderr.text && stderr.text.includes("Template error:")) {
-
-        // Report warning via toast but omit all messages not coming from the templating engine
-        // Post-hook may fail: e.g: calling mmsg outside of mango, or if a binary is not installed.
-        const errorLines = stderr.text.split("\n").filter(l => l.includes("Template error:"));
-        const errors = errorLines.slice(0, 3).join("\n") + (errorLines.length > 3 ? `\n... (+${errorLines.length - 3} more)` : "");
-        ToastService.showWarning(I18n.tr("toast.theming-processor-failed.title"), errors);
-      }
-      // Execute any pending request (handles both kill case and 400ms interval case)
+    onExited: function (exitCode, exitStatus) {
+      // Execute any pending request (handles both kill case and debounce timer interval case)
       if (pendingWallpaperRequest || pendingPredefinedRequest) {
         Logger.d("TemplateProcessor", "generateProcess onExited: has pending request, executing");
         executePendingRequest();
@@ -617,18 +595,14 @@ Singleton {
       }
     }
 
-    stdout: StdioCollector {
-      onStreamFinished: {
-        if (this.text)
-        Logger.d("TemplateProcessor", "stdout:", this.text);
-      }
-    }
-
     stderr: StdioCollector {
       onStreamFinished: {
-        if (this.text && this.text.trim() !== "") {
-          // Log template errors/warnings from Python script
-          Logger.e("TemplateProcessor", this.text.trim());
+        const text = this.text.trim();
+        if (text && text.includes("Template error:")) {
+          const errorLines = text.split("\n").filter(l => l.includes("Template error:"));
+          const errors = errorLines.slice(0, 3).join("\n") + (errorLines.length > 3 ? `\n... (+${errorLines.length - 3} more)` : "");
+          Logger.w("TemplateProcessor", errors);
+          ToastService.showWarning(I18n.tr("toast.theming-processor-failed.title"), errors);
         }
       }
     }
