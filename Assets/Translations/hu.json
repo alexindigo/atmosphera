@@ -592,9 +592,9 @@
       "density-default": "Alapértelmezett",
       "density-mini": "Mini",
       "density-spacious": "Tágas",
-      "type-simple": "Egyszerű",
       "type-floating": "Lebegő",
-      "type-framed": "Keretes"
+      "type-framed": "Keretes",
+      "type-simple": "Egyszerű"
     },
     "control-center": {
       "quick-settings-style-classic": "Klasszikus",

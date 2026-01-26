@@ -592,9 +592,9 @@
       "density-default": "По умолчанию",
       "density-mini": "Мини",
       "density-spacious": "Просторный",
-      "type-simple": "Простой",
       "type-floating": "Плавающий",
-      "type-framed": "В рамке"
+      "type-framed": "В рамке",
+      "type-simple": "Простой"
     },
     "control-center": {
       "quick-settings-style-classic": "Классический",

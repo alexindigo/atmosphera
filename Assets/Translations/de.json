@@ -592,9 +592,9 @@
       "density-default": "Standard",
       "density-mini": "Mini",
       "density-spacious": "Geräumig",
-      "type-simple": "Einfach",
       "type-floating": "Schwebend",
-      "type-framed": "Gerahmt"
+      "type-framed": "Gerahmt",
+      "type-simple": "Einfach"
     },
     "control-center": {
       "quick-settings-style-classic": "Klassisch",

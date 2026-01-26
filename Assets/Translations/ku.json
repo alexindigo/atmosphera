@@ -592,9 +592,9 @@
       "density-default": "Berdest",
       "density-mini": "Piçûk",
       "density-spacious": "Berfireh",
-      "type-simple": "Sade",
       "type-floating": "Herikbar",
-      "type-framed": "Çarçovekirî"
+      "type-framed": "Çarçovekirî",
+      "type-simple": "Sade"
     },
     "control-center": {
       "quick-settings-style-classic": "Klasîk",

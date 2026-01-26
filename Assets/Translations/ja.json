@@ -592,9 +592,9 @@
       "density-default": "標準",
       "density-mini": "ミニ",
       "density-spacious": "広々とした",
-      "type-simple": "シンプル",
       "type-floating": "フローティング",
-      "type-framed": "フレーム"
+      "type-framed": "フレーム",
+      "type-simple": "シンプル"
     },
     "control-center": {
       "quick-settings-style-classic": "クラシック",

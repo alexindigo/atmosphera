@@ -592,9 +592,9 @@
       "density-default": "默认",
       "density-mini": "迷你",
       "density-spacious": "宽敞",
-      "type-simple": "简约",
       "type-floating": "悬浮",
-      "type-framed": "边框"
+      "type-framed": "边框",
+      "type-simple": "简约"
     },
     "control-center": {
       "quick-settings-style-classic": "经典",

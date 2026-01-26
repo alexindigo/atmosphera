@@ -592,9 +592,9 @@
       "density-default": "Varsayılan",
       "density-mini": "Ufak",
       "density-spacious": "Geniş",
-      "type-simple": "Basit",
       "type-floating": "Yüzen",
-      "type-framed": "Çerçeveli"
+      "type-framed": "Çerçeveli",
+      "type-simple": "Basit"
     },
     "control-center": {
       "quick-settings-style-classic": "Klasik",

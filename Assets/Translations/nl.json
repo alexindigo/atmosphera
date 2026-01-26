@@ -592,9 +592,9 @@
       "density-default": "Standaard",
       "density-mini": "Mini",
       "density-spacious": "Ruim",
-      "type-simple": "Eenvoudig",
       "type-floating": "Zwevend",
-      "type-framed": "Omkaderd"
+      "type-framed": "Omkaderd",
+      "type-simple": "Eenvoudig"
     },
     "control-center": {
       "quick-settings-style-classic": "Klassiek",

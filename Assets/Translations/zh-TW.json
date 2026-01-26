@@ -592,9 +592,9 @@
       "density-default": "預設",
       "density-mini": "迷你",
       "density-spacious": "寬敞",
-      "type-simple": "簡約",
       "type-floating": "懸浮",
-      "type-framed": "邊框"
+      "type-framed": "邊框",
+      "type-simple": "簡約"
     },
     "control-center": {
       "quick-settings-style-classic": "古典",
