@@ -126,16 +126,23 @@ Item {
     Loader {
       id: titleText
       sourceComponent: root.delegate
-      Layout.alignment: Qt.AlignVCenter
-      onLoaded: this.item.text = root.text
+      Layout.fillHeight: true
+      onLoaded: {
+        this.item.text = root.text;
+        // Bind height to container to enable vertical centering of overly high text
+        this.item.height = Qt.binding(() => titleText.height);
+      }
     }
 
     Loader {
       id: loopingText
       sourceComponent: root.delegate
-      Layout.alignment: Qt.AlignVCenter
+      Layout.fillHeight: true
       visible: root.state !== NScrollText.ScrollState.None
-      onLoaded: this.item.text = root.text
+      onLoaded: {
+        this.item.text = root.text;
+        this.item.height = Qt.binding(() => loopingText.height);
+      }
     }
 
     NumberAnimation on x {
