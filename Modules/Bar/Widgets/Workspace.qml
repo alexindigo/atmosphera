@@ -305,6 +305,10 @@ Item {
           isOccupied: ws.isOccupied
         };
 
+        if (ws.handle !== null && ws.handle !== undefined) {
+          workspaceData.handle = ws.handle;
+        }
+
         if (showApplications) {
           workspaceData.windows = CompositorService.getWindowsForWorkspace(ws.id);
         }
