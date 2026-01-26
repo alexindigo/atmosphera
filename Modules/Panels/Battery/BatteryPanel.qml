@@ -248,59 +248,85 @@ SmartPanel {
                 spacing: Style.marginS
 
                 ColumnLayout {
-                  NText {
-                    readonly property string dName: BatteryService.getDeviceName(modelData)
-                    text: dName ? dName : I18n.tr("common.battery")
-                    color: Color.mOnSurface
-                    pointSize: Style.fontSizeS
-                  }
+                  Layout.fillWidth: true
+                  spacing: Style.marginS
 
-                  Rectangle {
-                    Layout.fillWidth: true
-                    height: Math.round(8 * Style.uiScaleRatio)
-                    radius: Math.min(Style.radiusL, height / 2)
-                    color: Color.mSurfaceVariant
+                  RowLayout {
+                    NIcon {
+                      color: (isCharging || isPluggedIn) ? Color.mPrimary : Color.mOnSurface
+                      icon: iconName
+                    }
 
-                    Rectangle {
-                      anchors.verticalCenter: parent.verticalCenter
-                      height: parent.height
-                      radius: parent.radius
-                      width: {
-                        var p = BatteryService.getPercentage(modelData);
-                        var ratio = Math.max(0, Math.min(1, p / 100));
-                        return parent.width * ratio;
-                      }
-                      color: Color.mPrimary
+                    NText {
+                      readonly property string dName: BatteryService.getDeviceName(modelData)
+                      text: dName ? dName : I18n.tr("common.battery")
+                      color: Color.mOnSurface
+                      pointSize: Style.fontSizeS
                     }
                   }
-                }
 
-                NText {
-                  text: `${Math.round(BatteryService.getPercentage(modelData))}%`
-                  color: Color.mOnSurface
-                  pointSize: Style.fontSizeS
-                  font.weight: Style.fontWeightBold
+                  RowLayout {
+                    Layout.fillWidth: true
+                    spacing: Style.marginS
+                    Rectangle {
+                      Layout.fillWidth: true
+                      height: Math.round(8 * Style.uiScaleRatio)
+                      radius: Math.min(Style.radiusL, height / 2)
+                      color: Color.mSurface
+
+                      Rectangle {
+                        anchors.verticalCenter: parent.verticalCenter
+                        height: parent.height
+                        radius: parent.radius
+                        width: {
+                          var p = BatteryService.getPercentage(modelData);
+                          var ratio = Math.max(0, Math.min(1, p / 100));
+                          return parent.width * ratio;
+                        }
+                        color: Color.mPrimary
+                      }
+                    }
+                    NText {
+                      Layout.preferredWidth: 40 * Style.uiScaleRatio
+                      horizontalAlignment: Text.AlignRight
+                      text: `${Math.round(BatteryService.getPercentage(modelData))}%`
+                      color: Color.mOnSurface
+                      pointSize: Style.fontSizeS
+                      font.weight: Style.fontWeightBold
+                    }
+                  }
                 }
               }
 
               // Health for this specific laptop battery
-              RowLayout {
+              ColumnLayout {
                 Layout.fillWidth: true
                 spacing: Style.marginS
                 visible: modelData.healthSupported || (modelData === selectedBattery && BatteryService.healthAvailable)
+                RowLayout {
+                  Layout.fillWidth: true
+                  spacing: Style.marginS
 
-                ColumnLayout {
+                  NIcon {
+                    icon: "heart"
+                  }
+
                   NText {
                     text: I18n.tr("battery.battery-health")
-                    color: Color.mOnSurfaceVariant
-                    pointSize: Style.fontSizeXS
+                    color: Color.mOnSurface
+                    pointSize: Style.fontSizeS
                   }
+                }
+
+                RowLayout {
+                  Layout.fillWidth: true
+                  spacing: Style.marginS
 
                   Rectangle {
                     Layout.fillWidth: true
-                    height: Math.round(4 * Style.uiScaleRatio)
+                    height: Math.round(8 * Style.uiScaleRatio)
                     radius: height / 2
-                    color: Color.mSurfaceVariant
+                    color: Color.mSurface
 
                     Rectangle {
                       anchors.verticalCenter: parent.verticalCenter
@@ -319,13 +345,16 @@ SmartPanel {
                       }
                     }
                   }
-                }
+                  NText {
+                    Layout.preferredWidth: 40 * Style.uiScaleRatio
+                    horizontalAlignment: Text.AlignRight
 
-                NText {
-                  readonly property int h: modelData.healthSupported ? Math.round(modelData.healthPercentage) : (modelData === selectedBattery ? BatteryService.healthPercent : -1)
-                  text: h >= 0 ? `${h}%` : "--"
-                  color: Color.mOnSurfaceVariant
-                  pointSize: Style.fontSizeXS
+                    readonly property int h: modelData.healthSupported ? Math.round(modelData.healthPercentage) : (modelData === selectedBattery ? BatteryService.healthPercent : -1)
+                    text: h >= 0 ? `${h}%` : "--"
+                    color: Color.mOnSurface
+                    pointSize: Style.fontSizeS
+                    font.weight: Style.fontWeightBold
+                  }
                 }
               }
             }
@@ -342,40 +371,46 @@ SmartPanel {
             delegate: ColumnLayout {
               Layout.fillWidth: true
               spacing: Style.marginS
-
               RowLayout {
                 Layout.fillWidth: true
                 spacing: Style.marginS
 
-                ColumnLayout {
-                  NText {
-                    readonly property string dName: BatteryService.getDeviceName(modelData)
-                    text: dName ? dName : I18n.tr("common.bluetooth")
-                    color: Color.mOnSurface
-                    pointSize: Style.fontSizeS
-                  }
-
-                  Rectangle {
-                    Layout.fillWidth: true
-                    height: Math.round(8 * Style.uiScaleRatio)
-                    radius: Math.min(Style.radiusL, height / 2)
-                    color: Color.mSurfaceVariant
-
-                    Rectangle {
-                      anchors.verticalCenter: parent.verticalCenter
-                      height: parent.height
-                      radius: parent.radius
-                      width: {
-                        var p = BatteryService.getPercentage(modelData);
-                        var ratio = Math.max(0, Math.min(1, p / 100));
-                        return parent.width * ratio;
-                      }
-                      color: Color.mPrimary
-                    }
-                  }
+                NIcon {
+                  icon: BluetoothService.getDeviceIcon(modelData)
                 }
 
                 NText {
+                  readonly property string dName: BatteryService.getDeviceName(modelData)
+                  text: dName ? dName : I18n.tr("common.bluetooth")
+                  color: Color.mOnSurface
+                  pointSize: Style.fontSizeS
+                }
+              }
+              RowLayout {
+                Layout.fillWidth: true
+                spacing: Style.marginS
+
+                Rectangle {
+                  Layout.fillWidth: true
+                  height: Math.round(8 * Style.uiScaleRatio)
+                  radius: Math.min(Style.radiusL, height / 2)
+                  color: Color.mSurface
+
+                  Rectangle {
+                    anchors.verticalCenter: parent.verticalCenter
+                    height: parent.height
+                    radius: parent.radius
+                    width: {
+                      var p = BatteryService.getPercentage(modelData);
+                      var ratio = Math.max(0, Math.min(1, p / 100));
+                      return parent.width * ratio;
+                    }
+                    color: Color.mPrimary
+                  }
+                }
+                NText {
+                  Layout.preferredWidth: 40 * Style.uiScaleRatio
+                  horizontalAlignment: Text.AlignRight
                   text: `${Math.round(BatteryService.getPercentage(modelData))}%`
                   color: Color.mOnSurface
                   pointSize: Style.fontSizeS
@@ -461,7 +496,7 @@ SmartPanel {
 
           NDivider {
             Layout.fillWidth: true
-            visible: showPowerProfiles && showNoctaliaPerformance
+            visible: showPowerProfiles && PowerProfileService.available && showNoctaliaPerformance
           }
 
           RowLayout {
