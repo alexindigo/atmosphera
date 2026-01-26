@@ -188,7 +188,8 @@ ColumnLayout {
               icon: "settings"
               tooltipText: I18n.tr("panels.plugins.settings-tooltip")
               baseSize: Style.baseWidgetSize * 0.7
-              visible: modelData.entryPoints?.settings !== undefined
+              visible: (modelData.entryPoints?.settings !== undefined)
+              enabled: modelData.enabled
               onClicked: {
                 pluginSettingsDialog.openPluginSettings(modelData);
               }
