@@ -591,7 +591,10 @@
       "density-compact": "Kompakt",
       "density-default": "Standard",
       "density-mini": "Mini",
-      "density-spacious": "Geräumig"
+      "density-spacious": "Geräumig",
+      "type-simple": "Einfach",
+      "type-floating": "Schwebend",
+      "type-framed": "Gerahmt"
     },
     "control-center": {
       "quick-settings-style-classic": "Klassisch",
@@ -719,6 +722,10 @@
       "appearance-desc": "Erscheinungsbild und Position der Statusleiste anpassen.",
       "appearance-floating-description": "Statusleiste als schwebende 'Pille' anzeigen.",
       "appearance-floating-label": "Schwebende Statusleiste",
+      "appearance-frame-radius": "Innenradius",
+      "appearance-frame-settings-description": "Rahmenstärke und inneren Eckenradius anpassen",
+      "appearance-frame-settings-label": "Rahmeneinstellungen",
+      "appearance-frame-thickness": "Stärke",
       "appearance-hide-on-overview-description": "Die Leiste ausblenden und Panels schließen, wenn die Compositor-Übersicht aktiv ist.",
       "appearance-hide-on-overview-label": "Leiste in der Übersicht ausblenden",
       "appearance-margins-description": "Ränder um die schwebende Statusleiste anpassen.",
@@ -733,6 +740,8 @@
       "appearance-show-capsule-label": "Kapsel anzeigen",
       "appearance-show-outline-description": "Zeige eine sichtbare Umrandung um jedes Widget an.",
       "appearance-show-outline-label": "Widget-Umrisse anzeigen",
+      "appearance-type-description": "Wähle den Stil der Leiste: Einfach, Schwebend oder Gerahmt",
+      "appearance-type-label": "Leistentyp",
       "appearance-use-separate-opacity-description": "Ermöglicht die Verwendung eines separaten Deckkraftwerts für den Leistenhintergrund.",
       "appearance-use-separate-opacity-label": "Separate Leisten-Deckkraft",
       "monitor-configure-widgets": "Widgets konfigurieren",

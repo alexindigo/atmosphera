@@ -591,7 +591,10 @@
       "density-compact": "Компактная",
       "density-default": "По умолчанию",
       "density-mini": "Мини",
-      "density-spacious": "Просторный"
+      "density-spacious": "Просторный",
+      "type-simple": "Простой",
+      "type-floating": "Плавающий",
+      "type-framed": "В рамке"
     },
     "control-center": {
       "quick-settings-style-classic": "Классический",
@@ -719,6 +722,10 @@
       "appearance-desc": "Настройка внешнего вида и положения панели.",
       "appearance-floating-description": "Отображает панель как плавающую 'таблетку'.",
       "appearance-floating-label": "Плавающая панель",
+      "appearance-frame-radius": "Внутренний радиус",
+      "appearance-frame-settings-description": "Настройте толщину рамки и внутренний радиус углов",
+      "appearance-frame-settings-label": "Настройки рамки",
+      "appearance-frame-thickness": "Толщина",
       "appearance-hide-on-overview-description": "Скрыть панель и закрыть панели, когда активен обзор компоновщика.",
       "appearance-hide-on-overview-label": "Скрыть панель в обзоре",
       "appearance-margins-description": "Настройка отступов вокруг плавающей панели.",
@@ -733,6 +740,8 @@
       "appearance-show-capsule-label": "Показывать капсулу",
       "appearance-show-outline-description": "Отображает видимую границу вокруг каждого виджета.",
       "appearance-show-outline-label": "Показать контуры виджетов",
+      "appearance-type-description": "Выберите стиль панели: Простой, Плавающий или В рамке",
+      "appearance-type-label": "Тип панели",
       "appearance-use-separate-opacity-description": "Включить использование отдельного значения прозрачности для фона полосы.",
       "appearance-use-separate-opacity-label": "Использовать раздельную прозрачность столбцов",
       "monitor-configure-widgets": "Настроить виджеты",

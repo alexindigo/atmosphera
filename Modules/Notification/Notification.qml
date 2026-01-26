@@ -80,34 +80,37 @@ Variants {
       readonly property bool isFloating: Settings.data.bar.floating
       readonly property real barHeight: Style.getBarHeightForScreen(notifWindow.screen?.name)
 
+      readonly property bool isFramed: Settings.data.bar.barType === "framed"
+      readonly property real frameThickness: Settings.data.bar.frameThickness ?? 8
+
       readonly property int notifWidth: Math.round(440 * Style.uiScaleRatio)
       readonly property int shadowPadding: Style.shadowBlurMax + Style.marginL
 
-      // Calculate bar offsets for each edge separately
+      // Calculate bar and frame offsets for each edge separately
       readonly property int barOffsetTop: {
         if (barPos !== "top")
-          return 0;
+          return isFramed ? frameThickness : 0;
         const floatMarginV = isFloating ? Math.ceil(Settings.data.bar.marginVertical) : 0;
         return barHeight + floatMarginV;
       }
 
       readonly property int barOffsetBottom: {
         if (barPos !== "bottom")
-          return 0;
+          return isFramed ? frameThickness : 0;
         const floatMarginV = isFloating ? Math.ceil(Settings.data.bar.marginVertical) : 0;
         return barHeight + floatMarginV;
       }
 
       readonly property int barOffsetLeft: {
         if (barPos !== "left")
-          return 0;
+          return isFramed ? frameThickness : 0;
         const floatMarginH = isFloating ? Math.ceil(Settings.data.bar.marginHorizontal) : 0;
         return barHeight + floatMarginH;
       }
 
       readonly property int barOffsetRight: {
         if (barPos !== "right")
-          return 0;
+          return isFramed ? frameThickness : 0;
         const floatMarginH = isFloating ? Math.ceil(Settings.data.bar.marginHorizontal) : 0;
         return barHeight + floatMarginH;
       }
@@ -120,7 +123,7 @@ Variants {
 
       // Margins for PanelWindow - only apply bar offset for the specific edge where the bar is
       margins.top: isTop ? barOffsetTop - shadowPadding + Style.marginM : 0
-      margins.bottom: isBottom ? barOffsetBottom - shadowPadding + Style.marginM : 0
+      margins.bottom: isBottom ? barOffsetBottom - shadowPadding : 0
       margins.left: isLeft ? barOffsetLeft - shadowPadding + Style.marginM : 0
       margins.right: isRight ? barOffsetRight - shadowPadding + Style.marginM : 0
 

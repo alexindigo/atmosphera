@@ -591,7 +591,10 @@
       "density-compact": "Compact",
       "density-default": "Default",
       "density-mini": "Mini",
-      "density-spacious": "Spacious"
+      "density-spacious": "Spacious",
+      "type-simple": "Simple",
+      "type-floating": "Floating",
+      "type-framed": "Framed"
     },
     "control-center": {
       "quick-settings-style-classic": "Classic",
@@ -719,6 +722,10 @@
       "appearance-desc": "Customize the bar's appearance and position.",
       "appearance-floating-description": "Display the bar as a floating 'pill'.",
       "appearance-floating-label": "Floating bar",
+      "appearance-frame-radius": "Inner Radius",
+      "appearance-frame-settings-description": "Adjust frame thickness and inner corner radius",
+      "appearance-frame-settings-label": "Frame Settings",
+      "appearance-frame-thickness": "Thickness",
       "appearance-hide-on-overview-description": "Hide the bar and close panels when the compositor overview is active.",
       "appearance-hide-on-overview-label": "Hide bar on overview",
       "appearance-margins-description": "Adjust the margins around the floating bar.",
@@ -733,6 +740,8 @@
       "appearance-show-capsule-label": "Show capsule",
       "appearance-show-outline-description": "Displays a visible border around every widget.",
       "appearance-show-outline-label": "Show widget outlines",
+      "appearance-type-description": "Choose the style of the bar: Simple, Floating or Framed",
+      "appearance-type-label": "Bar Type",
       "appearance-use-separate-opacity-description": "Enable to use a separate opacity value for the bar background.",
       "appearance-use-separate-opacity-label": "Use separate bar opacity",
       "monitor-configure-widgets": "Configure widgets",

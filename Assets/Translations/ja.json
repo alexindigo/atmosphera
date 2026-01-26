@@ -591,7 +591,10 @@
       "density-compact": "コンパクト",
       "density-default": "標準",
       "density-mini": "ミニ",
-      "density-spacious": "広々とした"
+      "density-spacious": "広々とした",
+      "type-simple": "シンプル",
+      "type-floating": "フローティング",
+      "type-framed": "フレーム"
     },
     "control-center": {
       "quick-settings-style-classic": "クラシック",
@@ -719,6 +722,10 @@
       "appearance-desc": "バーの外観や位置をカスタマイズします。",
       "appearance-floating-description": "バーを浮かせて、カプセル型で表示します。",
       "appearance-floating-label": "フローティングバー",
+      "appearance-frame-radius": "内側の半径",
+      "appearance-frame-settings-description": "フレームの太さと内側の半径を調整します",
+      "appearance-frame-settings-label": "フレーム設定",
+      "appearance-frame-thickness": "太さ",
       "appearance-hide-on-overview-description": "コンポジタの概要がアクティブなときは、バーを非表示にしてパネルを閉じます。",
       "appearance-hide-on-overview-label": "概要のバーを非表示にする",
       "appearance-margins-description": "フローティングバーの周囲の余白を調整します。",
@@ -733,6 +740,8 @@
       "appearance-show-capsule-label": "カプセルを表示",
       "appearance-show-outline-description": "すべてのウィジェットの周囲に枠線を表示します。",
       "appearance-show-outline-label": "ウィジェットの枠線を表示",
+      "appearance-type-description": "バーのスタイルを選択：シンプル、フローティング、またはフレーム",
+      "appearance-type-label": "バーの種類",
       "appearance-use-separate-opacity-description": "バーの背景に別の不透明度の値を使用できるようにする。",
       "appearance-use-separate-opacity-label": "バーの不透明度を個別に設定",
       "monitor-configure-widgets": "ウィジェットを設定",

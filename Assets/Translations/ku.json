@@ -591,7 +591,10 @@
       "density-compact": "Kompakt",
       "density-default": "Berdest",
       "density-mini": "Piçûk",
-      "density-spacious": "Berfireh"
+      "density-spacious": "Berfireh",
+      "type-simple": "Sade",
+      "type-floating": "Herikbar",
+      "type-framed": "Çarçovekirî"
     },
     "control-center": {
       "quick-settings-style-classic": "Klasîk",
@@ -719,6 +722,10 @@
       "appearance-desc": "Xuyakirina xuyabûn û pozîsyona bar.",
       "appearance-floating-description": "Bariş wekî 'heb'eke herikbar nîşan bide.",
       "appearance-floating-label": "Barê avjen",
+      "appearance-frame-radius": "Nîvçapa Hundirîn",
+      "appearance-frame-settings-description": "Stûrahiya çarçoveyê û nîvçapa goşeyê hundirîn sererast bike",
+      "appearance-frame-settings-label": "Mîhengên Çarçoveyê",
+      "appearance-frame-thickness": "Stûrahî",
       "appearance-hide-on-overview-description": "Dema ku pêşdîtina berhevker çalak be, bar veşêre û panelan bigire.",
       "appearance-hide-on-overview-label": "Li ser dîtinê bar veşêre",
       "appearance-margins-description": "Marginên dora bara herikbar eyar bike.",
@@ -733,6 +740,8 @@
       "appearance-show-capsule-label": "Pêşkêşkirina kapsulê",
       "appearance-show-outline-description": "Dîwarê xuya li dora her widgetê nîşan dide.",
       "appearance-show-outline-label": "Nîşandan xêzên widgetê",
+      "appearance-type-description": "Stîla darikê hilbijêre: Sade, Herikbar an Çarçovekirî",
+      "appearance-type-label": "Cureyê Darikê",
       "appearance-use-separate-opacity-description": "Destûrê bide ku ji bo paşxaneya bar nirxek opakbûna cuda were bikaranîn.",
       "appearance-use-separate-opacity-label": "Şefafiya bara cuda bikar bîne",
       "monitor-configure-widgets": "Widgetan saz bike",
