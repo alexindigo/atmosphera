@@ -75,7 +75,7 @@ Singleton {
     if (layoutChanged) {
       if (Settings.data.notifications.enableKeyboardLayoutToast) {
         const message = I18n.tr("toast.keyboard-layout.changed", {
-                                  "layout": currentLayout
+                                  "layout": fullLayoutName
                                 });
         ToastService.showNotice(I18n.tr("toast.keyboard-layout.title"), message, "", 2000);
       }
