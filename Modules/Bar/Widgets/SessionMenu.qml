@@ -19,9 +19,11 @@ NIconButton {
   property int sectionWidgetsCount: 0
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
+  // Explicit screenName property ensures reactive binding when screen changes
+  readonly property string screenName: screen ? screen.name : ""
   property var widgetSettings: {
-    if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.getBarWidgetsForScreen(screen?.name)[section];
+    if (section && sectionWidgetIndex >= 0 && screenName) {
+      var widgets = Settings.getBarWidgetsForScreen(screenName)[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
         return widgets[sectionWidgetIndex];
       }
@@ -47,12 +49,12 @@ NIconButton {
     }
   }
 
-  baseSize: Style.getCapsuleHeightForScreen(screen?.name)
+  baseSize: Style.getCapsuleHeightForScreen(screenName)
   applyUiScale: false
   customRadius: Style.radiusL
   icon: "power"
   tooltipText: I18n.tr("tooltips.session-menu")
-  tooltipDirection: BarService.getTooltipDirection(screen?.name)
+  tooltipDirection: BarService.getTooltipDirection(screenName)
   colorBg: Style.capsuleColor
   colorFg: root.iconColor
   colorBorder: "transparent"

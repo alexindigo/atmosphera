@@ -20,9 +20,11 @@ Item {
 
   // Settings
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
+  // Explicit screenName property ensures reactive binding when screen changes
+  readonly property string screenName: screen ? screen.name : ""
   property var widgetSettings: {
-    if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.getBarWidgetsForScreen(screen?.name)[section];
+    if (section && sectionWidgetIndex >= 0 && screenName) {
+      var widgets = Settings.getBarWidgetsForScreen(screenName)[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
         return widgets[sectionWidgetIndex];
       }
@@ -31,10 +33,10 @@ Item {
   }
 
   // Bar orientation (per-screen)
-  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
+  readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
-  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screen?.name)
-  readonly property real barFontSize: Style.getBarFontSizeForScreen(screen?.name)
+  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screenName)
+  readonly property real barFontSize: Style.getBarFontSizeForScreen(screenName)
 
   // Widget settings
   readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : "hidden"

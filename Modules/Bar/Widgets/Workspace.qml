@@ -24,9 +24,11 @@ Item {
   property int sectionWidgetsCount: 0
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
+  // Explicit screenName property ensures reactive binding when screen changes
+  readonly property string screenName: screen ? screen.name : ""
   property var widgetSettings: {
-    if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.getBarWidgetsForScreen(screen?.name)[section];
+    if (section && sectionWidgetIndex >= 0 && screenName) {
+      var widgets = Settings.getBarWidgetsForScreen(screenName)[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
         return widgets[sectionWidgetIndex];
       }
@@ -34,11 +36,11 @@ Item {
     return {};
   }
 
-  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
+  readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
-  readonly property real barHeight: Style.getBarHeightForScreen(screen?.name)
-  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screen?.name)
-  readonly property real barFontSize: Style.getBarFontSizeForScreen(screen?.name)
+  readonly property real barHeight: Style.getBarHeightForScreen(screenName)
+  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screenName)
+  readonly property real barFontSize: Style.getBarFontSizeForScreen(screenName)
   readonly property real baseDimensionRatio: 0.65 * (widgetSettings.labelMode === "none" ? 0.75 : 1)
 
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
@@ -240,7 +242,9 @@ Item {
   }
 
   onScreenChanged: refreshWorkspaces()
+  onScreenNameChanged: refreshWorkspaces()
   onHideUnoccupiedChanged: refreshWorkspaces()
+  onShowApplicationsChanged: refreshWorkspaces()
 
   Connections {
     target: CompositorService
@@ -1018,7 +1022,7 @@ Item {
               onEntered: {
                 const win = (typeof modelData !== "undefined") ? modelData : model;
                 groupedTaskbarItem.itemHovered = true;
-                TooltipService.show(groupedTaskbarItem, win.title || win.appId || "Unknown app.", BarService.getTooltipDirection(root.screen?.name));
+                TooltipService.show(groupedTaskbarItem, win.title || win.appId || "Unknown app.", BarService.getTooltipDirection(root.screenName));
               }
               onExited: {
                 groupedTaskbarItem.itemHovered = false;

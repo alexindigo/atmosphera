@@ -22,9 +22,11 @@ Item {
   property int sectionWidgetsCount: 0
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId] || {}
+  // Explicit screenName property ensures reactive binding when screen changes
+  readonly property string screenName: screen ? screen.name : ""
   property var widgetSettings: {
-    if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.getBarWidgetsForScreen(screen?.name)[section];
+    if (section && sectionWidgetIndex >= 0 && screenName) {
+      var widgets = Settings.getBarWidgetsForScreen(screenName)[section];
       if (widgets && sectionWidgetIndex < widgets.length && widgets[sectionWidgetIndex]) {
         return widgets[sectionWidgetIndex];
       }
@@ -41,10 +43,10 @@ Item {
   readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth || 0, screen ? screen.width * 0.06 : 0)
   readonly property bool useFixedWidth: (widgetSettings.useFixedWidth !== undefined) ? widgetSettings.useFixedWidth : (widgetMetadata.useFixedWidth || false)
 
-  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
+  readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
-  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screen?.name)
-  readonly property real barFontSize: Style.getBarFontSizeForScreen(screen?.name)
+  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screenName)
+  readonly property real barFontSize: Style.getBarFontSizeForScreen(screenName)
   readonly property bool hasFocusedWindow: CompositorService.getFocusedWindow() !== null
   readonly property string windowTitle: CompositorService.getFocusedWindowTitle() || "No active window"
   readonly property string fallbackIcon: "user-desktop"
