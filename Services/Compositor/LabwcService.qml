@@ -133,4 +133,12 @@ Item {
   function queryDisplayScales() {
     Logger.w("LabwcService", "Display scale queries not supported via ToplevelManager");
   }
+
+  function getFocusedScreen() {
+    const activeToplevel = ToplevelManager.activeToplevel;
+    if (activeToplevel && activeToplevel.screens && activeToplevel.screens.length > 0) {
+      return activeToplevel.screens[0];
+    }
+    return null;
+  }
 }

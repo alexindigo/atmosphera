@@ -385,4 +385,17 @@ Item {
       Logger.e("SwayService", "Failed to cycle keyboard layout:", e);
     }
   }
+
+  function getFocusedScreen() {
+    const i3Mon = I3.focusedMonitor;
+    if (i3Mon) {
+      const monitorName = i3Mon.name;
+      for (let i = 0; i < Quickshell.screens.length; i++) {
+        if (Quickshell.screens[i].name === monitorName) {
+          return Quickshell.screens[i];
+        }
+      }
+    }
+    return null;
+  }
 }
