@@ -306,7 +306,17 @@ Item {
         };
 
         if (showApplications) {
-          workspaceData.windows = CompositorService.getWindowsForWorkspace(ws.id);
+          // Explicitly serialize window objects - Qt 6.9 and older lose nested object
+          // properties when stored in ListModel, causing window.id to become undefined
+          var rawWindows = CompositorService.getWindowsForWorkspace(ws.id);
+          workspaceData.windows = rawWindows.map(w => ({
+                                                         id: w.id,
+                                                         address: w.address ?? "",
+                                                         appId: w.appId,
+                                                         title: w.title,
+                                                         isFocused: w.isFocused,
+                                                         workspaceId: w.workspaceId
+                                                       }));
         }
 
         targetList.push(workspaceData);
