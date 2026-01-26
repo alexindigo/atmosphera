@@ -443,11 +443,12 @@ Item {
       return [];
 
     // Set category mode based on whether there's a query
-    showsCategories = !query || query.trim() === "";
+    const isSearching = !!(query && query.trim() !== "");
+    showsCategories = !isSearching;
 
-    // Filter by category first
+    // Filter by category only when NOT searching
     let filteredEntries = entries;
-    if (selectedCategory && selectedCategory !== "all") {
+    if (!isSearching && selectedCategory && selectedCategory !== "all") {
       filteredEntries = entries.filter(app => appMatchesCategory(app, selectedCategory));
     }
 
