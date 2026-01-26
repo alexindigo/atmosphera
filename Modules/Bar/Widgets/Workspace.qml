@@ -1010,6 +1010,7 @@ Item {
 
               onPressed: mouse => {
                            const win = (typeof modelData !== "undefined") ? modelData : model;
+                           console.log("DEBUG win:", JSON.stringify(win), "modelData:", typeof modelData, "model:", typeof model);
                            if (!win)
                            return;
                            if (mouse.button === Qt.LeftButton) {
