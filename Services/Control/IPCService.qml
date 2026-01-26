@@ -549,6 +549,14 @@ Item {
 
   IpcHandler {
     target: "media"
+
+    function toggle() {
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var panel = PanelService.getPanel("mediaPlayerPanel", screen);
+                                              panel?.toggle(null, "MediaMini");
+                                            });
+    }
+
     function playPause() {
       MediaService.playPause();
     }
