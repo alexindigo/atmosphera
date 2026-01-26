@@ -13,17 +13,33 @@ Singleton {
 
   // Cached device lookups (computed once, used by all properties)
   readonly property var _laptopBattery: {
+    if (!UPower.devices)
+    return UPower.displayDevice;
+
+    var devices = UPower.devices.values || [];
+
+    // 1. Explicitly look for BAT0 first
+    for (var i = 0; i < devices.length; i++) {
+      var d = devices[i];
+      if (d && (d.nativePath === "BAT0" || d.objectPath === "/org/freedesktop/UPower/devices/battery_BAT0")) {
+        return d;
+      }
+    }
+
+    // 2. Fallback to displayDevice if it's a laptop battery
     if (UPower.displayDevice && UPower.displayDevice.isLaptopBattery) {
       return UPower.displayDevice;
     }
-    var devices = UPower.devices ? (UPower.devices.values || []) : [];
-    for (var i = 0; i < devices.length; i++) {
-      var device = devices[i];
+
+    // 3. Any other device marked as a laptop battery
+    for (var j = 0; j < devices.length; j++) {
+      var device = devices[j];
       if (device && device.type === UPowerDeviceType.Battery && device.isLaptopBattery) {
         return device;
       }
     }
-    return null;
+
+    return UPower.displayDevice;
   }
 
   readonly property var _bluetoothBattery: {
@@ -58,7 +74,7 @@ Singleton {
 
   function findUPowerDevice(nativePath) {
     if (!nativePath || nativePath === "") {
-      return UPower.displayDevice;
+      return _laptopBattery;
     }
 
     if (!UPower.devices) {
@@ -241,7 +257,7 @@ Singleton {
     if (percent >= 0) {
       return "battery";
     }
-    return "battery-off" // New fallback icon clearly represent if nothing is true here.
+    return "battery-off"; // New fallback icon clearly represent if nothing is true here.
   }
 
   function hasAnyBattery() {
