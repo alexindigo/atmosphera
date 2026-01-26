@@ -25,6 +25,10 @@ ColumnLayout {
   property real valueGroupedBorderOpacity: widgetData.groupedBorderOpacity !== undefined ? widgetData.groupedBorderOpacity : widgetMetadata.groupedBorderOpacity
   property bool valueEnableScrollWheel: widgetData.enableScrollWheel !== undefined ? widgetData.enableScrollWheel : widgetMetadata.enableScrollWheel
   property real valueIconScale: widgetData.iconScale !== undefined ? widgetData.iconScale : widgetMetadata.iconScale
+  property string valueFocusedColor: widgetData.focusedColor !== undefined ? widgetData.focusedColor : widgetMetadata.focusedColor
+  property string valueOccupiedColor: widgetData.occupiedColor !== undefined ? widgetData.occupiedColor : widgetMetadata.occupiedColor
+  property string valueEmptyColor: widgetData.emptyColor !== undefined ? widgetData.emptyColor : widgetMetadata.emptyColor
+  property bool valueShowBadge: widgetData.showBadge !== undefined ? widgetData.showBadge : widgetMetadata.showBadge
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
@@ -39,6 +43,10 @@ ColumnLayout {
     settings.groupedBorderOpacity = valueGroupedBorderOpacity;
     settings.enableScrollWheel = valueEnableScrollWheel;
     settings.iconScale = valueIconScale;
+    settings.focusedColor = valueFocusedColor;
+    settings.occupiedColor = valueOccupiedColor;
+    settings.emptyColor = valueEmptyColor;
+    settings.showBadge = valueShowBadge;
     return settings;
   }
 
@@ -119,6 +127,14 @@ ColumnLayout {
   }
 
   NToggle {
+    label: I18n.tr("bar.workspace.show-badge-label")
+    description: I18n.tr("bar.workspace.show-badge-description")
+    checked: valueShowBadge
+    onToggled: checked => valueShowBadge = checked
+    visible: valueShowApplications
+  }
+
+  NToggle {
     label: I18n.tr("bar.tray.colorize-icons-label")
     description: I18n.tr("bar.active-window.colorize-icons-description")
     checked: valueColorizeIcons
@@ -159,6 +175,92 @@ ColumnLayout {
     value: valueIconScale
     onMoved: value => valueIconScale = value
     text: Math.round(valueIconScale * 100) + "%"
-    visible: valueShowApplications
   }
+
+  NDivider {
+    Layout.fillWidth: true
+  }
+
+  NComboBox {
+    id: focusedColorCombo
+    label: I18n.tr("bar.workspace.focused-color-label")
+    description: I18n.tr("bar.workspace.focused-color-description")
+    model: [
+      {
+        "key": "primary",
+        "name": I18n.tr("common.primary")
+      },
+      {
+        "key": "secondary",
+        "name": I18n.tr("common.secondary")
+      },
+      {
+        "key": "tertiary",
+        "name": I18n.tr("common.tertiary")
+      },
+      {
+        "key": "onSurface",
+        "name": I18n.tr("common.on-surface")
+      }
+    ]
+    currentKey: valueFocusedColor
+    onSelected: key => valueFocusedColor = key
+    minimumWidth: 200
+  }
+
+  NComboBox {
+    id: occupiedColorCombo
+    label: I18n.tr("bar.workspace.occupied-color-label")
+    description: I18n.tr("bar.workspace.occupied-color-description")
+    model: [
+      {
+        "key": "primary",
+        "name": I18n.tr("common.primary")
+      },
+      {
+        "key": "secondary",
+        "name": I18n.tr("common.secondary")
+      },
+      {
+        "key": "tertiary",
+        "name": I18n.tr("common.tertiary")
+      },
+      {
+        "key": "onSurface",
+        "name": I18n.tr("common.on-surface")
+      }
+    ]
+    currentKey: valueOccupiedColor
+    onSelected: key => valueOccupiedColor = key
+    minimumWidth: 200
+  }
+
+  NComboBox {
+    id: emptyColorCombo
+    label: I18n.tr("bar.workspace.empty-color-label")
+    description: I18n.tr("bar.workspace.empty-color-description")
+    model: [
+      {
+        "key": "primary",
+        "name": I18n.tr("common.primary")
+      },
+      {
+        "key": "secondary",
+        "name": I18n.tr("common.secondary")
+      },
+      {
+        "key": "tertiary",
+        "name": I18n.tr("common.tertiary")
+      },
+      {
+        "key": "onSurface",
+        "name": I18n.tr("common.on-surface")
+      }
+    ]
+    currentKey: valueEmptyColor
+    onSelected: key => valueEmptyColor = key
+    minimumWidth: 200
+  }
+
+
 }

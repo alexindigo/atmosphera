@@ -169,11 +169,11 @@
       "show-artist-first-label": "Vis artist fyrst",
       "show-progress-ring-description": "Viser rund sporgangsvisar.",
       "show-progress-ring-label": "Vis rund sporgangsvisar",
-      "show-visualizer-description": "Viser audiovisualiserar når musikk spelar av.",
+      "show-visualizer-description": "Viser ljodvisualiserar når musikk spelar av.",
       "show-visualizer-label": "Vis visualiserar",
       "use-fixed-width-description": "Når dette er på, brukar miniprogrammet maksimum breidde heile tida, heller enn å måta seg til innhald dynamisk.",
       "use-fixed-width-label": "Bruk fast breidde",
-      "visualizer-type-description": "Vel kva slags audiovisualiserer du vil sjå.",
+      "visualizer-type-description": "Vel kva slags ljodvisualiserer du vil sjå.",
       "visualizer-type-label": "Visualiserartype"
     },
     "notification-history": {
@@ -254,8 +254,12 @@
     "workspace": {
       "character-count-description": "Kor mange teikn som skal visast frå arbeidsromnamn (1 - 10).",
       "character-count-label": "Teikntal",
+      "empty-color-description": "Set bakgrunnsfargen for tomme Workspaces.",
+      "empty-color-label": "Farge for tomt arbeidsområde",
       "enable-scrollwheel-description": "Byter mellom arbeidsrom med rullehjulet på musa.",
       "enable-scrollwheel-label": "Rull for å byta arbeidsrom",
+      "focused-color-description": "Set bakgrunnsfargen for det fokuserte Workspace.",
+      "focused-color-label": "Fokusert arbeidsområde-farge",
       "follow-focused-screen-description": "Viser arbeidsrom frå den aktive skjermen, heller enn skjermen der panelet finn seg.",
       "follow-focused-screen-label": "Fylg aktiv skjerm",
       "grouped-border-opacity-description": "Fastset kor ugjennomsynlege grensene på arbeidsromrammene er.",
@@ -264,8 +268,12 @@
       "hide-unoccupied-label": "Gøym utan vindaugo",
       "label-mode-description": "Vel korleis etikettar for arbeidsrom skal visast.",
       "label-mode-label": "Etikettmodus",
+      "occupied-color-description": "Set bakgrunnsfargen for opptekne Workspaces.",
+      "occupied-color-label": "Farge for oppteke arbeidsområde",
       "show-applications-description": "Viser applikasjonsikon innanfor kvart arbeidsrom.",
       "show-applications-label": "Vis applikasjonar",
+      "show-badge-description": "Vis arbeidsområdenummer-merket i gruppert modus.",
+      "show-badge-label": "Vis arbeidsområde-merke",
       "show-labels-only-when-occupied-description": "Viser etiketter for arbeidsrom berre når dei har vindaugo.",
       "show-labels-only-when-occupied-label": "Vis etikettar berre med vindaugo",
       "unfocused-icons-opacity-description": "Fastset kor ugjennomsynlege ufokuserte applikasjonsikon er.",
@@ -416,6 +424,7 @@
     "not-found": "Ikkje funne",
     "notifications": "Varsel",
     "official": "Offisiell",
+    "on-surface": "På overflata",
     "output": "Utdata",
     "pair": "Par",
     "paired": "Para",
@@ -428,6 +437,7 @@
     "polling": "Avlesing",
     "position": "Posisjon",
     "previous": "Førre",
+    "primary": "Primær",
     "random": "Tilfelleleg",
     "reboot": "Start å nyo",
     "refresh": "Lasta inn å nyo",
@@ -440,6 +450,7 @@
     "scanning": "Leitar...",
     "screen-corners": "Skjermhyrne",
     "search": "Søk",
+    "secondary": "Sekundær",
     "security": "Trygging",
     "select": "Vel",
     "shortcuts": "Beinvegar",
@@ -451,6 +462,7 @@
     "stop": "Stogg",
     "suspend": "Set i lett dvale",
     "templates": "Malar",
+    "tertiary": "Tertiær",
     "test": "Test",
     "thresholds": "Tersklar",
     "title": "Tittel",
@@ -529,15 +541,171 @@
       "calculator-description": "Kalkulator — reknar ut matematiske uttrykk",
       "calculator-enter-expression": "Skriv inn eit matematisk uttrykk",
       "calculator-press-enter-to-copy": "Trykk Enter for å kopiera utfallet",
-      "clipboard": "Utklippstavlehistorikk",
-      "clipboard-clear-description": "Tøm heile utklippstavlehistorikken",
-      "clipboard-clear-description-full": "Slett alt frå utklippstavlehistorikken",
-      "clipboard-clear-history": "Tøm utklipsstavlehistorikk",
+      "clipboard": "Utklippsbok",
+      "clipboard-clear-description": "Tøm heile utklippsboka",
+      "clipboard-clear-description-full": "Slett alt frå utklippsboka",
+      "clipboard-clear-history": "Tøm utklippsboka",
       "clipboard-delete": "Slett oppføring på utklippstavla",
-      "clipboard-history-disabled": "Utklippstavlehistorikk avslegen"
+      "clipboard-history-disabled": "Utklippsboka avslegen",
+      "clipboard-history-disabled-description": "Slå på utklippsboka i innstillingane eller installer cliphist",
+      "clipboard-loading": "Lastar inn utklippsbok...",
+      "clipboard-search-description": "Leita i utklippsboka",
+      "command-description": "Køyr skalkommandoar",
+      "emoji": "Emojiveljar",
+      "emoji-loading": "Lastar inn emojiar...",
+      "emoji-loading-description": "Vent litt",
+      "emoji-no-recent": "Ingen nylege emojiar enno",
+      "emoji-search-description": "Leita i og kopiera emojiar"
+    }
+  },
+  "lock-screen": {
+    "authenticating": "Autentiserer...",
+    "password": "Skriv passordet ditt...",
+    "restart": "Start å nyo",
+    "shut-down": "Slå av"
+  },
+  "notifications": {
+    "panel": {
+      "click-to-expand": "Klikk for å utvida",
+      "description": "Varsla dine kjem opp her når dei kjem inn.",
+      "no-notifications": "Ingen varsel"
+    },
+    "range": {
+      "earlier": "Tidlegare",
+      "today": "I dag",
+      "yesterday": "I går"
+    },
+    "time": {
+      "diff-d": "For 1 dag sidan",
+      "diff-dd": "For {diff} dagar sidan",
+      "diff-h": "For 1 time sidan",
+      "diff-hh": "For {diff} timar sidan",
+      "diff-m": "For 1 minutt sidan",
+      "diff-mm": "For {diff} minutt sidan",
+      "now": "no"
+    }
+  },
+  "options": {
+    "bar": {
+      "density-comfortable": "Høveleg",
+      "density-compact": "Tett",
+      "density-default": "Standard",
+      "density-mini": "Ørliten",
+      "density-spacious": "Romsleg"
+    },
+    "control-center": {
+      "quick-settings-style-classic": "Klassisk",
+      "quick-settings-style-modern": "Moderne"
+    },
+    "frame-rates-fps": "{fps} FPS",
+    "scrolling-modes": {
+      "always": "Alltid rull",
+      "hover": "Rull ved sviv",
+      "never": "Aldri rull"
+    },
+    "session-menu-grid-layout": {
+      "grid": "Rutenett",
+      "single-row": "Einskild rad"
+    },
+    "settings-panel-mode": {
+      "attached": "Panel knytt til lina",
+      "centered": "Panel i midten",
+      "window": "Utskilt vindauga"
+    },
+    "visualizer-types": {
+      "linear": "Lineær",
+      "mirrored": "Spegla",
+      "wave": "Bylgja"
+    },
+    "visualizer-visibility": {
+      "with-background": "Einast med bakgrunn"
+    },
+    "workspace-labels": {
+      "index": "Register",
+      "index-and-name": "Register og namn",
+      "name": "Namn"
     }
   },
   "panels": {
+    "about": {
+      "changelog": "Sjå endringar",
+      "contributors-desc": "Takk og ære til den {count} <b>framifrå</b> medverkaren vår!",
+      "contributors-description-plural": "Takk og ære til alle dei {count} <b>framifrå</b> medverkarane våre!",
+      "copy-info": "Kopier info",
+      "info-copied": "Info kopiert til utklippstavla",
+      "noctalia-desc": "Eit lettfram og minimalistisk skrivebordsskal skapa med omhug for Wayland, bygt med Quickshell.",
+      "noctalia-git-commit": "Git commit:",
+      "noctalia-installed-version": "Installert versjon:",
+      "noctalia-latest-version": "Nyaste versjon:",
+      "noctalia-title": "Noctaliaskal",
+      "privacy-policy": "Personvernfråsegn",
+      "support": "Støtt oss",
+      "system-cpu": "Prosessor:",
+      "system-disk": "Disk:",
+      "system-gpu": "Skjermkort:",
+      "system-host": "Vert:",
+      "system-install-hint": "Installer fastfetch for å sjå systemopplysningar",
+      "system-kernel": "Kjerne:",
+      "system-loading": "Lastar inn systemopplysningar...",
+      "system-memory": "Minne:",
+      "system-monitor": "Skjerm:",
+      "system-not-installed": "fasfetch er ikkje installert",
+      "system-os": "OS:",
+      "system-packages": "Pakkar:",
+      "system-product": "Vare:",
+      "system-title": "Systemopplysningar",
+      "system-uptime": "Driftstid:",
+      "system-wm": "WM:",
+      "telemetry-data-copied": "Telemetri kopiert til utklippstavla",
+      "telemetry-desc": "Hjelp oss gjera Noctalia betre ved å dela anonyme systemopplysningar (skjermoppløysing, kompositor, Linux-utgåve). Sende ein gong med maskinoppstart, inga sporing, data sletta automatisk etter 30 dagar.",
+      "telemetry-enabled": "Send anonyme systemopplysningar",
+      "telemetry-show-data": "Sjå data",
+      "telemetry-title": "Personvern",
+      "title": "Om",
+      "up-to-date": "Du er oppdatert!",
+      "update-available": "Oppdatering tilgjengeleg",
+      "view-commit": "Sjå commit på GitHub"
+    },
+    "audio": {
+      "devices-desc": "Set opp tilgjengeleg ljodinn- og ljoduteiningar.",
+      "devices-input-device-description": "Vel ljodinneininga du vil setja opp.",
+      "devices-input-device-label": "Inneining",
+      "devices-output-device-description": "Vel ljoduteininga du vil setja opp.",
+      "devices-output-device-label": "Uteining",
+      "devices-title": "Ljodeiningar",
+      "external-mixer-description": "Skriv inn kommandoen eller applikasjonsbana som køyrer når du slår på funksjonen for den eksterne ljodmiksaren.",
+      "external-mixer-label": "Kommando for ekstern ljodmiksar",
+      "external-mixer-placeholder": "pwvucontrol || pavucontrol",
+      "media-desc": "Set mediaapplikasjonane du likar best og dei du vil ignorera.",
+      "media-excluded-player-description": "Skriv inn lykelord for avspelarar som systemet skal ignorera. Kvart lykel ord skal vera på ei ny line.",
+      "media-excluded-player-label": "Borttekne avspelar",
+      "media-excluded-player-placeholder": "skriv substring og klikk på +",
+      "media-frame-rate-description": "Høgre frekvens er jamnare men krev fleire ressursar.",
+      "media-frame-rate-label": "Biletfrekvens",
+      "media-primary-player-description": "Skriv lykelord for å kjenna att avspelaren du brukar mest.",
+      "media-primary-player-label": "Hovudspelar",
+      "media-primary-player-placeholder": "t.d. spotify, vlc, mpv",
+      "media-scrolling-speed-description": "Tida det tek for tittelen å blada frå start til ende, i sekund.",
+      "media-scrolling-speed-label": "Bladefart",
+      "media-scrolling-title-description": "Slå på varig blading for lange mediatitlar.",
+      "media-scrolling-title-label": "Bladande tittel",
+      "media-title": "Mediaavspelarar",
+      "on-middle-clicked-description": "Kommando som køyr når knappen er midtklikka.",
+      "panel-applications-empty": "Ingen applikasjonar spelar av ljod no",
+      "title": "Ljod",
+      "visualizer-type-description": "Vel visualiseringstypen når ein spelar av media.",
+      "visualizer-type-label": "Visualiseringstype",
+      "volumes-desc": "Endrar kontrollane for ljodstyrke og ljodnivå",
+      "volumes-input-volume-description": "Mikrofon inn-nivå",
+      "volumes-mute-input-description": "Demp standard ljodinneining (mikrofon).",
+      "volumes-mute-input-label": "Demp ljodinndata",
+      "volumes-mute-output-description": "Demp hovudljoduteininga på systemet",
+      "volumes-mute-output-label": "Demp ljodutdata",
+      "volumes-output-volume-description": "Ljodstyrke på heile systemet"
+    },
+    "launcher": {
+      "clipboard-desc": "Sjå og styra utklippsboka di frå programveljaren."
+    },
     "lock-screen": {
       "auto-start-auth-description": "t.d. startar automatisk fingeravtrykksautentisering utan å krevje eit tastetrykk eller eit knappetrykk.",
       "auto-start-auth-label": "Autostart autentisering"
