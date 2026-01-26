@@ -148,7 +148,10 @@ Item {
 
     screen: root.screen
     oppositeDirection: BarService.getPillDirection(root)
-    icon: testMode ? BatteryService.getIcon(testPercent, testCharging, testPluggedIn, true) : BatteryService.getIcon(percent, isCharging, isPluggedIn, isReady)
+    icon: {
+        var iconName = testMode ? BatteryService.getIcon(testPercent, testCharging, testPluggedIn, true) : BatteryService.getIcon(percent, isCharging, isPluggedIn, isReady);
+        return iconName === "battery-charging" ? "battery-charging-2" : iconName;
+    }
     text: (isReady || testMode) ? Math.round(percent) : "-"
     suffix: "%"
     autoHide: false
