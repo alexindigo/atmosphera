@@ -37,7 +37,13 @@ SmartPanel {
     readonly property string deviceNativePath: getBatteryDevicePath()
     readonly property var selectedBattery: BatteryService.findUPowerDevice(deviceNativePath)
     readonly property var selectedBluetoothDevice: deviceNativePath ? BatteryService.findBluetoothDevice(deviceNativePath) : null
-    readonly property var selectedDevice: selectedBluetoothDevice || selectedBattery
+    readonly property var selectedDevice: {
+      var dev = selectedBluetoothDevice || selectedBattery;
+      if (BatteryService.isDevicePresent(dev))
+        return dev;
+
+      return allDevices.length > 0 ? allDevices[0] : null;
+    }
 
     // Check if selected device is actually present/connected
     readonly property bool isDevicePresent: BatteryService.isDevicePresent(selectedDevice)
@@ -96,20 +102,21 @@ SmartPanel {
     readonly property var otherDevices: allDevices.filter(d => BatteryService.isBluetoothDevice(d))
 
     readonly property string timeText: {
-      if (!isReady || !isDevicePresent)
+      if (!isReady || !isDevicePresent) {
         return I18n.tr("battery.no-battery-detected");
+      }
       if (isPluggedIn) {
         return I18n.tr("battery.plugged-in");
       }
-      if (selectedBattery) {
-        if (selectedBattery.timeToFull > 0) {
+      if (selectedDevice) {
+        if (selectedDevice.timeToFull > 0) {
           return I18n.tr("battery.time-until-full", {
-                           "time": Time.formatVagueHumanReadableDuration(selectedBattery.timeToFull)
+                           "time": Time.formatVagueHumanReadableDuration(selectedDevice.timeToFull)
                          });
         }
-        if (selectedBattery.timeToEmpty > 0) {
+        if (selectedDevice.timeToEmpty > 0) {
           return I18n.tr("battery.time-left", {
-                           "time": Time.formatVagueHumanReadableDuration(selectedBattery.timeToEmpty)
+                           "time": Time.formatVagueHumanReadableDuration(selectedDevice.timeToEmpty)
                          });
         }
       }
