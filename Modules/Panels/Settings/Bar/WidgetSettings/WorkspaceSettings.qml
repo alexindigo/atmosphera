@@ -261,6 +261,4 @@ ColumnLayout {
     onSelected: key => valueEmptyColor = key
     minimumWidth: 200
   }
-
-
 }
