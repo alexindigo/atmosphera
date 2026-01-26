@@ -305,6 +305,10 @@ Item {
           isOccupied: ws.isOccupied
         };
 
+        if (ws.handle !== null && ws.handle !== undefined) {
+          workspaceData.handle = ws.handle;
+        }
+
         if (showApplications) {
           // Explicitly serialize window objects - Qt 6.9 and older lose nested object
           // properties when stored in ListModel, causing window.id to become undefined

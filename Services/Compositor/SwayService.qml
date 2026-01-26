@@ -23,6 +23,12 @@ Item {
   // I3-specific properties
   property bool initialized: false
 
+  // Cache for window-to-workspace mapping
+  property var windowWorkspaceMap: ({})
+  
+  // Track window usage counts per workspace to handle duplicates
+  property var windowUsageCountsPerWorkspace: ({})
+
   // Debounce timer for updates
   Timer {
     id: updateTimer
@@ -40,7 +46,7 @@ Item {
       I3.dispatch('(["input"])');
       Qt.callLater(() => {
                      safeUpdateWorkspaces();
-                     safeUpdateWindows();
+                     queryWindowWorkspaces();
                      queryDisplayScales();
                      queryKeyboardLayout();
                    });
@@ -48,6 +54,122 @@ Item {
       Logger.i("SwayService", "Service started");
     } catch (e) {
       Logger.e("SwayService", "Failed to initialize:", e);
+    }
+  }
+
+  // Query window-to-workspace mapping via IPC
+  function queryWindowWorkspaces() {
+    swayTreeProcess.running = true;
+  }
+
+  // Sway tree process for getting window workspace information
+  Process {
+    id: swayTreeProcess
+    running: false
+    command: ["swaymsg", "-t", "get_tree", "-r"]
+
+    property string accumulatedOutput: ""
+
+    stdout: SplitParser {
+      onRead: function (line) {
+        swayTreeProcess.accumulatedOutput += line;
+      }
+    }
+
+    onExited: function (exitCode) {
+      if (exitCode !== 0 || !accumulatedOutput) {
+        Logger.e("SwayService", "Failed to query tree, exit code:", exitCode);
+        accumulatedOutput = "";
+        return;
+      }
+
+      try {
+        const treeData = JSON.parse(accumulatedOutput);
+        const newMap = {};
+        const workspaceWindows = {}; // Track windows per workspace
+        
+        // Recursively find all windows and their workspaces
+        function traverseTree(node, workspaceNum) {
+          if (!node) return;
+          
+          // If this is a workspace node, update the workspace number
+          if (node.type === "workspace" && node.num !== undefined) {
+            workspaceNum = node.num;
+            if (!workspaceWindows[workspaceNum]) {
+              workspaceWindows[workspaceNum] = [];
+            }
+          }
+          
+          // If this is a container with app_id or class (i.e., a window)
+          if (node.type === "con" && (node.app_id || node.window_properties)) {
+            const appId = node.app_id || 
+                         (node.window_properties ? node.window_properties.class : null);
+            const title = node.name || "";
+            const id = node.id;
+            
+            if (appId && workspaceNum !== undefined && workspaceNum >= 0) {
+              // Store window info for this workspace
+              workspaceWindows[workspaceNum].push({
+                appId: appId,
+                title: title,
+                id: id
+              });
+            }
+          }
+          
+          // Traverse children
+          if (node.nodes && node.nodes.length > 0) {
+            for (const child of node.nodes) {
+              traverseTree(child, workspaceNum);
+            }
+          }
+          
+          // Traverse floating nodes
+          if (node.floating_nodes && node.floating_nodes.length > 0) {
+            for (const child of node.floating_nodes) {
+              traverseTree(child, workspaceNum);
+            }
+          }
+        }
+        
+        traverseTree(treeData, -1);
+        
+        // Now build the map with workspace-specific keys
+        for (const wsNum in workspaceWindows) {
+          const windows = workspaceWindows[wsNum];
+          const appTitleCounts = {}; // Count occurrences of each appId:title in this workspace
+          
+          for (const win of windows) {
+            const baseKey = `${win.appId}:${win.title}`;
+            
+            // Track how many times we've seen this appId:title combo in this workspace
+            if (!appTitleCounts[baseKey]) {
+              appTitleCounts[baseKey] = 0;
+            }
+            const occurrence = appTitleCounts[baseKey];
+            appTitleCounts[baseKey]++;
+            
+            // Create unique key with workspace and occurrence index
+            const uniqueKey = `ws${wsNum}:${baseKey}[${occurrence}]`;
+            newMap[uniqueKey] = parseInt(wsNum);
+            
+            // Also store by ID if available (most reliable)
+            if (win.id) {
+              newMap[`id:${win.id}`] = parseInt(wsNum);
+            }
+          }
+        }
+        
+        windowWorkspaceMap = newMap;
+        
+        // Update windows with new workspace information
+        Qt.callLater(safeUpdateWindows);
+        
+      } catch (e) {
+        Logger.e("SwayService", "Failed to parse tree:", e);
+      } finally {
+        accumulatedOutput = "";
+      }
     }
   }
 
@@ -167,9 +289,8 @@ Item {
 
   // Safe update wrapper
   function safeUpdate() {
-    safeUpdateWindows();
+    queryWindowWorkspaces();
     safeUpdateWorkspaces();
-    windowListChanged();
   }
 
   // Safe workspace update
@@ -210,10 +331,14 @@ Item {
   function safeUpdateWindows() {
     try {
       const windowsList = [];
+      
+      // Reset usage counts per workspace before processing windows
+      windowUsageCountsPerWorkspace = {};
 
       if (!ToplevelManager.toplevels || !ToplevelManager.toplevels.values) {
         windows = [];
         focusedWindowIndex = -1;
+        windowListChanged();
         return;
       }
 
@@ -240,6 +365,8 @@ Item {
         focusedWindowIndex = newFocusedIndex;
         activeWindowChanged();
       }
+      
+      windowListChanged();
     } catch (e) {
       Logger.e("SwayService", "Error updating windows:", e);
     }
@@ -256,10 +383,49 @@ Item {
       const title = safeGetProperty(toplevel, "title", "");
       const focused = toplevel.activated === true;
 
+      // Try to find workspace ID from our cached map by trying all workspaces
+      let workspaceId = -1;
+      let foundWorkspaceNum = -1;
+      
+      // Build base key for this window
+      const baseKey = `${appId}:${title}`;
+      
+      // Try to find this window in any workspace
+      for (var i = 0; i < workspaces.count; i++) {
+        const ws = workspaces.get(i);
+        if (!ws) continue;
+        
+        const wsNum = ws.idx;
+        
+        // Initialize usage count for this workspace if needed
+        if (!windowUsageCountsPerWorkspace[wsNum]) {
+          windowUsageCountsPerWorkspace[wsNum] = {};
+        }
+        
+        // Get current usage count for this appId:title in this workspace
+        if (!windowUsageCountsPerWorkspace[wsNum][baseKey]) {
+          windowUsageCountsPerWorkspace[wsNum][baseKey] = 0;
+        }
+        
+        const occurrence = windowUsageCountsPerWorkspace[wsNum][baseKey];
+        const uniqueKey = `ws${wsNum}:${baseKey}[${occurrence}]`;
+        
+        // Check if this key exists in our map
+        if (windowWorkspaceMap[uniqueKey] !== undefined) {
+          foundWorkspaceNum = windowWorkspaceMap[uniqueKey];
+          workspaceId = ws.id;
+          
+          // Increment the usage count for this workspace
+          windowUsageCountsPerWorkspace[wsNum][baseKey]++;
+          break;
+        }
+      }
+
       return {
         "title": title,
         "appId": appId,
         "isFocused": focused,
+        "workspaceId": workspaceId,
         "handle": toplevel
       };
     } catch (e) {
@@ -341,6 +507,11 @@ Item {
 
       if (event.type == "get_inputs") {
         handleInputEvent(event.data);
+      }
+      
+      // Query window workspaces on relevant events
+      if (event.type === "window" || event.type === "workspace") {
+        Qt.callLater(queryWindowWorkspaces);
       }
     }
   }
