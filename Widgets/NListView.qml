@@ -19,6 +19,7 @@ Item {
       return false;
     return listView.contentHeight > listView.height;
   }
+  readonly property bool contentOverflows: listView.contentHeight > listView.height
 
   property bool showGradientMasks: true
   property color gradientColor: Color.mSurfaceVariant
@@ -134,8 +135,12 @@ Item {
         width: root.availableWidth
         height: root.gradientHeight
         z: 1
-        visible: root.showGradientMasks && root.verticalScrollBarActive
-        opacity: listView.contentY <= 1 ? 0 : 1
+        visible: root.showGradientMasks && root.contentOverflows
+        opacity: {
+          if (listView.contentY <= 1) return 0;
+          if (listView.currentItem && listView.currentItem.y - listView.contentY < root.gradientHeight) return 0;
+          return 1;
+        }
         Behavior on opacity {
           NumberAnimation { duration: Style.animationFast; easing.type: Easing.InOutQuad }
         }
@@ -156,8 +161,12 @@ Item {
         width: root.availableWidth
         height: root.gradientHeight + 1
         z: 1
-        visible: root.showGradientMasks && root.verticalScrollBarActive
-        opacity: (listView.contentY + listView.height >= listView.contentHeight - 1) ? 0 : 1
+        visible: root.showGradientMasks && root.contentOverflows
+        opacity: {
+          if (listView.contentY + listView.height >= listView.contentHeight - 1) return 0;
+          if (listView.currentItem && listView.currentItem.y + listView.currentItem.height > listView.contentY + listView.height - root.gradientHeight) return 0;
+          return 1;
+        }
         Behavior on opacity {
           NumberAnimation { duration: Style.animationFast; easing.type: Easing.InOutQuad }
         }

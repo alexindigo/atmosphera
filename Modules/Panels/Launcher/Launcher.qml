@@ -877,8 +877,8 @@ SmartPanel {
 
     RowLayout {
       anchors.fill: parent
-      anchors.margins: Style.marginL // Apply overall margins here
-      spacing: Style.marginM // Apply spacing between elements here
+      anchors.margins: Style.marginL
+      spacing: Style.marginM
 
       // Left Pane
       ColumnLayout {
@@ -1002,6 +1002,7 @@ SmartPanel {
             horizontalPolicy: ScrollBar.AlwaysOff
             verticalPolicy: ScrollBar.AlwaysOff
             reserveScrollbarSpace: false
+            gradientColor: Color.mSurface
 
             width: parent.width
             height: parent.height
@@ -1341,6 +1342,7 @@ SmartPanel {
             horizontalPolicy: ScrollBar.AlwaysOff
             verticalPolicy: ScrollBar.AlwaysOff
             reserveScrollbarSpace: false
+            gradientColor: "transparent" //Color.mSurface
 
             width: parent.width
             height: parent.height

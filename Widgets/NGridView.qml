@@ -22,6 +22,7 @@ Item {
       return false;
     return gridView.contentHeight > gridView.height;
   }
+  readonly property bool contentOverflows: gridView.contentHeight > gridView.height
 
   // Gradient properties
   property bool showGradientMasks: true
@@ -163,7 +164,7 @@ Item {
         width: root.availableWidth
         height: root.gradientHeight
         z: 1
-        visible: root.showGradientMasks && root.verticalScrollBarActive
+        visible: root.showGradientMasks && root.contentOverflows
         opacity: gridView.contentY <= 1 ? 0 : 1
         Behavior on opacity {
           NumberAnimation { duration: Style.animationFast; easing.type: Easing.InOutQuad }
@@ -185,7 +186,7 @@ Item {
         width: root.availableWidth
         height: root.gradientHeight + 1
         z: 1
-        visible: root.showGradientMasks && root.verticalScrollBarActive
+        visible: root.showGradientMasks && root.contentOverflows
         opacity: (gridView.contentY + gridView.height >= gridView.contentHeight - 1) ? 0 : 1
         Behavior on opacity {
           NumberAnimation { duration: Style.animationFast; easing.type: Easing.InOutQuad }
