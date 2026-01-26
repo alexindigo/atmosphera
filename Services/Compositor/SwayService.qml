@@ -25,6 +25,9 @@ Item {
 
   // Cache for window-to-workspace mapping
   property var windowWorkspaceMap: ({})
+  
+  // Track window usage counts per workspace to handle duplicates
+  property var windowUsageCountsPerWorkspace: ({})
 
   // Debounce timer for updates
   Timer {
@@ -83,6 +86,7 @@ Item {
       try {
         const treeData = JSON.parse(accumulatedOutput);
         const newMap = {};
+        const workspaceWindows = {}; // Track windows per workspace
         
         // Recursively find all windows and their workspaces
         function traverseTree(node, workspaceNum) {
@@ -91,6 +95,9 @@ Item {
           // If this is a workspace node, update the workspace number
           if (node.type === "workspace" && node.num !== undefined) {
             workspaceNum = node.num;
+            if (!workspaceWindows[workspaceNum]) {
+              workspaceWindows[workspaceNum] = [];
+            }
           }
           
           // If this is a container with app_id or class (i.e., a window)
@@ -101,14 +108,12 @@ Item {
             const id = node.id;
             
             if (appId && workspaceNum !== undefined && workspaceNum >= 0) {
-              // Create a key based on app_id and title for matching
-              const key = `${appId}:${title}`;
-              newMap[key] = workspaceNum;
-              
-              // Also store by ID if available
-              if (id) {
-                newMap[`id:${id}`] = workspaceNum;
-              }
+              // Store window info for this workspace
+              workspaceWindows[workspaceNum].push({
+                appId: appId,
+                title: title,
+                id: id
+              });
             }
           }
           
@@ -128,6 +133,33 @@ Item {
         }
         
         traverseTree(treeData, -1);
+        
+        // Now build the map with workspace-specific keys
+        for (const wsNum in workspaceWindows) {
+          const windows = workspaceWindows[wsNum];
+          const appTitleCounts = {}; // Count occurrences of each appId:title in this workspace
+          
+          for (const win of windows) {
+            const baseKey = `${win.appId}:${win.title}`;
+            
+            // Track how many times we've seen this appId:title combo in this workspace
+            if (!appTitleCounts[baseKey]) {
+              appTitleCounts[baseKey] = 0;
+            }
+            const occurrence = appTitleCounts[baseKey];
+            appTitleCounts[baseKey]++;
+            
+            // Create unique key with workspace and occurrence index
+            const uniqueKey = `ws${wsNum}:${baseKey}[${occurrence}]`;
+            newMap[uniqueKey] = parseInt(wsNum);
+            
+            // Also store by ID if available (most reliable)
+            if (win.id) {
+              newMap[`id:${win.id}`] = parseInt(wsNum);
+            }
+          }
+        }
+        
         windowWorkspaceMap = newMap;
         
         // Update windows with new workspace information
@@ -299,6 +331,9 @@ Item {
   function safeUpdateWindows() {
     try {
       const windowsList = [];
+      
+      // Reset usage counts per workspace before processing windows
+      windowUsageCountsPerWorkspace = {};
 
       if (!ToplevelManager.toplevels || !ToplevelManager.toplevels.values) {
         windows = [];
@@ -348,20 +383,41 @@ Item {
       const title = safeGetProperty(toplevel, "title", "");
       const focused = toplevel.activated === true;
 
-      // Try to find workspace ID from our cached map
+      // Try to find workspace ID from our cached map by trying all workspaces
       let workspaceId = -1;
+      let foundWorkspaceNum = -1;
       
-      // Try matching by app_id:title
-      const key = `${appId}:${title}`;
-      if (windowWorkspaceMap[key] !== undefined) {
-        const workspaceNum = windowWorkspaceMap[key];
+      // Build base key for this window
+      const baseKey = `${appId}:${title}`;
+      
+      // Try to find this window in any workspace
+      for (var i = 0; i < workspaces.count; i++) {
+        const ws = workspaces.get(i);
+        if (!ws) continue;
         
-        for (var i = 0; i < workspaces.count; i++) {
-          const ws = workspaces.get(i);
-          if (ws && ws.idx === workspaceNum) {
-            workspaceId = ws.id;
-            break;
-          }
+        const wsNum = ws.idx;
+        
+        // Initialize usage count for this workspace if needed
+        if (!windowUsageCountsPerWorkspace[wsNum]) {
+          windowUsageCountsPerWorkspace[wsNum] = {};
+        }
+        
+        // Get current usage count for this appId:title in this workspace
+        if (!windowUsageCountsPerWorkspace[wsNum][baseKey]) {
+          windowUsageCountsPerWorkspace[wsNum][baseKey] = 0;
+        }
+        
+        const occurrence = windowUsageCountsPerWorkspace[wsNum][baseKey];
+        const uniqueKey = `ws${wsNum}:${baseKey}[${occurrence}]`;
+        
+        // Check if this key exists in our map
+        if (windowWorkspaceMap[uniqueKey] !== undefined) {
+          foundWorkspaceNum = windowWorkspaceMap[uniqueKey];
+          workspaceId = ws.id;
+          
+          // Increment the usage count for this workspace
+          windowUsageCountsPerWorkspace[wsNum][baseKey]++;
+          break;
         }
       }
 
