@@ -287,7 +287,8 @@ Item {
           isFocused: ws.isFocused,
           isActive: ws.isActive,
           isUrgent: ws.isUrgent,
-          isOccupied: ws.isOccupied
+          isOccupied: ws.isOccupied,
+          handle: ws.handle
         };
 
         if (showApplications) {
