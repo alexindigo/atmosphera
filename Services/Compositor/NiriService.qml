@@ -486,4 +486,12 @@ Item {
       Logger.e("NiriService", "Failed to cycle keyboard layout:", e);
     }
   }
+
+  function getFocusedScreen() {
+    const activeToplevel = ToplevelManager.activeToplevel;
+    if (activeToplevel && activeToplevel.screens && activeToplevel.screens.length > 0) {
+      return activeToplevel.screens[0];
+    }
+    return null;
+  }
 }

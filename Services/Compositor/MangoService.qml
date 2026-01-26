@@ -677,4 +677,12 @@ Item {
   function cycleKeyboardLayout() {
     Logger.w("MangoService", "Keyboard layout cycling not supported");
   }
+
+  function getFocusedScreen() {
+    const activeToplevel = ToplevelManager.activeToplevel;
+    if (activeToplevel && activeToplevel.screens && activeToplevel.screens.length > 0) {
+      return activeToplevel.screens[0];
+    }
+    return null;
+  }
 }
