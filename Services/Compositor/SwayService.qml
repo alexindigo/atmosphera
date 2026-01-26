@@ -23,9 +23,6 @@ Item {
   // I3-specific properties
   property bool initialized: false
 
-  // Cache for window-to-workspace mapping
-  property var windowWorkspaceMap: ({})
-
   // Debounce timer for updates
   Timer {
     id: updateTimer
@@ -43,7 +40,7 @@ Item {
       I3.dispatch('(["input"])');
       Qt.callLater(() => {
                      safeUpdateWorkspaces();
-                     queryWindowWorkspaces();
+                     safeUpdateWindows();
                      queryDisplayScales();
                      queryKeyboardLayout();
                    });
@@ -51,93 +48,6 @@ Item {
       Logger.i("SwayService", "Service started");
     } catch (e) {
       Logger.e("SwayService", "Failed to initialize:", e);
-    }
-  }
-
-  // Query window-to-workspace mapping via IPC
-  function queryWindowWorkspaces() {
-    swayTreeProcess.running = true;
-  }
-
-  // Sway tree process for getting window workspace information
-  Process {
-    id: swayTreeProcess
-    running: false
-    command: ["swaymsg", "-t", "get_tree", "-r"]
-
-    property string accumulatedOutput: ""
-
-    stdout: SplitParser {
-      onRead: function (line) {
-        swayTreeProcess.accumulatedOutput += line;
-      }
-    }
-
-    onExited: function (exitCode) {
-      if (exitCode !== 0 || !accumulatedOutput) {
-        Logger.e("SwayService", "Failed to query tree, exit code:", exitCode);
-        accumulatedOutput = "";
-        return;
-      }
-
-      try {
-        const treeData = JSON.parse(accumulatedOutput);
-        const newMap = {};
-        
-        // Recursively find all windows and their workspaces
-        function traverseTree(node, workspaceNum) {
-          if (!node) return;
-          
-          // If this is a workspace node, update the workspace number
-          if (node.type === "workspace" && node.num !== undefined) {
-            workspaceNum = node.num;
-          }
-          
-          // If this is a container with app_id or class (i.e., a window)
-          if (node.type === "con" && (node.app_id || node.window_properties)) {
-            const appId = node.app_id || 
-                         (node.window_properties ? node.window_properties.class : null);
-            const title = node.name || "";
-            const id = node.id;
-            
-            if (appId && workspaceNum !== undefined && workspaceNum >= 0) {
-              // Create a key based on app_id and title for matching
-              const key = `${appId}:${title}`;
-              newMap[key] = workspaceNum;
-              
-              // Also store by ID if available
-              if (id) {
-                newMap[`id:${id}`] = workspaceNum;
-              }
-            }
-          }
-          
-          // Traverse children
-          if (node.nodes && node.nodes.length > 0) {
-            for (const child of node.nodes) {
-              traverseTree(child, workspaceNum);
-            }
-          }
-          
-          // Traverse floating nodes
-          if (node.floating_nodes && node.floating_nodes.length > 0) {
-            for (const child of node.floating_nodes) {
-              traverseTree(child, workspaceNum);
-            }
-          }
-        }
-        
-        traverseTree(treeData, -1);
-        windowWorkspaceMap = newMap;
-        
-        // Update windows with new workspace information
-        Qt.callLater(safeUpdateWindows);
-        
-      } catch (e) {
-        Logger.e("SwayService", "Failed to parse tree:", e);
-      } finally {
-        accumulatedOutput = "";
-      }
     }
   }
 
@@ -257,8 +167,9 @@ Item {
 
   // Safe update wrapper
   function safeUpdate() {
-    queryWindowWorkspaces();
+    safeUpdateWindows();
     safeUpdateWorkspaces();
+    windowListChanged();
   }
 
   // Safe workspace update
@@ -303,7 +214,6 @@ Item {
       if (!ToplevelManager.toplevels || !ToplevelManager.toplevels.values) {
         windows = [];
         focusedWindowIndex = -1;
-        windowListChanged();
         return;
       }
 
@@ -330,8 +240,6 @@ Item {
         focusedWindowIndex = newFocusedIndex;
         activeWindowChanged();
       }
-      
-      windowListChanged();
     } catch (e) {
       Logger.e("SwayService", "Error updating windows:", e);
     }
@@ -348,28 +256,10 @@ Item {
       const title = safeGetProperty(toplevel, "title", "");
       const focused = toplevel.activated === true;
 
-      // Try to find workspace ID from our cached map
-      let workspaceId = -1;
-      
-      // Try matching by app_id:title
-      const key = `${appId}:${title}`;
-      if (windowWorkspaceMap[key] !== undefined) {
-        const workspaceNum = windowWorkspaceMap[key];
-        
-        for (var i = 0; i < workspaces.count; i++) {
-          const ws = workspaces.get(i);
-          if (ws && ws.idx === workspaceNum) {
-            workspaceId = ws.id;
-            break;
-          }
-        }
-      }
-
       return {
         "title": title,
         "appId": appId,
         "isFocused": focused,
-        "workspaceId": workspaceId,
         "handle": toplevel
       };
     } catch (e) {
@@ -451,11 +341,6 @@ Item {
 
       if (event.type == "get_inputs") {
         handleInputEvent(event.data);
-      }
-      
-      // Query window workspaces on relevant events
-      if (event.type === "window" || event.type === "workspace") {
-        Qt.callLater(queryWindowWorkspaces);
       }
     }
   }
