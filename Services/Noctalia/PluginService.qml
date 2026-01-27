@@ -279,7 +279,7 @@ Singleton {
             root.availablePlugins.push(plugin);
           }
 
-          Logger.i("PluginService", "Loaded", registry.plugins.length, "plugins from", source.name);
+          Logger.i("PluginService", `Parsed ${registry.plugins.length} plugins manifest from '${source.name}'`);
 
           // Remove from active fetches BEFORE emitting signal so handler sees correct count
           delete activeFetches[source.url];
@@ -1287,7 +1287,7 @@ Singleton {
     } else if (pendingCount > 0) {
       Logger.i("PluginService", pendingCount, "plugin update(s) pending (require newer Noctalia)");
     } else {
-      Logger.i("PluginService", "All plugins are up to date");
+      Logger.i("PluginService", "All installed plugins are up to date");
     }
 
     shouldCheckUpdatesAfterFetch = false;
