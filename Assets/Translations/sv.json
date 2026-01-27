@@ -5,11 +5,11 @@
 "connect-vpn": "Anslut till {name}",
 "cycle-visualizer": "Cykelvisualiserare",
 "disable-bluetooth": "Inaktivera Bluetooth",
-"disable-dnd": "Inaktivera Stör ej",
+"disable-dnd": "Inaktivera Stör inte",
 "disable-wifi": "Inaktivera Wi-Fi",
 "disconnect-vpn": "Koppla från {name}",
 "enable-bluetooth": "Aktivera Bluetooth",
-"enable-dnd": "Aktivera Stör ej",
+"enable-dnd": "Aktivera Stör inte",
 "enable-wifi": "Aktivera Wi-Fi",
 "launcher-settings": "Startprograminställningar",
 "lower-to-bottom": "Sänk till botten",
@@ -60,7 +60,7 @@
 "show-power-profile-label": "Visa strömprofilkontroller"
 },
 "clock": {
-"clock-display-description": "Anpassa klockans visning genom att lägga till symboler från listan nedan. För att använda 12-timmarsformatet måste du inkludera symbolen "AP"."
+"clock-display-description": "Anpassa klockans visning genom att lägga till symboler från listan nedan. För att använda 12-timmarsformatet måste du inkludera symbolen \"AP\".",
 "clock-display-label": "Klockvisning",
 "custom-font-description": "Välj ett anpassat teckensnitt för klockvisningen.",
 "custom-font-label": "Anpassat teckensnitt",
@@ -107,7 +107,7 @@
 "hide-mode-label": "Dölj läge",
 "hide-mode-max-transparent": "Maximalt expanderad men transparent",
 "icon-description": "Välj en ikon från biblioteket.",
-"ipc-identifier-description": "Unik identifierare för IPC-kommandon. Använd denna identifierare med "qs -c noctalia-shell ipc call cb [action] [identifier]" för att styra denna knapp via IPC.",
+"ipc-identifier-description": "Unik identifierare för IPC-kommandon. Använd denna identifierare med \"qs -c noctalia-shell ipc call cb [action] [identifier]\" för att styra denna knapp via IPC.",
 "ipc-identifier-label": "IPC-identifierare",
 "left-click-description": "Kommando som ska utföras när knappen vänsterklickas.",
 "left-click-label": "Vänsterklick",
@@ -189,7 +189,7 @@
 "search-placeholder": "Sök widget..."
 },
 "spacer": {
-"width-description": "Avståndsbredd i bildpunkter.
+"width-description": "Avståndsbredd i bildpunkter."
 },
 "system-monitor": {
 "compact-mode-description": "Visa statistik som minibar-diagram istället för textvärden. Förhindrar layoutförskjutning. ",
@@ -244,7 +244,7 @@
 "colorize-icons-label": "Färglägg ikoner",
 "drawer-enabled-description": " När funktionen är aktiverad visas fackikoner som inte är fästa i en låda.<br>När funktionen är inaktiverad visas alla fackikoner i rad.",
 "drawer-enabled-label": "Aktivera låda",
-"hide-passive-description": "När funktionen är aktiverad döljs fackikoner med statusen "Passiv"."
+"hide-passive-description": "När funktionen är aktiverad döljs fackikoner med statusen \"Passiv\".",
 "hide-passive-label": "Dölj passiva ikoner"
 },
 "volym": {
@@ -717,10 +717,9 @@
 "appearance-background-opacity-label": "Fältets bakgrundsopacitet",
 "appearance-capsule-opacity-description": "Ställ in opacitetsnivån för widgetbakgrunder när kapseln visas.",
 "appearance-capsule-opacity-label": "Kapselns opacitet",
-"appearance-density-description": "Justera stapelns avstånd för ett kompakt eller rymligt utseende."
-"appearance-density-label": "Stapeldensitet",
-"appearance-desc": "Anpassa stapelns utseende och position."
-"appearance-floating-description": "Visa stapeln som en flytande "piller"."
+"appearance-density-description": "Justera stapelns avstånd för ett kompakt eller rymligt utseende.",
+"appearance-desc": "Anpassa stapelns utseende och position.",
+"appearance-floating-description": "Visa stapeln som en flytande \"piller\".",
 "appearance-floating-label": "Flytande stapel",
 "appearance-frame-radius": "Inre radie",
 "appearance-frame-settings-description": "Justera ramens tjocklek och inre hörnradie",
@@ -732,7 +731,7 @@
 "appearance-margins-horizontal": "Horisontell",
 "appearance-margins-label": "Marginaler",
 "appearance-margins-vertical": "Vertikal",
-"appearance-outer-corners-description": "Visa utåtböjda hörn på fältet."
+"appearance-outer-corners-description": "Visa utåtböjda hörn på fältet.",
 "appearance-outer-corners-label": "Ytterhörn",
 "appearance-position-description": "Välj var fältet ska placeras på skärmen.",
 "appearance-position-label": "Fältets position",
@@ -829,7 +828,7 @@
 "shortcuts-custom-button-on-clicked-label": "Vänsterklick-kommando",
 "shortcuts-custom-button-on-middle-clicked-label": "Kommando vid mittklick",
 "shortcuts-custom-button-on-right-clicked-label": "Kommando vid högerklick",
-"shortcuts-custom-button-on-state-command-description": "Kommando som ska utföras för att kontrollera om knappen ska vara i läge "på". Returnerar 0 för på, icke-noll för av.",
+"shortcuts-custom-button-on-state-command-description": "Kommando som ska utföras för att kontrollera om knappen ska vara i läge \"på\". Returnerar 0 för på, icke-noll för av.",
 "shortcuts-custom-button-on-state-command-label": "Kommando för att kontrollera om knappen är på",
 "shortcuts-custom-button-on-state-icon-description": "Ikonen för knappen när den är på.",
 "shortcuts-custom-button-on-state-icon-label": "Ikon för på-läge",
@@ -1001,7 +1000,7 @@
 "info-parameters-label": "Tillgängliga parametrar",
 "noctalia-started-description": "Kommando som ska utföras när Noctalia har laddats klart.",
 "noctalia-started-label": "Noctalia startat",
-"noctalia-started-placeholder": "t.ex. notify-send "Noctalia laddat"",
+"noctalia-started-placeholder": "t.ex. notify-send \"Noctalia laddat\"",
 "performance-mode-disabled-description": "Kommando som ska utföras när Noctalia Performance Mode är inaktiverat.",
 "performance-mode-disabled-label": "Performance mode inaktiverat",
 "performance-mode-disabled-placeholder": "t.ex. notify-send \"Performance\" \"Mode inaktiverat\"",
@@ -1039,7 +1038,7 @@
 "execute-title": "Exekvering",
 "settings-annotation-tool-description": "Kommando som körs när du klickar på anteckningsknappen i klippbordshistoriken. Bilden kommer att skickas till detta kommando.",
 "settings-annotation-tool-label": "Anteckningsverktyg",
-"settings-annotation-tool-placeholder": "t.ex. "gradia", "satty -f -"",
+"settings-annotation-tool-placeholder": "t.ex. \"gradia\", \"satty -f -\"",
 "settings-auto-paste-description": "Klistra in det valda klippbordsinnehållet automatiskt. Kräver wtype. ",
 "settings-auto-paste-label": "Automatisk klistra in",
 "settings-clip-preview-description": "Visa en förhandsgranskning av klippbordets innehåll när du använder kommandot >clip.",
@@ -1048,7 +1047,7 @@
 "settings-clip-wrap-text-label": "Vik in text i urklipp",
 "settings-clipboard-history-description": "Öppna tidigare kopierade objekt från startprogrammet.",
 "settings-clipboard-history-label": "Aktivera klippbordshistorik",
-"settings-custom-launch-prefix-description": "Prefixkommandon med en anpassad startfunktion (t.ex. "runapp" för systemd-integration).",
+"settings-custom-launch-prefix-description": "Prefixkommandon med en anpassad startfunktion (t.ex. \"runapp\" för systemd-integration).",
 "settings-custom-launch-prefix-enabled-description": "Använd ett anpassat prefix för att starta applikationer istället för standardmetoden.",
 "settings-custom-launch-prefix-enabled-label": "Aktivera anpassat startprefix",
 "settings-custom-launch-prefix-label": "Anpassat startprefix",
@@ -1067,11 +1066,11 @@
 "settings-show-icon-background-label": "Visa ikonbakgrund" ,
 "settings-sort-by-usage-description": "När denna funktion är aktiverad visas de program som används oftast först i listan.",
 "settings-sort-by-usage-label": "Sortera efter mest använda",
-"settings-terminal-command-description": "Kommando för att starta en terminal. T.ex. "kitty -e" eller "gnome-terminal --"."
+"settings-terminal-command-description": "Kommando för att starta en terminal. T.ex. \"kitty -e\" eller \"gnome-terminal --\"."
 ,
  "settings-terminal-command-label": "Terminalkommando",
-"settings-use-app2unit-description": "Använder en alternativ startmetod för att bättre hantera app-processer och förhindra problem."
-"settings-use-app2unit-label": "Använd App2Unit för att starta applikationer"
+"settings-use-app2unit-description": "Använder en alternativ startmetod för att bättre hantera app-processer och förhindra problem.",
+"settings-use-app2unit-label": "Använd App2Unit för att starta applikationer",
 "title": "Startprogram"
 },
 "location": {
@@ -1120,7 +1119,7 @@
 "compact-lockscreen-label": "Kompakt låsskärm",
 "lock-on-suspend-description": "Lås skärmen automatiskt när systemet pausas.",
 "lock-on-suspend-label": "Lås vid paus",
-"show-hibernate-description": "Visa alternativet "viloläge" i strömkontrollerna.",
+"show-hibernate-description": "Visa alternativet \"viloläge\" i strömkontrollerna.",
 "show-hibernate-label": "Visa viloläge",
 "show-session-buttons-description": "Tillåt åtkomst till ströminställningar från låsskärmen. ",
 "show-session-buttons-label": "Strömkontroller",
@@ -1161,9 +1160,9 @@
 "settings-do-not-disturb-description": "Inaktivera alla popup-meddelanden när funktionen är aktiverad.",
 "settings-enabled-description": "Aktivera eller inaktivera meddelandedemonen, kräver omstart av Noctalia-skalet.",
 "settings-enabled-label": "Aktivera meddelanden",
-"settings-location-description": "Var meddelanden visas på skärmen."
-"sounds-desc": "Konfigurera ljud effekter och volym för meddelanden."
-"sounds-enabled-description": "Aktivera ljudeffekter för inkommande meddelanden."
+"settings-location-description": "Var meddelanden visas på skärmen.",
+"sounds-desc": "Konfigurera ljud effekter och volym för meddelanden.",
+"sounds-enabled-description": "Aktivera ljudeffekter för inkommande meddelanden.",
 "sounds-enabled-label": "Aktivera meddelandeljud",
 "sounds-excluded-apps-description": "Hoppa över att spela upp det konfigurerade meddelandeljudet för specifika applikationer som har egna inbyggda ljud.",
 "sounds-excluded-apps-label": "Uteslutna applikationer",
@@ -1172,16 +1171,16 @@
 "sounds-files-critical-label": "Ljud för kritisk brådskande händelse",
 "sounds-files-critical-select-title": "Välj ljudfil för kritisk brådskande händelse",
 "sounds-files-desc": "Konfigurera anpassade ljudfiler för olika nivåer av brådskande meddelanden.",
-"sounds-files-low-description": "Sökväg till ljudfilen som spelas upp för meddelanden med låg prioritet."
+"sounds-files-low-description": "Sökväg till ljudfilen som spelas upp för meddelanden med låg prioritet.",
 "sounds-files-low-label": "Ljud för låg prioritet",
 "sounds-files-low-select-title": "Välj ljudfil för låg prioritet",
-"sounds-files-normal-description": "Sökväg till ljudfilen som spelas upp för meddelanden med normal prioritet."
+"sounds-files-normal-description": "Sökväg till ljudfilen som spelas upp för meddelanden med normal prioritet.",
 "sounds-files-normal-label": "Ljud för normal prioritet",
 "sounds-files-normal-select-title": "Välj ljudfil för normal prioritet",
 "sounds-files-placeholder": "Ange sökväg till ljudfil",
 "sounds-files-select-file": "Välj ljudfil",
 "sounds-files-title": "Ljudfiler",
-"sounds-files-unified-description": "Sökväg till ljudfilen som spelas upp för aviseringar."
+"sounds-files-unified-description": "Sökväg till ljudfilen som spelas upp för aviseringar.",
 "sounds-files-unified-label": "Meddelandeljud",
 "sounds-files-unified-select-title": "Välj meddelandeljudfil",
 "sounds-separate-description": "Använd olika ljudfiler för meddelanden med låg, normal och kritisk prioritet.",
@@ -1420,10 +1419,10 @@
 "settings-show-hidden-files-tooltip-hide": "Dölj dolda filer",
 "settings-show-hidden-files-tooltip-show": "Visa dolda filer",
 "settings-title": "Bakgrundsinställningar",
-“settings-view-mode-description": “Välj hur bakgrundsbilder ska visas från din katalog.",
-“settings-view-mode-label": “Visningsläge",
-“view-mode-browse": “Bläddra i kataloger",
-“view-mode-cycle-tooltip": “Visningsläge: {läge} (klicka för att ändra)",
+"settings-view-mode-description": "Välj hur bakgrundsbilder ska visas från din katalog.",
+"settings-view-mode-label": "Visningsläge",
+"view-mode-browse": "Bläddra i kataloger",
+"view-mode-cycle-tooltip": "Visningsläge: {läge} (klicka för att ändra)",
 "view-mode-recursive": "Platta underkataloger",
 "view-mode-single": "Rotkatalog"
 }
@@ -1433,7 +1432,7 @@
 "enter-command": "Ange kommando att utföra (app eller anpassat skript)" ,
 "enter-ipc-identifier": "Ange unik identifierare för IPC-kommandon",
 "enter-path": "Ange sökväg...",
-"enter-text-to-collapse": "t.ex. "ingenting spelas upp". Använd /regex/ för mönster.",
+"enter-text-to-collapse": "t.ex. \"ingenting spelas upp\". Använd /regex/ för mönster.",
 "enter-tooltip": "Ange verktygstips",
 "enter-width-pixels": "Ange bredd i pixlar",
 "search": "Sök... ",
@@ -1546,12 +1545,12 @@
 "clipboard": {
 "long-text": "Lång text",
 "unavailable": "Klippbordshistorik otillgänglig",
-"unavailable-desc": "Applikationen "cliphist" är inte installerad. Installera den för att kunna använda klippbordshistorikfunktionerna"
+"unavailable-desc": "Applikationen \"cliphist\" är inte installerad. Installera den för att kunna använda klippbordshistorikfunktionerna"
 },
 "do-not-disturb": {
-"disabled": "Stör ej inaktiverat",
+"disabled": "Stör inte inaktiverat",
 "disabled-desc": "Visar alla aviseringar",
-"enabled": "Stör ej aktiverat",
+"enabled": "Stör inte aktiverat",
 "enabled-desc": "Du hittar dessa aviseringar i din historik"
 },
 "donation-opened": "Donationssidan öppnad i din webbläsare",
@@ -1583,8 +1582,8 @@
 "title": "Bearbetning av mallar misslyckades"
 },
 "vpn": {
-"connected": "Ansluten till " {name}"",
-"disconnected": "Frånkopplad från "{name}""
+"connected": "Ansluten till \"{name}\"",
+"disconnected": "Frånkopplad från \"{name}\""
 },
 "wallpaper-colors": {
 "disabled": "Bakgrundsfärger inaktiverade",
@@ -1592,10 +1591,10 @@
 "label": "Bakgrundsfärger"
 },
 "wifi": {
-"connected": "Ansluten till "{ssid}"",
+"connected": "Ansluten till \"{ssid}\"",
 "connection-failed": "Anslutningen misslyckades",
 "connection-timeout": "Anslutningstidsgräns",
-"disconnected": "Kopplad från "{ssid}"",
+"disconnected": "Kopplad från \"{ssid}\"",
 "incorrect-password": "Felaktigt lösenord",
 "network-not-found": "Nätverk hittades inte"
 }
@@ -1609,7 +1608,7 @@
 "collapse": "Dölj sidofält",
 "copy-address": "Kopiera adress",
 "delete-notification": "Ta bort avisering",
-"do-not-disturb-enabled": "Stör ej",
+"do-not-disturb-enabled": "Stör inte",
 "expand": "Expandera sidofält",
 "forget-network": "Glöm nätverk",
 "grid-view": "Rutnätsvy",
