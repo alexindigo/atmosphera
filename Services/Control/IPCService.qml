@@ -672,5 +672,53 @@ Item {
                                               BarService.openPluginSettings(screen, manifest);
                                             });
     }
+
+    function openPanel(key: string) {
+      var manifest = PluginRegistry.getPluginManifest(key);
+      if (!manifest) {
+        Logger.w("IPC", "Plugin not found:", key);
+        return;
+      }
+      if (!manifest.entryPoints?.panel) {
+        Logger.w("IPC", "Plugin has no panel entry point:", key);
+        return;
+      }
+      root.screenDetector.withCurrentScreen(screen => {
+                                              PluginService.openPluginPanel(key, screen, null);
+                                            });
+    }
+
+    function closePanel(key: string) {
+      var manifest = PluginRegistry.getPluginManifest(key);
+      if (!manifest) {
+        Logger.w("IPC", "Plugin not found:", key);
+        return;
+      }
+      if (!manifest.entryPoints?.panel) {
+        Logger.w("IPC", "Plugin has no panel entry point:", key);
+        return;
+      }
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var api = PluginService.getPluginAPI(key);
+                                              if (api) {
+                                                api.closePanel(screen);
+                                              }
+                                            });
+    }
+
+    function togglePanel(key: string) {
+      var manifest = PluginRegistry.getPluginManifest(key);
+      if (!manifest) {
+        Logger.w("IPC", "Plugin not found:", key);
+        return;
+      }
+      if (!manifest.entryPoints?.panel) {
+        Logger.w("IPC", "Plugin has no panel entry point:", key);
+        return;
+      }
+      root.screenDetector.withCurrentScreen(screen => {
+                                              PluginService.togglePluginPanel(key, screen, null);
+                                            });
+    }
   }
 }
