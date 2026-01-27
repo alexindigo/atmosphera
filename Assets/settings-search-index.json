@@ -714,6 +714,24 @@
     "subTabLabel": "common.clipboard"
   },
   {
+    "labelKey": "panels.launcher.settings-clipboard-watch-text-label",
+    "descriptionKey": "panels.launcher.settings-clipboard-watch-text-description",
+    "widget": "NTextInput",
+    "tab": 8,
+    "tabLabel": "panels.launcher.title",
+    "subTab": 1,
+    "subTabLabel": "common.clipboard"
+  },
+  {
+    "labelKey": "panels.launcher.settings-clipboard-watch-image-label",
+    "descriptionKey": "panels.launcher.settings-clipboard-watch-image-description",
+    "widget": "NTextInput",
+    "tab": 8,
+    "tabLabel": "panels.launcher.title",
+    "subTab": 1,
+    "subTabLabel": "common.clipboard"
+  },
+  {
     "labelKey": "panels.launcher.settings-use-app2unit-label",
     "descriptionKey": "panels.launcher.settings-use-app2unit-description",
     "widget": "NToggle",
