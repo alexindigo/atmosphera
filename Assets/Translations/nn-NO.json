@@ -701,7 +701,13 @@
       "volumes-mute-input-label": "Demp ljodinndata",
       "volumes-mute-output-description": "Demp hovudljoduteininga på systemet",
       "volumes-mute-output-label": "Demp ljodutdata",
-      "volumes-output-volume-description": "Ljodstyrke på heile systemet"
+      "volumes-output-volume-description": "Ljodstyrke på heile systemet",
+      "volumes-step-size-description": "Endra kor mykje ljodstyrke endrar seg for kvart steg (rullehjul, beinknappar).",
+      "volumes-step-size-label": "Steg for ljodstyrke",
+      "volumes-volume-feedback-description": "Spel av svarljod når ein endrar på ljodstyrke",
+      "volumes-volume-feedback-label": "Spel av svarljod med ljodstyrke",
+      "volumes-volume-overdrive-description": "Tillèt at ljodstyrke kan gå over 100%. Ikkje alltid støtta av maskinvare.",
+      "volumes-volume-overdrive-label": "Tillat overdrift på ljodstyrke"
     },
     "launcher": {
       "clipboard-desc": "Sjå og styra utklippsboka di frå programveljaren."
