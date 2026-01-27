@@ -1111,6 +1111,8 @@
       "weather-show-in-calendar-label": "Időjárás megjelenítése a naptárban"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "Ha az fprintd (ujjlenyomat-hitelesítés) aktív, ez az opció lehetővé teszi, hogy továbbra is jelszóval jelentkezzen be ujjlenyomat helyett.",
+      "allow-password-with-fprintd-label": "Jelszavas bejelentkezés engedélyezése fprintd-vel",
       "auto-start-auth-description": "pl. automatikusan elindítja az ujjlenyomat-hitelesítést anélkül, hogy billentyűt kellene megnyomni vagy gombra kellene kattintani.",
       "auto-start-auth-label": "Automatikus hitelesítés indításkor",
       "compact-lockscreen-description": "Csak a bejelentkezési beviteli mező és a rendszervezérlők megjelenítése, elrejtve az időjárás és média widgeteket.",

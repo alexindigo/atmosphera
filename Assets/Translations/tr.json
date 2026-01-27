@@ -1111,6 +1111,8 @@
       "weather-show-in-calendar-label": "Takvimde hava durumunu göster"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "fprintd (parmak izi kimlik doğrulaması) etkin olduğunda, bu seçenek parmak izi yerine parolanızı kullanarak oturum açmanızı sağlar.",
+      "allow-password-with-fprintd-label": "fprintd ile parola girişine izin ver",
       "auto-start-auth-description": "örneğin, bir tuşa basmaya veya düğmeye tıklamaya gerek kalmadan parmak izi kimlik doğrulamasını otomatik olarak başlatır.",
       "auto-start-auth-label": "Otomatik kimlik doğrulama başlatma",
       "compact-lockscreen-description": "Sadece giriş girdisini ve sistem kontrollerini göster, hava durumu ve ortam araç takımlarını gizle.",

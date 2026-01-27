@@ -1111,6 +1111,8 @@
       "weather-show-in-calendar-label": "在行事曆中顯示天氣"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "當 fprintd（指紋認證）處於活動狀態時，此選項允許您使用密碼而非指紋登入。",
+      "allow-password-with-fprintd-label": "允許使用 fprintd 進行密碼登入",
       "auto-start-auth-description": "例如，自動啟動指紋驗證，無需按鍵或點擊按鈕。",
       "auto-start-auth-label": "自動啟動驗證",
       "compact-lockscreen-description": "只顯示登入欄位及電源控制, 隱藏天氣及媒體小工具",

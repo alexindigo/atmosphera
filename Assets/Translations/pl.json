@@ -1111,6 +1111,8 @@
       "weather-show-in-calendar-label": "Wyświetlaj pogodę w kalendarzu"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "Gdy fprintd (uwierzytelnianie odciskiem palca) jest aktywne, ta opcja pozwala nadal logować się za pomocą hasła zamiast odcisku palca.",
+      "allow-password-with-fprintd-label": "Zezwól na logowanie hasłem za pomocą fprintd",
       "auto-start-auth-description": "np. automatycznie uruchamia uwierzytelnianie odciskiem palca bez konieczności naciskania klawisza lub klikania przycisku.",
       "auto-start-auth-label": "Automatyczne uruchamianie uwierzytelniania",
       "compact-lockscreen-description": "Pokaż tylko logowanie i kontrolki systemowe, ukrywając widżety pogody i mediów.",

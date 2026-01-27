@@ -1111,6 +1111,8 @@
       "weather-show-in-calendar-label": "Wetter im Kalender anzeigen"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "Wenn fprintd (Fingerabdruck-Authentifizierung) aktiv ist, können Sie mit dieser Option weiterhin Ihr Passwort anstelle eines Fingerabdrucks verwenden.",
+      "allow-password-with-fprintd-label": "Passwort-Anmeldung mit fprintd erlauben",
       "auto-start-auth-description": "z. B. startet die Fingerabdruckauthentifizierung automatisch, ohne dass ein Tastendruck oder ein Klick erforderlich ist.",
       "auto-start-auth-label": "Automatische Authentifizierung beim Start",
       "compact-lockscreen-description": "Zeige nur die Login-Eingabe und Systemsteuerung, blende Wetter- und Medien-Widgets aus.",
