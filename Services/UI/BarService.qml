@@ -240,21 +240,21 @@ Singleton {
   function getPillDirection(widgetInstance) {
     try {
       if (widgetInstance.section === "left") {
-        return true;
-      } else if (widgetInstance.section === "right") {
         return false;
+      } else if (widgetInstance.section === "right") {
+        return true;
       } else {
         // middle section
         if (widgetInstance.sectionWidgetIndex < widgetInstance.sectionWidgetsCount / 2) {
-          return false;
-        } else {
           return true;
+        } else {
+          return false;
         }
       }
     } catch (e) {
       Logger.e(e);
     }
-    return false;
+    return true;
   }
 
   function getTooltipDirection(screenName) {
