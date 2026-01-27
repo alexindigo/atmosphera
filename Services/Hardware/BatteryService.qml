@@ -120,7 +120,7 @@ Singleton {
 
     // Check for DisplayDevice explicitly if requested via "DisplayDevice" or empty string
     if (nativePath === "DisplayDevice" && UPower.displayDevice) {
-       return UPower.displayDevice;
+      return UPower.displayDevice;
     }
 
     // Search in our cached list
@@ -224,51 +224,54 @@ Singleton {
     if (device) {
       if (device.timeToFull > 0) {
         return I18n.tr("battery.time-until-full", {
-                          "time": Time.formatVagueHumanReadableDuration(device.timeToFull)
-                        });
+                         "time": Time.formatVagueHumanReadableDuration(device.timeToFull)
+                       });
       }
       if (device.timeToEmpty > 0) {
         return I18n.tr("battery.time-left", {
-                          "time": Time.formatVagueHumanReadableDuration(device.timeToEmpty)
-                        });
+                         "time": Time.formatVagueHumanReadableDuration(device.timeToEmpty)
+                       });
       }
     }
     return I18n.tr("common.idle");
   }
 
   function getDeviceOptionsModel() {
-    var model = [{
-      "key": "",
-      "name": I18n.tr("bar.battery.device-default")
-    }];
+    var model = [
+          {
+            "key": "",
+            "name": I18n.tr("bar.battery.device-default")
+          }
+        ];
 
     for (var i = 0; i < devices.length; i++) {
       var d = devices[i];
       var name = "";
-      
+
       // Determine friendly name
       if (isBluetoothDevice(d)) {
-          name = d.name || "Bluetooth Device";
+        name = d.name || "Bluetooth Device";
       } else if (d === UPower.displayDevice) {
-          name = I18n.tr("common.battery-aggregate") || "Display Device";
+        name = I18n.tr("common.battery-aggregate") || "Display Device";
       } else {
-          name = d.model || I18n.tr("common.battery");
+        name = d.model || I18n.tr("common.battery");
       }
 
       // Determine ID/Path
       var key = isBluetoothDevice(d) ? d.address : d.nativePath;
-      if (!key && d === UPower.displayDevice) key = "DisplayDevice";
+      if (!key && d === UPower.displayDevice)
+        key = "DisplayDevice";
 
       // Format: "Model (ID)"
       var displayName = name;
       if (key && key !== "DisplayDevice") {
-          displayName = `${name} (${key})`;
+        displayName = `${name} (${key})`;
       }
 
       model.push({
-        "key": key || "",
-        "name": displayName
-      });
+                   "key": key || "",
+                   "name": displayName
+                 });
     }
     return model;
   }
@@ -311,7 +314,6 @@ Singleton {
       Qt.callLater(refreshHealth);
     }
   }
-
 
   function getIcon(percent, charging, pluggedIn, isReady) {
     if (!isReady) {
