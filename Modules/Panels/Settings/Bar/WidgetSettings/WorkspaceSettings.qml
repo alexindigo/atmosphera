@@ -12,6 +12,8 @@ ColumnLayout {
   property var widgetData: null
   property var widgetMetadata: null
 
+  signal settingsChanged(var settings)
+
   property string valueLabelMode: widgetData.labelMode !== undefined ? widgetData.labelMode : widgetMetadata.labelMode
   property bool valueHideUnoccupied: widgetData.hideUnoccupied !== undefined ? widgetData.hideUnoccupied : widgetMetadata.hideUnoccupied
   property bool valueFollowFocusedScreen: widgetData.followFocusedScreen !== undefined ? widgetData.followFocusedScreen : widgetMetadata.followFocusedScreen
@@ -75,7 +77,10 @@ ColumnLayout {
       }
     ]
     currentKey: widgetData.labelMode || widgetMetadata.labelMode
-    onSelected: key => valueLabelMode = key
+    onSelected: key => {
+                  valueLabelMode = key;
+                  settingsChanged(saveSettings());
+                }
     minimumWidth: 200
   }
 
@@ -85,7 +90,10 @@ ColumnLayout {
     from: 1
     to: 10
     value: valueCharacterCount
-    onValueChanged: valueCharacterCount = value
+    onValueChanged: {
+      valueCharacterCount = value;
+      settingsChanged(saveSettings());
+    }
     visible: valueLabelMode === "name"
   }
 
@@ -93,35 +101,50 @@ ColumnLayout {
     label: I18n.tr("bar.workspace.hide-unoccupied-label")
     description: I18n.tr("bar.workspace.hide-unoccupied-description")
     checked: valueHideUnoccupied
-    onToggled: checked => valueHideUnoccupied = checked
+    onToggled: checked => {
+                 valueHideUnoccupied = checked;
+                 settingsChanged(saveSettings());
+               }
   }
 
   NToggle {
     label: I18n.tr("bar.workspace.show-labels-only-when-occupied-label")
     description: I18n.tr("bar.workspace.show-labels-only-when-occupied-description")
     checked: valueShowLabelsOnlyWhenOccupied
-    onToggled: checked => valueShowLabelsOnlyWhenOccupied = checked
+    onToggled: checked => {
+                 valueShowLabelsOnlyWhenOccupied = checked;
+                 settingsChanged(saveSettings());
+               }
   }
 
   NToggle {
     label: I18n.tr("bar.workspace.follow-focused-screen-label")
     description: I18n.tr("bar.workspace.follow-focused-screen-description")
     checked: valueFollowFocusedScreen
-    onToggled: checked => valueFollowFocusedScreen = checked
+    onToggled: checked => {
+                 valueFollowFocusedScreen = checked;
+                 settingsChanged(saveSettings());
+               }
   }
 
   NToggle {
     label: I18n.tr("bar.workspace.enable-scrollwheel-label")
     description: I18n.tr("bar.workspace.enable-scrollwheel-description")
     checked: valueEnableScrollWheel
-    onToggled: checked => valueEnableScrollWheel = checked
+    onToggled: checked => {
+                 valueEnableScrollWheel = checked;
+                 settingsChanged(saveSettings());
+               }
   }
 
   NToggle {
     label: I18n.tr("bar.workspace.reverse-scrolling-label")
     description: I18n.tr("bar.workspace.reverse-scrolling-description")
     checked: valueReverseScroll
-    onToggled: checked => valueReverseScroll = checked
+    onToggled: checked => {
+                 valueReverseScroll = checked;
+                 settingsChanged(saveSettings());
+               }
     visible: valueEnableScrollWheel
   }
 
@@ -133,14 +156,20 @@ ColumnLayout {
     label: I18n.tr("bar.workspace.show-applications-label")
     description: I18n.tr("bar.workspace.show-applications-description")
     checked: valueShowApplications
-    onToggled: checked => valueShowApplications = checked
+    onToggled: checked => {
+                 valueShowApplications = checked;
+                 settingsChanged(saveSettings());
+               }
   }
 
   NToggle {
     label: I18n.tr("bar.workspace.show-badge-label")
     description: I18n.tr("bar.workspace.show-badge-description")
     checked: valueShowBadge
-    onToggled: checked => valueShowBadge = checked
+    onToggled: checked => {
+                 valueShowBadge = checked;
+                 settingsChanged(saveSettings());
+               }
     visible: valueShowApplications
   }
 
@@ -148,7 +177,10 @@ ColumnLayout {
     label: I18n.tr("bar.tray.colorize-icons-label")
     description: I18n.tr("bar.active-window.colorize-icons-description")
     checked: valueColorizeIcons
-    onToggled: checked => valueColorizeIcons = checked
+    onToggled: checked => {
+                 valueColorizeIcons = checked;
+                 settingsChanged(saveSettings());
+               }
     visible: valueShowApplications
   }
 
@@ -159,7 +191,10 @@ ColumnLayout {
     to: 1
     stepSize: 0.01
     value: valueUnfocusedIconsOpacity
-    onMoved: value => valueUnfocusedIconsOpacity = value
+    onMoved: value => {
+               valueUnfocusedIconsOpacity = value;
+               settingsChanged(saveSettings());
+             }
     text: Math.floor(valueUnfocusedIconsOpacity * 100) + "%"
     visible: valueShowApplications
   }
@@ -171,7 +206,10 @@ ColumnLayout {
     to: 1
     stepSize: 0.01
     value: valueGroupedBorderOpacity
-    onMoved: value => valueGroupedBorderOpacity = value
+    onMoved: value => {
+               valueGroupedBorderOpacity = value;
+               settingsChanged(saveSettings());
+             }
     text: Math.floor(valueGroupedBorderOpacity * 100) + "%"
     visible: valueShowApplications
   }
@@ -183,7 +221,10 @@ ColumnLayout {
     to: 1
     stepSize: 0.01
     value: valueIconScale
-    onMoved: value => valueIconScale = value
+    onMoved: value => {
+               valueIconScale = value;
+               settingsChanged(saveSettings());
+             }
     text: Math.round(valueIconScale * 100) + "%"
   }
 
@@ -214,7 +255,10 @@ ColumnLayout {
       }
     ]
     currentKey: valueFocusedColor
-    onSelected: key => valueFocusedColor = key
+    onSelected: key => {
+                  valueFocusedColor = key;
+                  settingsChanged(saveSettings());
+                }
     minimumWidth: 200
   }
 
@@ -241,7 +285,10 @@ ColumnLayout {
       }
     ]
     currentKey: valueOccupiedColor
-    onSelected: key => valueOccupiedColor = key
+    onSelected: key => {
+                  valueOccupiedColor = key;
+                  settingsChanged(saveSettings());
+                }
     minimumWidth: 200
   }
 
@@ -268,7 +315,10 @@ ColumnLayout {
       }
     ]
     currentKey: valueEmptyColor
-    onSelected: key => valueEmptyColor = key
+    onSelected: key => {
+                  valueEmptyColor = key;
+                  settingsChanged(saveSettings());
+                }
     minimumWidth: 200
   }
 }
