@@ -35,15 +35,9 @@ SmartPanel {
     }
 
     readonly property string deviceNativePath: getBatteryDevicePath()
-    readonly property var selectedBattery: BatteryService.findUPowerDevice(deviceNativePath)
-    readonly property var selectedBluetoothDevice: deviceNativePath ? BatteryService.findBluetoothDevice(deviceNativePath) : null
-    readonly property var selectedDevice: {
-      var dev = selectedBluetoothDevice || selectedBattery;
-      if (BatteryService.isDevicePresent(dev))
-        return dev;
 
-      return allDevices.length > 0 ? allDevices[0] : null;
-    }
+    // Use the centralized helper to find the specific device or fallback to primary
+    readonly property var selectedDevice: BatteryService.resolveDevice(deviceNativePath)
 
     // Check if selected device is actually present/connected
     readonly property bool isDevicePresent: BatteryService.isDevicePresent(selectedDevice)
@@ -52,76 +46,22 @@ SmartPanel {
     readonly property int percent: isReady ? Math.round(BatteryService.getPercentage(selectedDevice)) : -1
     readonly property bool isCharging: BatteryService.isCharging(selectedDevice)
     readonly property bool isPluggedIn: BatteryService.isPluggedIn(selectedDevice)
-    readonly property bool healthAvailable: (isReady && selectedBattery && selectedBattery.healthSupported) || (selectedBattery && BatteryService.healthAvailable)
-    readonly property int healthPercent: (isReady && selectedBattery && selectedBattery.healthSupported) ? Math.round(selectedBattery.healthPercentage) : BatteryService.healthPercent
+
+    readonly property bool isLaptopBattery: selectedDevice && !BatteryService.isBluetoothDevice(selectedDevice)
+
+    readonly property bool healthAvailable: (isReady && isLaptopBattery && selectedDevice.healthSupported) || (isLaptopBattery && BatteryService.healthAvailable)
+    readonly property int healthPercent: (isReady && isLaptopBattery && selectedDevice.healthSupported) ? Math.round(selectedDevice.healthPercentage) : BatteryService.healthPercent
 
     readonly property string deviceName: BatteryService.getDeviceName(selectedDevice)
     readonly property string panelTitle: deviceName ? `${I18n.tr("common.battery")} - ${deviceName}` : I18n.tr("common.battery")
 
-    readonly property var allDevices: {
-      var list = [];
-      var seenPaths = new Set();
+    // Use the centralized list of all devices
+    readonly property var allDevices: BatteryService.devices
 
-      // Add UPower batteries
-      if (UPower.devices) {
-        var upowerArray = UPower.devices.values || [];
-        for (var i = 0; i < upowerArray.length; i++) {
-          var d = upowerArray[i];
-          if (BatteryService.isDevicePresent(d) && d.type === UPowerDeviceType.Battery) {
-            if (d.nativePath && !seenPaths.has(d.nativePath)) {
-              list.push(d);
-              seenPaths.add(d.nativePath);
-            }
-          }
-        }
-      }
-      // Add Bluetooth batteries
-      if (BluetoothService.devices) {
-        var btArray = BluetoothService.devices.values || [];
-        for (var j = 0; j < btArray.length; j++) {
-          var btd = btArray[j];
-          if (BatteryService.isDevicePresent(btd) && btd.batteryAvailable) {
-            // Bluetooth devices use address as unique ID
-            if (btd.address && !seenPaths.has(btd.address)) {
-              list.push(btd);
-              seenPaths.add(btd.address);
-            }
-          }
-        }
-      }
+    readonly property var laptopBatteries: BatteryService.laptopBatteries
+    readonly property var otherDevices: BatteryService.externalBatteries
 
-      // Fallback: if no specific batteries found but display device is a battery, use it
-      if (list.length === 0 && UPower.displayDevice && UPower.displayDevice.type === UPowerDeviceType.Battery && BatteryService.isDevicePresent(UPower.displayDevice)) {
-        list.push(UPower.displayDevice);
-      }
-
-      return list;
-    }
-
-    readonly property var laptopBatteries: allDevices.filter(d => !BatteryService.isBluetoothDevice(d))
-    readonly property var otherDevices: allDevices.filter(d => BatteryService.isBluetoothDevice(d))
-
-    readonly property string timeText: {
-      if (!isReady || !isDevicePresent) {
-        return I18n.tr("battery.no-battery-detected");
-      }
-      if (isPluggedIn) {
-        return I18n.tr("battery.plugged-in");
-      }
-      if (selectedDevice) {
-        if (selectedDevice.timeToFull > 0) {
-          return I18n.tr("battery.time-until-full", {
-                           "time": Time.formatVagueHumanReadableDuration(selectedDevice.timeToFull)
-                         });
-        }
-        if (selectedDevice.timeToEmpty > 0) {
-          return I18n.tr("battery.time-left", {
-                           "time": Time.formatVagueHumanReadableDuration(selectedDevice.timeToEmpty)
-                         });
-        }
-      }
-      return I18n.tr("common.idle");
-    }
+    readonly property string timeText: BatteryService.getTimeRemainingText(selectedDevice)
     readonly property string iconName: BatteryService.getIcon(percent, isCharging, isPluggedIn, isReady)
 
     property var batteryWidgetInstance: BarService.lookupWidget("Battery", screen ? screen.name : null)
@@ -302,7 +242,7 @@ SmartPanel {
               ColumnLayout {
                 Layout.fillWidth: true
                 spacing: Style.marginS
-                visible: modelData.healthSupported || (modelData === selectedBattery && BatteryService.healthAvailable)
+                visible: modelData.healthSupported || (modelData === BatteryService.primaryDevice && BatteryService.healthAvailable)
                 RowLayout {
                   Layout.fillWidth: true
                   spacing: Style.marginS
@@ -333,14 +273,14 @@ SmartPanel {
                       height: parent.height
                       radius: parent.radius
                       width: {
-                        var h = modelData.healthSupported ? modelData.healthPercentage : (modelData === selectedBattery ? BatteryService.healthPercent : 0);
+                        var h = modelData.healthSupported ? modelData.healthPercentage : (modelData === BatteryService.primaryDevice ? BatteryService.healthPercent : 0);
                         if (h <= 0)
                           return 0;
                         var ratio = Math.max(0, Math.min(1, h / 100));
                         return parent.width * ratio;
                       }
                       color: {
-                        var h = modelData.healthSupported ? modelData.healthPercentage : (modelData === selectedBattery ? BatteryService.healthPercent : 0);
+                        var h = modelData.healthSupported ? modelData.healthPercentage : (modelData === BatteryService.primaryDevice ? BatteryService.healthPercent : 0);
                         return h >= 80 ? Color.mPrimary : (h >= 50 ? Color.mTertiary : Color.mError);
                       }
                     }
@@ -349,7 +289,7 @@ SmartPanel {
                     Layout.preferredWidth: 40 * Style.uiScaleRatio
                     horizontalAlignment: Text.AlignRight
 
-                    readonly property int h: modelData.healthSupported ? Math.round(modelData.healthPercentage) : (modelData === selectedBattery ? BatteryService.healthPercent : -1)
+                    readonly property int h: modelData.healthSupported ? Math.round(modelData.healthPercentage) : (modelData === BatteryService.primaryDevice ? BatteryService.healthPercent : -1)
                     text: h >= 0 ? `${h}%` : "--"
                     color: Color.mOnSurface
                     pointSize: Style.fontSizeS
