@@ -34,6 +34,14 @@ ColumnLayout {
   }
 
   NToggle {
+    label: I18n.tr("panels.lock-screen.allow-password-with-fprintd-label")
+    description: I18n.tr("panels.lock-screen.allow-password-with-fprintd-description")
+    checked: Settings.data.general.allowPasswordWithFprintd
+    onToggled: checked => Settings.data.general.allowPasswordWithFprintd = checked
+    defaultValue: Settings.getDefaultValue("general.allowPasswordWithFprintd")
+  }
+
+  NToggle {
     label: I18n.tr("panels.lock-screen.show-session-buttons-label")
     description: I18n.tr("panels.lock-screen.show-session-buttons-description")
     checked: Settings.data.general.showSessionButtonsOnLockScreen
