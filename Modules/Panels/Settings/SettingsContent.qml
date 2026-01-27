@@ -172,6 +172,35 @@ Item {
     highlightClearTimer.restart();
   }
 
+  // Navigate to a tab and optionally a subtab (simpler than navigateToResult, no highlighting)
+  function navigateToTab(tabId, subTabIndex) {
+    // Find the tab index by tab ID
+    let tabIndex = -1;
+    for (let i = 0; i < tabsModel.length; i++) {
+      if (tabsModel[i].id === tabId) {
+        tabIndex = i;
+        break;
+      }
+    }
+
+    if (tabIndex < 0)
+      return;
+
+    const hasSubTab = subTabIndex !== null && subTabIndex !== undefined && subTabIndex >= 0;
+    _pendingSubTab = hasSubTab ? subTabIndex : -1;
+
+    // Check if we're already on this tab
+    const alreadyOnTab = (currentTabIndex === tabIndex);
+
+    currentTabIndex = tabIndex;
+
+    if (alreadyOnTab && activeTabContent && hasSubTab) {
+      // Tab is already loaded, apply subtab directly
+      setSubTabIndex(subTabIndex);
+      _pendingSubTab = -1;
+    }
+  }
+
   function searchSelectNext() {
     if (searchResults.length === 0)
       return;

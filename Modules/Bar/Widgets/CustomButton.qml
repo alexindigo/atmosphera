@@ -464,6 +464,7 @@ Item {
       Logger.i("CustomButton", `Executing command: ${leftClickExec}`);
     } else if (!leftClickUpdateText) {
       BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+      //SettingsPanelService.openToTab(SettingsPanel.Tab.Bar, 1, screen);
     }
     if (!textStream && leftClickUpdateText) {
       runTextCommand();
