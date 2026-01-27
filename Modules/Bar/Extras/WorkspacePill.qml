@@ -26,12 +26,16 @@ Item {
   required property var getWorkspaceWidth
   required property var getWorkspaceHeight
 
-  // Fixed dimension (cross-axis)
+  // Fixed dimension (cross-axis) for visual pill
   readonly property real fixedDimension: Style.toOdd(capsuleHeight * baseDimensionRatio)
 
-  // Fixed dimension set directly, varying dimension handled by states
-  width: isVertical ? fixedDimension : getWorkspaceWidth(workspace, false)
-  height: isVertical ? getWorkspaceHeight(workspace, false) : fixedDimension
+  // Animated pill dimensions (for visual pill, not container)
+  property real pillWidth: isVertical ? fixedDimension : getWorkspaceWidth(workspace, false)
+  property real pillHeight: isVertical ? getWorkspaceHeight(workspace, false) : fixedDimension
+
+  // Container uses full capsuleHeight on cross-axis for larger click area
+  width: isVertical ? capsuleHeight : getWorkspaceWidth(workspace, false)
+  height: isVertical ? getWorkspaceHeight(workspace, false) : capsuleHeight
 
   states: [
     State {
@@ -39,8 +43,10 @@ Item {
       when: workspace.isActive
       PropertyChanges {
         target: pillContainer
-        width: isVertical ? fixedDimension : getWorkspaceWidth(workspace, true)
-        height: isVertical ? getWorkspaceHeight(workspace, true) : fixedDimension
+        width: isVertical ? capsuleHeight : getWorkspaceWidth(workspace, true)
+        height: isVertical ? getWorkspaceHeight(workspace, true) : capsuleHeight
+        pillWidth: isVertical ? fixedDimension : getWorkspaceWidth(workspace, true)
+        pillHeight: isVertical ? getWorkspaceHeight(workspace, true) : fixedDimension
       }
     }
   ]
@@ -50,7 +56,7 @@ Item {
       from: "inactive"
       to: "active"
       NumberAnimation {
-        property: isVertical ? "height" : "width"
+        properties: isVertical ? "height,pillHeight" : "width,pillWidth"
         duration: Style.animationNormal
         easing.type: Easing.OutBack
       }
@@ -59,7 +65,7 @@ Item {
       from: "active"
       to: "inactive"
       NumberAnimation {
-        property: isVertical ? "height" : "width"
+        properties: isVertical ? "height,pillHeight" : "width,pillWidth"
         duration: Style.animationNormal
         easing.type: Easing.OutBack
       }
@@ -68,7 +74,10 @@ Item {
 
   Rectangle {
     id: pill
-    anchors.fill: parent
+    width: pillContainer.pillWidth
+    height: pillContainer.pillHeight
+    x: Style.pixelAlignCenter(parent.width, width)
+    y: Style.pixelAlignCenter(parent.height, height)
     radius: Style.radiusM
     z: 0
 
@@ -84,10 +93,9 @@ Item {
 
     Loader {
       active: (labelMode !== "none") && (!showLabelsOnlyWhenOccupied || workspace.isOccupied || workspace.isFocused)
+      anchors.centerIn: parent
       sourceComponent: Component {
         NText {
-          x: Style.pixelAlignCenter(pill.width, width)
-          y: Style.pixelAlignCenter(pill.height, height)
           text: {
             if (workspace.name && workspace.name.length > 0) {
               if (labelMode === "name") {
@@ -105,8 +113,8 @@ Item {
             return workspace.idx.toString();
           }
           family: Settings.data.ui.fontFixed
-          // Size based on the fixed dimension (cross-axis)
-          pointSize: (isVertical ? pillContainer.width : pillContainer.height) * textRatio
+          // Size based on the fixed dimension (cross-axis) of the visual pill
+          pointSize: (isVertical ? pillContainer.pillWidth : pillContainer.pillHeight) * textRatio
           applyUiScale: false
           font.capitalization: Font.AllUppercase
           font.weight: Style.fontWeightBold
@@ -121,16 +129,6 @@ Item {
             return colorMap[emptyColor][1];
           }
         }
-      }
-    }
-
-    MouseArea {
-      id: pillMouseArea
-      anchors.fill: parent
-      cursorShape: Qt.PointingHandCursor
-      hoverEnabled: true
-      onClicked: {
-        CompositorService.switchToWorkspace(workspace);
       }
     }
 
@@ -174,13 +172,36 @@ Item {
       easing.type: Easing.OutBack
     }
   }
+  Behavior on pillWidth {
+    NumberAnimation {
+      duration: Style.animationNormal
+      easing.type: Easing.OutBack
+    }
+  }
+  Behavior on pillHeight {
+    NumberAnimation {
+      duration: Style.animationNormal
+      easing.type: Easing.OutBack
+    }
+  }
+
+  // Full-height click area
+  MouseArea {
+    id: pillMouseArea
+    anchors.fill: parent
+    cursorShape: Qt.PointingHandCursor
+    hoverEnabled: true
+    onClicked: {
+      CompositorService.switchToWorkspace(workspace);
+    }
+  }
 
   // Burst effect overlay for focused pill
   Rectangle {
     id: pillBurst
-    anchors.centerIn: pillContainer
-    width: pillContainer.width + 18 * masterProgress * scale
-    height: pillContainer.height + 18 * masterProgress * scale
+    anchors.centerIn: pill
+    width: pillContainer.pillWidth + 18 * masterProgress * scale
+    height: pillContainer.pillHeight + 18 * masterProgress * scale
     radius: width / 2
     color: "transparent"
     border.color: effectColor

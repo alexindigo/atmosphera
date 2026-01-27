@@ -61,7 +61,7 @@ Item {
     height: root.contentHeight
     anchors.centerIn: parent
 
-    radius: Style.radiusS
+    radius: Style.radiusL
     color: Style.capsuleColor
     border.color: Style.capsuleBorderColor
     border.width: Style.capsuleBorderWidth
