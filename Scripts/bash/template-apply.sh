@@ -71,6 +71,7 @@ EOF
 
 alacritty)
     CONFIG_FILE="$HOME/.config/alacritty/alacritty.toml"
+    NEW_THEME_PATH='~/.config/alacritty/themes/noctalia.toml'
 
     # Check if the config file exists, create it if it doesn't.
     if [ ! -f "$CONFIG_FILE" ]; then
@@ -84,15 +85,27 @@ import = [
 ]
 EOF
     else
-        # Check if theme is already imported (checking for the exact path)
-        if ! grep -q '"~/.config/alacritty/themes/noctalia.toml"' "$CONFIG_FILE"; then
-            # Check if [general] section exists
+        # Check if noctalia theme is already imported (any path variant)
+        if grep -q 'noctalia\.toml' "$CONFIG_FILE"; then
+            # Update old relative path to new absolute path if needed
+            if grep -q '"themes/noctalia.toml"' "$CONFIG_FILE"; then
+                sed -i 's|"themes/noctalia.toml"|"'"$NEW_THEME_PATH"'"|g' "$CONFIG_FILE"
+            fi
+            # Already has noctalia import with correct path, nothing to do
+        else
+            # No noctalia import found, add it
             if grep -q '^\[general\]' "$CONFIG_FILE"; then
-                # Add import line after [general] section header
-                sed -i '/^\[general\]/a import = ["~/.config/alacritty/themes/noctalia.toml"]' "$CONFIG_FILE"
+                # Check if import line already exists under [general]
+                if grep -q '^import\s*=' "$CONFIG_FILE"; then
+                    # Append to existing import array (before the closing bracket)
+                    sed -i '/^import\s*=\s*\[/,/\]/{/\]/s|]|    "'"$NEW_THEME_PATH"'",\n]|}' "$CONFIG_FILE"
+                else
+                    # Add import line after [general] section header
+                    sed -i '/^\[general\]/a import = ["'"$NEW_THEME_PATH"'"]' "$CONFIG_FILE"
+                fi
             else
                 # Create [general] section with import at the beginning of the file
-                sed -i '1i [general]\nimport = ["~/.config/alacritty/themes/noctalia.toml"]\n' "$CONFIG_FILE"
+                sed -i '1i [general]\nimport = ["'"$NEW_THEME_PATH"'"]\n' "$CONFIG_FILE"
             fi
         fi
     fi
