@@ -270,6 +270,8 @@
       "label-mode-label": "标签模式",
       "occupied-color-description": "设置已占用Workspace的背景颜色。",
       "occupied-color-label": "已占用工作区颜色",
+      "reverse-scrolling-description": "滚动时反转工作区切换方向。",
+      "reverse-scrolling-label": "反转滚动",
       "show-applications-description": "在每个工作区内显示应用程序图标。",
       "show-applications-label": "显示应用程序",
       "show-badge-description": "在分组模式下显示工作区编号徽章。",
@@ -1048,6 +1050,10 @@
       "settings-clip-wrap-text-label": "环绕剪贴板文本",
       "settings-clipboard-history-description": "从启动器访问之前复制的项目。",
       "settings-clipboard-history-label": "启用剪贴板历史记录",
+      "settings-clipboard-watch-image-description": "传递给 wl-paste 以进行图像更改的完整命令字符串。(需要重启)",
+      "settings-clipboard-watch-image-label": "图像监视命令",
+      "settings-clipboard-watch-text-description": "传递给 wl-paste 以进行文本更改的完整命令字符串。(需要重启)",
+      "settings-clipboard-watch-text-label": "文本监视命令",
       "settings-custom-launch-prefix-description": "使用自定义启动器前缀命令（例如，'runapp'用于systemd集成）。",
       "settings-custom-launch-prefix-enabled-description": "使用自定义前缀启动应用程序，而不是默认方法。",
       "settings-custom-launch-prefix-enabled-label": "启用自定义启动前缀",
@@ -1111,6 +1117,8 @@
       "weather-show-in-calendar-label": "在日历中显示天气"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "当 fprintd（指纹认证）处于活动状态时，此选项允许您使用密码而非指纹登录。",
+      "allow-password-with-fprintd-label": "允许使用 fprintd 进行密码登录",
       "auto-start-auth-description": "例如，自动启动指纹验证，无需按键或单击按钮。",
       "auto-start-auth-label": "自动启动身份验证",
       "compact-lockscreen-description": "仅显示登录输入和系统控制，隐藏天气和媒体小部件。",

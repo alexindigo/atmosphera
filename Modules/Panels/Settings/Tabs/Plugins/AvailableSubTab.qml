@@ -316,6 +316,20 @@ ColumnLayout {
               color: Color.mOnSurfaceVariant
             }
 
+            NText {
+              visible: !!modelData.lastUpdated
+              text: "•"
+              font.pointSize: Style.fontSizeXS
+              color: Color.mOnSurfaceVariant
+            }
+
+            NText {
+              visible: !!modelData.lastUpdated
+              text: modelData.lastUpdated ? Time.formatRelativeTime(new Date(modelData.lastUpdated)) : ""
+              font.pointSize: Style.fontSizeXS
+              color: Color.mOnSurfaceVariant
+            }
+
             Item {
               Layout.fillWidth: true
             }

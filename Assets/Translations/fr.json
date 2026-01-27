@@ -270,6 +270,8 @@
       "label-mode-label": "Mode d'étiquette",
       "occupied-color-description": "Définir la couleur d'arrière-plan pour les Workspaces occupés.",
       "occupied-color-label": "Couleur de l'espace de travail occupé",
+      "reverse-scrolling-description": "Inverser la direction du changement d'espace de travail lors du défilement.",
+      "reverse-scrolling-label": "Défilement inversé",
       "show-applications-description": "Afficher les icônes des applications dans chaque espace de travail.",
       "show-applications-label": "Afficher les applications",
       "show-badge-description": "Afficher le badge du numéro d'espace de travail en mode groupé.",
@@ -1048,6 +1050,10 @@
       "settings-clip-wrap-text-label": "Envelopper le texte du presse-papiers",
       "settings-clipboard-history-description": "Accédez aux éléments précédemment copiés depuis le lanceur.",
       "settings-clipboard-history-label": "Activer l'historique du presse-papiers",
+      "settings-clipboard-watch-image-description": "Chaîne de commande complète passée à wl-paste pour les changements d'image. (redémarrage requis)",
+      "settings-clipboard-watch-image-label": "Commande de Surveillance d'Images",
+      "settings-clipboard-watch-text-description": "Chaîne de commande complète passée à wl-paste pour les changements de texte. (nécessite un redémarrage)",
+      "settings-clipboard-watch-text-label": "Commande de surveillance de texte",
       "settings-custom-launch-prefix-description": "Préfixer les commandes avec un lanceur personnalisé (ex. 'runapp' pour l'intégration systemd).",
       "settings-custom-launch-prefix-enabled-description": "Utiliser un préfixe personnalisé pour lancer les applications au lieu de la méthode par défaut.",
       "settings-custom-launch-prefix-enabled-label": "Activer le préfixe de lancement personnalisé",
@@ -1111,6 +1117,8 @@
       "weather-show-in-calendar-label": "Afficher la météo dans le calendrier"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "Lorsque fprintd (authentification par empreinte digitale) est actif, cette option vous permet de vous connecter avec votre mot de passe au lieu d'une empreinte digitale.",
+      "allow-password-with-fprintd-label": "Autoriser la connexion par mot de passe avec fprintd",
       "auto-start-auth-description": "par exemple, démarre automatiquement l'authentification par empreinte digitale sans nécessiter de pression sur une touche ou un clic de bouton.",
       "auto-start-auth-label": "Authentification au démarrage automatique",
       "compact-lockscreen-description": "Afficher uniquement le champ de saisie de connexion et les commandes système, en masquant les widgets météo et multimédia.",

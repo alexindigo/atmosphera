@@ -714,6 +714,24 @@
     "subTabLabel": "common.clipboard"
   },
   {
+    "labelKey": "panels.launcher.settings-clipboard-watch-text-label",
+    "descriptionKey": "panels.launcher.settings-clipboard-watch-text-description",
+    "widget": "NTextInput",
+    "tab": 8,
+    "tabLabel": "panels.launcher.title",
+    "subTab": 1,
+    "subTabLabel": "common.clipboard"
+  },
+  {
+    "labelKey": "panels.launcher.settings-clipboard-watch-image-label",
+    "descriptionKey": "panels.launcher.settings-clipboard-watch-image-description",
+    "widget": "NTextInput",
+    "tab": 8,
+    "tabLabel": "panels.launcher.title",
+    "subTab": 1,
+    "subTabLabel": "common.clipboard"
+  },
+  {
     "labelKey": "panels.launcher.settings-use-app2unit-label",
     "descriptionKey": "panels.launcher.settings-use-app2unit-description",
     "widget": "NToggle",
@@ -840,6 +858,14 @@
   {
     "labelKey": "panels.lock-screen.auto-start-auth-label",
     "descriptionKey": "panels.lock-screen.auto-start-auth-description",
+    "widget": "NToggle",
+    "tab": 11,
+    "tabLabel": "panels.lock-screen.title",
+    "subTab": null
+  },
+  {
+    "labelKey": "panels.lock-screen.allow-password-with-fprintd-label",
+    "descriptionKey": "panels.lock-screen.allow-password-with-fprintd-description",
     "widget": "NToggle",
     "tab": 11,
     "tabLabel": "panels.lock-screen.title",

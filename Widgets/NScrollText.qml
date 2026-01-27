@@ -32,6 +32,7 @@ Item {
 
   property int scrollMode: NScrollText.ScrollMode.Never
   property bool alwaysMaxWidth: false
+  property bool forcedHover: false
   property int cursorShape: Qt.ArrowCursor
 
   // animation controls
@@ -62,6 +63,7 @@ Item {
     resetState();
   }
   onMaxWidthChanged: resetState()
+  onForcedHoverChanged: updateState()
 
   function resetState() {
     root.implicitWidth = Math.min(root.maxWidth, titleText.width);
@@ -110,7 +112,7 @@ Item {
         scrollTimer.restart();
       }
     } else if (scrollMode === NScrollText.ScrollMode.Hover) {
-      if (hoverArea.containsMouse)
+      if (hoverArea.containsMouse || forcedHover)
         state = NScrollText.ScrollState.Scrolling;
       else
         ensureReset();

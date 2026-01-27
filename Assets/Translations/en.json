@@ -270,6 +270,8 @@
       "label-mode-label": "Label mode",
       "occupied-color-description": "Set the background color for occupied workspaces.",
       "occupied-color-label": "Occupied workspace color",
+      "reverse-scrolling-description": "Reverse the direction of workspace switching when scrolling.",
+      "reverse-scrolling-label": "Reverse scrolling",
       "show-applications-description": "Display application icons inside each workspace.",
       "show-applications-label": "Show applications",
       "show-badge-description": "Show the workspace number badge in grouped mode.",
@@ -1048,6 +1050,10 @@
       "settings-clip-wrap-text-label": "Wrap clipboard text",
       "settings-clipboard-history-description": "Access previously copied items from the launcher.",
       "settings-clipboard-history-label": "Enable clipboard history",
+      "settings-clipboard-watch-image-description": "Full command string passed to wl-paste for image changes. (requires restart)",
+      "settings-clipboard-watch-image-label": "Image watch command",
+      "settings-clipboard-watch-text-description": "Full command string passed to wl-paste for text changes. (requires restart)",
+      "settings-clipboard-watch-text-label": "Text watch command",
       "settings-custom-launch-prefix-description": "Prefix commands with a custom launcher (e.g., 'runapp' for systemd integration).",
       "settings-custom-launch-prefix-enabled-description": "Use a custom prefix for launching applications instead of the default method.",
       "settings-custom-launch-prefix-enabled-label": "Enable custom launch prefix",
@@ -1111,6 +1117,8 @@
       "weather-show-in-calendar-label": "Display weather in calendar"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "When fprintd (fingerprint authentication) is active, this option lets you still login using your password instead of a fingerprint",
+      "allow-password-with-fprintd-label": "Allow password login with fprintd",
       "auto-start-auth-description": "e.g., automatically starts fingerprint authentication without requiring a key press or button click.",
       "auto-start-auth-label": "Auto-start authentication",
       "compact-lockscreen-description": "Show only the login input and system controls, hiding weather and media widgets.",

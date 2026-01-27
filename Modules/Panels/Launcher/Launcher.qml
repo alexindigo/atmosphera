@@ -755,6 +755,14 @@ SmartPanel {
     }
   }
 
+  SessionProvider {
+    id: sessionProvider
+    Component.onCompleted: {
+      registerProvider(this);
+      Logger.d("Launcher", "Registered: SessionProvider");
+    }
+  }
+
   // ---------------------------------------------------
   panelContent: Rectangle {
     id: ui

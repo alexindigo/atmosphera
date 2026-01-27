@@ -270,6 +270,8 @@
       "label-mode-label": "Etikettmodus",
       "occupied-color-description": "Set bakgrunnsfargen for opptekne Workspaces.",
       "occupied-color-label": "Farge for oppteke arbeidsområde",
+      "reverse-scrolling-description": "Reverser retninga for arbeidsområdebytte når du skrollar.",
+      "reverse-scrolling-label": "Omvendt rulling",
       "show-applications-description": "Viser applikasjonsikon innanfor kvart arbeidsrom.",
       "show-applications-label": "Vis applikasjonar",
       "show-badge-description": "Vis arbeidsområdenummer-merket i gruppert modus.",
@@ -710,9 +712,15 @@
       "volumes-volume-overdrive-label": "Tillat overdrift på ljodstyrke"
     },
     "launcher": {
-      "clipboard-desc": "Sjå og styra utklippsboka di frå programveljaren."
+      "clipboard-desc": "Sjå og styra utklippsboka di frå programveljaren.",
+      "settings-clipboard-watch-image-description": "Heil kommandostreng sendt til wl-paste for bildeendringar. (krev omstart)",
+      "settings-clipboard-watch-image-label": "Biletovervakingskommando",
+      "settings-clipboard-watch-text-description": "Fullstendig kommandostreng sendt til wl-paste for tekstendringer. (krever omstart)",
+      "settings-clipboard-watch-text-label": "Tekstovervakingskommando"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "Når fprintd (fingeravtrykkautentisering) er aktiv, lar dette alternativet deg framleis logge inn med passordet ditt i staden for eit fingeravtrykk.",
+      "allow-password-with-fprintd-label": "Tillat passordpålogging med fprintd",
       "auto-start-auth-description": "t.d. startar automatisk fingeravtrykksautentisering utan å krevje eit tastetrykk eller eit knappetrykk.",
       "auto-start-auth-label": "Autostart autentisering"
     }

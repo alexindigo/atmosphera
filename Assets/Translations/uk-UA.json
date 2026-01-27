@@ -270,6 +270,8 @@
       "label-mode-label": "Режим міток",
       "occupied-color-description": "Встановити колір фону для зайнятих Workspace.",
       "occupied-color-label": "Колір зайнятого робочого столу",
+      "reverse-scrolling-description": "Змінити напрямок перемикання робочих просторів під час прокручування.",
+      "reverse-scrolling-label": "Зворотне прокручування",
       "show-applications-description": "Відображати значки програм у кожному робочому просторі.",
       "show-applications-label": "Показати застосунки",
       "show-badge-description": "Показувати значок номера робочого столу в згрупованому режимі.",
@@ -1048,6 +1050,10 @@
       "settings-clip-wrap-text-label": "Загорнути текст з буфера обміну",
       "settings-clipboard-history-description": "Отримати доступ до раніше скопійованих елементів із лаунчера.",
       "settings-clipboard-history-label": "Увімкнути історію буфера обміну",
+      "settings-clipboard-watch-image-description": "Повний рядок команди, переданий до wl-paste для зміни зображень. (потрібен перезапуск)",
+      "settings-clipboard-watch-image-label": "Команда Спостереження за Зображеннями",
+      "settings-clipboard-watch-text-description": "Повний рядок команди, переданий до wl-paste для змін тексту. (потребує перезапуску)",
+      "settings-clipboard-watch-text-label": "Команда спостереження за текстом",
       "settings-custom-launch-prefix-description": "Додати префікс до команд запуску лаунчером (напр., 'runapp' для інтеграції з systemd).",
       "settings-custom-launch-prefix-enabled-description": "Використовувати власний префікс для запуску застосунків замість стандартного методу.",
       "settings-custom-launch-prefix-enabled-label": "Увімкнути користувацький префікс запуску",
@@ -1111,6 +1117,8 @@
       "weather-show-in-calendar-label": "Відображати погоду в календарі"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "Коли fprintd (автентифікація за відбитком пальця) активний, ця опція дозволяє входити в систему за допомогою пароля замість відбитка пальця.",
+      "allow-password-with-fprintd-label": "Дозволити вхід за паролем за допомогою fprintd",
       "auto-start-auth-description": "наприклад, автоматично запускає автентифікацію за відбитком пальця без необхідності натискання клавіші або клацання кнопки.",
       "auto-start-auth-label": "Автоматичний запуск автентифікації",
       "compact-lockscreen-description": "Показувати тільки поле входу та системні елементи керування, приховуючи віджети погоди та медіа.",

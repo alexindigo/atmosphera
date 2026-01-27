@@ -270,6 +270,8 @@
       "label-mode-label": "ラベルモード",
       "occupied-color-description": "使用中のWorkspaceの背景色を設定します。",
       "occupied-color-label": "使用中のワークスペースの色",
+      "reverse-scrolling-description": "スクロール時のワークスペース切り替え方向を反転する。",
+      "reverse-scrolling-label": "スクロール方向を反転",
       "show-applications-description": "各ワークスペース内にアプリアイコンを表示します。",
       "show-applications-label": "アプリアイコンを表示",
       "show-badge-description": "グループ化モードでワークスペース番号バッジを表示します。",
@@ -1048,6 +1050,10 @@
       "settings-clip-wrap-text-label": "クリップボードのテキストを折り返す",
       "settings-clipboard-history-description": "以前コピーした項目にランチャーからアクセスできるようにします。",
       "settings-clipboard-history-label": "クリップボード履歴を有効化",
+      "settings-clipboard-watch-image-description": "画像変更のためにwl-pasteに渡される完全なコマンド文字列。(再起動が必要)",
+      "settings-clipboard-watch-image-label": "画像監視コマンド",
+      "settings-clipboard-watch-text-description": "テキスト変更のために wl-paste に渡される完全なコマンド文字列。(再起動が必要)",
+      "settings-clipboard-watch-text-label": "テキスト監視コマンド",
       "settings-custom-launch-prefix-description": "コマンドの先頭にカスタムランチャーを付与します（例: systemd 連携用の 'runapp'）。",
       "settings-custom-launch-prefix-enabled-description": "デフォルトの方法の代わりに、カスタムプレフィックスを使用してアプリを起動します。",
       "settings-custom-launch-prefix-enabled-label": "カスタム起動プレフィックスを有効化",
@@ -1111,6 +1117,8 @@
       "weather-show-in-calendar-label": "カレンダー"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "fprintd（指紋認証）が有効な場合、このオプションを使用すると、指紋の代わりにパスワードでログインできます。",
+      "allow-password-with-fprintd-label": "fprintd でパスワードログインを許可する",
       "auto-start-auth-description": "たとえば、キーを押したりボタンをクリックしたりしなくても、指紋認証が自動的に開始されます。",
       "auto-start-auth-label": "自動認証を開始",
       "compact-lockscreen-description": "天気やメディアウィジェットを隠し、ログイン入力とシステムコントロールのみを表示します。",

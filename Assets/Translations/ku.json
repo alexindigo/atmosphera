@@ -270,6 +270,8 @@
       "label-mode-label": "Moda labelê",
       "occupied-color-description": "Rengê paşxaneyê ji bo Workspaceên dagirkirî destnîşan bike.",
       "occupied-color-label": "Rengê qada xebatê ya dagirkirî",
+      "reverse-scrolling-description": "Dema ku hûn digerînin, rêgeha guhertina cîhê kar berevajî bike.",
+      "reverse-scrolling-label": "گەڕاندنەوەی گەڕان",
       "show-applications-description": "Nîşaneyên sepanan di hundirê her cîhê xebatê de nîşan bide.",
       "show-applications-label": "Nîşan sepanan bide",
       "show-badge-description": "Di moda komkirî de nîşana jimareya cîhê kar nîşan bide.",
@@ -1048,6 +1050,10 @@
       "settings-clip-wrap-text-label": "Pêça nivîsa clipboardê",
       "settings-clipboard-history-description": "Gihîştina tiştên ku berê hatine kopîkirin ji destpêkerê.",
       "settings-clipboard-history-label": "Dîroka clipboardê çalak bike",
+      "settings-clipboard-watch-image-description": "ڕستەی فەرمانی تەواو کە بۆ wl-paste تێدەپەڕێنرێت بۆ گۆڕانکارییەکانی وێنە. (پێویستی بە دووبارە دەستپێکردنەوە هەیە)",
+      "settings-clipboard-watch-image-label": "فەرمانی چاودێریکردنی وێنە",
+      "settings-clipboard-watch-text-description": "تەواوی زنجیرەی فەرمان کە بۆ wl-paste تێپەڕێنراوە بۆ گۆڕانکارییەکانی دەق. (پێویستی بە دووبارە دەستپێکردنەوە هەیە)",
+      "settings-clipboard-watch-text-label": "فەرمانی چاودێری دەق",
       "settings-custom-launch-prefix-description": "Fermanên pêşgiran bi destpêkerek xwerû pêşda bikin (mînak, 'runapp' ji bo entegrasyona systemd).",
       "settings-custom-launch-prefix-enabled-description": "Bi awayekî xwerû destpêkê ji bo destpêkirina sepanan bikar bîne li şûna rêbaza standard.",
       "settings-custom-launch-prefix-enabled-label": "Pêşgira destpêkirinê ya xwerû çalak bike",
@@ -1111,6 +1117,8 @@
       "weather-show-in-calendar-label": "Nîşandanîna hewayê di salnameyê de"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "Dema ku fprintd (nasnameya tiliyan) çalak e, ev vebijêrk dihêle hûn bi şîfreya xwe têkevin, ne bi tiliya xwe.",
+      "allow-password-with-fprintd-label": "Rêdan bi têketina şîfreyê bi fprintd",
       "auto-start-auth-description": "mînak, otomatîkî dest bi rastkirina tiliyê dike bêyî ku pêdivî bi pêlkeyek an klîkek hebe.",
       "auto-start-auth-label": "Destpêkirina otomatîkî ya rastkirinê",
       "compact-lockscreen-description": "Tenê inputa têketinê û kontrolên pergalê nîşan bide, widgetên hewayê û medyayê veşêre.",

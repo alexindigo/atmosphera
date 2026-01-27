@@ -19,7 +19,8 @@ QtObject {
                                        42: migration42Component,
                                        43: migration43Component,
                                        44: migration44Component,
-                                       45: migration45Component
+                                       45: migration45Component,
+                                       46: migration46Component
                                      })
 
   // Migration components
@@ -36,4 +37,5 @@ QtObject {
   property Component migration43Component: Migration43 {}
   property Component migration44Component: Migration44 {}
   property Component migration45Component: Migration45 {}
+  property Component migration46Component: Migration46 {}
 }

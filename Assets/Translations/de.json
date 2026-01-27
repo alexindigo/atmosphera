@@ -270,6 +270,8 @@
       "label-mode-label": "Beschriftungsmodus",
       "occupied-color-description": "Lege die Hintergrundfarbe für belegte Workspaces fest.",
       "occupied-color-label": "Farbe für belegte Arbeitsfläche",
+      "reverse-scrolling-description": "Die Richtung des Arbeitsbereichswechsels beim Scrollen umkehren.",
+      "reverse-scrolling-label": "Scrollen umkehren",
       "show-applications-description": "Anwendungssymbole in jedem Arbeitsbereich anzeigen.",
       "show-applications-label": "Anwendungen anzeigen",
       "show-badge-description": "Zeige die Arbeitsbereichsnummern-Plakette im gruppierten Modus an.",
@@ -1048,6 +1050,10 @@
       "settings-clip-wrap-text-label": "Zwischenablage-Text umbrechen",
       "settings-clipboard-history-description": "Zugriff auf zuvor kopierte Elemente über den Launcher.",
       "settings-clipboard-history-label": "Zwischenablageverlauf aktivieren",
+      "settings-clipboard-watch-image-description": "Vollständige Befehlszeichenfolge, die an wl-paste für Bildänderungen übergeben wird. (Neustart erforderlich)",
+      "settings-clipboard-watch-image-label": "Bildüberwachungsbefehl",
+      "settings-clipboard-watch-text-description": "Vollständiger Befehlsstring, der an wl-paste für Textänderungen übergeben wird. (Neustart erforderlich)",
+      "settings-clipboard-watch-text-label": "Textüberwachungsbefehl",
       "settings-custom-launch-prefix-description": "Befehle mit einem benutzerdefinierten Launcher präfixieren (z.B. 'runapp' für systemd-Integration).",
       "settings-custom-launch-prefix-enabled-description": "Verwenden Sie ein benutzerdefiniertes Präfix zum Starten von Anwendungen anstelle der Standardmethode.",
       "settings-custom-launch-prefix-enabled-label": "Benutzerdefiniertes Start-Präfix aktivieren",
@@ -1111,6 +1117,8 @@
       "weather-show-in-calendar-label": "Wetter im Kalender anzeigen"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "Wenn fprintd (Fingerabdruck-Authentifizierung) aktiv ist, können Sie mit dieser Option weiterhin Ihr Passwort anstelle eines Fingerabdrucks verwenden.",
+      "allow-password-with-fprintd-label": "Passwort-Anmeldung mit fprintd erlauben",
       "auto-start-auth-description": "z. B. startet die Fingerabdruckauthentifizierung automatisch, ohne dass ein Tastendruck oder ein Klick erforderlich ist.",
       "auto-start-auth-label": "Automatische Authentifizierung beim Start",
       "compact-lockscreen-description": "Zeige nur die Login-Eingabe und Systemsteuerung, blende Wetter- und Medien-Widgets aus.",

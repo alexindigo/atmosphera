@@ -270,6 +270,8 @@
       "label-mode-label": "레이블 모드",
       "occupied-color-description": "사용 중인 작업 공간의 배경색을 설정합니다.",
       "occupied-color-label": "사용 중인 작업 공간 색상",
+      "reverse-scrolling-description": "스크롤할 때 작업 공간 전환 방향을 반대로 합니다.",
+      "reverse-scrolling-label": "스크롤 반전",
       "show-applications-description": "각 작업 공간 내부에 애플리케이션 아이콘을 표시합니다.",
       "show-applications-label": "애플리케이션 표시",
       "show-badge-description": "그룹화 모드에서 작업 공간 번호 배지를 표시합니다.",
@@ -1048,6 +1050,10 @@
       "settings-clip-wrap-text-label": "클립보드 텍스트 줄바꿈",
       "settings-clipboard-history-description": "이전에 복사한 항목에 런처에서 액세스합니다.",
       "settings-clipboard-history-label": "클립보드 기록 활성화",
+      "settings-clipboard-watch-image-description": "이미지 변경을 위해 wl-paste에 전달되는 전체 명령 문자열. (재시작 필요)",
+      "settings-clipboard-watch-image-label": "이미지 감시 명령",
+      "settings-clipboard-watch-text-description": "텍스트 변경을 위해 wl-paste에 전달되는 전체 명령 문자열. (재시작 필요)",
+      "settings-clipboard-watch-text-label": "텍스트 감시 명령",
       "settings-custom-launch-prefix-description": "기본 런처 대신 사용자 지정 접두사를 사용하여 명령을 실행합니다 (예: systemd 통합을 위한 'runapp').",
       "settings-custom-launch-prefix-enabled-description": "기본 방식 대신 사용자 지정 접두사를 사용하여 애플리케이션을 실행합니다.",
       "settings-custom-launch-prefix-enabled-label": "사용자 지정 실행 접두사 활성화",
@@ -1111,6 +1117,8 @@
       "weather-show-in-calendar-label": "달력에 날씨 표시"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "fprintd(지문 인증)가 활성화된 경우, 이 옵션을 사용하면 지문 대신 비밀번호로 로그인할 수 있습니다.",
+      "allow-password-with-fprintd-label": "fprintd로 암호 로그인 허용",
       "auto-start-auth-description": "예: 키 입력이나 버튼 클릭 없이 지문 인증을 자동으로 시작합니다.",
       "auto-start-auth-label": "인증 자동 시작",
       "compact-lockscreen-description": "로그인 입력과 시스템 제어만 표시하고 날씨 및 미디어 위젯을 숨깁니다.",

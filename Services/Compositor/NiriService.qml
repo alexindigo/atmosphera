@@ -489,10 +489,13 @@ Item {
   }
 
   function getFocusedScreen() {
-    const activeToplevel = ToplevelManager.activeToplevel;
-    if (activeToplevel && activeToplevel.screens && activeToplevel.screens.length > 0) {
-      return activeToplevel.screens[0];
-    }
+    // On niri the code below only works when you have an actual app selected on that screen.
     return null;
+
+    // const activeToplevel = ToplevelManager.activeToplevel;
+    // if (activeToplevel && activeToplevel.screens && activeToplevel.screens.length > 0) {
+    //   return activeToplevel.screens[0];
+    // }
+    // return null;
   }
 }

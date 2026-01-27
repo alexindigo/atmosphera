@@ -24,6 +24,7 @@ ColumnLayout {
   property real valueUnfocusedIconsOpacity: widgetData.unfocusedIconsOpacity !== undefined ? widgetData.unfocusedIconsOpacity : widgetMetadata.unfocusedIconsOpacity
   property real valueGroupedBorderOpacity: widgetData.groupedBorderOpacity !== undefined ? widgetData.groupedBorderOpacity : widgetMetadata.groupedBorderOpacity
   property bool valueEnableScrollWheel: widgetData.enableScrollWheel !== undefined ? widgetData.enableScrollWheel : widgetMetadata.enableScrollWheel
+  property bool valueReverseScroll: widgetData.reverseScroll !== undefined ? widgetData.reverseScroll : widgetMetadata.reverseScroll
   property real valueIconScale: widgetData.iconScale !== undefined ? widgetData.iconScale : widgetMetadata.iconScale
   property string valueFocusedColor: widgetData.focusedColor !== undefined ? widgetData.focusedColor : widgetMetadata.focusedColor
   property string valueOccupiedColor: widgetData.occupiedColor !== undefined ? widgetData.occupiedColor : widgetMetadata.occupiedColor
@@ -42,6 +43,7 @@ ColumnLayout {
     settings.unfocusedIconsOpacity = valueUnfocusedIconsOpacity;
     settings.groupedBorderOpacity = valueGroupedBorderOpacity;
     settings.enableScrollWheel = valueEnableScrollWheel;
+    settings.reverseScroll = valueReverseScroll;
     settings.iconScale = valueIconScale;
     settings.focusedColor = valueFocusedColor;
     settings.occupiedColor = valueOccupiedColor;
@@ -113,6 +115,14 @@ ColumnLayout {
     description: I18n.tr("bar.workspace.enable-scrollwheel-description")
     checked: valueEnableScrollWheel
     onToggled: checked => valueEnableScrollWheel = checked
+  }
+
+  NToggle {
+    label: I18n.tr("bar.workspace.reverse-scrolling-label")
+    description: I18n.tr("bar.workspace.reverse-scrolling-description")
+    checked: valueReverseScroll
+    onToggled: checked => valueReverseScroll = checked
+    visible: valueEnableScrollWheel
   }
 
   NDivider {

@@ -270,6 +270,8 @@
       "label-mode-label": "Címke mód",
       "occupied-color-description": "A foglalt Workspaces háttérszínének beállítása.",
       "occupied-color-label": "Foglalt munkaterület színe",
+      "reverse-scrolling-description": "Görgetéskor fordított irányba váltson a munkaterületek között.",
+      "reverse-scrolling-label": "Görgetés megfordítása",
       "show-applications-description": "Alkalmazásikonok megjelenítése minden munkaterületen belül.",
       "show-applications-label": "Alkalmazások megjelenítése",
       "show-badge-description": "Munkaterület számának jelzése csoportosított módban.",
@@ -1048,6 +1050,10 @@
       "settings-clip-wrap-text-label": "Clipboard szöveg becsomagolása",
       "settings-clipboard-history-description": "Hozzáférés a korábban másolt elemekhez az indítóból.",
       "settings-clipboard-history-label": "Vágólapelőzmények engedélyezése",
+      "settings-clipboard-watch-image-description": "Teljes parancssor, ami a wl-paste-nek kerül átadásra a képváltozásokhoz. (újraindítás szükséges)",
+      "settings-clipboard-watch-image-label": "Képfigyelő Parancs",
+      "settings-clipboard-watch-text-description": "A wl-paste-nek átadott teljes parancssor a szövegváltozásokhoz. (újraindítást igényel)",
+      "settings-clipboard-watch-text-label": "Szövegfigyelő parancs",
       "settings-custom-launch-prefix-description": "Előtagolja a parancsokat egyéni indítóval (pl. 'runapp' a systemd integrációhoz).",
       "settings-custom-launch-prefix-enabled-description": "Használjon egyéni előtagot az alkalmazások indításához az alapértelmezett módszer helyett.",
       "settings-custom-launch-prefix-enabled-label": "Egyéni indítási előtag engedélyezése",
@@ -1111,6 +1117,8 @@
       "weather-show-in-calendar-label": "Időjárás megjelenítése a naptárban"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "Ha az fprintd (ujjlenyomat-hitelesítés) aktív, ez az opció lehetővé teszi, hogy továbbra is jelszóval jelentkezzen be ujjlenyomat helyett.",
+      "allow-password-with-fprintd-label": "Jelszavas bejelentkezés engedélyezése fprintd-vel",
       "auto-start-auth-description": "pl. automatikusan elindítja az ujjlenyomat-hitelesítést anélkül, hogy billentyűt kellene megnyomni vagy gombra kellene kattintani.",
       "auto-start-auth-label": "Automatikus hitelesítés indításkor",
       "compact-lockscreen-description": "Csak a bejelentkezési beviteli mező és a rendszervezérlők megjelenítése, elrejtve az időjárás és média widgeteket.",

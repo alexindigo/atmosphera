@@ -270,6 +270,8 @@
       "label-mode-label": "標籤樣式",
       "occupied-color-description": "設定已佔用Workspace的背景顏色。",
       "occupied-color-label": "已佔用工作區顏色",
+      "reverse-scrolling-description": "捲動時反轉工作區切換方向。",
+      "reverse-scrolling-label": "反轉捲動",
       "show-applications-description": "顯示各個工作區的程式圖示",
       "show-applications-label": "顯示應用程式",
       "show-badge-description": "在群組模式下顯示工作區編號徽章。",
@@ -1048,6 +1050,10 @@
       "settings-clip-wrap-text-label": "剪貼簿文字換行",
       "settings-clipboard-history-description": "在啟動器存取先前所複製的項目",
       "settings-clipboard-history-label": "啟用剪貼簿歷史",
+      "settings-clipboard-watch-image-description": "傳遞給 wl-paste 以進行圖像更改的完整命令字串。(需要重新啟動)",
+      "settings-clipboard-watch-image-label": "圖像監控命令",
+      "settings-clipboard-watch-text-description": "傳遞給 wl-paste 以進行文字變更的完整命令字串。(需要重新啟動)",
+      "settings-clipboard-watch-text-label": "文字監看指令",
       "settings-custom-launch-prefix-description": "在命令前加上自訂啟動器前綴（例如：用「runapp」來整合 systemd）。",
       "settings-custom-launch-prefix-enabled-description": "使用自訂前綴而不是預設的方式來啟動應用程式",
       "settings-custom-launch-prefix-enabled-label": "啟用自訂的程式啟動前綴",
@@ -1111,6 +1117,8 @@
       "weather-show-in-calendar-label": "在行事曆中顯示天氣"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "當 fprintd（指紋認證）處於活動狀態時，此選項允許您使用密碼而非指紋登入。",
+      "allow-password-with-fprintd-label": "允許使用 fprintd 進行密碼登入",
       "auto-start-auth-description": "例如，自動啟動指紋驗證，無需按鍵或點擊按鈕。",
       "auto-start-auth-label": "自動啟動驗證",
       "compact-lockscreen-description": "只顯示登入欄位及電源控制, 隱藏天氣及媒體小工具",

@@ -270,6 +270,8 @@
       "label-mode-label": "Modo de rótulo",
       "occupied-color-description": "Definir a cor de fundo para Workspaces ocupados.",
       "occupied-color-label": "Cor do espaço de trabalho ocupado",
+      "reverse-scrolling-description": "Inverter a direção da troca de áreas de trabalho ao rolar.",
+      "reverse-scrolling-label": "Rolagem invertida",
       "show-applications-description": "Exibir ícones de aplicativos dentro de cada espaço de trabalho.",
       "show-applications-label": "Mostrar aplicativos",
       "show-badge-description": "Mostrar o selo do número da área de trabalho no modo agrupado.",
@@ -1048,6 +1050,10 @@
       "settings-clip-wrap-text-label": "Quebrar texto da área de transferência",
       "settings-clipboard-history-description": "Acesse itens copiados anteriormente a partir do lançador.",
       "settings-clipboard-history-label": "Ativar histórico da área de transferência",
+      "settings-clipboard-watch-image-description": "String de comando completa passada para wl-paste para alterações de imagem. (requer reinício)",
+      "settings-clipboard-watch-image-label": "Comando de Vigilância de Imagens",
+      "settings-clipboard-watch-text-description": "Cadeia de comando completa passada para wl-paste para alterações de texto. (requer reinício)",
+      "settings-clipboard-watch-text-label": "Comando de observação de texto",
       "settings-custom-launch-prefix-description": "Prefixar comandos com um inicializador personalizado (ex. 'runapp' para integração systemd).",
       "settings-custom-launch-prefix-enabled-description": "Usar um prefixo personalizado para inicializar aplicativos em vez do método padrão.",
       "settings-custom-launch-prefix-enabled-label": "Habilitar prefixo de inicialização personalizado",
@@ -1111,6 +1117,8 @@
       "weather-show-in-calendar-label": "Exibir clima no calendário"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "Quando o fprintd (autenticação por impressão digital) está ativo, esta opção permite-lhe iniciar sessão com a sua palavra-passe em vez de uma impressão digital.",
+      "allow-password-with-fprintd-label": "Permitir login por senha com fprintd",
       "auto-start-auth-description": "p. ex., inicia automaticamente a autenticação de impressão digital sem exigir uma pressão de tecla ou um clique de botão.",
       "auto-start-auth-label": "Autenticação de início automático",
       "compact-lockscreen-description": "Mostrar apenas a entrada de login e os controles do sistema, ocultando os widgets de clima e mídia.",

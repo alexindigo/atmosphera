@@ -270,6 +270,8 @@
       "label-mode-label": "Tryb etykiet",
       "occupied-color-description": "Ustaw kolor tła dla zajętych Workspace'ów.",
       "occupied-color-label": "Kolor zajętego obszaru roboczego",
+      "reverse-scrolling-description": "Odwróć kierunek przełączania obszarów roboczych podczas przewijania.",
+      "reverse-scrolling-label": "Odwróć przewijanie",
       "show-applications-description": "Wyświetl ikony aplikacji wewnątrz każdego obszaru roboczego.",
       "show-applications-label": "Pokaż aplikacje",
       "show-badge-description": "Pokaż plakietkę z numerem obszaru roboczego w trybie grupowym.",
@@ -1048,6 +1050,10 @@
       "settings-clip-wrap-text-label": "Zawijaj tekst ze schowka",
       "settings-clipboard-history-description": "Dostęp do wcześniej skopiowanych elementów z poziomu launchera.",
       "settings-clipboard-history-label": "Włącz historię schowka",
+      "settings-clipboard-watch-image-description": "Pełny ciąg poleceń przekazywany do wl-paste dla zmian obrazu. (wymaga ponownego uruchomienia)",
+      "settings-clipboard-watch-image-label": "Polecenie Monitorowania Obrazów",
+      "settings-clipboard-watch-text-description": "Pełny ciąg polecenia przekazany do wl-paste dla zmian tekstu. (wymaga ponownego uruchomienia)",
+      "settings-clipboard-watch-text-label": "Polecenie monitorowania tekstu",
       "settings-custom-launch-prefix-description": "Poprzedzaj polecenia własnym prefiksem (np. 'runapp' dla integracji z systemd).",
       "settings-custom-launch-prefix-enabled-description": "Używaj własnego prefiksu do uruchamiania aplikacji zamiast metody domyślnej.",
       "settings-custom-launch-prefix-enabled-label": "Włącz własny prefiks",
@@ -1111,6 +1117,8 @@
       "weather-show-in-calendar-label": "Wyświetlaj pogodę w kalendarzu"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "Gdy fprintd (uwierzytelnianie odciskiem palca) jest aktywne, ta opcja pozwala nadal logować się za pomocą hasła zamiast odcisku palca.",
+      "allow-password-with-fprintd-label": "Zezwól na logowanie hasłem za pomocą fprintd",
       "auto-start-auth-description": "np. automatycznie uruchamia uwierzytelnianie odciskiem palca bez konieczności naciskania klawisza lub klikania przycisku.",
       "auto-start-auth-label": "Automatyczne uruchamianie uwierzytelniania",
       "compact-lockscreen-description": "Pokaż tylko logowanie i kontrolki systemowe, ukrywając widżety pogody i mediów.",

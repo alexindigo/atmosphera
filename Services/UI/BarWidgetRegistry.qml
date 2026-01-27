@@ -253,7 +253,8 @@ Singleton {
                                     "focusedColor": "primary",
                                     "occupiedColor": "secondary",
                                     "emptyColor": "secondary",
-                                    "showBadge": true
+                                    "showBadge": true,
+                                    "reverseScroll": false
                                   },
                                   "Volume": {
                                     "displayMode": "onhover",

@@ -12,6 +12,10 @@ import qs.Widgets
 
 Item {
   id: root
+  Layout.preferredHeight: isVerticalBar ? -1 : Style.getBarHeightForScreen(screenName)
+  Layout.preferredWidth: isVerticalBar ? Style.getBarHeightForScreen(screenName) : -1
+  Layout.fillHeight: false
+  Layout.fillWidth: false
 
   property ShellScreen screen
 
@@ -263,6 +267,7 @@ Item {
               return NScrollText.ScrollMode.Hover;
             return NScrollText.ScrollMode.Never;
           }
+          forcedHover: mainMouseArea.containsMouse
           NText {
             text: windowTitle
             pointSize: barFontSize
@@ -312,28 +317,37 @@ Item {
         }
       }
 
-      // Mouse area for hover detection
-      MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onEntered: {
-          if ((windowTitle !== "") && isVerticalBar || (scrollingMode === "never")) {
-            TooltipService.show(root, windowTitle, BarService.getTooltipDirection(root.screen?.name));
-          }
-        }
-        onExited: {
-          TooltipService.hide();
-        }
-        onClicked: mouse => {
-                     if (mouse.button === Qt.RightButton) {
-                       PanelService.showContextMenu(contextMenu, root, screen);
-                     }
-                   }
+      // Mouse area moved to root
+    }
+  }
+
+  // Mouse area for hover detection
+  MouseArea {
+    id: mainMouseArea
+    anchors.fill: parent
+
+    // Extend click area to screen edge if widget is at the start/end
+    anchors.leftMargin: (!isVerticalBar && section === "left" && sectionWidgetIndex === 0) ? -Style.marginS : 0
+    anchors.rightMargin: (!isVerticalBar && section === "right" && sectionWidgetIndex === sectionWidgetsCount - 1) ? -Style.marginS : 0
+    anchors.topMargin: (isVerticalBar && section === "left" && sectionWidgetIndex === 0) ? -Style.marginM : 0
+    anchors.bottomMargin: (isVerticalBar && section === "right" && sectionWidgetIndex === sectionWidgetsCount - 1) ? -Style.marginM : 0
+
+    hoverEnabled: true
+    cursorShape: Qt.PointingHandCursor
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
+    onEntered: {
+      if ((windowTitle !== "") && isVerticalBar || (scrollingMode === "never")) {
+        TooltipService.show(root, windowTitle, BarService.getTooltipDirection(root.screen?.name));
       }
     }
+    onExited: {
+      TooltipService.hide();
+    }
+    onClicked: mouse => {
+                 if (mouse.button === Qt.RightButton) {
+                   PanelService.showContextMenu(contextMenu, root, screen);
+                 }
+               }
   }
 
   Connections {

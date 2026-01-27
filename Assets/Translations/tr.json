@@ -270,6 +270,8 @@
       "label-mode-label": "Etiket Modu",
       "occupied-color-description": "Dolu Workspaces için arka plan rengini ayarla.",
       "occupied-color-label": "Dolu çalışma alanı rengi",
+      "reverse-scrolling-description": "Kaydırırken çalışma alanı geçiş yönünü tersine çevir.",
+      "reverse-scrolling-label": "Ters kaydırma",
       "show-applications-description": "Her çalışma alanının içinde uygulama simgelerini görüntüle.",
       "show-applications-label": "Uygulamaları göster",
       "show-badge-description": "Gruplandırılmış modda çalışma alanı numarası işaretini göster.",
@@ -1048,6 +1050,10 @@
       "settings-clip-wrap-text-label": "Panoyu metni kaydır",
       "settings-clipboard-history-description": "Başlatıcıdan daha önce kopyalanan öğelere erişin.",
       "settings-clipboard-history-label": "Pano geçmişini etkinleştir",
+      "settings-clipboard-watch-image-description": "Görüntü değişiklikleri için wl-paste'e iletilen tam komut dizesi. (yeniden başlatma gerektirir)",
+      "settings-clipboard-watch-image-label": "Görüntü İzleme Komutu",
+      "settings-clipboard-watch-text-description": "Metin değişiklikleri için wl-paste'e iletilen tam komut dizesi. (yeniden başlatma gerektirir)",
+      "settings-clipboard-watch-text-label": "Metin izleme komutu",
       "settings-custom-launch-prefix-description": "Komutlara özel bir başlatıcı ile ön ek ekleyin (örn., systemd entegrasyonu için 'runapp').",
       "settings-custom-launch-prefix-enabled-description": "Uygulamaları başlatmak için varsayılan yöntem yerine özel bir ön ek kullanın.",
       "settings-custom-launch-prefix-enabled-label": "Özel başlatma ön ekini etkinleştir",
@@ -1111,6 +1117,8 @@
       "weather-show-in-calendar-label": "Takvimde hava durumunu göster"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "fprintd (parmak izi kimlik doğrulaması) etkin olduğunda, bu seçenek parmak izi yerine parolanızı kullanarak oturum açmanızı sağlar.",
+      "allow-password-with-fprintd-label": "fprintd ile parola girişine izin ver",
       "auto-start-auth-description": "örneğin, bir tuşa basmaya veya düğmeye tıklamaya gerek kalmadan parmak izi kimlik doğrulamasını otomatik olarak başlatır.",
       "auto-start-auth-label": "Otomatik kimlik doğrulama başlatma",
       "compact-lockscreen-description": "Sadece giriş girdisini ve sistem kontrollerini göster, hava durumu ve ortam araç takımlarını gizle.",
