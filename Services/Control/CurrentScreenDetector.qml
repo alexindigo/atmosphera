@@ -54,8 +54,7 @@ Item {
     }
 
       // Try compositor-specific focused monitor detection first
-      //let screen = CompositorService.getFocusedScreen();
-      let screen = null;
+      let screen = CompositorService.getFocusedScreen();
 
       if (screen) {
         // Apply the bar check if configured
