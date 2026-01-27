@@ -1111,6 +1111,8 @@
       "weather-show-in-calendar-label": "Weer in kalender weergeven"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "Wanneer fprintd (vingerafdrukauthenticatie) actief is, kunt u met deze optie nog steeds inloggen met uw wachtwoord in plaats van een vingerafdruk.",
+      "allow-password-with-fprintd-label": "Wachtwoordlogin toestaan met fprintd",
       "auto-start-auth-description": "start bijvoorbeeld automatisch de vingerafdrukauthenticatie zonder dat er een toetsaanslag of klik nodig is.",
       "auto-start-auth-label": "Automatische authenticatie bij opstarten",
       "compact-lockscreen-description": "Toon alleen de logininvoer en systeemknoppen, verberg weer- en mediawidgets.",

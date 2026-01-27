@@ -846,6 +846,14 @@
     "subTab": null
   },
   {
+    "labelKey": "panels.lock-screen.allow-password-with-fprintd-label",
+    "descriptionKey": "panels.lock-screen.allow-password-with-fprintd-description",
+    "widget": "NToggle",
+    "tab": 11,
+    "tabLabel": "panels.lock-screen.title",
+    "subTab": null
+  },
+  {
     "labelKey": "panels.lock-screen.show-session-buttons-label",
     "descriptionKey": "panels.lock-screen.show-session-buttons-description",
     "widget": "NToggle",

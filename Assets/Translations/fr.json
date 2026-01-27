@@ -1111,6 +1111,8 @@
       "weather-show-in-calendar-label": "Afficher la météo dans le calendrier"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "Lorsque fprintd (authentification par empreinte digitale) est actif, cette option vous permet de vous connecter avec votre mot de passe au lieu d'une empreinte digitale.",
+      "allow-password-with-fprintd-label": "Autoriser la connexion par mot de passe avec fprintd",
       "auto-start-auth-description": "par exemple, démarre automatiquement l'authentification par empreinte digitale sans nécessiter de pression sur une touche ou un clic de bouton.",
       "auto-start-auth-label": "Authentification au démarrage automatique",
       "compact-lockscreen-description": "Afficher uniquement le champ de saisie de connexion et les commandes système, en masquant les widgets météo et multimédia.",
