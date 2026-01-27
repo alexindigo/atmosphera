@@ -11,14 +11,53 @@ import qs.Services.UI
 Singleton {
   id: root
 
-  // Cached device lookups (computed once, used by all properties)
-  readonly property var _laptopBattery: {
-    if (!UPower.devices)
-    return UPower.displayDevice;
+  // 1. Centralized list of all batteries
+  readonly property var devices: {
+    var list = [];
+    var seenPaths = new Set();
 
-    var devices = UPower.devices.values || [];
+    // Add UPower batteries
+    if (UPower.devices) {
+      var upowerArray = UPower.devices.values || [];
+      for (var i = 0; i < upowerArray.length; i++) {
+        var d = upowerArray[i];
+        if (isDevicePresent(d) && d.type === UPowerDeviceType.Battery) {
+          if (d.nativePath && !seenPaths.has(d.nativePath)) {
+            list.push(d);
+            seenPaths.add(d.nativePath);
+          }
+        }
+      }
+    }
 
-    // 1. Explicitly look for BAT0 first
+    // Add Bluetooth batteries
+    if (BluetoothService.devices) {
+      var btArray = BluetoothService.devices.values || [];
+      for (var j = 0; j < btArray.length; j++) {
+        var btd = btArray[j];
+        if (isDevicePresent(btd) && btd.batteryAvailable) {
+          // Bluetooth devices use address as unique ID
+          if (btd.address && !seenPaths.has(btd.address)) {
+            list.push(btd);
+            seenPaths.add(btd.address);
+          }
+        }
+      }
+    }
+
+    // Fallback: if no specific batteries found but display device is a battery, use it
+    if (list.length === 0 && UPower.displayDevice && UPower.displayDevice.type === UPowerDeviceType.Battery && isDevicePresent(UPower.displayDevice)) {
+      list.push(UPower.displayDevice);
+    }
+    return list;
+  }
+
+  // 2. Determine the primary device (System Battery)
+  readonly property var primaryDevice: {
+    if (devices.length === 0)
+    return null;
+
+    // Prioritize BAT0
     for (var i = 0; i < devices.length; i++) {
       var d = devices[i];
       if (d && (d.nativePath === "BAT0" || d.objectPath === "/org/freedesktop/UPower/devices/battery_BAT0")) {
@@ -26,94 +65,49 @@ Singleton {
       }
     }
 
-    // 2. Fallback to displayDevice if it's a laptop battery
-    if (UPower.displayDevice && UPower.displayDevice.isLaptopBattery) {
-      return UPower.displayDevice;
-    }
-
-    // 3. Any other device marked as a laptop battery
+    // Prioritize (any) Laptop Battery
     for (var j = 0; j < devices.length; j++) {
-      var device = devices[j];
-      if (device && device.type === UPowerDeviceType.Battery && device.isLaptopBattery) {
-        return device;
+      var dev = devices[j];
+      if (dev && !isBluetoothDevice(dev) && dev.isLaptopBattery) {
+        return dev;
       }
     }
 
-    if (UPower.displayDevice.isPresent) {
-      return UPower.displayDevice;
-    }
-    return null;
+    // Fallback to the first available device
+    return devices[0];
   }
-
-  readonly property var _bluetoothBattery: {
-    var devices = BluetoothService.devices ? (BluetoothService.devices.values || []) : [];
-    for (var i = 0; i < devices.length; i++) {
-      var device = devices[i];
-      if (device && device.connected && device.batteryAvailable) {
-        return device;
-      }
-    }
-    return null;
-  }
-
-  // Primary battery device (prioritizes laptop over Bluetooth)
-  readonly property var primaryDevice: _laptopBattery || _bluetoothBattery || null
 
   // Whether the primary device is a laptop battery
-  readonly property bool isLaptopBattery: _laptopBattery !== null && primaryDevice === _laptopBattery
+  readonly property bool isLaptopBattery: primaryDevice !== null && !isBluetoothDevice(primaryDevice) && primaryDevice.isLaptopBattery
 
+  // Global properties for the Primary Device (used by LockScreen etc)
   readonly property real batteryPercentage: getPercentage(primaryDevice)
-
   readonly property bool batteryCharging: isCharging(primaryDevice)
-
   readonly property bool batteryPluggedIn: isPluggedIn(primaryDevice)
-
   readonly property bool batteryReady: isDeviceReady(primaryDevice)
-
   readonly property bool batteryPresent: isDevicePresent(primaryDevice)
 
   property bool healthAvailable: false
   property int healthPercent: -1
 
-  function findUPowerDevice(nativePath) {
+  // 3. Helper to resolve a device by path, or return primary if path is empty/invalid
+  function resolveDevice(nativePath) {
     if (!nativePath || nativePath === "") {
-      return _laptopBattery;
+      return primaryDevice;
     }
 
-    if (!UPower.devices) {
-      return null;
-    }
-
-    var deviceArray = UPower.devices.values || [];
-    for (var i = 0; i < deviceArray.length; i++) {
-      var device = deviceArray[i];
-      if (device && device.nativePath === nativePath) {
-        if (device.type === UPowerDeviceType.LinePower) {
-          continue;
-        }
-        return device;
-      }
-    }
-    return null;
-  }
-
-  function findBluetoothDevice(nativePath) {
-    if (!nativePath || !BluetoothService.devices) {
-      return null;
-    }
-
-    var macMatch = nativePath.match(/([0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2})/);
-    if (!macMatch) {
-      return null;
-    }
-
-    var macAddress = macMatch[1].toUpperCase();
-    var deviceArray = BluetoothService.devices.values || [];
-
-    for (var i = 0; i < deviceArray.length; i++) {
-      var device = deviceArray[i];
-      if (device && device.address && device.address.toUpperCase() === macAddress) {
-        return device;
+    // Search in our cached list
+    for (var i = 0; i < devices.length; i++) {
+      var d = devices[i];
+      if (isBluetoothDevice(d)) {
+        if (d.address && d.address.toUpperCase() === nativePath.toUpperCase())
+          return d;
+        // Try matching MAC in path string if passed format differs
+        if (nativePath.includes(d.address.toUpperCase()))
+          return d;
+      } else {
+        if (d.nativePath === nativePath)
+          return d;
       }
     }
     return null;
@@ -123,7 +117,7 @@ Singleton {
     if (!device)
       return false;
 
-    // Handle Bluetooth devices (identified by having batteryAvailable property)
+    // Handle Bluetooth devices
     if (device.batteryAvailable !== undefined) {
       return device.connected === true;
     }
@@ -133,11 +127,8 @@ Singleton {
       if (device.type === UPowerDeviceType.Battery && device.isPresent !== undefined) {
         return device.isPresent === true;
       }
-
-      // Fallback for non-battery UPower devices or if isPresent is missing
       return device.ready && device.percentage !== undefined;
     }
-
     return false;
   }
 
@@ -148,7 +139,6 @@ Singleton {
     if (device.batteryAvailable !== undefined) {
       return device.battery !== undefined;
     }
-
     return device.ready && device.percentage !== undefined;
   }
 

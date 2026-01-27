@@ -53,9 +53,9 @@ Item {
   readonly property bool testPluggedIn: false
   readonly property string deviceNativePath: widgetSettings.deviceNativePath || ""
 
-  readonly property var battery: BatteryService.findUPowerDevice(deviceNativePath)
-  readonly property var bluetoothDevice: deviceNativePath ? BatteryService.findBluetoothDevice(deviceNativePath) : null
-  readonly property var device: bluetoothDevice || battery
+  readonly property var device: BatteryService.resolveDevice(deviceNativePath)
+  readonly property var battery: device && !BatteryService.isBluetoothDevice(device) ? device : null
+  readonly property var bluetoothDevice: device && BatteryService.isBluetoothDevice(device) ? device : null
   readonly property bool hasBluetoothBattery: BatteryService.isBluetoothDevice(device)
 
   readonly property bool isReady: testMode ? true : (initializationComplete && BatteryService.isDeviceReady(device))
