@@ -17,6 +17,7 @@ Singleton {
     var seenPaths = new Set();
 
     // Add UPower batteries
+    var upowerBatteryCount = 0;
     if (UPower.devices) {
       var upowerArray = UPower.devices.values || [];
       for (var i = 0; i < upowerArray.length; i++) {
@@ -25,11 +26,17 @@ Singleton {
           if (d.nativePath && !seenPaths.has(d.nativePath)) {
             list.push(d);
             seenPaths.add(d.nativePath);
+            upowerBatteryCount++;
           }
         }
       }
     }
-
+    // Add DisplayDevice (Aggregate)
+    if (UPower.displayDevice && UPower.displayDevice.type === UPowerDeviceType.Battery && isDevicePresent(UPower.displayDevice)) {
+      if (upowerBatteryCount !== 1) {
+        list.push(UPower.displayDevice);
+      }
+    }
     // Add Bluetooth batteries
     if (BluetoothService.devices) {
       var btArray = BluetoothService.devices.values || [];
@@ -43,11 +50,6 @@ Singleton {
           }
         }
       }
-    }
-
-    // Fallback: if no specific batteries found but display device is a battery, use it
-    if (list.length === 0 && UPower.displayDevice && UPower.displayDevice.type === UPowerDeviceType.Battery && isDevicePresent(UPower.displayDevice)) {
-      list.push(UPower.displayDevice);
     }
     return list;
   }
