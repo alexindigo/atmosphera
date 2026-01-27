@@ -17,15 +17,12 @@ Scope {
   property bool showInfo: false
   property string errorMessage: ""
   property string infoMessage: ""
-  property bool fprintdAvailable: false
 
   readonly property string pamConfigDirectory: "/etc/pam.d"
   property string pamConfig: Quickshell.env("NOCTALIA_PAM_SERVICE") || "login"
   property bool pamReady: false
 
   Component.onCompleted: {
-    checkFprintdProc.running = true;
-
     if (Quickshell.env("NOCTALIA_PAM_SERVICE")) {
       Logger.i("LockContext", "NOCTALIA_PAM_SERVICE is set, using system PAM config: /etc/pam.d/" + pamConfig);
       pamReady = true;
@@ -85,7 +82,7 @@ Scope {
       if (!waitingForPassword) {
         pam.abort();
       }
-      if (fprintdAvailable) {
+      if (Settings.data.general.allowPasswordWithFprintd) {
         occupyFingerprintSensorProc.running = true;
       }
     } else {
@@ -112,14 +109,6 @@ Scope {
 
     Logger.i("LockContext", "Starting PAM authentication for user:", pam.user);
     pam.start();
-  }
-
-  Process {
-    id: checkFprintdProc
-    command: ["sh", "-c", "command -v fprintd-verify"]
-    onExited: function (exitCode) {
-      fprintdAvailable = (exitCode === 0);
-    }
   }
 
   Process {
