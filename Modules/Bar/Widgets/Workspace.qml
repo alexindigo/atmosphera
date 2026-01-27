@@ -603,7 +603,6 @@ Item {
   // ========================================
   // Grouped mode (showApplications = true)
   // ========================================
-
   Component {
     id: groupedWorkspaceDelegate
 
@@ -704,17 +703,16 @@ Item {
               height: parent.height
               source: {
                 root.iconRevision; // Force re-evaluation when revision changes
-                const win = (typeof modelData !== "undefined") ? modelData : model;
-                return ThemeIcons.iconForAppId(win.appId?.toLowerCase());
+                return ThemeIcons.iconForAppId(modelData.appId?.toLowerCase());
               }
               smooth: true
               asynchronous: true
-              opacity: (typeof modelData !== "undefined" ? modelData.isFocused : model.isFocused) ? Style.opacityFull : unfocusedIconsOpacity
-              layer.enabled: root.colorizeIcons && !(typeof modelData !== "undefined" ? modelData.isFocused : model.isFocused)
+              opacity: modelData.isFocused ? Style.opacityFull : unfocusedIconsOpacity
+              layer.enabled: root.colorizeIcons && !modelData.isFocused
 
               Rectangle {
                 id: groupedFocusIndicator
-                visible: (typeof modelData !== "undefined" ? modelData.isFocused : model.isFocused)
+                visible: modelData.isFocused
                 anchors.bottomMargin: -2
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -739,31 +737,23 @@ Item {
               preventStealing: true
 
               onPressed: mouse => {
-                           const win = (typeof modelData !== "undefined") ? modelData : model;
-                           console.log("DEBUG - id:", win.id, "appId:", win.appId, "using modelData:", typeof modelData !== "undefined");
-                           if (!win)
-                           return;
                            if (mouse.button === Qt.LeftButton) {
-                             CompositorService.focusWindow(win);
+                             CompositorService.focusWindow(modelData);
                            }
                          }
 
               onReleased: mouse => {
-                            const win = (typeof modelData !== "undefined") ? modelData : model;
-                            if (!win)
-                            return;
                             if (mouse.button === Qt.RightButton) {
                               mouse.accepted = true;
                               TooltipService.hide();
-                              root.selectedWindowId = win.id || win.address || "";
-                              root.selectedAppId = win.appId;
+                              root.selectedWindowId = modelData.id || modelData.address || "";
+                              root.selectedAppId = modelData.appId;
                               openGroupedContextMenu(groupedTaskbarItem);
                             }
                           }
               onEntered: {
-                const win = (typeof modelData !== "undefined") ? modelData : model;
                 groupedTaskbarItem.itemHovered = true;
-                TooltipService.show(groupedTaskbarItem, win.title || win.appId || "Unknown app.", BarService.getTooltipDirection(root.screenName));
+                TooltipService.show(groupedTaskbarItem, modelData.title || modelData.appId || "Unknown app.", BarService.getTooltipDirection(root.screenName));
               }
               onExited: {
                 groupedTaskbarItem.itemHovered = false;
