@@ -655,4 +655,22 @@ Item {
                                             });
     }
   }
+
+  IpcHandler {
+    target: "plugin"
+    function openSettings(key: string) {
+      var manifest = PluginRegistry.getPluginManifest(key);
+      if (!manifest) {
+        Logger.w("IPC", "Plugin not found:", key);
+        return;
+      }
+      if (!manifest.entryPoints?.settings) {
+        Logger.w("IPC", "Plugin has no settings entry point:", key);
+        return;
+      }
+      root.screenDetector.withCurrentScreen(screen => {
+                                              BarService.openPluginSettings(screen, manifest);
+                                            });
+    }
+  }
 }
