@@ -7,7 +7,7 @@ import qs.Modules.Bar.Extras
 import qs.Services.UI
 import qs.Widgets
 
-Rectangle {
+Item {
   id: root
 
   property ShellScreen screen
@@ -45,76 +45,89 @@ Rectangle {
   readonly property string formatVertical: widgetSettings.formatVertical !== undefined ? widgetSettings.formatVertical : widgetMetadata.formatVertical
   readonly property string tooltipFormat: widgetSettings.tooltipFormat !== undefined ? widgetSettings.tooltipFormat : widgetMetadata.tooltipFormat
 
-  implicitWidth: isBarVertical ? capsuleHeight : Math.round((isBarVertical ? verticalLoader.implicitWidth : horizontalLoader.implicitWidth) + Style.marginXL)
+  // Content dimensions for implicit sizing
+  readonly property real contentWidth: isBarVertical ? capsuleHeight : Math.round((isBarVertical ? verticalLoader.implicitWidth : horizontalLoader.implicitWidth) + Style.marginXL)
+  readonly property real contentHeight: isBarVertical ? Math.round(verticalLoader.implicitHeight + Style.marginS * 2) : capsuleHeight
 
-  implicitHeight: isBarVertical ? Math.round(verticalLoader.implicitHeight + Style.marginS * 2) : capsuleHeight
+  // Size: use implicit width/height
+  // BarWidgetLoader sets explicit width/height to extend click area
+  implicitWidth: contentWidth
+  implicitHeight: contentHeight
 
-  radius: Style.radiusS
-  color: Style.capsuleColor
-  border.color: Style.capsuleBorderColor
-  border.width: Style.capsuleBorderWidth
-
-  Item {
-    id: clockContainer
+  // Visual clock capsule - stays at content size, centered in parent
+  Rectangle {
+    id: visualClock
+    width: root.contentWidth
+    height: root.contentHeight
     anchors.centerIn: parent
 
-    // Horizontal
-    Loader {
-      id: horizontalLoader
-      active: !isBarVertical
+    radius: Style.radiusS
+    color: Style.capsuleColor
+    border.color: Style.capsuleBorderColor
+    border.width: Style.capsuleBorderWidth
+
+    Item {
+      id: clockContainer
       anchors.centerIn: parent
-      sourceComponent: ColumnLayout {
+
+      // Horizontal
+      Loader {
+        id: horizontalLoader
+        active: !isBarVertical
         anchors.centerIn: parent
-        spacing: Settings.data.bar.showCapsule ? -5 : -3
-        Repeater {
-          id: repeater
-          model: I18n.locale.toString(now, formatHorizontal.trim()).split("\\n")
-          NText {
-            visible: text !== ""
-            text: modelData
-            family: useCustomFont && customFont ? customFont : Settings.data.ui.fontDefault
-            Binding on pointSize {
-              value: {
-                if (repeater.model.length == 1) {
-                  // Single line: Full size
-                  return barFontSize;
-                } else if (repeater.model.length == 2) {
-                  // Two lines: First line is bigger than the second
-                  return (index == 0) ? Math.round(barFontSize * 0.9) : Math.round(barFontSize * 0.75);
-                } else {
-                  // More than two lines: Make it small!
-                  return Math.round(barFontSize * 0.75);
+        sourceComponent: ColumnLayout {
+          anchors.centerIn: parent
+          spacing: Settings.data.bar.showCapsule ? -5 : -3
+          Repeater {
+            id: repeater
+            model: I18n.locale.toString(now, formatHorizontal.trim()).split("\\n")
+            NText {
+              visible: text !== ""
+              text: modelData
+              family: useCustomFont && customFont ? customFont : Settings.data.ui.fontDefault
+              Binding on pointSize {
+                value: {
+                  if (repeater.model.length == 1) {
+                    // Single line: Full size
+                    return barFontSize;
+                  } else if (repeater.model.length == 2) {
+                    // Two lines: First line is bigger than the second
+                    return (index == 0) ? Math.round(barFontSize * 0.9) : Math.round(barFontSize * 0.75);
+                  } else {
+                    // More than two lines: Make it small!
+                    return Math.round(barFontSize * 0.75);
+                  }
                 }
               }
+              applyUiScale: false
+              color: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
+              wrapMode: Text.WordWrap
+              Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
             }
-            applyUiScale: false
-            color: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
-            wrapMode: Text.WordWrap
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
           }
         }
       }
-    }
 
-    // Vertical
-    Loader {
-      id: verticalLoader
-      active: isBarVertical
-      anchors.centerIn: parent // Now this works without layout conflicts
-      sourceComponent: ColumnLayout {
-        anchors.centerIn: parent
-        spacing: -2
-        Repeater {
-          model: I18n.locale.toString(now, formatVertical.trim()).split(" ")
-          delegate: NText {
-            visible: text !== ""
-            text: modelData
-            family: useCustomFont && customFont ? customFont : Settings.data.ui.fontDefault
-            pointSize: barFontSize
-            applyUiScale: false
-            color: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
-            wrapMode: Text.WordWrap
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+      // Vertical
+      Loader {
+        id: verticalLoader
+        active: isBarVertical
+        anchors.centerIn: parent // Now this works without layout conflicts
+        sourceComponent: ColumnLayout {
+          anchors.centerIn: parent
+          spacing: -2
+          Repeater {
+            model: I18n.locale.toString(now, formatVertical.trim()).split(" ")
+            delegate: NText {
+              visible: text !== ""
+              text: modelData
+              family: useCustomFont && customFont ? customFont : Settings.data.ui.fontDefault
+              pointSize: barFontSize
+              applyUiScale: false
+              color: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
+              wrapMode: Text.WordWrap
+              Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            }
           }
         }
       }

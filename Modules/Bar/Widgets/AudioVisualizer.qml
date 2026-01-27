@@ -76,8 +76,12 @@ Item {
     }
   }
 
-  implicitWidth: !shouldShow ? 0 : isVerticalBar ? capsuleHeight : visualizerWidth
-  implicitHeight: !shouldShow ? 0 : isVerticalBar ? visualizerWidth : capsuleHeight
+  // Content dimensions for implicit sizing
+  readonly property real contentWidth: !shouldShow ? 0 : isVerticalBar ? capsuleHeight : visualizerWidth
+  readonly property real contentHeight: !shouldShow ? 0 : isVerticalBar ? visualizerWidth : capsuleHeight
+
+  implicitWidth: contentWidth
+  implicitHeight: contentHeight
   visible: shouldShow
   opacity: shouldShow ? 1.0 : 0.0
 
@@ -94,37 +98,40 @@ Item {
     }
   }
 
+  // Store visualizer type to force re-evaluation
+  readonly property string currentVisualizerType: Settings.data.audio.visualizerType
+
+  // Visual capsule centered in parent
   Rectangle {
     id: background
-    anchors.fill: parent
+    width: root.contentWidth
+    height: root.contentHeight
+    anchors.centerIn: parent
     radius: Style.radiusS
     color: Style.capsuleColor
     border.color: Style.capsuleBorderColor
     border.width: Style.capsuleBorderWidth
-  }
 
-  // Store visualizer type to force re-evaluation
-  readonly property string currentVisualizerType: Settings.data.audio.visualizerType
+    // When visualizer type or playback changes, shouldShow updates automatically
+    // The Loader dynamically loads the appropriate visualizer based on settings
+    Loader {
+      id: visualizerLoader
+      anchors.fill: parent
+      anchors.margins: Style.marginS
+      active: shouldShow
+      asynchronous: true
 
-  // When visualizer type or playback changes, shouldShow updates automatically
-  // The Loader dynamically loads the appropriate visualizer based on settings
-  Loader {
-    id: visualizerLoader
-    anchors.fill: parent
-    anchors.margins: Style.marginS
-    active: shouldShow
-    asynchronous: true
-
-    sourceComponent: {
-      switch (currentVisualizerType) {
-      case "linear":
-        return linearComponent;
-      case "mirrored":
-        return mirroredComponent;
-      case "wave":
-        return waveComponent;
-      default:
-        return null;
+      sourceComponent: {
+        switch (currentVisualizerType) {
+        case "linear":
+          return linearComponent;
+        case "mirrored":
+          return mirroredComponent;
+        case "wave":
+          return waveComponent;
+        default:
+          return null;
+        }
       }
     }
   }

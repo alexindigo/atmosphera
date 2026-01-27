@@ -227,11 +227,11 @@ Item {
                  }
   }
 
-  // Main container
+  // Main container - stays at content size, pixel-perfect centered in parent
   Rectangle {
     id: container
-    anchors.left: parent.left
-    anchors.verticalCenter: parent.verticalCenter
+    x: Style.pixelAlignCenter(parent.width, width)
+    y: Style.pixelAlignCenter(parent.height, height)
     width: isVertical ? (isHidden ? 0 : verticalSize) : (isHidden ? 0 : contentWidth)
     height: isVertical ? (isHidden ? 0 : verticalSize) : capsuleHeight
     radius: Style.radiusM
