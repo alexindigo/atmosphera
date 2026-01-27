@@ -544,7 +544,7 @@ Item {
       "description": app.genericName || app.comment || "",
       "icon": app.icon || "application-x-executable",
       "isImage": false,
-      "_score": (score !== undefined ? score : 0) + 1,
+      "_score": (score !== undefined ? score : 0),
       "provider": root,
       "onActivate": function () {
         // Close the launcher/SmartPanel immediately without any animations.
