@@ -251,7 +251,7 @@ Item {
       // Top edge hot corner - triggers first widget in left (top) section
       MouseArea {
         width: parent.width
-        height: Style.marginM
+        height: Style.marginS
         x: 0
         y: 0
         onClicked: root.triggerFirstWidgetInSection("left")
@@ -260,7 +260,7 @@ Item {
       // Bottom edge hot corner - triggers last widget in right (bottom) section
       MouseArea {
         width: parent.width
-        height: Style.marginM
+        height: Style.marginS
         x: 0
         anchors.bottom: parent.bottom
         onClicked: root.triggerLastWidgetInSection("right")
@@ -270,7 +270,7 @@ Item {
       ColumnLayout {
         x: Style.pixelAlignCenter(parent.width, width)
         anchors.top: parent.top
-        anchors.topMargin: Style.marginM
+        anchors.topMargin: Style.marginS
         spacing: Style.marginS
 
         Repeater {
@@ -321,7 +321,7 @@ Item {
       ColumnLayout {
         x: Style.pixelAlignCenter(parent.width, width)
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.marginM
+        anchors.bottomMargin: Style.marginS
         spacing: Style.marginS
 
         Repeater {
