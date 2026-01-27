@@ -270,6 +270,8 @@
       "label-mode-label": "Beschriftungsmodus",
       "occupied-color-description": "Lege die Hintergrundfarbe für belegte Workspaces fest.",
       "occupied-color-label": "Farbe für belegte Arbeitsfläche",
+      "reverse-scrolling-description": "Die Richtung des Arbeitsbereichswechsels beim Scrollen umkehren.",
+      "reverse-scrolling-label": "Scrollen umkehren",
       "show-applications-description": "Anwendungssymbole in jedem Arbeitsbereich anzeigen.",
       "show-applications-label": "Anwendungen anzeigen",
       "show-badge-description": "Zeige die Arbeitsbereichsnummern-Plakette im gruppierten Modus an.",

@@ -270,6 +270,8 @@
       "label-mode-label": "Label mode",
       "occupied-color-description": "Set the background color for occupied workspaces.",
       "occupied-color-label": "Occupied workspace color",
+      "reverse-scrolling-description": "Reverse the direction of workspace switching when scrolling.",
+      "reverse-scrolling-label": "Reverse scrolling",
       "show-applications-description": "Display application icons inside each workspace.",
       "show-applications-label": "Show applications",
       "show-badge-description": "Show the workspace number badge in grouped mode.",

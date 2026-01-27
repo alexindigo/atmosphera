@@ -270,6 +270,8 @@
       "label-mode-label": "Modo de rótulo",
       "occupied-color-description": "Definir a cor de fundo para Workspaces ocupados.",
       "occupied-color-label": "Cor do espaço de trabalho ocupado",
+      "reverse-scrolling-description": "Inverter a direção da troca de áreas de trabalho ao rolar.",
+      "reverse-scrolling-label": "Rolagem invertida",
       "show-applications-description": "Exibir ícones de aplicativos dentro de cada espaço de trabalho.",
       "show-applications-label": "Mostrar aplicativos",
       "show-badge-description": "Mostrar o selo do número da área de trabalho no modo agrupado.",

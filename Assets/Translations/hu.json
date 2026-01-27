@@ -270,6 +270,8 @@
       "label-mode-label": "Címke mód",
       "occupied-color-description": "A foglalt Workspaces háttérszínének beállítása.",
       "occupied-color-label": "Foglalt munkaterület színe",
+      "reverse-scrolling-description": "Görgetéskor fordított irányba váltson a munkaterületek között.",
+      "reverse-scrolling-label": "Görgetés megfordítása",
       "show-applications-description": "Alkalmazásikonok megjelenítése minden munkaterületen belül.",
       "show-applications-label": "Alkalmazások megjelenítése",
       "show-badge-description": "Munkaterület számának jelzése csoportosított módban.",

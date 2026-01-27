@@ -270,6 +270,8 @@
       "label-mode-label": "레이블 모드",
       "occupied-color-description": "사용 중인 작업 공간의 배경색을 설정합니다.",
       "occupied-color-label": "사용 중인 작업 공간 색상",
+      "reverse-scrolling-description": "스크롤할 때 작업 공간 전환 방향을 반대로 합니다.",
+      "reverse-scrolling-label": "스크롤 반전",
       "show-applications-description": "각 작업 공간 내부에 애플리케이션 아이콘을 표시합니다.",
       "show-applications-label": "애플리케이션 표시",
       "show-badge-description": "그룹화 모드에서 작업 공간 번호 배지를 표시합니다.",
