@@ -39,7 +39,10 @@ Singleton {
       }
     }
 
-    return UPower.displayDevice;
+    if (UPower.displayDevice.isPresent) {
+      return UPower.displayDevice;
+    }
+    return null;
   }
 
   readonly property var _bluetoothBattery: {
