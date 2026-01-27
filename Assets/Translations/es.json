@@ -270,6 +270,8 @@
       "label-mode-label": "Modo de etiqueta",
       "occupied-color-description": "Establecer el color de fondo para los Workspaces ocupados.",
       "occupied-color-label": "Color del espacio de trabajo ocupado",
+      "reverse-scrolling-description": "Invertir la dirección del cambio de espacios de trabajo al desplazarse.",
+      "reverse-scrolling-label": "Desplazamiento inverso",
       "show-applications-description": "Mostrar los iconos de las aplicaciones dentro de cada espacio de trabajo.",
       "show-applications-label": "Mostrar aplicaciones",
       "show-badge-description": "Mostrar la insignia del número de espacio de trabajo en modo agrupado.",

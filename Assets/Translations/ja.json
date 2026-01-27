@@ -270,6 +270,8 @@
       "label-mode-label": "ラベルモード",
       "occupied-color-description": "使用中のWorkspaceの背景色を設定します。",
       "occupied-color-label": "使用中のワークスペースの色",
+      "reverse-scrolling-description": "スクロール時のワークスペース切り替え方向を反転する。",
+      "reverse-scrolling-label": "スクロール方向を反転",
       "show-applications-description": "各ワークスペース内にアプリアイコンを表示します。",
       "show-applications-label": "アプリアイコンを表示",
       "show-badge-description": "グループ化モードでワークスペース番号バッジを表示します。",

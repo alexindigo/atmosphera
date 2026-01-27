@@ -270,6 +270,8 @@
       "label-mode-label": "Etikettläge",
       "occupied-color-description": "Ställ in bakgrundsfärgen för använda arbetsytor.",
       "occupied-color-label": "Färg för använda arbetsytor",
+      "reverse-scrolling-description": "Vänd riktningen för arbetsyteväxling vid rullning.",
+      "reverse-scrolling-label": "Omvänd rullning",
       "show-applications-description": "Visa applikationsikoner i varje arbetsyta.",
       "show-applications-label": "Visa applikationer",
       "show-badge-description": "Visa arbetsytans nummerskylt i grupperat läge.",

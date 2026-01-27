@@ -270,6 +270,8 @@
       "label-mode-label": "Etikettmodus",
       "occupied-color-description": "Set bakgrunnsfargen for opptekne Workspaces.",
       "occupied-color-label": "Farge for oppteke arbeidsområde",
+      "reverse-scrolling-description": "Reverser retninga for arbeidsområdebytte når du skrollar.",
+      "reverse-scrolling-label": "Omvendt rulling",
       "show-applications-description": "Viser applikasjonsikon innanfor kvart arbeidsrom.",
       "show-applications-label": "Vis applikasjonar",
       "show-badge-description": "Vis arbeidsområdenummer-merket i gruppert modus.",

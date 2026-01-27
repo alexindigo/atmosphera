@@ -270,6 +270,8 @@
       "label-mode-label": "标签模式",
       "occupied-color-description": "设置已占用Workspace的背景颜色。",
       "occupied-color-label": "已占用工作区颜色",
+      "reverse-scrolling-description": "滚动时反转工作区切换方向。",
+      "reverse-scrolling-label": "反转滚动",
       "show-applications-description": "在每个工作区内显示应用程序图标。",
       "show-applications-label": "显示应用程序",
       "show-badge-description": "在分组模式下显示工作区编号徽章。",

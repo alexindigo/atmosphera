@@ -270,6 +270,8 @@
       "label-mode-label": "Labelmodus",
       "occupied-color-description": "Stel de achtergrondkleur in voor bezette Workspaces.",
       "occupied-color-label": "Kleur van bezette workspace",
+      "reverse-scrolling-description": "Keer de richting van het wisselen van werkruimtes om bij het scrollen.",
+      "reverse-scrolling-label": "Omgekeerd scrollen",
       "show-applications-description": "Toon applicatiepictogrammen in elke werkruimte.",
       "show-applications-label": "Toon applicaties",
       "show-badge-description": "Toon de werkomgevingnummerbadge in gegroepeerde modus.",

@@ -270,6 +270,8 @@
       "label-mode-label": "Режим міток",
       "occupied-color-description": "Встановити колір фону для зайнятих Workspace.",
       "occupied-color-label": "Колір зайнятого робочого столу",
+      "reverse-scrolling-description": "Змінити напрямок перемикання робочих просторів під час прокручування.",
+      "reverse-scrolling-label": "Зворотне прокручування",
       "show-applications-description": "Відображати значки програм у кожному робочому просторі.",
       "show-applications-label": "Показати застосунки",
       "show-badge-description": "Показувати значок номера робочого столу в згрупованому режимі.",

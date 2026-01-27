@@ -270,6 +270,8 @@
       "label-mode-label": "Etiket Modu",
       "occupied-color-description": "Dolu Workspaces için arka plan rengini ayarla.",
       "occupied-color-label": "Dolu çalışma alanı rengi",
+      "reverse-scrolling-description": "Kaydırırken çalışma alanı geçiş yönünü tersine çevir.",
+      "reverse-scrolling-label": "Ters kaydırma",
       "show-applications-description": "Her çalışma alanının içinde uygulama simgelerini görüntüle.",
       "show-applications-label": "Uygulamaları göster",
       "show-badge-description": "Gruplandırılmış modda çalışma alanı numarası işaretini göster.",

@@ -270,6 +270,8 @@
       "label-mode-label": "Tryb etykiet",
       "occupied-color-description": "Ustaw kolor tła dla zajętych Workspace'ów.",
       "occupied-color-label": "Kolor zajętego obszaru roboczego",
+      "reverse-scrolling-description": "Odwróć kierunek przełączania obszarów roboczych podczas przewijania.",
+      "reverse-scrolling-label": "Odwróć przewijanie",
       "show-applications-description": "Wyświetl ikony aplikacji wewnątrz każdego obszaru roboczego.",
       "show-applications-label": "Pokaż aplikacje",
       "show-badge-description": "Pokaż plakietkę z numerem obszaru roboczego w trybie grupowym.",
