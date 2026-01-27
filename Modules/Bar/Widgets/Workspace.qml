@@ -41,7 +41,7 @@ Item {
   readonly property real barHeight: Style.getBarHeightForScreen(screenName)
   readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screenName)
   readonly property real barFontSize: Style.getBarFontSizeForScreen(screenName)
-  readonly property real baseDimensionRatio: 0.65 * (widgetSettings.labelMode === "none" ? 0.75 : 1)
+  readonly property real baseDimensionRatio: 0.65
 
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
   readonly property bool hasLabel: (labelMode !== "none")
@@ -126,7 +126,7 @@ Item {
 
     // Don't calculate text width if labels are off
     if (labelMode === "none") {
-      return Math.round(d * factor);
+      return Style.toOdd(d * factor);
     }
 
     var displayText = ws.idx.toString();

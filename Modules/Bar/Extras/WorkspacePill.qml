@@ -27,8 +27,11 @@ Item {
   required property var getWorkspaceHeight
 
   // Fixed dimension (cross-axis)
-  width: isVertical ? Style.toOdd(capsuleHeight * baseDimensionRatio) : undefined
-  height: isVertical ? undefined : Style.toOdd(capsuleHeight * baseDimensionRatio)
+  readonly property real fixedDimension: Style.toOdd(capsuleHeight * baseDimensionRatio)
+
+  // Fixed dimension set directly, varying dimension handled by states
+  width: isVertical ? fixedDimension : getWorkspaceWidth(workspace, false)
+  height: isVertical ? getWorkspaceHeight(workspace, false) : fixedDimension
 
   states: [
     State {
@@ -36,17 +39,8 @@ Item {
       when: workspace.isActive
       PropertyChanges {
         target: pillContainer
-        width: isVertical ? pillContainer.width : getWorkspaceWidth(workspace, true)
-        height: isVertical ? getWorkspaceHeight(workspace, true) : pillContainer.height
-      }
-    },
-    State {
-      name: "inactive"
-      when: !workspace.isActive
-      PropertyChanges {
-        target: pillContainer
-        width: isVertical ? pillContainer.width : getWorkspaceWidth(workspace, false)
-        height: isVertical ? getWorkspaceHeight(workspace, false) : pillContainer.height
+        width: isVertical ? fixedDimension : getWorkspaceWidth(workspace, true)
+        height: isVertical ? getWorkspaceHeight(workspace, true) : fixedDimension
       }
     }
   ]
