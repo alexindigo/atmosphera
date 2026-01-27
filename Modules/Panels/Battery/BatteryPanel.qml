@@ -58,30 +58,10 @@ SmartPanel {
     // Use the centralized list of all devices
     readonly property var allDevices: BatteryService.devices
 
-    readonly property var laptopBatteries: allDevices.filter(d => !BatteryService.isBluetoothDevice(d))
-    readonly property var otherDevices: allDevices.filter(d => BatteryService.isBluetoothDevice(d))
+    readonly property var laptopBatteries: BatteryService.laptopBatteries
+    readonly property var otherDevices: BatteryService.externalBatteries
 
-    readonly property string timeText: {
-      if (!isReady || !isDevicePresent) {
-        return I18n.tr("battery.no-battery-detected");
-      }
-      if (isPluggedIn) {
-        return I18n.tr("battery.plugged-in");
-      }
-      if (selectedDevice) {
-        if (selectedDevice.timeToFull > 0) {
-          return I18n.tr("battery.time-until-full", {
-                           "time": Time.formatVagueHumanReadableDuration(selectedDevice.timeToFull)
-                         });
-        }
-        if (selectedDevice.timeToEmpty > 0) {
-          return I18n.tr("battery.time-left", {
-                           "time": Time.formatVagueHumanReadableDuration(selectedDevice.timeToEmpty)
-                         });
-        }
-      }
-      return I18n.tr("common.idle");
-    }
+    readonly property string timeText: BatteryService.getTimeRemainingText(selectedDevice)
     readonly property string iconName: BatteryService.getIcon(percent, isCharging, isPluggedIn, isReady)
 
     property var batteryWidgetInstance: BarService.lookupWidget("Battery", screen ? screen.name : null)

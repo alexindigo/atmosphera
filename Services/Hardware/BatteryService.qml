@@ -59,6 +59,11 @@ Singleton {
     if (devices.length === 0)
     return null;
 
+    // Prioritize DisplayDevice (Aggregate)
+    if (UPower.displayDevice && UPower.displayDevice.type === UPowerDeviceType.Battery && isDevicePresent(UPower.displayDevice)) {
+      return UPower.displayDevice;
+    }
+
     // Prioritize BAT0
     for (var i = 0; i < devices.length; i++) {
       var d = devices[i];
@@ -89,13 +94,33 @@ Singleton {
   readonly property bool batteryReady: isDeviceReady(primaryDevice)
   readonly property bool batteryPresent: isDevicePresent(primaryDevice)
 
+  // Exposed subsets of devices
+  readonly property var laptopBatteries: devices.filter(d => !isBluetoothDevice(d))
+  readonly property var externalBatteries: devices.filter(d => isBluetoothDevice(d))
+
   property bool healthAvailable: false
   property int healthPercent: -1
+
+  // Initialization state
+  property bool initializationComplete: false
+  readonly property bool ready: initializationComplete
+
+  Timer {
+    interval: 500
+    running: true
+    repeat: false
+    onTriggered: root.initializationComplete = true
+  }
 
   // 3. Helper to resolve a device by path, or return primary if path is empty/invalid
   function resolveDevice(nativePath) {
     if (!nativePath || nativePath === "") {
       return primaryDevice;
+    }
+
+    // Check for DisplayDevice explicitly if requested via "DisplayDevice" or empty string
+    if (nativePath === "DisplayDevice" && UPower.displayDevice) {
+       return UPower.displayDevice;
     }
 
     // Search in our cached list
@@ -189,6 +214,65 @@ Singleton {
     return "";
   }
 
+  function getTimeRemainingText(device) {
+    if (!ready || !isDevicePresent(device)) {
+      return I18n.tr("battery.no-battery-detected");
+    }
+    if (isPluggedIn(device)) {
+      return I18n.tr("battery.plugged-in");
+    }
+    if (device) {
+      if (device.timeToFull > 0) {
+        return I18n.tr("battery.time-until-full", {
+                          "time": Time.formatVagueHumanReadableDuration(device.timeToFull)
+                        });
+      }
+      if (device.timeToEmpty > 0) {
+        return I18n.tr("battery.time-left", {
+                          "time": Time.formatVagueHumanReadableDuration(device.timeToEmpty)
+                        });
+      }
+    }
+    return I18n.tr("common.idle");
+  }
+
+  function getDeviceOptionsModel() {
+    var model = [{
+      "key": "",
+      "name": I18n.tr("bar.battery.device-default")
+    }];
+
+    for (var i = 0; i < devices.length; i++) {
+      var d = devices[i];
+      var name = "";
+      
+      // Determine friendly name
+      if (isBluetoothDevice(d)) {
+          name = d.name || "Bluetooth Device";
+      } else if (d === UPower.displayDevice) {
+          name = I18n.tr("common.battery-aggregate") || "Display Device";
+      } else {
+          name = d.model || I18n.tr("common.battery");
+      }
+
+      // Determine ID/Path
+      var key = isBluetoothDevice(d) ? d.address : d.nativePath;
+      if (!key && d === UPower.displayDevice) key = "DisplayDevice";
+
+      // Format: "Model (ID)"
+      var displayName = name;
+      if (key && key !== "DisplayDevice") {
+          displayName = `${name} (${key})`;
+      }
+
+      model.push({
+        "key": key || "",
+        "name": displayName
+      });
+    }
+    return model;
+  }
+
   function refreshHealth() {
     if (!isLaptopBattery || !primaryDevice) {
       healthAvailable = false;
@@ -200,7 +284,8 @@ Singleton {
 
   Process {
     id: healthProcess
-    command: ["sh", "-c", "upower -i $(upower -e | grep battery | head -n 1) 2>/dev/null | grep -iE 'capacity'"]
+    // Dynamically target the primary device if possible, otherwise fall back to first battery
+    command: ["sh", "-c", `upower -i ${primaryDevice.nativePath ? "/org/freedesktop/UPower/devices/battery_" + primaryDevice.nativePath : "$(upower -e | grep battery | head -n 1)"} 2>/dev/null | grep -iE 'capacity'`]
     environment: ({
                     "LC_ALL": "C"
                   })
@@ -226,6 +311,7 @@ Singleton {
       Qt.callLater(refreshHealth);
     }
   }
+
 
   function getIcon(percent, charging, pluggedIn, isReady) {
     if (!isReady) {
