@@ -383,7 +383,7 @@ Singleton {
       property list<string> pinnedApps: []
       property bool useApp2Unit: false
       property bool sortByMostUsed: true
-      property string terminalCommand: "xterm -e"
+      property string terminalCommand: "alacritty -e"
       property bool customLaunchPrefixEnabled: false
       property string customLaunchPrefix: ""
       // View mode: "list" or "grid"
