@@ -25,7 +25,7 @@ Singleton {
   - Default cache directory: ~/.cache/noctalia
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 45
+  readonly property int settingsVersion: 46
   readonly property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
   readonly property string shellName: "noctalia"
   readonly property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
@@ -280,6 +280,7 @@ Singleton {
       property bool enableLockScreenCountdown: true
       property int lockScreenCountdownDuration: 10000
       property bool autoStartAuth: false
+      property bool allowPasswordWithFprintd: false
     }
 
     // ui

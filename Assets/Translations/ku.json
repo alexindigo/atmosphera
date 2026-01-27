@@ -1111,6 +1111,8 @@
       "weather-show-in-calendar-label": "Nîşandanîna hewayê di salnameyê de"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "Dema ku fprintd (nasnameya tiliyan) çalak e, ev vebijêrk dihêle hûn bi şîfreya xwe têkevin, ne bi tiliya xwe.",
+      "allow-password-with-fprintd-label": "Rêdan bi têketina şîfreyê bi fprintd",
       "auto-start-auth-description": "mînak, otomatîkî dest bi rastkirina tiliyê dike bêyî ku pêdivî bi pêlkeyek an klîkek hebe.",
       "auto-start-auth-label": "Destpêkirina otomatîkî ya rastkirinê",
       "compact-lockscreen-description": "Tenê inputa têketinê û kontrolên pergalê nîşan bide, widgetên hewayê û medyayê veşêre.",

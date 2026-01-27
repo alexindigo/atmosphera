@@ -10,15 +10,9 @@ QtObject {
     const shellName = "noctalia";
     const configDir = Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/";
     const pamConfigDir = configDir + "pam";
-    const pamConfigFile = pamConfigDir + "/password.conf";
-
-    // Remove the file if it exists
-    const script = `rm -f '${pamConfigFile}'`;
+    // Remove the entire pam directory if it exists
+    const script = `rm -rf '${pamConfigDir}'`;
     Quickshell.execDetached(["sh", "-c", script]);
-
-    // Attempt to remove the directory if empty (ignore errors)
-    const rmdirScript = `rmdir '${pamConfigDir}' 2>/dev/null || true`;
-    Quickshell.execDetached(["sh", "-c", rmdirScript]);
 
     logger.d("Migration46", "Cleaned up legacy PAM config");
 

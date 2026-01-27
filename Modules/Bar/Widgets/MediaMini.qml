@@ -11,6 +11,10 @@ import qs.Widgets.AudioSpectrum
 
 Item {
   id: root
+  Layout.preferredHeight: isVertical ? -1 : Style.getBarHeightForScreen(screenName)
+  Layout.preferredWidth: isVertical ? Style.getBarHeightForScreen(screenName) : -1
+  Layout.fillHeight: false
+  Layout.fillWidth: false
 
   property ShellScreen screen
   property string widgetId: ""
@@ -330,6 +334,7 @@ Item {
           }
           cursorShape: hasPlayer ? Qt.PointingHandCursor : Qt.ArrowCursor
           maxWidth: root.maxWidth - root.mainContentWidth
+          forcedHover: mainMouseArea.containsMouse
           NText {
             // anchors.fill: parent
             color: hasPlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
@@ -366,33 +371,43 @@ Item {
         }
       }
 
-      // Mouse interaction
-      MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+      // Mouse interaction moved to root
+    }
+  }
 
-        onClicked: mouse => {
-                     if (mouse.button === Qt.LeftButton) {
-                       PanelService.getPanel("mediaPlayerPanel", screen)?.toggle(container);
-                     } else if (mouse.button === Qt.RightButton) {
-                       TooltipService.hide();
-                       PanelService.showContextMenu(contextMenu, container, screen);
-                     } else if (mouse.button === Qt.MiddleButton && hasPlayer) {
-                       MediaService.playPause();
-                       TooltipService.hide();
-                     }
-                   }
+  // Mouse interaction
+  MouseArea {
+    id: mainMouseArea
+    anchors.fill: parent
 
-        onEntered: {
-          if (isVertical || scrollingMode === "never") {
-            TooltipService.show(root, title, BarService.getTooltipDirection(root.screen?.name));
-          }
-        }
-        onExited: TooltipService.hide()
+    // Extend click area to screen edge if widget is at the start/end
+    anchors.leftMargin: (!isVertical && section === "left" && sectionWidgetIndex === 0) ? -Style.marginS : 0
+    anchors.rightMargin: (!isVertical && section === "right" && sectionWidgetIndex === sectionWidgetsCount - 1) ? -Style.marginS : 0
+    anchors.topMargin: (isVertical && section === "left" && sectionWidgetIndex === 0) ? -Style.marginM : 0
+    anchors.bottomMargin: (isVertical && section === "right" && sectionWidgetIndex === sectionWidgetsCount - 1) ? -Style.marginM : 0
+
+    hoverEnabled: true
+    cursorShape: Qt.PointingHandCursor
+    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+
+    onClicked: mouse => {
+                 if (mouse.button === Qt.LeftButton) {
+                   PanelService.getPanel("mediaPlayerPanel", screen)?.toggle(container);
+                 } else if (mouse.button === Qt.RightButton) {
+                   TooltipService.hide();
+                   PanelService.showContextMenu(contextMenu, container, screen);
+                 } else if (mouse.button === Qt.MiddleButton && hasPlayer) {
+                   MediaService.playPause();
+                   TooltipService.hide();
+                 }
+               }
+
+    onEntered: {
+      if (isVertical || scrollingMode === "never") {
+        TooltipService.show(root, title, BarService.getTooltipDirection(root.screen?.name));
       }
     }
+    onExited: TooltipService.hide()
   }
 
   // Components

@@ -151,7 +151,7 @@ Singleton {
 
   // Get all widgets in a specific section
   function getWidgetsBySection(section, screenName = null) {
-    var widgets = [];
+    var widgetEntries = [];
 
     for (var key in widgetInstances) {
       var widget = widgetInstances[key];
@@ -159,19 +159,20 @@ Singleton {
         continue;
       if (widget.section === section) {
         if (!screenName || widget.screenName === screenName) {
-          widgets.push(widget.instance);
+          widgetEntries.push(widget);
         }
       }
     }
 
     // Sort by index to maintain order
-    widgets.sort(function (a, b) {
-      var aWidget = getWidgetWithMetadata(a.widgetId, a.screen?.name, a.section);
-      var bWidget = getWidgetWithMetadata(b.widgetId, b.screen?.name, b.section);
-      return (aWidget?.index || 0) - (bWidget?.index || 0);
+    widgetEntries.sort(function (a, b) {
+      return (a.index || 0) - (b.index || 0);
     });
 
-    return widgets;
+    // Return just the instances
+    return widgetEntries.map(function (w) {
+      return w.instance;
+    });
   }
 
   // Get all registered widgets (for debugging)

@@ -1111,6 +1111,8 @@
       "weather-show-in-calendar-label": "Exibir clima no calendário"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "Quando o fprintd (autenticação por impressão digital) está ativo, esta opção permite-lhe iniciar sessão com a sua palavra-passe em vez de uma impressão digital.",
+      "allow-password-with-fprintd-label": "Permitir login por senha com fprintd",
       "auto-start-auth-description": "p. ex., inicia automaticamente a autenticação de impressão digital sem exigir uma pressão de tecla ou um clique de botão.",
       "auto-start-auth-label": "Autenticação de início automático",
       "compact-lockscreen-description": "Mostrar apenas a entrada de login e os controles do sistema, ocultando os widgets de clima e mídia.",

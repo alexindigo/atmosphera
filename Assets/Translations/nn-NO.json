@@ -713,6 +713,8 @@
       "clipboard-desc": "Sjå og styra utklippsboka di frå programveljaren."
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "Når fprintd (fingeravtrykkautentisering) er aktiv, lar dette alternativet deg framleis logge inn med passordet ditt i staden for eit fingeravtrykk.",
+      "allow-password-with-fprintd-label": "Tillat passordpålogging med fprintd",
       "auto-start-auth-description": "t.d. startar automatisk fingeravtrykksautentisering utan å krevje eit tastetrykk eller eit knappetrykk.",
       "auto-start-auth-label": "Autostart autentisering"
     }

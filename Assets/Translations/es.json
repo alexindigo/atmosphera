@@ -1090,6 +1090,8 @@
       "weather-show-in-calendar-label": "Mostrar el clima en el calendario"
     },
     "lock-screen": {
+      "allow-password-with-fprintd-description": "Cuando fprintd (autenticación por huella dactilar) está activo, esta opción te permite iniciar sesión con tu contraseña en lugar de una huella dactilar.",
+      "allow-password-with-fprintd-label": "Permitir inicio de sesión con contraseña usando fprintd",
       "auto-start-auth-description": "p. ej., inicia automáticamente la autenticación de huellas dactilares sin requerir una pulsación de tecla o un clic de botón.",
       "auto-start-auth-label": "Autentificación de inicio automática",
       "compact-lockscreen-description": "Mostrar solo el campo de inicio de sesión y los controles del sistema, ocultando los widgets del clima y multimedia.",
