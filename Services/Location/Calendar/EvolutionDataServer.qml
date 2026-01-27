@@ -14,8 +14,7 @@ Singleton {
   readonly property string listCalendarsScript: Quickshell.shellDir + '/Scripts/python/src/calendar/list-calendars.py'
   readonly property string calendarEventsScript: Quickshell.shellDir + '/Scripts/python/src/calendar/calendar-events.py'
 
-  function init(service) {
-    CalendarService = service;
+  function init() {
     availabilityCheckProcess.running = true;
   }
   function loadCalendars() {

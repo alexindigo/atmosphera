@@ -9,7 +9,7 @@ import qs.Services.Location
 Singleton {
   id: root
 
-  function init(service) {
+  function init() {
     availabilityCheckProcess.running = true;
   }
   function loadCalendars() {
