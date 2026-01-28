@@ -840,8 +840,15 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: Style.toOdd(root.itemSize * 0.25)
                     height: 4
-                    color: taskbarItem.isFocused ? Color.mPrimary : "transparent"
+                    color: taskbarItem.isFocused ? Color.mPrimary : (taskbarItem.isHovered ? Color.mHover : "transparent")
                     radius: Math.min(Style.radiusXXS, width / 2)
+
+                    Behavior on color {
+                      ColorAnimation {
+                        duration: Style.animationFast
+                        easing.type: Easing.OutCubic
+                      }
+                    }
                   }
                 }
 
