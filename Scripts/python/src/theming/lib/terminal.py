@@ -99,9 +99,10 @@ class TerminalColors:
                 "newTab": {"bg": selection_bg, "fg": foreground},
                 "newTabHover": {"bg": bright["black"], "fg": foreground},
             },
+
             # Kitty border colors
             active_border=m_primary,
-            inactive_border=m_surface_variant,
+            inactive_border=m_secondary
         )
 
 
