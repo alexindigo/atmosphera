@@ -540,7 +540,7 @@ Item {
     id: pillRow
     spacing: spacingBetweenPills
     x: horizontalPadding
-    y: 0
+    y: workspaceBackground.y + Style.pixelAlignCenter(workspaceBackground.height, height)
     visible: !isVertical && !showApplications
 
     Repeater {
@@ -552,7 +552,6 @@ Item {
         isVertical: false
         baseDimensionRatio: root.baseDimensionRatio
         capsuleHeight: root.capsuleHeight
-        barHeight: root.barHeight
         labelMode: root.labelMode
         characterCount: root.characterCount
         textRatio: root.textRatio
@@ -574,7 +573,7 @@ Item {
   Column {
     id: pillColumn
     spacing: spacingBetweenPills
-    x: 0
+    x: workspaceBackground.x + Style.pixelAlignCenter(workspaceBackground.width, width)
     y: horizontalPadding
     visible: isVertical && !showApplications
 
@@ -587,7 +586,6 @@ Item {
         isVertical: true
         baseDimensionRatio: root.baseDimensionRatio
         capsuleHeight: root.capsuleHeight
-        barHeight: root.barHeight
         labelMode: root.labelMode
         characterCount: root.characterCount
         textRatio: root.textRatio

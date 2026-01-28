@@ -12,8 +12,6 @@ ColumnLayout {
   property var widgetData: null
   property var widgetMetadata: null
 
-  signal settingsChanged(var settings)
-
   readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
 
   // Local state
@@ -70,10 +68,7 @@ ColumnLayout {
       }
     ]
     currentKey: root.valueHideMode
-    onSelected: key => {
-                  root.valueHideMode = key;
-                  settingsChanged(saveSettings());
-                }
+    onSelected: key => root.valueHideMode = key
   }
 
   NToggle {
@@ -81,10 +76,7 @@ ColumnLayout {
     label: I18n.tr("bar.taskbar.only-same-monitor-label")
     description: I18n.tr("bar.taskbar.only-same-monitor-description")
     checked: root.valueOnlySameOutput
-    onToggled: checked => {
-                 root.valueOnlySameOutput = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => root.valueOnlySameOutput = checked
   }
 
   NToggle {
@@ -92,10 +84,7 @@ ColumnLayout {
     label: I18n.tr("bar.taskbar.only-active-workspaces-label")
     description: I18n.tr("bar.taskbar.only-active-workspaces-description")
     checked: root.valueOnlyActiveWorkspaces
-    onToggled: checked => {
-                 root.valueOnlyActiveWorkspaces = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => root.valueOnlyActiveWorkspaces = checked
   }
 
   NToggle {
@@ -103,10 +92,7 @@ ColumnLayout {
     label: I18n.tr("bar.tray.colorize-icons-label")
     description: I18n.tr("bar.taskbar.colorize-icons-description")
     checked: root.valueColorizeIcons
-    onToggled: checked => {
-                 root.valueColorizeIcons = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => root.valueColorizeIcons = checked
   }
 
   NToggle {
@@ -114,10 +100,7 @@ ColumnLayout {
     label: I18n.tr("bar.taskbar.show-pinned-apps-label")
     description: I18n.tr("bar.taskbar.show-pinned-apps-description")
     checked: root.valueShowPinnedApps
-    onToggled: checked => {
-                 root.valueShowPinnedApps = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => root.valueShowPinnedApps = checked
   }
 
   NValueSlider {
@@ -128,10 +111,7 @@ ColumnLayout {
     to: 1
     stepSize: 0.01
     value: root.valueIconScale
-    onMoved: value => {
-               root.valueIconScale = value;
-               settingsChanged(saveSettings());
-             }
+    onMoved: value => root.valueIconScale = value
     text: Math.round(root.valueIconScale * 100) + "%"
   }
 
@@ -140,10 +120,7 @@ ColumnLayout {
     label: I18n.tr("bar.taskbar.show-title-label")
     description: isVerticalBar ? I18n.tr("bar.taskbar.show-title-description-disabled") : I18n.tr("bar.taskbar.show-title-description")
     checked: root.valueShowTitle
-    onToggled: checked => {
-                 root.valueShowTitle = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => root.valueShowTitle = checked
     enabled: !isVerticalBar
   }
 
@@ -153,10 +130,7 @@ ColumnLayout {
     label: I18n.tr("bar.taskbar.smart-width-label")
     description: I18n.tr("bar.taskbar.smart-width-description")
     checked: root.valueSmartWidth
-    onToggled: checked => {
-                 root.valueSmartWidth = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => root.valueSmartWidth = checked
   }
 
   NValueSlider {
@@ -168,10 +142,7 @@ ColumnLayout {
     to: 100
     stepSize: 5
     value: root.valueMaxTaskbarWidth
-    onMoved: value => {
-               root.valueMaxTaskbarWidth = Math.round(value);
-               settingsChanged(saveSettings());
-             }
+    onMoved: value => root.valueMaxTaskbarWidth = Math.round(value)
     text: Math.round(root.valueMaxTaskbarWidth) + "%"
   }
 
@@ -183,6 +154,5 @@ ColumnLayout {
     description: I18n.tr("bar.taskbar.title-width-description")
     text: widgetData.titleWidth || widgetMetadata.titleWidth
     placeholderText: I18n.tr("placeholders.enter-width-pixels")
-    onEditingFinished: settingsChanged(saveSettings())
   }
 }

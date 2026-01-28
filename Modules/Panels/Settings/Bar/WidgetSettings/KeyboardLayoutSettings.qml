@@ -12,8 +12,6 @@ ColumnLayout {
   property var widgetData: null
   property var widgetMetadata: null
 
-  signal settingsChanged(var settings)
-
   // Local state
   property string valueDisplayMode: widgetData.displayMode !== undefined ? widgetData.displayMode : widgetMetadata.displayMode
   property bool valueShowIcon: widgetData.showIcon !== undefined ? widgetData.showIcon : widgetMetadata.showIcon
@@ -45,19 +43,13 @@ ColumnLayout {
       }
     ]
     currentKey: valueDisplayMode
-    onSelected: key => {
-                  valueDisplayMode = key;
-                  settingsChanged(saveSettings());
-                }
+    onSelected: key => valueDisplayMode = key
   }
 
   NToggle {
     label: I18n.tr("bar.custom-button.show-icon-label")
     description: I18n.tr("bar.keyboard-layout.show-icon-description")
     checked: valueShowIcon
-    onToggled: checked => {
-                 valueShowIcon = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueShowIcon = checked
   }
 }

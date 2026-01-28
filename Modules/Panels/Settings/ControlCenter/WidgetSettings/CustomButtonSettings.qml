@@ -14,8 +14,6 @@ ColumnLayout {
   property var widgetData: null
   property var widgetMetadata: null
 
-  signal settingsChanged(var settings)
-
   QtObject {
     id: _settings
 
@@ -96,7 +94,6 @@ ColumnLayout {
     initialIcon: _settings.icon
     onIconSelected: function (iconName) {
       _settings.icon = iconName;
-      settingsChanged(saveSettings());
     }
   }
 
@@ -106,10 +103,7 @@ ColumnLayout {
     description: I18n.tr("panels.control-center.shortcuts-custom-button-general-tooltip-text-description")
     placeholderText: I18n.tr("placeholders.enter-tooltip")
     text: _settings.generalTooltipText
-    onEditingFinished: {
-      _settings.generalTooltipText = text;
-      settingsChanged(saveSettings());
-    }
+    onTextChanged: _settings.generalTooltipText = text
   }
 
   NTextInput {
@@ -118,10 +112,7 @@ ColumnLayout {
     description: I18n.tr("bar.custom-button.left-click-description")
     placeholderText: I18n.tr("placeholders.enter-command")
     text: _settings.onClicked
-    onEditingFinished: {
-      _settings.onClicked = text;
-      settingsChanged(saveSettings());
-    }
+    onTextChanged: _settings.onClicked = text
   }
 
   NTextInput {
@@ -130,10 +121,7 @@ ColumnLayout {
     description: I18n.tr("bar.custom-button.right-click-description")
     placeholderText: I18n.tr("placeholders.enter-command")
     text: _settings.onRightClicked
-    onEditingFinished: {
-      _settings.onRightClicked = text;
-      settingsChanged(saveSettings());
-    }
+    onTextChanged: _settings.onRightClicked = text
   }
 
   NTextInput {
@@ -142,10 +130,7 @@ ColumnLayout {
     description: I18n.tr("bar.custom-button.middle-click-description")
     placeholderText: I18n.tr("placeholders.enter-command")
     text: _settings.onMiddleClicked
-    onEditingFinished: {
-      _settings.onMiddleClicked = text;
-      settingsChanged(saveSettings());
-    }
+    onTextChanged: _settings.onMiddleClicked = text
   }
 
   NDivider {}
@@ -156,10 +141,7 @@ ColumnLayout {
     label: I18n.tr("panels.control-center.shortcuts-custom-button-enable-on-state-logic-label")
     description: I18n.tr("panels.control-center.shortcuts-custom-button-enable-on-state-logic-description")
     checked: _settings.enableOnStateLogic
-    onToggled: checked => {
-                 _settings.enableOnStateLogic = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => _settings.enableOnStateLogic = checked
   }
 
   ColumnLayout {
@@ -188,13 +170,10 @@ ColumnLayout {
             Layout.fillWidth: true
             placeholderText: I18n.tr("panels.control-center.shortcuts-custom-button-state-checks-command")
             text: model.command
-            onEditingFinished: {
-              _settings._stateChecksListModel.set(currentIndex, {
-                                                    "command": text,
-                                                    "icon": model.icon
-                                                  });
-              settingsChanged(saveSettings());
-            }
+            onEditingFinished: _settings._stateChecksListModel.set(currentIndex, {
+                                                                     "command": text,
+                                                                     "icon": model.icon
+                                                                   })
           }
 
           RowLayout {
@@ -223,10 +202,7 @@ ColumnLayout {
               colorFg: Color.mOnError
               colorBgHover: Qt.alpha(Color.mError, Style.opacityMedium)
               colorFgHover: Color.mOnError
-              onClicked: {
-                _settings._stateChecksListModel.remove(currentIndex);
-                settingsChanged(saveSettings());
-              }
+              onClicked: _settings._stateChecksListModel.remove(currentIndex)
             }
           }
         }
@@ -239,7 +215,6 @@ ColumnLayout {
                                                   "command": model.command,
                                                   "icon": iconName
                                                 });
-            settingsChanged(saveSettings());
           }
         }
 
@@ -257,13 +232,10 @@ ColumnLayout {
 
       NButton {
         text: I18n.tr("panels.control-center.shortcuts-custom-button-state-checks-add")
-        onClicked: {
-          _settings._stateChecksListModel.append({
-                                                   "command": "",
-                                                   "icon": ""
-                                                 });
-          settingsChanged(saveSettings());
-        }
+        onClicked: _settings._stateChecksListModel.append({
+                                                            "command": "",
+                                                            "icon": ""
+                                                          })
       }
 
       Item {

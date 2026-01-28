@@ -14,8 +14,6 @@ ColumnLayout {
   property var widgetData: null
   property var widgetMetadata: null
 
-  signal settingsChanged(var settings)
-
   // Local state
   property string valueColorName: widgetData.colorName !== undefined ? widgetData.colorName : widgetMetadata.colorName
 
@@ -52,9 +50,6 @@ ColumnLayout {
       }
     ]
     currentKey: root.valueColorName
-    onSelected: key => {
-                  root.valueColorName = key;
-                  settingsChanged(saveSettings());
-                }
+    onSelected: key => root.valueColorName = key
   }
 }

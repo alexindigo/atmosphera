@@ -12,7 +12,6 @@ Item {
   // These must be provided by the parent Workspace widget
   required property real baseDimensionRatio
   required property real capsuleHeight
-  required property real barHeight
   required property string labelMode
   required property int characterCount
   required property real textRatio
@@ -34,9 +33,9 @@ Item {
   property real pillWidth: isVertical ? fixedDimension : getWorkspaceWidth(workspace, false)
   property real pillHeight: isVertical ? getWorkspaceHeight(workspace, false) : fixedDimension
 
-  // Container uses full barHeight on cross-axis for larger click area
-  width: isVertical ? barHeight : getWorkspaceWidth(workspace, false)
-  height: isVertical ? getWorkspaceHeight(workspace, false) : barHeight
+  // Container uses full capsuleHeight on cross-axis for larger click area
+  width: isVertical ? capsuleHeight : getWorkspaceWidth(workspace, false)
+  height: isVertical ? getWorkspaceHeight(workspace, false) : capsuleHeight
 
   states: [
     State {
@@ -44,8 +43,8 @@ Item {
       when: workspace.isActive
       PropertyChanges {
         target: pillContainer
-        width: isVertical ? barHeight : getWorkspaceWidth(workspace, true)
-        height: isVertical ? getWorkspaceHeight(workspace, true) : barHeight
+        width: isVertical ? capsuleHeight : getWorkspaceWidth(workspace, true)
+        height: isVertical ? getWorkspaceHeight(workspace, true) : capsuleHeight
         pillWidth: isVertical ? fixedDimension : getWorkspaceWidth(workspace, true)
         pillHeight: isVertical ? getWorkspaceHeight(workspace, true) : fixedDimension
       }
@@ -83,8 +82,6 @@ Item {
     z: 0
 
     color: {
-      if (pillMouseArea.containsMouse)
-        return Color.mHover;
       if (workspace.isFocused)
         return colorMap[focusedColor][0];
       if (workspace.isUrgent)
@@ -123,8 +120,6 @@ Item {
           font.weight: Style.fontWeightBold
           wrapMode: Text.Wrap
           color: {
-            if (pillMouseArea.containsMouse)
-              return Color.mOnHover;
             if (workspace.isFocused)
               return colorMap[focusedColor][1];
             if (workspace.isUrgent)
@@ -132,14 +127,6 @@ Item {
             if (workspace.isOccupied)
               return colorMap[occupiedColor][1];
             return colorMap[emptyColor][1];
-          }
-
-          Behavior on color {
-            enabled: !Color.isTransitioning
-            ColorAnimation {
-              duration: Style.animationFast
-              easing.type: Easing.InOutQuad
-            }
           }
         }
       }
@@ -156,7 +143,7 @@ Item {
       enabled: !Color.isTransitioning
       ColorAnimation {
         duration: Style.animationFast
-        easing.type: Easing.InOutQuad
+        easing.type: Easing.InOutCubic
       }
     }
     Behavior on opacity {

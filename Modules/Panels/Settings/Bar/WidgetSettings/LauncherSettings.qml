@@ -13,8 +13,6 @@ ColumnLayout {
   property var widgetData: null
   property var widgetMetadata: null
 
-  signal settingsChanged(var settings)
-
   // Local state
   property bool valueUsePrimaryColor: widgetData.usePrimaryColor !== undefined ? widgetData.usePrimaryColor : (widgetMetadata ? widgetMetadata.usePrimaryColor : false)
 
@@ -28,9 +26,6 @@ ColumnLayout {
     label: I18n.tr("bar.clock.use-primary-color-label")
     description: I18n.tr("bar.clock.use-primary-color-description")
     checked: valueUsePrimaryColor
-    onToggled: checked => {
-                 valueUsePrimaryColor = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueUsePrimaryColor = checked
   }
 }

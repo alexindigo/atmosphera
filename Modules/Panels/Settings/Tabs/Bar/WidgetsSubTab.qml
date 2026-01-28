@@ -20,14 +20,6 @@ ColumnLayout {
 
   signal openPluginSettings(var manifest)
 
-  function getSectionIcons() {
-    return {
-      "left": "arrow-bar-to-up",
-      "center": "layout-distribute-horizontal",
-      "right": "arrow-bar-to-down"
-    };
-  }
-
   NText {
     text: I18n.tr("panels.bar.widgets-desc")
     wrapMode: Text.WordWrap
@@ -41,7 +33,6 @@ ColumnLayout {
     settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
     widgetRegistry: BarWidgetRegistry
     widgetModel: Settings.data.bar.widgets.left
-    sectionIcons: root.getSectionIcons()
     availableWidgets: root.availableWidgets
     onAddWidget: (widgetId, section) => root.addWidgetToSection(widgetId, section)
     onRemoveWidget: (section, index) => root.removeWidgetFromSection(section, index)
@@ -58,7 +49,6 @@ ColumnLayout {
     settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
     widgetRegistry: BarWidgetRegistry
     widgetModel: Settings.data.bar.widgets.center
-    sectionIcons: root.getSectionIcons()
     availableWidgets: root.availableWidgets
     onAddWidget: (widgetId, section) => root.addWidgetToSection(widgetId, section)
     onRemoveWidget: (section, index) => root.removeWidgetFromSection(section, index)
@@ -75,7 +65,6 @@ ColumnLayout {
     settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
     widgetRegistry: BarWidgetRegistry
     widgetModel: Settings.data.bar.widgets.right
-    sectionIcons: root.getSectionIcons()
     availableWidgets: root.availableWidgets
     onAddWidget: (widgetId, section) => root.addWidgetToSection(widgetId, section)
     onRemoveWidget: (section, index) => root.removeWidgetFromSection(section, index)

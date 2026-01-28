@@ -233,10 +233,10 @@ Item {
       }
     }
 
-    onClicked: root.clicked()
-    onRightClicked: root.rightClicked()
-    onMiddleClicked: root.middleClicked()
-    onWheel: delta => root.wheeled(delta)
+    onClicked: root.onClicked()
+    onRightClicked: root.onRightClicked()
+    onMiddleClicked: root.onMiddleClicked()
+    onWheel: delta => root.onWheel(delta)
   }
 
   // Internal state for dynamic text
@@ -458,20 +458,22 @@ Item {
     }
   }
 
-  function clicked() {
+  function onClicked() {
     if (leftClickExec) {
       Quickshell.execDetached(["sh", "-lc", leftClickExec]);
       Logger.i("CustomButton", `Executing command: ${leftClickExec}`);
     } else if (!leftClickUpdateText) {
-      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
-      //SettingsPanelService.openToTab(SettingsPanel.Tab.Bar, 1, screen);
+      // No left click script was defined, open settings
+      var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+      settingsPanel.requestedTab = SettingsPanel.Tab.Bar;
+      settingsPanel.open();
     }
     if (!textStream && leftClickUpdateText) {
       runTextCommand();
     }
   }
 
-  function rightClicked() {
+  function onRightClicked() {
     if (rightClickExec) {
       Quickshell.execDetached(["sh", "-lc", rightClickExec]);
       Logger.i("CustomButton", `Executing command: ${rightClickExec}`);
@@ -481,7 +483,7 @@ Item {
     }
   }
 
-  function middleClicked() {
+  function onMiddleClicked() {
     if (middleClickExec) {
       Quickshell.execDetached(["sh", "-lc", middleClickExec]);
       Logger.i("CustomButton", `Executing command: ${middleClickExec}`);
@@ -516,7 +518,7 @@ Item {
     textProc.running = true;
   }
 
-  function wheeled(delta) {
+  function onWheel(delta) {
     if (wheelMode === "unified" && wheelExec) {
       let normalizedDelta = delta > 0 ? 1 : -1;
 

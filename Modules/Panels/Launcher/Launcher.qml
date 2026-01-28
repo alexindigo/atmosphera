@@ -1011,7 +1011,6 @@ SmartPanel {
             verticalPolicy: ScrollBar.AlwaysOff
             reserveScrollbarSpace: false
             gradientColor: Color.mSurface
-            wheelScrollMultiplier: 4.0
 
             width: parent.width
             height: parent.height
@@ -1352,7 +1351,6 @@ SmartPanel {
             verticalPolicy: ScrollBar.AlwaysOff
             reserveScrollbarSpace: false
             gradientColor: "transparent" //Color.mSurface
-            wheelScrollMultiplier: 4.0
 
             width: parent.width
             height: parent.height

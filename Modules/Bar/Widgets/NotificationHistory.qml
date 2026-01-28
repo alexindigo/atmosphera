@@ -111,15 +111,15 @@ NIconButton {
   }
 
   Loader {
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.verticalCenter: parent.verticalCenter
-    anchors.horizontalCenterOffset: parent.baseSize / 4
-    anchors.verticalCenterOffset: -parent.baseSize / 4
+    anchors.right: parent.right
+    anchors.top: parent.top
+    anchors.rightMargin: 2
+    anchors.topMargin: 1
     z: 2
     active: showUnreadBadge
     sourceComponent: Rectangle {
       id: badge
-      height: 7
+      height: 8
       width: height
       radius: Style.radiusXS
       color: Color.mError

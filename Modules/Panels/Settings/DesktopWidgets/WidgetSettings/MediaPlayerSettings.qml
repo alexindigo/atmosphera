@@ -11,8 +11,6 @@ ColumnLayout {
   property var widgetData: null
   property var widgetMetadata: null
 
-  signal settingsChanged(var settings)
-
   property bool valueShowBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : widgetMetadata.showBackground
   property string valueVisualizerType: (widgetData.visualizerType && widgetData.visualizerType !== "") ? widgetData.visualizerType : (widgetMetadata.visualizerType || "linear")
   property string valueHideMode: widgetData.hideMode !== undefined ? widgetData.hideMode : widgetMetadata.hideMode
@@ -42,10 +40,7 @@ ColumnLayout {
     label: I18n.tr("panels.desktop-widgets.clock-show-background-label")
     description: I18n.tr("panels.desktop-widgets.media-player-show-background-description")
     checked: valueShowBackground
-    onToggled: checked => {
-                 valueShowBackground = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueShowBackground = checked
   }
 
   NToggle {
@@ -53,10 +48,7 @@ ColumnLayout {
     label: I18n.tr("panels.desktop-widgets.clock-rounded-corners-label")
     description: I18n.tr("panels.desktop-widgets.media-player-rounded-corners-description")
     checked: valueRoundedCorners
-    onToggled: checked => {
-                 valueRoundedCorners = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueRoundedCorners = checked
   }
 
   NToggle {
@@ -64,10 +56,7 @@ ColumnLayout {
     label: I18n.tr("panels.desktop-widgets.media-player-show-album-art-label")
     description: I18n.tr("panels.desktop-widgets.media-player-show-album-art-description")
     checked: valueShowAlbumArt
-    onToggled: checked => {
-                 valueShowAlbumArt = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueShowAlbumArt = checked
   }
 
   NToggle {
@@ -75,10 +64,7 @@ ColumnLayout {
     label: I18n.tr("bar.media-mini.show-visualizer-label")
     description: I18n.tr("panels.desktop-widgets.media-player-show-visualizer-description")
     checked: valueShowVisualizer
-    onToggled: checked => {
-                 valueShowVisualizer = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueShowVisualizer = checked
   }
 
   NToggle {
@@ -86,10 +72,7 @@ ColumnLayout {
     label: I18n.tr("panels.desktop-widgets.media-player-show-buttons-label")
     description: I18n.tr("panels.desktop-widgets.media-player-show-buttons-description")
     checked: valueShowButtons
-    onToggled: checked => {
-                 valueShowButtons = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueShowButtons = checked
   }
 
   NComboBox {
@@ -112,10 +95,7 @@ ColumnLayout {
       }
     ]
     currentKey: valueVisualizerType
-    onSelected: key => {
-                  valueVisualizerType = key;
-                  settingsChanged(saveSettings());
-                }
+    onSelected: key => valueVisualizerType = key
   }
 
   NComboBox {
@@ -137,9 +117,6 @@ ColumnLayout {
       }
     ]
     currentKey: valueHideMode
-    onSelected: key => {
-                  valueHideMode = key;
-                  settingsChanged(saveSettings());
-                }
+    onSelected: key => valueHideMode = key
   }
 }

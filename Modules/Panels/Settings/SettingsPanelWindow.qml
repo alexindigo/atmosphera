@@ -28,12 +28,6 @@ FloatingWindow {
     if (visible) {
       settingsContent.requestedTab = SettingsPanelService.requestedTab;
       settingsContent.initialize();
-      if (SettingsPanelService.requestedSubTab >= 0) {
-        const tab = SettingsPanelService.requestedTab;
-        const subTab = SettingsPanelService.requestedSubTab;
-        SettingsPanelService.requestedSubTab = -1;
-        Qt.callLater(() => settingsContent.navigateToTab(tab, subTab));
-      }
       SettingsPanelService.isWindowOpen = true;
     } else {
       SettingsPanelService.isWindowOpen = false;

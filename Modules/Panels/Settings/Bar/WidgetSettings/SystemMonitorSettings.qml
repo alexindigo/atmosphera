@@ -13,8 +13,6 @@ ColumnLayout {
   property var widgetData: null
   property var widgetMetadata: null
 
-  signal settingsChanged(var settings)
-
   // Local, editable state for checkboxes
   property bool valueCompactMode: widgetData.compactMode !== undefined ? widgetData.compactMode : widgetMetadata.compactMode
   property bool valueUsePrimaryColor: widgetData.usePrimaryColor !== undefined ? widgetData.usePrimaryColor : widgetMetadata.usePrimaryColor
@@ -54,10 +52,7 @@ ColumnLayout {
     label: I18n.tr("bar.system-monitor.compact-mode-label")
     description: I18n.tr("bar.system-monitor.compact-mode-description")
     checked: valueCompactMode
-    onToggled: checked => {
-                 valueCompactMode = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueCompactMode = checked
   }
 
   NToggle {
@@ -65,10 +60,7 @@ ColumnLayout {
     label: I18n.tr("bar.clock.use-primary-color-label")
     description: I18n.tr("bar.clock.use-primary-color-description")
     checked: valueUsePrimaryColor
-    onToggled: checked => {
-                 valueUsePrimaryColor = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueUsePrimaryColor = checked
     visible: !valueCompactMode
   }
 
@@ -77,10 +69,7 @@ ColumnLayout {
     label: I18n.tr("bar.system-monitor.use-monospace-font-label")
     description: I18n.tr("bar.system-monitor.use-monospace-font-description")
     checked: valueUseMonospaceFont
-    onToggled: checked => {
-                 valueUseMonospaceFont = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueUseMonospaceFont = checked
     visible: !valueCompactMode
   }
 
@@ -90,10 +79,7 @@ ColumnLayout {
     label: I18n.tr("bar.system-monitor.cpu-usage-label")
     description: I18n.tr("bar.system-monitor.cpu-usage-description")
     checked: valueShowCpuUsage
-    onToggled: checked => {
-                 valueShowCpuUsage = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueShowCpuUsage = checked
   }
 
   NToggle {
@@ -102,10 +88,7 @@ ColumnLayout {
     label: I18n.tr("bar.system-monitor.cpu-temperature-label")
     description: I18n.tr("bar.system-monitor.cpu-temperature-description")
     checked: valueShowCpuTemp
-    onToggled: checked => {
-                 valueShowCpuTemp = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueShowCpuTemp = checked
   }
 
   NToggle {
@@ -114,10 +97,7 @@ ColumnLayout {
     label: I18n.tr("panels.system-monitor.gpu-section-label")
     description: I18n.tr("bar.system-monitor.gpu-temperature-description")
     checked: valueShowGpuTemp
-    onToggled: checked => {
-                 valueShowGpuTemp = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueShowGpuTemp = checked
     visible: SystemStatService.gpuAvailable
   }
 
@@ -127,10 +107,7 @@ ColumnLayout {
     label: I18n.tr("bar.system-monitor.load-average-label")
     description: I18n.tr("bar.system-monitor.load-average-description")
     checked: valueShowLoadAverage
-    onToggled: checked => {
-                 valueShowLoadAverage = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueShowLoadAverage = checked
   }
 
   NToggle {
@@ -139,10 +116,7 @@ ColumnLayout {
     label: I18n.tr("bar.system-monitor.memory-usage-label")
     description: I18n.tr("bar.system-monitor.memory-usage-description")
     checked: valueShowMemoryUsage
-    onToggled: checked => {
-                 valueShowMemoryUsage = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueShowMemoryUsage = checked
   }
 
   NToggle {
@@ -151,10 +125,7 @@ ColumnLayout {
     label: I18n.tr("bar.system-monitor.memory-percentage-label")
     description: I18n.tr("bar.system-monitor.memory-percentage-description")
     checked: valueShowMemoryAsPercent
-    onToggled: checked => {
-                 valueShowMemoryAsPercent = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueShowMemoryAsPercent = checked
     visible: valueShowMemoryUsage
   }
 
@@ -164,10 +135,7 @@ ColumnLayout {
     label: I18n.tr("bar.system-monitor.swap-usage-label")
     description: I18n.tr("bar.system-monitor.swap-usage-description")
     checked: valueShowSwapUsage
-    onToggled: checked => {
-                 valueShowSwapUsage = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueShowSwapUsage = checked
   }
 
   NToggle {
@@ -176,10 +144,7 @@ ColumnLayout {
     label: I18n.tr("bar.system-monitor.network-traffic-label")
     description: I18n.tr("bar.system-monitor.network-traffic-description")
     checked: valueShowNetworkStats
-    onToggled: checked => {
-                 valueShowNetworkStats = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueShowNetworkStats = checked
   }
 
   NToggle {
@@ -188,10 +153,7 @@ ColumnLayout {
     label: I18n.tr("bar.system-monitor.storage-usage-label")
     description: I18n.tr("bar.system-monitor.storage-usage-description")
     checked: valueShowDiskUsage
-    onToggled: checked => {
-                 valueShowDiskUsage = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueShowDiskUsage = checked
   }
 
   NComboBox {
@@ -207,9 +169,6 @@ ColumnLayout {
                                 }));
     }
     currentKey: valueDiskPath
-    onSelected: key => {
-                  valueDiskPath = key;
-                  settingsChanged(saveSettings());
-                }
+    onSelected: key => valueDiskPath = key
   }
 }
