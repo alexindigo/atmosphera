@@ -133,6 +133,14 @@ Item {
               return colorMap[occupiedColor][1];
             return colorMap[emptyColor][1];
           }
+
+          Behavior on color {
+            enabled: !Color.isTransitioning
+            ColorAnimation {
+              duration: Style.animationFast
+              easing.type: Easing.InOutQuad
+            }
+          }
         }
       }
     }
@@ -148,7 +156,7 @@ Item {
       enabled: !Color.isTransitioning
       ColorAnimation {
         duration: Style.animationFast
-        easing.type: Easing.InOutCubic
+        easing.type: Easing.InOutQuad
       }
     }
     Behavior on opacity {
