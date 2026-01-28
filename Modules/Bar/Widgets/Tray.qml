@@ -288,33 +288,35 @@ Item {
   }
 
   // Content dimensions for implicit sizing
-  readonly property real contentWidth: isVertical ? capsuleHeight : Math.round(trayFlow.implicitWidth)
-  readonly property real contentHeight: isVertical ? Math.round(trayFlow.implicitHeight) : capsuleHeight
+  readonly property real capsuleWidth: isVertical ? capsuleHeight : Math.round(trayFlow.implicitWidth)
+  readonly property real capsuleContentHeight: isVertical ? Math.round(trayFlow.implicitHeight) : capsuleHeight
 
-  implicitWidth: contentWidth
-  implicitHeight: contentHeight
+  implicitWidth: isVertical ? barHeight : Math.round(trayFlow.implicitWidth)
+  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight) : barHeight
   visible: filteredItems.length > 0 || dropdownItems.length > 0
   opacity: (filteredItems.length > 0 || dropdownItems.length > 0) ? 1.0 : 0.0
 
   // Visual capsule centered in parent
   Rectangle {
     id: visualCapsule
-    width: root.contentWidth
-    height: root.contentHeight
-    anchors.centerIn: parent
+    width: capsuleWidth
+    height: capsuleContentHeight
+    x: Style.pixelAlignCenter(parent.width, width)
+    y: Style.pixelAlignCenter(parent.height, height)
     radius: Style.radiusM
     color: Style.capsuleColor
     border.color: Style.capsuleBorderColor
     border.width: Style.capsuleBorderWidth
+  }
 
-    Flow {
-      id: trayFlow
-      spacing: Style.marginXS
-      flow: isVertical ? Flow.TopToBottom : Flow.LeftToRight
+  Flow {
+    id: trayFlow
+    spacing: Style.marginXS
+    flow: isVertical ? Flow.TopToBottom : Flow.LeftToRight
 
-      // Pixel-perfect centering
-      x: isVertical ? Style.pixelAlignCenter(parent.width, width) : 0
-      y: isVertical ? 0 : Style.pixelAlignCenter(parent.height, height)
+    // Position at edge for full click area
+    x: isVertical ? 0 : 0
+    y: isVertical ? 0 : 0
 
       // Drawer opener (before items if opposite direction)
       NIconButton {
@@ -353,9 +355,18 @@ Item {
 
         delegate: Item {
           id: trayDelegate
-          width: capsuleHeight
-          height: capsuleHeight
+          width: isVertical ? barHeight : capsuleHeight
+          height: isVertical ? capsuleHeight : barHeight
           visible: modelData
+
+          // Tooltip anchor representing the visual area (for proper tooltip positioning)
+          Item {
+            id: tooltipAnchor
+            width: capsuleHeight
+            height: capsuleHeight
+            x: Style.pixelAlignCenter(parent.width, width)
+            y: Style.pixelAlignCenter(parent.height, height)
+          }
 
           IconImage {
             id: trayIcon
@@ -460,7 +471,7 @@ Item {
               if (popupMenuWindow) {
                 popupMenuWindow.close();
               }
-              TooltipService.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection(root.screen?.name));
+              TooltipService.show(tooltipAnchor, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection(root.screen?.name));
             }
             onExited: TooltipService.hide()
           }
@@ -497,5 +508,4 @@ Item {
         onRightClicked: toggleDrawer(this)
       }
     } // closes Flow
-  } // closes visualCapsule
 }

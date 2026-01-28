@@ -816,8 +816,8 @@ Item {
           }
         }
       }
-    } // closes mainGrid
-  } // closes visualCapsule
+    }
+  }
 
   // MouseArea at root level for extended click area
   MouseArea {

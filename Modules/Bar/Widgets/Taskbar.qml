@@ -925,8 +925,8 @@ Item {
           }
         }
       }
-    } // closes GridLayout
-  } // closes visualCapsule
+    }
+  }
 
   function openTaskbarContextMenu(item) {
     // Build menu model directly
