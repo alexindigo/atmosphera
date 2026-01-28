@@ -115,7 +115,8 @@
     "NotificationHistory": {
       "showUnreadBadge": true,
       "hideWhenZero": false,
-      "hideWhenZeroUnread": false
+      "hideWhenZeroUnread": false,
+      "unreadBadgeColor": "primary"
     },
     "SessionMenu": {
       "colorName": "error"
@@ -177,7 +178,12 @@
       "unfocusedIconsOpacity": 1,
       "groupedBorderOpacity": 1,
       "enableScrollWheel": true,
-      "iconScale": 0.8
+      "iconScale": 0.8,
+      "focusedColor": "primary",
+      "occupiedColor": "secondary",
+      "emptyColor": "secondary",
+      "showBadge": true,
+      "reverseScroll": false
     },
     "Volume": {
       "displayMode": "onhover",
