@@ -322,6 +322,8 @@ Item {
       NIconButton {
         id: chevronIconBefore
         visible: root.drawerEnabled && dropdownItems.length > 0 && BarService.getPillDirection(root)
+        width: isVertical ? barHeight : capsuleHeight
+        height: isVertical ? capsuleHeight : barHeight
         tooltipText: I18n.tr("tooltips.open-tray-dropdown")
         tooltipDirection: BarService.getTooltipDirection(root.screen?.name)
         baseSize: capsuleHeight
@@ -445,23 +447,23 @@ Item {
                            }
 
                            if (modelData.hasMenu && modelData.menu && trayMenu && trayMenu.item) {
-                             // Position menu based on bar position
+                             // Position menu based on bar position, using tooltipAnchor for proper positioning
                              let menuX, menuY;
                              if (barPosition === "left") {
-                               // For left bar: position menu to the right of the bar
-                               menuX = trayDelegate.width + Style.marginM;
+                               // For left bar: position menu to the right of the visual area
+                               menuX = tooltipAnchor.width + Style.marginM;
                                menuY = 0;
                              } else if (barPosition === "right") {
-                               // For right bar: position menu to the left of the bar
+                               // For right bar: position menu to the left of the visual area
                                menuX = -trayMenu.item.width - Style.marginM;
                                menuY = 0;
                              } else {
-                               // For horizontal bars: center horizontally and position below
-                               menuX = (trayDelegate.width / 2) - (trayMenu.item.width / 2);
-                               menuY = (barPosition === "top") ? barHeight + Style.marginS - 2 : barHeight + Style.marginS - 2;
+                               // For horizontal bars: center horizontally and position below visual area
+                               menuX = (tooltipAnchor.width / 2) - (trayMenu.item.width / 2);
+                               menuY = tooltipAnchor.height + Style.marginS;
                              }
 
-                             PanelService.showTrayMenu(root.screen, modelData, trayMenu.item, trayDelegate, menuX, menuY, root.section, root.sectionWidgetIndex);
+                             PanelService.showTrayMenu(root.screen, modelData, trayMenu.item, tooltipAnchor, menuX, menuY, root.section, root.sectionWidgetIndex);
                            } else {
                              Logger.d("Tray", "No menu available for", modelData.id, "or trayMenu not set");
                            }
@@ -482,6 +484,8 @@ Item {
       NIconButton {
         id: chevronIconAfter
         visible: root.drawerEnabled && dropdownItems.length > 0 && !BarService.getPillDirection(root)
+        width: isVertical ? barHeight : capsuleHeight
+        height: isVertical ? capsuleHeight : barHeight
         tooltipText: I18n.tr("tooltips.open-tray-dropdown")
         tooltipDirection: BarService.getTooltipDirection(root.screen?.name)
         baseSize: capsuleHeight
