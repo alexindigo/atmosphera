@@ -182,7 +182,9 @@
       "hide-widget-when-zero-unread-description": "Hide the notification icon when there are no unread notifications.",
       "hide-widget-when-zero-unread-label": "Hide icon when no unread notifications",
       "show-unread-badge-description": "Display a badge showing the number of unread notifications.",
-      "show-unread-badge-label": "Show unread badge"
+      "show-unread-badge-label": "Show unread badge",
+      "unread-badge-color-description": "Select the color for the unread notification badge.",
+      "unread-badge-color-label": "Unread badge color"
     },
     "section-editor": {
       "placeholder": "Select a widget to add...",

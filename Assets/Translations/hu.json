@@ -182,7 +182,9 @@
       "hide-widget-when-zero-unread-description": "Az értesítési ikon elrejtése, ha nincs olvasatlan értesítés.",
       "hide-widget-when-zero-unread-label": "Ikon elrejtése, amikor nincs olvasatlan értesítés",
       "show-unread-badge-description": "Jelenítsen meg egy jelvényt, amely mutatja az olvasatlan értesítések számát.",
-      "show-unread-badge-label": "Olvasatlan jelvény megjelenítése"
+      "show-unread-badge-label": "Olvasatlan jelvény megjelenítése",
+      "unread-badge-color-description": "Válaszd ki az olvasatlan értesítési jelvény színét.",
+      "unread-badge-color-label": "Olvasatlan jelvény színe"
     },
     "section-editor": {
       "placeholder": "Válasszon hozzáadandó widgetet...",

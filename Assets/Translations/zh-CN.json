@@ -182,7 +182,9 @@
       "hide-widget-when-zero-unread-description": "没有未读通知时隐藏通知图标。",
       "hide-widget-when-zero-unread-label": "无未读时隐藏图标",
       "show-unread-badge-description": "显示一个用于展示未读通知数量的徽章。",
-      "show-unread-badge-label": "显示未读徽章"
+      "show-unread-badge-label": "显示未读徽章",
+      "unread-badge-color-description": "选择未读通知徽章的颜色。",
+      "unread-badge-color-label": "未读徽章颜色"
     },
     "section-editor": {
       "placeholder": "选择要添加的小部件...",

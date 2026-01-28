@@ -137,8 +137,8 @@ Item {
           color: LockKeysService.scrollLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
         }
       }
-    } // closes layout
-  } // closes visualCapsule
+    }
+  }
 
   // MouseArea at root level for extended click area
   MouseArea {
