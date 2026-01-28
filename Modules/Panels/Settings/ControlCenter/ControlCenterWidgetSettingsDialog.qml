@@ -111,25 +111,6 @@ Popup {
         }
       }
     }
-
-    // Action buttons
-    RowLayout {
-      id: buttonRow
-      Layout.fillWidth: true
-      Layout.topMargin: Style.marginM
-      Layout.preferredHeight: implicitHeight
-      spacing: Style.marginM
-
-      Item {
-        Layout.fillWidth: true
-      }
-
-      NButton {
-        text: I18n.tr("common.close")
-        outlined: true
-        onClicked: saveAndClose()
-      }
-    }
   }
 
   Connections {
