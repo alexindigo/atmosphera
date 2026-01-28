@@ -209,8 +209,8 @@ ColumnLayout {
   NToggle {
     id: showDiskDetails
     Layout.fillWidth: true
-    label: "Storage Details"
-    description: "Show disk space usage as numbers. (only works in horizontal bar configurations)"
+    label: I18n.tr("bar.system-monitor.storage-details-label")
+    description: I18n.tr("bar.system-monitor.storage-details-description")
     checked: valueShowDiskDetails
     onToggled: checked => {
                  valueShowDiskDetails = checked;
