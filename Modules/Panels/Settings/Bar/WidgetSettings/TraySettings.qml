@@ -137,19 +137,17 @@ ColumnLayout {
         spacing: Style.marginS
 
         NText {
+          anchors.verticalCenter: parent.verticalCenter
           text: model.rule
           elide: Text.ElideRight
-          verticalAlignment: Text.AlignVCenter
-          Layout.fillWidth: true
         }
 
         NIconButton {
-          width: 16
-          height: 16
+          anchors.verticalCenter: parent.verticalCenter
           icon: "close"
-          baseSize: 8
+          baseSize: 12 * Style.uiScaleRatio
           colorBg: Color.mSurfaceVariant
-          colorFg: Color.mOnSurface
+          colorFg: Color.mOnSurfaceVariant
           colorBgHover: Color.mError
           colorFgHover: Color.mOnError
           onClicked: {
