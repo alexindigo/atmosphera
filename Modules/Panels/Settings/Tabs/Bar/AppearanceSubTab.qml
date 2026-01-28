@@ -122,15 +122,30 @@ ColumnLayout {
     text: Math.floor(Settings.data.bar.capsuleOpacity * 100) + "%"
   }
 
-  NToggle {
+  NComboBox {
     Layout.fillWidth: true
-    label: I18n.tr("panels.bar.appearance-floating-label")
-    description: I18n.tr("panels.bar.appearance-floating-description")
-    checked: Settings.data.bar.floating
-    defaultValue: Settings.getDefaultValue("bar.floating")
-    onToggled: checked => {
-                 Settings.data.bar.floating = checked;
-               }
+    label: I18n.tr("panels.bar.appearance-type-label") ?? "Bar Type"
+    description: I18n.tr("panels.bar.appearance-type-description") ?? "Choose the style of the bar: Simple, Floating or Framed"
+    model: [
+      {
+        "key": "simple",
+        "name": I18n.tr("options.bar.type-simple") ?? "Simple"
+      },
+      {
+        "key": "floating",
+        "name": I18n.tr("options.bar.type-floating") ?? "Floating"
+      },
+      {
+        "key": "framed",
+        "name": I18n.tr("options.bar.type-framed") ?? "Framed"
+      }
+    ]
+    currentKey: Settings.data.bar.barType
+    defaultValue: Settings.getDefaultValue("bar.barType")
+    onSelected: key => {
+                  Settings.data.bar.barType = key;
+                  Settings.data.bar.floating = (key === "floating");
+                }
   }
 
   NToggle {
@@ -138,13 +153,53 @@ ColumnLayout {
     label: I18n.tr("panels.bar.appearance-outer-corners-label")
     description: I18n.tr("panels.bar.appearance-outer-corners-description")
     checked: Settings.data.bar.outerCorners
-    visible: !Settings.data.bar.floating
+    visible: Settings.data.bar.barType === "simple"
     defaultValue: Settings.getDefaultValue("bar.outerCorners")
     onToggled: checked => Settings.data.bar.outerCorners = checked
   }
 
   ColumnLayout {
-    visible: Settings.data.bar.floating
+    visible: Settings.data.bar.barType === "framed"
+    spacing: Style.marginS
+    Layout.fillWidth: true
+
+    NLabel {
+      label: I18n.tr("panels.bar.appearance-frame-settings-label") ?? "Frame Settings"
+      description: I18n.tr("panels.bar.appearance-frame-settings-description") ?? "Adjust frame thickness and inner corner radius"
+    }
+
+    RowLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginL
+
+      NValueSlider {
+        Layout.fillWidth: true
+        label: I18n.tr("panels.bar.appearance-frame-thickness") ?? "Thickness"
+        from: 4
+        to: 24
+        stepSize: 1
+        value: Settings.data.bar.frameThickness
+        defaultValue: Settings.getDefaultValue("bar.frameThickness")
+        onMoved: value => Settings.data.bar.frameThickness = value
+        text: Settings.data.bar.frameThickness + "px"
+      }
+
+      NValueSlider {
+        Layout.fillWidth: true
+        label: I18n.tr("panels.bar.appearance-frame-radius") ?? "Inner Radius"
+        from: 4
+        to: 24
+        stepSize: 1
+        value: Settings.data.bar.frameRadius
+        defaultValue: Settings.getDefaultValue("bar.frameRadius")
+        onMoved: value => Settings.data.bar.frameRadius = value
+        text: Settings.data.bar.frameRadius + "px"
+      }
+    }
+  }
+
+  ColumnLayout {
+    visible: Settings.data.bar.barType === "floating"
     spacing: Style.marginS
     Layout.fillWidth: true
 

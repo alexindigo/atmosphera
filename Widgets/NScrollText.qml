@@ -32,6 +32,7 @@ Item {
 
   property int scrollMode: NScrollText.ScrollMode.Never
   property bool alwaysMaxWidth: false
+  property bool forcedHover: false
   property int cursorShape: Qt.ArrowCursor
 
   // animation controls
@@ -70,6 +71,7 @@ Item {
   }
   onMaxWidthChanged: resetState()
   onContentWidthChanged: root.updateState()
+  onForcedHoverChanged: updateState()
 
   function resetState() {
     root.state = NScrollText.ScrollState.None;
@@ -114,7 +116,7 @@ Item {
         scrollTimer.restart();
       }
     } else if (scrollMode === NScrollText.ScrollMode.Hover) {
-      if (hoverArea.containsMouse)
+      if (hoverArea.containsMouse || forcedHover)
         state = NScrollText.ScrollState.Scrolling;
       else
         ensureReset();
@@ -130,16 +132,23 @@ Item {
     Loader {
       id: titleText
       sourceComponent: root.delegate
-      Layout.alignment: Qt.AlignVCenter
-      onLoaded: this.item.text = root.text
+      Layout.fillHeight: true
+      onLoaded: {
+        this.item.text = root.text;
+        // Bind height to container to enable vertical centering of overly high text
+        this.item.height = Qt.binding(() => titleText.height);
+      }
     }
 
     Loader {
       id: loopingText
       sourceComponent: root.delegate
-      Layout.alignment: Qt.AlignVCenter
+      Layout.fillHeight: true
       visible: root.state !== NScrollText.ScrollState.None
-      onLoaded: this.item.text = root.text
+      onLoaded: {
+        this.item.text = root.text;
+        this.item.height = Qt.binding(() => loopingText.height);
+      }
     }
 
     NumberAnimation on x {

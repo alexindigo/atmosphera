@@ -20,7 +20,7 @@ Popup {
 
   readonly property real maxHeight: screen ? screen.height * 0.9 : 800
 
-  width: Math.max(content.implicitWidth + padding * 2, 500)
+  width: Math.max(content.implicitWidth + padding * 2, 640)
   height: Math.min(content.implicitHeight + padding * 2, maxHeight)
   padding: Style.marginXL
   modal: true
@@ -73,7 +73,7 @@ Popup {
         NIconButton {
           icon: "close"
           tooltipText: I18n.tr("common.close")
-          onClicked: root.close()
+          onClicked: saveAndClose()
         }
       }
 
@@ -91,9 +91,10 @@ Popup {
         Layout.fillWidth: true
         Layout.fillHeight: true
         Layout.minimumHeight: 100
+        gradientColor: Color.mSurface
 
         ColumnLayout {
-          width: scrollView.width
+          width: scrollView.availableWidth
           spacing: Style.marginM
 
           // Settings based on widget type
@@ -151,24 +152,32 @@ Popup {
         }
 
         NButton {
-          text: I18n.tr("common.cancel")
+          text: I18n.tr("common.close")
           outlined: true
-          onClicked: root.close()
-        }
-
-        NButton {
-          text: I18n.tr("common.apply")
-          icon: "check"
-          onClicked: {
-            if (settingsLoader.item && settingsLoader.item.saveSettings) {
-              var newSettings = settingsLoader.item.saveSettings();
-              root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
-              root.close();
-            }
-          }
+          onClicked: saveAndClose()
         }
       }
     }
+  }
+
+  Connections {
+    target: settingsLoader.item
+    function onSettingsChanged(newSettings) {
+      if (newSettings) {
+        root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
+      }
+    }
+    ignoreUnknownSignals: true
+  }
+
+  function saveAndClose() {
+    if (settingsLoader.item && typeof settingsLoader.item.saveSettings === 'function') {
+      var newSettings = settingsLoader.item.saveSettings();
+      if (newSettings) {
+        root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
+      }
+    }
+    root.close();
   }
 
   function loadWidgetSettings() {

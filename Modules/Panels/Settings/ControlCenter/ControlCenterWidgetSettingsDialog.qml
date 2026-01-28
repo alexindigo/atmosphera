@@ -22,6 +22,7 @@ Popup {
   readonly property real settingsContentWidth: {
     if (settingsLoader.item && settingsLoader.item.implicitWidth > 0) {
       return settingsLoader.item.implicitWidth;
+      d;
     }
     return defaultContentWidth;
   }
@@ -71,7 +72,7 @@ Popup {
       NIconButton {
         icon: "close"
         tooltipText: I18n.tr("common.close")
-        onClicked: root.close()
+        onClicked: saveAndClose()
       }
     }
 
@@ -89,9 +90,11 @@ Popup {
       Layout.fillWidth: true
       Layout.fillHeight: true
       Layout.minimumHeight: 100
+      gradientColor: Color.mSurface
+      reserveScrollbarSpace: false
 
       ColumnLayout {
-        width: scrollView.width
+        width: scrollView.availableWidth
         spacing: Style.marginM
 
         Loader {
@@ -122,23 +125,31 @@ Popup {
       }
 
       NButton {
-        text: I18n.tr("common.cancel", "Cancel")
+        text: I18n.tr("common.close")
         outlined: true
-        onClicked: root.close()
-      }
-
-      NButton {
-        text: I18n.tr("common.apply", "Apply")
-        icon: "check"
-        onClicked: {
-          if (settingsLoader.item && settingsLoader.item.saveSettings) {
-            var newSettings = settingsLoader.item.saveSettings();
-            root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
-            root.close();
-          }
-        }
+        onClicked: saveAndClose()
       }
     }
+  }
+
+  Connections {
+    target: settingsLoader.item
+    function onSettingsChanged(newSettings) {
+      if (newSettings) {
+        root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
+      }
+    }
+    ignoreUnknownSignals: true
+  }
+
+  function saveAndClose() {
+    if (settingsLoader.item && typeof settingsLoader.item.saveSettings === 'function') {
+      var newSettings = settingsLoader.item.saveSettings();
+      if (newSettings) {
+        root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
+      }
+    }
+    root.close();
   }
 
   function loadWidgetSettings() {
