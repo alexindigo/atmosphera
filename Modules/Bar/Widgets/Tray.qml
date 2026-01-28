@@ -289,11 +289,12 @@ Item {
   }
 
   // Content dimensions for implicit sizing
-  readonly property real capsuleWidth: isVertical ? capsuleHeight : Math.round(trayFlow.implicitWidth)
-  readonly property real capsuleContentHeight: isVertical ? Math.round(trayFlow.implicitHeight) : capsuleHeight
+  readonly property real capsulePadding: Style.marginXS
+  readonly property real capsuleWidth: isVertical ? capsuleHeight : Math.round(trayFlow.implicitWidth + capsulePadding * 2)
+  readonly property real capsuleContentHeight: isVertical ? Math.round(trayFlow.implicitHeight + capsulePadding * 2) : capsuleHeight
 
-  implicitWidth: isVertical ? barHeight : Math.round(trayFlow.implicitWidth)
-  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight) : barHeight
+  implicitWidth: isVertical ? barHeight : Math.round(trayFlow.implicitWidth + capsulePadding * 2)
+  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight + capsulePadding * 2) : barHeight
   visible: filteredItems.length > 0 || dropdownItems.length > 0
   opacity: (filteredItems.length > 0 || dropdownItems.length > 0) ? 1.0 : 0.0
 
@@ -312,12 +313,12 @@ Item {
 
   Flow {
     id: trayFlow
-    spacing: Style.marginXS
+    spacing: 0
     flow: isVertical ? Flow.TopToBottom : Flow.LeftToRight
 
-    // Position at edge for full click area
-    x: isVertical ? 0 : 0
-    y: isVertical ? 0 : 0
+    // Position with padding from capsule edges
+    x: isVertical ? 0 : capsulePadding
+    y: isVertical ? capsulePadding : 0
 
     // Drawer opener (before items if opposite direction)
     NIconButton {
