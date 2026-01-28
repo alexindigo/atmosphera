@@ -422,15 +422,6 @@ Item {
     function disable() {
       NetworkService.setWifiEnabled(false);
     }
-
-    // TODO REMOVE IN FEB. 2026
-    function togglePanel() {
-      ToastService.showWarning("This IPC call will be deprecated soon, use 'network togglePanel' instead.");
-      root.screenDetector.withCurrentScreen(screen => {
-                                              var networkPanel = PanelService.getPanel("networkPanel", screen);
-                                              networkPanel?.toggle(null, "WiFi");
-                                            });
-    }
   }
 
   IpcHandler {
@@ -506,19 +497,6 @@ Item {
 
     function disableNoctaliaPerformance() {
       PowerProfileService.setNoctaliaPerformance(false);
-    }
-  }
-
-  // TODO REMOVE IN FEB. 2026
-  IpcHandler {
-    target: "osd"
-
-    function showText(text: string) {
-      ToastService.showNotice(text, "This IPC call will be deprecated soon, use 'toast send' instead.");
-    }
-
-    function showTextWithIcon(text: string, icon: string) {
-      ToastService.showNotice(text, "This IPC call will be deprecated soon, use 'toast send' instead.", icon);
     }
   }
 
