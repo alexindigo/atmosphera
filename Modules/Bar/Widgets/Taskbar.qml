@@ -596,7 +596,7 @@ Item {
     if (!visible)
       return 0;
     if (isVerticalBar)
-      return capsuleHeight;
+      return barHeight;
 
     var calculatedWidth = showTitle ? taskbarLayout.implicitWidth : taskbarLayout.implicitWidth + Style.marginXL;
 
@@ -607,7 +607,7 @@ Item {
 
     return Math.round(calculatedWidth);
   }
-  readonly property real contentHeight: visible ? (isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginXL) : capsuleHeight) : 0
+  readonly property real contentHeight: visible ? (isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginS * 2) : barHeight) : 0
 
   implicitWidth: contentWidth
   implicitHeight: contentHeight
@@ -659,8 +659,8 @@ Item {
           readonly property color titleBgColor: (isHovered || isFocused) ? Color.mHover : Style.capsuleColor
           readonly property color titleFgColor: (isHovered || isFocused) ? Color.mOnHover : Color.mOnSurface
 
-          Layout.preferredWidth: root.showTitle ? Math.round(contentWidth + Style.marginXL) : Math.round(contentWidth) // Add margins for both pinned and running apps
-          Layout.preferredHeight: root.itemSize
+          Layout.preferredWidth: root.isVerticalBar ? root.barHeight : (root.showTitle ? Math.round(contentWidth + Style.marginXL) : Math.round(contentWidth)) // Add margins for both pinned and running apps
+          Layout.preferredHeight: root.isVerticalBar ? root.itemSize : root.barHeight
           Layout.alignment: Qt.AlignCenter
 
           // Ensure dragged item is on top
@@ -786,7 +786,7 @@ Item {
               visible: shouldShowTitle
               anchors.centerIn: parent
               width: parent.width
-              height: root.height
+              height: root.barHeight
               color: titleBgColor
               radius: Style.radiusM
 
