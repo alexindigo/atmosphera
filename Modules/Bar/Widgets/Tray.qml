@@ -318,198 +318,198 @@ Item {
     x: isVertical ? 0 : 0
     y: isVertical ? 0 : 0
 
-      // Drawer opener (before items if opposite direction)
-      NIconButton {
-        id: chevronIconBefore
-        visible: root.drawerEnabled && dropdownItems.length > 0 && BarService.getPillDirection(root)
+    // Drawer opener (before items if opposite direction)
+    NIconButton {
+      id: chevronIconBefore
+      visible: root.drawerEnabled && dropdownItems.length > 0 && BarService.getPillDirection(root)
+      width: isVertical ? barHeight : capsuleHeight
+      height: isVertical ? capsuleHeight : barHeight
+      tooltipText: I18n.tr("tooltips.open-tray-dropdown")
+      tooltipDirection: BarService.getTooltipDirection(root.screen?.name)
+      baseSize: capsuleHeight
+      applyUiScale: false
+      customRadius: Style.radiusL
+      colorBg: "transparent"
+      colorFg: Color.mOnSurface
+      colorBorder: "transparent"
+      colorBorderHover: "transparent"
+      icon: {
+        switch (barPosition) {
+        case "bottom":
+          return "caret-up";
+        case "left":
+          return "caret-right";
+        case "right":
+          return "caret-left";
+        case "top":
+        default:
+          return "caret-down";
+        }
+      }
+      onClicked: toggleDrawer(this)
+      onRightClicked: toggleDrawer(this)
+    }
+
+    // Pinned items
+    Repeater {
+      id: repeater
+      model: root.filteredItems
+
+      delegate: Item {
+        id: trayDelegate
         width: isVertical ? barHeight : capsuleHeight
         height: isVertical ? capsuleHeight : barHeight
-        tooltipText: I18n.tr("tooltips.open-tray-dropdown")
-        tooltipDirection: BarService.getTooltipDirection(root.screen?.name)
-        baseSize: capsuleHeight
-        applyUiScale: false
-        customRadius: Style.radiusL
-        colorBg: "transparent"
-        colorFg: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mOnPrimary
-        colorBorder: "transparent"
-        colorBorderHover: "transparent"
-        icon: {
-          switch (barPosition) {
-          case "bottom":
-            return "caret-up";
-          case "left":
-            return "caret-right";
-          case "right":
-            return "caret-left";
-          case "top":
-          default:
-            return "caret-down";
+        visible: modelData
+
+        // Tooltip anchor representing the visual area (for proper tooltip positioning)
+        Item {
+          id: tooltipAnchor
+          width: capsuleHeight
+          height: capsuleHeight
+          x: Style.pixelAlignCenter(parent.width, width)
+          y: Style.pixelAlignCenter(parent.height, height)
+        }
+
+        IconImage {
+          id: trayIcon
+          width: iconSize
+          height: iconSize
+          x: Style.pixelAlignCenter(parent.width, width)
+          y: Style.pixelAlignCenter(parent.height, height)
+          asynchronous: true
+          backer.fillMode: Image.PreserveAspectFit
+
+          source: {
+            let icon = modelData?.icon || "";
+            if (!icon) {
+              return "";
+            }
+
+            // Process icon path
+            if (icon.includes("?path=")) {
+              const chunks = icon.split("?path=");
+              const name = chunks[0];
+              const path = chunks[1];
+              const fileName = name.substring(name.lastIndexOf("/") + 1);
+              return `file://${path}/${fileName}`;
+            }
+            return icon;
+          }
+          opacity: status === Image.Ready ? 1 : 0
+
+          layer.enabled: widgetSettings.colorizeIcons !== false
+          layer.effect: ShaderEffect {
+            property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
+            property real colorizeMode: 1.0
+
+            fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
           }
         }
-        onClicked: toggleDrawer(this)
-        onRightClicked: toggleDrawer(this)
-      }
 
-      // Pinned items
-      Repeater {
-        id: repeater
-        model: root.filteredItems
+        MouseArea {
+          anchors.fill: parent
+          hoverEnabled: true
+          cursorShape: Qt.PointingHandCursor
+          acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+          onClicked: mouse => {
+                       if (!modelData) {
+                         return;
+                       }
 
-        delegate: Item {
-          id: trayDelegate
-          width: isVertical ? barHeight : capsuleHeight
-          height: isVertical ? capsuleHeight : barHeight
-          visible: modelData
+                       if (mouse.button === Qt.LeftButton) {
+                         // Close any open menu first
+                         if (popupMenuWindow) {
+                           popupMenuWindow.close();
+                         }
 
-          // Tooltip anchor representing the visual area (for proper tooltip positioning)
-          Item {
-            id: tooltipAnchor
-            width: capsuleHeight
-            height: capsuleHeight
-            x: Style.pixelAlignCenter(parent.width, width)
-            y: Style.pixelAlignCenter(parent.height, height)
-          }
+                         if (!modelData.onlyMenu) {
+                           modelData.activate();
+                         }
+                       } else if (mouse.button === Qt.MiddleButton) {
+                         // Close the menu if it was visible
+                         if (popupMenuWindow && popupMenuWindow.visible) {
+                           popupMenuWindow.close();
+                           return;
+                         }
+                         modelData.secondaryActivate && modelData.secondaryActivate();
+                       } else if (mouse.button === Qt.RightButton) {
+                         TooltipService.hideImmediately();
 
-          IconImage {
-            id: trayIcon
-            width: iconSize
-            height: iconSize
-            x: Style.pixelAlignCenter(parent.width, width)
-            y: Style.pixelAlignCenter(parent.height, height)
-            asynchronous: true
-            backer.fillMode: Image.PreserveAspectFit
-
-            source: {
-              let icon = modelData?.icon || "";
-              if (!icon) {
-                return "";
-              }
-
-              // Process icon path
-              if (icon.includes("?path=")) {
-                const chunks = icon.split("?path=");
-                const name = chunks[0];
-                const path = chunks[1];
-                const fileName = name.substring(name.lastIndexOf("/") + 1);
-                return `file://${path}/${fileName}`;
-              }
-              return icon;
-            }
-            opacity: status === Image.Ready ? 1 : 0
-
-            layer.enabled: widgetSettings.colorizeIcons !== false
-            layer.effect: ShaderEffect {
-              property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
-              property real colorizeMode: 1.0
-
-              fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
-            }
-          }
-
-          MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
-            onClicked: mouse => {
-                         if (!modelData) {
+                         // Close the menu if it was visible
+                         if (popupMenuWindow && popupMenuWindow.visible) {
+                           popupMenuWindow.close();
                            return;
                          }
 
-                         if (mouse.button === Qt.LeftButton) {
-                           // Close any open menu first
-                           if (popupMenuWindow) {
-                             popupMenuWindow.close();
-                           }
+                         // Close any opened panel
+                         if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
+                           PanelService.openedPanel.close();
+                         }
 
-                           if (!modelData.onlyMenu) {
-                             modelData.activate();
-                           }
-                         } else if (mouse.button === Qt.MiddleButton) {
-                           // Close the menu if it was visible
-                           if (popupMenuWindow && popupMenuWindow.visible) {
-                             popupMenuWindow.close();
-                             return;
-                           }
-                           modelData.secondaryActivate && modelData.secondaryActivate();
-                         } else if (mouse.button === Qt.RightButton) {
-                           TooltipService.hideImmediately();
-
-                           // Close the menu if it was visible
-                           if (popupMenuWindow && popupMenuWindow.visible) {
-                             popupMenuWindow.close();
-                             return;
-                           }
-
-                           // Close any opened panel
-                           if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
-                             PanelService.openedPanel.close();
-                           }
-
-                           if (modelData.hasMenu && modelData.menu && trayMenu && trayMenu.item) {
-                             // Position menu based on bar position, using tooltipAnchor for proper positioning
-                             let menuX, menuY;
-                             if (barPosition === "left") {
-                               // For left bar: position menu to the right of the visual area
-                               menuX = tooltipAnchor.width + Style.marginM;
-                               menuY = 0;
-                             } else if (barPosition === "right") {
-                               // For right bar: position menu to the left of the visual area
-                               menuX = -trayMenu.item.width - Style.marginM;
-                               menuY = 0;
-                             } else {
-                               // For horizontal bars: center horizontally and position below visual area
-                               menuX = (tooltipAnchor.width / 2) - (trayMenu.item.width / 2);
-                               menuY = tooltipAnchor.height + Style.marginS;
-                             }
-
-                             PanelService.showTrayMenu(root.screen, modelData, trayMenu.item, tooltipAnchor, menuX, menuY, root.section, root.sectionWidgetIndex);
+                         if (modelData.hasMenu && modelData.menu && trayMenu && trayMenu.item) {
+                           // Position menu based on bar position, using tooltipAnchor for proper positioning
+                           let menuX, menuY;
+                           if (barPosition === "left") {
+                             // For left bar: position menu to the right of the visual area
+                             menuX = tooltipAnchor.width + Style.marginM;
+                             menuY = 0;
+                           } else if (barPosition === "right") {
+                             // For right bar: position menu to the left of the visual area
+                             menuX = -trayMenu.item.width - Style.marginM;
+                             menuY = 0;
                            } else {
-                             Logger.d("Tray", "No menu available for", modelData.id, "or trayMenu not set");
+                             // For horizontal bars: center horizontally and position below visual area
+                             menuX = (tooltipAnchor.width / 2) - (trayMenu.item.width / 2);
+                             menuY = tooltipAnchor.height + Style.marginS;
                            }
+
+                           PanelService.showTrayMenu(root.screen, modelData, trayMenu.item, tooltipAnchor, menuX, menuY, root.section, root.sectionWidgetIndex);
+                         } else {
+                           Logger.d("Tray", "No menu available for", modelData.id, "or trayMenu not set");
                          }
                        }
-            onEntered: {
-              if (popupMenuWindow) {
-                popupMenuWindow.close();
-              }
-              TooltipService.show(tooltipAnchor, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection(root.screen?.name));
+                     }
+          onEntered: {
+            if (popupMenuWindow) {
+              popupMenuWindow.close();
             }
-            onExited: TooltipService.hide()
+            TooltipService.show(tooltipAnchor, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection(root.screen?.name));
           }
+          onExited: TooltipService.hide()
         }
       }
+    }
 
-      // Drawer opener (after items if normal direction)
-      NIconButton {
-        id: chevronIconAfter
-        visible: root.drawerEnabled && dropdownItems.length > 0 && !BarService.getPillDirection(root)
-        width: isVertical ? barHeight : capsuleHeight
-        height: isVertical ? capsuleHeight : barHeight
-        tooltipText: I18n.tr("tooltips.open-tray-dropdown")
-        tooltipDirection: BarService.getTooltipDirection(root.screen?.name)
-        baseSize: capsuleHeight
-        applyUiScale: false
-        customRadius: Style.radiusL
-        colorBg: "transparent"
-        colorFg: Color.mOnSurface
-        colorBorder: "transparent"
-        colorBorderHover: "transparent"
-        icon: {
-          switch (barPosition) {
-          case "bottom":
-            return "caret-up";
-          case "left":
-            return "caret-right";
-          case "right":
-            return "caret-left";
-          case "top":
-          default:
-            return "caret-down";
-          }
+    // Drawer opener (after items if normal direction)
+    NIconButton {
+      id: chevronIconAfter
+      visible: root.drawerEnabled && dropdownItems.length > 0 && !BarService.getPillDirection(root)
+      width: isVertical ? barHeight : capsuleHeight
+      height: isVertical ? capsuleHeight : barHeight
+      tooltipText: I18n.tr("tooltips.open-tray-dropdown")
+      tooltipDirection: BarService.getTooltipDirection(root.screen?.name)
+      baseSize: capsuleHeight
+      applyUiScale: false
+      customRadius: Style.radiusL
+      colorBg: "transparent"
+      colorFg: Color.mOnSurface
+      colorBorder: "transparent"
+      colorBorderHover: "transparent"
+      icon: {
+        switch (barPosition) {
+        case "bottom":
+          return "caret-up";
+        case "left":
+          return "caret-right";
+        case "right":
+          return "caret-left";
+        case "top":
+        default:
+          return "caret-down";
         }
-        onClicked: toggleDrawer(this)
-        onRightClicked: toggleDrawer(this)
       }
-    } // closes Flow
+      onClicked: toggleDrawer(this)
+      onRightClicked: toggleDrawer(this)
+    }
+  } // closes Flow
 }
