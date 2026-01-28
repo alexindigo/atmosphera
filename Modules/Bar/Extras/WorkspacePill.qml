@@ -30,6 +30,23 @@ Item {
   // Fixed dimension (cross-axis) for visual pill
   readonly property real fixedDimension: Style.toOdd(capsuleHeight * baseDimensionRatio)
 
+  // Helper to safely get colors with proper reactivity
+  // Accesses Color singleton directly to ensure fresh values
+  function getColorPair(colorKey) {
+    switch (colorKey) {
+    case "primary":
+      return [Color.mPrimary, Color.mOnPrimary];
+    case "secondary":
+      return [Color.mSecondary, Color.mOnSecondary];
+    case "tertiary":
+      return [Color.mTertiary, Color.mOnTertiary];
+    case "onSurface":
+      return [Color.mOnSurface, Color.mSurface];
+    default:
+      return [Color.mPrimary, Color.mOnPrimary];
+    }
+  }
+
   // Animated pill dimensions (for visual pill, not container)
   property real pillWidth: isVertical ? fixedDimension : getWorkspaceWidth(workspace, false)
   property real pillHeight: isVertical ? getWorkspaceHeight(workspace, false) : fixedDimension
@@ -86,12 +103,12 @@ Item {
       if (pillMouseArea.containsMouse)
         return Color.mHover;
       if (workspace.isFocused)
-        return colorMap[focusedColor][0];
+        return getColorPair(focusedColor)[0];
       if (workspace.isUrgent)
         return Color.mError;
       if (workspace.isOccupied)
-        return colorMap[occupiedColor][0];
-      return Qt.alpha(colorMap[emptyColor][0], 0.3);
+        return getColorPair(occupiedColor)[0];
+      return Qt.alpha(getColorPair(emptyColor)[0], 0.3);
     }
 
     Loader {
@@ -126,12 +143,12 @@ Item {
             if (pillMouseArea.containsMouse)
               return Color.mOnHover;
             if (workspace.isFocused)
-              return colorMap[focusedColor][1];
+              return getColorPair(focusedColor)[1];
             if (workspace.isUrgent)
               return Color.mOnError;
             if (workspace.isOccupied)
-              return colorMap[occupiedColor][1];
-            return colorMap[emptyColor][1];
+              return getColorPair(occupiedColor)[1];
+            return getColorPair(emptyColor)[1];
           }
 
           Behavior on color {
