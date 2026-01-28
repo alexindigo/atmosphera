@@ -444,7 +444,7 @@ Item {
               TooltipService.show(tooltipAnchor, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection(root.screen?.name));
             } else if (root.hoveredItemIndex === trayDelegate.index) {
               root.hoveredItemIndex = -1;
-              TooltipService.hide();
+              TooltipService.hide(tooltipAnchor);
             }
           }
           onClicked: mouse => {

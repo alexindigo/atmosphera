@@ -88,12 +88,22 @@ Singleton {
     return null;
   }
 
-  function hide() {
-    if (pendingTooltip) {
-      pendingTooltip.hide();
-    }
-    if (activeTooltip) {
-      activeTooltip.hide();
+  function hide(target) {
+    // If target is provided, only hide if tooltip belongs to that target
+    if (target) {
+      if (pendingTooltip && pendingTooltip.targetItem === target) {
+        pendingTooltip.hide();
+      }
+      if (activeTooltip && activeTooltip.targetItem === target) {
+        activeTooltip.hide();
+      }
+    } else {
+      if (pendingTooltip) {
+        pendingTooltip.hide();
+      }
+      if (activeTooltip) {
+        activeTooltip.hide();
+      }
     }
   }
 
