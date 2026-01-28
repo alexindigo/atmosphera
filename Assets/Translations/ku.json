@@ -182,7 +182,9 @@
       "hide-widget-when-zero-unread-description": "Dema ku ti agahdarîya nexwendî tune be, îkona agahdarîyê veşêre.",
       "hide-widget-when-zero-unread-label": "Îkonê bê nexwendî veşêre",
       "show-unread-badge-description": "Nîşaneyekê nîşan bide ku hejmara agahiyên nehatine xwendin nîşan dide.",
-      "show-unread-badge-label": "Nîşana ne xwendî nîşan bide"
+      "show-unread-badge-label": "Nîşana ne xwendî nîşan bide",
+      "unread-badge-color-description": "Rengê nîşana agahdariya nexwendî hilbijêre.",
+      "unread-badge-color-label": "Rengê nîşana nexwendî"
     },
     "section-editor": {
       "placeholder": "Widgetekek hilbijêre ku lê zêde bike...",

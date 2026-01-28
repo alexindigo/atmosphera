@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import qs.Commons
 import qs.Services.Compositor
+import qs.Services.UI
 
 Singleton {
   id: root
@@ -303,6 +304,10 @@ Singleton {
 
     // Close any existing dialogs first to prevent stacking
     closeExistingDialogs(popupMenuWindow);
+
+    if (PanelService.openedPanel) {
+      PanelService.openedPanel.close();
+    }
 
     var component = Qt.createComponent(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml");
 

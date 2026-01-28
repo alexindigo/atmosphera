@@ -73,7 +73,7 @@ Popup {
         NIconButton {
           icon: "close"
           tooltipText: I18n.tr("common.close")
-          onClicked: root.close()
+          onClicked: saveAndClose()
         }
       }
 
@@ -147,21 +147,30 @@ Popup {
         NButton {
           text: I18n.tr("common.close")
           outlined: true
-          onClicked: root.close()
-        }
-
-        NButton {
-          text: I18n.tr("common.apply")
-          icon: "check"
-          onClicked: {
-            if (settingsLoader.item && settingsLoader.item.saveSettings) {
-              var newSettings = settingsLoader.item.saveSettings();
-              root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
-            }
-          }
+          onClicked: saveAndClose()
         }
       }
     }
+  }
+
+  Connections {
+    target: settingsLoader.item
+    function onSettingsChanged(newSettings) {
+      if (newSettings) {
+        root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
+      }
+    }
+    ignoreUnknownSignals: true
+  }
+
+  function saveAndClose() {
+    if (settingsLoader.item && typeof settingsLoader.item.saveSettings === 'function') {
+      var newSettings = settingsLoader.item.saveSettings();
+      if (newSettings) {
+        root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
+      }
+    }
+    root.close();
   }
 
   function loadWidgetSettings() {

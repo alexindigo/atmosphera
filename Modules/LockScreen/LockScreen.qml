@@ -77,14 +77,8 @@ Loader {
 
           Item {
             id: batteryIndicator
-            property bool initializationComplete: false
-            Timer {
-              interval: 500
-              running: true
-              onTriggered: batteryIndicator.initializationComplete = true
-            }
 
-            property bool isReady: initializationComplete && BatteryService.batteryReady
+            property bool isReady: BatteryService.ready && BatteryService.batteryReady
             property real percent: BatteryService.batteryPercentage
             property bool charging: BatteryService.batteryCharging
             property bool pluggedIn: BatteryService.batteryPluggedIn

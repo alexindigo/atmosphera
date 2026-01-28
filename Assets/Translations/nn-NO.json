@@ -182,7 +182,9 @@
       "hide-widget-when-zero-unread-description": "Skyler varslingsikonet når det ikkje er ulesne varsel.",
       "hide-widget-when-zero-unread-label": "Skyl ikon når inga ulesne varsel.",
       "show-unread-badge-description": "Viser merke med kor mange ulesne varsel det er.",
-      "show-unread-badge-label": "Vis \"ulesne\"-merke"
+      "show-unread-badge-label": "Vis \"ulesne\"-merke",
+      "unread-badge-color-description": "Vel fargen for merket for uleste varslingar.",
+      "unread-badge-color-label": "Farge på ulest merke"
     },
     "section-editor": {
       "placeholder": "Vel miniprogram å leggja til...",

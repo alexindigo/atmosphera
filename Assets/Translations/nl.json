@@ -182,7 +182,9 @@
       "hide-widget-when-zero-unread-description": "Het meldingspictogram verbergen wanneer er geen ongelezen meldingen zijn.",
       "hide-widget-when-zero-unread-label": "Pictogram verbergen zonder ongelezen meldingen",
       "show-unread-badge-description": "Toon een badge met het aantal ongelezen meldingen.",
-      "show-unread-badge-label": "Ongelezen-badge tonen"
+      "show-unread-badge-label": "Ongelezen-badge tonen",
+      "unread-badge-color-description": "Selecteer de kleur voor de badge van ongelezen meldingen.",
+      "unread-badge-color-label": "Kleur van de ongelezen badge"
     },
     "section-editor": {
       "placeholder": "Selecteer een widget om toe te voegen...",

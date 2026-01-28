@@ -182,7 +182,9 @@
       "hide-widget-when-zero-unread-description": "Ocultar el icono de notificaciones cuando no haya notificaciones pendientes de leer.",
       "hide-widget-when-zero-unread-label": "Ocultar icono sin notificaciones pendientes",
       "show-unread-badge-description": "Mostrar una insignia con el número de notificaciones no leídas.",
-      "show-unread-badge-label": "Mostrar insignia de no leídos"
+      "show-unread-badge-label": "Mostrar insignia de no leídos",
+      "unread-badge-color-description": "Selecciona el color para la insignia de notificación no leída.",
+      "unread-badge-color-label": "Color de la insignia de no leídos"
     },
     "section-editor": {
       "placeholder": "Selecciona un widget para añadir...",

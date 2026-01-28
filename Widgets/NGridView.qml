@@ -77,6 +77,9 @@ Item {
   property alias verticalVelocity: gridView.verticalVelocity
   property alias reuseItems: gridView.reuseItems
 
+  // Scroll speed multiplier for mouse wheel (1.0 = default, higher = faster)
+  property real wheelScrollMultiplier: 2.0
+
   // Forward GridView methods
   function positionViewAtIndex(index, mode) {
     gridView.positionViewAtIndex(index, mode);
@@ -220,6 +223,17 @@ Item {
                         root.keyPressed(event);
                       }
                     }
+
+    WheelHandler {
+      enabled: root.wheelScrollMultiplier !== 1.0
+      acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+      onWheel: event => {
+                 const delta = event.pixelDelta.y !== 0 ? event.pixelDelta.y : event.angleDelta.y / 8;
+                 const newY = gridView.contentY - (delta * root.wheelScrollMultiplier);
+                 gridView.contentY = Math.max(0, Math.min(newY, gridView.contentHeight - gridView.height));
+                 event.accepted = true;
+               }
+    }
 
     ScrollBar.vertical: ScrollBar {
       parent: root

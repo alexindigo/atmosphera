@@ -288,214 +288,235 @@ Item {
   }
 
   // Content dimensions for implicit sizing
-  readonly property real contentWidth: isVertical ? capsuleHeight : Math.round(trayFlow.implicitWidth)
-  readonly property real contentHeight: isVertical ? Math.round(trayFlow.implicitHeight) : capsuleHeight
+  readonly property real capsuleWidth: isVertical ? capsuleHeight : Math.round(trayFlow.implicitWidth)
+  readonly property real capsuleContentHeight: isVertical ? Math.round(trayFlow.implicitHeight) : capsuleHeight
 
-  implicitWidth: contentWidth
-  implicitHeight: contentHeight
+  implicitWidth: isVertical ? barHeight : Math.round(trayFlow.implicitWidth)
+  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight) : barHeight
   visible: filteredItems.length > 0 || dropdownItems.length > 0
   opacity: (filteredItems.length > 0 || dropdownItems.length > 0) ? 1.0 : 0.0
 
   // Visual capsule centered in parent
   Rectangle {
     id: visualCapsule
-    width: root.contentWidth
-    height: root.contentHeight
-    anchors.centerIn: parent
+    width: capsuleWidth
+    height: capsuleContentHeight
+    x: Style.pixelAlignCenter(parent.width, width)
+    y: Style.pixelAlignCenter(parent.height, height)
     radius: Style.radiusM
     color: Style.capsuleColor
     border.color: Style.capsuleBorderColor
     border.width: Style.capsuleBorderWidth
+  }
 
-    Flow {
-      id: trayFlow
-      spacing: Style.marginXS
-      flow: isVertical ? Flow.TopToBottom : Flow.LeftToRight
+  Flow {
+    id: trayFlow
+    spacing: Style.marginXS
+    flow: isVertical ? Flow.TopToBottom : Flow.LeftToRight
 
-      // Pixel-perfect centering
-      x: isVertical ? Style.pixelAlignCenter(parent.width, width) : 0
-      y: isVertical ? 0 : Style.pixelAlignCenter(parent.height, height)
+    // Position at edge for full click area
+    x: isVertical ? 0 : 0
+    y: isVertical ? 0 : 0
 
-      // Drawer opener (before items if opposite direction)
-      NIconButton {
-        id: chevronIconBefore
-        visible: root.drawerEnabled && dropdownItems.length > 0 && BarService.getPillDirection(root)
-        tooltipText: I18n.tr("tooltips.open-tray-dropdown")
-        tooltipDirection: BarService.getTooltipDirection(root.screen?.name)
-        baseSize: capsuleHeight
-        applyUiScale: false
-        customRadius: Style.radiusL
-        colorBg: "transparent"
-        colorFg: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mOnPrimary
-        colorBorder: "transparent"
-        colorBorderHover: "transparent"
-        icon: {
-          switch (barPosition) {
-          case "bottom":
-            return "caret-up";
-          case "left":
-            return "caret-right";
-          case "right":
-            return "caret-left";
-          case "top":
-          default:
-            return "caret-down";
-          }
+    // Drawer opener (before items if opposite direction)
+    NIconButton {
+      id: chevronIconBefore
+      visible: root.drawerEnabled && dropdownItems.length > 0 && BarService.getPillDirection(root)
+      width: isVertical ? barHeight : capsuleHeight
+      height: isVertical ? capsuleHeight : barHeight
+      tooltipText: I18n.tr("tooltips.open-tray-dropdown")
+      tooltipDirection: BarService.getTooltipDirection(root.screen?.name)
+      baseSize: capsuleHeight
+      applyUiScale: false
+      customRadius: Style.radiusL
+      colorBg: "transparent"
+      colorFg: Color.mOnSurface
+      colorBorder: "transparent"
+      colorBorderHover: "transparent"
+      icon: {
+        switch (barPosition) {
+        case "bottom":
+          return "caret-up";
+        case "left":
+          return "caret-right";
+        case "right":
+          return "caret-left";
+        case "top":
+        default:
+          return "caret-down";
         }
-        onClicked: toggleDrawer(this)
-        onRightClicked: toggleDrawer(this)
       }
+      onClicked: toggleDrawer(this)
+      onRightClicked: toggleDrawer(this)
+    }
 
-      // Pinned items
-      Repeater {
-        id: repeater
-        model: root.filteredItems
+    // Pinned items
+    Repeater {
+      id: repeater
+      model: root.filteredItems
 
-        delegate: Item {
-          id: trayDelegate
+      delegate: Item {
+        id: trayDelegate
+        width: isVertical ? barHeight : capsuleHeight
+        height: isVertical ? capsuleHeight : barHeight
+        visible: modelData
+
+        // Tooltip anchor representing the visual area (for proper tooltip positioning)
+        Item {
+          id: tooltipAnchor
           width: capsuleHeight
           height: capsuleHeight
-          visible: modelData
+          x: Style.pixelAlignCenter(parent.width, width)
+          y: Style.pixelAlignCenter(parent.height, height)
+        }
 
-          IconImage {
-            id: trayIcon
-            width: iconSize
-            height: iconSize
-            x: Style.pixelAlignCenter(parent.width, width)
-            y: Style.pixelAlignCenter(parent.height, height)
-            asynchronous: true
-            backer.fillMode: Image.PreserveAspectFit
+        IconImage {
+          id: trayIcon
+          width: iconSize
+          height: iconSize
+          x: Style.pixelAlignCenter(parent.width, width)
+          y: Style.pixelAlignCenter(parent.height, height)
+          asynchronous: true
+          backer.fillMode: Image.PreserveAspectFit
 
-            source: {
-              let icon = modelData?.icon || "";
-              if (!icon) {
-                return "";
-              }
-
-              // Process icon path
-              if (icon.includes("?path=")) {
-                const chunks = icon.split("?path=");
-                const name = chunks[0];
-                const path = chunks[1];
-                const fileName = name.substring(name.lastIndexOf("/") + 1);
-                return `file://${path}/${fileName}`;
-              }
-              return icon;
+          source: {
+            let icon = modelData?.icon || "";
+            if (!icon) {
+              return "";
             }
-            opacity: status === Image.Ready ? 1 : 0
 
-            layer.enabled: widgetSettings.colorizeIcons !== false
-            layer.effect: ShaderEffect {
-              property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
-              property real colorizeMode: 1.0
-
-              fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+            // Process icon path
+            if (icon.includes("?path=")) {
+              const chunks = icon.split("?path=");
+              const name = chunks[0];
+              const path = chunks[1];
+              const fileName = name.substring(name.lastIndexOf("/") + 1);
+              return `file://${path}/${fileName}`;
             }
+            return icon;
           }
+          opacity: status === Image.Ready ? 1 : 0
 
-          MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
-            onClicked: mouse => {
-                         if (!modelData) {
+          layer.enabled: widgetSettings.colorizeIcons !== false
+          layer.effect: ShaderEffect {
+            property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
+            property real colorizeMode: 1.0
+
+            fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+          }
+        }
+
+        MouseArea {
+          anchors.fill: parent
+          hoverEnabled: true
+          cursorShape: Qt.PointingHandCursor
+          acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+          onClicked: mouse => {
+                       if (!modelData) {
+                         return;
+                       }
+
+                       if (mouse.button === Qt.LeftButton) {
+                         // Close any open menu first
+                         if (popupMenuWindow) {
+                           popupMenuWindow.close();
+                         }
+
+                         if (!modelData.onlyMenu) {
+                           modelData.activate();
+                         }
+                       } else if (mouse.button === Qt.MiddleButton) {
+                         // Close the menu if it was visible
+                         if (popupMenuWindow && popupMenuWindow.visible) {
+                           popupMenuWindow.close();
+                           return;
+                         }
+                         modelData.secondaryActivate && modelData.secondaryActivate();
+                       } else if (mouse.button === Qt.RightButton) {
+                         TooltipService.hideImmediately();
+
+                         // Close the menu if it was visible
+                         if (popupMenuWindow && popupMenuWindow.visible) {
+                           popupMenuWindow.close();
                            return;
                          }
 
-                         if (mouse.button === Qt.LeftButton) {
-                           // Close any open menu first
-                           if (popupMenuWindow) {
-                             popupMenuWindow.close();
-                           }
+                         // Close any opened panel
+                         if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
+                           PanelService.openedPanel.close();
+                         }
 
-                           if (!modelData.onlyMenu) {
-                             modelData.activate();
-                           }
-                         } else if (mouse.button === Qt.MiddleButton) {
-                           // Close the menu if it was visible
-                           if (popupMenuWindow && popupMenuWindow.visible) {
-                             popupMenuWindow.close();
-                             return;
-                           }
-                           modelData.secondaryActivate && modelData.secondaryActivate();
-                         } else if (mouse.button === Qt.RightButton) {
-                           TooltipService.hideImmediately();
-
-                           // Close the menu if it was visible
-                           if (popupMenuWindow && popupMenuWindow.visible) {
-                             popupMenuWindow.close();
-                             return;
-                           }
-
-                           // Close any opened panel
-                           if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
-                             PanelService.openedPanel.close();
-                           }
-
-                           if (modelData.hasMenu && modelData.menu && trayMenu && trayMenu.item) {
-                             // Position menu based on bar position
+                         if (modelData.hasMenu && modelData.menu && trayMenu && trayMenu.item) {
+                           // Calculate menu position after ensuring menu is loaded
+                           const calculateAndShow = () => {
+                             // Position menu based on bar position, using tooltipAnchor for proper positioning
+                             // Increased spacing for better alignment with other context menus
                              let menuX, menuY;
                              if (barPosition === "left") {
-                               // For left bar: position menu to the right of the bar
-                               menuX = trayDelegate.width + Style.marginM;
+                               // For left bar: position menu to the right of the visual area
+                               menuX = tooltipAnchor.width + Style.marginL;
                                menuY = 0;
                              } else if (barPosition === "right") {
-                               // For right bar: position menu to the left of the bar
-                               menuX = -trayMenu.item.width - Style.marginM;
+                               // For right bar: position menu to the left of the visual area
+                               menuX = -trayMenu.item.implicitWidth - Style.marginL;
                                menuY = 0;
                              } else {
-                               // For horizontal bars: center horizontally and position below
-                               menuX = (trayDelegate.width / 2) - (trayMenu.item.width / 2);
-                               menuY = (barPosition === "top") ? barHeight + Style.marginS - 2 : barHeight + Style.marginS - 2;
+                               // For horizontal bars: center horizontally and position below visual area
+                               menuX = (tooltipAnchor.width / 2) - (trayMenu.item.implicitWidth / 2);
+                               menuY = tooltipAnchor.height + Style.marginL;
                              }
 
-                             PanelService.showTrayMenu(root.screen, modelData, trayMenu.item, trayDelegate, menuX, menuY, root.section, root.sectionWidgetIndex);
-                           } else {
-                             Logger.d("Tray", "No menu available for", modelData.id, "or trayMenu not set");
-                           }
+                             PanelService.showTrayMenu(root.screen, modelData, trayMenu.item, tooltipAnchor, menuX, menuY, root.section, root.sectionWidgetIndex);
+                           };
+
+                           // Use Qt.callLater to ensure menu dimensions are calculated
+                           Qt.callLater(calculateAndShow);
+                         } else {
+                           Logger.d("Tray", "No menu available for", modelData.id, "or trayMenu not set");
                          }
                        }
-            onEntered: {
-              if (popupMenuWindow) {
-                popupMenuWindow.close();
-              }
-              TooltipService.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection(root.screen?.name));
+                     }
+          onEntered: {
+            if (popupMenuWindow) {
+              popupMenuWindow.close();
             }
-            onExited: TooltipService.hide()
+            TooltipService.show(tooltipAnchor, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection(root.screen?.name));
           }
+          onExited: TooltipService.hide()
         }
       }
+    }
 
-      // Drawer opener (after items if normal direction)
-      NIconButton {
-        id: chevronIconAfter
-        visible: root.drawerEnabled && dropdownItems.length > 0 && !BarService.getPillDirection(root)
-        tooltipText: I18n.tr("tooltips.open-tray-dropdown")
-        tooltipDirection: BarService.getTooltipDirection(root.screen?.name)
-        baseSize: capsuleHeight
-        applyUiScale: false
-        customRadius: Style.radiusL
-        colorBg: "transparent"
-        colorFg: Color.mOnSurface
-        colorBorder: "transparent"
-        colorBorderHover: "transparent"
-        icon: {
-          switch (barPosition) {
-          case "bottom":
-            return "caret-up";
-          case "left":
-            return "caret-right";
-          case "right":
-            return "caret-left";
-          case "top":
-          default:
-            return "caret-down";
-          }
+    // Drawer opener (after items if normal direction)
+    NIconButton {
+      id: chevronIconAfter
+      visible: root.drawerEnabled && dropdownItems.length > 0 && !BarService.getPillDirection(root)
+      width: isVertical ? barHeight : capsuleHeight
+      height: isVertical ? capsuleHeight : barHeight
+      tooltipText: I18n.tr("tooltips.open-tray-dropdown")
+      tooltipDirection: BarService.getTooltipDirection(root.screen?.name)
+      baseSize: capsuleHeight
+      applyUiScale: false
+      customRadius: Style.radiusL
+      colorBg: "transparent"
+      colorFg: Color.mOnSurface
+      colorBorder: "transparent"
+      colorBorderHover: "transparent"
+      icon: {
+        switch (barPosition) {
+        case "bottom":
+          return "caret-up";
+        case "left":
+          return "caret-right";
+        case "right":
+          return "caret-left";
+        case "top":
+        default:
+          return "caret-down";
         }
-        onClicked: toggleDrawer(this)
-        onRightClicked: toggleDrawer(this)
       }
-    } // closes Flow
-  } // closes visualCapsule
+      onClicked: toggleDrawer(this)
+      onRightClicked: toggleDrawer(this)
+    }
+  } // closes Flow
 }

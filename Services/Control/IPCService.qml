@@ -258,11 +258,14 @@ Item {
       }
 
       if (Settings.data.nightLight.forced) {
-        Settings.data.nightLight.enabled = false;
         Settings.data.nightLight.forced = false;
       } else {
-        Settings.data.nightLight.enabled = true;
-        Settings.data.nightLight.forced = true;
+        if (Settings.data.nightLight.enabled) {
+          Settings.data.nightLight.enabled = false;
+        } else {
+          Settings.data.nightLight.forced = true;
+          Settings.data.nightLight.enabled = true;
+        }
       }
     }
   }

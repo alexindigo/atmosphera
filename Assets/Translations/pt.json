@@ -182,7 +182,9 @@
       "hide-widget-when-zero-unread-description": "Ocultar o ícone de notificações quando não houver notificações não lidas.",
       "hide-widget-when-zero-unread-label": "Ocultar ícone sem notificações não lidas",
       "show-unread-badge-description": "Exibir um distintivo mostrando o número de notificações não lidas.",
-      "show-unread-badge-label": "Mostrar distintivo de não lidos"
+      "show-unread-badge-label": "Mostrar distintivo de não lidos",
+      "unread-badge-color-description": "Selecione a cor para o emblema de notificação não lida.",
+      "unread-badge-color-label": "Cor do distintivo de não lido"
     },
     "section-editor": {
       "placeholder": "Selecione um widget para adicionar...",

@@ -68,6 +68,9 @@ Item {
   property alias horizontalVelocity: listView.horizontalVelocity
   property alias verticalVelocity: listView.verticalVelocity
 
+  // Scroll speed multiplier for mouse wheel (1.0 = default, higher = faster)
+  property real wheelScrollMultiplier: 2.0
+
   // Forward ListView methods
   function positionViewAtIndex(index, mode) {
     listView.positionViewAtIndex(index, mode);
@@ -185,6 +188,17 @@ Item {
 
     clip: true
     boundsBehavior: Flickable.StopAtBounds
+
+    WheelHandler {
+      enabled: root.wheelScrollMultiplier !== 1.0
+      acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+      onWheel: event => {
+                 const delta = event.pixelDelta.y !== 0 ? event.pixelDelta.y : event.angleDelta.y / 8;
+                 const newY = listView.contentY - (delta * root.wheelScrollMultiplier);
+                 listView.contentY = Math.max(0, Math.min(newY, listView.contentHeight - listView.height));
+                 event.accepted = true;
+               }
+    }
 
     ScrollBar.vertical: ScrollBar {
       parent: root
