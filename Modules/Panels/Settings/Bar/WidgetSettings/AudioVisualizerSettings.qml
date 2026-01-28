@@ -12,8 +12,6 @@ ColumnLayout {
   property var widgetData: null
   property var widgetMetadata: null
 
-  signal settingsChanged(var settings)
-
   // Local state
   property bool valueHideWhenIdle: widgetData.hideWhenIdle !== undefined ? widgetData.hideWhenIdle : widgetMetadata.hideWhenIdle
   property string valueColorName: widgetData.colorName !== undefined ? widgetData.colorName : widgetMetadata.colorName
@@ -33,7 +31,6 @@ ColumnLayout {
     description: I18n.tr("bar.audio-visualizer.width-description")
     text: widgetData.width || widgetMetadata.width
     placeholderText: I18n.tr("placeholders.enter-width-pixels")
-    onEditingFinished: settingsChanged(saveSettings())
   }
 
   NComboBox {
@@ -63,19 +60,13 @@ ColumnLayout {
       }
     ]
     currentKey: root.valueColorName
-    onSelected: key => {
-                  root.valueColorName = key;
-                  settingsChanged(saveSettings());
-                }
+    onSelected: key => root.valueColorName = key
   }
 
   NToggle {
     label: I18n.tr("bar.audio-visualizer.hide-when-idle-label")
     description: I18n.tr("bar.audio-visualizer.hide-when-idle-description")
     checked: valueHideWhenIdle
-    onToggled: checked => {
-                 valueHideWhenIdle = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueHideWhenIdle = checked
   }
 }

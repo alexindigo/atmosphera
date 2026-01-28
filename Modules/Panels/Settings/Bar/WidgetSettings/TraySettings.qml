@@ -10,8 +10,6 @@ ColumnLayout {
   property var widgetData: ({}) // Expected by BarWidgetSettingsDialog
   property var widgetMetadata: ({}) // Expected by BarWidgetSettingsDialog
 
-  signal settingsChanged(var settings)
-
   // Local state
   property var localBlacklist: widgetData.blacklist || []
   property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : widgetMetadata.colorizeIcons
@@ -38,10 +36,7 @@ ColumnLayout {
     label: I18n.tr("bar.tray.colorize-icons-label")
     description: I18n.tr("bar.tray.colorize-icons-description")
     checked: root.valueColorizeIcons
-    onToggled: checked => {
-                 root.valueColorizeIcons = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => root.valueColorizeIcons = checked
   }
 
   NToggle {
@@ -49,10 +44,7 @@ ColumnLayout {
     label: I18n.tr("bar.tray.drawer-enabled-label")
     description: I18n.tr("bar.tray.drawer-enabled-description")
     checked: root.valueDrawerEnabled
-    onToggled: checked => {
-                 root.valueDrawerEnabled = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => root.valueDrawerEnabled = checked
   }
 
   NToggle {
@@ -60,10 +52,7 @@ ColumnLayout {
     label: I18n.tr("bar.tray.hide-passive-label")
     description: I18n.tr("bar.tray.hide-passive-description")
     checked: root.valueHidePassive
-    onToggled: checked => {
-                 root.valueHidePassive = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => root.valueHidePassive = checked
   }
 
   ColumnLayout {
@@ -99,7 +88,6 @@ ColumnLayout {
                                       "rule": newRule
                                     });
               newRuleInput.text = "";
-              settingsChanged(saveSettings());
             }
           }
         }
@@ -154,7 +142,6 @@ ColumnLayout {
           colorFgHover: Color.mOnError
           onClicked: {
             blacklistModel.remove(index);
-            settingsChanged(saveSettings());
           }
         }
       }

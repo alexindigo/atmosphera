@@ -70,23 +70,6 @@ Item {
     "onSurface": [Color.mOnSurface, Color.mSurface]
   }
 
-  // Helper to safely get colors with proper reactivity
-  // Accesses Color singleton directly to ensure fresh values
-  function getColorPair(colorKey) {
-    switch (colorKey) {
-    case "primary":
-      return [Color.mPrimary, Color.mOnPrimary];
-    case "secondary":
-      return [Color.mSecondary, Color.mOnSecondary];
-    case "tertiary":
-      return [Color.mTertiary, Color.mOnTertiary];
-    case "onSurface":
-      return [Color.mOnSurface, Color.mSurface];
-    default:
-      return [Color.mPrimary, Color.mOnPrimary];
-    }
-  }
-
   // Only for grouped mode / show apps
   readonly property int baseItemSize: Style.toOdd(capsuleHeight * 0.8)
   readonly property int iconSize: Style.toOdd(baseItemSize * iconScale)
@@ -557,7 +540,7 @@ Item {
     id: pillRow
     spacing: spacingBetweenPills
     x: horizontalPadding
-    y: 0
+    y: workspaceBackground.y + Style.pixelAlignCenter(workspaceBackground.height, height)
     visible: !isVertical && !showApplications
 
     Repeater {
@@ -569,7 +552,6 @@ Item {
         isVertical: false
         baseDimensionRatio: root.baseDimensionRatio
         capsuleHeight: root.capsuleHeight
-        barHeight: root.barHeight
         labelMode: root.labelMode
         characterCount: root.characterCount
         textRatio: root.textRatio
@@ -591,7 +573,7 @@ Item {
   Column {
     id: pillColumn
     spacing: spacingBetweenPills
-    x: 0
+    x: workspaceBackground.x + Style.pixelAlignCenter(workspaceBackground.width, width)
     y: horizontalPadding
     visible: isVertical && !showApplications
 
@@ -604,7 +586,6 @@ Item {
         isVertical: true
         baseDimensionRatio: root.baseDimensionRatio
         capsuleHeight: root.capsuleHeight
-        barHeight: root.barHeight
         labelMode: root.labelMode
         characterCount: root.characterCount
         textRatio: root.textRatio
@@ -809,13 +790,13 @@ Item {
 
           color: {
             if (groupedContainer.workspaceModel.isFocused)
-              return root.getColorPair(root.focusedColor)[0];
+              return root.colorMap[root.focusedColor][0];
             if (groupedContainer.workspaceModel.isUrgent)
               return Color.mError;
             if (groupedContainer.hasWindows)
-              return root.getColorPair(root.occupiedColor)[0];
+              return root.colorMap[root.occupiedColor][0];
 
-            return root.getColorPair(root.emptyColor)[0];
+            return root.colorMap[root.emptyColor][0];
           }
 
           scale: groupedContainer.workspaceModel.isActive ? 1.0 : 0.8
@@ -878,13 +859,13 @@ Item {
 
           color: {
             if (groupedContainer.workspaceModel.isFocused)
-              return root.getColorPair(root.focusedColor)[1];
+              return root.colorMap[root.focusedColor][1];
             if (groupedContainer.workspaceModel.isUrgent)
               return Color.mOnError;
             if (groupedContainer.hasWindows)
-              return root.getColorPair(root.occupiedColor)[1];
+              return root.colorMap[root.occupiedColor][1];
 
-            return root.getColorPair(root.emptyColor)[1];
+            return root.colorMap[root.emptyColor][1];
           }
 
           Behavior on opacity {

@@ -71,12 +71,11 @@ Popup {
     interactive: contentHeight > root.height
     verticalPolicy: root.verticalPolicy
     horizontalPolicy: root.horizontalPolicy
-    reserveScrollbarSpace: false
     model: root.filteredModel
 
     delegate: ItemDelegate {
       id: menuItem
-      width: listView.availableWidth
+      width: listView.width
       height: root.itemHeight
       opacity: modelData.enabled !== false ? 1.0 : 0.5
       enabled: modelData.enabled !== false

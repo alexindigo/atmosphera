@@ -12,7 +12,6 @@ Item {
   // These must be provided by the parent Workspace widget
   required property real baseDimensionRatio
   required property real capsuleHeight
-  required property real barHeight
   required property string labelMode
   required property int characterCount
   required property real textRatio
@@ -30,30 +29,13 @@ Item {
   // Fixed dimension (cross-axis) for visual pill
   readonly property real fixedDimension: Style.toOdd(capsuleHeight * baseDimensionRatio)
 
-  // Helper to safely get colors with proper reactivity
-  // Accesses Color singleton directly to ensure fresh values
-  function getColorPair(colorKey) {
-    switch (colorKey) {
-    case "primary":
-      return [Color.mPrimary, Color.mOnPrimary];
-    case "secondary":
-      return [Color.mSecondary, Color.mOnSecondary];
-    case "tertiary":
-      return [Color.mTertiary, Color.mOnTertiary];
-    case "onSurface":
-      return [Color.mOnSurface, Color.mSurface];
-    default:
-      return [Color.mPrimary, Color.mOnPrimary];
-    }
-  }
-
   // Animated pill dimensions (for visual pill, not container)
   property real pillWidth: isVertical ? fixedDimension : getWorkspaceWidth(workspace, false)
   property real pillHeight: isVertical ? getWorkspaceHeight(workspace, false) : fixedDimension
 
-  // Container uses full barHeight on cross-axis for larger click area
-  width: isVertical ? barHeight : getWorkspaceWidth(workspace, false)
-  height: isVertical ? getWorkspaceHeight(workspace, false) : barHeight
+  // Container uses full capsuleHeight on cross-axis for larger click area
+  width: isVertical ? capsuleHeight : getWorkspaceWidth(workspace, false)
+  height: isVertical ? getWorkspaceHeight(workspace, false) : capsuleHeight
 
   states: [
     State {
@@ -61,8 +43,8 @@ Item {
       when: workspace.isActive
       PropertyChanges {
         target: pillContainer
-        width: isVertical ? barHeight : getWorkspaceWidth(workspace, true)
-        height: isVertical ? getWorkspaceHeight(workspace, true) : barHeight
+        width: isVertical ? capsuleHeight : getWorkspaceWidth(workspace, true)
+        height: isVertical ? getWorkspaceHeight(workspace, true) : capsuleHeight
         pillWidth: isVertical ? fixedDimension : getWorkspaceWidth(workspace, true)
         pillHeight: isVertical ? getWorkspaceHeight(workspace, true) : fixedDimension
       }
@@ -100,15 +82,13 @@ Item {
     z: 0
 
     color: {
-      if (pillMouseArea.containsMouse)
-        return Color.mHover;
       if (workspace.isFocused)
-        return getColorPair(focusedColor)[0];
+        return colorMap[focusedColor][0];
       if (workspace.isUrgent)
         return Color.mError;
       if (workspace.isOccupied)
-        return getColorPair(occupiedColor)[0];
-      return Qt.alpha(getColorPair(emptyColor)[0], 0.3);
+        return colorMap[occupiedColor][0];
+      return Qt.alpha(colorMap[emptyColor][0], 0.3);
     }
 
     Loader {
@@ -140,23 +120,13 @@ Item {
           font.weight: Style.fontWeightBold
           wrapMode: Text.Wrap
           color: {
-            if (pillMouseArea.containsMouse)
-              return Color.mOnHover;
             if (workspace.isFocused)
-              return getColorPair(focusedColor)[1];
+              return colorMap[focusedColor][1];
             if (workspace.isUrgent)
               return Color.mOnError;
             if (workspace.isOccupied)
-              return getColorPair(occupiedColor)[1];
-            return getColorPair(emptyColor)[1];
-          }
-
-          Behavior on color {
-            enabled: !Color.isTransitioning
-            ColorAnimation {
-              duration: Style.animationFast
-              easing.type: Easing.InOutQuad
-            }
+              return colorMap[occupiedColor][1];
+            return colorMap[emptyColor][1];
           }
         }
       }
@@ -173,7 +143,7 @@ Item {
       enabled: !Color.isTransitioning
       ColorAnimation {
         duration: Style.animationFast
-        easing.type: Easing.InOutQuad
+        easing.type: Easing.InOutCubic
       }
     }
     Behavior on opacity {

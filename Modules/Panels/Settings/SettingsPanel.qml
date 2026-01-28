@@ -94,7 +94,6 @@ SmartPanel {
   }
 
   property int requestedTab: SettingsPanel.Tab.General
-  property int requestedSubTab: -1
   property var requestedEntry: null
 
   // Content state - these are synced with SettingsContent when panel opens
@@ -147,13 +146,6 @@ SmartPanel {
     PanelService.willOpenPanel(root);
   }
 
-  // Open to a specific tab and optionally a subtab
-  function openToTab(tab, subTab, buttonItem, buttonName) {
-    requestedTab = tab !== undefined ? tab : SettingsPanel.Tab.General;
-    requestedSubTab = subTab !== undefined ? subTab : -1;
-    open(buttonItem, buttonName);
-  }
-
   // When the panel opens, initialize content
   onOpened: {
     if (_settingsContent) {
@@ -166,11 +158,6 @@ SmartPanel {
       } else {
         _settingsContent.requestedTab = requestedTab;
         _settingsContent.initialize();
-        if (requestedSubTab >= 0) {
-          const subTab = requestedSubTab;
-          requestedSubTab = -1;
-          Qt.callLater(() => _settingsContent.navigateToTab(requestedTab, subTab));
-        }
       }
     }
   }
