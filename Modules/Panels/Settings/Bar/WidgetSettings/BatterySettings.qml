@@ -4,7 +4,6 @@ import QtQuick.Layouts
 import qs.Commons
 import qs.Services.Hardware
 import qs.Widgets
-import qs.Services.Hardware
 
 ColumnLayout {
   id: root
@@ -25,7 +24,14 @@ ColumnLayout {
   property bool valueHideIfNotDetected: widgetData.hideIfNotDetected !== undefined ? widgetData.hideIfNotDetected : widgetMetadata.hideIfNotDetected
   property bool valueHideIfIdle: widgetData.hideIfIdle !== undefined ? widgetData.hideIfIdle : widgetMetadata.hideIfIdle
 
-  property var deviceModel: BatteryService.devicesModel
+  property var deviceModel: BatteryService.getDeviceOptionsModel()
+
+  Connections {
+    target: BatteryService
+    function onDevicesChanged() {
+      deviceModel = BatteryService.getDeviceOptionsModel();
+    }
+  }
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
@@ -77,7 +83,7 @@ ColumnLayout {
       icon: "refresh"
       // TODO i18n
       tooltipText: "Refresh device list"
-      onClicked: BatteryService.devicesModel = BatteryService.buildDeviceModel()
+      onClicked: deviceModel = BatteryService.getDeviceOptionsModel()
     }
   }
 
