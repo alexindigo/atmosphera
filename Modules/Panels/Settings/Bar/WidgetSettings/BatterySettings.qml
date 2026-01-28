@@ -24,14 +24,7 @@ ColumnLayout {
   property bool valueHideIfNotDetected: widgetData.hideIfNotDetected !== undefined ? widgetData.hideIfNotDetected : widgetMetadata.hideIfNotDetected
   property bool valueHideIfIdle: widgetData.hideIfIdle !== undefined ? widgetData.hideIfIdle : widgetMetadata.hideIfIdle
 
-  property var deviceModel: BatteryService.getDeviceOptionsModel()
-
-  Connections {
-    target: BatteryService
-    function onDevicesChanged() {
-      deviceModel = BatteryService.getDeviceOptionsModel();
-    }
-  }
+  property var deviceModel: BatteryService.devicesModel
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
@@ -81,9 +74,8 @@ ColumnLayout {
 
     NIconButton {
       icon: "refresh"
-      // TODO i18n
       tooltipText: "Refresh device list"
-      onClicked: deviceModel = BatteryService.getDeviceOptionsModel()
+      onClicked: BatteryService.devicesModel = BatteryService.buildDeviceModel()
     }
   }
 
