@@ -182,7 +182,9 @@
       "hide-widget-when-zero-unread-description": "Masquer l’icône de notification lorsqu’il n’y a aucune notification non lue.",
       "hide-widget-when-zero-unread-label": "Masquer l’icône sans notifications non lues",
       "show-unread-badge-description": "Afficher un badge montrant le nombre de notifications non lues.",
-      "show-unread-badge-label": "Afficher le badge non lu"
+      "show-unread-badge-label": "Afficher le badge non lu",
+      "unread-badge-color-description": "Sélectionnez la couleur pour le badge de notification non lue.",
+      "unread-badge-color-label": "Couleur du badge non lu"
     },
     "section-editor": {
       "placeholder": "Sélectionnez un widget à ajouter...",

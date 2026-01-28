@@ -182,7 +182,9 @@
       "hide-widget-when-zero-unread-description": "Okunmamış bildirim yokken bildirim simgesini gizle.",
       "hide-widget-when-zero-unread-label": "Okunmamış yokken simgeyi gizle",
       "show-unread-badge-description": "Okunmamış bildirim sayısını gösteren bir rozet göster.",
-      "show-unread-badge-label": "Okunmamış bildirimleri göster"
+      "show-unread-badge-label": "Okunmamış bildirimleri göster",
+      "unread-badge-color-description": "Okunmamış bildirim rozeti için rengi seçin.",
+      "unread-badge-color-label": "Okunmamış rozet rengi"
     },
     "section-editor": {
       "placeholder": "Eklenecek bir araç takımı seçin...",

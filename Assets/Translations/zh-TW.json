@@ -182,7 +182,9 @@
       "hide-widget-when-zero-unread-description": "沒有未讀通知時隱藏通知圖示。",
       "hide-widget-when-zero-unread-label": "沒有未讀通知時隱藏圖示",
       "show-unread-badge-description": "顯示帶有數量的未讀標記",
-      "show-unread-badge-label": "顯示未讀標記"
+      "show-unread-badge-label": "顯示未讀標記",
+      "unread-badge-color-description": "選擇未讀通知徽章的顏色。",
+      "unread-badge-color-label": "未讀徽章顏色"
     },
     "section-editor": {
       "placeholder": "選取一個小工具來新增...",

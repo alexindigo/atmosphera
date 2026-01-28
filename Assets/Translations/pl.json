@@ -182,7 +182,9 @@
       "hide-widget-when-zero-unread-description": "Ukryj ikonę powiadomień, gdy nie ma nieprzeczytanych powiadomień.",
       "hide-widget-when-zero-unread-label": "Ukryj ikonę bez nieprzeczytanych",
       "show-unread-badge-description": "Wyświetl plakietkę z liczbą nieprzeczytanych powiadomień.",
-      "show-unread-badge-label": "Pokaż plakietkę nieprzeczytanych"
+      "show-unread-badge-label": "Pokaż plakietkę nieprzeczytanych",
+      "unread-badge-color-description": "Wybierz kolor dla plakietki nieprzeczytanych powiadomień.",
+      "unread-badge-color-label": "Kolor plakietki nieprzeczytanych"
     },
     "section-editor": {
       "placeholder": "Wybierz widżet do dodania...",

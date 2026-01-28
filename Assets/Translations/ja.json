@@ -182,7 +182,9 @@
       "hide-widget-when-zero-unread-description": "未読の通知がない場合に通知アイコンを非表示にします。",
       "hide-widget-when-zero-unread-label": "未読なしでアイコンを非表示",
       "show-unread-badge-description": "未読通知の数を表示するバッジを表示します。",
-      "show-unread-badge-label": "未読バッジを表示"
+      "show-unread-badge-label": "未読バッジを表示",
+      "unread-badge-color-description": "未読の通知バッジの色を選択してください。",
+      "unread-badge-color-label": "未読バッジの色"
     },
     "section-editor": {
       "placeholder": "追加するウィジェットを選択...",

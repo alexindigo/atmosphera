@@ -182,7 +182,9 @@
       "hide-widget-when-zero-unread-description": "Приховувати значок сповіщень, якщо немає непрочитаних.",
       "hide-widget-when-zero-unread-label": "Приховувати значок без непрочитаних",
       "show-unread-badge-description": "Відображати значок з кількістю непрочитаних сповіщень.",
-      "show-unread-badge-label": "Показувати значок непрочитаних"
+      "show-unread-badge-label": "Показувати значок непрочитаних",
+      "unread-badge-color-description": "Виберіть колір для значка непрочитаних сповіщень.",
+      "unread-badge-color-label": "Колір значка непрочитаних"
     },
     "section-editor": {
       "placeholder": "Виберіть віджет для додавання...",

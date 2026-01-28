@@ -182,7 +182,9 @@
       "hide-widget-when-zero-unread-description": "Benachrichtigungssymbol ausblenden, wenn keine ungelesenen Benachrichtigungen vorhanden sind.",
       "hide-widget-when-zero-unread-label": "Symbol bei keinen ungelesenen Benachrichtigungen ausblenden",
       "show-unread-badge-description": "Badge mit der Anzahl ungelesener Benachrichtigungen anzeigen.",
-      "show-unread-badge-label": "Badge für ungelesene Nachrichten anzeigen"
+      "show-unread-badge-label": "Badge für ungelesene Nachrichten anzeigen",
+      "unread-badge-color-description": "Wähle die Farbe für das Abzeichen ungelesener Benachrichtigungen.",
+      "unread-badge-color-label": "Farbe des ungelesenen Abzeichens"
     },
     "section-editor": {
       "placeholder": "Widget auswählen...",
