@@ -288,7 +288,7 @@ Singleton {
   Process {
     id: healthProcess
     // Dynamically target the primary device if possible, otherwise fall back to first battery
-    command: ["sh", "-c", `upower -i ${primaryDevice.nativePath ? "/org/freedesktop/UPower/devices/battery_" + primaryDevice.nativePath : "$(upower -e | grep battery | head -n 1)"} 2>/dev/null | grep -iE 'capacity'`]
+    command: ["sh", "-c", `upower -i ${primaryDevice && primaryDevice.nativePath ? "/org/freedesktop/UPower/devices/battery_" + primaryDevice.nativePath : "$(upower -e | grep battery | head -n 1)"} 2>/dev/null | grep -iE 'capacity'`]
     environment: ({
                     "LC_ALL": "C"
                   })
