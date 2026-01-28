@@ -68,6 +68,7 @@ Item {
   property bool hidePassive: widgetSettings.hidePassive !== undefined ? widgetSettings.hidePassive : true // Hide passive status items
   property var filteredItems: [] // Items to show inline (pinned)
   property var dropdownItems: [] // Items to show in drawer (unpinned)
+  property int hoveredItemIndex: -1 // Track hovered item for dot indicator
 
   Timer {
     id: updateDebounceTimer
@@ -357,9 +358,12 @@ Item {
 
       delegate: Item {
         id: trayDelegate
+        required property var modelData
+        required property int index
         width: isVertical ? barHeight : capsuleHeight
         height: isVertical ? capsuleHeight : barHeight
         visible: modelData
+        readonly property bool isHovered: root.hoveredItemIndex === index
 
         // Tooltip anchor representing the visual area (for proper tooltip positioning)
         Item {
@@ -403,6 +407,24 @@ Item {
             property real colorizeMode: 1.0
 
             fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+          }
+        }
+
+        Rectangle {
+          id: hoverIndicator
+          anchors.bottom: trayIcon.bottom
+          anchors.bottomMargin: -2
+          anchors.horizontalCenter: trayIcon.horizontalCenter
+          width: Style.toOdd(iconSize * 0.25)
+          height: 4
+          color: trayDelegate.isHovered ? Color.mHover : "transparent"
+          radius: Math.min(Style.radiusXXS, width / 2)
+
+          Behavior on color {
+            ColorAnimation {
+              duration: Style.animationFast
+              easing.type: Easing.OutCubic
+            }
           }
         }
 
@@ -480,9 +502,13 @@ Item {
             if (popupMenuWindow) {
               popupMenuWindow.close();
             }
+            root.hoveredItemIndex = trayDelegate.index;
             TooltipService.show(tooltipAnchor, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection(root.screen?.name));
           }
-          onExited: TooltipService.hide()
+          onExited: {
+            root.hoveredItemIndex = -1;
+            TooltipService.hide();
+          }
         }
       }
     }
