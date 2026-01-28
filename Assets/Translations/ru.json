@@ -1038,7 +1038,7 @@
       "system-default": "По умолчанию"
     },
     "launcher": {
-      "clipboard-desc": "Получайте доступ к истории буфера обмена и управляйте ею из панели запуска.",
+      "clipboard-desc": "Получайте доступ к истории буфера обмена и управляйте ею из лаунчера.",
       "execute-desc": "Настройте способ запуска приложений.",
       "execute-title": "Исполнение",
       "settings-annotation-tool-description": "Команда для запуска при нажатии кнопки аннотирования в истории буфера обмена. Изображение будет передано в эту команду.",
@@ -1068,7 +1068,7 @@
       "settings-icon-mode-label": "Использовать нативные иконки",
       "settings-ignore-mouse-input-description": "Отключить взаимодействие с мышью и колесом прокрутки в лаунчере.",
       "settings-ignore-mouse-input-label": "Игнорировать ввод мыши",
-      "settings-position-description": "Выберите, где появляется панель запуска.",
+      "settings-position-description": "Выберите, где появляется панель лаунчера.",
       "settings-show-categories-description": "Показывать вкладки категорий для фильтрации приложений.",
       "settings-show-categories-label": "Показывать категории",
       "settings-show-icon-background-description": "Показывать закруглённый прямоугольник в качестве фона для иконок.",
@@ -1079,7 +1079,7 @@
       "settings-terminal-command-label": "Команда терминала",
       "settings-use-app2unit-description": "Использует альтернативный метод запуска для лучшего управления процессами приложений и предотвращения проблем.",
       "settings-use-app2unit-label": "Использовать App2Unit для запуска приложений",
-      "title": "Запуск"
+      "title": "Лаунчер"
     },
     "location": {
       "calendar-cards-desc": "Организуйте и включайте/выключайте карточки в панели календаря.",
