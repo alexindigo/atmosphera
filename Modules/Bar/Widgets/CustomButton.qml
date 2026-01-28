@@ -233,10 +233,10 @@ Item {
       }
     }
 
-    onClicked: root.onClicked()
-    onRightClicked: root.onRightClicked()
-    onMiddleClicked: root.onMiddleClicked()
-    onWheel: delta => root.onWheel(delta)
+    onClicked: root.clicked()
+    onRightClicked: root.rightClicked()
+    onMiddleClicked: root.middleClicked()
+    onWheel: delta => root.wheeled(delta)
   }
 
   // Internal state for dynamic text
@@ -458,7 +458,7 @@ Item {
     }
   }
 
-  function onClicked() {
+  function clicked() {
     if (leftClickExec) {
       Quickshell.execDetached(["sh", "-lc", leftClickExec]);
       Logger.i("CustomButton", `Executing command: ${leftClickExec}`);
@@ -471,7 +471,7 @@ Item {
     }
   }
 
-  function onRightClicked() {
+  function rightClicked() {
     if (rightClickExec) {
       Quickshell.execDetached(["sh", "-lc", rightClickExec]);
       Logger.i("CustomButton", `Executing command: ${rightClickExec}`);
@@ -481,7 +481,7 @@ Item {
     }
   }
 
-  function onMiddleClicked() {
+  function middleClicked() {
     if (middleClickExec) {
       Quickshell.execDetached(["sh", "-lc", middleClickExec]);
       Logger.i("CustomButton", `Executing command: ${middleClickExec}`);
@@ -516,7 +516,7 @@ Item {
     textProc.running = true;
   }
 
-  function onWheel(delta) {
+  function wheeled(delta) {
     if (wheelMode === "unified" && wheelExec) {
       let normalizedDelta = delta > 0 ? 1 : -1;
 
