@@ -49,6 +49,7 @@ Item {
 
   readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
+  readonly property real barHeight: Style.getBarHeightForScreen(screenName)
   readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screenName)
   readonly property real barFontSize: Style.getBarFontSizeForScreen(screenName)
   readonly property bool hasFocusedWindow: CompositorService.getFocusedWindow() !== null
@@ -58,9 +59,9 @@ Item {
   readonly property int iconSize: Style.toOdd(capsuleHeight * 0.75)
   readonly property int verticalSize: Style.toOdd(capsuleHeight * 0.85)
 
-  // For horizontal bars, height is always capsuleHeight (no animation needed)
+  // For horizontal bars, height is always barHeight (no animation needed)
   // For vertical bars, collapse to 0 when hidden
-  implicitHeight: isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : verticalSize) : capsuleHeight
+  implicitHeight: isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : verticalSize) : barHeight
   implicitWidth: isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : verticalSize) : (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : dynamicWidth)
 
   // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
@@ -194,7 +195,7 @@ Item {
     x: isVerticalBar ? Style.pixelAlignCenter(parent.width, width) : 0
     y: isVerticalBar ? 0 : Style.pixelAlignCenter(parent.height, height)
     width: isVerticalBar ? ((!hasFocusedWindow) && hideMode === "hidden" ? 0 : verticalSize) : ((!hasFocusedWindow) && (hideMode === "hidden") ? 0 : dynamicWidth)
-    height: isVerticalBar ? ((!hasFocusedWindow) && hideMode === "hidden" ? 0 : verticalSize) : capsuleHeight
+    height: isVerticalBar ? ((!hasFocusedWindow) && hideMode === "hidden" ? 0 : verticalSize) : barHeight
     radius: Style.radiusM
     color: Style.capsuleColor
     border.color: Style.capsuleBorderColor
