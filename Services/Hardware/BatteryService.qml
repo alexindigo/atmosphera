@@ -29,17 +29,9 @@ Singleton {
     if (!UPower.devices)
     return UPower.displayDevice;
 
-  // 2. Determine the primary device (System Battery)
-  readonly property var primaryDevice: {
-    if (devices.length === 0)
-    return null;
+    var devices = UPower.devices.values || [];
 
-    // Prioritize DisplayDevice (Aggregate)
-    if (UPower.displayDevice && UPower.displayDevice.type === UPowerDeviceType.Battery && isDevicePresent(UPower.displayDevice)) {
-      return UPower.displayDevice;
-    }
-
-    // Prioritize BAT0
+    // 1. Explicitly look for BAT0 first
     for (var i = 0; i < devices.length; i++) {
       var d = devices[i];
       if (d && (d.nativePath === "BAT0" || d.objectPath === "/org/freedesktop/UPower/devices/battery_BAT0")) {
@@ -47,11 +39,16 @@ Singleton {
       }
     }
 
-    // Prioritize (any) Laptop Battery
+    // 2. Fallback to displayDevice if it's a laptop battery
+    if (UPower.displayDevice && UPower.displayDevice.isLaptopBattery) {
+      return UPower.displayDevice;
+    }
+
+    // 3. Any other device marked as a laptop battery
     for (var j = 0; j < devices.length; j++) {
-      var dev = devices[j];
-      if (dev && !isBluetoothDevice(dev) && dev.isLaptopBattery) {
-        return dev;
+      var device = devices[j];
+      if (device && device.type === UPowerDeviceType.Battery && device.isLaptopBattery) {
+        return device;
       }
     }
 
@@ -95,11 +92,21 @@ Singleton {
       return _laptopBattery;
     }
 
-  Timer {
-    interval: 500
-    running: true
-    repeat: false
-    onTriggered: root.initializationComplete = true
+    if (!UPower.devices) {
+      return null;
+    }
+
+    var deviceArray = UPower.devices.values || [];
+    for (var i = 0; i < deviceArray.length; i++) {
+      var device = deviceArray[i];
+      if (device && device.nativePath === nativePath) {
+        if (device.type === UPowerDeviceType.LinePower) {
+          continue;
+        }
+        return device;
+      }
+    }
+    return null;
   }
 
   // MARK: findBluetoothDevice
@@ -108,23 +115,18 @@ Singleton {
       return null;
     }
 
-    // Check for DisplayDevice explicitly if requested via "DisplayDevice" or empty string
-    if (nativePath === "DisplayDevice" && UPower.displayDevice) {
-      return UPower.displayDevice;
+    var macMatch = nativePath.match(/([0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2})/);
+    if (!macMatch) {
+      return null;
     }
 
-    // Search in our cached list
-    for (var i = 0; i < devices.length; i++) {
-      var d = devices[i];
-      if (isBluetoothDevice(d)) {
-        if (d.address && d.address.toUpperCase() === nativePath.toUpperCase())
-          return d;
-        // Try matching MAC in path string if passed format differs
-        if (nativePath.includes(d.address.toUpperCase()))
-          return d;
-      } else {
-        if (d.nativePath === nativePath)
-          return d;
+    var macAddress = macMatch[1].toUpperCase();
+    var deviceArray = BluetoothService.devices.values || [];
+
+    for (var i = 0; i < deviceArray.length; i++) {
+      var device = deviceArray[i];
+      if (device && device.address && device.address.toUpperCase() === macAddress) {
+        return device;
       }
     }
     return null;
@@ -135,7 +137,7 @@ Singleton {
     if (!device)
       return false;
 
-    // Handle Bluetooth devices
+    // Handle Bluetooth devices (identified by having batteryAvailable property)
     if (device.batteryAvailable !== undefined) {
       return device.connected === true;
     }
@@ -145,8 +147,11 @@ Singleton {
       if (device.type === UPowerDeviceType.Battery && device.isPresent !== undefined) {
         return device.isPresent === true;
       }
+
+      // Fallback for non-battery UPower devices or if isPresent is missing
       return device.ready && device.percentage !== undefined;
     }
+
     return false;
   }
 
@@ -158,6 +163,7 @@ Singleton {
     if (device.batteryAvailable !== undefined) {
       return device.battery !== undefined;
     }
+
     return device.ready && device.percentage !== undefined;
   }
 
@@ -257,7 +263,7 @@ Singleton {
       Qt.callLater(refreshHealth);
     }
   }
-  // MARK: getIcon 
+  // MARK: getIcon
   function getIcon(percent, charging, pluggedIn, isReady) {
     if (!isReady) {
       return "battery-exclamation";
@@ -291,7 +297,6 @@ Singleton {
     return primaryDevice !== null;
   }
 
-
   // MARK: Battery
   // MARK: getRateText
   function getRateText(device) {
@@ -311,7 +316,6 @@ Singleton {
                      });
     }
   }
-
 
   // MARK: BatteryPanel
   readonly property var externalBatteries: {
@@ -349,14 +353,14 @@ Singleton {
     return I18n.tr("common.idle");
   }
 
-
   // MARK: BatterySettings
   property var devicesModel: buildDeviceModel()
 
   function buildDeviceModel() {
     var model = [
           {
-            "key": UPower.devices.DisplayDevice || "",  // It was capital D and i spend an hour to figure out [why tf this do absolutely nothing] XD (I hate my left shift it sticks)
+            "key": UPower.devices.DisplayDevice || ""  // It was capital D and i spend an hour to figure out [why tf this do absolutely nothing] XD (I hate my left shift it sticks)
+                   ,
             "name": I18n.tr("bar.battery.device-default")
           }
         ];
@@ -371,9 +375,9 @@ Singleton {
         }
         var displayName = device.model || device.nativePath || "Unknown";
         model.push({
-                   "key": device.nativePath || "",
-                   "name": displayName
-                 });
+                     "key": device.nativePath || "",
+                     "name": displayName
+                   });
       }
     }
     return model;
@@ -396,6 +400,9 @@ Singleton {
 
   Connections {
     target: UPower.devices
-    function onValuesChanged() { modelUpdateTimer.restart(); devicesModel = buildDeviceModel(); }
+    function onValuesChanged() {
+      modelUpdateTimer.restart();
+      devicesModel = buildDeviceModel();
+    }
   }
 }

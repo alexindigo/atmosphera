@@ -4,7 +4,6 @@ import QtQuick.Layouts
 import qs.Commons
 import qs.Services.Hardware
 import qs.Widgets
-import qs.Services.Hardware
 
 ColumnLayout {
   id: root
@@ -13,8 +12,6 @@ ColumnLayout {
   // Properties to receive data from parent
   property var widgetData: null
   property var widgetMetadata: null
-
-  signal settingsChanged(var settings)
 
   // Local state
   property string valueDisplayMode: widgetData.displayMode !== undefined ? widgetData.displayMode : widgetMetadata.displayMode
@@ -58,10 +55,7 @@ ColumnLayout {
       minimumWidth: 200
       model: root.deviceModel
       currentKey: root.valueDeviceNativePath
-      onSelected: key => {
-                    root.valueDeviceNativePath = key;
-                    settingsChanged(saveSettings());
-                  }
+      onSelected: key => root.valueDeviceNativePath = key
     }
 
     // Update currentKey when model changes to ensure selection is preserved
@@ -75,17 +69,15 @@ ColumnLayout {
 
     NIconButton {
       icon: "refresh"
-      // TODO i18n
       tooltipText: "Refresh device list"
       onClicked: BatteryService.devicesModel = BatteryService.buildDeviceModel()
     }
   }
 
   NComboBox {
-    Layout.fillWidth: true
     label: I18n.tr("bar.volume.display-mode-label")
     description: I18n.tr("bar.volume.display-mode-description")
-    minimumWidth: 240
+    minimumWidth: 134
     model: [
       {
         "key": "onhover",
@@ -101,10 +93,7 @@ ColumnLayout {
       }
     ]
     currentKey: root.valueDisplayMode
-    onSelected: key => {
-                  root.valueDisplayMode = key;
-                  settingsChanged(saveSettings());
-                }
+    onSelected: key => root.valueDisplayMode = key
   }
 
   NSpinBox {
@@ -114,49 +103,34 @@ ColumnLayout {
     suffix: "%"
     minimum: 5
     maximum: 50
-    onValueChanged: {
-      valueWarningThreshold = value;
-      settingsChanged(saveSettings());
-    }
+    onValueChanged: valueWarningThreshold = value
   }
 
   NToggle {
     label: I18n.tr("bar.battery.show-power-profile-label")
     description: I18n.tr("bar.battery.show-power-profile-description")
     checked: valueShowPowerProfiles
-    onToggled: checked => {
-                 valueShowPowerProfiles = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueShowPowerProfiles = checked
   }
 
   NToggle {
     label: I18n.tr("bar.battery.show-noctalia-performance-label")
     description: I18n.tr("bar.battery.show-noctalia-performance-description")
     checked: valueShowNoctaliaPerformance
-    onToggled: checked => {
-                 valueShowNoctaliaPerformance = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueShowNoctaliaPerformance = checked
   }
 
   NToggle {
     label: I18n.tr("bar.battery.hide-if-not-detected-label")
     description: I18n.tr("bar.battery.hide-if-not-detected-description")
     checked: valueHideIfNotDetected
-    onToggled: checked => {
-                 valueHideIfNotDetected = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueHideIfNotDetected = checked
   }
 
   NToggle {
     label: I18n.tr("bar.battery.hide-if-idle-label")
     description: I18n.tr("bar.battery.hide-if-idle-description")
     checked: valueHideIfIdle
-    onToggled: checked => {
-                 valueHideIfIdle = checked;
-                 settingsChanged(saveSettings());
-               }
+    onToggled: checked => valueHideIfIdle = checked
   }
 }
