@@ -23,7 +23,10 @@ ColumnLayout {
   signal openPluginSettingsRequested(var manifest)
 
   function getSectionIcons() {
-    return {"left": "arrow-bar-to-up", "right": "arrow-bar-to-down"};
+    return {
+      "left": "arrow-bar-to-up",
+      "right": "arrow-bar-to-down"
+    };
   }
 
   // Widgets Management Section

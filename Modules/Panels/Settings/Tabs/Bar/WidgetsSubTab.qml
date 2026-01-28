@@ -21,7 +21,11 @@ ColumnLayout {
   signal openPluginSettings(var manifest)
 
   function getSectionIcons() {
-    return {"left": "arrow-bar-to-up", "center": "layout-distribute-horizontal", "right": "arrow-bar-to-down"};
+    return {
+      "left": "arrow-bar-to-up",
+      "center": "layout-distribute-horizontal",
+      "right": "arrow-bar-to-down"
+    };
   }
 
   NText {
