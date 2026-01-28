@@ -63,13 +63,6 @@ Item {
   readonly property string emptyColor: (widgetSettings.emptyColor !== undefined) ? widgetSettings.emptyColor : widgetMetadata.emptyColor
   readonly property bool showBadge: (widgetSettings.showBadge !== undefined) ? widgetSettings.showBadge : widgetMetadata.showBadge
 
-  readonly property var colorMap: {
-    "primary": [Color.mPrimary, Color.mOnPrimary],
-    "secondary": [Color.mSecondary, Color.mOnSecondary],
-    "tertiary": [Color.mTertiary, Color.mOnTertiary],
-    "onSurface": [Color.mOnSurface, Color.mSurface]
-  }
-
   // Helper to safely get colors with proper reactivity
   // Accesses Color singleton directly to ensure fresh values
   function getColorPair(colorKey) {
@@ -574,7 +567,6 @@ Item {
         characterCount: root.characterCount
         textRatio: root.textRatio
         showLabelsOnlyWhenOccupied: root.showLabelsOnlyWhenOccupied
-        colorMap: root.colorMap
         focusedColor: root.focusedColor
         occupiedColor: root.occupiedColor
         emptyColor: root.emptyColor
@@ -609,7 +601,6 @@ Item {
         characterCount: root.characterCount
         textRatio: root.textRatio
         showLabelsOnlyWhenOccupied: root.showLabelsOnlyWhenOccupied
-        colorMap: root.colorMap
         focusedColor: root.focusedColor
         occupiedColor: root.occupiedColor
         emptyColor: root.emptyColor

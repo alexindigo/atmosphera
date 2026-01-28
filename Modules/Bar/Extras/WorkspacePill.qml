@@ -17,7 +17,6 @@ Item {
   required property int characterCount
   required property real textRatio
   required property bool showLabelsOnlyWhenOccupied
-  required property var colorMap
   required property string focusedColor
   required property string occupiedColor
   required property string emptyColor
