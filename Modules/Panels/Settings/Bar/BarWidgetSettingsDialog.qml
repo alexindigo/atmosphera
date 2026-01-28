@@ -20,7 +20,7 @@ Popup {
 
   readonly property real maxHeight: screen ? screen.height * 0.9 : 800
 
-  width: Math.max(content.implicitWidth + padding * 2, 500)
+  width: Math.max(content.implicitWidth + padding * 2, 640)
   height: Math.min(content.implicitHeight + padding * 2, maxHeight)
   padding: Style.marginXL
   modal: true

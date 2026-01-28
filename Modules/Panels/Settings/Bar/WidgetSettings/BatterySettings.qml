@@ -61,7 +61,7 @@ ColumnLayout {
       Layout.fillWidth: true
       label: I18n.tr("bar.battery.device-label")
       description: I18n.tr("bar.battery.device-description")
-      minimumWidth: 134
+      minimumWidth: 200
       model: root.deviceModel
       currentKey: root.valueDeviceNativePath
       onSelected: key => {
@@ -81,15 +81,17 @@ ColumnLayout {
 
     NIconButton {
       icon: "refresh"
+      // TODO i18n
       tooltipText: "Refresh device list"
       onClicked: deviceModel = BatteryService.getDeviceOptionsModel()
     }
   }
 
   NComboBox {
+    Layout.fillWidth: true
     label: I18n.tr("bar.volume.display-mode-label")
     description: I18n.tr("bar.volume.display-mode-description")
-    minimumWidth: 134
+    minimumWidth: 240
     model: [
       {
         "key": "onhover",
