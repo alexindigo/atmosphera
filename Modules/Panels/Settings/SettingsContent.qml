@@ -554,7 +554,9 @@ Item {
     ProgramCheckerService.checkAllPrograms();
     updateTabsModel();
     selectTabById(requestedTab);
-    if (sidebarExpanded) {
+    // Skip auto-focus on Nvidia GPUs - cursor blink causes UI choppiness
+    const isNvidia = SystemStatService.gpuType === "nvidia";
+    if (sidebarExpanded && !isNvidia) {
       Qt.callLater(() => {
                      if (searchInput.inputItem)
                      searchInput.inputItem.forceActiveFocus();
