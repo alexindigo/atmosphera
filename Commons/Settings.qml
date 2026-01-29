@@ -370,9 +370,9 @@ Singleton {
       property string wallhavenApiKey: ""
       property string wallhavenResolutionMode: "atleast" // "atleast" or "exact"
       property string wallhavenResolutionWidth: ""
+
       property string wallhavenResolutionHeight: ""
-      // Controls wallpaper list sorting: true = Newest First (Time), false = Alphabetical (Name)
-      property bool sortNewestFirst: true
+      property string sortOrder: "name" // "name", "name_desc", "date", "date_desc"
     }
 
     // applauncher
