@@ -1,10 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import Quickshell
-import Quickshell.Io
 import qs.Commons
-import qs.Modules.Panels.Settings
 import qs.Services.System
 import qs.Widgets
 
@@ -12,18 +9,11 @@ ColumnLayout {
   id: root
   spacing: Style.marginM
 
-  property ShellScreen screen
-
   // Properties to receive data from parent
   property var widgetData: null
   property var widgetMetadata: null
 
-  readonly property string screenName: screen ? screen.name : ""
-
   signal settingsChanged(var settings)
-
-  readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
-  readonly property bool isVertical: barPosition === "left" || barPosition === "right"
 
   // Local, editable state for checkboxes
   property bool valueCompactMode: widgetData.compactMode !== undefined ? widgetData.compactMode : widgetMetadata.compactMode
@@ -41,7 +31,6 @@ ColumnLayout {
   property bool valueShowDiskUsageAsPercent: widgetData.showDiskUsageAsPercent !== undefined ? widgetData.showDiskUsageAsPercent : widgetMetadata.showDiskUsageAsPercent
   property bool valueShowDiskAvailable: widgetData.showDiskAvailable !== undefined ? widgetData.showDiskAvailable : widgetMetadata.showDiskAvailable
   property string valueDiskPath: widgetData.diskPath !== undefined ? widgetData.diskPath : widgetMetadata.diskPath
-  property bool valueShowDiskDetails: widgetData.showDiskDetails !== undefined ? widgetData.showDiskDetails : widgetMetadata.showDiskDetails
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
