@@ -105,9 +105,6 @@ Singleton {
     function onShowHiddenFilesChanged() {
       root.refreshWallpapersList();
     }
-    function onSortNewestFirstChanged() {
-      root.refreshWallpapersList();
-    }
     function onUseSolidColorChanged() {
       if (Settings.data.wallpaper.useSolidColor) {
         var solidPath = root.createSolidColorPath(Settings.data.wallpaper.solidColor.toString());
@@ -128,6 +125,9 @@ Singleton {
           root.wallpaperChanged(Quickshell.screens[i].name, solidPath);
         }
       }
+    }
+    function onSortOrderChanged() {
+      root.refreshWallpapersList();
     }
   }
 
@@ -700,8 +700,8 @@ Singleton {
       findArgs.push(filters[i]);
     }
     findArgs.push(")");
-    // Add printf to get timestamp for sorting: <epoch-seconds> <path>
-    findArgs.push("-printf", "%T@ %p\\n");
+    // Add printf to get modification time
+    findArgs.push("-printf", "%T@|%p\\n");
 
     // Create Process component inline
     var processString = `
@@ -730,36 +730,57 @@ Singleton {
       var files = [];
       if (exitCode === 0) {
         var lines = processObject.stdout.text.split('\n');
-        var filesWithTime = [];
+        var parsedFiles = [];
+        
         for (var i = 0; i < lines.length; i++) {
           var line = lines[i].trim();
           if (line !== '') {
-            // Parse timestamp and path: <timestamp> <path>
-            var firstSpace = line.indexOf(' ');
-            if (firstSpace > 0) {
-              var timestamp = parseFloat(line.substring(0, firstSpace));
-              var path = line.substring(firstSpace + 1);
-
-              var showHidden = Settings.data.wallpaper.showHiddenFiles;
-              var name = path.split('/').pop();
-              if (showHidden || !name.startsWith('.')) {
-                filesWithTime.push({
-                  "time": timestamp,
-                  "path": path
-                });
-              }
+            var parts = line.split('|');
+            if (parts.length >= 2) { // Handle potential extra pipes in filename by joining rest
+               var timestamp = parseFloat(parts[0]);
+               var path = parts.slice(1).join('|');
+               
+               var showHidden = Settings.data.wallpaper.showHiddenFiles;
+               var name = path.split('/').pop();
+               if (showHidden || !name.startsWith('.')) {
+                 parsedFiles.push({
+                   path: path,
+                   time: timestamp,
+                   name: name
+                 });
+               }
+            } else if (line.indexOf('|') === -1) {
+                // Fallback for unexpected output format or old find versions (unlikely but safe)
+                var path = line;
+                var showHidden = Settings.data.wallpaper.showHiddenFiles;
+                var name = path.split('/').pop();
+                if (showHidden || !name.startsWith('.')) {
+                    parsedFiles.push({
+                        path: path,
+                        time: 0,
+                        name: name
+                    });
+                }
             }
           }
         }
         // Sort files based on settings
-        if (Settings.data.wallpaper.sortNewestFirst) {
-          // Newest first: descending sort by modification time
-          filesWithTime.sort((a, b) => b.time - a.time);
-        } else {
-          // Alphabetical: ascending sort by path/filename
-          filesWithTime.sort((a, b) => a.path.localeCompare(b.path));
-        }
-        files = filesWithTime.map(item => item.path);
+        var sortOrder = Settings.data.wallpaper.sortOrder || "name";
+        
+        parsedFiles.sort(function(a, b) {
+           if (sortOrder === "date_desc") { // Newest first
+               return b.time - a.time;
+           } else if (sortOrder === "date_asc") { // Oldest first
+               return a.time - b.time;
+           } else if (sortOrder === "name_desc") {
+               return b.name.localeCompare(a.name);
+           } else { // name (asc)
+               return a.name.localeCompare(b.name);
+           }
+        });
+        
+        // Map back to string array
+        files = parsedFiles.map(f => f.path);
 
         if (updateList) {
           wallpaperLists[screenName] = files;
