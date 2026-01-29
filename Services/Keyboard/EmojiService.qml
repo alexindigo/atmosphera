@@ -31,18 +31,18 @@ Singleton {
 
     const terms = query.toLowerCase().split(" ").filter(t => t);
     const results = emojis.filter(emoji => {
-      for (let term of terms) {
-        const emojiMatch = emoji.emoji.toLowerCase().includes(term);
-        const nameMatch = emoji.name.toLowerCase().includes(term);
-        const keywordMatch = emoji.keywords.some(kw => kw.toLowerCase().includes(term));
-        const categoryMatch = emoji.category.toLowerCase().includes(term);
+                                    for (let term of terms) {
+                                      const emojiMatch = emoji.emoji.toLowerCase().includes(term);
+                                      const nameMatch = emoji.name.toLowerCase().includes(term);
+                                      const keywordMatch = emoji.keywords.some(kw => kw.toLowerCase().includes(term));
+                                      const categoryMatch = emoji.category.toLowerCase().includes(term);
 
-        if (!emojiMatch && !nameMatch && !keywordMatch && !categoryMatch) {
-          return false;
-        }
-      }
-      return true;
-    });
+                                      if (!emojiMatch && !nameMatch && !keywordMatch && !categoryMatch) {
+                                        return false;
+                                      }
+                                    }
+                                    return true;
+                                  });
 
     return results;
   }
@@ -96,9 +96,9 @@ Singleton {
     var categories = [];
     for (var cat in categoryCounts) {
       categories.push({
-        name: cat,
-        count: categoryCounts[cat]
-      });
+                        name: cat,
+                        count: categoryCounts[cat]
+                      });
     }
 
     return categories;

@@ -23,18 +23,18 @@ Item {
   readonly property string emptyBrowsingMessage: selectedCategory === "recent" ? I18n.tr("launcher.providers.emoji-no-recent") : ""
 
   property var categoryIcons: ({
-      "all": "apps",
-      "recent": "clock",
-      "people": "user",
-      "animals": "paw",
-      "nature": "leaf",
-      "food": "apple",
-      "activity": "run",
-      "travel": "plane",
-      "objects": "home",
-      "symbols": "star",
-      "flags": "flag"
-    })
+                                 "all": "apps",
+                                 "recent": "clock",
+                                 "people": "user",
+                                 "animals": "paw",
+                                 "nature": "leaf",
+                                 "food": "apple",
+                                 "activity": "run",
+                                 "travel": "plane",
+                                 "objects": "home",
+                                 "symbols": "star",
+                                 "flags": "flag"
+                               })
 
   property var categories: ["all", "recent", "people", "animals", "nature", "food", "activity", "travel", "objects", "symbols", "flags"]
 
@@ -90,17 +90,17 @@ Item {
   // Return available commands when user types ">"
   function commands() {
     return [
-      {
-        "name": ">emoji",
-        "description": I18n.tr("launcher.providers.emoji-search-description"),
-        "icon": iconMode === "tabler" ? "mood-smile" : "face-smile",
-        "isTablerIcon": true,
-        "isImage": false,
-        "onActivate": function () {
-          launcher.setSearchText(">emoji ");
-        }
-      }
-    ];
+          {
+            "name": ">emoji",
+            "description": I18n.tr("launcher.providers.emoji-search-description"),
+            "icon": iconMode === "tabler" ? "mood-smile" : "face-smile",
+            "isTablerIcon": true,
+            "isImage": false,
+            "onActivate": function () {
+              launcher.setSearchText(">emoji ");
+            }
+          }
+        ];
   }
 
   // Get search results
@@ -111,15 +111,15 @@ Item {
 
     if (!EmojiService.loaded) {
       return [
-        {
-          "name": I18n.tr("launcher.providers.emoji-loading"),
-          "description": I18n.tr("launcher.providers.emoji-loading-description"),
-          "icon": iconMode === "tabler" ? "refresh" : "view-refresh",
-          "isTablerIcon": true,
-          "isImage": false,
-          "onActivate": function () {}
-        }
-      ];
+            {
+              "name": I18n.tr("launcher.providers.emoji-loading"),
+              "description": I18n.tr("launcher.providers.emoji-loading-description"),
+              "icon": iconMode === "tabler" ? "refresh" : "view-refresh",
+              "isTablerIcon": true,
+              "isImage": false,
+              "onActivate": function () {}
+            }
+          ];
     }
 
     var query = searchText.slice(6).trim();
