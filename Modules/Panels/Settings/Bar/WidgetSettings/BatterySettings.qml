@@ -74,7 +74,7 @@ ColumnLayout {
 
     NIconButton {
       icon: "refresh"
-      tooltipText: "Refresh device list"
+      tooltipText: I18n.tr("common.refresh")
       onClicked: BatteryService.devicesModel = BatteryService.buildDeviceModel()
     }
   }
