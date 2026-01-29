@@ -35,7 +35,7 @@ SmartPanel {
       if (BatteryService.isDevicePresent(selectedBattery)) {
         return selectedBattery;
       }
-      return BatteryService.primaryDevice;
+      return null;
     }
 
     // Check if selected device is actually present/connected
@@ -49,7 +49,7 @@ SmartPanel {
     readonly property int healthPercent: (isReady && selectedBattery && selectedBattery.healthSupported) ? Math.round(selectedBattery.healthPercentage) : BatteryService.healthPercent
 
     readonly property string deviceName: BatteryService.getDeviceName(selectedDevice)
-    readonly property string panelTitle: deviceName ? `${I18n.tr("common.battery")} - ${deviceName}` : I18n.tr("common.battery")
+    readonly property string panelTitle: deviceName ? `${deviceName}` : I18n.tr("common.battery")
 
     readonly property var allDevices: {
       var list = [];

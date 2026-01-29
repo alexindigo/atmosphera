@@ -86,7 +86,7 @@ Singleton {
                                   "Battery": {
                                     "displayMode": "onhover",
                                     "warningThreshold": 30,
-                                    "deviceNativePath": "",
+                                    "deviceNativePath": "__default__",
                                     "showPowerProfiles": false,
                                     "showNoctaliaPerformance": false,
                                     "hideIfNotDetected": true,
