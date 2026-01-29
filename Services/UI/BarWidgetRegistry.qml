@@ -57,6 +57,7 @@ Singleton {
                                      "LockKeys": "WidgetSettings/LockKeysSettings.qml",
                                      "MediaMini": "WidgetSettings/MediaMiniSettings.qml",
                                      "Microphone": "WidgetSettings/MicrophoneSettings.qml",
+                                     "Network": "WidgetSettings/NetworkSettings.qml",
                                      "NotificationHistory": "WidgetSettings/NotificationHistorySettings.qml",
                                      "SessionMenu": "WidgetSettings/SessionMenuSettings.qml",
                                      "Spacer": "WidgetSettings/SpacerSettings.qml",
@@ -65,9 +66,6 @@ Singleton {
                                      "Tray": "WidgetSettings/TraySettings.qml",
                                      "Volume": "WidgetSettings/VolumeSettings.qml",
                                      "VPN": "WidgetSettings/VPNSettings.qml",
-                                     // Reuse the same settings UI for renamed widget
-                                     "WiFi": "WidgetSettings/WiFiSettings.qml",
-                                     "Network": "WidgetSettings/WiFiSettings.qml",
                                      "Workspace": "WidgetSettings/WorkspaceSettings.qml"
                                    })
 

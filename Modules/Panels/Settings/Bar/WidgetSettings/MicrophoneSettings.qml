@@ -28,7 +28,7 @@ ColumnLayout {
   NComboBox {
     label: I18n.tr("bar.volume.display-mode-label")
     description: I18n.tr("bar.volume.display-mode-description")
-    minimumWidth: 134
+    minimumWidth: 200
     model: [
       {
         "key": "onhover",
