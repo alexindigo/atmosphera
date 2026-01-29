@@ -226,6 +226,7 @@ ColumnLayout {
                settingsChanged(saveSettings());
              }
     text: Math.round(valueIconScale * 100) + "%"
+    visible: valueShowApplications
   }
 
   NDivider {
