@@ -77,6 +77,8 @@ Loader {
       readonly property int peekHeight: 1
       readonly property int iconSize: Math.round(12 + 24 * (Settings.data.dock.size ?? 1))
       readonly property int floatingMargin: Settings.data.dock.floatingRatio * Style.marginL
+      readonly property int maxWidth: modelData ? modelData.width * 0.8 : 1000
+      readonly property int maxHeight: modelData ? modelData.height * 0.8 : 1000
 
       // Dock position properties
       readonly property string dockPosition: Settings.data.dock.position
@@ -532,7 +534,7 @@ Loader {
           WlrLayershell.exclusionMode: exclusive ? ExclusionMode.Auto : ExclusionMode.Ignore
 
           implicitWidth: Math.round(dockContainerWrapper.width + (root.isVertical ? 0 : Style.marginXL * 6))
-          implicitHeight: Math.round(dockContainerWrapper.height)
+          implicitHeight: Math.round(dockContainerWrapper.height + (root.isVertical ? Style.marginXL * 6 : 0))
 
           // Position based on dock setting
           anchors.top: dockPosition === "top"
@@ -595,8 +597,8 @@ Loader {
             Rectangle {
               id: dockContainer
               // For vertical dock, swap width and height logic
-              width: isVertical ? Math.round(iconSize * 1.5) : dockLayout.implicitWidth + Style.marginXL
-              height: isVertical ? dockLayout.implicitHeight + Style.marginXL : Math.round(iconSize * 1.5)
+              width: isVertical ? Math.round(iconSize * 1.5) : Math.min(dockLayout.implicitWidth + Style.marginXL, root.maxWidth)
+              height: isVertical ? Math.min(dockLayout.implicitHeight + Style.marginXL, root.maxHeight) : Math.round(iconSize * 1.5)
               color: Qt.alpha(Color.mSurface, Settings.data.dock.backgroundOpacity)
 
               // Anchor based on padding to achieve centering shift
@@ -643,12 +645,50 @@ Loader {
                 }
               }
 
-              Item {
+              Flickable {
                 id: dock
-                // Swap dimensions based on orientation
-                width: isVertical ? parent.width - (Style.marginXL) : dockLayout.implicitWidth
-                height: isVertical ? dockLayout.implicitHeight : parent.height - (Style.marginXL)
+                // Use parent dimensions more directly to avoid clipping
+                width: isVertical ? parent.width - Style.marginS * 2 : Math.min(dockLayout.implicitWidth, parent.width - Style.marginXL)
+                height: !isVertical ? parent.height - Style.marginS * 2 : Math.min(dockLayout.implicitHeight, parent.height - Style.marginXL)
+                contentWidth: dockLayout.implicitWidth
+                contentHeight: dockLayout.implicitHeight
                 anchors.centerIn: parent
+                clip: true
+
+                flickableDirection: isVertical ? Flickable.VerticalFlick : Flickable.HorizontalFlick
+
+                // Keep interactive dependent on overflow
+                interactive: isVertical ? contentHeight > height : contentWidth > width
+
+                // Centering margins
+                leftMargin: !isVertical && contentWidth < width ? (width - contentWidth) / 2 : 0
+                rightMargin: leftMargin
+                topMargin: isVertical && contentHeight < height ? (height - contentHeight) / 2 : 0
+                bottomMargin: topMargin
+
+                WheelHandler {
+                  acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+                  onWheel: event => {
+                             var delta = (event.angleDelta.y !== 0) ? event.angleDelta.y : event.angleDelta.x;
+                             if (root.isVertical) {
+                               dock.contentY = Math.max(-dock.topMargin, Math.min(dock.contentHeight - dock.height + dock.bottomMargin, dock.contentY - delta));
+                             } else {
+                               // For horizontal dock, we want to scroll contentX with BOTH x and y wheels
+                               var hDelta = (event.angleDelta.x !== 0) ? event.angleDelta.x : event.angleDelta.y;
+                               dock.contentX = Math.max(-dock.leftMargin, Math.min(dock.contentWidth - dock.width + dock.rightMargin, dock.contentX - hDelta));
+                             }
+                             event.accepted = true;
+                           }
+                }
+
+                ScrollBar.horizontal: ScrollBar {
+                  visible: !isVertical && dock.interactive
+                  policy: ScrollBar.AsNeeded
+                }
+                ScrollBar.vertical: ScrollBar {
+                  visible: isVertical && dock.interactive
+                  policy: ScrollBar.AsNeeded
+                }
 
                 function getAppIcon(appData): string {
                   if (!appData || !appData.appId)
@@ -663,7 +703,10 @@ Loader {
                   rows: isVertical ? -1 : 1
                   rowSpacing: Style.marginS
                   columnSpacing: Style.marginS
-                  anchors.centerIn: parent
+
+                  // Ensure the layout takes its full implicit size
+                  width: implicitWidth
+                  height: implicitHeight
 
                   Repeater {
                     model: dockApps
@@ -909,7 +952,6 @@ Loader {
                         // Only allow left-click dragging via axis control
                         drag.target: iconContainer
                         drag.axis: (pressedButtons & Qt.LeftButton) ? (root.isVertical ? Drag.YAxis : Drag.XAxis) : Drag.None
-                        preventStealing: true
 
                         onPressed: {
                           var p1 = appButton.mapFromItem(dockContainer, 0, 0);
