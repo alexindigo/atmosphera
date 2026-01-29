@@ -141,4 +141,6 @@ Slider {
       }
     }
   }
+
+  layer.enabled: true
 }

@@ -174,4 +174,6 @@ Slider {
       }
     }
   }
+
+  layer.enabled: true
 }
