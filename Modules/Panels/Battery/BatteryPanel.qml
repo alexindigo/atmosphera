@@ -25,33 +25,26 @@ SmartPanel {
     id: panelContent
     property real contentPreferredHeight: mainLayout.implicitHeight + Style.marginL * 2
 
-    // Get device selection from Battery widget settings (check right section first, then any Battery widget)
-    function getBatteryDevicePath() {
-      var widget = BarService.lookupWidget("Battery");
-      if (widget !== undefined && widget.deviceNativePath !== undefined) {
-        return widget.deviceNativePath;
-      }
-      return "";
-    }
-
-    readonly property string deviceNativePath: getBatteryDevicePath()
+    readonly property string deviceNativePath: resolveWidgetSetting("deviceNativePath", "__default__")
     readonly property var selectedBattery: BatteryService.findUPowerDevice(deviceNativePath)
-    readonly property var selectedBluetoothDevice: deviceNativePath ? BatteryService.findBluetoothDevice(deviceNativePath) : null
+    readonly property var selectedBluetoothDevice: BatteryService.findBluetoothDevice(deviceNativePath)
     readonly property var selectedDevice: {
-      var dev = selectedBluetoothDevice || selectedBattery;
-      if (BatteryService.isDevicePresent(dev))
-        return dev;
-
-      return allDevices.length > 0 ? allDevices[0] : null;
+      if (BatteryService.isDevicePresent(selectedBluetoothDevice)) {
+        return selectedBluetoothDevice;
+      }
+      if (BatteryService.isDevicePresent(selectedBattery)) {
+        return selectedBattery;
+      }
+      return BatteryService.primaryDevice;
     }
 
     // Check if selected device is actually present/connected
-    readonly property bool isDevicePresent: BatteryService.isDevicePresent(selectedDevice)
+    readonly property bool isPresent: BatteryService.isDevicePresent(selectedDevice)
     readonly property bool isReady: BatteryService.isDeviceReady(selectedDevice)
 
     readonly property int percent: isReady ? Math.round(BatteryService.getPercentage(selectedDevice)) : -1
-    readonly property bool isCharging: BatteryService.isCharging(selectedDevice)
-    readonly property bool isPluggedIn: BatteryService.isPluggedIn(selectedDevice)
+    readonly property bool isCharging: isReady ? BatteryService.isCharging(selectedDevice) : false
+    readonly property bool isPluggedIn: isReady ? BatteryService.isPluggedIn(selectedDevice) : false
     readonly property bool healthAvailable: (isReady && selectedBattery && selectedBattery.healthSupported) || (selectedBattery && BatteryService.healthAvailable)
     readonly property int healthPercent: (isReady && selectedBattery && selectedBattery.healthSupported) ? Math.round(selectedBattery.healthPercentage) : BatteryService.healthPercent
 
@@ -101,27 +94,6 @@ SmartPanel {
     readonly property var laptopBatteries: allDevices.filter(d => !BatteryService.isBluetoothDevice(d))
     readonly property var otherDevices: allDevices.filter(d => BatteryService.isBluetoothDevice(d))
 
-    readonly property string timeText: {
-      if (!isReady || !isDevicePresent) {
-        return I18n.tr("battery.no-battery-detected");
-      }
-      if (isPluggedIn) {
-        return I18n.tr("battery.plugged-in");
-      }
-      if (selectedDevice) {
-        if (selectedDevice.timeToFull > 0) {
-          return I18n.tr("battery.time-until-full", {
-                           "time": Time.formatVagueHumanReadableDuration(selectedDevice.timeToFull)
-                         });
-        }
-        if (selectedDevice.timeToEmpty > 0) {
-          return I18n.tr("battery.time-left", {
-                           "time": Time.formatVagueHumanReadableDuration(selectedDevice.timeToEmpty)
-                         });
-        }
-      }
-      return I18n.tr("common.idle");
-    }
     readonly property string iconName: BatteryService.getIcon(percent, isCharging, isPluggedIn, isReady)
 
     property var batteryWidgetInstance: BarService.lookupWidget("Battery", screen ? screen.name : null)
@@ -207,7 +179,7 @@ SmartPanel {
             }
 
             NText {
-              text: timeText
+              text: BatteryService.getTimeRemainingText(selectedDevice)
               pointSize: Style.fontSizeS
               color: Color.mOnSurfaceVariant
               wrapMode: Text.Wrap

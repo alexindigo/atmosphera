@@ -26,8 +26,9 @@ Singleton {
   property int healthPercent: -1
 
   readonly property var _laptopBattery: {
-    if (!UPower.devices)
-    return UPower.displayDevice;
+    if (!UPower.devices) {
+      return UPower.displayDevice;
+    }
 
     var devices = UPower.devices.values || [];
 
@@ -59,36 +60,15 @@ Singleton {
   }
 
   readonly property var _bluetoothBattery: {
-    if (externalBatteries.length > 0)
-    return externalBatteries[0];
-    return null;
-  }
-
-  // MARK: resolveDevice
-  function resolveDevice(nativePath) {
-    if (!nativePath || nativePath === "") {
-      return primaryDevice;
+    if (externalBatteries.length > 0) {
+      return externalBatteries[0];
     }
-
-    // Check for DisplayDevice explicitly (Literal key OR actual native path)
-    if ((nativePath === "DisplayDevice" || (UPower.displayDevice && nativePath === UPower.displayDevice.nativePath)) && UPower.displayDevice) {
-      return UPower.displayDevice;
-    }
-
-    var upowerDev = findUPowerDevice(nativePath);
-    if (upowerDev)
-      return upowerDev;
-
-    var btDev = findBluetoothDevice(nativePath);
-    if (btDev)
-      return btDev;
-
     return null;
   }
 
   // MARK: findUPowerDevice
   function findUPowerDevice(nativePath) {
-    if (!nativePath || nativePath === "" || nativePath === "DisplayDevice") {
+    if (!nativePath || nativePath === "__default__" || nativePath === "DisplayDevice") {
       return _laptopBattery;
     }
 
@@ -134,8 +114,9 @@ Singleton {
 
   // MARK: isDevicePresent
   function isDevicePresent(device) {
-    if (!device)
+    if (!device) {
       return false;
+    }
 
     // Handle Bluetooth devices (identified by having batteryAvailable property)
     if (device.batteryAvailable !== undefined) {
@@ -147,30 +128,28 @@ Singleton {
       if (device.type === UPowerDeviceType.Battery && device.isPresent !== undefined) {
         return device.isPresent === true;
       }
-
       // Fallback for non-battery UPower devices or if isPresent is missing
       return device.ready && device.percentage !== undefined;
     }
-
     return false;
   }
 
   // MARK: isDeviceReady
   function isDeviceReady(device) {
-    if (!isDevicePresent(device))
+    if (!isDevicePresent(device)) {
       return false;
-
+    }
     if (device.batteryAvailable !== undefined) {
       return device.battery !== undefined;
     }
-
     return device.ready && device.percentage !== undefined;
   }
 
   // MARK: getPercentage
   function getPercentage(device) {
-    if (!device)
-      return 0;
+    if (!device) {
+      return -1;
+    }
     if (device.batteryAvailable !== undefined) {
       return (device.battery || 0) * 100;
     }
@@ -179,9 +158,10 @@ Singleton {
 
   // MARK: isCharging
   function isCharging(device) {
-    if (!device || isBluetoothDevice(device))
+    if (!device || isBluetoothDevice(device)) {
       // Tracking bluetooth devices can charge or not is a loop hole, none of my devices has it, even if it possible?!
       return false;  // Assuming not charging until someone/quickshell brings a way to do pretty unlikely.
+    }
     if (device.state !== undefined) {
       return device.state === UPowerDeviceState.Charging;
     }
@@ -190,9 +170,10 @@ Singleton {
 
   // MARK: isPluggedIn
   function isPluggedIn(device) {
-    if (!device || isBluetoothDevice(device))
+    if (!device || isBluetoothDevice(device)) {
       // Tracking bluetooth devices can charge or not is a loop hole, none of my devices has it, even if it possible?!
       return false;  // Assuming not charging until someone/quickshell brings a way to do pretty unlikely.
+    }
     if (device.state !== undefined) {
       return device.state === UPowerDeviceState.FullyCharged || device.state === UPowerDeviceState.PendingCharge;
     }
@@ -206,8 +187,9 @@ Singleton {
 
   // MARK: getDeviceName
   function getDeviceName(device) {
-    if (!isDeviceReady(device))
+    if (!isDeviceReady(device)) {
       return "";
+    }
 
     // Don't show name for laptop batteries
     if (!isBluetoothDevice(device) && device.isLaptopBattery) {
@@ -245,9 +227,9 @@ Singleton {
     stdout: SplitParser {
       onRead: function (data) {
         var line = data.trim();
-        if (line === "")
+        if (line === "") {
           return;
-
+        }
         var capacityMatch = line.match(/^\s*capacity:\s*(\d+(?:\.\d+)?)\s*%/i);
         if (capacityMatch) {
           root.healthPercent = Math.round(parseFloat(capacityMatch[1]));
@@ -300,21 +282,18 @@ Singleton {
   // MARK: Battery
   // MARK: getRateText
   function getRateText(device) {
-    if (!device || device.changeRate === undefined)
+    if (!device || device.changeRate === undefined) {
       return "";
-
+    }
     const rate = Math.abs(device.changeRate);
     if (isPluggedIn(device)) {
       return I18n.tr("battery.plugged-in");
-    } else if (isCharging(device)) {
-      return I18n.tr("battery.charging-rate", {
-                       "rate": rate.toFixed(2)
-                     });
-    } else {
-      return I18n.tr("battery.discharging-rate", {
-                       "rate": rate.toFixed(2)
-                     });
+    } else if (device.timeToFull > 0) {
+      return I18n.tr("battery.charging-rate", {"rate": rate.toFixed(2)});
+    } else if (device.timeToEmpty > 0) {
+      return I18n.tr("battery.discharging-rate", {"rate": rate.toFixed(2)});
     }
+    return I18n.tr("common.idle");
   }
 
   // MARK: BatteryPanel
@@ -337,34 +316,24 @@ Singleton {
     }
     if (isPluggedIn(device)) {
       return I18n.tr("battery.plugged-in");
-    }
-    if (device) {
-      if (device.timeToFull > 0) {
-        return I18n.tr("battery.time-until-full", {
-                         "time": Time.formatVagueHumanReadableDuration(device.timeToFull)
-                       });
-      }
-      if (device.timeToEmpty > 0) {
-        return I18n.tr("battery.time-left", {
-                         "time": Time.formatVagueHumanReadableDuration(device.timeToEmpty)
-                       });
-      }
+    } else if (device.timeToFull > 0) {
+      return I18n.tr("battery.time-until-full", {"time": Time.formatVagueHumanReadableDuration(device.timeToFull)});
+    } else if (device.timeToEmpty > 0) {
+      return I18n.tr("battery.time-left", {"time": Time.formatVagueHumanReadableDuration(device.timeToEmpty)});
     }
     return I18n.tr("common.idle");
   }
 
   // MARK: BatterySettings
-  property var devicesModel: buildDeviceModel()
+  property var deviceModel: buildDeviceModel()
 
   function buildDeviceModel() {
     var model = [
           {
-            "key": UPower.devices.DisplayDevice || ""  // It was capital D and i spend an hour to figure out [why tf this do absolutely nothing] XD (I hate my left shift it sticks)
-                   ,
+            "key": "__default__",
             "name": I18n.tr("bar.battery.device-default")
           }
         ];
-
     // UPower Devices
     if (UPower.devices && UPower.devices.values) {
       var deviceArray = UPower.devices.values;
@@ -392,8 +361,8 @@ Singleton {
     onTriggered: {
       var newModel = buildDeviceModel();
       // Simple change detection to avoid unnecessary bindings updates
-      if (JSON.stringify(newModel) !== JSON.stringify(devicesModel)) {
-        devicesModel = newModel;
+      if (JSON.stringify(newModel) !== JSON.stringify(deviceModel)) {
+        deviceModel = newModel;
       }
     }
   }
@@ -402,7 +371,15 @@ Singleton {
     target: UPower.devices
     function onValuesChanged() {
       modelUpdateTimer.restart();
-      devicesModel = buildDeviceModel();
+      deviceModel = buildDeviceModel();
+    }
+  }
+
+  Connections {
+    target: BluetoothService
+    function onConnectedDevicesChanged() {
+      modelUpdateTimer.restart();
+      deviceModel = buildDeviceModel();
     }
   }
 }

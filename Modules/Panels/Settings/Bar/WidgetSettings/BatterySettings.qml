@@ -24,8 +24,6 @@ ColumnLayout {
   property bool valueHideIfNotDetected: widgetData.hideIfNotDetected !== undefined ? widgetData.hideIfNotDetected : widgetMetadata.hideIfNotDetected
   property bool valueHideIfIdle: widgetData.hideIfIdle !== undefined ? widgetData.hideIfIdle : widgetMetadata.hideIfIdle
 
-  property var deviceModel: BatteryService.devicesModel
-
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
     if (widgetData && widgetData.id) {
@@ -55,7 +53,7 @@ ColumnLayout {
       label: I18n.tr("bar.battery.device-label")
       description: I18n.tr("bar.battery.device-description")
       minimumWidth: 200
-      model: root.deviceModel
+      model: BatteryService.deviceModel
       currentKey: root.valueDeviceNativePath
       onSelected: key => {
                     root.valueDeviceNativePath = key;
@@ -63,18 +61,9 @@ ColumnLayout {
                   }
     }
 
-    // Update currentKey when model changes to ensure selection is preserved
-    Connections {
-      target: root
-      function onDeviceModelChanged() {
-        // Force update of currentKey to trigger selection update
-        deviceComboBox.currentKey = root.valueDeviceNativePath;
-      }
-    }
-
     NIconButton {
       icon: "refresh"
-      tooltipText: I18n.tr("common.refresh")
+      tooltipText: I18n.tr("tooltips.refresh-devices")
       onClicked: BatteryService.devicesModel = BatteryService.buildDeviceModel()
     }
   }
