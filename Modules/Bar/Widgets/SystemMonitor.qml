@@ -791,14 +791,10 @@ Item {
           // Text mode
           NText {
             visible: !compactMode
-            text: {
-              if (showDiskDetails && !isVertical) {
-                const usedGb = SystemStatService.diskUsedGb[diskPath] || 0;
-                const sizeGb = SystemStatService.diskSizeGb[diskPath] || 0;
-                return `${usedGb.toFixed(1)} GB / ${sizeGb.toFixed(1)} GB`;
-              }
-              return SystemStatService.diskPercents[diskPath] ? `${SystemStatService.diskPercents[diskPath]}%` : "n/a";
-            }
+            text: SystemStatService.formatDiskDisplay(diskPath, {
+                                                        percent: showDiskUsageAsPercent,
+                                                        available: showDiskAvailable
+                                                      })
             family: fontFamily
             pointSize: barFontSize
             applyUiScale: false

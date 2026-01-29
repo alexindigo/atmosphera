@@ -29,6 +29,7 @@ Singleton {
   property real swapPercent: 0
   property real swapTotalGb: 0
   property var diskPercents: ({})
+  property var diskAvailPercents: ({}) // available disk space in percent
   property var diskUsedGb: ({}) // Used space in GB per mount point
   property var diskAvailableGb: ({}) // available space in GB per mount point
   property var diskSizeGb: ({}) // Total size in GB per mount point
@@ -392,6 +393,7 @@ Singleton {
       onStreamFinished: {
         const lines = text.trim().split('\n');
         const newPercents = {};
+        const newAvailPercents = {};
         const newUsedGb = {};
         const newSizeGb = {};
         const newAvailableGb = {};
@@ -405,13 +407,16 @@ Singleton {
             const usedBytes = parseFloat(parts[2]) || 0;
             const sizeBytes = parseFloat(parts[3]) || 0;
             const availBytes = parseFloat(parts[4]) || 0;
+            const availPercent = sizeBytes > 0 ? (availBytes / sizeBytes) * 100 : 0;
             newPercents[target] = percent;
+            newAvailPercents[target] = Math.round(availPercent);
             newUsedGb[target] = usedBytes / bytesPerGb;
             newSizeGb[target] = sizeBytes / bytesPerGb;
             newAvailableGb[target] = availBytes / bytesPerGb;
           }
         }
         root.diskPercents = newPercents;
+        root.diskAvailPercents = newAvailPercents;
         root.diskUsedGb = newUsedGb;
         root.diskSizeGb = newSizeGb;
         root.diskAvailableGb = newAvailableGb;
@@ -933,6 +938,22 @@ Singleton {
     if (value < 10)
       return value.toFixed(1) + "G"; // "0.0G" to "9.9G"
     return Math.round(value) + "G"; // "10G" to "999G"
+  }
+
+  // -------------------------------------------------------
+  // Formatting disk usage
+  function formatDiskDisplay(diskPath, {
+                             percent = false,
+                             available = false
+} = {}) {
+    if (percent) {
+      const raw = available ? root.diskAvailPercents[diskPath] : root.diskPercents[diskPath];
+      const value = (raw === null) ? 0 : raw;
+      return `${value}%`;
+    } else {
+      const rawGb = available ? root.diskAvailableGb[diskPath] : root.diskUsedGb[diskPath];
+      return formatGigabytes(rawGb === null ? 0 : rawGb);
+    }
   }
 
   // -------------------------------------------------------
