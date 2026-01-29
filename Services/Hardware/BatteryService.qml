@@ -59,6 +59,18 @@ Singleton {
     return null;
   }
 
+  readonly property var externalBatteries: {
+    var list = [];
+    var devices = BluetoothService.devices ? (BluetoothService.devices.values || []) : [];
+    for (var i = 0; i < devices.length; i++) {
+      var device = devices[i];
+      if (device && device.connected && device.batteryAvailable) {
+        list.push(device);
+      }
+    }
+    return list;
+  }
+
   readonly property var _bluetoothBattery: externalBatteries.length > 0 ? externalBatteries[0] : null
 
   // MARK: BatterySettings
@@ -316,19 +328,6 @@ Singleton {
                      });
     }
     return I18n.tr("common.idle");
-  }
-
-  // MARK: BatteryPanel
-  readonly property var externalBatteries: {
-    var list = [];
-    var devices = BluetoothService.devices ? (BluetoothService.devices.values || []) : [];
-    for (var i = 0; i < devices.length; i++) {
-      var device = devices[i];
-      if (device && device.connected && device.batteryAvailable) {
-        list.push(device);
-      }
-    }
-    return list;
   }
 
   // MARK: getTimeRemainingText

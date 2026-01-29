@@ -50,8 +50,8 @@ Item {
   readonly property int testPercent: 35
   readonly property bool testCharging: false
   readonly property bool testPluggedIn: false
-  readonly property string deviceNativePath: widgetSettings.deviceNativePath || "__default__"
 
+  readonly property string deviceNativePath: widgetSettings.deviceNativePath !== undefined ? widgetSettings.deviceNativePath : widgetMetadata.deviceNativePath
   readonly property var selectedBattery: BatteryService.findUPowerDevice(deviceNativePath)
   readonly property var selectedBluetoothDevice: BatteryService.findBluetoothDevice(deviceNativePath)
   readonly property var selectedDevice: {
@@ -61,7 +61,7 @@ Item {
     if (BatteryService.isDevicePresent(selectedBattery)) {
       return selectedBattery;
     }
-    return BatteryService.primaryDevice;
+    return null;
   }
 
   // Check if selected device is actually present/connected
@@ -95,13 +95,13 @@ Item {
     target: selectedDevice?.type === UPowerDeviceType.Battery ? selectedDevice : null
 
     function onPercentageChanged() {
-      maybeNotify(BatteryService.getPercentage(selectedBattery), isCharging, isPluggedIn, isReady);
+      maybeNotify(BatteryService.getPercentage(selectedDevice), isCharging, isPluggedIn, isReady);
     }
     function onStateChanged() {
       if (isCharging || isPluggedIn) {
         hasNotifiedLowBattery = false;
       }
-      maybeNotify(BatteryService.getPercentage(selectedBattery), isCharging, isPluggedIn, isReady);
+      maybeNotify(BatteryService.getPercentage(selectedDevice), isCharging, isPluggedIn, isReady);
     }
   }
 
@@ -109,7 +109,7 @@ Item {
     target: selectedDevice?.batteryAvailable ? selectedDevice : null
 
     function onBatteryChanged() {
-      maybeNotify(BatteryService.getPercentage(selectedBluetoothDevice), isCharging, isPluggedIn, isReady);
+      maybeNotify(BatteryService.getPercentage(selectedDevice), isCharging, isPluggedIn, isReady);
     }
   }
 
@@ -156,7 +156,7 @@ Item {
       if (!isReady || !isPresent) {
         return I18n.tr("battery.no-battery-detected");
       }
-      const isInternal = selectedDevice === BatteryService.primaryDevice && BatteryService.isLaptopBattery;
+      const isInternal = selectedDevice.type === UPowerDeviceType.Battery && BatteryService.isLaptopBattery;
 
       if (isInternal) {
         let timeText = BatteryService.getTimeRemainingText(selectedDevice);
