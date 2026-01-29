@@ -267,7 +267,7 @@ Item {
       }
 
       // Calculate margin to center widgets vertically within the bar height
-      readonly property real verticalBarMargin: (root.barHeight - root.capsuleHeight) / 2
+      readonly property real verticalBarMargin: Math.round((root.barHeight - root.capsuleHeight) / 2)
 
       // Top section (left widgets)
       ColumnLayout {
@@ -374,7 +374,7 @@ Item {
       }
 
       // Calculate margin to center widgets horizontally within the bar height
-      readonly property real horizontalBarMargin: (root.barHeight - root.capsuleHeight) / 2
+      readonly property real horizontalBarMargin: Math.round((root.barHeight - root.capsuleHeight) / 2)
 
       // Left Section
       RowLayout {
