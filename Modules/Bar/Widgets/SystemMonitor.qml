@@ -43,6 +43,7 @@ Item {
   readonly property bool usePrimaryColor: widgetSettings.usePrimaryColor !== undefined ? widgetSettings.usePrimaryColor : widgetMetadata.usePrimaryColor
   readonly property bool useMonospaceFont: widgetSettings.useMonospaceFont !== undefined ? widgetSettings.useMonospaceFont : widgetMetadata.useMonospaceFont
   readonly property bool showCpuUsage: (widgetSettings.showCpuUsage !== undefined) ? widgetSettings.showCpuUsage : widgetMetadata.showCpuUsage
+  readonly property bool showCpuFreq: (widgetSettings.showCpuFreq !== undefined) ? widgetSettings.showCpuFreq : widgetMetadata.showCpuFreq
   readonly property bool showCpuTemp: (widgetSettings.showCpuTemp !== undefined) ? widgetSettings.showCpuTemp : widgetMetadata.showCpuTemp
   readonly property bool showGpuTemp: (widgetSettings.showGpuTemp !== undefined) ? widgetSettings.showGpuTemp : widgetMetadata.showGpuTemp
   readonly property bool showMemoryUsage: (widgetSettings.showMemoryUsage !== undefined) ? widgetSettings.showMemoryUsage : widgetMetadata.showMemoryUsage
@@ -50,6 +51,7 @@ Item {
   readonly property bool showSwapUsage: (widgetSettings.showSwapUsage !== undefined) ? widgetSettings.showSwapUsage : widgetMetadata.showSwapUsage
   readonly property bool showNetworkStats: (widgetSettings.showNetworkStats !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
   readonly property bool showDiskUsage: (widgetSettings.showDiskUsage !== undefined) ? widgetSettings.showDiskUsage : widgetMetadata.showDiskUsage
+  readonly property bool showDiskAsFree: (widgetSettings.showDiskAsFree !== undefined) ? widgetSettings.showDiskAsFree : widgetMetadata.showDiskAsFree
   readonly property bool showLoadAverage: (widgetSettings.showLoadAverage !== undefined) ? widgetSettings.showLoadAverage : widgetMetadata.showLoadAverage
   readonly property string diskPath: (widgetSettings.diskPath !== undefined) ? widgetSettings.diskPath : widgetMetadata.diskPath
   readonly property string fontFamily: useMonospaceFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
@@ -107,7 +109,9 @@ Item {
     if (diskPercent !== undefined) {
       const usedGb = SystemStatService.diskUsedGb[diskPath] || 0;
       const sizeGb = SystemStatService.diskSizeGb[diskPath] || 0;
-      lines.push(`${I18n.tr("system-monitor.disk")}: ${usedGb.toFixed(1)} GB / ${sizeGb.toFixed(1)} GB (${diskPercent}%)`);
+      const availGb = SystemStatService.diskAvailGb[diskPath] || 0;
+      lines.push(`${I18n.tr("system-monitor.disk")}: ${usedGb.toFixed(1)}G / ${sizeGb.toFixed(1)}G Used (${diskPercent}%)`);
+      lines.push(`Available: ${availGb.toFixed(1)}G`);
     }
 
     return lines.join("\n");
@@ -250,7 +254,7 @@ Item {
           // Text mode
           NText {
             visible: !compactMode
-            text: `${Math.round(SystemStatService.cpuUsage)}%`
+            text: (showCpuFreq && !isVertical) ? SystemStatService.cpuFreq.replace(" ", "") : `${Math.round(SystemStatService.cpuUsage)}%`
             family: fontFamily
             pointSize: barFontSize
             applyUiScale: false
@@ -788,7 +792,14 @@ Item {
           // Text mode
           NText {
             visible: !compactMode
-            text: SystemStatService.diskPercents[diskPath] ? `${SystemStatService.diskPercents[diskPath]}%` : "n/a"
+            text: {
+              if (showDiskAsFree && !isVertical) {
+                let avail = SystemStatService.diskAvailGb[diskPath] || 0;
+                return avail.toFixed(1) + "G";
+              } else {
+                return SystemStatService.diskPercents[diskPath] ? `${SystemStatService.diskPercents[diskPath]}%` : "n/a";
+              }
+            }
             family: fontFamily
             pointSize: barFontSize
             applyUiScale: false
