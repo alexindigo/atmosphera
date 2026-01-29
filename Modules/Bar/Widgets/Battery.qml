@@ -66,7 +66,7 @@ Item {
 
   // Check if selected device is actually present/connected
   readonly property bool isPresent: testMode ? true : BatteryService.isDevicePresent(selectedDevice)
-  readonly property bool isReady: testMode ? true: BatteryService.isDeviceReady(selectedDevice)
+  readonly property bool isReady: testMode ? true : BatteryService.isDeviceReady(selectedDevice)
 
   readonly property real percent: testMode ? testPercent : (isReady ? Math.round(BatteryService.getPercentage(selectedDevice)) : -1)
   readonly property bool isCharging: testMode ? testCharging : (isReady ? BatteryService.isCharging(selectedDevice) : false)
@@ -83,7 +83,9 @@ Item {
   function maybeNotify(currentPercent, charging, pluggedIn, isReady) {
     if (isReady && (!charging && !pluggedIn) && !hasNotifiedLowBattery && currentPercent <= warningThreshold) {
       hasNotifiedLowBattery = true;
-      ToastService.showWarning(I18n.tr("toast.battery.low"), I18n.tr("toast.battery.low-desc", {"percent": Math.round(currentPercent)}), "battery-exclamation");
+      ToastService.showWarning(I18n.tr("toast.battery.low"), I18n.tr("toast.battery.low-desc", {
+                                                                       "percent": Math.round(currentPercent)
+                                                                     }), "battery-exclamation");
     } else if (hasNotifiedLowBattery && (charging || pluggedIn || currentPercent > warningThreshold + 5)) {
       hasNotifiedLowBattery = false;
     }

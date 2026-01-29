@@ -64,21 +64,21 @@ Singleton {
   // MARK: BatterySettings
   property var deviceModel: {
     var model = [
-          {
-            "key": "__default__",
-            "name": I18n.tr("bar.battery.device-default")
-          }
-        ];
+      {
+        "key": "__default__",
+        "name": I18n.tr("bar.battery.device-default")
+      }
+    ];
     // UPower Devices
-    const devices = UPower.devices?.values || []
+    const devices = UPower.devices?.values || [];
     for (let d of devices) {
       if (!d || d.type === UPowerDeviceType.LinePower) {
         continue;
       }
       model.push({
-        key: d.nativePath || "",
-        name: d.model || d.nativePath || I18n.tr("common.unknown")
-      })
+                   key: d.nativePath || "",
+                   name: d.model || d.nativePath || I18n.tr("common.unknown")
+                 });
     }
     return model;
   }
@@ -262,7 +262,7 @@ Singleton {
       Qt.callLater(refreshHealth);
     }
   }
-  
+
   // MARK: getIcon
   function getIcon(percent, charging, pluggedIn, isReady) {
     if (!isReady) {
@@ -307,9 +307,13 @@ Singleton {
     if (isPluggedIn(device)) {
       return I18n.tr("battery.plugged-in");
     } else if (device.timeToFull > 0) {
-      return I18n.tr("battery.charging-rate", {"rate": rate.toFixed(2)});
+      return I18n.tr("battery.charging-rate", {
+                       "rate": rate.toFixed(2)
+                     });
     } else if (device.timeToEmpty > 0) {
-      return I18n.tr("battery.discharging-rate", {"rate": rate.toFixed(2)});
+      return I18n.tr("battery.discharging-rate", {
+                       "rate": rate.toFixed(2)
+                     });
     }
     return I18n.tr("common.idle");
   }
@@ -335,9 +339,13 @@ Singleton {
     if (isPluggedIn(device)) {
       return I18n.tr("battery.plugged-in");
     } else if (device.timeToFull > 0) {
-      return I18n.tr("battery.time-until-full", {"time": Time.formatVagueHumanReadableDuration(device.timeToFull)});
+      return I18n.tr("battery.time-until-full", {
+                       "time": Time.formatVagueHumanReadableDuration(device.timeToFull)
+                     });
     } else if (device.timeToEmpty > 0) {
-      return I18n.tr("battery.time-left", {"time": Time.formatVagueHumanReadableDuration(device.timeToEmpty)});
+      return I18n.tr("battery.time-left", {
+                       "time": Time.formatVagueHumanReadableDuration(device.timeToEmpty)
+                     });
     }
     return I18n.tr("common.idle");
   }
