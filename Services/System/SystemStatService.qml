@@ -30,6 +30,7 @@ Singleton {
   property real swapTotalGb: 0
   property var diskPercents: ({})
   property var diskUsedGb: ({}) // Used space in GB per mount point
+  property var diskAvailableGb: ({}) // available space in GB per mount point
   property var diskSizeGb: ({}) // Total size in GB per mount point
   property real rxSpeed: 0
   property real txSpeed: 0
@@ -385,7 +386,7 @@ Singleton {
   // --block-size=1 gives us bytes for precise GB calculation
   Process {
     id: dfProcess
-    command: ["df", "--output=target,pcent,used,size", "--block-size=1", "-x", "efivarfs"]
+    command: ["df", "--output=target,pcent,used,size,avail", "--block-size=1", "-x", "efivarfs"]
     running: false
     stdout: StdioCollector {
       onStreamFinished: {
@@ -393,6 +394,7 @@ Singleton {
         const newPercents = {};
         const newUsedGb = {};
         const newSizeGb = {};
+        const newAvailableGb = {};
         const bytesPerGb = 1024 * 1024 * 1024;
         // Start from line 1 (skip header)
         for (var i = 1; i < lines.length; i++) {
@@ -402,14 +404,17 @@ Singleton {
             const percent = parseInt(parts[1].replace(/[^0-9]/g, '')) || 0;
             const usedBytes = parseFloat(parts[2]) || 0;
             const sizeBytes = parseFloat(parts[3]) || 0;
+            const availBytes = parseFloat(parts[4]) || 0;
             newPercents[target] = percent;
             newUsedGb[target] = usedBytes / bytesPerGb;
             newSizeGb[target] = sizeBytes / bytesPerGb;
+            newAvailableGb[target] = availBytes / bytesPerGb;
           }
         }
         root.diskPercents = newPercents;
         root.diskUsedGb = newUsedGb;
         root.diskSizeGb = newSizeGb;
+        root.diskAvailableGb = newAvailableGb;
       }
     }
   }

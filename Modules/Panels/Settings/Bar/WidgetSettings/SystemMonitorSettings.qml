@@ -38,6 +38,8 @@ ColumnLayout {
   property bool valueShowSwapUsage: widgetData.showSwapUsage !== undefined ? widgetData.showSwapUsage : widgetMetadata.showSwapUsage
   property bool valueShowNetworkStats: widgetData.showNetworkStats !== undefined ? widgetData.showNetworkStats : widgetMetadata.showNetworkStats
   property bool valueShowDiskUsage: widgetData.showDiskUsage !== undefined ? widgetData.showDiskUsage : widgetMetadata.showDiskUsage
+  property bool valueShowDiskUsageAsPercent: widgetData.showDiskUsageAsPercent !== undefined ? widgetData.showDiskUsageAsPercent : widgetMetadata.showDiskUsageAsPercent
+  property bool valueShowDiskAvailable: widgetData.showDiskAvailable !== undefined ? widgetData.showDiskAvailable : widgetMetadata.showDiskAvailable
   property string valueDiskPath: widgetData.diskPath !== undefined ? widgetData.diskPath : widgetMetadata.diskPath
   property bool valueShowDiskDetails: widgetData.showDiskDetails !== undefined ? widgetData.showDiskDetails : widgetMetadata.showDiskDetails
 
@@ -55,8 +57,9 @@ ColumnLayout {
     settings.showSwapUsage = valueShowSwapUsage;
     settings.showNetworkStats = valueShowNetworkStats;
     settings.showDiskUsage = valueShowDiskUsage;
+    settings.showDiskUsageAsPercent = valueShowDiskUsageAsPercent;
+    settings.showDiskAvailable = valueShowDiskAvailable;
     settings.diskPath = valueDiskPath;
-    settings.showDiskDetails = valueShowDiskDetails;
 
     return settings;
   }
@@ -207,16 +210,27 @@ ColumnLayout {
   }
 
   NToggle {
-    id: showDiskDetails
+    id: showDiskUsageAsPercent
     Layout.fillWidth: true
-    label: I18n.tr("bar.system-monitor.storage-details-label")
-    description: I18n.tr("bar.system-monitor.storage-details-description")
-    checked: valueShowDiskDetails
+    label: "Disk as percentage"
+    description: "Show disk space as percentage instead of absolute values."
+    checked: valueShowDiskUsageAsPercent
     onToggled: checked => {
-                 valueShowDiskDetails = checked;
+                 valueShowDiskUsageAsPercent = checked;
                  settingsChanged(saveSettings());
                }
-    visible: !isVertical
+  }
+
+  NToggle {
+    id: showDiskAvailable
+    Layout.fillWidth: true
+    label: "Disk space available"
+    description: "Shows how much disk space is available instead of how much is used."
+    checked: valueShowDiskAvailable
+    onToggled: checked => {
+                 valueShowDiskAvailable = checked;
+                 settingsChanged(saveSettings());
+               }
   }
 
   NComboBox {

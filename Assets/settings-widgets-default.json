@@ -136,8 +136,9 @@
       "showSwapUsage": false,
       "showNetworkStats": false,
       "showDiskUsage": false,
-      "diskPath": "/",
-      "showDiskDetails": false
+      "showDiskUsageAsPercent": false,
+      "showDiskAvailable": false,
+      "diskPath": "/"
     },
     "Taskbar": {
       "onlySameOutput": true,
