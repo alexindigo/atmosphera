@@ -77,47 +77,6 @@ Item {
   // Bar widgets (per-screen)
   readonly property var barWidgets: Settings.getBarWidgetsForScreen(screen?.name)
 
-  // Cached widget arrays - only update when widget IDs change, not when widget settings change
-  // This prevents Repeater from recreating delegates on every settings save
-  property var _cachedLeftWidgets: []
-  property var _cachedCenterWidgets: []
-  property var _cachedRightWidgets: []
-
-  // Helper to check if widget ID list changed
-  function _widgetIdsEqual(a, b) {
-    if (!a || !b || a.length !== b.length)
-      return false;
-    for (var i = 0; i < a.length; i++) {
-      if (a[i]?.id !== b[i]?.id)
-        return false;
-    }
-    return true;
-  }
-
-  // Update caches when barWidgets changes, but only if widget IDs actually changed
-  onBarWidgetsChanged: {
-    var newLeft = filterValidWidgets(barWidgets?.left);
-    var newCenter = filterValidWidgets(barWidgets?.center);
-    var newRight = filterValidWidgets(barWidgets?.right);
-
-    if (!_widgetIdsEqual(_cachedLeftWidgets, newLeft)) {
-      _cachedLeftWidgets = newLeft;
-    }
-    if (!_widgetIdsEqual(_cachedCenterWidgets, newCenter)) {
-      _cachedCenterWidgets = newCenter;
-    }
-    if (!_widgetIdsEqual(_cachedRightWidgets, newRight)) {
-      _cachedRightWidgets = newRight;
-    }
-  }
-
-  Component.onCompleted: {
-    // Initialize caches
-    _cachedLeftWidgets = filterValidWidgets(barWidgets?.left);
-    _cachedCenterWidgets = filterValidWidgets(barWidgets?.center);
-    _cachedRightWidgets = filterValidWidgets(barWidgets?.right);
-  }
-
   // Fill the parent (the Loader)
   anchors.fill: parent
 
@@ -315,7 +274,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: root._cachedLeftWidgets
+          model: root.filterValidWidgets(root.barWidgets.left)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
@@ -326,7 +285,7 @@ Item {
                             "widgetId": modelData.id,
                             "section": "left",
                             "sectionWidgetIndex": index,
-                            "sectionWidgetsCount": root._cachedLeftWidgets.length
+                            "sectionWidgetsCount": root.barWidgets.left.length
                           })
             Layout.alignment: Qt.AlignHCenter
           }
@@ -340,7 +299,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: root._cachedCenterWidgets
+          model: root.filterValidWidgets(root.barWidgets.center)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
@@ -351,7 +310,7 @@ Item {
                             "widgetId": modelData.id,
                             "section": "center",
                             "sectionWidgetIndex": index,
-                            "sectionWidgetsCount": root._cachedCenterWidgets.length
+                            "sectionWidgetsCount": root.barWidgets.center.length
                           })
             Layout.alignment: Qt.AlignHCenter
           }
@@ -366,7 +325,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: root._cachedRightWidgets
+          model: root.filterValidWidgets(root.barWidgets.right)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
@@ -377,7 +336,7 @@ Item {
                             "widgetId": modelData.id,
                             "section": "right",
                             "sectionWidgetIndex": index,
-                            "sectionWidgetsCount": root._cachedRightWidgets.length
+                            "sectionWidgetsCount": root.barWidgets.right.length
                           })
             Layout.alignment: Qt.AlignHCenter
           }
@@ -421,7 +380,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: root._cachedLeftWidgets
+          model: root.filterValidWidgets(root.barWidgets.left)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
@@ -432,7 +391,7 @@ Item {
                             "widgetId": modelData.id,
                             "section": "left",
                             "sectionWidgetIndex": index,
-                            "sectionWidgetsCount": root._cachedLeftWidgets.length
+                            "sectionWidgetsCount": root.barWidgets.left.length
                           })
             Layout.alignment: Qt.AlignVCenter
           }
@@ -448,7 +407,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: root._cachedCenterWidgets
+          model: root.filterValidWidgets(root.barWidgets.center)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
@@ -459,7 +418,7 @@ Item {
                             "widgetId": modelData.id,
                             "section": "center",
                             "sectionWidgetIndex": index,
-                            "sectionWidgetsCount": root._cachedCenterWidgets.length
+                            "sectionWidgetsCount": root.barWidgets.center.length
                           })
             Layout.alignment: Qt.AlignVCenter
           }
@@ -476,7 +435,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: root._cachedRightWidgets
+          model: root.filterValidWidgets(root.barWidgets.right)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
@@ -487,7 +446,7 @@ Item {
                             "widgetId": modelData.id,
                             "section": "right",
                             "sectionWidgetIndex": index,
-                            "sectionWidgetsCount": root._cachedRightWidgets.length
+                            "sectionWidgetsCount": root.barWidgets.right.length
                           })
             Layout.alignment: Qt.AlignVCenter
           }
