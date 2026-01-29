@@ -739,6 +739,7 @@ Item {
             inputIconName: "search"
             visible: opacity > 0
             opacity: root.sidebarExpanded ? 1.0 : 0.0
+            layer.enabled: true // Isolate cursor blink rendering for Nvidia compatibility
 
             Behavior on opacity {
               NumberAnimation {
