@@ -148,7 +148,7 @@ Item {
     tooltipText: {
       let lines = [];
       if (testMode) {
-        lines.push("Time left: " + Time.formatVagueHumanReadableDuration(12345) + ".");
+        lines.push("Time left: " + Time.formatVagueHumanReadableDuration(12345));
         return lines.join("\n");
       }
       if (!isReady || !isPresent) {

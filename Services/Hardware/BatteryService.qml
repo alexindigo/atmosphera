@@ -262,6 +262,7 @@ Singleton {
       Qt.callLater(refreshHealth);
     }
   }
+  
   // MARK: getIcon
   function getIcon(percent, charging, pluggedIn, isReady) {
     if (!isReady) {
