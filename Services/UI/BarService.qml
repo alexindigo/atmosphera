@@ -24,6 +24,10 @@ Singleton {
 
   property var readyBars: ({})
 
+  // Revision counter - increment when widget list structure changes (add/remove/reorder)
+  // This triggers Bar.qml to re-sync its ListModels
+  property int widgetsRevision: 0
+
   // Registry to store actual widget instances
   // Key format: "screenName|section|widgetId|index"
   property var widgetInstances: ({})
