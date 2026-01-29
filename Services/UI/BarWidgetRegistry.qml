@@ -187,7 +187,8 @@ Singleton {
                                   "NotificationHistory": {
                                     "showUnreadBadge": true,
                                     "hideWhenZero": false,
-                                    "hideWhenZeroUnread": false
+                                    "hideWhenZeroUnread": false,
+                                    "unreadBadgeColor": "primary"
                                   },
                                   "SessionMenu": {
                                     "colorName": "error"

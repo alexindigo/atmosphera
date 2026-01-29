@@ -547,8 +547,9 @@ Item {
       "_score": (score !== undefined ? score : 0),
       "provider": root,
       "onActivate": function () {
-        // Close the launcher/SmartPanel with animation.
-        launcher.close();
+        // Close the launcher/SmartPanel immediately without any animations.
+        // Ensures we are not preventing the future focusing of the app
+        launcher.closeImmediately();
 
         // Defer execution to next event loop iteration to ensure panel is fully closed
         Qt.callLater(() => {

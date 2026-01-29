@@ -554,7 +554,9 @@ Item {
     ProgramCheckerService.checkAllPrograms();
     updateTabsModel();
     selectTabById(requestedTab);
-    if (sidebarExpanded) {
+    // Skip auto-focus on Nvidia GPUs - cursor blink causes UI choppiness
+    const isNvidia = SystemStatService.gpuType === "nvidia";
+    if (sidebarExpanded && !isNvidia) {
       Qt.callLater(() => {
                      if (searchInput.inputItem)
                      searchInput.inputItem.forceActiveFocus();
@@ -737,7 +739,7 @@ Item {
             Layout.fillWidth: true
             placeholderText: I18n.tr("common.search")
             inputIconName: "search"
-            visible: root.sidebarExpanded
+            visible: opacity > 0
             opacity: root.sidebarExpanded ? 1.0 : 0.0
 
             Behavior on opacity {
@@ -759,7 +761,7 @@ Item {
             id: searchCollapsedContainer
             Layout.fillWidth: true
             Layout.preferredHeight: Math.round(searchCollapsedRow.implicitHeight + Style.marginS * 2)
-            visible: !root.sidebarExpanded
+            visible: opacity > 0
             opacity: !root.sidebarExpanded ? 1.0 : 0.0
 
             Behavior on opacity {

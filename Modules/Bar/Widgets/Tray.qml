@@ -430,10 +430,23 @@ Item {
         }
 
         MouseArea {
+          id: itemMouseArea
           anchors.fill: parent
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
           acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+          onContainsMouseChanged: {
+            if (containsMouse) {
+              if (popupMenuWindow) {
+                popupMenuWindow.close();
+              }
+              root.hoveredItemIndex = trayDelegate.index;
+              TooltipService.show(tooltipAnchor, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection(root.screen?.name));
+            } else if (root.hoveredItemIndex === trayDelegate.index) {
+              root.hoveredItemIndex = -1;
+              TooltipService.hide(tooltipAnchor);
+            }
+          }
           onClicked: mouse => {
                        if (!modelData) {
                          return;
@@ -499,17 +512,6 @@ Item {
                          }
                        }
                      }
-          onEntered: {
-            if (popupMenuWindow) {
-              popupMenuWindow.close();
-            }
-            root.hoveredItemIndex = trayDelegate.index;
-            TooltipService.show(tooltipAnchor, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection(root.screen?.name));
-          }
-          onExited: {
-            root.hoveredItemIndex = -1;
-            TooltipService.hide();
-          }
         }
       }
     }
