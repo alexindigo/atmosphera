@@ -140,7 +140,7 @@ ColumnLayout {
         info += "GPU: " + gpu.result.map(g => g.name || "Unknown").join(", ") + "\n";
       }
       if (mem?.result) {
-        info += "Memory: " + SystemStatService.formatMemoryGb(mem.result.total / root.giga) + "\n";
+        info += "Memory: " + SystemStatService.formatGigabytes(mem.result.total / root.giga) + "\n";
       }
       if (wm?.result) {
         info += "WM: " + (wm.result.prettyName || wm.result.processName || "N/A") + "\n";
@@ -688,8 +688,8 @@ ColumnLayout {
         const mem = root.getModule("Memory");
         if (!mem?.result)
           return "N/A";
-        const used = SystemStatService.formatMemoryGb(mem.result.used / root.giga);
-        const total = SystemStatService.formatMemoryGb(mem.result.total / root.giga);
+        const used = SystemStatService.formatGigabytes(mem.result.used / root.giga);
+        const total = SystemStatService.formatGigabytes(mem.result.total / root.giga);
         return used + " / " + total;
       }
       color: Color.mOnSurface
@@ -712,8 +712,8 @@ ColumnLayout {
         const rootDisk = disk.result.find(d => d.mountpoint === "/");
         if (!rootDisk?.bytes)
           return "N/A";
-        const used = SystemStatService.formatMemoryGb(rootDisk.bytes.used / root.giga);
-        const total = SystemStatService.formatMemoryGb(rootDisk.bytes.total / root.giga);
+        const used = SystemStatService.formatGigabytes(rootDisk.bytes.used / root.giga);
+        const total = SystemStatService.formatGigabytes(rootDisk.bytes.total / root.giga);
         return used + " / " + total + " (" + rootDisk.filesystem + ")";
       }
       color: Color.mOnSurface

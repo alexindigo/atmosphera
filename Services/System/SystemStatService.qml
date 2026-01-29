@@ -925,7 +925,7 @@ Singleton {
   // -------------------------------------------------------
   // Smart formatter for memory values (GB) - max 4 chars
   // Uses decimal for < 10GB, integer otherwise
-  function formatMemoryGb(memGb) {
+  function formatGigabytes(memGb) {
     const value = parseFloat(memGb);
     if (isNaN(value))
       return "0G";
