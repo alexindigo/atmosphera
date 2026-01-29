@@ -266,11 +266,14 @@ Item {
         onClicked: root.triggerLastWidgetInSection("right")
       }
 
+      // Calculate margin to center widgets vertically within the bar height
+      readonly property real verticalBarMargin: (root.barHeight - root.capsuleHeight) / 2
+
       // Top section (left widgets)
       ColumnLayout {
         x: Style.pixelAlignCenter(parent.width, width)
         anchors.top: parent.top
-        anchors.topMargin: Style.marginS
+        anchors.topMargin: verticalBarMargin
         spacing: Style.marginS
 
         Repeater {
@@ -321,7 +324,7 @@ Item {
       ColumnLayout {
         x: Style.pixelAlignCenter(parent.width, width)
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.marginS
+        anchors.bottomMargin: verticalBarMargin
         spacing: Style.marginS
 
         Repeater {
@@ -370,12 +373,15 @@ Item {
         onClicked: root.triggerLastWidgetInSection("right")
       }
 
+      // Calculate margin to center widgets horizontally within the bar height
+      readonly property real horizontalBarMargin: (root.barHeight - root.capsuleHeight) / 2
+
       // Left Section
       RowLayout {
         id: leftSection
         objectName: "leftSection"
         anchors.left: parent.left
-        anchors.leftMargin: Style.marginS
+        anchors.leftMargin: horizontalBarMargin
         y: Style.pixelAlignCenter(parent.height, height)
         spacing: Style.marginS
 
@@ -430,7 +436,7 @@ Item {
         id: rightSection
         objectName: "rightSection"
         anchors.right: parent.right
-        anchors.rightMargin: Style.marginS
+        anchors.rightMargin: horizontalBarMargin
         y: Style.pixelAlignCenter(parent.height, height)
         spacing: Style.marginS
 
