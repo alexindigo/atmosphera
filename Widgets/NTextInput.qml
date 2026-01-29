@@ -149,6 +149,8 @@ ColumnLayout {
             color: enabled ? Color.mOnSurface : Qt.alpha(Color.mOnSurface, 0.4)
 
             selectByMouse: true
+            renderType: Text.NativeRendering
+            layer.enabled: true
 
             topPadding: 0
             bottomPadding: 0
