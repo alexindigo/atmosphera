@@ -43,36 +43,25 @@ ColumnLayout {
     return settings;
   }
 
-  RowLayout {
+  NComboBox {
+    id: deviceComboBox
     Layout.fillWidth: true
-    spacing: Style.marginM
-
-    NComboBox {
-      id: deviceComboBox
-      Layout.fillWidth: true
-      label: I18n.tr("bar.battery.device-label")
-      description: I18n.tr("bar.battery.device-description")
-      minimumWidth: 200
-      model: BatteryService.deviceModel
-      currentKey: root.valueDeviceNativePath
-      onSelected: key => {
-                    root.valueDeviceNativePath = key;
-                    settingsChanged(saveSettings());
-                  }
-    }
-
-    NIconButton {
-      icon: "refresh"
-      tooltipText: I18n.tr("tooltips.refresh-devices")
-      onClicked: BatteryService.devicesModel = BatteryService.buildDeviceModel()
-    }
+    label: I18n.tr("bar.battery.device-label")
+    description: I18n.tr("bar.battery.device-description")
+    minimumWidth: 200
+    model: BatteryService.deviceModel
+    currentKey: root.valueDeviceNativePath
+    onSelected: key => {
+                  root.valueDeviceNativePath = key;
+                  settingsChanged(saveSettings());
+                }
   }
 
   NComboBox {
     Layout.fillWidth: true
     label: I18n.tr("bar.volume.display-mode-label")
     description: I18n.tr("bar.volume.display-mode-description")
-    minimumWidth: 240
+    minimumWidth: 200
     model: [
       {
         "key": "onhover",

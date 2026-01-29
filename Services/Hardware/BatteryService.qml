@@ -59,11 +59,28 @@ Singleton {
     return null;
   }
 
-  readonly property var _bluetoothBattery: {
-    if (externalBatteries.length > 0) {
-      return externalBatteries[0];
+  readonly property var _bluetoothBattery: externalBatteries.length > 0 ? externalBatteries[0] : null
+
+  // MARK: BatterySettings
+  property var deviceModel: {
+    var model = [
+          {
+            "key": "__default__",
+            "name": I18n.tr("bar.battery.device-default")
+          }
+        ];
+    // UPower Devices
+    const devices = UPower.devices?.values || []
+    for (let d of devices) {
+      if (!d || d.type === UPowerDeviceType.LinePower) {
+        continue;
+      }
+      model.push({
+        key: d.nativePath || "",
+        name: d.model || d.nativePath || I18n.tr("common.unknown")
+      })
     }
-    return null;
+    return model;
   }
 
   // MARK: findUPowerDevice
@@ -322,64 +339,5 @@ Singleton {
       return I18n.tr("battery.time-left", {"time": Time.formatVagueHumanReadableDuration(device.timeToEmpty)});
     }
     return I18n.tr("common.idle");
-  }
-
-  // MARK: BatterySettings
-  property var deviceModel: buildDeviceModel()
-
-  function buildDeviceModel() {
-    var model = [
-          {
-            "key": "__default__",
-            "name": I18n.tr("bar.battery.device-default")
-          }
-        ];
-    // UPower Devices
-    if (UPower.devices && UPower.devices.values) {
-      var deviceArray = UPower.devices.values;
-      for (var i = 0; i < deviceArray.length; i++) {
-        var device = deviceArray[i];
-        if (!device || device.type === UPowerDeviceType.LinePower) {
-          continue;
-        }
-        var displayName = device.model || device.nativePath || "Unknown";
-        model.push({
-                     "key": device.nativePath || "",
-                     "name": displayName
-                   });
-      }
-    }
-    return model;
-  }
-
-  // MARK: modelUpdateTimer
-  Timer {
-    id: modelUpdateTimer
-    interval: 2000
-    running: true
-    repeat: true
-    onTriggered: {
-      var newModel = buildDeviceModel();
-      // Simple change detection to avoid unnecessary bindings updates
-      if (JSON.stringify(newModel) !== JSON.stringify(deviceModel)) {
-        deviceModel = newModel;
-      }
-    }
-  }
-
-  Connections {
-    target: UPower.devices
-    function onValuesChanged() {
-      modelUpdateTimer.restart();
-      deviceModel = buildDeviceModel();
-    }
-  }
-
-  Connections {
-    target: BluetoothService
-    function onConnectedDevicesChanged() {
-      modelUpdateTimer.restart();
-      deviceModel = buildDeviceModel();
-    }
   }
 }
