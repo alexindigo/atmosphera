@@ -208,6 +208,8 @@ Singleton {
                                     "showSwapUsage": false,
                                     "showNetworkStats": false,
                                     "showDiskUsage": false,
+                                    "showDiskUsageAsPercent": false,
+                                    "showDiskAvailable": false,
                                     "diskPath": "/"
                                   },
                                   "Taskbar": {
