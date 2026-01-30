@@ -499,7 +499,7 @@ Item {
                              } else {
                                // For horizontal bars: center horizontally and position below visual area
                                menuX = (tooltipAnchor.width / 2) - (trayMenu.item.implicitWidth / 2);
-                               menuY = tooltipAnchor.height + Style.marginL;
+                               menuY = tooltipAnchor.height + Style.marginS;
                              }
 
                              PanelService.showTrayMenu(root.screen, modelData, trayMenu.item, tooltipAnchor, menuX, menuY, root.section, root.sectionWidgetIndex);

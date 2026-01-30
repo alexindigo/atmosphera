@@ -86,10 +86,10 @@ PopupWindow {
       if (menuRight > screenRight && menuLeft < screenRight) {
         // Clipping on right edge - shift left
         const overflow = menuRight - screenRight;
-        return baseX - overflow - Style.marginM;
+        return baseX - overflow - Style.marginS;
       } else if (menuLeft < 0 && menuRight > 0) {
         // Clipping on left edge - shift right
-        return baseX - menuLeft + Style.marginM;
+        return baseX - menuLeft + Style.marginS;
       }
 
       return baseX;
@@ -140,13 +140,13 @@ PopupWindow {
       // Adjust if menu would clip off the bottom
       if (menuBottom > screenHeight) {
         const overflow = menuBottom - screenHeight;
-        finalBaseY -= (overflow + Style.marginM);
+        finalBaseY -= (overflow + Style.marginS);
       }
 
       // Adjust if menu would clip off the top
       // menuScreenY < 0 means it's above the screen edge
       if (menuScreenY < 0) {
-        finalBaseY -= (menuScreenY - Style.marginM);
+        finalBaseY -= (menuScreenY - Style.marginS);
       }
 
       return finalBaseY;
