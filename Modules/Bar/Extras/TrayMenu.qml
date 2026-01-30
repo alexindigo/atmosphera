@@ -110,7 +110,11 @@ PopupWindow {
 
       if (shouldApplyBottomBarLogic) {
         // For bottom bar from the bar itself, position menu above the anchor with margin
-        baseY = -(implicitHeight + Style.marginL + 2);
+        baseY = -(implicitHeight + Style.marginS);
+      } else if (barPosition === "top" && !isSubMenu && anchorY >= 0) {
+        // For top bar: position menu below bar with margin
+        const barHeight = Style.getBarHeightForScreen(root.screen?.name);
+        baseY = barHeight + Style.marginS;
       }
 
       // Use a robust way to get screen coordinates
@@ -128,14 +132,14 @@ PopupWindow {
       // Calculate the screen Y of the menu top
       // Use a small guess for height if implicitHeight is 0 to avoid covering the bar on the first frame
       const effectiveHeight = implicitHeight > 0 ? implicitHeight : 200;
-      const effectiveBaseY = shouldApplyBottomBarLogic ? -(effectiveHeight + Style.marginL + 2) : baseY;
+      const effectiveBaseY = shouldApplyBottomBarLogic ? -(effectiveHeight + Style.marginS) : baseY;
 
       const menuScreenY = windowYOnScreen + posInWindow.y + effectiveBaseY;
       const menuBottom = menuScreenY + (implicitHeight > 0 ? implicitHeight : effectiveHeight);
       const screenHeight = screen ? screen.height : 1080;
 
       // Adjust the final baseY (the actual value returned to anchor.rect.y)
-      let finalBaseY = shouldApplyBottomBarLogic ? -(implicitHeight + Style.marginL + 2) : baseY;
+      let finalBaseY = shouldApplyBottomBarLogic ? -(implicitHeight + Style.marginS) : baseY;
 
       // Adjust if menu would clip off the bottom
       if (menuBottom > screenHeight) {
