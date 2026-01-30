@@ -217,8 +217,10 @@
       "swap-usage-label": "Växlingsanvändning",
       "use-monospace-font-description": "Använd monospace-teckensnitt för enhetlig teckenbredd. ",
       "use-monospace-font-label": "Teckensnitt för fast bredd",
-      "storage-details-label": "Lagringsinformation",
-      "storage-details-description": "Visa diskutrymmesanvändning som siffror. (fungerar endast i horisontella stapelkonfigurationer)"
+      "storage-as-percentage-label": "Disk i procent",
+      "storage-as-percentage-description": "Visa diskutrymme som procentandel istället för absoluta värden.",
+      "storage-available-label": "Tillgängligt diskutrymme",
+      "storage-available-description": "Visar hur mycket diskutrymme som är tillgängligt istället för hur mycket som används."
     },
     "taskbar": {
       "colorize-icons-description": "Tillämpa temafärger på ikoner i aktivitetsfältet.",
@@ -1326,6 +1328,7 @@
       "critical-color-label": "Kritisk färg",
       "custom-highlight-colors-title-label": "Anpassade markeringsfärger",
       "disk-section-label": "Diskanvändning",
+      "disk-available-label": "Disk tillgänglig",
       "enable-dgpu-monitoring-description": "Varning: Detta aktiverar din diskreta GPU (NVIDIA/AMD), vilket kan påverka batteritiden avsevärt på bärbara datorer med hybridgrafik.",
       "enable-dgpu-monitoring-label": "Aktivera övervakning av diskret GPU",
       "external-monitor-description": "Ange kommandot eller applikationsvägen som ska startas när den externa systemövervakningsapplikationen aktiveras.",
