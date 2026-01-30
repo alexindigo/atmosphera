@@ -694,7 +694,7 @@
       "media-scrolling-title-description": "Slå på varig blading for lange mediatitlar.",
       "media-scrolling-title-label": "Bladande tittel",
       "media-title": "Mediaavspelarar",
-      "on-middle-clicked-description": "Kommando som køyr når knappen er midtklikka.",
+      "on-middle-clicked-description": "Kommando som køyrer når knappen er midtklikka.",
       "panel-applications-empty": "Ingen applikasjonar spelar av ljod no",
       "title": "Ljod",
       "visualizer-type-description": "Vel visualiseringstypen når ein spelar av media.",
@@ -713,19 +713,74 @@
       "volumes-volume-overdrive-description": "Tillèt at ljodstyrke kan gå over 100%. Ikkje alltid støtta av maskinvare.",
       "volumes-volume-overdrive-label": "Tillat overdrift på ljodstyrke"
     },
+    "bar": {
+      "appearance-density-description": "Fastset utfylling på lina for å gjera henne tett eller romsleg."
+    },
     "launcher": {
       "clipboard-desc": "Sjå og styra utklippsboka di frå programveljaren.",
-      "settings-clipboard-watch-image-description": "Heil kommandostreng sendt til wl-paste for bildeendringar. (krev omstart)",
-      "settings-clipboard-watch-image-label": "Biletovervakingskommando",
-      "settings-clipboard-watch-text-description": "Fullstendig kommandostreng sendt til wl-paste for tekstendringer. (krever omstart)",
-      "settings-clipboard-watch-text-label": "Tekstovervakingskommando"
+      "execute-desc": "Styrer korleis applikasjonar er køyrde",
+      "execute-title": "Køyring",
+      "settings-annotation-tool-description": "Kommando som køyrer når ein klikkar på merknadsknappen i utklippsboka. Biletet vert sendt med røyr til denne kommandoen.",
+      "settings-annotation-tool-label": "Merknadsverktøy",
+      "settings-annotation-tool-placeholder": "t.d. 'gradia', 'satty -f -'",
+      "settings-auto-paste-description": "Limar inn det valde utklippet automatisk. Krev wtype.",
+      "settings-auto-paste-label": "Automatisk liming",
+      "settings-clip-preview-description": "Viser førebilete av utklippsinnhaldet når ein nyttar >clip kommandoen.",
+      "settings-clip-preview-label": "Slå på klippførebilete",
+      "settings-clip-wrap-text-description": "Bryt tekst i utklippsboka heller enn å korta han av.",
+      "settings-clip-wrap-text-label": "Tekstbryting i utklipp",
+      "settings-clipboard-history-description": "Sjå ting som var kopiert tidlegare i programveljaren.",
+      "settings-clipboard-history-label": "Slå på utklippsboka",
+      "settings-clipboard-watch-image-description": "Heile kommandostreng send til wl-paste for bileteendringar. (krev omstart)",
+      "settings-clipboard-watch-image-label": "Biletvaktskommando",
+      "settings-clipboard-watch-text-description": "Heile kommandostreng send til wl-paste for tekstendringar. (krev omstart)",
+      "settings-clipboard-watch-text-label": "Tekstvaktskommando",
+      "settings-custom-launch-prefix-description": "Førefester kommandoar med eigendefinert programveljar (t.d. 'runapp' for systemd-integrering).",
+      "settings-custom-launch-prefix-enabled-description": "Brukar eigendefinert førefeste for å starta applikasjonar heller enn standardmåten.",
+      "settings-custom-launch-prefix-enabled-label": "Slå på eigendefinert startførefeste",
+      "settings-custom-launch-prefix-label": "Eigendefinert startførefeste",
+      "settings-desc": "Vel korleis programveljaren ser ut og kva det gjer.",
+      "settings-enable-settings-search-description": "Viser innstillingar når ein leitar i programveljaren.",
+      "settings-enable-settings-search-label": "Søk i innstillingar",
+      "settings-grid-view-description": "Viser utfall i rutenett heller enn som liste.",
+      "settings-icon-mode-description": "Brukar heimlege systemikon heller enn Tabler-ikon.",
+      "settings-icon-mode-label": "Bruk heimlege ikon",
+      "settings-ignore-mouse-input-description": "Slå av musekontakt og rullehjul i programveljaren.",
+      "settings-ignore-mouse-input-label": "Ikkje vyrd musekontakt",
+      "settings-position-description": "Vel kvar programveljarpanelet opnar seg.",
+      "settings-show-categories-description": "Viser kategorifanar for å granska applikasjonar",
+      "settings-show-categories-label": "Vis kategori",
+      "settings-show-icon-background-description": "Viser ein avrunda firkant som bakgrunn bak ikon.",
+      "settings-show-icon-background-label": "Vis ikonbakgrunn",
+      "settings-sort-by-usage-description": "Når dette er på, står dei appane du brukar mest fyrst på lista.",
+      "settings-sort-by-usage-label": "Sortera ved bruk",
+      "settings-terminal-command-description": "Kommando som køyrer frå terminal. T.d. 'kitty -e' eller 'gnome-terminal --'.",
+      "settings-terminal-command-label": "Terminalkommando",
+      "settings-use-app2unit-description": "Brukar annan oppstartsmåte for å betre kunna ordna app-prosessar og for å hindra feil.",
+      "settings-use-app2unit-label": "Bruk App2Unit for å køyra applikasjonar",
+      "title": "Programveljar"
     },
     "lock-screen": {
       "allow-password-with-fprintd-description": "Når fprintd (fingeravtrykkautentisering) er aktiv, lar dette alternativet deg framleis logge inn med passordet ditt i staden for eit fingeravtrykk.",
       "allow-password-with-fprintd-label": "Tillat passordpålogging med fprintd",
       "auto-start-auth-description": "t.d. startar automatisk fingeravtrykksautentisering utan å krevje eit tastetrykk eller eit knappetrykk.",
-      "auto-start-auth-label": "Autostart autentisering"
+      "auto-start-auth-label": "Autostart autentisering",
+      "compact-lockscreen-description": "Viser berre inndata for å logga inn og systemkontrollar, gøymer miniprogramma for vêr og media.",
+      "compact-lockscreen-label": "Endefram låseskjerm",
+      "lock-on-suspend-description": "Låser skjermen automatisk når ein suspenderer systemet.",
+      "lock-on-suspend-label": "Lås på suspendering",
+      "show-hibernate-description": "Viser 'Set i full dvale' i straumkontrollane.",
+      "show-hibernate-label": "Vis full dvale",
+      "show-session-buttons-description": "Tillèt at ein kann bruka straumkontrollane frå låseskjermen.",
+      "show-session-buttons-label": "Straumkontrollar",
+      "title": "Låseskjerm"
+    },
+    "user-interface": {
+      "panel-background-opacity-description": "Set kor ugjennomsynleg bakgrunnen er for alle panel (oppgåvelina, programveljar, innstillingar osb.)."
     }
+  },
+  "placeholders": {
+    "search-launcher": "Søk i treff... eller bruk > for kommandoar"
   },
   "toast": {
     "donation-opened": "Donasjonsside opna i nettlesaren din"
