@@ -27,6 +27,10 @@ Item {
   opacity: 0
   scale: initialScale
 
+  property real progress: 1.0
+
+  // ... (previous properties)
+
   // Background rectangle (apply shadows here)
   Rectangle {
     id: background
@@ -40,9 +44,6 @@ Item {
     border.color: {
       var baseColor;
       switch (root.type) {
-      case "warning":
-        baseColor = Color.mPrimary;
-        break;
       case "error":
         baseColor = Color.mError;
         break;
@@ -52,6 +53,40 @@ Item {
       }
       return Qt.alpha(baseColor, Settings.data.notifications.backgroundOpacity || 1.0);
     }
+
+    // Progress bar
+    Rectangle {
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 2
+      color: "transparent"
+
+      Rectangle {
+        id: progressBar
+        readonly property real progressWidth: background.width - (2 * background.radius)
+        height: parent.height
+        // Mirrored logic: centers the bar as it shrinks
+        x: background.radius + (progressWidth * (1 - root.progress)) / 2
+        width: progressWidth * root.progress
+
+        color: {
+          var baseColor;
+          switch (root.type) {
+          case "warning":
+            baseColor = Color.mPrimary;
+            break;
+          case "error":
+            baseColor = Color.mError;
+            break;
+          default:
+            baseColor = Color.mPrimary; // Match standard notification color
+            break;
+          }
+          return Qt.alpha(baseColor, Settings.data.notifications.backgroundOpacity || 1.0);
+        }
+      }
+    }
   }
 
   NDropShadow {
@@ -59,6 +94,23 @@ Item {
     source: background
     autoPaddingEnabled: true
   }
+
+  NumberAnimation {
+    id: progressAnimation
+    target: root
+    property: "progress"
+    from: 1.0
+    to: 0.0
+    duration: root.duration
+    easing.type: Easing.Linear
+    onFinished: {
+      if (root.progress === 0.0 && root.visible) {
+        root.hide();
+      }
+    }
+  }
+
+  // Timer: hideTimer removed, using progressAnimation
 
   Behavior on opacity {
     NumberAnimation {
@@ -75,12 +127,6 @@ Item {
   }
 
   Timer {
-    id: hideTimer
-    interval: root.duration
-    onTriggered: root.hide()
-  }
-
-  Timer {
     id: hideAnimation
     interval: Style.animationFast
     onTriggered: {
@@ -91,7 +137,7 @@ Item {
 
   // Cleanup on destruction
   Component.onDestruction: {
-    hideTimer.stop();
+    progressAnimation.stop();
     hideAnimation.stop();
   }
 
@@ -100,8 +146,12 @@ Item {
     anchors.fill: background
     acceptedButtons: Qt.LeftButton
     hoverEnabled: true
-    onEntered: hideTimer.stop()
-    onExited: hideTimer.restart()
+    onEntered: {
+      progressAnimation.pause();
+    }
+    onExited: {
+      progressAnimation.resume();
+    }
     onClicked: root.hide()
     cursorShape: Qt.PointingHandCursor
   }
@@ -188,7 +238,7 @@ Item {
 
   function show(msgTitle, msgDescription, msgIcon, msgType, msgDuration, msgActionLabel, msgActionCallback) {
     // Stop all timers first
-    hideTimer.stop();
+    progressAnimation.stop();
     hideAnimation.stop();
 
     title = msgTitle;
@@ -202,20 +252,25 @@ Item {
     visible = true;
     opacity = 1.0;
     scale = 1.0;
+    progress = 1.0;
 
-    hideTimer.restart();
+    // Configure and start animation
+    progressAnimation.duration = duration;
+    progressAnimation.from = 1.0;
+    progressAnimation.to = 0.0;
+    progressAnimation.restart();
   }
 
   function hide() {
-    hideTimer.stop();
+    progressAnimation.stop();
     opacity = 0;
     scale = initialScale;
     hideAnimation.restart();
   }
 
   function hideImmediately() {
-    hideTimer.stop();
     hideAnimation.stop();
+    progressAnimation.stop();
     opacity = 0;
     scale = initialScale;
     root.visible = false;
