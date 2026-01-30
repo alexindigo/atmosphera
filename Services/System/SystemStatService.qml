@@ -20,6 +20,9 @@ Singleton {
   // Public values
   property real cpuUsage: 0
   property real cpuTemp: 0
+  property string cpuFreq: "0.0GHz"
+  property real cpuFreqRatio: 0
+  property real cpuGlobalMaxFreq: 3.5
   property real gpuTemp: 0
   property bool gpuAvailable: false
   property string gpuType: "" // "amd", "intel", "nvidia"
@@ -31,6 +34,7 @@ Singleton {
   property var diskPercents: ({})
   property var diskUsedGb: ({}) // Used space in GB per mount point
   property var diskSizeGb: ({}) // Total size in GB per mount point
+  property var diskAvailGb: ({})
   property real rxSpeed: 0
   property real txSpeed: 0
   property real zfsArcSizeKb: 0 // ZFS ARC cache size in KB
@@ -243,7 +247,10 @@ Singleton {
         restart();
       }
     }
-    onTriggered: cpuStatFile.reload()
+    onTriggered: {
+      cpuStatFile.reload();
+      cpuFreqProcess.running = true;
+    }
   }
 
   // Timer for load average
@@ -379,13 +386,13 @@ Singleton {
   }
 
   // --------------------------------------------
-  // Process to fetch disk usage (percent, used, size)
+  // Process to fetch disk usage (percent, used, size, avail)
   // Uses 'df' aka 'disk free'
   // "-x efivarfs' skips efivarfs mountpoints, for which the `statfs` syscall may cause system-wide stuttering
   // --block-size=1 gives us bytes for precise GB calculation
   Process {
     id: dfProcess
-    command: ["df", "--output=target,pcent,used,size", "--block-size=1", "-x", "efivarfs"]
+    command: ["df", "--output=target,pcent,used,size,avail", "--block-size=1", "-x", "efivarfs"]
     running: false
     stdout: StdioCollector {
       onStreamFinished: {
@@ -393,23 +400,27 @@ Singleton {
         const newPercents = {};
         const newUsedGb = {};
         const newSizeGb = {};
+        const newAvailGb = {};
         const bytesPerGb = 1024 * 1024 * 1024;
         // Start from line 1 (skip header)
         for (var i = 1; i < lines.length; i++) {
           const parts = lines[i].trim().split(/\s+/);
-          if (parts.length >= 4) {
+          if (parts.length >= 5) {
             const target = parts[0];
             const percent = parseInt(parts[1].replace(/[^0-9]/g, '')) || 0;
             const usedBytes = parseFloat(parts[2]) || 0;
             const sizeBytes = parseFloat(parts[3]) || 0;
+            const availBytes = parseFloat(parts[4]) || 0;
             newPercents[target] = percent;
             newUsedGb[target] = usedBytes / bytesPerGb;
             newSizeGb[target] = sizeBytes / bytesPerGb;
+            newAvailGb[target] = availBytes / bytesPerGb;
           }
         }
         root.diskPercents = newPercents;
         root.diskUsedGb = newUsedGb;
         root.diskSizeGb = newSizeGb;
+        root.diskAvailGb = newAvailGb;
       }
     }
   }
@@ -422,6 +433,55 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         root.nproc = parseInt(text.trim());
+      }
+    }
+  }
+
+  // Process to get avg cpu frquency
+  Process {
+    id: cpuFreqProcess
+    command: ["cat", "/proc/cpuinfo"]
+    running: false
+    stdout: StdioCollector {
+      onStreamFinished: {
+        let txt = text;
+        let matches = txt.match(/cpu MHz\s+:\s+([0-9.]+)/g);
+        if (matches && matches.length > 0) {
+          let totalFreq = 0.0;
+          for (let i = 0; i < matches.length; i++) {
+            totalFreq += parseFloat(matches[i].split(":")[1]);
+          }
+          let avgFreq = (totalFreq / matches.length) / 1000.0;
+          root.cpuFreq = avgFreq.toFixed(1) + " GHz";
+          cpuMaxFreqProcess.running = true;
+          if (avgFreq > root.cpuGlobalMaxFreq)
+          root.cpuGlobalMaxFreq = avgFreq;
+          if (root.cpuGlobalMaxFreq > 0) {
+            root.cpuFreqRatio = Math.min(1.0, avgFreq / root.cpuGlobalMaxFreq);
+          }
+        }
+      }
+    }
+  }
+
+  // Process to get maximum CPU frequency limit
+  // Uses sysfs 'scaling_max_freq' to respect power profiles (e.g. power-profiles-daemon)
+  // 'sort -nr | head -n1' ensures we get the highest limit across all cores
+  // '2>/dev/null' ignores errors if cpufreq driver is missing or cores are offline
+  Process {
+    id: cpuMaxFreqProcess
+    command: ["sh", "-c", "cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq 2>/dev/null | sort -nr | head -n1"]
+    running: false
+    stdout: StdioCollector {
+      onStreamFinished: {
+        let maxKHz = parseInt(text.trim());
+        if (!isNaN(maxKHz) && maxKHz > 0) {
+          let newMaxFreq = maxKHz / 1000000.0;
+          if (Math.abs(root.cpuGlobalMaxFreq - newMaxFreq) > 0.01) {
+            Logger.i("SystemStat", `CPU Max Freq changed: ${root.cpuGlobalMaxFreq} -> ${newMaxFreq} GHz`);
+            root.cpuGlobalMaxFreq = newMaxFreq;
+          }
+        }
       }
     }
   }

@@ -199,6 +199,7 @@ Singleton {
                                     "usePrimaryColor": false,
                                     "useMonospaceFont": true,
                                     "showCpuUsage": true,
+                                    "showCpuFreq": false,
                                     "showCpuTemp": true,
                                     "showGpuTemp": false,
                                     "showLoadAverage": false,
@@ -207,6 +208,7 @@ Singleton {
                                     "showSwapUsage": false,
                                     "showNetworkStats": false,
                                     "showDiskUsage": false,
+                                    "showDiskAsFree": false,
                                     "diskPath": "/"
                                   },
                                   "Taskbar": {

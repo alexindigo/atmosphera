@@ -20,6 +20,7 @@ ColumnLayout {
   property bool valueUsePrimaryColor: widgetData.usePrimaryColor !== undefined ? widgetData.usePrimaryColor : widgetMetadata.usePrimaryColor
   property bool valueUseMonospaceFont: widgetData.useMonospaceFont !== undefined ? widgetData.useMonospaceFont : widgetMetadata.useMonospaceFont
   property bool valueShowCpuUsage: widgetData.showCpuUsage !== undefined ? widgetData.showCpuUsage : widgetMetadata.showCpuUsage
+  property bool valueShowCpuFreq: widgetData.showCpuFreq !== undefined ? widgetData.showCpuFreq : widgetMetadata.showCpuFreq
   property bool valueShowCpuTemp: widgetData.showCpuTemp !== undefined ? widgetData.showCpuTemp : widgetMetadata.showCpuTemp
   property bool valueShowGpuTemp: widgetData.showGpuTemp !== undefined ? widgetData.showGpuTemp : widgetMetadata.showGpuTemp
   property bool valueShowLoadAverage: widgetData.showLoadAverage !== undefined ? widgetData.showLoadAverage : widgetMetadata.showLoadAverage
@@ -28,6 +29,7 @@ ColumnLayout {
   property bool valueShowSwapUsage: widgetData.showSwapUsage !== undefined ? widgetData.showSwapUsage : widgetMetadata.showSwapUsage
   property bool valueShowNetworkStats: widgetData.showNetworkStats !== undefined ? widgetData.showNetworkStats : widgetMetadata.showNetworkStats
   property bool valueShowDiskUsage: widgetData.showDiskUsage !== undefined ? widgetData.showDiskUsage : widgetMetadata.showDiskUsage
+  property bool valueShowDiskAsFree: widgetData.showDiskAsFree !== undefined ? widgetData.showDiskAsFree : widgetMetadata.showDiskAsFree
   property string valueDiskPath: widgetData.diskPath !== undefined ? widgetData.diskPath : widgetMetadata.diskPath
 
   function saveSettings() {
@@ -36,6 +38,7 @@ ColumnLayout {
     settings.usePrimaryColor = valueUsePrimaryColor;
     settings.useMonospaceFont = valueUseMonospaceFont;
     settings.showCpuUsage = valueShowCpuUsage;
+    settings.showCpuFreq = valueShowCpuFreq;
     settings.showCpuTemp = valueShowCpuTemp;
     settings.showGpuTemp = valueShowGpuTemp;
     settings.showLoadAverage = valueShowLoadAverage;
@@ -44,6 +47,7 @@ ColumnLayout {
     settings.showSwapUsage = valueShowSwapUsage;
     settings.showNetworkStats = valueShowNetworkStats;
     settings.showDiskUsage = valueShowDiskUsage;
+    settings.showDiskAsFree = valueShowDiskAsFree;
     settings.diskPath = valueDiskPath;
 
     return settings;
@@ -92,6 +96,18 @@ ColumnLayout {
     checked: valueShowCpuUsage
     onToggled: checked => {
                  valueShowCpuUsage = checked;
+                 settingsChanged(saveSettings());
+               }
+  }
+
+  NToggle {
+    id: showCpuFreq
+    Layout.fillWidth: true
+    label: "Show CPU Frequency" // TODO: use I18n.tr
+    description: "Display the current CPU clock speed in GHz" // TODO: use I18n.tr
+    checked: valueShowCpuFreq
+    onToggled: checked => {
+                 valueShowCpuFreq = checked;
                  settingsChanged(saveSettings());
                }
   }
@@ -192,6 +208,19 @@ ColumnLayout {
                  valueShowDiskUsage = checked;
                  settingsChanged(saveSettings());
                }
+  }
+
+  NToggle {
+    id: showDiskAsFree
+    Layout.fillWidth: true
+    label: "Show Free Space" // TODO: use I18n.tr
+    description: "Display available space (GB) instead of percentage" // TODO: use I18n.tr
+    checked: valueShowDiskAsFree
+    onToggled: checked => {
+                 valueShowDiskAsFree = checked;
+                 settingsChanged(saveSettings());
+               }
+    visible: valueShowDiskUsage
   }
 
   NComboBox {
