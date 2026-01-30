@@ -73,36 +73,37 @@ Item {
   }
 
   // Build comprehensive tooltip text with all stats
-  function buildTooltipText() {
-    let lines = [];
+  function buildTooltipContent() {
+    let rows = [];
 
     // CPU
-    lines.push(`${I18n.tr("system-monitor.cpu-usage")}: ${Math.round(SystemStatService.cpuUsage)}% (${SystemStatService.cpuFreq})`);
+    rows.push([I18n.tr("system-monitor.cpu-usage"), `${Math.round(SystemStatService.cpuUsage)}% (${SystemStatService.cpuFreq})`]);
+
     if (SystemStatService.cpuTemp > 0) {
-      lines.push(`${I18n.tr("system-monitor.cpu-temp")}: ${Math.round(SystemStatService.cpuTemp)}°C`);
+      rows.push([I18n.tr("system-monitor.cpu-temp"), `${Math.round(SystemStatService.cpuTemp)}°C`]);
     }
 
     // GPU (if available)
     if (SystemStatService.gpuAvailable) {
-      lines.push(`${I18n.tr("system-monitor.gpu-temp")}: ${Math.round(SystemStatService.gpuTemp)}°C`);
+      rows.push([I18n.tr("system-monitor.gpu-temp"), `${Math.round(SystemStatService.gpuTemp)}°C`]);
     }
 
     // Load Average
     if (SystemStatService.loadAvg1 >= 0) {
-      lines.push(`${I18n.tr("system-monitor.load-average")}: ${SystemStatService.loadAvg1.toFixed(2)} · ${SystemStatService.loadAvg5.toFixed(2)} · ${SystemStatService.loadAvg15.toFixed(2)}`);
+      rows.push([I18n.tr("system-monitor.load-average"), `${SystemStatService.loadAvg1.toFixed(2)} · ${SystemStatService.loadAvg5.toFixed(2)} · ${SystemStatService.loadAvg15.toFixed(2)}`]);
     }
 
     // Memory
-    lines.push(`${I18n.tr("common.memory")}: ${Math.round(SystemStatService.memPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.memGb).replace(/[^0-9.]/g, "") + " GB"})`);
+    rows.push([I18n.tr("common.memory"), `${Math.round(SystemStatService.memPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.memGb).replace(/[^0-9.]/g, "") + " GB"})`]);
 
     // Swap (if available)
     if (SystemStatService.swapTotalGb > 0) {
-      lines.push(`${I18n.tr("bar.system-monitor.swap-usage-label")}: ${Math.round(SystemStatService.swapPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.swapGb).replace(/[^0-9.]/g, "") + " GB"})`);
+      rows.push([I18n.tr("bar.system-monitor.swap-usage-label"), `${Math.round(SystemStatService.swapPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.swapGb).replace(/[^0-9.]/g, "") + " GB"})`]);
     }
 
     // Network
-    lines.push(`${I18n.tr("system-monitor.download-speed")}: ${SystemStatService.formatSpeed(SystemStatService.rxSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}` + "/s");
-    lines.push(`${I18n.tr("system-monitor.upload-speed")}: ${SystemStatService.formatSpeed(SystemStatService.txSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}` + "/s");
+    rows.push([I18n.tr("system-monitor.download-speed"), `${SystemStatService.formatSpeed(SystemStatService.rxSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}` + "/s"]);
+    rows.push([I18n.tr("system-monitor.upload-speed"), `${SystemStatService.formatSpeed(SystemStatService.txSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}` + "/s"]);
 
     // Disk
     const diskPercent = SystemStatService.diskPercents[diskPath];
@@ -110,11 +111,13 @@ Item {
       const usedGb = SystemStatService.diskUsedGb[diskPath] || 0;
       const sizeGb = SystemStatService.diskSizeGb[diskPath] || 0;
       const availGb = SystemStatService.diskAvailGb[diskPath] || 0;
-      lines.push(`${I18n.tr("system-monitor.disk")}: ${usedGb.toFixed(1)}G / ${sizeGb.toFixed(1)}G Used (${diskPercent}%)`);
-      lines.push(`Available: ${availGb.toFixed(1)}G`);
+      rows.push([I18n.tr("system-monitor.disk"), `${usedGb.toFixed(1)}GB/${sizeGb.toFixed(1)}GB (${diskPercent}%)`]);
+
+      // TODO i18n
+      rows.push(["Available", `${availGb.toFixed(1)}G`]);
     }
 
-    return lines.join("\n");
+    return rows;
   }
 
   readonly property color textColor: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
@@ -918,7 +921,7 @@ Item {
                  }
                }
     onEntered: {
-      TooltipService.show(root, buildTooltipText(), BarService.getTooltipDirection(root.screen?.name));
+      TooltipService.show(root, buildTooltipContent(), BarService.getTooltipDirection(root.screen?.name));
       tooltipRefreshTimer.start();
     }
     onExited: {
@@ -933,7 +936,7 @@ Item {
     repeat: true
     onTriggered: {
       if (tooltipArea.containsMouse) {
-        TooltipService.updateText(buildTooltipText());
+        TooltipService.updateText(buildTooltipContent());
       }
     }
   }
