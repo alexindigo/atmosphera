@@ -21,6 +21,8 @@ Singleton {
   property real cpuUsage: 0
   property real cpuTemp: 0
   property string cpuFreq: "0.0GHz"
+  property real cpuFreqRatio: 0
+  property real cpuGlobalMaxFreq: 3.5
   property real gpuTemp: 0
   property bool gpuAvailable: false
   property string gpuType: "" // "amd", "intel", "nvidia"
@@ -447,11 +449,38 @@ Singleton {
         if (matches && matches.length > 0) {
           let totalFreq = 0.0;
           for (let i = 0; i < matches.length; i++) {
-            let val = parseFloat(matches[i].split(":")[1]);
-            totalFreq += val;
+            totalFreq += parseFloat(matches[i].split(":")[1]);
           }
           let avgFreq = (totalFreq / matches.length) / 1000.0;
-          root.cpuFreq = avgFreq.toFixed(1) + "GHz";
+          root.cpuFreq = avgFreq.toFixed(1) + " GHz";
+          cpuMaxFreqProcess.running = true;
+          if (avgFreq > root.cpuGlobalMaxFreq)
+          root.cpuGlobalMaxFreq = avgFreq;
+          if (root.cpuGlobalMaxFreq > 0) {
+            root.cpuFreqRatio = Math.min(1.0, avgFreq / root.cpuGlobalMaxFreq);
+          }
+        }
+      }
+    }
+  }
+
+  // Process to get maximum CPU frequency limit
+  // Uses sysfs 'scaling_max_freq' to respect power profiles (e.g. power-profiles-daemon)
+  // 'sort -nr | head -n1' ensures we get the highest limit across all cores
+  // '2>/dev/null' ignores errors if cpufreq driver is missing or cores are offline
+  Process {
+    id: cpuMaxFreqProcess
+    command: ["sh", "-c", "cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq 2>/dev/null | sort -nr | head -n1"]
+    running: false
+    stdout: StdioCollector {
+      onStreamFinished: {
+        let maxKHz = parseInt(text.trim());
+        if (!isNaN(maxKHz) && maxKHz > 0) {
+          let newMaxFreq = maxKHz / 1000000.0;
+          if (Math.abs(root.cpuGlobalMaxFreq - newMaxFreq) > 0.01) {
+            Logger.i("SystemStat", `CPU Max Freq changed: ${root.cpuGlobalMaxFreq} -> ${newMaxFreq} GHz`);
+            root.cpuGlobalMaxFreq = newMaxFreq;
+          }
         }
       }
     }

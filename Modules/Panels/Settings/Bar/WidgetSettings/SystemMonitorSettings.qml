@@ -104,13 +104,12 @@ ColumnLayout {
     id: showCpuFreq
     Layout.fillWidth: true
     label: "Show CPU Frequency" // TODO: use I18n.tr
-    description: "Display frequency (GHz) instead of usage percentage" // TODO: use I18n.tr
+    description: "Display the current CPU clock speed in GHz" // TODO: use I18n.tr
     checked: valueShowCpuFreq
     onToggled: checked => {
                  valueShowCpuFreq = checked;
                  settingsChanged(saveSettings());
                }
-    visible: valueShowCpuUsage
   }
 
   NToggle {

@@ -77,7 +77,7 @@ Item {
     let lines = [];
 
     // CPU
-    lines.push(`${I18n.tr("system-monitor.cpu-usage")}: ${Math.round(SystemStatService.cpuUsage)}%`);
+    lines.push(`${I18n.tr("system-monitor.cpu-usage")}: ${Math.round(SystemStatService.cpuUsage)}% (${SystemStatService.cpuFreq})`);
     if (SystemStatService.cpuTemp > 0) {
       lines.push(`${I18n.tr("system-monitor.cpu-temp")}: ${Math.round(SystemStatService.cpuTemp)}°C`);
     }
@@ -254,7 +254,7 @@ Item {
           // Text mode
           NText {
             visible: !compactMode
-            text: (showCpuFreq && !isVertical) ? SystemStatService.cpuFreq.replace(" ", "") : `${Math.round(SystemStatService.cpuUsage)}%`
+            text: `${Math.round(SystemStatService.cpuUsage)}%`
             family: fontFamily
             pointSize: barFontSize
             applyUiScale: false
@@ -278,6 +278,74 @@ Item {
             onLoaded: {
               item.ratio = Qt.binding(() => SystemStatService.cpuUsage / 100);
               item.statColor = Qt.binding(() => SystemStatService.cpuColor);
+            }
+          }
+        }
+      }
+
+      // CPU Frequency Component
+      Item {
+        id: cpuFreqContainer
+        implicitWidth: cpuFreqContent.implicitWidth
+        implicitHeight: cpuFreqContent.implicitHeight
+        Layout.preferredWidth: isVertical ? root.width : implicitWidth
+        Layout.preferredHeight: compactMode ? implicitHeight : capsuleHeight
+        Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
+        visible: showCpuFreq && (!isVertical || compactMode)
+
+        GridLayout {
+          id: cpuFreqContent
+          anchors.centerIn: parent
+          flow: (isVertical && !compactMode) ? GridLayout.TopToBottom : GridLayout.LeftToRight
+          rows: (isVertical && !compactMode) ? 2 : 1
+          columns: (isVertical && !compactMode) ? 1 : 2
+          rowSpacing: Style.marginXXS
+          columnSpacing: compactMode ? 3 : Style.marginXS
+
+          Item {
+            Layout.preferredWidth: iconSize
+            Layout.preferredHeight: (compactMode || isVertical) ? iconSize : capsuleHeight
+            Layout.alignment: Qt.AlignCenter
+            Layout.row: (isVertical && !compactMode) ? 1 : 0
+            Layout.column: 0
+
+            NIcon {
+              icon: "cpu-usage"
+              pointSize: iconSize
+              applyUiScale: false
+              x: Style.pixelAlignCenter(parent.width, width)
+              y: Style.pixelAlignCenter(parent.height, contentHeight)
+              color: Color.mOnSurface
+            }
+          }
+
+          // Text mode
+          NText {
+            visible: !compactMode
+            text: SystemStatService.cpuFreq.replace(" ", "")
+            family: fontFamily
+            pointSize: barFontSize
+            applyUiScale: false
+            Layout.alignment: Qt.AlignCenter
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            color: textColor
+            Layout.row: isVertical ? 0 : 0
+            Layout.column: isVertical ? 0 : 1
+          }
+
+          // Compact mode
+          Loader {
+            active: compactMode
+            visible: compactMode
+            sourceComponent: miniGaugeComponent
+            Layout.alignment: Qt.AlignCenter
+            Layout.row: 0
+            Layout.column: 1
+
+            onLoaded: {
+              item.ratio = Qt.binding(() => SystemStatService.cpuFreqRatio);
+              item.statColor = Qt.binding(() => Color.mPrimary);
             }
           }
         }
