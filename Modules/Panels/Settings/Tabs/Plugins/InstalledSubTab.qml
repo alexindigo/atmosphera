@@ -41,7 +41,7 @@ ColumnLayout {
                     "count": updateCount
                   })
     icon: "download"
-    visible: updateCount >= 2
+    visible: (updateCount > 0)
     enabled: !isUpdating
     backgroundColor: Color.mPrimary
     textColor: Color.mOnPrimary
