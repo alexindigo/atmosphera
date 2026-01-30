@@ -1350,8 +1350,9 @@ SmartPanel {
             horizontalPolicy: ScrollBar.AlwaysOff
             verticalPolicy: ScrollBar.AlwaysOff
             reserveScrollbarSpace: false
-            gradientColor: "transparent" //Color.mSurface
+            gradientColor: Color.mSurface
             wheelScrollMultiplier: 4.0
+            trackedSelectionIndex: root.selectedIndex
 
             width: parent.width
             height: parent.height
