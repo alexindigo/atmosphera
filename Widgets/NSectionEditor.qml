@@ -111,7 +111,7 @@ NBox {
     return [Color.mPrimary, Color.mOnPrimary];
   }
 
-  // Check if widget has settings (either core widget with allowUserSettings or plugin with settings entry point)
+  // Check if widget has settings (either core widget with metadata or plugin with settings entry point)
   function widgetHasSettings(widgetId) {
     // Check if it's a core widget with user settings
     if (root.widgetRegistry && root.widgetRegistry.widgetHasUserSettings(widgetId)) {

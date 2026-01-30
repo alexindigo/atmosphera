@@ -372,12 +372,7 @@ Singleton {
   // Helper function to check if widget has user settings
   function widgetHasUserSettings(id) {
     var meta = widgetMetadata[id];
-    if (meta === undefined)
-      return false;
-    // allowUserSettings=false lets a widget opt out of the settings dialog
-    if (meta.allowUserSettings === false)
-      return false;
-    return true;
+    return (meta !== undefined);
   }
 
   // ------------------------------
