@@ -73,6 +73,8 @@ Singleton {
   readonly property int swapCriticalThreshold: Settings.data.systemMonitor.swapCriticalThreshold
   readonly property int diskWarningThreshold: Settings.data.systemMonitor.diskWarningThreshold
   readonly property int diskCriticalThreshold: Settings.data.systemMonitor.diskCriticalThreshold
+  readonly property int diskAvailWarningThreshold: Settings.data.systemMonitor.diskAvailWarningThreshold
+  readonly property int diskAvailCriticalThreshold: Settings.data.systemMonitor.diskAvailCriticalThreshold
 
   // Computed warning/critical states (uses >= inclusive comparison)
   readonly property bool cpuWarning: cpuUsage >= cpuWarningThreshold
@@ -87,12 +89,12 @@ Singleton {
   readonly property bool swapCritical: swapPercent >= swapCriticalThreshold
 
   // Helper functions for disk (disk path is dynamic)
-  function isDiskWarning(diskPath) {
-    return (diskPercents[diskPath] || 0) >= diskWarningThreshold;
+  function isDiskWarning(diskPath, available = false) {
+    return available ? (diskAvailPercents[diskPath] || 0) <= diskAvailWarningThreshold : (diskPercents[diskPath] || 0) >= diskWarningThreshold;
   }
 
-  function isDiskCritical(diskPath) {
-    return (diskPercents[diskPath] || 0) >= diskCriticalThreshold;
+  function isDiskCritical(diskPath, available = false) {
+    return available ? (diskAvailPercents[diskPath] || 0) <= diskAvailCriticalThreshold : (diskPercents[diskPath] || 0) >= diskCriticalThreshold;
   }
 
   // Ready-to-use stat colors (for gauges, panels, icons)
@@ -102,8 +104,8 @@ Singleton {
   readonly property color memColor: memCritical ? criticalColor : (memWarning ? warningColor : Color.mPrimary)
   readonly property color swapColor: swapCritical ? criticalColor : (swapWarning ? warningColor : Color.mPrimary)
 
-  function getDiskColor(diskPath) {
-    return isDiskCritical(diskPath) ? criticalColor : (isDiskWarning(diskPath) ? warningColor : Color.mPrimary);
+  function getDiskColor(diskPath, available = false) {
+    return isDiskCritical(diskPath, available) ? criticalColor : (isDiskWarning(diskPath, available) ? warningColor : Color.mPrimary);
   }
 
   // Helper function for color resolution based on value and thresholds

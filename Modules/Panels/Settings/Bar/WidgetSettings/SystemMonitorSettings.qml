@@ -201,8 +201,8 @@ ColumnLayout {
   NToggle {
     id: showDiskUsageAsPercent
     Layout.fillWidth: true
-    label: "Disk as percentage"
-    description: "Show disk space as percentage instead of absolute values."
+    label: I18n.tr("bar.system-monitor.storage-as-percentage-label")
+    description: I18n.tr("bar.system-monitor.storage-as-percentage-description")
     checked: valueShowDiskUsageAsPercent
     onToggled: checked => {
                  valueShowDiskUsageAsPercent = checked;
@@ -213,8 +213,8 @@ ColumnLayout {
   NToggle {
     id: showDiskAvailable
     Layout.fillWidth: true
-    label: "Disk space available"
-    description: "Shows how much disk space is available instead of how much is used."
+    label: I18n.tr("bar.system-monitor.storage-available-label")
+    description: I18n.tr("bar.system-monitor.storage-available-description")
     checked: valueShowDiskAvailable
     onToggled: checked => {
                  valueShowDiskAvailable = checked;
