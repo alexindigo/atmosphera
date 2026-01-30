@@ -913,6 +913,7 @@ Item {
   }
 
   function openGroupedContextMenu(item) {
-    PanelService.showContextMenu(contextMenu, item, screen);
+    // Anchor to root (not item) because Repeater delegate items can cause issues on some compositors
+    PanelService.showContextMenu(contextMenu, root, screen);
   }
 }

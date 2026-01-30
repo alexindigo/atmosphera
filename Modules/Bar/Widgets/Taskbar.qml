@@ -985,6 +985,7 @@ Item {
     // Set the model directly
     contextMenu.model = items;
 
-    PanelService.showContextMenu(contextMenu, item, screen);
+    // Anchor to root (not item) because Repeater delegate items can cause issues on some compositors
+    PanelService.showContextMenu(contextMenu, root, screen);
   }
 }
