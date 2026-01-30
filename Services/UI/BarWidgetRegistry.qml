@@ -371,8 +371,7 @@ Singleton {
 
   // Helper function to check if widget has user settings
   function widgetHasUserSettings(id) {
-    var meta = widgetMetadata[id];
-    return (meta !== undefined);
+    return widgetMetadata[id] !== undefined;
   }
 
   // ------------------------------
