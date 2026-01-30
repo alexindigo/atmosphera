@@ -762,6 +762,14 @@ SmartPanel {
     }
   }
 
+  WindowsProvider {
+    id: windowsProvider
+    Component.onCompleted: {
+      registerProvider(this);
+      Logger.d("Launcher", "Registered: WindowsProvider");
+    }
+  }
+
   // ---------------------------------------------------
   panelContent: Rectangle {
     id: ui
