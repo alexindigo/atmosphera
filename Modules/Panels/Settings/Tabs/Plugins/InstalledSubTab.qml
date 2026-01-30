@@ -457,6 +457,8 @@ ColumnLayout {
     var manifest = PluginRegistry.getPluginManifest(pluginId);
     var pluginName = manifest?.name || pluginId;
 
+    BarService.widgetsRevision++;
+
     ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.uninstalling", {
                                                                        "plugin": pluginName
                                                                      }));
