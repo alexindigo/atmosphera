@@ -1390,11 +1390,11 @@
       "automation-change-mode-alphabetical": "Alfabético",
       "automation-change-mode-description": "Elija cómo se seleccionan los fondos de pantalla al cambiar automáticamente.",
       "automation-change-mode-label": "Modo de cambio",
-      "automation-custom-interval-description": "Ingresa el tiempo como HH:MM (ej., 01:30).",
+      "automation-custom-interval-description": "Introduce el tiempo en formato HH:MM (p.ej., 01:30).",
       "automation-custom-interval-label": "Intervalo personalizado",
       "automation-interval-description": "Con qué frecuencia cambiar los fondos de pantalla automáticamente.",
       "automation-interval-label": "Intervalo del fondo de pantalla",
-      "automation-random-wallpaper-description": "Programa cambios aleatorios de fondo de pantalla a intervalos regulares.",
+      "automation-random-wallpaper-description": "Programa cambios aleatorios del fondo de pantalla a intervalos regulares.",
       "automation-scheduled-change-description": "Cambiar automáticamente los fondos de pantalla a intervalos regulares.",
       "automation-scheduled-change-label": "Cambio programado",
       "look-feel-edge-smoothness-description": "Aplica un efecto suave y difuminado al borde de las transiciones.",
@@ -1437,12 +1437,12 @@
   },
   "placeholders": {
     "command-example": "echo \"Hola, mundo\"",
-    "enter-command": "Ingresa el comando a ejecutar (aplicación o script personalizado)",
-    "enter-ipc-identifier": "Introduzca un identificador único para los comandos IPC",
-    "enter-path": "Ingrese la ruta...",
-    "enter-text-to-collapse": "por ejemplo, 'no se está reproduciendo nada'. Usa /regex/ para patrones.",
-    "enter-tooltip": "Introducir información sobre herramientas",
-    "enter-width-pixels": "Ingresa el ancho en píxeles",
+    "enter-command": "Introduce el comando a ejecutar (aplicación o script personalizado)",
+    "enter-ipc-identifier": "Introduce un identificador único para los comandos IPC",
+    "enter-path": "Introduce la ruta...",
+    "enter-text-to-collapse": "p.ej., 'no se está reproduciendo nada'. Usa /regex/ para patrones.",
+    "enter-tooltip": "Introduce tooltip",
+    "enter-width-pixels": "Introduce el ancho en píxeles",
     "search": "Buscar...",
     "search-icons": "ej., noctalia, niri, battery, cloud",
     "search-launcher": "Buscar entradas... o usa > para comandos",
@@ -1474,7 +1474,7 @@
   "setup": {
     "all-done": "¡Listo!",
     "appearance": {
-      "subheader": "Elige el Dark Mode y las fuentes de color (Wallpaper o predefinidas)."
+      "subheader": "Elige el Modo Oscuro y las fuentes de color (Wallpaper o predefinidas)."
     },
     "customize": {
       "header": "Personaliza tu experiencia",
@@ -1482,14 +1482,14 @@
     },
     "skip-setup": "Omitir la configuración",
     "telemetry-wizard-done": "¡Entendido!",
-    "telemetry-wizard-note": "Tienes el control: activa o desactiva esto cuando quieras en los Ajustes",
+    "telemetry-wizard-note": "Tienes el control — activa o desactiva esto cuando quieras en los Ajustes",
     "telemetry-wizard-subtitle": "Hemos añadido analíticas anónimas para ayudar a mejorar Noctalia",
     "telemetry-wizard-title": "Actualización de privacidad",
     "wallpaper": {
-      "choose-dir": "Elige un directorio que contenga tus fondos",
+      "choose-dir": "Elige un directorio que contenga tus fondos de pantalla",
       "dir-browse": "Seleccionar carpeta",
-      "dir-description": "Elige la carpeta que contiene tus fondos.",
-      "dir-label": "Directorio de fondos",
+      "dir-description": "Elige la carpeta que contiene tus fondos de pantalla.",
+      "dir-label": "Directorio de fondos de pantalla",
       "dir-select-title": "Seleccionar carpeta de fondos",
       "header": "Elige tu fondo",
       "no-dir": "No se seleccionó un directorio de fondos",
@@ -1499,7 +1499,7 @@
       "select-prompt": "Selecciona un fondo abajo",
       "subheader": "Define el ambiente con un bonito fondo."
     },
-    "welcome-note": "Solo algunos conceptos básicos para empezar: todas las opciones están en configuración",
+    "welcome-note": "Solo algunos ajustes básicos para empezar — las opciones al completo están en configuración",
     "welcome-subtitle": "Hagamos que tu escritorio sea único",
     "welcome-title": "¡Bienvenido a Noctalia!"
   },
@@ -1523,7 +1523,7 @@
     "disk": "Disco",
     "download-speed": "Velocidad de descarga",
     "gpu-temp": "Temperatura de GPU",
-    "load-average": "Carga prom.",
+    "load-average": "Carga media",
     "title": "Monitor del sistema",
     "upload-speed": "Velocidad de subida"
   },
@@ -1546,8 +1546,8 @@
       "display-code": "Introduce el código {value} en el otro dispositivo.",
       "forget-failed": "Error al olvidar el dispositivo",
       "pair-failed": "Error al emparejar el dispositivo",
-      "passkey-required": "Se requiere una clave de acceso del dispositivo.",
-      "pincode-required": "Se requiere el código PIN del dispositivo.",
+      "passkey-required": "El dispositivo requiere una clave de acceso.",
+      "pincode-required": "El dispositivo requiere código PIN.",
       "state-change-failed": "Error al cambiar el estado de Bluetooth"
     },
     "clipboard": {
@@ -1583,7 +1583,7 @@
     },
     "power-profile": {
       "changed": "Perfil de energía cambiado",
-      "profile-name": "{profile"
+      "profile-name": "{profile}"
     },
     "theming-processor-failed": {
       "desc-generic": "Se encontró un error al procesar las plantillas",
@@ -1643,7 +1643,7 @@
     "open-settings": "Configuración",
     "open-tray-dropdown": "Bandeja del sistema",
     "output-muted": "Alternar silencio de salida",
-    "power-profile": "{profile} perfil de energía",
+    "power-profile": "Perfil de energía {profile}",
     "previous-media": "Pista anterior",
     "previous-month": "Mes anterior",
     "refresh-devices": "Actualizar dispositivos",
@@ -1653,8 +1653,8 @@
     "search-close": "Cerrar búsqueda",
     "session-menu": "Menú de sesión",
     "show-all-devices": "Mostrar todos los dispositivos",
-    "switch-to-dark-mode": "Modo oscuro",
-    "switch-to-light-mode": "Modo claro",
+    "switch-to-dark-mode": "Modo Oscuro",
+    "switch-to-light-mode": "Modo Claro",
     "unmute": "Activar el audio",
     "up": "Directorio superior",
     "volume-at": "Volumen de salida: {volume}%",
@@ -1663,7 +1663,7 @@
   "wallpaper": {
     "browse": {
       "empty-directory": "Este directorio está vacío.",
-      "go-root": "Ir a la raíz del fondo de pantalla",
+      "go-root": "Ir a la carpeta raíz de fondos de pantalla",
       "go-up": "Ir a la carpeta superior",
       "go-up-hint": "Usa el botón de atrás para navegar hacia arriba."
     },
@@ -1706,7 +1706,7 @@
       "sorting-favorites": "Favoritos",
       "sorting-label": "Ordenar por",
       "sorting-relevance": "Relevancia",
-      "sorting-toplist": "Lista superior",
+      "sorting-toplist": "Mejores",
       "sorting-views": "Visualizaciones",
       "source-label": "Fuente",
       "source-wallhaven": "Wallhaven",
@@ -1764,7 +1764,7 @@
       "minute-leading-zero": "Minuto con cero inicial (00-59)",
       "minute-no-leading-zero": "Minuto sin cero inicial (0-59)",
       "month-abbreviated": "Nombre del mes abreviado",
-      "month-full": "Nombre completo del mes",
+      "month-full": "Nombre del mes completo",
       "month-number-leading-zero": "Mes como número con cero inicial (01-12)",
       "month-number-no-zero": "Mes como número sin cero inicial (1-12)",
       "second-leading-zero": "Segundo con cero inicial (00-59)",
@@ -1777,15 +1777,15 @@
       "item": "elemento",
       "items": "elementos",
       "search-placeholder": "Buscar archivos y carpetas...",
-      "select-current": "Seleccionar actual",
-      "select-file": "Seleccionar archivo",
-      "select-folder": "Seleccionar carpeta",
+      "select-current": "Seleccionar Actual",
+      "select-file": "Seleccionar Archivo",
+      "select-folder": "Seleccionar Carpeta",
       "selected": "Seleccionado:",
-      "title": "Selector de archivos"
+      "title": "Selector de Archivos"
     },
     "file-picker-title": "Seleccionar un archivo",
     "icon-picker": {
-      "title": "Selector de iconos"
+      "title": "Selector de Iconos"
     },
     "tooltip-placeholder": "Marcador de posición"
   },
@@ -1810,7 +1810,7 @@
       "known-networks": "Redes conocidas",
       "link-speed": "Velocidad de enlace",
       "no-ethernet-devices": "No se detectaron dispositivos Ethernet",
-      "no-networks": "No se encontraron redes",
+      "no-networks": "No se encontraron redes Wi-Fi",
       "saved": "Guardado",
       "scan-again": "Escanear de nuevo",
       "searching": "Buscando redes cercanas...",
@@ -1818,9 +1818,9 @@
     },
     "signal": {
       "excellent": "Excelente",
-      "fair": "Regular",
+      "fair": "Razonable",
       "good": "Bueno",
-      "poor": "Débil"
+      "poor": "Pobre"
     }
   }
 }
