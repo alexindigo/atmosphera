@@ -533,8 +533,8 @@ Loader {
           WlrLayershell.namespace: "noctalia-dock-" + (screen?.name || "unknown")
           WlrLayershell.exclusionMode: exclusive ? ExclusionMode.Auto : ExclusionMode.Ignore
 
-          implicitWidth: Math.round(dockContainerWrapper.width + (root.isVertical ? 0 : Style.marginXL * 6))
-          implicitHeight: Math.round(dockContainerWrapper.height + (root.isVertical ? Style.marginXL * 6 : 0))
+          implicitWidth: dockContainerWrapper.width
+          implicitHeight: dockContainerWrapper.height
 
           // Position based on dock setting
           anchors.top: dockPosition === "top"
@@ -661,9 +661,9 @@ Loader {
                 interactive: isVertical ? contentHeight > height : contentWidth > width
 
                 // Centering margins
-                leftMargin: !isVertical && contentWidth < width ? (width - contentWidth) / 2 : 0
+                leftMargin: contentWidth < width ? (width - contentWidth) / 2 : 0
                 rightMargin: leftMargin
-                topMargin: isVertical && contentHeight < height ? (height - contentHeight) / 2 : 0
+                topMargin: contentHeight < height ? (height - contentHeight) / 2 : 0
                 bottomMargin: topMargin
 
                 WheelHandler {
