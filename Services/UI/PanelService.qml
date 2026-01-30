@@ -64,7 +64,8 @@ Singleton {
   }
 
   // Show a context menu with proper handling for all compositors
-  function showContextMenu(contextMenu, anchorItem, screen) {
+  // Optional targetItem: if provided, menu will be horizontally centered on this item instead of anchorItem
+  function showContextMenu(contextMenu, anchorItem, screen, targetItem) {
     if (!contextMenu || !anchorItem)
       return;
 
@@ -74,7 +75,7 @@ Singleton {
     var popupMenuWindow = getPopupMenuWindow(screen);
     if (popupMenuWindow) {
       popupMenuWindow.showContextMenu(contextMenu);
-      contextMenu.openAtItem(anchorItem, screen);
+      contextMenu.openAtItem(anchorItem, screen, targetItem);
     }
   }
 
