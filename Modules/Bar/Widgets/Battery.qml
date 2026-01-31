@@ -52,17 +52,7 @@ Item {
   readonly property bool testPluggedIn: false
 
   readonly property string deviceNativePath: widgetSettings.deviceNativePath !== undefined ? widgetSettings.deviceNativePath : widgetMetadata.deviceNativePath
-  readonly property var selectedBattery: BatteryService.findUPowerDevice(deviceNativePath)
-  readonly property var selectedBluetoothDevice: BatteryService.findBluetoothDevice(deviceNativePath)
-  readonly property var selectedDevice: {
-    if (BatteryService.isDevicePresent(selectedBluetoothDevice)) {
-      return selectedBluetoothDevice;
-    }
-    if (BatteryService.isDevicePresent(selectedBattery)) {
-      return selectedBattery;
-    }
-    return null;
-  }
+  readonly property var selectedDevice: BatteryService.isDevicePresent(BatteryService.findDevice(deviceNativePath)) ? BatteryService.findDevice(deviceNativePath) : null
 
   // Check if selected device is actually present/connected
   readonly property bool isPresent: testMode ? true : BatteryService.isDevicePresent(selectedDevice)
@@ -92,7 +82,7 @@ Item {
   }
 
   Connections {
-    target: selectedDevice?.type === UPowerDeviceType.Battery ? selectedDevice : null
+    target: selectedDevice
 
     function onPercentageChanged() {
       maybeNotify(BatteryService.getPercentage(selectedDevice), isCharging, isPluggedIn, isReady);
@@ -101,14 +91,6 @@ Item {
       if (isCharging || isPluggedIn) {
         hasNotifiedLowBattery = false;
       }
-      maybeNotify(BatteryService.getPercentage(selectedDevice), isCharging, isPluggedIn, isReady);
-    }
-  }
-
-  Connections {
-    target: selectedDevice?.batteryAvailable ? selectedDevice : null
-
-    function onBatteryChanged() {
       maybeNotify(BatteryService.getPercentage(selectedDevice), isCharging, isPluggedIn, isReady);
     }
   }
@@ -177,7 +159,7 @@ Item {
 
       // If we are showing the main laptop battery, append external devices
       if (isInternal) {
-        var external = BatteryService.externalBatteries;
+        var external = BatteryService.bluetoothBatteries;
         if (external.length > 0) {
           if (lines.length > 0)
             lines.push(""); // Separator
