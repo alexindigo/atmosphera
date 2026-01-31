@@ -4,68 +4,61 @@ import qs.Commons
 
 Item {
   id: root
-  clip: true // Clip curves that overshoot bounds
+  clip: true // Clip bezier overshoot
 
+  // Primary line
   property var values: []
+  property color color: Color.mPrimary
+
+  // Optional secondary line
+  property var values2: []
+  property color color2: Color.mError
+
+  // Range settings for primary line
   property real minValue: 0
   property real maxValue: 100
-  property bool autoScale: false
-  property color color: Color.mPrimary
+
+  // Range settings for secondary line (defaults to primary range)
+  property real minValue2: minValue
+  property real maxValue2: maxValue
+
+  // Style settings
   property real strokeWidth: 2 * Style.uiScaleRatio
   property bool fill: true
   property real fillOpacity: 0.15
 
-  readonly property bool hasData: values.length >= 2
-
   // Padding for bezier overshoot (percentage of range)
   readonly property real curvePadding: 0.08
 
-  // Computed effective range for rendering (includes padding for bezier overshoot)
-  readonly property real effectiveMin: {
-    let min = minValue;
-    let max = maxValue;
-    if (autoScale && values && values.length > 0) {
-      min = Math.min(...values);
-      max = Math.max(...values);
-    }
-    let range = max - min;
-    let padding = range * curvePadding;
-    return min - padding;
-  }
-  readonly property real effectiveMax: {
-    let min = minValue;
-    let max = maxValue;
-    if (autoScale && values && values.length > 0) {
-      min = Math.min(...values);
-      max = Math.max(...values);
-    }
-    let range = max - min;
-    let padding = range * curvePadding;
-    return max + padding;
-  }
+  readonly property bool hasData: values.length >= 2
+  readonly property bool hasData2: values2.length >= 2
 
-  // Convert a value to Y coordinate (no clamping - let bezier control points overshoot naturally)
-  function valueToY(val) {
-    let range = effectiveMax - effectiveMin;
+  // Convert a value to Y coordinate (with padding for bezier curves)
+  function valueToY(val, minVal, maxVal) {
+    let range = maxVal - minVal;
     if (range <= 0)
       return height / 2;
-    let normalized = (val - effectiveMin) / range;
+    let padding = range * curvePadding;
+    let paddedMin = minVal - padding;
+    let paddedMax = maxVal + padding;
+    let paddedRange = paddedMax - paddedMin;
+    let normalized = (val - paddedMin) / paddedRange;
     return height - normalized * height;
   }
 
-  // Generate SVG path using monotone cubic interpolation (better for data visualization)
-  readonly property string curvePath: {
-    if (!values || values.length < 2 || width <= 0 || height <= 0)
+  // Generate SVG path for a given values array using monotone cubic interpolation
+  function generateCurvePath(vals, minVal, maxVal) {
+    if (!vals || vals.length < 2 || width <= 0 || height <= 0)
       return "";
 
-    const n = values.length;
+    const n = vals.length;
 
     // Build array of points
     let points = [];
     for (let i = 0; i < n; i++) {
       points.push({
                     x: (i / (n - 1)) * width,
-                    y: valueToY(values[i])
+                    y: valueToY(vals[i], minVal, maxVal)
                   });
     }
 
@@ -109,21 +102,29 @@ Item {
     return path;
   }
 
-  // Path for the filled area (curve + bottom edge)
-  readonly property string fillPath: {
+  // Generate fill path (curve + bottom edge)
+  function generateFillPath(curvePath) {
     if (!curvePath || width <= 0 || height <= 0)
       return "";
     return curvePath + ` L ${width.toFixed(2)} ${height.toFixed(2)} L 0 ${height.toFixed(2)} Z`;
   }
+
+  // Computed paths for primary line
+  readonly property string curvePath: generateCurvePath(values, minValue, maxValue)
+  readonly property string fillPath: generateFillPath(curvePath)
+
+  // Computed paths for secondary line
+  readonly property string curvePath2: generateCurvePath(values2, minValue2, maxValue2)
+  readonly property string fillPath2: generateFillPath(curvePath2)
 
   Shape {
     anchors.fill: parent
     layer.enabled: true
     layer.samples: 4
     antialiasing: true
-    visible: root.hasData
+    visible: root.hasData || root.hasData2
 
-    // Filled area under the curve
+    // Primary line fill
     ShapePath {
       strokeColor: "transparent"
       strokeWidth: 0
@@ -134,7 +135,7 @@ Item {
         y2: root.height
         GradientStop {
           position: 0.0
-          color: Qt.rgba(root.color.r, root.color.g, root.color.b, root.fillOpacity)
+          color: Qt.rgba(root.color.r, root.color.g, root.color.b, root.fill ? root.fillOpacity : 0)
         }
         GradientStop {
           position: 1.0
@@ -146,15 +147,50 @@ Item {
       }
     }
 
-    // Stroke on top
+    // Secondary line fill
     ShapePath {
-      strokeColor: root.color
+      strokeColor: "transparent"
+      strokeWidth: 0
+      fillGradient: LinearGradient {
+        x1: 0
+        y1: 0
+        x2: 0
+        y2: root.height
+        GradientStop {
+          position: 0.0
+          color: Qt.rgba(root.color2.r, root.color2.g, root.color2.b, root.fill && root.hasData2 ? root.fillOpacity : 0)
+        }
+        GradientStop {
+          position: 1.0
+          color: "transparent"
+        }
+      }
+      PathSvg {
+        path: root.fillPath2
+      }
+    }
+
+    // Primary line stroke
+    ShapePath {
+      strokeColor: root.hasData ? root.color : "transparent"
       strokeWidth: root.strokeWidth
       fillColor: "transparent"
       joinStyle: ShapePath.RoundJoin
       capStyle: ShapePath.RoundCap
       PathSvg {
         path: root.curvePath
+      }
+    }
+
+    // Secondary line stroke
+    ShapePath {
+      strokeColor: root.hasData2 ? root.color2 : "transparent"
+      strokeWidth: root.strokeWidth
+      fillColor: "transparent"
+      joinStyle: ShapePath.RoundJoin
+      capStyle: ShapePath.RoundCap
+      PathSvg {
+        path: root.curvePath2
       }
     }
   }

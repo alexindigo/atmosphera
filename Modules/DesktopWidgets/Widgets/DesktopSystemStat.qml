@@ -16,7 +16,7 @@ DraggableDesktopWidget {
   readonly property string diskPath: (widgetData && widgetData.diskPath !== undefined) ? widgetData.diskPath : "/"
   readonly property color color: (widgetData && widgetData.color !== undefined) ? widgetData.color : Color.mPrimary
 
-  // History from service (2 minutes of data)
+  // History from service
   readonly property var history: {
     switch (root.statType) {
     case "CPU":
@@ -28,11 +28,14 @@ DraggableDesktopWidget {
     case "Disk":
       return SystemStatService.diskHistories[root.diskPath] || [];
     case "Network":
-      return SystemStatService.networkHistory;
+      return SystemStatService.rxSpeedHistory;
     default:
       return [];
     }
   }
+
+  // Secondary history for Network (Tx)
+  readonly property var history2: root.statType === "Network" ? SystemStatService.txSpeedHistory : []
 
   // Current value from service
   readonly property real currentValue: {
@@ -45,8 +48,6 @@ DraggableDesktopWidget {
       return SystemStatService.memPercent;
     case "Disk":
       return SystemStatService.diskPercents[root.diskPath] || 0;
-    case "Network":
-      return Math.max(SystemStatService.rxRatio, SystemStatService.txRatio) * 100;
     default:
       return 0;
     }
@@ -92,9 +93,32 @@ DraggableDesktopWidget {
 
       NText {
         Layout.alignment: Qt.AlignHCenter
+        visible: root.statType !== "Network"
         text: Math.round(root.currentValue) + (root.statType === "GPU" ? "°C" : "%")
         color: root.color
         pointSize: Style.fontSizeS * root.widgetScale
+        font.weight: Style.fontWeightBold
+        horizontalAlignment: Text.AlignHCenter
+      }
+
+      // Network: show Rx speed
+      NText {
+        Layout.alignment: Qt.AlignHCenter
+        visible: root.statType === "Network"
+        text: "↓ " + SystemStatService.formatSpeed(SystemStatService.rxSpeed)
+        color: root.color
+        pointSize: Style.fontSizeXXS * root.widgetScale
+        font.weight: Style.fontWeightBold
+        horizontalAlignment: Text.AlignHCenter
+      }
+
+      // Network: show Tx speed
+      NText {
+        Layout.alignment: Qt.AlignHCenter
+        visible: root.statType === "Network"
+        text: "↑ " + SystemStatService.formatSpeed(SystemStatService.txSpeed)
+        color: Color.mError
+        pointSize: Style.fontSizeXXS * root.widgetScale
         font.weight: Style.fontWeightBold
         horizontalAlignment: Text.AlignHCenter
       }
@@ -125,9 +149,27 @@ DraggableDesktopWidget {
       Layout.fillWidth: true
       Layout.fillHeight: true
       values: root.history
-      autoScale: root.statType === "GPU"
-      maxValue: 100
+      values2: root.history2
+      minValue: root.statType === "GPU" ? SystemStatService.gpuTempHistoryMin : 0
+      maxValue: {
+        switch (root.statType) {
+        case "CPU":
+          return Math.max(SystemStatService.cpuHistoryMax, 1);
+        case "GPU":
+          return Math.max(SystemStatService.gpuTempHistoryMax, 1);
+        case "Memory":
+          return Math.max(SystemStatService.memHistoryMax, 1);
+        case "Network":
+          return Math.max(SystemStatService.rxMaxSpeed, 1);
+        default:
+          return 100;
+        }
+      }
+      // Secondary line (TX) has its own scale
+      minValue2: minValue
+      maxValue2: root.statType === "Network" ? Math.max(SystemStatService.txMaxSpeed, 1) : maxValue
       color: root.color
+      color2: Color.mError
       fill: true
     }
   }

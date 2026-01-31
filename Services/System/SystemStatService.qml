@@ -59,11 +59,22 @@ Singleton {
   property var gpuTempHistory: new Array(gpuHistoryLength).fill(0)
   property var memHistory: new Array(memHistoryLength).fill(0)
   property var diskHistories: ({}) // Keyed by mount path, initialized on first update
-  property var networkHistory: new Array(networkHistoryLength).fill(0)
+  property var rxSpeedHistory: new Array(networkHistoryLength).fill(0)
+  property var txSpeedHistory: new Array(networkHistoryLength).fill(0)
+
+  // Historical min/max tracking (since shell started) for consistent graph scaling
+  property real cpuHistoryMax: 0
+  property real gpuTempHistoryMin: 100
+  property real gpuTempHistoryMax: 0
+  property real memHistoryMax: 0
+  // Network uses existing rxMaxSpeed/txMaxSpeed (7-day learned peaks)
+  // Disk is always 0-100%
 
   // History management - called from update functions, not change handlers
   // (change handlers don't fire when value stays the same)
   function pushCpuHistory() {
+    if (cpuUsage > cpuHistoryMax)
+      cpuHistoryMax = cpuUsage;
     let h = cpuHistory.slice();
     h.push(cpuUsage);
     if (h.length > cpuHistoryLength)
@@ -72,6 +83,12 @@ Singleton {
   }
 
   function pushGpuHistory() {
+    if (gpuTemp > 0) {
+      if (gpuTemp < gpuTempHistoryMin)
+        gpuTempHistoryMin = gpuTemp;
+      if (gpuTemp > gpuTempHistoryMax)
+        gpuTempHistoryMax = gpuTemp;
+    }
     let h = gpuTempHistory.slice();
     h.push(gpuTemp);
     if (h.length > gpuHistoryLength)
@@ -80,6 +97,8 @@ Singleton {
   }
 
   function pushMemHistory() {
+    if (memPercent > memHistoryMax)
+      memHistoryMax = memPercent;
     let h = memHistory.slice();
     h.push(memPercent);
     if (h.length > memHistoryLength)
@@ -101,12 +120,17 @@ Singleton {
   }
 
   function pushNetworkHistory() {
-    let value = Math.max(rxRatio, txRatio) * 100;
-    let h = networkHistory.slice();
-    h.push(value);
-    if (h.length > networkHistoryLength)
-      h.shift();
-    networkHistory = h;
+    let rxH = rxSpeedHistory.slice();
+    rxH.push(rxSpeed);
+    if (rxH.length > networkHistoryLength)
+      rxH.shift();
+    rxSpeedHistory = rxH;
+
+    let txH = txSpeedHistory.slice();
+    txH.push(txSpeed);
+    if (txH.length > networkHistoryLength)
+      txH.shift();
+    txSpeedHistory = txH;
   }
 
   // Network max speed tracking (learned over time, cached for 7 days)
