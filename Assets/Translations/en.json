@@ -489,6 +489,7 @@
     "week": "Week",
     "widgets": "Widgets",
     "width": "Width",
+    "windows": "Windows",
     "yes": "Yes"
   },
   "control-center": {
@@ -560,7 +561,7 @@
       "emoji-loading-description": "Please wait",
       "emoji-no-recent": "No recent emojis yet",
       "emoji-search-description": "Search and copy emojis",
-      "windows": "Windows",
+      "settings-search-description": "Search and navigate to settings",
       "windows-search-description": "Search and focus open windows"
     }
   },

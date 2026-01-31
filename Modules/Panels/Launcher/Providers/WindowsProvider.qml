@@ -6,7 +6,7 @@ import qs.Services.Compositor
 Item {
   id: root
 
-  property string name: I18n.tr("launcher.providers.windows")
+  property string name: I18n.tr("common.windows")
   property var launcher: null
   property bool handleSearch: Settings.data.appLauncher.enableWindowsSearch
   property string supportedLayouts: "list"
