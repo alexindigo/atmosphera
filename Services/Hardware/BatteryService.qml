@@ -202,10 +202,6 @@ Singleton {
     return "battery-off"; // New fallback icon clearly represent if nothing is true here.
   }
 
-  function hasAnyBattery() {
-    return primaryDevice !== null;
-  }
-
   function getRateText(device) {
     if (!device || device.changeRate === undefined) {
       return "";
