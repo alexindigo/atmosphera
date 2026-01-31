@@ -180,7 +180,9 @@ Variants {
       root.currentBrightness = newBrightness;
       // Don't show OSD if brightness panel is open
       var brightnessPanel = PanelService.getPanel("brightnessPanel", root.modelData);
-      if (brightnessPanel && brightnessPanel.isPanelOpen) {
+      var controlCenterPanel = PanelService.getPanel("controlCenterPanel", root.modelData);
+
+      if ((brightnessPanel && brightnessPanel.isPanelOpen) || (controlCenterPanel && controlCenterPanel.isPanelOpen)) {
         return;
       }
       showOSD(OSD.Type.Brightness);
