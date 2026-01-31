@@ -210,32 +210,28 @@ PanelWindow {
         anchors.fill: parent
         screen: barWindow.screen
 
-        // Hover detection area overlaid on bar
-        MouseArea {
-          id: hoverArea
-          anchors.fill: parent
-          hoverEnabled: true
-          acceptedButtons: Qt.NoButton
-          propagateComposedEvents: true
+        // Hover detection using HoverHandler (doesn't block child hover events)
+        HoverHandler {
+          id: hoverHandler
 
-          onEntered: {
-            barWindow.barHovered = true;
-            BarService.setScreenHovered(barWindow.screen?.name, true);
-            if (barWindow.autoHide) {
-              hideTimer.stop();
-              showTimer.restart();
-            }
-          }
-
-          onExited: {
-            // Skip if already hidden (being destroyed)
-            if (barWindow.isHidden)
-              return;
-            barWindow.barHovered = false;
-            BarService.setScreenHovered(barWindow.screen?.name, false);
-            if (barWindow.autoHide && !barWindow.panelOpen) {
-              showTimer.stop();
-              hideTimer.restart();
+          onHoveredChanged: {
+            if (hovered) {
+              barWindow.barHovered = true;
+              BarService.setScreenHovered(barWindow.screen?.name, true);
+              if (barWindow.autoHide) {
+                hideTimer.stop();
+                showTimer.restart();
+              }
+            } else {
+              // Skip if already hidden (being destroyed)
+              if (barWindow.isHidden)
+                return;
+              barWindow.barHovered = false;
+              BarService.setScreenHovered(barWindow.screen?.name, false);
+              if (barWindow.autoHide && !barWindow.panelOpen) {
+                showTimer.stop();
+                hideTimer.restart();
+              }
             }
           }
         }
