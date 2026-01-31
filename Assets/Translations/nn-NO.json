@@ -717,6 +717,14 @@
     "bar": {
       "appearance-density-description": "Fastset utfylling på lina for å gjera henne tett eller romsleg."
     },
+    "desktop-widgets": {
+      "system-stat-rounded-corners-description": "Bruk avrunda hjørne for bakgrunnen til widgeten.",
+      "system-stat-rounded-corners-label": "Avrunda Hjørne",
+      "system-stat-show-background-description": "Vis bakgrunnsbehaldaren for systemstatistikk-widgeten.",
+      "system-stat-show-background-label": "Vis bakgrunn",
+      "system-stat-stat-type-description": "Vel kva systemstatistikk som skal visast.",
+      "system-stat-stat-type-label": "Statistikktil"
+    },
     "launcher": {
       "clipboard-desc": "Sjå og styra utklippsboka di frå programveljaren.",
       "execute-desc": "Styrer korleis applikasjonar er køyrde",

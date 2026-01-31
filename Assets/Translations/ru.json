@@ -489,6 +489,7 @@
     "week": "Неделя",
     "widgets": "Виджеты",
     "width": "Ширина",
+    "windows": "Окна ",
     "yes": "Да"
   },
   "control-center": {
@@ -597,6 +598,7 @@
       "density-default": "По умолчанию",
       "density-mini": "Мини",
       "density-spacious": "Просторный",
+      "display-mode-always-visible": "Всегда видны",
       "type-floating": "Плавающий",
       "type-framed": "В рамке",
       "type-simple": "Простой"
@@ -725,6 +727,7 @@
       "appearance-density-description": "Настройка отступов панели для компактного или просторного вида.",
       "appearance-density-label": "Плотность панели",
       "appearance-desc": "Настройка внешнего вида и положения панели.",
+      "appearance-display-mode-label": "Режим Отображение",
       "appearance-floating-description": "Отображает панель как плавающую 'таблетку'.",
       "appearance-floating-label": "Плавающая панель",
       "appearance-frame-radius": "Внутренний радиус",
@@ -892,6 +895,12 @@
       "media-player-show-buttons-label": "Показать кнопки",
       "media-player-show-visualizer-description": "Показать наложение аудиовизуализатора.",
       "media-player-visualizer-type-description": "Выберите тип визуализации для фона медиаплеера.",
+      "system-stat-rounded-corners-description": "Использовать скругленные углы для фона виджета.",
+      "system-stat-rounded-corners-label": "Скругленные Углы",
+      "system-stat-show-background-description": "Показать фоновый контейнер для виджета системной статистики.",
+      "system-stat-show-background-label": "Показать фон",
+      "system-stat-stat-type-description": "Выберите, какую системную статистику отображать.",
+      "system-stat-stat-type-label": "Тип Статистики",
       "title": "Настольные виджеты",
       "weather-enabled-description": "Показать погодный виджет на рабочем столе.",
       "weather-enabled-label": "Включить виджет погоды",

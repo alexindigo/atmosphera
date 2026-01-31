@@ -489,6 +489,7 @@
     "week": "Semaine",
     "widgets": "Widgets",
     "width": "Largeur",
+    "windows": "Fenêtres",
     "yes": "Oui"
   },
   "control-center": {
@@ -508,6 +509,7 @@
     "on-hover": "Au survol"
   },
   "hide-modes": {
+    "auto-hide": "Masquer automatiquement ",
     "hidden": "Masquer quand vide",
     "idle": "Masquer quand inactif",
     "transparent": "Transparent quand vide",
@@ -560,6 +562,7 @@
       "emoji-loading-description": "Veuillez patienter",
       "emoji-no-recent": "Aucun emoji récent pour le moment",
       "emoji-search-description": "Rechercher et copier des émojis",
+      "settings-search-description": "Trouvez et explorez les paramètres",
       "windows-search-description": "Rechercher et focaliser les fenêtres ouvertes"
     }
   },
@@ -597,6 +600,7 @@
       "density-default": "Défaut",
       "density-mini": "Mini",
       "density-spacious": "Spacieux",
+      "display-mode-always-visible": "Toujours Visible",
       "type-floating": "Flottante",
       "type-framed": "Encadrée",
       "type-simple": "Simple"
@@ -718,6 +722,11 @@
       "volumes-volume-overdrive-label": "Autoriser le dépassement du volume"
     },
     "bar": {
+      "appearance-auto-hide-delay-description": "Délai avant que la barre ne se masque après le départ de la souris",
+      "appearance-auto-hide-delay-label": "Délai de masquage ",
+      "appearance-auto-hide-exclusive-note": "Remarque : La zone exclusive est automatiquement désactivée lorsque le masquage automatique est actif",
+      "appearance-auto-show-delay-description": "Délai avant que la barre ne s’affiche lorsque la souris entre en bordure",
+      "appearance-auto-show-delay-label": "Délai d’apparition ",
       "appearance-background-opacity-description": "Définir l'opacité de l'arrière-plan spécifiquement pour la barre.",
       "appearance-background-opacity-label": "Opacité de l'arrière-plan de la barre",
       "appearance-capsule-opacity-description": "Définir le niveau d'opacité des arrière-plans des widgets quand la capsule est affichée.",
@@ -725,6 +734,8 @@
       "appearance-density-description": "Ajustez le remplissage de la barre pour un aspect compact ou spacieux.",
       "appearance-density-label": "Densité de la barre",
       "appearance-desc": "Personnalisez l'apparence et la position de la barre.",
+      "appearance-display-mode-description": "Choisir quand la barre est visible ",
+      "appearance-display-mode-label": "Mode d’affichage ",
       "appearance-floating-description": "Afficher la barre sous forme de 'pilule' flottante.",
       "appearance-floating-label": "Barre flottante",
       "appearance-frame-radius": "Rayon interne",
@@ -892,6 +903,12 @@
       "media-player-show-buttons-label": "Afficher les boutons",
       "media-player-show-visualizer-description": "Afficher la superposition de l'visualiseur audio.",
       "media-player-visualizer-type-description": "Choisissez un type de visualisation pour l'arrière-plan du lecteur multimédia de bureau.",
+      "system-stat-rounded-corners-description": "Utiliser des coins arrondis pour l'arrière-plan du widget.",
+      "system-stat-rounded-corners-label": "Coins Arrondis",
+      "system-stat-show-background-description": "Afficher le conteneur d'arrière-plan pour le widget de statistiques système.",
+      "system-stat-show-background-label": "Afficher l'arrière-plan",
+      "system-stat-stat-type-description": "Choisis quelle statistique système afficher.",
+      "system-stat-stat-type-label": "Type de Statistique",
       "title": "Widgets de bureau",
       "weather-enabled-description": "Afficher un widget météo sur le bureau.",
       "weather-enabled-label": "Activer le widget météo",
