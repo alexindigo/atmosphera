@@ -489,6 +489,7 @@
     "week": "Tydzień",
     "widgets": "Widżety",
     "width": "Szerokość",
+    "windows": "Okna",
     "yes": "Tak"
   },
   "control-center": {
@@ -508,6 +509,7 @@
     "on-hover": "Po najechaniu kursorem"
   },
   "hide-modes": {
+    "auto-hide": "Automatyczne ukrywanie",
     "hidden": "Ukryj, gdy puste",
     "idle": "Ukryj, gdy bezczynny",
     "transparent": "Przezroczysty, gdy pusty",
@@ -560,6 +562,7 @@
       "emoji-loading-description": "Proszę czekać",
       "emoji-no-recent": "Brak ostatnich emoji",
       "emoji-search-description": "Szukaj i kopiuj emoji",
+      "settings-search-description": "Szukaj i przejdź do ustawień",
       "windows-search-description": "Wyszukaj i aktywuj otwarte okna"
     }
   },
@@ -597,6 +600,7 @@
       "density-default": "Domyślny",
       "density-mini": "Mini",
       "density-spacious": "Przestronny",
+      "display-mode-always-visible": "Zawsze widoczne",
       "type-floating": "Pływający",
       "type-framed": "Obramowany",
       "type-simple": "Prosty"
@@ -718,6 +722,11 @@
       "volumes-volume-overdrive-label": "Zezwalaj na wzmocnienie głośności (overdrive)"
     },
     "bar": {
+      "appearance-auto-hide-delay-description": "Czas, po którym Bar zniknie po opuszczeniu go przez mysz.",
+      "appearance-auto-hide-delay-label": "Opóźnienie ukrywania",
+      "appearance-auto-hide-exclusive-note": "Uwaga: Strefa wyłączna jest automatycznie wyłączana, gdy autoukrywanie jest aktywne.",
+      "appearance-auto-show-delay-description": "Czas, zanim pasek pojawi się, gdy mysz wejdzie na krawędź.",
+      "appearance-auto-show-delay-label": "Opóźnienie Wyświetlania",
       "appearance-background-opacity-description": "Ustaw przezroczystość tła konkretnie dla paska.",
       "appearance-background-opacity-label": "Krycie tła paska",
       "appearance-capsule-opacity-description": "Ustaw poziom przezroczystości tła widżetów, gdy kapsuła jest widoczna.",
@@ -725,6 +734,8 @@
       "appearance-density-description": "Dostosuj odstępy paska dla kompaktowego lub przestronnego wyglądu.",
       "appearance-density-label": "Zagęszczenie paska",
       "appearance-desc": "Dostosuj wygląd i pozycję paska.",
+      "appearance-display-mode-description": "Wybierz, kiedy pasek jest widoczny",
+      "appearance-display-mode-label": "Tryb Wyświetlania",
       "appearance-floating-description": "Wyświetl pasek jako pływającą 'pigułkę'.",
       "appearance-floating-label": "Pływający pasek",
       "appearance-frame-radius": "Promień wewnętrzny",
@@ -1070,6 +1081,8 @@
       "settings-desc": "Dostosuj zachowanie i wygląd launchera.",
       "settings-enable-settings-search-description": "Wyświetlaj wyniki ustawień podczas wyszukiwania w Launcherze.",
       "settings-enable-settings-search-label": "Włącz wyszukiwanie w ustawieniach",
+      "settings-enable-windows-search-description": "Wyszukaj i skup aktywne okna.",
+      "settings-enable-windows-search-label": "Włącz wyszukiwanie okien",
       "settings-grid-view-description": "Wyświetlaj elementy w układzie siatki zamiast listy.",
       "settings-icon-mode-description": "Używaj natywnych ikon systemowych zamiast ikon Tabler.",
       "settings-icon-mode-label": "Używaj natywnych ikon",

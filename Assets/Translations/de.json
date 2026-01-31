@@ -489,6 +489,7 @@
     "week": "Woche",
     "widgets": "Widgets",
     "width": "Breite",
+    "windows": "Fenster",
     "yes": "Ja"
   },
   "control-center": {
@@ -508,6 +509,7 @@
     "on-hover": "Beim Hover"
   },
   "hide-modes": {
+    "auto-hide": "Automatisch ausblenden",
     "hidden": "Ausblenden, wenn leer",
     "idle": "Ausblenden, wenn inaktiv",
     "transparent": "Transparent, wenn leer",
@@ -560,6 +562,7 @@
       "emoji-loading-description": "Bitte warten",
       "emoji-no-recent": "Noch keine kürzlich verwendeten Emojis",
       "emoji-search-description": "Emojis suchen und kopieren",
+      "settings-search-description": "Suchen und zu den Einstellungen navigieren",
       "windows-search-description": "Offene Fenster suchen und fokussieren"
     }
   },
@@ -597,6 +600,7 @@
       "density-default": "Standard",
       "density-mini": "Mini",
       "density-spacious": "Geräumig",
+      "display-mode-always-visible": "Immer sichtbar",
       "type-floating": "Schwebend",
       "type-framed": "Gerahmt",
       "type-simple": "Einfach"
@@ -718,6 +722,11 @@
       "volumes-volume-overdrive-label": "Lautstärke-Übersteuerung erlauben"
     },
     "bar": {
+      "appearance-auto-hide-delay-description": "Zeit, bis die Bar ausgeblendet wird, nachdem die Maus sie verlassen hat.",
+      "appearance-auto-hide-delay-label": "Ausblende-Verzögerung",
+      "appearance-auto-hide-exclusive-note": "Hinweis: Die exklusive Zone wird automatisch deaktiviert, wenn Auto-Hide aktiv ist.",
+      "appearance-auto-show-delay-description": "Zeit, bevor die Bar angezeigt wird, wenn die Maus den Rand betritt.",
+      "appearance-auto-show-delay-label": "Anzeigeverzögerung",
       "appearance-background-opacity-description": "Legen Sie die Hintergrundtransparenz speziell für die Leiste fest.",
       "appearance-background-opacity-label": "Leisten-Hintergrundtransparenz",
       "appearance-capsule-opacity-description": "Deckkraft der Widget-Hintergründe festlegen, wenn Kapsel angezeigt wird.",
@@ -725,6 +734,8 @@
       "appearance-density-description": "Innenabstand der Statusleiste für kompaktes oder geräumiges Aussehen anpassen.",
       "appearance-density-label": "Statusleistendichte",
       "appearance-desc": "Erscheinungsbild und Position der Statusleiste anpassen.",
+      "appearance-display-mode-description": "Wählen Sie, wann die Leiste sichtbar ist",
+      "appearance-display-mode-label": "Anzeigemodus",
       "appearance-floating-description": "Statusleiste als schwebende 'Pille' anzeigen.",
       "appearance-floating-label": "Schwebende Statusleiste",
       "appearance-frame-radius": "Innenradius",
@@ -1070,6 +1081,8 @@
       "settings-desc": "Verhalten und Erscheinungsbild des Starters anpassen.",
       "settings-enable-settings-search-description": "Einstellungen in den Suchergebnissen des Launchers anzeigen.",
       "settings-enable-settings-search-label": "Einstellungen-Suche aktivieren",
+      "settings-enable-windows-search-description": "Aktive Fenster suchen und fokussieren.",
+      "settings-enable-windows-search-label": "Fenstersuche aktivieren",
       "settings-grid-view-description": "Elemente in einem Raster statt in einer Liste anzeigen.",
       "settings-icon-mode-description": "Verwende native System-Icons anstelle von Tabler-Icons.",
       "settings-icon-mode-label": "Native Icons verwenden",

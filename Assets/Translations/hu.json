@@ -489,6 +489,7 @@
     "week": "Hét",
     "widgets": "Widgetek",
     "width": "Szélesség",
+    "windows": "Ablakok",
     "yes": "Igen"
   },
   "control-center": {
@@ -508,6 +509,7 @@
     "on-hover": "Rámutatáskor"
   },
   "hide-modes": {
+    "auto-hide": "Automatikus elrejtés",
     "hidden": "Elrejtés, ha üres",
     "idle": "Elrejtés, ha tétlen",
     "transparent": "Átlátszó, ha üres",
@@ -560,6 +562,7 @@
       "emoji-loading-description": "Kis türelmet",
       "emoji-no-recent": "Nincsenek még legutóbbi emojik",
       "emoji-search-description": "Emojik keresése és másolása",
+      "settings-search-description": "Keresés és navigálás a beállításokhoz",
       "windows-search-description": "Nyitott ablakok keresése és fókuszálása"
     }
   },
@@ -597,6 +600,7 @@
       "density-default": "Alapértelmezett",
       "density-mini": "Mini",
       "density-spacious": "Tágas",
+      "display-mode-always-visible": "Mindig látható",
       "type-floating": "Lebegő",
       "type-framed": "Keretes",
       "type-simple": "Egyszerű"
@@ -718,6 +722,11 @@
       "volumes-volume-overdrive-label": "Hangerő túllépésének engedélyezése"
     },
     "bar": {
+      "appearance-auto-hide-delay-description": "Idő, amíg a Bar elrejtőzik, miután az egér elhagyja.",
+      "appearance-auto-hide-delay-label": "Elrejtési késleltetés",
+      "appearance-auto-hide-exclusive-note": "Megjegyzés: Az exkluzív zóna automatikusan letiltásra kerül, ha az automatikus elrejtés aktív.",
+      "appearance-auto-show-delay-description": "Idő, mielőtt a sáv megjelenik, ha az egér a szélre kerül.",
+      "appearance-auto-show-delay-label": "Megjelenítési Késleltetés",
       "appearance-background-opacity-description": "Állítsa be a sáv háttér átlátszóságát.",
       "appearance-background-opacity-label": "Sáv háttér átlátszósága",
       "appearance-capsule-opacity-description": "Beállítja a widget hátterének átlátszósági szintjét, amikor a kapszula megjelenik.",
@@ -725,6 +734,8 @@
       "appearance-density-description": "Beállítja a sáv belső margóit a kompakt vagy tágas megjelenés érdekében.",
       "appearance-density-label": "Sáv sűrűsége",
       "appearance-desc": "A sáv megjelenésének és pozíciójának testreszabása.",
+      "appearance-display-mode-description": "Válassza ki, mikor látható a sáv.",
+      "appearance-display-mode-label": "Kijelző mód",
       "appearance-floating-description": "Megjeleníti a sávot lebegő „pirulaként”.",
       "appearance-floating-label": "Lebegő sáv",
       "appearance-frame-radius": "Belső sugár",
@@ -1070,6 +1081,8 @@
       "settings-desc": "Az indító viselkedésének és megjelenésének testreszabása.",
       "settings-enable-settings-search-description": "Beállítások megjelenítése a találatok között az indítón belül.",
       "settings-enable-settings-search-label": "Beállítások keresésének engedélyezése",
+      "settings-enable-windows-search-description": "Aktív ablakok keresése és fókuszálása.",
+      "settings-enable-windows-search-label": "Ablakkeresés engedélyezése",
       "settings-grid-view-description": "Elemek megjelenítése rács elrendezésben lista helyett.",
       "settings-icon-mode-description": "Használjon natív rendszerikonokat a Tabler ikonok helyett.",
       "settings-icon-mode-label": "Natív ikonok használata",

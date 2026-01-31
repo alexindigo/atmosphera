@@ -489,6 +489,7 @@
     "week": "주",
     "widgets": "위젯",
     "width": "너비",
+    "windows": "창",
     "yes": "예"
   },
   "control-center": {
@@ -508,6 +509,7 @@
     "on-hover": "마우스 오버 시"
   },
   "hide-modes": {
+    "auto-hide": "자동 숨기기",
     "hidden": "비어 있을 때 숨기기",
     "idle": "유휴 상태일 때 숨기기",
     "transparent": "비어 있을 때 투명하게",
@@ -560,6 +562,7 @@
       "emoji-loading-description": "잠시만 기다려 주세요",
       "emoji-no-recent": "최근 이모티콘이 없습니다",
       "emoji-search-description": "이모티콘 검색 및 복사",
+      "settings-search-description": "설정 검색 및 이동",
       "windows-search-description": "열려 있는 창 검색 및 포커스"
     }
   },
@@ -597,6 +600,7 @@
       "density-default": "기본",
       "density-mini": "미니",
       "density-spacious": "넓게",
+      "display-mode-always-visible": "항상 표시",
       "type-floating": "플로팅",
       "type-framed": "프레임",
       "type-simple": "심플"
@@ -718,6 +722,11 @@
       "volumes-volume-overdrive-label": "볼륨 오버드라이브 허용"
     },
     "bar": {
+      "appearance-auto-hide-delay-description": "마우스가 Bar를 벗어난 후 Bar가 숨겨지기까지의 시간",
+      "appearance-auto-hide-delay-label": "숨기기 지연",
+      "appearance-auto-hide-exclusive-note": "참고: 자동 숨기기가 활성화되면 전용 영역이 자동으로 비활성화됩니다.",
+      "appearance-auto-show-delay-description": "마우스가 가장자리에 진입할 때 바가 표시되기까지의 시간.",
+      "appearance-auto-show-delay-label": "표시 지연",
       "appearance-background-opacity-description": "바에 대해서만 별도로 배경 불투명도를 설정합니다.",
       "appearance-background-opacity-label": "바 배경 불투명도",
       "appearance-capsule-opacity-description": "캡슐이 표시될 때 위젯 배경의 불투명도 수준을 설정합니다.",
@@ -725,6 +734,8 @@
       "appearance-density-description": "컴팩트하거나 넓은 모양을 위해 바의 패딩을 조정합니다.",
       "appearance-density-label": "바 밀도",
       "appearance-desc": "바의 모양과 위치를 사용자 지정합니다.",
+      "appearance-display-mode-description": "바가 언제 표시될지 선택하세요.",
+      "appearance-display-mode-label": "디스플레이 모드",
       "appearance-floating-description": "바를 플로팅 '알약' 형태로 표시합니다.",
       "appearance-floating-label": "플로팅 바",
       "appearance-frame-radius": "내부 반경",
@@ -1070,6 +1081,8 @@
       "settings-desc": "런처의 동작과 모양을 사용자 지정합니다.",
       "settings-enable-settings-search-description": "런처에서 검색할 때 설정 결과를 표시합니다.",
       "settings-enable-settings-search-label": "설정 검색 활성화",
+      "settings-enable-windows-search-description": "활성 창을 검색하고 포커스합니다.",
+      "settings-enable-windows-search-label": "창 검색 활성화",
       "settings-grid-view-description": "항목을 목록 대신 그리드 레이아웃으로 표시합니다.",
       "settings-icon-mode-description": "Tabler 아이콘 대신 기본 시스템 아이콘을 사용합니다.",
       "settings-icon-mode-label": "기본 아이콘 사용",

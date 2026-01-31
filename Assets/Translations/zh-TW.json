@@ -489,6 +489,7 @@
     "week": "週",
     "widgets": "小工具",
     "width": "寬度",
+    "windows": "視窗",
     "yes": "是"
   },
   "control-center": {
@@ -508,6 +509,7 @@
     "on-hover": "游標移過時"
   },
   "hide-modes": {
+    "auto-hide": "自動隱藏",
     "hidden": "空白時隱藏",
     "idle": "閒置時隱藏",
     "transparent": "空白時變透明",
@@ -560,6 +562,7 @@
       "emoji-loading-description": "請稍候",
       "emoji-no-recent": "還沒有最近使用的表情符號",
       "emoji-search-description": "搜尋和複製表情符號",
+      "settings-search-description": "搜尋並前往設定",
       "windows-search-description": "搜尋並聚焦開啟的視窗"
     }
   },
@@ -597,6 +600,7 @@
       "density-default": "預設",
       "density-mini": "迷你",
       "density-spacious": "寬敞",
+      "display-mode-always-visible": "永遠可見",
       "type-floating": "懸浮",
       "type-framed": "邊框",
       "type-simple": "簡約"
@@ -718,6 +722,11 @@
       "volumes-volume-overdrive-label": "允許音量過載"
     },
     "bar": {
+      "appearance-auto-hide-delay-description": "滑鼠離開後Bar隱藏所需時間",
+      "appearance-auto-hide-delay-label": "隱藏延遲",
+      "appearance-auto-hide-exclusive-note": "注意: 當自動隱藏處於活動狀態時，專屬區域會自動禁用。",
+      "appearance-auto-show-delay-description": "滑鼠進入邊緣時，欄顯示前的延遲時間。",
+      "appearance-auto-show-delay-label": "顯示延遲",
       "appearance-background-opacity-description": "設定工具列背景的不透明度",
       "appearance-background-opacity-label": "工具列背景不透明度",
       "appearance-capsule-opacity-description": "設定當啟用顯示小容器時小工具的背景不透明度",
@@ -725,6 +734,8 @@
       "appearance-density-description": "調整工具列的內部間距來做出緊湊或寬敞的外觀",
       "appearance-density-label": "工具列密度",
       "appearance-desc": "自訂工具列的外觀及位置",
+      "appearance-display-mode-description": "選擇列何時可見",
+      "appearance-display-mode-label": "顯示模式",
       "appearance-floating-description": "將工具列以懸浮的圓弧長條狀顯示",
       "appearance-floating-label": "懸浮工具列",
       "appearance-frame-radius": "內圓角",
@@ -1070,6 +1081,8 @@
       "settings-desc": "自訂啟動器的外觀及行為",
       "settings-enable-settings-search-description": "在啟動器中搜尋時顯示設定結果。",
       "settings-enable-settings-search-label": "啟用設定搜尋",
+      "settings-enable-windows-search-description": "搜尋並聚焦作用中視窗。",
+      "settings-enable-windows-search-label": "啟用視窗搜尋",
       "settings-grid-view-description": "將項目以方格排列而不是列表顯示",
       "settings-icon-mode-description": "使用系統原生的圖示而不是自 Tabler 圖示包帶入",
       "settings-icon-mode-label": "使用原生圖示",

@@ -509,6 +509,7 @@
     "on-hover": "При наведении"
   },
   "hide-modes": {
+    "auto-hide": "Автоматическое скрытие",
     "hidden": "Скрывать, когда пусто",
     "idle": "Скрывать в режиме простоя",
     "transparent": "Прозрачный, когда пустой",
@@ -561,6 +562,7 @@
       "emoji-loading-description": "Пожалуйста, подождите",
       "emoji-no-recent": "Недавних эмодзи пока нет",
       "emoji-search-description": "Поиск и копирование эмодзи",
+      "settings-search-description": "Поиск и переход к настройкам",
       "windows-search-description": "Поиск и фокусировка открытых окон"
     }
   },
@@ -720,6 +722,11 @@
       "volumes-volume-overdrive-label": "Разрешить перегрузку громкости"
     },
     "bar": {
+      "appearance-auto-hide-delay-description": "Время, через которое Bar скроется после того, как курсор мыши покинет его.",
+      "appearance-auto-hide-delay-label": "Задержка скрытия",
+      "appearance-auto-hide-exclusive-note": "Примечание: Эксклюзивная зона автоматически отключается, когда автоскрытие активно.",
+      "appearance-auto-show-delay-description": "Время до появления панели, когда мышь входит в край.",
+      "appearance-auto-show-delay-label": "Задержка отображения",
       "appearance-background-opacity-description": "Установите прозрачность фона специально для панели.",
       "appearance-background-opacity-label": "Прозрачность фона бара",
       "appearance-capsule-opacity-description": "Установить уровень непрозрачности для фона виджетов, когда капсула отображается.",
@@ -727,6 +734,7 @@
       "appearance-density-description": "Настройка отступов панели для компактного или просторного вида.",
       "appearance-density-label": "Плотность панели",
       "appearance-desc": "Настройка внешнего вида и положения панели.",
+      "appearance-display-mode-description": "Выберите, когда панель видна",
       "appearance-display-mode-label": "Режим Отображение",
       "appearance-floating-description": "Отображает панель как плавающую 'таблетку'.",
       "appearance-floating-label": "Плавающая панель",
@@ -1073,6 +1081,8 @@
       "settings-desc": "Настройка поведения и внешнего вида запуска.",
       "settings-enable-settings-search-description": "Показывать результаты настроек при поиске в лаунчере.",
       "settings-enable-settings-search-label": "Включить поиск в настройках",
+      "settings-enable-windows-search-description": "Поиск и фокусировка активных окон.",
+      "settings-enable-windows-search-label": "Включить поиск окон",
       "settings-grid-view-description": "Показывать элементы в виде сетки вместо списка.",
       "settings-icon-mode-description": "Использовать нативные системные иконки вместо иконок Tabler.",
       "settings-icon-mode-label": "Использовать нативные иконки",

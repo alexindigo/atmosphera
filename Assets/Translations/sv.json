@@ -489,6 +489,7 @@
     "week": "Vecka",
     "widgets": "Widgetar",
     "width": "Bredd",
+    "windows": "Fönster",
     "yes": "Ja"
   },
   "control-center": {
@@ -508,6 +509,7 @@
     "on-hover": "Vid muspekning"
   },
   "hide-modes": {
+    "auto-hide": "Dölj automatiskt",
     "hidden": "Dölj när tom",
     "idle": "Dölj när inaktiv",
     "transparent": "Transparent när tom",
@@ -560,6 +562,7 @@
       "emoji-loading-description": "Vänta",
       "emoji-no-recent": "Inga nya emojis ännu",
       "emoji-search-description": "Sök och kopiera emojis",
+      "settings-search-description": "Sök och navigera till inställningar",
       "windows-search-description": "Sök och fokusera öppna fönster"
     }
   },
@@ -597,6 +600,7 @@
       "density-default": "Standard",
       "density-mini": "Mini",
       "density-spacious": "Rymlig",
+      "display-mode-always-visible": "Alltid synlig",
       "type-floating": "Flytande",
       "type-framed": "Inramad",
       "type-simple": "Enkel"
@@ -718,6 +722,11 @@
       "volumes-volume-overdrive-label": "Tillåt volymöverstyrning"
     },
     "bar": {
+      "appearance-auto-hide-delay-description": "Tid innan Bar döljs efter att musen lämnar den.",
+      "appearance-auto-hide-delay-label": "Dölj fördröjning",
+      "appearance-auto-hide-exclusive-note": "Obs: Exklusiv zon inaktiveras automatiskt när automatisk döljning är aktiv.",
+      "appearance-auto-show-delay-description": "Tid innan fältet visas när musen når kanten.",
+      "appearance-auto-show-delay-label": "Visningsfördröjning",
       "appearance-background-opacity-description": "Ställ in bakgrundens opacitet specifikt för fältet.",
       "appearance-background-opacity-label": "Fältets bakgrundsopacitet",
       "appearance-capsule-opacity-description": "Ställ in opacitetsnivån för widgetbakgrunder när kapseln visas.",
@@ -725,6 +734,8 @@
       "appearance-density-description": "Justera stapelns avstånd för ett kompakt eller rymligt utseende.",
       "appearance-density-label": "Stapeldensitet",
       "appearance-desc": "Anpassa stapelns utseende och position.",
+      "appearance-display-mode-description": "Välj när listen är synlig",
+      "appearance-display-mode-label": "Visningsläge",
       "appearance-floating-description": "Visa stapeln som en flytande \"piller\".",
       "appearance-floating-label": "Flytande stapel",
       "appearance-frame-radius": "Inre radie",
@@ -1070,6 +1081,8 @@
       "settings-desc": "Anpassa startprogrammets beteende och utseende.",
       "settings-enable-settings-search-description": "Visa inställningsresultat vid sökning i startprogrammet.",
       "settings-enable-settings-search-label": "Aktivera inställningssökning",
+      "settings-enable-windows-search-description": "Sök och fokusera aktiva fönster.",
+      "settings-enable-windows-search-label": "Aktivera fönstersökning",
       "settings-grid-view-description": "Visa objekt i ett rutnät istället för en lista.",
       "settings-icon-mode-description": "Använd inbyggda systemikoner istället för Tabler-ikoner.",
       "settings-icon-mode-label": "Använd inbyggda ikoner",

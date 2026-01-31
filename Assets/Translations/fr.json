@@ -1081,6 +1081,8 @@
       "settings-desc": "Personnalisez le comportement et l'apparence du lanceur.",
       "settings-enable-settings-search-description": "Afficher les résultats des paramètres lors de la recherche dans le lanceur.",
       "settings-enable-settings-search-label": "Activer la recherche dans les paramètres",
+      "settings-enable-windows-search-description": "Rechercher et focaliser les fenêtres actives.",
+      "settings-enable-windows-search-label": "Activer la recherche de fenêtres",
       "settings-grid-view-description": "Afficher les éléments dans une grille au lieu d'une liste.",
       "settings-icon-mode-description": "Utiliser les icônes natives du système au lieu des icônes Tabler.",
       "settings-icon-mode-label": "Utiliser les icônes natives",

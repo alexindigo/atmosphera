@@ -489,6 +489,7 @@
     "week": "周",
     "widgets": "小部件",
     "width": "宽度",
+    "windows": "窗口",
     "yes": "是"
   },
   "control-center": {
@@ -508,6 +509,7 @@
     "on-hover": "悬停时"
   },
   "hide-modes": {
+    "auto-hide": "自动隐藏",
     "hidden": "当为空时隐藏",
     "idle": "空闲时隐藏",
     "transparent": "空时透明",
@@ -560,6 +562,7 @@
       "emoji-loading-description": "请稍候",
       "emoji-no-recent": "尚无最近使用的表情符号",
       "emoji-search-description": "搜索和复制表情符号",
+      "settings-search-description": "搜索并前往设置",
       "windows-search-description": "搜索并聚焦打开的窗口"
     }
   },
@@ -597,6 +600,7 @@
       "density-default": "默认",
       "density-mini": "迷你",
       "density-spacious": "宽敞",
+      "display-mode-always-visible": "始终可见",
       "type-floating": "悬浮",
       "type-framed": "边框",
       "type-simple": "简约"
@@ -718,6 +722,11 @@
       "volumes-volume-overdrive-label": "允许音量过载"
     },
     "bar": {
+      "appearance-auto-hide-delay-description": "鼠标离开后Bar隐藏所需时间",
+      "appearance-auto-hide-delay-label": "隐藏延迟",
+      "appearance-auto-hide-exclusive-note": "注意: 当自动隐藏处于活动状态时，专属区域会自动禁用。",
+      "appearance-auto-show-delay-description": "鼠标进入边缘时，栏显示前的延迟时间。",
+      "appearance-auto-show-delay-label": "显示延迟",
       "appearance-background-opacity-description": "为状态栏设置背景不透明度。",
       "appearance-background-opacity-label": "状态栏背景不透明度",
       "appearance-capsule-opacity-description": "设置显示胶囊时小部件背景的不透明度。",
@@ -725,6 +734,8 @@
       "appearance-density-description": "调整状态栏的内边距以获得紧凑或宽松的外观。",
       "appearance-density-label": "状态栏密度",
       "appearance-desc": "自定义状态栏的外观和位置。",
+      "appearance-display-mode-description": "选择栏何时可见",
+      "appearance-display-mode-label": "显示模式",
       "appearance-floating-description": "将状态栏显示为浮动的“药丸”形状。",
       "appearance-floating-label": "浮动状态栏",
       "appearance-frame-radius": "内圆角",
@@ -1070,6 +1081,8 @@
       "settings-desc": "自定义启动器的行为和外观。",
       "settings-enable-settings-search-description": "在启动器中搜索时显示设置结果。",
       "settings-enable-settings-search-label": "启用设置搜索",
+      "settings-enable-windows-search-description": "搜索并聚焦活动窗口。",
+      "settings-enable-windows-search-label": "启用窗口搜索",
       "settings-grid-view-description": "以网格布局而非列表显示项目。",
       "settings-icon-mode-description": "使用本地系统图标而不是 Tabler 图标。",
       "settings-icon-mode-label": "使用本地图标",

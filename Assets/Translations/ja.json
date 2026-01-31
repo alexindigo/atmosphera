@@ -489,6 +489,7 @@
     "week": "週",
     "widgets": "ウィジェット",
     "width": "幅",
+    "windows": "ウィンドウ",
     "yes": "はい"
   },
   "control-center": {
@@ -508,6 +509,7 @@
     "on-hover": "マウスオーバー時"
   },
   "hide-modes": {
+    "auto-hide": "自動非表示",
     "hidden": "空の場合に非表示",
     "idle": "アイドル時に非表示",
     "transparent": "空の時は透明",
@@ -560,6 +562,7 @@
       "emoji-loading-description": "お待ちください",
       "emoji-no-recent": "まだ最近使った絵文字はありません",
       "emoji-search-description": "絵文字を検索してコピー",
+      "settings-search-description": "設定を検索して移動",
       "windows-search-description": "開いているウィンドウを検索してフォーカスする"
     }
   },
@@ -597,6 +600,7 @@
       "density-default": "標準",
       "density-mini": "ミニ",
       "density-spacious": "広々とした",
+      "display-mode-always-visible": "常に表示",
       "type-floating": "フローティング",
       "type-framed": "フレーム",
       "type-simple": "シンプル"
@@ -718,6 +722,11 @@
       "volumes-volume-overdrive-label": "100%以上の音量を許可"
     },
     "bar": {
+      "appearance-auto-hide-delay-description": "マウスカーソルがBarから離れた後、Barが非表示になるまでの時間",
+      "appearance-auto-hide-delay-label": "非表示遅延",
+      "appearance-auto-hide-exclusive-note": "注: 自動非表示が有効な場合、排他ゾーンは自動的に無効になります。",
+      "appearance-auto-show-delay-description": "マウスが端に到達したときにバーが表示されるまでの時間。",
+      "appearance-auto-show-delay-label": "表示遅延",
       "appearance-background-opacity-description": "バーの背景の不透明度を特に設定します。",
       "appearance-background-opacity-label": "バーの背景の不透明度",
       "appearance-capsule-opacity-description": "カプセル表示時のウィジェット背景の不透明度を設定します。",
@@ -725,6 +734,8 @@
       "appearance-density-description": "バーの余白を調整し、コンパクトまたはゆったりとした外観にします。",
       "appearance-density-label": "バーの密度",
       "appearance-desc": "バーの外観や位置をカスタマイズします。",
+      "appearance-display-mode-description": "バーの表示タイミングを選択してください",
+      "appearance-display-mode-label": "表示モード",
       "appearance-floating-description": "バーを浮かせて、カプセル型で表示します。",
       "appearance-floating-label": "フローティングバー",
       "appearance-frame-radius": "内側の半径",
@@ -1070,6 +1081,8 @@
       "settings-desc": "ランチャーの挙動と外観をカスタマイズします。",
       "settings-enable-settings-search-description": "ランチャーで検索する際に設定結果を表示する。",
       "settings-enable-settings-search-label": "設定検索を有効にする",
+      "settings-enable-windows-search-description": "アクティブなウィンドウを検索してフォーカスします。",
+      "settings-enable-windows-search-label": "ウィンドウ検索を有効にする",
       "settings-grid-view-description": "リスト形式の代わりに、グリッド（格子状）レイアウトで項目を表示します。",
       "settings-icon-mode-description": "Tablerアイコンではなく、ネイティブのシステムアイコンを使用します。",
       "settings-icon-mode-label": "ネイティブアイコンを使用",

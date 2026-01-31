@@ -489,6 +489,7 @@
     "week": "Veke",
     "widgets": "Miniprogram",
     "width": "Breidde",
+    "windows": "Vindauge",
     "yes": "Ja"
   },
   "control-center": {
@@ -508,6 +509,7 @@
     "on-hover": "Ved sviv"
   },
   "hide-modes": {
+    "auto-hide": "Automatisk gøyming",
     "hidden": "Gøym når tom",
     "idle": "Gøym når inaktiv",
     "transparent": "Gjennomsynleg når tom",
@@ -560,6 +562,7 @@
       "emoji-loading-description": "Vent litt",
       "emoji-no-recent": "Ingen nylege emojiar enno",
       "emoji-search-description": "Leita i og kopiera emojiar",
+      "settings-search-description": "Søk og naviger til innstillingar",
       "windows-search-description": "Søk og fokuser opne vindauge"
     }
   },
@@ -596,7 +599,8 @@
       "density-compact": "Tett",
       "density-default": "Standard",
       "density-mini": "Ørliten",
-      "density-spacious": "Romsleg"
+      "density-spacious": "Romsleg",
+      "display-mode-always-visible": "Alltid synleg"
     },
     "control-center": {
       "quick-settings-style-classic": "Klassisk",
@@ -715,7 +719,14 @@
       "volumes-volume-overdrive-label": "Tillat overdrift på ljodstyrke"
     },
     "bar": {
-      "appearance-density-description": "Fastset utfylling på lina for å gjera henne tett eller romsleg."
+      "appearance-auto-hide-delay-description": "Tid før Bar-en skjuler seg etter at musa forlèt den.",
+      "appearance-auto-hide-delay-label": "Skjulingsforsinking",
+      "appearance-auto-hide-exclusive-note": "Merk: Eksklusiv sone blir automatisk deaktivert når auto-skjul er aktivt.",
+      "appearance-auto-show-delay-description": "Tid før baren viser seg når musa kjem til kanten.",
+      "appearance-auto-show-delay-label": "Visingsforsinking",
+      "appearance-density-description": "Fastset utfylling på lina for å gjera henne tett eller romsleg.",
+      "appearance-display-mode-description": "Vel når baren er synleg",
+      "appearance-display-mode-label": "Visningsmodus"
     },
     "desktop-widgets": {
       "system-stat-rounded-corners-description": "Bruk avrunda hjørne for bakgrunnen til widgeten.",
@@ -751,6 +762,8 @@
       "settings-desc": "Vel korleis programveljaren ser ut og kva det gjer.",
       "settings-enable-settings-search-description": "Viser innstillingar når ein leitar i programveljaren.",
       "settings-enable-settings-search-label": "Søk i innstillingar",
+      "settings-enable-windows-search-description": "Søk og fokuser aktive vindauge.",
+      "settings-enable-windows-search-label": "Aktiver vindaugssøk",
       "settings-grid-view-description": "Viser utfall i rutenett heller enn som liste.",
       "settings-icon-mode-description": "Brukar heimlege systemikon heller enn Tabler-ikon.",
       "settings-icon-mode-label": "Bruk heimlege ikon",
