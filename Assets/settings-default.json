@@ -190,6 +190,7 @@
     "iconMode": "tabler",
     "showIconBackground": false,
     "enableSettingsSearch": true,
+    "enableWindowsSearch": true,
     "ignoreMouseInput": false,
     "screenshotAnnotationTool": ""
   },

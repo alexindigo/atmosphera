@@ -8,7 +8,7 @@ Item {
 
   property string name: I18n.tr("launcher.providers.windows")
   property var launcher: null
-  property bool handleSearch: true
+  property bool handleSearch: Settings.data.appLauncher.enableWindowsSearch
   property string supportedLayouts: "list"
 
   function init() {

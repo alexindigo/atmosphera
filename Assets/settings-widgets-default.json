@@ -129,6 +129,7 @@
       "usePrimaryColor": false,
       "useMonospaceFont": true,
       "showCpuUsage": true,
+      "showCpuFreq": false,
       "showCpuTemp": true,
       "showGpuTemp": false,
       "showLoadAverage": false,
@@ -137,6 +138,7 @@
       "showSwapUsage": false,
       "showNetworkStats": false,
       "showDiskUsage": false,
+      "showDiskAsFree": false,
       "diskPath": "/"
     },
     "Taskbar": {

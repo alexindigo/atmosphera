@@ -395,6 +395,7 @@ Singleton {
       property string iconMode: "tabler"
       property bool showIconBackground: false
       property bool enableSettingsSearch: true
+      property bool enableWindowsSearch: true
       property bool ignoreMouseInput: false
       property string screenshotAnnotationTool: ""
     }

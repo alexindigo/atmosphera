@@ -831,6 +831,15 @@
     "subTabLabel": "common.general"
   },
   {
+    "labelKey": "panels.launcher.settings-enable-windows-search-label",
+    "descriptionKey": "panels.launcher.settings-enable-windows-search-description",
+    "widget": "NToggle",
+    "tab": 8,
+    "tabLabel": "panels.launcher.title",
+    "subTab": 0,
+    "subTabLabel": "common.general"
+  },
+  {
     "labelKey": "panels.launcher.settings-ignore-mouse-input-label",
     "descriptionKey": "panels.launcher.settings-ignore-mouse-input-description",
     "widget": "NToggle",
