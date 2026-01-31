@@ -202,7 +202,7 @@ SmartPanel {
                     NText {
                       Layout.preferredWidth: 40 * Style.uiScaleRatio
                       horizontalAlignment: Text.AlignRight
-                      text: `${Math.round(BatteryService.getPercentage(modelData))}%`
+                      text: `${BatteryService.getPercentage(modelData)}%`
                       color: Color.mOnSurface
                       pointSize: Style.fontSizeS
                       font.weight: Style.fontWeightBold
@@ -266,7 +266,7 @@ SmartPanel {
                 NText {
                   Layout.preferredWidth: 40 * Style.uiScaleRatio
                   horizontalAlignment: Text.AlignRight
-                  text: `${Math.round(BatteryService.getPercentage(modelData))}%`
+                  text: `${BatteryService.getPercentage(modelData)}%`
                   color: Color.mOnSurface
                   pointSize: Style.fontSizeS
                   font.weight: Style.fontWeightBold

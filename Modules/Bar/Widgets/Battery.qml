@@ -58,7 +58,7 @@ Item {
   readonly property bool isPresent: testMode ? true : BatteryService.isDevicePresent(selectedDevice)
   readonly property bool isReady: testMode ? true : BatteryService.isDeviceReady(selectedDevice)
 
-  readonly property real percent: testMode ? testPercent : (isReady ? Math.round(BatteryService.getPercentage(selectedDevice)) : -1)
+  readonly property real percent: testMode ? testPercent : (isReady ? BatteryService.getPercentage(selectedDevice) : -1)
   readonly property bool isCharging: testMode ? testCharging : (isReady ? BatteryService.isCharging(selectedDevice) : false)
   readonly property bool isPluggedIn: testMode ? testPluggedIn : (isReady ? BatteryService.isPluggedIn(selectedDevice) : false)
 
@@ -74,7 +74,7 @@ Item {
     if (isReady && (!charging && !pluggedIn) && !hasNotifiedLowBattery && currentPercent <= warningThreshold) {
       hasNotifiedLowBattery = true;
       ToastService.showWarning(I18n.tr("toast.battery.low"), I18n.tr("toast.battery.low-desc", {
-                                                                       "percent": Math.round(currentPercent)
+                                                                       "percent": currentPercent
                                                                      }), "battery-exclamation");
     } else if (hasNotifiedLowBattery && (charging || pluggedIn || currentPercent > warningThreshold + 5)) {
       hasNotifiedLowBattery = false;
@@ -121,7 +121,7 @@ Item {
     screen: root.screen
     oppositeDirection: BarService.getPillDirection(root)
     icon: testMode ? BatteryService.getIcon(testPercent, testCharging, testPluggedIn, true) : BatteryService.getIcon(percent, isCharging, isPluggedIn, isReady)
-    text: (isReady || testMode) ? Math.round(percent) : "-"
+    text: (isReady || testMode) ? percent : "-"
     suffix: "%"
     autoHide: false
     forceOpen: isReady && displayMode === "alwaysShow"
@@ -153,7 +153,7 @@ Item {
       } else if (selectedDevice) {
         // External / Peripheral Device (Phone, Keyboard, Mouse, Gamepad, Headphone etc.)
         let name = BatteryService.getDeviceName(selectedDevice);
-        let pct = Math.round(percent);
+        let pct = percent;
         lines.push(name + ": " + pct + suffix);
       }
 
@@ -166,7 +166,7 @@ Item {
           for (var j = 0; j < external.length; j++) {
             var dev = external[j];
             var dName = BatteryService.getDeviceName(dev);
-            var dPct = Math.round(BatteryService.getPercentage(dev));
+            var dPct = BatteryService.getPercentage(dev);
             lines.push(dName + ": " + dPct + suffix);
           }
         }

@@ -20,7 +20,7 @@ Singleton {
   readonly property bool batteryPluggedIn: isPluggedIn(primaryDevice)
   readonly property bool batteryReady: isDeviceReady(primaryDevice)
   readonly property bool batteryPresent: isDevicePresent(primaryDevice)
-  readonly property string batteryIcon: getIcon(Math.round(batteryPercentage), batteryCharging, batteryPluggedIn, batteryReady)
+  readonly property string batteryIcon: getIcon(batteryPercentage, batteryCharging, batteryPluggedIn, batteryReady)
 
   readonly property var laptopBatteries: UPower.devices.values.filter(d => d.isLaptopBattery)
   readonly property var bluetoothBatteries: {
@@ -116,9 +116,9 @@ Singleton {
       return -1;
     }
     if (device.batteryAvailable !== undefined) {
-      return (device.battery || 0) * 100;
+      return Math.round((device.battery || 0) * 100);
     }
-    return (device.percentage || 0) * 100;
+    return Math.round((device.percentage || 0) * 100);
   }
 
   function isCharging(device) {
