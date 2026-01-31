@@ -559,7 +559,9 @@
       "emoji-loading": "이모티콘 로딩 중...",
       "emoji-loading-description": "잠시만 기다려 주세요",
       "emoji-no-recent": "최근 이모티콘이 없습니다",
-      "emoji-search-description": "이모티콘 검색 및 복사"
+      "emoji-search-description": "이모티콘 검색 및 복사",
+      "windows": "",
+      "windows-search-description": "열려 있는 창 검색 및 포커스"
     }
   },
   "lock-screen": {

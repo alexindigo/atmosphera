@@ -559,7 +559,9 @@
       "emoji-loading": "Läser in emojis...",
       "emoji-loading-description": "Vänta",
       "emoji-no-recent": "Inga nya emojis ännu",
-      "emoji-search-description": "Sök och kopiera emojis"
+      "emoji-search-description": "Sök och kopiera emojis",
+      "windows": "",
+      "windows-search-description": "Sök och fokusera öppna fönster"
     }
   },
   "lock-screen": {

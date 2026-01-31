@@ -559,7 +559,9 @@
       "emoji-loading": "正在加载表情符号...",
       "emoji-loading-description": "请稍候",
       "emoji-no-recent": "尚无最近使用的表情符号",
-      "emoji-search-description": "搜索和复制表情符号"
+      "emoji-search-description": "搜索和复制表情符号",
+      "windows": "",
+      "windows-search-description": "搜索并聚焦打开的窗口"
     }
   },
   "lock-screen": {

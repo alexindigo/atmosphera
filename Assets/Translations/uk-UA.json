@@ -559,7 +559,9 @@
       "emoji-loading": "Завантаження емодзі...",
       "emoji-loading-description": "Зачекайте, будь ласка",
       "emoji-no-recent": "Немає нещодавніх емодзі",
-      "emoji-search-description": "Пошук і копіювання емодзі"
+      "emoji-search-description": "Пошук і копіювання емодзі",
+      "windows": "",
+      "windows-search-description": "Пошук і фокусування відкритих вікон"
     }
   },
   "lock-screen": {

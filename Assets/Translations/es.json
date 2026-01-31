@@ -559,7 +559,9 @@
       "emoji-loading": "Cargando emojis...",
       "emoji-loading-description": "Por favor espera",
       "emoji-no-recent": "No hay emojis recientes",
-      "emoji-search-description": "Buscar y copiar emojis"
+      "emoji-search-description": "Buscar y copiar emojis",
+      "windows": "",
+      "windows-search-description": "Buscar y enfocar ventanas abiertas"
     }
   },
   "lock-screen": {

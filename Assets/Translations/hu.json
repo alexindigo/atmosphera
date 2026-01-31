@@ -559,7 +559,9 @@
       "emoji-loading": "Emojik betöltése...",
       "emoji-loading-description": "Kis türelmet",
       "emoji-no-recent": "Nincsenek még legutóbbi emojik",
-      "emoji-search-description": "Emojik keresése és másolása"
+      "emoji-search-description": "Emojik keresése és másolása",
+      "windows": "",
+      "windows-search-description": "Nyitott ablakok keresése és fókuszálása"
     }
   },
   "lock-screen": {
