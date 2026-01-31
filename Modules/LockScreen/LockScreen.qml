@@ -82,6 +82,7 @@ Loader {
             property bool charging: BatteryService.batteryCharging
             property bool pluggedIn: BatteryService.batteryPluggedIn
             property bool batteryVisible: isReady
+            property string icon: BatteryService.batteryIcon
           }
 
           Item {
