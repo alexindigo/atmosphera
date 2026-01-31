@@ -99,6 +99,8 @@ Item {
   Shape {
     id: shape
     anchors.fill: parent
+    layer.enabled: true
+    layer.samples: 4
     antialiasing: true
     visible: root.hasData
 
