@@ -44,6 +44,95 @@ Singleton {
   property real loadAvg15: 0
   property int nproc: 0 // Number of cpu cores
 
+  // History arrays (2 minutes of data, length computed from polling interval)
+  // Pre-filled with zeros so the graph scrolls smoothly from the start
+  readonly property int historyDurationMs: (1 * 30 * 1000) // 1 minute
+
+  // Computed history lengths based on polling intervals
+  readonly property int cpuHistoryLength: Math.ceil(historyDurationMs / normalizeInterval(Settings.data.systemMonitor.cpuPollingInterval))
+  readonly property int gpuHistoryLength: Math.ceil(historyDurationMs / normalizeInterval(Settings.data.systemMonitor.gpuPollingInterval))
+  readonly property int memHistoryLength: Math.ceil(historyDurationMs / normalizeInterval(Settings.data.systemMonitor.memPollingInterval))
+  readonly property int diskHistoryLength: Math.ceil(historyDurationMs / normalizeInterval(Settings.data.systemMonitor.diskPollingInterval))
+  readonly property int networkHistoryLength: Math.ceil(historyDurationMs / normalizeInterval(Settings.data.systemMonitor.networkPollingInterval))
+
+  property var cpuHistory: new Array(cpuHistoryLength).fill(0)
+  property var gpuTempHistory: new Array(gpuHistoryLength).fill(0)
+  property var memHistory: new Array(memHistoryLength).fill(0)
+  property var diskHistories: ({}) // Keyed by mount path, initialized on first update
+  property var rxSpeedHistory: new Array(networkHistoryLength).fill(0)
+  property var txSpeedHistory: new Array(networkHistoryLength).fill(0)
+
+  // Historical min/max tracking (since shell started) for consistent graph scaling
+  property real cpuHistoryMax: 0
+  property real gpuTempHistoryMin: 100
+  property real gpuTempHistoryMax: 0
+  property real memHistoryMax: 0
+  // Network uses existing rxMaxSpeed/txMaxSpeed (7-day learned peaks)
+  // Disk is always 0-100%
+
+  // History management - called from update functions, not change handlers
+  // (change handlers don't fire when value stays the same)
+  function pushCpuHistory() {
+    if (cpuUsage > cpuHistoryMax)
+      cpuHistoryMax = cpuUsage;
+    let h = cpuHistory.slice();
+    h.push(cpuUsage);
+    if (h.length > cpuHistoryLength)
+      h.shift();
+    cpuHistory = h;
+  }
+
+  function pushGpuHistory() {
+    if (gpuTemp > 0) {
+      if (gpuTemp < gpuTempHistoryMin)
+        gpuTempHistoryMin = gpuTemp;
+      if (gpuTemp > gpuTempHistoryMax)
+        gpuTempHistoryMax = gpuTemp;
+    }
+    let h = gpuTempHistory.slice();
+    h.push(gpuTemp);
+    if (h.length > gpuHistoryLength)
+      h.shift();
+    gpuTempHistory = h;
+  }
+
+  function pushMemHistory() {
+    if (memPercent > memHistoryMax)
+      memHistoryMax = memPercent;
+    let h = memHistory.slice();
+    h.push(memPercent);
+    if (h.length > memHistoryLength)
+      h.shift();
+    memHistory = h;
+  }
+
+  function pushDiskHistory() {
+    let newHistories = {};
+    for (let path in diskPercents) {
+      // Pre-fill with zeros if this is a new path
+      let h = diskHistories[path] ? diskHistories[path].slice() : new Array(diskHistoryLength).fill(0);
+      h.push(diskPercents[path]);
+      if (h.length > diskHistoryLength)
+        h.shift();
+      newHistories[path] = h;
+    }
+    diskHistories = newHistories;
+  }
+
+  function pushNetworkHistory() {
+    let rxH = rxSpeedHistory.slice();
+    rxH.push(rxSpeed);
+    if (rxH.length > networkHistoryLength)
+      rxH.shift();
+    rxSpeedHistory = rxH;
+
+    let txH = txSpeedHistory.slice();
+    txH.push(txSpeed);
+    if (txH.length > networkHistoryLength)
+      txH.shift();
+    txSpeedHistory = txH;
+  }
+
   // Network max speed tracking (learned over time, cached for 7 days)
   readonly property real rxMaxSpeed: {
     const peaks = networkStatsAdapter.rxPeaks || [];
@@ -421,6 +510,7 @@ Singleton {
         root.diskUsedGb = newUsedGb;
         root.diskSizeGb = newSizeGb;
         root.diskAvailGb = newAvailGb;
+        root.pushDiskHistory();
       }
     }
   }
@@ -632,6 +722,7 @@ Singleton {
     onLoaded: {
       const data = text().trim();
       root.gpuTemp = Math.round(parseInt(data) / 1000.0);
+      root.pushGpuHistory();
     }
   }
 
@@ -700,6 +791,7 @@ Singleton {
         const temp = parseInt(text.trim());
         if (!isNaN(temp)) {
           root.gpuTemp = temp;
+          root.pushGpuHistory();
         }
       }
     }
@@ -793,6 +885,7 @@ Singleton {
       }
       root.memGb = (usageKb / 1048576).toFixed(1); // 1024*1024 = 1048576
       root.memPercent = Math.round((usageKb / memTotal) * 100);
+      root.pushMemHistory();
     }
 
     // Swap usage
@@ -844,6 +937,7 @@ Singleton {
       if (diffTotal > 0) {
         root.cpuUsage = (((diffTotal - diffIdle) / diffTotal) * 100).toFixed(1);
       }
+      root.pushCpuHistory();
     }
 
     root.prevCpuStats = stats;
@@ -935,6 +1029,9 @@ Singleton {
     root.prevRxBytes = totalRx;
     root.prevTxBytes = totalTx;
     root.prevTime = currentTime;
+
+    // Update network history after speeds are computed
+    root.pushNetworkHistory();
   }
 
   // -------------------------------------------------------

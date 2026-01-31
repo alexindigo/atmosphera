@@ -1059,7 +1059,7 @@
       "clipboard-desc": "Access and manage your clipboard history from the launcher.",
       "execute-desc": "Configure how applications are launched.",
       "execute-title": "Execution",
-      "settings-annotation-tool-description": "Command to run when clicking the annotate button in clipboard history, The image will be piped to this command.",
+      "settings-annotation-tool-description": "Command to run when clicking the annotate button in clipboard history. The image will be piped to this command.",
       "settings-annotation-tool-label": "Annotation tool",
       "settings-annotation-tool-placeholder": "e.g. 'gradia', 'satty -f -'",
       "settings-auto-paste-description": "Automatically paste the selected clipboard item. Requires wtype.",

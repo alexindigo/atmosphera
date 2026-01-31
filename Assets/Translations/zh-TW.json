@@ -1059,7 +1059,7 @@
       "clipboard-desc": "在啟動器存取及整理你的剪貼簿歷史",
       "execute-desc": "設定應用程式該如何啟動",
       "execute-title": "執行",
-      "settings-annotation-tool-description": "點擊剪貼簿歷史記錄中的註記按鈕時要執行的命令，圖片將會透過管線傳送至此命令。",
+      "settings-annotation-tool-description": "點擊剪貼簿歷史記錄中的註記按鈕時要執行的命令。圖片將會透過管線傳送至此命令。",
       "settings-annotation-tool-label": "註記工具",
       "settings-annotation-tool-placeholder": "例如: gradia', 'satty -f -'",
       "settings-auto-paste-description": "自動貼上選取的剪貼簿項目, 需要 wtype 套件",
