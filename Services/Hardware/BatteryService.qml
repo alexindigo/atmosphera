@@ -34,7 +34,7 @@ Singleton {
     return list
   }
 
-  readonly property var _laptopBattery: UPower.displayDevice.isPresent ? UPower.displayDevice : null
+  readonly property var _laptopBattery: UPower.displayDevice.isPresent ? UPower.displayDevice : (laptopBatteries.length > 0 ? laptopBatteries[0] : null)
   readonly property var _bluetoothBattery: bluetoothBatteries.length > 0 ? bluetoothBatteries[0] : null
 
   property var deviceModel: {
@@ -154,7 +154,7 @@ Singleton {
     // Don't show name for laptop batteries
     if (!isBluetoothDevice(device) && device.isLaptopBattery) {
       // If there is more than one battery explicitly name them
-      Logger.e("BatteryDebug", "Available Battery count: " + laptopBatteries.length);
+      // Logger.e("BatteryDebug", "Available Battery count: " + laptopBatteries.length); // can be useful for debugging
       if (laptopBatteries.length > 1 && device.nativePath) {
         // In case of 2 batteries: bat0 => bat1  bat1 => bat2
         return I18n.tr("common.battery") + " " + parseInt(device.nativePath.substring(3) + 1);
