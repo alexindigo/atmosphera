@@ -489,6 +489,7 @@
     "week": "Semana",
     "widgets": "Widgets",
     "width": "Ancho",
+    "windows": "Ventanas",
     "yes": "Sí"
   },
   "control-center": {
@@ -508,6 +509,7 @@
     "on-hover": "Al pasar por encima"
   },
   "hide-modes": {
+    "auto-hide": "Ocultación Automática",
     "hidden": "Ocultar cuando esté vacío",
     "idle": "Ocultar cuando esté inactivo",
     "transparent": "Transparente cuando esté vacío",
@@ -560,6 +562,7 @@
       "emoji-loading-description": "Por favor espera",
       "emoji-no-recent": "No hay emojis recientes",
       "emoji-search-description": "Buscar y copiar emojis",
+      "settings-search-description": "Buscar en los ajustes",
       "windows-search-description": "Buscar y enfocar ventanas abiertas"
     }
   },
@@ -597,6 +600,7 @@
       "density-default": "Predeterminada",
       "density-mini": "Mini",
       "density-spacious": "Espaciosa",
+      "display-mode-always-visible": "Siempre visible",
       "type-floating": "Flotante",
       "type-framed": "Con marco",
       "type-simple": "Simple"
@@ -718,6 +722,11 @@
       "volumes-volume-overdrive-label": "Permitir sobreamplificación de volumen"
     },
     "bar": {
+      "appearance-auto-hide-delay-description": "Tiempo que tarda la barra en ocultarse cuando se aparta el ratón",
+      "appearance-auto-hide-delay-label": "Demora de Ocultación",
+      "appearance-auto-hide-exclusive-note": "Nota: La zona exclusiva se desactiva automáticamente cuando la ocultación automática está activa",
+      "appearance-auto-show-delay-description": "Tiempo que tarda la barra en mostrarse cuando el ratón llega al borde",
+      "appearance-auto-show-delay-label": "Demora de Despliegue",
       "appearance-background-opacity-description": "Establece la opacidad del fondo específicamente para la barra.",
       "appearance-background-opacity-label": "Opacidad del fondo de la barra",
       "appearance-capsule-opacity-description": "Establecer el nivel de opacidad para los fondos de los widgets cuando se muestra la cápsula.",
@@ -725,6 +734,8 @@
       "appearance-density-description": "Ajusta el relleno de la barra para un aspecto compacto o espacioso.",
       "appearance-density-label": "Densidad de la barra",
       "appearance-desc": "Personaliza la apariencia y posición de la barra.",
+      "appearance-display-mode-description": "Elige cuando será visible la barra",
+      "appearance-display-mode-label": "Modo de Visualización",
       "appearance-floating-description": "Muestra la barra como una 'píldora' flotante.",
       "appearance-floating-label": "Barra flotante",
       "appearance-frame-radius": "Radio interno",

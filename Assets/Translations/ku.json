@@ -559,7 +559,8 @@
       "emoji-loading": "Îmojî tên barkriin...",
       "emoji-loading-description": "Tika raweste",
       "emoji-no-recent": "Hîna emojiyên dawî tune ne",
-      "emoji-search-description": "Lêgerîn û kopîkirina emojiyan"
+      "emoji-search-description": "Lêgerîn û kopîkirina emojiyan",
+      "windows-search-description": "Pencereyên vekirî bigere û bîne pêş"
     }
   },
   "lock-screen": {
@@ -1546,7 +1547,7 @@
       "confirm-code": "Koda {value} li ser amûra din piştrast bike.",
       "connect-failed": "Têk çû girêdan bi cîhazê re",
       "disconnect-failed": "Têkçûn di qutkirina ji cîhazê de",
-      "discoverable-change-failed": "Guhertina rewşa dîtşbar têk çû"",
+      "discoverable-change-failed": "Guhertina rewşa dîtşbar têk çû",
       "discoverable-disabled": "Dîtbarî hat neçalakkirin",
       "discoverable-enabled": "Dîtbarî hat neçalakkirin",
       "display-code": "Koda {value} li ser amûra din binivîse.",
