@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Pam
-import Quickshell.Services.UPower
 import Quickshell.Wayland
 import qs.Commons
 import qs.Services.Compositor
