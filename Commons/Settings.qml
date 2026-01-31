@@ -203,7 +203,7 @@ Singleton {
       // Auto-hide settings
       property string displayMode: "always_visible" // "always_visible", "auto_hide"
       property int autoHideDelay: 500 // ms before hiding after mouse leaves
-      property int autoShowDelay: 100 // ms before showing when mouse enters
+      property int autoShowDelay: 150 // ms before showing when mouse enters
 
       // Widget configuration for modular bar system
       property JsonObject widgets

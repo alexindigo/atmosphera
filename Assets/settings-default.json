@@ -20,7 +20,7 @@
     "hideOnOverview": false,
     "displayMode": "always_visible",
     "autoHideDelay": 500,
-    "autoShowDelay": 100,
+    "autoShowDelay": 150,
     "widgets": {
       "left": [
         {

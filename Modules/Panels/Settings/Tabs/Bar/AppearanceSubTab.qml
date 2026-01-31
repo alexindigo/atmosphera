@@ -124,20 +124,20 @@ ColumnLayout {
 
   NComboBox {
     Layout.fillWidth: true
-    label: I18n.tr("panels.bar.appearance-type-label") ?? "Bar Type"
-    description: I18n.tr("panels.bar.appearance-type-description") ?? "Choose the style of the bar: Simple, Floating or Framed"
+    label: I18n.tr("panels.bar.appearance-type-label")
+    description: I18n.tr("panels.bar.appearance-type-description")
     model: [
       {
         "key": "simple",
-        "name": I18n.tr("options.bar.type-simple") ?? "Simple"
+        "name": I18n.tr("options.bar.type-simple")
       },
       {
         "key": "floating",
-        "name": I18n.tr("options.bar.type-floating") ?? "Floating"
+        "name": I18n.tr("options.bar.type-floating")
       },
       {
         "key": "framed",
-        "name": I18n.tr("options.bar.type-framed") ?? "Framed"
+        "name": I18n.tr("options.bar.type-framed")
       }
     ]
     currentKey: Settings.data.bar.barType
@@ -164,8 +164,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NLabel {
-      label: I18n.tr("panels.bar.appearance-frame-settings-label") ?? "Frame Settings"
-      description: I18n.tr("panels.bar.appearance-frame-settings-description") ?? "Adjust frame thickness and inner corner radius"
+      label: I18n.tr("panels.bar.appearance-frame-settings-label")
+      description: I18n.tr("panels.bar.appearance-frame-settings-description")
     }
 
     RowLayout {
@@ -174,7 +174,7 @@ ColumnLayout {
 
       NValueSlider {
         Layout.fillWidth: true
-        label: I18n.tr("panels.bar.appearance-frame-thickness") ?? "Thickness"
+        label: I18n.tr("panels.bar.appearance-frame-thickness")
         from: 4
         to: 24
         stepSize: 1
@@ -186,7 +186,7 @@ ColumnLayout {
 
       NValueSlider {
         Layout.fillWidth: true
-        label: I18n.tr("panels.bar.appearance-frame-radius") ?? "Inner Radius"
+        label: I18n.tr("panels.bar.appearance-frame-radius")
         from: 4
         to: 24
         stepSize: 1
@@ -245,16 +245,16 @@ ColumnLayout {
 
   NComboBox {
     Layout.fillWidth: true
-    label: I18n.tr("panels.bar.appearance-display-mode-label") ?? "Display Mode"
-    description: I18n.tr("panels.bar.appearance-display-mode-description") ?? "Choose when the bar is visible"
+    label: I18n.tr("panels.bar.appearance-display-mode-label")
+    description: I18n.tr("panels.bar.appearance-display-mode-description")
     model: [
       {
         "key": "always_visible",
-        "name": I18n.tr("options.bar.display-mode-always-visible") ?? "Always Visible"
+        "name": I18n.tr("hide-modes.visible")
       },
       {
         "key": "auto_hide",
-        "name": I18n.tr("options.bar.display-mode-auto-hide") ?? "Auto-hide"
+        "name": I18n.tr("hide-modes.auto-hide")
       }
     ]
     currentKey: Settings.data.bar.displayMode
@@ -269,8 +269,8 @@ ColumnLayout {
 
     NValueSlider {
       Layout.fillWidth: true
-      label: I18n.tr("panels.bar.appearance-auto-hide-delay-label") ?? "Hide Delay"
-      description: I18n.tr("panels.bar.appearance-auto-hide-delay-description") ?? "Time before bar hides after mouse leaves"
+      label: I18n.tr("panels.bar.appearance-auto-hide-delay-label")
+      description: I18n.tr("panels.bar.appearance-auto-hide-delay-description")
       from: 100
       to: 2000
       stepSize: 100
@@ -282,8 +282,8 @@ ColumnLayout {
 
     NValueSlider {
       Layout.fillWidth: true
-      label: I18n.tr("panels.bar.appearance-auto-show-delay-label") ?? "Show Delay"
-      description: I18n.tr("panels.bar.appearance-auto-show-delay-description") ?? "Time before bar shows when mouse enters edge"
+      label: I18n.tr("panels.bar.appearance-auto-show-delay-label")
+      description: I18n.tr("panels.bar.appearance-auto-show-delay-description")
       from: 0
       to: 500
       stepSize: 50
@@ -296,7 +296,7 @@ ColumnLayout {
     NLabel {
       visible: Settings.data.bar.exclusive
       label: ""
-      description: I18n.tr("panels.bar.appearance-auto-hide-exclusive-note") ?? "Note: Exclusive zone is automatically disabled when auto-hide is active"
+      description: I18n.tr("panels.bar.appearance-auto-hide-exclusive-note")
     }
   }
 
