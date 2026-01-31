@@ -103,7 +103,7 @@ ShapePath {
   readonly property real blMultY: bar ? ShapeCornerHelper.getMultY(bar.bottomLeftCornerState) : 1
   readonly property real blRadius: bar ? getCornerRadius(bar.bottomLeftCornerState) : 0
 
-  // Auto-hide opacity factor (animates from 1 to 0 when hidden)
+  // Auto-hide opacity factor for background fade
   property real opacityFactor: (bar && bar.isHidden) ? 0 : 1
 
   Behavior on opacityFactor {

@@ -152,7 +152,10 @@ PanelWindow {
     id: unloadTimer
     interval: Style.animationFast + 50
     onTriggered: {
-      if (barWindow.isHidden) {
+      // Only unload if still hidden AND not about to show (prevents unload/reload race)
+      if (barWindow.isHidden && !showTimer.running) {
+        // Clear hover state before unloading to prevent issues during destruction
+        barWindow.barHovered = false;
         barWindow.contentLoaded = false;
       }
     }
@@ -225,6 +228,9 @@ PanelWindow {
           }
 
           onExited: {
+            // Skip if already hidden (being destroyed)
+            if (barWindow.isHidden)
+              return;
             barWindow.barHovered = false;
             BarService.setScreenHovered(barWindow.screen?.name, false);
             if (barWindow.autoHide && !barWindow.panelOpen) {

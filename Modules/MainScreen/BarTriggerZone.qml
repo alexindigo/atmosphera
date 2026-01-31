@@ -17,6 +17,10 @@ PanelWindow {
   readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
   readonly property int triggerSize: 1
 
+  // Track if component is being destroyed to prevent signals during cleanup
+  property bool isBeingDestroyed: false
+  Component.onDestruction: isBeingDestroyed = true
+
   // Invisible trigger zone
   color: "transparent"
   focusable: false
@@ -43,11 +47,15 @@ PanelWindow {
     hoverEnabled: true
 
     onEntered: {
+      if (root.isBeingDestroyed)
+        return;
       // Signal hover - BarContentWindow will handle the show delay
       BarService.setScreenHovered(root.screen?.name, true);
     }
 
     onExited: {
+      if (root.isBeingDestroyed)
+        return;
       BarService.setScreenHovered(root.screen?.name, false);
     }
   }
