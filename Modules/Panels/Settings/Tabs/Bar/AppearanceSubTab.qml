@@ -238,6 +238,68 @@ ColumnLayout {
     }
   }
 
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginS
+  }
+
+  NComboBox {
+    Layout.fillWidth: true
+    label: I18n.tr("panels.bar.appearance-display-mode-label") ?? "Display Mode"
+    description: I18n.tr("panels.bar.appearance-display-mode-description") ?? "Choose when the bar is visible"
+    model: [
+      {
+        "key": "always_visible",
+        "name": I18n.tr("options.bar.display-mode-always-visible") ?? "Always Visible"
+      },
+      {
+        "key": "auto_hide",
+        "name": I18n.tr("options.bar.display-mode-auto-hide") ?? "Auto-hide"
+      }
+    ]
+    currentKey: Settings.data.bar.displayMode
+    defaultValue: Settings.getDefaultValue("bar.displayMode")
+    onSelected: key => Settings.data.bar.displayMode = key
+  }
+
+  ColumnLayout {
+    visible: Settings.data.bar.displayMode === "auto_hide"
+    spacing: Style.marginS
+    Layout.fillWidth: true
+
+    NValueSlider {
+      Layout.fillWidth: true
+      label: I18n.tr("panels.bar.appearance-auto-hide-delay-label") ?? "Hide Delay"
+      description: I18n.tr("panels.bar.appearance-auto-hide-delay-description") ?? "Time before bar hides after mouse leaves"
+      from: 100
+      to: 2000
+      stepSize: 100
+      value: Settings.data.bar.autoHideDelay
+      defaultValue: Settings.getDefaultValue("bar.autoHideDelay")
+      onMoved: value => Settings.data.bar.autoHideDelay = value
+      text: Settings.data.bar.autoHideDelay + "ms"
+    }
+
+    NValueSlider {
+      Layout.fillWidth: true
+      label: I18n.tr("panels.bar.appearance-auto-show-delay-label") ?? "Show Delay"
+      description: I18n.tr("panels.bar.appearance-auto-show-delay-description") ?? "Time before bar shows when mouse enters edge"
+      from: 0
+      to: 500
+      stepSize: 50
+      value: Settings.data.bar.autoShowDelay
+      defaultValue: Settings.getDefaultValue("bar.autoShowDelay")
+      onMoved: value => Settings.data.bar.autoShowDelay = value
+      text: Settings.data.bar.autoShowDelay + "ms"
+    }
+
+    NLabel {
+      visible: Settings.data.bar.exclusive
+      label: ""
+      description: I18n.tr("panels.bar.appearance-auto-hide-exclusive-note") ?? "Note: Exclusive zone is automatically disabled when auto-hide is active"
+    }
+  }
+
   NToggle {
     Layout.fillWidth: true
     visible: CompositorService.isNiri

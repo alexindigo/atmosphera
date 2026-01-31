@@ -75,6 +75,32 @@ Variants {
       }
     }
 
+    // BarTriggerZone - thin invisible zone to reveal hidden bar
+    // Always loaded when auto-hide is enabled (it's just 1px, no performance impact)
+    Loader {
+      active: {
+        if (!parent.windowLoaded || !parent.shouldBeActive)
+          return false;
+        if (!BarService.effectivelyVisible)
+          return false;
+        if (Settings.data.bar.displayMode !== "auto_hide")
+          return false;
+
+        // Check if bar is configured for this screen
+        var monitors = Settings.data.bar.monitors || [];
+        return monitors.length === 0 || monitors.includes(modelData?.name);
+      }
+      asynchronous: false
+
+      sourceComponent: BarTriggerZone {
+        screen: modelData
+      }
+
+      onLoaded: {
+        Logger.d("AllScreens", "BarTriggerZone created for", modelData?.name);
+      }
+    }
+
     // BarExclusionZone - created after MainScreen has fully loaded
     // Disabled when bar is hidden or not configured for this screen
     Repeater {

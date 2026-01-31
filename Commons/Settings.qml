@@ -200,6 +200,11 @@ Singleton {
       // Hide bar/panels when compositor overview is active
       property bool hideOnOverview: false
 
+      // Auto-hide settings
+      property string displayMode: "always_visible" // "always_visible", "auto_hide"
+      property int autoHideDelay: 500 // ms before hiding after mouse leaves
+      property int autoShowDelay: 100 // ms before showing when mouse enters
+
       // Widget configuration for modular bar system
       property JsonObject widgets
       widgets: JsonObject {
