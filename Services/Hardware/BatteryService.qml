@@ -153,7 +153,14 @@ Singleton {
 
     // Don't show name for laptop batteries
     if (!isBluetoothDevice(device) && device.isLaptopBattery) {
-      return "";
+      // If there is more than one battery explicitly name them
+      Logger.e("BatteryDebug", "Available Battery count: " + laptopBatteries.length);
+      if (laptopBatteries.length > 1 && device.nativePath) {
+        // In case of 2 batteries: bat0 => bat1  bat1 => bat2
+        return I18n.tr("common.battery") + " " + parseInt(device.nativePath.substring(3) + 1);
+      }
+      // If only one battery no numbers needed.
+      return I18n.tr("common.battery");
     }
 
     if (isBluetoothDevice(device) && device.name) {
