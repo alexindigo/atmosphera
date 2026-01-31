@@ -149,6 +149,17 @@ SmartPanel {
                     NIcon {
                       color: (BatteryService.isCharging(modelData) || BatteryService.isPluggedIn(modelData)) ? Color.mPrimary : Color.mOnSurface
                       icon: BatteryService.getIcon(BatteryService.getPercentage(modelData), BatteryService.isCharging(modelData), BatteryService.isPluggedIn(modelData), BatteryService.isDeviceReady(modelData))
+
+                      MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered: {
+                          if (modelData.healthSupported) {
+                            TooltipService.show(parent, `${I18n.tr("battery.battery-health")}: ${Math.round(modelData.healthPercentage)}%`);
+                          }
+                        }
+                        onExited: TooltipService.hide(parent)
+                      }
                     }
 
                     NText {
@@ -200,65 +211,6 @@ SmartPanel {
                 }
               }
 
-              // Health for this specific laptop battery
-              ColumnLayout {
-                Layout.fillWidth: true
-                spacing: Style.marginS
-                visible: modelData.healthSupported
-                RowLayout {
-                  Layout.fillWidth: true
-                  spacing: Style.marginS
-
-                  NIcon {
-                    icon: "heart"
-                  }
-
-                  NText {
-                    text: I18n.tr("battery.battery-health")
-                    color: Color.mOnSurface
-                    pointSize: Style.fontSizeS
-                  }
-                }
-
-                RowLayout {
-                  Layout.fillWidth: true
-                  spacing: Style.marginS
-
-                  Rectangle {
-                    Layout.fillWidth: true
-                    height: Math.round(8 * Style.uiScaleRatio)
-                    radius: height / 2
-                    color: Color.mSurface
-
-                    Rectangle {
-                      anchors.verticalCenter: parent.verticalCenter
-                      height: parent.height
-                      radius: parent.radius
-                      width: {
-                        var h = modelData.healthPercentage;
-                        if (h <= 0)
-                          return 0;
-                        var ratio = Math.max(0, Math.min(1, h / 100));
-                        return parent.width * ratio;
-                      }
-                      color: {
-                        var h = modelData.healthPercentage;
-                        return h >= 80 ? Color.mPrimary : (h >= 50 ? Color.mTertiary : Color.mError);
-                      }
-                    }
-                  }
-                  NText {
-                    Layout.preferredWidth: 40 * Style.uiScaleRatio
-                    horizontalAlignment: Text.AlignRight
-
-                    readonly property int h: Math.round(modelData.healthPercentage)
-                    text: h >= 0 ? `${h}%` : "--"
-                    color: Color.mOnSurface
-                    pointSize: Style.fontSizeS
-                    font.weight: Style.fontWeightBold
-                  }
-                }
-              }
             }
           }
 
