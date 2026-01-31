@@ -16,48 +16,46 @@ DraggableDesktopWidget {
   readonly property string diskPath: (widgetData && widgetData.diskPath !== undefined) ? widgetData.diskPath : "/"
   readonly property color color: (widgetData && widgetData.color !== undefined) ? widgetData.color : Color.mPrimary
 
-  // History tracking
-  property var history: []
-  readonly property int maxHistory: 60 // 60 points at 1s = 1 minute of history
+  // History from service (2 minutes of data)
+  readonly property var history: {
+    switch (root.statType) {
+    case "CPU":
+      return SystemStatService.cpuHistory;
+    case "GPU":
+      return SystemStatService.gpuTempHistory;
+    case "Memory":
+      return SystemStatService.memHistory;
+    case "Disk":
+      return SystemStatService.diskHistories[root.diskPath] || [];
+    case "Network":
+      return SystemStatService.networkHistory;
+    default:
+      return [];
+    }
+  }
+
+  // Current value from service
+  readonly property real currentValue: {
+    switch (root.statType) {
+    case "CPU":
+      return SystemStatService.cpuUsage;
+    case "GPU":
+      return SystemStatService.gpuTemp;
+    case "Memory":
+      return SystemStatService.memPercent;
+    case "Disk":
+      return SystemStatService.diskPercents[root.diskPath] || 0;
+    case "Network":
+      return Math.max(SystemStatService.rxRatio, SystemStatService.txRatio) * 100;
+    default:
+      return 0;
+    }
+  }
 
   implicitWidth: Math.round(240 * widgetScale)
   implicitHeight: Math.round(100 * widgetScale)
   width: implicitWidth
   height: implicitHeight
-
-  Timer {
-    interval: 1000
-    repeat: true
-    running: true
-    triggeredOnStart: true
-    onTriggered: {
-      let val = 0;
-      switch (root.statType) {
-      case "CPU":
-        val = SystemStatService.cpuUsage;
-        break;
-      case "GPU":
-        val = SystemStatService.gpuTemp;
-        break;
-      case "Memory":
-        val = SystemStatService.memPercent;
-        break;
-      case "Disk":
-        val = SystemStatService.diskPercents[root.diskPath] || 0;
-        break;
-      case "Network":
-        val = Math.max(SystemStatService.rxRatio, SystemStatService.txRatio) * 100;
-        break;
-      }
-
-      let newHistory = root.history.slice();
-      newHistory.push(val);
-      if (newHistory.length > root.maxHistory) {
-        newHistory.shift();
-      }
-      root.history = newHistory;
-    }
-  }
 
   RowLayout {
     anchors.fill: parent
@@ -77,7 +75,7 @@ DraggableDesktopWidget {
           case "CPU":
             return "cpu-usage";
           case "GPU":
-            return "gpu";
+            return "gpu-temperature";
           case "Memory":
             return "memory";
           case "Disk":
@@ -94,14 +92,21 @@ DraggableDesktopWidget {
 
       NText {
         Layout.alignment: Qt.AlignHCenter
-        text: {
-          const lastVal = root.history.length > 0 ? root.history[root.history.length - 1] : 0;
-          return Math.round(lastVal) + (root.statType === "GPU" ? "°C" : "%");
-        }
+        text: Math.round(root.currentValue) + (root.statType === "GPU" ? "°C" : "%")
         color: root.color
         pointSize: Style.fontSizeS * root.widgetScale
         font.weight: Style.fontWeightBold
         horizontalAlignment: Text.AlignHCenter
+      }
+
+      NText {
+        Layout.alignment: Qt.AlignHCenter
+        visible: root.statType === "CPU"
+        text: SystemStatService.cpuFreq
+        color: root.color
+        pointSize: Style.fontSizeXXS * root.widgetScale
+        horizontalAlignment: Text.AlignHCenter
+        opacity: 0.8
       }
 
       NText {
@@ -120,6 +125,7 @@ DraggableDesktopWidget {
       Layout.fillWidth: true
       Layout.fillHeight: true
       values: root.history
+      autoScale: root.statType === "GPU"
       maxValue: 100
       color: root.color
       fill: true

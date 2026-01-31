@@ -26,7 +26,7 @@ Singleton {
     DesktopWeather {}
   }
   property Component systemStatComponent: Component {
-    SystemStat {}
+    DesktopSystemStat {}
   }
 
   // Widget registry object mapping widget names to components
