@@ -356,3 +356,15 @@ body {
 [class*="pollContainer_"] [class*="votedStyles_"] [class*="answerInner_"] {
     border: 2px solid var(--active) !important;
 }
+
+/* Invite to server button override*/
+[class*="inviteButton_"] svg path,
+[class*="actionIcon_"] path[d^="M14.5 8a3 3 0"] {
+    fill: var(--accent-1) !important;
+    color: var(--accent-1) !important;
+}
+
+[class*="inviteButton_"]:hover svg path {
+    fill: var(--accent-3) !important;
+    color: var(--accent-3) !important;
+}
