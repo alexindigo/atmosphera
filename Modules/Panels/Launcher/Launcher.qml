@@ -1203,6 +1203,24 @@ SmartPanel {
                         color: Color.mOnSurfaceVariant
                       }
                     }
+
+                    // Badge icon overlay (generic indicator for any provider)
+                    Rectangle {
+                      visible: !!modelData.badgeIcon
+                      anchors.bottom: parent.bottom
+                      anchors.right: parent.right
+                      anchors.margins: 2
+                      width: height
+                      height: Style.fontSizeM + Style.marginXS
+                      color: Color.mSurfaceVariant
+                      radius: Style.radiusXXS
+                      NIcon {
+                        anchors.centerIn: parent
+                        icon: modelData.badgeIcon || ""
+                        pointSize: Style.fontSizeS
+                        color: Color.mOnSurfaceVariant
+                      }
+                    }
                   }
 
                   // Text content
