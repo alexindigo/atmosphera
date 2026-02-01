@@ -331,3 +331,40 @@ body {
 [class*="pollContainer_"] [class*="selected__"] {
     border: 2px solid var(--active) !important;
 }
+
+[class*="votedStyles_"] [class*="votePercentageBar_"] {
+    background-color: var(--active-2) !important;
+    opacity: 0.5;
+}
+
+[class*="pollContainer_"] [class*="answerSelectionIcon_"] circle {
+    fill: var(--accent-3) !important;
+}
+
+[class*="pollContainer_"] [class*="votedStyles_"] [class*="answerSelectionIcon_"] path {
+    fill: var(--bg-1) !important;
+}
+
+[class*="pollContainer_"] [class*="answer__"]:not([class*="votedStyles_"]) [class*="answerSelectionIcon_"] path {
+    fill: var(--accent-1) !important;
+}
+
+[class*="pollContainer_"] [class*="votesData_"] {
+    color: var(--text-2) !important;
+}
+
+[class*="pollContainer_"] [class*="votedStyles_"] [class*="answerInner_"] {
+    border: 2px solid var(--active) !important;
+}
+
+/* Invite to server button override*/
+[class*="inviteButton_"] svg path,
+[class*="actionIcon_"] path[d^="M14.5 8a3 3 0"] {
+    fill: var(--accent-1) !important;
+    color: var(--accent-1) !important;
+}
+
+[class*="inviteButton_"]:hover svg path {
+    fill: var(--accent-3) !important;
+    color: var(--accent-3) !important;
+}
