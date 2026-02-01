@@ -21,8 +21,14 @@ Singleton {
   readonly property bool batteryReady: isDeviceReady(primaryDevice)
   readonly property bool batteryPresent: isDevicePresent(primaryDevice)
   readonly property string batteryIcon: getIcon(batteryPercentage, batteryCharging, batteryPluggedIn, batteryReady)
-
-  readonly property var laptopBatteries: UPower.devices.values.filter(d => d.isLaptopBattery)
+  readonly property var laptopBatteries: UPower.devices.values.filter(d => d.isLaptopBattery).sort((x, y) => {
+    // Force DisplayDevice to the top
+    if (x.nativePath.includes("DisplayDevice")) return -1;
+    if (y.nativePath.includes("DisplayDevice")) return 1;
+          
+    // Standard string comparison works for BAT0 vs BAT1
+    return x.nativePath.localeCompare(y.nativePath, undefined, {numeric: true});
+  });
   readonly property var bluetoothBatteries: {
     var list = [];
     var btArray = BluetoothService.devices?.values || [];
@@ -152,16 +158,20 @@ Singleton {
       return "";
     }
 
-    // Don't show name for laptop batteries
     if (!isBluetoothDevice(device) && device.isLaptopBattery) {
       // If there is more than one battery explicitly name them
       // Logger.e("BatteryDebug", "Available Battery count: " + laptopBatteries.length); // can be useful for debugging
       if (laptopBatteries.length > 1 && device.nativePath) {
-        // In case of 2 batteries: bat0 => bat1  bat1 => bat2
-        return I18n.tr("common.battery") + " " + (parseInt(device.nativePath.substring(3)) + 1);
+        if (device.nativePath === "DisplayDevice") {
+          return "All batteries (combined)"; // TODO: i18n
+        }
+        var match = device.nativePath.match(/(\d+)$/);
+        if (match) {
+          // In case of 2 batteries: bat0 => bat1  bat1 => bat2
+          return I18n.tr("common.battery") + " " + (parseInt(match[1]) + 1);
+        }
       }
-      // If only one battery no numbers needed.
-      return I18n.tr("common.battery");
+      return "";
     }
 
     if (isBluetoothDevice(device) && device.name) {
