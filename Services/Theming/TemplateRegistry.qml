@@ -309,6 +309,18 @@ Singleton {
       "postProcess": () => `${templateApplyScript} niri`
     },
     {
+      "id": "sway",
+      "name": "Sway",
+      "category": "compositor",
+      "input": "sway",
+      "outputs": [
+        {
+          "path": "~/.config/sway/noctalia"
+        }
+      ],
+      "postProcess": () => `${templateApplyScript} sway`
+    },
+    {
       "id": "hyprland",
       "name": "Hyprland",
       "category": "compositor",

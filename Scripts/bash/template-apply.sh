@@ -4,7 +4,7 @@
 if [ "$#" -lt 1 ]; then
     # Print usage information to standard error.
     echo "Error: No application specified." >&2
-    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|fuzzel|walker|pywalfox|cava|yazi|niri|hyprland|mango} [dark|light]" >&2
+    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|fuzzel|walker|pywalfox|cava|yazi|niri|hyprland|sway|mango|btop|zathura} [dark|light]" >&2
     exit 1
 fi
 
@@ -340,6 +340,33 @@ hyprland)
 
     # Reload hyprland
     hyprctl reload
+    ;;
+
+sway)
+    echo "🎨 Applying 'noctalia' theme to Sway..."
+    CONFIG_DIR="$HOME/.config/sway"
+    CONFIG_FILE="$CONFIG_DIR/config"
+    INCLUDE_LINE='include ~/.config/sway/noctalia'
+
+    # Check if the config file exists.
+    if [ ! -f "$CONFIG_FILE" ]; then
+        echo "Config file not found, creating $CONFIG_FILE..."
+        mkdir -p "$(dirname "$CONFIG_FILE")"
+        echo -e "\n$INCLUDE_LINE\n" >"$CONFIG_FILE"
+        echo "Created new config file with noctalia theme."
+    else
+        # Check if noctalia include already exists (flexible matching)
+        if grep -qE 'include\s+.*noctalia' "$CONFIG_FILE"; then
+            echo "Theme already included, skipping modification."
+        else
+            # Add the include line to the end of the file
+            echo -e "\n$INCLUDE_LINE\n" >>"$CONFIG_FILE"
+            echo "✅ Added noctalia theme include to config."
+        fi
+    fi
+
+    # Reload sway
+    swaymsg reload
     ;;
 
 mango)

@@ -144,6 +144,24 @@
     "subTabLabel": "common.appearance"
   },
   {
+    "labelKey": "panels.bar.appearance-type-label",
+    "descriptionKey": "panels.bar.appearance-type-description",
+    "widget": "NComboBox",
+    "tab": 4,
+    "tabLabel": "panels.bar.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
+    "labelKey": "panels.bar.appearance-display-mode-label",
+    "descriptionKey": "panels.bar.appearance-display-mode-description",
+    "widget": "NComboBox",
+    "tab": 4,
+    "tabLabel": "panels.bar.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
     "labelKey": "panels.bar.appearance-use-separate-opacity-label",
     "descriptionKey": "panels.bar.appearance-use-separate-opacity-description",
     "widget": "NToggle",
@@ -189,9 +207,9 @@
     "subTabLabel": "common.appearance"
   },
   {
-    "labelKey": "panels.bar.appearance-type-label",
-    "descriptionKey": "panels.bar.appearance-type-description",
-    "widget": "NComboBox",
+    "labelKey": "panels.bar.appearance-hide-on-overview-label",
+    "descriptionKey": "panels.bar.appearance-hide-on-overview-description",
+    "widget": "NToggle",
     "tab": 4,
     "tabLabel": "panels.bar.title",
     "subTab": 0,
@@ -261,15 +279,6 @@
     "subTabLabel": "common.appearance"
   },
   {
-    "labelKey": "panels.bar.appearance-display-mode-label",
-    "descriptionKey": "panels.bar.appearance-display-mode-description",
-    "widget": "NComboBox",
-    "tab": 4,
-    "tabLabel": "panels.bar.title",
-    "subTab": 0,
-    "subTabLabel": "common.appearance"
-  },
-  {
     "labelKey": "panels.bar.appearance-auto-hide-delay-label",
     "descriptionKey": "panels.bar.appearance-auto-hide-delay-description",
     "widget": "NValueSlider",
@@ -282,15 +291,6 @@
     "labelKey": "panels.bar.appearance-auto-show-delay-label",
     "descriptionKey": "panels.bar.appearance-auto-show-delay-description",
     "widget": "NValueSlider",
-    "tab": 4,
-    "tabLabel": "panels.bar.title",
-    "subTab": 0,
-    "subTabLabel": "common.appearance"
-  },
-  {
-    "labelKey": "panels.bar.appearance-hide-on-overview-label",
-    "descriptionKey": "panels.bar.appearance-hide-on-overview-description",
-    "widget": "NToggle",
     "tab": 4,
     "tabLabel": "panels.bar.title",
     "subTab": 0,
