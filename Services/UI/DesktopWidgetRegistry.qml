@@ -202,4 +202,112 @@ Singleton {
     root.pluginWidgetRegistryUpdated();
     return true;
   }
+
+  function updateWidgetData(monitorName, widgetIndex, properties) {
+    if (widgetIndex < 0 || !monitorName) {
+      return;
+    }
+
+    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
+    var newMonitorWidgets = monitorWidgets.slice();
+
+    for (var i = 0; i < newMonitorWidgets.length; i++) {
+      if (newMonitorWidgets[i].name === monitorName) {
+        var widgets = (newMonitorWidgets[i].widgets || []).slice();
+        if (widgetIndex < widgets.length) {
+          widgets[widgetIndex] = Object.assign({}, widgets[widgetIndex], properties);
+          newMonitorWidgets[i] = Object.assign({}, newMonitorWidgets[i], {
+                                                 "widgets": widgets
+                                               });
+          Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
+        }
+        break;
+      }
+    }
+  }
+
+  property var currentSettingsDialog: null
+
+  function openWidgetSettings(screen, widgetIndex, widgetId, widgetData) {
+    if (!widgetId || !screen) {
+      return;
+    }
+
+    if (root.currentSettingsDialog) {
+      root.currentSettingsDialog.close();
+      root.currentSettingsDialog.destroy();
+      root.currentSettingsDialog = null;
+    }
+
+    var hasSettings = false;
+    if (root.isPluginWidget(widgetId)) {
+      var pluginId = widgetId.replace("plugin:", "");
+      var manifest = PluginRegistry.getPluginManifest(pluginId);
+      if (manifest && manifest.entryPoints && manifest.entryPoints.settings) {
+        hasSettings = true;
+      }
+    } else {
+      hasSettings = root.widgetSettingsMap[widgetId] !== undefined;
+    }
+
+    if (!hasSettings) {
+      Logger.w("DesktopWidgetRegistry", "Widget does not have settings:", widgetId);
+      return;
+    }
+
+    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+    if (!popupMenuWindow) {
+      Logger.e("DesktopWidgetRegistry", "No popup menu window found for screen");
+      return;
+    }
+
+    if (popupMenuWindow.hideDynamicMenu) {
+      popupMenuWindow.hideDynamicMenu();
+    }
+
+    var component = Qt.createComponent(Quickshell.shellDir + "/Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml");
+
+    function instantiateAndOpen() {
+      var dialog = component.createObject(popupMenuWindow.dialogParent, {
+                                            "widgetIndex": widgetIndex,
+                                            "widgetData": widgetData,
+                                            "widgetId": widgetId,
+                                            "sectionId": screen.name,
+                                            "screen": screen
+                                          });
+
+      if (dialog) {
+        root.currentSettingsDialog = dialog;
+        dialog.updateWidgetSettings.connect((sec, idx, settings) => {
+                                              root.updateWidgetData(sec, idx, settings);
+                                            });
+        popupMenuWindow.hasDialog = true;
+        dialog.closed.connect(() => {
+                                popupMenuWindow.hasDialog = false;
+                                popupMenuWindow.close();
+                                if (root.currentSettingsDialog === dialog) {
+                                  root.currentSettingsDialog = null;
+                                }
+                                dialog.destroy();
+                              });
+        dialog.open();
+      } else {
+        Logger.e("DesktopWidgetRegistry", "Failed to create widget settings dialog");
+      }
+    }
+
+    if (component.status === Component.Ready) {
+      instantiateAndOpen();
+    } else if (component.status === Component.Error) {
+      Logger.e("DesktopWidgetRegistry", "Error loading settings dialog component:", component.errorString());
+    } else {
+      component.statusChanged.connect(() => {
+                                        if (component.status === Component.Ready) {
+                                          instantiateAndOpen();
+                                        } else if (component.status === Component.Error) {
+                                          Logger.e("DesktopWidgetRegistry", "Error loading settings dialog component:", component.errorString());
+                                        }
+                                      });
+    }
+  }
 }
