@@ -1058,17 +1058,9 @@ Loader {
                                   Logger.d("Dock", "Executing terminal app manually: " + app.name);
                                   const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
                                   const command = terminal.concat(app.command);
-                                  try {
-                                    CompositorService.spawn(command);
-                                  } catch (e) {
-                                    Quickshell.execDetached(command);
-                                  }
+                                  CompositorService.spawn(command);
                                 } else if (app.command && app.command.length > 0) {
-                                  try {
-                                    CompositorService.spawn(app.command);
-                                  } catch (e) {
-                                    Quickshell.execDetached(app.command);
-                                  }
+                                  CompositorService.spawn(app.command);
                                 } else if (app.execute) {
                                   app.execute();
                                 } else {

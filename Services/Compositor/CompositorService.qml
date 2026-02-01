@@ -410,7 +410,11 @@ Singleton {
     if (backend && backend.spawn) {
       backend.spawn(command);
     } else {
-      throw new Error("No backend available for spawn command");
+      try {
+        Quickshell.execDetached(command);
+      } catch (e) {
+        Logger.e("Compositro", "Failed to exececute detached:", e);
+      }
     }
   }
 
