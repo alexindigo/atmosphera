@@ -312,8 +312,8 @@
     "countdownDuration": 10000,
     "position": "center",
     "showHeader": true,
-    "largeButtonsStyle": false,
-    "largeButtonsLayout": "grid",
+    "largeButtonsStyle": true,
+    "largeButtonsLayout": "single-row",
     "showNumberLabels": true,
     "powerOptions": [
       {
