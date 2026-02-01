@@ -413,7 +413,7 @@ Singleton {
       try {
         Quickshell.execDetached(command);
       } catch (e) {
-        Logger.e("Compositro", "Failed to exececute detached:", e);
+        Logger.e("Compositor", "Failed to exececute detached:", e);
       }
     }
   }
