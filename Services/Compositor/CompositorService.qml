@@ -405,6 +405,15 @@ Singleton {
     }
   }
 
+  // Spawn command
+  function spawn(command) {
+    if (backend && backend.spawn) {
+      backend.spawn(command);
+    } else {
+      throw new Error("No backend available for spawn command");
+    }
+  }
+
   // Session management
   function logout() {
     if (backend && backend.logout) {

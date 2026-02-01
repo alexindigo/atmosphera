@@ -395,9 +395,17 @@ Item {
           Logger.d("Taskbar", "Executing terminal app manually: " + app.name);
           const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
           const command = terminal.concat(app.command);
-          Quickshell.execDetached(command);
+          try {
+            CompositorService.spawn(command);
+          } catch (e) {
+            Quickshell.execDetached(command);
+          }
         } else if (app.command && app.command.length > 0) {
-          Quickshell.execDetached(app.command);
+          try {
+            CompositorService.spawn(app.command);
+          } catch (e) {
+            Quickshell.execDetached(app.command);
+          }
         } else if (app.execute) {
           app.execute();
         } else {

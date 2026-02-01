@@ -485,4 +485,12 @@ Item {
     }
     return null;
   }
+
+  function spawn(command) {
+    try {
+      Quickshell.execDetached(["hyprctl", "dispatch", "--", "exec"].concat(command));
+    } catch (e) {
+      Logger.e("HyprlandService", "Failed to spawn command:", e);
+    }
+  }
 }
