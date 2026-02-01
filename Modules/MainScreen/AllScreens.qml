@@ -128,9 +128,15 @@ Variants {
     }
 
     // PopupMenuWindow - reusable popup window for both tray menus and context menus
-    // Disabled when bar is hidden or not configured for this screen
+    // Active when bar is visible on this screen, OR when desktop widgets edit mode is active
     Loader {
       active: {
+        // Desktop widgets edit mode needs popup window on ALL screens
+        if (DesktopWidgetRegistry.editMode && Settings.data.desktopWidgets.enabled) {
+          return true;
+        }
+
+        // Normal bar-based condition
         if (!parent.windowLoaded || !parent.shouldBeActive || !BarService.effectivelyVisible)
           return false;
 
