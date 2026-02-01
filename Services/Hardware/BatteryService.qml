@@ -22,13 +22,17 @@ Singleton {
   readonly property bool batteryPresent: isDevicePresent(primaryDevice)
   readonly property string batteryIcon: getIcon(batteryPercentage, batteryCharging, batteryPluggedIn, batteryReady)
   readonly property var laptopBatteries: UPower.devices.values.filter(d => d.isLaptopBattery).sort((x, y) => {
-    // Force DisplayDevice to the top
-    if (x.nativePath.includes("DisplayDevice")) return -1;
-    if (y.nativePath.includes("DisplayDevice")) return 1;
-          
-    // Standard string comparison works for BAT0 vs BAT1
-    return x.nativePath.localeCompare(y.nativePath, undefined, {numeric: true});
-  });
+                                                                                                     // Force DisplayDevice to the top
+                                                                                                     if (x.nativePath.includes("DisplayDevice"))
+                                                                                                     return -1;
+                                                                                                     if (y.nativePath.includes("DisplayDevice"))
+                                                                                                     return 1;
+
+                                                                                                     // Standard string comparison works for BAT0 vs BAT1
+                                                                                                     return x.nativePath.localeCompare(y.nativePath, undefined, {
+                                                                                                                                         numeric: true
+                                                                                                                                       });
+                                                                                                   })
   readonly property var bluetoothBatteries: {
     var list = [];
     var btArray = BluetoothService.devices?.values || [];
@@ -38,7 +42,7 @@ Singleton {
         list.push(btd);
       }
     }
-    return list
+    return list;
   }
 
   readonly property var _laptopBattery: UPower.displayDevice.isPresent ? UPower.displayDevice : (laptopBatteries.length > 0 ? laptopBatteries[0] : null)
@@ -65,26 +69,26 @@ Singleton {
   }
 
   function findDevice(nativePath) {
-     if (!nativePath || nativePath === "__default__" || nativePath === "DisplayDevice") {
-       return _laptopBattery;
-     }
+    if (!nativePath || nativePath === "__default__" || nativePath === "DisplayDevice") {
+      return _laptopBattery;
+    }
 
-     if (!UPower.devices) {
-       return null;
-     }
+    if (!UPower.devices) {
+      return null;
+    }
 
-     var deviceArray = UPower.devices.values || [];
-     for (var i = 0; i < deviceArray.length; i++) {
-       var device = deviceArray[i];
-       if (device && device.nativePath === nativePath) {
-         if (device.type === UPowerDeviceType.LinePower) {
-           continue;
-         }
-         return device;
-       }
-     }
-     return null;
-   }
+    var deviceArray = UPower.devices.values || [];
+    for (var i = 0; i < deviceArray.length; i++) {
+      var device = deviceArray[i];
+      if (device && device.nativePath === nativePath) {
+        if (device.type === UPowerDeviceType.LinePower) {
+          continue;
+        }
+        return device;
+      }
+    }
+    return null;
+  }
 
   function isDevicePresent(device) {
     if (!device) {
@@ -186,22 +190,43 @@ Singleton {
     return "";
   }
 
-function getIcon(percent, charging, pluggedIn, isReady) {
-    if (!isReady){return "battery-exclamation";}
-    if (charging){return "battery-charging";}
-    if (pluggedIn){return "battery-charging-2";}
+  function getIcon(percent, charging, pluggedIn, isReady) {
+    if (!isReady) {
+      return "battery-exclamation";
+    }
+    if (charging) {
+      return "battery-charging";
+    }
+    if (pluggedIn) {
+      return "battery-charging-2";
+    }
 
     const icons = [
-        { threshold: 80, icon: "battery-4" },
-        { threshold: 60, icon: "battery-3" },
-        { threshold: 40, icon: "battery-2" },
-        { threshold: 20, icon: "battery-1" },
-        { threshold:  0, icon: "battery"   }
-    ];
+            {
+              threshold: 80,
+              icon: "battery-4"
+            },
+            {
+              threshold: 60,
+              icon: "battery-3"
+            },
+            {
+              threshold: 40,
+              icon: "battery-2"
+            },
+            {
+              threshold: 20,
+              icon: "battery-1"
+            },
+            {
+              threshold: 0,
+              icon: "battery"
+            }
+          ];
 
     const match = icons.find(tier => percent >= tier.threshold);
     return match ? match.icon : "battery-off"; // New fallback icon clearly represent if nothing is true here.
-}
+  }
 
   function getRateText(device) {
     if (!device || device.changeRate === undefined) {
