@@ -1273,6 +1273,7 @@
       "hot-reload-description": "Automatically reload plugins when their files change. Useful for plugin development.",
       "hot-reload-label": "Hot reload (dev mode)",
       "hot-reloaded": "Reloaded plugin: {name}",
+      "translations-reloaded": "Reloaded translations: {name}",
       "install-error": "Failed to install: {error}",
       "install-incompatible": "{plugin} requires Noctalia v{version} or higher",
       "install-success": "Successfully installed {plugin}",
