@@ -168,10 +168,11 @@ Singleton {
         var match = device.nativePath.match(/(\d+)$/);
         if (match) {
           // In case of 2 batteries: bat0 => bat1  bat1 => bat2
-          return I18n.tr("common.battery") + " " + (parseInt(match[1]) + 1);
+          return I18n.tr("common.battery") + " " + (parseInt(match[1]) + 1);  // Append numbers
         }
       }
-      return "";
+      // Return Battery if there is only one
+      return I18n.tr("common.battery");
     }
 
     if (isBluetoothDevice(device) && device.name) {
@@ -185,33 +186,22 @@ Singleton {
     return "";
   }
 
-  function getIcon(percent, charging, pluggedIn, isReady) {
-    if (!isReady) {
-      return "battery-exclamation";
-    }
-    if (charging) {
-      return "battery-charging";
-    }
-    if (pluggedIn) {
-      return "battery-charging-2";
-    }
-    if (percent >= 80) {
-      return "battery-4";
-    }
-    if (percent >= 60) {
-      return "battery-3";
-    }
-    if (percent >= 40) {
-      return "battery-2";
-    }
-    if (percent >= 20) {
-      return "battery-1";
-    }
-    if (percent >= 0) {
-      return "battery";
-    }
-    return "battery-off"; // New fallback icon clearly represent if nothing is true here.
-  }
+function getIcon(percent, charging, pluggedIn, isReady) {
+    if (!isReady){return "battery-exclamation";}
+    if (charging){return "battery-charging";}
+    if (pluggedIn){return "battery-charging-2";}
+
+    const icons = [
+        { threshold: 80, icon: "battery-4" },
+        { threshold: 60, icon: "battery-3" },
+        { threshold: 40, icon: "battery-2" },
+        { threshold: 20, icon: "battery-1" },
+        { threshold:  0, icon: "battery"   }
+    ];
+
+    const match = icons.find(tier => percent >= tier.threshold);
+    return match ? match.icon : "battery-off"; // New fallback icon clearly represent if nothing is true here.
+}
 
   function getRateText(device) {
     if (!device || device.changeRate === undefined) {
