@@ -194,9 +194,6 @@ Singleton {
       // Bar outer corners (inverted/concave corners at bar edges when not floating)
       property bool outerCorners: true
 
-      // Reserves space with compositor
-      property bool exclusive: true
-
       // Hide bar/panels when compositor overview is active
       property bool hideOnOverview: false
 

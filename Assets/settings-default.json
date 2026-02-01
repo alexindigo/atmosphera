@@ -16,7 +16,6 @@
     "frameThickness": 8,
     "frameRadius": 12,
     "outerCorners": true,
-    "exclusive": true,
     "hideOnOverview": false,
     "displayMode": "always_visible",
     "autoHideDelay": 500,

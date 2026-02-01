@@ -112,12 +112,6 @@ ColumnLayout {
     onSelected: key => Settings.data.bar.displayMode = key
   }
 
-  NLabel {
-    visible: Settings.data.bar.exclusive
-    label: ""
-    description: I18n.tr("panels.bar.appearance-auto-hide-exclusive-note")
-  }
-
   NToggle {
     label: I18n.tr("panels.bar.appearance-use-separate-opacity-label")
     description: I18n.tr("panels.bar.appearance-use-separate-opacity-description")
