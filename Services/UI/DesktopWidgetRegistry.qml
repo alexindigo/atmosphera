@@ -82,7 +82,8 @@ Singleton {
                                     "showBackground": true,
                                     "statType": "CPU",
                                     "diskPath": "/",
-                                    "roundedCorners": true
+                                    "roundedCorners": true,
+                                    "layout": "bottom"
                                   }
                                 })
 

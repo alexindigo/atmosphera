@@ -15,6 +15,80 @@ DraggableDesktopWidget {
   readonly property string statType: (widgetData && widgetData.statType !== undefined) ? widgetData.statType : (widgetMetadata.statType !== undefined ? widgetMetadata.statType : "CPU")
   readonly property string diskPath: (widgetData && widgetData.diskPath !== undefined) ? widgetData.diskPath : "/"
   readonly property color color: (widgetData && widgetData.color !== undefined) ? widgetData.color : Color.mPrimary
+  readonly property string layout: (widgetData && widgetData.layout !== undefined) ? widgetData.layout : (widgetMetadata.layout !== undefined ? widgetMetadata.layout : "side")
+
+  // Legend items model - each item has: text, color, icon (optional), bold (optional), opacity (optional), elide (optional)
+  readonly property var legendItems: {
+    switch (root.statType) {
+    case "CPU":
+      return [
+            {
+              icon: "cpu-usage",
+              text: Math.round(SystemStatService.cpuUsage) + "%",
+              color: root.color
+            },
+            {
+              text: "cpu-usage",
+              text: SystemStatService.cpuFreq,
+              color: root.color,
+              opacity: 0.8
+            },
+            {
+              icon: "cpu-temperature",
+              text: SystemStatService.cpuTemp + "°C",
+              color: Color.mError
+            }
+          ];
+    case "GPU":
+      return [
+            {
+              icon: "gpu-temperature",
+              text: Math.round(SystemStatService.gpuTemp) + "°C",
+              color: root.color
+            }
+          ];
+    case "Memory":
+      return [
+            {
+              icon: "memory",
+              text: Math.round(SystemStatService.memPercent) + "%",
+              color: root.color
+            }
+          ];
+    case "Disk":
+      var items = [
+            {
+              icon: "storage",
+              text: Math.round(SystemStatService.diskPercents[root.diskPath] || 0) + "%",
+              color: root.color
+            }
+          ];
+      if (root.diskPath !== "/") {
+        items.push({
+                     text: root.diskPath,
+                     color: root.color,
+                     opacity: 0.8,
+                     elide: true
+                   });
+      }
+      return items;
+    case "Network":
+      return [
+            {
+              icon: "download-speed",
+              text: SystemStatService.formatSpeed(SystemStatService.rxSpeed),
+              color: root.color
+            },
+            {
+              icon: "upload-speed",
+              text: SystemStatService.formatSpeed(SystemStatService.txSpeed),
+              color: Color.mError
+            }
+          ];
+    default:
+      return [];
+    }
+  }
 
   // History from service
   readonly property var history: {
@@ -34,34 +108,80 @@ DraggableDesktopWidget {
     }
   }
 
-  // Secondary history for Network (Tx)
-  readonly property var history2: root.statType === "Network" ? SystemStatService.txSpeedHistory : []
-
-  // Current value from service
-  readonly property real currentValue: {
+  // Secondary history (CPU temp for CPU, Tx for Network)
+  readonly property var history2: {
     switch (root.statType) {
     case "CPU":
-      return SystemStatService.cpuUsage;
-    case "GPU":
-      return SystemStatService.gpuTemp;
-    case "Memory":
-      return SystemStatService.memPercent;
-    case "Disk":
-      return SystemStatService.diskPercents[root.diskPath] || 0;
+      return SystemStatService.cpuTempHistory;
+    case "Network":
+      return SystemStatService.txSpeedHistory;
     default:
-      return 0;
+      return [];
+    }
+  }
+
+  // Graph min/max values
+  readonly property real graphMinValue: root.statType === "GPU" ? SystemStatService.gpuTempHistoryMin : 0
+  readonly property real graphMaxValue: {
+    switch (root.statType) {
+    case "CPU":
+      return Math.max(SystemStatService.cpuHistoryMax, 1);
+    case "GPU":
+      return Math.max(SystemStatService.gpuTempHistoryMax, 1);
+    case "Memory":
+      return Math.max(SystemStatService.memHistoryMax, 1);
+    case "Network":
+      return Math.max(SystemStatService.rxMaxSpeed, 1);
+    default:
+      return 100;
+    }
+  }
+  readonly property real graphMinValue2: {
+    switch (root.statType) {
+    case "CPU":
+      return SystemStatService.cpuTempHistoryMin;
+    default:
+      return graphMinValue;
+    }
+  }
+  readonly property real graphMaxValue2: {
+    switch (root.statType) {
+    case "CPU":
+      return Math.max(SystemStatService.cpuTempHistoryMax, 1);
+    case "Network":
+      return Math.max(SystemStatService.txMaxSpeed, 1);
+    default:
+      return graphMaxValue;
     }
   }
 
   implicitWidth: Math.round(240 * widgetScale)
-  implicitHeight: Math.round(100 * widgetScale)
+  implicitHeight: Math.round(120 * widgetScale)
   width: implicitWidth
   height: implicitHeight
 
+  // Graph component (shared between layouts)
+  Component {
+    id: graphComponent
+    NGraph {
+      values: root.history
+      values2: root.history2
+      minValue: root.graphMinValue
+      maxValue: root.graphMaxValue
+      minValue2: root.graphMinValue2
+      maxValue2: root.graphMaxValue2
+      color: root.color
+      color2: Color.mError
+      fill: true
+    }
+  }
+
+  // Side layout: icon + legend on left, graph on right
   RowLayout {
     anchors.fill: parent
     anchors.margins: Math.round(Style.marginL * widgetScale)
     spacing: Math.round(Style.marginL * widgetScale)
+    visible: root.layout === "side"
 
     ColumnLayout {
       Layout.alignment: Qt.AlignVCenter
@@ -69,108 +189,88 @@ DraggableDesktopWidget {
       Layout.preferredWidth: Math.round(64 * widgetScale)
       spacing: Style.marginXS * root.widgetScale
 
-      NIcon {
-        Layout.alignment: Qt.AlignHCenter
-        icon: {
-          switch (root.statType) {
-          case "CPU":
-            return "cpu-usage";
-          case "GPU":
-            return "gpu-temperature";
-          case "Memory":
-            return "memory";
-          case "Disk":
-            return "storage";
-          case "Network":
-            return "network";
-          default:
-            return "help";
+      Repeater {
+        model: root.legendItems
+        delegate: RowLayout {
+          Layout.alignment: Qt.AlignHCenter
+          spacing: Math.round(Style.marginXXS * root.widgetScale)
+
+          NIcon {
+            visible: !!modelData.icon
+            icon: modelData.icon || ""
+            color: modelData.color
+            pointSize: Style.fontSizeS * root.widgetScale
+            opacity: modelData.opacity !== undefined ? modelData.opacity : 1.0
+          }
+
+          NText {
+            text: modelData.text
+            color: modelData.color
+            pointSize: Style.fontSizeS * root.widgetScale
+            font.family: Settings.data.ui.fontFixed
+            font.weight: modelData.bold ? Style.fontWeightBold : Style.fontWeightRegular
+            opacity: modelData.opacity !== undefined ? modelData.opacity : 1.0
+            elide: modelData.elide ? Text.ElideMiddle : Text.ElideNone
+            Layout.maximumWidth: modelData.elide ? Math.round(56 * root.widgetScale) : -1
+            horizontalAlignment: Text.AlignHCenter
           }
         }
-        color: root.color
-        pointSize: Style.fontSizeXL * root.widgetScale
-      }
-
-      NText {
-        Layout.alignment: Qt.AlignHCenter
-        visible: root.statType !== "Network"
-        text: Math.round(root.currentValue) + (root.statType === "GPU" ? "°C" : "%")
-        color: root.color
-        pointSize: Style.fontSizeS * root.widgetScale
-        font.weight: Style.fontWeightBold
-        horizontalAlignment: Text.AlignHCenter
-      }
-
-      // Network: show Rx speed
-      NText {
-        Layout.alignment: Qt.AlignHCenter
-        visible: root.statType === "Network"
-        text: "↓ " + SystemStatService.formatSpeed(SystemStatService.rxSpeed)
-        color: root.color
-        pointSize: Style.fontSizeXXS * root.widgetScale
-        font.weight: Style.fontWeightBold
-        horizontalAlignment: Text.AlignHCenter
-      }
-
-      // Network: show Tx speed
-      NText {
-        Layout.alignment: Qt.AlignHCenter
-        visible: root.statType === "Network"
-        text: "↑ " + SystemStatService.formatSpeed(SystemStatService.txSpeed)
-        color: Color.mError
-        pointSize: Style.fontSizeXXS * root.widgetScale
-        font.weight: Style.fontWeightBold
-        horizontalAlignment: Text.AlignHCenter
-      }
-
-      NText {
-        Layout.alignment: Qt.AlignHCenter
-        visible: root.statType === "CPU"
-        text: SystemStatService.cpuFreq
-        color: root.color
-        pointSize: Style.fontSizeXXS * root.widgetScale
-        horizontalAlignment: Text.AlignHCenter
-        opacity: 0.8
-      }
-
-      NText {
-        Layout.alignment: Qt.AlignHCenter
-        visible: root.statType === "Disk" && root.diskPath !== "/"
-        text: root.diskPath
-        color: root.color
-        pointSize: Style.fontSizeXXS * root.widgetScale
-        elide: Text.ElideMiddle
-        Layout.maximumWidth: Math.round(56 * widgetScale)
-        opacity: 0.8
       }
     }
 
-    NGraph {
+    Loader {
       Layout.fillWidth: true
       Layout.fillHeight: true
-      values: root.history
-      values2: root.history2
-      minValue: root.statType === "GPU" ? SystemStatService.gpuTempHistoryMin : 0
-      maxValue: {
-        switch (root.statType) {
-        case "CPU":
-          return Math.max(SystemStatService.cpuHistoryMax, 1);
-        case "GPU":
-          return Math.max(SystemStatService.gpuTempHistoryMax, 1);
-        case "Memory":
-          return Math.max(SystemStatService.memHistoryMax, 1);
-        case "Network":
-          return Math.max(SystemStatService.rxMaxSpeed, 1);
-        default:
-          return 100;
+      sourceComponent: graphComponent
+    }
+  }
+
+  // Bottom layout: full-width graph, horizontal legend at bottom
+  ColumnLayout {
+    anchors.fill: parent
+    anchors.margins: Math.round(Style.marginL * widgetScale)
+    spacing: Math.round(Style.marginS * widgetScale)
+    visible: root.layout === "bottom"
+
+    Loader {
+      Layout.fillWidth: true
+      Layout.fillHeight: true
+      sourceComponent: graphComponent
+    }
+
+    RowLayout {
+      Layout.fillWidth: true
+      Layout.alignment: Qt.AlignHCenter
+      spacing: Math.round(Style.marginM * widgetScale)
+
+      Repeater {
+        model: root.legendItems
+        delegate: RowLayout {
+          Layout.alignment: Qt.AlignVCenter
+          spacing: Math.round(Style.marginXXS * root.widgetScale)
+
+          NIcon {
+            Layout.alignment: Qt.AlignVCenter
+            visible: !!modelData.icon
+            icon: modelData.icon || ""
+            color: modelData.color
+            pointSize: Style.fontSizeS * root.widgetScale
+            opacity: modelData.opacity !== undefined ? modelData.opacity : 1.0
+          }
+
+          NText {
+            Layout.alignment: Qt.AlignVCenter
+            text: modelData.text
+            color: modelData.color
+            pointSize: Style.fontSizeS * root.widgetScale
+            font.family: Settings.data.ui.fontFixed
+            font.weight: modelData.bold ? Style.fontWeightBold : Style.fontWeightRegular
+            opacity: modelData.opacity !== undefined ? modelData.opacity : 1.0
+            elide: modelData.elide ? Text.ElideMiddle : Text.ElideNone
+            Layout.maximumWidth: modelData.elide ? Math.round(56 * root.widgetScale) : -1
+          }
         }
       }
-      // Secondary line (TX) has its own scale
-      minValue2: minValue
-      maxValue2: root.statType === "Network" ? Math.max(SystemStatService.txMaxSpeed, 1) : maxValue
-      color: root.color
-      color2: Color.mError
-      fill: true
     }
   }
 }

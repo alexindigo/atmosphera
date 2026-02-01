@@ -46,7 +46,7 @@ Singleton {
 
   // History arrays (2 minutes of data, length computed from polling interval)
   // Pre-filled with zeros so the graph scrolls smoothly from the start
-  readonly property int historyDurationMs: (1 * 30 * 1000) // 1 minute
+  readonly property int historyDurationMs: (1 * 60 * 1000) // 1 minute
 
   // Computed history lengths based on polling intervals
   readonly property int cpuHistoryLength: Math.ceil(historyDurationMs / normalizeInterval(Settings.data.systemMonitor.cpuPollingInterval))
@@ -56,6 +56,7 @@ Singleton {
   readonly property int networkHistoryLength: Math.ceil(historyDurationMs / normalizeInterval(Settings.data.systemMonitor.networkPollingInterval))
 
   property var cpuHistory: new Array(cpuHistoryLength).fill(0)
+  property var cpuTempHistory: new Array(cpuHistoryLength).fill(0)
   property var gpuTempHistory: new Array(gpuHistoryLength).fill(0)
   property var memHistory: new Array(memHistoryLength).fill(0)
   property var diskHistories: ({}) // Keyed by mount path, initialized on first update
@@ -64,6 +65,8 @@ Singleton {
 
   // Historical min/max tracking (since shell started) for consistent graph scaling
   property real cpuHistoryMax: 0
+  property real cpuTempHistoryMin: 100
+  property real cpuTempHistoryMax: 0
   property real gpuTempHistoryMin: 100
   property real gpuTempHistoryMax: 0
   property real memHistoryMax: 0
@@ -80,6 +83,20 @@ Singleton {
     if (h.length > cpuHistoryLength)
       h.shift();
     cpuHistory = h;
+  }
+
+  function pushCpuTempHistory() {
+    if (cpuTemp > 0) {
+      if (cpuTemp < cpuTempHistoryMin)
+        cpuTempHistoryMin = cpuTemp;
+      if (cpuTemp > cpuTempHistoryMax)
+        cpuTempHistoryMax = cpuTemp;
+    }
+    let h = cpuTempHistory.slice();
+    h.push(cpuTemp);
+    if (h.length > cpuHistoryLength)
+      h.shift();
+    cpuTempHistory = h;
   }
 
   function pushGpuHistory() {
@@ -643,6 +660,7 @@ Singleton {
       } else {
         // For AMD sensors (k10temp and zenpower), directly set the temperature
         root.cpuTemp = Math.round(parseInt(data) / 1000.0);
+        root.pushCpuTempHistory();
       }
     }
     onLoadFailed: function (error) {
@@ -1114,10 +1132,12 @@ Singleton {
           sum += root.intelTempValues[i];
         }
         root.cpuTemp = Math.round(sum / root.intelTempValues.length);
+        root.pushCpuTempHistory();
         //Logger.i("SystemStat", `Averaged ${root.intelTempValues.length} CPU thermal sensors: ${root.cpuTemp}°C`)
       } else {
         Logger.w("SystemStat", "No temperature sensors found for coretemp");
         root.cpuTemp = 0;
+        root.pushCpuTempHistory();
       }
       return;
     }

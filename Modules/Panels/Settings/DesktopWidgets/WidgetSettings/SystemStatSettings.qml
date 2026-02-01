@@ -19,6 +19,7 @@ ColumnLayout {
   property string valueDiskPath: widgetData.diskPath !== undefined ? widgetData.diskPath : widgetMetadata.diskPath
   property bool valueShowBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : widgetMetadata.showBackground
   property bool valueRoundedCorners: widgetData.roundedCorners !== undefined ? widgetData.roundedCorners : (widgetMetadata.roundedCorners !== undefined ? widgetMetadata.roundedCorners : true)
+  property string valueLayout: widgetData.layout !== undefined ? widgetData.layout : (widgetMetadata.layout !== undefined ? widgetMetadata.layout : "side")
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
@@ -26,6 +27,7 @@ ColumnLayout {
     settings.diskPath = valueDiskPath;
     settings.showBackground = valueShowBackground;
     settings.roundedCorners = valueRoundedCorners;
+    settings.layout = valueLayout;
     return settings;
   }
 
@@ -107,5 +109,31 @@ ColumnLayout {
                  valueRoundedCorners = checked;
                  settingsChanged(saveSettings());
                }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+  }
+
+  NComboBox {
+    Layout.fillWidth: true
+    label: I18n.tr("panels.desktop-widgets.system-stat-layout-label")
+    description: I18n.tr("panels.desktop-widgets.system-stat-layout-description")
+    currentKey: valueLayout
+    minimumWidth: 260 * Style.uiScaleRatio
+    model: [
+      {
+        "key": "side",
+        "name": I18n.tr("panels.desktop-widgets.system-stat-layout-side")
+      },
+      {
+        "key": "bottom",
+        "name": I18n.tr("panels.desktop-widgets.system-stat-layout-bottom")
+      }
+    ]
+    onSelected: key => {
+                  valueLayout = key;
+                  settingsChanged(saveSettings());
+                }
   }
 }
