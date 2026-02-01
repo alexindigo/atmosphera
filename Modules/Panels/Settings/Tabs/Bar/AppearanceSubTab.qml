@@ -271,7 +271,6 @@ ColumnLayout {
     Layout.topMargin: Style.marginS
   }
 
-
   ColumnLayout {
     visible: Settings.data.bar.displayMode === "auto_hide"
     spacing: Style.marginS
