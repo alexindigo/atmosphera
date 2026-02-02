@@ -120,8 +120,7 @@ Item {
   Shape {
     anchors.fill: parent
     layer.enabled: true
-    layer.samples: 4
-    antialiasing: true
+    preferredRendererType: Shape.CurveRenderer
     visible: root.hasData || root.hasData2
 
     // Primary line fill
