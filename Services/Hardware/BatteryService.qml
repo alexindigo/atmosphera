@@ -1,5 +1,6 @@
 pragma Singleton
 import QtQuick
+import QtQml
 
 import Quickshell
 import Quickshell.Io
@@ -275,47 +276,21 @@ Singleton {
     return I18n.tr("common.idle");
   }
 
-  // Low battery notification logic
-  property var notifiedDevices: ({})
-
-  function checkDevice(device, id) {
+  function checkDevice(device) {
     if (!device || !isDeviceReady(device)) {
       return;
     }
 
-    const percentage = getPercentage(device);
+    const percentage = 1 //getPercentage(device);
     const charging = isCharging(device);
     const plugged = isPluggedIn(device);
-    const currentState = notifiedDevices[id] || 0; // 0: None, 1: Low, 2: Critical
+    const level = "critical"; //isLowBattery(device) ? "low" : isCriticalBattery(device) ? "critical" : "";
+    Logger.e("BatteryServiceDebug", "Device: " + device.model + " Percentage: " + percentage + " Charging: " + charging + " Plugged: " + plugged + " Level: " + level);
 
-    // Reset condition: Charging, Plugged in, or charged significantly above warning
-    if (charging || plugged || percentage > warningThreshold + 5) {
-      if (currentState !== 0) {
-        var map = notifiedDevices;
-        map[id] = 0;
-        notifiedDevices = map;
-      }
-      return;
+    if (level) {
+      notify(device, level);
     }
 
-    // Critical Notification
-    if (percentage <= criticalThreshold) {
-      if (currentState !== 2) {
-        notify(device, "critical");
-        var map2 = notifiedDevices;
-        map2[id] = 2;
-        notifiedDevices = map2;
-      }
-    }
-    // Low Notification
-    else if (percentage <= warningThreshold) {
-      if (currentState !== 1) {
-        notify(device, "low");
-        var map3 = notifiedDevices;
-        map3[id] = 1;
-        notifiedDevices = map3;
-      }
-    }
   }
 
   // Formerly known as maybeNotify
@@ -338,6 +313,41 @@ Singleton {
     ToastService.showNotice(title, desc, icon);
   }
 
-// Find a efficient way to track batteries, when percentage drops below thresholds, notify the user.
-// upower monitor-detail maybe?
+  Instantiator {
+    model: laptopBatteries
+    delegate: Connections {
+      target: modelData
+      function onPercentageChanged() {
+        Logger.e("BatteryServiceDebug", "Check in progress... (Battery percentage changed)")
+        checkDevice(modelData)
+      }
+      function onStateChanged() {
+        Logger.e("BatteryServiceDebug", "Check in progress... (Battery state changed)")
+        checkDevice(modelData)
+      }
+    }
+  }
+
+  Instantiator {
+    model: bluetoothBatteries
+    delegate: Connections {
+      target: modelData
+      function onPercentageChanged() {
+        Logger.e("BatteryServiceDebug", "Check in progress... (Bluetooth battery changed)")
+        checkDevice(modelData)
+      }
+      function onStateChanged() {
+        Logger.e("BatteryServiceDebug", "Check in progress... (Bluetooth battery state changed)")
+        checkDevice(modelData)
+      }
+      function onConnected() {
+        Logger.e("BatteryServiceDebug", "Check in progress... (Bluetooth battery connected)")
+        checkDevice(modelData)
+      }
+      function onDisconnected() {
+        Logger.e("BatteryServiceDebug", "Check in progress... (Bluetooth battery disconnected)")
+        checkDevice(modelData)
+      }
+    }
+  }
 }
