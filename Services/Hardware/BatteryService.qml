@@ -284,7 +284,7 @@ Singleton {
     const percentage = 1 //getPercentage(device);
     const charging = isCharging(device);
     const plugged = isPluggedIn(device);
-    const level = "critical"; //isLowBattery(device) ? "low" : isCriticalBattery(device) ? "critical" : "";
+    const level = "low"; //isLowBattery(device) ? "low" : isCriticalBattery(device) ? "critical" : "";
     Logger.e("BatteryServiceDebug", "Device: " + device.model + " Percentage: " + percentage + " Charging: " + charging + " Plugged: " + plugged + " Level: " + level);
 
     if (level) {
@@ -304,7 +304,7 @@ Singleton {
                          "percent": getPercentage(device)
                        });
 
-    if (device !== _laptopBattery && name) {
+    if (device == _bluetoothBattery  && name) {
       title = title + " " + name;
     }
 
