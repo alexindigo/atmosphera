@@ -476,17 +476,22 @@ ColumnLayout {
     }
   }
 
-  // Action buttons row
-  RowLayout {
+  GridLayout {
+    id: actionsGrid
     Layout.alignment: Qt.AlignHCenter
     Layout.topMargin: Style.marginM
     Layout.bottomMargin: Style.marginM
-    spacing: Style.marginM
+    rowSpacing: Style.marginM
+    columnSpacing: Style.marginM
+
+    columns: (changelogBtn.implicitWidth + copyBtn.implicitWidth + supportBtn.implicitWidth + 2 * columnSpacing) < root.width ? 3 : 1
 
     NButton {
+      id: changelogBtn
       icon: "sparkles"
       text: I18n.tr("panels.about.changelog")
       outlined: true
+      Layout.alignment: Qt.AlignHCenter
       onClicked: {
         var screen = PanelService.openedPanel?.screen || Quickshell.screens[0];
         UpdateService.viewChangelog(screen);
@@ -494,16 +499,20 @@ ColumnLayout {
     }
 
     NButton {
+      id: copyBtn
       icon: "copy"
       text: I18n.tr("panels.about.copy-info")
       outlined: true
+      Layout.alignment: Qt.AlignHCenter
       onClicked: root.copyInfoToClipboard()
     }
 
     NButton {
+      id: supportBtn
       icon: "heart"
       text: I18n.tr("panels.about.support")
       outlined: true
+      Layout.alignment: Qt.AlignHCenter
       onClicked: {
         Quickshell.execDetached(["xdg-open", "https://buymeacoffee.com/noctalia"]);
         ToastService.showNotice(I18n.tr("panels.about.support"), I18n.tr("toast.kofi-opened"));
