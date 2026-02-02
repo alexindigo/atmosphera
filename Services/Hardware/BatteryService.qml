@@ -20,6 +20,8 @@ Singleton {
   readonly property bool batteryPluggedIn: isPluggedIn(primaryDevice)
   readonly property bool batteryReady: isDeviceReady(primaryDevice)
   readonly property bool batteryPresent: isDevicePresent(primaryDevice)
+  readonly property real warningThreshold: Settings.data.systemMonitor.batteryWarningThreshold
+  readonly property real criticalThreshold: Settings.data.systemMonitor.batteryCriticalThreshold
   readonly property string batteryIcon: getIcon(batteryPercentage, batteryCharging, batteryPluggedIn, batteryReady)
   readonly property var laptopBatteries: UPower.devices.values.filter(d => d.isLaptopBattery).sort((x, y) => {
                                                                                                      // Force DisplayDevice to the top
@@ -153,6 +155,20 @@ Singleton {
     return false;
   }
 
+  function isCriticalBattery(device) {
+    if (!device || !isDeviceReady(device)) {
+      return false;
+    }
+    return (!isCharging(device) && !isPluggedIn(device)) && getPercentage(device) <= criticalThreshold;
+  }
+
+  function isLowBattery(device) {
+    if (!device || !isDeviceReady(device)) {
+      return false;
+    }
+    return (!isCharging(device) && !isPluggedIn(device)) && getPercentage(device) <= warningThreshold && getPercentage(device) > criticalThreshold;
+  }
+
   function isBluetoothDevice(device) {
     return device && device.batteryAvailable !== undefined;
   }
@@ -263,5 +279,75 @@ Singleton {
                      });
     }
     return I18n.tr("common.idle");
+  }
+
+  // Low battery notification logic
+  property var notifiedDevices: ({})
+
+  // Formerly known: maybeNotify
+  function checkDevice(device, id) {
+    if (!device || !isDeviceReady(device)) {
+      return;
+    }
+    // Notify once warningThreshold reached.
+    // Notify again when criticalThreshold reached.
+    // Watch changes trigeer this when percentage value changed. (of any battery except [bat0/bat1])
+
+    const hasNotified = notifiedDevices[id] === true;
+
+    if ((!isCharging(device) && !pluggedIn) && !hasNotified && getPercentage(device) <= warningThreshold) {
+      // Update property explicitly to ensure state persistence
+      var map = notifiedDevices;
+      map[id] = true;
+      notifiedDevices = map;
+
+      var name = getDeviceName(device);
+      var title = I18n.tr("toast.battery.low");
+      var desc = I18n.tr("toast.battery.low-desc", {
+                           "percent": getPercentage(device)
+                         });
+      if (device !== _laptopBattery && name) {
+        title = title + " " + name;
+      }
+      ToastService.showNotice(title, desc, "battery-charging-2");
+    } else if (hasNotified && (isCharging(device) || isPluggedIn(device) || getPercentage(device) > warningThreshold + 5)) {
+      var map = notifiedDevices;
+      map[id] = false;
+      notifiedDevices = map;
+    }
+  }
+// I hated this we have similar function(s)
+  function checkAllDevices() {
+    // 1. Primary Laptop Battery
+    if (_laptopBattery) {
+      checkDevice(_laptopBattery, "primary_laptop");
+    }
+
+    // 2. Bluetooth Devices
+    var bt = bluetoothBatteries;
+    for (var i = 0; i < bt.length; i++) {
+      checkDevice(bt[i], "bt_" + bt[i].address);
+    }
+
+    // 3. UPower Devices (excluding laptop batteries)
+    if (UPower.devices) {
+      var devs = UPower.devices.values;
+      for (var j = 0; j < devs.length; j++) {
+        var d = devs[j];
+        if (d.type === UPowerDeviceType.LinePower)
+          continue;
+        if (d.isLaptopBattery)
+          continue; // Handled by _laptopBattery check above
+        checkDevice(d, "up_" + d.nativePath);
+      }
+    }
+  }
+// I hate polling as well.
+  Timer {
+    interval: 60000 // 1 minute
+    running: true
+    repeat: true
+    triggeredOnStart: true
+    onTriggered: checkAllDevices()
   }
 }
