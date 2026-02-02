@@ -270,6 +270,8 @@
     "swapCriticalThreshold": 90,
     "diskWarningThreshold": 80,
     "diskCriticalThreshold": 90,
+    "diskAvailWarningThreshold": 20,
+    "diskAvailCriticalThreshold": 10,
     "cpuPollingInterval": 1000,
     "gpuPollingInterval": 3000,
     "enableDgpuMonitoring": false,

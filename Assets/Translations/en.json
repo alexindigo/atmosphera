@@ -216,7 +216,11 @@
       "swap-usage-description": "Show swap memory usage.",
       "swap-usage-label": "Swap usage",
       "use-monospace-font-description": "Use monospace font for consistent character width.",
-      "use-monospace-font-label": "Monospace font"
+      "use-monospace-font-label": "Monospace font",
+      "storage-as-percentage-label": "Disk as percentage",
+      "storage-as-percentage-description": "Show disk space as percentage instead of absolute values.",
+      "storage-available-label": "Disk space available",
+      "storage-available-description": "Shows how much disk space is available instead of how much is used."
     },
     "taskbar": {
       "colorize-icons-description": "Apply theme colors to taskbar icons.",
@@ -1351,6 +1355,7 @@
       "critical-color-label": "Critical color",
       "custom-highlight-colors-title-label": "Custom highlight colors",
       "disk-section-label": "Disk usage",
+      "disk-available-label": "Disk available",
       "enable-dgpu-monitoring-description": "Warning: This will wake up your discrete GPU (NVIDIA/AMD), which may significantly impact battery life on laptops with hybrid graphics.",
       "enable-dgpu-monitoring-label": "Enable discrete GPU monitoring",
       "external-monitor-description": "Enter the command or application path to launch when activating the external system monitor application.",

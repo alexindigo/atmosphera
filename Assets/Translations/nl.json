@@ -216,7 +216,11 @@
       "swap-usage-description": "Toon swap geheugengebruik.",
       "swap-usage-label": "Swapgebruik",
       "use-monospace-font-description": "Gebruik een monospace lettertype voor een consistente tekenbreedte.",
-      "use-monospace-font-label": "Lettertype met vaste breedte"
+      "use-monospace-font-label": "Lettertype met vaste breedte",
+      "storage-as-percentage-label": "Schijf als percentage",
+      "storage-as-percentage-description": "Geef schijfruimte weer als percentage in plaats van absolute waarden.",
+      "storage-available-label": "Beschikbare schijfruimte",
+      "storage-available-description": "Geeft aan hoeveel schijfruimte beschikbaar is in plaats van hoeveel er in gebruik is."
     },
     "taskbar": {
       "colorize-icons-description": "Pas themakleuren toe op taakbalkpictogrammen.",
@@ -1350,6 +1354,7 @@
       "critical-color-label": "Kritische kleur",
       "custom-highlight-colors-title-label": "Aangepaste markeerkleuren",
       "disk-section-label": "Schijfgebruik",
+      "disk-available-label": "Schijf beschikbaar",
       "enable-dgpu-monitoring-description": "Waarschuwing: Dit zal uw dedicated GPU (NVIDIA/AMD) activeren, wat een aanzienlijke impact kan hebben op de accuduur van laptops met hybride grafische kaarten.",
       "enable-dgpu-monitoring-label": "Dedicated GPU-monitoring inschakelen",
       "external-monitor-description": "Voer de opdracht of applicatiepad in om te starten bij het activeren van de externe systeemmonitor applicatie.",

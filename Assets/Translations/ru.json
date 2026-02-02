@@ -216,7 +216,11 @@
       "swap-usage-description": "Показать использование swap-памяти.",
       "swap-usage-label": "Использование swap",
       "use-monospace-font-description": "Используйте моноширинный шрифт для единообразной ширины символов.",
-      "use-monospace-font-label": "Моноширинный шрифт"
+      "use-monospace-font-label": "Моноширинный шрифт",
+      "storage-as-percentage-label": "Диск в процентах",
+      "storage-as-percentage-description": "Показывать место на диске в процентах, а не в абсолютных значениях.",
+      "storage-available-label": "Доступное место на диске",
+      "storage-available-description": "Показывает, сколько дискового пространства доступно, а не сколько используется."
     },
     "taskbar": {
       "colorize-icons-description": "Применить цвета темы к иконкам панели задач.",
@@ -1350,6 +1354,7 @@
       "critical-color-label": "Критический цвет",
       "custom-highlight-colors-title-label": "Пользовательские цвета выделения",
       "disk-section-label": "Использование диска",
+      "disk-available-label": "Доступный диск",
       "enable-dgpu-monitoring-description": "Внимание: Это разбудит ваш дискретный графический процессор (NVIDIA/AMD), что может значительно повлиять на время работы от аккумулятора на ноутбуках с гибридной графикой.",
       "enable-dgpu-monitoring-label": "Включить мониторинг дискретного GPU",
       "external-monitor-description": "Введите команду или путь к приложению для запуска при активации внешнего приложения мониторинга системы.",

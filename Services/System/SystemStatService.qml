@@ -32,7 +32,9 @@ Singleton {
   property real swapPercent: 0
   property real swapTotalGb: 0
   property var diskPercents: ({})
+  property var diskAvailPercents: ({}) // available disk space in percent
   property var diskUsedGb: ({}) // Used space in GB per mount point
+  property var diskAvailableGb: ({}) // available space in GB per mount point
   property var diskSizeGb: ({}) // Total size in GB per mount point
   property var diskAvailGb: ({})
   property real rxSpeed: 0
@@ -181,6 +183,8 @@ Singleton {
   readonly property int swapCriticalThreshold: Settings.data.systemMonitor.swapCriticalThreshold
   readonly property int diskWarningThreshold: Settings.data.systemMonitor.diskWarningThreshold
   readonly property int diskCriticalThreshold: Settings.data.systemMonitor.diskCriticalThreshold
+  readonly property int diskAvailWarningThreshold: Settings.data.systemMonitor.diskAvailWarningThreshold
+  readonly property int diskAvailCriticalThreshold: Settings.data.systemMonitor.diskAvailCriticalThreshold
 
   // Computed warning/critical states (uses >= inclusive comparison)
   readonly property bool cpuWarning: cpuUsage >= cpuWarningThreshold
@@ -195,12 +199,12 @@ Singleton {
   readonly property bool swapCritical: swapPercent >= swapCriticalThreshold
 
   // Helper functions for disk (disk path is dynamic)
-  function isDiskWarning(diskPath) {
-    return (diskPercents[diskPath] || 0) >= diskWarningThreshold;
+  function isDiskWarning(diskPath, available = false) {
+    return available ? (diskAvailPercents[diskPath] || 0) <= diskAvailWarningThreshold : (diskPercents[diskPath] || 0) >= diskWarningThreshold;
   }
 
-  function isDiskCritical(diskPath) {
-    return (diskPercents[diskPath] || 0) >= diskCriticalThreshold;
+  function isDiskCritical(diskPath, available = false) {
+    return available ? (diskAvailPercents[diskPath] || 0) <= diskAvailCriticalThreshold : (diskPercents[diskPath] || 0) >= diskCriticalThreshold;
   }
 
   // Ready-to-use stat colors (for gauges, panels, icons)
@@ -210,8 +214,8 @@ Singleton {
   readonly property color memColor: memCritical ? criticalColor : (memWarning ? warningColor : Color.mPrimary)
   readonly property color swapColor: swapCritical ? criticalColor : (swapWarning ? warningColor : Color.mPrimary)
 
-  function getDiskColor(diskPath) {
-    return isDiskCritical(diskPath) ? criticalColor : (isDiskWarning(diskPath) ? warningColor : Color.mPrimary);
+  function getDiskColor(diskPath, available = false) {
+    return isDiskCritical(diskPath, available) ? criticalColor : (isDiskWarning(diskPath, available) ? warningColor : Color.mPrimary);
   }
 
   // Helper function for color resolution based on value and thresholds
@@ -444,9 +448,10 @@ Singleton {
       onStreamFinished: {
         const lines = text.trim().split('\n');
         const newPercents = {};
+        const newAvailPercents = {};
         const newUsedGb = {};
         const newSizeGb = {};
-        const newAvailGb = {};
+        const newAvailableGb = {};
         const bytesPerGb = 1024 * 1024 * 1024;
         // Start from line 1 (skip header)
         for (var i = 1; i < lines.length; i++) {
@@ -457,16 +462,19 @@ Singleton {
             const usedBytes = parseFloat(parts[2]) || 0;
             const sizeBytes = parseFloat(parts[3]) || 0;
             const availBytes = parseFloat(parts[4]) || 0;
+            const availPercent = sizeBytes > 0 ? (availBytes / sizeBytes) * 100 : 0;
             newPercents[target] = percent;
+            newAvailPercents[target] = Math.round(availPercent);
             newUsedGb[target] = usedBytes / bytesPerGb;
             newSizeGb[target] = sizeBytes / bytesPerGb;
-            newAvailGb[target] = availBytes / bytesPerGb;
+            newAvailableGb[target] = availBytes / bytesPerGb;
           }
         }
         root.diskPercents = newPercents;
+        root.diskAvailPercents = newAvailPercents;
         root.diskUsedGb = newUsedGb;
         root.diskSizeGb = newSizeGb;
-        root.diskAvailGb = newAvailGb;
+        root.diskAvailableGb = newAvailableGb;
         root.pushDiskHistory();
       }
     }
@@ -1014,7 +1022,7 @@ Singleton {
   // -------------------------------------------------------
   // Smart formatter for memory values (GB) - max 4 chars
   // Uses decimal for < 10GB, integer otherwise
-  function formatMemoryGb(memGb) {
+  function formatGigabytes(memGb) {
     const value = parseFloat(memGb);
     if (isNaN(value))
       return "0G";
@@ -1022,6 +1030,22 @@ Singleton {
     if (value < 10)
       return value.toFixed(1) + "G"; // "0.0G" to "9.9G"
     return Math.round(value) + "G"; // "10G" to "999G"
+  }
+
+  // -------------------------------------------------------
+  // Formatting disk usage
+  function formatDiskDisplay(diskPath, {
+                             percent = false,
+                             available = false
+} = {}) {
+    if (percent) {
+      const raw = available ? root.diskAvailPercents[diskPath] : root.diskPercents[diskPath];
+      const value = (raw === null) ? 0 : raw;
+      return `${value}%`;
+    } else {
+      const rawGb = available ? root.diskAvailableGb[diskPath] : root.diskUsedGb[diskPath];
+      return formatGigabytes(rawGb === null ? 0 : rawGb);
+    }
   }
 
   // -------------------------------------------------------

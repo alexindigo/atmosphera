@@ -216,7 +216,11 @@
       "swap-usage-description": "Mostrar el uso de la memoria swap.",
       "swap-usage-label": "Uso de swap",
       "use-monospace-font-description": "Utilice fuente monoespaciada para un ancho de carácter consistente.",
-      "use-monospace-font-label": "Fuente monoespaciada"
+      "use-monospace-font-label": "Fuente monoespaciada",
+      "storage-as-percentage-label": "Disco como porcentaje",
+      "storage-as-percentage-description": "Mostrar el espacio en disco como porcentaje en lugar de valores absolutos.",
+      "storage-available-label": "Espacio disponible en disco",
+      "storage-available-description": "Muestra cuánto espacio en disco hay disponible en lugar de cuánto se está utilizando."
     },
     "taskbar": {
       "colorize-icons-description": "Aplicar colores del tema a los iconos de la barra de tareas.",
@@ -1350,6 +1354,7 @@
       "critical-color-label": "Color crítico",
       "custom-highlight-colors-title-label": "Colores de resaltado personalizados",
       "disk-section-label": "Uso de disco",
+      "disk-available-label": "Disco disponible",
       "enable-dgpu-monitoring-description": "Advertencia: Esto activará tu GPU dedicada (NVIDIA/AMD), lo que podría afectar significativamente la duración de la batería en portátiles con gráficos híbridos.",
       "enable-dgpu-monitoring-label": "Habilitar la monitorización de la GPU dedicada",
       "external-monitor-description": "Ingrese el comando o ruta de la aplicación para ejecutar al activar la aplicación externa del monitor del sistema.",

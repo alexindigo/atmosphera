@@ -29,7 +29,8 @@ ColumnLayout {
   property bool valueShowSwapUsage: widgetData.showSwapUsage !== undefined ? widgetData.showSwapUsage : widgetMetadata.showSwapUsage
   property bool valueShowNetworkStats: widgetData.showNetworkStats !== undefined ? widgetData.showNetworkStats : widgetMetadata.showNetworkStats
   property bool valueShowDiskUsage: widgetData.showDiskUsage !== undefined ? widgetData.showDiskUsage : widgetMetadata.showDiskUsage
-  property bool valueShowDiskAsFree: widgetData.showDiskAsFree !== undefined ? widgetData.showDiskAsFree : widgetMetadata.showDiskAsFree
+  property bool valueShowDiskUsageAsPercent: widgetData.showDiskUsageAsPercent !== undefined ? widgetData.showDiskUsageAsPercent : widgetMetadata.showDiskUsageAsPercent
+  property bool valueShowDiskAvailable: widgetData.showDiskAvailable !== undefined ? widgetData.showDiskAvailable : widgetMetadata.showDiskAvailable
   property string valueDiskPath: widgetData.diskPath !== undefined ? widgetData.diskPath : widgetMetadata.diskPath
 
   function saveSettings() {
@@ -47,7 +48,8 @@ ColumnLayout {
     settings.showSwapUsage = valueShowSwapUsage;
     settings.showNetworkStats = valueShowNetworkStats;
     settings.showDiskUsage = valueShowDiskUsage;
-    settings.showDiskAsFree = valueShowDiskAsFree;
+    settings.showDiskUsageAsPercent = valueShowDiskUsageAsPercent;
+    settings.showDiskAvailable = valueShowDiskAvailable;
     settings.diskPath = valueDiskPath;
 
     return settings;
@@ -211,16 +213,27 @@ ColumnLayout {
   }
 
   NToggle {
-    id: showDiskAsFree
+    id: showDiskUsageAsPercent
     Layout.fillWidth: true
-    label: "Show Free Space" // TODO: use I18n.tr
-    description: "Display available space (GB) instead of percentage" // TODO: use I18n.tr
-    checked: valueShowDiskAsFree
+    label: I18n.tr("bar.system-monitor.storage-as-percentage-label")
+    description: I18n.tr("bar.system-monitor.storage-as-percentage-description")
+    checked: valueShowDiskUsageAsPercent
     onToggled: checked => {
-                 valueShowDiskAsFree = checked;
+                 valueShowDiskUsageAsPercent = checked;
                  settingsChanged(saveSettings());
                }
-    visible: valueShowDiskUsage
+  }
+
+  NToggle {
+    id: showDiskAvailable
+    Layout.fillWidth: true
+    label: I18n.tr("bar.system-monitor.storage-available-label")
+    description: I18n.tr("bar.system-monitor.storage-available-description")
+    checked: valueShowDiskAvailable
+    onToggled: checked => {
+                 valueShowDiskAvailable = checked;
+                 settingsChanged(saveSettings());
+               }
   }
 
   NComboBox {

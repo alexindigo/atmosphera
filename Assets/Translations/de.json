@@ -216,7 +216,11 @@
       "swap-usage-description": "Swap-Speichernutzung anzeigen.",
       "swap-usage-label": "Swap-Auslastung",
       "use-monospace-font-description": "Verwende eine Monospace-Schriftart für eine konsistente Zeichenbreite.",
-      "use-monospace-font-label": "Schriftart mit fester Breite"
+      "use-monospace-font-label": "Schriftart mit fester Breite",
+      "storage-as-percentage-label": "Festplatte in Prozent",
+      "storage-as-percentage-description": "Zeige den Speicherplatz als Prozentsatz statt als absolute Werte an.",
+      "storage-available-label": "Verfügbarer Speicherplatz",
+      "storage-available-description": "Zeigt an, wie viel Speicherplatz verfügbar ist, anstatt wie viel belegt ist."
     },
     "taskbar": {
       "colorize-icons-description": "Theme-Farben auf Taskbar-Symbole anwenden.",
@@ -1350,6 +1354,7 @@
       "critical-color-label": "Kritische Farbe",
       "custom-highlight-colors-title-label": "Benutzerdefinierte Hervorhebungsfarben",
       "disk-section-label": "Festplattennutzung",
+      "disk-available-label": "Festplattenspeicher verfügbar",
       "enable-dgpu-monitoring-description": "Warnung: Dies aktiviert Ihre dedizierte GPU (NVIDIA/AMD), was die Akkulaufzeit von Laptops mit Hybridgrafik erheblich beeinträchtigen kann.",
       "enable-dgpu-monitoring-label": "Dedizierte GPU-Überwachung aktivieren",
       "external-monitor-description": "Geben Sie den Befehl oder Anwendungspfad ein, um die externe Systemmonitor-Anwendung zu starten.",

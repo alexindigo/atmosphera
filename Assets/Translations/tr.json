@@ -216,7 +216,11 @@
       "swap-usage-description": "Takas belleği kullanımını göster.",
       "swap-usage-label": "Takas kullanımı",
       "use-monospace-font-description": "Tekdüze karakter genişliği için tek aralıklı yazı tipini kullanın.",
-      "use-monospace-font-label": "Tek aralıklı yazı tipi"
+      "use-monospace-font-label": "Tek aralıklı yazı tipi",
+      "storage-as-percentage-label": "Disk yüzdesi olarak",
+      "storage-as-percentage-description": "Disk alanını mutlak değerler yerine yüzde olarak göster.",
+      "storage-available-label": "Kullanılabilir disk alanı",
+      "storage-available-description": "Kullanılan disk alanı yerine kullanılabilir disk alanının ne kadar olduğunu gösterir."
     },
     "taskbar": {
       "colorize-icons-description": "Görev çubuğu simgelerine tema renklerini uygula.",
@@ -1350,6 +1354,7 @@
       "critical-color-label": "Kritik renk",
       "custom-highlight-colors-title-label": "Özel vurgulama renkleri",
       "disk-section-label": "Disk kullanımı",
+      "disk-available-label": "Disk kullanılabilir",
       "enable-dgpu-monitoring-description": "Uyarı: Bu, ayrık GPU'nuzu (NVIDIA/AMD) uyandıracak ve bu da hibrit grafiklere sahip dizüstü bilgisayarlarda pil ömrünü önemli ölçüde etkileyebilir.",
       "enable-dgpu-monitoring-label": "Ayrık GPU izlemeyi etkinleştir",
       "external-monitor-description": "Harici sistem izleyici uygulamasını etkinleştirirken başlatılacak komut veya uygulama yolunu girin.",

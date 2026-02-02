@@ -216,7 +216,11 @@
       "swap-usage-description": "Afficher l'utilisation de la mémoire swap.",
       "swap-usage-label": "Utilisation du swap",
       "use-monospace-font-description": "Utilisez une police de caractères à chasse fixe pour une largeur de caractère uniforme.",
-      "use-monospace-font-label": "Police à chasse fixe"
+      "use-monospace-font-label": "Police à chasse fixe",
+      "storage-as-percentage-label": "Disque en pourcentage",
+      "storage-as-percentage-description": "Afficher l'espace disque en pourcentage plutôt qu'en valeurs absolues.",
+      "storage-available-label": "Espace disque disponible",
+      "storage-available-description": "Affiche l'espace disque disponible plutôt que l'espace utilisé."
     },
     "taskbar": {
       "colorize-icons-description": "Appliquer les couleurs du thème aux icônes de la barre des tâches.",
@@ -1350,6 +1354,7 @@
       "critical-color-label": "Couleur critique",
       "custom-highlight-colors-title-label": "Couleurs de surbrillance personnalisées",
       "disk-section-label": "Utilisation disque",
+      "disk-available-label": "Disque disponible",
       "enable-dgpu-monitoring-description": "Attention : Ceci va activer votre GPU dédié (NVIDIA/AMD), ce qui peut avoir un impact significatif sur l'autonomie de la batterie des ordinateurs portables dotés de cartes graphiques hybrides.",
       "enable-dgpu-monitoring-label": "Activer la surveillance du GPU dédié",
       "external-monitor-description": "Entrez la commande ou le chemin de l'application à lancer lors de l'activation de l'application externe de surveillance du système.",

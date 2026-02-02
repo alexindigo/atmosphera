@@ -216,7 +216,11 @@
       "swap-usage-description": "Pokaż użycie pamięci wymiany.",
       "swap-usage-label": "Użycie pamięci wymiany",
       "use-monospace-font-description": "Użyj czcionki o stałej szerokości znaków dla zachowania spójnej szerokości znaków.",
-      "use-monospace-font-label": "Czcionka o stałej szerokości znaków"
+      "use-monospace-font-label": "Czcionka o stałej szerokości znaków",
+      "storage-as-percentage-label": "Dysk jako procent",
+      "storage-as-percentage-description": "Pokaż miejsce na dysku jako wartość procentową zamiast wartości bezwzględnej.",
+      "storage-available-label": "Dostępna przestrzeń dyskowa",
+      "storage-available-description": "Pokazuje, ile miejsca na dysku jest dostępne, a nie ile jest zajęte."
     },
     "taskbar": {
       "colorize-icons-description": "Zastosuj kolory motywu do ikon paska zadań.",
@@ -1350,6 +1354,7 @@
       "critical-color-label": "Kolor krytyczny",
       "custom-highlight-colors-title-label": "Własne kolory podświetlenia",
       "disk-section-label": "Użycie dysku",
+      "disk-available-label": "Dysk dostępny",
       "enable-dgpu-monitoring-description": "Ostrzeżenie: To obudzi twoją dedykowaną kartę graficzną (NVIDIA/AMD), co może znacząco wpłynąć na żywotność baterii w laptopach z hybrydową grafiką.",
       "enable-dgpu-monitoring-label": "Włącz monitorowanie dedykowanej karty graficznej",
       "external-monitor-description": "Wprowadź polecenie lub ścieżkę aplikacji do uruchomienia przy aktywacji zewnętrznej aplikacji monitora systemu.",
