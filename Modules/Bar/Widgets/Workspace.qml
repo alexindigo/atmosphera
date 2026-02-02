@@ -48,8 +48,11 @@ Item {
   readonly property bool followFocusedScreen: (widgetSettings.followFocusedScreen !== undefined) ? widgetSettings.followFocusedScreen : widgetMetadata.followFocusedScreen
   readonly property int characterCount: isVertical ? 2 : ((widgetSettings.characterCount !== undefined) ? widgetSettings.characterCount : widgetMetadata.characterCount)
 
+  // Pill size setting (0.5-1.0 range)
+  readonly property real pillSize: (widgetSettings.pillSize !== undefined) ? widgetSettings.pillSize : widgetMetadata.pillSize
+
   // When no label the pills are smaller
-  readonly property real baseDimensionRatio: (widgetSettings.labelMode === "none" ? 0.5 : 0.6)
+  readonly property real baseDimensionRatio: pillSize
 
   // Grouped mode (show applications) settings
   readonly property bool showApplications: (widgetSettings.showApplications !== undefined) ? widgetSettings.showApplications : widgetMetadata.showApplications
@@ -597,7 +600,7 @@ Item {
         required property var model
         workspace: model
         isVertical: true
-        baseDimensionRatio: root.baseDimensionRatio * 0.9 // slightly smaller in vertical mode
+        baseDimensionRatio: root.baseDimensionRatio
         capsuleHeight: root.capsuleHeight
         barHeight: root.barHeight
         labelMode: root.labelMode

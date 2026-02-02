@@ -256,7 +256,8 @@ Singleton {
                                     "occupiedColor": "secondary",
                                     "emptyColor": "secondary",
                                     "showBadge": true,
-                                    "reverseScroll": false
+                                    "reverseScroll": false,
+                                    "pillSize": 0.6
                                   },
                                   "Volume": {
                                     "displayMode": "onhover",
