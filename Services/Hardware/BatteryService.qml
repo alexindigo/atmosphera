@@ -344,10 +344,6 @@ Singleton {
         Logger.e("BatteryServiceDebug", "Check in progress... (Bluetooth battery connected)")
         checkDevice(modelData)
       }
-      function onDisconnected() {
-        Logger.e("BatteryServiceDebug", "Check in progress... (Bluetooth battery disconnected)")
-        checkDevice(modelData)
-      }
     }
   }
 }
