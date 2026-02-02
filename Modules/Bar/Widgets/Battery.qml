@@ -37,12 +37,8 @@ Item {
   readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
   readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
   readonly property string displayMode: widgetSettings.displayMode !== undefined ? widgetSettings.displayMode : widgetMetadata.displayMode
-  readonly property real warningThreshold: Settings.data.systemMonitor.batteryWarningThreshold
-  readonly property real criticalThreshold: Settings.data.systemMonitor.batteryCriticalThreshold
   readonly property bool hideIfNotDetected: widgetSettings.hideIfNotDetected !== undefined ? widgetSettings.hideIfNotDetected : widgetMetadata.hideIfNotDetected
   readonly property bool hideIfIdle: widgetSettings.hideIfIdle !== undefined ? widgetSettings.hideIfIdle : widgetMetadata.hideIfIdle
-  readonly property bool isLowBattery: isReady && (!isCharging && !isPluggedIn) && percent <= warningThreshold && percent > criticalThreshold
-  readonly property bool isCriticalBattery: isReady && (!isCharging && !isPluggedIn) && percent <= criticalThreshold
 
   // Visibility: show if hideIfNotDetected is false, or if battery is ready
   readonly property bool shouldShow: !hideIfNotDetected || (isReady && (hideIfIdle ? (!isCharging && !isPluggedIn) : true))
@@ -52,7 +48,8 @@ Item {
   readonly property int testPercent: 35
   readonly property bool testCharging: false
   readonly property bool testPluggedIn: false
-
+  readonly property bool testLowBattery: false
+  readonly property bool testCriticalBattery: false
   readonly property string deviceNativePath: widgetSettings.deviceNativePath !== undefined ? widgetSettings.deviceNativePath : widgetMetadata.deviceNativePath
   readonly property var selectedDevice: BatteryService.isDevicePresent(BatteryService.findDevice(deviceNativePath)) ? BatteryService.findDevice(deviceNativePath) : null
 
@@ -63,39 +60,14 @@ Item {
   readonly property real percent: testMode ? testPercent : (isReady ? BatteryService.getPercentage(selectedDevice) : -1)
   readonly property bool isCharging: testMode ? testCharging : (isReady ? BatteryService.isCharging(selectedDevice) : false)
   readonly property bool isPluggedIn: testMode ? testPluggedIn : (isReady ? BatteryService.isPluggedIn(selectedDevice) : false)
-
-  property bool hasNotifiedLowBattery: false
+  readonly property bool isLowBattery: testMode ? testLowBattery : (isReady ? BatteryService.isLowBattery(selectedDevice) : false)
+  readonly property bool isCriticalBattery: testMode ? testCriticalBattery : (isReady ? BatteryService.isCriticalBattery(selectedDevice) : false)
 
   visible: shouldShow
   opacity: shouldShow ? 1.0 : 0.0
 
   implicitWidth: pill.width
   implicitHeight: pill.height
-
-  function maybeNotify(currentPercent, charging, pluggedIn, isReady) {
-    if (isReady && (!charging && !pluggedIn) && !hasNotifiedLowBattery && currentPercent <= warningThreshold) {
-      hasNotifiedLowBattery = true;
-      ToastService.showNotice(I18n.tr("toast.battery.low"), I18n.tr("toast.battery.low-desc", {
-                                                                      "percent": currentPercent
-                                                                    }), "battery-charging-2"); // showWarning don't get custom icon, using generic one. type and duration seems being ignored.
-    } else if (hasNotifiedLowBattery && (charging || pluggedIn || currentPercent > warningThreshold + 5)) {
-      hasNotifiedLowBattery = false;
-    }
-  }
-
-  Connections {
-    target: selectedDevice
-
-    function onPercentageChanged() {
-      maybeNotify(BatteryService.getPercentage(selectedDevice), isCharging, isPluggedIn, isReady);
-    }
-    function onStateChanged() {
-      if (isCharging || isPluggedIn) {
-        hasNotifiedLowBattery = false;
-      }
-      maybeNotify(BatteryService.getPercentage(selectedDevice), isCharging, isPluggedIn, isReady);
-    }
-  }
 
   NPopupContextMenu {
     id: contextMenu
@@ -144,7 +116,7 @@ Item {
 
       if (isInternal) {
         let timeText = BatteryService.getTimeRemainingText(selectedDevice);
-        if (timeText && timeText !== I18n.tr("common.idle") && timeText !== I18n.tr("battery.no-battery-detected") && timeText !== I18n.tr("battery.plugged-in")) {
+        if (timeText) {
           lines.push(timeText);
         }
 
