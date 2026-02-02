@@ -482,6 +482,8 @@ Singleton {
       property int swapCriticalThreshold: 90
       property int diskWarningThreshold: 80
       property int diskCriticalThreshold: 90
+      property int batteryWarningThreshold: 20
+      property int batteryCriticalThreshold: 5
       property int cpuPollingInterval: 3000
       property int tempPollingInterval: 3000
       property int gpuPollingInterval: 3000
