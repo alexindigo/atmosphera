@@ -270,6 +270,8 @@
     "swapCriticalThreshold": 90,
     "diskWarningThreshold": 80,
     "diskCriticalThreshold": 90,
+    "batteryWarningThreshold": 20,
+    "batteryCriticalThreshold": 5,
     "cpuPollingInterval": 3000,
     "tempPollingInterval": 3000,
     "gpuPollingInterval": 3000,
