@@ -29,6 +29,10 @@ Singleton {
   // Overview state (Niri-specific, defaults to false for other compositors)
   property bool overviewActive: false
 
+  // Global workspaces flag (workspaces shared across all outputs)
+  // True for LabWC (stacking compositor), false for tiling WMs with per-output workspaces
+  property bool globalWorkspaces: false
+
   // Generic events
   signal workspaceChanged
   signal activeWindowChanged
@@ -226,6 +230,9 @@ Singleton {
     focusedWindowIndex = backend.focusedWindowIndex;
     if (backend.overviewActive !== undefined) {
       overviewActive = backend.overviewActive;
+    }
+    if (backend.globalWorkspaces !== undefined) {
+      globalWorkspaces = backend.globalWorkspaces;
     }
   }
 
