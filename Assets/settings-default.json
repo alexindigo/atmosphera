@@ -270,8 +270,6 @@
     "swapCriticalThreshold": 90,
     "diskWarningThreshold": 80,
     "diskCriticalThreshold": 90,
-    "batteryWarningThreshold": 20,
-    "batteryCriticalThreshold": 5,
     "cpuPollingInterval": 1000,
     "gpuPollingInterval": 3000,
     "enableDgpuMonitoring": false,
@@ -353,7 +351,6 @@
     "lowUrgencyDuration": 3,
     "normalUrgencyDuration": 8,
     "criticalUrgencyDuration": 15,
-    "enableKeyboardLayoutToast": true,
     "saveToHistory": {
       "low": true,
       "normal": true,
@@ -368,7 +365,10 @@
       "lowSoundFile": "",
       "excludedApps": "discord,firefox,chrome,chromium,edge"
     },
-    "enableMediaToast": false
+    "enableMediaToast": false,
+    "enableKeyboardLayoutToast": true,
+    "batteryWarningThreshold": 20,
+    "batteryCriticalThreshold": 5
   },
   "osd": {
     "enabled": true,

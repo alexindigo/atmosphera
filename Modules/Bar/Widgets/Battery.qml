@@ -100,8 +100,8 @@ Item {
     autoHide: false
     forceOpen: isReady && displayMode === "alwaysShow"
     forceClose: displayMode === "alwaysHide" || !isReady
-    customBackgroundColor: (isCharging || isPluggedIn) ? Color.mPrimary : ((isLowBattery || isCriticalBattery) ? Color.mError : "transparent")
-    customTextIconColor: (isCharging || isPluggedIn) ? Color.mOnPrimary : ((isLowBattery || isCriticalBattery) ? Color.mOnError : "transparent")
+    customBackgroundColor: isCharging ? Color.mPrimary : ((isLowBattery || isCriticalBattery) ? Color.mError : "transparent")
+    customTextIconColor: isCharging ? Color.mOnPrimary : ((isLowBattery || isCriticalBattery) ? Color.mOnError : "transparent")
 
     tooltipText: {
       let lines = [];

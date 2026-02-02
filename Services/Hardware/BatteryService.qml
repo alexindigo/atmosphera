@@ -154,16 +154,10 @@ Singleton {
   }
 
   function isCriticalBattery(device) {
-    if (!device || !isDeviceReady(device)) {
-      return false;
-    }
     return (!isCharging(device) && !isPluggedIn(device)) && getPercentage(device) <= criticalThreshold;
   }
 
   function isLowBattery(device) {
-    if (!device || !isDeviceReady(device)) {
-      return false;
-    }
     return (!isCharging(device) && !isPluggedIn(device)) && getPercentage(device) <= warningThreshold && getPercentage(device) > criticalThreshold;
   }
 
@@ -277,34 +271,29 @@ Singleton {
   }
 
   function checkDevice(device) {
-    if (!device || !isDeviceReady(device)) {
+    if (!device || !device.ready) {
       return;
     }
 
     const percentage = getPercentage(device);
     const charging = isCharging(device);
-    const plugged = isPluggedIn(device);
-    const level = "low"; //isLowBattery(device) ? "low" : isCriticalBattery(device) ? "critical" : "";
-    Logger.e("BatteryServiceDebug", "Device: " + device.model + " Percentage: " + percentage + " Charging: " + charging + " Plugged: " + plugged + " Level: " + level);
+    const pluggedIn = isPluggedIn(device);
+    const level = isLowBattery(device) ? "low" : (isCriticalBattery(device) ? "critical" : "");
 
-    if (level && !charging && !plugged) {
+    if ((level === "low" || level === "critical") && !charging && !pluggedIn) {
       notify(device, level);
     }
-
   }
 
-  // Formerly known as maybeNotify
   function notify(device, level) {
     var name = getDeviceName(device);
     var titleKey = level === "critical" ? "toast.battery.critical" : "toast.battery.low";
     var descKey = level === "critical" ? "toast.battery.critical-desc" : "toast.battery.low-desc";
 
     var title = I18n.tr(titleKey);
-    var desc = I18n.tr(descKey, {
-                         "percent": getPercentage(device)
-                       });
+    var desc = I18n.tr(descKey, {"percent": getPercentage(device)});
 
-    if (device == _bluetoothBattery  && name) {
+    if (device == _bluetoothBattery && name) {
       title = title + " " + name;
     }
 
@@ -314,35 +303,23 @@ Singleton {
   }
 
   Instantiator {
-    model: laptopBatteries
+    model: deviceModel
     delegate: Connections {
-      target: modelData
-      function onPercentageChanged() {
-        Logger.e("BatteryServiceDebug", "Check in progress... (Battery percentage changed)")
-        checkDevice(modelData)
-      }
-      function onStateChanged() {
-        Logger.e("BatteryServiceDebug", "Check in progress... (Battery state changed)")
-        checkDevice(modelData)
-      }
-    }
-  }
+      required property var modelData
+      property var device: findDevice(modelData.key)
+      target: device
 
-  Instantiator {
-    model: bluetoothBatteries
-    delegate: Connections {
-      target: modelData
       function onPercentageChanged() {
-        Logger.e("BatteryServiceDebug", "Check in progress... (Bluetooth battery changed)")
-        checkDevice(modelData)
+        if (device.isLaptopBattery && modelData.key !== "__default__") {
+          return;
+        }
+        checkDevice(device)
       }
       function onStateChanged() {
-        Logger.e("BatteryServiceDebug", "Check in progress... (Bluetooth battery state changed)")
-        checkDevice(modelData)
-      }
-      function onConnected() {
-        Logger.e("BatteryServiceDebug", "Check in progress... (Bluetooth battery connected)")
-        checkDevice(modelData)
+        if (device.isLaptopBattery && modelData.key !== "__default__") {
+          return;
+        }
+        checkDevice(device)
       }
     }
   }
