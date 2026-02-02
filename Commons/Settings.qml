@@ -483,7 +483,6 @@ Singleton {
       property int diskWarningThreshold: 80
       property int diskCriticalThreshold: 90
       property int cpuPollingInterval: 1000
-      property int tempPollingInterval: 1000
       property int gpuPollingInterval: 3000
       property bool enableDgpuMonitoring: false // Opt-in: reading dGPU sysfs/nvidia-smi wakes it from D3cold, draining battery
       property int memPollingInterval: 1000

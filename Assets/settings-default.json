@@ -271,7 +271,6 @@
     "diskWarningThreshold": 80,
     "diskCriticalThreshold": 90,
     "cpuPollingInterval": 1000,
-    "tempPollingInterval": 1000,
     "gpuPollingInterval": 3000,
     "enableDgpuMonitoring": false,
     "memPollingInterval": 1000,
