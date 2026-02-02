@@ -31,9 +31,33 @@ from wayland import protocol as wp
 from wayland.client import MakeDisplay, ServerDisconnected, NoXDGRuntimeDir
 
 # Protocol XML paths
-WAYLAND_XML = '/usr/share/wayland/wayland.xml'
 PROTOCOLS_DIR = os.path.join(VENDOR_DIR, 'wayland', 'protocols')
 EXT_WORKSPACE_XML = os.path.join(PROTOCOLS_DIR, 'ext-workspace-v1.xml')
+
+
+def find_wayland_xml():
+    """Find wayland.xml using XDG_DATA_DIRS"""
+    # Get XDG_DATA_DIRS, falling back to standard paths
+    xdg_data_dirs = os.environ.get('XDG_DATA_DIRS', '/usr/local/share:/usr/share')
+
+    for data_dir in xdg_data_dirs.split(':'):
+        wayland_xml = os.path.join(data_dir, 'wayland', 'wayland.xml')
+        if os.path.exists(wayland_xml):
+            return wayland_xml
+
+    # Fallback to common paths if not found in XDG_DATA_DIRS
+    fallback_paths = [
+        '/usr/share/wayland/wayland.xml',
+        '/usr/local/share/wayland/wayland.xml',
+    ]
+    for path in fallback_paths:
+        if os.path.exists(path):
+            return path
+
+    return None
+
+
+WAYLAND_XML = find_wayland_xml()
 
 
 class WorkspaceState:
@@ -349,10 +373,10 @@ def main():
     args = parser.parse_args()
 
     # Check for required protocol files
-    if not os.path.exists(WAYLAND_XML):
+    if not WAYLAND_XML or not os.path.exists(WAYLAND_XML):
         print(json.dumps({
             'type': 'error',
-            'message': f'Wayland protocol file not found: {WAYLAND_XML}'
+            'message': 'Wayland protocol file not found. Check XDG_DATA_DIRS or install wayland-devel.'
         }), flush=True)
         return 1
 
