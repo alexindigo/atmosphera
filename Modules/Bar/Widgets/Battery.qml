@@ -73,9 +73,9 @@ Item {
   function maybeNotify(currentPercent, charging, pluggedIn, isReady) {
     if (isReady && (!charging && !pluggedIn) && !hasNotifiedLowBattery && currentPercent <= warningThreshold) {
       hasNotifiedLowBattery = true;
-      ToastService.showWarning(I18n.tr("toast.battery.low"), I18n.tr("toast.battery.low-desc", {
-                                                                       "percent": currentPercent
-                                                                     }), "battery-exclamation");
+      ToastService.showNotice(I18n.tr("toast.battery.low"), I18n.tr("toast.battery.low-desc", {
+                                                                      "percent": currentPercent
+                                                                    }), "battery-charging-2"); // showWarning don't get custom icon, using generic one. type and duration seems being ignored.
     } else if (hasNotifiedLowBattery && (charging || pluggedIn || currentPercent > warningThreshold + 5)) {
       hasNotifiedLowBattery = false;
     }
