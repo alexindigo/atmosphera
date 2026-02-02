@@ -11,10 +11,7 @@ import qs.Services.UI
 Singleton {
   id: root
 
-  // Primary battery device (prioritizes laptop over Bluetooth)
-  readonly property var primaryDevice: _laptopBattery || _bluetoothBattery || null
-  // Whether the primary device is a laptop battery
-  readonly property bool isLaptopBattery: _laptopBattery !== null && primaryDevice === _laptopBattery
+  readonly property var primaryDevice: _laptopBattery || _bluetoothBattery || null // Primary battery device (prioritizes laptop over Bluetooth)
   readonly property real batteryPercentage: getPercentage(primaryDevice)
   readonly property bool batteryCharging: isCharging(primaryDevice)
   readonly property bool batteryPluggedIn: isPluggedIn(primaryDevice)
@@ -249,9 +246,7 @@ Singleton {
       return "";
     }
     const rate = Math.abs(device.changeRate);
-    if (isPluggedIn(device)) {
-      return I18n.tr("battery.plugged-in");
-    } else if (device.timeToFull > 0) {
+    if (device.timeToFull > 0) {
       return I18n.tr("battery.charging-rate", {
                        "rate": rate.toFixed(2)
                      });
@@ -260,7 +255,6 @@ Singleton {
                        "rate": rate.toFixed(2)
                      });
     }
-    return I18n.tr("common.idle");
   }
 
   function getTimeRemainingText(device) {

@@ -112,7 +112,7 @@ Item {
       if (!isReady || !isPresent) {
         return I18n.tr("battery.no-battery-detected");
       }
-      const isInternal = selectedDevice.type === UPowerDeviceType.Battery && BatteryService.isLaptopBattery;
+      const isInternal = selectedDevice.isLaptopBattery;
 
       if (isInternal) {
         let timeText = BatteryService.getTimeRemainingText(selectedDevice);
