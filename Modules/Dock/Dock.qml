@@ -650,7 +650,7 @@ Loader {
                 id: dock
                 // Use parent dimensions more directly to avoid clipping
                 width: isVertical ? parent.width - Style.marginS * 2 : Math.min(dockLayout.implicitWidth, parent.width - Style.marginXL)
-                height: !isVertical ? parent.height - Style.marginS * 2 : Math.min(dockLayout.implicitHeight, parent.height - Style.marginXL)
+                height: !isVertical ? parent.height - Style.marginS : Math.min(dockLayout.implicitHeight, parent.height - Style.marginXL)
                 contentWidth: dockLayout.implicitWidth
                 contentHeight: dockLayout.implicitHeight
                 anchors.centerIn: parent
@@ -662,10 +662,8 @@ Loader {
                 interactive: isVertical ? contentHeight > height : contentWidth > width
 
                 // Centering margins
-                leftMargin: contentWidth < width ? (width - contentWidth) / 2 : 0
-                rightMargin: leftMargin
-                topMargin: contentHeight < height ? (height - contentHeight) / 2 : 0
-                bottomMargin: topMargin
+                contentX: isVertical && contentWidth < width ? (contentWidth - width) / 2 : 0
+                contentY: !isVertical && contentHeight < height ? (contentHeight - height) / 2 : 0
 
                 WheelHandler {
                   acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
