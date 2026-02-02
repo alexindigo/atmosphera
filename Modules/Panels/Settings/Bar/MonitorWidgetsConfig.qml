@@ -14,6 +14,11 @@ NBox {
 
   required property var screen
   readonly property string screenName: screen?.name || ""
+  // Determine if the bar on a per screen basis is vertical
+  readonly property bool barIsVertical: {
+    var pos = Settings.getBarPositionForScreen(screenName);
+    return pos === "left" || pos === "right";
+  }
 
   color: Color.mSurfaceVariant
   Layout.fillWidth: true
@@ -153,7 +158,7 @@ NBox {
 
     // Left Section
     NSectionEditor {
-      sectionName: I18n.tr("positions.left")
+      sectionName: root.barIsVertical ? I18n.tr("positions.top") : I18n.tr("positions.left")
       sectionId: "left"
       screen: root.screen
       settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
@@ -187,7 +192,7 @@ NBox {
 
     // Right Section
     NSectionEditor {
-      sectionName: I18n.tr("positions.right")
+      sectionName: root.barIsVertical ? I18n.tr("positions.bottom") : I18n.tr("positions.right")
       sectionId: "right"
       screen: root.screen
       settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
