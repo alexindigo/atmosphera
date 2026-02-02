@@ -597,7 +597,7 @@ Item {
         required property var model
         workspace: model
         isVertical: true
-        baseDimensionRatio: root.baseDimensionRatio
+        baseDimensionRatio: root.baseDimensionRatio * 0.9 // slightly smaller in vertical mode
         capsuleHeight: root.capsuleHeight
         barHeight: root.barHeight
         labelMode: root.labelMode
