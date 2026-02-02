@@ -341,9 +341,9 @@ Singleton {
   }
 
   // --------------------------------------------
-  // Timer for CPU usage
+  // Timer for CPU usage, frequency, and temperature
   Timer {
-    id: cpuUsageTimer
+    id: cpuTimer
     interval: root.normalizeInterval(Settings.data.systemMonitor.cpuPollingInterval)
     repeat: true
     running: true
@@ -356,6 +356,7 @@ Singleton {
     onTriggered: {
       cpuStatFile.reload();
       cpuFreqProcess.running = true;
+      updateCpuTemperature();
     }
   }
 
@@ -372,21 +373,6 @@ Singleton {
       }
     }
     onTriggered: loadAvgFile.reload()
-  }
-
-  // Timer for CPU temperature
-  Timer {
-    id: cpuTempTimer
-    interval: root.normalizeInterval(Settings.data.systemMonitor.tempPollingInterval)
-    repeat: true
-    running: true
-    triggeredOnStart: true
-    onIntervalChanged: {
-      if (running) {
-        restart();
-      }
-    }
-    onTriggered: updateCpuTemperature()
   }
 
   // Timer for memory stats
