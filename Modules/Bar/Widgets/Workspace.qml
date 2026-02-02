@@ -49,7 +49,7 @@ Item {
   readonly property int characterCount: isVertical ? 2 : ((widgetSettings.characterCount !== undefined) ? widgetSettings.characterCount : widgetMetadata.characterCount)
 
   // When no label the pills are smaller
-  readonly property real baseDimensionRatio: 0.65 * (widgetSettings.labelMode === "none" ? 0.75 : 1)
+  readonly property real baseDimensionRatio: (widgetSettings.labelMode === "none" ? 0.5 : 0.6)
 
   // Grouped mode (show applications) settings
   readonly property bool showApplications: (widgetSettings.showApplications !== undefined) ? widgetSettings.showApplications : widgetMetadata.showApplications
