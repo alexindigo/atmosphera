@@ -649,8 +649,8 @@ Loader {
               Flickable {
                 id: dock
                 // Use parent dimensions more directly to avoid clipping
-                width: isVertical ? parent.width - Style.marginS * 2 : Math.min(dockLayout.implicitWidth, parent.width - Style.marginXL)
-                height: !isVertical ? parent.height - Style.marginS : Math.min(dockLayout.implicitHeight, parent.height - Style.marginXL)
+                width: isVertical ? parent.width : Math.min(dockLayout.implicitWidth, parent.width - Style.marginXL)
+                height: !isVertical ? parent.height : Math.min(dockLayout.implicitHeight, parent.height - Style.marginXL)
                 contentWidth: dockLayout.implicitWidth
                 contentHeight: dockLayout.implicitHeight
                 anchors.centerIn: parent
@@ -712,8 +712,9 @@ Loader {
 
                     delegate: Item {
                       id: appButton
-                      Layout.preferredWidth: iconSize
-                      Layout.preferredHeight: iconSize
+                      readonly property real indicatorMargin: Math.max(2, Math.round(iconSize * 0.12))
+                      Layout.preferredWidth: isVertical ? iconSize + indicatorMargin * 2 : iconSize
+                      Layout.preferredHeight: isVertical ? iconSize : iconSize + indicatorMargin * 2
                       Layout.alignment: Qt.AlignCenter
 
                       property bool isActive: modelData.toplevel && ToplevelManager.activeToplevel && ToplevelManager.activeToplevel === modelData.toplevel
@@ -1070,15 +1071,28 @@ Loader {
                         }
                       }
 
-                      // Active indicator - always below the icon
+                      // Active indicator - positioned at the edge of the delegate area
                       Rectangle {
                         visible: Settings.data.dock.inactiveIndicators ? isRunning : isActive
-                        width: iconSize * 0.2
-                        height: iconSize * 0.1
+                        width: isVertical ? indicatorMargin * 0.8 : iconSize * 0.2
+                        height: isVertical ? iconSize * 0.2 : indicatorMargin * 0.8
                         color: Color.mPrimary
                         radius: Style.radiusXS
-                        anchors.top: parent.bottom
-                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        // Anchor to the edge facing the screen center
+                        anchors.bottom: !isVertical && dockPosition === "bottom" ? parent.bottom : undefined
+                        anchors.top: !isVertical && dockPosition === "top" ? parent.top : undefined
+                        anchors.left: isVertical && dockPosition === "left" ? parent.left : undefined
+                        anchors.right: isVertical && dockPosition === "right" ? parent.right : undefined
+
+                        anchors.horizontalCenter: isVertical ? undefined : parent.horizontalCenter
+                        anchors.verticalCenter: isVertical ? parent.verticalCenter : undefined
+
+                        // Offset slightly from the edge
+                        anchors.bottomMargin: !isVertical && dockPosition === "bottom" ? 2 : 0
+                        anchors.topMargin: !isVertical && dockPosition === "top" ? 2 : 0
+                        anchors.leftMargin: isVertical && dockPosition === "left" ? 2 : 0
+                        anchors.rightMargin: isVertical && dockPosition === "right" ? 2 : 0
                       }
                     }
                   }
