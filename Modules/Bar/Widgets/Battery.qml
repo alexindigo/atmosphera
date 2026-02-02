@@ -37,10 +37,12 @@ Item {
   readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
   readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
   readonly property string displayMode: widgetSettings.displayMode !== undefined ? widgetSettings.displayMode : widgetMetadata.displayMode
-  readonly property real warningThreshold: widgetSettings.warningThreshold !== undefined ? widgetSettings.warningThreshold : widgetMetadata.warningThreshold
+  readonly property real warningThreshold: Settings.data.systemMonitor.batteryWarningThreshold
+  readonly property real criticalThreshold: Settings.data.systemMonitor.batteryCriticalThreshold
   readonly property bool hideIfNotDetected: widgetSettings.hideIfNotDetected !== undefined ? widgetSettings.hideIfNotDetected : widgetMetadata.hideIfNotDetected
   readonly property bool hideIfIdle: widgetSettings.hideIfIdle !== undefined ? widgetSettings.hideIfIdle : widgetMetadata.hideIfIdle
-  readonly property bool isLowBattery: isReady && (!isCharging && !isPluggedIn) && percent <= warningThreshold
+  readonly property bool isLowBattery: isReady && (!isCharging && !isPluggedIn) && percent <= warningThreshold && percent > criticalThreshold
+  readonly property bool isCriticalBattery: isReady && (!isCharging && !isPluggedIn) && percent <= criticalThreshold
 
   // Visibility: show if hideIfNotDetected is false, or if battery is ready
   readonly property bool shouldShow: !hideIfNotDetected || (isReady && (hideIfIdle ? (!isCharging && !isPluggedIn) : true))
@@ -126,8 +128,8 @@ Item {
     autoHide: false
     forceOpen: isReady && displayMode === "alwaysShow"
     forceClose: displayMode === "alwaysHide" || !isReady
-    customBackgroundColor: isCharging ? Color.mPrimary : (isLowBattery ? Color.mError : "transparent")
-    customTextIconColor: isCharging ? Color.mOnPrimary : (isLowBattery ? Color.mOnError : "transparent")
+    customBackgroundColor: isCharging ? Color.mPrimary : (isCriticalBattery ? Color.mError : (isLowBattery ? Color.mTertiary : "transparent"))
+    customTextIconColor: isCharging ? Color.mOnPrimary : (isCriticalBattery ? Color.mOnError : (isLowBattery ? Color.mOnTertiary : "transparent"))
 
     tooltipText: {
       let lines = [];
