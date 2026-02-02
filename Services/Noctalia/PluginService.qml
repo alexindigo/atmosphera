@@ -1446,7 +1446,9 @@ Singleton {
     }
 
     // Try to find the plugin panel slot (pluginPanel1 or pluginPanel2)
-    // Try slot 1 first, then slot 2
+    // Priority: 1) toggle same plugin, 2) empty slot, 3) closed slot, 4) replace open slot
+    var closedSlot = null;
+
     for (var slotNum = 1; slotNum <= 2; slotNum++) {
       var panelName = "pluginPanel" + slotNum;
       var panel = PanelService.getPanel(panelName, screen);
@@ -1460,22 +1462,38 @@ Singleton {
 
         // If this slot is empty, use it
         if (panel.currentPluginId === "") {
-          // Set the pluginId first - when panel opens and panelContent loads,
-          // Component.onCompleted will call loadPluginPanel automatically
           panel.currentPluginId = pluginId;
           panel.open(buttonItem);
           return true;
         }
+
+        // Track first closed slot (panel assigned but not showing)
+        if (!closedSlot && !panel.isPanelOpen) {
+          closedSlot = panel;
+        }
       }
     }
 
-    // If both slots are occupied, use slot 1 (replace existing)
+    // Prefer reusing a closed slot over replacing an open one
+    if (closedSlot) {
+      closedSlot.currentPluginId = pluginId;
+      closedSlot.open(buttonItem);
+      return true;
+    }
+
+    // If both slots are occupied and open, use slot 1 (replace existing)
     var panel1 = PanelService.getPanel("pluginPanel1", screen);
     if (panel1) {
+      var wasAlreadyOpen = panel1.isPanelOpen;
       panel1.unloadPluginPanel();
-      // Set the pluginId first - when panel opens and panelContent loads,
-      // Component.onCompleted will call loadPluginPanel automatically
       panel1.currentPluginId = pluginId;
+
+      // If panel was already open, Component.onCompleted won't fire again
+      // since panelContent is already loaded. We need to load the plugin manually.
+      if (wasAlreadyOpen && panel1.contentLoader) {
+        panel1.loadPluginPanel(pluginId);
+      }
+
       panel1.open(buttonItem);
       return true;
     }
