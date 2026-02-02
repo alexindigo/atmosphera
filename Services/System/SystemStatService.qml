@@ -443,7 +443,6 @@ Singleton {
   Process {
     id: dfProcess
     command: ["df", "--output=target,pcent,used,size,avail", "--block-size=1", "-x", "efivarfs"]
-    command: ["df", "--output=target,pcent,used,size,avail", "--block-size=1", "-x", "efivarfs"]
     running: false
     stdout: StdioCollector {
       onStreamFinished: {
