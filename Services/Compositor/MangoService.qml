@@ -688,4 +688,12 @@ Item {
     // }
     // return null;
   }
+
+  function spawn(command) {
+    try {
+      Quickshell.execDetached(["mmsg", "-d", "spawn", "--"].concat(command));
+    } catch (e) {
+      Logger.e("MangoService", "Failed to spawn command:", e);
+    }
+  }
 }

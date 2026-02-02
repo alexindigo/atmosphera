@@ -91,7 +91,8 @@ Singleton {
         {
           "path": "~/.local/share/color-schemes/noctalia.colors"
         }
-      ]
+      ],
+      "postProcess": () => "if command -v plasma-apply-colorscheme >/dev/null 2>&1; then plasma-apply-colorscheme BreezeDark; sleep 0.5; plasma-apply-colorscheme noctalia; fi"
     },
     {
       "id": "fuzzel",
@@ -307,6 +308,18 @@ Singleton {
         }
       ],
       "postProcess": () => `${templateApplyScript} niri`
+    },
+    {
+      "id": "sway",
+      "name": "Sway",
+      "category": "compositor",
+      "input": "sway",
+      "outputs": [
+        {
+          "path": "~/.config/sway/noctalia"
+        }
+      ],
+      "postProcess": () => `${templateApplyScript} sway`
     },
     {
       "id": "hyprland",

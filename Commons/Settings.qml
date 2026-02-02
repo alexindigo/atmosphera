@@ -194,9 +194,6 @@ Singleton {
       // Bar outer corners (inverted/concave corners at bar edges when not floating)
       property bool outerCorners: true
 
-      // Reserves space with compositor
-      property bool exclusive: true
-
       // Hide bar/panels when compositor overview is active
       property bool hideOnOverview: false
 
@@ -375,7 +372,9 @@ Singleton {
       property string wallhavenApiKey: ""
       property string wallhavenResolutionMode: "atleast" // "atleast" or "exact"
       property string wallhavenResolutionWidth: ""
+
       property string wallhavenResolutionHeight: ""
+      property string sortOrder: "name" // "name", "name_desc", "date", "date_desc"
     }
 
     // applauncher
@@ -532,8 +531,8 @@ Singleton {
       property int countdownDuration: 10000
       property string position: "center"
       property bool showHeader: true
-      property bool largeButtonsStyle: false
-      property string largeButtonsLayout: "grid"
+      property bool largeButtonsStyle: true
+      property string largeButtonsLayout: "single-row"
       property bool showNumberLabels: true
       property list<var> powerOptions: [
         {

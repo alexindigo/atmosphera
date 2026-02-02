@@ -16,7 +16,6 @@
     "frameThickness": 8,
     "frameRadius": 12,
     "outerCorners": true,
-    "exclusive": true,
     "hideOnOverview": false,
     "displayMode": "always_visible",
     "autoHideDelay": 500,
@@ -172,7 +171,8 @@
     "wallhavenApiKey": "",
     "wallhavenResolutionMode": "atleast",
     "wallhavenResolutionWidth": "",
-    "wallhavenResolutionHeight": ""
+    "wallhavenResolutionHeight": "",
+    "sortOrder": "name"
   },
   "appLauncher": {
     "enableClipboardHistory": false,
@@ -312,8 +312,8 @@
     "countdownDuration": 10000,
     "position": "center",
     "showHeader": true,
-    "largeButtonsStyle": false,
-    "largeButtonsLayout": "grid",
+    "largeButtonsStyle": true,
+    "largeButtonsLayout": "single-row",
     "showNumberLabels": true,
     "powerOptions": [
       {

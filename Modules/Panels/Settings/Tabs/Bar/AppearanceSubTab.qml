@@ -67,6 +67,50 @@ ColumnLayout {
     defaultValue: Settings.getDefaultValue("bar.density")
     onSelected: key => Settings.data.bar.density = key
   }
+  NComboBox {
+    Layout.fillWidth: true
+    label: I18n.tr("panels.bar.appearance-type-label")
+    description: I18n.tr("panels.bar.appearance-type-description")
+    model: [
+      {
+        "key": "simple",
+        "name": I18n.tr("options.bar.type-simple")
+      },
+      {
+        "key": "floating",
+        "name": I18n.tr("options.bar.type-floating")
+      },
+      {
+        "key": "framed",
+        "name": I18n.tr("options.bar.type-framed")
+      }
+    ]
+    currentKey: Settings.data.bar.barType
+    defaultValue: Settings.getDefaultValue("bar.barType")
+    onSelected: key => {
+                  Settings.data.bar.barType = key;
+                  Settings.data.bar.floating = (key === "floating");
+                }
+  }
+
+  NComboBox {
+    Layout.fillWidth: true
+    label: I18n.tr("panels.bar.appearance-display-mode-label")
+    description: I18n.tr("panels.bar.appearance-display-mode-description")
+    model: [
+      {
+        "key": "always_visible",
+        "name": I18n.tr("hide-modes.visible")
+      },
+      {
+        "key": "auto_hide",
+        "name": I18n.tr("hide-modes.auto-hide")
+      }
+    ]
+    currentKey: Settings.data.bar.displayMode
+    defaultValue: Settings.getDefaultValue("bar.displayMode")
+    onSelected: key => Settings.data.bar.displayMode = key
+  }
 
   NToggle {
     label: I18n.tr("panels.bar.appearance-use-separate-opacity-label")
@@ -122,30 +166,14 @@ ColumnLayout {
     text: Math.floor(Settings.data.bar.capsuleOpacity * 100) + "%"
   }
 
-  NComboBox {
+  NToggle {
     Layout.fillWidth: true
-    label: I18n.tr("panels.bar.appearance-type-label")
-    description: I18n.tr("panels.bar.appearance-type-description")
-    model: [
-      {
-        "key": "simple",
-        "name": I18n.tr("options.bar.type-simple")
-      },
-      {
-        "key": "floating",
-        "name": I18n.tr("options.bar.type-floating")
-      },
-      {
-        "key": "framed",
-        "name": I18n.tr("options.bar.type-framed")
-      }
-    ]
-    currentKey: Settings.data.bar.barType
-    defaultValue: Settings.getDefaultValue("bar.barType")
-    onSelected: key => {
-                  Settings.data.bar.barType = key;
-                  Settings.data.bar.floating = (key === "floating");
-                }
+    visible: CompositorService.isNiri
+    label: I18n.tr("panels.bar.appearance-hide-on-overview-label")
+    description: I18n.tr("panels.bar.appearance-hide-on-overview-description")
+    checked: Settings.data.bar.hideOnOverview
+    defaultValue: Settings.getDefaultValue("bar.hideOnOverview")
+    onToggled: checked => Settings.data.bar.hideOnOverview = checked
   }
 
   NToggle {
@@ -243,25 +271,6 @@ ColumnLayout {
     Layout.topMargin: Style.marginS
   }
 
-  NComboBox {
-    Layout.fillWidth: true
-    label: I18n.tr("panels.bar.appearance-display-mode-label")
-    description: I18n.tr("panels.bar.appearance-display-mode-description")
-    model: [
-      {
-        "key": "always_visible",
-        "name": I18n.tr("hide-modes.visible")
-      },
-      {
-        "key": "auto_hide",
-        "name": I18n.tr("hide-modes.auto-hide")
-      }
-    ]
-    currentKey: Settings.data.bar.displayMode
-    defaultValue: Settings.getDefaultValue("bar.displayMode")
-    onSelected: key => Settings.data.bar.displayMode = key
-  }
-
   ColumnLayout {
     visible: Settings.data.bar.displayMode === "auto_hide"
     spacing: Style.marginS
@@ -292,21 +301,5 @@ ColumnLayout {
       onMoved: value => Settings.data.bar.autoShowDelay = value
       text: Settings.data.bar.autoShowDelay + "ms"
     }
-
-    NLabel {
-      visible: Settings.data.bar.exclusive
-      label: ""
-      description: I18n.tr("panels.bar.appearance-auto-hide-exclusive-note")
-    }
-  }
-
-  NToggle {
-    Layout.fillWidth: true
-    visible: CompositorService.isNiri
-    label: I18n.tr("panels.bar.appearance-hide-on-overview-label")
-    description: I18n.tr("panels.bar.appearance-hide-on-overview-description")
-    checked: Settings.data.bar.hideOnOverview
-    defaultValue: Settings.getDefaultValue("bar.hideOnOverview")
-    onToggled: checked => Settings.data.bar.hideOnOverview = checked
   }
 }

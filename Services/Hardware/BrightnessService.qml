@@ -229,7 +229,7 @@ Singleton {
         refreshProc.running = true;
       } else if (monitor.isDdc) {
         // For DDC displays, get the current value
-        refreshProc.command = ["ddcutil", "-b", monitor.busNum, "getvcp", "10", "--brief"];
+        refreshProc.command = ["ddcutil", "-b", monitor.busNum, "--sleep-multiplier=0.05", "getvcp", "10", "--brief"];
         refreshProc.running = true;
       } else if (monitor.isAppleDisplay) {
         // For Apple displays, get the current value
@@ -311,7 +311,7 @@ Singleton {
 
     // Timer for debouncing rapid changes
     readonly property Timer timer: Timer {
-      interval: 100
+      interval: 250
       onTriggered: {
         if (!isNaN(monitor.queuedBrightness)) {
           monitor.setBrightness(monitor.queuedBrightness);
@@ -319,21 +319,6 @@ Singleton {
         }
       }
     }
-
-    // Disabled as this is very inneficient and create spikes lag on many computers due to I2C being very slow and synchronous.
-    // // Timer for polling DDC monitor brightness (every 30 seconds)
-    // readonly property Timer pollTimer: Timer {
-    //   interval: 30000
-    //   repeat: true
-    //   running: monitor.isDdc
-    //   triggeredOnStart: true
-    //   onTriggered: {
-    //     // Only refresh if not currently setting brightness
-    //     if (!monitor.commandRunning && isNaN(monitor.queuedBrightness)) {
-    //       monitor.refreshBrightnessFromSystem();
-    //     }
-    //   }
-    // }
 
     function setBrightnessDebounced(value: real): void {
       monitor.queuedBrightness = value;
@@ -385,7 +370,7 @@ Singleton {
         setBrightnessProc.running = true;
       } else if (isDdc) {
         var ddcValue = Math.round(value * monitor.maxBrightness);
-        setBrightnessProc.command = ["ddcutil", "-b", busNum, "--sleep-multiplier=0.05", "setvcp", "10", ddcValue];
+        setBrightnessProc.command = ["ddcutil", "-b", busNum, "--noverify", "--async", "--sleep-multiplier=0.05", "setvcp", "10", ddcValue];
         setBrightnessProc.running = true;
       } else {
         setBrightnessProc.command = ["brightnessctl", "s", rounded + "%"];
@@ -397,7 +382,7 @@ Singleton {
       if (isAppleDisplay) {
         initProc.command = ["asdbctl", "get"];
       } else if (isDdc) {
-        initProc.command = ["ddcutil", "-b", busNum, "getvcp", "10", "--brief"];
+        initProc.command = ["ddcutil", "-b", busNum, "--sleep-multiplier=0.05", "getvcp", "10", "--brief"];
       } else {
         // Internal backlight - find the first available backlight device and get its info
         // This now returns: device_path, current_brightness, max_brightness (on separate lines)

@@ -405,6 +405,19 @@ Singleton {
     }
   }
 
+  // Spawn command
+  function spawn(command) {
+    if (backend && backend.spawn) {
+      backend.spawn(command);
+    } else {
+      try {
+        Quickshell.execDetached(command);
+      } catch (e) {
+        Logger.e("Compositor", "Failed to exececute detached:", e);
+      }
+    }
+  }
+
   // Session management
   function logout() {
     if (backend && backend.logout) {

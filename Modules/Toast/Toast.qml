@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
+import qs.Services.System
 import qs.Widgets
 
 Item {
@@ -28,8 +29,27 @@ Item {
   scale: initialScale
 
   property real progress: 1.0
+  property int hoverCount: 0
 
-  // ... (previous properties)
+  onHoverCountChanged: {
+    if (hoverCount > 0) {
+      resumeTimer.stop();
+      progressAnimation.pause();
+    } else {
+      resumeTimer.start();
+    }
+  }
+
+  Timer {
+    id: resumeTimer
+    interval: 50
+    repeat: false
+    onTriggered: {
+      if (hoverCount === 0) {
+        progressAnimation.resume();
+      }
+    }
+  }
 
   // Background rectangle (apply shadows here)
   Rectangle {
@@ -147,10 +167,10 @@ Item {
     acceptedButtons: Qt.LeftButton
     hoverEnabled: true
     onEntered: {
-      progressAnimation.pause();
+      root.hoverCount++;
     }
     onExited: {
-      progressAnimation.resume();
+      root.hoverCount--;
     }
     onClicked: root.hide()
     cursorShape: Qt.PointingHandCursor
@@ -226,6 +246,10 @@ Item {
         hoverColor: Color.mHover
         outlined: false
         implicitHeight: 24
+
+        onEntered: root.hoverCount++
+        onExited: root.hoverCount--
+
         onClicked: {
           if (root.actionCallback) {
             root.actionCallback();
@@ -253,6 +277,7 @@ Item {
     opacity = 1.0;
     scale = 1.0;
     progress = 1.0;
+    hoverCount = 0;
 
     // Configure and start animation
     progressAnimation.duration = duration;
@@ -273,7 +298,6 @@ Item {
     progressAnimation.stop();
     opacity = 0;
     scale = initialScale;
-    root.visible = false;
     root.hidden();
   }
 }
