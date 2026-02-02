@@ -692,7 +692,7 @@ Item {
   function spawn(command) {
     try {
       const cmdStr = Array.isArray(command) ? command.join(" ") : command;
-      Quickshell.execDetached(["mmsg", "-d", "'spawn," + cmdStr + "'"]);
+      Quickshell.execDetached(["sh", "-c", "mmsg -d 'spawn," + cmdStr + "'"]);
     } catch (e) {
       Logger.e("MangoService", "Failed to spawn command:", e);
     }
