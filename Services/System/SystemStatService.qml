@@ -70,7 +70,7 @@ Singleton {
   property real gpuTempHistoryMin: 100
   property real gpuTempHistoryMax: 0
   property real memHistoryMax: 0
-  // Network uses existing rxMaxSpeed/txMaxSpeed (7-day learned peaks)
+  // Network uses autoscaling from current history window
   // Disk is always 0-100%
 
   // History management - called from update functions, not change handlers
@@ -150,17 +150,17 @@ Singleton {
     txSpeedHistory = txH;
   }
 
-  // Network max speed tracking (learned over time, cached for 7 days)
+  // Network max speed tracking (autoscales from current history window)
   readonly property real rxMaxSpeed: {
-    const peaks = networkStatsAdapter.rxPeaks || [];
-    return peaks.length > 0 ? Math.max(...peaks.map(p => p.speed)) : 0;
+    const max = Math.max(...rxSpeedHistory);
+    return max > 0 ? max : 1024; // Minimum 1 KB/s floor
   }
   readonly property real txMaxSpeed: {
-    const peaks = networkStatsAdapter.txPeaks || [];
-    return peaks.length > 0 ? Math.max(...peaks.map(p => p.speed)) : 0;
+    const max = Math.max(...txSpeedHistory);
+    return max > 0 ? max : 1024; // Minimum 1 KB/s floor
   }
 
-  // Ready-to-use ratios based on learned maximums (0..1 range)
+  // Ready-to-use ratios based on current maximums (0..1 range)
   readonly property real rxRatio: rxMaxSpeed > 0 ? Math.min(1, rxSpeed / rxMaxSpeed) : 0
   readonly property real txRatio: txMaxSpeed > 0 ? Math.min(1, txSpeed / txMaxSpeed) : 0
 
@@ -250,52 +250,6 @@ Singleton {
   property string gpuTempHwmonPath: ""
   property var foundGpuSensors: [] // [{hwmonPath, type, hasDedicatedVram}]
   property int gpuVramCheckIndex: 0
-
-  // --------------------------------------------
-  // Network speed stats cache (7-day rolling window)
-  property string networkStatsFile: Settings.cacheDir + "network_stats.json"
-
-  FileView {
-    id: networkStatsView
-    path: root.networkStatsFile
-    printErrors: false
-
-    JsonAdapter {
-      id: networkStatsAdapter
-      property var rxPeaks: []
-      property var txPeaks: []
-    }
-
-    onLoadFailed: {
-      networkStatsAdapter.rxPeaks = [];
-      networkStatsAdapter.txPeaks = [];
-    }
-
-    onLoaded: {
-      root.pruneExpiredPeaks();
-    }
-  }
-
-  Timer {
-    id: networkStatsSaveDebounce
-    interval: 1000
-    onTriggered: networkStatsView.writeAdapter()
-  }
-
-  function pruneExpiredPeaks() {
-    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
-    const cutoff = Date.now() - sevenDaysMs;
-    const rxBefore = (networkStatsAdapter.rxPeaks || []).length;
-    const txBefore = (networkStatsAdapter.txPeaks || []).length;
-
-    networkStatsAdapter.rxPeaks = (networkStatsAdapter.rxPeaks || []).filter(p => p.timestamp > cutoff);
-    networkStatsAdapter.txPeaks = (networkStatsAdapter.txPeaks || []).filter(p => p.timestamp > cutoff);
-
-    // Save if any were pruned
-    if (networkStatsAdapter.rxPeaks.length !== rxBefore || networkStatsAdapter.txPeaks.length !== txBefore) {
-      networkStatsSaveDebounce.restart();
-    }
-  }
 
   // --------------------------------------------
   Component.onCompleted: {
@@ -1006,27 +960,6 @@ Singleton {
 
         root.rxSpeed = Math.round(rxDiff / timeDiff); // Speed in Bytes/s
         root.txSpeed = Math.round(txDiff / timeDiff);
-
-        // Record new peaks if higher than current max (for adaptive ratio calculation)
-        const now = Date.now();
-        if (root.rxSpeed > root.rxMaxSpeed) {
-          networkStatsAdapter.rxPeaks = [...(networkStatsAdapter.rxPeaks || []),
-                                         {
-                                           speed: root.rxSpeed,
-                                           timestamp: now
-                                         }
-              ];
-          networkStatsSaveDebounce.restart();
-        }
-        if (root.txSpeed > root.txMaxSpeed) {
-          networkStatsAdapter.txPeaks = [...(networkStatsAdapter.txPeaks || []),
-                                         {
-                                           speed: root.txSpeed,
-                                           timestamp: now
-                                         }
-              ];
-          networkStatsSaveDebounce.restart();
-        }
       }
     }
 
