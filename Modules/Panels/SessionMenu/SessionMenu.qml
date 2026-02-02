@@ -890,10 +890,11 @@ SmartPanel {
 
     // Effective hover state that respects ignoreMouseHover
     readonly property bool effectiveHover: !root.ignoreMouseHover && mouseArea.containsMouse
+    readonly property real hoveredScale: 1.05
 
     signal clicked
 
-    property real hoverScale: (isSelected || effectiveHover) ? 1.05 : 1.0
+    property real hoverScale: (isSelected || effectiveHover) ? hoveredScale : 1.0
 
     radius: Style.radiusL
     color: {
@@ -909,8 +910,10 @@ SmartPanel {
     border.width: Style.borderS
     border.color: Color.mOutline
 
-    layer.enabled: hoverScale !== 1.0
+    // Always enable layer to fix nvidia bug, render at 2x size to avoid blur when scaling up
+    layer.enabled: true
     layer.smooth: true
+    layer.textureSize: Qt.size(Math.ceil(width * 2), Math.ceil(height * 2))
 
     // Scale transform for hover effect
     transform: Scale {
@@ -967,10 +970,13 @@ SmartPanel {
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
 
-        property real iconScale: (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover) ? 1.15 : 1.0
+        readonly property real hoveredIconScale: 1.15
+        property real iconScale: (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover) ? hoveredIconScale : 1.0
 
-        layer.enabled: iconScale !== 1.0
+        // Always enable layer to fix nvidia bug, render at 2x size to avoid blur when scaling up
+        layer.enabled: true
         layer.smooth: true
+        layer.textureSize: Qt.size(Math.ceil(width * 2), Math.ceil(height * 2))
 
         transform: Scale {
           origin.x: iconElement.width / 2
