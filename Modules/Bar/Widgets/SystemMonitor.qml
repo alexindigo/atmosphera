@@ -43,6 +43,7 @@ Item {
   readonly property bool usePrimaryColor: widgetSettings.usePrimaryColor !== undefined ? widgetSettings.usePrimaryColor : widgetMetadata.usePrimaryColor
   readonly property bool useMonospaceFont: widgetSettings.useMonospaceFont !== undefined ? widgetSettings.useMonospaceFont : widgetMetadata.useMonospaceFont
   readonly property bool showCpuUsage: (widgetSettings.showCpuUsage !== undefined) ? widgetSettings.showCpuUsage : widgetMetadata.showCpuUsage
+  readonly property bool showCpuFreq: (widgetSettings.showCpuFreq !== undefined) ? widgetSettings.showCpuFreq : widgetMetadata.showCpuFreq
   readonly property bool showCpuTemp: (widgetSettings.showCpuTemp !== undefined) ? widgetSettings.showCpuTemp : widgetMetadata.showCpuTemp
   readonly property bool showGpuTemp: (widgetSettings.showGpuTemp !== undefined) ? widgetSettings.showGpuTemp : widgetMetadata.showGpuTemp
   readonly property bool showMemoryUsage: (widgetSettings.showMemoryUsage !== undefined) ? widgetSettings.showMemoryUsage : widgetMetadata.showMemoryUsage
@@ -74,46 +75,49 @@ Item {
   }
 
   // Build comprehensive tooltip text with all stats
-  function buildTooltipText() {
-    let lines = [];
+  function buildTooltipContent() {
+    let rows = [];
 
     // CPU
-    lines.push(`${I18n.tr("system-monitor.cpu-usage")}: ${Math.round(SystemStatService.cpuUsage)}%`);
+    rows.push([I18n.tr("system-monitor.cpu-usage"), `${Math.round(SystemStatService.cpuUsage)}% (${SystemStatService.cpuFreq})`]);
+
     if (SystemStatService.cpuTemp > 0) {
-      lines.push(`${I18n.tr("system-monitor.cpu-temp")}: ${Math.round(SystemStatService.cpuTemp)}°C`);
+      rows.push([I18n.tr("system-monitor.cpu-temp"), `${Math.round(SystemStatService.cpuTemp)}°C`]);
     }
 
     // GPU (if available)
     if (SystemStatService.gpuAvailable) {
-      lines.push(`${I18n.tr("system-monitor.gpu-temp")}: ${Math.round(SystemStatService.gpuTemp)}°C`);
+      rows.push([I18n.tr("system-monitor.gpu-temp"), `${Math.round(SystemStatService.gpuTemp)}°C`]);
     }
 
     // Load Average
     if (SystemStatService.loadAvg1 >= 0) {
-      lines.push(`${I18n.tr("system-monitor.load-average")}: ${SystemStatService.loadAvg1.toFixed(2)} · ${SystemStatService.loadAvg5.toFixed(2)} · ${SystemStatService.loadAvg15.toFixed(2)}`);
+      rows.push([I18n.tr("system-monitor.load-average"), `${SystemStatService.loadAvg1.toFixed(2)} · ${SystemStatService.loadAvg5.toFixed(2)} · ${SystemStatService.loadAvg15.toFixed(2)}`]);
     }
 
     // Memory
-    lines.push(`${I18n.tr("common.memory")}: ${Math.round(SystemStatService.memPercent)}% (${SystemStatService.formatGigabytes(SystemStatService.memGb).replace(/[^0-9.]/g, "") + " GB"})`);
+    rows.push([I18n.tr("common.memory"), `${Math.round(SystemStatService.memPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.memGb).replace(/[^0-9.]/g, "") + " GB"})`]);
 
     // Swap (if available)
     if (SystemStatService.swapTotalGb > 0) {
-      lines.push(`${I18n.tr("bar.system-monitor.swap-usage-label")}: ${Math.round(SystemStatService.swapPercent)}% (${SystemStatService.formatGigabytes(SystemStatService.swapGb).replace(/[^0-9.]/g, "") + " GB"})`);
+      rows.push([I18n.tr("bar.system-monitor.swap-usage-label"), `${Math.round(SystemStatService.swapPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.swapGb).replace(/[^0-9.]/g, "") + " GB"})`]);
     }
 
     // Network
-    lines.push(`${I18n.tr("system-monitor.download-speed")}: ${SystemStatService.formatSpeed(SystemStatService.rxSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}` + "/s");
-    lines.push(`${I18n.tr("system-monitor.upload-speed")}: ${SystemStatService.formatSpeed(SystemStatService.txSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}` + "/s");
+    rows.push([I18n.tr("system-monitor.download-speed"), `${SystemStatService.formatSpeed(SystemStatService.rxSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}` + "/s"]);
+    rows.push([I18n.tr("system-monitor.upload-speed"), `${SystemStatService.formatSpeed(SystemStatService.txSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2")}` + "/s"]);
 
     // Disk
     const diskPercent = SystemStatService.diskPercents[diskPath];
     if (diskPercent !== undefined) {
       const usedGb = SystemStatService.diskUsedGb[diskPath] || 0;
       const sizeGb = SystemStatService.diskSizeGb[diskPath] || 0;
-      lines.push(`${I18n.tr("system-monitor.disk")}: ${usedGb.toFixed(1)} GB / ${sizeGb.toFixed(1)} GB (${diskPercent}%)`);
+      const availGb = SystemStatService.diskAvailGb[diskPath] || 0;
+      rows.push([I18n.tr("system-monitor.disk"), `${diskPercent}% (${usedGb.toFixed(1)} / ${sizeGb.toFixed(1)} GB)`]);
+      rows.push([I18n.tr("common.available"), `${availGb.toFixed(1)} GB`]);
     }
 
-    return lines.join("\n");
+    return rows;
   }
 
   readonly property color textColor: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
@@ -277,6 +281,74 @@ Item {
             onLoaded: {
               item.ratio = Qt.binding(() => SystemStatService.cpuUsage / 100);
               item.statColor = Qt.binding(() => SystemStatService.cpuColor);
+            }
+          }
+        }
+      }
+
+      // CPU Frequency Component
+      Item {
+        id: cpuFreqContainer
+        implicitWidth: cpuFreqContent.implicitWidth
+        implicitHeight: cpuFreqContent.implicitHeight
+        Layout.preferredWidth: isVertical ? root.width : implicitWidth
+        Layout.preferredHeight: compactMode ? implicitHeight : capsuleHeight
+        Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
+        visible: showCpuFreq && (!isVertical || compactMode)
+
+        GridLayout {
+          id: cpuFreqContent
+          anchors.centerIn: parent
+          flow: (isVertical && !compactMode) ? GridLayout.TopToBottom : GridLayout.LeftToRight
+          rows: (isVertical && !compactMode) ? 2 : 1
+          columns: (isVertical && !compactMode) ? 1 : 2
+          rowSpacing: Style.marginXXS
+          columnSpacing: compactMode ? 3 : Style.marginXS
+
+          Item {
+            Layout.preferredWidth: iconSize
+            Layout.preferredHeight: (compactMode || isVertical) ? iconSize : capsuleHeight
+            Layout.alignment: Qt.AlignCenter
+            Layout.row: (isVertical && !compactMode) ? 1 : 0
+            Layout.column: 0
+
+            NIcon {
+              icon: "cpu-usage"
+              pointSize: iconSize
+              applyUiScale: false
+              x: Style.pixelAlignCenter(parent.width, width)
+              y: Style.pixelAlignCenter(parent.height, contentHeight)
+              color: Color.mOnSurface
+            }
+          }
+
+          // Text mode
+          NText {
+            visible: !compactMode
+            text: SystemStatService.cpuFreq.replace(" ", "")
+            family: fontFamily
+            pointSize: barFontSize
+            applyUiScale: false
+            Layout.alignment: Qt.AlignCenter
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            color: textColor
+            Layout.row: isVertical ? 0 : 0
+            Layout.column: isVertical ? 0 : 1
+          }
+
+          // Compact mode
+          Loader {
+            active: compactMode
+            visible: compactMode
+            sourceComponent: miniGaugeComponent
+            Layout.alignment: Qt.AlignCenter
+            Layout.row: 0
+            Layout.column: 1
+
+            onLoaded: {
+              item.ratio = Qt.binding(() => SystemStatService.cpuFreqRatio);
+              item.statColor = Qt.binding(() => Color.mPrimary);
             }
           }
         }
@@ -845,7 +917,7 @@ Item {
                  }
                }
     onEntered: {
-      TooltipService.show(root, buildTooltipText(), BarService.getTooltipDirection(root.screen?.name));
+      TooltipService.show(root, buildTooltipContent(), BarService.getTooltipDirection(root.screen?.name));
       tooltipRefreshTimer.start();
     }
     onExited: {
@@ -860,7 +932,7 @@ Item {
     repeat: true
     onTriggered: {
       if (tooltipArea.containsMouse) {
-        TooltipService.updateText(buildTooltipText());
+        TooltipService.updateText(buildTooltipContent());
       }
     }
   }

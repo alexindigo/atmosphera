@@ -119,6 +119,11 @@ Singleton {
           }
         })(pluginId, root.loadedPlugins[pluginId]);
       }
+
+      // Update translation file watchers to watch the new language's files
+      if (root.hotReloadEnabled) {
+        updateTranslationWatchers();
+      }
     }
   }
 
@@ -517,7 +522,7 @@ Singleton {
       var manifest = PluginRegistry.getPluginManifest(compositeKey);
       if (manifest && manifest.entryPoints && manifest.entryPoints.barWidget) {
         var widgetId = "plugin:" + compositeKey;
-        addWidgetToBar(widgetId, "right"); // Default to right section
+        addWidgetToBar(widgetId, "right");
       }
     }
 
@@ -527,6 +532,7 @@ Singleton {
                               enabled: true
                             });
     root.pluginEnabled(compositeKey);
+
     return true;
   }
 
@@ -602,6 +608,11 @@ Singleton {
       if (changed) {
         Settings.data.bar.widgets[section] = newWidgets;
       }
+    }
+
+    // Signal the bar to refresh if widgets were removed
+    if (changed) {
+      BarService.widgetsRevision++;
     }
 
     return changed;
@@ -730,6 +741,9 @@ Singleton {
           // Register with BarWidgetRegistry
           BarWidgetRegistry.registerPluginWidget(pluginId, widgetComponent, manifest.metadata);
           Logger.i("PluginService", "Loaded bar widget for plugin:", pluginId);
+
+          // Now that the widget is registered, bump widgetsRevision so the bar can render it
+          BarService.widgetsRevision++;
         } else if (widgetComponent.status === Component.Error) {
           root.recordPluginError(pluginId, "barWidget", widgetComponent.errorString());
         }
@@ -1617,12 +1631,73 @@ Singleton {
       });
     }
 
+    // Create a separate debounce timer for translation reloads (lighter weight)
+    var translationDebounceTimer = Qt.createQmlObject(`
+      import QtQuick
+      Timer {
+        property string targetPluginId: ""
+        property var reloadCallback: null
+        interval: 300
+        repeat: false
+        onTriggered: {
+          if (reloadCallback) reloadCallback(targetPluginId);
+        }
+      }
+    `, root, "TranslationReloadDebounce_" + pluginId);
+
+    translationDebounceTimer.targetPluginId = pluginId;
+    translationDebounceTimer.reloadCallback = root.reloadPluginTranslations;
+
+    // Watch the current language's translation file
+    var translationWatcher = createTranslationWatcher(pluginId, pluginDir, I18n.langCode, translationDebounceTimer);
+
     root.pluginFileWatchers[pluginId] = {
       watchers: watchers,
-      debounceTimer: debounceTimer
+      debounceTimer: debounceTimer,
+      translationWatcher: translationWatcher,
+      translationDebounceTimer: translationDebounceTimer,
+      pluginDir: pluginDir
     };
 
-    Logger.d("PluginService", "Set up hot reload watcher for plugin:", pluginId);
+    Logger.d("PluginService", "Set up hot reload watcher for plugin:", pluginId, "(including translations)");
+  }
+
+  // Create a translation file watcher for a specific language
+  function createTranslationWatcher(pluginId, pluginDir, language, debounceTimer) {
+    var translationFile = pluginDir + "/i18n/" + language + ".json";
+
+    var watcher = Qt.createQmlObject(`
+      import Quickshell.Io
+      FileView {
+        path: "${translationFile}"
+        watchChanges: true
+      }
+    `, root, "TranslationWatcher_" + pluginId + "_" + language);
+
+    watcher.fileChanged.connect(function () {
+      debounceTimer.restart();
+    });
+
+    Logger.d("PluginService", "Watching translation file:", translationFile);
+    return watcher;
+  }
+
+  // Update translation watchers when language changes
+  function updateTranslationWatchers() {
+    for (var pluginId in root.pluginFileWatchers) {
+      var watcherData = root.pluginFileWatchers[pluginId];
+      if (!watcherData || !watcherData.translationDebounceTimer)
+        continue;
+
+      // Destroy old translation watcher
+      if (watcherData.translationWatcher) {
+        watcherData.translationWatcher.destroy();
+      }
+
+      // Create new watcher for current language
+      watcherData.translationWatcher = createTranslationWatcher(pluginId, watcherData.pluginDir, I18n.langCode, watcherData.translationDebounceTimer);
+    }
+    Logger.d("PluginService", "Updated translation watchers for language:", I18n.langCode);
   }
 
   // Remove file watcher for a plugin
@@ -1644,6 +1719,16 @@ Singleton {
     // Destroy debounce timer
     if (watcherData.debounceTimer) {
       watcherData.debounceTimer.destroy();
+    }
+
+    // Destroy translation watcher
+    if (watcherData.translationWatcher) {
+      watcherData.translationWatcher.destroy();
+    }
+
+    // Destroy translation debounce timer
+    if (watcherData.translationDebounceTimer) {
+      watcherData.translationDebounceTimer.destroy();
     }
 
     delete root.pluginFileWatchers[pluginId];
@@ -1694,6 +1779,30 @@ Singleton {
                                                                        }));
 
       Logger.i("PluginService", "Hot reload complete for plugin:", pluginId);
+    });
+
+    return true;
+  }
+
+  // Hot reload only translations for a plugin (lightweight, no component reload)
+  function reloadPluginTranslations(pluginId) {
+    var plugin = root.loadedPlugins[pluginId];
+    if (!plugin || !plugin.api || !plugin.manifest) {
+      Logger.w("PluginService", "Cannot reload translations: plugin not loaded:", pluginId);
+      return false;
+    }
+
+    Logger.i("PluginService", "Hot reloading translations for plugin:", pluginId);
+
+    loadPluginTranslationsAsync(pluginId, plugin.manifest, I18n.langCode, function (translations) {
+      plugin.api.pluginTranslations = translations;
+      plugin.api.translationVersion++;
+
+      var pluginName = plugin.manifest.name || pluginId;
+      ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.translations-reloaded", {
+                                                                         "name": pluginName
+                                                                       }));
+      Logger.i("PluginService", "Translation hot reload complete for plugin:", pluginId);
     });
 
     return true;

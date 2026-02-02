@@ -493,6 +493,7 @@
     "week": "Week",
     "widgets": "Widgets",
     "width": "Breedte",
+    "windows": "Vensters",
     "yes": "Ja"
   },
   "control-center": {
@@ -512,6 +513,7 @@
     "on-hover": "Bij hover"
   },
   "hide-modes": {
+    "auto-hide": "Automatisch verbergen",
     "hidden": "Verbergen indien leeg",
     "idle": "Verbergen indien inactief",
     "transparent": "Transparant wanneer leeg",
@@ -563,7 +565,9 @@
       "emoji-loading": "Emoji's laden...",
       "emoji-loading-description": "Even geduld",
       "emoji-no-recent": "Nog geen recente emoji's",
-      "emoji-search-description": "Zoek en kopieer emoji's"
+      "emoji-search-description": "Zoek en kopieer emoji's",
+      "settings-search-description": "Zoeken en navigeren naar instellingen",
+      "windows-search-description": "Zoek en focus open vensters"
     }
   },
   "lock-screen": {
@@ -600,6 +604,7 @@
       "density-default": "Standaard",
       "density-mini": "Mini",
       "density-spacious": "Ruim",
+      "display-mode-always-visible": "Altijd zichtbaar",
       "type-floating": "Zwevend",
       "type-framed": "Omkaderd",
       "type-simple": "Eenvoudig"
@@ -721,6 +726,11 @@
       "volumes-volume-overdrive-label": "Volume-overdrive toestaan"
     },
     "bar": {
+      "appearance-auto-hide-delay-description": "Tijd voordat de Bar verdwijnt nadat de muis deze verlaat.",
+      "appearance-auto-hide-delay-label": "Verbergvertraging",
+      "appearance-auto-hide-exclusive-note": "Opmerking: De exclusieve zone wordt automatisch uitgeschakeld wanneer automatisch verbergen actief is.",
+      "appearance-auto-show-delay-description": "Tijd voordat de balk verschijnt wanneer de muis de rand bereikt.",
+      "appearance-auto-show-delay-label": "Toonvertraging",
       "appearance-background-opacity-description": "Stel de achtergronddoorzichtigheid specifiek in voor de balk.",
       "appearance-background-opacity-label": "Balk achtergronddoorzichtigheid",
       "appearance-capsule-opacity-description": "Stel het doorzichtigheidsniveau in voor widget-achtergronden wanneer capsule wordt getoond.",
@@ -728,6 +738,8 @@
       "appearance-density-description": "Pas de opvulling van de balk aan voor een compacte of ruime uitstraling.",
       "appearance-density-label": "Balkdichtheid",
       "appearance-desc": "Pas de uitstraling en positie van de balk aan.",
+      "appearance-display-mode-description": "Kies wanneer de balk zichtbaar is",
+      "appearance-display-mode-label": "Weergavemodus",
       "appearance-floating-description": "Toon de balk weer als een zwevende 'pil'.",
       "appearance-floating-label": "Zwevende balk",
       "appearance-frame-radius": "Binnenradius",
@@ -895,6 +907,16 @@
       "media-player-show-buttons-label": "Knoppen weergeven",
       "media-player-show-visualizer-description": "Toon de audio-visualisatie overlay.",
       "media-player-visualizer-type-description": "Kies een visualisatietype voor de achtergrond van de desktop mediaplayer.",
+      "system-stat-layout-bottom": "Onder",
+      "system-stat-layout-description": "Kies hoe de legenda wordt weergegeven ten opzichte van de grafiek.",
+      "system-stat-layout-label": "Indeling",
+      "system-stat-layout-side": "Zijde",
+      "system-stat-rounded-corners-description": "Afgeronde hoeken gebruiken voor de widget-achtergrond.",
+      "system-stat-rounded-corners-label": "Afgeronde Hoeken",
+      "system-stat-show-background-description": "Toon de achtergrondcontainer voor de systeemstatistieken-widget.",
+      "system-stat-show-background-label": "Achtergrond weergeven",
+      "system-stat-stat-type-description": "Kies welke systeemstatistiek weer te geven.",
+      "system-stat-stat-type-label": "Statistiektype",
       "title": "Desktopwidgets",
       "weather-enabled-description": "Toon een weerwidget op het bureaublad.",
       "weather-enabled-label": "Weerwidget inschakelen",
@@ -1067,6 +1089,8 @@
       "settings-desc": "Pas het gedrag en uiterlijk van de launcher aan.",
       "settings-enable-settings-search-description": "Toon instellingen in de zoekresultaten van de Launcher.",
       "settings-enable-settings-search-label": "Instellingen zoeken inschakelen",
+      "settings-enable-windows-search-description": "Actieve vensters zoeken en focussen.",
+      "settings-enable-windows-search-label": "Vensterzoekfunctie inschakelen",
       "settings-grid-view-description": "Items in een raster weergeven in plaats van een lijst.",
       "settings-icon-mode-description": "Gebruik native systeemiconen in plaats van Tabler-iconen.",
       "settings-icon-mode-label": "Gebruik native iconen",

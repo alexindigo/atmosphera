@@ -25,7 +25,7 @@ Singleton {
   - Default cache directory: ~/.cache/noctalia
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 46
+  readonly property int settingsVersion: 47
   readonly property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
   readonly property string shellName: "noctalia"
   readonly property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
@@ -194,11 +194,13 @@ Singleton {
       // Bar outer corners (inverted/concave corners at bar edges when not floating)
       property bool outerCorners: true
 
-      // Reserves space with compositor
-      property bool exclusive: true
-
       // Hide bar/panels when compositor overview is active
       property bool hideOnOverview: false
+
+      // Auto-hide settings
+      property string displayMode: "always_visible" // "always_visible", "auto_hide"
+      property int autoHideDelay: 500 // ms before hiding after mouse leaves
+      property int autoShowDelay: 150 // ms before showing when mouse enters
 
       // Widget configuration for modular bar system
       property JsonObject widgets
@@ -370,7 +372,9 @@ Singleton {
       property string wallhavenApiKey: ""
       property string wallhavenResolutionMode: "atleast" // "atleast" or "exact"
       property string wallhavenResolutionWidth: ""
+
       property string wallhavenResolutionHeight: ""
+      property string sortOrder: "name" // "name", "name_desc", "date", "date_desc"
     }
 
     // applauncher
@@ -395,6 +399,7 @@ Singleton {
       property string iconMode: "tabler"
       property bool showIconBackground: false
       property bool enableSettingsSearch: true
+      property bool enableWindowsSearch: true
       property bool ignoreMouseInput: false
       property string screenshotAnnotationTool: ""
     }
@@ -479,13 +484,12 @@ Singleton {
       property int diskCriticalThreshold: 90
       property int diskAvailWarningThreshold: 20
       property int diskAvailCriticalThreshold: 10
-      property int cpuPollingInterval: 3000
-      property int tempPollingInterval: 3000
+      property int cpuPollingInterval: 1000
       property int gpuPollingInterval: 3000
       property bool enableDgpuMonitoring: false // Opt-in: reading dGPU sysfs/nvidia-smi wakes it from D3cold, draining battery
-      property int memPollingInterval: 3000
+      property int memPollingInterval: 1000
       property int diskPollingInterval: 30000
-      property int networkPollingInterval: 3000
+      property int networkPollingInterval: 1000
       property int loadAvgPollingInterval: 3000
       property bool useCustomColors: false
       property string warningColor: ""
@@ -528,8 +532,8 @@ Singleton {
       property int countdownDuration: 10000
       property string position: "center"
       property bool showHeader: true
-      property bool largeButtonsStyle: false
-      property string largeButtonsLayout: "grid"
+      property bool largeButtonsStyle: true
+      property string largeButtonsLayout: "single-row"
       property bool showNumberLabels: true
       property list<var> powerOptions: [
         {
@@ -1113,7 +1117,7 @@ Singleton {
 
     // Delete deprecated user settings from the wiget
     for (const k of Object.keys(widget)) {
-      if (k === "id" || k === "allowUserSettings") {
+      if (k === "id") {
         continue;
       }
       if (!keys.includes(k)) {
@@ -1124,7 +1128,7 @@ Singleton {
     // Inject missing default setting (metaData) from BarWidgetRegistry
     for (var i = 0; i < keys.length; i++) {
       const k = keys[i];
-      if (k === "id" || k === "allowUserSettings") {
+      if (k === "id") {
         continue;
       }
 

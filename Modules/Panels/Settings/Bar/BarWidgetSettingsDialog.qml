@@ -15,10 +15,11 @@ Popup {
   property string widgetId: ""
   property string sectionId: ""
   property var screen: null
-
-  signal updateWidgetSettings(string section, int index, var settings)
+  property var settingsCache: ({})
 
   readonly property real maxHeight: screen ? screen.height * 0.9 : 800
+
+  signal updateWidgetSettings(string section, int index, var settings)
 
   width: Math.max(content.implicitWidth + padding * 2, 640)
   height: Math.min(content.implicitHeight + padding * 2, maxHeight)
@@ -138,36 +139,27 @@ Popup {
           }
         }
       }
+    }
+  }
 
-      // Action buttons
-      RowLayout {
-        id: buttonRow
-        Layout.fillWidth: true
-        Layout.topMargin: Style.marginM
-        Layout.preferredHeight: implicitHeight
-        spacing: Style.marginM
-
-        Item {
-          Layout.fillWidth: true
-        }
-
-        NButton {
-          text: I18n.tr("common.close")
-          outlined: true
-          onClicked: saveAndClose()
-        }
-      }
+  Timer {
+    id: saveTimer
+    running: false
+    interval: 150
+    onTriggered: {
+      root.updateWidgetSettings(root.sectionId, root.widgetIndex, root.settingsCache);
     }
   }
 
   Connections {
     target: settingsLoader.item
+    ignoreUnknownSignals: true
     function onSettingsChanged(newSettings) {
       if (newSettings) {
-        root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
+        root.settingsCache = newSettings;
+        saveTimer.start();
       }
     }
-    ignoreUnknownSignals: true
   }
 
   function saveAndClose() {

@@ -493,6 +493,7 @@
     "week": "Hafta",
     "widgets": "Araçlar",
     "width": "Genişlik",
+    "windows": "Pencereler",
     "yes": "Evet"
   },
   "control-center": {
@@ -512,6 +513,7 @@
     "on-hover": "Üzerine gelindiğinde"
   },
   "hide-modes": {
+    "auto-hide": "Otomatik gizleme",
     "hidden": "Boş olduğunda gizle",
     "idle": "Boşta kalınca gizle",
     "transparent": "Boşken şeffaf",
@@ -563,7 +565,9 @@
       "emoji-loading": "Emojiler yükleniyor...",
       "emoji-loading-description": "Lütfen bekleyin",
       "emoji-no-recent": "Henüz yeni emoji yok",
-      "emoji-search-description": "Emoji arama ve kopyalama"
+      "emoji-search-description": "Emoji arama ve kopyalama",
+      "settings-search-description": "Ayarları ara ve git",
+      "windows-search-description": "Açık pencereleri ara ve odakla"
     }
   },
   "lock-screen": {
@@ -600,6 +604,7 @@
       "density-default": "Varsayılan",
       "density-mini": "Ufak",
       "density-spacious": "Geniş",
+      "display-mode-always-visible": "Her Zaman Görünür",
       "type-floating": "Yüzen",
       "type-framed": "Çerçeveli",
       "type-simple": "Basit"
@@ -721,6 +726,11 @@
       "volumes-volume-overdrive-label": "Ses aşımına izin ver"
     },
     "bar": {
+      "appearance-auto-hide-delay-description": "Fare ayrıldıktan sonra Bar'ın gizlenmeden önceki süre.",
+      "appearance-auto-hide-delay-label": "Gizleme Gecikmesi",
+      "appearance-auto-hide-exclusive-note": "Not: Otomatik gizleme etkin olduğunda özel bölge otomatik olarak devre dışı bırakılır.",
+      "appearance-auto-show-delay-description": "Fare kenara girdiğinde çubuğun görünmesinden önceki süre.",
+      "appearance-auto-show-delay-label": "Gösterme Gecikmesi",
       "appearance-background-opacity-description": "Çubuğun arka plan opaklığını özel olarak ayarlayın.",
       "appearance-background-opacity-label": "Çubuk arka plan opaklığı",
       "appearance-capsule-opacity-description": "Kapsül gösterildiğinde araç takımı arka planlarının saydamlık seviyesini ayarla.",
@@ -728,6 +738,8 @@
       "appearance-density-description": "Sıkı veya geniş bir görünüm için araç çubuğu dolgusunu ayarlayın.",
       "appearance-density-label": "Araç Çubuğu yoğunluğu",
       "appearance-desc": "Araç çubuğunun görünümünü ve konumunu özelleştirin.",
+      "appearance-display-mode-description": "Çubuğun ne zaman görünür olacağını seçin",
+      "appearance-display-mode-label": "Görüntü Modu",
       "appearance-floating-description": "Araç çubuğunu yüzen bir 'kapsül' olarak görüntüler. Not: Bu, ekran köşelerini kenarlara taşıyacaktır.",
       "appearance-floating-label": "Yüzen araç çubuğu",
       "appearance-frame-radius": "İç Yarıçap",
@@ -895,6 +907,16 @@
       "media-player-show-buttons-label": "Düğmeleri göster",
       "media-player-show-visualizer-description": "Ses görselleştirici katmanını göster.",
       "media-player-visualizer-type-description": "Masaüstü medya oynatıcı arka planı için bir görselleştirme türü seçin.",
+      "system-stat-layout-bottom": "Alt",
+      "system-stat-layout-description": "Efsanenin grafiğe göre nasıl görüntüleneceğini seçin.",
+      "system-stat-layout-label": "Düzen",
+      "system-stat-layout-side": "Taraf",
+      "system-stat-rounded-corners-description": "Widget arka planı için yuvarlatılmış köşeler kullan.",
+      "system-stat-rounded-corners-label": "Yuvarlatılmış Köşeler",
+      "system-stat-show-background-description": "Sistem istatistik Widget'ı için arka plan kapsayıcısını göster.",
+      "system-stat-show-background-label": "Arka planı göster",
+      "system-stat-stat-type-description": "Hangi sistem istatistiğini görüntüleyeceğini seç.",
+      "system-stat-stat-type-label": "İstatistik Türü",
       "title": "Masaüstü araçları",
       "weather-enabled-description": "Masaüstünde bir hava durumu aracı göster.",
       "weather-enabled-label": "Hava durumu araç kutusunu etkinleştir",
@@ -1067,6 +1089,8 @@
       "settings-desc": "Başlatıcının davranışını ve görünümünü özelleştirin.",
       "settings-enable-settings-search-description": "Başlatıcıda arama yaparken ayarlar sonuçlarını göster.",
       "settings-enable-settings-search-label": "Ayarlar aramasını etkinleştir",
+      "settings-enable-windows-search-description": "Etkin pencereleri ara ve odakla.",
+      "settings-enable-windows-search-label": "Pencere aramasını etkinleştir",
       "settings-grid-view-description": "Öğeleri liste yerine ızgara düzeninde görüntüle.",
       "settings-icon-mode-description": "Tabler simgeleri yerine yerel sistem simgelerini kullanın.",
       "settings-icon-mode-label": "Yerel simgeleri kullan",

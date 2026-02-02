@@ -375,6 +375,19 @@ PanelWindow {
       readonly property real barMarginV: barFloating ? Math.floor(Settings.data.bar.marginVertical) : 0
       readonly property real barHeight: Style.getBarHeightForScreen(screen?.name)
 
+      // Auto-hide properties (read by AllBackgrounds for background fade)
+      readonly property bool autoHide: Settings.data.bar.displayMode === "auto_hide"
+      property bool isHidden: false
+
+      Connections {
+        target: BarService
+        function onBarAutoHideStateChanged(screenName, hidden) {
+          if (screenName === barPlaceholder.screen?.name) {
+            barPlaceholder.isHidden = hidden;
+          }
+        }
+      }
+
       // Expose bar dimensions directly on this Item for BarBackground
       // Use screen dimensions directly
       x: {

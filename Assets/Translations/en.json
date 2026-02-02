@@ -493,6 +493,7 @@
     "week": "Week",
     "widgets": "Widgets",
     "width": "Width",
+    "windows": "Windows",
     "yes": "Yes"
   },
   "control-center": {
@@ -512,6 +513,7 @@
     "on-hover": "On hover"
   },
   "hide-modes": {
+    "auto-hide": "Auto-hide",
     "hidden": "Hide when empty",
     "idle": "Hide when idle",
     "transparent": "Transparent when empty",
@@ -563,7 +565,9 @@
       "emoji-loading": "Loading emojis...",
       "emoji-loading-description": "Please wait",
       "emoji-no-recent": "No recent emojis yet",
-      "emoji-search-description": "Search and copy emojis"
+      "emoji-search-description": "Search and copy emojis",
+      "settings-search-description": "Search and navigate to settings",
+      "windows-search-description": "Search and focus open windows"
     }
   },
   "lock-screen": {
@@ -600,6 +604,7 @@
       "density-default": "Default",
       "density-mini": "Mini",
       "density-spacious": "Spacious",
+      "display-mode-always-visible": "Always Visible",
       "type-floating": "Floating",
       "type-framed": "Framed",
       "type-simple": "Simple"
@@ -721,6 +726,11 @@
       "volumes-volume-overdrive-label": "Allow volume overdrive"
     },
     "bar": {
+      "appearance-auto-hide-delay-description": "Time before bar hides after mouse leaves",
+      "appearance-auto-hide-delay-label": "Hide Delay",
+      "appearance-auto-hide-exclusive-note": "Note: Exclusive zone is automatically disabled when auto-hide is active",
+      "appearance-auto-show-delay-description": "Time before bar shows when mouse enters edge",
+      "appearance-auto-show-delay-label": "Show Delay",
       "appearance-background-opacity-description": "Set the background opacity specifically for the bar.",
       "appearance-background-opacity-label": "Bar background opacity",
       "appearance-capsule-opacity-description": "Set the opacity level for widget backgrounds when capsule is shown.",
@@ -728,6 +738,8 @@
       "appearance-density-description": "Adjust the bar's padding for a compact or spacious look.",
       "appearance-density-label": "Bar density",
       "appearance-desc": "Customize the bar's appearance and position.",
+      "appearance-display-mode-description": "Choose when the bar is visible",
+      "appearance-display-mode-label": "Display Mode",
       "appearance-floating-description": "Display the bar as a floating 'pill'.",
       "appearance-floating-label": "Floating bar",
       "appearance-frame-radius": "Inner Radius",
@@ -895,6 +907,16 @@
       "media-player-show-buttons-label": "Show buttons",
       "media-player-show-visualizer-description": "Show the audio visualizer overlay.",
       "media-player-visualizer-type-description": "Choose a visualization type.",
+      "system-stat-layout-bottom": "Bottom",
+      "system-stat-layout-description": "Choose how the legend is displayed relative to the graph.",
+      "system-stat-layout-label": "Layout",
+      "system-stat-layout-side": "Side",
+      "system-stat-rounded-corners-description": "Use rounded corners for the widget background.",
+      "system-stat-rounded-corners-label": "Rounded corners",
+      "system-stat-show-background-description": "Show the background container for the system stat widget.",
+      "system-stat-show-background-label": "Show background",
+      "system-stat-stat-type-description": "Choose which system statistic to display.",
+      "system-stat-stat-type-label": "Statistic Type",
       "title": "Desktop Widgets",
       "weather-enabled-description": "Show a weather widget on the desktop.",
       "weather-enabled-label": "Enable weather widget",
@@ -1045,7 +1067,7 @@
       "clipboard-desc": "Access and manage your clipboard history from the launcher.",
       "execute-desc": "Configure how applications are launched.",
       "execute-title": "Execution",
-      "settings-annotation-tool-description": "Command to run when clicking the annotate button in clipboard history, The image will be piped to this command.",
+      "settings-annotation-tool-description": "Command to run when clicking the annotate button in clipboard history. The image will be piped to this command.",
       "settings-annotation-tool-label": "Annotation tool",
       "settings-annotation-tool-placeholder": "e.g. 'gradia', 'satty -f -'",
       "settings-auto-paste-description": "Automatically paste the selected clipboard item. Requires wtype.",
@@ -1067,6 +1089,8 @@
       "settings-desc": "Customize the launcher's behavior and appearance.",
       "settings-enable-settings-search-description": "Show settings results when searching in the launcher.",
       "settings-enable-settings-search-label": "Enable settings search",
+      "settings-enable-windows-search-description": "Search and focus active windows.",
+      "settings-enable-windows-search-label": "Enable windows search",
       "settings-grid-view-description": "Display items in a grid layout instead of a list.",
       "settings-icon-mode-description": "Use native system icons instead of Tabler icons.",
       "settings-icon-mode-label": "Use native icons",
@@ -1253,6 +1277,7 @@
       "hot-reload-description": "Automatically reload plugins when their files change. Useful for plugin development.",
       "hot-reload-label": "Hot reload (dev mode)",
       "hot-reloaded": "Reloaded plugin: {name}",
+      "translations-reloaded": "Reloaded translations: {name}",
       "install-error": "Failed to install: {error}",
       "install-incompatible": "{plugin} requires Noctalia v{version} or higher",
       "install-success": "Successfully installed {plugin}",

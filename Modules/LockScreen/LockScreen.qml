@@ -78,11 +78,11 @@ Loader {
           Item {
             id: batteryIndicator
 
-            property bool isReady: BatteryService.ready && BatteryService.batteryReady
+            property bool isReady: BatteryService.batteryReady
             property real percent: BatteryService.batteryPercentage
             property bool charging: BatteryService.batteryCharging
             property bool pluggedIn: BatteryService.batteryPluggedIn
-            property bool batteryVisible: isReady && percent >= 0 && BatteryService.hasAnyBattery()
+            property bool batteryVisible: isReady && BatteryService.hasAnyBattery()
           }
 
           Item {

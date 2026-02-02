@@ -489,6 +489,7 @@
     "week": "Тиждень",
     "widgets": "Віджети",
     "width": "Ширина",
+    "windows": "Вікна",
     "yes": "Так"
   },
   "control-center": {
@@ -508,6 +509,7 @@
     "on-hover": "При наведенні"
   },
   "hide-modes": {
+    "auto-hide": "Автоматичне приховування",
     "hidden": "Приховувати, коли порожньо",
     "idle": "Приховувати, коли неактивний",
     "transparent": "Прозорий, коли порожній",
@@ -559,7 +561,9 @@
       "emoji-loading": "Завантаження емодзі...",
       "emoji-loading-description": "Зачекайте, будь ласка",
       "emoji-no-recent": "Немає нещодавніх емодзі",
-      "emoji-search-description": "Пошук і копіювання емодзі"
+      "emoji-search-description": "Пошук і копіювання емодзі",
+      "settings-search-description": "Пошук та перехід до налаштувань",
+      "windows-search-description": "Пошук і фокусування відкритих вікон"
     }
   },
   "lock-screen": {
@@ -596,6 +600,7 @@
       "density-default": "Стандартний",
       "density-mini": "Міні",
       "density-spacious": "Просторий",
+      "display-mode-always-visible": "Завжди видимий",
       "type-floating": "Плаваючий",
       "type-framed": "У рамці",
       "type-simple": "Простий"
@@ -717,6 +722,11 @@
       "volumes-volume-overdrive-label": "Гучність понад 100%"
     },
     "bar": {
+      "appearance-auto-hide-delay-description": "Час, через який Bar сховається після того, як курсор миші залишить його.",
+      "appearance-auto-hide-delay-label": "Затримка приховування",
+      "appearance-auto-hide-exclusive-note": "Примітка: Ексклюзивна зона автоматично вимикається, коли автоприховування активне.",
+      "appearance-auto-show-delay-description": "Час до появи панелі, коли миша входить у край.",
+      "appearance-auto-show-delay-label": "Затримка відображення",
       "appearance-background-opacity-description": "Встановити прозорість фону спеціально для панелі.",
       "appearance-background-opacity-label": "Прозорість фону панелі",
       "appearance-capsule-opacity-description": "Встановити рівень непрозорості для фону віджетів, коли показано капсулу.",
@@ -724,6 +734,8 @@
       "appearance-density-description": "Налаштуйте відступи панелі для компактного або просторого вигляду.",
       "appearance-density-label": "Щільність панелі",
       "appearance-desc": "Налаштуйте зовнішній вигляд та положення панелі.",
+      "appearance-display-mode-description": "Виберіть, коли панель видима",
+      "appearance-display-mode-label": "Режим відображення",
       "appearance-floating-description": "Відображати панель як плаваючу 'капсулу'. Примітка: Це перемістить кути екрана до країв.",
       "appearance-floating-label": "Плаваюча панель (Острівець)",
       "appearance-frame-radius": "Внутрішній радіус",
@@ -891,6 +903,16 @@
       "media-player-show-buttons-label": "Показати кнопки",
       "media-player-show-visualizer-description": "Показати накладання аудіовізуалізатора.",
       "media-player-visualizer-type-description": "Оберіть тип візуалізації для фону медіаплеєра на робочому столі.",
+      "system-stat-layout-bottom": "Низ",
+      "system-stat-layout-description": "Виберіть, як відображається легенда відносно графіка.",
+      "system-stat-layout-label": "Макет",
+      "system-stat-layout-side": "Сторона",
+      "system-stat-rounded-corners-description": "Використовувати заокруглені кути для фону віджета.",
+      "system-stat-rounded-corners-label": "Закруглені Кути",
+      "system-stat-show-background-description": "Показати фоновий контейнер для віджета системної статистики.",
+      "system-stat-show-background-label": "Показати фон",
+      "system-stat-stat-type-description": "Виберіть, яку системну статистику відображати.",
+      "system-stat-stat-type-label": "Тип Статистики",
       "title": "Настільні віджети",
       "weather-enabled-description": "Показувати погодний віджет на робочому столі.",
       "weather-enabled-label": "Увімкнути віджет погоди",
@@ -1041,7 +1063,7 @@
       "clipboard-desc": "Отримуйте доступ до історії буфера обміну та керуйте нею з панелі запуску.",
       "execute-desc": "Налаштуйте спосіб запуску програм.",
       "execute-title": "Виконання",
-      "settings-annotation-tool-description": "Команда для запуску при натисканні кнопки анотування в історії буфера обміну, зображення буде передано в цю команду.",
+      "settings-annotation-tool-description": "Команда для запуску при натисканні кнопки анотування в історії буфера обміну. Зображення буде передано в цю команду.",
       "settings-annotation-tool-label": "Інструмент анотацій",
       "settings-annotation-tool-placeholder": "напр. 'gradia', 'satty -f -'",
       "settings-auto-paste-description": "Автоматично вставити вибраний елемент з буфера обміну. Потребує wtype.",
@@ -1063,6 +1085,8 @@
       "settings-desc": "Налаштуйте поведінку та зовнішній вигляд лаунчера.",
       "settings-enable-settings-search-description": "Показувати результати налаштувань під час пошуку в Launcher.",
       "settings-enable-settings-search-label": "Увімкнути пошук у налаштуваннях",
+      "settings-enable-windows-search-description": "Шукати та фокусувати активні вікна.",
+      "settings-enable-windows-search-label": "Увімкнути пошук вікон",
       "settings-grid-view-description": "Показувати елементи у вигляді сітки замість списку.",
       "settings-icon-mode-description": "Використовувати нативні системні іконки замість іконок Tabler.",
       "settings-icon-mode-label": "Використовувати нативні іконки",

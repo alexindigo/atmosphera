@@ -17,7 +17,7 @@ PanelWindow {
   property string edge: Settings.getBarPositionForScreen(screen?.name)
   property real thickness: (edge === Settings.getBarPositionForScreen(screen?.name)) ? Style.getBarHeightForScreen(screen?.name) : (Settings.data.bar.frameThickness ?? 12)
 
-  readonly property bool exclusive: Settings.data.bar.exclusive
+  readonly property bool autoHide: Settings.data.bar.displayMode === "auto_hide"
   readonly property bool barFloating: Settings.data.bar.floating || false
   readonly property real barMarginH: (barFloating && edge === Settings.getBarPositionForScreen(screen?.name)) ? Math.ceil(Settings.data.bar.marginHorizontal) : 0
   readonly property real barMarginV: (barFloating && edge === Settings.getBarPositionForScreen(screen?.name)) ? Math.ceil(Settings.data.bar.marginVertical) : 0
@@ -31,7 +31,8 @@ PanelWindow {
   // Wayland layer shell configuration
   WlrLayershell.layer: WlrLayer.Top
   WlrLayershell.namespace: "noctalia-bar-exclusion-" + edge + "-" + (screen?.name || "unknown")
-  WlrLayershell.exclusionMode: exclusive ? ExclusionMode.Auto : ExclusionMode.Ignore
+  // When auto-hide is enabled, never reserve space
+  WlrLayershell.exclusionMode: autoHide ? ExclusionMode.Ignore : ExclusionMode.Auto
 
   // Anchor based on specified edge
   anchors {

@@ -753,6 +753,50 @@ SmartPanel {
         }
 
         NIconButton {
+          property string sortOrder: Settings.data.wallpaper.sortOrder || "name"
+          icon: {
+            if (sortOrder === "date_desc")
+              return "clock";
+            if (sortOrder === "date_asc")
+              return "history";
+            if (sortOrder === "name_desc")
+              return "sort-descending";
+            return "sort-ascending";
+          }
+          tooltipText: {
+            if (sortOrder === "date_desc")
+              return "Sort: Newest First";
+            if (sortOrder === "date_asc")
+              return "Sort: Oldest First";
+            if (sortOrder === "name_desc")
+              return "Sort: Name (Z-A)";
+            return "Sort: Name (A-Z)";
+          }
+          baseSize: Style.baseWidgetSize * 0.8
+          onClicked: {
+            var next = "name";
+            if (sortOrder === "name")
+              next = "date_desc";
+            else if (sortOrder === "date_desc")
+              next = "name"; // Toggle simpler: Name -> Newest -> Name
+            // Expanded cycle: Name -> Newest -> Oldest -> Z-A -> Name
+            // User just asked for "newest first", so let's make it easy to reach.
+            // Let's do: Name (A-Z) -> Newest -> Oldest -> Name (Z-A) -> ...
+
+            if (sortOrder === "name")
+              next = "date_desc";
+            else if (sortOrder === "date_desc")
+              next = "date_asc";
+            else if (sortOrder === "date_asc")
+              next = "name_desc";
+            else
+              next = "name";
+
+            Settings.data.wallpaper.sortOrder = next;
+          }
+        }
+
+        NIconButton {
           icon: getViewModeIcon()
           tooltipText: getViewModeTooltip()
           baseSize: Style.baseWidgetSize * 0.8

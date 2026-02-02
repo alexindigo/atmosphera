@@ -20,6 +20,7 @@ ColumnLayout {
   property bool valueUsePrimaryColor: widgetData.usePrimaryColor !== undefined ? widgetData.usePrimaryColor : widgetMetadata.usePrimaryColor
   property bool valueUseMonospaceFont: widgetData.useMonospaceFont !== undefined ? widgetData.useMonospaceFont : widgetMetadata.useMonospaceFont
   property bool valueShowCpuUsage: widgetData.showCpuUsage !== undefined ? widgetData.showCpuUsage : widgetMetadata.showCpuUsage
+  property bool valueShowCpuFreq: widgetData.showCpuFreq !== undefined ? widgetData.showCpuFreq : widgetMetadata.showCpuFreq
   property bool valueShowCpuTemp: widgetData.showCpuTemp !== undefined ? widgetData.showCpuTemp : widgetMetadata.showCpuTemp
   property bool valueShowGpuTemp: widgetData.showGpuTemp !== undefined ? widgetData.showGpuTemp : widgetMetadata.showGpuTemp
   property bool valueShowLoadAverage: widgetData.showLoadAverage !== undefined ? widgetData.showLoadAverage : widgetMetadata.showLoadAverage
@@ -38,6 +39,7 @@ ColumnLayout {
     settings.usePrimaryColor = valueUsePrimaryColor;
     settings.useMonospaceFont = valueUseMonospaceFont;
     settings.showCpuUsage = valueShowCpuUsage;
+    settings.showCpuFreq = valueShowCpuFreq;
     settings.showCpuTemp = valueShowCpuTemp;
     settings.showGpuTemp = valueShowGpuTemp;
     settings.showLoadAverage = valueShowLoadAverage;
@@ -96,6 +98,18 @@ ColumnLayout {
     checked: valueShowCpuUsage
     onToggled: checked => {
                  valueShowCpuUsage = checked;
+                 settingsChanged(saveSettings());
+               }
+  }
+
+  NToggle {
+    id: showCpuFreq
+    Layout.fillWidth: true
+    label: "Show CPU Frequency" // TODO: use I18n.tr
+    description: "Display the current CPU clock speed in GHz" // TODO: use I18n.tr
+    checked: valueShowCpuFreq
+    onToggled: checked => {
+                 valueShowCpuFreq = checked;
                  settingsChanged(saveSettings());
                }
   }

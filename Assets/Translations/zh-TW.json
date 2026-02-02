@@ -489,6 +489,7 @@
     "week": "週",
     "widgets": "小工具",
     "width": "寬度",
+    "windows": "視窗",
     "yes": "是"
   },
   "control-center": {
@@ -508,6 +509,7 @@
     "on-hover": "游標移過時"
   },
   "hide-modes": {
+    "auto-hide": "自動隱藏",
     "hidden": "空白時隱藏",
     "idle": "閒置時隱藏",
     "transparent": "空白時變透明",
@@ -559,7 +561,9 @@
       "emoji-loading": "載入表情符號...",
       "emoji-loading-description": "請稍候",
       "emoji-no-recent": "還沒有最近使用的表情符號",
-      "emoji-search-description": "搜尋和複製表情符號"
+      "emoji-search-description": "搜尋和複製表情符號",
+      "settings-search-description": "搜尋並前往設定",
+      "windows-search-description": "搜尋並聚焦開啟的視窗"
     }
   },
   "lock-screen": {
@@ -596,6 +600,7 @@
       "density-default": "預設",
       "density-mini": "迷你",
       "density-spacious": "寬敞",
+      "display-mode-always-visible": "永遠可見",
       "type-floating": "懸浮",
       "type-framed": "邊框",
       "type-simple": "簡約"
@@ -717,6 +722,11 @@
       "volumes-volume-overdrive-label": "允許音量過載"
     },
     "bar": {
+      "appearance-auto-hide-delay-description": "滑鼠離開後Bar隱藏所需時間",
+      "appearance-auto-hide-delay-label": "隱藏延遲",
+      "appearance-auto-hide-exclusive-note": "注意: 當自動隱藏處於活動狀態時，專屬區域會自動禁用。",
+      "appearance-auto-show-delay-description": "滑鼠進入邊緣時，欄顯示前的延遲時間。",
+      "appearance-auto-show-delay-label": "顯示延遲",
       "appearance-background-opacity-description": "設定工具列背景的不透明度",
       "appearance-background-opacity-label": "工具列背景不透明度",
       "appearance-capsule-opacity-description": "設定當啟用顯示小容器時小工具的背景不透明度",
@@ -724,6 +734,8 @@
       "appearance-density-description": "調整工具列的內部間距來做出緊湊或寬敞的外觀",
       "appearance-density-label": "工具列密度",
       "appearance-desc": "自訂工具列的外觀及位置",
+      "appearance-display-mode-description": "選擇列何時可見",
+      "appearance-display-mode-label": "顯示模式",
       "appearance-floating-description": "將工具列以懸浮的圓弧長條狀顯示",
       "appearance-floating-label": "懸浮工具列",
       "appearance-frame-radius": "內圓角",
@@ -891,6 +903,16 @@
       "media-player-show-buttons-label": "顯示按鈕",
       "media-player-show-visualizer-description": "顯示視覺效果",
       "media-player-visualizer-type-description": "選擇視覺效果的樣式",
+      "system-stat-layout-bottom": "底部",
+      "system-stat-layout-description": "選擇圖例相對於圖表的顯示方式。",
+      "system-stat-layout-label": "佈局",
+      "system-stat-layout-side": "邊",
+      "system-stat-rounded-corners-description": "小工具背景使用圓角。",
+      "system-stat-rounded-corners-label": "圓角",
+      "system-stat-show-background-description": "顯示系統統計小工具的背景容器。",
+      "system-stat-show-background-label": "顯示背景",
+      "system-stat-stat-type-description": "選擇要顯示的系統統計資訊。",
+      "system-stat-stat-type-label": "統計類型",
       "title": "桌面小工具",
       "weather-enabled-description": "在桌面顯示一個天氣小工具",
       "weather-enabled-label": "啟用天氣小工具",
@@ -1041,7 +1063,7 @@
       "clipboard-desc": "在啟動器存取及整理你的剪貼簿歷史",
       "execute-desc": "設定應用程式該如何啟動",
       "execute-title": "執行",
-      "settings-annotation-tool-description": "點擊剪貼簿歷史記錄中的註記按鈕時要執行的命令，圖片將會透過管線傳送至此命令。",
+      "settings-annotation-tool-description": "點擊剪貼簿歷史記錄中的註記按鈕時要執行的命令。圖片將會透過管線傳送至此命令。",
       "settings-annotation-tool-label": "註記工具",
       "settings-annotation-tool-placeholder": "例如: gradia', 'satty -f -'",
       "settings-auto-paste-description": "自動貼上選取的剪貼簿項目, 需要 wtype 套件",
@@ -1063,6 +1085,8 @@
       "settings-desc": "自訂啟動器的外觀及行為",
       "settings-enable-settings-search-description": "在啟動器中搜尋時顯示設定結果。",
       "settings-enable-settings-search-label": "啟用設定搜尋",
+      "settings-enable-windows-search-description": "搜尋並聚焦作用中視窗。",
+      "settings-enable-windows-search-label": "啟用視窗搜尋",
       "settings-grid-view-description": "將項目以方格排列而不是列表顯示",
       "settings-icon-mode-description": "使用系統原生的圖示而不是自 Tabler 圖示包帶入",
       "settings-icon-mode-label": "使用原生圖示",

@@ -18,20 +18,11 @@ ColumnLayout {
   // Local state
   property string valueDisplayMode: widgetData.displayMode !== undefined ? widgetData.displayMode : widgetMetadata.displayMode
   property int valueWarningThreshold: widgetData.warningThreshold !== undefined ? widgetData.warningThreshold : widgetMetadata.warningThreshold
-  property string valueDeviceNativePath: widgetData.deviceNativePath !== undefined ? widgetData.deviceNativePath : ""
+  property string valueDeviceNativePath: widgetData.deviceNativePath !== undefined ? widgetData.deviceNativePath : "__default__"
   property bool valueShowPowerProfiles: widgetData.showPowerProfiles !== undefined ? widgetData.showPowerProfiles : widgetMetadata.showPowerProfiles
   property bool valueShowNoctaliaPerformance: widgetData.showNoctaliaPerformance !== undefined ? widgetData.showNoctaliaPerformance : widgetMetadata.showNoctaliaPerformance
   property bool valueHideIfNotDetected: widgetData.hideIfNotDetected !== undefined ? widgetData.hideIfNotDetected : widgetMetadata.hideIfNotDetected
   property bool valueHideIfIdle: widgetData.hideIfIdle !== undefined ? widgetData.hideIfIdle : widgetMetadata.hideIfIdle
-
-  property var deviceModel: BatteryService.getDeviceOptionsModel()
-
-  Connections {
-    target: BatteryService
-    function onDevicesChanged() {
-      deviceModel = BatteryService.getDeviceOptionsModel();
-    }
-  }
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
@@ -44,54 +35,29 @@ ColumnLayout {
     settings.showNoctaliaPerformance = valueShowNoctaliaPerformance;
     settings.hideIfNotDetected = valueHideIfNotDetected;
     settings.hideIfIdle = valueHideIfIdle;
-    if (valueDeviceNativePath && valueDeviceNativePath !== "") {
-      settings.deviceNativePath = valueDeviceNativePath;
-    } else {
-      delete settings.deviceNativePath;
-    }
+    settings.deviceNativePath = valueDeviceNativePath;
     return settings;
   }
 
-  RowLayout {
+  NComboBox {
+    id: deviceComboBox
     Layout.fillWidth: true
-    spacing: Style.marginM
-
-    NComboBox {
-      id: deviceComboBox
-      Layout.fillWidth: true
-      label: I18n.tr("bar.battery.device-label")
-      description: I18n.tr("bar.battery.device-description")
-      minimumWidth: 200
-      model: root.deviceModel
-      currentKey: root.valueDeviceNativePath
-      onSelected: key => {
-                    root.valueDeviceNativePath = key;
-                    settingsChanged(saveSettings());
-                  }
-    }
-
-    // Update currentKey when model changes to ensure selection is preserved
-    Connections {
-      target: root
-      function onDeviceModelChanged() {
-        // Force update of currentKey to trigger selection update
-        deviceComboBox.currentKey = root.valueDeviceNativePath;
-      }
-    }
-
-    NIconButton {
-      icon: "refresh"
-      // TODO i18n
-      tooltipText: "Refresh device list"
-      onClicked: deviceModel = BatteryService.getDeviceOptionsModel()
-    }
+    label: I18n.tr("bar.battery.device-label")
+    description: I18n.tr("bar.battery.device-description")
+    minimumWidth: 200
+    model: BatteryService.deviceModel
+    currentKey: root.valueDeviceNativePath
+    onSelected: key => {
+                  root.valueDeviceNativePath = key;
+                  settingsChanged(saveSettings());
+                }
   }
 
   NComboBox {
     Layout.fillWidth: true
     label: I18n.tr("bar.volume.display-mode-label")
     description: I18n.tr("bar.volume.display-mode-description")
-    minimumWidth: 240
+    minimumWidth: 200
     model: [
       {
         "key": "onhover",

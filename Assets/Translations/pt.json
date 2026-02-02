@@ -493,6 +493,7 @@
     "week": "Semana",
     "widgets": "Widgets",
     "width": "Largura",
+    "windows": "Janelas",
     "yes": "Sim"
   },
   "control-center": {
@@ -512,6 +513,7 @@
     "on-hover": "Ao passar"
   },
   "hide-modes": {
+    "auto-hide": "Ocultar automaticamente",
     "hidden": "Ocultar quando vazio",
     "idle": "Ocultar quando inativo",
     "transparent": "Transparente quando vazio",
@@ -563,7 +565,9 @@
       "emoji-loading": "Carregando emojis...",
       "emoji-loading-description": "Por favor, aguarde",
       "emoji-no-recent": "Ainda não há emojis recentes",
-      "emoji-search-description": "Buscar e copiar emojis"
+      "emoji-search-description": "Buscar e copiar emojis",
+      "settings-search-description": "Pesquisar e navegar para as configurações",
+      "windows-search-description": "Pesquisar e focar janelas abertas"
     }
   },
   "lock-screen": {
@@ -600,6 +604,7 @@
       "density-default": "Padrão",
       "density-mini": "Mini",
       "density-spacious": "Espaçoso(a)",
+      "display-mode-always-visible": "Sempre Visível",
       "type-floating": "Flutuante",
       "type-framed": "Emoldurada",
       "type-simple": "Simples"
@@ -721,6 +726,11 @@
       "volumes-volume-overdrive-label": "Permitir volume acima de 100%"
     },
     "bar": {
+      "appearance-auto-hide-delay-description": "Tempo até a Bar se ocultar depois que o rato a deixa.",
+      "appearance-auto-hide-delay-label": "Atraso para Ocultar",
+      "appearance-auto-hide-exclusive-note": "Nota: A zona exclusiva é automaticamente desativada quando o auto-ocultar está ativo.",
+      "appearance-auto-show-delay-description": "Tempo até a barra aparecer quando o mouse entra na borda.",
+      "appearance-auto-show-delay-label": "Atraso de Exibição",
       "appearance-background-opacity-description": "Defina a opacidade do fundo especificamente para a barra.",
       "appearance-background-opacity-label": "Opacidade do fundo da barra",
       "appearance-capsule-opacity-description": "Define o nível de opacidade para fundos dos widgets quando a cápsula é mostrada.",
@@ -728,6 +738,8 @@
       "appearance-density-description": "Ajuste o preenchimento da barra para um visual compacto ou espaçoso.",
       "appearance-density-label": "Densidade da barra",
       "appearance-desc": "Personalize a aparência e a posição da barra.",
+      "appearance-display-mode-description": "Escolha quando a barra está visível",
+      "appearance-display-mode-label": "Modo de Exibição",
       "appearance-floating-description": "Exibe a barra como uma 'pílula' flutuante.",
       "appearance-floating-label": "Barra flutuante",
       "appearance-frame-radius": "Raio Interno",
@@ -895,6 +907,16 @@
       "media-player-show-buttons-label": "Mostrar botões",
       "media-player-show-visualizer-description": "Mostrar a sobreposição do visualizador de áudio.",
       "media-player-visualizer-type-description": "Escolha um tipo de visualização para o fundo do reprodutor de mídia na área de trabalho.",
+      "system-stat-layout-bottom": "Inferior",
+      "system-stat-layout-description": "Escolha como a legenda é exibida em relação ao gráfico.",
+      "system-stat-layout-label": "Layout",
+      "system-stat-layout-side": "Lado",
+      "system-stat-rounded-corners-description": "Usar cantos arredondados para o fundo do widget.",
+      "system-stat-rounded-corners-label": "Cantos Arredondados",
+      "system-stat-show-background-description": "Mostrar o contêiner de fundo para o widget de estatísticas do sistema.",
+      "system-stat-show-background-label": "Mostrar plano de fundo",
+      "system-stat-stat-type-description": "Escolhe qual estatística do sistema exibir.",
+      "system-stat-stat-type-label": "Tipo de Estatística",
       "title": "Widgets da área de trabalho",
       "weather-enabled-description": "Mostrar um widget de clima na área de trabalho.",
       "weather-enabled-label": "Ativar widget de clima",
@@ -1067,6 +1089,8 @@
       "settings-desc": "Personalize o comportamento e a aparência do lançador.",
       "settings-enable-settings-search-description": "Mostrar os resultados das configurações ao pesquisar no Launcher.",
       "settings-enable-settings-search-label": "Ativar pesquisa nas configurações",
+      "settings-enable-windows-search-description": "Pesquisar e focar janelas ativas.",
+      "settings-enable-windows-search-label": "Ativar pesquisa de janelas",
       "settings-grid-view-description": "Exibir itens em uma grade em vez de uma lista.",
       "settings-icon-mode-description": "Use ícones nativos do sistema em vez de ícones Tabler.",
       "settings-icon-mode-label": "Usar ícones nativos",
