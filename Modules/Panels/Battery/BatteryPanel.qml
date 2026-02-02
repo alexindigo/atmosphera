@@ -165,7 +165,7 @@ SmartPanel {
                     NText {
                       readonly property string dName: BatteryService.getDeviceName(modelData)
                       text: dName ? dName : I18n.tr("common.battery")
-                      color: Color.mOnSurface
+                      color: (BatteryService.isCharging(modelData) || BatteryService.isPluggedIn(modelData)) ? Color.mPrimary : Color.mOnSurface
                       pointSize: Style.fontSizeS
                       Layout.fillWidth: true
                     }
@@ -203,7 +203,7 @@ SmartPanel {
                       Layout.preferredWidth: 40 * Style.uiScaleRatio
                       horizontalAlignment: Text.AlignRight
                       text: `${BatteryService.getPercentage(modelData)}%`
-                      color: Color.mOnSurface
+                      color: (BatteryService.isCharging(modelData) || BatteryService.isPluggedIn(modelData)) ? Color.mPrimary : Color.mOnSurface
                       pointSize: Style.fontSizeS
                       font.weight: Style.fontWeightBold
                     }
