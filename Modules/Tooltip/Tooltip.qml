@@ -17,7 +17,7 @@ PopupWindow {
   property int gridPaddingVertical: Style.marginXS // extra vertical padding for grid mode
   property int delay: 0
   property int hideDelay: 0
-  property int maxWidth: 320
+  property int maxWidth: 340
 
   property int animationDuration: Style.animationFast
   property real animationScale: 0.85

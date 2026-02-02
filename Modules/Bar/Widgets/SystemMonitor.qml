@@ -111,10 +111,8 @@ Item {
       const usedGb = SystemStatService.diskUsedGb[diskPath] || 0;
       const sizeGb = SystemStatService.diskSizeGb[diskPath] || 0;
       const availGb = SystemStatService.diskAvailGb[diskPath] || 0;
-      rows.push([I18n.tr("system-monitor.disk"), `${usedGb.toFixed(1)}GB/${sizeGb.toFixed(1)}GB (${diskPercent}%)`]);
-
-      // TODO i18n
-      rows.push(["Available", `${availGb.toFixed(1)}G`]);
+      rows.push([I18n.tr("system-monitor.disk"), `${diskPercent}% (${usedGb.toFixed(1)} / ${sizeGb.toFixed(1)} GB)`]);
+      rows.push([I18n.tr("common.available"), `${availGb.toFixed(1)} GB`]);
     }
 
     return rows;
