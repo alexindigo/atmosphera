@@ -533,7 +533,6 @@ Singleton {
         if (!isNaN(maxKHz) && maxKHz > 0) {
           let newMaxFreq = maxKHz / 1000000.0;
           if (Math.abs(root.cpuGlobalMaxFreq - newMaxFreq) > 0.01) {
-            Logger.i("SystemStat", `CPU Max Freq changed: ${root.cpuGlobalMaxFreq} -> ${newMaxFreq} GHz`);
             root.cpuGlobalMaxFreq = newMaxFreq;
           }
         }
