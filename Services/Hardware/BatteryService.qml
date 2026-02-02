@@ -18,8 +18,8 @@ Singleton {
   readonly property bool batteryPluggedIn: isPluggedIn(primaryDevice)
   readonly property bool batteryReady: isDeviceReady(primaryDevice)
   readonly property bool batteryPresent: isDevicePresent(primaryDevice)
-  readonly property real warningThreshold: Settings.data.systemMonitor.batteryWarningThreshold
-  readonly property real criticalThreshold: Settings.data.systemMonitor.batteryCriticalThreshold
+  readonly property real warningThreshold: Settings.data.notifications.batteryWarningThreshold
+  readonly property real criticalThreshold: Settings.data.notifications.batteryCriticalThreshold
   readonly property string batteryIcon: getIcon(batteryPercentage, batteryCharging, batteryPluggedIn, batteryReady)
   readonly property var laptopBatteries: UPower.devices.values.filter(d => d.isLaptopBattery).sort((x, y) => {
                                                                                                      // Force DisplayDevice to the top
