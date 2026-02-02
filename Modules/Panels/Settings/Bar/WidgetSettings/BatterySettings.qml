@@ -17,7 +17,6 @@ ColumnLayout {
 
   // Local state
   property string valueDisplayMode: widgetData.displayMode !== undefined ? widgetData.displayMode : widgetMetadata.displayMode
-  property int valueWarningThreshold: widgetData.warningThreshold !== undefined ? widgetData.warningThreshold : widgetMetadata.warningThreshold
   property string valueDeviceNativePath: widgetData.deviceNativePath !== undefined ? widgetData.deviceNativePath : "__default__"
   property bool valueShowPowerProfiles: widgetData.showPowerProfiles !== undefined ? widgetData.showPowerProfiles : widgetMetadata.showPowerProfiles
   property bool valueShowNoctaliaPerformance: widgetData.showNoctaliaPerformance !== undefined ? widgetData.showNoctaliaPerformance : widgetMetadata.showNoctaliaPerformance
@@ -30,7 +29,6 @@ ColumnLayout {
       settings.id = widgetData.id;
     }
     settings.displayMode = valueDisplayMode;
-    settings.warningThreshold = valueWarningThreshold;
     settings.showPowerProfiles = valueShowPowerProfiles;
     settings.showNoctaliaPerformance = valueShowNoctaliaPerformance;
     settings.hideIfNotDetected = valueHideIfNotDetected;
@@ -77,19 +75,6 @@ ColumnLayout {
                   root.valueDisplayMode = key;
                   settingsChanged(saveSettings());
                 }
-  }
-
-  NSpinBox {
-    label: I18n.tr("bar.battery.low-battery-threshold-label")
-    description: I18n.tr("bar.battery.low-battery-threshold-description")
-    value: valueWarningThreshold
-    suffix: "%"
-    minimum: 5
-    maximum: 50
-    onValueChanged: {
-      valueWarningThreshold = value;
-      settingsChanged(saveSettings());
-    }
   }
 
   NToggle {
