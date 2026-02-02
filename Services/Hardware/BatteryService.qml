@@ -284,70 +284,66 @@ Singleton {
   // Low battery notification logic
   property var notifiedDevices: ({})
 
-  // Formerly known: maybeNotify
   function checkDevice(device, id) {
     if (!device || !isDeviceReady(device)) {
       return;
     }
-    // Notify once warningThreshold reached.
-    // Notify again when criticalThreshold reached.
-    // Watch changes trigeer this when percentage value changed. (of any battery except [bat0/bat1])
 
-    const hasNotified = notifiedDevices[id] === true;
+    const percentage = getPercentage(device);
+    const charging = isCharging(device);
+    const plugged = isPluggedIn(device);
+    const currentState = notifiedDevices[id] || 0; // 0: None, 1: Low, 2: Critical
 
-    if ((!isCharging(device) && !pluggedIn) && !hasNotified && getPercentage(device) <= warningThreshold) {
-      // Update property explicitly to ensure state persistence
-      var map = notifiedDevices;
-      map[id] = true;
-      notifiedDevices = map;
-
-      var name = getDeviceName(device);
-      var title = I18n.tr("toast.battery.low");
-      var desc = I18n.tr("toast.battery.low-desc", {
-                           "percent": getPercentage(device)
-                         });
-      if (device !== _laptopBattery && name) {
-        title = title + " " + name;
+    // Reset condition: Charging, Plugged in, or charged significantly above warning
+    if (charging || plugged || percentage > warningThreshold + 5) {
+      if (currentState !== 0) {
+        var map = notifiedDevices;
+        map[id] = 0;
+        notifiedDevices = map;
       }
-      ToastService.showNotice(title, desc, "battery-charging-2");
-    } else if (hasNotified && (isCharging(device) || isPluggedIn(device) || getPercentage(device) > warningThreshold + 5)) {
-      var map = notifiedDevices;
-      map[id] = false;
-      notifiedDevices = map;
-    }
-  }
-// I hated this we have similar function(s)
-  function checkAllDevices() {
-    // 1. Primary Laptop Battery
-    if (_laptopBattery) {
-      checkDevice(_laptopBattery, "primary_laptop");
+      return;
     }
 
-    // 2. Bluetooth Devices
-    var bt = bluetoothBatteries;
-    for (var i = 0; i < bt.length; i++) {
-      checkDevice(bt[i], "bt_" + bt[i].address);
+    // Critical Notification
+    if (percentage <= criticalThreshold) {
+      if (currentState !== 2) {
+        notify(device, "critical");
+        var map2 = notifiedDevices;
+        map2[id] = 2;
+        notifiedDevices = map2;
+      }
     }
-
-    // 3. UPower Devices (excluding laptop batteries)
-    if (UPower.devices) {
-      var devs = UPower.devices.values;
-      for (var j = 0; j < devs.length; j++) {
-        var d = devs[j];
-        if (d.type === UPowerDeviceType.LinePower)
-          continue;
-        if (d.isLaptopBattery)
-          continue; // Handled by _laptopBattery check above
-        checkDevice(d, "up_" + d.nativePath);
+    // Low Notification
+    else if (percentage <= warningThreshold) {
+      if (currentState !== 1) {
+        notify(device, "low");
+        var map3 = notifiedDevices;
+        map3[id] = 1;
+        notifiedDevices = map3;
       }
     }
   }
-// I hate polling as well.
-  Timer {
-    interval: 60000 // 1 minute
-    running: true
-    repeat: true
-    triggeredOnStart: true
-    onTriggered: checkAllDevices()
+
+  // Formerly known as maybeNotify
+  function notify(device, level) {
+    var name = getDeviceName(device);
+    var titleKey = level === "critical" ? "toast.battery.critical" : "toast.battery.low";
+    var descKey = level === "critical" ? "toast.battery.critical-desc" : "toast.battery.low-desc";
+
+    var title = I18n.tr(titleKey);
+    var desc = I18n.tr(descKey, {
+                         "percent": getPercentage(device)
+                       });
+
+    if (device !== _laptopBattery && name) {
+      title = title + " " + name;
+    }
+
+    // Use a more urgent icon for critical
+    var icon = level === "critical" ? "battery-exclamation" : "battery-charging-2";
+    ToastService.showNotice(title, desc, icon);
   }
+
+// Find a efficient way to track batteries, when percentage drops below thresholds, notify the user.
+// upower monitor-detail maybe?
 }
