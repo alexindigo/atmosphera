@@ -712,7 +712,7 @@ Loader {
 
                     delegate: Item {
                       id: appButton
-                      readonly property real indicatorMargin: Math.max(2, Math.round(iconSize * 0.12))
+                      readonly property real indicatorMargin: Math.max(3, Math.round(iconSize * 0.18))
                       Layout.preferredWidth: isVertical ? iconSize + indicatorMargin * 2 : iconSize
                       Layout.preferredHeight: isVertical ? iconSize : iconSize + indicatorMargin * 2
                       Layout.alignment: Qt.AlignCenter
@@ -1074,8 +1074,8 @@ Loader {
                       // Active indicator - positioned at the edge of the delegate area
                       Rectangle {
                         visible: Settings.data.dock.inactiveIndicators ? isRunning : isActive
-                        width: isVertical ? indicatorMargin * 0.8 : iconSize * 0.2
-                        height: isVertical ? iconSize * 0.2 : indicatorMargin * 0.8
+                        width: isVertical ? indicatorMargin * 0.6 : iconSize * 0.2
+                        height: isVertical ? iconSize * 0.2 : indicatorMargin * 0.6
                         color: Color.mPrimary
                         radius: Style.radiusXS
 
