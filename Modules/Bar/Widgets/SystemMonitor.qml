@@ -56,7 +56,6 @@ Item {
   readonly property bool showLoadAverage: (widgetSettings.showLoadAverage !== undefined) ? widgetSettings.showLoadAverage : widgetMetadata.showLoadAverage
   readonly property string diskPath: (widgetSettings.diskPath !== undefined) ? widgetSettings.diskPath : widgetMetadata.diskPath
   readonly property string fontFamily: useMonospaceFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
-  readonly property bool showDiskDetails: (widgetSettings.showDiskDetails !== undefined) ? widgetSettings.showDiskDetails : widgetMetadata.showDiskDetails
 
   readonly property real iconSize: Style.toOdd(capsuleHeight * 0.48)
   readonly property real miniGaugeWidth: Math.max(3, Style.toOdd(root.iconSize * 0.25))
