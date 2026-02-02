@@ -33,7 +33,8 @@ SmartPanel {
     property int profileIndex: profileToIndex(PowerProfileService.profile)
     readonly property bool showPowerProfiles: resolveWidgetSetting("showPowerProfiles", false)
     readonly property bool showNoctaliaPerformance: resolveWidgetSetting("showNoctaliaPerformance", false)
-
+    readonly property bool isLowBattery: BatteryService.isLowBattery
+    readonly property bool isCriticalBattery: BatteryService.isCriticalBattery
     readonly property var primaryDevice: BatteryService.primaryDevice
 
     function profileToIndex(p) {
@@ -147,8 +148,8 @@ SmartPanel {
 
                   RowLayout {
                     NIcon {
-                      color: (BatteryService.isCharging(modelData) || BatteryService.isPluggedIn(modelData)) ? Color.mPrimary : Color.mOnSurface
                       icon: BatteryService.getIcon(BatteryService.getPercentage(modelData), BatteryService.isCharging(modelData), BatteryService.isPluggedIn(modelData), BatteryService.isDeviceReady(modelData))
+                      color: (BatteryService.isCharging(modelData) || BatteryService.isPluggedIn(modelData)) ? Color.mPrimary : BatteryService.isCriticalBattery(modelData) ? Color.mError : BatteryService.isLowBattery(modelData) ? Color.mOnError : Color.mOnSurface
 
                       MouseArea {
                         anchors.fill: parent
@@ -165,7 +166,7 @@ SmartPanel {
                     NText {
                       readonly property string dName: BatteryService.getDeviceName(modelData)
                       text: dName ? dName : I18n.tr("common.battery")
-                      color: (BatteryService.isCharging(modelData) || BatteryService.isPluggedIn(modelData)) ? Color.mPrimary : Color.mOnSurface
+                      color: (BatteryService.isCharging(modelData) || BatteryService.isPluggedIn(modelData)) ? Color.mPrimary : BatteryService.isCriticalBattery(modelData) ? Color.mError : BatteryService.isLowBattery(modelData) ? Color.mOnError : Color.mOnSurface
                       pointSize: Style.fontSizeS
                       Layout.fillWidth: true
                     }
@@ -203,7 +204,7 @@ SmartPanel {
                       Layout.preferredWidth: 40 * Style.uiScaleRatio
                       horizontalAlignment: Text.AlignRight
                       text: `${BatteryService.getPercentage(modelData)}%`
-                      color: (BatteryService.isCharging(modelData) || BatteryService.isPluggedIn(modelData)) ? Color.mPrimary : Color.mOnSurface
+                      color: (BatteryService.isCharging(modelData) || BatteryService.isPluggedIn(modelData)) ? Color.mPrimary : BatteryService.isCriticalBattery(modelData) ? Color.mError : BatteryService.isLowBattery(modelData) ? Color.mOnError : Color.mOnSurface
                       pointSize: Style.fontSizeS
                       font.weight: Style.fontWeightBold
                     }
@@ -231,12 +232,13 @@ SmartPanel {
 
                 NIcon {
                   icon: BluetoothService.getDeviceIcon(modelData)
+                  color: BatteryService.isCriticalBattery(modelData) ? Color.mError : BatteryService.isLowBattery(modelData) ? Color.mOnError : Color.mOnSurface
                 }
 
                 NText {
                   readonly property string dName: BatteryService.getDeviceName(modelData)
                   text: dName ? dName : I18n.tr("common.bluetooth")
-                  color: Color.mOnSurface
+                  color: BatteryService.isCriticalBattery(modelData) ? Color.mError : BatteryService.isLowBattery(modelData) ? Color.mOnError : Color.mOnSurface
                   pointSize: Style.fontSizeS
                 }
               }
@@ -267,7 +269,7 @@ SmartPanel {
                   Layout.preferredWidth: 40 * Style.uiScaleRatio
                   horizontalAlignment: Text.AlignRight
                   text: `${BatteryService.getPercentage(modelData)}%`
-                  color: Color.mOnSurface
+                  color: BatteryService.isCriticalBattery(modelData) ? Color.mError : BatteryService.isLowBattery(modelData) ? Color.mOnError : Color.mOnSurface
                   pointSize: Style.fontSizeS
                   font.weight: Style.fontWeightBold
                 }
