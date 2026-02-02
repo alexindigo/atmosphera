@@ -291,7 +291,7 @@ SmartPanel {
           anchors.right: parent.right
           anchors.top: parent.top
           anchors.margins: Style.marginM
-          spacing: Style.marginS
+          spacing: Style.marginXS
 
           // Load Average
           RowLayout {
@@ -313,6 +313,33 @@ SmartPanel {
 
             NText {
               text: `${SystemStatService.loadAvg1.toFixed(2)} • ${SystemStatService.loadAvg5.toFixed(2)} • ${SystemStatService.loadAvg15.toFixed(2)}`
+              pointSize: Style.fontSizeXS
+              color: Color.mOnSurface
+              Layout.fillWidth: true
+              horizontalAlignment: Text.AlignRight
+            }
+          }
+
+          // GPU Temperature (only if available)
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: Style.marginS
+            visible: SystemStatService.gpuAvailable
+
+            NIcon {
+              icon: "gpu-temperature"
+              pointSize: Style.fontSizeM
+              color: Color.mPrimary
+            }
+
+            NText {
+              text: I18n.tr("system-monitor.gpu-temp") + ":"
+              pointSize: Style.fontSizeXS
+              color: Color.mOnSurfaceVariant
+            }
+
+            NText {
+              text: `${Math.round(SystemStatService.gpuTemp)}°C`
               pointSize: Style.fontSizeXS
               color: Color.mOnSurface
               Layout.fillWidth: true
@@ -349,33 +376,6 @@ SmartPanel {
               Layout.fillWidth: true
               horizontalAlignment: Text.AlignRight
               elide: Text.ElideMiddle
-            }
-          }
-
-          // GPU Temperature (only if available)
-          RowLayout {
-            Layout.fillWidth: true
-            spacing: Style.marginS
-            visible: SystemStatService.gpuAvailable
-
-            NIcon {
-              icon: "gpu-temperature"
-              pointSize: Style.fontSizeM
-              color: Color.mPrimary
-            }
-
-            NText {
-              text: I18n.tr("system-monitor.gpu-temp") + ":"
-              pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
-            }
-
-            NText {
-              text: `${Math.round(SystemStatService.gpuTemp)}°C`
-              pointSize: Style.fontSizeXS
-              color: Color.mOnSurface
-              Layout.fillWidth: true
-              horizontalAlignment: Text.AlignRight
             }
           }
 
