@@ -52,6 +52,10 @@ Singleton {
       "name": I18n.tr("common.faithful")
     },
     {
+      "key": "dysfunctional",
+      "name": I18n.tr("common.dysfunctional")
+    },
+    {
       "key": "muted",
       "name": I18n.tr("common.color-muted")
     },
