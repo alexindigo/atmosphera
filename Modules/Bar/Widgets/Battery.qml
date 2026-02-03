@@ -40,28 +40,19 @@ Item {
   readonly property bool hideIfNotDetected: widgetSettings.hideIfNotDetected !== undefined ? widgetSettings.hideIfNotDetected : widgetMetadata.hideIfNotDetected
   readonly property bool hideIfIdle: widgetSettings.hideIfIdle !== undefined ? widgetSettings.hideIfIdle : widgetMetadata.hideIfIdle
 
+  // Check if selected device is actually present/connected
+  readonly property bool isReady: BatteryService.isDeviceReady(selectedDevice)
+  readonly property bool isPresent: BatteryService.isDevicePresent(selectedDevice)
+  readonly property real percent: isReady ? BatteryService.getPercentage(selectedDevice) : -1
+  readonly property bool isCharging: isReady ? BatteryService.isCharging(selectedDevice) : false
+  readonly property bool isPluggedIn: isReady ? BatteryService.isPluggedIn(selectedDevice) : false
+  readonly property bool isLowBattery: isReady ? BatteryService.isLowBattery(selectedDevice) : false
+  readonly property bool isCriticalBattery: isReady ? BatteryService.isCriticalBattery(selectedDevice) : false
+
   // Visibility: show if hideIfNotDetected is false, or if battery is ready
   readonly property bool shouldShow: !hideIfNotDetected || (isReady && (hideIfIdle ? (!isCharging && !isPluggedIn) : true))
-
-  // Test mode
-  readonly property bool testMode: false
-  readonly property int testPercent: 35
-  readonly property bool testCharging: false
-  readonly property bool testPluggedIn: false
-  readonly property bool testLowBattery: false
-  readonly property bool testCriticalBattery: false
   readonly property string deviceNativePath: widgetSettings.deviceNativePath !== undefined ? widgetSettings.deviceNativePath : widgetMetadata.deviceNativePath
   readonly property var selectedDevice: BatteryService.isDevicePresent(BatteryService.findDevice(deviceNativePath)) ? BatteryService.findDevice(deviceNativePath) : null
-
-  // Check if selected device is actually present/connected
-  readonly property bool isPresent: testMode ? true : BatteryService.isDevicePresent(selectedDevice)
-  readonly property bool isReady: testMode ? true : BatteryService.isDeviceReady(selectedDevice)
-
-  readonly property real percent: testMode ? testPercent : (isReady ? BatteryService.getPercentage(selectedDevice) : -1)
-  readonly property bool isCharging: testMode ? testCharging : (isReady ? BatteryService.isCharging(selectedDevice) : false)
-  readonly property bool isPluggedIn: testMode ? testPluggedIn : (isReady ? BatteryService.isPluggedIn(selectedDevice) : false)
-  readonly property bool isLowBattery: testMode ? testLowBattery : (isReady ? BatteryService.isLowBattery(selectedDevice) : false)
-  readonly property bool isCriticalBattery: testMode ? testCriticalBattery : (isReady ? BatteryService.isCriticalBattery(selectedDevice) : false)
 
   visible: shouldShow
   opacity: shouldShow ? 1.0 : 0.0
@@ -94,8 +85,8 @@ Item {
     id: pill
     screen: root.screen
     oppositeDirection: BarService.getPillDirection(root)
-    icon: testMode ? BatteryService.getIcon(testPercent, testCharging, testPluggedIn, true) : BatteryService.getIcon(percent, isCharging, isPluggedIn, isReady)
-    text: (isReady || testMode) ? percent : "-"
+    icon: BatteryService.getIcon(percent, isCharging, isPluggedIn, isReady)
+    text: isReady ? percent : "-"
     suffix: "%"
     autoHide: false
     forceOpen: isReady && displayMode === "alwaysShow"
@@ -105,10 +96,6 @@ Item {
 
     tooltipText: {
       let lines = [];
-      if (testMode) {
-        lines.push("Time left: " + Time.formatVagueHumanReadableDuration(12345));
-        return lines.join("\n");
-      }
       if (!isReady || !isPresent) {
         return I18n.tr("battery.no-battery-detected");
       }
