@@ -49,7 +49,7 @@ Item {
   // Generate SVG path for a given values array using monotone cubic interpolation
   function generateCurvePath(vals, minVal, maxVal) {
     if (!vals || vals.length < 2 || width <= 0 || height <= 0)
-      return "";
+      return "M 0 0"; // Valid no-op path to avoid Qt triangulator crash on empty path
 
     const n = vals.length;
 
@@ -104,8 +104,8 @@ Item {
 
   // Generate fill path (curve + bottom edge)
   function generateFillPath(curvePath) {
-    if (!curvePath || width <= 0 || height <= 0)
-      return "";
+    if (!curvePath || curvePath === "M 0 0" || width <= 0 || height <= 0)
+      return "M 0 0"; // Valid no-op path to avoid Qt triangulator crash on empty path
     return curvePath + ` L ${width.toFixed(2)} ${height.toFixed(2)} L 0 ${height.toFixed(2)} Z`;
   }
 
