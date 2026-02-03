@@ -1,6 +1,6 @@
 pragma Singleton
-import QtQuick
 import QtQml
+import QtQuick
 
 import Quickshell
 import Quickshell.Io
@@ -285,7 +285,10 @@ Singleton {
     var deviceKey = device.nativePath;
 
     if (!_hasNotified[deviceKey]) {
-      _hasNotified[deviceKey] = { low: false, critical: false };
+      _hasNotified[deviceKey] = {
+        low: false,
+        critical: false
+      };
     }
 
     if (charging || pluggedIn) {
@@ -314,7 +317,9 @@ Singleton {
     var descKey = level === "critical" ? "toast.battery.critical-desc" : "toast.battery.low-desc";
 
     var title = I18n.tr(titleKey);
-    var desc = I18n.tr(descKey, {"percent": getPercentage(device)});
+    var desc = I18n.tr(descKey, {
+                         "percent": getPercentage(device)
+                       });
     var icon = level === "critical" ? "battery-exclamation" : "battery-charging-2";
 
     if (device == _bluetoothBattery && name) {
@@ -335,13 +340,13 @@ Singleton {
         if (device.isLaptopBattery && modelData.key !== "__default__") {
           return;
         }
-        checkDevice(device)
+        checkDevice(device);
       }
       function onStateChanged() {
         if (device.isLaptopBattery && modelData.key !== "__default__") {
           return;
         }
-        checkDevice(device)
+        checkDevice(device);
       }
     }
   }
