@@ -37,13 +37,15 @@ Item {
   readonly property real curvePadding: 0.08
 
   readonly property bool hasData: values.length >= 2
-  readonly property bool hasData2: values2.length >= 2
 
   // Animation state
   property real _t: 1.0
   property bool _ready: false
   property real _pred: 0
-  property real _pred2: 0
+
+  // Synced copies of values2 - only updated when values changes to prevent timing desync
+  property var _syncedValues2: []
+  property real _syncedPred2: 0
 
   onValuesChanged: {
     if (values.length < 2)
@@ -51,6 +53,14 @@ Item {
     const last = values[values.length - 1];
     const prev = values.length > 1 ? values[values.length - 2] : last;
     _pred = Math.max(minValue, last + (last - prev));
+
+    // Sync values2 data at the same time as values to prevent timing desync
+    _syncedValues2 = values2.slice();
+    if (values2.length >= 2) {
+      const last2 = values2[values2.length - 1];
+      const prev2 = values2[values2.length - 2];
+      _syncedPred2 = Math.max(minValue2, last2 + (last2 - prev2));
+    }
 
     if (!_ready) {
       _ready = true;
@@ -61,15 +71,6 @@ Item {
     // Maintain continuity: new_t = old_t - 1
     _t = _t - 1.0;
     _animTimer.start();
-  }
-
-  onValues2Changed: {
-    if (values2.length < 2)
-      return;
-    const last = values2[values2.length - 1];
-    const prev = values2.length > 1 ? values2[values2.length - 2] : last;
-    _pred2 = Math.max(minValue2, last + (last - prev));
-    // Let animation timer handle repaints - don't trigger here
   }
 
   Timer {
@@ -99,15 +100,15 @@ Item {
   }
 
   readonly property real _effectiveMax2: {
-    if (!autoScale2 || !hasData2)
+    if (!autoScale2 || _syncedValues2.length < 2)
       return maxValue2;
     let m = maxValue2;
-    for (let i = 0; i < values2.length; i++) {
-      if (values2[i] > m)
-        m = values2[i];
+    for (let i = 0; i < _syncedValues2.length; i++) {
+      if (_syncedValues2[i] > m)
+        m = _syncedValues2[i];
     }
-    if (_pred2 > m)
-      m = _pred2;
+    if (_syncedPred2 > m)
+      m = _syncedPred2;
     return m;
   }
 
@@ -132,20 +133,19 @@ Item {
     onPaint: {
       var ctx = getContext("2d");
       ctx.clearRect(0, 0, width, height);
-      if (width <= 0 || height <= 0)
+      if (width <= 0 || height <= 0 || !root.hasData)
         return;
 
-      // Use primary values length for consistent step size
-      const baseLen = root.hasData ? root.values.length : (root.hasData2 ? root.values2.length : 0);
-      if (baseLen < 2)
+      const n = root.values.length;
+      if (n < 2)
         return;
-      const step = width / (baseLen - 1);
+      const step = width / (n - 1);
 
-      if (root.hasData) {
-        drawGraph(ctx, root.values, root._pred, root.minValue, root._effectiveMax, root.color, root._t, step);
-      }
-      if (root.hasData2) {
-        drawGraph(ctx, root.values2, root._pred2, root.minValue2, root._effectiveMax2, root.color2, root._t, step);
+      drawGraph(ctx, root.values, root._pred, root.minValue, root._effectiveMax, root.color, root._t, step);
+
+      // Only draw synced values2 if length matches (prevents visual glitches from timing desync)
+      if (root._syncedValues2.length === n) {
+        drawGraph(ctx, root._syncedValues2, root._syncedPred2, root.minValue2, root._effectiveMax2, root.color2, root._t, step);
       }
     }
 
