@@ -460,7 +460,7 @@ Item {
 
   function clicked() {
     if (leftClickExec) {
-      Quickshell.execDetached(["sh", "-c", leftClickExec]);
+      Quickshell.execDetached(["sh", "-lc", leftClickExec]);
       Logger.i("CustomButton", `Executing command: ${leftClickExec}`);
     } else if (!leftClickUpdateText) {
       BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
@@ -473,7 +473,7 @@ Item {
 
   function rightClicked() {
     if (rightClickExec) {
-      Quickshell.execDetached(["sh", "-c", rightClickExec]);
+      Quickshell.execDetached(["sh", "-lc", rightClickExec]);
       Logger.i("CustomButton", `Executing command: ${rightClickExec}`);
     }
     if (!textStream && rightClickUpdateText) {
@@ -483,7 +483,7 @@ Item {
 
   function middleClicked() {
     if (middleClickExec) {
-      Quickshell.execDetached(["sh", "-c", middleClickExec]);
+      Quickshell.execDetached(["sh", "-lc", middleClickExec]);
       Logger.i("CustomButton", `Executing command: ${middleClickExec}`);
     }
     if (!textStream && middleClickUpdateText) {
@@ -512,7 +512,7 @@ Item {
       return;
     if (textProc.running)
       return;
-    textProc.command = ["sh", "-c", textCommand];
+    textProc.command = ["sh", "-lc", textCommand];
     textProc.running = true;
   }
 
@@ -554,7 +554,7 @@ Item {
         }
       });
 
-      Quickshell.execDetached(["sh", "-c", command]);
+      Quickshell.execDetached(["sh", "-lc", command]);
       Logger.i("CustomButton", `Executing command: ${command}`);
     } else if (wheelMode === "separate") {
       if ((delta > 0 && wheelUpExec) || (delta < 0 && wheelDownExec)) {
@@ -595,7 +595,7 @@ Item {
           }
         });
 
-        Quickshell.execDetached(["sh", "-c", command]);
+        Quickshell.execDetached(["sh", "-lc", command]);
         Logger.i("CustomButton", `Executing command: ${command}`);
       }
     }
