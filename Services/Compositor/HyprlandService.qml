@@ -426,6 +426,10 @@ Item {
   // Public functions
   function switchToWorkspace(workspace) {
     try {
+      if (workspace.name) {
+        Hyprland.dispatch(`workspace ${workspace.name}`);
+        return;
+      }
       Hyprland.dispatch(`workspace ${workspace.idx}`);
     } catch (e) {
       Logger.e("HyprlandService", "Failed to switch workspace:", e);
