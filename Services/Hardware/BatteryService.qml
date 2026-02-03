@@ -21,6 +21,7 @@ Singleton {
   readonly property real warningThreshold: Settings.data.notifications.batteryWarningThreshold
   readonly property real criticalThreshold: Settings.data.notifications.batteryCriticalThreshold
   readonly property string batteryIcon: getIcon(batteryPercentage, batteryCharging, batteryPluggedIn, batteryReady)
+
   readonly property var laptopBatteries: UPower.devices.values.filter(d => d.isLaptopBattery).sort((x, y) => {
                                                                                                      // Force DisplayDevice to the top
                                                                                                      if (x.nativePath.includes("DisplayDevice"))
@@ -33,6 +34,7 @@ Singleton {
                                                                                                                                          numeric: true
                                                                                                                                        });
                                                                                                    })
+
   readonly property var bluetoothBatteries: {
     var list = [];
     var btArray = BluetoothService.devices?.values || [];
@@ -68,6 +70,8 @@ Singleton {
     return model;
   }
 
+  property var _hasNotified: {}
+
   function findDevice(nativePath) {
     if (!nativePath || nativePath === "__default__" || nativePath === "DisplayDevice") {
       return _laptopBattery;
@@ -77,14 +81,13 @@ Singleton {
       return null;
     }
 
-    var deviceArray = UPower.devices.values || [];
-    for (var i = 0; i < deviceArray.length; i++) {
-      var device = deviceArray[i];
-      if (device && device.nativePath === nativePath) {
-        if (device.type === UPowerDeviceType.LinePower) {
+    const devices = UPower.devices?.values || [];
+    for (let d of devices) {
+      if (d && d.nativePath === nativePath) {
+        if (d.type === UPowerDeviceType.LinePower) {
           continue;
         }
-        return device;
+        return d;
       }
     }
     return null;
@@ -271,7 +274,7 @@ Singleton {
   }
 
   function checkDevice(device) {
-    if (!device || !device.ready) {
+    if (!device || !isDeviceReady(device)) {
       return;
     }
 
@@ -279,9 +282,29 @@ Singleton {
     const charging = isCharging(device);
     const pluggedIn = isPluggedIn(device);
     const level = isLowBattery(device) ? "low" : (isCriticalBattery(device) ? "critical" : "");
+    var deviceKey = device.nativePath;
 
-    if ((level === "low" || level === "critical") && !charging && !pluggedIn) {
-      notify(device, level);
+    if (!_hasNotified[deviceKey]) {
+      _hasNotified[deviceKey] = { low: false, critical: false };
+    }
+
+    if (charging || pluggedIn) {
+      _hasNotified[deviceKey].low = false;
+      _hasNotified[deviceKey].critical = false;
+    }
+
+    if (percentage > warningThreshold) {
+      _hasNotified[deviceKey].low = false;
+      _hasNotified[deviceKey].critical = false;
+    } else if (percentage > criticalThreshold) {
+      _hasNotified[deviceKey].critical = false;
+    }
+
+    if (level) {
+      if (!_hasNotified[deviceKey][level]) {
+        notify(device, level);
+        _hasNotified[deviceKey][level] = true;
+      }
     }
   }
 
@@ -292,13 +315,12 @@ Singleton {
 
     var title = I18n.tr(titleKey);
     var desc = I18n.tr(descKey, {"percent": getPercentage(device)});
+    var icon = level === "critical" ? "battery-exclamation" : "battery-charging-2";
 
     if (device == _bluetoothBattery && name) {
       title = title + " " + name;
     }
 
-    // Use a more urgent icon for critical
-    var icon = level === "critical" ? "battery-exclamation" : "battery-charging-2";
     ToastService.showNotice(title, desc, icon);
   }
 
