@@ -70,7 +70,7 @@ Singleton {
     return model;
   }
 
-  property var _hasNotified: {}
+  property var _hasNotified: ({})
 
   function findDevice(nativePath) {
     if (!nativePath || nativePath === "__default__" || nativePath === "DisplayDevice") {
