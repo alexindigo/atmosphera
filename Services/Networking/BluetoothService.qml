@@ -545,7 +545,9 @@ Singleton {
         }
       }
     }
-    stderr: StdioCollector {}
+    stderr: SplitParser {
+      onRead: data => Logger.i("Bluetooth", data)
+    }
     onExited: {
       root.pinRequired = false;
       Logger.i("Bluetooth", "Pairing process exited.");
