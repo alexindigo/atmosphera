@@ -346,24 +346,30 @@ def _score_colors_dysfunctional(
         family_center = _family_center_hue(family)
         hue_diff = _circular_hue_diff(dominant_center, family_center)
         if hue_diff >= MIN_HUE_DISTANCE and count >= min_count:
-            distant_families.append((family, count, hue_diff))
+            # Get max chroma in this family - we want families with vibrant colors
+            max_chroma = max(c[2] for c in hue_families[family])
+            distant_families.append((family, count, hue_diff, max_chroma))
         else:
             close_families.append(family)
 
     # Build result: colors from distant families first
     result_colors = []
 
-    # Sort distant families by hue distance (most different first), then by count
-    distant_families.sort(key=lambda x: (-x[2], -x[1]))
+    # Sort distant families by weighted score: hue_distance * max_chroma
+    # This balances visual distinctness (hue distance) with color quality (chroma)
+    # A family that's far away AND has good colors beats one that's close with great colors
+    distant_families.sort(key=lambda x: -(x[2] * x[3]))
 
-    for family, _, _ in distant_families:
+    for family, _, _, _ in distant_families:
         family_colors = hue_families[family]
-        # Sort by count descending, chroma as tiebreaker
-        family_colors.sort(key=lambda x: (-x[3], -x[2]))
+        # Sort by chroma descending - we want the most vibrant color from this family
+        # Count is tiebreaker to avoid picking tiny noise clusters
+        family_colors.sort(key=lambda x: (-x[2], -x[3]))
         for color, hue, chroma, count in family_colors:
-            # Score encodes family rank + count for proper ordering
-            family_rank = next(i for i, (f, _, _) in enumerate(distant_families) if f == family)
-            score = (len(distant_families) - family_rank) * 1000000 + count * 1000 + chroma
+            # Score encodes family rank + chroma for proper ordering
+            # Chroma is primary (we want vibrant), count is tiebreaker
+            family_rank = next(i for i, (f, _, _, _) in enumerate(distant_families) if f == family)
+            score = (len(distant_families) - family_rank) * 1000000 + chroma * 1000 + count
             result_colors.append((color, score))
 
     # Add colors from close families (including dominant) at lower priority
