@@ -51,7 +51,8 @@ Item {
   readonly property bool showSwapUsage: (widgetSettings.showSwapUsage !== undefined) ? widgetSettings.showSwapUsage : widgetMetadata.showSwapUsage
   readonly property bool showNetworkStats: (widgetSettings.showNetworkStats !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
   readonly property bool showDiskUsage: (widgetSettings.showDiskUsage !== undefined) ? widgetSettings.showDiskUsage : widgetMetadata.showDiskUsage
-  readonly property bool showDiskAsFree: (widgetSettings.showDiskAsFree !== undefined) ? widgetSettings.showDiskAsFree : widgetMetadata.showDiskAsFree
+  readonly property bool showDiskUsageAsPercent: (widgetSettings.showDiskUsageAsPercent !== undefined) ? widgetSettings.showDiskUsageAsPercent : widgetMetadata.showDiskUsageAsPercent
+  readonly property bool showDiskAvailable: (widgetSettings.showDiskAvailable !== undefined) ? widgetSettings.showDiskAvailable : widgetMetadata.showDiskAvailable
   readonly property bool showLoadAverage: (widgetSettings.showLoadAverage !== undefined) ? widgetSettings.showLoadAverage : widgetMetadata.showLoadAverage
   readonly property string diskPath: (widgetSettings.diskPath !== undefined) ? widgetSettings.diskPath : widgetMetadata.diskPath
   readonly property string fontFamily: useMonospaceFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
@@ -94,11 +95,11 @@ Item {
     }
 
     // Memory
-    rows.push([I18n.tr("common.memory"), `${Math.round(SystemStatService.memPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.memGb).replace(/[^0-9.]/g, "") + " GB"})`]);
+    rows.push([I18n.tr("common.memory"), `${Math.round(SystemStatService.memPercent)}% (${SystemStatService.formatGigabytes(SystemStatService.memGb).replace(/[^0-9.]/g, "") + " GB"})`]);
 
     // Swap (if available)
     if (SystemStatService.swapTotalGb > 0) {
-      rows.push([I18n.tr("bar.system-monitor.swap-usage-label"), `${Math.round(SystemStatService.swapPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.swapGb).replace(/[^0-9.]/g, "") + " GB"})`]);
+      rows.push([I18n.tr("bar.system-monitor.swap-usage-label"), `${Math.round(SystemStatService.swapPercent)}% (${SystemStatService.formatGigabytes(SystemStatService.swapGb).replace(/[^0-9.]/g, "") + " GB"})`]);
     }
 
     // Network
@@ -110,11 +111,9 @@ Item {
     if (diskPercent !== undefined) {
       const usedGb = SystemStatService.diskUsedGb[diskPath] || 0;
       const sizeGb = SystemStatService.diskSizeGb[diskPath] || 0;
-      const availGb = SystemStatService.diskAvailGb[diskPath] || 0;
-      rows.push([I18n.tr("system-monitor.disk"), `${usedGb.toFixed(1)}GB/${sizeGb.toFixed(1)}GB (${diskPercent}%)`]);
-
-      // TODO i18n
-      rows.push(["Available", `${availGb.toFixed(1)}G`]);
+      const availGb = SystemStatService.diskAvailableGb[diskPath] || 0;
+      rows.push([I18n.tr("system-monitor.disk"), `${diskPercent}% (${usedGb.toFixed(1)} / ${sizeGb.toFixed(1)} GB)`]);
+      rows.push([I18n.tr("common.available"), `${availGb.toFixed(1)} GB`]);
     }
 
     return rows;
@@ -597,7 +596,7 @@ Item {
           // Text mode
           NText {
             visible: !compactMode
-            text: showMemoryAsPercent ? `${Math.round(SystemStatService.memPercent)}%` : SystemStatService.formatMemoryGb(SystemStatService.memGb)
+            text: showMemoryAsPercent ? `${Math.round(SystemStatService.memPercent)}%` : SystemStatService.formatGigabytes(SystemStatService.memGb)
             family: fontFamily
             pointSize: barFontSize
             applyUiScale: false
@@ -863,14 +862,10 @@ Item {
           // Text mode
           NText {
             visible: !compactMode
-            text: {
-              if (showDiskAsFree && !isVertical) {
-                let avail = SystemStatService.diskAvailGb[diskPath] || 0;
-                return avail.toFixed(1) + "G";
-              } else {
-                return SystemStatService.diskPercents[diskPath] ? `${SystemStatService.diskPercents[diskPath]}%` : "n/a";
-              }
-            }
+            text: SystemStatService.formatDiskDisplay(diskPath, {
+                                                        percent: showDiskUsageAsPercent,
+                                                        available: showDiskAvailable
+                                                      })
             family: fontFamily
             pointSize: barFontSize
             applyUiScale: false
@@ -892,8 +887,8 @@ Item {
             Layout.column: 1
 
             onLoaded: {
-              item.ratio = Qt.binding(() => (SystemStatService.diskPercents[diskPath] ?? 0) / 100);
-              item.statColor = Qt.binding(() => SystemStatService.getDiskColor(diskPath));
+              item.ratio = Qt.binding(() => (showDiskAvailable ? SystemStatService.diskAvailPercents[diskPath] : SystemStatService.diskPercents[diskPath] ?? 0) / 100);
+              item.statColor = Qt.binding(() => SystemStatService.getDiskColor(diskPath, showDiskAvailable));
             }
           }
         }

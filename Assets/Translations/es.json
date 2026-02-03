@@ -49,7 +49,7 @@
       "device-description": "Seleccione qué dispositivo de batería mostrar.",
       "device-label": "Dispositivo de batería",
       "hide-if-idle-description": "Ocultar el widget cuando la batería no se esté cargando ni descargando.",
-      "hide-if-idle-label": "Ocultar cuando esté inactivo",
+      "hide-if-idle-label": "Ocultar cuando inactivo",
       "hide-if-not-detected-description": "Ocultar el widget cuando no se detecte batería en el sistema.",
       "hide-if-not-detected-label": "Ocultar si no se detecta",
       "low-battery-threshold-description": "Muestra una advertencia cuando la batería cae por debajo de este porcentaje.",
@@ -145,7 +145,7 @@
     },
     "lock-keys": {
       "hide-when-off-description": "Ocultar el indicador cuando la tecla no está activa.",
-      "hide-when-off-label": "Ocultar cuando está desactivado",
+      "hide-when-off-label": "Ocultar cuando desactivado",
       "show-caps-lock-description": "Mostrar el estado de Bloq Mayús.",
       "show-caps-lock-label": "Bloq Mayús",
       "show-num-lock-description": "Mostrar el estado de Bloq Num.",
@@ -211,6 +211,10 @@
       "memory-usage-label": "Uso de memoria",
       "network-traffic-description": "Mostrar las velocidades de carga y descarga de la red.",
       "network-traffic-label": "Tráfico de red",
+      "storage-as-percentage-description": "Mostrar el espacio en disco como porcentaje en lugar de valores absolutos.",
+      "storage-as-percentage-label": "Disco como porcentaje",
+      "storage-available-description": "Muestra cuánto espacio en disco está disponible en lugar de cuánto se usa.",
+      "storage-available-label": "Espacio en disco disponible",
       "storage-usage-description": "Mostrar la información del uso del espacio en disco.",
       "storage-usage-label": "Uso de almacenamiento",
       "swap-usage-description": "Mostrar el uso de la memoria swap.",
@@ -272,6 +276,8 @@
       "label-mode-label": "Modo de etiqueta",
       "occupied-color-description": "Establecer el color de fondo para los Workspaces ocupados.",
       "occupied-color-label": "Color del espacio de trabajo ocupado",
+      "pill-size-description": "Ajusta el tamaño de las píldoras del espacio de trabajo (50%-100%).",
+      "pill-size-label": "Tamaño de la píldora",
       "reverse-scrolling-description": "Invertir la dirección del cambio de espacios de trabajo al desplazarse.",
       "reverse-scrolling-label": "Desplazamiento inverso",
       "show-applications-description": "Mostrar los iconos de las aplicaciones dentro de cada espacio de trabajo.",
@@ -387,6 +393,7 @@
     "disconnecting": "Desconectando...",
     "download": "Descargar",
     "duration": "Duración",
+    "dysfunctional": "Disfuncional",
     "edit": "Editar",
     "enabled": "Activado",
     "events": "Eventos",
@@ -510,8 +517,8 @@
   },
   "hide-modes": {
     "auto-hide": "Ocultación Automática",
-    "hidden": "Ocultar cuando esté vacío",
-    "idle": "Ocultar cuando esté inactivo",
+    "hidden": "Ocultar cuando vacío",
+    "idle": "Ocultar cuando inactivo",
     "transparent": "Transparente cuando esté vacío",
     "visible": "Mostrar siempre"
   },
@@ -612,7 +619,7 @@
     "frame-rates-fps": "{fps} FPS",
     "scrolling-modes": {
       "always": "Desplazar siempre",
-      "hover": "Desplazar al posar el puntero",
+      "hover": "Desplazar encima",
       "never": "No desplazar nunca"
     },
     "session-menu-grid-layout": {
@@ -807,6 +814,7 @@
       "download-title": "Descargar Esquemas de Color",
       "method-description": {
         "content": "Esquema de Material Design con extracción de color de alta fidelidad que coincide estrechamente con los colores reales del contenido de origen.",
+        "dysfunctional": "Como Faithful, pero elige la segunda familia de colores más dominante como primaria.",
         "faithful": "Intenta mantenerse cerca del color original mientras genera una paleta armoniosa.",
         "fruit-salad": "Esquema de Material Design que produce una paleta alegre y vibrante con matices diversos y variados.",
         "monochrome": "Esquema de Material Design que utiliza una escala de grises de un solo tono con un contenido cromático mínimo.",
@@ -1302,6 +1310,7 @@
       "sources-placeholder": "Mi repositorio genial",
       "sources-remove-tooltip": "Eliminar fuente del plugin",
       "title": "Plugins",
+      "translations-reloaded": "Traducciones recargadas: {name}",
       "uninstall-dialog-description": "¿Está seguro de que quiere desinstalar {plugin}? Esto eliminará todos los datos del plugin.",
       "uninstall-dialog-title": "Desinstalar plugin",
       "uninstall-error": "Error al desinstalar: {error}",
@@ -1349,6 +1358,7 @@
     "system-monitor": {
       "critical-color-label": "Color crítico",
       "custom-highlight-colors-title-label": "Colores de resaltado personalizados",
+      "disk-available-label": "Espacio en disco disponible",
       "disk-section-label": "Uso de disco",
       "enable-dgpu-monitoring-description": "Advertencia: Esto activará tu GPU dedicada (NVIDIA/AMD), lo que podría afectar significativamente la duración de la batería en portátiles con gráficos híbridos.",
       "enable-dgpu-monitoring-label": "Habilitar la monitorización de la GPU dedicada",

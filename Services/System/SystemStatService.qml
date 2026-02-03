@@ -32,7 +32,9 @@ Singleton {
   property real swapPercent: 0
   property real swapTotalGb: 0
   property var diskPercents: ({})
+  property var diskAvailPercents: ({}) // available disk space in percent
   property var diskUsedGb: ({}) // Used space in GB per mount point
+  property var diskAvailableGb: ({}) // available space in GB per mount point
   property var diskSizeGb: ({}) // Total size in GB per mount point
   property var diskAvailGb: ({})
   property real rxSpeed: 0
@@ -70,7 +72,7 @@ Singleton {
   property real gpuTempHistoryMin: 100
   property real gpuTempHistoryMax: 0
   property real memHistoryMax: 0
-  // Network uses existing rxMaxSpeed/txMaxSpeed (7-day learned peaks)
+  // Network uses autoscaling from current history window
   // Disk is always 0-100%
 
   // History management - called from update functions, not change handlers
@@ -150,17 +152,17 @@ Singleton {
     txSpeedHistory = txH;
   }
 
-  // Network max speed tracking (learned over time, cached for 7 days)
+  // Network max speed tracking (autoscales from current history window)
   readonly property real rxMaxSpeed: {
-    const peaks = networkStatsAdapter.rxPeaks || [];
-    return peaks.length > 0 ? Math.max(...peaks.map(p => p.speed)) : 0;
+    const max = Math.max(...rxSpeedHistory);
+    return max > 0 ? max : 1024; // Minimum 1 KB/s floor
   }
   readonly property real txMaxSpeed: {
-    const peaks = networkStatsAdapter.txPeaks || [];
-    return peaks.length > 0 ? Math.max(...peaks.map(p => p.speed)) : 0;
+    const max = Math.max(...txSpeedHistory);
+    return max > 0 ? max : 1024; // Minimum 1 KB/s floor
   }
 
-  // Ready-to-use ratios based on learned maximums (0..1 range)
+  // Ready-to-use ratios based on current maximums (0..1 range)
   readonly property real rxRatio: rxMaxSpeed > 0 ? Math.min(1, rxSpeed / rxMaxSpeed) : 0
   readonly property real txRatio: txMaxSpeed > 0 ? Math.min(1, txSpeed / txMaxSpeed) : 0
 
@@ -181,6 +183,8 @@ Singleton {
   readonly property int swapCriticalThreshold: Settings.data.systemMonitor.swapCriticalThreshold
   readonly property int diskWarningThreshold: Settings.data.systemMonitor.diskWarningThreshold
   readonly property int diskCriticalThreshold: Settings.data.systemMonitor.diskCriticalThreshold
+  readonly property int diskAvailWarningThreshold: Settings.data.systemMonitor.diskAvailWarningThreshold
+  readonly property int diskAvailCriticalThreshold: Settings.data.systemMonitor.diskAvailCriticalThreshold
 
   // Computed warning/critical states (uses >= inclusive comparison)
   readonly property bool cpuWarning: cpuUsage >= cpuWarningThreshold
@@ -195,12 +199,12 @@ Singleton {
   readonly property bool swapCritical: swapPercent >= swapCriticalThreshold
 
   // Helper functions for disk (disk path is dynamic)
-  function isDiskWarning(diskPath) {
-    return (diskPercents[diskPath] || 0) >= diskWarningThreshold;
+  function isDiskWarning(diskPath, available = false) {
+    return available ? (diskAvailPercents[diskPath] || 0) <= diskAvailWarningThreshold : (diskPercents[diskPath] || 0) >= diskWarningThreshold;
   }
 
-  function isDiskCritical(diskPath) {
-    return (diskPercents[diskPath] || 0) >= diskCriticalThreshold;
+  function isDiskCritical(diskPath, available = false) {
+    return available ? (diskAvailPercents[diskPath] || 0) <= diskAvailCriticalThreshold : (diskPercents[diskPath] || 0) >= diskCriticalThreshold;
   }
 
   // Ready-to-use stat colors (for gauges, panels, icons)
@@ -210,8 +214,8 @@ Singleton {
   readonly property color memColor: memCritical ? criticalColor : (memWarning ? warningColor : Color.mPrimary)
   readonly property color swapColor: swapCritical ? criticalColor : (swapWarning ? warningColor : Color.mPrimary)
 
-  function getDiskColor(diskPath) {
-    return isDiskCritical(diskPath) ? criticalColor : (isDiskWarning(diskPath) ? warningColor : Color.mPrimary);
+  function getDiskColor(diskPath, available = false) {
+    return isDiskCritical(diskPath, available) ? criticalColor : (isDiskWarning(diskPath, available) ? warningColor : Color.mPrimary);
   }
 
   // Helper function for color resolution based on value and thresholds
@@ -250,52 +254,6 @@ Singleton {
   property string gpuTempHwmonPath: ""
   property var foundGpuSensors: [] // [{hwmonPath, type, hasDedicatedVram}]
   property int gpuVramCheckIndex: 0
-
-  // --------------------------------------------
-  // Network speed stats cache (7-day rolling window)
-  property string networkStatsFile: Settings.cacheDir + "network_stats.json"
-
-  FileView {
-    id: networkStatsView
-    path: root.networkStatsFile
-    printErrors: false
-
-    JsonAdapter {
-      id: networkStatsAdapter
-      property var rxPeaks: []
-      property var txPeaks: []
-    }
-
-    onLoadFailed: {
-      networkStatsAdapter.rxPeaks = [];
-      networkStatsAdapter.txPeaks = [];
-    }
-
-    onLoaded: {
-      root.pruneExpiredPeaks();
-    }
-  }
-
-  Timer {
-    id: networkStatsSaveDebounce
-    interval: 1000
-    onTriggered: networkStatsView.writeAdapter()
-  }
-
-  function pruneExpiredPeaks() {
-    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
-    const cutoff = Date.now() - sevenDaysMs;
-    const rxBefore = (networkStatsAdapter.rxPeaks || []).length;
-    const txBefore = (networkStatsAdapter.txPeaks || []).length;
-
-    networkStatsAdapter.rxPeaks = (networkStatsAdapter.rxPeaks || []).filter(p => p.timestamp > cutoff);
-    networkStatsAdapter.txPeaks = (networkStatsAdapter.txPeaks || []).filter(p => p.timestamp > cutoff);
-
-    // Save if any were pruned
-    if (networkStatsAdapter.rxPeaks.length !== rxBefore || networkStatsAdapter.txPeaks.length !== txBefore) {
-      networkStatsSaveDebounce.restart();
-    }
-  }
 
   // --------------------------------------------
   Component.onCompleted: {
@@ -490,9 +448,10 @@ Singleton {
       onStreamFinished: {
         const lines = text.trim().split('\n');
         const newPercents = {};
+        const newAvailPercents = {};
         const newUsedGb = {};
         const newSizeGb = {};
-        const newAvailGb = {};
+        const newAvailableGb = {};
         const bytesPerGb = 1024 * 1024 * 1024;
         // Start from line 1 (skip header)
         for (var i = 1; i < lines.length; i++) {
@@ -503,16 +462,19 @@ Singleton {
             const usedBytes = parseFloat(parts[2]) || 0;
             const sizeBytes = parseFloat(parts[3]) || 0;
             const availBytes = parseFloat(parts[4]) || 0;
+            const availPercent = sizeBytes > 0 ? (availBytes / sizeBytes) * 100 : 0;
             newPercents[target] = percent;
+            newAvailPercents[target] = Math.round(availPercent);
             newUsedGb[target] = usedBytes / bytesPerGb;
             newSizeGb[target] = sizeBytes / bytesPerGb;
-            newAvailGb[target] = availBytes / bytesPerGb;
+            newAvailableGb[target] = availBytes / bytesPerGb;
           }
         }
         root.diskPercents = newPercents;
+        root.diskAvailPercents = newAvailPercents;
         root.diskUsedGb = newUsedGb;
         root.diskSizeGb = newSizeGb;
-        root.diskAvailGb = newAvailGb;
+        root.diskAvailableGb = newAvailableGb;
         root.pushDiskHistory();
       }
     }
@@ -571,7 +533,6 @@ Singleton {
         if (!isNaN(maxKHz) && maxKHz > 0) {
           let newMaxFreq = maxKHz / 1000000.0;
           if (Math.abs(root.cpuGlobalMaxFreq - newMaxFreq) > 0.01) {
-            Logger.i("SystemStat", `CPU Max Freq changed: ${root.cpuGlobalMaxFreq} -> ${newMaxFreq} GHz`);
             root.cpuGlobalMaxFreq = newMaxFreq;
           }
         }
@@ -1006,27 +967,6 @@ Singleton {
 
         root.rxSpeed = Math.round(rxDiff / timeDiff); // Speed in Bytes/s
         root.txSpeed = Math.round(txDiff / timeDiff);
-
-        // Record new peaks if higher than current max (for adaptive ratio calculation)
-        const now = Date.now();
-        if (root.rxSpeed > root.rxMaxSpeed) {
-          networkStatsAdapter.rxPeaks = [...(networkStatsAdapter.rxPeaks || []),
-                                         {
-                                           speed: root.rxSpeed,
-                                           timestamp: now
-                                         }
-              ];
-          networkStatsSaveDebounce.restart();
-        }
-        if (root.txSpeed > root.txMaxSpeed) {
-          networkStatsAdapter.txPeaks = [...(networkStatsAdapter.txPeaks || []),
-                                         {
-                                           speed: root.txSpeed,
-                                           timestamp: now
-                                         }
-              ];
-          networkStatsSaveDebounce.restart();
-        }
       }
     }
 
@@ -1081,7 +1021,7 @@ Singleton {
   // -------------------------------------------------------
   // Smart formatter for memory values (GB) - max 4 chars
   // Uses decimal for < 10GB, integer otherwise
-  function formatMemoryGb(memGb) {
+  function formatGigabytes(memGb) {
     const value = parseFloat(memGb);
     if (isNaN(value))
       return "0G";
@@ -1089,6 +1029,22 @@ Singleton {
     if (value < 10)
       return value.toFixed(1) + "G"; // "0.0G" to "9.9G"
     return Math.round(value) + "G"; // "10G" to "999G"
+  }
+
+  // -------------------------------------------------------
+  // Formatting disk usage
+  function formatDiskDisplay(diskPath, {
+                             percent = false,
+                             available = false
+} = {}) {
+    if (percent) {
+      const raw = available ? root.diskAvailPercents[diskPath] : root.diskPercents[diskPath];
+      const value = (raw === null) ? 0 : raw;
+      return `${value}%`;
+    } else {
+      const rawGb = available ? root.diskAvailableGb[diskPath] : root.diskUsedGb[diskPath];
+      return formatGigabytes(rawGb === null ? 0 : rawGb);
+    }
   }
 
   // -------------------------------------------------------

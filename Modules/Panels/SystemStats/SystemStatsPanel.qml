@@ -138,13 +138,15 @@ SmartPanel {
             values: SystemStatService.cpuHistory
             values2: SystemStatService.cpuTempHistory
             minValue: 0
-            maxValue: Math.max(SystemStatService.cpuHistoryMax, 1)
+            maxValue: 100
             minValue2: Math.max(SystemStatService.cpuTempHistoryMin - 5, 0)
             maxValue2: Math.max(SystemStatService.cpuTempHistoryMax + 5, 1)
+            autoScale: false
             color: Color.mPrimary
             color2: Color.mError
             fill: true
             fillOpacity: 0.15
+            updateInterval: Settings.data.systemMonitor.cpuPollingInterval
           }
         }
       }
@@ -170,7 +172,7 @@ SmartPanel {
             }
 
             NText {
-              text: `${Math.round(SystemStatService.memPercent)}% • ${SystemStatService.formatMemoryGb(SystemStatService.memGb).replace(/[^0-9.]/g, "")} GB`
+              text: `${Math.round(SystemStatService.memPercent)}% • ${SystemStatService.formatGigabytes(SystemStatService.memGb).replace(/[^0-9.]/g, "")} GB`
               pointSize: Style.fontSizeXS
               color: Color.mPrimary
             }
@@ -205,10 +207,12 @@ SmartPanel {
             Layout.fillHeight: true
             values: SystemStatService.memHistory
             minValue: 0
-            maxValue: Math.max(SystemStatService.memHistoryMax, 1)
+            maxValue: 100
+            autoScale: false
             color: Color.mPrimary
             fill: true
             fillOpacity: 0.15
+            updateInterval: Settings.data.systemMonitor.memPollingInterval
           }
         }
       }
@@ -276,6 +280,7 @@ SmartPanel {
             color2: Color.mError
             fill: true
             fillOpacity: 0.15
+            updateInterval: Settings.data.systemMonitor.networkPollingInterval
           }
         }
       }
@@ -291,7 +296,7 @@ SmartPanel {
           anchors.right: parent.right
           anchors.top: parent.top
           anchors.margins: Style.marginM
-          spacing: Style.marginS
+          spacing: Style.marginXS
 
           // Load Average
           RowLayout {
@@ -313,6 +318,33 @@ SmartPanel {
 
             NText {
               text: `${SystemStatService.loadAvg1.toFixed(2)} • ${SystemStatService.loadAvg5.toFixed(2)} • ${SystemStatService.loadAvg15.toFixed(2)}`
+              pointSize: Style.fontSizeXS
+              color: Color.mOnSurface
+              Layout.fillWidth: true
+              horizontalAlignment: Text.AlignRight
+            }
+          }
+
+          // GPU Temperature (only if available)
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: Style.marginS
+            visible: SystemStatService.gpuAvailable
+
+            NIcon {
+              icon: "gpu-temperature"
+              pointSize: Style.fontSizeM
+              color: Color.mPrimary
+            }
+
+            NText {
+              text: I18n.tr("system-monitor.gpu-temp") + ":"
+              pointSize: Style.fontSizeXS
+              color: Color.mOnSurfaceVariant
+            }
+
+            NText {
+              text: `${Math.round(SystemStatService.gpuTemp)}°C`
               pointSize: Style.fontSizeXS
               color: Color.mOnSurface
               Layout.fillWidth: true
@@ -352,33 +384,6 @@ SmartPanel {
             }
           }
 
-          // GPU Temperature (only if available)
-          RowLayout {
-            Layout.fillWidth: true
-            spacing: Style.marginS
-            visible: SystemStatService.gpuAvailable
-
-            NIcon {
-              icon: "gpu-temperature"
-              pointSize: Style.fontSizeM
-              color: Color.mPrimary
-            }
-
-            NText {
-              text: I18n.tr("system-monitor.gpu-temp") + ":"
-              pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
-            }
-
-            NText {
-              text: `${Math.round(SystemStatService.gpuTemp)}°C`
-              pointSize: Style.fontSizeXS
-              color: Color.mOnSurface
-              Layout.fillWidth: true
-              horizontalAlignment: Text.AlignRight
-            }
-          }
-
           // Swap details (only visible if swap is enabled)
           RowLayout {
             Layout.fillWidth: true
@@ -398,7 +403,7 @@ SmartPanel {
             }
 
             NText {
-              text: `${SystemStatService.formatMemoryGb(SystemStatService.swapGb).replace(/[^0-9.]/g, "")} / ${SystemStatService.formatMemoryGb(SystemStatService.swapTotalGb).replace(/[^0-9.]/g, "")} GB`
+              text: `${SystemStatService.formatGigabytes(SystemStatService.swapGb).replace(/[^0-9.]/g, "")} / ${SystemStatService.formatGigabytes(SystemStatService.swapTotalGb).replace(/[^0-9.]/g, "")} GB`
               pointSize: Style.fontSizeXS
               color: Color.mOnSurface
               Layout.fillWidth: true
