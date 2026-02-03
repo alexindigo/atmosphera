@@ -1135,8 +1135,8 @@
     "subTabLabel": "common.sound"
   },
   {
-    "labelKey": "panels.notifications.media-toast-label",
-    "descriptionKey": "panels.notifications.media-toast-description",
+    "labelKey": "panels.notifications.toast-media-label",
+    "descriptionKey": "panels.notifications.toast-media-description",
     "widget": "NCheckbox",
     "tab": 9,
     "tabLabel": "common.notifications",
@@ -1147,6 +1147,15 @@
     "labelKey": "panels.notifications.toast-keyboard-label",
     "descriptionKey": "panels.notifications.toast-keyboard-description",
     "widget": "NCheckbox",
+    "tab": 9,
+    "tabLabel": "common.notifications",
+    "subTab": 4,
+    "subTabLabel": "common.toast"
+  },
+  {
+    "labelKey": "panels.notifications.toast-battery-label",
+    "descriptionKey": "panels.notifications.toast-battery-description",
+    "widget": "NLabel",
     "tab": 9,
     "tabLabel": "common.notifications",
     "subTab": 4,
