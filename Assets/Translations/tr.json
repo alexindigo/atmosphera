@@ -1191,8 +1191,6 @@
       "history-low-urgency-label": "Düşük aciliyeti geçmişe kaydet",
       "history-normal-urgency-description": "Normal öncelikli bildirimleri geçmişe kaydet.",
       "history-normal-urgency-label": "Normal aciliyeti geçmişe kaydet",
-      "media-toast-description": "Medya oynatma durumu değiştiğinde bir bildirim göster.",
-      "media-toast-label": "Medya",
       "monitors-desc": "Bildirimleri belirli ekranlarda gösterin. Hiçbiri seçilmezse varsayılan olarak tümünde gösterilir.",
       "settings-always-on-top-description": "Bildirimleri tam ekran pencerelerinin ve diğer katmanların üzerinde görüntüle.",
       "settings-background-opacity-description": "Bildirim arka planlarının opaklığını ayarlayın.",
@@ -1232,7 +1230,9 @@
       "sounds-volume-label": "Ses seviyesi",
       "toast-desc": "Bildirim penceresi görünümünü ve davranışını yapılandırın.",
       "toast-keyboard-description": "Klavye düzeni değiştiğinde bir bildirim göster.",
-      "toast-keyboard-label": "Klavye düzeni"
+      "toast-keyboard-label": "Klavye düzeni",
+      "toast-media-description": "Medya oynatma durumu değiştiğinde bir bildirim göster.",
+      "toast-media-label": "Medya"
     },
     "osd": {
       "always-on-top-description": "OSD'yi tam ekran pencerelerinin ve diğer katmanların üzerinde görüntüle.",

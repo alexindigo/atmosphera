@@ -1088,13 +1088,13 @@
       "wifi-description": "Styr trådlause nettverk (krev NetworkManager)."
     },
     "notifications": {
-      "media-toast-description": "Viser skjermvarsel når det er ei endring i mediaavspelingsstatus.",
-      "media-toast-label": "Media",
       "settings-background-opacity-description": "Endrar på kor ugjennomsynlege varselbakgrunnar er.",
       "sounds-excluded-apps-description": "Ikkje spel av varselljoden for visse applikasjonar som har eigne ljodar.",
       "toast-desc": "Vel varseloppførsel og utsjånad.",
       "toast-keyboard-description": "Viser skjermvarsel når knappefjøloppsett er endra.",
-      "toast-keyboard-label": "Knappefjøloppsett"
+      "toast-keyboard-label": "Knappefjøloppsett",
+      "toast-media-description": "Viser skjermvarsel når det er ei endring i mediaavspelingsstatus.",
+      "toast-media-label": "Media"
     },
     "osd": {
       "background-opacity-description": "Styrer kor gjennomsynleg skjermvisingsbakgrunnen er.",

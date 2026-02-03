@@ -1191,8 +1191,6 @@
       "history-low-urgency-label": "Alacsony sürgősség mentése az előzményekbe",
       "history-normal-urgency-description": "Normál prioritású értesítések mentése az előzményekbe.",
       "history-normal-urgency-label": "Normál sürgősség mentése az előzményekbe",
-      "media-toast-description": "Toast üzenet megjelenítése a média lejátszási állapotának változásakor.",
-      "media-toast-label": "Média",
       "monitors-desc": "Értesítés megjelenítése meghatározott monitorokon. Alapértelmezetten mindegyiken, ha nincs kiválasztva.",
       "settings-always-on-top-description": "Értesítések megjelenítése teljes képernyős ablakok és más rétegek felett.",
       "settings-background-opacity-description": "Az értesítési hátterek átlátszóságának beállítása.",
@@ -1232,7 +1230,9 @@
       "sounds-volume-label": "Hangerő",
       "toast-desc": "Felugró üzenet megjelenésének és viselkedésének beállítása.",
       "toast-keyboard-description": "Felugró üzenet megjelenítése a billentyűzetkiosztás változásakor.",
-      "toast-keyboard-label": "Billentyűzetkiosztás"
+      "toast-keyboard-label": "Billentyűzetkiosztás",
+      "toast-media-description": "Toast üzenet megjelenítése a média lejátszási állapotának változásakor.",
+      "toast-media-label": "Média"
     },
     "osd": {
       "always-on-top-description": "Képernyőn megjelenő kijelző megjelenítése teljes képernyős ablakok és más rétegek felett.",

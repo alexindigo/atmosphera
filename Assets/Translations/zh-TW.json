@@ -1191,8 +1191,6 @@
       "history-low-urgency-label": "儲存低急迫性到歷史通知",
       "history-normal-urgency-description": "將普通急迫的通知存放到歷史通知",
       "history-normal-urgency-label": "儲存普通急迫到歷史通知",
-      "media-toast-description": "媒體播放狀態變更時顯示氣泡訊息",
-      "media-toast-label": "媒體",
       "monitors-desc": "只在特定的顯示器顯示通知, 如果全部取消勾選則會顯示在所有顯示器",
       "settings-always-on-top-description": "在全螢幕視窗與其他層級上方顯示通知。",
       "settings-background-opacity-description": "調整通知背景的不透明度",
@@ -1232,7 +1230,9 @@
       "sounds-volume-label": "音效音量",
       "toast-desc": "設定氣泡訊息的外觀及行為",
       "toast-keyboard-description": "當鍵盤佈局改變時顯示氣泡訊息",
-      "toast-keyboard-label": "鍵盤佈局"
+      "toast-keyboard-label": "鍵盤佈局",
+      "toast-media-description": "媒體播放狀態變更時顯示氣泡訊息",
+      "toast-media-label": "媒體"
     },
     "osd": {
       "always-on-top-description": "將螢幕顯示在全螢幕視窗與其他層疊之上",

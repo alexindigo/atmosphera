@@ -1191,8 +1191,6 @@
       "history-low-urgency-label": "중요도 낮음 기록 저장",
       "history-normal-urgency-description": "보통 레벨의 알림을 기록에 저장합니다.",
       "history-normal-urgency-label": "중요도 보통 기록 저장",
-      "media-toast-description": "미디어 재생 상태가 변경될 때 토스트를 표시합니다.",
-      "media-toast-label": "미디어",
       "monitors-desc": "특정 모니터에 알림을 표시합니다. 선택하지 않으면 모든 모니터에 표시됩니다.",
       "settings-always-on-top-description": "전체 화면 창 및 다른 레이어 위에 알림을 표시합니다.",
       "settings-background-opacity-description": "알림 배경의 불투명도를 조정합니다.",
@@ -1232,7 +1230,9 @@
       "sounds-volume-label": "소리 볼륨",
       "toast-desc": "토스트 모양과 동작을 구성합니다.",
       "toast-keyboard-description": "키보드 레이아웃 변경 시 토스트를 표시합니다.",
-      "toast-keyboard-label": "키보드 레이아웃"
+      "toast-keyboard-label": "키보드 레이아웃",
+      "toast-media-description": "미디어 재생 상태가 변경될 때 토스트를 표시합니다.",
+      "toast-media-label": "미디어"
     },
     "osd": {
       "always-on-top-description": "전체 화면 창 및 다른 레이어 위에 OSD를 표시합니다.",

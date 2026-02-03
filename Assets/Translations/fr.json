@@ -1191,8 +1191,6 @@
       "history-low-urgency-label": "Enregistrer l'urgence faible dans l'historique",
       "history-normal-urgency-description": "Enregistrer les notifications de priorité normale dans l'historique.",
       "history-normal-urgency-label": "Enregistrer l'urgence normale dans l'historique",
-      "media-toast-description": "Afficher une notification toast lorsque l'état de lecture du média change.",
-      "media-toast-label": "Média",
       "monitors-desc": "Afficher les notifications sur des moniteurs spécifiques. Par défaut, sur tous si aucun n'est choisi.",
       "settings-always-on-top-description": "Afficher les notifications au-dessus des fenêtres en plein écran et des autres applications.",
       "settings-background-opacity-description": "Ajuster l'opacité des arrière-plans de notifications.",
@@ -1232,7 +1230,9 @@
       "sounds-volume-label": "Volume sonore",
       "toast-desc": "Configurer l'apparence et le comportement des notifications toast.",
       "toast-keyboard-description": "Afficher une notification lorsque la disposition du clavier change.",
-      "toast-keyboard-label": "Disposition du clavier"
+      "toast-keyboard-label": "Disposition du clavier",
+      "toast-media-description": "Afficher une notification toast lorsque l'état de lecture du média change.",
+      "toast-media-label": "Média"
     },
     "osd": {
       "always-on-top-description": "Afficher l'OSD au-dessus des fenêtres plein écran et autres couches.",

@@ -1191,8 +1191,6 @@
       "history-low-urgency-label": "Spara låg prioritet i historiken",
       "history-normal-urgency-description": "Spara meddelanden med normal prioritet i historiken.",
       "history-normal-urgency-label": "Spara normal prioritet i historiken",
-      "media-toast-description": "Visa en toast när mediaspelningsstatus ändras.",
-      "media-toast-label": "Media",
       "monitors-desc": "Visa meddelanden på specifika skärmar. Standardinställningen är alla om ingen väljs.",
       "settings-always-on-top-description": "Visa meddelanden ovanför helskärmsfönster och andra lager.",
       "settings-background-opacity-description": "Justera opaciteten för meddelandenas bakgrund.",
@@ -1232,7 +1230,9 @@
       "sounds-volume-label": "Ljudvolym",
       "toast-desc": "Konfigurera utseende och beteende för toast.",
       "toast-keyboard-description": "Visa en toast när tangentbordslayouten ändras.",
-      "toast-keyboard-label": "Tangentbordslayout"
+      "toast-keyboard-label": "Tangentbordslayout",
+      "toast-media-description": "Visa en toast när mediaspelningsstatus ändras.",
+      "toast-media-label": "Media"
     },
     "osd": {
       "always-on-top-description": "Visa OSD ovanför helskärmsfönster och andra lager.",

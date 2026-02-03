@@ -1191,8 +1191,6 @@
       "history-low-urgency-label": "Guardar urgencia baja en el historial",
       "history-normal-urgency-description": "Guardar notificaciones de prioridad normal en el historial.",
       "history-normal-urgency-label": "Guardar urgencia normal en el historial",
-      "media-toast-description": "Mostrar un toast cuando cambie el estado de reproducción multimedia.",
-      "media-toast-label": "Multimedia",
       "monitors-desc": "Muestra notificaciones en monitores específicos. Por defecto, se muestra en todos si no se elige ninguno.",
       "settings-always-on-top-description": "Muestra las notificaciones sobre ventanas a pantalla completa y otras capas.",
       "settings-background-opacity-description": "Ajustar la opacidad de los fondos de las notificaciones.",
@@ -1232,7 +1230,9 @@
       "sounds-volume-label": "Volumen del sonido",
       "toast-desc": "Configurar la apariencia y el comportamiento de las notificaciones toast.",
       "toast-keyboard-description": "Mostrar una notificación cuando cambie la distribución del teclado.",
-      "toast-keyboard-label": "Distribución del teclado"
+      "toast-keyboard-label": "Distribución del teclado",
+      "toast-media-description": "Mostrar un toast cuando cambie el estado de reproducción multimedia.",
+      "toast-media-label": "Multimedia"
     },
     "osd": {
       "always-on-top-description": "Mostrar OSD por encima de ventanas de pantalla completa y otras capas.",

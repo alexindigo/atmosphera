@@ -1191,8 +1191,6 @@
       "history-low-urgency-label": "Niedrige Dringlichkeit im Verlauf speichern",
       "history-normal-urgency-description": "Normale Prioritätsbenachrichtigungen im Verlauf speichern.",
       "history-normal-urgency-label": "Normale Dringlichkeit im Verlauf speichern",
-      "media-toast-description": "Eine Toast-Benachrichtigung anzeigen, wenn sich der Wiedergabestatus von Medien ändert.",
-      "media-toast-label": "Medien",
       "monitors-desc": "Benachrichtigungen auf bestimmten Monitoren anzeigen. Standardmäßig werden sie auf allen Monitoren angezeigt.",
       "settings-always-on-top-description": "Benachrichtigungen über Vollbildfenstern und anderen Ebenen anzeigen.",
       "settings-background-opacity-description": "Transparenz der Benachrichtigungshintergründe anpassen.",
@@ -1232,7 +1230,9 @@
       "sounds-volume-label": "Sound-Lautstärke",
       "toast-desc": "Konfigurieren Sie das Aussehen und Verhalten von Toast-Benachrichtigungen.",
       "toast-keyboard-description": "Zeige eine Toast-Benachrichtigung an, wenn sich das Tastaturlayout ändert.",
-      "toast-keyboard-label": "Tastaturlayout"
+      "toast-keyboard-label": "Tastaturlayout",
+      "toast-media-description": "Eine Toast-Benachrichtigung anzeigen, wenn sich der Wiedergabestatus von Medien ändert.",
+      "toast-media-label": "Medien"
     },
     "osd": {
       "always-on-top-description": "On-Screen Display über Vollbildfenstern und anderen Ebenen anzeigen.",

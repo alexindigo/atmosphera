@@ -1191,8 +1191,6 @@
       "history-low-urgency-label": "将低紧急度保存到历史记录",
       "history-normal-urgency-description": "将正常优先级通知保存到历史记录。",
       "history-normal-urgency-label": "将正常紧急度保存到历史记录",
-      "media-toast-description": "媒体播放状态改变时显示一个 Toast。",
-      "media-toast-label": "媒体",
       "monitors-desc": "在特定显示器上显示通知。如果未选择，则默认为全部。",
       "settings-always-on-top-description": "在全屏窗口和其他图层上方显示通知。",
       "settings-background-opacity-description": "调整通知背景的透明度。",
@@ -1232,7 +1230,9 @@
       "sounds-volume-label": "声音音量",
       "toast-desc": "配置气泡通知的外观和行为。",
       "toast-keyboard-description": "键盘布局改变时显示一个 Toast。",
-      "toast-keyboard-label": "键盘布局"
+      "toast-keyboard-label": "键盘布局",
+      "toast-media-description": "媒体播放状态改变时显示一个 Toast。",
+      "toast-media-label": "媒体"
     },
     "osd": {
       "always-on-top-description": "在全屏窗口和其他图层之上显示 OSD。",
