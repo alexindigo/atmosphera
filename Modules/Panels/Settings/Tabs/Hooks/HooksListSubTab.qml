@@ -68,7 +68,7 @@ ColumnLayout {
                               Settings.saveImmediate();
                             }, val => {
                               if (val)
-                              Quickshell.execDetached(["sh", "-lc", val.replace("$1", "test_wallpaper_path").replace("$2", "test_screen")]);
+                              Quickshell.execDetached(["sh", "-c", val.replace("$1", "test_wallpaper_path").replace("$2", "test_screen")]);
                             })
   }
 
@@ -82,7 +82,7 @@ ColumnLayout {
                               Settings.saveImmediate();
                             }, val => {
                               if (val)
-                              Quickshell.execDetached(["sh", "-lc", val.replace("$1", "true")]);
+                              Quickshell.execDetached(["sh", "-c", val.replace("$1", "true")]);
                             })
   }
 
@@ -96,7 +96,7 @@ ColumnLayout {
                               Settings.saveImmediate();
                             }, val => {
                               if (val)
-                              Quickshell.execDetached(["sh", "-lc", val]);
+                              Quickshell.execDetached(["sh", "-c", val]);
                             })
   }
 
@@ -110,7 +110,7 @@ ColumnLayout {
                               Settings.saveImmediate();
                             }, val => {
                               if (val)
-                              Quickshell.execDetached(["sh", "-lc", val]);
+                              Quickshell.execDetached(["sh", "-c", val]);
                             })
   }
 
@@ -124,7 +124,7 @@ ColumnLayout {
                               Settings.saveImmediate();
                             }, val => {
                               if (val)
-                              Quickshell.execDetached(["sh", "-lc", val]);
+                              Quickshell.execDetached(["sh", "-c", val]);
                             })
   }
 
@@ -138,7 +138,7 @@ ColumnLayout {
                               Settings.saveImmediate();
                             }, val => {
                               if (val)
-                              Quickshell.execDetached(["sh", "-lc", val]);
+                              Quickshell.execDetached(["sh", "-c", val]);
                             })
   }
 
@@ -152,7 +152,7 @@ ColumnLayout {
                               Settings.saveImmediate();
                             }, val => {
                               if (val)
-                              Quickshell.execDetached(["sh", "-lc", val + " test"]);
+                              Quickshell.execDetached(["sh", "-c", val + " test"]);
                             })
   }
 }

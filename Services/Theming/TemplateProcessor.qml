@@ -106,7 +106,7 @@ Singleton {
 
     const script = buildGenerationScript(content, wp, mode);
 
-    generateProcess.command = ["sh", "-lc", script];
+    generateProcess.command = ["sh", "-c", script];
     generateProcess.running = true;
   }
 
@@ -166,7 +166,7 @@ Singleton {
     // Add user templates if enabled
     script += buildUserTemplateCommandForPredefined(schemeData, mode);
 
-    generateProcess.command = ["sh", "-lc", script];
+    generateProcess.command = ["sh", "-c", script];
     generateProcess.running = true;
   }
 
@@ -406,7 +406,7 @@ Singleton {
                                          }
                                        });
 
-    copyProcess.command = ["sh", "-lc", script];
+    copyProcess.command = ["sh", "-c", script];
     copyProcess.running = true;
   }
 
@@ -435,7 +435,7 @@ Singleton {
                                        });
 
     if (commands.length > 0) {
-      copyProcess.command = ["sh", "-lc", commands.join('; ')];
+      copyProcess.command = ["sh", "-c", commands.join('; ')];
       copyProcess.running = true;
     }
   }
