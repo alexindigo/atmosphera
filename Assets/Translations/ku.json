@@ -216,7 +216,11 @@
       "swap-usage-description": "Bikaranîna bîra swapê nîşan bide.",
       "swap-usage-label": "Bikaranîna Swapê",
       "use-monospace-font-description": "Bi kar tîne fonta monospace ji bo firehiya karakterê ya domdar.",
-      "use-monospace-font-label": "Tîpa yek-firehî"
+      "use-monospace-font-label": "Tîpa yek-firehî",
+      "storage-as-percentage-label": "Dîsk wekî rêje",
+      "storage-as-percentage-description": "Cihê dîskê li şûna nirxên mutleq, wekî rêjeyê nîşan bide.",
+      "storage-available-label": "Cihê dîskê yê berdest",
+      "storage-available-description": "Nîşan dide ka çiqas cihê dîskê berdest e, li şûna ku nîşan bide ka çiqas hatiye bikaranîn."
     },
     "taskbar": {
       "colorize-icons-description": "Rengên temayê li îkonên taskbarê bicîh bike.",
@@ -1350,6 +1354,7 @@
       "critical-color-label": "Rengê krîtîk",
       "custom-highlight-colors-title-label": "Rengên ronîkirina xwerû",
       "disk-section-label": "Bikaranîna dîskê",
+      "disk-available-label": "Dîsk berdest e",
       "enable-dgpu-monitoring-description": "Hişyarî: Ev dê YKG a te ya veqetandî (NVIDIA/AMD) hişyar bike, ku dibe ku bandorek girîng li ser jiyana pîlê li ser laptopên bi grafîkên hîbrîd bike.",
       "enable-dgpu-monitoring-label": "Çavdêriya YKG veqetandî çalak bike",
       "external-monitor-description": "Fermanî an rêya sepanê binivîse ku dema sepana monitora pergala derveyî çalak dike were xebitandin.",

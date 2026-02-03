@@ -195,28 +195,6 @@ def _hue_to_family(hue: float) -> int:
         return 5  # PURPLE
 
 
-def _hue_to_family_alternative(hue: float) -> int:
-    """
-    Alternative hue mapping for Alternate mode.
-    Splits Emerald/Mint from Teal/Cyan to prioritize the latter.
-    """
-    if hue >= 330 or hue < 30:
-        return 0  # RED
-    elif hue < 60:
-        return 1  # ORANGE
-    elif hue < 105:
-        return 2  # YELLOW
-    elif hue < 155:
-        return 3  # GREEN
-    elif hue < 185:
-        return 4  # EMERALD/MINT
-    elif hue < 215:
-        return 5  # TEAL/CYAN
-    elif hue < 270:
-        return 6  # BLUE
-    else:
-        return 7  # PURPLE
-
 def _score_colors_count(
     colors_with_counts: list[tuple[RGB, int]],
 ) -> list[tuple[Color, float]]:
@@ -283,84 +261,6 @@ def _score_colors_count(
     result_colors.sort(key=lambda x: -x[1])
     return result_colors
 
-
-def _score_colors_count_alt(
-    colors_with_counts: list[tuple[RGB, int]],
-) -> list[tuple[Color, float]]:
-    """
-    Score colors prioritizing a 'Subject' color.
-
-    Logic:
-    1. Identify the most dominant family by area (usually the background).
-    2. Skip it if possible.
-    3. From the remaining families, pick the one with most vibrant colors.
-       NOTE: We give a slight priority boost to TEAL/CYAN (5) to catch
-       specific character subjects.
-    """
-    MIN_CHROMA = 10.0
-
-    hue_families: dict[int, list[tuple[Color, float, float, int]]] = {}
-
-    for rgb, count in colors_with_counts:
-        color = Color.from_rgb(rgb)
-        try:
-            hct = color.to_hct()
-            if hct.chroma >= MIN_CHROMA:
-                family = _hue_to_family_alternative(hct.hue)
-                if family not in hue_families:
-                    hue_families[family] = []
-                hue_families[family].append((color, hct.hue, hct.chroma, count))
-        except (ValueError, ZeroDivisionError):
-            pass
-
-    if not hue_families:
-        result = []
-        for rgb, count in colors_with_counts:
-            color = Color.from_rgb(rgb)
-            result.append((color, float(count)))
-        result.sort(key=lambda x: -x[1])
-        if len(result) > 1:
-            return [result[1]] + [result[0]] + result[2:]
-        return result
-
-    area_rank = []
-    for f, colors in hue_families.items():
-        area_rank.append((f, sum(c[3] for c in colors)))
-    area_rank.sort(key=lambda x: -x[1])
-
-    remaining_families = [f for f, _ in area_rank]
-    dominant_family = remaining_families[0]
-    if len(remaining_families) > 1:
-        remaining_families = remaining_families[1:]
-
-    vibrancy_rank = []
-    for f in remaining_families:
-        mx_chroma = max(c[2] for c in hue_families[f])
-        # Significant boost for Teal (5) vs Emerald (4) to ensure subject focus
-        # This helps target "Teal" characters even if Emerald backgrounds are vibrant.
-        weight = mx_chroma * (2.0 if f == 5 else 1.0)
-        vibrancy_rank.append((f, weight))
-    vibrancy_rank.sort(key=lambda x: -x[1])
-
-    best_family = vibrancy_rank[0][0]
-    
-    result_families = [best_family]
-    if dominant_family != best_family:
-        result_families.append(dominant_family)
-    for f in [fr[0] for fr in area_rank]:
-        if f not in result_families:
-            result_families.append(f)
-
-    result_colors = []
-    for i, family in enumerate(result_families):
-        family_colors = hue_families[family]
-        family_colors.sort(key=lambda x: (-x[3], -x[2]))
-        for color, _, chroma, count in family_colors:
-            score = (len(result_families) - i) * 1000000 + count * 1000 + chroma
-            result_colors.append((color, score))
-
-    result_colors.sort(key=lambda x: -x[1])
-    return result_colors
 
 def _score_colors_muted(
     colors_with_counts: list[tuple[RGB, int]],
@@ -534,7 +434,6 @@ def extract_palette(
                  - "population": matugen-like, representative colors (M3 schemes)
                  - "chroma": vibrant, chroma-prioritized with centroid averaging
                  - "count": area-dominant, picks by pixel count (faithful mode)
-                 - "count-alt": area-dominant, picks SECOND most prominent family
                  - "muted": like count but without chroma filtering (monochrome wallpapers)
 
     Returns:
@@ -552,7 +451,7 @@ def extract_palette(
         # Don't pre-filter for population scoring - let the Score algorithm filter
         # This matches matugen which quantizes all pixels, then filters in scoring
         filtered = sampled
-    elif scoring in ("count", "count-alt"):
+    elif scoring == "count":
         # Faithful mode: many clusters to capture color diversity, no pre-filtering
         # Scoring will filter to colorful colors and pick by count
         cluster_count = 48
@@ -595,10 +494,6 @@ def extract_palette(
         # Use representative colors with count scoring (faithful mode)
         colors_for_scoring = [(c[1], c[2]) for c in clusters]
         scored = _score_colors_count(colors_for_scoring)
-    elif scoring == "count-alt":
-        # Use representative colors with count scoring, but 2nd family (faithful-alt mode)
-        colors_for_scoring = [(c[1], c[2]) for c in clusters]
-        scored = _score_colors_count_alt(colors_for_scoring)
     elif scoring == "muted":
         # Use representative colors with muted scoring (no chroma filter)
         colors_for_scoring = [(c[1], c[2]) for c in clusters]

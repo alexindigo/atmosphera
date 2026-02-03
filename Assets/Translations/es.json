@@ -49,7 +49,7 @@
       "device-description": "Seleccione qué dispositivo de batería mostrar.",
       "device-label": "Dispositivo de batería",
       "hide-if-idle-description": "Ocultar el widget cuando la batería no se esté cargando ni descargando.",
-      "hide-if-idle-label": "Ocultar cuando inactivo",
+      "hide-if-idle-label": "Ocultar cuando esté inactivo",
       "hide-if-not-detected-description": "Ocultar el widget cuando no se detecte batería en el sistema.",
       "hide-if-not-detected-label": "Ocultar si no se detecta",
       "low-battery-threshold-description": "Muestra una advertencia cuando la batería cae por debajo de este porcentaje.",
@@ -145,7 +145,7 @@
     },
     "lock-keys": {
       "hide-when-off-description": "Ocultar el indicador cuando la tecla no está activa.",
-      "hide-when-off-label": "Ocultar cuando desactivado",
+      "hide-when-off-label": "Ocultar cuando está desactivado",
       "show-caps-lock-description": "Mostrar el estado de Bloq Mayús.",
       "show-caps-lock-label": "Bloq Mayús",
       "show-num-lock-description": "Mostrar el estado de Bloq Num.",
@@ -216,7 +216,11 @@
       "swap-usage-description": "Mostrar el uso de la memoria swap.",
       "swap-usage-label": "Uso de swap",
       "use-monospace-font-description": "Utilice fuente monoespaciada para un ancho de carácter consistente.",
-      "use-monospace-font-label": "Fuente monoespaciada"
+      "use-monospace-font-label": "Fuente monoespaciada",
+      "storage-as-percentage-label": "Disco como porcentaje",
+      "storage-as-percentage-description": "Mostrar el espacio en disco como porcentaje en lugar de valores absolutos.",
+      "storage-available-label": "Espacio disponible en disco",
+      "storage-available-description": "Muestra cuánto espacio en disco hay disponible en lugar de cuánto se está utilizando."
     },
     "taskbar": {
       "colorize-icons-description": "Aplicar colores del tema a los iconos de la barra de tareas.",
@@ -392,7 +396,6 @@
     "events": "Eventos",
     "execute": "Ejecutar",
     "faithful": "Fiel",
-    "faithful-alt": "Fiel (Alternativo)",
     "focus": "Enfoque",
     "frequency": "Frecuencia",
     "gateway": "Puerta de enlace",
@@ -511,8 +514,8 @@
   },
   "hide-modes": {
     "auto-hide": "Ocultación Automática",
-    "hidden": "Ocultar cuando vacío",
-    "idle": "Ocultar cuando inactivo",
+    "hidden": "Ocultar cuando esté vacío",
+    "idle": "Ocultar cuando esté inactivo",
     "transparent": "Transparente cuando esté vacío",
     "visible": "Mostrar siempre"
   },
@@ -613,7 +616,7 @@
     "frame-rates-fps": "{fps} FPS",
     "scrolling-modes": {
       "always": "Desplazar siempre",
-      "hover": "Desplazar encima",
+      "hover": "Desplazar al posar el puntero",
       "never": "No desplazar nunca"
     },
     "session-menu-grid-layout": {
@@ -1351,6 +1354,7 @@
       "critical-color-label": "Color crítico",
       "custom-highlight-colors-title-label": "Colores de resaltado personalizados",
       "disk-section-label": "Uso de disco",
+      "disk-available-label": "Disco disponible",
       "enable-dgpu-monitoring-description": "Advertencia: Esto activará tu GPU dedicada (NVIDIA/AMD), lo que podría afectar significativamente la duración de la batería en portátiles con gráficos híbridos.",
       "enable-dgpu-monitoring-label": "Habilitar la monitorización de la GPU dedicada",
       "external-monitor-description": "Ingrese el comando o ruta de la aplicación para ejecutar al activar la aplicación externa del monitor del sistema.",

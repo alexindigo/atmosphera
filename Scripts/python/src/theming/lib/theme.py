@@ -860,7 +860,7 @@ def generate_theme(
     """
     # Handle vibrant/faithful modes (use generate_normal_* functions)
     # Both use same theme generation, but different color extraction (handled in palette.py)
-    if scheme_type in ("vibrant", "faithful", "faithful-alt"):
+    if scheme_type in ("vibrant", "faithful"):
         if mode == "dark":
             return generate_normal_dark(palette)
         return generate_normal_light(palette)
