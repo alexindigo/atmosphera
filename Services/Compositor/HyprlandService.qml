@@ -178,6 +178,9 @@ Item {
 
       for (var i = 0; i < hlWorkspaces.length; i++) {
         const ws = hlWorkspaces[i];
+        if (ws.name && ws.name.startsWith("special:"))
+          continue;
+
         const wsData = {
           "id": ws.id,
           "idx": ws.id,
