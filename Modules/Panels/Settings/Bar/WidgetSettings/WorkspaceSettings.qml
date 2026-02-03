@@ -32,6 +32,7 @@ ColumnLayout {
   property string valueOccupiedColor: widgetData.occupiedColor !== undefined ? widgetData.occupiedColor : widgetMetadata.occupiedColor
   property string valueEmptyColor: widgetData.emptyColor !== undefined ? widgetData.emptyColor : widgetMetadata.emptyColor
   property bool valueShowBadge: widgetData.showBadge !== undefined ? widgetData.showBadge : widgetMetadata.showBadge
+  property real valuePillSize: widgetData.pillSize !== undefined ? widgetData.pillSize : widgetMetadata.pillSize
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
@@ -51,6 +52,7 @@ ColumnLayout {
     settings.occupiedColor = valueOccupiedColor;
     settings.emptyColor = valueEmptyColor;
     settings.showBadge = valueShowBadge;
+    settings.pillSize = valuePillSize;
     return settings;
   }
 
@@ -95,6 +97,21 @@ ColumnLayout {
       settingsChanged(saveSettings());
     }
     visible: valueLabelMode === "name"
+  }
+
+  NValueSlider {
+    label: I18n.tr("bar.workspace.pill-size-label")
+    description: I18n.tr("bar.workspace.pill-size-description")
+    from: 0.4
+    to: 1.0
+    stepSize: 0.01
+    value: valuePillSize
+    onMoved: value => {
+               valuePillSize = value;
+               settingsChanged(saveSettings());
+             }
+    text: Math.round(valuePillSize * 100) + "%"
+    visible: !valueShowApplications
   }
 
   NToggle {
