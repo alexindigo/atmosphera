@@ -276,7 +276,7 @@
       "label-mode-label": "Label mode",
       "occupied-color-description": "Set the background color for occupied workspaces.",
       "occupied-color-label": "Occupied workspace color",
-      "pill-size-description": "Adjust the size of workspace pills (50%-100%).",
+      "pill-size-description": "Adjust the size of workspace pills.",
       "pill-size-label": "Pill size",
       "reverse-scrolling-description": "Reverse the direction of workspace switching when scrolling.",
       "reverse-scrolling-label": "Reverse scrolling",
