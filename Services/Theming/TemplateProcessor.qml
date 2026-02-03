@@ -248,11 +248,11 @@ Singleton {
                                                                       var resolvedPaths = TemplateRegistry.resolvedCodeClientPaths(client.name);
                                                                       if (isCodeClientEnabled(client.name) && resolvedPaths.length > 0) {
                                                                         resolvedPaths.forEach((resolvedPath, pathIndex) => {
-                                                                          var suffix = resolvedPaths.length > 1 ? `_${pathIndex}` : "";
-                                                                          lines.push(`\n[templates.code_${client.name}${suffix}]`);
-                                                                          lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${app.input}"`);
-                                                                          lines.push(`output_path = "${resolvedPath}"`);
-                                                                        });
+                                                                                                var suffix = resolvedPaths.length > 1 ? `_${pathIndex}` : "";
+                                                                                                lines.push(`\n[templates.code_${client.name}${suffix}]`);
+                                                                                                lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${app.input}"`);
+                                                                                                lines.push(`output_path = "${resolvedPath}"`);
+                                                                                              });
                                                                       }
                                                                     });
                                               }

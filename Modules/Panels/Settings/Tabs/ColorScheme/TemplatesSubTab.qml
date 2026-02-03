@@ -67,7 +67,8 @@ ColumnLayout {
           }
 
           if (include) {
-            if (client.path) validClients.push(client.path);
+            if (client.path)
+              validClients.push(client.path);
           }
         }
 

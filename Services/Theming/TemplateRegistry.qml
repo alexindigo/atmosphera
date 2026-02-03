@@ -405,8 +405,10 @@ Singleton {
 
   // Get resolved theme paths for a code client (returns array of all matching paths)
   function resolvedCodeClientPaths(clientName) {
-    if (clientName === "code") return resolvedCodePaths;
-    if (clientName === "codium") return resolvedCodiumPaths;
+    if (clientName === "code")
+      return resolvedCodePaths;
+    if (clientName === "codium")
+      return resolvedCodiumPaths;
     return [];
   }
 
@@ -445,10 +447,13 @@ Singleton {
     stdout: SplitParser {
       onRead: data => {
         var line = data.trim();
-        if (line) codeResolverProcess.paths.push(line);
+        if (line)
+        codeResolverProcess.paths.push(line);
       }
     }
-    onExited: { root.resolvedCodePaths = paths; }
+    onExited: {
+      root.resolvedCodePaths = paths;
+    }
   }
 
   Process {
@@ -459,10 +464,13 @@ Singleton {
     stdout: SplitParser {
       onRead: data => {
         var line = data.trim();
-        if (line) codiumResolverProcess.paths.push(line);
+        if (line)
+        codiumResolverProcess.paths.push(line);
       }
     }
-    onExited: { root.resolvedCodiumPaths = paths; }
+    onExited: {
+      root.resolvedCodiumPaths = paths;
+    }
   }
   // Build user templates TOML content
   function buildUserTemplatesToml() {
