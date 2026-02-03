@@ -293,7 +293,6 @@
   "battery": {
     "battery-health": "Battery health",
     "battery-level": "Battery level",
-    "capacity-level": "Capacity: {level}",
     "charging-rate": "Charging rate: {rate} W",
     "discharging-rate": "Discharging rate: {rate} W",
     "health": "Health: {percent}%",
@@ -1191,8 +1190,6 @@
       "history-low-urgency-label": "Save low urgency to history",
       "history-normal-urgency-description": "Save normal priority notifications to history.",
       "history-normal-urgency-label": "Save normal urgency to history",
-      "media-toast-description": "Show a toast when media playback state changes.",
-      "media-toast-label": "Media",
       "monitors-desc": "Show notification on specific monitors. Defaults to all if none are chosen.",
       "settings-always-on-top-description": "Display notifications above fullscreen windows and other layers.",
       "settings-background-opacity-description": "Adjust the opacity of notification backgrounds.",
@@ -1231,8 +1228,12 @@
       "sounds-volume-description": "Adjust the volume level for notification sounds.",
       "sounds-volume-label": "Sound volume",
       "toast-desc": "Configure toast appearance and behavior.",
+      "toast-battery-description": "Show a warning when the battery level falls below this percentage.",
+      "toast-battery-label": "Battery warning",
       "toast-keyboard-description": "Show a toast when the keyboard layout changes.",
-      "toast-keyboard-label": "Keyboard layout"
+      "toast-keyboard-label": "Keyboard layout",
+      "toast-media-description": "Show a toast when media playback state changes.",
+      "toast-media-label": "Media"
     },
     "osd": {
       "always-on-top-description": "Display OSD above fullscreen windows and other layers.",
@@ -1566,8 +1567,10 @@
       "title": "Airplane Mode"
     },
     "battery": {
+      "critical": "Critical battery",
+      "critical-desc": "Battery is at {percent}%. Please connect the charger immediately.",
       "low": "Low battery",
-      "low-desc": "Battery is at {percent}%. Please connect the charger"
+      "low-desc": "Battery is at {percent}%. Please connect the charger."
     },
     "bluetooth": {
       "address-copied": "Address copied to clipboard",
