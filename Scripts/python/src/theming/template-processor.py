@@ -12,6 +12,7 @@ Supported scheme types:
 - monochrome: Pure grayscale M3 scheme (chroma = 0, only error has color)
 - vibrant: Prioritizes the most saturated colors regardless of area coverage
 - faithful: Prioritizes dominant colors by area, what you see is what you get
+- faithful-alt: Like faithful, but prioritizes the 2nd most prominent color family
 - muted: Preserves hue but caps saturation low (for monochrome/monotonal wallpapers)
 
 Usage:
@@ -83,7 +84,7 @@ Examples:
     # Scheme type selection
     parser.add_argument(
         '--scheme-type',
-        choices=['tonal-spot', 'content', 'fruit-salad', 'rainbow', 'monochrome', 'vibrant', 'faithful', 'muted'],
+        choices=['tonal-spot', 'content', 'fruit-salad', 'rainbow', 'monochrome', 'vibrant', 'faithful', 'faithful-alt', 'muted'],
         default='tonal-spot',
         help='Color scheme type (default: tonal-spot)'
     )
@@ -275,6 +276,9 @@ def main() -> int:
                 # K-means with count scoring - picks dominant color by area coverage
                 # This ensures primary reflects what you actually see in the image
                 palette = extract_palette(pixels, k=5, scoring="count")
+            elif scheme_type == "faithful-alt":
+                # K-means with count-alt scoring - picks 2nd dominant family
+                palette = extract_palette(pixels, k=5, scoring="count-alt")
             elif scheme_type == "muted":
                 # K-means with muted scoring - accepts low/zero chroma colors
                 # For monochrome/monotonal wallpapers where dominant color has low saturation

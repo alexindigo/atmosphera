@@ -52,6 +52,10 @@ Singleton {
       "name": I18n.tr("common.faithful")
     },
     {
+      "key": "faithful-alt",
+      "name": I18n.tr("common.faithful-alt")
+    },
+    {
       "key": "muted",
       "name": I18n.tr("common.color-muted")
     },

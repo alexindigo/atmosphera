@@ -25,6 +25,7 @@ Item {
 
   property var outputCache: ({})
   property var workspaceCache: ({})
+  property string focusedOutputName: ""
 
   function initialize() {
     niriEventStream.connected = true;
@@ -142,7 +143,20 @@ Item {
       workspaces.append(workspacesList[i]);
     }
 
+    // Update focused output from focused workspace
+    updateFocusedOutput();
+
     workspaceChanged();
+  }
+
+  function updateFocusedOutput() {
+    for (var i = 0; i < workspaces.count; i++) {
+      var ws = workspaces.get(i);
+      if (ws.isFocused && ws.output) {
+        focusedOutputName = ws.output;
+        return;
+      }
+    }
   }
 
   Socket {
@@ -489,14 +503,15 @@ Item {
   }
 
   function getFocusedScreen() {
-    // On niri the code below only works when you have an actual app selected on that screen.
+    // Use focused output name tracked from workspace events
+    if (focusedOutputName) {
+      for (var i = 0; i < Quickshell.screens.length; i++) {
+        if (Quickshell.screens[i].name === focusedOutputName) {
+          return Quickshell.screens[i];
+        }
+      }
+    }
     return null;
-
-    // const activeToplevel = ToplevelManager.activeToplevel;
-    // if (activeToplevel && activeToplevel.screens && activeToplevel.screens.length > 0) {
-    //   return activeToplevel.screens[0];
-    // }
-    // return null;
   }
 
   function spawn(command) {
