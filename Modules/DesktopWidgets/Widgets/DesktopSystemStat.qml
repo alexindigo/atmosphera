@@ -121,17 +121,17 @@ DraggableDesktopWidget {
   }
 
   // Graph min/max values
-  readonly property real graphMinValue: root.statType === "GPU" ? SystemStatService.gpuTempHistoryMin : 0
+  readonly property real graphMinValue: root.statType === "GPU" ? Math.max(SystemStatService.gpuTempHistoryMin - 5, 0) : 0
   readonly property real graphMaxValue: {
     switch (root.statType) {
     case "CPU":
-      return Math.max(SystemStatService.cpuHistoryMax, 1);
-    case "GPU":
-      return Math.max(SystemStatService.gpuTempHistoryMax, 1);
     case "Memory":
-      return Math.max(SystemStatService.memHistoryMax, 1);
+    case "Disk":
+      return 100;  // Percentage-based stats use fixed 0-100 range
+    case "GPU":
+      return Math.max(SystemStatService.gpuTempHistoryMax + 5, 1);
     case "Network":
-      return Math.max(SystemStatService.rxMaxSpeed, 1);
+      return SystemStatService.rxMaxSpeed;
     default:
       return 100;
     }
@@ -139,7 +139,7 @@ DraggableDesktopWidget {
   readonly property real graphMinValue2: {
     switch (root.statType) {
     case "CPU":
-      return SystemStatService.cpuTempHistoryMin;
+      return Math.max(SystemStatService.cpuTempHistoryMin - 5, 0);
     default:
       return graphMinValue;
     }
@@ -147,9 +147,9 @@ DraggableDesktopWidget {
   readonly property real graphMaxValue2: {
     switch (root.statType) {
     case "CPU":
-      return Math.max(SystemStatService.cpuTempHistoryMax, 1);
+      return Math.max(SystemStatService.cpuTempHistoryMax + 5, 1);
     case "Network":
-      return Math.max(SystemStatService.txMaxSpeed, 1);
+      return SystemStatService.txMaxSpeed;
     default:
       return graphMaxValue;
     }
@@ -159,6 +159,36 @@ DraggableDesktopWidget {
   implicitHeight: Math.round(120 * widgetScale)
   width: implicitWidth
   height: implicitHeight
+
+  // Auto-scale settings per stat type (CPU/Memory/Disk are 0-100%, others auto-scale)
+  readonly property bool graphAutoScale: {
+    switch (root.statType) {
+    case "CPU":
+    case "Memory":
+    case "Disk":
+      return false;
+    default:
+      return true;
+    }
+  }
+
+  // Update interval per stat type
+  readonly property int graphUpdateInterval: {
+    switch (root.statType) {
+    case "CPU":
+      return Settings.data.systemMonitor.cpuPollingInterval;
+    case "GPU":
+      return Settings.data.systemMonitor.gpuPollingInterval;
+    case "Memory":
+      return Settings.data.systemMonitor.memPollingInterval;
+    case "Disk":
+      return Settings.data.systemMonitor.diskPollingInterval;
+    case "Network":
+      return Settings.data.systemMonitor.networkPollingInterval;
+    default:
+      return 1000;
+    }
+  }
 
   // Graph component (shared between layouts)
   Component {
@@ -170,9 +200,12 @@ DraggableDesktopWidget {
       maxValue: root.graphMaxValue
       minValue2: root.graphMinValue2
       maxValue2: root.graphMaxValue2
+      autoScale: root.graphAutoScale
+      autoScale2: root.graphAutoScale
       color: root.color
       color2: Color.mError
       fill: true
+      updateInterval: root.graphUpdateInterval
     }
   }
 

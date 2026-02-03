@@ -273,9 +273,9 @@ SmartPanel {
             values: SystemStatService.rxSpeedHistory
             values2: SystemStatService.txSpeedHistory
             minValue: 0
-            maxValue: Math.max(SystemStatService.rxMaxSpeed, 1)
+            maxValue: SystemStatService.rxMaxSpeed
             minValue2: 0
-            maxValue2: Math.max(SystemStatService.txMaxSpeed, 1)
+            maxValue2: SystemStatService.txMaxSpeed
             color: Color.mPrimary
             color2: Color.mError
             fill: true
