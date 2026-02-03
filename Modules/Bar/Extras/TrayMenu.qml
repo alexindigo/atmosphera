@@ -304,7 +304,7 @@ PopupWindow {
                 // Helper properties
                 readonly property int type: modelData?.buttonType ?? QsMenuButtonType.None
                 readonly property bool isRadio: type === QsMenuButtonType.RadioButton
-                readonly property bool isChecked: modelData?.checked ?? false
+                readonly property bool isChecked: modelData?.checkState === Qt.Checked || (modelData?.checked ?? false)
 
                 // Color Logic
                 readonly property color activeColor: mouseArea.containsMouse ? Color.mOnHover : Color.mPrimary
