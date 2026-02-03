@@ -248,11 +248,10 @@ def _read_image_imagemagick(path: Path) -> list[RGB]:
     # -resize: downsample for performance (we don't need full resolution for color extraction)
     # ppm: output as PPM format (easy to parse)
 
-    # Resize to fit within 112x112 while maintaining aspect ratio
-    # This matches matugen's approach and preserves color proportions
+    # Resize to 112x112 to match matugen's color extraction
     # Use -filter Box for consistent results across ImageMagick versions
     # Use -depth 8 -colorspace sRGB -strip to reduce variance between HDRI/non-HDRI builds
-    resize_spec = "112x112"
+    resize_spec = "112x112!"
 
     try:
         # Try 'magick' first (ImageMagick 7+), fallback to 'convert' (ImageMagick 6)
