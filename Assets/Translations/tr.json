@@ -393,6 +393,7 @@
     "disconnecting": "Bağlantı kesiliyor...",
     "download": "İndir",
     "duration": "Süre",
+    "dysfunctional": "İşlevsiz",
     "edit": "Düzenle",
     "enabled": "Etkinleştirildi",
     "events": "Etkinlikler",
@@ -813,6 +814,7 @@
       "download-title": "Renk şemalarını indir",
       "method-description": {
         "content": "Kaynak içeriğin gerçek renkleriyle yakından eşleşen, yüksek doğruluklu renk çıkarma özelliğine sahip Material Design şeması.",
+        "dysfunctional": "Faithful gibi, ancak ikinci en baskın renk ailesini birincil olarak seçer.",
         "faithful": "Uyumlu bir palet oluştururken kaynak rengine yakın kalmaya çalışır.",
         "fruit-salad": "Çeşitli ve farklı tonlara sahip, eğlenceli, canlı bir palet üreten Material Design şeması.",
         "monochrome": "Minimal kromatik içerikli tek tonlu gri tonlamalı Material Design şeması.",

@@ -393,6 +393,7 @@
     "disconnecting": "Déconnexion...",
     "download": "Télécharger",
     "duration": "Durée",
+    "dysfunctional": "Dysfonctionnel",
     "edit": "Modifier",
     "enabled": "Activé",
     "events": "Événements",
@@ -813,6 +814,7 @@
       "download-title": "Télécharger des jeux de couleurs",
       "method-description": {
         "content": "Schéma Material Design avec extraction de couleurs haute fidélité qui correspond étroitement aux couleurs réelles du contenu source.",
+        "dysfunctional": "Comme Faithful, mais choisit la deuxième famille de couleurs la plus dominante comme principale.",
         "faithful": "Tente de rester proche de la couleur source tout en générant une palette harmonieuse.",
         "fruit-salad": "Schéma Material Design qui produit une palette ludique et vibrante avec des teintes diverses et variées.",
         "monochrome": "Schéma Material Design utilisant une échelle de gris à teinte unique avec un contenu chromatique minimal.",

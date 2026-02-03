@@ -393,6 +393,7 @@
     "disconnecting": "Kopplar från...",
     "download": "Hämta ner",
     "duration": "Varaktighet",
+    "dysfunctional": "Dysfunktionell",
     "edit": "Redigera",
     "enabled": "Aktiverad",
     "events": "Händelser",
@@ -813,6 +814,7 @@
       "download-title": "Hämta ner färgscheman",
       "method-description": {
         "content": "Material Design-schema med högkvalitativ färgutvinning som nära matchar källinnehållets faktiska färger.",
+        "dysfunctional": "Som Faithful, men väljer den näst mest dominanta färgfamiljen som primär.",
         "faithful": "Försöker hålla sig nära källfärgen samtidigt som en harmonisk palett genereras.",
         "fruit-salad": "Material Design-schema som ger en lekfull, livfull palett med olika och varierande nyanser.",
         "monochrome": "Material Design-schema som använder en enda nyans i gråskala med minimalt kromatiskt innehåll.",

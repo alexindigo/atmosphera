@@ -393,6 +393,7 @@
     "disconnecting": "Kapcsolat bontása...",
     "download": "Letöltés",
     "duration": "Időtartam",
+    "dysfunctional": "Diszfunkcionális",
     "edit": "Szerkesztés",
     "enabled": "Engedélyezve",
     "events": "Események",
@@ -813,6 +814,7 @@
       "download-title": "Színsémák letöltése",
       "method-description": {
         "content": "Material Design séma nagy pontosságú színkivonással, amely szorosan illeszkedik a forrás tartalom tényleges színeihez.",
+        "dysfunctional": "Mint a Faithful, de a második legdominánsabb színcsaládot választja elsődlegesnek.",
         "faithful": "Igyekszik közel maradni a forrásszínhez, miközben harmonikus palettát generál.",
         "fruit-salad": "Material Design séma, amely játékos, élénk palettát hoz létre változatos árnyalatokkal.",
         "monochrome": "Material Design séma egyszínű szürkeskálával, minimális színtartalommal.",

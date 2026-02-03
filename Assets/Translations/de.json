@@ -393,6 +393,7 @@
     "disconnecting": "Verbindung wird getrennt...",
     "download": "Herunterladen",
     "duration": "Dauer",
+    "dysfunctional": "Dysfunktional",
     "edit": "Bearbeiten",
     "enabled": "Aktiviert",
     "events": "Ereignisse",
@@ -813,6 +814,7 @@
       "download-title": "Farbschemata herunterladen",
       "method-description": {
         "content": "Material Design Schema mit hochauflösender Farbextraktion, das die tatsächlichen Farben des Quellinhalts genau wiedergibt.",
+        "dysfunctional": "Wie Faithful, wählt aber die zweitdominanteste Farbfamilie als primär.",
         "faithful": "Versucht, nah an der Ausgangsfarbe zu bleiben, während gleichzeitig eine harmonische Palette erzeugt wird.",
         "fruit-salad": "Material Design-Schema, das eine spielerische, lebendige Palette mit vielfältigen Farbtönen erzeugt.",
         "monochrome": "Material Design-Schema mit einer einfarbigen Grauskala und minimalem Farbanteil.",

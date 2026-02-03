@@ -393,6 +393,7 @@
     "disconnecting": "Rozłączanie...",
     "download": "Pobierz",
     "duration": "Czas trwania",
+    "dysfunctional": "Dysfunkcyjny",
     "edit": "Edytuj",
     "enabled": "Włączone",
     "events": "Wydarzenia",
@@ -813,6 +814,7 @@
       "download-title": "Pobierz schematy kolorów",
       "method-description": {
         "content": "Schemat Material Design z ekstrakcją kolorów o wysokiej wierności, która ściśle odpowiada rzeczywistym kolorom treści źródłowej.",
+        "dysfunctional": "Jak Faithful, ale wybiera drugą najbardziej dominującą rodzinę kolorów jako główną.",
         "faithful": "Próbuje pozostać blisko koloru źródłowego, jednocześnie generując harmonijną paletę.",
         "fruit-salad": "Schemat Material Design, który tworzy radosną, żywą paletę z różnorodnymi odcieniami.",
         "monochrome": "Schemat Material Design wykorzystujący jednobarwną skalę szarości z minimalną zawartością chromatyczną.",

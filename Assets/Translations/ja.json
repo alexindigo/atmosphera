@@ -393,6 +393,7 @@
     "disconnecting": "切断中...",
     "download": "ダウンロード",
     "duration": "期間",
+    "dysfunctional": "機能不全",
     "edit": "編集",
     "enabled": "有効",
     "events": "イベント",
@@ -813,6 +814,7 @@
       "download-title": "配色のダウンロード",
       "method-description": {
         "content": "ソースコンテンツの実際の色と厳密に一致する、高忠実度の色抽出を備えたMaterial Designスキーム。",
+        "dysfunctional": "Faithfulのように、2番目に支配的な色族をプライマリとして選択します。",
         "faithful": "調和のとれたパレットを生成しながら、ソースカラーにできるだけ近い色を維持しようとします。",
         "fruit-salad": "多様で多彩な色合いを持つ、遊び心のある鮮やかなパレットを生み出すMaterial Designスキーム。",
         "monochrome": "単一色相のグレースケールと最小限の彩度コンテンツを使用した Material Design スキーム。",

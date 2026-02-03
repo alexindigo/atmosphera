@@ -393,6 +393,7 @@
     "disconnecting": "正在断开连接...",
     "download": "下载",
     "duration": "时长",
+    "dysfunctional": "功能失调",
     "edit": "编辑",
     "enabled": "已启用",
     "events": "事件",
@@ -813,6 +814,7 @@
       "download-title": "下载配色方案",
       "method-description": {
         "content": "具有高保真色彩提取的 Material Design 方案，可与源内容的实际颜色紧密匹配。",
+        "dysfunctional": "与 Faithful 类似，但选择第二主导的颜色家族作为主要颜色。",
         "faithful": "尝试在生成和谐调色板的同时，尽可能接近源颜色。",
         "fruit-salad": "Material Design 方案，产生一个俏皮、充满活力的调色板，具有多样和变化的色调。",
         "monochrome": "使用单色调灰阶和最少色彩内容的 Material Design 方案。",

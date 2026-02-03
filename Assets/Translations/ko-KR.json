@@ -393,6 +393,7 @@
     "disconnecting": "연결 해제 중...",
     "download": "다운로드",
     "duration": "지속 시간",
+    "dysfunctional": "기능 장애",
     "edit": "편집",
     "enabled": "활성화됨",
     "events": "일정",
@@ -813,6 +814,7 @@
       "download-title": "색상 구성 다운로드",
       "method-description": {
         "content": "소스 콘텐츠의 실제 색상을 매우 유사하게 재현하는 고품질 색상 추출을 사용하는 머티리얼 디자인 구성입니다.",
+        "dysfunctional": "Faithful과 비슷하지만, 두 번째로 지배적인 색상 계열을 기본으로 선택합니다.",
         "faithful": "소스 색상에 가깝게 유지하면서 조화로운 팔레트 생성을 시도합니다.",
         "fruit-salad": "다양하고 다채로운 색조로 유쾌하고 생동감 넘치는 팔레트를 생성하는 머티리얼 디자인 구성입니다.",
         "monochrome": "채도가 최소화된 단일 색조 그레이스케일을 사용하는 머티리얼 디자인 구성입니다.",
