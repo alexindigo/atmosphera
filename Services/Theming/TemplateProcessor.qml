@@ -245,11 +245,14 @@ Singleton {
                                               if (isTemplateEnabled("code")) {
                                                 app.clients.forEach(client => {
                                                                       // Check if this specific client is detected
-                                                                      if (isCodeClientEnabled(client.name)) {
-                                                                        lines.push(`\n[templates.code_${client.name}]`);
-                                                                        lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${app.input}"`);
-                                                                        const expandedPath = client.path.replace("~", homeDir);
-                                                                        lines.push(`output_path = "${expandedPath}"`);
+                                                                      var resolvedPaths = TemplateRegistry.resolvedCodeClientPaths(client.name);
+                                                                      if (isCodeClientEnabled(client.name) && resolvedPaths.length > 0) {
+                                                                        resolvedPaths.forEach((resolvedPath, pathIndex) => {
+                                                                          var suffix = resolvedPaths.length > 1 ? `_${pathIndex}` : "";
+                                                                          lines.push(`\n[templates.code_${client.name}${suffix}]`);
+                                                                          lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${app.input}"`);
+                                                                          lines.push(`output_path = "${resolvedPath}"`);
+                                                                        });
                                                                       }
                                                                     });
                                               }
