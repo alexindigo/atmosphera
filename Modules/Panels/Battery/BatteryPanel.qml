@@ -14,8 +14,6 @@ import qs.Widgets
 SmartPanel {
   id: root
 
-  property ShellScreen screen
-
   preferredWidth: Math.round(440 * Style.uiScaleRatio)
   preferredHeight: Math.round(460 * Style.uiScaleRatio)
 
@@ -31,8 +29,8 @@ SmartPanel {
     readonly property var powerProfiles: [PowerProfile.PowerSaver, PowerProfile.Balanced, PowerProfile.Performance]
     readonly property bool profilesAvailable: PowerProfileService.available
     property int profileIndex: profileToIndex(PowerProfileService.profile)
-    readonly property bool showPowerProfiles: resolveWidgetSetting("showPowerProfiles", false)
-    readonly property bool showNoctaliaPerformance: resolveWidgetSetting("showNoctaliaPerformance", false)
+    readonly property bool showPowerProfiles: panelID ? panelID.showPowerProfiles : resolveWidgetSetting("showPowerProfiles", false)
+    readonly property bool showNoctaliaPerformance: panelID ? panelID.showNoctaliaPerformance : resolveWidgetSetting("showNoctaliaPerformance", false)
     readonly property bool isLowBattery: BatteryService.isLowBattery
     readonly property bool isCriticalBattery: BatteryService.isCriticalBattery
     readonly property var primaryDevice: BatteryService.primaryDevice

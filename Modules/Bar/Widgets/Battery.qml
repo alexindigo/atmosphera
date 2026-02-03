@@ -135,7 +135,16 @@ Item {
       return lines.join("\n");
     }
 
-    onClicked: PanelService.getPanel("batteryPanel", screen)?.toggle(this)
+    onClicked: {
+      var panel = PanelService.getPanel("batteryPanel", screen);
+      if (panel) {
+        panel.panelID = {
+                          showPowerProfiles: widgetSettings.showPowerProfiles !== undefined ? widgetSettings.showPowerProfiles : widgetMetadata.showPowerProfiles,
+                          showNoctaliaPerformance: widgetSettings.showNoctaliaPerformance !== undefined ? widgetSettings.showNoctaliaPerformance : widgetMetadata.showNoctaliaPerformance
+                        };
+        panel.toggle(this);
+      }
+    }
     onRightClicked: {
       PanelService.showContextMenu(contextMenu, pill, screen);
     }
