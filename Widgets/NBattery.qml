@@ -237,7 +237,8 @@ Item {
   // Percentage text overlaid on battery center
   NText {
     id: percentageText
-    visible: root.showPercentageText && root.ready && !root.showStateIcon
+    visible: opacity > 0
+    opacity: root.showPercentageText && root.ready && !root.showStateIcon ? 1 : 0
     x: batteryCanvas.x + Style.pixelAlignCenter(batteryCanvas.width, width)
     y: batteryCanvas.y + Style.pixelAlignCenter(batteryCanvas.height, height)
     font.family: Settings.data.ui.fontFixed
@@ -247,16 +248,33 @@ Item {
     color: Qt.alpha(root.textColor, 0.75)
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
+
+    Behavior on opacity {
+      enabled: !Settings.data.general.animationDisabled
+      NumberAnimation {
+        duration: Style.animationFast
+        easing.type: Easing.InOutQuad
+      }
+    }
   }
 
   // State icon centered inside battery body (shown when alternating)
   NIcon {
     id: stateIconOverlay
-    visible: root.hasStateIcon && root.showStateIcon
+    visible: opacity > 0
+    opacity: root.hasStateIcon && root.showStateIcon ? 1 : 0
     x: batteryCanvas.x + Style.pixelAlignCenter(batteryCanvas.width, width)
     y: batteryCanvas.y + Style.pixelAlignCenter(batteryCanvas.height, height)
     icon: root.stateIcon
     pointSize: Style.toOdd(root.baseSize)
     color: Qt.alpha(root.textColor, 0.75)
+
+    Behavior on opacity {
+      enabled: !Settings.data.general.animationDisabled
+      NumberAnimation {
+        duration: Style.animationFast
+        easing.type: Easing.InOutQuad
+      }
+    }
   }
 }
