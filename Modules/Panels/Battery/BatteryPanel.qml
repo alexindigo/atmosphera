@@ -145,17 +145,26 @@ SmartPanel {
                   spacing: Style.marginS
 
                   RowLayout {
-                    RowLayout {
-                      NIcon {
-                        icon: BatteryService.getIcon(BatteryService.getPercentage(modelData), BatteryService.isCharging(modelData), BatteryService.isPluggedIn(modelData), BatteryService.isDeviceReady(modelData))
-                        color: (BatteryService.isCharging(modelData) || BatteryService.isPluggedIn(modelData)) ? Color.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? Color.mError : Color.mOnSurface
-                      }
+                    Item {
+                      id: batteryInfoItem
+                      implicitWidth: batteryInfoRow.implicitWidth
+                      implicitHeight: batteryInfoRow.implicitHeight
 
-                      NText {
-                        readonly property string dName: BatteryService.getDeviceName(modelData)
-                        text: dName ? dName : I18n.tr("common.battery")
-                        color: (BatteryService.isCharging(modelData) || BatteryService.isPluggedIn(modelData)) ? Color.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? Color.mError : Color.mOnSurface
-                        pointSize: Style.fontSizeS
+                      RowLayout {
+                        id: batteryInfoRow
+                        anchors.fill: parent
+
+                        NIcon {
+                          icon: BatteryService.getIcon(BatteryService.getPercentage(modelData), BatteryService.isCharging(modelData), BatteryService.isPluggedIn(modelData), BatteryService.isDeviceReady(modelData))
+                          color: (BatteryService.isCharging(modelData) || BatteryService.isPluggedIn(modelData)) ? Color.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? Color.mError : Color.mOnSurface
+                        }
+
+                        NText {
+                          readonly property string dName: BatteryService.getDeviceName(modelData)
+                          text: dName ? dName : I18n.tr("common.battery")
+                          color: (BatteryService.isCharging(modelData) || BatteryService.isPluggedIn(modelData)) ? Color.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? Color.mError : Color.mOnSurface
+                          pointSize: Style.fontSizeS
+                        }
                       }
 
                       MouseArea {
@@ -163,10 +172,10 @@ SmartPanel {
                         hoverEnabled: true
                         onEntered: {
                           if (modelData.healthSupported) {
-                            TooltipService.show(parent, `${I18n.tr("battery.battery-health")}: ${Math.round(modelData.healthPercentage)}%`);
+                            TooltipService.show(batteryInfoItem, `${I18n.tr("battery.battery-health")}: ${Math.round(modelData.healthPercentage)}%`);
                           }
                         }
-                        onExited: TooltipService.hide(parent)
+                        onExited: TooltipService.hide(batteryInfoItem)
                       }
                     }
 

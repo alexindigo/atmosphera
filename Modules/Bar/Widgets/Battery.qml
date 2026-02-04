@@ -34,12 +34,12 @@ Item {
     return {};
   }
 
- readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
+  readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
   readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
   readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screenName)
 
   readonly property string displayMode: widgetSettings.displayMode !== undefined ? widgetSettings.displayMode : widgetMetadata.displayMode
-  
+
   readonly property bool hideIfNotDetected: widgetSettings.hideIfNotDetected !== undefined ? widgetSettings.hideIfNotDetected : widgetMetadata.hideIfNotDetected
   readonly property bool hideIfIdle: widgetSettings.hideIfIdle !== undefined ? widgetSettings.hideIfIdle : widgetMetadata.hideIfIdle
 
@@ -79,8 +79,7 @@ Item {
       }
 
       // Show battery health if supported (check actual battery, not DisplayDevice)
-      let healthDevice = selectedDevice.healthSupported ? selectedDevice :
-                         (BatteryService.laptopBatteries.length > 0 ? BatteryService.laptopBatteries[0] : null);
+      let healthDevice = selectedDevice.healthSupported ? selectedDevice : (BatteryService.laptopBatteries.length > 0 ? BatteryService.laptopBatteries[0] : null);
       if (healthDevice && healthDevice.healthSupported) {
         lines.push(`${I18n.tr("battery.battery-health")}: ${Math.round(healthDevice.healthPercentage)}%`);
       }
@@ -138,9 +137,9 @@ Item {
   Rectangle {
     id: capsule
     anchors.centerIn: nBattery
-    width: root.isBarVertical ?  root.capsuleHeight : nBattery.width + Style.marginS * 2
+    width: root.isBarVertical ? root.capsuleHeight : nBattery.width + Style.marginS * 2
     height: root.isBarVertical ? nBattery.height + Style.marginS * 2 : root.capsuleHeight
-    radius: Style.radiusS
+    radius: Math.min(Style.radiusL, width / 2)
     color: mouseArea.containsMouse ? Color.mHover : Style.capsuleColor
     border.color: Style.capsuleBorderColor
     border.width: Style.capsuleBorderWidth
@@ -184,18 +183,18 @@ Item {
       TooltipService.hide();
     }
     onClicked: mouse => {
-      if (mouse.button === Qt.RightButton) {
-        PanelService.showContextMenu(contextMenu, nBattery, screen);
-      } else {
-        var panel = PanelService.getPanel("batteryPanel", screen);
-        if (panel) {
-          panel.panelID = {
-            showPowerProfiles: widgetSettings.showPowerProfiles !== undefined ? widgetSettings.showPowerProfiles : widgetMetadata.showPowerProfiles,
-            showNoctaliaPerformance: widgetSettings.showNoctaliaPerformance !== undefined ? widgetSettings.showNoctaliaPerformance : widgetMetadata.showNoctaliaPerformance
-          };
-          panel.toggle(this);
-        }
-      }
-    }
+                 if (mouse.button === Qt.RightButton) {
+                   PanelService.showContextMenu(contextMenu, nBattery, screen);
+                 } else {
+                   var panel = PanelService.getPanel("batteryPanel", screen);
+                   if (panel) {
+                     panel.panelID = {
+                       showPowerProfiles: widgetSettings.showPowerProfiles !== undefined ? widgetSettings.showPowerProfiles : widgetMetadata.showPowerProfiles,
+                       showNoctaliaPerformance: widgetSettings.showNoctaliaPerformance !== undefined ? widgetSettings.showNoctaliaPerformance : widgetMetadata.showNoctaliaPerformance
+                     };
+                     panel.toggle(this);
+                   }
+                 }
+               }
   }
 }

@@ -33,7 +33,8 @@ Item {
   property bool showStateIcon: false
 
   onHasStateIconChanged: {
-    if (!hasStateIcon) showStateIcon = false
+    if (!hasStateIcon)
+      showStateIcon = false;
   }
 
   // Internal sizing calculations based on baseSize
@@ -68,8 +69,10 @@ Item {
   // State icon logic
   readonly property bool hasStateIcon: charging || pluggedIn
   readonly property string stateIcon: {
-    if (charging) return "bolt-filled";
-    if (pluggedIn) return "plug-filled"
+    if (charging)
+      return "bolt-filled";
+    if (pluggedIn)
+      return "plug-filled";
     return "";
   }
 
@@ -214,8 +217,10 @@ Item {
 
     // Helper function to draw rounded rectangle
     function roundedRect(ctx, x, y, w, h, r) {
-      if (w < 2 * r) r = w / 2;
-      if (h < 2 * r) r = h / 2;
+      if (w < 2 * r)
+        r = w / 2;
+      if (h < 2 * r)
+        r = h / 2;
       ctx.moveTo(x + r, y);
       ctx.lineTo(x + w - r, y);
       ctx.arcTo(x + w, y, x + w, y + r, r);
