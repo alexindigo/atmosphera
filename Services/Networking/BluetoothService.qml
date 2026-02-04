@@ -52,7 +52,7 @@ Singleton {
   }
 
   // Tunables for CLI pairing/connect flow
-  property int pairWaitSeconds: 20
+  property int pairWaitSeconds: 45
   property int connectAttempts: 5
   property int connectRetryIntervalMs: 2000
 
@@ -588,7 +588,7 @@ Singleton {
     const totalPauseMs = (pairWait * 1000) + (attempts * intervalSec * 1000) + 2000;
     _pauseDiscoveryFor(totalPauseMs);
 
-    const scriptPath = Quickshell.shellDir + "/Scripts/python/src/network/bluetooth-connect.py";
+    const scriptPath = Quickshell.shellDir + "/Scripts/python/src/network/bluetooth-pair.py";
 
     pairingProcess.command = ["python3", scriptPath, String(addr), String(pairWait), String(attempts), String(intervalSec)];
     pairingProcess.running = true;
