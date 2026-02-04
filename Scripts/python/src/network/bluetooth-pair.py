@@ -9,7 +9,7 @@ import errno
 
 
 def log(msg) -> None:
-    sys.stderr.write(f"[bluetooth-pair] {msg}\n")
+    sys.stderr.write(f"[pair] {msg}\n")
 
 
 def pair_fast():
