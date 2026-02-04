@@ -65,6 +65,9 @@ Item {
     const isInternal = selectedDevice.isLaptopBattery;
 
     if (isInternal) {
+      // Show charge percentage
+      lines.push(`${I18n.tr("battery.battery-level")}: ${percent}%`);
+
       let timeText = BatteryService.getTimeRemainingText(selectedDevice);
       if (timeText) {
         lines.push(timeText);
@@ -73,6 +76,13 @@ Item {
       let rateText = BatteryService.getRateText(selectedDevice);
       if (rateText) {
         lines.push(rateText);
+      }
+
+      // Show battery health if supported (check actual battery, not DisplayDevice)
+      let healthDevice = selectedDevice.healthSupported ? selectedDevice :
+                         (BatteryService.laptopBatteries.length > 0 ? BatteryService.laptopBatteries[0] : null);
+      if (healthDevice && healthDevice.healthSupported) {
+        lines.push(`${I18n.tr("battery.battery-health")}: ${Math.round(healthDevice.healthPercentage)}%`);
       }
     } else if (selectedDevice) {
       // External / Peripheral Device (Phone, Keyboard, Mouse, Gamepad, Headphone etc.)
