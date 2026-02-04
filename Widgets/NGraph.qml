@@ -29,32 +29,60 @@ Item {
   // Smooth scrolling interval (how often data updates)
   property int updateInterval: 1000
 
-  // Auto-scale: when false, use minValue/maxValue directly (e.g., for 0-100% graphs)
-  property bool autoScale: true
-  property bool autoScale2: true
+  // Animate scale changes (for network graphs with dynamic max)
+  property bool animateScale: false
 
   // Padding for bezier overshoot (percentage of range)
-  readonly property real curvePadding: 0.08
+  readonly property real curvePadding: 0.12
 
-  readonly property bool hasData: values.length >= 3
-  readonly property bool hasData2: values2.length >= 3
+  // Edge padding to hide bezier curve overshoot (in pixels)
+  readonly property real edgePadding: Math.max(8, width * 0.02)
+
+  readonly property bool hasData: values.length >= 4
+  readonly property bool hasData2: values2.length >= 4
+
+  // Target max values (what we're animating toward)
+  property real _targetMax1: maxValue
+  property real _targetMax2: maxValue2
+
+  // Current animated max values (interpolated in timer when animateScale is true)
+  property real _animMax1: maxValue
+  property real _animMax2: maxValue2
+
+  onMaxValueChanged: {
+    _targetMax1 = maxValue;
+    if (animateScale && _ready1) {
+      _animTimer.start();
+    } else {
+      _animMax1 = maxValue;
+    }
+  }
+
+  onMaxValue2Changed: {
+    _targetMax2 = maxValue2;
+    if (animateScale && _ready2) {
+      _animTimer.start();
+    } else {
+      _animMax2 = maxValue2;
+    }
+  }
+
+  // Effective max values (animated or direct)
+  readonly property real _effectiveMax1: animateScale ? _animMax1 : maxValue
+  readonly property real _effectiveMax2: animateScale ? _animMax2 : maxValue2
 
   // Animation state for primary line
   property real _t1: 1.0
   property bool _ready1: false
   property real _pred1: 0
-  property real _ghost1: 0      // Value scrolling off left (the removed point)
-  property real _nextGhost1: 0  // Current first value, becomes ghost on next update
 
   // Animation state for secondary line
   property real _t2: 1.0
   property bool _ready2: false
   property real _pred2: 0
-  property real _ghost2: 0
-  property real _nextGhost2: 0
 
   onValuesChanged: {
-    if (values.length < 2)
+    if (values.length < 4)
       return;
 
     const last = values[values.length - 1];
@@ -63,21 +91,15 @@ Item {
 
     if (!_ready1) {
       _ready1 = true;
-      _ghost1 = values[0];
-      _nextGhost1 = values[0];
       _t1 = 0;
     } else {
-      // Use the saved first value as the ghost (it's now conceptually removed)
-      _ghost1 = _nextGhost1;
       _t1 = _t1 - 1.0;
     }
-    // Save current first value for next update
-    _nextGhost1 = values[0];
     _animTimer.start();
   }
 
   onValues2Changed: {
-    if (values2.length < 2)
+    if (values2.length < 4)
       return;
 
     const last = values2[values2.length - 1];
@@ -86,14 +108,10 @@ Item {
 
     if (!_ready2) {
       _ready2 = true;
-      _ghost2 = values2[0];
-      _nextGhost2 = values2[0];
       _t2 = 0;
     } else {
-      _ghost2 = _nextGhost2;
       _t2 = _t2 - 1.0;
     }
-    _nextGhost2 = values2[0];
     _animTimer.start();
   }
 
@@ -105,6 +123,7 @@ Item {
       const dt = 16 / root.updateInterval;
       let stillAnimating = false;
 
+      // Scroll animation
       if (root._t1 < 1.0) {
         root._t1 = Math.min(1.0, root._t1 + dt);
         stillAnimating = true;
@@ -114,38 +133,31 @@ Item {
         stillAnimating = true;
       }
 
+      // Scale animation (lerp toward target) - synchronized with scroll
+      if (root.animateScale) {
+        const scaleLerp = 0.15; // Smooth lerp factor per frame
+        const threshold = 0.5; // Snap when close enough
+
+        if (Math.abs(root._animMax1 - root._targetMax1) > threshold) {
+          root._animMax1 += (root._targetMax1 - root._animMax1) * scaleLerp;
+          stillAnimating = true;
+        } else if (root._animMax1 !== root._targetMax1) {
+          root._animMax1 = root._targetMax1;
+        }
+
+        if (Math.abs(root._animMax2 - root._targetMax2) > threshold) {
+          root._animMax2 += (root._targetMax2 - root._animMax2) * scaleLerp;
+          stillAnimating = true;
+        } else if (root._animMax2 !== root._targetMax2) {
+          root._animMax2 = root._targetMax2;
+        }
+      }
+
       canvas.requestPaint();
 
       if (!stillAnimating)
         stop();
     }
-  }
-
-  // Effective max values that include current data and predictions (when autoScale is true)
-  readonly property real _effectiveMax: {
-    if (!autoScale || !hasData)
-      return maxValue;
-    let m = maxValue;
-    for (let i = 0; i < values.length; i++) {
-      if (values[i] > m)
-        m = values[i];
-    }
-    if (_pred1 > m)
-      m = _pred1;
-    return m;
-  }
-
-  readonly property real _effectiveMax2: {
-    if (!autoScale2 || !hasData2)
-      return maxValue2;
-    let m = maxValue2;
-    for (let i = 0; i < values2.length; i++) {
-      if (values2[i] > m)
-        m = values2[i];
-    }
-    if (_pred2 > m)
-      m = _pred2;
-    return m;
   }
 
   // Convert a value to Y coordinate (with padding for bezier curves)
@@ -172,48 +184,59 @@ Item {
       if (width <= 0 || height <= 0)
         return;
 
+      // Apply edge clipping to hide bezier overshoot (symmetric horizontal)
+      const pad = root.edgePadding;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(pad, 0, width - pad * 2, height);
+      ctx.clip();
+
       // Draw primary line
       if (root.hasData) {
         const n = root.values.length;
-        // Step based on visible points (n-1 since vals[0] is off-screen buffer)
-        const step = width / (n - 2);
-        drawGraph(ctx, root.values, root._pred1, root._ghost1, root.minValue, root._effectiveMax, root.color, root._t1, step);
+        // Step based on visible points (n-2 since vals[0] and vals[1] are off-screen buffers)
+        const step = width / (n - 3);
+        drawGraph(ctx, root.values, root._pred1, root.minValue, root._effectiveMax1, root.color, root._t1, step);
       }
 
       // Draw secondary line (independent animation)
       if (root.hasData2) {
         const n2 = root.values2.length;
-        const step2 = width / (n2 - 2);
-        drawGraph(ctx, root.values2, root._pred2, root._ghost2, root.minValue2, root._effectiveMax2, root.color2, root._t2, step2);
+        const step2 = width / (n2 - 3);
+        drawGraph(ctx, root.values2, root._pred2, root.minValue2, root._effectiveMax2, root.color2, root._t2, step2);
       }
+
+      ctx.restore();
     }
 
-    function drawGraph(ctx, vals, pred, ghost, minVal, maxVal, lineColor, t, step) {
-      if (!vals || vals.length < 3)
+    function drawGraph(ctx, vals, pred, minVal, maxVal, lineColor, t, step) {
+      if (!vals || vals.length < 4)
+        return;
+
+      // Safety check for invalid step
+      if (!isFinite(step) || step <= 0)
         return;
 
       const n = vals.length;
 
       // Build points with interpolated X positions for smooth scrolling
-      // We skip vals[0] (use it as off-screen buffer for bezier continuity)
-      // This avoids the visual artifact when data scrolls off the left edge
+      // vals[0] and vals[1] are off-screen buffers for bezier continuity
+      // Visible data starts from vals[2]
       let pts = [];
 
-      // Ghost point (old removed value) at position -2
+      // Buffer points (always off-screen, provide bezier continuity)
       pts.push({
                  x: (-2 - t) * step,
-                 y: root.valueToY(ghost, minVal, maxVal)
-               });
-
-      // Buffer point (vals[0]) at position -1, always off-screen
-      pts.push({
-                 x: (-1 - t) * step,
                  y: root.valueToY(vals[0], minVal, maxVal)
                });
+      pts.push({
+                 x: (-1 - t) * step,
+                 y: root.valueToY(vals[1], minVal, maxVal)
+               });
 
-      // Visible data points start from vals[1]
-      for (let i = 1; i < n; i++) {
-        const x = (i - 1 - t) * step;
+      // Visible data points start from vals[2]
+      for (let i = 2; i < n; i++) {
+        const x = (i - 2 - t) * step;
         const y = root.valueToY(vals[i], minVal, maxVal);
         pts.push({
                    x: x,
@@ -223,7 +246,7 @@ Item {
 
       // Prediction point
       pts.push({
-                 x: (n - 1 - t) * step,
+                 x: (n - 2 - t) * step,
                  y: root.valueToY(pred, minVal, maxVal)
                });
 

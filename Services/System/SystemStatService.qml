@@ -58,28 +58,25 @@ Singleton {
   readonly property int networkHistoryLength: Math.ceil(historyDurationMs / normalizeInterval(Settings.data.systemMonitor.networkPollingInterval))
 
   property var cpuHistory: new Array(cpuHistoryLength).fill(0)
-  property var cpuTempHistory: new Array(cpuHistoryLength).fill(0)
-  property var gpuTempHistory: new Array(gpuHistoryLength).fill(0)
+  property var cpuTempHistory: new Array(cpuHistoryLength).fill(40)  // Reasonable default temp
+  property var gpuTempHistory: new Array(gpuHistoryLength).fill(40)  // Reasonable default temp
   property var memHistory: new Array(memHistoryLength).fill(0)
   property var diskHistories: ({}) // Keyed by mount path, initialized on first update
   property var rxSpeedHistory: new Array(networkHistoryLength).fill(0)
   property var txSpeedHistory: new Array(networkHistoryLength).fill(0)
 
   // Historical min/max tracking (since shell started) for consistent graph scaling
-  property real cpuHistoryMax: 0
-  property real cpuTempHistoryMin: 100
-  property real cpuTempHistoryMax: 0
-  property real gpuTempHistoryMin: 100
-  property real gpuTempHistoryMax: 0
-  property real memHistoryMax: 0
+  // Temperature defaults create a valid 30-80°C range that expands as real data comes in
+  property real cpuTempHistoryMin: 30
+  property real cpuTempHistoryMax: 80
+  property real gpuTempHistoryMin: 30
+  property real gpuTempHistoryMax: 80
   // Network uses autoscaling from current history window
   // Disk is always 0-100%
 
   // History management - called from update functions, not change handlers
   // (change handlers don't fire when value stays the same)
   function pushCpuHistory() {
-    if (cpuUsage > cpuHistoryMax)
-      cpuHistoryMax = cpuUsage;
     let h = cpuHistory.slice();
     h.push(cpuUsage);
     if (h.length > cpuHistoryLength)
@@ -116,8 +113,6 @@ Singleton {
   }
 
   function pushMemHistory() {
-    if (memPercent > memHistoryMax)
-      memHistoryMax = memPercent;
     let h = memHistory.slice();
     h.push(memPercent);
     if (h.length > memHistoryLength)
@@ -508,7 +503,7 @@ Singleton {
             totalFreq += parseFloat(matches[i].split(":")[1]);
           }
           let avgFreq = (totalFreq / matches.length) / 1000.0;
-          root.cpuFreq = avgFreq.toFixed(1) + " GHz";
+          root.cpuFreq = avgFreq.toFixed(1) + "GHz";
           cpuMaxFreqProcess.running = true;
           if (avgFreq > root.cpuGlobalMaxFreq)
           root.cpuGlobalMaxFreq = avgFreq;

@@ -90,10 +90,10 @@ SmartPanel {
             }
 
             NText {
-              text: `${Math.round(SystemStatService.cpuUsage)}%`
+              text: `${Math.round(SystemStatService.cpuUsage)}% ${SystemStatService.cpuFreq}`
               pointSize: Style.fontSizeXS
               color: Color.mPrimary
-              Layout.rightMargin: Style.marginS
+              font.family: Settings.data.ui.fontFixed
             }
 
             NIcon {
@@ -106,19 +106,8 @@ SmartPanel {
               text: `${Math.round(SystemStatService.cpuTemp)}°C`
               pointSize: Style.fontSizeXS
               color: Color.mError
+              font.family: Settings.data.ui.fontFixed
               Layout.rightMargin: Style.marginS
-            }
-
-            NIcon {
-              icon: "bolt"
-              pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
-            }
-
-            NText {
-              text: SystemStatService.cpuFreq
-              pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
             }
 
             Item {
@@ -141,7 +130,6 @@ SmartPanel {
             maxValue: 100
             minValue2: Math.max(SystemStatService.cpuTempHistoryMin - 5, 0)
             maxValue2: Math.max(SystemStatService.cpuTempHistoryMax + 5, 1)
-            autoScale: false
             color: Color.mPrimary
             color2: Color.mError
             fill: true
@@ -172,23 +160,10 @@ SmartPanel {
             }
 
             NText {
-              text: `${Math.round(SystemStatService.memPercent)}% • ${SystemStatService.formatGigabytes(SystemStatService.memGb).replace(/[^0-9.]/g, "")} GB`
+              text: `${Math.round(SystemStatService.memPercent)}% ${SystemStatService.formatGigabytes(SystemStatService.memGb).replace(/[^0-9.]/g, "")} GB`
               pointSize: Style.fontSizeXS
               color: Color.mPrimary
-            }
-
-            NIcon {
-              visible: SystemStatService.swapTotalGb > 0
-              icon: "exchange"
-              pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
-            }
-
-            NText {
-              visible: SystemStatService.swapTotalGb > 0
-              text: `${Math.round(SystemStatService.swapPercent)}%`
-              pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              font.family: Settings.data.ui.fontFixed
             }
 
             Item {
@@ -208,7 +183,6 @@ SmartPanel {
             values: SystemStatService.memHistory
             minValue: 0
             maxValue: 100
-            autoScale: false
             color: Color.mPrimary
             fill: true
             fillOpacity: 0.15
@@ -241,6 +215,7 @@ SmartPanel {
               text: SystemStatService.formatSpeed(SystemStatService.rxSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2") + "/s"
               pointSize: Style.fontSizeXS
               color: Color.mPrimary
+              font.family: Settings.data.ui.fontFixed
               Layout.rightMargin: Style.marginS
             }
 
@@ -254,6 +229,7 @@ SmartPanel {
               text: SystemStatService.formatSpeed(SystemStatService.txSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2") + "/s"
               pointSize: Style.fontSizeXS
               color: Color.mError
+              font.family: Settings.data.ui.fontFixed
             }
 
             Item {
@@ -281,6 +257,7 @@ SmartPanel {
             fill: true
             fillOpacity: 0.15
             updateInterval: Settings.data.systemMonitor.networkPollingInterval
+            animateScale: true
           }
         }
       }

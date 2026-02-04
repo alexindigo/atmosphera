@@ -160,18 +160,6 @@ DraggableDesktopWidget {
   width: implicitWidth
   height: implicitHeight
 
-  // Auto-scale settings per stat type (CPU/Memory/Disk are 0-100%, others auto-scale)
-  readonly property bool graphAutoScale: {
-    switch (root.statType) {
-    case "CPU":
-    case "Memory":
-    case "Disk":
-      return false;
-    default:
-      return true;
-    }
-  }
-
   // Update interval per stat type
   readonly property int graphUpdateInterval: {
     switch (root.statType) {
@@ -200,19 +188,18 @@ DraggableDesktopWidget {
       maxValue: root.graphMaxValue
       minValue2: root.graphMinValue2
       maxValue2: root.graphMaxValue2
-      autoScale: root.graphAutoScale
-      autoScale2: root.graphAutoScale
       color: root.color
       color2: Color.mError
       fill: true
       updateInterval: root.graphUpdateInterval
+      animateScale: root.statType === "Network"
     }
   }
 
   // Side layout: icon + legend on left, graph on right
   RowLayout {
     anchors.fill: parent
-    anchors.margins: Math.round(Style.marginL * widgetScale)
+    anchors.margins: Math.round(Style.marginM * widgetScale)
     spacing: Math.round(Style.marginL * widgetScale)
     visible: root.layout === "side"
 
@@ -252,6 +239,7 @@ DraggableDesktopWidget {
     }
 
     Loader {
+      active: root.layout === "side"
       Layout.fillWidth: true
       Layout.fillHeight: true
       sourceComponent: graphComponent
@@ -261,11 +249,12 @@ DraggableDesktopWidget {
   // Bottom layout: full-width graph, horizontal legend at bottom
   ColumnLayout {
     anchors.fill: parent
-    anchors.margins: Math.round(Style.marginL * widgetScale)
+    anchors.margins: Math.round(Style.marginM * widgetScale)
     spacing: Math.round(Style.marginS * widgetScale)
     visible: root.layout === "bottom"
 
     Loader {
+      active: root.layout === "bottom"
       Layout.fillWidth: true
       Layout.fillHeight: true
       sourceComponent: graphComponent

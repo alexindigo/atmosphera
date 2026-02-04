@@ -290,6 +290,7 @@ Item {
     id: contentContainer
     anchors.fill: parent
     z: 1
+    clip: true
   }
 
   // Context menu model and handler - menu is created dynamically in PopupMenuWindow
