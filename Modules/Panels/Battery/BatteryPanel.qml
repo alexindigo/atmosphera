@@ -145,9 +145,18 @@ SmartPanel {
                   spacing: Style.marginS
 
                   RowLayout {
-                    NIcon {
-                      icon: BatteryService.getIcon(BatteryService.getPercentage(modelData), BatteryService.isCharging(modelData), BatteryService.isPluggedIn(modelData), BatteryService.isDeviceReady(modelData))
-                      color: (BatteryService.isCharging(modelData) || BatteryService.isPluggedIn(modelData)) ? Color.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? Color.mError : Color.mOnSurface
+                    RowLayout {
+                      NIcon {
+                        icon: BatteryService.getIcon(BatteryService.getPercentage(modelData), BatteryService.isCharging(modelData), BatteryService.isPluggedIn(modelData), BatteryService.isDeviceReady(modelData))
+                        color: (BatteryService.isCharging(modelData) || BatteryService.isPluggedIn(modelData)) ? Color.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? Color.mError : Color.mOnSurface
+                      }
+
+                      NText {
+                        readonly property string dName: BatteryService.getDeviceName(modelData)
+                        text: dName ? dName : I18n.tr("common.battery")
+                        color: (BatteryService.isCharging(modelData) || BatteryService.isPluggedIn(modelData)) ? Color.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? Color.mError : Color.mOnSurface
+                        pointSize: Style.fontSizeS
+                      }
 
                       MouseArea {
                         anchors.fill: parent
@@ -161,11 +170,7 @@ SmartPanel {
                       }
                     }
 
-                    NText {
-                      readonly property string dName: BatteryService.getDeviceName(modelData)
-                      text: dName ? dName : I18n.tr("common.battery")
-                      color: (BatteryService.isCharging(modelData) || BatteryService.isPluggedIn(modelData)) ? Color.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? Color.mError : Color.mOnSurface
-                      pointSize: Style.fontSizeS
+                    Item {
                       Layout.fillWidth: true
                     }
 
