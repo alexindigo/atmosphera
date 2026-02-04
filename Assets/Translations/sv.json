@@ -75,8 +75,6 @@
       "use-custom-font-label": "Använd anpassat teckensnitt",
       "use-monospaced-font-description": "När denna funktion är aktiverad använder klockan ett monospaced-teckensnitt.",
       "use-monospaced-font-label": "Använd monospaced-teckensnitt",
-      "use-primary-color-description": "När denna funktion är aktiverad används primärfärgen för att framhäva.",
-      "use-primary-color-label": "Använd primärfärg",
       "vertical-bar-description": "Använd ett mellanslag för att separera varje del till en ny rad.",
       "vertical-bar-label": "Vertikal stapel"
     },
@@ -345,13 +343,6 @@
       "version-new-user": "Ny installation"
     }
   },
-  "colors": {
-    "error": "Fel",
-    "on-surface": "På ytan",
-    "primary": "Primär",
-    "secondary": "Sekundär",
-    "tertiary": "Tertiär"
-  },
   "common": {
     "actions": "Åtgärder",
     "add": "Lägg till",
@@ -396,6 +387,7 @@
     "dysfunctional": "Dysfunktionell",
     "edit": "Redigera",
     "enabled": "Aktiverad",
+    "error": "Fel",
     "events": "Händelser",
     "execute": "Exekvera",
     "faithful": "Trogen",
@@ -831,7 +823,7 @@
       "templates-filter-label": "Filtrera efter kategori",
       "templates-misc-description": "Skapa dina egna mallar.",
       "templates-misc-label": "Avancerat",
-      "templates-misc-user-templates-description": "Aktivera endast om du vet vad du gör – se vår online-dokumentation.",
+      "templates-misc-user-templates-description": "Aktivera endast om du vet vad du gör — se vår online-dokumentation.",
       "templates-misc-user-templates-label": "Aktivera användarmallar",
       "templates-none-detected": "Inga upptäckta",
       "templates-write-path": "Skriver: {filepath}",
@@ -1228,6 +1220,8 @@
       "sounds-unavailable-label": "Meddelandeljud otillgängliga",
       "sounds-volume-description": "Justera volymnivån för meddelandeljud.",
       "sounds-volume-label": "Ljudvolym",
+      "toast-battery-description": "Visa en varning när batterinivån sjunker under denna procentandel.",
+      "toast-battery-label": "Batterivarning",
       "toast-desc": "Konfigurera utseende och beteende för toast.",
       "toast-keyboard-description": "Visa en toast när tangentbordslayouten ändras.",
       "toast-keyboard-label": "Tangentbordslayout",
@@ -1516,7 +1510,7 @@
     },
     "skip-setup": "Hoppa över inställningar",
     "telemetry-wizard-done": "Jag fattar!",
-    "telemetry-wizard-note": "Du har kontrollen – aktivera eller inaktivera detta när som helst i Inställningar",
+    "telemetry-wizard-note": "Du har kontrollen — aktivera eller inaktivera detta när som helst i inställningar",
     "telemetry-wizard-subtitle": "Vi har lagt till anonym analys för att förbättra Noctalia",
     "telemetry-wizard-title": "Uppdatering av integritet",
     "wallpaper": {
@@ -1533,7 +1527,7 @@
       "select-prompt": "Välj en bakgrundsbild nedan",
       "subheader": "Skapa stämning med en vacker bakgrund."
     },
-    "welcome-note": "Bara några grundläggande tips för att komma igång – alla alternativ finns i inställningarna",
+    "welcome-note": "Bara några grundläggande tips för att komma igång — alla alternativ finns i inställningarna",
     "welcome-subtitle": "Låt oss göra ditt skrivbord unikt för dig",
     "welcome-title": "Välkommen till Noctalia!"
   },
@@ -1566,8 +1560,10 @@
       "title": "Flygplansläge"
     },
     "battery": {
+      "critical": "Kritisk batterinivå",
+      "critical-desc": "Batteriet är på {percent}% — anslut laddaren omedelbart",
       "low": "Lågt batteri",
-      "low-desc": "Batteriet är på {percent}%. Anslut laddaren"
+      "low-desc": "Batteriet är på {percent}% — anslut laddaren"
     },
     "bluetooth": {
       "address-copied": "Adress kopierad till urklipp",

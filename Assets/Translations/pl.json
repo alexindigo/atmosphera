@@ -75,8 +75,6 @@
       "use-custom-font-label": "Użyj niestandardowej czcionki",
       "use-monospaced-font-description": "Gdy włączone, zegar będzie używał czcionki o stałej szerokości.",
       "use-monospaced-font-label": "Użyj czcionki monospaced",
-      "use-primary-color-description": "Gdy włączone, stosuje kolor podstawowy dla podkreślenia.",
-      "use-primary-color-label": "Użyj koloru podstawowego",
       "vertical-bar-description": "Użyj spacji, aby oddzielić każdą część w nowej linii.",
       "vertical-bar-label": "Pasek pionowy"
     },
@@ -345,13 +343,6 @@
       "version-new-user": "Nowa instalacja"
     }
   },
-  "colors": {
-    "error": "Błąd",
-    "on-surface": "Na powierzchni",
-    "primary": "Podstawowy",
-    "secondary": "Wtórny",
-    "tertiary": "Trzeciorzędowy"
-  },
   "common": {
     "actions": "Akcje",
     "add": "Dodaj",
@@ -396,6 +387,7 @@
     "dysfunctional": "Dysfunkcyjny",
     "edit": "Edytuj",
     "enabled": "Włączone",
+    "error": "Błąd",
     "events": "Wydarzenia",
     "execute": "Wykonaj",
     "faithful": "Wierny",
@@ -1228,6 +1220,8 @@
       "sounds-unavailable-label": "Dźwięki powiadomień niedostępne",
       "sounds-volume-description": "Dostosuj poziom głośności dźwięków powiadomień.",
       "sounds-volume-label": "Głośność dźwięku",
+      "toast-battery-description": "Wyświetl ostrzeżenie, gdy poziom baterii spadnie poniżej tego procentu.",
+      "toast-battery-label": "Ostrzeżenie o baterii",
       "toast-desc": "Konfiguruj wygląd i zachowanie dymków powiadomień.",
       "toast-keyboard-description": "Pokaż dymek (toast), gdy zmieni się układ klawiatury.",
       "toast-keyboard-label": "Układ klawiatury",
@@ -1516,7 +1510,7 @@
     },
     "skip-setup": "Pomiń konfigurację",
     "telemetry-wizard-done": "Rozumiem!",
-    "telemetry-wizard-note": "Masz kontrolę – możesz to włączyć lub wyłączyć w dowolnym momencie w Ustawieniach",
+    "telemetry-wizard-note": "Masz kontrolę — możesz to włączyć lub wyłączyć w dowolnym momencie w ustawieniach",
     "telemetry-wizard-subtitle": "Dodaliśmy anonimowe analizy, aby pomóc w ulepszaniu Noctalia",
     "telemetry-wizard-title": "Aktualizacja prywatności",
     "wallpaper": {
@@ -1566,8 +1560,10 @@
       "title": "Tryb samolotowy"
     },
     "battery": {
+      "critical": "Krytyczny poziom baterii",
+      "critical-desc": "Bateria naładowana w {percent}% — proszę natychmiast podłączyć ładowarkę",
       "low": "Słaba bateria",
-      "low-desc": "Poziom baterii wynosi {percent}%. Podłącz ładowarkę"
+      "low-desc": "Bateria naładowana w {percent}% — proszę podłączyć ładowarkę"
     },
     "bluetooth": {
       "address-copied": "Adres skopiowany do schowka",

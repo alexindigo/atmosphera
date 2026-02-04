@@ -75,8 +75,6 @@
       "use-custom-font-label": "カスタムフォントを使用",
       "use-monospaced-font-description": "有効にすると、時計に等幅フォントを使用します。",
       "use-monospaced-font-label": "等幅フォントを使用",
-      "use-primary-color-description": "有効にすると、強調のためにプライマリカラーが適用されます。",
-      "use-primary-color-label": "プライマリカラーを使用",
       "vertical-bar-description": "各パーツを新しい行に分けるにはスペースを使用してください。",
       "vertical-bar-label": "垂直バー"
     },
@@ -345,13 +343,6 @@
       "version-new-user": "新規インストール"
     }
   },
-  "colors": {
-    "error": "エラー",
-    "on-surface": "表面上",
-    "primary": "主要",
-    "secondary": "二次的",
-    "tertiary": "第三紀"
-  },
   "common": {
     "actions": "アクション",
     "add": "追加",
@@ -396,6 +387,7 @@
     "dysfunctional": "機能不全",
     "edit": "編集",
     "enabled": "有効",
+    "error": "エラー",
     "events": "イベント",
     "execute": "実行",
     "faithful": "忠実",
@@ -1228,6 +1220,8 @@
       "sounds-unavailable-label": "通知音を利用できません",
       "sounds-volume-description": "通知音の音量レベルを調整します。",
       "sounds-volume-label": "通知音量",
+      "toast-battery-description": "バッテリー残量がこの割合を下回った場合に警告を表示します。",
+      "toast-battery-label": "バッテリー警告",
       "toast-desc": "トースト通知の外観と挙動を設定します。",
       "toast-keyboard-description": "キーボードレイアウトの変更時にトーストを表示します。",
       "toast-keyboard-label": "キーボードレイアウト",
@@ -1566,8 +1560,10 @@
       "title": "機内モード"
     },
     "battery": {
+      "critical": "バッテリー残量低下",
+      "critical-desc": "バッテリー残量 {percent}% — すぐに充電器を接続してください",
       "low": "バッテリー残量低下",
-      "low-desc": "バッテリー残量が {percent}% です。充電器を接続してください"
+      "low-desc": "バッテリー残量 {percent}% — 充電器を接続してください"
     },
     "bluetooth": {
       "address-copied": "アドレスをクリップボードにコピーしました",

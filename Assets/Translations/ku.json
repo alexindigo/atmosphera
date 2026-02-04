@@ -75,8 +75,6 @@
       "use-custom-font-label": "Cûrenivîsa kesane bi kar bîne",
       "use-monospaced-font-description": "Dema ku çalak be, demjimêr wê cûrenivîsa monospace bi kar bîne.",
       "use-monospaced-font-label": "Cûrenivîsa monospace bi kar bîne",
-      "use-primary-color-description": "Dema ku çalak be, ev rengê sereke ji bo pejirandinê tê sepandin.",
-      "use-primary-color-label": "Rengê sereke bi kar bîne",
       "vertical-bar-description": "Bi kar tînin valahiyekê ji hev veqetînin her beşek li ser rêzeke nû.",
       "vertical-bar-label": "Darê vertical"
     },
@@ -338,13 +336,6 @@
       "version": "Goherto {version}",
       "version-new-user": "Sazkirina nû"
     }
-  },
-  "colors": {
-    "error": "Çewtî",
-    "on-surface": "Li ser rûyê",
-    "primary": "Sereke",
-    "secondary": "Duyemîn",
-    "tertiary": "Sêyemîn"
   },
   "common": {
     "actions": "Çalakî",
@@ -1506,7 +1497,7 @@
     },
     "skip-setup": "Sazkirinê Derbas Bike",
     "telemetry-wizard-done": "Gihîşt!",
-    "telemetry-wizard-note": "Hûn di kontrolê de ne - hûn dikarin vê yekê di Mîhengan de her dem çalak an neçalak bikin",
+    "telemetry-wizard-note": "Hûn di kontrolê de ne - hûn dikarin vê yekê di mîhengan de her dem çalak an neçalak bikin",
     "telemetry-wizard-subtitle": "Me analîtîkên anonîm zêde kirin da ku alîkariya başkirina Noctalia bikin",
     "telemetry-wizard-title": "Nûkirina Nepenîtiyê",
     "wallpaper": {

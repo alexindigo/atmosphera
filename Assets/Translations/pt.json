@@ -75,8 +75,6 @@
       "use-custom-font-label": "Usar fonte personalizada",
       "use-monospaced-font-description": "Quando ativado, o relógio usará a fonte monoespaçada.",
       "use-monospaced-font-label": "Usar fonte monoespaçada",
-      "use-primary-color-description": "Quando ativado, aplica a cor primária para dar ênfase.",
-      "use-primary-color-label": "Usar cor primária",
       "vertical-bar-description": "Use um espaço para separar cada parte em uma nova linha.",
       "vertical-bar-label": "Barra vertical"
     },
@@ -345,13 +343,6 @@
       "version-new-user": "Nova instalação"
     }
   },
-  "colors": {
-    "error": "Erro",
-    "on-surface": "Na superfície",
-    "primary": "Primário",
-    "secondary": "Secundário",
-    "tertiary": "Terciário"
-  },
   "common": {
     "actions": "Ações",
     "add": "Adicionar",
@@ -396,6 +387,7 @@
     "dysfunctional": "Disfuncional",
     "edit": "Editar",
     "enabled": "Ativado",
+    "error": "Erro",
     "events": "Eventos",
     "execute": "Executar",
     "faithful": "Fiel",
@@ -1228,6 +1220,8 @@
       "sounds-unavailable-label": "Sons de notificação indisponíveis",
       "sounds-volume-description": "Ajustar o nível de volume para sons de notificação.",
       "sounds-volume-label": "Volume do som",
+      "toast-battery-description": "Mostrar um aviso quando o nível da bateria cair abaixo desta percentagem.",
+      "toast-battery-label": "Aviso de bateria",
       "toast-desc": "Configurar a aparência e o comportamento do toast.",
       "toast-keyboard-description": "Mostrar uma notificação quando o layout do teclado mudar.",
       "toast-keyboard-label": "Layout do teclado",
@@ -1516,7 +1510,7 @@
     },
     "skip-setup": "Ignorar configuração",
     "telemetry-wizard-done": "Entendi!",
-    "telemetry-wizard-note": "Você está no controle — ative ou desative isso a qualquer momento nas Configurações",
+    "telemetry-wizard-note": "Você está no controle — ative ou desative isso a qualquer momento nas configurações",
     "telemetry-wizard-subtitle": "Adicionámos análises anónimas para ajudar a melhorar o Noctalia",
     "telemetry-wizard-title": "Atualização de privacidade",
     "wallpaper": {
@@ -1533,7 +1527,7 @@
       "select-prompt": "Selecione um papel de parede abaixo",
       "subheader": "Defina o ambiente com um belo fundo."
     },
-    "welcome-note": "Apenas alguns ajustes básicos para começar - o restante está em configurações",
+    "welcome-note": "Apenas alguns ajustes básicos para começar — o restante está em configurações",
     "welcome-subtitle": "Vamos tornar o seu ambiente de trabalho único",
     "welcome-title": "Bem-vindo ao Noctalia!"
   },
@@ -1566,8 +1560,10 @@
       "title": "Modo avião"
     },
     "battery": {
+      "critical": "Bateria crítica",
+      "critical-desc": "Bateria a {percent}% — por favor, conecte o carregador imediatamente",
       "low": "Bateria fraca",
-      "low-desc": "A bateria está em {percent}%. Por favor, conecte o carregador"
+      "low-desc": "Bateria está em {percent}% — por favor, conecte o carregador"
     },
     "bluetooth": {
       "address-copied": "Endereço copiado para a área de transferência",
@@ -1793,8 +1789,8 @@
       "day-full": "Nome completo do dia",
       "day-leading-zero": "Dia com zero à esquerda (01-31)",
       "day-no-leading-zero": "Dia sem zero à esquerda (1-31)",
-      "hour-leading-zero": "Hora com zero à esquerda (00-23) - formato de 24 horas",
-      "hour-no-leading-zero": "Hora sem zero à esquerda (0-23) - formato de 24 horas",
+      "hour-leading-zero": "Hora com zero à esquerda (00-23) — formato de 24 horas",
+      "hour-no-leading-zero": "Hora sem zero à esquerda (0-23) — formato de 24 horas",
       "minute-leading-zero": "Minuto com zero à esquerda (00-59)",
       "minute-no-leading-zero": "Minuto sem zero à esquerda (0-59)",
       "month-abbreviated": "Nome do mês abreviado",

@@ -75,8 +75,6 @@
       "use-custom-font-label": "Özel yazı tipi kullan",
       "use-monospaced-font-description": "Etkinleştirildiğinde, saat tek aralıklı yazı tipini kullanır.",
       "use-monospaced-font-label": "Tek aralıklı yazı tipi kullan",
-      "use-primary-color-description": "Etkinleştirildiğinde, bu vurgu için birincil rengi uygular.",
-      "use-primary-color-label": "Birincil rengi kullan",
       "vertical-bar-description": "Her parçayı yeni bir satıra ayırmak için boşluk kullanın.",
       "vertical-bar-label": "Dikey çubuk"
     },
@@ -345,13 +343,6 @@
       "version-new-user": "Yeni kurulum"
     }
   },
-  "colors": {
-    "error": "Hata",
-    "on-surface": "Yüzeyde",
-    "primary": "Birincil",
-    "secondary": "İkincil",
-    "tertiary": "Üçüncül"
-  },
   "common": {
     "actions": "Eylemler",
     "add": "Ekle",
@@ -396,6 +387,7 @@
     "dysfunctional": "İşlevsiz",
     "edit": "Düzenle",
     "enabled": "Etkinleştirildi",
+    "error": "Hata",
     "events": "Etkinlikler",
     "execute": "Yürüt",
     "faithful": "Sadık",
@@ -1228,6 +1220,8 @@
       "sounds-unavailable-label": "Bildirim sesleri kullanılamıyor",
       "sounds-volume-description": "Bildirim sesleri için ses seviyesini ayarlayın.",
       "sounds-volume-label": "Ses seviyesi",
+      "toast-battery-description": "Pil seviyesi bu yüzdenin altına düştüğünde bir uyarı göster.",
+      "toast-battery-label": "Pil uyarısı",
       "toast-desc": "Bildirim penceresi görünümünü ve davranışını yapılandırın.",
       "toast-keyboard-description": "Klavye düzeni değiştiğinde bir bildirim göster.",
       "toast-keyboard-label": "Klavye düzeni",
@@ -1516,7 +1510,7 @@
     },
     "skip-setup": "Kurulumu Atla",
     "telemetry-wizard-done": "Anlaşıldı!",
-    "telemetry-wizard-note": "Kontrol sizde — istediğiniz zaman Ayarlar'dan etkinleştirebilir veya devre dışı bırakabilirsiniz",
+    "telemetry-wizard-note": "Kontrol sizde — istediğiniz zaman ayarlar'dan etkinleştirebilir veya devre dışı bırakabilirsiniz",
     "telemetry-wizard-subtitle": "Noctalia'yı geliştirmeye yardımcı olmak için anonim analizler ekledik",
     "telemetry-wizard-title": "Gizlilik Güncellemesi",
     "wallpaper": {
@@ -1566,8 +1560,10 @@
       "title": "Uçak modu"
     },
     "battery": {
+      "critical": "Kritik pil seviyesi",
+      "critical-desc": "Pil {percent}% — lütfen şarj cihazını hemen bağlayın",
       "low": "Düşük batarya",
-      "low-desc": "Batarya % {percent}. Lütfen şarj bağlantısını yapın"
+      "low-desc": "Pil {percent}% seviyesinde — lütfen şarj cihazını bağlayın"
     },
     "bluetooth": {
       "address-copied": "Adres panoya kopyalandı",

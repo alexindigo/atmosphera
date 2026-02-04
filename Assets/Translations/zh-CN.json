@@ -75,8 +75,6 @@
       "use-custom-font-label": "使用自定义字体",
       "use-monospaced-font-description": "启用后，时钟将使用等宽字体。",
       "use-monospaced-font-label": "使用等宽字体",
-      "use-primary-color-description": "启用后，将应用主颜色进行强调。",
-      "use-primary-color-label": "使用主颜色",
       "vertical-bar-description": "使用空格将每个部分分隔到新行。",
       "vertical-bar-label": "垂直栏"
     },
@@ -291,12 +289,12 @@
     }
   },
   "battery": {
-    "battery-health": "电池健康度",
+    "battery-health": "电池健康",
     "battery-level": "电池电量",
     "capacity-level": "容量：{level}",
     "charging-rate": "充电速率：{rate} W",
     "discharging-rate": "放电速率：{rate} W",
-    "health": "健康状况：{percent}%",
+    "health": "电池健康：{percent}%",
     "inhibit-idle-description": "保持系统唤醒。",
     "no-battery-detected": "未检测到电池",
     "plugged-in": "已接通电源",
@@ -345,13 +343,6 @@
       "version-new-user": "全新安装"
     }
   },
-  "colors": {
-    "error": "错误色",
-    "on-surface": "背景之上",
-    "primary": "主要色",
-    "secondary": "次要色",
-    "tertiary": "第三色"
-  },
   "common": {
     "actions": "操作",
     "add": "添加",
@@ -396,6 +387,7 @@
     "dysfunctional": "功能失调",
     "edit": "编辑",
     "enabled": "已启用",
+    "error": "错误",
     "events": "事件",
     "execute": "执行",
     "faithful": "忠实",
@@ -1228,6 +1220,8 @@
       "sounds-unavailable-label": "通知声音不可用",
       "sounds-volume-description": "调整通知声音的音量级别。",
       "sounds-volume-label": "声音音量",
+      "toast-battery-description": "当电池电量低于此百分比时显示警告。",
+      "toast-battery-label": "低电量警告",
       "toast-desc": "配置气泡通知的外观和行为。",
       "toast-keyboard-description": "键盘布局改变时显示一个 Toast。",
       "toast-keyboard-label": "键盘布局",
@@ -1566,8 +1560,10 @@
       "title": "飞行模式"
     },
     "battery": {
+      "critical": "电量严重不足",
+      "critical-desc": "电量仅剩 {percent}% — 请立即连接充电器",
       "low": "电池电量低",
-      "low-desc": "电量仅剩 {percent}%，请插上充电器。"
+      "low-desc": "电量仅剩 {percent}% — 请连接充电器"
     },
     "bluetooth": {
       "address-copied": "地址已复制到剪贴板",

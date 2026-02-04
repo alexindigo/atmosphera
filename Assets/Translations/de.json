@@ -75,8 +75,6 @@
       "use-custom-font-label": "Benutzerdefinierte Schriftart verwenden",
       "use-monospaced-font-description": "Wenn aktiviert, verwendet die Uhr die Monospace-Schriftart.",
       "use-monospaced-font-label": "Monospace-Schriftart verwenden",
-      "use-primary-color-description": "Wenn aktiviert, wird die Primärfarbe zur Hervorhebung angewendet.",
-      "use-primary-color-label": "Primärfarbe verwenden",
       "vertical-bar-description": "Verwenden Sie ein Leerzeichen, um jeden Teil in eine neue Zeile zu trennen.",
       "vertical-bar-label": "Vertikale Leiste"
     },
@@ -345,13 +343,6 @@
       "version-new-user": "Neuinstallation"
     }
   },
-  "colors": {
-    "error": "Fehler",
-    "on-surface": "Auf der Oberfläche",
-    "primary": "Primär",
-    "secondary": "Sekundär",
-    "tertiary": "Tertiär"
-  },
   "common": {
     "actions": "Aktionen",
     "add": "Hinzufügen",
@@ -396,6 +387,7 @@
     "dysfunctional": "Dysfunktional",
     "edit": "Bearbeiten",
     "enabled": "Aktiviert",
+    "error": "Fehler",
     "events": "Ereignisse",
     "execute": "Ausführen",
     "faithful": "Originalgetreu",
@@ -1228,6 +1220,8 @@
       "sounds-unavailable-label": "Benachrichtigungstöne nicht verfügbar",
       "sounds-volume-description": "Lautstärke für Benachrichtigungstöne anpassen.",
       "sounds-volume-label": "Sound-Lautstärke",
+      "toast-battery-description": "Zeige eine Warnung an, wenn der Akkustand unter diesen Prozentsatz fällt.",
+      "toast-battery-label": "Akkuwarnung",
       "toast-desc": "Konfigurieren Sie das Aussehen und Verhalten von Toast-Benachrichtigungen.",
       "toast-keyboard-description": "Zeige eine Toast-Benachrichtigung an, wenn sich das Tastaturlayout ändert.",
       "toast-keyboard-label": "Tastaturlayout",
@@ -1516,7 +1510,7 @@
     },
     "skip-setup": "Einrichtung überspringen",
     "telemetry-wizard-done": "Verstanden!",
-    "telemetry-wizard-note": "Sie haben die Kontrolle – aktivieren oder deaktivieren Sie dies jederzeit in den Einstellungen",
+    "telemetry-wizard-note": "Sie haben die Kontrolle — aktivieren oder deaktivieren Sie dies jederzeit in den Einstellungen",
     "telemetry-wizard-subtitle": "Wir haben anonyme Analysen hinzugefügt, um Noctalia zu verbessern",
     "telemetry-wizard-title": "Datenschutz-Update",
     "wallpaper": {
@@ -1533,7 +1527,7 @@
       "select-prompt": "Wählen Sie unten ein Hintergrundbild",
       "subheader": "Bestimmen Sie die Stimmung mit einem schönen Hintergrund."
     },
-    "welcome-note": "Nur ein paar Grundeinstellungen – alle Optionen befinden sich in den Einstellungen",
+    "welcome-note": "Nur ein paar Grundeinstellungen — alle Optionen befinden sich in den Einstellungen",
     "welcome-subtitle": "Gestalten wir Ihren Desktop einzigartig",
     "welcome-title": "Willkommen bei Noctalia!"
   },
@@ -1566,8 +1560,10 @@
       "title": "Flugmodus"
     },
     "battery": {
+      "critical": "Kritischer Akkustand",
+      "critical-desc": "Akku ist bei {percent}% — bitte sofort das Ladegerät anschließen",
       "low": "Niedriger Akkustand",
-      "low-desc": "Akku ist bei {percent}%. Bitte schließen Sie das Ladegerät an"
+      "low-desc": "Akku ist bei {percent}% — bitte das Ladegerät anschließen"
     },
     "bluetooth": {
       "address-copied": "Adresse in die Zwischenablage kopiert",

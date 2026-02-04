@@ -75,8 +75,6 @@
       "use-custom-font-label": "Egyéni betűtípus használata",
       "use-monospaced-font-description": "Ha engedélyezve van, az óra a monospace betűtípust fogja használni.",
       "use-monospaced-font-label": "Monospace betűtípus használata",
-      "use-primary-color-description": "Ha engedélyezve van, ez az elsődleges színt alkalmazza a hangsúlyozáshoz.",
-      "use-primary-color-label": "Elsődleges szín használata",
       "vertical-bar-description": "Használjon szóközt az egyes részek új sorba való elkülönítéséhez.",
       "vertical-bar-label": "Függőleges sáv"
     },
@@ -345,13 +343,6 @@
       "version-new-user": "Új telepítés"
     }
   },
-  "colors": {
-    "error": "Hiba",
-    "on-surface": "A felszínen",
-    "primary": "Elsődleges",
-    "secondary": "Másodlagos",
-    "tertiary": "Harmadlagos"
-  },
   "common": {
     "actions": "Műveletek",
     "add": "Hozzáadás",
@@ -396,6 +387,7 @@
     "dysfunctional": "Diszfunkcionális",
     "edit": "Szerkesztés",
     "enabled": "Engedélyezve",
+    "error": "Hiba",
     "events": "Események",
     "execute": "Végrehajt",
     "faithful": "Hű",
@@ -1228,6 +1220,8 @@
       "sounds-unavailable-label": "Értesítési hangok nem érhetők el",
       "sounds-volume-description": "Az értesítési hangok hangerejének beállítása.",
       "sounds-volume-label": "Hangerő",
+      "toast-battery-description": "Figyelmeztetés megjelenítése, ha az akkumulátor töltöttségi szintje ez alá a százalék alá esik.",
+      "toast-battery-label": "Akkumulátor figyelmeztetés",
       "toast-desc": "Felugró üzenet megjelenésének és viselkedésének beállítása.",
       "toast-keyboard-description": "Felugró üzenet megjelenítése a billentyűzetkiosztás változásakor.",
       "toast-keyboard-label": "Billentyűzetkiosztás",
@@ -1516,7 +1510,7 @@
     },
     "skip-setup": "Beállítás kihagyása",
     "telemetry-wizard-done": "Értettem!",
-    "telemetry-wizard-note": "Te irányítasz – bármikor engedélyezheted vagy letilthatod a Beállításokban",
+    "telemetry-wizard-note": "Te irányítasz — bármikor engedélyezheted vagy letilthatod a beállításokban",
     "telemetry-wizard-subtitle": "Anonim analitikát adtunk hozzá, hogy segítsük a Noctalia fejlesztését",
     "telemetry-wizard-title": "Adatvédelmi frissítés",
     "wallpaper": {
@@ -1533,7 +1527,7 @@
       "select-prompt": "Válasszon egy háttérképet alább",
       "subheader": "Teremtsen hangulatot egy gyönyörű háttérrel."
     },
-    "welcome-note": "Csak néhány alapvető dolog az induláshoz – a teljes beállítási lehetőség a beállításokban található",
+    "welcome-note": "Csak néhány alapvető dolog az induláshoz — a teljes beállítási lehetőség a beállításokban található",
     "welcome-subtitle": "Tegyük egyedivé az asztalod",
     "welcome-title": "Üdvözöl a Noctalia!"
   },
@@ -1566,8 +1560,10 @@
       "title": "Repülőgép üzemmód"
     },
     "battery": {
+      "critical": "Kritikus akkumulátor",
+      "critical-desc": "Az akkumulátor {percent}%-on van — kérjük, azonnal csatlakoztassa a töltőt",
       "low": "Alacsony akkumulátor",
-      "low-desc": "Az akkumulátor {percent}%-on van. Csatlakoztassa a töltőt"
+      "low-desc": "Az akkumulátor {percent}%-on van — kérjük, csatlakoztassa a töltőt"
     },
     "bluetooth": {
       "address-copied": "Cím a vágólapra másolva",

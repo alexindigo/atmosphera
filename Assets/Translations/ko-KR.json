@@ -75,8 +75,6 @@
       "use-custom-font-label": "사용자 지정 글꼴 사용",
       "use-monospaced-font-description": "활성화하면 시계가 고정폭 글꼴을 사용합니다.",
       "use-monospaced-font-label": "고정폭 글꼴 사용",
-      "use-primary-color-description": "활성화하면 강조를 위해 첫번째 색상을 적용합니다.",
-      "use-primary-color-label": "첫번째 색 사용",
       "vertical-bar-description": "각 부분을 새 줄로 나누려면 공백을 사용하세요.",
       "vertical-bar-label": "수직 바"
     },
@@ -345,13 +343,6 @@
       "version-new-user": "새로 설치됨"
     }
   },
-  "colors": {
-    "error": "오류",
-    "on-surface": "표면 색",
-    "primary": "첫번째 색",
-    "secondary": "두번째 색",
-    "tertiary": "세번째 색"
-  },
   "common": {
     "actions": "작업",
     "add": "추가",
@@ -396,6 +387,7 @@
     "dysfunctional": "기능 장애",
     "edit": "편집",
     "enabled": "활성화됨",
+    "error": "오류",
     "events": "일정",
     "execute": "실행",
     "faithful": "충실하게",
@@ -1228,6 +1220,8 @@
       "sounds-unavailable-label": "알림 소리 사용 불가",
       "sounds-volume-description": "알림 소리의 볼륨 레벨을 조정합니다.",
       "sounds-volume-label": "소리 볼륨",
+      "toast-battery-description": "배터리 잔량이 이 비율 아래로 떨어지면 경고를 표시합니다.",
+      "toast-battery-label": "배터리 경고",
       "toast-desc": "토스트 모양과 동작을 구성합니다.",
       "toast-keyboard-description": "키보드 레이아웃 변경 시 토스트를 표시합니다.",
       "toast-keyboard-label": "키보드 레이아웃",
@@ -1566,8 +1560,10 @@
       "title": "비행기 모드"
     },
     "battery": {
+      "critical": "배터리 부족",
+      "critical-desc": "배터리 {percent}% — 즉시 충전기를 연결해주세요",
       "low": "배터리 부족",
-      "low-desc": "배터리가 {percent}%입니다. 충전기를 연결하세요"
+      "low-desc": "배터리가 {percent}%입니다 — 충전기를 연결해주세요"
     },
     "bluetooth": {
       "address-copied": "주소가 클립보드에 복사됨",

@@ -75,8 +75,6 @@
       "use-custom-font-label": "Usar fuente personalizada",
       "use-monospaced-font-description": "Cuando está activada, el reloj usará la fuente monoespaciada.",
       "use-monospaced-font-label": "Usar fuente monoespaciada",
-      "use-primary-color-description": "Cuando está activado, se aplicará el color primario para dar énfasis.",
-      "use-primary-color-label": "Usar color primario",
       "vertical-bar-description": "Usa un espacio para separar cada parte en una nueva línea.",
       "vertical-bar-label": "Barra vertical"
     },
@@ -345,13 +343,6 @@
       "version-new-user": "Instalación nueva"
     }
   },
-  "colors": {
-    "error": "Error",
-    "on-surface": "Sobre la superficie",
-    "primary": "Primario",
-    "secondary": "Secundario",
-    "tertiary": "Terciario"
-  },
   "common": {
     "actions": "Acciones",
     "add": "Añadir",
@@ -396,6 +387,7 @@
     "dysfunctional": "Disfuncional",
     "edit": "Editar",
     "enabled": "Activado",
+    "error": "Error",
     "events": "Eventos",
     "execute": "Ejecutar",
     "faithful": "Fiel",
@@ -1228,6 +1220,8 @@
       "sounds-unavailable-label": "Sonidos de notificación no disponibles",
       "sounds-volume-description": "Ajustar el nivel de volumen para los sonidos de notificación.",
       "sounds-volume-label": "Volumen del sonido",
+      "toast-battery-description": "Mostrar una advertencia cuando el nivel de batería caiga por debajo de este porcentaje.",
+      "toast-battery-label": "Advertencia de batería",
       "toast-desc": "Configurar la apariencia y el comportamiento de las notificaciones toast.",
       "toast-keyboard-description": "Mostrar una notificación cuando cambie la distribución del teclado.",
       "toast-keyboard-label": "Distribución del teclado",
@@ -1516,7 +1510,7 @@
     },
     "skip-setup": "Omitir la configuración",
     "telemetry-wizard-done": "¡Entendido!",
-    "telemetry-wizard-note": "Tienes el control — activa o desactiva esto cuando quieras en los Ajustes",
+    "telemetry-wizard-note": "Tienes el control — activa o desactiva esto cuando quieras en los ajustes",
     "telemetry-wizard-subtitle": "Hemos añadido analíticas anónimas para ayudar a mejorar Noctalia",
     "telemetry-wizard-title": "Actualización de privacidad",
     "wallpaper": {
@@ -1566,8 +1560,10 @@
       "title": "Modo avión"
     },
     "battery": {
+      "critical": "Batería crítica",
+      "critical-desc": "Batería al {percent}% — por favor, conecta el cargador inmediatamente",
       "low": "Batería baja",
-      "low-desc": "La batería está al {percent}%. Por favor, conecta el cargador"
+      "low-desc": "Batería al {percent}% — por favor, conecta el cargador"
     },
     "bluetooth": {
       "address-copied": "Dirección copiada al portapapeles",

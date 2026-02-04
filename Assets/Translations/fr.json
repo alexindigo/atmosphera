@@ -75,8 +75,6 @@
       "use-custom-font-label": "Utiliser une police personnalisée",
       "use-monospaced-font-description": "Lorsque cette option est activée, l'horloge utilisera la police à chasse fixe.",
       "use-monospaced-font-label": "Utiliser une police à chasse fixe",
-      "use-primary-color-description": "Lorsque cette option est activée, la couleur principale est utilisée pour la mise en évidence.",
-      "use-primary-color-label": "Utiliser la couleur principale",
       "vertical-bar-description": "Utilisez un espace pour séparer chaque partie sur une nouvelle ligne.",
       "vertical-bar-label": "Barre verticale"
     },
@@ -345,13 +343,6 @@
       "version-new-user": "Nouvelle installation"
     }
   },
-  "colors": {
-    "error": "Erreur",
-    "on-surface": "Sur la surface",
-    "primary": "Primaire",
-    "secondary": "Secondaire",
-    "tertiary": "Tertiaire"
-  },
   "common": {
     "actions": "Actions",
     "add": "Ajouter",
@@ -396,6 +387,7 @@
     "dysfunctional": "Dysfonctionnel",
     "edit": "Modifier",
     "enabled": "Activé",
+    "error": "Erreur",
     "events": "Événements",
     "execute": "Exécuter",
     "faithful": "Fidèle",
@@ -1228,6 +1220,8 @@
       "sounds-unavailable-label": "Sons de notification non disponibles",
       "sounds-volume-description": "Ajuster le niveau de volume pour les sons de notification.",
       "sounds-volume-label": "Volume sonore",
+      "toast-battery-description": "Afficher un avertissement lorsque le niveau de batterie descend en dessous de ce pourcentage.",
+      "toast-battery-label": "Avertissement de batterie",
       "toast-desc": "Configurer l'apparence et le comportement des notifications toast.",
       "toast-keyboard-description": "Afficher une notification lorsque la disposition du clavier change.",
       "toast-keyboard-label": "Disposition du clavier",
@@ -1516,7 +1510,7 @@
     },
     "skip-setup": "Ignorer la configuration",
     "telemetry-wizard-done": "Bien reçu !",
-    "telemetry-wizard-note": "Vous avez le contrôle : activez ou désactivez cette option à tout moment dans les Paramètres",
+    "telemetry-wizard-note": "Vous avez le contrôle — activez ou désactivez cette option à tout moment dans les paramètres",
     "telemetry-wizard-subtitle": "Nous avons ajouté des analyses anonymes pour aider à améliorer Noctalia",
     "telemetry-wizard-title": "Mise à jour de la confidentialité",
     "wallpaper": {
@@ -1566,8 +1560,10 @@
       "title": "Mode avion"
     },
     "battery": {
+      "critical": "Batterie critique",
+      "critical-desc": "Batterie à {percent}% — veuillez connecter le chargeur immédiatement",
       "low": "Batterie faible",
-      "low-desc": "La batterie est à {percent}%. Veuillez brancher le chargeur"
+      "low-desc": "Batterie à {percent}% — veuillez connecter le chargeur"
     },
     "bluetooth": {
       "address-copied": "Adresse copiée dans le presse-papiers",

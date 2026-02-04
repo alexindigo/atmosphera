@@ -75,8 +75,6 @@
       "use-custom-font-label": "使用自訂字型",
       "use-monospaced-font-description": "當啟用時, 時鐘會使用等寬字型顯示",
       "use-monospaced-font-label": "使用等寬字型",
-      "use-primary-color-description": "當啟用時, 會以主題的主色強調",
-      "use-primary-color-label": "使用主要顏色",
       "vertical-bar-description": "使用空格把各個部件拆到下一行",
       "vertical-bar-label": "垂直列顯示"
     },
@@ -345,13 +343,6 @@
       "version-new-user": "全新安裝"
     }
   },
-  "colors": {
-    "error": "錯誤",
-    "on-surface": "工具列表面",
-    "primary": "主要色",
-    "secondary": "輔助色",
-    "tertiary": "三級色"
-  },
   "common": {
     "actions": "操作",
     "add": "新增",
@@ -396,6 +387,7 @@
     "dysfunctional": "功能失調",
     "edit": "編輯",
     "enabled": "已啟用",
+    "error": "錯誤",
     "events": "事件",
     "execute": "執行",
     "faithful": "忠實",
@@ -1228,6 +1220,8 @@
       "sounds-unavailable-label": "通知音效無法使用",
       "sounds-volume-description": "調整通知音效的音量大小",
       "sounds-volume-label": "音效音量",
+      "toast-battery-description": "當電池電量低於此百分比時顯示警告。",
+      "toast-battery-label": "低電量提醒",
       "toast-desc": "設定氣泡訊息的外觀及行為",
       "toast-keyboard-description": "當鍵盤佈局改變時顯示氣泡訊息",
       "toast-keyboard-label": "鍵盤佈局",
@@ -1566,8 +1560,10 @@
       "title": "飛航模式"
     },
     "battery": {
+      "critical": "電量嚴重不足",
+      "critical-desc": "電量剩餘 {percent}% — 請立即連接充電器",
       "low": "電量過低",
-      "low-desc": "電池剩餘 {percent}% 電量, 請接上充電器"
+      "low-desc": "電量剩餘 {percent}% — 請連接充電器"
     },
     "bluetooth": {
       "address-copied": "已複製位址至剪貼簿",

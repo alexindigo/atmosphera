@@ -75,8 +75,6 @@
       "use-custom-font-label": "Use custom font",
       "use-monospaced-font-description": "When enabled, the clock will use the monospaced font.",
       "use-monospaced-font-label": "Use monospaced font",
-      "use-primary-color-description": "When enabled, this applies the primary color for emphasis.",
-      "use-primary-color-label": "Use primary color",
       "vertical-bar-description": "Use a space to separate each part onto a new line.",
       "vertical-bar-label": "Vertical bar"
     },
@@ -94,7 +92,7 @@
       "collapse-condition-description": "If the output text matches this value, the button will collapse.",
       "collapse-condition-label": "Collapse condition",
       "color-selection-description": "Apply theme colors to icon and text.",
-      "color-selection-label": "Select Color",
+      "color-selection-label": "Select color",
       "display-command-output-description": "Enter a command to run at a regular interval. The first line of its output will be displayed as text.",
       "display-command-output-label": "Display command output",
       "display-command-output-stream-description": "Enter a command to run continuously.",
@@ -345,13 +343,6 @@
       "version-new-user": "Fresh install"
     }
   },
-  "colors": {
-    "error": "Error",
-    "on-surface": "On Surface",
-    "primary": "Primary",
-    "secondary": "Secondary",
-    "tertiary": "Tertiary"
-  },
   "common": {
     "actions": "Actions",
     "add": "Add",
@@ -396,6 +387,7 @@
     "dysfunctional": "Dysfunctional",
     "edit": "Edit",
     "enabled": "Enabled",
+    "error": "Error",
     "events": "Events",
     "execute": "Execute",
     "faithful": "Faithful",
@@ -1518,7 +1510,7 @@
     },
     "skip-setup": "Skip Setup",
     "telemetry-wizard-done": "Got it!",
-    "telemetry-wizard-note": "You're in control — enable or disable this anytime in Settings",
+    "telemetry-wizard-note": "You're in control — enable or disable this anytime in settings",
     "telemetry-wizard-subtitle": "We've added anonymous analytics to help improve Noctalia",
     "telemetry-wizard-title": "Privacy Update",
     "wallpaper": {
@@ -1569,9 +1561,9 @@
     },
     "battery": {
       "critical": "Critical battery",
-      "critical-desc": "Battery is at {percent}%. Please connect the charger immediately.",
+      "critical-desc": "Battery is at {percent}% — please connect the charger immediately",
       "low": "Low battery",
-      "low-desc": "Battery is at {percent}%. Please connect the charger."
+      "low-desc": "Battery is at {percent}% — please connect the charger"
     },
     "bluetooth": {
       "address-copied": "Address copied to clipboard",

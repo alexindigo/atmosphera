@@ -75,8 +75,6 @@
       "use-custom-font-label": "Aangepast lettertype gebruiken",
       "use-monospaced-font-description": "Indien ingeschakeld gebruikt de klok het monospace-lettertype.",
       "use-monospaced-font-label": "Monospace-lettertype gebruiken",
-      "use-primary-color-description": "Indien ingeschakeld wordt de primaire kleur gebruikt voor nadruk.",
-      "use-primary-color-label": "Primaire kleur gebruiken",
       "vertical-bar-description": "Gebruik een spatie om elk deel op een nieuwe regel te plaatsen.",
       "vertical-bar-label": "Verticale balk"
     },
@@ -345,13 +343,6 @@
       "version-new-user": "Nieuwe installatie"
     }
   },
-  "colors": {
-    "error": "Fout",
-    "on-surface": "Op oppervlak",
-    "primary": "Primair",
-    "secondary": "Secundair",
-    "tertiary": "Tertiair"
-  },
   "common": {
     "actions": "Acties",
     "add": "Toevoegen",
@@ -396,6 +387,7 @@
     "dysfunctional": "Dysfunctioneel",
     "edit": "Bewerken",
     "enabled": "Ingeschakeld",
+    "error": "Fout",
     "events": "Evenementen",
     "execute": "Uitvoeren",
     "faithful": "Getrouw",
@@ -1228,6 +1220,8 @@
       "sounds-unavailable-label": "Meldingsgeluiden niet beschikbaar",
       "sounds-volume-description": "Pas het volumeniveau aan voor meldingsgeluiden.",
       "sounds-volume-label": "Geluidsvolume",
+      "toast-battery-description": "Toon een waarschuwing wanneer het accuniveau onder dit percentage zakt.",
+      "toast-battery-label": "Accuwaarschuwing",
       "toast-desc": "Configureer het uiterlijk en gedrag van toasts.",
       "toast-keyboard-description": "Toon een toastmelding wanneer de toetsenbordindeling verandert.",
       "toast-keyboard-label": "Toetsenbordindeling",
@@ -1516,7 +1510,7 @@
     },
     "skip-setup": "Setup overslaan",
     "telemetry-wizard-done": "Begrepen!",
-    "telemetry-wizard-note": "Je hebt de controle - schakel dit op elk moment in of uit in de Instellingen",
+    "telemetry-wizard-note": "Je hebt de controle — schakel dit op elk moment in of uit in de instellingen",
     "telemetry-wizard-subtitle": "We hebben anonieme analyses toegevoegd om Noctalia te helpen verbeteren",
     "telemetry-wizard-title": "Privacy-update",
     "wallpaper": {
@@ -1533,7 +1527,7 @@
       "select-prompt": "Selecteer hieronder een achtergrond",
       "subheader": "Zet de toon met een mooie achtergrond."
     },
-    "welcome-note": "Een paar basisinstellingen om je op weg te helpen – alle opties vind je in instellingen",
+    "welcome-note": "Een paar basisinstellingen om je op weg te helpen — alle opties vind je in instellingen",
     "welcome-subtitle": "Laten we uw bureaublad uniek maken",
     "welcome-title": "Welkom bij Noctalia!"
   },
@@ -1566,8 +1560,10 @@
       "title": "Vliegtuigmodus"
     },
     "battery": {
+      "critical": "Kritiek accuniveau",
+      "critical-desc": "Accu is {percent}% — sluit de oplader onmiddellijk aan",
       "low": "Accu bijna leeg",
-      "low-desc": "De accu is op {percent}%. Sluit de oplader aan"
+      "low-desc": "Accu is op {percent}% — sluit de oplader aan"
     },
     "bluetooth": {
       "address-copied": "Adres gekopieerd naar klembord",
