@@ -21,7 +21,7 @@ def main():
     # We won't use pair_wait_seconds in the same way, but we'll respect the timeout logic.
     pair_wait_seconds = float(sys.argv[2])
     if pair_wait_seconds < 30:
-        log(f"Warning: pairWaitSeconds ({pair_wait_seconds}) is too short. Enforcing 15s minimum.")
+        log(f"Warning: pairWaitSeconds ({pair_wait_seconds}s) is too short. Enforcing 45s minimum.")
         pair_wait_seconds = 45.0
 
     attempts = int(sys.argv[3])
@@ -41,7 +41,7 @@ def main():
     os.close(slave_fd)
 
     def send_command(cmd):
-        log(f"Sending: {cmd}")
+        log(f"Sending cmd: {cmd}")
         os.write(master_fd, (cmd + "\n").encode('utf-8'))
 
     def read_output(timeout=1.0):
@@ -66,7 +66,7 @@ def main():
 
     log("Initializing bluetoothctl...")
     time.sleep(1)  # Wait for startup
-    initial_out = read_output(timeout=1)
+    # initial_out = read_output(timeout=1)
     # print(initial_out) # Debug
 
     send_command("agent on")
@@ -74,17 +74,17 @@ def main():
     send_command("power on")
     time.sleep(1)
 
-    # Clean start
+    # Clean start (May need to determine in-complete pairing status[es] and restart process at this point. - If needed.)
     log(f"Removing {addr} to start fresh...")
     send_command(f"remove {addr}")
     time.sleep(2)
 
     # Scan and wait for discovery
-    log("Scanning for device (30s timeout)...")
+    log(f"Scanning for device ({pair_wait_seconds}s timeout)...")
     send_command("scan on")
     found = False
     scan_start = time.time()
-    while time.time() - scan_start < 30:  # Wait up to 30s to find it
+    while time.time() - scan_start < 60:  # Wait up to 60s to find it.
         out = read_output(timeout=0.5)
         if out:
             print(out, end='')
@@ -102,7 +102,7 @@ def main():
                 break
 
     if not found:
-        log("Device not found in scan. Trying to pair anyway...")
+        log("Device not found in scan! (is device in pairing mode?) Attempting to pair anyway...")
 
     # Pair
     send_command(f"pair {addr}")
@@ -137,7 +137,7 @@ def main():
                 log("Device requested PIN/Passkey. Waiting for user input...")
                 print("[PIN_REQ]")
                 sys.stdout.flush()
-                
+
                 try:
                     # Read PIN from stdin (blocking)
                     user_pin = sys.stdin.readline().strip()
@@ -152,7 +152,6 @@ def main():
                     break
 
             # Just Works (JW) is implicit (no prompt)
-
             if "Pairing successful" in out or "Paired: yes" in out or "Bonded: yes" in out:
                 paired = True
                 log("Pairing successful detected in stream.")
