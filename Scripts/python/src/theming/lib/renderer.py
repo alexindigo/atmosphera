@@ -1133,6 +1133,8 @@ class TemplateRenderer:
                     continue
 
                 # Handle closest_color if configured (matugen-compatible)
+                # Reset for each template to avoid state pollution between templates
+                self.closest_color = ""
                 colors_to_compare = template.get("colors_to_compare")
                 compare_to = template.get("compare_to")
 
