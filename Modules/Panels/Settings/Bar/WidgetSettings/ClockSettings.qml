@@ -84,8 +84,8 @@ ColumnLayout {
   }
 
   NComboBox {
-    label: I18n.tr("bar.clock.empty-color-label")
-    description: I18n.tr("bar.clock.empty-color-description")
+    label: I18n.tr("bar.clock.select-color-label")
+    description: I18n.tr("bar.clock.select-color-description")
     model: [
       {
         "name": I18n.tr("common.none"),
