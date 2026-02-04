@@ -9,20 +9,20 @@ import errno
 
 
 def log(msg):
-    sys.stderr.write(f"[bluetooth-connect] {msg}\n")
+    sys.stderr.write(f"[bluetooth-pair] {msg}\n")
 
 
 def main():
     if len(sys.argv) < 5:
-        log("Usage: bluetooth-connect.py <addr> <pairWaitSeconds> <attempts> <intervalSec>")
+        log("Usage: bluetooth-pair.py <addr> <pairWaitSeconds> <attempts> <intervalSec>")
         sys.exit(2)
 
     addr = sys.argv[1]
     # We won't use pair_wait_seconds in the same way, but we'll respect the timeout logic.
     pair_wait_seconds = float(sys.argv[2])
-    if pair_wait_seconds < 15:
+    if pair_wait_seconds < 30:
         log(f"Warning: pairWaitSeconds ({pair_wait_seconds}) is too short. Enforcing 15s minimum.")
-        pair_wait_seconds = 15.0
+        pair_wait_seconds = 45.0
 
     attempts = int(sys.argv[3])
     interval_sec = float(sys.argv[4])
