@@ -540,13 +540,13 @@ Singleton {
         var chunk = data;
         if (chunk.indexOf("[PIN_REQ]") !== -1) {
           root.pinRequired = true;
-          Logger.i("Bluetooth", "PIN required for pairing");
+          Logger.d("Bluetooth", "PIN required for pairing");
           ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("bluetooth.panel.pin-required"), "lock");
         }
       }
     }
     stderr: SplitParser {
-      onRead: data => Logger.i("Bluetooth", data)
+      onRead: data => Logger.d("Bluetooth", data)
     }
     onExited: {
       root.pinRequired = false;
