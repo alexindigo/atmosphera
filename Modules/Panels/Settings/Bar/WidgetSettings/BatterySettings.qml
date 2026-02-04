@@ -42,7 +42,7 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("bar.battery.device-label")
     description: I18n.tr("bar.battery.device-description")
-    minimumWidth: 200
+    minimumWidth: 240
     model: BatteryService.deviceModel
     currentKey: root.valueDeviceNativePath
     onSelected: key => {
@@ -55,7 +55,7 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("bar.battery.display-mode-label")
     description: I18n.tr("bar.battery.display-mode-description")
-    minimumWidth: 200
+    minimumWidth: 240
     model: [
       {
         "key": "graphic",
