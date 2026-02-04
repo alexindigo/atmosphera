@@ -113,7 +113,7 @@ ColumnLayout {
 
   NComboBox {
     visible: valueEnableColorization
-    label: I18n.tr("bar.custom-button.color-selection-label")
+    label: I18n.tr("common.select-color")
     description: I18n.tr("bar.custom-button.color-selection-description")
     model: [
       {
