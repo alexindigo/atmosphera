@@ -154,7 +154,7 @@ Item {
     font.family: Settings.data.ui.fontFixed
     font.weight: Style.fontWeightBold
     text: Math.round(root.animatedPercentage)
-    pointSize: root.baseSize * 0.82
+    pointSize: root.baseSize * (root.vertical ? 0.78 : 0.82)
     color: Qt.alpha(root.textColor, 0.75)
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
