@@ -8,11 +8,11 @@ import select
 import errno
 
 
-def log(msg):
+def log(msg) -> None:
     sys.stderr.write(f"[bluetooth-pair] {msg}\n")
 
 
-def main():
+def pair_fast():
     if len(sys.argv) < 5:
         log("Usage: bluetooth-pair.py <addr> <pairWaitSeconds> <attempts> <intervalSec>")
         sys.exit(2)
@@ -32,27 +32,27 @@ def main():
         log(f"Invalid Bluetooth address: '{addr}'")
         sys.exit(2)
 
-    # Master/Slave PTY for interactive control
-    master_fd, slave_fd = pty.openpty()
+    # m/s PTY for interactive control
+    mfd, sfd = pty.openpty()
 
     # Start bluetoothctl
-    proc = subprocess.Popen(['bluetoothctl'], stdin=slave_fd, stdout=slave_fd, stderr=slave_fd, close_fds=True, text=True)
+    subprocess.Popen(['bluetoothctl'], stdin=sfd, stdout=sfd, stderr=sfd, close_fds=True, text=True)
 
-    os.close(slave_fd)
+    os.close(sfd)
 
     def send_command(cmd):
         log(f"Sending cmd: {cmd}")
-        os.write(master_fd, (cmd + "\n").encode('utf-8'))
+        os.write(mfd, (cmd + "\n").encode('utf-8'))
 
     def read_output(timeout=1.0):
-        # Reads available output from master_fd
+        # Reads available output from mfd
         output = b""
         end_time = time.time() + timeout
         while time.time() < end_time:
-            r, _, _ = select.select([master_fd], [], [], 0.1)
-            if master_fd in r:
+            r, _, _ = select.select([mfd], [], [], 0.1)
+            if mfd in r:
                 try:
-                    data = os.read(master_fd, 1024)
+                    data = os.read(mfd, 1024)
                     if not data:
                         break
                     output += data
@@ -71,47 +71,18 @@ def main():
 
     send_command("agent on")
     send_command("default-agent")
-    send_command("power on")
-    time.sleep(1)
+    # send_command("power on") # If we are pairing bluetooth is already powered on
+    time.sleep(0.5)
 
-    # Clean start (May need to determine in-complete pairing status[es] and restart process at this point. - If needed.)
-    log(f"Removing {addr} to start fresh...")
-    send_command(f"remove {addr}")
-    time.sleep(2)
-
-    # Scan and wait for discovery
-    log(f"Scanning for device ({pair_wait_seconds}s timeout)...")
-    send_command("scan on")
-    found = False
-    scan_start = time.time()
-    while time.time() - scan_start < 60:  # Wait up to 60s to find it.
-        out = read_output(timeout=0.5)
-        if out:
-            print(out, end='')
-            # Split lines to handle mixed output safely
-            for line in out.splitlines():
-                if addr in line:
-                    if "[DEL]" in line:
-                        continue
-                    if "[NEW]" in line or "[CHG]" in line:
-                        if "not available" not in line:
-                            log(f"Device {addr} discovered!")
-                            found = True
-                            break
-            if found:
-                break
-
-    if not found:
-        log("Device not found in scan! (is device in pairing mode?) Attempting to pair anyway...")
-
-    # Pair
+    # Pair directly since the device is already discovered in the UI/Panel (Removed previous scan/wait part)
+    log(f"Attempting to pair with {addr}...")
     send_command(f"pair {addr}")
 
     # Loop to watch for confirmation or success
     start_time = time.time()
     paired = False
 
-    log("Waiting for pairing logic...")
+    log("Waiting for pairing sequence start...")
     while time.time() - start_time < pair_wait_seconds:
         out = read_output(timeout=0.5)
         if out:
@@ -191,7 +162,7 @@ def main():
             time.sleep(1)
             out = read_output(timeout=1)
             if "Connected: yes" in out:
-                log("Connected successfully.")
+                log("Connected successfully, we are done here.")
                 connected = True
                 break
             else:
@@ -212,4 +183,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    pair_fast()
