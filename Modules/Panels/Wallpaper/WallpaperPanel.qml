@@ -761,6 +761,8 @@ SmartPanel {
               return "history";
             if (sortOrder === "name_desc")
               return "sort-descending";
+            if (sortOrder === "random")
+              return "arrows-shuffle";
             return "sort-ascending";
           }
           tooltipText: {
@@ -770,6 +772,8 @@ SmartPanel {
               return "Sort: Oldest First";
             if (sortOrder === "name_desc")
               return "Sort: Name (Z-A)";
+            if (sortOrder === "random")
+              return "Sort: Random";
             return "Sort: Name (A-Z)";
           }
           baseSize: Style.baseWidgetSize * 0.8
@@ -779,7 +783,7 @@ SmartPanel {
               next = "date_desc";
             else if (sortOrder === "date_desc")
               next = "name"; // Toggle simpler: Name -> Newest -> Name
-            // Expanded cycle: Name -> Newest -> Oldest -> Z-A -> Name
+            // Expanded cycle: Name -> Newest -> Oldest -> Z-A -> Random -> Name
             // User just asked for "newest first", so let's make it easy to reach.
             // Let's do: Name (A-Z) -> Newest -> Oldest -> Name (Z-A) -> ...
 
@@ -789,6 +793,8 @@ SmartPanel {
               next = "date_asc";
             else if (sortOrder === "date_asc")
               next = "name_desc";
+            else if (sortOrder === "name_desc")
+              next = "random";
             else
               next = "name";
 

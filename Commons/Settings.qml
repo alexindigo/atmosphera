@@ -374,7 +374,7 @@ Singleton {
       property string wallhavenResolutionWidth: ""
 
       property string wallhavenResolutionHeight: ""
-      property string sortOrder: "name" // "name", "name_desc", "date", "date_desc"
+      property string sortOrder: "name" // "name", "name_desc", "date", "date_desc", "random"
     }
 
     // applauncher

@@ -767,17 +767,27 @@ Singleton {
         // Sort files based on settings
         var sortOrder = Settings.data.wallpaper.sortOrder || "name";
 
-        parsedFiles.sort(function (a, b) {
-          if (sortOrder === "date_desc") { // Newest first
-            return b.time - a.time;
-          } else if (sortOrder === "date_asc") { // Oldest first
-            return a.time - b.time;
-          } else if (sortOrder === "name_desc") {
-            return b.name.localeCompare(a.name);
-          } else { // name (asc)
-            return a.name.localeCompare(b.name);
-          }
-        });
+        // Fischer-Yates shuffle
+        if (sortOrder === "random") {
+            for (let i = parsedFiles.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const temp = parsedFiles[i];
+                parsedFiles[i] = parsedFiles[j];
+                parsedFiles[j] = temp;
+            }
+        } else {
+          parsedFiles.sort(function (a, b) {
+            if (sortOrder === "date_desc") { // Newest first
+              return b.time - a.time;
+            } else if (sortOrder === "date_asc") { // Oldest first
+              return a.time - b.time;
+            } else if (sortOrder === "name_desc") {
+              return b.name.localeCompare(a.name);
+            } else { // name (asc)
+              return a.name.localeCompare(b.name);
+            }
+          });
+        }
 
         // Map back to string array
         files = parsedFiles.map(f => f.path);
