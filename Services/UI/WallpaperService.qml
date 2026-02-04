@@ -769,12 +769,12 @@ Singleton {
 
         // Fischer-Yates shuffle
         if (sortOrder === "random") {
-            for (let i = parsedFiles.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                const temp = parsedFiles[i];
-                parsedFiles[i] = parsedFiles[j];
-                parsedFiles[j] = temp;
-            }
+          for (let i = parsedFiles.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const temp = parsedFiles[i];
+            parsedFiles[i] = parsedFiles[j];
+            parsedFiles[j] = temp;
+          }
         } else {
           parsedFiles.sort(function (a, b) {
             if (sortOrder === "date_desc") { // Newest first
