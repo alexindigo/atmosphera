@@ -32,23 +32,23 @@ ColumnLayout {
     model: [
       {
         "key": "primary",
-        "name": I18n.tr("colors.primary")
+        "name": I18n.tr("common.primary")
       },
       {
         "key": "secondary",
-        "name": I18n.tr("colors.secondary")
+        "name": I18n.tr("common.secondary")
       },
       {
         "key": "tertiary",
-        "name": I18n.tr("colors.tertiary")
+        "name": I18n.tr("common.tertiary")
       },
       {
         "key": "onSurface",
-        "name": I18n.tr("colors.on-surface")
+        "name": I18n.tr("common.on-surface")
       },
       {
         "key": "error",
-        "name": I18n.tr("colors.error")
+        "name": I18n.tr("common.error")
       }
     ]
     currentKey: root.valueColorName

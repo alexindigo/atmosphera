@@ -63,19 +63,19 @@ ColumnLayout {
         "key": "none"
       },
       {
-        "name": I18n.tr("colors.primary"),
+        "name": I18n.tr("common.primary"),
         "key": "primary"
       },
       {
-        "name": I18n.tr("colors.secondary"),
+        "name": I18n.tr("common.secondary"),
         "key": "secondary"
       },
       {
-        "name": I18n.tr("colors.tertiary"),
+        "name": I18n.tr("common.tertiary"),
         "key": "tertiary"
       },
       {
-        "name": I18n.tr("colors.error"),
+        "name": I18n.tr("common.error"),
         "key": "error"
       }
     ]
