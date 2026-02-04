@@ -16,6 +16,7 @@ ColumnLayout {
   signal settingsChanged(var settings)
 
   // Local state
+  property string valueDisplayMode: widgetData.displayMode !== undefined ? widgetData.displayMode : widgetMetadata.displayMode
   property string valueDeviceNativePath: widgetData.deviceNativePath !== undefined ? widgetData.deviceNativePath : "__default__"
   property bool valueShowPowerProfiles: widgetData.showPowerProfiles !== undefined ? widgetData.showPowerProfiles : widgetMetadata.showPowerProfiles
   property bool valueShowNoctaliaPerformance: widgetData.showNoctaliaPerformance !== undefined ? widgetData.showNoctaliaPerformance : widgetMetadata.showNoctaliaPerformance
@@ -27,6 +28,7 @@ ColumnLayout {
     if (widgetData && widgetData.id) {
       settings.id = widgetData.id;
     }
+    settings.displayMode = valueDisplayMode;
     settings.showPowerProfiles = valueShowPowerProfiles;
     settings.showNoctaliaPerformance = valueShowNoctaliaPerformance;
     settings.hideIfNotDetected = valueHideIfNotDetected;
@@ -45,6 +47,36 @@ ColumnLayout {
     currentKey: root.valueDeviceNativePath
     onSelected: key => {
                   root.valueDeviceNativePath = key;
+                  settingsChanged(saveSettings());
+                }
+  }
+
+  NComboBox {
+    Layout.fillWidth: true
+    label: I18n.tr("bar.battery.display-mode-label")
+    description: I18n.tr("bar.battery.display-mode-description")
+    minimumWidth: 200
+    model: [
+      {
+        "key": "graphic",
+        "name": I18n.tr("bar.battery.display-mode-graphic")
+      },
+      {
+        "key": "icon-hover",
+        "name": I18n.tr("bar.battery.display-mode-icon-hover")
+      },
+      {
+        "key": "icon-always",
+        "name": I18n.tr("bar.battery.display-mode-icon-always")
+      },
+      {
+        "key": "icon-only",
+        "name": I18n.tr("bar.battery.display-mode-icon-only")
+      }
+    ]
+    currentKey: root.valueDisplayMode
+    onSelected: key => {
+                  root.valueDisplayMode = key;
                   settingsChanged(saveSettings());
                 }
   }

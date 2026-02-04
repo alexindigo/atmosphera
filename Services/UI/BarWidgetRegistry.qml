@@ -84,6 +84,7 @@ Singleton {
                                     "hideWhenIdle": false
                                   },
                                   "Battery": {
+                                    "displayMode": "graphic",
                                     "deviceNativePath": "__default__",
                                     "showPowerProfiles": false,
                                     "showNoctaliaPerformance": false,
