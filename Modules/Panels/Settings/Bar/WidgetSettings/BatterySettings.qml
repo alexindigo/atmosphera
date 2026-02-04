@@ -16,7 +16,6 @@ ColumnLayout {
   signal settingsChanged(var settings)
 
   // Local state
-  property string valueDisplayMode: widgetData.displayMode !== undefined ? widgetData.displayMode : widgetMetadata.displayMode
   property string valueDeviceNativePath: widgetData.deviceNativePath !== undefined ? widgetData.deviceNativePath : "__default__"
   property bool valueShowPowerProfiles: widgetData.showPowerProfiles !== undefined ? widgetData.showPowerProfiles : widgetMetadata.showPowerProfiles
   property bool valueShowNoctaliaPerformance: widgetData.showNoctaliaPerformance !== undefined ? widgetData.showNoctaliaPerformance : widgetMetadata.showNoctaliaPerformance
@@ -28,7 +27,6 @@ ColumnLayout {
     if (widgetData && widgetData.id) {
       settings.id = widgetData.id;
     }
-    settings.displayMode = valueDisplayMode;
     settings.showPowerProfiles = valueShowPowerProfiles;
     settings.showNoctaliaPerformance = valueShowNoctaliaPerformance;
     settings.hideIfNotDetected = valueHideIfNotDetected;
@@ -47,32 +45,6 @@ ColumnLayout {
     currentKey: root.valueDeviceNativePath
     onSelected: key => {
                   root.valueDeviceNativePath = key;
-                  settingsChanged(saveSettings());
-                }
-  }
-
-  NComboBox {
-    Layout.fillWidth: true
-    label: I18n.tr("bar.volume.display-mode-label")
-    description: I18n.tr("bar.volume.display-mode-description")
-    minimumWidth: 200
-    model: [
-      {
-        "key": "onhover",
-        "name": I18n.tr("display-modes.on-hover")
-      },
-      {
-        "key": "alwaysShow",
-        "name": I18n.tr("display-modes.always-show")
-      },
-      {
-        "key": "alwaysHide",
-        "name": I18n.tr("display-modes.always-hide")
-      }
-    ]
-    currentKey: root.valueDisplayMode
-    onSelected: key => {
-                  root.valueDisplayMode = key;
                   settingsChanged(saveSettings());
                 }
   }
