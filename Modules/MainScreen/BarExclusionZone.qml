@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Wayland
 import qs.Commons
 import qs.Services.Compositor
+import qs.Services.UI
 
 /**
 * BarExclusionZone - Invisible PanelWindow that reserves exclusive space for the bar
@@ -31,8 +32,11 @@ PanelWindow {
   // Wayland layer shell configuration
   WlrLayershell.layer: WlrLayer.Top
   WlrLayershell.namespace: "noctalia-bar-exclusion-" + edge + "-" + (screen?.name || "unknown")
-  // When auto-hide is enabled, never reserve space
-  WlrLayershell.exclusionMode: autoHide ? ExclusionMode.Ignore : ExclusionMode.Auto
+  // When auto-hide is enabled OR bar is explicitly hidden via IPC, don't reserve space
+  // Note: We check BarService.isVisible directly, NOT effectivelyVisible, because we want
+  // the exclusion zone to stay during overview (effectivelyVisible is false during overview
+  // when hideOnOverview is enabled, but isVisible remains true)
+  WlrLayershell.exclusionMode: (autoHide || !BarService.isVisible) ? ExclusionMode.Ignore : ExclusionMode.Auto
 
   // Anchor based on specified edge
   anchors {
