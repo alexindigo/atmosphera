@@ -34,9 +34,12 @@ Item {
     return {};
   }
 
-  readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
+ readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
   readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
+  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screenName)
+
   readonly property string displayMode: widgetSettings.displayMode !== undefined ? widgetSettings.displayMode : widgetMetadata.displayMode
+  
   readonly property bool hideIfNotDetected: widgetSettings.hideIfNotDetected !== undefined ? widgetSettings.hideIfNotDetected : widgetMetadata.hideIfNotDetected
   readonly property bool hideIfIdle: widgetSettings.hideIfIdle !== undefined ? widgetSettings.hideIfIdle : widgetMetadata.hideIfIdle
 
@@ -50,15 +53,55 @@ Item {
   readonly property bool isCriticalBattery: isReady ? BatteryService.isCriticalBattery(selectedDevice) : false
 
   // Visibility: show if hideIfNotDetected is false, or if battery is ready
-  readonly property bool shouldShow: !hideIfNotDetected || (isReady && (hideIfIdle ? (!isCharging && !isPluggedIn) : true))
+  readonly property bool shouldShow: !hideIfNotDetected || (isReady && (hideIfIdle ? (isCharging || !isPluggedIn) : true))
   readonly property string deviceNativePath: widgetSettings.deviceNativePath !== undefined ? widgetSettings.deviceNativePath : widgetMetadata.deviceNativePath
   readonly property var selectedDevice: BatteryService.isDevicePresent(BatteryService.findDevice(deviceNativePath)) ? BatteryService.findDevice(deviceNativePath) : null
+
+  readonly property string tooltipText: {
+    let lines = [];
+    if (!isReady || !isPresent) {
+      return I18n.tr("battery.no-battery-detected");
+    }
+    const isInternal = selectedDevice.isLaptopBattery;
+
+    if (isInternal) {
+      let timeText = BatteryService.getTimeRemainingText(selectedDevice);
+      if (timeText) {
+        lines.push(timeText);
+      }
+
+      let rateText = BatteryService.getRateText(selectedDevice);
+      if (rateText) {
+        lines.push(rateText);
+      }
+    } else if (selectedDevice) {
+      // External / Peripheral Device (Phone, Keyboard, Mouse, Gamepad, Headphone etc.)
+      let name = BatteryService.getDeviceName(selectedDevice);
+      lines.push(`${name}: ${percent}%`);
+    }
+
+    // If we are showing the main laptop battery, append external devices
+    if (isInternal) {
+      var external = BatteryService.bluetoothBatteries;
+      if (external.length > 0) {
+        if (lines.length > 0)
+          lines.push(""); // Separator
+        for (var j = 0; j < external.length; j++) {
+          var dev = external[j];
+          var dName = BatteryService.getDeviceName(dev);
+          var dPct = BatteryService.getPercentage(dev);
+          lines.push(`${dName}: ${dPct}%`);
+        }
+      }
+    }
+    return lines.join("\n");
+  }
 
   visible: shouldShow
   opacity: shouldShow ? 1.0 : 0.0
 
-  implicitWidth: pill.width
-  implicitHeight: pill.height
+  implicitWidth: capsule.width
+  implicitHeight: capsule.height
 
   NPopupContextMenu {
     id: contextMenu
@@ -81,72 +124,66 @@ Item {
                  }
   }
 
-  BarPill {
-    id: pill
-    screen: root.screen
-    oppositeDirection: BarService.getPillDirection(root)
-    icon: BatteryService.getIcon(percent, isCharging, isPluggedIn, isReady)
-    text: isReady ? percent : "-"
-    suffix: "%"
-    autoHide: false
-    forceOpen: isReady && displayMode === "alwaysShow"
-    forceClose: displayMode === "alwaysHide" || !isReady
-    customBackgroundColor: isCharging ? Color.mPrimary : ((isLowBattery || isCriticalBattery) ? Color.mError : "transparent")
-    customTextIconColor: isCharging ? Color.mOnPrimary : ((isLowBattery || isCriticalBattery) ? Color.mOnError : "transparent")
+  // Capsule background
+  Rectangle {
+    id: capsule
+    anchors.centerIn: nBattery
+    width: root.isBarVertical ?  root.capsuleHeight : nBattery.width + Style.marginM * 2
+    height: root.isBarVertical ? nBattery.height + Style.marginM * 2 : root.capsuleHeight
+    radius: Style.iRadiusL
+    color: mouseArea.containsMouse ? Color.mHover : Color.mSurfaceVariant
+    border.color: Style.capsuleBorderColor
+    border.width: Style.capsuleBorderWidth
 
-    tooltipText: {
-      let lines = [];
-      if (!isReady || !isPresent) {
-        return I18n.tr("battery.no-battery-detected");
-      }
-      const isInternal = selectedDevice.isLaptopBattery;
-
-      if (isInternal) {
-        let timeText = BatteryService.getTimeRemainingText(selectedDevice);
-        if (timeText) {
-          lines.push(timeText);
-        }
-
-        let rateText = BatteryService.getRateText(selectedDevice);
-        if (rateText) {
-          lines.push(rateText);
-        }
-      } else if (selectedDevice) {
-        // External / Peripheral Device (Phone, Keyboard, Mouse, Gamepad, Headphone etc.)
-        let name = BatteryService.getDeviceName(selectedDevice);
-        let pct = percent;
-        lines.push(name + ": " + pct + suffix);
-      }
-
-      // If we are showing the main laptop battery, append external devices
-      if (isInternal) {
-        var external = BatteryService.bluetoothBatteries;
-        if (external.length > 0) {
-          if (lines.length > 0)
-            lines.push(""); // Separator
-          for (var j = 0; j < external.length; j++) {
-            var dev = external[j];
-            var dName = BatteryService.getDeviceName(dev);
-            var dPct = BatteryService.getPercentage(dev);
-            lines.push(dName + ": " + dPct + suffix);
-          }
-        }
-      }
-      return lines.join("\n");
-    }
-
-    onClicked: {
-      var panel = PanelService.getPanel("batteryPanel", screen);
-      if (panel) {
-        panel.panelID = {
-          showPowerProfiles: widgetSettings.showPowerProfiles !== undefined ? widgetSettings.showPowerProfiles : widgetMetadata.showPowerProfiles,
-          showNoctaliaPerformance: widgetSettings.showNoctaliaPerformance !== undefined ? widgetSettings.showNoctaliaPerformance : widgetMetadata.showNoctaliaPerformance
-        };
-        panel.toggle(this);
+    Behavior on color {
+      enabled: !Color.isTransitioning
+      ColorAnimation {
+        duration: Style.animationFast
+        easing.type: Easing.InOutQuad
       }
     }
-    onRightClicked: {
-      PanelService.showContextMenu(contextMenu, pill, screen);
+  }
+
+  NBattery {
+    id: nBattery
+    anchors.centerIn: parent
+    baseSize: Style.barFontSize
+    percentage: root.percent
+    charging: root.isCharging
+    pluggedIn: root.isPluggedIn
+    ready: root.isReady
+    showPercentageText: true
+    vertical: root.isBarVertical
+    isCharging: root.isCharging
+    isLow: root.isLowBattery || root.isCriticalBattery
+  }
+
+  MouseArea {
+    id: mouseArea
+    anchors.fill: parent
+    hoverEnabled: true
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
+    onEntered: {
+      if (root.tooltipText) {
+        TooltipService.show(root, root.tooltipText, "auto");
+      }
+    }
+    onExited: {
+      TooltipService.hide();
+    }
+    onClicked: mouse => {
+      if (mouse.button === Qt.RightButton) {
+        PanelService.showContextMenu(contextMenu, nBattery, screen);
+      } else {
+        var panel = PanelService.getPanel("batteryPanel", screen);
+        if (panel) {
+          panel.panelID = {
+            showPowerProfiles: widgetSettings.showPowerProfiles !== undefined ? widgetSettings.showPowerProfiles : widgetMetadata.showPowerProfiles,
+            showNoctaliaPerformance: widgetSettings.showNoctaliaPerformance !== undefined ? widgetSettings.showNoctaliaPerformance : widgetMetadata.showNoctaliaPerformance
+          };
+          panel.toggle(this);
+        }
+      }
     }
   }
 }
