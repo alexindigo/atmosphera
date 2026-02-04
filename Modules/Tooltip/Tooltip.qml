@@ -257,20 +257,22 @@ PopupWindow {
       contentHeight = tooltipText.implicitHeight;
     }
 
-    const tipWidth = Math.min(contentWidth + (padding * 2), maxWidth);
+    const tipWidth = Math.ceil(Math.min(contentWidth + (padding * 2), maxWidth));
     root.implicitWidth = tipWidth;
 
-    const tipHeight = contentHeight + (padding * 2);
+    // Add +2 buffer for fractional scaling issues (especially with "top" direction)
+    const tipHeight = Math.ceil(contentHeight + (padding * 2)) + 2;
     root.implicitHeight = tipHeight;
 
     // Get target's global position and convert to screen-relative
+    // Round all values to avoid sub-pixel positioning issues with fractional scaling
     var targetGlobalAbs = targetItem.mapToGlobal(0, 0);
     var targetGlobal = {
-      "x": targetGlobalAbs.x - screenX,
-      "y": targetGlobalAbs.y - screenY
+      "x": Math.round(targetGlobalAbs.x - screenX),
+      "y": Math.round(targetGlobalAbs.y - screenY)
     };
-    const targetWidth = targetItem.width;
-    const targetHeight = targetItem.height;
+    const targetWidth = Math.round(targetItem.width);
+    const targetHeight = Math.round(targetItem.height);
 
     var newAnchorX = 0;
     var newAnchorY = 0;
@@ -425,8 +427,10 @@ PopupWindow {
     }
 
     // Apply position first (before making visible)
-    anchorX = newAnchorX;
-    anchorY = newAnchorY;
+    // Round to avoid sub-pixel positioning issues with fractional scaling
+    // Use floor for negative values to push tooltip away from target
+    anchorX = newAnchorX < 0 ? Math.floor(newAnchorX) : Math.round(newAnchorX);
+    anchorY = newAnchorY < 0 ? Math.floor(newAnchorY) : Math.round(newAnchorY);
     isPositioned = true;
 
     // Now make visible and start animation
@@ -512,20 +516,22 @@ PopupWindow {
       contentHeight = tooltipText.implicitHeight;
     }
 
-    const tipWidth = Math.min(contentWidth + (padding * 2), maxWidth);
+    const tipWidth = Math.ceil(Math.min(contentWidth + (padding * 2), maxWidth));
     root.implicitWidth = tipWidth;
 
-    const tipHeight = contentHeight + (padding * 2);
+    // Add +2 buffer for fractional scaling issues (especially with "top" direction)
+    const tipHeight = Math.ceil(contentHeight + (padding * 2)) + 2;
     root.implicitHeight = tipHeight;
 
     // Reposition based on current direction (screen-relative)
+    // Round all values to avoid sub-pixel positioning issues with fractional scaling
     var targetGlobalAbs = targetItem.mapToGlobal(0, 0);
     var targetGlobal = {
-      "x": targetGlobalAbs.x - screenX,
-      "y": targetGlobalAbs.y - screenY
+      "x": Math.round(targetGlobalAbs.x - screenX),
+      "y": Math.round(targetGlobalAbs.y - screenY)
     };
-    const targetWidth = targetItem.width;
-    const targetHeight = targetItem.height;
+    const targetWidth = Math.round(targetItem.width);
+    const targetHeight = Math.round(targetItem.height);
 
     // Recalculate base anchor position (center on target for top/bottom, etc.)
     var newAnchorX = anchorX;
@@ -602,8 +608,10 @@ PopupWindow {
     }
 
     // Apply the new anchor positions
-    anchorX = newAnchorX;
-    anchorY = newAnchorY;
+    // Round to avoid sub-pixel positioning issues with fractional scaling
+    // Use floor for negative values to push tooltip away from target
+    anchorX = newAnchorX < 0 ? Math.floor(newAnchorX) : Math.round(newAnchorX);
+    anchorY = newAnchorY < 0 ? Math.floor(newAnchorY) : Math.round(newAnchorY);
 
     // Force anchor update
     Qt.callLater(() => {
