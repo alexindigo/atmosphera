@@ -125,17 +125,20 @@ Rectangle {
     }
 
     // Clock
+    // Clock
     NClock {
       now: Time.now
-      clockStyle: Settings.data.location.analogClockInCalendar ? "analog" : "digital"
+      clockStyle: "digital"
+      showProgress: false
       Layout.preferredWidth: 70
       Layout.preferredHeight: 70
       Layout.alignment: Qt.AlignVCenter
-      backgroundColor: Color.mSurface
+      backgroundColor: "transparent"
       clockColor: Color.mOnSurface
-      secondHandColor: Color.mPrimary
       hoursFontSize: Style.fontSizeL
       minutesFontSize: Style.fontSizeL
+      hoursFontWeight: Style.fontWeightBold
+      minutesFontWeight: Style.fontWeightBold
     }
   }
 }
