@@ -39,7 +39,7 @@ NBox {
           target: SystemStatService
           function onCpuUsageChanged() {
             if (TooltipService.activeTooltip && TooltipService.activeTooltip.targetItem === cpuUsageGauge) {
-              TooltipService.updateText(I18n.tr("system-monitor.cpu-usage") + `: ${Math.round(SystemStatService.cpuUsage)}%`)
+              TooltipService.updateText(I18n.tr("system-monitor.cpu-usage") + `: ${Math.round(SystemStatService.cpuUsage)}%`);
             }
           }
         }
@@ -64,7 +64,7 @@ NBox {
           target: SystemStatService
           function onCpuTempChanged() {
             if (TooltipService.activeTooltip && TooltipService.activeTooltip.targetItem === cpuTempGauge) {
-              TooltipService.updateText(I18n.tr("system-monitor.cpu-temp") + `: ${Math.round(SystemStatService.cpuTemp)}%`)
+              TooltipService.updateText(I18n.tr("system-monitor.cpu-temp") + `: ${Math.round(SystemStatService.cpuTemp)}%`);
             }
           }
         }
@@ -88,7 +88,7 @@ NBox {
           target: SystemStatService
           function onMemPercentChanged() {
             if (TooltipService.activeTooltip && TooltipService.activeTooltip.targetItem === memPercentGauge) {
-              TooltipService.updateText(I18n.tr("common.memory") + `: ${Math.round(SystemStatService.memPercent)}%`)
+              TooltipService.updateText(I18n.tr("common.memory") + `: ${Math.round(SystemStatService.memPercent)}%`);
             }
           }
         }
@@ -112,7 +112,7 @@ NBox {
           target: SystemStatService
           function onDiskPercentsChanged() {
             if (TooltipService.activeTooltip && TooltipService.activeTooltip.targetItem === diskPercentsGauge) {
-              TooltipService.updateText(I18n.tr("system-monitor.disk") + `: ${SystemStatService.diskPercents[root.diskPath] || 0}%\n${root.diskPath}`)
+              TooltipService.updateText(I18n.tr("system-monitor.disk") + `: ${SystemStatService.diskPercents[root.diskPath] || 0}%\n${root.diskPath}`);
             }
           }
         }
