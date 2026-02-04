@@ -138,10 +138,10 @@ Item {
   Rectangle {
     id: capsule
     anchors.centerIn: nBattery
-    width: root.isBarVertical ?  root.capsuleHeight : nBattery.width + Style.marginM * 2
-    height: root.isBarVertical ? nBattery.height + Style.marginM * 2 : root.capsuleHeight
-    radius: Style.iRadiusL
-    color: mouseArea.containsMouse ? Color.mHover : Color.mSurfaceVariant
+    width: root.isBarVertical ?  root.capsuleHeight : nBattery.width + Style.marginS * 2
+    height: root.isBarVertical ? nBattery.height + Style.marginS * 2 : root.capsuleHeight
+    radius: Style.radiusS
+    color: mouseArea.containsMouse ? Color.mHover : Style.capsuleColor
     border.color: Style.capsuleBorderColor
     border.width: Style.capsuleBorderWidth
 
@@ -166,6 +166,8 @@ Item {
     vertical: root.isBarVertical
     isCharging: root.isCharging
     isLow: root.isLowBattery || root.isCriticalBattery
+    baseColor: mouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface
+    textColor: mouseArea.containsMouse ? Color.mHover : Color.mSurface
   }
 
   MouseArea {

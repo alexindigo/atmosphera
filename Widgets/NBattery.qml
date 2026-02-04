@@ -17,9 +17,10 @@ Item {
   property real baseSize: Style.fontSizeM
 
   // Styling - no hardcoded colors, only theme colors
-  readonly property color baseColor: Color.mOnSurface
-  readonly property color lowColor: Color.mError
-  readonly property color chargingColor: Color.mPrimary
+  property color baseColor: Color.mOnSurface
+  property color lowColor: Color.mError
+  property color chargingColor: Color.mPrimary
+  property color textColor: Color.mSurface
 
   property bool isLow: false
   property bool isCharging: false
@@ -62,7 +63,7 @@ Item {
   }
 
   // Background color for empty portion (semi-transparent)
-  readonly property color emptyColor: Qt.alpha(Color.mOnSurface, 0.6)
+  readonly property color emptyColor: Qt.alpha(baseColor, 0.6)
 
   // State icon logic
   readonly property bool hasStateIcon: charging || pluggedIn
@@ -237,8 +238,8 @@ Item {
     font.family: Settings.data.ui.fontFixed
     font.weight: Style.fontWeightBold
     text: Math.round(root.animatedPercentage)
-    pointSize: Style.toOdd(root.baseSize * 0.83)
-    color: Qt.alpha(Color.mSurface, 0.75)
+    pointSize: root.baseSize * 0.82
+    color: Qt.alpha(root.textColor, 0.75)
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
   }
@@ -251,6 +252,6 @@ Item {
     y: batteryCanvas.y + Style.pixelAlignCenter(batteryCanvas.height, height)
     icon: root.stateIcon
     pointSize: Style.toOdd(root.baseSize)
-    color: Qt.alpha(Color.mSurface, 0.75)
+    color: Qt.alpha(root.textColor, 0.75)
   }
 }
