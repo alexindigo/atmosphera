@@ -42,7 +42,6 @@ ColumnLayout {
 
     GridLayout {
       Layout.fillWidth: true
-      Layout.topMargin: Style.marginM
       columns: 2
       columnSpacing: Style.marginM
       rowSpacing: Style.marginM

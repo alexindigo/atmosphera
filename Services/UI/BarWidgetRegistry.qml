@@ -97,7 +97,7 @@ Singleton {
                                     "displayMode": "onhover"
                                   },
                                   "Clock": {
-                                    "usePrimaryColor": false,
+                                    "clockColor": "onSurface",
                                     "useCustomFont": false,
                                     "customFont": "",
                                     "formatHorizontal": "HH:mm ddd, MMM dd",
