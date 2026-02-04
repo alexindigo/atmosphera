@@ -157,14 +157,13 @@ Item {
     id: nBattery
     anchors.centerIn: parent
     baseSize: Style.barFontSize
-    percentage: root.percent
-    charging: root.isCharging
-    pluggedIn: root.isPluggedIn
-    ready: root.isReady
     showPercentageText: true
     vertical: root.isBarVertical
-    isCharging: root.isCharging
-    isLow: root.isLowBattery || root.isCriticalBattery
+    percentage: root.percent
+    ready: root.isReady
+    charging: root.isCharging
+    pluggedIn: root.isPluggedIn
+    low: root.isLowBattery || root.isCriticalBattery
     baseColor: mouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface
     textColor: mouseArea.containsMouse ? Color.mHover : Color.mSurface
   }
@@ -176,7 +175,7 @@ Item {
     acceptedButtons: Qt.LeftButton | Qt.RightButton
     onEntered: {
       if (root.tooltipText) {
-        TooltipService.show(root, root.tooltipText, "auto");
+        TooltipService.show(root, root.tooltipText, BarService.getTooltipDirection(root.screen?.name));
       }
     }
     onExited: {

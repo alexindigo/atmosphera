@@ -12,6 +12,7 @@ Item {
   required property bool charging
   required property bool pluggedIn
   required property bool ready
+  required property bool low
 
   // Sizing - baseSize controls overall scaleFactor for bar/panel usage
   property real baseSize: Style.fontSizeM
@@ -21,9 +22,6 @@ Item {
   property color lowColor: Color.mError
   property color chargingColor: Color.mPrimary
   property color textColor: Color.mSurface
-
-  property bool isLow: false
-  property bool isCharging: false
 
   // Display options
   property bool showPercentageText: true
@@ -54,10 +52,10 @@ Item {
     if (!ready) {
       return Qt.alpha(baseColor, Style.opacityMedium);
     }
-    if (isCharging) {
+    if (charging) {
       return chargingColor;
     }
-    if (isLowBattery) {
+    if (low) {
       return lowColor;
     }
     return baseColor;
@@ -67,8 +65,10 @@ Item {
   readonly property color emptyColor: Qt.alpha(baseColor, 0.6)
 
   // State icon logic
-  readonly property bool hasStateIcon: charging || pluggedIn
+  readonly property bool hasStateIcon: (!ready || charging || pluggedIn)
   readonly property string stateIcon: {
+    if (!ready)
+      return "x";
     if (charging)
       return "bolt-filled";
     if (pluggedIn)
@@ -262,7 +262,7 @@ Item {
   NIcon {
     id: stateIconOverlay
     visible: opacity > 0
-    opacity: root.hasStateIcon && root.showStateIcon ? 1 : 0
+    opacity: !root.ready || (root.hasStateIcon && root.showStateIcon) ? 1 : 0
     x: batteryCanvas.x + Style.pixelAlignCenter(batteryCanvas.width, width)
     y: batteryCanvas.y + Style.pixelAlignCenter(batteryCanvas.height, height)
     icon: root.stateIcon
