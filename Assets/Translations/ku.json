@@ -247,8 +247,7 @@
       "hide-passive-label": "Veşartina tiştên pasîf"
     },
     "volume": {
-      "display-mode-description": "Tu dixwazî ev nirx çawa xuya bike hilbijêre.",
-      "display-mode-label": "Awayî nîşandanê"
+      "display-mode-description": "Tu dixwazî ev nirx çawa xuya bike hilbijêre."
     },
     "workspace": {
       "character-count-description": "Hejmara tîpên ku ji navên qada xebatê bên nîşandan (1-10).",
@@ -725,7 +724,6 @@
       "appearance-density-label": "Çalyî bar",
       "appearance-desc": "Xuyakirina xuyabûn û pozîsyona bar.",
       "appearance-display-mode-description": "Hilbijêre ka kengî bila darik were xuyakirin.",
-      "appearance-display-mode-label": "Awaya nîşandanê",
       "appearance-floating-description": "Bariş wekî 'heb'eke herikbar nîşan bide.",
       "appearance-floating-label": "Barê avjen",
       "appearance-frame-radius": "Nîvçapa Hundirîn",

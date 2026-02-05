@@ -50,10 +50,9 @@
       "device-label": "Dispositif à pile",
       "display-mode-description": "Choisissez comment la batterie est affichée dans la barre.",
       "display-mode-graphic": "Batterie Graphique",
-      "display-mode-icon-always": "Icône – Toujours afficher %",
+      "display-mode-icon-always": "Icône - Toujours afficher %",
       "display-mode-icon-hover": "Icône - Afficher au survol",
       "display-mode-icon-only": "Icône seulement",
-      "display-mode-label": "Mode d'Affichage",
       "hide-if-idle-description": "Masquer le widget lorsque la batterie n'est ni en charge ni en décharge.",
       "hide-if-idle-label": "Masquer en cas d'inactivité",
       "hide-if-not-detected-description": "Masquer le widget lorsqu'aucune batterie n'est détectée sur le système.",
@@ -258,8 +257,7 @@
       "hide-passive-label": "Masquer les objets passifs"
     },
     "volume": {
-      "display-mode-description": "Choisissez comment vous souhaitez que cette valeur apparaisse.",
-      "display-mode-label": "Mode d'affichage"
+      "display-mode-description": "Choisissez comment vous souhaitez que cette valeur apparaisse."
     },
     "workspace": {
       "character-count-description": "Nombre de caractères à afficher des noms d'espaces de travail (1-10).",
@@ -388,6 +386,7 @@
     "disconnect": "Déconnecter",
     "disconnected": "Déconnecté",
     "disconnecting": "Déconnexion...",
+    "display-mode": "Mode d'Affichage",
     "download": "Télécharger",
     "duration": "Durée",
     "dysfunctional": "Dysfonctionnel",
@@ -741,7 +740,6 @@
       "appearance-density-label": "Densité de la barre",
       "appearance-desc": "Personnalisez l'apparence et la position de la barre.",
       "appearance-display-mode-description": "Choisir quand la barre est visible.",
-      "appearance-display-mode-label": "Mode d’affichage ",
       "appearance-floating-description": "Afficher la barre sous forme de 'pilule' flottante.",
       "appearance-floating-label": "Barre flottante",
       "appearance-frame-radius": "Rayon interne",

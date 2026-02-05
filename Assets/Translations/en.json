@@ -53,7 +53,6 @@
       "display-mode-icon-always": "Icon - Always show %",
       "display-mode-icon-hover": "Icon - Show on hover",
       "display-mode-icon-only": "Icon only",
-      "display-mode-label": "Display mode",
       "hide-if-idle-description": "Hide the widget when the battery is not charging or discharging.",
       "hide-if-idle-label": "Hide when idle",
       "hide-if-not-detected-description": "Hide the widget when no battery is detected on the system.",
@@ -258,8 +257,7 @@
       "hide-passive-label": "Hide passive items"
     },
     "volume": {
-      "display-mode-description": "Choose how you'd like this value to appear.",
-      "display-mode-label": "Display mode"
+      "display-mode-description": "Choose how you'd like this value to appear."
     },
     "workspace": {
       "character-count-description": "Number of characters to display from workspace names (1-10).",
@@ -388,6 +386,7 @@
     "disconnect": "Disconnect",
     "disconnected": "Disconnected",
     "disconnecting": "Disconnecting...",
+    "display-mode": "Display mode",
     "download": "Download",
     "duration": "Duration",
     "dysfunctional": "Dysfunctional",
@@ -741,7 +740,6 @@
       "appearance-density-label": "Bar density",
       "appearance-desc": "Customize the bar's appearance and position.",
       "appearance-display-mode-description": "Choose when the bar is visible.",
-      "appearance-display-mode-label": "Display mode",
       "appearance-floating-description": "Display the bar as a floating 'pill'.",
       "appearance-floating-label": "Floating bar",
       "appearance-frame-radius": "Inner Radius",

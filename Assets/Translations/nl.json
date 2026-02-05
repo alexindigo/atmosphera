@@ -50,10 +50,9 @@
       "device-label": "Accuapparaat",
       "display-mode-description": "Kies hoe de batterij wordt weergegeven in de balk.",
       "display-mode-graphic": "Grafische Batterij",
-      "display-mode-icon-always": "Pictogram – Altijd tonen %",
-      "display-mode-icon-hover": "Icoon - Tonen bij zweven",
+      "display-mode-icon-always": "Pictogram - Altijd % tonen",
+      "display-mode-icon-hover": "Icoon - Tonen bij hover",
       "display-mode-icon-only": "Alleen pictogram",
-      "display-mode-label": "Weergavemodus",
       "hide-if-idle-description": "Verberg de widget wanneer de accu niet wordt opgeladen of ontladen.",
       "hide-if-idle-label": "Verbergen indien inactief",
       "hide-if-not-detected-description": "Verberg de widget als er geen accu op het systeem wordt gedetecteerd.",
@@ -258,8 +257,7 @@
       "hide-passive-label": "Verberg passieve items"
     },
     "volume": {
-      "display-mode-description": "Kies hoe je wilt dat deze waarde wordt weergegeven.",
-      "display-mode-label": "Weergavemodus"
+      "display-mode-description": "Kies hoe je wilt dat deze waarde wordt weergegeven."
     },
     "workspace": {
       "character-count-description": "Aantal tekens dat wordt weergegeven van werkruimtenamen (1-10).",
@@ -388,6 +386,7 @@
     "disconnect": "Verbreek de verbinding",
     "disconnected": "Verbinding verbroken",
     "disconnecting": "Verbinding verbroken...",
+    "display-mode": "Weergavemodus",
     "download": "Downloaden",
     "duration": "Duur",
     "dysfunctional": "Dysfunctioneel",
@@ -741,7 +740,6 @@
       "appearance-density-label": "Balkdichtheid",
       "appearance-desc": "Pas de uitstraling en positie van de balk aan.",
       "appearance-display-mode-description": "Kies wanneer de balk zichtbaar is.",
-      "appearance-display-mode-label": "Weergavemodus",
       "appearance-floating-description": "Toon de balk weer als een zwevende 'pil'.",
       "appearance-floating-label": "Zwevende balk",
       "appearance-frame-radius": "Binnenradius",

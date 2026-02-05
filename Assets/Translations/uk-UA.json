@@ -50,10 +50,9 @@
       "device-label": "Пристрій живлення від батареї",
       "display-mode-description": "Виберіть, як відображається батарея на панелі.",
       "display-mode-graphic": "Графічна Батарея",
-      "display-mode-icon-always": "Піктограма – Завжди показувати %",
+      "display-mode-icon-always": "Іконка - Завжди показувати %",
       "display-mode-icon-hover": "Іконка - Показувати при наведенні",
       "display-mode-icon-only": "Лише значок",
-      "display-mode-label": "Режим Відображення",
       "hide-if-idle-description": "Приховати віджет, коли акумулятор не заряджається та не розряджається.",
       "hide-if-idle-label": "Приховати, коли неактивний",
       "hide-if-not-detected-description": "Приховати віджет, коли в системі не виявлено акумулятор.",
@@ -258,8 +257,7 @@
       "hide-passive-label": "Приховати пасивні предмети"
     },
     "volume": {
-      "display-mode-description": "Виберіть, як ви хочете, щоб це значення відображалося.",
-      "display-mode-label": "Режим відображення"
+      "display-mode-description": "Виберіть, як ви хочете, щоб це значення відображалося."
     },
     "workspace": {
       "character-count-description": "Кількість символів для відображення з назв робочих просторів (1-10).",
@@ -388,6 +386,7 @@
     "disconnect": "Від'єднати",
     "disconnected": "Від'єднано",
     "disconnecting": "Від'єднання...",
+    "display-mode": "Режим Відображення",
     "download": "Завантажити",
     "duration": "Тривалість",
     "dysfunctional": "Дисфункціональний",
@@ -741,7 +740,6 @@
       "appearance-density-label": "Щільність панелі",
       "appearance-desc": "Налаштуйте зовнішній вигляд та положення панелі.",
       "appearance-display-mode-description": "Виберіть, коли панель видима.",
-      "appearance-display-mode-label": "Режим відображення",
       "appearance-floating-description": "Відображати панель як плаваючу 'капсулу'. Примітка: Це перемістить кути екрана до країв.",
       "appearance-floating-label": "Плаваюча панель (Острівець)",
       "appearance-frame-radius": "Внутрішній радіус",

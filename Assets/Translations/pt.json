@@ -50,10 +50,9 @@
       "device-label": "Dispositivo de bateria",
       "display-mode-description": "Escolha como a bateria é exibida na barra.",
       "display-mode-graphic": "Bateria Gráfica",
-      "display-mode-icon-always": "Ícone – Sempre mostrar %",
-      "display-mode-icon-hover": "Ícone - Mostrar ao passar o mouse",
+      "display-mode-icon-always": "Ícone - Sempre mostrar %",
+      "display-mode-icon-hover": "Ícone - Mostrar ao passar",
       "display-mode-icon-only": "Apenas ícone",
-      "display-mode-label": "Modo de Exibição",
       "hide-if-idle-description": "Ocultar o widget quando a bateria não estiver carregando ou descarregando.",
       "hide-if-idle-label": "Ocultar quando inativo",
       "hide-if-not-detected-description": "Oculte o widget quando nenhuma bateria for detectada no sistema.",
@@ -258,8 +257,7 @@
       "hide-passive-label": "Ocultar itens passivos"
     },
     "volume": {
-      "display-mode-description": "Escolha como você gostaria que este valor aparecesse.",
-      "display-mode-label": "Modo de exibição"
+      "display-mode-description": "Escolha como você gostaria que este valor aparecesse."
     },
     "workspace": {
       "character-count-description": "Número de caracteres a exibir dos nomes de espaços de trabalho (1-10).",
@@ -388,6 +386,7 @@
     "disconnect": "Desconectar",
     "disconnected": "Desconectado(a)",
     "disconnecting": "Desconectando...",
+    "display-mode": "Modo de Exibição",
     "download": "Baixar",
     "duration": "Duração",
     "dysfunctional": "Disfuncional",
@@ -741,7 +740,6 @@
       "appearance-density-label": "Densidade da barra",
       "appearance-desc": "Personalize a aparência e a posição da barra.",
       "appearance-display-mode-description": "Escolha quando a barra está visível.",
-      "appearance-display-mode-label": "Modo de exibição",
       "appearance-floating-description": "Exibe a barra como uma 'pílula' flutuante.",
       "appearance-floating-label": "Barra flutuante",
       "appearance-frame-radius": "Raio Interno",

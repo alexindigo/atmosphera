@@ -50,10 +50,9 @@
       "device-label": "Pil cihazı",
       "display-mode-description": "Pilin çubukta nasıl görüntüleneceğini seçin.",
       "display-mode-graphic": "Grafik Pil",
-      "display-mode-icon-always": "Simge – Her zaman göster %",
+      "display-mode-icon-always": "Simge - Her zaman % göster",
       "display-mode-icon-hover": "Simge - Üzerine gelindiğinde göster",
       "display-mode-icon-only": "Yalnızca simge",
-      "display-mode-label": "Görüntü Modu",
       "hide-if-idle-description": "Pil şarj olmuyor veya deşarj olmuyorken aracı gizle.",
       "hide-if-idle-label": "Boşta kalınca gizle",
       "hide-if-not-detected-description": "Sistemde pil algılanmadığında araç çubuğunu gizle.",
@@ -258,8 +257,7 @@
       "hide-passive-label": "Pasif öğeleri gizle"
     },
     "volume": {
-      "display-mode-description": "Bu değerin nasıl görünmesini istediğinizi seçin.",
-      "display-mode-label": "Görüntüleme modu"
+      "display-mode-description": "Bu değerin nasıl görünmesini istediğinizi seçin."
     },
     "workspace": {
       "character-count-description": "Çalışma alanı adlarından gösterilecek karakter sayısı (1-10).",
@@ -388,6 +386,7 @@
     "disconnect": "Bağlantıyı kes",
     "disconnected": "Bağlantı kesildi",
     "disconnecting": "Bağlantı kesiliyor...",
+    "display-mode": "Görüntü Modu",
     "download": "İndir",
     "duration": "Süre",
     "dysfunctional": "İşlevsiz",
@@ -741,7 +740,6 @@
       "appearance-density-label": "Araç Çubuğu yoğunluğu",
       "appearance-desc": "Araç çubuğunun görünümünü ve konumunu özelleştirin.",
       "appearance-display-mode-description": "Çubuğun ne zaman görünür olacağını seçin.",
-      "appearance-display-mode-label": "Görüntü modu",
       "appearance-floating-description": "Araç çubuğunu yüzen bir 'kapsül' olarak görüntüler. Not: Bu, ekran köşelerini kenarlara taşıyacaktır.",
       "appearance-floating-label": "Yüzen araç çubuğu",
       "appearance-frame-radius": "İç Yarıçap",

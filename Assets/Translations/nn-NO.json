@@ -251,8 +251,7 @@
       "hide-passive-label": "Gøym passive objekt"
     },
     "volume": {
-      "display-mode-description": "Vel korleis dette skal visast.",
-      "display-mode-label": "Visningsmodus"
+      "display-mode-description": "Vel korleis dette skal visast."
     },
     "workspace": {
       "character-count-description": "Kor mange teikn som skal visast frå arbeidsromnamn (1 - 10).",
@@ -732,7 +731,6 @@
       "appearance-density-label": "Tettleik på oppgåvelina",
       "appearance-desc": "Måtar til kor oppgåvelina ser ut og kvar ho er.",
       "appearance-display-mode-description": "Vel når baren er synleg.",
-      "appearance-display-mode-label": "Visningsmodus",
       "appearance-floating-description": "Viser oppgåvelina som flytande \"pille\".",
       "appearance-floating-label": "Flytande oppgåvelina",
       "appearance-frame-radius": "Innradius",

@@ -53,7 +53,6 @@
       "display-mode-icon-always": "图标 - 始终显示 %",
       "display-mode-icon-hover": "图标 - 悬停时显示",
       "display-mode-icon-only": "仅图标",
-      "display-mode-label": "显示模式",
       "hide-if-idle-description": "当电池空闲时（没有充电或者放电电流时），隐藏小部件。",
       "hide-if-idle-label": "空闲时隐藏",
       "hide-if-not-detected-description": "当系统未检测到电池时，隐藏该小部件。",
@@ -258,8 +257,7 @@
       "hide-passive-label": "隐藏被动物品"
     },
     "volume": {
-      "display-mode-description": "选择您希望此值显示的方式。",
-      "display-mode-label": "显示模式"
+      "display-mode-description": "选择您希望此值显示的方式。"
     },
     "workspace": {
       "character-count-description": "显示工作区名称的字符数量（1-10）。",
@@ -388,6 +386,7 @@
     "disconnect": "断开连接",
     "disconnected": "已断开连接",
     "disconnecting": "正在断开连接...",
+    "display-mode": "显示模式",
     "download": "下载",
     "duration": "时长",
     "dysfunctional": "功能失调",
@@ -741,7 +740,6 @@
       "appearance-density-label": "状态栏密度",
       "appearance-desc": "自定义状态栏的外观和位置。",
       "appearance-display-mode-description": "选择栏何时可见。",
-      "appearance-display-mode-label": "显示模式",
       "appearance-floating-description": "将状态栏显示为浮动的“药丸”形状。",
       "appearance-floating-label": "浮动状态栏",
       "appearance-frame-radius": "内圆角",

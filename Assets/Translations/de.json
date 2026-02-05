@@ -50,10 +50,9 @@
       "device-label": "Akkugerät",
       "display-mode-description": "Wählen Sie, wie der Akku in der Leiste angezeigt wird.",
       "display-mode-graphic": "Grafischer Akku",
-      "display-mode-icon-always": "Symbol – Immer anzeigen %",
-      "display-mode-icon-hover": "Symbol - Beim Überfahren anzeigen",
+      "display-mode-icon-always": "Symbol - Immer % anzeigen",
+      "display-mode-icon-hover": "Symbol - Beim Hover anzeigen",
       "display-mode-icon-only": "Nur Symbol",
-      "display-mode-label": "Anzeigemodus",
       "hide-if-idle-description": "Das Widget ausblenden, wenn der Akku nicht geladen oder entladen wird.",
       "hide-if-idle-label": "Ausblenden, wenn im Leerlauf",
       "hide-if-not-detected-description": "Widget ausblenden, wenn kein Akku im System erkannt wird.",
@@ -76,7 +75,7 @@
       "horizontal-bar-label": "Horizontale Leiste",
       "preview": "Vorschau",
       "select-color-description": "Wendet Themenfarben zur Hervorhebung an.",
-      "tooltip-format-description": "Formatzeichenfolge für den Tooltip, der beim Überfahren der Uhr angezeigt wird. Leer lassen, um den Standard-Tooltip zu verwenden.",
+      "tooltip-format-description": "Formatzeichenfolge für den Tooltip, der beim Bewegen des Mauszeigers über die Uhr angezeigt wird. Leer lassen, um den Standard-Tooltip zu verwenden.",
       "tooltip-format-label": "Tooltip-Format",
       "use-custom-font-description": "Überschreibt die Standard-Schriftart mit einer benutzerdefinierten Schriftart für die Uhr.",
       "use-custom-font-label": "Benutzerdefinierte Schriftart verwenden",
@@ -258,8 +257,7 @@
       "hide-passive-label": "Passive Elemente ausblenden"
     },
     "volume": {
-      "display-mode-description": "Wählen Sie, wie dieser Wert angezeigt werden soll.",
-      "display-mode-label": "Anzeigemodus"
+      "display-mode-description": "Wählen Sie, wie dieser Wert angezeigt werden soll."
     },
     "workspace": {
       "character-count-description": "Anzahl der Zeichen, die von Arbeitsflächennamen angezeigt werden (1-10).",
@@ -388,6 +386,7 @@
     "disconnect": "Trennen",
     "disconnected": "Getrennt",
     "disconnecting": "Verbindung wird getrennt...",
+    "display-mode": "Anzeigemodus",
     "download": "Herunterladen",
     "duration": "Dauer",
     "dysfunctional": "Dysfunktional",
@@ -741,7 +740,6 @@
       "appearance-density-label": "Leistendichte",
       "appearance-desc": "Erscheinungsbild und Position der Leiste anpassen.",
       "appearance-display-mode-description": "Wählen Sie, wann die Leiste sichtbar ist.",
-      "appearance-display-mode-label": "Anzeigemodus",
       "appearance-floating-description": "Leiste als schwebende 'Pille' anzeigen.",
       "appearance-floating-label": "Schwebende Leiste",
       "appearance-frame-radius": "Innenradius",
@@ -860,7 +858,7 @@
       "shortcuts-custom-button-state-checks-command": "Befehl, der für diese Zustandsprüfung ausgeführt werden soll",
       "shortcuts-custom-button-state-checks-label": "Zustandsprüfungen",
       "shortcuts-custom-button-state-checks-remove": "Entfernen",
-      "shortcuts-custom-button-tooltip-description": "Der Tooltip, der angezeigt wird, wenn Sie mit der Maus über die Schaltfläche fahren.",
+      "shortcuts-custom-button-tooltip-description": "Der Tooltip, der beim Bewegen des Mauszeigers über die Schaltfläche angezeigt wird.",
       "shortcuts-custom-button-tooltip-label": "Tooltip",
       "shortcuts-title": "Widgets für Kurzbefehle",
       "system-monitor-disk-path-description": "Wählen Sie, welchen Festplatten-Mountpunkt die Systemmonitor-Karte im Kontrollzentrum überwachen soll.",

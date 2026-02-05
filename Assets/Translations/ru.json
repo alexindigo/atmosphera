@@ -50,10 +50,9 @@
       "device-label": "Устройство с батареей",
       "display-mode-description": "Выберите, как отображается батарея на панели.",
       "display-mode-graphic": "Графическая Батарея",
-      "display-mode-icon-always": "Значок – Всегда показывать %",
+      "display-mode-icon-always": "Значок - Всегда показывать %",
       "display-mode-icon-hover": "Иконка - Показать при наведении",
       "display-mode-icon-only": "Только значок",
-      "display-mode-label": "Режим Отображения",
       "hide-if-idle-description": "Скрыть виджет, когда батарея не заряжается и не разряжается.",
       "hide-if-idle-label": "Скрывать в режиме простоя",
       "hide-if-not-detected-description": "Скрыть виджет, если в системе не обнаружена батарея.",
@@ -258,8 +257,7 @@
       "hide-passive-label": "Скрыть пассивные предметы"
     },
     "volume": {
-      "display-mode-description": "Выберите, как это значение должно отображаться.",
-      "display-mode-label": "Режим отображения"
+      "display-mode-description": "Выберите, как это значение должно отображаться."
     },
     "workspace": {
       "character-count-description": "Количество символов для отображения из имён рабочих пространств (1-10).",
@@ -388,6 +386,7 @@
     "disconnect": "Отключить",
     "disconnected": "Отключено",
     "disconnecting": "Отключение...",
+    "display-mode": "Режим Отображения",
     "download": "Скачать",
     "duration": "Продолжительность",
     "dysfunctional": "Дисфункциональный",
@@ -741,7 +740,6 @@
       "appearance-density-label": "Плотность панели",
       "appearance-desc": "Настройка внешнего вида и положения панели.",
       "appearance-display-mode-description": "Выберите, когда панель видна.",
-      "appearance-display-mode-label": "Режим oтображение",
       "appearance-floating-description": "Отображает панель как плавающую 'таблетку'.",
       "appearance-floating-label": "Плавающая панель",
       "appearance-frame-radius": "Внутренний радиус",

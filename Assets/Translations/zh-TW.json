@@ -50,10 +50,9 @@
       "device-label": "電池裝置",
       "display-mode-description": "選擇電池在工具列中的顯示方式。",
       "display-mode-graphic": "圖形化電池",
-      "display-mode-icon-always": "圖示 - 總是顯示 %",
+      "display-mode-icon-always": "圖示 - 始終顯示 %",
       "display-mode-icon-hover": "圖示 - 懸停時顯示",
       "display-mode-icon-only": "僅圖示",
-      "display-mode-label": "顯示模式",
       "hide-if-idle-description": "當電池狀態為閒置時隱藏小工具",
       "hide-if-idle-label": "閒置時隱藏",
       "hide-if-not-detected-description": "如果系統沒有偵測到電池就隱藏小工具",
@@ -258,8 +257,7 @@
       "hide-passive-label": "隱藏被動項目"
     },
     "volume": {
-      "display-mode-description": "選擇你想如何顯示這項數值",
-      "display-mode-label": "顯示模式"
+      "display-mode-description": "選擇你想如何顯示這項數值"
     },
     "workspace": {
       "character-count-description": "限制工作區所設定的名字要顯示幾個字元 (1-10)",
@@ -388,6 +386,7 @@
     "disconnect": "斷線",
     "disconnected": "已斷線",
     "disconnecting": "正在斷線...",
+    "display-mode": "顯示模式",
     "download": "下載",
     "duration": "持續時間",
     "dysfunctional": "功能失調",
@@ -741,7 +740,6 @@
       "appearance-density-label": "工具列密度",
       "appearance-desc": "自訂工具列的外觀及位置",
       "appearance-display-mode-description": "選擇列何時可見",
-      "appearance-display-mode-label": "顯示模式",
       "appearance-floating-description": "將工具列以懸浮的圓弧長條狀顯示",
       "appearance-floating-label": "懸浮工具列",
       "appearance-frame-radius": "內圓角",

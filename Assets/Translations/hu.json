@@ -50,10 +50,9 @@
       "device-label": "Akkumulátor eszköz",
       "display-mode-description": "Válassza ki, hogyan jelenjen meg az akkumulátor a sávban.",
       "display-mode-graphic": "Grafikus Akkumulátor",
-      "display-mode-icon-always": "Ikon – Mindig mutassa %",
+      "display-mode-icon-always": "Ikon - Mindig mutassa a %-ot",
       "display-mode-icon-hover": "Ikon - Rámutatásra megjelenik",
       "display-mode-icon-only": "Csak ikon",
-      "display-mode-label": "Kijelző mód",
       "hide-if-idle-description": "Widget elrejtése, ha az akkumulátor nincs töltés alatt vagy lemerülőben.",
       "hide-if-idle-label": "Elrejtés tétlenség esetén",
       "hide-if-not-detected-description": "Widget elrejtése, ha a rendszer nem észlel akkumulátort.",
@@ -258,8 +257,7 @@
       "hide-passive-label": "Passzív elemek elrejtése"
     },
     "volume": {
-      "display-mode-description": "Válassza ki, hogyan jelenjen meg ez az érték.",
-      "display-mode-label": "Megjelenítési mód"
+      "display-mode-description": "Válassza ki, hogyan jelenjen meg ez az érték."
     },
     "workspace": {
       "character-count-description": "A munkaterületnevekből megjelenítendő karakterek száma (1-10).",
@@ -388,6 +386,7 @@
     "disconnect": "Kapcsolat bontása",
     "disconnected": "Kapcsolat bontva",
     "disconnecting": "Kapcsolat bontása...",
+    "display-mode": "Kijelző mód",
     "download": "Letöltés",
     "duration": "Időtartam",
     "dysfunctional": "Diszfunkcionális",
@@ -741,7 +740,6 @@
       "appearance-density-label": "Sáv sűrűsége",
       "appearance-desc": "A sáv megjelenésének és pozíciójának testreszabása.",
       "appearance-display-mode-description": "Válassza ki, mikor látható a sáv.",
-      "appearance-display-mode-label": "Kijelző mód",
       "appearance-floating-description": "Megjeleníti a sávot lebegő „pirulaként”.",
       "appearance-floating-label": "Lebegő sáv",
       "appearance-frame-radius": "Belső sugár",

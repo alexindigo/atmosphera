@@ -50,10 +50,9 @@
       "device-label": "バッテリーデバイス",
       "display-mode-description": "バッテリーをバーにどのように表示するかを選択します。",
       "display-mode-graphic": "グラフィックバッテリー",
-      "display-mode-icon-always": "アイコン - 常に表示 %",
+      "display-mode-icon-always": "アイコン - 常に%を表示",
       "display-mode-icon-hover": "アイコン - ホバー時に表示",
       "display-mode-icon-only": "アイコンのみ",
-      "display-mode-label": "表示モード",
       "hide-if-idle-description": "バッテリーが充電または放電していないときは、ウィジェットを非表示にします。",
       "hide-if-idle-label": "アイドル時に隠す",
       "hide-if-not-detected-description": "システムでバッテリーが検出されない場合は、ウィジェットを非表示にします。",
@@ -258,8 +257,7 @@
       "hide-passive-label": "パッシブ項目を非表示"
     },
     "volume": {
-      "display-mode-description": "値の表示方法を選択します。",
-      "display-mode-label": "表示モード"
+      "display-mode-description": "値の表示方法を選択します。"
     },
     "workspace": {
       "character-count-description": "ワークスペース名から表示する文字数 (1-10)。",
@@ -388,6 +386,7 @@
     "disconnect": "切断",
     "disconnected": "切断済み",
     "disconnecting": "切断中...",
+    "display-mode": "表示モード",
     "download": "ダウンロード",
     "duration": "期間",
     "dysfunctional": "機能不全",
@@ -741,7 +740,6 @@
       "appearance-density-label": "バーの密度",
       "appearance-desc": "バーの外観や位置をカスタマイズします。",
       "appearance-display-mode-description": "バーの表示タイミングを選択してください。",
-      "appearance-display-mode-label": "表示モード",
       "appearance-floating-description": "バーを浮かせて、カプセル型で表示します。",
       "appearance-floating-label": "フローティングバー",
       "appearance-frame-radius": "内側の半径",

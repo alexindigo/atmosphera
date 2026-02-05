@@ -50,10 +50,9 @@
       "device-label": "Urządzenie baterii",
       "display-mode-description": "Wybierz, jak bateria jest wyświetlana na pasku.",
       "display-mode-graphic": "Graficzna Bateria",
-      "display-mode-icon-always": "Ikona – Zawsze pokazuj %",
+      "display-mode-icon-always": "Ikona - Zawsze pokazuj %",
       "display-mode-icon-hover": "Ikona - Pokaż po najechaniu",
       "display-mode-icon-only": "Tylko ikona",
-      "display-mode-label": "Tryb Wyświetlania",
       "hide-if-idle-description": "Ukryj widżet, gdy bateria nie jest ładowana ani rozładowywana.",
       "hide-if-idle-label": "Ukryj, gdy bezczynny",
       "hide-if-not-detected-description": "Ukryj widżet, gdy w systemie nie zostanie wykryta bateria.",
@@ -258,8 +257,7 @@
       "hide-passive-label": "Ukryj pasywne elementy"
     },
     "volume": {
-      "display-mode-description": "Wybierz sposób wyświetlania tej wartości.",
-      "display-mode-label": "Tryb wyświetlania"
+      "display-mode-description": "Wybierz sposób wyświetlania tej wartości."
     },
     "workspace": {
       "character-count-description": "Liczba znaków do wyświetlenia z nazw obszarów roboczych (1-10).",
@@ -388,6 +386,7 @@
     "disconnect": "Rozłącz",
     "disconnected": "Rozłączone",
     "disconnecting": "Rozłączanie...",
+    "display-mode": "Tryb Wyświetlania",
     "download": "Pobierz",
     "duration": "Czas trwania",
     "dysfunctional": "Dysfunkcyjny",
@@ -741,7 +740,6 @@
       "appearance-density-label": "Zagęszczenie paska",
       "appearance-desc": "Dostosuj wygląd i pozycję paska.",
       "appearance-display-mode-description": "Wybierz, kiedy pasek jest widoczny.",
-      "appearance-display-mode-label": "Tryb wyświetlania",
       "appearance-floating-description": "Wyświetl pasek jako pływającą 'pigułkę'.",
       "appearance-floating-label": "Pływający pasek",
       "appearance-frame-radius": "Promień wewnętrzny",

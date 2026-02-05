@@ -50,10 +50,9 @@
       "device-label": "Batterienhet",
       "display-mode-description": "Välj hur batteriet visas i fältet.",
       "display-mode-graphic": "Grafiskt Batteri",
-      "display-mode-icon-always": "Ikon – Visa alltid %",
+      "display-mode-icon-always": "Ikon - Visa alltid %",
       "display-mode-icon-hover": "Ikon - Visa vid hovring",
       "display-mode-icon-only": "Endast ikon",
-      "display-mode-label": "Visningsläge",
       "hide-if-idle-description": "Dölj widgeten när batteriet inte laddas eller laddas ur.",
       "hide-if-idle-label": "Dölj när inaktiv",
       "hide-if-not-detected-description": "Dölj widgeten när inget batteri upptäcks i systemet.",
@@ -258,8 +257,7 @@
       "hide-passive-label": "Dölj passiva ikoner"
     },
     "volume": {
-      "display-mode-description": "Välj hur du vill att detta värde ska visas.",
-      "display-mode-label": "Visningsläge"
+      "display-mode-description": "Välj hur du vill att detta värde ska visas."
     },
     "workspace": {
       "character-count-description": "Antal tecken som ska visas från arbetsytans namn (1–10). ",
@@ -388,6 +386,7 @@
     "disconnect": "Koppla från",
     "disconnected": "Frånkopplad",
     "disconnecting": "Kopplar från...",
+    "display-mode": "Visningsläge",
     "download": "Hämta ner",
     "duration": "Varaktighet",
     "dysfunctional": "Dysfunktionell",
@@ -741,7 +740,6 @@
       "appearance-density-label": "Stapeldensitet",
       "appearance-desc": "Anpassa stapelns utseende och position.",
       "appearance-display-mode-description": "Välj när listen är synlig.",
-      "appearance-display-mode-label": "Visningsläge",
       "appearance-floating-description": "Visa stapeln som en flytande \"piller\".",
       "appearance-floating-label": "Flytande stapel",
       "appearance-frame-radius": "Inre radie",
