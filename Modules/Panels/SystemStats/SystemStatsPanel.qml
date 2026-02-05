@@ -124,6 +124,9 @@ SmartPanel {
           NGraph {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.leftMargin: -Style.marginS
+            Layout.rightMargin: -Style.marginS
+            Layout.bottomMargin: 2
             values: SystemStatService.cpuHistory
             values2: SystemStatService.cpuTempHistory
             minValue: 0
@@ -135,6 +138,7 @@ SmartPanel {
             fill: true
             fillOpacity: 0.15
             updateInterval: Settings.data.systemMonitor.cpuPollingInterval
+            edgeToEdge: true
           }
         }
       }
@@ -180,6 +184,9 @@ SmartPanel {
           NGraph {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.leftMargin: -Style.marginS
+            Layout.rightMargin: -Style.marginS
+            Layout.bottomMargin: 2
             values: SystemStatService.memHistory
             minValue: 0
             maxValue: 100
@@ -187,6 +194,7 @@ SmartPanel {
             fill: true
             fillOpacity: 0.15
             updateInterval: Settings.data.systemMonitor.memPollingInterval
+            edgeToEdge: true
           }
         }
       }
@@ -246,6 +254,9 @@ SmartPanel {
           NGraph {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.leftMargin: -Style.marginS
+            Layout.rightMargin: -Style.marginS
+            Layout.bottomMargin: 2
             values: SystemStatService.rxSpeedHistory
             values2: SystemStatService.txSpeedHistory
             minValue: 0
@@ -258,6 +269,7 @@ SmartPanel {
             fillOpacity: 0.15
             updateInterval: Settings.data.systemMonitor.networkPollingInterval
             animateScale: true
+            edgeToEdge: true
           }
         }
       }
