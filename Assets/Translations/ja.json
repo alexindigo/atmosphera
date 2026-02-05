@@ -517,6 +517,7 @@
     "auto-hide": "自動非表示",
     "hidden": "空の場合に非表示",
     "idle": "アイドル時に非表示",
+    "non-exclusive": "非独占",
     "transparent": "空の時は透明",
     "visible": "常に表示"
   },

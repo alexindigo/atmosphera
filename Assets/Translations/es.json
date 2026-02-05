@@ -517,6 +517,7 @@
     "auto-hide": "Ocultación Automática",
     "hidden": "Ocultar cuando vacío",
     "idle": "Ocultar cuando inactivo",
+    "non-exclusive": "No exclusivo",
     "transparent": "Transparente cuando esté vacío",
     "visible": "Mostrar siempre"
   },

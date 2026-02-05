@@ -517,6 +517,7 @@
     "auto-hide": "Dölj automatiskt",
     "hidden": "Dölj när tom",
     "idle": "Dölj när inaktiv",
+    "non-exclusive": "Icke-exklusiv",
     "transparent": "Transparent när tom",
     "visible": "Alltid synlig"
   },

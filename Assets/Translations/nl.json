@@ -517,6 +517,7 @@
     "auto-hide": "Automatisch verbergen",
     "hidden": "Verbergen indien leeg",
     "idle": "Verbergen indien inactief",
+    "non-exclusive": "Niet-exclusief",
     "transparent": "Transparant wanneer leeg",
     "visible": "Altijd zichtbaar"
   },

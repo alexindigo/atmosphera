@@ -517,6 +517,7 @@
     "auto-hide": "Automatikus elrejtés",
     "hidden": "Elrejtés, ha üres",
     "idle": "Elrejtés, ha tétlen",
+    "non-exclusive": "Nem kizárólagos",
     "transparent": "Átlátszó, ha üres",
     "visible": "Mindig látható"
   },

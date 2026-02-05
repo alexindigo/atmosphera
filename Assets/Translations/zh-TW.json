@@ -517,6 +517,7 @@
     "auto-hide": "自動隱藏",
     "hidden": "空白時隱藏",
     "idle": "閒置時隱藏",
+    "non-exclusive": "非獨佔",
     "transparent": "空白時變透明",
     "visible": "始終可見"
   },

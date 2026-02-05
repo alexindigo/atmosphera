@@ -103,6 +103,10 @@ ColumnLayout {
         "name": I18n.tr("hide-modes.visible")
       },
       {
+        "key": "non_exclusive",
+        "name": I18n.tr("hide-modes.non-exclusive")
+      },
+      {
         "key": "auto_hide",
         "name": I18n.tr("hide-modes.auto-hide")
       }

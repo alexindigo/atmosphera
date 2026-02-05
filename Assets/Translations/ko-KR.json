@@ -517,6 +517,7 @@
     "auto-hide": "자동 숨기기",
     "hidden": "비어 있을 때 숨기기",
     "idle": "유휴 상태일 때 숨기기",
+    "non-exclusive": "비독점",
     "transparent": "비어 있을 때 투명하게",
     "visible": "항상 표시"
   },

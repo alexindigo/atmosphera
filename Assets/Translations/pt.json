@@ -517,6 +517,7 @@
     "auto-hide": "Ocultar automaticamente",
     "hidden": "Ocultar quando vazio",
     "idle": "Ocultar quando inativo",
+    "non-exclusive": "Não exclusivo",
     "transparent": "Transparente quando vazio",
     "visible": "Sempre visível"
   },

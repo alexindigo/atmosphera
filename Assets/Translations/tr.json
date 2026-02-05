@@ -517,6 +517,7 @@
     "auto-hide": "Otomatik gizleme",
     "hidden": "Boş olduğunda gizle",
     "idle": "Boşta kalınca gizle",
+    "non-exclusive": "Münhasır olmayan",
     "transparent": "Boşken şeffaf",
     "visible": "Her zaman görünür"
   },
