@@ -153,7 +153,7 @@
     "subTabLabel": "common.appearance"
   },
   {
-    "labelKey": "panels.bar.appearance-display-mode-label",
+    "labelKey": "common.display-mode",
     "descriptionKey": "panels.bar.appearance-display-mode-description",
     "widget": "NComboBox",
     "tab": 4,

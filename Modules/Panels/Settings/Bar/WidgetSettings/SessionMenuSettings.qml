@@ -31,6 +31,10 @@ ColumnLayout {
     description: I18n.tr("bar.audio-visualizer.color-name-description")
     model: [
       {
+        "key": "none",
+        "name": I18n.tr("common.none")
+      },
+      {
         "key": "primary",
         "name": I18n.tr("common.primary")
       },
@@ -41,10 +45,6 @@ ColumnLayout {
       {
         "key": "tertiary",
         "name": I18n.tr("common.tertiary")
-      },
-      {
-        "key": "onSurface",
-        "name": I18n.tr("common.on-surface")
       },
       {
         "key": "error",

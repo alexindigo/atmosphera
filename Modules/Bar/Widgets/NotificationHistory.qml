@@ -32,23 +32,23 @@ NIconButton {
     }
     return {};
   }
-  readonly property bool showUnreadBadge: (widgetSettings.showUnreadBadge !== undefined) ? widgetSettings.showUnreadBadge : widgetMetadata.showUnreadBadge
-  readonly property bool hideWhenZero: (widgetSettings.hideWhenZero !== undefined) ? widgetSettings.hideWhenZero : widgetMetadata.hideWhenZero
-  readonly property bool hideWhenZeroUnread: (widgetSettings.hideWhenZeroUnread !== undefined) ? widgetSettings.hideWhenZeroUnread : widgetMetadata.hideWhenZeroUnread
-  readonly property string unreadBadgeColor: (widgetSettings.unreadBadgeColor !== undefined) ? widgetSettings.unreadBadgeColor : (widgetMetadata.unreadBadgeColor || "primary")
+  readonly property bool showUnreadBadge: widgetSettings.showUnreadBadge !== undefined ? widgetSettings.showUnreadBadge : widgetMetadata.showUnreadBadge
+  readonly property bool hideWhenZero: widgetSettings.hideWhenZero !== undefined ? widgetSettings.hideWhenZero : widgetMetadata.hideWhenZero
+  readonly property bool hideWhenZeroUnread: widgetSettings.hideWhenZeroUnread !== undefined ? widgetSettings.hideWhenZeroUnread : widgetMetadata.hideWhenZeroUnread
+  readonly property string unreadBadgeColor: widgetSettings.unreadBadgeColor !== undefined ? widgetSettings.unreadBadgeColor : widgetMetadata.unreadBadgeColor
 
-  function getColor(colorKey) {
-    switch (colorKey) {
+  readonly property color badgeColor: {
+    switch (unreadBadgeColor) {
     case "primary":
       return Color.mPrimary;
     case "secondary":
       return Color.mSecondary;
     case "tertiary":
       return Color.mTertiary;
-    case "onSurface":
-      return Color.mOnSurface;
+    case "error":
+      return Color.mError;
     default:
-      return Color.mPrimary;
+      return Color.mOnSurface;
     }
   }
 
@@ -138,7 +138,7 @@ NIconButton {
       height: 7
       width: height
       radius: Style.radiusXS
-      color: root.hovering ? Color.mOnHover : (root.getColor(root.unreadBadgeColor) || Color.mError)
+      color: root.hovering ? Color.mOnHover : (root.badgeColor || Color.mError)
       border.color: Color.mSurface
       border.width: Style.borderS
       visible: count > 0

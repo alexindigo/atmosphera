@@ -53,7 +53,7 @@ ColumnLayout {
 
   NComboBox {
     Layout.fillWidth: true
-    label: I18n.tr("bar.battery.display-mode-label")
+    label: I18n.tr("common.display-mode")
     description: I18n.tr("bar.battery.display-mode-description")
     minimumWidth: 240
     model: [
