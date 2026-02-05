@@ -35,8 +35,11 @@ Item {
   // Padding for bezier overshoot (percentage of range)
   readonly property real curvePadding: 0.12
 
+  // Allow curve to extend to the edges (no horizontal padding)
+  property bool edgeToEdge: false
+
   // Edge padding to hide bezier curve overshoot (in pixels)
-  readonly property real edgePadding: Math.max(8, width * 0.02)
+  readonly property real edgePadding: edgeToEdge ? 0 : Math.max(8, width * 0.02)
 
   readonly property bool hasData: values.length >= 4
   readonly property bool hasData2: values2.length >= 4
