@@ -17,7 +17,7 @@ ColumnLayout {
 
   // Local, editable state for checkboxes
   property bool valueCompactMode: widgetData.compactMode !== undefined ? widgetData.compactMode : widgetMetadata.compactMode
-  property bool valueUsePrimaryColor: widgetData.usePrimaryColor !== undefined ? widgetData.usePrimaryColor : widgetMetadata.usePrimaryColor
+  property string valueTextColor: widgetData.textColor !== undefined ? widgetData.textColor : widgetMetadata.textColor
   property bool valueUseMonospaceFont: widgetData.useMonospaceFont !== undefined ? widgetData.useMonospaceFont : widgetMetadata.useMonospaceFont
   property bool valueShowCpuUsage: widgetData.showCpuUsage !== undefined ? widgetData.showCpuUsage : widgetMetadata.showCpuUsage
   property bool valueShowCpuFreq: widgetData.showCpuFreq !== undefined ? widgetData.showCpuFreq : widgetMetadata.showCpuFreq
@@ -36,7 +36,7 @@ ColumnLayout {
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
     settings.compactMode = valueCompactMode;
-    settings.usePrimaryColor = valueUsePrimaryColor;
+    settings.textColor = valueTextColor;
     settings.useMonospaceFont = valueUseMonospaceFont;
     settings.showCpuUsage = valueShowCpuUsage;
     settings.showCpuFreq = valueShowCpuFreq;
@@ -66,15 +66,37 @@ ColumnLayout {
                }
   }
 
-  NToggle {
-    Layout.fillWidth: true
-    label: I18n.tr("bar.clock.use-primary-color-label")
-    description: I18n.tr("bar.clock.use-primary-color-description")
-    checked: valueUsePrimaryColor
-    onToggled: checked => {
-                 valueUsePrimaryColor = checked;
-                 settingsChanged(saveSettings());
-               }
+  NComboBox {
+    label: I18n.tr("common.select-color")
+    description: I18n.tr("bar.clock.select-color-description")
+    model: [
+      {
+        "name": I18n.tr("common.none"),
+        "key": "none"
+      },
+      {
+        "key": "primary",
+        "name": I18n.tr("common.primary")
+      },
+      {
+        "key": "secondary",
+        "name": I18n.tr("common.secondary")
+      },
+      {
+        "key": "tertiary",
+        "name": I18n.tr("common.tertiary")
+      },
+      {
+        "key": "error",
+        "name": I18n.tr("common.error")
+      }
+    ]
+    currentKey: valueTextColor
+    onSelected: key => {
+                  valueTextColor = key;
+                  settingsChanged(saveSettings());
+                }
+    minimumWidth: 200
     visible: !valueCompactMode
   }
 

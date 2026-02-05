@@ -40,7 +40,8 @@ Item {
   readonly property real barFontSize: Style.getBarFontSizeForScreen(screenName)
 
   readonly property bool compactMode: widgetSettings.compactMode !== undefined ? widgetSettings.compactMode : widgetMetadata.compactMode
-  readonly property bool usePrimaryColor: widgetSettings.usePrimaryColor !== undefined ? widgetSettings.usePrimaryColor : widgetMetadata.usePrimaryColor
+  readonly property string textColorKey: widgetSettings.textColor !== undefined ? widgetSettings.textColor : widgetMetadata.textColor
+
   readonly property bool useMonospaceFont: widgetSettings.useMonospaceFont !== undefined ? widgetSettings.useMonospaceFont : widgetMetadata.useMonospaceFont
   readonly property bool showCpuUsage: (widgetSettings.showCpuUsage !== undefined) ? widgetSettings.showCpuUsage : widgetMetadata.showCpuUsage
   readonly property bool showCpuFreq: (widgetSettings.showCpuFreq !== undefined) ? widgetSettings.showCpuFreq : widgetMetadata.showCpuFreq
@@ -63,6 +64,21 @@ Item {
   // Content dimensions for implicit sizing
   readonly property real contentWidth: isVertical ? capsuleHeight : Math.round(mainGrid.implicitWidth + Style.marginXL)
   readonly property real contentHeight: isVertical ? Math.round(mainGrid.implicitHeight + Style.marginXL) : capsuleHeight
+
+  readonly property color textColor: {
+    switch (textColorKey) {
+    case "primary":
+      return Color.mPrimary;
+    case "secondary":
+      return Color.mSecondary;
+    case "tertiary":
+      return Color.mTertiary;
+    case "error":
+      return Color.mError;
+    default:
+      return Color.mOnSurface;
+    }
+  }
 
   // Size: use implicit width/height
   // BarWidgetLoader sets explicit width/height to extend click area
@@ -118,8 +134,6 @@ Item {
 
     return rows;
   }
-
-  readonly property color textColor: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
 
   // Visibility-aware warning/critical states (delegates to service)
   readonly property bool cpuWarning: showCpuUsage && SystemStatService.cpuWarning
