@@ -261,7 +261,7 @@ ColumnLayout {
             // Installing spinner
             NBusyIndicator {
               visible: !modelData.downloaded && (PluginService.installingPlugins[modelData.id] === true)
-              size: Style.baseWidgetSize * 0.7
+              size: Style.baseWidgetSize * 0.5
               running: visible
             }
           }
