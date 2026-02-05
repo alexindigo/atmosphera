@@ -62,7 +62,7 @@ Item {
   }
 
   // Background color for empty portion (semi-transparent)
-  readonly property color emptyColor: Qt.alpha(baseColor, 0.6)
+  readonly property color emptyColor: Qt.alpha(baseColor, 0.7)
 
   // State icon logic
   readonly property bool hasStateIcon: (!ready || charging || pluggedIn)
@@ -149,15 +149,17 @@ Item {
     id: percentageText
     visible: opacity > 0
     opacity: root.showPercentageText && root.ready && !root.showStateIcon ? 1 : 0
-    x: batteryBody.x + Style.pixelAlignCenter(batteryBody.width, width)
-    y: batteryBody.y + Style.pixelAlignCenter(batteryBody.height, height)
+    x: batteryBody.x + Style.pixelAlignCenter(bodyBackground.width, width)
+    y: batteryBody.y + bodyBackground.y + Style.pixelAlignCenter(bodyBackground.height, height)
     font.family: Settings.data.ui.fontFixed
     font.weight: Style.fontWeightBold
-    text: Math.round(root.animatedPercentage)
-    pointSize: root.baseSize * (root.vertical ? 0.78 : 0.82)
+    text: root.vertical ? String(Math.round(root.animatedPercentage)).split('').join('\n') : Math.round(root.animatedPercentage)
+    pointSize: root.baseSize * (root.vertical ? 0.82 : 0.82)
     color: Qt.alpha(root.textColor, 0.75)
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
+    lineHeight: root.vertical ? 0.7 : 1.0
+    lineHeightMode: Text.ProportionalHeight
 
     Behavior on opacity {
       enabled: !Settings.data.general.animationDisabled
@@ -173,8 +175,8 @@ Item {
     id: stateIconOverlay
     visible: opacity > 0
     opacity: !root.ready || (root.hasStateIcon && root.showStateIcon) ? 1 : 0
-    x: batteryBody.x + Style.pixelAlignCenter(batteryBody.width, width)
-    y: batteryBody.y + Style.pixelAlignCenter(batteryBody.height, height)
+    x: batteryBody.x + Style.pixelAlignCenter(bodyBackground.width, width)
+    y: batteryBody.y + bodyBackground.y + Style.pixelAlignCenter(bodyBackground.height, height)
     icon: root.stateIcon
     pointSize: Style.toOdd(root.baseSize)
     color: Qt.alpha(root.textColor, 0.75)
