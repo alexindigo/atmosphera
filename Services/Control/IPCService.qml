@@ -315,6 +315,21 @@ Item {
     function set(schemeName: string) {
       ColorSchemeService.setPredefinedScheme(schemeName);
     }
+    function setGenerationMethod(method: string) {
+      var valid = false;
+      for (var i = 0; i < TemplateProcessor.schemeTypes.length; i++) {
+        if (TemplateProcessor.schemeTypes[i].key === method) {
+          valid = true;
+          break;
+        }
+      }
+
+      if (valid) {
+        Settings.data.colorSchemes.generationMethod = method;
+      } else {
+        Logger.w("IPC", "Invalid generation method received: " + method);
+      }
+    }
   }
 
   IpcHandler {
