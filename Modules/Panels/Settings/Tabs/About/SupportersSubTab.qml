@@ -137,7 +137,7 @@ ColumnLayout {
                 Image {
                   anchors.centerIn: parent
                   source: "../../../../../Assets/noctalia.svg"
-                  width: parent.width * 0.8
+                  width: parent.width * 0.75
                   height: width
                   fillMode: Image.PreserveAspectFit
                   mipmap: true
@@ -147,7 +147,7 @@ ColumnLayout {
             }
 
             Rectangle {
-              visible: avatarWrapper.isRounded
+              visible: avatarWrapper.isRounded || !supporterCard.hasGithub
               anchors.fill: parent
               color: "transparent"
               radius: width * 0.5
@@ -190,22 +190,11 @@ ColumnLayout {
               pointSize: Style.fontSizeS
             }
 
-            RowLayout {
-              spacing: Style.marginXS
-              Layout.fillWidth: true
-
-              NIcon {
-                icon: "heart"
-                pointSize: Style.fontSizeXS
-                color: Color.mPrimary
-              }
-
-              NText {
-                text: I18n.tr("panels.about.supporter-badge")
-                pointSize: Style.fontSizeXS
-                color: Color.mPrimary
-                font.weight: Style.fontWeightMedium
-              }
+            NText {
+              text: I18n.tr("panels.about.supporter-badge")
+              pointSize: Style.fontSizeXS
+              color: Color.mPrimary
+              font.weight: Style.fontWeightMedium
             }
           }
 
