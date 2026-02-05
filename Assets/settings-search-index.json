@@ -876,6 +876,22 @@
     "subTabLabel": "common.general"
   },
   {
+    "labelKey": "panels.lock-screen.clock-style-label",
+    "descriptionKey": "panels.lock-screen.clock-style-description",
+    "widget": "NComboBox",
+    "tab": 11,
+    "tabLabel": "panels.lock-screen.title",
+    "subTab": null
+  },
+  {
+    "labelKey": "panels.lock-screen.clock-format-label",
+    "descriptionKey": "panels.lock-screen.clock-format-description",
+    "widget": "NTextInput",
+    "tab": 11,
+    "tabLabel": "panels.lock-screen.title",
+    "subTab": null
+  },
+  {
     "labelKey": "panels.lock-screen.lock-on-suspend-label",
     "descriptionKey": "panels.lock-screen.lock-on-suspend-description",
     "widget": "NToggle",

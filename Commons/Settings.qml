@@ -283,6 +283,8 @@ Singleton {
       property int lockScreenCountdownDuration: 10000
       property bool autoStartAuth: false
       property bool allowPasswordWithFprintd: false
+      property string clockStyle: "custom"
+      property string clockFormat: "hh\\nmm"
     }
 
     // ui

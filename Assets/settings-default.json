@@ -93,7 +93,9 @@
     "enableLockScreenCountdown": true,
     "lockScreenCountdownDuration": 10000,
     "autoStartAuth": false,
-    "allowPasswordWithFprintd": false
+    "allowPasswordWithFprintd": false,
+    "clockStyle": "custom",
+    "clockFormat": "hh\\nmm"
   },
   "ui": {
     "fontDefault": "",

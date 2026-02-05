@@ -8,6 +8,57 @@ import qs.Widgets
 ColumnLayout {
   id: root
   spacing: Style.marginL
+  function insertToken(token) {
+    if (formatInput.inputItem) {
+      var input = formatInput.inputItem;
+      var cursorPos = input.cursorPosition;
+      var currentText = input.text;
+      var newText = currentText.substring(0, cursorPos) + token + currentText.substring(cursorPos);
+      input.text = newText + " ";
+      input.cursorPosition = cursorPos + token.length + 1;
+      input.forceActiveFocus();
+    }
+  }
+
+  NComboBox {
+    label: I18n.tr("panels.lock-screen.clock-style-label")
+    description: I18n.tr("panels.lock-screen.clock-style-description")
+    model: [
+      {
+        "key": "analog",
+        "name": I18n.tr("panels.lock-screen.clock-style-analog")
+      },
+      {
+        "key": "digital",
+        "name": I18n.tr("panels.lock-screen.clock-style-digital")
+      },
+      {
+        "key": "custom",
+        "name": I18n.tr("panels.lock-screen.clock-style-custom")
+      }
+    ]
+    currentKey: Settings.data.general.clockStyle
+    onSelected: key => Settings.data.general.clockStyle = key
+    defaultValue: Settings.getDefaultValue("general.clockStyle")
+    z: 10
+  }
+
+  NTextInput {
+    id: formatInput
+    label: I18n.tr("panels.lock-screen.clock-format-label")
+    description: I18n.tr("panels.lock-screen.clock-format-description")
+    text: Settings.data.general.clockFormat
+    onTextChanged: Settings.data.general.clockFormat = text
+    visible: Settings.data.general.clockStyle === "custom"
+    defaultValue: Settings.getDefaultValue("general.clockFormat")
+  }
+
+  NDateTimeTokens {
+    Layout.fillWidth: true
+    Layout.preferredHeight: 300
+    visible: Settings.data.general.clockStyle === "custom"
+    onTokenClicked: token => root.insertToken(token)
+  }
 
   NToggle {
     label: I18n.tr("panels.lock-screen.lock-on-suspend-label")

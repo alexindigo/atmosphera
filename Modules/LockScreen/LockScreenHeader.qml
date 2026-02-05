@@ -125,20 +125,60 @@ Rectangle {
     }
 
     // Clock
-    // Clock
-    NClock {
-      now: Time.now
-      clockStyle: "digital"
-      showProgress: false
-      Layout.preferredWidth: 70
-      Layout.preferredHeight: 70
+    Item {
+      Layout.preferredWidth: Settings.data.general.clockStyle === "analog" ? 120 : (Settings.data.general.clockStyle === "custom" ? 90 : 70)
+      Layout.preferredHeight: Settings.data.general.clockStyle === "analog" ? 120 : (Settings.data.general.clockStyle === "custom" ? 90 : 70)
       Layout.alignment: Qt.AlignVCenter
-      backgroundColor: "transparent"
-      clockColor: Color.mOnSurface
-      hoursFontSize: Style.fontSizeL
-      minutesFontSize: Style.fontSizeL
-      hoursFontWeight: Style.fontWeightBold
-      minutesFontWeight: Style.fontWeightBold
+
+      // Analog Clock
+      NClock {
+        anchors.centerIn: parent
+        width: 120
+        height: 120
+        visible: Settings.data.general.clockStyle === "analog"
+        now: Time.now
+        clockStyle: "analog"
+        backgroundColor: "transparent"
+        clockColor: Color.mOnSurface
+        secondHandColor: Color.mPrimary
+      }
+
+      // Digital Clock (Standard)
+      NClock {
+        anchors.centerIn: parent
+        width: 70
+        height: 70
+        visible: Settings.data.general.clockStyle === "digital"
+        now: Time.now
+        clockStyle: "digital"
+        showProgress: true
+        progressColor: Color.mPrimary
+        backgroundColor: "transparent"
+        clockColor: Color.mOnSurface
+        hoursFontSize: Style.fontSizeL
+        minutesFontSize: Style.fontSizeL
+        hoursFontWeight: Style.fontWeightBold
+        minutesFontWeight: Style.fontWeightBold
+      }
+
+      // Custom Clock (Stacked)
+      ColumnLayout {
+        anchors.centerIn: parent
+        visible: Settings.data.general.clockStyle === "custom"
+        spacing: -3
+
+        Repeater {
+          model: I18n.locale.toString(Time.now, (Settings.data.general.clockFormat || "hh\\nmm").replace(/\\n/g, "\n")).split("\n")
+          NText {
+            text: modelData
+            pointSize: Style.fontSizeL
+            font.weight: Style.fontWeightBold
+            color: Color.mOnSurface
+            horizontalAlignment: Text.AlignHCenter
+            Layout.alignment: Qt.AlignHCenter
+          }
+        }
+      }
     }
   }
 }
