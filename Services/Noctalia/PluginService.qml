@@ -43,6 +43,9 @@ Singleton {
   property var pluginErrors: ({})
   signal pluginLoadError(string pluginId, string entryPoint, string error)
 
+  // Track currently installing plugins: { pluginId: true }
+  property var installingPlugins: ({})
+
   // Hot reload: file watchers for plugin directories
   property var pluginFileWatchers: ({}) // { pluginId: FileView }
   property bool hotReloadEnabled: Settings.isDebug
@@ -411,9 +414,19 @@ Singleton {
     var downloadCmd = "temp_dir=$(mktemp -d) && GIT_TERMINAL_PROMPT=0 git clone --filter=blob:none --sparse --depth=1 --quiet '" + repoUrl + "' \"$temp_dir\" 2>/dev/null && cd \"$temp_dir\" && git sparse-checkout set '" + pluginId + "' 2>/dev/null && mkdir -p '" + pluginDir + "' && cp -r \"$temp_dir/" + pluginId + "/.\" '" + pluginDir
         + "/'; exit_code=$?; rm -rf \"$temp_dir\"; exit $exit_code";
 
+    // Mark as installing
+    var newInstalling = Object.assign({}, root.installingPlugins);
+    newInstalling[pluginId] = true;
+    root.installingPlugins = newInstalling;
+
     var downloadProcess = Qt.createQmlObject('import QtQuick; import Quickshell.Io; Process { command: ["sh", "-c", "' + downloadCmd.replace(/"/g, '\\"') + '"] }', root, "DownloadPlugin_" + pluginId);
 
     downloadProcess.exited.connect(function (exitCode) {
+      // Mark as finished (remove from installing)
+      var currentInstalling = Object.assign({}, root.installingPlugins);
+      delete currentInstalling[pluginId];
+      root.installingPlugins = currentInstalling;
+
       if (exitCode === 0) {
         Logger.i("PluginService", "Downloaded plugin:", compositeKey);
 
