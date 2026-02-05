@@ -126,15 +126,15 @@ Rectangle {
 
     // Clock
     Item {
-      Layout.preferredWidth: Settings.data.general.clockStyle === "analog" ? 120 : (Settings.data.general.clockStyle === "custom" ? 90 : 70)
-      Layout.preferredHeight: Settings.data.general.clockStyle === "analog" ? 120 : (Settings.data.general.clockStyle === "custom" ? 90 : 70)
+      Layout.preferredWidth: Settings.data.general.clockStyle === "analog" ? 70 : (Settings.data.general.clockStyle === "custom" ? 90 : 70)
+      Layout.preferredHeight: Settings.data.general.clockStyle === "analog" ? 70 : (Settings.data.general.clockStyle === "custom" ? 90 : 70)
       Layout.alignment: Qt.AlignVCenter
 
       // Analog Clock
       NClock {
         anchors.centerIn: parent
-        width: 120
-        height: 120
+        width: 70
+        height: 70
         visible: Settings.data.general.clockStyle === "analog"
         now: Time.now
         clockStyle: "analog"
