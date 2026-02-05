@@ -469,6 +469,7 @@
     "sources": "Kaynaklar",
     "start": "Başlat",
     "stop": "Dur",
+    "supporters": "Destekçiler",
     "suspend": "Askıya al",
     "templates": "Şablonlar",
     "tertiary": "Üçüncül",
@@ -646,6 +647,7 @@
   },
   "panels": {
     "about": {
+      "become-supporter": "Destekçi ol",
       "changelog": "Değişiklik günlüğünü görüntüle",
       "contributors-desc": "{count} <b>harika</b> katılımcımıza <b>teşekkürler</b>!",
       "contributors-description-plural": "{count} <b>harika</b> katılımcımıza <b>teşekkürler</b>!",
@@ -658,6 +660,9 @@
       "noctalia-title": "Noctalia kabuğu",
       "privacy-policy": "Gizlilik politikası",
       "support": "Bizi destekleyin",
+      "supporter-badge": "Destekçi",
+      "supporters-desc-singular": "Harika destekçimize kocaman bir teşekkür!",
+      "supporters-loading": "Destekçiler yükleniyor...",
       "system-cpu": "İşlemci:",
       "system-disk": "Disk:",
       "system-gpu": "GPU:",

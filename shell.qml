@@ -102,6 +102,7 @@ ShellRoot {
         PowerProfileService.init();
         HostService.init();
         GitHubService.init();
+        SupporterService.init();
 
         delayedInitTimer.running = true;
       }

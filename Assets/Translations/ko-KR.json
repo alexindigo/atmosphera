@@ -469,6 +469,7 @@
     "sources": "소스",
     "start": "시작",
     "stop": "중지",
+    "supporters": "후원자",
     "suspend": "대기 모드",
     "templates": "템플릿",
     "tertiary": "세번째",
@@ -646,6 +647,7 @@
   },
   "panels": {
     "about": {
+      "become-supporter": "후원자 되기",
       "changelog": "변경 로그 보기",
       "contributors-desc": "{count}명의 <b>멋진</b> 기여자에게 감사를 전합니다!",
       "contributors-description-plural": "{count}명의 <b>멋진</b> 기여자들에게 감사를 전합니다!",
@@ -658,6 +660,9 @@
       "noctalia-title": "Noctalia 셸",
       "privacy-policy": "개인정보 처리방침",
       "support": "후원하기",
+      "supporter-badge": "후원자",
+      "supporters-desc-singular": "멋진 후원자분께 진심으로 감사드립니다!",
+      "supporters-loading": "후원자 불러오는 중...",
       "system-cpu": "CPU:",
       "system-disk": "디스크:",
       "system-gpu": "GPU:",

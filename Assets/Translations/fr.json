@@ -469,6 +469,7 @@
     "sources": "Sources",
     "start": "Commencer",
     "stop": "Arrêtez",
+    "supporters": "Soutiens",
     "suspend": "Mettre en veille",
     "templates": "Modèles",
     "tertiary": "Tertiaire",
@@ -646,6 +647,7 @@
   },
   "panels": {
     "about": {
+      "become-supporter": "Devenir un soutien",
       "changelog": "Afficher le journal des modifications",
       "contributors-desc": "Un grand merci à notre {count} <b>super</b> contributeur !",
       "contributors-description-plural": "Un grand merci à nos {count} <b>super</b> contributeurs !",
@@ -658,6 +660,9 @@
       "noctalia-title": "Shell Noctalia",
       "privacy-policy": "Politique de confidentialité",
       "support": "Soutenez-nous",
+      "supporter-badge": "Soutien",
+      "supporters-desc-singular": "Un immense merci à notre incroyable soutien !",
+      "supporters-loading": "Chargement des contributeurs...",
       "system-cpu": "Processeur :",
       "system-disk": "Disque :",
       "system-gpu": "GPU :",

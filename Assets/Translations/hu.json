@@ -469,6 +469,7 @@
     "sources": "Források",
     "start": "Kezdés",
     "stop": "Állj",
+    "supporters": "Támogatók",
     "suspend": "Felfüggesztés",
     "templates": "Sablonok",
     "tertiary": "Harmadlagos",
@@ -646,6 +647,7 @@
   },
   "panels": {
     "about": {
+      "become-supporter": "Legyél támogató",
       "changelog": "Változások megtekintése",
       "contributors-desc": "Köszönet a(z) {count} <b>fantasztikus</b> közreműködőnknek!",
       "contributors-description-plural": "Köszönet a(z) {count} <b>fantasztikus</b> közreműködőnknek!",
@@ -658,6 +660,9 @@
       "noctalia-title": "Noctalia shell",
       "privacy-policy": "Adatvédelmi irányelvek",
       "support": "Támogasson minket",
+      "supporter-badge": "Támogató",
+      "supporters-desc-singular": "Hatalmas köszönet csodálatos támogatóinknak!",
+      "supporters-loading": "Támogatók betöltése...",
       "system-cpu": "CPU:",
       "system-disk": "Lemez:",
       "system-gpu": "GPU:",

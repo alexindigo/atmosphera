@@ -469,6 +469,7 @@
     "sources": "ソース",
     "start": "開始",
     "stop": "停止",
+    "supporters": "サポーター",
     "suspend": "サスペンド",
     "templates": "テンプレート",
     "tertiary": "第三",
@@ -646,6 +647,7 @@
   },
   "panels": {
     "about": {
+      "become-supporter": "サポーターになる",
       "changelog": "変更履歴を見る",
       "contributors-desc": "{count}人の<b>素晴らしい</b>コントリビューターに感謝！",
       "contributors-description-plural": "{count}人の<b>素晴らしい</b>コントリビューターに感謝！",
@@ -658,6 +660,9 @@
       "noctalia-title": "Noctalia shell",
       "privacy-policy": "プライバシーポリシー",
       "support": "支援する",
+      "supporter-badge": "サポーター",
+      "supporters-desc-singular": "素晴らしいサポーターに心からの感謝を！",
+      "supporters-loading": "サポーターを読み込み中...",
       "system-cpu": "CPU：",
       "system-disk": "ディスク：",
       "system-gpu": "GPU：",

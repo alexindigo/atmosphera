@@ -469,6 +469,7 @@
     "sources": "来源",
     "start": "开始",
     "stop": "停止",
+    "supporters": "支持者",
     "suspend": "挂起",
     "templates": "模板",
     "tertiary": "第三",
@@ -646,6 +647,7 @@
   },
   "panels": {
     "about": {
+      "become-supporter": "成为支持者",
       "changelog": "查看更改日志",
       "contributors-desc": "向我们 {count} 位<b>超棒的</b>贡献者致敬！",
       "contributors-description-plural": "向我们 {count} 位<b>超棒的</b>贡献者致敬！",
@@ -658,6 +660,9 @@
       "noctalia-title": "Noctalia shell",
       "privacy-policy": "隐私政策",
       "support": "支持我们",
+      "supporter-badge": "支持者",
+      "supporters-desc-singular": "非常感谢我们出色的支持者！",
+      "supporters-loading": "正在加载支持者...",
       "system-cpu": "中央处理器：",
       "system-disk": "磁盘：",
       "system-gpu": "图形处理器：",

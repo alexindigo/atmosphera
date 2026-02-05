@@ -469,6 +469,7 @@
     "sources": "Джерела",
     "start": "Почати",
     "stop": "Зупиніться",
+    "supporters": "Прихильники",
     "suspend": "Призупинити",
     "templates": "Шаблони",
     "tertiary": "Третинний",
@@ -646,6 +647,7 @@
   },
   "panels": {
     "about": {
+      "become-supporter": "Стати прихильником",
       "changelog": "Переглянути журнал змін",
       "contributors-desc": "Подяка нашому {count} <b>чудовому</b> учаснику!",
       "contributors-description-plural": "Подяка нашим {count} <b>чудовим</b> учасникам!",
@@ -658,6 +660,9 @@
       "noctalia-title": "Оболонка Noctalia",
       "privacy-policy": "Політика конфіденційності",
       "support": "Підтримати нас",
+      "supporter-badge": "Прихильник",
+      "supporters-desc-singular": "Величезне дякую нашому чудовому прихильнику!",
+      "supporters-loading": "Завантаження прихильників...",
       "system-cpu": "ЦП:",
       "system-disk": "Диск:",
       "system-gpu": "GPU:",

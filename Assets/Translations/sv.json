@@ -469,6 +469,7 @@
     "sources": "Källor",
     "start": "Starta",
     "stop": "Stoppa",
+    "supporters": "Stödjare",
     "suspend": "Avbryt",
     "templates": "Mallar",
     "tertiary": "Tertiär",
@@ -646,6 +647,7 @@
   },
   "panels": {
     "about": {
+      "become-supporter": "Bli supporter",
       "changelog": "Visa ändringslogg",
       "contributors-desc": "Tack till våra {count} <b>fantastiska</b> bidragsgivare!",
       "contributors-description-plural": "Tack till våra {count} <b>fantastiska</b> bidragsgivare!",
@@ -658,6 +660,9 @@
       "noctalia-title": "Noctalia-skal",
       "privacy-policy": "Sekretesspolicy",
       "support": "Stöd oss",
+      "supporter-badge": "Supporter",
+      "supporters-desc-singular": "Ett stort tack till vår fantastiska supporter!",
+      "supporters-loading": "Laddar supportrar...",
       "system-cpu": "CPU:",
       "system-disk": "Disk:",
       "system-gpu": "GPU:",

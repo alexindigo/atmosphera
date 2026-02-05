@@ -469,6 +469,7 @@
     "sources": "Fuentes",
     "start": "Comienzo",
     "stop": "Parar",
+    "supporters": "Apoyadores",
     "suspend": "Suspender",
     "templates": "Plantillas",
     "tertiary": "Terciario",
@@ -646,6 +647,7 @@
   },
   "panels": {
     "about": {
+      "become-supporter": "Hazte patrocinador",
       "changelog": "Ver registro de cambios",
       "contributors-desc": "¡Un saludo a nuestro <b>increíble</b> colaborador número {count}!",
       "contributors-description-plural": "¡Un saludo a nuestros {count} <b>increíbles</b> colaboradores!",
@@ -658,6 +660,9 @@
       "noctalia-title": "Shell Noctalia",
       "privacy-policy": "Política de privacidad",
       "support": "Apóyanos",
+      "supporter-badge": "Colaborador",
+      "supporters-desc-singular": "¡Un enorme agradecimiento a nuestro increíble colaborador!",
+      "supporters-loading": "Cargando patrocinadores...",
       "system-cpu": "CPU:",
       "system-disk": "Disco:",
       "system-gpu": "GPU:",

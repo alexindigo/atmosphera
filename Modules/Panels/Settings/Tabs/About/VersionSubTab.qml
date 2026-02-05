@@ -515,7 +515,7 @@ ColumnLayout {
       Layout.alignment: Qt.AlignHCenter
       onClicked: {
         Quickshell.execDetached(["xdg-open", "https://buymeacoffee.com/noctalia"]);
-        ToastService.showNotice(I18n.tr("panels.about.support"), I18n.tr("toast.kofi-opened"));
+        ToastService.showNotice(I18n.tr("panels.about.support"), I18n.tr("toast.donation-opened"));
       }
     }
   }
