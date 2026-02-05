@@ -661,6 +661,7 @@
       "privacy-policy": "隱私權政策",
       "support": "支持我們",
       "supporter-badge": "支持者",
+      "supporters-desc-plural": "非常感謝我們的<b>{count}位出色</b>支持者！",
       "supporters-desc-singular": "非常感謝我們出色的支持者！",
       "supporters-loading": "正在載入支持者...",
       "system-cpu": "CPU:",

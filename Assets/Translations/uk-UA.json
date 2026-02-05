@@ -661,6 +661,7 @@
       "privacy-policy": "Політика конфіденційності",
       "support": "Підтримати нас",
       "supporter-badge": "Прихильник",
+      "supporters-desc-plural": "Величезна подяка нашим <b>{count} чудовим</b> прихильникам!",
       "supporters-desc-singular": "Величезне дякую нашому чудовому прихильнику!",
       "supporters-loading": "Завантаження прихильників...",
       "system-cpu": "ЦП:",

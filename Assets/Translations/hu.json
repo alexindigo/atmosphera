@@ -661,6 +661,7 @@
       "privacy-policy": "Adatvédelmi irányelvek",
       "support": "Támogasson minket",
       "supporter-badge": "Támogató",
+      "supporters-desc-plural": "Hatalmas köszönet a <b>{count} csodálatos</b> támogatóinknak!",
       "supporters-desc-singular": "Hatalmas köszönet csodálatos támogatóinknak!",
       "supporters-loading": "Támogatók betöltése...",
       "system-cpu": "CPU:",

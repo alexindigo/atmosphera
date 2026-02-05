@@ -661,6 +661,7 @@
       "privacy-policy": "Политика конфиденциальности",
       "support": "Поддержать нас",
       "supporter-badge": "Сторонник",
+      "supporters-desc-plural": "Огромное спасибо нашим <b>{count} замечательным</b> сторонникам!",
       "supporters-desc-singular": "Огромное спасибо нашему замечательному стороннику!",
       "supporters-loading": "Загрузка спонсоров...",
       "system-cpu": "ЦП:",

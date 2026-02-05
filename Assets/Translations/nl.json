@@ -661,6 +661,7 @@
       "privacy-policy": "Privacybeleid",
       "support": "Steun ons",
       "supporter-badge": "Supporter",
+      "supporters-desc-plural": "Enorm bedankt aan onze <b>{count} geweldige</b> supporters!",
       "supporters-desc-singular": "Een enorme dank aan onze geweldige supporter!",
       "supporters-loading": "Donateurs laden...",
       "system-cpu": "CPU:",

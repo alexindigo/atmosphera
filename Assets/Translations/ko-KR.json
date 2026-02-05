@@ -661,6 +661,7 @@
       "privacy-policy": "개인정보 처리방침",
       "support": "후원하기",
       "supporter-badge": "후원자",
+      "supporters-desc-plural": "저희의 <b>{count}명의 멋진</b> 후원자분들께 진심으로 감사드립니다!",
       "supporters-desc-singular": "멋진 후원자분께 진심으로 감사드립니다!",
       "supporters-loading": "후원자 불러오는 중...",
       "system-cpu": "CPU:",

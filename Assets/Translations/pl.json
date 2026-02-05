@@ -661,6 +661,7 @@
       "privacy-policy": "Polityka prywatności",
       "support": "Wesprzyj nas",
       "supporter-badge": "Wspierający",
+      "supporters-desc-plural": "Ogromne podziękowania dla naszych <b>{count} wspaniałych</b> wspierających!",
       "supporters-desc-singular": "Ogromne podziękowania dla naszego wspaniałego wspierającego!",
       "supporters-loading": "Ładowanie wspierających...",
       "system-cpu": "Procesor:",

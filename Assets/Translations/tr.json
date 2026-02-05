@@ -661,6 +661,7 @@
       "privacy-policy": "Gizlilik politikası",
       "support": "Bizi destekleyin",
       "supporter-badge": "Destekçi",
+      "supporters-desc-plural": "<b>{count} harika</b> destekçimize kocaman teşekkürler!",
       "supporters-desc-singular": "Harika destekçimize kocaman bir teşekkür!",
       "supporters-loading": "Destekçiler yükleniyor...",
       "system-cpu": "İşlemci:",
