@@ -733,89 +733,100 @@ Item {
             }
           }
 
-          // Search input
-          NTextInput {
-            id: searchInput
-            Layout.fillWidth: true
-            placeholderText: I18n.tr("common.search")
-            inputIconName: "search"
-            visible: opacity > 0
-            opacity: root.sidebarExpanded ? 1.0 : 0.0
-
-            Behavior on opacity {
-              NumberAnimation {
-                duration: Style.animationFast
-                easing.type: Easing.InOutQuad
-              }
-            }
-
-            onTextChanged: root.searchText = text
-            onEditingFinished: {
-              if (root.searchText.trim() !== "")
-                root.searchActivate();
-            }
-          }
-
-          // Search button for collapsed sidebar
+          // Search container wrapper to prevent layout jumps
           Item {
-            id: searchCollapsedContainer
+            id: searchContainerWrapper
             Layout.fillWidth: true
-            Layout.preferredHeight: Math.round(searchCollapsedRow.implicitHeight + Style.marginS * 2)
-            visible: opacity > 0
-            opacity: !root.sidebarExpanded ? 1.0 : 0.0
+            Layout.preferredHeight: searchInput.implicitHeight > 0 ? searchInput.implicitHeight : (Style.fontSizeXL + Style.marginM * 2)
 
-            Behavior on opacity {
-              NumberAnimation {
-                duration: Style.animationFast
-                easing.type: Easing.InOutQuad
-              }
-            }
-
-            Rectangle {
-              id: searchCollapsedButton
-              width: Math.round(searchCollapsedRow.implicitWidth + Style.marginS * 2)
-              height: parent.height
+            // Search input
+            NTextInput {
+              id: searchInput
               anchors.left: parent.left
-              radius: Style.radiusS
-              color: searchCollapsedMouseArea.containsMouse ? Color.mHover : "transparent"
+              anchors.right: parent.right
+              anchors.verticalCenter: parent.verticalCenter
+              placeholderText: I18n.tr("common.search")
+              inputIconName: "search"
+              visible: opacity > 0
+              opacity: root.sidebarExpanded ? 1.0 : 0.0
 
-              Behavior on color {
-                enabled: !Color.isTransitioning
-                ColorAnimation {
+              Behavior on opacity {
+                NumberAnimation {
                   duration: Style.animationFast
                   easing.type: Easing.InOutQuad
                 }
               }
 
-              RowLayout {
-                id: searchCollapsedRow
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.leftMargin: Style.marginS
-                spacing: 0
+              onTextChanged: root.searchText = text
+              onEditingFinished: {
+                if (root.searchText.trim() !== "")
+                  root.searchActivate();
+              }
+            }
 
-                NIcon {
-                  icon: "search"
-                  color: searchCollapsedMouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface
-                  pointSize: Style.fontSizeXL
+            // Search button for collapsed sidebar
+            Item {
+              id: searchCollapsedContainer
+              anchors.left: parent.left
+              anchors.right: parent.right
+              anchors.verticalCenter: parent.verticalCenter
+              height: Math.round(searchCollapsedRow.implicitHeight + Style.marginS * 2)
+              visible: opacity > 0
+              opacity: !root.sidebarExpanded ? 1.0 : 0.0
+
+              Behavior on opacity {
+                NumberAnimation {
+                  duration: Style.animationFast
+                  easing.type: Easing.InOutQuad
                 }
               }
 
-              MouseArea {
-                id: searchCollapsedMouseArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                  root.sidebarExpanded = true;
-                  root.wasCollapsedBeforeSearch = false; // Expanding manually resets this
-                  Qt.callLater(() => searchInput.inputItem.forceActiveFocus());
+              Rectangle {
+                id: searchCollapsedButton
+                width: Math.round(searchCollapsedRow.implicitWidth + Style.marginS * 2)
+                height: parent.height
+                anchors.left: parent.left
+                radius: Style.radiusS
+                color: searchCollapsedMouseArea.containsMouse ? Color.mHover : "transparent"
+
+                Behavior on color {
+                  enabled: !Color.isTransitioning
+                  ColorAnimation {
+                    duration: Style.animationFast
+                    easing.type: Easing.InOutQuad
+                  }
                 }
-                onEntered: {
-                  TooltipService.show(searchCollapsedButton, I18n.tr("common.search"));
+
+                RowLayout {
+                  id: searchCollapsedRow
+                  anchors.verticalCenter: parent.verticalCenter
+                  anchors.left: parent.left
+                  anchors.leftMargin: Style.marginS
+                  spacing: 0
+
+                  NIcon {
+                    icon: "search"
+                    color: searchCollapsedMouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface
+                    pointSize: Style.fontSizeXL
+                  }
                 }
-                onExited: {
-                  TooltipService.hide();
+
+                MouseArea {
+                  id: searchCollapsedMouseArea
+                  anchors.fill: parent
+                  hoverEnabled: true
+                  cursorShape: Qt.PointingHandCursor
+                  onClicked: {
+                    root.sidebarExpanded = true;
+                    root.wasCollapsedBeforeSearch = false; // Expanding manually resets this
+                    Qt.callLater(() => searchInput.inputItem.forceActiveFocus());
+                  }
+                  onEntered: {
+                    TooltipService.show(searchCollapsedButton, I18n.tr("common.search"));
+                  }
+                  onExited: {
+                    TooltipService.hide();
+                  }
                 }
               }
             }
