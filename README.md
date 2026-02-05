@@ -123,7 +123,8 @@ A heartfelt thank you to our incredible community of [**contributors**](https://
 
 ## ☕ Donations
 
-While all donations are greatly appreciated, they are completely voluntary.
+While all donations are greatly appreciated, they are completely voluntary.  
+Thank you to everyone who supports the project! 💜
 
 <p>
   Buy Me a Coffee - Credit Card<br/>
@@ -137,25 +138,6 @@ While all donations are greatly appreciated, they are completely voluntary.
     <img src="https://assets.noctalia.dev/donate-badge.svg" alt="Support Noctalia Kofi">
   </a>
 <p>
-
-
-### Thank you to everyone who supports the project 💜!
-* Gohma
-* DiscoCevapi
-* <a href="https://pika-os.com/" target="_blank">PikaOS</a>
-* LionHeartP
-* Nyxion ツ
-* RockDuck
-* Eynix
-* MrDowntempo
-* Tempus Thales
-* Raine
-* JustCurtis
-* llego
-* Grune
-* Maitreya (Max)
-* sheast
-* Radu
 
 ---
 
