@@ -78,10 +78,8 @@ Item {
       return [Color.mSecondary, Color.mOnSecondary];
     case "tertiary":
       return [Color.mTertiary, Color.mOnTertiary];
-    case "onSurface":
-      return [Color.mOnSurface, Color.mSurface];
     default:
-      return [Color.mPrimary, Color.mOnPrimary];
+      return [Color.mOnSurface, Color.mSurface];
     }
   }
 

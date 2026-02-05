@@ -256,6 +256,10 @@ ColumnLayout {
     description: I18n.tr("bar.workspace.focused-color-description")
     model: [
       {
+        "key": "none",
+        "name": I18n.tr("common.none")
+      },
+      {
         "key": "primary",
         "name": I18n.tr("common.primary")
       },
@@ -266,10 +270,6 @@ ColumnLayout {
       {
         "key": "tertiary",
         "name": I18n.tr("common.tertiary")
-      },
-      {
-        "key": "onSurface",
-        "name": I18n.tr("common.on-surface")
       }
     ]
     currentKey: valueFocusedColor
@@ -286,6 +286,10 @@ ColumnLayout {
     description: I18n.tr("bar.workspace.occupied-color-description")
     model: [
       {
+        "key": "none",
+        "name": I18n.tr("common.none")
+      },
+      {
         "key": "primary",
         "name": I18n.tr("common.primary")
       },
@@ -296,10 +300,6 @@ ColumnLayout {
       {
         "key": "tertiary",
         "name": I18n.tr("common.tertiary")
-      },
-      {
-        "key": "onSurface",
-        "name": I18n.tr("common.on-surface")
       }
     ]
     currentKey: valueOccupiedColor
@@ -316,6 +316,10 @@ ColumnLayout {
     description: I18n.tr("bar.workspace.empty-color-description")
     model: [
       {
+        "key": "none",
+        "name": I18n.tr("common.none")
+      },
+      {
         "key": "primary",
         "name": I18n.tr("common.primary")
       },
@@ -326,10 +330,6 @@ ColumnLayout {
       {
         "key": "tertiary",
         "name": I18n.tr("common.tertiary")
-      },
-      {
-        "key": "onSurface",
-        "name": I18n.tr("common.on-surface")
       }
     ]
     currentKey: valueEmptyColor
