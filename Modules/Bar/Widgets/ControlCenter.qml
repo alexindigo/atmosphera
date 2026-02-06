@@ -34,10 +34,10 @@ NIconButton {
     return {};
   }
 
-  readonly property string customIcon: widgetSettings.icon || widgetMetadata.icon
+  readonly property string customIcon: widgetSettings.icon !== undefined ? widgetSettings.icon : widgetMetadata.icon
   readonly property bool useDistroLogo: widgetSettings.useDistroLogo !== undefined ? widgetSettings.useDistroLogo : widgetMetadata.useDistroLogo
-  readonly property string customIconPath: widgetSettings.customIconPath || ""
-  readonly property bool enableColorization: widgetSettings.enableColorization || false
+  readonly property string customIconPath: widgetSettings.customIconPath !== undefined ? widgetSettings.customIconPath : widgetMetadata.customIconPath
+  readonly property bool enableColorization: widgetSettings.enableColorization !== undefined ? widgetSettings.enableColorization : widgetMetadata.enableColorization
   readonly property string colorizeSystemIcon: widgetSettings.colorizeSystemIcon !== undefined ? widgetSettings.colorizeSystemIcon : widgetMetadata.colorizeSystemIcon
 
   readonly property color iconColor: {
