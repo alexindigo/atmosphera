@@ -183,6 +183,7 @@ Item {
     anchors.fill: parent
     hoverEnabled: true
     acceptedButtons: Qt.LeftButton | Qt.RightButton
+    cursorShape: Qt.PointingHandCursor
     onEntered: {
       if (root.tooltipContent) {
         TooltipService.show(root, root.tooltipContent, BarService.getTooltipDirection(root.screen?.name));

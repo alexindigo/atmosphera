@@ -56,22 +56,6 @@ NIconButton {
       return Color.mOnSurface;
     }
   }
-  readonly property color iconHoverColor: {
-    if (!enableColorization)
-      return Color.mOnHover;
-    switch (colorizeSystemIcon) {
-    case "primary":
-      return Qt.darker(Color.mPrimary, 1.2);
-    case "secondary":
-      return Qt.darker(Color.mSecondary, 1.2);
-    case "tertiary":
-      return Qt.darker(Color.mTertiary, 1.2);
-    case "error":
-      return Qt.darker(Color.mError, 1.2);
-    default:
-      return Color.mOnHover;
-    }
-  }
 
   // If we have a custom path and not using distro logo, use the theme icon.
   // If using distro logo, don't use theme icon.
@@ -84,7 +68,7 @@ NIconButton {
   colorBg: Style.capsuleColor
   colorFg: iconColor
   colorBgHover: useDistroLogo ? Color.mSurfaceVariant : Color.mHover
-  colorFgHover: iconHoverColor
+  colorFgHover: Color.mOnHover
   colorBorder: "transparent"
   colorBorderHover: useDistroLogo ? Color.mHover : "transparent"
 
