@@ -1290,6 +1290,8 @@
       "types-volume-label": "Output volume"
     },
     "plugins": {
+      "auto-update": "Auto-update plugins",
+      "auto-update-description": "Automatically update all plugins when the shell starts.",
       "available-description": "Browse and install plugins from configured sources.",
       "available-label": "Available plugins",
       "available-no-plugins-description": "Check your plugin sources or refresh the list.",

@@ -251,8 +251,8 @@
       "title-width-reset-tooltip": "重設標題寬度"
     },
     "tray": {
-      "chevron-color-description": "將主題顏色套用至抽屜的V形圖示。",
-      "chevron-color-label": "V形顏色",
+      "chevron-color-description": "將主題顏色套用至抽屜的箭頭圖示。",
+      "chevron-color-label": "箭頭顏色",
       "colorize-icons-description": "將系統夾圖示套用主題用色",
       "colorize-icons-label": "為圖示上色",
       "drawer-enabled-description": "當啟用時, 沒有釘選的系統匣圖示將會顯示在抽屜面板中<br>如果停用則所有的圖示都會在工具列裡顯示",
@@ -1290,6 +1290,8 @@
       "types-volume-label": "輸出音量"
     },
     "plugins": {
+      "auto-update": "自動更新外掛程式",
+      "auto-update-description": "在 shell 啟動時自動更新所有外掛程式。",
       "available-description": "從設定的來源檢視及安裝外掛模組",
       "available-label": "可用的外掛模組",
       "available-no-plugins-description": "檢查你的模組來源或者重新整理列表",
@@ -1534,7 +1536,7 @@
   "setup": {
     "all-done": "完成!",
     "appearance": {
-      "subheader": "選擇 Dark Mode 和色彩來源 (桌布或預先定義)。"
+      "subheader": "選擇深色模式和顏色來源（桌布或預設）。"
     },
     "customize": {
       "header": "客製你的使用體驗",

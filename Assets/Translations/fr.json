@@ -252,7 +252,7 @@
     },
     "tray": {
       "chevron-color-description": "Appliquer les couleurs du thème à l'icône chevron du tiroir.",
-      "chevron-color-label": "Couleur du Chevron",
+      "chevron-color-label": "Couleur du chevron",
       "colorize-icons-description": "Appliquer les couleurs du thème aux icônes de la barre système.",
       "colorize-icons-label": "Coloriser les icônes",
       "drawer-enabled-description": "Lorsqu'elle est activée, les éléments de la barre système non épinglés sont affichés dans un panneau tiroir.<br>Lorsqu'elle est désactivée, tous les éléments de la barre système sont affichés en ligne.",
@@ -1290,6 +1290,8 @@
       "types-volume-label": "Volume de sortie"
     },
     "plugins": {
+      "auto-update": "Mettre à jour les plugins automatiquement",
+      "auto-update-description": "Mettre à jour automatiquement tous les plugins au démarrage de la shell.",
       "available-description": "Parcourir et installer des plugins à partir des sources configurées.",
       "available-label": "Plugins disponibles",
       "available-no-plugins-description": "Vérifiez les sources de vos plugins ou actualisez la liste.",
@@ -1534,7 +1536,7 @@
   "setup": {
     "all-done": "Terminé !",
     "appearance": {
-      "subheader": "Choisissez le Dark Mode et les sources de couleurs (Fond d'écran ou prédéfinies)."
+      "subheader": "Choisissez le mode sombre et les sources de couleur (Fond d'écran ou prédéfinies)."
     },
     "customize": {
       "header": "Personnaliser votre expérience",

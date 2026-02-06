@@ -251,8 +251,8 @@
       "title-width-reset-tooltip": "Titelbreedte resetten"
     },
     "tray": {
-      "chevron-color-description": "Themakleuren toepassen op het chevron-pictogram van de lade.",
-      "chevron-color-label": "Chevronkleur",
+      "chevron-color-description": "Themakleuren toepassen op het pijl-icoon van de lade.",
+      "chevron-color-label": "Pijlkleur",
       "colorize-icons-description": "Pas themakleuren toe op systeemvakpictogrammen.",
       "colorize-icons-label": "Pictogrammen inkleuren",
       "drawer-enabled-description": "Indien ingeschakeld worden niet-vastgemaakte systeemvakitems in een lade weergegeven.<br>Indien uitgeschakeld worden alle items inline getoond.",
@@ -1290,6 +1290,8 @@
       "types-volume-label": "Uitvoervolume"
     },
     "plugins": {
+      "auto-update": "Plugins automatisch bijwerken",
+      "auto-update-description": "Update automatisch alle plugins wanneer de shell start.",
       "available-description": "Blader door en installeer plugins vanuit geconfigureerde bronnen.",
       "available-label": "Beschikbare plug-ins",
       "available-no-plugins-description": "Controleer je plugin-bronnen of vernieuw de lijst.",
@@ -1416,7 +1418,7 @@
       "box-border-description": "Toon een omlijning rond inhoudsgebieden.",
       "box-border-label": "Containeromtrek",
       "box-border-radius-description": "Past de hoekronding aan van belangrijke lay-outsecties, zoals zijbalken, kaarten en inhoudspanelen.",
-      "box-border-radius-label": "Container Radius",
+      "box-border-radius-label": "Hoekradius",
       "box-border-radius-reset": "Containerstraal resetten",
       "control-border-radius-description": "Regelt de kromming van interactieve elementen, waaronder knoppen, schakelaars en tekstvelden.",
       "control-border-radius-label": "Voer straal in",
@@ -1534,7 +1536,7 @@
   "setup": {
     "all-done": "Klaar!",
     "appearance": {
-      "subheader": "Kies Dark Mode en kleurbronnen (Wallpaper of vooraf gedefinieerd)."
+      "subheader": "Kies donkere modus en kleurbronnen (Achtergrond of voorgedefinieerd)."
     },
     "customize": {
       "header": "Pas je ervaring aan",

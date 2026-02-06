@@ -437,6 +437,9 @@
     "startup": "",
     "session": ""
   },
+  "plugins": {
+    "autoUpdate": false
+  },
   "desktopWidgets": {
     "enabled": false,
     "gridSnap": false,

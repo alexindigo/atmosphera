@@ -251,8 +251,8 @@
       "title-width-reset-tooltip": "重置标题宽度"
     },
     "tray": {
-      "chevron-color-description": "将主题颜色应用到抽屉的V形图标。",
-      "chevron-color-label": "V形颜色",
+      "chevron-color-description": "将主题颜色应用于抽屉的箭头图标。",
+      "chevron-color-label": "箭头颜色",
       "colorize-icons-description": "将主题颜色应用到系统托盘图标。",
       "colorize-icons-label": "着色图标",
       "drawer-enabled-description": "启用时，未固定的托盘项显示在抽屉面板中。<br>禁用时，所有托盘项都内联显示。",
@@ -1290,6 +1290,8 @@
       "types-volume-label": "输出音量"
     },
     "plugins": {
+      "auto-update": "自动更新插件",
+      "auto-update-description": "在 shell 启动时自动更新所有插件。",
       "available-description": "浏览并安装来自已配置源的插件。",
       "available-label": "可用插件",
       "available-no-plugins-description": "检查你的插件源或刷新列表。",
@@ -1534,7 +1536,7 @@
   "setup": {
     "all-done": "完成！",
     "appearance": {
-      "subheader": "选择 Dark Mode 和颜色来源（壁纸或预定义）。"
+      "subheader": "选择深色模式和颜色来源（壁纸或预设）。"
     },
     "customize": {
       "header": "自定义体验",

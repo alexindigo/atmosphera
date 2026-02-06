@@ -251,8 +251,8 @@
       "title-width-reset-tooltip": "제목 너비 초기화"
     },
     "tray": {
-      "chevron-color-description": "서랍 셰브론 아이콘에 테마 색상 적용.",
-      "chevron-color-label": "셰브론 색상",
+      "chevron-color-description": "드로어 셰브론 아이콘에 테마 색상을 적용합니다.",
+      "chevron-color-label": "화살표 색상",
       "colorize-icons-description": "트레이 아이콘에 테마 색상을 적용합니다.",
       "colorize-icons-label": "아이콘 색상화",
       "drawer-enabled-description": "활성화하면 고정되지 않은 트레이 항목이 서랍 패널에 표시됩니다.<br>비활성화하면 모든 트레이 항목이 인라인으로 표시됩니다.",
@@ -1290,6 +1290,8 @@
       "types-volume-label": "출력 볼륨"
     },
     "plugins": {
+      "auto-update": "플러그인 자동 업데이트",
+      "auto-update-description": "셸 시작 시 모든 플러그인을 자동으로 업데이트합니다.",
       "available-description": "구성된 소스에서 플러그인을 찾아보고 설치합니다.",
       "available-label": "사용 가능한 플러그인",
       "available-no-plugins-description": "플러그인 소스를 확인하거나 목록을 새로고침하세요.",
@@ -1534,7 +1536,7 @@
   "setup": {
     "all-done": "완료되었습니다!",
     "appearance": {
-      "subheader": "다크 모드와 색상 소스(배경화면 또는 미리 정의됨)를 선택하세요."
+      "subheader": "다크 모드와 색상 소스(배경화면 또는 사전 정의)를 선택하세요."
     },
     "customize": {
       "header": "경험 사용자 지정",

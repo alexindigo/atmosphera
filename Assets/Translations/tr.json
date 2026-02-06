@@ -251,8 +251,8 @@
       "title-width-reset-tooltip": "Başlık genişliğini sıfırla"
     },
     "tray": {
-      "chevron-color-description": "Tema renklerini çekmece ok simgesine uygula.",
-      "chevron-color-label": "Şevron Rengi",
+      "chevron-color-description": "Çekmecenin ok simgesine tema renklerini uygula.",
+      "chevron-color-label": "Ok rengi",
       "colorize-icons-description": "Tepsi simgelerine tema renklerini uygula.",
       "colorize-icons-label": "Simgeleri renklendir",
       "drawer-enabled-description": "Etkinleştirildiğinde, sabitlenmemiş tepsi öğeleri bir çekmece panelinde gösterilir.<br>Devre dışı bırakıldığında, tüm tepsi öğeleri satır içi gösterilir.",
@@ -1290,6 +1290,8 @@
       "types-volume-label": "Çıkış sesi"
     },
     "plugins": {
+      "auto-update": "Eklentileri otomatik güncelle",
+      "auto-update-description": "Shell başladığında tüm eklentileri otomatik olarak güncelle.",
       "available-description": "Yapılandırılmış kaynaklardan eklentilere göz atın ve yükleyin.",
       "available-label": "Mevcut eklentiler",
       "available-no-plugins-description": "Eklenti kaynaklarınızı kontrol edin veya listeyi yenileyin.",
@@ -1534,7 +1536,7 @@
   "setup": {
     "all-done": "Tamamlandı!",
     "appearance": {
-      "subheader": "Dark Mode'u ve renk kaynaklarını seçin (Duvar kağıdı veya önceden tanımlı)."
+      "subheader": "Koyu modu ve renk kaynaklarını (Duvar kağıdı veya önceden tanımlanmış) seçin."
     },
     "customize": {
       "header": "Deneyiminizi özelleştirin",

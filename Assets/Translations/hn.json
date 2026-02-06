@@ -50,6 +50,7 @@
       "device-label": "Batteriambod",
       "display-mode-description": "Vel korleîs batteriet er synt fram på radi.",
       "display-mode-graphic": "Upplysande batteriteikn",
+      "display-mode-graphic-clean": "Upplysande batteriteikn (ingen %)",
       "display-mode-icon-always": "Teikn - syn % stødt",
       "display-mode-icon-hover": "Teikn - syn ved sviv",
       "display-mode-icon-only": "Einast teikn",

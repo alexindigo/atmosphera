@@ -251,8 +251,8 @@
       "title-width-reset-tooltip": "Resetuj szerokość tytułu"
     },
     "tray": {
-      "chevron-color-description": "Zastosuj kolory motywu do ikony szewronu szuflady.",
-      "chevron-color-label": "Kolor Szewronu",
+      "chevron-color-description": "Zastosuj kolory motywu do ikony strzałki szuflady.",
+      "chevron-color-label": "Kolor strzałki",
       "colorize-icons-description": "Zastosuj kolory motywu do ikon zasobnika.",
       "colorize-icons-label": "Koloryzuj ikony",
       "drawer-enabled-description": "Gdy włączone, nieprzypięte elementy zasobnika są pokazywane w panelu szuflady.<br>Gdy wyłączone, wszystkie elementy są pokazywane w linii.",
@@ -1290,6 +1290,8 @@
       "types-volume-label": "Głośność wyjściowa"
     },
     "plugins": {
+      "auto-update": "Automatyczna aktualizacja wtyczek",
+      "auto-update-description": "Automatycznie aktualizuj wszystkie wtyczki po uruchomieniu shella.",
       "available-description": "Przeglądaj i instaluj wtyczki ze skonfigurowanych źródeł.",
       "available-label": "Dostępne wtyczki",
       "available-no-plugins-description": "Sprawdź źródła wtyczek lub odśwież listę.",
@@ -1534,7 +1536,7 @@
   "setup": {
     "all-done": "Gotowe!",
     "appearance": {
-      "subheader": "Wybierz Dark Mode i źródła kolorów (Tapeta lub predefiniowane)."
+      "subheader": "Wybierz tryb ciemny i źródła kolorów (Tapeta lub predefiniowane)."
     },
     "customize": {
       "header": "Dostosuj swoje doświadczenie",

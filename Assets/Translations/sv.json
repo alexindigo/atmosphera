@@ -251,8 +251,8 @@
       "title-width-reset-tooltip": "Återställ titelbredd"
     },
     "tray": {
-      "chevron-color-description": "Tillämpa temafärger på lådans chevronikon.",
-      "chevron-color-label": "Chevronfärg",
+      "chevron-color-description": "Tillämpa temafärger på lådans pil-ikon.",
+      "chevron-color-label": "Pilfärg",
       "colorize-icons-description": "Tillämpa temafärger på ikoner i aktivitetsfältet.",
       "colorize-icons-label": "Färglägg ikoner",
       "drawer-enabled-description": "När funktionen är aktiverad visas fackikoner som inte är fästa i en låda.<br>När funktionen är inaktiverad visas alla fackikoner i rad.",
@@ -1290,6 +1290,8 @@
       "types-volume-label": "Utgångsvolym"
     },
     "plugins": {
+      "auto-update": "Uppdatera insticksmoduler automatiskt",
+      "auto-update-description": "Uppdatera automatiskt alla plugins när skalet startar.",
       "available-description": "Bläddra bland och installera insticksmoduler från konfigurerade källor.",
       "available-label": "Tillgängliga insticksmoduler",
       "available-no-plugins-description": "Kontrollera dina instickskällor eller uppdatera listan.",
@@ -1534,7 +1536,7 @@
   "setup": {
     "all-done": "Allt klart!",
     "appearance": {
-      "subheader": "Välj mörkt läge och färgkällor (bakgrundsbild eller fördefinierade)."
+      "subheader": "Välj mörkt läge och färgkällor (Bakgrundsbild eller fördefinierade)."
     },
     "customize": {
       "header": "Anpassa din upplevelse",

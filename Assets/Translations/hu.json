@@ -251,8 +251,8 @@
       "title-width-reset-tooltip": "Cím szélességének alaphelyzetbe állítása"
     },
     "tray": {
-      "chevron-color-description": "Téma színeinek alkalmazása a fiók nyíl ikonjára.",
-      "chevron-color-label": "Chevron Színe",
+      "chevron-color-description": "Alkalmazza a témaszíneket a fiók nyíl ikonjára.",
+      "chevron-color-label": "Nyíl színe",
       "colorize-icons-description": "Témaszínek alkalmazása a tálcaikonokra.",
       "colorize-icons-label": "Ikonok színezése",
       "drawer-enabled-description": "Ha be van kapcsolva, a nem rögzített tálcaelemek egy fiókpanelen jelennek meg.<br>Kikapcsolva az összes tálcaelem sorban jelenik meg.",
@@ -1290,6 +1290,8 @@
       "types-volume-label": "Kimeneti hangerő"
     },
     "plugins": {
+      "auto-update": "Beépülők automatikus frissítése",
+      "auto-update-description": "Automatikusan frissítse az összes plugint a shell indításakor.",
       "available-description": "Bővítmények böngészése és telepítése a beállított forrásokból.",
       "available-label": "Elérhető bővítmények",
       "available-no-plugins-description": "Ellenőrizze a bővítményforrásokat, vagy frissítse a listát.",
@@ -1534,7 +1536,7 @@
   "setup": {
     "all-done": "Kész!",
     "appearance": {
-      "subheader": "Válassza ki a Sötét módot és a színforrásokat (háttérkép vagy előre definiált)."
+      "subheader": "Válaszd ki a sötét módot és a színforrásokat (Háttérkép vagy előre meghatározott)."
     },
     "customize": {
       "header": "Tapasztalat testreszabása",

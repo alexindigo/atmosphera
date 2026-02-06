@@ -251,8 +251,8 @@
       "title-width-reset-tooltip": "タイトルの幅をリセット"
     },
     "tray": {
-      "chevron-color-description": "ドロワーのシェブロンアイコンにテーマの色を適用する。",
-      "chevron-color-label": "シェブロンの色",
+      "chevron-color-description": "ドロワーのシェブロンアイコンにテーマの色を適用します。",
+      "chevron-color-label": "矢印の色",
       "colorize-icons-description": "トレイのアイコンにテーマカラーを適用します。",
       "colorize-icons-label": "テーマカラーの適用",
       "drawer-enabled-description": "有効にすると、ピン留めされていないトレイ項目をドロワーパネル内に表示します。<br>無効にすると、すべての項目をインラインで表示します。",
@@ -1290,6 +1290,8 @@
       "types-volume-label": "出力音量"
     },
     "plugins": {
+      "auto-update": "プラグインを自動更新",
+      "auto-update-description": "シェル起動時にすべてのプラグインを自動的に更新します。",
       "available-description": "設定されたソースからプラグインを参照してインストールします。",
       "available-label": "利用可能なプラグイン",
       "available-no-plugins-description": "プラグインのソースを確認するか、リストを更新してください。",
@@ -1534,7 +1536,7 @@
   "setup": {
     "all-done": "完了！",
     "appearance": {
-      "subheader": "Dark Modeと色のソース（壁紙または定義済み）を選択します。"
+      "subheader": "ダークモードと色のソース（壁紙または事前定義）を選択します。"
     },
     "customize": {
       "header": "自分好みにカスタマイズ",
