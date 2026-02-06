@@ -289,6 +289,16 @@ Singleton {
     }
   }
 
+  // Reset differential state after suspend so the first reading is treated as fresh
+  Connections {
+    target: Time
+    function onResumed() {
+      Logger.i("SystemStat", "System resumed - resetting differential state");
+      root.prevCpuStats = null;
+      root.prevTime = 0;
+    }
+  }
+
   function restartGpuDetection() {
     // Reset GPU state
     root.gpuAvailable = false;
