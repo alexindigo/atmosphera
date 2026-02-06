@@ -411,6 +411,7 @@
     "installed": "Instalado",
     "interface": "Interfaz",
     "internet": "Internet",
+    "keybind": "Atajo de teclado",
     "language": "Idioma",
     "loading": "Cargando...",
     "local": "Local",
@@ -448,6 +449,7 @@
     "primary": "Primario",
     "random": "Aleatorio",
     "reboot": "Reiniciar",
+    "record": "Iniciar grabación",
     "refresh": "Refrescar",
     "required": "(obligatorio)",
     "reset": "Restablecer",
@@ -872,7 +874,7 @@
       "shortcuts-title": "Widgets de accesos directos",
       "system-monitor-disk-path-description": "Selecciona qué punto de montaje de disco debe monitorear la tarjeta del monitor del sistema en el centro de control.",
       "system-monitor-disk-path-label": "Ruta del disco del monitor del sistema",
-      "title": "Centro de control"
+      "title": "Centro de Control"
     },
     "desktop-widgets": {
       "clock-enabled-description": "Mostrar un widget de reloj en el escritorio.",
@@ -1357,6 +1359,9 @@
       "entry-settings-default-command-logout": "Cierre de sesión interno (sin comando)",
       "entry-settings-default-info-description": "Si no se especifica un comando personalizado, se utilizará el comando predeterminado del sistema.",
       "entry-settings-default-info-label": "Comando predeterminado",
+      "entry-settings-keybind-description": "Asigna una combinación de teclas para activar esta acción cuando el menú de sesión esté abierto.",
+      "entry-settings-keybind-placeholder": "Pulsa Grabar para asignar una tecla...",
+      "entry-settings-keybind-recording": "Grabando... Pulsa cualquier combinación de teclas",
       "entry-settings-title": "Configurar {entry}",
       "entry-settings-tooltip": "Configurar comando",
       "general-desc": "Configurar el comportamiento y la apariencia del panel del menú de sesión.",
@@ -1503,7 +1508,7 @@
     "bottom-center": "Inferior central",
     "bottom-left": "Inferior izquierda",
     "bottom-right": "Inferior derecha",
-    "center": "Centrar",
+    "center": "Centro",
     "center-left": "Izquierda centrado",
     "center-right": "Derecha centrado",
     "close-to-bar": "Cerca del botón de la barra",

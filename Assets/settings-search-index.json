@@ -1392,6 +1392,14 @@
     "subTab": null
   },
   {
+    "labelKey": "common.keybind",
+    "descriptionKey": "panels.session-menu.entry-settings-keybind-description",
+    "widget": "NTextInput",
+    "tab": 12,
+    "tabLabel": "session-menu.title",
+    "subTab": null
+  },
+  {
     "labelKey": "panels.system-monitor.enable-dgpu-monitoring-label",
     "descriptionKey": "panels.system-monitor.enable-dgpu-monitoring-description",
     "widget": "NToggle",
