@@ -146,13 +146,18 @@ Item {
 
   // Get color value from color name (returns null for invalid names)
   function _getColorValue(colorName, forHover) {
-    const baseColor = (function() {
+    const baseColor = (function () {
       switch (colorName) {
-      case "primary": return Color.mPrimary;
-      case "secondary": return Color.mSecondary;
-      case "tertiary": return Color.mTertiary;
-      case "error": return Color.mError;
-      default: return null;
+      case "primary":
+        return Color.mPrimary;
+      case "secondary":
+        return Color.mSecondary;
+      case "tertiary":
+        return Color.mTertiary;
+      case "error":
+        return Color.mError;
+      default:
+        return null;
       }
     })();
     return baseColor !== null ? (forHover ? Qt.darker(baseColor, 1.2) : baseColor) : null;
@@ -165,12 +170,14 @@ Item {
         return isHover ? Color.mOnHover : Color.mOnSurface;
       }
       const color = _getColorValue(dynamicColorName, isHover);
-      if (color !== null) return color;
+      if (color !== null)
+        return color;
     }
 
     if (staticColorName && staticColorName !== "" && isColorizing) {
       const color = _getColorValue(staticColorName, isHover);
-      if (color !== null) return color;
+      if (color !== null)
+        return color;
     }
 
     return isHover ? Color.mOnHover : Color.mOnSurface;
