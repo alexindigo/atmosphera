@@ -12,6 +12,26 @@ NIconButton {
 
   property ShellScreen screen
 
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
+  property string section: ""
+  property int sectionWidgetIndex: -1
+  property int sectionWidgetsCount: 0
+
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
+  readonly property string screenName: screen ? screen.name : ""
+  property var widgetSettings: {
+    if (section && sectionWidgetIndex >= 0 && screenName) {
+      var widgets = Settings.getBarWidgetsForScreen(screenName)[section];
+      if (widgets && sectionWidgetIndex < widgets.length) {
+        return widgets[sectionWidgetIndex];
+      }
+    }
+    return {};
+  }
+
+  readonly property string iconColorKey: widgetSettings.iconColor !== undefined ? widgetSettings.iconColor : widgetMetadata.iconColor
+
   enabled: Settings.data.wallpaper.enabled
   baseSize: Style.getCapsuleHeightForScreen(screen?.name)
   applyUiScale: false
@@ -20,7 +40,7 @@ NIconButton {
   tooltipText: I18n.tr("tooltips.wallpaper-selector")
   tooltipDirection: BarService.getTooltipDirection(screen?.name)
   colorBg: Style.capsuleColor
-  colorFg: Color.mOnSurface
+  colorFg: Color.resolveColorKey(iconColorKey)
   colorBorder: "transparent"
   colorBorderHover: "transparent"
   border.color: Style.capsuleBorderColor
@@ -35,6 +55,11 @@ NIconButton {
         "action": "random-wallpaper",
         "icon": "dice"
       },
+      {
+        "label": I18n.tr("actions.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
     ]
 
     onTriggered: action => {
@@ -43,6 +68,8 @@ NIconButton {
 
                    if (action === "random-wallpaper") {
                      WallpaperService.setRandomWallpaper();
+                   } else if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
                    }
                  }
   }

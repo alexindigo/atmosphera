@@ -1,21 +1,17 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
 import qs.Commons
-import qs.Services.UI
 import qs.Widgets
 
 ColumnLayout {
   id: root
   spacing: Style.marginM
 
-  // Properties to receive data from parent
   property var widgetData: null
   property var widgetMetadata: null
 
   signal settingsChanged(var settings)
 
-  // Local state
   property string valueIconColor: widgetData.iconColor !== undefined ? widgetData.iconColor : widgetMetadata.iconColor
 
   function saveSettings() {

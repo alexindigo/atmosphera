@@ -22,6 +22,8 @@ Item {
   property bool rotateText: false
   property color customBackgroundColor: "transparent"
   property color customTextIconColor: "transparent"
+  property color customIconColor: "transparent"
+  property color customTextColor: "transparent"
 
   readonly property bool collapseToIcon: forceClose && !forceOpen
 
@@ -57,6 +59,8 @@ Item {
   // Always prioritize hover color, then the custom one and finally the fallback color
   readonly property color bgColor: hovered ? Color.mHover : (customBackgroundColor.a > 0) ? customBackgroundColor : Style.capsuleColor
   readonly property color fgColor: hovered ? Color.mOnHover : (customTextIconColor.a > 0) ? customTextIconColor : Color.mOnSurface
+  readonly property color iconFgColor: hovered ? Color.mOnHover : (customIconColor.a > 0) ? customIconColor : (customTextIconColor.a > 0) ? customTextIconColor : Color.mOnSurface
+  readonly property color textFgColor: hovered ? Color.mOnHover : (customTextColor.a > 0) ? customTextColor : (customTextIconColor.a > 0) ? customTextIconColor : Color.mOnSurface
 
   readonly property real iconSize: Style.toOdd(pillHeight * 0.48)
 
@@ -151,7 +155,7 @@ Item {
       applyUiScale: false
       horizontalAlignment: Text.AlignHCenter
       verticalAlignment: Text.AlignVCenter
-      color: root.fgColor
+      color: root.textFgColor
       visible: revealed
 
       function getVerticalCenterOffset() {
@@ -198,7 +202,7 @@ Item {
       icon: root.icon
       pointSize: iconSize
       applyUiScale: false
-      color: root.fgColor
+      color: root.iconFgColor
       // Center horizontally
       x: (iconCircle.width - width) / 2
       // Center vertically accounting for font metrics

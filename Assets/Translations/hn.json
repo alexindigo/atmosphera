@@ -74,7 +74,6 @@
       "horizontal-bar-description": "Råd: Du kann nytta \\n til å skifta til ny lina.",
       "horizontal-bar-label": "Vassbein rad",
       "preview": "Vis fyreåt",
-      "select-color-description": "Lìt med hamslìtene for tyngd.",
       "tooltip-format-description": "Snidstreng for vitringi som kjem upp når du sviv yver klokka. Haldt tom for fyrevald vitring.",
       "tooltip-format-label": "Vitringssnid",
       "use-custom-font-description": "Sjå burt frå skriftkyndi elles og nytta ei onnor skriftkynd til klokka.",
@@ -89,5 +88,8 @@
       "browse-library": "Leita i samning",
       "color-selection-description": "Lìt nøytelteikn med hamslìtene."
     }
+  },
+  "common": {
+    "select-color-description": "Lìt med hamslìtene for tyngd."
   }
 }

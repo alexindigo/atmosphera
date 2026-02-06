@@ -66,35 +66,8 @@ Item {
   readonly property real contentWidth: isVertical ? capsuleHeight : Math.round(mainGrid.implicitWidth + Style.marginXL)
   readonly property real contentHeight: isVertical ? Math.round(mainGrid.implicitHeight + Style.marginXL) : capsuleHeight
 
-  readonly property color iconColor: {
-    switch (iconColorKey) {
-    case "primary":
-      return Color.mPrimary;
-    case "secondary":
-      return Color.mSecondary;
-    case "tertiary":
-      return Color.mTertiary;
-    case "error":
-      return Color.mError;
-    default:
-      return Color.mOnSurface;
-    }
-  }
-
-  readonly property color textColor: {
-    switch (textColorKey) {
-    case "primary":
-      return Color.mPrimary;
-    case "secondary":
-      return Color.mSecondary;
-    case "tertiary":
-      return Color.mTertiary;
-    case "error":
-      return Color.mError;
-    default:
-      return Color.mOnSurface;
-    }
-  }
+  readonly property color iconColor: Color.resolveColorKey(iconColorKey)
+  readonly property color textColor: Color.resolveColorKey(textColorKey)
 
   // Size: use implicit width/height
   // BarWidgetLoader sets explicit width/height to extend click area

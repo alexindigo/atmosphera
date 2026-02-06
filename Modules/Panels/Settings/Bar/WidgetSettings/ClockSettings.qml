@@ -85,29 +85,8 @@ ColumnLayout {
 
   NComboBox {
     label: I18n.tr("common.select-color")
-    description: I18n.tr("bar.clock.select-color-description")
-    model: [
-      {
-        "name": I18n.tr("common.none"),
-        "key": "none"
-      },
-      {
-        "key": "primary",
-        "name": I18n.tr("common.primary")
-      },
-      {
-        "key": "secondary",
-        "name": I18n.tr("common.secondary")
-      },
-      {
-        "key": "tertiary",
-        "name": I18n.tr("common.tertiary")
-      },
-      {
-        "key": "error",
-        "name": I18n.tr("common.error")
-      }
-    ]
+    description: I18n.tr("common.select-color-description")
+    model: Color.colorKeyModel
     currentKey: valueClockColor
     onSelected: key => {
                   valueClockColor = key;

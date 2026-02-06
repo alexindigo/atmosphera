@@ -228,6 +228,59 @@ Singleton {
     }
   }
 
+  function resolveColorKey(key) {
+    switch (key) {
+    case "primary":
+      return root.mPrimary;
+    case "secondary":
+      return root.mSecondary;
+    case "tertiary":
+      return root.mTertiary;
+    case "error":
+      return root.mError;
+    default:
+      return root.mOnSurface;
+    }
+  }
+
+  function resolveColorKeyOptional(key) {
+    switch (key) {
+    case "primary":
+      return root.mPrimary;
+    case "secondary":
+      return root.mSecondary;
+    case "tertiary":
+      return root.mTertiary;
+    case "error":
+      return root.mError;
+    default:
+      return "transparent";
+    }
+  }
+
+  readonly property var colorKeyModel: [
+    {
+      "key": "none",
+      "name": I18n.tr("common.none")
+    },
+    {
+      "key": "primary",
+      "name": I18n.tr("common.primary")
+    },
+    {
+      "key": "secondary",
+      "name": I18n.tr("common.secondary")
+    },
+    {
+      "key": "tertiary",
+      "name": I18n.tr("common.tertiary")
+    },
+    {
+      "key": "error",
+      "name": I18n.tr("common.error")
+    }
+  ]
+
   // --------------------------------
   // Default colors: Rose Pine
   QtObject {

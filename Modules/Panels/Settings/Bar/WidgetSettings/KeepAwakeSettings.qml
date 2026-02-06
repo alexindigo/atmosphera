@@ -12,41 +12,14 @@ ColumnLayout {
 
   signal settingsChanged(var settings)
 
-  property string valueDisplayMode: widgetData.displayMode !== undefined ? widgetData.displayMode : widgetMetadata.displayMode
   property string valueIconColor: widgetData.iconColor !== undefined ? widgetData.iconColor : widgetMetadata.iconColor
   property string valueTextColor: widgetData.textColor !== undefined ? widgetData.textColor : widgetMetadata.textColor
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
-    settings.displayMode = valueDisplayMode;
     settings.iconColor = valueIconColor;
     settings.textColor = valueTextColor;
     return settings;
-  }
-
-  NComboBox {
-    label: I18n.tr("common.display-mode")
-    description: I18n.tr("bar.volume.display-mode-description")
-    minimumWidth: 200
-    model: [
-      {
-        "key": "onhover",
-        "name": I18n.tr("display-modes.on-hover")
-      },
-      {
-        "key": "alwaysShow",
-        "name": I18n.tr("display-modes.always-show")
-      },
-      {
-        "key": "alwaysHide",
-        "name": I18n.tr("display-modes.always-hide")
-      }
-    ]
-    currentKey: root.valueDisplayMode
-    onSelected: key => {
-                  root.valueDisplayMode = key;
-                  settingsChanged(saveSettings());
-                }
   }
 
   NComboBox {

@@ -57,28 +57,7 @@ ColumnLayout {
     visible: valueEnableColorization
     label: I18n.tr("common.select-color")
     description: I18n.tr("bar.control-center.color-selection-description")
-    model: [
-      {
-        "name": I18n.tr("common.none"),
-        "key": "none"
-      },
-      {
-        "name": I18n.tr("common.primary"),
-        "key": "primary"
-      },
-      {
-        "name": I18n.tr("common.secondary"),
-        "key": "secondary"
-      },
-      {
-        "name": I18n.tr("common.tertiary"),
-        "key": "tertiary"
-      },
-      {
-        "name": I18n.tr("common.error"),
-        "key": "error"
-      }
-    ]
+    model: Color.colorKeyModel
     currentKey: valueColorizeSystemIcon
     onSelected: function (key) {
       valueColorizeSystemIcon = key;

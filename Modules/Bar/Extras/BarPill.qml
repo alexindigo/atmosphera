@@ -21,6 +21,8 @@ Item {
   property bool rotateText: false
   property color customBackgroundColor: "transparent"
   property color customTextIconColor: "transparent"
+  property color customIconColor: "transparent"
+  property color customTextColor: "transparent"
 
   readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
@@ -64,6 +66,8 @@ Item {
         rotateText: root.rotateText
         customBackgroundColor: root.customBackgroundColor
         customTextIconColor: root.customTextIconColor
+        customIconColor: root.customIconColor
+        customTextColor: root.customTextColor
         onShown: root.shown()
         onHidden: root.hidden()
         onEntered: root.entered()
@@ -90,6 +94,8 @@ Item {
         hovered: root.hovered
         customBackgroundColor: root.customBackgroundColor
         customTextIconColor: root.customTextIconColor
+        customIconColor: root.customIconColor
+        customTextColor: root.customTextColor
         onShown: root.shown()
         onHidden: root.hidden()
         onEntered: root.entered()

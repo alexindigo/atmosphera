@@ -40,28 +40,7 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("bar.audio-visualizer.color-name-label")
     description: I18n.tr("bar.audio-visualizer.color-name-description")
-    model: [
-      {
-        "key": "none",
-        "name": I18n.tr("common.none")
-      },
-      {
-        "key": "primary",
-        "name": I18n.tr("common.primary")
-      },
-      {
-        "key": "secondary",
-        "name": I18n.tr("common.secondary")
-      },
-      {
-        "key": "tertiary",
-        "name": I18n.tr("common.tertiary")
-      },
-      {
-        "key": "error",
-        "name": I18n.tr("common.error")
-      }
-    ]
+    model: Color.colorKeyModel
     currentKey: root.valueColorName
     onSelected: key => {
                   root.valueColorName = key;
