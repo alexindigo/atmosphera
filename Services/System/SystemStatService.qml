@@ -242,6 +242,15 @@ Singleton {
   property int intelTempFilesChecked: 0
   property int intelTempMaxFiles: 20 // Will test up to temp20_input
 
+  // Thermal zone fallback (for ARM SoCs with SCMI sensors, etc.)
+  // Matches thermal zone types containing "cpu" and picks the hottest big-core zone.
+  // Also provides GPU temp via zones like "gpu-avg-thermal" or "gpu0-thermal".
+  readonly property var thermalZoneCpuPatterns: ["cpu-b", "cpu-m", "cpu"]
+  readonly property var thermalZoneGpuPatterns: ["gpu-avg", "gpu0", "gpu"]
+  property string cpuThermalZonePath: ""
+  property var cpuThermalZonePaths: [] // All matching CPU zones for averaging
+  property string gpuThermalZonePath: ""
+
   // GPU temperature detection
   // On dual-GPU systems, we prioritize discrete GPUs over integrated GPUs
   // Priority: NVIDIA (opt-in) > AMD dGPU > Intel Arc > AMD iGPU
@@ -549,8 +558,8 @@ Singleton {
 
     function checkNext() {
       if (currentIndex >= 16) {
-        // Check up to hwmon10
-        Logger.w("No supported temperature sensor found");
+        // No hwmon sensor found, try thermal_zone fallback (ARM SoCs, SCMI, etc.)
+        thermalZoneScanner.startScan();
         return;
       }
 
@@ -613,6 +622,159 @@ Singleton {
                    });
     }
   }
+
+  // --------------------------------------------
+  // Thermal zone fallback for CPU and GPU temperature
+  // Used on ARM SoCs (e.g., SCMI sensors) where hwmon doesn't expose
+  // coretemp/k10temp/zenpower. Scans /sys/class/thermal/thermal_zoneN/type
+  // for CPU and GPU zone names, then reads temp from all matching zones.
+  //
+  // CPU: reads all cpu-*-thermal zones and reports the hottest core.
+  // GPU: prefers gpu-avg-thermal (firmware average), falls back to max of gpu[0-9]-thermal.
+
+  FileView {
+    id: thermalZoneScanner
+    property int currentIndex: 0
+    property var cpuZones: []
+    property var gpuZones: []
+    property string gpuAvgZonePath: ""
+    printErrors: false
+
+    function startScan() {
+      currentIndex = 0;
+      cpuZones = [];
+      gpuZones = [];
+      gpuAvgZonePath = "";
+      checkNext();
+    }
+
+    function checkNext() {
+      if (currentIndex >= 20) {
+        finishScan();
+        return;
+      }
+      thermalZoneScanner.path = `/sys/class/thermal/thermal_zone${currentIndex}/type`;
+      thermalZoneScanner.reload();
+    }
+
+    onLoaded: {
+      const name = text().trim();
+      const zonePath = `/sys/class/thermal/thermal_zone${currentIndex}`;
+      if (name.startsWith("cpu") && name.endsWith("thermal")) {
+        cpuZones.push({"type": name, "path": zonePath + "/temp"});
+      } else if (name === "gpu-avg-thermal") {
+        gpuAvgZonePath = zonePath + "/temp";
+      } else if (/^gpu[0-9]+-?thermal$/.test(name)) {
+        gpuZones.push({"type": name, "path": zonePath + "/temp"});
+      }
+      currentIndex++;
+      Qt.callLater(() => { checkNext(); });
+    }
+
+    onLoadFailed: function (error) {
+      currentIndex++;
+      Qt.callLater(() => { checkNext(); });
+    }
+
+    function finishScan() {
+      // CPU thermal zones
+      if (cpuZones.length > 0) {
+        root.cpuTempSensorName = "thermal_zone";
+        root.cpuThermalZonePaths = cpuZones.map(z => z.path);
+        const types = cpuZones.map(z => z.type).join(", ");
+        Logger.i("SystemStat", `Found ${cpuZones.length} CPU thermal zone(s): ${types}`);
+      } else {
+        Logger.w("No supported temperature sensor found");
+      }
+
+      // GPU thermal zones
+      if (gpuAvgZonePath !== "") {
+        root.gpuThermalZonePath = gpuAvgZonePath;
+        root.gpuAvailable = true;
+        root.gpuType = "thermal_zone";
+        Logger.i("SystemStat", `Found GPU thermal zone: gpu-avg-thermal`);
+      } else if (gpuZones.length > 0) {
+        root.gpuThermalZonePaths = gpuZones.map(z => z.path);
+        root.gpuThermalZonePath = gpuZones[0].path; // fallback single path
+        root.gpuAvailable = true;
+        root.gpuType = "thermal_zone";
+        const types = gpuZones.map(z => z.type).join(", ");
+        Logger.i("SystemStat", `Found ${gpuZones.length} GPU thermal zone(s): ${types} (using max)`);
+      }
+    }
+  }
+
+  // Thermal zone reader for CPU: reads all zones, reports max (hottest core)
+  FileView {
+    id: cpuThermalZoneReader
+    property int currentZoneIndex: 0
+    property var collectedTemps: []
+    printErrors: false
+
+    onLoaded: {
+      const temp = parseInt(text().trim()) / 1000.0;
+      if (!isNaN(temp) && temp > 0)
+        collectedTemps.push(temp);
+      currentZoneIndex++;
+      Qt.callLater(() => { readNextCpuThermalZone(); });
+    }
+
+    onLoadFailed: function (error) {
+      currentZoneIndex++;
+      Qt.callLater(() => { readNextCpuThermalZone(); });
+    }
+  }
+
+  function readNextCpuThermalZone() {
+    if (cpuThermalZoneReader.currentZoneIndex >= root.cpuThermalZonePaths.length) {
+      if (cpuThermalZoneReader.collectedTemps.length > 0) {
+        root.cpuTemp = Math.round(Math.max(...cpuThermalZoneReader.collectedTemps));
+      } else {
+        root.cpuTemp = 0;
+      }
+      root.pushCpuTempHistory();
+      return;
+    }
+    cpuThermalZoneReader.path = root.cpuThermalZonePaths[cpuThermalZoneReader.currentZoneIndex];
+    cpuThermalZoneReader.reload();
+  }
+
+  // Thermal zone reader for GPU: reads single zone (gpu-avg-thermal) or max of gpu[N] zones
+  FileView {
+    id: gpuThermalZoneReader
+    property int currentZoneIndex: 0
+    property var collectedTemps: []
+    printErrors: false
+
+    onLoaded: {
+      const temp = parseInt(text().trim()) / 1000.0;
+      if (!isNaN(temp) && temp > 0)
+        collectedTemps.push(temp);
+
+      // If we have multiple GPU zones (no gpu-avg), iterate and take max
+      if (root.gpuThermalZonePaths && root.gpuThermalZonePaths.length > 0) {
+        currentZoneIndex++;
+        if (currentZoneIndex < root.gpuThermalZonePaths.length) {
+          Qt.callLater(() => { readNextGpuThermalZone(); });
+          return;
+        }
+        // All zones read, take max
+        root.gpuTemp = Math.round(Math.max(...collectedTemps));
+      } else {
+        // Single gpu-avg-thermal zone
+        root.gpuTemp = Math.round(temp);
+      }
+      root.pushGpuHistory();
+    }
+  }
+
+  function readNextGpuThermalZone() {
+    gpuThermalZoneReader.path = root.gpuThermalZonePaths[gpuThermalZoneReader.currentZoneIndex];
+    gpuThermalZoneReader.reload();
+  }
+
+  // Property to store multiple GPU thermal zone paths (when no gpu-avg is available)
+  property var gpuThermalZonePaths: []
 
   // --------------------------------------------
   // --------------------------------------------
@@ -1056,6 +1218,11 @@ Singleton {
       root.intelTempValues = [];
       root.intelTempFilesChecked = 0;
       checkNextIntelTemp();
+    } // For thermal_zone fallback (ARM SoCs, SCMI, etc.), read all CPU zones and take max
+    else if (root.cpuTempSensorName === "thermal_zone") {
+      cpuThermalZoneReader.currentZoneIndex = 0;
+      cpuThermalZoneReader.collectedTemps = [];
+      readNextCpuThermalZone();
     }
   }
 
@@ -1112,7 +1279,11 @@ Singleton {
   // Priority (when dGPU monitoring disabled): AMD iGPU only (discrete GPUs skipped to preserve D3cold)
   function selectBestGpu() {
     if (root.foundGpuSensors.length === 0) {
-      Logger.d("SystemStat", "No GPU temperature sensor found");
+      // No hwmon GPU sensors found, try thermal_zone fallback
+      if (root.gpuThermalZonePath === "" && root.gpuThermalZonePaths.length === 0) {
+        // Thermal zone scanner hasn't found GPU zones yet; start a scan
+        thermalZoneScanner.startScan();
+      }
       return;
     }
 
@@ -1174,6 +1345,17 @@ Singleton {
     } else if (root.gpuType === "amd" || root.gpuType === "intel") {
       gpuTempReader.path = `${root.gpuTempHwmonPath}/temp1_input`;
       gpuTempReader.reload();
+    } else if (root.gpuType === "thermal_zone") {
+      if (root.gpuThermalZonePaths && root.gpuThermalZonePaths.length > 0) {
+        // Multiple GPU zones (no gpu-avg), read all and take max
+        gpuThermalZoneReader.currentZoneIndex = 0;
+        gpuThermalZoneReader.collectedTemps = [];
+        readNextGpuThermalZone();
+      } else {
+        // Single gpu-avg-thermal zone
+        gpuThermalZoneReader.path = root.gpuThermalZonePath;
+        gpuThermalZoneReader.reload();
+      }
     }
   }
 }
