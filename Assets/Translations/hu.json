@@ -1776,6 +1776,8 @@
     "transitions": {
       "disc": "Korong",
       "fade": "Halványítás",
+      "honeycomb": "Méhsejt",
+      "pixelate": "Pixelezés",
       "stripes": "Csíkok",
       "wipe": "Törlés"
     },

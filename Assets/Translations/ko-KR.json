@@ -1776,6 +1776,8 @@
     "transitions": {
       "disc": "디스크",
       "fade": "페이드",
+      "honeycomb": "벌집",
+      "pixelate": "픽셀화",
       "stripes": "스트라이프",
       "wipe": "와이프"
     },

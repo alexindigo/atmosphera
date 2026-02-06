@@ -1776,6 +1776,8 @@
     "transitions": {
       "disc": "Skiva",
       "fade": "Tonad",
+      "honeycomb": "Bikaka",
+      "pixelate": "Pixla",
       "stripes": "Ränder",
       "wipe": "Torkning"
     },

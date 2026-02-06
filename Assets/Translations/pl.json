@@ -1776,6 +1776,8 @@
     "transitions": {
       "disc": "Dysk",
       "fade": "Zanikanie",
+      "honeycomb": "Plaster miodu",
+      "pixelate": "Pikselizuj",
       "stripes": "Paski",
       "wipe": "Wycieranie"
     },

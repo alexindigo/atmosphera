@@ -1776,6 +1776,8 @@
     "transitions": {
       "disc": "Disco",
       "fade": "Esmaecer",
+      "honeycomb": "Favo de mel",
+      "pixelate": "Pixelizar",
       "stripes": "Listras",
       "wipe": "Limpar"
     },

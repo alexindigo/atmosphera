@@ -1776,6 +1776,8 @@
     "transitions": {
       "disc": "Scheibe",
       "fade": "Überblenden",
+      "honeycomb": "Honigwabe",
+      "pixelate": "Verpixeln",
       "stripes": "Streifen",
       "wipe": "Wischen"
     },

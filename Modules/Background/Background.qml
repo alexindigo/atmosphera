@@ -38,6 +38,14 @@ Variants {
       property real stripesCount: 16
       property real stripesAngle: 0
 
+      // Pixelate
+      property real pixelateMaxBlockSize: 64.0
+
+      // Honeycomb
+      property real honeycombCellSize: 0.04
+      property real honeycombCenterX: 0.5
+      property real honeycombCenterY: 0.5
+
       // Used to debounce wallpaper changes
       property string futureWallpaper: ""
       // Track the original wallpaper path being transitioned to (before caching)
@@ -181,6 +189,10 @@ Variants {
             return discShaderComponent;
           case "stripes":
             return stripesShaderComponent;
+          case "pixelate":
+            return pixelateShaderComponent;
+          case "honeycomb":
+            return honeycombShaderComponent;
           case "fade":
           case "none":
           default:
@@ -316,6 +328,71 @@ Variants {
           property vector4d solidColor2: root.solidColor2
 
           fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/wp_stripes.frag.qsb")
+        }
+      }
+
+      // Pixelate transition shader component
+      Component {
+        id: pixelateShaderComponent
+        ShaderEffect {
+          anchors.fill: parent
+
+          property variant source1: currentWallpaper
+          property variant source2: nextWallpaper
+          property real progress: root.transitionProgress
+          property real maxBlockSize: root.pixelateMaxBlockSize
+
+          // Fill mode properties
+          property real fillMode: root.fillMode
+          property vector4d fillColor: root.fillColor
+          property real imageWidth1: source1.sourceSize.width
+          property real imageHeight1: source1.sourceSize.height
+          property real imageWidth2: source2.sourceSize.width
+          property real imageHeight2: source2.sourceSize.height
+          property real screenWidth: width
+          property real screenHeight: height
+
+          // Solid color mode
+          property real isSolid1: root.isSolid1 ? 1.0 : 0.0
+          property real isSolid2: root.isSolid2 ? 1.0 : 0.0
+          property vector4d solidColor1: root.solidColor1
+          property vector4d solidColor2: root.solidColor2
+
+          fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/wp_pixelate.frag.qsb")
+        }
+      }
+
+      // Honeycomb transition shader component
+      Component {
+        id: honeycombShaderComponent
+        ShaderEffect {
+          anchors.fill: parent
+
+          property variant source1: currentWallpaper
+          property variant source2: nextWallpaper
+          property real progress: root.transitionProgress
+          property real cellSize: root.honeycombCellSize
+          property real centerX: root.honeycombCenterX
+          property real centerY: root.honeycombCenterY
+          property real aspectRatio: root.width / root.height
+
+          // Fill mode properties
+          property real fillMode: root.fillMode
+          property vector4d fillColor: root.fillColor
+          property real imageWidth1: source1.sourceSize.width
+          property real imageHeight1: source1.sourceSize.height
+          property real imageWidth2: source2.sourceSize.width
+          property real imageHeight2: source2.sourceSize.height
+          property real screenWidth: width
+          property real screenHeight: height
+
+          // Solid color mode
+          property real isSolid1: root.isSolid1 ? 1.0 : 0.0
+          property real isSolid2: root.isSolid2 ? 1.0 : 0.0
+          property vector4d solidColor1: root.solidColor1
+          property vector4d solidColor2: root.solidColor2
+
+          fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/wp_honeycomb.frag.qsb")
         }
       }
 
@@ -576,6 +653,16 @@ Variants {
           stripesAngle = Math.random() * 360;
           setWallpaperWithTransition(futureWallpaper);
           break;
+        case "pixelate":
+          pixelateMaxBlockSize = Math.round(Math.random() * 80 + 32);
+          setWallpaperWithTransition(futureWallpaper);
+          break;
+        case "honeycomb":
+          honeycombCellSize = Math.random() * 0.04 + 0.02;
+          honeycombCenterX = Math.random();
+          honeycombCenterY = Math.random();
+          setWallpaperWithTransition(futureWallpaper);
+          break;
         default:
           setWallpaperWithTransition(futureWallpaper);
           break;
@@ -613,6 +700,14 @@ Variants {
         case "stripes":
           stripesCount = Math.round(Math.random() * 20 + 4);
           stripesAngle = Math.random() * 360;
+          break;
+        case "pixelate":
+          pixelateMaxBlockSize = 64.0;
+          break;
+        case "honeycomb":
+          honeycombCellSize = 0.04;
+          honeycombCenterX = 0.5;
+          honeycombCenterY = 0.5;
           break;
         }
 

@@ -1776,6 +1776,8 @@
     "transitions": {
       "disc": "Disk",
       "fade": "Belirsizleşme",
+      "honeycomb": "Petek",
+      "pixelate": "Pikselleştir",
       "stripes": "Çizgiler",
       "wipe": "Silme"
     },

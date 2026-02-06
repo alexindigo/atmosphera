@@ -1776,6 +1776,8 @@
     "transitions": {
       "disc": "Schijf",
       "fade": "Vervagen",
+      "honeycomb": "Honingraat",
+      "pixelate": "Pixeliseren",
       "stripes": "Strepen",
       "wipe": "Vegen"
     },

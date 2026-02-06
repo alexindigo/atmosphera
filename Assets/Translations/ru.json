@@ -1776,6 +1776,8 @@
     "transitions": {
       "disc": "Диск",
       "fade": "Затухание",
+      "honeycomb": "Соты",
+      "pixelate": "Пикселизировать",
       "stripes": "Полосы",
       "wipe": "Стирание"
     },

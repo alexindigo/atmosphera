@@ -1776,6 +1776,8 @@
     "transitions": {
       "disc": "圆盘",
       "fade": "淡入淡出",
+      "honeycomb": "蜂巢",
+      "pixelate": "像素化",
       "stripes": "条纹",
       "wipe": "擦除"
     },

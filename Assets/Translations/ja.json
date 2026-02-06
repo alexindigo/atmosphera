@@ -1776,6 +1776,8 @@
     "transitions": {
       "disc": "ディスク",
       "fade": "フェード",
+      "honeycomb": "ハニカム",
+      "pixelate": "ピクセル化",
       "stripes": "ストライプ",
       "wipe": "ワイプ"
     },

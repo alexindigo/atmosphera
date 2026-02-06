@@ -1776,6 +1776,8 @@
     "transitions": {
       "disc": "Disco",
       "fade": "Desvanecer",
+      "honeycomb": "Panal",
+      "pixelate": "Pixelar",
       "stripes": "Rayas",
       "wipe": "Barrido"
     },
