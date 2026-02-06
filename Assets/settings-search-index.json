@@ -1171,7 +1171,7 @@
   {
     "labelKey": "panels.notifications.toast-battery-label",
     "descriptionKey": "panels.notifications.toast-battery-description",
-    "widget": "NLabel",
+    "widget": "NCheckbox",
     "tab": 9,
     "tabLabel": "common.notifications",
     "subTab": 4,

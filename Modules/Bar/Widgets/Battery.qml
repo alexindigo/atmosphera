@@ -76,7 +76,6 @@ Item {
       }
 
       let rateText = BatteryService.getRateText(selectedDevice);
-      console.log(rateText);
       if (rateText) {
         const entries = rateText.split(":").map(a => a.trim());
         rows.push(entries);
