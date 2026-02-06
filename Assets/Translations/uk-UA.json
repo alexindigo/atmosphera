@@ -747,6 +747,8 @@
       "appearance-auto-show-delay-label": "Затримка відображення",
       "appearance-background-opacity-description": "Встановити прозорість фону спеціально для панелі.",
       "appearance-background-opacity-label": "Прозорість фону панелі",
+      "appearance-capsule-color-description": "Виберіть колір для капсул панелі або не використовуйте жодного для стандартного кольору поверхні.",
+      "appearance-capsule-color-label": "Колір капсули",
       "appearance-capsule-opacity-description": "Встановити рівень непрозорості для фону віджетів, коли показано капсулу.",
       "appearance-capsule-opacity-label": "Непрозорість капсули",
       "appearance-density-description": "Налаштуйте відступи панелі для компактного або просторого вигляду.",

@@ -747,6 +747,8 @@
       "appearance-auto-show-delay-label": "显示延迟",
       "appearance-background-opacity-description": "为状态栏设置背景不透明度。",
       "appearance-background-opacity-label": "状态栏背景不透明度",
+      "appearance-capsule-color-description": "为栏胶囊选择一种颜色，或不使用任何颜色以采用默认表面颜色。",
+      "appearance-capsule-color-label": "胶囊颜色",
       "appearance-capsule-opacity-description": "设置显示胶囊时小部件背景的不透明度。",
       "appearance-capsule-opacity-label": "胶囊不透明度",
       "appearance-density-description": "调整状态栏的内边距以获得紧凑或宽松的外观。",

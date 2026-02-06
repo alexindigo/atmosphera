@@ -198,6 +198,15 @@
     "subTabLabel": "common.appearance"
   },
   {
+    "labelKey": "panels.bar.appearance-capsule-color-label",
+    "descriptionKey": "panels.bar.appearance-capsule-color-description",
+    "widget": "NComboBox",
+    "tab": 4,
+    "tabLabel": "panels.bar.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
     "labelKey": "panels.bar.appearance-capsule-opacity-label",
     "descriptionKey": "panels.bar.appearance-capsule-opacity-description",
     "widget": "NValueSlider",

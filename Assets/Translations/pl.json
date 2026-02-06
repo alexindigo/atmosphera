@@ -747,6 +747,8 @@
       "appearance-auto-show-delay-label": "Opóźnienie Wyświetlania",
       "appearance-background-opacity-description": "Ustaw przezroczystość tła konkretnie dla paska.",
       "appearance-background-opacity-label": "Krycie tła paska",
+      "appearance-capsule-color-description": "Wybierz kolor dla kapsuł paska, lub nie używaj żadnego dla domyślnego koloru powierzchni.",
+      "appearance-capsule-color-label": "Kolor kapsuły",
       "appearance-capsule-opacity-description": "Ustaw poziom przezroczystości tła widżetów, gdy kapsuła jest widoczna.",
       "appearance-capsule-opacity-label": "Przezroczystość kapsuły",
       "appearance-density-description": "Dostosuj odstępy paska dla kompaktowego lub przestronnego wyglądu.",

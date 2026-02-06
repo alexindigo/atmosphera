@@ -747,6 +747,8 @@
       "appearance-auto-show-delay-label": "顯示延遲",
       "appearance-background-opacity-description": "設定工具列背景的不透明度",
       "appearance-background-opacity-label": "工具列背景不透明度",
+      "appearance-capsule-color-description": "為欄膠囊選擇一種顏色，或不使用任何顏色以採用預設表面顏色。",
+      "appearance-capsule-color-label": "膠囊顏色",
       "appearance-capsule-opacity-description": "設定當啟用顯示小容器時小工具的背景不透明度",
       "appearance-capsule-opacity-label": "小容器不透明度",
       "appearance-density-description": "調整工具列的內部間距來做出緊湊或寬敞的外觀",

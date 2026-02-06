@@ -177,6 +177,7 @@ Singleton {
       property bool showOutline: false
       property bool showCapsule: true
       property real capsuleOpacity: 1.0
+      property string capsuleColorKey: "none"
 
       // Bar background opacity settings
       property real backgroundOpacity: 0.93

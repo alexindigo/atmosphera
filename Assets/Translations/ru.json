@@ -747,6 +747,8 @@
       "appearance-auto-show-delay-label": "Задержка отображения",
       "appearance-background-opacity-description": "Установите прозрачность фона специально для панели.",
       "appearance-background-opacity-label": "Прозрачность фона бара",
+      "appearance-capsule-color-description": "Выберите цвет для капсул панели или не используйте никакой для цвета поверхности по умолчанию.",
+      "appearance-capsule-color-label": "Цвет капсулы",
       "appearance-capsule-opacity-description": "Установить уровень непрозрачности для фона виджетов, когда капсула отображается.",
       "appearance-capsule-opacity-label": "Непрозрачность капсулы",
       "appearance-density-description": "Настройка отступов панели для компактного или просторного вида.",

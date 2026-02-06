@@ -8,6 +8,7 @@
     "showOutline": false,
     "showCapsule": true,
     "capsuleOpacity": 1,
+    "capsuleColorKey": "none",
     "backgroundOpacity": 0.93,
     "useSeparateOpacity": false,
     "floating": false,

@@ -747,6 +747,8 @@
       "appearance-auto-show-delay-label": "Megjelenítési Késleltetés",
       "appearance-background-opacity-description": "Állítsa be a sáv háttér átlátszóságát.",
       "appearance-background-opacity-label": "Sáv háttér átlátszósága",
+      "appearance-capsule-color-description": "Válassz színt a sávkapszulákhoz, vagy ne használj semmit az alapértelmezett felületszínhez.",
+      "appearance-capsule-color-label": "Kapszula színe",
       "appearance-capsule-opacity-description": "Beállítja a widget hátterének átlátszósági szintjét, amikor a kapszula megjelenik.",
       "appearance-capsule-opacity-label": "Kapszula átlátszósága",
       "appearance-density-description": "Beállítja a sáv belső margóit a kompakt vagy tágas megjelenés érdekében.",

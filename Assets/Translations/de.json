@@ -747,6 +747,8 @@
       "appearance-auto-show-delay-label": "Anzeigeverzögerung",
       "appearance-background-opacity-description": "Legen Sie die Hintergrundtransparenz speziell für die Leiste fest.",
       "appearance-background-opacity-label": "Leisten-Hintergrundtransparenz",
+      "appearance-capsule-color-description": "Wähle eine Farbe für Leistenkapseln, oder verwende keine für die Standard-Oberflächenfarbe.",
+      "appearance-capsule-color-label": "Kapselfarbe",
       "appearance-capsule-opacity-description": "Deckkraft der Widget-Hintergründe festlegen, wenn Kapsel angezeigt wird.",
       "appearance-capsule-opacity-label": "Kapsel-Deckkraft",
       "appearance-density-description": "Innenabstand der Leiste für kompaktes oder geräumiges Aussehen anpassen.",

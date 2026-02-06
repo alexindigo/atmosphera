@@ -86,7 +86,10 @@
     "control-center": {
       "browse-file": "Leita etter fil",
       "browse-library": "Leita i samning",
-      "color-selection-description": "Lìt nøytelteikn med hamslìtene."
+      "color-selection-description": "Lìt nøytelteikn med hamslìtene.",
+      "enable-colorization-description": "Lìt teiknet til styreromet med hamslìtene.",
+      "icon-description": "Kjos teikn frå samningi eller ei onnor fil.",
+      "select-custom-icon": "Kjos teikn"
     }
   },
   "common": {

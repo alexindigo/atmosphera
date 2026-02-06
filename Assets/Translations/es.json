@@ -747,6 +747,8 @@
       "appearance-auto-show-delay-label": "Demora de Despliegue",
       "appearance-background-opacity-description": "Establece la opacidad del fondo específicamente para la barra.",
       "appearance-background-opacity-label": "Opacidad del fondo de la barra",
+      "appearance-capsule-color-description": "Elige un color para las cápsulas de la barra, o no uses ninguno para el color de superficie predeterminado.",
+      "appearance-capsule-color-label": "Color de la cápsula",
       "appearance-capsule-opacity-description": "Establecer el nivel de opacidad para los fondos de los widgets cuando se muestra la cápsula.",
       "appearance-capsule-opacity-label": "Opacidad de la cápsula",
       "appearance-density-description": "Ajusta el relleno de la barra para un aspecto compacto o espacioso.",

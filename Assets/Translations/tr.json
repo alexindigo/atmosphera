@@ -747,6 +747,8 @@
       "appearance-auto-show-delay-label": "Gösterme Gecikmesi",
       "appearance-background-opacity-description": "Çubuğun arka plan opaklığını özel olarak ayarlayın.",
       "appearance-background-opacity-label": "Çubuk arka plan opaklığı",
+      "appearance-capsule-color-description": "Çubuk kapsülleri için bir renk seçin veya varsayılan yüzey rengi için hiçbirini kullanmayın.",
+      "appearance-capsule-color-label": "Kapsül rengi",
       "appearance-capsule-opacity-description": "Kapsül gösterildiğinde araç takımı arka planlarının saydamlık seviyesini ayarla.",
       "appearance-capsule-opacity-label": "Kapsül saydamlığı",
       "appearance-density-description": "Sıkı veya geniş bir görünüm için araç çubuğu dolgusunu ayarlayın.",

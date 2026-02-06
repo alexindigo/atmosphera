@@ -747,6 +747,8 @@
       "appearance-auto-show-delay-label": "표시 지연",
       "appearance-background-opacity-description": "바에 대해서만 별도로 배경 불투명도를 설정합니다.",
       "appearance-background-opacity-label": "바 배경 불투명도",
+      "appearance-capsule-color-description": "바 캡슐의 색상을 선택하거나, 기본 표면 색상에는 색상을 사용하지 마세요.",
+      "appearance-capsule-color-label": "캡슐 색상",
       "appearance-capsule-opacity-description": "캡슐이 표시될 때 위젯 배경의 불투명도 수준을 설정합니다.",
       "appearance-capsule-opacity-label": "캡슐 불투명도",
       "appearance-density-description": "컴팩트하거나 넓은 모양을 위해 바의 패딩을 조정합니다.",
