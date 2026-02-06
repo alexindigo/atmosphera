@@ -20,8 +20,34 @@ Singleton {
   // Requested subtab when opening (-1 means no specific subtab)
   property int requestedSubTab: -1
 
+  // Requested entry for search navigation
+  property var requestedEntry: null
+
   signal windowOpened
   signal windowClosed
+
+  // Open to a specific search entry (from launcher)
+  // For window mode, handles directly. For panel mode, delegates to panel.
+  function openToEntry(entry, screen) {
+    if (Settings.data.ui.settingsPanelMode === "window") {
+      requestedEntry = entry;
+      if (settingsWindow) {
+        settingsWindow.visible = true;
+        isWindowOpen = true;
+        windowOpened();
+      }
+    } else {
+      if (!screen) {
+        Logger.w("SettingsPanelService", "Screen parameter required for panel mode");
+        return;
+      }
+      var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+      if (settingsPanel) {
+        settingsPanel.requestedEntry = entry;
+        settingsPanel.open();
+      }
+    }
+  }
 
   // Unified function to open settings to a specific tab and subtab
   // Respects user's settingsPanelMode setting (window vs panel)
