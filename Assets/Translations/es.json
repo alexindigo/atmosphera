@@ -251,6 +251,8 @@
       "title-width-reset-tooltip": "Restablecer ancho del título"
     },
     "tray": {
+      "chevron-color-description": "Aplicar colores del tema al icono de chevron del cajón.",
+      "chevron-color-label": "Color del Chevrón",
       "colorize-icons-description": "Aplicar colores del tema a los iconos de la bandeja del sistema.",
       "colorize-icons-label": "Colorear iconos",
       "drawer-enabled-description": "Cuando está habilitado, los elementos de la bandeja no anclados se muestran en un panel cajón.<br>Cuando está deshabilitado, todos los elementos de la bandeja se muestran en línea.",

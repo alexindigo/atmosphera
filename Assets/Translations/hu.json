@@ -251,6 +251,8 @@
       "title-width-reset-tooltip": "Cím szélességének alaphelyzetbe állítása"
     },
     "tray": {
+      "chevron-color-description": "Téma színeinek alkalmazása a fiók nyíl ikonjára.",
+      "chevron-color-label": "Chevron Színe",
       "colorize-icons-description": "Témaszínek alkalmazása a tálcaikonokra.",
       "colorize-icons-label": "Ikonok színezése",
       "drawer-enabled-description": "Ha be van kapcsolva, a nem rögzített tálcaelemek egy fiókpanelen jelennek meg.<br>Kikapcsolva az összes tálcaelem sorban jelenik meg.",

@@ -251,6 +251,8 @@
       "title-width-reset-tooltip": "Reset title width"
     },
     "tray": {
+      "chevron-color-description": "Apply theme colors to the drawer chevron icon.",
+      "chevron-color-label": "Chevron color",
       "colorize-icons-description": "Apply theme colors to tray icons.",
       "colorize-icons-label": "Colorize icons",
       "drawer-enabled-description": "When enabled, unpinned tray items are shown in a drawer panel.<br>When disabled, all tray items are shown inline.",

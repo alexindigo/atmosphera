@@ -251,6 +251,8 @@
       "title-width-reset-tooltip": "Återställ titelbredd"
     },
     "tray": {
+      "chevron-color-description": "Tillämpa temafärger på lådans chevronikon.",
+      "chevron-color-label": "Chevronfärg",
       "colorize-icons-description": "Tillämpa temafärger på ikoner i aktivitetsfältet.",
       "colorize-icons-label": "Färglägg ikoner",
       "drawer-enabled-description": "När funktionen är aktiverad visas fackikoner som inte är fästa i en låda.<br>När funktionen är inaktiverad visas alla fackikoner i rad.",

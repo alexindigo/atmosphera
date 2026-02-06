@@ -251,6 +251,8 @@
       "title-width-reset-tooltip": "Titelbreedte resetten"
     },
     "tray": {
+      "chevron-color-description": "Themakleuren toepassen op het chevron-pictogram van de lade.",
+      "chevron-color-label": "Chevronkleur",
       "colorize-icons-description": "Pas themakleuren toe op systeemvakpictogrammen.",
       "colorize-icons-label": "Pictogrammen inkleuren",
       "drawer-enabled-description": "Indien ingeschakeld worden niet-vastgemaakte systeemvakitems in een lade weergegeven.<br>Indien uitgeschakeld worden alle items inline getoond.",

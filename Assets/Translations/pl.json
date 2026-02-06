@@ -251,6 +251,8 @@
       "title-width-reset-tooltip": "Resetuj szerokość tytułu"
     },
     "tray": {
+      "chevron-color-description": "Zastosuj kolory motywu do ikony szewronu szuflady.",
+      "chevron-color-label": "Kolor Szewronu",
       "colorize-icons-description": "Zastosuj kolory motywu do ikon zasobnika.",
       "colorize-icons-label": "Koloryzuj ikony",
       "drawer-enabled-description": "Gdy włączone, nieprzypięte elementy zasobnika są pokazywane w panelu szuflady.<br>Gdy wyłączone, wszystkie elementy są pokazywane w linii.",

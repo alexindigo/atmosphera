@@ -251,6 +251,8 @@
       "title-width-reset-tooltip": "タイトルの幅をリセット"
     },
     "tray": {
+      "chevron-color-description": "ドロワーのシェブロンアイコンにテーマの色を適用する。",
+      "chevron-color-label": "シェブロンの色",
       "colorize-icons-description": "トレイのアイコンにテーマカラーを適用します。",
       "colorize-icons-label": "テーマカラーの適用",
       "drawer-enabled-description": "有効にすると、ピン留めされていないトレイ項目をドロワーパネル内に表示します。<br>無効にすると、すべての項目をインラインで表示します。",

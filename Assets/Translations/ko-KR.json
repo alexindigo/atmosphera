@@ -251,6 +251,8 @@
       "title-width-reset-tooltip": "제목 너비 초기화"
     },
     "tray": {
+      "chevron-color-description": "서랍 셰브론 아이콘에 테마 색상 적용.",
+      "chevron-color-label": "셰브론 색상",
       "colorize-icons-description": "트레이 아이콘에 테마 색상을 적용합니다.",
       "colorize-icons-label": "아이콘 색상화",
       "drawer-enabled-description": "활성화하면 고정되지 않은 트레이 항목이 서랍 패널에 표시됩니다.<br>비활성화하면 모든 트레이 항목이 인라인으로 표시됩니다.",

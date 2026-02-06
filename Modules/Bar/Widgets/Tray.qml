@@ -66,6 +66,8 @@ Item {
   property var pinned: widgetSettings.pinned || widgetMetadata.pinned || [] // Pinned items (shown inline)
   property bool drawerEnabled: widgetSettings.drawerEnabled !== undefined ? widgetSettings.drawerEnabled : (widgetMetadata.drawerEnabled !== undefined ? widgetMetadata.drawerEnabled : true) // Enable drawer panel
   property bool hidePassive: widgetSettings.hidePassive !== undefined ? widgetSettings.hidePassive : true // Hide passive status items
+  readonly property string chevronColorKey: widgetSettings.chevronColor !== undefined ? widgetSettings.chevronColor : widgetMetadata.chevronColor
+  readonly property color chevronColor: Color.resolveColorKey(chevronColorKey)
   property var filteredItems: [] // Items to show inline (pinned)
   property var dropdownItems: [] // Items to show in drawer (unpinned)
   property int hoveredItemIndex: -1 // Track hovered item for dot indicator
@@ -332,7 +334,7 @@ Item {
       applyUiScale: false
       customRadius: Style.radiusL
       colorBg: "transparent"
-      colorFg: Color.mOnSurface
+      colorFg: root.chevronColor
       colorBorder: "transparent"
       colorBorderHover: "transparent"
       icon: {
@@ -528,7 +530,7 @@ Item {
       applyUiScale: false
       customRadius: Style.radiusL
       colorBg: "transparent"
-      colorFg: Color.mOnSurface
+      colorFg: root.chevronColor
       colorBorder: "transparent"
       colorBorderHover: "transparent"
       icon: {

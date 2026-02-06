@@ -251,6 +251,8 @@
       "title-width-reset-tooltip": "Başlık genişliğini sıfırla"
     },
     "tray": {
+      "chevron-color-description": "Tema renklerini çekmece ok simgesine uygula.",
+      "chevron-color-label": "Şevron Rengi",
       "colorize-icons-description": "Tepsi simgelerine tema renklerini uygula.",
       "colorize-icons-label": "Simgeleri renklendir",
       "drawer-enabled-description": "Etkinleştirildiğinde, sabitlenmemiş tepsi öğeleri bir çekmece panelinde gösterilir.<br>Devre dışı bırakıldığında, tüm tepsi öğeleri satır içi gösterilir.",

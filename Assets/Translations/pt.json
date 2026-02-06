@@ -251,6 +251,8 @@
       "title-width-reset-tooltip": "Redefinir largura do título"
     },
     "tray": {
+      "chevron-color-description": "Aplicar cores do tema ao ícone de divisa da gaveta.",
+      "chevron-color-label": "Cor do Chevron",
       "colorize-icons-description": "Aplicar cores do tema aos ícones da bandeja do sistema.",
       "colorize-icons-label": "Colorir ícones",
       "drawer-enabled-description": "Quando habilitado, os itens da bandeja não fixados são exibidos em um painel gaveta.<br>Quando desabilitado, todos os itens da bandeja são exibidos inline.",

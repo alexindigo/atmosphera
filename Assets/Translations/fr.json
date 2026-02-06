@@ -251,6 +251,8 @@
       "title-width-reset-tooltip": "Réinitialiser la largeur du titre"
     },
     "tray": {
+      "chevron-color-description": "Appliquer les couleurs du thème à l'icône chevron du tiroir.",
+      "chevron-color-label": "Couleur du Chevron",
       "colorize-icons-description": "Appliquer les couleurs du thème aux icônes de la barre système.",
       "colorize-icons-label": "Coloriser les icônes",
       "drawer-enabled-description": "Lorsqu'elle est activée, les éléments de la barre système non épinglés sont affichés dans un panneau tiroir.<br>Lorsqu'elle est désactivée, tous les éléments de la barre système sont affichés en ligne.",

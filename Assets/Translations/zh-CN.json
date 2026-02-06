@@ -251,6 +251,8 @@
       "title-width-reset-tooltip": "重置标题宽度"
     },
     "tray": {
+      "chevron-color-description": "将主题颜色应用到抽屉的V形图标。",
+      "chevron-color-label": "V形颜色",
       "colorize-icons-description": "将主题颜色应用到系统托盘图标。",
       "colorize-icons-label": "着色图标",
       "drawer-enabled-description": "启用时，未固定的托盘项显示在抽屉面板中。<br>禁用时，所有托盘项都内联显示。",

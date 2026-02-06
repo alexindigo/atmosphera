@@ -251,6 +251,8 @@
       "title-width-reset-tooltip": "Titelbreite zurücksetzen"
     },
     "tray": {
+      "chevron-color-description": "Designfarben auf das Schubladen-Chevron-Symbol anwenden.",
+      "chevron-color-label": "Chevron-Farbe",
       "colorize-icons-description": "Theme-Farben auf Tray-Symbole anwenden.",
       "colorize-icons-label": "Symbole einfärben",
       "drawer-enabled-description": "Wenn aktiviert, werden nicht angeheftete Tray-Elemente in einem Drawer-Panel angezeigt.<br>Wenn deaktiviert, werden alle Tray-Elemente inline angezeigt.",

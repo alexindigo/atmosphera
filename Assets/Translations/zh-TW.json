@@ -251,6 +251,8 @@
       "title-width-reset-tooltip": "重設標題寬度"
     },
     "tray": {
+      "chevron-color-description": "將主題顏色套用至抽屜的V形圖示。",
+      "chevron-color-label": "V形顏色",
       "colorize-icons-description": "將系統夾圖示套用主題用色",
       "colorize-icons-label": "為圖示上色",
       "drawer-enabled-description": "當啟用時, 沒有釘選的系統匣圖示將會顯示在抽屜面板中<br>如果停用則所有的圖示都會在工具列裡顯示",
