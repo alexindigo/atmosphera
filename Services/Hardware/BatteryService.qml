@@ -312,9 +312,9 @@ Singleton {
   }
 
   function notify(device, level) {
-    if (!Settings.data.notifications.enableBatteryToast)
+    if (!Settings.data.notifications.enableBatteryToast) {
       return;
-
+    }
     var name = getDeviceName(device);
     var titleKey = level === "critical" ? "toast.battery.critical" : "toast.battery.low";
     var descKey = level === "critical" ? "toast.battery.critical-desc" : "toast.battery.low-desc";
@@ -329,11 +329,8 @@ Singleton {
       title = title + " " + name;
     }
 
-    if (level == "critical") {
-      ToastService.showError(title, desc, icon);
-    } else {
-      ToastService.showWarning(title, desc, icon);
-    }
+    // Only 'showNotice' supports custom icons
+    ToastService.showNotice(title, desc, icon, 6000);
   }
 
   Instantiator {
