@@ -90,7 +90,7 @@ SmartPanel {
             }
 
             NText {
-              text: `${Math.round(SystemStatService.cpuUsage)}% ${SystemStatService.cpuFreq}`
+              text: `${Math.round(SystemStatService.cpuUsage)}% ${SystemStatService.cpuFreq.replace(/[^0-9.]/g, "")} GHz`
               pointSize: Style.fontSizeXS
               color: Color.mPrimary
               font.family: Settings.data.ui.fontFixed
