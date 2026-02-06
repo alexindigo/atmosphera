@@ -49,6 +49,7 @@ Singleton {
   // FileView to load translation files
   property FileView translationFile: FileView {
     id: fileView
+    printErrors: false
     watchChanges: true
     onFileChanged: reload()
     onLoaded: {
@@ -75,17 +76,19 @@ Singleton {
       }
 
       // Try short code before falling back to English (e.g. "zh-CN" → "zh")
+      // Qt.callLater is needed because FileView doesn't re-trigger when path
+      // is changed inside its own onLoadFailed handler
       var shortCode = root.langCode.substring(0, 2);
       if (shortCode !== root.langCode) {
-        Logger.w("I18n", `Translation file for "${root.langCode}" not found, trying "${shortCode}"`);
+        Logger.d("I18n", `Translation file for "${root.langCode}" not found, trying "${shortCode}"`);
         root.langCode = shortCode;
-        loadTranslations();
+        Qt.callLater(loadTranslations);
       } else {
         Logger.w("I18n", `Translation file for "${root.langCode}" not found, falling back to English`);
         root.langCode = "en";
         root.fullLocaleCode = "en";
         root.locale = Qt.locale("en");
-        loadTranslations();
+        Qt.callLater(loadTranslations);
       }
     }
   }
