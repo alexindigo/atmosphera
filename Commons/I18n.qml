@@ -66,18 +66,26 @@ Singleton {
       }
     }
     onLoadFailed: function (error) {
-      if (root.langCode !== "en") {
-        // Fast-path language file not found, fall back to English directly
+      if (root.langCode === "en") {
+        Logger.e("I18n", `Failed to load English translation file: ${error}`);
+        // English also failed - still emit signal to unblock startup
+        root.isLoaded = true;
+        root.translationsLoaded();
+        return;
+      }
+
+      // Try short code before falling back to English (e.g. "zh-CN" → "zh")
+      var shortCode = root.langCode.substring(0, 2);
+      if (shortCode !== root.langCode) {
+        Logger.w("I18n", `Translation file for "${root.langCode}" not found, trying "${shortCode}"`);
+        root.langCode = shortCode;
+        loadTranslations();
+      } else {
         Logger.w("I18n", `Translation file for "${root.langCode}" not found, falling back to English`);
         root.langCode = "en";
         root.fullLocaleCode = "en";
         root.locale = Qt.locale("en");
         loadTranslations();
-      } else {
-        Logger.e("I18n", `Failed to load English translation file: ${error}`);
-        // English also failed - still emit signal to unblock startup
-        root.isLoaded = true;
-        root.translationsLoaded();
       }
     }
   }
@@ -129,12 +137,12 @@ Singleton {
       };
     }
 
-    // Fall back to system locale
+    // Fall back to system locale - try full code first (e.g. "zh-CN"),
+    // onLoadFailed will try the short code ("zh") if the file doesn't exist
     for (var i = 0; i < Qt.locale().uiLanguages.length; i++) {
       var fullLang = Qt.locale().uiLanguages[i];
-      var shortLang = fullLang.substring(0, 2);
       return {
-        code: shortLang,
+        code: fullLang,
         fullLocale: fullLang
       };
     }
