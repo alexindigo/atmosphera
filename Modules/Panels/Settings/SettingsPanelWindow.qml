@@ -23,28 +23,37 @@ FloatingWindow {
     SettingsPanelService.settingsWindow = root;
   }
 
+  // Track if content has been initialized to avoid resetting on fullscreen
+  property bool _isInitialized: false
+
   // Sync visibility with service
   onVisibleChanged: {
     if (visible) {
-      // Check if we have a search entry to navigate to
-      if (SettingsPanelService.requestedEntry) {
-        const entry = SettingsPanelService.requestedEntry;
-        SettingsPanelService.requestedEntry = null;
-        settingsContent.requestedTab = entry.tab;
-        settingsContent.initialize();
-        Qt.callLater(() => settingsContent.navigateToResult(entry));
-      } else {
-        settingsContent.requestedTab = SettingsPanelService.requestedTab;
-        settingsContent.initialize();
-        if (SettingsPanelService.requestedSubTab >= 0) {
-          const tab = SettingsPanelService.requestedTab;
-          const subTab = SettingsPanelService.requestedSubTab;
-          SettingsPanelService.requestedSubTab = -1;
-          Qt.callLater(() => settingsContent.navigateToTab(tab, subTab));
+      // Only initialize when window first opens, not on fullscreen/unfullscreen
+      if (!_isInitialized) {
+        // Check if we have a search entry to navigate to
+        if (SettingsPanelService.requestedEntry) {
+          const entry = SettingsPanelService.requestedEntry;
+          SettingsPanelService.requestedEntry = null;
+          settingsContent.requestedTab = entry.tab;
+          settingsContent.initialize();
+          Qt.callLater(() => settingsContent.navigateToResult(entry));
+        } else {
+          settingsContent.requestedTab = SettingsPanelService.requestedTab;
+          settingsContent.initialize();
+          if (SettingsPanelService.requestedSubTab >= 0) {
+            const tab = SettingsPanelService.requestedTab;
+            const subTab = SettingsPanelService.requestedSubTab;
+            SettingsPanelService.requestedSubTab = -1;
+            Qt.callLater(() => settingsContent.navigateToTab(tab, subTab));
+          }
         }
+        _isInitialized = true;
       }
       SettingsPanelService.isWindowOpen = true;
     } else {
+      // Reset initialization state when window is closed
+      _isInitialized = false;
       SettingsPanelService.isWindowOpen = false;
     }
   }
