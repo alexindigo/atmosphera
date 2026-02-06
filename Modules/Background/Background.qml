@@ -59,6 +59,7 @@ Variants {
 
       Component.onDestruction: {
         transitionAnimation.stop();
+        startupTransitionTimer.stop();
         debounceTimer.stop();
         shaderLoader.active = false;
         currentWallpaper.source = "";
@@ -114,6 +115,15 @@ Variants {
         running: false
         repeat: false
         onTriggered: changeWallpaper()
+      }
+
+      // Delay startup transition to ensure the compositor has mapped the window
+      Timer {
+        id: startupTransitionTimer
+        interval: 100
+        running: false
+        repeat: false
+        onTriggered: _executeStartupTransition()
       }
 
       Image {
@@ -316,8 +326,7 @@ Variants {
         property: "transitionProgress"
         from: 0.0
         to: 1.0
-        // The stripes shader feels faster visually, we make it a bit slower here.
-        duration: transitionType == "stripes" ? Settings.data.wallpaper.transitionDuration * 1.6 : Settings.data.wallpaper.transitionDuration
+        duration: Settings.data.wallpaper.transitionDuration
         easing.type: Easing.InOutCubic
         onFinished: {
           // Clear the tracking of what we're transitioning to
@@ -575,6 +584,8 @@ Variants {
 
       // ------------------------------------------------------
       // Dedicated function for startup animation
+      // Sets up transition params, then defers the actual animation
+      // to allow the compositor time to map the window.
       function performStartupTransition() {
         // Get the transitionType from the settings
         transitionType = Settings.data.wallpaper.transitionType;
@@ -589,31 +600,32 @@ Variants {
           transitionType = "fade";
         }
 
-        // Apply transitionType so the shader loader picks the correct shader
-        this.transitionType = transitionType;
-
+        // Pre-compute per-type params so the shader is ready
         switch (transitionType) {
-        case "none":
-          setWallpaperImmediate(futureWallpaper);
-          break;
         case "wipe":
           wipeDirection = Math.random() * 4;
-          setWallpaperWithTransition(futureWallpaper);
           break;
         case "disc":
           // Force center origin for elegant startup animation
           discCenterX = 0.5;
           discCenterY = 0.5;
-          setWallpaperWithTransition(futureWallpaper);
           break;
         case "stripes":
           stripesCount = Math.round(Math.random() * 20 + 4);
           stripesAngle = Math.random() * 360;
-          setWallpaperWithTransition(futureWallpaper);
           break;
-        default:
+        }
+
+        // Defer the actual transition start so the compositor can map the window
+        startupTransitionTimer.start();
+      }
+
+      // Actually kick off the startup transition after the delay
+      function _executeStartupTransition() {
+        if (transitionType === "none") {
+          setWallpaperImmediate(futureWallpaper);
+        } else {
           setWallpaperWithTransition(futureWallpaper);
-          break;
         }
         // Mark startup transition complete
         isStartupTransition = false;
