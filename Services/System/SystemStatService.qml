@@ -1083,8 +1083,23 @@ Singleton {
   }
 
   // -------------------------------------------------------
+  // Check whether a network interface is virtual/tunnel/bridge.
+  // Only physical interfaces (eth*, en*, wl*, ww*) are kept so
+  // that traffic routed through VPNs, Docker bridges, etc. is
+  // not double-counted.
+  readonly property var _virtualPrefixes: ["lo", "docker", "veth", "br-", "virbr", "vnet", "tun", "tap", "wg", "tailscale", "nordlynx", "proton", "mullvad", "flannel", "cni", "cali", "vxlan", "genev", "gre", "sit", "ip6tnl", "dummy", "ifb", "nlmon", "bond"]
+
+  function isVirtualInterface(name) {
+    for (let i = 0; i < _virtualPrefixes.length; ++i) {
+      if (name.startsWith(_virtualPrefixes[i]))
+        return true;
+    }
+    return false;
+  }
+
+  // -------------------------------------------------------
   // Calculate RX and TX speed from /proc/net/dev
-  // Average speed of all interfaces excepted 'lo'
+  // Sums speeds of all physical interfaces
   function calculateNetworkSpeed(text) {
     if (!text) {
       return;
@@ -1108,7 +1123,7 @@ Singleton {
       }
 
       const iface = line.substring(0, colonIndex).trim();
-      if (iface === 'lo') {
+      if (isVirtualInterface(iface)) {
         continue;
       }
 
