@@ -134,7 +134,7 @@ SmartPanel {
             minValue2: Math.max(SystemStatService.cpuTempHistoryMin - 5, 0)
             maxValue2: Math.max(SystemStatService.cpuTempHistoryMax + 5, 1)
             color: Color.mPrimary
-            color2: Color.mError
+            color2: Color.mSecondary
             fill: true
             fillOpacity: 0.15
             updateInterval: Settings.data.systemMonitor.cpuPollingInterval
@@ -264,7 +264,7 @@ SmartPanel {
             minValue2: 0
             maxValue2: SystemStatService.txMaxSpeed
             color: Color.mPrimary
-            color2: Color.mError
+            color2: Color.mSecondary
             fill: true
             fillOpacity: 0.15
             updateInterval: Settings.data.systemMonitor.networkPollingInterval
