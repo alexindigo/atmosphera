@@ -661,19 +661,29 @@ Singleton {
       const name = text().trim();
       const zonePath = `/sys/class/thermal/thermal_zone${currentIndex}`;
       if (name.startsWith("cpu") && name.endsWith("thermal")) {
-        cpuZones.push({"type": name, "path": zonePath + "/temp"});
+        cpuZones.push({
+                        "type": name,
+                        "path": zonePath + "/temp"
+                      });
       } else if (name === "gpu-avg-thermal") {
         gpuAvgZonePath = zonePath + "/temp";
       } else if (/^gpu[0-9]+-?thermal$/.test(name)) {
-        gpuZones.push({"type": name, "path": zonePath + "/temp"});
+        gpuZones.push({
+                        "type": name,
+                        "path": zonePath + "/temp"
+                      });
       }
       currentIndex++;
-      Qt.callLater(() => { checkNext(); });
+      Qt.callLater(() => {
+                     checkNext();
+                   });
     }
 
     onLoadFailed: function (error) {
       currentIndex++;
-      Qt.callLater(() => { checkNext(); });
+      Qt.callLater(() => {
+                     checkNext();
+                   });
     }
 
     function finishScan() {
@@ -714,14 +724,18 @@ Singleton {
     onLoaded: {
       const temp = parseInt(text().trim()) / 1000.0;
       if (!isNaN(temp) && temp > 0)
-        collectedTemps.push(temp);
+      collectedTemps.push(temp);
       currentZoneIndex++;
-      Qt.callLater(() => { readNextCpuThermalZone(); });
+      Qt.callLater(() => {
+                     readNextCpuThermalZone();
+                   });
     }
 
     onLoadFailed: function (error) {
       currentZoneIndex++;
-      Qt.callLater(() => { readNextCpuThermalZone(); });
+      Qt.callLater(() => {
+                     readNextCpuThermalZone();
+                   });
     }
   }
 
@@ -749,13 +763,15 @@ Singleton {
     onLoaded: {
       const temp = parseInt(text().trim()) / 1000.0;
       if (!isNaN(temp) && temp > 0)
-        collectedTemps.push(temp);
+      collectedTemps.push(temp);
 
       // If we have multiple GPU zones (no gpu-avg), iterate and take max
       if (root.gpuThermalZonePaths && root.gpuThermalZonePaths.length > 0) {
         currentZoneIndex++;
         if (currentZoneIndex < root.gpuThermalZonePaths.length) {
-          Qt.callLater(() => { readNextGpuThermalZone(); });
+          Qt.callLater(() => {
+                         readNextGpuThermalZone();
+                       });
           return;
         }
         // All zones read, take max

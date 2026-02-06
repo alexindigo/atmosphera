@@ -373,9 +373,9 @@ Singleton {
         var ddcValue = Math.round(value * monitor.maxBrightness);
         var ddcBus = busNum;
         Qt.callLater(() => {
-          setBrightnessProc.command = ["ddcutil", "-b", ddcBus, "--noverify", "--async", "--sleep-multiplier=0.05", "setvcp", "10", ddcValue];
-          setBrightnessProc.running = true;
-        });
+                       setBrightnessProc.command = ["ddcutil", "-b", ddcBus, "--noverify", "--async", "--sleep-multiplier=0.05", "setvcp", "10", ddcValue];
+                       setBrightnessProc.running = true;
+                     });
       } else if (!isDdc) {
         monitor.commandRunning = true;
         monitor.ignoreNextChange = true;
