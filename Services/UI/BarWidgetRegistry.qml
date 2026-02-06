@@ -195,6 +195,7 @@ Singleton {
                                   },
                                   "SystemMonitor": {
                                     "compactMode": true,
+                                    "iconColor": "none",
                                     "textColor": "none",
                                     "useMonospaceFont": true,
                                     "showCpuUsage": true,

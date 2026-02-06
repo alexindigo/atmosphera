@@ -462,6 +462,7 @@
     "security": "Security",
     "select": "Select",
     "select-color": "Select color",
+    "select-icon-color": "Select icon color",
     "shortcuts": "Shortcuts",
     "shutdown": "Shutdown",
     "signal": "Signal",

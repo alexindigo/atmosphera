@@ -17,6 +17,7 @@ ColumnLayout {
 
   // Local, editable state for checkboxes
   property bool valueCompactMode: widgetData.compactMode !== undefined ? widgetData.compactMode : widgetMetadata.compactMode
+  property string valueIconColor: widgetData.iconColor !== undefined ? widgetData.iconColor : widgetMetadata.iconColor
   property string valueTextColor: widgetData.textColor !== undefined ? widgetData.textColor : widgetMetadata.textColor
   property bool valueUseMonospaceFont: widgetData.useMonospaceFont !== undefined ? widgetData.useMonospaceFont : widgetMetadata.useMonospaceFont
   property bool valueShowCpuUsage: widgetData.showCpuUsage !== undefined ? widgetData.showCpuUsage : widgetMetadata.showCpuUsage
@@ -36,6 +37,7 @@ ColumnLayout {
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
     settings.compactMode = valueCompactMode;
+    settings.iconColor = valueIconColor;
     settings.textColor = valueTextColor;
     settings.useMonospaceFont = valueUseMonospaceFont;
     settings.showCpuUsage = valueShowCpuUsage;
@@ -64,6 +66,39 @@ ColumnLayout {
                  valueCompactMode = checked;
                  settingsChanged(saveSettings());
                }
+  }
+
+  NComboBox {
+    label: I18n.tr("common.select-icon-color")
+    description: I18n.tr("bar.clock.select-color-description")
+    model: [
+      {
+        "name": I18n.tr("common.none"),
+        "key": "none"
+      },
+      {
+        "key": "primary",
+        "name": I18n.tr("common.primary")
+      },
+      {
+        "key": "secondary",
+        "name": I18n.tr("common.secondary")
+      },
+      {
+        "key": "tertiary",
+        "name": I18n.tr("common.tertiary")
+      },
+      {
+        "key": "error",
+        "name": I18n.tr("common.error")
+      }
+    ]
+    currentKey: valueIconColor
+    onSelected: key => {
+                  valueIconColor = key;
+                  settingsChanged(saveSettings());
+                }
+    minimumWidth: 200
   }
 
   NComboBox {
