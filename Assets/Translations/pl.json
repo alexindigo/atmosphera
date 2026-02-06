@@ -199,6 +199,8 @@
     "system-monitor": {
       "compact-mode-description": "Wyświetlaj statystyki jako mini wykresy słupkowe zamiast wartości tekstowych. Zapobiega przesunięciom układu.",
       "compact-mode-label": "Tryb kompaktowy",
+      "cpu-frequency-description": "Wyświetl aktualną prędkość zegara CPU w GHz.",
+      "cpu-frequency-label": "Pokaż częstotliwość CPU",
       "cpu-temperature-description": "Pokaż odczyty temperatury procesora (jeśli dostępne).",
       "cpu-temperature-label": "Temperatura CPU",
       "cpu-usage-description": "Wyświetl aktualne użycie procesora w procentach.",

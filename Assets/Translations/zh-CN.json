@@ -199,6 +199,8 @@
     "system-monitor": {
       "compact-mode-description": "将数据以条形图显示以防止布局偏移。",
       "compact-mode-label": "紧凑模式",
+      "cpu-frequency-description": "显示当前 CPU 时钟速度（GHz）。",
+      "cpu-frequency-label": "显示 CPU 频率",
       "cpu-temperature-description": "显示 CPU 温度（如果可用）。",
       "cpu-temperature-label": "CPU 温度",
       "cpu-usage-description": "以百分比显示当前 CPU 使用率",

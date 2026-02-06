@@ -199,6 +199,8 @@
     "system-monitor": {
       "compact-mode-description": "テキスト値の代わりに、ミニ棒グラフとして統計を表示します。レイアウトのずれを防ぎます。",
       "compact-mode-label": "コンパクトモード",
+      "cpu-frequency-description": "現在のCPUクロック速度をGHzで表示します。",
+      "cpu-frequency-label": "CPU周波数を表示",
       "cpu-temperature-description": "利用可能な場合、CPU 温度を表示します。",
       "cpu-temperature-label": "CPU 温度",
       "cpu-usage-description": "現在の CPU 使用率を表示します。",

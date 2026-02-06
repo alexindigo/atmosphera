@@ -199,6 +199,8 @@
     "system-monitor": {
       "compact-mode-description": "İstatistikleri metin değerleri yerine mini çubuk grafikler olarak görüntüleyin. Düzen kaymasını önler.",
       "compact-mode-label": "Kompakt mod",
+      "cpu-frequency-description": "Mevcut CPU saat hızını GHz cinsinden görüntüle.",
+      "cpu-frequency-label": "CPU frekansını göster",
       "cpu-temperature-description": "Mevcut işlemci sıcaklık okumalarını gösterir.",
       "cpu-temperature-label": "İşlemci sıcaklığı",
       "cpu-usage-description": "Mevcut işlemci kullanım yüzdesini göster.",

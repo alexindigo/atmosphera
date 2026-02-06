@@ -199,6 +199,8 @@
     "system-monitor": {
       "compact-mode-description": "Visa statistik som minibar-diagram istället för textvärden. Förhindrar layoutförskjutning. ",
       "compact-mode-label": "Kompakt läge",
+      "cpu-frequency-description": "Visa aktuell CPU-klockhastighet i GHz.",
+      "cpu-frequency-label": "Visa CPU-frekvens",
       "cpu-temperature-description": "Visa CPU-temperaturvärden om tillgängliga.",
       "cpu-temperature-label": "CPU-temperatur",
       "cpu-usage-description": "Visa aktuell CPU-användningsprocent.",
