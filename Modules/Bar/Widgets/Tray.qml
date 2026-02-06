@@ -314,6 +314,27 @@ Item {
     border.width: Style.capsuleBorderWidth
   }
 
+  NPopupContextMenu {
+    id: chevronContextMenu
+
+    model: [
+      {
+        "label": I18n.tr("actions.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   chevronContextMenu.close();
+                   PanelService.closeContextMenu(screen);
+
+                   if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
+
   Flow {
     id: trayFlow
     spacing: 0
@@ -351,7 +372,7 @@ Item {
         }
       }
       onClicked: toggleDrawer(this)
-      onRightClicked: toggleDrawer(this)
+      onRightClicked: PanelService.showContextMenu(chevronContextMenu, this, screen)
     }
 
     // Pinned items
@@ -547,7 +568,7 @@ Item {
         }
       }
       onClicked: toggleDrawer(this)
-      onRightClicked: toggleDrawer(this)
+      onRightClicked: PanelService.showContextMenu(chevronContextMenu, this, screen)
     }
   } // closes Flow
 }
