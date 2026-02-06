@@ -326,7 +326,11 @@ Singleton {
       title = title + " " + name;
     }
 
-    ToastService.showNotice(title, desc, icon);
+    if (level == "critical") {
+      ToastService.showError(title, desc, icon);
+    } else {
+      ToastService.showWarning(title, desc, icon);
+    }
   }
 
   Instantiator {
