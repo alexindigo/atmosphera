@@ -62,7 +62,7 @@ Singleton {
                                   "Clock": {
                                     "showBackground": true,
                                     "clockStyle": "digital",
-                                    "usePrimaryColor": false,
+                                    "clockColor": "none",
                                     "useCustomFont": false,
                                     "format": "HH:mm\\nd MMMM yyyy"
                                   },

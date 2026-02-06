@@ -34,10 +34,10 @@ NIconButton {
     return {};
   }
 
-  readonly property string customIcon: widgetSettings.icon || widgetMetadata.icon
+  readonly property string customIcon: widgetSettings.icon !== undefined ? widgetSettings.icon : widgetMetadata.icon
   readonly property bool useDistroLogo: widgetSettings.useDistroLogo !== undefined ? widgetSettings.useDistroLogo : widgetMetadata.useDistroLogo
-  readonly property string customIconPath: widgetSettings.customIconPath || ""
-  readonly property bool enableColorization: widgetSettings.enableColorization || false
+  readonly property string customIconPath: widgetSettings.customIconPath !== undefined ? widgetSettings.customIconPath : widgetMetadata.customIconPath
+  readonly property bool enableColorization: widgetSettings.enableColorization !== undefined ? widgetSettings.enableColorization : widgetMetadata.enableColorization
   readonly property string colorizeSystemIcon: widgetSettings.colorizeSystemIcon !== undefined ? widgetSettings.colorizeSystemIcon : widgetMetadata.colorizeSystemIcon
 
   readonly property color iconColor: {
@@ -67,13 +67,10 @@ NIconButton {
   customRadius: Style.radiusL
   colorBg: Style.capsuleColor
   colorFg: iconColor
-  colorBgHover: useDistroLogo ? Color.mSurfaceVariant : Color.mHover
+  colorBgHover: Color.mHover
   colorFgHover: Color.mOnHover
-  colorBorder: "transparent"
-  colorBorderHover: useDistroLogo ? Color.mHover : "transparent"
-
-  border.color: Style.capsuleBorderColor
-  border.width: Style.capsuleBorderWidth
+  colorBorder: Style.capsuleBorderColor
+  colorBorderHover: Style.capsuleBorderColor
 
   NPopupContextMenu {
     id: contextMenu
@@ -141,9 +138,9 @@ NIconButton {
     visible: source !== ""
     smooth: true
     asynchronous: true
-    layer.enabled: enableColorization && (useDistroLogo || customIconPath !== "")
+    layer.enabled: (enableColorization || hovering) && (useDistroLogo || customIconPath !== "")
     layer.effect: ShaderEffect {
-      property color targetColor: iconColor
+      property color targetColor: !hovering ? iconColor : Color.mOnHover
       property real colorizeMode: 2.0
 
       fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
