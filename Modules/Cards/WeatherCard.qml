@@ -20,10 +20,10 @@ NBox {
 
   // Weather condition detection
   readonly property int currentWeatherCode: weatherReady ? LocationService.data.weather.current_weather.weathercode : 0
-  readonly property bool isRaining: testEffects === "rain"  || (testEffects === "" && ((currentWeatherCode >= 51 && currentWeatherCode <= 67) || (currentWeatherCode >= 80 && currentWeatherCode <= 82)))
-  readonly property bool isSnowing: testEffects === "snow"  || (testEffects === "" && ((currentWeatherCode >= 71 && currentWeatherCode <= 77) || (currentWeatherCode >= 85 && currentWeatherCode <= 86)))
-  readonly property bool isCloudy:  testEffects === "cloud" || (testEffects === "" && (currentWeatherCode === 3))
-  readonly property bool isFoggy:   testEffects === "fog"   || (testEffects === "" && (currentWeatherCode === 45 || currentWeatherCode === 48))
+  readonly property bool isRaining: testEffects === "rain" || (testEffects === "" && ((currentWeatherCode >= 51 && currentWeatherCode <= 67) || (currentWeatherCode >= 80 && currentWeatherCode <= 82)))
+  readonly property bool isSnowing: testEffects === "snow" || (testEffects === "" && ((currentWeatherCode >= 71 && currentWeatherCode <= 77) || (currentWeatherCode >= 85 && currentWeatherCode <= 86)))
+  readonly property bool isCloudy: testEffects === "cloud" || (testEffects === "" && (currentWeatherCode === 3))
+  readonly property bool isFoggy: testEffects === "fog" || (testEffects === "" && (currentWeatherCode === 45 || currentWeatherCode === 48))
 
   visible: Settings.data.location.weatherEnabled
   implicitHeight: Math.max(100 * Style.uiScaleRatio, content.implicitHeight + (Style.marginXL * 2))
@@ -62,13 +62,9 @@ NBox {
         property real itemHeight: weatherEffect.height
         property color bgColor: root.color
         property real cornerRadius: root.isRaining ? 0 : (root.radius - root.border.width)
-        property real alternative: root.isFoggy;
+        property real alternative: root.isFoggy
 
-        fragmentShader:
-            root.isSnowing ? Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/weather_snow.frag.qsb") :
-            root.isRaining ? Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/weather_rain.frag.qsb") :
-            root.isCloudy || root.isFoggy ? Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/weather_cloud.frag.qsb") :
-            ""
+        fragmentShader: root.isSnowing ? Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/weather_snow.frag.qsb") : root.isRaining ? Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/weather_rain.frag.qsb") : root.isCloudy || root.isFoggy ? Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/weather_cloud.frag.qsb") : ""
       }
     }
   }
