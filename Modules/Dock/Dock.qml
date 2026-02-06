@@ -335,7 +335,7 @@ Loader {
                                                              pushApp("pinned-running", toplevel, pinnedAppId, toplevel.title);
                                                            });
                                } else {
-                                // App is pinned but not running - add once
+                                 // App is pinned but not running - add once
                                  pushApp("pinned", null, pinnedAppId, getAppNameFromDesktopEntry(pinnedAppId) || pinnedAppId);
                                }
                              });
