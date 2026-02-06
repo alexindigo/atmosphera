@@ -27,11 +27,11 @@ Item {
   property bool showPercentageText: true
   property bool vertical: false
 
-  // Alternating state icon display (toggles between percentage and icon when charging/plugged)
+  // Alternating state icon display (toggles between percentage and icon when charging)
   property bool showStateIcon: false
 
-  onHasStateIconChanged: {
-    if (!hasStateIcon)
+  onChargingChanged: {
+    if (!charging)
       showStateIcon = false;
   }
 
@@ -62,10 +62,9 @@ Item {
   }
 
   // Background color for empty portion (semi-transparent)
-  readonly property color emptyColor: Qt.alpha(baseColor, 0.7)
+  readonly property color emptyColor: Qt.alpha(baseColor, 0.66)
 
   // State icon logic
-  readonly property bool hasStateIcon: (!ready || charging || pluggedIn)
   readonly property string stateIcon: {
     if (!ready)
       return "x";
@@ -90,9 +89,9 @@ Item {
   // Timer to alternate between percentage text and state icon when charging/plugged
   Timer {
     id: alternateTimer
-    interval: 3000
+    interval: 5000
     repeat: true
-    running: root.hasStateIcon && root.ready
+    running: root.charging
     onTriggered: root.showStateIcon = !root.showStateIcon
   }
 
@@ -148,7 +147,7 @@ Item {
   NText {
     id: percentageText
     visible: opacity > 0
-    opacity: root.showPercentageText && root.ready && !root.showStateIcon ? 1 : 0
+    opacity: root.showPercentageText && root.ready && (root.charging ? !root.showStateIcon : !root.pluggedIn) ? 1 : 0
     x: batteryBody.x + Style.pixelAlignCenter(bodyBackground.width, width)
     y: batteryBody.y + bodyBackground.y + Style.pixelAlignCenter(bodyBackground.height, height)
     font.family: Settings.data.ui.fontFixed
@@ -174,7 +173,7 @@ Item {
   NIcon {
     id: stateIconOverlay
     visible: opacity > 0
-    opacity: !root.ready || (root.hasStateIcon && root.showStateIcon) ? 1 : 0
+    opacity: !root.ready || (root.charging ? root.showStateIcon : root.pluggedIn) ? 1 : 0
     x: batteryBody.x + Style.pixelAlignCenter(bodyBackground.width, width)
     y: batteryBody.y + bodyBackground.y + Style.pixelAlignCenter(bodyBackground.height, height)
     icon: root.stateIcon

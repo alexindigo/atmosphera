@@ -50,6 +50,7 @@
       "device-label": "Устройство с батареей",
       "display-mode-description": "Выберите, как отображается батарея на панели.",
       "display-mode-graphic": "Графическая батарея",
+      "display-mode-graphic-clean": "Графическая батарея (без %)",
       "display-mode-icon-always": "Значок - Всегда показывать %",
       "display-mode-icon-hover": "Иконка - Показать при наведении",
       "display-mode-icon-only": "Только значок",

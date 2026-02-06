@@ -50,6 +50,7 @@
       "device-label": "バッテリーデバイス",
       "display-mode-description": "バッテリーをバーにどのように表示するかを選択します。",
       "display-mode-graphic": "グラフィックバッテリー",
+      "display-mode-graphic-clean": "グラフィカルバッテリー (パーセント表示なし)",
       "display-mode-icon-always": "アイコン - 常に%を表示",
       "display-mode-icon-hover": "アイコン - ホバー時に表示",
       "display-mode-icon-only": "アイコンのみ",

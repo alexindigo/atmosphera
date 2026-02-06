@@ -50,6 +50,7 @@
       "device-label": "Accuapparaat",
       "display-mode-description": "Kies hoe de batterij wordt weergegeven in de balk.",
       "display-mode-graphic": "Grafische accu",
+      "display-mode-graphic-clean": "Grafische batterij (geen %)",
       "display-mode-icon-always": "Pictogram - Altijd % tonen",
       "display-mode-icon-hover": "Icoon - Tonen bij hover",
       "display-mode-icon-only": "Alleen pictogram",

@@ -50,6 +50,7 @@
       "device-label": "Dispositivo de batería",
       "display-mode-description": "Elige cómo se muestra la batería en la barra.",
       "display-mode-graphic": "Batería gráfica",
+      "display-mode-graphic-clean": "Batería gráfica (sin %)",
       "display-mode-icon-always": "Icono - Siempre mostrar %",
       "display-mode-icon-hover": "Icono - Mostrar al pasar",
       "display-mode-icon-only": "Solo icono",

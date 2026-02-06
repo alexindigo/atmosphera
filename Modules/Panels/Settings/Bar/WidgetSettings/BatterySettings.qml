@@ -62,6 +62,10 @@ ColumnLayout {
         "name": I18n.tr("bar.battery.display-mode-graphic")
       },
       {
+        "key": "graphic-clean",
+        "name": I18n.tr("bar.battery.display-mode-graphic-clean")
+      },
+      {
         "key": "icon-hover",
         "name": I18n.tr("bar.battery.display-mode-icon-hover")
       },

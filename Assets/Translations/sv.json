@@ -50,6 +50,7 @@
       "device-label": "Batterienhet",
       "display-mode-description": "Välj hur batteriet visas i fältet.",
       "display-mode-graphic": "Grafiskt batteri",
+      "display-mode-graphic-clean": "Grafiskt batteri (ingen %)",
       "display-mode-icon-always": "Ikon - Visa alltid %",
       "display-mode-icon-hover": "Ikon - Visa vid hovring",
       "display-mode-icon-only": "Endast ikon",

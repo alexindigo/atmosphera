@@ -50,6 +50,7 @@
       "device-label": "Akkugerät",
       "display-mode-description": "Wählen Sie, wie der Akku in der Leiste angezeigt wird.",
       "display-mode-graphic": "Grafischer Akku",
+      "display-mode-graphic-clean": "Grafische Batterie (ohne %)",
       "display-mode-icon-always": "Symbol - Immer % anzeigen",
       "display-mode-icon-hover": "Symbol - Beim Hover anzeigen",
       "display-mode-icon-only": "Nur Symbol",

@@ -50,6 +50,7 @@
       "device-label": "Dispositif à pile",
       "display-mode-description": "Choisissez comment la batterie est affichée dans la barre.",
       "display-mode-graphic": "Batterie graphique",
+      "display-mode-graphic-clean": "Batterie graphique (sans %)",
       "display-mode-icon-always": "Icône - Toujours afficher %",
       "display-mode-icon-hover": "Icône - Afficher au survol",
       "display-mode-icon-only": "Icône seulement",

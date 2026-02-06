@@ -50,6 +50,7 @@
       "device-label": "电池设备",
       "display-mode-description": "选择电池在任务栏中的显示方式。",
       "display-mode-graphic": "图形化电池",
+      "display-mode-graphic-clean": "图形电池（无%）",
       "display-mode-icon-always": "图标 - 始终显示 %",
       "display-mode-icon-hover": "图标 - 悬停时显示",
       "display-mode-icon-only": "仅图标",

@@ -50,6 +50,7 @@
       "device-label": "Akkumulátor eszköz",
       "display-mode-description": "Válassza ki, hogyan jelenjen meg az akkumulátor a sávban.",
       "display-mode-graphic": "Grafikus akkumulátor",
+      "display-mode-graphic-clean": "Grafikus akkumulátor (százalék nélkül)",
       "display-mode-icon-always": "Ikon - Mindig mutassa a %-ot",
       "display-mode-icon-hover": "Ikon - Rámutatásra megjelenik",
       "display-mode-icon-only": "Csak ikon",

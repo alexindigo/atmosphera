@@ -50,6 +50,7 @@
       "device-label": "배터리 장치",
       "display-mode-description": "배터리가 바에 어떻게 표시될지 선택하세요.",
       "display-mode-graphic": "그래픽 배터리",
+      "display-mode-graphic-clean": "그래픽 배터리 (퍼센트 없음)",
       "display-mode-icon-always": "아이콘 - 항상 % 표시",
       "display-mode-icon-hover": "아이콘 - 호버 시 표시",
       "display-mode-icon-only": "아이콘만",

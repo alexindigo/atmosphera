@@ -50,6 +50,7 @@
       "device-label": "Pil cihazı",
       "display-mode-description": "Pilin çubukta nasıl görüntüleneceğini seçin.",
       "display-mode-graphic": "Grafik pil",
+      "display-mode-graphic-clean": "Grafik pil (yüzde yok)",
       "display-mode-icon-always": "Simge - Her zaman % göster",
       "display-mode-icon-hover": "Simge - Üzerine gelindiğinde göster",
       "display-mode-icon-only": "Yalnızca simge",

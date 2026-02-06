@@ -50,6 +50,7 @@
       "device-label": "電池裝置",
       "display-mode-description": "選擇電池在工具列中的顯示方式。",
       "display-mode-graphic": "圖形化電池",
+      "display-mode-graphic-clean": "圖形電池（無%）",
       "display-mode-icon-always": "圖示 - 始終顯示 %",
       "display-mode-icon-hover": "圖示 - 懸停時顯示",
       "display-mode-icon-only": "僅圖示",

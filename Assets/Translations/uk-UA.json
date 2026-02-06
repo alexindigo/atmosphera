@@ -50,6 +50,7 @@
       "device-label": "Пристрій живлення від батареї",
       "display-mode-description": "Виберіть, як відображається батарея на панелі.",
       "display-mode-graphic": "Графічна батарея",
+      "display-mode-graphic-clean": "Графічна батарея (без %)",
       "display-mode-icon-always": "Іконка - Завжди показувати %",
       "display-mode-icon-hover": "Іконка - Показувати при наведенні",
       "display-mode-icon-only": "Лише значок",
