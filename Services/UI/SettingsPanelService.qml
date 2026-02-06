@@ -26,8 +26,6 @@ Singleton {
   signal windowOpened
   signal windowClosed
 
-  // Open to a specific search entry (from launcher)
-  // For window mode, handles directly. For panel mode, delegates to panel.
   function openToEntry(entry, screen) {
     if (Settings.data.ui.settingsPanelMode === "window") {
       requestedEntry = entry;

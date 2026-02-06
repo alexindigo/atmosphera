@@ -50,7 +50,7 @@ Item {
   property var searchResults: []
   property int searchSelectedIndex: 0
   property string highlightLabelKey: ""
-  property bool _navigatingFromSearch: false
+  property bool navigatingFromSearch: false
 
   // Mouse hover suppression during keyboard navigation
   property bool ignoreMouseHover: false
@@ -156,20 +156,16 @@ Item {
     highlightLabelKey = entry.labelKey;
     _pendingSubTab = (entry.subTab !== null && entry.subTab !== undefined) ? entry.subTab : -1;
 
-    // Check if we're already on this tab
     const alreadyOnTab = (currentTabIndex === entry.tab);
-
-    // Mark that we're navigating from search so tab change handler doesn't clear highlight
-    _navigatingFromSearch = true;
+    navigatingFromSearch = true;
     currentTabIndex = entry.tab;
-    _navigatingFromSearch = false;
+    navigatingFromSearch = false;
 
     if (alreadyOnTab && activeTabContent) {
-      // Tab is already loaded, apply subtab + highlight directly
       if (_pendingSubTab >= 0) {
-        _navigatingFromSearch = true;
+        navigatingFromSearch = true;
         setSubTabIndex(_pendingSubTab);
-        _navigatingFromSearch = false;
+        navigatingFromSearch = false;
         _pendingSubTab = -1;
       }
       highlightScrollTimer.targetKey = highlightLabelKey;
@@ -258,39 +254,33 @@ Item {
     return false;
   }
 
-  // Immediately clear highlight when tab changes (unless from search navigation)
   onCurrentTabIndexChanged: {
-    if (!_navigatingFromSearch) {
+    if (!navigatingFromSearch) {
       clearHighlightImmediately();
     }
   }
 
-  // Track current subtab bar to detect subtab changes
-  property var _currentSubTabBar: null
+  property var currentSubTabBar: null
 
   onActiveTabContentChanged: {
-    // Disconnect from old subtab bar
-    if (_currentSubTabBar) {
+    if (currentSubTabBar) {
       try {
-        _currentSubTabBar.currentIndexChanged.disconnect(_onSubTabChanged);
-      } catch (e) {
-        // Ignore if already disconnected
-      }
-      _currentSubTabBar = null;
+        currentSubTabBar.currentIndexChanged.disconnect(onSubTabChanged);
+      } catch (e) {}
+      currentSubTabBar = null;
     }
 
-    // Find and connect to new subtab bar
     if (activeTabContent) {
       const tabBar = findNTabBar(activeTabContent);
       if (tabBar) {
-        _currentSubTabBar = tabBar;
-        _currentSubTabBar.currentIndexChanged.connect(_onSubTabChanged);
+        currentSubTabBar = tabBar;
+        currentSubTabBar.currentIndexChanged.connect(onSubTabChanged);
       }
     }
   }
 
-  function _onSubTabChanged() {
-    if (!_navigatingFromSearch) {
+  function onSubTabChanged() {
+    if (!navigatingFromSearch) {
       clearHighlightImmediately();
     }
   }
@@ -312,7 +302,6 @@ Item {
     return null;
   }
 
-  // Clear highlight immediately (no animation)
   function clearHighlightImmediately() {
     highlightClearTimer.stop();
     highlightScrollTimer.stop();
@@ -1235,12 +1224,11 @@ Item {
                         item.screen = root.screen;
                       }
                       root.activeTabContent = item;
-                      // Handle pending subtab + highlight from search navigation
                       if (root.highlightLabelKey) {
                         if (root._pendingSubTab >= 0) {
-                          root._navigatingFromSearch = true;
+                          root.navigatingFromSearch = true;
                           root.setSubTabIndex(root._pendingSubTab);
-                          root._navigatingFromSearch = false;
+                          root.navigatingFromSearch = false;
                           root._pendingSubTab = -1;
                         }
                         highlightScrollTimer.targetKey = root.highlightLabelKey;

@@ -23,14 +23,12 @@ FloatingWindow {
     SettingsPanelService.settingsWindow = root;
   }
 
-  // Track if content has been initialized to avoid resetting on fullscreen
-  property bool _isInitialized: false
+  property bool isInitialized: false
 
   // Sync visibility with service
   onVisibleChanged: {
     if (visible) {
-      // Only initialize when window first opens, not on fullscreen/unfullscreen
-      if (!_isInitialized) {
+      if (!isInitialized) {
         // Check if we have a search entry to navigate to
         if (SettingsPanelService.requestedEntry) {
           const entry = SettingsPanelService.requestedEntry;
@@ -48,12 +46,11 @@ FloatingWindow {
             Qt.callLater(() => settingsContent.navigateToTab(tab, subTab));
           }
         }
-        _isInitialized = true;
+        isInitialized = true;
       }
       SettingsPanelService.isWindowOpen = true;
     } else {
-      // Reset initialization state when window is closed
-      _isInitialized = false;
+      isInitialized = false;
       SettingsPanelService.isWindowOpen = false;
     }
   }
