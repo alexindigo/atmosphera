@@ -258,9 +258,6 @@ Singleton {
                                     "iconColor": "none",
                                     "textColor": "none"
                                   },
-                                  "WiFi": {
-                                    "displayMode": "onhover"
-                                  },
                                   "Network": {
                                     "displayMode": "onhover",
                                     "iconColor": "none",
