@@ -199,6 +199,8 @@
     "system-monitor": {
       "compact-mode-description": "Statistiken als Mini-Balkendiagramme anstelle von Textwerten anzeigen. Verhindert Layoutverschiebungen.",
       "compact-mode-label": "Kompaktmodus",
+      "cpu-frequency-description": "Die aktuelle CPU-Taktrate in GHz anzeigen.",
+      "cpu-frequency-label": "CPU-Frequenz anzeigen",
       "cpu-temperature-description": "CPU-Temperaturwerte anzeigen, falls verfügbar.",
       "cpu-temperature-label": "CPU-Temperatur",
       "cpu-usage-description": "Aktuelle CPU-Auslastung in Prozent anzeigen.",

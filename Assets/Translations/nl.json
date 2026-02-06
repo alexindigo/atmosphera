@@ -199,6 +199,8 @@
     "system-monitor": {
       "compact-mode-description": "Statistieken weergeven als mini-staafdiagrammen in plaats van tekstwaarden. Voorkomt lay-outverschuiving.",
       "compact-mode-label": "Compacte modus",
+      "cpu-frequency-description": "De huidige CPU-kloksnelheid in GHz weergeven.",
+      "cpu-frequency-label": "CPU-frequentie weergeven",
       "cpu-temperature-description": "Toon CPU-temperatuur indien beschikbaar.",
       "cpu-temperature-label": "CPU-temperatuur",
       "cpu-usage-description": "Toon het huidige CPU-gebruik in procent.",

@@ -199,6 +199,8 @@
     "system-monitor": {
       "compact-mode-description": "Exibir as estatísticas como mini gráficos de barras em vez de valores de texto. Evita mudanças no layout.",
       "compact-mode-label": "Modo compacto",
+      "cpu-frequency-description": "Exibir a velocidade de clock atual da CPU em GHz.",
+      "cpu-frequency-label": "Mostrar frequência da CPU",
       "cpu-temperature-description": "Mostrar as leituras de temperatura da CPU se disponíveis.",
       "cpu-temperature-label": "Temperatura da CPU",
       "cpu-usage-description": "Exibir o percentual atual de uso da CPU.",

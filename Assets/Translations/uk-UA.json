@@ -199,6 +199,8 @@
     "system-monitor": {
       "compact-mode-description": "Відображати статистику у вигляді міні-діаграм замість текстових значень. Запобігає зсуву макета.",
       "compact-mode-label": "Компактний режим",
+      "cpu-frequency-description": "Відобразити поточну тактову частоту CPU у ГГц.",
+      "cpu-frequency-label": "Показати частоту CPU",
       "cpu-temperature-description": "Показувати показники температури ЦП, якщо доступно.",
       "cpu-temperature-label": "Температура ЦП",
       "cpu-usage-description": "Відображати поточний відсоток використання ЦП.",

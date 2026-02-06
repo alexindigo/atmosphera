@@ -199,6 +199,8 @@
     "system-monitor": {
       "compact-mode-description": "A statisztikákat mini sávdiagramokként jelenítse meg a szöveges értékek helyett. Megakadályozza az elrendezés eltolódását.",
       "compact-mode-label": "Kompakt mód",
+      "cpu-frequency-description": "Az aktuális CPU órajel megjelenítése GHz-ben.",
+      "cpu-frequency-label": "CPU frekvencia megjelenítése",
       "cpu-temperature-description": "CPU hőmérséklet-adatok megjelenítése, ha elérhetőek.",
       "cpu-temperature-label": "CPU hőmérséklet",
       "cpu-usage-description": "Jelenítse meg az aktuális CPU-használati százalékot.",
