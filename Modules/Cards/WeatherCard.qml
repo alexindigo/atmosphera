@@ -16,7 +16,7 @@ NBox {
   readonly property bool weatherReady: Settings.data.location.weatherEnabled && (LocationService.data.weather !== null)
 
   // Test mode: set to "rain", "snow", "cloud" or "fog"
-  property string testEffects: ""
+  property string testEffects: "fog"
 
   // Weather condition detection
   readonly property int currentWeatherCode: weatherReady ? LocationService.data.weather.current_weather.weathercode : 0
@@ -49,7 +49,7 @@ NBox {
       ShaderEffect {
         id: weatherEffect
         anchors.fill: parent
-        // rain matches content margins, everything else fills the box
+        // Rain matches content margins, everything else fills the box
         anchors.margins: root.isRaining ? Style.marginXL : root.border.width
 
         property var source: ShaderEffectSource {
