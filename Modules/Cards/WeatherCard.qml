@@ -16,7 +16,7 @@ NBox {
   readonly property bool weatherReady: Settings.data.location.weatherEnabled && (LocationService.data.weather !== null)
 
   // Test mode: set to "rain", "snow", "cloud" or "fog"
-  property string testEffects: "fog"
+  property string testEffects: ""
 
   // Weather condition detection
   readonly property int currentWeatherCode: weatherReady ? LocationService.data.weather.current_weather.weathercode : 0
