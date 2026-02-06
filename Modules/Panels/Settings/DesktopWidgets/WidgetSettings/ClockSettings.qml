@@ -18,7 +18,7 @@ ColumnLayout {
   property bool valueShowBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : widgetMetadata.showBackground
   property bool valueRoundedCorners: widgetData.roundedCorners !== undefined ? widgetData.roundedCorners : true
   property string valueClockStyle: widgetData.clockStyle !== undefined ? widgetData.clockStyle : widgetMetadata.clockStyle
-  property bool valueClockColor: widgetData.clockColor !== undefined ? widgetData.clockColor : widgetMetadata.clockColor
+  property string valueClockColor: widgetData.clockColor !== undefined ? widgetData.clockColor : widgetMetadata.clockColor
   property bool valueUseCustomFont: widgetData.useCustomFont !== undefined ? widgetData.useCustomFont : widgetMetadata.useCustomFont
   property string valueCustomFont: widgetData.customFont !== undefined ? widgetData.customFont : ""
   property string valueFormat: widgetData.format !== undefined ? widgetData.format : widgetMetadata.format
@@ -101,7 +101,7 @@ ColumnLayout {
 
   NComboBox {
     label: I18n.tr("common.select-color")
-    description: I18n.tr("bar.clock.select-color-description")
+    description: I18n.tr("common.select-color-description")
     model: [
       {
         "name": I18n.tr("common.none"),
