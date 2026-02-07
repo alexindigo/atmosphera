@@ -1202,9 +1202,13 @@ Singleton {
   }
 
   // Find available plugin by ID
-  function findAvailablePlugin(pluginId) {
+  function findAvailablePlugin(compositeKeyOrId) {
+    var parsed = PluginRegistry.parseCompositeKey(compositeKeyOrId);
+    var pluginId = parsed.pluginId;
+    var sourceUrl = PluginRegistry.getPluginSourceUrl(compositeKeyOrId);
+
     for (var i = 0; i < root.availablePlugins.length; i++) {
-      if (root.availablePlugins[i].id === pluginId) {
+      if (root.availablePlugins[i].id === pluginId && root.availablePlugins[i].source.url === sourceUrl) {
         return root.availablePlugins[i];
       }
     }
