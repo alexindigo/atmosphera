@@ -287,6 +287,7 @@ Singleton {
       property bool allowPasswordWithFprintd: false
       property string clockStyle: "custom"
       property string clockFormat: "hh\\nmm"
+      property list<string> lockScreenMonitors: [] // holds lock screen visibility per monitor
     }
 
     // ui
