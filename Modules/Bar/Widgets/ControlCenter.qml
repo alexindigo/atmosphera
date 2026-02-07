@@ -126,7 +126,7 @@ NIconButton {
   IconImage {
     id: customOrDistroLogo
     anchors.centerIn: parent
-    width: root.width * 0.8
+    width: root.buttonSize * 0.8
     height: width
     source: {
       if (useDistroLogo)
@@ -138,7 +138,7 @@ NIconButton {
     visible: source !== ""
     smooth: true
     asynchronous: true
-    layer.enabled: (enableColorization || hovering) && (useDistroLogo || customIconPath !== "")
+    layer.enabled: (enableColorization) && (useDistroLogo || customIconPath !== "")
     layer.effect: ShaderEffect {
       property color targetColor: !hovering ? iconColor : Color.mOnHover
       property real colorizeMode: 2.0
