@@ -1319,16 +1319,17 @@ Singleton {
   // Priority (when dGPU monitoring enabled): NVIDIA > AMD dGPU > Intel Arc > AMD iGPU
   // Priority (when dGPU monitoring disabled): AMD iGPU only (discrete GPUs skipped to preserve D3cold)
   function selectBestGpu() {
+    const dgpuEnabled = Settings.data.systemMonitor.enableDgpuMonitoring;
+
     if (root.foundGpuSensors.length === 0) {
       // No hwmon GPU sensors found, try thermal_zone fallback
-      if (root.gpuThermalZonePath === "" && root.gpuThermalZonePaths.length === 0) {
+      if (dgpuEnabled && root.gpuThermalZonePath === "" && root.gpuThermalZonePaths.length === 0) {
         // Thermal zone scanner hasn't found GPU zones yet; start a scan
         thermalZoneScanner.startScan();
       }
       return;
     }
 
-    const dgpuEnabled = Settings.data.systemMonitor.enableDgpuMonitoring;
     let best = null;
 
     for (var i = 0; i < root.foundGpuSensors.length; i++) {
