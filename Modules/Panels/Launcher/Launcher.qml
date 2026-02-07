@@ -1271,6 +1271,7 @@ SmartPanel {
                       model: parent.itemActions
                       NIconButton {
                         icon: modelData.icon
+                        baseSize: Style.baseWidgetSize * 0.75
                         tooltipText: modelData.tooltip
                         z: 1
                         onClicked: {
@@ -1655,6 +1656,7 @@ SmartPanel {
                     model: parent.gridItemActions
                     NIconButton {
                       icon: modelData.icon
+                      baseSize: Style.baseWidgetSize * 0.75
                       tooltipText: modelData.tooltip
                       z: 11
                       onClicked: {
