@@ -285,7 +285,6 @@ Singleton {
   function onDisplayScalesUpdated(scales) {
     displayScales = scales;
     saveDisplayScalesToCache();
-    displayScalesChanged();
     Logger.d("CompositorService", "Display scales updated");
   }
 
