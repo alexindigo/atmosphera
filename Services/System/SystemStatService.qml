@@ -703,8 +703,8 @@ Singleton {
         root.cpuThermalZonePaths = cpuZones.map(z => z.path);
         const types = cpuZones.map(z => z.type).join(", ");
         Logger.i("SystemStat", `Found ${cpuZones.length} CPU thermal zone(s): ${types}`);
-      } else {
-        Logger.w("No supported temperature sensor found");
+      } else if (root.cpuTempHwmonPath === "") {
+        Logger.w("SystemStat", "No supported temperature sensor found");
       }
 
       // GPU thermal zones
