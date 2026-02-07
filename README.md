@@ -124,7 +124,7 @@ Nix users can use the flake's devShell to access a development environment. Run 
 
 <p align="center">
   <a href="https://github.com/noctalia-dev/noctalia-shell/stargazers">
-    <img src="https://noctalia.dev:7777/stars" alt="Star History" />
+    <img src="https://api.noctalia.dev/stars" alt="Star History" />
   </a>
 </p>
 
