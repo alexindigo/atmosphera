@@ -285,6 +285,7 @@ Singleton {
           var validation = validateManifest(manifest);
 
           if (validation.valid) {
+            manifest.compositeKey = pluginId;
             root.installedPlugins[pluginId] = manifest;
             Logger.i("PluginRegistry", "Loaded plugin:", pluginId, "-", manifest.name);
 
@@ -330,6 +331,7 @@ Singleton {
           var validation = validateManifest(manifest);
 
           if (validation.valid) {
+            manifest.compositeKey = pluginId;
             root.installedPlugins[pluginId] = manifest;
             Logger.i("PluginRegistry", "Loaded plugin:", pluginId, "-", manifest.name);
 
@@ -425,6 +427,7 @@ Singleton {
   // sourceUrl is required for new plugins to generate composite key
   function registerPlugin(manifest, sourceUrl) {
     var compositeKey = generateCompositeKey(manifest.id, sourceUrl);
+    manifest.compositeKey = compositeKey;
     root.installedPlugins[compositeKey] = manifest;
 
     // Ensure state exists (default to disabled, store sourceUrl)
