@@ -85,7 +85,7 @@ Item {
     color: Style.capsuleColor
     border.color: Style.capsuleBorderColor
     border.width: Style.capsuleBorderWidth
-    visible: !root.hideWhenOff || (LockKeysService.capsLockOn || LockKeysService.numLockOn || LockKeysService.scrollLockOn)
+    visible: !root.hideWhenOff || (root.showCaps && LockKeysService.capsLockOn) || (root.showNum && LockKeysService.numLockOn) || (root.showScroll && LockKeysService.scrollLockOn)
 
     Item {
       id: layout
