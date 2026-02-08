@@ -97,7 +97,8 @@
     "autoStartAuth": false,
     "allowPasswordWithFprintd": false,
     "clockStyle": "custom",
-    "clockFormat": "hh\\nmm"
+    "clockFormat": "hh\\nmm",
+    "lockScreenMonitors": []
   },
   "ui": {
     "fontDefault": "",

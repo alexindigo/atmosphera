@@ -1180,6 +1180,8 @@
       "compact-lockscreen-label": "Endefram låseskjerm",
       "lock-on-suspend-description": "Låser skjermen automatisk når ein suspenderer systemet.",
       "lock-on-suspend-label": "Lås på suspendering",
+      "lock-screen-animations-description": "Slå på/av animasjonar på låseskjermen",
+      "lock-screen-animations-label": "Animasjonar på låseskjermen",
       "show-hibernate-description": "Viser 'Set i full dvale' i straumkontrollane.",
       "show-hibernate-label": "Vis full dvale",
       "show-session-buttons-description": "Tillèt at ein kann bruka straumkontrollane frå låseskjermen.",
@@ -1791,7 +1793,9 @@
     "wallhaven": {
       "loading": "Lastar inn bakgrunnsbilete...",
       "no-results": "Fann ingen bakgrunnsbilete. Prøv å søkja noko anna.",
-      "page": "{current} av {total}"
+      "page": "{current} av {total}",
+      "page-prefix": "Side",
+      "page-suffix": "av {total}"
     }
   },
   "weather": {

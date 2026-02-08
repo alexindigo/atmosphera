@@ -935,7 +935,8 @@
     "widget": "NToggle",
     "tab": 11,
     "tabLabel": "panels.lock-screen.title",
-    "subTab": null
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
   },
   {
     "labelKey": "panels.lock-screen.auto-start-auth-label",

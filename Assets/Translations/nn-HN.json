@@ -40,7 +40,7 @@
     "audio-visualizer": {
       "color-name-description": "Kjos lìten på framsyningi.",
       "color-name-label": "Fyllelìt",
-      "hide-when-idle-description": "Framsyningi løynest når dette er på, minder nokot spelar av.",
+      "hide-when-idle-description": "Framsyningi løynest når dette er på, minder noko spelar av.",
       "hide-when-idle-label": "Løyn når ingen ting spelar av",
       "width-description": "Sjølvvald lùtbreidd."
     },
@@ -132,7 +132,23 @@
       "show-icon-description": "Skifter um nøytelfråmerket er synlegt eller ikkje.",
       "show-icon-label": "Syn fråmerke",
       "text-stream-description": "Strøymde utfallssegner frå styrebodet syner seg som tekst på knappen.",
-      "text-stream-label": "Strøym"
+      "text-stream-label": "Strøym",
+      "wheel-description": "Styrebod som køyrer når ein rullar hjulet på musi.<br>Nytta $delta i styrebodet for hjulsbrigdi.",
+      "wheel-down-description": "Styrebod som køyrer når hjulet er rulla nedetter.",
+      "wheel-down-label": "Styrebod - nedetter",
+      "wheel-label": "Rullehjul",
+      "wheel-mode-separate-description": "Hav ulike styrebod når ein rullar uppetter og nedetter.",
+      "wheel-mode-separate-label": "Skilde hjulstyrebod",
+      "wheel-up-description": "Styrebod som køyrer når hjulet er rulla uppetter.",
+      "wheel-up-label": "Styrebod - uppetter",
+      "wheel-update-text": "Før upp ny tekst med rulling"
+    },
+    "keyboard-layout": {
+      "show-icon-description": "Syn merket for knappefjøluppsett."
+    },
+    "lock-keys": {
+      "hide-when-off-description": "Løyn sermerket når knappen ikkje er verksam.",
+      "hide-when-off-label": "Løyn når av"
     }
   },
   "common": {
