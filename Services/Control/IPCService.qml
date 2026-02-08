@@ -37,16 +37,97 @@ Item {
 
   IpcHandler {
     target: "settings"
-    function toggle() {
+
+    readonly property var _tabMap: ({
+                                      "about": SettingsPanel.Tab.About,
+                                      "audio": SettingsPanel.Tab.Audio,
+                                      "bar": SettingsPanel.Tab.Bar,
+                                      "colorscheme": SettingsPanel.Tab.ColorScheme,
+                                      "lockscreen": SettingsPanel.Tab.LockScreen,
+                                      "controlcenter": SettingsPanel.Tab.ControlCenter,
+                                      "desktopwidgets": SettingsPanel.Tab.DesktopWidgets,
+                                      "osd": SettingsPanel.Tab.OSD,
+                                      "display": SettingsPanel.Tab.Display,
+                                      "dock": SettingsPanel.Tab.Dock,
+                                      "general": SettingsPanel.Tab.General,
+                                      "hooks": SettingsPanel.Tab.Hooks,
+                                      "launcher": SettingsPanel.Tab.Launcher,
+                                      "location": SettingsPanel.Tab.Location,
+                                      "network": SettingsPanel.Tab.Network,
+                                      "notifications": SettingsPanel.Tab.Notifications,
+                                      "plugins": SettingsPanel.Tab.Plugins,
+                                      "sessionmenu": SettingsPanel.Tab.SessionMenu,
+                                      "systemmonitor": SettingsPanel.Tab.SystemMonitor,
+                                      "userinterface": SettingsPanel.Tab.UserInterface,
+                                      "wallpaper": SettingsPanel.Tab.Wallpaper
+                                    })
+
+    function _parseTabArg(tabArg) {
+      var parts = tabArg.split("/");
+      var tabId = _resolveTab(parts[0]);
+      var subTabId = parts.length > 1 ? parseInt(parts[1]) : -1;
+      return {
+        "tab": tabId,
+        "subTab": isNaN(subTabId) ? -1 : subTabId
+      };
+    }
+
+    function _resolveTab(tabName) {
+      if (!tabName)
+        return SettingsPanel.Tab.General;
+      var key = tabName.toLowerCase().replace(/[-_]/g, "");
+      if (key in _tabMap)
+        return _tabMap[key];
+      Logger.w("IPC", "Unknown settings tab: " + tabName);
+      return SettingsPanel.Tab.General;
+    }
+
+    function _toggle(tabId, subTabId) {
       if (Settings.data.ui.settingsPanelMode === "window") {
-        SettingsPanelService.toggleWindow(SettingsPanel.Tab.General);
+        if (SettingsPanelService.isWindowOpen) {
+          SettingsPanelService.closeWindow();
+        } else {
+          SettingsPanelService.openToTab(tabId, subTabId);
+        }
       } else {
         root.screenDetector.withCurrentScreen(screen => {
                                                 var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-                                                settingsPanel.requestedTab = SettingsPanel.Tab.General;
-                                                settingsPanel?.toggle();
+                                                if (settingsPanel?.isPanelOpen) {
+                                                  settingsPanel.close();
+                                                } else {
+                                                  settingsPanel?.openToTab(tabId, subTabId);
+                                                }
                                               });
       }
+    }
+
+    function _open(tabId, subTabId) {
+      if (Settings.data.ui.settingsPanelMode === "window") {
+        SettingsPanelService.openToTab(tabId, subTabId);
+      } else {
+        root.screenDetector.withCurrentScreen(screen => {
+                                                var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+                                                settingsPanel?.openToTab(tabId, subTabId);
+                                              });
+      }
+    }
+
+    function toggle() {
+      _toggle(SettingsPanel.Tab.General, -1);
+    }
+
+    function toggleTab(tab: string) {
+      var parsed = _parseTabArg(tab);
+      _toggle(parsed.tab, parsed.subTab);
+    }
+
+    function open() {
+      _open(SettingsPanel.Tab.General, -1);
+    }
+
+    function openTab(tab: string) {
+      var parsed = _parseTabArg(tab);
+      _open(parsed.tab, parsed.subTab);
     }
   }
 
