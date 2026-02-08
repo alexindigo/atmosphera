@@ -517,6 +517,12 @@ Singleton {
   function lockAndSuspend() {
     Logger.i("Compositor", "Lock and suspend requested");
 
+    // if a custom lock command exists, execute it and suspend without wait
+    if (executeSessionAction("lock")) {
+      suspend();
+      return;
+    }
+
     // If already locked, suspend immediately
     if (PanelService && PanelService.lockScreen && PanelService.lockScreen.active) {
       Logger.i("Compositor", "Screen already locked, suspending");
