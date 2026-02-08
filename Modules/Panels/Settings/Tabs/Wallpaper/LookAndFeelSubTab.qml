@@ -76,6 +76,7 @@ ColumnLayout {
     description: I18n.tr("panels.wallpaper.llook-feel-overview-blur-description")
     from: 0.0
     to: 1.5
+    stepSize: 0.01
     value: Settings.data.wallpaper.overviewBlur
     onMoved: value => Settings.data.wallpaper.overviewBlur = value
     text: Math.round(Settings.data.wallpaper.overviewBlur).toFixed(1)
@@ -88,6 +89,7 @@ ColumnLayout {
     description: I18n.tr("panels.wallpaper.look-feel-overview-tint-description")
     from: 0.0
     to: 1.0
+    stepSize: 0.01
     value: Settings.data.wallpaper.overviewTint
     onMoved: value => Settings.data.wallpaper.overviewTint = value
     text: Math.round(Settings.data.wallpaper.overviewTint).toFixed(1)
