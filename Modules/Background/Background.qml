@@ -94,13 +94,23 @@ Variants {
       Connections {
         target: CompositorService
         function onDisplayScalesChanged() {
-          if (isStartupTransition) {
+          const currentPath = WallpaperService.getWallpaper(modelData.name);
+          if (!currentPath || WallpaperService.isSolidColorPath(currentPath)) {
             return;
           }
-          const currentPath = WallpaperService.getWallpaper(modelData.name);
-          if (currentPath) {
-            requestPreprocessedWallpaper(currentPath);
+
+          if (isStartupTransition) {
+            // During startup, just ensure the correct cache exists without visual changes
+            const compositorScale = CompositorService.getDisplayScale(modelData.name);
+            const targetWidth = Math.round(modelData.width * compositorScale);
+            const targetHeight = Math.round(modelData.height * compositorScale);
+            ImageCacheService.getLarge(currentPath, targetWidth, targetHeight, function (cachedPath, success) {
+              WallpaperService.wallpaperProcessingComplete(modelData.name, currentPath, success ? cachedPath : "");
+            });
+            return;
           }
+
+          requestPreprocessedWallpaper(currentPath);
         }
       }
 

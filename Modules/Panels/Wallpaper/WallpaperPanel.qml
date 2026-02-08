@@ -426,6 +426,19 @@ SmartPanel {
             }
 
             NComboBox {
+              visible: Settings.data.colorSchemes.useWallpaperColors
+              Layout.fillWidth: false
+              Layout.minimumWidth: 200
+              minimumWidth: 200
+              model: TemplateProcessor.schemeTypes
+              currentKey: Settings.data.colorSchemes.generationMethod
+              onSelected: key => {
+                            Settings.data.colorSchemes.generationMethod = key;
+                            AppThemeService.generate();
+                          }
+            }
+
+            NComboBox {
               id: sourceComboBox
               Layout.fillWidth: false
 
@@ -738,20 +751,6 @@ SmartPanel {
         }
 
         // Right side: actions (view mode, hide filenames, refresh)
-        NComboBox {
-          visible: Settings.data.colorSchemes.useWallpaperColors
-          baseSize: 0.8
-          Layout.minimumWidth: 200
-          minimumWidth: 200
-          //tooltip: I18n.tr("panels.color-scheme.wallpaper-method-label")
-          model: TemplateProcessor.schemeTypes
-          currentKey: Settings.data.colorSchemes.generationMethod
-          onSelected: key => {
-                        Settings.data.colorSchemes.generationMethod = key;
-                        AppThemeService.generate();
-                      }
-        }
-
         NIconButton {
           property string sortOrder: Settings.data.wallpaper.sortOrder || "name"
           icon: {
