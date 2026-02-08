@@ -392,8 +392,10 @@ NBox {
                     // Map section IDs to correct position keys based on bar orientation
                     var positionKey = section;
                     if (root.barIsVertical) {
-                      if (section === "left") positionKey = "top";
-                      else if (section === "right") positionKey = "bottom";
+                      if (section === "left")
+                        positionKey = "top";
+                      else if (section === "right")
+                        positionKey = "bottom";
                     }
                     if (I18n.hasTranslation("positions." + positionKey)) {
                       displayLabel = I18n.tr("positions." + positionKey);
