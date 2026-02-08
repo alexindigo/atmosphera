@@ -57,6 +57,20 @@ Variants {
         return pos;
       }
 
+      // Preview panel support
+      readonly property int listPanelWidth: Math.round(500 * Style.uiScaleRatio)
+      readonly property int previewPanelWidth: Math.round(400 * Style.uiScaleRatio)
+      readonly property bool previewActive: {
+        if (!launcherCore)
+          return false;
+        var provider = launcherCore.activeProvider;
+        if (!provider || !provider.hasPreview)
+          return false;
+        if (!Settings.data.appLauncher.enableClipPreview)
+          return false;
+        return launcherCore.selectedIndex >= 0 && launcherCore.results && !!launcherCore.results[launcherCore.selectedIndex];
+      }
+
       // Dimmer background (click to close)
       Rectangle {
         anchors.fill: parent
@@ -78,8 +92,8 @@ Variants {
       // Launcher panel with position-based anchoring
       Item {
         id: launcherPanel
-        width: Math.round(500 * Style.uiScaleRatio) + (Style.marginL * 2)
-        height: Math.round(600 * Style.uiScaleRatio)
+        width: Math.round(Math.max(parent.width * 0.25, launcherWindow.listPanelWidth + (Style.marginL * 2)))
+        height: Math.round(Math.max(parent.height * 0.5, 600 * Style.uiScaleRatio))
         clip: false
 
         // Entrance animation
@@ -297,6 +311,84 @@ Variants {
 
           Component.onCompleted: PanelService.overlayLauncherCore = launcherCore
           Component.onDestruction: PanelService.overlayLauncherCore = null
+        }
+
+        // Preview Panel - clipboard preview positioned outside panel bounds
+        NDropShadow {
+          source: previewBox
+          anchors.fill: previewBox
+          autoPaddingEnabled: true
+          visible: previewBox.visible
+        }
+
+        NBox {
+          id: previewBox
+          visible: launcherWindow.previewActive
+          width: launcherWindow.previewPanelWidth
+          height: Math.round(400 * Style.uiScaleRatio)
+          x: panelPosition.endsWith("_right") ? -(launcherWindow.previewPanelWidth + Style.marginM) : launcherPanel.width + Style.marginM
+          y: {
+            var view = launcherCore.resultsView;
+            if (!view)
+              return Style.marginL;
+            var row = launcherCore.isGridView ? Math.floor(launcherCore.selectedIndex / launcherCore.gridColumns) : launcherCore.selectedIndex;
+            var gridCellSize = Math.floor((launcherWindow.listPanelWidth - (2 * Style.marginXS) - ((launcherCore.targetGridColumns - 1) * Style.marginS)) / launcherCore.targetGridColumns);
+            var itemHeight = launcherCore.isGridView ? (gridCellSize + Style.marginXXS) : (launcherCore.entryHeight + (view.spacing || 0));
+            var yPos = row * itemHeight - (view.contentY || 0);
+            var mapped = view.mapToItem(launcherPanel, 0, yPos);
+            return Math.max(Style.marginL, Math.min(mapped.y, launcherPanel.height - previewBox.height - Style.marginL));
+          }
+          z: -1
+
+          opacity: visible ? 1.0 : 0.0
+          Behavior on opacity {
+            NumberAnimation {
+              duration: Style.animationFast
+            }
+          }
+          Behavior on y {
+            NumberAnimation {
+              duration: Style.animationFast
+              easing.type: Easing.OutCubic
+            }
+          }
+
+          Loader {
+            id: previewLoader
+            anchors.fill: parent
+            active: launcherWindow.previewActive
+            source: {
+              if (!active)
+                return "";
+              var provider = launcherCore.activeProvider;
+              if (provider && provider.previewComponentPath)
+                return provider.previewComponentPath;
+              return "";
+            }
+
+            onLoaded: updatePreviewItem()
+            onItemChanged: updatePreviewItem()
+
+            function updatePreviewItem() {
+              if (!item || launcherCore.selectedIndex < 0 || !launcherCore.results[launcherCore.selectedIndex])
+                return;
+              var provider = launcherCore.activeProvider;
+              if (provider && provider.getPreviewData) {
+                item.currentItem = provider.getPreviewData(launcherCore.results[launcherCore.selectedIndex]);
+              } else {
+                item.currentItem = launcherCore.results[launcherCore.selectedIndex];
+              }
+            }
+          }
+        }
+
+        // Update preview when selection changes
+        Connections {
+          target: launcherCore
+          function onSelectedIndexChanged() {
+            if (previewLoader.item)
+              previewLoader.updatePreviewItem();
+          }
         }
       }
     }
