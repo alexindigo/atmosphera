@@ -1296,6 +1296,8 @@
       "available-label": "Beschikbare plug-ins",
       "available-no-plugins-description": "Controleer je plugin-bronnen of vernieuw de lijst.",
       "available-no-plugins-label": "Geen plug-ins beschikbaar",
+      "check-for-updates": "Controleren op updates",
+      "checking-for-updates": "Controleren op updates...",
       "collision-already-installed": "Deze plugin is al geïnstalleerd",
       "collision-custom-version-exists": "Er is al een aangepaste versie van \"{source}\" geïnstalleerd",
       "collision-official-version-exists": "De officiële versie van deze plugin is al geïnstalleerd",
@@ -1536,7 +1538,7 @@
   "setup": {
     "all-done": "Klaar!",
     "appearance": {
-      "subheader": "Kies donkere modus en kleurbronnen (Achtergrond of voorgedefinieerd)."
+      "subheader": "Kies donkere modus en kleurbronnen (achtergrond of voorgedefinieerd)."
     },
     "customize": {
       "header": "Pas je ervaring aan",

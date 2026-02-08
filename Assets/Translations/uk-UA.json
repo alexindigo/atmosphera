@@ -1296,6 +1296,8 @@
       "available-label": "Доступні плагіни",
       "available-no-plugins-description": "Перевірте вихідні коди вашого плагіна або оновіть список.",
       "available-no-plugins-label": "Немає доступних плагінів",
+      "check-for-updates": "Перевірити оновлення",
+      "checking-for-updates": "Перевірка оновлень...",
       "collision-already-installed": "Цей плагін вже встановлено",
       "collision-custom-version-exists": "Вже встановлено власну версію з \"{source}\"",
       "collision-official-version-exists": "Офіційна версія цього плагіна вже встановлена",
@@ -1536,7 +1538,7 @@
   "setup": {
     "all-done": "Готово!",
     "appearance": {
-      "subheader": "Виберіть темний режим і джерела кольорів (Шпалери або попередньо визначені)."
+      "subheader": "Виберіть темний режим і джерела кольорів (шпалери або попередньо визначені)."
     },
     "customize": {
       "header": "Налаштуйте ваш досвід",

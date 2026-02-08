@@ -1296,6 +1296,8 @@
       "available-label": "Verfügbare Plugins",
       "available-no-plugins-description": "Überprüfen Sie Ihre Plugin-Quellen oder aktualisieren Sie die Liste.",
       "available-no-plugins-label": "Keine Plugins verfügbar",
+      "check-for-updates": "Nach Updates suchen",
+      "checking-for-updates": "Prüfe auf Updates...",
       "collision-already-installed": "Dieses Plugin ist bereits installiert",
       "collision-custom-version-exists": "Eine benutzerdefinierte Version von \"{source}\" ist bereits installiert",
       "collision-official-version-exists": "Die offizielle Version dieses Plugins ist bereits installiert",

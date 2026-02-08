@@ -802,8 +802,8 @@
     "color-scheme": {
       "color-source-use-wallpaper-colors-description": "Lagar fargeskala frå bakgrunnsbiletet ditt. Vel fargar automatisk for å skapa ein samanhengande skala.",
       "color-source-use-wallpaper-colors-label": "Bruk bakgrunnsfargar",
-      "dark-mode-mode-description": "Slår på automatisk byte mellom Ljos- og Mørkemodus.",
-      "dark-mode-mode-label": "Tidsplan for Mørkemodus",
+      "dark-mode-mode-description": "Slår på automatisk byte mellom ljos- og mørkemodus.",
+      "dark-mode-mode-label": "Tidsplan for mørkemodus",
       "dark-mode-mode-manual": "For hand",
       "dark-mode-mode-off": "Av",
       "dark-mode-switch-description": "Byter til mørkare tema for å lettare sjå om natta.",
@@ -955,7 +955,7 @@
       "night-light-auto-schedule-label": "Automatisk timeplan",
       "night-light-desc": "Minkar blåljos for å hjelpa med svevn og mot trøytte augo.",
       "night-light-enable-description": "Gjev eit varmt fargefilter for å minka blåljos",
-      "night-light-enable-label": "Slå på Natteljos",
+      "night-light-enable-label": "Slå på natteljos",
       "night-light-force-activation-description": "Ser bort ifrå timeplanen og set nattefilteret på med det same.",
       "night-light-force-activation-label": "Tving filter",
       "night-light-manual-schedule-description": "Set eigendefinerte tider for solrenning og solglad.",
@@ -1045,15 +1045,15 @@
     },
     "hooks": {
       "info-command-info-description": "• Kommandoar køyrer i skal (sh -lc)<br>• Kommandoar køyrer i bakgrunnen (ufeste)<br>• Prøveknappar køyrer med noverande verdiar",
-      "info-parameters-description": "Bakgrunnskrok: $1 = bakgrunnsbane, $2 = skjermnamn<br>• Tema brytarkrok: $1 = sann/usann (Mørkemodus-status)<br>• Skjermopplåsings-/ulåsingskrokar: Ingen parametrar<br>• Ytingsmoduskrokar: Ingen parametrar<br>• Øktskrok: $1 = handling (Slå av/starta å nyo)",
+      "info-parameters-description": "Bakgrunnskrok: $1 = bakgrunnsbane, $2 = skjermnamn<br>• Tema brytarkrok: $1 = sann/usann (mørkemodus-status)<br>• Skjermopplåsings-/ulåsingskrokar: Ingen parametrar<br>• Ytingsmoduskrokar: Ingen parametrar<br>• Øktskrok: $1 = handling (Slå av/starta å nyo)",
       "info-parameters-label": "Tilgjengelege parametrar",
       "noctalia-started-description": "Kommandoen som køyrer når Noctalia er ferdig med å lasta inn.",
       "noctalia-started-label": "Noctalia byrja",
       "noctalia-started-placeholder": "t.d. notify-send 'Noctalia lasta inn'",
-      "performance-mode-disabled-description": "Kommandoen som køyrer når Noctalia Ytingsmodus er avslege.",
+      "performance-mode-disabled-description": "Kommandoen som køyrer når Noctalia ytingsmodus er avslege.",
       "performance-mode-disabled-label": "Ytingsmodus av",
       "performance-mode-disabled-placeholder": "t.d. notify-send \"Yting\" \"Modus avslege\"",
-      "performance-mode-enabled-description": "Kommandoen som køyrer når Noctalia Ytingsmodus er på.",
+      "performance-mode-enabled-description": "Kommandoen som køyrer når Noctalia ytingsmodus er på.",
       "performance-mode-enabled-label": "Ytingsmodus på",
       "performance-mode-enabled-placeholder": "t.d. notify-send \"Yting\" \"Modus påslege\"",
       "screen-lock-description": "Kommandoen som køyrer når skjermen er låst.",
@@ -1290,6 +1290,8 @@
       "types-volume-label": "Utdata-ljodstyrke"
     },
     "plugins": {
+      "auto-update": "Oppdater plugins automatisk",
+      "auto-update-description": "Oppdaterer alle plugins automatisk når skalet byrjar.",
       "available-description": "Leit etter og installer plugins frå tilmåta kjelder.",
       "available-label": "Tilgjengelege plugins",
       "available-no-plugins-description": "Sjekk pluginkjeldene dine eller lasta inn lista å nyo.",
@@ -1534,7 +1536,7 @@
   "setup": {
     "all-done": "Ferdig!",
     "appearance": {
-      "subheader": "Vel Mørkmodus og fargekjelder (Bakgrunnsbilete eller eigendefinert)."
+      "subheader": "Vel mørkemodus og fargekjelder (bakgrunnsbilete eller eigendefinert)."
     },
     "customize": {
       "header": "Skreddersy opplevinga di",
@@ -1698,7 +1700,7 @@
     "next-media": "Neste song",
     "next-month": "Neste månad",
     "night-light-not-installed": "Natteljos (ikkje tilgjengeleg)",
-    "noctalia-performance-enabled": "Noctalia Ytingsmodus",
+    "noctalia-performance-enabled": "Noctalia ytingsmodus",
     "open-annotation-tool": "Opna med merknadsverktøyet",
     "open-control-center": "Kontrollsenter",
     "open-notification-history-enable-dnd": "Varselhistorikk",

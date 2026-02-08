@@ -1296,6 +1296,8 @@
       "available-label": "可用插件",
       "available-no-plugins-description": "检查你的插件源或刷新列表。",
       "available-no-plugins-label": "没有可用的插件",
+      "check-for-updates": "检查更新",
+      "checking-for-updates": "正在检查更新...",
       "collision-already-installed": "此插件已安装",
       "collision-custom-version-exists": "来自“{source}”的自定义版本已安装",
       "collision-official-version-exists": "此插件的官方版本已安装",
@@ -1643,7 +1645,7 @@
     "noctalia-performance": {
       "disabled": "性能模式已禁用",
       "enabled": "已启用性能模式",
-      "label": "Noctalia 性能"
+      "label": "Noctalia 性能模式"
     },
     "power-profile": {
       "changed": "电源模式已更改",

@@ -1296,6 +1296,8 @@
       "available-label": "Dostępne wtyczki",
       "available-no-plugins-description": "Sprawdź źródła wtyczek lub odśwież listę.",
       "available-no-plugins-label": "Brak dostępnych wtyczek",
+      "check-for-updates": "Sprawdź aktualizacje",
+      "checking-for-updates": "Sprawdzanie aktualizacji...",
       "collision-already-installed": "Ta wtyczka jest już zainstalowana",
       "collision-custom-version-exists": "Niestandardowa wersja z \"{source}\" jest już zainstalowana",
       "collision-official-version-exists": "Oficjalna wersja tej wtyczki jest już zainstalowana",
@@ -1536,7 +1538,7 @@
   "setup": {
     "all-done": "Gotowe!",
     "appearance": {
-      "subheader": "Wybierz tryb ciemny i źródła kolorów (Tapeta lub predefiniowane)."
+      "subheader": "Wybierz tryb ciemny i źródła kolorów (tapeta lub predefiniowane)."
     },
     "customize": {
       "header": "Dostosuj swoje doświadczenie",

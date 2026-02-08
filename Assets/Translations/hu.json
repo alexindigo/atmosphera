@@ -1296,6 +1296,8 @@
       "available-label": "Elérhető bővítmények",
       "available-no-plugins-description": "Ellenőrizze a bővítményforrásokat, vagy frissítse a listát.",
       "available-no-plugins-label": "Nincsenek elérhető bővítmények",
+      "check-for-updates": "Frissítések keresése",
+      "checking-for-updates": "Frissítések keresése...",
       "collision-already-installed": "Ez a bővítmény már telepítve van",
       "collision-custom-version-exists": "Egyéni verzió a következő helyről: \"{source}\" már telepítve van",
       "collision-official-version-exists": "A plugin hivatalos verziója már telepítve van",
@@ -1536,7 +1538,7 @@
   "setup": {
     "all-done": "Kész!",
     "appearance": {
-      "subheader": "Válaszd ki a sötét módot és a színforrásokat (Háttérkép vagy előre meghatározott)."
+      "subheader": "Válaszd ki a sötét módot és a színforrásokat (háttérkép vagy előre meghatározott)."
     },
     "customize": {
       "header": "Tapasztalat testreszabása",

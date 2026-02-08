@@ -1296,6 +1296,8 @@
       "available-label": "利用可能なプラグイン",
       "available-no-plugins-description": "プラグインのソースを確認するか、リストを更新してください。",
       "available-no-plugins-label": "利用可能なプラグインはありません",
+      "check-for-updates": "アップデートを確認",
+      "checking-for-updates": "アップデートを確認しています...",
       "collision-already-installed": "このプラグインはすでにインストールされています",
       "collision-custom-version-exists": "「{source}」 発 の カスタム版 は 既に インストール されています",
       "collision-official-version-exists": "このプラグインの公式バージョンはすでにインストールされています",

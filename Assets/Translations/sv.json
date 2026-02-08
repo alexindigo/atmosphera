@@ -60,8 +60,8 @@
       "hide-if-not-detected-label": "Dölj när inte upptäckt",
       "low-battery-threshold-description": "Visa en varning när batteriet sjunker under denna procentandel.",
       "low-battery-threshold-label": "Varningsgräns för lågt batteri",
-      "show-noctalia-performance-description": "Visa växlingsknappen för Noctalia Performance Mode i batteripanelen.<br>Inaktiverar skuggor och animationer i Noctalia för att minska resursanvändningen.",
-      "show-noctalia-performance-label": "Visa Noctalia Performance-växeln",
+      "show-noctalia-performance-description": "Visa växeln för Noctalia prestandaläget i batteripanelen.<br>Inaktiverar skuggor och animationer i Noctalia för att minska resursanvändningen.",
+      "show-noctalia-performance-label": "Visa Noctalia Prestandaväxeln",
       "show-power-profile-description": "Visa valet av strömprofil i batteripanelen.",
       "show-power-profile-label": "Visa strömprofilkontroller"
     },
@@ -1050,12 +1050,12 @@
       "noctalia-started-description": "Kommando som ska utföras när Noctalia har laddats klart.",
       "noctalia-started-label": "Noctalia startat",
       "noctalia-started-placeholder": "t.ex. notify-send \"Noctalia laddat\"",
-      "performance-mode-disabled-description": "Kommando som ska utföras när Noctalia Performance Mode är inaktiverat.",
-      "performance-mode-disabled-label": "Performance mode inaktiverat",
-      "performance-mode-disabled-placeholder": "t.ex. notify-send \"Performance\"\"Mode inaktiverat\"",
-      "performance-mode-enabled-description": "Kommando som ska utföras när Noctalia Performance Mode är aktiverat.",
-      "performance-mode-enabled-label": "Performance mode aktiverat",
-      "performance-mode-enabled-placeholder": "t.ex. notify-send \"Performance\"\"Mode aktiverat\"",
+      "performance-mode-disabled-description": "Kommando som ska utföras när Noctalia prestandaläget är inaktiverat.",
+      "performance-mode-disabled-label": "Prestandaläget inaktiverat",
+      "performance-mode-disabled-placeholder": "t.ex. notify-send \"Prestanda\"\"Läget inaktiverat\"",
+      "performance-mode-enabled-description": "Kommando som ska utföras när Noctalia prestandaläget är aktiverat.",
+      "performance-mode-enabled-label": "Prestandaläget aktiverat",
+      "performance-mode-enabled-placeholder": "t.ex. notify-send \"Prestanda\"\"Läget aktiverat\"",
       "screen-lock-description": "Kommando som ska utföras när skärmen är låst.",
       "screen-lock-label": "Skärm låst",
       "screen-lock-placeholder": "t.ex. notify-send \"Skärm\"\"Låst\"",
@@ -1296,6 +1296,8 @@
       "available-label": "Tillgängliga insticksmoduler",
       "available-no-plugins-description": "Kontrollera dina instickskällor eller uppdatera listan.",
       "available-no-plugins-label": "Inga insticksmoduler tillgängliga",
+      "check-for-updates": "Sök efter uppdateringar",
+      "checking-for-updates": "Söker efter uppdateringar...",
       "collision-already-installed": "Denna insticksmodul är redan installerad",
       "collision-custom-version-exists": "En anpassad version från \"{source}\"är redan installerad",
       "collision-official-version-exists": "Den officiella versionen av denna insticksmodul är redan installerad",
@@ -1536,7 +1538,7 @@
   "setup": {
     "all-done": "Allt klart!",
     "appearance": {
-      "subheader": "Välj mörkt läge och färgkällor (Bakgrundsbild eller fördefinierade)."
+      "subheader": "Välj mörkt läge och färgkällor (bakgrundsbild eller fördefinierade)."
     },
     "customize": {
       "header": "Anpassa din upplevelse",
@@ -1643,7 +1645,7 @@
     "noctalia-performance": {
       "disabled": "Prestandaläget inaktiverat",
       "enabled": "Prestandaläget aktiverat",
-      "label": "Noctalia Performance"
+      "label": "Noctalia Prestanda"
     },
     "power-profile": {
       "changed": "Strömprofil ändrad",
@@ -1700,7 +1702,7 @@
     "next-media": "Nästa spår",
     "next-month": "Nästa månad",
     "night-light-not-installed": "Nattlampa (inte tillgänglig)",
-    "noctalia-performance-enabled": "Noctalia Performance Mode",
+    "noctalia-performance-enabled": "Noctalia prestandaläget",
     "open-annotation-tool": "Öppna med anteckningsverktyg",
     "open-control-center": "Kontrollcenter",
     "open-notification-history-enable-dnd": "Aviseringshistorik",

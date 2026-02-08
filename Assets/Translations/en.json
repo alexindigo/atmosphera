@@ -1296,6 +1296,8 @@
       "available-label": "Available plugins",
       "available-no-plugins-description": "Check your plugin sources or refresh the list.",
       "available-no-plugins-label": "No plugins available",
+      "check-for-updates": "Check for updates",
+      "checking-for-updates": "Checking for updates...",
       "collision-already-installed": "This plugin is already installed",
       "collision-custom-version-exists": "A custom version from \"{source}\" is already installed",
       "collision-official-version-exists": "The official version of this plugin is already installed",
@@ -1536,7 +1538,7 @@
   "setup": {
     "all-done": "All Done!",
     "appearance": {
-      "subheader": "Choose Dark Mode and color sources (Wallpaper or predefined)."
+      "subheader": "Choose Dark Mode and color sources (wallpaper or predefined)."
     },
     "customize": {
       "header": "Customize your experience",

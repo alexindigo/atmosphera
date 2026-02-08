@@ -1296,6 +1296,8 @@
       "available-label": "사용 가능한 플러그인",
       "available-no-plugins-description": "플러그인 소스를 확인하거나 목록을 새로고침하세요.",
       "available-no-plugins-label": "사용 가능한 플러그인 없음",
+      "check-for-updates": "업데이트 확인",
+      "checking-for-updates": "업데이트 확인 중...",
       "collision-already-installed": "이 플러그인은 이미 설치되어 있습니다",
       "collision-custom-version-exists": "\"{source}\"의 사용자 지정 버전이 이미 설치되어 있습니다",
       "collision-official-version-exists": "이 플러그인의 공식 버전이 이미 설치되어 있습니다",

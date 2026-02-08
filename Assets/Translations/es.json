@@ -477,7 +477,7 @@
     "sources": "Fuentes",
     "start": "Comienzo",
     "stop": "Parar",
-    "supporters": "Apoyadores",
+    "supporters": "Patrocinadores",
     "suspend": "Suspender",
     "templates": "Plantillas",
     "tertiary": "Terciario",
@@ -1296,6 +1296,8 @@
       "available-label": "Plugins disponibles",
       "available-no-plugins-description": "Comprueba las fuentes de tu plugin o actualiza la lista.",
       "available-no-plugins-label": "No hay plugins disponibles",
+      "check-for-updates": "Buscar actualizaciones",
+      "checking-for-updates": "Buscando actualizaciones...",
       "collision-already-installed": "Este plugin ya está instalado",
       "collision-custom-version-exists": "Ya hay instalada una versión personalizada de \"{source}\"",
       "collision-official-version-exists": "La versión oficial de este plugin ya está instalada",
@@ -1536,7 +1538,7 @@
   "setup": {
     "all-done": "¡Listo!",
     "appearance": {
-      "subheader": "Elige el modo oscuro y las fuentes de color (Fondo de pantalla o predefinidas)."
+      "subheader": "Elige el modo oscuro y las fuentes de color (fondo de pantalla o predefinidas)."
     },
     "customize": {
       "header": "Personaliza tu experiencia",
@@ -1717,8 +1719,8 @@
     "search-close": "Cerrar búsqueda",
     "session-menu": "Menú de sesión",
     "show-all-devices": "Mostrar todos los dispositivos",
-    "switch-to-dark-mode": "Modo Oscuro",
-    "switch-to-light-mode": "Modo Claro",
+    "switch-to-dark-mode": "Modo oscuro",
+    "switch-to-light-mode": "Modo claro",
     "unmute": "Activar el audio",
     "up": "Directorio superior",
     "volume-at": "Volumen de salida: {volume}%",

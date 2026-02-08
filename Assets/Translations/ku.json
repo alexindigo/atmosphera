@@ -48,6 +48,10 @@
       "device-default": "Berdest (Amûra dîmenderê)",
       "device-description": "Ka kîjan amûrê betarî hilbijêre ku were nîşandan.",
       "device-label": "Amûrê betarî",
+      "display-mode-graphic": "Betariyê grafîkî",
+      "display-mode-graphic-clean": "Betariyê grafîkî (bê %)",
+      "display-mode-icon-always": "Îkon - Her dem nîşan bide %",
+      "display-mode-icon-only": "Tenê îkon",
       "hide-if-idle-description": "Dema ku betarî neyê tijîkirin an valakirin, sepanokê veşêre.",
       "hide-if-idle-label": "Dema de bêkar veşêre",
       "hide-if-not-detected-description": "Dema betarî li ser pergalê neyê dîtin, sepanokê veşêre.",
@@ -184,7 +188,7 @@
       "unread-badge-color-label": "Rengê nîşana nexwendî"
     },
     "section-editor": {
-      "placeholder": "Widgetekek hilbijêre ku lê zêde bike...",
+      "placeholder": "Sepanokekê hilbijêre ku lê tevlî bikî...",
       "search-placeholder": "Sepanokê bigere..."
     },
     "spacer": {
@@ -208,6 +212,7 @@
       "memory-usage-label": "Bikaranîna bîrê",
       "network-traffic-description": "Leza leza barkirina torê û dakêşana torê nîşan bide.",
       "network-traffic-label": "Trafîka torê",
+      "storage-as-percentage-label": "Dîsk wekî rêje",
       "storage-usage-description": "Agahiyên bikaranîna cîhê dîskê nîşan bide.",
       "storage-usage-label": "Bikaranîna hilanînê",
       "swap-usage-description": "Bikaranîna bîra swapê nîşan bide.",
@@ -239,6 +244,7 @@
       "title-width-reset-tooltip": "Firehiya firehiya sernavê"
     },
     "tray": {
+      "chevron-color-label": "Rengê chevron",
       "colorize-icons-description": "Rengên rûkarê li ser îkonên devera agahiyê bisepîne.",
       "colorize-icons-label": "Îkonan rengîn bike",
       "drawer-enabled-description": "Dema ku çalak be, hêmanên trayê yên nehatine pin kirin di panelek dolabê de têne xuyang kirin.<br>Dema ku neçalak be, hemî hêmanên trayê inline têne xuyang kirin.",
@@ -367,7 +373,7 @@
     "countdown": "Jimartin",
     "date": "Dîrok",
     "default": "Xwerû",
-    "delete": "Jêbirin",
+    "delete": "Jê bibe",
     "devices": "Amûr",
     "disabled": "Nabe kar",
     "discharging": "Deravkirin",
@@ -378,10 +384,11 @@
     "duration": "Dirêjahî",
     "edit": "Biguherîne",
     "enabled": "Çalak",
+    "error": "Şaşetî",
     "events": "Bûyer",
     "execute": "Bicîh bîne",
     "faithful": "Dilsoz",
-    "focus": "Bala serincê",
+    "focus": "Balê bide",
     "frequency": "Frekans",
     "gateway": "Dergeh",
     "general": "Giştî",
@@ -433,6 +440,7 @@
     "primary": "Serekî",
     "random": "Bêserûber",
     "reboot": "Ji nû dest pê bike",
+    "record": "tomarkirinê dest pê bike",
     "refresh": "Nûkirin",
     "required": "(pêwîst)",
     "reset": "Vegerandin",
@@ -446,6 +454,8 @@
     "secondary": "Duyemîn",
     "security": "Ewlehî",
     "select": "Hilbijêre",
+    "select-color": "Rengê hilbijêre",
+    "select-icon-color": "Rengê îkonê hilbijêre",
     "shortcuts": "Kurterê",
     "shutdown": "Vemrîne",
     "signal": "Sînyal",
@@ -453,6 +463,7 @@
     "sources": "Çavkanî",
     "start": "Destpêkirin",
     "stop": "Raweste",
+    "supporters": "Piştgir",
     "suspend": "Rawestîne",
     "templates": "Şablonan",
     "tertiary": "Sêyemîn",
@@ -464,7 +475,7 @@
     "uninstall": "Rakirin",
     "unknown": "Nenas",
     "unpair": "Hevparekê berdan",
-    "unpin": "Jêbirin",
+    "unpin": "Bi dar nexe",
     "update": "Nûkirin",
     "upload": "Barkirin",
     "version": "Guherto",
@@ -641,6 +652,7 @@
       "noctalia-title": "Noctalia qalik",
       "privacy-policy": "Siyaseta nepenîtiyê",
       "support": "Piştgiriya me bike",
+      "supporter-badge": "Piştgir",
       "system-cpu": "YKN:",
       "system-disk": "Dîsk:",
       "system-gpu": "YKG:",
@@ -770,13 +782,13 @@
       "color-source-use-wallpaper-colors-description": "Ji dîwarê xwe şemayên rengan çêbike. Rengan bixweber derdixe da ku temayek hevgirtî biafirîne.",
       "color-source-use-wallpaper-colors-label": "Rengên dîwêr bikar bîne",
       "dark-mode-mode-description": "Veguhestina otomatîkî di navbera moda ronahî û tarî de çalak dike.",
-      "dark-mode-mode-label": "Bernameya Moda Tarî",
+      "dark-mode-mode-label": "Bernameya moda tarî",
       "dark-mode-mode-manual": "Bi destan",
       "dark-mode-mode-off": "Vemirî",
       "dark-mode-switch-description": "Veguherîne bo temayek tarîtir ji bo dîtina hêsantir bi şev.",
       "delete-error-description": "Xwe ji birina {scheme} bi ser neket",
       "delete-error-title": "Serbirin nemû ye",
-      "delete-success-description": "Bi serkeftî {scheme} hate jêbirin",
+      "delete-success-description": "Bi serkeftî {scheme} hat jêbirin",
       "delete-success-title": "Şêweya rengan hate jêbirin",
       "download-button": "Bêtir daxîne",
       "download-downloading": "Tê daxistin...",
@@ -1011,7 +1023,7 @@
     },
     "hooks": {
       "info-command-info-description": "• Ferman bi rêya shellê (sh -lc) tên meşandin<br>• Ferman di paşperdeyê de dimeşin (veqetandî)<br>• Bişkokên ceribandinê bi nirxên heyî dimeşin",
-      "info-parameters-description": "• Hooka dîwêr: $1 = rêya dîwêr, $2 = navê ekranê<br>• Hooka guherîna mijarê: $1 = rast/derew (rewşa Moda Tarî)<br>• Hookên kilîtkirin/vekirina ekranê: Parametre tune<br>• Hookên moda performansê: Parametre tune<br>• Hooka danişînê: $1 = çalakî (girtin/ji nû ve destpêkirin)",
+      "info-parameters-description": "• Hooka dîwêr: $1 = rêya dîwêr, $2 = navê ekranê<br>• Hooka guherîna mijarê: $1 = rast/derew (rewşa moda tarî)<br>• Hookên kilîtkirin/vekirina ekranê: Parametre tune<br>• Hookên moda performansê: Parametre tune<br>• Hooka danişînê: $1 = çalakî (girtin/ji nû ve destpêkirin)",
       "info-parameters-label": "Parametreyên berdest",
       "noctalia-started-description": "Fermana ku dema Noctalia barkirina xwe qedand pêk were.",
       "noctalia-started-label": "Noctalia Hêla Destpêkirin",
@@ -1290,7 +1302,7 @@
       "sources-placeholder": "Depoya min a bedew",
       "sources-remove-tooltip": "Çavkaniya pêvekê jê bibe",
       "title": "Pêvek",
-      "uninstall-dialog-description": "Ma hûn bawer in ku hûn dixwazin {plugin} jêbirin? Ev ê hemî daneyên pêvekê jê bibe.",
+      "uninstall-dialog-description": "Tu dixwazî {plugin} jê bibî? Ev ê hemû daneyên pêvekê jê bibe.",
       "uninstall-dialog-title": "Rakêşana pêvekê",
       "uninstall-error": "Nekarî were rakirin: {error}",
       "uninstall-success": "Bi serkeftî {plugin} hate rakirin",
@@ -1486,7 +1498,7 @@
   "setup": {
     "all-done": "Qediya!",
     "appearance": {
-      "subheader": "Dark Mode û çavkaniyên rengan hilbijêre (Wallpaper an pêşdiyarkirî)."
+      "subheader": "Moda tarî û çavkaniyên rengan hilbijêre (wallpaper an pêşdiyarkirî)."
     },
     "customize": {
       "header": "Xweserkirina ezmûna xwe bike",
@@ -1571,7 +1583,7 @@
       "disabled": "Dengê dernexîne neçalak e",
       "disabled-desc": "Hemû agahdarî tên nîşandan",
       "enabled": "Dengê dernexîne çalak e",
-      "enabled-desc": "Hûn ê van agahdariyan di dîroka xwe de bibînin"
+      "enabled-desc": "Tu yê van agahdariyan di dîroka xwe de bibînî"
     },
     "donation-opened": "Rûpela bexşînê di geroka we de vebû",
     "internet-limited": "Pêwendîdar bê înternetê",
@@ -1665,7 +1677,7 @@
     "search-close": "Lêgerînê bigire",
     "session-menu": "Menuya danişînê",
     "show-all-devices": "Hemû amûran nîşan bide",
-    "switch-to-dark-mode": "Awaya tarî",
+    "switch-to-dark-mode": "Moda tarî",
     "switch-to-light-mode": "Awaya ronahî",
     "unmute": "Bêdeng neke",
     "up": "Rêgeha resen",
@@ -1729,7 +1741,7 @@
       "disc": "Dîsk",
       "fade": "Wendabûn",
       "stripes": "xêz",
-      "wipe": "Rakirin"
+      "wipe": "Rake"
     },
     "try-different-search": "Lêgerîneke cûda bi kar bîne.",
     "wallhaven": {

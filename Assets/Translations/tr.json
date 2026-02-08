@@ -1296,6 +1296,8 @@
       "available-label": "Mevcut eklentiler",
       "available-no-plugins-description": "Eklenti kaynaklarınızı kontrol edin veya listeyi yenileyin.",
       "available-no-plugins-label": "Kullanılabilir eklenti yok",
+      "check-for-updates": "Güncellemeleri kontrol et",
+      "checking-for-updates": "Güncellemeler kontrol ediliyor...",
       "collision-already-installed": "Bu eklenti zaten yüklü",
       "collision-custom-version-exists": "\"{source}\" kaynağından özel bir sürüm zaten yüklü",
       "collision-official-version-exists": "Bu eklentinin resmi sürümü zaten yüklü",
@@ -1536,7 +1538,7 @@
   "setup": {
     "all-done": "Tamamlandı!",
     "appearance": {
-      "subheader": "Koyu modu ve renk kaynaklarını (Duvar kağıdı veya önceden tanımlanmış) seçin."
+      "subheader": "Koyu modu ve renk kaynaklarını (duvar kağıdı veya önceden tanımlanmış) seçin."
     },
     "customize": {
       "header": "Deneyiminizi özelleştirin",

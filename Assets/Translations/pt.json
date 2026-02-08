@@ -1296,6 +1296,8 @@
       "available-label": "Plugins disponíveis",
       "available-no-plugins-description": "Verifique as fontes do seu plugin ou atualize a lista.",
       "available-no-plugins-label": "Nenhum plugin disponível",
+      "check-for-updates": "Verificar atualizações",
+      "checking-for-updates": "Verificando atualizações...",
       "collision-already-installed": "Este plugin já está instalado",
       "collision-custom-version-exists": "Uma versão personalizada de \"{source}\" já está instalada",
       "collision-official-version-exists": "A versão oficial deste plugin já está instalada",
@@ -1536,7 +1538,7 @@
   "setup": {
     "all-done": "Concluído!",
     "appearance": {
-      "subheader": "Escolha o modo escuro e as fontes de cor (Papel de parede ou predefinidas)."
+      "subheader": "Escolha o modo escuro e as fontes de cor (papel de parede ou predefinidas)."
     },
     "customize": {
       "header": "Personalizar a sua experiência",

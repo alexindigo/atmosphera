@@ -1296,6 +1296,8 @@
       "available-label": "Доступные плагины",
       "available-no-plugins-description": "Проверьте исходники вашего плагина или обновите список.",
       "available-no-plugins-label": "Нет доступных плагинов",
+      "check-for-updates": "Проверить обновления",
+      "checking-for-updates": "Проверка обновлений...",
       "collision-already-installed": "Этот плагин уже установлен",
       "collision-custom-version-exists": "Пользовательская версия из \"{source}\" уже установлена",
       "collision-official-version-exists": "Официальная версия этого плагина уже установлена",
@@ -1536,7 +1538,7 @@
   "setup": {
     "all-done": "Готово!",
     "appearance": {
-      "subheader": "Выберите темный режим и источники цвета (Обои или предопределенные)."
+      "subheader": "Выберите темный режим и источники цвета (обои или предопределенные)."
     },
     "customize": {
       "header": "Настройте свой опыт",

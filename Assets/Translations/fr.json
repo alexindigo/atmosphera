@@ -1296,6 +1296,8 @@
       "available-label": "Plugins disponibles",
       "available-no-plugins-description": "Vérifiez les sources de vos plugins ou actualisez la liste.",
       "available-no-plugins-label": "Aucun plugin disponible",
+      "check-for-updates": "Rechercher des mises à jour",
+      "checking-for-updates": "Vérification des mises à jour...",
       "collision-already-installed": "Ce plugin est déjà installé",
       "collision-custom-version-exists": "Une version personnalisée de \"{source}\" est déjà installée",
       "collision-official-version-exists": "La version officielle de cette extension est déjà installée",
@@ -1536,7 +1538,7 @@
   "setup": {
     "all-done": "Terminé !",
     "appearance": {
-      "subheader": "Choisissez le mode sombre et les sources de couleur (Fond d'écran ou prédéfinies)."
+      "subheader": "Choisissez le mode sombre et les sources de couleur (fond d'écran ou prédéfinies)."
     },
     "customize": {
       "header": "Personnaliser votre expérience",

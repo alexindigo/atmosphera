@@ -1296,6 +1296,8 @@
       "available-label": "可用的外掛模組",
       "available-no-plugins-description": "檢查你的模組來源或者重新整理列表",
       "available-no-plugins-label": "沒有可用的外掛模組",
+      "check-for-updates": "檢查更新",
+      "checking-for-updates": "正在檢查更新...",
       "collision-already-installed": "這個模組已經安裝過了",
       "collision-custom-version-exists": "已經安裝了來自 \"{source}\" 的自訂版本",
       "collision-official-version-exists": "已經安裝了這個模組的官方版本",
