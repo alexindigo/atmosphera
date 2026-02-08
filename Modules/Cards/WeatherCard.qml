@@ -67,14 +67,23 @@ NBox {
         property real cornerRadius: root.isRaining ? 0 : (root.radius - root.border.width)
         property real alternative: root.isFoggy
 
-        fragmentShader: root.isSnowing ? Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/weather_snow.frag.qsb") : root.isRaining ? Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/weather_rain.frag.qsb") : root.isCloudy || root.isFoggy ? Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/weather_cloud.frag.qsb") : root.isClearDay ? Qt.resolvedUrl(
-                                                                                                                                                                                                                                                                                                                                                      Quickshell.shellDir
-                                                                                                                                                                                                                                                                                                                                                      + "/Shaders/qsb/weather_sun.frag.qsb") :
-                                                                                                                                                                                                                                                                                                                                                    root.isClearNight
-                                                                                                                                                                                                                                                                                                                                                    ? Qt.resolvedUrl(
-                                                                                                                                                                                                                                                                                                                                                        Quickshell.shellDir
-                                                                                                                                                                                                                                                                                                                                                        + "/Shaders/qsb/weather_stars.frag.qsb") :
-                                                                                                                                                                                                                                                                                                                                                      ""
+        fragmentShader: {
+          let shaderName;
+          if (root.isSnowing)
+            shaderName = "weather_snow";
+          else if (root.isRaining)
+            shaderName = "weather_rain";
+          else if (root.isCloudy || root.isFoggy)
+            shaderName = "weather_cloud";
+          else if (root.isClearDay)
+            shaderName = "weather_sun";
+          else if (root.isClearNight)
+            shaderName = "weather_stars";
+          else
+            shaderName = "";
+
+          return Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/" + shaderName + ".frag.qsb");
+        }
       }
     }
   }
