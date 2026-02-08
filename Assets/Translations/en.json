@@ -1184,6 +1184,7 @@
       "lock-on-suspend-label": "Lock on suspend",
       "lock-screen-animations-description": "Enable or disable lockscreen animations",
       "lock-screen-animations-label": "Lockscreen animations",
+      "monitors-desc": "Show lock screen on specific monitors. Defaults to all if none are chosen.",
       "show-hibernate-description": "Show the option 'hibernate' in the power controls.",
       "show-hibernate-label": "Show hibernate",
       "show-session-buttons-description": "Allow access to power settings from the lock screen.",
