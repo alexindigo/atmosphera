@@ -1002,7 +1002,8 @@ Item {
               model: root.tabsModel
               spacing: Style.marginXS
               currentIndex: root.currentTabIndex
-              verticalPolicy: ScrollBar.AsNeeded
+              horizontalPolicy: ScrollBar.AlwaysOff
+              verticalPolicy: ScrollBar.AlwaysOff
               gradientColor: "transparent"
               reserveScrollbarSpace: false
 
