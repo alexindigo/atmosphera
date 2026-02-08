@@ -75,11 +75,11 @@ ColumnLayout {
     label: I18n.tr("panels.wallpaper.look-feel-overview-blur-label")
     description: I18n.tr("panels.wallpaper.look-feel-overview-blur-description")
     from: 0.0
-    to: 150.0
-    stepSize: 1.0
+    to: 1.5
+    stepSize: 0.01
     value: Settings.data.wallpaper.overviewBlur
     onMoved: value => Settings.data.wallpaper.overviewBlur = value
-    text: Math.round(Settings.data.wallpaper.overviewBlur / 100).toFixed(1)
+    text: Settings.data.wallpaper.overviewBlur.toFixed(1)
     defaultValue: Settings.getDefaultValue("wallpaper.overviewBlur")
   }
 
@@ -88,11 +88,11 @@ ColumnLayout {
     label: I18n.tr("panels.wallpaper.look-feel-overview-tint-label")
     description: I18n.tr("panels.wallpaper.look-feel-overview-tint-description")
     from: 0.0
-    to: 100.0
-    stepSize: 1.0
+    to: 1.0
+    stepSize: 0.01
     value: Settings.data.wallpaper.overviewTint
     onMoved: value => Settings.data.wallpaper.overviewTint = value
-    text: Math.round(Settings.data.wallpaper.overviewTint / 100).toFixed(1)
+    text: Settings.data.wallpaper.overviewTint.toFixed(1)
     defaultValue: Settings.getDefaultValue("wallpaper.overviewTint")
   }
 }
