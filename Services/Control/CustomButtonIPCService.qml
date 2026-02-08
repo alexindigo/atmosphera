@@ -99,7 +99,7 @@ Item {
 
       // Trigger middle click if configured
       if (button.middleClickExec) {
-        button.onMiddleClicked();
+        button.middleClicked();
         Logger.i("CustomButtonIPCService", `Triggered middle click on button '${identifier}'`);
       } else {
         Logger.w("CustomButtonIPCService", `Button '${identifier}' has no middle click action configured`);
