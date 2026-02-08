@@ -1376,7 +1376,7 @@ SmartPanel {
           radius: Style.radiusM
           border.color: Color.mOutline
           border.width: Style.borderS
-          visible: loading
+          visible: loading || (typeof WallhavenService !== "undefined" && WallhavenService.fetching)
           z: 10
 
           ColumnLayout {
@@ -1493,7 +1493,7 @@ SmartPanel {
       // Pagination
       RowLayout {
         Layout.fillWidth: true
-        visible: !loading && errorMessage === "" && typeof WallhavenService !== "undefined"
+        visible: errorMessage === "" && typeof WallhavenService !== "undefined"
         spacing: Style.marginS
 
         Item {
@@ -1502,14 +1502,59 @@ SmartPanel {
 
         NIconButton {
           icon: "chevron-left"
-          enabled: WallhavenService.currentPage > 1 && !WallhavenService.fetching
+          enabled: !loading && WallhavenService.currentPage > 1 && !WallhavenService.fetching
           onClicked: WallhavenService.previousPage()
         }
 
-        NText {
-          text: I18n.tr("wallpaper.wallhaven.page").replace("{current}", WallhavenService.currentPage).replace("{total}", WallhavenService.lastPage)
-          color: Color.mOnSurface
-          horizontalAlignment: Text.AlignHCenter
+        RowLayout {
+          spacing: Style.marginXS
+
+          NText {
+            text: I18n.tr("wallpaper.wallhaven.page-prefix")
+            color: Color.mOnSurface
+          }
+
+          NTextInput {
+            id: pageInput
+            text: "" + WallhavenService.currentPage
+            Layout.preferredWidth: 80 * Style.uiScaleRatio
+            Layout.maximumWidth: 80 * Style.uiScaleRatio
+            Layout.fillWidth: false
+            minimumInputWidth: 80 * Style.uiScaleRatio
+            horizontalAlignment: Text.AlignHCenter
+            inputMethodHints: Qt.ImhDigitsOnly
+            enabled: !loading && !WallhavenService.fetching
+            showClearButton: false
+
+            Connections {
+              target: WallhavenService
+              function onCurrentPageChanged() {
+                pageInput.text = "" + WallhavenService.currentPage;
+              }
+            }
+
+            function submitPage() {
+              var page = parseInt(text);
+              if (!isNaN(page) && page >= 1 && page <= WallhavenService.lastPage) {
+                if (page !== WallhavenService.currentPage) {
+                  WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", page);
+                }
+              } else {
+                // Reset to current page if invalid
+                text = "" + WallhavenService.currentPage;
+              }
+              // Force focus loss to ensure UI updates cleanly
+              pageInput.inputItem.focus = false;
+            }
+
+            onEditingFinished: submitPage()
+            onAccepted: submitPage()
+          }
+
+          NText {
+            text: I18n.tr("wallpaper.wallhaven.page-suffix").replace("{total}", WallhavenService.lastPage)
+            color: Color.mOnSurface
+          }
         }
 
         NIconButton {

@@ -1795,7 +1795,9 @@
     "wallhaven": {
       "loading": "Loading wallpapers...",
       "no-results": "No wallpapers found. Try a different search query.",
-      "page": "{current} of {total}"
+      "page": "{current} of {total}",
+      "page-prefix": "Page",
+      "page-suffix": "of {total}"
     }
   },
   "weather": {

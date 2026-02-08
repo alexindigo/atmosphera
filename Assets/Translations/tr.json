@@ -1793,7 +1793,9 @@
     "wallhaven": {
       "loading": "Duvar kâğıtları yükleniyor...",
       "no-results": "Duvar kâğıdı bulunamadı. Farklı bir arama sorgusu deneyin.",
-      "page": "{current} / {total}"
+      "page": "{current} / {total}",
+      "page-prefix": "Sayfa",
+      "page-suffix": "{total} taneden"
     }
   },
   "weather": {

@@ -1793,7 +1793,9 @@
     "wallhaven": {
       "loading": "배경화면 로딩 중...",
       "no-results": "배경화면을 찾을 수 없습니다. 다른 검색어를 시도해 보세요.",
-      "page": "{total} 중 {current}"
+      "page": "{total} 중 {current}",
+      "page-prefix": "페이지",
+      "page-suffix": "{total}개 중"
     }
   },
   "weather": {

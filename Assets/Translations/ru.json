@@ -1793,7 +1793,9 @@
     "wallhaven": {
       "loading": "Загрузка обоев...",
       "no-results": "Обои не найдены. Попробуйте другой поисковый запрос.",
-      "page": "{current} из {total}"
+      "page": "{current} из {total}",
+      "page-prefix": "Страница",
+      "page-suffix": "из {total}"
     }
   },
   "weather": {

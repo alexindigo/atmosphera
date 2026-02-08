@@ -1793,7 +1793,9 @@
     "wallhaven": {
       "loading": "壁紙を読み込み中...",
       "no-results": "壁紙が見つかりません。別の検索条件を試してください。",
-      "page": "{current} / {total}"
+      "page": "{current} / {total}",
+      "page-prefix": "ページ",
+      "page-suffix": "{total}件中"
     }
   },
   "weather": {
