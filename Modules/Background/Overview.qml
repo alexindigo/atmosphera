@@ -101,15 +101,15 @@ Loader {
         layer.smooth: false
         layer.effect: MultiEffect {
           blurEnabled: true
-          blur: 1.0
-          blurMax: 32
+          blur: Settings.data.wallpaper.overviewBlur
+          blurMax: 64
         }
 
         // Tint overlay
         Rectangle {
           anchors.fill: parent
           color: tintColor
-          opacity: 0.6
+          opacity: Settings.data.wallpaper.overviewTint
         }
       }
     }
