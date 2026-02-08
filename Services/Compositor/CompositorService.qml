@@ -487,6 +487,17 @@ Singleton {
     Quickshell.execDetached(["sh", "-c", "systemctl suspend || loginctl suspend"]);
   }
 
+
+  function lock() {
+    Logger.i("Compositor", "LockScreen requested");
+    if (executeSessionAction("lock"))
+      return;
+
+    if (PanelService && PanelService.lockScreen) {
+      PanelService.lockScreen.active = true;
+    }
+  }
+
   function hibernate() {
     Logger.i("Compositor", "Hibernate requested");
     if (executeSessionAction("hibernate"))
