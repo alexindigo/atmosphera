@@ -406,6 +406,7 @@ Singleton {
       property bool enableWindowsSearch: true
       property bool ignoreMouseInput: false
       property string screenshotAnnotationTool: ""
+      property bool overviewLayer: false
     }
 
     // control center

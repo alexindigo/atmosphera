@@ -813,6 +813,15 @@
     "subTabLabel": "common.execute"
   },
   {
+    "labelKey": "panels.launcher.settings-overlay-layer-label",
+    "descriptionKey": "panels.launcher.settings-overlay-layer-description",
+    "widget": "NToggle",
+    "tab": 8,
+    "tabLabel": "panels.launcher.title",
+    "subTab": 0,
+    "subTabLabel": "common.general"
+  },
+  {
     "labelKey": "tooltips.grid-view",
     "descriptionKey": "panels.launcher.settings-grid-view-description",
     "widget": "NToggle",

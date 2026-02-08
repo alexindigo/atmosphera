@@ -120,41 +120,33 @@ Item {
     target: "launcher"
     function toggle() {
       root.screenDetector.withCurrentScreen(screen => {
-                                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                                              if (!launcherPanel)
-                                              return;
-                                              var searchText = launcherPanel.searchText || "";
+                                              var searchText = PanelService.getLauncherSearchText(screen);
                                               var isInAppMode = !searchText.startsWith(">");
-                                              if (!launcherPanel.isPanelOpen) {
+                                              if (!PanelService.isLauncherOpen(screen)) {
                                                 // Closed -> open in app mode
-                                                launcherPanel.open();
-                                                launcherPanel.setSearchText("");
+                                                PanelService.openLauncherWithSearch(screen, "");
                                               } else if (isInAppMode) {
                                                 // Already in app mode -> close
-                                                launcherPanel.close();
+                                                PanelService.closeLauncher(screen);
                                               } else {
                                                 // In another mode -> switch to app mode
-                                                launcherPanel.setSearchText("");
+                                                PanelService.setLauncherSearchText(screen, "");
                                               }
                                             });
     }
     function clipboard() {
       root.screenDetector.withCurrentScreen(screen => {
-                                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                                              if (!launcherPanel)
-                                              return;
-                                              var searchText = launcherPanel.searchText || "";
+                                              var searchText = PanelService.getLauncherSearchText(screen);
                                               var isInClipMode = searchText.startsWith(">clip");
-                                              if (!launcherPanel.isPanelOpen) {
+                                              if (!PanelService.isLauncherOpen(screen)) {
                                                 // Closed -> open in clipboard mode
-                                                launcherPanel.open();
-                                                launcherPanel.setSearchText(">clip ");
+                                                PanelService.openLauncherWithSearch(screen, ">clip ");
                                               } else if (isInClipMode) {
                                                 // Already in clipboard mode -> close
-                                                launcherPanel.close();
+                                                PanelService.closeLauncher(screen);
                                               } else {
                                                 // In another mode -> switch to clipboard mode
-                                                launcherPanel.setSearchText(">clip ");
+                                                PanelService.setLauncherSearchText(screen, ">clip ");
                                               }
                                             });
     }
@@ -180,21 +172,17 @@ Item {
     }
     function emoji() {
       root.screenDetector.withCurrentScreen(screen => {
-                                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                                              if (!launcherPanel)
-                                              return;
-                                              var searchText = launcherPanel.searchText || "";
+                                              var searchText = PanelService.getLauncherSearchText(screen);
                                               var isInEmojiMode = searchText.startsWith(">emoji");
-                                              if (!launcherPanel.isPanelOpen) {
+                                              if (!PanelService.isLauncherOpen(screen)) {
                                                 // Closed -> open in emoji mode
-                                                launcherPanel.open();
-                                                launcherPanel.setSearchText(">emoji ");
+                                                PanelService.openLauncherWithSearch(screen, ">emoji ");
                                               } else if (isInEmojiMode) {
                                                 // Already in emoji mode -> close
-                                                launcherPanel.close();
+                                                PanelService.closeLauncher(screen);
                                               } else {
                                                 // In another mode -> switch to emoji mode
-                                                launcherPanel.setSearchText(">emoji ");
+                                                PanelService.setLauncherSearchText(screen, ">emoji ");
                                               }
                                             });
     }
