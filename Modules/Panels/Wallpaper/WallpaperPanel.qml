@@ -103,6 +103,13 @@ SmartPanel {
   function onReturnPressed() {
     if (!contentItem)
       return;
+
+    // Check if Wallhaven page input has focus
+    if (contentItem.wallhavenView && contentItem.wallhavenView.visible && contentItem.wallhavenView.pageInput && contentItem.wallhavenView.pageInput.inputItem.activeFocus) {
+      contentItem.wallhavenView.pageInput.submitPage();
+      return;
+    }
+
     let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex);
     if (view?.gridView?.hasActiveFocus) {
       let gridView = view.gridView;
@@ -119,6 +126,7 @@ SmartPanel {
   panelContent: Rectangle {
     id: panelContent
 
+    property alias wallhavenView: wallhavenView
     property int currentScreenIndex: {
       if (screen !== null) {
         for (var i = 0; i < Quickshell.screens.length; i++) {
@@ -1126,6 +1134,7 @@ SmartPanel {
   component WallhavenView: Item {
     id: wallhavenViewRoot
     property alias gridView: wallhavenGridView
+    property alias pageInput: pageInput
 
     property var wallpapers: []
     property bool loading: false
