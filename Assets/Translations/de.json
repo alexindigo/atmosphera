@@ -675,7 +675,7 @@
       "system-cpu": "CPU:",
       "system-disk": "Festplatte:",
       "system-gpu": "GPU:",
-      "system-host": "Gastgeber:",
+      "system-host": "Host:",
       "system-install-hint": "Installieren Sie fastfetch, um Systeminformationen anzuzeigen",
       "system-kernel": "Kernel:",
       "system-loading": "Systeminformationen werden geladen...",

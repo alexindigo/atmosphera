@@ -675,7 +675,7 @@
       "system-cpu": "CPU:",
       "system-disk": "Schijf:",
       "system-gpu": "GPU:",
-      "system-host": "Gastheer/Gastvrouw:",
+      "system-host": "Host:",
       "system-install-hint": "Installeer fastfetch om systeeminformatie te bekijken",
       "system-kernel": "Kernel:",
       "system-loading": "Systeeminformatie laden...",
