@@ -1793,7 +1793,9 @@
     "wallhaven": {
       "loading": "Ładowanie tapet...",
       "no-results": "Nie znaleziono tapet. Spróbuj innego zapytania.",
-      "page": "{current} z {total}"
+      "page": "{current} z {total}",
+      "page-prefix": "Strona",
+      "page-suffix": "z {total}"
     }
   },
   "weather": {

@@ -199,7 +199,8 @@
     "enableSettingsSearch": true,
     "enableWindowsSearch": true,
     "ignoreMouseInput": false,
-    "screenshotAnnotationTool": ""
+    "screenshotAnnotationTool": "",
+    "overviewLayer": false
   },
   "controlCenter": {
     "position": "close_to_bar_button",

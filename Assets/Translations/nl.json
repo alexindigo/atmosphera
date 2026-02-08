@@ -1793,7 +1793,9 @@
     "wallhaven": {
       "loading": "Achtergronden laden...",
       "no-results": "Geen achtergronden gevonden. Probeer een andere zoekopdracht.",
-      "page": "{current} van {total}"
+      "page": "{current} van {total}",
+      "page-prefix": "Pagina",
+      "page-suffix": "van {total}"
     }
   },
   "weather": {

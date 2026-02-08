@@ -1793,7 +1793,9 @@
     "wallhaven": {
       "loading": "Hintergrundbilder werden geladen...",
       "no-results": "Keine Hintergrundbilder gefunden. Versuchen Sie eine andere Suchanfrage.",
-      "page": "{current} von {total}"
+      "page": "{current} von {total}",
+      "page-prefix": "Seite",
+      "page-suffix": "von {total}"
     }
   },
   "weather": {
