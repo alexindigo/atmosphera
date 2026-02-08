@@ -295,7 +295,7 @@ NBox {
                 visible: modelData.connected && NetworkService.disconnectingFrom !== modelData.ssid
                 text: I18n.tr("common.disconnect")
                 outlined: !hovered
-                fontSize: Style.fontSizeXS
+                fontSize: Style.fontSizeS
                 backgroundColor: Color.mError
                 onClicked: NetworkService.disconnect(modelData.ssid)
               }
