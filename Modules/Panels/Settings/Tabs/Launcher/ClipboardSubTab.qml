@@ -24,7 +24,7 @@ ColumnLayout {
     checked: Settings.data.appLauncher.enableClipPreview
     onToggled: checked => Settings.data.appLauncher.enableClipPreview = checked
     defaultValue: Settings.getDefaultValue("appLauncher.enableClipPreview")
-    visible: Settings.data.appLauncher.enableClipboardHistory
+    enabled: Settings.data.appLauncher.enableClipboardHistory
   }
 
   NToggle {
@@ -33,7 +33,7 @@ ColumnLayout {
     checked: Settings.data.appLauncher.clipboardWrapText
     onToggled: checked => Settings.data.appLauncher.clipboardWrapText = checked
     defaultValue: Settings.getDefaultValue("appLauncher.clipboardWrapText")
-    visible: Settings.data.appLauncher.enableClipboardHistory
+    enabled: Settings.data.appLauncher.enableClipboardHistory
   }
 
   NToggle {
@@ -42,7 +42,31 @@ ColumnLayout {
     checked: Settings.data.appLauncher.autoPasteClipboard
     onToggled: checked => Settings.data.appLauncher.autoPasteClipboard = checked
     defaultValue: Settings.getDefaultValue("appLauncher.autoPasteClipboard")
+    enabled: Settings.data.appLauncher.enableClipboardHistory && ProgramCheckerService.wtypeAvailable
+  }
+
+  NDivider {
+    Layout.fillWidth: true
     visible: Settings.data.appLauncher.enableClipboardHistory
-    enabled: ProgramCheckerService.wtypeAvailable
+  }
+
+  NTextInput {
+    label: I18n.tr("panels.launcher.settings-clipboard-watch-text-label")
+    description: I18n.tr("panels.launcher.settings-clipboard-watch-text-description")
+    Layout.fillWidth: true
+    text: Settings.data.appLauncher.clipboardWatchTextCommand
+    onEditingFinished: Settings.data.appLauncher.clipboardWatchTextCommand = text
+    enabled: Settings.data.appLauncher.enableClipboardHistory
+    visible: Settings.data.appLauncher.enableClipboardHistory
+  }
+
+  NTextInput {
+    label: I18n.tr("panels.launcher.settings-clipboard-watch-image-label")
+    description: I18n.tr("panels.launcher.settings-clipboard-watch-image-description")
+    Layout.fillWidth: true
+    text: Settings.data.appLauncher.clipboardWatchImageCommand
+    onEditingFinished: Settings.data.appLauncher.clipboardWatchImageCommand = text
+    enabled: Settings.data.appLauncher.enableClipboardHistory
+    visible: Settings.data.appLauncher.enableClipboardHistory
   }
 }

@@ -101,7 +101,7 @@ SmartPanel {
 
       NBox {
         Layout.fillWidth: true
-        Layout.preferredHeight: headerRow.implicitHeight + Style.marginM * 2
+        Layout.preferredHeight: headerRow.implicitHeight + Style.marginXL
 
         RowLayout {
           id: headerRow
@@ -255,54 +255,22 @@ SmartPanel {
             Layout.alignment: Qt.AlignVCenter
             visible: root.showAlbumArt
 
-            Item {
+            NImageRounded {
               anchors.fill: parent
-              layer.enabled: true
-              layer.effect: MultiEffect {
-                maskEnabled: true
-                maskSource: ShaderEffectSource {
-                  sourceItem: maskRect
-                  hideSource: true
-                }
-              }
+              radius: root.compactMode ? Style.radiusM : Style.radiusL
+              imagePath: MediaService.trackArtUrl
+              imageFillMode: Image.PreserveAspectCrop
+              fallbackIcon: "disc"
+              fallbackIconSize: root.compactMode ? Style.fontSizeXXXL * 3 : Style.fontSizeXXXL * 6
+              borderWidth: 0
+            }
 
-              Rectangle {
-                id: maskRect
-                anchors.fill: parent
-                radius: root.compactMode ? Style.radiusM : Style.radiusL
-                color: "white"
-                visible: false
-              }
-
-              Rectangle {
-                anchors.fill: parent
-                color: Color.mSurfaceVariant
-              }
-
-              Image {
-                id: albumArt
-                anchors.fill: parent
-                source: MediaService.trackArtUrl
-                fillMode: Image.PreserveAspectCrop
-                asynchronous: true
-                visible: root.showAlbumArt && source != ""
-              }
-
-              NIcon {
-                anchors.centerIn: parent
-                icon: "disc"
-                pointSize: root.compactMode ? Style.fontSizeXXL : (Style.fontSizeXXXL * 2)
-                color: Color.mOnSurfaceVariant
-                visible: root.showAlbumArt && albumArt.status !== Image.Ready
-              }
-
-              Loader {
-                anchors.fill: parent
-                anchors.margins: Style.marginS
-                z: 2
-                active: !!(root.needsCava && root.showAlbumArt)
-                sourceComponent: visualizerSource
-              }
+            Loader {
+              anchors.fill: parent
+              anchors.margins: Style.marginS
+              z: 2
+              active: !!(root.needsCava && root.showAlbumArt)
+              sourceComponent: visualizerSource
             }
           }
 
@@ -516,7 +484,7 @@ SmartPanel {
       values: CavaService.values
       fillColor: Color.mPrimary
       opacity: 0.4
-      barPosition: Settings.data.bar.position
+      barPosition: Settings.getBarPositionForScreen(root.screen?.name)
     }
   }
 

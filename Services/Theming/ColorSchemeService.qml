@@ -27,7 +27,7 @@ Singleton {
       // Toast: dark/light mode switched
       const enabled = !!Settings.data.colorSchemes.darkMode;
       const label = enabled ? I18n.tr("tooltips.switch-to-dark-mode") : I18n.tr("tooltips.switch-to-light-mode");
-      const description = I18n.tr("toast.wifi.enabled");
+      const description = I18n.tr("common.enabled");
       ToastService.showNotice(label, description, "dark-mode");
     }
   }
@@ -127,10 +127,10 @@ Singleton {
     if (schemeExists) {
       Settings.data.colorSchemes.predefinedScheme = basename;
       applyScheme(schemeName);
-      ToastService.showNotice("Color Scheme", `Set to ${basename}`, "settings-color-scheme");
+      ToastService.showNotice(I18n.tr("panels.color-scheme.title"), basename, "settings-color-scheme");
     } else {
       Logger.e("ColorScheme", "Scheme not found:", schemeName);
-      ToastService.showError("Color Scheme", `Scheme '${basename}' not found!`);
+      ToastService.showError(I18n.tr("panels.color-scheme.title"), `'${basename}' ` + I18n.tr("common.not-found"));
     }
   }
 
@@ -204,9 +204,12 @@ Singleton {
 
   // Check if any templates are enabled
   function hasEnabledTemplates() {
-    const templates = Settings.data.templates;
-    for (const key in templates) {
-      if (templates[key]) {
+    const activeTemplates = Settings.data.templates.activeTemplates;
+    if (!activeTemplates || activeTemplates.length === 0) {
+      return false;
+    }
+    for (let i = 0; i < activeTemplates.length; i++) {
+      if (activeTemplates[i].enabled) {
         return true;
       }
     }

@@ -15,9 +15,30 @@ Item {
   readonly property string section: widgetProps ? (widgetProps.section || "") : ""
   readonly property int sectionIndex: widgetProps ? (widgetProps.sectionWidgetIndex || 0) : 0
 
-  // Don't reserve space unless the loaded widget is really visible
-  implicitWidth: getImplicitSize(loader.item, "implicitWidth")
-  implicitHeight: getImplicitSize(loader.item, "implicitHeight")
+  // Store registration key at registration time so unregistration always uses the correct key,
+  // even if binding properties (section, sectionIndex) have changed by destruction time
+  property string _regScreen: ""
+  property string _regSection: ""
+  property string _regWidgetId: ""
+  property int _regIndex: -1
+
+  function _unregister() {
+    if (_regScreen !== "") {
+      BarService.unregisterWidget(_regScreen, _regSection, _regWidgetId, _regIndex);
+      _regScreen = "";
+    }
+  }
+
+  // Bar orientation and height for extended click areas
+  readonly property string barPosition: Settings.getBarPositionForScreen(widgetScreen?.name)
+  readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
+  readonly property real barHeight: Style.getBarHeightForScreen(widgetScreen?.name)
+
+  // Request full bar dimension from layout to extend click areas above/below widgets
+  // For horizontal bars: full bar height, widget's content width
+  // For vertical bars: full bar width, widget's content height
+  implicitWidth: isVerticalBar ? barHeight : getImplicitSize(loader.item, "implicitWidth")
+  implicitHeight: isVerticalBar ? getImplicitSize(loader.item, "implicitHeight") : barHeight
 
   // Remove layout space left by hidden widgets
   visible: loader.item ? ((loader.item.opacity > 0.0) || (loader.item.hasOwnProperty("hideMode") && loader.item.hideMode === "transparent")) : false
@@ -60,11 +81,31 @@ Item {
       return root.checkWidgetExists() ? BarWidgetRegistry.getWidget(root.widgetId) : null;
     }
 
+    // Unregister when the loaded item is destroyed (Loader deactivated or sourceComponent changed)
+    onItemChanged: {
+      if (!item) {
+        root._unregister();
+      }
+    }
+
     onLoaded: {
       if (!item)
         return;
 
       Logger.d("BarWidgetLoader", "Loading widget", widgetId, "on screen:", widgetScreen.name);
+
+      // Extend widget to fill full bar dimension for extended click areas
+      // For horizontal bars: widget fills bar height (content width preserved)
+      // For vertical bars: widget fills bar width (content height preserved)
+      if (root.isVerticalBar) {
+        item.width = Qt.binding(function () {
+          return root.barHeight;
+        });
+      } else {
+        item.height = Qt.binding(function () {
+          return root.barHeight;
+        });
+      }
 
       // Apply properties to loaded widget
       for (var prop in widgetProps) {
@@ -89,8 +130,15 @@ Item {
         }
       }
 
-      // Register this widget instance with BarService
+      // Unregister any previous registration before registering the new instance
+      root._unregister();
+
+      // Register and store the key for reliable unregistration
       BarService.registerWidget(widgetScreen.name, section, widgetId, sectionIndex, item);
+      root._regScreen = widgetScreen.name;
+      root._regSection = section;
+      root._regWidgetId = widgetId;
+      root._regIndex = sectionIndex;
 
       // Call custom onLoaded if it exists
       if (item.hasOwnProperty("onLoaded")) {
@@ -99,10 +147,7 @@ Item {
     }
 
     Component.onDestruction: {
-      // Unregister when destroyed
-      if (widgetScreen && section) {
-        BarService.unregisterWidget(widgetScreen.name, section, widgetId, sectionIndex);
-      }
+      root._unregister();
     }
   }
 

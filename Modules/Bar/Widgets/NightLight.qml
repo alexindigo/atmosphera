@@ -14,19 +14,37 @@ NIconButton {
 
   property ShellScreen screen
 
-  baseSize: Style.capsuleHeight
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
+  property string section: ""
+  property int sectionWidgetIndex: -1
+  property int sectionWidgetsCount: 0
+
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
+  readonly property string screenName: screen ? screen.name : ""
+  property var widgetSettings: {
+    if (section && sectionWidgetIndex >= 0 && screenName) {
+      var widgets = Settings.getBarWidgetsForScreen(screenName)[section];
+      if (widgets && sectionWidgetIndex < widgets.length) {
+        return widgets[sectionWidgetIndex];
+      }
+    }
+    return {};
+  }
+
+  readonly property string iconColorKey: widgetSettings.iconColor !== undefined ? widgetSettings.iconColor : widgetMetadata.iconColor
+
+  baseSize: Style.getCapsuleHeightForScreen(screen?.name)
   applyUiScale: false
   customRadius: Style.radiusL
   colorBg: Settings.data.nightLight.forced ? Color.mPrimary : Style.capsuleColor
-  colorFg: Settings.data.nightLight.forced ? Color.mOnPrimary : Color.mOnSurface
-  colorBorder: "transparent"
-  colorBorderHover: "transparent"
+  colorFg: Settings.data.nightLight.forced ? Color.mOnPrimary : Color.resolveColorKey(iconColorKey)
   border.color: Style.capsuleBorderColor
   border.width: Style.capsuleBorderWidth
 
   icon: Settings.data.nightLight.enabled ? (Settings.data.nightLight.forced ? "nightlight-forced" : "nightlight-on") : "nightlight-off"
   tooltipText: Settings.data.nightLight.enabled ? (Settings.data.nightLight.forced ? I18n.tr("common.night-light") : I18n.tr("common.night-light")) : I18n.tr("common.night-light")
-  tooltipDirection: BarService.getTooltipDirection()
+  tooltipDirection: BarService.getTooltipDirection(screen?.name)
   onClicked: {
     // Check if wlsunset is available before enabling night light
     if (!ProgramCheckerService.wlsunsetAvailable) {
@@ -45,9 +63,28 @@ NIconButton {
     }
   }
 
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: [
+      {
+        "label": I18n.tr("actions.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   contextMenu.close();
+                   PanelService.closeContextMenu(screen);
+
+                   if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
+
   onRightClicked: {
-    var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-    settingsPanel.requestedTab = SettingsPanel.Tab.Display;
-    settingsPanel.open();
+    PanelService.showContextMenu(contextMenu, root, screen);
   }
 }

@@ -24,7 +24,7 @@ ColumnLayout {
     });
   }
 
-  // Signal functions for widgets sub-tab
+  // Signal functions for widgets sub-tab (global widgets only)
   function _addWidgetToSection(widgetId, section) {
     var newWidget = {
       "id": widgetId
@@ -33,50 +33,58 @@ ColumnLayout {
       var metadata = BarWidgetRegistry.widgetMetadata[widgetId];
       if (metadata) {
         Object.keys(metadata).forEach(function (key) {
-          if (key !== "allowUserSettings") {
-            newWidget[key] = metadata[key];
-          }
+          newWidget[key] = metadata[key];
         });
       }
     }
     Settings.data.bar.widgets[section].push(newWidget);
+    BarService.widgetsRevision++;
   }
 
   function _removeWidgetFromSection(section, index) {
-    if (index >= 0 && index < Settings.data.bar.widgets[section].length) {
-      var newArray = Settings.data.bar.widgets[section].slice();
+    var widgets = Settings.data.bar.widgets;
+    if (index >= 0 && index < widgets[section].length) {
+      var newArray = widgets[section].slice();
       var removedWidgets = newArray.splice(index, 1);
-      Settings.data.bar.widgets[section] = newArray;
+      widgets[section] = newArray;
+      BarService.widgetsRevision++;
 
       if (removedWidgets[0].id === "ControlCenter" && BarService.lookupWidget("ControlCenter") === undefined) {
-        ToastService.showWarning(I18n.tr("toast.missing-control-center.label"), I18n.tr("toast.missing-control-center.description"), 12000);
+        ToastService.showWarning(I18n.tr("toast.missing-control-center.label"), I18n.tr("toast.missing-control-center.description"), 6000);
       }
     }
   }
 
   function _reorderWidgetInSection(section, fromIndex, toIndex) {
-    if (fromIndex >= 0 && fromIndex < Settings.data.bar.widgets[section].length && toIndex >= 0 && toIndex < Settings.data.bar.widgets[section].length) {
-      var newArray = Settings.data.bar.widgets[section].slice();
+    var widgets = Settings.data.bar.widgets;
+    if (fromIndex >= 0 && fromIndex < widgets[section].length && toIndex >= 0 && toIndex < widgets[section].length) {
+      var newArray = widgets[section].slice();
       var item = newArray[fromIndex];
       newArray.splice(fromIndex, 1);
       newArray.splice(toIndex, 0, item);
-      Settings.data.bar.widgets[section] = newArray;
+      widgets[section] = newArray;
+      BarService.widgetsRevision++;
     }
   }
 
+  // Note: _updateWidgetSettingsInSection does NOT increment revision
+  // because it only changes settings, not widget structure
   function _updateWidgetSettingsInSection(section, index, settings) {
     Settings.data.bar.widgets[section][index] = settings;
   }
 
   function _moveWidgetBetweenSections(fromSection, index, toSection) {
-    if (index >= 0 && index < Settings.data.bar.widgets[fromSection].length) {
-      var widget = Settings.data.bar.widgets[fromSection][index];
-      var sourceArray = Settings.data.bar.widgets[fromSection].slice();
+    var widgets = Settings.data.bar.widgets;
+    if (index >= 0 && index < widgets[fromSection].length) {
+      var widget = widgets[fromSection][index];
+      var sourceArray = widgets[fromSection].slice();
       sourceArray.splice(index, 1);
-      Settings.data.bar.widgets[fromSection] = sourceArray;
-      var targetArray = Settings.data.bar.widgets[toSection].slice();
+      widgets[fromSection] = sourceArray;
+      var targetArray = widgets[toSection].slice();
       targetArray.push(widget);
-      Settings.data.bar.widgets[toSection] = targetArray;
+      widgets[toSection] = targetArray;
+      BarService.widgetsRevision++;
+      Logger.d("BarTab", "_moveWidgetBetweenSections: revision now", BarService.widgetsRevision);
     }
   }
 
@@ -187,7 +195,7 @@ ColumnLayout {
 
   Item {
     Layout.fillWidth: true
-    Layout.preferredHeight: Style.marginL
+    Layout.preferredHeight: Style.marginS
   }
 
   NTabView {

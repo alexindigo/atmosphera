@@ -32,7 +32,7 @@ SmartPanel {
       // HEADER
       NBox {
         Layout.fillWidth: true
-        implicitHeight: headerRow.implicitHeight + (Style.marginM * 2)
+        implicitHeight: headerRow.implicitHeight + (Style.marginXL)
 
         RowLayout {
           id: headerRow
@@ -66,23 +66,25 @@ SmartPanel {
       }
 
       NScrollView {
+        id: brightnessScrollView
         Layout.fillWidth: true
         Layout.fillHeight: true
         horizontalPolicy: ScrollBar.AlwaysOff
         verticalPolicy: ScrollBar.AsNeeded
-        clip: true
         contentWidth: availableWidth
+        reserveScrollbarSpace: false
+        gradientColor: Color.mSurface
 
         // AudioService Devices
         ColumnLayout {
           spacing: Style.marginM
-          width: parent.width
+          width: brightnessScrollView.availableWidth
 
           Repeater {
             model: Quickshell.screens || []
             delegate: NBox {
               Layout.fillWidth: true
-              Layout.preferredHeight: outputColumn.implicitHeight + (Style.marginM * 2)
+              Layout.preferredHeight: outputColumn.implicitHeight + (Style.marginXL)
 
               property var brightnessMonitor: BrightnessService.getMonitorForScreen(modelData)
 

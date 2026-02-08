@@ -44,8 +44,8 @@ DraggableDesktopWidget {
     return chunks[0];
   }
 
-  implicitWidth: Math.round(Math.max(240 * widgetScale, contentLayout.implicitWidth + Style.marginM * widgetScale * 2))
-  implicitHeight: Math.round(64 * widgetScale + Style.marginM * widgetScale * 2)
+  implicitWidth: Math.round(Math.max(240 * widgetScale, contentLayout.implicitWidth + Style.marginXL * widgetScale))
+  implicitHeight: Math.round(64 * widgetScale + Style.marginXL * widgetScale)
   width: implicitWidth
   height: implicitHeight
 
@@ -63,7 +63,7 @@ DraggableDesktopWidget {
 
       NIcon {
         anchors.centerIn: parent
-        icon: weatherReady ? LocationService.weatherSymbolFromCode(currentWeatherCode) : "cloud"
+        icon: weatherReady ? LocationService.weatherSymbolFromCode(currentWeatherCode, LocationService.data.weather.current_weather.is_day) : "weather-cloud-off"
         pointSize: Math.round(Style.fontSizeXXXL * 2 * widgetScale)
         color: weatherReady ? Color.mPrimary : Color.mOnSurfaceVariant
       }

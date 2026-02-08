@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import qs.Commons
+import qs.Services.Compositor
 
 Singleton {
   id: root
@@ -67,8 +68,84 @@ Singleton {
     return popupMenuWindows[screen.name] || null;
   }
 
+  // Show a context menu with proper handling for all compositors
+  // Optional targetItem: if provided, menu will be horizontally centered on this item instead of anchorItem
+  function showContextMenu(contextMenu, anchorItem, screen, targetItem) {
+    if (!contextMenu || !anchorItem)
+      return;
+
+    // Close any previously opened context menu first
+    closeContextMenu(screen);
+
+    var popupMenuWindow = getPopupMenuWindow(screen);
+    if (popupMenuWindow) {
+      popupMenuWindow.showContextMenu(contextMenu);
+      contextMenu.openAtItem(anchorItem, screen, targetItem);
+    }
+  }
+
+  // Close any open context menu or popup menu window
+  function closeContextMenu(screen) {
+    var popupMenuWindow = getPopupMenuWindow(screen);
+    if (popupMenuWindow && popupMenuWindow.visible) {
+      popupMenuWindow.close();
+    }
+  }
+
+  // Show a tray menu with proper handling for all compositors
+  // Returns true if menu was shown successfully
+  function showTrayMenu(screen, trayItem, trayMenu, anchorItem, menuX, menuY, widgetSection, widgetIndex) {
+    if (!trayItem || !trayMenu || !anchorItem)
+      return false;
+
+    // Close any previously opened menu first
+    closeContextMenu(screen);
+
+    trayMenu.trayItem = trayItem;
+    trayMenu.widgetSection = widgetSection;
+    trayMenu.widgetIndex = widgetIndex;
+
+    var popupMenuWindow = getPopupMenuWindow(screen);
+    if (popupMenuWindow) {
+      popupMenuWindow.open();
+      trayMenu.showAt(anchorItem, menuX, menuY);
+    } else {
+      return false;
+    }
+    return true;
+  }
+
+  // Close tray menu
+  function closeTrayMenu(screen) {
+    var popupMenuWindow = getPopupMenuWindow(screen);
+    if (popupMenuWindow) {
+      // This closes both the window and calls hideMenu on the tray menu
+      popupMenuWindow.close();
+    }
+  }
+
+  // Find a fallback screen, prioritizing 0x0 position (primary)
+  function findFallbackScreen() {
+    let primaryCandidate = null;
+    let firstScreen = null;
+
+    for (let i = 0; i < Quickshell.screens.length; i++) {
+      const s = Quickshell.screens[i];
+      if (s.x === 0 && s.y === 0) {
+        primaryCandidate = s;
+      }
+      if (!firstScreen) {
+        firstScreen = s;
+      }
+    }
+
+    return primaryCandidate || firstScreen || null;
+  }
+
   // Returns a panel (loads it on-demand if not yet loaded)
-  function getPanel(name, screen) {
+  // By default, if panel not found on screen, tries other screens (favoring 0x0)
+  // Pass fallback=false to disable this behavior
+  function getPanel(name, screen, fallback = true) {
     if (!screen) {
       Logger.d("PanelService", "missing screen for getPanel:", name);
       // If no screen specified, return the first matching panel
@@ -87,6 +164,27 @@ Singleton {
       return registeredPanels[panelKey];
     }
 
+    // If fallback enabled, try to find panel on another screen
+    if (fallback) {
+      // First try the primary screen (0x0)
+      var fallbackScreen = findFallbackScreen();
+      if (fallbackScreen && fallbackScreen.name !== screen.name) {
+        var fallbackKey = `${name}-${fallbackScreen.name}`;
+        if (registeredPanels[fallbackKey]) {
+          Logger.d("PanelService", "Panel fallback from", screen.name, "to", fallbackScreen.name);
+          return registeredPanels[fallbackKey];
+        }
+      }
+
+      // Try any other screen
+      for (var key in registeredPanels) {
+        if (key.startsWith(name + "-")) {
+          Logger.d("PanelService", "Panel fallback to first available:", key);
+          return registeredPanels[key];
+        }
+      }
+    }
+
     Logger.w("PanelService", "Panel not found:", panelKey);
     return null;
   }
@@ -94,6 +192,24 @@ Singleton {
   // Check if a panel exists
   function hasPanel(name) {
     return name in registeredPanels;
+  }
+
+  // Check if panels can be shown on a given screen (has bar enabled or allowPanelsOnScreenWithoutBar)
+  function canShowPanelsOnScreen(screen) {
+    const name = screen?.name || "";
+    const monitors = Settings.data.bar.monitors || [];
+    const allowPanelsOnScreenWithoutBar = Settings.data.general.allowPanelsOnScreenWithoutBar;
+    return allowPanelsOnScreenWithoutBar || monitors.length === 0 || monitors.includes(name);
+  }
+
+  // Find a screen that can show panels
+  function findScreenForPanels() {
+    for (let i = 0; i < Quickshell.screens.length; i++) {
+      if (canShowPanelsOnScreen(Quickshell.screens[i])) {
+        return Quickshell.screens[i];
+      }
+    }
+    return null;
   }
 
   // Timer to switch from Exclusive to OnDemand keyboard focus on Hyprland
@@ -276,5 +392,17 @@ Singleton {
 
     // emit signal
     didClose();
+  }
+
+  // Close panels when compositor overview opens (if setting is enabled)
+  Connections {
+    target: CompositorService
+    enabled: Settings.data.bar.hideOnOverview
+
+    function onOverviewActiveChanged() {
+      if (CompositorService.overviewActive && root.openedPanel) {
+        root.openedPanel.close();
+      }
+    }
   }
 }

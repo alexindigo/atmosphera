@@ -19,7 +19,7 @@ SmartPanel {
   readonly property bool attachToBar: settingsPanelMode === "attached"
 
   readonly property string barDensity: Settings.data.bar.density
-  readonly property string barPosition: Settings.data.bar.position
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool barFloating: Settings.data.bar.floating
   readonly property real barMarginH: barFloating ? Math.ceil(Settings.data.bar.marginHorizontal) : 0
   readonly property real barMarginV: barFloating ? Math.ceil(Settings.data.bar.marginVertical) : 0
@@ -94,6 +94,8 @@ SmartPanel {
   }
 
   property int requestedTab: SettingsPanel.Tab.General
+  property int requestedSubTab: -1
+  property var requestedEntry: null
 
   // Content state - these are synced with SettingsContent when panel opens
   property int currentTabIndex: 0
@@ -145,11 +147,31 @@ SmartPanel {
     PanelService.willOpenPanel(root);
   }
 
+  // Open to a specific tab and optionally a subtab
+  function openToTab(tab, subTab, buttonItem, buttonName) {
+    requestedTab = tab !== undefined ? tab : SettingsPanel.Tab.General;
+    requestedSubTab = subTab !== undefined ? subTab : -1;
+    open(buttonItem, buttonName);
+  }
+
   // When the panel opens, initialize content
   onOpened: {
     if (_settingsContent) {
-      _settingsContent.requestedTab = requestedTab;
-      _settingsContent.initialize();
+      if (requestedEntry) {
+        _settingsContent.requestedTab = requestedEntry.tab;
+        _settingsContent.initialize();
+        const entry = requestedEntry;
+        requestedEntry = null;
+        Qt.callLater(() => _settingsContent.navigateToResult(entry));
+      } else {
+        _settingsContent.requestedTab = requestedTab;
+        _settingsContent.initialize();
+        if (requestedSubTab >= 0) {
+          const subTab = requestedSubTab;
+          requestedSubTab = -1;
+          Qt.callLater(() => _settingsContent.navigateToTab(requestedTab, subTab));
+        }
+      }
     }
   }
 
@@ -195,11 +217,19 @@ SmartPanel {
   }
 
   function onUpPressed() {
-    scrollUp();
+    if (_settingsContent && _settingsContent.searchText.trim() !== "") {
+      _settingsContent.searchSelectPrevious();
+    } else {
+      scrollUp();
+    }
   }
 
   function onDownPressed() {
-    scrollDown();
+    if (_settingsContent && _settingsContent.searchText.trim() !== "") {
+      _settingsContent.searchSelectNext();
+    } else {
+      scrollDown();
+    }
   }
 
   function onPageUpPressed() {
@@ -211,11 +241,19 @@ SmartPanel {
   }
 
   function onCtrlJPressed() {
-    scrollDown();
+    if (_settingsContent && _settingsContent.searchText.trim() !== "") {
+      _settingsContent.searchSelectNext();
+    } else {
+      scrollDown();
+    }
   }
 
   function onCtrlKPressed() {
-    scrollUp();
+    if (_settingsContent && _settingsContent.searchText.trim() !== "") {
+      _settingsContent.searchSelectPrevious();
+    } else {
+      scrollUp();
+    }
   }
 
   panelContent: Rectangle {

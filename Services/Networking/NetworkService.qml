@@ -69,14 +69,14 @@ Singleton {
     function onWifiEnabledChanged() {
       if (Settings.data.network.wifiEnabled) {
         if (!BluetoothService.airplaneModeToggled) {
-          ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("toast.wifi.enabled"), "wifi");
+          ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.enabled"), "wifi");
         }
         // Perform a scan to update the UI
         delayedScanTimer.interval = 3000;
         delayedScanTimer.restart();
       } else {
         if (!BluetoothService.airplaneModeToggled) {
-          ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("toast.wifi.disabled"), "wifi-off");
+          ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.disabled"), "wifi-off");
         }
         // Clear networks so the widget icon changes
         root.networks = ({});
@@ -870,31 +870,25 @@ Singleton {
         if (!result) {
           return;
         }
-
-        if (result === "none" && root.networkConnectivity !== result) {
-          root.networkConnectivity = result;
-          connectivityCheckProcess.failedChecks = 0;
-          root.scan();
+        if (result === "full" || result === "none" || result === "unknown") {
+          if (connectivityCheckProcess.failedChecks !== 0) {
+            connectivityCheckProcess.failedChecks = 0;
+          }
+          if (result !== root.networkConnectivity) {
+            if (result === "full") {
+              root.internetConnectivity = true;
+            }
+            root.networkConnectivity = result;
+            root.scan();
+          }
+          return;
         }
-
-        if (result === "full" && root.networkConnectivity !== result) {
-          root.networkConnectivity = result;
-          root.internetConnectivity = true;
-          connectivityCheckProcess.failedChecks = 0;
-          root.scan();
-        }
-
-        if ((result === "limited" || result === "portal") && root.networkConnectivity !== result) {
+        if ((result === "limited" || result === "portal") && result !== root.networkConnectivity) {
           connectivityCheckProcess.failedChecks++;
           if (connectivityCheckProcess.failedChecks === 3) {
             root.networkConnectivity = result;
             pingCheckProcess.running = true;
           }
-        }
-
-        if (result === "unknown" && root.networkConnectivity !== result) {
-          root.networkConnectivity = result;
-          connectivityCheckProcess.failedChecks = 0;
         }
       }
     }

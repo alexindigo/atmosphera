@@ -15,12 +15,6 @@ in
       description = "The noctalia-shell package to use";
     };
 
-    mutableRuntimeSettings = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Whether noctalia-shell creates a gui-settings.json to store setting changes made within the GUI at runtime.";
-    };
-
     target = lib.mkOption {
       type = lib.types.str;
       default = "graphical-session.target";
@@ -32,7 +26,7 @@ in
   config = lib.mkIf cfg.enable {
     systemd.user.services.noctalia-shell = {
       description = "Noctalia Shell - Wayland desktop shell";
-      documentation = [ "https://docs.noctalia.dev/docs" ];
+      documentation = [ "https://docs.noctalia.dev" ];
       after = [ cfg.target ];
       partOf = [ cfg.target ];
       wantedBy = [ cfg.target ];
@@ -45,9 +39,6 @@ in
       serviceConfig = {
         ExecStart = lib.getExe cfg.package;
         Restart = "on-failure";
-        Environment = lib.mkIf cfg.mutableRuntimeSettings [
-          "NOCTALIA_SETTINGS_FALLBACK=%h/.config/noctalia/gui-settings.json"
-        ];
       };
     };
 

@@ -24,20 +24,22 @@ Noctalia Shell is made possible by the incredible work of many open-source proje
 - **[gpu-screen-recorder](https://git.dec05eba.com/gpu-screen-recorder/about/)** - Hardware-accelerated screen recording
 - **[Cava](https://github.com/karlstav/cava)** - Audio visualizer component
 
-### Theming & Appearance
-- **[Matugen](https://github.com/InioX/matugen)** - Material You color scheme generation from wallpapers
-
 ### Utilities
 - **[cliphist](https://github.com/sentriz/cliphist)** - Clipboard history support
+
+## Icons
+- **[Tabler Icons](https://tabler.io/icons)** - Icon set used throughout the shell
+- **[Riyan Resdian on Noun Project](https://thenounproject.com/creator/yaicon/)** - Plug icon
 
 ## Audio Assets
 - **[Universfield on Pixabay](https://pixabay.com/users/universfield-28281460/)** - Notification sound effect
 - **[DrNI on Freesound](https://freesound.org/people/DrNI/sounds/34562/)** - Timer's alarm sound effect
+- **[Lucas McCallister on Freesound](http://www.freesound.org/samplesViewSingle.php?id=67091)** - Volume change feedback sound effect
 
 
 ## Special Thanks
 - The **Wayland** community for building the future of Linux desktop graphics
-- The **Niri**, **Hyprland**, **Sway**, and **MangoWC** teams for their excellent Wayland compositors
+- The **Niri**, **Hyprland**, **Sway**, **Labwc**, and **MangoWC** teams for their excellent Wayland compositors
 - All the contributors and users who have helped make Noctalia better
 
 ## License

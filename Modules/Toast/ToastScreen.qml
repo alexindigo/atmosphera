@@ -143,36 +143,40 @@ Item {
       readonly property bool isRight: location.endsWith("_right")
       readonly property bool isCentered: location === "top" || location === "bottom"
 
-      readonly property string barPos: Settings.data.bar.position
-      readonly property bool isFloating: Settings.data.bar.floating
+      readonly property bool isFramed: Settings.data.bar.barType === "framed"
+      readonly property real frameThickness: Settings.data.bar.frameThickness ?? 8
 
-      // Calculate bar offsets for each edge separately
+      readonly property string barPos: Settings.getBarPositionForScreen(panel.screen?.name)
+      readonly property bool isFloating: Settings.data.bar.floating
+      readonly property real barHeight: Style.getBarHeightForScreen(panel.screen?.name)
+
+      // Calculate bar and frame offsets for each edge separately
       readonly property int barOffsetTop: {
         if (barPos !== "top")
-          return 0;
+          return isFramed ? frameThickness : 0;
         const floatMarginV = isFloating ? Math.ceil(Settings.data.bar.marginVertical) : 0;
-        return Style.barHeight + floatMarginV;
+        return barHeight + floatMarginV;
       }
 
       readonly property int barOffsetBottom: {
         if (barPos !== "bottom")
-          return 0;
+          return isFramed ? frameThickness : 0;
         const floatMarginV = isFloating ? Math.ceil(Settings.data.bar.marginVertical) : 0;
-        return Style.barHeight + floatMarginV;
+        return barHeight + floatMarginV;
       }
 
       readonly property int barOffsetLeft: {
         if (barPos !== "left")
-          return 0;
+          return isFramed ? frameThickness : 0;
         const floatMarginH = isFloating ? Math.ceil(Settings.data.bar.marginHorizontal) : 0;
-        return Style.barHeight + floatMarginH;
+        return barHeight + floatMarginH;
       }
 
       readonly property int barOffsetRight: {
         if (barPos !== "right")
-          return 0;
+          return isFramed ? frameThickness : 0;
         const floatMarginH = isFloating ? Math.ceil(Settings.data.bar.marginHorizontal) : 0;
-        return Style.barHeight + floatMarginH;
+        return barHeight + floatMarginH;
       }
 
       readonly property int shadowPadding: Style.shadowBlurMax + Style.marginL
@@ -225,7 +229,7 @@ Item {
         toastItem.hideImmediately();
       }
 
-      SimpleToast {
+      Toast {
         id: toastItem
         onHidden: root.onToastHidden()
       }

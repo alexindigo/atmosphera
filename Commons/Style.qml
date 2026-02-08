@@ -24,6 +24,7 @@ Singleton {
   readonly property int fontWeightBold: 700
 
   // Container Radii: major layout sections (sidebars, cards, content panels)
+  readonly property int radiusXXXS: Math.round(3 * Settings.data.general.radiusRatio)
   readonly property int radiusXXS: Math.round(4 * Settings.data.general.radiusRatio)
   readonly property int radiusXS: Math.round(8 * Settings.data.general.radiusRatio)
   readonly property int radiusS: Math.round(12 * Settings.data.general.radiusRatio)
@@ -31,6 +32,7 @@ Singleton {
   readonly property int radiusL: Math.round(20 * Settings.data.general.radiusRatio)
 
   // Input radii: interactive elements (buttons, toggles, text fields)
+  readonly property int iRadiusXXXS: Math.round(3 * Settings.data.general.iRadiusRatio)
   readonly property int iRadiusXXS: Math.round(4 * Settings.data.general.iRadiusRatio)
   readonly property int iRadiusXS: Math.round(8 * Settings.data.general.iRadiusRatio)
   readonly property int iRadiusS: Math.round(12 * Settings.data.general.iRadiusRatio)
@@ -137,7 +139,7 @@ Singleton {
   readonly property real _barBaseFontSize: Math.max(1, (Style.barHeight / Style.capsuleHeight) * Style.fontSizeXXS)
   readonly property real barFontSize: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? _barBaseFontSize * 0.9 : _barBaseFontSize
 
-  readonly property color capsuleColor: Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : "transparent"
+  readonly property color capsuleColor: Settings.data.bar.showCapsule ? Qt.alpha(Settings.data.bar.capsuleColorKey !== "none" ? Color.resolveColorKey(Settings.data.bar.capsuleColorKey) : Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : "transparent"
 
   readonly property color capsuleBorderColor: Settings.data.bar.showOutline ? Color.mPrimary : "transparent"
   readonly property int capsuleBorderWidth: Settings.data.bar.showOutline ? Style.borderS : 0
@@ -157,5 +159,79 @@ Singleton {
   // Ensures a number is always even (rounds down to nearest even)
   function toEven(n) {
     return Math.floor(n / 2) * 2;
+  }
+
+  // Get bar height for a specific density and orientation
+  function getBarHeightForDensity(density, isVertical) {
+    let h;
+    switch (density) {
+    case "mini":
+      h = isVertical ? 23 : 21;
+      break;
+    case "compact":
+      h = isVertical ? 27 : 25;
+      break;
+    case "comfortable":
+      h = isVertical ? 39 : 37;
+      break;
+    case "spacious":
+      h = isVertical ? 49 : 47;
+      break;
+    default:
+    case "default":
+      h = isVertical ? 33 : 31;
+    }
+    return toOdd(h);
+  }
+
+  // Get capsule height for a specific density and bar height
+  function getCapsuleHeightForDensity(density, barHeight) {
+    let h;
+    switch (density) {
+    case "mini":
+      h = Math.round(barHeight * 0.90);
+      break;
+    case "compact":
+      h = Math.round(barHeight * 0.85);
+      break;
+    case "comfortable":
+      h = Math.round(barHeight * 0.75);
+      break;
+    case "spacious":
+      h = Math.round(barHeight * 0.65);
+      break;
+    default:
+      h = Math.round(barHeight * 0.82);
+      break;
+    }
+    return toOdd(h);
+  }
+
+  // Get bar font size for a specific bar height, capsule height, and orientation
+  function getBarFontSizeForDensity(barHeight, capsuleHeight, isVertical) {
+    const baseFontSize = Math.max(1, (barHeight / capsuleHeight) * Style.fontSizeXXS);
+    return isVertical ? baseFontSize * 0.9 : baseFontSize;
+  }
+
+  // Convenience functions for per-screen bar sizing
+  function getBarHeightForScreen(screenName) {
+    var density = Settings.getBarDensityForScreen(screenName);
+    var position = Settings.getBarPositionForScreen(screenName);
+    var isVertical = position === "left" || position === "right";
+    return getBarHeightForDensity(density, isVertical);
+  }
+
+  function getCapsuleHeightForScreen(screenName) {
+    var barHeight = getBarHeightForScreen(screenName);
+    var density = Settings.getBarDensityForScreen(screenName);
+    return getCapsuleHeightForDensity(density, barHeight);
+  }
+
+  function getBarFontSizeForScreen(screenName) {
+    var barHeight = getBarHeightForScreen(screenName);
+    var capsuleHeight = getCapsuleHeightForScreen(screenName);
+    var position = Settings.getBarPositionForScreen(screenName);
+    var isVertical = position === "left" || position === "right";
+    return getBarFontSizeForDensity(barHeight, capsuleHeight, isVertical);
   }
 }

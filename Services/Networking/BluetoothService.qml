@@ -5,7 +5,6 @@ import Quickshell
 import Quickshell.Bluetooth
 import Quickshell.Io
 import "../../Helpers/BluetoothUtils.js" as BluetoothUtils
-import "."
 import qs.Commons
 import qs.Services.UI
 
@@ -53,7 +52,7 @@ Singleton {
   }
 
   // Tunables for CLI pairing/connect flow
-  property int pairWaitSeconds: 20
+  property int pairWaitSeconds: 45
   property int connectAttempts: 5
   property int connectRetryIntervalMs: 2000
 
@@ -233,10 +232,10 @@ Singleton {
       if (bluetoothBlockedToggled) {
         checkWifiBlocked.running = true;
       } else if (adapter.state === BluetoothAdapter.Enabled) {
-        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.wifi.enabled"), "bluetooth");
+        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.enabled"), "bluetooth");
         Logger.d("Bluetooth", "Adapter enabled");
       } else if (adapter.state === BluetoothAdapter.Disabled) {
-        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.wifi.disabled"), "bluetooth-off");
+        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.disabled"), "bluetooth-off");
         Logger.d("Bluetooth", "Adapter disabled");
       }
     }
@@ -255,17 +254,17 @@ Singleton {
           root.airplaneModeToggled = true;
           root.lastWifiBlocked = true;
           NetworkService.setWifiEnabled(false);
-          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("toast.wifi.enabled"), "plane");
+          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.enabled"), "plane");
         } else if (!wifiBlocked && lastWifiBlocked) {
           root.airplaneModeToggled = true;
           root.lastWifiBlocked = false;
           NetworkService.setWifiEnabled(true);
-          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("toast.wifi.disabled"), "plane-off");
+          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.disabled"), "plane-off");
         } else if (adapter.enabled) {
-          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.wifi.enabled"), "bluetooth");
+          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.enabled"), "bluetooth");
           Logger.d("Bluetooth", "Adapter enabled");
         } else {
-          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.wifi.disabled"), "bluetooth-off");
+          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.disabled"), "bluetooth-off");
           Logger.d("Bluetooth", "Adapter disabled");
         }
         root.airplaneModeToggled = false;
@@ -516,6 +515,50 @@ Singleton {
     }
   }
 
+  // Interaction state
+  property bool pinRequired: false
+
+  function submitPin(pin) {
+    if (pairingProcess.running) {
+      pairingProcess.write(pin + "\n");
+      root.pinRequired = false;
+    }
+  }
+
+  function cancelPairing() {
+    if (pairingProcess.running) {
+      pairingProcess.running = false;
+    }
+    root.pinRequired = false;
+  }
+
+  // Interactive pairing process
+  Process {
+    id: pairingProcess
+    stdout: SplitParser {
+      onRead: data => {
+        var chunk = data;
+        if (chunk.indexOf("[PIN_REQ]") !== -1) {
+          root.pinRequired = true;
+          Logger.d("Bluetooth", "PIN required for pairing");
+          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("bluetooth.panel.pin-required"), "lock");
+        }
+      }
+    }
+    stderr: SplitParser {
+      onRead: data => Logger.d("Bluetooth", data)
+    }
+    onExited: {
+      root.pinRequired = false;
+      Logger.i("Bluetooth", "Pairing process exited.");
+      // Restore discovery if we paused it
+      if (root._discoveryWasRunning) {
+        root.setScanActive(true, 0);
+      }
+      root._discoveryWasRunning = false;
+    }
+  }
+
   // Pair using bluetoothctl which registers its own BlueZ agent internally.
   function pairWithBluetoothctl(device) {
     if (!device) {
@@ -529,6 +572,12 @@ Singleton {
 
     Logger.i("Bluetooth", "pairWithBluetoothctl", addr);
 
+    // Stop any previous pairing attempt
+    if (pairingProcess.running) {
+      pairingProcess.running = false;
+    }
+    root.pinRequired = false;
+
     // Compute bounded waits from tunables
     const pairWait = Math.max(5, Number(root.pairWaitSeconds) | 0);
     const attempts = Math.max(1, Number(root.connectAttempts) | 0);
@@ -539,10 +588,10 @@ Singleton {
     const totalPauseMs = (pairWait * 1000) + (attempts * intervalSec * 1000) + 2000;
     _pauseDiscoveryFor(totalPauseMs);
 
-    // Prefer external dev script for pairing/connecting; executed detached
-    const scriptPath = Quickshell.shellDir + "/Bin/bluetooth-connect.sh";
-    // Use bash explicitly to avoid relying on executable bit in all environments
-    btExec(["bash", scriptPath, String(addr), String(pairWait), String(attempts), String(intervalSec)]);
+    const scriptPath = Quickshell.shellDir + "/Scripts/python/src/network/bluetooth-pair.py";
+
+    pairingProcess.command = ["python3", scriptPath, String(addr), String(pairWait), String(attempts), String(intervalSec)];
+    pairingProcess.running = true;
   }
 
   // Helper to run bluetoothctl and scripts with consistent error logging

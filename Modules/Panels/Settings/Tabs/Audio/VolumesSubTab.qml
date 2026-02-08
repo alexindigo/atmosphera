@@ -29,14 +29,21 @@ ColumnLayout {
     }
   }
 
-  // Master Volume
+  // Output Volume
   ColumnLayout {
     spacing: Style.marginXXS
     Layout.fillWidth: true
 
-    NLabel {
+    NValueSlider {
+      Layout.fillWidth: true
       label: I18n.tr("panels.osd.types-volume-label")
       description: I18n.tr("panels.audio.volumes-output-volume-description")
+      from: 0
+      to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+      value: localVolume
+      stepSize: 0.01
+      text: Math.round(AudioService.volume * 100) + "%"
+      onMoved: value => localVolume = value
     }
 
     Timer {
@@ -48,16 +55,6 @@ ColumnLayout {
           AudioService.setVolume(localVolume);
         }
       }
-    }
-
-    NValueSlider {
-      Layout.fillWidth: true
-      from: 0
-      to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
-      value: localVolume
-      stepSize: 0.01
-      text: Math.round(AudioService.volume * 100) + "%"
-      onMoved: value => localVolume = value
     }
   }
 
@@ -76,6 +73,24 @@ ColumnLayout {
                    }
                  }
     }
+  }
+
+  // Volume Feedback sound Toggle
+  ColumnLayout {
+    spacing: Style.marginS
+    Layout.fillWidth: true
+
+    NToggle {
+      label: I18n.tr("panels.audio.volumes-volume-feedback-label")
+      description: I18n.tr("panels.audio.volumes-volume-feedback-description")
+      checked: Settings.data.audio.volumeFeedback
+      defaultValue: Settings.getDefaultValue("audio.volumeFeedback")
+      onToggled: checked => Settings.data.audio.volumeFeedback = checked
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
   }
 
   // Input Volume
@@ -128,6 +143,10 @@ ColumnLayout {
     }
   }
 
+  NDivider {
+    Layout.fillWidth: true
+  }
+
   // Raise maximum volume above 100%
   ColumnLayout {
     spacing: Style.marginS
@@ -140,9 +159,5 @@ ColumnLayout {
       defaultValue: Settings.getDefaultValue("audio.volumeOverdrive")
       onToggled: checked => Settings.data.audio.volumeOverdrive = checked
     }
-  }
-
-  NDivider {
-    Layout.fillWidth: true
   }
 }

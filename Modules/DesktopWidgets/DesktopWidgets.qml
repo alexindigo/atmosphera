@@ -83,9 +83,7 @@ Variants {
         var metadata = DesktopWidgetRegistry.widgetMetadata[widgetId];
         if (metadata) {
           Object.keys(metadata).forEach(function (key) {
-            if (key !== "allowUserSettings") {
-              newWidget[key] = metadata[key];
-            }
+            newWidget[key] = metadata[key];
           });
         }
 
@@ -307,20 +305,21 @@ Variants {
           id: editModeControlsPanel
           visible: DesktopWidgetRegistry.editMode && Settings.data.desktopWidgets.enabled
 
-          readonly property string barPos: Settings.data.bar.position || "top"
+          readonly property string barPos: Settings.getBarPositionForScreen(window.screen?.name)
           readonly property bool barFloating: Settings.data.bar.floating || false
+          readonly property real barHeight: Style.getBarHeightForScreen(window.screen?.name)
 
           readonly property int barOffsetTop: {
             if (barPos !== "top")
               return Style.marginM;
             const floatMarginV = barFloating ? Math.ceil(Settings.data.bar.marginVertical) : 0;
-            return Style.barHeight + floatMarginV + Style.marginM;
+            return barHeight + floatMarginV + Style.marginM;
           }
           readonly property int barOffsetRight: {
             if (barPos !== "right")
               return Style.marginM;
             const floatMarginH = barFloating ? Math.ceil(Settings.data.bar.marginHorizontal) : 0;
-            return Style.barHeight + floatMarginH + Style.marginM;
+            return barHeight + floatMarginH + Style.marginM;
           }
 
           // Internal state for drag tracking (session-only, resets on restart)

@@ -26,6 +26,7 @@ Singleton {
   }
 
   property var currentPlayer: null
+  property string playerIdentity: currentPlayer ? (currentPlayer.identity || "") : ""
   property real currentPosition: 0
   property bool isSeeking: false
   property int selectedPlayerIndex: 0
@@ -145,7 +146,7 @@ Singleton {
     let controllablePlayers = [];
     for (var i = 0; i < finalPlayers.length; i++) {
       let player = finalPlayers[i];
-      if (player && player.canControl) {
+      if (player && player.canPlay) {
         controllablePlayers.push(player);
       }
     }

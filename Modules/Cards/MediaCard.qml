@@ -194,7 +194,7 @@ NBox {
     anchors.topMargin: Style.marginXS
     anchors.leftMargin: Style.marginM
     anchors.rightMargin: Style.marginM
-    height: Style.barHeight
+    height: Style.baseWidgetSize
     visible: MediaService.getAvailablePlayers().length > 1
     radius: Style.radiusM
     color: "transparent"
@@ -294,6 +294,7 @@ NBox {
           shadowOpacity: 0.9
           shadowHorizontalOffset: 0
           shadowVerticalOffset: 0
+          shadowColor: Settings.data.colorSchemes.darkMode ? "black" : "white"
         }
 
         ColumnLayout {

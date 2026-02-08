@@ -2,6 +2,8 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Services.Compositor
+import qs.Services.System
 
 Item {
   id: root
@@ -96,8 +98,12 @@ Item {
   function onOpened() {
     // Refresh apps when launcher opens
     loadApplications();
-    // Reset to "all" category when opening
-    selectedCategory = "all";
+    // Default to Pinned if there are pinned apps, otherwise all
+    if (availableCategories.includes("Pinned")) {
+      selectedCategory = "Pinned";
+    } else {
+      selectedCategory = "all";
+    }
     // Set category mode initially (will be updated when getResults is called)
     showsCategories = true;
   }
@@ -296,12 +302,14 @@ Item {
       }
     }
 
-    const result = ["all"];
+    const result = [];
 
     // Add Pinned category first if there are pinned apps
     if (hasPinned) {
       result.push("Pinned");
     }
+
+    result.push("all");
 
     if (hasAudioVideo) {
       categorySet.add("AudioVideo");
@@ -436,11 +444,12 @@ Item {
       return [];
 
     // Set category mode based on whether there's a query
-    showsCategories = !query || query.trim() === "";
+    const isSearching = !!(query && query.trim() !== "");
+    showsCategories = !isSearching;
 
-    // Filter by category first
+    // Filter by category only when NOT searching
     let filteredEntries = entries;
-    if (selectedCategory && selectedCategory !== "all") {
+    if (!isSearching && selectedCategory && selectedCategory !== "all") {
       filteredEntries = entries.filter(app => appMatchesCategory(app, selectedCategory));
     }
 
@@ -477,7 +486,6 @@ Item {
     if (typeof FuzzySort !== 'undefined') {
       const fuzzyResults = FuzzySort.go(query, filteredEntries, {
                                           "keys": ["name", "comment", "genericName", "executableName"],
-                                          "threshold": -1000,
                                           "limit": 20
                                         });
 
@@ -492,7 +500,7 @@ Item {
         else
           nonFav.push(r);
       }
-      return fav.concat(nonFav).map(result => createResultEntry(result.obj));
+      return fav.concat(nonFav).map(result => createResultEntry(result.obj, result.score));
     } else {
       // Fallback to simple search
       const searchTerm = query.toLowerCase();
@@ -530,13 +538,14 @@ Item {
     }
   }
 
-  function createResultEntry(app) {
+  function createResultEntry(app, score) {
     return {
       "appId": getAppKey(app),
       "name": app.name || "Unknown",
       "description": app.genericName || app.comment || "",
       "icon": app.icon || "application-x-executable",
       "isImage": false,
+      "_score": (score !== undefined ? score : 0),
       "provider": root,
       "onActivate": function () {
         // Record usage before closing (provider may be destroyed after close)
@@ -564,7 +573,7 @@ Item {
                            const command = prefix.concat(app.command);
                            Quickshell.execDetached(command);
                          }
-                       } else if (Settings.data.appLauncher.useApp2Unit && app.id) {
+                       } else if (Settings.data.appLauncher.useApp2Unit && ProgramCheckerService.app2unitAvailable && app.id) {
                          Logger.d("ApplicationsProvider", `Using app2unit for: ${app.id}`);
                          if (app.runInTerminal)
                          Quickshell.execDetached(["app2unit", "--", app.id + ".desktop"]);
@@ -573,13 +582,12 @@ Item {
                        } else {
                          // Fallback logic when app2unit is not used
                          if (app.runInTerminal) {
-                           // If app.execute() fails for terminal apps, we handle it manually.
                            Logger.d("ApplicationsProvider", "Executing terminal app manually: " + app.name);
                            const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
                            const command = terminal.concat(app.command);
-                           Quickshell.execDetached(command);
+                           CompositorService.spawn(command);
                          } else if (app.command && app.command.length > 0) {
-                           Quickshell.execDetached(app.command);
+                           CompositorService.spawn(app.command);
                          } else if (app.execute) {
                            app.execute();
                          } else {

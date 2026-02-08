@@ -12,8 +12,8 @@ Singleton {
   readonly property string pluginsDir: Settings.configDir + "plugins"
   readonly property string pluginsFile: Settings.configDir + "plugins.json"
 
-  // Official source URL - plugins from this source keep plain IDs
-  readonly property string officialSourceUrl: "https://github.com/noctalia-dev/noctalia-plugins"
+  // Main source URL - plugins from this source keep plain IDs
+  readonly property string mainSourceUrl: "https://github.com/noctalia-dev/noctalia-plugins"
 
   Component.onCompleted: {
     ensurePluginsDirectory();
@@ -26,14 +26,14 @@ Singleton {
     return hash.substring(0, 6);
   }
 
-  // Check if a source is the official Noctalia source
-  function isOfficialSource(sourceUrl) {
-    return sourceUrl === root.officialSourceUrl;
+  // Check if a source is the main Noctalia plugins repository
+  function isMainSource(sourceUrl) {
+    return sourceUrl === root.mainSourceUrl;
   }
 
   // Generate composite key: plain ID for official, "hash:id" for custom
   function generateCompositeKey(pluginId, sourceUrl) {
-    if (!sourceUrl || isOfficialSource(sourceUrl)) {
+    if (!sourceUrl || isMainSource(sourceUrl)) {
       return pluginId;
     }
     var hash = generateSourceHash(sourceUrl);
@@ -82,7 +82,7 @@ Singleton {
   // Get source URL from plugin state
   function getPluginSourceUrl(compositeKey) {
     var state = root.pluginStates[compositeKey];
-    return state?.sourceUrl || root.officialSourceUrl;
+    return state?.sourceUrl || root.mainSourceUrl;
   }
 
   // Signals
@@ -114,11 +114,11 @@ Singleton {
       root.pluginStates = adapter.states || {};
       root.pluginSources = adapter.sources || [];
 
-      // Ensure official repo is in sources
+      // Ensure default repo is in sources
       if (root.pluginSources.length === 0) {
         root.pluginSources = [
           {
-            "name": "Official Noctalia Plugins",
+            "name": "Noctalia Plugins",
             "url": "https://github.com/noctalia-dev/noctalia-plugins",
             "enabled": true
           }
@@ -139,7 +139,7 @@ Singleton {
       root.pluginStates = {};
       root.pluginSources = [
             {
-              "name": "Official Noctalia Plugins",
+              "name": "Noctalia Plugins",
               "url": "https://github.com/noctalia-dev/noctalia-plugins",
               "enabled": true
             }
@@ -157,30 +157,52 @@ Singleton {
 
   // Migrate plugin data from older versions
   function migratePluginData() {
-    // Check if states need migration (v1 -> v2: add sourceUrl)
-    var needsMigration = false;
+    var needsSave = false;
+
+    // Migration v1 -> v2: add sourceUrl to states
     for (var pluginId in root.pluginStates) {
       if (root.pluginStates[pluginId].sourceUrl === undefined) {
-        needsMigration = true;
+        Logger.i("PluginRegistry", "Migrating plugin data to v2 (adding sourceUrl)");
+
+        var newStates = {};
+        for (var id in root.pluginStates) {
+          // For v1 -> v2 migration, we assume plugins are from main source
+          // Custom plugins installed before this feature need to be reinstalled
+          newStates[id] = {
+            enabled: root.pluginStates[id].enabled,
+            sourceUrl: root.mainSourceUrl
+          };
+        }
+        root.pluginStates = newStates;
+        needsSave = true;
         break;
       }
     }
 
-    if (needsMigration) {
-      Logger.i("PluginRegistry", "Migrating plugin data to v2 (adding sourceUrl)");
-
-      var newStates = {};
-      for (var id in root.pluginStates) {
-        // For v1 -> v2 migration, we assume plugins are from official source
-        // Custom plugins installed before this feature need to be reinstalled
-        newStates[id] = {
-          enabled: root.pluginStates[id].enabled,
-          sourceUrl: root.officialSourceUrl
-        };
+    // Migration: rename "Official Noctalia Plugins" -> "Noctalia Plugins"
+    var newSources = [];
+    var sourcesChanged = false;
+    for (var i = 0; i < root.pluginSources.length; i++) {
+      var source = root.pluginSources[i];
+      if (source.name === "Official Noctalia Plugins") {
+        newSources.push({
+                          name: "Noctalia Plugins",
+                          url: source.url,
+                          enabled: source.enabled
+                        });
+        sourcesChanged = true;
+        Logger.i("PluginRegistry", "Migrating source name: 'Official Noctalia Plugins' -> 'Noctalia Plugins'");
+      } else {
+        newSources.push(source);
       }
-      root.pluginStates = newStates;
-      root.save();
+    }
+    if (sourcesChanged) {
+      root.pluginSources = newSources;
+      needsSave = true;
+    }
 
+    if (needsSave) {
+      root.save();
       Logger.i("PluginRegistry", "Migration complete");
     }
   }
@@ -227,45 +249,63 @@ Singleton {
     checkProcess.running = true;
   }
 
-  // Scan plugin folder to discover installed plugins
+  // Scan plugin folder to discover installed plugins (single process reads all manifests)
   function scanPluginFolder() {
     Logger.i("PluginRegistry", "Scanning plugin folder:", root.pluginsDir);
 
-    var lsProcess = Qt.createQmlObject(`
+    var scanProcess = Qt.createQmlObject(`
       import QtQuick
       import Quickshell.Io
       Process {
-        command: ["sh", "-c", "ls -1 '${root.pluginsDir}' 2>/dev/null || true"]
+        command: ["sh", "-c", "for d in '${root.pluginsDir}'/*/; do [ -d \\"$d\\" ] || continue; [ -f \\"$d/manifest.json\\" ] || continue; echo \\"@@PLUGIN@@$(basename \\"$d\\")\\" ; cat \\"$d/manifest.json\\" ; done"]
         stdout: StdioCollector {}
         running: true
       }
-    `, root, "ScanPlugins");
+    `, root, "ScanAllPlugins");
 
-    lsProcess.exited.connect(function (exitCode) {
-      var output = String(lsProcess.stdout.text || "");
-      var pluginDirs = output.trim().split('\n').filter(function (dir) {
-        return dir.length > 0;
-      });
+    scanProcess.exited.connect(function (exitCode) {
+      var output = String(scanProcess.stdout.text || "");
+      var sections = output.split("@@PLUGIN@@");
+      var loadedCount = 0;
 
-      Logger.i("PluginRegistry", "Found", pluginDirs.length, "potential plugin directories");
+      for (var i = 1; i < sections.length; i++) {
+        var section = sections[i];
+        var newlineIdx = section.indexOf('\n');
+        if (newlineIdx === -1)
+          continue;
 
-      if (pluginDirs.length === 0) {
-        // No plugins to load, emit signal immediately
-        root.pluginsChanged();
-        lsProcess.destroy();
-        return;
+        var pluginId = section.substring(0, newlineIdx).trim();
+        var manifestJson = section.substring(newlineIdx + 1).trim();
+
+        if (!pluginId || !manifestJson)
+          continue;
+
+        try {
+          var manifest = JSON.parse(manifestJson);
+          var validation = validateManifest(manifest);
+
+          if (validation.valid) {
+            manifest.compositeKey = pluginId;
+            root.installedPlugins[pluginId] = manifest;
+            Logger.i("PluginRegistry", "Loaded plugin:", pluginId, "-", manifest.name);
+
+            if (!root.pluginStates[pluginId]) {
+              root.pluginStates[pluginId] = {
+                enabled: false
+              };
+            }
+            loadedCount++;
+          } else {
+            Logger.e("PluginRegistry", "Invalid manifest for", pluginId + ":", validation.error);
+          }
+        } catch (e) {
+          Logger.e("PluginRegistry", "Failed to parse manifest for", pluginId + ":", e.toString());
+        }
       }
 
-      // Track how many manifests we're loading
-      root.pendingManifests = pluginDirs.length;
-      Logger.i("PluginRegistry", "Starting to load", root.pendingManifests, "manifests");
-
-      // Load each manifest
-      for (var i = 0; i < pluginDirs.length; i++) {
-        loadPluginManifest(pluginDirs[i]);
-      }
-
-      lsProcess.destroy();
+      Logger.i("PluginRegistry", "All plugin manifests loaded. Total plugins:", loadedCount);
+      root.pluginsChanged();
+      scanProcess.destroy();
     });
   }
 
@@ -291,6 +331,7 @@ Singleton {
           var validation = validateManifest(manifest);
 
           if (validation.valid) {
+            manifest.compositeKey = pluginId;
             root.installedPlugins[pluginId] = manifest;
             Logger.i("PluginRegistry", "Loaded plugin:", pluginId, "-", manifest.name);
 
@@ -386,17 +427,18 @@ Singleton {
   // sourceUrl is required for new plugins to generate composite key
   function registerPlugin(manifest, sourceUrl) {
     var compositeKey = generateCompositeKey(manifest.id, sourceUrl);
+    manifest.compositeKey = compositeKey;
     root.installedPlugins[compositeKey] = manifest;
 
     // Ensure state exists (default to disabled, store sourceUrl)
     if (!root.pluginStates[compositeKey]) {
       root.pluginStates[compositeKey] = {
         enabled: false,
-        sourceUrl: sourceUrl || root.officialSourceUrl
+        sourceUrl: sourceUrl || root.mainSourceUrl
       };
     } else {
       // Preserve enabled state but update sourceUrl
-      root.pluginStates[compositeKey].sourceUrl = sourceUrl || root.officialSourceUrl;
+      root.pluginStates[compositeKey].sourceUrl = sourceUrl || root.mainSourceUrl;
     }
 
     save();

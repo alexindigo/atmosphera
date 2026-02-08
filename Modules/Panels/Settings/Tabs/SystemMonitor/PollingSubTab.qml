@@ -10,6 +10,10 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
+  NLabel {
+    Layout.fillWidth: true
+    description: I18n.tr("panels.system-monitor.polling-section-description")
+  }
   // CPU Polling
   RowLayout {
     Layout.fillWidth: true
@@ -28,28 +32,6 @@ ColumnLayout {
       value: Settings.data.systemMonitor.cpuPollingInterval
       defaultValue: Settings.getDefaultValue("systemMonitor.cpuPollingInterval")
       onValueChanged: Settings.data.systemMonitor.cpuPollingInterval = value
-      suffix: " ms"
-    }
-  }
-
-  // Temperature Polling
-  RowLayout {
-    Layout.fillWidth: true
-    spacing: Style.marginM
-
-    NText {
-      Layout.fillWidth: true
-      text: I18n.tr("bar.system-monitor.cpu-temperature-label")
-      pointSize: Style.fontSizeM
-    }
-
-    NSpinBox {
-      from: 250
-      to: 10000
-      stepSize: 250
-      value: Settings.data.systemMonitor.tempPollingInterval
-      defaultValue: Settings.getDefaultValue("systemMonitor.tempPollingInterval")
-      onValueChanged: Settings.data.systemMonitor.tempPollingInterval = value
       suffix: " ms"
     }
   }
@@ -133,8 +115,8 @@ ColumnLayout {
     }
 
     NSpinBox {
-      from: 250
-      to: 10000
+      from: 1000
+      to: 60000
       stepSize: 250
       value: Settings.data.systemMonitor.diskPollingInterval
       defaultValue: Settings.getDefaultValue("systemMonitor.diskPollingInterval")
@@ -163,10 +145,5 @@ ColumnLayout {
       onValueChanged: Settings.data.systemMonitor.networkPollingInterval = value
       suffix: " ms"
     }
-  }
-
-  NLabel {
-    Layout.fillWidth: true
-    description: I18n.tr("panels.system-monitor.polling-section-description")
   }
 }

@@ -40,7 +40,10 @@ Item {
         // Async decode as fallback
         var requestedId = currentItem.clipboardId;
         ClipboardService.decode(requestedId, function (content) {
-          if (previewPanel.currentItem && previewPanel.currentItem.clipboardId === requestedId) {
+          if (!previewPanel || !previewPanel.currentItem) {
+            return;
+          }
+          if (previewPanel.currentItem.clipboardId === requestedId) {
             var trimmed = content ? content.trim() : "";
             if (trimmed !== "") {
               previewPanel.fullContent = trimmed;
@@ -154,14 +157,14 @@ Item {
       visible: !isImageContent && !loadingFullContent
 
       NScrollView {
+        id: clipboardScrollView
         Layout.fillWidth: true
         Layout.fillHeight: true
-        clip: true
         horizontalPolicy: Settings.data.appLauncher.clipboardWrapText ? ScrollBar.AlwaysOff : ScrollBar.AsNeeded
 
         NText {
           text: fullContent
-          width: Settings.data.appLauncher.clipboardWrapText ? parent.width : implicitWidth
+          width: Settings.data.appLauncher.clipboardWrapText ? clipboardScrollView.availableWidth : implicitWidth
           wrapMode: Settings.data.appLauncher.clipboardWrapText ? Text.Wrap : Text.NoWrap
           textFormat: Text.PlainText
           font.pointSize: Style.fontSizeM

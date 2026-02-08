@@ -13,7 +13,7 @@ Item {
   property string icon: ""
   property string text: ""
   property string suffix: ""
-  property string tooltipText: ""
+  property var tooltipText: ""
   property bool autoHide: false
   property bool forceOpen: false
   property bool forceClose: false
@@ -22,6 +22,8 @@ Item {
   property bool rotateText: false
   property color customBackgroundColor: "transparent"
   property color customTextIconColor: "transparent"
+  property color customIconColor: "transparent"
+  property color customTextColor: "transparent"
 
   readonly property bool collapseToIcon: forceClose && !forceOpen
 
@@ -39,11 +41,12 @@ Item {
   property bool shouldAnimateHide: false
 
   // Sizing logic for vertical bars
-  readonly property int buttonSize: Style.capsuleHeight
+  readonly property int buttonSize: Style.getCapsuleHeightForScreen(screen?.name)
+  readonly property real barFontSize: Style.getBarFontSizeForScreen(screen?.name)
   readonly property int pillHeight: buttonSize
   readonly property int pillOverlap: Math.round(buttonSize * 0.5)
-  readonly property int maxPillWidth: rotateText ? Math.max(buttonSize, Math.round(textItem.implicitHeight + Style.marginM * 2)) : buttonSize
-  readonly property int maxPillHeight: rotateText ? Math.max(1, Math.round(textItem.implicitWidth + Style.marginM * 2 + Math.round(iconCircle.height / 4))) : Math.max(1, Math.round(textItem.implicitHeight + Style.marginM * 2))
+  readonly property int maxPillWidth: rotateText ? Math.max(buttonSize, Math.round(textItem.implicitHeight + Style.marginXL)) : buttonSize
+  readonly property int maxPillHeight: rotateText ? Math.max(1, Math.round(textItem.implicitWidth + Style.marginXL + Math.round(iconCircle.height / 4))) : Math.max(1, Math.round(textItem.implicitHeight + Style.marginXL))
 
   // Determine pill direction based on section position
   readonly property bool openDownward: oppositeDirection
@@ -56,12 +59,13 @@ Item {
   // Always prioritize hover color, then the custom one and finally the fallback color
   readonly property color bgColor: hovered ? Color.mHover : (customBackgroundColor.a > 0) ? customBackgroundColor : Style.capsuleColor
   readonly property color fgColor: hovered ? Color.mOnHover : (customTextIconColor.a > 0) ? customTextIconColor : Color.mOnSurface
+  readonly property color iconFgColor: hovered ? Color.mOnHover : (customIconColor.a > 0) ? customIconColor : (customTextIconColor.a > 0) ? customTextIconColor : Color.mOnSurface
+  readonly property color textFgColor: hovered ? Color.mOnHover : (customTextColor.a > 0) ? customTextColor : (customTextIconColor.a > 0) ? customTextIconColor : Color.mOnSurface
 
   readonly property real iconSize: Style.toOdd(pillHeight * 0.48)
 
-  // For vertical bars: width is just icon size, height includes pill space
-  width: buttonSize
-  height: {
+  // Content height calculation (for implicit sizing and visual layout)
+  readonly property real contentHeight: {
     if (collapseToIcon) {
       return hasIcon ? buttonSize : 0;
     }
@@ -73,6 +77,15 @@ Item {
     // Fallback to buttonSize in idle state to remain clickable
     return buttonSize;
   }
+
+  // Fill parent width to extend horizontal click area
+  // Keep content-based height for visual layout
+  anchors.left: parent ? parent.left : undefined
+  anchors.right: parent ? parent.right : undefined
+  anchors.verticalCenter: parent ? parent.verticalCenter : undefined
+  height: contentHeight
+  implicitWidth: buttonSize
+  implicitHeight: contentHeight
 
   Connections {
     target: root
@@ -87,7 +100,7 @@ Item {
   Rectangle {
     id: pillBackground
     width: buttonSize
-    height: root.height
+    height: root.contentHeight
     radius: Style.radiusM
     color: root.bgColor
     border.color: Style.capsuleBorderColor
@@ -97,6 +110,7 @@ Item {
     anchors.horizontalCenter: parent.horizontalCenter
 
     Behavior on color {
+      enabled: !Color.isTransitioning
       ColorAnimation {
         duration: Style.animationFast
         easing.type: Easing.InOutQuad
@@ -137,11 +151,11 @@ Item {
       rotation: rotateText ? -90 : 0
       text: root.text + root.suffix
       family: Settings.data.ui.fontFixed
-      pointSize: Style.barFontSize
+      pointSize: root.barFontSize
       applyUiScale: false
       horizontalAlignment: Text.AlignHCenter
       verticalAlignment: Text.AlignVCenter
-      color: root.fgColor
+      color: root.textFgColor
       visible: revealed
 
       function getVerticalCenterOffset() {
@@ -181,14 +195,14 @@ Item {
 
     // Icon positioning based on direction
     x: 0
-    y: openUpward ? (parent.height - height) : 0
+    y: openUpward ? (root.contentHeight - height) : 0
     anchors.horizontalCenter: parent.horizontalCenter
 
     NIcon {
       icon: root.icon
       pointSize: iconSize
       applyUiScale: false
-      color: root.fgColor
+      color: root.iconFgColor
       // Center horizontally
       x: (iconCircle.width - width) / 2
       // Center vertically accounting for font metrics
@@ -297,7 +311,7 @@ Item {
     onEntered: {
       hovered = true;
       root.entered();
-      TooltipService.show(root, root.tooltipText, BarService.getTooltipDirection(), (forceOpen || forceClose) ? Style.tooltipDelay : Style.tooltipDelayLong);
+      TooltipService.show(root, root.tooltipText, BarService.getTooltipDirection(root.screen?.name), (forceOpen || forceClose) ? Style.tooltipDelay : Style.tooltipDelayLong);
       if (forceClose) {
         return;
       }

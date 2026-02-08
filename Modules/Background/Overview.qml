@@ -17,53 +17,34 @@ Loader {
 
       required property ShellScreen modelData
       property string wallpaper: ""
-      property string cachedWallpaper: ""
+      property string preprocessedWallpaper: "" // Pre-resized wallpaper from Background.qml
       property bool isSolidColor: false
       property color solidColor: Settings.data.wallpaper.solidColor
+      property color tintColor: Settings.data.colorSchemes.darkMode ? Color.mSurface : Color.mOnSurface
 
       Component.onCompleted: {
         if (modelData) {
           Logger.d("Overview", "Loading overview for Niri on", modelData.name);
         }
-        setWallpaperInitial();
       }
 
       Component.onDestruction: {
-        // Clean up resources to prevent memory leak when overviewEnabled is toggled off
-        bgImage.layer.enabled = false;
         bgImage.source = "";
       }
 
-      // External state management
+      // External state management - wait for wallpaper processing to complete
+      // Reuses the same cached image as Background.qml for memory efficiency + GPU blur
       Connections {
         target: WallpaperService
-        function onWallpaperChanged(screenName, path) {
+        function onWallpaperProcessingComplete(screenName, path, cachedPath) {
           if (screenName === modelData.name) {
+            preprocessedWallpaper = cachedPath || "";
             wallpaper = path;
           }
         }
       }
 
-      function setWallpaperInitial() {
-        if (!WallpaperService || !WallpaperService.isInitialized) {
-          Qt.callLater(setWallpaperInitial);
-          return;
-        }
-
-        // Check if we're in solid color mode
-        if (Settings.data.wallpaper.useSolidColor) {
-          var solidPath = WallpaperService.createSolidColorPath(Settings.data.wallpaper.solidColor.toString());
-          wallpaper = solidPath;
-          return;
-        }
-
-        const wallpaperPath = WallpaperService.getWallpaper(modelData.name);
-        if (wallpaperPath && wallpaperPath !== wallpaper) {
-          wallpaper = wallpaperPath;
-        }
-      }
-
-      // Request cached wallpaper when source changes
+      // Handle wallpaper changes (solid color detection)
       onWallpaperChanged: {
         if (!wallpaper)
           return;
@@ -73,15 +54,10 @@ Loader {
           isSolidColor = true;
           var colorStr = WallpaperService.getSolidColor(wallpaper);
           solidColor = colorStr;
-          cachedWallpaper = "";
           return;
         }
 
         isSolidColor = false;
-        // Use 1280x720 for overview since it's heavily blurred anyway
-        ImageCacheService.getLarge(wallpaper, 1280, 720, function (path, success) {
-          cachedWallpaper = path;
-        });
       }
 
       color: "transparent"
@@ -105,21 +81,20 @@ Loader {
 
         Rectangle {
           anchors.fill: parent
-          color: Settings.data.colorSchemes.darkMode ? Color.mSurface : Color.mOnSurface
-          opacity: 0.8
+          color: tintColor
         }
       }
 
-      // Image background
+      // Image background with GPU-based blur
       Image {
         id: bgImage
         anchors.fill: parent
         visible: !isSolidColor
         fillMode: Image.PreserveAspectCrop
-        source: cachedWallpaper
+        source: preprocessedWallpaper || wallpaper
         smooth: true
         mipmap: false
-        cache: false
+        cache: true // Shares texture with Background's currentWallpaper
         asynchronous: true
 
         layer.enabled: true
@@ -130,10 +105,11 @@ Loader {
           blurMax: 32
         }
 
+        // Tint overlay
         Rectangle {
           anchors.fill: parent
-          color: Settings.data.colorSchemes.darkMode ? Color.mSurface : Color.mOnSurface
-          opacity: 0.8
+          color: tintColor
+          opacity: 0.6
         }
       }
     }

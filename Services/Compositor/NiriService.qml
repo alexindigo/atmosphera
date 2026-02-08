@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import Quickshell.Wayland
 import qs.Commons
 import qs.Services.Keyboard
 
@@ -59,6 +60,13 @@ Item {
     sendSocketCommand(niriCommandSocket, "Windows");
   }
 
+  Timer {
+    id: workspaceUpdateTimer
+    interval: 50
+    repeat: false
+    onTriggered: updateWorkspaces()
+  }
+
   function queryDisplayScales() {
     sendSocketCommand(niriCommandSocket, "Outputs");
   }
@@ -70,13 +78,15 @@ Item {
     for (const outputName in outputsData) {
       const output = outputsData[outputName];
       if (output && output.name) {
+        const isConnected = output.logical !== null && output.current_mode !== null;
         const logical = output.logical || {};
-        const currentModeIdx = output.current_mode || 0;
+        const currentModeIdx = output.current_mode ?? 0;
         const modes = output.modes || [];
         const currentMode = modes[currentModeIdx] || {};
 
         const outputData = {
           "name": output.name,
+          "connected": isConnected,
           "scale": logical.scale || 1.0,
           "width": logical.width || 0,
           "height": logical.height || 0,
@@ -90,8 +100,8 @@ Item {
           "transform": logical.transform || "Normal"
         };
 
-        scales[output.name] = outputData;
         outputCache[output.name] = outputData;
+        scales[output.name] = outputData;
       }
     }
 
@@ -184,7 +194,7 @@ Item {
                   } else if (event.WindowsChanged) {
                     handleWindowsChanged(event.WindowsChanged);
                   } else if (event.WorkspaceActivated) {
-                    updateWorkspaces();
+                    workspaceUpdateTimer.restart();
                   } else if (event.WindowFocusChanged) {
                     handleWindowFocusChanged(event.WindowFocusChanged);
                   } else if (event.WindowLayoutsChanged) {
@@ -326,6 +336,7 @@ Item {
       }
 
       windowListChanged();
+      workspaceUpdateTimer.restart();
     } catch (e) {
       Logger.e("NiriService", "Error handling WindowOpenedOrChanged:", e);
     }
@@ -346,6 +357,7 @@ Item {
 
         windows.splice(windowIndex, 1);
         windowListChanged();
+        workspaceUpdateTimer.restart();
       }
     } catch (e) {
       Logger.e("NiriService", "Error handling WindowClosed:", e);
@@ -465,6 +477,33 @@ Item {
       Quickshell.execDetached(["niri", "msg", "action", "quit", "--skip-confirmation"]);
     } catch (e) {
       Logger.e("NiriService", "Failed to logout:", e);
+    }
+  }
+
+  function cycleKeyboardLayout() {
+    try {
+      Quickshell.execDetached(["niri", "msg", "action", "switch-layout", "next"]);
+    } catch (e) {
+      Logger.e("NiriService", "Failed to cycle keyboard layout:", e);
+    }
+  }
+
+  function getFocusedScreen() {
+    // On niri the code below only works when you have an actual app selected on that screen.
+    return null;
+
+    // const activeToplevel = ToplevelManager.activeToplevel;
+    // if (activeToplevel && activeToplevel.screens && activeToplevel.screens.length > 0) {
+    //   return activeToplevel.screens[0];
+    // }
+    // return null;
+  }
+
+  function spawn(command) {
+    try {
+      Quickshell.execDetached(["niri", "msg", "action", "spawn", "--"].concat(command));
+    } catch (e) {
+      Logger.e("NiriService", "Failed to spawn command:", e);
     }
   }
 }

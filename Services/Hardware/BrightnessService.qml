@@ -39,6 +39,10 @@ Singleton {
     monitors.forEach(m => m.decreaseBrightness());
   }
 
+  function setBrightness(value: real): void {
+    monitors.forEach(m => m.setBrightnessDebounced(value));
+  }
+
   function getDetectedDisplays(): list<var> {
     return detectedDisplays;
   }
@@ -100,13 +104,16 @@ Singleton {
                                              var ddcModelMatch = d.match(/(This monitor does not support DDC\/CI|Invalid display)/);
                                              var modelMatch = d.match(/Model:\s*(.*)/);
                                              var busMatch = d.match(/I2C bus:[ ]*\/dev\/i2c-([0-9]+)/);
+                                             var connectorMatch = d.match(/DRM[_ ]connector:\s*card\d+-(.+)/);
                                              var ddcModel = ddcModelMatch ? ddcModelMatch.length > 0 : false;
                                              var model = modelMatch ? modelMatch[1] : "Unknown";
                                              var bus = busMatch ? busMatch[1] : "Unknown";
-                                             Logger.i("Brightness", "Detected DDC Monitor:", model, "on bus", bus, "is DDC:", !ddcModel);
+                                             var connector = connectorMatch ? connectorMatch[1].trim() : "";
+                                             Logger.i("Brightness", "Detected DDC Monitor:", model, "connector:", connector, "bus:", bus, "is DDC:", !ddcModel);
                                              return {
                                                "model": model,
                                                "busNum": bus,
+                                               "connector": connector,
                                                "isDdc": !ddcModel
                                              };
                                            });
@@ -119,8 +126,8 @@ Singleton {
     id: monitor
 
     required property ShellScreen modelData
-    readonly property bool isDdc: Settings.data.brightness.enableDdcSupport && root.ddcMonitors.some(m => m.model === modelData.model)
-    readonly property string busNum: root.ddcMonitors.find(m => m.model === modelData.model)?.busNum ?? ""
+    readonly property bool isDdc: Settings.data.brightness.enableDdcSupport && root.ddcMonitors.some(m => m.connector === modelData.name)
+    readonly property string busNum: root.ddcMonitors.find(m => m.connector === modelData.name)?.busNum ?? ""
     readonly property bool isAppleDisplay: root.appleDisplayPresent && modelData.model.startsWith("StudioDisplay")
     readonly property string method: isAppleDisplay ? "apple" : (isDdc ? "ddcutil" : "internal")
 
@@ -173,6 +180,7 @@ Singleton {
               var current = parseInt(parts[3]);
               var max = parseInt(parts[4]);
               if (!isNaN(current) && !isNaN(max) && max > 0) {
+                monitor.maxBrightness = max;
                 newBrightness = current / max;
               }
             }
@@ -188,8 +196,8 @@ Singleton {
             }
           }
 
-          // Update if we got a valid brightness value and it's different
-          if (!isNaN(newBrightness) && Math.abs(newBrightness - monitor.brightness) > 0.01) {
+          // Update if we got a valid brightness value
+          if (!isNaN(newBrightness) && (Math.abs(newBrightness - monitor.brightness) > 0.001 || monitor.brightness === 0)) {
             monitor.brightness = newBrightness;
             monitor.brightnessUpdated(monitor.brightness);
             root.monitorBrightnessChanged(monitor, monitor.brightness);
@@ -219,9 +227,9 @@ Singleton {
         // For internal displays, query the system directly
         refreshProc.command = ["sh", "-c", "cat " + monitor.brightnessPath + " && " + "cat " + monitor.maxBrightnessPath];
         refreshProc.running = true;
-      } else if (monitor.isDdc) {
+      } else if (monitor.isDdc && monitor.busNum !== "") {
         // For DDC displays, get the current value
-        refreshProc.command = ["ddcutil", "-b", monitor.busNum, "getvcp", "10", "--brief"];
+        refreshProc.command = ["ddcutil", "-b", monitor.busNum, "--sleep-multiplier=0.05", "getvcp", "10", "--brief"];
         refreshProc.running = true;
       } else if (monitor.isAppleDisplay) {
         // For Apple displays, get the current value
@@ -267,6 +275,7 @@ Singleton {
               var current = parseInt(parts[3]);
               var max = parseInt(parts[4]);
               if (!isNaN(current) && !isNaN(max) && max > 0) {
+                monitor.maxBrightness = max;
                 monitor.brightness = current / max;
                 Logger.d("Brightness", "DDC brightness:", current + "/" + max + " =", monitor.brightness);
               }
@@ -302,25 +311,11 @@ Singleton {
 
     // Timer for debouncing rapid changes
     readonly property Timer timer: Timer {
-      interval: 100
+      interval: 250
       onTriggered: {
         if (!isNaN(monitor.queuedBrightness)) {
           monitor.setBrightness(monitor.queuedBrightness);
           monitor.queuedBrightness = NaN;
-        }
-      }
-    }
-
-    // Timer for polling DDC monitor brightness (every 30 seconds)
-    readonly property Timer pollTimer: Timer {
-      interval: 30000
-      repeat: true
-      running: monitor.isDdc
-      triggeredOnStart: true
-      onTriggered: {
-        // Only refresh if not currently setting brightness
-        if (!monitor.commandRunning && isNaN(monitor.queuedBrightness)) {
-          monitor.refreshBrightnessFromSystem();
         }
       }
     }
@@ -367,16 +362,23 @@ Singleton {
       }
 
       // Execute the brightness change command
-      monitor.commandRunning = true;
-      monitor.ignoreNextChange = true;
-
       if (isAppleDisplay) {
+        monitor.commandRunning = true;
+        monitor.ignoreNextChange = true;
         setBrightnessProc.command = ["asdbctl", "set", rounded];
         setBrightnessProc.running = true;
-      } else if (isDdc) {
-        setBrightnessProc.command = ["ddcutil", "-b", busNum, "--sleep-multiplier=0.05", "setvcp", "10", rounded];
-        setBrightnessProc.running = true;
-      } else {
+      } else if (isDdc && busNum !== "") {
+        monitor.commandRunning = true;
+        monitor.ignoreNextChange = true;
+        var ddcValue = Math.round(value * monitor.maxBrightness);
+        var ddcBus = busNum;
+        Qt.callLater(() => {
+                       setBrightnessProc.command = ["ddcutil", "-b", ddcBus, "--noverify", "--async", "--sleep-multiplier=0.05", "setvcp", "10", ddcValue];
+                       setBrightnessProc.running = true;
+                     });
+      } else if (!isDdc) {
+        monitor.commandRunning = true;
+        monitor.ignoreNextChange = true;
         setBrightnessProc.command = ["brightnessctl", "s", rounded + "%"];
         setBrightnessProc.running = true;
       }
@@ -385,17 +387,21 @@ Singleton {
     function initBrightness(): void {
       if (isAppleDisplay) {
         initProc.command = ["asdbctl", "get"];
-      } else if (isDdc) {
-        initProc.command = ["ddcutil", "-b", busNum, "getvcp", "10", "--brief"];
-      } else {
+        initProc.running = true;
+      } else if (isDdc && busNum !== "") {
+        initProc.command = ["ddcutil", "-b", busNum, "--sleep-multiplier=0.05", "getvcp", "10", "--brief"];
+        initProc.running = true;
+      } else if (!isDdc) {
         // Internal backlight - find the first available backlight device and get its info
         // This now returns: device_path, current_brightness, max_brightness (on separate lines)
         initProc.command = ["sh", "-c", "for dev in /sys/class/backlight/*; do " + "  if [ -f \"$dev/brightness\" ] && [ -f \"$dev/max_brightness\" ]; then " + "    echo \"$dev\"; " + "    cat \"$dev/brightness\"; " + "    cat \"$dev/max_brightness\"; " + "    break; " + "  fi; " + "done"];
+        initProc.running = true;
       }
-      initProc.running = true;
     }
 
     onBusNumChanged: initBrightness()
+    onIsDdcChanged: if (isDdc)
+    initBrightness()
     Component.onCompleted: initBrightness()
   }
 }

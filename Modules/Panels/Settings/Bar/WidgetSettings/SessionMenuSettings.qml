@@ -14,42 +14,26 @@ ColumnLayout {
   property var widgetData: null
   property var widgetMetadata: null
 
+  signal settingsChanged(var settings)
+
   // Local state
-  property string valueColorName: widgetData.colorName !== undefined ? widgetData.colorName : widgetMetadata.colorName
+  property string valueIconColor: widgetData.iconColor !== undefined ? widgetData.iconColor : (widgetData.colorName !== undefined ? widgetData.colorName : widgetMetadata.iconColor)
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
-    settings.colorName = valueColorName;
+    settings.iconColor = valueIconColor;
     return settings;
   }
 
   NComboBox {
-    Layout.fillWidth: true
-    label: I18n.tr("bar.audio-visualizer.color-name-label")
-    description: I18n.tr("bar.audio-visualizer.color-name-description")
-    model: [
-      {
-        "key": "primary",
-        "name": I18n.tr("colors.primary")
-      },
-      {
-        "key": "secondary",
-        "name": I18n.tr("colors.secondary")
-      },
-      {
-        "key": "tertiary",
-        "name": I18n.tr("colors.tertiary")
-      },
-      {
-        "key": "onSurface",
-        "name": I18n.tr("colors.on-surface")
-      },
-      {
-        "key": "error",
-        "name": I18n.tr("colors.error")
-      }
-    ]
-    currentKey: root.valueColorName
-    onSelected: key => root.valueColorName = key
+    label: I18n.tr("common.select-icon-color")
+    description: I18n.tr("common.select-color-description")
+    model: Color.colorKeyModel
+    currentKey: root.valueIconColor
+    onSelected: key => {
+                  root.valueIconColor = key;
+                  settingsChanged(saveSettings());
+                }
+    minimumWidth: 200
   }
 }

@@ -40,7 +40,7 @@ SmartPanel {
       return false;
     if (!Settings.data.appLauncher.enableClipPreview)
       return false;
-    return launcherCoreRef.selectedIndex >= 0 && launcherCoreRef.results && !!launcherCoreRef.results[launcherCoreRef.selectedIndex];
+    return selectedIndex >= 0 && results && !!results[selectedIndex];
   }
   readonly property int previewPanelWidth: Math.round(400 * Style.uiScaleRatio)
 
@@ -53,13 +53,14 @@ SmartPanel {
   preferredWidthRatio: 0.25
   preferredHeightRatio: 0.5
 
-  // Positioning based on settings
+  // Positioning
+  readonly property string screenBarPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property string panelPosition: {
     if (Settings.data.appLauncher.position === "follow_bar") {
-      if (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") {
-        return `center_${Settings.data.bar.position}`;
+      if (screenBarPosition === "left" || screenBarPosition === "right") {
+        return `center_${screenBarPosition}`;
       } else {
-        return `${Settings.data.bar.position}_center`;
+        return `${screenBarPosition}_center`;
       }
     } else {
       return Settings.data.appLauncher.position;
@@ -92,7 +93,7 @@ SmartPanel {
       visible: root.previewActive
       width: root.previewPanelWidth
       height: Math.round(400 * Style.uiScaleRatio)
-      x: ui.width + Style.marginM
+      x: root.panelAnchorRight ? -(root.previewPanelWidth + Style.marginM) : ui.width + Style.marginM
       y: {
         var view = launcherCore.resultsView;
         if (!view)

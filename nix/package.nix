@@ -1,5 +1,18 @@
 {
   version ? "dirty",
+  extraPackages ? [ ],
+  runtimeDeps ? [
+    brightnessctl
+    cava
+    cliphist
+    ddcutil
+    wlsunset
+    wl-clipboard
+    imagemagick
+    wget
+    (python3.withPackages (pp: lib.optional calendarSupport pp.pygobject3))
+  ],
+
   lib,
   stdenvNoCC,
   # build
@@ -10,14 +23,14 @@
   cava,
   cliphist,
   ddcutil,
-  matugen,
   wlsunset,
   wl-clipboard,
   imagemagick,
   wget,
+  python3,
+  wayland-scanner,
   # calendar support
   calendarSupport ? false,
-  python3,
   evolution-data-server,
   libical,
   glib,
@@ -34,7 +47,7 @@ let
         /.github
         /.gitignore
         /Assets/Screenshots
-        /Bin/dev
+        /Scripts/dev
         /nix
         /LICENSE
         /README.md
@@ -46,19 +59,6 @@ let
         /CREDITS.md
       ]);
   };
-
-  runtimeDeps = [
-    brightnessctl
-    cava
-    cliphist
-    ddcutil
-    matugen
-    wlsunset
-    wl-clipboard
-    imagemagick
-    wget
-  ]
-  ++ lib.optional calendarSupport (python3.withPackages (pp: [ pp.pygobject3 ]));
 
   giTypelibPath = lib.makeSearchPath "lib/girepository-1.0" [
     evolution-data-server
@@ -90,7 +90,8 @@ stdenvNoCC.mkDerivation {
 
   preFixup = ''
     qtWrapperArgs+=(
-      --prefix PATH : ${lib.makeBinPath runtimeDeps}
+      --prefix PATH : ${lib.makeBinPath (runtimeDeps ++ extraPackages)}
+      --prefix XDG_DATA_DIRS : ${wayland-scanner}/share
       --add-flags "-p $out/share/noctalia-shell"
       ${lib.optionalString calendarSupport "--prefix GI_TYPELIB_PATH : ${giTypelibPath}"}
     )

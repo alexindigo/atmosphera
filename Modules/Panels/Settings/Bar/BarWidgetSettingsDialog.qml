@@ -14,25 +14,14 @@ Popup {
   property var widgetData: null
   property string widgetId: ""
   property string sectionId: ""
+  property var screen: null
+  property var settingsCache: ({})
+
+  readonly property real maxHeight: screen ? screen.height * 0.9 : 800
 
   signal updateWidgetSettings(string section, int index, var settings)
 
-  // Helper function to find screen from parent chain
-  function findScreen() {
-    var item = parent;
-    while (item) {
-      if (item.screen !== undefined) {
-        return item.screen;
-      }
-      item = item.parent;
-    }
-    return null;
-  }
-
-  readonly property var screen: findScreen()
-  readonly property real maxHeight: screen ? screen.height * 0.9 : (parent ? parent.height * 0.9 : 800)
-
-  width: Math.max(content.implicitWidth + padding * 2, 500)
+  width: Math.max(content.implicitWidth + padding * 2, 640)
   height: Math.min(content.implicitHeight + padding * 2, maxHeight)
   padding: Style.marginXL
   modal: true
@@ -85,7 +74,7 @@ Popup {
         NIconButton {
           icon: "close"
           tooltipText: I18n.tr("common.close")
-          onClicked: root.close()
+          onClicked: saveAndClose()
         }
       }
 
@@ -103,9 +92,10 @@ Popup {
         Layout.fillWidth: true
         Layout.fillHeight: true
         Layout.minimumHeight: 100
+        gradientColor: Color.mSurface
 
         ColumnLayout {
-          width: scrollView.width
+          width: scrollView.availableWidth
           spacing: Style.marginM
 
           // Settings based on widget type
@@ -149,38 +139,37 @@ Popup {
           }
         }
       }
+    }
+  }
 
-      // Action buttons
-      RowLayout {
-        id: buttonRow
-        Layout.fillWidth: true
-        Layout.topMargin: Style.marginM
-        Layout.preferredHeight: implicitHeight
-        spacing: Style.marginM
+  Timer {
+    id: saveTimer
+    running: false
+    interval: 150
+    onTriggered: {
+      root.updateWidgetSettings(root.sectionId, root.widgetIndex, root.settingsCache);
+    }
+  }
 
-        Item {
-          Layout.fillWidth: true
-        }
-
-        NButton {
-          text: I18n.tr("common.cancel")
-          outlined: true
-          onClicked: root.close()
-        }
-
-        NButton {
-          text: I18n.tr("common.apply")
-          icon: "check"
-          onClicked: {
-            if (settingsLoader.item && settingsLoader.item.saveSettings) {
-              var newSettings = settingsLoader.item.saveSettings();
-              root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
-              root.close();
-            }
-          }
-        }
+  Connections {
+    target: settingsLoader.item
+    ignoreUnknownSignals: true
+    function onSettingsChanged(newSettings) {
+      if (newSettings) {
+        root.settingsCache = newSettings;
+        saveTimer.start();
       }
     }
+  }
+
+  function saveAndClose() {
+    if (settingsLoader.item && typeof settingsLoader.item.saveSettings === 'function') {
+      var newSettings = settingsLoader.item.saveSettings();
+      if (newSettings) {
+        root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
+      }
+    }
+    root.close();
   }
 
   function loadWidgetSettings() {
@@ -188,7 +177,7 @@ Popup {
     if (source) {
       var currentWidgetData = widgetData;
       if (sectionId && widgetIndex >= 0) {
-        var widgets = Settings.data.bar.widgets[sectionId];
+        var widgets = Settings.getBarWidgetsForScreen(screen?.name || "")[sectionId];
         if (widgets && widgetIndex < widgets.length) {
           currentWidgetData = widgets[widgetIndex];
         }

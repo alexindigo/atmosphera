@@ -13,19 +13,26 @@ ColumnLayout {
   property var widgetData: null
   property var widgetMetadata: null
 
+  signal settingsChanged(var settings)
+
   // Local state
-  property bool valueUsePrimaryColor: widgetData.usePrimaryColor !== undefined ? widgetData.usePrimaryColor : (widgetMetadata ? widgetMetadata.usePrimaryColor : false)
+  property string valueIconColor: widgetData.iconColor !== undefined ? widgetData.iconColor : widgetMetadata.iconColor
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
-    settings.usePrimaryColor = valueUsePrimaryColor;
+    settings.iconColor = valueIconColor;
     return settings;
   }
 
-  NToggle {
-    label: I18n.tr("bar.clock.use-primary-color-label")
-    description: I18n.tr("bar.clock.use-primary-color-description")
-    checked: valueUsePrimaryColor
-    onToggled: checked => valueUsePrimaryColor = checked
+  NComboBox {
+    label: I18n.tr("common.select-icon-color")
+    description: I18n.tr("common.select-color-description")
+    model: Color.colorKeyModel
+    currentKey: valueIconColor
+    onSelected: key => {
+                  valueIconColor = key;
+                  settingsChanged(saveSettings());
+                }
+    minimumWidth: 200
   }
 }

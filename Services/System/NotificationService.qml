@@ -140,7 +140,7 @@ Singleton {
 
     // Check if we should save to history based on urgency
     const saveToHistorySettings = Settings.data.notifications?.saveToHistory;
-    if (saveToHistorySettings) {
+    if (saveToHistorySettings && !notification.transient) {
       let shouldSave = true;
       switch (data.urgency) {
       case 0: // low
@@ -156,7 +156,7 @@ Singleton {
       if (shouldSave) {
         addToHistory(data);
       }
-    } else {
+    } else if (!notification.transient) {
       // Default behavior: save all if settings not configured
       addToHistory(data);
     }
@@ -299,8 +299,27 @@ Singleton {
     // Update stored notification object
     const notifData = activeNotifications[internalId];
     notifData.notification = notification;
+
+    // Deep copy actions to preserve them even if QML object clears list
+    var safeActions = [];
+    if (notification.actions) {
+      for (var i = 0; i < notification.actions.length; i++) {
+        safeActions.push({
+                           "identifier": notification.actions[i].identifier,
+                           "actionObject": notification.actions[i]
+                         });
+      }
+    }
+    notifData.cachedActions = safeActions;
+    notifData.metadata.originalId = data.originalId;
+
     notification.tracked = true;
-    notification.closed.connect(() => removeNotification(internalId));
+
+    function onClosed() {
+      userDismissNotification(internalId);
+    }
+    notification.closed.connect(onClosed);
+    notifData.onClosed = onClosed;
 
     // Update metadata
     notifData.metadata.urgency = data.urgency;
@@ -317,11 +336,26 @@ Singleton {
                                                                 "targetDataId": data.id
                                                               });
 
+    // Deep copy actions
+    var safeActions = [];
+    if (notification.actions) {
+      for (var i = 0; i < notification.actions.length; i++) {
+        safeActions.push({
+                           "identifier": notification.actions[i].identifier,
+                           "actionObject": notification.actions[i]
+                         });
+      }
+    }
+
     // Store notification data
     activeNotifications[data.id] = {
       "notification": notification,
       "watcher": watcher,
+      "cachedActions": safeActions // Cache actions
+                       ,
       "metadata": {
+        "originalId": data.originalId // Store original ID
+                      ,
         "timestamp": data.timestamp.getTime(),
         "duration": calculateDuration(data),
         "urgency": data.urgency,
@@ -331,7 +365,12 @@ Singleton {
     };
 
     notification.tracked = true;
-    notification.closed.connect(() => removeNotification(data.id));
+
+    function onClosed() {
+      userDismissNotification(data.id);
+    }
+    notification.closed.connect(onClosed);
+    activeNotifications[data.id].onClosed = onClosed;
 
     // Add to list
     activeList.insert(0, data);
@@ -339,9 +378,10 @@ Singleton {
     // Remove overflow
     while (activeList.count > maxVisible) {
       const last = activeList.get(activeList.count - 1);
-      activeNotifications[last.id]?.notification?.dismiss();
+      // Overflow only removes from ACTIVE view, but keeps it for history
+      activeNotifications[last.id]?.notification?.dismiss(); // Visually dismiss
       activeList.remove(activeList.count - 1);
-      cleanupNotification(last.id);
+      // DO NOT call cleanupNotification here, we want to keep it for history actions
     }
   }
 
@@ -396,6 +436,8 @@ Singleton {
       "originalImage": image,
       "cachedImage": image  // Start with original, update when cached
                      ,
+      "originalId": n.originalId || n.id || 0 // Ensure originalId is passed through
+                    ,
       "actionsJson": JSON.stringify((n.actions || []).map(a => ({
                                                                   "text": (a.text || "").trim() || "Action",
                                                                   "identifier": a.identifier || ""
@@ -728,8 +770,16 @@ Singleton {
 
   // Public API
   function dismissActiveNotification(id) {
-    activeNotifications[id]?.notification?.dismiss();
-    removeNotification(id);
+    userDismissNotification(id);
+  }
+
+  // User dismissed from active view (e.g. clicked close, or swipe)
+  // This behaves like "overflow" - removes from active list but KEEPS data for history
+  function userDismissNotification(id) {
+    const index = findNotificationIndex(id);
+    if (index >= 0) {
+      activeList.remove(index);
+    }
   }
 
   function dismissOldestActive() {
@@ -750,17 +800,71 @@ Singleton {
   }
 
   function invokeAction(id, actionId) {
+    // 1. Try invoking via live object
+    let invoked = false;
     const notifData = activeNotifications[id];
-    if (!notifData?.notification?.actions)
-      return false;
 
-    for (const action of notifData.notification.actions) {
-      if (action.identifier === actionId && action.invoke) {
-        action.invoke();
-        return true;
+    if (!notifData) {
+      // No data
+    } else if (!notifData.notification) {
+      // No notification object
+    } else {
+      // Use cached actions if live actions are empty (which happens if app closed notification)
+      const actionsToUse = (notifData.notification.actions && notifData.notification.actions.length > 0) ? notifData.notification.actions : (notifData.cachedActions || []);
+
+      if (actionsToUse && actionsToUse.length > 0) {
+        for (const item of actionsToUse) {
+          const id = item.identifier; // Works for both raw object and wrapper (if properties match)
+          const actionObj = item.actionObject ? item.actionObject : item; // Unwrap if wrapper
+
+          if (id === actionId) {
+            if (actionObj.invoke) {
+              try {
+                actionObj.invoke();
+                invoked = true;
+              } catch (e) {
+                if (manualInvoke(notifData.metadata.originalId, id)) {
+                  invoked = true;
+                }
+              }
+            } else {
+              if (manualInvoke(notifData.metadata.originalId, id)) {
+                invoked = true;
+              }
+            }
+          }
+        }
       }
     }
-    return false;
+
+    if (!invoked) {
+      return false;
+    }
+
+    // Clear actions after use
+    updateModel(activeList, id, "actionsJson", "[]");
+    updateModel(historyList, id, "actionsJson", "[]");
+    saveHistory();
+
+    return true;
+  }
+
+  function manualInvoke(originalId, actionId) {
+    if (!originalId) {
+      return false;
+    }
+
+    try {
+      // Construct the signal emission using dbus-send
+      // dbus-send --session --type=signal /org/freedesktop/Notifications org.freedesktop.Notifications.ActionInvoked uint32:ID string:"KEY"
+      const args = ["dbus-send", "--session", "--type=signal", "/org/freedesktop/Notifications", "org.freedesktop.Notifications.ActionInvoked", "uint32:" + originalId, "string:" + actionId];
+
+      Quickshell.execDetached(args);
+      return true;
+    } catch (e) {
+      Logger.e("NotificationService", "Manual invoke failed: " + e);
+      return false;
+    }
   }
 
   function removeFromHistory(notificationId) {
@@ -829,5 +933,124 @@ Singleton {
 
   onDoNotDisturbChanged: {
     ToastService.showNotice(doNotDisturb ? I18n.tr("toast.do-not-disturb.enabled") : I18n.tr("toast.do-not-disturb.disabled"), doNotDisturb ? I18n.tr("toast.do-not-disturb.enabled-desc") : I18n.tr("toast.do-not-disturb.disabled-desc"), doNotDisturb ? "bell-off" : "bell");
+  }
+
+  // Media toast functionality
+  property string previousMediaTitle: ""
+  property string previousMediaArtist: ""
+  property bool previousMediaIsPlaying: false
+  property bool mediaToastInitialized: false
+
+  Timer {
+    id: mediaToastInitTimer
+    interval: 3000 // Wait 3 seconds after startup to avoid initial toast
+    running: true
+    onTriggered: {
+      root.mediaToastInitialized = true;
+      root.previousMediaTitle = MediaService.trackTitle;
+      root.previousMediaArtist = MediaService.trackArtist;
+      root.previousMediaIsPlaying = MediaService.isPlaying;
+    }
+  }
+
+  Timer {
+    id: mediaToastDebounce
+    interval: 250 // Dynamic interval based on player
+    onTriggered: {
+      checkMediaToast();
+    }
+  }
+
+  function checkMediaToast() {
+    if (!Settings.data.notifications.enableMediaToast || !mediaToastInitialized)
+      return;
+
+    if (doNotDisturb || PowerProfileService.noctaliaPerformanceMode)
+      return;
+
+    // Re-evaluate player identity here to handle race conditions where
+    // the identity wasn't updated yet when the timer started.
+    const player = (MediaService.playerIdentity || "").toLowerCase();
+    const browsers = ["firefox", "chromium", "chrome", "brave", "edge", "opera", "vivaldi", "zen"];
+    const isBrowser = browsers.some(b => player.includes(b));
+
+    // Safety check: If it's a browser, ensure we waited long enough.
+    // If we started with a short interval (e.g. 250ms because we thought it was Spotify),
+    // correct it now and wait the full duration.
+    if (isBrowser && mediaToastDebounce.interval < 1500) {
+      mediaToastDebounce.interval = 1500;
+      mediaToastDebounce.restart();
+      return;
+    }
+
+    const title = MediaService.trackTitle || "";
+    const artist = MediaService.trackArtist || "";
+    const isPlaying = MediaService.isPlaying;
+
+    // Only show toast if something meaningful changed
+    const titleChanged = title !== previousMediaTitle && title !== "";
+    const playStateChanged = isPlaying !== previousMediaIsPlaying;
+    const hasMedia = title !== "" || artist !== "";
+
+    // Browser Specific Logic:
+    // If a browser reports a new title but is PAUSED, ignore it.
+    if (isBrowser && !isPlaying && titleChanged) {
+      previousMediaTitle = title;
+      previousMediaArtist = artist;
+      previousMediaIsPlaying = isPlaying;
+      return;
+    }
+
+    if (hasMedia && (titleChanged || playStateChanged)) {
+      const icon = isPlaying ? "media-play" : "media-pause";
+      let message = "";
+
+      if (artist && title) {
+        message = artist + " — " + title;
+      } else if (title) {
+        message = title;
+      } else if (artist) {
+        message = artist;
+      }
+
+      if (message !== "") {
+        const toastTitle = isPlaying ? I18n.tr("common.play") : I18n.tr("common.pause");
+        ToastService.showNotice(toastTitle, message, icon, 3000);
+      }
+    }
+
+    previousMediaTitle = title;
+    previousMediaArtist = artist;
+    previousMediaIsPlaying = isPlaying;
+  }
+
+  Connections {
+    target: MediaService
+
+    function onTrackTitleChanged() {
+      restartDebounce();
+    }
+
+    function onTrackArtistChanged() {
+      restartDebounce();
+    }
+
+    function onIsPlayingChanged() {
+      restartDebounce();
+    }
+
+    function onPlayerIdentityChanged() {
+      restartDebounce();
+    }
+  }
+
+  function restartDebounce() {
+    const player = (MediaService.playerIdentity || "").toLowerCase();
+    const browsers = ["firefox", "chromium", "chrome", "brave", "edge", "opera", "vivaldi"];
+    const isBrowser = browsers.some(b => player.includes(b));
+
+    // Use long delay for browsers to filter hover previews, short for music apps
+    mediaToastDebounce.interval = isBrowser ? 1500 : 250;
+    mediaToastDebounce.restart();
   }
 }

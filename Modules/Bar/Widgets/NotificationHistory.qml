@@ -21,17 +21,37 @@ NIconButton {
   property int sectionWidgetsCount: 0
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
+  // Explicit screenName property ensures reactive binding when screen changes
+  readonly property string screenName: screen ? screen.name : ""
   property var widgetSettings: {
-    if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section];
+    if (section && sectionWidgetIndex >= 0 && screenName) {
+      var widgets = Settings.getBarWidgetsForScreen(screenName)[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
         return widgets[sectionWidgetIndex];
       }
     }
     return {};
   }
-  readonly property bool showUnreadBadge: (widgetSettings.showUnreadBadge !== undefined) ? widgetSettings.showUnreadBadge : widgetMetadata.showUnreadBadge
-  readonly property bool hideWhenZero: (widgetSettings.hideWhenZero !== undefined) ? widgetSettings.hideWhenZero : widgetMetadata.hideWhenZero
+  readonly property bool showUnreadBadge: widgetSettings.showUnreadBadge !== undefined ? widgetSettings.showUnreadBadge : widgetMetadata.showUnreadBadge
+  readonly property bool hideWhenZero: widgetSettings.hideWhenZero !== undefined ? widgetSettings.hideWhenZero : widgetMetadata.hideWhenZero
+  readonly property bool hideWhenZeroUnread: widgetSettings.hideWhenZeroUnread !== undefined ? widgetSettings.hideWhenZeroUnread : widgetMetadata.hideWhenZeroUnread
+  readonly property string unreadBadgeColor: widgetSettings.unreadBadgeColor !== undefined ? widgetSettings.unreadBadgeColor : widgetMetadata.unreadBadgeColor
+  readonly property string iconColorKey: widgetSettings.iconColor !== undefined ? widgetSettings.iconColor : widgetMetadata.iconColor
+
+  readonly property color badgeColor: {
+    switch (unreadBadgeColor) {
+    case "primary":
+      return Color.mPrimary;
+    case "secondary":
+      return Color.mSecondary;
+    case "tertiary":
+      return Color.mTertiary;
+    case "error":
+      return Color.mError;
+    default:
+      return Color.mOnSurface;
+    }
+  }
 
   function computeUnreadCount() {
     var since = NotificationService.lastSeenTs;
@@ -48,20 +68,18 @@ NIconButton {
 
   readonly property int count: computeUnreadCount()
 
-  baseSize: Style.capsuleHeight
+  baseSize: Style.getCapsuleHeightForScreen(screen?.name)
   applyUiScale: false
   customRadius: Style.radiusL
   icon: NotificationService.doNotDisturb ? "bell-off" : "bell"
   tooltipText: NotificationService.doNotDisturb ? I18n.tr("tooltips.open-notification-history-enable-dnd") : I18n.tr("tooltips.open-notification-history-enable-dnd")
-  tooltipDirection: BarService.getTooltipDirection()
+  tooltipDirection: BarService.getTooltipDirection(screen?.name)
   colorBg: Style.capsuleColor
-  colorFg: Color.mOnSurface
-  colorBorder: "transparent"
-  colorBorderHover: "transparent"
+  colorFg: Color.resolveColorKey(iconColorKey)
   border.color: Style.capsuleBorderColor
   border.width: Style.capsuleBorderWidth
-  visible: count > 0 || !hideWhenZero
-  opacity: (count > 0 || !hideWhenZero) ? 1.0 : 0.0
+  visible: !((hideWhenZero && NotificationService.historyList.count === 0) || (hideWhenZeroUnread && count === 0))
+  opacity: !((hideWhenZero && NotificationService.historyList.count === 0) || (hideWhenZeroUnread && count === 0)) ? 1.0 : 0.0
 
   NPopupContextMenu {
     id: contextMenu
@@ -85,10 +103,8 @@ NIconButton {
     ]
 
     onTriggered: action => {
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-                   if (popupMenuWindow) {
-                     popupMenuWindow.close();
-                   }
+                   contextMenu.close();
+                   PanelService.closeContextMenu(screen);
 
                    if (action === "toggle-dnd") {
                      NotificationService.doNotDisturb = !NotificationService.doNotDisturb;
@@ -106,26 +122,22 @@ NIconButton {
   }
 
   onRightClicked: {
-    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-    if (popupMenuWindow) {
-      popupMenuWindow.showContextMenu(contextMenu);
-      contextMenu.openAtItem(root, screen);
-    }
+    PanelService.showContextMenu(contextMenu, root, screen);
   }
 
   Loader {
-    anchors.right: parent.right
-    anchors.top: parent.top
-    anchors.rightMargin: 2
-    anchors.topMargin: 1
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.horizontalCenterOffset: parent.baseSize / 4
+    anchors.verticalCenterOffset: -parent.baseSize / 4
     z: 2
     active: showUnreadBadge
     sourceComponent: Rectangle {
       id: badge
-      height: 8
+      height: 7
       width: height
       radius: Style.radiusXS
-      color: Color.mError
+      color: root.hovering ? Color.mOnHover : (root.badgeColor || Color.mError)
       border.color: Color.mSurface
       border.width: Style.borderS
       visible: count > 0

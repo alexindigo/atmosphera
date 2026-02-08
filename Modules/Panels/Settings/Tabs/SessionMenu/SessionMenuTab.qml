@@ -10,6 +10,7 @@ ColumnLayout {
   id: root
   spacing: 0
 
+  property var _activeDialog: null
   property list<var> entriesModel: []
   property list<var> entriesDefault: [
     {
@@ -57,7 +58,8 @@ ColumnLayout {
                     "action": entriesModel[i].id,
                     "enabled": entriesModel[i].enabled,
                     "countdownEnabled": entriesModel[i].countdownEnabled !== undefined ? entriesModel[i].countdownEnabled : true,
-                    "command": entriesModel[i].command || ""
+                    "command": entriesModel[i].command || "",
+                    "keybind": entriesModel[i].keybind || ""
                   });
     }
     Settings.data.sessionMenu.powerOptions = toSave;
@@ -78,6 +80,15 @@ ColumnLayout {
     saveEntries();
   }
 
+  Component.onDestruction: {
+    if (_activeDialog && _activeDialog.close) {
+      var dialog = _activeDialog;
+      _activeDialog = null;
+      dialog.close();
+      dialog.destroy();
+    }
+  }
+
   function openEntrySettingsDialog(index) {
     if (index < 0 || index >= entriesModel.length) {
       return;
@@ -87,6 +98,12 @@ ColumnLayout {
     var component = Qt.createComponent(Quickshell.shellDir + "/Modules/Panels/Settings/Tabs/SessionMenu/SessionMenuEntrySettingsDialog.qml");
 
     function instantiateAndOpen() {
+      if (root._activeDialog) {
+        root._activeDialog.close();
+        root._activeDialog.destroy();
+        root._activeDialog = null;
+      }
+
       var dialog = component.createObject(Overlay.overlay, {
                                             "entryIndex": index,
                                             "entryData": entry,
@@ -95,11 +112,16 @@ ColumnLayout {
                                           });
 
       if (dialog) {
-        dialog.updateEntryCommand.connect((idx, command) => {
-                                            root.updateEntry(idx, {
-                                                               "command": command
-                                                             });
-                                          });
+        root._activeDialog = dialog;
+        dialog.updateEntryProperties.connect((idx, properties) => {
+                                               root.updateEntry(idx, properties);
+                                             });
+        dialog.closed.connect(() => {
+                                if (root._activeDialog === dialog) {
+                                  root._activeDialog = null;
+                                  dialog.destroy();
+                                }
+                              });
         dialog.open();
       } else {
         Logger.e("SessionMenuTab", "Failed to create entry settings dialog");
@@ -136,6 +158,7 @@ ColumnLayout {
           entry.countdownEnabled = settingEntry.countdownEnabled !== undefined ? settingEntry.countdownEnabled : true;
           // Load custom command if defined
           entry.command = settingEntry.command || "";
+          entry.keybind = settingEntry.keybind || "";
           entriesModel.push(entry);
         }
       }
@@ -157,6 +180,7 @@ ColumnLayout {
         entry.countdownEnabled = true;
         // Default command to empty string for new entries
         entry.command = "";
+        entry.keybind = "";
         entriesModel.push(entry);
       }
     }

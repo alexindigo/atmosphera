@@ -93,6 +93,7 @@ Variants {
         return currentBrightness;
       case OSD.Type.LockKey:
         return 1.0; // Always show 100% when showing lock key status
+
       default:
         return 0;
       }
@@ -176,10 +177,15 @@ Variants {
     }
 
     function onBrightnessChanged(newBrightness) {
+      if (!root)
+        return;
+
       root.currentBrightness = newBrightness;
       // Don't show OSD if brightness panel is open
       var brightnessPanel = PanelService.getPanel("brightnessPanel", root.modelData);
-      if (brightnessPanel && brightnessPanel.isPanelOpen) {
+      var controlCenterPanel = PanelService.getPanel("controlCenterPanel", root.modelData);
+
+      if ((brightnessPanel && brightnessPanel.isPanelOpen) || (controlCenterPanel && controlCenterPanel.isPanelOpen)) {
         return;
       }
       showOSD(OSD.Type.Brightness);
@@ -203,6 +209,15 @@ Variants {
       // Check if this OSD type is enabled
       if (!isTypeEnabled(type))
         return;
+
+      // Suppress Audio OSD if Audio Panel or Control Center is open
+      if (type === OSD.Type.Volume || type === OSD.Type.InputVolume) {
+        var audioPanel = PanelService.getPanel("audioPanel", root.modelData);
+        var controlCenterPanel = PanelService.getPanel("controlCenterPanel", root.modelData);
+        if ((audioPanel && audioPanel.isPanelOpen) || (controlCenterPanel && controlCenterPanel.isPanelOpen)) {
+          return;
+        }
+      }
 
       currentOSDType = type;
 
@@ -315,6 +330,18 @@ Variants {
       }
     }
 
+    Component.onDestruction: {
+      if (typeof BrightnessService !== "undefined" && BrightnessService.monitors) {
+        for (var i = 0; i < BrightnessService.monitors.length; i++) {
+          try {
+            BrightnessService.monitors[i].brightnessUpdated.disconnect(onBrightnessChanged);
+          } catch (e) {
+            // Ignore errors if already disconnected or not connected
+          }
+        }
+      }
+    }
+
     // Visual Component
     sourceComponent: PanelWindow {
       id: panel
@@ -333,9 +360,8 @@ Variants {
         id: lockKeyTextMetrics
         visible: false
         text: root.getDisplayPercentage()
-        pointSize: Style.fontSizeM
+        pointSize: Style.fontSizeS
         family: Settings.data.ui.fontFixed
-        font.weight: Style.fontWeightMedium
         elide: Text.ElideNone
         wrapMode: Text.NoWrap
       }
@@ -363,7 +389,7 @@ Variants {
         const textWidth = Math.ceil(lockKeyTextMetrics.contentWidth || 0);
         if (textWidth === 0) {
           // Fallback: estimate based on text length if measurement not ready
-          const fontSize = Style.fontSizeM * Settings.data.ui.fontFixedScale * Style.uiScaleRatio;
+          const fontSize = Style.fontSizeS * Settings.data.ui.fontFixedScale * Style.uiScaleRatio;
           const estimatedWidth = text.length * fontSize * 0.6;
           const iconWidth = Style.fontSizeXL * Style.uiScaleRatio;
           const margins = Style.marginL * 2;
@@ -392,7 +418,7 @@ Variants {
         }
         // Calculate height: font size * char count + margins + icon space
         // Font size M (11pt) scaled, plus some spacing between chars
-        const fontSize = Style.fontSizeM * Settings.data.ui.fontFixedScale * Style.uiScaleRatio;
+        const fontSize = Style.fontSizeS * Settings.data.ui.fontFixedScale * Style.uiScaleRatio;
         const charHeight = fontSize * 1.3; // Add 30% for line height (matches Layout.preferredHeight)
         const textHeight = charCount * charHeight;
         // Background margins (Style.marginM * 1.5 * 2 for top and bottom)
@@ -420,16 +446,26 @@ Variants {
       anchors.left: isLeft
       anchors.right: isRight
 
+      readonly property string screenBarPosition: Settings.getBarPositionForScreen(root.modelData?.name)
+      readonly property real barHeight: Style.getBarHeightForScreen(root.modelData?.name)
+      readonly property bool isFramed: Settings.data.bar.barType === "framed"
+      readonly property real frameThickness: Settings.data.bar.frameThickness ?? 8
+
       function calculateMargin(isAnchored, position) {
         if (!isAnchored)
           return 0;
 
         let base = Style.marginM;
-        if (Settings.data.bar.position === position) {
+        if (screenBarPosition === position) {
           const isVertical = position === "top" || position === "bottom";
           const floatExtra = Math.ceil(Settings.data.bar.floating ? (isVertical ? Settings.data.bar.marginVertical : Settings.data.bar.marginHorizontal) : 0);
-          return Style.barHeight + base + floatExtra;
+          return barHeight + base + floatExtra;
         }
+
+        if (isFramed) {
+          return base + frameThickness;
+        }
+
         return base;
       }
 
@@ -523,7 +559,6 @@ Variants {
             TextMetrics {
               id: percentageMetrics
               font.family: Settings.data.ui.fontFixed
-              font.weight: Style.fontWeightMedium
               font.pointSize: Style.fontSizeS * (Settings.data.ui.fontFixedScale * Style.uiScaleRatio)
               text: "150%"
             }
@@ -548,9 +583,7 @@ Variants {
               visible: root.currentOSDType === OSD.Type.LockKey
               text: root.getDisplayPercentage()
               color: root.getProgressColor()
-              pointSize: Style.fontSizeM
-              family: Settings.data.ui.fontFixed
-              font.weight: Style.fontWeightMedium
+              pointSize: Style.fontSizeS
               elide: Text.ElideNone
               Layout.fillWidth: true
               horizontalAlignment: Text.AlignHCenter
@@ -657,12 +690,11 @@ Variants {
                 NText {
                   text: modelData || ""
                   color: root.getProgressColor()
-                  pointSize: Style.fontSizeM
+                  pointSize: Style.fontSizeS
                   family: Settings.data.ui.fontFixed
-                  font.weight: Style.fontWeightMedium
                   Layout.fillWidth: true
                   Layout.preferredHeight: {
-                    const fontSize = Style.fontSizeM * Settings.data.ui.fontFixedScale * Style.uiScaleRatio;
+                    const fontSize = Style.fontSizeS * Settings.data.ui.fontFixedScale * Style.uiScaleRatio;
                     return Math.round(fontSize * 1.3);
                   }
                   Layout.alignment: Qt.AlignHCenter
@@ -678,7 +710,6 @@ Variants {
               color: Color.mOnSurface
               pointSize: Style.fontSizeS
               family: Settings.data.ui.fontFixed
-              font.weight: Style.fontWeightRegular
               Layout.fillWidth: true
               Layout.alignment: Qt.AlignHCenter
               horizontalAlignment: Text.AlignHCenter
@@ -741,17 +772,24 @@ Variants {
           }
         }
 
+        // Delay showing the OSD to allow the layout to settle after activation.
+        // Without this, the percentage text renders outside the box on first
+        // show.
+        Timer {
+          id: showDelayTimer
+          interval: 30
+          onTriggered: {
+            osdItem.visible = true;
+            osdItem.opacity = 1;
+            osdItem.scale = 1.0;
+            hideTimer.start();
+          }
+        }
+
         function show() {
           hideTimer.stop();
           visibilityTimer.stop();
-          osdItem.visible = true;
-
-          Qt.callLater(() => {
-                         osdItem.opacity = 1;
-                         osdItem.scale = 1.0;
-                       });
-
-          hideTimer.start();
+          showDelayTimer.start();
         }
 
         function hide() {

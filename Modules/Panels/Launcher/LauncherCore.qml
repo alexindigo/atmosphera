@@ -37,13 +37,29 @@ Rectangle {
   property var activeProvider: null
   property bool resultsReady: false
   property var pluginProviderInstances: ({})
-  property bool ignoreMouseHover: Settings.data.appLauncher.ignoreMouseInput
+  property bool ignoreMouseHover: true // Transient flag, should always be true on init
+
+  // Global mouse tracking for movement detection across delegates
+  property real globalLastMouseX: 0
+  property real globalLastMouseY: 0
+  property bool globalMouseInitialized: false
+  property bool mouseTrackingReady: false // Delay tracking until panel is settled
+
+  Timer {
+    id: mouseTrackingDelayTimer
+    interval: Style.animationNormal + 50 // Wait for panel animation to complete + safety margin
+    repeat: false
+    onTriggered: {
+      root.mouseTrackingReady = true;
+      root.globalMouseInitialized = false; // Reset so we get fresh initial position
+    }
+  }
 
   readonly property var defaultProvider: appsProvider
   readonly property var currentProvider: activeProvider || defaultProvider
 
   readonly property int badgeSize: Math.round(Style.baseWidgetSize * 1.6 * Style.uiScaleRatio)
-  readonly property int entryHeight: Math.round(badgeSize + Style.marginM * 2)
+  readonly property int entryHeight: Math.round(badgeSize + Style.marginXL)
 
   readonly property bool providerShowsCategories: currentProvider.showsCategories === true
 
@@ -95,8 +111,24 @@ Rectangle {
 
   readonly property int targetGridColumns: currentProvider && currentProvider.preferredGridColumns ? currentProvider.preferredGridColumns : 5
   readonly property int listPanelWidth: Math.round(500 * Style.uiScaleRatio)
+  readonly property int gridContentWidth: listPanelWidth - (2 * Style.marginXS)
+  readonly property int gridCellSize: Math.floor((gridContentWidth - ((targetGridColumns - 1) * Style.marginS)) / targetGridColumns)
 
   property int gridColumns: 5
+
+  // Check if current provider allows wrap navigation (default true)
+  readonly property bool allowWrapNavigation: {
+    var provider = activeProvider || currentProvider;
+    return provider && provider.wrapNavigation !== undefined ? provider.wrapNavigation : true;
+  }
+
+  // Listen for plugin provider registry changes
+  Connections {
+    target: LauncherProviderRegistry
+    function onPluginProviderRegistryUpdated() {
+      root.syncPluginProviders();
+    }
+  }
 
   // Lifecycle
   onIsOpenChanged: {
@@ -110,6 +142,9 @@ Rectangle {
   function onOpened() {
     resultsReady = false;
     ignoreMouseHover = true;
+    globalMouseInitialized = false;
+    mouseTrackingReady = false;
+    mouseTrackingDelayTimer.restart();
     syncPluginProviders();
     Qt.callLater(() => {
                    for (let provider of providers) {
@@ -124,6 +159,7 @@ Rectangle {
 
   function onClosed() {
     searchText = "";
+    ignoreMouseHover = true;
     for (let provider of providers) {
       if (provider.onClosed)
         provider.onClosed();
@@ -157,6 +193,8 @@ Rectangle {
 
   function syncPluginProviders() {
     var registeredIds = LauncherProviderRegistry.getPluginProviders();
+
+    // Remove providers that are no longer registered
     for (var existingId in pluginProviderInstances) {
       if (registeredIds.indexOf(existingId) === -1) {
         var idx = providers.indexOf(pluginProviderInstances[existingId]);
@@ -164,13 +202,16 @@ Rectangle {
           providers.splice(idx, 1);
         pluginProviderInstances[existingId].destroy();
         delete pluginProviderInstances[existingId];
+        Logger.d("Launcher", "Removed plugin provider:", existingId);
       }
     }
+
+    // Add new providers
     for (var i = 0; i < registeredIds.length; i++) {
       var providerId = registeredIds[i];
       if (!pluginProviderInstances[providerId]) {
         var component = LauncherProviderRegistry.getProviderComponent(providerId);
-        var pluginId = providerId.substring(7);
+        var pluginId = providerId.substring(7); // Remove "plugin:" prefix
         var pluginApi = PluginService.getPluginAPI(pluginId);
         if (component && pluginApi) {
           var instance = component.createObject(root, {
@@ -179,16 +220,24 @@ Rectangle {
           if (instance) {
             pluginProviderInstances[providerId] = instance;
             registerProvider(instance);
+            Logger.d("Launcher", "Registered plugin provider:", providerId);
           }
         }
       }
     }
+
+    // Update results if launcher is open
+    if (root.isOpen) {
+      updateResults();
+    }
   }
 
+  // Search handling
   function updateResults() {
     results = [];
     var newActiveProvider = null;
 
+    // Check for command mode
     if (searchText.startsWith(">")) {
       for (let provider of providers) {
         if (provider.handleCommand && provider.handleCommand(searchText)) {
@@ -197,6 +246,8 @@ Rectangle {
           break;
         }
       }
+
+      // Show available commands if just ">" or filter commands if partial match
       if (!newActiveProvider) {
         let allCommands = [];
         for (let provider of providers) {
@@ -210,7 +261,6 @@ Rectangle {
           if (typeof FuzzySort !== 'undefined') {
             const fuzzyResults = FuzzySort.go(query, allCommands, {
                                                 "keys": ["name"],
-                                                "threshold": -1000,
                                                 "limit": 50
                                               });
             results = fuzzyResults.map(result => result.obj);
@@ -221,32 +271,113 @@ Rectangle {
         }
       }
     } else {
+      // Regular search - let providers contribute results
+      let allResults = [];
       for (let provider of providers) {
         if (provider.handleSearch) {
           const providerResults = provider.getResults(searchText);
-          results = results.concat(providerResults);
+          allResults = allResults.concat(providerResults);
         }
       }
+
+      // Sort by _score (higher = better match), items without _score go first
+      if (searchText.trim() !== "") {
+        allResults.sort((a, b) => {
+                          const sa = a._score !== undefined ? a._score : 0;
+                          const sb = b._score !== undefined ? b._score : 0;
+                          return sb - sa;
+                        });
+      }
+      results = allResults;
     }
 
+    // Update activeProvider only after computing new state to avoid UI flicker
     activeProvider = newActiveProvider;
     selectedIndex = 0;
   }
 
   // Navigation functions
+  function selectNext() {
+    if (results.length > 0 && selectedIndex < results.length - 1) {
+      selectedIndex++;
+    }
+  }
+
+  function selectPrevious() {
+    if (results.length > 0 && selectedIndex > 0) {
+      selectedIndex--;
+    }
+  }
+
   function selectNextWrapped() {
-    if (results.length > 0)
-      selectedIndex = (selectedIndex + 1) % results.length;
+    if (results.length > 0) {
+      if (allowWrapNavigation) {
+        selectedIndex = (selectedIndex + 1) % results.length;
+      } else {
+        selectNext();
+      }
+    }
   }
+
   function selectPreviousWrapped() {
-    if (results.length > 0)
-      selectedIndex = (((selectedIndex - 1) % results.length) + results.length) % results.length;
+    if (results.length > 0) {
+      if (allowWrapNavigation) {
+        selectedIndex = (((selectedIndex - 1) % results.length) + results.length) % results.length;
+      } else {
+        selectPrevious();
+      }
+    }
   }
+
   function selectFirst() {
     selectedIndex = 0;
   }
+
   function selectLast() {
     selectedIndex = results.length > 0 ? results.length - 1 : 0;
+  }
+
+  function selectNextPage() {
+    if (results.length > 0) {
+      const page = Math.max(1, Math.floor(600 / entryHeight));
+      selectedIndex = Math.min(selectedIndex + page, results.length - 1);
+    }
+  }
+
+  function selectPreviousPage() {
+    if (results.length > 0) {
+      const page = Math.max(1, Math.floor(600 / entryHeight));
+      selectedIndex = Math.max(selectedIndex - page, 0);
+    }
+  }
+
+  // Grid view navigation functions
+  function selectPreviousRow() {
+    if (results.length > 0 && isGridView && gridColumns > 0) {
+      const currentRow = Math.floor(selectedIndex / gridColumns);
+      const currentCol = selectedIndex % gridColumns;
+
+      if (currentRow > 0) {
+        const targetRow = currentRow - 1;
+        const targetIndex = targetRow * gridColumns + currentCol;
+        const itemsInTargetRow = Math.min(gridColumns, results.length - targetRow * gridColumns);
+        if (currentCol < itemsInTargetRow) {
+          selectedIndex = targetIndex;
+        } else {
+          selectedIndex = targetRow * gridColumns + itemsInTargetRow - 1;
+        }
+      } else {
+        // Wrap to last row, same column
+        const totalRows = Math.ceil(results.length / gridColumns);
+        const lastRow = totalRows - 1;
+        const itemsInLastRow = Math.min(gridColumns, results.length - lastRow * gridColumns);
+        if (currentCol < itemsInLastRow) {
+          selectedIndex = lastRow * gridColumns + currentCol;
+        } else {
+          selectedIndex = results.length - 1;
+        }
+      }
+    }
   }
 
   function selectNextRow() {
@@ -254,38 +385,23 @@ Rectangle {
       const currentRow = Math.floor(selectedIndex / gridColumns);
       const currentCol = selectedIndex % gridColumns;
       const totalRows = Math.ceil(results.length / gridColumns);
+
       if (currentRow < totalRows - 1) {
-        const targetIndex = (currentRow + 1) * gridColumns + currentCol;
-        selectedIndex = targetIndex < results.length ? targetIndex : results.length - 1;
+        const targetRow = currentRow + 1;
+        const targetIndex = targetRow * gridColumns + currentCol;
+        if (targetIndex < results.length) {
+          selectedIndex = targetIndex;
+        } else {
+          const itemsInTargetRow = results.length - targetRow * gridColumns;
+          if (itemsInTargetRow > 0) {
+            selectedIndex = targetRow * gridColumns + itemsInTargetRow - 1;
+          } else {
+            selectedIndex = Math.min(currentCol, results.length - 1);
+          }
+        }
       } else {
+        // Wrap to first row, same column
         selectedIndex = Math.min(currentCol, results.length - 1);
-      }
-    }
-  }
-
-  function selectPreviousRow() {
-    if (results.length > 0 && isGridView && gridColumns > 0) {
-      const currentRow = Math.floor(selectedIndex / gridColumns);
-      const currentCol = selectedIndex % gridColumns;
-      if (currentRow > 0) {
-        selectedIndex = (currentRow - 1) * gridColumns + currentCol;
-      } else {
-        const totalRows = Math.ceil(results.length / gridColumns);
-        selectedIndex = Math.min((totalRows - 1) * gridColumns + currentCol, results.length - 1);
-      }
-    }
-  }
-
-  function selectNextColumn() {
-    if (results.length > 0 && isGridView) {
-      const currentRow = Math.floor(selectedIndex / gridColumns);
-      const currentCol = selectedIndex % gridColumns;
-      const itemsInRow = Math.min(gridColumns, results.length - currentRow * gridColumns);
-      if (currentCol < itemsInRow - 1)
-        selectedIndex++;
-      else {
-        const totalRows = Math.ceil(results.length / gridColumns);
-        selectedIndex = currentRow < totalRows - 1 ? (currentRow + 1) * gridColumns : 0;
       }
     }
   }
@@ -294,12 +410,34 @@ Rectangle {
     if (results.length > 0 && isGridView) {
       const currentRow = Math.floor(selectedIndex / gridColumns);
       const currentCol = selectedIndex % gridColumns;
-      if (currentCol > 0)
-        selectedIndex--;
-      else if (currentRow > 0)
-        selectedIndex = (currentRow - 1) * gridColumns + gridColumns - 1;
-      else
-        selectedIndex = results.length - 1;
+      if (currentCol > 0) {
+        selectedIndex = currentRow * gridColumns + (currentCol - 1);
+      } else if (currentRow > 0) {
+        selectedIndex = (currentRow - 1) * gridColumns + (gridColumns - 1);
+      } else {
+        const totalRows = Math.ceil(results.length / gridColumns);
+        const lastRowIndex = (totalRows - 1) * gridColumns + (gridColumns - 1);
+        selectedIndex = Math.min(lastRowIndex, results.length - 1);
+      }
+    }
+  }
+
+  function selectNextColumn() {
+    if (results.length > 0 && isGridView) {
+      const currentRow = Math.floor(selectedIndex / gridColumns);
+      const currentCol = selectedIndex % gridColumns;
+      const itemsInCurrentRow = Math.min(gridColumns, results.length - currentRow * gridColumns);
+
+      if (currentCol < itemsInCurrentRow - 1) {
+        selectedIndex = currentRow * gridColumns + (currentCol + 1);
+      } else {
+        const totalRows = Math.ceil(results.length / gridColumns);
+        if (currentRow < totalRows - 1) {
+          selectedIndex = (currentRow + 1) * gridColumns;
+        } else {
+          selectedIndex = 0;
+        }
+      }
     }
   }
 
@@ -307,13 +445,18 @@ Rectangle {
     if (results.length > 0 && results[selectedIndex]) {
       const item = results[selectedIndex];
       const provider = item.provider || currentProvider;
+
+      // Check if auto-paste is enabled and provider/item supports it
       if (Settings.data.appLauncher.autoPasteClipboard && provider && provider.supportsAutoPaste && item.autoPasteText) {
         if (item.onAutoPaste)
           item.onAutoPaste();
-        close();
-        Qt.callLater(() => ClipboardService.pasteText(item.autoPasteText));
+        closeImmediately();
+        Qt.callLater(() => {
+                       ClipboardService.pasteText(item.autoPasteText);
+                     });
         return;
       }
+
       if (item.onActivate)
         item.onActivate();
     }
@@ -331,34 +474,44 @@ Rectangle {
         var cats = providerCategories;
         var idx = cats.indexOf(currentProvider.selectedCategory);
         currentProvider.selectCategory(cats[(idx + 1) % cats.length]);
-      } else
+      } else {
         selectNextWrapped();
+      }
       event.accepted = true;
       break;
     case Qt.Key_Backtab:
       if (showProviderCategories) {
-        var cats = providerCategories;
-        var idx = cats.indexOf(currentProvider.selectedCategory);
-        currentProvider.selectCategory(cats[((idx - 1) % cats.length + cats.length) % cats.length]);
-      } else
+        var cats2 = providerCategories;
+        var idx2 = cats2.indexOf(currentProvider.selectedCategory);
+        currentProvider.selectCategory(cats2[((idx2 - 1) % cats2.length + cats2.length) % cats2.length]);
+      } else {
         selectPreviousWrapped();
+      }
       event.accepted = true;
       break;
     case Qt.Key_Up:
-      isGridView ? selectPreviousRow() : selectPreviousWrapped();
+      if (!isSingleView) {
+        isGridView ? selectPreviousRow() : selectPreviousWrapped();
+      }
       event.accepted = true;
       break;
     case Qt.Key_Down:
-      isGridView ? selectNextRow() : selectNextWrapped();
+      if (!isSingleView) {
+        isGridView ? selectNextRow() : selectNextWrapped();
+      }
       event.accepted = true;
       break;
     case Qt.Key_Left:
-      isGridView ? selectPreviousColumn() : selectPreviousWrapped();
-      event.accepted = true;
+      if (isGridView) {
+        selectPreviousColumn();
+        event.accepted = true;
+      }
       break;
     case Qt.Key_Right:
-      isGridView ? selectNextColumn() : selectNextWrapped();
-      event.accepted = true;
+      if (isGridView) {
+        selectNextColumn();
+        event.accepted = true;
+      }
       break;
     case Qt.Key_Return:
     case Qt.Key_Enter:
@@ -373,6 +526,14 @@ Rectangle {
       selectLast();
       event.accepted = true;
       break;
+    case Qt.Key_PageUp:
+      selectPreviousPage();
+      event.accepted = true;
+      break;
+    case Qt.Key_PageDown:
+      selectNextPage();
+      event.accepted = true;
+      break;
     case Qt.Key_Delete:
       if (selectedIndex >= 0 && results && results[selectedIndex]) {
         var item = results[selectedIndex];
@@ -382,39 +543,112 @@ Rectangle {
       }
       event.accepted = true;
       break;
+    case Qt.Key_H:
+      if (event.modifiers & Qt.ControlModifier && isGridView) {
+        selectPreviousWrapped();
+        event.accepted = true;
+      }
+      break;
+    case Qt.Key_J:
+      if (event.modifiers & Qt.ControlModifier) {
+        isGridView ? selectNextRow() : selectNextWrapped();
+        event.accepted = true;
+      }
+      break;
+    case Qt.Key_K:
+      if (event.modifiers & Qt.ControlModifier) {
+        isGridView ? selectPreviousRow() : selectPreviousWrapped();
+        event.accepted = true;
+      }
+      break;
+    case Qt.Key_L:
+      if (event.modifiers & Qt.ControlModifier && isGridView) {
+        selectNextWrapped();
+        event.accepted = true;
+      }
+      break;
+    case Qt.Key_N:
+      if (event.modifiers & Qt.ControlModifier) {
+        selectNextWrapped();
+        event.accepted = true;
+      }
+      break;
+    case Qt.Key_P:
+      if (event.modifiers & Qt.ControlModifier) {
+        selectPreviousWrapped();
+        event.accepted = true;
+      }
+      break;
     }
   }
 
-  // Providers
+  // -----------------------
+  // Provider components
+  // -----------------------
   ApplicationsProvider {
     id: appsProvider
-    launcher: root
-    Component.onCompleted: registerProvider(this)
+    Component.onCompleted: {
+      registerProvider(this);
+      Logger.d("Launcher", "Registered: ApplicationsProvider");
+    }
   }
 
   ClipboardProvider {
     id: clipProvider
-    launcher: root
-    Component.onCompleted: if (Settings.data.appLauncher.enableClipboardHistory)
-                             registerProvider(this)
+    Component.onCompleted: {
+      if (Settings.data.appLauncher.enableClipboardHistory) {
+        registerProvider(this);
+        Logger.d("Launcher", "Registered: ClipboardProvider");
+      }
+    }
   }
 
   CommandProvider {
     id: cmdProvider
-    launcher: root
-    Component.onCompleted: registerProvider(this)
+    Component.onCompleted: {
+      registerProvider(this);
+      Logger.d("Launcher", "Registered: CommandProvider");
+    }
   }
 
   EmojiProvider {
     id: emojiProvider
-    launcher: root
-    Component.onCompleted: registerProvider(this)
+    Component.onCompleted: {
+      registerProvider(this);
+      Logger.d("Launcher", "Registered: EmojiProvider");
+    }
   }
 
   CalculatorProvider {
     id: calcProvider
-    launcher: root
-    Component.onCompleted: registerProvider(this)
+    Component.onCompleted: {
+      registerProvider(this);
+      Logger.d("Launcher", "Registered: CalculatorProvider");
+    }
+  }
+
+  SettingsProvider {
+    id: settingsProvider
+    Component.onCompleted: {
+      registerProvider(this);
+      Logger.d("Launcher", "Registered: SettingsProvider");
+    }
+  }
+
+  SessionProvider {
+    id: sessionProvider
+    Component.onCompleted: {
+      registerProvider(this);
+      Logger.d("Launcher", "Registered: SessionProvider");
+    }
+  }
+
+  WindowsProvider {
+    id: windowsProvider
+    Component.onCompleted: {
+      registerProvider(this);
+      Logger.d("Launcher", "Registered: WindowsProvider");
+    }
   }
 
   // ==================== UI Content ====================
@@ -428,34 +662,30 @@ Rectangle {
     }
   }
 
-  MouseArea {
-    id: mouseMovementDetector
-    anchors.fill: parent
-    z: -999
-    hoverEnabled: true
-    propagateComposedEvents: true
-    acceptedButtons: Qt.NoButton
+  HoverHandler {
+    id: globalHoverHandler
     enabled: !Settings.data.appLauncher.ignoreMouseInput
 
-    property real lastX: 0
-    property real lastY: 0
-    property bool initialized: false
+    onPointChanged: {
+      if (!root.mouseTrackingReady) {
+        return;
+      }
 
-    onPositionChanged: mouse => {
-                         if (!initialized) {
-                           lastX = mouse.x;
-                           lastY = mouse.y;
-                           initialized = true;
-                           return;
-                         }
-                         const deltaX = Math.abs(mouse.x - lastX);
-                         const deltaY = Math.abs(mouse.y - lastY);
-                         if (deltaX > 1 || deltaY > 1) {
-                           root.ignoreMouseHover = false;
-                           lastX = mouse.x;
-                           lastY = mouse.y;
-                         }
-                       }
+      if (!root.globalMouseInitialized) {
+        root.globalLastMouseX = point.position.x;
+        root.globalLastMouseY = point.position.y;
+        root.globalMouseInitialized = true;
+        return;
+      }
+
+      const deltaX = Math.abs(point.position.x - root.globalLastMouseX);
+      const deltaY = Math.abs(point.position.y - root.globalLastMouseY);
+      if (deltaX + deltaY >= 5) {
+        root.ignoreMouseHover = false;
+        root.globalLastMouseX = point.position.x;
+        root.globalLastMouseY = point.position.y;
+      }
+    }
   }
 
   ColumnLayout {
@@ -495,7 +725,7 @@ Rectangle {
       }
     }
 
-    // Category tabs
+    // Unified category tabs (works with any provider that has categories)
     NTabBar {
       id: categoryTabs
       visible: root.showProviderCategories
@@ -529,317 +759,51 @@ Rectangle {
       sourceComponent: root.isSingleView ? singleViewComponent : (root.isGridView ? gridViewComponent : listViewComponent)
     }
 
-    NDivider {
-      Layout.fillWidth: true
-    }
+    // --------------------------
+    // LIST VIEW
+    Component {
+      id: listViewComponent
+      NListView {
+        id: resultsList
 
-    NText {
-      Layout.fillWidth: true
-      text: {
-        if (root.results.length === 0) {
-          if (root.searchText)
-            return I18n.tr("common.no-results");
-          if (root.currentProvider && root.currentProvider.emptyBrowsingMessage)
-            return root.currentProvider.emptyBrowsingMessage;
-          return "";
-        }
-        var prefix = root.activeProvider && root.activeProvider.name ? root.activeProvider.name + ": " : "";
-        return prefix + root.results.length + " result" + (root.results.length !== 1 ? 's' : '');
-      }
-      pointSize: Style.fontSizeXS
-      color: Color.mOnSurfaceVariant
-      horizontalAlignment: Text.AlignCenter
-    }
-  }
+        horizontalPolicy: ScrollBar.AlwaysOff
+        verticalPolicy: ScrollBar.AlwaysOff
+        reserveScrollbarSpace: false
+        gradientColor: Color.mSurface
+        wheelScrollMultiplier: 4.0
 
-  // List view component
-  Component {
-    id: listViewComponent
-    NListView {
-      id: resultsList
-      horizontalPolicy: ScrollBar.AlwaysOff
-      verticalPolicy: ScrollBar.AlwaysOff
-      spacing: Style.marginXS
-      model: root.results
-      currentIndex: root.selectedIndex
-      cacheBuffer: height * 2
-      interactive: !Settings.data.appLauncher.ignoreMouseInput
-
-      onCurrentIndexChanged: {
-        cancelFlick();
-        if (currentIndex >= 0)
-          positionViewAtIndex(currentIndex, ListView.Contain);
-      }
-
-      delegate: NBox {
-        id: entry
-        property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === root.selectedIndex)
-
-        Component.onCompleted: {
-          var provider = modelData.provider;
-          if (provider && provider.prepareItem)
-            provider.prepareItem(modelData);
-        }
-
-        width: resultsList.width
-        implicitHeight: root.entryHeight
-        clip: true
-        color: entry.isSelected ? Color.mHover : Color.mSurface
-
-        Behavior on color {
-          ColorAnimation {
-            duration: Style.animationFast
-            easing.type: Easing.OutCirc
+        width: parent.width
+        height: parent.height
+        spacing: Style.marginXS
+        model: root.results
+        currentIndex: root.selectedIndex
+        cacheBuffer: resultsList.height * 2
+        interactive: !Settings.data.appLauncher.ignoreMouseInput
+        onCurrentIndexChanged: {
+          cancelFlick();
+          if (currentIndex >= 0) {
+            positionViewAtIndex(currentIndex, ListView.Contain);
           }
         }
+        onModelChanged: {}
 
-        RowLayout {
-          anchors.fill: parent
-          anchors.margins: Style.marginM
-          spacing: Style.marginM
+        delegate: NBox {
+          id: entry
 
-          Item {
-            visible: !modelData.hideIcon
-            Layout.preferredWidth: modelData.hideIcon ? 0 : root.badgeSize
-            Layout.preferredHeight: modelData.hideIcon ? 0 : root.badgeSize
+          property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === root.selectedIndex)
 
-            Rectangle {
-              anchors.fill: parent
-              radius: Style.radiusM
-              color: Color.mSurfaceVariant
-              visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage
-            }
-
-            NImageRounded {
-              id: imagePreview
-              anchors.fill: parent
-              visible: modelData.isImage && !modelData.displayString
-              radius: Style.radiusXS
-              borderColor: Color.mOnSurface
-              borderWidth: Style.borderM
-              imageFillMode: Image.PreserveAspectCrop
-
-              readonly property int _rev: modelData.provider && modelData.provider.imageRevision ? modelData.provider.imageRevision : 0
-
-              imagePath: {
-                _rev;
-                var provider = modelData.provider;
-                if (provider && provider.getImageUrl)
-                  return provider.getImageUrl(modelData);
-                return "";
-              }
-
-              Rectangle {
-                anchors.fill: parent
-                visible: parent.status === Image.Loading
-                color: Color.mSurfaceVariant
-                BusyIndicator {
-                  anchors.centerIn: parent
-                  running: true
-                  width: Style.baseWidgetSize * 0.5
-                  height: width
-                }
-              }
-
-              onStatusChanged: status => {
-                                 if (status === Image.Error) {
-                                   iconLoader.visible = true;
-                                   imagePreview.visible = false;
-                                 }
-                               }
-            }
-
-            Loader {
-              id: iconLoader
-              anchors.fill: parent
-              anchors.margins: Style.marginXS
-              visible: (!modelData.isImage && !modelData.displayString) || (modelData.isImage && imagePreview.status === Image.Error)
-              active: visible
-              sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? tablerIconComp : systemIconComp
-
-              Component {
-                id: tablerIconComp
-                NIcon {
-                  icon: modelData.icon
-                  pointSize: Style.fontSizeXXXL
-                  visible: modelData.icon && !modelData.displayString
-                }
-              }
-              Component {
-                id: systemIconComp
-                IconImage {
-                  anchors.fill: parent
-                  source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
-                  visible: modelData.icon && source !== "" && !modelData.displayString
-                  asynchronous: true
-                }
-              }
-            }
-
-            NText {
-              id: stringDisplay
-              anchors.centerIn: parent
-              visible: modelData.displayString || (!imagePreview.visible && !iconLoader.visible)
-              text: modelData.displayString ? modelData.displayString : (modelData.name ? modelData.name.charAt(0).toUpperCase() : "?")
-              pointSize: modelData.displayString ? (modelData.displayStringSize || Style.fontSizeXXXL) : Style.fontSizeXXL
-              font.weight: Style.fontWeightBold
-              color: modelData.displayString ? Color.mOnSurface : Color.mOnPrimary
-            }
-
-            Rectangle {
-              visible: modelData.isImage && imagePreview.visible
-              anchors.bottom: parent.bottom
-              anchors.right: parent.right
-              anchors.margins: 2
-              width: formatLabel.width + Style.marginXXS * 2
-              height: formatLabel.height + Style.marginXXS
-              color: Color.mSurfaceVariant
-              radius: Style.radiusXXS
-              NText {
-                id: formatLabel
-                anchors.centerIn: parent
-                text: {
-                  if (!modelData.isImage)
-                    return "";
-                  const parts = (modelData.description || "").split(" • ");
-                  return parts[0] || "IMG";
-                }
-                pointSize: Style.fontSizeXXS
-                color: Color.mOnSurfaceVariant
-              }
+          // Prepare item when it becomes visible (e.g., decode images)
+          Component.onCompleted: {
+            var provider = modelData.provider;
+            if (provider && provider.prepareItem) {
+              provider.prepareItem(modelData);
             }
           }
 
-          ColumnLayout {
-            Layout.fillWidth: true
-            spacing: 0
-
-            NText {
-              text: modelData.name || "Unknown"
-              pointSize: Style.fontSizeL
-              font.weight: Style.fontWeightBold
-              color: entry.isSelected ? Color.mOnHover : Color.mOnSurface
-              elide: Text.ElideRight
-              maximumLineCount: 1
-              wrapMode: Text.Wrap
-              clip: true
-              Layout.fillWidth: true
-            }
-
-            NText {
-              text: modelData.description || ""
-              pointSize: Style.fontSizeS
-              color: entry.isSelected ? Color.mOnHover : Color.mOnSurfaceVariant
-              elide: Text.ElideRight
-              maximumLineCount: 1
-              Layout.fillWidth: true
-              visible: text !== ""
-            }
-          }
-
-          RowLayout {
-            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-            spacing: Style.marginXS
-            visible: entry.isSelected && itemActions.length > 0
-
-            property var itemActions: {
-              if (!entry.isSelected)
-                return [];
-              var provider = modelData.provider || root.currentProvider;
-              if (provider && provider.getItemActions)
-                return provider.getItemActions(modelData);
-              return [];
-            }
-
-            Repeater {
-              model: parent.itemActions
-              NIconButton {
-                icon: modelData.icon
-                tooltipText: modelData.tooltip
-                z: 1
-                onClicked: if (modelData.action)
-                             modelData.action()
-              }
-            }
-          }
-        }
-
-        MouseArea {
-          id: mouseArea
-          anchors.fill: parent
-          z: -1
-          hoverEnabled: true
-          cursorShape: Qt.PointingHandCursor
-          enabled: !Settings.data.appLauncher.ignoreMouseInput
-          onEntered: if (!root.ignoreMouseHover)
-                       root.selectedIndex = index
-          onClicked: mouse => {
-                       if (mouse.button === Qt.LeftButton) {
-                         root.selectedIndex = index;
-                         root.activate();
-                         mouse.accepted = true;
-                       }
-                     }
-        }
-      }
-    }
-  }
-
-  // Grid view component
-  Component {
-    id: gridViewComponent
-    NGridView {
-      id: resultsGrid
-      horizontalPolicy: ScrollBar.AlwaysOff
-      verticalPolicy: ScrollBar.AlwaysOff
-      cellWidth: width / root.targetGridColumns
-      cellHeight: {
-        var cw = width / root.targetGridColumns;
-        if (root.currentProvider && root.currentProvider.preferredGridCellRatio)
-          return cw * root.currentProvider.preferredGridCellRatio;
-        return cw;
-      }
-      model: root.results
-      cacheBuffer: height * 2
-      keyNavigationEnabled: false
-      focus: false
-      interactive: !Settings.data.appLauncher.ignoreMouseInput
-
-      Component.onCompleted: root.gridColumns = root.targetGridColumns
-      onWidthChanged: root.gridColumns = root.targetGridColumns
-
-      Connections {
-        target: root
-        enabled: root.isGridView
-        function onSelectedIndexChanged() {
-          if (root.isGridView && root.selectedIndex >= 0) {
-            Qt.callLater(() => {
-                           if (resultsGrid && resultsGrid.cancelFlick) {
-                             resultsGrid.cancelFlick();
-                             resultsGrid.positionViewAtIndex(root.selectedIndex, GridView.Contain);
-                           }
-                         });
-          }
-        }
-      }
-
-      delegate: Item {
-        id: gridEntryContainer
-        width: resultsGrid.cellWidth
-        height: resultsGrid.cellHeight
-        property bool isSelected: (!root.ignoreMouseHover && gridMouseArea.containsMouse) || (index === root.selectedIndex)
-
-        Component.onCompleted: {
-          var provider = modelData.provider;
-          if (provider && provider.prepareItem)
-            provider.prepareItem(modelData);
-        }
-
-        NBox {
-          id: gridEntry
-          anchors.fill: parent
-          anchors.margins: Style.marginXXS
-          color: gridEntryContainer.isSelected ? Color.mHover : Color.mSurface
+          width: resultsList.availableWidth
+          implicitHeight: root.entryHeight
+          clip: true
+          color: entry.isSelected ? Color.mHover : Color.mSurface
 
           Behavior on color {
             ColorAnimation {
@@ -849,232 +813,652 @@ Rectangle {
           }
 
           ColumnLayout {
+            id: contentLayout
             anchors.fill: parent
-            anchors.margins: Style.marginS
-            anchors.bottomMargin: Style.marginS
-            spacing: Style.marginXXS
+            anchors.margins: Style.marginM
+            spacing: Style.marginM
 
-            Item {
-              Layout.preferredWidth: Math.round(gridEntry.width * 0.65)
-              Layout.preferredHeight: Math.round(gridEntry.width * 0.65)
-              Layout.alignment: Qt.AlignHCenter
+            // Top row - Main entry content with action buttons
+            RowLayout {
+              Layout.fillWidth: true
+              spacing: Style.marginM
 
-              Rectangle {
-                anchors.fill: parent
-                radius: Style.radiusM
-                color: Color.mSurfaceVariant
-                visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage
-              }
+              // Icon badge or Image preview or Emoji
+              Item {
+                visible: !modelData.hideIcon
+                Layout.preferredWidth: modelData.hideIcon ? 0 : root.badgeSize
+                Layout.preferredHeight: modelData.hideIcon ? 0 : root.badgeSize
 
-              NImageRounded {
-                id: gridImagePreview
-                anchors.fill: parent
-                visible: modelData.isImage && !modelData.displayString
-                radius: Style.radiusM
-                readonly property int _rev: modelData.provider && modelData.provider.imageRevision ? modelData.provider.imageRevision : 0
-                imagePath: {
-                  _rev;
-                  var provider = modelData.provider;
-                  if (provider && provider.getImageUrl)
-                    return provider.getImageUrl(modelData);
-                  return "";
-                }
-
+                // Icon background
                 Rectangle {
                   anchors.fill: parent
-                  visible: parent.status === Image.Loading
+                  radius: Style.radiusM
                   color: Color.mSurfaceVariant
-                  BusyIndicator {
-                    anchors.centerIn: parent
-                    running: true
-                    width: Style.baseWidgetSize * 0.5
-                    height: width
-                  }
+                  visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage
                 }
 
-                onStatusChanged: status => {
-                                   if (status === Image.Error) {
-                                     gridIconLoader.visible = true;
-                                     gridImagePreview.visible = false;
-                                   }
-                                 }
-              }
+                // Image preview - uses provider's getImageUrl if available
+                NImageRounded {
+                  id: imagePreview
+                  anchors.fill: parent
+                  visible: !!modelData.isImage && !modelData.displayString
+                  radius: Style.radiusXS
+                  borderColor: Color.mOnSurface
+                  borderWidth: Style.borderM
+                  imageFillMode: Image.PreserveAspectCrop
 
-              Loader {
-                id: gridIconLoader
-                anchors.fill: parent
-                anchors.margins: Style.marginXS
-                visible: (!modelData.isImage && !modelData.displayString) || (modelData.isImage && gridImagePreview.status === Image.Error)
-                active: visible
-                sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? gridTablerIconComp : gridSystemIconComp
+                  // Use provider's image revision for reactive updates
+                  readonly property int _rev: modelData.provider && modelData.provider.imageRevision ? modelData.provider.imageRevision : 0
 
-                Component {
-                  id: gridTablerIconComp
-                  NIcon {
-                    icon: modelData.icon
-                    pointSize: Style.fontSizeXXXL
-                    visible: modelData.icon && !modelData.displayString
-                  }
-                }
-                Component {
-                  id: gridSystemIconComp
-                  IconImage {
-                    anchors.fill: parent
-                    source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
-                    visible: modelData.icon && source !== "" && !modelData.displayString
-                    asynchronous: true
-                  }
-                }
-              }
-
-              NText {
-                id: gridStringDisplay
-                anchors.centerIn: parent
-                visible: modelData.displayString || (!gridImagePreview.visible && !gridIconLoader.visible)
-                text: modelData.displayString ? modelData.displayString : (modelData.name ? modelData.name.charAt(0).toUpperCase() : "?")
-                pointSize: {
-                  if (modelData.displayString) {
-                    if (modelData.displayStringSize)
-                      return modelData.displayStringSize * Style.uiScaleRatio;
-                    if (root.providerHasDisplayString) {
-                      const cellBasedSize = gridEntry.width * 0.4;
-                      const maxSize = Style.fontSizeXXXL * Style.uiScaleRatio;
-                      return Math.min(cellBasedSize, maxSize);
+                  // Get image URL from provider
+                  imagePath: {
+                    _rev;
+                    var provider = modelData.provider;
+                    if (provider && provider.getImageUrl) {
+                      return provider.getImageUrl(modelData);
                     }
-                    return Style.fontSizeXXL * 2 * Style.uiScaleRatio;
+                    return "";
                   }
-                  const cellBasedSize = gridEntry.width * 0.25;
-                  const baseSize = Style.fontSizeXL * Style.uiScaleRatio;
-                  const maxSize = Style.fontSizeXXL * Style.uiScaleRatio;
-                  return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
+
+                  Rectangle {
+                    anchors.fill: parent
+                    visible: parent.status === Image.Loading
+                    color: Color.mSurfaceVariant
+
+                    BusyIndicator {
+                      anchors.centerIn: parent
+                      running: true
+                      width: Style.baseWidgetSize * 0.5
+                      height: width
+                    }
+                  }
+
+                  onStatusChanged: status => {
+                                     if (status === Image.Error) {
+                                       iconLoader.visible = true;
+                                       imagePreview.visible = false;
+                                     }
+                                   }
                 }
-                font.weight: Style.fontWeightBold
-                color: modelData.displayString ? Color.mOnSurface : Color.mOnPrimary
-              }
-            }
 
-            NText {
-              visible: !modelData.hideLabel
-              text: modelData.name || "Unknown"
-              pointSize: {
-                if (root.providerHasDisplayString && modelData.displayString)
-                  return Style.fontSizeS * Style.uiScaleRatio;
-                const cellBasedSize = gridEntry.width * 0.12;
-                const baseSize = Style.fontSizeS * Style.uiScaleRatio;
-                const maxSize = Style.fontSizeM * Style.uiScaleRatio;
-                return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
+                Loader {
+                  id: iconLoader
+                  anchors.fill: parent
+                  anchors.margins: Style.marginXS
+
+                  visible: (!modelData.isImage && !modelData.displayString) || (!!modelData.isImage && imagePreview.status === Image.Error)
+                  active: visible
+
+                  sourceComponent: Component {
+                    Loader {
+                      anchors.fill: parent
+                      sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? tablerIconComponent : systemIconComponent
+                    }
+                  }
+
+                  Component {
+                    id: tablerIconComponent
+                    NIcon {
+                      icon: modelData.icon
+                      pointSize: Style.fontSizeXXXL
+                      visible: modelData.icon && !modelData.displayString
+                      color: (entry.isSelected && !Settings.data.appLauncher.showIconBackground) ? Color.mOnHover : Color.mOnSurface
+                    }
+                  }
+
+                  Component {
+                    id: systemIconComponent
+                    IconImage {
+                      anchors.fill: parent
+                      source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
+                      visible: modelData.icon && source !== "" && !modelData.displayString
+                      asynchronous: true
+                    }
+                  }
+                }
+
+                // String display - takes precedence when displayString is present
+                NText {
+                  id: stringDisplay
+                  anchors.centerIn: parent
+                  visible: !!modelData.displayString || (!imagePreview.visible && !iconLoader.visible)
+                  text: modelData.displayString ? modelData.displayString : (modelData.name ? modelData.name.charAt(0).toUpperCase() : "?")
+                  pointSize: modelData.displayString ? (modelData.displayStringSize || Style.fontSizeXXXL) : Style.fontSizeXXL
+                  font.weight: Style.fontWeightBold
+                  color: modelData.displayString ? Color.mOnSurface : Color.mOnPrimary
+                }
+
+                // Image type indicator overlay
+                Rectangle {
+                  visible: !!modelData.isImage && imagePreview.visible
+                  anchors.bottom: parent.bottom
+                  anchors.right: parent.right
+                  anchors.margins: 2
+                  width: formatLabel.width + Style.marginXS
+                  height: formatLabel.height + Style.marginXXS
+                  color: Color.mSurfaceVariant
+                  radius: Style.radiusXXS
+                  NText {
+                    id: formatLabel
+                    anchors.centerIn: parent
+                    text: {
+                      if (!modelData.isImage)
+                        return "";
+                      const desc = modelData.description || "";
+                      const parts = desc.split(" \u2022 ");
+                      return parts[0] || "IMG";
+                    }
+                    pointSize: Style.fontSizeXXS
+                    color: Color.mOnSurfaceVariant
+                  }
+                }
+
+                // Badge icon overlay (generic indicator for any provider)
+                Rectangle {
+                  visible: !!modelData.badgeIcon
+                  anchors.bottom: parent.bottom
+                  anchors.right: parent.right
+                  anchors.margins: 2
+                  width: height
+                  height: Style.fontSizeM + Style.marginXS
+                  color: Color.mSurfaceVariant
+                  radius: Style.radiusXXS
+                  NIcon {
+                    anchors.centerIn: parent
+                    icon: modelData.badgeIcon || ""
+                    pointSize: Style.fontSizeS
+                    color: Color.mOnSurfaceVariant
+                  }
+                }
               }
-              font.weight: Style.fontWeightSemiBold
-              color: gridEntryContainer.isSelected ? Color.mOnHover : Color.mOnSurface
-              elide: Text.ElideRight
-              Layout.fillWidth: true
-              Layout.maximumWidth: gridEntry.width - 8
-              Layout.leftMargin: (root.providerHasDisplayString && modelData.displayString) ? Style.marginS : 0
-              Layout.rightMargin: (root.providerHasDisplayString && modelData.displayString) ? Style.marginS : 0
-              horizontalAlignment: Text.AlignHCenter
-              wrapMode: Text.NoWrap
-              maximumLineCount: 1
+
+              // Text content
+              ColumnLayout {
+                Layout.fillWidth: true
+                spacing: 0
+
+                NText {
+                  text: modelData.name || "Unknown"
+                  pointSize: Style.fontSizeL
+                  font.weight: Style.fontWeightBold
+                  color: entry.isSelected ? Color.mOnHover : Color.mOnSurface
+                  elide: Text.ElideRight
+                  maximumLineCount: 1
+                  wrapMode: Text.Wrap
+                  clip: true
+                  Layout.fillWidth: true
+                }
+
+                NText {
+                  text: modelData.description || ""
+                  pointSize: Style.fontSizeS
+                  color: entry.isSelected ? Color.mOnHover : Color.mOnSurfaceVariant
+                  elide: Text.ElideRight
+                  maximumLineCount: 1
+                  Layout.fillWidth: true
+                  visible: text !== ""
+                }
+              }
+
+              // Action buttons row - dynamically populated from provider
+              RowLayout {
+                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                spacing: Style.marginXS
+                visible: entry.isSelected && itemActions.length > 0
+
+                property var itemActions: {
+                  if (!entry.isSelected)
+                    return [];
+                  var provider = modelData.provider || root.currentProvider;
+                  if (provider && provider.getItemActions) {
+                    return provider.getItemActions(modelData);
+                  }
+                  return [];
+                }
+
+                Repeater {
+                  model: parent.itemActions
+                  NIconButton {
+                    icon: modelData.icon
+                    baseSize: Style.baseWidgetSize * 0.75
+                    tooltipText: modelData.tooltip
+                    z: 1
+                    onClicked: {
+                      if (modelData.action) {
+                        modelData.action();
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
 
-          Row {
-            visible: gridEntryContainer.isSelected && gridItemActions.length > 0
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.margins: Style.marginXS
-            z: 10
-            spacing: Style.marginXXS
-
-            property var gridItemActions: {
-              if (!gridEntryContainer.isSelected)
-                return [];
-              var provider = modelData.provider || root.currentProvider;
-              if (provider && provider.getItemActions)
-                return provider.getItemActions(modelData);
-              return [];
-            }
-
-            Repeater {
-              model: parent.gridItemActions
-              NIconButton {
-                icon: modelData.icon
-                tooltipText: modelData.tooltip
-                z: 11
-                onClicked: if (modelData.action)
-                             modelData.action()
+          MouseArea {
+            id: mouseArea
+            anchors.fill: parent
+            z: -1
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            enabled: !Settings.data.appLauncher.ignoreMouseInput
+            onEntered: {
+              if (!root.ignoreMouseHover) {
+                root.selectedIndex = index;
               }
             }
-          }
-        }
-
-        MouseArea {
-          id: gridMouseArea
-          anchors.fill: parent
-          z: -1
-          hoverEnabled: true
-          cursorShape: Qt.PointingHandCursor
-          enabled: !Settings.data.appLauncher.ignoreMouseInput
-          onEntered: {
-            root.ignoreMouseHover = false;
-            root.selectedIndex = index;
-          }
-          onClicked: mouse => {
-                       if (mouse.button === Qt.LeftButton) {
-                         root.selectedIndex = index;
-                         root.activate();
-                         mouse.accepted = true;
+            onClicked: mouse => {
+                         if (mouse.button === Qt.LeftButton) {
+                           root.selectedIndex = index;
+                           root.activate();
+                           mouse.accepted = true;
+                         }
                        }
-                     }
+            acceptedButtons: Qt.LeftButton
+          }
         }
       }
     }
-  }
 
-  // Single view component
-  Component {
-    id: singleViewComponent
-    Item {
-      NBox {
-        anchors.fill: parent
-        color: Color.mSurfaceVariant
+    // --------------------------
+    // SINGLE ITEM VIEW
+    Component {
+      id: singleViewComponent
 
-        ColumnLayout {
+      Item {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+
+        NBox {
           anchors.fill: parent
-          anchors.margins: Style.marginL
+          color: Color.mSurfaceVariant
+          Layout.fillWidth: true
+          Layout.fillHeight: true
 
-          Item {
-            Layout.alignment: Qt.AlignTop | Qt.AlignLeft
-            NText {
-              text: root.results.length > 0 ? root.results[0].name : ""
-              pointSize: Style.fontSizeL
-              font.weight: Font.Bold
-              color: Color.mPrimary
-            }
-          }
-
-          ScrollView {
-            Layout.alignment: Qt.AlignTop | Qt.AlignLeft
-            Layout.topMargin: Style.fontSizeL + Style.marginXL
+          ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: Style.marginL
             Layout.fillWidth: true
             Layout.fillHeight: true
-            clip: true
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            contentWidth: availableWidth
 
-            NText {
-              width: parent.width
-              text: root.results.length > 0 ? root.results[0].description : ""
-              pointSize: Style.fontSizeM
-              font.weight: Font.Bold
-              color: Color.mOnSurface
-              horizontalAlignment: Text.AlignHLeft
-              verticalAlignment: Text.AlignTop
-              wrapMode: Text.Wrap
-              markdownTextEnabled: true
+            Item {
+              Layout.alignment: Qt.AlignTop | Qt.AlignLeft
+              NText {
+                text: root.results.length > 0 ? root.results[0].name : ""
+                pointSize: Style.fontSizeL
+                font.weight: Font.Bold
+                color: Color.mPrimary
+              }
+            }
+
+            NScrollView {
+              id: descriptionScrollView
+              Layout.alignment: Qt.AlignTop | Qt.AlignLeft
+              Layout.topMargin: Style.fontSizeL + Style.marginXL
+              Layout.fillWidth: true
+              Layout.fillHeight: true
+              horizontalPolicy: ScrollBar.AlwaysOff
+              reserveScrollbarSpace: false
+
+              NText {
+                width: descriptionScrollView.availableWidth
+                text: root.results.length > 0 ? root.results[0].description : ""
+                pointSize: Style.fontSizeM
+                font.weight: Font.Bold
+                color: Color.mOnSurface
+                horizontalAlignment: Text.AlignHLeft
+                verticalAlignment: Text.AlignTop
+                wrapMode: Text.Wrap
+                markdownTextEnabled: true
+              }
             }
           }
         }
       }
+    }
+
+    // --------------------------
+    // GRID VIEW
+    Component {
+      id: gridViewComponent
+      NGridView {
+        id: resultsGrid
+
+        horizontalPolicy: ScrollBar.AlwaysOff
+        verticalPolicy: ScrollBar.AlwaysOff
+        reserveScrollbarSpace: false
+        gradientColor: Color.mSurface
+        wheelScrollMultiplier: 4.0
+        trackedSelectionIndex: root.selectedIndex
+
+        width: parent.width
+        height: parent.height
+        cellWidth: parent.width / root.targetGridColumns
+        cellHeight: {
+          var cellWidth = parent.width / root.targetGridColumns;
+          // Use provider's preferred ratio if available
+          if (root.currentProvider && root.currentProvider.preferredGridCellRatio) {
+            return cellWidth * root.currentProvider.preferredGridCellRatio;
+          }
+          return cellWidth;
+        }
+        leftMargin: 0
+        rightMargin: 0
+        topMargin: 0
+        bottomMargin: 0
+        model: root.results
+        cacheBuffer: resultsGrid.height * 2
+        keyNavigationEnabled: false
+        focus: false
+        interactive: !Settings.data.appLauncher.ignoreMouseInput
+
+        // Completely disable GridView key handling
+        Keys.enabled: false
+
+        Component.onCompleted: root.gridColumns = root.targetGridColumns
+        onWidthChanged: root.gridColumns = root.targetGridColumns
+        onModelChanged: {}
+
+        // Handle scrolling to show selected item when it changes
+        Connections {
+          target: root
+          enabled: root.isGridView
+          function onSelectedIndexChanged() {
+            if (!root.isGridView || root.selectedIndex < 0 || !resultsGrid) {
+              return;
+            }
+
+            Qt.callLater(() => {
+                           if (root.isGridView && resultsGrid && resultsGrid.cancelFlick) {
+                             resultsGrid.cancelFlick();
+                             resultsGrid.positionViewAtIndex(root.selectedIndex, GridView.Contain);
+                           }
+                         });
+          }
+        }
+
+        delegate: Item {
+          id: gridEntryContainer
+          width: resultsGrid.cellWidth
+          height: resultsGrid.cellHeight
+
+          property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === root.selectedIndex)
+
+          // Prepare item when it becomes visible (e.g., decode images)
+          Component.onCompleted: {
+            var provider = modelData.provider;
+            if (provider && provider.prepareItem) {
+              provider.prepareItem(modelData);
+            }
+          }
+
+          NBox {
+            id: gridEntry
+            anchors.fill: parent
+            anchors.margins: Style.marginXXS
+            color: gridEntryContainer.isSelected ? Color.mHover : Color.mSurface
+
+            Behavior on color {
+              ColorAnimation {
+                duration: Style.animationFast
+                easing.type: Easing.OutCirc
+              }
+            }
+
+            ColumnLayout {
+              anchors.fill: parent
+              anchors.margins: Style.marginS
+              anchors.bottomMargin: Style.marginS
+              spacing: Style.marginXXS
+
+              // Icon badge or Image preview or Emoji
+              Item {
+                // Use consistent 65% sizing for all items
+                Layout.preferredWidth: Math.round(gridEntry.width * 0.65)
+                Layout.preferredHeight: Math.round(gridEntry.width * 0.65)
+                Layout.alignment: Qt.AlignHCenter
+
+                // Icon background
+                Rectangle {
+                  anchors.fill: parent
+                  radius: Style.radiusM
+                  color: Color.mSurfaceVariant
+                  visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage
+                }
+
+                // Image preview - uses provider's getImageUrl if available
+                NImageRounded {
+                  id: gridImagePreview
+                  anchors.fill: parent
+                  visible: !!modelData.isImage && !modelData.displayString
+                  radius: Style.radiusM
+
+                  // Use provider's image revision for reactive updates
+                  readonly property int _rev: modelData.provider && modelData.provider.imageRevision ? modelData.provider.imageRevision : 0
+
+                  // Get image URL from provider
+                  imagePath: {
+                    _rev;
+                    var provider = modelData.provider;
+                    if (provider && provider.getImageUrl) {
+                      return provider.getImageUrl(modelData);
+                    }
+                    return "";
+                  }
+
+                  Rectangle {
+                    anchors.fill: parent
+                    visible: parent.status === Image.Loading
+                    color: Color.mSurfaceVariant
+
+                    BusyIndicator {
+                      anchors.centerIn: parent
+                      running: true
+                      width: Style.baseWidgetSize * 0.5
+                      height: width
+                    }
+                  }
+
+                  onStatusChanged: status => {
+                                     if (status === Image.Error) {
+                                       gridIconLoader.visible = true;
+                                       gridImagePreview.visible = false;
+                                     }
+                                   }
+                }
+
+                Loader {
+                  id: gridIconLoader
+                  anchors.fill: parent
+                  anchors.margins: Style.marginXS
+
+                  visible: (!modelData.isImage && !modelData.displayString) || (!!modelData.isImage && gridImagePreview.status === Image.Error)
+                  active: visible
+
+                  sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? gridTablerIconComponent : gridSystemIconComponent
+
+                  Component {
+                    id: gridTablerIconComponent
+                    NIcon {
+                      icon: modelData.icon
+                      pointSize: Style.fontSizeXXXL
+                      visible: modelData.icon && !modelData.displayString
+                      color: (gridEntryContainer.isSelected && !Settings.data.appLauncher.showIconBackground) ? Color.mOnHover : Color.mOnSurface
+                    }
+                  }
+
+                  Component {
+                    id: gridSystemIconComponent
+                    IconImage {
+                      anchors.fill: parent
+                      source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
+                      visible: modelData.icon && source !== "" && !modelData.displayString
+                      asynchronous: true
+                    }
+                  }
+                }
+
+                // String display
+                NText {
+                  id: gridStringDisplay
+                  anchors.centerIn: parent
+                  visible: !!modelData.displayString || (!gridImagePreview.visible && !gridIconLoader.visible)
+                  text: modelData.displayString ? modelData.displayString : (modelData.name ? modelData.name.charAt(0).toUpperCase() : "?")
+                  pointSize: {
+                    if (modelData.displayString) {
+                      // Use custom size if provided, otherwise default scaling
+                      if (modelData.displayStringSize) {
+                        return modelData.displayStringSize * Style.uiScaleRatio;
+                      }
+                      if (root.providerHasDisplayString) {
+                        // Scale with cell width but cap at reasonable maximum
+                        const cellBasedSize = gridEntry.width * 0.4;
+                        const maxSize = Style.fontSizeXXXL * Style.uiScaleRatio;
+                        return Math.min(cellBasedSize, maxSize);
+                      }
+                      return Style.fontSizeXXL * 2 * Style.uiScaleRatio;
+                    }
+                    // Scale font size relative to cell width for low res, but cap at maximum
+                    const cellBasedSize = gridEntry.width * 0.25;
+                    const baseSize = Style.fontSizeXL * Style.uiScaleRatio;
+                    const maxSize = Style.fontSizeXXL * Style.uiScaleRatio;
+                    return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
+                  }
+                  font.weight: Style.fontWeightBold
+                  color: modelData.displayString ? Color.mOnSurface : Color.mOnPrimary
+                }
+
+                // Badge icon overlay (generic indicator for any provider)
+                Rectangle {
+                  visible: !!modelData.badgeIcon
+                  anchors.bottom: parent.bottom
+                  anchors.right: parent.right
+                  anchors.margins: 2
+                  width: height
+                  height: Style.fontSizeM + Style.marginXS
+                  color: Color.mSurfaceVariant
+                  radius: Style.radiusXXS
+                  NIcon {
+                    anchors.centerIn: parent
+                    icon: modelData.badgeIcon || ""
+                    pointSize: Style.fontSizeS
+                    color: Color.mOnSurfaceVariant
+                  }
+                }
+              }
+
+              // Text content (hidden when hideLabel is true)
+              NText {
+                visible: !modelData.hideLabel
+                text: modelData.name || "Unknown"
+                pointSize: {
+                  if (root.providerHasDisplayString && modelData.displayString) {
+                    return Style.fontSizeS * Style.uiScaleRatio;
+                  }
+                  // Scale font size relative to cell width for low res, but cap at maximum
+                  const cellBasedSize = gridEntry.width * 0.12;
+                  const baseSize = Style.fontSizeS * Style.uiScaleRatio;
+                  const maxSize = Style.fontSizeM * Style.uiScaleRatio;
+                  return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
+                }
+                font.weight: Style.fontWeightSemiBold
+                color: gridEntryContainer.isSelected ? Color.mOnHover : Color.mOnSurface
+                elide: Text.ElideRight
+                Layout.fillWidth: true
+                Layout.maximumWidth: gridEntry.width - 8
+                Layout.leftMargin: (root.providerHasDisplayString && modelData.displayString) ? Style.marginS : 0
+                Layout.rightMargin: (root.providerHasDisplayString && modelData.displayString) ? Style.marginS : 0
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.NoWrap
+                maximumLineCount: 1
+              }
+            }
+
+            // Action buttons (overlay in top-right corner) - dynamically populated from provider
+            Row {
+              visible: gridEntryContainer.isSelected && gridItemActions.length > 0
+              anchors.top: parent.top
+              anchors.right: parent.right
+              anchors.margins: Style.marginXS
+              z: 10
+              spacing: Style.marginXXS
+
+              property var gridItemActions: {
+                if (!gridEntryContainer.isSelected)
+                  return [];
+                var provider = modelData.provider || root.currentProvider;
+                if (provider && provider.getItemActions) {
+                  return provider.getItemActions(modelData);
+                }
+                return [];
+              }
+
+              Repeater {
+                model: parent.gridItemActions
+                NIconButton {
+                  icon: modelData.icon
+                  baseSize: Style.baseWidgetSize * 0.75
+                  tooltipText: modelData.tooltip
+                  z: 11
+                  onClicked: {
+                    if (modelData.action) {
+                      modelData.action();
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          MouseArea {
+            id: mouseArea
+            anchors.fill: parent
+            z: -1
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            enabled: !Settings.data.appLauncher.ignoreMouseInput
+
+            onEntered: {
+              if (!root.ignoreMouseHover) {
+                root.selectedIndex = index;
+              }
+            }
+            onClicked: mouse => {
+                         if (mouse.button === Qt.LeftButton) {
+                           root.selectedIndex = index;
+                           root.activate();
+                           mouse.accepted = true;
+                         }
+                       }
+            acceptedButtons: Qt.LeftButton
+          }
+        }
+      }
+    }
+
+    NDivider {
+      Layout.fillWidth: true
+    }
+
+    NText {
+      Layout.fillWidth: true
+      text: {
+        if (root.results.length === 0) {
+          if (root.searchText) {
+            return I18n.tr("common.no-results");
+          }
+          // Use provider's empty browsing message if available
+          var provider = root.currentProvider;
+          if (provider && provider.emptyBrowsingMessage) {
+            return provider.emptyBrowsingMessage;
+          }
+          return "";
+        }
+        var prefix = root.activeProvider && root.activeProvider.name ? root.activeProvider.name + ": " : "";
+        return prefix + I18n.trp("common.result-count", root.results.length);
+      }
+      pointSize: Style.fontSizeXS
+      color: Color.mOnSurfaceVariant
+      horizontalAlignment: Text.AlignCenter
     }
   }
 }

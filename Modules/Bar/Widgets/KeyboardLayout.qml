@@ -6,6 +6,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 import qs.Commons
 import qs.Modules.Bar.Extras
+import qs.Services.Compositor
 import qs.Services.Keyboard
 import qs.Services.UI
 import qs.Widgets
@@ -22,9 +23,11 @@ Item {
   property int sectionWidgetsCount: 0
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
+  // Explicit screenName property ensures reactive binding when screen changes
+  readonly property string screenName: screen ? screen.name : ""
   property var widgetSettings: {
-    if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section];
+    if (section && sectionWidgetIndex >= 0 && screenName) {
+      var widgets = Settings.getBarWidgetsForScreen(screenName)[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
         return widgets[sectionWidgetIndex];
       }
@@ -32,8 +35,13 @@ Item {
     return {};
   }
 
+  readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
+  readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
+
   readonly property string displayMode: (widgetSettings.displayMode !== undefined) ? widgetSettings.displayMode : widgetMetadata.displayMode
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
+  readonly property string iconColorKey: widgetSettings.iconColor !== undefined ? widgetSettings.iconColor : widgetMetadata.iconColor
+  readonly property string textColorKey: widgetSettings.textColor !== undefined ? widgetSettings.textColor : widgetMetadata.textColor
 
   // Use the shared service for keyboard layout
   property string currentLayout: KeyboardLayoutService.currentLayout
@@ -53,10 +61,8 @@ Item {
     ]
 
     onTriggered: action => {
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-                   if (popupMenuWindow) {
-                     popupMenuWindow.close();
-                   }
+                   contextMenu.close();
+                   PanelService.closeContextMenu(screen);
 
                    if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
@@ -69,22 +75,18 @@ Item {
     anchors.verticalCenter: parent.verticalCenter
     screen: root.screen
     oppositeDirection: BarService.getPillDirection(root)
+    customIconColor: Color.resolveColorKeyOptional(root.iconColorKey)
+    customTextColor: Color.resolveColorKeyOptional(root.textColorKey)
     icon: root.showIcon ? "keyboard" : ""
     autoHide: false // Important to be false so we can hover as long as we want
-    text: currentLayout.toUpperCase()
-    tooltipText: I18n.tr("tooltips.keyboard-layout", {
-                           "layout": currentLayout.toUpperCase()
-                         })
+    text: isBarVertical ? currentLayout.substring(0, 3).toUpperCase() : currentLayout
+    tooltipText: KeyboardLayoutService.fullLayoutName
     // When icon is disabled, always show the layout text
     forceOpen: !root.showIcon || root.displayMode === "forceOpen"
     forceClose: root.showIcon && root.displayMode === "alwaysHide"
-    onClicked: {}
+    onClicked: CompositorService.cycleKeyboardLayout()
     onRightClicked: {
-      var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-      if (popupMenuWindow) {
-        popupMenuWindow.showContextMenu(contextMenu);
-        contextMenu.openAtItem(pill, screen);
-      }
+      PanelService.showContextMenu(contextMenu, pill, screen);
     }
   }
 }

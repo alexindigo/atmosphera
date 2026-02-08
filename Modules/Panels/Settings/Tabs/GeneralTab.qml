@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
+import "../../../../Helpers/QtObj2JS.js" as QtObj2JS
 import qs.Commons
 import qs.Services.System
 import qs.Services.UI
@@ -17,7 +18,7 @@ ColumnLayout {
 
     // Avatar preview
     NImageRounded {
-      Layout.preferredWidth: 88 * Style.uiScaleRatio
+      Layout.preferredWidth: 128 * Style.uiScaleRatio
       Layout.preferredHeight: width
       radius: width / 2
       imagePath: Settings.preprocessPath(Settings.data.general.avatarImage)
@@ -27,18 +28,24 @@ ColumnLayout {
       Layout.alignment: Qt.AlignTop
     }
 
-    NTextInputButton {
-      label: I18n.tr("panels.general.profile-picture-label", {
-                       "user": HostService.displayName
-                     })
-      description: I18n.tr("panels.general.profile-picture-description")
-      text: Settings.data.general.avatarImage
-      placeholderText: '~/.face' // don't translate path
-      buttonIcon: "photo"
-      buttonTooltip: I18n.tr("panels.general.profile-tooltip")
-      onInputEditingFinished: Settings.data.general.avatarImage = text
-      onButtonClicked: {
-        avatarPicker.openFilePicker();
+    ColumnLayout {
+      NText {
+        text: HostService.displayName
+        pointSize: Style.fontSizeM
+        color: Color.mPrimary
+      }
+
+      NTextInputButton {
+        label: I18n.tr("panels.general.profile-picture-label")
+        description: I18n.tr("panels.general.profile-picture-description")
+        text: Settings.data.general.avatarImage
+        placeholderText: '~/.face' // don't translate path
+        buttonIcon: "photo"
+        buttonTooltip: I18n.tr("panels.general.profile-tooltip")
+        onInputEditingFinished: Settings.data.general.avatarImage = text
+        onButtonClicked: {
+          avatarPicker.openFilePicker();
+        }
       }
     }
   }
@@ -172,25 +179,44 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginM
   }
 
-  NButton {
-    visible: !HostService.isNixOS
-    icon: "wand"
-    text: I18n.tr("panels.general.launch-setup-wizard")
-    outlined: true
-    onClicked: {
-      var targetScreen = PanelService.openedPanel ? PanelService.openedPanel.screen : (Quickshell.screens.length > 0 ? Quickshell.screens[0] : null);
-      if (!targetScreen) {
-        return;
+  RowLayout {
+    spacing: Style.marginL
+    Layout.fillWidth: true
+
+    NButton {
+      icon: "wand"
+      text: I18n.tr("panels.general.launch-setup-wizard")
+      outlined: true
+      onClicked: {
+        var targetScreen = PanelService.openedPanel ? PanelService.openedPanel.screen : (Quickshell.screens.length > 0 ? Quickshell.screens[0] : null);
+        if (!targetScreen) {
+          return;
+        }
+        var setupPanel = PanelService.getPanel("setupWizardPanel", targetScreen);
+        if (setupPanel) {
+          setupPanel.telemetryOnlyMode = false;
+          setupPanel.open();
+        } else {
+          Qt.callLater(() => {
+                         var sp = PanelService.getPanel("setupWizardPanel", targetScreen);
+                         if (sp) {
+                           sp.telemetryOnlyMode = false;
+                           sp.open();
+                         }
+                       });
+        }
       }
-      var setupPanel = PanelService.getPanel("setupWizardPanel", targetScreen);
-      if (setupPanel) {
-        setupPanel.open();
-      } else {
-        Qt.callLater(() => {
-                       var sp = PanelService.getPanel("setupWizardPanel", targetScreen);
-                       if (sp)
-                       sp.open();
-                     });
+    }
+
+    NButton {
+      icon: "json"
+      text: I18n.tr("panels.general.copy-settings")
+      outlined: true
+      onClicked: {
+        var plainData = QtObj2JS.qtObjectToPlainObject(Settings.data);
+        var json = JSON.stringify(plainData, null, 2);
+        Quickshell.execDetached(["wl-copy", json]);
+        ToastService.showNotice(I18n.tr("panels.general.settings-copied"));
       }
     }
   }

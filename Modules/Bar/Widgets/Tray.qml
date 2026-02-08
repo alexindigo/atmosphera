@@ -10,7 +10,7 @@ import qs.Modules.Bar.Extras
 import qs.Services.UI
 import qs.Widgets
 
-Rectangle {
+Item {
   id: root
 
   property ShellScreen screen
@@ -43,9 +43,11 @@ Rectangle {
   property int sectionWidgetsCount: 0
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
+  // Explicit screenName property ensures reactive binding when screen changes
+  readonly property string screenName: screen ? screen.name : ""
   property var widgetSettings: {
-    if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section];
+    if (section && sectionWidgetIndex >= 0 && screenName) {
+      var widgets = Settings.getBarWidgetsForScreen(screenName)[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
         return widgets[sectionWidgetIndex];
       }
@@ -53,17 +55,22 @@ Rectangle {
     return {};
   }
 
-  readonly property string barPosition: Settings.data.bar.position
+  readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
+  readonly property real barHeight: Style.getBarHeightForScreen(screenName)
+  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screenName)
   readonly property bool density: Settings.data.bar.density
-  readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.65)
+  readonly property int iconSize: Style.toOdd(capsuleHeight * 0.65)
 
-  property list<string> blacklist: widgetSettings.blacklist || widgetMetadata.blacklist || [] // Read from settings
-  property list<string> pinned: widgetSettings.pinned || widgetMetadata.pinned || [] // Pinned items (shown inline)
+  property var blacklist: widgetSettings.blacklist || widgetMetadata.blacklist || [] // Read from settings
+  property var pinned: widgetSettings.pinned || widgetMetadata.pinned || [] // Pinned items (shown inline)
   property bool drawerEnabled: widgetSettings.drawerEnabled !== undefined ? widgetSettings.drawerEnabled : (widgetMetadata.drawerEnabled !== undefined ? widgetMetadata.drawerEnabled : true) // Enable drawer panel
   property bool hidePassive: widgetSettings.hidePassive !== undefined ? widgetSettings.hidePassive : true // Hide passive status items
+  readonly property string chevronColorKey: widgetSettings.chevronColor !== undefined ? widgetSettings.chevronColor : widgetMetadata.chevronColor
+  readonly property color chevronColor: Color.resolveColorKey(chevronColorKey)
   property var filteredItems: [] // Items to show inline (pinned)
   property var dropdownItems: [] // Items to show in drawer (unpinned)
+  property int hoveredItemIndex: -1 // Track hovered item for dot indicator
 
   Timer {
     id: updateDebounceTimer
@@ -111,6 +118,21 @@ Rectangle {
   }
 
   function _performFilteredItemsUpdate() {
+    // Force a fresh read of settings to ensure we have the latest blacklist
+    var currentSettings = {};
+    if (section && sectionWidgetIndex >= 0 && screenName) {
+      var w = Settings.getBarWidgetsForScreen(screenName)[section];
+      if (w && sectionWidgetIndex < w.length) {
+        currentSettings = w[sectionWidgetIndex];
+      }
+    }
+
+    // Update local properties with fresh data
+    if (currentSettings.blacklist !== undefined)
+      root.blacklist = currentSettings.blacklist;
+    if (currentSettings.pinned !== undefined)
+      root.pinned = currentSettings.pinned;
+
     let newItems = [];
     if (SystemTray.items && SystemTray.items.values) {
       const trayItems = SystemTray.items.values;
@@ -267,35 +289,73 @@ Rectangle {
   Component.onCompleted: {
     root.updateFilteredItems(); // Initial update
   }
-  implicitWidth: isVertical ? Style.capsuleHeight : Math.round(trayFlow.implicitWidth)
-  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight) : Style.capsuleHeight
-  radius: Style.radiusM
-  color: Style.capsuleColor
-  border.color: Style.capsuleBorderColor
-  border.width: Style.capsuleBorderWidth
+
+  // Content dimensions for implicit sizing
+  readonly property int visibleItemCount: (root.drawerEnabled && dropdownItems.length > 0 ? 1 : 0) + filteredItems.length
+  readonly property real capsulePadding: 0
+  readonly property real capsuleWidth: isVertical ? capsuleHeight : Math.round(trayFlow.implicitWidth + capsulePadding * 2)
+  readonly property real capsuleContentHeight: isVertical ? Math.round(trayFlow.implicitHeight + capsulePadding * 2) : capsuleHeight
+
+  implicitWidth: isVertical ? barHeight : Math.round(trayFlow.implicitWidth + capsulePadding * 2)
+  implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight + capsulePadding * 2) : barHeight
   visible: filteredItems.length > 0 || dropdownItems.length > 0
   opacity: (filteredItems.length > 0 || dropdownItems.length > 0) ? 1.0 : 0.0
 
+  // Visual capsule centered in parent
+  Rectangle {
+    id: visualCapsule
+    width: capsuleWidth
+    height: capsuleContentHeight
+    x: Style.pixelAlignCenter(parent.width, width)
+    y: Style.pixelAlignCenter(parent.height, height)
+    radius: Style.radiusM
+    color: Style.capsuleColor
+    border.color: Style.capsuleBorderColor
+    border.width: Style.capsuleBorderWidth
+  }
+
+  NPopupContextMenu {
+    id: chevronContextMenu
+
+    model: [
+      {
+        "label": I18n.tr("actions.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   chevronContextMenu.close();
+                   PanelService.closeContextMenu(screen);
+
+                   if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
+
   Flow {
     id: trayFlow
-    spacing: Style.marginXS
+    spacing: 0
     flow: isVertical ? Flow.TopToBottom : Flow.LeftToRight
 
-    // Pixel-perfect centering
-    x: isVertical ? Style.pixelAlignCenter(parent.width, width) : 0
-    y: isVertical ? 0 : Style.pixelAlignCenter(parent.height, height)
+    // Position centered in capsule
+    anchors.centerIn: visualCapsule
 
     // Drawer opener (before items if opposite direction)
     NIconButton {
       id: chevronIconBefore
       visible: root.drawerEnabled && dropdownItems.length > 0 && BarService.getPillDirection(root)
+      width: isVertical ? barHeight : capsuleHeight
+      height: isVertical ? capsuleHeight : barHeight
       tooltipText: I18n.tr("tooltips.open-tray-dropdown")
-      tooltipDirection: BarService.getTooltipDirection()
-      baseSize: Style.capsuleHeight
+      tooltipDirection: BarService.getTooltipDirection(root.screen?.name)
+      baseSize: capsuleHeight
       applyUiScale: false
       customRadius: Style.radiusL
       colorBg: "transparent"
-      colorFg: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mOnPrimary
+      colorFg: root.chevronColor
       colorBorder: "transparent"
       colorBorderHover: "transparent"
       icon: {
@@ -312,7 +372,7 @@ Rectangle {
         }
       }
       onClicked: toggleDrawer(this)
-      onRightClicked: toggleDrawer(this)
+      onRightClicked: PanelService.showContextMenu(chevronContextMenu, this, screen)
     }
 
     // Pinned items
@@ -321,9 +381,22 @@ Rectangle {
       model: root.filteredItems
 
       delegate: Item {
-        width: Style.capsuleHeight
-        height: Style.capsuleHeight
+        id: trayDelegate
+        required property var modelData
+        required property int index
+        width: isVertical ? barHeight : capsuleHeight
+        height: isVertical ? capsuleHeight : barHeight
         visible: modelData
+        readonly property bool isHovered: root.hoveredItemIndex === index
+
+        // Tooltip anchor representing the visual area (for proper tooltip positioning)
+        Item {
+          id: tooltipAnchor
+          width: capsuleHeight
+          height: capsuleHeight
+          x: Style.pixelAlignCenter(parent.width, width)
+          y: Style.pixelAlignCenter(parent.height, height)
+        }
 
         IconImage {
           id: trayIcon
@@ -333,8 +406,6 @@ Rectangle {
           y: Style.pixelAlignCenter(parent.height, height)
           asynchronous: true
           backer.fillMode: Image.PreserveAspectFit
-
-          property bool menuJustOpened: false
 
           source: {
             let icon = modelData?.icon || "";
@@ -361,82 +432,109 @@ Rectangle {
 
             fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
           }
+        }
 
-          MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
-            onClicked: mouse => {
-                         if (!modelData) {
-                           return;
-                         }
+        Rectangle {
+          id: hoverIndicator
+          anchors.bottom: trayIcon.bottom
+          anchors.bottomMargin: -2
+          anchors.horizontalCenter: trayIcon.horizontalCenter
+          width: Style.toOdd(iconSize * 0.25)
+          height: 4
+          color: trayDelegate.isHovered ? Color.mHover : "transparent"
+          radius: Math.min(Style.radiusXXS, width / 2)
 
-                         if (mouse.button === Qt.LeftButton) {
-                           // Close any open menu first
-                           if (popupMenuWindow) {
-                             popupMenuWindow.close();
-                           }
+          Behavior on color {
+            ColorAnimation {
+              duration: Style.animationFast
+              easing.type: Easing.OutCubic
+            }
+          }
+        }
 
-                           if (!modelData.onlyMenu) {
-                             modelData.activate();
-                           }
-                         } else if (mouse.button === Qt.MiddleButton) {
-                           // Close the menu if it was visible
-                           if (popupMenuWindow && popupMenuWindow.visible) {
-                             popupMenuWindow.close();
-                             return;
-                           }
-                           modelData.secondaryActivate && modelData.secondaryActivate();
-                         } else if (mouse.button === Qt.RightButton) {
-                           TooltipService.hideImmediately();
-
-                           // Close the menu if it was visible
-                           if (popupMenuWindow && popupMenuWindow.visible) {
-                             popupMenuWindow.close();
-                             return;
-                           }
-
-                           // Close any opened panel
-                           if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
-                             PanelService.openedPanel.close();
-                           }
-
-                           if (modelData.hasMenu && modelData.menu && popupMenuWindow && trayMenu && trayMenu.item) {
-                             popupMenuWindow.open();
-
-                             // Position menu based on bar position
-                             let menuX, menuY;
-                             if (barPosition === "left") {
-                               // For left bar: position menu to the right of the bar
-                               menuX = width + Style.marginM;
-                               menuY = 0;
-                             } else if (barPosition === "right") {
-                               // For right bar: position menu to the left of the bar
-                               menuX = -trayMenu.item.width - Style.marginM;
-                               menuY = 0;
-                             } else {
-                               // For horizontal bars: center horizontally and position below
-                               menuX = (width / 2) - (trayMenu.item.width / 2);
-                               menuY = (barPosition === "top") ? Style.barHeight + Style.marginS - 2 : Style.barHeight + Style.marginS - 2;
-                             }
-                             trayMenu.item.trayItem = modelData;
-                             trayMenu.item.widgetSection = root.section;
-                             trayMenu.item.widgetIndex = root.sectionWidgetIndex;
-                             trayMenu.item.showAt(parent, menuX, menuY);
-                           } else {
-                             Logger.d("Tray", "No menu available for", modelData.id, "or trayMenu not set");
-                           }
-                         }
-                       }
-            onEntered: {
+        MouseArea {
+          id: itemMouseArea
+          anchors.fill: parent
+          hoverEnabled: true
+          cursorShape: Qt.PointingHandCursor
+          acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+          onContainsMouseChanged: {
+            if (containsMouse) {
               if (popupMenuWindow) {
                 popupMenuWindow.close();
               }
-              TooltipService.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection());
+              root.hoveredItemIndex = trayDelegate.index;
+              TooltipService.show(tooltipAnchor, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection(root.screen?.name));
+            } else if (root.hoveredItemIndex === trayDelegate.index) {
+              root.hoveredItemIndex = -1;
+              TooltipService.hide(tooltipAnchor);
             }
-            onExited: TooltipService.hide()
           }
+          onClicked: mouse => {
+                       if (!modelData) {
+                         return;
+                       }
+
+                       if (mouse.button === Qt.LeftButton) {
+                         // Close any open menu first
+                         if (popupMenuWindow) {
+                           popupMenuWindow.close();
+                         }
+
+                         if (!modelData.onlyMenu) {
+                           modelData.activate();
+                         }
+                       } else if (mouse.button === Qt.MiddleButton) {
+                         // Close the menu if it was visible
+                         if (popupMenuWindow && popupMenuWindow.visible) {
+                           popupMenuWindow.close();
+                           return;
+                         }
+                         modelData.secondaryActivate && modelData.secondaryActivate();
+                       } else if (mouse.button === Qt.RightButton) {
+                         TooltipService.hideImmediately();
+
+                         // Close the menu if it was visible
+                         if (popupMenuWindow && popupMenuWindow.visible) {
+                           popupMenuWindow.close();
+                           return;
+                         }
+
+                         // Close any opened panel
+                         if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
+                           PanelService.openedPanel.close();
+                         }
+
+                         if (modelData.hasMenu && modelData.menu && trayMenu && trayMenu.item) {
+                           // Calculate menu position after ensuring menu is loaded
+                           const calculateAndShow = () => {
+                             // Position menu based on bar position, using tooltipAnchor for proper positioning
+                             // Increased spacing for better alignment with other context menus
+                             let menuX, menuY;
+                             if (barPosition === "left") {
+                               // For left bar: position menu to the right of the visual area
+                               menuX = tooltipAnchor.width + Style.marginL;
+                               menuY = 0;
+                             } else if (barPosition === "right") {
+                               // For right bar: position menu to the left of the visual area
+                               menuX = -trayMenu.item.implicitWidth - Style.marginL;
+                               menuY = 0;
+                             } else {
+                               // For horizontal bars: center horizontally and position below visual area
+                               menuX = (tooltipAnchor.width / 2) - (trayMenu.item.implicitWidth / 2);
+                               menuY = tooltipAnchor.height + Style.marginS;
+                             }
+
+                             PanelService.showTrayMenu(root.screen, modelData, trayMenu.item, tooltipAnchor, menuX, menuY, root.section, root.sectionWidgetIndex);
+                           };
+
+                           // Use Qt.callLater to ensure menu dimensions are calculated
+                           Qt.callLater(calculateAndShow);
+                         } else {
+                           Logger.d("Tray", "No menu available for", modelData.id, "or trayMenu not set");
+                         }
+                       }
+                     }
         }
       }
     }
@@ -445,13 +543,15 @@ Rectangle {
     NIconButton {
       id: chevronIconAfter
       visible: root.drawerEnabled && dropdownItems.length > 0 && !BarService.getPillDirection(root)
+      width: isVertical ? barHeight : capsuleHeight
+      height: isVertical ? capsuleHeight : barHeight
       tooltipText: I18n.tr("tooltips.open-tray-dropdown")
-      tooltipDirection: BarService.getTooltipDirection()
-      baseSize: Style.capsuleHeight
+      tooltipDirection: BarService.getTooltipDirection(root.screen?.name)
+      baseSize: capsuleHeight
       applyUiScale: false
       customRadius: Style.radiusL
       colorBg: "transparent"
-      colorFg: Color.mOnSurface
+      colorFg: root.chevronColor
       colorBorder: "transparent"
       colorBorderHover: "transparent"
       icon: {
@@ -468,7 +568,7 @@ Rectangle {
         }
       }
       onClicked: toggleDrawer(this)
-      onRightClicked: toggleDrawer(this)
+      onRightClicked: PanelService.showContextMenu(chevronContextMenu, this, screen)
     }
-  }
+  } // closes Flow
 }

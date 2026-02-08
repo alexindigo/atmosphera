@@ -178,8 +178,9 @@ Item {
 
       for (var i = 0; i < hlWorkspaces.length; i++) {
         const ws = hlWorkspaces[i];
-        if (!ws || ws.id < 1)
+        if (ws.name && ws.name.startsWith("special:"))
           continue;
+
         const wsData = {
           "id": ws.id,
           "idx": ws.id,
@@ -428,6 +429,10 @@ Item {
   // Public functions
   function switchToWorkspace(workspace) {
     try {
+      if (workspace.name) {
+        Hyprland.dispatch(`workspace ${workspace.name}`);
+        return;
+      }
       Hyprland.dispatch(`workspace ${workspace.idx}`);
     } catch (e) {
       Logger.e("HyprlandService", "Failed to switch workspace:", e);
@@ -462,6 +467,35 @@ Item {
       Quickshell.execDetached(["hyprctl", "dispatch", "exit"]);
     } catch (e) {
       Logger.e("HyprlandService", "Failed to logout:", e);
+    }
+  }
+
+  function cycleKeyboardLayout() {
+    try {
+      Quickshell.execDetached(["hyprctl", "switchxkblayout", "all", "next"]);
+    } catch (e) {
+      Logger.e("HyprlandService", "Failed to cycle keyboard layout:", e);
+    }
+  }
+
+  function getFocusedScreen() {
+    const hyprMon = Hyprland.focusedMonitor;
+    if (hyprMon) {
+      const monitorName = hyprMon.name;
+      for (let i = 0; i < Quickshell.screens.length; i++) {
+        if (Quickshell.screens[i].name === monitorName) {
+          return Quickshell.screens[i];
+        }
+      }
+    }
+    return null;
+  }
+
+  function spawn(command) {
+    try {
+      Quickshell.execDetached(["hyprctl", "dispatch", "--", "exec"].concat(command));
+    } catch (e) {
+      Logger.e("HyprlandService", "Failed to spawn command:", e);
     }
   }
 }

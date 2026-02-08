@@ -6,10 +6,11 @@ import Quickshell.Wayland
 import Quickshell.Widgets
 import qs.Commons
 import qs.Services.Compositor
+import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
 
-Rectangle {
+Item {
   id: root
 
   property ShellScreen screen
@@ -20,13 +21,18 @@ Rectangle {
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
-  readonly property string barPosition: Settings.data.bar.position
+  // Explicit screenName property ensures reactive binding when screen changes
+  readonly property string screenName: screen ? screen.name : ""
+  readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
+  readonly property real barHeight: Style.getBarHeightForScreen(screenName)
+  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screenName)
+  readonly property real barFontSize: Style.getBarFontSizeForScreen(screenName)
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
-    if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section];
+    if (section && sectionWidgetIndex >= 0 && screenName) {
+      var widgets = Settings.getBarWidgetsForScreen(screenName)[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
         return widgets[sectionWidgetIndex];
       }
@@ -42,7 +48,7 @@ Rectangle {
   readonly property bool smartWidth: (widgetSettings.smartWidth !== undefined) ? widgetSettings.smartWidth : widgetMetadata.smartWidth
   readonly property int maxTaskbarWidthPercent: (widgetSettings.maxTaskbarWidth !== undefined) ? widgetSettings.maxTaskbarWidth : widgetMetadata.maxTaskbarWidth
   readonly property real iconScale: (widgetSettings.iconScale !== undefined) ? widgetSettings.iconScale : widgetMetadata.iconScale
-  readonly property int itemSize: Style.toOdd(Style.capsuleHeight * Math.max(0.1, iconScale))
+  readonly property int itemSize: Style.toOdd(capsuleHeight * Math.max(0.1, iconScale))
 
   // Maximum width for the taskbar widget to prevent overlapping with other widgets
   readonly property real maxTaskbarWidth: {
@@ -55,19 +61,21 @@ Rectangle {
   }
 
   readonly property int titleWidth: {
-    if (smartWidth && showTitle && !isVerticalBar && combinedModel.length > 0) {
-      var entriesCount = combinedModel.length;
-      var baseWidth = 140;
-      var calculatedWidth = baseWidth / Math.sqrt(entriesCount);
+    // First, use user-defined title width if set
+    var calculatedWidth = (widgetSettings.titleWidth !== undefined) ? widgetSettings.titleWidth : widgetMetadata.titleWidth;
 
+    // Second, shrink title width if it exceeds maxTaskbarWidth when smartWidth is enabled
+    if (smartWidth && combinedModel.length > 0) {
       if (maxTaskbarWidth > 0) {
-        var maxWidthPerEntry = (maxTaskbarWidth / entriesCount) - itemSize - Style.marginS - Style.marginM * 2;
+        var entriesCount = combinedModel.length;
+        var maxWidthPerEntry = (maxTaskbarWidth / entriesCount) - itemSize - Style.marginS - Style.marginXL;
         calculatedWidth = Math.min(calculatedWidth, maxWidthPerEntry);
       }
 
-      return Math.max(Math.round(calculatedWidth), 20);
+      calculatedWidth = Math.max(Math.round(calculatedWidth), 20);
     }
-    return (widgetSettings.titleWidth !== undefined) ? widgetSettings.titleWidth : widgetMetadata.titleWidth;
+
+    return calculatedWidth;
   }
   readonly property bool showPinnedApps: (widgetSettings.showPinnedApps !== undefined) ? widgetSettings.showPinnedApps : widgetMetadata.showPinnedApps
 
@@ -97,6 +105,91 @@ Rectangle {
   // Wheel scroll handling
   property int wheelAccumulatedDelta: 0
   property bool wheelCooldown: false
+
+  // Drag and Drop state for visual feedback
+  property int dragSourceIndex: -1
+  property int dragTargetIndex: -1
+
+  // Track the session order of apps (transient reordering)
+  property var sessionAppOrder: []
+
+  function getAppKey(appData) {
+    if (!appData)
+      return null;
+    // prefer window object identity for running apps to distinguish instances
+    if (appData.window)
+      return appData.window;
+    // fallback to appId for pinned-only apps
+    return appData.appId;
+  }
+
+  function sortApps(apps) {
+    if (!sessionAppOrder || sessionAppOrder.length === 0) {
+      return apps;
+    }
+
+    const sorted = [];
+    const remaining = [...apps];
+
+    // 1. Pick apps that are in the session order
+    for (let i = 0; i < sessionAppOrder.length; i++) {
+      const key = sessionAppOrder[i];
+      const idx = remaining.findIndex(app => getAppKey(app) === key);
+      if (idx !== -1) {
+        sorted.push(remaining[idx]);
+        remaining.splice(idx, 1);
+      }
+    }
+
+    // 2. Append any new/remaining apps
+    remaining.forEach(app => sorted.push(app));
+
+    return sorted;
+  }
+
+  function reorderApps(fromIndex, toIndex) {
+    Logger.d("Taskbar", "Reordering apps from " + fromIndex + " to " + toIndex);
+    if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0 || fromIndex >= combinedModel.length || toIndex >= combinedModel.length)
+      return;
+
+    const list = [...combinedModel];
+    const item = list.splice(fromIndex, 1)[0];
+    list.splice(toIndex, 0, item);
+
+    combinedModel = list;
+    sessionAppOrder = combinedModel.map(getAppKey);
+    savePinnedOrder();
+  }
+
+  function savePinnedOrder() {
+    const currentPinned = Settings.data.dock.pinnedApps || [];
+    const newPinned = [];
+    const seen = new Set();
+
+    // Extract pinned apps in their current visual order
+    combinedModel.forEach(app => {
+                            if (app.appId && !seen.has(app.appId)) {
+                              const isPinned = currentPinned.some(p => normalizeAppId(p) === normalizeAppId(app.appId));
+
+                              if (isPinned) {
+                                newPinned.push(app.appId);
+                                seen.add(app.appId);
+                              }
+                            }
+                          });
+
+    // Check if any pinned apps were missed (e.g. filtered out by workspace)
+    currentPinned.forEach(p => {
+                            if (!seen.has(p)) {
+                              newPinned.push(p);
+                              seen.add(p);
+                            }
+                          });
+
+    if (JSON.stringify(currentPinned) !== JSON.stringify(newPinned)) {
+      Settings.data.dock.pinnedApps = newPinned;
+    }
+  }
 
   // Helper function to normalize app IDs for case-insensitive matching
   function normalizeAppId(appId) {
@@ -261,7 +354,12 @@ Rectangle {
                          });
     }
 
-    combinedModel = runningWindows;
+    combinedModel = sortApps(runningWindows);
+
+    // Sync session order if needed (e.g. first run or new apps added)
+    if (!sessionAppOrder || sessionAppOrder.length === 0 || sessionAppOrder.length !== combinedModel.length) {
+      sessionAppOrder = combinedModel.map(getAppKey);
+    }
     updateHasWindow();
   }
 
@@ -285,7 +383,7 @@ Rectangle {
           const command = prefix.concat(app.command);
           Quickshell.execDetached(command);
         }
-      } else if (Settings.data.appLauncher.useApp2Unit && app.id) {
+      } else if (Settings.data.appLauncher.useApp2Unit && ProgramCheckerService.app2unitAvailable && app.id) {
         Logger.d("Taskbar", `Using app2unit for: ${app.id}`);
         if (app.runInTerminal)
           Quickshell.execDetached(["app2unit", "--", app.id + ".desktop"]);
@@ -297,9 +395,9 @@ Rectangle {
           Logger.d("Taskbar", "Executing terminal app manually: " + app.name);
           const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
           const command = terminal.concat(app.command);
-          Quickshell.execDetached(command);
+          CompositorService.spawn(command);
         } else if (app.command && app.command.length > 0) {
-          Quickshell.execDetached(app.command);
+          CompositorService.spawn(app.command);
         } else if (app.execute) {
           app.execute();
         } else {
@@ -364,10 +462,8 @@ Rectangle {
       return items;
     }
     onTriggered: (action, item) => {
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(root.screen);
-                   if (popupMenuWindow) {
-                     popupMenuWindow.close();
-                   }
+                   contextMenu.close();
+                   PanelService.closeContextMenu(root.screen);
 
                    // Look up the window fresh each time to avoid stale references
                    const selectedWindow = root.getSelectedWindow();
@@ -495,13 +591,14 @@ Rectangle {
     }
   }
 
-  implicitWidth: {
+  // Content dimensions for implicit sizing
+  readonly property real contentWidth: {
     if (!visible)
       return 0;
     if (isVerticalBar)
-      return Style.capsuleHeight;
+      return barHeight;
 
-    var calculatedWidth = showTitle ? taskbarLayout.implicitWidth : taskbarLayout.implicitWidth + Style.marginM * 2;
+    var calculatedWidth = showTitle ? taskbarLayout.implicitWidth : taskbarLayout.implicitWidth + Style.marginXL;
 
     // Apply maximum width constraint when smartWidth is enabled
     if (smartWidth && maxTaskbarWidth > 0) {
@@ -510,173 +607,328 @@ Rectangle {
 
     return Math.round(calculatedWidth);
   }
-  implicitHeight: visible ? (isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginM * 2) : Style.capsuleHeight) : 0
-  radius: Style.radiusM
-  color: Style.capsuleColor
-  border.color: Style.capsuleBorderColor
-  border.width: Style.capsuleBorderWidth
+  readonly property real contentHeight: visible ? (isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginS * 2) : capsuleHeight) : 0
 
-  GridLayout {
-    id: taskbarLayout
+  implicitWidth: contentWidth
+  implicitHeight: contentHeight
 
-    // Pixel-perfect centering
-    x: isVerticalBar ? Style.pixelAlignCenter(parent.width, width) : ((root.showTitle) ? Style.pixelAlignCenter(parent.width, width) : Style.marginM)
-    y: Style.pixelAlignCenter(parent.height, height)
+  // Visual capsule centered in parent
+  Rectangle {
+    id: visualCapsule
+    width: root.contentWidth
+    height: root.contentHeight
+    anchors.centerIn: parent
+    radius: Style.radiusM
+    color: Style.capsuleColor
+    border.color: Style.capsuleBorderColor
+    border.width: Style.capsuleBorderWidth
 
-    // Configure GridLayout to behave like RowLayout or ColumnLayout
-    rows: isVerticalBar ? -1 : 1 // -1 means unlimited
-    columns: isVerticalBar ? 1 : -1 // -1 means unlimited
+    GridLayout {
+      id: taskbarLayout
 
-    rowSpacing: isVerticalBar ? Style.marginXXS : 0
-    columnSpacing: isVerticalBar ? 0 : Style.marginXXS
+      // Pixel-perfect centering
+      x: isVerticalBar ? Style.pixelAlignCenter(parent.width, width) : ((root.showTitle) ? Style.pixelAlignCenter(parent.width, width) : Style.marginM)
+      y: Style.pixelAlignCenter(parent.height, height)
 
-    Repeater {
-      model: root.combinedModel
-      delegate: Item {
-        id: taskbarItem
-        required property var modelData
-        property ShellScreen screen: root.screen
+      // Configure GridLayout to behave like RowLayout or ColumnLayout
+      rows: isVerticalBar ? -1 : 1 // -1 means unlimited
+      columns: isVerticalBar ? 1 : -1 // -1 means unlimited
 
-        readonly property bool isRunning: modelData.window !== null
-        readonly property bool isPinned: modelData.type === "pinned" || modelData.type === "pinned-running"
-        readonly property bool isFocused: isRunning && modelData.window && modelData.window.isFocused
-        readonly property bool isPinnedRunning: isPinned && isRunning && !isFocused
-        readonly property bool isHovered: root.hoveredWindowId === modelData.id
+      rowSpacing: isVerticalBar ? Style.marginXXS : 0
+      columnSpacing: isVerticalBar ? 0 : Style.marginXXS
 
-        readonly property bool shouldShowTitle: root.showTitle && modelData.type !== "pinned"
-        readonly property real itemSpacing: Style.marginS
-        readonly property real contentWidth: shouldShowTitle ? root.itemSize + itemSpacing + root.titleWidth : root.itemSize
+      Repeater {
+        model: root.combinedModel
+        delegate: Item {
+          id: taskbarItem
+          required property var modelData
+          required property int index
+          property ShellScreen screen: root.screen
 
-        readonly property string title: modelData.title || modelData.appId || "Unknown application"
-        readonly property color titleBgColor: (isHovered || isFocused) ? Color.mHover : Style.capsuleColor
-        readonly property color titleFgColor: (isHovered || isFocused) ? Color.mOnHover : Color.mOnSurface
+          readonly property bool isRunning: modelData.window !== null
+          readonly property bool isPinned: modelData.type === "pinned" || modelData.type === "pinned-running"
+          readonly property bool isFocused: isRunning && modelData.window && modelData.window.isFocused
+          readonly property bool isPinnedRunning: isPinned && isRunning && !isFocused
+          readonly property bool isHovered: root.hoveredWindowId === modelData.id
 
-        Layout.preferredWidth: root.showTitle ? Math.round(contentWidth + Style.marginM * 2) : Math.round(contentWidth) // Add margins for both pinned and running apps
-        Layout.preferredHeight: root.itemSize
-        Layout.alignment: Qt.AlignCenter
+          readonly property bool shouldShowTitle: root.showTitle && modelData.type !== "pinned"
+          readonly property real itemSpacing: Style.marginS
+          readonly property real contentWidth: shouldShowTitle ? root.itemSize + itemSpacing + root.titleWidth : root.itemSize
 
-        Rectangle {
-          id: titleBackground
-          visible: shouldShowTitle
-          anchors.centerIn: parent
-          width: parent.width
-          height: root.height
-          color: titleBgColor
-          radius: Style.radiusM
+          readonly property string title: modelData.title || modelData.appId || "Unknown application"
+          readonly property color titleBgColor: (isHovered || isFocused) ? Color.mHover : Style.capsuleColor
+          readonly property color titleFgColor: (isHovered || isFocused) ? Color.mOnHover : Color.mOnSurface
 
-          Behavior on color {
-            ColorAnimation {
-              duration: Style.animationFast
-              easing.type: Easing.InOutQuad
-            }
-          }
-        }
+          Layout.preferredWidth: root.isVerticalBar ? root.barHeight : (root.showTitle ? Math.round(contentWidth + Style.marginXL) : Math.round(contentWidth)) // Add margins for both pinned and running apps
+          Layout.preferredHeight: root.isVerticalBar ? root.itemSize : root.barHeight
+          Layout.alignment: Qt.AlignCenter
 
-        Rectangle {
-          anchors.centerIn: parent
-          width: taskbarItem.contentWidth
-          height: parent.height
-          color: "transparent"
+          // Ensure dragged item is on top
+          z: (root.dragSourceIndex === index) ? 1000 : 1
 
-          RowLayout {
-            id: itemLayout
+          property int modelIndex: index
+          objectName: "taskbarAppItem"
+
+          DropArea {
             anchors.fill: parent
-            spacing: taskbarItem.itemSpacing
-
-            Item {
-              Layout.preferredWidth: root.itemSize
-              Layout.preferredHeight: root.itemSize
-              Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-
-              IconImage {
-                id: appIcon
-                anchors.fill: parent
-
-                source: ThemeIcons.iconForAppId(taskbarItem.modelData.appId)
-                smooth: true
-                asynchronous: true
-
-                // Apply dock shader to all taskbar icons
-                layer.enabled: widgetSettings.colorizeIcons !== false
-                layer.effect: ShaderEffect {
-                  property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
-                  property real colorizeMode: 0.0 // Dock mode (grayscale)
-
-                  fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
-                }
+            keys: ["taskbar-app"]
+            onEntered: function (drag) {
+              if (drag.source && drag.source.objectName === "taskbarAppItem") {
+                root.dragTargetIndex = taskbarItem.modelIndex;
               }
+            }
+            onExited: function () {
+              if (root.dragTargetIndex === taskbarItem.modelIndex) {
+                root.dragTargetIndex = -1;
+              }
+            }
+            onDropped: function (drop) {
+              root.dragSourceIndex = -1;
+              root.dragTargetIndex = -1;
+              Logger.d("Taskbar", "Dropped! Source: " + (drop.source ? drop.source.objectName : "null") + " Index: " + (drop.source ? drop.source.modelIndex : "?") + " -> Target Index: " + taskbarItem.modelIndex);
+              if (drop.source && drop.source.objectName === "taskbarAppItem" && drop.source !== taskbarItem) {
+                root.reorderApps(drop.source.modelIndex, taskbarItem.modelIndex);
+              } else {
+                Logger.d("Taskbar", "Drop ignored. Source objectName: " + (drop.source ? drop.source.objectName : "null"));
+              }
+            }
+          }
 
-              Rectangle {
-                id: iconBackground
-                visible: !shouldShowTitle
-                anchors.bottomMargin: -2
-                anchors.bottom: parent.bottom
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: Style.toOdd(root.itemSize * 0.25)
-                height: 4
-                color: taskbarItem.isFocused ? Color.mPrimary : "transparent"
-                radius: Math.min(Style.radiusXXS, width / 2)
+          Item {
+            id: draggableContent
+            width: parent.width
+            height: parent.height
+            anchors.centerIn: dragging ? undefined : parent
+
+            // Visual shifting logic
+            readonly property bool isDragged: root.dragSourceIndex === index
+            property real shiftOffset: 0
+
+            // Calculate shift based on drag state
+            // If I am NOT the dragged item, but I am in the path of the drag
+            Binding on shiftOffset {
+              value: {
+                if (root.dragSourceIndex !== -1 && root.dragTargetIndex !== -1 && !draggableContent.isDragged) {
+                  if (root.dragSourceIndex < root.dragTargetIndex) {
+                    // Dragging Right: Items between source and target shift Left
+                    if (index > root.dragSourceIndex && index <= root.dragTargetIndex) {
+                      return -1 * (root.isVerticalBar ? root.itemSize : draggableContent.width); // Simple approximation, could be refined
+                    }
+                  } else if (root.dragSourceIndex > root.dragTargetIndex) {
+                    // Dragging Left: Items between target and source shift Right
+                    if (index >= root.dragTargetIndex && index < root.dragSourceIndex) {
+                      return (root.isVerticalBar ? root.itemSize : draggableContent.width);
+                    }
+                  }
+                }
+                return 0;
               }
             }
 
-            NText {
-              id: titleText
+            transform: Translate {
+              x: !root.isVerticalBar ? draggableContent.shiftOffset : 0
+              y: root.isVerticalBar ? draggableContent.shiftOffset : 0
+
+              Behavior on x {
+                NumberAnimation {
+                  duration: Style.animationFast
+                  easing.type: Easing.OutQuad
+                }
+              }
+              Behavior on y {
+                NumberAnimation {
+                  duration: Style.animationFast
+                  easing.type: Easing.OutQuad
+                }
+              }
+            }
+
+            property bool dragging: taskbarMouseArea.drag.active
+            onDraggingChanged: {
+              if (dragging) {
+                root.dragSourceIndex = index;
+              } else {
+                // Don't reset immediately on release to allow drop to handle it,
+                // or use a timer if needed, but drop handler usually fires.
+                // However, if dropped outside, we need to reset.
+                // Let's reset if not handled by drop area quickly?
+                // Actually, drag.active becomes false on release.
+                // We might want to clear it if no drop happened.
+                if (root.dragSourceIndex === index) {
+                  // Slight delay/check? For now, let DropArea handle reset on success.
+                  // If cancelled (dropped nowhere), we should reset.
+                  Qt.callLater(() => {
+                                 if (!taskbarMouseArea.drag.active && root.dragSourceIndex === index) {
+                                   root.dragSourceIndex = -1;
+                                   root.dragTargetIndex = -1;
+                                 }
+                               });
+                }
+              }
+            }
+
+            Drag.active: dragging
+            Drag.source: taskbarItem
+            Drag.hotSpot.x: width / 2
+            Drag.hotSpot.y: height / 2
+            Drag.keys: ["taskbar-app"]
+
+            z: dragging ? 1000 : 0
+            scale: dragging ? 1.05 : 1.0
+            Behavior on scale {
+              NumberAnimation {
+                duration: Style.animationFast
+              }
+            }
+
+            Rectangle {
+              id: titleBackground
               visible: shouldShowTitle
-              Layout.preferredWidth: root.titleWidth
-              Layout.preferredHeight: root.itemSize
-              Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-              Layout.fillWidth: false
+              anchors.centerIn: parent
+              width: parent.width
+              height: root.capsuleHeight
+              color: titleBgColor
+              radius: Style.radiusM
 
-              text: taskbarItem.title
-              elide: Text.ElideRight
-              verticalAlignment: Text.AlignVCenter
-              horizontalAlignment: Text.AlignLeft
-
-              pointSize: Style.barFontSize
-              color: titleFgColor
-              opacity: Style.opacityFull
-            }
-          }
-        }
-
-        MouseArea {
-          anchors.fill: parent
-          hoverEnabled: true
-          cursorShape: Qt.PointingHandCursor
-          acceptedButtons: Qt.LeftButton | Qt.RightButton
-
-          onClicked: function (mouse) {
-            if (!modelData)
-              return;
-            if (mouse.button === Qt.LeftButton) {
-              if (isRunning && modelData.window) {
-                // Running app - focus it
-                try {
-                  CompositorService.focusWindow(modelData.window);
-                } catch (error) {
-                  Logger.e("Taskbar", "Failed to activate toplevel: " + error);
+              Behavior on color {
+                ColorAnimation {
+                  duration: Style.animationFast
+                  easing.type: Easing.InOutQuad
                 }
-              } else if (isPinned) {
-                // Pinned app not running - launch it
-                root.launchPinnedApp(modelData.appId);
               }
-            } else if (mouse.button === Qt.RightButton) {
-              TooltipService.hide();
-              // Only show context menu for running apps
-              if (isRunning && modelData.window) {
-                root.selectedWindowId = modelData.id;
-                root.selectedAppId = modelData.appId;
-                root.openTaskbarContextMenu(taskbarItem);
+            }
+
+            Rectangle {
+              anchors.centerIn: parent
+              width: taskbarItem.contentWidth
+              height: parent.height
+              color: "transparent"
+
+              RowLayout {
+                id: itemLayout
+                anchors.fill: parent
+                spacing: taskbarItem.itemSpacing
+
+                Item {
+                  Layout.preferredWidth: root.itemSize
+                  Layout.preferredHeight: root.itemSize
+                  Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+
+                  IconImage {
+                    id: appIcon
+                    anchors.fill: parent
+
+                    source: ThemeIcons.iconForAppId(taskbarItem.modelData.appId)
+                    smooth: true
+                    asynchronous: true
+
+                    // Apply dock shader to all taskbar icons
+                    layer.enabled: widgetSettings.colorizeIcons !== false
+                    layer.effect: ShaderEffect {
+                      property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
+                      property real colorizeMode: 0.0 // Dock mode (grayscale)
+
+                      fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+                    }
+                  }
+
+                  Rectangle {
+                    id: iconBackground
+                    visible: !shouldShowTitle
+                    anchors.bottomMargin: -2
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: Style.toOdd(root.itemSize * 0.25)
+                    height: 4
+                    color: taskbarItem.isFocused ? Color.mPrimary : (taskbarItem.isHovered ? Color.mHover : "transparent")
+                    radius: Math.min(Style.radiusXXS, width / 2)
+
+                    Behavior on color {
+                      ColorAnimation {
+                        duration: Style.animationFast
+                        easing.type: Easing.OutCubic
+                      }
+                    }
+                  }
+                }
+
+                NText {
+                  id: titleText
+                  visible: shouldShowTitle
+                  Layout.preferredWidth: root.titleWidth
+                  Layout.preferredHeight: root.itemSize
+                  Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                  Layout.fillWidth: false
+
+                  text: taskbarItem.title
+                  elide: Text.ElideRight
+                  verticalAlignment: Text.AlignVCenter
+                  horizontalAlignment: Text.AlignLeft
+
+                  pointSize: barFontSize
+                  color: titleFgColor
+                  opacity: Style.opacityFull
+                }
               }
             }
           }
-          onEntered: {
-            root.hoveredWindowId = taskbarItem.modelData.id;
-            TooltipService.show(taskbarItem, taskbarItem.title, BarService.getTooltipDirection());
-          }
-          onExited: {
-            root.hoveredWindowId = "";
-            TooltipService.hide();
+
+          MouseArea {
+            id: taskbarMouseArea
+            objectName: "taskbarMouseArea"
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+            drag.target: draggableContent
+            drag.axis: root.isVerticalBar ? Drag.YAxis : Drag.XAxis
+            preventStealing: true
+
+            onPressed: {
+              // Constrain drag to roughly the taskbar area but allow some freedom
+              // Or just let it be free since we only care about drops
+            }
+
+            onReleased: {
+              if (draggableContent.Drag.active) {
+                draggableContent.Drag.drop();
+              }
+            }
+
+            onClicked: function (mouse) {
+              if (!modelData)
+                return;
+              if (mouse.button === Qt.LeftButton) {
+                if (isRunning && modelData.window) {
+                  // Running app - focus it
+                  try {
+                    CompositorService.focusWindow(modelData.window);
+                  } catch (error) {
+                    Logger.e("Taskbar", "Failed to activate toplevel: " + error);
+                  }
+                } else if (isPinned) {
+                  // Pinned app not running - launch it
+                  root.launchPinnedApp(modelData.appId);
+                }
+              } else if (mouse.button === Qt.RightButton) {
+                TooltipService.hide();
+                // Only show context menu for running apps
+                if (isRunning && modelData.window) {
+                  root.selectedWindowId = modelData.id;
+                  root.selectedAppId = modelData.appId;
+                  root.openTaskbarContextMenu(taskbarItem);
+                }
+              }
+            }
+            onEntered: {
+              root.hoveredWindowId = taskbarItem.modelData.id;
+              TooltipService.show(taskbarItem, taskbarItem.title, BarService.getTooltipDirection(root.screen?.name));
+            }
+            onExited: {
+              root.hoveredWindowId = "";
+              TooltipService.hide();
+            }
           }
         }
       }
@@ -733,30 +985,7 @@ Rectangle {
     // Set the model directly
     contextMenu.model = items;
 
-    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-    if (popupMenuWindow) {
-      popupMenuWindow.open();
-
-      // Calculate menu position
-      const globalPos = item.mapToItem(root, 0, 0);
-      let menuX, menuY;
-      if (root.barPosition === "top") {
-        menuX = globalPos.x + (item.width / 2) - (contextMenu.implicitWidth / 2);
-        menuY = Style.barHeight + Style.marginS;
-      } else if (root.barPosition === "bottom") {
-        const menuHeight = 12 + contextMenu.model.length * contextMenu.itemHeight;
-        menuX = globalPos.x + (item.width / 2) - (contextMenu.implicitWidth / 2);
-        menuY = -menuHeight - Style.marginS;
-      } else if (root.barPosition === "left") {
-        menuX = Style.barHeight + Style.marginS;
-        menuY = globalPos.y + (item.height / 2) - (contextMenu.implicitHeight / 2);
-      } else {
-        // right
-        menuX = -contextMenu.implicitWidth - Style.marginS;
-        menuY = globalPos.y + (item.height / 2) - (contextMenu.implicitHeight / 2);
-      }
-      popupMenuWindow.showContextMenu(contextMenu);
-      contextMenu.openAtItem(root, screen);
-    }
+    // Anchor to root (stable) but center horizontally on the clicked item
+    PanelService.showContextMenu(contextMenu, root, screen, item);
   }
 }

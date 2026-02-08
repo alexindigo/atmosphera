@@ -11,8 +11,11 @@ Popup {
   modal: true
   dim: false
   anchors.centerIn: parent
-  width: Math.max(settingsContent.implicitWidth + padding * 2, 500 * Style.uiScaleRatio)
-  height: settingsContent.implicitHeight + padding * 2
+  property var screen: null
+  readonly property real maxHeight: screen ? screen.height * 0.9 : 800
+
+  width: Math.max(settingsContent.implicitWidth + padding * 2, 600 * Style.uiScaleRatio)
+  height: Math.min(settingsContent.implicitHeight + padding * 2, maxHeight)
   padding: Style.marginXL
 
   property var currentPlugin: null
@@ -63,9 +66,18 @@ Popup {
       }
 
       // Settings loader - pluginApi is passed via setSource() in openPluginSettings()
-      Loader {
-        id: settingsLoader
+      NScrollView {
+        id: settingsScrollView
         Layout.fillWidth: true
+        Layout.fillHeight: true
+        Layout.minimumHeight: 100
+        horizontalPolicy: ScrollBar.AlwaysOff
+        gradientColor: Color.mSurface
+
+        Loader {
+          id: settingsLoader
+          width: settingsScrollView.availableWidth
+        }
       }
 
       // Action buttons
@@ -79,7 +91,7 @@ Popup {
         }
 
         NButton {
-          text: I18n.tr("common.cancel")
+          text: I18n.tr("common.close")
           outlined: true
           onClicked: root.close()
         }
@@ -90,7 +102,6 @@ Popup {
           onClicked: {
             if (settingsLoader.item && settingsLoader.item.saveSettings) {
               settingsLoader.item.saveSettings();
-              root.close();
               if (root.showToastOnSave) {
                 ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.settings-saved"));
               }

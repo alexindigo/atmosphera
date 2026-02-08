@@ -43,6 +43,9 @@ Singleton {
   property var pluginErrors: ({})
   signal pluginLoadError(string pluginId, string entryPoint, string error)
 
+  // Track currently installing plugins: { pluginId: true }
+  property var installingPlugins: ({})
+
   // Hot reload: file watchers for plugin directories
   property var pluginFileWatchers: ({}) // { pluginId: FileView }
   property bool hotReloadEnabled: Settings.isDebug
@@ -113,11 +116,27 @@ Singleton {
             // Reload translations
             loadPluginTranslationsAsync(id, plugin.manifest, I18n.langCode, function (translations) {
               plugin.api.pluginTranslations = translations;
-              plugin.api.translationVersion++;
-              Logger.d("PluginService", "Reloaded translations for plugin:", id);
+
+              // Reload English fallback for non-English languages
+              if (I18n.langCode !== "en") {
+                loadPluginTranslationsAsync(id, plugin.manifest, "en", function (fallbackTranslations) {
+                  plugin.api.pluginFallbackTranslations = fallbackTranslations;
+                  plugin.api.translationVersion++;
+                  Logger.d("PluginService", "Reloaded translations for plugin:", id);
+                });
+              } else {
+                plugin.api.pluginFallbackTranslations = {};
+                plugin.api.translationVersion++;
+                Logger.d("PluginService", "Reloaded translations for plugin:", id);
+              }
             });
           }
         })(pluginId, root.loadedPlugins[pluginId]);
+      }
+
+      // Update translation file watchers to watch the new language's files
+      if (root.hotReloadEnabled) {
+        updateTranslationWatchers();
       }
     }
   }
@@ -185,6 +204,7 @@ Singleton {
       root.pluginsFullyLoaded = true;
       Logger.i("PluginService", "No plugins to load");
       root.allPluginsLoaded();
+      root._isStartupCheck = true;
       refreshAvailablePlugins();
       return;
     }
@@ -210,6 +230,7 @@ Singleton {
       root.allPluginsLoaded();
 
       // Fetch available plugins from all sources
+      root._isStartupCheck = true;
       refreshAvailablePlugins();
     }
   }
@@ -279,7 +300,7 @@ Singleton {
             root.availablePlugins.push(plugin);
           }
 
-          Logger.i("PluginService", "Loaded", registry.plugins.length, "plugins from", source.name);
+          Logger.i("PluginService", `Parsed ${registry.plugins.length} plugins manifest from '${source.name}'`);
 
           // Remove from active fetches BEFORE emitting signal so handler sees correct count
           delete activeFetches[source.url];
@@ -325,7 +346,7 @@ Singleton {
     }
 
     // For official plugins, also check if any custom version with same base ID exists
-    if (PluginRegistry.isOfficialSource(sourceUrl)) {
+    if (PluginRegistry.isMainSource(sourceUrl)) {
       var allInstalled = PluginRegistry.getAllInstalledPluginIds();
       for (var i = 0; i < allInstalled.length; i++) {
         var parsed = PluginRegistry.parseCompositeKey(allInstalled[i]);
@@ -344,7 +365,7 @@ Singleton {
     }
 
     // For custom plugins, check if official version exists
-    if (!PluginRegistry.isOfficialSource(sourceUrl)) {
+    if (!PluginRegistry.isMainSource(sourceUrl)) {
       if (PluginRegistry.isPluginDownloaded(pluginMetadata.id)) {
         return {
           collision: true,
@@ -406,9 +427,19 @@ Singleton {
     var downloadCmd = "temp_dir=$(mktemp -d) && GIT_TERMINAL_PROMPT=0 git clone --filter=blob:none --sparse --depth=1 --quiet '" + repoUrl + "' \"$temp_dir\" 2>/dev/null && cd \"$temp_dir\" && git sparse-checkout set '" + pluginId + "' 2>/dev/null && mkdir -p '" + pluginDir + "' && cp -r \"$temp_dir/" + pluginId + "/.\" '" + pluginDir
         + "/'; exit_code=$?; rm -rf \"$temp_dir\"; exit $exit_code";
 
+    // Mark as installing
+    var newInstalling = Object.assign({}, root.installingPlugins);
+    newInstalling[pluginId] = true;
+    root.installingPlugins = newInstalling;
+
     var downloadProcess = Qt.createQmlObject('import QtQuick; import Quickshell.Io; Process { command: ["sh", "-c", "' + downloadCmd.replace(/"/g, '\\"') + '"] }', root, "DownloadPlugin_" + pluginId);
 
     downloadProcess.exited.connect(function (exitCode) {
+      // Mark as finished (remove from installing)
+      var currentInstalling = Object.assign({}, root.installingPlugins);
+      delete currentInstalling[pluginId];
+      root.installingPlugins = currentInstalling;
+
       if (exitCode === 0) {
         Logger.i("PluginService", "Downloaded plugin:", compositeKey);
 
@@ -517,7 +548,7 @@ Singleton {
       var manifest = PluginRegistry.getPluginManifest(compositeKey);
       if (manifest && manifest.entryPoints && manifest.entryPoints.barWidget) {
         var widgetId = "plugin:" + compositeKey;
-        addWidgetToBar(widgetId, "right"); // Default to right section
+        addWidgetToBar(widgetId, "right");
       }
     }
 
@@ -527,6 +558,7 @@ Singleton {
                               enabled: true
                             });
     root.pluginEnabled(compositeKey);
+
     return true;
   }
 
@@ -604,6 +636,11 @@ Singleton {
       }
     }
 
+    // Signal the bar to refresh if widgets were removed
+    if (changed) {
+      BarService.widgetsRevision++;
+    }
+
     return changed;
   }
 
@@ -646,8 +683,14 @@ Singleton {
     loadPluginSettings(pluginId, function (settings) {
       // Then load translations
       loadPluginTranslationsAsync(pluginId, manifest, I18n.langCode, function (translations) {
-        // Both ready - call back with complete data
-        callback(settings, translations);
+        // Load English fallback for non-English languages
+        if (I18n.langCode !== "en") {
+          loadPluginTranslationsAsync(pluginId, manifest, "en", function (fallbackTranslations) {
+            callback(settings, translations, fallbackTranslations);
+          });
+        } else {
+          callback(settings, translations, {});
+        }
       });
     });
   }
@@ -670,9 +713,9 @@ Singleton {
     Logger.i("PluginService", "Loading plugin:", pluginId);
 
     // Load settings and translations FIRST, then create API and instantiate components
-    loadPluginData(pluginId, manifest, function (settings, translations) {
+    loadPluginData(pluginId, manifest, function (settings, translations, fallbackTranslations) {
       // Create plugin API object with pre-loaded data
-      var pluginApi = createPluginAPI(pluginId, manifest, settings, translations);
+      var pluginApi = createPluginAPI(pluginId, manifest, settings, translations, fallbackTranslations);
 
       // Initialize plugin entry with API and manifest
       root.loadedPlugins[pluginId] = {
@@ -730,6 +773,9 @@ Singleton {
           // Register with BarWidgetRegistry
           BarWidgetRegistry.registerPluginWidget(pluginId, widgetComponent, manifest.metadata);
           Logger.i("PluginService", "Loaded bar widget for plugin:", pluginId);
+
+          // Now that the widget is registered, bump widgetsRevision so the bar can render it
+          BarService.widgetsRevision++;
         } else if (widgetComponent.status === Component.Error) {
           root.recordPluginError(pluginId, "barWidget", widgetComponent.errorString());
         }
@@ -849,7 +895,7 @@ Singleton {
   }
 
   // Create plugin API object with pre-loaded settings and translations
-  function createPluginAPI(pluginId, manifest, settings, translations) {
+  function createPluginAPI(pluginId, manifest, settings, translations, fallbackTranslations) {
     var pluginDir = PluginRegistry.getPluginDir(pluginId);
 
     var api = Qt.createQmlObject(`
@@ -869,11 +915,15 @@ Singleton {
         property var launcherProvider: null
         property var controlCenterWidget: null
 
+        // Panel state: which screen the plugin's panel is currently open on (null if closed)
+        property var panelOpenScreen: null
+
         // IPC handlers storage
         property var ipcHandlers: ({})
 
         // Translation storage
         property var pluginTranslations: ({})
+        property var pluginFallbackTranslations: ({})  // English fallback for missing keys
         property string currentLanguage: ""
         property int translationVersion: 0  // Increments when translations change - plugins should depend on this
 
@@ -898,6 +948,7 @@ Singleton {
     // Set pre-loaded settings and translations (available immediately!)
     api.pluginSettings = settings || {};
     api.pluginTranslations = translations || {};
+    api.pluginFallbackTranslations = fallbackTranslations || {};
 
     // ----------------------------------------
     // Helper function to get nested property by dot notation
@@ -980,14 +1031,19 @@ Singleton {
 
       var translation = getNestedProperty(api.pluginTranslations, key);
 
-      // Return formatted key if translation not found
+      // Fallback to English if not found in current language
+      if (translation === undefined || translation === null || typeof translation !== 'string') {
+        translation = getNestedProperty(api.pluginFallbackTranslations, key);
+      }
+
+      // Return formatted key if translation not found in any language
       if (translation === undefined || translation === null) {
-        return '## ' + key + ' ##';
+        return `!!${key}!!`;
       }
 
       // Ensure translation is a string
       if (typeof translation !== 'string') {
-        return '## ' + key + ' ##';
+        return `!!${key}!!`;
       }
 
       // Handle interpolations (e.g., "Hello {name}!")
@@ -1002,19 +1058,13 @@ Singleton {
 
     // ----------------------------------------
     // Plural translation function
-    api.trp = function (key, count, defaultSingular, defaultPlural, interpolations) {
-      if (typeof defaultSingular === 'undefined') {
-        defaultSingular = '';
-      }
-      if (typeof defaultPlural === 'undefined') {
-        defaultPlural = '';
-      }
+    api.trp = function (key, count, interpolations) {
       if (typeof interpolations === 'undefined') {
         interpolations = {};
       }
 
-      // Use key for singular, key_plural for plural
-      var pluralKey = count === 1 ? key : key + '-plural';
+      // Use key for singular, key-plural for plural
+      const realKey = count === 1 ? key : `${key}-plural`;
 
       // Merge interpolations with count
       var finalInterpolations = {
@@ -1025,13 +1075,13 @@ Singleton {
       }
 
       // Use tr() to look up the translation
-      return api.tr(pluralKey, finalInterpolations);
+      return api.tr(realKey, finalInterpolations);
     };
 
     // ----------------------------------------
     // Check if translation exists
     api.hasTranslation = function (key) {
-      return getNestedProperty(api.pluginTranslations, key) !== undefined;
+      return getNestedProperty(api.pluginTranslations, key) !== undefined || getNestedProperty(api.pluginFallbackTranslations, key) !== undefined;
     };
 
     return api;
@@ -1125,7 +1175,6 @@ Singleton {
     var writeCmd = "mkdir -p '" + dirEsc + "' && cat > '" + fileEsc + "' << '" + delimiter + "'\n" + settingsJson + "\n" + delimiter + "\n";
 
     Logger.d("PluginService", "Saving settings to:", settingsFile);
-    Logger.d("PluginService", "Settings JSON:", settingsJson);
 
     // Use Quickshell.execDetached to execute the command (use array syntax)
     var pid = Quickshell.execDetached(["sh", "-c", writeCmd]);
@@ -1177,9 +1226,13 @@ Singleton {
   }
 
   // Find available plugin by ID
-  function findAvailablePlugin(pluginId) {
+  function findAvailablePlugin(compositeKeyOrId) {
+    var parsed = PluginRegistry.parseCompositeKey(compositeKeyOrId);
+    var pluginId = parsed.pluginId;
+    var sourceUrl = PluginRegistry.getPluginSourceUrl(compositeKeyOrId);
+
     for (var i = 0; i < root.availablePlugins.length; i++) {
-      if (root.availablePlugins[i].id === pluginId) {
+      if (root.availablePlugins[i].id === pluginId && root.availablePlugins[i].source.url === sourceUrl) {
         return root.availablePlugins[i];
       }
     }
@@ -1188,6 +1241,9 @@ Singleton {
 
   // Internal flag to track if we should check for updates after registry fetch
   property bool shouldCheckUpdatesAfterFetch: false
+
+  // Flag to track if this is the initial startup update check (for auto-update)
+  property bool _isStartupCheck: false
 
   // Check for plugin updates (call this after availablePlugins are loaded)
   function checkForUpdates() {
@@ -1263,37 +1319,72 @@ Singleton {
     root.pluginUpdatesPending = pendingUpdates;
     var updateCount = Object.keys(updates).length;
     var pendingCount = Object.keys(pendingUpdates).length;
+    var updatesDescription = Object.keys(updates).map(function (pluginId) {
+      return pluginId + ": " + updates[pluginId].currentVersion + " → " + updates[pluginId].availableVersion;
+    }).join("\n");
 
     if (updateCount > 0) {
       Logger.i("PluginService", updateCount, "plugin update(s) available");
-      ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.trp("panels.plugins.update-available", updateCount, "{count} plugin update available", "{count} plugin updates available", {
-                                                                          "count": updateCount
-                                                                        }), "plugin", 5000, I18n.tr("panels.plugins.open-plugins-tab"), function () {
-                                                                          // Open settings panel to Plugins tab on the screen where the cursor is
-                                                                          if (root.screenDetector) {
-                                                                            root.screenDetector.withCurrentScreen(function (screen) {
-                                                                              var panel = PanelService.getPanel("settingsPanel", screen);
-                                                                              if (panel) {
-                                                                                panel.requestedTab = SettingsPanel.Tab.Plugins;
-                                                                                panel.open();
-                                                                              }
-                                                                            });
-                                                                          } else {
-                                                                            // Fallback to primary screen if screen detector is not available
-                                                                            var panel = PanelService.getPanel("settingsPanel", Quickshell.screens[0]);
-                                                                            if (panel) {
-                                                                              panel.requestedTab = SettingsPanel.Tab.Plugins;
-                                                                              panel.open();
-                                                                            }
-                                                                          }
-                                                                        });
+      ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.trp("panels.plugins.update-available", updateCount) + "\n\n" + updatesDescription, "plugin", 5000, I18n.tr("panels.plugins.open-plugins-tab"), function () {
+        // Open settings panel to Plugins tab on the screen where the cursor is
+        if (root.screenDetector) {
+          root.screenDetector.withCurrentScreen(function (screen) {
+            var panel = PanelService.getPanel("settingsPanel", screen);
+            if (panel) {
+              panel.requestedTab = SettingsPanel.Tab.Plugins;
+              panel.open();
+            }
+          });
+        } else {
+          // Fallback to primary screen if screen detector is not available
+          var panel = PanelService.getPanel("settingsPanel", Quickshell.screens[0]);
+          if (panel) {
+            panel.requestedTab = SettingsPanel.Tab.Plugins;
+            panel.open();
+          }
+        }
+      });
     } else if (pendingCount > 0) {
       Logger.i("PluginService", pendingCount, "plugin update(s) pending (require newer Noctalia)");
     } else {
-      Logger.i("PluginService", "All plugins are up to date");
+      Logger.i("PluginService", "All installed plugins are up to date");
     }
 
+    // Auto-update on startup if enabled
+    if (root._isStartupCheck && Settings.data.plugins.autoUpdate && updateCount > 0) {
+      Logger.i("PluginService", "Auto-updating", updateCount, "plugin(s)");
+      updateAllPlugins();
+    }
+
+    root._isStartupCheck = false;
     shouldCheckUpdatesAfterFetch = false;
+  }
+
+  // Update all plugins sequentially
+  function updateAllPlugins(callback) {
+    var pluginIds = Object.keys(root.pluginUpdates);
+    var currentIndex = 0;
+
+    function updateNext() {
+      if (currentIndex >= pluginIds.length) {
+        ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.update-all-success"));
+        if (callback)
+          callback();
+        return;
+      }
+
+      var pluginId = pluginIds[currentIndex];
+      currentIndex++;
+
+      root.updatePlugin(pluginId, function (success, error) {
+        if (!success) {
+          Logger.w("PluginService", "Failed to auto-update", pluginId + ":", error);
+        }
+        Qt.callLater(updateNext);
+      });
+    }
+
+    updateNext();
   }
 
   // Simple version comparison (semantic versioning x.y.z)
@@ -1435,7 +1526,9 @@ Singleton {
     }
 
     // Try to find the plugin panel slot (pluginPanel1 or pluginPanel2)
-    // Try slot 1 first, then slot 2
+    // Priority: 1) toggle same plugin, 2) empty slot, 3) closed slot, 4) replace open slot
+    var closedSlot = null;
+
     for (var slotNum = 1; slotNum <= 2; slotNum++) {
       var panelName = "pluginPanel" + slotNum;
       var panel = PanelService.getPanel(panelName, screen);
@@ -1449,22 +1542,38 @@ Singleton {
 
         // If this slot is empty, use it
         if (panel.currentPluginId === "") {
-          // Set the pluginId first - when panel opens and panelContent loads,
-          // Component.onCompleted will call loadPluginPanel automatically
           panel.currentPluginId = pluginId;
           panel.open(buttonItem);
           return true;
         }
+
+        // Track first closed slot (panel assigned but not showing)
+        if (!closedSlot && !panel.isPanelOpen) {
+          closedSlot = panel;
+        }
       }
     }
 
-    // If both slots are occupied, use slot 1 (replace existing)
+    // Prefer reusing a closed slot over replacing an open one
+    if (closedSlot) {
+      closedSlot.currentPluginId = pluginId;
+      closedSlot.open(buttonItem);
+      return true;
+    }
+
+    // If both slots are occupied and open, use slot 1 (replace existing)
     var panel1 = PanelService.getPanel("pluginPanel1", screen);
     if (panel1) {
+      var wasAlreadyOpen = panel1.isPanelOpen;
       panel1.unloadPluginPanel();
-      // Set the pluginId first - when panel opens and panelContent loads,
-      // Component.onCompleted will call loadPluginPanel automatically
       panel1.currentPluginId = pluginId;
+
+      // If panel was already open, Component.onCompleted won't fire again
+      // since panelContent is already loaded. We need to load the plugin manually.
+      if (wasAlreadyOpen && panel1.contentLoader) {
+        panel1.loadPluginPanel(pluginId);
+      }
+
       panel1.open(buttonItem);
       return true;
     }
@@ -1620,12 +1729,73 @@ Singleton {
       });
     }
 
+    // Create a separate debounce timer for translation reloads (lighter weight)
+    var translationDebounceTimer = Qt.createQmlObject(`
+      import QtQuick
+      Timer {
+        property string targetPluginId: ""
+        property var reloadCallback: null
+        interval: 300
+        repeat: false
+        onTriggered: {
+          if (reloadCallback) reloadCallback(targetPluginId);
+        }
+      }
+    `, root, "TranslationReloadDebounce_" + pluginId);
+
+    translationDebounceTimer.targetPluginId = pluginId;
+    translationDebounceTimer.reloadCallback = root.reloadPluginTranslations;
+
+    // Watch the current language's translation file
+    var translationWatcher = createTranslationWatcher(pluginId, pluginDir, I18n.langCode, translationDebounceTimer);
+
     root.pluginFileWatchers[pluginId] = {
       watchers: watchers,
-      debounceTimer: debounceTimer
+      debounceTimer: debounceTimer,
+      translationWatcher: translationWatcher,
+      translationDebounceTimer: translationDebounceTimer,
+      pluginDir: pluginDir
     };
 
-    Logger.d("PluginService", "Set up hot reload watcher for plugin:", pluginId);
+    Logger.d("PluginService", "Set up hot reload watcher for plugin:", pluginId, "(including translations)");
+  }
+
+  // Create a translation file watcher for a specific language
+  function createTranslationWatcher(pluginId, pluginDir, language, debounceTimer) {
+    var translationFile = pluginDir + "/i18n/" + language + ".json";
+
+    var watcher = Qt.createQmlObject(`
+      import Quickshell.Io
+      FileView {
+        path: "${translationFile}"
+        watchChanges: true
+      }
+    `, root, "TranslationWatcher_" + pluginId + "_" + language);
+
+    watcher.fileChanged.connect(function () {
+      debounceTimer.restart();
+    });
+
+    Logger.d("PluginService", "Watching translation file:", translationFile);
+    return watcher;
+  }
+
+  // Update translation watchers when language changes
+  function updateTranslationWatchers() {
+    for (var pluginId in root.pluginFileWatchers) {
+      var watcherData = root.pluginFileWatchers[pluginId];
+      if (!watcherData || !watcherData.translationDebounceTimer)
+        continue;
+
+      // Destroy old translation watcher
+      if (watcherData.translationWatcher) {
+        watcherData.translationWatcher.destroy();
+      }
+
+      // Create new watcher for current language
+      watcherData.translationWatcher = createTranslationWatcher(pluginId, watcherData.pluginDir, I18n.langCode, watcherData.translationDebounceTimer);
+    }
+    Logger.d("PluginService", "Updated translation watchers for language:", I18n.langCode);
   }
 
   // Remove file watcher for a plugin
@@ -1647,6 +1817,16 @@ Singleton {
     // Destroy debounce timer
     if (watcherData.debounceTimer) {
       watcherData.debounceTimer.destroy();
+    }
+
+    // Destroy translation watcher
+    if (watcherData.translationWatcher) {
+      watcherData.translationWatcher.destroy();
+    }
+
+    // Destroy translation debounce timer
+    if (watcherData.translationDebounceTimer) {
+      watcherData.translationDebounceTimer.destroy();
     }
 
     delete root.pluginFileWatchers[pluginId];
@@ -1697,6 +1877,46 @@ Singleton {
                                                                        }));
 
       Logger.i("PluginService", "Hot reload complete for plugin:", pluginId);
+    });
+
+    return true;
+  }
+
+  // Hot reload only translations for a plugin (lightweight, no component reload)
+  function reloadPluginTranslations(pluginId) {
+    var plugin = root.loadedPlugins[pluginId];
+    if (!plugin || !plugin.api || !plugin.manifest) {
+      Logger.w("PluginService", "Cannot reload translations: plugin not loaded:", pluginId);
+      return false;
+    }
+
+    Logger.i("PluginService", "Hot reloading translations for plugin:", pluginId);
+
+    loadPluginTranslationsAsync(pluginId, plugin.manifest, I18n.langCode, function (translations) {
+      plugin.api.pluginTranslations = translations;
+
+      // Also reload English fallback for non-English languages
+      if (I18n.langCode !== "en") {
+        loadPluginTranslationsAsync(pluginId, plugin.manifest, "en", function (fallbackTranslations) {
+          plugin.api.pluginFallbackTranslations = fallbackTranslations;
+          plugin.api.translationVersion++;
+
+          var pluginName = plugin.manifest.name || pluginId;
+          ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.translations-reloaded", {
+                                                                             "name": pluginName
+                                                                           }));
+          Logger.i("PluginService", "Translation hot reload complete for plugin:", pluginId);
+        });
+      } else {
+        plugin.api.pluginFallbackTranslations = {};
+        plugin.api.translationVersion++;
+
+        var pluginName = plugin.manifest.name || pluginId;
+        ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.translations-reloaded", {
+                                                                           "name": pluginName
+                                                                         }));
+        Logger.i("PluginService", "Translation hot reload complete for plugin:", pluginId);
+      }
     });
 
     return true;

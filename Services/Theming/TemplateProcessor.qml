@@ -4,7 +4,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 
-import Quickshell.Io
 import qs.Commons
 import qs.Services.System
 import qs.Services.Theming
@@ -13,22 +12,67 @@ import qs.Services.UI
 Singleton {
   id: root
 
-  readonly property string dynamicConfigPath: Settings.cacheDir + "matugen.dynamic.toml"
+  // Signal emitted when color generation completes successfully (for wallpaper-based theming)
+  signal colorsGenerated
 
-  readonly property var schemeNameMap: ({
-                                          "Noctalia (default)": "Noctalia-default",
-                                          "Noctalia (legacy)": "Noctalia-legacy",
-                                          "Tokyo Night": "Tokyo-Night",
-                                          "Rose Pine": "Rosepine"
-                                        })
+  readonly property string dynamicConfigPath: Settings.cacheDir + "theming.dynamic.toml"
+  readonly property string templateProcessorScript: Quickshell.shellDir + "/Scripts/python/src/theming/template-processor.py"
 
-  readonly property var terminalPaths: ({
-                                          "foot": "~/.config/foot/themes/noctalia",
-                                          "ghostty": "~/.config/ghostty/themes/noctalia",
-                                          "kitty": "~/.config/kitty/themes/noctalia.conf",
-                                          "alacritty": "~/.config/alacritty/themes/noctalia.toml",
-                                          "wezterm": "~/.config/wezterm/colors/Noctalia.toml"
-                                        })
+  // Debounce state for wallpaper processing
+  property var pendingWallpaperRequest: null
+  property var pendingPredefinedRequest: null
+
+  readonly property var schemeTypes: [
+    {
+      "key": "tonal-spot",
+      "name": "M3-Tonal Spot" // Do not translate
+    },
+    {
+      "key": "content",
+      "name": "M3-Content" // Do not translate
+    },
+    {
+      "key": "fruit-salad",
+      "name": "M3-Fruit Salad" // Do not translate
+    },
+    {
+      "key": "rainbow",
+      "name": "M3-Rainbow" // Do not translate
+    },
+    {
+      "key": "monochrome",
+      "name": "M3-Monochrome" // Do not translate
+    },
+    {
+      "key": "vibrant",
+      "name": I18n.tr("common.vibrant")
+    },
+    {
+      "key": "faithful",
+      "name": I18n.tr("common.faithful")
+    },
+    {
+      "key": "dysfunctional",
+      "name": I18n.tr("common.dysfunctional")
+    },
+    {
+      "key": "muted",
+      "name": I18n.tr("common.color-muted")
+    },
+  ]
+
+  // Check if a template is enabled in the activeTemplates array
+  function isTemplateEnabled(templateId) {
+    const activeTemplates = Settings.data.templates.activeTemplates;
+    if (!activeTemplates)
+      return false;
+    for (let i = 0; i < activeTemplates.length; i++) {
+      if (activeTemplates[i].id === templateId && activeTemplates[i].enabled) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   function escapeTomlString(value) {
     if (!value)
@@ -37,101 +81,101 @@ Singleton {
   }
 
   /**
-  * Process wallpaper colors using matugen CLI
-  * Dual-path architecture (wallpaper uses matugen CLI)
+  * Process wallpaper colors using internal themer
+  * Dual-path architecture (wallpaper generation)
+  * Uses debouncing to prevent spawning multiple processes when spamming wallpaper changes
   */
   function processWallpaperColors(wallpaperPath, mode) {
-    const content = buildMatugenConfig();
-    if (!content)
-      return;
-    const wp = wallpaperPath.replace(/'/g, "'\\''");
-    const script = buildMatugenScript(content, wp, mode);
+    Logger.d("TemplateProcessor", `processWallpaperColors called: path=${wallpaperPath}, mode=${mode}`);
+    pendingWallpaperRequest = {
+      wallpaperPath: wallpaperPath,
+      mode: mode
+    };
+    pendingPredefinedRequest = null;
+    debounceTimer.restart();
+  }
 
-    generateProcess.generator = "matugen";
-    generateProcess.command = ["sh", "-lc", script];
+  function executeWallpaperColors(wallpaperPath, mode) {
+    Logger.d("TemplateProcessor", `executeWallpaperColors: path=${wallpaperPath}, mode=${mode}`);
+    const content = buildThemeConfig();
+    if (!content) {
+      Logger.d("TemplateProcessor", "executeWallpaperColors: no config content, aborting");
+      return;
+    }
+    const wp = wallpaperPath.replace(/'/g, "'\\''");
+
+    const script = buildGenerationScript(content, wp, mode);
+
+    generateProcess.command = ["sh", "-c", script];
     generateProcess.running = true;
   }
 
-  // Queue for processing templates one by one
-  property var templateQueue: []
-  property var currentTemplateContext: null
+  readonly property string schemeJsonPath: Settings.cacheDir + "predefined-scheme.json"
+  readonly property string predefinedConfigPath: Settings.cacheDir + "theming.predefined.toml"
 
   /**
-  * Process predefined color scheme using sed scripts
-  * Dual-path architecture (predefined uses sed scripts)
-  * Templates are processed one by one for better error reporting
+  * Process predefined color scheme using Python template processor
+  * Uses --scheme flag to expand 14-color scheme to full 48-color palette
+  * Uses debouncing to prevent spawning multiple processes when spamming scheme changes
   */
   function processPredefinedScheme(schemeData, mode) {
-    handleTerminalThemes(mode);
-
-    const colors = schemeData[mode];
-    const homeDir = Quickshell.env("HOME");
-
-    // Build queue of templates to process
-    templateQueue = buildTemplateQueue(colors, mode, schemeData, homeDir);
-
-    // Add user templates if enabled
-    const userScript = buildUserTemplateCommandForPredefined(schemeData, mode);
-    if (userScript) {
-      templateQueue.push({
-                           id: "user-templates",
-                           script: userScript
-                         });
-    }
-
-    // Start processing
-    processNextTemplate();
+    pendingPredefinedRequest = {
+      schemeData: schemeData,
+      mode: mode
+    };
+    pendingWallpaperRequest = null;
+    debounceTimer.restart();
   }
 
-  function buildTemplateQueue(colors, mode, schemeData, homeDir) {
-    const queue = [];
+  function executePredefinedScheme(schemeData, mode) {
+    // 1. Handle terminal themes (runtime generation or pre-rendered file copy)
+    handleTerminalThemes(schemeData, mode);
 
-    TemplateRegistry.applications.forEach(app => {
-                                            if (app.id === "discord") {
-                                              if (Settings.data.templates.discord) {
-                                                const items = buildDiscordTemplateItems(app, colors, homeDir);
-                                                items.forEach(item => queue.push(item));
-                                              }
-                                            } else if (app.id === "code") {
-                                              if (Settings.data.templates.code) {
-                                                const items = buildCodeTemplateItems(app, colors, homeDir);
-                                                items.forEach(item => queue.push(item));
-                                              }
-                                            } else {
-                                              if (Settings.data.templates[app.id]) {
-                                                const items = buildAppTemplateItems(app, colors, mode, homeDir, schemeData);
-                                                items.forEach(item => queue.push(item));
-                                              }
-                                            }
-                                          });
-    return queue;
-  }
-
-  function processNextTemplate() {
-    if (templateQueue.length === 0) {
-      currentTemplateContext = null;
+    // 2. Build TOML config for application templates
+    const tomlContent = buildPredefinedTemplateConfig(mode);
+    if (!tomlContent) {
+      Logger.d("TemplateProcessor", "No application templates enabled for predefined scheme");
       return;
     }
 
-    const item = templateQueue.shift();
-    currentTemplateContext = item;
+    // 3. Build script to write files and run Python
+    const schemeJsonPathEsc = schemeJsonPath.replace(/'/g, "'\\''");
+    const configPathEsc = predefinedConfigPath.replace(/'/g, "'\\''");
 
-    templateProcess.command = ["sh", "-lc", item.script];
-    templateProcess.running = true;
+    // Use heredoc delimiters for safe JSON/TOML content
+    const schemeDelimiter = "SCHEME_JSON_EOF_" + Math.random().toString(36).substr(2, 9);
+    const tomlDelimiter = "TOML_CONFIG_EOF_" + Math.random().toString(36).substr(2, 9);
+
+    let script = "";
+
+    // Write scheme JSON
+    script += `cat > '${schemeJsonPathEsc}' << '${schemeDelimiter}'\n`;
+    script += JSON.stringify(schemeData, null, 2) + "\n";
+    script += `${schemeDelimiter}\n`;
+
+    // Write TOML config
+    script += `cat > '${configPathEsc}' << '${tomlDelimiter}'\n`;
+    script += tomlContent + "\n";
+    script += `${tomlDelimiter}\n`;
+
+    // Run Python template processor with --scheme flag
+    // Don't pass --mode so templates get both dark and light colors (e.g., zed.json needs both)
+    // Pass --default-mode so "default" in templates resolves to the current theme mode
+    script += `python3 "${templateProcessorScript}" --scheme '${schemeJsonPathEsc}' --config '${configPathEsc}' --default-mode ${mode}\n`;
+
+    // Add user templates if enabled
+    script += buildUserTemplateCommandForPredefined(schemeData, mode);
+
+    generateProcess.command = ["sh", "-c", script];
+    generateProcess.running = true;
   }
 
-  // ================================================================================
-  // WALLPAPER-BASED GENERATION (matugen CLI)
-  // ================================================================================
-  function buildMatugenConfig() {
+  /**
+  * Build TOML config for predefined scheme templates (excludes terminal themes)
+  */
+  function buildPredefinedTemplateConfig(mode) {
     var lines = [];
-    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
-
-    if (Settings.data.colorSchemes.useWallpaperColors) {
-      addWallpaperTemplates(lines, mode);
-    }
-
-    addApplicationTemplates(lines, mode);
+    addApplicationTheming(lines, mode);
 
     if (lines.length > 0) {
       return ["[config]"].concat(lines).join("\n") + "\n";
@@ -139,81 +183,99 @@ Singleton {
     return "";
   }
 
-  function addWallpaperTemplates(lines, mode) {
+  // ================================================================================
+  // WALLPAPER-BASED GENERATION
+  // ================================================================================
+  function buildThemeConfig() {
+    var lines = [];
+    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
+
+    if (Settings.data.colorSchemes.useWallpaperColors) {
+      addWallpaperTheming(lines, mode);
+    }
+
+    addApplicationTheming(lines, mode);
+
+    if (lines.length > 0) {
+      return ["[config]"].concat(lines).join("\n") + "\n";
+    }
+    return "";
+  }
+
+  function addWallpaperTheming(lines, mode) {
     const homeDir = Quickshell.env("HOME");
     // Noctalia colors JSON
     lines.push("[templates.noctalia]");
-    lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/noctalia.json"');
+    lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Templates/noctalia.json"');
     lines.push('output_path = "' + Settings.configDir + 'colors.json"');
 
     // Terminal templates
     TemplateRegistry.terminals.forEach(terminal => {
-                                         if (Settings.data.templates[terminal.id]) {
+                                         if (isTemplateEnabled(terminal.id)) {
                                            lines.push(`\n[templates.${terminal.id}]`);
-                                           lines.push(`input_path = "${Quickshell.shellDir}/Assets/MatugenTemplates/${terminal.matugenPath}"`);
+                                           lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${terminal.templatePath}"`);
                                            const outputPath = terminal.outputPath.replace("~", homeDir);
                                            lines.push(`output_path = "${outputPath}"`);
-                                           const postHook = terminal.postHook || `${TemplateRegistry.colorsApplyScript} ${terminal.id}`;
-                                           const postHookEsc = escapeTomlString(postHook);
+                                           const postHookEsc = escapeTomlString(terminal.postHook);
                                            lines.push(`post_hook = "${postHookEsc}"`);
                                          }
                                        });
   }
 
-  function addApplicationTemplates(lines, mode) {
+  function addApplicationTheming(lines, mode) {
     const homeDir = Quickshell.env("HOME");
     TemplateRegistry.applications.forEach(app => {
                                             if (app.id === "discord") {
-                                              // Handle Discord clients specially
-                                              if (Settings.data.templates.discord) {
-                                                app.clients.forEach(client => {
-                                                                      // Check if this specific client is detected
-                                                                      if (isDiscordClientEnabled(client.name)) {
-                                                                        lines.push(`\n[templates.discord_${client.name}]`);
-                                                                        lines.push(`input_path = "${Quickshell.shellDir}/Assets/MatugenTemplates/${app.input}"`);
-                                                                        const outputPath = client.path.replace("~", homeDir) + "/themes/noctalia.theme.css";
-                                                                        lines.push(`output_path = "${outputPath}"`);
-                                                                      }
-                                                                    });
+                                              // Handle Discord clients specially - multiple CSS themes
+                                              if (isTemplateEnabled("discord")) {
+                                                const inputs = Array.isArray(app.input) ? app.input : [app.input];
+                                                inputs.forEach((inputFile, idx) => {
+                                                                 // Derive theme suffix from input filename: discord-midnight.css → midnight
+                                                                 const themeSuffix = inputFile.replace(/^discord-/, "").replace(/\.css$/, "");
+                                                                 app.clients.forEach(client => {
+                                                                                       if (isDiscordClientEnabled(client.name)) {
+                                                                                         lines.push(`\n[templates.discord_${themeSuffix}_${client.name}]`);
+                                                                                         lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${inputFile}"`);
+                                                                                         // First input uses legacy name for backward compatibility
+                                                                                         const outputFile = idx === 0 ? "noctalia.theme.css" : `noctalia-${themeSuffix}.theme.css`;
+                                                                                         const outputPath = client.path.replace("~", homeDir) + `/themes/${outputFile}`;
+                                                                                         lines.push(`output_path = "${outputPath}"`);
+                                                                                       }
+                                                                                     });
+                                                               });
                                               }
                                             } else if (app.id === "code") {
                                               // Handle Code clients specially
-                                              if (Settings.data.templates.code) {
+                                              if (isTemplateEnabled("code")) {
                                                 app.clients.forEach(client => {
                                                                       // Check if this specific client is detected
-                                                                      if (isCodeClientEnabled(client.name)) {
-                                                                        lines.push(`\n[templates.code_${client.name}]`);
-                                                                        lines.push(`input_path = "${Quickshell.shellDir}/Assets/MatugenTemplates/${app.input}"`);
-                                                                        const expandedPath = client.path.replace("~", homeDir);
-                                                                        lines.push(`output_path = "${expandedPath}"`);
+                                                                      var resolvedPaths = TemplateRegistry.resolvedCodeClientPaths(client.name);
+                                                                      if (isCodeClientEnabled(client.name) && resolvedPaths.length > 0) {
+                                                                        resolvedPaths.forEach((resolvedPath, pathIndex) => {
+                                                                                                var suffix = resolvedPaths.length > 1 ? `_${pathIndex}` : "";
+                                                                                                lines.push(`\n[templates.code_${client.name}${suffix}]`);
+                                                                                                lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${app.input}"`);
+                                                                                                lines.push(`output_path = "${resolvedPath}"`);
+                                                                                              });
                                                                       }
                                                                     });
                                               }
-                                            } else if (app.id === "emacs" && app.checkDoomFirst) {
-                                              if (Settings.data.templates.emacs) {
-                                                const doomPathTemplate = app.outputs[0].path; // ~/.config/doom/themes/noctalia-theme.el
-                                                const standardPathTemplate = app.outputs[1].path; // ~/.emacs.d/themes/noctalia-theme.el
-                                                const doomPath = doomPathTemplate.replace("~", homeDir);
-                                                const standardPath = standardPathTemplate.replace("~", homeDir);
-                                                const doomConfigDir = `${homeDir}/.config/doom`;
-                                                const doomDir = doomPath.substring(0, doomPath.lastIndexOf('/'));
-
-                                                lines.push(`\n[templates.emacs]`);
-                                                lines.push(`input_path = "${Quickshell.shellDir}/Assets/MatugenTemplates/${app.input}"`);
-                                                lines.push(`output_path = "${standardPath}"`);
-                                                // Move to doom if doom exists, then remove empty .emacs.d/themes and .emacs.d directories
-                                                // Check directories are empty before removing
-                                                const postHook = `sh -c 'if [ -d "${doomConfigDir}" ] && [ -f "${standardPath}" ]; then mkdir -p "${doomDir}" && mv "${standardPath}" "${doomPath}" && rmdir "${homeDir}/.emacs.d/themes" 2>/dev/null && rmdir "${homeDir}/.emacs.d" 2>/dev/null || true; fi'`;
-                                                const postHookEsc = escapeTomlString(postHook);
-                                                lines.push(`post_hook = "${postHookEsc}"`);
+                                            } else if (app.id === "emacs") {
+                                              if (isTemplateEnabled("emacs")) {
+                                                ProgramCheckerService.availableEmacsClients.forEach(client => {
+                                                                                                      lines.push(`\n[templates.emacs_${client.name}]`);
+                                                                                                      lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${app.input}"`);
+                                                                                                      const expandedPath = client.path.replace("~", homeDir) + "/themes/noctalia-theme.el";
+                                                                                                      lines.push(`output_path = "${expandedPath}"`);
+                                                                                                    });
                                               }
                                             } else {
                                               // Handle regular apps
-                                              if (Settings.data.templates[app.id]) {
+                                              if (isTemplateEnabled(app.id)) {
                                                 app.outputs.forEach((output, idx) => {
                                                                       lines.push(`\n[templates.${app.id}_${idx}]`);
                                                                       const inputFile = output.input || app.input;
-                                                                      lines.push(`input_path = "${Quickshell.shellDir}/Assets/MatugenTemplates/${inputFile}"`);
+                                                                      lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${inputFile}"`);
                                                                       const outputPath = output.path.replace("~", homeDir);
                                                                       lines.push(`output_path = "${outputPath}"`);
                                                                       if (app.postProcess) {
@@ -246,240 +308,146 @@ Singleton {
     return false;
   }
 
-  function buildMatugenScript(content, wallpaper, mode) {
-    const delimiter = "MATUGEN_CONFIG_EOF_" + Math.random().toString(36).substr(2, 9);
+  // Get scheme type, defaulting to tonal-spot if not a recognized value
+  function getSchemeType() {
+    const method = Settings.data.colorSchemes.generationMethod;
+    const validKeys = root.schemeTypes.map(scheme => scheme.key);
+    return validKeys.includes(method) ? method : "tonal-spot";
+  }
+
+  function buildGenerationScript(content, wallpaper, mode) {
+    const delimiter = "THEME_CONFIG_EOF_" + Math.random().toString(36).substr(2, 9);
     const pathEsc = dynamicConfigPath.replace(/'/g, "'\\''");
     const wpDelimiter = "WALLPAPER_PATH_EOF_" + Math.random().toString(36).substr(2, 9);
 
     // Use heredoc for wallpaper path to avoid all escaping issues
     let script = `cat > '${pathEsc}' << '${delimiter}'\n${content}\n${delimiter}\n`;
     script += `NOCTALIA_WP_PATH=$(cat << '${wpDelimiter}'\n${wallpaper}\n${wpDelimiter}\n)\n`;
-    script += 'matugen ';
-    if (ProgramCheckerService.matugenVersion >= "3.1.0") {
-      // Matugen 3.1.0+ supports --continue-on-error to process all templates even if some fail
-      script += '--continue-on-error ';
-    }
-    script += `image "$NOCTALIA_WP_PATH" --config '${pathEsc}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType}`;
+
+    // Use template-processor.py (Python implementation)
+    // Don't pass --mode so templates get both dark and light colors (e.g., zed.json needs both)
+    // Pass --default-mode so "default" in templates resolves to the current theme mode
+    const schemeType = getSchemeType();
+    script += `python3 "${templateProcessorScript}" "$NOCTALIA_WP_PATH" --scheme-type ${schemeType} --config '${pathEsc}' --default-mode ${mode} `;
+
     script += buildUserTemplateCommand("$NOCTALIA_WP_PATH", mode);
 
     return script + "\n";
   }
 
   // ================================================================================
-  // PREDEFINED SCHEME GENERATION (queue-based, template by template)
-  // ================================================================================
-  function buildDiscordTemplateItems(discordApp, colors, homeDir) {
-    const items = [];
-    const palette = ColorPaletteGenerator.generatePalette(colors, Settings.data.colorSchemes.darkMode, false);
-
-    discordApp.clients.forEach(client => {
-                                 if (!isDiscordClientEnabled(client.name))
-                                 return;
-
-                                 const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${discordApp.input}`;
-                                 const outputPath = `${client.path}/themes/noctalia.theme.css`.replace("~", homeDir);
-                                 const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
-                                 const baseConfigDir = outputDir.replace("/themes", "");
-
-                                 let script = "";
-                                 script += `if [ -d "${baseConfigDir}" ]; then\n`;
-                                 script += `  mkdir -p ${outputDir}\n`;
-                                 script += `  cp '${templatePath}' '${outputPath}'\n`;
-                                 script += `  ${replaceColorsInFile(outputPath, palette)}`;
-                                 script += `fi\n`;
-
-                                 items.push({
-                                              id: `discord-${client.name}`,
-                                              outputPath: outputPath,
-                                              script: script
-                                            });
-                               });
-
-    return items;
-  }
-
-  function buildCodeTemplateItems(codeApp, colors, homeDir) {
-    const items = [];
-    const palette = ColorPaletteGenerator.generatePalette(colors, Settings.data.colorSchemes.darkMode, false);
-
-    codeApp.clients.forEach(client => {
-                              if (!isCodeClientEnabled(client.name))
-                              return;
-
-                              const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${codeApp.input}`;
-                              const outputPath = client.path.replace("~", homeDir);
-                              const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
-
-                              let baseConfigDir = "";
-                              if (client.name === "code") {
-                                baseConfigDir = homeDir + "/.vscode";
-                              } else if (client.name === "codium") {
-                                baseConfigDir = homeDir + "/.vscode-oss";
-                              }
-
-                              let script = "";
-                              script += `if [ -d "${baseConfigDir}" ]; then\n`;
-                              script += `  mkdir -p ${outputDir}\n`;
-                              script += `  cp '${templatePath}' '${outputPath}'\n`;
-                              script += `  ${replaceColorsInFile(outputPath, palette)}`;
-                              script += `fi\n`;
-
-                              items.push({
-                                           id: `code-${client.name}`,
-                                           outputPath: outputPath,
-                                           script: script
-                                         });
-                            });
-
-    return items;
-  }
-
-  function buildAppTemplateItems(app, colors, mode, homeDir, schemeData) {
-    const items = [];
-    const palette = ColorPaletteGenerator.generatePalette(colors, Settings.data.colorSchemes.darkMode, app.strict || false);
-
-    const hasDualModePatterns = app.dualMode || false;
-    let darkPalette, lightPalette;
-    if (hasDualModePatterns && schemeData) {
-      darkPalette = ColorPaletteGenerator.generatePalette(schemeData.dark, true, app.strict || false);
-      lightPalette = ColorPaletteGenerator.generatePalette(schemeData.light, false, app.strict || false);
-    }
-
-    if (app.id === "emacs" && app.checkDoomFirst) {
-      const doomPath = app.outputs[0].path.replace("~", homeDir);
-      const doomDir = doomPath.substring(0, doomPath.lastIndexOf('/'));
-      const doomConfigDir = doomDir.substring(0, doomDir.lastIndexOf('/'));
-      const standardPath = app.outputs[1].path.replace("~", homeDir);
-      const standardDir = standardPath.substring(0, standardPath.lastIndexOf('/'));
-      const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${app.input}`;
-
-      let script = "";
-      script += `if [ -d "${doomConfigDir}" ]; then\n`;
-      script += `  mkdir -p ${doomDir}\n`;
-      script += `  cp '${templatePath}' '${doomPath}'\n`;
-      script += replaceColorsInFile(doomPath, palette);
-      script += `else\n`;
-      script += `  mkdir -p ${standardDir}\n`;
-      script += `  cp '${templatePath}' '${standardPath}'\n`;
-      script += replaceColorsInFile(standardPath, palette);
-      script += `fi\n`;
-
-      items.push({
-                   id: app.id,
-                   outputPath: doomPath,
-                   script: script
-                 });
-    } else {
-      app.outputs.forEach((output, idx) => {
-                            const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${app.input}`;
-                            const outputPath = output.path.replace("~", homeDir);
-                            const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
-
-                            let script = "";
-                            script += `mkdir -p ${outputDir}\n`;
-                            const templateFile = output.input ? `${Quickshell.shellDir}/Assets/MatugenTemplates/${output.input}` : templatePath;
-                            script += `cp '${templateFile}' '${outputPath}'\n`;
-                            script += replaceColorsInFile(outputPath, palette);
-                            if (hasDualModePatterns && darkPalette && lightPalette) {
-                              script += replaceColorsInFileWithMode(outputPath, darkPalette, lightPalette);
-                            }
-
-                            // Add postProcess only on last output
-                            if (app.postProcess && idx === app.outputs.length - 1) {
-                              script += app.postProcess(mode);
-                            }
-
-                            items.push({
-                                         id: app.outputs.length > 1 ? `${app.id}-${idx}` : app.id,
-                                         outputPath: outputPath,
-                                         script: script
-                                       });
-                          });
-    }
-
-    return items;
-  }
-
-  function replaceColorsInFile(filePath, colors) {
-    let expressions = [];
-
-    Object.keys(colors).forEach(colorKey => {
-                                  const hexValue = colors[colorKey].default.hex;
-                                  const hexStrippedValue = colors[colorKey].default.hex_stripped;
-
-                                  const escapedHex = hexValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                                  const escapedHexStripped = hexStrippedValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-                                  // Batch all replacements into a single sed command to avoid ARG_MAX limits
-                                  expressions.push(`-e 's/{{colors\\.${colorKey}\\.default\\.hex_stripped}}/${escapedHexStripped}/g'`);
-                                  expressions.push(`-e 's/{{colors\\.${colorKey}\\.default\\.hex}}/${escapedHex}/g'`);
-                                });
-    return `sed -i ${expressions.join(' ')} '${filePath}'\n`;
-  }
-
-  function replaceColorsInFileWithMode(filePath, darkColors, lightColors) {
-    let expressions = [];
-
-    // Replace dark mode patterns
-    Object.keys(darkColors).forEach(colorKey => {
-                                      const hexValue = darkColors[colorKey].default.hex;
-                                      const hexStrippedValue = darkColors[colorKey].default.hex_stripped;
-                                      const escapedHex = hexValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                                      const escapedHexStripped = hexStrippedValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-                                      expressions.push(`-e 's/{{colors\\.${colorKey}\\.dark\\.hex_stripped}}/${escapedHexStripped}/g'`);
-                                      expressions.push(`-e 's/{{colors\\.${colorKey}\\.dark\\.hex}}/${escapedHex}/g'`);
-                                    });
-
-    // Replace light mode patterns
-    Object.keys(lightColors).forEach(colorKey => {
-                                       const hexValue = lightColors[colorKey].default.hex;
-                                       const hexStrippedValue = lightColors[colorKey].default.hex_stripped;
-                                       const escapedHex = hexValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                                       const escapedHexStripped = hexStrippedValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-                                       expressions.push(`-e 's/{{colors\\.${colorKey}\\.light\\.hex_stripped}}/${escapedHexStripped}/g'`);
-                                       expressions.push(`-e 's/{{colors\\.${colorKey}\\.light\\.hex}}/${escapedHex}/g'`);
-                                     });
-
-    // Batch all replacements into a single sed command to avoid ARG_MAX limits
-    return `sed -i ${expressions.join(' ')} '${filePath}'\n`;
-  }
-
-  // ================================================================================
-  // TERMINAL THEMES (predefined schemes use pre-rendered files)
+  // PREDEFINED COLOR SCHEMES
+  // TERMINAL THEMES (dual-path: runtime generation or legacy pre-rendered file copy)
   // ================================================================================
   function escapeShellPath(path) {
     // Escape single quotes by ending the quoted string, adding an escaped quote, and starting a new quoted string
     return "'" + path.replace(/'/g, "'\\''") + "'";
   }
 
-  function handleTerminalThemes(mode) {
-    const commands = [];
+  function handleTerminalThemes(schemeData, mode) {
     const homeDir = Quickshell.env("HOME");
 
-    Object.keys(terminalPaths).forEach(terminal => {
-                                         if (Settings.data.templates[terminal]) {
-                                           const outputPath = terminalPaths[terminal].replace("~", homeDir);
+    // Check if scheme has terminal section (new format)
+    const modeData = schemeData[mode] || schemeData;
+    const hasTerminalSection = modeData && modeData.terminal;
+
+    if (hasTerminalSection) {
+      // New path: runtime generation from JSON terminal colors
+      handleTerminalThemesGenerate(schemeData, mode, homeDir);
+    } else {
+      // Old path: copy pre-rendered files (backward compatibility for DLC schemes)
+      handleTerminalThemesCopy(mode, homeDir);
+    }
+  }
+
+  /**
+  * New path: Generate terminal themes at runtime from scheme's terminal section
+  */
+  function handleTerminalThemesGenerate(schemeData, mode, homeDir) {
+    // Build terminal output mapping for enabled terminals
+    const terminalOutputs = {};
+    TemplateRegistry.terminals.forEach(terminal => {
+                                         if (isTemplateEnabled(terminal.id)) {
+                                           const outputPath = terminal.outputPath.replace("~", homeDir);
+                                           terminalOutputs[terminal.id] = outputPath;
+                                         }
+                                       });
+
+    if (Object.keys(terminalOutputs).length === 0) {
+      Logger.d("TemplateProcessor", "No terminal templates enabled for generation");
+      return;
+    }
+
+    // Write scheme JSON to temp file and call Python with --terminal-output
+    const schemeJsonPathEsc = schemeJsonPath.replace(/'/g, "'\\''");
+    const schemeDelimiter = "SCHEME_JSON_EOF_" + Math.random().toString(36).substr(2, 9);
+
+    let script = "";
+
+    // Write scheme JSON
+    script += `cat > '${schemeJsonPathEsc}' << '${schemeDelimiter}'\n`;
+    script += JSON.stringify(schemeData, null, 2) + "\n";
+    script += `${schemeDelimiter}\n`;
+
+    // Create output directories
+    Object.values(terminalOutputs).forEach(path => {
+                                             const dir = path.substring(0, path.lastIndexOf('/'));
+                                             script += `mkdir -p ${escapeShellPath(dir)}; `;
+                                           });
+
+    // Run Python with terminal generation
+    const terminalOutputsJson = JSON.stringify(terminalOutputs).replace(/'/g, "'\\''");
+    script += `python3 "${templateProcessorScript}" --scheme '${schemeJsonPathEsc}' --default-mode ${mode} --terminal-output '${terminalOutputsJson}'; `;
+
+    // Run post-hooks for enabled terminals
+    TemplateRegistry.terminals.forEach(terminal => {
+                                         if (isTemplateEnabled(terminal.id)) {
+                                           script += `${terminal.postHook}; `;
+                                         }
+                                       });
+
+    copyProcess.command = ["sh", "-c", script];
+    copyProcess.running = true;
+  }
+
+  /**
+  * Old path: Copy pre-rendered terminal files (backward compatibility)
+  * Should be removed in late february 2026
+  */
+  function handleTerminalThemesCopy(mode, homeDir) {
+    const commands = [];
+
+    TemplateRegistry.terminals.forEach(terminal => {
+                                         if (isTemplateEnabled(terminal.id)) {
+                                           const outputPath = terminal.outputPath.replace("~", homeDir);
                                            const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
-                                           const templatePaths = getTerminalColorsTemplate(terminal, mode);
+                                           const templatePaths = getTerminalColorsTemplate(terminal.id, mode);
 
                                            commands.push(`mkdir -p ${escapeShellPath(outputDir)}`);
                                            // Try hyphen first (most common), then space (for schemes like "Rosey AMOLED")
                                            const hyphenPath = escapeShellPath(templatePaths.hyphen);
                                            const spacePath = escapeShellPath(templatePaths.space);
-                                           commands.push(`if [ -f ${hyphenPath} ]; then cp -f ${hyphenPath} ${escapeShellPath(outputPath)}; elif [ -f ${spacePath} ]; then cp -f ${spacePath} ${escapeShellPath(outputPath)}; else echo "ERROR: Template file not found for ${terminal} (tried both hyphen and space patterns)"; fi`);
-                                           commands.push(`${TemplateRegistry.colorsApplyScript} ${terminal}`);
+                                           commands.push(`if [ -f ${hyphenPath} ]; then cp -f ${hyphenPath} ${escapeShellPath(outputPath)}; elif [ -f ${spacePath} ]; then cp -f ${spacePath} ${escapeShellPath(outputPath)}; else echo "ERROR: Template file not found for ${terminal.id} (tried both hyphen and space patterns)"; fi`);
+
+                                           // Always use the apply script to set the theme and attempt hot reloading
+                                           commands.push(terminal.postHook);
                                          }
                                        });
 
     if (commands.length > 0) {
-      copyProcess.command = ["sh", "-lc", commands.join('; ')];
+      copyProcess.command = ["sh", "-c", commands.join('; ')];
       copyProcess.running = true;
     }
   }
 
   function getTerminalColorsTemplate(terminal, mode) {
+    const schemeNameMap = ({
+                             "Noctalia (default)": "Noctalia-default",
+                             "Noctalia (legacy)": "Noctalia-legacy",
+                             "Tokyo Night": "Tokyo-Night",
+                             "Rose Pine": "Rosepine"
+                           });
+
     let colorScheme = Settings.data.colorSchemes.predefinedScheme;
     colorScheme = schemeNameMap[colorScheme] || colorScheme;
 
@@ -528,7 +496,7 @@ Singleton {
   // USER TEMPLATES, advanced usage
   // ================================================================================
   function buildUserTemplateCommand(input, mode) {
-    if (!Settings.data.templates.enableUserTemplates)
+    if (!Settings.data.templates.enableUserTheming)
       return "";
 
     const userConfigPath = getUserConfigPath();
@@ -537,31 +505,31 @@ Singleton {
     // If input is a shell variable (starts with $), use double quotes to allow expansion
     // Otherwise, use single quotes for safety with file paths
     const inputQuoted = input.startsWith("$") ? `"${input}"` : `'${input.replace(/'/g, "'\\''")}'`;
-    script += `  matugen image ${inputQuoted} --config '${userConfigPath}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType}\n`;
+
+    const schemeType = getSchemeType();
+    // Don't pass --mode so user templates get both dark and light colors
+    // Pass --default-mode so "default" in templates resolves to the current theme mode
+    script += `  python3 "${templateProcessorScript}" ${inputQuoted} --scheme-type ${schemeType} --config '${userConfigPath}' --default-mode ${mode}\n`;
     script += "fi";
 
     return script;
   }
 
   function buildUserTemplateCommandForPredefined(schemeData, mode) {
-    if (!Settings.data.templates.enableUserTemplates)
+    if (!Settings.data.templates.enableUserTheming)
       return "";
 
     const userConfigPath = getUserConfigPath();
-    const colors = schemeData[mode];
-    const palette = ColorPaletteGenerator.generatePalette(colors, Settings.data.colorSchemes.darkMode, false);
 
-    const tempJsonPath = Settings.cacheDir + "predefined-colors.json";
-    const tempJsonPathEsc = tempJsonPath.replace(/'/g, "'\\''");
+    // Reuse the scheme JSON already written by processPredefinedScheme()
+    const schemeJsonPathEsc = schemeJsonPath.replace(/'/g, "'\\''");
 
     let script = "\n# Execute user templates with predefined scheme colors\n";
     script += `if [ -f '${userConfigPath}' ]; then\n`;
-    script += `  cat > '${tempJsonPathEsc}' << 'EOF'\n`;
-    script += JSON.stringify({
-                               "colors": palette
-                             }, null, 2) + "\n";
-    script += "EOF\n";
-    script += `  matugen json '${tempJsonPathEsc}' --config '${userConfigPath}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType}\n`;
+    // Use --scheme flag with the already-written scheme JSON
+    // Don't pass --mode so user templates get both dark and light colors
+    // Pass --default-mode so "default" in templates resolves to the current theme mode
+    script += `  python3 "${templateProcessorScript}" --scheme '${schemeJsonPathEsc}' --config '${userConfigPath}' --default-mode ${mode}\n`;
     script += "fi";
 
     return script;
@@ -572,6 +540,41 @@ Singleton {
   }
 
   // ================================================================================
+  // DEBOUNCE TIMER
+  // ================================================================================
+  function executePendingRequest() {
+    Logger.d("TemplateProcessor", `executePendingRequest: hasWallpaper=${!!pendingWallpaperRequest}, hasPredefined=${!!pendingPredefinedRequest}`);
+    if (pendingWallpaperRequest) {
+      const req = pendingWallpaperRequest;
+      pendingWallpaperRequest = null;
+      executeWallpaperColors(req.wallpaperPath, req.mode);
+    } else if (pendingPredefinedRequest) {
+      const req = pendingPredefinedRequest;
+      pendingPredefinedRequest = null;
+      executePredefinedScheme(req.schemeData, req.mode);
+    } else {
+      Logger.d("TemplateProcessor", "executePendingRequest: no pending request");
+    }
+  }
+
+  Timer {
+    id: debounceTimer
+    interval: 150
+    repeat: false
+    onTriggered: {
+      Logger.d("TemplateProcessor", `debounceTimer fired: processRunning=${generateProcess.running}`);
+      // Kill any running process before starting new one
+      if (generateProcess.running) {
+        Logger.d("TemplateProcessor", "debounceTimer: stopping running process");
+        generateProcess.running = false;
+        // executePendingRequest will be called from onExited
+      } else {
+        executePendingRequest();
+      }
+    }
+  }
+
+  // ================================================================================
   // PROCESSES
   // ================================================================================
   Process {
@@ -579,66 +582,27 @@ Singleton {
     workingDirectory: Quickshell.shellDir
     running: false
 
-    // Error reporting helpers
-    property string generator: ""
-
-    function buildErrorMessage() {
-      const description = (stderr.text && stderr.text.trim() !== "") ? stderr.text.trim() : ((stdout.text && stdout.text.trim() !== "") ? stdout.text.trim() : I18n.tr("toast.theming-processor-failed.desc-generic"));
-      const title = I18n.tr(`toast.theming-processor-failed.title-${generator}`);
-      return description;
-    }
-
-    onExited: function (exitCode) {
-      if (exitCode !== 0) {
-        const description = generateProcess.buildErrorMessage();
-        Logger.e("TemplateProcessor", `Process failed (generator: ${generator}) with exit code`, exitCode, description);
-        Logger.d("TemplateProcessor", "Failed command:", command.join(" ").substring(0, 500));
+    onExited: function (exitCode, exitStatus) {
+      // Execute any pending request (handles both kill case and debounce timer interval case)
+      if (pendingWallpaperRequest || pendingPredefinedRequest) {
+        Logger.d("TemplateProcessor", "generateProcess onExited: has pending request, executing");
+        executePendingRequest();
+      } else if (exitCode === 0) {
+        // No pending request and successful completion - emit signal
+        root.colorsGenerated();
       }
     }
 
-    stdout: StdioCollector {
+    stderr: StdioCollector {
       onStreamFinished: {
-        if (this.text)
-        Logger.d("TemplateProcessor", "stdout:", this.text);
-      }
-    }
-
-    stderr: StdioCollector {
-      onStreamFinished: {}
-    }
-  }
-
-  // ------------
-  // Process for queue-based template processing (predefined schemes)
-  Process {
-    id: templateProcess
-    workingDirectory: Quickshell.shellDir
-    running: false
-
-    onExited: function (exitCode) {
-      if (exitCode !== 0) {
-        const ctx = currentTemplateContext;
-        const errText = stderr.text ? stderr.text.trim() : "";
-        const outText = stdout.text ? stdout.text.trim() : "";
-        const description = errText || outText || "Unknown error";
-
-        Logger.e("TemplateProcessor", `Template "${ctx?.id}" failed (exit code ${exitCode}): ${description}`);
-        if (ctx?.outputPath) {
-          Logger.e("TemplateProcessor", `  Output path: ${ctx.outputPath}`);
+        const text = this.text.trim();
+        if (text && text.includes("Template error:")) {
+          const errorLines = text.split("\n").filter(l => l.includes("Template error:"));
+          const errors = errorLines.slice(0, 3).join("\n") + (errorLines.length > 3 ? `\n... (+${errorLines.length - 3} more)` : "");
+          Logger.w("TemplateProcessor", errors);
+          ToastService.showWarning(I18n.tr("toast.theming-processor-failed.title"), errors);
         }
-        Logger.d("TemplateProcessor", `  Script: ${ctx?.script?.substring(0, 300)}`);
       }
-
-      // Continue with next template regardless of success/failure
-      processNextTemplate();
-    }
-
-    stdout: StdioCollector {
-      onStreamFinished: {}
-    }
-
-    stderr: StdioCollector {
-      onStreamFinished: {}
     }
   }
 

@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Bluetooth
 import Quickshell.Wayland
 import qs.Commons
+import qs.Services.Hardware
 import qs.Services.Networking
 import qs.Services.UI
 import qs.Widgets
@@ -24,7 +25,7 @@ NBox {
   property bool detailsGrid: (Settings.data && Settings.data.ui && Settings.data.network.bluetoothDetailsViewMode !== undefined) ? (Settings.data.network.bluetoothDetailsViewMode === "grid") : true
 
   Layout.fillWidth: true
-  Layout.preferredHeight: column.implicitHeight + Style.marginM * 2
+  Layout.preferredHeight: column.implicitHeight + Style.marginXL
 
   ColumnLayout {
     id: column
@@ -88,7 +89,7 @@ NBox {
         }
 
         Layout.fillWidth: true
-        Layout.preferredHeight: deviceColumn.implicitHeight + (Style.marginM * 2)
+        Layout.preferredHeight: deviceColumn.implicitHeight + (Style.marginXL)
         radius: Style.radiusM
         clip: true
 
@@ -161,7 +162,10 @@ NBox {
                 spacing: Style.marginXS
 
                 NIcon {
-                  icon: "battery"
+                  icon: {
+                    var b = BluetoothService.getBatteryPercent(modelData);
+                    return BatteryService.getIcon(b !== null ? b : 0, false, false, b !== null);
+                  }
                   pointSize: Style.fontSizeXS
                   color: getContentColor(Color.mOnSurface)
                 }
@@ -189,9 +193,9 @@ NBox {
               // Info for connected device (placed before the CTA for consistency with Wi‑Fi)
               NIconButton {
                 visible: modelData.connected
-                icon: "info-circle"
+                icon: "info"
                 tooltipText: I18n.tr("common.info")
-                baseSize: Style.baseWidgetSize
+                baseSize: Style.baseWidgetSize * 0.8
                 onClicked: {
                   const key = BluetoothService.deviceKey(modelData);
                   root.expandedDeviceKey = (root.expandedDeviceKey === key) ? "" : key;
@@ -203,7 +207,7 @@ NBox {
                 visible: (modelData.paired || modelData.trusted) && !modelData.connected && !isBusy && !modelData.blocked
                 icon: "trash"
                 tooltipText: I18n.tr("common.unpair")
-                baseSize: Style.baseWidgetSize
+                baseSize: Style.baseWidgetSize * 0.8
                 onClicked: BluetoothService.unpairDevice(modelData)
               }
 
@@ -213,14 +217,7 @@ NBox {
                 visible: (modelData.state !== BluetoothDeviceState.Connecting)
                 enabled: (canConnect || canDisconnect || canPair) && !isBusy
                 outlined: !button.hovered
-                fontSize: Style.fontSizeXS
-                fontWeight: Style.fontWeightMedium
-                backgroundColor: {
-                  if (device.canDisconnect && !isBusy) {
-                    return Color.mError;
-                  }
-                  return Color.mPrimary;
-                }
+                fontSize: Style.fontSizeS
                 tooltipText: root.tooltipText
                 text: {
                   if (modelData.pairing) {
@@ -280,6 +277,7 @@ NBox {
               // Use Tabler layout icons; "grid" alone doesn't exist in our font
               icon: root.detailsGrid ? "layout-list" : "layout-grid"
               tooltipText: root.detailsGrid ? I18n.tr("tooltips.list-view") : I18n.tr("tooltips.grid-view")
+              baseSize: Style.baseWidgetSize * 0.8
               onClicked: {
                 root.detailsGrid = !root.detailsGrid;
                 if (Settings.data && Settings.data.ui) {
@@ -341,7 +339,10 @@ NBox {
                 Layout.preferredWidth: 1
                 spacing: Style.marginXS
                 NIcon {
-                  icon: "battery"
+                  icon: {
+                    var b = BluetoothService.getBatteryPercent(modelData);
+                    return BatteryService.getIcon(b !== null ? b : 0, false, false, b !== null);
+                  }
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   MouseArea {

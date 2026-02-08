@@ -8,14 +8,20 @@ import qs.Services.UI
 Singleton {
   id: root
 
-  readonly property string colorsApplyScript: Quickshell.shellDir + '/Bin/colors-apply.sh'
-
   Connections {
     target: WallpaperService
 
-    // When the wallpaper changes, regenerate with Matugen if necessary
+    // When the wallpaper changes, regenerate theme if necessary
     function onWallpaperChanged(screenName, path) {
-      if (screenName === Screen.name && Settings.data.colorSchemes.useWallpaperColors) {
+      if (!Settings.data.colorSchemes.useWallpaperColors)
+        return;
+
+      var effectiveMonitor = Settings.data.colorSchemes.monitorForColors;
+      if (effectiveMonitor === "" || effectiveMonitor === undefined) {
+        effectiveMonitor = Screen.name;
+      }
+
+      if (screenName === effectiveMonitor) {
         generateFromWallpaper();
       }
     }
@@ -25,6 +31,16 @@ Singleton {
     target: Settings.data.colorSchemes
     function onDarkModeChanged() {
       Logger.d("AppThemeService", "Detected dark mode change");
+      generate();
+    }
+    function onMonitorForColorsChanged() {
+      if (Settings.data.colorSchemes.useWallpaperColors) {
+        Logger.d("AppThemeService", "Monitor for colors changed to:", Settings.data.colorSchemes.monitorForColors);
+        generateFromWallpaper();
+      }
+    }
+    function onGenerationMethodChanged() {
+      Logger.d("AppThemeService", "Generation method changed to:", Settings.data.colorSchemes.generationMethod);
       generate();
     }
   }
@@ -44,9 +60,14 @@ Singleton {
   }
 
   function generateFromWallpaper() {
-    const wp = WallpaperService.getWallpaper(Screen.name);
+    var effectiveMonitor = Settings.data.colorSchemes.monitorForColors;
+    if (effectiveMonitor === "" || effectiveMonitor === undefined) {
+      effectiveMonitor = Screen.name;
+    }
+
+    const wp = WallpaperService.getWallpaper(effectiveMonitor);
     if (!wp) {
-      Logger.e("AppThemeService", "No wallpaper found");
+      Logger.e("AppThemeService", "No wallpaper found for monitor:", effectiveMonitor);
       return;
     }
     const mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";

@@ -10,9 +10,12 @@ ColumnLayout {
   property var widgetData: ({}) // Expected by BarWidgetSettingsDialog
   property var widgetMetadata: ({}) // Expected by BarWidgetSettingsDialog
 
+  signal settingsChanged(var settings)
+
   // Local state
   property var localBlacklist: widgetData.blacklist || []
   property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : widgetMetadata.colorizeIcons
+  property string valueChevronColor: widgetData.chevronColor !== undefined ? widgetData.chevronColor : widgetMetadata.chevronColor
   property bool valueDrawerEnabled: widgetData.drawerEnabled !== undefined ? widgetData.drawerEnabled : widgetMetadata.drawerEnabled
   property bool valueHidePassive: widgetData.hidePassive !== undefined ? widgetData.hidePassive : widgetMetadata.hidePassive
 
@@ -33,18 +36,37 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
-    label: I18n.tr("bar.tray.colorize-icons-label")
-    description: I18n.tr("bar.tray.colorize-icons-description")
-    checked: root.valueColorizeIcons
-    onToggled: checked => root.valueColorizeIcons = checked
+    label: I18n.tr("bar.tray.drawer-enabled-label")
+    description: I18n.tr("bar.tray.drawer-enabled-description")
+    checked: root.valueDrawerEnabled
+    onToggled: checked => {
+                 root.valueDrawerEnabled = checked;
+                 settingsChanged(saveSettings());
+               }
+  }
+
+  NComboBox {
+    label: I18n.tr("bar.tray.chevron-color-label")
+    description: I18n.tr("bar.tray.chevron-color-description")
+    model: Color.colorKeyModel
+    currentKey: root.valueChevronColor
+    onSelected: key => {
+                  root.valueChevronColor = key;
+                  settingsChanged(saveSettings());
+                }
+    minimumWidth: 200
+    visible: root.valueDrawerEnabled
   }
 
   NToggle {
     Layout.fillWidth: true
-    label: I18n.tr("bar.tray.drawer-enabled-label")
-    description: I18n.tr("bar.tray.drawer-enabled-description")
-    checked: root.valueDrawerEnabled
-    onToggled: checked => root.valueDrawerEnabled = checked
+    label: I18n.tr("bar.tray.colorize-icons-label")
+    description: I18n.tr("bar.tray.colorize-icons-description")
+    checked: root.valueColorizeIcons
+    onToggled: checked => {
+                 root.valueColorizeIcons = checked;
+                 settingsChanged(saveSettings());
+               }
   }
 
   NToggle {
@@ -52,7 +74,10 @@ ColumnLayout {
     label: I18n.tr("bar.tray.hide-passive-label")
     description: I18n.tr("bar.tray.hide-passive-description")
     checked: root.valueHidePassive
-    onToggled: checked => root.valueHidePassive = checked
+    onToggled: checked => {
+                 root.valueHidePassive = checked;
+                 settingsChanged(saveSettings());
+               }
   }
 
   ColumnLayout {
@@ -88,6 +113,7 @@ ColumnLayout {
                                       "rule": newRule
                                     });
               newRuleInput.text = "";
+              settingsChanged(saveSettings());
             }
           }
         }
@@ -96,11 +122,12 @@ ColumnLayout {
   }
 
   // List of current blacklist items
-  ListView {
+  NListView {
     Layout.fillWidth: true
     Layout.preferredHeight: 150
     Layout.topMargin: Style.marginL // Increased top margin
-    clip: true
+    gradientColor: Color.mSurface
+
     model: blacklistModel
     delegate: Item {
       width: ListView.width
@@ -124,23 +151,22 @@ ColumnLayout {
         spacing: Style.marginS
 
         NText {
+          anchors.verticalCenter: parent.verticalCenter
           text: model.rule
           elide: Text.ElideRight
-          verticalAlignment: Text.AlignVCenter
-          Layout.fillWidth: true
         }
 
         NIconButton {
-          width: 16
-          height: 16
+          anchors.verticalCenter: parent.verticalCenter
           icon: "close"
-          baseSize: 8
+          baseSize: 12 * Style.uiScaleRatio
           colorBg: Color.mSurfaceVariant
-          colorFg: Color.mOnSurface
+          colorFg: Color.mOnSurfaceVariant
           colorBgHover: Color.mError
           colorFgHover: Color.mOnError
           onClicked: {
             blacklistModel.remove(index);
+            settingsChanged(saveSettings());
           }
         }
       }
@@ -158,6 +184,7 @@ ColumnLayout {
     var settings = Object.assign({}, widgetData || {});
     settings.blacklist = newBlacklist;
     settings.colorizeIcons = root.valueColorizeIcons;
+    settings.chevronColor = root.valueChevronColor;
     settings.drawerEnabled = root.valueDrawerEnabled;
     settings.hidePassive = root.valueHidePassive;
     return settings;

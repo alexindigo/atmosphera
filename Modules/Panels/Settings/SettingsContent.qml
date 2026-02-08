@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 import qs.Modules.Panels.Settings.Tabs
 import qs.Modules.Panels.Settings.Tabs.About
@@ -11,6 +12,7 @@ import qs.Modules.Panels.Settings.Tabs.ColorScheme
 import qs.Modules.Panels.Settings.Tabs.ControlCenter
 import qs.Modules.Panels.Settings.Tabs.Display
 import qs.Modules.Panels.Settings.Tabs.Dock
+import qs.Modules.Panels.Settings.Tabs.Hooks
 import qs.Modules.Panels.Settings.Tabs.Launcher
 import qs.Modules.Panels.Settings.Tabs.Notifications
 import qs.Modules.Panels.Settings.Tabs.Osd
@@ -37,14 +39,341 @@ Item {
   property int currentTabIndex: 0
   property var tabsModel: []
   property var activeScrollView: null
+  property var activeTabContent: null
   property bool sidebarExpanded: true
+  // Track if sidebar was collapsed before searching started
+  property bool wasCollapsedBeforeSearch: false
+
+  // Search state
+  property string searchText: ""
+  property var searchIndex: []
+  property var searchResults: []
+  property int searchSelectedIndex: 0
+  property string highlightLabelKey: ""
+  property bool navigatingFromSearch: false
+
+  // Mouse hover suppression during keyboard navigation
+  property bool ignoreMouseHover: false
+  property real _lastMouseX: 0
+  property real _lastMouseY: 0
+  property bool _mouseInitialized: false
+
+  readonly property bool panelVeryTransparent: Settings.data.ui.panelBackgroundOpacity <= 0.75
+
+  onSearchResultsChanged: {
+    searchSelectedIndex = 0;
+    ignoreMouseHover = true;
+    _mouseInitialized = false;
+  }
 
   // Signal when close button is clicked
   signal closeRequested
 
+  // Load search index
+  FileView {
+    id: searchIndexFile
+    path: Quickshell.shellDir + "/Assets/settings-search-index.json"
+    watchChanges: false
+    printErrors: false
+
+    onLoaded: {
+      try {
+        root.searchIndex = JSON.parse(text());
+      } catch (e) {
+        root.searchIndex = [];
+      }
+    }
+  }
+
+  // Search function
+  onSearchTextChanged: {
+    if (searchText.trim() === "") {
+      searchResults = [];
+      if (wasCollapsedBeforeSearch) {
+        root.sidebarExpanded = false;
+        wasCollapsedBeforeSearch = false;
+      }
+      return;
+    }
+
+    // Auto-expand sidebar when searching
+    if (!root.sidebarExpanded) {
+      if (root.activeFocus) {
+        // If we are typing and the sidebar is collapsed and focused, we assume the user is typing to search
+        wasCollapsedBeforeSearch = true;
+      }
+      root.sidebarExpanded = true;
+    }
+
+    if (searchIndex.length === 0)
+      return;
+
+    // Build searchable items with resolved translations
+    let items = [];
+    for (let j = 0; j < searchIndex.length; j++) {
+      const entry = searchIndex[j];
+      items.push({
+                   "labelKey": entry.labelKey,
+                   "descriptionKey": entry.descriptionKey,
+                   "widget": entry.widget,
+                   "tab": entry.tab,
+                   "tabLabel": entry.tabLabel,
+                   "subTab": entry.subTab,
+                   "subTabLabel": entry.subTabLabel || null,
+                   "label": I18n.tr(entry.labelKey),
+                   "description": entry.descriptionKey ? I18n.tr(entry.descriptionKey) : "",
+                   "subTabName": entry.subTabLabel ? I18n.tr(entry.subTabLabel) : ""
+                 });
+    }
+
+    const results = FuzzySort.go(searchText.trim(), items, {
+                                   "keys": ["label", "subTabName", "description"],
+                                   "limit": 20,
+                                   "scoreFn": function (r) {
+                                     // r[0]=label, r[1]=subTabName, r[2]=description
+                                     // Boost subTabName matches by 1.5x
+                                     const labelScore = r[0].score;
+                                     const subTabScore = r[1].score * 1.5;
+                                     const descScore = r[2].score;
+                                     return Math.max(labelScore, subTabScore, descScore);
+                                   }
+                                 });
+
+    let extracted = [];
+    for (let i = 0; i < results.length; i++) {
+      extracted.push(results[i].obj);
+    }
+    searchResults = extracted;
+  }
+
+  // Navigate to a search result
+  property int _pendingSubTab: -1
+
+  function navigateToResult(entry) {
+    if (entry.tab < 0 || entry.tab >= tabsModel.length)
+      return;
+
+    highlightLabelKey = entry.labelKey;
+    _pendingSubTab = (entry.subTab !== null && entry.subTab !== undefined) ? entry.subTab : -1;
+
+    const alreadyOnTab = (currentTabIndex === entry.tab);
+    navigatingFromSearch = true;
+    currentTabIndex = entry.tab;
+    navigatingFromSearch = false;
+
+    if (alreadyOnTab && activeTabContent) {
+      if (_pendingSubTab >= 0) {
+        navigatingFromSearch = true;
+        setSubTabIndex(_pendingSubTab);
+        navigatingFromSearch = false;
+        _pendingSubTab = -1;
+      }
+      highlightScrollTimer.targetKey = highlightLabelKey;
+      highlightScrollTimer.restart();
+    }
+
+    // Clear highlight after a delay
+    highlightClearTimer.restart();
+  }
+
+  // Navigate to a tab and optionally a subtab (simpler than navigateToResult, no highlighting)
+  function navigateToTab(tabId, subTabIndex) {
+    // Find the tab index by tab ID
+    let tabIndex = -1;
+    for (let i = 0; i < tabsModel.length; i++) {
+      if (tabsModel[i].id === tabId) {
+        tabIndex = i;
+        break;
+      }
+    }
+
+    if (tabIndex < 0)
+      return;
+
+    const hasSubTab = subTabIndex !== null && subTabIndex !== undefined && subTabIndex >= 0;
+    _pendingSubTab = hasSubTab ? subTabIndex : -1;
+
+    // Check if we're already on this tab
+    const alreadyOnTab = (currentTabIndex === tabIndex);
+
+    currentTabIndex = tabIndex;
+
+    if (alreadyOnTab && activeTabContent && hasSubTab) {
+      // Tab is already loaded, apply subtab directly
+      setSubTabIndex(subTabIndex);
+      _pendingSubTab = -1;
+    }
+  }
+
+  function searchSelectNext() {
+    if (searchResults.length === 0)
+      return;
+    ignoreMouseHover = true;
+    _mouseInitialized = false;
+    searchSelectedIndex = Math.min(searchSelectedIndex + 1, searchResults.length - 1);
+    searchResultsList.positionViewAtIndex(searchSelectedIndex, ListView.Contain);
+  }
+
+  function searchSelectPrevious() {
+    if (searchResults.length === 0)
+      return;
+    ignoreMouseHover = true;
+    _mouseInitialized = false;
+    searchSelectedIndex = Math.max(searchSelectedIndex - 1, 0);
+    searchResultsList.positionViewAtIndex(searchSelectedIndex, ListView.Contain);
+  }
+
+  function searchActivate() {
+    if (searchSelectedIndex >= 0 && searchSelectedIndex < searchResults.length) {
+      navigateToResult(searchResults[searchSelectedIndex]);
+      searchInput.text = "";
+    }
+  }
+
+  // Set sub-tab on the currently loaded tab content
+  function setSubTabIndex(subTabIndex) {
+    if (activeTabContent) {
+      setSubTabRecursive(activeTabContent, subTabIndex);
+    }
+  }
+
+  function setSubTabRecursive(item, subTabIndex) {
+    if (!item)
+      return false;
+
+    if (item.objectName === "NTabBar") {
+      item.currentIndex = subTabIndex;
+      return true;
+    }
+
+    const childCount = item.children ? item.children.length : 0;
+    for (let i = 0; i < childCount; i++) {
+      if (setSubTabRecursive(item.children[i], subTabIndex))
+        return true;
+    }
+    return false;
+  }
+
+  onCurrentTabIndexChanged: {
+    if (!navigatingFromSearch) {
+      clearHighlightImmediately();
+    }
+  }
+
+  property var currentSubTabBar: null
+
+  onActiveTabContentChanged: {
+    if (currentSubTabBar) {
+      try {
+        currentSubTabBar.currentIndexChanged.disconnect(onSubTabChanged);
+      } catch (e) {}
+      currentSubTabBar = null;
+    }
+
+    if (activeTabContent) {
+      const tabBar = findNTabBar(activeTabContent);
+      if (tabBar) {
+        currentSubTabBar = tabBar;
+        currentSubTabBar.currentIndexChanged.connect(onSubTabChanged);
+      }
+    }
+  }
+
+  function onSubTabChanged() {
+    if (!navigatingFromSearch) {
+      clearHighlightImmediately();
+    }
+  }
+
+  function findNTabBar(item) {
+    if (!item)
+      return null;
+
+    if (item.objectName === "NTabBar") {
+      return item;
+    }
+
+    const childCount = item.children ? item.children.length : 0;
+    for (let i = 0; i < childCount; i++) {
+      const found = findNTabBar(item.children[i]);
+      if (found)
+        return found;
+    }
+    return null;
+  }
+
+  function clearHighlightImmediately() {
+    highlightClearTimer.stop();
+    highlightScrollTimer.stop();
+    highlightAnimation.stop();
+    highlightLabelKey = "";
+    highlightOverlay.opacity = 0;
+  }
+
+  // Find and highlight a widget by its label key
+  function findAndHighlightWidget(item, labelKey) {
+    if (!item)
+      return null;
+
+    // Check if this item has a matching label
+    if (item.hasOwnProperty("label") && item.label === I18n.tr(labelKey)) {
+      return item;
+    }
+
+    // Recursively search children
+    if (item.children) {
+      for (let i = 0; i < item.children.length; i++) {
+        const found = findAndHighlightWidget(item.children[i], labelKey);
+        if (found)
+          return found;
+      }
+    }
+    return null;
+  }
+
+  Timer {
+    id: highlightClearTimer
+    interval: 3000
+    onTriggered: root.highlightLabelKey = ""
+  }
+
+  Timer {
+    id: highlightScrollTimer
+    interval: 333
+    property string targetKey: ""
+    onTriggered: {
+      if (root.activeTabContent && targetKey) {
+        const widget = root.findAndHighlightWidget(root.activeTabContent, targetKey);
+        if (widget && root.activeScrollView) {
+          // Scroll widget into view
+          const mapped = widget.mapToItem(root.activeScrollView.contentItem, 0, 0);
+          const scrollBar = root.activeScrollView.ScrollBar.vertical;
+          if (scrollBar) {
+            const targetPos = (mapped.y - root.activeScrollView.height / 3) / root.activeScrollView.contentHeight;
+            scrollBar.position = Math.max(0, Math.min(targetPos, 1.0 - scrollBar.size));
+          }
+
+          // Position highlight overlay
+          const overlayPos = widget.mapToItem(tabContentArea, 0, 0);
+          highlightOverlay.x = overlayPos.x - Style.marginM;
+          highlightOverlay.y = overlayPos.y - Style.marginM;
+          highlightOverlay.width = widget.width + Style.marginM * 2;
+          highlightOverlay.height = widget.height + Style.marginM * 2;
+          highlightAnimation.restart();
+        }
+      }
+      targetKey = "";
+    }
+  }
+
   // Save sidebar state when it changes
   onSidebarExpandedChanged: {
     ShellState.setSettingsSidebarExpanded(sidebarExpanded);
+    if (!sidebarExpanded) {
+      root.searchText = "";
+      searchInput.text = "";
+      root.forceActiveFocus();
+    }
   }
 
   Component.onCompleted: {
@@ -285,7 +614,44 @@ Item {
     ProgramCheckerService.checkAllPrograms();
     updateTabsModel();
     selectTabById(requestedTab);
+    // Skip auto-focus on Nvidia GPUs - cursor blink causes UI choppiness
+    const isNvidia = SystemStatService.gpuType === "nvidia";
+    if (sidebarExpanded && !isNvidia) {
+      Qt.callLater(() => {
+                     if (searchInput.inputItem)
+                     searchInput.inputItem.forceActiveFocus();
+                   });
+    } else {
+      // Ensure root has focus so it can catch typing
+      Qt.callLater(() => root.forceActiveFocus());
+    }
   }
+
+  // Handle typing when sidebar is collapsed
+  focus: true
+  Keys.onPressed: event => {
+                    if (!sidebarExpanded && event.text.length > 0 && event.text.trim() !== "") {
+                      // Only capture if it looks like visible text
+                      if (event.modifiers & (Qt.ControlModifier | Qt.AltModifier | Qt.MetaModifier))
+                      return;
+
+                      // Explicitly ignore backspace and similar keys that might have text but shouldn't trigger search
+                      if (event.key === Qt.Key_Backspace || event.key === Qt.Key_Delete || event.key === Qt.Key_Escape)
+                      return;
+
+                      wasCollapsedBeforeSearch = true;
+                      sidebarExpanded = true;
+                      searchInput.text = event.text;
+                      Qt.callLater(() => {
+                                     if (searchInput.inputItem) {
+                                       searchInput.inputItem.forceActiveFocus();
+                                       // Cursor moves to end automatically usually, but let's be safe
+                                       searchInput.inputItem.cursorPosition = 1;
+                                     }
+                                   });
+                      event.accepted = true;
+                    }
+                  }
 
   // Scroll functions
   function scrollDown() {
@@ -348,16 +714,14 @@ Item {
       NBox {
         id: sidebar
 
-        readonly property bool panelVeryTransparent: Settings.data.ui.panelBackgroundOpacity <= 0.75
-
         clip: true
-        Layout.preferredWidth: Math.round(root.sidebarExpanded ? 200 * Style.uiScaleRatio : sidebarToggle.width + (panelVeryTransparent ? Style.marginM * 2 : 0) + (sidebarList.verticalScrollBarActive ? Style.marginM : 0))
+        Layout.preferredWidth: Math.round(root.sidebarExpanded ? 200 * Style.uiScaleRatio : sidebarToggle.width + (root.panelVeryTransparent ? Style.marginXL : 0) + (sidebarList.verticalScrollBarActive ? Style.marginM : 0))
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
 
-        radius: sidebar.panelVeryTransparent ? Style.radiusM : 0
-        color: sidebar.panelVeryTransparent ? Color.mSurfaceVariant : "transparent"
-        border.color: sidebar.panelVeryTransparent ? Style.boxBorderColor : "transparent"
+        radius: root.panelVeryTransparent ? Style.radiusM : 0
+        color: root.panelVeryTransparent ? Color.mSurfaceVariant : "transparent"
+        border.color: root.panelVeryTransparent ? Style.boxBorderColor : "transparent"
 
         Behavior on Layout.preferredWidth {
           NumberAnimation {
@@ -370,7 +734,7 @@ Item {
         ColumnLayout {
           anchors.fill: parent
           spacing: Style.marginS
-          anchors.margins: sidebar.panelVeryTransparent ? Style.marginM : 0
+          anchors.margins: root.panelVeryTransparent ? Style.marginM : 0
 
           // Sidebar toggle button
           Item {
@@ -387,6 +751,7 @@ Item {
               color: toggleMouseArea.containsMouse ? Color.mHover : "transparent"
 
               Behavior on color {
+                enabled: !Color.isTransitioning
                 ColorAnimation {
                   duration: Style.animationFast
                   easing.type: Easing.InOutQuad
@@ -426,22 +791,224 @@ Item {
             }
           }
 
+          // Search container wrapper to prevent layout jumps
+          Item {
+            id: searchContainerWrapper
+            Layout.fillWidth: true
+            Layout.preferredHeight: searchInput.implicitHeight > 0 ? searchInput.implicitHeight : (Style.fontSizeXL + Style.marginM * 2)
+
+            // Search input
+            NTextInput {
+              id: searchInput
+              anchors.left: parent.left
+              anchors.right: parent.right
+              anchors.verticalCenter: parent.verticalCenter
+              placeholderText: I18n.tr("common.search")
+              inputIconName: "search"
+              visible: opacity > 0
+              opacity: root.sidebarExpanded ? 1.0 : 0.0
+
+              Behavior on opacity {
+                NumberAnimation {
+                  duration: Style.animationFast
+                  easing.type: Easing.InOutQuad
+                }
+              }
+
+              onTextChanged: root.searchText = text
+              onEditingFinished: {
+                if (root.searchText.trim() !== "")
+                  root.searchActivate();
+              }
+            }
+
+            // Search button for collapsed sidebar
+            Item {
+              id: searchCollapsedContainer
+              anchors.left: parent.left
+              anchors.right: parent.right
+              anchors.verticalCenter: parent.verticalCenter
+              height: Math.round(searchCollapsedRow.implicitHeight + Style.marginS * 2)
+              visible: opacity > 0
+              opacity: !root.sidebarExpanded ? 1.0 : 0.0
+
+              Behavior on opacity {
+                NumberAnimation {
+                  duration: Style.animationFast
+                  easing.type: Easing.InOutQuad
+                }
+              }
+
+              Rectangle {
+                id: searchCollapsedButton
+                width: Math.round(searchCollapsedRow.implicitWidth + Style.marginS * 2)
+                height: parent.height
+                anchors.left: parent.left
+                radius: Style.radiusS
+                color: searchCollapsedMouseArea.containsMouse ? Color.mHover : "transparent"
+
+                Behavior on color {
+                  enabled: !Color.isTransitioning
+                  ColorAnimation {
+                    duration: Style.animationFast
+                    easing.type: Easing.InOutQuad
+                  }
+                }
+
+                RowLayout {
+                  id: searchCollapsedRow
+                  anchors.verticalCenter: parent.verticalCenter
+                  anchors.left: parent.left
+                  anchors.leftMargin: Style.marginS
+                  spacing: 0
+
+                  NIcon {
+                    icon: "search"
+                    color: searchCollapsedMouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface
+                    pointSize: Style.fontSizeXL
+                  }
+                }
+
+                MouseArea {
+                  id: searchCollapsedMouseArea
+                  anchors.fill: parent
+                  hoverEnabled: true
+                  cursorShape: Qt.PointingHandCursor
+                  onClicked: {
+                    root.sidebarExpanded = true;
+                    root.wasCollapsedBeforeSearch = false; // Expanding manually resets this
+                    Qt.callLater(() => searchInput.inputItem.forceActiveFocus());
+                  }
+                  onEntered: {
+                    TooltipService.show(searchCollapsedButton, I18n.tr("common.search"));
+                  }
+                  onExited: {
+                    TooltipService.hide();
+                  }
+                }
+              }
+            }
+          }
+
           Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.bottomMargin: Style.marginXL
 
+            // Search results list
+            NListView {
+              id: searchResultsList
+              anchors.fill: parent
+              model: root.searchResults
+              spacing: Style.marginXS
+              visible: root.searchText.trim() !== ""
+              verticalPolicy: ScrollBar.AsNeeded
+              gradientColor: "transparent"
+              reserveScrollbarSpace: false
+
+              HoverHandler {
+                onPointChanged: {
+                  if (!root._mouseInitialized) {
+                    root._lastMouseX = point.position.x;
+                    root._lastMouseY = point.position.y;
+                    root._mouseInitialized = true;
+                    return;
+                  }
+
+                  const deltaX = Math.abs(point.position.x - root._lastMouseX);
+                  const deltaY = Math.abs(point.position.y - root._lastMouseY);
+                  if (deltaX + deltaY >= 5) {
+                    root.ignoreMouseHover = false;
+                    root._lastMouseX = point.position.x;
+                    root._lastMouseY = point.position.y;
+                  }
+                }
+              }
+
+              delegate: Rectangle {
+                id: resultItem
+                width: searchResultsList.width - (searchResultsList.verticalScrollBarActive ? Style.marginM : 0)
+                height: resultColumn.implicitHeight + Style.marginS * 2
+                radius: Style.iRadiusS
+                readonly property bool selected: index === root.searchSelectedIndex
+                readonly property bool effectiveHover: !root.ignoreMouseHover && resultMouseArea.containsMouse
+                color: (effectiveHover || selected) ? Color.mHover : "transparent"
+
+                Behavior on color {
+                  enabled: !Color.isTransitioning
+                  ColorAnimation {
+                    duration: Style.animationFast
+                    easing.type: Easing.InOutQuad
+                  }
+                }
+
+                ColumnLayout {
+                  id: resultColumn
+                  anchors.fill: parent
+                  anchors.leftMargin: Style.marginS
+                  anchors.rightMargin: Style.marginS
+                  anchors.topMargin: Style.marginXS
+                  anchors.bottomMargin: Style.marginXS
+                  spacing: 0
+
+                  NText {
+                    text: I18n.tr(modelData.labelKey)
+                    pointSize: Style.fontSizeM
+                    font.weight: Style.fontWeightSemiBold
+                    color: (resultItem.effectiveHover || resultItem.selected) ? Color.mOnHover : Color.mOnSurface
+                    Layout.fillWidth: true
+                    elide: Text.ElideRight
+                    maximumLineCount: 1
+                  }
+
+                  NText {
+                    text: {
+                      let t = I18n.tr(modelData.tabLabel);
+                      if (modelData.subTabLabel)
+                        t += " › " + I18n.tr(modelData.subTabLabel);
+                      return t;
+                    }
+                    pointSize: Style.fontSizeXS
+                    color: (resultItem.effectiveHover || resultItem.selected) ? Color.mOnHover : Color.mOnSurfaceVariant
+                    Layout.fillWidth: true
+                    elide: Text.ElideRight
+                    maximumLineCount: 1
+                  }
+                }
+
+                MouseArea {
+                  id: resultMouseArea
+                  anchors.fill: parent
+                  hoverEnabled: true
+                  cursorShape: Qt.PointingHandCursor
+                  onEntered: {
+                    if (!root.ignoreMouseHover)
+                      root.searchSelectedIndex = index;
+                  }
+                  onClicked: {
+                    root.searchSelectedIndex = index;
+                    root.navigateToResult(modelData);
+                    searchInput.text = "";
+                  }
+                }
+              }
+            }
+
+            // Tab list
             NListView {
               id: sidebarList
+              visible: root.searchText.trim() === ""
               anchors.fill: parent
               model: root.tabsModel
               spacing: Style.marginXS
               currentIndex: root.currentTabIndex
               verticalPolicy: ScrollBar.AsNeeded
+              gradientColor: "transparent"
+              reserveScrollbarSpace: false
 
               delegate: Rectangle {
                 id: tabItem
-                width: sidebarList.width - (sidebarList.verticalScrollBarActive ? Style.marginM : 0)
+                width: sidebarList.width
                 height: tabEntryRow.implicitHeight + Style.marginS * 2
                 radius: Style.iRadiusS
                 color: selected ? Color.mPrimary : (tabItem.hovering ? Color.mHover : "transparent")
@@ -450,6 +1017,7 @@ Item {
                 property color tabTextColor: selected ? Color.mOnPrimary : (tabItem.hovering ? Color.mOnHover : Color.mOnSurface)
 
                 Behavior on color {
+                  enabled: !Color.isTransitioning
                   ColorAnimation {
                     duration: Style.animationFast
                     easing.type: Easing.InOutQuad
@@ -457,6 +1025,7 @@ Item {
                 }
 
                 Behavior on tabTextColor {
+                  enabled: !Color.isTransitioning
                   ColorAnimation {
                     duration: Style.animationFast
                     easing.type: Easing.InOutQuad
@@ -549,38 +1118,6 @@ Item {
             }
           }
         }
-
-        // Overlay gradient for sidebar scrolling
-        Rectangle {
-          anchors.fill: parent
-          anchors.margins: Style.borderS
-          radius: Style.radiusM
-          color: "transparent"
-          visible: sidebarList.verticalScrollBarActive
-          opacity: (sidebarList.contentY + sidebarList.height >= sidebarList.contentHeight - 10) ? 0 : 1
-
-          Behavior on opacity {
-            NumberAnimation {
-              duration: Style.animationFast
-              easing.type: Easing.InOutQuad
-            }
-          }
-
-          gradient: Gradient {
-            GradientStop {
-              position: 0.0
-              color: "transparent"
-            }
-            GradientStop {
-              position: 0.95
-              color: "transparent"
-            }
-            GradientStop {
-              position: 1.0
-              color: Color.mSurfaceVariant
-            }
-          }
-        }
       }
 
       // Content pane
@@ -627,12 +1164,9 @@ Item {
             }
           }
 
-          NDivider {
-            Layout.fillWidth: true
-          }
-
           // Tab content area
           Rectangle {
+            id: tabContentArea
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.leftMargin: -Style.marginM
@@ -640,13 +1174,25 @@ Item {
             color: "transparent"
 
             Repeater {
+              id: contentRepeater
               model: root.tabsModel
               delegate: Loader {
                 anchors.fill: parent
                 active: index === root.currentTabIndex
+                opacity: 0
+
+                NumberAnimation on opacity {
+                  id: fadeInAnim
+                  from: 0
+                  to: 1
+                  duration: Style.animationSlowest
+                  easing.type: Easing.OutCubic
+                  running: false
+                }
 
                 onStatusChanged: {
                   if (status === Loader.Ready && item) {
+                    fadeInAnim.start();
                     const scrollView = item.children[0];
                     if (scrollView && scrollView.toString().includes("ScrollView")) {
                       root.activeScrollView = scrollView;
@@ -654,29 +1200,39 @@ Item {
                   }
                 }
 
-                sourceComponent: Flickable {
-                  id: flickable
+                sourceComponent: NScrollView {
+                  id: scrollView
                   anchors.fill: parent
-                  pressDelay: 200
+                  horizontalPolicy: ScrollBar.AlwaysOff
+                  verticalPolicy: ScrollBar.AsNeeded
+                  leftPadding: Style.marginL
+                  topPadding: Style.marginL
+                  bottomPadding: Style.marginL
+                  userRightPadding: Style.marginL
+                  reserveScrollbarSpace: false
 
-                  NScrollView {
-                    id: scrollView
-                    anchors.fill: parent
-                    horizontalPolicy: ScrollBar.AlwaysOff
-                    verticalPolicy: ScrollBar.AsNeeded
-                    padding: Style.marginL
-                    Component.onCompleted: {
-                      root.activeScrollView = scrollView;
-                    }
+                  Component.onCompleted: {
+                    root.activeScrollView = scrollView;
+                  }
 
-                    Loader {
-                      active: true
-                      sourceComponent: root.tabsModel[index]?.source
-                      width: scrollView.availableWidth
-                      onLoaded: {
-                        if (item && item.hasOwnProperty("screen")) {
-                          item.screen = root.screen;
+                  Loader {
+                    active: true
+                    sourceComponent: root.tabsModel[index]?.source
+                    width: scrollView.availableWidth
+                    onLoaded: {
+                      if (item && item.hasOwnProperty("screen")) {
+                        item.screen = root.screen;
+                      }
+                      root.activeTabContent = item;
+                      if (root.highlightLabelKey) {
+                        if (root._pendingSubTab >= 0) {
+                          root.navigatingFromSearch = true;
+                          root.setSubTabIndex(root._pendingSubTab);
+                          root.navigatingFromSearch = false;
+                          root._pendingSubTab = -1;
                         }
+                        highlightScrollTimer.targetKey = root.highlightLabelKey;
+                        highlightScrollTimer.restart();
                       }
                     }
                   }
@@ -684,37 +1240,38 @@ Item {
               }
             }
 
-            // Overlay gradient for content scrolling
+            // Highlight overlay for search results
             Rectangle {
-              anchors.fill: parent
-              color: "transparent"
-              visible: root.activeScrollView && root.activeScrollView.ScrollBar.vertical && root.activeScrollView.ScrollBar.vertical.size < 1.0
-              opacity: {
-                if (!root.activeScrollView)
-                  return 1;
-                const scrollBar = root.activeScrollView.ScrollBar.vertical;
-                return (scrollBar.position + scrollBar.size >= 0.99) ? 0 : 1;
-              }
+              id: highlightOverlay
+              visible: opacity > 0
+              opacity: 0
+              color: Qt.alpha(Color.mSecondary, 0.2)
+              border.color: Qt.alpha(Color.mSecondary, 0.6)
+              border.width: Style.borderM
+              radius: Style.radiusS
+              z: 100
 
-              Behavior on opacity {
+              SequentialAnimation {
+                id: highlightAnimation
+
                 NumberAnimation {
-                  duration: Style.animationFast
-                  easing.type: Easing.InOutQuad
+                  target: highlightOverlay
+                  property: "opacity"
+                  to: 1.0
+                  duration: Style.animationSlow
+                  easing.type: Easing.OutQuad
                 }
-              }
 
-              gradient: Gradient {
-                GradientStop {
-                  position: 0.0
-                  color: "transparent"
+                PauseAnimation {
+                  duration: 2000
                 }
-                GradientStop {
-                  position: 0.95
-                  color: "transparent"
-                }
-                GradientStop {
-                  position: 1.0
-                  color: Qt.alpha(Color.mSurfaceVariant, 0.95)
+
+                NumberAnimation {
+                  target: highlightOverlay
+                  property: "opacity"
+                  to: 0
+                  duration: Style.animationSlowest
+                  easing.type: Easing.InQuad
                 }
               }
             }

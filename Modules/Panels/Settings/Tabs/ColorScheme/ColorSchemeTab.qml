@@ -19,6 +19,8 @@ ColumnLayout {
     id: timeOptions
   }
 
+  property var screen
+
   Component.onCompleted: {
     for (var h = 0; h < 24; h++) {
       for (var m = 0; m < 60; m += 30) {
@@ -89,6 +91,7 @@ ColumnLayout {
     currentIndex: subTabBar.currentIndex
 
     ColorsSubTab {
+      screen: root.screen
       timeOptions: timeOptions
       onOpenDownloadPopup: downloadPopupLoader.open()
     }

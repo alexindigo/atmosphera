@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Pipewire
+import Quickshell.Widgets
 import qs.Commons
 import qs.Modules.MainScreen
 import qs.Services.Media
@@ -145,130 +146,7 @@ SmartPanel {
     // Find application streams that are actually playing audio (connected to default sink)
     // Use linkGroups to find nodes connected to the default audio sink
     // Note: We need to use link IDs since source/target properties require binding
-    readonly property var appStreams: {
-      if (!Pipewire.ready || !AudioService.sink) {
-        return [];
-      }
-
-      var defaultSink = AudioService.sink;
-      var defaultSinkId = defaultSink.id;
-      var connectedStreamIds = {};
-      var connectedStreams = [];
-
-      // Use PwNodeLinkTracker to get properly bound link groups
-      if (!sinkLinkTracker.linkGroups) {
-        return [];
-      }
-
-      // Check if linkGroups is an array or ObjectModel
-      var linkGroupsCount = 0;
-      if (sinkLinkTracker.linkGroups.length !== undefined) {
-        linkGroupsCount = sinkLinkTracker.linkGroups.length;
-      } else if (sinkLinkTracker.linkGroups.count !== undefined) {
-        linkGroupsCount = sinkLinkTracker.linkGroups.count;
-      } else {
-        return [];
-      }
-
-      if (linkGroupsCount === 0) {
-        return [];
-      }
-
-      // Collect intermediate node IDs that are connected to the sink
-      var intermediateNodeIds = {};
-
-      // Process link groups from sinkLinkTracker
-      var nodesToCheck = [];
-
-      for (var i = 0; i < linkGroupsCount; i++) {
-        var linkGroup;
-        if (sinkLinkTracker.linkGroups.get) {
-          linkGroup = sinkLinkTracker.linkGroups.get(i);
-        } else {
-          linkGroup = sinkLinkTracker.linkGroups[i];
-        }
-
-        if (!linkGroup || !linkGroup.source) {
-          continue;
-        }
-
-        var sourceNode = linkGroup.source;
-
-        // If it's a stream node, add it directly
-        if (sourceNode.isStream && sourceNode.audio) {
-          if (!connectedStreamIds[sourceNode.id]) {
-            connectedStreamIds[sourceNode.id] = true;
-            connectedStreams.push(sourceNode);
-          }
-        } else {
-          // Not a stream - this is an intermediate node, track it
-          intermediateNodeIds[sourceNode.id] = true;
-          nodesToCheck.push(sourceNode);
-        }
-      }
-
-      // If we found intermediate nodes, we need to find streams connected to them
-      // Since Pipewire.linkGroups is not directly accessible, we'll use a heuristic:
-      // When intermediate nodes are present, include all active stream nodes
-      // (reasonable assumption: if audio is playing, streams are connected)
-      if (nodesToCheck.length > 0 || connectedStreams.length === 0) {
-        try {
-          // Get all nodes from Pipewire
-          var allNodes = [];
-          if (Pipewire.nodes) {
-            if (Pipewire.nodes.count !== undefined) {
-              var nodeCount = Pipewire.nodes.count;
-              for (var n = 0; n < nodeCount; n++) {
-                var node;
-                if (Pipewire.nodes.get) {
-                  node = Pipewire.nodes.get(n);
-                } else {
-                  node = Pipewire.nodes[n];
-                }
-                if (node)
-                  allNodes.push(node);
-              }
-            } else if (Pipewire.nodes.values) {
-              allNodes = Pipewire.nodes.values;
-            }
-          }
-
-          // Find all stream nodes
-          for (var j = 0; j < allNodes.length; j++) {
-            var node = allNodes[j];
-            if (!node || !node.isStream || !node.audio) {
-              continue;
-            }
-
-            var streamId = node.id;
-            if (connectedStreamIds[streamId]) {
-              continue; // Already added
-            }
-
-            // When intermediate nodes are present, include all stream nodes
-            // This is a reasonable heuristic since if audio is playing, they're likely connected
-            if (Object.keys(intermediateNodeIds).length > 0) {
-              connectedStreamIds[streamId] = true;
-              connectedStreams.push(node);
-            } else if (connectedStreams.length === 0) {
-              // Fallback: if no streams found yet, include as fallback
-              connectedStreamIds[streamId] = true;
-              connectedStreams.push(node);
-            }
-          }
-        } catch (e)
-          // Error finding stream nodes - continue with what we have
-        {}
-      }
-
-      return connectedStreams;
-    }
-
-    // Track links to the default sink using PwNodeLinkTracker (properly binds links)
-    PwNodeLinkTracker {
-      id: sinkLinkTracker
-      node: AudioService.sink
-    }
+    readonly property var appStreams: AudioService.appStreams
 
     // Use implicitHeight from content + margins to avoid binding loops
     property real contentPreferredHeight: mainColumn.implicitHeight + Style.marginL * 2
@@ -282,60 +160,59 @@ SmartPanel {
       // HEADER
       NBox {
         Layout.fillWidth: true
-        implicitHeight: headerRow.implicitHeight + (Style.marginM * 2)
+        implicitHeight: header.implicitHeight + (Style.marginXL)
 
-        RowLayout {
-          id: headerRow
+        ColumnLayout {
+          id: header
           anchors.fill: parent
           anchors.margins: Style.marginM
           spacing: Style.marginM
 
-          NIcon {
-            icon: "settings-audio"
-            pointSize: Style.fontSizeXXL
-            color: Color.mPrimary
-          }
+          RowLayout {
+            NIcon {
+              icon: "settings-audio"
+              pointSize: Style.fontSizeXXL
+              color: Color.mPrimary
+            }
 
-          NText {
-            text: I18n.tr("panels.audio.title")
-            pointSize: Style.fontSizeL
-            font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
-            Layout.fillWidth: true
-          }
+            NText {
+              text: I18n.tr("panels.audio.title")
+              pointSize: Style.fontSizeL
+              font.weight: Style.fontWeightBold
+              color: Color.mOnSurface
+              Layout.fillWidth: true
+            }
 
-          NIconButton {
-            icon: "close"
-            tooltipText: I18n.tr("common.close")
-            baseSize: Style.baseWidgetSize * 0.8
-            onClicked: {
-              root.close();
+            NIconButton {
+              icon: "close"
+              tooltipText: I18n.tr("common.close")
+              baseSize: Style.baseWidgetSize * 0.8
+              onClicked: {
+                root.close();
+              }
             }
           }
-        }
-      }
 
-      // Tab Bar
-      NTabBar {
-        id: tabBar
-        Layout.fillWidth: true
-        border.color: Style.boxBorderColor
-        border.width: Style.borderS
-        margins: Style.marginS
-        currentIndex: panelContent.currentTabIndex
-        distributeEvenly: true
-        onCurrentIndexChanged: panelContent.currentTabIndex = currentIndex
+          NTabBar {
+            id: tabBar
+            Layout.fillWidth: true
+            margins: Style.marginS
+            currentIndex: panelContent.currentTabIndex
+            distributeEvenly: true
+            onCurrentIndexChanged: panelContent.currentTabIndex = currentIndex
 
-        NTabButton {
-          text: I18n.tr("common.volumes")
-          tabIndex: 0
-          checked: tabBar.currentIndex === 0
-        }
+            NTabButton {
+              text: I18n.tr("common.volumes")
+              tabIndex: 0
+              checked: tabBar.currentIndex === 0
+            }
 
-        NTabButton {
-          text: I18n.tr("common.devices")
-          tabIndex: 1
-          checked: tabBar.currentIndex === 1
+            NTabButton {
+              text: I18n.tr("common.devices")
+              tabIndex: 1
+              checked: tabBar.currentIndex === 1
+            }
+          }
         }
       }
 
@@ -347,21 +224,23 @@ SmartPanel {
 
         // Applications Tab (Volume)
         NScrollView {
+          id: volumeScrollView
           horizontalPolicy: ScrollBar.AlwaysOff
           verticalPolicy: ScrollBar.AsNeeded
-          clip: true
           contentWidth: availableWidth
+          reserveScrollbarSpace: false
+          gradientColor: Color.mSurface
 
           ColumnLayout {
             spacing: Style.marginM
-            width: parent.width
+            width: volumeScrollView.availableWidth
 
             // Output Volume
             NBox {
               Layout.fillWidth: true
-              Layout.preferredHeight: outputVolumeColumn.implicitHeight + (Style.marginM * 2)
+              Layout.preferredHeight: outputVolumeColumn.implicitHeight + (Style.marginXL)
 
-              RowLayout {
+              ColumnLayout {
                 id: outputVolumeColumn
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -369,28 +248,28 @@ SmartPanel {
                 anchors.margins: Style.marginM
                 spacing: Style.marginM
 
-                ColumnLayout {
+                RowLayout {
                   Layout.fillWidth: true
                   spacing: Style.marginXS
 
-                  RowLayout {
-                    Layout.fillWidth: true
-                    spacing: Style.marginXS
-
-                    NText {
-                      text: I18n.tr("common.output")
-                      pointSize: Style.fontSizeM
-                      color: Color.mPrimary
-                    }
-
-                    NText {
-                      text: AudioService.sink ? (" - " + (AudioService.sink.description || AudioService.sink.name || "")) : ""
-                      pointSize: Style.fontSizeS
-                      color: Color.mOnSurfaceVariant
-                      elide: Text.ElideRight
-                      Layout.fillWidth: true
-                    }
+                  NText {
+                    text: I18n.tr("common.output")
+                    pointSize: Style.fontSizeM
+                    color: Color.mPrimary
                   }
+
+                  NText {
+                    text: AudioService.sink ? (" - " + (AudioService.sink.description || AudioService.sink.name || "")) : ""
+                    pointSize: Style.fontSizeS
+                    color: Color.mOnSurfaceVariant
+                    elide: Text.ElideRight
+                    Layout.fillWidth: true
+                  }
+                }
+
+                RowLayout {
+                  Layout.fillWidth: true
+                  spacing: Style.marginM
 
                   NValueSlider {
                     Layout.fillWidth: true
@@ -405,17 +284,27 @@ SmartPanel {
                     onPressedChanged: function (pressed) {
                       localOutputVolumeChanging = pressed;
                     }
-                    text: Math.round(localOutputVolume * 100) + "%"
                   }
-                }
 
-                NIconButton {
-                  icon: AudioService.getOutputIcon()
-                  tooltipText: I18n.tr("tooltips.output-muted")
-                  baseSize: Style.baseWidgetSize * 0.8
-                  onClicked: {
-                    AudioService.suppressOutputOSD();
-                    AudioService.setOutputMuted(!AudioService.muted);
+                  NText {
+                    text: Math.round(localOutputVolume * 100) + "%"
+                    pointSize: Style.fontSizeM
+                    family: Settings.data.ui.fontFixed
+                    color: Color.mOnSurface
+                    opacity: enabled ? 1.0 : 0.6
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.preferredWidth: 45 * Style.uiScaleRatio
+                    horizontalAlignment: Text.AlignRight
+                  }
+
+                  NIconButton {
+                    icon: AudioService.getOutputIcon()
+                    tooltipText: I18n.tr("tooltips.output-muted")
+                    baseSize: Style.baseWidgetSize * 0.7
+                    onClicked: {
+                      AudioService.suppressOutputOSD();
+                      AudioService.setOutputMuted(!AudioService.muted);
+                    }
                   }
                 }
               }
@@ -424,9 +313,9 @@ SmartPanel {
             // Input Volume
             NBox {
               Layout.fillWidth: true
-              Layout.preferredHeight: inputVolumeColumn.implicitHeight + (Style.marginM * 2)
+              Layout.preferredHeight: inputVolumeColumn.implicitHeight + (Style.marginXL)
 
-              RowLayout {
+              ColumnLayout {
                 id: inputVolumeColumn
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -434,28 +323,28 @@ SmartPanel {
                 anchors.margins: Style.marginM
                 spacing: Style.marginM
 
-                ColumnLayout {
+                RowLayout {
                   Layout.fillWidth: true
                   spacing: Style.marginXS
 
-                  RowLayout {
-                    Layout.fillWidth: true
-                    spacing: Style.marginXS
-
-                    NText {
-                      text: I18n.tr("common.input")
-                      pointSize: Style.fontSizeM
-                      color: Color.mPrimary
-                    }
-
-                    NText {
-                      text: AudioService.source ? (" - " + (AudioService.source.description || AudioService.source.name || "")) : ""
-                      pointSize: Style.fontSizeS
-                      color: Color.mOnSurfaceVariant
-                      elide: Text.ElideRight
-                      Layout.fillWidth: true
-                    }
+                  NText {
+                    text: I18n.tr("common.input")
+                    pointSize: Style.fontSizeM
+                    color: Color.mPrimary
                   }
+
+                  NText {
+                    text: AudioService.source ? (" - " + (AudioService.source.description || AudioService.source.name || "")) : ""
+                    pointSize: Style.fontSizeS
+                    color: Color.mOnSurfaceVariant
+                    elide: Text.ElideRight
+                    Layout.fillWidth: true
+                  }
+                }
+
+                RowLayout {
+                  Layout.fillWidth: true
+                  spacing: Style.marginM
 
                   NValueSlider {
                     Layout.fillWidth: true
@@ -470,17 +359,27 @@ SmartPanel {
                     onPressedChanged: function (pressed) {
                       localInputVolumeChanging = pressed;
                     }
-                    text: Math.round(localInputVolume * 100) + "%"
                   }
-                }
 
-                NIconButton {
-                  icon: AudioService.getInputIcon()
-                  tooltipText: I18n.tr("tooltips.input-muted")
-                  baseSize: Style.baseWidgetSize * 0.8
-                  onClicked: {
-                    AudioService.suppressInputOSD();
-                    AudioService.setInputMuted(!AudioService.inputMuted);
+                  NText {
+                    text: Math.round(localInputVolume * 100) + "%"
+                    pointSize: Style.fontSizeM
+                    family: Settings.data.ui.fontFixed
+                    color: Color.mOnSurface
+                    opacity: enabled ? 1.0 : 0.6
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.preferredWidth: 45 * Style.uiScaleRatio
+                    horizontalAlignment: Text.AlignRight
+                  }
+
+                  NIconButton {
+                    icon: AudioService.getInputIcon()
+                    tooltipText: I18n.tr("tooltips.input-muted")
+                    baseSize: Style.baseWidgetSize * 0.7
+                    onClicked: {
+                      AudioService.suppressInputOSD();
+                      AudioService.setInputMuted(!AudioService.inputMuted);
+                    }
                   }
                 }
               }
@@ -499,7 +398,7 @@ SmartPanel {
                 id: appBox
                 required property PwNode modelData
                 Layout.fillWidth: true
-                Layout.preferredHeight: appRow.implicitHeight + (Style.marginM * 2)
+                Layout.preferredHeight: appRow.implicitHeight + (Style.marginXL)
                 visible: !isCaptureStream
 
                 // Track individual node to ensure properties are bound
@@ -532,162 +431,148 @@ SmartPanel {
                   return false;
                 }
 
-                // Get app name from properties (reactive computed property)
-                // Access modelData.ready to ensure reactivity when node becomes ready
+                // Helper function to validate if a fuzzy match is actually related
+                function isValidMatch(searchTerm, entry) {
+                  if (!entry)
+                    return false;
+                  var search = searchTerm.toLowerCase();
+                  var id = (entry.id || "").toLowerCase();
+                  var name = (entry.name || "").toLowerCase();
+                  var icon = (entry.icon || "").toLowerCase();
+                  // Match is valid if search term appears in entry or entry appears in search
+                  return id.includes(search) || name.includes(search) || icon.includes(search) || search.includes(id.split('.').pop()) || search.includes(name.replace(/\s+/g, ''));
+                }
+
                 readonly property string appName: {
-                  if (!modelData) {
+                  if (!modelData)
                     return "Unknown App";
-                  }
 
                   var props = modelData.properties;
                   var desc = modelData.description || "";
                   var name = modelData.name || "";
 
-                  // If properties aren't available yet, try description or name
                   if (!props) {
-                    if (desc) {
+                    if (desc)
                       return desc;
-                    }
                     if (name) {
-                      // Try to extract meaningful name from node name
                       var nameParts = name.split(/[-_]/);
-                      if (nameParts.length > 0) {
-                        var extracted = nameParts[0];
-                        if (extracted) {
-                          return extracted.charAt(0).toUpperCase() + extracted.slice(1);
-                        }
-                      }
+                      if (nameParts.length > 0 && nameParts[0])
+                        return nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1);
                       return name;
                     }
                     return "Unknown App";
                   }
 
-                  // Try to get application name from various properties
+                  var binaryName = props["application.process.binary"] || "";
+
+                  // Try binary name first (fixes Electron apps like vesktop)
+                  if (binaryName) {
+                    var binParts = binaryName.split("/");
+                    if (binParts.length > 0) {
+                      var binName = binParts[binParts.length - 1].toLowerCase();
+                      var entry = ThemeIcons.findAppEntry(binName);
+                      // Only use entry if it's actually related to binary name
+                      if (entry && entry.name && isValidMatch(binName, entry))
+                        return entry.name;
+                    }
+                  }
+
                   var computedAppName = props["application.name"] || "";
                   var mediaName = props["media.name"] || "";
                   var mediaTitle = props["media.title"] || "";
                   var appId = props["application.id"] || "";
-                  var binaryName = props["application.process.binary"] || "";
 
-                  // If we have application.id, try to extract app name from it (e.g., "firefox.desktop" -> "firefox")
-                  if (!computedAppName && appId) {
-                    var parts = appId.split(".");
-                    if (parts.length > 0) {
-                      computedAppName = parts[0];
-                      // Capitalize first letter and format nicely
-                      if (computedAppName) {
-                        computedAppName = computedAppName.charAt(0).toUpperCase() + computedAppName.slice(1);
-                      }
+                  if (appId) {
+                    var entry = ThemeIcons.findAppEntry(appId);
+                    if (entry && entry.name && isValidMatch(appId, entry))
+                      return entry.name;
+                    if (!computedAppName) {
+                      var parts = appId.split(".");
+                      if (parts.length > 0 && parts[0])
+                        computedAppName = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
                     }
                   }
 
-                  // Try binary name as fallback
                   if (!computedAppName && binaryName) {
                     var binParts = binaryName.split("/");
-                    if (binParts.length > 0) {
-                      computedAppName = binParts[binParts.length - 1];
-                      if (computedAppName) {
-                        computedAppName = computedAppName.charAt(0).toUpperCase() + computedAppName.slice(1);
-                      }
-                    }
+                    if (binParts.length > 0 && binParts[binParts.length - 1])
+                      computedAppName = binParts[binParts.length - 1].charAt(0).toUpperCase() + binParts[binParts.length - 1].slice(1);
                   }
 
-                  // Priority: application.name > media.title > media.name > binary > description > name
                   var result = computedAppName || mediaTitle || mediaName || binaryName || desc || name;
 
-                  // If we still don't have a good name, try to extract from node name
                   if (!result || result === "" || result === "Unknown App") {
                     if (name) {
-                      // Try to extract meaningful name from node name (e.g., "firefox-1234" -> "firefox")
                       var nameParts = name.split(/[-_]/);
-                      if (nameParts.length > 0) {
-                        result = nameParts[0];
-                        // Capitalize first letter
-                        if (result) {
-                          result = result.charAt(0).toUpperCase() + result.slice(1);
-                        }
-                      }
+                      if (nameParts.length > 0 && nameParts[0])
+                        result = nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1);
                     }
                   }
 
                   return result || "Unknown App";
                 }
 
-                // Get app icon from properties (returns file path)
                 readonly property string appIcon: {
-                  if (!modelData) {
+                  if (!modelData)
                     return ThemeIcons.iconFromName("application-x-executable", "application-x-executable");
-                  }
 
                   var props = modelData.properties;
+
                   if (!props) {
-                    // Try to get icon from app name
                     var name = modelData.name || "";
                     if (name) {
-                      // Extract app name from node name (e.g., "firefox-1234" -> "firefox")
                       var nameParts = name.split(/[-_]/);
                       if (nameParts.length > 0) {
-                        var appName = nameParts[0].toLowerCase();
-                        return ThemeIcons.iconFromName(appName, "application-x-executable");
+                        var entry = ThemeIcons.findAppEntry(nameParts[0].toLowerCase());
+                        if (entry && entry.icon && isValidMatch(nameParts[0].toLowerCase(), entry))
+                          return ThemeIcons.iconFromName(entry.icon, "application-x-executable");
                       }
                     }
                     return ThemeIcons.iconFromName("application-x-executable", "application-x-executable");
                   }
 
-                  // Try application.icon-name first (from Pipewire)
-                  var iconName = props["application.icon-name"] || "";
-                  if (iconName) {
-                    var iconPath = ThemeIcons.iconFromName(iconName, "");
-                    if (iconPath && iconPath !== "") {
-                      return iconPath;
-                    }
-                  }
-
-                  // Try to get app ID and resolve from desktop entry
-                  var appId = props["application.id"] || "";
-                  if (appId) {
-                    var iconPathFromId = ThemeIcons.iconForAppId(appId.toLowerCase(), "");
-                    if (iconPathFromId && iconPathFromId !== "") {
-                      return iconPathFromId;
-                    }
-                  }
-
-                  // Try application.name
-                  var appName = props["application.name"] || "";
-                  if (appName) {
-                    var iconPathFromName = ThemeIcons.iconFromName(appName.toLowerCase(), "");
-                    if (iconPathFromName && iconPathFromName !== "") {
-                      return iconPathFromName;
-                    }
-                  }
-
-                  // Try binary name
                   var binaryName = props["application.process.binary"] || "";
                   if (binaryName) {
                     var binParts = binaryName.split("/");
                     if (binParts.length > 0) {
                       var binName = binParts[binParts.length - 1].toLowerCase();
-                      var iconPathFromBinary = ThemeIcons.iconFromName(binName, "");
-                      if (iconPathFromBinary && iconPathFromBinary !== "") {
-                        return iconPathFromBinary;
-                      }
+                      var entry = ThemeIcons.findAppEntry(binName);
+                      if (entry && entry.icon && isValidMatch(binName, entry))
+                        return ThemeIcons.iconFromName(entry.icon, "");
                     }
                   }
 
-                  // Try node name as fallback
+                  var iconName = props["application.icon-name"] || "";
+                  if (iconName && ThemeIcons.iconExists(iconName)) {
+                    var iconPath = ThemeIcons.iconFromName(iconName, "");
+                    if (iconPath && iconPath !== "")
+                      return iconPath;
+                  }
+
+                  var appId = props["application.id"] || "";
+                  if (appId) {
+                    var entry = ThemeIcons.findAppEntry(appId);
+                    if (entry && entry.icon && isValidMatch(appId, entry))
+                      return ThemeIcons.iconFromName(entry.icon, "");
+                  }
+
+                  var appName = props["application.name"] || "";
+                  if (appName) {
+                    var entry = ThemeIcons.findAppEntry(appName.toLowerCase());
+                    if (entry && entry.icon && isValidMatch(appName.toLowerCase(), entry))
+                      return ThemeIcons.iconFromName(entry.icon, "");
+                  }
+
                   var name = modelData.name || "";
                   if (name) {
                     var nameParts = name.split(/[-_]/);
                     if (nameParts.length > 0) {
-                      var extractedName = nameParts[0].toLowerCase();
-                      var iconPathFromNodeName = ThemeIcons.iconFromName(extractedName, "");
-                      if (iconPathFromNodeName && iconPathFromNodeName !== "") {
-                        return iconPathFromNodeName;
-                      }
+                      var entry = ThemeIcons.findAppEntry(nameParts[0].toLowerCase());
+                      if (entry && entry.icon && isValidMatch(nameParts[0].toLowerCase(), entry))
+                        return ThemeIcons.iconFromName(entry.icon, "");
                     }
                   }
 
-                  // Final fallback
                   return ThemeIcons.iconFromName("application-x-executable", "application-x-executable");
                 }
 
@@ -698,18 +583,12 @@ SmartPanel {
                   spacing: Style.marginM
 
                   // App Icon
-                  Image {
+                  IconImage {
                     id: appIconImage
                     Layout.preferredWidth: Style.baseWidgetSize
                     Layout.preferredHeight: Style.baseWidgetSize
                     source: appBox.appIcon
-                    sourceSize.width: Style.baseWidgetSize * 2
-                    sourceSize.height: Style.baseWidgetSize * 2
                     smooth: true
-                    mipmap: true
-                    antialiasing: true
-                    fillMode: Image.PreserveAspectFit
-                    cache: true
                     asynchronous: true
 
                     // Fallback icon if image fails to load
@@ -735,32 +614,48 @@ SmartPanel {
                       Layout.fillWidth: true
                     }
 
-                    NValueSlider {
+                    RowLayout {
                       Layout.fillWidth: true
-                      from: 0
-                      to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
-                      value: (appBox.appVolume !== undefined) ? appBox.appVolume : 0.0
-                      stepSize: 0.01
-                      heightRatio: 0.5
-                      enabled: !!(appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true)
-                      onMoved: function (value) {
-                        if (appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true) {
-                          appBox.nodeAudio.volume = value;
+                      spacing: Style.marginM
+
+                      NValueSlider {
+                        Layout.fillWidth: true
+                        from: 0
+                        to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+                        value: (appBox.appVolume !== undefined) ? appBox.appVolume : 0.0
+                        stepSize: 0.01
+                        heightRatio: 0.5
+                        enabled: !!(appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true)
+                        onMoved: function (value) {
+                          if (appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true) {
+                            appBox.nodeAudio.volume = value;
+                          }
                         }
                       }
-                      text: Math.round((appBox.appVolume !== undefined ? appBox.appVolume : 0.0) * 100) + "%"
-                    }
-                  }
 
-                  // Mute Button
-                  NIconButton {
-                    icon: (appBox.appMuted === true) ? "volume-mute" : "volume-high"
-                    tooltipText: (appBox.appMuted === true) ? I18n.tr("tooltips.unmute") : I18n.tr("tooltips.mute")
-                    baseSize: Style.baseWidgetSize * 0.8
-                    enabled: !!(appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true)
-                    onClicked: {
-                      if (appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true) {
-                        appBox.nodeAudio.muted = !appBox.appMuted;
+                      NText {
+                        text: Math.round((appBox.appVolume !== undefined ? appBox.appVolume : 0.0) * 100) + "%"
+                        pointSize: Style.fontSizeM
+                        family: Settings.data.ui.fontFixed
+                        color: Color.mOnSurface
+                        opacity: enabled ? 1.0 : 0.6
+                        Layout.alignment: Qt.AlignVCenter
+                        Layout.preferredWidth: 45 * Style.uiScaleRatio
+                        horizontalAlignment: Text.AlignRight
+                        enabled: !!(appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true)
+                      }
+
+                      // Mute Button
+                      NIconButton {
+                        icon: (appBox.appMuted === true) ? "volume-mute" : "volume-high"
+                        tooltipText: (appBox.appMuted === true) ? I18n.tr("tooltips.unmute") : I18n.tr("tooltips.mute")
+                        baseSize: Style.baseWidgetSize * 0.7
+                        enabled: !!(appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true)
+                        onClicked: {
+                          if (appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true) {
+                            appBox.nodeAudio.muted = !appBox.appMuted;
+                          }
+                        }
                       }
                     }
                   }
@@ -783,15 +678,17 @@ SmartPanel {
 
         // Devices Tab
         NScrollView {
+          id: devicesScrollView
           horizontalPolicy: ScrollBar.AlwaysOff
           verticalPolicy: ScrollBar.AsNeeded
-          clip: true
           contentWidth: availableWidth
+          reserveScrollbarSpace: false
+          gradientColor: Color.mSurface
 
           // AudioService Devices
           ColumnLayout {
             spacing: Style.marginM
-            width: parent.width
+            width: devicesScrollView.availableWidth
 
             // -------------------------------
             // Output Devices
@@ -801,7 +698,7 @@ SmartPanel {
 
             NBox {
               Layout.fillWidth: true
-              Layout.preferredHeight: outputColumn.implicitHeight + (Style.marginM * 2)
+              Layout.preferredHeight: outputColumn.implicitHeight + (Style.marginXL)
 
               ColumnLayout {
                 id: outputColumn
@@ -843,7 +740,7 @@ SmartPanel {
 
             NBox {
               Layout.fillWidth: true
-              Layout.preferredHeight: inputColumn.implicitHeight + (Style.marginM * 2)
+              Layout.preferredHeight: inputColumn.implicitHeight + (Style.marginXL)
 
               ColumnLayout {
                 id: inputColumn

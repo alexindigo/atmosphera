@@ -17,77 +17,95 @@ Scope {
   property bool showInfo: false
   property string errorMessage: ""
   property string infoMessage: ""
-  property bool pamAvailable: typeof PamContext !== "undefined"
 
-  // Determine PAM config based on OS
-  // On NixOS: use /etc/pam.d/login
-  // Otherwise: use generated config in configDir
-  readonly property string pamConfigDirectory: {
-    if (HostService.isReady && HostService.isNixOS) {
-      return "/etc/pam.d";
-    }
-    return Settings.configDir + "pam";
-  }
-  readonly property string pamConfig: {
-    if (HostService.isReady && HostService.isNixOS) {
-      return "login";
-    }
-    return "password.conf";
-  }
+  readonly property string pamConfigDirectory: "/etc/pam.d"
+  property string pamConfig: Quickshell.env("NOCTALIA_PAM_SERVICE") || "login"
+  property bool pamReady: false
 
   Component.onCompleted: {
-    if (HostService.isReady) {
-      if (HostService.isNixOS) {
-        Logger.i("LockContext", "NixOS detected, using system PAM config: /etc/pam.d/login");
-      } else {
-        Logger.i("LockContext", "Using generated PAM config:", pamConfigDirectory + "/" + pamConfig);
-      }
+    if (Quickshell.env("NOCTALIA_PAM_SERVICE")) {
+      Logger.i("LockContext", "NOCTALIA_PAM_SERVICE is set, using system PAM config: /etc/pam.d/" + pamConfig);
+      pamReady = true;
     } else {
-      // Wait for HostService to be ready
-      HostService.isReadyChanged.connect(function () {
-        if (HostService.isNixOS) {
-          Logger.i("LockContext", "NixOS detected, using system PAM config: /etc/pam.d/login");
+      Logger.i("LockContext", "Probing for best PAM service...");
+      detectPamServiceProc.running = true;
+    }
+  }
+
+  Process {
+    id: detectPamServiceProc
+    command: ["sh", "-c", "
+      if [ -f /etc/pam.d/login ]; then echo 'login'; exit 0; fi;
+      if [ -f /etc/pam.d/system-auth ]; then echo 'system-auth'; exit 0; fi;
+      if [ -f /etc/pam.d/common-auth ]; then echo 'common-auth'; exit 0; fi;
+      echo 'login';
+    "]
+    stdout: StdioCollector {
+      onStreamFinished: {
+        const service = String(text || "").trim();
+        if (service.length > 0) {
+          root.pamConfig = service;
+          Logger.i("LockContext", "Detected PAM service: " + service);
         } else {
-          Logger.i("LockContext", "Using generated PAM config:", pamConfigDirectory + "/" + pamConfig);
+          Logger.w("LockContext", "Failed to detect PAM service, defaulting to login");
         }
-      });
+        root.pamReady = true;
+      }
+    }
+    stderr: StdioCollector {}
+  }
+
+  onPamReadyChanged: {
+    if (pamReady) {
+      if (Settings.data.general.autoStartAuth && currentText === "") {
+        pam.start();
+      }
+    }
+  }
+
+  onShowInfoChanged: {
+    if (showInfo) {
+      showFailure = false;
+    }
+  }
+
+  onShowFailureChanged: {
+    if (showFailure) {
+      showInfo = false;
     }
   }
 
   onCurrentTextChanged: {
     if (currentText !== "") {
       showInfo = false;
-      infoMessage = "";
       showFailure = false;
-      errorMessage = "";
-      occupyFingerprintSensorProc.running = true;
+      if (!waitingForPassword) {
+        pam.abort();
+      }
+      if (Settings.data.general.allowPasswordWithFprintd) {
+        occupyFingerprintSensorProc.running = true;
+      }
     } else {
       occupyFingerprintSensorProc.running = false;
+      if (pamReady && Settings.data.general.autoStartAuth) {
+        pam.start();
+      }
     }
   }
 
   function tryUnlock() {
-    if (!pamAvailable) {
-      errorMessage = "PAM not available";
-      showFailure = true;
+    if (!pamReady) {
+      Logger.w("LockContext", "PAM not ready yet, ignoring unlock attempt");
       return;
     }
 
     if (waitingForPassword) {
       pam.respond(currentText);
+      unlockInProgress = true;
       waitingForPassword = false;
       showInfo = false;
       return;
     }
-
-    if (root.unlockInProgress) {
-      Logger.i("LockContext", "Unlock already in progress, ignoring duplicate attempt");
-      return;
-    }
-
-    root.unlockInProgress = true;
-    errorMessage = "";
-    showFailure = false;
 
     Logger.i("LockContext", "Starting PAM authentication for user:", pam.user);
     pam.start();
@@ -100,9 +118,6 @@ Scope {
 
   PamContext {
     id: pam
-    // Use custom PAM config to ensure predictable password-only authentication
-    // On NixOS: uses /etc/pam.d/login
-    // Otherwise: uses config created in Settings.qml and stored in configDir/pam/
     configDirectory: root.pamConfigDirectory
     config: root.pamConfig
     user: HostService.username
@@ -110,27 +125,21 @@ Scope {
     onPamMessage: {
       Logger.i("LockContext", "PAM message:", message, "isError:", messageIsError, "responseRequired:", responseRequired);
 
-      if (messageIsError) {
-        errorMessage = message;
-      } else {
-        infoMessage = message;
-      }
-
       if (this.responseRequired) {
         Logger.i("LockContext", "Responding to PAM with password");
         if (root.currentText !== "") {
           this.respond(root.currentText);
+          unlockInProgress = true;
         } else {
           root.waitingForPassword = true;
-          showFailure = false;
           infoMessage = I18n.tr("lock-screen.password");
           showInfo = true;
         }
       } else if (messageIsError) {
-        showInfo = false;
+        errorMessage = message;
         showFailure = true;
       } else {
-        showFailure = false;
+        infoMessage = message;
         showInfo = true;
       }
     }

@@ -1,19 +1,26 @@
 {
   "settingsVersion": 0,
   "bar": {
+    "barType": "simple",
     "position": "top",
     "monitors": [],
     "density": "default",
     "showOutline": false,
     "showCapsule": true,
     "capsuleOpacity": 1,
+    "capsuleColorKey": "none",
     "backgroundOpacity": 0.93,
     "useSeparateOpacity": false,
     "floating": false,
     "marginVertical": 4,
     "marginHorizontal": 4,
+    "frameThickness": 8,
+    "frameRadius": 12,
     "outerCorners": true,
-    "exclusive": true,
+    "hideOnOverview": false,
+    "displayMode": "always_visible",
+    "autoHideDelay": 500,
+    "autoShowDelay": 150,
     "widgets": {
       "left": [
         {
@@ -57,7 +64,8 @@
           "id": "ControlCenter"
         }
       ]
-    }
+    },
+    "screenOverrides": []
   },
   "general": {
     "avatarImage": "",
@@ -81,7 +89,14 @@
     "shadowOffsetY": 3,
     "language": "",
     "allowPanelsOnScreenWithoutBar": true,
-    "showChangelogOnStartup": true
+    "showChangelogOnStartup": true,
+    "telemetryEnabled": false,
+    "enableLockScreenCountdown": true,
+    "lockScreenCountdownDuration": 10000,
+    "autoStartAuth": false,
+    "allowPasswordWithFprintd": false,
+    "clockStyle": "custom",
+    "clockFormat": "hh\\nmm"
   },
   "ui": {
     "fontDefault": "",
@@ -134,13 +149,14 @@
     "directory": "",
     "monitorDirectories": [],
     "enableMultiMonitorDirectories": false,
-    "recursiveSearch": false,
+    "showHiddenFiles": false,
+    "viewMode": "single",
     "setWallpaperOnAllMonitors": true,
     "fillMode": "crop",
     "fillColor": "#000000",
     "useSolidColor": false,
     "solidColor": "#1a1a2e",
-    "randomEnabled": false,
+    "automationEnabled": false,
     "wallpaperChangeMode": "random",
     "randomIntervalSec": 300,
     "transitionDuration": 1500,
@@ -158,24 +174,29 @@
     "wallhavenApiKey": "",
     "wallhavenResolutionMode": "atleast",
     "wallhavenResolutionWidth": "",
-    "wallhavenResolutionHeight": ""
+    "wallhavenResolutionHeight": "",
+    "sortOrder": "name"
   },
   "appLauncher": {
     "enableClipboardHistory": false,
     "autoPasteClipboard": false,
     "enableClipPreview": true,
     "clipboardWrapText": true,
+    "clipboardWatchTextCommand": "wl-paste --type text --watch cliphist store",
+    "clipboardWatchImageCommand": "wl-paste --type image --watch cliphist store",
     "position": "center",
     "pinnedApps": [],
     "useApp2Unit": false,
     "sortByMostUsed": true,
-    "terminalCommand": "xterm -e",
+    "terminalCommand": "alacritty -e",
     "customLaunchPrefixEnabled": false,
     "customLaunchPrefix": "",
     "viewMode": "list",
     "showCategories": true,
     "iconMode": "tabler",
     "showIconBackground": false,
+    "enableSettingsSearch": true,
+    "enableWindowsSearch": true,
     "ignoreMouseInput": false,
     "screenshotAnnotationTool": "",
     "overviewLayer": false
@@ -193,6 +214,9 @@
         },
         {
           "id": "WallpaperSelector"
+        },
+        {
+          "id": "NoctaliaPerformance"
         }
       ],
       "right": [
@@ -246,15 +270,20 @@
     "gpuCriticalThreshold": 90,
     "memWarningThreshold": 80,
     "memCriticalThreshold": 90,
+    "swapWarningThreshold": 80,
+    "swapCriticalThreshold": 90,
     "diskWarningThreshold": 80,
     "diskCriticalThreshold": 90,
-    "cpuPollingInterval": 3000,
-    "tempPollingInterval": 3000,
+    "diskAvailWarningThreshold": 20,
+    "diskAvailCriticalThreshold": 10,
+    "batteryWarningThreshold": 20,
+    "batteryCriticalThreshold": 5,
+    "cpuPollingInterval": 1000,
     "gpuPollingInterval": 3000,
     "enableDgpuMonitoring": false,
-    "memPollingInterval": 3000,
-    "diskPollingInterval": 3000,
-    "networkPollingInterval": 3000,
+    "memPollingInterval": 1000,
+    "diskPollingInterval": 30000,
+    "networkPollingInterval": 1000,
     "loadAvgPollingInterval": 3000,
     "useCustomColors": false,
     "warningColor": "",
@@ -290,8 +319,8 @@
     "countdownDuration": 10000,
     "position": "center",
     "showHeader": true,
-    "largeButtonsStyle": false,
-    "largeButtonsLayout": "grid",
+    "largeButtonsStyle": true,
+    "largeButtonsLayout": "single-row",
     "showNumberLabels": true,
     "powerOptions": [
       {
@@ -330,7 +359,6 @@
     "lowUrgencyDuration": 3,
     "normalUrgencyDuration": 8,
     "criticalUrgencyDuration": 15,
-    "enableKeyboardLayoutToast": true,
     "saveToHistory": {
       "low": true,
       "normal": true,
@@ -344,7 +372,10 @@
       "normalSoundFile": "",
       "lowSoundFile": "",
       "excludedApps": "discord,firefox,chrome,chromium,edge"
-    }
+    },
+    "enableMediaToast": false,
+    "enableKeyboardLayoutToast": true,
+    "enableBatteryToast": true
   },
   "osd": {
     "enabled": true,
@@ -365,7 +396,8 @@
     "cavaFrameRate": 30,
     "visualizerType": "linear",
     "mprisBlacklist": [],
-    "preferredPlayer": ""
+    "preferredPlayer": "",
+    "volumeFeedback": false
   },
   "brightness": {
     "brightnessStep": 5,
@@ -379,35 +411,12 @@
     "schedulingMode": "off",
     "manualSunrise": "06:30",
     "manualSunset": "18:30",
-    "matugenSchemeType": "scheme-fruit-salad"
+    "generationMethod": "tonal-spot",
+    "monitorForColors": ""
   },
   "templates": {
-    "gtk": false,
-    "qt": false,
-    "kcolorscheme": false,
-    "alacritty": false,
-    "kitty": false,
-    "ghostty": false,
-    "foot": false,
-    "wezterm": false,
-    "fuzzel": false,
-    "discord": false,
-    "pywalfox": false,
-    "vicinae": false,
-    "walker": false,
-    "code": false,
-    "spicetify": false,
-    "telegram": false,
-    "cava": false,
-    "yazi": false,
-    "emacs": false,
-    "niri": false,
-    "hyprland": false,
-    "mango": false,
-    "zed": false,
-    "helix": false,
-    "zenBrowser": false,
-    "enableUserTemplates": false
+    "activeTemplates": [],
+    "enableUserTheming": false
   },
   "nightLight": {
     "enabled": false,
@@ -425,7 +434,12 @@
     "screenLock": "",
     "screenUnlock": "",
     "performanceModeEnabled": "",
-    "performanceModeDisabled": ""
+    "performanceModeDisabled": "",
+    "startup": "",
+    "session": ""
+  },
+  "plugins": {
+    "autoUpdate": false
   },
   "desktopWidgets": {
     "enabled": false,
