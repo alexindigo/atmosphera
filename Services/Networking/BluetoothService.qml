@@ -14,7 +14,7 @@ Singleton {
   // Constants (centralized tunables)
   readonly property int ctlPollMs: 1500
   readonly property int ctlPollSoonMs: 250
-  readonly property int scanAutoStopMs: 6000
+  readonly property int scanAutoStopMs: 10000
 
   property bool airplaneModeToggled: false
   property bool lastBluetoothBlocked: false
