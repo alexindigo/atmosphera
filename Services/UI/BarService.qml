@@ -95,7 +95,7 @@ Singleton {
     target: Settings.data.bar
     function onDisplayModeChanged() {
       Logger.d("BarService", "Display mode changed to:", Settings.data.bar.displayMode);
-      
+
       if (Settings.data.bar.displayMode === "auto_hide") {
         // When switching to auto_hide mode, hide the bar on all screens
         for (let screenName in screenAutoHideState) {
