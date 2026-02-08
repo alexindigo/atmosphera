@@ -1793,7 +1793,9 @@
     "wallhaven": {
       "loading": "正在載入桌布...",
       "no-results": "找不到桌布, 試著用不同的搜尋字串",
-      "page": "第 {current} / {total} 頁"
+      "page": "第 {current} / {total} 頁",
+      "page-prefix": "頁面",
+      "page-suffix": "共 {total} 個"
     }
   },
   "weather": {

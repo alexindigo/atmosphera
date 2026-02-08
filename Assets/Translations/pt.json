@@ -1793,7 +1793,9 @@
     "wallhaven": {
       "loading": "Carregando papéis de parede...",
       "no-results": "Nenhum papel de parede encontrado. Tente uma busca diferente.",
-      "page": "{current} de {total}"
+      "page": "{current} de {total}",
+      "page-prefix": "Página",
+      "page-suffix": "de {total}"
     }
   },
   "weather": {

@@ -9,8 +9,6 @@ import qs.Widgets
 Rectangle {
   id: root
 
-  // Whether to enable lock screen animations (avatar pulse, breathing, smooth cursor blink).
-  // Defaults to false to reduce GPU usage.  Set Settings.data.general.lockScreenAnimations = true to restore.
   readonly property bool animationsEnabled: Settings.data.general.lockScreenAnimations || false
 
   // Use timer-driven properties instead of Time.now to avoid per-frame repaints.

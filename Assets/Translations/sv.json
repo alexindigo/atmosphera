@@ -1793,7 +1793,9 @@
     "wallhaven": {
       "loading": "Läser in bakgrundsbilder...",
       "no-results": "Inga bakgrundsbilder hittades. Prova en annan sökfråga.",
-      "page": "{current} av {total}"
+      "page": "{current} av {total}",
+      "page-prefix": "Sida",
+      "page-suffix": "av {total}"
     }
   },
   "weather": {
