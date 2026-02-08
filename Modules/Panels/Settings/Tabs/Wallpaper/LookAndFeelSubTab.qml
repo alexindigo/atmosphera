@@ -79,7 +79,7 @@ ColumnLayout {
     stepSize: 0.01
     value: Settings.data.wallpaper.overviewBlur
     onMoved: value => Settings.data.wallpaper.overviewBlur = value
-    text: Settings.data.wallpaper.overviewBlur.toFixed(1)
+    text: (((Settings.data.wallpaper.overviewBlur) / 1.5) * 100).toFixed(0) + "%"
     defaultValue: Settings.getDefaultValue("wallpaper.overviewBlur")
   }
 
@@ -92,7 +92,7 @@ ColumnLayout {
     stepSize: 0.01
     value: Settings.data.wallpaper.overviewTint
     onMoved: value => Settings.data.wallpaper.overviewTint = value
-    text: Settings.data.wallpaper.overviewTint.toFixed(1)
+    text: ((Settings.data.wallpaper.overviewTint) * 100).toFixed(0) + "%"
     defaultValue: Settings.getDefaultValue("wallpaper.overviewTint")
   }
 }
