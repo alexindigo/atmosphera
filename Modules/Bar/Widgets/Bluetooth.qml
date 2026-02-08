@@ -3,6 +3,7 @@ import QtQuick.Controls
 import Quickshell
 import qs.Commons
 import qs.Modules.Bar.Extras
+import qs.Modules.Panels.Settings // For SettingsPanel
 import qs.Services.Networking
 import qs.Services.UI
 import qs.Widgets
@@ -50,9 +51,14 @@ Item {
         "icon": BluetoothService.enabled ? "bluetooth-off" : "bluetooth"
       },
       {
+        "label": I18n.tr("common.bluetooth") + " " + I18n.tr("tooltips.open-settings"),
+        "action": "bluetooth-settings",
+        "icon": "settings"
+      },
+      {
         "label": I18n.tr("actions.widget-settings"),
         "action": "widget-settings",
-        "icon": "settings"
+        "icon": "settings-bar"
       },
     ]
 
@@ -62,6 +68,8 @@ Item {
 
                    if (action === "toggle-bluetooth") {
                      BluetoothService.setBluetoothEnabled(!BluetoothService.enabled);
+                   } else if (action === "bluetooth-settings") {
+                     SettingsPanelService.openToTab(SettingsPanel.Tab.Network, 1, screen);
                    } else if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
                    }
