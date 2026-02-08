@@ -487,7 +487,6 @@ Singleton {
     Quickshell.execDetached(["sh", "-c", "systemctl suspend || loginctl suspend"]);
   }
 
-
   function lock() {
     Logger.i("Compositor", "LockScreen requested");
     if (executeSessionAction("lock"))

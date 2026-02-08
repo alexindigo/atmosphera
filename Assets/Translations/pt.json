@@ -1180,6 +1180,8 @@
       "compact-lockscreen-label": "Tela de bloqueio compacta",
       "lock-on-suspend-description": "Bloquear a tela automaticamente ao suspender o sistema.",
       "lock-on-suspend-label": "Bloquear ao suspender",
+      "lock-screen-animations-description": "Ativar ou desativar as animações do ecrã de bloqueio.",
+      "lock-screen-animations-label": "Animações da Tela de Bloqueio",
       "show-hibernate-description": "Mostrar a opção 'hibernar' nos controles de energia.",
       "show-hibernate-label": "Mostrar hibernar",
       "show-session-buttons-description": "Permitir acesso às configurações de energia a partir da tela de bloqueio.",
