@@ -132,7 +132,7 @@ Item {
                                                 // In another mode -> switch to app mode
                                                 PanelService.setLauncherSearchText(screen, "");
                                               }
-                                            });
+                                            }, Settings.data.appLauncher.overviewLayer);
     }
     function clipboard() {
       root.screenDetector.withCurrentScreen(screen => {
@@ -148,7 +148,7 @@ Item {
                                                 // In another mode -> switch to clipboard mode
                                                 PanelService.setLauncherSearchText(screen, ">clip ");
                                               }
-                                            });
+                                            }, Settings.data.appLauncher.overviewLayer);
     }
     function command() {
       root.screenDetector.withCurrentScreen(screen => {
@@ -168,7 +168,7 @@ Item {
                                                 // In another mode -> switch to clipboard mode
                                                 launcherPanel.setSearchText(">cmd ");
                                               }
-                                            });
+                                            }, Settings.data.appLauncher.overviewLayer);
     }
     function emoji() {
       root.screenDetector.withCurrentScreen(screen => {
@@ -184,7 +184,7 @@ Item {
                                                 // In another mode -> switch to emoji mode
                                                 PanelService.setLauncherSearchText(screen, ">emoji ");
                                               }
-                                            });
+                                            }, Settings.data.appLauncher.overviewLayer);
     }
     function windows() {
       root.screenDetector.withCurrentScreen(screen => {
@@ -204,7 +204,7 @@ Item {
                                                 // In another mode -> switch to windows mode
                                                 launcherPanel.setSearchText(">win ");
                                               }
-                                            });
+                                            }, Settings.data.appLauncher.overviewLayer);
     }
     function settings() {
       root.screenDetector.withCurrentScreen(screen => {
@@ -224,7 +224,7 @@ Item {
                                                 // In another mode -> switch to settings mode
                                                 launcherPanel.setSearchText(">settings ");
                                               }
-                                            });
+                                            }, Settings.data.appLauncher.overviewLayer);
     }
   }
 
