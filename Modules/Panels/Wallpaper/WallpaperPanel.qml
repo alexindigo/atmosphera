@@ -1517,10 +1517,10 @@ SmartPanel {
           NTextInput {
             id: pageInput
             text: "" + WallhavenService.currentPage
-            Layout.preferredWidth: 80 * Style.uiScaleRatio
-            Layout.maximumWidth: 80 * Style.uiScaleRatio
+            Layout.preferredWidth: 50 * Style.uiScaleRatio
+            Layout.maximumWidth: 50 * Style.uiScaleRatio
             Layout.fillWidth: false
-            minimumInputWidth: 80 * Style.uiScaleRatio
+            minimumInputWidth: 50 * Style.uiScaleRatio
             horizontalAlignment: Text.AlignHCenter
             inputMethodHints: Qt.ImhDigitsOnly
             enabled: !loading && !WallhavenService.fetching
