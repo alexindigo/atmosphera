@@ -54,6 +54,8 @@ Item {
   implicitWidth: contentWidth
   implicitHeight: contentHeight
 
+  visible: !root.hideWhenOff || (root.showCaps && LockKeysService.capsLockOn) || (root.showNum && LockKeysService.numLockOn) || (root.showScroll && LockKeysService.scrollLockOn)
+
   NPopupContextMenu {
     id: contextMenu
 
@@ -78,14 +80,13 @@ Item {
   // Visual capsule centered in parent
   Rectangle {
     id: visualCapsule
-    width: root.contentWidth
+    //    width: root.contentWidth
     height: root.contentHeight
     anchors.centerIn: parent
     radius: Style.radiusM
     color: Style.capsuleColor
     border.color: Style.capsuleBorderColor
     border.width: Style.capsuleBorderWidth
-    enabled: !root.hideWhenOff || (root.showCaps && LockKeysService.capsLockOn) || (root.showNum && LockKeysService.numLockOn) || (root.showScroll && LockKeysService.scrollLockOn)
 
     Item {
       id: layout
