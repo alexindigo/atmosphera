@@ -518,12 +518,6 @@ PanelWindow {
 
   Shortcut {
     sequence: Settings.data.general.keybinds.keyEnter
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onReturnPressed !== undefined) && !PanelService.isKeybindRecording
-    onActivated: PanelService.openedPanel.onReturnPressed()
-  }
-
-  Shortcut {
-    sequence: Settings.data.general.keybinds.keyEnter
     enabled: root.isPanelOpen && (PanelService.openedPanel.onEnterPressed !== undefined) && !PanelService.isKeybindRecording
     onActivated: PanelService.openedPanel.onEnterPressed()
   }
