@@ -122,8 +122,13 @@ Item {
     id: _animTimer
     interval: 16
     repeat: true
+    property real _prevTime: 0
+
     onTriggered: {
-      const dt = 16 / root.updateInterval;
+      const now = Date.now();
+      const elapsed = _prevTime > 0 ? (now - _prevTime) : 16;
+      _prevTime = now;
+      const dt = elapsed / root.updateInterval;
       let stillAnimating = false;
 
       // Scroll animation
@@ -158,8 +163,10 @@ Item {
 
       canvas.requestPaint();
 
-      if (!stillAnimating)
+      if (!stillAnimating) {
+        _prevTime = 0;
         stop();
+      }
     }
   }
 
