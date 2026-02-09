@@ -12,7 +12,7 @@ import qs.Services.UI
 import qs.Widgets
 
 Item {
-  id: root
+  id: btprefs
   Layout.fillWidth: true
   implicitHeight: mainLayout.implicitHeight // Do i hate locating qml Items? - Absolutely yes
 
@@ -27,10 +27,11 @@ Item {
   }
 
   onVisibleChanged: _updateScanningState()
+  onClosed: _updateScanningState()
 
   function _updateScanningState() {
-    Logger.d("Bluetooth SubTab", "Panel Opened");
-    if (root.visible && BluetoothService.enabled) {
+    Logger.d("Bluetooth Prefs", "Panel Opened");
+    if (btprefs.visible && BluetoothService.enabled) {
       if (!isScanningActive) {
         BluetoothService.setScanActive(true);
         isScanningActive = true;
@@ -39,30 +40,21 @@ Item {
         BluetoothService.setDiscoverable(true);
         isDiscoverable = true;
       }
-    } else {
-      if (isScanningActive) {
-        BluetoothService.setScanActive(false);
-        isScanningActive = false;
-      }
-      if (isDiscoverable) {
-        BluetoothService.setDiscoverable(false);
-        isDiscoverable = false;
-      }
-    }
+    } 
   }
 
   Component.onDestruction: {
-    // Ensure scanning is stopped when component is destroyed
+    // Ensure scanning is stopped when component is closed
     if (isScanningActive) {
       BluetoothService.setScanActive(false);
       isScanningActive = false;
     }
-    // Ensure discoverable is disabled when component is destroyed
+    // Ensure discoverable is disabled when component is closed
     if (isDiscoverable) {
       BluetoothService.setDiscoverable(false);
       isDiscoverable = false;
     }
-    Logger.d("Bluetooth SubTab", "Panel Closed");
+    Logger.d("Bluetooth Prefs", "Panel Closed");
   }
 
   ColumnLayout {
@@ -128,6 +120,7 @@ Item {
 
     // Device List [1] (Connected)
     BluetoothDevicesList {
+      id: connectedDevicesList
       label: I18n.tr("bluetooth.panel.connected-devices")
       headerMode: "layout"
       property var connectedDevices: {
@@ -142,8 +135,14 @@ Item {
       Layout.fillWidth: true
     }
 
+    NDivider {
+      Layout.fillWidth: true
+      visible: connectedDevicesList.visible
+    }
+
     // Devices List [2] (Paired)
     BluetoothDevicesList {
+      id: pairedDevicesList
       label: I18n.tr("bluetooth.panel.paired-devices")
       headerMode: "layout"
       property var pairedDevices: {
@@ -158,8 +157,14 @@ Item {
       Layout.fillWidth: true
     }
 
+    NDivider {
+      Layout.fillWidth: true
+      visible: pairedDevicesList.visible
+    }
+
     // Device List [3] (Ready to pair // discovered)
     BluetoothDevicesList {
+      id: availableDevicesList
       label: I18n.tr("bluetooth.panel.available-devices") + (BluetoothService.scanningActive ? " (" + I18n.tr("bluetooth.panel.scanning") + ")" : "")  // I would prefered something animated here but as far as im aware there is no such thing.
       headerMode: "filter"
       property var availableDevices: {
@@ -220,7 +225,7 @@ Item {
 
     NDivider {
       Layout.fillWidth: true
-      visible: BluetoothService.enabled
+      visible: availableDevicesList.visible
     }
 
     // RSSI Polling
