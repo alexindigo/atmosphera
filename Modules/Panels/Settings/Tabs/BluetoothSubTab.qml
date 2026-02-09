@@ -7,6 +7,7 @@ import "../../Bluetooth" // For BluetoothDevicesList
 
 import qs.Commons
 import qs.Services.Networking
+import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
 
@@ -16,6 +17,7 @@ Item {
   implicitHeight: mainLayout.implicitHeight // Do i hate locating qml Items? - Absolutely yes
 
   property bool isScanningActive: false // Track local scanning state
+  property bool isDiscoverable: false // Track local discoverable state
 
   Connections {
     target: BluetoothService
@@ -27,18 +29,24 @@ Item {
   onVisibleChanged: _updateScanningState()
 
   function _updateScanningState() {
+    Logger.d("Bluetooth SubTab", "Panel Opened");
     if (root.visible && BluetoothService.enabled) {
       if (!isScanningActive) {
-        BluetoothService.setScanActive(false, 0); // Make this infinite *later
-        // While panel open always scan...  This change will eliminate need of timeouts for it in Service.
-        // OR add a toggle?
-        // TODO: Decide on this, Service cleanup...
+        BluetoothService.setScanActive(true);
         isScanningActive = true;
+      }
+      if (!isDiscoverable) {
+        BluetoothService.setDiscoverable(true);
+        isDiscoverable = true;
       }
     } else {
       if (isScanningActive) {
-        BluetoothService.setScanActive(false, 0);
+        BluetoothService.setScanActive(false);
         isScanningActive = false;
+      }
+      if (isDiscoverable) {
+        BluetoothService.setDiscoverable(false);
+        isDiscoverable = false;
       }
     }
   }
@@ -46,9 +54,15 @@ Item {
   Component.onDestruction: {
     // Ensure scanning is stopped when component is destroyed
     if (isScanningActive) {
-      BluetoothService.setScanActive(false, 0);
+      BluetoothService.setScanActive(false);
       isScanningActive = false;
     }
+    // Ensure discoverable is disabled when component is destroyed
+    if (isDiscoverable) {
+      BluetoothService.setDiscoverable(false);
+      isDiscoverable = false;
+    }
+    Logger.d("Bluetooth SubTab", "Panel Closed");
   }
 
   ColumnLayout {
@@ -106,65 +120,8 @@ Item {
           Layout.fillWidth: true
           visible: BluetoothService.enabled
         }
-
-        // Discovery / Visibility Controls, Scanning Status
-        ColumnLayout {
-          Layout.fillWidth: true
-          visible: BluetoothService.enabled // Controls visibility of the entire group
-
-          RowLayout {
-            // Discovery
-            Layout.fillWidth: true
-            spacing: Style.marginM
-
-            NIcon {
-              enabled: BluetoothService.enabled
-              icon: BluetoothService.discoverable ? "broadcast" : "broadcast-off"
-              pointSize: Style.fontSizeXXL
-              color: BluetoothService.discoverable ? Color.mPrimary : Color.mOnSurfaceVariant
-            }
-
-            NText {
-              text: I18n.tr("bluetooth.panel.discoverable")
-              Layout.fillWidth: true
-              color: Color.mOnSurface
-            }
-
-            NToggle {
-              checked: BluetoothService.discoverable
-              onToggled: checked => BluetoothService.setDiscoverable(checked)
-            }
-          }
-          Item {
-            Layout.preferredHeight: Style.marginL
-          } // Used as a spacer
-          RowLayout {
-            // Scanning toggle
-            Layout.fillWidth: true
-            spacing: Style.marginM
-
-            NIcon {
-              enabled: BluetoothService.enabled
-              icon: BluetoothService.scanningActive ? "stop" : "refresh"
-              pointSize: Style.fontSizeXXL
-              color: BluetoothService.scanningActive ? Color.mPrimary : Color.mOnSurfaceVariant
-            }
-
-            NText {
-              text: BluetoothService.scanningActive ? I18n.tr("bluetooth.panel.scanning") : I18n.tr("tooltips.refresh-devices")
-              Layout.fillWidth: true
-              color: Color.mOnSurface
-            }
-
-            NToggle {
-              checked: BluetoothService.scanningActive
-              onToggled: BluetoothService.toggleDiscovery()
-            }
-          }
-
-          Item {
-            Layout.preferredHeight: Style.marginL
-          } // Used as a spacer
+        NText {
+          text: "This device is discoverable as " + HostService.hostName + " while Bluetooth Settings is open."
         }
       }
     }
@@ -201,9 +158,9 @@ Item {
       Layout.fillWidth: true
     }
 
-    // Device List [3] (Ready to pair // available)
+    // Device List [3] (Ready to pair // discovered)
     BluetoothDevicesList {
-      label: I18n.tr("bluetooth.panel.available-devices")
+      label: I18n.tr("bluetooth.panel.available-devices") + (BluetoothService.scanningActive ? " (" + I18n.tr("bluetooth.panel.scanning") + ")" : "")  // I would prefered something animated here but as far as im aware there is no such thing.
       headerMode: "filter"
       property var availableDevices: {
         if (!BluetoothService.adapter || !BluetoothService.adapter.devices)
@@ -261,9 +218,10 @@ Item {
       Layout.fillWidth: true
     }
 
-    Item {
-      Layout.preferredHeight: Style.marginL
-    } // Bottom spacer
+    NDivider {
+      Layout.fillWidth: true
+      visible: BluetoothService.enabled
+    }
 
     // RSSI Polling
     NBox {
