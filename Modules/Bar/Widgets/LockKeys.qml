@@ -10,19 +10,32 @@ import qs.Services.Keyboard
 import qs.Services.UI
 import qs.Widgets
 
+//test
 Item {
   id: root
 
-  property ShellScreen screen
+  readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
+  readonly property string capsIcon: widgetSettings.capsLockIcon !== undefined ? widgetSettings.capsLockIcon : widgetMetadata.capsLockIcon
+  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screenName)
+  readonly property real contentHeight: isVertical ? Math.round(layout.implicitHeight + Style.marginXL) : capsuleHeight
 
-  property string widgetId: ""
+  // Content dimensions for implicit sizing
+  readonly property real contentWidth: isVertical ? capsuleHeight : Math.round(layout.implicitWidth + Style.marginXL)
+  readonly property bool hideWhenOff: (widgetSettings.hideWhenOff !== undefined) ? widgetSettings.hideWhenOff : (widgetMetadata.hideWhenOff !== undefined ? widgetMetadata.hideWhenOff : false)
+  readonly property bool isVertical: barPosition === "left" || barPosition === "right"
+  readonly property string numIcon: widgetSettings.numLockIcon !== undefined ? widgetSettings.numLockIcon : widgetMetadata.numLockIcon
+  property ShellScreen screen
+  // Explicit screenName property ensures reactive binding when screen changes
+  readonly property string screenName: screen ? screen.name : ""
+  readonly property string scrollIcon: widgetSettings.scrollLockIcon !== undefined ? widgetSettings.scrollLockIcon : widgetMetadata.scrollLockIcon
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
-
+  readonly property bool showCaps: (widgetSettings.showCapsLock !== undefined) ? widgetSettings.showCapsLock : widgetMetadata.showCapsLock
+  readonly property bool showNum: (widgetSettings.showNumLock !== undefined) ? widgetSettings.showNumLock : widgetMetadata.showNumLock
+  readonly property bool showScroll: (widgetSettings.showScrollLock !== undefined) ? widgetSettings.showScrollLock : widgetMetadata.showScrollLock
+  property string widgetId: ""
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
-  // Explicit screenName property ensures reactive binding when screen changes
-  readonly property string screenName: screen ? screen.name : ""
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0 && screenName) {
       var widgets = Settings.getBarWidgetsForScreen(screenName)[section];
@@ -33,26 +46,9 @@ Item {
     return {};
   }
 
-  readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
-  readonly property bool isVertical: barPosition === "left" || barPosition === "right"
-  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screenName)
-
-  readonly property bool showCaps: (widgetSettings.showCapsLock !== undefined) ? widgetSettings.showCapsLock : widgetMetadata.showCapsLock
-  readonly property bool showNum: (widgetSettings.showNumLock !== undefined) ? widgetSettings.showNumLock : widgetMetadata.showNumLock
-  readonly property bool showScroll: (widgetSettings.showScrollLock !== undefined) ? widgetSettings.showScrollLock : widgetMetadata.showScrollLock
-
-  readonly property string capsIcon: widgetSettings.capsLockIcon !== undefined ? widgetSettings.capsLockIcon : widgetMetadata.capsLockIcon
-  readonly property string numIcon: widgetSettings.numLockIcon !== undefined ? widgetSettings.numLockIcon : widgetMetadata.numLockIcon
-  readonly property string scrollIcon: widgetSettings.scrollLockIcon !== undefined ? widgetSettings.scrollLockIcon : widgetMetadata.scrollLockIcon
-
-  readonly property bool hideWhenOff: (widgetSettings.hideWhenOff !== undefined) ? widgetSettings.hideWhenOff : (widgetMetadata.hideWhenOff !== undefined ? widgetMetadata.hideWhenOff : false)
-
-  // Content dimensions for implicit sizing
-  readonly property real contentWidth: isVertical ? capsuleHeight : Math.round(layout.implicitWidth + Style.marginXL)
-  readonly property real contentHeight: isVertical ? Math.round(layout.implicitHeight + Style.marginXL) : capsuleHeight
-
-  implicitWidth: contentWidth
   implicitHeight: contentHeight
+  implicitWidth: contentWidth
+  visible: !root.hideWhenOff || (root.showCaps && LockKeysService.capsLockOn) || (root.showNum && LockKeysService.numLockOn) || (root.showScroll && LockKeysService.scrollLockOn)
 
   NPopupContextMenu {
     id: contextMenu
@@ -78,64 +74,70 @@ Item {
   // Visual capsule centered in parent
   Rectangle {
     id: visualCapsule
-    width: root.contentWidth
-    height: root.contentHeight
+
     anchors.centerIn: parent
-    radius: Style.radiusM
-    color: Style.capsuleColor
     border.color: Style.capsuleBorderColor
     border.width: Style.capsuleBorderWidth
-    visible: !root.hideWhenOff || (root.showCaps && LockKeysService.capsLockOn) || (root.showNum && LockKeysService.numLockOn) || (root.showScroll && LockKeysService.scrollLockOn)
+    color: Style.capsuleColor
+    height: root.contentHeight
+    radius: Style.radiusM
+    width: root.contentWidth
 
     Item {
       id: layout
-      anchors.verticalCenter: parent.verticalCenter
-      anchors.horizontalCenter: parent.horizontalCenter
 
-      implicitWidth: rowLayout.visible ? rowLayout.implicitWidth : colLayout.implicitWidth
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.verticalCenter: parent.verticalCenter
       implicitHeight: rowLayout.visible ? rowLayout.implicitHeight : colLayout.implicitHeight
+      implicitWidth: rowLayout.visible ? rowLayout.implicitWidth : colLayout.implicitWidth
 
       RowLayout {
         id: rowLayout
-        visible: !root.isVertical
+
         spacing: 0
+        visible: !root.isVertical
 
         NIcon {
-          visible: root.showCaps && (!root.hideWhenOff || LockKeysService.capsLockOn)
-          icon: root.capsIcon
           color: LockKeysService.capsLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+          icon: root.capsIcon
+          visible: root.showCaps && (!root.hideWhenOff || LockKeysService.capsLockOn)
         }
+
         NIcon {
-          visible: root.showNum && (!root.hideWhenOff || LockKeysService.numLockOn)
-          icon: root.numIcon
           color: LockKeysService.numLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+          icon: root.numIcon
+          visible: root.showNum && (!root.hideWhenOff || LockKeysService.numLockOn)
         }
+
         NIcon {
-          visible: root.showScroll && (!root.hideWhenOff || LockKeysService.scrollLockOn)
-          icon: root.scrollIcon
           color: LockKeysService.scrollLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+          icon: root.scrollIcon
+          visible: root.showScroll && (!root.hideWhenOff || LockKeysService.scrollLockOn)
         }
       }
 
       ColumnLayout {
         id: colLayout
-        visible: root.isVertical
+
         spacing: 0
+        visible: root.isVertical
 
         NIcon {
-          visible: root.showCaps && (!root.hideWhenOff || LockKeysService.capsLockOn)
-          icon: root.capsIcon
           color: LockKeysService.capsLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+          icon: root.capsIcon
+          visible: root.showCaps && (!root.hideWhenOff || LockKeysService.capsLockOn)
         }
+
         NIcon {
-          visible: root.showNum && (!root.hideWhenOff || LockKeysService.numLockOn)
-          icon: root.numIcon
           color: LockKeysService.numLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+          icon: root.numIcon
+          visible: root.showNum && (!root.hideWhenOff || LockKeysService.numLockOn)
         }
+
         NIcon {
-          visible: root.showScroll && (!root.hideWhenOff || LockKeysService.scrollLockOn)
-          icon: root.scrollIcon
           color: LockKeysService.scrollLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+          icon: root.scrollIcon
+          visible: root.showScroll && (!root.hideWhenOff || LockKeysService.scrollLockOn)
         }
       }
     }
@@ -143,8 +145,9 @@ Item {
 
   // MouseArea at root level for extended click area
   MouseArea {
-    anchors.fill: parent
     acceptedButtons: Qt.RightButton
+    anchors.fill: parent
+
     onClicked: mouse => {
                  if (mouse.button === Qt.RightButton) {
                    PanelService.showContextMenu(contextMenu, root, screen);
