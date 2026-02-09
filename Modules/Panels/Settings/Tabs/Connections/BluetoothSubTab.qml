@@ -40,13 +40,17 @@ Item {
     return BluetoothService.sortDevices(filtered);
   }
 
-  readonly property var availableDevices: {
+  readonly property var unnamedAvailableDevices: {
     if (!BluetoothService.adapter || !BluetoothService.adapter.devices)
       return [];
-    var raw = BluetoothService.adapter.devices.values.filter(dev => dev && !dev.blocked && !dev.paired && !dev.trusted);
+    return BluetoothService.adapter.devices.values.filter(dev => dev && !dev.blocked && !dev.paired && !dev.trusted);
+  }
+
+  readonly property var availableDevices: {
+    var list = btprefs.unnamedAvailableDevices;
 
     if (Settings.data && Settings.data.ui && Settings.data.network.bluetoothHideUnnamedDevices) {
-      raw = raw.filter(function (dev) {
+      list = list.filter(function (dev) {
         var dn = dev.name || dev.deviceName || "";
         var s = String(dn).trim();
         if (s.length === 0)
@@ -71,8 +75,8 @@ Item {
         return true;
       });
     }
-    raw = BluetoothService.dedupeDevices(raw);
-    return BluetoothService.sortDevices(raw);
+    list = BluetoothService.dedupeDevices(list);
+    return BluetoothService.sortDevices(list);
   }
 
   // For managing expanded device details
@@ -265,7 +269,7 @@ Item {
     // Device List [3] (Available)
     NBox {
       id: availableDevicesBox
-      visible: !btprefs.showOnlyLists && btprefs.availableDevices.length > 0 && BluetoothService.adapter && BluetoothService.adapter.enabled
+      visible: !btprefs.showOnlyLists && btprefs.unnamedAvailableDevices.length > 0 && BluetoothService.adapter && BluetoothService.adapter.enabled
       Layout.fillWidth: true
       Layout.preferredHeight: availableDevicesCol.implicitHeight + Style.marginXL
 
@@ -302,6 +306,16 @@ Item {
         Repeater {
           model: btprefs.availableDevices
           delegate: nbox_delegate
+        }
+
+        NText {
+          visible: btprefs.availableDevices.length === 0 && btprefs.unnamedAvailableDevices.length > 0
+          text: I18n.tr("bluetooth.panel.no-named-devices")
+          pointSize: Style.fontSizeS
+          color: Color.mOnSurfaceVariant
+          horizontalAlignment: Text.AlignHCenter
+          Layout.fillWidth: true
+          Layout.margins: Style.marginL
         }
       }
     }
