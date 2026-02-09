@@ -299,17 +299,24 @@ Variants {
             // Right-click to dismiss
             MouseArea {
               anchors.fill: cardBackground
-              acceptedButtons: Qt.RightButton
+              acceptedButtons: Qt.LeftButton | Qt.RightButton
               hoverEnabled: true
               onEntered: card.hoverCount++
               onExited: card.hoverCount--
               onClicked: {
                 if (mouse.button === Qt.RightButton) {
                   animateOut();
+			    }
+                else if (mouse.button === Qt.LeftButton) {
+                  var actions = model.actionsJson ? JSON.parse(model.actionsJson) : [];
+                  var hasDefault = actions.some(function(a) { return a.identifier === "default" });
+				  if (hasDefault) {
+                    NotificationService.invokeAction(notificationId, "default");
+					animateOut();
+				  }
                 }
               }
-            }
-
+		    }
             // Animation setup
             function triggerEntryAnimation() {
               animInDelayTimer.stop();
