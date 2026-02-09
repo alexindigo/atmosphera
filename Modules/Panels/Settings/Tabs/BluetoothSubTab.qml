@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Window
 import Quickshell
 import Quickshell.Bluetooth
 import "../../Bluetooth" // For BluetoothDevicesList
@@ -16,22 +17,31 @@ Item {
   Layout.fillWidth: true
   implicitHeight: mainLayout.implicitHeight // Do i hate locating qml Items? - Absolutely yes
 
-  property bool isScanningActive: false // Track local scanning state
-  property bool isDiscoverable: false // Track local discoverable state
+  property bool isScanningActive: BluetoothService.scanningActive
+  property bool isDiscoverable: BluetoothService.discoverable
+
+  // Combined visibility check: tab must be visible AND the window must be visible
+  readonly property bool effectivelyVisible: btprefs.visible && Window.window && Window.window.visible
 
   Connections {
     target: BluetoothService
     function onEnabledChanged() {
-      _updateScanningState();
+      stateChangeDebouncer.restart();
     }
   }
 
-  onVisibleChanged: _updateScanningState()
-  onClosed: _updateScanningState()
+  onEffectivelyVisibleChanged: stateChangeDebouncer.restart()
+
+  Timer {
+    id: stateChangeDebouncer
+    interval: 100 // 100ms debounce
+    repeat: false
+    onTriggered: btprefs._updateScanningState()
+  }
 
   function _updateScanningState() {
-    Logger.d("Bluetooth Prefs", "Panel Opened");
-    if (btprefs.visible && BluetoothService.enabled) {
+    if (effectivelyVisible && BluetoothService.enabled) {
+      Logger.d("Bluetooth Prefs", "Panel/Tab Active");
       if (!isScanningActive) {
         BluetoothService.setScanActive(true);
         isScanningActive = true;
@@ -40,7 +50,17 @@ Item {
         BluetoothService.setDiscoverable(true);
         isDiscoverable = true;
       }
-    } 
+    } else {
+      Logger.d("Bluetooth Prefs", "Panel/Tab Inactive");
+      if (isScanningActive) {
+        BluetoothService.setScanActive(false);
+        isScanningActive = false;
+      }
+      if (isDiscoverable) {
+        BluetoothService.setDiscoverable(false);
+        isDiscoverable = false;
+      }
+    }
   }
 
   Component.onDestruction: {
