@@ -107,14 +107,22 @@ Item {
           visible: BluetoothService.enabled
         }
 
-        // Discovery / Visibility Controls, Scanning Status & RSSI Polling
+        // Discovery / Visibility Controls, Scanning Status
         ColumnLayout {
           Layout.fillWidth: true
           visible: BluetoothService.enabled // Controls visibility of the entire group
 
           RowLayout {
-            // Discovery / Visibility Controls
+            // Discovery
             Layout.fillWidth: true
+            spacing: Style.marginM
+
+            NIcon {
+              enabled: BluetoothService.enabled
+              icon: BluetoothService.discoverable ? "broadcast" : "broadcast-off"
+              pointSize: Style.fontSizeXXL
+              color: BluetoothService.discoverable ? Color.mPrimary : Color.mOnSurfaceVariant
+            }
 
             NText {
               text: I18n.tr("bluetooth.panel.discoverable")
@@ -127,35 +135,36 @@ Item {
               onToggled: checked => BluetoothService.setDiscoverable(checked)
             }
           }
+          Item {
+            Layout.preferredHeight: Style.marginL
+          } // Used as a spacer
+          RowLayout {
+            // Scanning toggle
+            Layout.fillWidth: true
+            spacing: Style.marginM
+
+            NIcon {
+              enabled: BluetoothService.enabled
+              icon: BluetoothService.scanningActive ? "stop" : "refresh"
+              pointSize: Style.fontSizeXXL
+              color: BluetoothService.scanningActive ? Color.mPrimary : Color.mOnSurfaceVariant
+            }
+
+            NText {
+              text: BluetoothService.scanningActive ? I18n.tr("bluetooth.panel.scanning") : I18n.tr("tooltips.refresh-devices")
+              Layout.fillWidth: true
+              color: Color.mOnSurface
+            }
+
+            NToggle {
+              checked: BluetoothService.scanningActive
+              onToggled: BluetoothService.toggleDiscovery()
+            }
+          }
 
           Item {
             Layout.preferredHeight: Style.marginL
           } // Used as a spacer
-
-          RowLayout {
-            // Scanning Status
-            Layout.fillWidth: true
-            spacing: Style.marginM
-
-            NText {
-              text: BluetoothService.scanningActive ? I18n.tr("bluetooth.panel.scanning") : I18n.tr("tooltips.refresh-devices")
-              color: Color.mOnSurface
-              Layout.alignment: Qt.AlignVCenter
-              elide: Text.ElideRight
-            }
-
-            NBusyIndicator {
-              running: BluetoothService.scanningActive
-              visible: running
-              size: Style.baseWidgetSize * 0.6
-            }
-
-            NIconButton {
-              icon: BluetoothService.scanningActive ? "stop" : "refresh"
-              onClicked: BluetoothService.toggleDiscovery()
-              visible: !BluetoothService.scanningActive
-            }
-          }
         }
       }
     }
