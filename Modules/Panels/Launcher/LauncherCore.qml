@@ -58,7 +58,7 @@ Rectangle {
   readonly property var defaultProvider: appsProvider
   readonly property var currentProvider: activeProvider || defaultProvider
 
-  readonly property string launcherDensity: (currentProvider && currentProvider.ignoreDensity === false) ? (Settings.data.appLauncher.density || "default") : "default"
+  readonly property string launcherDensity: (currentProvider && currentProvider.ignoreDensity === false) ? (Settings.data.appLauncher.density || "default") : "comfortable"
   readonly property int effectiveIconSize: launcherDensity === "comfortable" ? 48 : (launcherDensity === "default" ? 32 : 24)
   readonly property int badgeSize: Math.round(effectiveIconSize * Style.uiScaleRatio)
   readonly property int entryHeight: Math.round(badgeSize + (launcherDensity === "compact" ? (Style.marginL + Style.marginXXS) : (Style.marginXL + Style.marginS)))
@@ -935,7 +935,7 @@ Rectangle {
                 // Icon background
                 Rectangle {
                   anchors.fill: parent
-                  radius: Style.radiusM
+                  radius: height / 2
                   color: Color.mSurfaceVariant
                   visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage
                 }
@@ -1323,7 +1323,7 @@ Rectangle {
                 // Icon background
                 Rectangle {
                   anchors.fill: parent
-                  radius: Style.radiusM
+                  radius: height / 2
                   color: Color.mSurfaceVariant
                   visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage
                 }
