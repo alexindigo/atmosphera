@@ -457,6 +457,7 @@
     "refresh": "Atualizar",
     "required": "(obrigatório)",
     "reset": "Reiniciar",
+    "reset-to-default": "Redefinir para o Padrão",
     "result-count": "{count} resultado",
     "result-count-plural": "{count} resultados",
     "resume": "Retomar",
@@ -1021,6 +1022,14 @@
       "fonts-monospace-search-placeholder": "Pesquisar fontes monoespaçadas...",
       "fonts-reset-scaling": "Redefinir escala",
       "fonts-title": "Fontes",
+      "keybinds-description": "Configure as teclas de navegação globais para painéis e o lançador.",
+      "keybinds-down": "Mover para baixo",
+      "keybinds-enter": "Confirmar / Ação",
+      "keybinds-escape": "Fechar / Voltar",
+      "keybinds-left": "Mover para a Esquerda",
+      "keybinds-right": "Mover para a direita",
+      "keybinds-title": "Atalhos de Teclado de Navegação",
+      "keybinds-up": "Mover Para Cima",
       "language-desc": "Escolha o seu idioma preferido para a aplicação.",
       "language-select-auto-detect": "Automático",
       "language-select-description": "Selecione o idioma usado na interface da aplicação.",
@@ -1041,7 +1050,9 @@
       "screen-corners-solid-black-description": "Use preto sólido em vez da cor de fundo da barra.",
       "screen-corners-solid-black-label": "Cantos pretos sólidos",
       "screen-corners-title": "Cantos da tela",
-      "settings-copied": "Configurações copiadas para a área de transferência"
+      "settings-copied": "Configurações copiadas para a área de transferência",
+      "tab-basics": "Básico",
+      "tab-keybinds": "Atalhos de Teclado"
     },
     "hooks": {
       "info-command-info-description": "• Comandos são executados via shell (sh -lc)<br>• Comandos rodam em segundo plano (desanexados)<br>• Botões de teste executam com os valores atuais",

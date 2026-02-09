@@ -624,6 +624,14 @@
     "subTab": null
   },
   {
+    "labelKey": "panels.general.keybinds-title",
+    "descriptionKey": "panels.general.keybinds-description",
+    "widget": "NLabel",
+    "tab": 0,
+    "tabLabel": "common.general",
+    "subTab": null
+  },
+  {
     "labelKey": "panels.hooks.system-hooks-enable-label",
     "descriptionKey": "panels.hooks.system-hooks-enable-description",
     "widget": "NToggle",

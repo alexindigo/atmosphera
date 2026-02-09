@@ -457,6 +457,7 @@
     "refresh": "Refrescar",
     "required": "(obligatorio)",
     "reset": "Restablecer",
+    "reset-to-default": "Restablecer a Valores Predeterminados",
     "result-count": "{count} resultado",
     "result-count-plural": "{count} resultados",
     "resume": "Reanudar",
@@ -1021,6 +1022,14 @@
       "fonts-monospace-search-placeholder": "Buscar fuentes monoespaciadas...",
       "fonts-reset-scaling": "Restablecer la escala",
       "fonts-title": "Fuentes",
+      "keybinds-description": "Configura las teclas de navegación globales para paneles y el lanzador.",
+      "keybinds-down": "Mover hacia abajo",
+      "keybinds-enter": "Confirmar / Acción",
+      "keybinds-escape": "Cerrar / Volver",
+      "keybinds-left": "Mover a la Izquierda",
+      "keybinds-right": "Mover a la derecha",
+      "keybinds-title": "Atajos de Teclado de Navegación",
+      "keybinds-up": "Mover Arriba",
       "language-desc": "Elige tu idioma preferido para la aplicación.",
       "language-select-auto-detect": "Automático",
       "language-select-description": "Selecciona el idioma utilizado en la interfaz de la aplicación.",
@@ -1041,7 +1050,9 @@
       "screen-corners-solid-black-description": "Usa negro sólido en lugar del color de fondo de la barra.",
       "screen-corners-solid-black-label": "Esquinas negras sólidas",
       "screen-corners-title": "Esquinas de la pantalla",
-      "settings-copied": "Ajustes copiados al portapapeles"
+      "settings-copied": "Ajustes copiados al portapapeles",
+      "tab-basics": "Conceptos Básicos",
+      "tab-keybinds": "Atajos de Teclado"
     },
     "hooks": {
       "info-command-info-description": "• Los comandos se ejecutan a través de shell (sh -lc)<br>• Los comandos se ejecutan en segundo plano (desvinculados)<br>• Los botones de prueba se ejecutan con los valores actuales",

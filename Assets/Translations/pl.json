@@ -457,6 +457,7 @@
     "refresh": "Odśwież",
     "required": "(wymagane)",
     "reset": "Zresetuj",
+    "reset-to-default": "Przywróć do Domyślnych",
     "result-count": "{count} wynik",
     "result-count-plural": "{count} wyniki",
     "resume": "Wznów",
@@ -1021,6 +1022,14 @@
       "fonts-monospace-search-placeholder": "Szukaj czcionki monospace...",
       "fonts-reset-scaling": "Resetuj skalowanie",
       "fonts-title": "Czcionki",
+      "keybinds-description": "Skonfiguruj globalne klawisze nawigacyjne dla paneli i launchera.",
+      "keybinds-down": "Przenieś w dół",
+      "keybinds-enter": "Potwierdź / Akcja",
+      "keybinds-escape": "Zamknij / Wstecz",
+      "keybinds-left": "Przesuń w lewo",
+      "keybinds-right": "Przesuń w prawo",
+      "keybinds-title": "Skróty Klawiszowe Nawigacji",
+      "keybinds-up": "Przenieś w górę",
       "language-desc": "Wybierz preferowany język aplikacji.",
       "language-select-auto-detect": "Automatyczny",
       "language-select-description": "Wybierz język używany w interfejsie aplikacji.",
@@ -1041,7 +1050,9 @@
       "screen-corners-solid-black-description": "Użyj jednolitej czerni zamiast koloru tła paska.",
       "screen-corners-solid-black-label": "Jednolicie czarne narożniki",
       "screen-corners-title": "Narożniki ekranu",
-      "settings-copied": "Ustawienia skopiowane do schowka"
+      "settings-copied": "Ustawienia skopiowane do schowka",
+      "tab-basics": "Podstawy",
+      "tab-keybinds": "Skróty Klawiszowe"
     },
     "hooks": {
       "info-command-info-description": "• Polecenia są wykonywane przez powłokę (sh -lc)<br>• Polecenia działają w tle (detached)<br>• Przyciski testowe wykonują się z aktualnymi wartościami",

@@ -457,6 +457,7 @@
     "refresh": "Vernieuwen",
     "required": "(vereist)",
     "reset": "Resetten",
+    "reset-to-default": "Herstellen naar Standaard",
     "result-count": "{count} resultaat",
     "result-count-plural": "{count} resultaten",
     "resume": "Hervatten",
@@ -1021,6 +1022,14 @@
       "fonts-monospace-search-placeholder": "Monospace-lettertype zoeken...",
       "fonts-reset-scaling": "Schaling resetten",
       "fonts-title": "Lettertypes",
+      "keybinds-description": "Globale navigatietoetsen voor panelen en de starter configureren.",
+      "keybinds-down": "Naar beneden verplaatsen",
+      "keybinds-enter": "Bevestigen / Actie",
+      "keybinds-escape": "Sluiten / Terug",
+      "keybinds-left": "Naar links verplaatsen",
+      "keybinds-right": "Naar rechts verplaatsen",
+      "keybinds-title": "Navigatietoetsencombinaties",
+      "keybinds-up": "Omhoog verplaatsen",
       "language-desc": "Kies je voorkeurstaal voor de applicatie.",
       "language-select-auto-detect": "Automatisch",
       "language-select-description": "Selecteer de taal die in de interface van de applicatie wordt gebruikt.",
@@ -1041,7 +1050,9 @@
       "screen-corners-solid-black-description": "Gebruik effen zwart in plaats van de achtergrondkleur van de balk.",
       "screen-corners-solid-black-label": "Effen zwarte hoeken",
       "screen-corners-title": "Schermhoeken",
-      "settings-copied": "Instellingen gekopieerd naar klembord"
+      "settings-copied": "Instellingen gekopieerd naar klembord",
+      "tab-basics": "Basis",
+      "tab-keybinds": "Toetsencombinaties"
     },
     "hooks": {
       "info-command-info-description": "• Commando's worden uitgevoerd via shell (sh -lc)<br>• Commando's draaien op de achtergrond (losgekoppeld)<br>• Testknoppen worden uitgevoerd met de huidige waarden",

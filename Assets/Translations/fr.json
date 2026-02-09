@@ -457,6 +457,7 @@
     "refresh": "Actualiser",
     "required": "(requis)",
     "reset": "Réinitialiser",
+    "reset-to-default": "Réinitialiser par Défaut",
     "result-count": "{count} résultat",
     "result-count-plural": "{count} résultats",
     "resume": "Reprendrer",
@@ -1021,6 +1022,14 @@
       "fonts-monospace-search-placeholder": "Rechercher des polices à chasse fixe...",
       "fonts-reset-scaling": "Réinitialiser l'échelle",
       "fonts-title": "Polices",
+      "keybinds-description": "Configurez les touches de navigation globales pour les panneaux et le lanceur.",
+      "keybinds-down": "Déplacer vers le bas",
+      "keybinds-enter": "Confirmer / Action",
+      "keybinds-escape": "Fermer / Retour",
+      "keybinds-left": "Déplacer à Gauche",
+      "keybinds-right": "Déplacer à droite",
+      "keybinds-title": "Raccourcis Clavier de Navigation",
+      "keybinds-up": "Déplacer vers le haut",
       "language-desc": "Choisissez votre langue préférée pour l'application.",
       "language-select-auto-detect": "Automatique",
       "language-select-description": "Sélectionnez la langue utilisée dans l'interface de l'application.",
@@ -1041,7 +1050,9 @@
       "screen-corners-solid-black-description": "Utilisez du noir uni au lieu de la couleur de fond de la barre.",
       "screen-corners-solid-black-label": "Coins noirs unis",
       "screen-corners-title": "Coins de l'écran",
-      "settings-copied": "Paramètres copiés dans le presse-papier"
+      "settings-copied": "Paramètres copiés dans le presse-papier",
+      "tab-basics": "Bases",
+      "tab-keybinds": "Raccourcis Clavier"
     },
     "hooks": {
       "info-command-info-description": "• Les commandes sont exécutées via le shell (sh -lc)<br>• Les commandes s'exécutent en arrière-plan (détachées)<br>• Les boutons de test s'exécutent avec les valeurs actuelles",

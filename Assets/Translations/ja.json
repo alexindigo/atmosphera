@@ -457,6 +457,7 @@
     "refresh": "更新",
     "required": "(必須)",
     "reset": "リセット",
+    "reset-to-default": "デフォルトにリセット",
     "result-count": "{count} 結果",
     "result-count-plural": "{count} 結果",
     "resume": "再開",
@@ -1021,6 +1022,14 @@
       "fonts-monospace-search-placeholder": "等幅フォントを検索...",
       "fonts-reset-scaling": "サイズ設定をリセット",
       "fonts-title": "フォント",
+      "keybinds-description": "パネルとランチャーのグローバルナビゲーションキーを設定します。",
+      "keybinds-down": "下に移動",
+      "keybinds-enter": "確認 / アクション",
+      "keybinds-escape": "閉じる / 戻る",
+      "keybinds-left": "左へ移動",
+      "keybinds-right": "右へ移動",
+      "keybinds-title": "ナビゲーションのキーバインド",
+      "keybinds-up": "上へ移動",
       "language-desc": "アプリケーションで使用する言語を選択します。",
       "language-select-auto-detect": "自動検出",
       "language-select-description": "アプリケーションのインターフェースで使用する言語を選択します。",
@@ -1041,7 +1050,9 @@
       "screen-corners-solid-black-description": "バーの背景色の代わりに、黒一色を使用します。",
       "screen-corners-solid-black-label": "角を黒く塗りつぶす",
       "screen-corners-title": "画面の角",
-      "settings-copied": "設定をクリップボードにコピーしました"
+      "settings-copied": "設定をクリップボードにコピーしました",
+      "tab-basics": "基本",
+      "tab-keybinds": "キーバインド"
     },
     "hooks": {
       "info-command-info-description": "• コマンドはシェル (sh -lc) 経由で実行されます<br>• コマンドはバックグラウンドで実行されます<br>• テストボタンは現在の設定値を使って実行されます",

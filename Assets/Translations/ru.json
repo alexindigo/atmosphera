@@ -457,6 +457,7 @@
     "refresh": "Обновить",
     "required": "(обязательно)",
     "reset": "Сброс",
+    "reset-to-default": "Сбросить по Умолчанию",
     "result-count": "{count} результат",
     "result-count-plural": "{count} результаты",
     "resume": "Продолжить",
@@ -1021,6 +1022,14 @@
       "fonts-monospace-search-placeholder": "Поиск моноширинного шрифта...",
       "fonts-reset-scaling": "Сбросить масштабирование",
       "fonts-title": "Шрифты",
+      "keybinds-description": "Настройте глобальные клавиши навигации для панелей и лаунчера.",
+      "keybinds-down": "Переместить вниз",
+      "keybinds-enter": "Подтвердить / Действие",
+      "keybinds-escape": "Закрыть / Назад",
+      "keybinds-left": "Переместить влево",
+      "keybinds-right": "Переместить вправо",
+      "keybinds-title": "Навигационные Привязки Клавиш",
+      "keybinds-up": "Переместить вверх",
       "language-desc": "Выберите предпочитаемый язык для приложения.",
       "language-select-auto-detect": "Автоматически",
       "language-select-description": "Выберите язык, используемый в интерфейсе приложения.",
@@ -1041,7 +1050,9 @@
       "screen-corners-solid-black-description": "Использовать сплошной чёрный цвет вместо цвета фона панели.",
       "screen-corners-solid-black-label": "Сплошные чёрные углы",
       "screen-corners-title": "Углы экрана",
-      "settings-copied": "Настройки скопированы в буфер обмена"
+      "settings-copied": "Настройки скопированы в буфер обмена",
+      "tab-basics": "Основы",
+      "tab-keybinds": "Горячие Клавиши"
     },
     "hooks": {
       "info-command-info-description": "• Команды выполняются через shell (sh -lc)<br>• Команды выполняются в фоновом режиме (отдельно)<br>• Кнопки 'Тест' выполняются с текущими значениями",

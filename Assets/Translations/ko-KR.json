@@ -457,6 +457,7 @@
     "refresh": "새로고침",
     "required": "(필수)",
     "reset": "초기화",
+    "reset-to-default": "기본값으로 초기화",
     "result-count": "{count}개 결과",
     "result-count-plural": "{count}개 결과",
     "resume": "재개",
@@ -1021,6 +1022,14 @@
       "fonts-monospace-search-placeholder": "고정폭 글꼴 검색...",
       "fonts-reset-scaling": "크기 초기화",
       "fonts-title": "글꼴",
+      "keybinds-description": "패널 및 런처에 대한 전역 탐색 키를 구성합니다.",
+      "keybinds-down": "아래로 이동",
+      "keybinds-enter": "확인 / 동작",
+      "keybinds-escape": "닫기 / 뒤로",
+      "keybinds-left": "왼쪽으로 이동",
+      "keybinds-right": "오른쪽으로 이동",
+      "keybinds-title": "탐색 키 바인딩",
+      "keybinds-up": "위로 이동",
       "language-desc": "애플리케이션의 선호 언어를 선택하세요.",
       "language-select-auto-detect": "자동",
       "language-select-description": "애플리케이션 인터페이스에 사용될 언어를 선택합니다.",
@@ -1041,7 +1050,9 @@
       "screen-corners-solid-black-description": "바 배경색 대신 완전한 검은색을 사용합니다.",
       "screen-corners-solid-black-label": "검은색 모서리",
       "screen-corners-title": "화면 모서리",
-      "settings-copied": "설정이 클립보드에 복사됨"
+      "settings-copied": "설정이 클립보드에 복사됨",
+      "tab-basics": "기본",
+      "tab-keybinds": "키 바인딩"
     },
     "hooks": {
       "info-command-info-description": "• 명령은 셸(sh -lc)을 통해 실행됩니다.<br>• 명령은 백그라운드(detached)에서 실행됩니다.<br>• 테스트 버튼은 현재 값으로 실행됩니다.",

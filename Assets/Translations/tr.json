@@ -457,6 +457,7 @@
     "refresh": "Yenile",
     "required": "(gerekli)",
     "reset": "Sıfırla",
+    "reset-to-default": "Varsayılanlara Sıfırla",
     "result-count": "{count} sonuç",
     "result-count-plural": "{count} sonuçlar",
     "resume": "Sürdür",
@@ -1021,6 +1022,14 @@
       "fonts-monospace-search-placeholder": "Eş aralıklı yazı tipi ara...",
       "fonts-reset-scaling": "Ölçeklemeyi sıfırla",
       "fonts-title": "Yazı tipleri",
+      "keybinds-description": "Paneller ve başlatıcı için genel navigasyon tuşlarını yapılandırın.",
+      "keybinds-down": "Aşağı Taşı",
+      "keybinds-enter": "Onayla / Eylem",
+      "keybinds-escape": "Kapat / Geri",
+      "keybinds-left": "Sola Taşı",
+      "keybinds-right": "Sağa Taşı",
+      "keybinds-title": "Gezinme Tuş Atamaları",
+      "keybinds-up": "Yukarı Taşı",
       "language-desc": "Uygulama için tercih ettiğiniz dili seçin.",
       "language-select-auto-detect": "Otomatik",
       "language-select-description": "Uygulama arayüzünde kullanılacak dili seçin.",
@@ -1041,7 +1050,9 @@
       "screen-corners-solid-black-description": "Araç çubuğu arka plan rengi yerine tam siyah kullan.",
       "screen-corners-solid-black-label": "Siyah köşeler",
       "screen-corners-title": "Ekran köşeleri",
-      "settings-copied": "Ayarlar panoya kopyalandı"
+      "settings-copied": "Ayarlar panoya kopyalandı",
+      "tab-basics": "Temeller",
+      "tab-keybinds": "Tuş Atamaları"
     },
     "hooks": {
       "info-command-info-description": "• Komutlar kabuk (sh -lc) ile yürütülür<br>• Komutlar arka planda yürütülür (ayrık)<br>• Test düğmeleri mevcut değerlerle yürütülür",

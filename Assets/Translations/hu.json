@@ -457,6 +457,7 @@
     "refresh": "Frissítés",
     "required": "(kötelező)",
     "reset": "Visszaállítás",
+    "reset-to-default": "Visszaállítás Alapértelmezettre",
     "result-count": "{count} eredmény",
     "result-count-plural": "eredmények",
     "resume": "Folytatás",
@@ -1021,6 +1022,14 @@
       "fonts-monospace-search-placeholder": "Monospace betűtípus keresése...",
       "fonts-reset-scaling": "Méretezés visszaállítása",
       "fonts-title": "Betűtípusok",
+      "keybinds-description": "Globális navigációs billentyűk beállítása a panelekhez és az indítóhoz.",
+      "keybinds-down": "Lejjebb mozgatás",
+      "keybinds-enter": "Megerősítés / Művelet",
+      "keybinds-escape": "Bezárás / Vissza",
+      "keybinds-left": "Balra mozgat",
+      "keybinds-right": "Mozgatás jobbra",
+      "keybinds-title": "Navigációs Billentyűparancsok",
+      "keybinds-up": "Feljebb",
       "language-desc": "Válassza ki az alkalmazás előnyben részesített nyelvét.",
       "language-select-auto-detect": "Automatikus",
       "language-select-description": "Válassza ki az alkalmazás felületén használt nyelvet.",
@@ -1041,7 +1050,9 @@
       "screen-corners-solid-black-description": "Használjon egyszínű feketét a sáv háttérszíne helyett.",
       "screen-corners-solid-black-label": "Tömör fekete sarkok",
       "screen-corners-title": "Képernyősarkok",
-      "settings-copied": "Beállítások a vágólapra másolva"
+      "settings-copied": "Beállítások a vágólapra másolva",
+      "tab-basics": "Alapok",
+      "tab-keybinds": "Billentyűparancsok"
     },
     "hooks": {
       "info-command-info-description": "• A parancsok shellen keresztül futnak (sh -lc)<br>• A parancsok a háttérben futnak (leválasztva)<br>• A tesztgombok az aktuális értékekkel futnak le",

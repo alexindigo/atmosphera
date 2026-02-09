@@ -457,6 +457,7 @@
     "refresh": "Aktualisieren",
     "required": "(erforderlich)",
     "reset": "Zurücksetzen",
+    "reset-to-default": "Auf Standard zurücksetzen",
     "result-count": "{count} Ergebnis",
     "result-count-plural": "{count} Ergebnisse",
     "resume": "Fortsetzen",
@@ -1021,6 +1022,14 @@
       "fonts-monospace-search-placeholder": "Monospace-Schriftarten suchen...",
       "fonts-reset-scaling": "Skalierung zurücksetzen",
       "fonts-title": "Schriftarten",
+      "keybinds-description": "Globale Navigationstasten für Panels und Launcher konfigurieren.",
+      "keybinds-down": "Nach unten verschieben",
+      "keybinds-enter": "Bestätigen / Aktion",
+      "keybinds-escape": "Schließen / Zurück",
+      "keybinds-left": "Links verschieben",
+      "keybinds-right": "Rechts bewegen",
+      "keybinds-title": "Navigations-Tastenkombinationen",
+      "keybinds-up": "Nach oben",
       "language-desc": "Ändern Sie die Sprache von Noctalia.",
       "language-select-auto-detect": "Automatisch",
       "language-select-description": "Wählen Sie die Sprache der Anwendungsoberfläche.",
@@ -1041,7 +1050,9 @@
       "screen-corners-solid-black-description": "Schwarze Ecken anstelle der Leisten-Hintergrundfarbe verwenden.",
       "screen-corners-solid-black-label": "Schwarze Ecken",
       "screen-corners-title": "Bildschirmecken",
-      "settings-copied": "Einstellungen in die Zwischenablage kopiert"
+      "settings-copied": "Einstellungen in die Zwischenablage kopiert",
+      "tab-basics": "Grundlagen",
+      "tab-keybinds": "Tastenkombinationen"
     },
     "hooks": {
       "info-command-info-description": "• Befehle werden über Shell ausgeführt (sh -lc)<br>• Befehle laufen im Hintergrund (getrennt)<br>• Test-Buttons führen mit aktuellen Werten aus",

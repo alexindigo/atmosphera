@@ -457,6 +457,7 @@
     "refresh": "Uppdatera",
     "required": "(krävs)",
     "reset": "Återställ",
+    "reset-to-default": "Återställ till Standard",
     "result-count": "{count} resultat",
     "result-count-plural": "{count} resultat",
     "resume": "Återuppta",
@@ -1021,6 +1022,14 @@
       "fonts-monospace-search-placeholder": "Sök teckensnitt med fast bredd...",
       "fonts-reset-scaling": "Återställ skalning",
       "fonts-title": "Teckensnitt",
+      "keybinds-description": "Konfigurera globala navigeringsknappar för paneler och startprogram.",
+      "keybinds-down": "Flytta nedåt",
+      "keybinds-enter": "Bekräfta / Åtgärd",
+      "keybinds-escape": "Stäng / Tillbaka",
+      "keybinds-left": "Flytta vänster",
+      "keybinds-right": "Flytta höger",
+      "keybinds-title": "Navigeringstangentbindningar",
+      "keybinds-up": "Flytta upp",
       "language-desc": "Välj önskat språk för applikationen.",
       "language-select-auto-detect": "Automatiskt",
       "language-select-description": "Välj det språk som ska användas i programmets gränssnitt.",
@@ -1041,7 +1050,9 @@
       "screen-corners-solid-black-description": "Använd helt svart istället för stapelns bakgrundsfärg.",
       "screen-corners-solid-black-label": "Helt svarta hörn",
       "screen-corners-title": "Skärmhörn",
-      "settings-copied": "Inställningar kopierade till urklipp"
+      "settings-copied": "Inställningar kopierade till urklipp",
+      "tab-basics": "Grundläggande",
+      "tab-keybinds": "Tangentbindningar"
     },
     "hooks": {
       "info-command-info-description": "• Kommandon exekveras via shell (sh -lc)<br>• Kommandon körs i bakgrunden (fristående)<br>• Testknappar exekveras med aktuella värden",

@@ -457,6 +457,7 @@
     "refresh": "重新整理",
     "required": "(必要)",
     "reset": "重設",
+    "reset-to-default": "重設為預設值",
     "result-count": "{count} 筆結果",
     "result-count-plural": "{count} 筆結果",
     "resume": "繼續",
@@ -1021,6 +1022,14 @@
       "fonts-monospace-search-placeholder": "搜尋等寬字型...",
       "fonts-reset-scaling": "重設文字大小",
       "fonts-title": "字型",
+      "keybinds-description": "配置面板和啟動器的全域導航鍵。",
+      "keybinds-down": "下移",
+      "keybinds-enter": "確認 / 動作",
+      "keybinds-escape": "關閉 / 返回",
+      "keybinds-left": "向左移動",
+      "keybinds-right": "向右移動",
+      "keybinds-title": "導覽按鍵綁定",
+      "keybinds-up": "上移",
       "language-desc": "選擇你偏好使用的語言",
       "language-select-auto-detect": "自動選擇",
       "language-select-description": "選擇要在應用程式所使用的介面語言",
@@ -1041,7 +1050,9 @@
       "screen-corners-solid-black-description": "使用黑色而不是工具列背景色",
       "screen-corners-solid-black-label": "黑色邊角",
       "screen-corners-title": "畫面邊角",
-      "settings-copied": "已複製設定至剪貼簿"
+      "settings-copied": "已複製設定至剪貼簿",
+      "tab-basics": "基礎",
+      "tab-keybinds": "按鍵綁定"
     },
     "hooks": {
       "info-command-info-description": "• 指令將透過 shell (sh -lc) 執行<br>• 指令會在背景 (detached 狀態) 執行<br>• 測試按鈕會以當下填寫的內容執行",

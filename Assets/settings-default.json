@@ -98,7 +98,15 @@
     "allowPasswordWithFprintd": false,
     "clockStyle": "custom",
     "clockFormat": "hh\\nmm",
-    "lockScreenMonitors": []
+    "lockScreenMonitors": [],
+    "keybinds": {
+      "keyUp": "Up",
+      "keyDown": "Down",
+      "keyLeft": "Left",
+      "keyRight": "Right",
+      "keyEnter": "Return",
+      "keyEscape": "Esc"
+    }
   },
   "ui": {
     "fontDefault": "",

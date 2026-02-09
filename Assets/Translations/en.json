@@ -457,6 +457,7 @@
     "refresh": "Refresh",
     "required": "(required)",
     "reset": "Reset",
+    "reset-to-default": "Reset to Default",
     "result-count": "{count} result",
     "result-count-plural": "{count} results",
     "resume": "Resume",
@@ -1021,6 +1022,14 @@
       "fonts-monospace-search-placeholder": "Search monospace font...",
       "fonts-reset-scaling": "Reset scaling",
       "fonts-title": "Fonts",
+      "keybinds-description": "Configure global navigation keys for panels and launcher.",
+      "keybinds-down": "Move Down",
+      "keybinds-enter": "Confirm / Action",
+      "keybinds-escape": "Close / Back",
+      "keybinds-left": "Move Left",
+      "keybinds-right": "Move Right",
+      "keybinds-title": "Navigation Keybinds",
+      "keybinds-up": "Move Up",
       "language-desc": "Choose your preferred language for the application.",
       "language-select-auto-detect": "Automatic",
       "language-select-description": "Select the language used in the application's interface.",
@@ -1041,7 +1050,9 @@
       "screen-corners-solid-black-description": "Use solid black instead of the bar background color.",
       "screen-corners-solid-black-label": "Solid black corners",
       "screen-corners-title": "Screen corners",
-      "settings-copied": "Settings copied to clipboard"
+      "settings-copied": "Settings copied to clipboard",
+      "tab-basics": "Basics",
+      "tab-keybinds": "Keybinds"
     },
     "hooks": {
       "info-command-info-description": "• Commands are executed via shell (sh -lc)<br>• Commands run in background (detached)<br>• Test buttons execute with current values",

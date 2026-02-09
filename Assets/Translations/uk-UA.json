@@ -457,6 +457,7 @@
     "refresh": "Оновити",
     "required": "(обов'язково)",
     "reset": "Скинути",
+    "reset-to-default": "Скинути за Замовчуванням",
     "result-count": "{count} результат",
     "result-count-plural": "{count} результати",
     "resume": "Продовжити",
@@ -1021,6 +1022,14 @@
       "fonts-monospace-search-placeholder": "Пошук моноширинного шрифту...",
       "fonts-reset-scaling": "Скинути масштаб",
       "fonts-title": "Шрифти",
+      "keybinds-description": "Налаштуйте глобальні клавіші навігації для панелей та запускача.",
+      "keybinds-down": "Перемістити вниз",
+      "keybinds-enter": "Підтвердити / Дія",
+      "keybinds-escape": "Закрити / Назад",
+      "keybinds-left": "Перемістити вліво",
+      "keybinds-right": "Перемістити вправо",
+      "keybinds-title": "Прив'язки Клавіш Навігації",
+      "keybinds-up": "Перемістити вгору",
       "language-desc": "Виберіть бажану мову застосунку.",
       "language-select-auto-detect": "Автоматично",
       "language-select-description": "Виберіть мову інтерфейсу застосунку.",
@@ -1041,7 +1050,9 @@
       "screen-corners-solid-black-description": "Використовувати суцільний чорний колір замість кольору фону панелі.",
       "screen-corners-solid-black-label": "Суцільні чорні кути",
       "screen-corners-title": "Кути екрана",
-      "settings-copied": "Налаштування скопійовано до буфера обміну"
+      "settings-copied": "Налаштування скопійовано до буфера обміну",
+      "tab-basics": "Основи",
+      "tab-keybinds": "Гарячі Клавіші"
     },
     "hooks": {
       "info-command-info-description": "• Команди виконуються через оболонку (sh -lc)<br>• Команди запускаються у фоні (відокремлено)<br>• Кнопки тестування виконують команди з поточними значеннями",
