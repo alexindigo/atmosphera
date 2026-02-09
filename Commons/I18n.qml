@@ -99,6 +99,18 @@ Singleton {
     }
   }
 
+  // Correct language when settings finish loading from disk (or user changes it)
+  Connections {
+    target: Settings.data.general
+    function onLanguageChanged() {
+      var userLang = Settings.data.general.language;
+      if (userLang !== "" && userLang !== root.langCode && availableLanguages.includes(userLang)) {
+        Logger.i("I18n", `Applying user language preference: "${userLang}"`);
+        setLanguage(userLang);
+      }
+    }
+  }
+
   Component.onCompleted: {
     Logger.i("I18n", "Service started");
 
