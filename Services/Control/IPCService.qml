@@ -27,10 +27,10 @@ Item {
     function toggle() {
       BarService.isVisible = !BarService.isVisible;
     }
-    function hide() {
+    function hideBar() {
       BarService.isVisible = false;
     }
-    function show() {
+    function showBar() {
       BarService.isVisible = true;
     }
   }
