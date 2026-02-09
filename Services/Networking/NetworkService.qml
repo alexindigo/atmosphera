@@ -72,7 +72,7 @@ Singleton {
 
   Connections {
     target: Settings.data.network
-    onWifiEnabledChanged: {
+    function onWifiEnabledChanged() {
       if (Settings.data.network.wifiEnabled) {
         if (!BluetoothService.airplaneModeToggled) {
           ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.enabled"), "wifi");
@@ -106,7 +106,7 @@ Singleton {
   // Start initial checks when nmcli becomes available
   Connections {
     target: ProgramCheckerService
-    onNmcliAvailableChanged: {
+    function onNmcliAvailableChanged() {
       if (ProgramCheckerService.nmcliAvailable) {
         detectNetworkCapabilities();
         syncWifiState();
@@ -123,6 +123,7 @@ Singleton {
   // Function to detect host's networking capabilities eg has WiFi/Ethernet.
   function detectNetworkCapabilities() {
     if (ProgramCheckerService.nmcliAvailable) {
+      Logger.d("Network", "Starting network capability detection...");
       capabilityDetectProcess.running = true;
     }
   }
@@ -542,8 +543,9 @@ Singleton {
           } else if (key === "IP4.GATEWAY") {
             gw4 = val;
           } else if (key.indexOf("IP4.DNS") === 0) {
-            if (val && dnsServers.indexOf(val) === -1)
-            dnsServers.push(val);
+            if (val && dnsServers.indexOf(val) === -1) {
+              dnsServers.push(val);
+            }
           }
         }
         details.ifname = ethernetDeviceShowProcess.ifname;
