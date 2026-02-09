@@ -416,7 +416,7 @@ Singleton {
       property bool ignoreMouseInput: false
       property string screenshotAnnotationTool: ""
       property bool overviewLayer: false
-      property string density: "compact" // "compact", "default", "comfortable"
+      property string density: "default" // "compact", "default", "comfortable"
     }
 
     // control center

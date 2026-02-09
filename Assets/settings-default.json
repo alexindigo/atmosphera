@@ -209,7 +209,8 @@
     "enableWindowsSearch": true,
     "ignoreMouseInput": false,
     "screenshotAnnotationTool": "",
-    "overviewLayer": false
+    "overviewLayer": false,
+    "density": "default"
   },
   "controlCenter": {
     "position": "close_to_bar_button",
