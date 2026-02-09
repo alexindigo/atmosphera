@@ -14,6 +14,7 @@ Item {
   property var entries: []
   property string supportedLayouts: "both"
   property bool isDefaultProvider: true // This provider handles empty search
+  property bool ignoreDensity: false // Apps should scale with launcher density
 
   // Category support
   property string selectedCategory: "all"
