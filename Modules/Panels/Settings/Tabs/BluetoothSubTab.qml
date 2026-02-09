@@ -201,16 +201,23 @@ Item {
           return [];
         var filtered = BluetoothService.adapter.devices.values.filter(dev => dev && !dev.blocked && !dev.paired && !dev.trusted);
 
+        // Optionally hide devices without a meaningful name when the filter is enabled
         if (Settings.data && Settings.data.ui && Settings.data.network.bluetoothHideUnnamedDevices) {
           filtered = filtered.filter(function (dev) {
+            // Extract device name
             var dn = dev.name || dev.deviceName || "";
+            // 1) Hide empty or whitespace-only
             var s = String(dn).trim();
             if (s.length === 0)
               return false;
-            var lower = s.toLowerCase();
-            if (lower === "unknown" || lower === "unnamed" || lower === "n/a")
-              return false;
 
+            // 2) Hide common placeholders
+            var lower = s.toLowerCase();
+            if (lower === "unknown" || lower === "unnamed" || lower === "n/a" || lower === "na") {
+              return false;
+            }
+
+            // 3) Hide if the name equals the device address (ignoring separators)
             var addr = dev.address || dev.bdaddr || dev.mac || "";
             if (addr.length > 0) {
               var normName = s.toLowerCase().replace(/[^0-9a-z]/g, "");
@@ -218,6 +225,23 @@ Item {
               if (normName.length > 0 && normName === normAddr)
                 return false;
             }
+            // 4) Hide address-like strings
+            //   - Colon-separated hex: 00:11:22:33:44:55
+            var macColonHex = /^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$/;
+            //   - Hyphen-separated hex: 00-11-22-33-44-55
+            var macHyphenHex = /^([0-9A-Fa-f]{2}-){5}[0-9A-Fa-f]{2}$/;
+            //   - Hyphen-separated alnum pairs (to catch non-hex variants like AB-CD-EF-GH-01-23)
+            var macHyphenAny = /^([0-9A-Za-z]{2}-){5}[0-9A-Za-z]{2}$/;
+            //   - Cisco dotted hex: 0011.2233.4455
+            var macDotted = /^[0-9A-Fa-f]{4}\.[0-9A-Fa-f]{4}\.[0-9A-Fa-f]{4}$/;
+            //   - Bare hex: 001122334455
+            var macBare = /^[0-9A-Fa-f]{12}$/;
+            if (macColonHex.test(s) || macHyphenHex.test(s) || macHyphenAny.test(s) || macDotted.test(s) || macBare.test(s)) {
+              return false;
+            }
+
+            // Keep device otherwise (has a meaningful user-facing name)
+            return true;
           });
         }
         filtered = BluetoothService.dedupeDevices(filtered);
