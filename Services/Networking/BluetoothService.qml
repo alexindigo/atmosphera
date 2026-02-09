@@ -258,9 +258,7 @@ Singleton {
         }
         var ms = text.match(/\bDiscovering:\s*(yes|no)\b/i);
         if (ms && ms.length > 1) {
-          var discovering = (ms[1].toLowerCase() === "yes");
-          Logger.d("Bluetooth", "Parsed Discovering state from bluetoothctl: " + discovering + " (current ctlDiscovering: " + root.ctlDiscovering + ")");
-          root.ctlDiscovering = discovering;
+          root.ctlDiscovering = (ms[1].toLowerCase() === "yes");
         }
       } catch (e) {
         Logger.d("Bluetooth", "Failed to parse bluetoothctl show output", e);
@@ -319,11 +317,6 @@ Singleton {
       btExec(["bluetoothctl", "discoverable", state ? "on" : "off"]);
       root.ctlDiscoverable = !!state; // optimistic
       requestCtlPoll(ctlPollSoonMs);
-      if (state) {
-        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.bluetooth.discoverable-enabled"), "broadcast");
-      } else {
-        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.bluetooth.discoverable-disabled"), "broadcast-off");
-      }
       Logger.i("Bluetooth", "Discoverable state set to:", state);
     } catch (e) {
       Logger.w("Bluetooth", "Failed to change discoverable state", e);
@@ -380,23 +373,6 @@ Singleton {
       return false;
     }
     return device.connected && !device.pairing && !device.blocked;
-  }
-  // Status string for a device (translated)
-  function getStatusString(device) {
-    if (!device) {
-      return "";
-    }
-    try {
-      if (device.pairing)
-        return I18n.tr("common.pairing");
-      if (device.blocked)
-        return I18n.tr("bluetooth.panel.blocked");
-      if (device.state === BluetoothDevice.Connecting)
-        return I18n.tr("common.connecting");
-      if (device.state === BluetoothDevice.Disconnecting)
-        return I18n.tr("common.disconnecting");
-    } catch (_) {}
-    return "";
   }
 
   // Textual signal quality (translated)

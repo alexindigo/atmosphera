@@ -2,9 +2,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
-import qs.Widgets
 import qs.Modules.Panels.Settings.Tabs.Connections
 import qs.Services.Networking
+import qs.Widgets
 
 ColumnLayout {
   id: root

@@ -3,10 +3,11 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Bluetooth
+import "../Settings/Tabs/Connections" as BluetoothPrefs
 import qs.Commons
 import qs.Modules.MainScreen
-import qs.Modules.Panels.Settings // For SettingsPanel
-
+import qs.Modules.Panels.Settings
+import qs.Services.Hardware
 import qs.Services.Networking
 import qs.Services.UI
 import qs.Widgets
@@ -93,7 +94,6 @@ SmartPanel {
             Layout.fillWidth: true
             Layout.preferredHeight: disabledColumn.implicitHeight + Style.marginXL
 
-            // Center the content within this rectangle
             ColumnLayout {
               id: disabledColumn
               anchors.fill: parent
@@ -139,12 +139,8 @@ SmartPanel {
             visible: {
               if (!(BluetoothService.adapter && BluetoothService.adapter.enabled && BluetoothService.adapter.devices))
                 return false;
-
-              // Check for connected or paired/trusted devices
-              var knownCount = BluetoothService.adapter.devices.values.filter(dev => {
-                                                                                return dev && !dev.blocked && (dev.connected || dev.paired || dev.trusted);
-                                                                              }).length;
-              return (knownCount === 0);
+              // Pulling pairedDevices count from the source component
+              return (btSource.pairedDevices.length === 0 && btSource.connectedDevices.length === 0);
             }
             Layout.fillWidth: true
             Layout.preferredHeight: emptyColumn.implicitHeight + Style.marginXL
@@ -182,133 +178,18 @@ SmartPanel {
                   root.close();
                 }
               }
-
               Item {
                 Layout.fillHeight: true
               }
             }
           }
 
-          // Connected devices
-          BluetoothDevicesList {
-            label: I18n.tr("bluetooth.panel.connected-devices")
-            headerMode: "layout"
-            property var items: {
-              if (!BluetoothService.adapter || !BluetoothService.adapter.devices)
-                return [];
-              var filtered = BluetoothService.adapter.devices.values.filter(dev => dev && !dev.blocked && dev.connected);
-              filtered = BluetoothService.dedupeDevices(filtered);
-              return BluetoothService.sortDevices(filtered);
-            }
-            model: items
-            visible: items.length > 0 && BluetoothService.adapter && BluetoothService.adapter.enabled
+          // Pull connected/paired lists from BluetoothSubTab
+          BluetoothPrefs.BluetoothSubTab {
+            id: btSource
             Layout.fillWidth: true
-          }
-
-          // Paired devices
-          BluetoothDevicesList {
-            label: I18n.tr("bluetooth.panel.paired-devices")
-            headerMode: "layout"
-            property var items: {
-              if (!BluetoothService.adapter || !BluetoothService.adapter.devices)
-                return [];
-              var filtered = BluetoothService.adapter.devices.values.filter(dev => dev && !dev.blocked && !dev.connected && (dev.paired || dev.trusted));
-              filtered = BluetoothService.dedupeDevices(filtered);
-              return BluetoothService.sortDevices(filtered);
-            }
-            model: items
-            visible: items.length > 0 && BluetoothService.adapter && BluetoothService.adapter.enabled
-            Layout.fillWidth: true
-          }
-        }
-      }
-    }
-
-    // PIN Authentication Overlay
-    Rectangle {
-      id: pinOverlay
-      anchors.fill: parent
-      color: Color.mSurface
-      visible: BluetoothService.pinRequired
-
-      // Trap all input
-      MouseArea {
-        anchors.fill: parent
-        acceptedButtons: Qt.AllButtons
-        onClicked: mouse => mouse.accepted = true
-        onWheel: wheel => wheel.accepted = true
-      }
-
-      ColumnLayout {
-        anchors.centerIn: parent
-        width: parent.width * 0.85
-        spacing: Style.marginL
-
-        NIcon {
-          icon: "lock"
-          pointSize: 48
-          color: Color.mPrimary
-          Layout.alignment: Qt.AlignHCenter
-        }
-
-        NText {
-          text: I18n.tr("common.authentication-required")
-          pointSize: Style.fontSizeXL
-          font.weight: Style.fontWeightBold
-          color: Color.mOnSurface
-          horizontalAlignment: Text.AlignHCenter
-        }
-
-        NText {
-          text: I18n.tr("bluetooth.panel.pin-instructions")
-          pointSize: Style.fontSizeM
-          color: Color.mOnSurfaceVariant
-          wrapMode: Text.WordWrap
-          horizontalAlignment: Text.AlignHCenter
-          Layout.fillWidth: true
-        }
-
-        NTextInput {
-          id: pinInput
-          Layout.fillWidth: true
-          placeholderText: "123456"
-          inputIconName: "key"
-          // Clear text when overlay appears
-          onVisibleChanged: {
-            if (visible) {
-              text = "";
-              inputItem.forceActiveFocus();
-            }
-          }
-          // Submit on Enter
-          inputItem.onAccepted: {
-            if (text.length > 0) {
-              BluetoothService.submitPin(text);
-              text = "";
-            }
-          }
-        }
-
-        RowLayout {
-          Layout.alignment: Qt.AlignHCenter
-          spacing: Style.marginM
-
-          NButton {
-            text: I18n.tr("common.cancel")
-            icon: "x"
-            onClicked: BluetoothService.cancelPairing()
-          }
-
-          NButton {
-            text: I18n.tr("common.confirm")
-            icon: "check"
-            backgroundColor: Color.mPrimary
-            textColor: Color.mOnPrimary
-            enabled: pinInput.text.length > 0
-            onClicked: {
-              BluetoothService.submitPin(pinInput.text);
-              pinInput.text = "";
-            }
+            showOnlyLists: true
+            visible: !disabledBox.visible && !emptyBox.visible
           }
         }
       }
