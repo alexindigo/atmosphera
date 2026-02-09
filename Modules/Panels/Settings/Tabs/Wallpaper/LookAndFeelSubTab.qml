@@ -74,7 +74,7 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("panels.wallpaper.look-feel-overview-blur-label")
     description: I18n.tr("panels.wallpaper.look-feel-overview-blur-description")
-    visible: Settings.data.wallpaper.enabled && Settings.data.wallpaper.overviewEnabled
+    visible: CompositorService.isNiri
     from: 0.0
     to: 1.0
     stepSize: 0.01
@@ -88,7 +88,7 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("panels.wallpaper.look-feel-overview-tint-label")
     description: I18n.tr("panels.wallpaper.look-feel-overview-tint-description")
-    visible: Settings.data.wallpaper.enabled && Settings.data.wallpaper.overviewEnabled
+    visible: CompositorService.isNiri
     from: 0.0
     to: 1.0
     stepSize: 0.01

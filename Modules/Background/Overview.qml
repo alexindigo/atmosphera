@@ -5,6 +5,7 @@ import Quickshell.Wayland
 import qs.Commons
 import qs.Services.Compositor
 import qs.Services.UI
+import qs.Services.Power
 
 Loader {
   active: CompositorService.isNiri && Settings.data.wallpaper.enabled && Settings.data.wallpaper.overviewEnabled
@@ -100,7 +101,7 @@ Loader {
         layer.enabled: true
         layer.smooth: false
         layer.effect: MultiEffect {
-          blurEnabled: true
+          blurEnabled: !PowerProfileService.noctaliaPerformanceMode
           blur: Settings.data.wallpaper.overviewBlur
           blurMax: 48
         }
