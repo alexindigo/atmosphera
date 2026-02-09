@@ -133,7 +133,9 @@ Item {
           visible: BluetoothService.enabled
         }
         NText {
-          text: "This device is discoverable as " + HostService.hostName + " while Bluetooth Settings is open."
+          text: "This device is " + (isDiscoverable ? "discoverable" : "not discoverable") + " as " + HostService.hostName + " while Bluetooth Settings is open."
+          // TODO: missing: i18n
+          visible: BluetoothService.enabled
         }
       }
     }
