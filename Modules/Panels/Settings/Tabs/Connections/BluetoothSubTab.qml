@@ -99,7 +99,7 @@ Item {
   }
 
   function _updateScanningState() {
-    if (effectivelyVisible && BluetoothService.enabled) {
+    if (effectivelyVisible && BluetoothService.enabled && !showOnlyLists) {
       Logger.d("Bluetooth Prefs", "Panel/Tab Active");
       if (!isScanningActive) {
         BluetoothService.setScanActive(true);
