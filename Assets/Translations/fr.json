@@ -58,7 +58,6 @@
       "hide-if-idle-label": "Masquer en cas d'inactivité",
       "hide-if-not-detected-description": "Masquer le widget lorsqu'aucune batterie n'est détectée sur le système.",
       "hide-if-not-detected-label": "Caché si non détecté",
-      "low-battery-threshold-description": "Afficher un avertissement lorsque la batterie tombe en dessous de ce pourcentage.",
       "low-battery-threshold-label": "Seuil d'avertissement de batterie faible",
       "show-noctalia-performance-description": "Afficher le basculement du mode performance Noctalia dans le panneau batterie.<br>Désactive les ombres et les animations dans Noctalia pour réduire l'utilisation des ressources.",
       "show-noctalia-performance-label": "Afficher le basculement Noctalia Performance",

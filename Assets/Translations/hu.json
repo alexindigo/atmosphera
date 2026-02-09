@@ -58,7 +58,6 @@
       "hide-if-idle-label": "Elrejtés tétlenség esetén",
       "hide-if-not-detected-description": "Widget elrejtése, ha a rendszer nem észlel akkumulátort.",
       "hide-if-not-detected-label": "Elrejtés, ha nincs észlelve",
-      "low-battery-threshold-description": "Figyelmeztetés megjelenítése, ha az akkumulátor töltöttsége e százalék alá esik.",
       "low-battery-threshold-label": "Alacsony akkumulátor töltöttségi figyelmeztetési küszöb",
       "show-noctalia-performance-description": "A Noctalia teljesítménymód kapcsoló megjelenítése az akkumulátor panelen belül.<br>Kikapcsolja az árnyékokat és animációkat a Noctalia-ban az erőforrás-felhasználás csökkentése érdekében.",
       "show-noctalia-performance-label": "Noctalia teljesítménymód kapcsoló",

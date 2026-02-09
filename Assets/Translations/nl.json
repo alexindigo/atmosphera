@@ -58,7 +58,6 @@
       "hide-if-idle-label": "Verbergen indien inactief",
       "hide-if-not-detected-description": "Verberg de widget als er geen accu op het systeem wordt gedetecteerd.",
       "hide-if-not-detected-label": "Verbergen indien niet gedetecteerd",
-      "low-battery-threshold-description": "Toon een waarschuwing wanneer de accu onder dit percentage komt.",
       "low-battery-threshold-label": "Waarschuwingsdrempel voor lage accu",
       "show-noctalia-performance-description": "Toon de Noctalia-prestatiemodus-schakelaar in het accupaneel.<br>Schakelt schaduwen en animaties in Noctalia uit om het resourcegebruik te verminderen.",
       "show-noctalia-performance-label": "Noctalia-Performance-schakelaar tonen",

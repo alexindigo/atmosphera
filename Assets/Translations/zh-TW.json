@@ -58,7 +58,6 @@
       "hide-if-idle-label": "閒置時隱藏",
       "hide-if-not-detected-description": "如果系統沒有偵測到電池就隱藏小工具",
       "hide-if-not-detected-label": "沒有偵測到時隱藏",
-      "low-battery-threshold-description": "在電池落到此百分比以下時顯示警告",
       "low-battery-threshold-label": "低電量警告",
       "show-noctalia-performance-description": "在電池面板內顯示 Noctalia 效能模式開關",
       "show-noctalia-performance-label": "顯示 Noctalia 效能模式開關",

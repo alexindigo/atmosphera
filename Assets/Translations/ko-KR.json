@@ -58,7 +58,6 @@
       "hide-if-idle-label": "유휴 상태일 때 숨기기",
       "hide-if-not-detected-description": "시스템에서 배터리가 감지되지 않으면 위젯을 숨깁니다.",
       "hide-if-not-detected-label": "감지되지 않으면 숨기기",
-      "low-battery-threshold-description": "배터리가 여기서 지정한 퍼센트 미만일 때 경고를 표시합니다.",
       "low-battery-threshold-label": "배터리 부족 경고 임계값",
       "show-noctalia-performance-description": "배터리 패널 내부에 Noctalia 성능 모드 토글을 표시합니다.<br>리소스 사용량을 줄이기 위해 Noctalia의 그림자와 애니메이션을 비활성화합니다.",
       "show-noctalia-performance-label": "Noctalia 성능 토글 표시",

@@ -58,7 +58,6 @@
       "hide-if-idle-label": "Dölj när inaktiv",
       "hide-if-not-detected-description": "Dölj widgeten när inget batteri upptäcks i systemet.",
       "hide-if-not-detected-label": "Dölj när inte upptäckt",
-      "low-battery-threshold-description": "Visa en varning när batteriet sjunker under denna procentandel.",
       "low-battery-threshold-label": "Varningsgräns för lågt batteri",
       "show-noctalia-performance-description": "Visa växeln för Noctalia prestandaläget i batteripanelen.<br>Inaktiverar skuggor och animationer i Noctalia för att minska resursanvändningen.",
       "show-noctalia-performance-label": "Visa Noctalia Prestandaväxeln",
