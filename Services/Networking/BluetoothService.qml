@@ -14,7 +14,6 @@ Singleton {
   // Constants (centralized tunables)
   readonly property int ctlPollMs: 1500
   readonly property int ctlPollSoonMs: 250
-  readonly property int scanAutoStopMs: 10000
 
   property bool airplaneModeToggled: false
   property bool lastBluetoothBlocked: false
@@ -57,47 +56,7 @@ Singleton {
   property int connectRetryIntervalMs: 2000
 
   // Internal: temporarily pause discovery during pair/connect to reduce HCI churn
-  // Use a resume deadline to coalesce overlapping pauses safely
   property bool _discoveryWasRunning: false
-  property double _discoveryResumeAtMs: 0
-  // Timer used to restore discovery after temporary pause during pair/connect
-  Timer {
-    id: restoreDiscoveryTimer
-    repeat: false
-    onTriggered: {
-      const now = Date.now();
-      if (now < root._discoveryResumeAtMs) {
-        // Not yet time to resume; reschedule
-        interval = Math.max(100, root._discoveryResumeAtMs - now);
-        restart();
-        return;
-      }
-      if (root._discoveryWasRunning) {
-        root.setScanActive(true, 0);
-      }
-      root._discoveryWasRunning = false;
-      root._discoveryResumeAtMs = 0;
-    }
-  }
-
-  function _pauseDiscoveryFor(ms) {
-    try {
-      // Remember if discovery was running before the first pause
-      root._discoveryWasRunning = root._discoveryWasRunning || !!root.ctlDiscovering;
-      if (root.ctlDiscovering) {
-        root.setScanActive(false, 0);
-      }
-      if (ms && ms > 0) {
-        const now = Date.now();
-        const resumeAt = now + ms;
-        if (resumeAt > root._discoveryResumeAtMs) {
-          root._discoveryResumeAtMs = resumeAt;
-        }
-        restoreDiscoveryTimer.interval = Math.max(100, root._discoveryResumeAtMs - now);
-        restoreDiscoveryTimer.restart();
-      }
-    } catch (_) {}
-  }
 
   // Persistent process for fallback scanning to keep the session alive
   Process {
@@ -107,16 +66,9 @@ Singleton {
     onExited: Logger.d("Bluetooth", "Fallback scan process exited")
   }
 
-  // Unify discovery controls and auto‑stop window
-  function setScanActive(active, durationMs) {
-    // Logger.e("Bluetooth", "setScanActive called with active=" + active + ", durationMs=" + durationMs); // used for debugging
-    // Cancel any scheduled resume so manual toggle wins
-    try {
-      root._discoveryResumeAtMs = 0;
-      restoreDiscoveryTimer.stop();
-      root._discoveryWasRunning = false;
-    } catch (_) {}
-
+  // Unify discovery controls
+  function setScanActive(active) {
+    // Logger.e("Bluetooth", "setScanActive called with active=" + active); // used for debugging
     // Prefer Quickshell API if available, fall back to bluetoothctl
     var nativeSuccess = false;
     try {
@@ -158,48 +110,11 @@ Singleton {
       }
     }
 
-    if (active && durationMs && durationMs > 0) {
-      manualScanTimer.interval = durationMs;
-      // Logger.e("Bluetooth", "Restarting manualScanTimer with interval " + durationMs + "ms");
-      manualScanTimer.restart();
-    } else {
-      if (manualScanTimer.running) {
-        // Logger.e("Bluetooth", "Stopping manualScanTimer");
-        manualScanTimer.stop();
-      }
-    }
     requestCtlPoll(ctlPollSoonMs);
   }
 
-  // Explicit toggle that cancels any pending restore so UI button behaves predictably
-  function toggleDiscovery() {
-    // Logger.e("Bluetooth", "toggleDiscovery called. Adapter present: " + (!!adapter));
-    if (!adapter) {
-      // Logger.e("Bluetooth", "toggleDiscovery aborting: no adapter");
-      return;
-    }
-    // Logger.e("Bluetooth", "toggleDiscovery calling setScanActive. Current scanningActive=" + root.scanningActive);
-    setScanActive(!root.scanningActive, scanAutoStopMs);
-  }
-
-  // Auto-stop manual discovery after a short window
-  Timer {
-    id: manualScanTimer
-    repeat: false
-    onTriggered: {
-      // Logger.e("Bluetooth", "manualScanTimer triggered");
-      // Stop scan if currently active
-      if (root.scanningActive) {
-        //  Logger.e("Bluetooth", "manualScanTimer calling setScanActive(false)");
-        root.setScanActive(false, 0);
-      } else {
-        Logger.d("Bluetooth", "manualScanTimer triggered but scanningActive is false, doing nothing");
-      }
-    }
-  }
-
   // Exposed scanning flag for UI button state; reflects adapter discovery when available
-  readonly property bool scanningActive: ((adapter && adapter.discovering) ? true : (root.ctlDiscovering === true)) || manualScanTimer.running
+  readonly property bool scanningActive: (adapter && adapter.discovering) || root.ctlDiscovering
 
   function init() {
     Logger.i("Bluetooth", "Service started");
@@ -553,7 +468,7 @@ Singleton {
       Logger.i("Bluetooth", "Pairing process exited.");
       // Restore discovery if we paused it
       if (root._discoveryWasRunning) {
-        root.setScanActive(true, 0);
+        root.setScanActive(true);
       }
       root._discoveryWasRunning = false;
     }
@@ -585,8 +500,10 @@ Singleton {
     const intervalSec = Math.max(1, Math.round(intervalMs / 1000));
 
     // Pause discovery during pair/connect to avoid interference
-    const totalPauseMs = (pairWait * 1000) + (attempts * intervalSec * 1000) + 2000;
-    _pauseDiscoveryFor(totalPauseMs);
+    root._discoveryWasRunning = root.scanningActive;
+    if (root.scanningActive) {
+      root.setScanActive(false);
+    }
 
     const scriptPath = Quickshell.shellDir + "/Scripts/python/src/network/bluetooth-pair.py";
 
