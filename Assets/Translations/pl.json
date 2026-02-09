@@ -58,7 +58,6 @@
       "hide-if-idle-label": "Ukryj, gdy bezczynny",
       "hide-if-not-detected-description": "Ukryj widżet, gdy w systemie nie zostanie wykryta bateria.",
       "hide-if-not-detected-label": "Ukryj się, jeśli nie wykryto",
-      "low-battery-threshold-description": "Pokaż ostrzeżenie, gdy poziom baterii spadnie poniżej tego procentu.",
       "low-battery-threshold-label": "Próg ostrzegania o niskim poziomie baterii",
       "show-noctalia-performance-description": "Wyświetl przełącznik trybu wydajności Noctalia w panelu baterii.<br>Wyłącza cienie i animacje w Noctalia, aby zmniejszyć zużycie zasobów.",
       "show-noctalia-performance-label": "Pokaż przełącznik wydajności Noctalia",

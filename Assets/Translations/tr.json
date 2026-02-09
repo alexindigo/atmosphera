@@ -58,7 +58,6 @@
       "hide-if-idle-label": "Boşta kalınca gizle",
       "hide-if-not-detected-description": "Sistemde pil algılanmadığında araç çubuğunu gizle.",
       "hide-if-not-detected-label": "Algılanmazsa gizle",
-      "low-battery-threshold-description": "Batarya bu yüzdeye düştüğünde uyarı göster.",
       "low-battery-threshold-label": "Düşük batarya eşiği",
       "show-noctalia-performance-description": "Pil panelinde Noctalia performans modu anahtarını göster.<br>Kaynak kullanımını azaltmak için Noctalia'da gölgeleri ve animasyonları devre dışı bırakır.",
       "show-noctalia-performance-label": "Noctalia Performans anahtarını göster",

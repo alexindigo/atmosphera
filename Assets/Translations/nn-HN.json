@@ -58,7 +58,6 @@
       "hide-if-idle-label": "Løyn når uverksam",
       "hide-if-not-detected-description": "Løyn nøytelen når kjernen ikkje finn eit batteri.",
       "hide-if-not-detected-label": "Løyn når ikkje funne",
-      "low-battery-threshold-description": "Gjev åtvaring når batteristiget gjeng under denne hundradsluten.",
       "low-battery-threshold-label": "Åtvaringstreskald for lågt batteri",
       "show-noctalia-performance-description": "Syn brjotaren for Ytestoda frå Noctalia i batterifjøli.<br>Slær av skuggar og bilætrørslor i Noctalia for å minka emnebruk.",
       "show-noctalia-performance-label": "Syn brjotaren for Ytestoda frå Noctalia",

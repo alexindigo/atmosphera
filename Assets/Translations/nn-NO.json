@@ -58,7 +58,6 @@
       "hide-if-idle-label": "Gøym når i dvale",
       "hide-if-not-detected-description": "Gøymer miniprogrammet når inga batterieining er funnen.",
       "hide-if-not-detected-label": "Gøym når ikkje funnen",
-      "low-battery-threshold-description": "Viser åtvaring når batterinivået fell under dette prosenttalet.",
       "low-battery-threshold-label": "Varslingsterskel for lågt batterinivå",
       "show-noctalia-performance-description": "Viser ytingsmodusbrytaren for Noctalia i batterifanen.<br>Slår av skuggar og animasjonar i Noctalia for å minka ressursbruk.",
       "show-noctalia-performance-label": "Vis ytingsmodusbrytaren for Noctalia",
