@@ -58,8 +58,10 @@ Rectangle {
   readonly property var defaultProvider: appsProvider
   readonly property var currentProvider: activeProvider || defaultProvider
 
-  readonly property int badgeSize: Math.round(Style.baseWidgetSize * 1.6 * Style.uiScaleRatio)
-  readonly property int entryHeight: Math.round(badgeSize + Style.marginXL)
+  readonly property string launcherDensity: Settings.data.appLauncher.density || "compact"
+  readonly property int effectiveIconSize: launcherDensity === "comfortable" ? 48 : (launcherDensity === "default" ? 32 : 24)
+  readonly property int badgeSize: Math.round(effectiveIconSize * Style.uiScaleRatio)
+  readonly property int entryHeight: Math.round(badgeSize + (launcherDensity === "compact" ? (Style.marginL + Style.marginXXS) : (Style.marginXL + Style.marginS)))
 
   readonly property bool providerShowsCategories: currentProvider.showsCategories === true
 
@@ -103,13 +105,30 @@ Rectangle {
       return "single";
     if (providerHasDisplayString)
       return "grid";
-    return Settings.data.appLauncher.viewMode === "grid" ? "grid" : "list";
+    return Settings.data.appLauncher.viewMode;
   }
 
   readonly property bool isGridView: layoutMode === "grid"
   readonly property bool isSingleView: layoutMode === "single"
+  readonly property bool isCompactDensity: launcherDensity === "compact"
 
-  readonly property int targetGridColumns: currentProvider && currentProvider.preferredGridColumns ? currentProvider.preferredGridColumns : 5
+  readonly property int targetGridColumns: {
+    let base = 5;
+    if (launcherDensity === "comfortable")
+      base = 4;
+    else if (launcherDensity === "compact")
+      base = 6;
+
+    if (!activeProvider || activeProvider === defaultProvider)
+      return base;
+
+    if (activeProvider.preferredGridColumns) {
+      let multiplier = base / 5.0;
+      return Math.max(1, Math.round(activeProvider.preferredGridColumns * multiplier));
+    }
+
+    return base;
+  }
   readonly property int listPanelWidth: Math.round(500 * Style.uiScaleRatio)
   readonly property int gridContentWidth: listPanelWidth - (2 * Style.marginXS)
   readonly property int gridCellSize: Math.floor((gridContentWidth - ((targetGridColumns - 1) * Style.marginS)) / targetGridColumns)
@@ -775,7 +794,7 @@ Rectangle {
   ColumnLayout {
     anchors.fill: parent
     anchors.margins: Style.marginL
-    spacing: Style.marginM
+    spacing: Style.marginL
 
     RowLayout {
       Layout.fillWidth: true
@@ -858,7 +877,7 @@ Rectangle {
 
         width: parent.width
         height: parent.height
-        spacing: Style.marginXS
+        spacing: Style.marginS
         model: root.results
         currentIndex: root.selectedIndex
         cacheBuffer: resultsList.height * 2
@@ -899,13 +918,13 @@ Rectangle {
           ColumnLayout {
             id: contentLayout
             anchors.fill: parent
-            anchors.margins: Style.marginM
-            spacing: Style.marginM
+            anchors.margins: root.isCompactDensity ? Style.marginXS : Style.marginM
+            spacing: root.isCompactDensity ? Style.marginXS : Style.marginM
 
             // Top row - Main entry content with action buttons
             RowLayout {
               Layout.fillWidth: true
-              spacing: Style.marginM
+              spacing: root.isCompactDensity ? Style.marginS : Style.marginM
 
               // Icon badge or Image preview or Emoji
               Item {
@@ -1080,7 +1099,7 @@ Rectangle {
                   elide: Text.ElideRight
                   maximumLineCount: 1
                   Layout.fillWidth: true
-                  visible: text !== ""
+                  visible: text !== "" && !root.isCompactDensity
                 }
               }
 
@@ -1290,9 +1309,9 @@ Rectangle {
 
             ColumnLayout {
               anchors.fill: parent
-              anchors.margins: Style.marginS
-              anchors.bottomMargin: Style.marginS
-              spacing: Style.marginXXS
+              anchors.margins: root.isCompactDensity ? Style.marginXS : Style.marginS
+              anchors.bottomMargin: root.isCompactDensity ? Style.marginXS : Style.marginS
+              spacing: root.isCompactDensity ? 0 : Style.marginXXS
 
               // Icon badge or Image preview or Emoji
               Item {

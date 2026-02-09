@@ -625,6 +625,15 @@
       "quick-settings-style-modern": "Сучасний"
     },
     "frame-rates-fps": "{fps} к/с",
+    "launcher-density": {
+      "comfortable": "Комфортний",
+      "compact": "Компактний",
+      "default": "За замовчуванням"
+    },
+    "launcher-view-mode": {
+      "grid": "Сітка",
+      "list": "Список"
+    },
     "scrolling-modes": {
       "always": "Завжди прокручувати",
       "hover": "Прокручувати при наведенні",
@@ -1106,14 +1115,16 @@
       "settings-clip-wrap-text-label": "Загорнути текст з буфера обміну",
       "settings-clipboard-history-description": "Отримати доступ до раніше скопійованих елементів із лаунчера.",
       "settings-clipboard-history-label": "Увімкнути історію буфера обміну",
-      "settings-clipboard-watch-image-description": "Повний рядок команди, переданий до wl-paste для зміни зображень. (потрібен перезапуск)",
+      "settings-clipboard-watch-image-description": "Повний рядок команди, переданий до wl-paste для зміни зображень (потрібен перезапуск).",
       "settings-clipboard-watch-image-label": "Команда Спостереження за Зображеннями",
-      "settings-clipboard-watch-text-description": "Повний рядок команди, переданий до wl-paste для змін тексту. (потребує перезапуску)",
+      "settings-clipboard-watch-text-description": "Повний рядок команди, переданий до wl-paste для змін тексту (потребує перезапуску).",
       "settings-clipboard-watch-text-label": "Команда спостереження за текстом",
       "settings-custom-launch-prefix-description": "Додати префікс до команд запуску лаунчером (напр. 'runapp' для інтеграції з systemd).",
       "settings-custom-launch-prefix-enabled-description": "Використовувати власний префікс для запуску застосунків замість стандартного методу.",
       "settings-custom-launch-prefix-enabled-label": "Увімкнути користувацький префікс запуску",
       "settings-custom-launch-prefix-label": "Користувацький префікс запуску",
+      "settings-density-description": "Налаштуйте розмір іконок програм і щільність Launcher.",
+      "settings-density-label": "Щільність",
       "settings-desc": "Налаштуйте поведінку та зовнішній вигляд лаунчера.",
       "settings-enable-settings-search-description": "Показувати результати налаштувань під час пошуку в Launcher.",
       "settings-enable-settings-search-label": "Увімкнути пошук у налаштуваннях",
@@ -1137,6 +1148,8 @@
       "settings-terminal-command-label": "Команда терміналу",
       "settings-use-app2unit-description": "Використовує альтернативний метод запуску для кращого керування процесами застосунків і запобігання проблемам.",
       "settings-use-app2unit-label": "Використовувати App2Unit для запуску застосунків",
+      "settings-view-mode-description": "Виберіть макет для записів Запускача.",
+      "settings-view-mode-label": "Режим перегляду",
       "title": "Лаунчер"
     },
     "location": {

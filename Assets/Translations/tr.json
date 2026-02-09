@@ -625,6 +625,15 @@
       "quick-settings-style-modern": "Modern"
     },
     "frame-rates-fps": "{fps} FPS",
+    "launcher-density": {
+      "comfortable": "Konforlu",
+      "compact": "Kompakt",
+      "default": "Varsayılan"
+    },
+    "launcher-view-mode": {
+      "grid": "Izgara",
+      "list": "Liste"
+    },
     "scrolling-modes": {
       "always": "Her zaman kaydır",
       "hover": "Üzerine gelince kaydır",
@@ -1106,14 +1115,16 @@
       "settings-clip-wrap-text-label": "Panoyu metni kaydır",
       "settings-clipboard-history-description": "Başlatıcıdan daha önce kopyalanan öğelere erişin.",
       "settings-clipboard-history-label": "Pano geçmişini etkinleştir",
-      "settings-clipboard-watch-image-description": "Görüntü değişiklikleri için wl-paste'e iletilen tam komut dizesi. (yeniden başlatma gerektirir)",
+      "settings-clipboard-watch-image-description": "Görüntü değişiklikleri için wl-paste'e iletilen tam komut dizesi (yeniden başlatma gerektirir).",
       "settings-clipboard-watch-image-label": "Görüntü İzleme Komutu",
-      "settings-clipboard-watch-text-description": "Metin değişiklikleri için wl-paste'e iletilen tam komut dizesi. (yeniden başlatma gerektirir)",
+      "settings-clipboard-watch-text-description": "Görüntü değişiklikleri için wl-paste'e iletilen tam komut dizesi (yeniden başlatma gerektirir).",
       "settings-clipboard-watch-text-label": "Metin izleme komutu",
       "settings-custom-launch-prefix-description": "Komutlara özel bir başlatıcı ile ön ek ekleyin (örn. systemd entegrasyonu için 'runapp').",
       "settings-custom-launch-prefix-enabled-description": "Uygulamaları başlatmak için varsayılan yöntem yerine özel bir ön ek kullanın.",
       "settings-custom-launch-prefix-enabled-label": "Özel başlatma ön ekini etkinleştir",
       "settings-custom-launch-prefix-label": "Özel başlatma ön eki",
+      "settings-density-description": "Uygulama simgelerinin boyutunu ve Launcher yoğunluğunu ayarlayın.",
+      "settings-density-label": "Yoğunluk",
       "settings-desc": "Başlatıcının davranışını ve görünümünü özelleştirin.",
       "settings-enable-settings-search-description": "Başlatıcıda arama yaparken ayarlar sonuçlarını göster.",
       "settings-enable-settings-search-label": "Ayarlar aramasını etkinleştir",
@@ -1137,6 +1148,8 @@
       "settings-terminal-command-label": "Terminal komutu",
       "settings-use-app2unit-description": "Uygulama süreçlerini daha iyi yönetmek ve sorunları önlemek için alternatif bir başlatma yöntemi kullanır.",
       "settings-use-app2unit-label": "Uygulamaları başlatmak için App2Unit kullan",
+      "settings-view-mode-description": "Başlatıcı girişleri için düzeni seçin.",
+      "settings-view-mode-label": "Görünüm modu",
       "title": "Başlatıcı"
     },
     "location": {

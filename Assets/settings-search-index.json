@@ -830,9 +830,18 @@
     "subTabLabel": "common.general"
   },
   {
-    "labelKey": "tooltips.grid-view",
-    "descriptionKey": "panels.launcher.settings-grid-view-description",
-    "widget": "NToggle",
+    "labelKey": "panels.launcher.settings-view-mode-label",
+    "descriptionKey": "panels.launcher.settings-view-mode-description",
+    "widget": "NComboBox",
+    "tab": 8,
+    "tabLabel": "panels.launcher.title",
+    "subTab": 0,
+    "subTabLabel": "common.general"
+  },
+  {
+    "labelKey": "panels.launcher.settings-density-label",
+    "descriptionKey": "panels.launcher.settings-density-description",
+    "widget": "NComboBox",
     "tab": 8,
     "tabLabel": "panels.launcher.title",
     "subTab": 0,
