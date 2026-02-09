@@ -625,6 +625,15 @@
       "quick-settings-style-modern": "现代"
     },
     "frame-rates-fps": "{fps} FPS",
+    "launcher-density": {
+      "comfortable": "舒适",
+      "compact": "紧凑",
+      "default": "默认"
+    },
+    "launcher-view-mode": {
+      "grid": "网格",
+      "list": "列表"
+    },
     "scrolling-modes": {
       "always": "始终滚动",
       "hover": "悬停时滚动",
@@ -1106,14 +1115,16 @@
       "settings-clip-wrap-text-label": "环绕剪贴板文本",
       "settings-clipboard-history-description": "从启动器访问之前复制的项目。",
       "settings-clipboard-history-label": "启用剪贴板历史记录",
-      "settings-clipboard-watch-image-description": "传递给 wl-paste 以进行图像更改的完整命令字符串。(需要重启)",
+      "settings-clipboard-watch-image-description": "传递给 wl-paste 以进行图像更改的完整命令字符串（需要重启）。",
       "settings-clipboard-watch-image-label": "图像监视命令",
-      "settings-clipboard-watch-text-description": "传递给 wl-paste 以进行文本更改的完整命令字符串。(需要重启)",
+      "settings-clipboard-watch-text-description": "传递给 wl-paste 以进行文本更改的完整命令字符串（需要重启）。",
       "settings-clipboard-watch-text-label": "文本监视命令",
       "settings-custom-launch-prefix-description": "使用自定义启动器前缀命令（例如：'runapp'用于systemd集成）。",
       "settings-custom-launch-prefix-enabled-description": "使用自定义前缀启动应用程序，而不是默认方法。",
       "settings-custom-launch-prefix-enabled-label": "启用自定义启动前缀",
       "settings-custom-launch-prefix-label": "自定义启动前缀",
+      "settings-density-description": "调整应用程序图标大小和 Launcher 密度。",
+      "settings-density-label": "密度",
       "settings-desc": "自定义启动器的行为和外观。",
       "settings-enable-settings-search-description": "在启动器中搜索时显示设置结果。",
       "settings-enable-settings-search-label": "启用设置搜索",
@@ -1137,6 +1148,8 @@
       "settings-terminal-command-label": "终端命令",
       "settings-use-app2unit-description": "使用替代启动方法以更好地管理应用程序进程并防止问题。",
       "settings-use-app2unit-label": "使用 App2Unit 启动应用程序",
+      "settings-view-mode-description": "选择启动器条目的布局。",
+      "settings-view-mode-label": "视图模式",
       "title": "启动器"
     },
     "location": {

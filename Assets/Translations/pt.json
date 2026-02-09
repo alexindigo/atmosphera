@@ -625,6 +625,15 @@
       "quick-settings-style-modern": "Moderno"
     },
     "frame-rates-fps": "{fps} FPS",
+    "launcher-density": {
+      "comfortable": "Confortável",
+      "compact": "Compacto",
+      "default": "Padrão"
+    },
+    "launcher-view-mode": {
+      "grid": "Grade",
+      "list": "Lista"
+    },
     "scrolling-modes": {
       "always": "Rolar sempre",
       "hover": "Rolar ao passar",
@@ -1106,14 +1115,16 @@
       "settings-clip-wrap-text-label": "Quebrar texto da área de transferência",
       "settings-clipboard-history-description": "Acesse itens copiados anteriormente a partir do lançador.",
       "settings-clipboard-history-label": "Ativar histórico da área de transferência",
-      "settings-clipboard-watch-image-description": "String de comando completa passada para wl-paste para alterações de imagem. (requer reinício)",
+      "settings-clipboard-watch-image-description": "Cadeia de comando completa passada para wl-paste para alterações de imagem (requer reinício).",
       "settings-clipboard-watch-image-label": "Comando de Vigilância de Imagens",
-      "settings-clipboard-watch-text-description": "Cadeia de comando completa passada para wl-paste para alterações de texto. (requer reinício)",
+      "settings-clipboard-watch-text-description": "Cadeia de comando completa passada para wl-paste para alterações de texto (requer reinício).",
       "settings-clipboard-watch-text-label": "Comando de observação de texto",
       "settings-custom-launch-prefix-description": "Prefixar comandos com um inicializador personalizado (p. ex. 'runapp' para integração systemd).",
       "settings-custom-launch-prefix-enabled-description": "Usar um prefixo personalizado para inicializar aplicativos em vez do método padrão.",
       "settings-custom-launch-prefix-enabled-label": "Habilitar prefixo de inicialização personalizado",
       "settings-custom-launch-prefix-label": "Prefixo de inicialização personalizado",
+      "settings-density-description": "Ajuste o tamanho dos ícones de aplicativos e a densidade do Launcher.",
+      "settings-density-label": "Densidade",
       "settings-desc": "Personalize o comportamento e a aparência do lançador.",
       "settings-enable-settings-search-description": "Mostrar os resultados das configurações ao pesquisar no Launcher.",
       "settings-enable-settings-search-label": "Ativar pesquisa nas configurações",
@@ -1137,6 +1148,8 @@
       "settings-terminal-command-label": "Comando do terminal",
       "settings-use-app2unit-description": "Usa um método de inicialização alternativo para gerenciar melhor os processos de aplicativos e evitar problemas.",
       "settings-use-app2unit-label": "Usar App2Unit para iniciar aplicativos",
+      "settings-view-mode-description": "Escolha o layout para as entradas do Lançador.",
+      "settings-view-mode-label": "Modo de visualização",
       "title": "Lançador"
     },
     "location": {

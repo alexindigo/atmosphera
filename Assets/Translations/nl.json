@@ -625,6 +625,15 @@
       "quick-settings-style-modern": "Modern"
     },
     "frame-rates-fps": "{fps} FPS",
+    "launcher-density": {
+      "comfortable": "Comfortabel",
+      "compact": "Compact",
+      "default": "Standaard"
+    },
+    "launcher-view-mode": {
+      "grid": "Raster",
+      "list": "Lijst"
+    },
     "scrolling-modes": {
       "always": "Altijd scrollen",
       "hover": "Scrollen bij hover",
@@ -1106,14 +1115,16 @@
       "settings-clip-wrap-text-label": "Klembordtekst omwikkelen",
       "settings-clipboard-history-description": "Toegang tot eerder gekopieerde items vanuit de launcher.",
       "settings-clipboard-history-label": "Klembordgeschiedenis inschakelen",
-      "settings-clipboard-watch-image-description": "Volledige commandoreeks die aan wl-paste wordt doorgegeven voor afbeeldingswijzigingen. (herstart vereist)",
+      "settings-clipboard-watch-image-description": "Volledige commandoreeks die aan wl-paste wordt doorgegeven voor afbeeldingswijzigingen (herstart vereist).",
       "settings-clipboard-watch-image-label": "Afbeelding Bewakingscommando",
-      "settings-clipboard-watch-text-description": "Volledige commandoreeks die aan wl-paste wordt doorgegeven voor tekstwijzigingen. (vereist herstart)",
+      "settings-clipboard-watch-text-description": "Volledige commandoreeks die aan wl-paste wordt doorgegeven voor tekstwijzigingen (vereist herstart).",
       "settings-clipboard-watch-text-label": "Tekst volgcommando",
       "settings-custom-launch-prefix-description": "Voorzie commando's van een aangepaste launcher-prefix (bijv. 'runapp' voor systemd-integratie).",
       "settings-custom-launch-prefix-enabled-description": "Gebruik een aangepaste prefix om applicaties te starten in plaats van de standaardmethode.",
       "settings-custom-launch-prefix-enabled-label": "Aangepaste startprefix inschakelen",
       "settings-custom-launch-prefix-label": "Aangepaste startprefix",
+      "settings-density-description": "Pas de grootte van applicatiepictogrammen en de dichtheid van de Launcher aan.",
+      "settings-density-label": "Dichtheid",
       "settings-desc": "Pas het gedrag en uiterlijk van de launcher aan.",
       "settings-enable-settings-search-description": "Toon instellingen in de zoekresultaten van de Launcher.",
       "settings-enable-settings-search-label": "Instellingen zoeken inschakelen",
@@ -1137,6 +1148,8 @@
       "settings-terminal-command-label": "Terminalcommando",
       "settings-use-app2unit-description": "Gebruikt een alternatieve startmethode om app-processen beter te beheren en problemen te voorkomen.",
       "settings-use-app2unit-label": "App2Unit gebruiken om applicaties te starten",
+      "settings-view-mode-description": "Kies de indeling voor de starter-items.",
+      "settings-view-mode-label": "Weergavemodus",
       "title": "Launcher"
     },
     "location": {

@@ -625,6 +625,15 @@
       "quick-settings-style-modern": "Modern"
     },
     "frame-rates-fps": "{fps} FPS",
+    "launcher-density": {
+      "comfortable": "Bequem",
+      "compact": "Kompakt",
+      "default": "Standard"
+    },
+    "launcher-view-mode": {
+      "grid": "Gitter",
+      "list": "Liste"
+    },
     "scrolling-modes": {
       "always": "Immer scrollen",
       "hover": "Beim Hover scrollen",
@@ -992,7 +1001,7 @@
       "appearance-icon-size-label": "Dock-Größe",
       "appearance-inactive-indicators-description": "Anzeige von Indikator-Pillen für alle Apps, nicht nur für die aktuell aktive.",
       "appearance-inactive-indicators-label": "Laufende Indikatoren",
-      "appearance-pinned-static-description": "Gepinnten App-Symbole immer in statischer Reihenfolge nach links schieben.",
+      "appearance-pinned-static-description": "Gepinnte App-Symbole immer in statischer Reihenfolge nach links schieben.",
       "appearance-pinned-static-label": "Statische angeheftete Apps",
       "appearance-position-description": "Wählen Sie, wo das Dock auf dem Bildschirm angezeigt wird.",
       "appearance-position-label": "Position",
@@ -1106,14 +1115,16 @@
       "settings-clip-wrap-text-label": "Zwischenablage-Text umbrechen",
       "settings-clipboard-history-description": "Zugriff auf zuvor kopierte Elemente über den Launcher.",
       "settings-clipboard-history-label": "Zwischenablageverlauf aktivieren",
-      "settings-clipboard-watch-image-description": "Vollständige Befehlszeichenfolge, die an wl-paste für Bildänderungen übergeben wird. (Neustart erforderlich)",
+      "settings-clipboard-watch-image-description": "Vollständiger Befehlsstring, der an wl-paste für Bildänderungen übergeben wird (Neustart erforderlich).",
       "settings-clipboard-watch-image-label": "Bildüberwachungsbefehl",
-      "settings-clipboard-watch-text-description": "Vollständiger Befehlsstring, der an wl-paste für Textänderungen übergeben wird. (Neustart erforderlich)",
+      "settings-clipboard-watch-text-description": "Vollständiger Befehlsstring, der an wl-paste für Textänderungen übergeben wird (Neustart erforderlich).",
       "settings-clipboard-watch-text-label": "Textüberwachungsbefehl",
       "settings-custom-launch-prefix-description": "Befehle mit einem benutzerdefinierten Launcher präfixieren (z.B. 'runapp' für systemd-Integration).",
       "settings-custom-launch-prefix-enabled-description": "Verwenden Sie ein benutzerdefiniertes Präfix zum Starten von Anwendungen anstelle der Standardmethode.",
       "settings-custom-launch-prefix-enabled-label": "Benutzerdefiniertes Start-Präfix aktivieren",
       "settings-custom-launch-prefix-label": "Benutzerdefiniertes Start-Präfix",
+      "settings-density-description": "Größe der Anwendungssymbole und Dichte des Launchers anpassen.",
+      "settings-density-label": "Dichte",
       "settings-desc": "Verhalten und Erscheinungsbild des Starters anpassen.",
       "settings-enable-settings-search-description": "Einstellungen in den Suchergebnissen des Launchers anzeigen.",
       "settings-enable-settings-search-label": "Einstellungen-Suche aktivieren",
@@ -1137,6 +1148,8 @@
       "settings-terminal-command-label": "Terminalbefehl",
       "settings-use-app2unit-description": "Verwendet eine alternative Startmethode zur besseren Verwaltung von App-Prozessen und Problemvermeidung.",
       "settings-use-app2unit-label": "App2Unit zum Starten von Anwendungen verwenden",
+      "settings-view-mode-description": "Wähle das Layout für die Anwendungsstarter-Einträge.",
+      "settings-view-mode-label": "Ansichtsmodus",
       "title": "Starter"
     },
     "location": {

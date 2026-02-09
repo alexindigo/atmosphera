@@ -830,9 +830,18 @@
     "subTabLabel": "common.general"
   },
   {
-    "labelKey": "tooltips.grid-view",
-    "descriptionKey": "panels.launcher.settings-grid-view-description",
-    "widget": "NToggle",
+    "labelKey": "panels.launcher.settings-view-mode-label",
+    "descriptionKey": "panels.launcher.settings-view-mode-description",
+    "widget": "NComboBox",
+    "tab": 8,
+    "tabLabel": "panels.launcher.title",
+    "subTab": 0,
+    "subTabLabel": "common.general"
+  },
+  {
+    "labelKey": "panels.launcher.settings-density-label",
+    "descriptionKey": "panels.launcher.settings-density-description",
+    "widget": "NComboBox",
     "tab": 8,
     "tabLabel": "panels.launcher.title",
     "subTab": 0,
@@ -1248,6 +1257,15 @@
     "tabLabel": "panels.plugins.title",
     "subTab": 1,
     "subTabLabel": "common.available"
+  },
+  {
+    "labelKey": "panels.plugins.auto-update",
+    "descriptionKey": "panels.plugins.auto-update-description",
+    "widget": "NToggle",
+    "tab": 18,
+    "tabLabel": "panels.plugins.title",
+    "subTab": 0,
+    "subTabLabel": "common.installed"
   },
   {
     "labelKey": "panels.plugins.installed-no-plugins-label",

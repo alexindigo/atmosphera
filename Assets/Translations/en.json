@@ -625,6 +625,15 @@
       "quick-settings-style-modern": "Modern"
     },
     "frame-rates-fps": "{fps} FPS",
+    "launcher-density": {
+      "comfortable": "Comfortable",
+      "compact": "Compact",
+      "default": "Default"
+    },
+    "launcher-view-mode": {
+      "grid": "Grid",
+      "list": "List"
+    },
     "scrolling-modes": {
       "always": "Scroll always",
       "hover": "Scroll on hover",
@@ -1114,6 +1123,8 @@
       "settings-custom-launch-prefix-enabled-description": "Use a custom prefix for launching applications instead of the default method.",
       "settings-custom-launch-prefix-enabled-label": "Enable custom launch prefix",
       "settings-custom-launch-prefix-label": "Custom launch prefix",
+      "settings-density-description": "Adjust the size of application icons and the density of the launcher.",
+      "settings-density-label": "Density",
       "settings-desc": "Customize the launcher's behavior and appearance.",
       "settings-enable-settings-search-description": "Show settings results when searching in the launcher.",
       "settings-enable-settings-search-label": "Enable settings search",
@@ -1137,6 +1148,8 @@
       "settings-terminal-command-label": "Terminal command",
       "settings-use-app2unit-description": "Uses an alternative launch method to better manage app processes and prevent issues.",
       "settings-use-app2unit-label": "Use App2Unit to launch applications",
+      "settings-view-mode-description": "Choose the layout for the launcher entries.",
+      "settings-view-mode-label": "View mode",
       "title": "Launcher"
     },
     "location": {

@@ -625,6 +625,15 @@
       "quick-settings-style-modern": "Modern"
     },
     "frame-rates-fps": "{fps} bilder/s",
+    "launcher-density": {
+      "comfortable": "Bekväm",
+      "compact": "Kompakt",
+      "default": "Standard"
+    },
+    "launcher-view-mode": {
+      "grid": "Rutnät",
+      "list": "Lista"
+    },
     "scrolling-modes": {
       "always": "Rulla alltid",
       "hover": "Rulla vid muspekning",
@@ -1106,14 +1115,16 @@
       "settings-clip-wrap-text-label": "Vik in text i urklipp",
       "settings-clipboard-history-description": "Öppna tidigare kopierade objekt från startprogrammet.",
       "settings-clipboard-history-label": "Aktivera klippbordshistorik",
-      "settings-clipboard-watch-image-description": "Fullständig kommandosträng som skickas till wl-paste för bildändringar. (kräver omstart)",
+      "settings-clipboard-watch-image-description": "Fullständig kommandosträng som skickas till wl-paste för bildändringar (kräver omstart).",
       "settings-clipboard-watch-image-label": "Bildövervakningskommando",
-      "settings-clipboard-watch-text-description": "Fullständig kommandosträng skickad till wl-paste för textändringar. (kräver omstart)",
+      "settings-clipboard-watch-text-description": "Fullständig kommandosträng skickad till wl-paste för textändringar (kräver omstart).",
       "settings-clipboard-watch-text-label": "Textbevakningskommando",
       "settings-custom-launch-prefix-description": "Prefixkommandon med en anpassad startfunktion (t.ex. \"runapp\"för systemd-integration).",
       "settings-custom-launch-prefix-enabled-description": "Använd ett anpassat prefix för att starta applikationer istället för standardmetoden.",
       "settings-custom-launch-prefix-enabled-label": "Aktivera anpassat startprefix",
       "settings-custom-launch-prefix-label": "Anpassat startprefix",
+      "settings-density-description": "Justera storleken på applikationsikoner och Launcherns densitet.",
+      "settings-density-label": "Densitet",
       "settings-desc": "Anpassa startprogrammets beteende och utseende.",
       "settings-enable-settings-search-description": "Visa inställningsresultat vid sökning i startprogrammet.",
       "settings-enable-settings-search-label": "Aktivera inställningssökning",
@@ -1137,6 +1148,8 @@
       "settings-terminal-command-label": "Terminalkommando",
       "settings-use-app2unit-description": "Använder en alternativ startmetod för att bättre hantera app-processer och förhindra problem.",
       "settings-use-app2unit-label": "Använd App2Unit för att starta applikationer",
+      "settings-view-mode-description": "Välj layout för startprogrammets poster.",
+      "settings-view-mode-label": "Visningsläge",
       "title": "Startprogram"
     },
     "location": {

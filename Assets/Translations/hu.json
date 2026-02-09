@@ -625,6 +625,15 @@
       "quick-settings-style-modern": "Modern"
     },
     "frame-rates-fps": "{fps} FPS",
+    "launcher-density": {
+      "comfortable": "Kényelmes",
+      "compact": "Kompakt",
+      "default": "Alapértelmezett"
+    },
+    "launcher-view-mode": {
+      "grid": "Rács",
+      "list": "Lista"
+    },
     "scrolling-modes": {
       "always": "Mindig görgetés",
       "hover": "Görgetés rámutatáskor",
@@ -1106,14 +1115,16 @@
       "settings-clip-wrap-text-label": "Clipboard szöveg becsomagolása",
       "settings-clipboard-history-description": "Hozzáférés a korábban másolt elemekhez az indítóból.",
       "settings-clipboard-history-label": "Vágólapelőzmények engedélyezése",
-      "settings-clipboard-watch-image-description": "Teljes parancssor, ami a wl-paste-nek kerül átadásra a képváltozásokhoz. (újraindítás szükséges)",
+      "settings-clipboard-watch-image-description": "A wl-paste-nek átadott teljes parancssor képmódosításokhoz (újraindítás szükséges).",
       "settings-clipboard-watch-image-label": "Képfigyelő Parancs",
-      "settings-clipboard-watch-text-description": "A wl-paste-nek átadott teljes parancssor a szövegváltozásokhoz. (újraindítást igényel)",
+      "settings-clipboard-watch-text-description": "A wl-paste-nek átadott teljes parancssor a szövegváltozásokhoz (újraindítást szükséges).",
       "settings-clipboard-watch-text-label": "Szövegfigyelő parancs",
       "settings-custom-launch-prefix-description": "Előtagolja a parancsokat egyéni indítóval (pl. 'runapp' a systemd integrációhoz).",
       "settings-custom-launch-prefix-enabled-description": "Használjon egyéni előtagot az alkalmazások indításához az alapértelmezett módszer helyett.",
       "settings-custom-launch-prefix-enabled-label": "Egyéni indítási előtag engedélyezése",
       "settings-custom-launch-prefix-label": "Egyéni indítási előtag",
+      "settings-density-description": "Állítsd be az alkalmazásikonok méretét és a Launcher sűrűségét.",
+      "settings-density-label": "Sűrűség",
       "settings-desc": "Az indító viselkedésének és megjelenésének testreszabása.",
       "settings-enable-settings-search-description": "Beállítások megjelenítése a találatok között az indítón belül.",
       "settings-enable-settings-search-label": "Beállítások keresésének engedélyezése",
@@ -1137,6 +1148,8 @@
       "settings-terminal-command-label": "Terminál parancs",
       "settings-use-app2unit-description": "Alternatív indítási módszert használ az alkalmazásfolyamatok jobb kezelésére és a problémák megelőzésére.",
       "settings-use-app2unit-label": "App2Unit használata alkalmazások indításához",
+      "settings-view-mode-description": "Válaszd ki az indító bejegyzések elrendezését.",
+      "settings-view-mode-label": "Nézet mód",
       "title": "Indító"
     },
     "location": {

@@ -625,6 +625,15 @@
       "quick-settings-style-modern": "Moderne"
     },
     "frame-rates-fps": "{fps} FPS",
+    "launcher-density": {
+      "comfortable": "Confortable",
+      "compact": "Compact",
+      "default": "Par défaut"
+    },
+    "launcher-view-mode": {
+      "grid": "Grille",
+      "list": "Liste"
+    },
     "scrolling-modes": {
       "always": "Défiler toujours",
       "hover": "Défiler au survol",
@@ -1106,14 +1115,16 @@
       "settings-clip-wrap-text-label": "Envelopper le texte du presse-papiers",
       "settings-clipboard-history-description": "Accédez aux éléments précédemment copiés depuis le lanceur.",
       "settings-clipboard-history-label": "Activer l'historique du presse-papiers",
-      "settings-clipboard-watch-image-description": "Chaîne de commande complète passée à wl-paste pour les changements d'image. (redémarrage requis)",
+      "settings-clipboard-watch-image-description": "Chaîne de commande complète passée à wl-paste pour les changements d'image (redémarrage requis).",
       "settings-clipboard-watch-image-label": "Commande de Surveillance d'Images",
-      "settings-clipboard-watch-text-description": "Chaîne de commande complète passée à wl-paste pour les changements de texte. (nécessite un redémarrage)",
+      "settings-clipboard-watch-text-description": "Chaîne de commande complète passée à wl-paste pour les changements de texte (nécessite un redémarrage).",
       "settings-clipboard-watch-text-label": "Commande de surveillance de texte",
       "settings-custom-launch-prefix-description": "Préfixer les commandes avec un lanceur personnalisé (ex : 'runapp' pour l'intégration systemd).",
       "settings-custom-launch-prefix-enabled-description": "Utiliser un préfixe personnalisé pour lancer les applications au lieu de la méthode par défaut.",
       "settings-custom-launch-prefix-enabled-label": "Activer le préfixe de lancement personnalisé",
       "settings-custom-launch-prefix-label": "Préfixe de lancement personnalisé",
+      "settings-density-description": "Ajustez la taille des icônes d'application et la densité du Launcher.",
+      "settings-density-label": "Densité",
       "settings-desc": "Personnalisez le comportement et l'apparence du lanceur.",
       "settings-enable-settings-search-description": "Afficher les résultats des paramètres lors de la recherche dans le lanceur.",
       "settings-enable-settings-search-label": "Activer la recherche dans les paramètres",
@@ -1137,6 +1148,8 @@
       "settings-terminal-command-label": "Commande du terminal",
       "settings-use-app2unit-description": "Utilise une méthode de lancement alternative pour mieux gérer les processus des applications et prévenir les problèmes.",
       "settings-use-app2unit-label": "Utiliser App2Unit pour lancer les applications",
+      "settings-view-mode-description": "Choisis la disposition des entrées du Lanceur.",
+      "settings-view-mode-label": "Mode d'affichage",
       "title": "Lanceur"
     },
     "location": {
