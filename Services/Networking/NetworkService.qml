@@ -10,6 +10,12 @@ import qs.Services.UI
 Singleton {
   id: root
 
+  readonly property bool wifiAvailable: _wifiAvailable
+  readonly property bool ethernetAvailable: _ethernetAvailable
+
+  property bool _wifiAvailable: false
+  property bool _ethernetAvailable: false
+
   // Core state
   property var networks: ({})
   property bool scanning: false
@@ -66,7 +72,7 @@ Singleton {
 
   Connections {
     target: Settings.data.network
-    function onWifiEnabledChanged() {
+    onWifiEnabledChanged: {
       if (Settings.data.network.wifiEnabled) {
         if (!BluetoothService.airplaneModeToggled) {
           ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.enabled"), "wifi");
@@ -87,6 +93,7 @@ Singleton {
   Component.onCompleted: {
     Logger.i("Network", "Service started");
     if (ProgramCheckerService.nmcliAvailable) {
+      detectNetworkCapabilities();
       syncWifiState();
       scan();
       // Prime ethernet state immediately so UI can reflect wired status on startup
@@ -99,8 +106,9 @@ Singleton {
   // Start initial checks when nmcli becomes available
   Connections {
     target: ProgramCheckerService
-    function onNmcliAvailableChanged() {
+    onNmcliAvailableChanged: {
       if (ProgramCheckerService.nmcliAvailable) {
+        detectNetworkCapabilities();
         syncWifiState();
         scan();
         // Refresh ethernet status as soon as nmcli becomes available
@@ -108,6 +116,38 @@ Singleton {
         // Also refresh details so panels get info without waiting for timers
         refreshActiveWifiDetails();
         refreshActiveEthernetDetails();
+      }
+    }
+  }
+
+  // Function to detect host's networking capabilities eg has WiFi/Ethernet.
+  function detectNetworkCapabilities() {
+    if (ProgramCheckerService.nmcliAvailable) {
+      capabilityDetectProcess.running = true;
+    }
+  }
+
+  // Process to detect host's networking capabilities
+  Process {
+    id: capabilityDetectProcess
+    running: false
+    command: ["nmcli", "-t", "-f", "TYPE", "device"]
+    stdout: StdioCollector {
+      onStreamFinished: {
+        var lines = text.trim().split("\n");
+        var wifi = false;
+        var eth = false;
+        for (var i = 0; i < lines.length; i++) {
+          var type = lines[i].trim();
+          if (type === "wifi") {
+            wifi = true;
+          } else if (type === "ethernet") {
+            eth = true;
+          }
+        }
+        root._wifiAvailable = wifi;
+        root._ethernetAvailable = eth;
+        Logger.d("Network", "Detected capabilities - WiFi:", wifi, "Ethernet:", eth);
       }
     }
   }

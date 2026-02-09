@@ -3,6 +3,8 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
 import qs.Widgets
+import qs.Modules.Panels.Settings.Tabs.Connections
+import qs.Services.Networking
 
 ColumnLayout {
   id: root
@@ -16,14 +18,25 @@ ColumnLayout {
     currentIndex: tabView.currentIndex
 
     NTabButton {
-      text: I18n.tr("common.wifi")
+      text: I18n.tr("tooltips.manage-wifi")
+      // visible: NetworkService.wifiAvailable
+      enabled: NetworkService.wifiAvailable // Remove when work finished, only use visibility
       tabIndex: 0
       checked: subTabBar.currentIndex === 0
     }
     NTabButton {
       text: I18n.tr("common.bluetooth")
+      // visible: BluetoothService.bluetoothAvailable
+      enabled: BluetoothService.bluetoothAvailable // Remove when work finished, only use visibility
       tabIndex: 1
       checked: subTabBar.currentIndex === 1
+    }
+    NTabButton {
+      text: I18n.tr("wifi.label-ethernet")  // TODO: I18n
+      // visible: NetworkService.wifiAvailable
+      enabled: NetworkService.wifiAvailable // Remove when work finished, only use visibility
+      tabIndex: 2
+      checked: subTabBar.currentIndex === 2
     }
   }
 
@@ -36,8 +49,8 @@ ColumnLayout {
     id: tabView
     Layout.fillHeight: true
     currentIndex: subTabBar.currentIndex
-
     WifiSubTab {}
     BluetoothSubTab {}
+    EthernetSubTab {}
   }
 }

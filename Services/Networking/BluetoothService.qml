@@ -20,7 +20,9 @@ Singleton {
   property bool lastWifiBlocked: false
   readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
 
-  // Power/blocked state
+  // Power/blocked/availability state
+  readonly property bool bluetoothAvailable: adapter ? adapter !== null : false
+  property bool ctlAvailable: false
   readonly property bool enabled: adapter ? adapter.enabled : root.ctlPowered
   readonly property bool blocked: adapter?.state === BluetoothAdapterState.Blocked
   property bool ctlPowered: false
@@ -57,6 +59,45 @@ Singleton {
 
   // Internal: temporarily pause discovery during pair/connect to reduce HCI churn
   property bool _discoveryWasRunning: false
+  property double _discoveryResumeAtMs: 0
+  // Timer used to restore discovery after temporary pause during pair/connect
+  Timer {
+    id: restoreDiscoveryTimer
+    repeat: false
+    onTriggered: {
+      const now = Date.now();
+      if (now < root._discoveryResumeAtMs) {
+        // Not yet time to resume; reschedule
+        interval = Math.max(100, root._discoveryResumeAtMs - now);
+        restart();
+        return;
+      }
+      if (root._discoveryWasRunning) {
+        root.setScanActive(true);
+      }
+      root._discoveryWasRunning = false;
+      root._discoveryResumeAtMs = 0;
+    }
+  }
+
+  function _pauseDiscoveryFor(ms) {
+    try {
+      // Remember if discovery was running before the first pause
+      root._discoveryWasRunning = root._discoveryWasRunning || !!root.ctlDiscovering;
+      if (root.ctlDiscovering) {
+        root.setScanActive(false);
+      }
+      if (ms && ms > 0) {
+        const now = Date.now();
+        const resumeAt = now + ms;
+        if (resumeAt > root._discoveryResumeAtMs) {
+          root._discoveryResumeAtMs = resumeAt;
+        }
+        restoreDiscoveryTimer.interval = Math.max(100, root._discoveryResumeAtMs - now);
+        restoreDiscoveryTimer.restart();
+      }
+    } catch (_) {}
+  }
 
   // Persistent process for fallback scanning to keep the session alive
   Process {
@@ -501,10 +542,8 @@ Singleton {
     const intervalSec = Math.max(1, Math.round(intervalMs / 1000));
 
     // Pause discovery during pair/connect to avoid interference
-    root._discoveryWasRunning = root.scanningActive;
-    if (root.scanningActive) {
-      root.setScanActive(false);
-    }
+    const totalPauseMs = (pairWait * 1000) + (attempts * intervalSec * 1000) + 2000;
+    _pauseDiscoveryFor(totalPauseMs);
 
     const scriptPath = Quickshell.shellDir + "/Scripts/python/src/network/bluetooth-pair.py";
 

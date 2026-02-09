@@ -4,13 +4,13 @@ import QtQuick.Layouts
 import QtQuick.Window
 import Quickshell
 import Quickshell.Bluetooth
-import "../../Bluetooth" // For BluetoothDevicesList
 
 import qs.Commons
 import qs.Services.Networking
 import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
+import qs.Modules.Panels.Bluetooth
 
 Item {
   id: btprefs
@@ -44,21 +44,17 @@ Item {
       Logger.d("Bluetooth Prefs", "Panel/Tab Active");
       if (!isScanningActive) {
         BluetoothService.setScanActive(true);
-        isScanningActive = true;
       }
       if (!isDiscoverable) {
         BluetoothService.setDiscoverable(true);
-        isDiscoverable = true;
       }
     } else {
       Logger.d("Bluetooth Prefs", "Panel/Tab Inactive");
       if (isScanningActive) {
         BluetoothService.setScanActive(false);
-        isScanningActive = false;
       }
       if (isDiscoverable) {
         BluetoothService.setDiscoverable(false);
-        isDiscoverable = false;
       }
     }
   }
@@ -67,12 +63,10 @@ Item {
     // Ensure scanning is stopped when component is closed
     if (isScanningActive) {
       BluetoothService.setScanActive(false);
-      isScanningActive = false;
     }
     // Ensure discoverable is disabled when component is closed
     if (isDiscoverable) {
       BluetoothService.setDiscoverable(false);
-      isDiscoverable = false;
     }
     Logger.d("Bluetooth Prefs", "Panel Closed");
   }
