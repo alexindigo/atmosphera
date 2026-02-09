@@ -62,23 +62,24 @@ Singleton {
   Process {
     id: fallbackScanProcess
     // Pipe scan on and a long sleep to bluetoothctl to keep it running
-    command: ["sh", "-c", "trap 'kill 0' EXIT; (echo 'scan on'; sleep 3600) | bluetoothctl"]
+    // Afaik we don't need bluetoothctl scanning for an entire hour. back then this was made to save to day. (when i originaly wrote this)
+    command: ["sh", "-c", "(echo 'scan on'; sleep 30) | bluetoothctl"]  // trap is not sending sigterm to bctl, guess what to parent (qs)... | BAD Idea should have guessed that, expected to sh to crash and stop.
     onExited: Logger.d("Bluetooth", "Fallback scan process exited")
   }
 
   // Unify discovery controls
   function setScanActive(active) {
-    // Logger.e("Bluetooth", "setScanActive called with active=" + active); // used for debugging
-    // Prefer Quickshell API if available, fall back to bluetoothctl
+    Logger.d("Bluetooth", "setScanActive called with active=" + active); // used for debugging
+    // Prefer Quickshell API if available, fallback to bluetoothctl
     var nativeSuccess = false;
     try {
       if (adapter) {
         if (active && adapter.discovering !== undefined) {
-          // Logger.e("Bluetooth", "Starting discovery with Quickshell API"); // used for debugging
+          Logger.d("Bluetooth", "Starting discovery with Quickshell API"); // used for debugging
           adapter.discovering = true;
           nativeSuccess = true;
         } else if (!active && adapter.discovering !== undefined) {
-          // Logger.e("Bluetooth", "Stopping discovery with Quickshell API"); // used for debugging
+          Logger.d("Bluetooth", "Stopping discovery with Quickshell API"); // used for debugging
           adapter.discovering = false;
           nativeSuccess = true;
         }
@@ -94,16 +95,16 @@ Singleton {
     // Only issue bluetoothctl if we didn't use the adapter API
     if (!nativeSuccess) {
       if (active) {
-        // Logger.e("Bluetooth", "Starting fallback scan process");
+        Logger.d("Bluetooth", "Starting fallback scan process");
         fallbackScanProcess.running = true;
       } else {
-        // Logger.e("Bluetooth", "Stopping fallback scan process");
+        Logger.d("Bluetooth", "Stopping fallback scan process");
         fallbackScanProcess.running = false;
         // Explicitly send scan off command as well to ensure state is cleared
         btExec(["bluetoothctl", "scan", "off"]);
       }
     } else {
-      // Logger.e("Bluetooth", "Skipping bluetoothctl fallback as native API was used");
+      Logger.d("Bluetooth", "Skipping bluetoothctl fallback as native API was used");
       // Ensure fallback process is stopped if we switched to native
       if (fallbackScanProcess.running) {
         fallbackScanProcess.running = false;
@@ -204,7 +205,7 @@ Singleton {
     onExited: function (exitCode, exitStatus) {
       try {
         var text = ctlStdout.text || "";
-        // Logger.e("Bluetooth", "ctlShowProcess exited. Output length: " + text.length);
+        Logger.d("Bluetooth", "ctlShowProcess exited. Output length: " + text.length);
         // Parse Powered/Discoverable/Discovering lines
         var mp = text.match(/\bPowered:\s*(yes|no)\b/i);
         if (mp && mp.length > 1) {
@@ -217,7 +218,7 @@ Singleton {
         var ms = text.match(/\bDiscovering:\s*(yes|no)\b/i);
         if (ms && ms.length > 1) {
           var discovering = (ms[1].toLowerCase() === "yes");
-          //Logger.e("Bluetooth", "Parsed Discovering state from bluetoothctl: " + discovering + " (current ctlDiscovering: " + root.ctlDiscovering + ")");
+          Logger.d("Bluetooth", "Parsed Discovering state from bluetoothctl: " + discovering + " (current ctlDiscovering: " + root.ctlDiscovering + ")");
           root.ctlDiscovering = discovering;
         }
       } catch (e) {
