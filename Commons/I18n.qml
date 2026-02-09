@@ -107,6 +107,9 @@ Singleton {
       if (userLang !== "" && userLang !== root.langCode && availableLanguages.includes(userLang)) {
         Logger.i("I18n", `Applying user language preference: "${userLang}"`);
         setLanguage(userLang);
+      } else if (userLang === "" && root.systemDetectedLangCode !== "" && root.systemDetectedLangCode !== root.langCode) {
+        Logger.i("I18n", `Language reset to default, reverting to system language: "${root.systemDetectedLangCode}"`);
+        setLanguage(root.systemDetectedLangCode);
       }
     }
   }
