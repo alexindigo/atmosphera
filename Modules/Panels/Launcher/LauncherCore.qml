@@ -872,7 +872,7 @@ Rectangle {
         horizontalPolicy: ScrollBar.AlwaysOff
         verticalPolicy: ScrollBar.AlwaysOff
         reserveScrollbarSpace: false
-        gradientColor: Color.mSurface
+        gradientColor: Color.mSurfaceVariant
         wheelScrollMultiplier: 4.0
 
         width: parent.width
@@ -1229,7 +1229,7 @@ Rectangle {
         horizontalPolicy: ScrollBar.AlwaysOff
         verticalPolicy: ScrollBar.AlwaysOff
         reserveScrollbarSpace: false
-        gradientColor: Color.mSurface
+        gradientColor: Color.mSurfaceVariant
         wheelScrollMultiplier: 4.0
         trackedSelectionIndex: root.selectedIndex
 
