@@ -14,6 +14,26 @@ import qs.Widgets
 Item {
   id: root
 
+  property ShellScreen screen
+  property string widgetId: ""
+  property string section: ""
+  property int sectionWidgetIndex: -1
+  property int sectionWidgetsCount: 0
+
+  // Settings
+  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
+  // Explicit screenName property ensures reactive binding when screen changes
+  readonly property string screenName: screen ? screen.name : ""
+  property var widgetSettings: {
+    if (section && sectionWidgetIndex >= 0 && screenName) {
+      var widgets = Settings.getBarWidgetsForScreen(screenName)[section];
+      if (widgets && sectionWidgetIndex < widgets.length) {
+        return widgets[sectionWidgetIndex];
+      }
+    }
+    return {};
+  }
+
   readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
   readonly property string capsIcon: widgetSettings.capsLockIcon !== undefined ? widgetSettings.capsLockIcon : widgetMetadata.capsLockIcon
   readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screenName)
@@ -24,27 +44,10 @@ Item {
   readonly property bool hideWhenOff: (widgetSettings.hideWhenOff !== undefined) ? widgetSettings.hideWhenOff : (widgetMetadata.hideWhenOff !== undefined ? widgetMetadata.hideWhenOff : false)
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property string numIcon: widgetSettings.numLockIcon !== undefined ? widgetSettings.numLockIcon : widgetMetadata.numLockIcon
-  property ShellScreen screen
-  // Explicit screenName property ensures reactive binding when screen changes
-  readonly property string screenName: screen ? screen.name : ""
   readonly property string scrollIcon: widgetSettings.scrollLockIcon !== undefined ? widgetSettings.scrollLockIcon : widgetMetadata.scrollLockIcon
-  property string section: ""
-  property int sectionWidgetIndex: -1
-  property int sectionWidgetsCount: 0
   readonly property bool showCaps: (widgetSettings.showCapsLock !== undefined) ? widgetSettings.showCapsLock : widgetMetadata.showCapsLock
   readonly property bool showNum: (widgetSettings.showNumLock !== undefined) ? widgetSettings.showNumLock : widgetMetadata.showNumLock
   readonly property bool showScroll: (widgetSettings.showScrollLock !== undefined) ? widgetSettings.showScrollLock : widgetMetadata.showScrollLock
-  property string widgetId: ""
-  property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
-  property var widgetSettings: {
-    if (section && sectionWidgetIndex >= 0 && screenName) {
-      var widgets = Settings.getBarWidgetsForScreen(screenName)[section];
-      if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex];
-      }
-    }
-    return {};
-  }
 
   implicitHeight: contentHeight
   implicitWidth: contentWidth
