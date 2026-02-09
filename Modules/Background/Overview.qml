@@ -102,7 +102,7 @@ Loader {
         layer.effect: MultiEffect {
           blurEnabled: true
           blur: Settings.data.wallpaper.overviewBlur
-          blurMax: 64
+          blurMax: 48
         }
 
         // Tint overlay
