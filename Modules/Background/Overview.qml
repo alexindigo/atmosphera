@@ -4,8 +4,8 @@ import Quickshell
 import Quickshell.Wayland
 import qs.Commons
 import qs.Services.Compositor
-import qs.Services.UI
 import qs.Services.Power
+import qs.Services.UI
 
 Loader {
   active: CompositorService.isNiri && Settings.data.wallpaper.enabled && Settings.data.wallpaper.overviewEnabled
