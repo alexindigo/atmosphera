@@ -80,6 +80,7 @@ Singleton {
       }
     }
     function onEnableMultiMonitorDirectoriesChanged() {
+      root.usedRandomWallpapers = {};
       root.refreshWallpapersList();
       // Notify all monitors about potential directory changes
       for (var i = 0; i < Quickshell.screens.length; i++) {
