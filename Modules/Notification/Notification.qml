@@ -306,17 +306,18 @@ Variants {
               onClicked: {
                 if (mouse.button === Qt.RightButton) {
                   animateOut();
-			    }
-                else if (mouse.button === Qt.LeftButton) {
+                } else if (mouse.button === Qt.LeftButton) {
                   var actions = model.actionsJson ? JSON.parse(model.actionsJson) : [];
-                  var hasDefault = actions.some(function(a) { return a.identifier === "default" });
-				  if (hasDefault) {
+                  var hasDefault = actions.some(function (a) {
+                    return a.identifier === "default";
+                  });
+                  if (hasDefault) {
                     NotificationService.invokeAction(notificationId, "default");
-					animateOut();
-				  }
+                    animateOut();
+                  }
                 }
               }
-		    }
+            }
             // Animation setup
             function triggerEntryAnimation() {
               animInDelayTimer.stop();
