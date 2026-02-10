@@ -144,13 +144,11 @@ Item {
     NBox {
       visible: !btprefs.showOnlyLists
       Layout.fillWidth: true
-      Layout.preferredHeight: masterControlCol.implicitHeight + Style.marginL * 2
-      implicitHeight: Layout.preferredHeight
+      Layout.preferredHeight: masterControlCol.implicitHeight
 
       ColumnLayout {
         id: masterControlCol
         anchors.fill: parent
-        anchors.margins: Style.marginL
         spacing: Style.marginM
 
         RowLayout {
@@ -163,17 +161,11 @@ Item {
             color: BluetoothService.enabled ? Color.mPrimary : Color.mOnSurfaceVariant
           }
 
-          ColumnLayout {
-            Layout.fillWidth: false
-            spacing: 0
-            Layout.alignment: Qt.AlignVCenter
-
-            NText {
-              text: I18n.tr("common.bluetooth")
-              pointSize: Style.fontSizeL
-              font.weight: Style.fontWeightBold
-              color: Color.mOnSurface
-            }
+          NText {
+            text: I18n.tr("common.bluetooth")
+            pointSize: Style.fontSizeL
+            font.weight: Style.fontWeightBold
+            color: Color.mOnSurface
           }
 
           Item {
@@ -186,16 +178,27 @@ Item {
             Layout.alignment: Qt.AlignVCenter
           }
         }
+
         NDivider {
           Layout.fillWidth: true
           visible: BluetoothService.enabled
         }
+
         NText {
-          text: "This device is " + (isDiscoverable ? "discoverable" : "not discoverable") + " as " + HostService.hostName + " while Bluetooth Settings is open."
+          text: "This device is " + (isDiscoverable ? "discoverable" : "not discoverable") + " as <b>" + HostService.hostName + "</span</b> while this settings tab is open."
           // TODO: missing: i18n
           visible: BluetoothService.enabled
+          richTextEnabled: true
+          wrapMode: Text.WordWrap
+          horizontalAlignment: Text.AlignHCenter
+          Layout.fillWidth: true
         }
       }
+    }
+
+    Item {
+      visible: !showOnlyLists
+      Layout.fillWidth: true
     }
 
     // Device List [1] (Connected)
@@ -208,7 +211,10 @@ Item {
       ColumnLayout {
         id: connectedDevicesCol
         anchors.fill: parent
-        anchors.margins: Style.marginM
+        anchors.topMargin: Style.marginM
+        anchors.bottomMargin: Style.marginM
+        anchors.leftMargin: showOnlyLists ? Style.marginM : 0
+        anchors.rightMargin: showOnlyLists ? Style.marginM : 0
         spacing: Style.marginM
 
         NText {
@@ -227,11 +233,6 @@ Item {
       }
     }
 
-    NDivider {
-      Layout.fillWidth: true
-      visible: connectedDevicesBox.visible && !btprefs.showOnlyLists
-    }
-
     // Devices List [2] (Paired)
     NBox {
       id: pairedDevicesBox
@@ -242,7 +243,10 @@ Item {
       ColumnLayout {
         id: pairedDevicesCol
         anchors.fill: parent
-        anchors.margins: Style.marginM
+        anchors.topMargin: Style.marginM
+        anchors.bottomMargin: Style.marginM
+        anchors.leftMargin: showOnlyLists ? Style.marginM : 0
+        anchors.rightMargin: showOnlyLists ? Style.marginM : 0
         spacing: Style.marginM
 
         NText {
@@ -261,11 +265,6 @@ Item {
       }
     }
 
-    NDivider {
-      Layout.fillWidth: true
-      visible: pairedDevicesBox.visible && !btprefs.showOnlyLists
-    }
-
     // Device List [3] (Available)
     NBox {
       id: availableDevicesBox
@@ -276,7 +275,10 @@ Item {
       ColumnLayout {
         id: availableDevicesCol
         anchors.fill: parent
-        anchors.margins: Style.marginM
+        anchors.topMargin: Style.marginM
+        anchors.bottomMargin: Style.marginM
+        anchors.leftMargin: showOnlyLists ? Style.marginM : 0
+        anchors.rightMargin: showOnlyLists ? Style.marginM : 0
         spacing: Style.marginM
 
         RowLayout {
@@ -290,16 +292,6 @@ Item {
             color: Color.mSecondary
             font.weight: Style.fontWeightBold
             Layout.fillWidth: true
-          }
-
-          NIconButton {
-            icon: (Settings.data && Settings.data.ui && Settings.data.network.bluetoothHideUnnamedDevices) ? "filter-off" : "filter"
-            tooltipText: (Settings.data && Settings.data.ui && Settings.data.network.bluetoothHideUnnamedDevices) ? I18n.tr("tooltips.hide-unnamed-devices") : I18n.tr("tooltips.show-all-devices")
-            onClicked: {
-              if (Settings.data && Settings.data.ui) {
-                Settings.data.network.bluetoothHideUnnamedDevices = !(Settings.data.network.bluetoothHideUnnamedDevices);
-              }
-            }
           }
         }
 
@@ -320,52 +312,28 @@ Item {
       }
     }
 
-    NDivider {
+    Item {
+      visible: !showOnlyLists
       Layout.fillWidth: true
-      visible: availableDevicesBox.visible && !btprefs.showOnlyLists
+    }
+
+    NToggle {
+      label: I18n.tr("tooltips.hide-unnamed-devices")
+      description: "Hide devices that appear only as Bluetooth addresses."
+      checked: Settings.data && Settings.data.network && Settings.data.network.bluetoothHideUnnamedDevices
+      onToggled: checked => Settings.data.network.bluetoothHideUnnamedDevices = checked
+      Layout.alignment: Qt.AlignVCenter
+      visible: !btprefs.showOnlyLists && BluetoothService.enabled
     }
 
     // RSSI Polling
-    NBox {
+    NToggle {
+      label: I18n.tr("panels.network.bluetooth-rssi-polling-label")
+      description: I18n.tr("panels.network.bluetooth-rssi-polling-description")
+      checked: Settings.data && Settings.data.network && Settings.data.network.bluetoothRssiPollingEnabled
+      onToggled: checked => Settings.data.network.bluetoothRssiPollingEnabled = checked
+      Layout.alignment: Qt.AlignVCenter
       visible: !btprefs.showOnlyLists && BluetoothService.enabled
-      Layout.fillWidth: true
-      Layout.preferredHeight: rssiPollingColumn.implicitHeight + Style.marginL * 2
-      implicitHeight: Layout.preferredHeight
-
-      ColumnLayout {
-        id: rssiPollingColumn
-        anchors.fill: parent
-        anchors.margins: Style.marginM
-        spacing: Style.marginM
-
-        RowLayout {
-          Layout.fillWidth: true
-          spacing: Style.marginM
-
-          ColumnLayout {
-            Layout.fillWidth: true
-            spacing: 0
-            NText {
-              text: I18n.tr("panels.network.bluetooth-rssi-polling-label")
-              color: Color.mOnSurface
-            }
-            NText {
-              text: I18n.tr("panels.network.bluetooth-rssi-polling-description")
-              pointSize: Style.fontSizeS
-              color: Color.mOnSurfaceVariant
-              wrapMode: Text.WordWrap
-              visible: true
-              Layout.fillWidth: true
-            }
-          }
-
-          NToggle {
-            checked: Settings.data && Settings.data.network && Settings.data.network.bluetoothRssiPollingEnabled
-            onToggled: checked => Settings.data.network.bluetoothRssiPollingEnabled = checked
-            Layout.alignment: Qt.AlignVCenter
-          }
-        }
-      }
     }
   }
 
