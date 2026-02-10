@@ -65,13 +65,10 @@ Item {
           if (normName.length > 0 && normName === normAddr)
             return false;
         }
-        var macColonHex = /^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$/;
-        var macHyphenHex = /^([0-9A-Fa-f]{2}-){5}[0-9A-Fa-f]{2}$/;
-        var macHyphenAny = /^([0-9A-Za-z]{2}-){5}[0-9A-Za-z]{2}$/;
-        var macDotted = /^[0-9A-Fa-f]{4}\.[0-9A-Fa-f]{4}\.[0-9A-Fa-f]{4}$/;
-        var macBare = /^[0-9A-Fa-f]{12}$/;
-        if (macColonHex.test(s) || macHyphenHex.test(s) || macHyphenAny.test(s) || macDotted.test(s) || macBare.test(s))
+        var macRegexComb = /^(([0-9A-Fa-f]{2}[:\-]){5}[0-9A-Fa-f]{2}|([0-9A-Fa-f]{4}\.){2}[0-9A-Fa-f]{4}|[0-9A-Fa-f]{12})$/;
+        if (macRegexComb.test(s)) {
           return false;
+        }
         return true;
       });
     }
