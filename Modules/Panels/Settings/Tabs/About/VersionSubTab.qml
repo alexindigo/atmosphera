@@ -328,7 +328,7 @@ ColumnLayout {
 
   Process {
     id: fastfetchProcess
-    command: ["fastfetch", "--format", "json", "--config", "none"]
+    command: ["fastfetch", "--format", "json", "--config", Quickshell.shellDir + "/Assets/Services/fastfetch/system-info.jsonc"]
     running: false
 
     onExited: function (exitCode) {
