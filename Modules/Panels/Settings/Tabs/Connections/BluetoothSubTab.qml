@@ -187,7 +187,7 @@ Item {
         NText {
           text: "This device is discoverable as <b>" + HostService.hostName + "</b> while this settings tab is open."
           // TODO: missing: i18n
-          visible: BluetoothService.enabled
+          visible: (BluetoothService.enabled && isDiscoverable)
           richTextEnabled: true
           wrapMode: Text.WordWrap
           horizontalAlignment: Text.AlignHCenter
