@@ -288,6 +288,8 @@ Singleton {
       property string clockStyle: "custom"
       property string clockFormat: "hh\\nmm"
       property list<string> lockScreenMonitors: [] // holds lock screen visibility per monitor
+      property real lockScreenBlur: 0.0
+      property real lockScreenTint: 0.0
       property JsonObject keybinds: JsonObject {
         property string keyUp: "Up"
         property string keyDown: "Down"
