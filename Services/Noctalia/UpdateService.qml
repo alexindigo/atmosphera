@@ -304,7 +304,7 @@ Singleton {
 
   function showLatestChangelog() {
     if (!currentVersion)
-      return; 
+      return;
 
     if (!changelogStateLoaded) {
       pendingShowRequest = true;
