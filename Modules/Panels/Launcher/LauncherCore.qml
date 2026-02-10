@@ -1547,30 +1547,36 @@ Rectangle {
       }
     }
 
-    NDivider {
-      Layout.fillWidth: true
-    }
+    ColumnLayout {
+      Layout.leftMargin: Style.marginL
+      Layout.rightMargin: Style.marginL
 
-    NText {
-      Layout.fillWidth: true
-      text: {
-        if (root.results.length === 0) {
-          if (root.searchText) {
-            return I18n.tr("common.no-results");
-          }
-          // Use provider's empty browsing message if available
-          var provider = root.currentProvider;
-          if (provider && provider.emptyBrowsingMessage) {
-            return provider.emptyBrowsingMessage;
-          }
-          return "";
-        }
-        var prefix = root.activeProvider && root.activeProvider.name ? root.activeProvider.name + ": " : "";
-        return prefix + I18n.trp("common.result-count", root.results.length);
+      NDivider {
+        Layout.fillWidth: true
+        Layout.bottomMargin: Style.marginS
       }
-      pointSize: Style.fontSizeXS
-      color: Color.mOnSurfaceVariant
-      horizontalAlignment: Text.AlignCenter
+
+      NText {
+        Layout.fillWidth: true
+        text: {
+          if (root.results.length === 0) {
+            if (root.searchText) {
+              return I18n.tr("common.no-results");
+            }
+            // Use provider's empty browsing message if available
+            var provider = root.currentProvider;
+            if (provider && provider.emptyBrowsingMessage) {
+              return provider.emptyBrowsingMessage;
+            }
+            return "";
+          }
+          var prefix = root.activeProvider && root.activeProvider.name ? root.activeProvider.name + ": " : "";
+          return prefix + I18n.trp("common.result-count", root.results.length);
+        }
+        pointSize: Style.fontSizeXS
+        color: Color.mOnSurfaceVariant
+        horizontalAlignment: Text.AlignCenter
+      }
     }
   }
 }
