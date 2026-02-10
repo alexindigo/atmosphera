@@ -305,15 +305,15 @@ Variants {
               onExited: card.hoverCount--
               onClicked: mouse => {
                            if (mouse.button === Qt.RightButton) {
-                             card.animateOut();
+                             animateOut();
                            } else if (mouse.button === Qt.LeftButton) {
                              var actions = model.actionsJson ? JSON.parse(model.actionsJson) : [];
                              var hasDefault = actions.some(function (a) {
                                return a.identifier === "default";
                              });
                              if (hasDefault) {
+                               animateOut();
                                NotificationService.invokeAction(notificationId, "default");
-                               card.animateOut();
                              }
                            }
                          }
@@ -564,8 +564,8 @@ Variants {
               anchors.rightMargin: Style.marginM
 
               onClicked: {
-                NotificationService.removeFromHistory(model.id);
                 animateOut();
+                NotificationService.removeFromHistory(model.id);
               }
             }
           }
