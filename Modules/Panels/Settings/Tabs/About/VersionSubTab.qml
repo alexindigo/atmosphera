@@ -94,7 +94,7 @@ ColumnLayout {
     return {
       instanceId: TelemetryService.getInstanceId(),
       version: UpdateService.currentVersion,
-      compositor: CompositorService.isHyprland ? "Hyprland" : CompositorService.isNiri ? "Niri" : CompositorService.isSway ? "Sway" : CompositorService.isMango ? "MangoWC" : CompositorService.isLabwc ? "LabWC" : "Unknown",
+      compositor: TelemetryService.getCompositorType(),
       os: HostService.osPretty || "Unknown",
       ramGb: Math.round((root.getModule("Memory")?.result?.total || 0) / root.giga),
       monitors: monitors,
