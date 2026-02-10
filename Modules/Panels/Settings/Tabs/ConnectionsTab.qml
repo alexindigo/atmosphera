@@ -32,7 +32,7 @@ ColumnLayout {
       checked: subTabBar.currentIndex === 1
     }
     NTabButton {
-      text: I18n.tr("wifi.label-ethernet")  // TODO: I18n
+      text: I18n.tr("panels.connections.ethernet")
       // visible: NetworkService.wifiAvailable
       enabled: NetworkService.wifiAvailable // Remove when work finished, only use visibility
       tabIndex: 2

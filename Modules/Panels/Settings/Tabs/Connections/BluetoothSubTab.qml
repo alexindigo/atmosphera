@@ -185,8 +185,7 @@ Item {
         }
 
         NText {
-          text: "This device is discoverable as <b>" + HostService.hostName + "</b> while this settings tab is open."
-          // TODO: missing: i18n
+          text: I18n.tr("panels.connections.bluetooth-discoverable", {hostName: HostService.hostName})
           visible: (BluetoothService.enabled && isDiscoverable)
           richTextEnabled: true
           wrapMode: Text.WordWrap
@@ -302,7 +301,7 @@ Item {
 
         NText {
           visible: btprefs.availableDevices.length === 0 && btprefs.unnamedAvailableDevices.length > 0
-          text: I18n.tr("bluetooth.panel.no-named-devices")
+          text: I18n.tr("panels.connections.bluetooth-devices-unnamed")
           pointSize: Style.fontSizeS
           color: Color.mOnSurfaceVariant
           horizontalAlignment: Text.AlignHCenter
@@ -328,8 +327,8 @@ Item {
 
     // RSSI Polling
     NToggle {
-      label: I18n.tr("panels.network.bluetooth-rssi-polling-label")
-      description: I18n.tr("panels.network.bluetooth-rssi-polling-description")
+      label: I18n.tr("panels.connections.bluetooth-rssi-polling-label")
+      description: I18n.tr("panels.connections.bluetooth-rssi-polling-description")
       checked: Settings.data && Settings.data.network && Settings.data.network.bluetoothRssiPollingEnabled
       onToggled: checked => Settings.data.network.bluetoothRssiPollingEnabled = checked
       Layout.alignment: Qt.AlignVCenter
@@ -654,7 +653,7 @@ Item {
         Layout.alignment: Qt.AlignHCenter
       }
       NText {
-        text: I18n.tr("common.authentication-required")
+        text: I18n.tr("panels.connections.authentication-required")
         pointSize: Style.fontSizeXL
         font.weight: Style.fontWeightBold
         color: Color.mOnSurface
@@ -662,7 +661,7 @@ Item {
         Layout.fillWidth: true
       }
       NText {
-        text: I18n.tr("bluetooth.panel.pin-instructions")
+        text: I18n.tr("panels.connections.pin-instructions")
         pointSize: Style.fontSizeM
         color: Color.mOnSurfaceVariant
         wrapMode: Text.WordWrap

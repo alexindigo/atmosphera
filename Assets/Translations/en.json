@@ -504,7 +504,8 @@
     "widgets": "Widgets",
     "width": "Width",
     "windows": "Windows",
-    "yes": "Yes"
+    "yes": "Yes",
+    "confirm": "Confirm"
   },
   "control-center": {
     "power-profile": {
@@ -1190,12 +1191,18 @@
       "show-session-buttons-label": "Power controls",
       "title": "Lock Screen"
     },
-    "network": {
+    "connections": {
       "bluetooth-description": "Activate Bluetooth management.",
       "bluetooth-rssi-polling-description": "Periodically sample RSSI for connected devices via bluetoothctl. May not be available for all devices; uses minimal resources when enabled.",
       "bluetooth-rssi-polling-label": "Bluetooth signal polling",
       "desc": "Manage Wi-Fi and Bluetooth connections.",
-      "wifi-description": "Manage wireless networks (requires NetworkManager)."
+      "wifi-description": "Manage wireless networks (requires NetworkManager).",
+      "bluetooth-discoverable": "This device is discoverable as <b> {hostName} </b> while this settings tab is open.",
+      "bluetooth-devices-unnamed": "Devices found but filtered.",
+      "authentication-required": "Authentication required",
+      "pin-instructions": "",
+      "title": "Connections",
+      "ethernet": "Ethernet"
     },
     "notifications": {
       "duration-critical-urgency-description": "How long critical priority notifications stay visible.",
