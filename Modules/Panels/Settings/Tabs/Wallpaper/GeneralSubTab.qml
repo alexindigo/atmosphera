@@ -195,8 +195,8 @@ ColumnLayout {
     NValueSlider {
       Layout.fillWidth: true
       enabled: Settings.data.wallpaper.overviewEnabled
-      label: I18n.tr("panels.wallpaper.look-feel-overview-blur-label")
-      description: I18n.tr("panels.wallpaper.look-feel-overview-blur-description")
+      label: I18n.tr("panels.wallpaper.settings-overview-blur-strength-label")
+      description: I18n.tr("panels.wallpaper.settings-overview-blur-strength-description")
       visible: CompositorService.isNiri
       from: 0.0
       to: 1.0
@@ -210,8 +210,8 @@ ColumnLayout {
     NValueSlider {
       Layout.fillWidth: true
       enabled: Settings.data.wallpaper.overviewEnabled
-      label: I18n.tr("panels.wallpaper.look-feel-overview-tint-label")
-      description: I18n.tr("panels.wallpaper.look-feel-overview-tint-description")
+      label: I18n.tr("panels.wallpaper.settings-overview-tint-label")
+      description: I18n.tr("panels.wallpaper.settings-overview-tint-description")
       visible: CompositorService.isNiri
       from: 0.0
       to: 1.0

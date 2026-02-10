@@ -101,7 +101,7 @@ Loader {
         layer.enabled: true
         layer.smooth: false
         layer.effect: MultiEffect {
-          blurEnabled: !PowerProfileService.noctaliaPerformanceMode
+          blurEnabled: !PowerProfileService.noctaliaPerformanceMode && (Settings.data.wallpaper.overviewBlur > 0)
           blur: Settings.data.wallpaper.overviewBlur
           blurMax: 48
         }

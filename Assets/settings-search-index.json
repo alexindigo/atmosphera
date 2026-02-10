@@ -1709,8 +1709,8 @@
     "subTabLabel": "common.general"
   },
   {
-    "labelKey": "panels.wallpaper.look-feel-overview-blur-label",
-    "descriptionKey": "panels.wallpaper.look-feel-overview-blur-description",
+    "labelKey": "panels.wallpaper.settings-overview-blur-strength-label",
+    "descriptionKey": "panels.wallpaper.settings-overview-blur-strength-description",
     "widget": "NValueSlider",
     "tab": 3,
     "tabLabel": "common.wallpaper",
@@ -1718,8 +1718,8 @@
     "subTabLabel": "common.general"
   },
   {
-    "labelKey": "panels.wallpaper.look-feel-overview-tint-label",
-    "descriptionKey": "panels.wallpaper.look-feel-overview-tint-description",
+    "labelKey": "panels.wallpaper.settings-overview-tint-label",
+    "descriptionKey": "panels.wallpaper.settings-overview-tint-description",
     "widget": "NValueSlider",
     "tab": 3,
     "tabLabel": "common.wallpaper",
