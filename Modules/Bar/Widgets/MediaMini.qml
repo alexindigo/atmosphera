@@ -322,8 +322,6 @@ Item {
         // Scrolling title
         NScrollText {
           id: titleContainer
-          showGradientMasks: true
-          gradientColor: Style.capsuleColor
           Layout.fillWidth: true
           Layout.alignment: Qt.AlignVCenter
           Layout.preferredHeight: capsuleHeight
@@ -340,9 +338,14 @@ Item {
           cursorShape: hasPlayer ? Qt.PointingHandCursor : Qt.ArrowCursor
           maxWidth: root.maxWidth - root.mainContentWidth
           forcedHover: mainMouseArea.containsMouse
+          gradientColor: Style.capsuleColor
+          gradientWidth: Math.round(8 * Style.uiScaleRatio)
+          cornerRadius: Style.radiusM
+
           NText {
             color: hasPlayer ? root.textColor : Color.mOnSurfaceVariant
             pointSize: barFontSize
+            elide: Text.ElideNone
           }
         }
       }

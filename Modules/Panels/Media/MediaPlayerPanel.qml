@@ -285,8 +285,6 @@ SmartPanel {
               spacing: 0
 
               NScrollText {
-                showGradientMasks: true
-                gradientColor: Color.mSurfaceVariant
                 Layout.fillWidth: true
                 maxWidth: parent.width
                 text: {
@@ -304,6 +302,8 @@ SmartPanel {
                     return NScrollText.ScrollMode.Hover;
                   return NScrollText.ScrollMode.Never;
                 }
+                gradientColor: Color.mSurfaceVariant
+                cornerRadius: Style.radiusM
 
                 delegate: NText {
                   pointSize: root.compactMode ? Style.fontSizeL : Style.fontSizeXL
@@ -316,8 +316,6 @@ SmartPanel {
               }
 
               NScrollText {
-                showGradientMasks: true
-                gradientColor: Color.mSurfaceVariant
                 Layout.fillWidth: true
                 maxWidth: parent.width
                 text: {
@@ -335,6 +333,8 @@ SmartPanel {
                     return NScrollText.ScrollMode.Hover;
                   return NScrollText.ScrollMode.Never;
                 }
+                gradientColor: Color.mSurfaceVariant
+                cornerRadius: Style.radiusM
 
                 delegate: NText {
                   pointSize: root.compactMode ? Style.fontSizeS : Style.fontSizeM

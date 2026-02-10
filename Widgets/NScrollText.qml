@@ -35,10 +35,15 @@ Item {
   property bool forcedHover: false
   property int cursorShape: Qt.ArrowCursor
 
-  // animation controls
   property real waitBeforeScrolling: 1000
   property real scrollCycleDuration: Math.max(4000, root.text.length * 120)
   property real resettingDuration: 300
+
+  // gradient controls
+  property bool showGradients: true
+  property real gradientWidth: Math.round(12 * Style.uiScaleRatio)
+  property color gradientColor: Color.mSurfaceVariant
+  property real cornerRadius: 0
 
   readonly property real contentWidth: {
     if (!titleText.item)
@@ -123,10 +128,6 @@ Item {
     }
   }
 
-  property bool showGradientMasks: false
-  property color gradientColor: "transparent"
-  property real gradientWidth: 12
-
   RowLayout {
     id: scrollContainer
     height: parent.height
@@ -175,14 +176,17 @@ Item {
     }
   }
 
+  // Fade Gradients
   Rectangle {
+    id: leftGradient
     anchors.left: parent.left
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     width: root.gradientWidth
-    z: 1
-    visible: root.showGradientMasks && (root.contentWidth > root.width)
-    opacity: root.state === NScrollText.ScrollState.Scrolling ? Math.min(1.0, -scrollContainer.x / (root.gradientWidth * 1.5)) : 0
+    z: 2
+    visible: root.showGradients && root.contentWidth > root.maxWidth
+    radius: root.cornerRadius
+    opacity: scrollContainer.x < -1 ? 1 : 0
     gradient: Gradient {
       orientation: Gradient.Horizontal
       GradientStop {
@@ -194,15 +198,24 @@ Item {
         color: "transparent"
       }
     }
+    Behavior on opacity {
+      NumberAnimation {
+        duration: Style.animationFast
+        easing.type: Easing.InOutQuad
+      }
+    }
   }
 
   Rectangle {
+    id: rightGradient
     anchors.right: parent.right
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     width: root.gradientWidth
-    z: 1
-    visible: root.showGradientMasks && (root.contentWidth > root.width)
+    z: 2
+    visible: root.showGradients && root.contentWidth > root.maxWidth
+    radius: root.cornerRadius
+    opacity: 1 // Always show if overflowing as it loops
     gradient: Gradient {
       orientation: Gradient.Horizontal
       GradientStop {
@@ -212,6 +225,12 @@ Item {
       GradientStop {
         position: 1.0
         color: root.gradientColor
+      }
+    }
+    Behavior on opacity {
+      NumberAnimation {
+        duration: Style.animationFast
+        easing.type: Easing.InOutQuad
       }
     }
   }
