@@ -304,11 +304,7 @@ Singleton {
 
   function showLatestChangelog() {
     if (!currentVersion)
-      return;
-
-    if (!Settings.data.general.showChangelogOnStartup) {
-      return;
-    }
+      return; 
 
     if (!changelogStateLoaded) {
       pendingShowRequest = true;
@@ -321,6 +317,12 @@ Singleton {
 
     if (lastSeen === target)
       return;
+
+    if (!Settings.data.general.showChangelogOnStartup) {
+      // user has opted out of seeing changelogs, mark as seen
+      markChangelogSeen(target);
+      return;
+    }
 
     changelogFromVersion = lastSeen;
     changelogToVersion = target;
