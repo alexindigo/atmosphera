@@ -666,7 +666,7 @@
     "about": {
       "become-supporter": "Bli supporter",
       "changelog": "Visa ändringslogg",
-      "contributors-desc": "Tack till våra {count} <b>fantastiska</b> bidragsgivare!",
+      "contributors-description": "Tack till våra {count} <b>fantastiska</b> bidragsgivare!",
       "contributors-description-plural": "Tack till våra {count} <b>fantastiska</b> bidragsgivare!",
       "copy-info": "Kopiera info",
       "info-copied": "Info kopierad till urklipp",

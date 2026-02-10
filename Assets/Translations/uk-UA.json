@@ -666,7 +666,7 @@
     "about": {
       "become-supporter": "Стати прихильником",
       "changelog": "Переглянути журнал змін",
-      "contributors-desc": "Подяка нашому {count} <b>чудовому</b> учаснику!",
+      "contributors-description": "Подяка нашому {count} <b>чудовому</b> учаснику!",
       "contributors-description-plural": "Подяка нашим {count} <b>чудовим</b> учасникам!",
       "copy-info": "Копіювати інформацію",
       "info-copied": "Інформацію скопійовано до буфера обміну",

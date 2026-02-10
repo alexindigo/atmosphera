@@ -666,7 +666,7 @@
     "about": {
       "become-supporter": "成為支持者",
       "changelog": "檢視更新日誌",
-      "contributors-desc": "特別感謝我們這{count}位<b>超讚</b>的貢獻者!!",
+      "contributors-description": "特別感謝我們這{count}位<b>超讚</b>的貢獻者!!",
       "contributors-description-plural": "特別感謝我們這{count}位<b>超讚</b>的貢獻者!!",
       "copy-info": "複製資訊",
       "info-copied": "資訊已複製至剪貼簿",

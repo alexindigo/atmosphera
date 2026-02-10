@@ -666,7 +666,7 @@
     "about": {
       "become-supporter": "Become a supporter",
       "changelog": "View changelog",
-      "contributors-desc": "Shout-out to our {count} <b>awesome</b> contributor!",
+      "contributors-description": "Shout-out to our {count} <b>awesome</b> contributor!",
       "contributors-description-plural": "Shout-out to our {count} <b>awesome</b> contributors!",
       "copy-info": "Copy info",
       "info-copied": "Info copied to clipboard",

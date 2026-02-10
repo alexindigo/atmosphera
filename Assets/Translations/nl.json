@@ -666,7 +666,7 @@
     "about": {
       "become-supporter": "Word supporter",
       "changelog": "Bekijk wijzigingslogboek",
-      "contributors-desc": "Een shout-out naar onze {count} <b>geweldige</b> bijdrager!",
+      "contributors-description": "Een shout-out naar onze {count} <b>geweldige</b> bijdrager!",
       "contributors-description-plural": "Een shout-out naar onze {count} <b>geweldige</b> bijdragers!",
       "copy-info": "Kopieer info",
       "info-copied": "Info gekopieerd naar klembord",

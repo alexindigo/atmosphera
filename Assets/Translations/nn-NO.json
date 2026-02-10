@@ -666,7 +666,7 @@
     "about": {
       "become-supporter": "Vert med og støtt",
       "changelog": "Sjå endringar",
-      "contributors-desc": "Takk og ære til den {count} <b>framifrå</b> medverkaren vår!",
+      "contributors-description": "Takk og ære til den {count} <b>framifrå</b> medverkaren vår!",
       "contributors-description-plural": "Takk og ære til alle dei {count} <b>framifrå</b> medverkarane våre!",
       "copy-info": "Kopier info",
       "info-copied": "Info kopiert til utklippstavla",

@@ -666,7 +666,7 @@
     "about": {
       "become-supporter": "Hazte patrocinador",
       "changelog": "Ver registro de cambios",
-      "contributors-desc": "¡Un saludo a nuestro <b>increíble</b> colaborador número {count}!",
+      "contributors-description": "¡Un saludo a nuestro <b>increíble</b> colaborador número {count}!",
       "contributors-description-plural": "¡Un saludo a nuestros {count} <b>increíbles</b> colaboradores!",
       "copy-info": "Copiar información",
       "info-copied": "Información copiada al portapapeles",

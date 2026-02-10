@@ -666,7 +666,7 @@
     "about": {
       "become-supporter": "Legyél támogató",
       "changelog": "Változások megtekintése",
-      "contributors-desc": "Köszönet a(z) {count} <b>fantasztikus</b> közreműködőnknek!",
+      "contributors-description": "Köszönet a(z) {count} <b>fantasztikus</b> közreműködőnknek!",
       "contributors-description-plural": "Köszönet a(z) {count} <b>fantasztikus</b> közreműködőnknek!",
       "copy-info": "Információk másolása",
       "info-copied": "Információ a vágólapra másolva",

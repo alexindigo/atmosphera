@@ -640,7 +640,7 @@
   "panels": {
     "about": {
       "changelog": "Dîroka guhertinan bibîne",
-      "contributors-desc": "Silav ji {count} beşkdarên me yên <b>gewre</b> re!",
+      "contributors-description": "Silav ji {count} beşkdarên me yên <b>gewre</b> re!",
       "contributors-description-plural": "Spas ji {count} beşdarên me yên <b>ecêb</b>!",
       "copy-info": "Zanyariyan jê bigire",
       "info-copied": "Agahî li clipboardê hat kopîkirin",

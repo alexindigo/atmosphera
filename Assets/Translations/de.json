@@ -666,7 +666,7 @@
     "about": {
       "become-supporter": "Werde Unterstützer",
       "changelog": "Änderungsprotokoll anzeigen",
-      "contributors-desc": "Ein Dankeschön an unseren {count} <b>großartigen</b> Mitwirkenden!",
+      "contributors-description": "Ein Dankeschön an unseren {count} <b>großartigen</b> Mitwirkenden!",
       "contributors-description-plural": "Ein Dankeschön an unsere {count} <b>großartigen</b> Mitwirkenden!",
       "copy-info": "Informationen kopieren",
       "info-copied": "Info in die Zwischenablage kopiert",

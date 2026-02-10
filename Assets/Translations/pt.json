@@ -666,7 +666,7 @@
     "about": {
       "become-supporter": "Torne-se um apoiador",
       "changelog": "Ver histórico de alterações",
-      "contributors-desc": "Agradecimentos ao nosso <b>incrível</b> colaborador!",
+      "contributors-description": "Agradecimentos ao nosso <b>incrível</b> colaborador!",
       "contributors-description-plural": "Agradecimentos aos nossos {count} <b>incríveis</b> colaboradores!",
       "copy-info": "Copiar informações",
       "info-copied": "Informação copiada para a área de transferência",
