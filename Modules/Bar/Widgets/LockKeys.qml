@@ -35,14 +35,16 @@ Item {
   }
 
   readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
-  readonly property string capsIcon: widgetSettings.capsLockIcon !== undefined ? widgetSettings.capsLockIcon : widgetMetadata.capsLockIcon
+  readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screenName)
-  readonly property real contentHeight: isVertical ? Math.round(layout.implicitHeight + Style.marginXL) : capsuleHeight
 
   // Content dimensions for implicit sizing
   readonly property real contentWidth: isVertical ? capsuleHeight : Math.round(layout.implicitWidth + Style.marginXL)
+  readonly property real contentHeight: isVertical ? Math.round(layout.implicitHeight + Style.marginXL) : capsuleHeight
+
   readonly property bool hideWhenOff: (widgetSettings.hideWhenOff !== undefined) ? widgetSettings.hideWhenOff : (widgetMetadata.hideWhenOff !== undefined ? widgetMetadata.hideWhenOff : false)
-  readonly property bool isVertical: barPosition === "left" || barPosition === "right"
+
+  readonly property string capsIcon: widgetSettings.capsLockIcon !== undefined ? widgetSettings.capsLockIcon : widgetMetadata.capsLockIcon
   readonly property string numIcon: widgetSettings.numLockIcon !== undefined ? widgetSettings.numLockIcon : widgetMetadata.numLockIcon
   readonly property string scrollIcon: widgetSettings.scrollLockIcon !== undefined ? widgetSettings.scrollLockIcon : widgetMetadata.scrollLockIcon
   readonly property bool showCaps: (widgetSettings.showCapsLock !== undefined) ? widgetSettings.showCapsLock : widgetMetadata.showCapsLock
@@ -51,7 +53,6 @@ Item {
 
   implicitHeight: contentHeight
   implicitWidth: contentWidth
-  visible: !root.hideWhenOff || (root.showCaps && LockKeysService.capsLockOn) || (root.showNum && LockKeysService.numLockOn) || (root.showScroll && LockKeysService.scrollLockOn)
 
   NPopupContextMenu {
     id: contextMenu
@@ -78,13 +79,14 @@ Item {
   Rectangle {
     id: visualCapsule
 
+    visible: !root.hideWhenOff || (root.showCaps && LockKeysService.capsLockOn) || (root.showNum && LockKeysService.numLockOn) || (root.showScroll && LockKeysService.scrollLockOn)
     anchors.centerIn: parent
-    border.color: Style.capsuleBorderColor
-    border.width: Style.capsuleBorderWidth
     color: Style.capsuleColor
+    width: root.contentWidth
     height: root.contentHeight
     radius: Style.radiusM
-    width: root.contentWidth
+    border.color: Style.capsuleBorderColor
+    border.width: Style.capsuleBorderWidth
 
     Item {
       id: layout
