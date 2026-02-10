@@ -25,12 +25,12 @@ Slider {
   padding: cutoutExtra / 2
 
   snapMode: snapAlways ? Slider.SnapAlways : Slider.SnapOnRelease
-  implicitHeight: Math.max(trackHeight, knobDiameter) + 1
+  implicitHeight: Math.max(trackHeight, knobDiameter)
 
   background: Item {
     id: bgContainer
     x: root.leftPadding
-    y: root.topPadding + root.availableHeight / 2 - root.trackHeight / 2
+    y: root.topPadding + Style.pixelAlignCenter(root.availableHeight, root.trackHeight)
     implicitWidth: Style.sliderWidth
     implicitHeight: root.trackHeight
     width: root.availableWidth
