@@ -99,6 +99,8 @@
     "clockStyle": "custom",
     "clockFormat": "hh\\nmm",
     "lockScreenMonitors": [],
+    "lockScreenBlur": 0.0,
+    "lockScreenTint": 0.0,
     "keybinds": {
       "keyUp": "Up",
       "keyDown": "Down",

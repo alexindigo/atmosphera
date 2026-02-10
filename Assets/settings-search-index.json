@@ -1010,6 +1010,24 @@
     "subTabLabel": "common.appearance"
   },
   {
+    "labelKey": "panels.lock-screen.lock-screen-blur-strength-label",
+    "descriptionKey": "panels.lock-screen.lock-screen-blur-strength-description",
+    "widget": "NValueSlider",
+    "tab": 11,
+    "tabLabel": "panels.lock-screen.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
+    "labelKey": "panels.lock-screen.lock-screen-tint-strength-label",
+    "descriptionKey": "panels.lock-screen.lock-screen-tint-strength-description",
+    "widget": "NValueSlider",
+    "tab": 11,
+    "tabLabel": "panels.lock-screen.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
     "labelKey": "actions.enable-wifi",
     "descriptionKey": "panels.network.wifi-description",
     "widget": "NToggle",
