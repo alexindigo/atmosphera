@@ -91,6 +91,9 @@ Item {
     function onEnabledChanged() {
       stateChangeDebouncer.restart();
     }
+    function onDiscoverableChanged() {
+      stateChangeDebouncer.restart();
+    }
   }
 
   onEffectivelyVisibleChanged: stateChangeDebouncer.restart()
@@ -185,7 +188,7 @@ Item {
         }
 
         NText {
-          text: "This device is " + (isDiscoverable ? "discoverable" : "not discoverable") + " as <b>" + HostService.hostName + "</span</b> while this settings tab is open."
+          text: "This device is discoverable as <b>" + HostService.hostName + "</b> while this settings tab is open."
           // TODO: missing: i18n
           visible: BluetoothService.enabled
           richTextEnabled: true
