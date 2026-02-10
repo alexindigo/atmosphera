@@ -303,20 +303,20 @@ Variants {
               hoverEnabled: true
               onEntered: card.hoverCount++
               onExited: card.hoverCount--
-              onClicked: {
-                if (mouse.button === Qt.RightButton) {
-                  animateOut();
-                } else if (mouse.button === Qt.LeftButton) {
-                  var actions = model.actionsJson ? JSON.parse(model.actionsJson) : [];
-                  var hasDefault = actions.some(function (a) {
-                    return a.identifier === "default";
-                  });
-                  if (hasDefault) {
-                    NotificationService.invokeAction(notificationId, "default");
-                    animateOut();
-                  }
-                }
-              }
+              onClicked: mouse => {
+                           if (mouse.button === Qt.RightButton) {
+                             card.animateOut();
+                           } else if (mouse.button === Qt.LeftButton) {
+                             var actions = model.actionsJson ? JSON.parse(model.actionsJson) : [];
+                             var hasDefault = actions.some(function (a) {
+                               return a.identifier === "default";
+                             });
+                             if (hasDefault) {
+                               NotificationService.invokeAction(notificationId, "default");
+                               card.animateOut();
+                             }
+                           }
+                         }
             }
             // Animation setup
             function triggerEntryAnimation() {

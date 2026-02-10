@@ -809,6 +809,13 @@ Singleton {
     } else if (!notifData.notification) {
       // No notification object
     } else {
+      // Disconnect closed signal before invoking so the app-triggered close
+      // doesn't immediately remove the delegate (the dismiss animation handles removal)
+      if (notifData.onClosed) {
+        notifData.notification.closed.disconnect(notifData.onClosed);
+        notifData.onClosed = null;
+      }
+
       // Use cached actions if live actions are empty (which happens if app closed notification)
       const actionsToUse = (notifData.notification.actions && notifData.notification.actions.length > 0) ? notifData.notification.actions : (notifData.cachedActions || []);
 
