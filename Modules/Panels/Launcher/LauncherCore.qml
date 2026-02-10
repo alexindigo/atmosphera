@@ -185,7 +185,10 @@ Rectangle {
     }
   }
 
-  onSearchTextChanged: updateResults()
+  onSearchTextChanged: {
+    if (isOpen)
+      updateResults();
+  }
 
   function close() {
     requestClose();
