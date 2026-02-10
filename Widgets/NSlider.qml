@@ -41,8 +41,7 @@ Slider {
     // Background track
     Shape {
       anchors.fill: parent
-      layer.enabled: true
-      layer.samples: 4
+      preferredRendererType: Shape.CurveRenderer
 
       ShapePath {
         id: bgPath
@@ -121,8 +120,7 @@ Slider {
       width: bgContainer.fillWidth
       height: bgContainer.height
       visible: bgContainer.fillWidth > 0
-      layer.enabled: true
-      layer.samples: 4
+      preferredRendererType: Shape.CurveRenderer
       clip: true
 
       ShapePath {
