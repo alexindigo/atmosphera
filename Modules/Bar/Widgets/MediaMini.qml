@@ -322,6 +322,8 @@ Item {
         // Scrolling title
         NScrollText {
           id: titleContainer
+          showGradientMasks: true
+          gradientColor: Style.capsuleColor
           Layout.fillWidth: true
           Layout.alignment: Qt.AlignVCenter
           Layout.preferredHeight: capsuleHeight

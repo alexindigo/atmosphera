@@ -785,6 +785,8 @@ SmartPanel {
           text: isBrowseMode ? currentBrowsePath : WallpaperService.getMonitorDirectory(targetScreen?.name ?? "")
           Layout.fillWidth: true
           scrollMode: NScrollText.ScrollMode.Hover
+          showGradientMasks: true
+          gradientColor: Color.mSurfaceVariant
           NText {
             text: isBrowseMode ? currentBrowsePath : WallpaperService.getMonitorDirectory(targetScreen?.name ?? "")
             pointSize: Style.fontSizeS

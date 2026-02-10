@@ -254,6 +254,8 @@ Item {
 
         NScrollText {
           id: titleContainer
+          showGradientMasks: true
+          gradientColor: Style.capsuleColor
           text: windowTitle
           Layout.alignment: Qt.AlignVCenter
           maxWidth: {

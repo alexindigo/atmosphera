@@ -123,6 +123,10 @@ Item {
     }
   }
 
+  property bool showGradientMasks: false
+  property color gradientColor: "transparent"
+  property real gradientWidth: 12
+
   RowLayout {
     id: scrollContainer
     height: parent.height
@@ -168,6 +172,47 @@ Item {
       duration: root.scrollCycleDuration
       loops: Animation.Infinite
       easing.type: Easing.Linear
+    }
+  }
+
+  Rectangle {
+    anchors.left: parent.left
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    width: root.gradientWidth
+    z: 1
+    visible: root.showGradientMasks && (root.contentWidth > root.width)
+    opacity: root.state === NScrollText.ScrollState.Scrolling ? Math.min(1.0, -scrollContainer.x / (root.gradientWidth * 1.5)) : 0
+    gradient: Gradient {
+      orientation: Gradient.Horizontal
+      GradientStop {
+        position: 0.0
+        color: root.gradientColor
+      }
+      GradientStop {
+        position: 1.0
+        color: "transparent"
+      }
+    }
+  }
+
+  Rectangle {
+    anchors.right: parent.right
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    width: root.gradientWidth
+    z: 1
+    visible: root.showGradientMasks && (root.contentWidth > root.width)
+    gradient: Gradient {
+      orientation: Gradient.Horizontal
+      GradientStop {
+        position: 0.0
+        color: "transparent"
+      }
+      GradientStop {
+        position: 1.0
+        color: root.gradientColor
+      }
     }
   }
 }

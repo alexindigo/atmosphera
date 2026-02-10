@@ -285,6 +285,8 @@ SmartPanel {
               spacing: 0
 
               NScrollText {
+                showGradientMasks: true
+                gradientColor: Color.mSurfaceVariant
                 Layout.fillWidth: true
                 maxWidth: parent.width
                 text: {
@@ -314,6 +316,8 @@ SmartPanel {
               }
 
               NScrollText {
+                showGradientMasks: true
+                gradientColor: Color.mSurfaceVariant
                 Layout.fillWidth: true
                 maxWidth: parent.width
                 text: {
