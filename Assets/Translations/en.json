@@ -1222,13 +1222,15 @@
     "connections": {
       "bluetooth-description": "Activate Bluetooth management.",
       "bluetooth-rssi-polling-description": "Periodically sample RSSI for connected devices via bluetoothctl. May not be available for all devices; uses minimal resources when enabled.",
+      "bluetooth-rssi-polling-interval-description": "Configure how often to update signal strength for connected devices.",
       "bluetooth-rssi-polling-label": "Bluetooth signal polling",
+      "bluetooth-rssi-polling-interval-label": "Polling interval",
       "desc": "Manage Wi-Fi and Bluetooth connections.",
       "wifi-description": "Manage wireless networks (requires NetworkManager).",
       "bluetooth-discoverable": "This device is discoverable as <b> {hostName} </b> while this settings tab is open.",
       "bluetooth-devices-unnamed": "Devices found but filtered.",
       "authentication-required": "Authentication required",
-      "pin-instructions": "",
+      "pin-instructions": "Please enter the PIN code displayed on your device.",
       "title": "Connections",
       "ethernet": "Ethernet"
     },
