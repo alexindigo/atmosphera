@@ -666,7 +666,7 @@
     "about": {
       "become-supporter": "成為支持者",
       "changelog": "檢視更新日誌",
-      "contributors-desc": "特別感謝我們這{count}位<b>超讚</b>的貢獻者!!",
+      "contributors-description": "特別感謝我們這{count}位<b>超讚</b>的貢獻者!!",
       "contributors-description-plural": "特別感謝我們這{count}位<b>超讚</b>的貢獻者!!",
       "copy-info": "複製資訊",
       "info-copied": "資訊已複製至剪貼簿",
@@ -678,8 +678,8 @@
       "privacy-policy": "隱私權政策",
       "support": "支持我們",
       "supporter-badge": "支持者",
+      "supporters-desc": "非常感謝我們出色的支持者！",
       "supporters-desc-plural": "非常感謝我們的<b>{count}位出色</b>支持者！",
-      "supporters-desc-singular": "非常感謝我們出色的支持者！",
       "supporters-loading": "正在載入支持者...",
       "system-cpu": "CPU:",
       "system-disk": "磁碟:",

@@ -691,7 +691,7 @@ Item {
 
   function spawn(command) {
     try {
-      // Convert QML list to JS array if needed (QML lists fail Array.isArray but have length)
+      // Ensure command is a proper JS array
       const cmdArray = Array.isArray(command) ? command : (command && typeof command === "object" && command.length !== undefined) ? Array.from(command) : [command];
       const cmdStr = cmdArray.join(" ");
       Quickshell.execDetached(["sh", "-c", "mmsg -d 'spawn," + cmdStr + "'"]);

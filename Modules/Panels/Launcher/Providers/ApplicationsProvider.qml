@@ -1,6 +1,5 @@
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import qs.Commons
 import qs.Services.Compositor
 import qs.Services.System
@@ -57,38 +56,6 @@ Item {
       "WebBrowser": I18n.tr("launcher.categories.webbrowser")
     };
     return names[category] || category;
-  }
-
-  // Persistent usage tracking stored in cacheDir
-  property string usageFilePath: Settings.cacheDir + "launcher_app_usage.json"
-
-  // Debounced saver to avoid excessive IO
-  Timer {
-    id: saveTimer
-    interval: 750
-    repeat: false
-    onTriggered: usageFile.writeAdapter()
-  }
-
-  FileView {
-    id: usageFile
-    path: usageFilePath
-    printErrors: false
-    watchChanges: false
-
-    onLoadFailed: function (error) {
-      if (error.toString().includes("No such file") || error === 2) {
-        writeAdapter();
-      }
-    }
-
-    onAdapterUpdated: saveTimer.start()
-
-    JsonAdapter {
-      id: usageAdapter
-      // key: app id/command, value: integer count
-      property var counts: ({})
-    }
   }
 
   function init() {
@@ -547,7 +514,6 @@ Item {
       "_score": (score !== undefined ? score : 0),
       "provider": root,
       "onActivate": function () {
-        // Record usage before closing (provider may be destroyed after close)
         if (Settings.data.appLauncher.sortByMostUsed) {
           root.recordUsage(app);
         }
@@ -558,18 +524,21 @@ Item {
 
         // Defer execution to next event loop iteration to ensure panel is fully closed
         Qt.callLater(() => {
-                       Logger.d("ApplicationsProvider", `Launching: ${app.name}`);
+                       Logger.d("ApplicationsProvider", `Launching: ${app.name} (App ID: ${app.id || "unknown"})`);
 
                        if (Settings.data.appLauncher.customLaunchPrefixEnabled && Settings.data.appLauncher.customLaunchPrefix) {
                          // Use custom launch prefix
                          const prefix = Settings.data.appLauncher.customLaunchPrefix.split(" ");
+                         Logger.d("ApplicationsProvider", `Using custom launch prefix: ${Settings.data.appLauncher.customLaunchPrefix}`);
 
                          if (app.runInTerminal) {
                            const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
                            const command = prefix.concat(terminal.concat(app.command));
+                           Logger.d("ApplicationsProvider", `Executing command (with prefix and terminal): ${command.join(" ")}`);
                            Quickshell.execDetached(command);
                          } else {
                            const command = prefix.concat(app.command);
+                           Logger.d("ApplicationsProvider", `Executing command (with prefix): ${command.join(" ")}`);
                            Quickshell.execDetached(command);
                          }
                        } else if (Settings.data.appLauncher.useApp2Unit && ProgramCheckerService.app2unitAvailable && app.id) {
@@ -584,10 +553,13 @@ Item {
                            Logger.d("ApplicationsProvider", "Executing terminal app manually: " + app.name);
                            const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
                            const command = terminal.concat(app.command);
+                           Logger.d("ApplicationsProvider", "Executing command (manual terminal): " + command.join(" "));
                            CompositorService.spawn(command);
                          } else if (app.command && app.command.length > 0) {
+                           Logger.d("ApplicationsProvider", "Executing command: " + app.command.join(" "));
                            CompositorService.spawn(app.command);
                          } else if (app.execute) {
+                           Logger.d("ApplicationsProvider", "Calling app.execute() for: " + app.name);
                            app.execute();
                          } else {
                            Logger.w("ApplicationsProvider", `Could not launch: ${app.name}. No valid launch method.`);
@@ -642,28 +614,10 @@ Item {
   }
 
   function getUsageCount(app) {
-    const key = getAppKey(app);
-    const m = usageAdapter && usageAdapter.counts ? usageAdapter.counts : null;
-    if (!m)
-      return 0;
-    const v = m[key];
-    return typeof v === 'number' && isFinite(v) ? v : 0;
+    return ShellState.getLauncherUsageCount(getAppKey(app));
   }
 
   function recordUsage(app) {
-    const key = getAppKey(app);
-    Logger.d("ApplicationsProvider", `Recording usage for: ${key}`);
-
-    let counts = Object.assign({}, usageAdapter.counts || {});
-    const current = getUsageCount(app);
-    counts[key] = current + 1;
-
-    // Direct assignment to property var triggers change notification for JsonAdapter
-    usageAdapter.counts = counts;
-
-    // Write immediately instead of debouncing because the launcher
-    // often closes and destroys this provider right after launching an app.
-    usageFile.writeAdapter();
-    Logger.d("ApplicationsProvider", `Usage recorded and written for: ${key}`);
+    ShellState.recordLauncherUsage(getAppKey(app));
   }
 }

@@ -625,6 +625,15 @@
       "quick-settings-style-modern": "Moderne"
     },
     "frame-rates-fps": "{fps} FPS",
+    "launcher-density": {
+      "comfortable": "Høveleg",
+      "compact": "Tett",
+      "default": "Standard"
+    },
+    "launcher-view-mode": {
+      "grid": "Rutenett",
+      "list": "Liste"
+    },
     "scrolling-modes": {
       "always": "Alltid rull",
       "hover": "Rull ved sviv",
@@ -657,7 +666,7 @@
     "about": {
       "become-supporter": "Vert med og støtt",
       "changelog": "Sjå endringar",
-      "contributors-desc": "Takk og ære til den {count} <b>framifrå</b> medverkaren vår!",
+      "contributors-description": "Takk og ære til den {count} <b>framifrå</b> medverkaren vår!",
       "contributors-description-plural": "Takk og ære til alle dei {count} <b>framifrå</b> medverkarane våre!",
       "copy-info": "Kopier info",
       "info-copied": "Info kopiert til utklippstavla",
@@ -669,8 +678,8 @@
       "privacy-policy": "Personvernfråsegn",
       "support": "Støtt oss",
       "supporter-badge": "Støttar",
+      "supporters-desc": "Ein stor takk til alle framifrå støttarar!",
       "supporters-desc-plural": "Ein stor takk til alle <b>{count} framifrå</b> støttarar!",
-      "supporters-desc-singular": "Ein stor takk til alle framifrå støttarar!",
       "supporters-loading": "Lastar inn støttarar...",
       "system-cpu": "Prosessor:",
       "system-disk": "Disk:",
@@ -1192,7 +1201,7 @@
       "compact-lockscreen-label": "Endefram låseskjerm",
       "lock-on-suspend-description": "Låser skjermen automatisk når ein suspenderer systemet.",
       "lock-on-suspend-label": "Lås på suspendering",
-      "lock-screen-animations-description": "Slå på/av animasjonar på låseskjermen",
+      "lock-screen-animations-description": "Slå på/av animasjonar på låseskjermen.",
       "lock-screen-animations-label": "Animasjonar på låseskjermen",
       "monitors-desc": "Syn låseskjerm på visse skjermar. Dersom du ikkje vel noko, syner han seg på alle.",
       "show-hibernate-description": "Viser 'Set i full dvale' i straumkontrollane.",

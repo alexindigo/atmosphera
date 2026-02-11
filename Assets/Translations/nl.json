@@ -666,7 +666,7 @@
     "about": {
       "become-supporter": "Word supporter",
       "changelog": "Bekijk wijzigingslogboek",
-      "contributors-desc": "Een shout-out naar onze {count} <b>geweldige</b> bijdrager!",
+      "contributors-description": "Een shout-out naar onze {count} <b>geweldige</b> bijdrager!",
       "contributors-description-plural": "Een shout-out naar onze {count} <b>geweldige</b> bijdragers!",
       "copy-info": "Kopieer info",
       "info-copied": "Info gekopieerd naar klembord",
@@ -678,8 +678,8 @@
       "privacy-policy": "Privacybeleid",
       "support": "Steun ons",
       "supporter-badge": "Supporter",
+      "supporters-desc": "Een enorme dank aan onze geweldige supporter!",
       "supporters-desc-plural": "Enorm bedankt aan onze <b>{count} geweldige</b> supporters!",
-      "supporters-desc-singular": "Een enorme dank aan onze geweldige supporter!",
       "supporters-loading": "Donateurs laden...",
       "system-cpu": "CPU:",
       "system-disk": "Schijf:",

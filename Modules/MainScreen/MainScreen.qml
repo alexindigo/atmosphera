@@ -484,11 +484,12 @@ PanelWindow {
   // These shortcuts delegate to the opened panel's handler functions
   // Panels can implement: onEscapePressed, onTabPressed, onBackTabPressed,
   // onUpPressed, onDownPressed, onReturnPressed, etc...
-  Shortcut {
-    sequence: Settings.data.general.keybinds.keyEscape
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onEscapePressed !== undefined) && !PanelService.isKeybindRecording
-    onActivated: {
-      PanelService.openedPanel.onEscapePressed();
+  Instantiator {
+    model: Settings.data.general.keybinds.keyEscape || []
+    Shortcut {
+      sequence: modelData
+      enabled: root.isPanelOpen && (PanelService.openedPanel.onEscapePressed !== undefined) && !PanelService.isKeybindRecording
+      onActivated: PanelService.openedPanel.onEscapePressed()
     }
   }
 
@@ -504,34 +505,49 @@ PanelWindow {
     onActivated: PanelService.openedPanel.onBackTabPressed()
   }
 
-  Shortcut {
-    sequence: Settings.data.general.keybinds.keyUp
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onUpPressed !== undefined) && !PanelService.isKeybindRecording
-    onActivated: PanelService.openedPanel.onUpPressed()
+  Instantiator {
+    model: Settings.data.general.keybinds.keyUp || []
+    Shortcut {
+      sequence: modelData
+      enabled: root.isPanelOpen && (PanelService.openedPanel.onUpPressed !== undefined) && !PanelService.isKeybindRecording
+      onActivated: PanelService.openedPanel.onUpPressed()
+    }
   }
 
-  Shortcut {
-    sequence: Settings.data.general.keybinds.keyDown
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onDownPressed !== undefined) && !PanelService.isKeybindRecording
-    onActivated: PanelService.openedPanel.onDownPressed()
+  Instantiator {
+    model: Settings.data.general.keybinds.keyDown || []
+    Shortcut {
+      sequence: modelData
+      enabled: root.isPanelOpen && (PanelService.openedPanel.onDownPressed !== undefined) && !PanelService.isKeybindRecording
+      onActivated: PanelService.openedPanel.onDownPressed()
+    }
   }
 
-  Shortcut {
-    sequence: Settings.data.general.keybinds.keyEnter
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onEnterPressed !== undefined) && !PanelService.isKeybindRecording
-    onActivated: PanelService.openedPanel.onEnterPressed()
+  Instantiator {
+    model: Settings.data.general.keybinds.keyEnter || []
+    Shortcut {
+      sequence: modelData
+      enabled: root.isPanelOpen && (PanelService.openedPanel.onEnterPressed !== undefined) && !PanelService.isKeybindRecording
+      onActivated: PanelService.openedPanel.onEnterPressed()
+    }
   }
 
-  Shortcut {
-    sequence: Settings.data.general.keybinds.keyLeft
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onLeftPressed !== undefined) && !PanelService.isKeybindRecording
-    onActivated: PanelService.openedPanel.onLeftPressed()
+  Instantiator {
+    model: Settings.data.general.keybinds.keyLeft || []
+    Shortcut {
+      sequence: modelData
+      enabled: root.isPanelOpen && (PanelService.openedPanel.onLeftPressed !== undefined) && !PanelService.isKeybindRecording
+      onActivated: PanelService.openedPanel.onLeftPressed()
+    }
   }
 
-  Shortcut {
-    sequence: Settings.data.general.keybinds.keyRight
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onRightPressed !== undefined) && !PanelService.isKeybindRecording
-    onActivated: PanelService.openedPanel.onRightPressed()
+  Instantiator {
+    model: Settings.data.general.keybinds.keyRight || []
+    Shortcut {
+      sequence: modelData
+      enabled: root.isPanelOpen && (PanelService.openedPanel.onRightPressed !== undefined) && !PanelService.isKeybindRecording
+      onActivated: PanelService.openedPanel.onRightPressed()
+    }
   }
 
   Shortcut {
@@ -558,57 +574,4 @@ PanelWindow {
     onActivated: PanelService.openedPanel.onPageDownPressed()
   }
 
-  Shortcut {
-    sequence: "1"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(1)
-  }
-
-  Shortcut {
-    sequence: "2"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(2)
-  }
-
-  Shortcut {
-    sequence: "3"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(3)
-  }
-
-  Shortcut {
-    sequence: "4"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(4)
-  }
-
-  Shortcut {
-    sequence: "5"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(5)
-  }
-
-  Shortcut {
-    sequence: "6"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(6)
-  }
-
-  Shortcut {
-    sequence: "7"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(7)
-  }
-
-  Shortcut {
-    sequence: "8"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(8)
-  }
-
-  Shortcut {
-    sequence: "9"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(9)
-  }
 }

@@ -666,7 +666,7 @@
     "about": {
       "become-supporter": "サポーターになる",
       "changelog": "変更履歴を見る",
-      "contributors-desc": "{count}人の<b>素晴らしい</b>コントリビューターに感謝！",
+      "contributors-description": "{count}人の<b>素晴らしい</b>コントリビューターに感謝！",
       "contributors-description-plural": "{count}人の<b>素晴らしい</b>コントリビューターに感謝！",
       "copy-info": "情報をコピー",
       "info-copied": "クリップボードにコピーしました",
@@ -678,8 +678,8 @@
       "privacy-policy": "プライバシーポリシー",
       "support": "支援する",
       "supporter-badge": "サポーター",
+      "supporters-desc": "素晴らしいサポーターに心からの感謝を！",
       "supporters-desc-plural": "<b>{count}名の素晴らしい</b>サポーターの皆様に心より感謝いたします！",
-      "supporters-desc-singular": "素晴らしいサポーターに心からの感謝を！",
       "supporters-loading": "サポーターを読み込み中...",
       "system-cpu": "CPU：",
       "system-disk": "ディスク：",

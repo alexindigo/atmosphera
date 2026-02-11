@@ -666,7 +666,7 @@
     "about": {
       "become-supporter": "Стать спонсором",
       "changelog": "Посмотреть список изменений",
-      "contributors-desc": "Благодарим нашего <b>замечательного</b> участника: {count}!",
+      "contributors-description": "Благодарим нашего <b>замечательного</b> участника: {count}!",
       "contributors-description-plural": "Благодарим наших <b>замечательных</b> участников: {count}!",
       "copy-info": "Копировать информацию",
       "info-copied": "Информация скопирована в буфер обмена",
@@ -678,8 +678,8 @@
       "privacy-policy": "Политика конфиденциальности",
       "support": "Поддержать нас",
       "supporter-badge": "Сторонник",
+      "supporters-desc": "Огромное спасибо нашему замечательному стороннику!",
       "supporters-desc-plural": "Огромное спасибо нашим <b>{count} замечательным</b> сторонникам!",
-      "supporters-desc-singular": "Огромное спасибо нашему замечательному стороннику!",
       "supporters-loading": "Загрузка спонсоров...",
       "system-cpu": "ЦП:",
       "system-disk": "Диск:",

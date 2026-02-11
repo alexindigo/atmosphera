@@ -666,7 +666,7 @@
     "about": {
       "become-supporter": "Zostań wspierającym",
       "changelog": "Zobacz dziennik zmian",
-      "contributors-desc": "Podziękowania dla naszego {count} <b>niesamowitego</b> współtwórcy!",
+      "contributors-description": "Podziękowania dla naszego {count} <b>niesamowitego</b> współtwórcy!",
       "contributors-description-plural": "Podziękowania dla naszych {count} <b>niesamowitych</b> współtwórców!",
       "copy-info": "Kopiuj informacje",
       "info-copied": "Informacje skopiowane do schowka",
@@ -678,8 +678,8 @@
       "privacy-policy": "Polityka prywatności",
       "support": "Wesprzyj nas",
       "supporter-badge": "Wspierający",
+      "supporters-desc": "Ogromne podziękowania dla naszego wspaniałego wspierającego!",
       "supporters-desc-plural": "Ogromne podziękowania dla naszych <b>{count} wspaniałych</b> wspierających!",
-      "supporters-desc-singular": "Ogromne podziękowania dla naszego wspaniałego wspierającego!",
       "supporters-loading": "Ładowanie wspierających...",
       "system-cpu": "Procesor:",
       "system-disk": "Dysk:",
