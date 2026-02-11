@@ -1030,6 +1030,8 @@
       "fonts-monospace-search-placeholder": "Buscar fuentes monoespaciadas...",
       "fonts-reset-scaling": "Restablecer la escala",
       "fonts-title": "Fuentes",
+      "keybinds-conflict-description": "La combinación de teclas ya está asignada a {action}.",
+      "keybinds-conflict-title": "Conflicto de Atajos de Teclado",
       "keybinds-description": "Configura las teclas de navegación globales para paneles y el lanzador.",
       "keybinds-down": "Mover hacia abajo",
       "keybinds-enter": "Confirmar / Acción",

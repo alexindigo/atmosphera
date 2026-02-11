@@ -1030,6 +1030,8 @@
       "fonts-monospace-search-placeholder": "搜索等宽字体...",
       "fonts-reset-scaling": "恢复默认缩放",
       "fonts-title": "字体",
+      "keybinds-conflict-description": "此按键组合已分配给 {action}。",
+      "keybinds-conflict-title": "按键绑定冲突",
       "keybinds-description": "配置面板和启动器的全局导航键。",
       "keybinds-down": "下移",
       "keybinds-enter": "确认 / 操作",

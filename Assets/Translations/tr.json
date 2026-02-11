@@ -1030,6 +1030,8 @@
       "fonts-monospace-search-placeholder": "Eş aralıklı yazı tipi ara...",
       "fonts-reset-scaling": "Ölçeklemeyi sıfırla",
       "fonts-title": "Yazı tipleri",
+      "keybinds-conflict-description": "Tuş kombinasyonu zaten {action} için atanmış.",
+      "keybinds-conflict-title": "Tuş Ataması Çakışması",
       "keybinds-description": "Paneller ve başlatıcı için genel navigasyon tuşlarını yapılandırın.",
       "keybinds-down": "Aşağı Taşı",
       "keybinds-enter": "Onayla / Eylem",

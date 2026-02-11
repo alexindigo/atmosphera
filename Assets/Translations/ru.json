@@ -1030,6 +1030,8 @@
       "fonts-monospace-search-placeholder": "Поиск моноширинного шрифта...",
       "fonts-reset-scaling": "Сбросить масштабирование",
       "fonts-title": "Шрифты",
+      "keybinds-conflict-description": "Комбинация клавиш уже назначена для {action}.",
+      "keybinds-conflict-title": "Конфликт Горячих Клавиш",
       "keybinds-description": "Настройте глобальные клавиши навигации для панелей и лаунчера.",
       "keybinds-down": "Переместить вниз",
       "keybinds-enter": "Подтвердить / Действие",

@@ -1030,6 +1030,8 @@
       "fonts-monospace-search-placeholder": "Rechercher des polices à chasse fixe...",
       "fonts-reset-scaling": "Réinitialiser l'échelle",
       "fonts-title": "Polices",
+      "keybinds-conflict-description": "La combinaison de touches est déjà attribuée à {action}.",
+      "keybinds-conflict-title": "Conflit de Raccourcis Clavier",
       "keybinds-description": "Configurez les touches de navigation globales pour les panneaux et le lanceur.",
       "keybinds-down": "Déplacer vers le bas",
       "keybinds-enter": "Confirmer / Action",

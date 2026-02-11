@@ -1030,6 +1030,8 @@
       "fonts-monospace-search-placeholder": "Monospace betűtípus keresése...",
       "fonts-reset-scaling": "Méretezés visszaállítása",
       "fonts-title": "Betűtípusok",
+      "keybinds-conflict-description": "A billentyűkombináció már hozzá van rendelve ehhez: {action}.",
+      "keybinds-conflict-title": "Billentyűkombináció Ütközés",
       "keybinds-description": "Globális navigációs billentyűk beállítása a panelekhez és az indítóhoz.",
       "keybinds-down": "Lejjebb mozgatás",
       "keybinds-enter": "Megerősítés / Művelet",
