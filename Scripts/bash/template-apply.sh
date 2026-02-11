@@ -4,17 +4,16 @@
 if [ "$#" -lt 1 ]; then
     # Print usage information to standard error.
     echo "Error: No application specified." >&2
-    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|fuzzel|walker|pywalfox|cava|yazi|niri|hyprland|mango} [dark|light]" >&2
+    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|fuzzel|walker|pywalfox|cava|yazi|niri|hyprland|sway|scroll|mango|btop|zathura} [dark|light]" >&2
     exit 1
 fi
 
 APP_NAME="$1"
-MODE="${2:-}"  # Optional second argument for dark/light mode
+MODE="${2:-}" # Optional second argument for dark/light mode
 
 # --- Apply theme based on the application name ---
 case "$APP_NAME" in
 kitty)
-    echo "🎨 Applying 'noctalia' theme to kitty..."
     KITTY_CONF="$HOME/.config/kitty/kitty.conf"
     if [ -w "$KITTY_CONF" ]; then
         kitty +kitten themes --reload-in=all noctalia
@@ -24,17 +23,17 @@ kitty)
     ;;
 
 ghostty)
-    echo "🎨 Applying 'noctalia' theme to ghostty..."
     CONFIG_FILE="$HOME/.config/ghostty/config"
     # Check if the config file exists before trying to modify it.
     if [ -f "$CONFIG_FILE" ]; then
-        # Check if theme is already set to noctalia
-        if grep -q "^theme = noctalia" "$CONFIG_FILE"; then
-            echo "Theme already set to noctalia, skipping modification."
+        # Check if theme is already set to noctalia (flexible spacing)
+        if grep -qE "^theme\s*=\s*noctalia$" "$CONFIG_FILE"; then
+            : # Already correct
+        elif grep -qE "^theme\s*=" "$CONFIG_FILE"; then
+            # Replace existing theme line in-place
+            sed -i -E 's/^theme\s*=.*/theme = noctalia/' "$CONFIG_FILE"
         else
-            # Remove any existing theme include line to prevent duplicates.
-            sed -i '/theme/d' "$CONFIG_FILE"
-            # Add the new theme include line to the end of the file.
+            # Add the new theme line to the end of the file
             echo "theme = noctalia" >>"$CONFIG_FILE"
         fi
         # Only signal if ghostty is running
@@ -46,12 +45,10 @@ ghostty)
     ;;
 
 foot)
-    echo "🎨 Applying 'noctalia' theme to foot..."
     CONFIG_FILE="$HOME/.config/foot/foot.ini"
 
     # Check if the config file exists, create it if it doesn't.
     if [ ! -f "$CONFIG_FILE" ]; then
-        echo "Config file not found, creating $CONFIG_FILE..."
         # Create the config directory if it doesn't exist
         mkdir -p "$(dirname "$CONFIG_FILE")"
         # Create the config file with the noctalia theme
@@ -59,12 +56,9 @@ foot)
 [main]
 include=~/.config/foot/themes/noctalia
 EOF
-        echo "Created new config file with noctalia theme."
     else
         # Check if theme is already set to noctalia
-        if grep -q "include.*noctalia" "$CONFIG_FILE"; then
-            echo "Theme already set to noctalia, skipping modification."
-        else
+        if ! grep -q "include.*noctalia" "$CONFIG_FILE"; then
             # Remove any existing theme include line to prevent duplicates.
             sed -i '/include=.*themes/d' "$CONFIG_FILE"
             if grep -q '^\[main\]' "$CONFIG_FILE"; then
@@ -79,38 +73,48 @@ EOF
     ;;
 
 alacritty)
-    echo "🎨 Applying 'noctalia' theme to alacritty..."
     CONFIG_FILE="$HOME/.config/alacritty/alacritty.toml"
+    NEW_THEME_PATH='~/.config/alacritty/themes/noctalia.toml'
 
-    # Check if the config file exists.
-    if [ -f "$CONFIG_FILE" ]; then
-        # Check if theme is already imported
-        if grep -q 'import = \[.*"themes/noctalia.toml".*\]' "$CONFIG_FILE"; then
-            echo "Theme already set to noctalia, skipping modification."
+    # Check if the config file exists, create it if it doesn't.
+    if [ ! -f "$CONFIG_FILE" ]; then
+        # Create the config directory if it doesn't exist
+        mkdir -p "$(dirname "$CONFIG_FILE")"
+        # Create the config file with the noctalia theme import
+        cat >"$CONFIG_FILE" <<'EOF'
+[general]
+import = [
+    "~/.config/alacritty/themes/noctalia.toml"
+]
+EOF
+    else
+        # Check if noctalia theme is already imported (any path variant)
+        if grep -q 'noctalia\.toml' "$CONFIG_FILE"; then
+            # Update old relative path to new absolute path if needed
+            if grep -q '"themes/noctalia.toml"' "$CONFIG_FILE"; then
+                sed -i 's|"themes/noctalia.toml"|"'"$NEW_THEME_PATH"'"|g' "$CONFIG_FILE"
+            fi
+            # Already has noctalia import with correct path, nothing to do
         else
-            # Check if [general] section exists
+            # No noctalia import found, add it
             if grep -q '^\[general\]' "$CONFIG_FILE"; then
-                # Check if import line exists under [general]
-                if sed -n '/^\[general\]/,/^\[/p' "$CONFIG_FILE" | grep -q '^import = \['; then
-                    # Replace existing import line with noctalia theme
-                    sed -i '/^\[general\]/,/^\[/{s|^import = \[.*\]|import = ["themes/noctalia.toml"]|}' "$CONFIG_FILE"
+                # Check if import line already exists under [general]
+                if grep -q '^import\s*=' "$CONFIG_FILE"; then
+                    # Append to existing import array (before the closing bracket)
+                    sed -i '/^import\s*=\s*\[/,/\]/{/\]/s|]|    "'"$NEW_THEME_PATH"'",\n]|}' "$CONFIG_FILE"
                 else
-                    # Add import line after [general] section
-                    sed -i '/^\[general\]/a import = ["themes/noctalia.toml"]' "$CONFIG_FILE"
+                    # Add import line after [general] section header
+                    sed -i '/^\[general\]/a import = ["'"$NEW_THEME_PATH"'"]' "$CONFIG_FILE"
                 fi
             else
                 # Create [general] section with import at the beginning of the file
-                sed -i '1i [general]\nimport = ["themes/noctalia.toml"]\n' "$CONFIG_FILE"
+                sed -i '1i [general]\nimport = ["'"$NEW_THEME_PATH"'"]\n' "$CONFIG_FILE"
             fi
         fi
-    else
-        echo "Error: alacritty config file not found at $CONFIG_FILE" >&2
-        exit 1
     fi
     ;;
 
 wezterm)
-    echo "🎨 Applying 'noctalia' theme to wezterm..."
     CONFIG_FILE="$HOME/.config/wezterm/wezterm.lua"
     WEZTERM_SCHEME_LINE='config.color_scheme = "Noctalia"'
 
@@ -118,9 +122,7 @@ wezterm)
     if [ -f "$CONFIG_FILE" ]; then
 
         # Check if theme is already set to Noctalia (matches 'Noctalia' or "Noctalia")
-        if grep -q "^\s*config\.color_scheme\s*=\s*['\"]Noctalia['\"]\s*" "$CONFIG_FILE"; then
-            echo "Theme already set to Noctalia, skipping modification."
-        else
+        if ! grep -q "^\s*config\.color_scheme\s*=\s*['\"]Noctalia['\"]\s*" "$CONFIG_FILE"; then
             # Not set to Noctalia. Check if *any* color_scheme line exists.
             if grep -q '^\s*config\.color_scheme\s*=' "$CONFIG_FILE"; then
                 # It exists, so we replace it with our desired line.
@@ -129,7 +131,7 @@ wezterm)
                 # It doesn't exist, so we add it before the 'return config' line.
                 if grep -q '^\s*return\s*config' "$CONFIG_FILE"; then
                     # 'return config' exists. Insert the line before it.
-                    sed -i "/^\s*return\s*config/i\\$WEZTERM_SCHEME_LINE" "$CONFIG_FILE"
+                    sed -i '/^\s*return\s*config/i\'"$WEZTERM_SCHEME_LINE" "$CONFIG_FILE"
                 else
                     # This is a problem. We can't find the insertion point.
                     echo "Warning: 'config.color_scheme' not set and 'return config' line not found." >&2
@@ -147,48 +149,43 @@ wezterm)
     ;;
 
 fuzzel)
-    echo "🎨 Applying 'noctalia' theme to fuzzel..."
     CONFIG_FILE="$HOME/.config/fuzzel/fuzzel.ini"
 
     # Check if the config file exists, create it if it doesn't.
     if [ ! -f "$CONFIG_FILE" ]; then
-        echo "Config file not found, creating $CONFIG_FILE..."
         # Create the config directory if it doesn't exist
         mkdir -p "$(dirname "$CONFIG_FILE")"
         # Create the config file with the noctalia theme
         cat >"$CONFIG_FILE" <<'EOF'
 include=~/.config/fuzzel/themes/noctalia
 EOF
-        echo "Created new config file with noctalia theme."
     else
         # Check if theme is already set to noctalia
-        if grep -q "include=~/.config/fuzzel/themes/noctalia" "$CONFIG_FILE"; then
-            echo "Theme already set to noctalia, skipping modification."
+        if grep -q "^include=~/.config/fuzzel/themes/noctalia$" "$CONFIG_FILE"; then
+            : # Already correct
+        elif grep -q "^include=.*themes" "$CONFIG_FILE"; then
+            # Replace existing theme include line in-place
+            sed -i 's|^include=.*themes.*|include=~/.config/fuzzel/themes/noctalia|' "$CONFIG_FILE"
         else
-            # Remove any existing theme include line.
-            sed -i '/themes/d' "$CONFIG_FILE"
-            # Add the new theme include line.
+            # Add the new theme include line
             echo "include=~/.config/fuzzel/themes/noctalia" >>"$CONFIG_FILE"
         fi
     fi
     ;;
 
 walker)
-    echo "🎨 Applying 'noctalia' theme to walker..."
     CONFIG_FILE="$HOME/.config/walker/config.toml"
 
     # Check if the config file exists.
     if [ -f "$CONFIG_FILE" ]; then
-        # Check if theme is already set to noctalia
-        if grep -q '^theme = "noctalia"' "$CONFIG_FILE"; then
-            echo "Theme already set to noctalia, skipping modification."
+        # Check if theme is already set to noctalia (flexible spacing)
+        if grep -qE '^theme\s*=\s*"noctalia"' "$CONFIG_FILE"; then
+            : # Already correct
+        elif grep -qE '^theme\s*=' "$CONFIG_FILE"; then
+            # Replace existing theme line in-place
+            sed -i -E 's/^theme\s*=.*/theme = "noctalia"/' "$CONFIG_FILE"
         else
-            # Check if a theme line exists and replace it, otherwise append
-            if grep -q '^theme = ' "$CONFIG_FILE"; then
-                sed -i 's/^theme = .*/theme = "noctalia"/' "$CONFIG_FILE"
-            else
-                echo 'theme = "noctalia"' >>"$CONFIG_FILE"
-            fi
+            echo 'theme = "noctalia"' >>"$CONFIG_FILE"
         fi
     else
         echo "Error: walker config file not found at $CONFIG_FILE" >&2
@@ -197,17 +194,14 @@ walker)
     ;;
 
 vicinae)
-    echo "🎨 Applying noctalia theme to vicinae..."
     # Apply the theme
     vicinae theme set noctalia
     ;;
 
 pywalfox)
-    echo "🎨 Updating pywalfox themes..."
     # Set dark/light mode first if MODE is specified
     if [ -n "$MODE" ]; then
         if [ "$MODE" = "dark" ] || [ "$MODE" = "light" ]; then
-            echo "Setting pywalfox to $MODE mode..."
             pywalfox "$MODE"
         else
             echo "Warning: Invalid mode '$MODE'. Expected 'dark' or 'light'. Skipping mode switch." >&2
@@ -218,7 +212,6 @@ pywalfox)
     ;;
 
 cava)
-    echo "🎨 Applying 'noctalia' theme to cava..."
     CONFIG_FILE="$HOME/.config/cava/config"
     THEME_MODIFIED=false
 
@@ -226,24 +219,19 @@ cava)
     if [ -f "$CONFIG_FILE" ]; then
         # Check if [color] section exists
         if grep -q '^\[color\]' "$CONFIG_FILE"; then
-            echo "[color] section found, checking theme setting..."
-            # Check if theme is already set to noctalia under [color]
-            if sed -n '/^\[color\]/,/^\[/p' "$CONFIG_FILE" | grep -q '^theme = "noctalia"'; then
-                echo "Theme already set to noctalia under [color], skipping modification."
+            # Check if theme is already set to noctalia under [color] (flexible spacing)
+            if sed -n '/^\[color\]/,/^\[/p' "$CONFIG_FILE" | grep -qE '^theme\s*=\s*"noctalia"'; then
+                : # Already correct
+            elif sed -n '/^\[color\]/,/^\[/p' "$CONFIG_FILE" | grep -qE '^theme\s*='; then
+                # Replace existing theme line under [color]
+                sed -i -E '/^\[color\]/,/^\[/{s/^theme\s*=.*/theme = "noctalia"/}' "$CONFIG_FILE"
+                THEME_MODIFIED=true
             else
-                # Check if theme line exists under [color] section
-                if sed -n '/^\[color\]/,/^\[/p' "$CONFIG_FILE" | grep -q '^theme = '; then
-                    # Replace existing theme line under [color]
-                    sed -i '/^\[color\]/,/^\[/{s/^theme = .*/theme = "noctalia"/}' "$CONFIG_FILE"
-                    THEME_MODIFIED=true
-                else
-                    # Add theme line after [color]
-                    sed -i '/^\[color\]/a theme = "noctalia"' "$CONFIG_FILE"
-                    THEME_MODIFIED=true
-                fi
+                # Add theme line after [color]
+                sed -i '/^\[color\]/a theme = "noctalia"' "$CONFIG_FILE"
+                THEME_MODIFIED=true
             fi
         else
-            echo "[color] section not found, adding it with theme..."
             # Add [color] section with theme at the end of file
             echo "" >>"$CONFIG_FILE"
             echo "[color]" >>"$CONFIG_FILE"
@@ -254,19 +242,8 @@ cava)
         # Reload cava if it's running, but only if it's not using stdin config
         if pgrep -f cava >/dev/null; then
             # Check if Cava is running with -p /dev/stdin (managed by CavaService)
-            if pgrep -af cava | grep -q -- "-p.*stdin"; then
-                echo "Cava is managed by CavaService (stdin config), skipping reload signal."
-                echo "✅ Theme file updated. CavaService will use the theme on next restart."
-            else
-                echo "Reloading cava configuration..."
+            if ! pgrep -af cava | grep -q -- "-p.*stdin"; then
                 pkill -USR1 cava
-                echo "✅ Cava reloaded successfully"
-            fi
-        else
-            if [ "$THEME_MODIFIED" = true ]; then
-                echo "✅ Configuration updated. Start cava to see the changes."
-            else
-                echo "✅ Configuration already correct."
             fi
         fi
     else
@@ -276,20 +253,17 @@ cava)
     ;;
 
 yazi)
-    echo "🎨 Applying 'noctalia' flavor to yazi..."
     CONFIG_FILE="$HOME/.config/yazi/theme.toml"
 
     # Create config directory if it doesn't exist
     mkdir -p "$(dirname "$CONFIG_FILE")"
 
     if [ ! -f "$CONFIG_FILE" ]; then
-        echo "Config file not found, creating $CONFIG_FILE..."
         cat >"$CONFIG_FILE" <<'EOF'
 [flavor]
 dark  = "noctalia"
 light = "noctalia"
 EOF
-        echo "Created new theme.toml with noctalia flavor."
     else
         # Check if [flavor] section exists
         if grep -q '^\[flavor\]' "$CONFIG_FILE"; then
@@ -311,37 +285,35 @@ EOF
             echo 'dark  = "noctalia"' >>"$CONFIG_FILE"
             echo 'light = "noctalia"' >>"$CONFIG_FILE"
         fi
-        echo "✅ Updated yazi theme.toml to use noctalia flavor."
     fi
     ;;
 
 niri)
-    echo "🎨 Applying 'noctalia' theme to niri..."
     CONFIG_FILE="$HOME/.config/niri/config.kdl"
     INCLUDE_LINE='include "./noctalia.kdl"'
 
     # Check if the config file exists.
     if [ ! -f "$CONFIG_FILE" ]; then
-        echo "Config file not found, creating $CONFIG_FILE..."
         mkdir -p "$(dirname "$CONFIG_FILE")"
         echo -e "\n$INCLUDE_LINE\n" >"$CONFIG_FILE"
-        echo "Created new config file with noctalia theme."
     else
-        # Check if include line already exists
-        if grep -qF "$INCLUDE_LINE" "$CONFIG_FILE"; then
-            echo "Theme already included, skipping modification."
+        # Check if noctalia include already exists (flexible: quotes, ./ prefix)
+        if grep -qE 'include\s+["'"'"'](\./)?noctalia\.kdl["'"'"']' "$CONFIG_FILE"; then
+            : # Already included
         else
             # Add the include line to the end of the file
             echo -e "\n$INCLUDE_LINE\n" >>"$CONFIG_FILE"
-            echo "✅ Added noctalia theme include to config."
         fi
     fi
     ;;
 
 hyprland)
     echo "🎨 Applying 'noctalia' theme to Hyprland..."
-    CONFIG_FILE="$HOME/.config/hypr/hyprland.conf"
-    INCLUDE_LINE="source = ~/.config/hypr/noctalia/noctalia-colors.conf"
+    CONFIG_DIR="$HOME/.config/hypr"
+    CONFIG_FILE="$CONFIG_DIR/hyprland.conf"
+    THEME_FILE="$CONFIG_DIR/noctalia/noctalia-colors.conf"
+
+    INCLUDE_LINE="source = $THEME_FILE"
 
     # Check if the config file exists.
     if [ ! -f "$CONFIG_FILE" ]; then
@@ -350,8 +322,14 @@ hyprland)
         echo -e "\n$INCLUDE_LINE\n" >"$CONFIG_FILE"
         echo "Created new config file with noctalia theme."
     else
-        # Check if include line already exists
-        if grep -qF "$INCLUDE_LINE" "$CONFIG_FILE"; then
+        if [ -L "$CONFIG_FILE" ] && [ ! -w "$CONFIG_FILE" ]; then
+            echo "Detected read-only symlink, converting to local file..."
+            cp --remove-destination "$(readlink -f "$CONFIG_FILE")" "$CONFIG_FILE"
+            chmod +w "$CONFIG_FILE"
+        fi
+
+        # Check if noctalia theme source already exists (flexible matching)
+        if grep -qE 'source\s*=\s*.*noctalia.*\.conf' "$CONFIG_FILE"; then
             echo "Theme already included, skipping modification."
         else
             # Add the include line to the end of the file
@@ -361,12 +339,64 @@ hyprland)
     fi
 
     # Reload hyprland
-    echo "✅ Reloading hyprland"
     hyprctl reload
     ;;
 
+sway)
+    echo "🎨 Applying 'noctalia' theme to Sway..."
+    CONFIG_DIR="$HOME/.config/sway"
+    CONFIG_FILE="$CONFIG_DIR/config"
+    INCLUDE_LINE='include ~/.config/sway/noctalia'
+
+    # Check if the config file exists.
+    if [ ! -f "$CONFIG_FILE" ]; then
+        echo "Config file not found, creating $CONFIG_FILE..."
+        mkdir -p "$(dirname "$CONFIG_FILE")"
+        echo -e "\n$INCLUDE_LINE\n" >"$CONFIG_FILE"
+        echo "Created new config file with noctalia theme."
+    else
+        # Check if noctalia include already exists (flexible matching)
+        if grep -qE 'include\s+.*noctalia' "$CONFIG_FILE"; then
+            echo "Theme already included, skipping modification."
+        else
+            # Add the include line to the end of the file
+            echo -e "\n$INCLUDE_LINE\n" >>"$CONFIG_FILE"
+            echo "✅ Added noctalia theme include to config."
+        fi
+    fi
+
+    # Reload sway
+    swaymsg reload
+    ;;
+
+scroll)
+    echo "Applying 'noctalia' theme to Scroll..."
+    CONFIG_DIR="$HOME/.config/scroll"
+    CONFIG_FILE="$CONFIG_DIR/config"
+    INCLUDE_LINE='include ~/.config/scroll/noctalia'
+
+    # Check if the config file exists.
+    if [ ! -f "$CONFIG_FILE" ]; then
+        echo "Config file not found, creating $CONFIG_FILE..."
+        mkdir -p "$(dirname "$CONFIG_FILE")"
+        echo -e "\n$INCLUDE_LINE\n" >"$CONFIG_FILE"
+        echo "Created new config file with noctalia theme."
+    else
+        # Check if noctalia include already exists (flexible matching)
+        if grep -qE 'include\s+.*noctalia' "$CONFIG_FILE"; then
+            echo "Theme already included, skipping modification."
+        else
+            # Add the include line to the end of the file
+            echo -e "\n$INCLUDE_LINE\n" >>"$CONFIG_FILE"
+            echo "Added noctalia theme include to config."
+        fi
+    fi
+
+    # Reload scroll
+    scrollmsg reload
+    ;;
+
 mango)
-    echo "🎨 Applying 'noctalia' theme to mango..."
     CONFIG_DIR="$HOME/.config/mango"
     MAIN_CONFIG="$CONFIG_DIR/config.conf"
     THEME_FILE="$CONFIG_DIR/noctalia.conf"
@@ -382,13 +412,11 @@ mango)
 
     # Check if theme is already sourced in main config
     if [ -f "$MAIN_CONFIG" ] && grep -qF "$SOURCE_LINE" "$MAIN_CONFIG"; then
-        echo "Theme already set to noctalia, skipping modification."
+        : # Theme already set
     else
         # First-time setup: backup and remove legacy color definitions
-        echo "Setting up noctalia theme for the first time..."
 
         # Scan all .conf files in config directory for legacy color variables
-        FOUND_LEGACY=false
         for conf_file in "$CONFIG_DIR"/*.conf; do
             # Skip if no .conf files exist or if it's the theme file itself
             [ -e "$conf_file" ] || continue
@@ -396,9 +424,6 @@ mango)
 
             # Check if this file contains any color variable definitions
             if grep -qE "^($COLOR_VARS)\s*=" "$conf_file"; then
-                FOUND_LEGACY=true
-                echo "Found legacy colors in $(basename "$conf_file"), backing up..."
-
                 # Extract and append color definitions to backup file
                 grep -E "^($COLOR_VARS)\s*=" "$conf_file" >>"$BACKUP_FILE"
 
@@ -406,10 +431,6 @@ mango)
                 sed -i -E "/^($COLOR_VARS)\s*=/d" "$conf_file"
             fi
         done
-
-        if [ "$FOUND_LEGACY" = true ]; then
-            echo "✅ Legacy color definitions backed up to $(basename "$BACKUP_FILE")"
-        fi
 
         # Add source line to main config
         if [ -f "$MAIN_CONFIG" ]; then
@@ -420,37 +441,31 @@ mango)
             echo "# This sources the noctalia theme" >"$MAIN_CONFIG"
             echo -e "\n$SOURCE_LINE\n" >>"$MAIN_CONFIG"
         fi
-
-        echo "✅ Added noctalia theme to config."
     fi
 
     # Trigger live reload
     if command -v mmsg >/dev/null 2>&1; then
         mmsg -s -d reload_config
-        echo "✅ Configuration reloaded."
     else
         echo "Warning: mmsg command not found, manual restart may be needed." >&2
     fi
     ;;
 
 btop)
-    echo "🎨 Applying 'noctalia' theme to btop..."
     CONFIG_FILE="$HOME/.config/btop/btop.conf"
 
     if [ -f "$CONFIG_FILE" ]; then
-        if grep -q '^color_theme = "noctalia"' "$CONFIG_FILE"; then
-            echo "Theme already set to noctalia, skipping modification."
+        # Check if theme is already set to noctalia (flexible spacing)
+        if grep -qE '^color_theme\s*=\s*"noctalia"' "$CONFIG_FILE"; then
+            : # Already correct
+        elif grep -qE '^color_theme\s*=' "$CONFIG_FILE"; then
+            # Replace existing color_theme line in-place
+            sed -i -E 's/^color_theme\s*=.*/color_theme = "noctalia"/' "$CONFIG_FILE"
         else
-            if grep -q '^color_theme = ' "$CONFIG_FILE"; then
-                sed -i 's/^color_theme = .*/color_theme = "noctalia"/' "$CONFIG_FILE"
-            else
-                echo 'color_theme = "noctalia"' >>"$CONFIG_FILE"
-            fi
-            echo "✅ Updated btop config to use noctalia theme."
+            echo 'color_theme = "noctalia"' >>"$CONFIG_FILE"
         fi
 
         if pgrep -x btop >/dev/null; then
-            echo "Reloading btop..."
             pkill -SIGUSR2 -x btop
         fi
     else
@@ -459,23 +474,21 @@ btop)
     ;;
 
 zathura)
-    echo "🎨 Applying 'noctalia' theme to zathura..."
-
     ZATHURA_INSTANCES=$(dbus-send --session \
-      --dest=org.freedesktop.DBus \
-      --type=method_call \
-      --print-reply \
-      /org/freedesktop/DBus \
-      org.freedesktop.DBus.ListNames \
-      | grep -o 'org.pwmt.zathura.PID-[0-9]*')
+        --dest=org.freedesktop.DBus \
+        --type=method_call \
+        --print-reply \
+        /org/freedesktop/DBus \
+        org.freedesktop.DBus.ListNames |
+        grep -o 'org.pwmt.zathura.PID-[0-9]*')
 
     for id in $ZATHURA_INSTANCES; do
-      dbus-send --session \
-        --dest="$id" \
-        --type=method_call \
-        /org/pwmt/zathura \
-        org.pwmt.zathura.ExecuteCommand \
-        string:"source"
+        dbus-send --session \
+            --dest="$id" \
+            --type=method_call \
+            /org/pwmt/zathura \
+            org.pwmt.zathura.ExecuteCommand \
+            string:"source"
     done
     ;;
 
@@ -485,5 +498,3 @@ zathura)
     exit 1
     ;;
 esac
-
-echo "✅ Command sent for $APP_NAME."

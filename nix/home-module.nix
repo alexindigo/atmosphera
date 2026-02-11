@@ -138,7 +138,7 @@ in
           sources = [
             {
               enabled = true;
-              name = "Official Noctalia Plugins";
+              name = "Noctalia Plugins";
               url = "https://github.com/noctalia-dev/noctalia-plugins";
             }
           ];
@@ -148,7 +148,7 @@ in
               sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
             };
           };
-          version = 1;
+          version = 2;
         }
       '';
       description = ''

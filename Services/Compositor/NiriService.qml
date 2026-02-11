@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import Quickshell.Wayland
 import qs.Commons
 import qs.Services.Keyboard
 
@@ -484,6 +485,25 @@ Item {
       Quickshell.execDetached(["niri", "msg", "action", "switch-layout", "next"]);
     } catch (e) {
       Logger.e("NiriService", "Failed to cycle keyboard layout:", e);
+    }
+  }
+
+  function getFocusedScreen() {
+    // On niri the code below only works when you have an actual app selected on that screen.
+    return null;
+
+    // const activeToplevel = ToplevelManager.activeToplevel;
+    // if (activeToplevel && activeToplevel.screens && activeToplevel.screens.length > 0) {
+    //   return activeToplevel.screens[0];
+    // }
+    // return null;
+  }
+
+  function spawn(command) {
+    try {
+      Quickshell.execDetached(["niri", "msg", "action", "spawn", "--"].concat(command));
+    } catch (e) {
+      Logger.e("NiriService", "Failed to spawn command:", e);
     }
   }
 }

@@ -6,6 +6,7 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
 import qs.Commons
+import qs.Services.Compositor
 import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
@@ -58,11 +59,12 @@ Loader {
         }
       }
 
-      // Refresh icons when DesktopEntries becomes available
+      // Refresh icons and names when DesktopEntries becomes available (or updates)
       Connections {
         target: DesktopEntries.applications
         function onValuesChanged() {
           root.iconRevision++;
+          updateDockApps();
         }
       }
 
@@ -77,6 +79,8 @@ Loader {
       readonly property int peekHeight: 1
       readonly property int iconSize: Math.round(12 + 24 * (Settings.data.dock.size ?? 1))
       readonly property int floatingMargin: Settings.data.dock.floatingRatio * Style.marginL
+      readonly property int maxWidth: modelData ? modelData.width * 0.8 : 1000
+      readonly property int maxHeight: modelData ? modelData.height * 0.8 : 1000
 
       // Dock position properties
       readonly property string dockPosition: Settings.data.dock.position
@@ -110,6 +114,15 @@ Loader {
       property int dragSourceIndex: -1
       property int dragTargetIndex: -1
 
+      // when dragging ended but the cursor is outside the dock area, restart the timer
+      onDragSourceIndexChanged: {
+        if (dragSourceIndex === -1) {
+          if (autoHide && !dockHovered && !anyAppHovered && !peekHovered && !menuHovered) {
+            hideTimer.restart();
+          }
+        }
+      }
+
       // Revision counter to force icon re-evaluation
       property int iconRevision: 0
 
@@ -123,10 +136,17 @@ Loader {
       function getAppKey(appData) {
         if (!appData)
           return null;
-        // prefer toplevel object identity for running apps to distinguish instances
+
+        // Use stable appId for pinned apps to maintain their slot regardless of running state
+        if (appData.type === "pinned" || appData.type === "pinned-running") {
+          return appData.appId;
+        }
+
+        // prefer toplevel object identity for unpinned running apps to distinguish instances
         if (appData.toplevel)
           return appData.toplevel;
-        // fallback to appId for pinned-only apps
+
+        // fallback to appId
         return appData.appId;
       }
 
@@ -138,17 +158,23 @@ Loader {
         const sorted = [];
         const remaining = [...apps];
 
-        // 1. Pick apps that are in the session order
+        // Pick apps that are in the session order
         for (let i = 0; i < sessionAppOrder.length; i++) {
           const key = sessionAppOrder[i];
-          const idx = remaining.findIndex(app => getAppKey(app) === key);
-          if (idx !== -1) {
-            sorted.push(remaining[idx]);
-            remaining.splice(idx, 1);
+
+          // Pick ALL matching apps (e.g. all instances of a pinned app)
+          while (true) {
+            const idx = remaining.findIndex(app => getAppKey(app) === key);
+            if (idx !== -1) {
+              sorted.push(remaining[idx]);
+              remaining.splice(idx, 1);
+            } else {
+              break;
+            }
           }
         }
 
-        // 2. Append any new/remaining apps
+        // Append any new/remaining apps
         remaining.forEach(app => sorted.push(app));
 
         return sorted;
@@ -201,7 +227,10 @@ Loader {
       function normalizeAppId(appId) {
         if (!appId || typeof appId !== 'string')
           return "";
-        return appId.toLowerCase().trim();
+        let id = appId.toLowerCase().trim();
+        if (id.endsWith(".desktop"))
+          id = id.substring(0, id.length - 8);
+        return id;
       }
 
       // Helper function to check if an app ID matches a pinned app (case-insensitive)
@@ -249,6 +278,9 @@ Loader {
 
         //push an app onto combined with the given appType
         function pushApp(appType, toplevel, appId, title) {
+          // Use canonical ID for pinned apps to ensure key stability
+          const canonicalId = isAppIdPinned(appId, pinnedApps) ? (pinnedApps.find(p => normalizeAppId(p) === normalizeAppId(appId)) || appId) : appId;
+
           // For running apps, track by toplevel object to allow multiple instances
           if (toplevel) {
             if (processedToplevels.has(toplevel)) {
@@ -260,30 +292,30 @@ Loader {
             combined.push({
                             "type": appType,
                             "toplevel": toplevel,
-                            "appId": appId,
+                            "appId": canonicalId,
                             "title": title
                           });
             processedToplevels.add(toplevel);
           } else {
             // For pinned apps that aren't running, track by appId to avoid duplicates
-            if (processedPinnedAppIds.has(appId)) {
+            if (processedPinnedAppIds.has(canonicalId)) {
               return; // Already processed this pinned app
             }
             combined.push({
                             "type": appType,
                             "toplevel": toplevel,
-                            "appId": appId,
+                            "appId": canonicalId,
                             "title": title
                           });
-            processedPinnedAppIds.add(appId);
+            processedPinnedAppIds.add(canonicalId);
           }
         }
 
         function pushRunning(first) {
           runningApps.forEach(toplevel => {
                                 if (toplevel) {
-                                  // Skip pinned apps if they were already processed (when pinnedStatic is true)
-                                  const isPinned = pinnedApps.includes(toplevel.appId);
+                                  // Use robust matching to check if pinned
+                                  const isPinned = isAppIdPinned(toplevel.appId, pinnedApps);
                                   if (!first && isPinned && processedToplevels.has(toplevel)) {
                                     return; // Already added by pushPinned()
                                   }
@@ -294,8 +326,8 @@ Loader {
 
         function pushPinned() {
           pinnedApps.forEach(pinnedAppId => {
-                               // Find all running instances of this pinned app
-                               const matchingToplevels = runningApps.filter(app => app && app.appId === pinnedAppId);
+                               // Find all running instances of this pinned app using robust matching
+                               const matchingToplevels = runningApps.filter(app => app && normalizeAppId(app.appId) === normalizeAppId(pinnedAppId));
 
                                if (matchingToplevels.length > 0) {
                                  // Add all running instances as pinned-running
@@ -304,7 +336,7 @@ Loader {
                                                            });
                                } else {
                                  // App is pinned but not running - add once
-                                 pushApp("pinned", null, pinnedAppId, pinnedAppId);
+                                 pushApp("pinned", null, pinnedAppId, getAppNameFromDesktopEntry(pinnedAppId) || pinnedAppId);
                                }
                              });
         }
@@ -321,9 +353,36 @@ Loader {
         }
 
         dockApps = sortDockApps(combined);
-        // Sync session order if needed (e.g. first run or new apps added)
-        if (!sessionAppOrder || sessionAppOrder.length === 0 || sessionAppOrder.length !== dockApps.length) {
+
+        // Sync session order if needed
+        // Instead of resetting everything when length changes, we reconcile the keys
+        if (!sessionAppOrder || sessionAppOrder.length === 0) {
           sessionAppOrder = dockApps.map(getAppKey);
+        } else {
+          const currentKeys = new Set(dockApps.map(getAppKey));
+          const existingKeys = new Set();
+          const newOrder = [];
+
+          // Keep existing keys that are still present
+          sessionAppOrder.forEach(key => {
+                                    if (currentKeys.has(key)) {
+                                      newOrder.push(key);
+                                      existingKeys.add(key);
+                                    }
+                                  });
+
+          // Add new keys at the end
+          dockApps.forEach(app => {
+                             const key = getAppKey(app);
+                             if (!existingKeys.has(key)) {
+                               newOrder.push(key);
+                               existingKeys.add(key);
+                             }
+                           });
+
+          if (JSON.stringify(newOrder) !== JSON.stringify(sessionAppOrder)) {
+            sessionAppOrder = newOrder;
+          }
         }
       }
 
@@ -343,6 +402,11 @@ Loader {
         id: hideTimer
         interval: hideDelay
         onTriggered: {
+          // do not hide if dragging
+          if (root.dragSourceIndex !== -1) {
+            return;
+          }
+
           // Force menuHovered to false if no menu is current or visible
           if (!root.currentContextMenu || !root.currentContextMenu.visible) {
             menuHovered = false;
@@ -535,8 +599,8 @@ Loader {
             Rectangle {
               id: dockContainer
               // For vertical dock, swap width and height logic
-              width: isVertical ? Math.round(iconSize * 1.5) : dockLayout.implicitWidth + Style.marginXL
-              height: isVertical ? dockLayout.implicitHeight + Style.marginXL : Math.round(iconSize * 1.5)
+              width: isVertical ? Math.round(iconSize * 1.5) : Math.min(dockLayout.implicitWidth + Style.marginXL, root.maxWidth)
+              height: isVertical ? Math.min(dockLayout.implicitHeight + Style.marginXL, root.maxHeight) : Math.round(iconSize * 1.5)
               color: Qt.alpha(Color.mSurface, Settings.data.dock.backgroundOpacity)
 
               // Anchor based on padding to achieve centering shift
@@ -566,12 +630,13 @@ Loader {
                     showTimer.stop();
                     hideTimer.stop();
                     unloadTimer.stop(); // Cancel unload if hovering
+                    hidden = false; // Make sure dock is visible
                   }
                 }
 
                 onExited: {
                   dockHovered = false;
-                  if (autoHide && !anyAppHovered && !peekHovered && !menuHovered) {
+                  if (autoHide && !anyAppHovered && !peekHovered && !menuHovered && root.dragSourceIndex === -1) {
                     hideTimer.restart();
                   }
                 }
@@ -582,12 +647,48 @@ Loader {
                 }
               }
 
-              Item {
+              Flickable {
                 id: dock
-                // Swap dimensions based on orientation
-                width: isVertical ? parent.width - (Style.marginXL) : dockLayout.implicitWidth
-                height: isVertical ? dockLayout.implicitHeight : parent.height - (Style.marginXL)
+                // Use parent dimensions more directly to avoid clipping
+                width: isVertical ? parent.width : Math.min(dockLayout.implicitWidth, parent.width - Style.marginXL)
+                height: !isVertical ? parent.height : Math.min(dockLayout.implicitHeight, parent.height - Style.marginXL)
+                contentWidth: dockLayout.implicitWidth
+                contentHeight: dockLayout.implicitHeight
                 anchors.centerIn: parent
+                clip: true
+
+                flickableDirection: isVertical ? Flickable.VerticalFlick : Flickable.HorizontalFlick
+
+                // Keep interactive dependent on overflow
+                interactive: isVertical ? contentHeight > height : contentWidth > width
+
+                // Centering margins
+                contentX: isVertical && contentWidth < width ? (contentWidth - width) / 2 : 0
+                contentY: !isVertical && contentHeight < height ? (contentHeight - height) / 2 : 0
+
+                WheelHandler {
+                  acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+                  onWheel: event => {
+                             var delta = (event.angleDelta.y !== 0) ? event.angleDelta.y : event.angleDelta.x;
+                             if (root.isVertical) {
+                               dock.contentY = Math.max(-dock.topMargin, Math.min(dock.contentHeight - dock.height + dock.bottomMargin, dock.contentY - delta));
+                             } else {
+                               // For horizontal dock, we want to scroll contentX with BOTH x and y wheels
+                               var hDelta = (event.angleDelta.x !== 0) ? event.angleDelta.x : event.angleDelta.y;
+                               dock.contentX = Math.max(-dock.leftMargin, Math.min(dock.contentWidth - dock.width + dock.rightMargin, dock.contentX - hDelta));
+                             }
+                             event.accepted = true;
+                           }
+                }
+
+                ScrollBar.horizontal: ScrollBar {
+                  visible: !isVertical && dock.interactive
+                  policy: ScrollBar.AsNeeded
+                }
+                ScrollBar.vertical: ScrollBar {
+                  visible: isVertical && dock.interactive
+                  policy: ScrollBar.AsNeeded
+                }
 
                 function getAppIcon(appData): string {
                   if (!appData || !appData.appId)
@@ -602,15 +703,19 @@ Loader {
                   rows: isVertical ? -1 : 1
                   rowSpacing: Style.marginS
                   columnSpacing: Style.marginS
-                  anchors.centerIn: parent
+
+                  // Ensure the layout takes its full implicit size
+                  width: implicitWidth
+                  height: implicitHeight
 
                   Repeater {
                     model: dockApps
 
                     delegate: Item {
                       id: appButton
-                      Layout.preferredWidth: iconSize
-                      Layout.preferredHeight: iconSize
+                      readonly property real indicatorMargin: Math.max(3, Math.round(iconSize * 0.18))
+                      Layout.preferredWidth: isVertical ? iconSize + indicatorMargin * 2 : iconSize
+                      Layout.preferredHeight: isVertical ? iconSize : iconSize + indicatorMargin * 2
                       Layout.alignment: Qt.AlignCenter
 
                       property bool isActive: modelData.toplevel && ToplevelManager.activeToplevel && ToplevelManager.activeToplevel === modelData.toplevel
@@ -825,12 +930,10 @@ Loader {
                         onVisibleChanged: {
                           if (visible) {
                             root.currentContextMenu = contextMenu;
-                            anyAppHovered = false;
                           } else if (root.currentContextMenu === contextMenu) {
                             root.currentContextMenu = null;
                             hideTimer.stop();
                             menuHovered = false;
-                            anyAppHovered = false;
                             // Restart hide timer after menu closes
                             if (autoHide && !dockHovered && !anyAppHovered && !peekHovered && !menuHovered) {
                               hideTimer.restart();
@@ -850,7 +953,6 @@ Loader {
                         // Only allow left-click dragging via axis control
                         drag.target: iconContainer
                         drag.axis: (pressedButtons & Qt.LeftButton) ? (root.isVertical ? Drag.YAxis : Drag.XAxis) : Drag.None
-                        preventStealing: true
 
                         onPressed: {
                           var p1 = appButton.mapFromItem(dockContainer, 0, 0);
@@ -878,6 +980,7 @@ Loader {
                             showTimer.stop();
                             hideTimer.stop();
                             unloadTimer.stop(); // Cancel unload if hovering app
+                            hidden = false; // Make sure dock is visible
                           }
                         }
 
@@ -888,97 +991,109 @@ Loader {
                           if (!root.currentContextMenu || !root.currentContextMenu.visible) {
                             menuHovered = false;
                           }
-                          if (autoHide && !dockHovered && !peekHovered && !menuHovered) {
+                          if (autoHide && !dockHovered && !peekHovered && !menuHovered && root.dragSourceIndex === -1) {
                             hideTimer.restart();
                           }
                         }
 
-                        onClicked: function (mouse) {
-                          if (mouse.button === Qt.RightButton) {
-                            // If right-clicking on the same app with an open context menu, close it
-                            if (root.currentContextMenu === contextMenu && contextMenu.visible) {
-                              root.closeAllContextMenus();
-                              return;
-                            }
-                            // Close any other existing context menu first
-                            root.closeAllContextMenus();
-                            // Hide tooltip when showing context menu
-                            TooltipService.hideImmediately();
-                            contextMenu.show(appButton, modelData.toplevel || modelData);
-                            return;
-                          }
+                        onClicked: mouse => {
+                                     if (mouse.button === Qt.RightButton) {
+                                       // If right-clicking on the same app with an open context menu, close it
+                                       if (root.currentContextMenu === contextMenu && contextMenu.visible) {
+                                         root.closeAllContextMenus();
+                                         return;
+                                       }
+                                       // Close any other existing context menu first
+                                       root.closeAllContextMenus();
+                                       // Hide tooltip when showing context menu
+                                       TooltipService.hideImmediately();
+                                       contextMenu.show(appButton, modelData.toplevel || modelData);
+                                       return;
+                                     }
 
-                          // Close any existing context menu for non-right-click actions
-                          root.closeAllContextMenus();
+                                     // Close any existing context menu for non-right-click actions
+                                     root.closeAllContextMenus();
 
-                          // Check if toplevel is still valid (not a stale reference)
-                          const isValidToplevel = modelData?.toplevel && ToplevelManager && ToplevelManager.toplevels.values.includes(modelData.toplevel);
+                                     // Check if toplevel is still valid (not a stale reference)
+                                     const isValidToplevel = modelData?.toplevel && ToplevelManager && ToplevelManager.toplevels.values.includes(modelData.toplevel);
 
-                          if (mouse.button === Qt.MiddleButton && isValidToplevel && modelData.toplevel.close) {
-                            modelData.toplevel.close();
-                            Qt.callLater(root.updateDockApps); // Force immediate dock update
-                          } else if (mouse.button === Qt.LeftButton) {
-                            if (isValidToplevel && modelData.toplevel.activate) {
-                              // Running app - activate it
-                              modelData.toplevel.activate();
-                            } else if (modelData?.appId) {
-                              // Pinned app not running - launch it
-                              // Use ThemeIcons to robustly find the desktop entry
-                              const app = ThemeIcons.findAppEntry(modelData.appId);
+                                     if (mouse.button === Qt.MiddleButton && isValidToplevel && modelData.toplevel.close) {
+                                       modelData.toplevel.close();
+                                       Qt.callLater(root.updateDockApps); // Force immediate dock update
+                                     } else if (mouse.button === Qt.LeftButton) {
+                                       if (isValidToplevel && modelData.toplevel.activate) {
+                                         // Running app - activate it
+                                         modelData.toplevel.activate();
+                                       } else if (modelData?.appId) {
+                                         // Pinned app not running - launch it
+                                         // Use ThemeIcons to robustly find the desktop entry
+                                         const app = ThemeIcons.findAppEntry(modelData.appId);
 
-                              if (!app) {
-                                Logger.w("Dock", `Could not find desktop entry for pinned app: ${modelData.appId}`);
-                                return;
-                              }
+                                         if (!app) {
+                                           Logger.w("Dock", `Could not find desktop entry for pinned app: ${modelData.appId}`);
+                                           return;
+                                         }
 
-                              if (Settings.data.appLauncher.customLaunchPrefixEnabled && Settings.data.appLauncher.customLaunchPrefix) {
-                                // Use custom launch prefix
-                                const prefix = Settings.data.appLauncher.customLaunchPrefix.split(" ");
+                                         if (Settings.data.appLauncher.customLaunchPrefixEnabled && Settings.data.appLauncher.customLaunchPrefix) {
+                                           // Use custom launch prefix
+                                           const prefix = Settings.data.appLauncher.customLaunchPrefix.split(" ");
 
-                                if (app.runInTerminal) {
-                                  const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
-                                  const command = prefix.concat(terminal.concat(app.command));
-                                  Quickshell.execDetached(command);
-                                } else {
-                                  const command = prefix.concat(app.command);
-                                  Quickshell.execDetached(command);
-                                }
-                              } else if (Settings.data.appLauncher.useApp2Unit && ProgramCheckerService.app2unitAvailable && app.id) {
-                                Logger.d("Dock", `Using app2unit for: ${app.id}`);
-                                if (app.runInTerminal)
-                                  Quickshell.execDetached(["app2unit", "--", app.id + ".desktop"]);
-                                else
-                                  Quickshell.execDetached(["app2unit", "--"].concat(app.command));
-                              } else {
-                                // Fallback logic when app2unit is not used
-                                if (app.runInTerminal) {
-                                  // If app.execute() fails for terminal apps, we handle it manually.
-                                  Logger.d("Dock", "Executing terminal app manually: " + app.name);
-                                  const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
-                                  const command = terminal.concat(app.command);
-                                  Quickshell.execDetached(command);
-                                } else if (app.command && app.command.length > 0) {
-                                  Quickshell.execDetached(app.command);
-                                } else if (app.execute) {
-                                  app.execute();
-                                } else {
-                                  Logger.w("Dock", `Could not launch: ${app.name}. No valid launch method.`);
-                                }
-                              }
-                            }
-                          }
-                        }
+                                           if (app.runInTerminal) {
+                                             const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
+                                             const command = prefix.concat(terminal.concat(app.command));
+                                             Quickshell.execDetached(command);
+                                           } else {
+                                             const command = prefix.concat(app.command);
+                                             Quickshell.execDetached(command);
+                                           }
+                                         } else if (Settings.data.appLauncher.useApp2Unit && ProgramCheckerService.app2unitAvailable && app.id) {
+                                           Logger.d("Dock", `Using app2unit for: ${app.id}`);
+                                           if (app.runInTerminal)
+                                           Quickshell.execDetached(["app2unit", "--", app.id + ".desktop"]);
+                                           else
+                                           Quickshell.execDetached(["app2unit", "--"].concat(app.command));
+                                         } else {
+                                           // Fallback logic when app2unit is not used
+                                           if (app.runInTerminal) {
+                                             Logger.d("Dock", "Executing terminal app manually: " + app.name);
+                                             const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
+                                             const command = terminal.concat(app.command);
+                                             CompositorService.spawn(command);
+                                           } else if (app.command && app.command.length > 0) {
+                                             CompositorService.spawn(app.command);
+                                           } else if (app.execute) {
+                                             app.execute();
+                                           } else {
+                                             Logger.w("Dock", `Could not launch: ${app.name}. No valid launch method.`);
+                                           }
+                                         }
+                                       }
+                                     }
+                                   }
                       }
 
-                      // Active indicator - always below the icon
+                      // Active indicator - positioned at the edge of the delegate area
                       Rectangle {
                         visible: Settings.data.dock.inactiveIndicators ? isRunning : isActive
-                        width: iconSize * 0.2
-                        height: iconSize * 0.1
+                        width: isVertical ? indicatorMargin * 0.6 : iconSize * 0.2
+                        height: isVertical ? iconSize * 0.2 : indicatorMargin * 0.6
                         color: Color.mPrimary
                         radius: Style.radiusXS
-                        anchors.top: parent.bottom
-                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        // Anchor to the edge facing the screen center
+                        anchors.bottom: !isVertical && dockPosition === "bottom" ? parent.bottom : undefined
+                        anchors.top: !isVertical && dockPosition === "top" ? parent.top : undefined
+                        anchors.left: isVertical && dockPosition === "left" ? parent.left : undefined
+                        anchors.right: isVertical && dockPosition === "right" ? parent.right : undefined
+
+                        anchors.horizontalCenter: isVertical ? undefined : parent.horizontalCenter
+                        anchors.verticalCenter: isVertical ? parent.verticalCenter : undefined
+
+                        // Offset slightly from the edge
+                        anchors.bottomMargin: !isVertical && dockPosition === "bottom" ? 2 : 0
+                        anchors.topMargin: !isVertical && dockPosition === "top" ? 2 : 0
+                        anchors.leftMargin: isVertical && dockPosition === "left" ? 2 : 0
+                        anchors.rightMargin: isVertical && dockPosition === "right" ? 2 : 0
                       }
                     }
                   }

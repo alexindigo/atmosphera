@@ -22,9 +22,11 @@ Item {
   property int sectionWidgetsCount: 0
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
+  // Explicit screenName property ensures reactive binding when screen changes
+  readonly property string screenName: screen ? screen.name : ""
   property var widgetSettings: {
-    if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.getBarWidgetsForScreen(screen?.name)[section];
+    if (section && sectionWidgetIndex >= 0 && screenName) {
+      var widgets = Settings.getBarWidgetsForScreen(screenName)[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
         return widgets[sectionWidgetIndex];
       }
@@ -32,148 +34,96 @@ Item {
     return {};
   }
 
-  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
+  readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
   readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
+  readonly property real capsuleHeight: Style.getCapsuleHeightForScreen(screenName)
+
   readonly property string displayMode: widgetSettings.displayMode !== undefined ? widgetSettings.displayMode : widgetMetadata.displayMode
-  readonly property real warningThreshold: widgetSettings.warningThreshold !== undefined ? widgetSettings.warningThreshold : widgetMetadata.warningThreshold
+  readonly property bool useGraphicMode: displayMode === "graphic" || displayMode === "graphic-clean"
+
   readonly property bool hideIfNotDetected: widgetSettings.hideIfNotDetected !== undefined ? widgetSettings.hideIfNotDetected : widgetMetadata.hideIfNotDetected
   readonly property bool hideIfIdle: widgetSettings.hideIfIdle !== undefined ? widgetSettings.hideIfIdle : widgetMetadata.hideIfIdle
-  // Only show low battery warning if device is ready (prevents false positive during initialization)
-  readonly property bool isLowBattery: isReady && (!isCharging && !isPluggedIn) && percent <= warningThreshold
 
-  // Visibility: show if hideIfNotDetected is false, or if battery is ready (after initialization)
-  readonly property bool shouldShow: !hideIfNotDetected || (isReady && (hideIfIdle ? (!isCharging && !isPluggedIn) : true))
+  // Check if selected device is actually present/connected
+  readonly property bool isReady: BatteryService.isDeviceReady(selectedDevice)
+  readonly property bool isPresent: BatteryService.isDevicePresent(selectedDevice)
+  readonly property real percent: isReady ? BatteryService.getPercentage(selectedDevice) : -1
+  readonly property bool isCharging: isReady ? BatteryService.isCharging(selectedDevice) : false
+  readonly property bool isPluggedIn: isReady ? BatteryService.isPluggedIn(selectedDevice) : false
+  readonly property bool isLowBattery: isReady ? BatteryService.isLowBattery(selectedDevice) : false
+  readonly property bool isCriticalBattery: isReady ? BatteryService.isCriticalBattery(selectedDevice) : false
+
+  // Visibility: show if hideIfNotDetected is false, or if battery is ready
+  readonly property bool shouldShow: !hideIfNotDetected || (isReady && (hideIfIdle ? !isPluggedIn : true))
+  readonly property string deviceNativePath: widgetSettings.deviceNativePath !== undefined ? widgetSettings.deviceNativePath : widgetMetadata.deviceNativePath
+  readonly property var selectedDevice: BatteryService.isDevicePresent(BatteryService.findDevice(deviceNativePath)) ? BatteryService.findDevice(deviceNativePath) : null
+
+  readonly property var tooltipContent: {
+    if (!isReady || !isPresent) {
+      return I18n.tr("battery.no-battery-detected");
+    }
+
+    let rows = [];
+    const isInternal = selectedDevice.isLaptopBattery;
+    if (isInternal) {
+      // Show charge percentage
+      rows.push([I18n.tr("battery.battery-level"), `${percent}%`]);
+
+      let timeText = BatteryService.getTimeRemainingText(selectedDevice);
+      if (timeText) {
+        const colonIdx = timeText.indexOf(":");
+        if (colonIdx >= 0) {
+          rows.push([timeText.substring(0, colonIdx).trim(), timeText.substring(colonIdx + 1).trim()]);
+        } else {
+          rows.push([timeText, ""]);
+        }
+      }
+
+      let rateText = BatteryService.getRateText(selectedDevice);
+      if (rateText) {
+        const colonIdx = rateText.indexOf(":");
+        if (colonIdx >= 0) {
+          rows.push([rateText.substring(0, colonIdx).trim(), rateText.substring(colonIdx + 1).trim()]);
+        } else {
+          rows.push([rateText, ""]);
+        }
+      }
+
+      // Show battery health if supported (check actual battery, not DisplayDevice)
+      let healthDevice = selectedDevice.healthSupported ? selectedDevice : (BatteryService.laptopBatteries.length > 0 ? BatteryService.laptopBatteries[0] : null);
+      if (healthDevice && healthDevice.healthSupported) {
+        rows.push([I18n.tr("battery.battery-health"), `${Math.round(healthDevice.healthPercentage)}%`]);
+      }
+    } else if (selectedDevice) {
+      // External / Peripheral Device (Phone, Keyboard, Mouse, Gamepad, Headphone etc.)
+      let name = BatteryService.getDeviceName(selectedDevice);
+      rows.push([name, `${percent}%`]);
+    }
+
+    // If we are showing the main laptop battery, append external devices
+    if (isInternal) {
+      var external = BatteryService.bluetoothBatteries;
+      if (external.length > 0) {
+        if (rows.length > 0) {
+          rows.push(["---", "---"]); // Separator
+        }
+        for (var j = 0; j < external.length; j++) {
+          var dev = external[j];
+          var dName = BatteryService.getDeviceName(dev);
+          var dPct = BatteryService.getPercentage(dev);
+          rows.push([dName, `${dPct}%`]);
+        }
+      }
+    }
+
+    return rows;
+  }
+
   visible: shouldShow
   opacity: shouldShow ? 1.0 : 0.0
 
-  // Test mode
-  readonly property bool testMode: false
-  readonly property int testPercent: 35
-  readonly property bool testCharging: false
-  readonly property bool testPluggedIn: false
-  readonly property string deviceNativePath: widgetSettings.deviceNativePath || ""
-
-  function findBatteryDevice(nativePath) {
-    if (!nativePath || !UPower.devices) {
-      return UPower.displayDevice;
-    }
-    var devices = UPower.devices.values || [];
-    for (var i = 0; i < devices.length; i++) {
-      var device = devices[i];
-      if (device && device.nativePath === nativePath && device.type !== UPowerDeviceType.LinePower && device.percentage !== undefined) {
-        return device;
-      }
-    }
-    return UPower.displayDevice;
-  }
-
-  function findBluetoothDevice(nativePath) {
-    if (!nativePath || !BluetoothService.devices) {
-      return null;
-    }
-    var macMatch = nativePath.match(/([0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2})/);
-    if (!macMatch) {
-      return null;
-    }
-    var macAddress = macMatch[1].toUpperCase();
-    var devices = BluetoothService.devices.values || [];
-    for (var i = 0; i < devices.length; i++) {
-      var device = devices[i];
-      if (device && device.address && device.address.toUpperCase() === macAddress) {
-        return device;
-      }
-    }
-    return null;
-  }
-
-  readonly property var battery: findBatteryDevice(deviceNativePath)
-  readonly property var bluetoothDevice: deviceNativePath ? findBluetoothDevice(deviceNativePath) : null
-  readonly property bool hasBluetoothBattery: bluetoothDevice && bluetoothDevice.batteryAvailable && bluetoothDevice.battery !== undefined
-  readonly property bool isBluetoothConnected: bluetoothDevice && bluetoothDevice.connected === true
-
-  property bool initializationComplete: false
-  Timer {
-    interval: 500
-    running: true
-    onTriggered: root.initializationComplete = true
-  }
-
-  readonly property bool isDevicePresent: {
-    if (testMode)
-      return true;
-    if (deviceNativePath) {
-      if (bluetoothDevice) {
-        return isBluetoothConnected;
-      }
-      if (battery && battery.nativePath === deviceNativePath) {
-        if (battery.type === UPowerDeviceType.Battery && battery.isPresent !== undefined) {
-          return battery.isPresent;
-        }
-        return battery.ready && battery.percentage !== undefined && (battery.percentage > 0 || isCharging);
-      }
-      return false;
-    }
-    if (battery) {
-      // For default device, check isPresent if it's a Battery type, otherwise require percentage > 0
-      if (battery.type === UPowerDeviceType.Battery && battery.isPresent !== undefined) {
-        return battery.isPresent;
-      }
-      // For non-battery types or when isPresent is undefined, require actual percentage
-      return battery.ready && battery.percentage !== undefined && battery.percentage > 0;
-    }
-    return false;
-  }
-
-  readonly property bool isReady: testMode ? true : (initializationComplete && battery && battery.ready && isDevicePresent && (battery.percentage !== undefined || hasBluetoothBattery))
-  readonly property real percent: testMode ? testPercent : (isReady ? (hasBluetoothBattery ? (bluetoothDevice.battery * 100) : (battery.percentage * 100)) : 0)
-  readonly property bool isCharging: testMode ? testCharging : (isReady ? battery.state === UPowerDeviceState.Charging : false)
-  readonly property bool isPluggedIn: testMode ? testPluggedIn : (isReady ? battery.state === UPowerDeviceState.FullyCharged || battery.state === UPowerDeviceState.PendingCharge : false)
-
-  property bool hasNotifiedLowBattery: false
-
-  implicitWidth: pill.width
-  implicitHeight: pill.height
-
-  function maybeNotify(currentPercent, charging, pluggedIn, isReady) {
-    if (isReady && (!charging && !pluggedIn) && !hasNotifiedLowBattery && currentPercent <= warningThreshold) {
-      hasNotifiedLowBattery = true;
-      ToastService.showWarning(I18n.tr("toast.battery.low"), I18n.tr("toast.battery.low-desc", {
-                                                                       "percent": Math.round(currentPercent)
-                                                                     }));
-    } else if (hasNotifiedLowBattery && (charging || pluggedIn || currentPercent > warningThreshold + 5)) {
-      hasNotifiedLowBattery = false;
-    }
-  }
-
-  function getCurrentPercent() {
-    return hasBluetoothBattery ? (bluetoothDevice.battery * 100) : (battery ? battery.percentage * 100 : 0);
-  }
-
-  Connections {
-    target: battery
-    function onPercentageChanged() {
-      if (battery) {
-        maybeNotify(getCurrentPercent(), isCharging, isPluggedIn, isReady);
-      }
-    }
-    function onStateChanged() {
-      if (battery) {
-        if (isCharging || isPluggedIn) {
-          hasNotifiedLowBattery = false;
-        }
-        maybeNotify(getCurrentPercent(), isCharging, isPluggedIn, isReady);
-      }
-    }
-  }
-
-  Connections {
-    target: bluetoothDevice
-    function onBatteryChanged() {
-      if (bluetoothDevice && hasBluetoothBattery) {
-        maybeNotify(bluetoothDevice.battery * 100, battery ? isCharging : false, battery ? isPluggedIn : false, true);
-      }
-    }
-  }
+  implicitWidth: useGraphicMode ? capsule.width : pill.width
+  implicitHeight: useGraphicMode ? capsule.height : pill.height
 
   NPopupContextMenu {
     id: contextMenu
@@ -187,10 +137,8 @@ Item {
     ]
 
     onTriggered: action => {
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-                   if (popupMenuWindow) {
-                     popupMenuWindow.close();
-                   }
+                   contextMenu.close();
+                   PanelService.closeContextMenu(screen);
 
                    if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
@@ -198,62 +146,114 @@ Item {
                  }
   }
 
+  // ==================== GRAPHIC MODE ====================
+
+  // Capsule background (graphic mode only)
+  Rectangle {
+    id: capsule
+    visible: root.useGraphicMode
+    anchors.centerIn: nBattery
+    width: root.isBarVertical ? root.capsuleHeight : nBattery.width + Style.marginS * 2
+    height: root.isBarVertical ? nBattery.height + Style.marginS * 2 : root.capsuleHeight
+    radius: Math.min(Style.radiusL, width / 2)
+    color: graphicMouseArea.containsMouse ? Color.mHover : Style.capsuleColor
+    border.color: Style.capsuleBorderColor
+    border.width: Style.capsuleBorderWidth
+
+    Behavior on color {
+      enabled: !Color.isTransitioning
+      ColorAnimation {
+        duration: Style.animationFast
+        easing.type: Easing.InOutQuad
+      }
+    }
+  }
+
+  NBattery {
+    id: nBattery
+    visible: root.useGraphicMode
+    anchors.centerIn: parent
+    baseSize: Style.barFontSize
+    showPercentageText: root.displayMode !== "graphic-clean"
+    vertical: root.isBarVertical
+    percentage: root.percent
+    ready: root.isReady
+    charging: root.isCharging
+    pluggedIn: root.isPluggedIn
+    low: root.isLowBattery
+    critical: root.isCriticalBattery
+    baseColor: graphicMouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface
+    textColor: graphicMouseArea.containsMouse ? Color.mHover : Color.mSurface
+  }
+
+  MouseArea {
+    id: graphicMouseArea
+    visible: root.useGraphicMode
+    anchors.fill: parent
+    hoverEnabled: true
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
+    cursorShape: Qt.PointingHandCursor
+    onEntered: {
+      if (root.tooltipContent) {
+        TooltipService.show(root, root.tooltipContent, BarService.getTooltipDirection(root.screen?.name));
+      }
+      tooltipRefreshTimer.start();
+    }
+    onExited: {
+      tooltipRefreshTimer.stop();
+      TooltipService.hide();
+    }
+    onClicked: mouse => {
+                 if (mouse.button === Qt.RightButton) {
+                   PanelService.showContextMenu(contextMenu, nBattery, screen);
+                 } else {
+                   openBatteryPanel();
+                 }
+               }
+  }
+
+  Timer {
+    id: tooltipRefreshTimer
+    interval: 1000
+    repeat: true
+    onTriggered: {
+      if (graphicMouseArea.containsMouse) {
+        TooltipService.updateText(root.tooltipContent);
+      }
+    }
+  }
+
+  // ==================== ICON MODE ====================
+
   BarPill {
     id: pill
-
+    visible: !root.useGraphicMode
     screen: root.screen
     oppositeDirection: BarService.getPillDirection(root)
-    icon: testMode ? BatteryService.getIcon(testPercent, testCharging, testPluggedIn, true) : BatteryService.getIcon(percent, isCharging, isPluggedIn, isReady)
-    text: (isReady || testMode) ? Math.round(percent) : "-"
+    icon: BatteryService.getIcon(root.percent, root.isCharging, root.isPluggedIn, root.isReady)
+    text: root.isReady ? root.percent : "-"
     suffix: "%"
     autoHide: false
-    forceOpen: isReady && displayMode === "alwaysShow"
-    forceClose: displayMode === "alwaysHide" || (initializationComplete && !isReady)
-    customBackgroundColor: !initializationComplete ? "transparent" : (isCharging ? Color.mPrimary : (isLowBattery ? Color.mError : "transparent"))
-    customTextIconColor: !initializationComplete ? "transparent" : (isCharging ? Color.mOnPrimary : (isLowBattery ? Color.mOnError : "transparent"))
+    forceOpen: root.isReady && root.displayMode === "icon-always"
+    forceClose: root.displayMode === "icon-only" || !root.isReady
+    customBackgroundColor: root.isCharging ? Color.mPrimary : ((root.isLowBattery || root.isCriticalBattery) ? Color.mError : "transparent")
+    customTextIconColor: root.isCharging ? Color.mOnPrimary : ((root.isLowBattery || root.isCriticalBattery) ? Color.mOnError : "transparent")
+    tooltipText: root.tooltipContent
 
-    tooltipText: {
-      let lines = [];
-      if (testMode) {
-        lines.push(`Time left: ${Time.formatVagueHumanReadableDuration(12345)}.`);
-        return lines.join("\n");
-      }
-      if (!isReady || !isDevicePresent) {
-        return I18n.tr("battery.no-battery-detected");
-      }
-      if (!isPluggedIn && battery.timeToEmpty > 0) {
-        lines.push(I18n.tr("battery.time-left", {
-                             "time": Time.formatVagueHumanReadableDuration(battery.timeToEmpty)
-                           }));
-      }
-      if (!isPluggedIn && battery.timeToFull > 0) {
-        lines.push(I18n.tr("battery.time-until-full", {
-                             "time": Time.formatVagueHumanReadableDuration(battery.timeToFull)
-                           }));
-      }
-      if (battery.changeRate !== undefined) {
-        const rate = Math.abs(battery.changeRate);
-        if (isPluggedIn) {
-          lines.push(I18n.tr("battery.plugged-in"));
-        } else if (isCharging) {
-          lines.push(I18n.tr("battery.charging-rate", {
-                               "rate": rate.toFixed(2)
-                             }));
-        } else {
-          lines.push(I18n.tr("battery.discharging-rate", {
-                               "rate": rate.toFixed(2)
-                             }));
-        }
-      }
-      return lines.join("\n");
-    }
-    onClicked: PanelService.getPanel("batteryPanel", screen)?.toggle(this)
-    onRightClicked: {
-      var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-      if (popupMenuWindow) {
-        popupMenuWindow.showContextMenu(contextMenu);
-        contextMenu.openAtItem(pill, screen);
-      }
+    onClicked: openBatteryPanel()
+    onRightClicked: PanelService.showContextMenu(contextMenu, pill, screen)
+  }
+
+  // ==================== SHARED ====================
+
+  function openBatteryPanel() {
+    var panel = PanelService.getPanel("batteryPanel", screen);
+    if (panel) {
+      panel.panelID = {
+        showPowerProfiles: widgetSettings.showPowerProfiles !== undefined ? widgetSettings.showPowerProfiles : widgetMetadata.showPowerProfiles,
+        showNoctaliaPerformance: widgetSettings.showNoctaliaPerformance !== undefined ? widgetSettings.showNoctaliaPerformance : widgetMetadata.showNoctaliaPerformance
+      };
+      panel.toggle(root);
     }
   }
 }

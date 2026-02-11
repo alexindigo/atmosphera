@@ -134,7 +134,8 @@ SmartPanel {
                        "title": metadata.title,
                        "isShutdown": metadata.isShutdown,
                        "countdownEnabled": settingOption.countdownEnabled !== undefined ? settingOption.countdownEnabled : true,
-                       "command": settingOption.command || ""
+                       "command": settingOption.command || "",
+                       "keybind": settingOption.keybind || ""
                      });
       }
     }
@@ -210,31 +211,10 @@ SmartPanel {
     // Stop timer but don't reset other properties yet
     countdownTimer.stop();
 
-    // Find the option to check for custom command
-    var option = null;
-    for (var i = 0; i < powerOptions.length; i++) {
-      if (powerOptions[i].action === action) {
-        option = powerOptions[i];
-        break;
-      }
-    }
-
-    // If custom command is defined, execute it
-    if (option && option.command && option.command.trim() !== "") {
-      Logger.i("SessionMenu", "Executing custom command for action:", action, "Command:", option.command);
-      Quickshell.execDetached(["sh", "-lc", option.command]);
-      cancelTimer();
-      root.close();
-      return;
-    }
-
-    // Otherwise, use default behavior
+    // Use default behavior or custom command handled by CompositorService
     switch (action) {
     case "lock":
-      // Access lockScreen via PanelService
-      if (PanelService.lockScreen && !PanelService.lockScreen.active) {
-        PanelService.lockScreen.active = true;
-      }
+      CompositorService.lock();
       break;
     case "suspend":
       // Check if we should lock before suspending
@@ -363,40 +343,119 @@ SmartPanel {
     }
   }
 
-  // Override keyboard handlers from SmartPanel
-  function onEscapePressed() {
-    if (timerActive) {
-      cancelTimer();
+  function getKeybindString(event) {
+    let keyStr = "";
+    if (event.modifiers & Qt.ControlModifier)
+      keyStr += "Ctrl+";
+    if (event.modifiers & Qt.AltModifier)
+      keyStr += "Alt+";
+    if (event.modifiers & Qt.ShiftModifier)
+      keyStr += "Shift+";
+
+    let keyName = "";
+    let rawText = event.text;
+
+    if (event.key >= Qt.Key_A && event.key <= Qt.Key_Z || event.key >= Qt.Key_0 && event.key <= Qt.Key_9) {
+      keyName = String.fromCharCode(event.key);
+    } else if (event.key >= Qt.Key_F1 && event.key <= Qt.Key_F12) {
+      keyName = "F" + (event.key - Qt.Key_F1 + 1);
+    } else if (rawText && rawText.length > 0 && rawText.charCodeAt(0) > 31) {
+      keyName = rawText.toUpperCase();
+
+      if (event.modifiers & Qt.ShiftModifier) {
+        const shiftMap = {
+          "!": "1",
+          "\"": "2",
+          "§": "3",
+          "$": "4",
+          "%": "5",
+          "&": "6",
+          "/": "7",
+          "(": "8",
+          ")": "9",
+          "=": "0",
+          "@": "2",
+          "#": "3",
+          "^": "6",
+          "*": "8"
+        };
+        if (shiftMap[keyName]) {
+          keyName = shiftMap[keyName];
+        }
+      }
     } else {
-      root.close();
+      switch (event.key) {
+      case Qt.Key_Escape:
+        keyName = "Esc";
+        break;
+      case Qt.Key_Space:
+        keyName = "Space";
+        break;
+      case Qt.Key_Return:
+        keyName = "Return";
+        break;
+      case Qt.Key_Enter:
+        keyName = "Enter";
+        break;
+      case Qt.Key_Tab:
+        keyName = "Tab";
+        break;
+      case Qt.Key_Backspace:
+        keyName = "Backspace";
+        break;
+      case Qt.Key_Delete:
+        keyName = "Del";
+        break;
+      case Qt.Key_Insert:
+        keyName = "Ins";
+        break;
+      case Qt.Key_Home:
+        keyName = "Home";
+        break;
+      case Qt.Key_End:
+        keyName = "End";
+        break;
+      case Qt.Key_PageUp:
+        keyName = "PgUp";
+        break;
+      case Qt.Key_PageDown:
+        keyName = "PgDn";
+        break;
+      case Qt.Key_Left:
+        keyName = "Left";
+        break;
+      case Qt.Key_Right:
+        keyName = "Right";
+        break;
+      case Qt.Key_Up:
+        keyName = "Up";
+        break;
+      case Qt.Key_Down:
+        keyName = "Down";
+        break;
+      }
     }
+
+    if (!keyName)
+      return "";
+    return keyStr + keyName;
   }
 
-  function onTabPressed() {
-    selectNextWrapped();
-  }
-
-  function onBackTabPressed() {
-    selectPreviousWrapped();
-  }
-
-  function onLeftPressed() {
-    if (largeButtonsStyle) {
-      navigateGrid("left");
-    } else {
-      selectPreviousWrapped();
+  function checkKey(event, settingName) {
+    // Map simplified names to the actual setting property names
+    var propName = "key" + settingName.charAt(0).toUpperCase() + settingName.slice(1);
+    var boundKeys = Settings.data.general.keybinds[propName];
+    if (!boundKeys || boundKeys.length === 0)
+      return false;
+    var eventString = getKeybindString(event);
+    for (var i = 0; i < boundKeys.length; i++) {
+      if (boundKeys[i] === eventString)
+        return true;
     }
+    return false;
   }
 
-  function onRightPressed() {
-    if (largeButtonsStyle) {
-      navigateGrid("right");
-    } else {
-      selectNextWrapped();
-    }
-  }
-
-  function onUpPressed() {
+  function handleUp() {
     if (largeButtonsStyle) {
       navigateGrid("up");
     } else {
@@ -404,7 +463,7 @@ SmartPanel {
     }
   }
 
-  function onDownPressed() {
+  function handleDown() {
     if (largeButtonsStyle) {
       navigateGrid("down");
     } else {
@@ -412,30 +471,92 @@ SmartPanel {
     }
   }
 
-  function onReturnPressed() {
+  function handleLeft() {
+    if (largeButtonsStyle) {
+      navigateGrid("left");
+    } else {
+      selectPreviousWrapped();
+    }
+  }
+
+  function handleRight() {
+    if (largeButtonsStyle) {
+      navigateGrid("right");
+    } else {
+      selectNextWrapped();
+    }
+  }
+
+  function handleEnter() {
     activate();
   }
 
+  function handleEscape() {
+    if (timerActive) {
+      cancelTimer();
+    } else {
+      root.close();
+    }
+  }
+
+  // Override keyboard handlers from SmartPanel
+  function onEscapePressed() {
+    handleEscape();
+  }
+  function onTabPressed() {
+    selectNextWrapped();
+  }
+  function onBackTabPressed() {
+    selectPreviousWrapped();
+  }
+  function onLeftPressed() {
+    handleLeft();
+  }
+  function onRightPressed() {
+    handleRight();
+  }
+  function onUpPressed() {
+    handleUp();
+  }
+  function onDownPressed() {
+    handleDown();
+  }
   function onEnterPressed() {
-    activate();
+    handleEnter();
   }
-
   function onHomePressed() {
     selectFirst();
   }
-
   function onEndPressed() {
     selectLast();
   }
 
-  function onCtrlJPressed() {
-    selectNextWrapped();
+  function checkKeybind(event) {
+    if (powerOptions.length === 0)
+      return false;
+
+    // Construct key string in the same format as the recorder
+    // Ignore modifier keys by themselves
+    if (event.key === Qt.Key_Control || event.key === Qt.Key_Shift || event.key === Qt.Key_Alt || event.key === Qt.Key_Meta) {
+      return false;
+    }
+
+    const pressedKeybind = getKeybindString(event);
+    if (!pressedKeybind)
+      return false;
+
+    for (var i = 0; i < powerOptions.length; i++) {
+      const option = powerOptions[i];
+      if (option.keybind === pressedKeybind) {
+        selectedIndex = i;
+        startTimer(option.action);
+        return true;
+      }
+    }
+    return false;
   }
 
-  function onCtrlKPressed() {
-    selectPreviousWrapped();
-  }
-
+  // Number selection handler (kept for backward compatibility if needed, though keybinds might override common keys)
   function onNumberPressed(number) {
     if (!Settings.data.sessionMenu.showNumberLabels) {
       return;
@@ -480,6 +601,53 @@ SmartPanel {
                      });
       }
     }
+
+    Keys.onPressed: event => {
+                      // Check custom entry keybinds first
+                      if (root.checkKeybind(event)) {
+                        event.accepted = true;
+                        return;
+                      }
+
+                      // Check global navigation keybinds
+                      if (checkKey(event, 'up')) {
+                        handleUp();
+                        event.accepted = true;
+                        return;
+                      }
+                      if (checkKey(event, 'down')) {
+                        handleDown();
+                        event.accepted = true;
+                        return;
+                      }
+                      if (checkKey(event, 'left')) {
+                        handleLeft();
+                        event.accepted = true;
+                        return;
+                      }
+                      if (checkKey(event, 'right')) {
+                        handleRight();
+                        event.accepted = true;
+                        return;
+                      }
+                      if (checkKey(event, 'enter')) {
+                        handleEnter();
+                        event.accepted = true;
+                        return;
+                      }
+                      if (checkKey(event, 'escape')) {
+                        handleEscape();
+                        event.accepted = true;
+                        return;
+                      }
+
+                      // Block default keys if they weren't matched above
+                      // This prevents 'Up' from working if rebinned to something else
+                      if (event.key === Qt.Key_Up || event.key === Qt.Key_Down || event.key === Qt.Key_Left || event.key === Qt.Key_Right || event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Escape) {
+                        event.accepted = true;
+                        return;
+                      }
+                    }
 
     HoverHandler {
       id: globalHoverHandler
@@ -553,8 +721,8 @@ SmartPanel {
         Repeater {
           model: powerOptions
           delegate: LargeButton {
-            Layout.preferredWidth: 200 * Style.uiScaleRatio
-            Layout.preferredHeight: 200 * Style.uiScaleRatio
+            Layout.preferredWidth: Math.round(200 * Style.uiScaleRatio)
+            Layout.preferredHeight: Math.round(200 * Style.uiScaleRatio)
             icon: modelData.icon
             title: modelData.title
             isShutdown: modelData.isShutdown || false
@@ -566,6 +734,7 @@ SmartPanel {
               startTimer(modelData.action);
             }
             pending: timerActive && pendingAction === modelData.action
+            keybind: modelData.keybind || ""
           }
         }
       }
@@ -647,6 +816,7 @@ SmartPanel {
                 startTimer(modelData.action);
               }
               pending: timerActive && pendingAction === modelData.action
+              keybind: modelData.keybind || ""
             }
           }
         }
@@ -697,25 +867,27 @@ SmartPanel {
         font.weight: Style.fontWeightBold
       }
 
-      // Number indicator (keybind)
+      // Keybind/Number indicator (keybind)
       Rectangle {
         id: numberIndicatorRect
         anchors.left: countdownText.visible ? countdownText.right : parent.left
         anchors.leftMargin: countdownText.visible ? Style.marginXS : 0
         anchors.verticalCenter: parent.verticalCenter
-        width: Style.marginXL
-        height: width
+        width: Math.max(Style.marginXL, labelText.implicitWidth + Style.marginM)
+        height: Style.marginXL
         radius: Math.min(Style.radiusM, height / 2)
-        color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mPrimary : Qt.alpha(Color.mSurfaceVariant, 0.5)
+        color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mOnPrimary : Qt.alpha(Color.mSurfaceVariant, 0.5)
         border.width: Style.borderS
-        border.color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mPrimary : Color.mOutline
-        visible: Settings.data.sessionMenu.showNumberLabels && buttonRoot.number > 0
+        border.color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mOnPrimary : Color.mOutline
+        visible: (Settings.data.sessionMenu.showNumberLabels && buttonRoot.number > 0) || buttonRoot.keybind !== ""
 
         NText {
+          id: labelText
           anchors.centerIn: parent
-          text: buttonRoot.number
+          text: buttonRoot.keybind !== "" ? buttonRoot.keybind : buttonRoot.number
           pointSize: Style.fontSizeS
-          color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mOnPrimary : Color.mOnSurface
+          font.weight: Style.fontWeightBold
+          color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mPrimary : Color.mOnSurface
 
           Behavior on color {
             ColorAnimation {
@@ -733,6 +905,7 @@ SmartPanel {
     property bool isShutdown: false
     property bool isSelected: false
     property int number: 0
+    property string keybind: ""
     property int buttonIndex: -1
 
     // Effective hover state that respects ignoreMouseHover
@@ -886,14 +1059,16 @@ SmartPanel {
     property bool isShutdown: false
     property bool isSelected: false
     property int number: 0
+    property string keybind: ""
     property int buttonIndex: -1
 
     // Effective hover state that respects ignoreMouseHover
     readonly property bool effectiveHover: !root.ignoreMouseHover && mouseArea.containsMouse
+    readonly property real hoveredScale: 1.05
 
     signal clicked
 
-    property real hoverScale: (isSelected || effectiveHover) ? 1.05 : 1.0
+    property real hoverScale: (isSelected || effectiveHover) ? hoveredScale : 1.0
 
     radius: Style.radiusL
     color: {
@@ -908,6 +1083,11 @@ SmartPanel {
 
     border.width: Style.borderS
     border.color: Color.mOutline
+
+    // Always enable layer to fix nvidia bug, render at 2x size to avoid blur when scaling up
+    layer.enabled: true
+    layer.smooth: true
+    layer.textureSize: Qt.size(Math.ceil(width * 2), Math.ceil(height * 2))
 
     // Scale transform for hover effect
     transform: Scale {
@@ -958,13 +1138,19 @@ SmartPanel {
             return Color.mOnPrimary;
           return Color.mOnSurface;
         }
-        pointSize: Style.fontSizeXXXL * 2
-        width: 80 * Style.uiScaleRatio
-        height: 80 * Style.uiScaleRatio
+        pointSize: Style.fontSizeXXXL * 2.25
+        width: 90 * Style.uiScaleRatio
+        height: 90 * Style.uiScaleRatio
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
 
-        property real iconScale: (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover) ? 1.1 : 1.0
+        readonly property real hoveredIconScale: 1.15
+        property real iconScale: (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover) ? hoveredIconScale : 1.0
+
+        // Always enable layer to fix nvidia bug, render at 2x size to avoid blur when scaling up
+        layer.enabled: true
+        layer.smooth: true
+        layer.textureSize: Qt.size(Math.ceil(width * 2), Math.ceil(height * 2))
 
         transform: Scale {
           origin.x: iconElement.width / 2
@@ -1014,28 +1200,29 @@ SmartPanel {
       }
     }
 
-    // Number indicator in top-right corner
+    // Keybind/Number indicator in top-right corner
     Rectangle {
       anchors.top: parent.top
       anchors.right: parent.right
       anchors.margins: Style.marginM
-      width: Style.fontSizeM * 2
-      height: width
+      width: Math.max(Style.fontSizeM * 2, largeNumberText.implicitWidth + Style.marginM)
+      height: Style.fontSizeM * 2
       radius: Math.min(Style.radiusM, height / 2)
-      color: Qt.alpha(Color.mSurfaceVariant, 0.7)
+      color: (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover) ? Color.mOnPrimary : Qt.alpha(Color.mSurfaceVariant, 0.7)
       border.width: Style.borderS
-      border.color: Color.mOutline
-      visible: Settings.data.sessionMenu.showNumberLabels && largeButtonRoot.number > 0 && !largeButtonRoot.pending
+      border.color: (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover) ? Color.mOnPrimary : Color.mOutline
+      visible: (Settings.data.sessionMenu.showNumberLabels && largeButtonRoot.number > 0 || largeButtonRoot.keybind !== "") && !largeButtonRoot.pending
       z: 10
 
       NText {
         id: largeNumberText
         anchors.centerIn: parent
-        text: largeButtonRoot.number
+        text: largeButtonRoot.keybind !== "" ? largeButtonRoot.keybind : largeButtonRoot.number
         pointSize: Style.fontSizeM
+        font.weight: Style.fontWeightBold
         color: {
           if (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover)
-            return Color.mOnPrimary;
+            return Color.mPrimary;
           return Color.mOnSurface;
         }
 

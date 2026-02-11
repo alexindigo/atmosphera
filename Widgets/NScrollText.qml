@@ -32,16 +32,29 @@ Item {
 
   property int scrollMode: NScrollText.ScrollMode.Never
   property bool alwaysMaxWidth: false
+  property bool forcedHover: false
   property int cursorShape: Qt.ArrowCursor
 
-  // animation controls
   property real waitBeforeScrolling: 1000
   property real scrollCycleDuration: Math.max(4000, root.text.length * 120)
   property real resettingDuration: 300
 
+  // gradient controls
+  property bool showGradients: true
+  property real gradientWidth: Math.round(12 * Style.uiScaleRatio)
+  property color gradientColor: Color.mSurfaceVariant
+  property real cornerRadius: 0
+
+  readonly property real contentWidth: {
+    if (!titleText.item)
+      return 0;
+    const implicit = titleText.item.implicitWidth;
+    return implicit > 0 ? implicit : titleText.item.width;
+  }
   readonly property real measuredWidth: scrollContainer.width
 
   clip: true
+  implicitWidth: alwaysMaxWidth ? maxWidth : Math.min(maxWidth, contentWidth)
   implicitHeight: titleText.height
 
   enum ScrollState {
@@ -62,12 +75,10 @@ Item {
     resetState();
   }
   onMaxWidthChanged: resetState()
+  onContentWidthChanged: root.updateState()
+  onForcedHoverChanged: updateState()
 
   function resetState() {
-    root.implicitWidth = Math.min(root.maxWidth, titleText.width);
-    if (alwaysMaxWidth) {
-      root.implicitWidth = root.maxWidth;
-    }
     root.state = NScrollText.ScrollState.None;
     scrollContainer.x = 0;
     scrollTimer.restart();
@@ -99,7 +110,7 @@ Item {
   }
 
   function updateState() {
-    if (titleText.width <= root.maxWidth || scrollMode === NScrollText.ScrollMode.Never) {
+    if (contentWidth <= root.maxWidth || scrollMode === NScrollText.ScrollMode.Never) {
       state = NScrollText.ScrollState.None;
       return;
     }
@@ -110,7 +121,7 @@ Item {
         scrollTimer.restart();
       }
     } else if (scrollMode === NScrollText.ScrollMode.Hover) {
-      if (hoverArea.containsMouse)
+      if (hoverArea.containsMouse || forcedHover)
         state = NScrollText.ScrollState.Scrolling;
       else
         ensureReset();
@@ -126,16 +137,23 @@ Item {
     Loader {
       id: titleText
       sourceComponent: root.delegate
-      Layout.alignment: Qt.AlignVCenter
-      onLoaded: this.item.text = root.text
+      Layout.fillHeight: true
+      onLoaded: {
+        this.item.text = root.text;
+        // Bind height to container to enable vertical centering of overly high text
+        this.item.height = Qt.binding(() => titleText.height);
+      }
     }
 
     Loader {
       id: loopingText
       sourceComponent: root.delegate
-      Layout.alignment: Qt.AlignVCenter
+      Layout.fillHeight: true
       visible: root.state !== NScrollText.ScrollState.None
-      onLoaded: this.item.text = root.text
+      onLoaded: {
+        this.item.text = root.text;
+        this.item.height = Qt.binding(() => loopingText.height);
+      }
     }
 
     NumberAnimation on x {
@@ -155,6 +173,65 @@ Item {
       duration: root.scrollCycleDuration
       loops: Animation.Infinite
       easing.type: Easing.Linear
+    }
+  }
+
+  // Fade Gradients
+  Rectangle {
+    id: leftGradient
+    anchors.left: parent.left
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    width: root.gradientWidth
+    z: 2
+    visible: root.showGradients && root.contentWidth > root.maxWidth
+    radius: root.cornerRadius
+    opacity: scrollContainer.x < -1 ? 1 : 0
+    gradient: Gradient {
+      orientation: Gradient.Horizontal
+      GradientStop {
+        position: 0.0
+        color: root.gradientColor
+      }
+      GradientStop {
+        position: 1.0
+        color: "transparent"
+      }
+    }
+    Behavior on opacity {
+      NumberAnimation {
+        duration: Style.animationFast
+        easing.type: Easing.InOutQuad
+      }
+    }
+  }
+
+  Rectangle {
+    id: rightGradient
+    anchors.right: parent.right
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    width: root.gradientWidth
+    z: 2
+    visible: root.showGradients && root.contentWidth > root.maxWidth
+    radius: root.cornerRadius
+    opacity: 1 // Always show if overflowing as it loops
+    gradient: Gradient {
+      orientation: Gradient.Horizontal
+      GradientStop {
+        position: 0.0
+        color: "transparent"
+      }
+      GradientStop {
+        position: 1.0
+        color: root.gradientColor
+      }
+    }
+    Behavior on opacity {
+      NumberAnimation {
+        duration: Style.animationFast
+        easing.type: Easing.InOutQuad
+      }
     }
   }
 }

@@ -3,18 +3,42 @@
 import asyncio
 import os
 import sys
+import shutil
 from pathlib import Path
+
 
 async def run_command(*args):
     process = await asyncio.create_subprocess_exec(
-        *args,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
+        *args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
     )
     stdout, stderr = await process.communicate()
     if process.returncode != 0:
         print(f"Error running {' '.join(args)}: {stderr.decode().strip()}", file=sys.stderr)
     return stdout.decode().strip()
+
+
+def theme_exists(theme_name: str) -> bool:
+    """Check if a GTK theme exists in common locations."""
+    search_paths = [
+        Path.home() / ".themes",
+        Path.home() / ".local/share/themes",
+        Path("/usr/share/themes"),
+        Path("/usr/local/share/themes"),
+    ]
+
+    # Add paths from XDG_DATA_DIRS
+    xdg_data_dirs = os.environ.get("XDG_DATA_DIRS", "")
+    if xdg_data_dirs:
+        for path in xdg_data_dirs.split(":"):
+            if path:
+                search_paths.append(Path(path) / "themes")
+
+    for base_path in search_paths:
+        if (base_path / theme_name).is_dir():
+            return True
+
+    return False
+
 
 async def apply_gtk3_colors(config_dir: Path):
     gtk3_dir = config_dir / "gtk-3.0"
@@ -36,6 +60,7 @@ async def apply_gtk3_colors(config_dir: Path):
     print(f"Created symlink: {gtk_css} -> noctalia.css")
     return True
 
+
 async def apply_gtk4_colors(config_dir: Path):
     gtk4_dir = config_dir / "gtk-4.0"
     colors_file = gtk4_dir / "noctalia.css"
@@ -50,35 +75,53 @@ async def apply_gtk4_colors(config_dir: Path):
     print("Updated GTK4 CSS import")
     return True
 
-async def refresh_theme():
-    raw_theme = await run_command("gsettings", "get", "org.gnome.desktop.interface", "gtk-theme")
-    current_theme = raw_theme.strip("'")
-    
-    raw_scheme = await run_command("gsettings", "get", "org.gnome.desktop.interface", "color-scheme")
-    current_scheme = raw_scheme.strip("'")
-    
-    if not current_theme: current_theme = "adw-gtk3-dark"
-    if not current_scheme: current_scheme = "prefer-dark"
-        
-    temp_scheme = "default" if current_scheme == "prefer-dark" else "prefer-dark"
 
-    # await run_command("gsettings", "set", "org.gnome.desktop.interface", "color-scheme", temp_scheme)
-    # await run_command("dconf", "write", "/org/gnome/desktop/interface/color-scheme", f"'{temp_scheme}'")
-    
-    # await run_command("gsettings", "set", "org.gnome.desktop.interface", "gtk-theme", "")
-    # await run_command("dconf", "write", "/org/gnome/desktop/interface/gtk-theme", "''")
-    
-    # await asyncio.sleep(0.01)
-    
-    await run_command("gsettings", "set", "org.gnome.desktop.interface", "color-scheme", current_scheme)
-    await run_command("dconf", "write", "/org/gnome/desktop/interface/color-scheme", f"'{current_scheme}'")
-    
-    await run_command("gsettings", "set", "org.gnome.desktop.interface", "gtk-theme", current_theme)
-    await run_command("dconf", "write", "/org/gnome/desktop/interface/gtk-theme", f"'{current_theme}'")
+async def refresh_theme():
+    has_gsettings = shutil.which("gsettings")
+    has_dconf = shutil.which("dconf")
+
+    if not has_gsettings and not has_dconf:
+        print("No gsettings or dconf found, skip GTK refresh")
+        return
+
+    if mode == "light":
+        target_theme = "adw-gtk3"
+    else:
+        target_theme = "adw-gtk3-dark"
+
+    theme_available = theme_exists(target_theme)
+    if not theme_available:
+        print(f"Theme '{target_theme}' not found, skipping GTK theme set")
+
+    if has_gsettings:
+        schemas = await run_command("gsettings", "list-schemas")
+        if schemas and "org.gnome.desktop.interface" in schemas:
+            await run_command("gsettings", "set", "org.gnome.desktop.interface", "color-scheme", f"prefer-{mode}")
+            if theme_available:
+                await run_command("gsettings", "set", "org.gnome.desktop.interface", "gtk-theme", f"{target_theme}")
+            return
+
+    if has_dconf:
+        await run_command("dconf", "write", "/org/gnome/desktop/interface/color-scheme", f"'prefer-{mode}'")
+        if theme_available:
+            await run_command("dconf", "write", "/org/gnome/desktop/interface/gtk-theme", f"'{target_theme}'")
+
+
+async def get_config_dir() -> Path:
+    # 1. project-specific override
+    if value := os.environ.get("NOCTALIA_CONFIG_DIR"):
+        return Path(value).expanduser()
+
+    # 2. XDG standard
+    if value := os.environ.get("XDG_CONFIG_HOME"):
+        return Path(value).expanduser()
+
+    # 3. fallback
+    return Path.home() / ".config"
+
 
 async def main():
-    config_dir_path = sys.argv[1] if len(sys.argv) > 1 else os.path.expanduser("~/.config")
-    config_dir = Path(config_dir_path)
+    config_dir = await get_config_dir()
 
     if not config_dir.is_dir():
         print(f"Error: Config directory not found: {config_dir}", file=sys.stderr)
@@ -87,10 +130,7 @@ async def main():
     (config_dir / "gtk-3.0").mkdir(parents=True, exist_ok=True)
     (config_dir / "gtk-4.0").mkdir(parents=True, exist_ok=True)
 
-    results = await asyncio.gather(
-        apply_gtk3_colors(config_dir),
-        apply_gtk4_colors(config_dir)
-    )
+    results = await asyncio.gather(apply_gtk3_colors(config_dir), apply_gtk4_colors(config_dir))
 
     if all(results):
         await refresh_theme()
@@ -98,5 +138,8 @@ async def main():
     else:
         sys.exit(1)
 
+
 if __name__ == "__main__":
+    mode = sys.argv[1]  # light or dark
+
     asyncio.run(main())

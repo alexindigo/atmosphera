@@ -46,7 +46,7 @@ SmartPanel {
       return;
     let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex);
     if (view?.gridView) {
-      if (!view.gridView.activeFocus) {
+      if (!view.gridView.hasActiveFocus) {
         view.gridView.forceActiveFocus();
         if (view.gridView.currentIndex < 0 && view.gridView.model.length > 0) {
           view.gridView.currentIndex = 0;
@@ -65,7 +65,7 @@ SmartPanel {
     if (!contentItem)
       return;
     let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex);
-    if (view?.gridView?.activeFocus) {
+    if (view?.gridView?.hasActiveFocus) {
       if (view.gridView.currentIndex < 0 && view.gridView.model.length > 0) {
         view.gridView.currentIndex = 0;
       } else {
@@ -78,7 +78,7 @@ SmartPanel {
     if (!contentItem)
       return;
     let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex);
-    if (view?.gridView?.activeFocus) {
+    if (view?.gridView?.hasActiveFocus) {
       if (view.gridView.currentIndex < 0 && view.gridView.model.length > 0) {
         view.gridView.currentIndex = 0;
       } else {
@@ -91,7 +91,7 @@ SmartPanel {
     if (!contentItem)
       return;
     let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex);
-    if (view?.gridView?.activeFocus) {
+    if (view?.gridView?.hasActiveFocus) {
       if (view.gridView.currentIndex < 0 && view.gridView.model.length > 0) {
         view.gridView.currentIndex = 0;
       } else {
@@ -103,8 +103,15 @@ SmartPanel {
   function onReturnPressed() {
     if (!contentItem)
       return;
+
+    // Check if Wallhaven page input has focus
+    if (contentItem.wallhavenView && contentItem.wallhavenView.visible && contentItem.wallhavenView.pageInput && contentItem.wallhavenView.pageInput.inputItem.activeFocus) {
+      contentItem.wallhavenView.pageInput.submitPage();
+      return;
+    }
+
     let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex);
-    if (view?.gridView?.activeFocus) {
+    if (view?.gridView?.hasActiveFocus) {
       let gridView = view.gridView;
       if (gridView.currentIndex >= 0 && gridView.currentIndex < gridView.model.length) {
         view.selectItem(gridView.model[gridView.currentIndex]);
@@ -119,6 +126,7 @@ SmartPanel {
   panelContent: Rectangle {
     id: panelContent
 
+    property alias wallhavenView: wallhavenView
     property int currentScreenIndex: {
       if (screen !== null) {
         for (var i = 0; i < Quickshell.screens.length; i++) {
@@ -411,18 +419,65 @@ SmartPanel {
                 }
               }
 
-              Keys.onDownPressed: {
-                if (Settings.data.wallpaper.useWallhaven) {
-                  if (wallhavenView && wallhavenView.gridView) {
-                    wallhavenView.gridView.forceActiveFocus();
-                  }
-                } else {
-                  let currentView = screenRepeater.itemAt(currentScreenIndex);
-                  if (currentView && currentView.gridView) {
-                    currentView.gridView.forceActiveFocus();
-                  }
-                }
-              }
+              Keys.onPressed: event => {
+                                var boundKeys = Settings.data.general.keybinds.keyDown;
+                                if (!boundKeys || boundKeys.length === 0)
+                                return;
+
+                                // Helper to check key string (duplicated from LauncherCore/SessionMenu logic for now)
+                                // Ideally this should be a shared helper
+                                let keyStr = "";
+                                if (event.modifiers & Qt.ControlModifier)
+                                keyStr += "Ctrl+";
+                                if (event.modifiers & Qt.AltModifier)
+                                keyStr += "Alt+";
+                                if (event.modifiers & Qt.ShiftModifier)
+                                keyStr += "Shift+";
+
+                                let keyName = "";
+                                if (event.key >= Qt.Key_A && event.key <= Qt.Key_Z || event.key >= Qt.Key_0 && event.key <= Qt.Key_9) {
+                                  keyName = String.fromCharCode(event.key);
+                                } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                                  keyName = "Return"; // Standardize on Return for check
+                                } else if (event.key === Qt.Key_Escape) {
+                                  keyName = "Esc";
+                                } else if (event.key === Qt.Key_Up)
+                                keyName = "Up";
+                                else if (event.key === Qt.Key_Down)
+                                keyName = "Down";
+                                else if (event.key === Qt.Key_Left)
+                                keyName = "Left";
+                                else if (event.key === Qt.Key_Right)
+                                keyName = "Right";
+
+                                // If the key matches any bound key for Down
+                                if (boundKeys.indexOf(keyStr + keyName) !== -1) {
+                                  if (Settings.data.wallpaper.useWallhaven) {
+                                    if (wallhavenView && wallhavenView.gridView) {
+                                      wallhavenView.gridView.forceActiveFocus();
+                                    }
+                                  } else {
+                                    let currentView = screenRepeater.itemAt(currentScreenIndex);
+                                    if (currentView && currentView.gridView) {
+                                      currentView.gridView.forceActiveFocus();
+                                    }
+                                  }
+                                  event.accepted = true;
+                                }
+                              }
+            }
+
+            NComboBox {
+              visible: Settings.data.colorSchemes.useWallpaperColors
+              Layout.fillWidth: false
+              Layout.minimumWidth: 200
+              minimumWidth: 200
+              model: TemplateProcessor.schemeTypes
+              currentKey: Settings.data.colorSchemes.generationMethod
+              onSelected: key => {
+                            Settings.data.colorSchemes.generationMethod = key;
+                            AppThemeService.generate();
+                          }
             }
 
             NComboBox {
@@ -532,51 +587,6 @@ SmartPanel {
           // Wallhaven wallpapers
           WallhavenView {
             id: wallhavenView
-          }
-        }
-
-        // Overlay gradient to smooth the hard cut due to scrolling
-        Rectangle {
-          anchors.fill: parent
-          anchors.margins: Style.borderS
-          radius: Style.radiusM
-
-          // Get active grid view for scroll position
-          readonly property var activeGridView: {
-            if (Settings.data.wallpaper.useWallhaven) {
-              return wallhavenView.gridView;
-            } else {
-              const view = screenRepeater.itemAt(currentScreenIndex);
-              return view?.gridView ?? null;
-            }
-          }
-
-          opacity: {
-            if (!activeGridView)
-              return 1;
-            return (activeGridView.contentY + activeGridView.height >= activeGridView.contentHeight - 10) ? 0 : 1;
-          }
-
-          Behavior on opacity {
-            NumberAnimation {
-              duration: Style.animationFast
-              easing.type: Easing.InOutQuad
-            }
-          }
-
-          gradient: Gradient {
-            GradientStop {
-              position: 0.0
-              color: "transparent"
-            }
-            GradientStop {
-              position: 0.9
-              color: "transparent"
-            }
-            GradientStop {
-              position: 1.0
-              color: Color.mSurfaceVariant
-            }
           }
         }
       }
@@ -775,6 +785,9 @@ SmartPanel {
           text: isBrowseMode ? currentBrowsePath : WallpaperService.getMonitorDirectory(targetScreen?.name ?? "")
           Layout.fillWidth: true
           scrollMode: NScrollText.ScrollMode.Hover
+          gradientColor: Color.mSurfaceVariant
+          cornerRadius: Style.radiusM
+
           NText {
             text: isBrowseMode ? currentBrowsePath : WallpaperService.getMonitorDirectory(targetScreen?.name ?? "")
             pointSize: Style.fontSizeS
@@ -783,18 +796,54 @@ SmartPanel {
         }
 
         // Right side: actions (view mode, hide filenames, refresh)
-        NComboBox {
-          visible: Settings.data.colorSchemes.useWallpaperColors
-          baseSize: 0.8
-          Layout.minimumWidth: 200
-          minimumWidth: 200
-          //tooltip: I18n.tr("panels.color-scheme.wallpaper-method-label")
-          model: TemplateProcessor.schemeTypes
-          currentKey: Settings.data.colorSchemes.generationMethod
-          onSelected: key => {
-                        Settings.data.colorSchemes.generationMethod = key;
-                        AppThemeService.generate();
-                      }
+        NIconButton {
+          property string sortOrder: Settings.data.wallpaper.sortOrder || "name"
+          icon: {
+            if (sortOrder === "date_desc")
+              return "clock";
+            if (sortOrder === "date_asc")
+              return "history";
+            if (sortOrder === "name_desc")
+              return "sort-descending";
+            if (sortOrder === "random")
+              return "arrows-shuffle";
+            return "sort-ascending";
+          }
+          tooltipText: {
+            if (sortOrder === "date_desc")
+              return "Sort: Newest First";
+            if (sortOrder === "date_asc")
+              return "Sort: Oldest First";
+            if (sortOrder === "name_desc")
+              return "Sort: Name (Z-A)";
+            if (sortOrder === "random")
+              return "Sort: Random";
+            return "Sort: Name (A-Z)";
+          }
+          baseSize: Style.baseWidgetSize * 0.8
+          onClicked: {
+            var next = "name";
+            if (sortOrder === "name")
+              next = "date_desc";
+            else if (sortOrder === "date_desc")
+              next = "name"; // Toggle simpler: Name -> Newest -> Name
+            // Expanded cycle: Name -> Newest -> Oldest -> Z-A -> Random -> Name
+            // User just asked for "newest first", so let's make it easy to reach.
+            // Let's do: Name (A-Z) -> Newest -> Oldest -> Name (Z-A) -> ...
+
+            if (sortOrder === "name")
+              next = "date_desc";
+            else if (sortOrder === "date_desc")
+              next = "date_asc";
+            else if (sortOrder === "date_asc")
+              next = "name_desc";
+            else if (sortOrder === "name_desc")
+              next = "random";
+            else
+              next = "name";
+
+            Settings.data.wallpaper.sortOrder = next;
+          }
         }
 
         NIconButton {
@@ -832,7 +881,7 @@ SmartPanel {
         }
       }
 
-      GridView {
+      NGridView {
         id: wallpaperGridView
 
         Layout.fillWidth: true
@@ -840,10 +889,9 @@ SmartPanel {
 
         visible: !WallpaperService.scanning
         interactive: true
-        clip: true
-        focus: true
         keyNavigationEnabled: true
         keyNavigationWraps: false
+        highlightFollowsCurrentItem: false
         currentIndex: -1
 
         model: filteredItems
@@ -858,19 +906,10 @@ SmartPanel {
           positionViewAtBeginning();
         }
 
-        // Capture clicks on empty areas to give focus to GridView
-        MouseArea {
-          anchors.fill: parent
-          z: -1
-          onClicked: {
-            wallpaperGridView.forceActiveFocus();
-          }
-        }
-
         property int columns: (screen.width > 1920) ? 5 : 4
         property int itemSize: cellWidth
 
-        cellWidth: Math.floor((width - leftMargin - rightMargin) / columns)
+        cellWidth: Math.floor((availableWidth - leftMargin - rightMargin) / columns)
         cellHeight: Math.floor(itemSize * 0.7) + Style.marginXS + Style.fontSizeXS + Style.marginM
 
         leftMargin: Style.marginS
@@ -895,62 +934,14 @@ SmartPanel {
           }
         }
 
-        Keys.onPressed: event => {
-                          if (event.key === Qt.Key_Return || event.key === Qt.Key_Space) {
-                            if (currentIndex >= 0 && currentIndex < filteredItems.length) {
-                              selectItem(filteredItems[currentIndex]);
-                            }
-                            event.accepted = true;
+        onKeyPressed: event => {
+                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Space) {
+                          if (currentIndex >= 0 && currentIndex < filteredItems.length) {
+                            selectItem(filteredItems[currentIndex]);
                           }
+                          event.accepted = true;
                         }
-
-        ScrollBar.vertical: ScrollBar {
-          policy: ScrollBar.AsNeeded
-          parent: wallpaperGridView
-          x: wallpaperGridView.mirrored ? 0 : wallpaperGridView.width - width
-          y: 0
-          height: wallpaperGridView.height
-
-          property color handleColor: Qt.alpha(Color.mHover, 0.8)
-          property color handleHoverColor: handleColor
-          property color handlePressedColor: handleColor
-          property real handleWidth: 6
-          property real handleRadius: Style.radiusM
-
-          contentItem: Rectangle {
-            implicitWidth: parent.handleWidth
-            implicitHeight: 100
-            radius: parent.handleRadius
-            color: parent.pressed ? parent.handlePressedColor : parent.hovered ? parent.handleHoverColor : parent.handleColor
-            opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 1.0 : 0.0
-
-            Behavior on opacity {
-              NumberAnimation {
-                duration: Style.animationFast
-              }
-            }
-
-            Behavior on color {
-              ColorAnimation {
-                duration: Style.animationFast
-              }
-            }
-          }
-
-          background: Rectangle {
-            implicitWidth: parent.handleWidth
-            implicitHeight: 100
-            color: "transparent"
-            opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 0.3 : 0.0
-            radius: parent.handleRadius / 2
-
-            Behavior on opacity {
-              NumberAnimation {
-                duration: Style.animationFast
-              }
-            }
-          }
-        }
+                      }
 
         delegate: Item {
           id: wallpaperItemWrapper
@@ -1180,6 +1171,7 @@ SmartPanel {
   component WallhavenView: Item {
     id: wallhavenViewRoot
     property alias gridView: wallhavenGridView
+    property alias pageInput: pageInput
 
     property var wallpapers: []
     property bool loading: false
@@ -1253,17 +1245,16 @@ SmartPanel {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        GridView {
+        NGridView {
           id: wallhavenGridView
 
           anchors.fill: parent
 
           visible: !loading && errorMessage === "" && (wallpapers && wallpapers.length > 0)
           interactive: true
-          clip: true
-          focus: true
           keyNavigationEnabled: true
           keyNavigationWraps: false
+          highlightFollowsCurrentItem: false
           currentIndex: -1
 
           model: wallpapers || []
@@ -1281,7 +1272,7 @@ SmartPanel {
           property int columns: (screen.width > 1920) ? 5 : 4
           property int itemSize: cellWidth
 
-          cellWidth: Math.floor((width - leftMargin - rightMargin) / columns)
+          cellWidth: Math.floor((availableWidth - leftMargin - rightMargin) / columns)
           cellHeight: Math.floor(itemSize * 0.7) + Style.marginXS + Style.fontSizeXS + Style.marginM
 
           leftMargin: Style.marginS
@@ -1304,63 +1295,15 @@ SmartPanel {
             }
           }
 
-          Keys.onPressed: event => {
-                            if (event.key === Qt.Key_Return || event.key === Qt.Key_Space) {
-                              if (currentIndex >= 0 && currentIndex < wallpapers.length) {
-                                let wallpaper = wallpapers[currentIndex];
-                                wallhavenDownloadAndApply(wallpaper);
-                              }
-                              event.accepted = true;
+          onKeyPressed: event => {
+                          if (event.key === Qt.Key_Return || event.key === Qt.Key_Space) {
+                            if (currentIndex >= 0 && currentIndex < wallpapers.length) {
+                              let wallpaper = wallpapers[currentIndex];
+                              wallhavenDownloadAndApply(wallpaper);
                             }
+                            event.accepted = true;
                           }
-
-          ScrollBar.vertical: ScrollBar {
-            policy: ScrollBar.AsNeeded
-            parent: wallhavenGridView
-            x: wallhavenGridView.mirrored ? 0 : wallhavenGridView.width - width
-            y: 0
-            height: wallhavenGridView.height
-
-            property color handleColor: Qt.alpha(Color.mHover, 0.8)
-            property color handleHoverColor: handleColor
-            property color handlePressedColor: handleColor
-            property real handleWidth: 6
-            property real handleRadius: Style.radiusM
-
-            contentItem: Rectangle {
-              implicitWidth: parent.handleWidth
-              implicitHeight: 100
-              radius: parent.handleRadius
-              color: parent.pressed ? parent.handlePressedColor : parent.hovered ? parent.handleHoverColor : parent.handleColor
-              opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 1.0 : 0.0
-
-              Behavior on opacity {
-                NumberAnimation {
-                  duration: Style.animationFast
-                }
-              }
-
-              Behavior on color {
-                ColorAnimation {
-                  duration: Style.animationFast
-                }
-              }
-            }
-
-            background: Rectangle {
-              implicitWidth: parent.handleWidth
-              implicitHeight: 100
-              color: "transparent"
-              opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 0.3 : 0.0
-              radius: parent.handleRadius / 2
-
-              Behavior on opacity {
-                NumberAnimation {
-                  duration: Style.animationFast
-                }
-              }
-            }
-          }
+                        }
 
           delegate: Item {
             id: wallhavenItemWrapper
@@ -1479,7 +1422,7 @@ SmartPanel {
           radius: Style.radiusM
           border.color: Color.mOutline
           border.width: Style.borderS
-          visible: loading
+          visible: loading || (typeof WallhavenService !== "undefined" && WallhavenService.fetching)
           z: 10
 
           ColumnLayout {
@@ -1596,7 +1539,7 @@ SmartPanel {
       // Pagination
       RowLayout {
         Layout.fillWidth: true
-        visible: !loading && errorMessage === "" && typeof WallhavenService !== "undefined"
+        visible: errorMessage === "" && typeof WallhavenService !== "undefined"
         spacing: Style.marginS
 
         Item {
@@ -1605,14 +1548,59 @@ SmartPanel {
 
         NIconButton {
           icon: "chevron-left"
-          enabled: WallhavenService.currentPage > 1 && !WallhavenService.fetching
+          enabled: !loading && WallhavenService.currentPage > 1 && !WallhavenService.fetching
           onClicked: WallhavenService.previousPage()
         }
 
-        NText {
-          text: I18n.tr("wallpaper.wallhaven.page").replace("{current}", WallhavenService.currentPage).replace("{total}", WallhavenService.lastPage)
-          color: Color.mOnSurface
-          horizontalAlignment: Text.AlignHCenter
+        RowLayout {
+          spacing: Style.marginXS
+
+          NText {
+            text: I18n.tr("wallpaper.wallhaven.page-prefix")
+            color: Color.mOnSurface
+          }
+
+          NTextInput {
+            id: pageInput
+            text: "" + WallhavenService.currentPage
+            Layout.preferredWidth: 50 * Style.uiScaleRatio
+            Layout.maximumWidth: 50 * Style.uiScaleRatio
+            Layout.fillWidth: false
+            minimumInputWidth: 50 * Style.uiScaleRatio
+            horizontalAlignment: Text.AlignHCenter
+            inputMethodHints: Qt.ImhDigitsOnly
+            enabled: !loading && !WallhavenService.fetching
+            showClearButton: false
+
+            Connections {
+              target: WallhavenService
+              function onCurrentPageChanged() {
+                pageInput.text = "" + WallhavenService.currentPage;
+              }
+            }
+
+            function submitPage() {
+              var page = parseInt(text);
+              if (!isNaN(page) && page >= 1 && page <= WallhavenService.lastPage) {
+                if (page !== WallhavenService.currentPage) {
+                  WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", page);
+                }
+              } else {
+                // Reset to current page if invalid
+                text = "" + WallhavenService.currentPage;
+              }
+              // Force focus loss to ensure UI updates cleanly
+              pageInput.inputItem.focus = false;
+            }
+
+            onEditingFinished: submitPage()
+            onAccepted: submitPage()
+          }
+
+          NText {
+            text: I18n.tr("wallpaper.wallhaven.page-suffix").replace("{total}", WallhavenService.lastPage)
+            color: Color.mOnSurface
+          }
         }
 
         NIconButton {

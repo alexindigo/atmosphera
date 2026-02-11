@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import qs.Commons
+import qs.Services.UI
 
 Singleton {
   id: root
@@ -16,11 +17,66 @@ Singleton {
   // Requested tab when opening
   property int requestedTab: 0
 
+  // Requested subtab when opening (-1 means no specific subtab)
+  property int requestedSubTab: -1
+
+  // Requested entry for search navigation
+  property var requestedEntry: null
+
   signal windowOpened
   signal windowClosed
 
+  function openToEntry(entry, screen) {
+    if (Settings.data.ui.settingsPanelMode === "window") {
+      requestedEntry = entry;
+      if (settingsWindow) {
+        settingsWindow.visible = true;
+        isWindowOpen = true;
+        windowOpened();
+      }
+    } else {
+      if (!screen) {
+        Logger.w("SettingsPanelService", "Screen parameter required for panel mode");
+        return;
+      }
+      var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+      if (settingsPanel) {
+        settingsPanel.requestedEntry = entry;
+        settingsPanel.open();
+      }
+    }
+  }
+
+  // Unified function to open settings to a specific tab and subtab
+  // Respects user's settingsPanelMode setting (window vs panel)
+  // For panel mode, screen parameter is required
+  function openToTab(tab, subTab, screen) {
+    const tabId = tab !== undefined ? tab : 0;
+    const subTabId = subTab !== undefined ? subTab : -1;
+
+    if (Settings.data.ui.settingsPanelMode === "window") {
+      requestedTab = tabId;
+      requestedSubTab = subTabId;
+      if (settingsWindow) {
+        settingsWindow.visible = true;
+        isWindowOpen = true;
+        windowOpened();
+      }
+    } else {
+      if (!screen) {
+        Logger.w("SettingsPanelService", "Screen parameter required for panel mode");
+        return;
+      }
+      var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+      if (settingsPanel) {
+        settingsPanel.openToTab(tabId, subTabId);
+      }
+    }
+  }
+
   function openWindow(tab) {
     requestedTab = tab !== undefined ? tab : 0;
+    requestedSubTab = -1;
     if (settingsWindow) {
       settingsWindow.visible = true;
       isWindowOpen = true;

@@ -20,6 +20,9 @@ Singleton {
   // Public values
   property real cpuUsage: 0
   property real cpuTemp: 0
+  property string cpuFreq: "0.0GHz"
+  property real cpuFreqRatio: 0
+  property real cpuGlobalMaxFreq: 3.5
   property real gpuTemp: 0
   property bool gpuAvailable: false
   property string gpuType: "" // "amd", "intel", "nvidia"
@@ -29,8 +32,11 @@ Singleton {
   property real swapPercent: 0
   property real swapTotalGb: 0
   property var diskPercents: ({})
+  property var diskAvailPercents: ({}) // available disk space in percent
   property var diskUsedGb: ({}) // Used space in GB per mount point
+  property var diskAvailableGb: ({}) // available space in GB per mount point
   property var diskSizeGb: ({}) // Total size in GB per mount point
+  property var diskAvailGb: ({})
   property real rxSpeed: 0
   property real txSpeed: 0
   property real zfsArcSizeKb: 0 // ZFS ARC cache size in KB
@@ -40,17 +46,119 @@ Singleton {
   property real loadAvg15: 0
   property int nproc: 0 // Number of cpu cores
 
-  // Network max speed tracking (learned over time, cached for 7 days)
-  readonly property real rxMaxSpeed: {
-    const peaks = networkStatsAdapter.rxPeaks || [];
-    return peaks.length > 0 ? Math.max(...peaks.map(p => p.speed)) : 0;
-  }
-  readonly property real txMaxSpeed: {
-    const peaks = networkStatsAdapter.txPeaks || [];
-    return peaks.length > 0 ? Math.max(...peaks.map(p => p.speed)) : 0;
+  // History arrays (2 minutes of data, length computed from polling interval)
+  // Pre-filled with zeros so the graph scrolls smoothly from the start
+  readonly property int historyDurationMs: (1 * 60 * 1000) // 1 minute
+
+  // Computed history lengths based on polling intervals
+  readonly property int cpuHistoryLength: Math.ceil(historyDurationMs / normalizeInterval(Settings.data.systemMonitor.cpuPollingInterval))
+  readonly property int gpuHistoryLength: Math.ceil(historyDurationMs / normalizeInterval(Settings.data.systemMonitor.gpuPollingInterval))
+  readonly property int memHistoryLength: Math.ceil(historyDurationMs / normalizeInterval(Settings.data.systemMonitor.memPollingInterval))
+  readonly property int diskHistoryLength: Math.ceil(historyDurationMs / normalizeInterval(Settings.data.systemMonitor.diskPollingInterval))
+  readonly property int networkHistoryLength: Math.ceil(historyDurationMs / normalizeInterval(Settings.data.systemMonitor.networkPollingInterval))
+
+  property var cpuHistory: new Array(cpuHistoryLength).fill(0)
+  property var cpuTempHistory: new Array(cpuHistoryLength).fill(40)  // Reasonable default temp
+  property var gpuTempHistory: new Array(gpuHistoryLength).fill(40)  // Reasonable default temp
+  property var memHistory: new Array(memHistoryLength).fill(0)
+  property var diskHistories: ({}) // Keyed by mount path, initialized on first update
+  property var rxSpeedHistory: new Array(networkHistoryLength).fill(0)
+  property var txSpeedHistory: new Array(networkHistoryLength).fill(0)
+
+  // Historical min/max tracking (since shell started) for consistent graph scaling
+  // Temperature defaults create a valid 30-80°C range that expands as real data comes in
+  property real cpuTempHistoryMin: 30
+  property real cpuTempHistoryMax: 80
+  property real gpuTempHistoryMin: 30
+  property real gpuTempHistoryMax: 80
+  // Network uses autoscaling from current history window
+  // Disk is always 0-100%
+
+  // History management - called from update functions, not change handlers
+  // (change handlers don't fire when value stays the same)
+  function pushCpuHistory() {
+    let h = cpuHistory.slice();
+    h.push(cpuUsage);
+    if (h.length > cpuHistoryLength)
+      h.shift();
+    cpuHistory = h;
   }
 
-  // Ready-to-use ratios based on learned maximums (0..1 range)
+  function pushCpuTempHistory() {
+    if (cpuTemp > 0) {
+      if (cpuTemp < cpuTempHistoryMin)
+        cpuTempHistoryMin = cpuTemp;
+      if (cpuTemp > cpuTempHistoryMax)
+        cpuTempHistoryMax = cpuTemp;
+    }
+    let h = cpuTempHistory.slice();
+    h.push(cpuTemp);
+    if (h.length > cpuHistoryLength)
+      h.shift();
+    cpuTempHistory = h;
+  }
+
+  function pushGpuHistory() {
+    if (gpuTemp > 0) {
+      if (gpuTemp < gpuTempHistoryMin)
+        gpuTempHistoryMin = gpuTemp;
+      if (gpuTemp > gpuTempHistoryMax)
+        gpuTempHistoryMax = gpuTemp;
+    }
+    let h = gpuTempHistory.slice();
+    h.push(gpuTemp);
+    if (h.length > gpuHistoryLength)
+      h.shift();
+    gpuTempHistory = h;
+  }
+
+  function pushMemHistory() {
+    let h = memHistory.slice();
+    h.push(memPercent);
+    if (h.length > memHistoryLength)
+      h.shift();
+    memHistory = h;
+  }
+
+  function pushDiskHistory() {
+    let newHistories = {};
+    for (let path in diskPercents) {
+      // Pre-fill with zeros if this is a new path
+      let h = diskHistories[path] ? diskHistories[path].slice() : new Array(diskHistoryLength).fill(0);
+      h.push(diskPercents[path]);
+      if (h.length > diskHistoryLength)
+        h.shift();
+      newHistories[path] = h;
+    }
+    diskHistories = newHistories;
+  }
+
+  function pushNetworkHistory() {
+    let rxH = rxSpeedHistory.slice();
+    rxH.push(rxSpeed);
+    if (rxH.length > networkHistoryLength)
+      rxH.shift();
+    rxSpeedHistory = rxH;
+
+    let txH = txSpeedHistory.slice();
+    txH.push(txSpeed);
+    if (txH.length > networkHistoryLength)
+      txH.shift();
+    txSpeedHistory = txH;
+  }
+
+  // Network max speed tracking (autoscales from current history window)
+  // Minimum floor of 100 KB/s so small background traffic doesn't look significant
+  readonly property real rxMaxSpeed: {
+    const max = Math.max(...rxSpeedHistory);
+    return Math.max(max, 102400); // 100 KB/s floor
+  }
+  readonly property real txMaxSpeed: {
+    const max = Math.max(...txSpeedHistory);
+    return Math.max(max, 102400); // 100 KB/s floor
+  }
+
+  // Ready-to-use ratios based on current maximums (0..1 range)
   readonly property real rxRatio: rxMaxSpeed > 0 ? Math.min(1, rxSpeed / rxMaxSpeed) : 0
   readonly property real txRatio: txMaxSpeed > 0 ? Math.min(1, txSpeed / txMaxSpeed) : 0
 
@@ -71,6 +179,8 @@ Singleton {
   readonly property int swapCriticalThreshold: Settings.data.systemMonitor.swapCriticalThreshold
   readonly property int diskWarningThreshold: Settings.data.systemMonitor.diskWarningThreshold
   readonly property int diskCriticalThreshold: Settings.data.systemMonitor.diskCriticalThreshold
+  readonly property int diskAvailWarningThreshold: Settings.data.systemMonitor.diskAvailWarningThreshold
+  readonly property int diskAvailCriticalThreshold: Settings.data.systemMonitor.diskAvailCriticalThreshold
 
   // Computed warning/critical states (uses >= inclusive comparison)
   readonly property bool cpuWarning: cpuUsage >= cpuWarningThreshold
@@ -85,12 +195,12 @@ Singleton {
   readonly property bool swapCritical: swapPercent >= swapCriticalThreshold
 
   // Helper functions for disk (disk path is dynamic)
-  function isDiskWarning(diskPath) {
-    return (diskPercents[diskPath] || 0) >= diskWarningThreshold;
+  function isDiskWarning(diskPath, available = false) {
+    return available ? (diskAvailPercents[diskPath] || 0) <= diskAvailWarningThreshold : (diskPercents[diskPath] || 0) >= diskWarningThreshold;
   }
 
-  function isDiskCritical(diskPath) {
-    return (diskPercents[diskPath] || 0) >= diskCriticalThreshold;
+  function isDiskCritical(diskPath, available = false) {
+    return available ? (diskAvailPercents[diskPath] || 0) <= diskAvailCriticalThreshold : (diskPercents[diskPath] || 0) >= diskCriticalThreshold;
   }
 
   // Ready-to-use stat colors (for gauges, panels, icons)
@@ -100,8 +210,8 @@ Singleton {
   readonly property color memColor: memCritical ? criticalColor : (memWarning ? warningColor : Color.mPrimary)
   readonly property color swapColor: swapCritical ? criticalColor : (swapWarning ? warningColor : Color.mPrimary)
 
-  function getDiskColor(diskPath) {
-    return isDiskCritical(diskPath) ? criticalColor : (isDiskWarning(diskPath) ? warningColor : Color.mPrimary);
+  function getDiskColor(diskPath, available = false) {
+    return isDiskCritical(diskPath, available) ? criticalColor : (isDiskWarning(diskPath, available) ? warningColor : Color.mPrimary);
   }
 
   // Helper function for color resolution based on value and thresholds
@@ -132,6 +242,15 @@ Singleton {
   property int intelTempFilesChecked: 0
   property int intelTempMaxFiles: 20 // Will test up to temp20_input
 
+  // Thermal zone fallback (for ARM SoCs with SCMI sensors, etc.)
+  // Matches thermal zone types containing "cpu" and picks the hottest big-core zone.
+  // Also provides GPU temp via zones like "gpu-avg-thermal" or "gpu0-thermal".
+  readonly property var thermalZoneCpuPatterns: ["cpu-b", "cpu-m", "cpu"]
+  readonly property var thermalZoneGpuPatterns: ["gpu-avg", "gpu0", "gpu"]
+  property string cpuThermalZonePath: ""
+  property var cpuThermalZonePaths: [] // All matching CPU zones for averaging
+  property string gpuThermalZonePath: ""
+
   // GPU temperature detection
   // On dual-GPU systems, we prioritize discrete GPUs over integrated GPUs
   // Priority: NVIDIA (opt-in) > AMD dGPU > Intel Arc > AMD iGPU
@@ -140,52 +259,6 @@ Singleton {
   property string gpuTempHwmonPath: ""
   property var foundGpuSensors: [] // [{hwmonPath, type, hasDedicatedVram}]
   property int gpuVramCheckIndex: 0
-
-  // --------------------------------------------
-  // Network speed stats cache (7-day rolling window)
-  property string networkStatsFile: Settings.cacheDir + "network_stats.json"
-
-  FileView {
-    id: networkStatsView
-    path: root.networkStatsFile
-    printErrors: false
-
-    JsonAdapter {
-      id: networkStatsAdapter
-      property var rxPeaks: []
-      property var txPeaks: []
-    }
-
-    onLoadFailed: {
-      networkStatsAdapter.rxPeaks = [];
-      networkStatsAdapter.txPeaks = [];
-    }
-
-    onLoaded: {
-      root.pruneExpiredPeaks();
-    }
-  }
-
-  Timer {
-    id: networkStatsSaveDebounce
-    interval: 1000
-    onTriggered: networkStatsView.writeAdapter()
-  }
-
-  function pruneExpiredPeaks() {
-    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
-    const cutoff = Date.now() - sevenDaysMs;
-    const rxBefore = (networkStatsAdapter.rxPeaks || []).length;
-    const txBefore = (networkStatsAdapter.txPeaks || []).length;
-
-    networkStatsAdapter.rxPeaks = (networkStatsAdapter.rxPeaks || []).filter(p => p.timestamp > cutoff);
-    networkStatsAdapter.txPeaks = (networkStatsAdapter.txPeaks || []).filter(p => p.timestamp > cutoff);
-
-    // Save if any were pruned
-    if (networkStatsAdapter.rxPeaks.length !== rxBefore || networkStatsAdapter.txPeaks.length !== txBefore) {
-      networkStatsSaveDebounce.restart();
-    }
-  }
 
   // --------------------------------------------
   Component.onCompleted: {
@@ -216,6 +289,16 @@ Singleton {
     }
   }
 
+  // Reset differential state after suspend so the first reading is treated as fresh
+  Connections {
+    target: Time
+    function onResumed() {
+      Logger.i("SystemStat", "System resumed - resetting differential state");
+      root.prevCpuStats = null;
+      root.prevTime = 0;
+    }
+  }
+
   function restartGpuDetection() {
     // Reset GPU state
     root.gpuAvailable = false;
@@ -231,9 +314,9 @@ Singleton {
   }
 
   // --------------------------------------------
-  // Timer for CPU usage
+  // Timer for CPU usage, frequency, and temperature
   Timer {
-    id: cpuUsageTimer
+    id: cpuTimer
     interval: root.normalizeInterval(Settings.data.systemMonitor.cpuPollingInterval)
     repeat: true
     running: true
@@ -243,7 +326,11 @@ Singleton {
         restart();
       }
     }
-    onTriggered: cpuStatFile.reload()
+    onTriggered: {
+      cpuStatFile.reload();
+      cpuFreqProcess.running = true;
+      updateCpuTemperature();
+    }
   }
 
   // Timer for load average
@@ -259,21 +346,6 @@ Singleton {
       }
     }
     onTriggered: loadAvgFile.reload()
-  }
-
-  // Timer for CPU temperature
-  Timer {
-    id: cpuTempTimer
-    interval: root.normalizeInterval(Settings.data.systemMonitor.tempPollingInterval)
-    repeat: true
-    running: true
-    triggeredOnStart: true
-    onIntervalChanged: {
-      if (running) {
-        restart();
-      }
-    }
-    onTriggered: updateCpuTemperature()
   }
 
   // Timer for memory stats
@@ -379,37 +451,46 @@ Singleton {
   }
 
   // --------------------------------------------
-  // Process to fetch disk usage (percent, used, size)
+  // Process to fetch disk usage (percent, used, size, avail)
   // Uses 'df' aka 'disk free'
   // "-x efivarfs' skips efivarfs mountpoints, for which the `statfs` syscall may cause system-wide stuttering
   // --block-size=1 gives us bytes for precise GB calculation
   Process {
     id: dfProcess
-    command: ["df", "--output=target,pcent,used,size", "--block-size=1", "-x", "efivarfs"]
+    command: ["df", "--output=target,pcent,used,size,avail", "--block-size=1", "-x", "efivarfs"]
     running: false
     stdout: StdioCollector {
       onStreamFinished: {
         const lines = text.trim().split('\n');
         const newPercents = {};
+        const newAvailPercents = {};
         const newUsedGb = {};
         const newSizeGb = {};
+        const newAvailableGb = {};
         const bytesPerGb = 1024 * 1024 * 1024;
         // Start from line 1 (skip header)
         for (var i = 1; i < lines.length; i++) {
           const parts = lines[i].trim().split(/\s+/);
-          if (parts.length >= 4) {
+          if (parts.length >= 5) {
             const target = parts[0];
             const percent = parseInt(parts[1].replace(/[^0-9]/g, '')) || 0;
             const usedBytes = parseFloat(parts[2]) || 0;
             const sizeBytes = parseFloat(parts[3]) || 0;
+            const availBytes = parseFloat(parts[4]) || 0;
+            const availPercent = sizeBytes > 0 ? (availBytes / sizeBytes) * 100 : 0;
             newPercents[target] = percent;
+            newAvailPercents[target] = Math.round(availPercent);
             newUsedGb[target] = usedBytes / bytesPerGb;
             newSizeGb[target] = sizeBytes / bytesPerGb;
+            newAvailableGb[target] = availBytes / bytesPerGb;
           }
         }
         root.diskPercents = newPercents;
+        root.diskAvailPercents = newAvailPercents;
         root.diskUsedGb = newUsedGb;
         root.diskSizeGb = newSizeGb;
+        root.diskAvailableGb = newAvailableGb;
+        root.pushDiskHistory();
       }
     }
   }
@@ -422,6 +503,54 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         root.nproc = parseInt(text.trim());
+      }
+    }
+  }
+
+  // Process to get avg cpu frquency
+  Process {
+    id: cpuFreqProcess
+    command: ["cat", "/proc/cpuinfo"]
+    running: false
+    stdout: StdioCollector {
+      onStreamFinished: {
+        let txt = text;
+        let matches = txt.match(/cpu MHz\s+:\s+([0-9.]+)/g);
+        if (matches && matches.length > 0) {
+          let totalFreq = 0.0;
+          for (let i = 0; i < matches.length; i++) {
+            totalFreq += parseFloat(matches[i].split(":")[1]);
+          }
+          let avgFreq = (totalFreq / matches.length) / 1000.0;
+          root.cpuFreq = avgFreq.toFixed(1) + "GHz";
+          cpuMaxFreqProcess.running = true;
+          if (avgFreq > root.cpuGlobalMaxFreq)
+          root.cpuGlobalMaxFreq = avgFreq;
+          if (root.cpuGlobalMaxFreq > 0) {
+            root.cpuFreqRatio = Math.min(1.0, avgFreq / root.cpuGlobalMaxFreq);
+          }
+        }
+      }
+    }
+  }
+
+  // Process to get maximum CPU frequency limit
+  // Uses sysfs 'scaling_max_freq' to respect power profiles (e.g. power-profiles-daemon)
+  // 'sort -nr | head -n1' ensures we get the highest limit across all cores
+  // '2>/dev/null' ignores errors if cpufreq driver is missing or cores are offline
+  Process {
+    id: cpuMaxFreqProcess
+    command: ["sh", "-c", "cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq 2>/dev/null | sort -nr | head -n1"]
+    running: false
+    stdout: StdioCollector {
+      onStreamFinished: {
+        let maxKHz = parseInt(text.trim());
+        if (!isNaN(maxKHz) && maxKHz > 0) {
+          let newMaxFreq = maxKHz / 1000000.0;
+          if (Math.abs(root.cpuGlobalMaxFreq - newMaxFreq) > 0.01) {
+            root.cpuGlobalMaxFreq = newMaxFreq;
+          }
+        }
       }
     }
   }
@@ -439,8 +568,8 @@ Singleton {
 
     function checkNext() {
       if (currentIndex >= 16) {
-        // Check up to hwmon10
-        Logger.w("No supported temperature sensor found");
+        // No hwmon sensor found, try thermal_zone fallback (ARM SoCs, SCMI, etc.)
+        thermalZoneScanner.startScan();
         return;
       }
 
@@ -493,6 +622,7 @@ Singleton {
       } else {
         // For AMD sensors (k10temp and zenpower), directly set the temperature
         root.cpuTemp = Math.round(parseInt(data) / 1000.0);
+        root.pushCpuTempHistory();
       }
     }
     onLoadFailed: function (error) {
@@ -502,6 +632,175 @@ Singleton {
                    });
     }
   }
+
+  // --------------------------------------------
+  // Thermal zone fallback for CPU and GPU temperature
+  // Used on ARM SoCs (e.g., SCMI sensors) where hwmon doesn't expose
+  // coretemp/k10temp/zenpower. Scans /sys/class/thermal/thermal_zoneN/type
+  // for CPU and GPU zone names, then reads temp from all matching zones.
+  //
+  // CPU: reads all cpu-*-thermal zones and reports the hottest core.
+  // GPU: prefers gpu-avg-thermal (firmware average), falls back to max of gpu[0-9]-thermal.
+
+  FileView {
+    id: thermalZoneScanner
+    property int currentIndex: 0
+    property var cpuZones: []
+    property var gpuZones: []
+    property string gpuAvgZonePath: ""
+    printErrors: false
+
+    function startScan() {
+      currentIndex = 0;
+      cpuZones = [];
+      gpuZones = [];
+      gpuAvgZonePath = "";
+      checkNext();
+    }
+
+    function checkNext() {
+      if (currentIndex >= 20) {
+        finishScan();
+        return;
+      }
+      thermalZoneScanner.path = `/sys/class/thermal/thermal_zone${currentIndex}/type`;
+      thermalZoneScanner.reload();
+    }
+
+    onLoaded: {
+      const name = text().trim();
+      const zonePath = `/sys/class/thermal/thermal_zone${currentIndex}`;
+      if (name.startsWith("cpu") && name.endsWith("thermal")) {
+        cpuZones.push({
+                        "type": name,
+                        "path": zonePath + "/temp"
+                      });
+      } else if (name === "gpu-avg-thermal") {
+        gpuAvgZonePath = zonePath + "/temp";
+      } else if (/^gpu[0-9]+-?thermal$/.test(name)) {
+        gpuZones.push({
+                        "type": name,
+                        "path": zonePath + "/temp"
+                      });
+      }
+      currentIndex++;
+      Qt.callLater(() => {
+                     checkNext();
+                   });
+    }
+
+    onLoadFailed: function (error) {
+      currentIndex++;
+      Qt.callLater(() => {
+                     checkNext();
+                   });
+    }
+
+    function finishScan() {
+      // CPU thermal zones
+      if (cpuZones.length > 0) {
+        root.cpuTempSensorName = "thermal_zone";
+        root.cpuThermalZonePaths = cpuZones.map(z => z.path);
+        const types = cpuZones.map(z => z.type).join(", ");
+        Logger.i("SystemStat", `Found ${cpuZones.length} CPU thermal zone(s): ${types}`);
+      } else if (root.cpuTempHwmonPath === "") {
+        Logger.w("SystemStat", "No supported temperature sensor found");
+      }
+
+      // GPU thermal zones
+      if (gpuAvgZonePath !== "") {
+        root.gpuThermalZonePath = gpuAvgZonePath;
+        root.gpuAvailable = true;
+        root.gpuType = "thermal_zone";
+        Logger.i("SystemStat", `Found GPU thermal zone: gpu-avg-thermal`);
+      } else if (gpuZones.length > 0) {
+        root.gpuThermalZonePaths = gpuZones.map(z => z.path);
+        root.gpuThermalZonePath = gpuZones[0].path; // fallback single path
+        root.gpuAvailable = true;
+        root.gpuType = "thermal_zone";
+        const types = gpuZones.map(z => z.type).join(", ");
+        Logger.i("SystemStat", `Found ${gpuZones.length} GPU thermal zone(s): ${types} (using max)`);
+      }
+    }
+  }
+
+  // Thermal zone reader for CPU: reads all zones, reports max (hottest core)
+  FileView {
+    id: cpuThermalZoneReader
+    property int currentZoneIndex: 0
+    property var collectedTemps: []
+    printErrors: false
+
+    onLoaded: {
+      const temp = parseInt(text().trim()) / 1000.0;
+      if (!isNaN(temp) && temp > 0)
+      collectedTemps.push(temp);
+      currentZoneIndex++;
+      Qt.callLater(() => {
+                     readNextCpuThermalZone();
+                   });
+    }
+
+    onLoadFailed: function (error) {
+      currentZoneIndex++;
+      Qt.callLater(() => {
+                     readNextCpuThermalZone();
+                   });
+    }
+  }
+
+  function readNextCpuThermalZone() {
+    if (cpuThermalZoneReader.currentZoneIndex >= root.cpuThermalZonePaths.length) {
+      if (cpuThermalZoneReader.collectedTemps.length > 0) {
+        root.cpuTemp = Math.round(Math.max(...cpuThermalZoneReader.collectedTemps));
+      } else {
+        root.cpuTemp = 0;
+      }
+      root.pushCpuTempHistory();
+      return;
+    }
+    cpuThermalZoneReader.path = root.cpuThermalZonePaths[cpuThermalZoneReader.currentZoneIndex];
+    cpuThermalZoneReader.reload();
+  }
+
+  // Thermal zone reader for GPU: reads single zone (gpu-avg-thermal) or max of gpu[N] zones
+  FileView {
+    id: gpuThermalZoneReader
+    property int currentZoneIndex: 0
+    property var collectedTemps: []
+    printErrors: false
+
+    onLoaded: {
+      const temp = parseInt(text().trim()) / 1000.0;
+      if (!isNaN(temp) && temp > 0)
+      collectedTemps.push(temp);
+
+      // If we have multiple GPU zones (no gpu-avg), iterate and take max
+      if (root.gpuThermalZonePaths && root.gpuThermalZonePaths.length > 0) {
+        currentZoneIndex++;
+        if (currentZoneIndex < root.gpuThermalZonePaths.length) {
+          Qt.callLater(() => {
+                         readNextGpuThermalZone();
+                       });
+          return;
+        }
+        // All zones read, take max
+        root.gpuTemp = Math.round(Math.max(...collectedTemps));
+      } else {
+        // Single gpu-avg-thermal zone
+        root.gpuTemp = Math.round(temp);
+      }
+      root.pushGpuHistory();
+    }
+  }
+
+  function readNextGpuThermalZone() {
+    gpuThermalZoneReader.path = root.gpuThermalZonePaths[gpuThermalZoneReader.currentZoneIndex];
+    gpuThermalZoneReader.reload();
+  }
+
+  // Property to store multiple GPU thermal zone paths (when no gpu-avg is available)
+  property var gpuThermalZonePaths: []
 
   // --------------------------------------------
   // --------------------------------------------
@@ -572,6 +871,7 @@ Singleton {
     onLoaded: {
       const data = text().trim();
       root.gpuTemp = Math.round(parseInt(data) / 1000.0);
+      root.pushGpuHistory();
     }
   }
 
@@ -640,6 +940,7 @@ Singleton {
         const temp = parseInt(text.trim());
         if (!isNaN(temp)) {
           root.gpuTemp = temp;
+          root.pushGpuHistory();
         }
       }
     }
@@ -733,6 +1034,7 @@ Singleton {
       }
       root.memGb = (usageKb / 1048576).toFixed(1); // 1024*1024 = 1048576
       root.memPercent = Math.round((usageKb / memTotal) * 100);
+      root.pushMemHistory();
     }
 
     // Swap usage
@@ -784,14 +1086,30 @@ Singleton {
       if (diffTotal > 0) {
         root.cpuUsage = (((diffTotal - diffIdle) / diffTotal) * 100).toFixed(1);
       }
+      root.pushCpuHistory();
     }
 
     root.prevCpuStats = stats;
   }
 
   // -------------------------------------------------------
+  // Check whether a network interface is virtual/tunnel/bridge.
+  // Only physical interfaces (eth*, en*, wl*, ww*) are kept so
+  // that traffic routed through VPNs, Docker bridges, etc. is
+  // not double-counted.
+  readonly property var _virtualPrefixes: ["lo", "docker", "veth", "br-", "virbr", "vnet", "tun", "tap", "wg", "tailscale", "nordlynx", "proton", "mullvad", "flannel", "cni", "cali", "vxlan", "genev", "gre", "sit", "ip6tnl", "dummy", "ifb", "nlmon", "bond"]
+
+  function isVirtualInterface(name) {
+    for (let i = 0; i < _virtualPrefixes.length; ++i) {
+      if (name.startsWith(_virtualPrefixes[i]))
+        return true;
+    }
+    return false;
+  }
+
+  // -------------------------------------------------------
   // Calculate RX and TX speed from /proc/net/dev
-  // Average speed of all interfaces excepted 'lo'
+  // Sums speeds of all physical interfaces
   function calculateNetworkSpeed(text) {
     if (!text) {
       return;
@@ -815,7 +1133,7 @@ Singleton {
       }
 
       const iface = line.substring(0, colonIndex).trim();
-      if (iface === 'lo') {
+      if (isVirtualInterface(iface)) {
         continue;
       }
 
@@ -848,33 +1166,15 @@ Singleton {
 
         root.rxSpeed = Math.round(rxDiff / timeDiff); // Speed in Bytes/s
         root.txSpeed = Math.round(txDiff / timeDiff);
-
-        // Record new peaks if higher than current max (for adaptive ratio calculation)
-        const now = Date.now();
-        if (root.rxSpeed > root.rxMaxSpeed) {
-          networkStatsAdapter.rxPeaks = [...(networkStatsAdapter.rxPeaks || []),
-                                         {
-                                           speed: root.rxSpeed,
-                                           timestamp: now
-                                         }
-              ];
-          networkStatsSaveDebounce.restart();
-        }
-        if (root.txSpeed > root.txMaxSpeed) {
-          networkStatsAdapter.txPeaks = [...(networkStatsAdapter.txPeaks || []),
-                                         {
-                                           speed: root.txSpeed,
-                                           timestamp: now
-                                         }
-              ];
-          networkStatsSaveDebounce.restart();
-        }
       }
     }
 
     root.prevRxBytes = totalRx;
     root.prevTxBytes = totalTx;
     root.prevTime = currentTime;
+
+    // Update network history after speeds are computed
+    root.pushNetworkHistory();
   }
 
   // -------------------------------------------------------
@@ -920,7 +1220,7 @@ Singleton {
   // -------------------------------------------------------
   // Smart formatter for memory values (GB) - max 4 chars
   // Uses decimal for < 10GB, integer otherwise
-  function formatMemoryGb(memGb) {
+  function formatGigabytes(memGb) {
     const value = parseFloat(memGb);
     if (isNaN(value))
       return "0G";
@@ -928,6 +1228,22 @@ Singleton {
     if (value < 10)
       return value.toFixed(1) + "G"; // "0.0G" to "9.9G"
     return Math.round(value) + "G"; // "10G" to "999G"
+  }
+
+  // -------------------------------------------------------
+  // Formatting disk usage
+  function formatDiskDisplay(diskPath, {
+                             percent = false,
+                             available = false
+} = {}) {
+    if (percent) {
+      const raw = available ? root.diskAvailPercents[diskPath] : root.diskPercents[diskPath];
+      const value = (raw === null) ? 0 : raw;
+      return `${value}%`;
+    } else {
+      const rawGb = available ? root.diskAvailableGb[diskPath] : root.diskUsedGb[diskPath];
+      return formatGigabytes(rawGb === null ? 0 : rawGb);
+    }
   }
 
   // -------------------------------------------------------
@@ -943,6 +1259,11 @@ Singleton {
       root.intelTempValues = [];
       root.intelTempFilesChecked = 0;
       checkNextIntelTemp();
+    } // For thermal_zone fallback (ARM SoCs, SCMI, etc.), read all CPU zones and take max
+    else if (root.cpuTempSensorName === "thermal_zone") {
+      cpuThermalZoneReader.currentZoneIndex = 0;
+      cpuThermalZoneReader.collectedTemps = [];
+      readNextCpuThermalZone();
     }
   }
 
@@ -957,10 +1278,12 @@ Singleton {
           sum += root.intelTempValues[i];
         }
         root.cpuTemp = Math.round(sum / root.intelTempValues.length);
+        root.pushCpuTempHistory();
         //Logger.i("SystemStat", `Averaged ${root.intelTempValues.length} CPU thermal sensors: ${root.cpuTemp}°C`)
       } else {
         Logger.w("SystemStat", "No temperature sensors found for coretemp");
         root.cpuTemp = 0;
+        root.pushCpuTempHistory();
       }
       return;
     }
@@ -996,12 +1319,17 @@ Singleton {
   // Priority (when dGPU monitoring enabled): NVIDIA > AMD dGPU > Intel Arc > AMD iGPU
   // Priority (when dGPU monitoring disabled): AMD iGPU only (discrete GPUs skipped to preserve D3cold)
   function selectBestGpu() {
+    const dgpuEnabled = Settings.data.systemMonitor.enableDgpuMonitoring;
+
     if (root.foundGpuSensors.length === 0) {
-      Logger.d("SystemStat", "No GPU temperature sensor found");
+      // No hwmon GPU sensors found, try thermal_zone fallback
+      if (dgpuEnabled && root.gpuThermalZonePath === "" && root.gpuThermalZonePaths.length === 0) {
+        // Thermal zone scanner hasn't found GPU zones yet; start a scan
+        thermalZoneScanner.startScan();
+      }
       return;
     }
 
-    const dgpuEnabled = Settings.data.systemMonitor.enableDgpuMonitoring;
     let best = null;
 
     for (var i = 0; i < root.foundGpuSensors.length; i++) {
@@ -1059,6 +1387,17 @@ Singleton {
     } else if (root.gpuType === "amd" || root.gpuType === "intel") {
       gpuTempReader.path = `${root.gpuTempHwmonPath}/temp1_input`;
       gpuTempReader.reload();
+    } else if (root.gpuType === "thermal_zone") {
+      if (root.gpuThermalZonePaths && root.gpuThermalZonePaths.length > 0) {
+        // Multiple GPU zones (no gpu-avg), read all and take max
+        gpuThermalZoneReader.currentZoneIndex = 0;
+        gpuThermalZoneReader.collectedTemps = [];
+        readNextGpuThermalZone();
+      } else {
+        // Single gpu-avg-thermal zone
+        gpuThermalZoneReader.path = root.gpuThermalZonePath;
+        gpuThermalZoneReader.reload();
+      }
     }
   }
 }
