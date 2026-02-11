@@ -89,6 +89,15 @@ Singleton {
     }
   }
 
+  // Poll rfkill status periodically to detect hardware switches
+  Timer {
+    id: rfkillPollTimer
+    interval: 2000
+    repeat: true
+    running: true
+    onTriggered: checkWifiBlocked.running = true
+  }
+
   // Handle Airplane Mode detection via rfkill
   Process {
     id: checkWifiBlocked
@@ -114,23 +123,27 @@ Singleton {
         var wifiBlocked = checkBluetoothBlocked.wifiBlockedState;
         var btBlocked = text && text.trim().indexOf("Soft blocked: yes") !== -1;
 
-        // Standard state change notifications for WiFi only
-        if (wifiBlocked !== root.wifiBlocked) {
-          if (wifiBlocked) {
-            ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.disabled"), "wifi-off");
-          } else {
-            ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.enabled"), "wifi");
+        var currentAirplaneMode = wifiBlocked && btBlocked;
+        var previousAirplaneMode = root.wifiBlocked && root.bluetoothBlocked;
+
+        if (currentAirplaneMode && !previousAirplaneMode) {
+          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.enabled"), "plane");
+        } else if (!currentAirplaneMode && previousAirplaneMode) {
+          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.disabled"), "plane-off");
+        } else {
+          if (wifiBlocked !== root.wifiBlocked) {
+            if (wifiBlocked) {
+              ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.disabled"), "wifi-off");
+            } else {
+              ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.enabled"), "wifi");
+            }
           }
         }
-
-        // Update current blocked states (always reflect actual rfkill state)
         root.wifiBlocked = wifiBlocked;
         root.bluetoothBlocked = btBlocked;
       }
     }
   }
-
-
 
   // Handle system resume to refresh state and connectivity
   Connections {
