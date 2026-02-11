@@ -547,9 +547,11 @@ Item {
       "_score": (score !== undefined ? score : 0),
       "provider": root,
       "onActivate": function () {
-        // Record usage before closing (provider may be destroyed after close)
+        // Defer usage recording — must run before closeImmediately's deferred
+        // handler destroys us, but outside the delegate click call stack to
+        // avoid property-change cascades mid-handler.
         if (Settings.data.appLauncher.sortByMostUsed) {
-          root.recordUsage(app);
+          Qt.callLater(() => root.recordUsage(app));
         }
 
         // Close the launcher/SmartPanel immediately without any animations.

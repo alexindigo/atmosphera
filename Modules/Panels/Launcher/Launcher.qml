@@ -160,7 +160,9 @@ SmartPanel {
         screen: root.screen
         isOpen: root.isPanelOpen
         onRequestClose: root.close()
-        onRequestCloseImmediately: root.closeImmediately()
+        // Defer so the signal emission completes before SmartPanel
+        // sets isPanelOpen=false and the contentLoader destroys us.
+        onRequestCloseImmediately: Qt.callLater(root.closeImmediately)
       }
     }
 
