@@ -547,11 +547,8 @@ Item {
       "_score": (score !== undefined ? score : 0),
       "provider": root,
       "onActivate": function () {
-        // Defer usage recording — must run before closeImmediately's deferred
-        // handler destroys us, but outside the delegate click call stack to
-        // avoid property-change cascades mid-handler.
         if (Settings.data.appLauncher.sortByMostUsed) {
-          Qt.callLater(() => root.recordUsage(app));
+          root.recordUsage(app);
         }
 
         // Close the launcher/SmartPanel immediately without any animations.
@@ -654,18 +651,13 @@ Item {
 
   function recordUsage(app) {
     const key = getAppKey(app);
-    Logger.d("ApplicationsProvider", `Recording usage for: ${key}`);
-
-    let counts = Object.assign({}, usageAdapter.counts || {});
+    if (!usageAdapter.counts)
+      usageAdapter.counts = ({});
     const current = getUsageCount(app);
-    counts[key] = current + 1;
-
-    // Direct assignment to property var triggers change notification for JsonAdapter
-    usageAdapter.counts = counts;
-
-    // Write immediately instead of debouncing because the launcher
-    // often closes and destroys this provider right after launching an app.
+    // Mutate in-place to avoid triggering a property change notification,
+    // which would cascade through QML bindings during the click handler.
+    usageAdapter.counts[key] = current + 1;
+    // Write immediately — the debounced timer won't survive panel destruction.
     usageFile.writeAdapter();
-    Logger.d("ApplicationsProvider", `Usage recorded and written for: ${key}`);
   }
 }
