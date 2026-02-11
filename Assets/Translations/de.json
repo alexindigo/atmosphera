@@ -1498,6 +1498,8 @@
       "look-feel-fill-color-description": "Füllfarbe wählen, die hinter dem Hintergrundbild erscheinen kann.",
       "look-feel-fill-mode-description": "Wählen Sie, wie das Bild skaliert werden soll, um zur Auflösung Ihres Monitors zu passen.",
       "look-feel-fill-mode-label": "Füllmodus",
+      "look-feel-skip-startup-transition-description": "Überspringe die Hintergrundbild-Animation, wenn die Shell startet.",
+      "look-feel-skip-startup-transition-label": "Startübergang überspringen",
       "look-feel-title": "Aussehen & Verhalten",
       "look-feel-transition-duration-description": "Dauer der Übergangsanimationen in Sekunden.",
       "look-feel-transition-duration-label": "Übergangsdauer",

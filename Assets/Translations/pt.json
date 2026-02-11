@@ -1498,6 +1498,8 @@
       "look-feel-fill-color-description": "Escolha uma cor de preenchimento que pode aparecer atrás do papel de parede.",
       "look-feel-fill-mode-description": "Selecione como a imagem deve ser dimensionada para corresponder à resolução do seu monitor.",
       "look-feel-fill-mode-label": "Modo de preenchimento",
+      "look-feel-skip-startup-transition-description": "Ignorar a animação do papel de parede ao iniciar a shell.",
+      "look-feel-skip-startup-transition-label": "Pular transição de inicialização",
       "look-feel-title": "Aparência e estilo",
       "look-feel-transition-duration-description": "Duração das animações de transição em segundos.",
       "look-feel-transition-duration-label": "Duração da transição",

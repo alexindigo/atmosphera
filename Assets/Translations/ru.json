@@ -1498,6 +1498,8 @@
       "look-feel-fill-color-description": "Выберите цвет заливки, который может появиться за обоями.",
       "look-feel-fill-mode-description": "Выберите, как изображение должно масштабироваться, чтобы соответствовать разрешению вашего монитора.",
       "look-feel-fill-mode-label": "Режим заполнения",
+      "look-feel-skip-startup-transition-description": "Пропускать анимацию обоев при запуске оболочки.",
+      "look-feel-skip-startup-transition-label": "Пропустить стартовую анимацию",
       "look-feel-title": "Внешний вид",
       "look-feel-transition-duration-description": "Продолжительность анимации перехода в секундах.",
       "look-feel-transition-duration-label": "Продолжительность перехода",

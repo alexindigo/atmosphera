@@ -1498,6 +1498,8 @@
       "look-feel-fill-color-description": "Duvar kâğıdının arkasında görünebilecek bir dolgu rengi seçin.",
       "look-feel-fill-mode-description": "Görüntünün ekran çözünürlüğünüzle eşleşmesi için nasıl ölçekleneceğini seçin.",
       "look-feel-fill-mode-label": "Doldurma modu",
+      "look-feel-skip-startup-transition-description": "Kabuk başladığında duvar kağıdı animasyonunu atla.",
+      "look-feel-skip-startup-transition-label": "Başlangıç geçişini atla",
       "look-feel-title": "Görünüm ve his",
       "look-feel-transition-duration-description": "Geçiş animasyonlarının saniye cinsinden süresi.",
       "look-feel-transition-duration-label": "Geçiş süresi",

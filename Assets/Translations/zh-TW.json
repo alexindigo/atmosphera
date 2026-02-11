@@ -1498,6 +1498,8 @@
       "look-feel-fill-color-description": "挑選一個桌布底下可能會顯示的填充實色",
       "look-feel-fill-mode-description": "選擇圖像該以什麼方式縮放來符合顯示器的解析度",
       "look-feel-fill-mode-label": "填充模式",
+      "look-feel-skip-startup-transition-description": "在 shell 啟動時跳過桌布動畫。",
+      "look-feel-skip-startup-transition-label": "跳過啟動過場動畫",
       "look-feel-title": "外觀及風格",
       "look-feel-transition-duration-description": "設定轉場動畫使用的秒數",
       "look-feel-transition-duration-label": "轉場長度",

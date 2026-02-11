@@ -1498,6 +1498,8 @@
       "look-feel-fill-color-description": "Choisissez une couleur de remplissage qui peut apparaître derrière le fond d'écran.",
       "look-feel-fill-mode-description": "Sélectionnez comment l'image doit être mise à l'échelle pour correspondre à la résolution de votre moniteur.",
       "look-feel-fill-mode-label": "Mode de remplissage",
+      "look-feel-skip-startup-transition-description": "Ignorer l'animation du fond d'écran au démarrage du shell.",
+      "look-feel-skip-startup-transition-label": "Ignorer la transition de démarrage",
       "look-feel-title": "Apparence et ergonomie",
       "look-feel-transition-duration-description": "Durée des animations de transition en secondes.",
       "look-feel-transition-duration-label": "Durée de la transition",

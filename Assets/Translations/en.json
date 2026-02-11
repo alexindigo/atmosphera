@@ -1498,6 +1498,8 @@
       "look-feel-fill-color-description": "Choose a fill color that may appear behind the wallpaper.",
       "look-feel-fill-mode-description": "Select how the image should scale to match your monitor's resolution.",
       "look-feel-fill-mode-label": "Fill mode",
+      "look-feel-skip-startup-transition-description": "Skip the wallpaper animation when the shell starts.",
+      "look-feel-skip-startup-transition-label": "Skip startup transition",
       "look-feel-title": "Look & feel",
       "look-feel-transition-duration-description": "Duration of transition animations in seconds.",
       "look-feel-transition-duration-label": "Transition duration",

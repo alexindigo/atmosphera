@@ -1498,6 +1498,8 @@
       "look-feel-fill-color-description": "壁紙の背景に表示される塗りつぶし色を選択します。",
       "look-feel-fill-mode-description": "画像をディスプレイの解像度に合わせる方法を選択してください。",
       "look-feel-fill-mode-label": "配置方法",
+      "look-feel-skip-startup-transition-description": "シェル起動時に壁紙アニメーションをスキップする。",
+      "look-feel-skip-startup-transition-label": "起動時のトランジションをスキップ",
       "look-feel-title": "表示と演出",
       "look-feel-transition-duration-description": "切り替えアニメーションにかかる時間（秒）。",
       "look-feel-transition-duration-label": "切り替え時間",

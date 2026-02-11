@@ -1498,6 +1498,8 @@
       "look-feel-fill-color-description": "Виберіть колір заповнення, що може з'являтися за шпалерами.",
       "look-feel-fill-mode-description": "Виберіть, як зображення має масштабуватися відповідно до роздільної здатності монітора.",
       "look-feel-fill-mode-label": "Режим заповнення",
+      "look-feel-skip-startup-transition-description": "Пропускати анімацію шпалер при запуску оболонки.",
+      "look-feel-skip-startup-transition-label": "Пропустити стартову анімацію",
       "look-feel-title": "Зовнішній вигляд",
       "look-feel-transition-duration-description": "Тривалість анімацій переходу в секундах.",
       "look-feel-transition-duration-label": "Тривалість переходу",

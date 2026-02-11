@@ -1772,6 +1772,15 @@
     "subTabLabel": "common.look"
   },
   {
+    "labelKey": "panels.wallpaper.look-feel-skip-startup-transition-label",
+    "descriptionKey": "panels.wallpaper.look-feel-skip-startup-transition-description",
+    "widget": "NToggle",
+    "tab": 3,
+    "tabLabel": "common.wallpaper",
+    "subTab": 1,
+    "subTabLabel": "common.look"
+  },
+  {
     "labelKey": "panels.wallpaper.look-feel-transition-duration-label",
     "descriptionKey": "panels.wallpaper.look-feel-transition-duration-description",
     "widget": "NValueSlider",

@@ -1498,6 +1498,8 @@
       "look-feel-fill-color-description": "选择可能出现在壁纸后面的填充颜色。",
       "look-feel-fill-mode-description": "选择图像应如何缩放以匹配显示器的分辨率。",
       "look-feel-fill-mode-label": "填充模式",
+      "look-feel-skip-startup-transition-description": "在 shell 启动时跳过壁纸动画。",
+      "look-feel-skip-startup-transition-label": "跳过启动过渡动画",
       "look-feel-title": "外观与体验",
       "look-feel-transition-duration-description": "过渡动画的持续时间（秒）。",
       "look-feel-transition-duration-label": "过渡持续时间",

@@ -1498,6 +1498,8 @@
       "look-feel-fill-color-description": "Elige un color de relleno que pueda aparecer detrás del fondo de pantalla.",
       "look-feel-fill-mode-description": "Selecciona cómo debe escalar la imagen para coincidir con la resolución de tu monitor.",
       "look-feel-fill-mode-label": "Modo de relleno",
+      "look-feel-skip-startup-transition-description": "Omitir la animación del fondo de pantalla al iniciar la shell.",
+      "look-feel-skip-startup-transition-label": "Omitir transición de inicio",
       "look-feel-title": "Apariencia y estilo",
       "look-feel-transition-duration-description": "Duración de las animaciones de transición en segundos.",
       "look-feel-transition-duration-label": "Duración de la transición",

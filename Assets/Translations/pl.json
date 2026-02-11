@@ -1498,6 +1498,8 @@
       "look-feel-fill-color-description": "Wybierz kolor wypełnienia, który może pojawić się pod tapetą.",
       "look-feel-fill-mode-description": "Wybierz, jak obraz ma się skalować, aby pasować do rozdzielczości monitora.",
       "look-feel-fill-mode-label": "Tryb wypełnienia",
+      "look-feel-skip-startup-transition-description": "Pomiń animację tapety przy starcie powłoki.",
+      "look-feel-skip-startup-transition-label": "Pomiń animację startową",
       "look-feel-title": "Wygląd i styl",
       "look-feel-transition-duration-description": "Czas trwania animacji przejścia w sekundach.",
       "look-feel-transition-duration-label": "Czas trwania przejścia",

@@ -1498,6 +1498,8 @@
       "look-feel-fill-color-description": "Kies een vulkleur die achter de achtergrond kan verschijnen.",
       "look-feel-fill-mode-description": "Selecteer hoe de afbeelding moet schalen om overeen te komen met de resolutie van je monitor.",
       "look-feel-fill-mode-label": "Vulmodus",
+      "look-feel-skip-startup-transition-description": "Sla de achtergrondanimatie over wanneer de shell start.",
+      "look-feel-skip-startup-transition-label": "Opstartovergang overslaan",
       "look-feel-title": "Uiterlijk & gevoel",
       "look-feel-transition-duration-description": "Duur van overgangsanimaties in seconden.",
       "look-feel-transition-duration-label": "Overgangsduur",
