@@ -505,7 +505,8 @@
     "width": "Width",
     "windows": "Windows",
     "yes": "Yes",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "settings": "Settings"
   },
   "control-center": {
     "power-profile": {

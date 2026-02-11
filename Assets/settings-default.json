@@ -99,8 +99,8 @@
     "clockStyle": "custom",
     "clockFormat": "hh\\nmm",
     "lockScreenMonitors": [],
-    "lockScreenBlur": 0.0,
-    "lockScreenTint": 0.0,
+    "lockScreenBlur": 0,
+    "lockScreenTint": 0,
     "keybinds": {
       "keyUp": [
         "Up"
@@ -335,6 +335,7 @@
   },
   "network": {
     "wifiEnabled": true,
+    "airplaneModeEnabled": false,
     "bluetoothRssiPollingEnabled": false,
     "bluetoothRssiPollIntervalMs": 60000,
     "wifiDetailsViewMode": "grid",

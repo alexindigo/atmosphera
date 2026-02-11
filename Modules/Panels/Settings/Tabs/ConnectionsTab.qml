@@ -33,8 +33,8 @@ ColumnLayout {
     }
     NTabButton {
       text: I18n.tr("panels.connections.ethernet")
-      // visible: NetworkService.wifiAvailable
-      enabled: NetworkService.wifiAvailable // Remove when work finished, only use visibility
+      // visible: NetworkService.ethernetAvailable
+      enabled: NetworkService.ethernetAvailable // Remove when work finished, only use visibility
       tabIndex: 2
       checked: subTabBar.currentIndex === 2
     }

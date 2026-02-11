@@ -70,23 +70,121 @@ Singleton {
     }
   }
 
+  property bool airplaneModeToggled: false
+  property bool bluetoothBlocked: false
+  property bool wifiBlocked: false
+
   Connections {
     target: Settings.data.network
     function onWifiEnabledChanged() {
       if (Settings.data.network.wifiEnabled) {
-        if (!BluetoothService.airplaneModeToggled) {
+        if (!root.airplaneModeToggled) {
           ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.enabled"), "wifi");
         }
         // Perform a scan to update the UI
         delayedScanTimer.interval = 3000;
         delayedScanTimer.restart();
       } else {
-        if (!BluetoothService.airplaneModeToggled) {
+        if (!root.airplaneModeToggled) {
           ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.disabled"), "wifi-off");
         }
         // Clear networks so the widget icon changes
         root.networks = ({});
       }
+    }
+  }
+
+  // Handle Airplane Mode detection via rfkill
+  Process {
+    id: checkWifiBlocked
+    running: false
+    command: ["rfkill", "list", "wifi"]
+    stdout: StdioCollector {
+      onStreamFinished: {
+        var wifiBlocked = text && text.trim().indexOf("Soft blocked: yes") !== -1;
+        checkBluetoothBlocked.wifiBlockedState = wifiBlocked;
+        checkBluetoothBlocked.running = true;
+      }
+    }
+  }
+
+  Process {
+    id: checkBluetoothBlocked
+    running: false
+    command: ["rfkill", "list", "bluetooth"]
+    property bool wifiBlockedState: false // To pass state from checkWifiBlocked
+
+    stdout: StdioCollector {
+      onStreamFinished: {
+        var wifiBlocked = checkBluetoothBlocked.wifiBlockedState;
+        var btBlocked = text && text.trim().indexOf("Soft blocked: yes") !== -1;
+
+        // Check if airplane mode is desired by the user
+        var desiredAirplaneMode = Settings.data.network.airplaneModeEnabled;
+
+        // Track if actual state changed
+        var actualAirplaneModeActive = wifiBlocked && btBlocked;
+        var previousAirplaneModeActive = root.wifiBlocked && root.bluetoothBlocked;
+
+        // Enforcement: If desired state doesn't match actual state, force it.
+        if (desiredAirplaneMode && !actualAirplaneModeActive) {
+          // User wants airplane mode ON, but it's not actually active. Force it.
+          Logger.i("Network", "Enforcing Airplane Mode ON (rfkill block all)");
+          Quickshell.execDetached(["rfkill", "block", "wifi"]);
+          Quickshell.execDetached(["rfkill", "block", "bluetooth"]);
+          // We expect subsequent rfkill checks to confirm the state change.
+        } else if (!desiredAirplaneMode && actualAirplaneModeActive) {
+          // User wants airplane mode OFF, but it's still active. Force it off.
+          Logger.i("Network", "Enforcing Airplane Mode OFF (rfkill unblock all)");
+          Quickshell.execDetached(["rfkill", "unblock", "wifi"]);
+          Quickshell.execDetached(["rfkill", "unblock", "bluetooth"]);
+          // We expect subsequent rfkill checks to confirm the state change.
+        }
+
+        // Now handle toasts and update internal state based on current rfkill states.
+        // This part needs to be outside the enforcement blocks to correctly react to delayed rfkill changes.
+        if (actualAirplaneModeActive && !previousAirplaneModeActive) {
+          root.airplaneModeToggled = true; // Temporarily set to suppress individual toasts
+          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.enabled"), "plane");
+          root.airplaneModeToggled = false;
+        } else if (!actualAirplaneModeActive && previousAirplaneModeActive) {
+          root.airplaneModeToggled = true; // Temporarily set to suppress individual toasts
+          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.disabled"), "plane-off");
+          root.airplaneModeToggled = false;
+        } else {
+          // Standard state change notifications for WiFi only, if not in airplane mode context
+          if (wifiBlocked !== root.wifiBlocked) {
+            // Only show individual wifi toast if airplane mode is not currently active
+            if (!actualAirplaneModeActive) {
+                if (wifiBlocked) {
+                  ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.disabled"), "wifi-off");
+                } else {
+                  ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.enabled"), "wifi");
+                }
+            }
+          }
+        }
+
+        // Update current blocked states (always reflect actual rfkill state)
+        root.wifiBlocked = wifiBlocked;
+        root.bluetoothBlocked = btBlocked;
+      }
+    }
+  }
+
+
+
+  // Handle system resume to refresh state and connectivity
+  Connections {
+    target: Time
+    function onResumed() {
+      Logger.i("Network", "System resumed - forcing state poll");
+      ethernetStateProcess.running = true;
+      root.scan();
+      root.refreshActiveWifiDetails();
+      root.refreshActiveEthernetDetails();
+      connectivityCheckProcess.running = true;
+      checkWifiBlocked.running = true; // Refresh airplane mode state after resume
     }
   }
 
@@ -100,6 +198,7 @@ Singleton {
       ethernetStateProcess.running = true;
       refreshActiveWifiDetails();
       refreshActiveEthernetDetails();
+      checkWifiBlocked.running = true; // Trigger airplane mode check on startup
     }
   }
 
@@ -164,8 +263,9 @@ Singleton {
   function refreshActiveWifiDetails() {
     const now = Date.now();
     // If we're already fetching, don't start a new one
-    if (detailsLoading)
+    if (detailsLoading) {
       return;
+    }
 
     // Use cached details if they are fresh
     if (activeWifiIf && activeWifiDetails && (now - activeWifiDetailsTimestamp) < activeWifiDetailsTtlMs)
@@ -199,8 +299,9 @@ Singleton {
   // Refresh details for the currently active Ethernet link
   function refreshActiveEthernetDetails() {
     const now = Date.now();
-    if (ethernetDetailsLoading)
+    if (ethernetDetailsLoading) {
       return;
+    }
     if (!root.ethernetConnected) {
       // Link is down: keep the selected interface so UI can still show its info as disconnected
       // Only clear details to avoid showing stale IP/speed/etc.
@@ -226,23 +327,40 @@ Singleton {
     onTriggered: connectivityCheckProcess.running = true
   }
 
+  function setAirplaneMode(enabled) {
+    if (enabled) {
+      Logger.i("Network", "Executing rfkill block all (airplane mode ON)");
+      Quickshell.execDetached(["rfkill", "block", "wifi"]);
+      Quickshell.execDetached(["rfkill", "block", "bluetooth"]);
+    } else {
+      Logger.i("Network", "Executing rfkill unblock all (airplane mode OFF)");
+      Quickshell.execDetached(["rfkill", "unblock", "wifi"]);
+      Quickshell.execDetached(["rfkill", "unblock", "bluetooth"]);
+    }
+    // Trigger the check immediately to reflect state changes
+    checkWifiBlocked.running = true;
+  }
+
   // Core functions
   function syncWifiState() {
-    if (!ProgramCheckerService.nmcliAvailable)
+    if (!ProgramCheckerService.nmcliAvailable) {
       return;
+    }
     wifiStateProcess.running = true;
   }
 
   function setWifiEnabled(enabled) {
-    if (!ProgramCheckerService.nmcliAvailable)
+    if (!ProgramCheckerService.nmcliAvailable) {
       return;
+    }
     Settings.data.network.wifiEnabled = enabled;
     wifiStateEnableProcess.running = true;
   }
 
   function scan() {
-    if (!ProgramCheckerService.nmcliAvailable || !Settings.data.network.wifiEnabled)
+    if (!ProgramCheckerService.nmcliAvailable || !Settings.data.network.wifiEnabled) {
       return;
+    }
     if (scanning) {
       // Mark current scan results to be ignored and schedule a new scan
       Logger.d("Network", "Scan already in progress, will ignore results and rescan");
@@ -267,15 +385,17 @@ Singleton {
 
   // Refresh only Ethernet state/details
   function refreshEthernet() {
-    if (!ProgramCheckerService.nmcliAvailable)
+    if (!ProgramCheckerService.nmcliAvailable) {
       return;
+    }
     ethernetStateProcess.running = true;
     refreshActiveEthernetDetails();
   }
 
   function connect(ssid, password = "") {
-    if (!ProgramCheckerService.nmcliAvailable || connecting)
+    if (!ProgramCheckerService.nmcliAvailable || connecting) {
       return;
+    }
     connecting = true;
     connectingTo = ssid;
     lastError = "";
@@ -295,16 +415,18 @@ Singleton {
   }
 
   function disconnect(ssid) {
-    if (!ProgramCheckerService.nmcliAvailable)
+    if (!ProgramCheckerService.nmcliAvailable) {
       return;
+    }
     disconnectingFrom = ssid;
     disconnectProcess.ssid = ssid;
     disconnectProcess.running = true;
   }
 
   function forget(ssid) {
-    if (!ProgramCheckerService.nmcliAvailable)
+    if (!ProgramCheckerService.nmcliAvailable) {
       return;
+    }
     forgettingNetwork = ssid;
 
     // Remove from cache
@@ -358,16 +480,21 @@ Singleton {
 
   // Helper functions
   function signalIcon(signal, isConnected) {
-    if (isConnected === undefined)
+    if (isConnected === undefined) {
       isConnected = false;
-    if (isConnected && !root.internetConnectivity)
+    }
+    if (isConnected && !root.internetConnectivity) {
       return "world-off";
-    if (signal >= 80)
+    }
+    if (signal >= 80) {
       return "wifi";
-    if (signal >= 50)
+    }
+    if (signal >= 50) {
       return "wifi-2";
-    if (signal >= 20)
+    }
+    if (signal >= 20) {
       return "wifi-1";
+    }
     return "wifi-0";
   }
 
@@ -488,8 +615,9 @@ Singleton {
         });
         root.ethernetInterfaces = ethList;
         if (ifname) {
-          if (root.activeEthernetIf !== ifname)
-          root.activeEthernetIf = ifname;
+          if (root.activeEthernetIf !== ifname) {
+            root.activeEthernetIf = ifname;
+          }
           ethernetDeviceShowProcess.ifname = ifname;
           ethernetDeviceShowProcess.running = true;
         } else {
@@ -529,11 +657,13 @@ Singleton {
         const lines = text.split("\n");
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i].trim();
-          if (!line)
-          continue;
+          if (!line) {
+            continue;
+          }
           const idx = line.indexOf(":");
-          if (idx === -1)
-          continue;
+          if (idx === -1) {
+            continue;
+          }
           const key = line.substring(0, idx);
           const val = line.substring(idx + 1);
           if (key === "GENERAL.CONNECTION") {
@@ -637,8 +767,9 @@ Singleton {
           details.speed = speedText;
           // Try to derive numeric value
           const m = speedText.match(/([0-9]+(?:\.[0-9]+)?)\s*Mbit\/s/i);
-          if (m)
-          details.speedMbit = parseFloat(m[1]);
+          if (m) {
+            details.speedMbit = parseFloat(m[1]);
+          }
           root.activeEthernetDetails = details;
         }
         root.activeEthernetDetailsTimestamp = Date.now();
@@ -711,11 +842,13 @@ Singleton {
         const lines = text.split("\n");
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i].trim();
-          if (!line)
-          continue;
+          if (!line) {
+            continue;
+          }
           const idx = line.indexOf(":");
-          if (idx === -1)
-          continue;
+          if (idx === -1) {
+            continue;
+          }
           const key = line.substring(0, idx);
           const val = line.substring(idx + 1);
           if (key.indexOf("IP4.ADDRESS") === 0) {
@@ -806,8 +939,9 @@ Singleton {
           var compact = [];
           for (var i = 0; i < parts.length; i++) {
             var p = parts[i];
-            if (p && p.length > 0)
+            if (p && p.length > 0) {
             compact.push(p);
+            }
           }
           // Find a token that represents Mbit/s and use the previous number
           var unitIdx = -1;
@@ -1037,8 +1171,9 @@ Singleton {
 
         for (var i = 0; i < lines.length; ++i) {
           const line = lines[i].trim();
-          if (!line)
-          continue;
+          if (!line) {
+            continue;
+          }
 
           // Parse from the end to handle SSIDs with colons
           // Format is SSID:SECURITY:SIGNAL:IN-USE

@@ -3,6 +3,7 @@ import QtQuick.Controls
 import Quickshell
 import qs.Commons
 import qs.Modules.Bar.Extras
+import qs.Modules.Panels.Settings // For SettingsPanel
 import qs.Services.Networking
 import qs.Services.UI
 import qs.Widgets
@@ -50,6 +51,16 @@ Item {
         "icon": Settings.data.network.wifiEnabled ? "wifi-off" : "wifi"
       },
       {
+        "label": I18n.tr("tooltips.manage-wifi") + " " + I18n.tr("tooltips.open-settings"),
+        "action": "wifi-settings",
+        "icon": "settings"
+      },
+      {
+        "label": I18n.tr("panels.connections.ethernet") + " " + I18n.tr("tooltips.open-settings"),
+        "action": "ethernet-settings",
+        "icon": "settings"
+      },
+      {
         "label": I18n.tr("actions.widget-settings"),
         "action": "widget-settings",
         "icon": "settings"
@@ -62,7 +73,11 @@ Item {
 
                    if (action === "toggle-wifi") {
                      NetworkService.setWifiEnabled(!Settings.data.network.wifiEnabled);
-                   } else if (action === "widget-settings") {
+                   } else if (action === "wifi-settings") {
+                     SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 0, screen);
+                   }else if (action === "ethernet-settings") {
+                     SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 2, screen);
+                   }else if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
                    }
                  }
