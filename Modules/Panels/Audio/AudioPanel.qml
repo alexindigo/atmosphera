@@ -717,7 +717,6 @@ SmartPanel {
                 Repeater {
                   model: AudioService.sinks
                   NRadioButton {
-                    id: sinkButton
                     ButtonGroup.group: sinks
                     required property PwNode modelData
                     pointSize: Style.fontSizeS
@@ -728,28 +727,6 @@ SmartPanel {
                       localOutputVolume = AudioService.volume;
                     }
                     Layout.fillWidth: true
-
-                    contentItem: RowLayout {
-                      spacing: Style.marginS
-                      anchors.left: sinkButton.indicator.right
-                      anchors.leftMargin: Style.marginS
-                      anchors.verticalCenter: parent.verticalCenter
-                      anchors.right: parent.right
-
-                      NIcon {
-                        icon: AudioService.getDeviceIcon(modelData)
-                        pointSize: sinkButton.pointSize
-                        color: sinkButton.checked ? Color.mPrimary : Color.mOnSurface
-                      }
-
-                      NText {
-                        text: sinkButton.text
-                        pointSize: sinkButton.pointSize
-                        Layout.fillWidth: true
-                        color: sinkButton.checked ? Color.mPrimary : Color.mOnSurface
-                        elide: Text.ElideRight
-                      }
-                    }
                   }
                 }
               }
@@ -783,7 +760,6 @@ SmartPanel {
                 Repeater {
                   model: AudioService.sources
                   NRadioButton {
-                    id: sourceButton
                     ButtonGroup.group: sources
                     required property PwNode modelData
                     pointSize: Style.fontSizeS
@@ -791,28 +767,6 @@ SmartPanel {
                     checked: AudioService.source?.id === modelData.id
                     onClicked: AudioService.setAudioSource(modelData)
                     Layout.fillWidth: true
-
-                    contentItem: RowLayout {
-                      spacing: Style.marginS
-                      anchors.left: sourceButton.indicator.right
-                      anchors.leftMargin: Style.marginS
-                      anchors.verticalCenter: parent.verticalCenter
-                      anchors.right: parent.right
-
-                      NIcon {
-                        icon: AudioService.getDeviceIcon(modelData)
-                        pointSize: sourceButton.pointSize
-                        color: sourceButton.checked ? Color.mPrimary : Color.mOnSurface
-                      }
-
-                      NText {
-                        text: sourceButton.text
-                        pointSize: sourceButton.pointSize
-                        Layout.fillWidth: true
-                        color: sourceButton.checked ? Color.mPrimary : Color.mOnSurface
-                        elide: Text.ElideRight
-                      }
-                    }
                   }
                 }
               }
