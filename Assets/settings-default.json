@@ -384,6 +384,7 @@
   },
   "notifications": {
     "enabled": true,
+    "density": "default",
     "monitors": [],
     "location": "top_right",
     "overlayLayer": true,
