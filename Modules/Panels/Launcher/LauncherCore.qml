@@ -23,7 +23,11 @@ Rectangle {
   signal requestCloseImmediately
 
   function closeImmediately() {
-    requestCloseImmediately();
+    // Must be deferred — SmartPanel.closeImmediately() sets isPanelOpen=false
+    // which deactivates the contentLoader and destroys us mid-signal-chain.
+    Qt.callLater(function () {
+      requestCloseImmediately();
+    });
   }
 
   // Expose for preview panel positioning
