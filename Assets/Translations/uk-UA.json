@@ -1126,6 +1126,8 @@
       "settings-density-description": "Налаштуйте розмір іконок програм і щільність Launcher.",
       "settings-density-label": "Щільність",
       "settings-desc": "Налаштуйте поведінку та зовнішній вигляд лаунчера.",
+      "settings-enable-session-search-description": "Показувати дії сеансу (блокування, вимкнення, перезавантаження тощо) під час пошуку в Launcher.",
+      "settings-enable-session-search-label": "Увімкнути пошук сесії",
       "settings-enable-settings-search-description": "Показувати результати налаштувань під час пошуку в Launcher.",
       "settings-enable-settings-search-label": "Увімкнути пошук у налаштуваннях",
       "settings-enable-windows-search-description": "Шукати та фокусувати активні вікна.",

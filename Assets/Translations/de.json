@@ -1126,6 +1126,8 @@
       "settings-density-description": "Größe der Anwendungssymbole und Dichte des Launchers anpassen.",
       "settings-density-label": "Dichte",
       "settings-desc": "Verhalten und Erscheinungsbild des Starters anpassen.",
+      "settings-enable-session-search-description": "Sitzungsaktionen (Sperren, Herunterfahren, Neustarten usw.) beim Suchen im Launcher anzeigen.",
+      "settings-enable-session-search-label": "Sitzungssuche aktivieren",
       "settings-enable-settings-search-description": "Einstellungen in den Suchergebnissen des Launchers anzeigen.",
       "settings-enable-settings-search-label": "Einstellungen-Suche aktivieren",
       "settings-enable-windows-search-description": "Aktive Fenster suchen und fokussieren.",

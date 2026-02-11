@@ -1126,6 +1126,8 @@
       "settings-density-description": "調整應用程式圖示大小和 Launcher 密度。",
       "settings-density-label": "密度",
       "settings-desc": "自訂啟動器的外觀及行為",
+      "settings-enable-session-search-description": "在 Launcher 中搜尋時顯示工作階段動作（鎖定、關機、重新啟動等）。",
+      "settings-enable-session-search-label": "啟用工作階段搜尋",
       "settings-enable-settings-search-description": "在啟動器中搜尋時顯示設定結果。",
       "settings-enable-settings-search-label": "啟用設定搜尋",
       "settings-enable-windows-search-description": "搜尋並聚焦作用中視窗。",

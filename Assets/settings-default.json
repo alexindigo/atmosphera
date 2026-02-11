@@ -99,8 +99,8 @@
     "clockStyle": "custom",
     "clockFormat": "hh\\nmm",
     "lockScreenMonitors": [],
-    "lockScreenBlur": 0.0,
-    "lockScreenTint": 0.0,
+    "lockScreenBlur": 0,
+    "lockScreenTint": 0,
     "keybinds": {
       "keyUp": [
         "Up"
@@ -223,6 +223,7 @@
     "showIconBackground": false,
     "enableSettingsSearch": true,
     "enableWindowsSearch": true,
+    "enableSessionSearch": true,
     "ignoreMouseInput": false,
     "screenshotAnnotationTool": "",
     "overviewLayer": false,

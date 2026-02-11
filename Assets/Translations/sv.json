@@ -1126,6 +1126,8 @@
       "settings-density-description": "Justera storleken på applikationsikoner och Launcherns densitet.",
       "settings-density-label": "Densitet",
       "settings-desc": "Anpassa startprogrammets beteende och utseende.",
+      "settings-enable-session-search-description": "Visa sessionsåtgärder (lås, stäng av, starta om, etc.) vid sökning i Launcher.",
+      "settings-enable-session-search-label": "Aktivera sessionssökning",
       "settings-enable-settings-search-description": "Visa inställningsresultat vid sökning i startprogrammet.",
       "settings-enable-settings-search-label": "Aktivera inställningssökning",
       "settings-enable-windows-search-description": "Sök och fokusera aktiva fönster.",

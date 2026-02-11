@@ -1126,6 +1126,8 @@
       "settings-density-description": "アプリケーションアイコンのサイズとLauncherの密度を調整します。",
       "settings-density-label": "密度",
       "settings-desc": "ランチャーの挙動と外観をカスタマイズします。",
+      "settings-enable-session-search-description": "Launcherで検索する際に、セッションアクション（ロック、シャットダウン、再起動など）を表示する。",
+      "settings-enable-session-search-label": "セッション検索を有効にする",
       "settings-enable-settings-search-description": "ランチャーで検索する際に設定結果を表示する。",
       "settings-enable-settings-search-label": "設定検索を有効にする",
       "settings-enable-windows-search-description": "アクティブなウィンドウを検索してフォーカスします。",

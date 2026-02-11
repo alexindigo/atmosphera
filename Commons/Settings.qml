@@ -25,7 +25,7 @@ Singleton {
   - Default cache directory: ~/.cache/noctalia
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 51
+  readonly property int settingsVersion: 52
   readonly property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
   readonly property string shellName: "noctalia"
   readonly property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
@@ -417,6 +417,7 @@ Singleton {
       property bool showIconBackground: false
       property bool enableSettingsSearch: true
       property bool enableWindowsSearch: true
+      property bool enableSessionSearch: true
       property bool ignoreMouseInput: false
       property string screenshotAnnotationTool: ""
       property bool overviewLayer: false

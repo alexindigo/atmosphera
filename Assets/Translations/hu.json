@@ -1126,6 +1126,8 @@
       "settings-density-description": "Állítsd be az alkalmazásikonok méretét és a Launcher sűrűségét.",
       "settings-density-label": "Sűrűség",
       "settings-desc": "Az indító viselkedésének és megjelenésének testreszabása.",
+      "settings-enable-session-search-description": "Munkamenet-műveletek (zárolás, leállítás, újraindítás stb.) megjelenítése a Launcherben való kereséskor.",
+      "settings-enable-session-search-label": "Munkamenet-keresés engedélyezése",
       "settings-enable-settings-search-description": "Beállítások megjelenítése a találatok között az indítón belül.",
       "settings-enable-settings-search-label": "Beállítások keresésének engedélyezése",
       "settings-enable-windows-search-description": "Aktív ablakok keresése és fókuszálása.",

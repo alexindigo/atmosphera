@@ -1126,6 +1126,8 @@
       "settings-density-description": "Uygulama simgelerinin boyutunu ve Launcher yoğunluğunu ayarlayın.",
       "settings-density-label": "Yoğunluk",
       "settings-desc": "Başlatıcının davranışını ve görünümünü özelleştirin.",
+      "settings-enable-session-search-description": "Launcher'da arama yaparken oturum eylemlerini (kilitle, kapat, yeniden başlat vb.) göster.",
+      "settings-enable-session-search-label": "Oturum aramasını etkinleştir",
       "settings-enable-settings-search-description": "Başlatıcıda arama yaparken ayarlar sonuçlarını göster.",
       "settings-enable-settings-search-label": "Ayarlar aramasını etkinleştir",
       "settings-enable-windows-search-description": "Etkin pencereleri ara ve odakla.",

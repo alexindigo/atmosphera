@@ -1126,6 +1126,8 @@
       "settings-density-description": "Ajusta el tamaño de los iconos de las aplicaciones y la densidad del Launcher.",
       "settings-density-label": "Densidad",
       "settings-desc": "Personaliza el comportamiento y la apariencia del lanzador.",
+      "settings-enable-session-search-description": "Mostrar acciones de sesión (bloquear, apagar, reiniciar, etc.) al buscar en el Launcher.",
+      "settings-enable-session-search-label": "Habilitar búsqueda de sesión",
       "settings-enable-settings-search-description": "Mostrar los resultados de configuración al buscar en el lanzador.",
       "settings-enable-settings-search-label": "Activar la búsqueda en la configuración",
       "settings-enable-windows-search-description": "Buscar y enfocar ventanas activas.",

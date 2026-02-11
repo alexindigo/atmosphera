@@ -1126,6 +1126,8 @@
       "settings-density-description": "Dostosuj rozmiar ikon aplikacji i gęstość Launchera.",
       "settings-density-label": "Gęstość",
       "settings-desc": "Dostosuj zachowanie i wygląd launchera.",
+      "settings-enable-session-search-description": "Pokaż akcje sesji (blokowanie, wyłączanie, ponowne uruchamianie itp.) podczas wyszukiwania w Launcherze.",
+      "settings-enable-session-search-label": "Włącz wyszukiwanie sesji",
       "settings-enable-settings-search-description": "Wyświetlaj wyniki ustawień podczas wyszukiwania w Launcherze.",
       "settings-enable-settings-search-label": "Włącz wyszukiwanie w ustawieniach",
       "settings-enable-windows-search-description": "Wyszukaj i skup aktywne okna.",

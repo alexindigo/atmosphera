@@ -1126,6 +1126,8 @@
       "settings-density-description": "Pas de grootte van applicatiepictogrammen en de dichtheid van de Launcher aan.",
       "settings-density-label": "Dichtheid",
       "settings-desc": "Pas het gedrag en uiterlijk van de launcher aan.",
+      "settings-enable-session-search-description": "Toon sessieacties (vergrendelen, afsluiten, herstarten, etc.) bij het zoeken in de Launcher.",
+      "settings-enable-session-search-label": "Sessie zoeken inschakelen",
       "settings-enable-settings-search-description": "Toon instellingen in de zoekresultaten van de Launcher.",
       "settings-enable-settings-search-label": "Instellingen zoeken inschakelen",
       "settings-enable-windows-search-description": "Actieve vensters zoeken en focussen.",
