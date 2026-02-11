@@ -484,7 +484,7 @@ PanelWindow {
   // These shortcuts delegate to the opened panel's handler functions
   // Panels can implement: onEscapePressed, onTabPressed, onBackTabPressed,
   // onUpPressed, onDownPressed, onReturnPressed, etc...
-  Repeater {
+  Instantiator {
     model: Settings.data.general.keybinds.keyEscape || []
     Shortcut {
       sequence: modelData
@@ -505,7 +505,7 @@ PanelWindow {
     onActivated: PanelService.openedPanel.onBackTabPressed()
   }
 
-  Repeater {
+  Instantiator {
     model: Settings.data.general.keybinds.keyUp || []
     Shortcut {
       sequence: modelData
@@ -514,7 +514,7 @@ PanelWindow {
     }
   }
 
-  Repeater {
+  Instantiator {
     model: Settings.data.general.keybinds.keyDown || []
     Shortcut {
       sequence: modelData
@@ -523,7 +523,7 @@ PanelWindow {
     }
   }
 
-  Repeater {
+  Instantiator {
     model: Settings.data.general.keybinds.keyEnter || []
     Shortcut {
       sequence: modelData
@@ -532,7 +532,7 @@ PanelWindow {
     }
   }
 
-  Repeater {
+  Instantiator {
     model: Settings.data.general.keybinds.keyLeft || []
     Shortcut {
       sequence: modelData
@@ -541,7 +541,7 @@ PanelWindow {
     }
   }
 
-  Repeater {
+  Instantiator {
     model: Settings.data.general.keybinds.keyRight || []
     Shortcut {
       sequence: modelData
