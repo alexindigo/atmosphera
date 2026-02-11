@@ -161,6 +161,7 @@ Popup {
         label: I18n.tr("common.keybind")
         description: I18n.tr("panels.session-menu.entry-settings-keybind-description")
         allowEmpty: true
+        maxKeybinds: 1
         currentKeybinds: keybindInputText ? [keybindInputText] : []
         onKeybindsChanged: newKeybinds => {
                              keybindInputText = newKeybinds.length > 0 ? newKeybinds[0] : "";
