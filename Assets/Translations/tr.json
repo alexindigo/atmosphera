@@ -1536,6 +1536,7 @@
     }
   },
   "placeholders": {
+    "add-new-keybind": "Yeni tuş ataması ekle",
     "command-example": "echo \"Hello World\"",
     "enter-command": "Çalıştırılacak komutu girin (uygulama veya özel komut)",
     "enter-ipc-identifier": "IPC komutları için benzersiz bir tanımlayıcı girin",
@@ -1543,6 +1544,7 @@
     "enter-text-to-collapse": "örn. 'nothing is playing'. Desenler için /regex/ kullanın.",
     "enter-tooltip": "Araç ipucunu girin",
     "enter-width-pixels": "Genişliği piksel olarak girin",
+    "keybind-recording": "Tuş kombinasyonu kaydediliyor...",
     "search": "Ara...",
     "search-icons": "örn. noctalia, niri, battery, cloud",
     "search-launcher": "Girişleri arayın... veya > komutları için kullanın",

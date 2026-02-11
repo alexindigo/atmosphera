@@ -1536,6 +1536,7 @@
     }
   },
   "placeholders": {
+    "add-new-keybind": "新しいキーバインドを追加",
     "command-example": "echo \"Hello World\"",
     "enter-command": "実行するコマンドを入力（アプリまたはスクリプト）",
     "enter-ipc-identifier": "IPCコマンドの一意の識別子を入力してください",
@@ -1543,6 +1544,7 @@
     "enter-text-to-collapse": "例：'nothing is playing'。正規表現 (/.../) も使用できます。",
     "enter-tooltip": "ツールチップを入力",
     "enter-width-pixels": "幅を入力（ピクセル）",
+    "keybind-recording": "キーバインドを記録中...",
     "search": "検索...",
     "search-icons": "例：noctalia, niri, battery, cloud",
     "search-launcher": "項目を検索...（または > でコマンド実行）",

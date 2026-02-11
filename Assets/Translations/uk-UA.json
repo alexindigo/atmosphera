@@ -1536,6 +1536,7 @@
     }
   },
   "placeholders": {
+    "add-new-keybind": "Додати нову прив'язку клавіш",
     "command-example": "echo \"Привіт, Світ\"",
     "enter-command": "Введіть команду для виконання (застосунок або власний скрипт)",
     "enter-ipc-identifier": "Введіть унікальний ідентифікатор для команд IPC",
@@ -1543,6 +1544,7 @@
     "enter-text-to-collapse": "напр. 'нічого не відтворюється'. Використовуйте /regex/ для шаблонів.",
     "enter-tooltip": "Введіть підказку",
     "enter-width-pixels": "Введіть ширину в пікселях",
+    "keybind-recording": "Запис комбінації клавіш...",
     "search": "Пошук...",
     "search-icons": "напр. noctalia, niri, battery, cloud",
     "search-launcher": "Пошук записів... або використовуйте > для команд",

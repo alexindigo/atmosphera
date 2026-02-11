@@ -1123,6 +1123,8 @@
       "settings-custom-launch-prefix-enabled-description": "Brukar eigendefinert førefeste for å starta applikasjonar heller enn standardmåten.",
       "settings-custom-launch-prefix-enabled-label": "Slå på eigendefinert startførefeste",
       "settings-custom-launch-prefix-label": "Eigendefinert startførefeste",
+      "settings-density-description": "Endra på kor store applikasjonsikon er, og kor tette dei er i veljaren.",
+      "settings-density-label": "Tettleik",
       "settings-desc": "Vel korleis programveljaren ser ut og kva det gjer.",
       "settings-enable-settings-search-description": "Viser innstillingar når ein leitar i programveljaren.",
       "settings-enable-settings-search-label": "Søk i innstillingar",
@@ -1146,6 +1148,7 @@
       "settings-terminal-command-label": "Terminalkommando",
       "settings-use-app2unit-description": "Brukar annan oppstartsmåte for å betre kunna ordna app-prosessar og for å hindra feil.",
       "settings-use-app2unit-label": "Bruk App2Unit for å køyra applikasjonar",
+      "settings-view-mode-description": "Vel oppsettet for veljarobjekt.",
       "title": "Programveljar"
     },
     "location": {

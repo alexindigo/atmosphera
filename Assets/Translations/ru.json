@@ -1536,6 +1536,7 @@
     }
   },
   "placeholders": {
+    "add-new-keybind": "Добавить новую привязку клавиш",
     "command-example": "например, echo \"Hello World\"",
     "enter-command": "Введите команду для выполнения (приложение или пользовательский скрипт)",
     "enter-ipc-identifier": "Введите уникальный идентификатор для команд IPC",
@@ -1543,6 +1544,7 @@
     "enter-text-to-collapse": "напр. 'ничего не играет'. Используйте /regex/ для шаблонов.",
     "enter-tooltip": "Введите подсказку",
     "enter-width-pixels": "Введите ширину в пикселях",
+    "keybind-recording": "Запись сочетания клавиш...",
     "search": "Поиск...",
     "search-icons": "напр. noctalia, niri, battery, cloud",
     "search-launcher": "Поиск записей... или используйте > для команд",

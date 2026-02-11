@@ -72,7 +72,7 @@ Item {
 
           readonly property bool isOccupied: index < root.currentKeybinds.length
           readonly property bool isRecordingThis: root.recordingIndex === index
-          readonly property string keybindText: isRecordingThis ? I18n.tr("panels.session-menu.entry-settings-keybind-recording") : (isOccupied ? root.currentKeybinds[index] : I18n.tr("placeholders.type-new-binding"))
+          readonly property string keybindText: isRecordingThis ? I18n.tr("placeholders.keybind-recording") : (isOccupied ? root.currentKeybinds[index] : I18n.tr("placeholders.add-new-keybind"))
 
           onClicked: {
             if (isRecordingThis) {
@@ -120,6 +120,7 @@ Item {
                 text: slotArea.keybindText
                 color: slotArea.isRecordingThis ? Color.mOnSecondary : (slotArea.isOccupied ? Color.mOnSurface : Color.mOnSurfaceVariant)
                 font.family: slotArea.isOccupied && !slotArea.isRecordingThis ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
+                font.pointSize: slotArea.isOccupied ? Style.fontSizeM : Style.fontSizeS
                 font.weight: slotArea.isOccupied ? Style.fontWeightBold : Style.fontWeightRegular
                 elide: Text.ElideRight
                 opacity: slotArea.isOccupied || slotArea.isRecordingThis ? 1.0 : 0.6

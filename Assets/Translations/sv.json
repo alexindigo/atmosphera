@@ -1536,6 +1536,7 @@
     }
   },
   "placeholders": {
+    "add-new-keybind": "Lägg till ny tangentbindning",
     "command-example": "echo \"Hello World\"",
     "enter-command": "Ange kommando att utföra (app eller anpassat skript)",
     "enter-ipc-identifier": "Ange unik identifierare för IPC-kommandon",
@@ -1543,6 +1544,7 @@
     "enter-text-to-collapse": "t.ex. \"ingenting spelas upp\". Använd /regex/ för mönster.",
     "enter-tooltip": "Ange verktygstips",
     "enter-width-pixels": "Ange bredd i bildpunkter",
+    "keybind-recording": "Spelar in tangentbindning...",
     "search": "Sök... ",
     "search-icons": "t.ex. noctalia, niri, batteri, moln",
     "search-launcher": "Sök poster... eller använd > för kommandon",

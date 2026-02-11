@@ -1536,6 +1536,7 @@
     }
   },
   "placeholders": {
+    "add-new-keybind": "Új billentyűkombináció hozzáadása",
     "command-example": "echo \"Hello World\"",
     "enter-command": "Adja meg a végrehajtandó parancsot (alkalmazás vagy egyéni parancsfájl)",
     "enter-ipc-identifier": "Adja meg az IPC parancsok egyedi azonosítóját",
@@ -1543,6 +1544,7 @@
     "enter-text-to-collapse": "pl. 'semmi sem játszik'. Használjon /regex/-et mintákhoz.",
     "enter-tooltip": "Adja meg a buboréksúgót",
     "enter-width-pixels": "Adja meg a szélességet képpontban",
+    "keybind-recording": "Billentyűkombináció rögzítése...",
     "search": "Keresés...",
     "search-icons": "pl. noctalia, niri, battery, cloud",
     "search-launcher": "Keressen bejegyzéseket vagy írja be „>”-t a parancsokhoz",

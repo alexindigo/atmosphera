@@ -1536,6 +1536,7 @@
     }
   },
   "placeholders": {
+    "add-new-keybind": "Nieuwe toetsencombinatie toevoegen",
     "command-example": "echo \"Hello World\"",
     "enter-command": "Voer het uit te voeren commando in (app of aangepast script)",
     "enter-ipc-identifier": "Voer een unieke identificatie in voor IPC-opdrachten",
@@ -1543,6 +1544,7 @@
     "enter-text-to-collapse": "bijv. 'er wordt niets afgespeeld'. Gebruik /regex/ voor patronen.",
     "enter-tooltip": "Voer tooltip in",
     "enter-width-pixels": "Voer breedte in pixels in",
+    "keybind-recording": "Toetsencombinatie opnemen...",
     "search": "Zoeken...",
     "search-icons": "bijv. noctalia, niri, battery, cloud",
     "search-launcher": "Items zoeken... of gebruik > voor commando's",

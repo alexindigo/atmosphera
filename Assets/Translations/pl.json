@@ -1536,6 +1536,7 @@
     }
   },
   "placeholders": {
+    "add-new-keybind": "Dodaj nowy skrót klawiszowy",
     "command-example": "echo \"Witaj świecie\"",
     "enter-command": "Wpisz polecenie do wykonania (aplikacja lub skrypt)",
     "enter-ipc-identifier": "Wprowadź unikalny identyfikator dla poleceń IPC",
@@ -1543,6 +1544,7 @@
     "enter-text-to-collapse": "np. 'nic nie jest odtwarzane'. Użyj /regex/ dla wzorców.",
     "enter-tooltip": "Wpisz tekst podpowiedzi",
     "enter-width-pixels": "Wpisz szerokość w pikselach",
+    "keybind-recording": "Nagrywanie skrótu klawiszowego...",
     "search": "Szukaj...",
     "search-icons": "np. noctalia, niri, battery, cloud",
     "search-launcher": "Szukaj wpisów... lub użyj > dla poleceń",

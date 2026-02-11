@@ -1536,6 +1536,7 @@
     }
   },
   "placeholders": {
+    "add-new-keybind": "新增按鍵綁定",
     "command-example": "echo \"Hello World\"",
     "enter-command": "輸入要執行的指令 (程式或自訂腳本)",
     "enter-ipc-identifier": "輸入 IPC 命令的唯一識別碼",
@@ -1543,6 +1544,7 @@
     "enter-text-to-collapse": "例如: 'nothing is playing'. 也可用正規表示式 /regex/ 指定格式",
     "enter-tooltip": "輸入提示框文字",
     "enter-width-pixels": "以像素 (px) 輸入寬度",
+    "keybind-recording": "正在錄製按鍵綁定...",
     "search": "在這裡搜尋...",
     "search-icons": "例如: noctalia, niri, battery, cloud",
     "search-launcher": "搜尋所有項目... 或輸入 > 使用指令",

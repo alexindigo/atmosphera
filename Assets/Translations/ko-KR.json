@@ -1536,6 +1536,7 @@
     }
   },
   "placeholders": {
+    "add-new-keybind": "새 키 바인딩 추가",
     "command-example": "echo \"Hello World\"",
     "enter-command": "실행할 명령 입력 (앱 또는 사용자 지정 스크립트)",
     "enter-ipc-identifier": "IPC 명령을 위한 고유 식별자 입력",
@@ -1543,6 +1544,7 @@
     "enter-text-to-collapse": "예: '재생 중인 항목 없음'. 패턴에는 /regex/를 사용하세요.",
     "enter-tooltip": "툴팁 입력",
     "enter-width-pixels": "너비 입력 (픽셀 단위)",
+    "keybind-recording": "키 바인딩 기록 중...",
     "search": "검색...",
     "search-icons": "예: noctalia, niri, battery, cloud",
     "search-launcher": "항목 검색... 또는 명령을 위해 > 사용",

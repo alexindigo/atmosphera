@@ -1536,6 +1536,7 @@
     }
   },
   "placeholders": {
+    "add-new-keybind": "添加新键位绑定",
     "command-example": "echo \"Hello World\"",
     "enter-command": "输入要执行的命令（应用程序或自定义脚本）",
     "enter-ipc-identifier": "输入 IPC 命令的唯一标识符",
@@ -1543,6 +1544,7 @@
     "enter-text-to-collapse": "例如：“nothing is playing”。使用 /regex/ 表示匹配模式。",
     "enter-tooltip": "输入提示信息",
     "enter-width-pixels": "输入宽度（像素）",
+    "keybind-recording": "正在录制按键绑定...",
     "search": "搜索...",
     "search-icons": "例如：noctalia, niri, battery, cloud",
     "search-launcher": "搜索条目...或使用 > 执行命令",

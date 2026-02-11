@@ -1126,7 +1126,7 @@
       "settings-density-description": "Ajusta el tamaño de los iconos de las aplicaciones y la densidad del Launcher.",
       "settings-density-label": "Densidad",
       "settings-desc": "Personaliza el comportamiento y la apariencia del lanzador.",
-      "settings-enable-settings-search-description": "Mostrar los resultados de configuración al buscar en el Launcher.",
+      "settings-enable-settings-search-description": "Mostrar los resultados de configuración al buscar en el lanzador.",
       "settings-enable-settings-search-label": "Activar la búsqueda en la configuración",
       "settings-enable-windows-search-description": "Buscar y enfocar ventanas activas.",
       "settings-enable-windows-search-label": "Habilitar búsqueda de ventanas",
@@ -1536,6 +1536,7 @@
     }
   },
   "placeholders": {
+    "add-new-keybind": "Añadir atajo de teclado",
     "command-example": "echo \"Hola, mundo\"",
     "enter-command": "Introduce el comando a ejecutar (aplicación o script personalizado)",
     "enter-ipc-identifier": "Introduce un identificador único para los comandos IPC",
@@ -1543,6 +1544,7 @@
     "enter-text-to-collapse": "p. ej. 'no se está reproduciendo nada'. Usa /regex/ para patrones.",
     "enter-tooltip": "Introduce tooltip",
     "enter-width-pixels": "Introduce el ancho en píxeles",
+    "keybind-recording": "Grabando atajo de teclado...",
     "search": "Buscar...",
     "search-icons": "p. ej. noctalia, niri, battery, cloud",
     "search-launcher": "Buscar entradas... o usa > para comandos",

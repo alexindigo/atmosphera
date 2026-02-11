@@ -1536,6 +1536,7 @@
     }
   },
   "placeholders": {
+    "add-new-keybind": "Ajouter un nouveau raccourci clavier",
     "command-example": "echo \"Bonjour le monde\"",
     "enter-command": "Entrez la commande à exécuter (application ou script personnalisé)",
     "enter-ipc-identifier": "Entrez un identifiant unique pour les commandes IPC",
@@ -1543,6 +1544,7 @@
     "enter-text-to-collapse": "ex : 'rien n’est en lecture'. Utilisez /regex/ pour les modèles.",
     "enter-tooltip": "Entrer l'infobulle",
     "enter-width-pixels": "Entrez la largeur en pixels",
+    "keybind-recording": "Enregistrement de la combinaison de touches...",
     "search": "Rechercher...",
     "search-icons": "ex : noctalia, niri, batterie, nuage",
     "search-launcher": "Rechercher des entrées... ou utilisez > pour les commandes",

@@ -1536,6 +1536,7 @@
     }
   },
   "placeholders": {
+    "add-new-keybind": "Adicionar nova combinação de teclas",
     "command-example": "echo \"Olá, mundo\"",
     "enter-command": "Digite o comando para executar (app ou script personalizado)",
     "enter-ipc-identifier": "Introduza um identificador exclusivo para comandos IPC",
@@ -1543,6 +1544,7 @@
     "enter-text-to-collapse": "p. ex. 'nada está sendo reproduzido'. Use /regex/ para padrões.",
     "enter-tooltip": "Inserir dica de ferramenta",
     "enter-width-pixels": "Digite a largura em pixels",
+    "keybind-recording": "Gravando atalho de teclado...",
     "search": "Pesquisar...",
     "search-icons": "p. ex. noctalia, niri, battery, cloud",
     "search-launcher": "Pesquisar entradas... ou use > para comandos",
