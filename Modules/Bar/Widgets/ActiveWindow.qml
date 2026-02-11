@@ -288,10 +288,7 @@ Item {
       // Vertical layout for left/right bars - icon only
       Item {
         id: verticalLayout
-        width: parent.width - Style.marginXL
-        height: parent.height - Style.marginXL
-        x: Style.pixelAlignCenter(parent.width, width)
-        y: Style.pixelAlignCenter(parent.height, height)
+        anchors.fill: parent
         visible: isVerticalBar
         z: 1
 
@@ -300,8 +297,7 @@ Item {
           id: verticalIconContainer
           width: root.iconSize
           height: width
-          x: Style.pixelAlignCenter(parent.width, width)
-          y: Style.pixelAlignCenter(parent.height, height)
+          anchors.centerIn: parent
           visible: windowTitle !== ""
 
           IconImage {
