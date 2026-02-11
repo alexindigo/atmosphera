@@ -1749,7 +1749,7 @@ Singleton {
         import qs.Commons
 
         Item {
-            id: qmlWatcher
+            id: root
             signal fileChanged();
 
             Process {
@@ -1758,7 +1758,7 @@ Singleton {
                 stdout: SplitParser {
                     splitMarker: "\n"
                     onRead: line => {
-                        fileWatcher.createObject(qmlWatcher, { path: Qt.resolvedUrl(line) });
+                        fileWatcher.createObject(root, { path: Qt.resolvedUrl(line) });
                     }
                 }
             }
@@ -1769,7 +1769,7 @@ Singleton {
                     watchChanges: true
 
                     onFileChanged: {
-                        qmlWatcher.fileChanged();
+                        root.fileChanged();
                     }
                 }
             }
