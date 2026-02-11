@@ -336,7 +336,7 @@
   "network": {
     "wifiEnabled": true,
     "bluetoothRssiPollingEnabled": false,
-    "bluetoothRssiPollIntervalMs": 10000,
+    "bluetoothRssiPollIntervalMs": 60000,
     "wifiDetailsViewMode": "grid",
     "bluetoothDetailsViewMode": "grid",
     "bluetoothHideUnnamedDevices": false
