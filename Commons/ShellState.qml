@@ -71,6 +71,9 @@ Singleton {
       property var telemetry: ({
                                  instanceId: ""
                                })
+
+      // Launcher app usage counts
+      property var launcherUsage: ({})
     }
 
     onLoaded: {
@@ -90,33 +93,9 @@ Singleton {
     }
   }
 
-  // Launcher app usage tracking (separate file, survives panel destruction)
-  FileView {
-    id: launcherUsageFile
-    path: Settings.cacheDir ? Settings.cacheDir + "launcher_app_usage.json" : ""
-    printErrors: false
-    watchChanges: false
-
-    onLoadFailed: function (error) {
-      if (error.toString().includes("No such file") || error === 2) {
-        writeAdapter();
-      }
-    }
-
-    JsonAdapter {
-      id: launcherUsageAdapter
-      property var counts: ({})
-    }
-  }
-
-  Timer {
-    id: launcherUsageSaveTimer
-    interval: 500
-    onTriggered: launcherUsageFile.writeAdapter()
-  }
-
+  // Launcher usage
   function getLauncherUsageCount(key) {
-    const m = launcherUsageAdapter.counts;
+    const m = adapter.launcherUsage;
     if (!m)
       return 0;
     const v = m[key];
@@ -124,10 +103,10 @@ Singleton {
   }
 
   function recordLauncherUsage(key) {
-    let counts = Object.assign({}, launcherUsageAdapter.counts || {});
+    let counts = Object.assign({}, adapter.launcherUsage || {});
     counts[key] = getLauncherUsageCount(key) + 1;
-    launcherUsageAdapter.counts = counts;
-    launcherUsageSaveTimer.restart();
+    adapter.launcherUsage = counts;
+    save();
   }
 
   // Debounced save timer
