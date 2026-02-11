@@ -1415,9 +1415,7 @@
       "large-buttons-style-label": "Estilo de botões grandes",
       "position-description": "Escolha onde o painel do Menu de sessão aparece quando aberto.",
       "show-header-description": "Exibir o título e o botão de fechar na parte superior do menu de sessão.",
-      "show-header-label": "Mostrar cabeçalho",
-      "show-number-labels-description": "Exibir rótulos numéricos (1-2-3-4...) nos botões e habilitar atalhos de teclado numéricos para seleção rápida.",
-      "show-number-labels-label": "Mostrar rótulos numéricos"
+      "show-header-label": "Mostrar cabeçalho"
     },
     "system-monitor": {
       "critical-color-label": "Cor crítica",

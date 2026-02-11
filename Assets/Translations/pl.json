@@ -1415,9 +1415,7 @@
       "large-buttons-style-label": "Styl dużych przycisków",
       "position-description": "Wybierz, gdzie pojawia się panel menu sesji po otwarciu.",
       "show-header-description": "Wyświetlaj tytuł i przycisk zamknięcia na górze menu sesji.",
-      "show-header-label": "Pokaż nagłówek",
-      "show-number-labels-description": "Wyświetl etykiety z numerami (1-2-3-4...) na przyciskach i włącz przypisanie klawiszy numerycznych do szybkiego wyboru.",
-      "show-number-labels-label": "Pokaż etykiety numerów"
+      "show-header-label": "Pokaż nagłówek"
     },
     "system-monitor": {
       "critical-color-label": "Kolor krytyczny",

@@ -349,7 +349,6 @@
     "showHeader": true,
     "largeButtonsStyle": true,
     "largeButtonsLayout": "single-row",
-    "showNumberLabels": true,
     "powerOptions": [
       {
         "action": "lock",

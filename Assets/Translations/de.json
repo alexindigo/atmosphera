@@ -1415,9 +1415,7 @@
       "large-buttons-style-label": "Stil: Große Schaltflächen",
       "position-description": "Wählen Sie, wo das Sitzungsmenü-Panel beim Öffnen erscheint.",
       "show-header-description": "Zeige den Titel und die Schließen-Schaltfläche oben im Sitzungsmenü.",
-      "show-header-label": "Kopfzeile anzeigen",
-      "show-number-labels-description": "Nummern-Labels (1-2-3-4...) auf Schaltflächen anzeigen und Nummern-Tastenkürzel für schnelle Auswahl aktivieren.",
-      "show-number-labels-label": "Nummern-Labels anzeigen"
+      "show-header-label": "Kopfzeile anzeigen"
     },
     "system-monitor": {
       "critical-color-label": "Kritische Farbe",

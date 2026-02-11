@@ -556,7 +556,6 @@ Singleton {
       property bool showHeader: true
       property bool largeButtonsStyle: true
       property string largeButtonsLayout: "single-row"
-      property bool showNumberLabels: true
       property list<var> powerOptions: [
         {
           "action": "lock",

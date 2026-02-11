@@ -1415,9 +1415,7 @@
       "large-buttons-style-label": "Стиль великих кнопок",
       "position-description": "Виберіть, де з'являється панель меню сеансу при відкритті.",
       "show-header-description": "Відображати заголовок та кнопку закриття в верхній частині меню сеансу.",
-      "show-header-label": "Показувати заголовок",
-      "show-number-labels-description": "Відображати числові мітки (1-2-3-4...) на кнопках і увімкнути числові гарячі клавіші для швидкого вибору.",
-      "show-number-labels-label": "Показувати числові мітки"
+      "show-header-label": "Показувати заголовок"
     },
     "system-monitor": {
       "critical-color-label": "Критичний колір",

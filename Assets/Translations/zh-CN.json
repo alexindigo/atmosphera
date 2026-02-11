@@ -1415,9 +1415,7 @@
       "large-buttons-style-label": "大按钮样式",
       "position-description": "选择会话菜单面板打开时出现的位置。",
       "show-header-description": "在会话菜单顶部显示标题和关闭按钮。",
-      "show-header-label": "显示标题",
-      "show-number-labels-description": "在按钮上显示数字标签（1-2-3-4...）并启用数字快捷键以快速选择。",
-      "show-number-labels-label": "显示数字标签"
+      "show-header-label": "显示标题"
     },
     "system-monitor": {
       "critical-color-label": "严重颜色",

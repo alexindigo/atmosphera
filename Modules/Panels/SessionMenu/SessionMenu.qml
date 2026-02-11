@@ -449,20 +449,6 @@ SmartPanel {
     return false;
   }
 
-  // Number selection handler (kept for backward compatibility if needed, though keybinds might override common keys)
-  function onNumberPressed(number) {
-    if (!Settings.data.sessionMenu.showNumberLabels) {
-      return;
-    }
-    // Number is 1-based, convert to 0-based index
-    const index = number - 1;
-    if (index >= 0 && index < powerOptions.length) {
-      const option = powerOptions[index];
-      selectedIndex = index;
-      startTimer(option.action);
-    }
-  }
-
   // Countdown timer
   Timer {
     id: countdownTimer
@@ -760,7 +746,7 @@ SmartPanel {
         font.weight: Style.fontWeightBold
       }
 
-      // Keybind/Number indicator (keybind)
+      // Keybind indicator
       Rectangle {
         id: numberIndicatorRect
         anchors.left: countdownText.visible ? countdownText.right : parent.left
@@ -772,12 +758,12 @@ SmartPanel {
         color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mOnPrimary : Qt.alpha(Color.mSurfaceVariant, 0.5)
         border.width: Style.borderS
         border.color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mOnPrimary : Color.mOutline
-        visible: (Settings.data.sessionMenu.showNumberLabels && buttonRoot.number > 0) || buttonRoot.keybind !== ""
+        visible: (buttonRoot.keybind !== "") && !buttonRoot.pending
 
         NText {
           id: labelText
           anchors.centerIn: parent
-          text: buttonRoot.keybind !== "" ? buttonRoot.keybind : buttonRoot.number
+          text: buttonRoot.keybind
           pointSize: Style.fontSizeS
           font.weight: Style.fontWeightBold
           color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mPrimary : Color.mOnSurface
@@ -878,39 +864,6 @@ SmartPanel {
               return Color.mPrimary;
             if (buttonRoot.isShutdown && !buttonRoot.isSelected && !buttonRoot.effectiveHover)
               return Color.mError;
-            if (buttonRoot.isSelected || buttonRoot.effectiveHover)
-              return Color.mOnHover;
-            return Color.mOnSurface;
-          }
-
-          Behavior on color {
-            ColorAnimation {
-              duration: Style.animationFast
-              easing.type: Easing.OutCirc
-            }
-          }
-        }
-      }
-
-      // Number indicator on the right (when not pending)
-      Rectangle {
-        id: numberIndicator
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        width: Style.marginXL
-        height: width
-        radius: Math.min(Style.radiusM, height / 2)
-        color: Qt.alpha(Color.mSurfaceVariant, 0.5)
-        border.width: Style.borderS
-        border.color: Color.mOutline
-        visible: Settings.data.sessionMenu.showNumberLabels && buttonRoot.number > 0 && !buttonRoot.pending
-
-        NText {
-          id: numberText
-          anchors.centerIn: parent
-          text: buttonRoot.number
-          pointSize: Style.fontSizeS
-          color: {
             if (buttonRoot.isSelected || buttonRoot.effectiveHover)
               return Color.mOnHover;
             return Color.mOnSurface;
@@ -1104,13 +1057,13 @@ SmartPanel {
       color: (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover) ? Color.mOnPrimary : Qt.alpha(Color.mSurfaceVariant, 0.7)
       border.width: Style.borderS
       border.color: (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover) ? Color.mOnPrimary : Color.mOutline
-      visible: (Settings.data.sessionMenu.showNumberLabels && largeButtonRoot.number > 0 || largeButtonRoot.keybind !== "") && !largeButtonRoot.pending
+      visible: (largeButtonRoot.keybind !== "") && !largeButtonRoot.pending
       z: 10
 
       NText {
         id: largeNumberText
         anchors.centerIn: parent
-        text: largeButtonRoot.keybind !== "" ? largeButtonRoot.keybind : largeButtonRoot.number
+        text: largeButtonRoot.keybind
         pointSize: Style.fontSizeM
         font.weight: Style.fontWeightBold
         color: {

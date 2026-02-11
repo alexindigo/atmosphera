@@ -1415,9 +1415,7 @@
       "large-buttons-style-label": "大きなボタンのスタイル",
       "position-description": "セッションメニューパネルの表示位置を選択します。",
       "show-header-description": "セッションメニューの上部にタイトルと閉じるボタンを表示します。",
-      "show-header-label": "ヘッダーを表示",
-      "show-number-labels-description": "ボタンに数字ラベル（1-2-3-4...）を表示し、クイック選択用の数字キーバインドを有効にします。",
-      "show-number-labels-label": "数字ラベルを表示"
+      "show-header-label": "ヘッダーを表示"
     },
     "system-monitor": {
       "critical-color-label": "危険時の色",

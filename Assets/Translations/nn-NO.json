@@ -1413,9 +1413,7 @@
       "large-buttons-style-label": "Stil med store knappar",
       "position-description": "Vel kvar øktsmenyen opnar seg på skjermen når du opnar han.",
       "show-header-description": "Viser tittel og stengeknapp øvst på øktsmenyen.",
-      "show-header-label": "Vis topptekst",
-      "show-number-labels-description": "Viser taletikettar (1-2-3-4...) på knappar og slår på talsnarvegar for å velja fort.",
-      "show-number-labels-label": "Vis taletikettar"
+      "show-header-label": "Vis topptekst"
     },
     "system-monitor": {
       "critical-color-label": "Kritisk farge",

@@ -1415,9 +1415,7 @@
       "large-buttons-style-label": "Large buttons style",
       "position-description": "Choose where the session menu panel appears when opened.",
       "show-header-description": "Display the title and close button at the top of the session menu.",
-      "show-header-label": "Show header",
-      "show-number-labels-description": "Display number labels (1-2-3-4...) on buttons and enable number keybinds for quick selection.",
-      "show-number-labels-label": "Show number labels"
+      "show-header-label": "Show header"
     },
     "system-monitor": {
       "critical-color-label": "Critical color",

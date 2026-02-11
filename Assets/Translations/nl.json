@@ -1415,9 +1415,7 @@
       "large-buttons-style-label": "Stijl met grote knoppen",
       "position-description": "Kies waar het sessiemenupaneel verschijnt wanneer het wordt geopend.",
       "show-header-description": "Toon de titel en sluitknop bovenaan het sessiemenu.",
-      "show-header-label": "Koptekst tonen",
-      "show-number-labels-description": "Nummerlabels (1-2-3-4...) op knoppen weergeven en nummertoetsen voor snelle selectie inschakelen.",
-      "show-number-labels-label": "Nummerlabels tonen"
+      "show-header-label": "Koptekst tonen"
     },
     "system-monitor": {
       "critical-color-label": "Kritische kleur",

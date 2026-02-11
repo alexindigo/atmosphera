@@ -1448,15 +1448,6 @@
     "subTabLabel": "common.general"
   },
   {
-    "labelKey": "panels.session-menu.show-number-labels-label",
-    "descriptionKey": "panels.session-menu.show-number-labels-description",
-    "widget": "NToggle",
-    "tab": 12,
-    "tabLabel": "session-menu.title",
-    "subTab": 0,
-    "subTabLabel": "common.general"
-  },
-  {
     "labelKey": "panels.session-menu.show-header-label",
     "descriptionKey": "panels.session-menu.show-header-description",
     "widget": "NToggle",

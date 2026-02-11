@@ -1415,9 +1415,7 @@
       "large-buttons-style-label": "以大按鈕顯示",
       "position-description": "選擇工作階段選單在哪裡顯示",
       "show-header-description": "在工作階段選單顯示標題及關閉按鈕",
-      "show-header-label": "顯示標題列",
-      "show-number-labels-description": "在選項上顯示數字標記並啟用以數字鍵快速選擇",
-      "show-number-labels-label": "顯示數字標記"
+      "show-header-label": "顯示標題列"
     },
     "system-monitor": {
       "critical-color-label": "危急顏色",

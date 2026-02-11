@@ -1415,9 +1415,7 @@
       "large-buttons-style-label": "Style boutons larges",
       "position-description": "Choisissez où le panneau du menu de session apparaît lorsqu'il est ouvert.",
       "show-header-description": "Afficher le titre et le bouton de fermeture en haut du menu de session.",
-      "show-header-label": "Afficher l'en-tête",
-      "show-number-labels-description": "Afficher les numéros (1-2-3-4...) sur les boutons et activer les raccourcis clavier numériques pour une sélection rapide.",
-      "show-number-labels-label": "Afficher les numéros"
+      "show-header-label": "Afficher l'en-tête"
     },
     "system-monitor": {
       "critical-color-label": "Couleur critique",

@@ -1415,9 +1415,7 @@
       "large-buttons-style-label": "Nagyméretű gombok stílusa",
       "position-description": "Válassza ki, hol jelenjen meg a munkamenet menüpanel megnyitáskor.",
       "show-header-description": "A cím és a bezárás gomb megjelenítése a munkamenet menü tetején.",
-      "show-header-label": "Fejléc megjelenítése",
-      "show-number-labels-description": "Számcímkék (1-2-3-4...) megjelenítése a gombokon és számbillentyűk engedélyezése a gyors kiválasztáshoz.",
-      "show-number-labels-label": "Számcímkék megjelenítése"
+      "show-header-label": "Fejléc megjelenítése"
     },
     "system-monitor": {
       "critical-color-label": "Kritikus szín",

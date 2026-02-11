@@ -1415,9 +1415,7 @@
       "large-buttons-style-label": "Stor knappstil",
       "position-description": "Välj var sessionsmenypanelen ska visas när den öppnas.",
       "show-header-description": "Visa titeln och stängningsknappen högst upp i sessionsmenyn.",
-      "show-header-label": "Visa rubrik",
-      "show-number-labels-description": "Visa numrerade etiketter (1-2-3-4...) på knapparna och aktivera numretangenter för snabbval.",
-      "show-number-labels-label": "Visa nummeretiketter"
+      "show-header-label": "Visa rubrik"
     },
     "system-monitor": {
       "critical-color-label": "Kritisk färg",

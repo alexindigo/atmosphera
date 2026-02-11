@@ -1415,9 +1415,7 @@
       "large-buttons-style-label": "Стиль крупные кнопки",
       "position-description": "Выберите, где появляется панель меню сеанса при открытии.",
       "show-header-description": "Отображать заголовок и кнопку закрытия в верхней части меню сеанса.",
-      "show-header-label": "Показывать заголовок",
-      "show-number-labels-description": "Отображать числовые метки (1-2-3-4...) на кнопках и включить числовые горячие клавиши для быстрого выбора.",
-      "show-number-labels-label": "Показывать числовые метки"
+      "show-header-label": "Показывать заголовок"
     },
     "system-monitor": {
       "critical-color-label": "Критический цвет",
