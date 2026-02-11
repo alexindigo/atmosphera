@@ -1030,6 +1030,8 @@
       "fonts-monospace-search-placeholder": "고정폭 글꼴 검색...",
       "fonts-reset-scaling": "크기 초기화",
       "fonts-title": "글꼴",
+      "keybinds-conflict-description": "이 키 조합은 이미 {action}에 할당되어 있습니다.",
+      "keybinds-conflict-title": "키 바인딩 충돌",
       "keybinds-description": "패널 및 런처에 대한 전역 탐색 키를 구성합니다.",
       "keybinds-down": "아래로 이동",
       "keybinds-enter": "확인 / 동작",

@@ -1030,6 +1030,8 @@
       "fonts-monospace-search-placeholder": "Szukaj czcionki monospace...",
       "fonts-reset-scaling": "Resetuj skalowanie",
       "fonts-title": "Czcionki",
+      "keybinds-conflict-description": "Kombinacja klawiszy jest już przypisana do {action}.",
+      "keybinds-conflict-title": "Konflikt Skrótów Klawiszowych",
       "keybinds-description": "Skonfiguruj globalne klawisze nawigacyjne dla paneli i launchera.",
       "keybinds-down": "Przenieś w dół",
       "keybinds-enter": "Potwierdź / Akcja",

@@ -1030,6 +1030,8 @@
       "fonts-monospace-search-placeholder": "Monospace-Schriftarten suchen...",
       "fonts-reset-scaling": "Skalierung zurücksetzen",
       "fonts-title": "Schriftarten",
+      "keybinds-conflict-description": "Die Tastenkombination ist bereits {action} zugewiesen.",
+      "keybinds-conflict-title": "Tastenbelegungskonflikt",
       "keybinds-description": "Globale Navigationstasten für Panels und Launcher konfigurieren.",
       "keybinds-down": "Nach unten verschieben",
       "keybinds-enter": "Bestätigen / Aktion",

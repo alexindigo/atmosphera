@@ -1030,6 +1030,8 @@
       "fonts-monospace-search-placeholder": "Monospace-lettertype zoeken...",
       "fonts-reset-scaling": "Schaling resetten",
       "fonts-title": "Lettertypes",
+      "keybinds-conflict-description": "De toetscombinatie is al toegewezen aan {action}.",
+      "keybinds-conflict-title": "Toetsencombinatieconflict",
       "keybinds-description": "Globale navigatietoetsen voor panelen en de starter configureren.",
       "keybinds-down": "Naar beneden verplaatsen",
       "keybinds-enter": "Bevestigen / Actie",

@@ -1030,6 +1030,8 @@
       "fonts-monospace-search-placeholder": "Sök teckensnitt med fast bredd...",
       "fonts-reset-scaling": "Återställ skalning",
       "fonts-title": "Teckensnitt",
+      "keybinds-conflict-description": "Tangentkombinationen är redan tilldelad {action}.",
+      "keybinds-conflict-title": "Tangentbindningskonflikt",
       "keybinds-description": "Konfigurera globala navigeringsknappar för paneler och startprogram.",
       "keybinds-down": "Flytta nedåt",
       "keybinds-enter": "Bekräfta / Åtgärd",

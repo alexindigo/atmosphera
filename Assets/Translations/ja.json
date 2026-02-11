@@ -1030,6 +1030,8 @@
       "fonts-monospace-search-placeholder": "等幅フォントを検索...",
       "fonts-reset-scaling": "サイズ設定をリセット",
       "fonts-title": "フォント",
+      "keybinds-conflict-description": "このキーの組み合わせはすでに{action}に割り当てられています。",
+      "keybinds-conflict-title": "キーバインドの競合",
       "keybinds-description": "パネルとランチャーのグローバルナビゲーションキーを設定します。",
       "keybinds-down": "下に移動",
       "keybinds-enter": "確認 / アクション",

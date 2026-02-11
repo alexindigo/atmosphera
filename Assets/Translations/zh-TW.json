@@ -1030,6 +1030,8 @@
       "fonts-monospace-search-placeholder": "搜尋等寬字型...",
       "fonts-reset-scaling": "重設文字大小",
       "fonts-title": "字型",
+      "keybinds-conflict-description": "此按鍵組合已分配給 {action}。",
+      "keybinds-conflict-title": "按鍵綁定衝突",
       "keybinds-description": "配置面板和啟動器的全域導航鍵。",
       "keybinds-down": "下移",
       "keybinds-enter": "確認 / 動作",
