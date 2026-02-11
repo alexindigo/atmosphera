@@ -891,6 +891,12 @@ SmartPanel {
         }
       }
 
+      onExited: {
+        if (!root.ignoreMouseHover && selectedIndex === buttonRoot.buttonIndex) {
+          selectedIndex = -1;
+        }
+      }
+
       onClicked: buttonRoot.clicked()
     }
   }
@@ -1090,6 +1096,12 @@ SmartPanel {
       onEntered: {
         if (!root.ignoreMouseHover) {
           selectedIndex = largeButtonRoot.buttonIndex;
+        }
+      }
+
+      onExited: {
+        if (!root.ignoreMouseHover && selectedIndex === largeButtonRoot.buttonIndex) {
+          selectedIndex = -1;
         }
       }
 
