@@ -118,7 +118,7 @@ Singleton {
     "settings-launcher": "rocket",
     "settings-audio": "device-speaker",
     "settings-display": "device-desktop",
-    "settings-network": "sitemap",
+    "settings-network": "affiliate",
     "settings-brightness": "brightness-up",
     "settings-location": "world-pin",
     "settings-color-scheme": "palette",
