@@ -62,14 +62,6 @@ Item {
   // Persistent usage tracking stored in cacheDir
   property string usageFilePath: Settings.cacheDir + "launcher_app_usage.json"
 
-  // Debounced saver to avoid excessive IO
-  Timer {
-    id: saveTimer
-    interval: 750
-    repeat: false
-    onTriggered: usageFile.writeAdapter()
-  }
-
   FileView {
     id: usageFile
     path: usageFilePath
@@ -81,8 +73,6 @@ Item {
         writeAdapter();
       }
     }
-
-    onAdapterUpdated: saveTimer.start()
 
     JsonAdapter {
       id: usageAdapter
@@ -96,6 +86,8 @@ Item {
   }
 
   function onOpened() {
+    // Persist any usage data recorded since last open
+    usageFile.writeAdapter();
     // Refresh apps when launcher opens
     loadApplications();
     // Default to Pinned if there are pinned apps, otherwise all
@@ -651,13 +643,11 @@ Item {
 
   function recordUsage(app) {
     const key = getAppKey(app);
-    if (!usageAdapter.counts)
+    if (!usageAdapter.counts) {
       usageAdapter.counts = ({});
-    const current = getUsageCount(app);
-    // Mutate in-place to avoid triggering a property change notification,
-    // which would cascade through QML bindings during the click handler.
-    usageAdapter.counts[key] = current + 1;
-    // Write immediately — the debounced timer won't survive panel destruction.
-    usageFile.writeAdapter();
+    }
+    // Mutate in-place — no property change notification, no file I/O.
+    // Data is flushed to disk on next open via onOpened().
+    usageAdapter.counts[key] = getUsageCount(app) + 1;
   }
 }
