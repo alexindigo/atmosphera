@@ -101,7 +101,6 @@ SmartPanel {
   }
 
   function onReturnPressed() {
-    console.log("YOUASD");
     if (!contentItem)
       return;
 
