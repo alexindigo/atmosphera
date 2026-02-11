@@ -541,7 +541,7 @@ Singleton {
     property JsonObject network: JsonObject {
       property bool wifiEnabled: true
       property bool bluetoothRssiPollingEnabled: false  // Opt-in Bluetooth RSSI polling (uses bluetoothctl)
-      property int bluetoothRssiPollIntervalMs: 10000 // Polling interval in milliseconds for RSSI queries
+      property int bluetoothRssiPollIntervalMs: 60000 // Polling interval in milliseconds for RSSI queries
       property string wifiDetailsViewMode: "grid"   // "grid" or "list"
       property string bluetoothDetailsViewMode: "grid" // "grid" or "list"
       property bool bluetoothHideUnnamedDevices: false
