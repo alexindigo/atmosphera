@@ -501,7 +501,10 @@ Item {
 
   function spawn(command) {
     try {
-      Quickshell.execDetached(["niri", "msg", "action", "spawn", "--"].concat(command));
+      const cmdArray = Array.isArray(command) ? command : (command && typeof command === "object" && command.length !== undefined) ? Array.from(command) : [command];
+      const niriCommand = ["niri", "msg", "action", "spawn", "--"].concat(cmdArray);
+      Logger.d("NiriService", "Calling niri spawn: " + niriCommand.join(" "));
+      Quickshell.execDetached(niriCommand);
     } catch (e) {
       Logger.e("NiriService", "Failed to spawn command:", e);
     }
