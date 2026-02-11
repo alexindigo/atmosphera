@@ -25,7 +25,7 @@ Singleton {
   - Default cache directory: ~/.cache/noctalia
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 49
+  readonly property int settingsVersion: 51
   readonly property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
   readonly property string shellName: "noctalia"
   readonly property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
@@ -199,7 +199,7 @@ Singleton {
       property bool hideOnOverview: false
 
       // Auto-hide settings
-      property string displayMode: "always_visible" // "always_visible", "auto_hide"
+      property string displayMode: "always_visible"
       property int autoHideDelay: 500 // ms before hiding after mouse leaves
       property int autoShowDelay: 150 // ms before showing when mouse enters
 
@@ -287,6 +287,17 @@ Singleton {
       property bool allowPasswordWithFprintd: false
       property string clockStyle: "custom"
       property string clockFormat: "hh\\nmm"
+      property list<string> lockScreenMonitors: [] // holds lock screen visibility per monitor
+      property real lockScreenBlur: 0.0
+      property real lockScreenTint: 0.0
+      property JsonObject keybinds: JsonObject {
+        property list<string> keyUp: ["Up"]
+        property list<string> keyDown: ["Down"]
+        property list<string> keyLeft: ["Left"]
+        property list<string> keyRight: ["Right"]
+        property list<string> keyEnter: ["Return"]
+        property list<string> keyEscape: ["Esc"]
+      }
     }
 
     // ui
@@ -365,6 +376,8 @@ Singleton {
       property real transitionEdgeSmoothness: 0.05
       property string panelPosition: "follow_bar"
       property bool hideWallpaperFilenames: false
+      property real overviewBlur: 0.4
+      property real overviewTint: 0.6
       // Wallhaven settings
       property bool useWallhaven: false
       property string wallhavenQuery: ""
@@ -407,6 +420,7 @@ Singleton {
       property bool ignoreMouseInput: false
       property string screenshotAnnotationTool: ""
       property bool overviewLayer: false
+      property string density: "default" // "compact", "default", "comfortable"
     }
 
     // control center
@@ -545,27 +559,33 @@ Singleton {
       property list<var> powerOptions: [
         {
           "action": "lock",
-          "enabled": true
+          "enabled": true,
+          "keybind": "1"
         },
         {
           "action": "suspend",
-          "enabled": true
+          "enabled": true,
+          "keybind": "2"
         },
         {
           "action": "hibernate",
-          "enabled": true
+          "enabled": true,
+          "keybind": "3"
         },
         {
           "action": "reboot",
-          "enabled": true
+          "enabled": true,
+          "keybind": "4"
         },
         {
           "action": "logout",
-          "enabled": true
+          "enabled": true,
+          "keybind": "5"
         },
         {
           "action": "shutdown",
-          "enabled": true
+          "enabled": true,
+          "keybind": "6"
         }
       ]
     }

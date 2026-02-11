@@ -30,6 +30,9 @@ Singleton {
   // Track current alphabetical index for each screen
   property var alphabeticalIndices: ({})
 
+  // Track used wallpapers for random mode (persisted across reboots)
+  property var usedRandomWallpapers: ({})
+
   property bool isInitialized: false
   property string wallpaperCacheFile: ""
 
@@ -57,6 +60,7 @@ Singleton {
   Connections {
     target: Settings.data.wallpaper
     function onDirectoryChanged() {
+      root.usedRandomWallpapers = {};
       root.refreshWallpapersList();
       // Emit directory change signals for monitors using the default directory
       if (!Settings.data.wallpaper.enableMultiMonitorDirectories) {
@@ -76,6 +80,7 @@ Singleton {
       }
     }
     function onEnableMultiMonitorDirectoriesChanged() {
+      root.usedRandomWallpapers = {};
       root.refreshWallpapersList();
       // Notify all monitors about potential directory changes
       for (var i = 0; i < Quickshell.screens.length; i++) {
@@ -401,8 +406,7 @@ Singleton {
         var wallpaperList = getWallpapersList(screenName);
 
         if (wallpaperList.length > 0) {
-          var randomIndex = Math.floor(Math.random() * wallpaperList.length);
-          var randomPath = wallpaperList[randomIndex];
+          var randomPath = _pickUnusedRandom(screenName, wallpaperList);
           changeWallpaper(randomPath, screenName);
         }
       }
@@ -411,11 +415,56 @@ Singleton {
       // We can use any screenName here, so we just pick the primary one.
       var wallpaperList = getWallpapersList(Screen.name);
       if (wallpaperList.length > 0) {
-        var randomIndex = Math.floor(Math.random() * wallpaperList.length);
-        var randomPath = wallpaperList[randomIndex];
+        var randomPath = _pickUnusedRandom("all", wallpaperList);
         changeWallpaper(randomPath, undefined);
       }
     }
+  }
+
+  // -------------------------------------------------------------------
+  // Pick a random wallpaper that hasn't been used yet in the current cycle.
+  // Once all wallpapers have been shown, resets the pool (keeping only the
+  // last-shown wallpaper to avoid an immediate repeat).
+  function _pickUnusedRandom(key, wallpaperList) {
+    var used = usedRandomWallpapers[key] || [];
+
+    // Clean stale entries (files that were removed from the directory)
+    var wallpaperSet = new Set(wallpaperList);
+    used = used.filter(function (path) {
+      return wallpaperSet.has(path);
+    });
+
+    // Filter to wallpapers that haven't been used yet
+    var unused = wallpaperList.filter(function (path) {
+      return used.indexOf(path) === -1;
+    });
+
+    // If all have been used, reset but keep the last one to avoid immediate repeat
+    if (unused.length === 0) {
+      var lastUsed = used.length > 0 ? used[used.length - 1] : "";
+      used = lastUsed ? [lastUsed] : [];
+      unused = wallpaperList.filter(function (path) {
+        return used.indexOf(path) === -1;
+      });
+      // Edge case: only one wallpaper in the directory
+      if (unused.length === 0) {
+        unused = wallpaperList;
+      }
+      Logger.d("Wallpaper", "All wallpapers used for", key, "- resetting pool");
+    }
+
+    // Pick randomly from unused
+    var randomIndex = Math.floor(Math.random() * unused.length);
+    var picked = unused[randomIndex];
+
+    // Record as used
+    used.push(picked);
+    usedRandomWallpapers[key] = used;
+
+    // Persist
+    saveTimer.restart();
+
+    return picked;
   }
 
   // -------------------------------------------------------------------
@@ -878,11 +927,13 @@ Singleton {
       id: wallpaperCacheAdapter
       property var wallpapers: ({})
       property string defaultWallpaper: root.noctaliaDefaultWallpaper
+      property var usedRandomWallpapers: ({})
     }
 
     onLoaded: {
       // Load wallpapers from cache file
       root.currentWallpapers = wallpaperCacheAdapter.wallpapers || {};
+      root.usedRandomWallpapers = wallpaperCacheAdapter.usedRandomWallpapers || {};
 
       // Load default wallpaper from cache if it exists, otherwise use Noctalia default
       if (wallpaperCacheAdapter.defaultWallpaper && wallpaperCacheAdapter.defaultWallpaper !== "") {
@@ -912,6 +963,7 @@ Singleton {
     onTriggered: {
       wallpaperCacheAdapter.wallpapers = root.currentWallpapers;
       wallpaperCacheAdapter.defaultWallpaper = root.defaultWallpaper;
+      wallpaperCacheAdapter.usedRandomWallpapers = root.usedRandomWallpapers;
       wallpaperCacheView.writeAdapter();
       Logger.d("Wallpaper", "Saved wallpapers to cache file");
     }

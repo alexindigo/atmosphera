@@ -11,6 +11,7 @@ import qs.Modules.MainScreen
 import qs.Services.Compositor
 import qs.Services.UI
 import qs.Widgets
+import "../../../Helpers/Keybinds.js" as Keybinds
 
 SmartPanel {
   id: root
@@ -343,40 +344,11 @@ SmartPanel {
     }
   }
 
-  // Override keyboard handlers from SmartPanel
-  function onEscapePressed() {
-    if (timerActive) {
-      cancelTimer();
-    } else {
-      root.close();
-    }
+  function checkKey(event, settingName) {
+    return Keybinds.checkKey(event, settingName, Settings);
   }
 
-  function onTabPressed() {
-    selectNextWrapped();
-  }
-
-  function onBackTabPressed() {
-    selectPreviousWrapped();
-  }
-
-  function onLeftPressed() {
-    if (largeButtonsStyle) {
-      navigateGrid("left");
-    } else {
-      selectPreviousWrapped();
-    }
-  }
-
-  function onRightPressed() {
-    if (largeButtonsStyle) {
-      navigateGrid("right");
-    } else {
-      selectNextWrapped();
-    }
-  }
-
-  function onUpPressed() {
+  function handleUp() {
     if (largeButtonsStyle) {
       navigateGrid("up");
     } else {
@@ -384,7 +356,7 @@ SmartPanel {
     }
   }
 
-  function onDownPressed() {
+  function handleDown() {
     if (largeButtonsStyle) {
       navigateGrid("down");
     } else {
@@ -392,145 +364,89 @@ SmartPanel {
     }
   }
 
-  function onReturnPressed() {
+  function handleLeft() {
+    if (largeButtonsStyle) {
+      navigateGrid("left");
+    } else {
+      selectPreviousWrapped();
+    }
+  }
+
+  function handleRight() {
+    if (largeButtonsStyle) {
+      navigateGrid("right");
+    } else {
+      selectNextWrapped();
+    }
+  }
+
+  function handleEnter() {
     activate();
   }
 
+  function handleEscape() {
+    if (timerActive) {
+      cancelTimer();
+    } else {
+      root.close();
+    }
+  }
+
+  // Override keyboard handlers from SmartPanel
+  function onEscapePressed() {
+    handleEscape();
+  }
+  function onTabPressed() {
+    selectNextWrapped();
+  }
+  function onBackTabPressed() {
+    selectPreviousWrapped();
+  }
+  function onLeftPressed() {
+    handleLeft();
+  }
+  function onRightPressed() {
+    handleRight();
+  }
+  function onUpPressed() {
+    handleUp();
+  }
+  function onDownPressed() {
+    handleDown();
+  }
   function onEnterPressed() {
-    activate();
+    handleEnter();
   }
-
   function onHomePressed() {
     selectFirst();
   }
-
   function onEndPressed() {
     selectLast();
   }
 
-  function onCtrlJPressed() {
-    selectNextWrapped();
-  }
-
-  function onCtrlKPressed() {
-    selectPreviousWrapped();
-  }
-
   function checkKeybind(event) {
     if (powerOptions.length === 0)
-      return;
+      return false;
 
     // Construct key string in the same format as the recorder
     // Ignore modifier keys by themselves
     if (event.key === Qt.Key_Control || event.key === Qt.Key_Shift || event.key === Qt.Key_Alt || event.key === Qt.Key_Meta) {
-      return;
+      return false;
     }
 
-    let keyStr = "";
-    if (event.modifiers & Qt.ControlModifier)
-      keyStr += "Ctrl+";
-    if (event.modifiers & Qt.AltModifier)
-      keyStr += "Alt+";
-    if (event.modifiers & Qt.ShiftModifier)
-      keyStr += "Shift+";
-
-    let keyName = "";
-    let rawText = event.text;
-
-    if (event.key >= Qt.Key_A && event.key <= Qt.Key_Z || event.key >= Qt.Key_0 && event.key <= Qt.Key_9) {
-      keyName = String.fromCharCode(event.key);
-    } else if (event.key >= Qt.Key_F1 && event.key <= Qt.Key_F12) {
-      keyName = "F" + (event.key - Qt.Key_F1 + 1);
-    } else if (rawText && rawText.length > 0 && rawText.charCodeAt(0) > 31) {
-      keyName = rawText.toUpperCase();
-
-      // Handle shifted digits for common layouts (e.g., German, US)
-      if (event.modifiers & Qt.ShiftModifier) {
-        const shiftMap = {
-          "!": "1",
-          "\"": "2",
-          "§": "3",
-          "$": "4",
-          "%": "5",
-          "&": "6",
-          "/": "7",
-          "(": "8",
-          ")": "9",
-          "=": "0",
-          "@": "2",
-          "#": "3",
-          "^": "6",
-          "*": "8"
-        };
-        if (shiftMap[keyName]) {
-          keyName = shiftMap[keyName];
-        }
-      }
-    } else {
-      switch (event.key) {
-      case Qt.Key_Escape:
-        keyName = "Esc";
-        break;
-      case Qt.Key_Space:
-        keyName = "Space";
-        break;
-      case Qt.Key_Return:
-      case Qt.Key_Enter:
-        keyName = "Enter";
-        break;
-      case Qt.Key_Tab:
-        keyName = "Tab";
-        break;
-      case Qt.Key_Backspace:
-        keyName = "Backspace";
-        break;
-      case Qt.Key_Delete:
-        keyName = "Del";
-        break;
-      case Qt.Key_Insert:
-        keyName = "Ins";
-        break;
-      case Qt.Key_Home:
-        keyName = "Home";
-        break;
-      case Qt.Key_End:
-        keyName = "End";
-        break;
-      case Qt.Key_PageUp:
-        keyName = "PgUp";
-        break;
-      case Qt.Key_PageDown:
-        keyName = "PgDn";
-        break;
-      case Qt.Key_Left:
-        keyName = "Left";
-        break;
-      case Qt.Key_Right:
-        keyName = "Right";
-        break;
-      case Qt.Key_Up:
-        keyName = "Up";
-        break;
-      case Qt.Key_Down:
-        keyName = "Down";
-        break;
-      }
-    }
-
-    if (!keyName)
-      return;
-
-    const pressedKeybind = keyStr + keyName;
+    const pressedKeybind = Keybinds.getKeybindString(event);
+    if (!pressedKeybind)
+      return false;
 
     for (var i = 0; i < powerOptions.length; i++) {
       const option = powerOptions[i];
       if (option.keybind === pressedKeybind) {
         selectedIndex = i;
         startTimer(option.action);
-        event.accepted = true;
-        return;
+        return true;
       }
     }
+    return false;
   }
 
   // Number selection handler (kept for backward compatibility if needed, though keybinds might override common keys)
@@ -580,7 +496,50 @@ SmartPanel {
     }
 
     Keys.onPressed: event => {
-                      root.checkKeybind(event);
+                      // Check custom entry keybinds first
+                      if (root.checkKeybind(event)) {
+                        event.accepted = true;
+                        return;
+                      }
+
+                      // Check global navigation keybinds
+                      if (checkKey(event, 'up')) {
+                        handleUp();
+                        event.accepted = true;
+                        return;
+                      }
+                      if (checkKey(event, 'down')) {
+                        handleDown();
+                        event.accepted = true;
+                        return;
+                      }
+                      if (checkKey(event, 'left')) {
+                        handleLeft();
+                        event.accepted = true;
+                        return;
+                      }
+                      if (checkKey(event, 'right')) {
+                        handleRight();
+                        event.accepted = true;
+                        return;
+                      }
+                      if (checkKey(event, 'enter')) {
+                        handleEnter();
+                        event.accepted = true;
+                        return;
+                      }
+                      if (checkKey(event, 'escape')) {
+                        handleEscape();
+                        event.accepted = true;
+                        return;
+                      }
+
+                      // Block default keys if they weren't matched above
+                      // This prevents 'Up' from working if rebinned to something else
+                      if (event.key === Qt.Key_Up || event.key === Qt.Key_Down || event.key === Qt.Key_Left || event.key === Qt.Key_Right || event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Escape) {
+                        event.accepted = true;
+                        return;
+                      }
                     }
 
     HoverHandler {

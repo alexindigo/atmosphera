@@ -27,107 +27,113 @@ Item {
     function toggle() {
       BarService.isVisible = !BarService.isVisible;
     }
-    function hide() {
+    function hideBar() {
       BarService.isVisible = false;
     }
-    function show() {
+    function showBar() {
       BarService.isVisible = true;
+    }
+    function setDisplayMode(mode: string) {
+      if (mode === "always_visible" || mode === "non_exclusive" || mode === "auto_hide") {
+        Settings.data.bar.displayMode = mode;
+      }
+    }
+  }
+
+  // Settings IPC helpers (outside IpcHandler to avoid QVariant IPC warnings)
+  readonly property var _settingsTabMap: ({
+                                            "about": SettingsPanel.Tab.About,
+                                            "audio": SettingsPanel.Tab.Audio,
+                                            "bar": SettingsPanel.Tab.Bar,
+                                            "colorscheme": SettingsPanel.Tab.ColorScheme,
+                                            "lockscreen": SettingsPanel.Tab.LockScreen,
+                                            "controlcenter": SettingsPanel.Tab.ControlCenter,
+                                            "desktopwidgets": SettingsPanel.Tab.DesktopWidgets,
+                                            "osd": SettingsPanel.Tab.OSD,
+                                            "display": SettingsPanel.Tab.Display,
+                                            "dock": SettingsPanel.Tab.Dock,
+                                            "general": SettingsPanel.Tab.General,
+                                            "hooks": SettingsPanel.Tab.Hooks,
+                                            "launcher": SettingsPanel.Tab.Launcher,
+                                            "location": SettingsPanel.Tab.Location,
+                                            "network": SettingsPanel.Tab.Network,
+                                            "notifications": SettingsPanel.Tab.Notifications,
+                                            "plugins": SettingsPanel.Tab.Plugins,
+                                            "sessionmenu": SettingsPanel.Tab.SessionMenu,
+                                            "systemmonitor": SettingsPanel.Tab.SystemMonitor,
+                                            "userinterface": SettingsPanel.Tab.UserInterface,
+                                            "wallpaper": SettingsPanel.Tab.Wallpaper
+                                          })
+
+  function _parseSettingsTabArg(tabArg) {
+    var parts = tabArg.split("/");
+    var tabId = _resolveSettingsTab(parts[0]);
+    var subTabId = parts.length > 1 ? parseInt(parts[1]) : -1;
+    return {
+      "tab": tabId,
+      "subTab": isNaN(subTabId) ? -1 : subTabId
+    };
+  }
+
+  function _resolveSettingsTab(tabName) {
+    if (!tabName)
+      return SettingsPanel.Tab.General;
+    var key = tabName.toLowerCase().replace(/[-_]/g, "");
+    if (key in _settingsTabMap)
+      return _settingsTabMap[key];
+    Logger.w("IPC", "Unknown settings tab: " + tabName);
+    return SettingsPanel.Tab.General;
+  }
+
+  function _settingsToggle(tabId, subTabId) {
+    if (Settings.data.ui.settingsPanelMode === "window") {
+      if (SettingsPanelService.isWindowOpen) {
+        SettingsPanelService.closeWindow();
+      } else {
+        SettingsPanelService.openToTab(tabId, subTabId);
+      }
+    } else {
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+                                              if (settingsPanel?.isPanelOpen) {
+                                                settingsPanel.close();
+                                              } else {
+                                                settingsPanel?.openToTab(tabId, subTabId);
+                                              }
+                                            });
+    }
+  }
+
+  function _settingsOpen(tabId, subTabId) {
+    if (Settings.data.ui.settingsPanelMode === "window") {
+      SettingsPanelService.openToTab(tabId, subTabId);
+    } else {
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+                                              settingsPanel?.openToTab(tabId, subTabId);
+                                            });
     }
   }
 
   IpcHandler {
     target: "settings"
 
-    readonly property var _tabMap: ({
-                                      "about": SettingsPanel.Tab.About,
-                                      "audio": SettingsPanel.Tab.Audio,
-                                      "bar": SettingsPanel.Tab.Bar,
-                                      "colorscheme": SettingsPanel.Tab.ColorScheme,
-                                      "lockscreen": SettingsPanel.Tab.LockScreen,
-                                      "controlcenter": SettingsPanel.Tab.ControlCenter,
-                                      "desktopwidgets": SettingsPanel.Tab.DesktopWidgets,
-                                      "osd": SettingsPanel.Tab.OSD,
-                                      "display": SettingsPanel.Tab.Display,
-                                      "dock": SettingsPanel.Tab.Dock,
-                                      "general": SettingsPanel.Tab.General,
-                                      "hooks": SettingsPanel.Tab.Hooks,
-                                      "launcher": SettingsPanel.Tab.Launcher,
-                                      "location": SettingsPanel.Tab.Location,
-                                      "network": SettingsPanel.Tab.Network,
-                                      "notifications": SettingsPanel.Tab.Notifications,
-                                      "plugins": SettingsPanel.Tab.Plugins,
-                                      "sessionmenu": SettingsPanel.Tab.SessionMenu,
-                                      "systemmonitor": SettingsPanel.Tab.SystemMonitor,
-                                      "userinterface": SettingsPanel.Tab.UserInterface,
-                                      "wallpaper": SettingsPanel.Tab.Wallpaper
-                                    })
-
-    function _parseTabArg(tabArg) {
-      var parts = tabArg.split("/");
-      var tabId = _resolveTab(parts[0]);
-      var subTabId = parts.length > 1 ? parseInt(parts[1]) : -1;
-      return {
-        "tab": tabId,
-        "subTab": isNaN(subTabId) ? -1 : subTabId
-      };
-    }
-
-    function _resolveTab(tabName) {
-      if (!tabName)
-        return SettingsPanel.Tab.General;
-      var key = tabName.toLowerCase().replace(/[-_]/g, "");
-      if (key in _tabMap)
-        return _tabMap[key];
-      Logger.w("IPC", "Unknown settings tab: " + tabName);
-      return SettingsPanel.Tab.General;
-    }
-
-    function _toggle(tabId, subTabId) {
-      if (Settings.data.ui.settingsPanelMode === "window") {
-        if (SettingsPanelService.isWindowOpen) {
-          SettingsPanelService.closeWindow();
-        } else {
-          SettingsPanelService.openToTab(tabId, subTabId);
-        }
-      } else {
-        root.screenDetector.withCurrentScreen(screen => {
-                                                var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-                                                if (settingsPanel?.isPanelOpen) {
-                                                  settingsPanel.close();
-                                                } else {
-                                                  settingsPanel?.openToTab(tabId, subTabId);
-                                                }
-                                              });
-      }
-    }
-
-    function _open(tabId, subTabId) {
-      if (Settings.data.ui.settingsPanelMode === "window") {
-        SettingsPanelService.openToTab(tabId, subTabId);
-      } else {
-        root.screenDetector.withCurrentScreen(screen => {
-                                                var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-                                                settingsPanel?.openToTab(tabId, subTabId);
-                                              });
-      }
-    }
-
     function toggle() {
-      _toggle(SettingsPanel.Tab.General, -1);
+      root._settingsToggle(SettingsPanel.Tab.General, -1);
     }
 
     function toggleTab(tab: string) {
-      var parsed = _parseTabArg(tab);
-      _toggle(parsed.tab, parsed.subTab);
+      var parsed = root._parseSettingsTabArg(tab);
+      root._settingsToggle(parsed.tab, parsed.subTab);
     }
 
     function open() {
-      _open(SettingsPanel.Tab.General, -1);
+      root._settingsOpen(SettingsPanel.Tab.General, -1);
     }
 
     function openTab(tab: string) {
-      var parsed = _parseTabArg(tab);
-      _open(parsed.tab, parsed.subTab);
+      var parsed = root._parseSettingsTabArg(tab);
+      root._settingsOpen(parsed.tab, parsed.subTab);
     }
   }
 
@@ -233,21 +239,14 @@ Item {
     }
     function command() {
       root.screenDetector.withCurrentScreen(screen => {
-                                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                                              if (!launcherPanel)
-                                              return;
-                                              var searchText = launcherPanel.searchText || "";
-                                              var isInClipMode = searchText.startsWith(">cmd");
-                                              if (!launcherPanel.isPanelOpen) {
-                                                // Closed -> open in clipboard mode
-                                                launcherPanel.open();
-                                                launcherPanel.setSearchText(">cmd ");
-                                              } else if (isInClipMode) {
-                                                // Already in clipboard mode -> close
-                                                launcherPanel.close();
+                                              var searchText = PanelService.getLauncherSearchText(screen);
+                                              var isInCmdMode = searchText.startsWith(">cmd");
+                                              if (!PanelService.isLauncherOpen(screen)) {
+                                                PanelService.openLauncherWithSearch(screen, ">cmd ");
+                                              } else if (isInCmdMode) {
+                                                PanelService.closeLauncher(screen);
                                               } else {
-                                                // In another mode -> switch to clipboard mode
-                                                launcherPanel.setSearchText(">cmd ");
+                                                PanelService.setLauncherSearchText(screen, ">cmd ");
                                               }
                                             }, Settings.data.appLauncher.overviewLayer);
     }
@@ -269,41 +268,27 @@ Item {
     }
     function windows() {
       root.screenDetector.withCurrentScreen(screen => {
-                                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                                              if (!launcherPanel)
-                                              return;
-                                              var searchText = launcherPanel.searchText || "";
+                                              var searchText = PanelService.getLauncherSearchText(screen);
                                               var isInWindowsMode = searchText.startsWith(">win");
-                                              if (!launcherPanel.isPanelOpen) {
-                                                // Closed -> open in windows mode
-                                                launcherPanel.open();
-                                                launcherPanel.setSearchText(">win ");
+                                              if (!PanelService.isLauncherOpen(screen)) {
+                                                PanelService.openLauncherWithSearch(screen, ">win ");
                                               } else if (isInWindowsMode) {
-                                                // Already in windows mode -> close
-                                                launcherPanel.close();
+                                                PanelService.closeLauncher(screen);
                                               } else {
-                                                // In another mode -> switch to windows mode
-                                                launcherPanel.setSearchText(">win ");
+                                                PanelService.setLauncherSearchText(screen, ">win ");
                                               }
                                             }, Settings.data.appLauncher.overviewLayer);
     }
     function settings() {
       root.screenDetector.withCurrentScreen(screen => {
-                                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                                              if (!launcherPanel)
-                                              return;
-                                              var searchText = launcherPanel.searchText || "";
+                                              var searchText = PanelService.getLauncherSearchText(screen);
                                               var isInSettingsMode = searchText.startsWith(">settings");
-                                              if (!launcherPanel.isPanelOpen) {
-                                                // Closed -> open in settings mode
-                                                launcherPanel.open();
-                                                launcherPanel.setSearchText(">settings ");
+                                              if (!PanelService.isLauncherOpen(screen)) {
+                                                PanelService.openLauncherWithSearch(screen, ">settings ");
                                               } else if (isInSettingsMode) {
-                                                // Already in settings mode -> close
-                                                launcherPanel.close();
+                                                PanelService.closeLauncher(screen);
                                               } else {
-                                                // In another mode -> switch to settings mode
-                                                launcherPanel.setSearchText(">settings ");
+                                                PanelService.setLauncherSearchText(screen, ">settings ");
                                               }
                                             }, Settings.data.appLauncher.overviewLayer);
     }

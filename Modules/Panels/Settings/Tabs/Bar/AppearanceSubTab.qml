@@ -284,6 +284,7 @@ ColumnLayout {
   NDivider {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginS
+    visible: Settings.data.bar.displayMode === "auto_hide"
   }
 
   ColumnLayout {
