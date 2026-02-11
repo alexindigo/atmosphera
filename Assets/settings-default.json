@@ -335,7 +335,6 @@
   },
   "network": {
     "wifiEnabled": true,
-    "airplaneModeEnabled": false,
     "bluetoothRssiPollingEnabled": false,
     "bluetoothRssiPollIntervalMs": 60000,
     "wifiDetailsViewMode": "grid",

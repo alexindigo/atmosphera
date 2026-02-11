@@ -70,7 +70,6 @@ Singleton {
     }
   }
 
-  property bool airplaneModeToggled: false
   property bool bluetoothBlocked: false
   property bool wifiBlocked: false
 
@@ -78,16 +77,12 @@ Singleton {
     target: Settings.data.network
     function onWifiEnabledChanged() {
       if (Settings.data.network.wifiEnabled) {
-        if (!root.airplaneModeToggled) {
-          ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.enabled"), "wifi");
-        }
+        ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.enabled"), "wifi");
         // Perform a scan to update the UI
         delayedScanTimer.interval = 3000;
         delayedScanTimer.restart();
       } else {
-        if (!root.airplaneModeToggled) {
-          ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.disabled"), "wifi-off");
-        }
+        ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.disabled"), "wifi-off");
         // Clear networks so the widget icon changes
         root.networks = ({});
       }
@@ -119,49 +114,12 @@ Singleton {
         var wifiBlocked = checkBluetoothBlocked.wifiBlockedState;
         var btBlocked = text && text.trim().indexOf("Soft blocked: yes") !== -1;
 
-        // Check if airplane mode is desired by the user
-        var desiredAirplaneMode = Settings.data.network.airplaneModeEnabled;
-
-        // Track if actual state changed
-        var actualAirplaneModeActive = wifiBlocked && btBlocked;
-        var previousAirplaneModeActive = root.wifiBlocked && root.bluetoothBlocked;
-
-        // Enforcement: If desired state doesn't match actual state, force it.
-        if (desiredAirplaneMode && !actualAirplaneModeActive) {
-          // User wants airplane mode ON, but it's not actually active. Force it.
-          Logger.i("Network", "Enforcing Airplane Mode ON (rfkill block all)");
-          Quickshell.execDetached(["rfkill", "block", "wifi"]);
-          Quickshell.execDetached(["rfkill", "block", "bluetooth"]);
-          // We expect subsequent rfkill checks to confirm the state change.
-        } else if (!desiredAirplaneMode && actualAirplaneModeActive) {
-          // User wants airplane mode OFF, but it's still active. Force it off.
-          Logger.i("Network", "Enforcing Airplane Mode OFF (rfkill unblock all)");
-          Quickshell.execDetached(["rfkill", "unblock", "wifi"]);
-          Quickshell.execDetached(["rfkill", "unblock", "bluetooth"]);
-          // We expect subsequent rfkill checks to confirm the state change.
-        }
-
-        // Now handle toasts and update internal state based on current rfkill states.
-        // This part needs to be outside the enforcement blocks to correctly react to delayed rfkill changes.
-        if (actualAirplaneModeActive && !previousAirplaneModeActive) {
-          root.airplaneModeToggled = true; // Temporarily set to suppress individual toasts
-          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.enabled"), "plane");
-          root.airplaneModeToggled = false;
-        } else if (!actualAirplaneModeActive && previousAirplaneModeActive) {
-          root.airplaneModeToggled = true; // Temporarily set to suppress individual toasts
-          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.disabled"), "plane-off");
-          root.airplaneModeToggled = false;
-        } else {
-          // Standard state change notifications for WiFi only, if not in airplane mode context
-          if (wifiBlocked !== root.wifiBlocked) {
-            // Only show individual wifi toast if airplane mode is not currently active
-            if (!actualAirplaneModeActive) {
-                if (wifiBlocked) {
-                  ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.disabled"), "wifi-off");
-                } else {
-                  ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.enabled"), "wifi");
-                }
-            }
+        // Standard state change notifications for WiFi only
+        if (wifiBlocked !== root.wifiBlocked) {
+          if (wifiBlocked) {
+            ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.disabled"), "wifi-off");
+          } else {
+            ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.enabled"), "wifi");
           }
         }
 
@@ -184,7 +142,7 @@ Singleton {
       root.refreshActiveWifiDetails();
       root.refreshActiveEthernetDetails();
       connectivityCheckProcess.running = true;
-      checkWifiBlocked.running = true; // Refresh airplane mode state after resume
+      checkWifiBlocked.running = true; // Refresh rfkill states after resume
     }
   }
 
@@ -198,7 +156,7 @@ Singleton {
       ethernetStateProcess.running = true;
       refreshActiveWifiDetails();
       refreshActiveEthernetDetails();
-      checkWifiBlocked.running = true; // Trigger airplane mode check on startup
+      checkWifiBlocked.running = true; // Trigger rfkill check on startup
     }
   }
 
@@ -325,20 +283,6 @@ Singleton {
     running: ProgramCheckerService.nmcliAvailable
     repeat: true
     onTriggered: connectivityCheckProcess.running = true
-  }
-
-  function setAirplaneMode(enabled) {
-    if (enabled) {
-      Logger.i("Network", "Executing rfkill block all (airplane mode ON)");
-      Quickshell.execDetached(["rfkill", "block", "wifi"]);
-      Quickshell.execDetached(["rfkill", "block", "bluetooth"]);
-    } else {
-      Logger.i("Network", "Executing rfkill unblock all (airplane mode OFF)");
-      Quickshell.execDetached(["rfkill", "unblock", "wifi"]);
-      Quickshell.execDetached(["rfkill", "unblock", "bluetooth"]);
-    }
-    // Trigger the check immediately to reflect state changes
-    checkWifiBlocked.running = true;
   }
 
   // Core functions

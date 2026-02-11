@@ -174,7 +174,7 @@ Item {
 
           NToggle {
             checked: BluetoothService.enabled
-            enabled: !NetworkService.bluetoothBlocked || !Settings.data.network.airplaneModeEnabled
+            enabled: !NetworkService.bluetoothBlocked
             onToggled: checked => BluetoothService.setBluetoothEnabled(checked)
             Layout.alignment: Qt.AlignVCenter
           }

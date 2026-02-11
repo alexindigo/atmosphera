@@ -540,7 +540,6 @@ Singleton {
     // network
     property JsonObject network: JsonObject {
       property bool wifiEnabled: true
-      property bool airplaneModeEnabled: false // New property for persistent airplane mode state
       property bool bluetoothRssiPollingEnabled: false  // Opt-in Bluetooth RSSI polling (uses bluetoothctl)
       property int bluetoothRssiPollIntervalMs: 60000 // Polling interval in milliseconds for RSSI queries
       property string wifiDetailsViewMode: "grid"   // "grid" or "list"
