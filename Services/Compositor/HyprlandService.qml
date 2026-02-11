@@ -493,8 +493,7 @@ Item {
 
   function spawn(command) {
     try {
-      const cmdArray = Array.isArray(command) ? command : (command && typeof command === "object" && command.length !== undefined) ? Array.from(command) : [command];
-      Quickshell.execDetached(["hyprctl", "dispatch", "--", "exec"].concat(cmdArray));
+      Quickshell.execDetached(["hyprctl", "dispatch", "--", "exec"].concat(command));
     } catch (e) {
       Logger.e("HyprlandService", "Failed to spawn command:", e);
     }

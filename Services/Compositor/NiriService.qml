@@ -501,8 +501,7 @@ Item {
 
   function spawn(command) {
     try {
-      const cmdArray = Array.isArray(command) ? command : (command && typeof command === "object" && command.length !== undefined) ? Array.from(command) : [command];
-      const niriCommand = ["niri", "msg", "action", "spawn", "--"].concat(cmdArray);
+      const niriCommand = ["niri", "msg", "action", "spawn", "--"].concat(command);
       Logger.d("NiriService", "Calling niri spawn: " + niriCommand.join(" "));
       Quickshell.execDetached(niriCommand);
     } catch (e) {
