@@ -2,13 +2,13 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
+import "../../../Helpers/Keybinds.js" as Keybinds
 import qs.Commons
 import qs.Modules.MainScreen
 import qs.Modules.Panels.Settings
 import qs.Services.Theming
 import qs.Services.UI
 import qs.Widgets
-import "../../../Helpers/Keybinds.js" as Keybinds
 
 SmartPanel {
   id: root
@@ -421,20 +421,20 @@ SmartPanel {
               }
 
               Keys.onPressed: event => {
-                if (Keybinds.checkKey(event, 'down', Settings)) {
-                  if (Settings.data.wallpaper.useWallhaven) {
-                    if (wallhavenView && wallhavenView.gridView) {
-                      wallhavenView.gridView.forceActiveFocus();
-                    }
-                  } else {
-                    let currentView = screenRepeater.itemAt(currentScreenIndex);
-                    if (currentView && currentView.gridView) {
-                      currentView.gridView.forceActiveFocus();
-                    }
-                  }
-                  event.accepted = true;
-                }
-              }
+                                if (Keybinds.checkKey(event, 'down', Settings)) {
+                                  if (Settings.data.wallpaper.useWallhaven) {
+                                    if (wallhavenView && wallhavenView.gridView) {
+                                      wallhavenView.gridView.forceActiveFocus();
+                                    }
+                                  } else {
+                                    let currentView = screenRepeater.itemAt(currentScreenIndex);
+                                    if (currentView && currentView.gridView) {
+                                      currentView.gridView.forceActiveFocus();
+                                    }
+                                  }
+                                  event.accepted = true;
+                                }
+                              }
             }
 
             NComboBox {
@@ -905,13 +905,13 @@ SmartPanel {
         }
 
         onKeyPressed: event => {
-          if (Keybinds.checkKey(event, 'enter', Settings)) {
-            if (currentIndex >= 0 && currentIndex < filteredItems.length) {
-              selectItem(filteredItems[currentIndex]);
-            }
-            event.accepted = true;
-          }
-        }
+                        if (Keybinds.checkKey(event, 'enter', Settings)) {
+                          if (currentIndex >= 0 && currentIndex < filteredItems.length) {
+                            selectItem(filteredItems[currentIndex]);
+                          }
+                          event.accepted = true;
+                        }
+                      }
 
         delegate: Item {
           id: wallpaperItemWrapper
@@ -1266,14 +1266,14 @@ SmartPanel {
           }
 
           onKeyPressed: event => {
-            if (Keybinds.checkKey(event, 'enter', Settings)) {
-              if (currentIndex >= 0 && currentIndex < wallpapers.length) {
-                let wallpaper = wallpapers[currentIndex];
-                wallhavenDownloadAndApply(wallpaper);
-              }
-              event.accepted = true;
-            }
-          }
+                          if (Keybinds.checkKey(event, 'enter', Settings)) {
+                            if (currentIndex >= 0 && currentIndex < wallpapers.length) {
+                              let wallpaper = wallpapers[currentIndex];
+                              wallhavenDownloadAndApply(wallpaper);
+                            }
+                            event.accepted = true;
+                          }
+                        }
 
           delegate: Item {
             id: wallhavenItemWrapper
