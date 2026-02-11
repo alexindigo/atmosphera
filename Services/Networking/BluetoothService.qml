@@ -12,7 +12,7 @@ Singleton {
   id: root
 
   // Constants (centralized tunables)
-  readonly property int ctlPollMs: 1500
+  readonly property int ctlPollMs: 10000
   readonly property int ctlPollSoonMs: 250
 
   property bool airplaneModeToggled: false
@@ -43,8 +43,8 @@ Singleton {
   // Experimental: best‑effort RSSI polling for connected devices (without root)
   // Enabled in debug mode or via user setting in Settings > Network
   property bool rssiPollingEnabled: (Settings && (Settings.isDebug || (Settings.data && Settings.data.network && Settings.data.network.bluetoothRssiPollingEnabled))) ? true : false
-  // Interval can be configured from Settings; defaults to 10s
-  property int rssiPollIntervalMs: (Settings && Settings.data && Settings.data.network && Settings.data.network.bluetoothRssiPollIntervalMs) ? Settings.data.network.bluetoothRssiPollIntervalMs : 10000
+  // Interval can be configured from Settings; defaults to 60s
+  property int rssiPollIntervalMs: (Settings && Settings.data && Settings.data.network && Settings.data.network.bluetoothRssiPollIntervalMs) ? Settings.data.network.bluetoothRssiPollIntervalMs : 60000
   // RSSI helper sub‑component
   property BluetoothRssi rssi: BluetoothRssi {
     enabled: root.enabled && root.rssiPollingEnabled
@@ -59,45 +59,6 @@ Singleton {
 
   // Internal: temporarily pause discovery during pair/connect to reduce HCI churn
   property bool _discoveryWasRunning: false
-  property double _discoveryResumeAtMs: 0
-  // Timer used to restore discovery after temporary pause during pair/connect
-  Timer {
-    id: restoreDiscoveryTimer
-    repeat: false
-    onTriggered: {
-      const now = Date.now();
-      if (now < root._discoveryResumeAtMs) {
-        // Not yet time to resume; reschedule
-        interval = Math.max(100, root._discoveryResumeAtMs - now);
-        restart();
-        return;
-      }
-      if (root._discoveryWasRunning) {
-        root.setScanActive(true);
-      }
-      root._discoveryWasRunning = false;
-      root._discoveryResumeAtMs = 0;
-    }
-  }
-
-  function _pauseDiscoveryFor(ms) {
-    try {
-      // Remember if discovery was running before the first pause
-      root._discoveryWasRunning = root._discoveryWasRunning || !!root.ctlDiscovering;
-      if (root.ctlDiscovering) {
-        root.setScanActive(false);
-      }
-      if (ms && ms > 0) {
-        const now = Date.now();
-        const resumeAt = now + ms;
-        if (resumeAt > root._discoveryResumeAtMs) {
-          root._discoveryResumeAtMs = resumeAt;
-        }
-        restoreDiscoveryTimer.interval = Math.max(100, root._discoveryResumeAtMs - now);
-        restoreDiscoveryTimer.restart();
-      }
-    } catch (_) {}
-  }
 
   // Persistent process for fallback scanning to keep the session alive
   Process {
@@ -298,6 +259,16 @@ Singleton {
     pollCtlStateSoonTimer.restart();
   }
 
+  // Handle system wakeup to force-poll and ensure state is up-to-date
+  Connections {
+    target: Time
+    function onResumed() {
+      Logger.i("Bluetooth", "System resumed - forcing state poll");
+      ctlPollTimer.restart();
+      pollCtlState();
+    }
+  }
+
   // Adapter power (enable/disable) via bluetoothctl
   function setBluetoothEnabled(state) {
     Logger.i("Bluetooth", "SetBluetoothEnabled", state);
@@ -489,6 +460,7 @@ Singleton {
         root.setScanActive(true);
       }
       root._discoveryWasRunning = false;
+      root.requestCtlPoll();
     }
   }
 
@@ -518,8 +490,10 @@ Singleton {
     const intervalSec = Math.max(1, Math.round(intervalMs / 1000));
 
     // Pause discovery during pair/connect to avoid interference
-    const totalPauseMs = (pairWait * 1000) + (attempts * intervalSec * 1000) + 2000;
-    _pauseDiscoveryFor(totalPauseMs);
+    root._discoveryWasRunning = root.scanningActive;
+    if (root.scanningActive) {
+      root.setScanActive(false);
+    }
 
     const scriptPath = Quickshell.shellDir + "/Scripts/python/src/network/bluetooth-pair.py";
 
