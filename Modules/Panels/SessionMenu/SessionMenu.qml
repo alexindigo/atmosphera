@@ -444,11 +444,15 @@ SmartPanel {
   function checkKey(event, settingName) {
     // Map simplified names to the actual setting property names
     var propName = "key" + settingName.charAt(0).toUpperCase() + settingName.slice(1);
-    var boundKey = Settings.data.general.keybinds[propName];
-    if (!boundKey)
+    var boundKeys = Settings.data.general.keybinds[propName];
+    if (!boundKeys || boundKeys.length === 0)
       return false;
     var eventString = getKeybindString(event);
-    return eventString === boundKey;
+    for (var i = 0; i < boundKeys.length; i++) {
+      if (boundKeys[i] === eventString)
+        return true;
+    }
+    return false;
   }
 
   function handleUp() {

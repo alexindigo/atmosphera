@@ -25,7 +25,7 @@ Singleton {
   - Default cache directory: ~/.cache/noctalia
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 50
+  readonly property int settingsVersion: 51
   readonly property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
   readonly property string shellName: "noctalia"
   readonly property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
@@ -291,12 +291,12 @@ Singleton {
       property real lockScreenBlur: 0.0
       property real lockScreenTint: 0.0
       property JsonObject keybinds: JsonObject {
-        property string keyUp: "Up"
-        property string keyDown: "Down"
-        property string keyLeft: "Left"
-        property string keyRight: "Right"
-        property string keyEnter: "Return"
-        property string keyEscape: "Esc"
+        property list<string> keyUp: ["Up"]
+        property list<string> keyDown: ["Down"]
+        property list<string> keyLeft: ["Left"]
+        property list<string> keyRight: ["Right"]
+        property list<string> keyEnter: ["Return"]
+        property list<string> keyEscape: ["Esc"]
       }
     }
 

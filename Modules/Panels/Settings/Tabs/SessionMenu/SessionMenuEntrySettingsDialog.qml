@@ -160,11 +160,12 @@ Popup {
         Layout.fillWidth: true
         label: I18n.tr("common.keybind")
         description: I18n.tr("panels.session-menu.entry-settings-keybind-description")
-        currentKeybind: keybindInputText
-        onKeybindChanged: newKeybind => {
-                            keybindInputText = newKeybind;
-                            root.save();
-                          }
+        allowEmpty: true
+        currentKeybinds: keybindInputText ? [keybindInputText] : []
+        onKeybindsChanged: newKeybinds => {
+                             keybindInputText = newKeybinds.length > 0 ? newKeybinds[0] : "";
+                             root.save();
+                           }
       }
 
       // Hidden property to store the text since NKeybindRecorder manages its own state

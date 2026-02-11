@@ -101,6 +101,7 @@ SmartPanel {
   }
 
   function onReturnPressed() {
+    console.log("YOUASD");
     if (!contentItem)
       return;
 
@@ -420,8 +421,8 @@ SmartPanel {
               }
 
               Keys.onPressed: event => {
-                                var boundKey = Settings.data.general.keybinds.keyDown;
-                                if (!boundKey)
+                                var boundKeys = Settings.data.general.keybinds.keyDown;
+                                if (!boundKeys || boundKeys.length === 0)
                                 return;
 
                                 // Helper to check key string (duplicated from LauncherCore/SessionMenu logic for now)
@@ -450,8 +451,8 @@ SmartPanel {
                                 else if (event.key === Qt.Key_Right)
                                 keyName = "Right";
 
-                                // If the key matches the bound key for Down
-                                if ((keyStr + keyName) === boundKey) {
+                                // If the key matches any bound key for Down
+                                if (boundKeys.indexOf(keyStr + keyName) !== -1) {
                                   if (Settings.data.wallpaper.useWallhaven) {
                                     if (wallhavenView && wallhavenView.gridView) {
                                       wallhavenView.gridView.forceActiveFocus();
