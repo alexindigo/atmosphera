@@ -185,7 +185,9 @@ Item {
         }
 
         NText {
-          text: I18n.tr("panels.connections.bluetooth-discoverable", {hostName: HostService.hostName})
+          text: I18n.tr("panels.connections.bluetooth-discoverable", {
+                          hostName: HostService.hostName
+                        })
           visible: (BluetoothService.enabled && isDiscoverable)
           richTextEnabled: true
           wrapMode: Text.WordWrap
@@ -333,6 +335,19 @@ Item {
       onToggled: checked => Settings.data.network.bluetoothRssiPollingEnabled = checked
       Layout.alignment: Qt.AlignVCenter
       visible: !btprefs.showOnlyLists && BluetoothService.enabled
+    }
+    NSpinBox {
+      label: I18n.tr("panels.connections.bluetooth-rssi-polling-interval-label")
+      description: I18n.tr("panels.connections.bluetooth-rssi-polling-interval-description")
+      from: 10000
+      to: 120000
+      stepSize: 1000
+      value: Settings.data && Settings.data.network && Settings.data.network.bluetoothRssiPollIntervalMs
+      defaultValue: Settings.getDefaultValue("network.bluetoothRssiPollIntervalMs")
+      onValueChanged: Settings.data.network.bluetoothRssiPollIntervalMs = value
+      suffix: " ms"
+      Layout.alignment: Qt.AlignVCenter
+      visible: (!btprefs.showOnlyLists && BluetoothService.enabled) && Settings.data && Settings.data.network && Settings.data.network.bluetoothRssiPollingEnabled
     }
   }
 
