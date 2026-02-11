@@ -1,6 +1,5 @@
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import qs.Commons
 import qs.Services.Compositor
 import qs.Services.System
@@ -59,35 +58,11 @@ Item {
     return names[category] || category;
   }
 
-  // Persistent usage tracking stored in cacheDir
-  property string usageFilePath: Settings.cacheDir + "launcher_app_usage.json"
-
-  FileView {
-    id: usageFile
-    path: usageFilePath
-    printErrors: false
-    watchChanges: false
-
-    onLoadFailed: function (error) {
-      if (error.toString().includes("No such file") || error === 2) {
-        writeAdapter();
-      }
-    }
-
-    JsonAdapter {
-      id: usageAdapter
-      // key: app id/command, value: integer count
-      property var counts: ({})
-    }
-  }
-
   function init() {
     loadApplications();
   }
 
   function onOpened() {
-    // Persist any usage data recorded since last open
-    usageFile.writeAdapter();
     // Refresh apps when launcher opens
     loadApplications();
     // Default to Pinned if there are pinned apps, otherwise all
@@ -633,21 +608,10 @@ Item {
   }
 
   function getUsageCount(app) {
-    const key = getAppKey(app);
-    const m = usageAdapter && usageAdapter.counts ? usageAdapter.counts : null;
-    if (!m)
-      return 0;
-    const v = m[key];
-    return typeof v === 'number' && isFinite(v) ? v : 0;
+    return ShellState.getLauncherUsageCount(getAppKey(app));
   }
 
   function recordUsage(app) {
-    const key = getAppKey(app);
-    if (!usageAdapter.counts) {
-      usageAdapter.counts = ({});
-    }
-    // Mutate in-place — no property change notification, no file I/O.
-    // Data is flushed to disk on next open via onOpened().
-    usageAdapter.counts[key] = getUsageCount(app) + 1;
+    ShellState.recordLauncherUsage(getAppKey(app));
   }
 }
