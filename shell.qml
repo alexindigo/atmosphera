@@ -109,6 +109,7 @@ ShellRoot {
           HostService.init();
           GitHubService.init();
           SupporterService.init();
+          CustomButtonIPCService.init();
         });
 
         delayedInitTimer.running = true;
@@ -145,11 +146,6 @@ ShellRoot {
       IPCService {
         id: ipcService
         screenDetector: screenDetector
-      }
-
-      // CustomButtonIPCService handles IPC commands for custom buttons
-      CustomButtonIPCService {
-        id: customButtonIPCService
       }
 
       // Container for plugins Main.qml instances (must be in graphics scene)
