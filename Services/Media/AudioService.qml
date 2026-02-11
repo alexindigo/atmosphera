@@ -482,4 +482,48 @@ Singleton {
     }
     Pipewire.preferredDefaultAudioSource = newSource;
   }
+
+  function getDeviceIcon(node: PwNode): string {
+    if (!node || !node.properties) {
+      return node && !node.isSink ? "microphone" : "volume";
+    }
+
+    const props = node.properties;
+    const isSink = node.isSink;
+    
+    // Properties to scan for keywords
+    const searchTerms = [
+      node.description,
+      node.name,
+      props["node.nick"],
+      props["alsa.card_name"],
+      props["alsa.id"],
+      props["device.form-factor"],
+      props["media.class"],
+      props["device.profile.name"]
+    ].filter(s => s).map(s => s.toLowerCase());
+
+    const hasMatch = (keywords) => keywords.some(k => searchTerms.some(t => t.includes(k)));
+
+    if (hasMatch(["hdmi", "displayport", "digital stereo", "monitor", "tv"])) {
+      return "bt-device-tv";
+    }
+
+    if (hasMatch(["headphone", "headset", "earbud", "earphone", "cloud", "arctis", "major", "minor", "wireless"])) {
+      return "bt-device-headphones";
+    }
+
+    if (!isSink || hasMatch(["microphone", "mic"])) {
+      if (hasMatch(["microphone", "mic"])) return "microphone";
+    }
+
+    if (hasMatch(["speaker", "loudspeaker", "internal", "analog", "pci"])) {
+      return isSink ? "bt-device-speaker" : "microphone";
+    }
+
+    if (props["device.bus"] === "bluetooth") return "bluetooth";
+    if (props["device.bus"] === "usb") return isSink ? "bt-device-speaker" : "microphone";
+
+    return isSink ? "volume" : "microphone";
+  }
 }
