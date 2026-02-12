@@ -650,6 +650,7 @@ SmartPanel {
     // Browse mode properties
     property string currentBrowsePath: WallpaperService.getCurrentBrowsePath(targetScreen?.name ?? "")
     property bool isBrowseMode: Settings.data.wallpaper.viewMode === "browse"
+    property int _browseScanGeneration: 0
 
     // Sort favorites to the top (only for non-directory items)
     function sortFavoritesToTop(items) {
@@ -756,8 +757,29 @@ SmartPanel {
     // non-favorite model rebuilds (sort, filter, navigation) don't animate.
     Timer {
       id: animateMovementResetTimer
-      interval: Style.animationNormal + 50
-      onTriggered: wallpaperGridView.animateMovement = false
+      readonly property int settleDelay: 50
+      interval: Style.animationNormal + settleDelay
+      onTriggered: {
+        wallpaperGridView.animateMovement = false;
+        reconcileModel();
+      }
+    }
+
+    // Reorder wallpaperModel to match filteredItems using in-place moves.
+    // Avoids clear+rebuild which would destroy delegates and flash thumbnails.
+    function reconcileModel() {
+      for (var i = 0; i < filteredItems.length; i++) {
+        var currentPos = -1;
+        for (var j = i; j < wallpaperModel.count; j++) {
+          if (wallpaperModel.get(j).path === filteredItems[i].path) {
+            currentPos = j;
+            break;
+          }
+        }
+        if (currentPos !== -1 && currentPos !== i) {
+          wallpaperModel.move(currentPos, i, 1);
+        }
+      }
     }
 
     Component.onCompleted: {
@@ -809,7 +831,11 @@ SmartPanel {
         var browsePath = WallpaperService.getCurrentBrowsePath(targetScreen.name);
         currentBrowsePath = browsePath;
 
+        // Bump generation so stale scan callbacks from rapid navigation are ignored
+        var gen = ++_browseScanGeneration;
         WallpaperService.scanDirectoryWithDirs(targetScreen.name, browsePath, function (result) {
+          if (gen !== _browseScanGeneration)
+            return; // Stale callback from a superseded navigation
           wallpapersList = result.files;
           directoriesList = result.directories;
           Logger.d("WallpaperPanel", "Browse mode: Got", wallpapersList.length, "files and", directoriesList.length, "directories for screen", targetScreen.name);
