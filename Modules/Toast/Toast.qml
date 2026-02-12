@@ -30,6 +30,26 @@ Item {
 
   property real progress: 1.0
   property int hoverCount: 0
+  property real swipeOffset: 0
+  property real pressGlobalX: 0
+  property bool isSwiping: false
+  readonly property string location: Settings.data.notifications?.location || "top_right"
+  readonly property bool isLeft: location.endsWith("_left")
+  readonly property bool isRight: location.endsWith("_right")
+  readonly property real swipeStartThreshold: Math.round(18 * Style.uiScaleRatio)
+  readonly property real swipeDismissThreshold: Math.max(110, background.width * 0.32)
+
+  transform: Translate {
+    x: root.swipeOffset
+  }
+
+  function clampSwipeDelta(deltaX) {
+    if (isRight)
+      return Math.max(0, deltaX);
+    if (isLeft)
+      return Math.min(0, deltaX);
+    return deltaX;
+  }
 
   onHoverCountChanged: {
     if (hoverCount > 0) {
@@ -148,6 +168,14 @@ Item {
     }
   }
 
+  Behavior on swipeOffset {
+    enabled: !root.isSwiping
+    NumberAnimation {
+      duration: Style.animationFast
+      easing.type: Easing.OutCubic
+    }
+  }
+
   Timer {
     id: hideAnimation
     interval: Style.animationFast
@@ -165,6 +193,7 @@ Item {
 
   // Click anywhere dismiss the toast (must be before content so action link can override)
   MouseArea {
+    id: toastDragArea
     anchors.fill: background
     acceptedButtons: Qt.LeftButton
     hoverEnabled: true
@@ -174,7 +203,41 @@ Item {
     onExited: {
       root.hoverCount--;
     }
-    onClicked: root.hide()
+    onPressed: mouse => {
+                 const globalPoint = toastDragArea.mapToGlobal(mouse.x, mouse.y);
+                 root.pressGlobalX = globalPoint.x;
+                 root.isSwiping = false;
+               }
+    onPositionChanged: mouse => {
+                         if (!(mouse.buttons & Qt.LeftButton))
+                           return;
+                         const globalPoint = toastDragArea.mapToGlobal(mouse.x, mouse.y);
+                         const deltaX = root.clampSwipeDelta(globalPoint.x - root.pressGlobalX);
+                         if (!root.isSwiping) {
+                           if (Math.abs(deltaX) < root.swipeStartThreshold)
+                             return;
+                           root.isSwiping = true;
+                         }
+                         root.swipeOffset = deltaX;
+                       }
+    onReleased: mouse => {
+                  if (mouse.button !== Qt.LeftButton)
+                    return;
+                  if (root.isSwiping) {
+                    root.isSwiping = false;
+                    if (Math.abs(root.swipeOffset) >= root.swipeDismissThreshold) {
+                      root.hide();
+                    } else {
+                      root.swipeOffset = 0;
+                    }
+                    return;
+                  }
+                  root.hide();
+                }
+    onCanceled: {
+      root.isSwiping = false;
+      root.swipeOffset = 0;
+    }
     cursorShape: Qt.PointingHandCursor
   }
 
@@ -280,6 +343,8 @@ Item {
     scale = 1.0;
     progress = 1.0;
     hoverCount = 0;
+    isSwiping = false;
+    swipeOffset = 0;
 
     // Configure and start animation
     progressAnimation.duration = duration;
@@ -290,6 +355,8 @@ Item {
 
   function hide() {
     progressAnimation.stop();
+    isSwiping = false;
+    swipeOffset = 0;
     opacity = 0;
     scale = initialScale;
     hideAnimation.restart();
@@ -298,6 +365,8 @@ Item {
   function hideImmediately() {
     hideAnimation.stop();
     progressAnimation.stop();
+    isSwiping = false;
+    swipeOffset = 0;
     opacity = 0;
     scale = initialScale;
     root.hidden();

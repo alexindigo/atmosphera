@@ -211,15 +211,30 @@ Variants {
             property real scaleValue: 0.8
             property real opacityValue: 0.0
             property real slideOffset: 0
+            property real swipeOffset: 0
+            property real pressGlobalX: 0
+            property bool isSwiping: false
+            property bool suppressClick: false
+            readonly property real swipeStartThreshold: Math.round(18 * Style.uiScaleRatio)
+            readonly property real swipeDismissThreshold: Math.max(110, cardBackground.width * 0.32)
 
             scale: scaleValue
             opacity: opacityValue
             transform: Translate {
+              x: card.swipeOffset
               y: card.slideOffset
             }
 
             readonly property real slideInOffset: notifWindow.isTop ? -slideDistance : slideDistance
             readonly property real slideOutOffset: slideInOffset
+
+            function clampSwipeDelta(deltaX) {
+              if (notifWindow.isRight)
+                return Math.max(0, deltaX);
+              if (notifWindow.isLeft)
+                return Math.min(0, deltaX);
+              return deltaX;
+            }
 
             // Background with border
             Rectangle {
@@ -301,26 +316,69 @@ Variants {
 
             // Right-click to dismiss
             MouseArea {
+              id: cardDragArea
               anchors.fill: cardBackground
               acceptedButtons: Qt.LeftButton | Qt.RightButton
               hoverEnabled: true
               onEntered: card.hoverCount++
               onExited: card.hoverCount--
-              onClicked: mouse => {
-                           if (mouse.button === Qt.RightButton) {
-                             card.animateOut();
-                           } else if (mouse.button === Qt.LeftButton) {
-                             var actions = model.actionsJson ? JSON.parse(model.actionsJson) : [];
-                             var hasDefault = actions.some(function (a) {
-                               return a.identifier === "default";
-                             });
-                             if (hasDefault) {
-                               card.animateOut();
-                               deferredActionTimer.actionId = "default";
-                               deferredActionTimer.start();
-                             }
+              onPressed: mouse => {
+                           if (mouse.button === Qt.LeftButton) {
+                             const globalPoint = cardDragArea.mapToGlobal(mouse.x, mouse.y);
+                             card.pressGlobalX = globalPoint.x;
+                             card.isSwiping = false;
+                             card.suppressClick = false;
                            }
                          }
+              onPositionChanged: mouse => {
+                                   if (!(mouse.buttons & Qt.LeftButton) || card.isRemoving)
+                                     return;
+                                   const globalPoint = cardDragArea.mapToGlobal(mouse.x, mouse.y);
+                                   const deltaX = card.clampSwipeDelta(globalPoint.x - card.pressGlobalX);
+                                   if (!card.isSwiping) {
+                                     if (Math.abs(deltaX) < card.swipeStartThreshold)
+                                       return;
+                                     card.isSwiping = true;
+                                   }
+                                   card.swipeOffset = deltaX;
+                                 }
+              onReleased: mouse => {
+                            if (mouse.button === Qt.RightButton) {
+                              card.animateOut();
+                              return;
+                            }
+
+                            if (mouse.button !== Qt.LeftButton)
+                              return;
+
+                            if (card.isSwiping) {
+                              if (Math.abs(card.swipeOffset) >= card.swipeDismissThreshold) {
+                                card.dismissBySwipe();
+                              } else {
+                                card.swipeOffset = 0;
+                              }
+                              card.suppressClick = true;
+                              card.isSwiping = false;
+                              return;
+                            }
+
+                            if (card.suppressClick)
+                              return;
+
+                            var actions = model.actionsJson ? JSON.parse(model.actionsJson) : [];
+                            var hasDefault = actions.some(function (a) {
+                              return a.identifier === "default";
+                            });
+                            if (hasDefault) {
+                              card.animateOut();
+                              deferredActionTimer.actionId = "default";
+                              deferredActionTimer.start();
+                            }
+                          }
+              onCanceled: {
+                card.isSwiping = false;
+                card.swipeOffset = 0;
+              }
             }
             // Animation setup
             function triggerEntryAnimation() {
@@ -329,6 +387,8 @@ Variants {
               resumeTimer.stop();
               isRemoving = false;
               hoverCount = 0;
+              isSwiping = false;
+              swipeOffset = 0;
               if (Settings.data.general.animationDisabled) {
                 slideOffset = 0;
                 scaleValue = 1.0;
@@ -366,10 +426,28 @@ Variants {
               animInDelayTimer.stop();
               resumeTimer.stop();
               isRemoving = true;
+              isSwiping = false;
+              swipeOffset = 0;
               if (!Settings.data.general.animationDisabled) {
                 slideOffset = slideOutOffset;
                 scaleValue = 0.8;
                 opacityValue = 0.0;
+              }
+            }
+
+            function dismissBySwipe() {
+              if (isRemoving)
+                return;
+              animInDelayTimer.stop();
+              resumeTimer.stop();
+              isRemoving = true;
+              isSwiping = false;
+              if (!Settings.data.general.animationDisabled) {
+                swipeOffset = swipeOffset >= 0 ? cardBackground.width + Style.marginXL : -cardBackground.width - Style.marginXL;
+                scaleValue = 0.8;
+                opacityValue = 0.0;
+              } else {
+                swipeOffset = 0;
               }
             }
 
@@ -427,6 +505,14 @@ Variants {
                 damping: 0.3
                 epsilon: 0.01
                 mass: 0.6
+              }
+            }
+
+            Behavior on swipeOffset {
+              enabled: !Settings.data.general.animationDisabled && !card.isSwiping
+              NumberAnimation {
+                duration: Style.animationFast
+                easing.type: Easing.OutCubic
               }
             }
 
