@@ -673,6 +673,7 @@
       "contributors-description": "Agradecimentos ao nosso <b>incrível</b> colaborador!",
       "contributors-description-plural": "Agradecimentos aos nossos {count} <b>incríveis</b> colaboradores!",
       "copy-info": "Copiar informações",
+      "debug-disabled": "Modo de depuração desativado",
       "debug-enabled": "Modo de depuração ativado",
       "info-copied": "Informação copiada para a área de transferência",
       "noctalia-desc": "Um shell de desktop elegante e minimalista, cuidadosamente criado para Wayland, construído com Quickshell.",

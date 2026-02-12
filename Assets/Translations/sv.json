@@ -673,6 +673,7 @@
       "contributors-description": "Tack till våra {count} <b>fantastiska</b> bidragsgivare!",
       "contributors-description-plural": "Tack till våra {count} <b>fantastiska</b> bidragsgivare!",
       "copy-info": "Kopiera info",
+      "debug-disabled": "Felsökningsläge inaktiverat",
       "debug-enabled": "Felsökningsläge aktiverat",
       "info-copied": "Info kopierad till urklipp",
       "noctalia-desc": "Ett elegant och minimalistiskt skrivbordsskal som är noggrant utformat för Wayland och byggt med Quickshell.",

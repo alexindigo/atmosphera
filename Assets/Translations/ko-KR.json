@@ -673,6 +673,7 @@
       "contributors-description": "{count}명의 <b>멋진</b> 기여자에게 감사를 전합니다!",
       "contributors-description-plural": "{count}명의 <b>멋진</b> 기여자들에게 감사를 전합니다!",
       "copy-info": "정보 복사",
+      "debug-disabled": "디버그 모드 비활성화됨",
       "debug-enabled": "디버그 모드 활성화됨",
       "info-copied": "정보가 클립보드에 복사됨",
       "noctalia-desc": "Wayland를 위해 세심하게 제작된 매끄럽고 미니멀한 데스크톱 셸로, Quickshell로 빌드되었습니다.",

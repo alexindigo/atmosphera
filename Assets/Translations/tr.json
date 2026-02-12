@@ -673,6 +673,7 @@
       "contributors-description": "{count} <b>harika</b> katılımcımıza <b>teşekkürler</b>!",
       "contributors-description-plural": "{count} <b>harika</b> katılımcımıza <b>teşekkürler</b>!",
       "copy-info": "Bilgileri kopyala",
+      "debug-disabled": "Hata ayıklama modu devre dışı bırakıldı",
       "debug-enabled": "Hata ayıklama modu etkinleştirildi",
       "info-copied": "Bilgi panoya kopyalandı",
       "noctalia-desc": "Wayland için düşünülmüş, Quickshell ile inşa edilmiş şık ve minimal masaüstü kabuğu.",

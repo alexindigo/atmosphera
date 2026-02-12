@@ -673,6 +673,7 @@
       "contributors-description": "向我们 {count} 位<b>超棒的</b>贡献者致敬！",
       "contributors-description-plural": "向我们 {count} 位<b>超棒的</b>贡献者致敬！",
       "copy-info": "复制信息",
+      "debug-disabled": "调试模式已禁用",
       "debug-enabled": "调试模式已启用",
       "info-copied": "信息已复制到剪贴板",
       "noctalia-desc": "一款为 Wayland 精心打造的时尚简约桌面 shell，基于 Quickshell 构建。",

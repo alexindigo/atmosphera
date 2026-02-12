@@ -673,6 +673,7 @@
       "contributors-description": "Podziękowania dla naszego {count} <b>niesamowitego</b> współtwórcy!",
       "contributors-description-plural": "Podziękowania dla naszych {count} <b>niesamowitych</b> współtwórców!",
       "copy-info": "Kopiuj informacje",
+      "debug-disabled": "Tryb debugowania wyłączony",
       "debug-enabled": "Tryb debugowania włączony",
       "info-copied": "Informacje skopiowane do schowka",
       "noctalia-desc": "Elegancka i minimalistyczna powłoka pulpitu stworzona dla Wayland, zbudowana w Quickshell.",

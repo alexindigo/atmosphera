@@ -673,6 +673,7 @@
       "contributors-description": "Köszönet a(z) {count} <b>fantasztikus</b> közreműködőnknek!",
       "contributors-description-plural": "Köszönet a(z) {count} <b>fantasztikus</b> közreműködőnknek!",
       "copy-info": "Információk másolása",
+      "debug-disabled": "Hibakeresési mód kikapcsolva",
       "debug-enabled": "Hibakeresési mód engedélyezve",
       "info-copied": "Információ a vágólapra másolva",
       "noctalia-desc": "Egy elegáns és minimalista asztali felület, Waylandra tervezve, Quickshell-en alapulva.",

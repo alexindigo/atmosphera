@@ -92,6 +92,23 @@ Singleton {
     }
   }
 
+  // When debug mode is disabled, tear down all hot reload watchers
+  Connections {
+    target: Settings
+
+    function onIsDebugChanged() {
+      if (!Settings.isDebug && root.pluginHotReloadEnabled.length > 0) {
+        Logger.i("PluginService", "Debug mode disabled, removing all hot reload watchers");
+        // Remove watchers for all hot-reload-enabled plugins
+        var plugins = root.pluginHotReloadEnabled.slice(); // copy since we mutate
+        for (var i = 0; i < plugins.length; i++) {
+          removePluginFileWatcher(plugins[i]);
+        }
+        root.pluginHotReloadEnabled = [];
+      }
+    }
+  }
+
   // Listen for language changes to reload plugin translations
   Connections {
     target: I18n

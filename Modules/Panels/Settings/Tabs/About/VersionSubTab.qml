@@ -385,16 +385,19 @@ ColumnLayout {
       MouseArea {
         anchors.fill: parent
         onClicked: {
-          if (Settings.isDebug)
-            return;
-          if (parent.debugTapCount === 0)
+          if (parent.debugTapCount === 0) {
             debugTapTimer.restart();
+          }
           parent.debugTapCount++;
           if (parent.debugTapCount >= 8) {
             parent.debugTapCount = 0;
             debugTapTimer.stop();
-            Settings.isDebug = true;
-            ToastService.showNotice("Debug", I18n.tr("panels.about.debug-enabled"));
+            Settings.isDebug = !Settings.isDebug;
+            if (Settings.isDebug) {
+              ToastService.showNotice("Debug", I18n.tr("panels.about.debug-enabled"));
+            } else {
+              ToastService.showNotice("Debug", I18n.tr("panels.about.debug-disabled"));
+            }
           }
         }
       }

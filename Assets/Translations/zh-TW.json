@@ -673,6 +673,7 @@
       "contributors-description": "特別感謝我們這{count}位<b>超讚</b>的貢獻者!!",
       "contributors-description-plural": "特別感謝我們這{count}位<b>超讚</b>的貢獻者!!",
       "copy-info": "複製資訊",
+      "debug-disabled": "偵錯模式已停用",
       "debug-enabled": "偵錯模式已啟用",
       "info-copied": "資訊已複製至剪貼簿",
       "noctalia-desc": "一個為 Wayland 精心打造, 兼具簡潔及流暢的桌面介面, 使用 Quickshell 建置",
