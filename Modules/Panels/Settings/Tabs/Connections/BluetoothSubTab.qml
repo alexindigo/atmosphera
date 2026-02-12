@@ -104,15 +104,15 @@ Item {
 
   function _updateScanningState() {
     if (effectivelyVisible && BluetoothService.enabled && !showOnlyLists) {
-      Logger.d("Bluetooth Prefs", "Panel/Tab Active");
+      Logger.d("BluetoothPrefs", "Panel/tab active");
       if (!isScanningActive) {
         BluetoothService.setScanActive(true);
       }
-      if (!isDiscoverable) {
+      if (!Settings.data.network.disableDiscoverability && !isDiscoverable) {
         BluetoothService.setDiscoverable(true);
       }
     } else {
-      Logger.d("Bluetooth Prefs", "Panel/Tab Inactive");
+      Logger.d("BluetoothPrefs", "Panel/tab inactive");
       if (isScanningActive) {
         BluetoothService.setScanActive(false);
       }
@@ -131,7 +131,7 @@ Item {
     if (isDiscoverable) {
       BluetoothService.setDiscoverable(false);
     }
-    Logger.d("Bluetooth Prefs", "Panel Closed");
+    Logger.d("BluetoothPrefs", "Panel closed");
   }
 
   ColumnLayout {
@@ -161,11 +161,8 @@ Item {
             color: BluetoothService.enabled ? Color.mPrimary : Color.mOnSurfaceVariant
           }
 
-          NText {
-            text: I18n.tr("common.bluetooth")
-            pointSize: Style.fontSizeL
-            font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
+          NLabel {
+            label: I18n.tr("common.bluetooth")
           }
 
           Item {
@@ -186,9 +183,7 @@ Item {
         }
 
         NText {
-          text: I18n.tr("panels.connections.bluetooth-discoverable", {
-                          hostName: HostService.hostName
-                        })
+          text: I18n.tr("panels.connections.bluetooth-discoverable", {hostName: HostService.hostName})
           visible: (BluetoothService.enabled && isDiscoverable)
           richTextEnabled: true
           wrapMode: Text.WordWrap
@@ -320,10 +315,22 @@ Item {
     }
 
     NToggle {
-      label: I18n.tr("tooltips.hide-unnamed-devices")
-      description: "Hide devices that appear only as Bluetooth addresses."
-      checked: Settings.data && Settings.data.network && Settings.data.network.bluetoothHideUnnamedDevices
+      label: I18n.tr("panels.connections.hide-unnamed-devices-label")  // former i18n key: tooltips.hide-unnamed-devices
+      description: I18n.tr("panels.connections.hide-unnamed-devices-description") // "Hide devices that appear only as Bluetooth addresses."
+      checked: Settings.data.network.bluetoothHideUnnamedDevices
       onToggled: checked => Settings.data.network.bluetoothHideUnnamedDevices = checked
+      Layout.alignment: Qt.AlignVCenter
+      visible: !btprefs.showOnlyLists && BluetoothService.enabled
+    }
+
+    NToggle {
+      label: I18n.tr("panels.connections.disable-discoverability-label") // "Disable device visibility"
+      description: I18n.tr("panels.connections.disable-discoverability-description") // "Hide your device from nearby Bluetooth devices."
+      checked: Settings.data.network.disableDiscoverability
+      onToggled: checked => {
+                              Settings.data.network.disableDiscoverability = checked;
+                              BluetoothService.setDiscoverable(!checked);
+                            }
       Layout.alignment: Qt.AlignVCenter
       visible: !btprefs.showOnlyLists && BluetoothService.enabled
     }
@@ -332,7 +339,7 @@ Item {
     NToggle {
       label: I18n.tr("panels.connections.bluetooth-rssi-polling-label")
       description: I18n.tr("panels.connections.bluetooth-rssi-polling-description")
-      checked: Settings.data && Settings.data.network && Settings.data.network.bluetoothRssiPollingEnabled
+      checked: Settings.data.network.bluetoothRssiPollingEnabled
       onToggled: checked => Settings.data.network.bluetoothRssiPollingEnabled = checked
       Layout.alignment: Qt.AlignVCenter
       visible: !btprefs.showOnlyLists && BluetoothService.enabled
@@ -343,12 +350,12 @@ Item {
       from: 10000
       to: 120000
       stepSize: 1000
-      value: Settings.data && Settings.data.network && Settings.data.network.bluetoothRssiPollIntervalMs
+      value: Settings.data.network.bluetoothRssiPollIntervalMs
       defaultValue: Settings.getDefaultValue("network.bluetoothRssiPollIntervalMs")
       onValueChanged: Settings.data.network.bluetoothRssiPollIntervalMs = value
       suffix: " ms"
       Layout.alignment: Qt.AlignVCenter
-      visible: (!btprefs.showOnlyLists && BluetoothService.enabled) && Settings.data && Settings.data.network && Settings.data.network.bluetoothRssiPollingEnabled
+      visible: (!btprefs.showOnlyLists && BluetoothService.enabled) && Settings.data.network.bluetoothRssiPollingEnabled
     }
   }
 

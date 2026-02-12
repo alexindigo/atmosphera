@@ -51,7 +51,7 @@ Item {
         "icon": Settings.data.network.wifiEnabled ? "wifi-off" : "wifi"
       },
       {
-        "label": I18n.tr("tooltips.manage-wifi") + " " + I18n.tr("tooltips.open-settings"),
+        "label": I18n.tr("common.wifi") + " " + I18n.tr("tooltips.open-settings"),
         "action": "wifi-settings",
         "icon": "settings"
       },
@@ -161,7 +161,7 @@ Item {
       } catch (e) {
         // noop
       }
-      return I18n.tr("tooltips.manage-wifi");
+      return I18n.tr("common.wifi");
     }
   }
 }

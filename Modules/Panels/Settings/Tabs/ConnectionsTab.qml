@@ -18,7 +18,7 @@ ColumnLayout {
     currentIndex: tabView.currentIndex
 
     NTabButton {
-      text: I18n.tr("tooltips.manage-wifi")
+      text: I18n.tr("common.wifi")
       // visible: NetworkService.wifiAvailable
       enabled: NetworkService.wifiAvailable // Remove when work finished, only use visibility
       tabIndex: 0
@@ -30,13 +30,6 @@ ColumnLayout {
       enabled: BluetoothService.bluetoothAvailable // Remove when work finished, only use visibility
       tabIndex: 1
       checked: subTabBar.currentIndex === 1
-    }
-    NTabButton {
-      text: I18n.tr("panels.connections.ethernet")
-      // visible: NetworkService.ethernetAvailable
-      enabled: NetworkService.ethernetAvailable // Remove when work finished, only use visibility
-      tabIndex: 2
-      checked: subTabBar.currentIndex === 2
     }
   }
 
@@ -51,6 +44,5 @@ ColumnLayout {
     currentIndex: subTabBar.currentIndex
     WifiSubTab {}
     BluetoothSubTab {}
-    EthernetSubTab {}
   }
 }

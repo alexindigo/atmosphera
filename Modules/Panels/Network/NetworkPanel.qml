@@ -140,13 +140,13 @@ SmartPanel {
                     panelViewMode = "wifi";
                   }
                 }
-                onEntered: TooltipService.show(parent, panelViewMode === "wifi" ? I18n.tr("control-center.wifi.label-ethernet") : I18n.tr("wifi.panel.title"))
+                onEntered: TooltipService.show(parent, panelViewMode === "wifi" ? I18n.tr("control-center.wifi.label-ethernet") : I18n.tr("common.wifi"))
                 onExited: TooltipService.hide()
               }
             }
 
             NText {
-              text: panelViewMode === "wifi" ? I18n.tr("wifi.panel.title") : I18n.tr("control-center.wifi.label-ethernet")
+              text: panelViewMode === "wifi" ? I18n.tr("common.wifi") : I18n.tr("control-center.wifi.label-ethernet")
               pointSize: Style.fontSizeL
               font.weight: Style.fontWeightBold
               color: Color.mOnSurface
@@ -198,7 +198,7 @@ SmartPanel {
             }
 
             NTabButton {
-              text: I18n.tr("tooltips.manage-wifi")
+              text: I18n.tr("common.wifi")
               tabIndex: 0
               checked: modeTabBar.currentIndex === 0
             }

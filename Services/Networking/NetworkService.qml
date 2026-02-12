@@ -70,77 +70,18 @@ Singleton {
     }
   }
 
-  property bool bluetoothBlocked: false
-  property bool wifiBlocked: false
-
   Connections {
     target: Settings.data.network
     function onWifiEnabledChanged() {
       if (Settings.data.network.wifiEnabled) {
-        ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.enabled"), "wifi");
+        ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("common.enabled"), "wifi");
         // Perform a scan to update the UI
         delayedScanTimer.interval = 3000;
         delayedScanTimer.restart();
       } else {
-        ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.disabled"), "wifi-off");
+        ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("common.disabled"), "wifi-off");
         // Clear networks so the widget icon changes
         root.networks = ({});
-      }
-    }
-  }
-
-  // Poll rfkill status periodically to detect hardware switches
-  Timer {
-    id: rfkillPollTimer
-    interval: 2000
-    repeat: true
-    running: true
-    onTriggered: checkWifiBlocked.running = true
-  }
-
-  // Handle Airplane Mode detection via rfkill
-  Process {
-    id: checkWifiBlocked
-    running: false
-    command: ["rfkill", "list", "wifi"]
-    stdout: StdioCollector {
-      onStreamFinished: {
-        var wifiBlocked = text && text.trim().indexOf("Soft blocked: yes") !== -1;
-        checkBluetoothBlocked.wifiBlockedState = wifiBlocked;
-        checkBluetoothBlocked.running = true;
-      }
-    }
-  }
-
-  Process {
-    id: checkBluetoothBlocked
-    running: false
-    command: ["rfkill", "list", "bluetooth"]
-    property bool wifiBlockedState: false // To pass state from checkWifiBlocked
-
-    stdout: StdioCollector {
-      onStreamFinished: {
-        var wifiBlocked = checkBluetoothBlocked.wifiBlockedState;
-        var btBlocked = text && text.trim().indexOf("Soft blocked: yes") !== -1;
-
-        var currentAirplaneMode = wifiBlocked && btBlocked;
-        var previousAirplaneMode = root.wifiBlocked && root.bluetoothBlocked;
-
-        if (currentAirplaneMode && !previousAirplaneMode) {
-          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.enabled"), "plane");
-        } else if (!currentAirplaneMode && previousAirplaneMode) {
-          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.disabled"), "plane-off");
-        } else {
-          if (wifiBlocked !== root.wifiBlocked) {
-            if (wifiBlocked) {
-              ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.disabled"), "wifi-off");
-            } else {
-              ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.enabled"), "wifi");
-            }
-          }
-        }
-        root.wifiBlocked = wifiBlocked;
-        root.bluetoothBlocked = btBlocked;
       }
     }
   }
@@ -310,8 +251,21 @@ Singleton {
     if (!ProgramCheckerService.nmcliAvailable) {
       return;
     }
+    Logger.i("Wi-Fi", "SetWifiEnabled", enabled);
     Settings.data.network.wifiEnabled = enabled;
     wifiStateEnableProcess.running = true;
+  }
+
+  function setAirplaneMode(enabled) {
+    if (enabled) {
+      Quickshell.execDetached(["rfkill", "block", "wifi"]);
+      Quickshell.execDetached(["rfkill", "block", "bluetooth"]);
+      Settings.data.network.airplaneModeEnabled = true;
+    } else {
+      Quickshell.execDetached(["rfkill", "unblock", "wifi"]);
+      Quickshell.execDetached(["rfkill", "unblock", "bluetooth"]);
+      Settings.data.network.airplaneModeEnabled = false;
+    }
   }
 
   function scan() {
@@ -974,7 +928,6 @@ Singleton {
 
     stdout: StdioCollector {
       onStreamFinished: {
-        Logger.i("Network", "Wi-Fi state change command executed");
         // Re-check the state to ensure it's in sync
         syncWifiState();
       }
@@ -1316,7 +1269,7 @@ Singleton {
         root.connecting = false;
         root.connectingTo = "";
         Logger.i("Network", "Connected to network: '" + connectProcess.ssid + "'");
-        ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("toast.wifi.connected", {
+        ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("toast.wifi.connected", {
                                                                        "ssid": connectProcess.ssid
                                                                      }), "wifi");
 
@@ -1347,7 +1300,7 @@ Singleton {
 
           Logger.w("Network", "Connect error: " + text);
           // Notify user about the failure
-          ToastService.showWarning(I18n.tr("wifi.panel.title"), root.lastError || I18n.tr("toast.wifi.connection-failed"));
+          ToastService.showWarning(I18n.tr("common.wifi"), root.lastError || I18n.tr("toast.wifi.connection-failed"));
         }
       }
     }
@@ -1362,7 +1315,7 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         Logger.i("Network", "Disconnected from network: '" + disconnectProcess.ssid + "'");
-        ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("toast.wifi.disconnected", {
+        ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("toast.wifi.disconnected", {
                                                                        "ssid": disconnectProcess.ssid
                                                                      }), "wifi-off");
 

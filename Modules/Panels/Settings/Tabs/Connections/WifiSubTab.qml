@@ -25,6 +25,43 @@ Item {
     anchors.right: parent.right
     spacing: Style.marginL
 
+    // Airplane Mode Toggle
+    NBox {
+      Layout.fillWidth: true
+      Layout.preferredHeight: masterControlColAirplane.implicitHeight
+
+      ColumnLayout {
+        id: masterControlColAirplane
+        anchors.fill: parent
+        spacing: Style.marginM
+
+        RowLayout {
+          Layout.fillWidth: true
+          spacing: Style.marginM
+
+          NIcon {
+            icon: Settings.data.network.airplaneModeEnabled ? "plane" : "plane-off"
+            pointSize: Style.fontSizeXXL
+            color: Settings.data.network.airplaneModeEnabled ? Color.mPrimary : Color.mOnSurfaceVariant
+          }
+
+          NLabel {
+            label: I18n.tr("toast.airplane-mode.title")
+          }
+
+          Item {
+            Layout.fillWidth: true
+          }
+
+          NToggle {
+            checked: Settings.data.network.airplaneModeEnabled
+            onToggled: checked => NetworkService.setAirplaneMode(checked)
+            Layout.alignment: Qt.AlignVCenter
+          }
+        }
+      }
+    }
+
     // Wi-Fi Master Control
     NBox {
       Layout.fillWidth: true
@@ -45,11 +82,11 @@ Item {
             color: Settings.data.network.wifiEnabled ? Color.mPrimary : Color.mOnSurfaceVariant
           }
 
-          NText {
-            text: I18n.tr("tooltips.manage-wifi")
-            pointSize: Style.fontSizeL
-            font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
+          NLabel {
+            label: I18n.tr("common.wifi")
+          }
+
+          Item {
             Layout.fillWidth: true
           }
 
@@ -57,7 +94,7 @@ Item {
             checked: Settings.data.network.wifiEnabled
             onToggled: checked => NetworkService.setWifiEnabled(checked)
             Layout.alignment: Qt.AlignVCenter
-            enabled: !NetworkService.wifiBlocked
+            enabled: ProgramCheckerService.nmcliAvailable
           }
         }
       }

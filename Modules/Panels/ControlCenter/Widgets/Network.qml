@@ -46,7 +46,7 @@ NIconButtonHot {
     } catch (e) {
       // noop
     }
-    return I18n.tr("tooltips.manage-wifi");
+    return I18n.tr("common.wifi");
   }
   onClicked: {
     var panel = PanelService.getPanel("networkPanel", screen);

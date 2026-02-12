@@ -402,7 +402,7 @@ NBox {
                       const value = NetworkService.activeWifiIf || "";
                       if (value.length > 0) {
                         Quickshell.execDetached(["wl-copy", value]);
-                        ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("toast.bluetooth.address-copied"), "wifi");
+                        ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("toast.bluetooth.address-copied"), "wifi");
                       }
                     }
                   }
@@ -545,7 +545,7 @@ NBox {
                       const value = NetworkService.activeWifiDetails.ipv4 || "";
                       if (value.length > 0) {
                         Quickshell.execDetached(["wl-copy", value]);
-                        ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("toast.bluetooth.address-copied"), "wifi");
+                        ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("toast.bluetooth.address-copied"), "wifi");
                       }
                     }
                   }

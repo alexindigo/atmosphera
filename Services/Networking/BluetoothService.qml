@@ -17,16 +17,20 @@ Singleton {
 
   readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
 
+  // Airplane mode status
+  property bool airplaneModeToggled: false
+  property bool wifiBlocked: false
+  property bool btBlocked: false
+
   // Power/blocked/availability state
   readonly property bool bluetoothAvailable: !!adapter
-  readonly property bool enabled: adapter ? adapter.enabled : root.ctlPowered
-  readonly property bool blocked: adapter?.state === BluetoothAdapterState.Blocked
+  readonly property bool enabled: adapter?.enabled ?? root.ctlPowered
   property bool ctlPowered: false
   property bool ctlDiscovering: false
   property bool ctlDiscoverable: false
 
-  // Adapter discoverability (advertising) flag (driven by bluetoothctl)
-  readonly property bool discoverable: root.ctlDiscoverable
+  // Adapter discoverability (advertising) flag
+  readonly property bool discoverable: adapter?.discoverable ?? root.ctlDiscoverable
   readonly property var devices: adapter ? adapter.devices : null
   readonly property var connectedDevices: {
     if (!adapter || !adapter.devices) {
@@ -94,7 +98,7 @@ Singleton {
   }
 
   // Exposed scanning flag for UI button state; reflects adapter discovery when available
-  readonly property bool scanningActive: (adapter && adapter.discovering) || root.ctlDiscovering
+  readonly property bool scanningActive: adapter?.discovering ?? root.ctlDiscovering
 
   function init() {
     Logger.i("Bluetooth", "Service started");
@@ -107,13 +111,58 @@ Singleton {
     target: adapter
     function onStateChanged() {
       if (!adapter || adapter.state === BluetoothAdapter.Enabling || adapter.state === BluetoothAdapter.Disabling) {
-      return;
+        return;
+      }
+      checkAirplaneMode.running = true;
     }
+  }
 
-      if (adapter.state === BluetoothAdapter.Enabled) {
-        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.enabled"), "bluetooth");
-      } else if (adapter.state === BluetoothAdapter.Disabled && !root.blocked) {
-        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.disabled"), "bluetooth-off");
+  Process {
+    id: checkAirplaneMode
+    running: false
+    command: ["rfkill", "list"]
+    stdout: StdioCollector {
+      onStreamFinished: {
+        var output = this.text || "";
+        var wifiBlocked = /^\d+:.*Wireless LAN[^\n]*\n\s*Soft blocked:\s*yes/im.test(output)
+        var btBlocked = /^\d+:.*Bluetooth[^\n]*\n\s*Soft blocked:\s*yes/im.test(output)
+
+        // Track if actual state changed
+        var actualAirplaneModeActive = wifiBlocked && btBlocked;
+        var previousAirplaneModeActive = root.wifiBlocked && root.btBlocked;
+
+        // Check if airplane mode has been toggled
+        if (actualAirplaneModeActive && !previousAirplaneModeActive) {
+          root.airplaneModeToggled = true;
+          NetworkService.setWifiEnabled(false);
+          Settings.data.network.airplaneModeEnabled = true;
+          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.enabled"), "plane");
+          Logger.i("AirplaneMode", "Wi-Fi & Bluetooth adapter blocked")
+        } else if (!actualAirplaneModeActive && previousAirplaneModeActive) {
+          root.airplaneModeToggled = true;
+          NetworkService.setWifiEnabled(true);
+          Settings.data.network.airplaneModeEnabled = false;
+          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.disabled"), "plane-off");
+          Logger.i("AirplaneMode", "Wi-Fi & Bluetooth adapter unblocked")
+        } else if (adapter.enabled) {
+          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.enabled"), "bluetooth");
+          Logger.d("Bluetooth", "Adapter enabled");
+        } else {
+          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.disabled"), "bluetooth-off");
+          Logger.d("Bluetooth", "Adapter disabled");
+        }
+        root.airplaneModeToggled = false;
+
+        // Update current blocked states (always reflect actual rfkill state)
+        root.wifiBlocked = wifiBlocked;
+        root.btBlocked = btBlocked;
+      }
+    }
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text && text.trim()) {
+          Logger.w("AirplaneMode", "rfkill stderr:", text.trim());
+        }
       }
     }
   }
