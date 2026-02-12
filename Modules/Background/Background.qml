@@ -159,6 +159,8 @@ Variants {
         onStatusChanged: {
           if (status === Image.Error) {
             Logger.w("Current wallpaper failed to load:", source);
+          } else if (status === Image.Ready && !wallpaperReady) {
+            wallpaperReady = true;
           }
         }
       }
@@ -179,6 +181,9 @@ Variants {
             Logger.w("Next wallpaper failed to load:", source);
             pendingTransition = false;
           } else if (status === Image.Ready) {
+            if (!wallpaperReady) {
+              wallpaperReady = true;
+            }
             if (pendingTransition) {
               pendingTransition = false;
               currentWallpaper.asynchronous = false;
@@ -565,6 +570,9 @@ Variants {
           // Clear image sources for memory efficiency
           currentWallpaper.source = "";
           nextWallpaper.source = "";
+          if (!wallpaperReady) {
+            wallpaperReady = true;
+          }
           return;
         }
 
@@ -643,6 +651,9 @@ Variants {
         } else {
           nextWallpaper.source = source;
           if (nextWallpaper.status === Image.Ready) {
+            if (!wallpaperReady) {
+              wallpaperReady = true;
+            }
             currentWallpaper.asynchronous = false;
             transitionAnimation.start();
           } else {
@@ -707,8 +718,6 @@ Variants {
       // Sets up transition params, then defers the actual animation
       // to allow the compositor time to map the window.
       function performStartupTransition() {
-        wallpaperReady = true;
-
         if (Settings.data.wallpaper.skipStartupTransition) {
           setWallpaperImmediate(futureWallpaper);
           isStartupTransition = false;
