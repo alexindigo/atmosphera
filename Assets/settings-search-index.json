@@ -1033,7 +1033,7 @@
     "widget": "NToggle",
     "tab": 15,
     "tabLabel": "panels.connections.title",
-    "subTab": null,
+    "subTab": 0,
     "subTabLabel": "common.wifi"
   },
   {
@@ -1042,7 +1042,25 @@
     "widget": "NToggle",
     "tab": 15,
     "tabLabel": "panels.connections.title",
-    "subTab": null,
+    "subTab": 1,
+    "subTabLabel": "common.bluetooth"
+  },
+  {
+    "labelKey": "panels.connections.hide-unnamed-devices-label",
+    "descriptionKey": "panels.connections.hide-unnamed-devices-description",
+    "widget": "NToggle",
+    "tab": 15,
+    "tabLabel": "panels.connections.title",
+    "subTab": 1,
+    "subTabLabel": "common.bluetooth"
+  },
+  {
+    "labelKey": "panels.connections.disable-discoverability-label",
+    "descriptionKey": "panels.connections.disable-discoverability-description",
+    "widget": "NToggle",
+    "tab": 15,
+    "tabLabel": "panels.connections.title",
+    "subTab": 1,
     "subTabLabel": "common.bluetooth"
   },
   {
@@ -1051,7 +1069,7 @@
     "widget": "NToggle",
     "tab": 15,
     "tabLabel": "panels.connections.title",
-    "subTab": null,
+    "subTab": 1,
     "subTabLabel": "common.bluetooth"
   },
   {
