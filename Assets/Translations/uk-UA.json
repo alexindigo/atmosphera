@@ -634,6 +634,10 @@
       "grid": "Сітка",
       "list": "Список"
     },
+    "notification-density": {
+      "compact": "Компактний",
+      "default": "За замовчуванням"
+    },
     "scrolling-modes": {
       "always": "Завжди прокручувати",
       "hover": "Прокручувати при наведенні",
@@ -1252,6 +1256,8 @@
       "monitors-desc": "Показувати сповіщення на певних моніторах. За замовчуванням на всіх, якщо не вибрано.",
       "settings-always-on-top-description": "Відображати сповіщення поверх повноекранних вікон та інших шарів.",
       "settings-background-opacity-description": "Налаштуйте непрозорість фону сповіщень.",
+      "settings-density-description": "Виберіть щільність картки сповіщень.",
+      "settings-density-label": "Щільність",
       "settings-desc": "Налаштуйте зовнішній вигляд та поведінку сповіщень.",
       "settings-do-not-disturb-description": "Вимкнути всі спливаючі сповіщення, коли увімкнено.",
       "settings-enabled-description": "Увімкнути або вимкнути демон сповіщень, вимагає перезапуску Noctalia shell.",

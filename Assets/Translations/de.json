@@ -634,6 +634,10 @@
       "grid": "Gitter",
       "list": "Liste"
     },
+    "notification-density": {
+      "compact": "Kompakt",
+      "default": "Standard"
+    },
     "scrolling-modes": {
       "always": "Immer scrollen",
       "hover": "Beim Hover scrollen",
@@ -1252,6 +1256,8 @@
       "monitors-desc": "Benachrichtigungen auf bestimmten Monitoren anzeigen. Standardmäßig werden sie auf allen Monitoren angezeigt.",
       "settings-always-on-top-description": "Benachrichtigungen über Vollbildfenstern und anderen Ebenen anzeigen.",
       "settings-background-opacity-description": "Transparenz der Benachrichtigungshintergründe anpassen.",
+      "settings-density-description": "Wähle die Dichte der Benachrichtigungskarte.",
+      "settings-density-label": "Dichte",
       "settings-desc": "Erscheinungsbild und Verhalten von Benachrichtigungen konfigurieren.",
       "settings-do-not-disturb-description": "Alle Benachrichtigungs-Popups deaktivieren.",
       "settings-enabled-description": "Benachrichtigungs-Daemon aktivieren oder deaktivieren, erfordert einen Neustart von Noctalia Shell.",

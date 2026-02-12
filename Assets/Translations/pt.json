@@ -634,6 +634,10 @@
       "grid": "Grade",
       "list": "Lista"
     },
+    "notification-density": {
+      "compact": "Compacto",
+      "default": "Padrão"
+    },
     "scrolling-modes": {
       "always": "Rolar sempre",
       "hover": "Rolar ao passar",
@@ -1252,6 +1256,8 @@
       "monitors-desc": "Mostra a notificação em monitores específicos. O padrão é todos, se nenhum for escolhido.",
       "settings-always-on-top-description": "Exibe notificações acima de janelas em tela cheia e outras camadas.",
       "settings-background-opacity-description": "Ajustar a opacidade dos fundos das notificações.",
+      "settings-density-description": "Escolha a densidade do cartão de notificação.",
+      "settings-density-label": "Densidade",
       "settings-desc": "Configure a aparência e o comportamento das notificações.",
       "settings-do-not-disturb-description": "Desativa todos os pop-ups de notificação quando ativado.",
       "settings-enabled-description": "Ativar ou desativar o daemon de notificações, requer reiniciar o Noctalia shell.",

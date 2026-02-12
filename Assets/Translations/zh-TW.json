@@ -634,6 +634,10 @@
       "grid": "網格",
       "list": "列表"
     },
+    "notification-density": {
+      "compact": "緊湊",
+      "default": "預設"
+    },
     "scrolling-modes": {
       "always": "總是捲動",
       "hover": "游標移過時捲動",
@@ -1252,6 +1256,8 @@
       "monitors-desc": "只在特定的顯示器顯示通知, 如果全部取消勾選則會顯示在所有顯示器",
       "settings-always-on-top-description": "在全螢幕視窗與其他層級上方顯示通知。",
       "settings-background-opacity-description": "調整通知背景的不透明度",
+      "settings-density-description": "選擇通知卡密度。",
+      "settings-density-label": "密度",
       "settings-desc": "設定通知的外觀及行為",
       "settings-do-not-disturb-description": "當啟用時, 停止彈出所有通知",
       "settings-enabled-description": "啟用或完全停用通知的 daemon, 需要重新啟動 Noctalia 介面",

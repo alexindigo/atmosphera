@@ -634,6 +634,10 @@
       "grid": "Izgara",
       "list": "Liste"
     },
+    "notification-density": {
+      "compact": "Kompakt",
+      "default": "Varsayılan"
+    },
     "scrolling-modes": {
       "always": "Her zaman kaydır",
       "hover": "Üzerine gelince kaydır",
@@ -1252,6 +1256,8 @@
       "monitors-desc": "Bildirimleri belirli ekranlarda gösterin. Hiçbiri seçilmezse varsayılan olarak tümünde gösterilir.",
       "settings-always-on-top-description": "Bildirimleri tam ekran pencerelerinin ve diğer katmanların üzerinde görüntüle.",
       "settings-background-opacity-description": "Bildirim arka planlarının opaklığını ayarlayın.",
+      "settings-density-description": "Bildirim kartı yoğunluğunu seçin.",
+      "settings-density-label": "Yoğunluk",
       "settings-desc": "Bildirimlerin görünümünü ve davranışını yapılandırın.",
       "settings-do-not-disturb-description": "Etkinleştirildiğinde tüm bildirim açılır pencerelerini devre dışı bırakır.",
       "settings-enabled-description": "Bildirim arka plan programını etkinleştir veya devre dışı bırak, Noctalia shell'in yeniden başlatılmasını gerektirir.",

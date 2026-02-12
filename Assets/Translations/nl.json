@@ -634,6 +634,10 @@
       "grid": "Raster",
       "list": "Lijst"
     },
+    "notification-density": {
+      "compact": "Compact",
+      "default": "Standaard"
+    },
     "scrolling-modes": {
       "always": "Altijd scrollen",
       "hover": "Scrollen bij hover",
@@ -1252,6 +1256,8 @@
       "monitors-desc": "Meldingen op specifieke monitoren tonen. Standaard op alle als er geen zijn gekozen.",
       "settings-always-on-top-description": "Toon meldingen boven fullscreen-vensters en andere lagen.",
       "settings-background-opacity-description": "Pas de dekking van meldingsachtergronden aan.",
+      "settings-density-description": "Kies de dichtheid van de meldingenkaart.",
+      "settings-density-label": "Dichtheid",
       "settings-desc": "Configureer uiterlijk en gedrag van meldingen.",
       "settings-do-not-disturb-description": "Schakel alle meldingspop-ups uit wanneer ingeschakeld.",
       "settings-enabled-description": "Schakel de meldingsdaemon in of uit, vereist een herstart van Noctalia shell.",
