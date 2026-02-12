@@ -393,6 +393,8 @@ Singleton {
 
       property string wallhavenResolutionHeight: ""
       property string sortOrder: "name" // "name", "name_desc", "date", "date_desc", "random"
+      property list<var> favorites: []
+      // Format: [{ "path": "/path/to/wallpaper.jpg", "colorScheme": "...", "darkMode": true, "useWallpaperColors": true, "generationMethod": "tonal-spot" }]
     }
 
     // applauncher
