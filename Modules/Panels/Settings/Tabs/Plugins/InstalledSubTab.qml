@@ -206,11 +206,11 @@ ColumnLayout {
               Layout.fillWidth: true
             }
 
-            NIconButton {
-              icon: PluginService.isPluginHotReloadEnabled(modelData.id) ? "bug-filled" : "bug-off"
+            NIconButtonHot {
+              icon: "bug"
+              hot: PluginService.isPluginHotReloadEnabled(modelData.id)
               tooltipText: PluginService.isPluginHotReloadEnabled(modelData.id) ? I18n.tr("panels.plugins.development-disable") : I18n.tr("panels.plugins.development-enable")
               baseSize: Style.baseWidgetSize * 0.7
-              enabled: modelData.enabled
               onClicked: PluginService.togglePluginHotReload(modelData.id)
               visible: Settings.isDebug
             }

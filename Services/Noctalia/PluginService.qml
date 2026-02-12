@@ -48,14 +48,7 @@ Singleton {
 
   // Hot reload: file watchers for plugin directories
   property var pluginFileWatchers: ({}) // { pluginId: FileView }
-  property bool hotReloadEnabled: Settings.isDebug
   property list<string> pluginHotReloadEnabled: [] // List of pluginIds that have hot reload enabled
-
-  onHotReloadEnabledChanged: {
-    if (root.initialized) {
-      setHotReloadEnabled(root.hotReloadEnabled);
-    }
-  }
 
   // Track active fetches
   property var activeFetches: ({})
@@ -136,7 +129,7 @@ Singleton {
       }
 
       // Update translation file watchers to watch the new language's files
-      if (root.hotReloadEnabled) {
+      if (root.pluginHotReloadEnabled.length > 0) {
         updateTranslationWatchers();
       }
     }
@@ -1697,7 +1690,7 @@ Singleton {
 
   // Set up file watcher for a plugin directory
   function setupPluginFileWatcher(pluginId) {
-    if (!root.hotReloadEnabled && !isPluginHotReloadEnabled(pluginId)) {
+    if (!isPluginHotReloadEnabled(pluginId)) {
       return;
     }
 
@@ -1986,10 +1979,6 @@ Singleton {
 
   // Toggle the hot reload state of a certain plugin
   function togglePluginHotReload(pluginId) {
-    // If we have hot reload completely enabled just return
-    if (root.hotReloadEnabled)
-      return;
-
     const index = root.pluginHotReloadEnabled.indexOf(pluginId);
     if (index === -1) {
       root.pluginHotReloadEnabled.push(pluginId);
@@ -1999,25 +1988,6 @@ Singleton {
       root.pluginHotReloadEnabled.splice(index, 1);
       removePluginFileWatcher(pluginId);
       Logger.i("PluginService", "Hot reload disabled for plugin:", pluginId);
-    }
-  }
-
-  // Enable/disable hot reload for all loaded plugins
-  function setHotReloadEnabled(enabled) {
-    root.hotReloadEnabled = enabled;
-
-    if (enabled) {
-      // Set up watchers for all loaded plugins
-      for (var pluginId in root.loadedPlugins) {
-        setupPluginFileWatcher(pluginId);
-      }
-      Logger.i("PluginService", "Hot reload enabled for all plugins");
-    } else {
-      // Remove all watchers
-      for (var pluginId in root.pluginFileWatchers) {
-        removePluginFileWatcher(pluginId);
-      }
-      Logger.i("PluginService", "Hot reload disabled");
     }
   }
 }
