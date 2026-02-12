@@ -1794,6 +1794,8 @@
       "categories-anime": "Аніме",
       "categories-label": "Категорії",
       "categories-people": "Люди",
+      "color-extraction-disabled": "Використовувати вилучення кольорів шпалер",
+      "color-extraction-enabled": "Використовувати попередньо визначені кольорові схеми",
       "order-asc": "За зростанням",
       "order-desc": "За спаданням",
       "order-label": "Порядок",

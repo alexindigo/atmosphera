@@ -1794,6 +1794,8 @@
       "categories-anime": "動漫",
       "categories-label": "分類",
       "categories-people": "人物",
+      "color-extraction-disabled": "使用桌布顏色擷取",
+      "color-extraction-enabled": "使用預設配色方案",
       "order-asc": "升序",
       "order-desc": "降序",
       "order-label": "排序",

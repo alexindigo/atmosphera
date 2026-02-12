@@ -1794,6 +1794,8 @@
       "categories-anime": "Anime",
       "categories-label": "Categorieën",
       "categories-people": "Mensen",
+      "color-extraction-disabled": "Achtergrondkleurextractie gebruiken",
+      "color-extraction-enabled": "Voorgedefinieerde kleurenschema's gebruiken",
       "order-asc": "Oplopend",
       "order-desc": "Aflopend",
       "order-label": "Volgorde",

@@ -1794,6 +1794,8 @@
       "categories-anime": "Anime",
       "categories-label": "Kategoriler",
       "categories-people": "İnsanlar",
+      "color-extraction-disabled": "Duvar kağıdı renk çıkarma kullan",
+      "color-extraction-enabled": "Önceden tanımlanmış renk şemalarını kullan",
       "order-asc": "Artan",
       "order-desc": "Azalan",
       "order-label": "Sıra",

@@ -1794,6 +1794,8 @@
       "categories-anime": "Anime",
       "categories-label": "Kategóriák",
       "categories-people": "Emberek",
+      "color-extraction-disabled": "Háttérkép színkivonás használata",
+      "color-extraction-enabled": "Előre meghatározott színsémák használata",
       "order-asc": "Növekvő",
       "order-desc": "Csökkenő",
       "order-label": "Sorrend",

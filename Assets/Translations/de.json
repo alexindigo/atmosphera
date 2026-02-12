@@ -1794,6 +1794,8 @@
       "categories-anime": "Anime",
       "categories-label": "Kategorien",
       "categories-people": "Personen",
+      "color-extraction-disabled": "Hintergrundbild-Farbenextraktion verwenden",
+      "color-extraction-enabled": "Vordefinierte Farbschemata nutzen",
       "order-asc": "Aufsteigend",
       "order-desc": "Absteigend",
       "order-label": "Reihenfolge",

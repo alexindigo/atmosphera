@@ -1794,6 +1794,8 @@
       "categories-anime": "Anime",
       "categories-label": "Categorias",
       "categories-people": "Pessoas",
+      "color-extraction-disabled": "Usar extração de cores do papel de parede",
+      "color-extraction-enabled": "Usar esquemas de cores predefinidos",
       "order-asc": "Crescente",
       "order-desc": "Decrescente",
       "order-label": "Ordem",

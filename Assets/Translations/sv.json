@@ -1794,6 +1794,8 @@
       "categories-anime": "Anime",
       "categories-label": "Kategorier",
       "categories-people": "Personer",
+      "color-extraction-disabled": "Använd bakgrundsfärgsutvinning",
+      "color-extraction-enabled": "Använd fördefinierade färgscheman",
       "order-asc": "Stigande",
       "order-desc": "Fallande",
       "order-label": "Ordning",

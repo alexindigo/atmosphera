@@ -1794,6 +1794,8 @@
       "categories-anime": "애니메이션",
       "categories-label": "카테고리",
       "categories-people": "인물",
+      "color-extraction-disabled": "배경화면 색상 추출 사용",
+      "color-extraction-enabled": "사전 정의된 색상 구성표 사용",
       "order-asc": "오름차순",
       "order-desc": "내림차순",
       "order-label": "순서",

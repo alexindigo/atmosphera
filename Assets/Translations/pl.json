@@ -1794,6 +1794,8 @@
       "categories-anime": "Anime",
       "categories-label": "Kategorie",
       "categories-people": "Ludzie",
+      "color-extraction-disabled": "Użyj ekstrakcji kolorów tapety",
+      "color-extraction-enabled": "Użyj predefiniowanych schematów kolorów",
       "order-asc": "Rosnąco",
       "order-desc": "Malejąco",
       "order-label": "Kolejność",
