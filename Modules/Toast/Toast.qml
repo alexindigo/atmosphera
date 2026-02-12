@@ -31,16 +31,21 @@ Item {
   property real progress: 1.0
   property int hoverCount: 0
   property real swipeOffset: 0
+  property real swipeOffsetY: 0
   property real pressGlobalX: 0
+  property real pressGlobalY: 0
   property bool isSwiping: false
   readonly property string location: Settings.data.notifications?.location || "top_right"
   readonly property bool isLeft: location.endsWith("_left")
   readonly property bool isRight: location.endsWith("_right")
+  readonly property bool useVerticalSwipe: location === "bottom" || location === "top"
   readonly property real swipeStartThreshold: Math.round(18 * Style.uiScaleRatio)
   readonly property real swipeDismissThreshold: Math.max(110, background.width * 0.32)
+  readonly property real verticalSwipeDismissThreshold: Math.max(70, background.height * 0.35)
 
   transform: Translate {
     x: root.swipeOffset
+    y: root.swipeOffsetY
   }
 
   function clampSwipeDelta(deltaX) {
@@ -49,6 +54,14 @@ Item {
     if (isLeft)
       return Math.min(0, deltaX);
     return deltaX;
+  }
+
+  function clampVerticalSwipeDelta(deltaY) {
+    if (location === "bottom")
+      return Math.max(0, deltaY);
+    if (location === "top")
+      return Math.min(0, deltaY);
+    return deltaY;
   }
 
   onHoverCountChanged: {
@@ -176,6 +189,14 @@ Item {
     }
   }
 
+  Behavior on swipeOffsetY {
+    enabled: !root.isSwiping
+    NumberAnimation {
+      duration: Style.animationFast
+      easing.type: Easing.OutCubic
+    }
+  }
+
   Timer {
     id: hideAnimation
     interval: Style.animationFast
@@ -206,29 +227,48 @@ Item {
     onPressed: mouse => {
                  const globalPoint = toastDragArea.mapToGlobal(mouse.x, mouse.y);
                  root.pressGlobalX = globalPoint.x;
+                 root.pressGlobalY = globalPoint.y;
                  root.isSwiping = false;
                }
     onPositionChanged: mouse => {
                          if (!(mouse.buttons & Qt.LeftButton))
                            return;
                          const globalPoint = toastDragArea.mapToGlobal(mouse.x, mouse.y);
-                         const deltaX = root.clampSwipeDelta(globalPoint.x - root.pressGlobalX);
+                         const rawDeltaX = globalPoint.x - root.pressGlobalX;
+                         const rawDeltaY = globalPoint.y - root.pressGlobalY;
+                         const deltaX = root.clampSwipeDelta(rawDeltaX);
+                         const deltaY = root.clampVerticalSwipeDelta(rawDeltaY);
                          if (!root.isSwiping) {
-                           if (Math.abs(deltaX) < root.swipeStartThreshold)
-                             return;
-                           root.isSwiping = true;
+                           if (root.useVerticalSwipe) {
+                             if (Math.abs(deltaY) < root.swipeStartThreshold)
+                               return;
+                             root.isSwiping = true;
+                           } else {
+                             if (Math.abs(deltaX) < root.swipeStartThreshold)
+                               return;
+                             root.isSwiping = true;
+                           }
                          }
-                         root.swipeOffset = deltaX;
+                         if (root.useVerticalSwipe) {
+                           root.swipeOffset = 0;
+                           root.swipeOffsetY = deltaY;
+                         } else {
+                           root.swipeOffset = deltaX;
+                           root.swipeOffsetY = 0;
+                         }
                        }
     onReleased: mouse => {
                   if (mouse.button !== Qt.LeftButton)
                     return;
                   if (root.isSwiping) {
                     root.isSwiping = false;
-                    if (Math.abs(root.swipeOffset) >= root.swipeDismissThreshold) {
+                    const dismissDistance = root.useVerticalSwipe ? Math.abs(root.swipeOffsetY) : Math.abs(root.swipeOffset);
+                    const threshold = root.useVerticalSwipe ? root.verticalSwipeDismissThreshold : root.swipeDismissThreshold;
+                    if (dismissDistance >= threshold) {
                       root.hide();
                     } else {
                       root.swipeOffset = 0;
+                      root.swipeOffsetY = 0;
                     }
                     return;
                   }
@@ -237,6 +277,7 @@ Item {
     onCanceled: {
       root.isSwiping = false;
       root.swipeOffset = 0;
+      root.swipeOffsetY = 0;
     }
     cursorShape: Qt.PointingHandCursor
   }
@@ -345,6 +386,7 @@ Item {
     hoverCount = 0;
     isSwiping = false;
     swipeOffset = 0;
+    swipeOffsetY = 0;
 
     // Configure and start animation
     progressAnimation.duration = duration;
@@ -357,6 +399,7 @@ Item {
     progressAnimation.stop();
     isSwiping = false;
     swipeOffset = 0;
+    swipeOffsetY = 0;
     opacity = 0;
     scale = initialScale;
     hideAnimation.restart();
@@ -367,6 +410,7 @@ Item {
     progressAnimation.stop();
     isSwiping = false;
     swipeOffset = 0;
+    swipeOffsetY = 0;
     opacity = 0;
     scale = initialScale;
     root.hidden();

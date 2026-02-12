@@ -212,17 +212,21 @@ Variants {
             property real opacityValue: 0.0
             property real slideOffset: 0
             property real swipeOffset: 0
+            property real swipeOffsetY: 0
             property real pressGlobalX: 0
+            property real pressGlobalY: 0
             property bool isSwiping: false
             property bool suppressClick: false
+            readonly property bool useVerticalSwipe: notifWindow.location === "bottom" || notifWindow.location === "top"
             readonly property real swipeStartThreshold: Math.round(18 * Style.uiScaleRatio)
             readonly property real swipeDismissThreshold: Math.max(110, cardBackground.width * 0.32)
+            readonly property real verticalSwipeDismissThreshold: Math.max(70, cardBackground.height * 0.35)
 
             scale: scaleValue
             opacity: opacityValue
             transform: Translate {
               x: card.swipeOffset
-              y: card.slideOffset
+              y: card.slideOffset + card.swipeOffsetY
             }
 
             readonly property real slideInOffset: notifWindow.isTop ? -slideDistance : slideDistance
@@ -234,6 +238,14 @@ Variants {
               if (notifWindow.isLeft)
                 return Math.min(0, deltaX);
               return deltaX;
+            }
+
+            function clampVerticalSwipeDelta(deltaY) {
+              if (notifWindow.isBottom)
+                return Math.max(0, deltaY);
+              if (notifWindow.isTop)
+                return Math.min(0, deltaY);
+              return deltaY;
             }
 
             // Background with border
@@ -326,6 +338,7 @@ Variants {
                            if (mouse.button === Qt.LeftButton) {
                              const globalPoint = cardDragArea.mapToGlobal(mouse.x, mouse.y);
                              card.pressGlobalX = globalPoint.x;
+                             card.pressGlobalY = globalPoint.y;
                              card.isSwiping = false;
                              card.suppressClick = false;
                            }
@@ -334,13 +347,28 @@ Variants {
                                    if (!(mouse.buttons & Qt.LeftButton) || card.isRemoving)
                                      return;
                                    const globalPoint = cardDragArea.mapToGlobal(mouse.x, mouse.y);
-                                   const deltaX = card.clampSwipeDelta(globalPoint.x - card.pressGlobalX);
+                                   const rawDeltaX = globalPoint.x - card.pressGlobalX;
+                                   const rawDeltaY = globalPoint.y - card.pressGlobalY;
+                                   const deltaX = card.clampSwipeDelta(rawDeltaX);
+                                   const deltaY = card.clampVerticalSwipeDelta(rawDeltaY);
                                    if (!card.isSwiping) {
-                                     if (Math.abs(deltaX) < card.swipeStartThreshold)
-                                       return;
-                                     card.isSwiping = true;
+                                     if (card.useVerticalSwipe) {
+                                       if (Math.abs(deltaY) < card.swipeStartThreshold)
+                                         return;
+                                       card.isSwiping = true;
+                                     } else {
+                                       if (Math.abs(deltaX) < card.swipeStartThreshold)
+                                         return;
+                                       card.isSwiping = true;
+                                     }
                                    }
-                                   card.swipeOffset = deltaX;
+                                   if (card.useVerticalSwipe) {
+                                     card.swipeOffset = 0;
+                                     card.swipeOffsetY = deltaY;
+                                   } else {
+                                     card.swipeOffset = deltaX;
+                                     card.swipeOffsetY = 0;
+                                   }
                                  }
               onReleased: mouse => {
                             if (mouse.button === Qt.RightButton) {
@@ -352,10 +380,13 @@ Variants {
                               return;
 
                             if (card.isSwiping) {
-                              if (Math.abs(card.swipeOffset) >= card.swipeDismissThreshold) {
+                              const dismissDistance = card.useVerticalSwipe ? Math.abs(card.swipeOffsetY) : Math.abs(card.swipeOffset);
+                              const threshold = card.useVerticalSwipe ? card.verticalSwipeDismissThreshold : card.swipeDismissThreshold;
+                              if (dismissDistance >= threshold) {
                                 card.dismissBySwipe();
                               } else {
                                 card.swipeOffset = 0;
+                                card.swipeOffsetY = 0;
                               }
                               card.suppressClick = true;
                               card.isSwiping = false;
@@ -378,6 +409,7 @@ Variants {
               onCanceled: {
                 card.isSwiping = false;
                 card.swipeOffset = 0;
+                card.swipeOffsetY = 0;
               }
             }
             // Animation setup
@@ -389,6 +421,7 @@ Variants {
               hoverCount = 0;
               isSwiping = false;
               swipeOffset = 0;
+              swipeOffsetY = 0;
               if (Settings.data.general.animationDisabled) {
                 slideOffset = 0;
                 scaleValue = 1.0;
@@ -428,6 +461,7 @@ Variants {
               isRemoving = true;
               isSwiping = false;
               swipeOffset = 0;
+              swipeOffsetY = 0;
               if (!Settings.data.general.animationDisabled) {
                 slideOffset = slideOutOffset;
                 scaleValue = 0.8;
@@ -443,11 +477,18 @@ Variants {
               isRemoving = true;
               isSwiping = false;
               if (!Settings.data.general.animationDisabled) {
-                swipeOffset = swipeOffset >= 0 ? cardBackground.width + Style.marginXL : -cardBackground.width - Style.marginXL;
+                if (useVerticalSwipe) {
+                  swipeOffset = 0;
+                  swipeOffsetY = swipeOffsetY >= 0 ? cardBackground.height + Style.marginXL : -cardBackground.height - Style.marginXL;
+                } else {
+                  swipeOffset = swipeOffset >= 0 ? cardBackground.width + Style.marginXL : -cardBackground.width - Style.marginXL;
+                  swipeOffsetY = 0;
+                }
                 scaleValue = 0.8;
                 opacityValue = 0.0;
               } else {
                 swipeOffset = 0;
+                swipeOffsetY = 0;
               }
             }
 
@@ -509,6 +550,14 @@ Variants {
             }
 
             Behavior on swipeOffset {
+              enabled: !Settings.data.general.animationDisabled && !card.isSwiping
+              NumberAnimation {
+                duration: Style.animationFast
+                easing.type: Easing.OutCubic
+              }
+            }
+
+            Behavior on swipeOffsetY {
               enabled: !Settings.data.general.animationDisabled && !card.isSwiping
               NumberAnimation {
                 duration: Style.animationFast
