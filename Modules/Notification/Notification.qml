@@ -346,7 +346,7 @@ Variants {
                          }
               onPositionChanged: mouse => {
                                    if (!(mouse.buttons & Qt.LeftButton) || card.isRemoving)
-                                     return;
+                                   return;
                                    const globalPoint = cardDragArea.mapToGlobal(mouse.x, mouse.y);
                                    const rawDeltaX = globalPoint.x - card.pressGlobalX;
                                    const rawDeltaY = globalPoint.y - card.pressGlobalY;
@@ -355,11 +355,11 @@ Variants {
                                    if (!card.isSwiping) {
                                      if (card.useVerticalSwipe) {
                                        if (Math.abs(deltaY) < card.swipeStartThreshold)
-                                         return;
+                                       return;
                                        card.isSwiping = true;
                                      } else {
                                        if (Math.abs(deltaX) < card.swipeStartThreshold)
-                                         return;
+                                       return;
                                        card.isSwiping = true;
                                      }
                                    }
@@ -378,7 +378,7 @@ Variants {
                             }
 
                             if (mouse.button !== Qt.LeftButton)
-                              return;
+                            return;
 
                             if (card.isSwiping) {
                               const dismissDistance = card.useVerticalSwipe ? Math.abs(card.swipeOffsetY) : Math.abs(card.swipeOffset);
@@ -395,7 +395,7 @@ Variants {
                             }
 
                             if (card.suppressClick)
-                              return;
+                            return;
 
                             var actions = model.actionsJson ? JSON.parse(model.actionsJson) : [];
                             var hasDefault = actions.some(function (a) {

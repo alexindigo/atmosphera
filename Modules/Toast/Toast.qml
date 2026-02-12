@@ -232,7 +232,7 @@ Item {
                }
     onPositionChanged: mouse => {
                          if (!(mouse.buttons & Qt.LeftButton))
-                           return;
+                         return;
                          const globalPoint = toastDragArea.mapToGlobal(mouse.x, mouse.y);
                          const rawDeltaX = globalPoint.x - root.pressGlobalX;
                          const rawDeltaY = globalPoint.y - root.pressGlobalY;
@@ -241,11 +241,11 @@ Item {
                          if (!root.isSwiping) {
                            if (root.useVerticalSwipe) {
                              if (Math.abs(deltaY) < root.swipeStartThreshold)
-                               return;
+                             return;
                              root.isSwiping = true;
                            } else {
                              if (Math.abs(deltaX) < root.swipeStartThreshold)
-                               return;
+                             return;
                              root.isSwiping = true;
                            }
                          }
@@ -259,7 +259,7 @@ Item {
                        }
     onReleased: mouse => {
                   if (mouse.button !== Qt.LeftButton)
-                    return;
+                  return;
                   if (root.isSwiping) {
                     root.isSwiping = false;
                     const dismissDistance = root.useVerticalSwipe ? Math.abs(root.swipeOffsetY) : Math.abs(root.swipeOffset);

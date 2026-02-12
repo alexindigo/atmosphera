@@ -439,7 +439,7 @@ SmartPanel {
                       cursorShape: notificationDelegate.canExpand ? Qt.PointingHandCursor : Qt.ArrowCursor
                       onPressed: mouse => {
                                    if (mouse.button !== Qt.LeftButton)
-                                     return;
+                                   return;
                                    const globalPoint = historyInteractionArea.mapToGlobal(mouse.x, mouse.y);
                                    notificationDelegate.pressGlobalX = globalPoint.x;
                                    notificationDelegate.pressGlobalY = globalPoint.y;
@@ -448,7 +448,7 @@ SmartPanel {
                                  }
                       onPositionChanged: mouse => {
                                            if (!(mouse.buttons & Qt.LeftButton) || notificationDelegate.isRemoving)
-                                             return;
+                                           return;
 
                                            const globalPoint = historyInteractionArea.mapToGlobal(mouse.x, mouse.y);
                                            const deltaX = globalPoint.x - notificationDelegate.pressGlobalX;
@@ -456,7 +456,7 @@ SmartPanel {
 
                                            if (!notificationDelegate.isSwiping) {
                                              if (Math.abs(deltaX) < notificationDelegate.swipeStartThreshold)
-                                               return;
+                                             return;
 
                                              // Only start a swipe-dismiss when horizontal movement is dominant.
                                              if (Math.abs(deltaX) <= Math.abs(deltaY) * 1.15) {
@@ -470,7 +470,7 @@ SmartPanel {
                                          }
                       onReleased: mouse => {
                                     if (mouse.button !== Qt.LeftButton)
-                                      return;
+                                    return;
 
                                     if (notificationDelegate.isSwiping) {
                                       if (Math.abs(notificationDelegate.swipeOffset) >= notificationDelegate.swipeDismissThreshold) {
@@ -484,7 +484,7 @@ SmartPanel {
                                     }
 
                                     if (!notificationDelegate.canExpand || notificationDelegate.suppressClick)
-                                      return;
+                                    return;
 
                                     if (scrollView.expandedId === notificationId) {
                                       scrollView.expandedId = "";
