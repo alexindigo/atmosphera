@@ -634,6 +634,10 @@
       "grid": "网格",
       "list": "列表"
     },
+    "notification-density": {
+      "compact": "紧凑",
+      "default": "默认"
+    },
     "scrolling-modes": {
       "always": "始终滚动",
       "hover": "悬停时滚动",
@@ -1252,6 +1256,8 @@
       "monitors-desc": "在特定显示器上显示通知。如果未选择，则默认为全部。",
       "settings-always-on-top-description": "在全屏窗口和其他图层上方显示通知。",
       "settings-background-opacity-description": "调整通知背景的透明度。",
+      "settings-density-description": "选择通知卡密度。",
+      "settings-density-label": "密度",
       "settings-desc": "配置通知的外观和行为。",
       "settings-do-not-disturb-description": "启用后禁用所有通知弹出窗口。",
       "settings-enabled-description": "启用或禁用通知守护进程，需要重启 Noctalia shell。",

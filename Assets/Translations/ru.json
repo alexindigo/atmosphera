@@ -634,6 +634,10 @@
       "grid": "Сетка",
       "list": "Список"
     },
+    "notification-density": {
+      "compact": "Компактный",
+      "default": "По умолчанию"
+    },
     "scrolling-modes": {
       "always": "Всегда прокручивать",
       "hover": "Прокручивать при наведении",
@@ -1252,6 +1256,8 @@
       "monitors-desc": "Показывать уведомления на определённых мониторах. По умолчанию на всех, если ни один не выбран.",
       "settings-always-on-top-description": "Отображать уведомления поверх полноэкранных окон и других слоёв.",
       "settings-background-opacity-description": "Настройка непрозрачности фона уведомлений.",
+      "settings-density-description": "Выберите плотность карточки уведомлений.",
+      "settings-density-label": "Плотность",
       "settings-desc": "Настройка внешнего вида и поведения уведомлений.",
       "settings-do-not-disturb-description": "Отключить все всплывающие окна уведомлений, если включено.",
       "settings-enabled-description": "Включить или отключить демон уведомлений, требуется перезапуск Noctalia shell.",

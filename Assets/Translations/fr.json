@@ -634,6 +634,10 @@
       "grid": "Grille",
       "list": "Liste"
     },
+    "notification-density": {
+      "compact": "Compact",
+      "default": "Par défaut"
+    },
     "scrolling-modes": {
       "always": "Défiler toujours",
       "hover": "Défiler au survol",
@@ -1252,6 +1256,8 @@
       "monitors-desc": "Afficher les notifications sur des moniteurs spécifiques. Par défaut, sur tous si aucun n'est choisi.",
       "settings-always-on-top-description": "Afficher les notifications au-dessus des fenêtres en plein écran et des autres applications.",
       "settings-background-opacity-description": "Ajuster l'opacité des arrière-plans de notifications.",
+      "settings-density-description": "Choisissez la densité de la carte de notification.",
+      "settings-density-label": "Densité",
       "settings-desc": "Configurez l'apparence et le comportement des notifications.",
       "settings-do-not-disturb-description": "Désactive toutes les fenêtres de notification lorsque cette option est activée.",
       "settings-enabled-description": "Activer ou désactiver le démon de notifications, nécessite un redémarrage de Noctalia shell.",

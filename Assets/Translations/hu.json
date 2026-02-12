@@ -634,6 +634,10 @@
       "grid": "Rács",
       "list": "Lista"
     },
+    "notification-density": {
+      "compact": "Kompakt",
+      "default": "Alapértelmezett"
+    },
     "scrolling-modes": {
       "always": "Mindig görgetés",
       "hover": "Görgetés rámutatáskor",
@@ -1252,6 +1256,8 @@
       "monitors-desc": "Értesítés megjelenítése meghatározott monitorokon. Alapértelmezetten mindegyiken, ha nincs kiválasztva.",
       "settings-always-on-top-description": "Értesítések megjelenítése teljes képernyős ablakok és más rétegek felett.",
       "settings-background-opacity-description": "Az értesítési hátterek átlátszóságának beállítása.",
+      "settings-density-description": "Válaszd ki az értesítési kártya sűrűségét.",
+      "settings-density-label": "Sűrűség",
       "settings-desc": "Az értesítések megjelenésének és viselkedésének konfigurálása.",
       "settings-do-not-disturb-description": "Blokkolja az összes értesítési felugró ablakot, ha be van kapcsolva.",
       "settings-enabled-description": "Az értesítési daemon be- vagy kikapcsolása a Noctalia shell újraindítását igényli.",

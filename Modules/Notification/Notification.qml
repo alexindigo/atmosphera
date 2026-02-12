@@ -83,7 +83,8 @@ Variants {
       readonly property bool isFramed: Settings.data.bar.barType === "framed"
       readonly property real frameThickness: Settings.data.bar.frameThickness ?? 8
 
-      readonly property int notifWidth: Math.round(440 * Style.uiScaleRatio)
+      readonly property bool isCompact: Settings.data.notifications.density === "compact"
+      readonly property int notifWidth: Math.round((isCompact ? 320 : 440) * Style.uiScaleRatio)
       readonly property int shadowPadding: Style.shadowBlurMax + Style.marginL
 
       // Calculate bar and frame offsets for each edge separately
@@ -204,7 +205,7 @@ Variants {
             readonly property int slideDistance: 300
 
             Layout.preferredWidth: notifWidth + notifWindow.shadowPadding * 2
-            Layout.preferredHeight: notificationContent.implicitHeight + Style.marginXL + notifWindow.shadowPadding * 2
+            Layout.preferredHeight: (notifWindow.isCompact ? compactContent.implicitHeight : notificationContent.implicitHeight) + Style.marginXL + notifWindow.shadowPadding * 2
             Layout.maximumHeight: Layout.preferredHeight
 
             // Animation properties
@@ -433,6 +434,7 @@ Variants {
             // Content
             ColumnLayout {
               id: notificationContent
+              visible: !notifWindow.isCompact
               anchors.fill: cardBackground
               anchors.margins: Style.marginM
               spacing: Style.marginM
@@ -576,6 +578,7 @@ Variants {
 
             // Close button
             NIconButton {
+              visible: !notifWindow.isCompact
               icon: "close"
               tooltipText: I18n.tr("common.close")
               baseSize: Style.baseWidgetSize * 0.6
@@ -588,6 +591,55 @@ Variants {
                 card.animateOut();
                 deferredActionTimer.isHistoryRemoval = true;
                 deferredActionTimer.start();
+              }
+            }
+
+            // Compact content
+            RowLayout {
+              id: compactContent
+              visible: notifWindow.isCompact
+              anchors.fill: cardBackground
+              anchors.margins: Style.marginM
+              spacing: Style.marginS
+
+              NImageRounded {
+                Layout.preferredWidth: Math.round(24 * Style.uiScaleRatio)
+                Layout.preferredHeight: Math.round(24 * Style.uiScaleRatio)
+                Layout.alignment: Qt.AlignVCenter
+                radius: Style.radiusXS
+                imagePath: model.originalImage || ""
+                borderColor: "transparent"
+                borderWidth: 0
+                fallbackIcon: "bell"
+                fallbackIconSize: 16
+              }
+
+              ColumnLayout {
+                Layout.fillWidth: true
+                spacing: Style.marginXS
+
+                NText {
+                  text: model.summary || I18n.tr("common.no-summary")
+                  pointSize: Style.fontSizeM
+                  font.weight: Style.fontWeightMedium
+                  color: Color.mOnSurface
+                  textFormat: Text.PlainText
+                  maximumLineCount: 1
+                  elide: Text.ElideRight
+                  Layout.fillWidth: true
+                }
+
+                NText {
+                  visible: model.body && model.body.length > 0
+                  Layout.fillWidth: true
+                  text: model.body || ""
+                  pointSize: Style.fontSizeS
+                  color: Color.mOnSurfaceVariant
+                  textFormat: Text.PlainText
+                  wrapMode: Text.Wrap
+                  maximumLineCount: 2
+                  elide: Text.ElideRight
+                }
               }
             }
           }

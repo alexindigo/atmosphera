@@ -634,6 +634,10 @@
       "grid": "Rutnät",
       "list": "Lista"
     },
+    "notification-density": {
+      "compact": "Kompakt",
+      "default": "Standard"
+    },
     "scrolling-modes": {
       "always": "Rulla alltid",
       "hover": "Rulla vid muspekning",
@@ -1252,6 +1256,8 @@
       "monitors-desc": "Visa meddelanden på specifika skärmar. Standardinställningen är alla om ingen väljs.",
       "settings-always-on-top-description": "Visa meddelanden ovanför helskärmsfönster och andra lager.",
       "settings-background-opacity-description": "Justera opaciteten för meddelandenas bakgrund.",
+      "settings-density-description": "Välj densitet för aviseringskortet.",
+      "settings-density-label": "Densitet",
       "settings-desc": "Konfigurera meddelandenas utseende och beteende.",
       "settings-do-not-disturb-description": "Inaktivera alla popup-meddelanden när funktionen är aktiverad.",
       "settings-enabled-description": "Aktivera eller inaktivera meddelandedemonen, kräver omstart av Noctalia-skalet.",

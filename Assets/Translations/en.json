@@ -634,6 +634,10 @@
       "grid": "Grid",
       "list": "List"
     },
+    "notification-density": {
+      "compact": "Compact",
+      "default": "Default"
+    },
     "scrolling-modes": {
       "always": "Scroll always",
       "hover": "Scroll on hover",
@@ -1252,6 +1256,8 @@
       "monitors-desc": "Show notification on specific monitors. Defaults to all if none are chosen.",
       "settings-always-on-top-description": "Display notifications above fullscreen windows and other layers.",
       "settings-background-opacity-description": "Adjust the opacity of notification backgrounds.",
+      "settings-density-description": "Choose the notification card density.",
+      "settings-density-label": "Density",
       "settings-desc": "Configure notifications appearance and behavior.",
       "settings-do-not-disturb-description": "Disable all notification popups when enabled.",
       "settings-enabled-description": "Enable or disable the notification daemon, requires a restart of Noctalia shell.",
