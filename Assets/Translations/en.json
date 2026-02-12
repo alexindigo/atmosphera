@@ -1337,6 +1337,8 @@
       "collision-already-installed": "This plugin is already installed",
       "collision-custom-version-exists": "A custom version from \"{source}\" is already installed",
       "collision-official-version-exists": "The official version of this plugin is already installed",
+      "debug-disable": "Disable debug mode for this plugin",
+      "debug-enable": "Enable debug mode for this plugin",
       "filter-downloaded": "Downloaded",
       "filter-not-downloaded": "Not Downloaded",
       "filter-tags-description": "Filter plugins by category or download status.",

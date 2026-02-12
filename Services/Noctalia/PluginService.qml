@@ -49,6 +49,7 @@ Singleton {
   // Hot reload: file watchers for plugin directories
   property var pluginFileWatchers: ({}) // { pluginId: FileView }
   property bool hotReloadEnabled: Settings.isDebug
+  property list<string> pluginHotReloadEnabled: [] // List of pluginIds that have hot reload enabled
 
   onHotReloadEnabledChanged: {
     if (root.initialized) {
@@ -1696,7 +1697,7 @@ Singleton {
 
   // Set up file watcher for a plugin directory
   function setupPluginFileWatcher(pluginId) {
-    if (!root.hotReloadEnabled) {
+    if (!root.hotReloadEnabled && !isPluginHotReloadEnabled(pluginId)) {
       return;
     }
 
@@ -1976,6 +1977,28 @@ Singleton {
     });
 
     return true;
+  }
+
+  // Check if a certain plugin has hot reload enabled
+  function isPluginHotReloadEnabled(pluginId) {
+    return root.pluginHotReloadEnabled.indexOf(pluginId) !== -1;
+  }
+
+  // Toggle the hot reload state of a certain plugin
+  function togglePluginHotReload(pluginId) {
+    // If we have hot reload completely enabled just return
+    if (root.hotReloadEnabled) return;
+
+    const index = root.pluginHotReloadEnabled.indexOf(pluginId);
+    if (index === -1) {
+      root.pluginHotReloadEnabled.push(pluginId);
+      setupPluginFileWatcher(pluginId);
+      Logger.i("PluginService", "Hot reload enabled for plugin:", pluginId);
+    } else {
+      root.pluginHotReloadEnabled.splice(index, 1);
+      removePluginFileWatcher(pluginId);
+      Logger.i("PluginService", "Hot reload disabled for plugin:", pluginId);
+    }
   }
 
   // Enable/disable hot reload for all loaded plugins
