@@ -19,15 +19,13 @@ ColumnLayout {
 
     NTabButton {
       text: I18n.tr("common.wifi")
-      // visible: NetworkService.wifiAvailable
-      enabled: NetworkService.wifiAvailable // Remove when work finished, only use visibility
+      visible: NetworkService.wifiAvailable
       tabIndex: 0
       checked: subTabBar.currentIndex === 0
     }
     NTabButton {
       text: I18n.tr("common.bluetooth")
-      // visible: BluetoothService.bluetoothAvailable
-      enabled: BluetoothService.bluetoothAvailable // Remove when work finished, only use visibility
+      visible: BluetoothService.bluetoothAvailable
       tabIndex: 1
       checked: subTabBar.currentIndex === 1
     }
