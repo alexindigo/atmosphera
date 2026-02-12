@@ -5,6 +5,9 @@
 * but proper credit must be given to the original author.
 */
 
+//@ pragma Env QT_FFMPEG_DECODING_HW_DEVICE_TYPES=vaapi,vdpau
+//@ pragma Env QT_FFMPEG_ENCODING_HW_DEVICE_TYPES=vaapi,vdpau
+
 // Qt & Quickshell Core
 import QtQuick
 import Quickshell
@@ -109,6 +112,7 @@ ShellRoot {
           HostService.init();
           GitHubService.init();
           SupporterService.init();
+          CustomButtonIPCService.init();
         });
 
         delayedInitTimer.running = true;
@@ -145,11 +149,6 @@ ShellRoot {
       IPCService {
         id: ipcService
         screenDetector: screenDetector
-      }
-
-      // CustomButtonIPCService handles IPC commands for custom buttons
-      CustomButtonIPCService {
-        id: customButtonIPCService
       }
 
       // Container for plugins Main.qml instances (must be in graphics scene)
