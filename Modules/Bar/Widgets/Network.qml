@@ -148,7 +148,7 @@ Item {
           else if (NetworkService.activeEthernetIf && NetworkService.activeEthernetIf.length > 0)
             base = NetworkService.activeEthernetIf;
           else
-            base = I18n.tr("control-center.wifi.label-ethernet");
+            base = I18n.tr("common.ethernet");
           const speed = (d.speed && d.speed.length > 0) ? d.speed : "";
           return speed ? (base + " — " + speed) : base;
         }

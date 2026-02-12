@@ -315,8 +315,8 @@ Item {
     }
 
     NToggle {
-      label: I18n.tr("panels.connections.hide-unnamed-devices-label")  // former i18n key: tooltips.hide-unnamed-devices
-      description: I18n.tr("panels.connections.hide-unnamed-devices-description") // "Hide devices that appear only as Bluetooth addresses."
+      label: I18n.tr("panels.connections.hide-unnamed-devices-label")
+      description: I18n.tr("panels.connections.hide-unnamed-devices-description")
       checked: Settings.data.network.bluetoothHideUnnamedDevices
       onToggled: checked => Settings.data.network.bluetoothHideUnnamedDevices = checked
       Layout.alignment: Qt.AlignVCenter
@@ -324,8 +324,8 @@ Item {
     }
 
     NToggle {
-      label: I18n.tr("panels.connections.disable-discoverability-label") // "Disable device visibility"
-      description: I18n.tr("panels.connections.disable-discoverability-description") // "Hide your device from nearby Bluetooth devices."
+      label: I18n.tr("panels.connections.disable-discoverability-label")
+      description: I18n.tr("panels.connections.disable-discoverability-description")
       checked: Settings.data.network.disableDiscoverability
       onToggled: checked => {
                               Settings.data.network.disableDiscoverability = checked;

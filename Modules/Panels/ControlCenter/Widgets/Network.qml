@@ -33,7 +33,7 @@ NIconButtonHot {
     try {
       if (NetworkService.ethernetConnected) {
         // Match design: fixed label when on Ethernet
-        return I18n.tr("control-center.wifi.label-ethernet");
+        return I18n.tr("common.ethernet");
       }
       // Wi‑Fi: SSID — link speed (if available)
       for (const net in NetworkService.networks) {

@@ -1029,27 +1029,30 @@
   },
   {
     "labelKey": "actions.enable-wifi",
-    "descriptionKey": "panels.network.wifi-description",
+    "descriptionKey": "panels.connections.wifi-description",
     "widget": "NToggle",
     "tab": 15,
-    "tabLabel": "common.network",
-    "subTab": null
+    "tabLabel": "panels.connections.title",
+    "subTab": null,
+    "subTabLabel": "common.wifi"
   },
   {
     "labelKey": "actions.enable-bluetooth",
-    "descriptionKey": "panels.network.bluetooth-description",
+    "descriptionKey": "panels.connections.bluetooth-description",
     "widget": "NToggle",
     "tab": 15,
-    "tabLabel": "common.network",
-    "subTab": null
+    "tabLabel": "panels.connections.title",
+    "subTab": null,
+    "subTabLabel": "common.bluetooth"
   },
   {
-    "labelKey": "panels.network.bluetooth-rssi-polling-label",
-    "descriptionKey": "panels.network.bluetooth-rssi-polling-description",
+    "labelKey": "panels.connections.bluetooth-rssi-polling-label",
+    "descriptionKey": "panels.connections.bluetooth-rssi-polling-description",
     "widget": "NToggle",
     "tab": 15,
-    "tabLabel": "common.network",
-    "subTab": null
+    "tabLabel": "panels.connections.title",
+    "subTab": null,
+    "subTabLabel": "common.bluetooth"
   },
   {
     "labelKey": "panels.notifications.duration-respect-expire-label",

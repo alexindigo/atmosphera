@@ -140,13 +140,13 @@ SmartPanel {
                     panelViewMode = "wifi";
                   }
                 }
-                onEntered: TooltipService.show(parent, panelViewMode === "wifi" ? I18n.tr("control-center.wifi.label-ethernet") : I18n.tr("common.wifi"))
+                onEntered: TooltipService.show(parent, panelViewMode === "wifi" ? I18n.tr("common.ethernet") : I18n.tr("common.wifi"))
                 onExited: TooltipService.hide()
               }
             }
 
             NText {
-              text: panelViewMode === "wifi" ? I18n.tr("common.wifi") : I18n.tr("control-center.wifi.label-ethernet")
+              text: panelViewMode === "wifi" ? I18n.tr("common.wifi") : I18n.tr("common.ethernet")
               pointSize: Style.fontSizeL
               font.weight: Style.fontWeightBold
               color: Color.mOnSurface
@@ -204,7 +204,7 @@ SmartPanel {
             }
 
             NTabButton {
-              text: I18n.tr("control-center.wifi.label-ethernet")
+              text: I18n.tr("common.ethernet")
               tabIndex: 1
               checked: modeTabBar.currentIndex === 1
             }
@@ -707,7 +707,7 @@ SmartPanel {
                                   const value = (NetworkService.activeEthernetDetails.ifname && NetworkService.activeEthernetDetails.ifname.length > 0) ? NetworkService.activeEthernetDetails.ifname : (NetworkService.activeEthernetIf || "");
                                   if (value.length > 0) {
                                     Quickshell.execDetached(["wl-copy", value]);
-                                    ToastService.showNotice(I18n.tr("control-center.wifi.label-ethernet"), I18n.tr("toast.bluetooth.address-copied"), "ethernet");
+                                    ToastService.showNotice(I18n.tr("common.ethernet"), I18n.tr("toast.bluetooth.address-copied"), "ethernet");
                                   }
                                 }
                               }
@@ -859,7 +859,7 @@ SmartPanel {
                                   const value = NetworkService.activeEthernetDetails.ipv4 || "";
                                   if (value.length > 0) {
                                     Quickshell.execDetached(["wl-copy", value]);
-                                    ToastService.showNotice(I18n.tr("control-center.wifi.label-ethernet"), I18n.tr("toast.bluetooth.address-copied"), "ethernet");
+                                    ToastService.showNotice(I18n.tr("common.ethernet"), I18n.tr("toast.bluetooth.address-copied"), "ethernet");
                                   }
                                 }
                               }
