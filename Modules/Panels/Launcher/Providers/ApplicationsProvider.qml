@@ -540,7 +540,7 @@ Item {
                          hasSpaceArgs = commandArgs.some(arg => String(arg).includes(" "));
                        }
                        if (app.execute && (hasQuotedArgs || hasSpaceArgs)) {
-                         Logger.w("ApplicationsProvider", `Detected quoted/space arguments in Exec for ${app.name}, using app.execute()`);
+                         Logger.d("ApplicationsProvider", `Detected quoted/space arguments in Exec for ${app.name}, using app.execute()`);
                          app.execute();
                          return;
                        }
