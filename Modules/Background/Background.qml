@@ -22,6 +22,9 @@ Variants {
       property string transitionType: "fade"
       property real transitionProgress: 0
       property bool isStartupTransition: true
+      property bool wallpaperReady: false
+
+      visible: wallpaperReady
 
       readonly property real edgeSmoothness: Settings.data.wallpaper.transitionEdgeSmoothness
       readonly property var allTransitions: WallpaperService.allTransitions
@@ -704,6 +707,8 @@ Variants {
       // Sets up transition params, then defers the actual animation
       // to allow the compositor time to map the window.
       function performStartupTransition() {
+        wallpaperReady = true;
+
         if (Settings.data.wallpaper.skipStartupTransition) {
           setWallpaperImmediate(futureWallpaper);
           isStartupTransition = false;
