@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../Helpers/Keybinds.js" as Keybinds
 import qs.Commons
 import qs.Services.UI
 import qs.Widgets
-import "../Helpers/Keybinds.js" as Keybinds
 
 Item {
   id: root
@@ -37,25 +37,30 @@ Item {
   readonly property real _pillHeight: Style.baseWidgetSize * 1.1 * Style.uiScaleRatio
 
   function _applyKeybind(keyStr) {
-    if (!keyStr) return;
-    
+    if (!keyStr)
+      return;
+
     // 1. Internal duplicate check (same action)
     for (let i = 0; i < root.currentKeybinds.length; i++) {
-        if (i !== root.recordingIndex && String(root.currentKeybinds[i]).toLowerCase() === keyStr.toLowerCase()) {
-            hasConflict = true;
-            ToastService.showWarning(I18n.tr("panels.general.keybinds-conflict-title"), I18n.tr("panels.general.keybinds-conflict-description", { "action": root.label || "This action" }));
-            conflictTimer.restart();
-            return;
-        }
+      if (i !== root.recordingIndex && String(root.currentKeybinds[i]).toLowerCase() === keyStr.toLowerCase()) {
+        hasConflict = true;
+        ToastService.showWarning(I18n.tr("panels.general.keybinds-conflict-title"), I18n.tr("panels.general.keybinds-conflict-description", {
+                                                                                              "action": root.label || "This action"
+                                                                                            }));
+        conflictTimer.restart();
+        return;
+      }
     }
 
     // 2. External conflict check (other actions)
     const conflict = Keybinds.getKeybindConflict(keyStr, root.settingsPath, Settings.data);
     if (conflict) {
-        hasConflict = true;
-        ToastService.showWarning(I18n.tr("panels.general.keybinds-conflict-title"), I18n.tr("panels.general.keybinds-conflict-description", { "action": conflict }));
-        conflictTimer.restart();
-        return;
+      hasConflict = true;
+      ToastService.showWarning(I18n.tr("panels.general.keybinds-conflict-title"), I18n.tr("panels.general.keybinds-conflict-description", {
+                                                                                            "action": conflict
+                                                                                          }));
+      conflictTimer.restart();
+      return;
     }
 
     var newKeybinds = Array.from(root.currentKeybinds);

@@ -256,11 +256,19 @@ Item {
 
     Transition {
       id: moveTransitionImpl
-      NumberAnimation { properties: "x,y"; duration: Style.animationNormal; easing.type: Easing.InOutQuad }
+      NumberAnimation {
+        properties: "x,y"
+        duration: Style.animationNormal
+        easing.type: Easing.InOutQuad
+      }
     }
     Transition {
       id: displacedTransitionImpl
-      NumberAnimation { properties: "x,y"; duration: Style.animationNormal; easing.type: Easing.InOutQuad }
+      NumberAnimation {
+        properties: "x,y"
+        duration: Style.animationNormal
+        easing.type: Easing.InOutQuad
+      }
     }
 
     // Enable clipping to keep content within bounds

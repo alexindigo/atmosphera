@@ -447,9 +447,7 @@ SmartPanel {
 
             NIconButton {
               icon: "color-swatch"
-              tooltipText: Settings.data.colorSchemes.useWallpaperColors
-                ? I18n.tr("wallpaper.panel.color-extraction-enabled")
-                : I18n.tr("wallpaper.panel.color-extraction-disabled")
+              tooltipText: Settings.data.colorSchemes.useWallpaperColors ? I18n.tr("wallpaper.panel.color-extraction-enabled") : I18n.tr("wallpaper.panel.color-extraction-disabled")
               baseSize: Style.baseWidgetSize * 0.8
               onClicked: {
                 Settings.data.colorSchemes.useWallpaperColors = !Settings.data.colorSchemes.useWallpaperColors;
@@ -469,19 +467,18 @@ SmartPanel {
 
               property bool _initialized: false
               property bool _userChanging: false
-              Component.onCompleted: Qt.callLater(() => { _initialized = true; })
+              Component.onCompleted: Qt.callLater(() => {
+                                                    _initialized = true;
+                                                  })
 
-              model: Settings.data.colorSchemes.useWallpaperColors
-                ? TemplateProcessor.schemeTypes
-                : ColorSchemeService.schemes.map(s => ({
-                    "key": ColorSchemeService.getBasename(s),
-                    "name": ColorSchemeService.getBasename(s)
-                  }))
-              currentKey: Settings.data.colorSchemes.useWallpaperColors
-                ? Settings.data.colorSchemes.generationMethod
-                : Settings.data.colorSchemes.predefinedScheme
+              model: Settings.data.colorSchemes.useWallpaperColors ? TemplateProcessor.schemeTypes : ColorSchemeService.schemes.map(s => ({
+                                                                                                                                            "key": ColorSchemeService.getBasename(s),
+                                                                                                                                            "name": ColorSchemeService.getBasename(s)
+                                                                                                                                          }))
+              currentKey: Settings.data.colorSchemes.useWallpaperColors ? Settings.data.colorSchemes.generationMethod : Settings.data.colorSchemes.predefinedScheme
               onCurrentKeyChanged: {
-                if (!_initialized) return;
+                if (!_initialized)
+                  return;
                 if (_userChanging) {
                   _userChanging = false;
                   return;
@@ -496,13 +493,27 @@ SmartPanel {
                             } else {
                               ColorSchemeService.setPredefinedScheme(key);
                             }
-                            Qt.callLater(() => { _userChanging = false; });
+                            Qt.callLater(() => {
+                                           _userChanging = false;
+                                         });
                           }
 
               SequentialAnimation {
                 id: schemeGlowAnimation
-                NumberAnimation { target: colorSchemeComboBox; property: "opacity"; to: 0.3; duration: Style.animationSlow; easing.type: Easing.OutCubic }
-                NumberAnimation { target: colorSchemeComboBox; property: "opacity"; to: 1.0; duration: Style.animationSlow; easing.type: Easing.InCubic }
+                NumberAnimation {
+                  target: colorSchemeComboBox
+                  property: "opacity"
+                  to: 0.3
+                  duration: Style.animationSlow
+                  easing.type: Easing.OutCubic
+                }
+                NumberAnimation {
+                  target: colorSchemeComboBox
+                  property: "opacity"
+                  to: 1.0
+                  duration: Style.animationSlow
+                  easing.type: Easing.InCubic
+                }
               }
             }
 
@@ -632,7 +643,9 @@ SmartPanel {
     property var directoriesList: [] // List of directories in browse mode
 
     // ListModel for the grid — enables animated reordering via move()
-    ListModel { id: wallpaperModel }
+    ListModel {
+      id: wallpaperModel
+    }
 
     // Browse mode properties
     property string currentBrowsePath: WallpaperService.getCurrentBrowsePath(targetScreen?.name ?? "")
@@ -683,7 +696,8 @@ SmartPanel {
       // Apply filter if text is present
       if (!panelContent.filterText || panelContent.filterText.trim().length === 0) {
         filteredItems = combinedItems;
-        if (!skipSync) syncModel();
+        if (!skipSync)
+          syncModel();
         return;
       }
 
@@ -695,7 +709,8 @@ SmartPanel {
         return r.obj;
       });
       filteredItems = sortFavoritesToTop(filtered);
-      if (!skipSync) syncModel();
+      if (!skipSync)
+        syncModel();
     }
 
     // Copy filteredItems into the ListModel (full rebuild, no animation).
@@ -718,7 +733,8 @@ SmartPanel {
           break;
         }
       }
-      if (fromIndex === -1) return;
+      if (fromIndex === -1)
+        return;
 
       // Find where it should be in the freshly-computed filteredItems
       var toIndex = -1;
@@ -728,7 +744,8 @@ SmartPanel {
           break;
         }
       }
-      if (toIndex === -1 || fromIndex === toIndex) return;
+      if (toIndex === -1 || fromIndex === toIndex)
+        return;
 
       wallpaperGridView.animateMovement = true;
       wallpaperModel.move(fromIndex, toIndex, 1);
@@ -1183,10 +1200,14 @@ SmartPanel {
                 z: 5
 
                 Behavior on color {
-                  ColorAnimation { duration: Style.animationFast }
+                  ColorAnimation {
+                    duration: Style.animationFast
+                  }
                 }
                 Behavior on opacity {
-                  NumberAnimation { duration: Style.animationFast }
+                  NumberAnimation {
+                    duration: Style.animationFast
+                  }
                 }
 
                 NIcon {
@@ -1223,14 +1244,18 @@ SmartPanel {
 
                 property int diameter: 25 * Style.uiScaleRatio
                 property int _favRevision: 0
-                property var favData: { _favRevision; return WallpaperService.getFavorite(wallpaperItem.wallpaperPath); }
+                property var favData: {
+                  _favRevision;
+                  return WallpaperService.getFavorite(wallpaperItem.wallpaperPath);
+                }
                 property var colors: favData && favData.paletteColors ? favData.paletteColors : []
                 property bool isDark: favData ? favData.darkMode : false
 
                 Connections {
                   target: WallpaperService
                   function onFavoriteDataUpdated(path) {
-                    if (path === wallpaperItem.wallpaperPath) paletteRow._favRevision++;
+                    if (path === wallpaperItem.wallpaperPath)
+                      paletteRow._favRevision++;
                   }
                 }
 

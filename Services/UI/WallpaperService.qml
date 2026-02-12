@@ -366,13 +366,11 @@ Singleton {
   // Save the color scheme of any favorited wallpapers that are about
   // to be replaced, while the current settings still reflect them.
   function _saveOutgoingFavorites(newPath, screenName) {
-    var outgoing = screenName !== undefined
-      ? [currentWallpapers[screenName]]
-      : Object.values(currentWallpapers);
+    var outgoing = screenName !== undefined ? [currentWallpapers[screenName]] : Object.values(currentWallpapers);
 
     var unique = [...new Set(outgoing)];
 
-    unique.forEach(function(path) {
+    unique.forEach(function (path) {
       if (path && path !== newPath && isFavorite(path)) {
         updateFavoriteColorScheme(path);
       }
@@ -942,12 +940,7 @@ Singleton {
       "darkMode": Settings.data.colorSchemes.darkMode,
       "useWallpaperColors": Settings.data.colorSchemes.useWallpaperColors,
       "generationMethod": Settings.data.colorSchemes.generationMethod,
-      "paletteColors": [
-        Color.mPrimary.toString(),
-        Color.mSecondary.toString(),
-        Color.mTertiary.toString(),
-        Color.mError.toString()
-      ]
+      "paletteColors": [Color.mPrimary.toString(), Color.mSecondary.toString(), Color.mTertiary.toString(), Color.mError.toString()]
     };
   }
 
