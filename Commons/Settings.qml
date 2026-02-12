@@ -26,7 +26,7 @@ Singleton {
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
   readonly property int settingsVersion: 53
-  readonly property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
+  property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
   readonly property string shellName: "noctalia"
   readonly property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
   readonly property string cacheDir: Quickshell.env("NOCTALIA_CACHE_DIR") || (Quickshell.env("XDG_CACHE_HOME") || Quickshell.env("HOME") + "/.cache") + "/" + shellName + "/"

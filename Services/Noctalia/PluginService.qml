@@ -1987,7 +1987,8 @@ Singleton {
   // Toggle the hot reload state of a certain plugin
   function togglePluginHotReload(pluginId) {
     // If we have hot reload completely enabled just return
-    if (root.hotReloadEnabled) return;
+    if (root.hotReloadEnabled)
+      return;
 
     const index = root.pluginHotReloadEnabled.indexOf(pluginId);
     if (index === -1) {
