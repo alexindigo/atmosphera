@@ -97,6 +97,10 @@ Variants {
       Connections {
         target: CompositorService
         function onDisplayScalesChanged() {
+          if (!WallpaperService.isInitialized) {
+            return;
+          }
+
           const currentPath = WallpaperService.getWallpaper(modelData.name);
           if (!currentPath || WallpaperService.isSolidColorPath(currentPath)) {
             return;
@@ -646,6 +650,9 @@ Variants {
           _solidColor2 = colorStr;
           // No image to load, start transition immediately
           nextWallpaper.source = "";
+          if (!wallpaperReady) {
+            wallpaperReady = true;
+          }
           currentWallpaper.asynchronous = false;
           transitionAnimation.start();
         } else {
