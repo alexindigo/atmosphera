@@ -643,6 +643,10 @@
       "grid": "Grid",
       "single-row": "Single row"
     },
+    "notification-density": {
+      "default": "Default",
+      "compact": "Compact"
+    },
     "settings-panel-mode": {
       "attached": "Panel attached to bar",
       "centered": "Centered panel",
@@ -1257,6 +1261,8 @@
       "settings-enabled-description": "Enable or disable the notification daemon, requires a restart of Noctalia shell.",
       "settings-enabled-label": "Enable notifications",
       "settings-location-description": "Where notifications appear on screen.",
+      "settings-density-description": "Choose the notification card density.",
+      "settings-density-label": "Density",
       "sounds-desc": "Configure notification sound effects and volume.",
       "sounds-enabled-description": "Enable sound effects for incoming notifications.",
       "sounds-enabled-label": "Enable notification sounds",
