@@ -510,13 +510,7 @@ Singleton {
       property int diskAvailCriticalThreshold: 10
       property int batteryWarningThreshold: 20
       property int batteryCriticalThreshold: 5
-      property int cpuPollingInterval: 1000
-      property int gpuPollingInterval: 3000
       property bool enableDgpuMonitoring: false // Opt-in: reading dGPU sysfs/nvidia-smi wakes it from D3cold, draining battery
-      property int memPollingInterval: 1000
-      property int diskPollingInterval: 30000
-      property int networkPollingInterval: 1000
-      property int loadAvgPollingInterval: 3000
       property bool useCustomColors: false
       property string warningColor: ""
       property string criticalColor: ""

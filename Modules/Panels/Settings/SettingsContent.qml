@@ -30,6 +30,8 @@ import qs.Widgets
 Item {
   id: root
 
+  Component.onDestruction: SystemStatService.unregisterComponent("settings")
+
   // Screen reference for child components
   property var screen
 
@@ -389,6 +391,7 @@ Item {
   }
 
   Component.onCompleted: {
+    SystemStatService.registerComponent("settings");
     // Restore sidebar state
     sidebarExpanded = ShellState.getSettingsSidebarExpanded();
   }

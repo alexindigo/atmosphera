@@ -81,6 +81,9 @@ Item {
   implicitWidth: contentWidth
   implicitHeight: contentHeight
 
+  Component.onCompleted: SystemStatService.registerComponent("bar-sysmon:" + (screen?.name || "unknown"))
+  Component.onDestruction: SystemStatService.unregisterComponent("bar-sysmon:" + (screen?.name || "unknown"))
+
   function openExternalMonitor() {
     Quickshell.execDetached(["sh", "-c", Settings.data.systemMonitor.externalMonitor]);
   }

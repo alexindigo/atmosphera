@@ -11,6 +11,9 @@ import qs.Widgets
 SmartPanel {
   id: root
 
+  Component.onCompleted: SystemStatService.registerComponent("panel-systemstats")
+  Component.onDestruction: SystemStatService.unregisterComponent("panel-systemstats")
+
   preferredWidth: Math.round(440 * Style.uiScaleRatio)
 
   panelContent: Item {
@@ -137,7 +140,7 @@ SmartPanel {
             color2: Color.mSecondary
             fill: true
             fillOpacity: 0.15
-            updateInterval: Settings.data.systemMonitor.cpuPollingInterval
+            updateInterval: SystemStatService.cpuIntervalMs
             edgeToEdge: true
           }
         }
@@ -193,7 +196,7 @@ SmartPanel {
             color: Color.mPrimary
             fill: true
             fillOpacity: 0.15
-            updateInterval: Settings.data.systemMonitor.memPollingInterval
+            updateInterval: SystemStatService.memIntervalMs
             edgeToEdge: true
           }
         }
@@ -267,7 +270,7 @@ SmartPanel {
             color2: Color.mSecondary
             fill: true
             fillOpacity: 0.15
-            updateInterval: Settings.data.systemMonitor.networkPollingInterval
+            updateInterval: SystemStatService.networkIntervalMs
             animateScale: true
             edgeToEdge: true
           }
