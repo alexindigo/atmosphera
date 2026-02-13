@@ -63,7 +63,7 @@ Item {
 
   readonly property int paddingPercent: usePadding ? String("100%").length : 0
   readonly property int paddingTemp: usePadding ? String("999°").length : 0
-  readonly property int paddingCpuFreq: usePadding ? String("9.9GHz").length : 0
+  readonly property int paddingCpuFreq: usePadding ? String("9.9").length : 0
   readonly property int paddingSpeed: usePadding ? String("9999G").length : 0
 
   readonly property real iconSize: Style.toOdd(capsuleHeight * 0.48)
@@ -334,7 +334,7 @@ Item {
           // Text mode
           NText {
             visible: !compactMode
-            text: SystemStatService.cpuFreq.replace(" ", "").padStart(paddingCpuFreq, " ")
+            text: SystemStatService.cpuFreq.replace("Hz", "").replace(" ", "").padStart(paddingCpuFreq, " ")
             family: fontFamily
             pointSize: barFontSize
             applyUiScale: false
