@@ -224,7 +224,11 @@
       "swap-usage-description": "Show swap memory usage.",
       "swap-usage-label": "Swap usage",
       "use-monospace-font-description": "Use monospace font for consistent character width.",
-      "use-monospace-font-label": "Monospace font"
+      "use-monospace-font-label": "Monospace font",
+      "use-padding-description": "Pads the text values with leading spaces to prevent layout shifting.",
+      "use-padding-description-disabled-monospace-font": "A monospace font is needed for this feature.",
+      "use-padding-description-disabled-vertical": "Vertical taskbar does not support padding text.",
+      "use-padding-label": "Pad text"
     },
     "taskbar": {
       "colorize-icons-description": "Apply theme colors to taskbar icons.",
