@@ -45,6 +45,18 @@ Singleton {
         Settings.data.bar.displayMode = mode;
       }
     }
+    function setPosition(position: string, screen: string) {
+      var valid = position === "top" || position === "bottom" || position === "left" || position === "right";
+      if (!valid) {
+        Logger.w("IPC", "Invalid bar position: " + position + ". Valid: top, bottom, left, right");
+        return;
+      }
+      if (!screen || screen === "all") {
+        Settings.data.bar.position = position;
+      } else {
+        Settings.setScreenOverride(screen, "position", position);
+      }
+    }
   }
 
   // Settings IPC helpers (outside IpcHandler to avoid QVariant IPC warnings)
