@@ -24,7 +24,7 @@ Singleton {
   // Power/blocked/availability state
   property bool ctlAvailable: false
   readonly property bool bluetoothAvailable: !!adapter || root.ctlAvailable
-  readonly property bool enabled: (adapter && adapter.enabled) || root.ctlPowered
+  readonly property bool enabled: adapter?.enabled ?? root.ctlPowered
   property bool ctlPowered: false
   property bool ctlDiscovering: false
   property bool ctlDiscoverable: false
@@ -119,7 +119,14 @@ Singleton {
     Logger.i("Bluetooth", "Service started");
   }
 
-  Component.onCompleted: pollCtlState()
+  Component.onCompleted: {
+    pollCtlState();
+    // Ensure Airplane Mode persists upon reboot
+    if (root.airplaneModeEnabled) {
+      Quickshell.execDetached(["rfkill", "block", "wifi"]);
+      Quickshell.execDetached(["rfkill", "block", "bluetooth"]);
+    }
+  }
 
   // Track adapter state changes
   Connections {
