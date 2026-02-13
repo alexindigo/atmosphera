@@ -422,8 +422,8 @@ Item {
     OsdTab {}
   }
   Component {
-    id: networkTab
-    NetworkTab {}
+    id: connectionsTab
+    ConnectionsTab {}
   }
   Component {
     id: regionTab
@@ -575,10 +575,10 @@ Item {
             "source": displayTab
           },
           {
-            "id": SettingsPanel.Tab.Network,
-            "label": "common.network",
+            "id": SettingsPanel.Tab.Connections,
+            "label": "panels.connections.title",
             "icon": "settings-network",
-            "source": networkTab
+            "source": connectionsTab
           },
           {
             "id": SettingsPanel.Tab.Location,
