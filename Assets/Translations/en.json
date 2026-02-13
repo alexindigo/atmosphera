@@ -1292,6 +1292,8 @@
       "settings-do-not-disturb-description": "Disable all notification popups when enabled.",
       "settings-enabled-description": "Enable or disable the notification daemon, requires a restart of Noctalia shell.",
       "settings-enabled-label": "Enable notifications",
+      "settings-markdown-description": "Render notification content using Markdown formatting.",
+      "settings-markdown-label": "Enable Markdown",
       "settings-location-description": "Where notifications appear on screen.",
       "sounds-desc": "Configure notification sound effects and volume.",
       "sounds-enabled-description": "Enable sound effects for incoming notifications.",
