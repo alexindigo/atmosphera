@@ -17,7 +17,7 @@ NIconButtonHot {
   }
   onRightClicked: {
     if (!Settings.data.network.airplaneModeEnabled) {
-      BluetoothService.setBluetoothEnabled(!BluetoothService.enabled)
+      BluetoothService.setBluetoothEnabled(!BluetoothService.enabled);
     }
   }
 }

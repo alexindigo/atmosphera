@@ -378,6 +378,62 @@
     "subTabLabel": "common.templates"
   },
   {
+    "labelKey": "common.bluetooth",
+    "descriptionKey": null,
+    "widget": "NLabel",
+    "tab": 15,
+    "tabLabel": "panels.connections.title",
+    "subTab": null
+  },
+  {
+    "labelKey": "panels.connections.hide-unnamed-devices-label",
+    "descriptionKey": "panels.connections.hide-unnamed-devices-description",
+    "widget": "NToggle",
+    "tab": 15,
+    "tabLabel": "panels.connections.title",
+    "subTab": null
+  },
+  {
+    "labelKey": "panels.connections.disable-discoverability-label",
+    "descriptionKey": "panels.connections.disable-discoverability-description",
+    "widget": "NToggle",
+    "tab": 15,
+    "tabLabel": "panels.connections.title",
+    "subTab": null
+  },
+  {
+    "labelKey": "panels.connections.bluetooth-rssi-polling-label",
+    "descriptionKey": "panels.connections.bluetooth-rssi-polling-description",
+    "widget": "NToggle",
+    "tab": 15,
+    "tabLabel": "panels.connections.title",
+    "subTab": null
+  },
+  {
+    "labelKey": "panels.connections.bluetooth-rssi-polling-interval-label",
+    "descriptionKey": "panels.connections.bluetooth-rssi-polling-interval-description",
+    "widget": "NSpinBox",
+    "tab": 15,
+    "tabLabel": "panels.connections.title",
+    "subTab": null
+  },
+  {
+    "labelKey": "toast.airplane-mode.title",
+    "descriptionKey": null,
+    "widget": "NLabel",
+    "tab": 15,
+    "tabLabel": "panels.connections.title",
+    "subTab": null
+  },
+  {
+    "labelKey": "common.wifi",
+    "descriptionKey": null,
+    "widget": "NLabel",
+    "tab": 15,
+    "tabLabel": "panels.connections.title",
+    "subTab": null
+  },
+  {
     "labelKey": "common.position",
     "descriptionKey": "panels.control-center.position-description",
     "widget": "NComboBox",
@@ -1035,51 +1091,6 @@
     "tabLabel": "panels.lock-screen.title",
     "subTab": 0,
     "subTabLabel": "common.appearance"
-  },
-  {
-    "labelKey": "actions.enable-wifi",
-    "descriptionKey": "panels.connections.wifi-description",
-    "widget": "NToggle",
-    "tab": 15,
-    "tabLabel": "panels.connections.title",
-    "subTab": 0,
-    "subTabLabel": "common.wifi"
-  },
-  {
-    "labelKey": "actions.enable-bluetooth",
-    "descriptionKey": "panels.connections.bluetooth-description",
-    "widget": "NToggle",
-    "tab": 15,
-    "tabLabel": "panels.connections.title",
-    "subTab": 1,
-    "subTabLabel": "common.bluetooth"
-  },
-  {
-    "labelKey": "panels.connections.hide-unnamed-devices-label",
-    "descriptionKey": "panels.connections.hide-unnamed-devices-description",
-    "widget": "NToggle",
-    "tab": 15,
-    "tabLabel": "panels.connections.title",
-    "subTab": 1,
-    "subTabLabel": "common.bluetooth"
-  },
-  {
-    "labelKey": "panels.connections.disable-discoverability-label",
-    "descriptionKey": "panels.connections.disable-discoverability-description",
-    "widget": "NToggle",
-    "tab": 15,
-    "tabLabel": "panels.connections.title",
-    "subTab": 1,
-    "subTabLabel": "common.bluetooth"
-  },
-  {
-    "labelKey": "panels.connections.bluetooth-rssi-polling-label",
-    "descriptionKey": "panels.connections.bluetooth-rssi-polling-description",
-    "widget": "NToggle",
-    "tab": 15,
-    "tabLabel": "panels.connections.title",
-    "subTab": 1,
-    "subTabLabel": "common.bluetooth"
   },
   {
     "labelKey": "panels.notifications.duration-respect-expire-label",

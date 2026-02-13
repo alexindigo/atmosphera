@@ -71,7 +71,7 @@ Item {
                      NetworkService.setWifiEnabled(!Settings.data.network.wifiEnabled);
                    } else if (action === "wifi-settings") {
                      SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 0, screen);
-                   }else if (action === "widget-settings") {
+                   } else if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
                    }
                  }

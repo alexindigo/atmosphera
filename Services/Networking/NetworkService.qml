@@ -851,7 +851,7 @@ Singleton {
           for (var i = 0; i < parts.length; i++) {
             var p = parts[i];
             if (p && p.length > 0) {
-            compact.push(p);
+              compact.push(p);
             }
           }
           // Find a token that represents Mbit/s and use the previous number
@@ -1270,8 +1270,8 @@ Singleton {
         root.connectingTo = "";
         Logger.i("Network", "Connected to network: '" + connectProcess.ssid + "'");
         ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("toast.wifi.connected", {
-                                                                       "ssid": connectProcess.ssid
-                                                                     }), "wifi");
+                                                                  "ssid": connectProcess.ssid
+                                                                }), "wifi");
 
         // Still do a scan to get accurate signal and security info
         delayedScanTimer.interval = 5000;
@@ -1316,8 +1316,8 @@ Singleton {
       onStreamFinished: {
         Logger.i("Network", "Disconnected from network: '" + disconnectProcess.ssid + "'");
         ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("toast.wifi.disconnected", {
-                                                                       "ssid": disconnectProcess.ssid
-                                                                     }), "wifi-off");
+                                                                  "ssid": disconnectProcess.ssid
+                                                                }), "wifi-off");
 
         // Immediately update UI on successful disconnect
         root.updateNetworkStatus(disconnectProcess.ssid, false);

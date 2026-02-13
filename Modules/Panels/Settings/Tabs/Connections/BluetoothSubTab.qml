@@ -183,7 +183,9 @@ Item {
         }
 
         NText {
-          text: I18n.tr("panels.connections.bluetooth-discoverable", {hostName: HostService.hostName})
+          text: I18n.tr("panels.connections.bluetooth-discoverable", {
+                          hostName: HostService.hostName
+                        })
           visible: (BluetoothService.enabled && isDiscoverable)
           richTextEnabled: true
           wrapMode: Text.WordWrap
@@ -328,9 +330,9 @@ Item {
       description: I18n.tr("panels.connections.disable-discoverability-description")
       checked: Settings.data.network.disableDiscoverability
       onToggled: checked => {
-                              Settings.data.network.disableDiscoverability = checked;
-                              BluetoothService.setDiscoverable(!checked);
-                            }
+                   Settings.data.network.disableDiscoverability = checked;
+                   BluetoothService.setDiscoverable(!checked);
+                 }
       Layout.alignment: Qt.AlignVCenter
       visible: !btprefs.showOnlyLists && BluetoothService.enabled
     }

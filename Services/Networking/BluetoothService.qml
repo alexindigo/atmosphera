@@ -146,8 +146,8 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         var output = this.text || "";
-        var wifiBlocked = /^\d+:.*Wireless LAN[^\n]*\n\s*Soft blocked:\s*yes/im.test(output)
-        var btBlocked = /^\d+:.*Bluetooth[^\n]*\n\s*Soft blocked:\s*yes/im.test(output)
+        var wifiBlocked = /^\d+:.*Wireless LAN[^\n]*\n\s*Soft blocked:\s*yes/im.test(output);
+        var btBlocked = /^\d+:.*Bluetooth[^\n]*\n\s*Soft blocked:\s*yes/im.test(output);
         var isAirplaneModeActive = wifiBlocked && btBlocked;
 
         // Check if airplane mode has been toggled
@@ -156,13 +156,13 @@ Singleton {
           NetworkService.setWifiEnabled(false);
           Settings.data.network.airplaneModeEnabled = true;
           ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.enabled"), "plane");
-          Logger.i("AirplaneMode", "Wi-Fi & Bluetooth adapter blocked")
+          Logger.i("AirplaneMode", "Wi-Fi & Bluetooth adapter blocked");
         } else if (!isAirplaneModeActive && root.airplaneModeEnabled) {
           root.airplaneModeToggled = true;
           NetworkService.setWifiEnabled(true);
           Settings.data.network.airplaneModeEnabled = false;
           ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.disabled"), "plane-off");
-          Logger.i("AirplaneMode", "Wi-Fi & Bluetooth adapter unblocked")
+          Logger.i("AirplaneMode", "Wi-Fi & Bluetooth adapter unblocked");
         } else {
           var isCurrentlyEnabled = (adapter && adapter.enabled) || root.ctlPowered;
           var stateChanged = isCurrentlyEnabled !== root._lastEnabledState;
@@ -192,7 +192,9 @@ Singleton {
   Process {
     id: ctlShowProcess
     running: false
-    stdout: StdioCollector { id: ctlStdout }
+    stdout: StdioCollector {
+      id: ctlStdout
+    }
     onExited: function (exitCode, exitStatus) {
       try {
         var text = ctlStdout.text || "";
@@ -208,13 +210,19 @@ Singleton {
             foundController = true;
           }
           var mp = line.match(/\bPowered:\s*(yes|no)\b/i);
-          if (mp) { powered = (mp[1].toLowerCase() === "yes"); }
+          if (mp) {
+            powered = (mp[1].toLowerCase() === "yes");
+          }
 
           var md = line.match(/\bDiscoverable:\s*(yes|no)\b/i);
-          if (md) { discoverable = (md[1].toLowerCase() === "yes"); }
+          if (md) {
+            discoverable = (md[1].toLowerCase() === "yes");
+          }
 
           var ms = line.match(/\bDiscovering:\s*(yes|no)\b/i);
-          if (ms) { discovering = (ms[1].toLowerCase() === "yes"); }
+          if (ms) {
+            discovering = (ms[1].toLowerCase() === "yes");
+          }
         }
         root.ctlAvailable = foundController; // Assign findings.
         root.ctlPowered = powered; // Assign findings.
@@ -502,10 +510,14 @@ Singleton {
       return "";
     }
     try {
-      if (device.pairing) return "pairing";
-      if (device.blocked) return "blocked";
-      if (device.state === BluetoothDevice.Connecting) return "connecting";
-      if (device.state === BluetoothDevice.Disconnecting) return "disconnecting";
+      if (device.pairing)
+        return "pairing";
+      if (device.blocked)
+        return "blocked";
+      if (device.state === BluetoothDevice.Connecting)
+        return "connecting";
+      if (device.state === BluetoothDevice.Disconnecting)
+        return "disconnecting";
     } catch (_) {}
     return "";
   }

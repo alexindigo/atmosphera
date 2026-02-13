@@ -54,7 +54,7 @@ NIconButtonHot {
   }
   onRightClicked: {
     if (!Settings.data.network.airplaneModeEnabled) {
-      NetworkService.setWifiEnabled(!Settings.data.network.wifiEnabled)
+      NetworkService.setWifiEnabled(!Settings.data.network.wifiEnabled);
     }
   }
 }

@@ -165,11 +165,17 @@ Singleton {
   }
 
   function isBluetoothDevice(device) {
-    if (!device) {return false;}
+    if (!device) {
+      return false;
+    }
     // Check for Quickshell Bluetooth device property
-    if (device.batteryAvailable !== undefined) {return true;}
+    if (device.batteryAvailable !== undefined) {
+      return true;
+    }
     // Check for UPower device path indicating it's a Bluetooth device
-    if (device.nativePath && (device.nativePath.includes("bluez") || device.nativePath.includes("bluetooth"))) {return true;}
+    if (device.nativePath && (device.nativePath.includes("bluez") || device.nativePath.includes("bluetooth"))) {
+      return true;
+    }
     return false;
   }
 
