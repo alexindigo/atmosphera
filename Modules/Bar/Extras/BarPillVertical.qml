@@ -324,15 +324,15 @@ Item {
       TooltipService.hide();
     }
     onClicked: mouse => {
-      TooltipService.hide();
-      if (mouse.button === Qt.LeftButton) {
-        root.clicked();
-      } else if (mouse.button === Qt.RightButton) {
-        root.rightClicked();
-      } else if (mouse.button === Qt.MiddleButton) {
-        root.middleClicked();
-      }
-    }
+                 TooltipService.hide();
+                 if (mouse.button === Qt.LeftButton) {
+                   root.clicked();
+                 } else if (mouse.button === Qt.RightButton) {
+                   root.rightClicked();
+                 } else if (mouse.button === Qt.MiddleButton) {
+                   root.middleClicked();
+                 }
+               }
     onWheel: wheel => root.wheel(wheel.angleDelta.y)
   }
 
