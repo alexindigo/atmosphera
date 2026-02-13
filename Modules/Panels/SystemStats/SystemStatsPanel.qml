@@ -141,7 +141,6 @@ SmartPanel {
             fill: true
             fillOpacity: 0.15
             updateInterval: SystemStatService.cpuIntervalMs
-            edgeToEdge: true
           }
         }
       }
@@ -197,7 +196,6 @@ SmartPanel {
             fill: true
             fillOpacity: 0.15
             updateInterval: SystemStatService.memIntervalMs
-            edgeToEdge: true
           }
         }
       }
@@ -272,7 +270,6 @@ SmartPanel {
             fillOpacity: 0.15
             updateInterval: SystemStatService.networkIntervalMs
             animateScale: true
-            edgeToEdge: true
           }
         }
       }
