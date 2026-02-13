@@ -13,8 +13,8 @@ import qs.Widgets
 SmartPanel {
   id: root
 
-  preferredWidth: Math.round(440 * Style.uiScaleRatio)
-  preferredHeight: Math.round(540 * Style.uiScaleRatio)
+  preferredWidth: Math.round((Settings.data.notifications.enableMarkdown ? 540 : 440) * Style.uiScaleRatio)
+  preferredHeight: Math.round((Settings.data.notifications.enableMarkdown ? 640 : 540) * Style.uiScaleRatio)
 
   onOpened: {
     NotificationService.updateLastSeenTs();
@@ -571,6 +571,7 @@ SmartPanel {
                     readonly property real swipeStartThreshold: Math.round(16 * Style.uiScaleRatio)
                     readonly property real swipeDismissThreshold: Math.max(110, width * 0.3)
                     readonly property int removeAnimationDuration: Style.animationNormal
+                    readonly property int notificationTextFormat: (Settings.data.notifications.enableMarkdown && notificationDelegate.isExpanded) ? Text.MarkdownText : Text.StyledText
 
                     transform: Translate {
                       x: notificationDelegate.swipeOffset
@@ -763,7 +764,7 @@ SmartPanel {
 
                         // Icon
                         NImageRounded {
-                          anchors.verticalCenter: parent.verticalCenter
+                          anchors.verticalCenter: notificationDelegate.isExpanded ? undefined : parent.verticalCenter
                           width: Math.round(40 * Style.uiScaleRatio)
                           height: Math.round(40 * Style.uiScaleRatio)
                           radius: Math.min(Style.radiusL, width / 2)
@@ -824,7 +825,7 @@ SmartPanel {
                             text: model.summary || I18n.tr("common.no-summary")
                             pointSize: Style.fontSizeM
                             color: Color.mOnSurface
-                            textFormat: Text.StyledText
+                            textFormat: notificationDelegate.notificationTextFormat
                             wrapMode: Text.Wrap
                             maximumLineCount: notificationDelegate.isExpanded ? 999 : 2
                             elide: Text.ElideRight
@@ -837,7 +838,7 @@ SmartPanel {
                             text: model.body || ""
                             pointSize: Style.fontSizeS
                             color: Color.mOnSurfaceVariant
-                            textFormat: Text.StyledText
+                            textFormat: notificationDelegate.notificationTextFormat
                             wrapMode: Text.Wrap
                             maximumLineCount: notificationDelegate.isExpanded ? 999 : 3
                             elide: Text.ElideRight
