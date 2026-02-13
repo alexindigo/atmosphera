@@ -24,7 +24,7 @@ ColumnLayout {
   property string valueIconColor: widgetData.iconColor !== undefined ? widgetData.iconColor : widgetMetadata.iconColor
   property string valueTextColor: widgetData.textColor !== undefined ? widgetData.textColor : widgetMetadata.textColor
   property bool valueUseMonospaceFont: widgetData.useMonospaceFont !== undefined ? widgetData.useMonospaceFont : widgetMetadata.useMonospaceFont
-  property bool valueUsePadding: isVerticalBar ? false : widgetData.usePadding !== undefined ? widgetData.usePadding : widgetMetadata.usePadding
+  property bool valueUsePadding: widgetData.usePadding !== undefined ? widgetData.usePadding : widgetMetadata.usePadding
   property bool valueShowCpuUsage: widgetData.showCpuUsage !== undefined ? widgetData.showCpuUsage : widgetMetadata.showCpuUsage
   property bool valueShowCpuFreq: widgetData.showCpuFreq !== undefined ? widgetData.showCpuFreq : widgetMetadata.showCpuFreq
   property bool valueShowCpuTemp: widgetData.showCpuTemp !== undefined ? widgetData.showCpuTemp : widgetMetadata.showCpuTemp
@@ -115,13 +115,17 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("bar.system-monitor.use-padding-label")
     description: isVerticalBar ? I18n.tr("bar.system-monitor.use-padding-description-disabled-vertical") : !valueUseMonospaceFont ? I18n.tr("bar.system-monitor.use-padding-description-disabled-monospace-font") : I18n.tr("bar.system-monitor.use-padding-description")
-    checked: valueUsePadding
+    checked: valueUsePadding && !isVerticalBar && valueUseMonospaceFont
     onToggled: checked => {
                  valueUsePadding = checked;
                  saveSettings();
                }
     visible: !valueCompactMode
     enabled: !isVerticalBar && valueUseMonospaceFont
+  }
+
+  NDivider {
+    Layout.fillWidth: true
   }
 
   NToggle {
@@ -161,6 +165,18 @@ ColumnLayout {
   }
 
   NToggle {
+    id: showLoadAverage
+    Layout.fillWidth: true
+    label: I18n.tr("bar.system-monitor.load-average-label")
+    description: I18n.tr("bar.system-monitor.load-average-description")
+    checked: valueShowLoadAverage
+    onToggled: checked => {
+                 valueShowLoadAverage = checked;
+                 saveSettings();
+               }
+  }
+
+  NToggle {
     id: showGpuTemp
     Layout.fillWidth: true
     label: I18n.tr("panels.system-monitor.gpu-section-label")
@@ -171,18 +187,6 @@ ColumnLayout {
                  saveSettings();
                }
     visible: SystemStatService.gpuAvailable
-  }
-
-  NToggle {
-    id: showLoadAverage
-    Layout.fillWidth: true
-    label: I18n.tr("bar.system-monitor.load-average-label")
-    description: I18n.tr("bar.system-monitor.load-average-description")
-    checked: valueShowLoadAverage
-    onToggled: checked => {
-                 valueShowLoadAverage = checked;
-                 saveSettings();
-               }
   }
 
   NToggle {
@@ -232,6 +236,10 @@ ColumnLayout {
                  valueShowNetworkStats = checked;
                  saveSettings();
                }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
   }
 
   NToggle {
