@@ -18,9 +18,8 @@ Singleton {
   readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
 
   // Airplane mode status
+  readonly property bool airplaneModeEnabled: Settings.data.network.airplaneModeEnabled
   property bool airplaneModeToggled: false
-  property bool wifiBlocked: false
-  property bool btBlocked: false
 
   // Power/blocked/availability state
   readonly property bool bluetoothAvailable: !!adapter
@@ -126,19 +125,16 @@ Singleton {
         var output = this.text || "";
         var wifiBlocked = /^\d+:.*Wireless LAN[^\n]*\n\s*Soft blocked:\s*yes/im.test(output)
         var btBlocked = /^\d+:.*Bluetooth[^\n]*\n\s*Soft blocked:\s*yes/im.test(output)
-
-        // Track if actual state changed
-        var actualAirplaneModeActive = wifiBlocked && btBlocked;
-        var previousAirplaneModeActive = root.wifiBlocked && root.btBlocked;
+        var isAirplaneModeActive = wifiBlocked && btBlocked;
 
         // Check if airplane mode has been toggled
-        if (actualAirplaneModeActive && !previousAirplaneModeActive) {
+        if (isAirplaneModeActive && !root.airplaneModeEnabled) {
           root.airplaneModeToggled = true;
           NetworkService.setWifiEnabled(false);
           Settings.data.network.airplaneModeEnabled = true;
           ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.enabled"), "plane");
           Logger.i("AirplaneMode", "Wi-Fi & Bluetooth adapter blocked")
-        } else if (!actualAirplaneModeActive && previousAirplaneModeActive) {
+        } else if (!isAirplaneModeActive && root.airplaneModeEnabled) {
           root.airplaneModeToggled = true;
           NetworkService.setWifiEnabled(true);
           Settings.data.network.airplaneModeEnabled = false;
@@ -152,10 +148,6 @@ Singleton {
           Logger.d("Bluetooth", "Adapter disabled");
         }
         root.airplaneModeToggled = false;
-
-        // Update current blocked states (always reflect actual rfkill state)
-        root.wifiBlocked = wifiBlocked;
-        root.btBlocked = btBlocked;
       }
     }
     stderr: StdioCollector {

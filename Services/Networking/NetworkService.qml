@@ -74,12 +74,16 @@ Singleton {
     target: Settings.data.network
     function onWifiEnabledChanged() {
       if (Settings.data.network.wifiEnabled) {
-        ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("common.enabled"), "wifi");
+        if (!BluetoothService.airplaneModeToggled) {
+          ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("common.enabled"), "wifi");
+        }
         // Perform a scan to update the UI
         delayedScanTimer.interval = 3000;
         delayedScanTimer.restart();
       } else {
-        ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("common.disabled"), "wifi-off");
+        if (!BluetoothService.airplaneModeToggled) {
+          ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("common.disabled"), "wifi-off");
+        }
         // Clear networks so the widget icon changes
         root.networks = ({});
       }
@@ -96,7 +100,6 @@ Singleton {
       root.refreshActiveWifiDetails();
       root.refreshActiveEthernetDetails();
       connectivityCheckProcess.running = true;
-      checkWifiBlocked.running = true; // Refresh rfkill states after resume
     }
   }
 
@@ -110,7 +113,6 @@ Singleton {
       ethernetStateProcess.running = true;
       refreshActiveWifiDetails();
       refreshActiveEthernetDetails();
-      checkWifiBlocked.running = true; // Trigger rfkill check on startup
     }
   }
 
@@ -260,11 +262,9 @@ Singleton {
     if (enabled) {
       Quickshell.execDetached(["rfkill", "block", "wifi"]);
       Quickshell.execDetached(["rfkill", "block", "bluetooth"]);
-      Settings.data.network.airplaneModeEnabled = true;
     } else {
       Quickshell.execDetached(["rfkill", "unblock", "wifi"]);
       Quickshell.execDetached(["rfkill", "unblock", "bluetooth"]);
-      Settings.data.network.airplaneModeEnabled = false;
     }
   }
 
