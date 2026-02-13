@@ -58,6 +58,7 @@ SmartPanel {
           NToggle {
             id: bluetoothSwitch
             checked: BluetoothService.enabled
+            enabled: !Settings.data.network.airplaneModeEnabled && BluetoothService.bluetoothAvailable
             onToggled: checked => BluetoothService.setBluetoothEnabled(checked)
             baseSize: Style.baseWidgetSize * 0.65
           }
@@ -90,7 +91,7 @@ SmartPanel {
           // Adapter not available of disabled
           NBox {
             id: disabledBox
-            visible: !(BluetoothService.adapter && BluetoothService.adapter.enabled)
+            visible: !BluetoothService.enabled
             Layout.fillWidth: true
             Layout.preferredHeight: disabledColumn.implicitHeight + Style.marginXL
 
@@ -137,7 +138,7 @@ SmartPanel {
           NBox {
             id: emptyBox
             visible: {
-              if (!(BluetoothService.adapter && BluetoothService.adapter.enabled && BluetoothService.adapter.devices))
+              if (!BluetoothService.enabled || !BluetoothService.devices)
                 return false;
               // Pulling pairedDevices count from the source component
               return (btSource.pairedDevices.length === 0 && btSource.connectedDevices.length === 0);

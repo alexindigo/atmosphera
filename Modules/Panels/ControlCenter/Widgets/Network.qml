@@ -52,5 +52,9 @@ NIconButtonHot {
     var panel = PanelService.getPanel("networkPanel", screen);
     panel?.toggle(this);
   }
-  onRightClicked: NetworkService.setWifiEnabled(!Settings.data.network.wifiEnabled)
+  onRightClicked: {
+    if (!Settings.data.network.airplaneModeEnabled) {
+      NetworkService.setWifiEnabled(!Settings.data.network.wifiEnabled)
+    }
+  }
 }

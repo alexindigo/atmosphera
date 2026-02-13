@@ -171,7 +171,7 @@ Item {
 
           NToggle {
             checked: BluetoothService.enabled
-            enabled: !NetworkService.bluetoothBlocked
+            enabled: !Settings.data.network.airplaneModeEnabled && BluetoothService.bluetoothAvailable
             onToggled: checked => BluetoothService.setBluetoothEnabled(checked)
             Layout.alignment: Qt.AlignVCenter
           }
@@ -201,7 +201,7 @@ Item {
     // Device List [1] (Connected)
     NBox {
       id: connectedDevicesBox
-      visible: btprefs.connectedDevices.length > 0 && BluetoothService.adapter && BluetoothService.adapter.enabled
+      visible: btprefs.connectedDevices.length > 0 && BluetoothService.enabled
       Layout.fillWidth: true
       Layout.preferredHeight: connectedDevicesCol.implicitHeight + Style.marginXL
 
@@ -233,7 +233,7 @@ Item {
     // Devices List [2] (Paired)
     NBox {
       id: pairedDevicesBox
-      visible: btprefs.pairedDevices.length > 0 && BluetoothService.adapter && BluetoothService.adapter.enabled
+      visible: btprefs.pairedDevices.length > 0 && BluetoothService.enabled
       Layout.fillWidth: true
       Layout.preferredHeight: pairedDevicesCol.implicitHeight + Style.marginXL
 
@@ -265,7 +265,7 @@ Item {
     // Device List [3] (Available)
     NBox {
       id: availableDevicesBox
-      visible: !btprefs.showOnlyLists && btprefs.unnamedAvailableDevices.length > 0 && BluetoothService.adapter && BluetoothService.adapter.enabled
+      visible: !btprefs.showOnlyLists && btprefs.unnamedAvailableDevices.length > 0 && BluetoothService.enabled
       Layout.fillWidth: true
       Layout.preferredHeight: availableDevicesCol.implicitHeight + Style.marginXL
 

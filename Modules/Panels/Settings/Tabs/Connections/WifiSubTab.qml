@@ -94,7 +94,7 @@ Item {
             checked: Settings.data.network.wifiEnabled
             onToggled: checked => NetworkService.setWifiEnabled(checked)
             Layout.alignment: Qt.AlignVCenter
-            enabled: ProgramCheckerService.nmcliAvailable
+            enabled: ProgramCheckerService.nmcliAvailable && !Settings.data.network.airplaneModeEnabled && NetworkService.wifiAvailable
           }
         }
       }

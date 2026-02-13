@@ -48,16 +48,12 @@ Item {
       {
         "label": Settings.data.network.wifiEnabled ? I18n.tr("actions.disable-wifi") : I18n.tr("actions.enable-wifi"),
         "action": "toggle-wifi",
-        "icon": Settings.data.network.wifiEnabled ? "wifi-off" : "wifi"
+        "icon": Settings.data.network.wifiEnabled ? "wifi-off" : "wifi",
+        "enabled": !Settings.data.network.airplaneModeEnabled && NetworkService.wifiAvailable
       },
       {
         "label": I18n.tr("common.wifi") + " " + I18n.tr("tooltips.open-settings"),
         "action": "wifi-settings",
-        "icon": "settings"
-      },
-      {
-        "label": I18n.tr("panels.connections.ethernet") + " " + I18n.tr("tooltips.open-settings"),
-        "action": "ethernet-settings",
         "icon": "settings"
       },
       {
@@ -75,8 +71,6 @@ Item {
                      NetworkService.setWifiEnabled(!Settings.data.network.wifiEnabled);
                    } else if (action === "wifi-settings") {
                      SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 0, screen);
-                   }else if (action === "ethernet-settings") {
-                     SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 2, screen);
                    }else if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
                    }

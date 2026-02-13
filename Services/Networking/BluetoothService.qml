@@ -22,11 +22,19 @@ Singleton {
   property bool airplaneModeToggled: false
 
   // Power/blocked/availability state
-  readonly property bool bluetoothAvailable: !!adapter
-  readonly property bool enabled: adapter?.enabled ?? root.ctlPowered
+  property bool ctlAvailable: false
+  readonly property bool bluetoothAvailable: !!adapter || root.ctlAvailable
+  readonly property bool enabled: (adapter && adapter.enabled) || root.ctlPowered
   property bool ctlPowered: false
   property bool ctlDiscovering: false
   property bool ctlDiscoverable: false
+
+  onAdapterChanged: {
+    pollCtlState();
+    if (!adapter) {
+      ctlPollTimer.interval = 2000;
+    }
+  }
 
   // Adapter discoverability (advertising) flag
   readonly property bool discoverable: adapter?.discoverable ?? root.ctlDiscoverable
@@ -60,6 +68,14 @@ Singleton {
 
   // Internal: temporarily pause discovery during pair/connect to reduce HCI churn
   property bool _discoveryWasRunning: false
+  property bool _lastEnabledState: root.enabled
+
+  Timer {
+    id: initDelayTimer
+    interval: 3000
+    running: true
+    repeat: false
+  }
 
   // Persistent process for bluetoothctl scanning when native discovery is unavailable
   Process {
@@ -140,12 +156,18 @@ Singleton {
           Settings.data.network.airplaneModeEnabled = false;
           ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.disabled"), "plane-off");
           Logger.i("AirplaneMode", "Wi-Fi & Bluetooth adapter unblocked")
-        } else if (adapter.enabled) {
-          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.enabled"), "bluetooth");
-          Logger.d("Bluetooth", "Adapter enabled");
         } else {
-          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.disabled"), "bluetooth-off");
-          Logger.d("Bluetooth", "Adapter disabled");
+          var isCurrentlyEnabled = (adapter && adapter.enabled) || root.ctlPowered;
+          var stateChanged = isCurrentlyEnabled !== root._lastEnabledState;
+          if (!initDelayTimer.running && stateChanged) {
+            if (isCurrentlyEnabled) {
+              ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.enabled"), "bluetooth");
+            } else {
+              ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.disabled"), "bluetooth-off");
+            }
+          }
+          root._lastEnabledState = isCurrentlyEnabled;
+          Logger.d("Bluetooth", "State updated - enabled:", isCurrentlyEnabled);
         }
         root.airplaneModeToggled = false;
       }
@@ -168,17 +190,29 @@ Singleton {
       try {
         var text = ctlStdout.text || "";
         var lines = text.split('\n');
+        var foundController = false;  // Strict state following.
+        var powered = false;  // Strict state following.
+        var discoverable = false;  // Strict state following.
+        var discovering = false;  // Strict state following.
+
         for (var i = 0; i < lines.length; i++) {
           var line = lines[i].trim();
+          if (line.indexOf("Controller") === 0) {
+            foundController = true;
+          }
           var mp = line.match(/\bPowered:\s*(yes|no)\b/i);
-          if (mp) { root.ctlPowered = (mp[1].toLowerCase() === "yes"); }
+          if (mp) { powered = (mp[1].toLowerCase() === "yes"); }
 
           var md = line.match(/\bDiscoverable:\s*(yes|no)\b/i);
-          if (md) { root.ctlDiscoverable = (md[1].toLowerCase() === "yes"); }
+          if (md) { discoverable = (md[1].toLowerCase() === "yes"); }
 
           var ms = line.match(/\bDiscovering:\s*(yes|no)\b/i);
-          if (ms) { root.ctlDiscovering = (ms[1].toLowerCase() === "yes"); }
+          if (ms) { discovering = (ms[1].toLowerCase() === "yes"); }
         }
+        root.ctlAvailable = foundController; // Assign findings.
+        root.ctlPowered = powered; // Assign findings.
+        root.ctlDiscoverable = discoverable; // Assign findings.
+        root.ctlDiscovering = discovering; // Assign findings.
       } catch (e) {
         Logger.d("Bluetooth", "Failed to parse bluetoothctl show output", e);
       }
@@ -198,13 +232,14 @@ Singleton {
   // Periodic state polling
   Timer {
     id: ctlPollTimer
-    interval: ctlPollMs
+    interval: adapter ? ctlPollMs : 2000
     repeat: true
-    running: root.enabled
+    running: true
     onTriggered: {
       pollCtlState();
-      if (interval !== ctlPollMs) {
-        interval = ctlPollMs;
+      var targetInterval = adapter ? ctlPollMs : 2000;
+      if (interval !== targetInterval) {
+        interval = targetInterval;
       }
     }
   }

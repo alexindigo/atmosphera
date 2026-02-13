@@ -48,7 +48,8 @@ Item {
       {
         "label": BluetoothService.enabled ? I18n.tr("actions.disable-bluetooth") : I18n.tr("actions.enable-bluetooth"),
         "action": "toggle-bluetooth",
-        "icon": BluetoothService.enabled ? "bluetooth-off" : "bluetooth"
+        "icon": BluetoothService.enabled ? "bluetooth-off" : "bluetooth",
+        "enabled": !Settings.data.network.airplaneModeEnabled && BluetoothService.bluetoothAvailable
       },
       {
         "label": I18n.tr("common.bluetooth") + " " + I18n.tr("tooltips.open-settings"),
