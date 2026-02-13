@@ -224,7 +224,11 @@
       "swap-usage-description": "Swap-Speichernutzung anzeigen.",
       "swap-usage-label": "Swap-Auslastung",
       "use-monospace-font-description": "Verwende eine Monospace-Schriftart für eine konsistente Zeichenbreite.",
-      "use-monospace-font-label": "Schriftart mit fester Breite"
+      "use-monospace-font-label": "Schriftart mit fester Breite",
+      "use-padding-description": "Füllt die Textwerte mit Leerzeichen auf. Verhindert Layoutverschiebungen.",
+      "use-padding-description-disabled-monospace-font": "Eine Monospace-Schriftart ist notwendig, um dieses Option wählen zu können.",
+      "use-padding-description-disabled-vertical": "Vertikale Taskleiste unterstützt keine Titelanzeige.",
+      "use-padding-label": "Text mit führenden Leerzeichen auffüllen"
     },
     "taskbar": {
       "colorize-icons-description": "Themenfarben auf Taskbar-Symbole anwenden.",

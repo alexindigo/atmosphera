@@ -15,11 +15,14 @@ ColumnLayout {
 
   signal settingsChanged(var settings)
 
+  readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
+
   // Local, editable state for checkboxes
   property bool valueCompactMode: widgetData.compactMode !== undefined ? widgetData.compactMode : widgetMetadata.compactMode
   property string valueIconColor: widgetData.iconColor !== undefined ? widgetData.iconColor : widgetMetadata.iconColor
   property string valueTextColor: widgetData.textColor !== undefined ? widgetData.textColor : widgetMetadata.textColor
   property bool valueUseMonospaceFont: widgetData.useMonospaceFont !== undefined ? widgetData.useMonospaceFont : widgetMetadata.useMonospaceFont
+  property bool valueUsePadding: isVerticalBar ? false : widgetData.usePadding !== undefined ? widgetData.usePadding : widgetMetadata.usePadding
   property bool valueShowCpuUsage: widgetData.showCpuUsage !== undefined ? widgetData.showCpuUsage : widgetMetadata.showCpuUsage
   property bool valueShowCpuFreq: widgetData.showCpuFreq !== undefined ? widgetData.showCpuFreq : widgetMetadata.showCpuFreq
   property bool valueShowCpuTemp: widgetData.showCpuTemp !== undefined ? widgetData.showCpuTemp : widgetMetadata.showCpuTemp
@@ -40,6 +43,7 @@ ColumnLayout {
     settings.iconColor = valueIconColor;
     settings.textColor = valueTextColor;
     settings.useMonospaceFont = valueUseMonospaceFont;
+    settings.usePadding = valueUsePadding;
     settings.showCpuUsage = valueShowCpuUsage;
     settings.showCpuFreq = valueShowCpuFreq;
     settings.showCpuTemp = valueShowCpuTemp;
@@ -103,6 +107,19 @@ ColumnLayout {
                  settingsChanged(saveSettings());
                }
     visible: !valueCompactMode
+  }
+
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("bar.system-monitor.use-padding-label")
+    description: isVerticalBar ? I18n.tr("bar.system-monitor.use-padding-description-disabled-vertical") : !valueUseMonospaceFont ? I18n.tr("bar.system-monitor.use-padding-description-disabled-monospace-font") : I18n.tr("bar.system-monitor.use-padding-description")
+    checked: valueUsePadding
+    onToggled: checked => {
+                 valueUsePadding = checked;
+                 settingsChanged(saveSettings());
+               }
+    visible: !valueCompactMode
+    enabled: !isVerticalBar && valueUseMonospaceFont
   }
 
   NToggle {

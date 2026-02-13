@@ -28,6 +28,7 @@ Singleton {
   property string gpuType: "" // "amd", "intel", "nvidia"
   property real memGb: 0
   property real memPercent: 0
+  property real memTotalGb: 0
   property real swapGb: 0
   property real swapPercent: 0
   property real swapTotalGb: 0
@@ -1034,6 +1035,7 @@ Singleton {
       }
       root.memGb = (usageKb / 1048576).toFixed(1); // 1024*1024 = 1048576
       root.memPercent = Math.round((usageKb / memTotal) * 100);
+      root.memTotalGb = (memTotal / 1048576).toFixed(1);
       root.pushMemHistory();
     }
 
@@ -1231,18 +1233,53 @@ Singleton {
   }
 
   // -------------------------------------------------------
+  // Formatting gigabytes with optional padding
+  function formatGigabytesDisplay(memGb, maxGb = null) {
+    const value = formatGigabytes(memGb === null ? 0 : memGb);
+    if (maxGb !== null) {
+      const padding = Math.max(4, formatGigabytes(maxGb).length);
+      return value.padStart(padding, " ");
+    }
+    return value;
+  }
+
+  // -------------------------------------------------------
+  // Formatting percentage with optional padding
+  function formatPercentageDisplay(value, padding = false) {
+    return `${Math.round(value === null ? 0 : value)}%`.padStart(padding ? 4 : 0, " ");
+  }
+
+  // -------------------------------------------------------
   // Formatting disk usage
   function formatDiskDisplay(diskPath, {
                              percent = false,
-                             available = false
+                             available = false,
+                             padding = false
 } = {}) {
     if (percent) {
       const raw = available ? root.diskAvailPercents[diskPath] : root.diskPercents[diskPath];
-      const value = (raw === null) ? 0 : raw;
-      return `${value}%`;
+      return formatPercentageDisplay(raw, padding);
     } else {
       const rawGb = available ? root.diskAvailableGb[diskPath] : root.diskUsedGb[diskPath];
-      return formatGigabytes(rawGb === null ? 0 : rawGb);
+      const maxGb = padding ? root.diskSizeGb[diskPath] : null;
+      return formatGigabytesDisplay(rawGb, maxGb);
+    }
+  }
+
+  // -------------------------------------------------------
+  // Formatting ram usage
+  function formatRamDisplay({
+                            swap = false,
+                            percent = false,
+                            padding = false
+} = {}) {
+    if (percent) {
+      const raw = swap ? swapPercent : memPercent;
+      return formatPercentageDisplay(raw, padding);
+    } else {
+      const rawGb = swap ? swapGb : memGb;
+      const maxGb = padding ? (swap ? swapTotalGb : memTotalGb) : null;
+      return formatGigabytesDisplay(rawGb, maxGb);
     }
   }
 
