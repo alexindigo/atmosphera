@@ -224,7 +224,11 @@
       "swap-usage-description": "Takas belleği kullanımını göster.",
       "swap-usage-label": "Takas kullanımı",
       "use-monospace-font-description": "Tekdüze karakter genişliği için tek aralıklı yazı tipini kullanın.",
-      "use-monospace-font-label": "Tek aralıklı yazı tipi"
+      "use-monospace-font-label": "Tek aralıklı yazı tipi",
+      "use-padding-description": "Düzen kaymasını önlemek için metin değerlerini baştaki boşluklarla doldurur.",
+      "use-padding-description-disabled-monospace-font": "Bu özellik için tek aralıklı bir yazı tipi gereklidir.",
+      "use-padding-description-disabled-vertical": "Dikey görev çubuğu metin dolgusunu desteklemez.",
+      "use-padding-label": "Metin Dolgusu"
     },
     "taskbar": {
       "colorize-icons-description": "Görev çubuğu simgelerine tema renklerini uygula.",
@@ -1043,6 +1047,9 @@
       "keybinds-enter": "Onayla / Eylem",
       "keybinds-escape": "Kapat / Geri",
       "keybinds-left": "Sola taşı",
+      "keybinds-modifier-description": "Kısayollar bir değiştirici tuş (Ctrl veya Alt) içermelidir.",
+      "keybinds-modifier-title": "Değiştirici gerekli",
+      "keybinds-remove": "Sil",
       "keybinds-right": "Sağa taşı",
       "keybinds-title": "Gezinme tuş atamaları",
       "keybinds-up": "Yukarı taşı",

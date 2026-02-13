@@ -224,7 +224,11 @@
       "swap-usage-description": "Cserehely memória használatának megjelenítése.",
       "swap-usage-label": "Cserehely használat",
       "use-monospace-font-description": "Használjon monospace betűtípust az egységes karakter-szélességhez.",
-      "use-monospace-font-label": "Monospace betűtípus"
+      "use-monospace-font-label": "Monospace betűtípus",
+      "use-padding-description": "Kitölti a szövegértékeket vezető szóközökkel, hogy megakadályozza az elrendezés eltolódását.",
+      "use-padding-description-disabled-monospace-font": "Ehhez a funkcióhoz monospace betűtípus szükséges.",
+      "use-padding-description-disabled-vertical": "A függőleges tálca nem támogatja a szöveges kitöltést.",
+      "use-padding-label": "Szövegkitöltés"
     },
     "taskbar": {
       "colorize-icons-description": "Témaszínek alkalmazása a tálca ikonjaira.",
@@ -1043,6 +1047,9 @@
       "keybinds-enter": "Megerősítés / Művelet",
       "keybinds-escape": "Bezárás / Vissza",
       "keybinds-left": "Balra mozgat",
+      "keybinds-modifier-description": "A gyorsbillentyűknek tartalmazniuk kell egy módosító billentyűt (Ctrl vagy Alt).",
+      "keybinds-modifier-title": "Módosító szükséges",
+      "keybinds-remove": "Törlés",
       "keybinds-right": "Jobbra mozgat",
       "keybinds-title": "Navigációs billentyűparancsok",
       "keybinds-up": "Felfelé mozgat",

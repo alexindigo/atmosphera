@@ -224,7 +224,11 @@
       "swap-usage-description": "Visa användning av växlingsminne.",
       "swap-usage-label": "Växlingsanvändning",
       "use-monospace-font-description": "Använd monospace-teckensnitt för enhetlig teckenbredd. ",
-      "use-monospace-font-label": "Teckensnitt för fast bredd"
+      "use-monospace-font-label": "Teckensnitt för fast bredd",
+      "use-padding-description": "Fyller ut textvärdena med inledande mellanslag för att förhindra layoutförskjutning.",
+      "use-padding-description-disabled-monospace-font": "Ett monospace-typsnitt behövs för den här funktionen.",
+      "use-padding-description-disabled-vertical": "Vertikal aktivitetsfält stöder inte textutfyllnad.",
+      "use-padding-label": "Textutfyllnad"
     },
     "taskbar": {
       "colorize-icons-description": "Tillämpa temafärger på ikoner i aktivitetsfältet.",
@@ -1043,6 +1047,9 @@
       "keybinds-enter": "Bekräfta / Åtgärd",
       "keybinds-escape": "Stäng / Tillbaka",
       "keybinds-left": "Flytta vänster",
+      "keybinds-modifier-description": "Genvägar måste inkludera en modifieringstangent (Ctrl eller Alt).",
+      "keybinds-modifier-title": "Modifierare krävs",
+      "keybinds-remove": "Ta bort",
       "keybinds-right": "Flytta höger",
       "keybinds-title": "Navigeringstangentbindningar",
       "keybinds-up": "Flytta upp",

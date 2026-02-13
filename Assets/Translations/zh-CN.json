@@ -224,7 +224,11 @@
       "swap-usage-description": "显示 Swap 使用情况。",
       "swap-usage-label": "Swap",
       "use-monospace-font-description": "使用等宽字体以保持字符宽度一致。",
-      "use-monospace-font-label": "等宽字体"
+      "use-monospace-font-label": "等宽字体",
+      "use-padding-description": "用前导空格填充文本值，以防止布局偏移。",
+      "use-padding-description-disabled-monospace-font": "此功能需要等宽字体。",
+      "use-padding-description-disabled-vertical": "垂直任务栏不支持文本内边距。",
+      "use-padding-label": "文本填充"
     },
     "taskbar": {
       "colorize-icons-description": "将主题颜色应用到任务栏图标。",
@@ -1043,6 +1047,9 @@
       "keybinds-enter": "确认 / 操作",
       "keybinds-escape": "关闭 / 返回",
       "keybinds-left": "左移",
+      "keybinds-modifier-description": "快捷键必须包含修饰键 (Ctrl 或 Alt)。",
+      "keybinds-modifier-title": "需要修饰键",
+      "keybinds-remove": "删除",
       "keybinds-right": "右移",
       "keybinds-title": "导航按键绑定",
       "keybinds-up": "上移",

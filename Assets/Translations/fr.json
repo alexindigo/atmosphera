@@ -224,7 +224,11 @@
       "swap-usage-description": "Afficher l'utilisation de la mémoire swap.",
       "swap-usage-label": "Utilisation du swap",
       "use-monospace-font-description": "Utilisez une police de caractères à chasse fixe pour une largeur de caractère uniforme.",
-      "use-monospace-font-label": "Police à chasse fixe"
+      "use-monospace-font-label": "Police à chasse fixe",
+      "use-padding-description": "Remplit les valeurs de texte avec des espaces en début de ligne pour éviter le décalage de la mise en page.",
+      "use-padding-description-disabled-monospace-font": "Une police à chasse fixe est nécessaire pour cette fonctionnalité.",
+      "use-padding-description-disabled-vertical": "La barre des tâches verticale ne prend pas en charge le remplissage de texte.",
+      "use-padding-label": "Rembourrage du Texte"
     },
     "taskbar": {
       "colorize-icons-description": "Appliquer les couleurs du thème aux icônes de la barre des tâches.",
@@ -1043,6 +1047,9 @@
       "keybinds-enter": "Confirmer / Action",
       "keybinds-escape": "Fermer / Retour",
       "keybinds-left": "Déplacer à gauche",
+      "keybinds-modifier-description": "Les raccourcis doivent inclure une touche de modification (Ctrl ou Alt).",
+      "keybinds-modifier-title": "Modificateur requis",
+      "keybinds-remove": "Supprimer",
       "keybinds-right": "Déplacer à droite",
       "keybinds-title": "Raccourcis clavier de navigation",
       "keybinds-up": "Déplacer vers le haut",

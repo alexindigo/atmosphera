@@ -224,7 +224,11 @@
       "swap-usage-description": "Toon swap geheugengebruik.",
       "swap-usage-label": "Swapgebruik",
       "use-monospace-font-description": "Gebruik een monospace lettertype voor een consistente tekenbreedte.",
-      "use-monospace-font-label": "Lettertype met vaste breedte"
+      "use-monospace-font-label": "Lettertype met vaste breedte",
+      "use-padding-description": "Vult de tekstwaarden aan met voorloopspaties om lay-outverschuiving te voorkomen.",
+      "use-padding-description-disabled-monospace-font": "Een monospace lettertype is nodig voor deze functie.",
+      "use-padding-description-disabled-vertical": "De verticale taakbalk ondersteunt geen tekstvulling.",
+      "use-padding-label": "Tekstopvulling"
     },
     "taskbar": {
       "colorize-icons-description": "Pas themakleuren toe op taakbalkpictogrammen.",
@@ -1043,6 +1047,9 @@
       "keybinds-enter": "Bevestigen / Actie",
       "keybinds-escape": "Sluiten / Terug",
       "keybinds-left": "Naar links",
+      "keybinds-modifier-description": "Sneltoetsen moeten een modificatietoets (Ctrl of Alt) bevatten.",
+      "keybinds-modifier-title": "Modificator vereist",
+      "keybinds-remove": "Verwijderen",
       "keybinds-right": "Naar rechts",
       "keybinds-title": "Navigatietoetsencombinaties",
       "keybinds-up": "Omhoog",

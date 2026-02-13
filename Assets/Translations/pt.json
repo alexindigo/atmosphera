@@ -224,7 +224,11 @@
       "swap-usage-description": "Mostrar o uso da memória swap.",
       "swap-usage-label": "Utilização de swap",
       "use-monospace-font-description": "Use fonte monoespaçada para largura de caractere consistente.",
-      "use-monospace-font-label": "Fonte monoespaçada"
+      "use-monospace-font-label": "Fonte monoespaçada",
+      "use-padding-description": "Preenche os valores de texto com espaços iniciais para evitar o deslocamento do layout.",
+      "use-padding-description-disabled-monospace-font": "É necessária uma fonte monoespaçada para esta funcionalidade.",
+      "use-padding-description-disabled-vertical": "A barra de tarefas vertical não suporta preenchimento de texto.",
+      "use-padding-label": "Preenchimento do Texto"
     },
     "taskbar": {
       "colorize-icons-description": "Aplicar cores do tema aos ícones da barra de tarefas.",
@@ -1043,6 +1047,9 @@
       "keybinds-enter": "Confirmar / Ação",
       "keybinds-escape": "Fechar / Voltar",
       "keybinds-left": "Mover para a esquerda",
+      "keybinds-modifier-description": "Atalhos devem incluir uma tecla modificadora (Ctrl ou Alt).",
+      "keybinds-modifier-title": "Modificador necessário",
+      "keybinds-remove": "Remover",
       "keybinds-right": "Mover para a direita",
       "keybinds-title": "Atalhos de teclado de navegação",
       "keybinds-up": "Mover para cima",

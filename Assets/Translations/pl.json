@@ -224,7 +224,11 @@
       "swap-usage-description": "Pokaż użycie pamięci wymiany.",
       "swap-usage-label": "Użycie pamięci wymiany",
       "use-monospace-font-description": "Użyj czcionki o stałej szerokości znaków dla zachowania spójnej szerokości znaków.",
-      "use-monospace-font-label": "Czcionka o stałej szerokości znaków"
+      "use-monospace-font-label": "Czcionka o stałej szerokości znaków",
+      "use-padding-description": "Wypełnia wartości tekstowe spacjami wiodącymi, aby zapobiec przesunięciom układu.",
+      "use-padding-description-disabled-monospace-font": "Do tej funkcji potrzebna jest czcionka monospace.",
+      "use-padding-description-disabled-vertical": "Pionowy pasek zadań nie obsługuje wypełnienia tekstowego.",
+      "use-padding-label": "Wypełnienie Tekstu"
     },
     "taskbar": {
       "colorize-icons-description": "Zastosuj kolory motywu do ikon paska zadań.",
@@ -1043,6 +1047,9 @@
       "keybinds-enter": "Potwierdź / Akcja",
       "keybinds-escape": "Zamknij / Wstecz",
       "keybinds-left": "Przesuń w lewo",
+      "keybinds-modifier-description": "Skróty muszą zawierać klawisz modyfikujący (Ctrl lub Alt).",
+      "keybinds-modifier-title": "Wymagany modyfikator",
+      "keybinds-remove": "Usuń",
       "keybinds-right": "Przesuń w prawo",
       "keybinds-title": "Skróty klawiszowe nawigacji",
       "keybinds-up": "Przenieś w górę",

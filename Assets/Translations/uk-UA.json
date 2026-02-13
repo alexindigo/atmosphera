@@ -224,7 +224,11 @@
       "swap-usage-description": "Показати використання swap-пам'яті.",
       "swap-usage-label": "Використання swap",
       "use-monospace-font-description": "Використовуйте моноширинний шрифт для забезпечення сталої ширини символів.",
-      "use-monospace-font-label": "Моноширинний шрифт"
+      "use-monospace-font-label": "Моноширинний шрифт",
+      "use-padding-description": "Додає до текстових значень початкові пробіли, щоб запобігти зсуву макета.",
+      "use-padding-description-disabled-monospace-font": "Для цієї функції потрібен моноширинний шрифт.",
+      "use-padding-description-disabled-vertical": "Вертикальна панель завдань не підтримує текстові відступи.",
+      "use-padding-label": "Відступ Тексту"
     },
     "taskbar": {
       "colorize-icons-description": "Застосувати кольори теми до значків панелі завдань.",
@@ -1043,6 +1047,9 @@
       "keybinds-enter": "Підтвердити / Дія",
       "keybinds-escape": "Закрити / Назад",
       "keybinds-left": "Перемістити вліво",
+      "keybinds-modifier-description": "Комбінації клавіш повинні включати клавішу-модифікатор (Ctrl або Alt).",
+      "keybinds-modifier-title": "Потрібен модифікатор",
+      "keybinds-remove": "Видалити",
       "keybinds-right": "Перемістити вправо",
       "keybinds-title": "Прив'язки клавіш навігації",
       "keybinds-up": "Перемістити вгору",

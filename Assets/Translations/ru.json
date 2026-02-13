@@ -224,7 +224,11 @@
       "swap-usage-description": "Показать использование swap-памяти.",
       "swap-usage-label": "Использование swap",
       "use-monospace-font-description": "Используйте моноширинный шрифт для единообразной ширины символов.",
-      "use-monospace-font-label": "Моноширинный шрифт"
+      "use-monospace-font-label": "Моноширинный шрифт",
+      "use-padding-description": "Добавляет к текстовым значениям начальные пробелы, чтобы предотвратить смещение макета.",
+      "use-padding-description-disabled-monospace-font": "Для этой функции необходим моноширинный шрифт.",
+      "use-padding-description-disabled-vertical": "Вертикальная панель задач не поддерживает текстовые отступы.",
+      "use-padding-label": "Отступ Текста"
     },
     "taskbar": {
       "colorize-icons-description": "Применить цвета темы к иконкам панели задач.",
@@ -1043,6 +1047,9 @@
       "keybinds-enter": "Подтвердить / Действие",
       "keybinds-escape": "Закрыть / Назад",
       "keybinds-left": "Переместить влево",
+      "keybinds-modifier-description": "Сочетания клавиш должны включать клавишу-модификатор (Ctrl или Alt).",
+      "keybinds-modifier-title": "Требуется модификатор",
+      "keybinds-remove": "Удалить",
       "keybinds-right": "Переместить вправо",
       "keybinds-title": "Навигационные привязки клавиш",
       "keybinds-up": "Переместить вверх",
