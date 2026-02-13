@@ -100,7 +100,7 @@ ColumnLayout {
     initialIcon: _settings.icon
     onIconSelected: function (iconName) {
       _settings.icon = iconName;
-      settingsChanged(saveSettings());
+      saveSettings();
     }
   }
 
@@ -112,7 +112,7 @@ ColumnLayout {
     text: _settings.generalTooltipText
     onEditingFinished: {
       _settings.generalTooltipText = text;
-      settingsChanged(saveSettings());
+      saveSettings();
     }
   }
 
@@ -124,7 +124,7 @@ ColumnLayout {
     text: _settings.onClicked
     onEditingFinished: {
       _settings.onClicked = text;
-      settingsChanged(saveSettings());
+      saveSettings();
     }
   }
 
@@ -136,7 +136,7 @@ ColumnLayout {
     text: _settings.onRightClicked
     onEditingFinished: {
       _settings.onRightClicked = text;
-      settingsChanged(saveSettings());
+      saveSettings();
     }
   }
 
@@ -148,7 +148,7 @@ ColumnLayout {
     text: _settings.onMiddleClicked
     onEditingFinished: {
       _settings.onMiddleClicked = text;
-      settingsChanged(saveSettings());
+      saveSettings();
     }
   }
 
@@ -162,7 +162,7 @@ ColumnLayout {
     checked: _settings.enableOnStateLogic
     onToggled: checked => {
                  _settings.enableOnStateLogic = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
   }
 
@@ -197,7 +197,7 @@ ColumnLayout {
                                                     "command": text,
                                                     "icon": model.icon
                                                   });
-              settingsChanged(saveSettings());
+              saveSettings();
             }
           }
 
@@ -229,7 +229,7 @@ ColumnLayout {
               colorFgHover: Color.mOnError
               onClicked: {
                 _settings._stateChecksListModel.remove(currentIndex);
-                settingsChanged(saveSettings());
+                saveSettings();
               }
             }
           }
@@ -243,7 +243,7 @@ ColumnLayout {
                                                   "command": model.command,
                                                   "icon": iconName
                                                 });
-            settingsChanged(saveSettings());
+            saveSettings();
           }
         }
 
@@ -266,7 +266,7 @@ ColumnLayout {
                                                    "command": "",
                                                    "icon": ""
                                                  });
-          settingsChanged(saveSettings());
+          saveSettings();
         }
       }
 
