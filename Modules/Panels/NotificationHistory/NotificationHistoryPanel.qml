@@ -383,7 +383,7 @@ SmartPanel {
                     }
 
                     Behavior on opacity {
-                      enabled: !Settings.data.general.animationDisabled
+                      enabled: !Settings.data.general.animationDisabled && notificationDelegate.isRemoving
                       NumberAnimation {
                         duration: notificationDelegate.removeAnimationDuration
                         easing.type: Easing.OutCubic
@@ -391,7 +391,7 @@ SmartPanel {
                     }
 
                     Behavior on height {
-                      enabled: !Settings.data.general.animationDisabled
+                      enabled: !Settings.data.general.animationDisabled && notificationDelegate.isRemoving
                       NumberAnimation {
                         duration: notificationDelegate.removeAnimationDuration
                         easing.type: Easing.OutCubic
@@ -399,7 +399,7 @@ SmartPanel {
                     }
 
                     Behavior on y {
-                      enabled: !Settings.data.general.animationDisabled
+                      enabled: !Settings.data.general.animationDisabled && notificationDelegate.isRemoving
                       NumberAnimation {
                         duration: notificationDelegate.removeAnimationDuration
                         easing.type: Easing.OutCubic
