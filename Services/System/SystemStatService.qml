@@ -149,14 +149,14 @@ Singleton {
   }
 
   // Network max speed tracking (autoscales from current history window)
-  // Minimum floor of 100 KB/s so small background traffic doesn't look significant
+  // Minimum floor of 1 MB/s so graph doesn't fluctuate at low speeds
   readonly property real rxMaxSpeed: {
     const max = Math.max(...rxSpeedHistory);
-    return Math.max(max, 102400); // 100 KB/s floor
+    return Math.max(max, 1048576); // 1 MB/s floor
   }
   readonly property real txMaxSpeed: {
     const max = Math.max(...txSpeedHistory);
-    return Math.max(max, 102400); // 100 KB/s floor
+    return Math.max(max, 524288); // 512 KB/s floor
   }
 
   // Ready-to-use ratios based on current maximums (0..1 range)
