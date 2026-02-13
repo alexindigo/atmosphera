@@ -44,7 +44,8 @@ Item {
   readonly property string textColorKey: widgetSettings.textColor !== undefined ? widgetSettings.textColor : widgetMetadata.textColor
 
   readonly property bool useMonospaceFont: widgetSettings.useMonospaceFont !== undefined ? widgetSettings.useMonospaceFont : widgetMetadata.useMonospaceFont
-  readonly property bool usePadding: !compactMode && !isVertical && useMonospaceFont && (widgetSettings.usePadding !== undefined) ? widgetSettings.usePadding : widgetMetadata.usePadding
+  readonly property bool usePadding: !compactMode && !isVertical && useMonospaceFont && ((widgetSettings.usePadding !== undefined) ? widgetSettings.usePadding : widgetMetadata.usePadding)
+
   readonly property bool showCpuUsage: (widgetSettings.showCpuUsage !== undefined) ? widgetSettings.showCpuUsage : widgetMetadata.showCpuUsage
   readonly property bool showCpuFreq: (widgetSettings.showCpuFreq !== undefined) ? widgetSettings.showCpuFreq : widgetMetadata.showCpuFreq
   readonly property bool showCpuTemp: (widgetSettings.showCpuTemp !== undefined) ? widgetSettings.showCpuTemp : widgetMetadata.showCpuTemp

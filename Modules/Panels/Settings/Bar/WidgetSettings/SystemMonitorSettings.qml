@@ -10,12 +10,14 @@ ColumnLayout {
   spacing: Style.marginM
 
   // Properties to receive data from parent
+  property var screen: null
   property var widgetData: null
   property var widgetMetadata: null
 
   signal settingsChanged(var settings)
 
-  readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
+  readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
 
   // Local, editable state for checkboxes
   property bool valueCompactMode: widgetData.compactMode !== undefined ? widgetData.compactMode : widgetMetadata.compactMode
@@ -58,7 +60,7 @@ ColumnLayout {
     settings.showDiskAvailable = valueShowDiskAvailable;
     settings.diskPath = valueDiskPath;
 
-    return settings;
+    settingsChanged(settings);
   }
 
   NToggle {
@@ -68,7 +70,7 @@ ColumnLayout {
     checked: valueCompactMode
     onToggled: checked => {
                  valueCompactMode = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
   }
 
@@ -79,7 +81,7 @@ ColumnLayout {
     currentKey: valueIconColor
     onSelected: key => {
                   valueIconColor = key;
-                  settingsChanged(saveSettings());
+                  saveSettings();
                 }
     minimumWidth: 200
   }
@@ -91,7 +93,7 @@ ColumnLayout {
     currentKey: valueTextColor
     onSelected: key => {
                   valueTextColor = key;
-                  settingsChanged(saveSettings());
+                  saveSettings();
                 }
     minimumWidth: 200
     visible: !valueCompactMode
@@ -104,7 +106,7 @@ ColumnLayout {
     checked: valueUseMonospaceFont
     onToggled: checked => {
                  valueUseMonospaceFont = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
     visible: !valueCompactMode
   }
@@ -116,7 +118,7 @@ ColumnLayout {
     checked: valueUsePadding
     onToggled: checked => {
                  valueUsePadding = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
     visible: !valueCompactMode
     enabled: !isVerticalBar && valueUseMonospaceFont
@@ -130,7 +132,7 @@ ColumnLayout {
     checked: valueShowCpuUsage
     onToggled: checked => {
                  valueShowCpuUsage = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
   }
 
@@ -142,7 +144,7 @@ ColumnLayout {
     checked: valueShowCpuFreq
     onToggled: checked => {
                  valueShowCpuFreq = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
   }
 
@@ -154,7 +156,7 @@ ColumnLayout {
     checked: valueShowCpuTemp
     onToggled: checked => {
                  valueShowCpuTemp = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
   }
 
@@ -166,7 +168,7 @@ ColumnLayout {
     checked: valueShowGpuTemp
     onToggled: checked => {
                  valueShowGpuTemp = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
     visible: SystemStatService.gpuAvailable
   }
@@ -179,7 +181,7 @@ ColumnLayout {
     checked: valueShowLoadAverage
     onToggled: checked => {
                  valueShowLoadAverage = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
   }
 
@@ -191,7 +193,7 @@ ColumnLayout {
     checked: valueShowMemoryUsage
     onToggled: checked => {
                  valueShowMemoryUsage = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
   }
 
@@ -203,7 +205,7 @@ ColumnLayout {
     checked: valueShowMemoryAsPercent
     onToggled: checked => {
                  valueShowMemoryAsPercent = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
     visible: valueShowMemoryUsage
   }
@@ -216,7 +218,7 @@ ColumnLayout {
     checked: valueShowSwapUsage
     onToggled: checked => {
                  valueShowSwapUsage = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
   }
 
@@ -228,7 +230,7 @@ ColumnLayout {
     checked: valueShowNetworkStats
     onToggled: checked => {
                  valueShowNetworkStats = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
   }
 
@@ -240,7 +242,7 @@ ColumnLayout {
     checked: valueShowDiskUsage
     onToggled: checked => {
                  valueShowDiskUsage = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
   }
 
@@ -252,7 +254,7 @@ ColumnLayout {
     checked: valueShowDiskUsageAsPercent
     onToggled: checked => {
                  valueShowDiskUsageAsPercent = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
   }
 
@@ -264,7 +266,7 @@ ColumnLayout {
     checked: valueShowDiskAvailable
     onToggled: checked => {
                  valueShowDiskAvailable = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
   }
 
@@ -283,7 +285,7 @@ ColumnLayout {
     currentKey: valueDiskPath
     onSelected: key => {
                   valueDiskPath = key;
-                  settingsChanged(saveSettings());
+                  saveSettings();
                 }
   }
 }
