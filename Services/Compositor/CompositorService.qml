@@ -493,7 +493,7 @@ Singleton {
     if (executeSessionAction("rebootToUefi"))
       return;
 
-    HooksService.executeSessionHook("reboot_to_uefi", () => {
+    HooksService.executeSessionHook("rebootToUefi", () => {
                                       Quickshell.execDetached(["sh", "-c", "systemctl reboot --firmware-setup"]);
                                     });
   }
