@@ -67,10 +67,8 @@ ColumnLayout {
                 }
   }
 
-  NComboBox {
+  NColorChoice {
     label: I18n.tr("common.select-color")
-    description: I18n.tr("common.select-color-description")
-    model: Color.colorKeyModel
     currentKey: valueTextColor
     onSelected: key => {
                   valueTextColor = key;

@@ -26,15 +26,12 @@ ColumnLayout {
     settingsChanged(settings);
   }
 
-  NComboBox {
+  NColorChoice {
     label: I18n.tr("common.select-icon-color")
-    description: I18n.tr("common.select-color-description")
-    model: Color.colorKeyModel
     currentKey: root.valueIconColor
     onSelected: key => {
                   root.valueIconColor = key;
                   saveSettings();
                 }
-    minimumWidth: 200
   }
 }

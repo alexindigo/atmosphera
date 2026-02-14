@@ -113,11 +113,10 @@ ColumnLayout {
                }
   }
 
-  NComboBox {
+  NColorChoice {
     visible: valueEnableColorization
-    label: I18n.tr("common.select-color")
+    label: I18n.tr("common.select-icon-color")
     description: I18n.tr("bar.custom-button.color-selection-description")
-    model: Color.colorKeyModel
     currentKey: valueColorizeSystemIcon
     onSelected: key => {
                   valueColorizeSystemIcon = key;

@@ -42,28 +42,23 @@ ColumnLayout {
                }
   }
 
-  NComboBox {
+  NColorChoice {
     label: I18n.tr("common.select-icon-color")
-    description: I18n.tr("common.select-color-description")
-    model: Color.colorKeyModel
     currentKey: valueIconColor
     onSelected: key => {
                   valueIconColor = key;
                   saveSettings();
                 }
-    minimumWidth: 200
   }
 
-  NComboBox {
+  NColorChoice {
     label: I18n.tr("bar.notification-history.unread-badge-color-label")
     description: I18n.tr("bar.notification-history.unread-badge-color-description")
-    model: Color.colorKeyModel
     currentKey: valueUnreadBadgeColor
     onSelected: key => {
                   valueUnreadBadgeColor = key;
                   saveSettings();
                 }
-    minimumWidth: 200
     visible: valueShowUnreadBadge
   }
 
