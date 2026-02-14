@@ -210,8 +210,7 @@ Item {
 
         NText {
           text: I18n.tr("bluetooth.panel.connected-devices")
-          pointSize: Style.fontSizeS
-          color: Color.mSecondary
+          pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
           Layout.fillWidth: true
           Layout.leftMargin: Style.marginS
@@ -243,8 +242,7 @@ Item {
 
         NText {
           text: I18n.tr("bluetooth.panel.paired-devices")
-          pointSize: Style.fontSizeS
-          color: Color.mSecondary
+          pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
           Layout.fillWidth: true
           Layout.leftMargin: Style.marginS
@@ -279,11 +277,9 @@ Item {
           Layout.leftMargin: Style.marginS
           spacing: Style.marginS
 
-          NText {
-            text: I18n.tr("bluetooth.panel.available-devices") + (BluetoothService.scanningActive ? " (" + I18n.tr("bluetooth.panel.scanning") + ")" : "")
-            pointSize: Style.fontSizeS
-            color: Color.mSecondary
-            font.weight: Style.fontWeightBold
+          NLabel {
+            label: I18n.tr("bluetooth.panel.available-devices")
+            description: BluetoothService.scanningActive ? I18n.tr("bluetooth.panel.scanning") : ""
             Layout.fillWidth: true
           }
         }
