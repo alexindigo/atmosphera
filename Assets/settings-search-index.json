@@ -380,7 +380,7 @@
   {
     "labelKey": "common.bluetooth",
     "descriptionKey": null,
-    "widget": "NLabel",
+    "widget": "NToggle",
     "tab": 15,
     "tabLabel": "panels.connections.title",
     "subTab": 1,
