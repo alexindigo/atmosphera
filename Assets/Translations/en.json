@@ -458,6 +458,7 @@
     "primary": "Primary",
     "random": "Random",
     "reboot": "Reboot",
+    "reboot-to-uefi": "Reboot to UEFI Firmware",
     "record": "Start recording",
     "refresh": "Refresh",
     "required": "(required)",
