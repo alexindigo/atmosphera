@@ -69,14 +69,7 @@ SmartPanel {
 
     readonly property real contentPreferredHeight: (root.compactMode ? 240 : (root.showAlbumArt ? 560 : 300)) * Style.uiScaleRatio
 
-    Loader {
-      id: visualizerLoaderCompact
-      anchors.fill: parent
-      anchors.margins: Style.marginL
-      z: 0
-      active: !!(root.needsCava && !root.showAlbumArt)
-      sourceComponent: visualizerSource
-    }
+    // Old loader removed from here
 
     property Component visualizerSource: {
       switch (root.visualizerType) {
@@ -234,6 +227,14 @@ SmartPanel {
       NBox {
         Layout.fillWidth: true
         Layout.fillHeight: true
+
+        // Visualizer background for content area
+        Loader {
+          anchors.fill: parent
+          z: 0
+          active: !!(root.needsCava && !root.showAlbumArt)
+          sourceComponent: visualizerSource
+        }
 
         GridLayout {
           anchors.fill: parent
