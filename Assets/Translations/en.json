@@ -1241,7 +1241,6 @@
     },
     "connections": {
       "authentication-required": "Authentication required",
-      "bluetooth-description": "Activate Bluetooth management.",
       "bluetooth-devices-unnamed": "Unnamed devices are not shown.",
       "bluetooth-discoverable": "This device is discoverable as <b> {hostName} </b> while this settings tab is open.",
       "bluetooth-rssi-polling-description": "Periodically sample RSSI for connected devices via bluetoothctl. May not be available for all devices; uses minimal resources when enabled.",
@@ -1253,9 +1252,7 @@
       "hide-unnamed-devices-label": "Hide unnamed devices",
       "hide-unnamed-devices-description": "Hide devices that appear only as Bluetooth addresses.",
       "pin-instructions": "Please enter the PIN code displayed on your device.",
-      "title": "Connections",
-      "wifi-description": "Manage wireless networks (requires NetworkManager)."
-
+      "title": "Connections"
     },
     "notifications": {
       "duration-critical-urgency-description": "How long critical priority notifications stay visible.",
