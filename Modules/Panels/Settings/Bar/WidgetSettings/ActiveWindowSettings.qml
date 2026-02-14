@@ -74,7 +74,6 @@ ColumnLayout {
                   valueTextColor = key;
                   saveSettings();
                 }
-    minimumWidth: 200
   }
 
   NToggle {
