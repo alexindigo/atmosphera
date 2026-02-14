@@ -104,7 +104,7 @@ SmartPanel {
       "title": I18n.tr("common.reboot"),
       "isShutdown": false
     },
-    "reboot_to_uefi": {
+    "rebootToUefi": {
       "icon": "reboot",
       "title": I18n.tr("common.reboot-to-uefi"),
       "isShutdown": false

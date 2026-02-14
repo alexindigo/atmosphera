@@ -38,7 +38,7 @@ ColumnLayout {
       "required": false
     },
     {
-      "id": "reboot_to_uefi",
+      "id": "rebootToUefi",
       "text": I18n.tr("common.reboot-to-uefi"),
       "enabled": true,
       "required": false

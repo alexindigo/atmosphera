@@ -488,9 +488,9 @@ Singleton {
                                     });
   }
 
-  function reboot_to_uefi() {
+  function rebootToUefi() {
     Logger.i("Compositor", "Reboot to UEFI firmware requested requested");
-    if (executeSessionAction("reboot_to_uefi"))
+    if (executeSessionAction("rebootToUefi"))
       return;
 
     HooksService.executeSessionHook("reboot_to_uefi", () => {
