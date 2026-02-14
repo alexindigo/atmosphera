@@ -19,6 +19,7 @@ RowLayout {
               "value": defaultValue === "" ? "(empty)" : String(defaultValue)
             });
   }
+  readonly property int diameter: circleSize * Style.uiScaleRatio
 
   signal selected(string key)
 
@@ -31,12 +32,7 @@ RowLayout {
 
   RowLayout {
     id: colourRow
-
-    property real hoverScale: 1.15
-    property int diameter: circleSize * Style.uiScaleRatio
-
-    Layout.margins: Style.uiScaleRatio * hoverScale
-    Layout.minimumWidth: Math.round(root.minimumWidth * Style.uiScaleRatio)
+    Layout.minimumWidth: root.diameter * Color.colorKeyModel.length
 
     Repeater {
       model: Color.colorKeyModel
@@ -48,12 +44,12 @@ RowLayout {
         property bool isHovered: circleMouseArea.containsMouse
 
         Layout.alignment: Qt.AlignHCenter
-        implicitWidth: colourRow.diameter
-        implicitHeight: colourRow.diameter
-        radius: colourRow.diameter * 0.5
+        implicitWidth: root.diameter
+        implicitHeight: root.diameter
+        radius: root.diameter * 0.5
         color: Color.resolveColorKey(modelData.key)
-        border.color: isSelected ? Color.mOnSurface : "transparent"
-        border.width: isSelected ? Style.borderS + 1 : 0
+        border.color: (isSelected || isHovered) ? Color.mOnSurface : Color.mOutline
+        border.width: Style.borderM
         scale: isHovered ? colourRow.hoverScale : 1
 
         MouseArea {
@@ -76,13 +72,6 @@ RowLayout {
           pointSize: Math.max(Style.fontSizeXS, colorCircle.width * 0.4)
           color: Color.mOnPrimary
           visible: colorCircle.isSelected
-        }
-
-        Behavior on scale {
-          NumberAnimation {
-            duration: Style.animationNormal
-            easing.type: Easing.OutCubic
-          }
         }
 
         Behavior on border.color {
