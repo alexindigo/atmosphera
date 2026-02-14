@@ -458,6 +458,7 @@
     "primary": "Primario",
     "random": "Aleatorio",
     "reboot": "Reiniciar",
+    "reboot-to-uefi": "Reiniciar en el firmware UEFI",
     "record": "Iniciar grabación",
     "refresh": "Refrescar",
     "required": "(obligatorio)",

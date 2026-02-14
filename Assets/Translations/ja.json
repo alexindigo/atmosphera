@@ -458,6 +458,7 @@
     "primary": "プライマリ",
     "random": "ランダム",
     "reboot": "再起動",
+    "reboot-to-uefi": "UEFIファームウェアで再起動",
     "record": "録画を開始",
     "refresh": "更新",
     "required": "(必須)",

@@ -458,6 +458,7 @@
     "primary": "Birincil",
     "random": "Rastgele",
     "reboot": "Yeniden başlat",
+    "reboot-to-uefi": "UEFI Donanım Yazılımına Yeniden Başlat",
     "record": "Kaydı Başlat",
     "refresh": "Yenile",
     "required": "(gerekli)",

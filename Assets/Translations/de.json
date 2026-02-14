@@ -458,6 +458,7 @@
     "primary": "Primär",
     "random": "Zufällig",
     "reboot": "Neu starten",
+    "reboot-to-uefi": "Neustart zur UEFI-Firmware",
     "record": "Aufnahme starten",
     "refresh": "Aktualisieren",
     "required": "(erforderlich)",

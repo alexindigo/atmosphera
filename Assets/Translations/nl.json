@@ -458,6 +458,7 @@
     "primary": "Primair",
     "random": "Willekeurig",
     "reboot": "Herstarten",
+    "reboot-to-uefi": "Opnieuw opstarten naar UEFI-firmware",
     "record": "Opname starten",
     "refresh": "Vernieuwen",
     "required": "(vereist)",

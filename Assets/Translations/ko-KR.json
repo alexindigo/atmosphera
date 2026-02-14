@@ -458,6 +458,7 @@
     "primary": "첫번째",
     "random": "랜덤",
     "reboot": "재부팅",
+    "reboot-to-uefi": "UEFI 펌웨어로 재부팅",
     "record": "녹화 시작",
     "refresh": "새로고침",
     "required": "(필수)",

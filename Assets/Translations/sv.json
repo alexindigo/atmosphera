@@ -458,6 +458,7 @@
     "primary": "Primär",
     "random": "Slumpmässig",
     "reboot": "Starta om",
+    "reboot-to-uefi": "Starta om till UEFI-firmware",
     "record": "Starta inspelning",
     "refresh": "Uppdatera",
     "required": "(krävs)",

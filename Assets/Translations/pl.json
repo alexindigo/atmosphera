@@ -458,6 +458,7 @@
     "primary": "Podstawowy",
     "random": "Losowy",
     "reboot": "Restart",
+    "reboot-to-uefi": "Uruchom ponownie do oprogramowania układowego UEFI",
     "record": "Rozpocznij nagrywanie",
     "refresh": "Odśwież",
     "required": "(wymagane)",

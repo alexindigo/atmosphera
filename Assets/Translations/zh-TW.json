@@ -458,6 +458,7 @@
     "primary": "主要的",
     "random": "隨機",
     "reboot": "重新啟動",
+    "reboot-to-uefi": "重新啟動到 UEFI 韌體",
     "record": "開始錄製",
     "refresh": "重新整理",
     "required": "(必要)",
