@@ -92,7 +92,7 @@ Singleton {
     property string startTime: ""
     property string duration: ""
 
-    command: ["khal", "list", "--once", "--json", "uid", "--json", "title", "--json", "start-long-full", "--json", "end-long-full", "--json", "calendar", "--json", "description", "--json", "location", startTime, duration]
+    command: ["khal", "list", "--json", "uid", "--json", "title", "--json", "start-long-full", "--json", "end-long-full", "--json", "calendar", "--json", "description", "--json", "location", startTime, duration]
 
     stdout: StdioCollector {
       onStreamFinished: {
