@@ -377,6 +377,7 @@
     "color-muted": "Gedempt",
     "colors": "Kleuren",
     "command": "Commando",
+    "confirm": "Bevestigen",
     "connect": "Verbinden",
     "connected": "Verbonden",
     "connecting": "Verbinden...",
@@ -400,6 +401,7 @@
     "edit": "Bewerken",
     "enabled": "Ingeschakeld",
     "error": "Fout",
+    "ethernet": "Ethernet",
     "events": "Evenementen",
     "execute": "Uitvoeren",
     "faithful": "Getrouw",
@@ -474,6 +476,7 @@
     "select-color": "Kleur selecteren",
     "select-color-description": "Themakleuren toepassen voor nadruk.",
     "select-icon-color": "Icoonkleur selecteren",
+    "settings": "Instellingen",
     "shortcuts": "Snelkoppelingen",
     "shutdown": "Afsluiten",
     "signal": "Signaal",
@@ -507,6 +510,7 @@
     "week": "Week",
     "widgets": "Widgets",
     "width": "Breedte",
+    "wifi": "Wi-Fi",
     "windows": "Vensters",
     "yes": "Ja"
   },
@@ -873,6 +877,23 @@
       "wallpaper-method-label": "Paletgeneratiemethode",
       "wallpaper-monitor-source-description": "Selecteer welke monitor te gebruiken voor het extraheren van wallpaperkleuren.",
       "wallpaper-monitor-source-label": "Bron van kleurgeneratie"
+    },
+    "connections": {
+      "authentication-required": "Authenticatie vereist",
+      "bluetooth-description": "Bluetooth-beheer activeren.",
+      "bluetooth-devices-unnamed": "Naamloze apparaten worden niet getoond.",
+      "bluetooth-discoverable": "Dit apparaat is vindbaar als <b> {hostName} </b> zolang dit instellingen-tabblad geopend is.",
+      "bluetooth-rssi-polling-description": "Periodiek RSSI van verbonden apparaten via bluetoothctl samplen. Mogelijk niet beschikbaar voor alle apparaten; gebruikt minimale middelen wanneer ingeschakeld.",
+      "bluetooth-rssi-polling-interval-description": "Configureer hoe vaak de signaalsterkte voor verbonden apparaten moet worden bijgewerkt.",
+      "bluetooth-rssi-polling-interval-label": "Polling-interval",
+      "bluetooth-rssi-polling-label": "Bluetooth-signaalpeiling",
+      "disable-discoverability-description": "Verberg je apparaat voor Bluetooth-apparaten in de buurt.",
+      "disable-discoverability-label": "Zichtbaarheid van apparaat uitschakelen",
+      "hide-unnamed-devices-description": "Verberg apparaten die alleen als Bluetooth-adressen verschijnen.",
+      "hide-unnamed-devices-label": "Onbenoemde apparaten verbergen",
+      "pin-instructions": "Voer de PIN-code in die op uw apparaat wordt weergegeven.",
+      "title": "Verbindingen",
+      "wifi-description": "Draadloze netwerken beheren (vereist NetworkManager)."
     },
     "control-center": {
       "cards-desc": "Pas aan welke bedieningselementen in het bedieningscentrum verschijnen en in welke volgorde.",
@@ -1434,7 +1455,9 @@
       "large-buttons-style-label": "Stijl met grote knoppen",
       "position-description": "Kies waar het sessiemenupaneel verschijnt wanneer het wordt geopend.",
       "show-header-description": "Toon de titel en sluitknop bovenaan het sessiemenu.",
-      "show-header-label": "Koptekst tonen"
+      "show-header-label": "Koptekst tonen",
+      "show-keybinds-description": "Toon toetscombinatiehints bij sessie-opties.",
+      "show-keybinds-label": "Toetsencombinaties weergeven"
     },
     "system-monitor": {
       "critical-color-label": "Kritische kleur",

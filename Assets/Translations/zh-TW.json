@@ -377,6 +377,7 @@
     "color-muted": "已靜音",
     "colors": "顏色",
     "command": "指令",
+    "confirm": "確認",
     "connect": "連接",
     "connected": "已連接",
     "connecting": "正在連線...",
@@ -400,6 +401,7 @@
     "edit": "編輯",
     "enabled": "已啟用",
     "error": "錯誤",
+    "ethernet": "乙太網路",
     "events": "事件",
     "execute": "執行",
     "faithful": "忠實",
@@ -474,6 +476,7 @@
     "select-color": "選擇顏色",
     "select-color-description": "套用主題顏色以示強調。",
     "select-icon-color": "選擇圖示顏色",
+    "settings": "設定",
     "shortcuts": "快捷鍵",
     "shutdown": "關機",
     "signal": "訊號",
@@ -507,6 +510,7 @@
     "week": "週",
     "widgets": "小工具",
     "width": "寬度",
+    "wifi": "Wi-Fi",
     "windows": "視窗",
     "yes": "是"
   },
@@ -873,6 +877,23 @@
       "wallpaper-method-label": "調色盤產生方法",
       "wallpaper-monitor-source-description": "選取要用於擷取桌布顏色的螢幕。",
       "wallpaper-monitor-source-label": "色彩產生來源"
+    },
+    "connections": {
+      "authentication-required": "需要驗證",
+      "bluetooth-description": "啟用藍牙管理。",
+      "bluetooth-devices-unnamed": "未命名裝置不顯示。",
+      "bluetooth-discoverable": "當此設定分頁開啟時，此裝置可被發現為 <b> {hostName} </b>。",
+      "bluetooth-rssi-polling-description": "透過 bluetoothctl 定期取樣已連接裝置的 RSSI。可能並非所有裝置都可用；啟用時佔用最少資源。",
+      "bluetooth-rssi-polling-interval-description": "配置已連線裝置的訊號強度更新頻率。",
+      "bluetooth-rssi-polling-interval-label": "輪詢間隔",
+      "bluetooth-rssi-polling-label": "藍牙訊號輪詢",
+      "disable-discoverability-description": "將您的裝置從附近的 Bluetooth 裝置中隱藏。",
+      "disable-discoverability-label": "停用裝置可見性",
+      "hide-unnamed-devices-description": "隱藏僅顯示為 Bluetooth 位址的裝置。",
+      "hide-unnamed-devices-label": "隱藏未命名裝置",
+      "pin-instructions": "請輸入您裝置上顯示的PIN碼。",
+      "title": "連線",
+      "wifi-description": "管理無線網路 (需要 NetworkManager)。"
     },
     "control-center": {
       "cards-desc": "自訂控制中心出現的控制項目及排序",
@@ -1434,7 +1455,9 @@
       "large-buttons-style-label": "以大按鈕顯示",
       "position-description": "選擇工作階段選單在哪裡顯示",
       "show-header-description": "在工作階段選單顯示標題及關閉按鈕",
-      "show-header-label": "顯示標題列"
+      "show-header-label": "顯示標題列",
+      "show-keybinds-description": "在工作階段選項上顯示快捷鍵提示。",
+      "show-keybinds-label": "顯示快捷鍵"
     },
     "system-monitor": {
       "critical-color-label": "危急顏色",

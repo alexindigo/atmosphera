@@ -377,6 +377,7 @@
     "color-muted": "차분하게",
     "colors": "색상",
     "command": "명령",
+    "confirm": "확인",
     "connect": "연결",
     "connected": "연결됨",
     "connecting": "연결 중...",
@@ -400,6 +401,7 @@
     "edit": "편집",
     "enabled": "활성화됨",
     "error": "오류",
+    "ethernet": "이더넷",
     "events": "일정",
     "execute": "실행",
     "faithful": "충실하게",
@@ -474,6 +476,7 @@
     "select-color": "색상 선택",
     "select-color-description": "강조를 위해 테마 색상을 적용합니다.",
     "select-icon-color": "아이콘 색상 선택",
+    "settings": "설정",
     "shortcuts": "단축키",
     "shutdown": "시스템 종료",
     "signal": "신호",
@@ -507,6 +510,7 @@
     "week": "주",
     "widgets": "위젯",
     "width": "너비",
+    "wifi": "Wi-Fi",
     "windows": "창",
     "yes": "예"
   },
@@ -873,6 +877,23 @@
       "wallpaper-method-label": "팔레트 생성 방법",
       "wallpaper-monitor-source-description": "배경화면 색상을 추출할 모니터를 선택하세요.",
       "wallpaper-monitor-source-label": "색상 생성 소스"
+    },
+    "connections": {
+      "authentication-required": "인증 필요",
+      "bluetooth-description": "Bluetooth 관리 활성화.",
+      "bluetooth-devices-unnamed": "이름 없는 장치는 표시되지 않습니다.",
+      "bluetooth-discoverable": "이 장치는 이 설정 탭이 열려 있는 동안 <b> {hostName} </b>으로 검색될 수 있습니다.",
+      "bluetooth-rssi-polling-description": "bluetoothctl을 통해 연결된 장치의 RSSI를 주기적으로 샘플링합니다. 모든 장치에서 사용 가능하지 않을 수 있으며, 활성화 시 최소한의 리소스를 사용합니다.",
+      "bluetooth-rssi-polling-interval-description": "연결된 장치의 신호 강도를 얼마나 자주 업데이트할지 구성합니다.",
+      "bluetooth-rssi-polling-interval-label": "폴링 간격",
+      "bluetooth-rssi-polling-label": "Bluetooth 신호 폴링",
+      "disable-discoverability-description": "주변 Bluetooth 장치에서 장치를 숨깁니다.",
+      "disable-discoverability-label": "장치 가시성 비활성화",
+      "hide-unnamed-devices-description": "Bluetooth 주소로만 표시되는 장치를 숨깁니다.",
+      "hide-unnamed-devices-label": "이름 없는 장치 숨기기",
+      "pin-instructions": "기기에 표시된 PIN 코드를 입력해주세요.",
+      "title": "연결",
+      "wifi-description": "무선 네트워크 관리 (NetworkManager 필요)."
     },
     "control-center": {
       "cards-desc": "제어 센터에 표시될 컨트롤과 순서를 사용자 지정합니다.",
@@ -1434,7 +1455,9 @@
       "large-buttons-style-label": "큰 버튼 스타일",
       "position-description": "세션 메뉴 패널이 열릴 때 나타날 위치를 선택하세요.",
       "show-header-description": "세션 메뉴 상단에 제목과 닫기 버튼을 표시합니다.",
-      "show-header-label": "헤더 표시"
+      "show-header-label": "헤더 표시",
+      "show-keybinds-description": "세션 옵션에 키 바인딩 힌트를 표시합니다.",
+      "show-keybinds-label": "단축키 표시"
     },
     "system-monitor": {
       "critical-color-label": "위험 색상",

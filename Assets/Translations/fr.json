@@ -377,6 +377,7 @@
     "color-muted": "Muet",
     "colors": "Couleurs",
     "command": "Commande",
+    "confirm": "Confirmer",
     "connect": "Connecter",
     "connected": "Connecté",
     "connecting": "Connexion en cours...",
@@ -400,6 +401,7 @@
     "edit": "Modifier",
     "enabled": "Activé",
     "error": "Erreur",
+    "ethernet": "Ethernet",
     "events": "Événements",
     "execute": "Exécuter",
     "faithful": "Fidèle",
@@ -474,6 +476,7 @@
     "select-color": "Sélectionner une couleur",
     "select-color-description": "Appliquer les couleurs du thème pour mettre en valeur.",
     "select-icon-color": "Sélectionner la couleur de l'icône",
+    "settings": "Paramètres",
     "shortcuts": "Raccourcis",
     "shutdown": "Éteindre",
     "signal": "Signal",
@@ -507,6 +510,7 @@
     "week": "Semaine",
     "widgets": "Widgets",
     "width": "Largeur",
+    "wifi": "Wi-Fi",
     "windows": "Fenêtres",
     "yes": "Oui"
   },
@@ -873,6 +877,23 @@
       "wallpaper-method-label": "Méthode de génération de palette",
       "wallpaper-monitor-source-description": "Sélectionnez le moniteur à utiliser pour extraire les couleurs du fond d'écran.",
       "wallpaper-monitor-source-label": "Source de génération des couleurs"
+    },
+    "connections": {
+      "authentication-required": "Authentification requise",
+      "bluetooth-description": "Activer la gestion Bluetooth.",
+      "bluetooth-devices-unnamed": "Les appareils sans nom ne sont pas affichés.",
+      "bluetooth-discoverable": "Cet appareil est détectable en tant que <b> {hostName} </b> tant que cet onglet de paramètres est ouvert.",
+      "bluetooth-rssi-polling-description": "Échantillonne périodiquement le RSSI des appareils connectés via bluetoothctl. Peut ne pas être disponible pour tous les appareils ; utilise des ressources minimales lorsqu'il est activé.",
+      "bluetooth-rssi-polling-interval-description": "Configurer la fréquence de mise à jour de la force du signal pour les appareils connectés.",
+      "bluetooth-rssi-polling-interval-label": "Intervalle d'interrogation",
+      "bluetooth-rssi-polling-label": "Interrogation du signal Bluetooth",
+      "disable-discoverability-description": "Masquer votre appareil des appareils Bluetooth à proximité.",
+      "disable-discoverability-label": "Désactiver la visibilité de l'appareil",
+      "hide-unnamed-devices-description": "Masquer les appareils qui n'apparaissent que sous forme d'adresses Bluetooth.",
+      "hide-unnamed-devices-label": "Masquer les appareils sans nom",
+      "pin-instructions": "Veuillez saisir le code PIN affiché sur votre appareil.",
+      "title": "Connexions",
+      "wifi-description": "Gérer les réseaux sans fil (nécessite NetworkManager)."
     },
     "control-center": {
       "cards-desc": "Personnalisez les commandes qui apparaissent dans le centre de contrôle et leur ordre d'affichage.",
@@ -1434,7 +1455,9 @@
       "large-buttons-style-label": "Style boutons larges",
       "position-description": "Choisissez où le panneau du menu de session apparaît lorsqu'il est ouvert.",
       "show-header-description": "Afficher le titre et le bouton de fermeture en haut du menu de session.",
-      "show-header-label": "Afficher l'en-tête"
+      "show-header-label": "Afficher l'en-tête",
+      "show-keybinds-description": "Afficher les indices de raccourcis clavier sur les options de session.",
+      "show-keybinds-label": "Afficher les raccourcis clavier"
     },
     "system-monitor": {
       "critical-color-label": "Couleur critique",

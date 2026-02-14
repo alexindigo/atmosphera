@@ -377,6 +377,7 @@
     "color-muted": "Silenciado",
     "colors": "Cores",
     "command": "Comando",
+    "confirm": "Confirmar",
     "connect": "Conectar",
     "connected": "Conectado(a)",
     "connecting": "Conectando...",
@@ -400,6 +401,7 @@
     "edit": "Editar",
     "enabled": "Ativado",
     "error": "Erro",
+    "ethernet": "Ethernet",
     "events": "Eventos",
     "execute": "Executar",
     "faithful": "Fiel",
@@ -474,6 +476,7 @@
     "select-color": "Selecionar cor",
     "select-color-description": "Aplicar cores do tema para enfatizar.",
     "select-icon-color": "Selecionar cor do ícone",
+    "settings": "Definições",
     "shortcuts": "Atalhos",
     "shutdown": "Desligar",
     "signal": "Sinal",
@@ -507,6 +510,7 @@
     "week": "Semana",
     "widgets": "Widgets",
     "width": "Largura",
+    "wifi": "Wi-Fi",
     "windows": "Janelas",
     "yes": "Sim"
   },
@@ -873,6 +877,23 @@
       "wallpaper-method-label": "Método de geração de paleta",
       "wallpaper-monitor-source-description": "Selecione qual monitor usar para extrair as cores do papel de parede.",
       "wallpaper-monitor-source-label": "Fonte de geração de cores"
+    },
+    "connections": {
+      "authentication-required": "Autenticação necessária",
+      "bluetooth-description": "Ativar gestão de Bluetooth.",
+      "bluetooth-devices-unnamed": "Dispositivos sem nome não são exibidos.",
+      "bluetooth-discoverable": "Este dispositivo é detectável como <b> {hostName} </b> enquanto esta aba de configurações estiver aberta.",
+      "bluetooth-rssi-polling-description": "Amostra periodicamente o RSSI de dispositivos conectados via bluetoothctl. Pode não estar disponível para todos os dispositivos; usa recursos mínimos quando ativado.",
+      "bluetooth-rssi-polling-interval-description": "Configurar com que frequência atualizar a intensidade do sinal para dispositivos conectados.",
+      "bluetooth-rssi-polling-interval-label": "Intervalo de sondagem",
+      "bluetooth-rssi-polling-label": "Sondagem de sinal Bluetooth",
+      "disable-discoverability-description": "Ocultar o seu dispositivo de dispositivos Bluetooth próximos.",
+      "disable-discoverability-label": "Desativar visibilidade do dispositivo",
+      "hide-unnamed-devices-description": "Ocultar dispositivos que aparecem apenas como endereços Bluetooth.",
+      "hide-unnamed-devices-label": "Ocultar dispositivos sem nome",
+      "pin-instructions": "Por favor, insira o código PIN exibido no seu dispositivo.",
+      "title": "Conexões",
+      "wifi-description": "Gerenciar redes sem fio (requer NetworkManager)."
     },
     "control-center": {
       "cards-desc": "Personalize quais controles aparecem na central de controle e em que ordem.",
@@ -1434,7 +1455,9 @@
       "large-buttons-style-label": "Estilo de botões grandes",
       "position-description": "Escolha onde o painel do Menu de sessão aparece quando aberto.",
       "show-header-description": "Exibir o título e o botão de fechar na parte superior do menu de sessão.",
-      "show-header-label": "Mostrar cabeçalho"
+      "show-header-label": "Mostrar cabeçalho",
+      "show-keybinds-description": "Exibir dicas de atalhos de teclado nas opções de sessão.",
+      "show-keybinds-label": "Mostrar atalhos de teclado"
     },
     "system-monitor": {
       "critical-color-label": "Cor crítica",

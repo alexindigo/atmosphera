@@ -377,6 +377,7 @@
     "color-muted": "ミュート",
     "colors": "色",
     "command": "コマンド",
+    "confirm": "確認",
     "connect": "接続",
     "connected": "接続済み",
     "connecting": "接続中...",
@@ -400,6 +401,7 @@
     "edit": "編集",
     "enabled": "有効",
     "error": "エラー",
+    "ethernet": "イーサネット",
     "events": "イベント",
     "execute": "実行",
     "faithful": "忠実",
@@ -474,6 +476,7 @@
     "select-color": "色を選択",
     "select-color-description": "強調のためにテーマの色を適用します。",
     "select-icon-color": "アイコンの色を選択",
+    "settings": "設定",
     "shortcuts": "ショートカット",
     "shutdown": "シャットダウン",
     "signal": "信号",
@@ -507,6 +510,7 @@
     "week": "週",
     "widgets": "ウィジェット",
     "width": "幅",
+    "wifi": "Wi-Fi",
     "windows": "ウィンドウ",
     "yes": "はい"
   },
@@ -873,6 +877,23 @@
       "wallpaper-method-label": "パレット生成方法",
       "wallpaper-monitor-source-description": "壁紙の色を抽出するために使用するモニターを選択してください。",
       "wallpaper-monitor-source-label": "色の生成元"
+    },
+    "connections": {
+      "authentication-required": "認証が必要です",
+      "bluetooth-description": "Bluetooth管理を有効にする。",
+      "bluetooth-devices-unnamed": "名前のないデバイスは表示されません。",
+      "bluetooth-discoverable": "このデバイスは、この設定タブが開いている間、<b> {hostName} </b> として検出可能です。",
+      "bluetooth-rssi-polling-description": "bluetoothctl を介して接続されたデバイスの RSSI を定期的にサンプリングします。すべてのデバイスで利用できるとは限りません。有効にすると最小限のリソースを使用します。",
+      "bluetooth-rssi-polling-interval-description": "接続されたデバイスの信号強度を更新する頻度を設定します。",
+      "bluetooth-rssi-polling-interval-label": "ポーリング間隔",
+      "bluetooth-rssi-polling-label": "Bluetooth信号ポーリング",
+      "disable-discoverability-description": "近くのBluetoothデバイスからデバイスを非表示にする。",
+      "disable-discoverability-label": "デバイスの可視性を無効にする",
+      "hide-unnamed-devices-description": "Bluetoothアドレスとしてのみ表示されるデバイスを非表示にする。",
+      "hide-unnamed-devices-label": "名前のないデバイスを非表示にする",
+      "pin-instructions": "デバイスに表示されているPINコードを入力してください。",
+      "title": "接続",
+      "wifi-description": "ワイヤレスネットワークを管理します (NetworkManagerが必要です)。"
     },
     "control-center": {
       "cards-desc": "コントロールセンターに表示する項目と、その順序をカスタマイズします。",
@@ -1434,7 +1455,9 @@
       "large-buttons-style-label": "大きなボタンのスタイル",
       "position-description": "セッションメニューパネルの表示位置を選択します。",
       "show-header-description": "セッションメニューの上部にタイトルと閉じるボタンを表示します。",
-      "show-header-label": "ヘッダーを表示"
+      "show-header-label": "ヘッダーを表示",
+      "show-keybinds-description": "セッションオプションにキーバインドのヒントを表示する。",
+      "show-keybinds-label": "キーバインドを表示"
     },
     "system-monitor": {
       "critical-color-label": "危険時の色",
