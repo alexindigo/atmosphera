@@ -84,16 +84,12 @@ ColumnLayout {
     }
   }
 
-  NComboBox {
-    label: I18n.tr("common.select-color")
-    description: I18n.tr("common.select-color-description")
-    model: Color.colorKeyModel
+  NColorChoice {
     currentKey: valueClockColor
     onSelected: key => {
                   valueClockColor = key;
                   saveSettings();
                 }
-    minimumWidth: 200
   }
 
   NToggle {

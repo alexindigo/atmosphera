@@ -37,11 +37,10 @@ ColumnLayout {
     onEditingFinished: saveSettings()
   }
 
-  NComboBox {
+  NColorChoice {
     Layout.fillWidth: true
     label: I18n.tr("bar.audio-visualizer.color-name-label")
     description: I18n.tr("bar.audio-visualizer.color-name-description")
-    model: Color.colorKeyModel
     currentKey: root.valueColorName
     onSelected: key => {
                   root.valueColorName = key;

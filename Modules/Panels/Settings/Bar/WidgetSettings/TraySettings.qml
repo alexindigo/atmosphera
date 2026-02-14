@@ -50,16 +50,14 @@ ColumnLayout {
                }
   }
 
-  NComboBox {
+  NColorChoice {
     label: I18n.tr("bar.tray.chevron-color-label")
     description: I18n.tr("bar.tray.chevron-color-description")
-    model: Color.colorKeyModel
     currentKey: root.valueChevronColor
     onSelected: key => {
                   root.valueChevronColor = key;
                   saveSettings();
                 }
-    minimumWidth: 200
     visible: root.valueDrawerEnabled
   }
 

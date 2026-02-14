@@ -52,27 +52,20 @@ ColumnLayout {
                 }
   }
 
-  NComboBox {
+  NColorChoice {
     label: I18n.tr("common.select-icon-color")
-    description: I18n.tr("common.select-color-description")
-    model: Color.colorKeyModel
     currentKey: valueIconColor
     onSelected: key => {
                   valueIconColor = key;
                   saveSettings();
                 }
-    minimumWidth: 200
   }
 
-  NComboBox {
-    label: I18n.tr("common.select-color")
-    description: I18n.tr("common.select-color-description")
-    model: Color.colorKeyModel
+  NColorChoice {
     currentKey: valueTextColor
     onSelected: key => {
                   valueTextColor = key;
                   saveSettings();
                 }
-    minimumWidth: 200
   }
 }
