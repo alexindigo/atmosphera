@@ -6,13 +6,12 @@ RowLayout {
   id: root
 
   property real minimumWidth: 200
-  property string label: ""
-  property string description: ""
+  property string label: I18n.tr("common.select-color")
+  property string description: I18n.tr("common.select-color-description")
   property string tooltip: ""
   property string currentKey: ""
   property var defaultValue: "none"
   property int circleSize: Style.baseWidgetSize * 0.9
-
   readonly property bool isValueChanged: currentKey !== defaultValue
   readonly property string indicatorTooltip: {
     I18n.tr("panels.indicator.default-value", {
