@@ -11,8 +11,8 @@ RowLayout {
   property string tooltip: ""
   property string currentKey: ""
   property var defaultValue: "none"
-  property color noneColor
-  property color noneOnColor
+  property var noneColor: undefined      // color declared as var so we can nullify
+  property var noneOnColor: undefined    // color declared as var so we can nullify
 
   readonly property bool isValueChanged: currentKey !== defaultValue
   readonly property string indicatorTooltip: {
