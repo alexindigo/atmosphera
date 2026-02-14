@@ -33,6 +33,8 @@ SmartPanel {
     }
     property real contentPreferredHeight: Math.min(root.preferredHeight, Math.ceil(calculatedHeight))
 
+    property real layoutWidth: Math.max(1, root.preferredWidth - (Style.marginL * 2))
+
     // State (lazy-loaded with panelContent)
     property var rangeCounts: [0, 0, 0, 0]
     property var lastKnownDate: null  // Track the current date to detect day changes
@@ -264,7 +266,7 @@ SmartPanel {
           property string expandedId: ""
 
           ColumnLayout {
-            width: scrollView.availableWidth
+            width: panelContent.layoutWidth
             spacing: Style.marginM
 
             // Empty state when no notifications
@@ -321,7 +323,7 @@ SmartPanel {
 
               Column {
                 id: notificationColumn
-                width: scrollView.width
+                width: panelContent.layoutWidth
                 spacing: Style.marginM
 
                 Repeater {
