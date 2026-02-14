@@ -30,6 +30,8 @@ import qs.Widgets
 Item {
   id: root
 
+  Component.onDestruction: SystemStatService.unregisterComponent("settings")
+
   // Screen reference for child components
   property var screen
 
@@ -389,6 +391,7 @@ Item {
   }
 
   Component.onCompleted: {
+    SystemStatService.registerComponent("settings");
     // Restore sidebar state
     sidebarExpanded = ShellState.getSettingsSidebarExpanded();
   }
@@ -419,8 +422,8 @@ Item {
     OsdTab {}
   }
   Component {
-    id: networkTab
-    NetworkTab {}
+    id: connectionsTab
+    ConnectionsTab {}
   }
   Component {
     id: regionTab
@@ -572,10 +575,10 @@ Item {
             "source": displayTab
           },
           {
-            "id": SettingsPanel.Tab.Network,
-            "label": "common.network",
+            "id": SettingsPanel.Tab.Connections,
+            "label": "panels.connections.title",
             "icon": "settings-network",
-            "source": networkTab
+            "source": connectionsTab
           },
           {
             "id": SettingsPanel.Tab.Location,

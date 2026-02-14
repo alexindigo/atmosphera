@@ -224,7 +224,11 @@
       "swap-usage-description": "顯示交換記憶體使用量",
       "swap-usage-label": "交換記憶體使用量",
       "use-monospace-font-description": "使用等寬字型可以達成一致的字元寬度",
-      "use-monospace-font-label": "等寬字型"
+      "use-monospace-font-label": "等寬字型",
+      "use-padding-description": "用前導空格填充文字值，以防止佈局偏移。",
+      "use-padding-description-disabled-monospace-font": "此功能需要等寬字體。",
+      "use-padding-description-disabled-vertical": "垂直工作列不支援文字內邊距。",
+      "use-padding-label": "文字填充"
     },
     "taskbar": {
       "colorize-icons-description": "將工具列圖示套用主題用色",
@@ -1043,6 +1047,9 @@
       "keybinds-enter": "確認 / 動作",
       "keybinds-escape": "關閉 / 返回",
       "keybinds-left": "向左移動",
+      "keybinds-modifier-description": "快捷鍵必須包含修飾鍵 (Ctrl 或 Alt)。",
+      "keybinds-modifier-title": "需要修飾鍵",
+      "keybinds-remove": "刪除",
       "keybinds-right": "向右移動",
       "keybinds-title": "導覽按鍵綁定",
       "keybinds-up": "上移",
