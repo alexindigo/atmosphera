@@ -554,6 +554,7 @@ Singleton {
       property int countdownDuration: 10000
       property string position: "center"
       property bool showHeader: true
+      property bool showKeybinds: true
       property bool largeButtonsStyle: true
       property string largeButtonsLayout: "single-row"
       property list<var> powerOptions: [
