@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import qs.Commons
+import qs.Services.UI
 
 RowLayout {
   id: root
@@ -61,6 +62,8 @@ RowLayout {
           anchors.fill: parent
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
+          onEntered: TooltipService.show(parent, modelData.name)
+          onExited: TooltipService.hide()
           onClicked: {
             root.currentKey = modelData.key;
             root.selected(modelData.key);
