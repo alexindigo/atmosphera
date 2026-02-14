@@ -52,11 +52,11 @@ ColumnLayout {
                 }
   }
 
-  NComboBox {
+  NColorChoice {
     label: I18n.tr("common.select-icon-color")
     description: I18n.tr("common.select-color-description")
-    model: Color.colorKeyModel
     currentKey: valueIconColor
+    defaultValue: "none"
     onSelected: key => {
                   valueIconColor = key;
                   saveSettings();
