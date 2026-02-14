@@ -175,7 +175,7 @@ SmartPanel {
                 icon: "settings"
                 Layout.alignment: Qt.AlignHCenter
                 onClicked: {
-                  SettingsPanel.openToTab(SettingsPanel.Tab.Bluetooth);
+                  SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 1, screen);
                   root.close();
                 }
               }

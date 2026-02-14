@@ -20,8 +20,8 @@ Item {
   // Configuration for shared use (e.g. by BluetoothPanel)
   property bool showOnlyLists: false
 
-  property bool isScanningActive: BluetoothService.scanningActive
-  property bool isDiscoverable: BluetoothService.discoverable
+  readonly property bool isScanningActive: BluetoothService.scanningActive
+  readonly property bool isDiscoverable: BluetoothService.discoverable
 
   // Device lists with local filtering logic
   readonly property var connectedDevices: {
@@ -145,6 +145,7 @@ Item {
       visible: !btprefs.showOnlyLists
       Layout.fillWidth: true
       Layout.preferredHeight: masterControlCol.implicitHeight
+      border.color: "transparent"
 
       ColumnLayout {
         id: masterControlCol
@@ -206,6 +207,7 @@ Item {
       visible: btprefs.connectedDevices.length > 0 && BluetoothService.enabled
       Layout.fillWidth: true
       Layout.preferredHeight: connectedDevicesCol.implicitHeight + Style.marginXL
+      border.color: showOnlyLists ? Style.boxBorderColor : "transparent"
 
       ColumnLayout {
         id: connectedDevicesCol
@@ -238,6 +240,7 @@ Item {
       visible: btprefs.pairedDevices.length > 0 && BluetoothService.enabled
       Layout.fillWidth: true
       Layout.preferredHeight: pairedDevicesCol.implicitHeight + Style.marginXL
+      border.color: showOnlyLists ? Style.boxBorderColor : "transparent"
 
       ColumnLayout {
         id: pairedDevicesCol
@@ -270,6 +273,7 @@ Item {
       visible: !btprefs.showOnlyLists && btprefs.unnamedAvailableDevices.length > 0 && BluetoothService.enabled
       Layout.fillWidth: true
       Layout.preferredHeight: availableDevicesCol.implicitHeight + Style.marginXL
+      border.color: "transparent"
 
       ColumnLayout {
         id: availableDevicesCol

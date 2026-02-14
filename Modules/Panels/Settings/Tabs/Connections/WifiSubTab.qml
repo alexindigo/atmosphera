@@ -29,6 +29,7 @@ Item {
     NBox {
       Layout.fillWidth: true
       Layout.preferredHeight: masterControlColAirplane.implicitHeight
+      border.color: "transparent"
 
       ColumnLayout {
         id: masterControlColAirplane
@@ -66,6 +67,7 @@ Item {
     NBox {
       Layout.fillWidth: true
       Layout.preferredHeight: masterControlCol.implicitHeight
+      border.color: "transparent"
 
       ColumnLayout {
         id: masterControlCol
