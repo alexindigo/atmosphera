@@ -488,12 +488,12 @@ Singleton {
                                     });
   }
 
-  function reboot-to-uefi() {
+  function reboot_to_uefi() {
     Logger.i("Compositor", "Reboot to UEFI firmware requested requested");
-    if (executeSessionAction("reboot-to-uefi"))
+    if (executeSessionAction("reboot_to_uefi"))
       return;
 
-    HooksService.executeSessionHook("reboot-to-uefi", () => {
+    HooksService.executeSessionHook("reboot_to_uefi", () => {
                                       Quickshell.execDetached(["sh", "-c", "systemctl reboot --firmware-setup"]);
                                     });
   }
