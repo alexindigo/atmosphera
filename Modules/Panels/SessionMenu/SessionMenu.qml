@@ -236,7 +236,7 @@ SmartPanel {
     case "reboot":
       CompositorService.reboot();
       break;
-    case "reboot-to-uefi":
+    case "rebootToUefi":
       CompositorService.rebootToUefi();
       break;
     case "logout":
