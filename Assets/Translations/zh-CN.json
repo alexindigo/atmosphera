@@ -880,7 +880,6 @@
     },
     "connections": {
       "authentication-required": "需要认证",
-      "bluetooth-description": "激活蓝牙管理。",
       "bluetooth-devices-unnamed": "未命名设备不显示。",
       "bluetooth-discoverable": "当此设置选项卡打开时，此设备可被发现为 <b> {hostName} </b>。",
       "bluetooth-rssi-polling-description": "通过 bluetoothctl 定期采样已连接设备的 RSSI。可能并非所有设备都可用；启用时占用最少资源。",
@@ -892,8 +891,7 @@
       "hide-unnamed-devices-description": "隐藏仅显示为 Bluetooth 地址的设备。",
       "hide-unnamed-devices-label": "隐藏未命名设备",
       "pin-instructions": "请输入您设备上显示的PIN码。",
-      "title": "连接",
-      "wifi-description": "管理无线网络 (需要 NetworkManager)。"
+      "title": "连接"
     },
     "control-center": {
       "cards-desc": "自定义在控制中心显示的控制项及其顺序。",

@@ -880,7 +880,6 @@
     },
     "connections": {
       "authentication-required": "Kimlik doğrulama gerekli",
-      "bluetooth-description": "Bluetooth yönetimini etkinleştir.",
       "bluetooth-devices-unnamed": "Adlandırılmamış cihazlar gösterilmez.",
       "bluetooth-discoverable": "Bu ayarlar sekmesi açıkken bu cihaz <b> {hostName} </b> olarak keşfedilebilir.",
       "bluetooth-rssi-polling-description": "bluetoothctl aracılığıyla bağlı cihazların RSSI değerini periyodik olarak örnekler. Tüm cihazlar için mevcut olmayabilir; etkinleştirildiğinde minimum kaynak kullanır.",
@@ -892,8 +891,7 @@
       "hide-unnamed-devices-description": "Yalnızca Bluetooth adresleri olarak görünen cihazları gizle.",
       "hide-unnamed-devices-label": "İsimsiz cihazları gizle",
       "pin-instructions": "Lütfen cihazınızda gösterilen PIN kodunu girin.",
-      "title": "Bağlantılar",
-      "wifi-description": "Kablosuz ağları yönet (NetworkManager gerektirir)."
+      "title": "Bağlantılar"
     },
     "control-center": {
       "cards-desc": "Kontrol merkezinde hangi kontrollerin ve hangi sırada görüneceğini özelleştirin.",

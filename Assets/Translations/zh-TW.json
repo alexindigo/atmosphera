@@ -880,7 +880,6 @@
     },
     "connections": {
       "authentication-required": "需要驗證",
-      "bluetooth-description": "啟用藍牙管理。",
       "bluetooth-devices-unnamed": "未命名裝置不顯示。",
       "bluetooth-discoverable": "當此設定分頁開啟時，此裝置可被發現為 <b> {hostName} </b>。",
       "bluetooth-rssi-polling-description": "透過 bluetoothctl 定期取樣已連接裝置的 RSSI。可能並非所有裝置都可用；啟用時佔用最少資源。",
@@ -892,8 +891,7 @@
       "hide-unnamed-devices-description": "隱藏僅顯示為 Bluetooth 位址的裝置。",
       "hide-unnamed-devices-label": "隱藏未命名裝置",
       "pin-instructions": "請輸入您裝置上顯示的PIN碼。",
-      "title": "連線",
-      "wifi-description": "管理無線網路 (需要 NetworkManager)。"
+      "title": "連線"
     },
     "control-center": {
       "cards-desc": "自訂控制中心出現的控制項目及排序",

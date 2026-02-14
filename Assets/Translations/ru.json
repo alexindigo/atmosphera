@@ -880,7 +880,6 @@
     },
     "connections": {
       "authentication-required": "Требуется аутентификация",
-      "bluetooth-description": "Активировать управление Bluetooth.",
       "bluetooth-devices-unnamed": "Безымянные устройства не отображаются.",
       "bluetooth-discoverable": "Это устройство обнаруживаемо как <b> {hostName} </b>, пока открыта эта вкладка настроек.",
       "bluetooth-rssi-polling-description": "Периодически опрашивает RSSI для подключенных устройств через bluetoothctl. Может быть недоступно для всех устройств; при включении использует минимальные ресурсы.",
@@ -892,8 +891,7 @@
       "hide-unnamed-devices-description": "Скрыть устройства, которые отображаются только как Bluetooth-адреса.",
       "hide-unnamed-devices-label": "Скрывать безымянные устройства",
       "pin-instructions": "Пожалуйста, введите PIN-код, отображаемый на вашем устройстве.",
-      "title": "Подключения",
-      "wifi-description": "Управление беспроводными сетями (требует NetworkManager)."
+      "title": "Подключения"
     },
     "control-center": {
       "cards-desc": "Настройте, какие элементы управления появляются в центре управления и в каком порядке.",

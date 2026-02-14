@@ -880,7 +880,6 @@
     },
     "connections": {
       "authentication-required": "Hitelesítés szükséges",
-      "bluetooth-description": "Bluetooth-kezelés aktiválása.",
       "bluetooth-devices-unnamed": "A névtelen eszközök nem jelennek meg.",
       "bluetooth-discoverable": "Ez az eszköz <b> {hostName} </b> néven fedezhető fel, amíg ez a beállítási fül nyitva van.",
       "bluetooth-rssi-polling-description": "Rendszeresen mintavételezi a csatlakoztatott eszközök RSSI-jét bluetoothctl-en keresztül. Lehet, hogy nem minden eszközhöz érhető el; engedélyezve minimális erőforrásokat használ.",
@@ -892,8 +891,7 @@
       "hide-unnamed-devices-description": "Rejtse el azokat az eszközöket, amelyek csak Bluetooth-címként jelennek meg.",
       "hide-unnamed-devices-label": "Névtelen eszközök elrejtése",
       "pin-instructions": "Kérjük, írja be az eszközén megjelenő PIN-kódot.",
-      "title": "Kapcsolatok",
-      "wifi-description": "Vezeték nélküli hálózatok kezelése (NetworkManager szükséges hozzá)."
+      "title": "Kapcsolatok"
     },
     "control-center": {
       "cards-desc": "Személyre szabhatja, hogy mely vezérlők jelenjenek meg a vezérlőközpontban és milyen sorrendben.",

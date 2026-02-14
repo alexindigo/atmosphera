@@ -880,7 +880,6 @@
     },
     "connections": {
       "authentication-required": "Wymagana autentykacja",
-      "bluetooth-description": "Aktywuj zarządzanie Bluetooth.",
       "bluetooth-devices-unnamed": "Nienazwane urządzenia nie są wyświetlane.",
       "bluetooth-discoverable": "To urządzenie jest wykrywalne jako <b> {hostName} </b>, dopóki ta zakładka ustawień jest otwarta.",
       "bluetooth-rssi-polling-description": "Okresowo próbkuje RSSI dla podłączonych urządzeń za pośrednictwem bluetoothctl. Może nie być dostępne dla wszystkich urządzeń; zużywa minimalne zasoby po włączeniu.",
@@ -892,8 +891,7 @@
       "hide-unnamed-devices-description": "Ukryj urządzenia, które pojawiają się tylko jako adresy Bluetooth.",
       "hide-unnamed-devices-label": "Ukryj nienazwane urządzenia",
       "pin-instructions": "Wprowadź kod PIN wyświetlony na Twoim urządzeniu.",
-      "title": "Połączenia",
-      "wifi-description": "Zarządzaj sieciami bezprzewodowymi (wymaga NetworkManager)."
+      "title": "Połączenia"
     },
     "control-center": {
       "cards-desc": "Dostosuj, które kontrolki pojawiają się w centrum sterowania i w jakiej kolejności.",

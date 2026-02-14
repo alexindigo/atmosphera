@@ -880,7 +880,6 @@
     },
     "connections": {
       "authentication-required": "Autentisering krävs",
-      "bluetooth-description": "Aktivera Bluetooth-hantering.",
       "bluetooth-devices-unnamed": "Namnlösa enheter visas inte.",
       "bluetooth-discoverable": "Denna enhet är upptäckbar som <b> {hostName} </b> medan denna inställningsflik är öppen.",
       "bluetooth-rssi-polling-description": "Samplar periodiskt RSSI för anslutna enheter via bluetoothctl. Kanske inte tillgängligt för alla enheter; använder minimala resurser när det är aktiverat.",
@@ -892,8 +891,7 @@
       "hide-unnamed-devices-description": "Dölj enheter som endast visas som Bluetooth-adresser.",
       "hide-unnamed-devices-label": "Dölj namnlösa enheter",
       "pin-instructions": "Ange PIN-koden som visas på din enhet.",
-      "title": "Anslutningar",
-      "wifi-description": "Hantera trådlösa nätverk (kräver NetworkManager)."
+      "title": "Anslutningar"
     },
     "control-center": {
       "cards-desc": "Anpassa vilka kontroller som ska visas i kontrollcentret och i vilken ordning.",

@@ -880,7 +880,6 @@
     },
     "connections": {
       "authentication-required": "Authenticatie vereist",
-      "bluetooth-description": "Bluetooth-beheer activeren.",
       "bluetooth-devices-unnamed": "Naamloze apparaten worden niet getoond.",
       "bluetooth-discoverable": "Dit apparaat is vindbaar als <b> {hostName} </b> zolang dit instellingen-tabblad geopend is.",
       "bluetooth-rssi-polling-description": "Periodiek RSSI van verbonden apparaten via bluetoothctl samplen. Mogelijk niet beschikbaar voor alle apparaten; gebruikt minimale middelen wanneer ingeschakeld.",
@@ -892,8 +891,7 @@
       "hide-unnamed-devices-description": "Verberg apparaten die alleen als Bluetooth-adressen verschijnen.",
       "hide-unnamed-devices-label": "Onbenoemde apparaten verbergen",
       "pin-instructions": "Voer de PIN-code in die op uw apparaat wordt weergegeven.",
-      "title": "Verbindingen",
-      "wifi-description": "Draadloze netwerken beheren (vereist NetworkManager)."
+      "title": "Verbindingen"
     },
     "control-center": {
       "cards-desc": "Pas aan welke bedieningselementen in het bedieningscentrum verschijnen en in welke volgorde.",
