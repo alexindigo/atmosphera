@@ -65,7 +65,7 @@ SmartPanel {
 
           NIconButton {
             icon: "settings"
-            tooltipText: I18n.tr("common.settings")
+            tooltipText: I18n.tr("tooltips.open-settings")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 1, screen)
           }
