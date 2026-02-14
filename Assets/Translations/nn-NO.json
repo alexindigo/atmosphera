@@ -224,7 +224,11 @@
       "swap-usage-description": "Viser swap-minnebruk.",
       "swap-usage-label": "Swap-minnebruk",
       "use-monospace-font-description": "Bruk skrift med fast breidde.",
-      "use-monospace-font-label": "Fastbreiddeskrift"
+      "use-monospace-font-label": "Fastbreiddeskrift",
+      "use-padding-description": "Legg til utfylling føre teksta for å hindra endring i oppsett.",
+      "use-padding-description-disabled-monospace-font": "Du må ha fastsett ei fastbreiddeskrift for å bruka dette.",
+      "use-padding-description-disabled-vertical": "Loddrett oppgåvelina støtter ikkje utfylling.",
+      "use-padding-label": "Utfyll tekst"
     },
     "taskbar": {
       "colorize-icons-description": "Gjev ikon på oppgåvelina temafargane.",
@@ -373,6 +377,7 @@
     "color-muted": "Dempa",
     "colors": "Fargar",
     "command": "Kommando",
+    "confirm": "Stadfest",
     "connect": "Kopla til",
     "connected": "Kopla til",
     "connecting": "Koplar til...",
@@ -396,6 +401,7 @@
     "edit": "Endra",
     "enabled": "Påslegen",
     "error": "Feil",
+    "ethernet": "Ethernet",
     "events": "Hende",
     "execute": "Utfør",
     "faithful": "Tru",
@@ -470,6 +476,7 @@
     "select-color": "Vel farge",
     "select-color-description": "Gjev temafargar for å heva ut.",
     "select-icon-color": "Vel ikonfarge",
+    "settings": "Innstillingar",
     "shortcuts": "Beinvegar",
     "shutdown": "Slå av",
     "signal": "Dekning",
@@ -503,6 +510,7 @@
     "week": "Veke",
     "widgets": "Miniprogram",
     "width": "Breidde",
+    "wifi": "Wi-Fi",
     "windows": "Vindauge",
     "yes": "Ja"
   },
@@ -634,6 +642,10 @@
       "grid": "Rutenett",
       "list": "Liste"
     },
+    "notification-density": {
+      "compact": "Tett",
+      "default": "Standard"
+    },
     "scrolling-modes": {
       "always": "Alltid rull",
       "hover": "Rull ved sviv",
@@ -669,6 +681,8 @@
       "contributors-description": "Takk og ære til den {count} <b>framifrå</b> medverkaren vår!",
       "contributors-description-plural": "Takk og ære til alle dei {count} <b>framifrå</b> medverkarane våre!",
       "copy-info": "Kopier info",
+      "debug-disabled": "Feilsøking av",
+      "debug-enabled": "Feilsøking på",
       "info-copied": "Info kopiert til utklippstavla",
       "noctalia-desc": "Eit lettfram og minimalistisk skrivebordsskal skapa med omhug for Wayland, bygt med Quickshell.",
       "noctalia-git-commit": "Git commit:",
@@ -863,6 +877,11 @@
       "wallpaper-method-label": "Fargeskala lagingsmåte",
       "wallpaper-monitor-source-description": "Vel kva for skjerm Noctalia ser på for å velja bakgrunnsfargar.",
       "wallpaper-monitor-source-label": "Kjelde for fargeval"
+    },
+    "connections": {
+      "authentication-required": "Krev autentisering",
+      "bluetooth-devices-unnamed": "Einingar utan namn er ikkje viste.",
+      "bluetooth-discoverable": "Ein kan finna eininga som <b> {hostName} </b> medan denne innstillingsfana er open."
     },
     "control-center": {
       "cards-desc": "Vel kva for kontrollar skal visast i kontrollsenteret og rekkjefylgda.",
