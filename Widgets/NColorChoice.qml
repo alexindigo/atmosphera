@@ -11,7 +11,7 @@ RowLayout {
   property string tooltip: ""
   property string currentKey: ""
   property var defaultValue: undefined
-  property int circleSize: Style.baseWidgetSize
+  property int circleSize: Style.baseWidgetSize * 0.9
   // Private properties
   readonly property bool isValueChanged: (defaultValue !== undefined) && (currentKey !== defaultValue)
   readonly property string indicatorTooltip: defaultValue !== undefined ? I18n.tr("panels.indicator.default-value", {
@@ -46,8 +46,8 @@ RowLayout {
         property bool isHovered: circleMouseArea.containsMouse
 
         Layout.alignment: Qt.AlignHCenter
-        width: colourRow.diameter
-        height: colourRow.diameter
+        implicitWidth: colourRow.diameter
+        implicitHeight: colourRow.diameter
         radius: colourRow.diameter * 0.5
         color: Color.resolveColorKey(modelData.key)
         border.color: isSelected ? Color.mOnSurface : "transparent"
