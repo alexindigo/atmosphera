@@ -6,20 +6,22 @@ import qs.Services.UI
 RowLayout {
   id: root
 
-  property real minimumWidth: 200
   property string label: I18n.tr("common.select-color")
   property string description: I18n.tr("common.select-color-description")
   property string tooltip: ""
   property string currentKey: ""
   property var defaultValue: "none"
-  property int circleSize: Style.baseWidgetSize * 0.9
+  property color noneColor: undefined
+  property color noneOnColor: undefined
+
   readonly property bool isValueChanged: currentKey !== defaultValue
   readonly property string indicatorTooltip: {
     I18n.tr("panels.indicator.default-value", {
               "value": defaultValue === "" ? "(empty)" : String(defaultValue)
             });
   }
-  readonly property int diameter: circleSize * Style.uiScaleRatio
+
+  readonly property int diameter: Style.baseWidgetSize * 0.9 * Style.uiScaleRatio
 
   signal selected(string key)
 
@@ -47,10 +49,9 @@ RowLayout {
         implicitWidth: root.diameter
         implicitHeight: root.diameter
         radius: root.diameter * 0.5
-        color: Color.resolveColorKey(modelData.key)
+        color: (modelData.key === "none" && root.noneColor !== undefined) ? root.noneColor : Color.resolveColorKey(modelData.key)
         border.color: (isSelected || isHovered) ? Color.mOnSurface : Color.mOutline
         border.width: Style.borderM
-        scale: isHovered ? colourRow.hoverScale : 1
 
         MouseArea {
           id: circleMouseArea
@@ -70,7 +71,8 @@ RowLayout {
           anchors.centerIn: parent
           icon: "check"
           pointSize: Math.max(Style.fontSizeXS, colorCircle.width * 0.4)
-          color: Color.mOnPrimary
+          color: (modelData.key === "none" && root.noneOnColor !== undefined) ? root.noneOnColor : Color.resolveOnColorKey(modelData.key)
+          font.weight: Style.fontWeightBold
           visible: colorCircle.isSelected
         }
 
