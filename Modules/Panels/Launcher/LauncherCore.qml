@@ -749,7 +749,7 @@ Rectangle {
 
       Repeater {
         model: root.providerCategories
-        NIconTabButton {
+        NTabButton {
           required property string modelData
           required property int index
           icon: root.currentProvider.categoryIcons ? (root.currentProvider.categoryIcons[modelData] || "star") : "star"
