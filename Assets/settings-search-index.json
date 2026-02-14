@@ -423,6 +423,15 @@
     "subTabLabel": "common.bluetooth"
   },
   {
+    "labelKey": "toast.airplane-mode.title",
+    "descriptionKey": null,
+    "widget": "NToggle",
+    "tab": 15,
+    "tabLabel": "panels.connections.title",
+    "subTab": 0,
+    "subTabLabel": "common.wifi"
+  },
+  {
     "labelKey": "common.wifi",
     "descriptionKey": null,
     "widget": "NToggle",
