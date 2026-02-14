@@ -64,6 +64,13 @@ SmartPanel {
           }
 
           NIconButton {
+            icon: "settings"
+            tooltipText: I18n.tr("commont.settings")
+            baseSize: Style.baseWidgetSize * 0.8
+            onClicked: SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 1, screen)
+          }
+
+          NIconButton {
             icon: "close"
             tooltipText: I18n.tr("common.close")
             baseSize: Style.baseWidgetSize * 0.8
@@ -174,11 +181,9 @@ SmartPanel {
                 text: I18n.tr("common.settings")
                 icon: "settings"
                 Layout.alignment: Qt.AlignHCenter
-                onClicked: {
-                  SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 1, screen);
-                  root.close();
-                }
+                onClicked: SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 1, screen)
               }
+
               Item {
                 Layout.fillHeight: true
               }

@@ -105,33 +105,15 @@ Singleton {
   }
 
   function _settingsToggle(tabId, subTabId) {
-    if (Settings.data.ui.settingsPanelMode === "window") {
-      if (SettingsPanelService.isWindowOpen) {
-        SettingsPanelService.closeWindow();
-      } else {
-        SettingsPanelService.openToTab(tabId, subTabId);
-      }
-    } else {
-      root.screenDetector.withCurrentScreen(screen => {
-                                              var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-                                              if (settingsPanel?.isPanelOpen) {
-                                                settingsPanel.close();
-                                              } else {
-                                                settingsPanel?.openToTab(tabId, subTabId);
-                                              }
-                                            });
-    }
+    root.screenDetector.withCurrentScreen(screen => {
+                                            SettingsPanelService.toggle(tabId, subTabId, screen);
+                                          });
   }
 
   function _settingsOpen(tabId, subTabId) {
-    if (Settings.data.ui.settingsPanelMode === "window") {
-      SettingsPanelService.openToTab(tabId, subTabId);
-    } else {
-      root.screenDetector.withCurrentScreen(screen => {
-                                              var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-                                              settingsPanel?.openToTab(tabId, subTabId);
-                                            });
-    }
+    root.screenDetector.withCurrentScreen(screen => {
+                                            SettingsPanelService.openToTab(tabId, subTabId, screen);
+                                          });
   }
 
   IpcHandler {

@@ -153,15 +153,6 @@ SmartPanel {
               Layout.fillWidth: true
             }
 
-            NToggle {
-              id: wifiSwitch
-              visible: panelViewMode === "wifi"
-              checked: Settings.data.network.wifiEnabled
-              enabled: !Settings.data.network.airplaneModeEnabled && NetworkService.wifiAvailable
-              onToggled: checked => NetworkService.setWifiEnabled(checked)
-              baseSize: Style.baseWidgetSize * 0.7 // Slightly smaller
-            }
-
             NIconButton {
               icon: "refresh"
               tooltipText: I18n.tr("common.refresh")
@@ -173,6 +164,22 @@ SmartPanel {
                 else
                   NetworkService.refreshEthernet();
               }
+            }
+
+            NToggle {
+              id: wifiSwitch
+              visible: panelViewMode === "wifi"
+              checked: Settings.data.network.wifiEnabled
+              enabled: !Settings.data.network.airplaneModeEnabled && NetworkService.wifiAvailable
+              onToggled: checked => NetworkService.setWifiEnabled(checked)
+              baseSize: Style.baseWidgetSize * 0.7 // Slightly smaller
+            }
+
+            NIconButton {
+              icon: "settings"
+              tooltipText: I18n.tr("commont.settings")
+              baseSize: Style.baseWidgetSize * 0.8
+              onClicked: SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 0, screen)
             }
 
             NIconButton {

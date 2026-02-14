@@ -452,15 +452,7 @@ Variants {
                 icon: "settings"
                 tooltipText: I18n.tr("actions.open-settings")
                 onClicked: {
-                  if (Settings.data.ui.settingsPanelMode === "window") {
-                    SettingsPanelService.toggleWindow(SettingsPanel.Tab.DesktopWidgets);
-                  } else {
-                    var settingsPanel = PanelService.getPanel("settingsPanel", screenLoader.modelData);
-                    if (settingsPanel) {
-                      settingsPanel.requestedTab = SettingsPanel.Tab.DesktopWidgets;
-                      settingsPanel.toggle();
-                    }
-                  }
+                  SettingsPanelService.toggle(SettingsPanel.Tab.DesktopWidgets, -1, screenLoader.modelData);
                 }
               }
 

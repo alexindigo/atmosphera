@@ -310,13 +310,13 @@ Item {
       id: miscSettingsBox
       visible: !root.showOnlyLists && BluetoothService.enabled
       Layout.fillWidth: true
-      Layout.preferredHeight: miscSettingsCol.implicitHeight + (Style.marginL * 2)
+      Layout.preferredHeight: miscSettingsCol.implicitHeight + (Style.marginXL * 2)
       color: Color.mSurface
 
       ColumnLayout {
         id: miscSettingsCol
         anchors.fill: parent
-        anchors.margins: Style.marginL
+        anchors.margins: Style.marginXL
         spacing: Style.marginM
 
         NToggle {

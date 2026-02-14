@@ -628,7 +628,13 @@ Item {
 
   function initialize() {
     ProgramCheckerService.checkAllPrograms();
+    // Guard _pendingSubTab during model rebuild: updateTabsModel() triggers
+    // a ListView model reset which can set currentTabIndex=0 via the sidebar
+    // sync handler, causing the wrong tab to load and consume _pendingSubTab.
+    const savedPendingSubTab = _pendingSubTab;
+    _pendingSubTab = -1;
     updateTabsModel();
+    _pendingSubTab = savedPendingSubTab;
     selectTabById(requestedTab);
     // Skip auto-focus on Nvidia GPUs - cursor blink causes UI choppiness
     const isNvidia = SystemStatService.gpuType === "nvidia";

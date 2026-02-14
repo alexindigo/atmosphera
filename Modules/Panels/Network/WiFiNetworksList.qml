@@ -65,8 +65,7 @@ NBox {
 
       NText {
         text: root.label
-        pointSize: Style.fontSizeS
-        color: Color.mSecondary
+        pointSize: Style.fontSizeM
         font.weight: Style.fontWeightBold
         Layout.fillWidth: true
       }
