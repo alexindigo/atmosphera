@@ -377,6 +377,7 @@
     "color-muted": "Вимкнено звук",
     "colors": "Кольори",
     "command": "Команда",
+    "confirm": "Підтвердити",
     "connect": "Підключити",
     "connected": "Підключено",
     "connecting": "Підключення...",
@@ -400,6 +401,7 @@
     "edit": "Редагувати",
     "enabled": "Увімкнено",
     "error": "Помилка",
+    "ethernet": "Ethernet",
     "events": "Події",
     "execute": "Виконати",
     "faithful": "Вірний",
@@ -474,6 +476,7 @@
     "select-color": "Вибрати колір",
     "select-color-description": "Застосувати кольори теми для виділення.",
     "select-icon-color": "Вибрати колір значка",
+    "settings": "Налаштування",
     "shortcuts": "Ярлики",
     "shutdown": "Вимкнути",
     "signal": "Сигнал",
@@ -507,6 +510,7 @@
     "week": "Тиждень",
     "widgets": "Віджети",
     "width": "Ширина",
+    "wifi": "Wi-Fi",
     "windows": "Вікна",
     "yes": "Так"
   },
@@ -873,6 +877,23 @@
       "wallpaper-method-label": "Метод створення палітри",
       "wallpaper-monitor-source-description": "Виберіть монітор, який використовувати для вилучення кольорів шпалер.",
       "wallpaper-monitor-source-label": "Джерело генерації кольору"
+    },
+    "connections": {
+      "authentication-required": "Потрібна автентифікація",
+      "bluetooth-description": "Активувати керування Bluetooth.",
+      "bluetooth-devices-unnamed": "Безіменні пристрої не відображаються.",
+      "bluetooth-discoverable": "Цей пристрій можна виявити як <b> {hostName} </b>, поки ця вкладка налаштувань відкрита.",
+      "bluetooth-rssi-polling-description": "Періодично вимірює RSSI для підключених пристроїв через bluetoothctl. Може бути недоступно для всіх пристроїв; використовує мінімальні ресурси, якщо увімкнено.",
+      "bluetooth-rssi-polling-interval-description": "Налаштуйте, як часто оновлювати рівень сигналу для підключених пристроїв.",
+      "bluetooth-rssi-polling-interval-label": "Інтервал опитування",
+      "bluetooth-rssi-polling-label": "Опитування сигналу Bluetooth",
+      "disable-discoverability-description": "Приховати ваш пристрій від найближчих пристроїв Bluetooth.",
+      "disable-discoverability-label": "Вимкнути видимість пристрою",
+      "hide-unnamed-devices-description": "Приховати пристрої, які відображаються лише як Bluetooth-адреси.",
+      "hide-unnamed-devices-label": "Приховати безіменні пристрої",
+      "pin-instructions": "Будь ласка, введіть PIN-код, що відображається на вашому пристрої.",
+      "title": "Підключення",
+      "wifi-description": "Керування бездротовими мережами (вимагає NetworkManager)."
     },
     "control-center": {
       "cards-desc": "Налаштуйте, які елементи керування з'являються в центрі керування та в якому порядку.",
@@ -1434,7 +1455,9 @@
       "large-buttons-style-label": "Стиль великих кнопок",
       "position-description": "Виберіть, де з'являється панель меню сеансу при відкритті.",
       "show-header-description": "Відображати заголовок та кнопку закриття в верхній частині меню сеансу.",
-      "show-header-label": "Показувати заголовок"
+      "show-header-label": "Показувати заголовок",
+      "show-keybinds-description": "Показувати підказки щодо комбінацій клавіш у параметрах сеансу.",
+      "show-keybinds-label": "Показати комбінації клавіш"
     },
     "system-monitor": {
       "critical-color-label": "Критичний колір",

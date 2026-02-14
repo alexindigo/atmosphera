@@ -377,6 +377,7 @@
     "color-muted": "Выключено",
     "colors": "Цвета",
     "command": "Команда",
+    "confirm": "Подтвердить",
     "connect": "Соединить",
     "connected": "Подключено",
     "connecting": "Соединение...",
@@ -400,6 +401,7 @@
     "edit": "Редактировать",
     "enabled": "Включено",
     "error": "Ошибка",
+    "ethernet": "Ethernet",
     "events": "События",
     "execute": "Выполнить",
     "faithful": "Верный",
@@ -474,6 +476,7 @@
     "select-color": "Выбрать цвет",
     "select-color-description": "Применить цвета темы для выделения.",
     "select-icon-color": "Выбрать цвет значка",
+    "settings": "Настройки",
     "shortcuts": "Ярлыки",
     "shutdown": "Выключить",
     "signal": "Сигнал",
@@ -507,6 +510,7 @@
     "week": "Неделя",
     "widgets": "Виджеты",
     "width": "Ширина",
+    "wifi": "Wi-Fi",
     "windows": "Окна ",
     "yes": "Да"
   },
@@ -873,6 +877,23 @@
       "wallpaper-method-label": "Метод генерации палитры",
       "wallpaper-monitor-source-description": "Выберите монитор, который будет использоваться для извлечения цветов обоев.",
       "wallpaper-monitor-source-label": "Источник генерации цвета"
+    },
+    "connections": {
+      "authentication-required": "Требуется аутентификация",
+      "bluetooth-description": "Активировать управление Bluetooth.",
+      "bluetooth-devices-unnamed": "Безымянные устройства не отображаются.",
+      "bluetooth-discoverable": "Это устройство обнаруживаемо как <b> {hostName} </b>, пока открыта эта вкладка настроек.",
+      "bluetooth-rssi-polling-description": "Периодически опрашивает RSSI для подключенных устройств через bluetoothctl. Может быть недоступно для всех устройств; при включении использует минимальные ресурсы.",
+      "bluetooth-rssi-polling-interval-description": "Настройте, как часто обновлять уровень сигнала для подключенных устройств.",
+      "bluetooth-rssi-polling-interval-label": "Интервал опроса",
+      "bluetooth-rssi-polling-label": "Опрос сигнала Bluetooth",
+      "disable-discoverability-description": "Скрыть ваше устройство от ближайших Bluetooth-устройств.",
+      "disable-discoverability-label": "Отключить видимость устройства",
+      "hide-unnamed-devices-description": "Скрыть устройства, которые отображаются только как Bluetooth-адреса.",
+      "hide-unnamed-devices-label": "Скрывать безымянные устройства",
+      "pin-instructions": "Пожалуйста, введите PIN-код, отображаемый на вашем устройстве.",
+      "title": "Подключения",
+      "wifi-description": "Управление беспроводными сетями (требует NetworkManager)."
     },
     "control-center": {
       "cards-desc": "Настройте, какие элементы управления появляются в центре управления и в каком порядке.",
@@ -1434,7 +1455,9 @@
       "large-buttons-style-label": "Стиль крупные кнопки",
       "position-description": "Выберите, где появляется панель меню сеанса при открытии.",
       "show-header-description": "Отображать заголовок и кнопку закрытия в верхней части меню сеанса.",
-      "show-header-label": "Показывать заголовок"
+      "show-header-label": "Показывать заголовок",
+      "show-keybinds-description": "Отображать подсказки по горячим клавишам в параметрах сеанса.",
+      "show-keybinds-label": "Показать сочетания клавиш"
     },
     "system-monitor": {
       "critical-color-label": "Критический цвет",

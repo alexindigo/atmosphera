@@ -377,6 +377,7 @@
     "color-muted": "Dämpad",
     "colors": "Färger",
     "command": "Kommando",
+    "confirm": "Bekräfta",
     "connect": "Anslut",
     "connected": "Ansluten",
     "connecting": "Ansluter...",
@@ -400,6 +401,7 @@
     "edit": "Redigera",
     "enabled": "Aktiverad",
     "error": "Fel",
+    "ethernet": "Ethernet",
     "events": "Händelser",
     "execute": "Exekvera",
     "faithful": "Trogen",
@@ -474,6 +476,7 @@
     "select-color": "Välj färg",
     "select-color-description": "Tillämpa temafärger för betoning.",
     "select-icon-color": "Välj ikonfärg",
+    "settings": "Inställningar",
     "shortcuts": "Genvägar",
     "shutdown": "Stäng av",
     "signal": "Signal",
@@ -507,6 +510,7 @@
     "week": "Vecka",
     "widgets": "Widgetar",
     "width": "Bredd",
+    "wifi": "Wi-Fi",
     "windows": "Fönster",
     "yes": "Ja"
   },
@@ -873,6 +877,23 @@
       "wallpaper-method-label": "Metod för att generera palett",
       "wallpaper-monitor-source-description": "Välj vilken bildskärm som ska användas för att extrahera bakgrundsbildernas färger.",
       "wallpaper-monitor-source-label": "Källa för färggenerering"
+    },
+    "connections": {
+      "authentication-required": "Autentisering krävs",
+      "bluetooth-description": "Aktivera Bluetooth-hantering.",
+      "bluetooth-devices-unnamed": "Namnlösa enheter visas inte.",
+      "bluetooth-discoverable": "Denna enhet är upptäckbar som <b> {hostName} </b> medan denna inställningsflik är öppen.",
+      "bluetooth-rssi-polling-description": "Samplar periodiskt RSSI för anslutna enheter via bluetoothctl. Kanske inte tillgängligt för alla enheter; använder minimala resurser när det är aktiverat.",
+      "bluetooth-rssi-polling-interval-description": "Konfigurera hur ofta signalstyrkan för anslutna enheter ska uppdateras.",
+      "bluetooth-rssi-polling-interval-label": "Avsökningsintervall",
+      "bluetooth-rssi-polling-label": "Bluetooth-signalavsökning",
+      "disable-discoverability-description": "Dölj din enhet från närliggande Bluetooth-enheter.",
+      "disable-discoverability-label": "Inaktivera enhetssynlighet",
+      "hide-unnamed-devices-description": "Dölj enheter som endast visas som Bluetooth-adresser.",
+      "hide-unnamed-devices-label": "Dölj namnlösa enheter",
+      "pin-instructions": "Ange PIN-koden som visas på din enhet.",
+      "title": "Anslutningar",
+      "wifi-description": "Hantera trådlösa nätverk (kräver NetworkManager)."
     },
     "control-center": {
       "cards-desc": "Anpassa vilka kontroller som ska visas i kontrollcentret och i vilken ordning.",
@@ -1434,7 +1455,9 @@
       "large-buttons-style-label": "Stor knappstil",
       "position-description": "Välj var sessionsmenypanelen ska visas när den öppnas.",
       "show-header-description": "Visa titeln och stängningsknappen högst upp i sessionsmenyn.",
-      "show-header-label": "Visa rubrik"
+      "show-header-label": "Visa rubrik",
+      "show-keybinds-description": "Visa kortkommando-tips på sessionsalternativ.",
+      "show-keybinds-label": "Visa kortkommandon"
     },
     "system-monitor": {
       "critical-color-label": "Kritisk färg",
