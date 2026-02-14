@@ -56,7 +56,6 @@ ColumnLayout {
     label: I18n.tr("common.select-icon-color")
     description: I18n.tr("common.select-color-description")
     currentKey: valueIconColor
-    defaultValue: "none"
     onSelected: key => {
                   valueIconColor = key;
                   saveSettings();

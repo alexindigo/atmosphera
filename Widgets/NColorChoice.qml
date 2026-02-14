@@ -10,13 +10,15 @@ RowLayout {
   property string description: ""
   property string tooltip: ""
   property string currentKey: ""
-  property var defaultValue: undefined
+  property var defaultValue: "none"
   property int circleSize: Style.baseWidgetSize * 0.9
-  // Private properties
-  readonly property bool isValueChanged: (defaultValue !== undefined) && (currentKey !== defaultValue)
-  readonly property string indicatorTooltip: defaultValue !== undefined ? I18n.tr("panels.indicator.default-value", {
-                                                                                    "value": defaultValue === "" ? "(empty)" : String(defaultValue)
-                                                                                  }) : ""
+
+  readonly property bool isValueChanged: currentKey !== defaultValue
+  readonly property string indicatorTooltip: {
+    I18n.tr("panels.indicator.default-value", {
+              "value": defaultValue === "" ? "(empty)" : String(defaultValue)
+            });
+  }
 
   signal selected(string key)
 
