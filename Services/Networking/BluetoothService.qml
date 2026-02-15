@@ -482,10 +482,10 @@ Singleton {
     id: pairingProcess
     stdout: SplitParser {
       onRead: data => {
-        Logger.e("Bluetooth", data)
+        Logger.d("Bluetooth", data)
         if (data.indexOf("PIN_REQUIRED") !== -1) {
           root.pinRequired = true;
-          Logger.d("Bluetooth", "PIN required for pairing");
+          Logger.i("Bluetooth", "PIN required for pairing");
           ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("bluetooth.panel.pin-required"), "lock");
         }
       }
