@@ -6,10 +6,11 @@ import select
 import subprocess
 import sys
 import time
+# flake8: noqa: E501 # Line too long
 
 
 def log(msg) -> None:
-    sys.stderr.write(f"[pair] {msg}\n")
+    sys.stdout.write(f"[pair] {msg}\n")
 
 
 def pair_fast():
@@ -88,17 +89,20 @@ def pair_fast():
         if out:
             print(out, end='')
             # Numberic Comparison (NC) 1 of 4 - Tested pairing with my iPhone.
-            if out in {"Confirm passkey", "yes/no", "Request confirmation"}:
+            expected_confirmation: list[str] = ["Confirm passkey", "yes/no", "Request confirmation"]
+            if any(e in out for e in expected_confirmation):
                 log("Detected passkey prompt. Sending 'yes'.")
                 send_command("yes")
 
             # Authorization Request
-            if out in {"Authorize service", "Request authorization"}:
+            expected_auth: list[str] = ["Authorize service", "Request authorization"]
+            if any(e in out for e in expected_auth):
                 log("Detected authorization request. Sending 'yes'.")
                 send_command("yes")
 
             # Interactive PIN/Passkey Entry (Device displays code, User must enter on PC)
-            if out in {"Enter passkey", "Enter PIN code", "Passkey:"}:
+            expected_pin: list[str] = ["Enter passkey", "Enter PIN code", "Passkey:"]
+            if any(e in out for e in expected_pin):
                 log("Device requested PIN/Passkey. Waiting for user input...")
                 log("PIN_REQUIRED")
 
@@ -116,7 +120,8 @@ def pair_fast():
                     break
 
             # Just Works (JW) is implicit (no prompt)
-            if out in {"Pairing successful", "Paired: yes", "Bonded: yes"}:
+            expected_success: list[str] = ["Pairing successful", "Paired: yes", "Bonded: yes"]
+            if any(e in out for e in expected_success):
                 paired = True
                 log("Pairing successful detected in stream.")
                 break
@@ -124,8 +129,9 @@ def pair_fast():
             if "Failed to pair" in out:
                 log("Pairing failed explicitly.")
                 break
-
-            if out in {"Already joined", "Already exists"}:
+            
+            expected_already_paired: list[str] = ["Already joined", "Already exists"]
+            if any(e in out for e in expected_already_paired):
                 paired = True
                 log("Device already paired.")
                 break
