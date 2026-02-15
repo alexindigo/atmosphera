@@ -486,7 +486,6 @@ Singleton {
         if (data.indexOf("PIN_REQUIRED") !== -1) {
           root.pinRequired = true;
           Logger.i("Bluetooth", "PIN required for pairing");
-          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("bluetooth.panel.pin-required"), "lock");
         }
       }
     }
