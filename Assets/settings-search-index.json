@@ -694,7 +694,7 @@
     "tabLabel": "common.general",
     "subTab": null
   },
-{
+  {
     "labelKey": "panels.general.reverse-scrolling-label",
     "descriptionKey": "panels.general.reverse-scrolling-description",
     "widget": "NToggle",
