@@ -31,13 +31,13 @@ ColumnLayout {
       anchors.margins: Style.marginL
 
       // Airplane Mode Toggle
-      // NToggle {
-      //   Layout.fillWidth: true
-      //   label: I18n.tr("toast.airplane-mode.title")
-      //   icon: Settings.data.network.airplaneModeEnabled ? "plane" : "plane-off"
-      //   checked: Settings.data.network.airplaneModeEnabled
-      //   onToggled: checked => NetworkService.setAirplaneMode(checked)
-      // }
+      NToggle {
+        Layout.fillWidth: true
+        label: I18n.tr("toast.airplane-mode.title")
+        icon: Settings.data.network.airplaneModeEnabled ? "plane" : "plane-off"
+        checked: Settings.data.network.airplaneModeEnabled
+        onToggled: checked => BluetoothService.setAirplaneMode(checked)
+      }
 
       // Wi-Fi Master Control
       NToggle {

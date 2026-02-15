@@ -26,15 +26,12 @@ Singleton {
   readonly property bool bluetoothAvailable: !!adapter || root.ctlAvailable
   readonly property bool enabled: adapter?.enabled ?? root.ctlPowered
   property bool ctlPowered: false
+  property bool ctlPowerBlocked: false
   property bool ctlDiscovering: false
   property bool ctlDiscoverable: false
 
-  onAdapterChanged: {
-    pollCtlState();
-    if (!adapter) {
-      ctlPollTimer.interval = 2000;
-    }
-  }
+  // Exposed scanning flag for UI button state; reflects adapter discovery when available
+  readonly property bool scanningActive: adapter?.discovering ?? root.ctlDiscovering
 
   // Adapter discoverability (advertising) flag
   readonly property bool discoverable: adapter?.discoverable ?? root.ctlDiscoverable
@@ -68,13 +65,210 @@ Singleton {
 
   // Internal: temporarily pause discovery during pair/connect to reduce HCI churn
   property bool _discoveryWasRunning: false
-  property bool _lastEnabledState: root.enabled
+  property bool _ctlInit: false
 
   Timer {
     id: initDelayTimer
     interval: 3000
     running: true
     repeat: false
+  }
+
+  function init() {
+    Logger.i("Bluetooth", "Service started");
+  }
+
+  Component.onCompleted: {
+    pollCtlState();
+    // Ensure Airplane Mode persists upon reboot
+    if (root.airplaneModeEnabled) {
+      Quickshell.execDetached(["rfkill", "block", "wifi"]);
+      Quickshell.execDetached(["rfkill", "block", "bluetooth"]);
+    }
+  }
+
+  // Handle system wakeup to force-poll and ensure state is up-to-date
+  Connections {
+    target: Time
+    function onResumed() {
+      Logger.i("Bluetooth", "System resumed - forcing state poll");
+      requestCtlPoll();
+    }
+  }
+
+  // Track adapter state changes
+  Connections {
+    target: adapter
+    function onStateChanged() {
+      if (!adapter || adapter.state === BluetoothAdapter.Enabling || adapter.state === BluetoothAdapter.Disabling) {
+        return;
+      }
+      checkAirplaneMode.running = true;
+    }
+  }
+
+  onAdapterChanged: {
+    pollCtlState();
+    if (!adapter) {
+      ctlPollTimer.interval = 2000;
+    }
+  }
+
+  function setAirplaneMode(state) {
+    if (state) {
+      Quickshell.execDetached(["rfkill", "block", "wifi"]);
+      Quickshell.execDetached(["rfkill", "block", "bluetooth"]);
+    } else {
+      Quickshell.execDetached(["rfkill", "unblock", "wifi"]);
+      Quickshell.execDetached(["rfkill", "unblock", "bluetooth"]);
+    }
+    if (!adapter) {
+      root.ctlPowered = !state;
+      root.ctlPowerBlocked = state;
+      root.airplaneModeToggled = true;
+      NetworkService.setWifiEnabled(!state);
+      Settings.data.network.airplaneModeEnabled = state;
+      ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), state ? I18n.tr("common.enabled") : I18n.tr("common.disabled"), state ? "plane" : "plane-off");
+      Logger.i("AirplaneMode", state ? "Wi-Fi & Bluetooth adapter blocked" : "Wi-Fi & Bluetooth adapter unblocked");
+      root.airplaneModeToggled = false;
+    }
+  }
+
+  Process {
+    id: checkAirplaneMode
+    running: false
+    command: ["rfkill", "list"]
+    stdout: StdioCollector {
+      onStreamFinished: {
+        var output = this.text || "";
+        var wifiBlocked = /^\d+:.*Wireless LAN[^\n]*\n\s*Soft blocked:\s*yes/im.test(output);
+        var btBlocked = /^\d+:.*Bluetooth[^\n]*\n\s*Soft blocked:\s*yes/im.test(output);
+        var isAirplaneModeActive = wifiBlocked && btBlocked;
+
+        // Check if airplane mode has been toggled
+        if (isAirplaneModeActive && !root.airplaneModeEnabled) {
+          root.airplaneModeToggled = true;
+          NetworkService.setWifiEnabled(false);
+          Settings.data.network.airplaneModeEnabled = true;
+          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.enabled"), "plane");
+          Logger.i("AirplaneMode", "Wi-Fi & Bluetooth adapter blocked");
+        } else if (!isAirplaneModeActive && root.airplaneModeEnabled) {
+          root.airplaneModeToggled = true;
+          NetworkService.setWifiEnabled(true);
+          Settings.data.network.airplaneModeEnabled = false;
+          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.disabled"), "plane-off");
+          Logger.i("AirplaneMode", "Wi-Fi & Bluetooth adapter unblocked");
+        } else if (adapter ? adapter.enabled : root.ctlPowered) {
+          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.enabled"), "bluetooth");
+          Logger.d("Bluetooth", "Adapter enabled");
+        } else {
+          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.disabled"), "bluetooth-off");
+          Logger.d("Bluetooth", "Adapter disabled");
+        }
+        root.airplaneModeToggled = false;
+      }
+    }
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text && text.trim()) {
+          Logger.w("AirplaneMode", "rfkill stderr:", text.trim());
+        }
+      }
+    }
+  }
+
+  // Periodic state polling
+  Timer {
+    id: ctlPollTimer
+    interval: adapter ? ctlPollMs : 2000
+    repeat: true
+    running: true
+    onTriggered: {
+      pollCtlState();
+      var targetInterval = adapter ? ctlPollMs : 2000;
+      if (interval !== targetInterval) {
+        interval = targetInterval;
+      }
+    }
+  }
+
+  function requestCtlPoll(delayMs) {
+    ctlPollTimer.interval = Math.max(50, delayMs || ctlPollSoonMs);
+    ctlPollTimer.restart();
+  }
+
+  function pollCtlState() {
+    if (ctlShowProcess.running) {
+      return;
+    }
+    try {
+      ctlShowProcess.running = true;
+    } catch (_) {}
+  }
+
+  // bluetoothctl state polling
+  Process {
+    id: ctlShowProcess
+    command: ["bluetoothctl", "show"]
+    running: false
+    stdout: StdioCollector {
+      id: ctlStdout
+    }
+    onExited: function (exitCode, exitStatus) {
+      try {
+        var text = ctlStdout.text || "";
+        var lines = text.split('\n');
+        var foundController = false;
+        var powered = false;
+        var powerBlocked = false;
+        var discoverable = false;
+        var discovering = false;
+
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i].trim();
+          if (line.indexOf("Controller") === 0) {
+            foundController = true;
+          }
+
+          var mp = line.match(/\bPowered:\s*(yes|no)\b/i);
+          if (mp) {
+            powered = (mp[1].toLowerCase() === "yes");
+          }
+
+          var mps = line.match(/\bPowerState:\s*([A-Za-z-]+)\b/i);
+          if (mps) {
+            powerBlocked = (mps[1].toLowerCase() === "off-blocked");
+          }
+
+          var md = line.match(/\bDiscoverable:\s*(yes|no)\b/i);
+          if (md) {
+            discoverable = (md[1].toLowerCase() === "yes");
+          }
+
+          var ms = line.match(/\bDiscovering:\s*(yes|no)\b/i);
+          if (ms) {
+            discovering = (ms[1].toLowerCase() === "yes");
+          }
+        }
+
+        if (!adapter && (root.ctlPowered !== powered || root.ctlPowerBlocked !== powerBlocked)) {
+          root.ctlPowered = powered;
+          root.ctlPowerBlocked = powerBlocked;
+          if (root._ctlInit) {
+            checkAirplaneMode.running = true;
+          }
+          root._ctlInit = true;
+        }
+
+        root.ctlAvailable = foundController;
+        root.ctlPowered = powered;
+        root.ctlPowerBlocked = powerBlocked;
+        root.ctlDiscoverable = discoverable;
+        root.ctlDiscovering = discovering;
+      } catch (e) {
+        Logger.d("Bluetooth", "Failed to parse bluetoothctl show output", e);
+      }
+    }
   }
 
   // Persistent process for bluetoothctl scanning when native discovery is unavailable
@@ -112,174 +306,20 @@ Singleton {
     requestCtlPoll(ctlPollSoonMs);
   }
 
-  // Exposed scanning flag for UI button state; reflects adapter discovery when available
-  readonly property bool scanningActive: adapter?.discovering ?? root.ctlDiscovering
-
-  function init() {
-    Logger.i("Bluetooth", "Service started");
-  }
-
-  Component.onCompleted: {
-    pollCtlState();
-    // Ensure Airplane Mode persists upon reboot
-    if (root.airplaneModeEnabled) {
-      Quickshell.execDetached(["rfkill", "block", "wifi"]);
-      Quickshell.execDetached(["rfkill", "block", "bluetooth"]);
-    }
-  }
-
-  // Track adapter state changes
-  Connections {
-    target: adapter
-    function onStateChanged() {
-      if (!adapter || adapter.state === BluetoothAdapter.Enabling || adapter.state === BluetoothAdapter.Disabling) {
-        return;
-      }
-      checkAirplaneMode.running = true;
-    }
-  }
-
-  Process {
-    id: checkAirplaneMode
-    running: false
-    command: ["rfkill", "list"]
-    stdout: StdioCollector {
-      onStreamFinished: {
-        var output = this.text || "";
-        var wifiBlocked = /^\d+:.*Wireless LAN[^\n]*\n\s*Soft blocked:\s*yes/im.test(output);
-        var btBlocked = /^\d+:.*Bluetooth[^\n]*\n\s*Soft blocked:\s*yes/im.test(output);
-        var isAirplaneModeActive = wifiBlocked && btBlocked;
-
-        // Check if airplane mode has been toggled
-        if (isAirplaneModeActive && !root.airplaneModeEnabled) {
-          root.airplaneModeToggled = true;
-          NetworkService.setWifiEnabled(false);
-          Settings.data.network.airplaneModeEnabled = true;
-          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.enabled"), "plane");
-          Logger.i("AirplaneMode", "Wi-Fi & Bluetooth adapter blocked");
-        } else if (!isAirplaneModeActive && root.airplaneModeEnabled) {
-          root.airplaneModeToggled = true;
-          NetworkService.setWifiEnabled(true);
-          Settings.data.network.airplaneModeEnabled = false;
-          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.disabled"), "plane-off");
-          Logger.i("AirplaneMode", "Wi-Fi & Bluetooth adapter unblocked");
-        } else {
-          var isCurrentlyEnabled = (adapter && adapter.enabled) || root.ctlPowered;
-          var stateChanged = isCurrentlyEnabled !== root._lastEnabledState;
-          if (!initDelayTimer.running && stateChanged) {
-            if (isCurrentlyEnabled) {
-              ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.enabled"), "bluetooth");
-            } else {
-              ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.disabled"), "bluetooth-off");
-            }
-          }
-          root._lastEnabledState = isCurrentlyEnabled;
-          Logger.d("Bluetooth", "State updated - enabled:", isCurrentlyEnabled);
-        }
-        root.airplaneModeToggled = false;
-      }
-    }
-    stderr: StdioCollector {
-      onStreamFinished: {
-        if (text && text.trim()) {
-          Logger.w("AirplaneMode", "rfkill stderr:", text.trim());
-        }
-      }
-    }
-  }
-
-  // bluetoothctl state polling
-  Process {
-    id: ctlShowProcess
-    running: false
-    stdout: StdioCollector {
-      id: ctlStdout
-    }
-    onExited: function (exitCode, exitStatus) {
-      try {
-        var text = ctlStdout.text || "";
-        var lines = text.split('\n');
-        var foundController = false;  // Strict state following.
-        var powered = false;  // Strict state following.
-        var discoverable = false;  // Strict state following.
-        var discovering = false;  // Strict state following.
-
-        for (var i = 0; i < lines.length; i++) {
-          var line = lines[i].trim();
-          if (line.indexOf("Controller") === 0) {
-            foundController = true;
-          }
-          var mp = line.match(/\bPowered:\s*(yes|no)\b/i);
-          if (mp) {
-            powered = (mp[1].toLowerCase() === "yes");
-          }
-
-          var md = line.match(/\bDiscoverable:\s*(yes|no)\b/i);
-          if (md) {
-            discoverable = (md[1].toLowerCase() === "yes");
-          }
-
-          var ms = line.match(/\bDiscovering:\s*(yes|no)\b/i);
-          if (ms) {
-            discovering = (ms[1].toLowerCase() === "yes");
-          }
-        }
-        root.ctlAvailable = foundController; // Assign findings.
-        root.ctlPowered = powered; // Assign findings.
-        root.ctlDiscoverable = discoverable; // Assign findings.
-        root.ctlDiscovering = discovering; // Assign findings.
-      } catch (e) {
-        Logger.d("Bluetooth", "Failed to parse bluetoothctl show output", e);
-      }
-    }
-  }
-
-  function pollCtlState() {
-    if (ctlShowProcess.running) {
-      return;
-    }
-    try {
-      ctlShowProcess.command = ["bluetoothctl", "show"];
-      ctlShowProcess.running = true;
-    } catch (_) {}
-  }
-
-  // Periodic state polling
-  Timer {
-    id: ctlPollTimer
-    interval: adapter ? ctlPollMs : 2000
-    repeat: true
-    running: true
-    onTriggered: {
-      pollCtlState();
-      var targetInterval = adapter ? ctlPollMs : 2000;
-      if (interval !== targetInterval) {
-        interval = targetInterval;
-      }
-    }
-  }
-
-  function requestCtlPoll(delayMs) {
-    ctlPollTimer.interval = Math.max(50, delayMs || ctlPollSoonMs);
-    ctlPollTimer.restart();
-  }
-
-  // Handle system wakeup to force-poll and ensure state is up-to-date
-  Connections {
-    target: Time
-    function onResumed() {
-      Logger.i("Bluetooth", "System resumed - forcing state poll");
-      requestCtlPoll();
-    }
-  }
-
   // Adapter power (enable/disable) via bluetoothctl
   function setBluetoothEnabled(state) {
     Logger.i("Bluetooth", "SetBluetoothEnabled", state);
     try {
-      btExec(["bluetoothctl", "power", state ? "on" : "off"]);
-      root.ctlPowered = !!state;
-      requestCtlPoll(ctlPollSoonMs);
+      if (adapter) {
+        adapter.enabled = state;
+      }
+      else {
+        btExec(["bluetoothctl", "power", state ? "on" : "off"]);
+        root.ctlPowered = state;
+        requestCtlPoll(ctlPollSoonMs);
+        ToastService.showNotice(I18n.tr("common.bluetooth"), state ? I18n.tr("common.enabled") : I18n.tr("common.disabled"), state ? "bluetooth" : "bluetooth-off");
+        Logger.d("Bluetooth", state ? "Adapter enabled" : "Adapter disabled");
+      }
     } catch (e) {
       Logger.w("Bluetooth", "Enable/Disable failed", e);
       ToastService.showWarning(I18n.tr("common.bluetooth"), I18n.tr("toast.bluetooth.state-change-failed"));
@@ -289,9 +329,14 @@ Singleton {
   // Toggle adapter discoverability (advertising visibility) via bluetoothctl
   function setDiscoverable(state) {
     try {
-      btExec(["bluetoothctl", "discoverable", state ? "on" : "off"]);
-      root.ctlDiscoverable = !!state; // optimistic
-      requestCtlPoll(ctlPollSoonMs);
+      if (adapter) {
+        adapter.discoverable = state;
+      }
+      else {
+        btExec(["bluetoothctl", "discoverable", state ? "on" : "off"]);
+        root.ctlDiscoverable = state; // optimistic
+        requestCtlPoll(ctlPollSoonMs);
+      }
       Logger.i("Bluetooth", "Discoverable state set to:", state);
     } catch (e) {
       Logger.w("Bluetooth", "Failed to change discoverable state", e);

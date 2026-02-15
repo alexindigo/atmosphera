@@ -258,16 +258,6 @@ Singleton {
     wifiStateEnableProcess.running = true;
   }
 
-  function setAirplaneMode(enabled) {
-    if (enabled) {
-      Quickshell.execDetached(["rfkill", "block", "wifi"]);
-      Quickshell.execDetached(["rfkill", "block", "bluetooth"]);
-    } else {
-      Quickshell.execDetached(["rfkill", "unblock", "wifi"]);
-      Quickshell.execDetached(["rfkill", "unblock", "bluetooth"]);
-    }
-  }
-
   function scan() {
     if (!ProgramCheckerService.nmcliAvailable || !Settings.data.network.wifiEnabled) {
       return;

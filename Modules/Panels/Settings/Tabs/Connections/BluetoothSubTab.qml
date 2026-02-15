@@ -169,11 +169,11 @@ Item {
 
         NDivider {
           Layout.fillWidth: true
-          visible: BluetoothService.enabled
+          visible: BluetoothService.enabled && isDiscoverable
         }
 
         NText {
-          visible: (BluetoothService.enabled && isDiscoverable)
+          visible: BluetoothService.enabled && isDiscoverable
           Layout.fillWidth: true
           text: I18n.tr("panels.connections.bluetooth-discoverable", {
                           hostName: HostService.hostName
