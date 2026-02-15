@@ -50,7 +50,7 @@ Variants {
     }
 
     // Only create PanelWindow if enabled AND (screen has widgets OR in edit mode)
-    active: modelData && Settings.data.desktopWidgets.enabled && (screenWidgets.length > 0 || DesktopWidgetRegistry.editMode) && !PowerProfileService.noctaliaPerformanceMode
+    active: modelData && Settings.data.desktopWidgets.enabled && (screenWidgets.length > 0 || DesktopWidgetRegistry.editMode) && !PowerProfileService.noctaliaPerformanceMode && !PanelService.lockScreen?.active
 
     sourceComponent: PanelWindow {
       id: window
