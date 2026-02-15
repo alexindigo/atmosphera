@@ -1095,9 +1095,7 @@
       "screen-corners-title": "Esquinas de la pantalla",
       "settings-copied": "Ajustes copiados al portapapeles",
       "tab-basics": "Conceptos Básicos",
-      "tab-keybinds": "Atajos de Teclado",
-      "appearance-reverse-scrolling-description": "Invertir la dirección de trabajo al desplazarse.",
-      "appearance-reverse-scrolling-label": "Desplazamiento inverso"
+      "tab-keybinds": "Atajos de Teclado"
     },
     "hooks": {
       "info-command-info-description": "• Los comandos se ejecutan a través de shell (sh -lc)<br>• Los comandos se ejecutan en segundo plano (desvinculados)<br>• Los botones de prueba se ejecutan con los valores actuales",
