@@ -387,6 +387,15 @@
     "subTabLabel": "common.bluetooth"
   },
   {
+    "labelKey": "bluetooth.panel.paired-devices",
+    "descriptionKey": null,
+    "widget": "NLabel",
+    "tab": 15,
+    "tabLabel": "panels.connections.title",
+    "subTab": 1,
+    "subTabLabel": "common.bluetooth"
+  },
+  {
     "labelKey": "bluetooth.panel.available-devices",
     "descriptionKey": null,
     "widget": "NLabel",

@@ -239,7 +239,7 @@ Item {
         spacing: Style.marginM
 
         NLabel {
-          text: I18n.tr("bluetooth.panel.paired-devices")
+          label: I18n.tr("bluetooth.panel.paired-devices")
           Layout.fillWidth: true
           Layout.leftMargin: Style.marginS
         }
