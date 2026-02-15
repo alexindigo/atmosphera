@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
+import errno
+import os
+import pty
+import select
+import subprocess
 import sys
 import time
-import subprocess
-import pty
-import os
-import select
-import errno
 
 
 def log(msg) -> None:
@@ -88,26 +88,19 @@ def pair_fast():
         if out:
             print(out, end='')
             # Numberic Comparison (NC) 1 of 4 - Tested pairing with my iPhone.
-            if "Confirm passkey" in out or "yes/no" in out or "Request confirmation" in out:
+            if out in {"Confirm passkey", "yes/no", "Request confirmation"}:
                 log("Detected passkey prompt. Sending 'yes'.")
                 send_command("yes")
 
             # Authorization Request
-            if "Authorize service" in out or "Request authorization" in out:
+            if out in {"Authorize service", "Request authorization"}:
                 log("Detected authorization request. Sending 'yes'.")
                 send_command("yes")
 
-            # Passkey Display (User needs to type this on the remote device, e.g. Keyboard)
-            if "Passkey:" in out:
-                for line in out.splitlines():
-                    if "Passkey:" in line:
-                        log(f"ACTION REQUIRED: {line.strip()} (Type this on the device)")
-
             # Interactive PIN/Passkey Entry (Device displays code, User must enter on PC)
-            if "Enter passkey" in out or "Enter PIN code" in out:
+            if out in {"Enter passkey", "Enter PIN code", "Passkey:"}:
                 log("Device requested PIN/Passkey. Waiting for user input...")
-                print("[PIN_REQ]")
-                sys.stdout.flush()
+                log("PIN_REQUIRED")
 
                 try:
                     # Read PIN from stdin (blocking)
@@ -123,7 +116,7 @@ def pair_fast():
                     break
 
             # Just Works (JW) is implicit (no prompt)
-            if "Pairing successful" in out or "Paired: yes" in out or "Bonded: yes" in out:
+            if out in {"Pairing successful", "Paired: yes", "Bonded: yes"}:
                 paired = True
                 log("Pairing successful detected in stream.")
                 break
@@ -132,7 +125,7 @@ def pair_fast():
                 log("Pairing failed explicitly.")
                 break
 
-            if "Already joined" in out or "Already exists" in out:
+            if out in {"Already joined", "Already exists"}:
                 paired = True
                 log("Device already paired.")
                 break
