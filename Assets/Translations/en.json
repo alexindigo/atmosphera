@@ -599,6 +599,7 @@
   "notifications": {
     "panel": {
       "click-to-expand": "Click to expand",
+      "click-to-collapse": "Click to collapse",
       "description": "Your notifications will show up here as they arrive.",
       "no-notifications": "No notifications"
     },

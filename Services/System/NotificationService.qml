@@ -645,9 +645,9 @@ Singleton {
         historyList.append({
                              "id": item.id || "",
                              "summary": item.summary || "",
-                             "summaryMarkdown": item.summaryMarkdown || processNotificationMarkdown(item.summary || ""),
+                             "summaryMarkdown": processNotificationMarkdown(item.summary || ""),
                              "body": item.body || "",
-                             "bodyMarkdown": item.bodyMarkdown || processNotificationMarkdown(item.body || ""),
+                             "bodyMarkdown": processNotificationMarkdown(item.body || ""),
                              "appName": item.appName || "",
                              "urgency": item.urgency < 0 || item.urgency > 2 ? 1 : item.urgency,
                              "timestamp": time,
