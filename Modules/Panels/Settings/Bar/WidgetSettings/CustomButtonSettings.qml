@@ -24,6 +24,8 @@ ColumnLayout {
   property int valueMaxTextLengthVertical: widgetData?.maxTextLength?.vertical ?? widgetMetadata?.maxTextLength?.vertical
   property string valueHideMode: (widgetData.hideMode !== undefined) ? widgetData.hideMode : widgetMetadata.hideMode
   property bool valueShowIcon: (widgetData.showIcon !== undefined) ? widgetData.showIcon : widgetMetadata.showIcon
+  property bool valueShowExecTooltip: widgetData.showExecTooltip !== undefined ? widgetData.showExecTooltip : (widgetMetadata.showExecTooltip !== undefined ? widgetMetadata.showExecTooltip : true)
+  property bool valueShowTextTooltip: widgetData.showTextTooltip !== undefined ? widgetData.showTextTooltip : (widgetMetadata.showTextTooltip !== undefined ? widgetMetadata.showTextTooltip : true)
   property bool valueEnableColorization: widgetData.enableColorization || false
   property string valueColorizeSystemIcon: widgetData.colorizeSystemIcon !== undefined ? widgetData.colorizeSystemIcon : widgetMetadata.colorizeSystemIcon || "none"
   property string valueIpcIdentifier: widgetData.ipcIdentifier !== undefined ? widgetData.ipcIdentifier : widgetMetadata.ipcIdentifier || ""
@@ -49,6 +51,8 @@ ColumnLayout {
     settings.textStream = valueTextStream;
     settings.parseJson = valueParseJson;
     settings.showIcon = valueShowIcon;
+    settings.showExecTooltip = valueShowExecTooltip;
+    settings.showTextTooltip = valueShowTextTooltip;
     settings.hideMode = valueHideMode;
     settings.maxTextLength = {
       "horizontal": valueMaxTextLengthHorizontal,
@@ -122,6 +126,28 @@ ColumnLayout {
                   valueColorizeSystemIcon = key;
                   saveSettings();
                 }
+  }
+
+  NToggle {
+    id: showExecTooltipToggle
+    label: I18n.tr("bar.custom-button.show-exec-tooltip-label", "Show command tooltips")
+    description: I18n.tr("bar.custom-button.show-exec-tooltip-description", "Show tooltips with command details (left/right/middle click, wheel).")
+    checked: valueShowExecTooltip
+    onToggled: checked => {
+                 valueShowExecTooltip = checked;
+                 saveSettings();
+               }
+  }
+
+  NToggle {
+    id: showTextTooltipToggle
+    label: I18n.tr("bar.custom-button.show-text-tooltip-label", "Show dynamic text tooltips")
+    description: I18n.tr("bar.custom-button.show-text-tooltip-description", "Show tooltips with the output from the text command.")
+    checked: valueShowTextTooltip
+    onToggled: checked => {
+                 valueShowTextTooltip = checked;
+                 saveSettings();
+               }
   }
 
   NTextInput {

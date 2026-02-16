@@ -58,6 +58,8 @@ Item {
   readonly property bool parseJson: widgetSettings.parseJson !== undefined ? widgetSettings.parseJson : (widgetMetadata.parseJson || false)
   readonly property bool hasExec: (leftClickExec || rightClickExec || middleClickExec || (wheelMode === "unified" && wheelExec) || (wheelMode === "separate" && (wheelUpExec || wheelDownExec)))
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : true
+  readonly property bool showExecTooltip: widgetSettings.showExecTooltip !== undefined ? widgetSettings.showExecTooltip : (widgetMetadata.showExecTooltip !== undefined ? widgetMetadata.showExecTooltip : true)
+  readonly property bool showTextTooltip: widgetSettings.showTextTooltip !== undefined ? widgetSettings.showTextTooltip : (widgetMetadata.showTextTooltip !== undefined ? widgetMetadata.showTextTooltip : true)
   readonly property string hideMode: widgetSettings.hideMode || "alwaysExpanded"
   readonly property bool hasOutput: _dynamicText !== ""
   readonly property bool shouldForceOpen: textStream && (hideMode === "alwaysExpanded" || hideMode === "maxTransparent")
@@ -206,7 +208,7 @@ Item {
     tooltipText: {
       var tooltipLines = [];
 
-      if (hasExec) {
+      if (showExecTooltip && hasExec) {
         if (leftClickExec !== "") {
           tooltipLines.push(`Left click: ${leftClickExec}.`);
         }
@@ -228,7 +230,7 @@ Item {
         }
       }
 
-      if (_dynamicTooltip !== "") {
+      if (showTextTooltip && _dynamicTooltip !== "") {
         if (tooltipLines.length > 0) {
           tooltipLines.push("");
         }
