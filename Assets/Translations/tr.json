@@ -598,6 +598,7 @@
   },
   "notifications": {
     "panel": {
+      "click-to-collapse": "Daraltmak için tıklayın",
       "click-to-expand": "Genişletmek için tıklayın",
       "description": "Bildirimler geldikçe burada görünecek.",
       "no-notifications": "Bildirim yok"
@@ -882,7 +883,7 @@
     "connections": {
       "authentication-required": "Kimlik doğrulama gerekli",
       "bluetooth-devices-unnamed": "Adlandırılmamış cihazlar gösterilmez.",
-      "bluetooth-discoverable": "Bu ayarlar sekmesi açıkken bu cihaz <b> {hostName} </b> olarak keşfedilebilir.",
+      "bluetooth-discoverable": "Bu ayarlar sekmesi açıkken bu cihaz <b>{hostName}</b> olarak keşfedilebilir.",
       "bluetooth-rssi-polling-description": "bluetoothctl aracılığıyla bağlı cihazların RSSI değerini periyodik olarak örnekler. Tüm cihazlar için mevcut olmayabilir; etkinleştirildiğinde minimum kaynak kullanır.",
       "bluetooth-rssi-polling-interval-description": "Bağlı cihazlar için sinyal gücünün ne sıklıkta güncelleneceğini yapılandırın.",
       "bluetooth-rssi-polling-interval-label": "Yoklama Aralığı",
@@ -1084,6 +1085,8 @@
       "profile-select-avatar": "Avatar resmini seç",
       "profile-title": "Avatar",
       "profile-tooltip": "Avatar resmi",
+      "reverse-scrolling-description": "Yorumlanan kaydırma yönünü tersine çevir",
+      "reverse-scrolling-label": "Kaydırmayı tersine çevir",
       "screen-corners-desc": "Ekran köşesi yuvarlatma ve görsel efektleri özelleştirin.",
       "screen-corners-radius-description": "Ekranın yuvarlatılmış köşelerini ayarlayın.",
       "screen-corners-radius-label": "Ekran köşesi yarıçapı",
@@ -1291,6 +1294,8 @@
       "settings-enabled-description": "Bildirim arka plan programını etkinleştir veya devre dışı bırak, Noctalia shell'in yeniden başlatılmasını gerektirir.",
       "settings-enabled-label": "Bildirimleri etkinleştir",
       "settings-location-description": "Bildirimlerin ekranda nerede görüneceği.",
+      "settings-markdown-description": "Bildirim içeriğini Markdown biçimlendirmesi kullanarak oluştur.",
+      "settings-markdown-label": "Markdown'ı Etkinleştir",
       "sounds-desc": "Bildirim ses efektlerini ve ses seviyesini yapılandırın.",
       "sounds-enabled-description": "Gelen bildirimler için ses efektlerini etkinleştir.",
       "sounds-enabled-label": "Bildirim seslerini etkinleştir",

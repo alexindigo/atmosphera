@@ -598,6 +598,7 @@
   },
   "notifications": {
     "panel": {
+      "click-to-collapse": "点击折叠",
       "click-to-expand": "点击展开",
       "description": "您的通知将在到达时显示在此处。",
       "no-notifications": "无通知"
@@ -882,7 +883,7 @@
     "connections": {
       "authentication-required": "需要认证",
       "bluetooth-devices-unnamed": "未命名设备不显示。",
-      "bluetooth-discoverable": "当此设置选项卡打开时，此设备可被发现为 <b> {hostName} </b>。",
+      "bluetooth-discoverable": "当此设置选项卡打开时，此设备可被发现为 <b>{hostName}</b>。",
       "bluetooth-rssi-polling-description": "通过 bluetoothctl 定期采样已连接设备的 RSSI。可能并非所有设备都可用；启用时占用最少资源。",
       "bluetooth-rssi-polling-interval-description": "配置已连接设备的信号强度更新频率。",
       "bluetooth-rssi-polling-interval-label": "轮询间隔",
@@ -1084,6 +1085,8 @@
       "profile-select-avatar": "选择头像图片",
       "profile-title": "个人资料",
       "profile-tooltip": "头像",
+      "reverse-scrolling-description": "反转解释的滚动方向",
+      "reverse-scrolling-label": "反转滚动",
       "screen-corners-desc": "自定义屏幕边角的圆度和视觉效果。",
       "screen-corners-radius-description": "调整屏幕圆角的弧度。",
       "screen-corners-radius-label": "屏幕边角半径",
@@ -1291,6 +1294,8 @@
       "settings-enabled-description": "启用或禁用通知守护进程，需要重启 Noctalia shell。",
       "settings-enabled-label": "启用通知",
       "settings-location-description": "通知在屏幕上出现的位置。",
+      "settings-markdown-description": "使用 Markdown 格式渲染通知内容。",
+      "settings-markdown-label": "启用 Markdown",
       "sounds-desc": "配置通知音效和音量。",
       "sounds-enabled-description": "启用收到通知时的音效。",
       "sounds-enabled-label": "启用通知声音",

@@ -598,6 +598,7 @@
   },
   "notifications": {
     "panel": {
+      "click-to-collapse": "Klikken om in te klappen",
       "click-to-expand": "Klik om uit te vouwen",
       "description": "Je meldingen verschijnen hier zodra ze binnenkomen.",
       "no-notifications": "Geen meldingen"
@@ -882,7 +883,7 @@
     "connections": {
       "authentication-required": "Authenticatie vereist",
       "bluetooth-devices-unnamed": "Naamloze apparaten worden niet getoond.",
-      "bluetooth-discoverable": "Dit apparaat is vindbaar als <b> {hostName} </b> zolang dit instellingen-tabblad geopend is.",
+      "bluetooth-discoverable": "Dit apparaat is vindbaar als <b>{hostName}</b> zolang dit instellingen-tabblad geopend is.",
       "bluetooth-rssi-polling-description": "Periodiek RSSI van verbonden apparaten via bluetoothctl samplen. Mogelijk niet beschikbaar voor alle apparaten; gebruikt minimale middelen wanneer ingeschakeld.",
       "bluetooth-rssi-polling-interval-description": "Configureer hoe vaak de signaalsterkte voor verbonden apparaten moet worden bijgewerkt.",
       "bluetooth-rssi-polling-interval-label": "Polling-interval",
@@ -1084,6 +1085,8 @@
       "profile-select-avatar": "Avatarafbeelding selecteren",
       "profile-title": "Profiel",
       "profile-tooltip": "Profielfoto",
+      "reverse-scrolling-description": "Geïnterpreteerde schuifrichting omkeren",
+      "reverse-scrolling-label": "Scrollen omkeren",
       "screen-corners-desc": "Pas afronding en visuele effecten van schermhoeken aan.",
       "screen-corners-radius-description": "Pas de afronding van de schermhoeken aan.",
       "screen-corners-radius-label": "Straal schermhoeken",
@@ -1291,6 +1294,8 @@
       "settings-enabled-description": "Schakel de meldingsdaemon in of uit, vereist een herstart van Noctalia shell.",
       "settings-enabled-label": "Meldingen inschakelen",
       "settings-location-description": "Waar meldingen op het scherm verschijnen.",
+      "settings-markdown-description": "Meldingsinhoud weergeven met Markdown-opmaak.",
+      "settings-markdown-label": "Markdown inschakelen",
       "sounds-desc": "Configureer meldingsgeluidseffecten en volume.",
       "sounds-enabled-description": "Schakel geluidseffecten in voor inkomende meldingen.",
       "sounds-enabled-label": "Meldingsgeluiden inschakelen",

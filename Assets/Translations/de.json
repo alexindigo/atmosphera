@@ -598,6 +598,7 @@
   },
   "notifications": {
     "panel": {
+      "click-to-collapse": "Klicken zum Einklappen",
       "click-to-expand": "Zum Erweitern klicken",
       "description": "Ihre Benachrichtigungen werden hier angezeigt, sobald sie eintreffen.",
       "no-notifications": "Keine Benachrichtigungen"
@@ -882,7 +883,7 @@
     "connections": {
       "authentication-required": "Authentifizierung erforderlich",
       "bluetooth-devices-unnamed": "Unbenannte Geräte werden nicht angezeigt.",
-      "bluetooth-discoverable": "Dieses Gerät ist auffindbar als <b> {hostName} </b>, solange dieser Einstellungs-Tab geöffnet ist.",
+      "bluetooth-discoverable": "Dieses Gerät ist auffindbar als <b>{hostName}</b>, solange dieser Einstellungs-Tab geöffnet ist.",
       "bluetooth-rssi-polling-description": "Periodisch RSSI für verbundene Geräte über bluetoothctl abfragen. Möglicherweise nicht für alle Geräte verfügbar; verbraucht bei Aktivierung minimale Ressourcen.",
       "bluetooth-rssi-polling-interval-description": "Konfigurieren, wie oft die Signalstärke für verbundene Geräte aktualisiert werden soll.",
       "bluetooth-rssi-polling-interval-label": "Abfrageintervall",
@@ -1084,6 +1085,8 @@
       "profile-select-avatar": "Avatar auswählen",
       "profile-title": "Profil",
       "profile-tooltip": "Profilbild",
+      "reverse-scrolling-description": "Interpretierte Bildlaufrichtung umkehren",
+      "reverse-scrolling-label": "Scrollen umkehren",
       "screen-corners-desc": "Bildschirmecken-Rundung und visuelle Effekte anpassen.",
       "screen-corners-radius-description": "Rundung der Bildschirmecken anpassen.",
       "screen-corners-radius-label": "Bildschirmecken-Radius",
@@ -1291,6 +1294,8 @@
       "settings-enabled-description": "Benachrichtigungs-Daemon aktivieren oder deaktivieren, erfordert einen Neustart von Noctalia Shell.",
       "settings-enabled-label": "Benachrichtigungen aktivieren",
       "settings-location-description": "Wo Benachrichtigungen auf dem Bildschirm erscheinen.",
+      "settings-markdown-description": "Benachrichtigungsinhalt mit Markdown-Formatierung rendern.",
+      "settings-markdown-label": "Markdown aktivieren",
       "sounds-desc": "Benachrichtigungs-Soundeffekte und Lautstärke konfigurieren.",
       "sounds-enabled-description": "Soundeffekte für eingehende Benachrichtigungen aktivieren.",
       "sounds-enabled-label": "Benachrichtigungstöne aktivieren",

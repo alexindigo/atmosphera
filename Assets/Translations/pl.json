@@ -598,6 +598,7 @@
   },
   "notifications": {
     "panel": {
+      "click-to-collapse": "Kliknij, aby zwinąć",
       "click-to-expand": "Kliknij, aby rozwinąć",
       "description": "Twoje powiadomienia pojawią się tutaj, gdy nadejdą.",
       "no-notifications": "Brak powiadomień"
@@ -882,7 +883,7 @@
     "connections": {
       "authentication-required": "Wymagana autentykacja",
       "bluetooth-devices-unnamed": "Nienazwane urządzenia nie są wyświetlane.",
-      "bluetooth-discoverable": "To urządzenie jest wykrywalne jako <b> {hostName} </b>, dopóki ta zakładka ustawień jest otwarta.",
+      "bluetooth-discoverable": "To urządzenie jest wykrywalne jako <b>{hostName}</b>, dopóki ta zakładka ustawień jest otwarta.",
       "bluetooth-rssi-polling-description": "Okresowo próbkuje RSSI dla podłączonych urządzeń za pośrednictwem bluetoothctl. Może nie być dostępne dla wszystkich urządzeń; zużywa minimalne zasoby po włączeniu.",
       "bluetooth-rssi-polling-interval-description": "Skonfiguruj, jak często aktualizować siłę sygnału dla podłączonych urządzeń.",
       "bluetooth-rssi-polling-interval-label": "Interwał odpytywania",
@@ -1084,6 +1085,8 @@
       "profile-select-avatar": "Wybierz obraz awatara",
       "profile-title": "Profil",
       "profile-tooltip": "Zdjęcie profilowe",
+      "reverse-scrolling-description": "Odwróć zinterpretowany kierunek przewijania",
+      "reverse-scrolling-label": "Odwróć przewijanie",
       "screen-corners-desc": "Dostosuj zaokrąglenia krawędzi ekranu i efekty wizualne.",
       "screen-corners-radius-description": "Dostosuj zaokrąglenie narożników ekranu.",
       "screen-corners-radius-label": "Promień narożników ekranu",
@@ -1291,6 +1294,8 @@
       "settings-enabled-description": "Włącz lub wyłącz demona powiadomień (wymaga restartu Noctalia).",
       "settings-enabled-label": "Włącz powiadomienia",
       "settings-location-description": "Miejsce na ekranie, w którym pojawiają się powiadomienia.",
+      "settings-markdown-description": "Renderuj treść powiadomień, używając formatowania Markdown.",
+      "settings-markdown-label": "Włącz Markdown",
       "sounds-desc": "Konfiguruj efekty dźwiękowe i głośność powiadomień.",
       "sounds-enabled-description": "Włącz efekty dźwiękowe dla przychodzących powiadomień.",
       "sounds-enabled-label": "Włącz dźwięki powiadomień",
