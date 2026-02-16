@@ -598,6 +598,7 @@
   },
   "notifications": {
     "panel": {
+      "click-to-collapse": "クリックで折りたたむ",
       "click-to-expand": "クリックして展開",
       "description": "通知が届くとここに表示されます。",
       "no-notifications": "通知なし"
@@ -882,7 +883,7 @@
     "connections": {
       "authentication-required": "認証が必要です",
       "bluetooth-devices-unnamed": "名前のないデバイスは表示されません。",
-      "bluetooth-discoverable": "このデバイスは、この設定タブが開いている間、<b> {hostName} </b> として検出可能です。",
+      "bluetooth-discoverable": "このデバイスは、この設定タブが開いている間、<b>{hostName}</b> として検出可能です。",
       "bluetooth-rssi-polling-description": "bluetoothctl を介して接続されたデバイスの RSSI を定期的にサンプリングします。すべてのデバイスで利用できるとは限りません。有効にすると最小限のリソースを使用します。",
       "bluetooth-rssi-polling-interval-description": "接続されたデバイスの信号強度を更新する頻度を設定します。",
       "bluetooth-rssi-polling-interval-label": "ポーリング間隔",
@@ -1084,6 +1085,8 @@
       "profile-select-avatar": "アバター画像を選択",
       "profile-title": "プロフィール",
       "profile-tooltip": "プロフィール写真",
+      "reverse-scrolling-description": "解釈されたスクロール方向を反転",
+      "reverse-scrolling-label": "スクロール方向を反転",
       "screen-corners-desc": "画面の角の丸みや視覚効果をカスタマイズします。",
       "screen-corners-radius-description": "画面の角の丸みを調整します。",
       "screen-corners-radius-label": "角の丸み",
@@ -1291,6 +1294,8 @@
       "settings-enabled-description": "通知デーモンを有効化・無効化します（Noctalia shellの再起動が必要です）。",
       "settings-enabled-label": "通知を有効化",
       "settings-location-description": "画面上の通知の表示位置。",
+      "settings-markdown-description": "Markdown形式を使用して通知コンテンツを表示します。",
+      "settings-markdown-label": "Markdown を有効にする",
       "sounds-desc": "通知音の効果と音量を設定します。",
       "sounds-enabled-description": "通知受信時のの効果音を有効にします。",
       "sounds-enabled-label": "通知音を有効化",

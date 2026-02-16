@@ -598,6 +598,7 @@
   },
   "notifications": {
     "panel": {
+      "click-to-collapse": "Натисніть, щоб згорнути",
       "click-to-expand": "Клацніть для розгортання",
       "description": "Ваші сповіщення з'являтимуться тут по мірі надходження.",
       "no-notifications": "Немає сповіщень"
@@ -882,7 +883,7 @@
     "connections": {
       "authentication-required": "Потрібна автентифікація",
       "bluetooth-devices-unnamed": "Безіменні пристрої не відображаються.",
-      "bluetooth-discoverable": "Цей пристрій можна виявити як <b> {hostName} </b>, поки ця вкладка налаштувань відкрита.",
+      "bluetooth-discoverable": "Цей пристрій можна виявити як <b>{hostName}</b>, поки ця вкладка налаштувань відкрита.",
       "bluetooth-rssi-polling-description": "Періодично вимірює RSSI для підключених пристроїв через bluetoothctl. Може бути недоступно для всіх пристроїв; використовує мінімальні ресурси, якщо увімкнено.",
       "bluetooth-rssi-polling-interval-description": "Налаштуйте, як часто оновлювати рівень сигналу для підключених пристроїв.",
       "bluetooth-rssi-polling-interval-label": "Інтервал опитування",
@@ -1084,6 +1085,8 @@
       "profile-select-avatar": "Вибрати зображення аватара",
       "profile-title": "Профіль",
       "profile-tooltip": "Фото профілю",
+      "reverse-scrolling-description": "Обернути інтерпретований напрямок прокручування",
+      "reverse-scrolling-label": "Зворотне прокручування",
       "screen-corners-desc": "Налаштуйте заокруглення кутів екрана та візуальні ефекти.",
       "screen-corners-radius-description": "Налаштуйте заокруглення кутів екрана.",
       "screen-corners-radius-label": "Радіус кутів екрана",
@@ -1291,6 +1294,8 @@
       "settings-enabled-description": "Увімкнути або вимкнути демон сповіщень, вимагає перезапуску Noctalia shell.",
       "settings-enabled-label": "Увімкнути сповіщення",
       "settings-location-description": "Де з'являються сповіщення на екрані.",
+      "settings-markdown-description": "Відображати вміст сповіщень, використовуючи форматування Markdown.",
+      "settings-markdown-label": "Увімкнути Markdown",
       "sounds-desc": "Налаштуйте звукові ефекти та гучність сповіщень.",
       "sounds-enabled-description": "Увімкнути звукові ефекти для вхідних сповіщень.",
       "sounds-enabled-label": "Увімкнути звуки сповіщень",

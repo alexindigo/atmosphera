@@ -598,6 +598,7 @@
   },
   "notifications": {
     "panel": {
+      "click-to-collapse": "Cliquer pour réduire",
       "click-to-expand": "Cliquez pour développer",
       "description": "Vos notifications apparaîtront ici à mesure qu'elles arriveront.",
       "no-notifications": "Aucune notification"
@@ -882,7 +883,7 @@
     "connections": {
       "authentication-required": "Authentification requise",
       "bluetooth-devices-unnamed": "Les appareils sans nom ne sont pas affichés.",
-      "bluetooth-discoverable": "Cet appareil est détectable en tant que <b> {hostName} </b> tant que cet onglet de paramètres est ouvert.",
+      "bluetooth-discoverable": "Cet appareil est détectable en tant que <b>{hostName}</b> tant que cet onglet de paramètres est ouvert.",
       "bluetooth-rssi-polling-description": "Échantillonne périodiquement le RSSI des appareils connectés via bluetoothctl. Peut ne pas être disponible pour tous les appareils ; utilise des ressources minimales lorsqu'il est activé.",
       "bluetooth-rssi-polling-interval-description": "Configurer la fréquence de mise à jour de la force du signal pour les appareils connectés.",
       "bluetooth-rssi-polling-interval-label": "Intervalle d'interrogation",
@@ -1084,6 +1085,8 @@
       "profile-select-avatar": "Sélectionner une image d'avatar",
       "profile-title": "Profil",
       "profile-tooltip": "Photo de profil",
+      "reverse-scrolling-description": "Inverser le sens de défilement interprété",
+      "reverse-scrolling-label": "Défilement inversé",
       "screen-corners-desc": "Personnalisez l'arrondi des coins de l'écran et les effets visuels.",
       "screen-corners-radius-description": "Ajustez l'arrondi des coins de l'écran.",
       "screen-corners-radius-label": "Rayon des coins de l'écran",
@@ -1291,6 +1294,8 @@
       "settings-enabled-description": "Activer ou désactiver le démon de notifications, nécessite un redémarrage de Noctalia shell.",
       "settings-enabled-label": "Activer les notifications",
       "settings-location-description": "Où les notifications apparaissent à l'écran.",
+      "settings-markdown-description": "Afficher le contenu des notifications en utilisant le formatage Markdown.",
+      "settings-markdown-label": "Activer Markdown",
       "sounds-desc": "Configurer les effets sonores et le volume des notifications.",
       "sounds-enabled-description": "Activer les effets sonores pour les notifications entrantes.",
       "sounds-enabled-label": "Activer les sons de notification",

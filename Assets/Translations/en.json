@@ -598,8 +598,8 @@
   },
   "notifications": {
     "panel": {
-      "click-to-expand": "Click to expand",
       "click-to-collapse": "Click to collapse",
+      "click-to-expand": "Click to expand",
       "description": "Your notifications will show up here as they arrive.",
       "no-notifications": "No notifications"
     },
@@ -883,7 +883,7 @@
     "connections": {
       "authentication-required": "Authentication required",
       "bluetooth-devices-unnamed": "Unnamed devices are not shown.",
-      "bluetooth-discoverable": "This device is discoverable as <b> {hostName} </b> while this settings tab is open.",
+      "bluetooth-discoverable": "This device is discoverable as <b>{hostName}</b> while this settings tab is open.",
       "bluetooth-rssi-polling-description": "Periodically sample RSSI for connected devices via bluetoothctl. May not be available for all devices; uses minimal resources when enabled.",
       "bluetooth-rssi-polling-interval-description": "Configure how often to update signal strength for connected devices.",
       "bluetooth-rssi-polling-interval-label": "Polling interval",
@@ -1277,6 +1277,8 @@
       "duration-respect-expire-description": "Use the expire timeout set in the notification.",
       "duration-respect-expire-label": "Respect expire timeout",
       "duration-title": "Notification duration",
+      "history-clear-dismiss-description": "Clear notification from history when dismissed.",
+      "history-clear-dismiss-label": "Clear on dismissed",
       "history-critical-urgency-description": "Save critical priority notifications to history.",
       "history-critical-urgency-label": "Save critical urgency to history",
       "history-desc": "Control which notifications are saved to history based on their urgency level.",
@@ -1293,9 +1295,9 @@
       "settings-do-not-disturb-description": "Disable all notification popups when enabled.",
       "settings-enabled-description": "Enable or disable the notification daemon, requires a restart of Noctalia shell.",
       "settings-enabled-label": "Enable notifications",
+      "settings-location-description": "Where notifications appear on screen.",
       "settings-markdown-description": "Render notification content using Markdown formatting.",
       "settings-markdown-label": "Enable Markdown",
-      "settings-location-description": "Where notifications appear on screen.",
       "sounds-desc": "Configure notification sound effects and volume.",
       "sounds-enabled-description": "Enable sound effects for incoming notifications.",
       "sounds-enabled-label": "Enable notification sounds",
@@ -1768,6 +1770,7 @@
     "collapse": "Collapse sidebar",
     "copy-address": "Copy address",
     "delete-notification": "Delete notification",
+    "dismiss-notification": "Dismiss notification",
     "do-not-disturb-enabled": "Do Not Disturb",
     "expand": "Expand sidebar",
     "forget-network": "Forget network",

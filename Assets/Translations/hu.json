@@ -598,6 +598,7 @@
   },
   "notifications": {
     "panel": {
+      "click-to-collapse": "Kattintson az összecsukáshoz",
       "click-to-expand": "Kattintson a kibontáshoz",
       "description": "Az értesítések itt jelennek meg, amint megérkeznek.",
       "no-notifications": "Nincs értesítés"
@@ -882,7 +883,7 @@
     "connections": {
       "authentication-required": "Hitelesítés szükséges",
       "bluetooth-devices-unnamed": "A névtelen eszközök nem jelennek meg.",
-      "bluetooth-discoverable": "Ez az eszköz <b> {hostName} </b> néven fedezhető fel, amíg ez a beállítási fül nyitva van.",
+      "bluetooth-discoverable": "Ez az eszköz <b>{hostName}</b> néven fedezhető fel, amíg ez a beállítási fül nyitva van.",
       "bluetooth-rssi-polling-description": "Rendszeresen mintavételezi a csatlakoztatott eszközök RSSI-jét bluetoothctl-en keresztül. Lehet, hogy nem minden eszközhöz érhető el; engedélyezve minimális erőforrásokat használ.",
       "bluetooth-rssi-polling-interval-description": "Konfigurálja, milyen gyakran frissüljön a jelerősség a csatlakoztatott eszközök számára.",
       "bluetooth-rssi-polling-interval-label": "Lekérdezési intervallum",
@@ -1084,6 +1085,8 @@
       "profile-select-avatar": "Avatárkép kiválasztása",
       "profile-title": "Profil",
       "profile-tooltip": "Profilkép",
+      "reverse-scrolling-description": "Az értelmezett görgetési irány megfordítása",
+      "reverse-scrolling-label": "Görgetés megfordítása",
       "screen-corners-desc": "A képernyősarkok lekerekítésének és vizuális effektjeinek testreszabása.",
       "screen-corners-radius-description": "Állítsa be a képernyő lekerekített sarkait.",
       "screen-corners-radius-label": "Képernyősarkok lekerekítési sugara",
@@ -1291,6 +1294,8 @@
       "settings-enabled-description": "Az értesítési daemon be- vagy kikapcsolása a Noctalia shell újraindítását igényli.",
       "settings-enabled-label": "Értesítések engedélyezése",
       "settings-location-description": "Ahol az értesítések megjelennek a képernyőn.",
+      "settings-markdown-description": "Értesítés tartalmának megjelenítése Markdown formázással.",
+      "settings-markdown-label": "Markdown engedélyezése",
       "sounds-desc": "Értesítési hangeffektusok és hangerő beállítása.",
       "sounds-enabled-description": "Hanghatások engedélyezése a bejövő értesítésekhez.",
       "sounds-enabled-label": "Értesítési hangok engedélyezése",

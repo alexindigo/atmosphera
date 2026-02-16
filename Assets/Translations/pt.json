@@ -598,6 +598,7 @@
   },
   "notifications": {
     "panel": {
+      "click-to-collapse": "Clique para recolher",
       "click-to-expand": "Clique para expandir",
       "description": "Suas notificações aparecerão aqui assim que chegarem.",
       "no-notifications": "Nenhuma notificação"
@@ -882,7 +883,7 @@
     "connections": {
       "authentication-required": "Autenticação necessária",
       "bluetooth-devices-unnamed": "Dispositivos sem nome não são exibidos.",
-      "bluetooth-discoverable": "Este dispositivo é detectável como <b> {hostName} </b> enquanto esta aba de configurações estiver aberta.",
+      "bluetooth-discoverable": "Este dispositivo é detectável como <b>{hostName}</b> enquanto esta aba de configurações estiver aberta.",
       "bluetooth-rssi-polling-description": "Amostra periodicamente o RSSI de dispositivos conectados via bluetoothctl. Pode não estar disponível para todos os dispositivos; usa recursos mínimos quando ativado.",
       "bluetooth-rssi-polling-interval-description": "Configurar com que frequência atualizar a intensidade do sinal para dispositivos conectados.",
       "bluetooth-rssi-polling-interval-label": "Intervalo de sondagem",
@@ -1084,6 +1085,8 @@
       "profile-select-avatar": "Selecionar imagem de avatar",
       "profile-title": "Perfil",
       "profile-tooltip": "Foto de perfil",
+      "reverse-scrolling-description": "Inverter a direção de rolagem interpretada",
+      "reverse-scrolling-label": "Rolagem invertida",
       "screen-corners-desc": "Personalize o arredondamento dos cantos da tela e os efeitos visuais.",
       "screen-corners-radius-description": "Ajuste os cantos arredondados da tela.",
       "screen-corners-radius-label": "Raio dos cantos da tela",
@@ -1291,6 +1294,8 @@
       "settings-enabled-description": "Ativar ou desativar o daemon de notificações, requer reiniciar o Noctalia shell.",
       "settings-enabled-label": "Ativar notificações",
       "settings-location-description": "Onde as notificações aparecem na tela.",
+      "settings-markdown-description": "Renderizar o conteúdo da notificação usando formatação Markdown.",
+      "settings-markdown-label": "Ativar Markdown",
       "sounds-desc": "Configurar efeitos sonoros e volume de notificações.",
       "sounds-enabled-description": "Ativar efeitos sonoros para notificações recebidas.",
       "sounds-enabled-label": "Ativar sons de notificação",

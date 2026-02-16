@@ -598,6 +598,7 @@
   },
   "notifications": {
     "panel": {
+      "click-to-collapse": "Clic para contraer",
       "click-to-expand": "Haz clic para expandir",
       "description": "Tus notificaciones aparecerán aquí a medida que lleguen.",
       "no-notifications": "No hay notificaciones"
@@ -882,7 +883,7 @@
     "connections": {
       "authentication-required": "Autenticación requerida",
       "bluetooth-devices-unnamed": "Los dispositivos sin nombre no se muestran.",
-      "bluetooth-discoverable": "Este dispositivo es detectable como <b> {hostName} </b> mientras esta pestaña de ajustes esté abierta.",
+      "bluetooth-discoverable": "Este dispositivo es detectable como <b>{hostName}</b> mientras esta pestaña de ajustes esté abierta.",
       "bluetooth-rssi-polling-description": "Muestrea periódicamente el RSSI de los dispositivos conectados a través de bluetoothctl. Puede que no esté disponible para todos los dispositivos; usa recursos mínimos cuando está activado.",
       "bluetooth-rssi-polling-interval-description": "Configura con qué frecuencia actualizar la intensidad de la señal para los dispositivos conectados.",
       "bluetooth-rssi-polling-interval-label": "Intervalo de sondeo",
@@ -1084,6 +1085,8 @@
       "profile-select-avatar": "Seleccionar imagen de avatar",
       "profile-title": "Perfil",
       "profile-tooltip": "Foto de perfil",
+      "reverse-scrolling-description": "Invertir dirección de desplazamiento interpretada",
+      "reverse-scrolling-label": "Desplazamiento inverso",
       "screen-corners-desc": "Personaliza el redondeo de las esquinas de la pantalla y los efectos visuales.",
       "screen-corners-radius-description": "Ajusta las esquinas redondeadas de la pantalla.",
       "screen-corners-radius-label": "Radio de las esquinas de la pantalla",
@@ -1291,6 +1294,8 @@
       "settings-enabled-description": "Activar o desactivar el demonio de notificaciones, requiere reiniciar Noctalia shell.",
       "settings-enabled-label": "Activar notificaciones",
       "settings-location-description": "Dónde aparecen las notificaciones en la pantalla.",
+      "settings-markdown-description": "Renderizar el contenido de las notificaciones usando formato Markdown.",
+      "settings-markdown-label": "Habilitar Markdown",
       "sounds-desc": "Configurar efectos de sonido y volumen de notificaciones.",
       "sounds-enabled-description": "Activar efectos de sonido para notificaciones entrantes.",
       "sounds-enabled-label": "Activar sonidos de notificación",

@@ -598,6 +598,7 @@
   },
   "notifications": {
     "panel": {
+      "click-to-collapse": "클릭하여 접기",
       "click-to-expand": "클릭하여 펼치기",
       "description": "알림이 도착하면 여기에 표시됩니다.",
       "no-notifications": "알림 없음"
@@ -882,7 +883,7 @@
     "connections": {
       "authentication-required": "인증 필요",
       "bluetooth-devices-unnamed": "이름 없는 장치는 표시되지 않습니다.",
-      "bluetooth-discoverable": "이 장치는 이 설정 탭이 열려 있는 동안 <b> {hostName} </b>으로 검색될 수 있습니다.",
+      "bluetooth-discoverable": "이 장치는 이 설정 탭이 열려 있는 동안 <b>{hostName}</b>으로 검색될 수 있습니다.",
       "bluetooth-rssi-polling-description": "bluetoothctl을 통해 연결된 장치의 RSSI를 주기적으로 샘플링합니다. 모든 장치에서 사용 가능하지 않을 수 있으며, 활성화 시 최소한의 리소스를 사용합니다.",
       "bluetooth-rssi-polling-interval-description": "연결된 장치의 신호 강도를 얼마나 자주 업데이트할지 구성합니다.",
       "bluetooth-rssi-polling-interval-label": "폴링 간격",
@@ -1084,6 +1085,8 @@
       "profile-select-avatar": "아바타 이미지 선택",
       "profile-title": "프로필",
       "profile-tooltip": "프로필 사진",
+      "reverse-scrolling-description": "해석된 스크롤 방향 반전",
+      "reverse-scrolling-label": "스크롤 반전",
       "screen-corners-desc": "화면 모서리 라운딩 및 시각 효과를 사용자 지정합니다.",
       "screen-corners-radius-description": "화면의 둥근 모서리를 조정합니다.",
       "screen-corners-radius-label": "화면 모서리 반경",
@@ -1291,6 +1294,8 @@
       "settings-enabled-description": "알림 데몬을 활성화하거나 비활성화합니다. Noctalia 셸을 다시 시작해야 합니다.",
       "settings-enabled-label": "알림 활성화",
       "settings-location-description": "화면상에 알림이 나타나는 위치입니다.",
+      "settings-markdown-description": "Markdown 서식을 사용하여 알림 내용을 렌더링합니다.",
+      "settings-markdown-label": "Markdown 활성화",
       "sounds-desc": "알림 소리 효과 및 볼륨을 구성합니다.",
       "sounds-enabled-description": "수신 알림에 대한 소리 효과를 활성화합니다.",
       "sounds-enabled-label": "알림 소리 활성화",

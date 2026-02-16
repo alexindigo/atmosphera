@@ -598,6 +598,7 @@
   },
   "notifications": {
     "panel": {
+      "click-to-collapse": "Klicka för att fälla ihop",
       "click-to-expand": "Klicka för att expandera",
       "description": "Dina aviseringar visas här när de kommer in. ",
       "no-notifications": "Inga meddelanden"
@@ -882,7 +883,7 @@
     "connections": {
       "authentication-required": "Autentisering krävs",
       "bluetooth-devices-unnamed": "Namnlösa enheter visas inte.",
-      "bluetooth-discoverable": "Denna enhet är upptäckbar som <b> {hostName} </b> medan denna inställningsflik är öppen.",
+      "bluetooth-discoverable": "Denna enhet är upptäckbar som <b>{hostName}</b> medan denna inställningsflik är öppen.",
       "bluetooth-rssi-polling-description": "Samplar periodiskt RSSI för anslutna enheter via bluetoothctl. Kanske inte tillgängligt för alla enheter; använder minimala resurser när det är aktiverat.",
       "bluetooth-rssi-polling-interval-description": "Konfigurera hur ofta signalstyrkan för anslutna enheter ska uppdateras.",
       "bluetooth-rssi-polling-interval-label": "Avsökningsintervall",
@@ -1084,6 +1085,8 @@
       "profile-select-avatar": "Välj avatarbild",
       "profile-title": "Profil",
       "profile-tooltip": "Profilbild",
+      "reverse-scrolling-description": "Vänd den tolkade rullningsriktningen",
+      "reverse-scrolling-label": "Omvänd rullning",
       "screen-corners-desc": "Anpassa rundningen av skärmens hörn och visuella effekter.",
       "screen-corners-radius-description": "Justera skärmens rundade hörn.",
       "screen-corners-radius-label": "Skärmens hörnradie",
@@ -1291,6 +1294,8 @@
       "settings-enabled-description": "Aktivera eller inaktivera meddelandedemonen, kräver omstart av Noctalia-skalet.",
       "settings-enabled-label": "Aktivera meddelanden",
       "settings-location-description": "Var meddelanden visas på skärmen.",
+      "settings-markdown-description": "Rendera meddelandeinnehåll med Markdown-formatering.",
+      "settings-markdown-label": "Aktivera Markdown",
       "sounds-desc": "Konfigurera ljud effekter och volym för meddelanden.",
       "sounds-enabled-description": "Aktivera ljudeffekter för inkommande meddelanden.",
       "sounds-enabled-label": "Aktivera meddelandeljud",
