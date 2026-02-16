@@ -131,7 +131,7 @@ ColumnLayout {
   NToggle {
     id: showExecTooltipToggle
     label: I18n.tr("bar.custom-button.show-exec-tooltip-label")
-    description: I18n.tr("bar.custom-button.show-exec-tooltip-description"")
+    description: I18n.tr("bar.custom-button.show-exec-tooltip-description")
     checked: valueShowExecTooltip
     onToggled: checked => {
                  valueShowExecTooltip = checked;
