@@ -822,7 +822,7 @@ SmartPanel {
                           NText {
                             id: summaryText
                             width: parent.width
-                            text: model.summary || I18n.tr("common.no-summary")
+                            text: (Settings.data.notifications.enableMarkdown && notificationDelegate.isExpanded) ? (model.summaryMarkdown || model.summary || I18n.tr("common.no-summary")) : (model.summary || I18n.tr("common.no-summary"))
                             pointSize: Style.fontSizeM
                             color: Color.mOnSurface
                             textFormat: notificationDelegate.notificationTextFormat
@@ -835,7 +835,7 @@ SmartPanel {
                           NText {
                             id: bodyText
                             width: parent.width
-                            text: model.body || ""
+                            text: (Settings.data.notifications.enableMarkdown && notificationDelegate.isExpanded) ? (model.bodyMarkdown || model.body || "") : (model.body || "")
                             pointSize: Style.fontSizeS
                             color: Color.mOnSurfaceVariant
                             textFormat: notificationDelegate.notificationTextFormat
