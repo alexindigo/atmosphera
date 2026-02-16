@@ -402,9 +402,7 @@ Variants {
                               return a.identifier === "default";
                             });
                             if (hasDefault) {
-                              card.animateOut();
-                              deferredActionTimer.actionId = "default";
-                              deferredActionTimer.start();
+                              card.runDeferredAction("default", false);
                             }
                           }
               onCanceled: {
@@ -491,6 +489,25 @@ Variants {
                 swipeOffset = 0;
                 swipeOffsetY = 0;
               }
+            }
+
+            function runDeferredAction(actionId, isHistoryRemoval) {
+              if (Style.animationSlow <= 0) {
+                if (isHistoryRemoval) {
+                  NotificationService.removeFromHistory(notificationId);
+                } else {
+                  NotificationService.invokeAction(notificationId, actionId);
+                }
+                card.animateOut();
+                return;
+              }
+
+              deferredActionTimer.stop();
+              deferredActionTimer.actionId = actionId || "";
+              deferredActionTimer.isHistoryRemoval = isHistoryRemoval;
+              deferredActionTimer.interval = Math.min(50, Math.max(1, Style.animationSlow - 1));
+              card.animateOut();
+              deferredActionTimer.start();
             }
 
             Timer {
@@ -636,7 +653,7 @@ Variants {
                     pointSize: Style.fontSizeM
                     font.weight: Style.fontWeightMedium
                     color: Color.mOnSurface
-                    textFormat: Text.PlainText
+                    textFormat: Text.StyledText
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     maximumLineCount: 3
                     elide: Text.ElideRight
@@ -649,7 +666,7 @@ Variants {
                     text: model.body || ""
                     pointSize: Style.fontSizeM
                     color: Color.mOnSurface
-                    textFormat: Text.PlainText
+                    textFormat: Text.StyledText
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
                     maximumLineCount: 5
@@ -699,10 +716,7 @@ Variants {
                         outlined: false
                         implicitHeight: 24
                         onClicked: {
-                          card.animateOut();
-                          deferredActionTimer.actionId = actionData.identifier;
-                          deferredActionTimer.isHistoryRemoval = false;
-                          deferredActionTimer.start();
+                          card.runDeferredAction(actionData.identifier, false);
                         }
                       }
                     }
@@ -723,9 +737,7 @@ Variants {
               anchors.rightMargin: Style.marginM
 
               onClicked: {
-                card.animateOut();
-                deferredActionTimer.isHistoryRemoval = true;
-                deferredActionTimer.start();
+                card.runDeferredAction("", true);
               }
             }
 
@@ -758,7 +770,7 @@ Variants {
                   pointSize: Style.fontSizeM
                   font.weight: Style.fontWeightMedium
                   color: Color.mOnSurface
-                  textFormat: Text.PlainText
+                  textFormat: Text.StyledText
                   maximumLineCount: 1
                   elide: Text.ElideRight
                   Layout.fillWidth: true
@@ -770,7 +782,7 @@ Variants {
                   text: model.body || ""
                   pointSize: Style.fontSizeS
                   color: Color.mOnSurfaceVariant
-                  textFormat: Text.PlainText
+                  textFormat: Text.StyledText
                   wrapMode: Text.Wrap
                   maximumLineCount: 2
                   elide: Text.ElideRight

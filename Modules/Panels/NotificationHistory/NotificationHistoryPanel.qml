@@ -4,7 +4,6 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Notifications
 import Quickshell.Wayland
-import "../../../Helpers/Keybinds.js" as Keybinds
 import qs.Commons
 import qs.Modules.MainScreen
 import qs.Services.System
@@ -14,8 +13,8 @@ import qs.Widgets
 SmartPanel {
   id: root
 
-  preferredWidth: Math.round(440 * Style.uiScaleRatio)
-  preferredHeight: Math.round(540 * Style.uiScaleRatio)
+  preferredWidth: Math.round((Settings.data.notifications.enableMarkdown ? 540 : 440) * Style.uiScaleRatio)
+  preferredHeight: Math.round((Settings.data.notifications.enableMarkdown ? 640 : 540) * Style.uiScaleRatio)
 
   onOpened: {
     NotificationService.updateLastSeenTs();
@@ -80,7 +79,7 @@ SmartPanel {
                       }
 
                       // Removal (Delete/Remove)
-                      if (checkKey(event, 'keyRemove') || event.key === Qt.Key_Delete) {
+                      if (checkKey(event, 'remove') || event.key === Qt.Key_Delete) {
                         removeSelection();
                         event.accepted = true;
                         return;
@@ -567,11 +566,56 @@ SmartPanel {
                     property real pressGlobalX: 0
                     property real pressGlobalY: 0
                     property bool isSwiping: false
-                    property bool suppressClick: false
                     property bool isRemoving: false
+                    property string pendingLink: ""
                     readonly property real swipeStartThreshold: Math.round(16 * Style.uiScaleRatio)
                     readonly property real swipeDismissThreshold: Math.max(110, width * 0.3)
                     readonly property int removeAnimationDuration: Style.animationNormal
+                    readonly property int notificationTextFormat: (Settings.data.notifications.enableMarkdown && notificationDelegate.isExpanded) ? Text.MarkdownText : Text.StyledText
+                    readonly property real actionButtonSize: Style.baseWidgetSize * 0.7
+                    readonly property real buttonClusterWidth: notificationDelegate.actionButtonSize * 2 + Style.marginXS
+                    readonly property real iconSize: Math.round(40 * Style.uiScaleRatio)
+
+                    function isSafeLink(link) {
+                      if (!link)
+                        return false;
+                      const lower = link.toLowerCase();
+                      const schemes = ["http://", "https://", "mailto:"];
+                      return schemes.some(scheme => lower.startsWith(scheme));
+                    }
+
+                    function linkAtPoint(x, y) {
+                      if (!Settings.data.notifications.enableMarkdown || !notificationDelegate.isExpanded)
+                        return "";
+
+                      if (summaryText) {
+                        const summaryPoint = summaryText.mapFromItem(historyInteractionArea, x, y);
+                        if (summaryPoint.x >= 0 && summaryPoint.y >= 0 && summaryPoint.x <= summaryText.width && summaryPoint.y <= summaryText.height) {
+                          const summaryLink = summaryText.linkAt ? summaryText.linkAt(summaryPoint.x, summaryPoint.y) : "";
+                          if (isSafeLink(summaryLink))
+                            return summaryLink;
+                        }
+                      }
+
+                      if (bodyText) {
+                        const bodyPoint = bodyText.mapFromItem(historyInteractionArea, x, y);
+                        if (bodyPoint.x >= 0 && bodyPoint.y >= 0 && bodyPoint.x <= bodyText.width && bodyPoint.y <= bodyText.height) {
+                          const bodyLink = bodyText.linkAt ? bodyText.linkAt(bodyPoint.x, bodyPoint.y) : "";
+                          if (isSafeLink(bodyLink))
+                            return bodyLink;
+                        }
+                      }
+
+                      return "";
+                    }
+
+                    function updateCursorAt(x, y) {
+                      if (notificationDelegate.isExpanded && notificationDelegate.linkAtPoint(x, y)) {
+                        historyInteractionArea.cursorShape = Qt.PointingHandCursor;
+                      } else {
+                        historyInteractionArea.cursorShape = Qt.ArrowCursor;
+                      }
+                    }
 
                     transform: Translate {
                       x: notificationDelegate.swipeOffset
@@ -582,7 +626,6 @@ SmartPanel {
                         return;
                       isRemoving = true;
                       isSwiping = false;
-                      suppressClick = true;
 
                       if (Settings.data.general.animationDisabled) {
                         NotificationService.removeFromHistory(notificationId);
@@ -669,12 +712,22 @@ SmartPanel {
                     MouseArea {
                       id: historyInteractionArea
                       anchors.fill: parent
-                      anchors.rightMargin: Style.baseWidgetSize
+                      anchors.rightMargin: notificationDelegate.buttonClusterWidth + Style.marginM
                       enabled: !notificationDelegate.isRemoving
-                      cursorShape: notificationDelegate.canExpand ? Qt.PointingHandCursor : Qt.ArrowCursor
+                      hoverEnabled: true
+                      cursorShape: Qt.ArrowCursor
                       onPressed: mouse => {
                                    panelContent.focusIndex = index;
                                    panelContent.actionIndex = -1;
+
+                                   if (notificationDelegate.isExpanded) {
+                                     const link = notificationDelegate.linkAtPoint(mouse.x, mouse.y);
+                                     if (link) {
+                                       notificationDelegate.pendingLink = link;
+                                     } else {
+                                       notificationDelegate.pendingLink = "";
+                                     }
+                                   }
 
                                    if (mouse.button !== Qt.LeftButton)
                                    return;
@@ -682,7 +735,6 @@ SmartPanel {
                                    notificationDelegate.pressGlobalX = globalPoint.x;
                                    notificationDelegate.pressGlobalY = globalPoint.y;
                                    notificationDelegate.isSwiping = false;
-                                   notificationDelegate.suppressClick = false;
                                  }
                       onPositionChanged: mouse => {
                                            if (!(mouse.buttons & Qt.LeftButton) || notificationDelegate.isRemoving)
@@ -698,10 +750,13 @@ SmartPanel {
 
                                              // Only start a swipe-dismiss when horizontal movement is dominant.
                                              if (Math.abs(deltaX) <= Math.abs(deltaY) * 1.15) {
-                                               notificationDelegate.suppressClick = true;
                                                return;
                                              }
                                              notificationDelegate.isSwiping = true;
+                                           }
+
+                                           if (notificationDelegate.pendingLink && Math.abs(deltaX) >= notificationDelegate.swipeStartThreshold) {
+                                             notificationDelegate.pendingLink = "";
                                            }
 
                                            notificationDelegate.swipeOffset = deltaX;
@@ -716,31 +771,38 @@ SmartPanel {
                                       } else {
                                         notificationDelegate.swipeOffset = 0;
                                       }
-                                      notificationDelegate.suppressClick = true;
                                       notificationDelegate.isSwiping = false;
+                                      notificationDelegate.pendingLink = "";
                                       return;
                                     }
 
-                                    if (!notificationDelegate.canExpand || notificationDelegate.suppressClick)
-                                    return;
-
-                                    if (scrollView.expandedId === notificationId) {
-                                      scrollView.expandedId = "";
-                                    } else {
-                                      scrollView.expandedId = notificationId;
+                                    if (notificationDelegate.pendingLink) {
+                                      Qt.openUrlExternally(notificationDelegate.pendingLink);
+                                      notificationDelegate.pendingLink = "";
+                                      return;
                                     }
                                   }
                       onCanceled: {
                         notificationDelegate.isSwiping = false;
                         notificationDelegate.swipeOffset = 0;
-                        notificationDelegate.suppressClick = true;
+                        notificationDelegate.pendingLink = "";
+                        historyInteractionArea.cursorShape = Qt.ArrowCursor;
+                      }
+                    }
+
+                    HoverHandler {
+                      target: historyInteractionArea
+                      onPointChanged: notificationDelegate.updateCursorAt(point.position.x, point.position.y)
+                      onActiveChanged: {
+                        if (!active) {
+                          historyInteractionArea.cursorShape = Qt.ArrowCursor;
+                        }
                       }
                     }
 
                     onVisibleChanged: {
                       if (!visible) {
                         notificationDelegate.isSwiping = false;
-                        notificationDelegate.suppressClick = false;
                         notificationDelegate.swipeOffset = 0;
                         notificationDelegate.opacity = 1;
                         notificationDelegate.isRemoving = false;
@@ -764,9 +826,9 @@ SmartPanel {
 
                         // Icon
                         NImageRounded {
-                          anchors.verticalCenter: parent.verticalCenter
-                          width: Math.round(40 * Style.uiScaleRatio)
-                          height: Math.round(40 * Style.uiScaleRatio)
+                          anchors.verticalCenter: notificationDelegate.isExpanded ? undefined : parent.verticalCenter
+                          width: notificationDelegate.iconSize
+                          height: notificationDelegate.iconSize
                           radius: Math.min(Style.radiusL, width / 2)
                           imagePath: model.cachedImage || model.originalImage || ""
                           borderColor: "transparent"
@@ -777,7 +839,7 @@ SmartPanel {
 
                         // Content
                         Column {
-                          width: parent.width - Math.round(40 * Style.uiScaleRatio) - Style.marginM - Style.baseWidgetSize
+                          width: parent.width - notificationDelegate.iconSize - notificationDelegate.buttonClusterWidth - (Style.marginM * 2)
                           spacing: Style.marginXS
 
                           // Header row with app name and timestamp
@@ -822,10 +884,10 @@ SmartPanel {
                           NText {
                             id: summaryText
                             width: parent.width
-                            text: model.summary || I18n.tr("common.no-summary")
+                            text: (Settings.data.notifications.enableMarkdown && notificationDelegate.isExpanded) ? (model.summaryMarkdown || I18n.tr("common.no-summary")) : (model.summary || I18n.tr("common.no-summary"))
                             pointSize: Style.fontSizeM
                             color: Color.mOnSurface
-                            textFormat: Text.PlainText
+                            textFormat: notificationDelegate.notificationTextFormat
                             wrapMode: Text.Wrap
                             maximumLineCount: notificationDelegate.isExpanded ? 999 : 2
                             elide: Text.ElideRight
@@ -835,40 +897,14 @@ SmartPanel {
                           NText {
                             id: bodyText
                             width: parent.width
-                            text: model.body || ""
+                            text: (Settings.data.notifications.enableMarkdown && notificationDelegate.isExpanded) ? (model.bodyMarkdown || "") : (model.body || "")
                             pointSize: Style.fontSizeS
                             color: Color.mOnSurfaceVariant
-                            textFormat: Text.PlainText
+                            textFormat: notificationDelegate.notificationTextFormat
                             wrapMode: Text.Wrap
                             maximumLineCount: notificationDelegate.isExpanded ? 999 : 3
                             elide: Text.ElideRight
                             visible: text.length > 0
-                          }
-
-                          // Expand indicator
-                          Row {
-                            width: parent.width
-                            visible: !notificationDelegate.isExpanded && notificationDelegate.canExpand
-                            spacing: Style.marginXS
-
-                            Item {
-                              width: parent.width - expandText.width - expandIcon.width - Style.marginXS
-                              height: 1
-                            }
-
-                            NText {
-                              id: expandText
-                              text: I18n.tr("notifications.panel.click-to-expand") || "Click to expand"
-                              pointSize: Style.fontSizeXS
-                              color: Color.mPrimary
-                            }
-
-                            NIcon {
-                              id: expandIcon
-                              icon: "chevron-down"
-                              pointSize: Style.fontSizeS
-                              color: Color.mPrimary
-                            }
                           }
 
                           // Actions Flow
@@ -909,15 +945,43 @@ SmartPanel {
                           }
                         }
 
-                        // Delete button
-                        NIconButton {
-                          icon: "trash"
-                          tooltipText: I18n.tr("tooltips.delete-notification")
-                          baseSize: Style.baseWidgetSize * 0.7
-                          anchors.top: parent.top
+                        Item {
+                          width: notificationDelegate.buttonClusterWidth
+                          height: notificationDelegate.actionButtonSize
 
-                          onClicked: {
-                            NotificationService.removeFromHistory(notificationId);
+                          Row {
+                            anchors.right: parent.right
+                            spacing: Style.marginXS
+
+                            NIconButton {
+                              id: expandButton
+                              icon: notificationDelegate.isExpanded ? "chevron-up" : "chevron-down"
+                              tooltipText: notificationDelegate.isExpanded ? I18n.tr("notifications.panel.click-to-collapse") || "Click to collapse" : I18n.tr("notifications.panel.click-to-expand") || "Click to expand"
+                              baseSize: notificationDelegate.actionButtonSize
+                              opacity: (notificationDelegate.canExpand || notificationDelegate.isExpanded) ? 1.0 : 0.0
+                              enabled: notificationDelegate.canExpand || notificationDelegate.isExpanded
+
+                              onClicked: {
+                                notificationDelegate.pendingLink = "";
+                                historyInteractionArea.cursorShape = Qt.ArrowCursor;
+                                if (scrollView.expandedId === notificationId) {
+                                  scrollView.expandedId = "";
+                                } else {
+                                  scrollView.expandedId = notificationId;
+                                }
+                              }
+                            }
+
+                            // Delete button
+                            NIconButton {
+                              icon: "trash"
+                              tooltipText: I18n.tr("tooltips.delete-notification")
+                              baseSize: notificationDelegate.actionButtonSize
+
+                              onClicked: {
+                                NotificationService.removeFromHistory(notificationId);
+                              }
+                            }
                           }
                         }
                       }

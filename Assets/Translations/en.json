@@ -599,6 +599,7 @@
   "notifications": {
     "panel": {
       "click-to-expand": "Click to expand",
+      "click-to-collapse": "Click to collapse",
       "description": "Your notifications will show up here as they arrive.",
       "no-notifications": "No notifications"
     },
@@ -1084,6 +1085,8 @@
       "profile-select-avatar": "Select avatar image",
       "profile-title": "Profile",
       "profile-tooltip": "Profile picture",
+      "reverse-scrolling-description": "Reverse the interpreted scroll direction",
+      "reverse-scrolling-label": "Reverse scrolling",
       "screen-corners-desc": "Customize screen corner rounding and visual effects.",
       "screen-corners-radius-description": "Adjust the rounded corners of the screen.",
       "screen-corners-radius-label": "Screen corners radius",
@@ -1290,6 +1293,8 @@
       "settings-do-not-disturb-description": "Disable all notification popups when enabled.",
       "settings-enabled-description": "Enable or disable the notification daemon, requires a restart of Noctalia shell.",
       "settings-enabled-label": "Enable notifications",
+      "settings-markdown-description": "Render notification content using Markdown formatting.",
+      "settings-markdown-label": "Enable Markdown",
       "settings-location-description": "Where notifications appear on screen.",
       "sounds-desc": "Configure notification sound effects and volume.",
       "sounds-enabled-description": "Enable sound effects for incoming notifications.",
