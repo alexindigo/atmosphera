@@ -79,7 +79,7 @@ SmartPanel {
                       }
 
                       // Removal (Delete/Remove)
-                      if (checkKey(event, 'keyRemove') || event.key === Qt.Key_Delete) {
+                      if (checkKey(event, 'remove') || event.key === Qt.Key_Delete) {
                         removeSelection();
                         event.accepted = true;
                         return;

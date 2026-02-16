@@ -102,8 +102,13 @@ QtObject {
   }
 
   function checkKey(event, settingName, settings) {
-    // Map simplified names to the actual setting property names
-    var propName = "key" + settingName.charAt(0).toUpperCase() + settingName.slice(1);
+    // Accept both simplified names ("remove") and full property names ("keyRemove")
+    // so callers are less error-prone.
+    var normalized = String(settingName || "");
+    if (!normalized)
+      return false;
+
+    var propName = normalized.startsWith("key") ? normalized : ("key" + normalized.charAt(0).toUpperCase() + normalized.slice(1));
     var boundKeys = settings.data.general.keybinds[propName];
     if (!boundKeys || boundKeys.length === 0)
       return false;
