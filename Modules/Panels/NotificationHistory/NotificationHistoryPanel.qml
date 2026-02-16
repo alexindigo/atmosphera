@@ -720,14 +720,14 @@ SmartPanel {
                                    panelContent.focusIndex = index;
                                    panelContent.actionIndex = -1;
 
-                                    if (notificationDelegate.isExpanded) {
-                                      const link = notificationDelegate.linkAtPoint(mouse.x, mouse.y);
-                                      if (link) {
-                                        notificationDelegate.pendingLink = link;
-                                      } else {
-                                        notificationDelegate.pendingLink = "";
-                                      }
-                                    }
+                                   if (notificationDelegate.isExpanded) {
+                                     const link = notificationDelegate.linkAtPoint(mouse.x, mouse.y);
+                                     if (link) {
+                                       notificationDelegate.pendingLink = link;
+                                     } else {
+                                       notificationDelegate.pendingLink = "";
+                                     }
+                                   }
 
                                    if (mouse.button !== Qt.LeftButton)
                                    return;
@@ -755,9 +755,9 @@ SmartPanel {
                                              notificationDelegate.isSwiping = true;
                                            }
 
-                                            if (notificationDelegate.pendingLink && Math.abs(deltaX) >= notificationDelegate.swipeStartThreshold) {
-                                              notificationDelegate.pendingLink = "";
-                                            }
+                                           if (notificationDelegate.pendingLink && Math.abs(deltaX) >= notificationDelegate.swipeStartThreshold) {
+                                             notificationDelegate.pendingLink = "";
+                                           }
 
                                            notificationDelegate.swipeOffset = deltaX;
                                          }
@@ -952,7 +952,7 @@ SmartPanel {
                           Row {
                             anchors.right: parent.right
                             spacing: Style.marginXS
-                            
+
                             NIconButton {
                               id: expandButton
                               icon: notificationDelegate.isExpanded ? "chevron-up" : "chevron-down"
