@@ -374,6 +374,9 @@ Variants {
               onReleased: mouse => {
                             if (mouse.button === Qt.RightButton) {
                               card.animateOut();
+                              if (Settings.data.notifications.clearDismissed) {
+                                NotificationService.removeFromHistory(notificationId);
+                              }
                               return;
                             }
 
@@ -385,6 +388,9 @@ Variants {
                               const threshold = card.useVerticalSwipe ? card.verticalSwipeDismissThreshold : card.swipeDismissThreshold;
                               if (dismissDistance >= threshold) {
                                 card.dismissBySwipe();
+                                if (Settings.data.notifications.clearDismissed) {
+                                  NotificationService.removeFromHistory(notificationId);
+                                }
                               } else {
                                 card.swipeOffset = 0;
                                 card.swipeOffsetY = 0;
@@ -402,7 +408,7 @@ Variants {
                               return a.identifier === "default";
                             });
                             if (hasDefault) {
-                              card.runDeferredAction("default", false);
+                              card.runDeferredTimer("default", false);
                             }
                           }
               onCanceled: {
@@ -491,12 +497,12 @@ Variants {
               }
             }
 
-            function runDeferredAction(actionId, isHistoryRemoval) {
+            function runDeferredTimer(actionId, isDismissed) {
               if (Style.animationSlow <= 0) {
-                if (isHistoryRemoval) {
-                  NotificationService.removeFromHistory(notificationId);
-                } else {
+                if (!isDismissed) {
                   NotificationService.invokeAction(notificationId, actionId);
+                } else if (Settings.data.notifications.clearDismissed) {
+                  NotificationService.removeFromHistory(notificationId);
                 }
                 card.animateOut();
                 return;
@@ -504,7 +510,7 @@ Variants {
 
               deferredActionTimer.stop();
               deferredActionTimer.actionId = actionId || "";
-              deferredActionTimer.isHistoryRemoval = isHistoryRemoval;
+              deferredActionTimer.isDismissed = isDismissed;
               deferredActionTimer.interval = Math.min(50, Math.max(1, Style.animationSlow - 1));
               card.animateOut();
               deferredActionTimer.start();
@@ -523,12 +529,12 @@ Variants {
               id: deferredActionTimer
               interval: 50
               property string actionId: ""
-              property bool isHistoryRemoval: false
+              property bool isDismissed: false
               onTriggered: {
-                if (isHistoryRemoval) {
-                  NotificationService.removeFromHistory(notificationId);
-                } else {
+                if (!isDismissed) {
                   NotificationService.invokeAction(notificationId, actionId);
+                } else if (Settings.data.notifications.clearDismissed) {
+                  NotificationService.removeFromHistory(notificationId);
                 }
               }
             }
@@ -716,7 +722,7 @@ Variants {
                         outlined: false
                         implicitHeight: 24
                         onClicked: {
-                          card.runDeferredAction(actionData.identifier, false);
+                          card.runDeferredTimer(actionData.identifier, false);
                         }
                       }
                     }
@@ -729,7 +735,7 @@ Variants {
             NIconButton {
               visible: !notifWindow.isCompact
               icon: "close"
-              tooltipText: I18n.tr("common.close")
+              tooltipText: I18n.tr("tooltips.dismiss-notification")
               baseSize: Style.baseWidgetSize * 0.6
               anchors.top: cardBackground.top
               anchors.topMargin: Style.marginM
@@ -737,7 +743,7 @@ Variants {
               anchors.rightMargin: Style.marginM
 
               onClicked: {
-                card.runDeferredAction("", true);
+                card.runDeferredTimer("", true);
               }
             }
 

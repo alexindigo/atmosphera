@@ -1198,6 +1198,15 @@
     "subTabLabel": "common.appearance"
   },
   {
+    "labelKey": "panels.notifications.history-clear-dismiss-label",
+    "descriptionKey": "panels.notifications.history-clear-dismiss-description",
+    "widget": "NToggle",
+    "tab": 9,
+    "tabLabel": "common.notifications",
+    "subTab": 2,
+    "subTabLabel": "common.history"
+  },
+  {
     "labelKey": "panels.notifications.settings-markdown-label",
     "descriptionKey": "panels.notifications.settings-markdown-description",
     "widget": "NToggle",
