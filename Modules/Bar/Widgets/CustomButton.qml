@@ -238,7 +238,10 @@ Item {
       }
 
       if (tooltipLines.length === 0) {
-        return "Custom button, configure in settings.";
+        if (!showExecTooltip && !showTextTooltip) {
+          return "";
+        }
+        return I18n.tr("bar.custom-button.default-tooltip");
       } else {
         return tooltipLines.join("\n");
       }

@@ -134,6 +134,7 @@
       "show-exec-tooltip-label": "Show command tooltips",
       "show-text-tooltip-description": "Show tooltips with the output from the text command.",
       "show-text-tooltip-label": "Show dynamic text tooltips",
+      "default-tooltip": "Custom button, configure in settings.",
       "text-stream-description": "Streamed lines from the command will be displayed as text on the button.",
       "text-stream-label": "Stream",
       "wheel-description": "Command to execute when the scroll wheel is used.<br>Use $delta for the scroll wheel delta in the command.",
