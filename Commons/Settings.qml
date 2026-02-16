@@ -605,6 +605,7 @@ Singleton {
       property int lowUrgencyDuration: 3
       property int normalUrgencyDuration: 8
       property int criticalUrgencyDuration: 15
+      property bool clearDismissed: true
       property JsonObject saveToHistory: JsonObject {
         property bool low: true
         property bool normal: true
