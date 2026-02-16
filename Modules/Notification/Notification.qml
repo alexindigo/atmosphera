@@ -402,9 +402,7 @@ Variants {
                               return a.identifier === "default";
                             });
                             if (hasDefault) {
-                              card.animateOut();
-                              deferredActionTimer.actionId = "default";
-                              deferredActionTimer.start();
+                              card.runDeferredAction("default", false);
                             }
                           }
               onCanceled: {
@@ -491,6 +489,25 @@ Variants {
                 swipeOffset = 0;
                 swipeOffsetY = 0;
               }
+            }
+
+            function runDeferredAction(actionId, isHistoryRemoval) {
+              if (Style.animationSlow <= 0) {
+                if (isHistoryRemoval) {
+                  NotificationService.removeFromHistory(notificationId);
+                } else {
+                  NotificationService.invokeAction(notificationId, actionId);
+                }
+                card.animateOut();
+                return;
+              }
+
+              deferredActionTimer.stop();
+              deferredActionTimer.actionId = actionId || "";
+              deferredActionTimer.isHistoryRemoval = isHistoryRemoval;
+              deferredActionTimer.interval = Math.min(50, Math.max(1, Style.animationSlow - 1));
+              card.animateOut();
+              deferredActionTimer.start();
             }
 
             Timer {
@@ -699,10 +716,7 @@ Variants {
                         outlined: false
                         implicitHeight: 24
                         onClicked: {
-                          card.animateOut();
-                          deferredActionTimer.actionId = actionData.identifier;
-                          deferredActionTimer.isHistoryRemoval = false;
-                          deferredActionTimer.start();
+                          card.runDeferredAction(actionData.identifier, false);
                         }
                       }
                     }
@@ -723,9 +737,7 @@ Variants {
               anchors.rightMargin: Style.marginM
 
               onClicked: {
-                card.animateOut();
-                deferredActionTimer.isHistoryRemoval = true;
-                deferredActionTimer.start();
+                card.runDeferredAction("", true);
               }
             }
 
