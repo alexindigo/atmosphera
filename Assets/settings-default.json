@@ -387,6 +387,7 @@
   },
   "notifications": {
     "enabled": true,
+    "enableMarkdown": false,
     "density": "default",
     "monitors": [],
     "location": "top_right",
