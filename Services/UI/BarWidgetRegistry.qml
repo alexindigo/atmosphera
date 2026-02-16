@@ -127,6 +127,8 @@ Singleton {
                                   "CustomButton": {
                                     "icon": "heart",
                                     "showIcon": true,
+                                    "showExecTooltip": true,
+                                    "showTextTooltip": true,
                                     "hideMode": "alwaysExpanded",
                                     "leftClickExec": "",
                                     "leftClickUpdateText": false,
