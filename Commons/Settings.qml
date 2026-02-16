@@ -871,6 +871,17 @@ Singleton {
   }
 
   // -----------------------------------------------------
+  // Get effective bar display mode for a screen (with inheritance)
+  // If the screen has a displayMode override and overrides are enabled, use it; otherwise use global default
+  function getBarDisplayModeForScreen(screenName) {
+    var override = _findScreenOverride(screenName);
+    if (override && override.enabled !== false && override.displayMode !== undefined) {
+      return override.displayMode;
+    }
+    return data.bar.displayMode || "always_visible";
+  }
+
+  // -----------------------------------------------------
   // Check if a screen has any overrides, optionally for a specific property
   function hasScreenOverride(screenName, property) {
     var override = _findScreenOverride(screenName);
