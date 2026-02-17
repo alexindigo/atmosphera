@@ -126,7 +126,7 @@ Item {
   function _buildTooltipText() {
     // Build tooltip based on settings
     let tooltip = "";
-    
+
     // If user set custom text, always show it
     // If no custom text and showExecTooltip is off, show i18n default
     if (_hasCustomTooltip) {
@@ -134,7 +134,7 @@ Item {
     } else if (!showExecTooltip) {
       tooltip = I18n.tr("panels.control-center.shortcuts-custom-button-default-tooltip");
     }
-    
+
     // Add command details if enabled
     if (showExecTooltip) {
       if (onClickedCommand) {

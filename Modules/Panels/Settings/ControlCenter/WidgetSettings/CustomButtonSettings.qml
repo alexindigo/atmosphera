@@ -83,7 +83,10 @@ ColumnLayout {
   }
 
   function updateStateCheck(index, command, icon) {
-    _settings._stateChecksListModel.set(index, { "command": command, "icon": icon });
+    _settings._stateChecksListModel.set(index, {
+                                          "command": command,
+                                          "icon": icon
+                                        });
     _settings.saveSettings();
   }
 
@@ -93,7 +96,10 @@ ColumnLayout {
   }
 
   function addStateCheck() {
-    _settings._stateChecksListModel.append({ "command": "", "icon": "" });
+    _settings._stateChecksListModel.append({
+                                             "command": "",
+                                             "icon": ""
+                                           });
     _settings.saveSettings();
   }
 
