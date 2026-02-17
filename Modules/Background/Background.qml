@@ -61,6 +61,18 @@ Variants {
       // Solid color mode - track whether current/next are solid colors
       property bool isSolid1: false
       property bool isSolid2: false
+
+      // Actual pixel dimensions of the cached image file, fetched asynchronously via
+      // getImageDimensions(). Decoupled from source1.sourceSize.* which reflects Qt's
+      // sourceSize-constrained decoded size and is NOT the same as the file's true
+      // dimensions when sourceSize constrains a non-native aspect ratio. Shaders need
+      // the true file dimensions for accurate fill-mode UV math (center, tile, and
+      // crop/fit for non-matching aspect ratios). Falls back to sourceSize when unknown.
+      property real _currentImageWidth: 0
+      property real _currentImageHeight: 0
+      property real _nextImageWidth: 0
+      property real _nextImageHeight: 0
+
       property color _solidColor1: Settings.data.wallpaper.solidColor
       property color _solidColor2: Settings.data.wallpaper.solidColor
       property vector4d solidColor1: Qt.vector4d(_solidColor1.r, _solidColor1.g, _solidColor1.b, 1.0)
@@ -110,7 +122,7 @@ Variants {
 
           if (isStartupTransition) {
             // During startup, just ensure the correct cache exists without visual changes
-            const startupSize = root._getMaxCacheSize();
+            const startupSize = root._getMaxCacheSizeForOrientation();
             ImageCacheService.getLarge(currentPath, startupSize.width, startupSize.height, function (cachedPath, success) {
               WallpaperService.wallpaperProcessingComplete(modelData.name, currentPath, success ? cachedPath : "");
             });
@@ -128,16 +140,20 @@ Variants {
       // is a high-resolution image such as 4K).
       property size _targetPixelSize: Qt.size(Math.round(modelData.width * CompositorService.getDisplayScale(modelData.name)), Math.round(modelData.height * CompositorService.getDisplayScale(modelData.name)))
 
-      // Largest pixel dimensions across all connected screens.
-      // All monitors request their ImageMagick cache at this single size so that every screen
-      // showing the same wallpaper reuses the same cached file on disk, cutting ImageMagick
-      // work from N jobs down to 1 and reducing disk cache size proportionally.
-      // Qt's sourceSize (_targetPixelSize above) still caps GPU decode to each monitor's own
-      // resolution, so there is no VRAM overhead on the smaller displays.
-      function _getMaxCacheSize() {
+      // Largest pixel dimensions among monitors that share this screen's orientation
+      // (landscape vs portrait). Monitors of the same orientation reuse the same
+      // ImageMagick-cached file on disk, cutting redundant processing while avoiding
+      // the broken results that occur when a landscape-sized cache is fed to a portrait
+      // monitor (or vice versa). Qt's sourceSize (_targetPixelSize) still caps GPU
+      // decode to each monitor's own resolution, so smaller displays have no VRAM overhead.
+      function _getMaxCacheSizeForOrientation() {
+        const myIsPortrait = modelData.height > modelData.width;
         let maxW = 0, maxH = 0;
         for (let i = 0; i < Quickshell.screens.length; i++) {
           const screen = Quickshell.screens[i];
+          const screenIsPortrait = screen.height > screen.width;
+          if (screenIsPortrait !== myIsPortrait)
+            continue;
           const scale = CompositorService.getDisplayScale(screen.name);
           const w = Math.round(screen.width * scale);
           const h = Math.round(screen.height * scale);
@@ -270,10 +286,10 @@ Variants {
           // Fill mode properties
           property real fillMode: root.fillMode
           property vector4d fillColor: root.fillColor
-          property real imageWidth1: source1.sourceSize.width
-          property real imageHeight1: source1.sourceSize.height
-          property real imageWidth2: source2 ? source2.sourceSize.width : 0.0
-          property real imageHeight2: source2 ? source2.sourceSize.height : 0.0
+          property real imageWidth1: root._currentImageWidth > 0 ? root._currentImageWidth : source1.sourceSize.width
+          property real imageHeight1: root._currentImageHeight > 0 ? root._currentImageHeight : source1.sourceSize.height
+          property real imageWidth2: source2 ? (root._nextImageWidth > 0 ? root._nextImageWidth : source2.sourceSize.width) : 0.0
+          property real imageHeight2: source2 ? (root._nextImageHeight > 0 ? root._nextImageHeight : source2.sourceSize.height) : 0.0
           property real screenWidth: width
           property real screenHeight: height
 
@@ -302,10 +318,10 @@ Variants {
           // Fill mode properties
           property real fillMode: root.fillMode
           property vector4d fillColor: root.fillColor
-          property real imageWidth1: source1.sourceSize.width
-          property real imageHeight1: source1.sourceSize.height
-          property real imageWidth2: source2 ? source2.sourceSize.width : 0.0
-          property real imageHeight2: source2 ? source2.sourceSize.height : 0.0
+          property real imageWidth1: root._currentImageWidth > 0 ? root._currentImageWidth : source1.sourceSize.width
+          property real imageHeight1: root._currentImageHeight > 0 ? root._currentImageHeight : source1.sourceSize.height
+          property real imageWidth2: source2 ? (root._nextImageWidth > 0 ? root._nextImageWidth : source2.sourceSize.width) : 0.0
+          property real imageHeight2: source2 ? (root._nextImageHeight > 0 ? root._nextImageHeight : source2.sourceSize.height) : 0.0
           property real screenWidth: width
           property real screenHeight: height
 
@@ -336,10 +352,10 @@ Variants {
           // Fill mode properties
           property real fillMode: root.fillMode
           property vector4d fillColor: root.fillColor
-          property real imageWidth1: source1.sourceSize.width
-          property real imageHeight1: source1.sourceSize.height
-          property real imageWidth2: source2 ? source2.sourceSize.width : 0.0
-          property real imageHeight2: source2 ? source2.sourceSize.height : 0.0
+          property real imageWidth1: root._currentImageWidth > 0 ? root._currentImageWidth : source1.sourceSize.width
+          property real imageHeight1: root._currentImageHeight > 0 ? root._currentImageHeight : source1.sourceSize.height
+          property real imageWidth2: source2 ? (root._nextImageWidth > 0 ? root._nextImageWidth : source2.sourceSize.width) : 0.0
+          property real imageHeight2: source2 ? (root._nextImageHeight > 0 ? root._nextImageHeight : source2.sourceSize.height) : 0.0
           property real screenWidth: width
           property real screenHeight: height
 
@@ -370,10 +386,10 @@ Variants {
           // Fill mode properties
           property real fillMode: root.fillMode
           property vector4d fillColor: root.fillColor
-          property real imageWidth1: source1.sourceSize.width
-          property real imageHeight1: source1.sourceSize.height
-          property real imageWidth2: source2 ? source2.sourceSize.width : 0.0
-          property real imageHeight2: source2 ? source2.sourceSize.height : 0.0
+          property real imageWidth1: root._currentImageWidth > 0 ? root._currentImageWidth : source1.sourceSize.width
+          property real imageHeight1: root._currentImageHeight > 0 ? root._currentImageHeight : source1.sourceSize.height
+          property real imageWidth2: source2 ? (root._nextImageWidth > 0 ? root._nextImageWidth : source2.sourceSize.width) : 0.0
+          property real imageHeight2: source2 ? (root._nextImageHeight > 0 ? root._nextImageHeight : source2.sourceSize.height) : 0.0
           property real screenWidth: width
           property real screenHeight: height
 
@@ -401,10 +417,10 @@ Variants {
           // Fill mode properties
           property real fillMode: root.fillMode
           property vector4d fillColor: root.fillColor
-          property real imageWidth1: source1.sourceSize.width
-          property real imageHeight1: source1.sourceSize.height
-          property real imageWidth2: source2 ? source2.sourceSize.width : 0.0
-          property real imageHeight2: source2 ? source2.sourceSize.height : 0.0
+          property real imageWidth1: root._currentImageWidth > 0 ? root._currentImageWidth : source1.sourceSize.width
+          property real imageHeight1: root._currentImageHeight > 0 ? root._currentImageHeight : source1.sourceSize.height
+          property real imageWidth2: source2 ? (root._nextImageWidth > 0 ? root._nextImageWidth : source2.sourceSize.width) : 0.0
+          property real imageHeight2: source2 ? (root._nextImageHeight > 0 ? root._nextImageHeight : source2.sourceSize.height) : 0.0
           property real screenWidth: width
           property real screenHeight: height
 
@@ -435,10 +451,10 @@ Variants {
           // Fill mode properties
           property real fillMode: root.fillMode
           property vector4d fillColor: root.fillColor
-          property real imageWidth1: source1.sourceSize.width
-          property real imageHeight1: source1.sourceSize.height
-          property real imageWidth2: source2 ? source2.sourceSize.width : 0.0
-          property real imageHeight2: source2 ? source2.sourceSize.height : 0.0
+          property real imageWidth1: root._currentImageWidth > 0 ? root._currentImageWidth : source1.sourceSize.width
+          property real imageHeight1: root._currentImageHeight > 0 ? root._currentImageHeight : source1.sourceSize.height
+          property real imageWidth2: source2 ? (root._nextImageWidth > 0 ? root._nextImageWidth : source2.sourceSize.width) : 0.0
+          property real imageHeight2: source2 ? (root._nextImageHeight > 0 ? root._nextImageHeight : source2.sourceSize.height) : 0.0
           property real screenWidth: width
           property real screenHeight: height
 
@@ -473,6 +489,12 @@ Variants {
           const tempSource = nextWallpaper.source;
           currentWallpaper.source = tempSource;
           transitionProgress = 0.0;
+
+          // Promote next image dimensions to current
+          _currentImageWidth = _nextImageWidth;
+          _currentImageHeight = _nextImageHeight;
+          _nextImageWidth = 0;
+          _nextImageHeight = 0;
 
           // Now clear nextWallpaper after currentWallpaper has the new source
           // Force complete cleanup to free texture memory
@@ -529,7 +551,7 @@ Variants {
           return;
         }
 
-        const initialSize = _getMaxCacheSize();
+        const initialSize = _getMaxCacheSizeForOrientation();
         ImageCacheService.getLarge(wallpaperPath, initialSize.width, initialSize.height, function (cachedPath, success) {
           if (success) {
             futureWallpaper = cachedPath;
@@ -561,7 +583,7 @@ Variants {
           return;
         }
 
-        const cacheSize = _getMaxCacheSize();
+        const cacheSize = _getMaxCacheSizeForOrientation();
         ImageCacheService.getLarge(originalPath, cacheSize.width, cacheSize.height, function (cachedPath, success) {
           // Ignore stale callback if we've moved on to a different wallpaper
           if (originalPath !== transitioningToOriginalPath) {
@@ -599,6 +621,8 @@ Variants {
         if (isSolidSource) {
           var colorStr = WallpaperService.getSolidColor(source);
           _solidColor1 = colorStr;
+          _currentImageWidth = 0;
+          _currentImageHeight = 0;
           // Clear image sources for memory efficiency
           currentWallpaper.source = "";
           nextWallpaper.source = "";
@@ -610,8 +634,22 @@ Variants {
 
         // Clear nextWallpaper to free texture memory
         nextWallpaper.source = "";
+        _nextImageWidth = 0;
+        _nextImageHeight = 0;
 
+        _currentImageWidth = 0;
+        _currentImageHeight = 0;
         currentWallpaper.source = "";
+
+        // Fetch actual file dimensions for accurate fill-mode UV math in shaders.
+        // Runs concurrently with image loading; falls back to sourceSize until resolved.
+        const _immediateDimPath = source;
+        ImageCacheService.getImageDimensions(_immediateDimPath, function (w, h) {
+          if (w > 0)
+            _currentImageWidth = w;
+          if (h > 0)
+            _currentImageHeight = h;
+        });
 
         Qt.callLater(() => {
                        currentWallpaper.source = source;
@@ -651,6 +689,10 @@ Variants {
           _solidColor1 = _solidColor2;
           const newCurrentSource = nextWallpaper.source;
           currentWallpaper.source = newCurrentSource;
+          _currentImageWidth = _nextImageWidth;
+          _currentImageHeight = _nextImageHeight;
+          _nextImageWidth = 0;
+          _nextImageHeight = 0;
 
           // Now clear nextWallpaper after current has the new source
           Qt.callLater(() => {
@@ -675,6 +717,8 @@ Variants {
         if (isSolidSource) {
           var colorStr = WallpaperService.getSolidColor(source);
           _solidColor2 = colorStr;
+          _nextImageWidth = 0;
+          _nextImageHeight = 0;
           // No image to load, start transition immediately
           nextWallpaper.source = "";
           if (!wallpaperReady) {
@@ -684,6 +728,16 @@ Variants {
           transitionAnimation.start();
         } else {
           nextWallpaper.source = source;
+          _nextImageWidth = 0;
+          _nextImageHeight = 0;
+          // Fetch actual file dimensions concurrently with image load
+          const _transitionDimPath = source;
+          ImageCacheService.getImageDimensions(_transitionDimPath, function (w, h) {
+            if (w > 0)
+              _nextImageWidth = w;
+            if (h > 0)
+              _nextImageHeight = h;
+          });
           if (nextWallpaper.status === Image.Ready) {
             if (!wallpaperReady) {
               wallpaperReady = true;
