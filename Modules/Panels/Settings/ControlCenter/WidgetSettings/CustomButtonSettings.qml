@@ -26,8 +26,9 @@ ColumnLayout {
     property string onMiddleClicked: (widgetData && widgetData.onMiddleClicked !== undefined) ? widgetData.onMiddleClicked : (widgetMetadata && widgetMetadata.onMiddleClicked ? widgetMetadata.onMiddleClicked : "")
     property ListModel _stateChecksListModel: ListModel {}
     property string stateChecksJson: "[]"
-    property string generalTooltipText: (widgetData && widgetData.generalTooltipText !== undefined) ? widgetData.generalTooltipText : (widgetMetadata && widgetMetadata.generalTooltipText ? widgetMetadata.generalTooltipText : "Custom Button")
+    property string generalTooltipText: (widgetData && widgetData.generalTooltipText !== undefined) ? widgetData.generalTooltipText : (widgetMetadata && widgetMetadata.generalTooltipText ? widgetMetadata.generalTooltipText : "")
     property bool enableOnStateLogic: (widgetData && widgetData.enableOnStateLogic !== undefined) ? widgetData.enableOnStateLogic : (widgetMetadata && widgetMetadata.enableOnStateLogic !== undefined ? widgetMetadata.enableOnStateLogic : false)
+    property bool showExecTooltip: (widgetData && widgetData.showExecTooltip !== undefined) ? widgetData.showExecTooltip : (widgetMetadata && widgetMetadata.showExecTooltip !== undefined ? widgetMetadata.showExecTooltip : true)
 
     function populateStateChecks() {
       try {
@@ -71,7 +72,8 @@ ColumnLayout {
         "onMiddleClicked": _settings.onMiddleClicked,
         "stateChecksJson": _settings.stateChecksJson,
         "generalTooltipText": _settings.generalTooltipText,
-        "enableOnStateLogic": _settings.enableOnStateLogic
+        "enableOnStateLogic": _settings.enableOnStateLogic,
+        "showExecTooltip": _settings.showExecTooltip
       };
     }
   }
@@ -100,7 +102,7 @@ ColumnLayout {
 
     NLabel {
       label: I18n.tr("common.icon")
-      description: I18n.tr("bar.custom-button.icon-description")
+      description: I18n.tr("panels.control-center.shortcuts-custom-button-icon-description")
     }
 
     NIcon {
@@ -137,10 +139,21 @@ ColumnLayout {
     }
   }
 
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("panels.control-center.shortcuts-custom-button-show-exec-tooltip-label")
+    description: I18n.tr("panels.control-center.shortcuts-custom-button-show-exec-tooltip-description")
+    checked: _settings.showExecTooltip
+    onToggled: checked => {
+                 _settings.showExecTooltip = checked;
+                 saveSettings();
+               }
+  }
+
   NTextInput {
     Layout.fillWidth: true
     label: I18n.tr("panels.control-center.shortcuts-custom-button-on-clicked-label")
-    description: I18n.tr("bar.custom-button.left-click-description")
+    description: I18n.tr("panels.control-center.shortcuts-custom-button-on-clicked-description")
     placeholderText: I18n.tr("placeholders.enter-command")
     text: _settings.onClicked
     onEditingFinished: {
@@ -152,7 +165,7 @@ ColumnLayout {
   NTextInput {
     Layout.fillWidth: true
     label: I18n.tr("panels.control-center.shortcuts-custom-button-on-right-clicked-label")
-    description: I18n.tr("bar.custom-button.right-click-description")
+    description: I18n.tr("panels.control-center.shortcuts-custom-button-on-right-clicked-description")
     placeholderText: I18n.tr("placeholders.enter-command")
     text: _settings.onRightClicked
     onEditingFinished: {
@@ -164,7 +177,7 @@ ColumnLayout {
   NTextInput {
     Layout.fillWidth: true
     label: I18n.tr("panels.control-center.shortcuts-custom-button-on-middle-clicked-label")
-    description: I18n.tr("bar.custom-button.middle-click-description")
+    description: I18n.tr("panels.control-center.shortcuts-custom-button-on-middle-clicked-description")
     placeholderText: I18n.tr("placeholders.enter-command")
     text: _settings.onMiddleClicked
     onEditingFinished: {
