@@ -7,12 +7,12 @@ import subprocess
 import sys
 import time
 # flake8: noqa: E501 # Line too long
-version = "0.0.2"
+version = "0.0.2-1"
 
 
 def log(msg) -> None:
     sys.stdout.write(f"[pair] {msg}\n")
-    sys.stdout.flush()  # Additional flush to ensure the message is passed
+    sys.stdout.flush()  # Flush to ensure the message is passed
 
 
 def pair_fast():
@@ -113,17 +113,14 @@ def pair_fast():
             expected_pin: list[str] = ["Enter passkey", "Enter PIN code", "Passkey: "]
             if any(e in out for e in expected_pin):
                 log("Device requested PIN/Passkey. Waiting for user input...")
-                log("PIN_REQUIRED")
+                log("PIN_REQUIRED")  # Signal to service, to prompt user.
 
                 try:
                     # Read PIN from stdin (blocking)
                     user_pin = sys.stdin.readline().strip()
                     if user_pin:
-                        log(f"Sending PIN: {user_pin}")
+                        log(f"Received PIN: {user_pin}, relaying to bluetoothctl...")
                         send_command(user_pin)
-                    else:
-                        log("Empty PIN received. Aborting.")
-                        break
                 except Exception as e:
                     log(f"Error reading stdin: {e}")
                     break
