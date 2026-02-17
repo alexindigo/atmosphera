@@ -482,7 +482,7 @@ Singleton {
     id: pairingProcess
     stdout: SplitParser {
       onRead: data => {
-        Logger.d("Bluetooth", data)
+        Logger.d("Bluetooth", data);
         if (data.indexOf("PIN_REQUIRED") !== -1) {
           root.pinRequired = true;
           Logger.i("Bluetooth", "PIN required for pairing");
@@ -500,8 +500,8 @@ Singleton {
       root.requestCtlPoll();
     }
     environment: ({
-      "LC_ALL": "C"
-    })
+                    "LC_ALL": "C"
+                  })
   }
 
   // Pair using bluetoothctl which registers its own BlueZ agent internally.
