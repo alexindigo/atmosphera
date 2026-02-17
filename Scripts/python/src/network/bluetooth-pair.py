@@ -7,10 +7,12 @@ import subprocess
 import sys
 import time
 # flake8: noqa: E501 # Line too long
+version = "0.0.2"
 
 
 def log(msg) -> None:
     sys.stdout.write(f"[pair] {msg}\n")
+    sys.stdout.flush()  # Additional flush to ensure the message is passed
 
 
 def pair_fast():
@@ -88,6 +90,13 @@ def pair_fast():
         out = read_output(timeout=0.5)
         if out:
             print(out, end='')
+            # Device not found yet
+            device_not_discovered: list[str] = [f"Device {addr} not available"]
+            if any(e in out for e in device_not_discovered):
+                log(f"Device {addr} is discovered yet...")
+                pair_wait_seconds += 30  # Add additional time for device discovery
+
+            # Confirm Passkey
             # Numberic Comparison (NC) 1 of 4 - Tested pairing with my iPhone.
             expected_confirmation: list[str] = ["Confirm passkey", "yes/no", "Request confirmation"]
             if any(e in out for e in expected_confirmation):
@@ -101,7 +110,7 @@ def pair_fast():
                 send_command("yes")
 
             # Interactive PIN/Passkey Entry (Device displays code, User must enter on PC)
-            expected_pin: list[str] = ["Enter passkey", "Enter PIN code", "Passkey:"]
+            expected_pin: list[str] = ["Enter passkey", "Enter PIN code", "Passkey: "]
             if any(e in out for e in expected_pin):
                 log("Device requested PIN/Passkey. Waiting for user input...")
                 log("PIN_REQUIRED")
