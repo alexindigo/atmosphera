@@ -129,6 +129,7 @@ Singleton {
                                     "showIcon": true,
                                     "showExecTooltip": true,
                                     "showTextTooltip": true,
+                                    "generalTooltipText": "",
                                     "hideMode": "alwaysExpanded",
                                     "leftClickExec": "",
                                     "leftClickUpdateText": false,

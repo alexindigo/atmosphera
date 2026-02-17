@@ -103,6 +103,8 @@
       "dynamic-text": "Dynamic text",
       "enable-colorization-description": "Enable colorization for the custom button icon and text, applying theme colors.",
       "enable-colorization-label": "Enable colorization",
+      "general-tooltip-text-description": "Custom text to display in the button's tooltip.",
+      "general-tooltip-text-label": "Custom tooltip text",
       "hide-mode-always-expanded": "Always expanded",
       "hide-mode-description": "Controls widget visibility when the command has no output.",
       "hide-mode-expand-with-output": "Expand when has output",
