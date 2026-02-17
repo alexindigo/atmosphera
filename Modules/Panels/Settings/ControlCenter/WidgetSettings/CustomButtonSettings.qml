@@ -13,6 +13,7 @@ ColumnLayout {
 
   property var widgetData: null
   property var widgetMetadata: null
+  property var rootSettings: null
 
   signal settingsChanged(var settings)
 
@@ -50,28 +51,48 @@ ColumnLayout {
     }
 
     Component.onCompleted: {
+      root.rootSettings = _settings;
       stateChecksJson = (widgetData && widgetData.stateChecksJson !== undefined) ? widgetData.stateChecksJson : (widgetMetadata && widgetMetadata.stateChecksJson ? widgetMetadata.stateChecksJson : "[]");
       Qt.callLater(populateStateChecks);
+    }
+
+    function saveSettings() {
+      var savedStateChecksArray = [];
+      for (var i = 0; i < _settings._stateChecksListModel.count; i++) {
+        savedStateChecksArray.push(_settings._stateChecksListModel.get(i));
+      }
+      _settings.stateChecksJson = JSON.stringify(savedStateChecksArray);
+
+      return {
+        "id": widgetData.id,
+        "icon": _settings.icon,
+        "onClicked": _settings.onClicked,
+        "onRightClicked": _settings.onRightClicked,
+        "onMiddleClicked": _settings.onMiddleClicked,
+        "stateChecksJson": _settings.stateChecksJson,
+        "generalTooltipText": _settings.generalTooltipText,
+        "enableOnStateLogic": _settings.enableOnStateLogic
+      };
     }
   }
 
   function saveSettings() {
-    var savedStateChecksArray = [];
-    for (var i = 0; i < _settings._stateChecksListModel.count; i++) {
-      savedStateChecksArray.push(_settings._stateChecksListModel.get(i));
-    }
-    _settings.stateChecksJson = JSON.stringify(savedStateChecksArray);
+    return _settings.saveSettings();
+  }
 
-    return {
-      "id": widgetData.id,
-      "icon": _settings.icon,
-      "onClicked": _settings.onClicked,
-      "onRightClicked": _settings.onRightClicked,
-      "onMiddleClicked": _settings.onMiddleClicked,
-      "stateChecksJson": _settings.stateChecksJson,
-      "generalTooltipText": _settings.generalTooltipText,
-      "enableOnStateLogic": _settings.enableOnStateLogic
-    };
+  function updateStateCheck(index, command, icon) {
+    _settings._stateChecksListModel.set(index, { "command": command, "icon": icon });
+    _settings.saveSettings();
+  }
+
+  function removeStateCheck(index) {
+    _settings._stateChecksListModel.remove(index);
+    _settings.saveSettings();
+  }
+
+  function addStateCheck() {
+    _settings._stateChecksListModel.append({ "command": "", "icon": "" });
+    _settings.saveSettings();
   }
 
   RowLayout {
@@ -168,7 +189,7 @@ ColumnLayout {
 
   ColumnLayout {
     Layout.fillWidth: true
-    visible: _settings.enableOnStateLogic
+    visible: root.rootSettings && root.rootSettings.enableOnStateLogic
     spacing: (Style?.marginM ?? 8) * 2
 
     NLabel {
@@ -176,7 +197,7 @@ ColumnLayout {
     }
 
     Repeater {
-      model: _settings._stateChecksListModel
+      model: root.rootSettings ? root.rootSettings._stateChecksListModel : null
       delegate: Item {
         property int currentIndex: index
 
@@ -193,11 +214,7 @@ ColumnLayout {
             placeholderText: I18n.tr("panels.control-center.shortcuts-custom-button-state-checks-command")
             text: model.command
             onEditingFinished: {
-              _settings._stateChecksListModel.set(currentIndex, {
-                                                    "command": text,
-                                                    "icon": model.icon
-                                                  });
-              saveSettings();
+              updateStateCheck(currentIndex, text, model.icon);
             }
           }
 
@@ -228,8 +245,7 @@ ColumnLayout {
               colorBgHover: Qt.alpha(Color.mError, Style.opacityMedium)
               colorFgHover: Color.mOnError
               onClicked: {
-                _settings._stateChecksListModel.remove(currentIndex);
-                saveSettings();
+                removeStateCheck(currentIndex);
               }
             }
           }
@@ -239,18 +255,14 @@ ColumnLayout {
           id: iconPickerDelegate
           initialIcon: model.icon
           onIconSelected: function (iconName) {
-            _settings._stateChecksListModel.set(currentIndex, {
-                                                  "command": model.command,
-                                                  "icon": iconName
-                                                });
-            saveSettings();
+            updateStateCheck(currentIndex, model.command, iconName);
           }
         }
 
         NDivider {
           id: divider
           anchors.bottom: parent.bottom
-          visible: index < _settings._stateChecksListModel.count - 1 // Only show divider if not the last item
+          visible: index < (root.rootSettings ? root.rootSettings._stateChecksListModel.count : 0) - 1 // Only show divider if not the last item
         }
       }
     }
@@ -261,13 +273,7 @@ ColumnLayout {
 
       NButton {
         text: I18n.tr("panels.control-center.shortcuts-custom-button-state-checks-add")
-        onClicked: {
-          _settings._stateChecksListModel.append({
-                                                   "command": "",
-                                                   "icon": ""
-                                                 });
-          saveSettings();
-        }
+        onClicked: addStateCheck()
       }
 
       Item {
