@@ -196,7 +196,7 @@ Item {
       id: connectedDevicesBox
       visible: root.connectedDevices.length > 0 && BluetoothService.enabled
       Layout.fillWidth: true
-      Layout.preferredHeight: connectedDevicesCol.implicitHeight + Style.marginXL
+      Layout.preferredHeight: connectedDevicesCol.implicitHeight + Style.margin2M
       border.color: showOnlyLists ? Style.boxBorderColor : "transparent"
 
       ColumnLayout {
@@ -226,7 +226,7 @@ Item {
       id: pairedDevicesBox
       visible: root.pairedDevices.length > 0 && BluetoothService.enabled
       Layout.fillWidth: true
-      Layout.preferredHeight: pairedDevicesCol.implicitHeight + Style.marginXL
+      Layout.preferredHeight: pairedDevicesCol.implicitHeight + Style.margin2M
       border.color: showOnlyLists ? Style.boxBorderColor : "transparent"
 
       ColumnLayout {
@@ -256,7 +256,7 @@ Item {
       id: availableDevicesBox
       visible: !root.showOnlyLists && root.unnamedAvailableDevices.length > 0 && BluetoothService.enabled
       Layout.fillWidth: true
-      Layout.preferredHeight: availableDevicesCol.implicitHeight + Style.marginXL
+      Layout.preferredHeight: availableDevicesCol.implicitHeight + Style.margin2M
       border.color: "transparent"
 
       ColumnLayout {
