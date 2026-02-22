@@ -153,7 +153,7 @@ Loader {
           return 0;
         const spacing = Style.marginS;
         const layoutLength = (iconSize * dockItemCount) + (spacing * Math.max(0, dockItemCount - 1));
-        const padded = layoutLength + Style.margin2XL * 6;
+        const padded = layoutLength + (showFrameIndicator ? Style.marginXL : Style.margin2XL * 6);
         return Math.min(padded, isVertical ? maxHeight : maxWidth);
       }
 
