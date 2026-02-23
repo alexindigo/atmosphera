@@ -249,63 +249,6 @@ Variants {
               return deltaY;
             }
 
-            // Background with border
-            Rectangle {
-              id: cardBackground
-              anchors.fill: parent
-              anchors.margins: notifWindow.shadowPadding
-              radius: Style.radiusL
-              border.color: Qt.alpha(Color.mOutline, Settings.data.notifications.backgroundOpacity || 1.0)
-              border.width: Style.borderS
-              color: Qt.alpha(Color.mSurface, Settings.data.notifications.backgroundOpacity || 1.0)
-
-              // Progress bar
-              Rectangle {
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: 2
-                color: "transparent"
-
-                Rectangle {
-                  id: progressBar
-                  readonly property real progressWidth: cardBackground.width - (2 * cardBackground.radius)
-                  height: parent.height
-                  x: cardBackground.radius + (progressWidth * (1 - model.progress)) / 2
-                  width: progressWidth * model.progress
-
-                  color: {
-                    var baseColor = model.urgency === 2 ? Color.mError : model.urgency === 0 ? Color.mOnSurface : Color.mPrimary;
-                    return Qt.alpha(baseColor, Settings.data.notifications.backgroundOpacity || 1.0);
-                  }
-
-                  antialiasing: true
-
-                  Behavior on width {
-                    enabled: !card.isRemoving
-                    NumberAnimation {
-                      duration: 100
-                      easing.type: Easing.Linear
-                    }
-                  }
-
-                  Behavior on x {
-                    enabled: !card.isRemoving
-                    NumberAnimation {
-                      duration: 100
-                      easing.type: Easing.Linear
-                    }
-                  }
-                }
-              }
-            }
-
-            NDropShadow {
-              anchors.fill: cardBackground
-              source: cardBackground
-              autoPaddingEnabled: true
-            }
-
             // Hover handling
             onHoverCountChanged: {
               if (hoverCount > 0) {
@@ -327,99 +270,6 @@ Variants {
               }
             }
 
-            // Right-click to dismiss
-            MouseArea {
-              id: cardDragArea
-              anchors.fill: cardBackground
-              acceptedButtons: Qt.LeftButton | Qt.RightButton
-              hoverEnabled: true
-              onEntered: card.hoverCount++
-              onExited: card.hoverCount--
-              onPressed: mouse => {
-                           if (mouse.button === Qt.LeftButton) {
-                             const globalPoint = cardDragArea.mapToGlobal(mouse.x, mouse.y);
-                             card.pressGlobalX = globalPoint.x;
-                             card.pressGlobalY = globalPoint.y;
-                             card.isSwiping = false;
-                             card.suppressClick = false;
-                           }
-                         }
-              onPositionChanged: mouse => {
-                                   if (!(mouse.buttons & Qt.LeftButton) || card.isRemoving)
-                                   return;
-                                   const globalPoint = cardDragArea.mapToGlobal(mouse.x, mouse.y);
-                                   const rawDeltaX = globalPoint.x - card.pressGlobalX;
-                                   const rawDeltaY = globalPoint.y - card.pressGlobalY;
-                                   const deltaX = card.clampSwipeDelta(rawDeltaX);
-                                   const deltaY = card.clampVerticalSwipeDelta(rawDeltaY);
-                                   if (!card.isSwiping) {
-                                     if (card.useVerticalSwipe) {
-                                       if (Math.abs(deltaY) < card.swipeStartThreshold)
-                                       return;
-                                       card.isSwiping = true;
-                                     } else {
-                                       if (Math.abs(deltaX) < card.swipeStartThreshold)
-                                       return;
-                                       card.isSwiping = true;
-                                     }
-                                   }
-                                   if (card.useVerticalSwipe) {
-                                     card.swipeOffset = 0;
-                                     card.swipeOffsetY = deltaY;
-                                   } else {
-                                     card.swipeOffset = deltaX;
-                                     card.swipeOffsetY = 0;
-                                   }
-                                 }
-              onReleased: mouse => {
-                            if (mouse.button === Qt.RightButton) {
-                              card.animateOut();
-                              if (Settings.data.notifications.clearDismissed) {
-                                NotificationService.removeFromHistory(notificationId);
-                              }
-                              return;
-                            }
-
-                            if (mouse.button !== Qt.LeftButton)
-                            return;
-
-                            if (card.isSwiping) {
-                              const dismissDistance = card.useVerticalSwipe ? Math.abs(card.swipeOffsetY) : Math.abs(card.swipeOffset);
-                              const threshold = card.useVerticalSwipe ? card.verticalSwipeDismissThreshold : card.swipeDismissThreshold;
-                              if (dismissDistance >= threshold) {
-                                card.dismissBySwipe();
-                                if (Settings.data.notifications.clearDismissed) {
-                                  NotificationService.removeFromHistory(notificationId);
-                                }
-                              } else {
-                                card.swipeOffset = 0;
-                                card.swipeOffsetY = 0;
-                              }
-                              card.suppressClick = true;
-                              card.isSwiping = false;
-                              return;
-                            }
-
-                            if (card.suppressClick)
-                            return;
-
-                            var actions = model.actionsJson ? JSON.parse(model.actionsJson) : [];
-                            var hasDefault = actions.some(function (a) {
-                              return a.identifier === "default";
-                            });
-                            if (hasDefault) {
-                              card.runAction("default", false);
-                            } else {
-                              NotificationService.focusSenderWindow(model.appName);
-                              card.animateOut();
-                            }
-                          }
-              onCanceled: {
-                card.isSwiping = false;
-                card.swipeOffset = 0;
-                card.swipeOffsetY = 0;
-              }
-            }
             // Animation setup
             function triggerEntryAnimation() {
               animInDelayTimer.stop();
@@ -569,74 +419,358 @@ Variants {
               }
             }
 
-            // Content
-            ColumnLayout {
-              id: notificationContent
-              visible: !notifWindow.isCompact
-              anchors.fill: cardBackground
-              anchors.margins: Style.marginM
-              spacing: Style.marginM
+            // Sub item with the right dimensions, really usefull for the
+            // HoverHandler: card items are overlapping because of the
+            // negative spacing of notificationStack.
+            Item {
+              id: displayedCard
 
-              HoverHandler {
-                onHoveredChanged: hovered ? card.hoverCount++ : card.hoverCount--
+              anchors.fill: parent
+              anchors.margins: notifWindow.shadowPadding
+
+              // Right-click to dismiss
+              MouseArea {
+                id: cardDragArea
+                anchors.fill: cardBackground
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                hoverEnabled: true
+                onEntered: card.hoverCount++
+                onExited: card.hoverCount--
+                onPressed: mouse => {
+                             if (mouse.button === Qt.LeftButton) {
+                               const globalPoint = cardDragArea.mapToGlobal(mouse.x, mouse.y);
+                               card.pressGlobalX = globalPoint.x;
+                               card.pressGlobalY = globalPoint.y;
+                               card.isSwiping = false;
+                               card.suppressClick = false;
+                             }
+                           }
+                onPositionChanged: mouse => {
+                                     if (!(mouse.buttons & Qt.LeftButton) || card.isRemoving)
+                                     return;
+                                     const globalPoint = cardDragArea.mapToGlobal(mouse.x, mouse.y);
+                                     const rawDeltaX = globalPoint.x - card.pressGlobalX;
+                                     const rawDeltaY = globalPoint.y - card.pressGlobalY;
+                                     const deltaX = card.clampSwipeDelta(rawDeltaX);
+                                     const deltaY = card.clampVerticalSwipeDelta(rawDeltaY);
+                                     if (!card.isSwiping) {
+                                       if (card.useVerticalSwipe) {
+                                         if (Math.abs(deltaY) < card.swipeStartThreshold)
+                                         return;
+                                         card.isSwiping = true;
+                                       } else {
+                                         if (Math.abs(deltaX) < card.swipeStartThreshold)
+                                         return;
+                                         card.isSwiping = true;
+                                       }
+                                     }
+                                     if (card.useVerticalSwipe) {
+                                       card.swipeOffset = 0;
+                                       card.swipeOffsetY = deltaY;
+                                     } else {
+                                       card.swipeOffset = deltaX;
+                                       card.swipeOffsetY = 0;
+                                     }
+                                   }
+                onReleased: mouse => {
+                              if (mouse.button === Qt.RightButton) {
+                                card.animateOut();
+                                if (Settings.data.notifications.clearDismissed) {
+                                  NotificationService.removeFromHistory(notificationId);
+                                }
+                                return;
+                              }
+
+                              if (mouse.button !== Qt.LeftButton)
+                              return;
+
+                              if (card.isSwiping) {
+                                const dismissDistance = card.useVerticalSwipe ? Math.abs(card.swipeOffsetY) : Math.abs(card.swipeOffset);
+                                const threshold = card.useVerticalSwipe ? card.verticalSwipeDismissThreshold : card.swipeDismissThreshold;
+                                if (dismissDistance >= threshold) {
+                                  card.dismissBySwipe();
+                                  if (Settings.data.notifications.clearDismissed) {
+                                    NotificationService.removeFromHistory(notificationId);
+                                  }
+                                } else {
+                                  card.swipeOffset = 0;
+                                  card.swipeOffsetY = 0;
+                                }
+                                card.suppressClick = true;
+                                card.isSwiping = false;
+                                return;
+                              }
+
+                              if (card.suppressClick)
+                              return;
+
+                              var actions = model.actionsJson ? JSON.parse(model.actionsJson) : [];
+                              var hasDefault = actions.some(function (a) {
+                                return a.identifier === "default";
+                              });
+                              if (hasDefault) {
+                                card.runAction("default", false);
+                              } else {
+                                NotificationService.focusSenderWindow(model.appName);
+                                card.animateOut();
+                              }
+                            }
+                onCanceled: {
+                  card.isSwiping = false;
+                  card.swipeOffset = 0;
+                  card.swipeOffsetY = 0;
+                }
               }
 
+              // Background with border
+              Rectangle {
+                id: cardBackground
+                anchors.fill: parent
+                radius: Style.radiusL
+                border.color: Qt.alpha(Color.mOutline, Settings.data.notifications.backgroundOpacity || 1.0)
+                border.width: Style.borderS
+                color: Qt.alpha(Color.mSurface, Settings.data.notifications.backgroundOpacity || 1.0)
+
+                // Progress bar
+                Rectangle {
+                  anchors.top: parent.top
+                  anchors.left: parent.left
+                  anchors.right: parent.right
+                  height: 2
+                  color: "transparent"
+
+                  Rectangle {
+                    id: progressBar
+                    readonly property real progressWidth: cardBackground.width - (2 * cardBackground.radius)
+                    height: parent.height
+                    x: cardBackground.radius + (progressWidth * (1 - model.progress)) / 2
+                    width: progressWidth * model.progress
+
+                    color: {
+                      var baseColor = model.urgency === 2 ? Color.mError : model.urgency === 0 ? Color.mOnSurface : Color.mPrimary;
+                      return Qt.alpha(baseColor, Settings.data.notifications.backgroundOpacity || 1.0);
+                    }
+
+                    antialiasing: true
+
+                    Behavior on width {
+                      enabled: !card.isRemoving
+                      NumberAnimation {
+                        duration: 100
+                        easing.type: Easing.Linear
+                      }
+                    }
+
+                    Behavior on x {
+                      enabled: !card.isRemoving
+                      NumberAnimation {
+                        duration: 100
+                        easing.type: Easing.Linear
+                      }
+                    }
+                  }
+                }
+              }
+
+              NDropShadow {
+                anchors.fill: cardBackground
+                source: cardBackground
+                autoPaddingEnabled: true
+              }
+
+              // Content
+              ColumnLayout {
+                id: notificationContent
+                visible: !notifWindow.isCompact
+                anchors.fill: cardBackground
+                anchors.margins: Style.marginM
+                spacing: Style.marginM
+
+                HoverHandler {
+                  onHoveredChanged: hovered ? card.hoverCount++ : card.hoverCount--
+                }
+
+                RowLayout {
+                  Layout.fillWidth: true
+                  spacing: Style.marginL
+                  Layout.leftMargin: Style.marginM
+                  Layout.rightMargin: Style.marginM
+                  Layout.topMargin: Style.marginM
+                  Layout.bottomMargin: Style.marginM
+
+                  NImageRounded {
+                    Layout.preferredWidth: Math.round(40 * Style.uiScaleRatio)
+                    Layout.preferredHeight: Math.round(40 * Style.uiScaleRatio)
+                    Layout.alignment: Qt.AlignVCenter
+                    radius: Math.min(Style.radiusL, Layout.preferredWidth / 2)
+                    imagePath: model.originalImage || ""
+                    borderColor: "transparent"
+                    borderWidth: 0
+                    fallbackIcon: "bell"
+                    fallbackIconSize: 24
+                  }
+
+                  ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: Style.marginS
+
+                    // Header with urgency indicator
+                    RowLayout {
+                      Layout.fillWidth: true
+                      spacing: Style.marginS
+
+                      Rectangle {
+                        Layout.preferredWidth: 6
+                        Layout.preferredHeight: 6
+                        Layout.alignment: Qt.AlignVCenter
+                        radius: Style.radiusXS
+                        color: model.urgency === 2 ? Color.mError : model.urgency === 0 ? Color.mOnSurface : Color.mPrimary
+                      }
+
+                      NText {
+                        text: model.appName || "Unknown App"
+                        pointSize: Style.fontSizeXS
+                        font.weight: Style.fontWeightBold
+                        color: Color.mSecondary
+                      }
+
+                      NText {
+                        textFormat: Text.PlainText
+                        text: " " + Time.formatRelativeTime(model.timestamp)
+                        pointSize: Style.fontSizeXXS
+                        color: Color.mOnSurfaceVariant
+                        Layout.alignment: Qt.AlignBottom
+                      }
+
+                      Item {
+                        Layout.fillWidth: true
+                      }
+                    }
+
+                    NText {
+                      text: model.summary || I18n.tr("common.no-summary")
+                      pointSize: Style.fontSizeM
+                      font.weight: Style.fontWeightMedium
+                      color: Color.mOnSurface
+                      textFormat: Text.StyledText
+                      wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                      maximumLineCount: 3
+                      elide: Text.ElideRight
+                      visible: text.length > 0
+                      Layout.fillWidth: true
+                      Layout.rightMargin: Style.marginM
+                    }
+
+                    NText {
+                      text: model.body || ""
+                      pointSize: Style.fontSizeM
+                      color: Color.mOnSurface
+                      textFormat: Text.StyledText
+                      wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+
+                      maximumLineCount: 5
+                      elide: Text.ElideRight
+                      visible: text.length > 0
+                      Layout.fillWidth: true
+                      Layout.rightMargin: Style.marginXL
+                    }
+
+                    // Actions
+                    Flow {
+                      Layout.fillWidth: true
+                      spacing: Style.marginS
+                      Layout.topMargin: Style.marginM
+                      flow: Flow.LeftToRight
+
+                      property string parentNotificationId: notificationId
+                      property var parsedActions: {
+                        try {
+                          return model.actionsJson ? JSON.parse(model.actionsJson) : [];
+                        } catch (e) {
+                          return [];
+                        }
+                      }
+                      visible: parsedActions.length > 0
+
+                      Repeater {
+                        model: parent.parsedActions
+
+                        delegate: NButton {
+                          property var actionData: modelData
+
+                          onEntered: card.hoverCount++
+                          onExited: card.hoverCount--
+
+                          text: {
+                            var actionText = actionData.text || "Open";
+                            if (actionText.includes(",")) {
+                              return actionText.split(",")[1] || actionText;
+                            }
+                            return actionText;
+                          }
+                          fontSize: Style.fontSizeS
+                          backgroundColor: Color.mPrimary
+                          textColor: hovered ? Color.mOnHover : Color.mOnPrimary
+                          hoverColor: Color.mHover
+                          outlined: false
+                          implicitHeight: 24
+                          onClicked: {
+                            card.runAction(actionData.identifier, false);
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+
+              // Close button
+              NIconButton {
+                visible: !notifWindow.isCompact
+                icon: "close"
+                tooltipText: I18n.tr("tooltips.dismiss-notification")
+                baseSize: Style.baseWidgetSize * 0.6
+                anchors.top: cardBackground.top
+                anchors.topMargin: Style.marginXL
+                anchors.right: cardBackground.right
+                anchors.rightMargin: Style.marginXL
+
+                HoverHandler {
+                  onHoveredChanged: hovered ? card.hoverCount++ : card.hoverCount--
+                }
+
+                onClicked: {
+                  card.runAction("", true);
+                }
+              }
+
+              // Compact content
               RowLayout {
-                Layout.fillWidth: true
-                spacing: Style.marginL
-                Layout.leftMargin: Style.marginM
-                Layout.rightMargin: Style.marginM
-                Layout.topMargin: Style.marginM
-                Layout.bottomMargin: Style.marginM
+                id: compactContent
+                visible: notifWindow.isCompact
+                anchors.fill: cardBackground
+                anchors.margins: Style.marginM
+                spacing: Style.marginS
+
+                HoverHandler {
+                  onHoveredChanged: hovered ? card.hoverCount++ : card.hoverCount--
+                }
 
                 NImageRounded {
-                  Layout.preferredWidth: Math.round(40 * Style.uiScaleRatio)
-                  Layout.preferredHeight: Math.round(40 * Style.uiScaleRatio)
+                  Layout.preferredWidth: Math.round(24 * Style.uiScaleRatio)
+                  Layout.preferredHeight: Math.round(24 * Style.uiScaleRatio)
                   Layout.alignment: Qt.AlignVCenter
-                  radius: Math.min(Style.radiusL, Layout.preferredWidth / 2)
+                  radius: Style.radiusXS
                   imagePath: model.originalImage || ""
                   borderColor: "transparent"
                   borderWidth: 0
                   fallbackIcon: "bell"
-                  fallbackIconSize: 24
+                  fallbackIconSize: 16
                 }
 
                 ColumnLayout {
                   Layout.fillWidth: true
-                  spacing: Style.marginS
-
-                  // Header with urgency indicator
-                  RowLayout {
-                    Layout.fillWidth: true
-                    spacing: Style.marginS
-
-                    Rectangle {
-                      Layout.preferredWidth: 6
-                      Layout.preferredHeight: 6
-                      Layout.alignment: Qt.AlignVCenter
-                      radius: Style.radiusXS
-                      color: model.urgency === 2 ? Color.mError : model.urgency === 0 ? Color.mOnSurface : Color.mPrimary
-                    }
-
-                    NText {
-                      text: model.appName || "Unknown App"
-                      pointSize: Style.fontSizeXS
-                      font.weight: Style.fontWeightBold
-                      color: Color.mSecondary
-                    }
-
-                    NText {
-                      textFormat: Text.PlainText
-                      text: " " + Time.formatRelativeTime(model.timestamp)
-                      pointSize: Style.fontSizeXXS
-                      color: Color.mOnSurfaceVariant
-                      Layout.alignment: Qt.AlignBottom
-                    }
-
-                    Item {
-                      Layout.fillWidth: true
-                    }
-                  }
+                  spacing: Style.marginXS
 
                   NText {
                     text: model.summary || I18n.tr("common.no-summary")
@@ -644,146 +778,22 @@ Variants {
                     font.weight: Style.fontWeightMedium
                     color: Color.mOnSurface
                     textFormat: Text.StyledText
-                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                    maximumLineCount: 3
+                    maximumLineCount: 1
                     elide: Text.ElideRight
-                    visible: text.length > 0
                     Layout.fillWidth: true
-                    Layout.rightMargin: Style.marginM
                   }
 
                   NText {
+                    visible: model.body && model.body.length > 0
+                    Layout.fillWidth: true
                     text: model.body || ""
-                    pointSize: Style.fontSizeM
-                    color: Color.mOnSurface
+                    pointSize: Style.fontSizeS
+                    color: Color.mOnSurfaceVariant
                     textFormat: Text.StyledText
-                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-
-                    maximumLineCount: 5
+                    wrapMode: Text.Wrap
+                    maximumLineCount: 2
                     elide: Text.ElideRight
-                    visible: text.length > 0
-                    Layout.fillWidth: true
-                    Layout.rightMargin: Style.marginXL
                   }
-
-                  // Actions
-                  Flow {
-                    Layout.fillWidth: true
-                    spacing: Style.marginS
-                    Layout.topMargin: Style.marginM
-                    flow: Flow.LeftToRight
-
-                    property string parentNotificationId: notificationId
-                    property var parsedActions: {
-                      try {
-                        return model.actionsJson ? JSON.parse(model.actionsJson) : [];
-                      } catch (e) {
-                        return [];
-                      }
-                    }
-                    visible: parsedActions.length > 0
-
-                    Repeater {
-                      model: parent.parsedActions
-
-                      delegate: NButton {
-                        property var actionData: modelData
-
-                        onEntered: card.hoverCount++
-                        onExited: card.hoverCount--
-
-                        text: {
-                          var actionText = actionData.text || "Open";
-                          if (actionText.includes(",")) {
-                            return actionText.split(",")[1] || actionText;
-                          }
-                          return actionText;
-                        }
-                        fontSize: Style.fontSizeS
-                        backgroundColor: Color.mPrimary
-                        textColor: hovered ? Color.mOnHover : Color.mOnPrimary
-                        hoverColor: Color.mHover
-                        outlined: false
-                        implicitHeight: 24
-                        onClicked: {
-                          card.runAction(actionData.identifier, false);
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-
-            // Close button
-            NIconButton {
-              visible: !notifWindow.isCompact
-              icon: "close"
-              tooltipText: I18n.tr("tooltips.dismiss-notification")
-              baseSize: Style.baseWidgetSize * 0.6
-              anchors.top: cardBackground.top
-              anchors.topMargin: Style.marginXL
-              anchors.right: cardBackground.right
-              anchors.rightMargin: Style.marginXL
-
-              HoverHandler {
-                onHoveredChanged: hovered ? card.hoverCount++ : card.hoverCount--
-              }
-
-              onClicked: {
-                card.runAction("", true);
-              }
-            }
-
-            // Compact content
-            RowLayout {
-              id: compactContent
-              visible: notifWindow.isCompact
-              anchors.fill: cardBackground
-              anchors.margins: Style.marginM
-              spacing: Style.marginS
-
-              HoverHandler {
-                onHoveredChanged: hovered ? card.hoverCount++ : card.hoverCount--
-              }
-
-              NImageRounded {
-                Layout.preferredWidth: Math.round(24 * Style.uiScaleRatio)
-                Layout.preferredHeight: Math.round(24 * Style.uiScaleRatio)
-                Layout.alignment: Qt.AlignVCenter
-                radius: Style.radiusXS
-                imagePath: model.originalImage || ""
-                borderColor: "transparent"
-                borderWidth: 0
-                fallbackIcon: "bell"
-                fallbackIconSize: 16
-              }
-
-              ColumnLayout {
-                Layout.fillWidth: true
-                spacing: Style.marginXS
-
-                NText {
-                  text: model.summary || I18n.tr("common.no-summary")
-                  pointSize: Style.fontSizeM
-                  font.weight: Style.fontWeightMedium
-                  color: Color.mOnSurface
-                  textFormat: Text.StyledText
-                  maximumLineCount: 1
-                  elide: Text.ElideRight
-                  Layout.fillWidth: true
-                }
-
-                NText {
-                  visible: model.body && model.body.length > 0
-                  Layout.fillWidth: true
-                  text: model.body || ""
-                  pointSize: Style.fontSizeS
-                  color: Color.mOnSurfaceVariant
-                  textFormat: Text.StyledText
-                  wrapMode: Text.Wrap
-                  maximumLineCount: 2
-                  elide: Text.ElideRight
                 }
               }
             }
