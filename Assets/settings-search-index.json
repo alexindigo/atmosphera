@@ -520,18 +520,18 @@
     "subTab": null
   },
   {
-    "labelKey": "panels.display.monitors-brightness-step-label",
-    "descriptionKey": "panels.display.monitors-brightness-step-description",
-    "widget": "NSpinBox",
+    "labelKey": "panels.display.monitors-backlight-device-label",
+    "descriptionKey": "panels.display.monitors-backlight-device-description",
+    "widget": "NComboBox",
     "tab": 14,
     "tabLabel": "panels.display.title",
     "subTab": 0,
     "subTabLabel": "common.brightness"
   },
   {
-    "labelKey": "panels.display.monitors-backlight-device-label",
-    "descriptionKey": "panels.display.monitors-backlight-device-description",
-    "widget": "NComboBox",
+    "labelKey": "panels.display.monitors-brightness-step-label",
+    "descriptionKey": "panels.display.monitors-brightness-step-description",
+    "widget": "NSpinBox",
     "tab": 14,
     "tabLabel": "panels.display.title",
     "subTab": 0,

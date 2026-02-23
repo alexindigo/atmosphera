@@ -1007,7 +1007,7 @@
     },
     "display": {
       "monitors-backlight-device-auto-option": "Standard",
-      "monitors-backlight-device-description": "Välj en bakgrundsbelysningsenhet för den här utgången.",
+      "monitors-backlight-device-description": "Välj en bakgrundsbelysningsenhet för denna utgång.",
       "monitors-backlight-device-label": "Bakgrundsbelysningsenhet",
       "monitors-brightness-step-description": "Justera stegstorleken för ljusstyrkeändringar (rullhjul och kortkommandon).",
       "monitors-brightness-step-label": "Ljusstyrkestegstorlek",

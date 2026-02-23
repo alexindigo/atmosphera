@@ -1007,7 +1007,7 @@
     },
     "display": {
       "monitors-backlight-device-auto-option": "デフォルト",
-      "monitors-backlight-device-description": "この出力に使用するバックライトデバイスを選択します。",
+      "monitors-backlight-device-description": "この出力のバックライトデバイスを選択してください。",
       "monitors-backlight-device-label": "バックライトデバイス",
       "monitors-brightness-step-description": "明るさの変化量（スクロールホイールやショートカットキー）を調整します。",
       "monitors-brightness-step-label": "明るさの調整ステップ",

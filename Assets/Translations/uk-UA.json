@@ -1007,8 +1007,8 @@
     },
     "display": {
       "monitors-backlight-device-auto-option": "За замовчуванням",
-      "monitors-backlight-device-description": "Виберіть пристрій підсвітки для цього виходу.",
-      "monitors-backlight-device-label": "Пристрій підсвітки",
+      "monitors-backlight-device-description": "Виберіть пристрій підсвічування для цього виходу.",
+      "monitors-backlight-device-label": "Пристрій Підсвічування",
       "monitors-brightness-step-description": "Налаштуйте крок зміни яскравості (колесо миші та гарячі клавіші).",
       "monitors-brightness-step-label": "Крок зміни яскравості",
       "monitors-brightness-unavailable-ddc-disabled": "Регулювання яскравості недоступне. Увімкніть \"Підтримку зовнішньої яскравості\", щоб керувати яскравістю цього дисплея.",

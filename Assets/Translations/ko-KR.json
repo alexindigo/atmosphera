@@ -1007,7 +1007,7 @@
     },
     "display": {
       "monitors-backlight-device-auto-option": "기본값",
-      "monitors-backlight-device-description": "이 출력에 사용할 백라이트 장치를 선택하세요.",
+      "monitors-backlight-device-description": "이 출력에 대한 백라이트 장치를 선택하세요.",
       "monitors-backlight-device-label": "백라이트 장치",
       "monitors-brightness-step-description": "밝기 변경(스크롤 휠 및 키보드 단축키)의 단계 크기를 조정합니다.",
       "monitors-brightness-step-label": "밝기 단계 크기",

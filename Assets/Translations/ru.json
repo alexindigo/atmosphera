@@ -1007,8 +1007,8 @@
     },
     "display": {
       "monitors-backlight-device-auto-option": "По умолчанию",
-      "monitors-backlight-device-description": "Выберите устройство подсветки для этого выхода.",
-      "monitors-backlight-device-label": "Устройство подсветки",
+      "monitors-backlight-device-description": "Выберите устройство подсветки для этого вывода.",
+      "monitors-backlight-device-label": "Устройство Подсветки",
       "monitors-brightness-step-description": "Настройка шага изменения яркости (колесо прокрутки и сочетания клавиш).",
       "monitors-brightness-step-label": "Шаг изменения яркости",
       "monitors-brightness-unavailable-ddc-disabled": "Управление яркостью недоступно. Включите \"Поддержка внешней яркости\", чтобы управлять яркостью этого дисплея.",
