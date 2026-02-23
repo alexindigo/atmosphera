@@ -37,7 +37,7 @@ PopupWindow {
   property real menuMinWidth: 120
   property real menuMaxWidth: 360
   property real menuMaxHeight: Math.max(180, Math.min(420, Math.round((targetScreen ? targetScreen.height : 600) * 0.3)))
-  property int separatorCompactHeight: 8
+  property int separatorCompactHeight: Style.borderS + Style.margin2S
   property string forcedGroupMenuMode: ""
   readonly property int separatorIndex: {
     for (let i = 0; i < root.items.length; i++) {
@@ -49,7 +49,7 @@ PopupWindow {
   readonly property bool splitExtendedLayout: separatorIndex >= 0
   readonly property var scrollItems: splitExtendedLayout ? root.items.slice(0, separatorIndex) : root.items
   readonly property var fixedItems: splitExtendedLayout ? root.items.slice(separatorIndex + 1) : []
-  readonly property real menuInnerHeight: Math.max(0, implicitHeight - Style.marginXL)
+  readonly property real menuInnerHeight: Math.max(0, implicitHeight - Style.margin2M)
   readonly property real fixedActionsHeight: listHeight(fixedItems)
   readonly property real separatorBlockHeight: splitExtendedLayout ? separatorCompactHeight : 0
   readonly property real scrollAreaHeight: splitExtendedLayout ? Math.max(0, menuInnerHeight - fixedActionsHeight - separatorBlockHeight) : menuInnerHeight
@@ -709,12 +709,14 @@ PopupWindow {
     }
 
     Rectangle {
+      id: separator
       visible: root.splitExtendedLayout
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.top: menuFlick.bottom
       anchors.leftMargin: Style.marginS
       anchors.rightMargin: Style.marginS
+      anchors.topMargin: Style.marginS
       height: Style.borderS
       color: Qt.alpha(Color.mOutline, 0.7)
       radius: Style.radiusXS
@@ -728,15 +730,16 @@ PopupWindow {
       anchors.bottom: parent.bottom
       anchors.leftMargin: Style.marginM
       anchors.rightMargin: Style.marginM
+      anchors.topMargin: Style.marginS
       anchors.bottomMargin: Style.marginM
-      anchors.top: menuFlick.bottom
-      anchors.topMargin: root.separatorBlockHeight
+      anchors.top: separator.bottom
       spacing: 0
 
       Repeater {
         model: root.fixedItems
 
         Rectangle {
+          id: fixedItemRect
           readonly property int globalIndex: root.fixedItemGlobalIndex(index)
           width: fixedColumn.width
           height: root.rowHeightForItem(modelData)
@@ -755,7 +758,7 @@ PopupWindow {
             NIcon {
               icon: modelData.icon
               pointSize: Style.fontSizeL
-              color: root.hoveredItem === parent.globalIndex ? Color.mOnHover : Color.mOnSurfaceVariant
+              color: root.hoveredItem === fixedItemRect.globalIndex ? Color.mOnHover : Color.mOnSurfaceVariant
               visible: icon !== ""
               anchors.verticalCenter: parent.verticalCenter
             }
@@ -763,7 +766,7 @@ PopupWindow {
             NText {
               text: modelData.text
               pointSize: Style.fontSizeS
-              color: root.hoveredItem === parent.globalIndex ? Color.mOnHover : Color.mOnSurfaceVariant
+              color: root.hoveredItem === fixedItemRect.globalIndex ? Color.mOnHover : Color.mOnSurfaceVariant
               anchors.verticalCenter: parent.verticalCenter
               width: fixedRowLayout.width - ((modelData.icon && modelData.icon !== "") ? (Style.fontSizeL + Style.marginS) : 0)
               elide: Text.ElideRight
