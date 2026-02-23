@@ -10,6 +10,7 @@ ColumnLayout {
   id: root
   spacing: Style.marginL
   Layout.fillWidth: true
+  enabled: Settings.data.notifications.enabled
 
   signal openUnifiedPicker
   signal openLowPicker

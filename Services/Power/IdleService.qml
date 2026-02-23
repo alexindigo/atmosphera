@@ -20,8 +20,7 @@ import qs.Services.UI
 * IdleMonitor instances are created with Qt.createQmlObject() so the shell
 * does not crash on compositors that lack the protocol.
 *
-* Timeouts come from Settings.data.idle (in minutes). 0 = disabled.
-* NOTE: IdleMonitor.timeout is in seconds.
+* Timeouts come from Settings.data.idle (in seconds). 0 = disabled.
 */
 Singleton {
   id: root
@@ -41,6 +40,7 @@ Singleton {
   property var _lockMonitor: null
   property var _suspendMonitor: null
   property var _heartbeatMonitor: null
+  property var _customMonitors: ({})
 
   // Signals for external listeners (plugins, modules)
   signal screenOffRequested
@@ -130,16 +130,76 @@ Singleton {
     function onEnabledChanged() {
       root._applyTimeouts();
     }
+    function onCustomCommandsChanged() {
+      root._applyCustomMonitors();
+    }
   }
 
   function _applyTimeouts() {
     const idle = Settings.data.idle;
     const globalEnabled = idle.enabled;
 
-    _setMonitor("screenOff", globalEnabled ? idle.screenOffTimeout * 60 : 0);
-    _setMonitor("lock", globalEnabled ? idle.lockTimeout * 60 : 0);
-    _setMonitor("suspend", globalEnabled ? idle.suspendTimeout * 60 : 0);
+    _setMonitor("screenOff", globalEnabled ? idle.screenOffTimeout : 0);
+    _setMonitor("lock", globalEnabled ? idle.lockTimeout : 0);
+    _setMonitor("suspend", globalEnabled ? idle.suspendTimeout : 0);
     _ensureHeartbeat();
+    _applyCustomMonitors();
+  }
+
+  function _applyCustomMonitors() {
+    // Destroy all existing custom monitors
+    for (var key in _customMonitors) {
+      if (_customMonitors[key]) {
+        _customMonitors[key].destroy();
+      }
+    }
+    root._customMonitors = {};
+
+    const idle = Settings.data.idle;
+    if (!idle.enabled)
+      return;
+
+    var entries = [];
+    try {
+      entries = JSON.parse(idle.customCommands);
+    } catch (e) {
+      Logger.w("IdleService", "Failed to parse customCommands:", e);
+      return;
+    }
+
+    var newMonitors = {};
+    for (var i = 0; i < entries.length; i++) {
+      const entry = entries[i];
+      const timeoutSec = parseInt(entry.timeout);
+      const cmd = entry.command;
+      if (!cmd || timeoutSec <= 0)
+        continue;
+      try {
+        const qml = `
+          import Quickshell.Wayland
+          IdleMonitor { timeout: ${timeoutSec} }
+        `;
+
+        const monitor = Qt.createQmlObject(qml, root, "IdleMonitor_custom_" + i);
+        const capturedCmd = cmd;
+        monitor.isIdleChanged.connect(function () {
+          if (monitor.isIdle) {
+            root._executeCustomCommand(capturedCmd);
+          }
+        });
+        newMonitors[i] = monitor;
+        root._monitorsCreated = true;
+        Logger.i("IdleService", "Custom monitor " + i + " created, timeout", timeoutSec, "s");
+      } catch (e) {
+        Logger.w("IdleService", "Failed to create custom monitor " + i + ":", e);
+      }
+    }
+    root._customMonitors = newMonitors;
+  }
+
+  function _executeCustomCommand(cmd) {
+    Logger.i("IdleService", "Executing custom command:", cmd);
+    Quickshell.execDetached(["sh", "-c", cmd]);
   }
 
   function _setMonitor(stage, timeoutSec) {
@@ -198,6 +258,7 @@ Singleton {
       const monitor = Qt.createQmlObject(qml, root, "IdleMonitor_heartbeat");
       monitor.isIdleChanged.connect(function () {
         if (monitor.isIdle) {
+          root.idleSeconds = 1;
           idleCounter.start();
         } else {
           idleCounter.stop();

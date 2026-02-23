@@ -8,6 +8,7 @@ ColumnLayout {
   id: root
   spacing: Style.marginL
   Layout.fillWidth: true
+  enabled: Settings.data.notifications.enabled
 
   NToggle {
     label: I18n.tr("panels.notifications.duration-respect-expire-label")

@@ -932,7 +932,8 @@
     "widget": "NToggle",
     "tab": 13,
     "tabLabel": "common.idle",
-    "subTab": null
+    "subTab": 0,
+    "subTabLabel": "panels.idle.tab-behavior"
   },
   {
     "labelKey": "panels.idle.status-label",
@@ -940,7 +941,8 @@
     "widget": "NLabel",
     "tab": 13,
     "tabLabel": "common.idle",
-    "subTab": null
+    "subTab": 0,
+    "subTabLabel": "panels.idle.tab-behavior"
   },
   {
     "labelKey": "panels.idle.timeouts-label",
@@ -948,7 +950,8 @@
     "widget": "NLabel",
     "tab": 13,
     "tabLabel": "common.idle",
-    "subTab": null
+    "subTab": 0,
+    "subTabLabel": "panels.idle.tab-behavior"
   },
   {
     "labelKey": "panels.idle.screen-off-label",
@@ -956,7 +959,8 @@
     "widget": "NSpinBox",
     "tab": 13,
     "tabLabel": "common.idle",
-    "subTab": null
+    "subTab": 0,
+    "subTabLabel": "panels.idle.tab-behavior"
   },
   {
     "labelKey": "panels.idle.lock-label",
@@ -964,7 +968,8 @@
     "widget": "NSpinBox",
     "tab": 13,
     "tabLabel": "common.idle",
-    "subTab": null
+    "subTab": 0,
+    "subTabLabel": "panels.idle.tab-behavior"
   },
   {
     "labelKey": "common.suspend",
@@ -972,7 +977,8 @@
     "widget": "NSpinBox",
     "tab": 13,
     "tabLabel": "common.idle",
-    "subTab": null
+    "subTab": 0,
+    "subTabLabel": "panels.idle.tab-behavior"
   },
   {
     "labelKey": "panels.idle.fade-duration-label",
@@ -980,7 +986,35 @@
     "widget": "NSpinBox",
     "tab": 13,
     "tabLabel": "common.idle",
-    "subTab": null
+    "subTab": 0,
+    "subTabLabel": "panels.idle.tab-behavior"
+  },
+  {
+    "labelKey": "panels.idle.custom-label",
+    "descriptionKey": "panels.idle.custom-description",
+    "widget": "NLabel",
+    "tab": 13,
+    "tabLabel": "common.idle",
+    "subTab": 1,
+    "subTabLabel": "panels.idle.tab-custom"
+  },
+  {
+    "labelKey": "panels.idle.custom-entry-timeout",
+    "descriptionKey": null,
+    "widget": "NSpinBox",
+    "tab": 13,
+    "tabLabel": "common.idle",
+    "subTab": 1,
+    "subTabLabel": "panels.idle.tab-custom"
+  },
+  {
+    "labelKey": "panels.idle.custom-entry-command",
+    "descriptionKey": null,
+    "widget": "NTextInput",
+    "tab": 13,
+    "tabLabel": "common.idle",
+    "subTab": 1,
+    "subTabLabel": "panels.idle.tab-custom"
   },
   {
     "labelKey": "panels.launcher.settings-clipboard-history-label",
