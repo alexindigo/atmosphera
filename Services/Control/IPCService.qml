@@ -499,6 +499,10 @@ Singleton {
                                             });
     }
 
+    function lock() {
+      CompositorService.lock();
+    }
+
     function lockAndSuspend() {
       CompositorService.lockAndSuspend();
     }

@@ -118,16 +118,17 @@ Singleton {
   * Uses --scheme flag to expand 14-color scheme to full 48-color palette
   * Uses debouncing to prevent spawning multiple processes when spamming scheme changes
   */
-  function processPredefinedScheme(schemeData, mode) {
+  function processPredefinedScheme(schemeData, mode, wallpaperPath) {
     pendingPredefinedRequest = {
       schemeData: schemeData,
-      mode: mode
+      mode: mode,
+      wallpaperPath: wallpaperPath || ""
     };
     pendingWallpaperRequest = null;
     debounceTimer.restart();
   }
 
-  function executePredefinedScheme(schemeData, mode) {
+  function executePredefinedScheme(schemeData, mode, wallpaperPath) {
     // 1. Handle terminal themes (runtime generation or pre-rendered file copy)
     handleTerminalThemes(schemeData, mode);
 
@@ -161,10 +162,12 @@ Singleton {
     // Run Python template processor with --scheme flag
     // Don't pass --mode so templates get both dark and light colors (e.g., zed.json needs both)
     // Pass --default-mode so "default" in templates resolves to the current theme mode
-    script += `python3 "${templateProcessorScript}" --scheme '${schemeJsonPathEsc}' --config '${configPathEsc}' --default-mode ${mode}\n`;
+    // Pass wallpaper as positional arg so image_path is available in templates (no extraction occurs when --scheme is used)
+    const wpArg = wallpaperPath ? `'${wallpaperPath.replace(/'/g, "'\\''")}'` : "";
+    script += `python3 "${templateProcessorScript}" ${wpArg} --scheme '${schemeJsonPathEsc}' --config '${configPathEsc}' --default-mode ${mode}\n`;
 
     // Add user templates if enabled
-    script += buildUserTemplateCommandForPredefined(schemeData, mode);
+    script += buildUserTemplateCommandForPredefined(schemeData, mode, wallpaperPath);
 
     generateProcess.command = ["sh", "-c", script];
     generateProcess.running = true;
@@ -515,7 +518,7 @@ Singleton {
     return script;
   }
 
-  function buildUserTemplateCommandForPredefined(schemeData, mode) {
+  function buildUserTemplateCommandForPredefined(schemeData, mode, wallpaperPath) {
     if (!Settings.data.templates.enableUserTheming)
       return "";
 
@@ -523,13 +526,15 @@ Singleton {
 
     // Reuse the scheme JSON already written by processPredefinedScheme()
     const schemeJsonPathEsc = schemeJsonPath.replace(/'/g, "'\\''");
+    const wpArg = wallpaperPath ? `'${wallpaperPath.replace(/'/g, "'\\''")}'` : "";
 
     let script = "\n# Execute user templates with predefined scheme colors\n";
     script += `if [ -f '${userConfigPath}' ]; then\n`;
     // Use --scheme flag with the already-written scheme JSON
     // Don't pass --mode so user templates get both dark and light colors
     // Pass --default-mode so "default" in templates resolves to the current theme mode
-    script += `  python3 "${templateProcessorScript}" --scheme '${schemeJsonPathEsc}' --config '${userConfigPath}' --default-mode ${mode}\n`;
+    // Pass wallpaper as positional arg so image_path is available in templates
+    script += `  python3 "${templateProcessorScript}" ${wpArg} --scheme '${schemeJsonPathEsc}' --config '${userConfigPath}' --default-mode ${mode}\n`;
     script += "fi";
 
     return script;
@@ -551,7 +556,7 @@ Singleton {
     } else if (pendingPredefinedRequest) {
       const req = pendingPredefinedRequest;
       pendingPredefinedRequest = null;
-      executePredefinedScheme(req.schemeData, req.mode);
+      executePredefinedScheme(req.schemeData, req.mode, req.wallpaperPath);
     } else {
       Logger.d("TemplateProcessor", "executePendingRequest: no pending request");
     }
