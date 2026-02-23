@@ -830,6 +830,8 @@
       "appearance-use-separate-opacity-label": "Użyj osobnej przezroczystości słupków",
       "appearance-widget-spacing-description": "Dostosuj odstępy między każdym widżetem na pasku.",
       "appearance-widget-spacing-label": "Odstępy między widżetami",
+      "appearance-content-padding-description": "Dostosuj odstęp między krawędziami paska a widżetami.",
+      "appearance-content-padding-label": "Odstęp treści",
       "monitor-configure-widgets": "Skonfiguruj widżety",
       "monitor-override-settings": "Zastąp ustawienia globalne",
       "monitor-override-settings-description": "Użyj niestandardowych ustawień dla tego monitora.",

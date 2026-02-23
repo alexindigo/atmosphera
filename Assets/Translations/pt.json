@@ -830,6 +830,8 @@
       "appearance-use-separate-opacity-label": "Usar opacidade separada para as barras",
       "appearance-widget-spacing-description": "Ajusta o espaçamento entre cada widget na barra.",
       "appearance-widget-spacing-label": "Espaçamento de widgets",
+      "appearance-content-padding-description": "Ajusta o espaçamento entre as bordas da barra e os widgets.",
+      "appearance-content-padding-label": "Espaçamento do conteúdo",
       "monitor-configure-widgets": "Configurar widgets",
       "monitor-override-settings": "Substituir configurações globais",
       "monitor-override-settings-description": "Usar definições personalizadas para este monitor.",

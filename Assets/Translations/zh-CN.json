@@ -830,6 +830,8 @@
       "appearance-use-separate-opacity-label": "使用单独的状态栏不透明度",
       "appearance-widget-spacing-description": "调整栏中每个小部件之间的间距。",
       "appearance-widget-spacing-label": "小部件间距",
+      "appearance-content-padding-description": "调整栏边缘与小部件之间的内边距。",
+      "appearance-content-padding-label": "内容内边距",
       "monitor-configure-widgets": "配置小部件",
       "monitor-override-settings": "覆盖全局设置",
       "monitor-override-settings-description": "为此显示器使用自定义设置。",

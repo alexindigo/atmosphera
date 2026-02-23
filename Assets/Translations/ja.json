@@ -830,6 +830,8 @@
       "appearance-use-separate-opacity-label": "バーの不透明度を個別に設定",
       "appearance-widget-spacing-description": "バー内の各ウィジェット間の間隔を調整します。",
       "appearance-widget-spacing-label": "ウィジェットの間隔",
+      "appearance-content-padding-description": "バーの端とウィジェット間のパディングを調整します。",
+      "appearance-content-padding-label": "コンテンツパディング",
       "monitor-configure-widgets": "ウィジェットを設定",
       "monitor-override-settings": "グローバル設定を上書き",
       "monitor-override-settings-description": "このモニターにカスタム設定を使用する。",

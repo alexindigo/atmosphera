@@ -830,6 +830,8 @@
       "appearance-use-separate-opacity-label": "Використовувати окрему прозорість стовпців",
       "appearance-widget-spacing-description": "Налаштуйте інтервал між кожним віджетом на панелі.",
       "appearance-widget-spacing-label": "Відстань між віджетами",
+      "appearance-content-padding-description": "Налаштуйте відступ між краями панелі та віджетами.",
+      "appearance-content-padding-label": "Відступ вмісту",
       "monitor-configure-widgets": "Налаштувати віджети",
       "monitor-override-settings": "Перевизначити глобальні налаштування",
       "monitor-override-settings-description": "Використовувати власні налаштування для цього монітора.",
