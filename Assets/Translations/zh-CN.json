@@ -370,6 +370,7 @@
   },
   "common": {
     "actions": "操作",
+    "active": "活跃",
     "add": "添加",
     "appearance": "外观",
     "apply": "应用",
@@ -486,6 +487,8 @@
     "scanning": "扫描中...",
     "screen-corners": "屏幕边角",
     "search": "搜索",
+    "second": "{count} 秒",
+    "second-plural": "{count} 秒",
     "secondary": "辅助",
     "security": "安全",
     "select": "选择",
@@ -985,6 +988,8 @@
       "media-player-show-buttons-label": "显示按钮",
       "media-player-show-visualizer-description": "显示音频可视化叠加层。",
       "media-player-visualizer-type-description": "选择桌面媒体播放器的背景可视化类型。",
+      "overview-enabled-description": "当合成器概览打开时，显示桌面小部件。",
+      "overview-enabled-label": "在概览中显示",
       "system-stat-layout-bottom": "底部",
       "system-stat-layout-description": "选择图例相对于图表的显示方式。",
       "system-stat-layout-label": "布局",
@@ -1182,6 +1187,22 @@
       "wallpaper-changed-description": "壁纸更改时执行的命令。",
       "wallpaper-changed-label": "壁纸已更改",
       "wallpaper-changed-placeholder": "例如：notify-send \"壁纸\" \"已更改\""
+    },
+    "idle": {
+      "enable-description": "在一段时间不活动后，自动关闭屏幕、锁定或休眠。",
+      "enable-label": "启用空闲管理",
+      "fade-duration-description": "每次操作触发前，屏幕渐变为黑的动画持续时间（秒）。任何鼠标移动都会取消渐变。",
+      "fade-duration-label": "淡入淡出时长",
+      "lock-description": "锁屏激活前的非活动分钟数。",
+      "lock-label": "锁定屏幕",
+      "screen-off-description": "显示器关闭前的不活动分钟数。",
+      "screen-off-label": "关闭屏幕",
+      "status-description": "Compositor报告的空闲时间。",
+      "status-label": "空闲时间",
+      "suspend-description": "系统挂起前的非活动分钟数。",
+      "timeouts-description": "设置为0以禁用一个阶段。Keep Awake激活时，超时会暂停。",
+      "timeouts-label": "超时",
+      "unavailable": "此 Compositor 不支持原生空闲监控。"
     },
     "indicator": {
       "default-value": "默认值：{value}",

@@ -370,6 +370,7 @@
   },
   "common": {
     "actions": "Acties",
+    "active": "Actief",
     "add": "Toevoegen",
     "appearance": "Uiterlijk",
     "apply": "Toepassen",
@@ -486,6 +487,8 @@
     "scanning": "Scannen...",
     "screen-corners": "Schermhoeken",
     "search": "Zoeken",
+    "second": "{count} seconde",
+    "second-plural": "{count} seconden",
     "secondary": "Secundair",
     "security": "Beveiliging",
     "select": "Selecteer",
@@ -985,6 +988,8 @@
       "media-player-show-buttons-label": "Knoppen weergeven",
       "media-player-show-visualizer-description": "Toon de audio-visualisatie overlay.",
       "media-player-visualizer-type-description": "Kies een visualisatietype voor de achtergrond van de desktop mediaplayer.",
+      "overview-enabled-description": "Toon desktopwidgets terwijl het compositor-overzicht geopend is.",
+      "overview-enabled-label": "Tonen in overzicht",
       "system-stat-layout-bottom": "Onder",
       "system-stat-layout-description": "Kies hoe de legenda wordt weergegeven ten opzichte van de grafiek.",
       "system-stat-layout-label": "Indeling",
@@ -1182,6 +1187,22 @@
       "wallpaper-changed-description": "Commando dat wordt uitgevoerd wanneer de achtergrond verandert.",
       "wallpaper-changed-label": "Achtergrond gewijzigd",
       "wallpaper-changed-placeholder": "bijv. notify-send \"Achtergrond\" \"Gewijzigd\""
+    },
+    "idle": {
+      "enable-description": "Schakel het scherm automatisch uit, vergrendel of zet in slaapstand na een periode van inactiviteit.",
+      "enable-label": "Inactiviteitsbeheer inschakelen",
+      "fade-duration-description": "Seconden voor de fade-to-black animatie voordat elke actie wordt geactiveerd. Elke muisbeweging annuleert de fade.",
+      "fade-duration-label": "Vervagingsduur",
+      "lock-description": "Minuten van inactiviteit voordat het vergrendelscherm wordt geactiveerd.",
+      "lock-label": "Scherm vergrendelen",
+      "screen-off-description": "Minuten inactiviteit voordat monitoren worden uitgeschakeld.",
+      "screen-off-label": "Scherm uitschakelen",
+      "status-description": "Inactiviteitstijd zoals gerapporteerd door de Compositor.",
+      "status-label": "Inactiviteitstijd",
+      "suspend-description": "Minuten van inactiviteit voordat het systeem in slaapstand gaat.",
+      "timeouts-description": "Stel in op 0 om een fase uit te schakelen. Time-outs worden gepauzeerd zolang Keep Awake actief is.",
+      "timeouts-label": "Time-outs",
+      "unavailable": "Native inactiviteitsmonitoring is niet beschikbaar op deze Compositor."
     },
     "indicator": {
       "default-value": "Standaard: {value}",

@@ -370,6 +370,7 @@
   },
   "common": {
     "actions": "Aktionen",
+    "active": "Aktiv",
     "add": "Hinzufügen",
     "appearance": "Aussehen",
     "apply": "Anwenden",
@@ -486,6 +487,8 @@
     "scanning": "Scannen...",
     "screen-corners": "Bildschirmecken",
     "search": "Suche",
+    "second": "{count} Sekunde",
+    "second-plural": "{count} Sekunden",
     "secondary": "Sekundär",
     "security": "Sicherheit",
     "select": "Auswählen",
@@ -985,6 +988,8 @@
       "media-player-show-buttons-label": "Tasten anzeigen",
       "media-player-show-visualizer-description": "Audiovisualisierungs-Overlay anzeigen.",
       "media-player-visualizer-type-description": "Wählen Sie einen Visualisierungstyp für den Hintergrund des Desktop-Medienplayers.",
+      "overview-enabled-description": "Desktop-Widgets anzeigen, während die Compositor-Übersicht geöffnet ist.",
+      "overview-enabled-label": "In Übersicht anzeigen",
       "system-stat-layout-bottom": "Unten",
       "system-stat-layout-description": "Wählen Sie, wie die Legende relativ zum Diagramm angezeigt wird.",
       "system-stat-layout-label": "Layout",
@@ -1182,6 +1187,22 @@
       "wallpaper-changed-description": "Befehl, der ausgeführt wird, wenn sich das Hintergrundbild ändert.",
       "wallpaper-changed-label": "Hintergrundbild geändert",
       "wallpaper-changed-placeholder": "z.B. notify-send \"Hintergrundbild\" \"Geändert\""
+    },
+    "idle": {
+      "enable-description": "Automatisch den Bildschirm ausschalten, sperren oder in den Ruhezustand versetzen nach einer Zeit der Inaktivität.",
+      "enable-label": "Leerlaufverwaltung aktivieren",
+      "fade-duration-description": "Sekunden für die Schwarzblende-Animation, bevor jede Aktion ausgelöst wird. Jede Mausbewegung bricht die Überblendung ab.",
+      "fade-duration-label": "Einblenddauer",
+      "lock-description": "Minuten der Inaktivität, bevor der Sperrbildschirm aktiviert wird.",
+      "lock-label": "Bildschirmsperre",
+      "screen-off-description": "Minuten der Inaktivität, bevor Monitore ausgeschaltet werden.",
+      "screen-off-label": "Bildschirm ausschalten",
+      "status-description": "Leerlaufzeit, wie vom Compositor gemeldet.",
+      "status-label": "Leerlaufzeit",
+      "suspend-description": "Minuten der Inaktivität, bevor das System in den Ruhezustand geht.",
+      "timeouts-description": "Auf 0 setzen, um eine Stufe zu deaktivieren. Timeouts werden pausiert, während Keep Awake aktiv ist.",
+      "timeouts-label": "Zeitüberschreitungen",
+      "unavailable": "Native Leerlaufüberwachung ist auf diesem Compositor nicht verfügbar."
     },
     "indicator": {
       "default-value": "Standard: {value}",

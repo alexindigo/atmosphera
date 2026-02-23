@@ -370,6 +370,7 @@
   },
   "common": {
     "actions": "Действия",
+    "active": "Активный",
     "add": "Добавить",
     "appearance": "Внешний вид",
     "apply": "Применить",
@@ -486,6 +487,8 @@
     "scanning": "Сканирование...",
     "screen-corners": "Углы экрана",
     "search": "Поиск",
+    "second": "{count} секунда",
+    "second-plural": "{count} секунд",
     "secondary": "Вторичный",
     "security": "Безопасность",
     "select": "Выбрать",
@@ -985,6 +988,8 @@
       "media-player-show-buttons-label": "Показать кнопки",
       "media-player-show-visualizer-description": "Показать наложение аудиовизуализатора.",
       "media-player-visualizer-type-description": "Выберите тип визуализации для фона медиаплеера.",
+      "overview-enabled-description": "Показывать виджеты рабочего стола, пока обзор композитора открыт.",
+      "overview-enabled-label": "Показать в обзоре",
       "system-stat-layout-bottom": "Низ",
       "system-stat-layout-description": "Выберите, как отображается легенда относительно графика.",
       "system-stat-layout-label": "Макет",
@@ -1182,6 +1187,22 @@
       "wallpaper-changed-description": "Команда для выполнения при смене обоев.",
       "wallpaper-changed-label": "Обои изменены",
       "wallpaper-changed-placeholder": "напр. notify-send \"Обои\" \"Изменены\""
+    },
+    "idle": {
+      "enable-description": "Автоматически выключать экран, блокировать или приостанавливать работу после периода бездействия.",
+      "enable-label": "Включить управление бездействием",
+      "fade-duration-description": "Секунды для анимации затемнения перед выполнением каждого действия. Любое движение мыши отменяет затемнение.",
+      "fade-duration-label": "Длительность затухания",
+      "lock-description": "Минуты бездействия до активации экрана блокировки.",
+      "lock-label": "Заблокировать экран",
+      "screen-off-description": "Минуты бездействия до отключения мониторов.",
+      "screen-off-label": "Выключить экран",
+      "status-description": "Время простоя, сообщаемое Compositor.",
+      "status-label": "Время Простоя",
+      "suspend-description": "Минуты бездействия до приостановки работы системы.",
+      "timeouts-description": "Установите 0, чтобы отключить этап. Тайм-ауты приостанавливаются, пока Keep Awake активен.",
+      "timeouts-label": "Тайм-ауты",
+      "unavailable": "Нативный мониторинг бездействия недоступен на этом Compositorе."
     },
     "indicator": {
       "default-value": "По умолчанию: {value}",
