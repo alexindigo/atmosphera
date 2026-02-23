@@ -13,16 +13,19 @@ Singleton {
 
     // When the wallpaper changes, regenerate theme if necessary
     function onWallpaperChanged(screenName, path) {
-      if (!Settings.data.colorSchemes.useWallpaperColors)
-        return;
-
       var effectiveMonitor = Settings.data.colorSchemes.monitorForColors;
       if (effectiveMonitor === "" || effectiveMonitor === undefined) {
         effectiveMonitor = Screen.name;
       }
 
-      if (screenName === effectiveMonitor) {
+      if (screenName !== effectiveMonitor)
+        return;
+
+      if (Settings.data.colorSchemes.useWallpaperColors) {
         generateFromWallpaper();
+      } else {
+        // Re-run predefined scheme templates so {{image}} reflects the new wallpaper path
+        ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme);
       }
     }
   }
@@ -77,6 +80,11 @@ Singleton {
   function generateFromPredefinedScheme(schemeData) {
     Logger.i("AppThemeService", "Generating templates from predefined color scheme");
     const mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
-    TemplateProcessor.processPredefinedScheme(schemeData, mode);
+    var effectiveMonitor = Settings.data.colorSchemes.monitorForColors;
+    if (effectiveMonitor === "" || effectiveMonitor === undefined) {
+      effectiveMonitor = Screen.name;
+    }
+    const wallpaperPath = WallpaperService.getWallpaper(effectiveMonitor) || "";
+    TemplateProcessor.processPredefinedScheme(schemeData, mode, wallpaperPath);
   }
 }

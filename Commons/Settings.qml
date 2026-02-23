@@ -670,6 +670,8 @@ Singleton {
       property int brightnessStep: 5
       property bool enforceMinimum: true
       property bool enableDdcSupport: false
+      property list<var> backlightDeviceMappings: []
+      // Format: [{ "output": "eDP-1", "device": "/sys/class/backlight/intel_backlight" }]
     }
 
     property JsonObject colorSchemes: JsonObject {
@@ -719,9 +721,20 @@ Singleton {
       property bool autoUpdate: false
     }
 
+    // idle management
+    property JsonObject idle: JsonObject {
+      property bool enabled: false
+      property int screenOffTimeout: 0   // seconds, 0 = disabled
+      property int lockTimeout: 0        // seconds, 0 = disabled
+      property int suspendTimeout: 0     // seconds, 0 = disabled
+      property int fadeDuration: 5       // seconds of fade-to-black before action fires
+      property string customCommands: "[]" // JSON array of {timeout, command}
+    }
+
     // desktop widgets
     property JsonObject desktopWidgets: JsonObject {
       property bool enabled: false
+      property bool overviewEnabled: true
       property bool gridSnap: false
       property list<var> monitorWidgets: []
       // Format: [{ "name": "DP-1", "widgets": [...] }, { "name": "HDMI-1", "widgets": [...] }]

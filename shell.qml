@@ -110,6 +110,7 @@ ShellRoot {
           HooksService.init();
           BluetoothService.init();
           IdleInhibitorService.init();
+          IdleService.init();
           PowerProfileService.init();
           HostService.init();
           GitHubService.init();
@@ -145,6 +146,7 @@ ShellRoot {
       }
 
       LockScreen {}
+      FadeOverlay {}
 
       // Settings window mode (single window across all monitors)
       SettingsPanelWindow {}

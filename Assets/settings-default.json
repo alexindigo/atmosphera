@@ -460,7 +460,8 @@
   "brightness": {
     "brightnessStep": 5,
     "enforceMinimum": true,
-    "enableDdcSupport": false
+    "enableDdcSupport": false,
+    "backlightDeviceMappings": []
   },
   "colorSchemes": {
     "useWallpaperColors": false,
@@ -499,8 +500,16 @@
   "plugins": {
     "autoUpdate": false
   },
+  "idle": {
+    "enabled": false,
+    "screenOffTimeout": 0,
+    "lockTimeout": 0,
+    "suspendTimeout": 0,
+    "fadeDuration": 5
+  },
   "desktopWidgets": {
     "enabled": false,
+    "overviewEnabled": true,
     "gridSnap": false,
     "monitorWidgets": []
   }
