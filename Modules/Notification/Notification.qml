@@ -198,7 +198,7 @@ Variants {
 
             property string notificationId: model.id
             property var notificationData: model
-            property int hoverCount: 0
+            property bool isHovered: false
             property bool isRemoving: false
 
             readonly property int animationDelay: index * 100
@@ -249,34 +249,13 @@ Variants {
               return deltaY;
             }
 
-            // Hover handling
-            onHoverCountChanged: {
-              if (hoverCount > 0) {
-                resumeTimer.stop();
-                NotificationService.pauseTimeout(notificationId);
-              } else {
-                resumeTimer.start();
-              }
-            }
-
-            Timer {
-              id: resumeTimer
-              interval: 50
-              repeat: false
-              onTriggered: {
-                if (hoverCount === 0) {
-                  NotificationService.resumeTimeout(notificationId);
-                }
-              }
-            }
-
             // Animation setup
             function triggerEntryAnimation() {
               animInDelayTimer.stop();
               removalTimer.stop();
               resumeTimer.stop();
               isRemoving = false;
-              hoverCount = 0;
+              isHovered = false;
               isSwiping = false;
               swipeOffset = 0;
               swipeOffsetY = 0;
@@ -428,14 +407,35 @@ Variants {
               anchors.fill: parent
               anchors.margins: notifWindow.shadowPadding
 
+              HoverHandler {
+                onHoveredChanged: {
+                  isHovered = hovered;
+                  if (isHovered) {
+                    resumeTimer.stop();
+                    NotificationService.pauseTimeout(notificationId);
+                  } else {
+                    resumeTimer.start();
+                  }
+                }
+              }
+
+              Timer {
+                id: resumeTimer
+                interval: 50
+                repeat: false
+                onTriggered: {
+                  if (!isHovered) {
+                    NotificationService.resumeTimeout(notificationId);
+                  }
+                }
+              }
+
               // Right-click to dismiss
               MouseArea {
                 id: cardDragArea
                 anchors.fill: cardBackground
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 hoverEnabled: true
-                onEntered: card.hoverCount++
-                onExited: card.hoverCount--
                 onPressed: mouse => {
                              if (mouse.button === Qt.LeftButton) {
                                const globalPoint = cardDragArea.mapToGlobal(mouse.x, mouse.y);
@@ -586,10 +586,6 @@ Variants {
                 anchors.margins: Style.marginM
                 spacing: Style.marginM
 
-                HoverHandler {
-                  onHoveredChanged: hovered ? card.hoverCount++ : card.hoverCount--
-                }
-
                 RowLayout {
                   Layout.fillWidth: true
                   spacing: Style.marginL
@@ -698,9 +694,6 @@ Variants {
                         delegate: NButton {
                           property var actionData: modelData
 
-                          onEntered: card.hoverCount++
-                          onExited: card.hoverCount--
-
                           text: {
                             var actionText = actionData.text || "Open";
                             if (actionText.includes(",")) {
@@ -735,10 +728,6 @@ Variants {
                 anchors.right: cardBackground.right
                 anchors.rightMargin: Style.marginXL
 
-                HoverHandler {
-                  onHoveredChanged: hovered ? card.hoverCount++ : card.hoverCount--
-                }
-
                 onClicked: {
                   card.runAction("", true);
                 }
@@ -751,10 +740,6 @@ Variants {
                 anchors.fill: cardBackground
                 anchors.margins: Style.marginM
                 spacing: Style.marginS
-
-                HoverHandler {
-                  onHoveredChanged: hovered ? card.hoverCount++ : card.hoverCount--
-                }
 
                 NImageRounded {
                   Layout.preferredWidth: Math.round(24 * Style.uiScaleRatio)

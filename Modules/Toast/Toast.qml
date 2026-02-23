@@ -29,7 +29,7 @@ Item {
   scale: initialScale
 
   property real progress: 1.0
-  property int hoverCount: 0
+  property bool isHovered: false
   property real swipeOffset: 0
   property real swipeOffsetY: 0
   property real pressGlobalX: 0
@@ -64,14 +64,17 @@ Item {
     return deltaY;
   }
 
-  onHoverCountChanged: {
-    if (hoverCount > 0) {
-      resumeTimer.stop();
-      if (progressAnimation.running && !progressAnimation.paused) {
-        progressAnimation.pause();
+  HoverHandler {
+    onHoveredChanged: {
+      isHovered = hovered;
+      if (isHovered) {
+        resumeTimer.stop();
+        if (progressAnimation.running && !progressAnimation.paused) {
+          progressAnimation.pause();
+        }
+      } else {
+        resumeTimer.start();
       }
-    } else {
-      resumeTimer.start();
     }
   }
 
@@ -80,7 +83,7 @@ Item {
     interval: 50
     repeat: false
     onTriggered: {
-      if (hoverCount === 0 && progressAnimation.paused) {
+      if (!isHovered && progressAnimation.paused) {
         progressAnimation.resume();
       }
     }
@@ -218,12 +221,6 @@ Item {
     anchors.fill: background
     acceptedButtons: Qt.LeftButton
     hoverEnabled: true
-    onEntered: {
-      root.hoverCount++;
-    }
-    onExited: {
-      root.hoverCount--;
-    }
     onPressed: mouse => {
                  const globalPoint = toastDragArea.mapToGlobal(mouse.x, mouse.y);
                  root.pressGlobalX = globalPoint.x;
@@ -353,9 +350,6 @@ Item {
         outlined: false
         implicitHeight: 24
 
-        onEntered: root.hoverCount++
-        onExited: root.hoverCount--
-
         onClicked: {
           if (root.actionCallback) {
             root.actionCallback();
@@ -383,7 +377,7 @@ Item {
     opacity = 1.0;
     scale = 1.0;
     progress = 1.0;
-    hoverCount = 0;
+    isHovered = false;
     isSwiping = false;
     swipeOffset = 0;
     swipeOffsetY = 0;
