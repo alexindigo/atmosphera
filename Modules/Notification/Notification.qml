@@ -743,6 +743,10 @@ Variants {
               anchors.margins: Style.marginM
               spacing: Style.marginS
 
+              HoverHandler {
+                onHoveredChanged: hovered ? card.hoverCount++ : card.hoverCount--
+              }
+
               NImageRounded {
                 Layout.preferredWidth: Math.round(24 * Style.uiScaleRatio)
                 Layout.preferredHeight: Math.round(24 * Style.uiScaleRatio)
