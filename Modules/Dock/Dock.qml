@@ -102,7 +102,7 @@ Loader {
       readonly property int barHeight: Style.getBarHeightForScreen(modelData?.name)
       readonly property int peekEdgeLength: {
         const edgeSize = isVertical ? Math.round(modelData?.height || maxHeight) : Math.round(modelData?.width || maxWidth);
-        const minLength = Math.max(1, Math.round(edgeSize * 0.1));
+        const minLength = Math.max(1, Math.round(edgeSize * ((isStaticMode && Settings.data.dock.showFrameIndicator && Settings.data.bar.barType === "framed" && hasBar) ? 0.1 : 0.25)));
         return Math.max(minLength, frameIndicatorLength);
       }
       readonly property int peekCenterOffsetX: {
@@ -153,7 +153,7 @@ Loader {
           return 0;
         const spacing = Style.marginS;
         const layoutLength = (iconSize * dockItemCount) + (spacing * Math.max(0, dockItemCount - 1));
-        const padded = layoutLength + (showFrameIndicator ? Style.marginXL : Style.margin2XL * 6);
+        const padded = layoutLength + Style.marginXL;
         return Math.min(padded, isVertical ? maxHeight : maxWidth);
       }
 
