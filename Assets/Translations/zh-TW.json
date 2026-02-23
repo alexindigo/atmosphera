@@ -370,6 +370,7 @@
   },
   "common": {
     "actions": "操作",
+    "active": "活躍",
     "add": "新增",
     "appearance": "外觀",
     "apply": "套用",
@@ -486,6 +487,8 @@
     "scanning": "掃描中...",
     "screen-corners": "畫面邊角",
     "search": "搜尋",
+    "second": "{count} 秒",
+    "second-plural": "{count} 秒",
     "secondary": "輔助",
     "security": "安全",
     "select": "選取",
@@ -985,6 +988,8 @@
       "media-player-show-buttons-label": "顯示按鈕",
       "media-player-show-visualizer-description": "顯示視覺效果",
       "media-player-visualizer-type-description": "選擇視覺效果的樣式",
+      "overview-enabled-description": "當合成器概覽開啟時，顯示桌面小工具。",
+      "overview-enabled-label": "在概覽中顯示",
       "system-stat-layout-bottom": "底部",
       "system-stat-layout-description": "選擇圖例相對於圖表的顯示方式。",
       "system-stat-layout-label": "佈局",
@@ -1182,6 +1187,22 @@
       "wallpaper-changed-description": "在桌布更換時要執行的指令",
       "wallpaper-changed-label": "桌布更換時",
       "wallpaper-changed-placeholder": "例如: notify-send \"Wallpaper\" \"Changed\""
+    },
+    "idle": {
+      "enable-description": "在一段時間不活動後，自動關閉螢幕、鎖定或暫停。",
+      "enable-label": "啟用閒置管理",
+      "fade-duration-description": "每次操作觸發前，螢幕漸變為黑的動畫持續時間（秒）。任何滑鼠移動都會取消漸變。",
+      "fade-duration-label": "淡入淡出時長",
+      "lock-description": "鎖定畫面啟用前的閒置分鐘數。",
+      "lock-label": "鎖定螢幕",
+      "screen-off-description": "顯示器關閉前的閒置分鐘數。",
+      "screen-off-label": "關閉螢幕",
+      "status-description": "Compositor回報的閒置時間。",
+      "status-label": "閒置時間",
+      "suspend-description": "系統暫停前的非活動分鐘數。",
+      "timeouts-description": "設定為0以停用一個階段。Keep Awake啟用時，逾時會暫停。",
+      "timeouts-label": "逾時",
+      "unavailable": "此 Compositor 不支援原生閒置監控。"
     },
     "indicator": {
       "default-value": "預設值: {value}",

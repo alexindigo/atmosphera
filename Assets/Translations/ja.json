@@ -370,6 +370,7 @@
   },
   "common": {
     "actions": "アクション",
+    "active": "アクティブ",
     "add": "追加",
     "appearance": "外観",
     "apply": "適用",
@@ -486,6 +487,8 @@
     "scanning": "スキャン中...",
     "screen-corners": "画面の隅",
     "search": "検索",
+    "second": "{count} 秒",
+    "second-plural": "{count} 秒",
     "secondary": "セカンダリー",
     "security": "セキュリティ",
     "select": "選択",
@@ -985,6 +988,8 @@
       "media-player-show-buttons-label": "ボタンを表示",
       "media-player-show-visualizer-description": "オーディオビジュアライザーのオーバーレイを表示する。",
       "media-player-visualizer-type-description": "デスクトップメディアプレーヤーの背景に使用するビジュアライザーの種類を選択します。",
+      "overview-enabled-description": "コンポジターの概要が開いている間、デスクトップウィジェットを表示する。",
+      "overview-enabled-label": "概要に表示",
       "system-stat-layout-bottom": "下",
       "system-stat-layout-description": "凡例がグラフに対してどのように表示されるかを選択します。",
       "system-stat-layout-label": "レイアウト",
@@ -1182,6 +1187,22 @@
       "wallpaper-changed-description": "壁紙が変更された際に実行されるコマンド。",
       "wallpaper-changed-label": "壁紙変更時",
       "wallpaper-changed-placeholder": "例：notify-send \"Wallpaper\" \"Changed\""
+    },
+    "idle": {
+      "enable-description": "一定時間操作がない場合、自動的に画面をオフにする、ロックする、またはサスペンドする。",
+      "enable-label": "アイドル管理を有効にする",
+      "fade-duration-description": "各アクションが実行される前の、画面が暗転するアニメーションの秒数。マウスを動かすとフェードはキャンセルされます。",
+      "fade-duration-label": "フェード時間",
+      "lock-description": "ロック画面がアクティブになるまでの非アクティブ時間（分）。",
+      "lock-label": "画面をロック",
+      "screen-off-description": "モニターがオフになるまでの非アクティブな時間（分）。",
+      "screen-off-label": "画面をオフにする",
+      "status-description": "Compositorが報告したアイドル時間。",
+      "status-label": "アイドル時間",
+      "suspend-description": "システムがサスペンドするまでの非アクティブ時間（分）。",
+      "timeouts-description": "ステージを無効にするには0に設定します。Keep Awakeがアクティブな間、タイムアウトは一時停止されます。",
+      "timeouts-label": "タイムアウト",
+      "unavailable": "このCompositorでは、ネイティブのアイドル監視は利用できません。"
     },
     "indicator": {
       "default-value": "デフォルト：{value}",

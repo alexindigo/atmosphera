@@ -370,6 +370,7 @@
   },
   "common": {
     "actions": "Ações",
+    "active": "Ativo",
     "add": "Adicionar",
     "appearance": "Aparência",
     "apply": "Aplicar",
@@ -486,6 +487,8 @@
     "scanning": "A digitalização está em andamento...",
     "screen-corners": "Cantos da tela",
     "search": "Pesquisar",
+    "second": "{count} segundo",
+    "second-plural": "{count} segundos",
     "secondary": "Secundário",
     "security": "Segurança",
     "select": "Selecionar",
@@ -985,6 +988,8 @@
       "media-player-show-buttons-label": "Mostrar botões",
       "media-player-show-visualizer-description": "Mostrar a sobreposição do visualizador de áudio.",
       "media-player-visualizer-type-description": "Escolha um tipo de visualização para o fundo do reprodutor de mídia na área de trabalho.",
+      "overview-enabled-description": "Mostrar widgets da área de trabalho enquanto a visão geral do compositor estiver aberta.",
+      "overview-enabled-label": "Mostrar na visão geral",
       "system-stat-layout-bottom": "Inferior",
       "system-stat-layout-description": "Escolha como a legenda é exibida em relação ao gráfico.",
       "system-stat-layout-label": "Layout",
@@ -1182,6 +1187,22 @@
       "wallpaper-changed-description": "Comando a ser executado quando o papel de parede muda.",
       "wallpaper-changed-label": "Papel de parede alterado",
       "wallpaper-changed-placeholder": "p. ex. notify-send \"Papel de parede\" \"Alterado\""
+    },
+    "idle": {
+      "enable-description": "Desligar a tela, bloquear ou suspender automaticamente após um período de inatividade.",
+      "enable-label": "Ativar gerenciamento de inatividade",
+      "fade-duration-description": "Segundos para a animação de esmaecimento para preto antes de cada ação ser acionada. Qualquer movimento do rato cancela o esmaecimento.",
+      "fade-duration-label": "Duração do esmaecimento",
+      "lock-description": "Minutos de inatividade antes que a tela de bloqueio seja ativada.",
+      "lock-label": "Bloquear tela",
+      "screen-off-description": "Minutos de inatividade antes que os monitores sejam desligados.",
+      "screen-off-label": "Desligar tela",
+      "status-description": "Tempo ocioso conforme relatado pelo Compositor.",
+      "status-label": "Tempo Ocioso",
+      "suspend-description": "Minutos de inatividade antes que o sistema suspenda.",
+      "timeouts-description": "Defina como 0 para desativar uma etapa. Os tempos limite são pausados enquanto o Keep Awake estiver ativo.",
+      "timeouts-label": "Tempos Limite",
+      "unavailable": "A monitorização nativa de inatividade não está disponível neste Compositor."
     },
     "indicator": {
       "default-value": "Padrão: {value}",

@@ -370,6 +370,7 @@
   },
   "common": {
     "actions": "Actions",
+    "active": "Actif",
     "add": "Ajouter",
     "appearance": "Apparence",
     "apply": "Appliquer",
@@ -486,6 +487,8 @@
     "scanning": "Analyse en cours...",
     "screen-corners": "Coins d'écran",
     "search": "Rechercher",
+    "second": "{count} seconde",
+    "second-plural": "{count} secondes",
     "secondary": "Secondaire",
     "security": "Sécurité",
     "select": "Sélectionner",
@@ -985,6 +988,8 @@
       "media-player-show-buttons-label": "Afficher les boutons",
       "media-player-show-visualizer-description": "Afficher la superposition de l'visualiseur audio.",
       "media-player-visualizer-type-description": "Choisissez un type de visualisation pour l'arrière-plan du lecteur multimédia de bureau.",
+      "overview-enabled-description": "Afficher les widgets du bureau lorsque l'aperçu du compositeur est ouvert.",
+      "overview-enabled-label": "Afficher dans l'aperçu",
       "system-stat-layout-bottom": "Bas",
       "system-stat-layout-description": "Choisissez comment la légende est affichée par rapport au graphique.",
       "system-stat-layout-label": "Disposition",
@@ -1182,6 +1187,22 @@
       "wallpaper-changed-description": "Commande à exécuter lorsque le fond d'écran change.",
       "wallpaper-changed-label": "Fond d'écran changé",
       "wallpaper-changed-placeholder": "ex : notify-send \"Fond d'écran\" \"Changé\""
+    },
+    "idle": {
+      "enable-description": "Éteindre l'écran, verrouiller ou suspendre automatiquement après une période d'inactivité.",
+      "enable-label": "Activer la gestion de l'inactivité",
+      "fade-duration-description": "Secondes pour l'animation de fondu au noir avant que chaque action ne se déclenche. Tout mouvement de souris annule le fondu.",
+      "fade-duration-label": "Durée du fondu",
+      "lock-description": "Minutes d'inactivité avant l'activation de l'écran de verrouillage.",
+      "lock-label": "Verrouiller l'écran",
+      "screen-off-description": "Minutes d'inactivité avant que les moniteurs ne s'éteignent.",
+      "screen-off-label": "Éteindre l'écran",
+      "status-description": "Temps d'inactivité tel que rapporté par le Compositor.",
+      "status-label": "Temps d'Inactivité",
+      "suspend-description": "Minutes d'inactivité avant que le système ne se suspende.",
+      "timeouts-description": "Réglez sur 0 pour désactiver une étape. Les délais d'attente sont mis en pause tant que Keep Awake est actif.",
+      "timeouts-label": "Délais d'Expiration",
+      "unavailable": "La surveillance native de l'inactivité n'est pas disponible sur ce Compositor."
     },
     "indicator": {
       "default-value": "Par défaut : {value}",

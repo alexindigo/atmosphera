@@ -370,6 +370,7 @@
   },
   "common": {
     "actions": "Acciones",
+    "active": "Activo",
     "add": "Añadir",
     "appearance": "Apariencia",
     "apply": "Aplicar",
@@ -486,6 +487,8 @@
     "scanning": "Escaneando...",
     "screen-corners": "Esquinas de la pantalla",
     "search": "Buscar",
+    "second": "{count} segundo",
+    "second-plural": "{count} segundos",
     "secondary": "Secundario",
     "security": "Seguridad",
     "select": "Seleccionar",
@@ -985,6 +988,8 @@
       "media-player-show-buttons-label": "Mostrar botones",
       "media-player-show-visualizer-description": "Mostrar la superposición del visualizador de audio.",
       "media-player-visualizer-type-description": "Elige un tipo de visualización para el fondo del reproductor multimedia de escritorio.",
+      "overview-enabled-description": "Mostrar widgets de escritorio mientras la vista general del compositor esté abierta.",
+      "overview-enabled-label": "Mostrar en la vista general",
       "system-stat-layout-bottom": "Abajo",
       "system-stat-layout-description": "Elige cómo se muestra la leyenda en relación con el gráfico.",
       "system-stat-layout-label": "Diseño",
@@ -1182,6 +1187,22 @@
       "wallpaper-changed-description": "Comando a ejecutar cuando cambia el fondo de pantalla.",
       "wallpaper-changed-label": "Fondo de pantalla cambiado",
       "wallpaper-changed-placeholder": "p. ej. notify-send \"Fondo de pantalla\" \"Cambiado\""
+    },
+    "idle": {
+      "enable-description": "Apagar la pantalla, bloquear o suspender automáticamente después de un período de inactividad.",
+      "enable-label": "Activar gestión de inactividad",
+      "fade-duration-description": "Segundos para la animación de fundido a negro antes de que se active cada acción. Cualquier movimiento del ratón cancela el fundido.",
+      "fade-duration-label": "Duración del fundido",
+      "lock-description": "Minutos de inactividad antes de que se active la pantalla de bloqueo.",
+      "lock-label": "Bloquear pantalla",
+      "screen-off-description": "Minutos de inactividad antes de que los monitores se apaguen.",
+      "screen-off-label": "Apagar pantalla",
+      "status-description": "Tiempo de inactividad según lo informado por el Compositor.",
+      "status-label": "Tiempo de Inactividad",
+      "suspend-description": "Minutos de inactividad antes de que el sistema se suspenda.",
+      "timeouts-description": "Establece en 0 para deshabilitar una etapa. Los tiempos de espera se pausan mientras Keep Awake está activo.",
+      "timeouts-label": "Tiempos de Espera",
+      "unavailable": "La monitorización nativa de inactividad no está disponible en este Compositor."
     },
     "indicator": {
       "default-value": "Predeterminado: {value}",

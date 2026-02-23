@@ -370,6 +370,7 @@
   },
   "common": {
     "actions": "Åtgärder",
+    "active": "Aktiv",
     "add": "Lägg till",
     "appearance": "Utseende",
     "apply": "Tillämpa",
@@ -486,6 +487,8 @@
     "scanning": "Söker igenom...",
     "screen-corners": "Skärmhörn",
     "search": "Sök",
+    "second": "{count} sekund",
+    "second-plural": "{count} sekunder",
     "secondary": "Sekundär",
     "security": "Säkerhet",
     "select": "Välj",
@@ -985,6 +988,8 @@
       "media-player-show-buttons-label": "Visa knappar",
       "media-player-show-visualizer-description": "Visa ljudvisualiseringsöverlägget.",
       "media-player-visualizer-type-description": "Välj en visualiseringstyp.",
+      "overview-enabled-description": "Visa skrivbordswidgetar medan kompositorns översikt är öppen.",
+      "overview-enabled-label": "Visa i översikt",
       "system-stat-layout-bottom": "Botten",
       "system-stat-layout-description": "Välj hur förklaringen visas i förhållande till diagrammet.",
       "system-stat-layout-label": "Layout",
@@ -1182,6 +1187,22 @@
       "wallpaper-changed-description": "Kommando som ska utföras när bakgrundsbilden ändras.",
       "wallpaper-changed-label": "Bakgrundsbild ändrad",
       "wallpaper-changed-placeholder": "t.ex. notify-send \"Bakgrundsbild\"\"Ändrad\""
+    },
+    "idle": {
+      "enable-description": "Stäng automatiskt av skärmen, lås eller försätt i viloläge efter en period av inaktivitet.",
+      "enable-label": "Aktivera inaktivitetshantering",
+      "fade-duration-description": "Sekunder för animationen som tonar till svart innan varje åtgärd utlöses. Alla musrörelser avbryter nedtoningen.",
+      "fade-duration-label": "Toningstid",
+      "lock-description": "Minuter av inaktivitet innan låsskärmen aktiveras.",
+      "lock-label": "Lås skärm",
+      "screen-off-description": "Minuter av inaktivitet innan skärmarna stängs av.",
+      "screen-off-label": "Stäng av skärmen",
+      "status-description": "Inaktiv tid som rapporterats av Compositor.",
+      "status-label": "Inaktiv Tid",
+      "suspend-description": "Minuter av inaktivitet innan systemet försätts i viloläge.",
+      "timeouts-description": "Ställ in på 0 för att inaktivera ett steg. Tidsgränser pausas medan Keep Awake är aktivt.",
+      "timeouts-label": "Tidsgränser",
+      "unavailable": "Inbyggd inaktivitetsövervakning är inte tillgänglig på denna Compositor."
     },
     "indicator": {
       "default-value": "Standard: {värde}",

@@ -988,6 +988,8 @@
       "media-player-show-buttons-label": "Show buttons",
       "media-player-show-visualizer-description": "Show the audio visualizer overlay.",
       "media-player-visualizer-type-description": "Choose a visualization type.",
+      "overview-enabled-description": "Show desktop widgets while the compositor overview is open.",
+      "overview-enabled-label": "Show in overview",
       "system-stat-layout-bottom": "Bottom",
       "system-stat-layout-description": "Choose how the legend is displayed relative to the graph.",
       "system-stat-layout-label": "Layout",

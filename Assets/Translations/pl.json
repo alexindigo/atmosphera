@@ -370,6 +370,7 @@
   },
   "common": {
     "actions": "Akcje",
+    "active": "Aktywny",
     "add": "Dodaj",
     "appearance": "Wygląd",
     "apply": "Zastosuj",
@@ -486,6 +487,8 @@
     "scanning": "Skanowanie...",
     "screen-corners": "Narożniki ekranu",
     "search": "Szukaj",
+    "second": "{count} sekunda",
+    "second-plural": "{count} sekund",
     "secondary": "Dodatkowy",
     "security": "Bezpieczeństwo",
     "select": "Wybierz",
@@ -985,6 +988,8 @@
       "media-player-show-buttons-label": "Pokaż przyciski",
       "media-player-show-visualizer-description": "Pokaż nakładkę wizualizatora audio.",
       "media-player-visualizer-type-description": "Wybierz typ wizualizacji dla tła odtwarzacza pulpitu.",
+      "overview-enabled-description": "Pokaż widżety pulpitu, gdy przegląd kompozytora jest otwarty.",
+      "overview-enabled-label": "Pokaż w przeglądzie",
       "system-stat-layout-bottom": "Dół",
       "system-stat-layout-description": "Wybierz, jak legenda jest wyświetlana względem wykresu.",
       "system-stat-layout-label": "Układ",
@@ -1182,6 +1187,22 @@
       "wallpaper-changed-description": "Polecenie do wykonania podczas zmiany tapety.",
       "wallpaper-changed-label": "Zmiana tapety",
       "wallpaper-changed-placeholder": "np. notify-send \"Tapeta\" \"Zmieniona\""
+    },
+    "idle": {
+      "enable-description": "Automatycznie wyłącz ekran, zablokuj lub uśpij po okresie bezczynności.",
+      "enable-label": "Włącz zarządzanie bezczynnością",
+      "fade-duration-description": "Sekundy animacji wygaszania do czerni przed uruchomieniem każdej akcji. Każdy ruch myszy anuluje wygaszanie.",
+      "fade-duration-label": "Czas trwania zanikania",
+      "lock-description": "Minuty bezczynności przed aktywacją ekranu blokady.",
+      "lock-label": "Zablokuj ekran",
+      "screen-off-description": "Minuty bezczynności, zanim monitory zostaną wyłączone.",
+      "screen-off-label": "Wyłącz ekran",
+      "status-description": "Czas bezczynności zgłoszony przez Compositor.",
+      "status-label": "Czas Bezczynności",
+      "suspend-description": "Minuty bezczynności przed zawieszeniem systemu.",
+      "timeouts-description": "Ustaw na 0, aby wyłączyć etap. Limity czasu są wstrzymane, gdy Keep Awake jest aktywny.",
+      "timeouts-label": "Limity Czasu",
+      "unavailable": "Natywne monitorowanie bezczynności nie jest dostępne na tym Compositorze."
     },
     "indicator": {
       "default-value": "Domyślnie: {value}",

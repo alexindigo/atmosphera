@@ -370,6 +370,7 @@
   },
   "common": {
     "actions": "Eylemler",
+    "active": "Aktif",
     "add": "Ekle",
     "appearance": "Görünüm",
     "apply": "Uygula",
@@ -486,6 +487,8 @@
     "scanning": "Taranıyor...",
     "screen-corners": "Ekran köşeleri",
     "search": "Arama",
+    "second": "{count} saniye",
+    "second-plural": "{count} saniye",
     "secondary": "İkincil",
     "security": "Güvenlik",
     "select": "Seç",
@@ -985,6 +988,8 @@
       "media-player-show-buttons-label": "Düğmeleri göster",
       "media-player-show-visualizer-description": "Ses görselleştirici katmanını göster.",
       "media-player-visualizer-type-description": "Masaüstü medya oynatıcı arka planı için bir görselleştirme türü seçin.",
+      "overview-enabled-description": "Kompozitör genel görünümü açıkken masaüstü araç takımlarını göster.",
+      "overview-enabled-label": "Genel bakışta göster",
       "system-stat-layout-bottom": "Alt",
       "system-stat-layout-description": "Efsanenin grafiğe göre nasıl görüntüleneceğini seçin.",
       "system-stat-layout-label": "Düzen",
@@ -1182,6 +1187,22 @@
       "wallpaper-changed-description": "Duvar kâğıdı değiştiğinde çalıştırılacak komut.",
       "wallpaper-changed-label": "Duvar kâğıdı değişti",
       "wallpaper-changed-placeholder": "örn. notify-send \"Duvar Kâğıdı\" \"Değişti\""
+    },
+    "idle": {
+      "enable-description": "Belirli bir süre işlem yapılmadığında ekranı otomatik olarak kapat, kilitle veya askıya al.",
+      "enable-label": "Boşta kalma yönetimini etkinleştir",
+      "fade-duration-description": "Her eylem tetiklenmeden önce kararan animasyonun saniye cinsinden süresi. Herhangi bir fare hareketi kararmayı iptal eder.",
+      "fade-duration-label": "Solma süresi",
+      "lock-description": "Kilit ekranı etkinleşmeden önceki hareketsizlik süresi (dakika).",
+      "lock-label": "Ekranı Kilitle",
+      "screen-off-description": "Monitörler kapanmadan önce etkinliksiz geçen dakika.",
+      "screen-off-label": "Ekranı kapat",
+      "status-description": "Compositor tarafından bildirilen boşta kalma süresi.",
+      "status-label": "Boşta Kalma Süresi",
+      "suspend-description": "Sistem askıya alınmadan önceki hareketsizlik süresi (dakika).",
+      "timeouts-description": "Bir aşamayı devre dışı bırakmak için 0 olarak ayarlayın. Keep Awake aktifken zaman aşımları duraklatılır.",
+      "timeouts-label": "Zaman Aşımları",
+      "unavailable": "Yerel boşta kalma izleme bu Compositor'da mevcut değil."
     },
     "indicator": {
       "default-value": "Varsayılan: {value}",

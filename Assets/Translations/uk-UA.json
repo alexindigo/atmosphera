@@ -370,6 +370,7 @@
   },
   "common": {
     "actions": "Дії",
+    "active": "Активний",
     "add": "Додати",
     "appearance": "Зовнішній вигляд",
     "apply": "Подати заявку",
@@ -486,6 +487,8 @@
     "scanning": "Сканування...",
     "screen-corners": "Кути екрана",
     "search": "Пошук",
+    "second": "{count} секунда",
+    "second-plural": "{count} секунд",
     "secondary": "Вторинний",
     "security": "Безпека",
     "select": "Вибрати",
@@ -985,6 +988,8 @@
       "media-player-show-buttons-label": "Показати кнопки",
       "media-player-show-visualizer-description": "Показати накладання аудіовізуалізатора.",
       "media-player-visualizer-type-description": "Оберіть тип візуалізації для фону медіаплеєра на робочому столі.",
+      "overview-enabled-description": "Показувати віджети робочого столу, поки огляд композитора відкритий.",
+      "overview-enabled-label": "Показати в огляді",
       "system-stat-layout-bottom": "Низ",
       "system-stat-layout-description": "Виберіть, як відображається легенда відносно графіка.",
       "system-stat-layout-label": "Макет",
@@ -1182,6 +1187,22 @@
       "wallpaper-changed-description": "Команда для виконання при зміні шпалер.",
       "wallpaper-changed-label": "Шпалери змінено",
       "wallpaper-changed-placeholder": "напр. notify-send \"Шпалери\" \"Змінено\""
+    },
+    "idle": {
+      "enable-description": "Автоматично вимикати екран, блокувати або призупиняти роботу після періоду бездіяльності.",
+      "enable-label": "Увімкнути керування бездіяльністю",
+      "fade-duration-description": "Секунди для анімації затемнення до чорного перед виконанням кожної дії. Будь-який рух миші скасовує затемнення.",
+      "fade-duration-label": "Тривалість згасання",
+      "lock-description": "Хвилини бездіяльності до активації екрана блокування.",
+      "lock-label": "Заблокувати екран",
+      "screen-off-description": "Хвилини бездіяльності до вимкнення моніторів.",
+      "screen-off-label": "Вимкнути екран",
+      "status-description": "Час простою, повідомлений Compositor.",
+      "status-label": "Час Простою",
+      "suspend-description": "Хвилини бездіяльності до призупинення роботи системи.",
+      "timeouts-description": "Встановіть 0, щоб вимкнути етап. Тайм-аути призупиняються, поки Keep Awake активний.",
+      "timeouts-label": "Тайм-аути",
+      "unavailable": "Нативний моніторинг бездіяльності недоступний на цьому Compositorі."
     },
     "indicator": {
       "default-value": "За замовчуванням: {value}",

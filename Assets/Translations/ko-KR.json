@@ -370,6 +370,7 @@
   },
   "common": {
     "actions": "작업",
+    "active": "활성",
     "add": "추가",
     "appearance": "모양",
     "apply": "적용",
@@ -486,6 +487,8 @@
     "scanning": "검색 중...",
     "screen-corners": "화면 모서리",
     "search": "검색",
+    "second": "{count} 초",
+    "second-plural": "{count} 초",
     "secondary": "두번째",
     "security": "보안",
     "select": "선택",
@@ -985,6 +988,8 @@
       "media-player-show-buttons-label": "버튼 표시",
       "media-player-show-visualizer-description": "오디오 비주얼라이저 오버레이를 표시합니다.",
       "media-player-visualizer-type-description": "비주얼라이저 유형을 선택하세요.",
+      "overview-enabled-description": "컴포지터 개요가 열려 있는 동안 데스크톱 위젯을 표시합니다.",
+      "overview-enabled-label": "개요에 표시",
       "system-stat-layout-bottom": "아래",
       "system-stat-layout-description": "범례가 그래프에 상대적으로 어떻게 표시되는지 선택합니다.",
       "system-stat-layout-label": "레이아웃",
@@ -1182,6 +1187,22 @@
       "wallpaper-changed-description": "배경화면이 변경될 때 실행할 명령입니다.",
       "wallpaper-changed-label": "배경화면 변경됨",
       "wallpaper-changed-placeholder": "예: notify-send \"배경화면\" \"변경됨\""
+    },
+    "idle": {
+      "enable-description": "일정 시간 비활성 상태 후 자동으로 화면을 끄거나, 잠그거나, 절전 모드로 전환합니다.",
+      "enable-label": "유휴 관리 활성화",
+      "fade-duration-description": "각 동작이 실행되기 전 화면이 검게 페이드되는 애니메이션 시간(초). 마우스 움직임이 있으면 페이드가 취소됩니다.",
+      "fade-duration-label": "페이드 지속 시간",
+      "lock-description": "잠금 화면이 활성화되기 전 비활성 시간(분).",
+      "lock-label": "화면 잠금",
+      "screen-off-description": "모니터가 꺼지기 전 비활성 시간(분).",
+      "screen-off-label": "화면 끄기",
+      "status-description": "Compositor가 보고한 유휴 시간.",
+      "status-label": "유휴 시간",
+      "suspend-description": "시스템이 일시 중단되기 전 비활성 시간(분).",
+      "timeouts-description": "단계를 비활성화하려면 0으로 설정하세요. Keep Awake가 활성화된 동안 시간 초과는 일시 중지됩니다.",
+      "timeouts-label": "시간 초과",
+      "unavailable": "이 Compositor에서는 네이티브 유휴 모니터링을 사용할 수 없습니다."
     },
     "indicator": {
       "default-value": "기본값: {value}",
