@@ -577,6 +577,10 @@ Variants {
               anchors.margins: Style.marginM
               spacing: Style.marginM
 
+              HoverHandler {
+                onHoveredChanged: hovered ? card.hoverCount++ : card.hoverCount--
+              }
+
               RowLayout {
                 Layout.fillWidth: true
                 spacing: Style.marginL
@@ -721,6 +725,10 @@ Variants {
               anchors.topMargin: Style.marginXL
               anchors.right: cardBackground.right
               anchors.rightMargin: Style.marginXL
+
+              HoverHandler {
+                onHoveredChanged: hovered ? card.hoverCount++ : card.hoverCount--
+              }
 
               onClicked: {
                 card.runAction("", true);
