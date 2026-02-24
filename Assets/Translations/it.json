@@ -1768,59 +1768,75 @@
       "low-desc": "Batteria al {percent}% — collega il caricatore"
     },
     "bluetooth": {
-      "title": "Bluetooth"
+      "address-copied": "Address copied to clipboard",
+      "confirm-code": "Confirm code {value} on the other device.",
+      "connect-failed": "Failed to connect to device",
+      "disconnect-failed": "Failed to disconnect from device",
+      "discoverable-change-failed": "Failed to change discoverable state",
+      "discoverable-disabled": "Discoverable disabled",
+      "discoverable-enabled": "Discoverable enabled",
+      "display-code": "Enter code {value} on the other device.",
+      "forget-failed": "Failed to forget device",
+      "pair-failed": "Failed to pair device",
+      "passkey-required": "Passkey required by the device.",
+      "pincode-required": "PIN code required by the device.",
+      "state-change-failed": "Failed to change Bluetooth state"
     },
-    "dark-mode": {
-      "title": "Tema scuro"
+    "clipboard": {
+      "long-text": "Long text",
+      "unavailable": "Clipboard history unavailable",
+      "unavailable-desc": "The 'cliphist' application is not installed. Please install it to use clipboard history features"
     },
-    "hooks": {
-      "title-error": "Hook non riuscito",
-      "title-success": "Hook completato"
+    "do-not-disturb": {
+      "disabled": "Do Not Disturb disabled",
+      "disabled-desc": "Showing all notifications",
+      "enabled": "Do Not Disturb enabled",
+      "enabled-desc": "You'll find these notifications in your history"
     },
-    "network": {
-      "internet": "Accesso a Internet",
-      "internet-connected": "Connesso a Internet",
-      "internet-disconnected": "Disconnesso da Internet",
-      "internet-limited": "Connesso senza Internet",
-      "title": "Rete"
+    "donation-opened": "Donation page opened in your browser",
+    "internet-limited": "Connected without internet",
+    "keyboard-layout": {
+      "changed": "Keyboard layout changed to {layout}",
+      "title": "Keyboard"
+    },
+    "missing-control-center": {
+      "description": "The control center widget has been removed from the bar. To access it from the bar again, you will need to re-add the widget. You can open it with right clicking on the bar too",
+      "label": "Last control center widget removed"
     },
     "night-light": {
-      "title": "Luce notturna"
+      "forced": "Forced activation",
+      "normal": "Normal mode",
+      "not-installed": "wlsunset not installed"
     },
-    "notifications": {
-      "title": "Notifiche"
+    "noctalia-performance": {
+      "disabled": "Performance mode disabled",
+      "enabled": "Performance mode enabled",
+      "label": "Noctalia Performance"
     },
     "power-profile": {
-      "title": "Profilo energetico"
+      "changed": "Power profile changed",
+      "profile-name": "{profile}"
     },
-    "settings": {
-      "refresh": {
-        "title": "Impostazioni aggiornate"
-      },
-      "restore": {
-        "title": "Impostazioni ripristinate"
-      }
+    "theming-processor-failed": {
+      "desc-generic": "Encountered an error while processing templates",
+      "title": "Templating processing failed"
     },
-    "template": {
-      "generic": {
-        "error": {
-          "title": "Applicazione modello fallita"
-        },
-        "success": {
-          "title": "Modello applicato"
-        }
-      },
-      "multiple": {
-        "error": {
-          "title": "Applicazione modelli fallita"
-        },
-        "success": {
-          "title": "Modelli applicati"
-        }
-      }
+    "vpn": {
+      "connected": "Connected to '{name}'",
+      "disconnected": "Disconnected from '{name}'"
+    },
+    "wallpaper-colors": {
+      "disabled": "Wallpaper colors disabled",
+      "enabled": "Wallpaper colors enabled",
+      "label": "Wallpaper colors"
     },
     "wifi": {
-      "title": "Wi-Fi"
+      "connected": "Connected to '{ssid}'",
+      "connection-failed": "Connection failed",
+      "connection-timeout": "Connection timeout",
+      "disconnected": "Disconnected from '{ssid}'",
+      "incorrect-password": "Incorrect password",
+      "network-not-found": "Network not found"
     }
   },
   "tooltips": {
