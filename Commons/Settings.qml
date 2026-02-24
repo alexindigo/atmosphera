@@ -316,13 +316,7 @@ Singleton {
       property real panelBackgroundOpacity: 0.93
       property bool panelsAttachedToBar: true
       property string settingsPanelMode: "attached" // "centered", "attached", "window"
-      // Details view mode persistence for panels
-      property string wifiDetailsViewMode: "grid"   // "grid" or "list"
-      property string bluetoothDetailsViewMode: "grid" // "grid" or "list"
-      // Persist the last-opened view for the unified network panel: "wifi" | "ethernet"
-      property string networkPanelView: "wifi"
-      // Bluetooth available devices list: hide items without a name
-      property bool bluetoothHideUnnamedDevices: false
+
       property bool boxBorderEnabled: false
     }
 
@@ -556,6 +550,7 @@ Singleton {
       property bool airplaneModeEnabled: false
       property bool bluetoothRssiPollingEnabled: false  // Opt-in Bluetooth RSSI polling (uses bluetoothctl)
       property int bluetoothRssiPollIntervalMs: 60000 // Polling interval in milliseconds for RSSI queries
+      property string networkPanelView: "wifi"
       property string wifiDetailsViewMode: "grid"   // "grid" or "list"
       property string bluetoothDetailsViewMode: "grid" // "grid" or "list"
       property bool bluetoothHideUnnamedDevices: false
