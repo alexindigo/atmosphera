@@ -1,6 +1,6 @@
 # Syntax highlighting
 # -------------------
-"attribute" = "secondary"
+"attribute" = { fg = "primary", modifiers = ["bold"] }
 
 "type" = "primary"
 "type.enum.variant" = "secondary"
@@ -11,27 +11,30 @@
 "constant.character" = "secondaryContainer"
 "constant.character.escape" = "tertiaryContainer"
 
-"string" = "tertiary"
-"string.regexp" = "tertiaryContainer"
-"string.special" = "tertiary"
-"string.special.symbol" = "tertiary"
+"string" = { fg = "tertiary", bg = "surfaceContainerHigh" }
+"string.regexp" = { fg = "tertiaryContainer", bg = "surfaceContainerHigh" }
+"string.special" = { fg = "tertiary", bg = "surfaceContainerHigh" }
+"string.special.symbol" = { fg = "tertiary", bg = "surfaceContainerHigh" }
+"string.special.path" = { fg = "secondary", underline = { color = "secondary", style = "line" } }
 
-"comment" = { fg = "outline", modifiers = ["italic"] }
+"path" = { fg = "secondary", underline = { color = "secondary", style = "line" } }
+
+"comment" = { fg = "outline", bg = "surfaceContainerHigh", modifiers = ["italic"] }
 
 "variable" = "onSurface"
 "variable.builtin" = "secondary"
 "variable.parameter" = { fg = "onSurfaceVariant", modifiers = ["italic"] }
-"variable.other.member" = "onSurface"
+"variable.other.member" = "primary"
 
 "label" = "secondary"
 
-"punctuation" = "onBackground"
-"punctuation.special" = "onBackground"
+"punctuation" = "outlineVariant"
+"punctuation.special" = "outline"
 
-"keyword" = "primary"
-"keyword.control.conditional" = { fg = "tertiary", modifiers = ["italic"] }
+"keyword" = { fg = "primary", modifiers = ["bold"] }
+"keyword.control.conditional" = { fg = "tertiary", modifiers = ["italic", "bold"] }
 
-"operator" = "primary"
+"operator" = { fg = "secondary", modifiers = ["bold"] }
 
 "function" = "tertiary"
 "function.macro" = "tertiary"
@@ -44,7 +47,7 @@
 
 "markup.heading" = "primary"
 "markup.list" = "onSurface"
-"markup.bold" = { fg = "second", modifiers = ["bold"] }
+"markup.bold" = { fg = "secondary", modifiers = ["bold"] }
 "markup.italic" = { fg = "secondary", modifiers = ["italic"] }
 "markup.link.url" = { fg = "secondary", modifiers = ["italic", "underlined"] }
 "markup.link.label" = "primary"
