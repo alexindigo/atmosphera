@@ -945,8 +945,8 @@ SmartPanel {
                                 property var actionData: modelData
                                 onClicked: {
                                   NotificationService.focusSenderWindow(notificationDelegate.appName);
-                                  NotificationService.invokeAction(notificationDelegate.notificationId, actionData.identifier);
                                   root.close();
+                                  NotificationService.invokeAction(notificationDelegate.notificationId, actionData.identifier);
                                 }
                               }
                             }
