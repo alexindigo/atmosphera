@@ -304,7 +304,8 @@ Singleton {
 
   Timer {
     id: wpctlPollTimer
-    interval: 1250
+    // Safety net only; regular updates are event-driven from sink audio signals.
+    interval: 20000
     running: root.wpctlAvailable
     repeat: true
     onTriggered: root.refreshWpctlOutputState()
@@ -378,6 +379,10 @@ Singleton {
     target: sink?.audio ?? null
 
     function onVolumeChanged() {
+      if (root.wpctlAvailable) {
+        root.refreshWpctlOutputState();
+      }
+
       // Ignore volume changes if we're the one setting it (to prevent feedback loop)
       if (root.isSettingOutputVolume) {
         return;
@@ -403,6 +408,12 @@ Singleton {
                        }
                        root.isSettingOutputVolume = false;
                      });
+      }
+    }
+
+    function onMutedChanged() {
+      if (root.wpctlAvailable) {
+        root.refreshWpctlOutputState();
       }
     }
   }
