@@ -169,7 +169,8 @@ PopupWindow {
       return;
     }
 
-    if (!opener.children || opener.children.values.length === 0) {
+    const hasEntries = opener.children && ((opener.children.count ?? -1) > 0 || (opener.children.values && opener.children.values.length > 0));
+    if (!hasEntries) {
       //Logger.w("TrayMenu", "Menu not ready, delaying show")
       Qt.callLater(() => showAt(item, x, y));
       return;
@@ -254,7 +255,7 @@ PopupWindow {
       spacing: 0
 
       Repeater {
-        model: opener.children ? [...opener.children.values] : []
+        model: opener.children
 
         delegate: Rectangle {
           id: entry
