@@ -209,22 +209,22 @@ Singleton {
     `;
 
     queueUtilityProcess({
-      name: "CopyTempFile_" + cacheKey,
-      processString: processString,
-      onComplete: function (exitCode) {
-        if (exitCode === 0) {
-          Logger.d("ImageCache", "Temp file cached:", destPath);
-          notifyCallbacks(cacheKey, destPath, true);
-        } else {
-          Logger.w("ImageCache", "Failed to cache temp file:", sourcePath);
-          notifyCallbacks(cacheKey, "", false);
-        }
-      },
-      onError: function () {
-        Logger.e("ImageCache", "Error caching temp file:", sourcePath);
-        notifyCallbacks(cacheKey, "", false);
-      }
-    });
+                          name: "CopyTempFile_" + cacheKey,
+                          processString: processString,
+                          onComplete: function (exitCode) {
+                            if (exitCode === 0) {
+                              Logger.d("ImageCache", "Temp file cached:", destPath);
+                              notifyCallbacks(cacheKey, destPath, true);
+                            } else {
+                              Logger.w("ImageCache", "Failed to cache temp file:", sourcePath);
+                              notifyCallbacks(cacheKey, "", false);
+                            }
+                          },
+                          onError: function () {
+                            Logger.e("ImageCache", "Error caching temp file:", sourcePath);
+                            notifyCallbacks(cacheKey, "", false);
+                          }
+                        });
   }
 
   // -------------------------------------------------

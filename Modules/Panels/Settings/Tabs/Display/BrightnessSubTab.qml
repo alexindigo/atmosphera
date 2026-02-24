@@ -35,10 +35,12 @@ ColumnLayout {
           return baseLabel + "(" + autoDeviceName + ")";
         }
         readonly property var backlightDeviceOptions: {
-          var options = [{
-                           "key": "",
-                           "name": automaticOptionLabel
-                         }];
+          var options = [
+                {
+                  "key": "",
+                  "name": automaticOptionLabel
+                }
+              ];
 
           var devices = BrightnessService.availableBacklightDevices || [];
           for (var i = 0; i < devices.length; i++) {

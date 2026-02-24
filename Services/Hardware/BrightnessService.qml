@@ -98,7 +98,7 @@ Singleton {
   function setMappedBacklightDevice(outputName, devicePath): void {
     var normalizedOutput = String(outputName || "").trim();
     if (normalizedOutput === "")
-      return;
+    return;
 
     var normalizedDevicePath = normalizeBacklightDevicePath(devicePath);
     var mappings = Settings.data.brightness.backlightDeviceMappings || [];
@@ -108,34 +108,34 @@ Singleton {
     for (var i = 0; i < mappings.length; i++) {
       var mapping = mappings[i];
       if (!mapping || typeof mapping !== "object")
-        continue;
+      continue;
 
       var mappingOutput = String(mapping.output || "").trim();
       var mappingDevice = normalizeBacklightDevicePath(mapping.device || "");
       if (mappingOutput === "" || mappingDevice === "")
-        continue;
+      continue;
 
       if (mappingOutput === normalizedOutput) {
         if (!replaced && normalizedDevicePath !== "") {
           nextMappings.push({
-            "output": normalizedOutput,
-            "device": normalizedDevicePath
-          });
+                              "output": normalizedOutput,
+                              "device": normalizedDevicePath
+                            });
         }
         replaced = true;
       } else {
         nextMappings.push({
-          "output": mappingOutput,
-          "device": mappingDevice
-        });
+                            "output": mappingOutput,
+                            "device": mappingDevice
+                          });
       }
     }
 
     if (!replaced && normalizedDevicePath !== "") {
       nextMappings.push({
-        "output": normalizedOutput,
-        "device": normalizedDevicePath
-      });
+                          "output": normalizedOutput,
+                          "device": normalizedDevicePath
+                        });
     }
 
     Settings.data.brightness.backlightDeviceMappings = nextMappings;
@@ -143,7 +143,7 @@ Singleton {
 
   function scanBacklightDevices(): void {
     if (!scanBacklightProc.running)
-      scanBacklightProc.running = true;
+    scanBacklightProc.running = true;
   }
 
   reloadableId: "brightness"
@@ -219,7 +219,7 @@ Singleton {
         for (var i = 0; i < lines.length; i++) {
           var path = root.normalizeBacklightDevicePath(lines[i]);
           if (path === "" || seen[path])
-            continue;
+          continue;
           seen[path] = true;
           found.push(path);
         }
@@ -441,9 +441,6 @@ Singleton {
             }
           }
 
-          // Always update
-          monitor.brightnessUpdated(monitor.brightness);
-          root.monitorBrightnessChanged(monitor, monitor.brightness);
           monitor.initInProgress = false;
         }
       }
@@ -546,13 +543,9 @@ Singleton {
       } else if (!isDdc) {
         // Internal backlight: first try explicit output mapping, then fall back to first available.
         var preferredDevicePath = root.getMappedBacklightDevice(modelData.name);
-        var probeScript = [
-          "preferred=\"$1\"",
-          "if [ -n \"$preferred\" ] && [ ! -d \"$preferred\" ]; then preferred=\"/sys/class/backlight/$preferred\"; fi",
-          "selected=\"\"",
-          "if [ -n \"$preferred\" ] && [ -f \"$preferred/brightness\" ] && [ -f \"$preferred/max_brightness\" ]; then selected=\"$preferred\"; else for dev in /sys/class/backlight/*; do if [ -f \"$dev/brightness\" ] && [ -f \"$dev/max_brightness\" ]; then selected=\"$dev\"; break; fi; done; fi",
-          "if [ -n \"$selected\" ]; then echo \"$selected\"; cat \"$selected/brightness\"; cat \"$selected/max_brightness\"; fi"
-        ].join("; ");
+        var probeScript = ["preferred=\"$1\"", "if [ -n \"$preferred\" ] && [ ! -d \"$preferred\" ]; then preferred=\"/sys/class/backlight/$preferred\"; fi", "selected=\"\"",
+                           "if [ -n \"$preferred\" ] && [ -f \"$preferred/brightness\" ] && [ -f \"$preferred/max_brightness\" ]; then selected=\"$preferred\"; else for dev in /sys/class/backlight/*; do if [ -f \"$dev/brightness\" ] && [ -f \"$dev/max_brightness\" ]; then selected=\"$dev\"; break; fi; done; fi",
+                           "if [ -n \"$selected\" ]; then echo \"$selected\"; cat \"$selected/brightness\"; cat \"$selected/max_brightness\"; fi"].join("; ");
         initProc.command = ["sh", "-c", probeScript, "sh", preferredDevicePath];
         initProc.running = true;
       } else {
