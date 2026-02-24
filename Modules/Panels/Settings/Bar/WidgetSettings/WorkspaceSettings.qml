@@ -238,93 +238,33 @@ ColumnLayout {
     Layout.fillWidth: true
   }
 
-  NComboBox {
-    id: focusedColorCombo
+  NColorChoice {
     label: I18n.tr("bar.workspace.focused-color-label")
     description: I18n.tr("bar.workspace.focused-color-description")
-    model: [
-      {
-        "key": "none",
-        "name": I18n.tr("common.none")
-      },
-      {
-        "key": "primary",
-        "name": I18n.tr("common.primary")
-      },
-      {
-        "key": "secondary",
-        "name": I18n.tr("common.secondary")
-      },
-      {
-        "key": "tertiary",
-        "name": I18n.tr("common.tertiary")
-      }
-    ]
     currentKey: valueFocusedColor
     onSelected: key => {
                   valueFocusedColor = key;
                   saveSettings();
                 }
-    minimumWidth: 200
   }
 
-  NComboBox {
-    id: occupiedColorCombo
+  NColorChoice {
     label: I18n.tr("bar.workspace.occupied-color-label")
     description: I18n.tr("bar.workspace.occupied-color-description")
-    model: [
-      {
-        "key": "none",
-        "name": I18n.tr("common.none")
-      },
-      {
-        "key": "primary",
-        "name": I18n.tr("common.primary")
-      },
-      {
-        "key": "secondary",
-        "name": I18n.tr("common.secondary")
-      },
-      {
-        "key": "tertiary",
-        "name": I18n.tr("common.tertiary")
-      }
-    ]
     currentKey: valueOccupiedColor
     onSelected: key => {
                   valueOccupiedColor = key;
                   saveSettings();
                 }
-    minimumWidth: 200
   }
 
-  NComboBox {
-    id: emptyColorCombo
+  NColorChoice {
     label: I18n.tr("bar.workspace.empty-color-label")
     description: I18n.tr("bar.workspace.empty-color-description")
-    model: [
-      {
-        "key": "none",
-        "name": I18n.tr("common.none")
-      },
-      {
-        "key": "primary",
-        "name": I18n.tr("common.primary")
-      },
-      {
-        "key": "secondary",
-        "name": I18n.tr("common.secondary")
-      },
-      {
-        "key": "tertiary",
-        "name": I18n.tr("common.tertiary")
-      }
-    ]
     currentKey: valueEmptyColor
     onSelected: key => {
                   valueEmptyColor = key;
                   saveSettings();
                 }
-    minimumWidth: 200
   }
 }
