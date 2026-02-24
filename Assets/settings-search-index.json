@@ -1845,8 +1845,8 @@
     "subTabLabel": "common.panels"
   },
   {
-    "labelKey": "panels.user-interface.settings-panel-sidebar-label",
-    "descriptionKey": "panels.user-interface.settings-panel-sidebar-description",
+    "labelKey": "panels.user-interface.settings-panel-sidebar-card-style-label",
+    "descriptionKey": "panels.user-interface.settings-panel-sidebar-card-style-description",
     "widget": "NToggle",
     "tab": 1,
     "tabLabel": "panels.user-interface.title",

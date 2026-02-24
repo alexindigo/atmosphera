@@ -1600,6 +1600,8 @@
       "scaling-label": "Interface scaling",
       "settings-panel-mode-description": "Choose settings layout (may require reopening).",
       "settings-panel-mode-label": "Settings panel mode",
+      "settings-panel-sidebar-card-style-description": "Wraps the settings sidebar in a filled background with rounded corners.",
+      "settings-panel-sidebar-card-style-label": "Sidebar card style",
       "shadows-description": "Enables drop shadows under bars and panels.",
       "shadows-direction-description": "Choose where the shadow is cast to.",
       "shadows-direction-label": "Shadow direction",
