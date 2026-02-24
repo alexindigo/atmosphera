@@ -60,7 +60,7 @@ ColumnLayout {
   }
 
   NHeader {
-    label: "Settings panel"
+    label: I18n.tr("panels.user-interface.settings-panel-header")
   }
 
   NComboBox {
