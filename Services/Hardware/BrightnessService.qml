@@ -441,9 +441,6 @@ Singleton {
             }
           }
 
-          // Always update
-          monitor.brightnessUpdated(monitor.brightness);
-          root.monitorBrightnessChanged(monitor, monitor.brightness);
           monitor.initInProgress = false;
         }
       }
