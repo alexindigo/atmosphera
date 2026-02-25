@@ -833,6 +833,8 @@
       "appearance-use-separate-opacity-label": "별도 바 불투명도 사용",
       "appearance-widget-spacing-description": "바의 각 위젯 사이 간격을 조정합니다.",
       "appearance-widget-spacing-label": "위젯 간격",
+      "appearance-content-padding-description": "바 가장자리와 위젯 사이의 패딩을 조정합니다.",
+      "appearance-content-padding-label": "콘텐츠 패딩",
       "monitor-configure-widgets": "위젯 구성",
       "monitor-override-settings": "전역 설정 재정의",
       "monitor-override-settings-description": "이 모니터에 사용자 지정 설정을 사용합니다.",

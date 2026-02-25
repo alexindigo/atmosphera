@@ -833,6 +833,8 @@
       "appearance-use-separate-opacity-label": "Separate Leisten-Deckkraft",
       "appearance-widget-spacing-description": "Den Abstand zwischen jedem Widget in der Leiste anpassen.",
       "appearance-widget-spacing-label": "Widget-Abstand",
+      "appearance-content-padding-description": "Passen Sie den Abstand zwischen Leistenrändern und Widgets an.",
+      "appearance-content-padding-label": "Inhaltsabstand",
       "monitor-configure-widgets": "Widgets konfigurieren",
       "monitor-override-settings": "Globale Einstellungen überschreiben",
       "monitor-override-settings-description": "Benutzerdefinierte Einstellungen für diesen Monitor verwenden.",

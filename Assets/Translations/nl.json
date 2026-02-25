@@ -833,6 +833,8 @@
       "appearance-use-separate-opacity-label": "Gebruik afzonderlijke balkdekking",
       "appearance-widget-spacing-description": "Pas de afstand tussen elke widget in de balk aan.",
       "appearance-widget-spacing-label": "Widgetafstand",
+      "appearance-content-padding-description": "Pas de opvulling tussen de baranden en widgets aan.",
+      "appearance-content-padding-label": "Inhoudopvulling",
       "monitor-configure-widgets": "Widgets configureren",
       "monitor-override-settings": "Globale instellingen overschrijven",
       "monitor-override-settings-description": "Gebruik aangepaste instellingen voor deze monitor.",

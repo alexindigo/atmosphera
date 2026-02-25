@@ -833,6 +833,8 @@
       "appearance-use-separate-opacity-label": "Külön oszlop átlátszóság használata",
       "appearance-widget-spacing-description": "Az egyes widgetek közötti távolság a sávon.",
       "appearance-widget-spacing-label": "Widget távolság",
+      "appearance-content-padding-description": "Állítsd be a távolságot a sáv szélei és a widgetek között.",
+      "appearance-content-padding-label": "Tartalom távolság",
       "monitor-configure-widgets": "Widgetek konfigurálása",
       "monitor-override-settings": "Globális beállítások felülírása",
       "monitor-override-settings-description": "Egyéni beállítások használata ehhez a monitorhoz.",

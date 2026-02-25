@@ -833,6 +833,8 @@
       "appearance-use-separate-opacity-label": "Использовать раздельную прозрачность столбцов",
       "appearance-widget-spacing-description": "Отрегулируйте интервал между каждым виджетом на панели.",
       "appearance-widget-spacing-label": "Расстояние между виджетами",
+      "appearance-content-padding-description": "Отрегулируйте отступ между краями панели и виджетами.",
+      "appearance-content-padding-label": "Отступ содержимого",
       "monitor-configure-widgets": "Настроить виджеты",
       "monitor-override-settings": "Переопределить глобальные настройки",
       "monitor-override-settings-description": "Использовать пользовательские настройки для этого монитора.",

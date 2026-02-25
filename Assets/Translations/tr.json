@@ -833,6 +833,8 @@
       "appearance-use-separate-opacity-label": "Ayrı çubuk opaklığı kullan",
       "appearance-widget-spacing-description": "Çubuktaki her bir widget arasındaki boşluğu ayarlayın.",
       "appearance-widget-spacing-label": "Widget aralığı",
+      "appearance-content-padding-description": "Çubuk kenarları ile widget'lar arasındaki dolguyu ayarlayın.",
+      "appearance-content-padding-label": "İçerik dolgusu",
       "monitor-configure-widgets": "Araçları yapılandır",
       "monitor-override-settings": "Genel ayarları geçersiz kıl",
       "monitor-override-settings-description": "Bu monitör için özel ayarları kullan.",
