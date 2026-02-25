@@ -36,9 +36,9 @@ Singleton {
   readonly property string defaultVideosDirectory: Quickshell.env("HOME") + "/Videos"
   readonly property string defaultWallpapersDirectory: Quickshell.env("HOME") + "/Pictures/Wallpapers"
 
-  // Signal emitted when settings are loaded after startupcale changes
   signal settingsLoaded
   signal settingsSaved
+  signal settingsReloaded
 
   // -----------------------------------------------------
   // -----------------------------------------------------
@@ -121,6 +121,9 @@ Singleton {
         root.settingsLoaded();
 
         upgradeSettings();
+      } else {
+        Logger.d("Settings", "Settings reloaded from external file change");
+        root.settingsReloaded();
       }
     }
     onLoadFailed: function (error) {
