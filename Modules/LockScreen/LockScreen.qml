@@ -25,6 +25,12 @@ Loader {
     } else {
       CavaService.unregisterComponent("lockscreen");
     }
+
+    if (root.active) {
+      LockKeysService.registerComponent("lockscreen");
+    } else {
+      LockKeysService.unregisterComponent("lockscreen");
+    }
   }
 
   onNeedsCavaChanged: {
@@ -38,6 +44,11 @@ Loader {
   Component.onCompleted: {
     // Register with panel service
     PanelService.lockScreen = this;
+  }
+
+  Component.onDestruction: {
+    CavaService.unregisterComponent("lockscreen");
+    LockKeysService.unregisterComponent("lockscreen");
   }
 
   Timer {
