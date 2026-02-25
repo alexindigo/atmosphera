@@ -395,7 +395,7 @@ Item {
 
     hoverEnabled: true
     cursorShape: Qt.PointingHandCursor
-    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton | Qt.ForwardButton | Qt.BackButton
 
     onClicked: mouse => {
                  if (mouse.button === Qt.LeftButton) {
@@ -405,6 +405,12 @@ Item {
                    PanelService.showContextMenu(contextMenu, container, screen);
                  } else if (mouse.button === Qt.MiddleButton && hasPlayer) {
                    MediaService.playPause();
+                   TooltipService.hide();
+                 } else if (mouse.button === Qt.ForwardButton && hasPlayer) {
+                   MediaService.next();
+                   TooltipService.hide();
+                 } else if (mouse.button === Qt.BackButton && hasPlayer) {
+                   MediaService.previous();
                    TooltipService.hide();
                  }
                }
