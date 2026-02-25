@@ -80,7 +80,7 @@ Loader {
       readonly property int showDelay: 100
       readonly property int hideAnimationDuration: Math.max(0, Math.round(Style.animationFast / (Settings.data.dock.animationSpeed || 1.0)))
       readonly property int showAnimationDuration: Math.max(0, Math.round(Style.animationFast / (Settings.data.dock.animationSpeed || 1.0)))
-      readonly property int peekHeight: 1
+      readonly property int peekThickness: 1
       readonly property int indicatorThickness: 3
       readonly property int iconSize: Math.round(12 + 24 * (Settings.data.dock.size ?? 1))
       readonly property int floatingMargin: Settings.data.dock.floatingRatio * Style.marginL
@@ -148,6 +148,7 @@ Loader {
         return hidden;
       }
       readonly property int dockItemCount: dockApps.length + (Settings.data.dock.showLauncherIcon ? 1 : 0)
+      readonly property bool indicatorVisible: showFrameIndicator && frameIndicatorLength > 0
       readonly property int frameIndicatorLength: {
         if (dockItemCount <= 0)
           return 0;
@@ -663,31 +664,17 @@ Loader {
           color: "transparent"
 
           // When bar is at same edge, position peek window past the bar so it receives mouse events
-          margins.top: isVertical ? peekCenterOffsetY : (dockPosition === "top" && barAtSameEdge && !showFrameIndicator ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0)
-          margins.bottom: dockPosition === "bottom" && barAtSameEdge && !showFrameIndicator ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0
-          margins.left: !isVertical ? peekCenterOffsetX : (dockPosition === "left" && barAtSameEdge && !showFrameIndicator ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0)) : 0)
-          margins.right: dockPosition === "right" && barAtSameEdge && !showFrameIndicator ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0)) : 0
+          margins.top: isVertical ? peekCenterOffsetY : (dockPosition === "top" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0)
+          margins.bottom: dockPosition === "bottom" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0
+          margins.left: !isVertical ? peekCenterOffsetX : (dockPosition === "left" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0)) : 0)
+          margins.right: dockPosition === "right" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0)) : 0
 
           WlrLayershell.namespace: "noctalia-dock-peek-" + (screen?.name || "unknown")
+          WlrLayershell.layer: WlrLayer.Overlay
           WlrLayershell.exclusionMode: ExclusionMode.Ignore
           // Larger peek area when bar is at same edge, normal 1px otherwise
-          implicitHeight: isVertical ? peekEdgeLength : ((showFrameIndicator || barAtSameEdge) ? indicatorThickness : peekHeight)
-          implicitWidth: isVertical ? ((showFrameIndicator || barAtSameEdge) ? indicatorThickness : peekHeight) : peekEdgeLength
-
-          Rectangle {
-            anchors.fill: parent
-            radius: indicatorThickness
-            color: Qt.alpha(Color.mPrimary, 0.6)
-            opacity: showFrameIndicator && frameIndicatorLength > 0 ? 1 : 0
-            visible: opacity > 0
-
-            Behavior on opacity {
-              NumberAnimation {
-                duration: Style.animationFast
-                easing.type: Easing.InOutQuad
-              }
-            }
-          }
+          implicitHeight: isVertical ? peekEdgeLength : peekThickness
+          implicitWidth: isVertical ? peekThickness : peekEdgeLength
 
           MouseArea {
             id: peekArea
@@ -718,6 +705,52 @@ Loader {
               showTimer.stop();
               if (!hidden && !dockHovered && !anyAppHovered && !menuHovered) {
                 hideTimer.restart();
+              }
+            }
+          }
+        }
+      }
+
+      // FRAME INDICATOR WINDOW
+      Loader {
+        active: (barIsReady || !hasBar) && modelData && (Settings.data.dock.monitors.length === 0 || Settings.data.dock.monitors.includes(modelData.name)) && indicatorVisible
+
+        sourceComponent: PanelWindow {
+          id: frameIndicatorWindow
+
+          screen: modelData
+          // Dynamic anchors based on dock position
+          anchors.top: dockPosition === "top" || isVertical
+          anchors.bottom: dockPosition === "bottom"
+          anchors.left: dockPosition === "left" || !isVertical
+          anchors.right: dockPosition === "right"
+          focusable: false
+          color: "transparent"
+
+          margins.top: isVertical ? peekCenterOffsetY : (dockPosition === "top" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0)
+          margins.bottom: dockPosition === "bottom" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0
+          margins.left: !isVertical ? peekCenterOffsetX : (dockPosition === "left" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0)) : 0)
+          margins.right: dockPosition === "right" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0)) : 0
+
+          WlrLayershell.namespace: "noctalia-dock-indicator-" + (screen?.name || "unknown")
+          WlrLayershell.layer: WlrLayer.Top
+          WlrLayershell.exclusionMode: ExclusionMode.Ignore
+          WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+          implicitHeight: isVertical ? peekEdgeLength : indicatorThickness
+          implicitWidth: isVertical ? indicatorThickness : peekEdgeLength
+
+          Rectangle {
+            id: indicatorRect
+            anchors.fill: parent
+            radius: indicatorThickness
+            color: Qt.alpha(Color.mPrimary, 0.6)
+            opacity: showFrameIndicator && frameIndicatorLength > 0 ? 1 : 0
+            visible: opacity > 0
+
+            Behavior on opacity {
+              NumberAnimation {
+                duration: Style.animationFast
+                easing.type: Easing.InOutQuad
               }
             }
           }
