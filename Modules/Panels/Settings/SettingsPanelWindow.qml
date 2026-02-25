@@ -14,7 +14,7 @@ FloatingWindow {
   minimumSize: Qt.size(840 * Style.uiScaleRatio, 910 * Style.uiScaleRatio)
   implicitWidth: Math.round(840 * Style.uiScaleRatio)
   implicitHeight: Math.round(910 * Style.uiScaleRatio)
-  color: Color.mSurface
+  color: "transparent"
 
   visible: false
 
@@ -98,7 +98,7 @@ FloatingWindow {
   // Main content
   Rectangle {
     anchors.fill: parent
-    color: "transparent"
+    color: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
     radius: Style.radiusL
 
     SettingsContent {
