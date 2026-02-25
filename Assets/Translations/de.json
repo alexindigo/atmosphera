@@ -92,7 +92,7 @@
       "browse-file": "Datei durchsuchen",
       "browse-library": "Bibliothek durchsuchen",
       "color-selection-description": "Wendet Themenfarben auf Symbole an.",
-      "enable-colorization-description": "Farbgebung durch Themenfarben für das Kontrollzentrum-Symbol aktivieren.",
+      "enable-colorization-description": "Farbgebung für das Symbol aktivieren, Designfarben anwenden.",
       "icon-description": "Symbol aus der Bibliothek oder eine benutzerdefinierte Datei auswählen.",
       "select-custom-icon": "Benutzerdefiniertes Symbol auswählen",
       "use-distro-logo-description": "Logo Ihrer Distribution anstelle eines benutzerdefinierten Symbols verwenden.",
@@ -1006,6 +1006,9 @@
       "weather-show-background-description": "Zeige den Hintergrundcontainer für das Wetter-Widget an."
     },
     "display": {
+      "monitors-backlight-device-auto-option": "Standard",
+      "monitors-backlight-device-description": "Wähle ein Hintergrundbeleuchtungsgerät für diesen Ausgang.",
+      "monitors-backlight-device-label": "Hintergrundbeleuchtungsgerät",
       "monitors-brightness-step-description": "Schrittgröße für Helligkeitsänderungen anpassen (Mausrad und Tastenkürzel).",
       "monitors-brightness-step-label": "Helligkeits-Schrittgröße",
       "monitors-brightness-unavailable-ddc-disabled": "Helligkeitssteuerung nicht verfügbar. Aktivieren Sie \"Externe Helligkeitsunterstützung\", um die Helligkeit dieses Displays zu steuern.",

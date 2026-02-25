@@ -92,7 +92,7 @@
       "browse-file": "Bläddra bland filer",
       "browse-library": "Bläddra bland bibliotek",
       "color-selection-description": "Tillämpa temafärger på ikoner.",
-      "enable-colorization-description": "Aktivera färgläggning för kontrollcenterikonen och tillämpa temafärger. ",
+      "enable-colorization-description": "Aktivera färgläggning för ikon, tillämpa temafärger.",
       "icon-description": "Välj en ikon från biblioteket eller en anpassad fil.",
       "select-custom-icon": "Välj en anpassad ikon",
       "use-distro-logo-description": "Använd din distributions logotyp istället för en anpassad ikon.",
@@ -1006,6 +1006,9 @@
       "weather-show-background-description": "Visa bakgrundsbehållaren för väderwidgeten."
     },
     "display": {
+      "monitors-backlight-device-auto-option": "Standard",
+      "monitors-backlight-device-description": "Välj en bakgrundsbelysningsenhet för denna utgång.",
+      "monitors-backlight-device-label": "Bakgrundsbelysningsenhet",
       "monitors-brightness-step-description": "Justera stegstorleken för ljusstyrkeändringar (rullhjul och kortkommandon).",
       "monitors-brightness-step-label": "Ljusstyrkestegstorlek",
       "monitors-brightness-unavailable-ddc-disabled": "Ljusstyrkekontroll otillgänglig. Aktivera \"Extern ljusstyrkestöd\"för att kontrollera ljusstyrkan på denna skärm.",

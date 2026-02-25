@@ -1,7 +1,9 @@
 import QtQuick
 import Quickshell
+import Quickshell.Widgets
 import qs.Commons
 import qs.Modules.Panels.Settings
+import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
 
@@ -29,18 +31,28 @@ NIconButton {
     return {};
   }
 
-  readonly property string iconName: widgetSettings.icon || (widgetMetadata ? widgetMetadata.icon : "search")
-  readonly property string iconColorKey: widgetSettings.iconColor !== undefined ? widgetSettings.iconColor : widgetMetadata.iconColor
+  readonly property string customIcon: widgetSettings.icon || (widgetMetadata ? widgetMetadata.icon : "rocket")
+  readonly property bool useDistroLogo: widgetSettings.useDistroLogo !== undefined ? widgetSettings.useDistroLogo : widgetMetadata.useDistroLogo
+  readonly property string customIconPath: widgetSettings.customIconPath !== undefined ? widgetSettings.customIconPath : widgetMetadata.customIconPath
+  readonly property bool enableColorization: widgetSettings.enableColorization !== undefined ? widgetSettings.enableColorization : widgetMetadata.enableColorization
+  readonly property string colorizeSystemIcon: widgetSettings.colorizeSystemIcon !== undefined ? widgetSettings.colorizeSystemIcon : widgetMetadata.colorizeSystemIcon
 
-  icon: iconName
+  readonly property color iconColor: {
+    if (!enableColorization)
+      return Color.mOnSurface;
+    return Color.resolveColorKey(colorizeSystemIcon);
+  }
+
+  // If we have a custom path or are using distro logo, don't show the theme icon.
+  icon: (customIconPath === "" && !useDistroLogo) ? customIcon : ""
   tooltipText: I18n.tr("actions.open-launcher")
   tooltipDirection: BarService.getTooltipDirection(screenName)
   baseSize: Style.getCapsuleHeightForScreen(screenName)
   applyUiScale: false
   customRadius: Style.radiusL
   colorBg: Style.capsuleColor
+  colorFg: iconColor
   colorBgHover: Color.mHover
-  colorFg: Color.resolveColorKey(iconColorKey)
   colorFgHover: Color.mOnHover
   colorBorder: Style.capsuleBorderColor
   colorBorderHover: Style.capsuleBorderColor
@@ -79,5 +91,29 @@ NIconButton {
   onMiddleClicked: PanelService.toggleLauncher(screen)
   onRightClicked: {
     PanelService.showContextMenu(contextMenu, root, screen);
+  }
+
+  IconImage {
+    id: customOrDistroLogo
+    anchors.centerIn: parent
+    width: root.buttonSize * 0.8
+    height: width
+    source: {
+      if (useDistroLogo)
+        return HostService.osLogo;
+      if (customIconPath !== "")
+        return customIconPath.startsWith("file://") ? customIconPath : "file://" + customIconPath;
+      return "";
+    }
+    visible: source !== ""
+    smooth: true
+    asynchronous: true
+    layer.enabled: (enableColorization) && (useDistroLogo || customIconPath !== "")
+    layer.effect: ShaderEffect {
+      property color targetColor: !hovering ? iconColor : Color.mOnHover
+      property real colorizeMode: 2.0
+
+      fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+    }
   }
 }

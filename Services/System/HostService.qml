@@ -192,16 +192,23 @@ Singleton {
     stderr: StdioCollector {}
   }
 
-  // Read /etc/hostname
-  FileView {
-    id: hostName
-    path: "/etc/hostname"
-    onLoaded: {
-      const name = text().trim();
-      if (name) {
-        root.hostName = name;
-        Logger.i("HostService", "resolved hostname", name);
+  // Resolve hostname from distro-specific locations.
+  // Prefer /etc/hostname, fallback to Gentoo's /etc/conf.d/hostname.
+  Process {
+    id: hostNameProcess
+    command: ["sh", "-c",
+      "if [ -r /etc/hostname ]; then sed -n '1p' /etc/hostname; exit 0; fi; if [ -r /etc/conf.d/hostname ]; then v=$(sed -n -E 's/^[[:space:]]*[Hh][Oo][Ss][Tt][Nn][Aa][Mm][Ee][[:space:]]*=[[:space:]]*//p' /etc/conf.d/hostname | sed -n '1p'); v=$(printf '%s' \"$v\" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//; s/^\"//; s/\"$//; s/^\x27//; s/\x27$//'); printf '%s\n' \"$v\"; exit 0; fi; exit 0"]
+    running: true
+
+    stdout: StdioCollector {
+      onStreamFinished: {
+        const name = String(text || "").trim();
+        if (name.length > 0) {
+          root.hostName = name;
+          Logger.i("HostService", "resolved hostname", name);
+        }
       }
     }
+    stderr: StdioCollector {}
   }
 }

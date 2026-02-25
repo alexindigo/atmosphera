@@ -92,7 +92,7 @@
       "browse-file": "Explorar archivo",
       "browse-library": "Explorar biblioteca",
       "color-selection-description": "Aplica colores del tema a los iconos.",
-      "enable-colorization-description": "Habilita el coloreado del icono del centro de control, aplicando los colores del tema.",
+      "enable-colorization-description": "Habilitar la colorización para el icono, aplicando los colores del tema.",
       "icon-description": "Selecciona un icono de la biblioteca o un archivo personalizado.",
       "select-custom-icon": "Seleccionar un icono personalizado",
       "use-distro-logo-description": "Usar el logo de tu distribución en lugar de un icono personalizado.",
@@ -1006,6 +1006,9 @@
       "weather-show-background-description": "Mostrar el contenedor de fondo para el widget del clima."
     },
     "display": {
+      "monitors-backlight-device-auto-option": "Predeterminado",
+      "monitors-backlight-device-description": "Selecciona un dispositivo de retroiluminación para esta salida.",
+      "monitors-backlight-device-label": "Dispositivo de Retroiluminación",
       "monitors-brightness-step-description": "Ajusta el tamaño del paso para los cambios de brillo (rueda de desplazamiento y atajos de teclado).",
       "monitors-brightness-step-label": "Tamaño del paso de brillo",
       "monitors-brightness-unavailable-ddc-disabled": "Control de brillo no disponible. Habilita \"Soporte de brillo externo\" para controlar el brillo de esta pantalla.",

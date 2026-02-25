@@ -520,6 +520,15 @@
     "subTab": null
   },
   {
+    "labelKey": "panels.display.monitors-backlight-device-label",
+    "descriptionKey": "panels.display.monitors-backlight-device-description",
+    "widget": "NComboBox",
+    "tab": 14,
+    "tabLabel": "panels.display.title",
+    "subTab": 0,
+    "subTabLabel": "common.brightness"
+  },
+  {
     "labelKey": "panels.display.monitors-brightness-step-label",
     "descriptionKey": "panels.display.monitors-brightness-step-description",
     "widget": "NSpinBox",
@@ -1830,6 +1839,15 @@
     "labelKey": "panels.user-interface.settings-panel-mode-label",
     "descriptionKey": "panels.user-interface.settings-panel-mode-description",
     "widget": "NComboBox",
+    "tab": 1,
+    "tabLabel": "panels.user-interface.title",
+    "subTab": 1,
+    "subTabLabel": "common.panels"
+  },
+  {
+    "labelKey": "panels.user-interface.settings-panel-sidebar-card-style-label",
+    "descriptionKey": "panels.user-interface.settings-panel-sidebar-card-style-description",
+    "widget": "NToggle",
     "tab": 1,
     "tabLabel": "panels.user-interface.title",
     "subTab": 1,

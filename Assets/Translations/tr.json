@@ -92,7 +92,7 @@
       "browse-file": "Dosyaya göz at",
       "browse-library": "Kütüphaneye göz at",
       "color-selection-description": "Simgeye tema renklerini uygular.",
-      "enable-colorization-description": "Kontrol merkezi simgesi için renklendirmeyi etkinleştirir, tema renklerini uygular.",
+      "enable-colorization-description": "Simge için renklendirmeyi etkinleştir, tema renklerini uygula.",
       "icon-description": "Kütüphaneden veya özel bir dosyadan bir simge seçin.",
       "select-custom-icon": "Özel bir simge seç",
       "use-distro-logo-description": "Özel simge yerine dağıtımınızın logosunu kullanın.",
@@ -1006,6 +1006,9 @@
       "weather-show-background-description": "Hava durumu widget'ı için arka plan konteynerini göster."
     },
     "display": {
+      "monitors-backlight-device-auto-option": "Varsayılan",
+      "monitors-backlight-device-description": "Bu çıkış için bir arka ışık cihazı seçin.",
+      "monitors-backlight-device-label": "Arka Işık Cihazı",
       "monitors-brightness-step-description": "Parlaklık değişimleri için adım boyutunu ayarlayın (tekerlek ve klavye kısayolları).",
       "monitors-brightness-step-label": "Parlaklık adım boyutu",
       "monitors-brightness-unavailable-ddc-disabled": "Parlaklık kontrolü kullanılamıyor. Bu ekranın parlaklığını kontrol etmek için \"Harici parlaklık desteği\"ni etkinleştirin.",

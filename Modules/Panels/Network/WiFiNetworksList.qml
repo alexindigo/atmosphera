@@ -22,7 +22,7 @@ NBox {
   property string infoSsid: ""
   // Local layout toggle for details: true = grid (2 cols), false = rows (1 col)
   // Persisted under Settings.data.network.wifiDetailsViewMode
-  property bool detailsGrid: (Settings.data && Settings.data.ui && Settings.data.network.wifiDetailsViewMode !== undefined) ? (Settings.data.network.wifiDetailsViewMode === "grid") : true
+  property bool detailsGrid: (Settings.data.network.wifiDetailsViewMode === "grid")
 
   signal passwordRequested(string ssid)
   signal passwordSubmitted(string ssid, string password)
@@ -201,7 +201,7 @@ NBox {
                   color: Color.mError
                   radius: height * 0.5
                   width: Math.round(forgettingText.implicitWidth + Style.margin2S)
-                  height: math.round(forgettingText.implicitHeight + Style.margin2XXS)
+                  height: Math.round(forgettingText.implicitHeight + Style.margin2XXS)
 
                   NText {
                     id: forgettingText

@@ -49,7 +49,7 @@ Item {
   readonly property var availableDevices: {
     var list = root.unnamedAvailableDevices;
 
-    if (Settings.data && Settings.data.ui && Settings.data.network.bluetoothHideUnnamedDevices) {
+    if (Settings.data.network.bluetoothHideUnnamedDevices) {
       list = list.filter(function (dev) {
         var dn = dev.name || dev.deviceName || "";
         var s = String(dn).trim();
@@ -78,7 +78,7 @@ Item {
 
   // For managing expanded device details
   property string expandedDeviceKey: ""
-  property bool detailsGrid: (Settings.data && Settings.data.ui && Settings.data.network.bluetoothDetailsViewMode !== undefined) ? (Settings.data.network.bluetoothDetailsViewMode === "grid") : true
+  property bool detailsGrid: (Settings.data.network.bluetoothDetailsViewMode === "grid")
 
   // Combined visibility check: tab must be visible AND the window must be visible
   readonly property bool effectivelyVisible: root.visible && Window.window && Window.window.visible
@@ -196,7 +196,7 @@ Item {
       id: connectedDevicesBox
       visible: root.connectedDevices.length > 0 && BluetoothService.enabled
       Layout.fillWidth: true
-      Layout.preferredHeight: connectedDevicesCol.implicitHeight + Style.marginXL
+      Layout.preferredHeight: connectedDevicesCol.implicitHeight + Style.margin2M
       border.color: showOnlyLists ? Style.boxBorderColor : "transparent"
 
       ColumnLayout {
@@ -226,7 +226,7 @@ Item {
       id: pairedDevicesBox
       visible: root.pairedDevices.length > 0 && BluetoothService.enabled
       Layout.fillWidth: true
-      Layout.preferredHeight: pairedDevicesCol.implicitHeight + Style.marginXL
+      Layout.preferredHeight: pairedDevicesCol.implicitHeight + Style.margin2M
       border.color: showOnlyLists ? Style.boxBorderColor : "transparent"
 
       ColumnLayout {
@@ -256,7 +256,7 @@ Item {
       id: availableDevicesBox
       visible: !root.showOnlyLists && root.unnamedAvailableDevices.length > 0 && BluetoothService.enabled
       Layout.fillWidth: true
-      Layout.preferredHeight: availableDevicesCol.implicitHeight + Style.marginXL
+      Layout.preferredHeight: availableDevicesCol.implicitHeight + Style.margin2M
       border.color: "transparent"
 
       ColumnLayout {
@@ -533,9 +533,7 @@ Item {
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
               root.detailsGrid = !root.detailsGrid;
-              if (Settings.data && Settings.data.ui) {
-                Settings.data.network.bluetoothDetailsViewMode = root.detailsGrid ? "grid" : "list";
-              }
+              Settings.data.network.bluetoothDetailsViewMode = root.detailsGrid ? "grid" : "list";
             }
             z: 1
           }

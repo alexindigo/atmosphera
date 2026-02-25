@@ -143,6 +143,16 @@ Singleton {
     Logger.i("BarService", "Service started");
   }
 
+  // Bump widgetsRevision when settings are reloaded from an external file change
+  // so Bar.qml re-syncs its widget ListModels with the updated widget configuration
+  Connections {
+    target: Settings
+    function onSettingsReloaded() {
+      Logger.d("BarService", "Settings reloaded externally, bumping widgetsRevision");
+      root.widgetsRevision++;
+    }
+  }
+
   // update bar's hidden state when mode changes
   Connections {
     target: Settings.data.bar
