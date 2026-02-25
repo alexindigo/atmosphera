@@ -92,7 +92,7 @@
       "browse-file": "Datei durchsuchen",
       "browse-library": "Bibliothek durchsuchen",
       "color-selection-description": "Wendet Themenfarben auf Symbole an.",
-      "enable-colorization-description": "Farbgebung durch Themenfarben für das Kontrollzentrum-Symbol aktivieren.",
+      "enable-colorization-description": "Farbgebung für das Symbol aktivieren, Designfarben anwenden.",
       "icon-description": "Symbol aus der Bibliothek oder eine benutzerdefinierte Datei auswählen.",
       "select-custom-icon": "Benutzerdefiniertes Symbol auswählen",
       "use-distro-logo-description": "Logo Ihrer Distribution anstelle eines benutzerdefinierten Symbols verwenden.",

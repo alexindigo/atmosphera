@@ -92,7 +92,7 @@
       "browse-file": "Parcourir les fichiers",
       "browse-library": "Parcourir la bibliothèque",
       "color-selection-description": "Applique les couleurs du thème aux icônes.",
-      "enable-colorization-description": "Active la coloration pour l'icône du centre de contrôle, en appliquant les couleurs du thème.",
+      "enable-colorization-description": "Activer la colorisation pour l'icône, en appliquant les couleurs du thème.",
       "icon-description": "Sélectionnez une icône de la bibliothèque ou un fichier personnalisé.",
       "select-custom-icon": "Sélectionner une icône personnalisée",
       "use-distro-logo-description": "Utiliser le logo de votre distribution au lieu d'une icône personnalisée.",

@@ -92,7 +92,7 @@
       "browse-file": "Bläddra bland filer",
       "browse-library": "Bläddra bland bibliotek",
       "color-selection-description": "Tillämpa temafärger på ikoner.",
-      "enable-colorization-description": "Aktivera färgläggning för kontrollcenterikonen och tillämpa temafärger. ",
+      "enable-colorization-description": "Aktivera färgläggning för ikon, tillämpa temafärger.",
       "icon-description": "Välj en ikon från biblioteket eller en anpassad fil.",
       "select-custom-icon": "Välj en anpassad ikon",
       "use-distro-logo-description": "Använd din distributions logotyp istället för en anpassad ikon.",

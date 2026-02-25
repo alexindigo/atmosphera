@@ -92,7 +92,7 @@
       "browse-file": "Dosyaya göz at",
       "browse-library": "Kütüphaneye göz at",
       "color-selection-description": "Simgeye tema renklerini uygular.",
-      "enable-colorization-description": "Kontrol merkezi simgesi için renklendirmeyi etkinleştirir, tema renklerini uygular.",
+      "enable-colorization-description": "Simge için renklendirmeyi etkinleştir, tema renklerini uygula.",
       "icon-description": "Kütüphaneden veya özel bir dosyadan bir simge seçin.",
       "select-custom-icon": "Özel bir simge seç",
       "use-distro-logo-description": "Özel simge yerine dağıtımınızın logosunu kullanın.",

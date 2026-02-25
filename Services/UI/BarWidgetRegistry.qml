@@ -183,7 +183,11 @@ Singleton {
                                     "hideWhenOff": false
                                   },
                                   "Launcher": {
+                                    "useDistroLogo": false,
                                     "icon": "rocket",
+                                    "customIconPath": "",
+                                    "colorizeSystemIcon": "none",
+                                    "enableColorization": false,
                                     "iconColor": "none"
                                   },
                                   "MediaMini": {

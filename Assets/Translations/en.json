@@ -92,7 +92,7 @@
       "browse-file": "Browse File",
       "browse-library": "Browse Library",
       "color-selection-description": "Apply theme colors to icons.",
-      "enable-colorization-description": "Enable colorization for the control center icon, applying theme colors.",
+      "enable-colorization-description": "Enable colorization for icon, applying theme colors.",
       "icon-description": "Select an icon from the library or a custom file.",
       "select-custom-icon": "Select a custom icon",
       "use-distro-logo-description": "Use your distribution's logo instead of a custom icon.",

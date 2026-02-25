@@ -92,7 +92,7 @@
       "browse-file": "ファイルを参照",
       "browse-library": "ライブラリを参照",
       "color-selection-description": "アイコンに適用するテーマの色を選択します。",
-      "enable-colorization-description": "コントロールセンターのアイコンに、テーマカラーを適用します。",
+      "enable-colorization-description": "アイコンの色付けを有効にし、テーマの色を適用します。",
       "icon-description": "ライブラリまたはカスタムファイルからアイコンを選択します。",
       "select-custom-icon": "カスタムアイコンを選択",
       "use-distro-logo-description": "カスタムアイコンの代わりに、ディストリビューションのロゴを使用します。",

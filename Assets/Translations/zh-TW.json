@@ -92,7 +92,7 @@
       "browse-file": "瀏覽檔案",
       "browse-library": "瀏覽圖示庫",
       "color-selection-description": "將主題用色套用至圖示上",
-      "enable-colorization-description": "對控制中心的圖示啟用上色, 並套用主題用色",
+      "enable-colorization-description": "為圖示啟用著色，應用主題顏色。",
       "icon-description": "自圖示庫或檔案選擇一個圖示",
       "select-custom-icon": "選取一個自訂圖示",
       "use-distro-logo-description": "使用你現在使用的發行版 Logo 作為圖示",

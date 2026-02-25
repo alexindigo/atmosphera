@@ -92,7 +92,7 @@
       "browse-file": "浏览文件",
       "browse-library": "浏览库",
       "color-selection-description": "将主题颜色应用于图标。",
-      "enable-colorization-description": "为控制中心图标启用着色，应用主题颜色。",
+      "enable-colorization-description": "为图标启用着色，应用主题颜色。",
       "icon-description": "从库中选择图标或自定义文件。",
       "select-custom-icon": "选择自定义图标",
       "use-distro-logo-description": "使用您的发行版徽标而不是自定义图标。",
