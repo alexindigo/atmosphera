@@ -771,7 +771,7 @@
       "visualizer-type-description": "Виберіть тип візуалізації для відтворення медіа.",
       "visualizer-type-label": "Тип візуалізації",
       "volumes-desc": "Налаштуйте регулятори гучності та рівні звуку.",
-      "volumes-feedback-sound-file-description": "Шлях до звукового файлу, що відтворюється при зміні гучності виводу.",
+      "volumes-feedback-sound-file-description": "Шлях до звукового файлу, який відтворюється під час зміни гучності.",
       "volumes-feedback-sound-file-label": "Звуковий файл зворотного зв'язку гучності",
       "volumes-feedback-sound-file-select-title": "Вибрати звуковий файл зворотного зв'язку гучності",
       "volumes-input-volume-description": "Рівень гучності мікрофона.",

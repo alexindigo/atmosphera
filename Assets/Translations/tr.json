@@ -771,7 +771,7 @@
       "visualizer-type-description": "Medya oynatma için bir görselleştirme türü seçin.",
       "visualizer-type-label": "Görselleştirme türü",
       "volumes-desc": "Ses kontrollerini ve ses seviyelerini ayarlayın.",
-      "volumes-feedback-sound-file-description": "Çıkış ses seviyesi değiştirildiğinde çalınan ses dosyasının yolu.",
+      "volumes-feedback-sound-file-description": "Ses seviyesi değiştirilirken çalınan ses dosyasının yolu.",
       "volumes-feedback-sound-file-label": "Ses geri bildirim ses dosyası",
       "volumes-feedback-sound-file-select-title": "Ses geri bildirimi ses dosyası seç",
       "volumes-input-volume-description": "Mikrofon giriş ses seviyesi.",

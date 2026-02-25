@@ -771,7 +771,7 @@
       "visualizer-type-description": "Wybierz typ wizualizacji odtwarzania multimediów.",
       "visualizer-type-label": "Typ wizualizacji",
       "volumes-desc": "Dostosuj głośność i poziomy dźwięku.",
-      "volumes-feedback-sound-file-description": "Ścieżka do pliku dźwiękowego odtwarzanego podczas zmiany głośności wyjściowej.",
+      "volumes-feedback-sound-file-description": "Ścieżka do pliku dźwiękowego odtwarzanego podczas zmiany głośności.",
       "volumes-feedback-sound-file-label": "Plik dźwiękowy informacji zwrotnej głośności",
       "volumes-feedback-sound-file-select-title": "Wybierz plik dźwiękowy informacji zwrotnej o głośności",
       "volumes-input-volume-description": "Poziom głośności wejścia mikrofonu.",

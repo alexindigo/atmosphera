@@ -771,7 +771,7 @@
       "visualizer-type-description": "Kies een visualisatietype voor mediaweergave.",
       "visualizer-type-label": "Visualisatietype",
       "volumes-desc": "Pas volumeregelaars en audioniveaus aan.",
-      "volumes-feedback-sound-file-description": "Pad naar het geluidsbestand dat wordt afgespeeld bij het wijzigen van het uitvoervolume.",
+      "volumes-feedback-sound-file-description": "Pad naar het geluidsbestand dat wordt afgespeeld bij het wijzigen van het volume.",
       "volumes-feedback-sound-file-label": "Geluidsbestand voor volumefeedback",
       "volumes-feedback-sound-file-select-title": "Selecteer volumefeedback-geluidsbestand",
       "volumes-input-volume-description": "Volumeniveau van microfooninvoer.",

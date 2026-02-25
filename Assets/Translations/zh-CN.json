@@ -771,7 +771,7 @@
       "visualizer-type-description": "选择媒体播放的可视化类型。",
       "visualizer-type-label": "可视化类型",
       "volumes-desc": "调整音量控制和音频级别。",
-      "volumes-feedback-sound-file-description": "更改输出音量时播放的声音文件路径。",
+      "volumes-feedback-sound-file-description": "更改音量时播放的声音文件路径。",
       "volumes-feedback-sound-file-label": "音量反馈声音文件",
       "volumes-feedback-sound-file-select-title": "选择音量反馈声音文件",
       "volumes-input-volume-description": "麦克风输入音量级别。",

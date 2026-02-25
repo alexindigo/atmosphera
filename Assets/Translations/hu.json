@@ -771,7 +771,7 @@
       "visualizer-type-description": "Vizualizációs típus a média lejátszásához.",
       "visualizer-type-label": "Vizualizációs típus",
       "volumes-desc": "Beállítja a hangerőszabályzókat és a hangszinteket.",
-      "volumes-feedback-sound-file-description": "Az a hangfájl elérési útja, amely a kimeneti hangerő változtatásakor játszódik le.",
+      "volumes-feedback-sound-file-description": "Az a hangfájl elérési útja, amely a hangerő változtatásakor játszódik le.",
       "volumes-feedback-sound-file-label": "Hangerő visszajelző hangfájl",
       "volumes-feedback-sound-file-select-title": "Hangerő visszajelző hangfájl kiválasztása",
       "volumes-input-volume-description": "Mikrofon bemeneti hangerőszintje.",

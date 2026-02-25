@@ -771,7 +771,7 @@
       "visualizer-type-description": "Välj en visualiseringstyp för medieuppspelning.",
       "visualizer-type-label": "Visualiseringstyp",
       "volumes-desc": "Justera volymkontroller och ljudnivåer.",
-      "volumes-feedback-sound-file-description": "Sökväg till ljudfilen som spelas upp när utvolymen ändras.",
+      "volumes-feedback-sound-file-description": "Sökväg till ljudfilen som spelas upp när volymen ändras.",
       "volumes-feedback-sound-file-label": "Ljudfil för volymfeedback",
       "volumes-feedback-sound-file-select-title": "Välj ljudfil för volymfeedback",
       "volumes-input-volume-description": "Mikrofonens ingångsvolymnivå.",

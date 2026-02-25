@@ -771,7 +771,7 @@
       "visualizer-type-description": "メディア再生の可視化タイプを選択してください。",
       "visualizer-type-label": "視覚化の種類",
       "volumes-desc": "音量コントロールとレベルを調整します。",
-      "volumes-feedback-sound-file-description": "出力音量を変更したときに再生されるサウンドファイルのパス。",
+      "volumes-feedback-sound-file-description": "音量変更時に再生されるサウンドファイルのパス。",
       "volumes-feedback-sound-file-label": "音量フィードバックのサウンドファイル",
       "volumes-feedback-sound-file-select-title": "音量フィードバックのサウンドファイルを選択",
       "volumes-input-volume-description": "マイクの音量レベル。",

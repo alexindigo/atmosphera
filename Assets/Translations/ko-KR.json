@@ -771,7 +771,7 @@
       "visualizer-type-description": "미디어 재생 시 사용할 비주얼라이저 유형을 선택하세요.",
       "visualizer-type-label": "비주얼라이저 유형",
       "volumes-desc": "볼륨 제어 및 오디오 레벨을 조정합니다.",
-      "volumes-feedback-sound-file-description": "출력 볼륨 변경 시 재생되는 사운드 파일 경로.",
+      "volumes-feedback-sound-file-description": "볼륨 변경 시 재생되는 사운드 파일 경로.",
       "volumes-feedback-sound-file-label": "볼륨 피드백 사운드 파일",
       "volumes-feedback-sound-file-select-title": "볼륨 피드백 사운드 파일 선택",
       "volumes-input-volume-description": "마이크 입력 볼륨 레벨입니다.",

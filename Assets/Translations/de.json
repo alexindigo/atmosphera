@@ -771,7 +771,7 @@
       "visualizer-type-description": "Wählen Sie einen Visualisierungstyp für die Medienwiedergabe.",
       "visualizer-type-label": "Visualisierungsart",
       "volumes-desc": "Lautstärkeregler und Audiopegel anpassen.",
-      "volumes-feedback-sound-file-description": "Pfad zur Sounddatei, die beim Ändern der Ausgabelautstärke abgespielt wird.",
+      "volumes-feedback-sound-file-description": "Pfad zur Sounddatei, die beim Ändern der Lautstärke abgespielt wird.",
       "volumes-feedback-sound-file-label": "Audiodatei für Lautstärke-Feedback",
       "volumes-feedback-sound-file-select-title": "Audiodatei für Lautstärkerückmeldung auswählen",
       "volumes-input-volume-description": "Mikrofon-Eingabe-Lautstärke.",

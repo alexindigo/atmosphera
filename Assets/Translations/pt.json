@@ -771,7 +771,7 @@
       "visualizer-type-description": "Escolha um tipo de visualização para reprodução de mídia.",
       "visualizer-type-label": "Tipo de visualização",
       "volumes-desc": "Ajuste os controles de volume e os níveis de áudio.",
-      "volumes-feedback-sound-file-description": "Caminho para o arquivo de som reproduzido ao alterar o volume de saída.",
+      "volumes-feedback-sound-file-description": "Caminho para o arquivo de som reproduzido ao mudar o volume.",
       "volumes-feedback-sound-file-label": "Arquivo de som de feedback de volume",
       "volumes-feedback-sound-file-select-title": "Selecionar arquivo de som de feedback de volume",
       "volumes-input-volume-description": "Nível de volume de entrada do microfone.",

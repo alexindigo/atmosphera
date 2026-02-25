@@ -771,7 +771,7 @@
       "visualizer-type-description": "選擇媒體播放時的視覺效果樣式",
       "visualizer-type-label": "視覺效果樣式",
       "volumes-desc": "調整音訊控制及音量",
-      "volumes-feedback-sound-file-description": "變更輸出音量時播放的音效檔案路徑。",
+      "volumes-feedback-sound-file-description": "更改音量時播放的聲音檔案路徑。",
       "volumes-feedback-sound-file-label": "音量回饋聲音檔案",
       "volumes-feedback-sound-file-select-title": "選擇音量回饋聲音檔案",
       "volumes-input-volume-description": "麥克風輸入音量",

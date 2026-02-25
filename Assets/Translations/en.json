@@ -771,7 +771,7 @@
       "visualizer-type-description": "Choose a visualization type for media playback.",
       "visualizer-type-label": "Visualization type",
       "volumes-desc": "Adjust volume controls and audio levels.",
-      "volumes-feedback-sound-file-description": "Path to the sound file played when changing output volume.",
+      "volumes-feedback-sound-file-description": "Path to the sound file played when changing volume.",
       "volumes-feedback-sound-file-label": "Volume feedback sound file",
       "volumes-feedback-sound-file-select-title": "Select volume feedback sound file",
       "volumes-input-volume-description": "Microphone input volume level.",
