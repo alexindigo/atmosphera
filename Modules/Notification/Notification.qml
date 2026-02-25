@@ -718,9 +718,9 @@ Variants {
               tooltipText: I18n.tr("tooltips.dismiss-notification")
               baseSize: Style.baseWidgetSize * 0.6
               anchors.top: cardBackground.top
-              anchors.topMargin: Style.marginM
+              anchors.topMargin: Style.marginXL
               anchors.right: cardBackground.right
-              anchors.rightMargin: Style.marginM
+              anchors.rightMargin: Style.marginXL
 
               onClicked: {
                 card.runAction("", true);
