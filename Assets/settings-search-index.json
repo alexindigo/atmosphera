@@ -92,7 +92,7 @@
   {
     "labelKey": "panels.audio.volumes-feedback-sound-file-label",
     "descriptionKey": "panels.audio.volumes-feedback-sound-file-description",
-    "widget": "NTextInputButton",
+    "widget": "NLabel",
     "tab": 13,
     "tabLabel": "panels.audio.title",
     "subTab": 0,
