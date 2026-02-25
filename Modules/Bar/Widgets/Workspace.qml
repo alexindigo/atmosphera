@@ -68,21 +68,6 @@ Item {
   readonly property string emptyColor: (widgetSettings.emptyColor !== undefined) ? widgetSettings.emptyColor : widgetMetadata.emptyColor
   readonly property bool showBadge: (widgetSettings.showBadge !== undefined) ? widgetSettings.showBadge : widgetMetadata.showBadge
 
-  // Helper to safely get colors with proper reactivity
-  // Accesses Color singleton directly to ensure fresh values
-  function getColorPair(colorKey) {
-    switch (colorKey) {
-    case "primary":
-      return [Color.mPrimary, Color.mOnPrimary];
-    case "secondary":
-      return [Color.mSecondary, Color.mOnSecondary];
-    case "tertiary":
-      return [Color.mTertiary, Color.mOnTertiary];
-    default:
-      return [Color.mOnSurface, Color.mSurface];
-    }
-  }
-
   // Only for grouped mode / show apps
   readonly property int baseItemSize: Style.toOdd(capsuleHeight * 0.8)
   readonly property int iconSize: Style.toOdd(baseItemSize * iconScale)
@@ -804,13 +789,13 @@ Item {
 
           color: {
             if (groupedContainer.workspaceModel.isFocused)
-              return root.getColorPair(root.focusedColor)[0];
+              return Color.resolveColorKey(root.focusedColor);
             if (groupedContainer.workspaceModel.isUrgent)
               return Color.mError;
             if (groupedContainer.hasWindows)
-              return root.getColorPair(root.occupiedColor)[0];
+              return Color.resolveColorKey(root.occupiedColor);
 
-            return root.getColorPair(root.emptyColor)[0];
+            return Color.resolveColorKey(root.emptyColor);
           }
 
           scale: groupedContainer.workspaceModel.isActive ? 1.0 : 0.8
@@ -873,13 +858,13 @@ Item {
 
           color: {
             if (groupedContainer.workspaceModel.isFocused)
-              return root.getColorPair(root.focusedColor)[1];
+              return Color.resolveOnColorKey(root.focusedColor);
             if (groupedContainer.workspaceModel.isUrgent)
               return Color.mOnError;
             if (groupedContainer.hasWindows)
-              return root.getColorPair(root.occupiedColor)[1];
+              return Color.resolveOnColorKey(root.occupiedColor);
 
-            return root.getColorPair(root.emptyColor)[1];
+            return Color.resolveOnColorKey(root.emptyColor);
           }
 
           Behavior on opacity {
