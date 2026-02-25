@@ -661,6 +661,7 @@ Singleton {
       property list<string> mprisBlacklist: []
       property string preferredPlayer: ""
       property bool volumeFeedback: false
+      property string volumeFeedbackSoundFile: ""
     }
 
     // brightness

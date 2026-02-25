@@ -619,7 +619,10 @@ Singleton {
     lastVolumeFeedbackTime = now;
 
     const feedbackVolume = currentVolume;
-    SoundService.playSound("volume-change.wav", {
+    const configuredSoundFile = Settings.data.audio.volumeFeedbackSoundFile;
+    const soundFile = (configuredSoundFile && configuredSoundFile.trim() !== "") ? configuredSoundFile : "volume-change.wav";
+
+    SoundService.playSound(soundFile, {
                              volume: feedbackVolume,
                              fallback: false,
                              repeat: false

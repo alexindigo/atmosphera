@@ -90,6 +90,15 @@
     "subTabLabel": "common.volumes"
   },
   {
+    "labelKey": "panels.audio.volumes-feedback-sound-file-label",
+    "descriptionKey": "panels.audio.volumes-feedback-sound-file-description",
+    "widget": "NTextInputButton",
+    "tab": 13,
+    "tabLabel": "panels.audio.title",
+    "subTab": 0,
+    "subTabLabel": "common.volumes"
+  },
+  {
     "labelKey": "panels.osd.types-input-volume-label",
     "descriptionKey": "panels.audio.volumes-input-volume-description",
     "widget": "NValueSlider",
