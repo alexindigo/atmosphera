@@ -1059,7 +1059,7 @@ Item {
               delegate: Rectangle {
                 id: tabItem
                 width: sidebarList.width
-                height: tabEntryRow.implicitHeight + Style.margin2S
+                height: tabEntryRow.implicitHeight + Style.margin2XS
                 radius: Style.iRadiusS
                 color: selected ? Color.mPrimary : (tabItem.hovering ? Color.mHover : "transparent")
                 readonly property bool selected: index === root.currentTabIndex
