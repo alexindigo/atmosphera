@@ -74,7 +74,7 @@ ColumnLayout {
 
   // Middle click command
   NTextInput {
-    label: I18n.tr("panels.control-center.shortcuts-custom-button-on-middle-clicked-label")
+    label: I18n.tr("bar.custom-button.middle-click-label")
     description: I18n.tr("panels.audio.on-middle-clicked-description")
     placeholderText: I18n.tr("panels.audio.external-mixer-placeholder")
     text: valueMiddleClickCommand
