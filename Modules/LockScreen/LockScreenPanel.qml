@@ -120,11 +120,11 @@ Item {
 
       var visibleCount = 0;
       if (hasBattery)
-      visibleCount++;
+        visibleCount++;
       if (hasKeyboard)
-      visibleCount++;
+        visibleCount++;
       if (hasCapsSlot)
-      visibleCount++;
+        visibleCount++;
 
       if (visibleCount >= 3) {
         return 280;
