@@ -207,6 +207,15 @@
     "subTabLabel": "common.appearance"
   },
   {
+    "labelKey": "panels.bar.appearance-content-padding-label",
+    "descriptionKey": "panels.bar.appearance-content-padding-description",
+    "widget": "NValueSlider",
+    "tab": 4,
+    "tabLabel": "panels.bar.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
     "labelKey": "panels.bar.appearance-show-outline-label",
     "descriptionKey": "panels.bar.appearance-show-outline-description",
     "widget": "NToggle",
