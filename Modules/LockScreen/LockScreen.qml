@@ -280,13 +280,21 @@ Loader {
                   height: 0
                   visible: false
                   enabled: !lockContext.unlockInProgress
-                  font.pointSize: Style.fontSizeM
-                  color: Color.mPrimary
                   echoMode: TextInput.Password
-                  passwordCharacter: "•"
                   passwordMaskDelay: 0
-                  text: lockContext.currentText
-                  onTextChanged: lockContext.currentText = text
+
+                  // Bidirectional sync — avoids a declarative binding which breaks on input
+                  onTextChanged: {
+                    if (lockContext.currentText !== text)
+                      lockContext.currentText = text;
+                  }
+                  Connections {
+                    target: lockContext
+                    function onCurrentTextChanged() {
+                      if (passwordInput.text !== lockContext.currentText)
+                        passwordInput.text = lockContext.currentText;
+                    }
+                  }
 
                   Keys.onPressed: function (event) {
                     if (Keybinds.checkKey(event, 'enter', Settings)) {
@@ -317,9 +325,49 @@ Loader {
           Component {
             id: blackScreenComponent
 
+            // Black surface for disabled monitors — still captures keyboard for password entry
             Rectangle {
               anchors.fill: parent
               color: "black"
+
+              TextInput {
+                id: blackScreenPasswordInput
+                width: 0
+                height: 0
+                visible: false
+                enabled: !lockContext.unlockInProgress
+                echoMode: TextInput.Password
+                passwordMaskDelay: 0
+
+                // Bidirectional sync — avoids a declarative binding which breaks on input
+                onTextChanged: {
+                  if (lockContext.currentText !== text)
+                    lockContext.currentText = text;
+                }
+                Connections {
+                  target: lockContext
+                  function onCurrentTextChanged() {
+                    if (blackScreenPasswordInput.text !== lockContext.currentText)
+                      blackScreenPasswordInput.text = lockContext.currentText;
+                  }
+                }
+
+                Keys.onPressed: function (event) {
+                  if (Keybinds.checkKey(event, 'enter', Settings)) {
+                    lockContext.tryUnlock();
+                    event.accepted = true;
+                  }
+                }
+
+                Component.onCompleted: forceActiveFocus()
+              }
+  
+              MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                acceptedButtons: Qt.NoButton
+                onPositionChanged: blackScreenPasswordInput.forceActiveFocus()
+              }
             }
           }
         }
