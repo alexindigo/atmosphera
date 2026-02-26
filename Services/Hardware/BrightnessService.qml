@@ -454,7 +454,7 @@ Singleton {
 
     // Timer for debouncing rapid changes
     readonly property Timer timer: Timer {
-      interval: 250
+      interval: monitor.isDdc ? 250 : 33
       onTriggered: {
         if (!isNaN(monitor.queuedBrightness)) {
           monitor.setBrightness(monitor.queuedBrightness);

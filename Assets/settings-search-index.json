@@ -90,6 +90,15 @@
     "subTabLabel": "common.volumes"
   },
   {
+    "labelKey": "panels.audio.volumes-feedback-sound-file-label",
+    "descriptionKey": "panels.audio.volumes-feedback-sound-file-description",
+    "widget": "NLabel",
+    "tab": 14,
+    "tabLabel": "panels.audio.title",
+    "subTab": 0,
+    "subTabLabel": "common.volumes"
+  },
+  {
     "labelKey": "panels.osd.types-input-volume-label",
     "descriptionKey": "panels.audio.volumes-input-volume-description",
     "widget": "NValueSlider",
@@ -191,6 +200,15 @@
   {
     "labelKey": "panels.bar.appearance-widget-spacing-label",
     "descriptionKey": "panels.bar.appearance-widget-spacing-description",
+    "widget": "NValueSlider",
+    "tab": 4,
+    "tabLabel": "panels.bar.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
+    "labelKey": "panels.bar.appearance-content-padding-label",
+    "descriptionKey": "panels.bar.appearance-content-padding-description",
     "widget": "NValueSlider",
     "tab": 4,
     "tabLabel": "panels.bar.title",

@@ -115,10 +115,22 @@ Item {
     width: {
       var hasBattery = batteryIndicator.isReady;
       var hasKeyboard = keyboardLayout.currentLayout !== "Unknown";
+      var hasCaps = LockKeysService.capsLockOn;
+      var hasCapsSlot = hasBattery || hasKeyboard || hasCaps;
 
-      if (hasBattery && hasKeyboard) {
+      var visibleCount = 0;
+      if (hasBattery)
+        visibleCount++;
+      if (hasKeyboard)
+        visibleCount++;
+      if (hasCapsSlot)
+        visibleCount++;
+
+      if (visibleCount >= 3) {
+        return 280;
+      } else if (visibleCount === 2) {
         return 200;
-      } else if (hasBattery || hasKeyboard) {
+      } else if (visibleCount === 1) {
         return 120;
       } else {
         return 0;
@@ -131,9 +143,10 @@ Item {
     topLeftRadius: Style.radiusL
     topRightRadius: Style.radiusL
     color: Color.mSurface
-    visible: Settings.data.general.compactLockScreen && ((batteryIndicator.isReady) || keyboardLayout.currentLayout !== "Unknown")
+    visible: Settings.data.general.compactLockScreen && (batteryIndicator.isReady || keyboardLayout.currentLayout !== "Unknown" || LockKeysService.capsLockOn)
 
     RowLayout {
+      id: compactStatusRow
       anchors.centerIn: parent
       spacing: Style.marginL
 
@@ -173,6 +186,25 @@ Item {
           elide: Text.ElideRight
         }
       }
+
+      // Caps Lock indicator
+      RowLayout {
+        spacing: 6
+        visible: batteryIndicator.isReady || keyboardLayout.currentLayout !== "Unknown" || LockKeysService.capsLockOn
+
+        NIcon {
+          icon: "letter-c"
+          pointSize: Style.fontSizeM
+          color: LockKeysService.capsLockOn ? Color.mPrimary : Qt.alpha(Color.mOnSurfaceVariant, 0.5)
+        }
+
+        NText {
+          text: I18n.tr("bar.lock-keys.show-caps-lock-label")
+          color: LockKeysService.capsLockOn ? Color.mOnSurfaceVariant : Qt.alpha(Color.mOnSurfaceVariant, 0.65)
+          pointSize: Style.fontSizeM
+          elide: Text.ElideRight
+        }
+      }
     }
   }
 
@@ -196,7 +228,7 @@ Item {
     radius: Style.radiusL
     color: Color.mSurface
 
-    width: Settings.data.general.showHibernateOnLockScreen ? 800 : 750
+    width: Settings.data.general.showHibernateOnLockScreen ? 860 : 810
 
     ColumnLayout {
       anchors.fill: parent
@@ -460,7 +492,7 @@ Item {
         ColumnLayout {
           Layout.alignment: (batteryIndicator.isReady) ? (Qt.AlignRight | Qt.AlignVCenter) : Qt.AlignVCenter
           spacing: Style.marginM
-          visible: (batteryIndicator.isReady) || keyboardLayout.currentLayout !== "Unknown"
+          visible: batteryIndicator.isReady || keyboardLayout.currentLayout !== "Unknown" || LockKeysService.capsLockOn
 
           // Battery
           RowLayout {
@@ -494,6 +526,25 @@ Item {
             NText {
               text: keyboardLayout.currentLayout
               color: Color.mOnSurfaceVariant
+              pointSize: Style.fontSizeM
+              elide: Text.ElideRight
+            }
+          }
+
+          // Caps Lock
+          RowLayout {
+            spacing: Style.marginXS
+            visible: batteryIndicator.isReady || keyboardLayout.currentLayout !== "Unknown" || LockKeysService.capsLockOn
+
+            NIcon {
+              icon: "letter-c"
+              pointSize: Style.fontSizeM
+              color: LockKeysService.capsLockOn ? Color.mPrimary : Qt.alpha(Color.mOnSurfaceVariant, 0.5)
+            }
+
+            NText {
+              text: I18n.tr("bar.lock-keys.show-caps-lock-label")
+              color: LockKeysService.capsLockOn ? Color.mOnSurfaceVariant : Qt.alpha(Color.mOnSurfaceVariant, 0.65)
               pointSize: Style.fontSizeM
               elide: Text.ElideRight
             }

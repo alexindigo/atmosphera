@@ -36,9 +36,9 @@ Singleton {
   readonly property string defaultVideosDirectory: Quickshell.env("HOME") + "/Videos"
   readonly property string defaultWallpapersDirectory: Quickshell.env("HOME") + "/Pictures/Wallpapers"
 
-  // Signal emitted when settings are loaded after startupcale changes
   signal settingsLoaded
   signal settingsSaved
+  signal settingsReloaded
 
   // -----------------------------------------------------
   // -----------------------------------------------------
@@ -121,6 +121,9 @@ Singleton {
         root.settingsLoaded();
 
         upgradeSettings();
+      } else {
+        Logger.d("Settings", "Settings reloaded from external file change");
+        root.settingsReloaded();
       }
     }
     onLoadFailed: function (error) {
@@ -179,6 +182,7 @@ Singleton {
       property real capsuleOpacity: 1.0
       property string capsuleColorKey: "none"
       property int widgetSpacing: 6
+      property int contentPadding: 0
       property real fontScale: 1.0
 
       // Bar background opacity settings
@@ -658,6 +662,7 @@ Singleton {
       property list<string> mprisBlacklist: []
       property string preferredPlayer: ""
       property bool volumeFeedback: false
+      property string volumeFeedbackSoundFile: ""
     }
 
     // brightness

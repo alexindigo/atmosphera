@@ -168,6 +168,20 @@ ColumnLayout {
     text: Settings.data.bar.widgetSpacing + "px"
   }
 
+  NValueSlider {
+    Layout.fillWidth: true
+    label: I18n.tr("panels.bar.appearance-content-padding-label")
+    description: I18n.tr("panels.bar.appearance-content-padding-description")
+    from: 0
+    to: 30
+    stepSize: 1
+    showReset: true
+    value: Settings.data.bar.contentPadding
+    defaultValue: Settings.getDefaultValue("bar.contentPadding")
+    onMoved: value => Settings.data.bar.contentPadding = value
+    text: Settings.data.bar.contentPadding + "px"
+  }
+
   NToggle {
     Layout.fillWidth: true
     label: I18n.tr("panels.bar.appearance-show-outline-label")

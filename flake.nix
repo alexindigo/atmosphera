@@ -3,18 +3,27 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    noctalia-qs = {
+      url = "github:noctalia-dev/noctalia-qs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
     {
       self,
       nixpkgs,
+      noctalia-qs,
       ...
     }:
     let
       eachSystem = nixpkgs.lib.genAttrs nixpkgs.lib.platforms.linux;
       pkgsFor = eachSystem (
-        system: nixpkgs.legacyPackages.${system}.appendOverlays [ self.overlays.default ]
+        system:
+        nixpkgs.legacyPackages.${system}.appendOverlays [
+          self.overlays.default
+          noctalia-qs.overlays.default
+        ]
       );
     in
     {

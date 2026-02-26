@@ -50,7 +50,7 @@ Item {
 
   // Connection used to open the pill when volume changes
   Connections {
-    target: AudioService.sink?.audio ? AudioService.sink?.audio : null
+    target: AudioService
     function onVolumeChanged() {
       // Logger.i("Bar:Volume", "onVolumeChanged")
       if (!firstVolumeReceived) {
@@ -58,6 +58,16 @@ Item {
         firstVolumeReceived = true;
       } else {
         // Hide any tooltip while the pill is visible / being updated
+        TooltipService.hide();
+        pill.show();
+        externalHideTimer.restart();
+      }
+    }
+
+    function onMutedChanged() {
+      if (!firstVolumeReceived) {
+        firstVolumeReceived = true;
+      } else {
         TooltipService.hide();
         pill.show();
         externalHideTimer.restart();

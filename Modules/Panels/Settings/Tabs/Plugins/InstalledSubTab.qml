@@ -230,8 +230,11 @@ ColumnLayout {
               icon: "external-link"
               tooltipText: I18n.tr("panels.plugins.open-plugin-page")
               baseSize: Style.baseWidgetSize * 0.7
-              visible: modelData.isFromOfficialRepo
-              onClicked: Qt.openUrlExternally("https://noctalia.dev/plugins/" + modelData.id)
+              visible: true
+              onClicked: {
+                var sourceUrl = PluginRegistry.getPluginSourceUrl(modelData.compositeKey) || "";
+                Qt.openUrlExternally(sourceUrl && !PluginRegistry.isMainSource(sourceUrl) ? sourceUrl : "https://noctalia.dev/plugins/" + modelData.id);
+              }
             }
 
             NIconButton {

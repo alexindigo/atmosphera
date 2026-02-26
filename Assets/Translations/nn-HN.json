@@ -8,6 +8,7 @@
     "disable-dnd": "Slå av \"Ikkje skjepla\"",
     "disable-wifi": "Slå av trådlaust net",
     "disconnect-vpn": "Enda samband med {name}",
+    "dock-settings": "Festeinnstillingar",
     "enable-bluetooth": "Slå på Blåtann",
     "enable-dnd": "Slå på \"Ikkje skjepla\"",
     "enable-wifi": "Slå på trådlaust net",
@@ -144,11 +145,13 @@
       "text-stream-description": "Strøymde utfallssegner frå styrebodet syner seg som tekst på knappen.",
       "text-stream-label": "Strøym",
       "wheel-description": "Styrebod som køyrer når ein bled hjulet på musi.<br>Nytta $delta i styrebodet for hjulsbrigdi.",
+      "wheel-down": "Bled nedetter",
       "wheel-down-description": "Styrebod som køyrer når hjulet er bladt nedetter.",
       "wheel-down-label": "Styrebod - nedetter",
       "wheel-label": "Bladhjul",
       "wheel-mode-separate-description": "Hav ulike styrebod når ein bled uppetter og nedetter.",
       "wheel-mode-separate-label": "Skilde hjulstyrebod",
+      "wheel-up": "Bled uppetter",
       "wheel-up-description": "Styrebod som køyrer når hjulet er bladt uppetter.",
       "wheel-up-label": "Styrebod - uppetter",
       "wheel-update-text": "Før upp ny tekst med bledjing"
@@ -205,11 +208,32 @@
     },
     "spacer": {
       "width-description": "Rombreidd i molar."
+    },
+    "system-monitor": {
+      "compact-mode-description": "Syn upplysningar som suleteikningar helder en skrift. Stoggar brigde i uppsettet.",
+      "compact-mode-label": "Klemb nøytelen",
+      "cpu-frequency-description": "Syn midverksnarleik i GHz.",
+      "cpu-frequency-label": "Syn midverksøkning",
+      "cpu-temperature-description": "Syn hitemælingar for midverket um råd.",
+      "cpu-temperature-label": "Midverkhite",
+      "cpu-usage-description": "Syn midverkbruk som hundradpart.",
+      "cpu-usage-label": "Midverkbruk"
     }
   },
   "common": {
     "brightness": "Ljosstyrke",
     "select-color-description": "Lita med hamlitene for tyngd."
+  },
+  "options": {
+    "bar": {
+      "density-compact": "Klembd"
+    },
+    "launcher-density": {
+      "compact": "Klembd"
+    },
+    "notification-density": {
+      "compact": "Klembd"
+    }
   },
   "system": {
     "welcome-back": "Velkomen attende,"
