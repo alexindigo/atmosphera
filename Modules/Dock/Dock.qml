@@ -100,6 +100,14 @@ Loader {
       readonly property real barMarginH: Settings.data.bar.floating ? Math.ceil(Settings.data.bar.marginHorizontal) : 0
       readonly property real barMarginV: Settings.data.bar.floating ? Math.ceil(Settings.data.bar.marginVertical) : 0
       readonly property int barHeight: Style.getBarHeightForScreen(modelData?.name)
+      readonly property bool staticPanelOpen: {
+        if (!isStaticMode)
+          return false;
+        var panel = getStaticDockPanel();
+        if (panel && panel.isPanelOpen !== undefined)
+          return panel.isPanelOpen;
+        return false;
+      }
       readonly property int peekEdgeLength: {
         const edgeSize = isVertical ? Math.round(modelData?.height || maxHeight) : Math.round(modelData?.width || maxWidth);
         const minLength = Math.max(1, Math.round(edgeSize * (Settings.data.dock.showDockIndicator ? 0.1 : 0.25)));
@@ -142,10 +150,7 @@ Loader {
       readonly property bool showDockIndicator: {
         if (!Settings.data.dock.showDockIndicator || (!autoHide && !isStaticMode) || !hidden)
           return false;
-        var panel = getStaticDockPanel();
-        if (panel && panel.isPanelOpen !== undefined)
-          return !panel.isPanelOpen;
-        return hidden;
+        return !staticPanelOpen;
       }
       readonly property int dockItemCount: dockApps.length + (Settings.data.dock.showLauncherIcon ? 1 : 0)
       readonly property bool indicatorVisible: showDockIndicator && dockIndicatorLength > 0
@@ -618,13 +623,7 @@ Loader {
         interval: showDelay
         onTriggered: {
           if (autoHide) {
-            if (isStaticMode) {
-              if (dockItemCount <= 0)
-                return;
-              const panel = getStaticDockPanel();
-              if (panel && !panel.isPanelOpen)
-                panel.open();
-            } else {
+            if (!isStaticMode) {
               dockLoaded = true; // Load dock immediately
             }
             hidden = false; // Then trigger show animation
@@ -649,7 +648,7 @@ Loader {
 
       // PEEK WINDOW
       Loader {
-        active: (barIsReady || !hasBar) && modelData && (Settings.data.dock.monitors.length === 0 || Settings.data.dock.monitors.includes(modelData.name)) && (autoHide || isStaticMode)
+        active: (barIsReady || !hasBar) && modelData && (Settings.data.dock.monitors.length === 0 || Settings.data.dock.monitors.includes(modelData.name))
 
         sourceComponent: PanelWindow {
           id: peekWindow
@@ -680,16 +679,12 @@ Loader {
 
             onEntered: {
               peekHovered = true;
-              if (isStaticMode && !autoHide) {
+              if (isStaticMode) {
                 if (dockItemCount <= 0)
                   return;
                 const panel = getStaticDockPanel();
                 if (panel && !panel.isPanelOpen)
                   panel.open();
-                return;
-              }
-              if (isStaticMode) {
-                showTimer.start();
                 return;
               }
               if (hidden) {

@@ -56,9 +56,23 @@ SmartPanel {
     }
   }
 
+  onAnyAppHoveredChanged: {
+    if (anyAppHovered) {
+      hoverCloseTimer.stop();
+    } else if (!panelHovered && !menuHovered && !dockHovered && !isDockHovered) {
+      hoverCloseTimer.restart();
+    }
+  }
+
   onClosed: {
     hoverCloseTimer.stop();
     isDockHovered = false;
+  }
+
+  onOpened: {
+    if (!panelHovered && !menuHovered) {
+      hoverCloseTimer.restart();
+    }
   }
 
   panelAnchorTop: dockPosition === "top"
@@ -492,7 +506,7 @@ SmartPanel {
     id: hoverCloseTimer
     interval: hideDelay
     onTriggered: {
-      if (root.menuHovered || (root.currentContextMenu && root.currentContextMenu.visible)) {
+      if (root.dockHovered || root.isDockHovered || root.anyAppHovered || root.menuHovered || (root.currentContextMenu && root.currentContextMenu.visible)) {
         restart();
         return;
       }
@@ -509,20 +523,27 @@ SmartPanel {
     property real contentPreferredWidth: Math.round(dockContainerWrapper.width) - (isVertical ? frameThickness : 0)
     property real contentPreferredHeight: Math.round(dockContainerWrapper.height) - (!isVertical ? frameThickness : 0)
 
-    // Detect hover over panel content (including DockContent)
-    HoverHandler {
-      id: dockHoverHandler
-      acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-      onHoveredChanged: {
-        root.panelHovered = hovered;
-        if (hovered) {
-          root.isDockHovered = true;
-          hoverCloseTimer.stop();
-        } else {
-          if (root.menuHovered || (root.currentContextMenu && root.currentContextMenu.visible)) {
+    Item {
+      id: hoverArea
+      anchors.fill: dockContainerWrapper
+      anchors.margins: -frameThickness
+
+      // Detect hover over dock area including frame thickness
+      HoverHandler {
+        id: dockHoverArea
+        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+        onHoveredChanged: {
+          root.panelHovered = hovered;
+          if (hovered) {
+            root.isDockHovered = true;
             hoverCloseTimer.stop();
           } else {
-            hoverCloseTimer.restart();
+            root.isDockHovered = false;
+            if (root.menuHovered || (root.currentContextMenu && root.currentContextMenu.visible)) {
+              hoverCloseTimer.stop();
+            } else {
+              hoverCloseTimer.restart();
+            }
           }
         }
       }
