@@ -197,25 +197,12 @@ Item {
     Component {
       id: miniGaugeComponent
 
-      Rectangle {
-        id: miniGauge
-        property real ratio: 0 // 0..1
-        property color statColor: Color.mPrimary // Color based on warning/critical state
-
+      NLinearGauge {
+        ratio: 0
+        orientation: Qt.Vertical
+        fillColor: Color.mPrimary
         width: miniGaugeWidth
         height: iconSize
-        radius: width / 2
-        color: Color.mOutline
-
-        // Fill that grows from bottom
-        Rectangle {
-          property real fillHeight: parent.height * Math.min(1, Math.max(0, miniGauge.ratio))
-          width: parent.width
-          height: fillHeight
-          radius: parent.radius
-          color: miniGauge.statColor
-          anchors.bottom: parent.bottom
-        }
       }
     }
 
@@ -226,7 +213,7 @@ Item {
       rows: isVertical ? -1 : 1
       columns: isVertical ? 1 : -1
       rowSpacing: isVertical ? (compactMode ? Style.marginL : Style.marginXL) : 0
-      columnSpacing: isVertical ? 0 : (Style.marginM)
+      columnSpacing: isVertical ? 0 : Style.marginM
 
       // CPU Usage Component
       Item {
@@ -241,10 +228,12 @@ Item {
         GridLayout {
           id: cpuUsageContent
           anchors.centerIn: parent
-          flow: (isVertical && !compactMode) ? GridLayout.TopToBottom : GridLayout.LeftToRight
-          rows: (isVertical && !compactMode) ? 2 : 1
-          columns: (isVertical && !compactMode) ? 1 : 2
-          rowSpacing: Style.marginXXS
+
+          property bool verticalDisplay: isVertical && !compactMode
+          flow: verticalDisplay ? GridLayout.TopToBottom : GridLayout.LeftToRight
+          rows: verticalDisplay ? -1 : 1
+          columns: verticalDisplay ? 1 : -1
+          rowSpacing: compactMode ? 3 : Style.marginXS
           columnSpacing: compactMode ? 3 : Style.marginXS
 
           Item {
@@ -290,7 +279,7 @@ Item {
 
             onLoaded: {
               item.ratio = Qt.binding(() => SystemStatService.cpuUsage / 100);
-              item.statColor = Qt.binding(() => SystemStatService.cpuColor);
+              item.fillColor = Qt.binding(() => SystemStatService.cpuColor);
             }
           }
         }
@@ -358,7 +347,6 @@ Item {
 
             onLoaded: {
               item.ratio = Qt.binding(() => SystemStatService.cpuFreqRatio);
-              item.statColor = Qt.binding(() => Color.mPrimary);
             }
           }
         }
@@ -426,7 +414,7 @@ Item {
 
             onLoaded: {
               item.ratio = Qt.binding(() => SystemStatService.cpuTemp / 100);
-              item.statColor = Qt.binding(() => SystemStatService.tempColor);
+              item.fillColor = Qt.binding(() => SystemStatService.tempColor);
             }
           }
         }
@@ -494,7 +482,7 @@ Item {
 
             onLoaded: {
               item.ratio = Qt.binding(() => SystemStatService.gpuTemp / 100);
-              item.statColor = Qt.binding(() => SystemStatService.gpuColor);
+              item.fillColor = Qt.binding(() => SystemStatService.gpuColor);
             }
           }
         }
@@ -562,7 +550,6 @@ Item {
 
             onLoaded: {
               item.ratio = Qt.binding(() => Math.min(1, SystemStatService.loadAvg1 / SystemStatService.nproc));
-              item.statColor = Qt.binding(() => Color.mPrimary);
             }
           }
         }
@@ -633,7 +620,7 @@ Item {
 
             onLoaded: {
               item.ratio = Qt.binding(() => SystemStatService.memPercent / 100);
-              item.statColor = Qt.binding(() => SystemStatService.memColor);
+              item.fillColor = Qt.binding(() => SystemStatService.memColor);
             }
           }
         }
@@ -705,7 +692,7 @@ Item {
 
             onLoaded: {
               item.ratio = Qt.binding(() => SystemStatService.swapPercent / 100);
-              item.statColor = Qt.binding(() => SystemStatService.swapColor);
+              item.fillColor = Qt.binding(() => SystemStatService.swapColor);
             }
           }
         }
@@ -909,7 +896,7 @@ Item {
 
             onLoaded: {
               item.ratio = Qt.binding(() => (showDiskAvailable ? SystemStatService.diskAvailPercents[diskPath] : SystemStatService.diskPercents[diskPath] ?? 0) / 100);
-              item.statColor = Qt.binding(() => SystemStatService.getDiskColor(diskPath, showDiskAvailable));
+              item.fillColor = Qt.binding(() => SystemStatService.getDiskColor(diskPath, showDiskAvailable));
             }
           }
         }
