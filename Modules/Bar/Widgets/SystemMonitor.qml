@@ -153,6 +153,11 @@ Item {
 
     model: [
       {
+        "label": I18n.tr("system-monitor.title"),
+        "action": "sysmon-settings",
+        "icon": "settings"
+      },
+      {
         "label": I18n.tr("actions.widget-settings"),
         "action": "widget-settings",
         "icon": "settings"
@@ -163,7 +168,9 @@ Item {
                    contextMenu.close();
                    PanelService.closeContextMenu(screen);
 
-                   if (action === "widget-settings") {
+                   if (action === "sysmon-settings") {
+                     SettingsPanelService.openToTab(SettingsPanel.Tab.SystemMonitor, 0, screen);
+                   } else if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
                    }
                  }
