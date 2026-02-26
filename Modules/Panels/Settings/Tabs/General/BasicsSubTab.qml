@@ -164,6 +164,7 @@ ColumnLayout {
       icon: "wand"
       text: I18n.tr("panels.general.launch-setup-wizard")
       outlined: true
+      Layout.fillWidth: true
       onClicked: {
         var targetScreen = PanelService.openedPanel ? PanelService.openedPanel.screen : (Quickshell.screens.length > 0 ? Quickshell.screens[0] : null);
         if (!targetScreen) {
@@ -186,9 +187,20 @@ ColumnLayout {
     }
 
     NButton {
+      icon: "external-link"
+      text: I18n.tr("common.documentation")
+      outlined: true
+      Layout.fillWidth: true
+      onClicked: {
+        Qt.openUrlExternally("https://docs.noctalia.dev");
+      }
+    }
+
+    NButton {
       icon: "json"
       text: I18n.tr("panels.general.copy-settings")
       outlined: true
+      Layout.fillWidth: true
       onClicked: {
         var plainData = QtObj2JS.qtObjectToPlainObject(Settings.data);
         var json = JSON.stringify(plainData, null, 2);
