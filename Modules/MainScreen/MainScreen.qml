@@ -217,39 +217,21 @@ PanelWindow {
       bottomRightCorner: barPlaceholder.bottomRightCornerState
     }
 
-    // ── Framed bar: frame body (4 strips) + rounded hole subtraction ──
-    // The 4 strips cover the entire frame area including straight-edge inner
-    // corners. A nested Subtract region then removes the hole with correct
-    // frameRadius rounding, leaving the blur boundary exactly matching the
-    // visual frame shape.
-
-    // Top strip (covers full width above hole)
+    // ── Framed bar: full screen minus rounded hole ──
     Region {
       x: 0
       y: 0
       width: (barPlaceholder.isFramed && root.barShouldShow) ? root.width : 0
-      height: (barPlaceholder.isFramed && root.barShouldShow) ? backgroundBlur.frameHoleY : 0
-    }
-    // Bottom strip
-    Region {
-      x: 0
-      y: (barPlaceholder.isFramed && root.barShouldShow) ? backgroundBlur.frameHoleY2 : 0
-      width: (barPlaceholder.isFramed && root.barShouldShow) ? root.width : 0
-      height: (barPlaceholder.isFramed && root.barShouldShow) ? (root.height - backgroundBlur.frameHoleY2) : 0
-    }
-    // Left strip (only at hole height - top/bottom strips already cover those rows)
-    Region {
-      x: 0
-      y: (barPlaceholder.isFramed && root.barShouldShow) ? backgroundBlur.frameHoleY : 0
-      width: (barPlaceholder.isFramed && root.barShouldShow) ? backgroundBlur.frameHoleX : 0
-      height: (barPlaceholder.isFramed && root.barShouldShow) ? (backgroundBlur.frameHoleY2 - backgroundBlur.frameHoleY) : 0
-    }
-    // Right strip
-    Region {
-      x: (barPlaceholder.isFramed && root.barShouldShow) ? backgroundBlur.frameHoleX2 : 0
-      y: (barPlaceholder.isFramed && root.barShouldShow) ? backgroundBlur.frameHoleY : 0
-      width: (barPlaceholder.isFramed && root.barShouldShow) ? (root.width - backgroundBlur.frameHoleX2) : 0
-      height: (barPlaceholder.isFramed && root.barShouldShow) ? (backgroundBlur.frameHoleY2 - backgroundBlur.frameHoleY) : 0
+      height: (barPlaceholder.isFramed && root.barShouldShow) ? root.height : 0
+
+      Region {
+        intersection: Intersection.Subtract
+        x: backgroundBlur.frameHoleX
+        y: backgroundBlur.frameHoleY
+        width: backgroundBlur.frameHoleX2 - backgroundBlur.frameHoleX
+        height: backgroundBlur.frameHoleY2 - backgroundBlur.frameHoleY
+        radius: backgroundBlur.frameR
+      }
     }
 
     // ── Panel blur regions ──
@@ -572,7 +554,7 @@ PanelWindow {
       // Panel background geometry (from the currently open panel on this screen)
       readonly property var panelBg: {
         var op = PanelService.openedPanel;
-        if (!op || op.screen !== root.screen)
+        if (!op || op.screen !== root.screen || op.blurEnabled === false)
           return null;
         var region = op.panelRegion;
         return (region && region.visible) ? region.panelItem : null;
@@ -581,7 +563,7 @@ PanelWindow {
       // Panel background geometry for the closing panel (may coexist with panelBg)
       readonly property var closingPanelBg: {
         var cp = PanelService.closingPanel;
-        if (!cp || cp.screen !== root.screen)
+        if (!cp || cp.screen !== root.screen || cp.blurEnabled === false)
           return null;
         var region = cp.panelRegion;
         return (region && region.visible) ? region.panelItem : null;

@@ -75,6 +75,9 @@ Item {
   property bool cachedShouldAnimateWidth: false
   property bool cachedShouldAnimateHeight: false
 
+  // Whether blur should be applied behind this panel
+  property bool blurEnabled: true
+
   // Close with escape key
   property bool closeWithEscape: true
 

@@ -18,6 +18,9 @@ SmartPanel {
   readonly property bool largeButtonsStyle: Settings.data.sessionMenu.largeButtonsStyle || false
   readonly property bool largeButtonsLayout: Settings.data.sessionMenu.largeButtonsLayout || "grid"
 
+  // Large buttons style is fullscreen — disable blur behind it
+  blurEnabled: !largeButtonsStyle
+
   // Make panel background transparent for large buttons style
   panelBackgroundColor: largeButtonsStyle ? "transparent" : Color.mSurface
 
@@ -567,7 +570,7 @@ SmartPanel {
       }
     }
 
-    // Timer text for large buttons style (above buttons) - positioned absolutely with background
+    // Timer text for large buttons style, positioned absolutely with background
     Rectangle {
       id: timerTextContainer
       visible: largeButtonsStyle && timerActive
@@ -577,7 +580,7 @@ SmartPanel {
       width: timerText.width + Style.margin2XL
       height: timerText.height + Style.margin2L
       radius: Style.radiusM
-      color: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+      color: Color.mSurfaceVariant
       border.color: Color.mOutline
       border.width: Style.borderS
       z: 1000
@@ -591,7 +594,7 @@ SmartPanel {
                       })
         font.weight: Style.fontWeightBold
         pointSize: Style.fontSizeL
-        color: Color.mOnSurface
+        color: Color.mOnSurfaceVariant
       }
     }
 
@@ -638,6 +641,7 @@ SmartPanel {
       visible: !largeButtonsStyle
       anchors.fill: parent
       anchors.margins: Style.marginL
+      color: Color.mSurface
 
       ColumnLayout {
         anchors.fill: parent
@@ -838,7 +842,7 @@ SmartPanel {
           width: labelText.implicitWidth + Style.margin2M
           height: labelText.height + Style.margin2XS
           radius: Math.min(Style.radiusM, height / 2)
-          color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mOnPrimary : Qt.alpha(Color.mSurfaceVariant, 0.5)
+          color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mOnPrimary : Color.mSurfaceVariant
           border.width: Style.borderS
           border.color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mOnPrimary : Color.mOutline
           visible: Settings.data.sessionMenu.showKeybinds && (buttonRoot.keybind !== "") && !buttonRoot.pending
@@ -944,7 +948,7 @@ SmartPanel {
       if (isSelected || effectiveHover) {
         return Qt.alpha(Color.mPrimary, 1.0);
       }
-      return Qt.alpha(Color.mSurfaceVariant, Settings.data.ui.panelBackgroundOpacity);
+      return Color.mSurface;
     }
 
     border.width: Style.borderS
