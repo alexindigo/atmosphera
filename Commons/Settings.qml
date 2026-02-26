@@ -546,7 +546,7 @@ Singleton {
       property double deadOpacity: 0.6
       property real animationSpeed: 1.0 // Speed multiplier for hide/show animations (0.1 = slowest, 2.0 = fastest)
       property bool sitOnFrame: false
-      property bool showFrameIndicator: true
+      property bool showDockIndicator: true
     }
 
     // network

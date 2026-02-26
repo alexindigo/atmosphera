@@ -106,12 +106,11 @@ ColumnLayout {
 
     NToggle {
       Layout.fillWidth: true
-      visible: Settings.data.dock.dockType === "static" && Settings.data.bar.barType === "framed"
-      label: I18n.tr("panels.dock.appearance-frame-indicator-label")
-      description: I18n.tr("panels.dock.appearance-frame-indicator-description")
-      checked: Settings.data.dock.showFrameIndicator
-      defaultValue: Settings.getDefaultValue("dock.showFrameIndicator")
-      onToggled: checked => Settings.data.dock.showFrameIndicator = checked
+      label: I18n.tr("panels.dock.appearance-dock-indicator-label")
+      description: I18n.tr("panels.dock.appearance-dock-indicator-description")
+      checked: Settings.data.dock.showDockIndicator
+      defaultValue: Settings.getDefaultValue("dock.showDockIndicator")
+      onToggled: checked => Settings.data.dock.showDockIndicator = checked
     }
 
     NValueSlider {

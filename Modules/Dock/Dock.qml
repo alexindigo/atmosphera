@@ -102,8 +102,8 @@ Loader {
       readonly property int barHeight: Style.getBarHeightForScreen(modelData?.name)
       readonly property int peekEdgeLength: {
         const edgeSize = isVertical ? Math.round(modelData?.height || maxHeight) : Math.round(modelData?.width || maxWidth);
-        const minLength = Math.max(1, Math.round(edgeSize * ((isStaticMode && Settings.data.dock.showFrameIndicator && Settings.data.bar.barType === "framed" && hasBar) ? 0.1 : 0.25)));
-        return Math.max(minLength, frameIndicatorLength);
+        const minLength = Math.max(1, Math.round(edgeSize * (Settings.data.dock.showDockIndicator ? 0.1 : 0.25)));
+        return Math.max(minLength, dockIndicatorLength);
       }
       readonly property int peekCenterOffsetX: {
         if (isVertical)
@@ -139,8 +139,8 @@ Loader {
         }
         return Math.max(0, Math.round((edgeSize - peekEdgeLength) / 2));
       }
-      readonly property bool showFrameIndicator: {
-        if (!isStaticMode || !Settings.data.dock.showFrameIndicator || Settings.data.bar.barType !== "framed" || !hasBar)
+      readonly property bool showDockIndicator: {
+        if (!Settings.data.dock.showDockIndicator || (!autoHide && !isStaticMode) || !hidden)
           return false;
         var panel = getStaticDockPanel();
         if (panel && panel.isPanelOpen !== undefined)
@@ -148,8 +148,8 @@ Loader {
         return hidden;
       }
       readonly property int dockItemCount: dockApps.length + (Settings.data.dock.showLauncherIcon ? 1 : 0)
-      readonly property bool indicatorVisible: showFrameIndicator && frameIndicatorLength > 0
-      readonly property int frameIndicatorLength: {
+      readonly property bool indicatorVisible: showDockIndicator && dockIndicatorLength > 0
+      readonly property int dockIndicatorLength: {
         if (dockItemCount <= 0)
           return 0;
         const spacing = Style.marginS;
@@ -711,12 +711,12 @@ Loader {
         }
       }
 
-      // FRAME INDICATOR WINDOW
+      // DOCK INDICATOR WINDOW
       Loader {
-        active: (barIsReady || !hasBar) && modelData && (Settings.data.dock.monitors.length === 0 || Settings.data.dock.monitors.includes(modelData.name)) && indicatorVisible
+        active: (barIsReady || !hasBar) && modelData && (Settings.data.dock.monitors.length === 0 || Settings.data.dock.monitors.includes(modelData.name))
 
         sourceComponent: PanelWindow {
-          id: frameIndicatorWindow
+          id: dockIndicatorWindow
 
           screen: modelData
           // Dynamic anchors based on dock position
@@ -744,12 +744,12 @@ Loader {
             anchors.fill: parent
             radius: indicatorThickness
             color: Qt.alpha(Color.mPrimary, 0.6)
-            opacity: showFrameIndicator && frameIndicatorLength > 0 ? 1 : 0
+            opacity: indicatorVisible ? 1 : 0
             visible: opacity > 0
 
             Behavior on opacity {
               NumberAnimation {
-                duration: Style.animationFast
+                duration: Style.animationNormal
                 easing.type: Easing.InOutQuad
               }
             }
