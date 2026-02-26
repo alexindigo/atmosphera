@@ -1761,6 +1761,7 @@
   "system-monitor": {
     "cpu-temp": "CPU temp",
     "cpu-usage": "CPU usage",
+    "core-usage": "Core {id} usage",
     "disk": "Disk",
     "download-speed": "Download speed",
     "gpu-temp": "GPU temp",
