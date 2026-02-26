@@ -356,71 +356,56 @@ PopupWindow {
       }
     }
 
-    // Adjust horizontal position to keep tooltip on screen
-    // For top/bottom tooltips, always adjust horizontally (they don't overlap horizontally)
-    // For left/right tooltips, check for overlap before adjusting
+    // Adjust horizontal position to keep tooltip on screen.
+    // For top/bottom tooltips, always adjust horizontally (they don't overlap horizontally).
+    // For left/right tooltips, check for overlap before adjusting to avoid landing on the target.
     const globalX = targetGlobal.x + newAnchorX;
-    const isHorizontalTooltip = (direction === "top" || direction === "bottom");
+    const effectiveDirection = direction === "auto" ? selectedPosition.dir : direction;
+    const isHorizontalTooltip = (effectiveDirection === "top" || effectiveDirection === "bottom");
 
     if (globalX < 0) {
-      // Clipping at left - only adjust if tooltip won't overlap target
       const adjustedX = -targetGlobal.x + margin;
       if (isHorizontalTooltip) {
-        // Top/bottom tooltips: always allow horizontal adjustment
         newAnchorX = adjustedX;
       } else {
-        // Left/right tooltips: check for vertical overlap
         const wouldOverlap = adjustedX < targetWidth && adjustedX + tipWidth > 0;
-        if (!wouldOverlap) {
+        if (!wouldOverlap)
           newAnchorX = adjustedX;
-        }
       }
     } else if (globalX + tipWidth > screenWidth) {
-      // Clipping at right - only adjust if tooltip won't overlap target
       const adjustedX = screenWidth - targetGlobal.x - tipWidth - margin;
       if (isHorizontalTooltip) {
-        // Top/bottom tooltips: always allow horizontal adjustment
         newAnchorX = adjustedX;
       } else {
-        // Left/right tooltips: check for vertical overlap
         const wouldOverlap = adjustedX < targetWidth && adjustedX + tipWidth > 0;
-        if (!wouldOverlap) {
+        if (!wouldOverlap)
           newAnchorX = adjustedX;
-        }
       }
     }
 
-    // Adjust vertical position to keep tooltip on screen
-    // For left/right tooltips, always adjust vertically (they don't overlap vertically)
-    // For top/bottom tooltips, check for overlap before adjusting
+    // Adjust vertical position to keep tooltip on screen.
+    // For left/right tooltips, always adjust vertically (they don't overlap vertically).
+    // For top/bottom tooltips, check for overlap before adjusting to avoid landing on the target.
     const globalY = targetGlobal.y + newAnchorY;
-    const isVerticalTooltip = (direction === "left" || direction === "right");
+    const isVerticalTooltip = (effectiveDirection === "left" || effectiveDirection === "right");
 
     if (globalY < 0) {
-      // Clipping at top - only adjust if tooltip won't overlap target
       const adjustedY = -targetGlobal.y + margin;
       if (isVerticalTooltip) {
-        // Left/right tooltips: always allow vertical adjustment
         newAnchorY = adjustedY;
       } else {
-        // Top/bottom tooltips: check for horizontal overlap
         const wouldOverlap = adjustedY < targetHeight && adjustedY + tipHeight > 0;
-        if (!wouldOverlap) {
+        if (!wouldOverlap)
           newAnchorY = adjustedY;
-        }
       }
     } else if (globalY + tipHeight > screenHeight) {
-      // Clipping at bottom - only adjust if tooltip won't overlap target
       const adjustedY = screenHeight - targetGlobal.y - tipHeight - margin;
       if (isVerticalTooltip) {
-        // Left/right tooltips: always allow vertical adjustment
         newAnchorY = adjustedY;
       } else {
-        // Top/bottom tooltips: check for horizontal overlap
         const wouldOverlap = adjustedY < targetHeight && adjustedY + tipHeight > 0;
-        if (!wouldOverlap) {
+        if (!wouldOverlap)
           newAnchorY = adjustedY;
-        }
       }
     }
 
@@ -555,7 +540,7 @@ PopupWindow {
       isVerticalTooltip = true;
     }
 
-    // Adjust horizontal position to keep tooltip on screen if needed
+    // Adjust horizontal position to keep tooltip on screen if needed.
     const globalX = targetGlobal.x + newAnchorX;
     if (globalX < 0) {
       const adjustedX = -targetGlobal.x + margin;
@@ -563,9 +548,8 @@ PopupWindow {
         newAnchorX = adjustedX;
       } else {
         const wouldOverlap = adjustedX < targetWidth && adjustedX + tipWidth > 0;
-        if (!wouldOverlap) {
+        if (!wouldOverlap)
           newAnchorX = adjustedX;
-        }
       }
     } else if (globalX + tipWidth > screenWidth) {
       const adjustedX = screenWidth - targetGlobal.x - tipWidth - margin;
@@ -573,13 +557,12 @@ PopupWindow {
         newAnchorX = adjustedX;
       } else {
         const wouldOverlap = adjustedX < targetWidth && adjustedX + tipWidth > 0;
-        if (!wouldOverlap) {
+        if (!wouldOverlap)
           newAnchorX = adjustedX;
-        }
       }
     }
 
-    // Adjust vertical position to keep tooltip on screen if needed
+    // Adjust vertical position to keep tooltip on screen if needed.
     const globalY = targetGlobal.y + newAnchorY;
     if (globalY < 0) {
       const adjustedY = -targetGlobal.y + margin;
@@ -587,9 +570,8 @@ PopupWindow {
         newAnchorY = adjustedY;
       } else {
         const wouldOverlap = adjustedY < targetHeight && adjustedY + tipHeight > 0;
-        if (!wouldOverlap) {
+        if (!wouldOverlap)
           newAnchorY = adjustedY;
-        }
       }
     } else if (globalY + tipHeight > screenHeight) {
       const adjustedY = screenHeight - targetGlobal.y - tipHeight - margin;
@@ -597,9 +579,8 @@ PopupWindow {
         newAnchorY = adjustedY;
       } else {
         const wouldOverlap = adjustedY < targetHeight && adjustedY + tipHeight > 0;
-        if (!wouldOverlap) {
+        if (!wouldOverlap)
           newAnchorY = adjustedY;
-        }
       }
     }
 
