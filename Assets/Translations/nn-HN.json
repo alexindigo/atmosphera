@@ -210,5 +210,8 @@
   "common": {
     "brightness": "Ljosstyrke",
     "select-color-description": "Lita med hamlitene for tyngd."
+  },
+  "system": {
+    "welcome-back": "Velkomen attende,"
   }
 }
