@@ -229,7 +229,7 @@ Item {
           id: cpuUsageContent
           anchors.centerIn: parent
 
-          property bool verticalDisplay: isVertical && !compactMode
+          property bool verticalDisplay: isVertical && (!compactMode || showCpuCores)
           flow: verticalDisplay ? GridLayout.TopToBottom : GridLayout.LeftToRight
           rows: verticalDisplay ? -1 : 1
           columns: verticalDisplay ? 1 : -1
@@ -268,10 +268,10 @@ Item {
             Layout.column: isVertical ? 0 : 1
           }
 
-          // Compact mode
+          // Compact mode general cpu
           Loader {
-            active: compactMode
-            visible: compactMode
+            active: compactMode && !showCpuCores
+            visible: compactMode && !showCpuCores
             sourceComponent: miniGaugeComponent
             Layout.alignment: Qt.AlignCenter
             Layout.row: 0
@@ -280,6 +280,20 @@ Item {
             onLoaded: {
               item.ratio = Qt.binding(() => SystemStatService.cpuUsage / 100);
               item.fillColor = Qt.binding(() => SystemStatService.cpuColor);
+            }
+          }
+
+          // Compact mode for cores
+          Repeater {
+            model: (compactMode && showCpuCores) ? SystemStatService.coresUsage : []
+
+            delegate: NLinearGauge {
+              required property var modelData
+              width: isVertical ? iconSize : miniGaugeWidth
+              height: isVertical ? miniGaugeWidth : iconSize
+              orientation: isVertical ? Qt.Horizontal : Qt.Vertical
+              ratio: modelData / 100
+              fillColor: SystemStatService.getCoreUsageColor(modelData)
             }
           }
         }
