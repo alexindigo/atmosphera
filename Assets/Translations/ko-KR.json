@@ -799,6 +799,8 @@
       "appearance-capsule-color-label": "캡슐 색상",
       "appearance-capsule-opacity-description": "캡슐이 표시될 때 위젯 배경의 불투명도 수준을 설정합니다.",
       "appearance-capsule-opacity-label": "캡슐 불투명도",
+      "appearance-content-padding-description": "바 가장자리와 위젯 사이의 패딩을 조정합니다.",
+      "appearance-content-padding-label": "콘텐츠 패딩",
       "appearance-density-description": "컴팩트하거나 넓은 모양을 위해 바의 패딩을 조정합니다.",
       "appearance-density-label": "바 밀도",
       "appearance-desc": "바의 모양과 위치를 사용자 지정합니다.",

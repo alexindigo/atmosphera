@@ -799,6 +799,8 @@
       "appearance-capsule-color-label": "膠囊顏色",
       "appearance-capsule-opacity-description": "設定當啟用顯示小容器時小工具的背景不透明度",
       "appearance-capsule-opacity-label": "小容器不透明度",
+      "appearance-content-padding-description": "調整列邊緣與小工具之間的內邊距。",
+      "appearance-content-padding-label": "內容內邊距",
       "appearance-density-description": "調整工具列的內部間距來做出緊湊或寬敞的外觀",
       "appearance-density-label": "工具列密度",
       "appearance-desc": "自訂工具列的外觀及位置",

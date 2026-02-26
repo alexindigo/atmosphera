@@ -799,6 +799,8 @@
       "appearance-capsule-color-label": "Kapsül rengi",
       "appearance-capsule-opacity-description": "Kapsül gösterildiğinde araç takımı arka planlarının saydamlık seviyesini ayarla.",
       "appearance-capsule-opacity-label": "Kapsül saydamlığı",
+      "appearance-content-padding-description": "Çubuk kenarları ile widget'lar arasındaki dolguyu ayarlayın.",
+      "appearance-content-padding-label": "İçerik dolgusu",
       "appearance-density-description": "Sıkı veya geniş bir görünüm için araç çubuğu dolgusunu ayarlayın.",
       "appearance-density-label": "Araç Çubuğu yoğunluğu",
       "appearance-desc": "Araç çubuğunun görünümünü ve konumunu özelleştirin.",

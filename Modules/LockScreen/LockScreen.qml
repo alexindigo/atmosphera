@@ -361,7 +361,7 @@ Loader {
 
                 Component.onCompleted: forceActiveFocus()
               }
-  
+
               MouseArea {
                 anchors.fill: parent
                 hoverEnabled: true

@@ -344,7 +344,7 @@ Item {
       ColumnLayout {
         x: Style.pixelAlignCenter(parent.width, width)
         anchors.top: parent.top
-        anchors.topMargin: verticalBarMargin
+        anchors.topMargin: verticalBarMargin + Settings.data.bar.contentPadding
         spacing: Settings.data.bar.widgetSpacing
 
         Repeater {
@@ -395,7 +395,7 @@ Item {
       ColumnLayout {
         x: Style.pixelAlignCenter(parent.width, width)
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: verticalBarMargin
+        anchors.bottomMargin: verticalBarMargin + Settings.data.bar.contentPadding
         spacing: Settings.data.bar.widgetSpacing
 
         Repeater {
@@ -452,7 +452,7 @@ Item {
         id: leftSection
         objectName: "leftSection"
         anchors.left: parent.left
-        anchors.leftMargin: horizontalBarMargin
+        anchors.leftMargin: horizontalBarMargin + Settings.data.bar.contentPadding
         y: Style.pixelAlignCenter(parent.height, height)
         spacing: Settings.data.bar.widgetSpacing
 
@@ -507,7 +507,7 @@ Item {
         id: rightSection
         objectName: "rightSection"
         anchors.right: parent.right
-        anchors.rightMargin: horizontalBarMargin
+        anchors.rightMargin: horizontalBarMargin + Settings.data.bar.contentPadding
         y: Style.pixelAlignCenter(parent.height, height)
         spacing: Settings.data.bar.widgetSpacing
 

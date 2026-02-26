@@ -799,6 +799,8 @@
       "appearance-capsule-color-label": "Capsulekleur",
       "appearance-capsule-opacity-description": "Stel het doorzichtigheidsniveau in voor widget-achtergronden wanneer capsule wordt getoond.",
       "appearance-capsule-opacity-label": "Capsule-doorzichtigheid",
+      "appearance-content-padding-description": "Pas de opvulling tussen de baranden en widgets aan.",
+      "appearance-content-padding-label": "Inhoudopvulling",
       "appearance-density-description": "Pas de opvulling van de balk aan voor een compacte of ruime uitstraling.",
       "appearance-density-label": "Balkdichtheid",
       "appearance-desc": "Pas de uitstraling en positie van de balk aan.",

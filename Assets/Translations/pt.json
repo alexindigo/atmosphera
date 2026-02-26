@@ -799,6 +799,8 @@
       "appearance-capsule-color-label": "Cor da cápsula",
       "appearance-capsule-opacity-description": "Define o nível de opacidade para fundos dos widgets quando a cápsula é mostrada.",
       "appearance-capsule-opacity-label": "Opacidade da cápsula",
+      "appearance-content-padding-description": "Ajusta o espaçamento entre as bordas da barra e os widgets.",
+      "appearance-content-padding-label": "Espaçamento do conteúdo",
       "appearance-density-description": "Ajuste o preenchimento da barra para um visual compacto ou espaçoso.",
       "appearance-density-label": "Densidade da barra",
       "appearance-desc": "Personalize a aparência e a posição da barra.",

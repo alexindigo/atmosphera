@@ -799,6 +799,8 @@
       "appearance-capsule-color-label": "カプセルの色",
       "appearance-capsule-opacity-description": "カプセル表示時のウィジェット背景の不透明度を設定します。",
       "appearance-capsule-opacity-label": "カプセルの不透明度",
+      "appearance-content-padding-description": "バーの端とウィジェット間のパディングを調整します。",
+      "appearance-content-padding-label": "コンテンツパディング",
       "appearance-density-description": "バーの余白を調整し、コンパクトまたはゆったりとした外観にします。",
       "appearance-density-label": "バーの密度",
       "appearance-desc": "バーの外観や位置をカスタマイズします。",

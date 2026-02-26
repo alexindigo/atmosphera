@@ -799,6 +799,8 @@
       "appearance-capsule-color-label": "Kapselfarbe",
       "appearance-capsule-opacity-description": "Deckkraft der Widget-Hintergründe festlegen, wenn Kapsel angezeigt wird.",
       "appearance-capsule-opacity-label": "Kapsel-Deckkraft",
+      "appearance-content-padding-description": "Passen Sie den Abstand zwischen Leistenrändern und Widgets an.",
+      "appearance-content-padding-label": "Inhaltsabstand",
       "appearance-density-description": "Innenabstand der Leiste für kompaktes oder geräumiges Aussehen anpassen.",
       "appearance-density-label": "Leistendichte",
       "appearance-desc": "Erscheinungsbild und Position der Leiste anpassen.",

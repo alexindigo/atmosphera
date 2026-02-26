@@ -799,6 +799,8 @@
       "appearance-capsule-color-label": "胶囊颜色",
       "appearance-capsule-opacity-description": "设置显示胶囊时小部件背景的不透明度。",
       "appearance-capsule-opacity-label": "胶囊不透明度",
+      "appearance-content-padding-description": "调整栏边缘与小部件之间的内边距。",
+      "appearance-content-padding-label": "内容内边距",
       "appearance-density-description": "调整状态栏的内边距以获得紧凑或宽松的外观。",
       "appearance-density-label": "状态栏密度",
       "appearance-desc": "自定义状态栏的外观和位置。",

@@ -799,6 +799,8 @@
       "appearance-capsule-color-label": "Kolor kapsuły",
       "appearance-capsule-opacity-description": "Ustaw poziom przezroczystości tła widżetów, gdy kapsuła jest widoczna.",
       "appearance-capsule-opacity-label": "Przezroczystość kapsuły",
+      "appearance-content-padding-description": "Dostosuj odstęp między krawędziami paska a widżetami.",
+      "appearance-content-padding-label": "Odstęp treści",
       "appearance-density-description": "Dostosuj odstępy paska dla kompaktowego lub przestronnego wyglądu.",
       "appearance-density-label": "Zagęszczenie paska",
       "appearance-desc": "Dostosuj wygląd i pozycję paska.",
