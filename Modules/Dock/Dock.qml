@@ -663,11 +663,8 @@ Loader {
           focusable: false
           color: "transparent"
 
-          // When bar is at same edge, position peek window past the bar so it receives mouse events
-          margins.top: isVertical ? peekCenterOffsetY : (dockPosition === "top" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0)
-          margins.bottom: dockPosition === "bottom" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0
-          margins.left: !isVertical ? peekCenterOffsetX : (dockPosition === "left" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0)) : 0)
-          margins.right: dockPosition === "right" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0)) : 0
+          margins.top: peekCenterOffsetY
+          margins.left: peekCenterOffsetX
 
           WlrLayershell.namespace: "noctalia-dock-peek-" + (screen?.name || "unknown")
           WlrLayershell.layer: WlrLayer.Overlay
@@ -727,10 +724,30 @@ Loader {
           focusable: false
           color: "transparent"
 
-          margins.top: isVertical ? peekCenterOffsetY : (dockPosition === "top" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0)
-          margins.bottom: dockPosition === "bottom" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0
-          margins.left: !isVertical ? peekCenterOffsetX : (dockPosition === "left" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0)) : 0)
-          margins.right: dockPosition === "right" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0)) : 0
+          property real targetIndicatorOffsetX: peekCenterOffsetX
+          property real targetIndicatorOffsetY: peekCenterOffsetY
+          property real animatedIndicatorOffsetX: targetIndicatorOffsetX
+          property real animatedIndicatorOffsetY: targetIndicatorOffsetY
+
+          onTargetIndicatorOffsetXChanged: animatedIndicatorOffsetX = targetIndicatorOffsetX
+          onTargetIndicatorOffsetYChanged: animatedIndicatorOffsetY = targetIndicatorOffsetY
+
+          Behavior on animatedIndicatorOffsetX {
+            NumberAnimation {
+              duration: Style.animationNormal
+              easing.type: Easing.InOutQuad
+            }
+          }
+
+          Behavior on animatedIndicatorOffsetY {
+            NumberAnimation {
+              duration: Style.animationNormal
+              easing.type: Easing.InOutQuad
+            }
+          }
+
+          margins.top: animatedIndicatorOffsetY
+          margins.left: animatedIndicatorOffsetX
 
           WlrLayershell.namespace: "noctalia-dock-indicator-" + (screen?.name || "unknown")
           WlrLayershell.layer: WlrLayer.Top
@@ -738,6 +755,19 @@ Loader {
           WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
           implicitHeight: isVertical ? peekEdgeLength : indicatorThickness
           implicitWidth: isVertical ? indicatorThickness : peekEdgeLength
+
+          Behavior on implicitWidth {
+            NumberAnimation {
+              duration: Style.animationNormal
+              easing.type: Easing.InOutQuad
+            }
+          }
+          Behavior on implicitHeight {
+            NumberAnimation {
+              duration: Style.animationNormal
+              easing.type: Easing.InOutQuad
+            }
+          }
 
           Rectangle {
             id: indicatorRect
