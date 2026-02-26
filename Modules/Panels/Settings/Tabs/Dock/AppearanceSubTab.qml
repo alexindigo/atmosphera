@@ -113,6 +113,41 @@ ColumnLayout {
       onToggled: checked => Settings.data.dock.showDockIndicator = checked
     }
 
+    NToggle {
+      Layout.fillWidth: true
+      visible: Settings.data.dock.showDockIndicator
+      label: I18n.tr("panels.dock.appearance-indicator-thickness-label")
+      description: I18n.tr("panels.dock.appearance-indicator-thickness-description")
+      checked: (Settings.data.dock.indicatorThickness || 3) >= 6
+      defaultValue: (Settings.getDefaultValue("dock.indicatorThickness") || 3) >= 6
+      onToggled: checked => Settings.data.dock.indicatorThickness = checked ? 6 : 3
+    }
+
+    NColorChoice {
+      Layout.fillWidth: true
+      visible: Settings.data.dock.showDockIndicator
+      label: I18n.tr("panels.dock.appearance-indicator-color-label")
+      description: I18n.tr("panels.dock.appearance-indicator-color-description")
+      currentKey: Settings.data.dock.indicatorColor || "primary"
+      defaultValue: Settings.getDefaultValue("dock.indicatorColor")
+      onSelected: key => Settings.data.dock.indicatorColor = key
+    }
+
+    NValueSlider {
+      Layout.fillWidth: true
+      visible: Settings.data.dock.showDockIndicator
+      label: I18n.tr("panels.dock.appearance-indicator-opacity-label")
+      description: I18n.tr("panels.dock.appearance-indicator-opacity-description")
+      from: 0.1
+      to: 1
+      stepSize: 0.01
+      showReset: true
+      value: Settings.data.dock.indicatorOpacity
+      defaultValue: Settings.getDefaultValue("dock.indicatorOpacity")
+      onMoved: value => Settings.data.dock.indicatorOpacity = value
+      text: Math.floor(Settings.data.dock.indicatorOpacity * 100) + "%"
+    }
+
     NValueSlider {
       Layout.fillWidth: true
       label: I18n.tr("panels.osd.background-opacity-label")

@@ -81,7 +81,9 @@ Loader {
       readonly property int hideAnimationDuration: Math.max(0, Math.round(Style.animationFast / (Settings.data.dock.animationSpeed || 1.0)))
       readonly property int showAnimationDuration: Math.max(0, Math.round(Style.animationFast / (Settings.data.dock.animationSpeed || 1.0)))
       readonly property int peekThickness: 1
-      readonly property int indicatorThickness: 3
+      readonly property int indicatorThickness: Settings.data.dock.indicatorThickness || 3
+      readonly property string indicatorColorKey: Settings.data.dock.indicatorColor || "primary"
+      readonly property real indicatorOpacity: Settings.data.dock.indicatorOpacity !== undefined ? Settings.data.dock.indicatorOpacity : 0.6
       readonly property int iconSize: Math.round(12 + 24 * (Settings.data.dock.size ?? 1))
       readonly property int floatingMargin: Settings.data.dock.floatingRatio * Style.marginL
       readonly property int maxWidth: modelData ? modelData.width * 0.8 : 1000
@@ -768,7 +770,7 @@ Loader {
             id: indicatorRect
             anchors.fill: parent
             radius: indicatorThickness
-            color: Qt.alpha(Color.mPrimary, 0.6)
+            color: Qt.alpha(Color.resolveColorKey(indicatorColorKey), indicatorOpacity)
             opacity: indicatorVisible ? 1 : 0
             visible: opacity > 0
 
