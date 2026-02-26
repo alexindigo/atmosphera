@@ -159,6 +159,7 @@
       "useMonospaceFont": true,
       "usePadding": false,
       "showCpuUsage": true,
+      "showCpuCores": true,
       "showCpuFreq": false,
       "showCpuTemp": true,
       "showGpuTemp": false,
