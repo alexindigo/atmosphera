@@ -724,9 +724,9 @@ Singleton {
     // idle management
     property JsonObject idle: JsonObject {
       property bool enabled: false
-      property int screenOffTimeout: 0   // seconds, 0 = disabled
-      property int lockTimeout: 0        // seconds, 0 = disabled
-      property int suspendTimeout: 0     // seconds, 0 = disabled
+      property int screenOffTimeout: 600    // seconds, 0 = disabled
+      property int lockTimeout: 660         // seconds, 0 = disabled
+      property int suspendTimeout: 1800     // seconds, 0 = disabled
       property int fadeDuration: 5       // seconds of fade-to-black before action fires
       property string customCommands: "[]" // JSON array of {timeout, command}
     }
