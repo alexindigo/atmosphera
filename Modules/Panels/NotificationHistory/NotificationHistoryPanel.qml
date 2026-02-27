@@ -172,10 +172,12 @@ SmartPanel {
           NotificationService.invokeAction(item.id, actions[actionIndex].identifier);
         }
       } else {
-        // Toggle expansion or open?
-        // User request didn't specify. Let's toggle expansion logic if we can access it.
-        // We can communicate with the delegate via a property or signal?
-        // Delegates read 'scrollView.expandedId'.
+        var delegate = notificationColumn.children[focusIndex];
+        if (!delegate)
+          return;
+        if (!(delegate.canExpand || delegate.isExpanded))
+          return;
+
         if (scrollView.expandedId === item.id) {
           scrollView.expandedId = "";
         } else {
