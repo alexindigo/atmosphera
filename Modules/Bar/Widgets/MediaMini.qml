@@ -39,17 +39,17 @@ Item {
   readonly property real barFontSize: Style.getBarFontSizeForScreen(screenName)
 
   // Widget settings
-  readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : "hidden"
-  readonly property bool hideWhenIdle: (widgetSettings.hideWhenIdle !== undefined) ? widgetSettings.hideWhenIdle : (widgetMetadata.hideWhenIdle !== undefined ? widgetMetadata.hideWhenIdle : false)
-  readonly property bool showAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
-  readonly property bool showArtistFirst: (widgetSettings.showArtistFirst !== undefined) ? widgetSettings.showArtistFirst : widgetMetadata.showArtistFirst
-  readonly property bool showVisualizer: (widgetSettings.showVisualizer !== undefined) ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer
-  readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
-  readonly property string scrollingMode: (widgetSettings.scrollingMode !== undefined) ? widgetSettings.scrollingMode : widgetMetadata.scrollingMode
-  readonly property bool showProgressRing: (widgetSettings.showProgressRing !== undefined) ? widgetSettings.showProgressRing : widgetMetadata.showProgressRing
-  readonly property bool useFixedWidth: (widgetSettings.useFixedWidth !== undefined) ? widgetSettings.useFixedWidth : widgetMetadata.useFixedWidth
-  readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
-  readonly property string textColorKey: (widgetSettings.textColor !== undefined) ? widgetSettings.textColor : widgetMetadata.textColor
+  readonly property string hideMode: widgetSettings.hideMode !== undefined ? widgetSettings.hideMode : widgetMetadata.hideMode
+  readonly property bool hideWhenIdle: widgetSettings.hideWhenIdle !== undefined ? widgetSettings.hideWhenIdle : widgetMetadata.hideWhenIdle
+  readonly property bool showAlbumArt: widgetSettings.showAlbumArt !== undefined ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
+  readonly property bool showArtistFirst: widgetSettings.showArtistFirst !== undefined ? widgetSettings.showArtistFirst : widgetMetadata.showArtistFirst
+  readonly property bool showVisualizer: widgetSettings.showVisualizer !== undefined ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer
+  readonly property string visualizerType: widgetSettings.visualizerType !== undefined ? widgetSettings.visualizerType : widgetMetadata.visualizerType
+  readonly property string scrollingMode: widgetSettings.scrollingMode !== undefined ? widgetSettings.scrollingMode : widgetMetadata.scrollingMode
+  readonly property bool showProgressRing: widgetSettings.showProgressRing !== undefined ? widgetSettings.showProgressRing : widgetMetadata.showProgressRing
+  readonly property bool useFixedWidth: widgetSettings.useFixedWidth !== undefined ? widgetSettings.useFixedWidth : widgetMetadata.useFixedWidth
+  readonly property real maxWidth: widgetSettings.maxWidth !== undefined ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
+  readonly property string textColorKey: widgetSettings.textColor !== undefined ? widgetSettings.textColor : widgetMetadata.textColor
   readonly property color textColor: Color.resolveColorKey(textColorKey)
 
   // Dimensions

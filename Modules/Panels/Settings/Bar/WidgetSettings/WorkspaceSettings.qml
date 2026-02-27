@@ -197,7 +197,9 @@ ColumnLayout {
     from: 0
     to: 1
     stepSize: 0.01
+    showReset: true
     value: valueUnfocusedIconsOpacity
+    defaultValue: widgetMetadata.unfocusedIconsOpacity
     onMoved: value => {
                valueUnfocusedIconsOpacity = value;
                saveSettings();
@@ -212,7 +214,9 @@ ColumnLayout {
     from: 0
     to: 1
     stepSize: 0.01
+    showReset: true
     value: valueGroupedBorderOpacity
+    defaultValue: widgetMetadata.groupedBorderOpacity
     onMoved: value => {
                valueGroupedBorderOpacity = value;
                saveSettings();
@@ -227,7 +231,9 @@ ColumnLayout {
     from: 0.5
     to: 1
     stepSize: 0.01
+    showReset: true
     value: valueIconScale
+    defaultValue: widgetMetadata.iconScale
     onMoved: value => {
                valueIconScale = value;
                saveSettings();
