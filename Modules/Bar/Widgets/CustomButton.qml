@@ -58,6 +58,10 @@ Item {
   readonly property bool parseJson: widgetSettings.parseJson !== undefined ? widgetSettings.parseJson : (widgetMetadata.parseJson || false)
   readonly property bool hasExec: (leftClickExec || rightClickExec || middleClickExec || (wheelMode === "unified" && wheelExec) || (wheelMode === "separate" && (wheelUpExec || wheelDownExec)))
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : true
+  readonly property bool showExecTooltip: widgetSettings.showExecTooltip !== undefined ? widgetSettings.showExecTooltip : (widgetMetadata.showExecTooltip !== undefined ? widgetMetadata.showExecTooltip : true)
+  readonly property bool showTextTooltip: widgetSettings.showTextTooltip !== undefined ? widgetSettings.showTextTooltip : (widgetMetadata.showTextTooltip !== undefined ? widgetMetadata.showTextTooltip : true)
+  readonly property string generalTooltipText: widgetSettings.generalTooltipText !== undefined ? widgetSettings.generalTooltipText : (widgetMetadata.generalTooltipText || "")
+  readonly property bool _hasCustomTooltip: generalTooltipText.trim() !== ""
   readonly property string hideMode: widgetSettings.hideMode || "alwaysExpanded"
   readonly property bool hasOutput: _dynamicText !== ""
   readonly property bool shouldForceOpen: textStream && (hideMode === "alwaysExpanded" || hideMode === "maxTransparent")
@@ -201,45 +205,64 @@ Item {
     rotateText: isVerticalBar && currentMaxTextLength > 0
     autoHide: false
     forceOpen: _pillForceOpen
+    forceClose: !_pillForceOpen
     customTextIconColor: iconColor
 
-    tooltipText: {
-      var tooltipLines = [];
+    // Helper function to build tooltip content
+    function _buildTooltipContent() {
+      var lines = [];
 
-      if (hasExec) {
+      // Add custom tooltip if set
+      if (_hasCustomTooltip) {
+        lines.push(generalTooltipText);
+      }
+
+      // Add command details if enabled and available
+      if (showExecTooltip && hasExec) {
         if (leftClickExec !== "") {
-          tooltipLines.push(`Left click: ${leftClickExec}.`);
+          lines.push(I18n.tr("bar.custom-button.left-click-label") + `: ${leftClickExec}`);
         }
         if (rightClickExec !== "") {
-          tooltipLines.push(`Right click: ${rightClickExec}.`);
+          lines.push(I18n.tr("bar.custom-button.right-click-label") + `: ${rightClickExec}`);
         }
         if (middleClickExec !== "") {
-          tooltipLines.push(`Middle click: ${middleClickExec}.`);
+          lines.push(I18n.tr("bar.custom-button.middle-click-label") + `: ${middleClickExec}`);
         }
         if (wheelMode === "unified" && wheelExec !== "") {
-          tooltipLines.push(`Wheel: ${wheelExec}.`);
+          lines.push(I18n.tr("bar.custom-button.wheel-label") + `: ${wheelExec}`);
         } else if (wheelMode === "separate") {
           if (wheelUpExec !== "") {
-            tooltipLines.push(`Wheel up: ${wheelUpExec}.`);
+            lines.push(I18n.tr("bar.custom-button.wheel-up") + `: ${wheelUpExec}`);
           }
           if (wheelDownExec !== "") {
-            tooltipLines.push(`Wheel down: ${wheelDownExec}.`);
+            lines.push(I18n.tr("bar.custom-button.wheel-down") + `Wheel down: ${wheelDownExec}`);
           }
         }
       }
 
-      if (_dynamicTooltip !== "") {
-        if (tooltipLines.length > 0) {
-          tooltipLines.push("");
-        }
-        tooltipLines.push(_dynamicTooltip);
+      // Add dynamic text tooltip if enabled and available
+      if (showTextTooltip && _dynamicTooltip !== "") {
+        lines.push(_dynamicTooltip);
       }
 
-      if (tooltipLines.length === 0) {
-        return "Custom button, configure in settings.";
-      } else {
-        return tooltipLines.join("\n");
+      return lines;
+    }
+
+    tooltipText: {
+      var lines = _buildTooltipContent();
+
+      // If no custom tooltip and both switches are off, show default tooltip
+      if (!_hasCustomTooltip && !showExecTooltip && !showTextTooltip) {
+        return I18n.tr("bar.custom-button.default-tooltip");
       }
+
+      // If there's content, join with newlines
+      if (lines.length > 0) {
+        return lines.join("\n");
+      }
+
+      // Fallback (shouldn't reach here normally)
+      return I18n.tr("bar.custom-button.default-tooltip");
     }
 
     onClicked: root.clicked()

@@ -29,6 +29,20 @@ Singleton {
     Logger.i("IPCService", "Service started");
   }
 
+  // Helper for index-based notification lookups in IPC
+  function _getNotificationByIndex(index: string, funcName: string) {
+    var idx = index === "" ? 0 : parseInt(index);
+    if (isNaN(idx)) {
+      Logger.w("IPC", "Argument to ipc call '" + funcName + "' must be a number");
+      return null;
+    }
+    if (idx < 0 || idx >= NotificationService.activeList.count) {
+      Logger.w("IPC", "Notification index out of range: " + idx);
+      return null;
+    }
+    return NotificationService.activeList.get(idx);
+  }
+
   IpcHandler {
     target: "bar"
     function toggle() {
@@ -40,9 +54,13 @@ Singleton {
     function showBar() {
       BarService.show();
     }
-    function setDisplayMode(mode: string) {
+    function setDisplayMode(mode: string, screen: string) {
       if (mode === "always_visible" || mode === "non_exclusive" || mode === "auto_hide") {
-        Settings.data.bar.displayMode = mode;
+        if (!screen || screen === "all") {
+          Settings.data.bar.displayMode = mode;
+        } else {
+          Settings.setScreenOverride(screen, "displayMode", mode);
+        }
       }
     }
     function setPosition(position: string, screen: string) {
@@ -188,6 +206,51 @@ Singleton {
 
     function removeFromHistory(id: string): bool {
       return NotificationService.removeFromHistory(id);
+    }
+
+    function invokeDefault(index: string): bool {
+      var notif = root._getNotificationByIndex(index, "notifications invokeDefault");
+      if (!notif)
+        return false;
+
+      var actions = JSON.parse(notif.actionsJson || "[]");
+      if (actions.length === 0)
+        return false;
+
+      var actionId = actions.find(a => a.identifier === "default")?.identifier ?? actions[0].identifier;
+      return NotificationService.invokeAction(notif.id, actionId);
+    }
+
+    function invokeDefaultAndDismiss(index: string): bool {
+      var notif = root._getNotificationByIndex(index, "notifications invokeDefaultAndDismiss");
+      if (!notif)
+        return false;
+
+      var actions = JSON.parse(notif.actionsJson || "[]");
+      if (actions.length === 0) {
+        NotificationService.dismissActiveNotification(notif.id);
+        return false;
+      }
+
+      var actionId = actions.find(a => a.identifier === "default")?.identifier ?? actions[0].identifier;
+      var result = NotificationService.invokeAction(notif.id, actionId);
+      NotificationService.dismissActiveNotification(notif.id);
+      return result;
+    }
+
+    function invokeAction(id: string, actionId: string): bool {
+      if (!id || !actionId) {
+        Logger.w("IPC", "Both 'id' and 'actionId' are required for 'notifications invokeAction'");
+        return false;
+      }
+      return NotificationService.invokeAction(id, actionId);
+    }
+
+    function getActions(index: string): string {
+      var notif = root._getNotificationByIndex(index, "notifications getActions");
+      if (!notif)
+        return "[]";
+      return notif.actionsJson || "[]";
     }
   }
 
@@ -434,6 +497,10 @@ Singleton {
                                               var sessionMenuPanel = PanelService.getPanel("sessionMenuPanel", screen);
                                               sessionMenuPanel?.toggle();
                                             });
+    }
+
+    function lock() {
+      CompositorService.lock();
     }
 
     function lockAndSuspend() {

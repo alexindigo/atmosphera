@@ -175,7 +175,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.leftMargin: Style.borderS
         Layout.rightMargin: Style.borderS
-        implicitHeight: Math.round(contentColumn.implicitHeight + Style.marginL * 2)
+        implicitHeight: Math.round(contentColumn.implicitHeight + Style.margin2L)
         color: Color.mSurface
 
         ColumnLayout {
@@ -205,8 +205,8 @@ ColumnLayout {
               visible: modelData.official === true
               color: Color.mSecondary
               radius: Style.radiusXS
-              implicitWidth: officialBadgeRow.implicitWidth + Style.marginS * 2
-              implicitHeight: officialBadgeRow.implicitHeight + Style.marginXS * 2
+              implicitWidth: officialBadgeRow.implicitWidth + Style.margin2S
+              implicitHeight: officialBadgeRow.implicitHeight + Style.margin2XS
 
               RowLayout {
                 id: officialBadgeRow
@@ -238,7 +238,10 @@ ColumnLayout {
               icon: "external-link"
               baseSize: Style.baseWidgetSize * 0.7
               tooltipText: I18n.tr("panels.plugins.open-plugin-page")
-              onClicked: Qt.openUrlExternally("https://noctalia.dev/plugins/" + modelData.id + "/")
+              onClicked: {
+                var sourceUrl = modelData.source?.url || "";
+                Qt.openUrlExternally(sourceUrl && !PluginRegistry.isMainSource(sourceUrl) ? sourceUrl : "https://noctalia.dev/plugins/" + modelData.id + "/");
+              }
             }
 
             // Downloaded indicator

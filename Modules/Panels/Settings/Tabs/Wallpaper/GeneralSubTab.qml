@@ -138,7 +138,7 @@ ColumnLayout {
       color: Color.mSurface
       border.color: Color.mOutline
       border.width: Style.borderS
-      implicitHeight: contentCol.implicitHeight + Style.marginL * 2
+      implicitHeight: contentCol.implicitHeight + Style.margin2L
       clip: true
 
       ColumnLayout {
@@ -201,6 +201,7 @@ ColumnLayout {
       from: 0.0
       to: 1.0
       stepSize: 0.01
+      showReset: true
       value: Settings.data.wallpaper.overviewBlur
       onMoved: value => Settings.data.wallpaper.overviewBlur = value
       text: ((Settings.data.wallpaper.overviewBlur) * 100).toFixed(0) + "%"
@@ -216,6 +217,7 @@ ColumnLayout {
       from: 0.0
       to: 1.0
       stepSize: 0.01
+      showReset: true
       value: Settings.data.wallpaper.overviewTint
       onMoved: value => Settings.data.wallpaper.overviewTint = value
       text: ((Settings.data.wallpaper.overviewTint) * 100).toFixed(0) + "%"

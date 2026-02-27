@@ -20,7 +20,7 @@ NBox {
 
   color: Color.mSurfaceVariant
   Layout.fillWidth: true
-  implicitHeight: content.implicitHeight + Style.marginL * 2
+  implicitHeight: content.implicitHeight + Style.margin2L
 
   // Helper to get widgets for this screen (ensures override exists)
   function _getWidgetsContainer() {
@@ -117,6 +117,7 @@ NBox {
     for (var i = 0; i < widgetIds.length; i++) {
       var id = widgetIds[i];
       var displayName = id;
+      const badges = [];
       if (BarWidgetRegistry.isPluginWidget(id)) {
         var pluginId = id.replace("plugin:", "");
         var manifest = PluginRegistry.getPluginManifest(pluginId);
@@ -125,10 +126,21 @@ NBox {
         } else {
           displayName = pluginId;
         }
+        badges.push({
+                      "icon": "plugin",
+                      "color": Color.mSecondary
+                    });
+      }
+      if (BarWidgetRegistry.isCpuIntensive(id)) {
+        badges.push({
+                      "icon": "cpu-intensive",
+                      "color": Color.mSecondary
+                    });
       }
       availableWidgetsModel.append({
                                      "key": id,
-                                     "name": displayName
+                                     "name": displayName,
+                                     "badges": badges
                                    });
     }
   }

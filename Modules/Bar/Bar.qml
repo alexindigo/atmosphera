@@ -292,12 +292,13 @@ Item {
                          }
                          // Click is on empty bar background - open control center
                          var controlCenterPanel = PanelService.getPanel("controlCenterPanel", screen);
-                         if (Settings.data.controlCenter.position === "close_to_bar_button") {
-                           // Will attempt to open the panel next to the bar button if any.
-                           controlCenterPanel?.toggle(null, "ControlCenter");
-                         } else {
-                           controlCenterPanel?.toggle();
-                         }
+
+                         // Map click position to screen-relative coordinates
+                         // We need to map from bar coordinates to screen coordinates
+                         var screenRelativePos = mapToItem(null, mouse.x, mouse.y);
+
+                         // Pass click position directly
+                         controlCenterPanel?.toggle(null, screenRelativePos);
                          mouse.accepted = true;
                        }
                      }
@@ -343,8 +344,8 @@ Item {
       ColumnLayout {
         x: Style.pixelAlignCenter(parent.width, width)
         anchors.top: parent.top
-        anchors.topMargin: verticalBarMargin
-        spacing: Style.marginS
+        anchors.topMargin: verticalBarMargin + Settings.data.bar.contentPadding
+        spacing: Settings.data.bar.widgetSpacing
 
         Repeater {
           model: root.leftWidgetsModel
@@ -369,7 +370,7 @@ Item {
       ColumnLayout {
         x: Style.pixelAlignCenter(parent.width, width)
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Style.marginS
+        spacing: Settings.data.bar.widgetSpacing
 
         Repeater {
           model: root.centerWidgetsModel
@@ -394,8 +395,8 @@ Item {
       ColumnLayout {
         x: Style.pixelAlignCenter(parent.width, width)
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: verticalBarMargin
-        spacing: Style.marginS
+        anchors.bottomMargin: verticalBarMargin + Settings.data.bar.contentPadding
+        spacing: Settings.data.bar.widgetSpacing
 
         Repeater {
           model: root.rightWidgetsModel
@@ -451,9 +452,9 @@ Item {
         id: leftSection
         objectName: "leftSection"
         anchors.left: parent.left
-        anchors.leftMargin: horizontalBarMargin
+        anchors.leftMargin: horizontalBarMargin + Settings.data.bar.contentPadding
         y: Style.pixelAlignCenter(parent.height, height)
-        spacing: Style.marginS
+        spacing: Settings.data.bar.widgetSpacing
 
         Repeater {
           model: root.leftWidgetsModel
@@ -480,7 +481,7 @@ Item {
         objectName: "centerSection"
         anchors.horizontalCenter: parent.horizontalCenter
         y: Style.pixelAlignCenter(parent.height, height)
-        spacing: Style.marginS
+        spacing: Settings.data.bar.widgetSpacing
 
         Repeater {
           model: root.centerWidgetsModel
@@ -506,9 +507,9 @@ Item {
         id: rightSection
         objectName: "rightSection"
         anchors.right: parent.right
-        anchors.rightMargin: horizontalBarMargin
+        anchors.rightMargin: horizontalBarMargin + Settings.data.bar.contentPadding
         y: Style.pixelAlignCenter(parent.height, height)
-        spacing: Style.marginS
+        spacing: Settings.data.bar.widgetSpacing
 
         Repeater {
           model: root.rightWidgetsModel

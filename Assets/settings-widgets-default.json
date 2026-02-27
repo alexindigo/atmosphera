@@ -30,7 +30,8 @@
     "Brightness": {
       "displayMode": "onhover",
       "iconColor": "none",
-      "textColor": "none"
+      "textColor": "none",
+      "applyToAllMonitors": false
     },
     "Clock": {
       "clockColor": "none",
@@ -51,6 +52,9 @@
     "CustomButton": {
       "icon": "heart",
       "showIcon": true,
+      "showExecTooltip": true,
+      "showTextTooltip": true,
+      "generalTooltipText": "",
       "hideMode": "alwaysExpanded",
       "leftClickExec": "",
       "leftClickUpdateText": false,
@@ -101,7 +105,11 @@
       "hideWhenOff": false
     },
     "Launcher": {
+      "useDistroLogo": false,
       "icon": "rocket",
+      "customIconPath": "",
+      "colorizeSystemIcon": "none",
+      "enableColorization": false,
       "iconColor": "none"
     },
     "MediaMini": {
@@ -137,6 +145,9 @@
     },
     "SessionMenu": {
       "iconColor": "error"
+    },
+    "Settings": {
+      "iconColor": "non"
     },
     "Spacer": {
       "width": 20
@@ -216,7 +227,6 @@
       "occupiedColor": "secondary",
       "emptyColor": "secondary",
       "showBadge": true,
-      "reverseScroll": false,
       "pillSize": 0.6
     },
     "Volume": {
@@ -235,9 +245,10 @@
       "onClicked": "",
       "onRightClicked": "",
       "onMiddleClicked": "",
-      "stateChecks": [],
-      "generalTooltipText": "Custom Button",
-      "enableOnStateLogic": false
+      "stateChecksJson": "[]",
+      "generalTooltipText": "",
+      "enableOnStateLogic": false,
+      "showExecTooltip": true
     }
   },
   "desktop": {

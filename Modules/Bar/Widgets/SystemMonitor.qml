@@ -70,8 +70,8 @@ Item {
   readonly property real miniGaugeWidth: Math.max(3, Style.toOdd(root.iconSize * 0.25))
 
   // Content dimensions for implicit sizing
-  readonly property real contentWidth: isVertical ? capsuleHeight : Math.round(mainGrid.implicitWidth + Style.marginXL)
-  readonly property real contentHeight: isVertical ? Math.round(mainGrid.implicitHeight + Style.marginXL) : capsuleHeight
+  readonly property real contentWidth: isVertical ? capsuleHeight : Math.round(mainGrid.implicitWidth + Style.margin2M)
+  readonly property real contentHeight: isVertical ? Math.round(mainGrid.implicitHeight + Style.margin2M) : capsuleHeight
 
   readonly property color iconColor: Color.resolveColorKey(iconColorKey)
   readonly property color textColor: Color.resolveColorKey(textColorKey)
@@ -202,21 +202,6 @@ Item {
           radius: parent.radius
           color: miniGauge.statColor
           anchors.bottom: parent.bottom
-
-          Behavior on fillHeight {
-            enabled: !Settings.data.general.animationDisabled
-            NumberAnimation {
-              duration: Style.animationNormal
-              easing.type: Easing.OutCubic
-            }
-          }
-
-          Behavior on color {
-            ColorAnimation {
-              duration: Style.animationNormal
-              easing.type: Easing.OutCubic
-            }
-          }
         }
       }
     }

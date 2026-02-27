@@ -31,9 +31,10 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("panels.user-interface.panel-background-opacity-label")
     description: I18n.tr("panels.user-interface.panel-background-opacity-description")
-    from: 0.4
+    from: 0
     to: 1
     stepSize: 0.01
+    showReset: true
     value: Settings.data.ui.panelBackgroundOpacity
     defaultValue: Settings.getDefaultValue("ui.panelBackgroundOpacity")
     onMoved: value => Settings.data.ui.panelBackgroundOpacity = value
@@ -47,6 +48,7 @@ ColumnLayout {
     from: 0
     to: 1
     stepSize: 0.01
+    showReset: true
     value: Settings.data.general.dimmerOpacity
     defaultValue: Settings.getDefaultValue("general.dimmerOpacity")
     onMoved: value => Settings.data.general.dimmerOpacity = value
@@ -55,6 +57,10 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
+  }
+
+  NHeader {
+    label: I18n.tr("panels.user-interface.settings-panel-header")
   }
 
   NComboBox {
@@ -78,5 +84,14 @@ ColumnLayout {
     currentKey: Settings.data.ui.settingsPanelMode
     defaultValue: Settings.getDefaultValue("ui.settingsPanelMode")
     onSelected: key => Settings.data.ui.settingsPanelMode = key
+    minimumWidth: 220 * Style.uiScaleRatio
+  }
+
+  NToggle {
+    label: I18n.tr("panels.user-interface.settings-panel-sidebar-card-style-label")
+    description: I18n.tr("panels.user-interface.settings-panel-sidebar-card-style-description")
+    checked: Settings.data.ui.settingsPanelSideBarCardStyle
+    defaultValue: Settings.getDefaultValue("ui.settingsPanelSideBarCardStyle")
+    onToggled: checked => Settings.data.ui.settingsPanelSideBarCardStyle = checked
   }
 }

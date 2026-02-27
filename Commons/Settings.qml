@@ -36,9 +36,9 @@ Singleton {
   readonly property string defaultVideosDirectory: Quickshell.env("HOME") + "/Videos"
   readonly property string defaultWallpapersDirectory: Quickshell.env("HOME") + "/Pictures/Wallpapers"
 
-  // Signal emitted when settings are loaded after startupcale changes
   signal settingsLoaded
   signal settingsSaved
+  signal settingsReloaded
 
   // -----------------------------------------------------
   // -----------------------------------------------------
@@ -121,6 +121,9 @@ Singleton {
         root.settingsLoaded();
 
         upgradeSettings();
+      } else {
+        Logger.d("Settings", "Settings reloaded from external file change");
+        root.settingsReloaded();
       }
     }
     onLoadFailed: function (error) {
@@ -178,6 +181,9 @@ Singleton {
       property bool showCapsule: true
       property real capsuleOpacity: 1.0
       property string capsuleColorKey: "none"
+      property int widgetSpacing: 6
+      property int contentPadding: 0
+      property real fontScale: 1.0
 
       // Bar background opacity settings
       property real backgroundOpacity: 0.93
@@ -202,6 +208,7 @@ Singleton {
       property string displayMode: "always_visible"
       property int autoHideDelay: 500 // ms before hiding after mouse leaves
       property int autoShowDelay: 150 // ms before showing when mouse enters
+      property bool showOnWorkspaceSwitch: true // show bar briefly on workspace switch
 
       // Widget configuration for modular bar system
       property JsonObject widgets
@@ -287,6 +294,7 @@ Singleton {
       property bool allowPasswordWithFprintd: false
       property string clockStyle: "custom"
       property string clockFormat: "hh\\nmm"
+      property bool passwordChars: false
       property list<string> lockScreenMonitors: [] // holds lock screen visibility per monitor
       property real lockScreenBlur: 0.0
       property real lockScreenTint: 0.0
@@ -299,6 +307,7 @@ Singleton {
         property list<string> keyEscape: ["Esc"]
         property list<string> keyRemove: ["Del"]
       }
+      property bool reverseScroll: false
     }
 
     // ui
@@ -308,17 +317,11 @@ Singleton {
       property real fontDefaultScale: 1.0
       property real fontFixedScale: 1.0
       property bool tooltipsEnabled: true
+      property bool boxBorderEnabled: false
       property real panelBackgroundOpacity: 0.93
       property bool panelsAttachedToBar: true
       property string settingsPanelMode: "attached" // "centered", "attached", "window"
-      // Details view mode persistence for panels
-      property string wifiDetailsViewMode: "grid"   // "grid" or "list"
-      property string bluetoothDetailsViewMode: "grid" // "grid" or "list"
-      // Persist the last-opened view for the unified network panel: "wifi" | "ethernet"
-      property string networkPanelView: "wifi"
-      // Bluetooth available devices list: hide items without a name
-      property bool bluetoothHideUnnamedDevices: false
-      property bool boxBorderEnabled: false
+      property bool settingsPanelSideBarCardStyle: false
     }
 
     // location
@@ -522,6 +525,7 @@ Singleton {
       property bool enabled: true
       property string position: "bottom" // "top", "bottom", "left", "right"
       property string displayMode: "auto_hide" // "always_visible", "auto_hide", "exclusive"
+      property string dockType: "floating" // "floating", "static"
       property real backgroundOpacity: 1.0
       property real floatingRatio: 1.0
       property real size: 1
@@ -529,11 +533,19 @@ Singleton {
       property list<string> monitors: [] // holds dock visibility per monitor
       property list<string> pinnedApps: [] // Desktop entry IDs pinned to the dock (e.g., "org.kde.konsole", "firefox.desktop")
       property bool colorizeIcons: false
-
+      property bool showLauncherIcon: false
+      property string launcherPosition: "end" // "start", "end"
+      property string launcherIconColor: "none"
       property bool pinnedStatic: false
       property bool inactiveIndicators: false
+      property bool groupApps: false
+      property string groupContextMenuMode: "extended" // "list", "extended"
+      property string groupClickAction: "cycle" // "cycle", "list"
+      property string groupIndicatorStyle: "dots" // "number", "dots"
       property double deadOpacity: 0.6
       property real animationSpeed: 1.0 // Speed multiplier for hide/show animations (0.1 = slowest, 2.0 = fastest)
+      property bool sitOnFrame: false
+      property bool showFrameIndicator: true
     }
 
     // network
@@ -542,6 +554,7 @@ Singleton {
       property bool airplaneModeEnabled: false
       property bool bluetoothRssiPollingEnabled: false  // Opt-in Bluetooth RSSI polling (uses bluetoothctl)
       property int bluetoothRssiPollIntervalMs: 60000 // Polling interval in milliseconds for RSSI queries
+      property string networkPanelView: "wifi"
       property string wifiDetailsViewMode: "grid"   // "grid" or "list"
       property string bluetoothDetailsViewMode: "grid" // "grid" or "list"
       property bool bluetoothHideUnnamedDevices: false
@@ -587,6 +600,11 @@ Singleton {
           "action": "shutdown",
           "enabled": true,
           "keybind": "6"
+        },
+        {
+          "action": "rebootToUefi",
+          "enabled": true,
+          "keybind": "7"
         }
       ]
     }
@@ -594,6 +612,7 @@ Singleton {
     // notifications
     property JsonObject notifications: JsonObject {
       property bool enabled: true
+      property bool enableMarkdown: false
       property string density: "default" // "default", "compact"
       property list<string> monitors: [] // holds notifications visibility per monitor
       property string location: "top_right"
@@ -603,6 +622,7 @@ Singleton {
       property int lowUrgencyDuration: 3
       property int normalUrgencyDuration: 8
       property int criticalUrgencyDuration: 15
+      property bool clearDismissed: true
       property JsonObject saveToHistory: JsonObject {
         property bool low: true
         property bool normal: true
@@ -642,6 +662,7 @@ Singleton {
       property list<string> mprisBlacklist: []
       property string preferredPlayer: ""
       property bool volumeFeedback: false
+      property string volumeFeedbackSoundFile: ""
     }
 
     // brightness
@@ -649,6 +670,8 @@ Singleton {
       property int brightnessStep: 5
       property bool enforceMinimum: true
       property bool enableDdcSupport: false
+      property list<var> backlightDeviceMappings: []
+      // Format: [{ "output": "eDP-1", "device": "/sys/class/backlight/intel_backlight" }]
     }
 
     property JsonObject colorSchemes: JsonObject {
@@ -701,6 +724,7 @@ Singleton {
     // desktop widgets
     property JsonObject desktopWidgets: JsonObject {
       property bool enabled: false
+      property bool overviewEnabled: true
       property bool gridSnap: false
       property list<var> monitorWidgets: []
       // Format: [{ "name": "DP-1", "widgets": [...] }, { "name": "HDMI-1", "widgets": [...] }]
@@ -862,6 +886,17 @@ Singleton {
       return override.density;
     }
     return data.bar.density || "default";
+  }
+
+  // -----------------------------------------------------
+  // Get effective bar display mode for a screen (with inheritance)
+  // If the screen has a displayMode override and overrides are enabled, use it; otherwise use global default
+  function getBarDisplayModeForScreen(screenName) {
+    var override = _findScreenOverride(screenName);
+    if (override && override.enabled !== false && override.displayMode !== undefined) {
+      return override.displayMode;
+    }
+    return data.bar.displayMode || "always_visible";
   }
 
   // -----------------------------------------------------

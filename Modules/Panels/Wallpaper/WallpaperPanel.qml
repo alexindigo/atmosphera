@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import "../../../Helpers/Keybinds.js" as Keybinds
 import qs.Commons
 import qs.Modules.MainScreen
 import qs.Modules.Panels.Settings
@@ -265,7 +264,7 @@ SmartPanel {
       // Header
       NBox {
         Layout.fillWidth: true
-        Layout.preferredHeight: headerColumn.implicitHeight + Style.marginL * 2
+        Layout.preferredHeight: headerColumn.implicitHeight + Style.margin2L
         color: Color.mSurfaceVariant
 
         ColumnLayout {

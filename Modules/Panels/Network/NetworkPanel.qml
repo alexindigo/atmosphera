@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Modules.MainScreen
+import qs.Modules.Panels.Settings
 import qs.Services.Networking
 import qs.Services.UI
 import qs.Widgets
@@ -17,10 +18,10 @@ SmartPanel {
   property string passwordSsid: ""
   property string expandedSsid: ""
 
-  // Info panel collapsed by default, view mode persisted under Settings.data.ui.wifiDetailsViewMode
+  // Info panel collapsed by default, view mode persisted in settings
   // Ethernet details UI state (mirrors Wi‑Fi info behavior)
   property bool ethernetInfoExpanded: false
-  property bool ethernetDetailsGrid: (Settings.data && Settings.data.ui && Settings.data.network.wifiDetailsViewMode !== undefined) ? (Settings.data.network.wifiDetailsViewMode === "grid") : true
+  property bool ethernetDetailsGrid: (Settings.data.network.wifiDetailsViewMode === "grid")
 
   // Unified panel view mode: "wifi" | "ethernet" (persisted)
   property string panelViewMode: "wifi"
@@ -28,8 +29,9 @@ SmartPanel {
 
   onPanelViewModeChanged: {
     // Persist last view (only after restored the initial value)
-    if (panelViewPersistEnabled && Settings.data && Settings.data.ui && Settings.data.ui.networkPanelView !== undefined)
+    if (panelViewPersistEnabled) {
       Settings.data.ui.networkPanelView = panelViewMode;
+    }
     // Reset transient states to avoid layout artifacts
     passwordSsid = "";
     expandedSsid = "";
@@ -70,7 +72,7 @@ SmartPanel {
     // Also fetch Ethernet details if connected
     NetworkService.refreshActiveEthernetDetails();
     // Restore last view if valid, otherwise choose what's available (prefer Wi‑Fi when both exist)
-    if (Settings.data && Settings.data.ui && Settings.data.ui.networkPanelView) {
+    if (Settings.data.ui.networkPanelView) {
       const last = Settings.data.ui.networkPanelView;
       if (last === "ethernet" && NetworkService.hasEthernet()) {
         panelViewMode = "ethernet";
@@ -102,7 +104,7 @@ SmartPanel {
   panelContent: Rectangle {
     color: "transparent"
 
-    property real contentPreferredHeight: Math.min(root.preferredHeight, mainColumn.implicitHeight + Style.marginL * 2)
+    property real contentPreferredHeight: Math.min(root.preferredHeight, mainColumn.implicitHeight + Style.margin2L)
 
     ColumnLayout {
       id: mainColumn
@@ -113,13 +115,14 @@ SmartPanel {
       // Header
       NBox {
         Layout.fillWidth: true
-        Layout.preferredHeight: header.implicitHeight + Style.marginXL
+        Layout.preferredHeight: header.implicitHeight + Style.margin2M
 
         ColumnLayout {
           id: header
           anchors.fill: parent
           anchors.margins: Style.marginM
           spacing: Style.marginM
+
           RowLayout {
             NIcon {
               id: modeIcon
@@ -145,11 +148,8 @@ SmartPanel {
               }
             }
 
-            NText {
-              text: panelViewMode === "wifi" ? I18n.tr("common.wifi") : I18n.tr("common.ethernet")
-              pointSize: Style.fontSizeL
-              font.weight: Style.fontWeightBold
-              color: Color.mOnSurface
+            NLabel {
+              label: panelViewMode === "wifi" ? I18n.tr("common.wifi") : I18n.tr("common.ethernet")
               Layout.fillWidth: true
             }
 
@@ -196,8 +196,6 @@ SmartPanel {
             visible: NetworkService.hasEthernet()
             margins: Style.marginS
             Layout.fillWidth: true
-            border.color: Style.boxBorderColor
-            border.width: Style.borderS
             spacing: Style.marginM
             distributeEvenly: true
             currentIndex: root.panelViewMode === "wifi" ? 0 : 1
@@ -231,7 +229,7 @@ SmartPanel {
         Rectangle {
           visible: panelViewMode === "wifi" && NetworkService.lastError.length > 0
           Layout.fillWidth: true
-          Layout.preferredHeight: errorRow.implicitHeight + (Style.marginXL)
+          Layout.preferredHeight: errorRow.implicitHeight + Style.margin2M
           color: Qt.alpha(Color.mError, 0.1)
           radius: Style.radiusS
           border.width: Style.borderS
@@ -285,7 +283,7 @@ SmartPanel {
               id: disabledBox
               visible: panelViewMode === "wifi" && !Settings.data.network.wifiEnabled
               Layout.fillWidth: true
-              Layout.preferredHeight: disabledColumn.implicitHeight + Style.marginXL
+              Layout.preferredHeight: disabledColumn.implicitHeight + Style.margin2M
 
               ColumnLayout {
                 id: disabledColumn
@@ -331,7 +329,7 @@ SmartPanel {
               id: scanningBox
               visible: panelViewMode === "wifi" && Settings.data.network.wifiEnabled && Object.keys(NetworkService.networks).length === 0 && NetworkService.scanning
               Layout.fillWidth: true
-              Layout.preferredHeight: scanningColumn.implicitHeight + Style.marginXL
+              Layout.preferredHeight: scanningColumn.implicitHeight + Style.margin2M
 
               ColumnLayout {
                 id: scanningColumn
@@ -368,7 +366,7 @@ SmartPanel {
               id: emptyBox
               visible: panelViewMode === "wifi" && Settings.data.network.wifiEnabled && !NetworkService.scanning && Object.keys(NetworkService.networks).length === 0 && !NetworkService.scanning
               Layout.fillWidth: true
-              Layout.preferredHeight: emptyColumn.implicitHeight + Style.marginXL
+              Layout.preferredHeight: emptyColumn.implicitHeight + Style.margin2M
 
               ColumnLayout {
                 id: emptyColumn
@@ -477,7 +475,7 @@ SmartPanel {
               NBox {
                 visible: !(NetworkService.ethernetInterfaces && NetworkService.ethernetInterfaces.length > 0)
                 Layout.fillWidth: true
-                Layout.preferredHeight: emptyEthColumn.implicitHeight + Style.marginXL
+                Layout.preferredHeight: emptyEthColumn.implicitHeight + Style.margin2M
 
                 ColumnLayout {
                   id: emptyEthColumn
@@ -524,7 +522,7 @@ SmartPanel {
                     Layout.fillWidth: true
                     Layout.leftMargin: Style.marginXS
                     Layout.rightMargin: Style.marginXS
-                    implicitHeight: ethItemColumn.implicitHeight + (Style.marginXL)
+                    implicitHeight: ethItemColumn.implicitHeight + Style.margin2M
                     radius: Style.radiusM
                     border.width: Style.borderS
                     border.color: modelData.connected ? Color.mPrimary : Color.mOutline
@@ -532,7 +530,7 @@ SmartPanel {
 
                     ColumnLayout {
                       id: ethItemColumn
-                      width: parent.width - (Style.marginXL)
+                      width: parent.width - Style.margin2M
                       x: Style.marginM
                       y: Style.marginM
                       spacing: Style.marginS
@@ -573,8 +571,8 @@ SmartPanel {
                               visible: modelData.connected
                               color: Color.mPrimary
                               radius: height * 0.5
-                              width: ethConnectedText.implicitWidth + (Style.marginS * 2)
-                              height: ethConnectedText.implicitHeight + (Style.marginXS)
+                              width: ethConnectedText.implicitWidth + Style.margin2S
+                              height: ethConnectedText.implicitHeight + (Style.margin2XXS)
 
                               NText {
                                 id: ethConnectedText
@@ -634,7 +632,7 @@ SmartPanel {
                         radius: Style.radiusS
                         border.width: Style.borderS
                         border.color: Color.mOutline
-                        implicitHeight: ethInfoGrid.implicitHeight + Style.marginS * 2
+                        implicitHeight: ethInfoGrid.implicitHeight + Style.margin2S
                         clip: true
                         Layout.topMargin: Style.marginXS
 
@@ -648,9 +646,7 @@ SmartPanel {
                           baseSize: Style.baseWidgetSize * 0.8
                           onClicked: {
                             ethernetDetailsGrid = !ethernetDetailsGrid;
-                            if (Settings.data && Settings.data.ui) {
-                              Settings.data.ui.wifiDetailsViewMode = ethernetDetailsGrid ? "grid" : "list";
-                            }
+                            Settings.data.network.wifiDetailsViewMode = ethernetDetailsGrid ? "grid" : "list";
                           }
                           z: 1
                         }

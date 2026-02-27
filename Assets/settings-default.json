@@ -9,6 +9,9 @@
     "showCapsule": true,
     "capsuleOpacity": 1,
     "capsuleColorKey": "none",
+    "widgetSpacing": 6,
+    "contentPadding": 0,
+    "fontScale": 1,
     "backgroundOpacity": 0.93,
     "useSeparateOpacity": false,
     "floating": false,
@@ -21,6 +24,7 @@
     "displayMode": "always_visible",
     "autoHideDelay": 500,
     "autoShowDelay": 150,
+    "showOnWorkspaceSwitch": true,
     "widgets": {
       "left": [
         {
@@ -98,6 +102,7 @@
     "allowPasswordWithFprintd": false,
     "clockStyle": "custom",
     "clockFormat": "hh\\nmm",
+    "passwordChars": false,
     "lockScreenMonitors": [],
     "lockScreenBlur": 0,
     "lockScreenTint": 0,
@@ -123,7 +128,8 @@
       "keyRemove": [
         "Del"
       ]
-    }
+    },
+    "reverseScroll": false
   },
   "ui": {
     "fontDefault": "",
@@ -131,14 +137,11 @@
     "fontDefaultScale": 1,
     "fontFixedScale": 1,
     "tooltipsEnabled": true,
+    "boxBorderEnabled": false,
     "panelBackgroundOpacity": 0.93,
     "panelsAttachedToBar": true,
     "settingsPanelMode": "attached",
-    "wifiDetailsViewMode": "grid",
-    "bluetoothDetailsViewMode": "grid",
-    "networkPanelView": "wifi",
-    "bluetoothHideUnnamedDevices": false,
-    "boxBorderEnabled": false
+    "settingsPanelSideBarCardStyle": false
   },
   "location": {
     "name": "Tokyo",
@@ -321,6 +324,7 @@
     "enabled": true,
     "position": "bottom",
     "displayMode": "auto_hide",
+    "dockType": "floating",
     "backgroundOpacity": 1,
     "floatingRatio": 1,
     "size": 1,
@@ -328,16 +332,26 @@
     "monitors": [],
     "pinnedApps": [],
     "colorizeIcons": false,
+    "showLauncherIcon": false,
+    "launcherPosition": "end",
+    "launcherIconColor": "none",
     "pinnedStatic": false,
     "inactiveIndicators": false,
+    "groupApps": false,
+    "groupContextMenuMode": "extended",
+    "groupClickAction": "cycle",
+    "groupIndicatorStyle": "dots",
     "deadOpacity": 0.6,
-    "animationSpeed": 1
+    "animationSpeed": 1,
+    "sitOnFrame": false,
+    "showFrameIndicator": true
   },
   "network": {
     "wifiEnabled": true,
     "airplaneModeEnabled": false,
     "bluetoothRssiPollingEnabled": false,
     "bluetoothRssiPollIntervalMs": 60000,
+    "networkPanelView": "wifi",
     "wifiDetailsViewMode": "grid",
     "bluetoothDetailsViewMode": "grid",
     "bluetoothHideUnnamedDevices": false,
@@ -381,11 +395,17 @@
         "action": "shutdown",
         "enabled": true,
         "keybind": "6"
+      },
+      {
+        "action": "rebootToUefi",
+        "enabled": true,
+        "keybind": "7"
       }
     ]
   },
   "notifications": {
     "enabled": true,
+    "enableMarkdown": false,
     "density": "default",
     "monitors": [],
     "location": "top_right",
@@ -395,6 +415,7 @@
     "lowUrgencyDuration": 3,
     "normalUrgencyDuration": 8,
     "criticalUrgencyDuration": 15,
+    "clearDismissed": true,
     "saveToHistory": {
       "low": true,
       "normal": true,
@@ -433,12 +454,14 @@
     "visualizerType": "linear",
     "mprisBlacklist": [],
     "preferredPlayer": "",
-    "volumeFeedback": false
+    "volumeFeedback": false,
+    "volumeFeedbackSoundFile": ""
   },
   "brightness": {
     "brightnessStep": 5,
     "enforceMinimum": true,
-    "enableDdcSupport": false
+    "enableDdcSupport": false,
+    "backlightDeviceMappings": []
   },
   "colorSchemes": {
     "useWallpaperColors": false,
@@ -479,6 +502,7 @@
   },
   "desktopWidgets": {
     "enabled": false,
+    "overviewEnabled": true,
     "gridSnap": false,
     "monitorWidgets": []
   }

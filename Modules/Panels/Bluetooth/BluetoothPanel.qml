@@ -22,7 +22,7 @@ SmartPanel {
     id: panelContent
     color: "transparent"
 
-    property real contentPreferredHeight: Math.min(root.preferredHeight, mainColumn.implicitHeight + Style.marginL * 2)
+    property real contentPreferredHeight: Math.min(root.preferredHeight, mainColumn.implicitHeight + Style.margin2L)
 
     ColumnLayout {
       id: mainColumn
@@ -33,13 +33,12 @@ SmartPanel {
       // Header
       NBox {
         Layout.fillWidth: true
-        Layout.preferredHeight: headerRow.implicitHeight + Style.marginXL
+        Layout.preferredHeight: headerRow.implicitHeight + Style.margin2M
 
         RowLayout {
           id: headerRow
           anchors.fill: parent
           anchors.margins: Style.marginM
-          spacing: Style.marginM
 
           NIcon {
             icon: BluetoothService.enabled ? "bluetooth" : "bluetooth-off"
@@ -47,11 +46,8 @@ SmartPanel {
             color: BluetoothService.enabled ? Color.mPrimary : Color.mOnSurfaceVariant
           }
 
-          NText {
-            text: I18n.tr("common.bluetooth")
-            pointSize: Style.fontSizeL
-            font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
+          NLabel {
+            label: I18n.tr("common.bluetooth")
             Layout.fillWidth: true
           }
 
@@ -100,7 +96,7 @@ SmartPanel {
             id: disabledBox
             visible: !BluetoothService.enabled
             Layout.fillWidth: true
-            Layout.preferredHeight: disabledColumn.implicitHeight + Style.marginXL
+            Layout.preferredHeight: disabledColumn.implicitHeight + Style.margin2M
 
             ColumnLayout {
               id: disabledColumn
@@ -151,7 +147,7 @@ SmartPanel {
               return (btSource.pairedDevices.length === 0 && btSource.connectedDevices.length === 0);
             }
             Layout.fillWidth: true
-            Layout.preferredHeight: emptyColumn.implicitHeight + Style.marginXL
+            Layout.preferredHeight: emptyColumn.implicitHeight + Style.margin2M
 
             ColumnLayout {
               id: emptyColumn

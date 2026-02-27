@@ -115,10 +115,22 @@ Item {
     width: {
       var hasBattery = batteryIndicator.isReady;
       var hasKeyboard = keyboardLayout.currentLayout !== "Unknown";
+      var hasCaps = LockKeysService.capsLockOn;
+      var hasCapsSlot = hasBattery || hasKeyboard || hasCaps;
 
-      if (hasBattery && hasKeyboard) {
+      var visibleCount = 0;
+      if (hasBattery)
+        visibleCount++;
+      if (hasKeyboard)
+        visibleCount++;
+      if (hasCapsSlot)
+        visibleCount++;
+
+      if (visibleCount >= 3) {
+        return 280;
+      } else if (visibleCount === 2) {
         return 200;
-      } else if (hasBattery || hasKeyboard) {
+      } else if (visibleCount === 1) {
         return 120;
       } else {
         return 0;
@@ -131,9 +143,10 @@ Item {
     topLeftRadius: Style.radiusL
     topRightRadius: Style.radiusL
     color: Color.mSurface
-    visible: Settings.data.general.compactLockScreen && ((batteryIndicator.isReady) || keyboardLayout.currentLayout !== "Unknown")
+    visible: Settings.data.general.compactLockScreen && (batteryIndicator.isReady || keyboardLayout.currentLayout !== "Unknown" || LockKeysService.capsLockOn)
 
     RowLayout {
+      id: compactStatusRow
       anchors.centerIn: parent
       spacing: Style.marginL
 
@@ -173,6 +186,25 @@ Item {
           elide: Text.ElideRight
         }
       }
+
+      // Caps Lock indicator
+      RowLayout {
+        spacing: 6
+        visible: batteryIndicator.isReady || keyboardLayout.currentLayout !== "Unknown" || LockKeysService.capsLockOn
+
+        NIcon {
+          icon: "letter-c"
+          pointSize: Style.fontSizeM
+          color: LockKeysService.capsLockOn ? Color.mPrimary : Qt.alpha(Color.mOnSurfaceVariant, 0.5)
+        }
+
+        NText {
+          text: I18n.tr("bar.lock-keys.show-caps-lock-label")
+          color: LockKeysService.capsLockOn ? Color.mOnSurfaceVariant : Qt.alpha(Color.mOnSurfaceVariant, 0.65)
+          pointSize: Style.fontSizeM
+          elide: Text.ElideRight
+        }
+      }
     }
   }
 
@@ -196,7 +228,7 @@ Item {
     radius: Style.radiusL
     color: Color.mSurface
 
-    width: Settings.data.general.showHibernateOnLockScreen ? 800 : 750
+    width: Settings.data.general.showHibernateOnLockScreen ? 860 : 810
 
     ColumnLayout {
       anchors.fill: parent
@@ -460,7 +492,7 @@ Item {
         ColumnLayout {
           Layout.alignment: (batteryIndicator.isReady) ? (Qt.AlignRight | Qt.AlignVCenter) : Qt.AlignVCenter
           spacing: Style.marginM
-          visible: (batteryIndicator.isReady) || keyboardLayout.currentLayout !== "Unknown"
+          visible: batteryIndicator.isReady || keyboardLayout.currentLayout !== "Unknown" || LockKeysService.capsLockOn
 
           // Battery
           RowLayout {
@@ -494,6 +526,25 @@ Item {
             NText {
               text: keyboardLayout.currentLayout
               color: Color.mOnSurfaceVariant
+              pointSize: Style.fontSizeM
+              elide: Text.ElideRight
+            }
+          }
+
+          // Caps Lock
+          RowLayout {
+            spacing: Style.marginXS
+            visible: batteryIndicator.isReady || keyboardLayout.currentLayout !== "Unknown" || LockKeysService.capsLockOn
+
+            NIcon {
+              icon: "letter-c"
+              pointSize: Style.fontSizeM
+              color: LockKeysService.capsLockOn ? Color.mPrimary : Qt.alpha(Color.mOnSurfaceVariant, 0.5)
+            }
+
+            NText {
+              text: I18n.tr("bar.lock-keys.show-caps-lock-label")
+              color: LockKeysService.capsLockOn ? Color.mOnSurfaceVariant : Qt.alpha(Color.mOnSurfaceVariant, 0.65)
               pointSize: Style.fontSizeM
               elide: Text.ElideRight
             }
@@ -581,17 +632,46 @@ Item {
 
                 Row {
                   id: passwordDisplayContent
-                  spacing: Style.marginS
+                  spacing: Style.marginXXXS
                   anchors.verticalCenter: parent.verticalCenter
 
                   Repeater {
-                    model: passwordInput.text.length
+                    id: iconRepeater
+                    model: ScriptModel {
+                      values: Array(passwordInput.text.length)
+                    }
+
+                    property list<string> passwordChars: ["circle-filled", "pentagon-filled", "michelin-star-filled", "square-rounded-filled", "guitar-pick-filled", "blob-filled", "triangle-filled"]
 
                     NIcon {
-                      icon: "circle-filled"
-                      pointSize: Style.fontSizeS
+                      id: icon
+
+                      required property int index
+                      // This will be called with index = -1 when the TextInput is deleted
+                      // So we make sur index is positive to avoid warning on array accesses
+                      property bool drawCustomChar: index >= 0 && Settings.data.general.passwordChars
+
+                      icon: drawCustomChar ? iconRepeater.passwordChars[index % iconRepeater.passwordChars.length] : "circle-filled"
+                      pointSize: Style.fontSizeL
                       color: Color.mPrimary
                       opacity: 1.0
+                      scale: animationsEnabled ? 0.5 : 1
+                      ParallelAnimation {
+                        id: iconAnim
+                        NumberAnimation {
+                          target: icon
+                          properties: "scale"
+                          to: 1
+                          duration: Style.animationFast
+                          easing.type: Easing.BezierSpline
+                          easing.bezierCurve: Easing.OutInBounce
+                        }
+                      }
+                      Component.onCompleted: {
+                        if (animationsEnabled) {
+                          iconAnim.start();
+                        }
+                      }
                     }
                   }
                 }
@@ -763,7 +843,6 @@ Item {
             outlined: true
             backgroundColor: Color.mOnSurfaceVariant
             textColor: Color.mOnPrimary
-            hoverColor: Color.mPrimary
             fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
             iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
             horizontalAlignment: Qt.AlignHCenter
@@ -783,7 +862,6 @@ Item {
             outlined: true
             backgroundColor: Color.mOnSurfaceVariant
             textColor: Color.mOnPrimary
-            hoverColor: Color.mPrimary
             fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
             iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
             horizontalAlignment: Qt.AlignHCenter
@@ -804,7 +882,6 @@ Item {
             outlined: true
             backgroundColor: Color.mOnSurfaceVariant
             textColor: Color.mOnPrimary
-            hoverColor: Color.mPrimary
             fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
             iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
             horizontalAlignment: Qt.AlignHCenter
@@ -824,7 +901,6 @@ Item {
             outlined: true
             backgroundColor: Color.mOnSurfaceVariant
             textColor: Color.mOnPrimary
-            hoverColor: Color.mPrimary
             fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
             iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
             horizontalAlignment: Qt.AlignHCenter
@@ -844,7 +920,6 @@ Item {
             outlined: true
             backgroundColor: Color.mError
             textColor: Color.mOnError
-            hoverColor: Color.mError
             fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
             iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
             horizontalAlignment: Qt.AlignHCenter

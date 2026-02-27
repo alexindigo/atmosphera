@@ -67,6 +67,7 @@ ColumnLayout {
     defaultValue: Settings.getDefaultValue("bar.density")
     onSelected: key => Settings.data.bar.density = key
   }
+
   NComboBox {
     Layout.fillWidth: true
     label: I18n.tr("panels.bar.appearance-type-label")
@@ -132,10 +133,53 @@ ColumnLayout {
     from: 0
     to: 1
     stepSize: 0.01
+    showReset: true
     value: Settings.data.bar.backgroundOpacity
     defaultValue: Settings.getDefaultValue("bar.backgroundOpacity")
     onMoved: value => Settings.data.bar.backgroundOpacity = value
     text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
+  }
+
+  NValueSlider {
+    Layout.fillWidth: true
+    label: I18n.tr("panels.bar.appearance-font-scale-label")
+    description: I18n.tr("panels.bar.appearance-font-scale-description")
+    from: 0.5
+    to: 2.0
+    stepSize: 0.01
+    showReset: true
+    value: Settings.data.bar.fontScale
+    defaultValue: Settings.getDefaultValue("bar.fontScale")
+    onMoved: value => Settings.data.bar.fontScale = value
+    text: Math.floor(Settings.data.bar.fontScale * 100) + "%"
+  }
+
+  NValueSlider {
+    Layout.fillWidth: true
+    label: I18n.tr("panels.bar.appearance-widget-spacing-label")
+    description: I18n.tr("panels.bar.appearance-widget-spacing-description")
+    from: 0
+    to: 30
+    stepSize: 1
+    showReset: true
+    value: Settings.data.bar.widgetSpacing
+    defaultValue: Settings.getDefaultValue("bar.widgetSpacing")
+    onMoved: value => Settings.data.bar.widgetSpacing = value
+    text: Settings.data.bar.widgetSpacing + "px"
+  }
+
+  NValueSlider {
+    Layout.fillWidth: true
+    label: I18n.tr("panels.bar.appearance-content-padding-label")
+    description: I18n.tr("panels.bar.appearance-content-padding-description")
+    from: 0
+    to: 30
+    stepSize: 1
+    showReset: true
+    value: Settings.data.bar.contentPadding
+    defaultValue: Settings.getDefaultValue("bar.contentPadding")
+    onMoved: value => Settings.data.bar.contentPadding = value
+    text: Settings.data.bar.contentPadding + "px"
   }
 
   NToggle {
@@ -175,6 +219,7 @@ ColumnLayout {
     from: 0
     to: 1
     stepSize: 0.01
+    showReset: true
     value: Settings.data.bar.capsuleOpacity
     defaultValue: Settings.getDefaultValue("bar.capsuleOpacity")
     onMoved: value => Settings.data.bar.capsuleOpacity = value
@@ -221,6 +266,7 @@ ColumnLayout {
         from: 4
         to: 24
         stepSize: 1
+        showReset: true
         value: Settings.data.bar.frameThickness
         defaultValue: Settings.getDefaultValue("bar.frameThickness")
         onMoved: value => Settings.data.bar.frameThickness = value
@@ -233,6 +279,7 @@ ColumnLayout {
         from: 4
         to: 24
         stepSize: 1
+        showReset: true
         value: Settings.data.bar.frameRadius
         defaultValue: Settings.getDefaultValue("bar.frameRadius")
         onMoved: value => Settings.data.bar.frameRadius = value
@@ -261,6 +308,7 @@ ColumnLayout {
         from: 0
         to: 18
         stepSize: 1
+        showReset: true
         value: Settings.data.bar.marginVertical
         defaultValue: Settings.getDefaultValue("bar.marginVertical")
         onMoved: value => Settings.data.bar.marginVertical = value
@@ -273,6 +321,7 @@ ColumnLayout {
         from: 0
         to: 18
         stepSize: 1
+        showReset: true
         value: Settings.data.bar.marginHorizontal
         defaultValue: Settings.getDefaultValue("bar.marginHorizontal")
         onMoved: value => Settings.data.bar.marginHorizontal = value
@@ -299,6 +348,7 @@ ColumnLayout {
       from: 100
       to: 2000
       stepSize: 100
+      showReset: true
       value: Settings.data.bar.autoHideDelay
       defaultValue: Settings.getDefaultValue("bar.autoHideDelay")
       onMoved: value => Settings.data.bar.autoHideDelay = value
@@ -312,10 +362,20 @@ ColumnLayout {
       from: 0
       to: 500
       stepSize: 50
+      showReset: true
       value: Settings.data.bar.autoShowDelay
       defaultValue: Settings.getDefaultValue("bar.autoShowDelay")
       onMoved: value => Settings.data.bar.autoShowDelay = value
       text: Settings.data.bar.autoShowDelay + "ms"
+    }
+
+    NToggle {
+      Layout.fillWidth: true
+      label: I18n.tr("panels.bar.appearance-show-on-workspace-switch-label")
+      description: I18n.tr("panels.bar.appearance-show-on-workspace-switch-description")
+      checked: Settings.data.bar.showOnWorkspaceSwitch
+      defaultValue: Settings.getDefaultValue("bar.showOnWorkspaceSwitch")
+      onToggled: checked => Settings.data.bar.showOnWorkspaceSwitch = checked
     }
   }
 }

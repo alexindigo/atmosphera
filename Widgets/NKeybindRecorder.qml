@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../Helpers/Keybinds.js" as Keybinds
 import qs.Commons
 import qs.Services.UI
 import qs.Widgets
@@ -19,6 +18,7 @@ Item {
   property string settingsPath: ""
 
   property int maxKeybinds: 2
+  property bool requireModifierForNormalKeys: true
   signal keybindsChanged(var newKeybinds)
 
   implicitHeight: contentLayout.implicitHeight
@@ -308,7 +308,7 @@ Item {
                         }
 
                         if (keyName) {
-                          // Enforce modifier requirement (Ctrl or Alt) for "normal" keys
+                          // Enforce modifier requirement (Ctrl or Alt) for "normal" keys unless explicitly disabled
                           // Allow Arrows, Nav, Function, and System keys without modifiers
                           const isSpecialKey = (event.key >= Qt.Key_F1 && event.key <= Qt.Key_F35) || (event.key >= Qt.Key_Left && event.key <= Qt.Key_Down) || (event.key === Qt.Key_Home || event.key === Qt.Key_End || event.key === Qt.Key_PageUp || event.key === Qt.Key_PageDown) || (event.key === Qt.Key_Insert || event.key === Qt.Key_Delete || event.key
                                                                                                                                                                                                                                                                                             === Qt.Key_Backspace) || (event.key === Qt.Key_Tab || event.key
@@ -318,7 +318,7 @@ Item {
 
                           const hasModifier = (event.modifiers & Qt.ControlModifier) || (event.modifiers & Qt.AltModifier);
 
-                          if (!hasModifier && !isSpecialKey) {
+                          if (root.requireModifierForNormalKeys && !hasModifier && !isSpecialKey) {
                             hasConflict = true;
                             ToastService.showWarning(I18n.tr("panels.general.keybinds-modifier-title"), I18n.tr("panels.general.keybinds-modifier-description"));
                             conflictTimer.restart();
