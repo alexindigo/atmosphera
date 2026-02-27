@@ -225,7 +225,7 @@ Singleton {
                                     "iconColor": "error"
                                   },
                                   "Settings": {
-                                    "iconColor": "non"
+                                    "iconColor": "none"
                                   },
                                   "Spacer": {
                                     "width": 20

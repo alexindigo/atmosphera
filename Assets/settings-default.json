@@ -505,7 +505,8 @@
     "screenOffTimeout": 0,
     "lockTimeout": 0,
     "suspendTimeout": 0,
-    "fadeDuration": 5
+    "fadeDuration": 5,
+    "customCommands": "[]"
   },
   "desktopWidgets": {
     "enabled": false,
