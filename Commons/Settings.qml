@@ -182,7 +182,7 @@ Singleton {
       property real capsuleOpacity: 1.0
       property string capsuleColorKey: "none"
       property int widgetSpacing: 6
-      property int contentPadding: 0
+      property int contentPadding: 2
       property real fontScale: 1.0
 
       // Bar background opacity settings
