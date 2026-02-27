@@ -254,16 +254,25 @@ Singleton {
     }
   }
 
+  // Idle Inhibitor / Keep Awake
   IpcHandler {
     target: "idleInhibitor"
     function toggle() {
-      return IdleInhibitorService.manualToggle();
+      IdleInhibitorService.manualToggle();
     }
     function enable() {
       IdleInhibitorService.addManualInhibitor(null);
     }
     function disable() {
       IdleInhibitorService.removeManualInhibitor();
+    }
+    function enableFor(seconds: string) {
+      var secs = parseInt(seconds);
+      if (isNaN(secs) || secs <= 0) {
+        Logger.w("IPC", "Argument to 'idleInhibitor enableFor' must be a positive number");
+        return;
+      }
+      IdleInhibitorService.addManualInhibitor(secs);
     }
   }
 
