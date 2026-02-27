@@ -1035,6 +1035,7 @@ Rectangle {
                     baseSize: Style.baseWidgetSize * 0.75
                     tooltipText: modelData.tooltip
                     z: 1
+                    allowScroll: true
                     onClicked: {
                       if (modelData.action) {
                         modelData.action();
@@ -1411,6 +1412,7 @@ Rectangle {
                   baseSize: Style.baseWidgetSize * 0.75
                   tooltipText: modelData.tooltip
                   z: 11
+                  allowScroll: true
                   onClicked: {
                     if (modelData.action) {
                       modelData.action();
