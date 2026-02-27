@@ -177,7 +177,7 @@ SmartPanel {
           return;
         if (!(delegate.canExpand || delegate.isExpanded))
           return;
-          
+
         if (scrollView.expandedId === item.id) {
           scrollView.expandedId = "";
         } else {
