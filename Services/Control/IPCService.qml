@@ -557,6 +557,14 @@ Singleton {
       }
     }
 
+    function get(screen: string): string {
+      if (screen === "all" || screen === "") {
+        return Quickshell.screens.map(screen => WallpaperService.currentWallpapers[screen.name]);
+      } else {
+        return [ WallpaperService.currentWallpapers[screen]];
+      };
+    }
+
     function set(path: string, screen: string) {
       if (screen === "all" || screen === "") {
         screen = undefined;
