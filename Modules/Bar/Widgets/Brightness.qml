@@ -163,7 +163,8 @@ Item {
     forceClose: displayMode === "alwaysHide"
     tooltipText: {
       var monitor = brightnessMonitor;
-      if (!monitor || !monitor.brightnessControlAvailable || isNaN(monitor.brightness))
+      var panel = PanelService.getPanel("brightnessPanel", screen);
+      if (panel?.isPanelOpen || !monitor || !monitor.brightnessControlAvailable || isNaN(monitor.brightness))
         return "";
       return I18n.tr("tooltips.brightness-at", {
                        "brightness": Math.round(monitor.brightness * 100)

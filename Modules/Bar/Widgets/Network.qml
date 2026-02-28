@@ -131,6 +131,9 @@ Item {
       PanelService.showContextMenu(contextMenu, pill, screen);
     }
     tooltipText: {
+      if (PanelService.getPanel("networkPanel", screen)) {
+        return "";
+      }
       try {
         if (NetworkService.ethernetConnected) {
           const d = NetworkService.activeEthernetDetails || ({});

@@ -924,8 +924,10 @@ Item {
                  }
                }
     onEntered: {
-      TooltipService.show(root, buildTooltipContent(), BarService.getTooltipDirection(root.screen?.name));
-      tooltipRefreshTimer.start();
+      if (!PanelService.getPanel("systemStatsPanel", screen).isPanelOpen) {
+        TooltipService.show(root, buildTooltipContent(), BarService.getTooltipDirection(root.screen?.name));
+        tooltipRefreshTimer.start();
+      }
     }
     onExited: {
       tooltipRefreshTimer.stop();
