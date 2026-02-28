@@ -1209,11 +1209,11 @@ Singleton {
   // Helper function to format network speeds
   function formatSpeed(bytesPerSecond) {
     const units = ["KB", "MB", "GB"];
-    let value = bytesPerSecond / 1024;
+    let value = bytesPerSecond / 1000;
     let unitIndex = 0;
 
-    while (value >= 1024 && unitIndex < units.length - 1) {
-      value /= 1024;
+    while (value >= 1000 && unitIndex < units.length - 1) {
+      value /= 1000;
       unitIndex++;
     }
 
@@ -1232,13 +1232,13 @@ Singleton {
     const units = ["", "K", "M", "G"];
     let value = bytesPerSecond;
     let unitIndex = 0;
-    while (value >= 1024 && unitIndex < units.length - 1) {
-      value = value / 1024.0;
+    while (value >= 1000 && unitIndex < units.length - 1) {
+      value = value / 1000.0;
       unitIndex++;
     }
     // Promote at ~100 of current unit (e.g., 100k -> ~0.1M shown as 0.1M or 0M if rounded)
     if (unitIndex < units.length - 1 && value >= 100) {
-      value = value / 1024.0;
+      value = value / 1000.0;
       unitIndex++;
     }
     const display = Math.round(value).toString();

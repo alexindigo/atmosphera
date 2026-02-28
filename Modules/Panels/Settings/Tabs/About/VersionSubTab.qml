@@ -737,7 +737,7 @@ ColumnLayout {
           return "N/A";
         const used = (mem.result.used / root.gigaB).toFixed(1);
         const total = (mem.result.total / root.gigaB).toFixed(1);
-        return used + " GB / " + total + " GB";
+        return used + " GiB / " + total + " GiB";
       }
       color: Color.mOnSurface
       pointSize: sysInfo.textSize
