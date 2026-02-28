@@ -374,7 +374,7 @@ Singleton {
     function lock() {
       // Only lock if not already locked (prevents the red screen issue)
       if (!PanelService.lockScreen.active) {
-        PanelService.lockScreen.active = true;
+        CompositorService.lock();
       }
     }
   }
@@ -508,13 +508,18 @@ Singleton {
                                             });
     }
 
-    function lock() {
-      CompositorService.lock();
-    }
+      function lock() {
+        if (!PanelService.lockScreen.active) {
+          CompositorService.lock();
+        }
+      }
 
-    function lockAndSuspend() {
-      CompositorService.lockAndSuspend();
-    }
+      function lockAndSuspend() {
+        // Only lock and suspend if not already locked
+        if (!PanelService.lockScreen.active) {
+          CompositorService.lockAndSuspend();
+        }
+      }
   }
 
   IpcHandler {
@@ -555,14 +560,6 @@ Singleton {
       if (Settings.data.wallpaper.enabled) {
         WallpaperService.setRandomWallpaper();
       }
-    }
-
-    function get(screen: string): string {
-      if (screen === "all" || screen === "") {
-        return Quickshell.screens.map(screen => WallpaperService.currentWallpapers[screen.name]);
-      } else {
-        return [ WallpaperService.currentWallpapers[screen]];
-      };
     }
 
     function set(path: string, screen: string) {
