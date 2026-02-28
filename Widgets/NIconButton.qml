@@ -124,12 +124,12 @@ Item {
                  }
                }
     onWheel: wheel => {
-      if (root.allowScroll) {
-        root.wheel(wheel.angleDelta.y);
-        wheel.accepted = false;
-      } else {
-        wheel.accepted = true;
-      }
-    }
+               if (root.allowScroll) {
+                 root.wheel(wheel.angleDelta.y);
+                 wheel.accepted = false;
+               } else {
+                 wheel.accepted = true;
+               }
+             }
   }
 }
