@@ -172,11 +172,11 @@ Singleton {
   // Minimum floor of 1 MB/s so graph doesn't fluctuate at low speeds
   readonly property real rxMaxSpeed: {
     const max = Math.max(...rxSpeedHistory);
-    return Math.max(max, 1048576); // 1 MB/s floor
+    return Math.max(max, 1000000); // 1 MB/s floor
   }
   readonly property real txMaxSpeed: {
     const max = Math.max(...txSpeedHistory);
-    return Math.max(max, 524288); // 512 KB/s floor
+    return Math.max(max, 512000); // 512 KB/s floor
   }
 
   // Ready-to-use ratios based on current maximums (0..1 range)
