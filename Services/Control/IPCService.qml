@@ -508,18 +508,18 @@ Singleton {
                                             });
     }
 
-      function lock() {
-        if (!PanelService.lockScreen.active) {
-          CompositorService.lock();
-        }
+    function lock() {
+      if (!PanelService.lockScreen.active) {
+        CompositorService.lock();
       }
+    }
 
-      function lockAndSuspend() {
-        // Only lock and suspend if not already locked
-        if (!PanelService.lockScreen.active) {
-          CompositorService.lockAndSuspend();
-        }
+    function lockAndSuspend() {
+      // Only lock and suspend if not already locked
+      if (!PanelService.lockScreen.active) {
+        CompositorService.lockAndSuspend();
       }
+    }
   }
 
   IpcHandler {
