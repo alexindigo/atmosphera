@@ -104,7 +104,7 @@ Singleton {
   function _executeAction(stage) {
     Logger.i("IdleService", "Executing action:", stage);
     if (stage === "screenOff") {
-      root._suppressUntil = Date.now() + 15000;
+      root._suppressUntil = Date.now() + (Settings.data.idle.screenOffTimeout * 1000);
       CompositorService.turnOffMonitors();
       root.screenOffRequested();
     } else if (stage === "lock") {
