@@ -165,7 +165,7 @@ SmartPanel {
             }
 
             NText {
-              text: `${Math.round(SystemStatService.memPercent)}% (${SystemStatService.formatGigabytes(SystemStatService.memGb).replace(/[^0-9.]/g, "")} GiB)`
+              text: `${Math.round(SystemStatService.memPercent)}% (${(SystemStatService.memGb).toFixed(1)} GiB)`
               pointSize: Style.fontSizeXS
               color: Color.mPrimary
               font.family: Settings.data.ui.fontFixed
@@ -386,7 +386,7 @@ SmartPanel {
             }
 
             NText {
-              text: `${SystemStatService.formatGigabytes(SystemStatService.swapGb).replace(/[^0-9.]/g, "")} / ${SystemStatService.formatGigabytes(SystemStatService.swapTotalGb).replace(/[^0-9.]/g, "")} GiB`
+              text: `${(SystemStatService.swapGb).toFixed(1)} / ${(SystemStatService.swapTotalGb).toFixed(1)} GiB`
               pointSize: Style.fontSizeXS
               color: Color.mOnSurface
               Layout.fillWidth: true
