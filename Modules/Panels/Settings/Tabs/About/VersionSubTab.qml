@@ -33,7 +33,8 @@ ColumnLayout {
   property string commitInfo: ""
 
   readonly property bool isGitVersion: root.currentVersion.endsWith("-git")
-  readonly property int giga: (1024 * 1024 * 1024)
+  readonly property int gigaB: (1024 * 1024 * 1024)
+  readonly property int gigaD: (1000 * 1000 * 1000)
 
   // Update status: compare versions (strip -git suffix for comparison)
   readonly property string installedBase: root.currentVersion.replace("-git", "")
@@ -96,7 +97,7 @@ ColumnLayout {
       version: UpdateService.currentVersion,
       compositor: TelemetryService.getCompositorType(),
       os: HostService.osPretty || "Unknown",
-      ramGb: Math.round((root.getModule("Memory")?.result?.total || 0) / root.giga),
+      ramGb: Math.round((root.getModule("Memory")?.result?.total || 0) / root.gigaB),
       monitors: monitors,
       ui: {
         scaleRatio: Settings.data.general.scaleRatio,
@@ -140,7 +141,7 @@ ColumnLayout {
         info += "GPU: " + gpu.result.map(g => g.name || "Unknown").join(", ") + "\n";
       }
       if (mem?.result) {
-        info += "Memory: " + SystemStatService.formatGigabytes(mem.result.total / root.giga) + "\n";
+        info += "Memory: " + (mem.result.total / root.gigaB).toFixed(1) + " GB \n";
       }
       if (wm?.result) {
         info += "WM: " + (wm.result.prettyName || wm.result.processName || "N/A") + "\n";
@@ -734,9 +735,9 @@ ColumnLayout {
         const mem = root.getModule("Memory");
         if (!mem?.result)
           return "N/A";
-        const used = SystemStatService.formatGigabytes(mem.result.used / root.giga);
-        const total = SystemStatService.formatGigabytes(mem.result.total / root.giga);
-        return used + " / " + total;
+        const used = (mem.result.used / root.gigaB).toFixed(1);
+        const total = (mem.result.total / root.gigaB).toFixed(1);
+        return used + " GB / " + total + " GB";
       }
       color: Color.mOnSurface
       pointSize: sysInfo.textSize
@@ -758,9 +759,9 @@ ColumnLayout {
         const rootDisk = disk.result.find(d => d.mountpoint === "/");
         if (!rootDisk?.bytes)
           return "N/A";
-        const used = SystemStatService.formatGigabytes(rootDisk.bytes.used / root.giga);
-        const total = SystemStatService.formatGigabytes(rootDisk.bytes.total / root.giga);
-        return used + " / " + total + " (" + rootDisk.filesystem + ")";
+        const used = (rootDisk.bytes.used / root.gigaD).toFixed(1);
+        const total = (rootDisk.bytes.total / root.gigaD).toFixed(1);
+        return used + " GB / " + total + " GB" + " (" + rootDisk.filesystem + ")";
       }
       color: Color.mOnSurface
       pointSize: sysInfo.textSize

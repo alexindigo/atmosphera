@@ -501,7 +501,7 @@ Singleton {
         const newUsedGb = {};
         const newSizeGb = {};
         const newAvailableGb = {};
-        const bytesPerGb = 1024 * 1024 * 1024;
+        const bytesPerGb = 1000 * 1000 * 1000;
         // Start from line 1 (skip header)
         for (var i = 1; i < lines.length; i++) {
           const parts = lines[i].trim().split(/\s+/);
