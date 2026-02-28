@@ -41,6 +41,7 @@ Singleton {
   property var _suspendMonitor: null
   property var _heartbeatMonitor: null
   property var _customMonitors: ({})
+  property real _suppressUntil: 0
 
   // Signals for external listeners (plugins, modules)
   signal screenOffRequested
@@ -60,9 +61,16 @@ Singleton {
     repeat: false
     onTriggered: {
       const action = root.fadePending;
-      root.fadePending = "";
       root._executeAction(action);
+      overlayCleanupTimer.start();
     }
+  }
+
+  Timer {
+    id: overlayCleanupTimer
+    interval: 500
+    repeat: false
+    onTriggered: root.fadePending = ""
   }
 
   // Counts up idleSeconds while the heartbeat monitor reports idle
@@ -80,11 +88,13 @@ Singleton {
     Logger.i("IdleService", "Fade cancelled for:", fadePending);
     fadePending = "";
     graceTimer.stop();
+    overlayCleanupTimer.stop();
   }
 
   function _onIdle(stage) {
-    // Don't re-trigger if already fading something
     if (fadePending !== "")
+      return;
+    if (Date.now() < _suppressUntil)
       return;
     Logger.i("IdleService", "Idle fired:", stage);
     fadePending = stage;
@@ -94,6 +104,7 @@ Singleton {
   function _executeAction(stage) {
     Logger.i("IdleService", "Executing action:", stage);
     if (stage === "screenOff") {
+      root._suppressUntil = Date.now() + 15000;
       CompositorService.turnOffMonitors();
       root.screenOffRequested();
     } else if (stage === "lock") {
@@ -264,6 +275,7 @@ Singleton {
           idleCounter.stop();
           root.idleSeconds = 0;
           root.cancelFade();
+          overlayCleanupTimer.stop();
         }
       });
       _heartbeatMonitor = monitor;
