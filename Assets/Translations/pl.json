@@ -1330,6 +1330,8 @@
       "clock-style-label": "Styl Zegara",
       "compact-lockscreen-description": "Pokaż tylko logowanie i kontrolki systemowe, ukrywając widżety pogody i mediów.",
       "compact-lockscreen-label": "Kompaktowy ekran blokady",
+      "enable-lockscreen-media-controls-description": "Pokaż interaktywne elementy sterujące odtwarzaniem multimediów na ekranie blokady.",
+      "enable-lockscreen-media-controls-label": "Sterowanie Multimediami na Ekranie Blokady",
       "lock-on-suspend-description": "Automatycznie blokuj ekran podczas uśpienia systemu.",
       "lock-on-suspend-label": "Blokuj przy uśpieniu",
       "lock-screen-animations-description": "Włącz lub wyłącz animacje ekranu blokady.",

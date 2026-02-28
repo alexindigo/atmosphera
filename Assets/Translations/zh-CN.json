@@ -1330,6 +1330,8 @@
       "clock-style-label": "时钟样式",
       "compact-lockscreen-description": "仅显示登录输入和系统控制，隐藏天气和媒体小部件。",
       "compact-lockscreen-label": "紧凑型锁屏",
+      "enable-lockscreen-media-controls-description": "在锁屏界面显示交互式媒体播放控件。",
+      "enable-lockscreen-media-controls-label": "锁屏媒体控件",
       "lock-on-suspend-description": "系统挂起时自动锁定屏幕。",
       "lock-on-suspend-label": "挂起时锁定",
       "lock-screen-animations-description": "启用或禁用锁屏动画。",

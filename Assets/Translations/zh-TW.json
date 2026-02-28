@@ -1330,6 +1330,8 @@
       "clock-style-label": "時鐘樣式",
       "compact-lockscreen-description": "只顯示登入欄位及電源控制, 隱藏天氣及媒體小工具",
       "compact-lockscreen-label": "精簡鎖定畫面",
+      "enable-lockscreen-media-controls-description": "在鎖定畫面顯示互動式媒體播放控制項。",
+      "enable-lockscreen-media-controls-label": "鎖定畫面媒體控制項",
       "lock-on-suspend-description": "在暫停系統時自動鎖定畫面",
       "lock-on-suspend-label": "暫停時鎖定",
       "lock-screen-animations-description": "啟用或停用鎖定畫面動畫。",

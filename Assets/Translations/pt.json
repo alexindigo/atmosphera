@@ -1330,6 +1330,8 @@
       "clock-style-label": "Estilo do Relógio",
       "compact-lockscreen-description": "Mostrar apenas a entrada de login e os controles do sistema, ocultando os widgets de clima e mídia.",
       "compact-lockscreen-label": "Tela de bloqueio compacta",
+      "enable-lockscreen-media-controls-description": "Mostrar controles interativos de reprodução de mídia na tela de bloqueio.",
+      "enable-lockscreen-media-controls-label": "Controles de Mídia do Ecrã de Bloqueio",
       "lock-on-suspend-description": "Bloquear a tela automaticamente ao suspender o sistema.",
       "lock-on-suspend-label": "Bloquear ao suspender",
       "lock-screen-animations-description": "Ativar ou desativar as animações do ecrã de bloqueio.",

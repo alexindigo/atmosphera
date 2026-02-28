@@ -1330,6 +1330,8 @@
       "clock-style-label": "Saat Stili",
       "compact-lockscreen-description": "Sadece giriş girdisini ve sistem kontrollerini göster, hava durumu ve ortam araç takımlarını gizle.",
       "compact-lockscreen-label": "Kompakt ekran kilidi",
+      "enable-lockscreen-media-controls-description": "Kilit ekranında etkileşimli medya oynatma kontrollerini göster.",
+      "enable-lockscreen-media-controls-label": "Kilit Ekranı Medya Kontrolleri",
       "lock-on-suspend-description": "Sistemi askıya alırken otomatik olarak ekranı kilitler.",
       "lock-on-suspend-label": "Askıya alırken kilitle",
       "lock-screen-animations-description": "Kilit ekranı animasyonlarını etkinleştir veya devre dışı bırak.",

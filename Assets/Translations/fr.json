@@ -1330,6 +1330,8 @@
       "clock-style-label": "Style de l'Horloge",
       "compact-lockscreen-description": "Afficher uniquement le champ de saisie de connexion et les commandes système, en masquant les widgets météo et multimédia.",
       "compact-lockscreen-label": "Écran de verrouillage compact",
+      "enable-lockscreen-media-controls-description": "Afficher les commandes interactives de lecture multimédia sur l'écran de verrouillage.",
+      "enable-lockscreen-media-controls-label": "Commandes Multimédia de l'Écran de Verrouillage",
       "lock-on-suspend-description": "Verrouiller automatiquement l'écran lors de la mise en veille du système.",
       "lock-on-suspend-label": "Verrouiller à la suspension",
       "lock-screen-animations-description": "Activer ou désactiver les animations de l'écran de verrouillage.",

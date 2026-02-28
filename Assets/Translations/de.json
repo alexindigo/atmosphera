@@ -1330,6 +1330,8 @@
       "clock-style-label": "Uhrstil",
       "compact-lockscreen-description": "Zeige nur die Login-Eingabe und Systemsteuerung, blende Wetter- und Medien-Widgets aus.",
       "compact-lockscreen-label": "Kompakter Sperrbildschirm",
+      "enable-lockscreen-media-controls-description": "Interaktive Medienwiedergabesteuerung auf dem Sperrbildschirm anzeigen.",
+      "enable-lockscreen-media-controls-label": "Sperrbildschirm-Mediensteuerung",
       "lock-on-suspend-description": "Den Bildschirm beim Energiesparen automatisch sperren.",
       "lock-on-suspend-label": "Sperren beim Energiesparen",
       "lock-screen-animations-description": "Sperrbildschirm-Animationen aktivieren oder deaktivieren.",

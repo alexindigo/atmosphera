@@ -1330,6 +1330,8 @@
       "clock-style-label": "Stile orologio",
       "compact-lockscreen-description": "Mostra solo input di accesso e controlli di sistema, nascondendo i widget meteo e media.",
       "compact-lockscreen-label": "Schermata blocco compatta",
+      "enable-lockscreen-media-controls-description": "Mostra i controlli interattivi di riproduzione multimediale sulla schermata di blocco.",
+      "enable-lockscreen-media-controls-label": "Controlli Multimediali della Schermata di Blocco",
       "lock-on-suspend-description": "Blocca automaticamente lo schermo quando il sistema viene sospeso.",
       "lock-on-suspend-label": "Blocca alla sospensione",
       "lock-screen-animations-description": "Abilita o disabilita le animazioni della schermata blocco.",

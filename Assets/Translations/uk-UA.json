@@ -1330,6 +1330,8 @@
       "clock-style-label": "Стиль Годинника",
       "compact-lockscreen-description": "Показувати тільки поле входу та системні елементи керування, приховуючи віджети погоди та медіа.",
       "compact-lockscreen-label": "Компактний екран блокування",
+      "enable-lockscreen-media-controls-description": "Показувати інтерактивні елементи керування відтворенням медіа на екрані блокування.",
+      "enable-lockscreen-media-controls-label": "Елементи Керування Медіа на Екрані Блокування",
       "lock-on-suspend-description": "Автоматично блокувати екран при призупиненні системи.",
       "lock-on-suspend-label": "Блокувати при призупиненні",
       "lock-screen-animations-description": "Увімкнути або вимкнути анімації екрана блокування.",

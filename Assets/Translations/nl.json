@@ -1330,6 +1330,8 @@
       "clock-style-label": "Klokstijl",
       "compact-lockscreen-description": "Toon alleen de logininvoer en systeemknoppen, verberg weer- en mediawidgets.",
       "compact-lockscreen-label": "Compact vergrendelscherm",
+      "enable-lockscreen-media-controls-description": "Toon interactieve mediabediening op het vergrendelscherm.",
+      "enable-lockscreen-media-controls-label": "Mediabediening op het Vergrendelscherm",
       "lock-on-suspend-description": "Vergrendel het scherm automatisch wanneer het systeem wordt onderbroken.",
       "lock-on-suspend-label": "Vergrendelen bij onderbreken",
       "lock-screen-animations-description": "Vergrendelschermanimaties in- of uitschakelen.",

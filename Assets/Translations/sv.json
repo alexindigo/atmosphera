@@ -1330,6 +1330,8 @@
       "clock-style-label": "Klockstil",
       "compact-lockscreen-description": "Visa endast inloggningsfältet och systemkontrollerna, dölj väder- och mediewidgets.",
       "compact-lockscreen-label": "Kompakt låsskärm",
+      "enable-lockscreen-media-controls-description": "Visa interaktiva mediekontroller på låsskärmen.",
+      "enable-lockscreen-media-controls-label": "Mediekontroller på Låsskärmen",
       "lock-on-suspend-description": "Lås skärmen automatiskt när systemet pausas.",
       "lock-on-suspend-label": "Lås vid paus",
       "lock-screen-animations-description": "Aktivera eller inaktivera låsskärmsanimeringar.",

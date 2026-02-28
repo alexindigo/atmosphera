@@ -1330,6 +1330,8 @@
       "clock-style-label": "時計のスタイル",
       "compact-lockscreen-description": "天気やメディアウィジェットを隠し、ログイン入力とシステムコントロールのみを表示します。",
       "compact-lockscreen-label": "コンパクトなロック画面",
+      "enable-lockscreen-media-controls-description": "ロック画面にインタラクティブなメディア再生コントロールを表示する。",
+      "enable-lockscreen-media-controls-label": "ロック画面のメディアコントロール",
       "lock-on-suspend-description": "システムのサスペンド時に、自動的に画面をロックします。",
       "lock-on-suspend-label": "サスペンド時にロック",
       "lock-screen-animations-description": "ロック画面のアニメーションを有効または無効にする。",

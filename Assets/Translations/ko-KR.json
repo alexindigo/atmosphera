@@ -1330,6 +1330,8 @@
       "clock-style-label": "시계 스타일",
       "compact-lockscreen-description": "로그인 입력과 시스템 제어만 표시하고 날씨 및 미디어 위젯을 숨깁니다.",
       "compact-lockscreen-label": "컴팩트 잠금 화면",
+      "enable-lockscreen-media-controls-description": "잠금 화면에 대화형 미디어 재생 제어를 표시합니다.",
+      "enable-lockscreen-media-controls-label": "잠금 화면 미디어 제어",
       "lock-on-suspend-description": "시스템 대기 모드 진입 시 자동으로 화면을 잠급니다.",
       "lock-on-suspend-label": "대기 모드 시 잠금",
       "lock-screen-animations-description": "잠금 화면 애니메이션 활성화 또는 비활성화.",
