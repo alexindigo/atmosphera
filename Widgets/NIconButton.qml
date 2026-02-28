@@ -14,6 +14,7 @@ Item {
   property string tooltipText
   property string tooltipDirection: "auto"
   property bool allowClickWhenDisabled: false
+  property bool allowScroll: false
   property bool hovering: false
 
   property color colorBg: Color.mSurfaceVariant
@@ -122,6 +123,13 @@ Item {
                    root.middleClicked();
                  }
                }
-    onWheel: wheel => root.wheel(wheel.angleDelta.y)
+    onWheel: wheel => {
+      if (root.allowScroll) {
+        root.wheel(wheel.angleDelta.y);
+        wheel.accepted = false;
+      } else {
+        wheel.accepted = true;
+      }
+    }
   }
 }
