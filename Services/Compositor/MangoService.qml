@@ -672,7 +672,18 @@ Item {
 
   function turnOffMonitors() {
     try {
-      Quickshell.execDetached(["wlr-randr", "--off"]);
+      const outputs = Object.keys(internal.monitorScales);
+      if (outputs.length === 0) {
+        if (root.selectedMonitor) {
+          Quickshell.execDetached(["mmsg", "-s", "-d", "disable_monitor," + root.selectedMonitor]);
+        } else {
+          Logger.w("MangoService", "Cannot turn off monitors: No outputs known and selectedMonitor is empty");
+        }
+      } else {
+        for (let i = 0; i < outputs.length; i++) {
+          Quickshell.execDetached(["mmsg", "-s", "-d", "disable_monitor," + outputs[i]]);
+        }
+      }
     } catch (e) {
       Logger.e("MangoService", "Failed to turn off monitors:", e);
     }
@@ -680,7 +691,18 @@ Item {
 
   function turnOnMonitors() {
     try {
-      Quickshell.execDetached(["wlr-randr", "--on"]);
+      const outputs = Object.keys(internal.monitorScales);
+      if (outputs.length === 0) {
+        if (root.selectedMonitor) {
+          Quickshell.execDetached(["mmsg", "-s", "-d", "enable_monitor," + root.selectedMonitor]);
+        } else {
+          Logger.w("MangoService", "Cannot turn on monitors: No outputs known and selectedMonitor is empty");
+        }
+      } else {
+        for (let i = 0; i < outputs.length; i++) {
+          Quickshell.execDetached(["mmsg", "-s", "-d", "enable_monitor," + outputs[i]]);
+        }
+      }
     } catch (e) {
       Logger.e("MangoService", "Failed to turn on monitors:", e);
     }
