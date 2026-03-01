@@ -9,6 +9,7 @@ ColumnLayout {
   spacing: Style.marginM
 
   // Properties to receive data from parent
+  property var screen: null
   property var widgetData: null
   property var widgetMetadata: null
 
@@ -26,7 +27,6 @@ ColumnLayout {
   property real valueUnfocusedIconsOpacity: widgetData.unfocusedIconsOpacity !== undefined ? widgetData.unfocusedIconsOpacity : widgetMetadata.unfocusedIconsOpacity
   property real valueGroupedBorderOpacity: widgetData.groupedBorderOpacity !== undefined ? widgetData.groupedBorderOpacity : widgetMetadata.groupedBorderOpacity
   property bool valueEnableScrollWheel: widgetData.enableScrollWheel !== undefined ? widgetData.enableScrollWheel : widgetMetadata.enableScrollWheel
-  property bool valueReverseScroll: widgetData.reverseScroll !== undefined ? widgetData.reverseScroll : widgetMetadata.reverseScroll
   property real valueIconScale: widgetData.iconScale !== undefined ? widgetData.iconScale : widgetMetadata.iconScale
   property string valueFocusedColor: widgetData.focusedColor !== undefined ? widgetData.focusedColor : widgetMetadata.focusedColor
   property string valueOccupiedColor: widgetData.occupiedColor !== undefined ? widgetData.occupiedColor : widgetMetadata.occupiedColor
@@ -46,14 +46,13 @@ ColumnLayout {
     settings.unfocusedIconsOpacity = valueUnfocusedIconsOpacity;
     settings.groupedBorderOpacity = valueGroupedBorderOpacity;
     settings.enableScrollWheel = valueEnableScrollWheel;
-    settings.reverseScroll = valueReverseScroll;
     settings.iconScale = valueIconScale;
     settings.focusedColor = valueFocusedColor;
     settings.occupiedColor = valueOccupiedColor;
     settings.emptyColor = valueEmptyColor;
     settings.showBadge = valueShowBadge;
     settings.pillSize = valuePillSize;
-    return settings;
+    settingsChanged(settings);
   }
 
   NComboBox {
@@ -81,7 +80,7 @@ ColumnLayout {
     currentKey: widgetData.labelMode || widgetMetadata.labelMode
     onSelected: key => {
                   valueLabelMode = key;
-                  settingsChanged(saveSettings());
+                  saveSettings();
                 }
     minimumWidth: 200
   }
@@ -94,7 +93,7 @@ ColumnLayout {
     value: valueCharacterCount
     onValueChanged: {
       valueCharacterCount = value;
-      settingsChanged(saveSettings());
+      saveSettings();
     }
     visible: valueLabelMode === "name"
   }
@@ -106,9 +105,11 @@ ColumnLayout {
     to: 1.0
     stepSize: 0.01
     value: valuePillSize
+    defaultValue: widgetMetadata.pillSize
+    showReset: true
     onMoved: value => {
                valuePillSize = value;
-               settingsChanged(saveSettings());
+               saveSettings();
              }
     text: Math.round(valuePillSize * 100) + "%"
     visible: !valueShowApplications
@@ -120,7 +121,7 @@ ColumnLayout {
     checked: valueHideUnoccupied
     onToggled: checked => {
                  valueHideUnoccupied = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
   }
 
@@ -130,7 +131,7 @@ ColumnLayout {
     checked: valueShowLabelsOnlyWhenOccupied
     onToggled: checked => {
                  valueShowLabelsOnlyWhenOccupied = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
   }
 
@@ -140,7 +141,7 @@ ColumnLayout {
     checked: valueFollowFocusedScreen
     onToggled: checked => {
                  valueFollowFocusedScreen = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
   }
 
@@ -150,19 +151,8 @@ ColumnLayout {
     checked: valueEnableScrollWheel
     onToggled: checked => {
                  valueEnableScrollWheel = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
-  }
-
-  NToggle {
-    label: I18n.tr("bar.workspace.reverse-scrolling-label")
-    description: I18n.tr("bar.workspace.reverse-scrolling-description")
-    checked: valueReverseScroll
-    onToggled: checked => {
-                 valueReverseScroll = checked;
-                 settingsChanged(saveSettings());
-               }
-    visible: valueEnableScrollWheel
   }
 
   NDivider {
@@ -175,7 +165,7 @@ ColumnLayout {
     checked: valueShowApplications
     onToggled: checked => {
                  valueShowApplications = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
   }
 
@@ -185,7 +175,7 @@ ColumnLayout {
     checked: valueShowBadge
     onToggled: checked => {
                  valueShowBadge = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
     visible: valueShowApplications
   }
@@ -196,7 +186,7 @@ ColumnLayout {
     checked: valueColorizeIcons
     onToggled: checked => {
                  valueColorizeIcons = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
     visible: valueShowApplications
   }
@@ -207,10 +197,12 @@ ColumnLayout {
     from: 0
     to: 1
     stepSize: 0.01
+    showReset: true
     value: valueUnfocusedIconsOpacity
+    defaultValue: widgetMetadata.unfocusedIconsOpacity
     onMoved: value => {
                valueUnfocusedIconsOpacity = value;
-               settingsChanged(saveSettings());
+               saveSettings();
              }
     text: Math.floor(valueUnfocusedIconsOpacity * 100) + "%"
     visible: valueShowApplications
@@ -222,10 +214,12 @@ ColumnLayout {
     from: 0
     to: 1
     stepSize: 0.01
+    showReset: true
     value: valueGroupedBorderOpacity
+    defaultValue: widgetMetadata.groupedBorderOpacity
     onMoved: value => {
                valueGroupedBorderOpacity = value;
-               settingsChanged(saveSettings());
+               saveSettings();
              }
     text: Math.floor(valueGroupedBorderOpacity * 100) + "%"
     visible: valueShowApplications
@@ -237,10 +231,12 @@ ColumnLayout {
     from: 0.5
     to: 1
     stepSize: 0.01
+    showReset: true
     value: valueIconScale
+    defaultValue: widgetMetadata.iconScale
     onMoved: value => {
                valueIconScale = value;
-               settingsChanged(saveSettings());
+               saveSettings();
              }
     text: Math.round(valueIconScale * 100) + "%"
     visible: valueShowApplications
@@ -250,93 +246,33 @@ ColumnLayout {
     Layout.fillWidth: true
   }
 
-  NComboBox {
-    id: focusedColorCombo
+  NColorChoice {
     label: I18n.tr("bar.workspace.focused-color-label")
     description: I18n.tr("bar.workspace.focused-color-description")
-    model: [
-      {
-        "key": "none",
-        "name": I18n.tr("common.none")
-      },
-      {
-        "key": "primary",
-        "name": I18n.tr("common.primary")
-      },
-      {
-        "key": "secondary",
-        "name": I18n.tr("common.secondary")
-      },
-      {
-        "key": "tertiary",
-        "name": I18n.tr("common.tertiary")
-      }
-    ]
     currentKey: valueFocusedColor
     onSelected: key => {
                   valueFocusedColor = key;
-                  settingsChanged(saveSettings());
+                  saveSettings();
                 }
-    minimumWidth: 200
   }
 
-  NComboBox {
-    id: occupiedColorCombo
+  NColorChoice {
     label: I18n.tr("bar.workspace.occupied-color-label")
     description: I18n.tr("bar.workspace.occupied-color-description")
-    model: [
-      {
-        "key": "none",
-        "name": I18n.tr("common.none")
-      },
-      {
-        "key": "primary",
-        "name": I18n.tr("common.primary")
-      },
-      {
-        "key": "secondary",
-        "name": I18n.tr("common.secondary")
-      },
-      {
-        "key": "tertiary",
-        "name": I18n.tr("common.tertiary")
-      }
-    ]
     currentKey: valueOccupiedColor
     onSelected: key => {
                   valueOccupiedColor = key;
-                  settingsChanged(saveSettings());
+                  saveSettings();
                 }
-    minimumWidth: 200
   }
 
-  NComboBox {
-    id: emptyColorCombo
+  NColorChoice {
     label: I18n.tr("bar.workspace.empty-color-label")
     description: I18n.tr("bar.workspace.empty-color-description")
-    model: [
-      {
-        "key": "none",
-        "name": I18n.tr("common.none")
-      },
-      {
-        "key": "primary",
-        "name": I18n.tr("common.primary")
-      },
-      {
-        "key": "secondary",
-        "name": I18n.tr("common.secondary")
-      },
-      {
-        "key": "tertiary",
-        "name": I18n.tr("common.tertiary")
-      }
-    ]
     currentKey: valueEmptyColor
     onSelected: key => {
                   valueEmptyColor = key;
-                  settingsChanged(saveSettings());
+                  saveSettings();
                 }
-    minimumWidth: 200
   }
 }

@@ -17,8 +17,11 @@ NBox {
   property var availableSections: ["left", "center", "right"]
   property var sectionLabels: ({}) // Map of sectionId -> display label
   property var sectionIcons: ({}) // Map of sectionId -> icon name
+  property bool barIsVertical: false // When true, map left/right to top/bottom in labels
   property int maxWidgets: -1 // -1 means unlimited
   property bool draggable: true // Enable/disable drag reordering
+  property bool crossSectionDraggable: false
+  property alias dropTargetArea: gridContainer
 
   // Get display label for a section
   function getSectionLabel(sectionId) {
@@ -40,6 +43,58 @@ NBox {
   property string settingsDialogComponent: "invalid-settings-dialog"
   property var screen: null // Screen reference for per-screen widget settings
   property var _activeDialog: null
+  property bool crossDropHoverActive: false
+
+  function clearCrossSectionHover() {
+    crossDropHoverActive = false;
+
+    var parentItem = root.parent;
+    if (!parentItem || !parentItem.children) {
+      return;
+    }
+
+    for (var i = 0; i < parentItem.children.length; i++) {
+      var candidate = parentItem.children[i];
+      if (!candidate || candidate.crossDropHoverActive === undefined)
+        continue;
+      candidate.crossDropHoverActive = false;
+    }
+  }
+
+  function updateCrossSectionHover(globalX, globalY) {
+    var parentItem = root.parent;
+    if (!parentItem || !parentItem.children) {
+      crossDropHoverActive = false;
+      return;
+    }
+
+    crossDropHoverActive = false;
+
+    for (var i = 0; i < parentItem.children.length; i++) {
+      var candidate = parentItem.children[i];
+      if (!candidate || candidate.sectionId === undefined || candidate.crossDropHoverActive === undefined) {
+        continue;
+      }
+
+      var shouldHighlight = false;
+      if (candidate !== root && candidate.visible && candidate.enabled) {
+        var localPoint = candidate.mapFromGlobal(globalX, globalY);
+        var area = candidate.dropTargetArea ? candidate.dropTargetArea : candidate;
+        shouldHighlight = localPoint.x >= area.x && localPoint.y >= area.y && localPoint.x <= area.x + area.width && localPoint.y <= area.y + area.height;
+      }
+
+      candidate.crossDropHoverActive = shouldHighlight;
+    }
+  }
+
+  function isPointInsideSelf(globalX, globalY) {
+    if (globalX < 0 || globalY < 0)
+      return false;
+    var localPoint = root.mapFromGlobal(globalX, globalY);
+    return localPoint.x >= 0 && localPoint.y >= 0 && localPoint.x <= root.width && localPoint.y <= root.height;
+  }
+
+  readonly property bool showCrossSectionDropHint: crossDropHoverActive
 
   Component.onDestruction: {
     if (_activeDialog && _activeDialog.close) {
@@ -67,6 +122,7 @@ NBox {
   color: Color.mSurface
   opacity: enabled ? 1.0 : 0.6
   Layout.fillWidth: true
+  z: flowDragArea.dragStarted ? 5000 : 0
 
   // Calculate width to fit gridColumns widgets with spacing
   function calculateWidgetWidth(gridWidth) {
@@ -75,9 +131,36 @@ NBox {
     return Math.floor(widgetWidth);
   }
 
+  function findSectionAtGlobalPosition(globalX, globalY) {
+    var parentItem = root.parent;
+    if (!parentItem || !parentItem.children) {
+      return "";
+    }
+
+    for (var i = 0; i < parentItem.children.length; i++) {
+      var candidate = parentItem.children[i];
+      if (!candidate || candidate === root) {
+        continue;
+      }
+
+      // Only consider sibling section editors
+      if (candidate.sectionId === undefined || !candidate.visible || !candidate.enabled) {
+        continue;
+      }
+
+      var localPoint = candidate.mapFromGlobal(globalX, globalY);
+      var area = candidate.dropTargetArea ? candidate.dropTargetArea : candidate;
+      if (localPoint.x >= area.x && localPoint.y >= area.y && localPoint.x <= area.x + area.width && localPoint.y <= area.y + area.height) {
+        return candidate.sectionId;
+      }
+    }
+
+    return "";
+  }
+
   Layout.minimumHeight: {
     // header + minimal content area
-    var absoluteMin = (Style.marginL * 2) + (Style.fontSizeL * 2) + Style.marginM + (65 * Style.uiScaleRatio);
+    var absoluteMin = Style.margin2L + (Style.fontSizeL * 2) + Style.marginM + (65 * Style.uiScaleRatio);
 
     var widgetCount = widgetModel.length;
     if (widgetCount === 0) {
@@ -86,7 +169,7 @@ NBox {
 
     // Calculate rows based on grid layout
     // Use actual parent width if available, otherwise estimate
-    var availableWidth = (parent && parent.width > 0) ? (parent.width - (Style.marginL * 2)) : 400;
+    var availableWidth = (parent && parent.width > 0) ? (parent.width - Style.margin2L) : 400;
     var rows = Math.ceil(widgetCount / root.gridColumns);
 
     // Calculate widget width for height calculation
@@ -100,7 +183,7 @@ NBox {
     var gridBottomMargin = Style.marginL;
     var widgetAreaHeight = gridTopMargin + (rows * widgetItemHeight) + ((rows - 1) * Style.marginL) + gridBottomMargin;
 
-    return Math.max(absoluteMin, (Style.marginL * 2) + headerHeight + Style.marginM + widgetAreaHeight);
+    return Math.max(absoluteMin, Style.margin2L + headerHeight + Style.marginM + widgetAreaHeight);
   }
 
   // Generate widget color from name checksum
@@ -319,10 +402,20 @@ NBox {
         var gridTopMargin = Style.marginS;
         var gridBottomMargin = Style.marginS;
         var calculatedHeight = gridTopMargin + (rows * root.widgetItemHeight) + ((rows - 1) * Style.marginS) + gridBottomMargin;
-        return Math.max(65 * Style.uiScaleRatio, calculatedHeight);
+        return calculatedHeight;
       }
-      Layout.minimumHeight: 65 * Style.uiScaleRatio
-      clip: true // Clip to prevent overflow
+      Layout.minimumHeight: widgetModel.length === 0 ? (65 * Style.uiScaleRatio) : (Style.margin2S + root.widgetItemHeight)
+      clip: !flowDragArea.dragStarted
+
+      Rectangle {
+        anchors.fill: parent
+        radius: Style.iRadiusL
+        color: Qt.alpha(Color.mSecondary, 0.12)
+        border.color: Color.mSecondary
+        border.width: Style.borderM
+        visible: root.showCrossSectionDropHint
+        z: 1500
+      }
 
       Grid {
         id: widgetGrid
@@ -388,8 +481,16 @@ NBox {
                   if (section !== root.sectionId) {
                     var label = root.getSectionLabel(section);
                     var displayLabel = '';
-                    if (I18n.hasTranslation("positions." + section)) {
-                      displayLabel = I18n.tr("positions." + section);
+                    // Map section IDs to correct position keys based on bar orientation
+                    var positionKey = section;
+                    if (root.barIsVertical) {
+                      if (section === "left")
+                        positionKey = "top";
+                      else if (section === "right")
+                        positionKey = "bottom";
+                    }
+                    if (I18n.hasTranslation("positions." + positionKey)) {
+                      displayLabel = I18n.tr("positions." + positionKey);
                     } else {
                       displayLabel = label.charAt(0).toUpperCase() + label.slice(1);
                     }
@@ -580,7 +681,7 @@ NBox {
         id: flowDragArea
         anchors.fill: parent
         z: 100 // Above widgets to ensure it captures events first
-        enabled: root.draggable
+        enabled: root.draggable || root.crossSectionDraggable
 
         acceptedButtons: Qt.LeftButton
         preventStealing: true // Always prevent stealing to ensure we get all events
@@ -697,6 +798,7 @@ NBox {
         }
 
         function resetDragState() {
+          root.clearCrossSectionHover();
           dragStarted = false;
           potentialDrag = false;
           draggedIndex = -1;
@@ -769,12 +871,18 @@ NBox {
                                    dragGhost.color = root.getWidgetColor(draggedModelData)[0];
                                    ghostText.text = draggedModelData.id;
                                  }
+
+                                 var startGlobal = flowDragArea.mapToGlobal(mouse.x, mouse.y);
+                                 root.updateCrossSectionHover(startGlobal.x, startGlobal.y);
                                }
 
                                if (dragStarted) {
                                  // Move ghost widget
                                  dragGhost.x = mouse.x - dragGhost.width / 2;
                                  dragGhost.y = mouse.y - dragGhost.height / 2;
+
+                                 var moveGlobal = flowDragArea.mapToGlobal(mouse.x, mouse.y);
+                                 root.updateCrossSectionHover(moveGlobal.x, moveGlobal.y);
 
                                  // Update drop indicator
                                  updateDropIndicator(mouse.x, mouse.y);
@@ -783,9 +891,15 @@ NBox {
                            }
 
         onReleased: mouse => {
-                      if (dragStarted && dropTargetIndex !== -1 && dropTargetIndex !== draggedIndex) {
+                      if (root.draggable && dragStarted && dropTargetIndex !== -1 && dropTargetIndex !== draggedIndex) {
                         // Perform the reorder
                         reorderWidget(sectionId, draggedIndex, dropTargetIndex);
+                      } else if (dragStarted && draggedIndex !== -1) {
+                        var globalPos = flowDragArea.mapToGlobal(mouse.x, mouse.y);
+                        var targetSectionId = root.findSectionAtGlobalPosition(globalPos.x, globalPos.y);
+                        if (targetSectionId !== "" && targetSectionId !== root.sectionId) {
+                          root.moveWidget(root.sectionId, draggedIndex, targetSectionId);
+                        }
                       }
 
                       // Always signal end of interaction if we started one

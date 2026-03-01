@@ -19,10 +19,73 @@ ColumnLayout {
       model: Quickshell.screens || []
       delegate: NBox {
         Layout.fillWidth: true
-        implicitHeight: contentCol.implicitHeight + Style.marginL * 2
+        implicitHeight: Math.round(contentCol.implicitHeight + Style.margin2L)
         color: Color.mSurface
 
         property var brightnessMonitor: BrightnessService.getMonitorForScreen(modelData)
+        property real localBrightness: 0.5
+        property bool localBrightnessChanging: false
+        readonly property string automaticOptionLabel: {
+          var baseLabel = I18n.tr("panels.display.monitors-backlight-device-auto-option");
+          var autoDevicePath = (BrightnessService.availableBacklightDevices && BrightnessService.availableBacklightDevices.length > 0) ? BrightnessService.availableBacklightDevices[0] : "";
+          if (autoDevicePath === "")
+            return baseLabel;
+
+          var autoDeviceName = BrightnessService.getBacklightDeviceName(autoDevicePath) || autoDevicePath;
+          return baseLabel + "(" + autoDeviceName + ")";
+        }
+        readonly property var backlightDeviceOptions: {
+          var options = [
+                {
+                  "key": "",
+                  "name": automaticOptionLabel
+                }
+              ];
+
+          var devices = BrightnessService.availableBacklightDevices || [];
+          for (var i = 0; i < devices.length; i++) {
+            var devicePath = devices[i];
+            var deviceName = BrightnessService.getBacklightDeviceName(devicePath) || devicePath;
+            options.push({
+                           "key": devicePath,
+                           "name": deviceName
+                         });
+          }
+          return options;
+        }
+
+        onBrightnessMonitorChanged: {
+          if (brightnessMonitor && !localBrightnessChanging)
+            localBrightness = brightnessMonitor.brightness || 0.5;
+        }
+
+        Connections {
+          target: BrightnessService
+          function onMonitorBrightnessChanged(monitor, newBrightness) {
+            if (monitor === brightnessMonitor && !localBrightnessChanging) {
+              localBrightness = newBrightness;
+            }
+          }
+        }
+        Connections {
+          target: brightnessMonitor
+          ignoreUnknownSignals: true
+          function onBrightnessUpdated() {
+            if (brightnessMonitor && !localBrightnessChanging) {
+              localBrightness = brightnessMonitor.brightness || 0;
+            }
+          }
+        }
+        Timer {
+          id: debounceTimer
+          interval: 120
+          repeat: false
+          onTriggered: {
+            if (brightnessMonitor && brightnessMonitor.brightnessControlAvailable && Math.abs(localBrightness - brightnessMonitor.brightness) >= 0.005) {
+              brightnessMonitor.setBrightness(localBrightness);
+            }
+          }
+        }
 
         ColumnLayout {
           id: contentCol
@@ -80,24 +143,32 @@ ColumnLayout {
                 id: brightnessSlider
                 from: 0
                 to: 1
-                value: brightnessMonitor ? brightnessMonitor.brightness : 0.5
+                value: localBrightness
                 stepSize: 0.01
                 enabled: brightnessMonitor ? brightnessMonitor.brightnessControlAvailable : false
                 onMoved: value => {
                            if (brightnessMonitor && brightnessMonitor.brightnessControlAvailable) {
-                             brightnessMonitor.setBrightness(value);
+                             localBrightness = value;
+                             debounceTimer.restart();
                            }
                          }
                 onPressedChanged: (pressed, value) => {
+                                    localBrightnessChanging = pressed;
                                     if (brightnessMonitor && brightnessMonitor.brightnessControlAvailable) {
-                                      brightnessMonitor.setBrightness(value);
+                                      if (pressed) {
+                                        localBrightness = value;
+                                        debounceTimer.restart();
+                                      } else {
+                                        localBrightness = value;
+                                        debounceTimer.restart();
+                                      }
                                     }
                                   }
                 Layout.fillWidth: true
               }
 
               NText {
-                text: brightnessMonitor ? Math.round(brightnessSlider.value * 100) + "%" : "N/A"
+                text: brightnessMonitor ? Math.round(localBrightness * 100) + "%" : "N/A"
                 Layout.preferredWidth: 55
                 horizontalAlignment: Text.AlignRight
                 Layout.alignment: Qt.AlignVCenter
@@ -117,12 +188,22 @@ ColumnLayout {
             }
 
             NText {
-              visible: brightnessMonitor && !brightnessMonitor.brightnessControlAvailable
+              visible: brightnessMonitor && !brightnessMonitor.brightnessControlAvailable && !(brightnessMonitor.method === "internal" && brightnessMonitor.initInProgress)
               text: !Settings.data.brightness.enableDdcSupport ? I18n.tr("panels.display.monitors-brightness-unavailable-ddc-disabled") : I18n.tr("panels.display.monitors-brightness-unavailable-generic")
               pointSize: Style.fontSizeXS
               color: Color.mOnSurfaceVariant
               Layout.fillWidth: true
               wrapMode: Text.WordWrap
+            }
+
+            NComboBox {
+              Layout.fillWidth: true
+              visible: brightnessMonitor && brightnessMonitor.method === "internal"
+              label: I18n.tr("panels.display.monitors-backlight-device-label")
+              description: I18n.tr("panels.display.monitors-backlight-device-description")
+              model: backlightDeviceOptions
+              currentKey: BrightnessService.getMappedBacklightDevice(modelData.name) || ""
+              onSelected: key => BrightnessService.setMappedBacklightDevice(modelData.name, key)
             }
           }
         }

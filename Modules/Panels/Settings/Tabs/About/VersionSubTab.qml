@@ -33,7 +33,8 @@ ColumnLayout {
   property string commitInfo: ""
 
   readonly property bool isGitVersion: root.currentVersion.endsWith("-git")
-  readonly property int giga: (1024 * 1024 * 1024)
+  readonly property int gigaB: (1024 * 1024 * 1024)
+  readonly property int gigaD: (1000 * 1000 * 1000)
 
   // Update status: compare versions (strip -git suffix for comparison)
   readonly property string installedBase: root.currentVersion.replace("-git", "")
@@ -94,9 +95,9 @@ ColumnLayout {
     return {
       instanceId: TelemetryService.getInstanceId(),
       version: UpdateService.currentVersion,
-      compositor: CompositorService.isHyprland ? "Hyprland" : CompositorService.isNiri ? "Niri" : CompositorService.isSway ? "Sway" : CompositorService.isMango ? "MangoWC" : CompositorService.isLabwc ? "LabWC" : "Unknown",
+      compositor: TelemetryService.getCompositorType(),
       os: HostService.osPretty || "Unknown",
-      ramGb: Math.round((root.getModule("Memory")?.result?.total || 0) / root.giga),
+      ramGb: Math.round((root.getModule("Memory")?.result?.total || 0) / root.gigaB),
       monitors: monitors,
       ui: {
         scaleRatio: Settings.data.general.scaleRatio,
@@ -140,7 +141,7 @@ ColumnLayout {
         info += "GPU: " + gpu.result.map(g => g.name || "Unknown").join(", ") + "\n";
       }
       if (mem?.result) {
-        info += "Memory: " + SystemStatService.formatGigabytes(mem.result.total / root.giga) + "\n";
+        info += "Memory: " + (mem.result.total / root.gigaB).toFixed(1) + " GB \n";
       }
       if (wm?.result) {
         info += "WM: " + (wm.result.prettyName || wm.result.processName || "N/A") + "\n";
@@ -328,7 +329,7 @@ ColumnLayout {
 
   Process {
     id: fastfetchProcess
-    command: ["fastfetch", "--format", "json", "--config", "none"]
+    command: ["fastfetch", "--format", "json", "--config", Quickshell.shellDir + "/Assets/Services/fastfetch/system-info.jsonc"]
     running: false
 
     onExited: function (exitCode) {
@@ -365,6 +366,42 @@ ColumnLayout {
       mipmap: true
       smooth: true
       Layout.alignment: Qt.AlignBottom
+      rotation: Settings.isDebug ? 180 : 0
+
+      Behavior on rotation {
+        NumberAnimation {
+          duration: Style.animationSlowest
+          easing.type: Easing.OutBack
+        }
+      }
+
+      property int debugTapCount: 0
+
+      Timer {
+        id: debugTapTimer
+        interval: 5000
+        onTriggered: parent.debugTapCount = 0
+      }
+
+      MouseArea {
+        anchors.fill: parent
+        onClicked: {
+          if (parent.debugTapCount === 0) {
+            debugTapTimer.restart();
+          }
+          parent.debugTapCount++;
+          if (parent.debugTapCount >= 8) {
+            parent.debugTapCount = 0;
+            debugTapTimer.stop();
+            Settings.isDebug = !Settings.isDebug;
+            if (Settings.isDebug) {
+              ToastService.showNotice("Debug", I18n.tr("panels.about.debug-enabled"));
+            } else {
+              ToastService.showNotice("Debug", I18n.tr("panels.about.debug-disabled"));
+            }
+          }
+        }
+      }
     }
 
     ColumnLayout {
@@ -493,7 +530,8 @@ ColumnLayout {
       outlined: true
       Layout.alignment: Qt.AlignHCenter
       onClicked: {
-        var screen = PanelService.openedPanel?.screen || Quickshell.screens[0];
+        var screen = PanelService.openedPanel?.screen || SettingsPanelService.settingsWindow?.screen || PanelService.findScreenForPanels();
+        SettingsPanelService.close(screen);
         UpdateService.viewChangelog(screen);
       }
     }
@@ -515,7 +553,7 @@ ColumnLayout {
       Layout.alignment: Qt.AlignHCenter
       onClicked: {
         Quickshell.execDetached(["xdg-open", "https://buymeacoffee.com/noctalia"]);
-        ToastService.showNotice(I18n.tr("panels.about.support"), I18n.tr("toast.kofi-opened"));
+        ToastService.showNotice(I18n.tr("panels.about.support"), I18n.tr("toast.donation-opened"));
       }
     }
   }
@@ -697,9 +735,9 @@ ColumnLayout {
         const mem = root.getModule("Memory");
         if (!mem?.result)
           return "N/A";
-        const used = SystemStatService.formatGigabytes(mem.result.used / root.giga);
-        const total = SystemStatService.formatGigabytes(mem.result.total / root.giga);
-        return used + " / " + total;
+        const used = (mem.result.used / root.gigaB).toFixed(1);
+        const total = (mem.result.total / root.gigaB).toFixed(1);
+        return used + " GiB / " + total + " GiB";
       }
       color: Color.mOnSurface
       pointSize: sysInfo.textSize
@@ -721,9 +759,9 @@ ColumnLayout {
         const rootDisk = disk.result.find(d => d.mountpoint === "/");
         if (!rootDisk?.bytes)
           return "N/A";
-        const used = SystemStatService.formatGigabytes(rootDisk.bytes.used / root.giga);
-        const total = SystemStatService.formatGigabytes(rootDisk.bytes.total / root.giga);
-        return used + " / " + total + " (" + rootDisk.filesystem + ")";
+        const used = (rootDisk.bytes.used / root.gigaD).toFixed(1);
+        const total = (rootDisk.bytes.total / root.gigaD).toFixed(1);
+        return used + " GB / " + total + " GB" + " (" + rootDisk.filesystem + ")";
       }
       color: Color.mOnSurface
       pointSize: sysInfo.textSize

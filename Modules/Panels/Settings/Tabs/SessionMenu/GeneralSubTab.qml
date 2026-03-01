@@ -37,15 +37,6 @@ ColumnLayout {
     onSelected: key => Settings.data.sessionMenu.largeButtonsLayout = key
   }
 
-  NToggle {
-    Layout.fillWidth: true
-    label: I18n.tr("panels.session-menu.show-number-labels-label")
-    description: I18n.tr("panels.session-menu.show-number-labels-description")
-    checked: Settings.data.sessionMenu.showNumberLabels !== false
-    defaultValue: Settings.getDefaultValue("sessionMenu.showNumberLabels") ?? true
-    onToggled: checked => Settings.data.sessionMenu.showNumberLabels = checked
-  }
-
   NComboBox {
     label: I18n.tr("common.position")
     description: I18n.tr("panels.session-menu.position-description")
@@ -98,6 +89,15 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
+    label: I18n.tr("panels.session-menu.show-keybinds-label")
+    description: I18n.tr("panels.session-menu.show-keybinds-description")
+    checked: Settings.data.sessionMenu.showKeybinds
+    onToggled: checked => Settings.data.sessionMenu.showKeybinds = checked
+    defaultValue: Settings.getDefaultValue("sessionMenu.showKeybinds")
+  }
+
+  NToggle {
+    Layout.fillWidth: true
     label: I18n.tr("panels.session-menu.enable-countdown-label")
     description: I18n.tr("panels.session-menu.enable-countdown-description")
     checked: Settings.data.sessionMenu.enableCountdown
@@ -113,6 +113,7 @@ ColumnLayout {
     from: 1000
     to: 30000
     stepSize: 1000
+    showReset: true
     value: Settings.data.sessionMenu.countdownDuration
     onMoved: value => Settings.data.sessionMenu.countdownDuration = value
     text: Math.round(Settings.data.sessionMenu.countdownDuration / 1000) + "s"

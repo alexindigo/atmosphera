@@ -23,22 +23,58 @@ Item {
   readonly property int shadowPadding: Style.shadowBlurMax + Style.marginL
 
   width: notificationWidth + shadowPadding * 2
-  height: Math.round(contentLayout.implicitHeight + Style.marginXL * 2 + shadowPadding * 2)
+  height: Math.round(contentLayout.implicitHeight + Style.margin2M * 2 + shadowPadding * 2)
   visible: true
   opacity: 0
   scale: initialScale
 
   property real progress: 1.0
-  property int hoverCount: 0
+  property bool isHovered: false
+  property real swipeOffset: 0
+  property real swipeOffsetY: 0
+  property real pressGlobalX: 0
+  property real pressGlobalY: 0
+  property bool isSwiping: false
+  readonly property string location: Settings.data.notifications?.location || "top_right"
+  readonly property bool isLeft: location.endsWith("_left")
+  readonly property bool isRight: location.endsWith("_right")
+  readonly property bool useVerticalSwipe: location === "bottom" || location === "top"
+  readonly property real swipeStartThreshold: Math.round(18 * Style.uiScaleRatio)
+  readonly property real swipeDismissThreshold: Math.max(110, background.width * 0.32)
+  readonly property real verticalSwipeDismissThreshold: Math.max(70, background.height * 0.35)
 
-  onHoverCountChanged: {
-    if (hoverCount > 0) {
-      resumeTimer.stop();
-      if (progressAnimation.running && !progressAnimation.paused) {
-        progressAnimation.pause();
+  transform: Translate {
+    x: root.swipeOffset
+    y: root.swipeOffsetY
+  }
+
+  function clampSwipeDelta(deltaX) {
+    if (isRight)
+      return Math.max(0, deltaX);
+    if (isLeft)
+      return Math.min(0, deltaX);
+    return deltaX;
+  }
+
+  function clampVerticalSwipeDelta(deltaY) {
+    if (location === "bottom")
+      return Math.max(0, deltaY);
+    if (location === "top")
+      return Math.min(0, deltaY);
+    return deltaY;
+  }
+
+  HoverHandler {
+    onHoveredChanged: {
+      isHovered = hovered;
+      if (isHovered) {
+        resumeTimer.stop();
+        if (progressAnimation.running && !progressAnimation.paused) {
+          progressAnimation.pause();
+        }
+      } else {
+        resumeTimer.start();
       }
-    } else {
-      resumeTimer.start();
     }
   }
 
@@ -47,7 +83,7 @@ Item {
     interval: 50
     repeat: false
     onTriggered: {
-      if (hoverCount === 0 && progressAnimation.paused) {
+      if (!isHovered && progressAnimation.paused) {
         progressAnimation.resume();
       }
     }
@@ -148,6 +184,22 @@ Item {
     }
   }
 
+  Behavior on swipeOffset {
+    enabled: !root.isSwiping
+    NumberAnimation {
+      duration: Style.animationFast
+      easing.type: Easing.OutCubic
+    }
+  }
+
+  Behavior on swipeOffsetY {
+    enabled: !root.isSwiping
+    NumberAnimation {
+      duration: Style.animationFast
+      easing.type: Easing.OutCubic
+    }
+  }
+
   Timer {
     id: hideAnimation
     interval: Style.animationFast
@@ -165,16 +217,65 @@ Item {
 
   // Click anywhere dismiss the toast (must be before content so action link can override)
   MouseArea {
+    id: toastDragArea
     anchors.fill: background
     acceptedButtons: Qt.LeftButton
     hoverEnabled: true
-    onEntered: {
-      root.hoverCount++;
+    onPressed: mouse => {
+                 const globalPoint = toastDragArea.mapToGlobal(mouse.x, mouse.y);
+                 root.pressGlobalX = globalPoint.x;
+                 root.pressGlobalY = globalPoint.y;
+                 root.isSwiping = false;
+               }
+    onPositionChanged: mouse => {
+                         if (!(mouse.buttons & Qt.LeftButton))
+                         return;
+                         const globalPoint = toastDragArea.mapToGlobal(mouse.x, mouse.y);
+                         const rawDeltaX = globalPoint.x - root.pressGlobalX;
+                         const rawDeltaY = globalPoint.y - root.pressGlobalY;
+                         const deltaX = root.clampSwipeDelta(rawDeltaX);
+                         const deltaY = root.clampVerticalSwipeDelta(rawDeltaY);
+                         if (!root.isSwiping) {
+                           if (root.useVerticalSwipe) {
+                             if (Math.abs(deltaY) < root.swipeStartThreshold)
+                             return;
+                             root.isSwiping = true;
+                           } else {
+                             if (Math.abs(deltaX) < root.swipeStartThreshold)
+                             return;
+                             root.isSwiping = true;
+                           }
+                         }
+                         if (root.useVerticalSwipe) {
+                           root.swipeOffset = 0;
+                           root.swipeOffsetY = deltaY;
+                         } else {
+                           root.swipeOffset = deltaX;
+                           root.swipeOffsetY = 0;
+                         }
+                       }
+    onReleased: mouse => {
+                  if (mouse.button !== Qt.LeftButton)
+                  return;
+                  if (root.isSwiping) {
+                    root.isSwiping = false;
+                    const dismissDistance = root.useVerticalSwipe ? Math.abs(root.swipeOffsetY) : Math.abs(root.swipeOffset);
+                    const threshold = root.useVerticalSwipe ? root.verticalSwipeDismissThreshold : root.swipeDismissThreshold;
+                    if (dismissDistance >= threshold) {
+                      root.hide();
+                    } else {
+                      root.swipeOffset = 0;
+                      root.swipeOffsetY = 0;
+                    }
+                    return;
+                  }
+                  root.hide();
+                }
+    onCanceled: {
+      root.isSwiping = false;
+      root.swipeOffset = 0;
+      root.swipeOffsetY = 0;
     }
-    onExited: {
-      root.hoverCount--;
-    }
-    onClicked: root.hide()
     cursorShape: Qt.PointingHandCursor
   }
 
@@ -183,8 +284,8 @@ Item {
     anchors.fill: background
     anchors.topMargin: Style.marginM
     anchors.bottomMargin: Style.marginM
-    anchors.leftMargin: Style.marginXL
-    anchors.rightMargin: Style.marginXL
+    anchors.leftMargin: Style.margin2M
+    anchors.rightMargin: Style.margin2M
     spacing: Style.marginL
 
     // Icon
@@ -249,9 +350,6 @@ Item {
         outlined: false
         implicitHeight: 24
 
-        onEntered: root.hoverCount++
-        onExited: root.hoverCount--
-
         onClicked: {
           if (root.actionCallback) {
             root.actionCallback();
@@ -279,7 +377,10 @@ Item {
     opacity = 1.0;
     scale = 1.0;
     progress = 1.0;
-    hoverCount = 0;
+    isHovered = false;
+    isSwiping = false;
+    swipeOffset = 0;
+    swipeOffsetY = 0;
 
     // Configure and start animation
     progressAnimation.duration = duration;
@@ -290,6 +391,9 @@ Item {
 
   function hide() {
     progressAnimation.stop();
+    isSwiping = false;
+    swipeOffset = 0;
+    swipeOffsetY = 0;
     opacity = 0;
     scale = initialScale;
     hideAnimation.restart();
@@ -298,6 +402,9 @@ Item {
   function hideImmediately() {
     hideAnimation.stop();
     progressAnimation.stop();
+    isSwiping = false;
+    swipeOffset = 0;
+    swipeOffsetY = 0;
     opacity = 0;
     scale = initialScale;
     root.hidden();

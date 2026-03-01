@@ -21,8 +21,9 @@ Item {
   readonly property bool isDragging: internal.isDragging
   readonly property bool isScaling: internal.isScaling
 
-  property bool showBackground: (widgetData && widgetData.showBackground !== undefined) ? widgetData.showBackground : true
-  property bool roundedCorners: (widgetData && widgetData.roundedCorners !== undefined) ? widgetData.roundedCorners : true
+  // All Desktop widgets have these settings, but fallback just in case
+  property bool showBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : (widgetMetadata?.showBackground ?? true)
+  property bool roundedCorners: widgetData.roundedCorners !== undefined ? widgetData.roundedCorners : (widgetMetadata?.roundedCorners ?? true)
 
   property real widgetScale: 1.0
   property real minScale: 0.5

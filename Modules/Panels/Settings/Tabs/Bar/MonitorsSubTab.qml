@@ -28,7 +28,7 @@ ColumnLayout {
     delegate: NBox {
       id: monitorCard
       Layout.fillWidth: true
-      implicitHeight: cardContent.implicitHeight + Style.marginL * 2
+      implicitHeight: cardContent.implicitHeight + Style.margin2L
       color: Color.mSurface
 
       required property var modelData
@@ -113,6 +113,7 @@ ColumnLayout {
             checked: monitorCard.overrideEnabled
             onToggled: checked => {
                          Settings.setScreenOverride(monitorCard.screenName, "enabled", checked);
+                         BarService.widgetsRevision++;
                        }
           }
 
@@ -190,6 +191,34 @@ ColumnLayout {
               }
             }
 
+            // DisplayMode override
+            RowLayout {
+              Layout.fillWidth: true
+              spacing: Style.marginS
+
+              NComboBox {
+                Layout.fillWidth: true
+                label: I18n.tr("common.display-mode")
+                description: I18n.tr("panels.bar.appearance-display-mode-description")
+                model: [
+                  {
+                    "key": "always_visible",
+                    "name": I18n.tr("hide-modes.visible")
+                  },
+                  {
+                    "key": "non_exclusive",
+                    "name": I18n.tr("hide-modes.non-exclusive")
+                  },
+                  {
+                    "key": "auto_hide",
+                    "name": I18n.tr("hide-modes.auto-hide")
+                  }
+                ]
+                currentKey: Settings.getBarDisplayModeForScreen(monitorCard.screenName)
+                onSelected: key => Settings.setScreenOverride(monitorCard.screenName, "displayMode", key)
+              }
+            }
+
             // Widgets configuration button and Reset all
             RowLayout {
               Layout.fillWidth: true
@@ -211,7 +240,10 @@ ColumnLayout {
                 fontSize: Style.fontSizeS
                 text: I18n.tr("panels.bar.use-global-widgets")
                 icon: "refresh"
-                onClicked: Settings.clearScreenOverride(monitorCard.screenName, "widgets")
+                onClicked: {
+                  Settings.clearScreenOverride(monitorCard.screenName, "widgets");
+                  BarService.widgetsRevision++;
+                }
               }
 
               NButton {
@@ -219,7 +251,10 @@ ColumnLayout {
                 fontSize: Style.fontSizeS
                 text: I18n.tr("panels.bar.monitor-reset-all")
                 icon: "restore"
-                onClicked: Settings.clearScreenOverride(monitorCard.screenName)
+                onClicked: {
+                  Settings.clearScreenOverride(monitorCard.screenName);
+                  BarService.widgetsRevision++;
+                }
               }
             }
 

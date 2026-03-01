@@ -17,6 +17,7 @@ import qs.Modules.Panels.Brightness
 import qs.Modules.Panels.Changelog
 import qs.Modules.Panels.Clock
 import qs.Modules.Panels.ControlCenter
+import qs.Modules.Panels.Dock
 import qs.Modules.Panels.Launcher
 import qs.Modules.Panels.Media
 import qs.Modules.Panels.Network
@@ -29,6 +30,7 @@ import qs.Modules.Panels.SystemStats
 import qs.Modules.Panels.Tray
 import qs.Modules.Panels.Wallpaper
 import qs.Services.Compositor
+import qs.Services.Power
 import qs.Services.UI
 
 /**
@@ -200,6 +202,66 @@ PanelWindow {
     }
   }
 
+  // Blur behind the bar and open panels — attached to PanelWindow (required by BackgroundEffect API)
+  BackgroundEffect.blurRegion: Region {
+    // ── Non-framed bar (simple/floating): single rectangle with bar corner states ──
+    Region {
+      x: (!barPlaceholder.isFramed && root.barShouldShow && !barPlaceholder.isHidden) ? barPlaceholder.x : 0
+      y: (!barPlaceholder.isFramed && root.barShouldShow && !barPlaceholder.isHidden) ? barPlaceholder.y : 0
+      width: (!barPlaceholder.isFramed && root.barShouldShow && !barPlaceholder.isHidden) ? barPlaceholder.width : 0
+      height: (!barPlaceholder.isFramed && root.barShouldShow && !barPlaceholder.isHidden) ? barPlaceholder.height : 0
+      radius: Style.radiusL
+      topLeftCorner: barPlaceholder.topLeftCornerState
+      topRightCorner: barPlaceholder.topRightCornerState
+      bottomLeftCorner: barPlaceholder.bottomLeftCornerState
+      bottomRightCorner: barPlaceholder.bottomRightCornerState
+    }
+
+    // ── Framed bar: full screen minus rounded hole ──
+    Region {
+      x: 0
+      y: 0
+      width: (barPlaceholder.isFramed && root.barShouldShow && !barPlaceholder.isHidden) ? root.width : 0
+      height: (barPlaceholder.isFramed && root.barShouldShow && !barPlaceholder.isHidden) ? root.height : 0
+
+      Region {
+        intersection: Intersection.Subtract
+        x: backgroundBlur.frameHoleX
+        y: backgroundBlur.frameHoleY
+        width: backgroundBlur.frameHoleX2 - backgroundBlur.frameHoleX
+        height: backgroundBlur.frameHoleY2 - backgroundBlur.frameHoleY
+        radius: backgroundBlur.frameR
+      }
+    }
+
+    // ── Panel blur regions ──
+    // Opening panel
+    Region {
+      x: backgroundBlur.panelBg ? Math.round(backgroundBlur.panelBg.x) : 0
+      y: backgroundBlur.panelBg ? Math.round(backgroundBlur.panelBg.y) : 0
+      width: backgroundBlur.panelBg ? Math.round(backgroundBlur.panelBg.width) : 0
+      height: backgroundBlur.panelBg ? Math.round(backgroundBlur.panelBg.height) : 0
+      radius: Style.radiusL
+      topLeftCorner: backgroundBlur.panelBg ? backgroundBlur.panelBg.topLeftCornerState : CornerState.Normal
+      topRightCorner: backgroundBlur.panelBg ? backgroundBlur.panelBg.topRightCornerState : CornerState.Normal
+      bottomLeftCorner: backgroundBlur.panelBg ? backgroundBlur.panelBg.bottomLeftCornerState : CornerState.Normal
+      bottomRightCorner: backgroundBlur.panelBg ? backgroundBlur.panelBg.bottomRightCornerState : CornerState.Normal
+    }
+
+    // Closing panel (coexists with opening panel during transition)
+    Region {
+      x: backgroundBlur.closingPanelBg ? Math.round(backgroundBlur.closingPanelBg.x) : 0
+      y: backgroundBlur.closingPanelBg ? Math.round(backgroundBlur.closingPanelBg.y) : 0
+      width: backgroundBlur.closingPanelBg ? Math.round(backgroundBlur.closingPanelBg.width) : 0
+      height: backgroundBlur.closingPanelBg ? Math.round(backgroundBlur.closingPanelBg.height) : 0
+      radius: Style.radiusL
+      topLeftCorner: backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.topLeftCornerState : CornerState.Normal
+      topRightCorner: backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.topRightCornerState : CornerState.Normal
+      bottomLeftCorner: backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.bottomLeftCornerState : CornerState.Normal
+      bottomRightCorner: backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.bottomRightCornerState : CornerState.Normal
+    }
+  }
+
   // --------------------------------------
   // Container for all UI elements
   Item {
@@ -337,6 +399,12 @@ PanelWindow {
       screen: root.screen
     }
 
+    StaticDockPanel {
+      id: staticDockPanel
+      objectName: "staticDockPanel-" + (root.screen?.name || "unknown")
+      screen: root.screen
+    }
+
     // ----------------------------------------------
     // Plugin panel slots
     // ----------------------------------------------
@@ -376,8 +444,8 @@ PanelWindow {
       readonly property real barHeight: Style.getBarHeightForScreen(screen?.name)
 
       // Auto-hide properties (read by AllBackgrounds for background fade)
-      readonly property bool autoHide: Settings.data.bar.displayMode === "auto_hide"
-      property bool isHidden: false
+      readonly property bool autoHide: Settings.getBarDisplayModeForScreen(screen?.name) === "auto_hide"
+      property bool isHidden: autoHide
 
       Connections {
         target: BarService
@@ -475,22 +543,67 @@ PanelWindow {
       }
     }
 
-    /**
-    *  Screen Corners
-    */
+    // Screen Corners
     ScreenCorners {}
+
+    // Blur behind the bar and open panels
+    // Helper object holding computed properties for blur regions
+    QtObject {
+      id: backgroundBlur
+
+      // Panel background geometry (from the currently open panel on this screen)
+      readonly property var panelBg: {
+        var op = PanelService.openedPanel;
+        if (!op || op.screen !== root.screen || op.blurEnabled === false)
+          return null;
+        var region = op.panelRegion;
+        return (region && region.visible) ? region.panelItem : null;
+      }
+
+      // Panel background geometry for the closing panel (may coexist with panelBg)
+      readonly property var closingPanelBg: {
+        var cp = PanelService.closingPanel;
+        if (!cp || cp.screen !== root.screen || cp.blurEnabled === false)
+          return null;
+        var region = cp.panelRegion;
+        return (region && region.visible) ? region.panelItem : null;
+      }
+
+      // Framed bar: inner hole boundary (where the hole begins on each axis)
+      // These are the x/y coordinates of the 4 inner hole corners
+      readonly property real frameHoleX: barPlaceholder.barPosition === "left" ? barPlaceholder.barHeight : barPlaceholder.frameThickness
+      readonly property real frameHoleY: barPlaceholder.barPosition === "top" ? barPlaceholder.barHeight : barPlaceholder.frameThickness
+      readonly property real frameHoleX2: root.width - (barPlaceholder.barPosition === "right" ? barPlaceholder.barHeight : barPlaceholder.frameThickness)
+      readonly property real frameHoleY2: root.height - (barPlaceholder.barPosition === "bottom" ? barPlaceholder.barHeight : barPlaceholder.frameThickness)
+      readonly property real frameR: Settings.data.bar.frameRadius ?? 20
+    }
+
+    // Native idle inhibitor — one per active MainScreen window.
+    // Multiple inhibitors bound to the same enabled state are harmless;
+    // having one per screen is more robust than picking a "primary" screen.
+    IdleInhibitor {
+      window: root
+      enabled: IdleInhibitorService.isInhibited
+
+      Component.onCompleted: {
+        IdleInhibitorService.nativeInhibitorAvailable = true;
+        Logger.d("IdleInhibitor", "Native IdleInhibitor active on screen:", root.screen?.name);
+      }
+    }
   }
 
-  // ========================================
   // Centralized Keyboard Shortcuts
-  // ========================================
+
   // These shortcuts delegate to the opened panel's handler functions
   // Panels can implement: onEscapePressed, onTabPressed, onBackTabPressed,
   // onUpPressed, onDownPressed, onReturnPressed, etc...
-  Shortcut {
-    sequence: "Escape"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onEscapePressed !== undefined)
-    onActivated: PanelService.openedPanel.onEscapePressed()
+  Instantiator {
+    model: Settings.data.general.keybinds.keyEscape || []
+    Shortcut {
+      sequence: modelData
+      enabled: root.isPanelOpen && (PanelService.openedPanel.onEscapePressed !== undefined) && !PanelService.isKeybindRecording
+      onActivated: PanelService.openedPanel.onEscapePressed()
+    }
   }
 
   Shortcut {
@@ -505,40 +618,49 @@ PanelWindow {
     onActivated: PanelService.openedPanel.onBackTabPressed()
   }
 
-  Shortcut {
-    sequence: "Up"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onUpPressed !== undefined)
-    onActivated: PanelService.openedPanel.onUpPressed()
+  Instantiator {
+    model: Settings.data.general.keybinds.keyUp || []
+    Shortcut {
+      sequence: modelData
+      enabled: root.isPanelOpen && (PanelService.openedPanel.onUpPressed !== undefined) && !PanelService.isKeybindRecording
+      onActivated: PanelService.openedPanel.onUpPressed()
+    }
   }
 
-  Shortcut {
-    sequence: "Down"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onDownPressed !== undefined)
-    onActivated: PanelService.openedPanel.onDownPressed()
+  Instantiator {
+    model: Settings.data.general.keybinds.keyDown || []
+    Shortcut {
+      sequence: modelData
+      enabled: root.isPanelOpen && (PanelService.openedPanel.onDownPressed !== undefined) && !PanelService.isKeybindRecording
+      onActivated: PanelService.openedPanel.onDownPressed()
+    }
   }
 
-  Shortcut {
-    sequence: "Return"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onReturnPressed !== undefined)
-    onActivated: PanelService.openedPanel.onReturnPressed()
+  Instantiator {
+    model: Settings.data.general.keybinds.keyEnter || []
+    Shortcut {
+      sequence: modelData
+      enabled: root.isPanelOpen && (PanelService.openedPanel.onEnterPressed !== undefined) && !PanelService.isKeybindRecording
+      onActivated: PanelService.openedPanel.onEnterPressed()
+    }
   }
 
-  Shortcut {
-    sequence: "Enter"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onEnterPressed !== undefined)
-    onActivated: PanelService.openedPanel.onEnterPressed()
+  Instantiator {
+    model: Settings.data.general.keybinds.keyLeft || []
+    Shortcut {
+      sequence: modelData
+      enabled: root.isPanelOpen && (PanelService.openedPanel.onLeftPressed !== undefined) && !PanelService.isKeybindRecording
+      onActivated: PanelService.openedPanel.onLeftPressed()
+    }
   }
 
-  Shortcut {
-    sequence: "Left"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onLeftPressed !== undefined)
-    onActivated: PanelService.openedPanel.onLeftPressed()
-  }
-
-  Shortcut {
-    sequence: "Right"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onRightPressed !== undefined)
-    onActivated: PanelService.openedPanel.onRightPressed()
+  Instantiator {
+    model: Settings.data.general.keybinds.keyRight || []
+    Shortcut {
+      sequence: modelData
+      enabled: root.isPanelOpen && (PanelService.openedPanel.onRightPressed !== undefined) && !PanelService.isKeybindRecording
+      onActivated: PanelService.openedPanel.onRightPressed()
+    }
   }
 
   Shortcut {
@@ -563,95 +685,5 @@ PanelWindow {
     sequence: "PgDown"
     enabled: root.isPanelOpen && (PanelService.openedPanel.onPageDownPressed !== undefined)
     onActivated: PanelService.openedPanel.onPageDownPressed()
-  }
-
-  Shortcut {
-    sequence: "Ctrl+H"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onCtrlHPressed !== undefined)
-    onActivated: PanelService.openedPanel.onCtrlHPressed()
-  }
-
-  Shortcut {
-    sequence: "Ctrl+J"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onCtrlJPressed !== undefined)
-    onActivated: PanelService.openedPanel.onCtrlJPressed()
-  }
-
-  Shortcut {
-    sequence: "Ctrl+K"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onCtrlKPressed !== undefined)
-    onActivated: PanelService.openedPanel.onCtrlKPressed()
-  }
-
-  Shortcut {
-    sequence: "Ctrl+L"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onCtrlLPressed !== undefined)
-    onActivated: PanelService.openedPanel.onCtrlLPressed()
-  }
-
-  Shortcut {
-    sequence: "Ctrl+N"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onCtrlNPressed !== undefined)
-    onActivated: PanelService.openedPanel.onCtrlNPressed()
-  }
-
-  Shortcut {
-    sequence: "Ctrl+P"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onCtrlPPressed !== undefined)
-    onActivated: PanelService.openedPanel.onCtrlPPressed()
-  }
-
-  Shortcut {
-    sequence: "1"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(1)
-  }
-
-  Shortcut {
-    sequence: "2"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(2)
-  }
-
-  Shortcut {
-    sequence: "3"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(3)
-  }
-
-  Shortcut {
-    sequence: "4"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(4)
-  }
-
-  Shortcut {
-    sequence: "5"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(5)
-  }
-
-  Shortcut {
-    sequence: "6"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(6)
-  }
-
-  Shortcut {
-    sequence: "7"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(7)
-  }
-
-  Shortcut {
-    sequence: "8"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(8)
-  }
-
-  Shortcut {
-    sequence: "9"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onNumberPressed !== undefined)
-    onActivated: PanelService.openedPanel.onNumberPressed(9)
   }
 }

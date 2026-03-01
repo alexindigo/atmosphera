@@ -9,6 +9,9 @@ import qs.Services.Keyboard
 Item {
   id: root
 
+  // Configurable IPC command name (overridden to "scrollmsg" for Scroll)
+  property string msgCommand: "swaymsg"
+
   // Properties that match the facade interface
   property ListModel workspaces: ListModel {}
   property var windows: []
@@ -42,8 +45,7 @@ Item {
     if (initialized)
       return;
     try {
-      I3.refreshWorkspaces();
-      I3.dispatch('(["input"])');
+      I3.refreshWorkspaces()
       Qt.callLater(() => {
                      safeUpdateWorkspaces();
                      queryWindowWorkspaces();
@@ -66,7 +68,7 @@ Item {
   Process {
     id: swayTreeProcess
     running: false
-    command: ["swaymsg", "-t", "get_tree", "-r"]
+    command: [msgCommand, "-t", "get_tree", "-r"]
 
     property string accumulatedOutput: ""
 
@@ -181,7 +183,7 @@ Item {
   Process {
     id: swayOutputsProcess
     running: false
-    command: ["swaymsg", "-t", "get_outputs", "-r"]
+    command: [msgCommand, "-t", "get_outputs", "-r"]
 
     property string accumulatedOutput: ""
 
@@ -232,16 +234,6 @@ Item {
     }
   }
 
-  Timer {
-    id: keyboardLayoutUpdateTimer
-    interval: 1000
-    running: true
-    repeat: true
-    onTriggered: {
-      queryKeyboardLayout();
-    }
-  }
-
   function queryKeyboardLayout() {
     swayInputsProcess.running = true;
   }
@@ -249,7 +241,7 @@ Item {
   Process {
     id: swayInputsProcess
     running: false
-    command: ["swaymsg", "-t", "get_inputs", "-r"]
+    command: [msgCommand, "-t", "get_inputs", "-r"]
 
     property string accumulatedOutput: ""
 
@@ -456,22 +448,17 @@ Item {
 
   function handleInputEvent(ev) {
     try {
-      let beforeParenthesis;
-      const parenthesisPos = ev.lastIndexOf('(');
-
-      if (parenthesisPos === -1) {
-        beforeParenthesis = ev;
-      } else {
-        beforeParenthesis = ev.substring(0, parenthesisPos);
+      const eventData = JSON.parse(ev)
+      if (eventData.change == "xkb_layout" && eventData.input != null) {
+        const input = eventData.input
+        if (input.type == "keyboard" && input.xkb_active_layout_name != null) {
+          const layoutName = input.xkb_active_layout_name
+          KeyboardLayoutService.setCurrentLayout(layoutName)
+          Logger.d("SwayService", "Keyboard layout switched:", layoutName)
+        }
       }
-
-      const layoutNameStart = beforeParenthesis.lastIndexOf(',') + 1;
-      const layoutName = ev.substring(layoutNameStart);
-
-      KeyboardLayoutService.setCurrentLayout(layoutName);
-      Logger.d("HyprlandService", "Keyboard layout switched:", layoutName);
     } catch (e) {
-      Logger.e("HyprlandService", "Error handling activelayout:", e);
+      Logger.e("SwayService", "Error handling input event:", e)
     }
   }
 
@@ -493,6 +480,15 @@ Item {
     }
   }
 
+  // Some programs change title of window dependent on content
+  Connections {
+    target: ToplevelManager ? ToplevelManager.activeToplevel : null
+    enabled: initialized
+    function onTitleChanged() {
+      updateTimer.restart();
+    }
+  }
+
   Connections {
     target: I3
     enabled: initialized
@@ -504,15 +500,13 @@ Item {
       if (event.type === "output") {
         Qt.callLater(queryDisplayScales);
       }
+    }
+  }
 
-      if (event.type == "get_inputs") {
-        handleInputEvent(event.data);
-      }
-
-      // Query window workspaces on relevant events
-      if (event.type === "window" || event.type === "workspace") {
-        Qt.callLater(queryWindowWorkspaces);
-      }
+  I3IpcListener {
+    subscriptions: ["input"]
+    onIpcEvent: function (event) {
+      handleInputEvent(event.data)
     }
   }
 
@@ -541,9 +535,25 @@ Item {
     }
   }
 
+  function turnOffMonitors() {
+    try {
+      Quickshell.execDetached([msgCommand, "output", "*", "dpms", "off"]);
+    } catch (e) {
+      Logger.e("SwayService", "Failed to turn off monitors:", e);
+    }
+  }
+
+  function turnOnMonitors() {
+    try {
+      Quickshell.execDetached([msgCommand, "output", "*", "dpms", "on"]);
+    } catch (e) {
+      Logger.e("SwayService", "Failed to turn on monitors:", e);
+    }
+  }
+
   function logout() {
     try {
-      Quickshell.execDetached(["swaymsg", "exit"]);
+      Quickshell.execDetached([msgCommand, "exit"]);
     } catch (e) {
       Logger.e("SwayService", "Failed to logout:", e);
     }
@@ -551,7 +561,7 @@ Item {
 
   function cycleKeyboardLayout() {
     try {
-      Quickshell.execDetached(["swaymsg", "input", "type:keyboard", "xkb_switch_layout", "next"]);
+      Quickshell.execDetached([msgCommand, "input", "type:keyboard", "xkb_switch_layout", "next"]);
     } catch (e) {
       Logger.e("SwayService", "Failed to cycle keyboard layout:", e);
     }
@@ -575,7 +585,7 @@ Item {
 
   function spawn(command) {
     try {
-      Quickshell.execDetached(["swaymsg", "exec", "--"].concat(command));
+      Quickshell.execDetached([msgCommand, "exec", "--"].concat(command));
     } catch (e) {
       Logger.e("SwayService", "Failed to spawn command:", e);
     }

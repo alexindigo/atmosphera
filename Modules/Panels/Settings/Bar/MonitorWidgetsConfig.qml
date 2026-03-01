@@ -14,15 +14,13 @@ NBox {
 
   required property var screen
   readonly property string screenName: screen?.name || ""
-  // Determine if the bar on a per screen basis is vertical
-  readonly property bool barIsVertical: {
-    var pos = Settings.getBarPositionForScreen(screenName);
-    return pos === "left" || pos === "right";
-  }
+  // determine bar orientation
+  readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
+  readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
 
   color: Color.mSurfaceVariant
   Layout.fillWidth: true
-  implicitHeight: content.implicitHeight + Style.marginL * 2
+  implicitHeight: content.implicitHeight + Style.margin2L
 
   // Helper to get widgets for this screen (ensures override exists)
   function _getWidgetsContainer() {
@@ -119,6 +117,7 @@ NBox {
     for (var i = 0; i < widgetIds.length; i++) {
       var id = widgetIds[i];
       var displayName = id;
+      const badges = [];
       if (BarWidgetRegistry.isPluginWidget(id)) {
         var pluginId = id.replace("plugin:", "");
         var manifest = PluginRegistry.getPluginManifest(pluginId);
@@ -127,10 +126,21 @@ NBox {
         } else {
           displayName = pluginId;
         }
+        badges.push({
+                      "icon": "plugin",
+                      "color": Color.mSecondary
+                    });
+      }
+      if (BarWidgetRegistry.isCpuIntensive(id)) {
+        badges.push({
+                      "icon": "cpu-intensive",
+                      "color": Color.mSecondary
+                    });
       }
       availableWidgetsModel.append({
                                      "key": id,
-                                     "name": displayName
+                                     "name": displayName,
+                                     "badges": badges
                                    });
     }
   }
@@ -160,6 +170,7 @@ NBox {
     NSectionEditor {
       sectionName: root.barIsVertical ? I18n.tr("positions.top") : I18n.tr("positions.left")
       sectionId: "left"
+      barIsVertical: root.barIsVertical
       screen: root.screen
       settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
       widgetRegistry: BarWidgetRegistry
@@ -177,6 +188,7 @@ NBox {
     NSectionEditor {
       sectionName: I18n.tr("positions.center")
       sectionId: "center"
+      barIsVertical: root.barIsVertical
       screen: root.screen
       settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
       widgetRegistry: BarWidgetRegistry
@@ -194,6 +206,7 @@ NBox {
     NSectionEditor {
       sectionName: root.barIsVertical ? I18n.tr("positions.bottom") : I18n.tr("positions.right")
       sectionId: "right"
+      barIsVertical: root.barIsVertical
       screen: root.screen
       settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
       widgetRegistry: BarWidgetRegistry

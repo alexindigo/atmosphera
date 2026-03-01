@@ -1,8 +1,10 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Quickshell
 import qs.Commons
 import qs.Services.Media
+import qs.Services.System
 import qs.Widgets
 
 ColumnLayout {
@@ -67,11 +69,7 @@ ColumnLayout {
       label: I18n.tr("panels.audio.volumes-mute-output-label")
       description: I18n.tr("panels.audio.volumes-mute-output-description")
       checked: AudioService.muted
-      onToggled: checked => {
-                   if (AudioService.sink && AudioService.sink.audio) {
-                     AudioService.sink.audio.muted = checked;
-                   }
-                 }
+      onToggled: checked => AudioService.setOutputMuted(checked)
     }
   }
 
@@ -86,6 +84,28 @@ ColumnLayout {
       checked: Settings.data.audio.volumeFeedback
       defaultValue: Settings.getDefaultValue("audio.volumeFeedback")
       onToggled: checked => Settings.data.audio.volumeFeedback = checked
+    }
+
+    ColumnLayout {
+      enabled: SoundService.multimediaAvailable && Settings.data.audio.volumeFeedback
+      spacing: Style.marginXXS
+      Layout.fillWidth: true
+
+      NLabel {
+        label: I18n.tr("panels.audio.volumes-feedback-sound-file-label")
+        description: I18n.tr("panels.audio.volumes-feedback-sound-file-description")
+      }
+
+      NTextInputButton {
+        enabled: parent.enabled
+        Layout.fillWidth: true
+        placeholderText: I18n.tr("panels.notifications.sounds-files-placeholder")
+        text: Settings.data.audio.volumeFeedbackSoundFile ?? ""
+        buttonIcon: "folder-open"
+        buttonTooltip: I18n.tr("panels.notifications.sounds-files-select-file")
+        onInputEditingFinished: Settings.data.audio.volumeFeedbackSoundFile = text
+        onButtonClicked: volumeFeedbackFilePicker.open()
+      }
     }
   }
 
@@ -159,5 +179,18 @@ ColumnLayout {
       defaultValue: Settings.getDefaultValue("audio.volumeOverdrive")
       onToggled: checked => Settings.data.audio.volumeOverdrive = checked
     }
+  }
+
+  NFilePicker {
+    id: volumeFeedbackFilePicker
+    title: I18n.tr("panels.audio.volumes-feedback-sound-file-select-title")
+    selectionMode: "files"
+    initialPath: Quickshell.env("HOME")
+    nameFilters: ["*.wav", "*.mp3", "*.ogg", "*.flac", "*.m4a", "*.aac"]
+    onAccepted: paths => {
+                  if (paths.length > 0) {
+                    Settings.data.audio.volumeFeedbackSoundFile = paths[0];
+                  }
+                }
   }
 }

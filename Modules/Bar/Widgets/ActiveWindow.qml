@@ -46,6 +46,8 @@ Item {
   // Maximum widget width with user settings support
   readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth || 0, screen ? screen.width * 0.06 : 0)
   readonly property bool useFixedWidth: (widgetSettings.useFixedWidth !== undefined) ? widgetSettings.useFixedWidth : (widgetMetadata.useFixedWidth || false)
+  readonly property string textColorKey: (widgetSettings.textColor !== undefined) ? widgetSettings.textColor : widgetMetadata.textColor
+  readonly property color textColor: Color.resolveColorKey(textColorKey)
 
   readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
@@ -91,7 +93,7 @@ Item {
   function calculateContentWidth() {
     // Calculate the actual content width based on visible elements
     var contentWidth = 0;
-    var margins = Style.marginS * 2; // Left and right margins
+    var margins = Style.margin2S; // Left and right margins
 
     // Icon width (if visible)
     if (showIcon) {
@@ -103,7 +105,7 @@ Item {
     contentWidth += titleContainer.measuredWidth;
 
     // Additional small margin for text
-    contentWidth += Style.marginXS;
+    contentWidth += Style.margin2XXS;
 
     // Add container margins
     contentWidth += margins;
@@ -257,7 +259,7 @@ Item {
           maxWidth: {
             // Calculate available width based on other elements
             var iconWidth = (showIcon && windowIcon.visible ? (iconSize + Style.marginS) : 0);
-            var totalMargins = Style.marginXS;
+            var totalMargins = Style.margin2XXS;
             var availableWidth = mainContainer.width - iconWidth - totalMargins;
             return Math.max(20, availableWidth);
           }
@@ -269,12 +271,16 @@ Item {
             return NScrollText.ScrollMode.Never;
           }
           forcedHover: mainMouseArea.containsMouse
+          gradientColor: Style.capsuleColor
+          gradientWidth: Math.round(8 * Style.uiScaleRatio)
+          cornerRadius: Style.radiusM
+
           NText {
             text: windowTitle
             pointSize: barFontSize
             applyUiScale: false
             font.weight: Style.fontWeightMedium
-            color: Color.mOnSurface
+            color: root.textColor
           }
         }
       }
@@ -282,8 +288,8 @@ Item {
       // Vertical layout for left/right bars - icon only
       Item {
         id: verticalLayout
-        width: parent.width - Style.marginXL
-        height: parent.height - Style.marginXL
+        width: parent.width - Style.margin2M
+        height: parent.height - Style.margin2M
         x: Style.pixelAlignCenter(parent.width, width)
         y: Style.pixelAlignCenter(parent.height, height)
         visible: isVerticalBar

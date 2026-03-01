@@ -14,6 +14,7 @@ Item {
   property string tooltipText
   property string tooltipDirection: "auto"
   property bool allowClickWhenDisabled: false
+  property bool allowScroll: false
   property bool hovering: false
 
   property color colorBg: Color.mSurfaceVariant
@@ -107,21 +108,28 @@ Item {
       }
       root.exited();
     }
-    onClicked: function (mouse) {
-      if (tooltipText) {
-        TooltipService.hide(root);
-      }
-      if (!root.enabled && !allowClickWhenDisabled) {
-        return;
-      }
-      if (mouse.button === Qt.LeftButton) {
-        root.clicked();
-      } else if (mouse.button === Qt.RightButton) {
-        root.rightClicked();
-      } else if (mouse.button === Qt.MiddleButton) {
-        root.middleClicked();
-      }
-    }
-    onWheel: wheel => root.wheel(wheel.angleDelta.y)
+    onClicked: mouse => {
+                 if (tooltipText) {
+                   TooltipService.hide(root);
+                 }
+                 if (!root.enabled && !allowClickWhenDisabled) {
+                   return;
+                 }
+                 if (mouse.button === Qt.LeftButton) {
+                   root.clicked();
+                 } else if (mouse.button === Qt.RightButton) {
+                   root.rightClicked();
+                 } else if (mouse.button === Qt.MiddleButton) {
+                   root.middleClicked();
+                 }
+               }
+    onWheel: wheel => {
+               if (root.allowScroll) {
+                 root.wheel(wheel.angleDelta.y);
+                 wheel.accepted = false;
+               } else {
+                 wheel.accepted = true;
+               }
+             }
   }
 }

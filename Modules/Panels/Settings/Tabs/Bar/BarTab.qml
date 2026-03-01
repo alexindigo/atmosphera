@@ -24,7 +24,9 @@ ColumnLayout {
     });
   }
 
-  // Signal functions for widgets sub-tab (global widgets only)
+  // Signal functions for widgets sub-tab (global widgets only).
+  // These intentionally edit Settings.data.bar.widgets (global defaults),
+  // not per-screen overrides. Per-screen editing is handled by MonitorWidgetsConfig.qml.
   function _addWidgetToSection(widgetId, section) {
     var newWidget = {
       "id": widgetId
@@ -187,9 +189,14 @@ ColumnLayout {
       checked: subTabBar.currentIndex === 1
     }
     NTabButton {
-      text: I18n.tr("common.monitors")
+      text: I18n.tr("common.behavior")
       tabIndex: 2
       checked: subTabBar.currentIndex === 2
+    }
+    NTabButton {
+      text: I18n.tr("common.monitors")
+      tabIndex: 3
+      checked: subTabBar.currentIndex === 3
     }
   }
 
@@ -212,6 +219,7 @@ ColumnLayout {
       moveWidgetBetweenSections: root._moveWidgetBetweenSections
       onOpenPluginSettings: manifest => pluginSettingsDialog.openPluginSettings(manifest)
     }
+    BehaviorSubTab {}
     MonitorsSubTab {
       addMonitor: root.addMonitor
       removeMonitor: root.removeMonitor

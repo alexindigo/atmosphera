@@ -14,12 +14,12 @@ ColumnLayout {
   signal settingsChanged(var settings)
 
   property bool valueShowBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : widgetMetadata.showBackground
-  property string valueVisualizerType: (widgetData.visualizerType && widgetData.visualizerType !== "") ? widgetData.visualizerType : (widgetMetadata.visualizerType || "linear")
+  property string valueVisualizerType: widgetData.visualizerType ? widgetData.visualizerType : widgetMetadata.visualizerType
   property string valueHideMode: widgetData.hideMode !== undefined ? widgetData.hideMode : widgetMetadata.hideMode
-  property bool valueShowButtons: widgetData.showButtons !== undefined ? widgetData.showButtons : (widgetMetadata.showButtons !== undefined ? widgetMetadata.showButtons : true)
-  property bool valueShowAlbumArt: widgetData.showAlbumArt !== undefined ? widgetData.showAlbumArt : (widgetMetadata.showAlbumArt !== undefined ? widgetMetadata.showAlbumArt : true)
-  property bool valueShowVisualizer: widgetData.showVisualizer !== undefined ? widgetData.showVisualizer : (widgetMetadata.showVisualizer !== undefined ? widgetMetadata.showVisualizer : true)
-  property bool valueRoundedCorners: widgetData.roundedCorners !== undefined ? widgetData.roundedCorners : (widgetMetadata.roundedCorners !== undefined ? widgetMetadata.roundedCorners : true)
+  property bool valueShowButtons: widgetData.showButtons !== undefined ? widgetData.showButtons : widgetMetadata.showButtons
+  property bool valueShowAlbumArt: widgetData.showAlbumArt !== undefined ? widgetData.showAlbumArt : widgetMetadata.showAlbumArt
+  property bool valueShowVisualizer: widgetData.showVisualizer !== undefined ? widgetData.showVisualizer : widgetMetadata.showVisualizer
+  property bool valueRoundedCorners: widgetData.roundedCorners !== undefined ? widgetData.roundedCorners : widgetMetadata.roundedCorners
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
@@ -30,11 +30,7 @@ ColumnLayout {
     settings.showAlbumArt = valueShowAlbumArt;
     settings.showVisualizer = valueShowVisualizer;
     settings.roundedCorners = valueRoundedCorners;
-
-    // Clean up legacy property
-    delete settings.visualizerVisibility;
-
-    return settings;
+    settingsChanged(settings);
   }
 
   NToggle {
@@ -44,8 +40,9 @@ ColumnLayout {
     checked: valueShowBackground
     onToggled: checked => {
                  valueShowBackground = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.showBackground
   }
 
   NToggle {
@@ -55,8 +52,9 @@ ColumnLayout {
     checked: valueRoundedCorners
     onToggled: checked => {
                  valueRoundedCorners = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.roundedCorners
   }
 
   NToggle {
@@ -66,8 +64,9 @@ ColumnLayout {
     checked: valueShowAlbumArt
     onToggled: checked => {
                  valueShowAlbumArt = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.showAlbumArt
   }
 
   NToggle {
@@ -77,8 +76,9 @@ ColumnLayout {
     checked: valueShowVisualizer
     onToggled: checked => {
                  valueShowVisualizer = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.showVisualizer
   }
 
   NToggle {
@@ -88,8 +88,9 @@ ColumnLayout {
     checked: valueShowButtons
     onToggled: checked => {
                  valueShowButtons = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.showButtons
   }
 
   NComboBox {
@@ -114,8 +115,9 @@ ColumnLayout {
     currentKey: valueVisualizerType
     onSelected: key => {
                   valueVisualizerType = key;
-                  settingsChanged(saveSettings());
+                  saveSettings();
                 }
+    defaultValue: widgetMetadata.visualizerType
   }
 
   NComboBox {
@@ -139,7 +141,8 @@ ColumnLayout {
     currentKey: valueHideMode
     onSelected: key => {
                   valueHideMode = key;
-                  settingsChanged(saveSettings());
+                  saveSettings();
                 }
+    defaultValue: widgetMetadata.hideMode
   }
 }

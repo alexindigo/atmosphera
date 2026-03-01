@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import Quickshell
 import qs.Commons
 import qs.Widgets
 
@@ -15,14 +14,6 @@ ColumnLayout {
     checked: Settings.data.general.lockOnSuspend
     onToggled: checked => Settings.data.general.lockOnSuspend = checked
     defaultValue: Settings.getDefaultValue("general.lockOnSuspend")
-  }
-
-  NToggle {
-    label: I18n.tr("panels.lock-screen.compact-lockscreen-label")
-    description: I18n.tr("panels.lock-screen.compact-lockscreen-description")
-    checked: Settings.data.general.compactLockScreen
-    onToggled: checked => Settings.data.general.compactLockScreen = checked
-    defaultValue: Settings.getDefaultValue("general.compactLockScreen")
   }
 
   NToggle {
@@ -75,6 +66,7 @@ ColumnLayout {
     from: 1000
     to: 30000
     stepSize: 1000
+    showReset: true
     value: Settings.data.general.lockScreenCountdownDuration
     onMoved: value => Settings.data.general.lockScreenCountdownDuration = value
     text: Math.round(Settings.data.general.lockScreenCountdownDuration / 1000) + "s"

@@ -66,6 +66,8 @@ Item {
   property var pinned: widgetSettings.pinned || widgetMetadata.pinned || [] // Pinned items (shown inline)
   property bool drawerEnabled: widgetSettings.drawerEnabled !== undefined ? widgetSettings.drawerEnabled : (widgetMetadata.drawerEnabled !== undefined ? widgetMetadata.drawerEnabled : true) // Enable drawer panel
   property bool hidePassive: widgetSettings.hidePassive !== undefined ? widgetSettings.hidePassive : true // Hide passive status items
+  readonly property string chevronColorKey: widgetSettings.chevronColor !== undefined ? widgetSettings.chevronColor : widgetMetadata.chevronColor
+  readonly property color chevronColor: Color.resolveColorKey(chevronColorKey)
   property var filteredItems: [] // Items to show inline (pinned)
   property var dropdownItems: [] // Items to show in drawer (unpinned)
   property int hoveredItemIndex: -1 // Track hovered item for dot indicator
@@ -312,6 +314,27 @@ Item {
     border.width: Style.capsuleBorderWidth
   }
 
+  NPopupContextMenu {
+    id: chevronContextMenu
+
+    model: [
+      {
+        "label": I18n.tr("actions.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   chevronContextMenu.close();
+                   PanelService.closeContextMenu(screen);
+
+                   if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
+
   Flow {
     id: trayFlow
     spacing: 0
@@ -326,13 +349,19 @@ Item {
       visible: root.drawerEnabled && dropdownItems.length > 0 && BarService.getPillDirection(root)
       width: isVertical ? barHeight : capsuleHeight
       height: isVertical ? capsuleHeight : barHeight
-      tooltipText: I18n.tr("tooltips.open-tray-dropdown")
+      tooltipText: {
+        if (PanelService.getPanel("trayDrawerPanel", root.screen)?.isPanelOpen) {
+          return "";
+        } else {
+          return I18n.tr("tooltips.open-tray-dropdown");
+        }
+      }
       tooltipDirection: BarService.getTooltipDirection(root.screen?.name)
       baseSize: capsuleHeight
       applyUiScale: false
       customRadius: Style.radiusL
       colorBg: "transparent"
-      colorFg: Color.mOnSurface
+      colorFg: root.chevronColor
       colorBorder: "transparent"
       colorBorderHover: "transparent"
       icon: {
@@ -349,7 +378,7 @@ Item {
         }
       }
       onClicked: toggleDrawer(this)
-      onRightClicked: toggleDrawer(this)
+      onRightClicked: PanelService.showContextMenu(chevronContextMenu, this, screen)
     }
 
     // Pinned items
@@ -528,7 +557,7 @@ Item {
       applyUiScale: false
       customRadius: Style.radiusL
       colorBg: "transparent"
-      colorFg: Color.mOnSurface
+      colorFg: root.chevronColor
       colorBorder: "transparent"
       colorBorderHover: "transparent"
       icon: {
@@ -545,7 +574,7 @@ Item {
         }
       }
       onClicked: toggleDrawer(this)
-      onRightClicked: toggleDrawer(this)
+      onRightClicked: PanelService.showContextMenu(chevronContextMenu, this, screen)
     }
   } // closes Flow
 }

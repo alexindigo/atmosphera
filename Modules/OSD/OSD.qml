@@ -177,6 +177,9 @@ Variants {
     }
 
     function onBrightnessChanged(newBrightness) {
+      if (!root)
+        return;
+
       root.currentBrightness = newBrightness;
       // Don't show OSD if brightness panel is open
       var brightnessPanel = PanelService.getPanel("brightnessPanel", root.modelData);
@@ -295,6 +298,20 @@ Variants {
       }
     }
 
+    // Register/unregister LockKeysService polling based on whether LockKey OSD is enabled
+    onLockKeyOSDEnabledChanged: {
+      if (lockKeyOSDEnabled) {
+        LockKeysService.registerComponent("osd:" + (modelData?.name || "unknown"));
+      } else {
+        LockKeysService.unregisterComponent("osd:" + (modelData?.name || "unknown"));
+      }
+    }
+    Component.onCompleted: {
+      if (lockKeyOSDEnabled) {
+        LockKeysService.registerComponent("osd:" + (modelData?.name || "unknown"));
+      }
+    }
+
     // LockKeys monitoring with a cleaner approach
     // Only connect when LockKey OSD is enabled to avoid starting the service unnecessarily
     Connections {
@@ -324,6 +341,19 @@ Variants {
       onTriggered: {
         connectBrightnessMonitors();
         root.startupComplete = true;
+      }
+    }
+
+    Component.onDestruction: {
+      LockKeysService.unregisterComponent("osd:" + (modelData?.name || "unknown"));
+      if (typeof BrightnessService !== "undefined" && BrightnessService.monitors) {
+        for (var i = 0; i < BrightnessService.monitors.length; i++) {
+          try {
+            BrightnessService.monitors[i].brightnessUpdated.disconnect(onBrightnessChanged);
+          } catch (e) {
+            // Ignore errors if already disconnected or not connected
+          }
+        }
       }
     }
 
@@ -377,15 +407,15 @@ Variants {
           const fontSize = Style.fontSizeS * Settings.data.ui.fontFixedScale * Style.uiScaleRatio;
           const estimatedWidth = text.length * fontSize * 0.6;
           const iconWidth = Style.fontSizeXL * Style.uiScaleRatio;
-          const margins = Style.marginL * 2;
+          const margins = Style.margin2L;
           const spacing = Style.marginM;
-          const bgMargins = Style.marginM * 1.5 * 2;
+          const bgMargins = Style.margin2M * 1.5;
           return Math.max(shortHWidth, Math.round((estimatedWidth + iconWidth + margins + spacing + bgMargins) * 1.1));
         }
         const iconWidth = Style.fontSizeXL * Style.uiScaleRatio;
-        const margins = Style.marginL * 2; // Left and right content margins
+        const margins = Style.margin2L; // Left and right content margins
         const spacing = Style.marginM; // Spacing between icon and text
-        const bgMargins = Style.marginM * 1.5 * 2; // Background margins
+        const bgMargins = Style.margin2M * 1.5; // Background margins
         const totalWidth = textWidth + iconWidth + margins + spacing + bgMargins;
         // Ensure minimum width and add some buffer
         return Math.max(shortHWidth, Math.round(totalWidth * 1.1));
@@ -408,8 +438,8 @@ Variants {
         const textHeight = charCount * charHeight;
         // Background margins (Style.marginM * 1.5 * 2 for top and bottom)
         const bgMargins = Style.marginM * 1.5 * 2;
-        // Content margins (Style.marginL * 2 for top and bottom)
-        const contentMargins = Style.marginL * 2;
+        // Content margins (Style.margin2L for top and bottom)
+        const contentMargins = Style.margin2L;
         // Icon size: fontSizeXL scaled, with extra space for icon rendering and padding
         const iconSize = Style.fontSizeXL * Style.uiScaleRatio * 1.8; // Add 80% for icon rendering and padding
         // Spacing between text and icon (Style.marginM for lock keys)

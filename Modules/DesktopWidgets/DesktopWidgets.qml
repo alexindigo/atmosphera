@@ -50,7 +50,8 @@ Variants {
     }
 
     // Only create PanelWindow if enabled AND (screen has widgets OR in edit mode)
-    active: modelData && Settings.data.desktopWidgets.enabled && (screenWidgets.length > 0 || DesktopWidgetRegistry.editMode) && !PowerProfileService.noctaliaPerformanceMode
+    // During compositor overview, show widgets only when overviewEnabled is true.
+    active: modelData && Settings.data.desktopWidgets.enabled && (screenWidgets.length > 0 || DesktopWidgetRegistry.editMode) && (!CompositorService.overviewActive || Settings.data.desktopWidgets.overviewEnabled) && !PowerProfileService.noctaliaPerformanceMode && !PanelService.lockScreen?.active
 
     sourceComponent: PanelWindow {
       id: window
@@ -345,8 +346,8 @@ Variants {
           x: panelInternal.isDragging ? panelInternal.dragOffsetX : panelInternal.baseX
           y: panelInternal.isDragging ? panelInternal.dragOffsetY : panelInternal.baseY
 
-          width: controlsLayout.implicitWidth + (Style.marginXL * 2)
-          height: controlsLayout.implicitHeight + (Style.marginXL * 2)
+          width: controlsLayout.implicitWidth + Style.margin2XL
+          height: controlsLayout.implicitHeight + Style.margin2XL
 
           color: Qt.rgba(Color.mSurface.r, Color.mSurface.g, Color.mSurface.b, 0.85)
           radius: Style.radiusL
@@ -452,15 +453,7 @@ Variants {
                 icon: "settings"
                 tooltipText: I18n.tr("actions.open-settings")
                 onClicked: {
-                  if (Settings.data.ui.settingsPanelMode === "window") {
-                    SettingsPanelService.toggleWindow(SettingsPanel.Tab.DesktopWidgets);
-                  } else {
-                    var settingsPanel = PanelService.getPanel("settingsPanel", screenLoader.modelData);
-                    if (settingsPanel) {
-                      settingsPanel.requestedTab = SettingsPanel.Tab.DesktopWidgets;
-                      settingsPanel.toggle();
-                    }
-                  }
+                  SettingsPanelService.toggle(SettingsPanel.Tab.DesktopWidgets, -1, screenLoader.modelData);
                 }
               }
 

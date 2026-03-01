@@ -9,25 +9,27 @@ ColumnLayout {
   spacing: Style.marginM
 
   // Properties to receive data from parent
+  property var screen: null
   property var widgetData: null
   property var widgetMetadata: null
 
   signal settingsChanged(var settings)
 
   // Local state
-  property string valueHideMode: "hidden" // Default to 'Hide When Empty'
+  property string valueHideMode: widgetData.hideMode !== undefined ? widgetData.hideMode : widgetMetadata.hideMode
   // Deprecated: hideWhenIdle now folded into hideMode = "idle"
-  property bool valueHideWhenIdle: (widgetData && widgetData.hideWhenIdle !== undefined) ? widgetData.hideWhenIdle : (widgetMetadata && widgetMetadata.hideWhenIdle !== undefined ? widgetMetadata.hideWhenIdle : false)
-  property bool valueShowAlbumArt: (widgetData && widgetData.showAlbumArt !== undefined) ? widgetData.showAlbumArt : (widgetMetadata && widgetMetadata.showAlbumArt !== undefined ? widgetMetadata.showAlbumArt : false)
-  property bool valuePanelShowAlbumArt: (widgetData && widgetData.panelShowAlbumArt !== undefined) ? widgetData.panelShowAlbumArt : (widgetMetadata && widgetMetadata.panelShowAlbumArt !== undefined ? widgetMetadata.panelShowAlbumArt : true)
-  property bool valueShowArtistFirst: (widgetData && widgetData.showArtistFirst !== undefined) ? widgetData.showArtistFirst : (widgetMetadata && widgetMetadata.showArtistFirst !== undefined ? widgetMetadata.showArtistFirst : true)
-  property bool valueShowVisualizer: (widgetData && widgetData.showVisualizer !== undefined) ? widgetData.showVisualizer : (widgetMetadata && widgetMetadata.showVisualizer !== undefined ? widgetMetadata.showVisualizer : false)
-  property string valueVisualizerType: (widgetData && widgetData.visualizerType) || (widgetMetadata && widgetMetadata.visualizerType) || "linear"
-  property string valueScrollingMode: (widgetData && widgetData.scrollingMode) || (widgetMetadata && widgetMetadata.scrollingMode) || "hover"
-  property int valueMaxWidth: (widgetData && widgetData.maxWidth !== undefined) ? widgetData.maxWidth : (widgetMetadata && widgetMetadata.maxWidth !== undefined ? widgetMetadata.maxWidth : 145)
-  property bool valueUseFixedWidth: (widgetData && widgetData.useFixedWidth !== undefined) ? widgetData.useFixedWidth : (widgetMetadata && widgetMetadata.useFixedWidth !== undefined ? widgetMetadata.useFixedWidth : false)
-  property bool valueShowProgressRing: (widgetData && widgetData.showProgressRing !== undefined) ? widgetData.showProgressRing : (widgetMetadata && widgetMetadata.showProgressRing !== undefined ? widgetMetadata.showProgressRing : true)
+  property bool valueHideWhenIdle: widgetData.hideWhenIdle !== undefined ? widgetData.hideWhenIdle : widgetMetadata.hideWhenIdle
+  property bool valueShowAlbumArt: widgetData.showAlbumArt !== undefined ? widgetData.showAlbumArt : widgetMetadata.showAlbumArt
+  property bool valuePanelShowAlbumArt: widgetData.panelShowAlbumArt !== undefined ? widgetData.panelShowAlbumArt : widgetMetadata.panelShowAlbumArt
+  property bool valueShowArtistFirst: widgetData.showArtistFirst !== undefined ? widgetData.showArtistFirst : widgetMetadata.showArtistFirst
+  property bool valueShowVisualizer: widgetData.showVisualizer !== undefined ? widgetData.showVisualizer : widgetMetadata.showVisualizer
+  property string valueVisualizerType: widgetData.visualizerType !== undefined ? widgetData.visualizerType : widgetMetadata.visualizerType
+  property string valueScrollingMode: widgetData.scrollingMode !== undefined ? widgetData.scrollingMode : widgetMetadata.scrollingMode
+  property int valueMaxWidth: widgetData.maxWidth !== undefined ? widgetData.maxWidth : widgetMetadata.maxWidth
+  property bool valueUseFixedWidth: widgetData.useFixedWidth !== undefined ? widgetData.useFixedWidth : widgetMetadata.useFixedWidth
+  property bool valueShowProgressRing: widgetData.showProgressRing !== undefined ? widgetData.showProgressRing : widgetMetadata.showProgressRing
   property bool valueCompactMode: widgetData.compactMode !== undefined ? widgetData.compactMode : widgetMetadata.compactMode
+  property string valueTextColor: widgetData.textColor !== undefined ? widgetData.textColor : widgetMetadata.textColor
 
   Component.onCompleted: {
     if (widgetData && widgetData.hideMode !== undefined) {
@@ -49,7 +51,8 @@ ColumnLayout {
     settings.useFixedWidth = valueUseFixedWidth;
     settings.showProgressRing = valueShowProgressRing;
     settings.compactMode = valueCompactMode;
-    return settings;
+    settings.textColor = valueTextColor;
+    settingsChanged(settings);
   }
 
   NComboBox {
@@ -77,8 +80,9 @@ ColumnLayout {
     currentKey: root.valueHideMode
     onSelected: key => {
                   root.valueHideMode = key;
-                  settingsChanged(saveSettings());
+                  saveSettings();
                 }
+    defaultValue: widgetMetadata.hideMode
   }
 
   NToggle {
@@ -87,8 +91,9 @@ ColumnLayout {
     checked: valueShowAlbumArt
     onToggled: checked => {
                  valueShowAlbumArt = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.showAlbumArt
   }
 
   NToggle {
@@ -97,8 +102,9 @@ ColumnLayout {
     checked: valueShowArtistFirst
     onToggled: checked => {
                  valueShowArtistFirst = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.showArtistFirst
   }
 
   NToggle {
@@ -107,8 +113,9 @@ ColumnLayout {
     checked: valueShowVisualizer
     onToggled: checked => {
                  valueShowVisualizer = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.showVisualizer
   }
 
   NComboBox {
@@ -132,9 +139,10 @@ ColumnLayout {
     currentKey: valueVisualizerType
     onSelected: key => {
                   valueVisualizerType = key;
-                  settingsChanged(saveSettings());
+                  saveSettings();
                 }
     minimumWidth: 200
+    defaultValue: widgetMetadata.visualizerType
   }
 
   NTextInput {
@@ -144,7 +152,8 @@ ColumnLayout {
     description: I18n.tr("bar.media-mini.max-width-description")
     placeholderText: widgetMetadata.maxWidth
     text: valueMaxWidth
-    onEditingFinished: settingsChanged(saveSettings())
+    onEditingFinished: saveSettings()
+    defaultValue: String(widgetMetadata.maxWidth)
   }
 
   NToggle {
@@ -153,8 +162,9 @@ ColumnLayout {
     checked: valueUseFixedWidth
     onToggled: checked => {
                  valueUseFixedWidth = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.useFixedWidth
   }
 
   NToggle {
@@ -163,8 +173,18 @@ ColumnLayout {
     checked: valueShowProgressRing
     onToggled: checked => {
                  valueShowProgressRing = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.showProgressRing
+  }
+
+  NColorChoice {
+    currentKey: valueTextColor
+    onSelected: key => {
+                  valueTextColor = key;
+                  saveSettings();
+                }
+    defaultValue: widgetMetadata.textColor
   }
 
   NComboBox {
@@ -187,9 +207,10 @@ ColumnLayout {
     currentKey: valueScrollingMode
     onSelected: key => {
                   valueScrollingMode = key;
-                  settingsChanged(saveSettings());
+                  saveSettings();
                 }
     minimumWidth: 200
+    defaultValue: widgetMetadata.scrollingMode
   }
 
   NDivider {
@@ -209,8 +230,9 @@ ColumnLayout {
     checked: valuePanelShowAlbumArt
     onToggled: checked => {
                  valuePanelShowAlbumArt = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.panelShowAlbumArt
   }
 
   NToggle {
@@ -219,7 +241,8 @@ ColumnLayout {
     checked: valueCompactMode
     onToggled: checked => {
                  valueCompactMode = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.compactMode
   }
 }

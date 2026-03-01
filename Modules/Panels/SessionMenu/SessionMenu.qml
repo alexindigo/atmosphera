@@ -18,6 +18,9 @@ SmartPanel {
   readonly property bool largeButtonsStyle: Settings.data.sessionMenu.largeButtonsStyle || false
   readonly property bool largeButtonsLayout: Settings.data.sessionMenu.largeButtonsLayout || "grid"
 
+  // Large buttons style is fullscreen — disable blur behind it
+  blurEnabled: !largeButtonsStyle
+
   // Make panel background transparent for large buttons style
   panelBackgroundColor: largeButtonsStyle ? "transparent" : Color.mSurface
 
@@ -34,7 +37,7 @@ SmartPanel {
     var buttonSpacing = Style.marginS;
     var enabledCount = powerOptions.length;
 
-    var headerSpacing = Settings.data.sessionMenu.showHeader ? (Style.marginL * 2) : 0;
+    var headerSpacing = Settings.data.sessionMenu.showHeader ? Style.margin2L : 0;
     var baseHeight = (Style.marginL * 4) + headerHeight + dividerHeight + headerSpacing;
     var buttonsHeight = enabledCount > 0 ? (buttonHeight * enabledCount) + (buttonSpacing * (enabledCount - 1)) : 0;
 
@@ -103,6 +106,11 @@ SmartPanel {
       "title": I18n.tr("common.reboot"),
       "isShutdown": false
     },
+    "rebootToUefi": {
+      "icon": "reboot",
+      "title": I18n.tr("common.reboot-to-uefi"),
+      "isShutdown": false
+    },
     "logout": {
       "icon": "logout",
       "title": I18n.tr("common.logout"),
@@ -134,7 +142,8 @@ SmartPanel {
                        "title": metadata.title,
                        "isShutdown": metadata.isShutdown,
                        "countdownEnabled": settingOption.countdownEnabled !== undefined ? settingOption.countdownEnabled : true,
-                       "command": settingOption.command || ""
+                       "command": settingOption.command || "",
+                       "keybind": settingOption.keybind || ""
                      });
       }
     }
@@ -151,11 +160,16 @@ SmartPanel {
 
   // Lifecycle handlers
   onOpened: {
-    selectedIndex = -1;
-    ignoreMouseHover = true;
-    globalMouseInitialized = false;
-    mouseTrackingReady = false;
-    mouseTrackingDelayTimer.restart();
+    if (powerOptions.length > 0) {
+      selectedIndex = -1;
+      ignoreMouseHover = true;
+      globalMouseInitialized = false;
+      mouseTrackingReady = false;
+      mouseTrackingDelayTimer.restart();
+    } else {
+      Logger.w("SessionMenu", "Trying to open an empty session menu");
+      root.closeImmediately();
+    }
   }
 
   onClosed: {
@@ -210,31 +224,10 @@ SmartPanel {
     // Stop timer but don't reset other properties yet
     countdownTimer.stop();
 
-    // Find the option to check for custom command
-    var option = null;
-    for (var i = 0; i < powerOptions.length; i++) {
-      if (powerOptions[i].action === action) {
-        option = powerOptions[i];
-        break;
-      }
-    }
-
-    // If custom command is defined, execute it
-    if (option && option.command && option.command.trim() !== "") {
-      Logger.i("SessionMenu", "Executing custom command for action:", action, "Command:", option.command);
-      Quickshell.execDetached(["sh", "-c", option.command]);
-      cancelTimer();
-      root.close();
-      return;
-    }
-
-    // Otherwise, use default behavior
+    // Use default behavior or custom command handled by CompositorService
     switch (action) {
     case "lock":
-      // Access lockScreen via PanelService
-      if (PanelService.lockScreen && !PanelService.lockScreen.active) {
-        PanelService.lockScreen.active = true;
-      }
+      CompositorService.lock();
       break;
     case "suspend":
       // Check if we should lock before suspending
@@ -249,6 +242,9 @@ SmartPanel {
       break;
     case "reboot":
       CompositorService.reboot();
+      break;
+    case "rebootToUefi":
+      CompositorService.rebootToUefi();
       break;
     case "logout":
       CompositorService.logout();
@@ -334,13 +330,15 @@ SmartPanel {
       newCol = newCol - 1 < 0 ? grid.itemsInRow(newRow) - 1 : newCol - 1;
       break;
     case "right":
-      newCol = newCol + 1 >= grid.itemsInRow(newRow) ? 0 : newCol + 1;
+      // We already moved to newCol to 0 if grid.currentCol was negative
+      newCol = grid.currentCol < 0 ? newRow : newCol + 1 >= grid.itemsInRow(newRow) ? 0 : newCol + 1;
       break;
     case "up":
       newRow = newRow - 1 < 0 ? grid.rows - 1 : newRow - 1;
       break;
     case "down":
-      newRow = newRow + 1 >= grid.rows ? 0 : newRow + 1;
+      // We already moved to newRow to 0 if grid.currentRow was negative
+      newRow = grid.currentRow < 0 ? newRow : newRow + 1 >= grid.rows ? 0 : newRow + 1;
       break;
     }
 
@@ -363,40 +361,11 @@ SmartPanel {
     }
   }
 
-  // Override keyboard handlers from SmartPanel
-  function onEscapePressed() {
-    if (timerActive) {
-      cancelTimer();
-    } else {
-      root.close();
-    }
+  function checkKey(event, settingName) {
+    return Keybinds.checkKey(event, settingName, Settings);
   }
 
-  function onTabPressed() {
-    selectNextWrapped();
-  }
-
-  function onBackTabPressed() {
-    selectPreviousWrapped();
-  }
-
-  function onLeftPressed() {
-    if (largeButtonsStyle) {
-      navigateGrid("left");
-    } else {
-      selectPreviousWrapped();
-    }
-  }
-
-  function onRightPressed() {
-    if (largeButtonsStyle) {
-      navigateGrid("right");
-    } else {
-      selectNextWrapped();
-    }
-  }
-
-  function onUpPressed() {
+  function handleUp() {
     if (largeButtonsStyle) {
       navigateGrid("up");
     } else {
@@ -404,7 +373,7 @@ SmartPanel {
     }
   }
 
-  function onDownPressed() {
+  function handleDown() {
     if (largeButtonsStyle) {
       navigateGrid("down");
     } else {
@@ -412,41 +381,89 @@ SmartPanel {
     }
   }
 
-  function onReturnPressed() {
+  function handleLeft() {
+    if (largeButtonsStyle) {
+      navigateGrid("left");
+    } else {
+      selectPreviousWrapped();
+    }
+  }
+
+  function handleRight() {
+    if (largeButtonsStyle) {
+      navigateGrid("right");
+    } else {
+      selectNextWrapped();
+    }
+  }
+
+  function handleEnter() {
     activate();
   }
 
+  function handleEscape() {
+    if (timerActive) {
+      cancelTimer();
+    } else {
+      root.close();
+    }
+  }
+
+  // Override keyboard handlers from SmartPanel
+  function onEscapePressed() {
+    handleEscape();
+  }
+  function onTabPressed() {
+    selectNextWrapped();
+  }
+  function onBackTabPressed() {
+    selectPreviousWrapped();
+  }
+  function onLeftPressed() {
+    handleLeft();
+  }
+  function onRightPressed() {
+    handleRight();
+  }
+  function onUpPressed() {
+    handleUp();
+  }
+  function onDownPressed() {
+    handleDown();
+  }
   function onEnterPressed() {
-    activate();
+    handleEnter();
   }
-
   function onHomePressed() {
     selectFirst();
   }
-
   function onEndPressed() {
     selectLast();
   }
 
-  function onCtrlJPressed() {
-    selectNextWrapped();
-  }
+  function checkKeybind(event) {
+    if (powerOptions.length === 0)
+      return false;
 
-  function onCtrlKPressed() {
-    selectPreviousWrapped();
-  }
+    // Construct key string in the same format as the recorder
+    // Ignore modifier keys by themselves
+    if (event.key === Qt.Key_Control || event.key === Qt.Key_Shift || event.key === Qt.Key_Alt || event.key === Qt.Key_Meta) {
+      return false;
+    }
 
-  function onNumberPressed(number) {
-    if (!Settings.data.sessionMenu.showNumberLabels) {
-      return;
+    const pressedKeybind = Keybinds.getKeybindString(event);
+    if (!pressedKeybind)
+      return false;
+
+    for (var i = 0; i < powerOptions.length; i++) {
+      const option = powerOptions[i];
+      if (option.keybind === pressedKeybind) {
+        selectedIndex = i;
+        startTimer(option.action);
+        return true;
+      }
     }
-    // Number is 1-based, convert to 0-based index
-    const index = number - 1;
-    if (index >= 0 && index < powerOptions.length) {
-      const option = powerOptions[index];
-      selectedIndex = index;
-      startTimer(option.action);
-    }
+    return false;
   }
 
   // Countdown timer
@@ -481,6 +498,53 @@ SmartPanel {
       }
     }
 
+    Keys.onPressed: event => {
+                      // Check custom entry keybinds first
+                      if (root.checkKeybind(event)) {
+                        event.accepted = true;
+                        return;
+                      }
+
+                      // Check global navigation keybinds
+                      if (checkKey(event, 'up')) {
+                        handleUp();
+                        event.accepted = true;
+                        return;
+                      }
+                      if (checkKey(event, 'down')) {
+                        handleDown();
+                        event.accepted = true;
+                        return;
+                      }
+                      if (checkKey(event, 'left')) {
+                        handleLeft();
+                        event.accepted = true;
+                        return;
+                      }
+                      if (checkKey(event, 'right')) {
+                        handleRight();
+                        event.accepted = true;
+                        return;
+                      }
+                      if (checkKey(event, 'enter')) {
+                        handleEnter();
+                        event.accepted = true;
+                        return;
+                      }
+                      if (checkKey(event, 'escape')) {
+                        handleEscape();
+                        event.accepted = true;
+                        return;
+                      }
+
+                      // Block default keys if they weren't matched above
+                      // This prevents 'Up' from working if rebinned to something else
+                      if (event.key === Qt.Key_Up || event.key === Qt.Key_Down || event.key === Qt.Key_Left || event.key === Qt.Key_Right || event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Escape) {
+                        event.accepted = true;
+                        return;
+                      }
+                    }
+
     HoverHandler {
       id: globalHoverHandler
 
@@ -506,17 +570,17 @@ SmartPanel {
       }
     }
 
-    // Timer text for large buttons style (above buttons) - positioned absolutely with background
+    // Timer text for large buttons style, positioned absolutely with background
     Rectangle {
       id: timerTextContainer
       visible: largeButtonsStyle && timerActive
       anchors.bottom: largeButtonsContainer.top
       anchors.horizontalCenter: largeButtonsContainer.horizontalCenter
       anchors.bottomMargin: Style.marginM
-      width: timerText.width + Style.marginXL * 2
-      height: timerText.height + Style.marginL * 2
+      width: timerText.width + Style.margin2XL
+      height: timerText.height + Style.margin2L
       radius: Style.radiusM
-      color: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+      color: Color.mSurfaceVariant
       border.color: Color.mOutline
       border.width: Style.borderS
       z: 1000
@@ -530,7 +594,7 @@ SmartPanel {
                       })
         font.weight: Style.fontWeightBold
         pointSize: Style.fontSizeL
-        color: Color.mOnSurface
+        color: Color.mOnSurfaceVariant
       }
     }
 
@@ -566,6 +630,7 @@ SmartPanel {
               startTimer(modelData.action);
             }
             pending: timerActive && pendingAction === modelData.action
+            keybind: modelData.keybind || ""
           }
         }
       }
@@ -576,6 +641,7 @@ SmartPanel {
       visible: !largeButtonsStyle
       anchors.fill: parent
       anchors.margins: Style.marginL
+      color: Color.mSurfaceVariant
 
       ColumnLayout {
         anchors.fill: parent
@@ -647,6 +713,7 @@ SmartPanel {
                 startTimer(modelData.action);
               }
               pending: timerActive && pendingAction === modelData.action
+              keybind: modelData.keybind || ""
             }
           }
         }
@@ -675,57 +742,6 @@ SmartPanel {
   // Custom power button component
   component PowerButton: Rectangle {
     id: buttonRoot
-    // Keybind indicator and countdown text at far right
-    Item {
-      id: indicatorGroup
-      width: (countdownText.visible ? countdownText.width + Style.marginXS : 0) + numberIndicatorRect.width
-      height: numberIndicatorRect.height
-      anchors.verticalCenter: parent.verticalCenter
-      anchors.right: parent.right
-      anchors.rightMargin: Style.marginM
-      z: 20
-
-      // Countdown as plain text (left of keybind)
-      NText {
-        id: countdownText
-        visible: !Settings.data.sessionMenu.showHeader && buttonRoot.pending && timerActive && pendingAction === modelData.action
-        anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
-        text: Math.ceil(timeRemaining / 1000)
-        pointSize: Style.fontSizeS
-        color: Color.mPrimary
-        font.weight: Style.fontWeightBold
-      }
-
-      // Number indicator (keybind)
-      Rectangle {
-        id: numberIndicatorRect
-        anchors.left: countdownText.visible ? countdownText.right : parent.left
-        anchors.leftMargin: countdownText.visible ? Style.marginXS : 0
-        anchors.verticalCenter: parent.verticalCenter
-        width: Style.marginXL
-        height: width
-        radius: Math.min(Style.radiusM, height / 2)
-        color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mPrimary : Qt.alpha(Color.mSurfaceVariant, 0.5)
-        border.width: Style.borderS
-        border.color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mPrimary : Color.mOutline
-        visible: Settings.data.sessionMenu.showNumberLabels && buttonRoot.number > 0
-
-        NText {
-          anchors.centerIn: parent
-          text: buttonRoot.number
-          pointSize: Style.fontSizeS
-          color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mOnPrimary : Color.mOnSurface
-
-          Behavior on color {
-            ColorAnimation {
-              duration: Style.animationFast
-              easing.type: Easing.OutCirc
-            }
-          }
-        }
-      }
-    }
 
     property string icon: ""
     property string title: ""
@@ -733,6 +749,7 @@ SmartPanel {
     property bool isShutdown: false
     property bool isSelected: false
     property int number: 0
+    property string keybind: ""
     property int buttonIndex: -1
 
     // Effective hover state that respects ignoreMouseHover
@@ -763,6 +780,7 @@ SmartPanel {
     }
 
     Item {
+      id: contentItem
       anchors.fill: parent
       anchors.margins: Style.marginM
 
@@ -794,13 +812,65 @@ SmartPanel {
         }
       }
 
+      // Keybind indicator and countdown text at far right
+      Item {
+        id: indicatorGroup
+        width: (countdownText.visible ? countdownText.width + Style.marginXS : 0) + numberIndicatorRect.width
+        height: numberIndicatorRect.height
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
+        z: 20
+
+        // Countdown as plain text (left of keybind)
+        NText {
+          id: countdownText
+          visible: !Settings.data.sessionMenu.showHeader && buttonRoot.pending && timerActive && pendingAction === modelData.action
+          anchors.left: parent.left
+          anchors.verticalCenter: parent.verticalCenter
+          text: Math.ceil(timeRemaining / 1000)
+          pointSize: Style.fontSizeS
+          color: Color.mPrimary
+          font.weight: Style.fontWeightBold
+        }
+
+        // Keybind indicator
+        Rectangle {
+          id: numberIndicatorRect
+          anchors.left: countdownText.visible ? countdownText.right : parent.left
+          anchors.leftMargin: countdownText.visible ? Style.marginXS : 0
+          anchors.verticalCenter: parent.verticalCenter
+          width: labelText.implicitWidth + Style.margin2M
+          height: labelText.height + Style.margin2XS
+          radius: Math.min(Style.radiusM, height / 2)
+          color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mOnPrimary : Color.mSurface
+          border.width: Style.borderS
+          border.color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mOnPrimary : Color.mOutline
+          visible: Settings.data.sessionMenu.showKeybinds && (buttonRoot.keybind !== "") && !buttonRoot.pending
+
+          NText {
+            id: labelText
+            anchors.centerIn: parent
+            text: buttonRoot.keybind
+            pointSize: Style.fontSizeXS
+            color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mPrimary : Color.mOnSurface
+
+            Behavior on color {
+              ColorAnimation {
+                duration: Style.animationFast
+                easing.type: Easing.OutCirc
+              }
+            }
+          }
+        }
+      }
+
       // Text content in the middle
       ColumnLayout {
         anchors.left: iconElement.right
-        anchors.right: numberIndicator.visible ? numberIndicator.left : parent.right
+        anchors.right: indicatorGroup.left
         anchors.verticalCenter: parent.verticalCenter
         anchors.leftMargin: Style.marginL
-        anchors.rightMargin: numberIndicator.visible ? Style.marginM : 0
+        anchors.rightMargin: Style.marginM
         spacing: 0
 
         NText {
@@ -812,39 +882,6 @@ SmartPanel {
               return Color.mPrimary;
             if (buttonRoot.isShutdown && !buttonRoot.isSelected && !buttonRoot.effectiveHover)
               return Color.mError;
-            if (buttonRoot.isSelected || buttonRoot.effectiveHover)
-              return Color.mOnHover;
-            return Color.mOnSurface;
-          }
-
-          Behavior on color {
-            ColorAnimation {
-              duration: Style.animationFast
-              easing.type: Easing.OutCirc
-            }
-          }
-        }
-      }
-
-      // Number indicator on the right (when not pending)
-      Rectangle {
-        id: numberIndicator
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        width: Style.marginXL
-        height: width
-        radius: Math.min(Style.radiusM, height / 2)
-        color: Qt.alpha(Color.mSurfaceVariant, 0.5)
-        border.width: Style.borderS
-        border.color: Color.mOutline
-        visible: Settings.data.sessionMenu.showNumberLabels && buttonRoot.number > 0 && !buttonRoot.pending
-
-        NText {
-          id: numberText
-          anchors.centerIn: parent
-          text: buttonRoot.number
-          pointSize: Style.fontSizeS
-          color: {
             if (buttonRoot.isSelected || buttonRoot.effectiveHover)
               return Color.mOnHover;
             return Color.mOnSurface;
@@ -872,6 +909,12 @@ SmartPanel {
         }
       }
 
+      onExited: {
+        if (!root.ignoreMouseHover && selectedIndex === buttonRoot.buttonIndex) {
+          selectedIndex = -1;
+        }
+      }
+
       onClicked: buttonRoot.clicked()
     }
   }
@@ -886,6 +929,7 @@ SmartPanel {
     property bool isShutdown: false
     property bool isSelected: false
     property int number: 0
+    property string keybind: ""
     property int buttonIndex: -1
 
     // Effective hover state that respects ignoreMouseHover
@@ -904,7 +948,7 @@ SmartPanel {
       if (isSelected || effectiveHover) {
         return Qt.alpha(Color.mPrimary, 1.0);
       }
-      return Qt.alpha(Color.mSurfaceVariant, Settings.data.ui.panelBackgroundOpacity);
+      return Color.mSurface;
     }
 
     border.width: Style.borderS
@@ -1026,29 +1070,29 @@ SmartPanel {
       }
     }
 
-    // Number indicator in top-right corner
+    // Keybind/Number indicator in top-right corner
     Rectangle {
       anchors.top: parent.top
       anchors.right: parent.right
       anchors.margins: Style.marginM
-      width: Style.fontSizeM * 2
-      height: width
+      width: largeNumberText.implicitWidth + Style.margin2M
+      height: largeNumberText.implicitHeight + Style.margin2XS
       radius: Math.min(Style.radiusM, height / 2)
-      color: Qt.alpha(Color.mSurfaceVariant, 0.7)
+      color: (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover) ? Color.mOnPrimary : Qt.alpha(Color.mSurfaceVariant, 0.7)
       border.width: Style.borderS
-      border.color: Color.mOutline
-      visible: Settings.data.sessionMenu.showNumberLabels && largeButtonRoot.number > 0 && !largeButtonRoot.pending
+      border.color: (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover) ? Color.mOnPrimary : Color.mOutline
+      visible: Settings.data.sessionMenu.showKeybinds && (largeButtonRoot.keybind !== "") && !largeButtonRoot.pending
       z: 10
 
       NText {
         id: largeNumberText
         anchors.centerIn: parent
-        text: largeButtonRoot.number
-        pointSize: Style.fontSizeM
+        text: largeButtonRoot.keybind
+        pointSize: Style.fontSizeS
         color: {
           if (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover)
-            return Color.mOnPrimary;
-          return Color.mOnSurface;
+            return Color.mPrimary;
+          return Color.mOnSurfaceVariant;
         }
 
         Behavior on color {
@@ -1069,6 +1113,12 @@ SmartPanel {
       onEntered: {
         if (!root.ignoreMouseHover) {
           selectedIndex = largeButtonRoot.buttonIndex;
+        }
+      }
+
+      onExited: {
+        if (!root.ignoreMouseHover && selectedIndex === largeButtonRoot.buttonIndex) {
+          selectedIndex = -1;
         }
       }
 

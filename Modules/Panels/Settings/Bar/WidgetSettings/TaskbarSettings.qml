@@ -9,6 +9,7 @@ ColumnLayout {
   spacing: Style.marginM
 
   // Properties to receive data from parent
+  property var screen: null
   property var widgetData: null
   property var widgetMetadata: null
 
@@ -17,7 +18,7 @@ ColumnLayout {
   readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
 
   // Local state
-  property string valueHideMode: "hidden"
+  property string valueHideMode: widgetData.hideMode !== undefined ? widgetData.hideMode : widgetMetadata.hideMode
   property bool valueOnlyActiveWorkspaces: widgetData.onlyActiveWorkspaces !== undefined ? widgetData.onlyActiveWorkspaces : widgetMetadata.onlyActiveWorkspaces
   property bool valueOnlySameOutput: widgetData.onlySameOutput !== undefined ? widgetData.onlySameOutput : widgetMetadata.onlySameOutput
   property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : widgetMetadata.colorizeIcons
@@ -48,7 +49,7 @@ ColumnLayout {
     settings.titleWidth = parseInt(titleWidthInput.text) || widgetMetadata.titleWidth;
     settings.showPinnedApps = valueShowPinnedApps;
     settings.iconScale = valueIconScale;
-    return settings;
+    settingsChanged(settings);
   }
 
   NComboBox {
@@ -72,8 +73,9 @@ ColumnLayout {
     currentKey: root.valueHideMode
     onSelected: key => {
                   root.valueHideMode = key;
-                  settingsChanged(saveSettings());
+                  saveSettings();
                 }
+    defaultValue: widgetMetadata.hideMode
   }
 
   NToggle {
@@ -83,8 +85,9 @@ ColumnLayout {
     checked: root.valueOnlySameOutput
     onToggled: checked => {
                  root.valueOnlySameOutput = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.onlySameOutput
   }
 
   NToggle {
@@ -94,8 +97,9 @@ ColumnLayout {
     checked: root.valueOnlyActiveWorkspaces
     onToggled: checked => {
                  root.valueOnlyActiveWorkspaces = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.onlyActiveWorkspaces
   }
 
   NToggle {
@@ -105,8 +109,9 @@ ColumnLayout {
     checked: root.valueColorizeIcons
     onToggled: checked => {
                  root.valueColorizeIcons = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.colorizeIcons
   }
 
   NToggle {
@@ -116,8 +121,9 @@ ColumnLayout {
     checked: root.valueShowPinnedApps
     onToggled: checked => {
                  root.valueShowPinnedApps = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.showPinnedApps
   }
 
   NValueSlider {
@@ -127,10 +133,12 @@ ColumnLayout {
     from: 0.5
     to: 1
     stepSize: 0.01
+    showReset: true
     value: root.valueIconScale
+    defaultValue: widgetMetadata.iconScale
     onMoved: value => {
                root.valueIconScale = value;
-               settingsChanged(saveSettings());
+               saveSettings();
              }
     text: Math.round(root.valueIconScale * 100) + "%"
   }
@@ -142,9 +150,10 @@ ColumnLayout {
     checked: root.valueShowTitle
     onToggled: checked => {
                  root.valueShowTitle = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
     enabled: !isVerticalBar
+    defaultValue: widgetMetadata.showTitle
   }
 
   NTextInput {
@@ -155,7 +164,8 @@ ColumnLayout {
     description: I18n.tr("bar.taskbar.title-width-description")
     text: widgetData.titleWidth || widgetMetadata.titleWidth
     placeholderText: I18n.tr("placeholders.enter-width-pixels")
-    onEditingFinished: settingsChanged(saveSettings())
+    onEditingFinished: saveSettings()
+    defaultValue: String(widgetMetadata.titleWidth)
   }
 
   NToggle {
@@ -166,8 +176,9 @@ ColumnLayout {
     checked: root.valueSmartWidth
     onToggled: checked => {
                  root.valueSmartWidth = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.smartWidth
   }
 
   NValueSlider {
@@ -178,10 +189,12 @@ ColumnLayout {
     from: 10
     to: 100
     stepSize: 5
+    showReset: true
     value: root.valueMaxTaskbarWidth
+    defaultValue: widgetMetadata.maxTaskbarWidth
     onMoved: value => {
                root.valueMaxTaskbarWidth = Math.round(value);
-               settingsChanged(saveSettings());
+               saveSettings();
              }
     text: Math.round(root.valueMaxTaskbarWidth) + "%"
   }

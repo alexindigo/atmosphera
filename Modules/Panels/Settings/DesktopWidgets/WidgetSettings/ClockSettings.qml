@@ -16,11 +16,11 @@ ColumnLayout {
   signal settingsChanged(var settings)
 
   property bool valueShowBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : widgetMetadata.showBackground
-  property bool valueRoundedCorners: widgetData.roundedCorners !== undefined ? widgetData.roundedCorners : true
+  property bool valueRoundedCorners: widgetData.roundedCorners !== undefined ? widgetData.roundedCorners : widgetMetadata.roundedCorners
   property string valueClockStyle: widgetData.clockStyle !== undefined ? widgetData.clockStyle : widgetMetadata.clockStyle
-  property bool valueUsePrimaryColor: widgetData.usePrimaryColor !== undefined ? widgetData.usePrimaryColor : widgetMetadata.usePrimaryColor
+  property string valueClockColor: widgetData.clockColor !== undefined ? widgetData.clockColor : widgetMetadata.clockColor
   property bool valueUseCustomFont: widgetData.useCustomFont !== undefined ? widgetData.useCustomFont : widgetMetadata.useCustomFont
-  property string valueCustomFont: widgetData.customFont !== undefined ? widgetData.customFont : ""
+  property string valueCustomFont: widgetData.customFont !== undefined ? widgetData.customFont : widgetMetadata.custonFont
   property string valueFormat: widgetData.format !== undefined ? widgetData.format : widgetMetadata.format
 
   // Track the currently focused input field
@@ -34,11 +34,11 @@ ColumnLayout {
     settings.showBackground = valueShowBackground;
     settings.roundedCorners = valueRoundedCorners;
     settings.clockStyle = valueClockStyle;
-    settings.usePrimaryColor = valueUsePrimaryColor;
+    settings.clockColor = valueClockColor;
     settings.useCustomFont = valueUseCustomFont;
     settings.customFont = valueCustomFont;
     settings.format = valueFormat.trim();
-    return settings;
+    settingsChanged(settings);
   }
 
   // Function to insert token at cursor position in the focused input
@@ -65,7 +65,7 @@ ColumnLayout {
 
       // Ensure the input keeps focus
       input.focus = true;
-      settingsChanged(saveSettings());
+      saveSettings();
     }
   }
 
@@ -95,19 +95,20 @@ ColumnLayout {
     ]
     onSelected: key => {
                   valueClockStyle = key;
-                  settingsChanged(saveSettings());
+                  saveSettings();
                 }
+    defaultValue: widgetMetadata.clockStyle
   }
 
-  NToggle {
-    Layout.fillWidth: true
-    label: I18n.tr("bar.clock.use-primary-color-label")
-    description: I18n.tr("bar.clock.use-primary-color-description")
-    checked: valueUsePrimaryColor
-    onToggled: checked => {
-                 valueUsePrimaryColor = checked;
-                 settingsChanged(saveSettings());
-               }
+  NColorChoice {
+    label: I18n.tr("common.select-color")
+    description: I18n.tr("common.select-color-description")
+    currentKey: valueClockColor
+    onSelected: key => {
+                  valueClockColor = key;
+                  saveSettings();
+                }
+    defaultValue: widgetMetadata.clockColor
   }
 
   NToggle {
@@ -117,8 +118,9 @@ ColumnLayout {
     checked: valueUseCustomFont
     onToggled: checked => {
                  valueUseCustomFont = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.useCustomFont
   }
 
   NSearchableComboBox {
@@ -134,8 +136,10 @@ ColumnLayout {
     minimumWidth: 300
     onSelected: function (key) {
       valueCustomFont = key;
-      settingsChanged(saveSettings());
+      saveSettings();
     }
+    enabled: valueClockStyle === "minimal"
+    defaultValue: Settings.data.ui.fontDefault
   }
 
   NDivider {
@@ -181,6 +185,7 @@ ColumnLayout {
             });
           }
         }
+        defaultValue: widgetMetadata.format
       }
     }
 
@@ -225,7 +230,7 @@ ColumnLayout {
                 family: valueUseCustomFont && valueCustomFont ? valueCustomFont : Settings.data.ui.fontDefault
                 pointSize: Style.fontSizeM
                 font.weight: Style.fontWeightBold
-                color: valueUsePrimaryColor ? Color.mPrimary : Color.mOnSurface
+                color: Color.resolveColorKey(valueClockColor)
                 wrapMode: Text.WordWrap
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
 
@@ -266,8 +271,9 @@ ColumnLayout {
     checked: valueShowBackground
     onToggled: checked => {
                  valueShowBackground = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.showBackground
   }
 
   NToggle {
@@ -278,7 +284,8 @@ ColumnLayout {
     checked: valueRoundedCorners
     onToggled: checked => {
                  valueRoundedCorners = checked;
-                 settingsChanged(saveSettings());
+                 saveSettings();
                }
+    defaultValue: widgetMetadata.roundedCorners
   }
 }

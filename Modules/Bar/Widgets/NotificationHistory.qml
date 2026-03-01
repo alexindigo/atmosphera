@@ -36,21 +36,9 @@ NIconButton {
   readonly property bool hideWhenZero: widgetSettings.hideWhenZero !== undefined ? widgetSettings.hideWhenZero : widgetMetadata.hideWhenZero
   readonly property bool hideWhenZeroUnread: widgetSettings.hideWhenZeroUnread !== undefined ? widgetSettings.hideWhenZeroUnread : widgetMetadata.hideWhenZeroUnread
   readonly property string unreadBadgeColor: widgetSettings.unreadBadgeColor !== undefined ? widgetSettings.unreadBadgeColor : widgetMetadata.unreadBadgeColor
+  readonly property string iconColorKey: widgetSettings.iconColor !== undefined ? widgetSettings.iconColor : widgetMetadata.iconColor
 
-  readonly property color badgeColor: {
-    switch (unreadBadgeColor) {
-    case "primary":
-      return Color.mPrimary;
-    case "secondary":
-      return Color.mSecondary;
-    case "tertiary":
-      return Color.mTertiary;
-    case "error":
-      return Color.mError;
-    default:
-      return Color.mOnSurface;
-    }
-  }
+  readonly property color badgeColor: Color.resolveColorKey(unreadBadgeColor)
 
   function computeUnreadCount() {
     var since = NotificationService.lastSeenTs;
@@ -71,12 +59,16 @@ NIconButton {
   applyUiScale: false
   customRadius: Style.radiusL
   icon: NotificationService.doNotDisturb ? "bell-off" : "bell"
-  tooltipText: NotificationService.doNotDisturb ? I18n.tr("tooltips.open-notification-history-enable-dnd") : I18n.tr("tooltips.open-notification-history-enable-dnd")
+  tooltipText: {
+    if (PanelService.getPanel("notificationHistoryPanel", screen)?.isPanelOpen) {
+      return "";
+    } else {
+      return I18n.tr("tooltips.open-notification-history-enable-dnd");
+    }
+  }
   tooltipDirection: BarService.getTooltipDirection(screen?.name)
   colorBg: Style.capsuleColor
-  colorFg: Color.mOnSurface
-  colorBorder: "transparent"
-  colorBorderHover: "transparent"
+  colorFg: Color.resolveColorKey(iconColorKey)
   border.color: Style.capsuleBorderColor
   border.width: Style.capsuleBorderWidth
   visible: !((hideWhenZero && NotificationService.historyList.count === 0) || (hideWhenZeroUnread && count === 0))

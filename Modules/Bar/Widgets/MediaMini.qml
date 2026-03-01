@@ -11,10 +11,6 @@ import qs.Widgets.AudioSpectrum
 
 Item {
   id: root
-  Layout.preferredHeight: isVertical ? -1 : Style.getBarHeightForScreen(screenName)
-  Layout.preferredWidth: isVertical ? Style.getBarHeightForScreen(screenName) : -1
-  Layout.fillHeight: false
-  Layout.fillWidth: false
 
   property ShellScreen screen
   property string widgetId: ""
@@ -43,16 +39,18 @@ Item {
   readonly property real barFontSize: Style.getBarFontSizeForScreen(screenName)
 
   // Widget settings
-  readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : "hidden"
-  readonly property bool hideWhenIdle: (widgetSettings.hideWhenIdle !== undefined) ? widgetSettings.hideWhenIdle : (widgetMetadata.hideWhenIdle !== undefined ? widgetMetadata.hideWhenIdle : false)
-  readonly property bool showAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
-  readonly property bool showArtistFirst: (widgetSettings.showArtistFirst !== undefined) ? widgetSettings.showArtistFirst : widgetMetadata.showArtistFirst
-  readonly property bool showVisualizer: (widgetSettings.showVisualizer !== undefined) ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer
-  readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
-  readonly property string scrollingMode: (widgetSettings.scrollingMode !== undefined) ? widgetSettings.scrollingMode : widgetMetadata.scrollingMode
-  readonly property bool showProgressRing: (widgetSettings.showProgressRing !== undefined) ? widgetSettings.showProgressRing : widgetMetadata.showProgressRing
-  readonly property bool useFixedWidth: (widgetSettings.useFixedWidth !== undefined) ? widgetSettings.useFixedWidth : widgetMetadata.useFixedWidth
-  readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
+  readonly property string hideMode: widgetSettings.hideMode !== undefined ? widgetSettings.hideMode : widgetMetadata.hideMode
+  readonly property bool hideWhenIdle: widgetSettings.hideWhenIdle !== undefined ? widgetSettings.hideWhenIdle : widgetMetadata.hideWhenIdle
+  readonly property bool showAlbumArt: widgetSettings.showAlbumArt !== undefined ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
+  readonly property bool showArtistFirst: widgetSettings.showArtistFirst !== undefined ? widgetSettings.showArtistFirst : widgetMetadata.showArtistFirst
+  readonly property bool showVisualizer: widgetSettings.showVisualizer !== undefined ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer
+  readonly property string visualizerType: widgetSettings.visualizerType !== undefined ? widgetSettings.visualizerType : widgetMetadata.visualizerType
+  readonly property string scrollingMode: widgetSettings.scrollingMode !== undefined ? widgetSettings.scrollingMode : widgetMetadata.scrollingMode
+  readonly property bool showProgressRing: widgetSettings.showProgressRing !== undefined ? widgetSettings.showProgressRing : widgetMetadata.showProgressRing
+  readonly property bool useFixedWidth: widgetSettings.useFixedWidth !== undefined ? widgetSettings.useFixedWidth : widgetMetadata.useFixedWidth
+  readonly property real maxWidth: widgetSettings.maxWidth !== undefined ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
+  readonly property string textColorKey: widgetSettings.textColor !== undefined ? widgetSettings.textColor : widgetMetadata.textColor
+  readonly property color textColor: Color.resolveColorKey(textColorKey)
 
   // Dimensions
   readonly property int artSize: Style.toOdd(capsuleHeight * 0.75)
@@ -79,6 +77,11 @@ Item {
   readonly property string cavaComponentId: "bar:mediamini:" + root.screen?.name + ":" + root.section + ":" + root.sectionWidgetIndex
   readonly property bool needsCava: root.showVisualizer && root.visualizerType !== "" && root.visualizerType !== "none"
 
+  Layout.preferredHeight: isVertical ? -1 : Style.getBarHeightForScreen(screenName)
+  Layout.preferredWidth: isVertical ? Style.getBarHeightForScreen(screenName) : -1
+  Layout.fillHeight: false
+  Layout.fillWidth: false
+
   onNeedsCavaChanged: {
     if (root.needsCava) {
       CavaService.registerComponent(root.cavaComponentId);
@@ -91,16 +94,6 @@ Item {
     if (root.needsCava) {
       CavaService.unregisterComponent(root.cavaComponentId);
     }
-  }
-
-  readonly property string tooltipText: {
-    var text = title;
-    var controls = [];
-    controls.push("Left click to open player.");
-    controls.push("Right click for options.");
-    if (MediaService.canGoPrevious)
-      controls.push("Middle click for previous.");
-    return controls.length ? `${text}\n\n${controls.join("\n")}` : text;
   }
 
   // Layout
@@ -124,13 +117,13 @@ Item {
       iconWidth = artSize;
     }
 
-    var margins = isVertical ? 0 : (Style.marginS * 2);
+    var margins = isVertical ? 0 : Style.margin2S;
 
     // Add spacing and text width
     var textWidth = 0;
     if (titleContainer.measuredWidth > 0) {
       margins += Style.marginS;
-      textWidth = titleContainer.measuredWidth + Style.marginXS;
+      textWidth = titleContainer.measuredWidth + Style.margin2XXS;
     }
 
     var total = iconWidth + textWidth + margins;
@@ -236,8 +229,8 @@ Item {
     id: container
     x: Style.pixelAlignCenter(parent.width, width)
     y: Style.pixelAlignCenter(parent.height, height)
-    width: isVertical ? (isHidden ? 0 : verticalSize) : (isHidden ? 0 : contentWidth)
-    height: isVertical ? (isHidden ? 0 : verticalSize) : capsuleHeight
+    width: Style.toOdd(isVertical ? (isHidden ? 0 : verticalSize) : (isHidden ? 0 : contentWidth))
+    height: Style.toOdd(isVertical ? (isHidden ? 0 : verticalSize) : capsuleHeight)
     radius: Style.radiusM
     color: Style.capsuleColor
     border.color: Style.capsuleBorderColor
@@ -265,8 +258,8 @@ Item {
       Loader {
         x: Style.pixelAlignCenter(parent.width, width)
         y: Style.pixelAlignCenter(parent.height, height)
-        width: parent.width
-        height: parent.height
+        width: Style.toOdd(parent.width)
+        height: Style.toOdd(parent.height)
         active: showVisualizer
         z: 0
         sourceComponent: {
@@ -335,10 +328,14 @@ Item {
           cursorShape: hasPlayer ? Qt.PointingHandCursor : Qt.ArrowCursor
           maxWidth: root.maxWidth - root.mainContentWidth
           forcedHover: mainMouseArea.containsMouse
+          gradientColor: Style.capsuleColor
+          gradientWidth: Math.round(8 * Style.uiScaleRatio)
+          cornerRadius: Style.radiusM
+
           NText {
-            // anchors.fill: parent
-            color: hasPlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
+            color: hasPlayer ? root.textColor : Color.mOnSurfaceVariant
             pointSize: barFontSize
+            elide: Text.ElideNone
           }
         }
       }
@@ -347,8 +344,8 @@ Item {
       Item {
         id: verticalLayout
         visible: isVertical
-        width: verticalSize
-        height: width
+        width: Style.toOdd(verticalSize)
+        height: Style.toOdd(width)
         x: Style.pixelAlignCenter(parent.width, width)
         y: Style.pixelAlignCenter(parent.height, height)
         z: 1
@@ -388,22 +385,25 @@ Item {
 
     hoverEnabled: true
     cursorShape: Qt.PointingHandCursor
-    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton | Qt.ForwardButton | Qt.BackButton
 
     onClicked: mouse => {
+                 TooltipService.hide();
                  if (mouse.button === Qt.LeftButton) {
                    PanelService.getPanel("mediaPlayerPanel", screen)?.toggle(container);
                  } else if (mouse.button === Qt.RightButton) {
-                   TooltipService.hide();
                    PanelService.showContextMenu(contextMenu, container, screen);
                  } else if (mouse.button === Qt.MiddleButton && hasPlayer) {
                    MediaService.playPause();
-                   TooltipService.hide();
+                 } else if (mouse.button === Qt.ForwardButton && hasPlayer) {
+                   MediaService.next();
+                 } else if (mouse.button === Qt.BackButton && hasPlayer) {
+                   MediaService.previous();
                  }
                }
 
     onEntered: {
-      if (isVertical || scrollingMode === "never") {
+      if ((isVertical || scrollingMode === "never") && !PanelService.getPanel("mediaPlayerPanel", screen)?.isPanelOpen) {
         TooltipService.show(root, title, BarService.getTooltipDirection(root.screen?.name));
       }
     }

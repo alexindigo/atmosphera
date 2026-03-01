@@ -20,8 +20,8 @@ PanelWindow {
   // Note: screen property is inherited from PanelWindow and should be set by parent
   color: "transparent" // Transparent - background is in MainScreen below
 
-  // Make window pass-through when content is unloaded
-  visible: contentLoaded
+  // Make window pass-through when content is unloaded or bar is hidden via IPC
+  visible: contentLoaded && BarService.effectivelyVisible
 
   Component.onCompleted: {
     Logger.d("BarContentWindow", "Bar content window created for screen:", barWindow.screen?.name);
@@ -43,10 +43,10 @@ PanelWindow {
   readonly property real barHeight: Style.getBarHeightForScreen(barWindow.screen?.name)
 
   // Auto-hide properties
-  readonly property bool autoHide: Settings.data.bar.displayMode === "auto_hide"
+  readonly property bool autoHide: Settings.getBarDisplayModeForScreen(barWindow.screen?.name) === "auto_hide"
   readonly property int hideDelay: Settings.data.bar.autoHideDelay || 500
   readonly property int showDelay: Settings.data.bar.autoShowDelay || 100
-  property bool isHidden: false
+  property bool isHidden: autoHide
 
   // Hover tracking
   property bool barHovered: false
@@ -169,7 +169,39 @@ PanelWindow {
     } else {
       // Load immediately when showing
       unloadTimer.stop();
+      deferredUnloadTimer.stop();
       contentLoaded = true;
+    }
+  }
+
+  // Debounced content unload when bar visibility is toggled.
+  // Rapid toggles keep widgets alive; content is only unloaded after the bar
+  // has been continuously hidden for the debounce period.
+  Timer {
+    id: deferredUnloadTimer
+    interval: 1000
+    onTriggered: {
+      if (!BarService.effectivelyVisible) {
+        barWindow.barHovered = false;
+        barWindow.contentLoaded = false;
+        Logger.d("BarContentWindow", "Debounced content unload for screen:", barWindow.screen?.name);
+      }
+    }
+  }
+
+  Connections {
+    target: BarService
+    function onEffectivelyVisibleChanged() {
+      if (!BarService.effectivelyVisible) {
+        // Bar hidden — start debounced unload
+        deferredUnloadTimer.restart();
+      } else {
+        // Bar shown — cancel pending unload, ensure content is loaded
+        deferredUnloadTimer.stop();
+        if (!barWindow.isHidden) {
+          barWindow.contentLoaded = true;
+        }
+      }
     }
   }
 

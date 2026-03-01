@@ -670,6 +670,22 @@ Item {
     }
   }
 
+  function turnOffMonitors() {
+    try {
+      Quickshell.execDetached(["wlr-randr", "--off"]);
+    } catch (e) {
+      Logger.e("MangoService", "Failed to turn off monitors:", e);
+    }
+  }
+
+  function turnOnMonitors() {
+    try {
+      Quickshell.execDetached(["wlr-randr", "--on"]);
+    } catch (e) {
+      Logger.e("MangoService", "Failed to turn on monitors:", e);
+    }
+  }
+
   function logout() {
     Quickshell.execDetached(["mmsg", "-s", "-q"]);
   }
@@ -691,10 +707,7 @@ Item {
 
   function spawn(command) {
     try {
-      // Convert QML list to JS array if needed (QML lists fail Array.isArray but have length)
-      const cmdArray = Array.isArray(command) ? command : (command && typeof command === "object" && command.length !== undefined) ? Array.from(command) : [command];
-      const cmdStr = cmdArray.join(" ");
-      Quickshell.execDetached(["sh", "-c", "mmsg -d 'spawn," + cmdStr + "'"]);
+      Quickshell.execDetached(["mmsg", "-s", "-d", "spawn_shell," + command.join(" ")]);
     } catch (e) {
       Logger.e("MangoService", "Failed to spawn command:", e);
     }

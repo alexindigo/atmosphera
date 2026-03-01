@@ -10,6 +10,7 @@ ColumnLayout {
   id: root
   spacing: Style.marginL
   Layout.fillWidth: true
+  enabled: Settings.data.notifications.enabled
 
   signal openUnifiedPicker
   signal openLowPicker
@@ -20,7 +21,7 @@ ColumnLayout {
   NBox {
     Layout.fillWidth: true
     visible: !SoundService.multimediaAvailable
-    implicitHeight: unavailableContent.implicitHeight + Style.marginL * 2
+    implicitHeight: unavailableContent.implicitHeight + Style.margin2L
 
     RowLayout {
       id: unavailableContent
@@ -61,6 +62,7 @@ ColumnLayout {
     from: 0
     to: 1
     stepSize: 0.01
+    showReset: true
     value: Settings.data.notifications?.sounds?.volume ?? 0.5
     onMoved: value => Settings.data.notifications.sounds.volume = value
     text: Math.round((Settings.data.notifications?.sounds?.volume ?? 0.5) * 100) + "%"

@@ -45,24 +45,11 @@ Item {
   readonly property string formatVertical: widgetSettings.formatVertical !== undefined ? widgetSettings.formatVertical : widgetMetadata.formatVertical
   readonly property string tooltipFormat: widgetSettings.tooltipFormat !== undefined ? widgetSettings.tooltipFormat : widgetMetadata.tooltipFormat
 
-  readonly property color textColor: {
-    switch (clockColor) {
-    case "primary":
-      return Color.mPrimary;
-    case "secondary":
-      return Color.mSecondary;
-    case "tertiary":
-      return Color.mTertiary;
-    case "error":
-      return Color.mError;
-    default:
-      return Color.mOnSurface;
-    }
-  }
+  readonly property color textColor: Color.resolveColorKey(clockColor)
 
   // Content dimensions for implicit sizing
-  readonly property real contentWidth: isBarVertical ? capsuleHeight : Math.round((isBarVertical ? verticalLoader.implicitWidth : horizontalLoader.implicitWidth) + Style.marginXL)
-  readonly property real contentHeight: isBarVertical ? Math.round(verticalLoader.implicitHeight + Style.marginS * 2) : capsuleHeight
+  readonly property real contentWidth: isBarVertical ? capsuleHeight : Math.round((isBarVertical ? verticalLoader.implicitWidth : horizontalLoader.implicitWidth) + Style.margin2M)
+  readonly property real contentHeight: isBarVertical ? Math.round(verticalLoader.implicitHeight + Style.margin2S) : capsuleHeight
 
   // Size: use implicit width/height
   // BarWidgetLoader sets explicit width/height to extend click area
@@ -118,6 +105,9 @@ Item {
               color: textColor
               wrapMode: Text.WordWrap
               Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+              features: ({
+                           "tnum": 1
+                         })
             }
           }
         }
@@ -142,6 +132,9 @@ Item {
               color: textColor
               wrapMode: Text.WordWrap
               Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+              features: ({
+                           "tnum": 1
+                         })
             }
           }
         }
@@ -194,7 +187,7 @@ Item {
     hoverEnabled: true
     acceptedButtons: Qt.LeftButton | Qt.RightButton
     onEntered: {
-      if (!PanelService.getPanel("clockPanel", screen)?.active) {
+      if (!PanelService.getPanel("clockPanel", screen)?.isPanelOpen) {
         TooltipService.show(root, buildTooltipText(), BarService.getTooltipDirection(root.screen?.name));
         tooltipRefreshTimer.start();
       }
@@ -218,7 +211,7 @@ Item {
     interval: 1000
     repeat: true
     onTriggered: {
-      if (clockMouseArea.containsMouse && !PanelService.getPanel("clockPanel", screen)?.active) {
+      if (clockMouseArea.containsMouse && !PanelService.getPanel("clockPanel", screen)?.isPanelOpen) {
         TooltipService.updateText(buildTooltipText());
       }
     }

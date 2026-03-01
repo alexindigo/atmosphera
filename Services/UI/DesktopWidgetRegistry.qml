@@ -43,12 +43,6 @@ Singleton {
     widgets = widgetsObj;
 
     Logger.i("DesktopWidgetRegistry", "Service started");
-    Logger.d("DesktopWidgetRegistry", "Available widgets:", Object.keys(widgets));
-    Logger.d("DesktopWidgetRegistry", "Clock component:", clockComponent ? "exists" : "null");
-    Logger.d("DesktopWidgetRegistry", "MediaPlayer component:", mediaPlayerComponent ? "exists" : "null");
-    Logger.d("DesktopWidgetRegistry", "Weather component:", weatherComponent ? "exists" : "null");
-    Logger.d("DesktopWidgetRegistry", "Widgets object keys:", Object.keys(widgets));
-    Logger.d("DesktopWidgetRegistry", "Widgets object values check - Clock:", widgets["Clock"] ? "exists" : "null");
   }
 
   property var widgetSettingsMap: ({
@@ -61,31 +55,36 @@ Singleton {
   property var widgetMetadata: ({
                                   "Clock": {
                                     "showBackground": true,
+                                    "roundedCorners": true,
                                     "clockStyle": "digital",
-                                    "usePrimaryColor": false,
+                                    "clockColor": "none",
                                     "useCustomFont": false,
+                                    "customFont": "",
                                     "format": "HH:mm\\nd MMMM yyyy"
                                   },
                                   "MediaPlayer": {
                                     "showBackground": true,
+                                    "roundedCorners": true,
                                     "visualizerType": "linear",
                                     "hideMode": "visible",
                                     "showButtons": true,
                                     "showAlbumArt": true,
-                                    "showVisualizer": true,
-                                    "roundedCorners": true
+                                    "showVisualizer": true
                                   },
                                   "Weather": {
-                                    "showBackground": true
+                                    "showBackground": true,
+                                    "roundedCorners": true
                                   },
                                   "SystemStat": {
                                     "showBackground": true,
+                                    "roundedCorners": true,
                                     "statType": "CPU",
                                     "diskPath": "/",
-                                    "roundedCorners": true,
                                     "layout": "bottom"
                                   }
                                 })
+
+  property var cpuIntensiveWidgets: ["SystemStat"]
 
   // Plugin widget storage (mirroring BarWidgetRegistry pattern)
   property var pluginWidgets: ({})
@@ -115,6 +114,12 @@ Singleton {
   // Helper function to check if widget has user settings
   function widgetHasUserSettings(id) {
     return widgetMetadata[id] !== undefined;
+  }
+
+  function isCpuIntensive(id) {
+    if (pluginWidgetMetadata[id]?.cpuIntensive)
+      return true;
+    return cpuIntensiveWidgets.indexOf(id) >= 0;
   }
 
   // Check if a widget is a plugin widget
