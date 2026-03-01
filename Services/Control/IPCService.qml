@@ -568,7 +568,7 @@ Singleton {
 
     function random(screen: string) {
       if (Settings.data.wallpaper.enabled) {
-        if (screen === "all" || screen.trim().length === 0) {
+        if (!screen || screen === "all" || screen.trim().length === 0) {
           screen = undefined;
         }
         WallpaperService.setRandomWallpaper(screen);

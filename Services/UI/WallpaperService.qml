@@ -437,21 +437,20 @@ Singleton {
       if (screen === undefined) {
         // Pick a random wallpaper per screen
         for (var i = 0; i < Quickshell.screens.length; i++) {
-            var screenName = Quickshell.screens[i].name;
-            var wallpaperList = getWallpapersList(screenName);
+          var screenName = Quickshell.screens[i].name;
+          var wallpaperList = getWallpapersList(screenName);
 
-            if (wallpaperList.length > 0) {
-                var randomIndex = Math.floor(Math.random() * wallpaperList.length);
-                var randomPath = wallpaperList[randomIndex];
-                changeWallpaper(randomPath, screenName);
-            }
+          if (wallpaperList.length > 0) {
+            var randomPath = _pickUnusedRandom(screenName, wallpaperList);
+            changeWallpaper(randomPath, screenName);
+          }
         }
       } else {
-        // Pick a random wallpaper for the screen argument
+        // Pick a random wallpaper for the specified screen
         var wallpaperList = getWallpapersList(screen);
         if (wallpaperList.length > 0) {
-          var randomPath = _pickUnusedRandom(screenName, wallpaperList);
-          changeWallpaper(randomPath, screenName);
+          var randomPath = _pickUnusedRandom(screen, wallpaperList);
+          changeWallpaper(randomPath, screen);
         }
       }
     } else {
@@ -460,7 +459,7 @@ Singleton {
       var wallpaperList = getWallpapersList(Screen.name);
       if (wallpaperList.length > 0) {
         var randomPath = _pickUnusedRandom("all", wallpaperList);
-        changeWallpaper(randomPath, undefined);
+        changeWallpaper(randomPath, screen);
       }
     }
   }
@@ -578,7 +577,7 @@ Singleton {
     if (mode === "alphabetical") {
       setAlphabeticalWallpaper();
     } else {
-      setRandomWallpaper(null);
+      setRandomWallpaper();
     }
   }
 
