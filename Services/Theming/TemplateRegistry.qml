@@ -190,6 +190,10 @@ Singleton {
           "path": "~/.config/Vencord"
         },
         {
+          "name": "vencord-flatpak",
+          "path": "~/.var/app/com.discordapp.Discord/config/Vencord"
+        },
+        {
           "name": "betterdiscord",
           "path": "~/.config/BetterDiscord"
         }
