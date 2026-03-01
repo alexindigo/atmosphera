@@ -45,7 +45,7 @@ Item {
     if (initialized)
       return;
     try {
-      I3.refreshWorkspaces()
+      I3.refreshWorkspaces();
       Qt.callLater(() => {
                      safeUpdateWorkspaces();
                      queryWindowWorkspaces();
@@ -448,17 +448,17 @@ Item {
 
   function handleInputEvent(ev) {
     try {
-      const eventData = JSON.parse(ev)
+      const eventData = JSON.parse(ev);
       if (eventData.change == "xkb_layout" && eventData.input != null) {
-        const input = eventData.input
+        const input = eventData.input;
         if (input.type == "keyboard" && input.xkb_active_layout_name != null) {
-          const layoutName = input.xkb_active_layout_name
-          KeyboardLayoutService.setCurrentLayout(layoutName)
-          Logger.d("SwayService", "Keyboard layout switched:", layoutName)
+          const layoutName = input.xkb_active_layout_name;
+          KeyboardLayoutService.setCurrentLayout(layoutName);
+          Logger.d("SwayService", "Keyboard layout switched:", layoutName);
         }
       }
     } catch (e) {
-      Logger.e("SwayService", "Error handling input event:", e)
+      Logger.e("SwayService", "Error handling input event:", e);
     }
   }
 
@@ -506,7 +506,7 @@ Item {
   I3IpcListener {
     subscriptions: ["input"]
     onIpcEvent: function (event) {
-      handleInputEvent(event.data)
+      handleInputEvent(event.data);
     }
   }
 
