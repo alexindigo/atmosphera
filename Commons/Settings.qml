@@ -25,7 +25,7 @@ Singleton {
   - Default cache directory: ~/.cache/noctalia
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 53
+  readonly property int settingsVersion: 54
   property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
   readonly property string shellName: "noctalia"
   readonly property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
@@ -280,6 +280,7 @@ Singleton {
       property bool lockOnSuspend: true
       property bool showSessionButtonsOnLockScreen: true
       property bool showHibernateOnLockScreen: false
+      property bool enableLockScreenMediaControls: false
       property bool enableShadows: true
       property string shadowDirection: "bottom_right"
       property int shadowOffsetX: 2
@@ -303,7 +304,7 @@ Singleton {
         property list<string> keyDown: ["Down"]
         property list<string> keyLeft: ["Left"]
         property list<string> keyRight: ["Right"]
-        property list<string> keyEnter: ["Return"]
+        property list<string> keyEnter: ["Return", "Enter"]
         property list<string> keyEscape: ["Esc"]
         property list<string> keyRemove: ["Del"]
       }
@@ -545,7 +546,10 @@ Singleton {
       property double deadOpacity: 0.6
       property real animationSpeed: 1.0 // Speed multiplier for hide/show animations (0.1 = slowest, 2.0 = fastest)
       property bool sitOnFrame: false
-      property bool showFrameIndicator: true
+      property bool showDockIndicator: false
+      property int indicatorThickness: 3
+      property string indicatorColor: "primary"
+      property real indicatorOpacity: 0.6
     }
 
     // network

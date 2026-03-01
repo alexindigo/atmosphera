@@ -41,6 +41,8 @@ Singleton {
   property var _suspendMonitor: null
   property var _heartbeatMonitor: null
   property var _customMonitors: ({})
+  property real _suppressUntil: 0
+  property bool _screenOffActive: false
 
   // Signals for external listeners (plugins, modules)
   signal screenOffRequested
@@ -60,9 +62,16 @@ Singleton {
     repeat: false
     onTriggered: {
       const action = root.fadePending;
-      root.fadePending = "";
       root._executeAction(action);
+      overlayCleanupTimer.start();
     }
+  }
+
+  Timer {
+    id: overlayCleanupTimer
+    interval: 500
+    repeat: false
+    onTriggered: root.fadePending = ""
   }
 
   // Counts up idleSeconds while the heartbeat monitor reports idle
@@ -75,16 +84,29 @@ Singleton {
 
   // -------------------------------------------------------
   function cancelFade() {
-    if (fadePending === "")
+    if (fadePending === "") {
+      _restoreMonitors();
       return;
+    }
     Logger.i("IdleService", "Fade cancelled for:", fadePending);
     fadePending = "";
     graceTimer.stop();
+    overlayCleanupTimer.stop();
+    _restoreMonitors();
+  }
+
+  function _restoreMonitors() {
+    if (!_screenOffActive)
+      return;
+    _screenOffActive = false;
+    Logger.i("IdleService", "Restoring monitors (DPMS on)");
+    CompositorService.turnOnMonitors();
   }
 
   function _onIdle(stage) {
-    // Don't re-trigger if already fading something
     if (fadePending !== "")
+      return;
+    if (Date.now() < _suppressUntil)
       return;
     Logger.i("IdleService", "Idle fired:", stage);
     fadePending = stage;
@@ -94,7 +116,9 @@ Singleton {
   function _executeAction(stage) {
     Logger.i("IdleService", "Executing action:", stage);
     if (stage === "screenOff") {
+      root._suppressUntil = Date.now() + (Settings.data.idle.screenOffTimeout * 1000);
       CompositorService.turnOffMonitors();
+      root._screenOffActive = true;
       root.screenOffRequested();
     } else if (stage === "lock") {
       if (PanelService.lockScreen && !PanelService.lockScreen.active) {
@@ -264,6 +288,7 @@ Singleton {
           idleCounter.stop();
           root.idleSeconds = 0;
           root.cancelFade();
+          overlayCleanupTimer.stop();
         }
       });
       _heartbeatMonitor = monitor;

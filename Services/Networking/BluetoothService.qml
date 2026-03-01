@@ -212,7 +212,7 @@ Singleton {
   }
 
   function pollCtlState() {
-    if (!adapter && !ProgramCheckerService.bluetoothctlAvailable) {
+    if (!adapter || !ProgramCheckerService.bluetoothctlAvailable) {
       return;
     }
     if (ctlShowProcess.running) {

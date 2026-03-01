@@ -561,6 +561,14 @@ Item {
     }
   }
 
+  function turnOnMonitors() {
+    try {
+      Quickshell.execDetached([msgCommand, "output", "*", "dpms", "on"]);
+    } catch (e) {
+      Logger.e("SwayService", "Failed to turn on monitors:", e);
+    }
+  }
+
   function logout() {
     try {
       Quickshell.execDetached([msgCommand, "exit"]);

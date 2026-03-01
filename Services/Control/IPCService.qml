@@ -374,7 +374,7 @@ Singleton {
     function lock() {
       // Only lock if not already locked (prevents the red screen issue)
       if (!PanelService.lockScreen.active) {
-        PanelService.lockScreen.active = true;
+        CompositorService.lock();
       }
     }
   }
@@ -400,6 +400,16 @@ Singleton {
       val = Math.max(0.0, Math.min(1.0, val));
 
       BrightnessService.setBrightness(val);
+    }
+  }
+
+  IpcHandler {
+    target: "monitors"
+    function on() {
+      CompositorService.turnOnMonitors();
+    }
+    function off() {
+      CompositorService.turnOffMonitors();
     }
   }
 
@@ -509,11 +519,16 @@ Singleton {
     }
 
     function lock() {
-      CompositorService.lock();
+      if (!PanelService.lockScreen.active) {
+        CompositorService.lock();
+      }
     }
 
     function lockAndSuspend() {
-      CompositorService.lockAndSuspend();
+      // Only lock and suspend if not already locked
+      if (!PanelService.lockScreen.active) {
+        CompositorService.lockAndSuspend();
+      }
     }
   }
 
