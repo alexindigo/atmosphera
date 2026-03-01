@@ -404,6 +404,16 @@ Singleton {
   }
 
   IpcHandler {
+    target: "monitors"
+    function on() {
+      CompositorService.turnOnMonitors();
+    }
+    function off() {
+      CompositorService.turnOffMonitors();
+    }
+  }
+
+  IpcHandler {
     target: "darkMode"
     function toggle() {
       Settings.data.colorSchemes.darkMode = !Settings.data.colorSchemes.darkMode;
