@@ -169,36 +169,18 @@ ColumnLayout {
       Layout.fillWidth: true
       visible: !Settings.data.general.animationDisabled
 
-      RowLayout {
-        spacing: Style.marginL
+      NValueSlider {
         Layout.fillWidth: true
-
-        NValueSlider {
-          Layout.fillWidth: true
-          label: I18n.tr("panels.user-interface.animation-speed-label")
-          description: I18n.tr("panels.user-interface.animation-speed-description")
-          from: 0
-          to: 2.0
-          stepSize: 0.01
-          value: Settings.data.general.animationSpeed
-          defaultValue: Settings.getDefaultValue("general.animationSpeed")
-          onMoved: value => Settings.data.general.animationSpeed = Math.max(value, 0.05)
-          text: Math.round(Settings.data.general.animationSpeed * 100) + "%"
-        }
-
-        Item {
-          Layout.preferredWidth: 30 * Style.uiScaleRatio
-          Layout.preferredHeight: 30 * Style.uiScaleRatio
-
-          NIconButton {
-            icon: "restore"
-            baseSize: Style.baseWidgetSize * 0.8
-            tooltipText: I18n.tr("panels.user-interface.animation-speed-reset")
-            onClicked: Settings.data.general.animationSpeed = Settings.getDefaultValue("general.animationSpeed")
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-          }
-        }
+        label: I18n.tr("panels.user-interface.animation-speed-label")
+        description: I18n.tr("panels.user-interface.animation-speed-description")
+        from: 0
+        to: 2.0
+        stepSize: 0.01
+        showReset: true
+        value: Settings.data.general.animationSpeed
+        defaultValue: Settings.getDefaultValue("general.animationSpeed")
+        onMoved: value => Settings.data.general.animationSpeed = Math.max(value, 0.05)
+        text: Math.round(Settings.data.general.animationSpeed * 100) + "%"
       }
     }
   }
