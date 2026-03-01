@@ -141,28 +141,27 @@ Singleton {
         if (event["repeat-pattern"] !== "") {
           // if there is a repeat pattern, the event must be included each time
           result.push({
-                      uid: event.uid,
-                      calendar: event.calendar,
-                      summary: event.title,
-                      start: parseTimestamp(event["start-long-full"]),
-                      end: parseTimestamp(event["end-long-full"]),
-                      location: event.location,
-                      description: event.description
+                        uid: event.uid,
+                        calendar: event.calendar,
+                        summary: event.title,
+                        start: parseTimestamp(event["start-long-full"]),
+                        end: parseTimestamp(event["end-long-full"]),
+                        location: event.location,
+                        description: event.description
                       });
-          }
-        else if (!duplicates.has(event.uid) ) {
+        } else if (!duplicates.has(event.uid)) {
           // in any other cases, we must remove duplicates using the uid of the event
           result.push({
-                      uid: event.uid,
-                      calendar: event.calendar,
-                      summary: event.title,
-                      start: parseTimestamp(event["start-long-full"]),
-                      end: parseTimestamp(event["end-long-full"]),
-                      location: event.location,
-                      description: event.description
+                        uid: event.uid,
+                        calendar: event.calendar,
+                        summary: event.title,
+                        start: parseTimestamp(event["start-long-full"]),
+                        end: parseTimestamp(event["end-long-full"]),
+                        location: event.location,
+                        description: event.description
                       });
-          duplicates.add(event.uid)
-        } 
+          duplicates.add(event.uid);
+        }
       }
     }
 

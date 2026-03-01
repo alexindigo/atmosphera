@@ -522,7 +522,8 @@ Item {
     if (rightClickExec) {
       Quickshell.execDetached(["sh", "-lc", rightClickExec]);
       Logger.i("CustomButton", `Executing command: ${rightClickExec}`);
-    } if (!rightClickUpdateText) {
+    }
+    if (!rightClickUpdateText) {
       BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
     }
     if (!textStream && rightClickUpdateText) {
@@ -534,7 +535,8 @@ Item {
     if (middleClickExec) {
       Quickshell.execDetached(["sh", "-lc", middleClickExec]);
       Logger.i("CustomButton", `Executing command: ${middleClickExec}`);
-    } if (!middleClickUpdateText) {
+    }
+    if (!middleClickUpdateText) {
       BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
     }
     if (!textStream && middleClickUpdateText) {
