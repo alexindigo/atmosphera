@@ -256,7 +256,9 @@ Singleton {
           }
         ]
       }
-
+      property string mouseWheelAction: "none"
+      property bool reverseScroll: false
+      property bool mouseWheelWrap: true
       // Per-screen overrides for position and widgets
       // Format: [{ "name": "HDMI-1", "position": "left" }, { "name": "DP-1", "position": "bottom", "widgets": {...} }]
       property list<var> screenOverrides: []
@@ -546,7 +548,10 @@ Singleton {
       property double deadOpacity: 0.6
       property real animationSpeed: 1.0 // Speed multiplier for hide/show animations (0.1 = slowest, 2.0 = fastest)
       property bool sitOnFrame: false
-      property bool showFrameIndicator: true
+      property bool showDockIndicator: false
+      property int indicatorThickness: 3
+      property string indicatorColor: "primary"
+      property real indicatorOpacity: 0.6
     }
 
     // network

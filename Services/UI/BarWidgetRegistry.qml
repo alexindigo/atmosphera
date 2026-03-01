@@ -203,10 +203,7 @@ Singleton {
                                     "visualizerType": "linear",
                                     "textColor": "none",
                                     "compactMode": false,
-                                    "panelShowAlbumArt": true,
-                                    "panelShowVisualizer": true,
-                                    "compactShowAlbumArt": true,
-                                    "compactShowVisualizer": false
+                                    "panelShowAlbumArt": true
                                   },
                                   "Microphone": {
                                     "displayMode": "onhover",

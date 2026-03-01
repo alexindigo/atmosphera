@@ -1224,9 +1224,9 @@ Rectangle {
 
               // Icon badge or Image preview or Emoji
               Item {
-                // Use consistent 65% sizing for all items
+                // Size image at 65% of cell dimensions.
                 Layout.preferredWidth: Math.round(gridEntry.width * 0.65)
-                Layout.preferredHeight: Math.round(gridEntry.width * 0.65)
+                Layout.preferredHeight: Math.round(gridEntry.height * 0.65)
                 Layout.alignment: Qt.AlignHCenter
 
                 // Icon background

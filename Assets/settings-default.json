@@ -69,6 +69,9 @@
         }
       ]
     },
+    "mouseWheelAction": "none",
+    "reverseScroll": false,
+    "mouseWheelWrap": true,
     "screenOverrides": []
   },
   "general": {
@@ -346,7 +349,10 @@
     "deadOpacity": 0.6,
     "animationSpeed": 1,
     "sitOnFrame": false,
-    "showFrameIndicator": true
+    "showDockIndicator": false,
+    "indicatorThickness": 3,
+    "indicatorColor": "primary",
+    "indicatorOpacity": 0.6
   },
   "network": {
     "wifiEnabled": true,

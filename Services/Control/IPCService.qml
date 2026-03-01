@@ -404,6 +404,16 @@ Singleton {
   }
 
   IpcHandler {
+    target: "monitors"
+    function on() {
+      CompositorService.turnOnMonitors();
+    }
+    function off() {
+      CompositorService.turnOffMonitors();
+    }
+  }
+
+  IpcHandler {
     target: "darkMode"
     function toggle() {
       Settings.data.colorSchemes.darkMode = !Settings.data.colorSchemes.darkMode;
@@ -556,9 +566,12 @@ Singleton {
       }
     }
 
-    function random() {
+    function random(screen: string) {
       if (Settings.data.wallpaper.enabled) {
-        WallpaperService.setRandomWallpaper();
+        if (!screen || screen === "all" || screen.trim().length === 0) {
+          screen = undefined;
+        }
+        WallpaperService.setRandomWallpaper(screen);
       }
     }
 

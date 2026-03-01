@@ -234,6 +234,15 @@
     "subTabLabel": "common.appearance"
   },
   {
+    "labelKey": "panels.bar.appearance-capsule-color-label",
+    "descriptionKey": "panels.bar.appearance-capsule-color-description",
+    "widget": "NColorChoice",
+    "tab": 4,
+    "tabLabel": "panels.bar.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
     "labelKey": "panels.bar.appearance-capsule-opacity-label",
     "descriptionKey": "panels.bar.appearance-capsule-opacity-description",
     "widget": "NValueSlider",
@@ -342,12 +351,39 @@
     "subTabLabel": "common.appearance"
   },
   {
+    "labelKey": "panels.bar.behavior-workspace-scroll-label",
+    "descriptionKey": "panels.bar.behavior-workspace-scroll-description",
+    "widget": "NComboBox",
+    "tab": 4,
+    "tabLabel": "panels.bar.title",
+    "subTab": 2,
+    "subTabLabel": "common.behavior"
+  },
+  {
+    "labelKey": "panels.general.reverse-scrolling-label",
+    "descriptionKey": "panels.general.reverse-scrolling-description",
+    "widget": "NToggle",
+    "tab": 4,
+    "tabLabel": "panels.bar.title",
+    "subTab": 2,
+    "subTabLabel": "common.behavior"
+  },
+  {
+    "labelKey": "panels.bar.behavior-wheel-wrap-label",
+    "descriptionKey": "panels.bar.behavior-wheel-wrap-description",
+    "widget": "NToggle",
+    "tab": 4,
+    "tabLabel": "panels.bar.title",
+    "subTab": 2,
+    "subTabLabel": "common.behavior"
+  },
+  {
     "labelKey": "panels.bar.monitor-override-settings",
     "descriptionKey": "panels.bar.monitor-override-settings-description",
     "widget": "NToggle",
     "tab": 4,
     "tabLabel": "panels.bar.title",
-    "subTab": 2,
+    "subTab": 3,
     "subTabLabel": "common.monitors"
   },
   {
@@ -664,9 +700,36 @@
     "subTabLabel": "common.appearance"
   },
   {
-    "labelKey": "panels.dock.appearance-frame-indicator-label",
-    "descriptionKey": "panels.dock.appearance-frame-indicator-description",
+    "labelKey": "panels.dock.appearance-dock-indicator-label",
+    "descriptionKey": "panels.dock.appearance-dock-indicator-description",
     "widget": "NToggle",
+    "tab": 5,
+    "tabLabel": "panels.dock.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
+    "labelKey": "panels.dock.appearance-indicator-thickness-label",
+    "descriptionKey": "panels.dock.appearance-indicator-thickness-description",
+    "widget": "NToggle",
+    "tab": 5,
+    "tabLabel": "panels.dock.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
+    "labelKey": "panels.dock.appearance-indicator-color-label",
+    "descriptionKey": "panels.dock.appearance-indicator-color-description",
+    "widget": "NColorChoice",
+    "tab": 5,
+    "tabLabel": "panels.dock.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
+    "labelKey": "panels.dock.appearance-indicator-opacity-label",
+    "descriptionKey": "panels.dock.appearance-indicator-opacity-description",
+    "widget": "NValueSlider",
     "tab": 5,
     "tabLabel": "panels.dock.title",
     "subTab": 0,
@@ -808,6 +871,15 @@
     "subTabLabel": "common.appearance"
   },
   {
+    "labelKey": "common.select-icon-color",
+    "descriptionKey": null,
+    "widget": "NColorChoice",
+    "tab": 5,
+    "tabLabel": "panels.dock.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
     "labelKey": "panels.general.profile-picture-label",
     "descriptionKey": "panels.general.profile-picture-description",
     "widget": "NTextInputButton",
@@ -843,14 +915,6 @@
     "labelKey": "panels.general.fonts-monospace-scale-label",
     "descriptionKey": "panels.general.fonts-monospace-scale-description",
     "widget": "NValueSlider",
-    "tab": 0,
-    "tabLabel": "common.general",
-    "subTab": null
-  },
-  {
-    "labelKey": "panels.general.reverse-scrolling-label",
-    "descriptionKey": "panels.general.reverse-scrolling-description",
-    "widget": "NToggle",
     "tab": 0,
     "tabLabel": "common.general",
     "subTab": null

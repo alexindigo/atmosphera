@@ -39,17 +39,17 @@ Item {
   readonly property real barFontSize: Style.getBarFontSizeForScreen(screenName)
 
   // Widget settings
-  readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : "hidden"
-  readonly property bool hideWhenIdle: (widgetSettings.hideWhenIdle !== undefined) ? widgetSettings.hideWhenIdle : (widgetMetadata.hideWhenIdle !== undefined ? widgetMetadata.hideWhenIdle : false)
-  readonly property bool showAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
-  readonly property bool showArtistFirst: (widgetSettings.showArtistFirst !== undefined) ? widgetSettings.showArtistFirst : widgetMetadata.showArtistFirst
-  readonly property bool showVisualizer: (widgetSettings.showVisualizer !== undefined) ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer
-  readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
-  readonly property string scrollingMode: (widgetSettings.scrollingMode !== undefined) ? widgetSettings.scrollingMode : widgetMetadata.scrollingMode
-  readonly property bool showProgressRing: (widgetSettings.showProgressRing !== undefined) ? widgetSettings.showProgressRing : widgetMetadata.showProgressRing
-  readonly property bool useFixedWidth: (widgetSettings.useFixedWidth !== undefined) ? widgetSettings.useFixedWidth : widgetMetadata.useFixedWidth
-  readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
-  readonly property string textColorKey: (widgetSettings.textColor !== undefined) ? widgetSettings.textColor : widgetMetadata.textColor
+  readonly property string hideMode: widgetSettings.hideMode !== undefined ? widgetSettings.hideMode : widgetMetadata.hideMode
+  readonly property bool hideWhenIdle: widgetSettings.hideWhenIdle !== undefined ? widgetSettings.hideWhenIdle : widgetMetadata.hideWhenIdle
+  readonly property bool showAlbumArt: widgetSettings.showAlbumArt !== undefined ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
+  readonly property bool showArtistFirst: widgetSettings.showArtistFirst !== undefined ? widgetSettings.showArtistFirst : widgetMetadata.showArtistFirst
+  readonly property bool showVisualizer: widgetSettings.showVisualizer !== undefined ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer
+  readonly property string visualizerType: widgetSettings.visualizerType !== undefined ? widgetSettings.visualizerType : widgetMetadata.visualizerType
+  readonly property string scrollingMode: widgetSettings.scrollingMode !== undefined ? widgetSettings.scrollingMode : widgetMetadata.scrollingMode
+  readonly property bool showProgressRing: widgetSettings.showProgressRing !== undefined ? widgetSettings.showProgressRing : widgetMetadata.showProgressRing
+  readonly property bool useFixedWidth: widgetSettings.useFixedWidth !== undefined ? widgetSettings.useFixedWidth : widgetMetadata.useFixedWidth
+  readonly property real maxWidth: widgetSettings.maxWidth !== undefined ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
+  readonly property string textColorKey: widgetSettings.textColor !== undefined ? widgetSettings.textColor : widgetMetadata.textColor
   readonly property color textColor: Color.resolveColorKey(textColorKey)
 
   // Dimensions
@@ -94,16 +94,6 @@ Item {
     if (root.needsCava) {
       CavaService.unregisterComponent(root.cavaComponentId);
     }
-  }
-
-  readonly property string tooltipText: {
-    var text = title;
-    var controls = [];
-    controls.push("Left click to open player.");
-    controls.push("Right click for options.");
-    if (MediaService.canGoPrevious)
-      controls.push("Middle click for previous.");
-    return controls.length ? `${text}\n\n${controls.join("\n")}` : text;
   }
 
   // Layout
@@ -395,22 +385,25 @@ Item {
 
     hoverEnabled: true
     cursorShape: Qt.PointingHandCursor
-    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton | Qt.ForwardButton | Qt.BackButton
 
     onClicked: mouse => {
+                 TooltipService.hide();
                  if (mouse.button === Qt.LeftButton) {
                    PanelService.getPanel("mediaPlayerPanel", screen)?.toggle(container);
                  } else if (mouse.button === Qt.RightButton) {
-                   TooltipService.hide();
                    PanelService.showContextMenu(contextMenu, container, screen);
                  } else if (mouse.button === Qt.MiddleButton && hasPlayer) {
                    MediaService.playPause();
-                   TooltipService.hide();
+                 } else if (mouse.button === Qt.ForwardButton && hasPlayer) {
+                   MediaService.next();
+                 } else if (mouse.button === Qt.BackButton && hasPlayer) {
+                   MediaService.previous();
                  }
                }
 
     onEntered: {
-      if (isVertical || scrollingMode === "never") {
+      if ((isVertical || scrollingMode === "never") && !PanelService.getPanel("mediaPlayerPanel", screen)?.isPanelOpen) {
         TooltipService.show(root, title, BarService.getTooltipDirection(root.screen?.name));
       }
     }

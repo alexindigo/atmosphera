@@ -55,28 +55,31 @@ Singleton {
   property var widgetMetadata: ({
                                   "Clock": {
                                     "showBackground": true,
+                                    "roundedCorners": true,
                                     "clockStyle": "digital",
                                     "clockColor": "none",
                                     "useCustomFont": false,
+                                    "customFont": "",
                                     "format": "HH:mm\\nd MMMM yyyy"
                                   },
                                   "MediaPlayer": {
                                     "showBackground": true,
+                                    "roundedCorners": true,
                                     "visualizerType": "linear",
                                     "hideMode": "visible",
                                     "showButtons": true,
                                     "showAlbumArt": true,
-                                    "showVisualizer": true,
-                                    "roundedCorners": true
+                                    "showVisualizer": true
                                   },
                                   "Weather": {
-                                    "showBackground": true
+                                    "showBackground": true,
+                                    "roundedCorners": true
                                   },
                                   "SystemStat": {
                                     "showBackground": true,
+                                    "roundedCorners": true,
                                     "statType": "CPU",
                                     "diskPath": "/",
-                                    "roundedCorners": true,
                                     "layout": "bottom"
                                   }
                                 })
