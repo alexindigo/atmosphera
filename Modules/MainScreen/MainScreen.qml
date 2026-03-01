@@ -206,10 +206,10 @@ PanelWindow {
   BackgroundEffect.blurRegion: Region {
     // ── Non-framed bar (simple/floating): single rectangle with bar corner states ──
     Region {
-      x: (!barPlaceholder.isFramed && root.barShouldShow) ? barPlaceholder.x : 0
-      y: (!barPlaceholder.isFramed && root.barShouldShow) ? barPlaceholder.y : 0
-      width: (!barPlaceholder.isFramed && root.barShouldShow) ? barPlaceholder.width : 0
-      height: (!barPlaceholder.isFramed && root.barShouldShow) ? barPlaceholder.height : 0
+      x: (!barPlaceholder.isFramed && root.barShouldShow && !barPlaceholder.isHidden) ? barPlaceholder.x : 0
+      y: (!barPlaceholder.isFramed && root.barShouldShow && !barPlaceholder.isHidden) ? barPlaceholder.y : 0
+      width: (!barPlaceholder.isFramed && root.barShouldShow && !barPlaceholder.isHidden) ? barPlaceholder.width : 0
+      height: (!barPlaceholder.isFramed && root.barShouldShow && !barPlaceholder.isHidden) ? barPlaceholder.height : 0
       radius: Style.radiusL
       topLeftCorner: barPlaceholder.topLeftCornerState
       topRightCorner: barPlaceholder.topRightCornerState
@@ -221,8 +221,8 @@ PanelWindow {
     Region {
       x: 0
       y: 0
-      width: (barPlaceholder.isFramed && root.barShouldShow) ? root.width : 0
-      height: (barPlaceholder.isFramed && root.barShouldShow) ? root.height : 0
+      width: (barPlaceholder.isFramed && root.barShouldShow && !barPlaceholder.isHidden) ? root.width : 0
+      height: (barPlaceholder.isFramed && root.barShouldShow && !barPlaceholder.isHidden) ? root.height : 0
 
       Region {
         intersection: Intersection.Subtract
