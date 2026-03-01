@@ -729,7 +729,13 @@ Singleton {
       property int lockTimeout: 660         // seconds, 0 = disabled
       property int suspendTimeout: 1800     // seconds, 0 = disabled
       property int fadeDuration: 5       // seconds of fade-to-black before action fires
-      property string customCommands: "[]" // JSON array of {timeout, command}
+      property string screenOffCommand: ""
+      property string lockCommand: ""
+      property string suspendCommand: ""
+      property string resumeScreenOffCommand: ""
+      property string resumeLockCommand: ""
+      property string resumeSuspendCommand: ""
+      property string customCommands: "[]" // JSON array of {timeout, command, resumeCommand}
     }
 
     // desktop widgets

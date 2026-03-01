@@ -981,33 +981,6 @@
     "subTabLabel": "panels.idle.tab-behavior"
   },
   {
-    "labelKey": "panels.idle.screen-off-label",
-    "descriptionKey": "panels.idle.screen-off-description",
-    "widget": "NSpinBox",
-    "tab": 13,
-    "tabLabel": "common.idle",
-    "subTab": 0,
-    "subTabLabel": "panels.idle.tab-behavior"
-  },
-  {
-    "labelKey": "panels.idle.lock-label",
-    "descriptionKey": "panels.idle.lock-description",
-    "widget": "NSpinBox",
-    "tab": 13,
-    "tabLabel": "common.idle",
-    "subTab": 0,
-    "subTabLabel": "panels.idle.tab-behavior"
-  },
-  {
-    "labelKey": "common.suspend",
-    "descriptionKey": "panels.idle.suspend-description",
-    "widget": "NSpinBox",
-    "tab": 13,
-    "tabLabel": "common.idle",
-    "subTab": 0,
-    "subTabLabel": "panels.idle.tab-behavior"
-  },
-  {
     "labelKey": "panels.idle.fade-duration-label",
     "descriptionKey": "panels.idle.fade-duration-description",
     "widget": "NSpinBox",
@@ -1020,24 +993,6 @@
     "labelKey": "panels.idle.custom-label",
     "descriptionKey": "panels.idle.custom-description",
     "widget": "NLabel",
-    "tab": 13,
-    "tabLabel": "common.idle",
-    "subTab": 1,
-    "subTabLabel": "panels.idle.tab-custom"
-  },
-  {
-    "labelKey": "panels.idle.custom-entry-timeout",
-    "descriptionKey": null,
-    "widget": "NSpinBox",
-    "tab": 13,
-    "tabLabel": "common.idle",
-    "subTab": 1,
-    "subTabLabel": "panels.idle.tab-custom"
-  },
-  {
-    "labelKey": "panels.idle.custom-entry-command",
-    "descriptionKey": null,
-    "widget": "NTextInput",
     "tab": 13,
     "tabLabel": "common.idle",
     "subTab": 1,
