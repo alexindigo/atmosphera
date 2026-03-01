@@ -476,6 +476,7 @@
     "random": "Random",
     "reboot": "Reboot",
     "reboot-to-uefi": "Reboot to UEFI",
+    "userspace-reboot": "Userspace Reboot",
     "record": "Start recording",
     "refresh": "Refresh",
     "required": "(required)",
