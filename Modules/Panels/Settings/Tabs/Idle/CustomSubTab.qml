@@ -49,6 +49,11 @@ ColumnLayout {
     _saving = false;
   }
 
+  function _removeEntry(index) {
+    entriesModel.remove(index, 1);
+    _saveFromModel();
+  }
+
   Component.onCompleted: _loadToModel()
 
   Connections {
@@ -114,8 +119,7 @@ ColumnLayout {
           tooltipText: I18n.tr("panels.idle.custom-entry-delete")
           Layout.alignment: Qt.AlignBottom
           onClicked: {
-            entriesModel.remove(entryDelegate.index, 1);
-            root._saveFromModel();
+            root._removeEntry(entryDelegate.index);
           }
         }
       }
