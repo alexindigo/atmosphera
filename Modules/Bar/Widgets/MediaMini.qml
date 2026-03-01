@@ -96,16 +96,6 @@ Item {
     }
   }
 
-  readonly property string tooltipText: {
-    var text = title;
-    var controls = [];
-    controls.push("Left click to open player.");
-    controls.push("Right click for options.");
-    if (MediaService.canGoPrevious)
-      controls.push("Middle click for previous.");
-    return controls.length ? `${text}\n\n${controls.join("\n")}` : text;
-  }
-
   // Layout
   // For horizontal bars, height is always capsuleHeight (no animation needed to prevent jitter)
   // For vertical bars, collapse to 0 when hidden
@@ -398,25 +388,22 @@ Item {
     acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton | Qt.ForwardButton | Qt.BackButton
 
     onClicked: mouse => {
+                 TooltipService.hide();
                  if (mouse.button === Qt.LeftButton) {
                    PanelService.getPanel("mediaPlayerPanel", screen)?.toggle(container);
                  } else if (mouse.button === Qt.RightButton) {
-                   TooltipService.hide();
                    PanelService.showContextMenu(contextMenu, container, screen);
                  } else if (mouse.button === Qt.MiddleButton && hasPlayer) {
                    MediaService.playPause();
-                   TooltipService.hide();
                  } else if (mouse.button === Qt.ForwardButton && hasPlayer) {
                    MediaService.next();
-                   TooltipService.hide();
                  } else if (mouse.button === Qt.BackButton && hasPlayer) {
                    MediaService.previous();
-                   TooltipService.hide();
                  }
                }
 
     onEntered: {
-      if (isVertical || scrollingMode === "never") {
+      if ((isVertical || scrollingMode === "never") && !PanelService.getPanel("mediaPlayerPanel", screen)?.isPanelOpen) {
         TooltipService.show(root, title, BarService.getTooltipDirection(root.screen?.name));
       }
     }
