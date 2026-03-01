@@ -507,6 +507,15 @@ Singleton {
     }
   }
 
+  function turnOnMonitors() {
+    Logger.i("Compositor", "Turn on monitors requested");
+    if (backend && backend.turnOnMonitors) {
+      backend.turnOnMonitors();
+    } else {
+      Logger.w("Compositor", "No backend available for turnOnMonitors");
+    }
+  }
+
   function suspend() {
     Logger.i("Compositor", "Suspend requested");
     if (executeSessionAction("suspend"))

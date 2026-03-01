@@ -678,6 +678,14 @@ Item {
     }
   }
 
+  function turnOnMonitors() {
+    try {
+      Quickshell.execDetached(["wlr-randr", "--on"]);
+    } catch (e) {
+      Logger.e("MangoService", "Failed to turn on monitors:", e);
+    }
+  }
+
   function logout() {
     Quickshell.execDetached(["mmsg", "-s", "-q"]);
   }

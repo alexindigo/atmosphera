@@ -42,6 +42,7 @@ Singleton {
   property var _heartbeatMonitor: null
   property var _customMonitors: ({})
   property real _suppressUntil: 0
+  property bool _screenOffActive: false
 
   // Signals for external listeners (plugins, modules)
   signal screenOffRequested
@@ -83,12 +84,23 @@ Singleton {
 
   // -------------------------------------------------------
   function cancelFade() {
-    if (fadePending === "")
+    if (fadePending === "") {
+      _restoreMonitors();
       return;
+    }
     Logger.i("IdleService", "Fade cancelled for:", fadePending);
     fadePending = "";
     graceTimer.stop();
     overlayCleanupTimer.stop();
+    _restoreMonitors();
+  }
+
+  function _restoreMonitors() {
+    if (!_screenOffActive)
+      return;
+    _screenOffActive = false;
+    Logger.i("IdleService", "Restoring monitors (DPMS on)");
+    CompositorService.turnOnMonitors();
   }
 
   function _onIdle(stage) {
@@ -106,6 +118,7 @@ Singleton {
     if (stage === "screenOff") {
       root._suppressUntil = Date.now() + (Settings.data.idle.screenOffTimeout * 1000);
       CompositorService.turnOffMonitors();
+      root._screenOffActive = true;
       root.screenOffRequested();
     } else if (stage === "lock") {
       if (PanelService.lockScreen && !PanelService.lockScreen.active) {
