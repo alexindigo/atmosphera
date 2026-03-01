@@ -221,13 +221,22 @@ Item {
       if (showExecTooltip && hasExec) {
         if (leftClickExec !== "") {
           lines.push(I18n.tr("bar.custom-button.left-click-label") + `: ${leftClickExec}`);
+        } else {
+          lines.push(I18n.tr("bar.custom-button.left-click-label") + ": " + I18n.tr("actions.widget-settings"));
         }
+
         if (rightClickExec !== "") {
           lines.push(I18n.tr("bar.custom-button.right-click-label") + `: ${rightClickExec}`);
+        } else {
+          lines.push(I18n.tr("bar.custom-button.right-click-label") + ": " + I18n.tr("actions.widget-settings"));
         }
+
         if (middleClickExec !== "") {
           lines.push(I18n.tr("bar.custom-button.middle-click-label") + `: ${middleClickExec}`);
+        } else {
+          lines.push(I18n.tr("bar.custom-button.middle-click-label") + ": " + I18n.tr("actions.widget-settings"));
         }
+
         if (wheelMode === "unified" && wheelExec !== "") {
           lines.push(I18n.tr("bar.custom-button.wheel-label") + `: ${wheelExec}`);
         } else if (wheelMode === "separate") {
@@ -513,6 +522,8 @@ Item {
     if (rightClickExec) {
       Quickshell.execDetached(["sh", "-lc", rightClickExec]);
       Logger.i("CustomButton", `Executing command: ${rightClickExec}`);
+    } if (!rightClickUpdateText) {
+      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
     }
     if (!textStream && rightClickUpdateText) {
       runTextCommand();
@@ -523,6 +534,8 @@ Item {
     if (middleClickExec) {
       Quickshell.execDetached(["sh", "-lc", middleClickExec]);
       Logger.i("CustomButton", `Executing command: ${middleClickExec}`);
+    } if (!middleClickUpdateText) {
+      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
     }
     if (!textStream && middleClickUpdateText) {
       runTextCommand();
