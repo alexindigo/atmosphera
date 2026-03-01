@@ -351,12 +351,39 @@
     "subTabLabel": "common.appearance"
   },
   {
+    "labelKey": "panels.bar.behavior-workspace-scroll-label",
+    "descriptionKey": "panels.bar.behavior-workspace-scroll-description",
+    "widget": "NComboBox",
+    "tab": 4,
+    "tabLabel": "panels.bar.title",
+    "subTab": 2,
+    "subTabLabel": "common.behavior"
+  },
+  {
+    "labelKey": "panels.general.reverse-scrolling-label",
+    "descriptionKey": "panels.general.reverse-scrolling-description",
+    "widget": "NToggle",
+    "tab": 4,
+    "tabLabel": "panels.bar.title",
+    "subTab": 2,
+    "subTabLabel": "common.behavior"
+  },
+  {
+    "labelKey": "panels.bar.behavior-wheel-wrap-label",
+    "descriptionKey": "panels.bar.behavior-wheel-wrap-description",
+    "widget": "NToggle",
+    "tab": 4,
+    "tabLabel": "panels.bar.title",
+    "subTab": 2,
+    "subTabLabel": "common.behavior"
+  },
+  {
     "labelKey": "panels.bar.monitor-override-settings",
     "descriptionKey": "panels.bar.monitor-override-settings-description",
     "widget": "NToggle",
     "tab": 4,
     "tabLabel": "panels.bar.title",
-    "subTab": 2,
+    "subTab": 3,
     "subTabLabel": "common.monitors"
   },
   {
@@ -888,14 +915,6 @@
     "labelKey": "panels.general.fonts-monospace-scale-label",
     "descriptionKey": "panels.general.fonts-monospace-scale-description",
     "widget": "NValueSlider",
-    "tab": 0,
-    "tabLabel": "common.general",
-    "subTab": null
-  },
-  {
-    "labelKey": "panels.general.reverse-scrolling-label",
-    "descriptionKey": "panels.general.reverse-scrolling-description",
-    "widget": "NToggle",
     "tab": 0,
     "tabLabel": "common.general",
     "subTab": null

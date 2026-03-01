@@ -18,20 +18,20 @@ ColumnLayout {
     description: I18n.tr("panels.bar.behavior-workspace-scroll-description")
     model: {
       var items = [
-        {
-          "key": "none",
-          "name": "Nothing"
-        },
-        {
-          "key": "workspace",
-          "name": "Workspace"
-        }
-      ];
+            {
+              "key": "none",
+              "name": "Nothing"
+            },
+            {
+              "key": "workspace",
+              "name": "Workspace"
+            }
+          ];
       if (CompositorService.isNiri) {
         items.push({
-                    "key": "content",
-                    "name": "Content"
-                  });
+                     "key": "content",
+                     "name": "Content"
+                   });
       }
       return items;
     }

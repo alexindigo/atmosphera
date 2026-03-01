@@ -342,7 +342,7 @@ Item {
           onClicked: mouse => {
                        if (mouse.button === Qt.RightButton) {
                          if (bar.isPointOverWidget(mouse.x, mouse.y))
-                          return;
+                         return;
                          // Click is on empty bar background - open control center
                          var controlCenterPanel = PanelService.getPanel("controlCenterPanel", screen);
 
@@ -374,7 +374,7 @@ Item {
           target: bar
           acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
           enabled: bar.barWheelAction !== "none"
-          
+
           onWheel: function (event) {
             if (bar.barWheelCooldown)
               return;
