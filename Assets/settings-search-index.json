@@ -664,9 +664,36 @@
     "subTabLabel": "common.appearance"
   },
   {
-    "labelKey": "panels.dock.appearance-frame-indicator-label",
-    "descriptionKey": "panels.dock.appearance-frame-indicator-description",
+    "labelKey": "panels.dock.appearance-dock-indicator-label",
+    "descriptionKey": "panels.dock.appearance-dock-indicator-description",
     "widget": "NToggle",
+    "tab": 5,
+    "tabLabel": "panels.dock.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
+    "labelKey": "panels.dock.appearance-indicator-thickness-label",
+    "descriptionKey": "panels.dock.appearance-indicator-thickness-description",
+    "widget": "NToggle",
+    "tab": 5,
+    "tabLabel": "panels.dock.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
+    "labelKey": "panels.dock.appearance-indicator-color-label",
+    "descriptionKey": "panels.dock.appearance-indicator-color-description",
+    "widget": "NColorChoice",
+    "tab": 5,
+    "tabLabel": "panels.dock.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
+    "labelKey": "panels.dock.appearance-indicator-opacity-label",
+    "descriptionKey": "panels.dock.appearance-indicator-opacity-description",
+    "widget": "NValueSlider",
     "tab": 5,
     "tabLabel": "panels.dock.title",
     "subTab": 0,
