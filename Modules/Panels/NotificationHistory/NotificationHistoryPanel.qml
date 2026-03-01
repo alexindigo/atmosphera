@@ -781,7 +781,9 @@ SmartPanel {
 
                                     // Focus sender window (and invoke default action if available)
                                     var actions = notificationDelegate.actionsList;
-                                    var hasDefault = actions.some(function(a) { return a.identifier === "default"; });
+                                    var hasDefault = actions.some(function (a) {
+                                      return a.identifier === "default";
+                                    });
                                     if (hasDefault) {
                                       NotificationService.focusSenderWindow(notificationDelegate.appName);
                                       NotificationService.invokeAction(notificationDelegate.notificationId, "default");
