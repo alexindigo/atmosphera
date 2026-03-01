@@ -566,9 +566,12 @@ Singleton {
       }
     }
 
-    function random() {
+    function random(screen: string) {
       if (Settings.data.wallpaper.enabled) {
-        WallpaperService.setRandomWallpaper();
+        if (screen === "all" || screen.trim().length === 0) {
+          screen = undefined;
+        }
+        WallpaperService.setRandomWallpaper(screen);
       }
     }
 
