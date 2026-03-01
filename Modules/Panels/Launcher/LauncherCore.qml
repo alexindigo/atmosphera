@@ -1226,7 +1226,7 @@ Rectangle {
               Item {
                 // Use consistent 65% sizing for all items
                 Layout.preferredWidth: Math.round(gridEntry.width * 0.65)
-                Layout.preferredHeight: Math.round(gridEntry.width * 0.65)
+                Layout.preferredHeight: Math.round(gridEntry.height * 0.65)
                 Layout.alignment: Qt.AlignHCenter
 
                 // Icon background
