@@ -2,7 +2,6 @@ name: Bug Report
 description: Report a bug or regression in Noctalia
 title: "[BUG] "
 labels: ["bug"]
-assignees: [Ly-sec, ItsLemmy]
 
 body:
   - type: checkboxes
