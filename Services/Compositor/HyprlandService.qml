@@ -579,7 +579,7 @@ Item {
 
             const monitorsEvents = ["configreloaded", "monitoradded", "monitorremoved", "monitoraddedv2", "monitorremovedv2"];
 
-            if (monitorsEvents.indexOf(event.name) !== -1) {
+            if (monitorsEvents.includes(event.name)) {
                 Qt.callLater(queryDisplayScales);
             }
 
