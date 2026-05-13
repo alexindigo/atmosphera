@@ -24,6 +24,10 @@ Item {
   property var workspaceCache: ({})
   property var windowCache: ({})
 
+  // Dispatch compatibility state
+  property bool dispatchModeChecked: false
+  property bool useLuaDispatch: false
+
   // Debounce timer for window updates
   Timer {
     id: updateTimer
@@ -53,6 +57,8 @@ Item {
                      safeUpdateWindows();
                      queryDisplayScales();
                      queryKeyboardLayout();
+                     // Detect Hyprland dispatch syntax once during startup
+                     detectDispatchMode();
                    });
       initialized = true;
       Logger.i("HyprlandService", "Service started");
@@ -119,6 +125,65 @@ Item {
         // Clear accumulated output for next query
         accumulatedOutput = "";
       }
+    }
+  }
+
+  // ------------------------------------------------------------
+  // Dispatch mode probe
+  // This Process detects whether hyprland is using legacy
+  // hyprlang dispatch or the new Lua-based dispatch system
+  // (Hyprland v0.55+)
+  //
+  // This runs a harmless dispatcher shown in the docs:
+  // hl.dsp.no_op()
+  // If it returns "ok", Lua dispatch is supported.
+  // ------------------------------------------------------------
+  Process {
+    id: dispatchProbeProcess
+
+    running: false
+    command: ["hyprctl", "dispatch", "hl.dsp.no_op()"]
+
+    // Accumulate stdout/stderr because SplitParser delivers line-by-line
+    property string accumulatedOutput: ""
+    property string accumulatedError: ""
+
+    stdout: SplitParser {
+      onRead: function (line) {
+        dispatchProbeProcess.accumulatedOutput += line;
+      }
+    }
+
+    stderr: SplitParser {
+      onRead: function (line) {
+        dispatchProbeProcess.accumulatedError += line;
+      }
+    }
+
+    onExited: function (exitCode) {
+      const stdout = String(accumulatedOutput || "").trim();
+      const stderr = String(accumulatedError || "").trim();
+
+      // If Lua dispatch is supported, Hyprland returns "ok"
+      const lowerErr = stderr.toLowerCase();
+      useLuaDispatch = stdout.indexOf("ok") !== -1 && lowerErr.indexOf("error") === -1;
+
+      dispatchModeChecked = true;
+
+      Logger.i("HyprlandService", useLuaDispatch ? "Detected Lua hyprctl dispatch syntax" : "Using legacy hyprctl dispatch syntax");
+
+      // Debug output as per guidelines / troubleshooting
+      if (stdout.length > 0) {
+        Logger.d("HyprlandService", "Dispatch probe stdout:", stdout);
+      }
+
+      if (stderr.length > 0) {
+        Logger.d("HyprlandService", "Dispatch probe stderr:", stderr);
+      }
+
+      // Reset buffers for future runs
+      accumulatedOutput = "";
+      accumulatedError = "";
     }
   }
 
@@ -524,14 +589,57 @@ Item {
     }
   }
 
+  // Dispatch helpers
+  function luaQuote(str) {
+    return String(str).replace(/\\/g, "\\\\").replace(/"/g, "\\\"").replace(/\n/g, "\\n").replace(/\r/g, "\\r");
+  }
+
+  // ------------------------------------------------------------
+  // Triggers dispatch mode detection (once per session)
+  //
+  // Starts probe process if it hasn't already run
+  // ------------------------------------------------------------
+  function detectDispatchMode() {
+    // Avoid duplicate probes
+    if (dispatchModeChecked || dispatchProbeProcess.running) {
+      return;
+    }
+
+    Logger.i("HyprlandService", "Checking hyprctl dispatch syntax");
+    dispatchProbeProcess.running = true;
+  }
+
+  function dispatchCommand(legacyDispatcher, legacyArgs, luaCommand) {
+    try {
+      // Ensure dispatch mode is known before sending commands.
+      if (!dispatchModeChecked) {
+        Logger.w("HyprlandService", "Dispatch mode not detected yet, using legacy syntax");
+      }
+      const legacyFull = legacyArgs ? `${legacyDispatcher} ${legacyArgs}` : legacyDispatcher;
+
+      if (useLuaDispatch) {
+        Logger.d("HyprlandService", "Dispatch (Lua):", luaCommand);
+
+        Quickshell.execDetached(["hyprctl", "dispatch", luaCommand]);
+      } else {
+        Logger.d("HyprlandService", "Dispatch (Legacy):", legacyFull);
+
+        Hyprland.dispatch(legacyFull);
+      }
+    } catch (e) {
+      Logger.e("HyprlandService", "Dispatch failed:", legacyDispatcher, legacyArgs, e);
+    }
+  }
+
   // Public functions
   function switchToWorkspace(workspace) {
     try {
       if (workspace.name) {
-        Hyprland.dispatch(`workspace ${workspace.name}`);
+        dispatchCommand("workspace", workspace.name, `hl.dsp.focus({ workspace = "${luaQuote(workspace.name)}" })`);
         return;
       }
-      Hyprland.dispatch(`workspace ${workspace.idx}`);
+
+      dispatchCommand("workspace", workspace.idx, `hl.dsp.focus({ workspace = ${workspace.idx} })`);
     } catch (e) {
       Logger.e("HyprlandService", "Failed to switch workspace:", e);
     }
@@ -545,8 +653,11 @@ Item {
       }
 
       const windowId = window.id.toString();
-      Hyprland.dispatch(`focuswindow address:0x${windowId}`);
-      Hyprland.dispatch(`alterzorder top,address:0x${windowId}`); // Bring the focused window to the top (essential for Float Mode)
+      const addr = `address:0x${windowId}`;
+
+      dispatchCommand("focuswindow", addr, `hl.dsp.focus({ window = "${luaQuote(addr)}" })`);
+
+      dispatchCommand("alterzorder", `top,${addr}`, `hl.dsp.window.alter_zorder({ mode = "top", window = "${luaQuote(addr)}" })`);
     } catch (e) {
       Logger.e("HyprlandService", "Failed to switch window:", e);
     }
@@ -554,7 +665,9 @@ Item {
 
   function closeWindow(window) {
     try {
-      Hyprland.dispatch(`killwindow address:0x${window.id}`);
+      const addr = `address:0x${window.id}`;
+
+      dispatchCommand("killwindow", addr, `hl.dsp.window.close("${luaQuote(addr)}")`);
     } catch (e) {
       Logger.e("HyprlandService", "Failed to close window:", e);
     }
@@ -562,7 +675,7 @@ Item {
 
   function turnOffMonitors() {
     try {
-      Quickshell.execDetached(["hyprctl", "dispatch", "dpms", "off"]);
+      dispatchCommand("dpms", "off", `hl.dsp.dpms({ action = "off" })`);
     } catch (e) {
       Logger.e("HyprlandService", "Failed to turn off monitors:", e);
     }
@@ -570,7 +683,7 @@ Item {
 
   function turnOnMonitors() {
     try {
-      Quickshell.execDetached(["hyprctl", "dispatch", "dpms", "on"]);
+      dispatchCommand("dpms", "on", `hl.dsp.dpms({ action = "on" })`);
     } catch (e) {
       Logger.e("HyprlandService", "Failed to turn on monitors:", e);
     }
@@ -578,7 +691,7 @@ Item {
 
   function logout() {
     try {
-      Quickshell.execDetached(["hyprctl", "dispatch", "exit"]);
+      dispatchCommand("exit", "", "hl.dsp.exit()");
     } catch (e) {
       Logger.e("HyprlandService", "Failed to logout:", e);
     }
@@ -591,7 +704,6 @@ Item {
       Logger.e("HyprlandService", "Failed to cycle keyboard layout:", e);
     }
   }
-
   function getFocusedScreen() {
     const hyprMon = Hyprland.focusedMonitor;
     if (hyprMon) {
@@ -607,7 +719,9 @@ Item {
 
   function spawn(command) {
     try {
-      Quickshell.execDetached(["hyprctl", "dispatch", "--", "exec"].concat(command));
+      const cmd = command instanceof Array ? command.join(" ") : String(command);
+
+      dispatchCommand("exec", cmd, `hl.dsp.exec_cmd("${luaQuote(cmd)}")`);
     } catch (e) {
       Logger.e("HyprlandService", "Failed to spawn command:", e);
     }
