@@ -3,13 +3,13 @@ name: cachix
 on:
   push:
     branches:
-      - main
+      - v5
   workflow_run:
     workflows: ["update flake"]
     types:
       - completed
     branches:
-      - main
+      - v5
   workflow_dispatch:
 
 jobs:
