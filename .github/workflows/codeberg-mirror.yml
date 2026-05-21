@@ -10,13 +10,12 @@ on:
 jobs:
   mirror:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout (full mirror)
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - name: Clone bare repository
+        run: git clone --bare https://github.com/noctalia-dev/noctalia-shell.git repo
 
       - name: Push mirror to Codeberg
         run: |
-          git remote add codeberg https://${{ secrets.CODEBERG_TOKEN }}@codeberg.org/noctalia-dev/noctalia-shell.git
-          git push --mirror codeberg
+          cd repo
+          git push --mirror https://${{ secrets.CODEBERG_TOKEN }}@codeberg.org/noctalia-dev/noctalia-shell.git
