@@ -36,4 +36,5 @@ jobs:
       - name: Push mirror to Codeberg
         run: |
           git remote add codeberg git@codeberg.org:noctalia-dev/noctalia-shell.git
-          git push codeberg --mirror
+          git push codeberg --prune '+refs/heads/*:refs/heads/*'
+          git push codeberg --prune '+refs/tags/*:refs/tags/*'
