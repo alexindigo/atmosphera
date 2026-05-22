@@ -14,12 +14,63 @@ jobs:
   mirror:
     runs-on: ubuntu-latest
     steps:
+      # Bare clone only has refs/heads and refs/tags. A checked-out repo also
+      # carries refs/remotes/origin/*, and `git push --mirror` would create
+      # branches named origin/main on Codeberg (pre-receive hook declined).
       - name: Mirror GitHub to Codeberg
         env:
           GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
-          git clone --mirror "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GH_REPO}.git" bare
+
+          git_retry() {
+            local attempt=1
+            local max_attempts=4
+            local delay=30
+            while true; do
+              if "$@"; then
+                return 0
+              fi
+              if [[ "${attempt}" -ge "${max_attempts}" ]]; then
+                return 1
+              fi
+              echo "git command failed (attempt ${attempt}/${max_attempts}); retrying in ${delay}s..."
+              sleep "${delay}"
+              attempt=$((attempt + 1))
+              delay=$((delay * 2))
+            done
+          }
+
+          git_clone_retry() {
+            local attempt=1
+            local max_attempts=4
+            local delay=30
+            while true; do
+              if git clone --mirror "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GH_REPO}.git" bare; then
+                return 0
+              fi
+              rm -rf bare
+              if [[ "${attempt}" -ge "${max_attempts}" ]]; then
+                return 1
+              fi
+              echo "mirror clone failed (attempt ${attempt}/${max_attempts}); retrying in ${delay}s..."
+              sleep "${delay}"
+              attempt=$((attempt + 1))
+              delay=$((delay * 2))
+            done
+          }
+
+          git_clone_retry
           cd bare
+
+          # Large single --mirror packs often hit Codeberg's HTTP gateway timeout (504).
+          git config http.version HTTP/1.1
+          git config http.postBuffer 524288000
+          git config http.lowSpeedLimit 1000
+          git config http.lowSpeedTime 600
+
           git remote add codeberg "https://${{ secrets.CODEBERG_TOKEN }}@codeberg.org/noctalia-dev/noctalia-shell.git"
-          git push --mirror codeberg
+
+          # Branches first (smaller pack), then tags. --prune drops branches removed on GitHub.
+          git_retry git push codeberg '+refs/heads/*:refs/heads/*' --prune
+          git_retry git push codeberg '+refs/tags/*:refs/tags/*'
