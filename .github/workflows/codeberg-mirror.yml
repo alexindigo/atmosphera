@@ -7,15 +7,19 @@ on:
   delete:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   mirror:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Clone bare repository
-        run: git clone --bare https://github.com/noctalia-dev/noctalia-shell.git repo
-
-      - name: Push mirror to Codeberg
+      - name: Mirror GitHub to Codeberg
+        env:
+          GH_REPO: ${{ github.repository }}
         run: |
-          cd repo
-          git push --mirror https://${{ secrets.CODEBERG_TOKEN }}@codeberg.org/noctalia-dev/noctalia-shell.git
+          set -euo pipefail
+          git clone --mirror "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GH_REPO}.git" bare
+          cd bare
+          git remote add codeberg "https://${{ secrets.CODEBERG_TOKEN }}@codeberg.org/noctalia-dev/noctalia-shell.git"
+          git push --mirror codeberg
