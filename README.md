@@ -1,59 +1,25 @@
-# Noctalia Shell
+# Atmosphera
 
-> [!IMPORTANT]
-> We are actively working on **[Noctalia v5](https://noctalia.dev/blog/announcing-noctalia-v5)** — a full rewrite that will be entering alpha soon. As a result, issues and pull requests targeting v4 will most likely not be merged or fixed. Thank you for your patience and support!
+> **Project Status: Active Development / Advanced Fork**
+> Atmosphera is a desktop shell for Niri and Hyprland with expanded customization, forked from the frozen QML version of Noctalia. While the upstream project [shifted its focus away from the v4 codebase](https://noctalia.dev/blog/announcing-noctalia-v5) for a complete rewrite, this powerful QML architecture has been preserved here to serve as the launchpad for a highly modular, deeply customizable desktop environment.
 
-**_quiet by design_**
-
-<p align="center">
-  <img src="https://assets.noctalia.dev/noctalia-logo.svg?v=2" alt="Noctalia Logo" style="width: 192px" />
-</p>
-
-<p align="center">
-  <a href="https://docs.noctalia.dev/getting-started/installation">
-    <img
-      src="https://img.shields.io/badge/🌙_Install_Noctalia-A8AEFF?style=for-the-badge&labelColor=0C0D11"
-      alt="Install Noctalia"
-      style="height: 50px"
-    />
-  </a>
-</p>
-
-<p><br/></p>
-
-<p align="center">
-  <a href="https://github.com/noctalia-dev/noctalia-shell/commits">
-    <img src="https://img.shields.io/github/last-commit/noctalia-dev/noctalia-shell?style=for-the-badge&labelColor=0C0D11&color=A8AEFF&logo=git&logoColor=FFFFFF&label=commit" alt="Last commit" />
-  </a>
-  <a href="https://github.com/noctalia-dev/noctalia-shell/stargazers">
-    <img src="https://img.shields.io/github/stars/noctalia-dev/noctalia-shell?style=for-the-badge&labelColor=0C0D11&color=A8AEFF&logo=github&logoColor=FFFFFF" alt="GitHub stars" />
-  </a>
-  <a href="https://docs.noctalia.dev">
-    <img src="https://img.shields.io/badge/docs-A8AEFF?style=for-the-badge&logo=gitbook&logoColor=FFFFFF&labelColor=0C0D11" alt="Documentation" />
-  </a>
-  <a href="https://discord.noctalia.dev">
-    <img src="https://img.shields.io/badge/discord-A8AEFF?style=for-the-badge&labelColor=0C0D11&logo=discord&logoColor=FFFFFF" alt="Discord" />
-  </a>
-</p>
+**_elevating your workspace atmosphere_**
 
 ---
 
-## What is Noctalia?
+## What is Atmosphera?
 
-A beautiful, minimal desktop shell for Wayland that actually gets out of your way. Built on [Quickshell](https://quickshell.org/) (Qt/QML) with a warm lavender aesthetic that you can easily customize to match your vibe.
+**Atmosphera** is a robust, highly extensible desktop framework designed specifically for **Niri** and **Hyprland** compositors. Built on top of the flexible and expressive Quickshell (Qt/QML) architecture inherited from Noctalia, it represents a core shift in design philosophy: moving away from a locked-down, purely minimal desktop shell into a highly customizable, multi-layered environment.
 
-**✨ Key Features:**
-- 🪟 Native support for Niri, Hyprland, Sway, Scroll, Labwc and MangoWC
-- 🎨 Extensive theming with predefined color schemes and automatic color generation from your wallpaper
-- 🖼️ Wallpaper management with Wallhaven integration
-- 🔔 Notification system with history and Do Not Disturb
-- 🖥️ Multi-monitor support
-- 🔒 Lock screen
-- 🧩 Desktop widgets (clock, media player and more)
-- 💡 OSD for volume and brightness
-- 🔌 Nearly 100 plugins available ([explore plugins](https://noctalia.dev/plugins/))
-- 🪄 Setup wizard for first-time users
-- ⚡ Built on Quickshell for performance
+### Why this Fork?
+
+Atmosphera is born out of deep respect and gratitude for the Noctalia project. The original team poured immense care into crafting a stable, elegant, and highly capable Qt/QML foundation—without their brilliant groundwork, this project simply would not exist.
+
+As the upstream project shifts its focus to a brand-new architecture, Atmosphera embraces this mature codebase to celebrate, expand, and evolve its potential into the next generation:
+
+* **Unlocked Customization:** Extending the existing layout mechanics to allow deeper, unrestrained configuration of the visual environment.
+* **Paradigm Versatility:** Bridging the gap between classic desktop logic and dynamic workflows, allowing users to comfortably adapt the environment to their existing muscle memory.
+* **Deep Extensibility:** Moving far beyond basic configuration files by introducing versatile plugin types and developer hooks, allowing the shell's core functionality to be dynamically expanded and remixed.
 
 ---
 
@@ -76,50 +42,37 @@ https://github.com/user-attachments/assets/bf46f233-8d66-439a-a1ae-ab0446270f2d
 
 ---
 
-## 📋 Requirements
+## Requirements
 
 - Wayland compositor (see supported compositors below)
 - Quickshell: [noctalia-qs](https://github.com/noctalia-dev/noctalia-qs)
-- Additional dependencies are listed in our [documentation](https://docs.noctalia.dev)
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
-**New to Noctalia?**
-Check out our comprehensive documentation and installation guide to get up and running!
-
-<p align="center">
-  <a href="https://docs.noctalia.dev/getting-started/installation">
-    <img src="https://img.shields.io/badge/📖_Installation_Guide-A8AEFF?style=for-the-badge&logoColor=FFFFFF&labelColor=0C0D11" alt="Installation Guide" />
-  </a>
-  <a href="https://docs.noctalia.dev/getting-started/faq/">
-    <img src="https://img.shields.io/badge/❓_FAQ-A8AEFF?style=for-the-badge&logoColor=FFFFFF&labelColor=0C0D11" alt="FAQ" />
-  </a>
-  <a href="https://discord.noctalia.dev">
-    <img src="https://img.shields.io/badge/💬_Get_Help-A8AEFF?style=for-the-badge&logo=discord&logoColor=FFFFFF&labelColor=0C0D11" alt="Discord" />
-  </a>
-</p>
+**New to Atmosphera?**
+Check the [installation guide](#) and [FAQ](https://github.com/alexindigo/atmosphera/issues) to get up and running!
 
 ---
 
-## 🖥️ Wayland Compositors
+## Wayland Compositors
 
-Noctalia provides native support for **Niri**, **Hyprland**, **Sway**, **Scroll**, **Labwc** and **MangoWC**. Other Wayland compositors may work but could require additional configuration for compositor-specific features like workspaces and window management.
+Atmosphera provides native support for **Niri**, **Hyprland**, **Sway**, **Scroll**, **Labwc** and **MangoWC**. Other Wayland compositors may work but could require additional configuration for compositor-specific features like workspaces and window management.
 
 ---
 
 ## Scope
 
-Noctalia is a **desktop shell**, not a full desktop environment. It provides the visual layer that sits on top of your Wayland compositor (bars, panels, notifications, a dock, and widgets) but it intentionally stays within that boundary. Understanding this helps set the right expectations for feature requests.
+Atmosphera is a **desktop shell**, not a full desktop environment. It provides the visual layer that sits on top of your Wayland compositor (bars, panels, notifications, a dock, and widgets) but it intentionally stays within that boundary. Understanding this helps set the right expectations for feature requests.
 
-### What Noctalia does
+### What Atmosphera does
 
-Noctalia focuses on the things a shell is responsible for: status bar, panels, application launcher, notifications, lock screen, idle management, OSD, theming, wallpapers, desktop widgets, dock, and multi-monitor support.
+Atmosphera focuses on the things a shell is responsible for: status bar, panels, application launcher, notifications, lock screen, idle management, OSD, theming, wallpapers, desktop widgets, dock, and multi-monitor support.
 
 ### What belongs in a plugin
 
-If a feature is useful to some users but not essential to the core shell experience, it's a great candidate for a [plugin](https://noctalia.dev/plugins/). The plugin system is designed to make this easy: plugins can add bar widgets, panels, launcher providers, desktop widgets, and more.
+If a feature is useful to some users but not essential to the core shell experience, it's a great candidate for a [plugin](./docs/plugins/). The plugin system is designed to make this easy: plugins can add bar widgets, panels, launcher providers, desktop widgets, and more.
 
 Some examples of features that are better suited as plugins:
 - Compositor-specific extras (e.g., Steam overlay for Hyprland)
@@ -128,7 +81,7 @@ Some examples of features that are better suited as plugins:
 - Niche productivity tools (e.g., Pomodoro timer, RSS reader, Docker manager)
 - Alternative visualizations or widgets
 
-If you have an idea that fits this category, consider [building a plugin](https://docs.noctalia.dev/development/guideline) for it!
+If you have an idea that fits this category, consider [building a plugin](./docs/development/guideline.md) for it!
 
 ### What falls outside our scope
 
@@ -140,53 +93,27 @@ Some features go beyond what a desktop shell can or should do. These are typical
 - **Removable drive mounting**: handled by system services like udisks and desktop applications
 - **Screen mirroring/casting**: managed by the compositor or dedicated tools
 
-We appreciate feature suggestions, but if a request falls into this category, it's likely outside what Noctalia can provide. When in doubt, feel free to ask in our [Discord](https://discord.noctalia.dev).
+We appreciate feature suggestions, but if a request falls into this category, it's likely outside what Atmosphera can provide. When in doubt, feel free to ask in our [GitHub Issues](https://github.com/alexindigo/atmosphera/issues).
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
-We welcome contributions of any size - bug fixes, new features, documentation improvements, or custom themes and configs.
+We welcome contributions of any size — bug fixes, new features, documentation improvements, or custom themes and configs.
 
 **Get involved:**
-- **Found a bug?** [Open an issue](https://github.com/noctalia-dev/noctalia-shell/issues/new)
-- **Want to code?** Check out our [development guidelines](https://docs.noctalia.dev/development/guideline)
-- **Need help?** Join our [Discord](https://discord.noctalia.dev)
+- **Found a bug?** [Open an issue](https://github.com/alexindigo/atmosphera/issues/new)
 
 ---
 
-## 💜 Credits
+## Acknowledgments
 
-A heartfelt thank you to our incredible community of [**contributors**](https://github.com/noctalia-dev/noctalia-shell/graphs/contributors). We are immensely grateful for your dedicated participation and the constructive feedback you've provided, which continue to shape and improve our project for everyone.
-
----
-
-## ☕ Donations
-
-While all donations are greatly appreciated, they are completely voluntary.
-Thank you to everyone who supports the project! 💜
-
-<p>
-  <a href="https://www.buymeacoffee.com/noctalia">
-    <img src="https://img.shields.io/badge/Buy_Me_a_Coffee-A8AEFF?style=for-the-badge&logo=buymeacoffee&logoColor=FFFFFF&labelColor=0C0D11" alt="Buy Me a Coffee">
-  </a>
-  <a href="https://ko-fi.com/noctaliadev">
-    <img src="https://img.shields.io/badge/Ko--fi-A8AEFF?style=for-the-badge&logo=kofi&logoColor=FFFFFF&labelColor=0C0D11" alt="Ko-fi">
-  </a>
-</p>
+Atmosphera is a fork of **Noctalia Shell**. Thanks to all the [contributors](https://github.com/noctalia-dev/noctalia-shell/graphs/contributors) who built and inspired this project — see [THANKS.md](./THANKS.md).
 
 ---
 
-## 📄 License
+## License
 
-MIT License - see [LICENSE](./LICENSE) for details.
+GNU General Public License v3.0 — see [LICENSE](./LICENSE) for details.
 
----
-
-## ⭐ Star History
-
-<p align="center">
-  <a href="https://github.com/noctalia-dev/noctalia-shell/stargazers">
-    <img src="https://api.noctalia.dev/stars" alt="Star History" />
-  </a>
-</p>
+This project is a fork of [Noctalia Shell](https://github.com/noctalia-dev/noctalia-shell), originally released under the MIT License. See [THIRD-PARTY-NOTICES.md](./THIRD-PARTY-NOTICES.md) for original copyright and license information on incorporated code.

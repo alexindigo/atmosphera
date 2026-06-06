@@ -7,8 +7,8 @@ import qs.Widgets
 NIconButtonHot {
   property ShellScreen screen
 
-  icon: PowerProfileService.noctaliaPerformanceMode ? "rocket" : "rocket-off"
-  tooltipText: I18n.tr("tooltips.noctalia-performance-enabled")
-  hot: PowerProfileService.noctaliaPerformanceMode
-  onClicked: PowerProfileService.toggleNoctaliaPerformance()
+  icon: PowerProfileService.atmospheraPerformanceMode ? "rocket" : "rocket-off"
+  tooltipText: I18n.tr("tooltips.atmosphera-performance-enabled")
+  hot: PowerProfileService.atmospheraPerformanceMode
+  onClicked: PowerProfileService.toggleAtmospheraPerformance()
 }

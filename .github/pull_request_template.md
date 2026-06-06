@@ -1,6 +1,6 @@
 # Pull Request
 
-<!-- If this is a color scheme PR, please create it in https://github.com/noctalia-dev/noctalia-colorschemes instead -->
+<!-- Color scheme PRs should be submitted to the colorscheme repository if one exists -->
 
 If this PR is not ready for review yet, please mark it as **Draft** until it's good to be reviewed.
 
@@ -20,9 +20,9 @@ Mark the relevant option with an "x".
 ## Testing
 Describe how you tested your changes and mark the relevant items.
 
-- [ ] Tested on niri
+- [ ] Tested on Niri
 - [ ] Tested on Hyprland
-- [ ] Tested on sway
+- [ ] Tested on Sway
 - [ ] Tested with different bar positions and density settings
 - [ ] Tested at different interface scaling values
 - [ ] Tested with multiple monitors (if applicable)

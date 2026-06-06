@@ -524,7 +524,7 @@ Variants {
       implicitHeight: verticalMode ? (isShortMode ? lockKeyVHeight : longVHeight) : longHHeight
       color: "transparent"
 
-      WlrLayershell.namespace: "noctalia-osd-" + (screen?.name || "unknown")
+      WlrLayershell.namespace: "atmosphera-osd-" + (screen?.name || "unknown")
       WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
       WlrLayershell.layer: Settings.data.osd?.overlayLayer ? WlrLayer.Overlay : WlrLayer.Top
       WlrLayershell.exclusionMode: ExclusionMode.Ignore

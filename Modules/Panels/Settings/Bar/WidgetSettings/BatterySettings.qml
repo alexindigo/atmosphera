@@ -20,7 +20,7 @@ ColumnLayout {
   property string valueDisplayMode: widgetData.displayMode !== undefined ? widgetData.displayMode : widgetMetadata.displayMode
   property string valueDeviceNativePath: widgetData.deviceNativePath !== undefined ? widgetData.deviceNativePath : widgetMetadata.deviceNativePath
   property bool valueShowPowerProfiles: widgetData.showPowerProfiles !== undefined ? widgetData.showPowerProfiles : widgetMetadata.showPowerProfiles
-  property bool valueShowNoctaliaPerformance: widgetData.showNoctaliaPerformance !== undefined ? widgetData.showNoctaliaPerformance : widgetMetadata.showNoctaliaPerformance
+  property bool valueShowAtmospheraPerformance: widgetData.showAtmospheraPerformance !== undefined ? widgetData.showAtmospheraPerformance : widgetMetadata.showAtmospheraPerformance
   property bool valueHideIfNotDetected: widgetData.hideIfNotDetected !== undefined ? widgetData.hideIfNotDetected : widgetMetadata.hideIfNotDetected
   property bool valueHideIfIdle: widgetData.hideIfIdle !== undefined ? widgetData.hideIfIdle : widgetMetadata.hideIfIdle
 
@@ -31,7 +31,7 @@ ColumnLayout {
     }
     settings.displayMode = valueDisplayMode;
     settings.showPowerProfiles = valueShowPowerProfiles;
-    settings.showNoctaliaPerformance = valueShowNoctaliaPerformance;
+    settings.showAtmospheraPerformance = valueShowAtmospheraPerformance;
     settings.hideIfNotDetected = valueHideIfNotDetected;
     settings.hideIfIdle = valueHideIfIdle;
     settings.deviceNativePath = valueDeviceNativePath;
@@ -126,13 +126,13 @@ ColumnLayout {
   }
 
   NToggle {
-    label: I18n.tr("bar.battery.show-noctalia-performance-label")
-    description: I18n.tr("bar.battery.show-noctalia-performance-description")
-    checked: valueShowNoctaliaPerformance
+    label: I18n.tr("bar.battery.show-atmosphera-performance-label")
+    description: I18n.tr("bar.battery.show-atmosphera-performance-description")
+    checked: valueShowAtmospheraPerformance
     onToggled: checked => {
-                 valueShowNoctaliaPerformance = checked;
+                 valueShowAtmospheraPerformance = checked;
                  saveSettings();
                }
-    defaultValue: widgetMetadata.showNoctaliaPerformance
+    defaultValue: widgetMetadata.showAtmospheraPerformance
   }
 }

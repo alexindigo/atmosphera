@@ -27,16 +27,7 @@ ColumnLayout {
     enableDescriptionRichText: true
   }
 
-  NButton {
-    Layout.alignment: Qt.AlignHCenter
-    icon: "heart"
-    text: I18n.tr("panels.about.become-supporter")
-    outlined: true
-    onClicked: {
-      Quickshell.execDetached(["xdg-open", "https://buymeacoffee.com/noctalia"]);
-      ToastService.showNotice(I18n.tr("panels.about.support"), I18n.tr("toast.donation-opened"));
-    }
-  }
+  // Donation button removed (fork)
 
   NDivider {
     Layout.fillWidth: true
@@ -132,12 +123,13 @@ ColumnLayout {
 
                 Image {
                   anchors.centerIn: parent
-                  source: "../../../../../Assets/noctalia.svg"
+                  source: "../../../../../Assets/atmosphera.svg"
                   width: parent.width * 0.75
                   height: width
                   fillMode: Image.PreserveAspectFit
                   mipmap: true
                   smooth: true
+                  visible: false // Temporarily hidden; needs replacement logo
                 }
               }
             }

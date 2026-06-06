@@ -21,7 +21,7 @@ jobs:
 
       - name: Create release archive
         run: |
-          mkdir -p ../noctalia-release
+          mkdir -p ../atmosphera-release
           rsync -av \
             --exclude='.git' \
             --exclude='.github' \
@@ -29,10 +29,10 @@ jobs:
             --exclude='flake.nix' \
             --exclude='flake.lock' \
             --exclude='result*' \
-            ./ ../noctalia-release/
+            ./ ../atmosphera-release/
           cd ..
-          tar -czf noctalia-${{ github.ref_name }}.tar.gz noctalia-release/
-          cp noctalia-${{ github.ref_name }}.tar.gz noctalia-latest.tar.gz
+          tar -czf atmosphera-${{ github.ref_name }}.tar.gz atmosphera-release/
+          cp atmosphera-${{ github.ref_name }}.tar.gz atmosphera-latest.tar.gz
           mv *.tar.gz ${{ github.workspace }}/
 
       - name: Generate release notes
@@ -61,8 +61,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            noctalia-${{ github.ref_name }}.tar.gz
-            noctalia-latest.tar.gz
+            atmosphera-${{ github.ref_name }}.tar.gz
+            atmosphera-latest.tar.gz
           body_path: release_notes.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

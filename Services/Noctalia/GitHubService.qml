@@ -10,7 +10,7 @@ import qs.Services.UI
 Singleton {
   id: root
 
-  property string githubDataFile: Quickshell.env("NOCTALIA_GITHUB_FILE") || (Settings.cacheDir + "github.json")
+  property string githubDataFile: Quickshell.env("ATMOSPHERA_GITHUB_FILE") || (Settings.cacheDir + "github.json")
   property int githubUpdateFrequency: 60 * 60 // 1 hour expressed in seconds
   property bool isFetchingData: false
   readonly property alias data: adapter // Used to access via GitHubService.data.xxx.yyy

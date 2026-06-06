@@ -29,7 +29,7 @@ Item {
         color: Qt.rgba(0, 0, 0, 0)
 
         WlrLayershell.layer: WlrLayer.Overlay
-        WlrLayershell.namespace: "noctalia-fade-overlay"
+        WlrLayershell.namespace: "atmosphera-fade-overlay"
         WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
         WlrLayershell.exclusionMode: ExclusionMode.Ignore
         WlrLayershell.anchors {

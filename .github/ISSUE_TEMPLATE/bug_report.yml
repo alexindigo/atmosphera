@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report a bug or regression in Noctalia
+description: Report a bug or regression in Atmosphera
 title: "[BUG] "
 labels: ["bug"]
 
@@ -12,7 +12,7 @@ body:
       options:
         - label: I have searched existing issues and confirmed this is not a duplicate.
           required: true
-        - label: I am using the latest available version of Noctalia.
+        - label: I am using the latest available version of Atmosphera.
           required: true
 
   - type: textarea
@@ -68,10 +68,10 @@ body:
       render: text
 
   - type: input
-    id: noctalia-version
+    id: atmosphera-version
     attributes:
-      label: Noctalia version
-      description: Enter the version shown by Noctalia, or the commit hash if you are running a development build.
+      label: Atmosphera version
+      description: Enter the version shown by Atmosphera, or the commit hash if you are running a development build.
       placeholder: "v5.x.x (commit hash)"
     validations:
       required: true

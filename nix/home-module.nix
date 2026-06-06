@@ -5,28 +5,28 @@
   ...
 }:
 let
-  cfg = config.programs.noctalia-shell;
+  cfg = config.programs.atmosphera;
   jsonFormat = pkgs.formats.json { };
   tomlFormat = pkgs.formats.toml { };
 
   generateJson =
     name: value:
     if lib.isString value then
-      pkgs.writeText "noctalia-${name}.json" value
+      pkgs.writeText "atmosphera-${name}.json" value
     else if builtins.isPath value || lib.isStorePath value then
       value
     else
-      jsonFormat.generate "noctalia-${name}.json" value;
+      jsonFormat.generate "atmosphera-${name}.json" value;
 in
 {
-  options.programs.noctalia-shell = {
-    enable = lib.mkEnableOption "Noctalia shell configuration";
+  options.programs.atmosphera = {
+    enable = lib.mkEnableOption "Atmosphera configuration";
 
-    systemd.enable = lib.mkEnableOption "Noctalia shell systemd integration";
+    systemd.enable = lib.mkEnableOption "Atmosphera systemd integration";
 
     package = lib.mkOption {
       type = lib.types.nullOr lib.types.package;
-      description = "The noctalia-shell package to use";
+      description = "The atmosphera package to use";
     };
 
     settings = lib.mkOption {
@@ -56,8 +56,8 @@ in
         }
       '';
       description = ''
-        Noctalia shell configuration settings as an attribute set, string
-        or filepath, to be written to ~/.config/noctalia/settings.json.
+        Atmosphera configuration settings as an attribute set, string
+        or filepath, to be written to ~/.config/atmosphera/settings.json.
       '';
     };
 
@@ -89,8 +89,8 @@ in
         }
       '';
       description = ''
-        Noctalia shell color configuration as an attribute set, string
-        or filepath, to be written to ~/.config/noctalia/colors.json.
+        Atmosphera color configuration as an attribute set, string
+        or filepath, to be written to ~/.config/atmosphera/colors.json.
       '';
     };
 
@@ -107,7 +107,7 @@ in
         {
           templates = {
             neovim = {
-              input_path = "~/.config/noctalia/templates/template.lua";
+              input_path = "~/.config/atmosphera/templates/template.lua";
               output_path = "~/.config/nvim/generated.lua";
               post_hook = "pkill -SIGUSR1 nvim";
             };
@@ -115,7 +115,7 @@ in
         }
       '';
       description = ''
-        Template definitions for Noctalia, to be written to ~/.config/noctalia/user-templates.toml.
+        Template definitions for Atmosphera, to be written to ~/.config/atmosphera/user-templates.toml.
 
         This option accepts:
         - a Nix attrset (converted to TOML automatically)
@@ -138,7 +138,7 @@ in
           sources = [
             {
               enabled = true;
-              name = "Noctalia Plugins";
+              name = "Noctalia plugins";
               url = "https://github.com/noctalia-dev/noctalia-plugins";
             }
           ];
@@ -152,8 +152,8 @@ in
         }
       '';
       description = ''
-        Noctalia shell plugin configuration as an attribute set, string
-        or filepath, to be written to ~/.config/noctalia/plugins.json.
+        Atmosphera plugin configuration as an attribute set, string
+        or filepath, to be written to ~/.config/atmosphera/plugins.json.
       '';
     };
 
@@ -176,7 +176,7 @@ in
       '';
       description = ''
         Each plugin’s settings as an attribute set, string
-        or filepath, to be written to ~/.config/noctalia/plugins/plugin-name/settings.json.
+        or filepath, to be written to ~/.config/atmosphera/plugins/plugin-name/settings.json.
       '';
     };
   };
@@ -184,26 +184,26 @@ in
   config = lib.mkIf cfg.enable {
     warnings = lib.mkIf cfg.systemd.enable [
       ''
-        Running noctalia-shell as a systemd service has been deprecated!
-        See https://docs.noctalia.dev/getting-started/nixos/#running-the-shell for details.
+        Running atmosphera as a systemd service has been deprecated!
+        Use the graphical session target instead.
       ''
     ];
 
-    systemd.user.services.noctalia-shell = lib.mkIf cfg.systemd.enable {
+    systemd.user.services.atmosphera = lib.mkIf cfg.systemd.enable {
       Unit = {
-        Description = "Noctalia Shell - Wayland desktop shell";
-        Documentation = "https://docs.noctalia.dev";
+        Description = "Atmosphera - Wayland desktop shell";
+        Documentation = "https://github.com/alexindigo/atmosphera";
         PartOf = [ config.wayland.systemd.target ];
         After = [ config.wayland.systemd.target ];
         X-Restart-Triggers =
-          lib.optional (cfg.settings != { }) "${config.xdg.configFile."noctalia/settings.json".source}"
-          ++ lib.optional (cfg.colors != { }) "${config.xdg.configFile."noctalia/colors.json".source}"
-          ++ lib.optional (cfg.plugins != { }) "${config.xdg.configFile."noctalia/plugins.json".source}"
+          lib.optional (cfg.settings != { }) "${config.xdg.configFile."atmosphera/settings.json".source}"
+          ++ lib.optional (cfg.colors != { }) "${config.xdg.configFile."atmosphera/colors.json".source}"
+          ++ lib.optional (cfg.plugins != { }) "${config.xdg.configFile."atmosphera/plugins.json".source}"
           ++ lib.optional (
             cfg.user-templates != { }
-          ) "${config.xdg.configFile."noctalia/user-templates.toml".source}"
+          ) "${config.xdg.configFile."atmosphera/user-templates.toml".source}"
           ++ lib.mapAttrsToList (
-            name: _: "${config.xdg.configFile."noctalia/plugins/${name}/settings.json".source}"
+            name: _: "${config.xdg.configFile."atmosphera/plugins/${name}/settings.json".source}"
           ) cfg.pluginSettings;
       };
 
@@ -218,28 +218,28 @@ in
     home.packages = lib.optional (cfg.package != null) cfg.package;
 
     xdg.configFile = {
-      "noctalia/settings.json" = lib.mkIf (cfg.settings != { }) {
+      "atmosphera/settings.json" = lib.mkIf (cfg.settings != { }) {
         source = generateJson "settings" cfg.settings;
       };
-      "noctalia/colors.json" = lib.mkIf (cfg.colors != { }) {
+      "atmosphera/colors.json" = lib.mkIf (cfg.colors != { }) {
         source = generateJson "colors" cfg.colors;
       };
-      "noctalia/plugins.json" = lib.mkIf (cfg.plugins != { }) {
+      "atmosphera/plugins.json" = lib.mkIf (cfg.plugins != { }) {
         source = generateJson "plugins" cfg.plugins;
       };
-      "noctalia/user-templates.toml" = lib.mkIf (cfg.user-templates != { }) {
+      "atmosphera/user-templates.toml" = lib.mkIf (cfg.user-templates != { }) {
         source =
           if lib.isString cfg.user-templates then
-            pkgs.writeText "noctalia-user-templates.toml" cfg.user-templates
+            pkgs.writeText "atmosphera-user-templates.toml" cfg.user-templates
           else if builtins.isPath cfg.user-templates || lib.isStorePath cfg.user-templates then
             cfg.user-templates
           else
-            tomlFormat.generate "noctalia-user-templates.toml" cfg.user-templates;
+            tomlFormat.generate "atmosphera-user-templates.toml" cfg.user-templates;
       };
     }
     // lib.mapAttrs' (
       name: value:
-      lib.nameValuePair "noctalia/plugins/${name}/settings.json" {
+      lib.nameValuePair "atmosphera/plugins/${name}/settings.json" {
         source = generateJson "${name}-settings" value;
       }
     ) cfg.pluginSettings;
@@ -247,7 +247,7 @@ in
     assertions = [
       {
         assertion = !cfg.systemd.enable || cfg.package != null;
-        message = "noctalia-shell: The package option must not be null when systemd service is enabled.";
+        message = "atmosphera: The package option must not be null when systemd service is enabled.";
       }
     ];
   };

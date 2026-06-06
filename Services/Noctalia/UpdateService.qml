@@ -11,7 +11,7 @@ Singleton {
   id: root
 
   // Version properties
-  readonly property string baseVersion: "4.7.8"
+  readonly property string baseVersion: "0.1.0"
   readonly property bool isDevelopment: true
   readonly property string developmentSuffix: "-git"
   readonly property string currentVersion: `v${!isDevelopment ? baseVersion : baseVersion + developmentSuffix}`
@@ -20,9 +20,8 @@ Singleton {
   readonly property string telemetryIntroVersion: "4.0.2"
 
   // URLs
-  readonly property string discordUrl: "https://discord.noctalia.dev"
-  readonly property string feedbackUrl: Quickshell.env("NOCTALIA_CHANGELOG_FEEDBACK_URL") || ""
-  readonly property string upgradeLogBaseUrl: Quickshell.env("NOCTALIA_UPGRADELOG_URL") || "https://api.noctalia.dev/upgradelog"
+  readonly property string feedbackUrl: Quickshell.env("ATMOSPHERA_CHANGELOG_FEEDBACK_URL") || ""
+  readonly property string upgradeLogBaseUrl: Quickshell.env("ATMOSPHERA_UPGRADELOG_URL") || ""
 
   // Changelog properties
   property bool initialized: false
@@ -288,18 +287,6 @@ Singleton {
     popupScheduled = false;
     lastShownVersion = changelogCurrentVersion;
     viewChangelogTargetScreen = null;
-  }
-
-  function openDiscord() {
-    if (!discordUrl)
-      return;
-    Quickshell.execDetached(["xdg-open", discordUrl]);
-  }
-
-  function openFeedbackForm() {
-    if (!feedbackUrl)
-      return;
-    Quickshell.execDetached(["xdg-open", feedbackUrl]);
   }
 
   function showLatestChangelog() {
