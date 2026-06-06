@@ -47,10 +47,10 @@ ColumnLayout {
 
   // Startup Hook
   HookRow {
-    label: I18n.tr("panels.hooks.noctalia-started-label")
-    description: I18n.tr("panels.hooks.noctalia-started-description")
+    label: I18n.tr("panels.hooks.atmosphera-started-label")
+    description: I18n.tr("panels.hooks.atmosphera-started-description")
     value: Settings.data.hooks.startup
-    onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.noctalia-started-placeholder"), value, newValue => {
+    onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.atmosphera-started-placeholder"), value, newValue => {
                               Settings.data.hooks.startup = newValue;
                               Settings.saveImmediate();
                             }, val => {

@@ -30,7 +30,7 @@ SmartPanel {
     readonly property bool profilesAvailable: PowerProfileService.available
     property int profileIndex: profileToIndex(PowerProfileService.profile)
     readonly property bool showPowerProfiles: panelID ? panelID.showPowerProfiles : resolveWidgetSetting("showPowerProfiles", false)
-    readonly property bool showNoctaliaPerformance: panelID ? panelID.showNoctaliaPerformance : resolveWidgetSetting("showNoctaliaPerformance", false)
+    readonly property bool showAtmospheraPerformance: panelID ? panelID.showAtmospheraPerformance : resolveWidgetSetting("showAtmospheraPerformance", false)
     readonly property bool isLowBattery: BatteryService.isLowBattery
     readonly property bool isCriticalBattery: BatteryService.isCriticalBattery
     readonly property var primaryDevice: BatteryService.primaryDevice
@@ -293,7 +293,7 @@ SmartPanel {
       NBox {
         Layout.fillWidth: true
         height: controlsLayout.implicitHeight + Style.margin2L
-        visible: showPowerProfiles || showNoctaliaPerformance
+        visible: showPowerProfiles || showAtmospheraPerformance
 
         ColumnLayout {
           id: controlsLayout
@@ -367,16 +367,16 @@ SmartPanel {
 
           NDivider {
             Layout.fillWidth: true
-            visible: showPowerProfiles && PowerProfileService.available && showNoctaliaPerformance
+            visible: showPowerProfiles && PowerProfileService.available && showAtmospheraPerformance
           }
 
           RowLayout {
             Layout.fillWidth: true
             spacing: Style.marginS
-            visible: showNoctaliaPerformance
+            visible: showAtmospheraPerformance
 
             NText {
-              text: I18n.tr("toast.noctalia-performance.label")
+              text: I18n.tr("toast.atmosphera-performance.label")
               pointSize: Style.fontSizeM
               font.weight: Style.fontWeightBold
               color: Color.mOnSurface
@@ -384,14 +384,14 @@ SmartPanel {
             }
 
             NIcon {
-              icon: PowerProfileService.noctaliaPerformanceMode ? "rocket" : "rocket-off"
+              icon: PowerProfileService.atmospheraPerformanceMode ? "rocket" : "rocket-off"
               pointSize: Style.fontSizeL
-              color: PowerProfileService.noctaliaPerformanceMode ? Color.mPrimary : Color.mOnSurfaceVariant
+              color: PowerProfileService.atmospheraPerformanceMode ? Color.mPrimary : Color.mOnSurfaceVariant
             }
 
             NToggle {
-              checked: PowerProfileService.noctaliaPerformanceMode
-              onToggled: checked => PowerProfileService.noctaliaPerformanceMode = checked
+              checked: PowerProfileService.atmospheraPerformanceMode
+              onToggled: checked => PowerProfileService.atmospheraPerformanceMode = checked
             }
           }
         }

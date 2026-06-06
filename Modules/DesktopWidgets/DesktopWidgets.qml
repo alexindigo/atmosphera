@@ -51,7 +51,7 @@ Variants {
 
     // Only create PanelWindow if enabled AND (screen has widgets OR in edit mode)
     // During compositor overview, show widgets only when overviewEnabled is true.
-    active: modelData && Settings.data.desktopWidgets.enabled && (screenWidgets.length > 0 || DesktopWidgetRegistry.editMode) && (!CompositorService.overviewActive || Settings.data.desktopWidgets.overviewEnabled) && (!PowerProfileService.noctaliaPerformanceMode || !Settings.data.noctaliaPerformance.disableDesktopWidgets) && !PanelService.lockScreen?.active
+    active: modelData && Settings.data.desktopWidgets.enabled && (screenWidgets.length > 0 || DesktopWidgetRegistry.editMode) && (!CompositorService.overviewActive || Settings.data.desktopWidgets.overviewEnabled) && (!PowerProfileService.atmospheraPerformanceMode || !Settings.data.atmospheraPerformance.disableDesktopWidgets) && !PanelService.lockScreen?.active
 
     sourceComponent: PanelWindow {
       id: window
@@ -74,7 +74,7 @@ Variants {
 
       WlrLayershell.layer: WlrLayer.Bottom
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
-      WlrLayershell.namespace: "noctalia-desktop-widgets-" + (screen?.name || "unknown")
+      WlrLayershell.namespace: "atmosphera-desktop-widgets-" + (screen?.name || "unknown")
 
       anchors {
         top: true

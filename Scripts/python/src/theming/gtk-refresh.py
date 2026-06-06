@@ -40,23 +40,23 @@ def theme_exists(theme_name: str) -> bool:
     return False
 
 
-GTK_IMPORT = '@import url("noctalia.css");'
+GTK_IMPORT = '@import url("atmosphera.css");'
 
 
 def ensure_gtk_css_import(gtk_css: Path, colors_file: Path, label: str) -> bool:
     """
-    Append the noctalia.css import to gtk.css if not already present.
+    Append the atmosphera.css import to gtk.css if not already present.
     If gtk.css doesn't exist, create it with the import.
     Does not overwrite user modifications (similar to niri template).
     """
     if not colors_file.exists():
-        print(f"Error: {label} noctalia.css not found at {colors_file}", file=sys.stderr)
+        print(f"Error: {label} atmosphera.css not found at {colors_file}", file=sys.stderr)
         return False
 
     if gtk_css.exists() or gtk_css.is_symlink():
         content = gtk_css.read_text()
         # Already has the import (flexible: allow optional whitespace / different quoting)
-        if "noctalia.css" in content and "@import" in content:
+        if "atmosphera.css" in content and "@import" in content:
             return True
         # Need to modify — handle symlinks carefully
         target = gtk_css
@@ -75,23 +75,23 @@ def ensure_gtk_css_import(gtk_css: Path, colors_file: Path, label: str) -> bool:
             new_content += "\n"
         new_content += "\n" + GTK_IMPORT + "\n"
         target.write_text(new_content)
-        print(f"Appended {label} noctalia.css import to gtk.css")
+        print(f"Appended {label} atmosphera.css import to gtk.css")
     else:
         gtk_css.write_text(GTK_IMPORT + "\n")
-        print(f"Created {label} gtk.css with noctalia.css import")
+        print(f"Created {label} gtk.css with atmosphera.css import")
     return True
 
 
 async def apply_gtk3_colors(config_dir: Path):
     gtk3_dir = config_dir / "gtk-3.0"
-    colors_file = gtk3_dir / "noctalia.css"
+    colors_file = gtk3_dir / "atmosphera.css"
     gtk_css = gtk3_dir / "gtk.css"
     return ensure_gtk_css_import(gtk_css, colors_file, "GTK3")
 
 
 async def apply_gtk4_colors(config_dir: Path):
     gtk4_dir = config_dir / "gtk-4.0"
-    colors_file = gtk4_dir / "noctalia.css"
+    colors_file = gtk4_dir / "atmosphera.css"
     gtk_css = gtk4_dir / "gtk.css"
     return ensure_gtk_css_import(gtk_css, colors_file, "GTK4")
 
@@ -179,7 +179,7 @@ async def main():
         print("GTK colors applied successfully")
     else:
         # Still push light/dark preference so portal/GTK apps follow the shell even when
-        # gtk.css / noctalia.css setup failed.
+        # gtk.css / atmosphera.css setup failed.
         await sync_system_appearance(mode, update_gtk_theme=False)
         sys.exit(1)
 

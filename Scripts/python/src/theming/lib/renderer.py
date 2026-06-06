@@ -1128,13 +1128,13 @@ class TemplateRenderer:
         """Substitute {{closest_color}} in text."""
         return re.sub(r"\{\{\s*closest_color\s*\}\}", self.closest_color, text)
 
-    def _kitty_needs_current_theme_link(self, noctalia_theme_path: Path) -> bool:
+    def _kitty_needs_current_theme_link(self, atmosphera_theme_path: Path) -> bool:
         """True if generated kitty theme exists but ~/.config/kitty/current-theme.conf is absent.
 
         Many kitty.conf snippets use `include ./current-theme.conf`; template-apply.sh maintains
-        that link. When noctalia.conf is skipped as identical, hooks must still run once to create it.
+        that link. When atmosphera.conf is skipped as identical, hooks must still run once to create it.
         """
-        if not noctalia_theme_path.is_file():
+        if not atmosphera_theme_path.is_file():
             return False
         current = Path.home() / ".config" / "kitty" / "current-theme.conf"
         return not current.is_file()
@@ -1181,7 +1181,7 @@ class TemplateRenderer:
                 out_path = Path(output_path).expanduser()
                 # Hooks are skipped when the rendered file is unchanged (avoids mtime noise).
                 # Kitty setups often use `include ./current-theme.conf` pointing at the live
-                # theme; that file is created in the post_hook. If noctalia.conf is unchanged
+                # theme; that file is created in the post_hook. If atmosphera.conf is unchanged
                 # (e.g. wallpaper palette tweak that doesn't affect terminal colors), the hook
                 # never ran and current-theme.conf never appears — while predefined schemes
                 # usually change bytes so hooks always run. Force hooks when that include is missing.

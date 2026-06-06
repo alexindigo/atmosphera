@@ -663,9 +663,9 @@ Popup {
         if (needsReset) {
           Logger.i("ColorSchemeDownload", "Deleted scheme was active, resetting to Noctalia (default)");
           // Clear the setting immediately so ColorSchemeService won't try to apply the deleted scheme
-          Settings.data.colorSchemes.predefinedScheme = "Noctalia (default)";
+          Settings.data.colorSchemes.predefinedScheme = "Atmosphera (default)";
           // Apply the default scheme immediately
-          ColorSchemeService.setPredefinedScheme("Noctalia (default)");
+          ColorSchemeService.setPredefinedScheme("Atmosphera (default)");
         }
 
         // Reload color schemes

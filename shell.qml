@@ -1,5 +1,5 @@
 /*
-* Noctalia – made by https://github.com/noctalia-dev
+ * Atmosphera – forked from Noctalia (https://github.com/noctalia-dev)
 * Licensed under the MIT License.
 * Forks and modifications are allowed under the MIT License,
 * but proper credit must be given to the original author.
@@ -48,7 +48,7 @@ ShellRoot {
 
   Component.onCompleted: {
     Logger.i("Shell", "---------------------------");
-    Logger.i("Shell", "Noctalia Hello!");
+    Logger.i("Shell", "Atmosphera Hello!");
 
     // Initialize plugin system early so Settings can validate plugin widgets
     PluginRegistry.init();

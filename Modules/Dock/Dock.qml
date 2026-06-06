@@ -720,7 +720,7 @@ Loader {
           margins.top: peekCenterOffsetY
           margins.left: peekCenterOffsetX
 
-          WlrLayershell.namespace: "noctalia-dock-peek-" + (screen?.name || "unknown")
+          WlrLayershell.namespace: "atmosphera-dock-peek-" + (screen?.name || "unknown")
           WlrLayershell.layer: WlrLayer.Overlay
           WlrLayershell.exclusionMode: ExclusionMode.Ignore
           // Larger peek area when bar is at same edge, normal 1px otherwise
@@ -782,7 +782,7 @@ Loader {
           margins.top: peekCenterOffsetY
           margins.left: peekCenterOffsetX
 
-          WlrLayershell.namespace: "noctalia-dock-indicator-" + (screen?.name || "unknown")
+          WlrLayershell.namespace: "atmosphera-dock-indicator-" + (screen?.name || "unknown")
           WlrLayershell.layer: WlrLayer.Top
           WlrLayershell.exclusionMode: ExclusionMode.Ignore
           WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
@@ -842,7 +842,7 @@ Loader {
           focusable: false
           color: "transparent"
 
-          WlrLayershell.namespace: "noctalia-dock-" + (screen?.name || "unknown")
+          WlrLayershell.namespace: "atmosphera-dock-" + (screen?.name || "unknown")
           WlrLayershell.exclusionMode: exclusive ? ExclusionMode.Auto : ExclusionMode.Ignore
 
           // Slide animation: content slides inside a fixed window, no margin animation.

@@ -19,12 +19,12 @@ Scope {
   property string infoMessage: ""
 
   readonly property string pamConfigDirectory: "/etc/pam.d"
-  property string pamConfig: Quickshell.env("NOCTALIA_PAM_SERVICE") || "login"
+  property string pamConfig: Quickshell.env("ATMOSPHERA_PAM_SERVICE") || "login"
   property bool pamReady: false
 
   Component.onCompleted: {
-    if (Quickshell.env("NOCTALIA_PAM_SERVICE")) {
-      Logger.i("LockContext", "NOCTALIA_PAM_SERVICE is set, using system PAM config: /etc/pam.d/" + pamConfig);
+    if (Quickshell.env("ATMOSPHERA_PAM_SERVICE")) {
+      Logger.i("LockContext", "ATMOSPHERA_PAM_SERVICE is set, using system PAM config: /etc/pam.d/" + pamConfig);
       pamReady = true;
     } else {
       Logger.i("LockContext", "Probing for best PAM service...");

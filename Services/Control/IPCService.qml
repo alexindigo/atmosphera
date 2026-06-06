@@ -750,16 +750,16 @@ Singleton {
       }
     }
 
-    function toggleNoctaliaPerformance() {
-      PowerProfileService.toggleNoctaliaPerformance();
+    function toggleAtmospheraPerformance() {
+      PowerProfileService.toggleAtmospheraPerformance();
     }
 
-    function enableNoctaliaPerformance() {
-      PowerProfileService.setNoctaliaPerformance(true);
+    function enableAtmospheraPerformance() {
+      PowerProfileService.setAtmospheraPerformance(true);
     }
 
-    function disableNoctaliaPerformance() {
-      PowerProfileService.setNoctaliaPerformance(false);
+    function disableAtmospheraPerformance() {
+      PowerProfileService.setAtmospheraPerformance(false);
     }
   }
 

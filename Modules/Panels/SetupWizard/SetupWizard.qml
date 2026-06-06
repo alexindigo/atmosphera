@@ -186,7 +186,7 @@ SmartPanel {
                   anchors.centerIn: parent
                   width: 110
                   height: 110
-                  source: Qt.resolvedUrl(Quickshell.shellDir + "/Assets/noctalia.svg")
+                  source: Qt.resolvedUrl(Quickshell.shellDir + "/Assets/atmosphera.svg")
                   fillMode: Image.PreserveAspectFit
                   smooth: true
 

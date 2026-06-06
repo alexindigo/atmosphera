@@ -142,26 +142,11 @@ Singleton {
   Process {
     id: supporterProcess
 
-    command: ["curl", "-s", "https://api.noctalia.dev/supporters"]
+    command: ["true"]
 
     stdout: StdioCollector {
       onStreamFinished: {
-        try {
-          const response = text;
-          if (response && response.trim()) {
-            const parsed = JSON.parse(response);
-            if (Array.isArray(parsed)) {
-              root.data.supporters = parsed;
-              root.supporters = parsed;
-              root.saveData();
-              Logger.d("Supporter", "Fetched", parsed.length, "supporters");
-            } else if (parsed.message) {
-              Logger.w("Supporter", "API error:", parsed.message);
-            }
-          }
-        } catch (e) {
-          Logger.e("Supporter", "Failed to parse response:", e);
-        }
+        Logger.d("Supporter", "Supporters API disabled (fork removed upstream endpoint)");
         root.isFetching = false;
       }
     }
