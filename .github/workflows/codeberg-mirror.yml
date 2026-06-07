@@ -35,6 +35,6 @@ jobs:
 
       - name: Push mirror to Codeberg
         run: |
-          git remote add codeberg git@codeberg.org:alexindigo/atmosphera.git
+          git remote add codeberg git@codeberg.org:atmosphera/atmosphera.git
           git push codeberg --prune '+refs/heads/*:refs/heads/*'
           git push codeberg --prune '+refs/tags/*:refs/tags/*'
