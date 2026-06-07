@@ -21,17 +21,13 @@ jobs:
       - name: Fetch all remote branches and tags
         run: git fetch --all --tags --prune
 
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.CODEBERG_SSH_KEY }}" > ~/.ssh/codeberg
-          chmod 600 ~/.ssh/codeberg
-          ssh-keyscan codeberg.org >> ~/.ssh/known_hosts
-          cat >> ~/.ssh/config << 'SSHEOF'
-          Host codeberg.org
-            IdentityFile ~/.ssh/codeberg
-            StrictHostKeyChecking yes
-          SSHEOF
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.CODEBERG_SSH_KEY }}
+
+      - name: Add Codeberg to known hosts
+        run: ssh-keyscan -t ed25519,rsa codeberg.org >> ~/.ssh/known_hosts
 
       - name: Push mirror to Codeberg
         run: |
