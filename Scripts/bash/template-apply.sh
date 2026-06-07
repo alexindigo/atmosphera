@@ -48,7 +48,8 @@ ghostty)
                 # Replace existing theme line in-place
                 sed -i -E 's/^theme\s*=.*/theme = noctalia/' "$CONFIG_FILE"
             else
-                # Add the new theme line to the end of the file
+                # Ensure file ends with newline, then append the theme line
+                sed -i -e '$a\' "$CONFIG_FILE"
                 echo "theme = noctalia" >>"$CONFIG_FILE"
             fi
         fi
@@ -537,6 +538,7 @@ btop)
             # Replace existing color_theme line in-place
             sed -i -E 's/^color_theme\s*=.*/color_theme = "noctalia"/' "$CONFIG_FILE"
         else
+            sed -i -e '$a\' "$CONFIG_FILE"
             echo 'color_theme = "noctalia"' >>"$CONFIG_FILE"
         fi
 
