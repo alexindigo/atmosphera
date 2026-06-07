@@ -483,7 +483,7 @@ Item {
 
   function spawn(command) {
     try {
-      Quickshell.execDetached(["mmsg", "-s", "-d", "spawn_shell," + command.join(" ")]);
+      Quickshell.execDetached(["mmsg", "dispatch", "spawn," + command.join(" ")]);
     } catch (e) {
       Logger.e("MangoService", "Failed to spawn command:", e);
     }
