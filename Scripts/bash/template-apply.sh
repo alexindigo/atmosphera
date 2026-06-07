@@ -462,8 +462,8 @@ mango)
     MAIN_CONFIG="$CONFIG_DIR/config.conf"
     THEME_FILE="$CONFIG_DIR/noctalia.conf"
     BACKUP_FILE="$CONFIG_DIR/theme.conf.bak"
-    # This sources the noctalia theme file
-    SOURCE_LINE="source = $THEME_FILE"
+    # This sources the noctalia theme file (use ~ for portability)
+    SOURCE_LINE="source = ~${THEME_FILE#$HOME}"
 
     # Color variables that should be moved to theme file
     COLOR_VARS="shadowscolor|rootcolor|bordercolor|focuscolor|maximizescreencolor|urgentcolor|scratchpadcolor|globalcolor|overlaycolor"
@@ -472,7 +472,7 @@ mango)
     mkdir -p "$CONFIG_DIR"
 
     # Check if theme is already sourced in main config
-    if [ -f "$MAIN_CONFIG" ] && grep -qF "$SOURCE_LINE" "$MAIN_CONFIG"; then
+    if [ -f "$MAIN_CONFIG" ] && grep -qE "^source\s*=\s*(~|$HOME)" "$MAIN_CONFIG"; then
         : # Theme already set
     else
         # First-time setup: backup and remove legacy color definitions
