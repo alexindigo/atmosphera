@@ -10,3 +10,9 @@ build
 /debian/
 .direnv/
 .envrc
+
+# Upstream patch artifacts (ephemeral — generated and deleted)
+patches/*.patch
+
+# Rejects from partial patch application
+*.rej
