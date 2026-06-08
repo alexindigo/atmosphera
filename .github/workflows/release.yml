@@ -38,24 +38,28 @@ jobs:
       - name: Generate release notes
         run: |
           set -euo pipefail
-          # Find previous tag. Prefer the one before the current tag on the same history; fallback to the next most recent tag.
-          PREV_TAG=$(git describe --tags --abbrev=0 "${GITHUB_REF}^" 2>/dev/null || true)
-          if [ -z "${PREV_TAG:-}" ]; then
-            PREV_TAG=$(git tag --sort=-version:refname | grep -v "^${GITHUB_REF_NAME}$" | head -n1 || true)
-          fi
-          if [ -z "${PREV_TAG:-}" ]; then
-            RANGE="$(git rev-list --max-parents=0 HEAD)..${GITHUB_REF_NAME}"
-            SINCE_LABEL="project start"
+          TAG_BODY=$(git tag -l --format='%(contents:body)' "${GITHUB_REF_NAME}")
+          if [ -n "${TAG_BODY}" ]; then
+            echo "${TAG_BODY}" > release_notes.md
           else
-            RANGE="${PREV_TAG}..${GITHUB_REF_NAME}"
-            SINCE_LABEL="${PREV_TAG}"
+            PREV_TAG=$(git describe --tags --abbrev=0 "${GITHUB_REF}^" 2>/dev/null || true)
+            if [ -z "${PREV_TAG:-}" ]; then
+              PREV_TAG=$(git tag --sort=-version:refname | grep -v "^${GITHUB_REF_NAME}$" | head -n1 || true)
+            fi
+            if [ -z "${PREV_TAG:-}" ]; then
+              RANGE="$(git rev-list --max-parents=0 HEAD)..${GITHUB_REF_NAME}"
+              SINCE_LABEL="initial"
+            else
+              RANGE="${PREV_TAG}..${GITHUB_REF_NAME}"
+              SINCE_LABEL="${PREV_TAG}"
+            fi
+            echo "# Release ${GITHUB_REF_NAME}" > release_notes.md
+            echo "" >> release_notes.md
+            echo "## Changes since ${SINCE_LABEL}" >> release_notes.md
+            echo "" >> release_notes.md
+            git log --max-count=200 ${RANGE} --pretty=format:"- %s (%an)" >> release_notes.md
+            echo "" >> release_notes.md
           fi
-          echo "# Release ${GITHUB_REF_NAME}" > release_notes.md
-          echo "" >> release_notes.md
-          echo "## Changes since ${SINCE_LABEL}" >> release_notes.md
-          echo "" >> release_notes.md
-          git log ${RANGE} --pretty=format:"- %s ([%h](https://github.com/${GITHUB_REPOSITORY}/commit/%H)) by %an" >> release_notes.md
-          echo "" >> release_notes.md
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
