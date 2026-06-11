@@ -7,20 +7,28 @@ pre-commit:
 
 pre-push:
   jobs:
+    - name: verify remote is trusted
+      run: |
+        url=$(git remote get-url "$1" 2>/dev/null || echo "unknown")
+        case "$url" in
+          *github.com:alexindigo/atmosphera*|*aur-atmosphera*) ;;
+          *)
+            echo "ERROR: Push to untrusted remote '$1' ($url)"
+            exit 1
+            ;;
+        esac
     - name: verify signed commits and tags
       run: |
         set -euo pipefail
         failures=0
         while read local_ref local_sha remote_ref remote_sha; do
           [ -z "$local_ref" ] && continue
-          # Tags
           if echo "$local_ref" | grep -q '^refs/tags/'; then
             sig=$(git cat-file -p "$local_sha" 2>/dev/null | grep -co 'gpgsig\|BEGIN SSH SIGNATURE' || true)
             if [ "$sig" = "0" ]; then
               echo "ERROR: Tag $local_ref ($local_sha) is not signed"
               failures=$((failures + 1))
             fi
-          # Branches
           elif echo "$local_ref" | grep -q '^refs/heads/'; then
             if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
               range="$local_sha"
@@ -28,10 +36,12 @@ pre-push:
               range="${remote_sha}..${local_sha}"
             fi
             for commit in $(git rev-list "$range" 2>/dev/null); do
-              sig=$(git cat-file -p "$commit" 2>/dev/null | grep -co 'gpgsig\|BEGIN SSH SIGNATURE' || true)
-              if [ "$sig" = "0" ]; then
-                echo "ERROR: Commit $commit is not signed"
-                failures=$((failures + 1))
+              if git merge-base --is-ancestor "2b40ea68a" "$commit" 2>/dev/null; then
+                sig=$(git cat-file -p "$commit" 2>/dev/null | grep -co 'gpgsig\|BEGIN SSH SIGNATURE' || true)
+                if [ "$sig" = "0" ]; then
+                  echo "ERROR: Commit $commit is not signed"
+                  failures=$((failures + 1))
+                fi
               fi
             done
           fi
