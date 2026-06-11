@@ -1,0 +1,3 @@
+[Portal]
+DBusName=org.freedesktop.impl.portal.atmosphera-settings
+Interfaces=org.freedesktop.impl.portal.Settings;

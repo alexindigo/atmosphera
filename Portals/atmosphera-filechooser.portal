@@ -1,0 +1,3 @@
+[Portal]
+DBusName=org.freedesktop.impl.portal.atmosphera-filechooser
+Interfaces=org.freedesktop.impl.portal.FileChooser;
