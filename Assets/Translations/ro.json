@@ -391,6 +391,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Acțiuni",
     "active": "Activ",
     "add": "Adaugă",
@@ -774,11 +776,7 @@
       "system-title": "Informații Sistem",
       "system-uptime": "Timp de funcționare:",
       "system-wm": "WM:",
-      "telemetry-data-copied": "Date de telemetrie copiate în clipboard",
-      "telemetry-desc": "Ajută la îmbunătățirea Atmosphera prin partajarea informațiilor anonime despre sistem (rezoluție ecran, compositor, distro). Trimis o singură dată la pornire, fără urmărire, datele se șterg automat după 30 de zile.",
-      "telemetry-enabled": "Trimite informații de sistem anonime",
-      "telemetry-show-data": "Vizualizare date",
-      "telemetry-title": "Confidențialitate",
+      "privacy-title": "Confidențialitate",
       "title": "Despre",
       "up-to-date": "Ești la zi!",
       "update-available": "Actualizare disponibilă",
@@ -1864,10 +1862,6 @@
       "subheader": "Ajustează poziția barei, densitatea, scalarea și multe altele."
     },
     "skip-setup": "Omite configurarea",
-    "telemetry-wizard-done": "Am înțeles!",
-    "telemetry-wizard-note": "Ești în control — activează sau dezactivează asta oricând din setări",
-    "telemetry-wizard-subtitle": "Am adăugat analize anonime pentru a ajuta la îmbunătățirea Atmosphera",
-    "telemetry-wizard-title": "Actualizare de confidențialitate",
     "wallpaper": {
       "choose-dir": "Alege un dosar cu imaginile de fundal",
       "dir-browse": "Răsfoiește pentru folderul de imagini de fundal",

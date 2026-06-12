@@ -16,9 +16,6 @@ Singleton {
   readonly property string developmentSuffix: "-git"
   readonly property string currentVersion: `v${!isDevelopment ? baseVersion : baseVersion + developmentSuffix}`
 
-  // Telemetry was introduced in this version - users upgrading from earlier need to see the wizard
-  readonly property string telemetryIntroVersion: "4.0.2"
-
   // URLs
   readonly property string feedbackUrl: Quickshell.env("ATMOSPHERA_CHANGELOG_FEEDBACK_URL") || ""
   readonly property string upgradeLogBaseUrl: Quickshell.env("ATMOSPHERA_UPGRADELOG_URL") || ""
@@ -37,7 +34,6 @@ Singleton {
   property string changelogLastSeenVersion: ""
   property bool changelogStateLoaded: false
   property bool pendingShowRequest: false
-  property bool pendingTelemetryWizardCheck: false
 
   // Fix for FileView race condition
   property bool saveInProgress: false
@@ -56,7 +52,6 @@ Singleton {
   }
 
   signal popupQueued(string fromVersion, string toVersion)
-  signal telemetryWizardNeeded
 
   function init() {
     if (initialized)
@@ -67,10 +62,10 @@ Singleton {
 
     // Load changelog state from ShellState
     Qt.callLater(() => {
-                   if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
-                     loadChangelogState();
-                   }
-                 });
+      if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
+        loadChangelogState();
+      }
+    });
   }
 
   Connections {
@@ -206,45 +201,16 @@ Singleton {
     return 0;
   }
 
-  // Check if user is upgrading from a version before telemetry was introduced
-  function shouldShowTelemetryWizard() {
-    if (!changelogStateLoaded)
-      return false;
-    if (Settings.isFreshInstall)
-      return false;
-    if (Settings.shouldOpenSetupWizard)
-      return false;
-
-    // No previous version recorded but settings exist - assume upgrading from old version
-    // (e.g., user deleted shell-state.json but has existing settings)
-    if (!changelogLastSeenVersion || changelogLastSeenVersion === "")
-      return true;
-
-    // Check if last seen version is before telemetry introduction
-    return compareVersions(changelogLastSeenVersion, telemetryIntroVersion) < 0;
-  }
-
-  // Called by shell.qml to check for telemetry wizard after init
-  // If state isn't loaded yet, sets a pending flag and emits telemetryWizardNeeded later
+  // Called by shell.qml to show changelog after init
   function checkTelemetryWizardOrChangelog() {
     Logger.d("UpdateService", "checkTelemetryWizardOrChangelog called, stateLoaded:", changelogStateLoaded);
     if (!changelogStateLoaded) {
-      // State not loaded yet, set pending flags
-      Logger.d("UpdateService", "State not loaded yet, setting pending flags");
-      pendingTelemetryWizardCheck = true;
+      Logger.d("UpdateService", "State not loaded yet, setting pending flag");
       pendingShowRequest = true;
       return;
     }
 
-    // State is already loaded, check immediately
-    const needsTelemetryWizard = shouldShowTelemetryWizard();
-    Logger.d("UpdateService", "shouldShowTelemetryWizard:", needsTelemetryWizard, "lastSeenVersion:", changelogLastSeenVersion);
-    if (needsTelemetryWizard) {
-      Logger.i("UpdateService", "Emitting telemetryWizardNeeded signal");
-      root.telemetryWizardNeeded();
-    } else {
-      showLatestChangelog();
-    }
+    showLatestChangelog();
   }
 
   function openWhenReady() {
@@ -359,18 +325,6 @@ Singleton {
       Logger.e("UpdateService", "Failed to load changelog state:", error);
     }
     changelogStateLoaded = true;
-
-    // Handle pending telemetry wizard check first
-    if (pendingTelemetryWizardCheck) {
-      pendingTelemetryWizardCheck = false;
-      if (shouldShowTelemetryWizard()) {
-        root.telemetryWizardNeeded();
-      } else if (pendingShowRequest) {
-        pendingShowRequest = false;
-        Qt.callLater(root.showLatestChangelog);
-      }
-      return;
-    }
 
     if (pendingShowRequest) {
       pendingShowRequest = false;

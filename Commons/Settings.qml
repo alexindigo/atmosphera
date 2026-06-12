@@ -326,7 +326,6 @@ Singleton {
       property string language: ""
       property bool allowPanelsOnScreenWithoutBar: true
       property bool showChangelogOnStartup: true
-      property bool telemetryEnabled: false
       property bool enableLockScreenCountdown: true
       property int lockScreenCountdownDuration: 10000
       property bool autoStartAuth: false
@@ -335,6 +334,7 @@ Singleton {
       property string clockFormat: "hh\\nmm"
       property bool passwordChars: false
       property list<string> lockScreenMonitors: [] // holds lock screen visibility per monitor
+      property string lockScreenPlugin: "" // plugin ID for custom lock screen UI, empty = default
       property real lockScreenBlur: 0.0
       property real lockScreenTint: 0.0
       property JsonObject keybinds: JsonObject {

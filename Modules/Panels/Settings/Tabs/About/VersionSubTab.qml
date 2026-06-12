@@ -106,9 +106,9 @@ ColumnLayout {
                     });
     }
     return {
-      instanceId: TelemetryService.getInstanceId(),
+      instanceId: "",
       version: UpdateService.currentVersion,
-      compositor: TelemetryService.getCompositorType(),
+      compositor: "",
       os: HostService.osPretty || "Unknown",
       ramGb: Math.round((root.getModule("Memory")?.result?.total || 0) / root.gigaB),
       monitors: monitors,
@@ -124,7 +124,7 @@ ColumnLayout {
     const payload = getTelemetryPayload();
     const json = JSON.stringify(payload, null, 2);
     Quickshell.execDetached(["wl-copy", json]);
-    ToastService.showNotice(I18n.tr("panels.about.telemetry-title"), I18n.tr("panels.about.telemetry-data-copied"));
+    ToastService.showNotice(I18n.tr("panels.about.privacy-title"), "System info copied to clipboard");
   }
 
   function copyInfoToClipboard() {
@@ -937,34 +937,36 @@ ColumnLayout {
     }
   }
 
-  // Telemetry Section
+  // Privacy Section
   NDivider {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginL
   }
 
   NHeader {
-    label: I18n.tr("panels.about.telemetry-title")
+    label: I18n.tr("panels.about.privacy-title")
   }
 
-  NToggle {
+  Rectangle {
     Layout.fillWidth: true
-    label: I18n.tr("panels.about.telemetry-enabled")
-    description: I18n.tr("panels.about.telemetry-desc")
-    checked: Settings.data.general.telemetryEnabled
-    onToggled: checked => Settings.data.general.telemetryEnabled = checked
+    Layout.preferredHeight: privacyText.implicitHeight + Style.margin2M
+    color: Color.mSurfaceVariant
+    radius: Style.radiusL
+
+    NText {
+      id: privacyText
+      anchors.centerIn: parent
+      width: parent.width - Style.margin2L
+      text: I18n.tr("common.privacy-no-telemetry") + "\n" + I18n.tr("common.feedback-use-github")
+      pointSize: Style.fontSizeM
+      color: Color.mOnSurfaceVariant
+      horizontalAlignment: Text.AlignHCenter
+      wrapMode: Text.WordWrap
+    }
   }
 
   RowLayout {
     spacing: Style.marginM
-
-    NButton {
-      icon: "eye"
-      text: I18n.tr("panels.about.telemetry-show-data")
-      outlined: true
-      onClicked: root.copyTelemetryData()
-    }
-
-    // Privacy policy link removed (fork — no upstream privacy policy applies)
+    // TODO: Privacy policy link removed (fork — no upstream privacy policy applies)
   }
 }

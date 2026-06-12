@@ -391,6 +391,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Acties",
     "active": "Actief",
     "add": "Toevoegen",
@@ -774,11 +776,7 @@
       "system-title": "Systeeminformatie",
       "system-uptime": "Uptime:",
       "system-wm": "WM:",
-      "telemetry-data-copied": "Telemetriegegevens gekopieerd naar klembord",
-      "telemetry-desc": "Help Atmosphera te verbeteren door anonieme systeeminformatie (schermresolutie, compositor, distributie) te delen. Wordt eenmalig bij het opstarten verzonden, geen tracking, data wordt na 30 dagen automatisch verwijderd.",
-      "telemetry-enabled": "Anonieme systeeminformatie verzenden",
-      "telemetry-show-data": "Gegevens bekijken",
-      "telemetry-title": "Privacy",
+      "privacy-title": "Privacy",
       "title": "Over",
       "up-to-date": "Je bent up-to-date!",
       "update-available": "Update beschikbaar",
@@ -1864,10 +1862,6 @@
       "subheader": "Pas balkpositie, dichtheid, schaal en meer aan."
     },
     "skip-setup": "Setup overslaan",
-    "telemetry-wizard-done": "Begrepen!",
-    "telemetry-wizard-note": "Je hebt de controle — schakel dit op elk moment in of uit in de instellingen",
-    "telemetry-wizard-subtitle": "We hebben anonieme analyses toegevoegd om Atmosphera te helpen verbeteren",
-    "telemetry-wizard-title": "Privacy-update",
     "wallpaper": {
       "choose-dir": "Kies een map met je achtergrondafbeeldingen",
       "dir-browse": "Bladeren naar achtergrondmap",

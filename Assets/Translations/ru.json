@@ -391,6 +391,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Действия",
     "active": "Активный",
     "add": "Добавить",
@@ -774,11 +776,7 @@
       "system-title": "Системная информация",
       "system-uptime": "Время работы:",
       "system-wm": "МО:",
-      "telemetry-data-copied": "Данные телеметрии скопированы в буфер обмена.",
-      "telemetry-desc": "Помогите улучшить Atmosphera, поделившись анонимной информацией о системе (разрешение экрана, композитор, дистрибутив). Отправляется один раз при запуске, без отслеживания, данные автоматически удаляются через 30 дней.",
-      "telemetry-enabled": "Отправить анонимную системную информацию",
-      "telemetry-show-data": "Просмотр данных",
-      "telemetry-title": "Конфиденциальность",
+      "privacy-title": "Конфиденциальность",
       "title": "О программе",
       "up-to-date": "У вас всё актуально!",
       "update-available": "Доступно обновление",
@@ -1864,10 +1862,6 @@
       "subheader": "Настройте положение панели, плотность, масштабирование и многое другое."
     },
     "skip-setup": "Пропустить настройку",
-    "telemetry-wizard-done": "Понял!",
-    "telemetry-wizard-note": "Вы всё контролируете — вы можете включить или отключить это в любое время в настройках",
-    "telemetry-wizard-subtitle": "Мы добавили анонимную аналитику, чтобы помочь улучшить Atmosphera",
-    "telemetry-wizard-title": "Обновление конфиденциальности",
     "wallpaper": {
       "choose-dir": "Выберите каталог, содержащий ваши изображения обоев",
       "dir-browse": "Обзор папки с обоями",

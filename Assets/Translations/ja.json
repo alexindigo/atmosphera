@@ -391,6 +391,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "アクション",
     "active": "アクティブ",
     "add": "追加",
@@ -774,11 +776,7 @@
       "system-title": "システム情報",
       "system-uptime": "稼働時間：",
       "system-wm": "WM：",
-      "telemetry-data-copied": "テレメトリーデータをクリップボードにコピーしました。",
-      "telemetry-desc": "匿名システム情報（画面解像度、コンポジター、ディストリビューション）を共有して、Atmospheraの改善にご協力ください。起動時に一度送信され、追跡は行われず、データは30日後に自動的に削除されます。",
-      "telemetry-enabled": "匿名でシステム情報を送信する",
-      "telemetry-show-data": "データの表示",
-      "telemetry-title": "プライバシー",
+      "privacy-title": "プライバシー",
       "title": "バージョン情報",
       "up-to-date": "最新の状態です！",
       "update-available": "アップデートがあります",
@@ -1864,10 +1862,6 @@
       "subheader": "バーの位置や密度、インターフェースのスケールなどを調整します。"
     },
     "skip-setup": "セットアップをスキップ",
-    "telemetry-wizard-done": "了解しました！",
-    "telemetry-wizard-note": "設定でいつでも有効または無効にできます。",
-    "telemetry-wizard-subtitle": "Atmospheraの改善に役立つ匿名分析を追加しました",
-    "telemetry-wizard-title": "プライバシーアップデート",
     "wallpaper": {
       "choose-dir": "壁紙画像が含まれているフォルダを選択します",
       "dir-browse": "壁紙フォルダを参照",

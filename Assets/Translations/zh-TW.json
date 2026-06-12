@@ -391,6 +391,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "操作",
     "active": "活躍",
     "add": "新增",
@@ -774,11 +776,7 @@
       "system-title": "系統資訊:",
       "system-uptime": "開機時間:",
       "system-wm": "視窗管理器:",
-      "telemetry-data-copied": "已複製匿名資訊至剪貼簿",
-      "telemetry-desc": "提供匿名化的系統資訊 (畫面解析度, 合成器, 發行版) 幫助 Atmosphera 改進; 只在桌面啟動時執行, 沒有額外追蹤; 傳送的資料會在30天後自動刪除",
-      "telemetry-enabled": "傳送匿名化的系統資訊",
-      "telemetry-show-data": "檢視資料",
-      "telemetry-title": "隱私",
+      "privacy-title": "隱私",
       "title": "關於",
       "up-to-date": "你已經在最新版了!!",
       "update-available": "有更新版本",
@@ -1864,10 +1862,6 @@
       "subheader": "調整工具列的位置, 密度, 比例等等"
     },
     "skip-setup": "跳過設定",
-    "telemetry-wizard-done": "了解!",
-    "telemetry-wizard-note": "盡在掌控——您隨時可在設定中啟用或停用此功能",
-    "telemetry-wizard-subtitle": "我們新增了匿名分析功能以協助改善 Atmosphera",
-    "telemetry-wizard-title": "隱私權更新",
     "wallpaper": {
       "choose-dir": "選擇一個存放你桌布的目錄",
       "dir-browse": "瀏覽桌布文件夾",

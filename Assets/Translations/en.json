@@ -391,6 +391,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Actions",
     "active": "Active",
     "add": "Add",
@@ -774,11 +776,7 @@
       "system-title": "System Information",
       "system-uptime": "Uptime:",
       "system-wm": "WM:",
-      "telemetry-data-copied": "Telemetry data copied to clipboard",
-      "telemetry-desc": "Help improve Atmosphera by sharing anonymous system info (screen resolution, compositor, distro). Sent once at startup, no tracking, data auto-deleted after 30 days.",
-      "telemetry-enabled": "Send anonymous system information",
-      "telemetry-show-data": "View data",
-      "telemetry-title": "Privacy",
+      "privacy-title": "Privacy",
       "title": "About",
       "up-to-date": "You're up to date!",
       "update-available": "Update available",
@@ -1864,10 +1862,6 @@
       "subheader": "Adjust bar position, density, scaling and more."
     },
     "skip-setup": "Skip Setup",
-    "telemetry-wizard-done": "Got it!",
-    "telemetry-wizard-note": "You're in control — enable or disable this anytime in settings",
-    "telemetry-wizard-subtitle": "We've added anonymous analytics to help improve Atmosphera",
-    "telemetry-wizard-title": "Privacy Update",
     "wallpaper": {
       "choose-dir": "Choose a directory containing your wallpaper images",
       "dir-browse": "Browse for wallpaper folder",

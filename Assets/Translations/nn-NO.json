@@ -374,6 +374,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Handlingar",
     "active": "Aktiv",
     "add": "Legg til",
@@ -752,11 +754,7 @@
       "system-title": "Systemopplysningar",
       "system-uptime": "Driftstid:",
       "system-wm": "WM:",
-      "telemetry-data-copied": "Telemetri kopiert til utklippstavla",
-      "telemetry-desc": "Hjelp oss gjera Atmosphera betre ved å dela anonyme systemopplysningar (skjermoppløysing, kompositor, Linux-utgåve). Sende ein gong med maskinoppstart, inga sporing, data sletta automatisk etter 30 dagar.",
-      "telemetry-enabled": "Send anonyme systemopplysningar",
-      "telemetry-show-data": "Sjå data",
-      "telemetry-title": "Personvern",
+      "privacy-title": "Personvern",
       "title": "Om",
       "up-to-date": "Du er oppdatert!",
       "update-available": "Oppdatering tilgjengeleg",
@@ -1688,10 +1686,6 @@
       "subheader": "Endra kvar oppgåvelina er, tettleik, skalering og meir."
     },
     "skip-setup": "Hopp over oppsett",
-    "telemetry-wizard-done": "Skjønar!",
-    "telemetry-wizard-note": "Du har kontroll — slå dette av eller på når som helst i innstillingar",
-    "telemetry-wizard-subtitle": "Vi har lagt til anonyme analytikk for å hjelpa gjera Atmosphera betre.",
-    "telemetry-wizard-title": "Oppdatering om personvern",
     "wallpaper": {
       "choose-dir": "Vel ei mappe som har bakgrunnsbileta dine i seg",
       "dir-browse": "Søk etter bakgrunnsmappe",

@@ -391,6 +391,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Hành động",
     "active": "Hoạt động",
     "add": "Thêm",
@@ -774,11 +776,7 @@
       "system-title": "Thông tin hệ thống",
       "system-uptime": "Thời gian hoạt động:",
       "system-wm": "WM:",
-      "telemetry-data-copied": "Dữ liệu đo từ xa đã sao chép vào bảng tạm",
-      "telemetry-desc": "Giúp cải thiện Atmosphera bằng cách chia sẻ thông tin hệ thống ẩn danh (độ phân giải màn hình, compositor, distro). Gửi một lần khi khởi động, không theo dõi, dữ liệu tự động xóa sau 30 ngày.",
-      "telemetry-enabled": "Gửi thông tin hệ thống ẩn danh",
-      "telemetry-show-data": "Xem dữ liệu",
-      "telemetry-title": "Quyền riêng tư",
+      "privacy-title": "Quyền riêng tư",
       "title": "Giới thiệu",
       "up-to-date": "Bạn đã cập nhật!",
       "update-available": "Có bản cập nhật mới",
@@ -1864,10 +1862,6 @@
       "subheader": "Điều chỉnh vị trí, mật độ, tỉ lệ của Thanh Bar và nhiều hơn nữa."
     },
     "skip-setup": "Bỏ qua thiết lập",
-    "telemetry-wizard-done": "Đã hiểu!",
-    "telemetry-wizard-note": "Bạn có toàn quyền kiểm soát — bật hoặc tắt tính năng này bất cứ lúc nào trong cài đặt",
-    "telemetry-wizard-subtitle": "Chúng tôi đã thêm phân tích ẩn danh để giúp cải thiện Atmosphera",
-    "telemetry-wizard-title": "Cập nhật Quyền riêng tư",
     "wallpaper": {
       "choose-dir": "Chọn một thư mục chứa hình nền của bạn",
       "dir-browse": "Duyệt thư mục hình nền",
