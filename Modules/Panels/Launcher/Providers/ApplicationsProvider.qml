@@ -328,36 +328,36 @@ Item {
     const seen = new Map(); // Map of appId -> exec command
 
     entries = allApps.filter(app => {
-                               if (!app || app.noDisplay || app.hidden)
-                               return false;
+      if (!app || app.noDisplay || app.hidden)
+        return false;
 
-                               const appId = app.id || app.name;
-                               const execCmd = getExecutableName(app);
+      const appId = app.id || app.name;
+      const execCmd = getExecutableName(app);
 
-                               // Check if we've seen this app ID before
-                               if (seen.has(appId)) {
-                                 const previousExec = seen.get(appId);
+      // Check if we've seen this app ID before
+      if (seen.has(appId)) {
+        const previousExec = seen.get(appId);
 
-                                 // If exec is different, it's a legitimate different entry - keep it
-                                 if (previousExec !== execCmd) {
-                                   Logger.d("ApplicationsProvider", `Keeping variant of ${appId}: ${execCmd} (differs from ${previousExec})`);
-                                   // Add with modified ID to make it unique
-                                   app.id = `${appId}_${execCmd}`;
-                                   seen.set(app.id, execCmd);
-                                   return true;
-                                 }
+        // If exec is different, it's a legitimate different entry - keep it
+        if (previousExec !== execCmd) {
+          Logger.d("ApplicationsProvider", `Keeping variant of ${appId}: ${execCmd} (differs from ${previousExec})`);
+          // Add with modified ID to make it unique
+          app.id = `${appId}_${execCmd}`;
+          seen.set(app.id, execCmd);
+          return true;
+        }
 
-                                 // Same appId AND same exec = true duplicate, skip it
-                                 Logger.d("ApplicationsProvider", `Skipping duplicate: ${appId}`);
-                                 return false;
-                               }
+        // Same appId AND same exec = true duplicate, skip it
+        Logger.d("ApplicationsProvider", `Skipping duplicate: ${appId}`);
+        return false;
+      }
 
-                               seen.set(appId, execCmd);
-                               return true;
-                             }).map(app => {
-                                      app.executableName = getExecutableName(app);
-                                      return app;
-                                    });
+      seen.set(appId, execCmd);
+      return true;
+    }).map(app => {
+      app.executableName = getExecutableName(app);
+      return app;
+    });
 
     Logger.d("ApplicationsProvider", `Loaded ${entries.length} applications`);
     updateAvailableCategories();
@@ -436,26 +436,26 @@ Item {
       let sorted;
       if (Settings.data.appLauncher.sortByMostUsed) {
         sorted = filteredEntries.slice().sort((a, b) => {
-                                                // Pinned first
-                                                const aPinned = isAppPinned(a);
-                                                const bPinned = isAppPinned(b);
-                                                if (aPinned !== bPinned)
-                                                return aPinned ? -1 : 1;
+          // Pinned first
+          const aPinned = isAppPinned(a);
+          const bPinned = isAppPinned(b);
+          if (aPinned !== bPinned)
+            return aPinned ? -1 : 1;
 
-                                                const ua = getUsageCount(a);
-                                                const ub = getUsageCount(b);
-                                                if (ub !== ua)
-                                                return ub - ua;
-                                                return (a.name || "").toLowerCase().localeCompare((b.name || "").toLowerCase());
-                                              });
+          const ua = getUsageCount(a);
+          const ub = getUsageCount(b);
+          if (ub !== ua)
+            return ub - ua;
+          return (a.name || "").toLowerCase().localeCompare((b.name || "").toLowerCase());
+        });
       } else {
         sorted = filteredEntries.slice().sort((a, b) => {
-                                                const aPinned = isAppPinned(a);
-                                                const bPinned = isAppPinned(b);
-                                                if (aPinned !== bPinned)
-                                                return aPinned ? -1 : 1;
-                                                return (a.name || "").toLowerCase().localeCompare((b.name || "").toLowerCase());
-                                              });
+          const aPinned = isAppPinned(a);
+          const bPinned = isAppPinned(b);
+          if (aPinned !== bPinned)
+            return aPinned ? -1 : 1;
+          return (a.name || "").toLowerCase().localeCompare((b.name || "").toLowerCase());
+        });
       }
       return sorted.map(app => createResultEntry(app));
     }
@@ -482,36 +482,36 @@ Item {
       // Fallback to simple search
       const searchTerm = query.toLowerCase();
       return filteredEntries.filter(app => {
-                                      const name = (app.name || "").toLowerCase();
-                                      const comment = (app.comment || "").toLowerCase();
-                                      const generic = (app.genericName || "").toLowerCase();
-                                      const executable = getExecutableName(app).toLowerCase();
-                                      return name.includes(searchTerm) || comment.includes(searchTerm) || generic.includes(searchTerm) || executable.includes(searchTerm);
-                                    }).sort((a, b) => {
-                                              // Prioritize name matches, then executable matches
-                                              const aName = a.name.toLowerCase();
-                                              const bName = b.name.toLowerCase();
-                                              const aExecutable = getExecutableName(a).toLowerCase();
-                                              const bExecutable = getExecutableName(b).toLowerCase();
-                                              const aStarts = aName.startsWith(searchTerm);
-                                              const bStarts = bName.startsWith(searchTerm);
-                                              const aExecStarts = aExecutable.startsWith(searchTerm);
-                                              const bExecStarts = bExecutable.startsWith(searchTerm);
+        const name = (app.name || "").toLowerCase();
+        const comment = (app.comment || "").toLowerCase();
+        const generic = (app.genericName || "").toLowerCase();
+        const executable = getExecutableName(app).toLowerCase();
+        return name.includes(searchTerm) || comment.includes(searchTerm) || generic.includes(searchTerm) || executable.includes(searchTerm);
+      }).sort((a, b) => {
+        // Prioritize name matches, then executable matches
+        const aName = a.name.toLowerCase();
+        const bName = b.name.toLowerCase();
+        const aExecutable = getExecutableName(a).toLowerCase();
+        const bExecutable = getExecutableName(b).toLowerCase();
+        const aStarts = aName.startsWith(searchTerm);
+        const bStarts = bName.startsWith(searchTerm);
+        const aExecStarts = aExecutable.startsWith(searchTerm);
+        const bExecStarts = bExecutable.startsWith(searchTerm);
 
-                                              // Prioritize name matches first
-                                              if (aStarts && !bStarts)
-                                              return -1;
-                                              if (!aStarts && bStarts)
-                                              return 1;
+        // Prioritize name matches first
+        if (aStarts && !bStarts)
+          return -1;
+        if (!aStarts && bStarts)
+          return 1;
 
-                                              // Then prioritize executable matches
-                                              if (aExecStarts && !bExecStarts)
-                                              return -1;
-                                              if (!aExecStarts && bExecStarts)
-                                              return 1;
+        // Then prioritize executable matches
+        if (aExecStarts && !bExecStarts)
+          return -1;
+        if (!aExecStarts && bExecStarts)
+          return 1;
 
-                                              return aName.localeCompare(bName);
-                                            }).slice(0, 20).map(app => createResultEntry(app));
+        return aName.localeCompare(bName);
+      }).slice(0, 20).map(app => createResultEntry(app));
     }
   }
 
@@ -532,60 +532,60 @@ Item {
 
         // Defer execution to next event loop iteration to ensure panel is fully closed
         Qt.callLater(() => {
-                       Logger.d("ApplicationsProvider", `Launching: ${app.name} (App ID: ${app.id || "unknown"})`);
+          Logger.d("ApplicationsProvider", `Launching: ${app.name} (App ID: ${app.id || "unknown"})`);
 
-                       const execString = (app.exec !== undefined && app.exec !== null) ? String(app.exec) : "";
-                       const commandArgs = Array.isArray(app.command) ? app.command : (app.command && app.command.length !== undefined) ? Array.from(app.command) : [];
-                       let hasQuotedArgs = execString.includes("\"") || execString.includes("'");
-                       let hasSpaceArgs = false;
-                       if (!hasQuotedArgs) {
-                         hasQuotedArgs = commandArgs.some(arg => {
-                                                            const text = String(arg);
-                                                            return text.includes("\"") || text.includes("'");
-                                                          });
-                       }
-                       if (!hasSpaceArgs) {
-                         hasSpaceArgs = commandArgs.some(arg => String(arg).includes(" "));
-                       }
-                       if (app.execute && (hasQuotedArgs || hasSpaceArgs)) {
-                         Logger.d("ApplicationsProvider", `Detected quoted/space arguments in Exec for ${app.name}, using app.execute()`);
-                         app.execute();
-                         return;
-                       }
+          const execString = (app.exec !== undefined && app.exec !== null) ? String(app.exec) : "";
+          const commandArgs = Array.isArray(app.command) ? app.command : (app.command && app.command.length !== undefined) ? Array.from(app.command) : [];
+          let hasQuotedArgs = execString.includes("\"") || execString.includes("'");
+          let hasSpaceArgs = false;
+          if (!hasQuotedArgs) {
+            hasQuotedArgs = commandArgs.some(arg => {
+              const text = String(arg);
+              return text.includes("\"") || text.includes("'");
+            });
+          }
+          if (!hasSpaceArgs) {
+            hasSpaceArgs = commandArgs.some(arg => String(arg).includes(" "));
+          }
+          if (app.execute && (hasQuotedArgs || hasSpaceArgs)) {
+            Logger.d("ApplicationsProvider", `Detected quoted/space arguments in Exec for ${app.name}, using app.execute()`);
+            app.execute();
+            return;
+          }
 
-                       if (Settings.data.appLauncher.customLaunchPrefixEnabled && Settings.data.appLauncher.customLaunchPrefix.trim() !== "") {
-                         // Use custom launch prefix
-                         const prefix = Settings.data.appLauncher.customLaunchPrefix.trim().split(" ");
-                         Logger.d("ApplicationsProvider", `Using custom launch prefix: ${Settings.data.appLauncher.customLaunchPrefix.trim()}`);
+          if (Settings.data.appLauncher.customLaunchPrefixEnabled && Settings.data.appLauncher.customLaunchPrefix.trim() !== "") {
+            // Use custom launch prefix
+            const prefix = Settings.data.appLauncher.customLaunchPrefix.trim().split(" ");
+            Logger.d("ApplicationsProvider", `Using custom launch prefix: ${Settings.data.appLauncher.customLaunchPrefix.trim()}`);
 
-                         if (app.runInTerminal && Settings.data.appLauncher.terminalCommand.trim() !== "") {
-                           const terminal = Settings.data.appLauncher.terminalCommand.trim().split(" ");
-                           const command = prefix.concat(terminal.concat(app.command));
-                           Logger.d("ApplicationsProvider", `Executing command (with prefix and terminal): ${command.join(" ")}`);
-                           Quickshell.execDetached(command);
-                         } else {
-                           const command = prefix.concat(app.command);
-                           Logger.d("ApplicationsProvider", `Executing command (with prefix): ${command.join(" ")}`);
-                           Quickshell.execDetached(command);
-                         }
-                       } else {
-                         if (app.runInTerminal && Settings.data.appLauncher.terminalCommand.trim() !== "") {
-                           Logger.d("ApplicationsProvider", "Executing terminal app manually: " + app.name);
-                           const terminal = Settings.data.appLauncher.terminalCommand.trim().split(" ");
-                           const command = terminal.concat(app.command);
-                           Logger.d("ApplicationsProvider", "Executing command (manual terminal): " + command.join(" "));
-                           CompositorService.spawn(command);
-                         } else if (app.command && app.command.length > 0) {
-                           Logger.d("ApplicationsProvider", "Executing command: " + app.command.join(" "));
-                           CompositorService.spawn(app.command);
-                         } else if (app.execute) {
-                           Logger.d("ApplicationsProvider", "Calling app.execute() for: " + app.name);
-                           app.execute();
-                         } else {
-                           Logger.w("ApplicationsProvider", `Could not launch: ${app.name}. No valid launch method.`);
-                         }
-                       }
-                     });
+            if (app.runInTerminal && Settings.data.appLauncher.terminalCommand.trim() !== "") {
+              const terminal = Settings.data.appLauncher.terminalCommand.trim().split(" ");
+              const command = prefix.concat(terminal.concat(app.command));
+              Logger.d("ApplicationsProvider", `Executing command (with prefix and terminal): ${command.join(" ")}`);
+              Quickshell.execDetached(command);
+            } else {
+              const command = prefix.concat(app.command);
+              Logger.d("ApplicationsProvider", `Executing command (with prefix): ${command.join(" ")}`);
+              Quickshell.execDetached(command);
+            }
+          } else {
+            if (app.runInTerminal && Settings.data.appLauncher.terminalCommand.trim() !== "") {
+              Logger.d("ApplicationsProvider", "Executing terminal app manually: " + app.name);
+              const terminal = Settings.data.appLauncher.terminalCommand.trim().split(" ");
+              const command = terminal.concat(app.command);
+              Logger.d("ApplicationsProvider", "Executing command (manual terminal): " + command.join(" "));
+              CompositorService.spawn(command);
+            } else if (app.command && app.command.length > 0) {
+              Logger.d("ApplicationsProvider", "Executing command: " + app.command.join(" "));
+              CompositorService.spawn(app.command);
+            } else if (app.execute) {
+              Logger.d("ApplicationsProvider", "Calling app.execute() for: " + app.name);
+              app.execute();
+            } else {
+              Logger.w("ApplicationsProvider", `Could not launch: ${app.name}. No valid launch method.`);
+            }
+          }
+        });
       }
     };
   }

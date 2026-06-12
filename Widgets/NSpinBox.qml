@@ -121,14 +121,14 @@ RowLayout {
         root.exited();
       }
       onWheel: wheel => {
-                 if (wheel.angleDelta.y > 0 && root.value < root.to) {
-                   let newValue = Math.min(root.to, root.value + root.stepSize);
-                   root.value = newValue;
-                 } else if (wheel.angleDelta.y < 0 && root.value > root.from) {
-                   let newValue = Math.max(root.from, root.value - root.stepSize);
-                   root.value = newValue;
-                 }
-               }
+        if (wheel.angleDelta.y > 0 && root.value < root.to) {
+          let newValue = Math.min(root.to, root.value + root.stepSize);
+          root.value = newValue;
+        } else if (wheel.angleDelta.y < 0 && root.value > root.from) {
+          let newValue = Math.max(root.from, root.value - root.stepSize);
+          root.value = newValue;
+        }
+      }
     }
 
     // Decrease button (left)

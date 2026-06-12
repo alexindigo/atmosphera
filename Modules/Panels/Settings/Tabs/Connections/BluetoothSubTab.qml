@@ -335,9 +335,9 @@ Item {
           description: I18n.tr("panels.connections.disable-discoverability-description")
           checked: Settings.data.network.disableDiscoverability
           onToggled: checked => {
-                       Settings.data.network.disableDiscoverability = checked;
-                       BluetoothService.setDiscoverable(!checked);
-                     }
+            Settings.data.network.disableDiscoverability = checked;
+            BluetoothService.setDiscoverable(!checked);
+          }
         }
 
         // RSSI Polling

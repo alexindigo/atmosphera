@@ -150,23 +150,23 @@ ColumnLayout {
                 stepSize: 0.01
                 enabled: brightnessMonitor ? brightnessMonitor.brightnessControlAvailable : false
                 onMoved: value => {
-                           if (brightnessMonitor && brightnessMonitor.brightnessControlAvailable) {
-                             localBrightness = value;
-                             debounceTimer.restart();
-                           }
-                         }
+                  if (brightnessMonitor && brightnessMonitor.brightnessControlAvailable) {
+                    localBrightness = value;
+                    debounceTimer.restart();
+                  }
+                }
                 onPressedChanged: (pressed, value) => {
-                                    localBrightnessChanging = pressed;
-                                    if (brightnessMonitor && brightnessMonitor.brightnessControlAvailable) {
-                                      if (pressed) {
-                                        localBrightness = value;
-                                        debounceTimer.restart();
-                                      } else {
-                                        localBrightness = value;
-                                        debounceTimer.restart();
-                                      }
-                                    }
-                                  }
+                  localBrightnessChanging = pressed;
+                  if (brightnessMonitor && brightnessMonitor.brightnessControlAvailable) {
+                    if (pressed) {
+                      localBrightness = value;
+                      debounceTimer.restart();
+                    } else {
+                      localBrightness = value;
+                      debounceTimer.restart();
+                    }
+                  }
+                }
                 Layout.fillWidth: true
               }
 
@@ -241,8 +241,8 @@ ColumnLayout {
       description: I18n.tr("panels.display.monitors-external-brightness-description")
       checked: Settings.data.brightness.enableDdcSupport
       onToggled: checked => {
-                   Settings.data.brightness.enableDdcSupport = checked;
-                 }
+        Settings.data.brightness.enableDdcSupport = checked;
+      }
       defaultValue: Settings.getDefaultValue("brightness.enableDdcSupport")
     }
   }

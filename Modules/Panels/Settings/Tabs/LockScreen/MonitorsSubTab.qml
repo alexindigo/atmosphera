@@ -50,12 +50,12 @@ ColumnLayout {
       }
       checked: (Settings.data.general.lockScreenMonitors || []).indexOf(modelData.name) !== -1
       onToggled: checked => {
-                   if (checked) {
-                     Settings.data.general.lockScreenMonitors = root.addMonitor(Settings.data.general.lockScreenMonitors, modelData.name);
-                   } else {
-                     Settings.data.general.lockScreenMonitors = root.removeMonitor(Settings.data.general.lockScreenMonitors, modelData.name);
-                   }
-                 }
+        if (checked) {
+          Settings.data.general.lockScreenMonitors = root.addMonitor(Settings.data.general.lockScreenMonitors, modelData.name);
+        } else {
+          Settings.data.general.lockScreenMonitors = root.removeMonitor(Settings.data.general.lockScreenMonitors, modelData.name);
+        }
+      }
     }
   }
 }

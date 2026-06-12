@@ -50,12 +50,12 @@ ColumnLayout {
       }
       checked: (Settings.data.dock.monitors || []).indexOf(modelData.name) !== -1
       onToggled: checked => {
-                   if (checked) {
-                     Settings.data.dock.monitors = root.addMonitor(Settings.data.dock.monitors, modelData.name);
-                   } else {
-                     Settings.data.dock.monitors = root.removeMonitor(Settings.data.dock.monitors, modelData.name);
-                   }
-                 }
+        if (checked) {
+          Settings.data.dock.monitors = root.addMonitor(Settings.data.dock.monitors, modelData.name);
+        } else {
+          Settings.data.dock.monitors = root.removeMonitor(Settings.data.dock.monitors, modelData.name);
+        }
+      }
     }
   }
 }

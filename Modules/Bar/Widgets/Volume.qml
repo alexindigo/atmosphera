@@ -128,17 +128,17 @@ Item {
     ]
 
     onTriggered: action => {
-                   contextMenu.close();
-                   PanelService.closeContextMenu(screen);
+      contextMenu.close();
+      PanelService.closeContextMenu(screen);
 
-                   if (action === "toggle-mute") {
-                     AudioService.setOutputMuted(!AudioService.muted);
-                   } else if (action === "custom-command") {
-                     Quickshell.execDetached(["sh", "-c", middleClickCommand]);
-                   } else if (action === "widget-settings") {
-                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
-                   }
-                 }
+      if (action === "toggle-mute") {
+        AudioService.setOutputMuted(!AudioService.muted);
+      } else if (action === "custom-command") {
+        Quickshell.execDetached(["sh", "-c", middleClickCommand]);
+      } else if (action === "widget-settings") {
+        BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+      }
+    }
   }
 
   BarPill {
@@ -165,10 +165,10 @@ Item {
         const nick = AudioService.sink?.nickname ?? "";
         const volumeText = I18n.tr("tooltips.volume-at", {
                                      "volume": (() => {
-                                                  const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
-                                                  const displayVolume = Math.min(maxVolume, AudioService.volume);
-                                                  return Math.round(displayVolume * 100);
-                                                })()
+                                       const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+                                       const displayVolume = Math.min(maxVolume, AudioService.volume);
+                                       return Math.round(displayVolume * 100);
+                                     })()
                                    });
         return nick ? volumeText + "\n" + nick : volumeText;
       }

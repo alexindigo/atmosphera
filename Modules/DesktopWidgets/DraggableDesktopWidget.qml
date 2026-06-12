@@ -382,72 +382,72 @@ Item {
     property point pressPos: Qt.point(0, 0)
 
     onPressed: mouse => {
-                 // Prevent starting new operation if one is already in progress
-                 if (internal.operationType !== "") {
-                   return;
-                 }
+      // Prevent starting new operation if one is already in progress
+      if (internal.operationType !== "") {
+        return;
+      }
 
-                 pressPos = Qt.point(mouse.x, mouse.y);
-                 internal.operationType = "drag";
-                 internal.dragOffsetX = root.x;
-                 internal.dragOffsetY = root.y;
-                 internal.isDragging = true;
-               }
+      pressPos = Qt.point(mouse.x, mouse.y);
+      internal.operationType = "drag";
+      internal.dragOffsetX = root.x;
+      internal.dragOffsetY = root.y;
+      internal.isDragging = true;
+    }
 
     onPositionChanged: mouse => {
-                         if (internal.isDragging && pressed && internal.operationType === "drag") {
-                           var globalPressPos = mapToItem(root.parent, pressPos.x, pressPos.y);
-                           var globalCurrentPos = mapToItem(root.parent, mouse.x, mouse.y);
+      if (internal.isDragging && pressed && internal.operationType === "drag") {
+        var globalPressPos = mapToItem(root.parent, pressPos.x, pressPos.y);
+        var globalCurrentPos = mapToItem(root.parent, mouse.x, mouse.y);
 
-                           var deltaX = globalCurrentPos.x - globalPressPos.x;
-                           var deltaY = globalCurrentPos.y - globalPressPos.y;
+        var deltaX = globalCurrentPos.x - globalPressPos.x;
+        var deltaY = globalCurrentPos.y - globalPressPos.y;
 
-                           var newX = internal.dragOffsetX + deltaX;
-                           var newY = internal.dragOffsetY + deltaY;
+        var newX = internal.dragOffsetX + deltaX;
+        var newY = internal.dragOffsetY + deltaY;
 
-                           // Boundary clamping - allow widgets to go partially off-screen (75% can clip)
-                           // This gives users more control over positioning while keeping widgets accessible
-                           var scaledWidth = root.width;
-                           var scaledHeight = root.height;
-                           if (root.parent && scaledWidth > 0 && scaledHeight > 0) {
-                             var minVisibleX = scaledWidth * 0.25;
-                             var minVisibleY = scaledHeight * 0.25;
-                             newX = Math.max(-scaledWidth + minVisibleX, Math.min(newX, root.parent.width - minVisibleX));
-                             newY = Math.max(-scaledHeight + minVisibleY, Math.min(newY, root.parent.height - minVisibleY));
-                           }
+        // Boundary clamping - allow widgets to go partially off-screen (75% can clip)
+        // This gives users more control over positioning while keeping widgets accessible
+        var scaledWidth = root.width;
+        var scaledHeight = root.height;
+        if (root.parent && scaledWidth > 0 && scaledHeight > 0) {
+          var minVisibleX = scaledWidth * 0.25;
+          var minVisibleY = scaledHeight * 0.25;
+          newX = Math.max(-scaledWidth + minVisibleX, Math.min(newX, root.parent.width - minVisibleX));
+          newY = Math.max(-scaledHeight + minVisibleY, Math.min(newY, root.parent.height - minVisibleY));
+        }
 
-                           if (Settings.data.desktopWidgets.gridSnap) {
-                             newX = root.snapToGrid(newX);
-                             newY = root.snapToGrid(newY);
-                             // Re-clamp after snapping
-                             if (root.parent && scaledWidth > 0 && scaledHeight > 0) {
-                               var minVisibleX = scaledWidth * 0.25;
-                               var minVisibleY = scaledHeight * 0.25;
-                               newX = Math.max(-scaledWidth + minVisibleX, Math.min(newX, root.parent.width - minVisibleX));
-                               newY = Math.max(-scaledHeight + minVisibleY, Math.min(newY, root.parent.height - minVisibleY));
-                             }
-                           }
+        if (Settings.data.desktopWidgets.gridSnap) {
+          newX = root.snapToGrid(newX);
+          newY = root.snapToGrid(newY);
+          // Re-clamp after snapping
+          if (root.parent && scaledWidth > 0 && scaledHeight > 0) {
+            var minVisibleX = scaledWidth * 0.25;
+            var minVisibleY = scaledHeight * 0.25;
+            newX = Math.max(-scaledWidth + minVisibleX, Math.min(newX, root.parent.width - minVisibleX));
+            newY = Math.max(-scaledHeight + minVisibleY, Math.min(newY, root.parent.height - minVisibleY));
+          }
+        }
 
-                           internal.dragOffsetX = newX;
-                           internal.dragOffsetY = newY;
-                         }
-                       }
+        internal.dragOffsetX = newX;
+        internal.dragOffsetY = newY;
+      }
+    }
 
     onReleased: mouse => {
-                  if (internal.isDragging && internal.operationType === "drag" && widgetIndex >= 0 && screen && screen.name) {
-                    var roundedX = Math.round(internal.dragOffsetX);
-                    var roundedY = Math.round(internal.dragOffsetY);
-                    root.updateWidgetData({
-                                            "x": roundedX,
-                                            "y": roundedY
-                                          });
+      if (internal.isDragging && internal.operationType === "drag" && widgetIndex >= 0 && screen && screen.name) {
+        var roundedX = Math.round(internal.dragOffsetX);
+        var roundedY = Math.round(internal.dragOffsetY);
+        root.updateWidgetData({
+                                "x": roundedX,
+                                "y": roundedY
+                              });
 
-                    internal.baseX = roundedX;
-                    internal.baseY = roundedY;
-                    internal.isDragging = false;
-                    internal.operationType = "";
-                  }
-                }
+        internal.baseX = roundedX;
+        internal.baseY = roundedY;
+        internal.isDragging = false;
+        internal.operationType = "";
+      }
+    }
 
     onCanceled: {
       internal.isDragging = false;
@@ -465,17 +465,17 @@ Item {
     hoverEnabled: true
 
     onPressed: mouse => {
-                 if (mouse.button === Qt.RightButton) {
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(root.screen);
-                   if (popupMenuWindow) {
-                     // Map click position to screen coordinates
-                     var globalPos = root.mapToItem(null, mouse.x, mouse.y);
-                     // Use dynamic context menu (created in PopupMenuWindow's Top layer)
-                     // This ensures input events work correctly for desktop widgets (Bottom layer)
-                     popupMenuWindow.showDynamicContextMenu(root.contextMenuModel, globalPos.x, globalPos.y, root.handleContextMenuAction);
-                   }
-                 }
-               }
+      if (mouse.button === Qt.RightButton) {
+        var popupMenuWindow = PanelService.getPopupMenuWindow(root.screen);
+        if (popupMenuWindow) {
+          // Map click position to screen coordinates
+          var globalPos = root.mapToItem(null, mouse.x, mouse.y);
+          // Use dynamic context menu (created in PopupMenuWindow's Top layer)
+          // This ensures input events work correctly for desktop widgets (Bottom layer)
+          popupMenuWindow.showDynamicContextMenu(root.contextMenuModel, globalPos.x, globalPos.y, root.handleContextMenuAction);
+        }
+      }
+    }
   }
 
   // Corner handles for scaling - using Repeater to avoid code duplication
@@ -575,53 +575,53 @@ Item {
         property point pressPos: Qt.point(0, 0)
 
         onPressed: mouse => {
-                     if (internal.operationType !== "") {
-                       return;
-                     }
-                     pressPos = mapToItem(root.parent, mouse.x, mouse.y);
-                     internal.operationType = "scale";
-                     internal.isScaling = true;
-                     internal.initialScale = root.widgetScale;
-                     internal.lastScale = root.widgetScale;
-                     internal.initialWidth = root.width;
-                     internal.initialHeight = root.height;
-                   }
+          if (internal.operationType !== "") {
+            return;
+          }
+          pressPos = mapToItem(root.parent, mouse.x, mouse.y);
+          internal.operationType = "scale";
+          internal.isScaling = true;
+          internal.initialScale = root.widgetScale;
+          internal.lastScale = root.widgetScale;
+          internal.initialWidth = root.width;
+          internal.initialHeight = root.height;
+        }
 
         onPositionChanged: mouse => {
-                             if (internal.isScaling && pressed && internal.operationType === "scale") {
-                               var currentPos = mapToItem(root.parent, mouse.x, mouse.y);
-                               var deltaX = currentPos.x - pressPos.x;
-                               var deltaY = currentPos.y - pressPos.y;
+          if (internal.isScaling && pressed && internal.operationType === "scale") {
+            var currentPos = mapToItem(root.parent, mouse.x, mouse.y);
+            var deltaX = currentPos.x - pressPos.x;
+            var deltaY = currentPos.y - pressPos.y;
 
-                               // Project delta onto the diagonal direction for this corner
-                               // xDir/yDir indicate which direction increases scale
-                               var diagonalDelta = (deltaX * cornerHandle.modelData.xDir + deltaY * cornerHandle.modelData.yDir) / Math.sqrt(2);
+            // Project delta onto the diagonal direction for this corner
+            // xDir/yDir indicate which direction increases scale
+            var diagonalDelta = (deltaX * cornerHandle.modelData.xDir + deltaY * cornerHandle.modelData.yDir) / Math.sqrt(2);
 
-                               // Scale sensitivity: pixels of drag per 1.0 scale change
-                               var sensitivity = 150;
-                               var scaleDelta = diagonalDelta / sensitivity;
-                               var newScale = Math.max(root.minScale, Math.min(root.maxScale, internal.initialScale + scaleDelta));
+            // Scale sensitivity: pixels of drag per 1.0 scale change
+            var sensitivity = 150;
+            var scaleDelta = diagonalDelta / sensitivity;
+            var newScale = Math.max(root.minScale, Math.min(root.maxScale, internal.initialScale + scaleDelta));
 
-                               newScale = root.snapScaleToGrid(newScale);
+            newScale = root.snapScaleToGrid(newScale);
 
-                               if (!isNaN(newScale) && newScale > 0) {
-                                 root.widgetScale = newScale;
-                                 internal.lastScale = newScale;
-                               }
-                             }
-                           }
+            if (!isNaN(newScale) && newScale > 0) {
+              root.widgetScale = newScale;
+              internal.lastScale = newScale;
+            }
+          }
+        }
 
         onReleased: mouse => {
-                      if (internal.isScaling && internal.operationType === "scale") {
-                        root.updateWidgetData({
-                                                "scale": root.widgetScale
-                                              });
-                        internal.isScaling = false;
-                        internal.operationType = "";
-                        root.widgetScale = root.snapScaleToGrid(root.widgetScale);
-                        internal.lastScale = root.widgetScale;
-                      }
-                    }
+          if (internal.isScaling && internal.operationType === "scale") {
+            root.updateWidgetData({
+                                    "scale": root.widgetScale
+                                  });
+            internal.isScaling = false;
+            internal.operationType = "";
+            root.widgetScale = root.snapScaleToGrid(root.widgetScale);
+            internal.lastScale = root.widgetScale;
+          }
+        }
 
         onCanceled: {
           internal.isScaling = false;

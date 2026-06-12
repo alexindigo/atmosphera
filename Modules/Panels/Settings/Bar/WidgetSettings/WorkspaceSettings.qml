@@ -83,9 +83,9 @@ ColumnLayout {
     ]
     currentKey: widgetData.labelMode || widgetMetadata.labelMode
     onSelected: key => {
-                  valueLabelMode = key;
-                  saveSettings();
-                }
+      valueLabelMode = key;
+      saveSettings();
+    }
     minimumWidth: 200
   }
 
@@ -112,9 +112,9 @@ ColumnLayout {
     defaultValue: widgetMetadata.pillSize
     showReset: true
     onMoved: value => {
-               valuePillSize = value;
-               saveSettings();
-             }
+      valuePillSize = value;
+      saveSettings();
+    }
     text: Math.round(valuePillSize * 100) + "%"
     visible: !valueShowApplications
   }
@@ -143,9 +143,9 @@ ColumnLayout {
     ]
     currentKey: widgetData.fontWeight || widgetMetadata.fontWeight
     onSelected: key => {
-                  valueFontWeight = key;
-                  saveSettings();
-                }
+      valueFontWeight = key;
+      saveSettings();
+    }
     minimumWidth: 200
   }
 
@@ -154,9 +154,9 @@ ColumnLayout {
     description: I18n.tr("bar.workspace.hide-unoccupied-description")
     checked: valueHideUnoccupied
     onToggled: checked => {
-                 valueHideUnoccupied = checked;
-                 saveSettings();
-               }
+      valueHideUnoccupied = checked;
+      saveSettings();
+    }
   }
 
   NToggle {
@@ -164,9 +164,9 @@ ColumnLayout {
     description: I18n.tr("bar.workspace.show-labels-only-when-occupied-description")
     checked: valueShowLabelsOnlyWhenOccupied
     onToggled: checked => {
-                 valueShowLabelsOnlyWhenOccupied = checked;
-                 saveSettings();
-               }
+      valueShowLabelsOnlyWhenOccupied = checked;
+      saveSettings();
+    }
   }
 
   NToggle {
@@ -174,9 +174,9 @@ ColumnLayout {
     description: I18n.tr("bar.workspace.follow-focused-screen-description")
     checked: valueFollowFocusedScreen
     onToggled: checked => {
-                 valueFollowFocusedScreen = checked;
-                 saveSettings();
-               }
+      valueFollowFocusedScreen = checked;
+      saveSettings();
+    }
   }
 
   NToggle {
@@ -184,9 +184,9 @@ ColumnLayout {
     description: I18n.tr("bar.workspace.enable-scrollwheel-description")
     checked: valueEnableScrollWheel
     onToggled: checked => {
-                 valueEnableScrollWheel = checked;
-                 saveSettings();
-               }
+      valueEnableScrollWheel = checked;
+      saveSettings();
+    }
   }
 
   NDivider {
@@ -198,9 +198,9 @@ ColumnLayout {
     description: I18n.tr("bar.workspace.show-applications-description")
     checked: valueShowApplications
     onToggled: checked => {
-                 valueShowApplications = checked;
-                 saveSettings();
-               }
+      valueShowApplications = checked;
+      saveSettings();
+    }
   }
 
   NToggle {
@@ -208,9 +208,9 @@ ColumnLayout {
     description: I18n.tr("bar.workspace.show-applications-hover-description")
     checked: valueShowApplicationsHover
     onToggled: checked => {
-                 valueShowApplicationsHover = checked;
-                 saveSettings();
-               }
+      valueShowApplicationsHover = checked;
+      saveSettings();
+    }
     visible: valueShowApplications
   }
 
@@ -219,9 +219,9 @@ ColumnLayout {
     description: I18n.tr("bar.workspace.show-badge-description")
     checked: valueShowBadge
     onToggled: checked => {
-                 valueShowBadge = checked;
-                 saveSettings();
-               }
+      valueShowBadge = checked;
+      saveSettings();
+    }
     visible: valueShowApplications
   }
 
@@ -230,9 +230,9 @@ ColumnLayout {
     description: I18n.tr("bar.active-window.colorize-icons-description")
     checked: valueColorizeIcons
     onToggled: checked => {
-                 valueColorizeIcons = checked;
-                 saveSettings();
-               }
+      valueColorizeIcons = checked;
+      saveSettings();
+    }
     visible: valueShowApplications
   }
 
@@ -246,9 +246,9 @@ ColumnLayout {
     value: valueUnfocusedIconsOpacity
     defaultValue: widgetMetadata.unfocusedIconsOpacity
     onMoved: value => {
-               valueUnfocusedIconsOpacity = value;
-               saveSettings();
-             }
+      valueUnfocusedIconsOpacity = value;
+      saveSettings();
+    }
     text: Math.floor(valueUnfocusedIconsOpacity * 100) + "%"
     visible: valueShowApplications
   }
@@ -263,9 +263,9 @@ ColumnLayout {
     value: valueGroupedBorderOpacity
     defaultValue: widgetMetadata.groupedBorderOpacity
     onMoved: value => {
-               valueGroupedBorderOpacity = value;
-               saveSettings();
-             }
+      valueGroupedBorderOpacity = value;
+      saveSettings();
+    }
     text: Math.floor(valueGroupedBorderOpacity * 100) + "%"
     visible: valueShowApplications
   }
@@ -280,9 +280,9 @@ ColumnLayout {
     value: valueIconScale
     defaultValue: widgetMetadata.iconScale
     onMoved: value => {
-               valueIconScale = value;
-               saveSettings();
-             }
+      valueIconScale = value;
+      saveSettings();
+    }
     text: Math.round(valueIconScale * 100) + "%"
     visible: valueShowApplications
   }
@@ -296,9 +296,9 @@ ColumnLayout {
     description: I18n.tr("bar.workspace.focused-color-description")
     currentKey: valueFocusedColor
     onSelected: key => {
-                  valueFocusedColor = key;
-                  saveSettings();
-                }
+      valueFocusedColor = key;
+      saveSettings();
+    }
   }
 
   NColorChoice {
@@ -306,9 +306,9 @@ ColumnLayout {
     description: I18n.tr("bar.workspace.occupied-color-description")
     currentKey: valueOccupiedColor
     onSelected: key => {
-                  valueOccupiedColor = key;
-                  saveSettings();
-                }
+      valueOccupiedColor = key;
+      saveSettings();
+    }
   }
 
   NColorChoice {
@@ -316,8 +316,8 @@ ColumnLayout {
     description: I18n.tr("bar.workspace.empty-color-description")
     currentKey: valueEmptyColor
     onSelected: key => {
-                  valueEmptyColor = key;
-                  saveSettings();
-                }
+      valueEmptyColor = key;
+      saveSettings();
+    }
   }
 }

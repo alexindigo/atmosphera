@@ -326,13 +326,13 @@ Item {
     ]
 
     onTriggered: action => {
-                   chevronContextMenu.close();
-                   PanelService.closeContextMenu(screen);
+      chevronContextMenu.close();
+      PanelService.closeContextMenu(screen);
 
-                   if (action === "widget-settings") {
-                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
-                   }
-                 }
+      if (action === "widget-settings") {
+        BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+      }
+    }
   }
 
   Flow {
@@ -477,70 +477,70 @@ Item {
             }
           }
           onClicked: mouse => {
-                       if (!modelData) {
-                         return;
-                       }
+            if (!modelData) {
+              return;
+            }
 
-                       if (mouse.button === Qt.LeftButton) {
-                         // Close any open menu first
-                         if (popupMenuWindow) {
-                           popupMenuWindow.close();
-                         }
+            if (mouse.button === Qt.LeftButton) {
+              // Close any open menu first
+              if (popupMenuWindow) {
+                popupMenuWindow.close();
+              }
 
-                         if (!modelData.onlyMenu) {
-                           modelData.activate();
-                         }
-                       } else if (mouse.button === Qt.MiddleButton) {
-                         // Close the menu if it was visible
-                         if (popupMenuWindow && popupMenuWindow.visible) {
-                           popupMenuWindow.close();
-                           return;
-                         }
-                         modelData.secondaryActivate && modelData.secondaryActivate();
-                       } else if (mouse.button === Qt.RightButton) {
-                         TooltipService.hideImmediately();
+              if (!modelData.onlyMenu) {
+                modelData.activate();
+              }
+            } else if (mouse.button === Qt.MiddleButton) {
+              // Close the menu if it was visible
+              if (popupMenuWindow && popupMenuWindow.visible) {
+                popupMenuWindow.close();
+                return;
+              }
+              modelData.secondaryActivate && modelData.secondaryActivate();
+            } else if (mouse.button === Qt.RightButton) {
+              TooltipService.hideImmediately();
 
-                         // Close the menu if it was visible
-                         if (popupMenuWindow && popupMenuWindow.visible) {
-                           popupMenuWindow.close();
-                           return;
-                         }
+              // Close the menu if it was visible
+              if (popupMenuWindow && popupMenuWindow.visible) {
+                popupMenuWindow.close();
+                return;
+              }
 
-                         // Close any opened panel
-                         if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
-                           PanelService.openedPanel.close();
-                         }
+              // Close any opened panel
+              if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
+                PanelService.openedPanel.close();
+              }
 
-                         if (modelData.hasMenu && modelData.menu && trayMenu && trayMenu.item) {
-                           // Calculate menu position after ensuring menu is loaded
-                           const calculateAndShow = () => {
-                             // Position menu based on bar position, using tooltipAnchor for proper positioning
-                             // Increased spacing for better alignment with other context menus
-                             let menuX, menuY;
-                             if (barPosition === "left") {
-                               // For left bar: position menu to the right of the visual area
-                               menuX = tooltipAnchor.width + Style.marginL;
-                               menuY = 0;
-                             } else if (barPosition === "right") {
-                               // For right bar: position menu to the left of the visual area
-                               menuX = -trayMenu.item.implicitWidth - Style.marginL;
-                               menuY = 0;
-                             } else {
-                               // For horizontal bars: center horizontally and position below visual area
-                               menuX = (tooltipAnchor.width / 2) - (trayMenu.item.implicitWidth / 2);
-                               menuY = tooltipAnchor.height + Style.marginS;
-                             }
+              if (modelData.hasMenu && modelData.menu && trayMenu && trayMenu.item) {
+                // Calculate menu position after ensuring menu is loaded
+                const calculateAndShow = () => {
+                  // Position menu based on bar position, using tooltipAnchor for proper positioning
+                  // Increased spacing for better alignment with other context menus
+                  let menuX, menuY;
+                  if (barPosition === "left") {
+                    // For left bar: position menu to the right of the visual area
+                    menuX = tooltipAnchor.width + Style.marginL;
+                    menuY = 0;
+                  } else if (barPosition === "right") {
+                    // For right bar: position menu to the left of the visual area
+                    menuX = -trayMenu.item.implicitWidth - Style.marginL;
+                    menuY = 0;
+                  } else {
+                    // For horizontal bars: center horizontally and position below visual area
+                    menuX = (tooltipAnchor.width / 2) - (trayMenu.item.implicitWidth / 2);
+                    menuY = tooltipAnchor.height + Style.marginS;
+                  }
 
-                             PanelService.showTrayMenu(root.screen, modelData, trayMenu.item, tooltipAnchor, menuX, menuY, root.section, root.sectionWidgetIndex);
-                           };
+                  PanelService.showTrayMenu(root.screen, modelData, trayMenu.item, tooltipAnchor, menuX, menuY, root.section, root.sectionWidgetIndex);
+                };
 
-                           // Use Qt.callLater to ensure menu dimensions are calculated
-                           Qt.callLater(calculateAndShow);
-                         } else {
-                           Logger.d("Tray", "No menu available for", modelData.id, "or trayMenu not set");
-                         }
-                       }
-                     }
+                // Use Qt.callLater to ensure menu dimensions are calculated
+                Qt.callLater(calculateAndShow);
+              } else {
+                Logger.d("Tray", "No menu available for", modelData.id, "or trayMenu not set");
+              }
+            }
+          }
         }
       }
     }

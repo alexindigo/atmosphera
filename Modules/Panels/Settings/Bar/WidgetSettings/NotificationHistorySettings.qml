@@ -37,9 +37,9 @@ ColumnLayout {
     description: I18n.tr("bar.notification-history.show-unread-badge-description")
     checked: valueShowUnreadBadge
     onToggled: checked => {
-                 valueShowUnreadBadge = checked;
-                 saveSettings();
-               }
+      valueShowUnreadBadge = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showUnreadBadge
   }
 
@@ -47,9 +47,9 @@ ColumnLayout {
     label: I18n.tr("common.select-icon-color")
     currentKey: valueIconColor
     onSelected: key => {
-                  valueIconColor = key;
-                  saveSettings();
-                }
+      valueIconColor = key;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.iconColor
   }
 
@@ -58,9 +58,9 @@ ColumnLayout {
     description: I18n.tr("bar.notification-history.unread-badge-color-description")
     currentKey: valueUnreadBadgeColor
     onSelected: key => {
-                  valueUnreadBadgeColor = key;
-                  saveSettings();
-                }
+      valueUnreadBadgeColor = key;
+      saveSettings();
+    }
     visible: valueShowUnreadBadge
     defaultValue: widgetMetadata.unreadBadgeColor
   }
@@ -70,9 +70,9 @@ ColumnLayout {
     description: I18n.tr("bar.notification-history.hide-widget-when-zero-description")
     checked: valueHideWhenZero
     onToggled: checked => {
-                 valueHideWhenZero = checked;
-                 saveSettings();
-               }
+      valueHideWhenZero = checked;
+      saveSettings();
+    }
     enabled: !valueHideWhenZeroUnread
     defaultValue: widgetMetadata.hideWhenZero
   }
@@ -82,9 +82,9 @@ ColumnLayout {
     description: I18n.tr("bar.notification-history.hide-widget-when-zero-unread-description")
     checked: valueHideWhenZeroUnread
     onToggled: checked => {
-                 valueHideWhenZeroUnread = checked;
-                 saveSettings();
-               }
+      valueHideWhenZeroUnread = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.hideWhenZeroUnread
   }
 }

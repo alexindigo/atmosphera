@@ -47,11 +47,11 @@ Item {
     try {
       I3.refreshWorkspaces();
       Qt.callLater(() => {
-                     safeUpdateWorkspaces();
-                     queryWindowWorkspaces();
-                     queryDisplayScales();
-                     queryKeyboardLayout();
-                   });
+        safeUpdateWorkspaces();
+        queryWindowWorkspaces();
+        queryDisplayScales();
+        queryKeyboardLayout();
+      });
       initialized = true;
       Logger.i("SwayService", "Service started");
     } catch (e) {

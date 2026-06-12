@@ -97,25 +97,25 @@ ColumnLayout {
               z: 1000
 
               onPressed: mouse => {
-                           delegateItem.dragStartIndex = delegateItem.index;
-                           delegateItem.dragTargetIndex = delegateItem.index;
-                           delegateItem.dragStartY = delegateItem.y;
-                           delegateItem.dragging = true;
-                           delegateItem.z = 999;
-                           preventStealing = true;
-                         }
+                delegateItem.dragStartIndex = delegateItem.index;
+                delegateItem.dragTargetIndex = delegateItem.index;
+                delegateItem.dragStartY = delegateItem.y;
+                delegateItem.dragging = true;
+                delegateItem.z = 999;
+                preventStealing = true;
+              }
 
               onPositionChanged: mouse => {
-                                   if (delegateItem.dragging) {
-                                     var dy = mouse.y - height / 2;
-                                     var newY = delegateItem.y + dy;
-                                     newY = Math.max(0, Math.min(newY, listView.contentHeight - delegateItem.height));
-                                     delegateItem.y = newY;
-                                     var targetIndex = Math.floor((newY + delegateItem.height / 2) / (delegateItem.height + Style.marginS));
-                                     targetIndex = Math.max(0, Math.min(targetIndex, listView.count - 1));
-                                     delegateItem.dragTargetIndex = targetIndex;
-                                   }
-                                 }
+                if (delegateItem.dragging) {
+                  var dy = mouse.y - height / 2;
+                  var newY = delegateItem.y + dy;
+                  newY = Math.max(0, Math.min(newY, listView.contentHeight - delegateItem.height));
+                  delegateItem.y = newY;
+                  var targetIndex = Math.floor((newY + delegateItem.height / 2) / (delegateItem.height + Style.marginS));
+                  targetIndex = Math.max(0, Math.min(targetIndex, listView.count - 1));
+                  delegateItem.dragTargetIndex = targetIndex;
+                }
+              }
 
               onReleased: {
                 preventStealing = false;

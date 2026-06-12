@@ -145,15 +145,15 @@ Item {
         launcher.close();
 
       Qt.callLater(() => {
-                     // Find the actual window object to pass to focusWindow
-                     for (var i = 0; i < CompositorService.windows.count; i++) {
-                       var win = CompositorService.windows.get(i);
-                       if (win.id === windowEntry.id) {
-                         CompositorService.focusWindow(win);
-                         break;
-                       }
-                     }
-                   });
+        // Find the actual window object to pass to focusWindow
+        for (var i = 0; i < CompositorService.windows.count; i++) {
+          var win = CompositorService.windows.get(i);
+          if (win.id === windowEntry.id) {
+            CompositorService.focusWindow(win);
+            break;
+          }
+        }
+      });
     };
   }
 }

@@ -89,8 +89,8 @@ ColumnLayout {
     currentKey: Settings.data.bar.barType
     defaultValue: Settings.getDefaultValue("bar.barType")
     onSelected: key => {
-                  Settings.data.bar.barType = key;
-                }
+      Settings.data.bar.barType = key;
+    }
   }
 
   NComboBox {

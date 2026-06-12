@@ -36,57 +36,57 @@ SmartPanel {
     }
 
     Keys.onPressed: event => {
-                      // Tab navigation for categories
-                      if (event.key === Qt.Key_Tab) {
-                        currentRange = (currentRange + 1) % 4;
-                        event.accepted = true;
-                        return;
-                      }
+      // Tab navigation for categories
+      if (event.key === Qt.Key_Tab) {
+        currentRange = (currentRange + 1) % 4;
+        event.accepted = true;
+        return;
+      }
 
-                      if (event.key === Qt.Key_Backtab) { // Shift+Tab
-                        currentRange = (currentRange - 1 + 4) % 4;
-                        event.accepted = true;
-                        return;
-                      }
+      if (event.key === Qt.Key_Backtab) { // Shift+Tab
+        currentRange = (currentRange - 1 + 4) % 4;
+        event.accepted = true;
+        return;
+      }
 
-                      // Navigation Up/Down
-                      if (checkKey(event, 'up')) {
-                        moveSelection(-1);
-                        event.accepted = true;
-                        return;
-                      }
-                      if (checkKey(event, 'down')) {
-                        moveSelection(1);
-                        event.accepted = true;
-                        return;
-                      }
+      // Navigation Up/Down
+      if (checkKey(event, 'up')) {
+        moveSelection(-1);
+        event.accepted = true;
+        return;
+      }
+      if (checkKey(event, 'down')) {
+        moveSelection(1);
+        event.accepted = true;
+        return;
+      }
 
-                      // Action Navigation Left/Right
-                      if (checkKey(event, 'left')) {
-                        moveAction(-1);
-                        event.accepted = true;
-                        return;
-                      }
-                      if (checkKey(event, 'right')) {
-                        moveAction(1);
-                        event.accepted = true;
-                        return;
-                      }
+      // Action Navigation Left/Right
+      if (checkKey(event, 'left')) {
+        moveAction(-1);
+        event.accepted = true;
+        return;
+      }
+      if (checkKey(event, 'right')) {
+        moveAction(1);
+        event.accepted = true;
+        return;
+      }
 
-                      // Activation (Enter)
-                      if (checkKey(event, 'enter')) {
-                        activateSelection();
-                        event.accepted = true;
-                        return;
-                      }
+      // Activation (Enter)
+      if (checkKey(event, 'enter')) {
+        activateSelection();
+        event.accepted = true;
+        return;
+      }
 
-                      // Removal (Delete/Remove)
-                      if (checkKey(event, 'remove') || event.key === Qt.Key_Delete) {
-                        removeSelection();
-                        event.accepted = true;
-                        return;
-                      }
-                    }
+      // Removal (Delete/Remove)
+      if (checkKey(event, 'remove') || event.key === Qt.Key_Delete) {
+        removeSelection();
+        event.accepted = true;
+        return;
+      }
+    }
 
     function parseActions(actions) {
       try {
@@ -727,84 +727,84 @@ SmartPanel {
                       hoverEnabled: true
                       cursorShape: Qt.ArrowCursor
                       onPressed: mouse => {
-                                   panelContent.focusIndex = index;
-                                   panelContent.actionIndex = -1;
+                        panelContent.focusIndex = index;
+                        panelContent.actionIndex = -1;
 
-                                   if (notificationDelegate.isExpanded) {
-                                     const link = notificationDelegate.linkAtPoint(mouse.x, mouse.y);
-                                     if (link) {
-                                       notificationDelegate.pendingLink = link;
-                                     } else {
-                                       notificationDelegate.pendingLink = "";
-                                     }
-                                   }
+                        if (notificationDelegate.isExpanded) {
+                          const link = notificationDelegate.linkAtPoint(mouse.x, mouse.y);
+                          if (link) {
+                            notificationDelegate.pendingLink = link;
+                          } else {
+                            notificationDelegate.pendingLink = "";
+                          }
+                        }
 
-                                   if (mouse.button !== Qt.LeftButton)
-                                   return;
-                                   const globalPoint = historyInteractionArea.mapToGlobal(mouse.x, mouse.y);
-                                   notificationDelegate.pressGlobalX = globalPoint.x;
-                                   notificationDelegate.pressGlobalY = globalPoint.y;
-                                   notificationDelegate.isSwiping = false;
-                                 }
+                        if (mouse.button !== Qt.LeftButton)
+                          return;
+                        const globalPoint = historyInteractionArea.mapToGlobal(mouse.x, mouse.y);
+                        notificationDelegate.pressGlobalX = globalPoint.x;
+                        notificationDelegate.pressGlobalY = globalPoint.y;
+                        notificationDelegate.isSwiping = false;
+                      }
                       onPositionChanged: mouse => {
-                                           if (!(mouse.buttons & Qt.LeftButton) || notificationDelegate.isRemoving)
-                                           return;
+                        if (!(mouse.buttons & Qt.LeftButton) || notificationDelegate.isRemoving)
+                          return;
 
-                                           const globalPoint = historyInteractionArea.mapToGlobal(mouse.x, mouse.y);
-                                           const deltaX = globalPoint.x - notificationDelegate.pressGlobalX;
-                                           const deltaY = globalPoint.y - notificationDelegate.pressGlobalY;
+                        const globalPoint = historyInteractionArea.mapToGlobal(mouse.x, mouse.y);
+                        const deltaX = globalPoint.x - notificationDelegate.pressGlobalX;
+                        const deltaY = globalPoint.y - notificationDelegate.pressGlobalY;
 
-                                           if (!notificationDelegate.isSwiping) {
-                                             if (Math.abs(deltaX) < notificationDelegate.swipeStartThreshold)
-                                             return;
+                        if (!notificationDelegate.isSwiping) {
+                          if (Math.abs(deltaX) < notificationDelegate.swipeStartThreshold)
+                            return;
 
-                                             // Only start a swipe-dismiss when horizontal movement is dominant.
-                                             if (Math.abs(deltaX) <= Math.abs(deltaY) * 1.15) {
-                                               return;
-                                             }
-                                             notificationDelegate.isSwiping = true;
-                                           }
+                          // Only start a swipe-dismiss when horizontal movement is dominant.
+                          if (Math.abs(deltaX) <= Math.abs(deltaY) * 1.15) {
+                            return;
+                          }
+                          notificationDelegate.isSwiping = true;
+                        }
 
-                                           if (notificationDelegate.pendingLink && Math.abs(deltaX) >= notificationDelegate.swipeStartThreshold) {
-                                             notificationDelegate.pendingLink = "";
-                                           }
+                        if (notificationDelegate.pendingLink && Math.abs(deltaX) >= notificationDelegate.swipeStartThreshold) {
+                          notificationDelegate.pendingLink = "";
+                        }
 
-                                           notificationDelegate.swipeOffset = deltaX;
-                                         }
+                        notificationDelegate.swipeOffset = deltaX;
+                      }
                       onReleased: mouse => {
-                                    if (mouse.button !== Qt.LeftButton)
-                                    return;
+                        if (mouse.button !== Qt.LeftButton)
+                          return;
 
-                                    if (notificationDelegate.isSwiping) {
-                                      if (Math.abs(notificationDelegate.swipeOffset) >= notificationDelegate.swipeDismissThreshold) {
-                                        notificationDelegate.dismissBySwipe();
-                                      } else {
-                                        notificationDelegate.swipeOffset = 0;
-                                      }
-                                      notificationDelegate.isSwiping = false;
-                                      notificationDelegate.pendingLink = "";
-                                      return;
-                                    }
+                        if (notificationDelegate.isSwiping) {
+                          if (Math.abs(notificationDelegate.swipeOffset) >= notificationDelegate.swipeDismissThreshold) {
+                            notificationDelegate.dismissBySwipe();
+                          } else {
+                            notificationDelegate.swipeOffset = 0;
+                          }
+                          notificationDelegate.isSwiping = false;
+                          notificationDelegate.pendingLink = "";
+                          return;
+                        }
 
-                                    if (notificationDelegate.pendingLink) {
-                                      Qt.openUrlExternally(notificationDelegate.pendingLink);
-                                      notificationDelegate.pendingLink = "";
-                                      return;
-                                    }
+                        if (notificationDelegate.pendingLink) {
+                          Qt.openUrlExternally(notificationDelegate.pendingLink);
+                          notificationDelegate.pendingLink = "";
+                          return;
+                        }
 
-                                    // Without a default action, or if invoking it fails,
-                                    // fall back to focusing the sender window by app identity.
-                                    var actions = notificationDelegate.actionsList;
-                                    var hasDefault = actions.some(function (a) {
-                                      return a.identifier === "default";
-                                    });
-                                    if (hasDefault && NotificationService.invokeAction(notificationDelegate.notificationId, "default")) {
-                                      root.close();
-                                    } else {
-                                      NotificationService.focusSenderWindow(notificationDelegate.appName);
-                                      root.close();
-                                    }
-                                  }
+                        // Without a default action, or if invoking it fails,
+                        // fall back to focusing the sender window by app identity.
+                        var actions = notificationDelegate.actionsList;
+                        var hasDefault = actions.some(function (a) {
+                          return a.identifier === "default";
+                        });
+                        if (hasDefault && NotificationService.invokeAction(notificationDelegate.notificationId, "default")) {
+                          root.close();
+                        } else {
+                          NotificationService.focusSenderWindow(notificationDelegate.appName);
+                          root.close();
+                        }
+                      }
                       onCanceled: {
                         notificationDelegate.isSwiping = false;
                         notificationDelegate.swipeOffset = 0;

@@ -593,10 +593,10 @@ PopupWindow {
 
     // Force anchor update
     Qt.callLater(() => {
-                   if (root.anchor && root.visible) {
-                     root.anchor.updateAnchor();
-                   }
-                 });
+      if (root.anchor && root.visible) {
+        root.anchor.updateAnchor();
+      }
+    });
   }
 
   // Backward compatibility alias

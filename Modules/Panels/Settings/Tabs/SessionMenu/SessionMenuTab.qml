@@ -153,14 +153,14 @@ ColumnLayout {
       if (dialog) {
         root._activeDialog = dialog;
         dialog.updateEntryProperties.connect((idx, properties) => {
-                                               root.updateEntry(idx, properties);
-                                             });
+          root.updateEntry(idx, properties);
+        });
         dialog.closed.connect(() => {
-                                if (root._activeDialog === dialog) {
-                                  root._activeDialog = null;
-                                  dialog.destroy();
-                                }
-                              });
+          if (root._activeDialog === dialog) {
+            root._activeDialog = null;
+            dialog.destroy();
+          }
+        });
         dialog.open();
       } else {
         Logger.e("SessionMenuTab", "Failed to create entry settings dialog");

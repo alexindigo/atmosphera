@@ -98,11 +98,11 @@ NBox {
           }
 
           onStatusChanged: status => {
-                             if (status === Image.Error) {
-                               iconLoader.visible = true;
-                               imagePreview.visible = false;
-                             }
-                           }
+            if (status === Image.Error) {
+              iconLoader.visible = true;
+              imagePreview.visible = false;
+            }
+          }
         }
 
         // Color swatch - shown for clipboard color entries
@@ -283,12 +283,12 @@ NBox {
       }
     }
     onClicked: mouse => {
-                 if (mouse.button === Qt.LeftButton) {
-                   launcher.selectedIndex = entry.index;
-                   launcher.activate();
-                   mouse.accepted = true;
-                 }
-               }
+      if (mouse.button === Qt.LeftButton) {
+        launcher.selectedIndex = entry.index;
+        launcher.activate();
+        mouse.accepted = true;
+      }
+    }
     acceptedButtons: Qt.LeftButton
   }
 }

@@ -180,10 +180,10 @@ ScrollView {
     enabled: root.wheelScrollMultiplier !== 1.0 && root._internalFlickable !== null
     acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
     onWheel: event => {
-               const delta = event.pixelDelta.y !== 0 ? event.pixelDelta.y : event.angleDelta.y / 2;
-               root.applyWheelScroll(delta);
-               event.accepted = true;
-             }
+      const delta = event.pixelDelta.y !== 0 ? event.pixelDelta.y : event.angleDelta.y / 2;
+      root.applyWheelScroll(delta);
+      event.accepted = true;
+    }
   }
 
   // Watch for changes in horizontalPolicy

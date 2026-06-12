@@ -457,86 +457,86 @@ Variants {
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 hoverEnabled: true
                 onPressed: mouse => {
-                             if (mouse.button === Qt.LeftButton) {
-                               const globalPoint = cardDragArea.mapToGlobal(mouse.x, mouse.y);
-                               card.pressGlobalX = globalPoint.x;
-                               card.pressGlobalY = globalPoint.y;
-                               card.isSwiping = false;
-                               card.suppressClick = false;
-                             }
-                           }
+                  if (mouse.button === Qt.LeftButton) {
+                    const globalPoint = cardDragArea.mapToGlobal(mouse.x, mouse.y);
+                    card.pressGlobalX = globalPoint.x;
+                    card.pressGlobalY = globalPoint.y;
+                    card.isSwiping = false;
+                    card.suppressClick = false;
+                  }
+                }
                 onPositionChanged: mouse => {
-                                     if (!(mouse.buttons & Qt.LeftButton) || card.isRemoving)
-                                     return;
-                                     const globalPoint = cardDragArea.mapToGlobal(mouse.x, mouse.y);
-                                     const rawDeltaX = globalPoint.x - card.pressGlobalX;
-                                     const rawDeltaY = globalPoint.y - card.pressGlobalY;
-                                     const deltaX = card.clampSwipeDelta(rawDeltaX);
-                                     const deltaY = card.clampVerticalSwipeDelta(rawDeltaY);
-                                     if (!card.isSwiping) {
-                                       if (card.useVerticalSwipe) {
-                                         if (Math.abs(deltaY) < card.swipeStartThreshold)
-                                         return;
-                                         card.isSwiping = true;
-                                       } else {
-                                         if (Math.abs(deltaX) < card.swipeStartThreshold)
-                                         return;
-                                         card.isSwiping = true;
-                                       }
-                                     }
-                                     if (card.useVerticalSwipe) {
-                                       card.swipeOffset = 0;
-                                       card.swipeOffsetY = deltaY;
-                                     } else {
-                                       card.swipeOffset = deltaX;
-                                       card.swipeOffsetY = 0;
-                                     }
-                                   }
+                  if (!(mouse.buttons & Qt.LeftButton) || card.isRemoving)
+                    return;
+                  const globalPoint = cardDragArea.mapToGlobal(mouse.x, mouse.y);
+                  const rawDeltaX = globalPoint.x - card.pressGlobalX;
+                  const rawDeltaY = globalPoint.y - card.pressGlobalY;
+                  const deltaX = card.clampSwipeDelta(rawDeltaX);
+                  const deltaY = card.clampVerticalSwipeDelta(rawDeltaY);
+                  if (!card.isSwiping) {
+                    if (card.useVerticalSwipe) {
+                      if (Math.abs(deltaY) < card.swipeStartThreshold)
+                        return;
+                      card.isSwiping = true;
+                    } else {
+                      if (Math.abs(deltaX) < card.swipeStartThreshold)
+                        return;
+                      card.isSwiping = true;
+                    }
+                  }
+                  if (card.useVerticalSwipe) {
+                    card.swipeOffset = 0;
+                    card.swipeOffsetY = deltaY;
+                  } else {
+                    card.swipeOffset = deltaX;
+                    card.swipeOffsetY = 0;
+                  }
+                }
                 onReleased: mouse => {
-                              if (mouse.button === Qt.RightButton) {
-                                card.animateOut();
-                                if (Settings.data.notifications.clearDismissed) {
-                                  NotificationService.removeFromHistory(notificationId);
-                                }
-                                return;
-                              }
+                  if (mouse.button === Qt.RightButton) {
+                    card.animateOut();
+                    if (Settings.data.notifications.clearDismissed) {
+                      NotificationService.removeFromHistory(notificationId);
+                    }
+                    return;
+                  }
 
-                              if (mouse.button !== Qt.LeftButton)
-                              return;
+                  if (mouse.button !== Qt.LeftButton)
+                    return;
 
-                              if (card.isSwiping) {
-                                const dismissDistance = card.useVerticalSwipe ? Math.abs(card.swipeOffsetY) : Math.abs(card.swipeOffset);
-                                const threshold = card.useVerticalSwipe ? card.verticalSwipeDismissThreshold : card.swipeDismissThreshold;
-                                if (dismissDistance >= threshold) {
-                                  card.dismissBySwipe();
-                                  if (Settings.data.notifications.clearDismissed) {
-                                    NotificationService.removeFromHistory(notificationId);
-                                  }
-                                } else {
-                                  card.swipeOffset = 0;
-                                  card.swipeOffsetY = 0;
-                                }
-                                card.suppressClick = true;
-                                card.isSwiping = false;
-                                return;
-                              }
+                  if (card.isSwiping) {
+                    const dismissDistance = card.useVerticalSwipe ? Math.abs(card.swipeOffsetY) : Math.abs(card.swipeOffset);
+                    const threshold = card.useVerticalSwipe ? card.verticalSwipeDismissThreshold : card.swipeDismissThreshold;
+                    if (dismissDistance >= threshold) {
+                      card.dismissBySwipe();
+                      if (Settings.data.notifications.clearDismissed) {
+                        NotificationService.removeFromHistory(notificationId);
+                      }
+                    } else {
+                      card.swipeOffset = 0;
+                      card.swipeOffsetY = 0;
+                    }
+                    card.suppressClick = true;
+                    card.isSwiping = false;
+                    return;
+                  }
 
-                              if (card.suppressClick)
-                              return;
+                  if (card.suppressClick)
+                    return;
 
-                              var actions = model.actionsJson ? JSON.parse(model.actionsJson) : [];
-                              var hasDefault = actions.some(function (a) {
-                                return a.identifier === "default";
-                              });
-                              if (hasDefault && NotificationService.invokeActionAndSuppressClose(notificationId, "default")) {
-                                card.animateOut();
-                              } else {
-                                // Without a default action, or if invoking it fails,
-                                // the best fallback is focusing the sender window by app identity.
-                                NotificationService.focusSenderWindow(model.appName);
-                                card.animateOut();
-                              }
-                            }
+                  var actions = model.actionsJson ? JSON.parse(model.actionsJson) : [];
+                  var hasDefault = actions.some(function (a) {
+                    return a.identifier === "default";
+                  });
+                  if (hasDefault && NotificationService.invokeActionAndSuppressClose(notificationId, "default")) {
+                    card.animateOut();
+                  } else {
+                    // Without a default action, or if invoking it fails,
+                    // the best fallback is focusing the sender window by app identity.
+                    NotificationService.focusSenderWindow(model.appName);
+                    card.animateOut();
+                  }
+                }
                 onCanceled: {
                   card.isSwiping = false;
                   card.swipeOffset = 0;

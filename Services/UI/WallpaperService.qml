@@ -216,11 +216,11 @@ Singleton {
 
     // Initialize cache file path
     Qt.callLater(() => {
-                   if (typeof Settings !== 'undefined' && Settings.cacheDir) {
-                     wallpaperCacheFile = Settings.cacheDir + "wallpapers.json";
-                     wallpaperCacheView.path = wallpaperCacheFile;
-                   }
-                 });
+      if (typeof Settings !== 'undefined' && Settings.cacheDir) {
+        wallpaperCacheFile = Settings.cacheDir + "wallpapers.json";
+        wallpaperCacheView.path = wallpaperCacheFile;
+      }
+    });
 
     // Note: isInitialized will be set to true in wallpaperCacheView.onLoaded
     Logger.d("Wallpaper", "Triggering initial wallpaper scan");

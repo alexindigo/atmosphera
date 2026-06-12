@@ -100,13 +100,13 @@ ColumnLayout {
       resumeCommand: Settings.data.idle.resumeScreenOffCommand
       onActionTimeoutChanged: val => Settings.data.idle.screenOffTimeout = val
       onActionCommandChanged: cmd => {
-                                Settings.data.idle.screenOffCommand = cmd;
-                                Settings.saveImmediate();
-                              }
+        Settings.data.idle.screenOffCommand = cmd;
+        Settings.saveImmediate();
+      }
       onActionResumeCommandChanged: cmd => {
-                                      Settings.data.idle.resumeScreenOffCommand = cmd;
-                                      Settings.saveImmediate();
-                                    }
+        Settings.data.idle.resumeScreenOffCommand = cmd;
+        Settings.saveImmediate();
+      }
     }
 
     DefaultActionRow {
@@ -118,13 +118,13 @@ ColumnLayout {
       resumeCommand: Settings.data.idle.resumeLockCommand
       onActionTimeoutChanged: val => Settings.data.idle.lockTimeout = val
       onActionCommandChanged: cmd => {
-                                Settings.data.idle.lockCommand = cmd;
-                                Settings.saveImmediate();
-                              }
+        Settings.data.idle.lockCommand = cmd;
+        Settings.saveImmediate();
+      }
       onActionResumeCommandChanged: cmd => {
-                                      Settings.data.idle.resumeLockCommand = cmd;
-                                      Settings.saveImmediate();
-                                    }
+        Settings.data.idle.resumeLockCommand = cmd;
+        Settings.saveImmediate();
+      }
     }
 
     DefaultActionRow {
@@ -136,13 +136,13 @@ ColumnLayout {
       resumeCommand: Settings.data.idle.resumeSuspendCommand
       onActionTimeoutChanged: val => Settings.data.idle.suspendTimeout = val
       onActionCommandChanged: cmd => {
-                                Settings.data.idle.suspendCommand = cmd;
-                                Settings.saveImmediate();
-                              }
+        Settings.data.idle.suspendCommand = cmd;
+        Settings.saveImmediate();
+      }
       onActionResumeCommandChanged: cmd => {
-                                      Settings.data.idle.resumeSuspendCommand = cmd;
-                                      Settings.saveImmediate();
-                                    }
+        Settings.data.idle.resumeSuspendCommand = cmd;
+        Settings.saveImmediate();
+      }
     }
 
     NDivider {

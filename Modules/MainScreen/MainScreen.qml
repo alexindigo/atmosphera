@@ -289,10 +289,10 @@ PanelWindow {
       enabled: root.isAnyPanelOpen
       acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
       onClicked: mouse => {
-                   if (PanelService.openedPanel) {
-                     PanelService.openedPanel.close();
-                   }
-                 }
+        if (PanelService.openedPanel) {
+          PanelService.openedPanel.close();
+        }
+      }
       z: 0 // Behind panels and bar
     }
 

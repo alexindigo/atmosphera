@@ -23,17 +23,17 @@ Singleton {
   readonly property string batteryIcon: getIcon(batteryPercentage, batteryCharging, batteryPluggedIn, batteryReady)
 
   readonly property var laptopBatteries: UPower.devices.values.filter(d => d.isLaptopBattery).sort((x, y) => {
-                                                                                                     // Force DisplayDevice to the top
-                                                                                                     if (x.nativePath.includes("DisplayDevice"))
-                                                                                                     return -1;
-                                                                                                     if (y.nativePath.includes("DisplayDevice"))
-                                                                                                     return 1;
+    // Force DisplayDevice to the top
+    if (x.nativePath.includes("DisplayDevice"))
+      return -1;
+    if (y.nativePath.includes("DisplayDevice"))
+      return 1;
 
-                                                                                                     // Standard string comparison works for BAT0 vs BAT1
-                                                                                                     return x.nativePath.localeCompare(y.nativePath, undefined, {
-                                                                                                                                         numeric: true
-                                                                                                                                       });
-                                                                                                   })
+    // Standard string comparison works for BAT0 vs BAT1
+    return x.nativePath.localeCompare(y.nativePath, undefined, {
+                                        numeric: true
+                                      });
+  })
 
   readonly property var bluetoothBatteries: {
     var list = [];

@@ -51,9 +51,9 @@ ColumnLayout {
     ]
     currentKey: valueDisplayMode
     onSelected: key => {
-                  valueDisplayMode = key;
-                  saveSettings();
-                }
+      valueDisplayMode = key;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.displayMode
   }
 
@@ -62,9 +62,9 @@ ColumnLayout {
     description: I18n.tr("bar.keyboard-layout.show-icon-description")
     checked: valueShowIcon
     onToggled: checked => {
-                 valueShowIcon = checked;
-                 saveSettings();
-               }
+      valueShowIcon = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showIcon
   }
 
@@ -72,18 +72,18 @@ ColumnLayout {
     label: I18n.tr("common.select-icon-color")
     currentKey: valueIconColor
     onSelected: key => {
-                  valueIconColor = key;
-                  saveSettings();
-                }
+      valueIconColor = key;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.iconColor
   }
 
   NColorChoice {
     currentKey: valueTextColor
     onSelected: key => {
-                  valueTextColor = key;
-                  saveSettings();
-                }
+      valueTextColor = key;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.textColor
   }
 }

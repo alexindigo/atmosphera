@@ -71,17 +71,17 @@ Singleton {
 
     const list = Array.from(entryList);
     preppedNames = list.map(a => ({
-                                    name: FuzzySort.prepare(`${a.name} `),
-                                    entry: a
-                                  }));
+      name: FuzzySort.prepare(`${a.name} `),
+      entry: a
+    }));
     preppedIcons = list.map(a => ({
-                                    name: FuzzySort.prepare(`${a.icon} `),
-                                    entry: a
-                                  }));
+      name: FuzzySort.prepare(`${a.icon} `),
+      entry: a
+    }));
     preppedIds = list.map(a => ({
-                                  name: FuzzySort.prepare(`${a.id} `),
-                                  entry: a
-                                }));
+      name: FuzzySort.prepare(`${a.id} `),
+      entry: a
+    }));
   }
 
   function iconForAppId(appId, fallbackName) {

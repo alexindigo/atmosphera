@@ -313,14 +313,14 @@ Singleton {
     Logger.i("HooksService", "Service started");
     // Initialize lock screen state tracking
     Qt.callLater(() => {
-                   if (PanelService.lockScreen) {
-                     wasLocked = PanelService.lockScreen.active;
-                     lockScreenActiveConnection.target = PanelService.lockScreen;
-                   }
-                   // Initialize performance mode state tracking
-                   wasPerformanceModeEnabled = PowerProfileService.atmospheraPerformanceMode;
-                   // Execute startup hook
-                   executeStartupHook();
-                 });
+      if (PanelService.lockScreen) {
+        wasLocked = PanelService.lockScreen.active;
+        lockScreenActiveConnection.target = PanelService.lockScreen;
+      }
+      // Initialize performance mode state tracking
+      wasPerformanceModeEnabled = PowerProfileService.atmospheraPerformanceMode;
+      // Execute startup hook
+      executeStartupHook();
+    });
   }
 }

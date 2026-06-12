@@ -55,27 +55,27 @@ Singleton {
 
       // Connect cleanup when tooltip hides
       newTooltip.visibleChanged.connect(() => {
-                                          if (!newTooltip.visible) {
-                                            // Clean up after a delay to avoid interfering with new tooltips
-                                            Qt.callLater(() => {
-                                                           if (newTooltip && !newTooltip.visible) {
-                                                             if (activeTooltip === newTooltip) {
-                                                               activeTooltip = null;
-                                                             }
-                                                             if (pendingTooltip === newTooltip) {
-                                                               pendingTooltip = null;
-                                                             }
-                                                             newTooltip.destroy();
-                                                           }
-                                                         });
-                                          } else {
-                                            // Tooltip is now visible, move from pending to active
-                                            if (pendingTooltip === newTooltip) {
-                                              activeTooltip = newTooltip;
-                                              pendingTooltip = null;
-                                            }
-                                          }
-                                        });
+        if (!newTooltip.visible) {
+          // Clean up after a delay to avoid interfering with new tooltips
+          Qt.callLater(() => {
+            if (newTooltip && !newTooltip.visible) {
+              if (activeTooltip === newTooltip) {
+                activeTooltip = null;
+              }
+              if (pendingTooltip === newTooltip) {
+                pendingTooltip = null;
+              }
+              newTooltip.destroy();
+            }
+          });
+        } else {
+          // Tooltip is now visible, move from pending to active
+          if (pendingTooltip === newTooltip) {
+            activeTooltip = newTooltip;
+            pendingTooltip = null;
+          }
+        }
+      });
 
       // Show the tooltip
       newTooltip.show(target, content, direction || "auto", delay || Style.tooltipDelay, fontFamily);

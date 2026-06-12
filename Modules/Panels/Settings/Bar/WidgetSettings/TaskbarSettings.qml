@@ -72,9 +72,9 @@ ColumnLayout {
     ]
     currentKey: root.valueHideMode
     onSelected: key => {
-                  root.valueHideMode = key;
-                  saveSettings();
-                }
+      root.valueHideMode = key;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.hideMode
   }
 
@@ -84,9 +84,9 @@ ColumnLayout {
     description: I18n.tr("bar.taskbar.only-same-monitor-description")
     checked: root.valueOnlySameOutput
     onToggled: checked => {
-                 root.valueOnlySameOutput = checked;
-                 saveSettings();
-               }
+      root.valueOnlySameOutput = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.onlySameOutput
   }
 
@@ -96,9 +96,9 @@ ColumnLayout {
     description: I18n.tr("bar.taskbar.only-active-workspaces-description")
     checked: root.valueOnlyActiveWorkspaces
     onToggled: checked => {
-                 root.valueOnlyActiveWorkspaces = checked;
-                 saveSettings();
-               }
+      root.valueOnlyActiveWorkspaces = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.onlyActiveWorkspaces
   }
 
@@ -108,9 +108,9 @@ ColumnLayout {
     description: I18n.tr("bar.taskbar.colorize-icons-description")
     checked: root.valueColorizeIcons
     onToggled: checked => {
-                 root.valueColorizeIcons = checked;
-                 saveSettings();
-               }
+      root.valueColorizeIcons = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.colorizeIcons
   }
 
@@ -120,9 +120,9 @@ ColumnLayout {
     description: I18n.tr("bar.taskbar.show-pinned-apps-description")
     checked: root.valueShowPinnedApps
     onToggled: checked => {
-                 root.valueShowPinnedApps = checked;
-                 saveSettings();
-               }
+      root.valueShowPinnedApps = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showPinnedApps
   }
 
@@ -137,9 +137,9 @@ ColumnLayout {
     value: root.valueIconScale
     defaultValue: widgetMetadata.iconScale
     onMoved: value => {
-               root.valueIconScale = value;
-               saveSettings();
-             }
+      root.valueIconScale = value;
+      saveSettings();
+    }
     text: Math.round(root.valueIconScale * 100) + "%"
   }
 
@@ -149,9 +149,9 @@ ColumnLayout {
     description: isVerticalBar ? I18n.tr("bar.taskbar.show-title-description-disabled") : I18n.tr("bar.taskbar.show-title-description")
     checked: root.valueShowTitle
     onToggled: checked => {
-                 root.valueShowTitle = checked;
-                 saveSettings();
-               }
+      root.valueShowTitle = checked;
+      saveSettings();
+    }
     enabled: !isVerticalBar
     defaultValue: widgetMetadata.showTitle
   }
@@ -175,9 +175,9 @@ ColumnLayout {
     description: I18n.tr("bar.taskbar.smart-width-description")
     checked: root.valueSmartWidth
     onToggled: checked => {
-                 root.valueSmartWidth = checked;
-                 saveSettings();
-               }
+      root.valueSmartWidth = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.smartWidth
   }
 
@@ -193,9 +193,9 @@ ColumnLayout {
     value: root.valueMaxTaskbarWidth
     defaultValue: widgetMetadata.maxTaskbarWidth
     onMoved: value => {
-               root.valueMaxTaskbarWidth = Math.round(value);
-               saveSettings();
-             }
+      root.valueMaxTaskbarWidth = Math.round(value);
+      saveSettings();
+    }
     text: Math.round(root.valueMaxTaskbarWidth) + "%"
   }
 }

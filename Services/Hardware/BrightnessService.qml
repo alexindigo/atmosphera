@@ -238,22 +238,22 @@ Singleton {
       onStreamFinished: {
         var displays = text.trim().split("\n\n");
         ddcProc.ddcMonitors = displays.map(d => {
-                                             var ddcModelMatch = d.match(/(This monitor does not support DDC\/CI|Invalid display)/);
-                                             var modelMatch = d.match(/Model:\s*(.*)/);
-                                             var busMatch = d.match(/I2C bus:[ ]*\/dev\/i2c-([0-9]+)/);
-                                             var connectorMatch = d.match(/DRM[_ ]connector:\s*card\d+-(.+)/);
-                                             var ddcModel = ddcModelMatch ? ddcModelMatch.length > 0 : false;
-                                             var model = modelMatch ? modelMatch[1] : "Unknown";
-                                             var bus = busMatch ? busMatch[1] : "Unknown";
-                                             var connector = connectorMatch ? connectorMatch[1].trim() : "";
-                                             Logger.i("Brightness", "Detected DDC Monitor:", model, "connector:", connector, "bus:", bus, "is DDC:", !ddcModel);
-                                             return {
-                                               "model": model,
-                                               "busNum": bus,
-                                               "connector": connector,
-                                               "isDdc": !ddcModel
-                                             };
-                                           });
+          var ddcModelMatch = d.match(/(This monitor does not support DDC\/CI|Invalid display)/);
+          var modelMatch = d.match(/Model:\s*(.*)/);
+          var busMatch = d.match(/I2C bus:[ ]*\/dev\/i2c-([0-9]+)/);
+          var connectorMatch = d.match(/DRM[_ ]connector:\s*card\d+-(.+)/);
+          var ddcModel = ddcModelMatch ? ddcModelMatch.length > 0 : false;
+          var model = modelMatch ? modelMatch[1] : "Unknown";
+          var bus = busMatch ? busMatch[1] : "Unknown";
+          var connector = connectorMatch ? connectorMatch[1].trim() : "";
+          Logger.i("Brightness", "Detected DDC Monitor:", model, "connector:", connector, "bus:", bus, "is DDC:", !ddcModel);
+          return {
+            "model": model,
+            "busNum": bus,
+            "connector": connector,
+            "isDdc": !ddcModel
+          };
+        });
         root.ddcMonitors = ddcProc.ddcMonitors.filter(m => m.isDdc);
       }
     }
@@ -352,9 +352,9 @@ Singleton {
         // If there's a queued brightness change, process it now
         if (!isNaN(monitor.queuedBrightness)) {
           Qt.callLater(() => {
-                         monitor.setBrightness(monitor.queuedBrightness);
-                         monitor.queuedBrightness = NaN;
-                       });
+            monitor.setBrightness(monitor.queuedBrightness);
+            monitor.queuedBrightness = NaN;
+          });
         }
       }
     }
@@ -386,8 +386,8 @@ Singleton {
         // When a file change is detected, actively refresh from system
         // to ensure we get the most up-to-date value
         Qt.callLater(() => {
-                       monitor.refreshBrightnessFromSystem();
-                     });
+          monitor.refreshBrightnessFromSystem();
+        });
       }
     }
 
@@ -510,9 +510,9 @@ Singleton {
         var ddcValue = Math.round(value * monitor.maxBrightness);
         var ddcBus = busNum;
         Qt.callLater(() => {
-                       setBrightnessProc.command = ["ddcutil", "-b", ddcBus, "--noverify", "--async", "--enable-dynamic-sleep", "--sleep-multiplier=0.05", "setvcp", "10", ddcValue];
-                       setBrightnessProc.running = true;
-                     });
+          setBrightnessProc.command = ["ddcutil", "-b", ddcBus, "--noverify", "--async", "--enable-dynamic-sleep", "--sleep-multiplier=0.05", "setvcp", "10", ddcValue];
+          setBrightnessProc.running = true;
+        });
       } else if (!isDdc) {
         monitor.commandRunning = true;
         monitor.ignoreNextChange = true;

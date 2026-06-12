@@ -205,45 +205,44 @@ Item {
       focus: true
 
       Keys.onPressed: event => {
-                        if (root.recordingIndex === -1 || root.hasConflict)
-                        return;
+        if (root.recordingIndex === -1 || root.hasConflict)
+          return;
 
-                        // Handle Escape specifically to ensure it doesn't close the panel
-                        if (event.key === Qt.Key_Escape) {
-                          event.accepted = true;
-                          root._applyKeybind("Esc");
-                          return;
-                        }
+        // Handle Escape specifically to ensure it doesn't close the panel
+        if (event.key === Qt.Key_Escape) {
+          event.accepted = true;
+          root._applyKeybind("Esc");
+          return;
+        }
 
-                        // Ignore modifier keys by themselves
-                        if (event.key === Qt.Key_Control || event.key === Qt.Key_Shift || event.key === Qt.Key_Alt || event.key === Qt.Key_Meta) {
-                          event.accepted = true; // Consume modifiers too while listening
-                          return;
-                        }
+        // Ignore modifier keys by themselves
+        if (event.key === Qt.Key_Control || event.key === Qt.Key_Shift || event.key === Qt.Key_Alt || event.key === Qt.Key_Meta) {
+          event.accepted = true; // Consume modifiers too while listening
+          return;
+        }
 
-                        const keybindStr = Keybinds.getKeybindString(event);
-                        if (keybindStr) {
-                          // Enforce modifier requirement (Ctrl or Alt) for "normal" keys unless explicitly disabled
-                          // Allow Arrows, Nav, Function, and System keys without modifiers
-                          const isSpecialKey = (event.key >= Qt.Key_F1 && event.key <= Qt.Key_F35) || (event.key >= Qt.Key_Left && event.key <= Qt.Key_Down) || (event.key === Qt.Key_Home || event.key === Qt.Key_End || event.key === Qt.Key_PageUp || event.key === Qt.Key_PageDown) || (event.key === Qt.Key_Insert || event.key === Qt.Key_Delete || event.key
-                                                                                                                                                                                                                                                                                            === Qt.Key_Backspace) || (event.key === Qt.Key_Tab || event.key
-                                                                                                                                                                                                                                                                                                                      === Qt.Key_Return || event.key === Qt.Key_Enter
-                                                                                                                                                                                                                                                                                                                      || event.key === Qt.Key_Escape || event.key
-                                                                                                                                                                                                                                                                                                                      === Qt.Key_Space);
+        const keybindStr = Keybinds.getKeybindString(event);
+        if (keybindStr) {
+          // Enforce modifier requirement (Ctrl or Alt) for "normal" keys unless explicitly disabled
+          // Allow Arrows, Nav, Function, and System keys without modifiers
+          const isSpecialKey = (event.key >= Qt.Key_F1 && event.key <= Qt.Key_F35) || (event.key >= Qt.Key_Left && event.key <= Qt.Key_Down) || (event.key === Qt.Key_Home || event.key === Qt.Key_End || event.key === Qt.Key_PageUp || event.key === Qt.Key_PageDown) || (event.key === Qt.Key_Insert || event.key === Qt.Key_Delete || event.key
+                                                                                                                                                                                                                                                                            === Qt.Key_Backspace) || (event.key === Qt.Key_Tab || event.key === Qt.Key_Return
+                                                                                                                                                                                                                                                                                                      || event.key === Qt.Key_Enter || event.key === Qt.Key_Escape
+                                                                                                                                                                                                                                                                                                      || event.key === Qt.Key_Space);
 
-                          const hasModifier = (event.modifiers & Qt.ControlModifier) || (event.modifiers & Qt.AltModifier);
+          const hasModifier = (event.modifiers & Qt.ControlModifier) || (event.modifiers & Qt.AltModifier);
 
-                          if (root.requireModifierForNormalKeys && !hasModifier && !isSpecialKey) {
-                            hasConflict = true;
-                            ToastService.showWarning(I18n.tr("panels.general.keybinds-modifier-title"), I18n.tr("panels.general.keybinds-modifier-description"));
-                            conflictTimer.restart();
-                            return;
-                          }
+          if (root.requireModifierForNormalKeys && !hasModifier && !isSpecialKey) {
+            hasConflict = true;
+            ToastService.showWarning(I18n.tr("panels.general.keybinds-modifier-title"), I18n.tr("panels.general.keybinds-modifier-description"));
+            conflictTimer.restart();
+            return;
+          }
 
-                          root._applyKeybind(keybindStr);
-                        }
-                        event.accepted = true;
-                      }
+          root._applyKeybind(keybindStr);
+        }
+        event.accepted = true;
+      }
     }
   }
 }

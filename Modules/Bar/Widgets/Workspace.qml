@@ -505,29 +505,29 @@ Item {
     }
 
     onTriggered: (action, item) => {
-                   contextMenu.close();
-                   PanelService.closeContextMenu(screen);
+      contextMenu.close();
+      PanelService.closeContextMenu(screen);
 
-                   const selectedWindow = root.getSelectedWindow();
+      const selectedWindow = root.getSelectedWindow();
 
-                   if (action === "focus" && selectedWindow) {
-                     CompositorService.focusWindow(selectedWindow);
-                   } else if (action === "pin" && selectedAppId) {
-                     root.toggleAppPin(selectedAppId);
-                   } else if (action === "close" && selectedWindow) {
-                     CompositorService.closeWindow(selectedWindow);
-                   } else if (action === "widget-settings") {
-                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
-                   } else if (action.startsWith("desktop-action-") && item && item.desktopAction) {
-                     if (item.desktopAction.command && item.desktopAction.command.length > 0) {
-                       Quickshell.execDetached(item.desktopAction.command);
-                     } else if (item.desktopAction.execute) {
-                       item.desktopAction.execute();
-                     }
-                   }
-                   selectedWindowId = "";
-                   selectedAppId = "";
-                 }
+      if (action === "focus" && selectedWindow) {
+        CompositorService.focusWindow(selectedWindow);
+      } else if (action === "pin" && selectedAppId) {
+        root.toggleAppPin(selectedAppId);
+      } else if (action === "close" && selectedWindow) {
+        CompositorService.closeWindow(selectedWindow);
+      } else if (action === "widget-settings") {
+        BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+      } else if (action.startsWith("desktop-action-") && item && item.desktopAction) {
+        if (item.desktopAction.command && item.desktopAction.command.length > 0) {
+          Quickshell.execDetached(item.desktopAction.command);
+        } else if (item.desktopAction.execute) {
+          item.desktopAction.execute();
+        }
+      }
+      selectedWindowId = "";
+      selectedAppId = "";
+    }
   }
 
   Rectangle {
@@ -547,10 +547,10 @@ Item {
       anchors.fill: parent
       acceptedButtons: Qt.RightButton
       onClicked: mouse => {
-                   if (mouse.button === Qt.RightButton) {
-                     PanelService.showContextMenu(contextMenu, workspaceBackground, screen);
-                   }
-                 }
+        if (mouse.button === Qt.RightButton) {
+          PanelService.showContextMenu(contextMenu, workspaceBackground, screen);
+        }
+      }
     }
   }
 
@@ -750,19 +750,19 @@ Item {
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         preventStealing: true
         onPressed: mouse => {
-                     if (mouse.button === Qt.LeftButton) {
-                       CompositorService.switchToWorkspace(groupedContainer.workspaceModel);
-                     }
-                   }
+          if (mouse.button === Qt.LeftButton) {
+            CompositorService.switchToWorkspace(groupedContainer.workspaceModel);
+          }
+        }
         onReleased: mouse => {
-                      if (mouse.button === Qt.RightButton) {
-                        mouse.accepted = true;
-                        TooltipService.hide();
-                        root.selectedWindowId = "";
-                        root.selectedAppId = "";
-                        openGroupedContextMenu(groupedContainer);
-                      }
-                    }
+          if (mouse.button === Qt.RightButton) {
+            mouse.accepted = true;
+            TooltipService.hide();
+            root.selectedWindowId = "";
+            root.selectedAppId = "";
+            openGroupedContextMenu(groupedContainer);
+          }
+        }
       }
 
       Flow {
@@ -830,20 +830,20 @@ Item {
               preventStealing: true
 
               onPressed: mouse => {
-                           if (mouse.button === Qt.LeftButton && modelData) {
-                             CompositorService.focusWindow(modelData);
-                           }
-                         }
+                if (mouse.button === Qt.LeftButton && modelData) {
+                  CompositorService.focusWindow(modelData);
+                }
+              }
 
               onReleased: mouse => {
-                            if (mouse.button === Qt.RightButton && modelData) {
-                              mouse.accepted = true;
-                              TooltipService.hide();
-                              root.selectedWindowId = modelData.id || modelData.address || "";
-                              root.selectedAppId = modelData.appId;
-                              openGroupedContextMenu(groupedTaskbarItem);
-                            }
-                          }
+                if (mouse.button === Qt.RightButton && modelData) {
+                  mouse.accepted = true;
+                  TooltipService.hide();
+                  root.selectedWindowId = modelData.id || modelData.address || "";
+                  root.selectedAppId = modelData.appId;
+                  openGroupedContextMenu(groupedTaskbarItem);
+                }
+              }
               onEntered: {
                 if (!modelData)
                   return;

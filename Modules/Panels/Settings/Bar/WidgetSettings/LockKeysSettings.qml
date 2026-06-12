@@ -46,9 +46,9 @@ ColumnLayout {
       description: I18n.tr("bar.lock-keys.show-caps-lock-description")
       checked: valueShowCapsLock
       onToggled: checked => {
-                   valueShowCapsLock = checked;
-                   saveSettings();
-                 }
+        valueShowCapsLock = checked;
+        saveSettings();
+      }
       defaultValue: widgetMetadata.showCapsLock
     }
 
@@ -84,9 +84,9 @@ ColumnLayout {
       description: I18n.tr("bar.lock-keys.show-num-lock-description")
       checked: valueShowNumLock
       onToggled: checked => {
-                   valueShowNumLock = checked;
-                   saveSettings();
-                 }
+        valueShowNumLock = checked;
+        saveSettings();
+      }
       defaultValue: widgetMetadata.showNumLock
     }
 
@@ -122,9 +122,9 @@ ColumnLayout {
       description: I18n.tr("bar.lock-keys.show-scroll-lock-description")
       checked: valueShowScrollLock
       onToggled: checked => {
-                   valueShowScrollLock = checked;
-                   saveSettings();
-                 }
+        valueShowScrollLock = checked;
+        saveSettings();
+      }
       defaultValue: widgetMetadata.showScrollLock
     }
 
@@ -162,9 +162,9 @@ ColumnLayout {
     description: I18n.tr("bar.lock-keys.hide-when-off-description")
     checked: valueHideWhenOff
     onToggled: checked => {
-                 valueHideWhenOff = checked;
-                 saveSettings();
-               }
+      valueHideWhenOff = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.hideWhenOff
   }
 }

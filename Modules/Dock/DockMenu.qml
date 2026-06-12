@@ -210,15 +210,15 @@ PopupWindow {
       }
     } else {
       windows.forEach((window, index) => {
-                        const windowTitle = (window.title && window.title.trim() !== "") ? window.title : (appId || ("Window " + (index + 1)));
-                        next.push({
-                                    "icon": window === ToplevelManager?.activeToplevel ? "circle-filled" : "square-rounded",
-                                    "text": windowTitle,
-                                    "action": function () {
-                                      handleFocus(window);
-                                    }
-                                  });
-                      });
+        const windowTitle = (window.title && window.title.trim() !== "") ? window.title : (appId || ("Window " + (index + 1)));
+        next.push({
+                    "icon": window === ToplevelManager?.activeToplevel ? "circle-filled" : "square-rounded",
+                    "text": windowTitle,
+                    "action": function () {
+                      handleFocus(window);
+                    }
+                  });
+      });
 
       if (menuModeForGroup === "extended") {
         next.push({
@@ -522,10 +522,10 @@ PopupWindow {
 
   function handleCloseAll(windows) {
     windows.forEach(window => {
-                      if (window && ToplevelManager && ToplevelManager.toplevels.values.includes(window) && window.close) {
-                        window.close();
-                      }
-                    });
+      if (window && ToplevelManager && ToplevelManager.toplevels.values.includes(window) && window.close) {
+        window.close();
+      }
+    });
     if (root.onAppClosed && typeof root.onAppClosed === "function") {
       Qt.callLater(root.onAppClosed);
     }
@@ -606,12 +606,12 @@ PopupWindow {
     WheelHandler {
       acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
       onWheel: event => {
-                 if (!root.isScrollableHovered(event.y))
-                 return;
-                 const delta = event.pixelDelta.y !== 0 ? event.pixelDelta.y : event.angleDelta.y / 2;
-                 root.onWheelScroll(delta);
-                 event.accepted = true;
-               }
+        if (!root.isScrollableHovered(event.y))
+          return;
+        const delta = event.pixelDelta.y !== 0 ? event.pixelDelta.y : event.angleDelta.y / 2;
+        root.onWheelScroll(delta);
+        event.accepted = true;
+      }
     }
 
     Flickable {

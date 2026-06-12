@@ -24,13 +24,13 @@ Item {
     ]
 
     onTriggered: action => {
-                   contextMenu.close();
-                   PanelService.closeContextMenu(screen);
+      contextMenu.close();
+      PanelService.closeContextMenu(screen);
 
-                   if (action === "widget-settings") {
-                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
-                   }
-                 }
+      if (action === "widget-settings") {
+        BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+      }
+    }
   }
 
   property ShellScreen screen
@@ -423,11 +423,11 @@ Item {
     stdout: textStream ? textStdoutSplit : textStdoutCollect
     stderr: StdioCollector {}
     onExited: (exitCode, exitStatus) => {
-                if (textStream) {
-                  Logger.w("CustomButton", `Streaming text command exited (code: ${exitCode}), restarting...`);
-                  return;
-                }
-              }
+      if (textStream) {
+        Logger.w("CustomButton", `Streaming text command exited (code: ${exitCode}), restarting...`);
+        return;
+      }
+    }
   }
 
   function parseDynamicContent(content) {
@@ -601,9 +601,9 @@ Item {
     const placeholders = [];
     let i = 0;
     const protectedStr = str.replace(htmlTagRegex, tag => {
-                                       placeholders.push(tag);
-                                       return `___HTML_TAG_${i++}___`;
-                                     });
+      placeholders.push(tag);
+      return `___HTML_TAG_${i++}___`;
+    });
 
     let escaped = protectedStr.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/\r\n|\r|\n/g, "<br/>");
 

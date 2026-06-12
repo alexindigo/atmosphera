@@ -115,80 +115,80 @@ Singleton {
       const lines = out.split('\n').filter(l => l.length > 0);
       // cliphist list default format: "<id> <preview>" or "<id>\t<preview>"
       const parsed = lines.map((l, i) => {
-                                 let id = "";
-                                 let preview = "";
-                                 const m = l.match(/^(\d+)\s+(.+)$/);
-                                 if (m) {
-                                   id = m[1];
-                                   preview = m[2];
-                                 } else {
-                                   const tab = l.indexOf('\t');
-                                   id = tab > -1 ? l.slice(0, tab) : l;
-                                   preview = tab > -1 ? l.slice(tab + 1) : "";
-                                 }
-                                 const lower = preview.toLowerCase();
-                                 const isImage = lower.startsWith("[image]") || lower.includes(" binary data ");
-                                 // Best-effort mime guess from preview
-                                 var mime = "text/plain";
-                                 if (isImage) {
-                                   if (lower.includes(" png"))
-                                   mime = "image/png";
-                                   else if (lower.includes(" jpg") || lower.includes(" jpeg"))
-                                   mime = "image/jpeg";
-                                   else if (lower.includes(" webp"))
-                                   mime = "image/webp";
-                                   else if (lower.includes(" gif"))
-                                   mime = "image/gif";
-                                   else
-                                   mime = "image/*";
-                                 }
-                                 // Record first seen time for new ids (approximate copy time)
-                                 if (!root.firstSeenById[id]) {
-                                   const assumedAge = i * 15 * 60;
-                                   root.firstSeenById[id] = Time.timestamp - assumedAge;
-                                 }
-                                 // Smart type detection
-                                 var contentType = "text";
-                                 if (isImage) {
-                                   contentType = "image";
-                                 } else {
-                                   const t = preview.trim();
-                                   const tLower = t.toLowerCase();
-                                   if (/^#([a-f0-9]{3}|[a-f0-9]{6}|[a-f0-9]{8})$/.test(tLower)) {
-                                     contentType = "color";
-                                   } else if (/^https?:\/\//i.test(t)) {
-                                     contentType = "link";
-                                   } else if (/^(\/|~\/|file:\/\/)/i.test(t) && !t.startsWith('//') && !t.includes('\n')) {
-                                     contentType = "file";
-                                   } else if ((t.includes('{') && t.includes('}') && (t.includes(';') || t.includes('='))) || t.includes('</') || t.includes('/>') || t.includes('=>') || t.includes('===') || t.includes('!==') || t.includes('::') || t.includes('->') ||
-                                              /^(?:const|let|var|function|class|struct|interface|type|enum|import|export|func|fn|pub|def|using|namespace|property|public|private|protected)\b/i.test(t) || /^(?:#include|#define|#\[|@|\/\/|\/\*|<\?|<html|<body|<!DOCTYPE)/i.test(t) || /\b(?:require\(|module\.exports)\b/i.test(t)) {
-                                     contentType = "code";
-                                   }
-                                 }
+        let id = "";
+        let preview = "";
+        const m = l.match(/^(\d+)\s+(.+)$/);
+        if (m) {
+          id = m[1];
+          preview = m[2];
+        } else {
+          const tab = l.indexOf('\t');
+          id = tab > -1 ? l.slice(0, tab) : l;
+          preview = tab > -1 ? l.slice(tab + 1) : "";
+        }
+        const lower = preview.toLowerCase();
+        const isImage = lower.startsWith("[image]") || lower.includes(" binary data ");
+        // Best-effort mime guess from preview
+        var mime = "text/plain";
+        if (isImage) {
+          if (lower.includes(" png"))
+            mime = "image/png";
+          else if (lower.includes(" jpg") || lower.includes(" jpeg"))
+            mime = "image/jpeg";
+          else if (lower.includes(" webp"))
+            mime = "image/webp";
+          else if (lower.includes(" gif"))
+            mime = "image/gif";
+          else
+            mime = "image/*";
+        }
+        // Record first seen time for new ids (approximate copy time)
+        if (!root.firstSeenById[id]) {
+          const assumedAge = i * 15 * 60;
+          root.firstSeenById[id] = Time.timestamp - assumedAge;
+        }
+        // Smart type detection
+        var contentType = "text";
+        if (isImage) {
+          contentType = "image";
+        } else {
+          const t = preview.trim();
+          const tLower = t.toLowerCase();
+          if (/^#([a-f0-9]{3}|[a-f0-9]{6}|[a-f0-9]{8})$/.test(tLower)) {
+            contentType = "color";
+          } else if (/^https?:\/\//i.test(t)) {
+            contentType = "link";
+          } else if (/^(\/|~\/|file:\/\/)/i.test(t) && !t.startsWith('//') && !t.includes('\n')) {
+            contentType = "file";
+          } else if ((t.includes('{') && t.includes('}') && (t.includes(';') || t.includes('='))) || t.includes('</') || t.includes('/>') || t.includes('=>') || t.includes('===') || t.includes('!==') || t.includes('::') || t.includes('->') ||
+                     /^(?:const|let|var|function|class|struct|interface|type|enum|import|export|func|fn|pub|def|using|namespace|property|public|private|protected)\b/i.test(t) || /^(?:#include|#define|#\[|@|\/\/|\/\*|<\?|<html|<body|<!DOCTYPE)/i.test(t) || /\b(?:require\(|module\.exports)\b/i.test(t)) {
+            contentType = "code";
+          }
+        }
 
-                                 return {
-                                   "id": id,
-                                   "preview": preview,
-                                   "isImage": isImage,
-                                   "mime": mime,
-                                   "contentType": contentType
-                                 };
-                               });
+        return {
+          "id": id,
+          "preview": preview,
+          "isImage": isImage,
+          "mime": mime,
+          "contentType": contentType
+        };
+      });
 
       // Filter out browser junk when copying images
       const filtered = parsed.filter(item => {
-                                       if (item.isImage)
-                                       return true;
-                                       const p = item.preview;
-                                       // Skip UTF-16 encoded text (has null bytes between chars), chromium browser artifact
-                                       const nullCount = (p.match(/\x00/g) || []).length;
-                                       if (nullCount > p.length * 0.2)
-                                       return false;
-                                       // Skip browser-generated HTML wrapper, firefox
-                                       if (p.toLowerCase().startsWith("<meta http-equiv="))
-                                       return false;
-                                       return true;
-                                     });
+        if (item.isImage)
+          return true;
+        const p = item.preview;
+        // Skip UTF-16 encoded text (has null bytes between chars), chromium browser artifact
+        const nullCount = (p.match(/\x00/g) || []).length;
+        if (nullCount > p.length * 0.2)
+          return false;
+        // Skip browser-generated HTML wrapper, firefox
+        if (p.toLowerCase().startsWith("<meta http-equiv="))
+          return false;
+        return true;
+      });
 
       items = filtered;
       loading = false;

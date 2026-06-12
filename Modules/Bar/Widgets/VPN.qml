@@ -75,26 +75,26 @@ Item {
     }
 
     onTriggered: action => {
-                   contextMenu.close();
-                   PanelService.closeContextMenu(screen);
+      contextMenu.close();
+      PanelService.closeContextMenu(screen);
 
-                   if (!action) {
-                     return;
-                   }
-                   if (action === "widget-settings") {
-                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
-                     return;
-                   }
-                   if (action.startsWith("connect:")) {
-                     const uuid = action.substring("connect:".length);
-                     VPNService.connect(uuid);
-                     return;
-                   }
-                   if (action.startsWith("disconnect:")) {
-                     const uuid = action.substring("disconnect:".length);
-                     VPNService.disconnect(uuid);
-                   }
-                 }
+      if (!action) {
+        return;
+      }
+      if (action === "widget-settings") {
+        BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+        return;
+      }
+      if (action.startsWith("connect:")) {
+        const uuid = action.substring("connect:".length);
+        VPNService.connect(uuid);
+        return;
+      }
+      if (action.startsWith("disconnect:")) {
+        const uuid = action.substring("disconnect:".length);
+        VPNService.disconnect(uuid);
+      }
+    }
   }
 
   BarPill {

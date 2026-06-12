@@ -419,21 +419,21 @@ Item {
           hoverEnabled: false
           preventStealing: true
           onClicked: mouse => {
-                       if (mouse.button === Qt.RightButton) {
-                         if (bar.isPointOverWidget(mouse.x, mouse.y))
-                         return;
-                         bar.handleEmptyBarClick(bar.barRightClickAction, Settings.data.bar.rightClickFollowMouse, Settings.data.bar.rightClickCommand, mouse);
-                         mouse.accepted = true;
-                         return;
-                       }
-                       if (mouse.button === Qt.MiddleButton) {
-                         if (bar.isPointOverWidget(mouse.x, mouse.y))
-                         return;
-                         bar.handleEmptyBarClick(Settings.data.bar.middleClickAction || "none", Settings.data.bar.middleClickFollowMouse, Settings.data.bar.middleClickCommand, mouse);
-                         mouse.accepted = true;
-                         return;
-                       }
-                     }
+            if (mouse.button === Qt.RightButton) {
+              if (bar.isPointOverWidget(mouse.x, mouse.y))
+                return;
+              bar.handleEmptyBarClick(bar.barRightClickAction, Settings.data.bar.rightClickFollowMouse, Settings.data.bar.rightClickCommand, mouse);
+              mouse.accepted = true;
+              return;
+            }
+            if (mouse.button === Qt.MiddleButton) {
+              if (bar.isPointOverWidget(mouse.x, mouse.y))
+                return;
+              bar.handleEmptyBarClick(Settings.data.bar.middleClickAction || "none", Settings.data.bar.middleClickFollowMouse, Settings.data.bar.middleClickCommand, mouse);
+              mouse.accepted = true;
+              return;
+            }
+          }
         }
 
         // Debounce timer for wheel interactions

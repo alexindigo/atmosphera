@@ -501,57 +501,57 @@ SmartPanel {
       target: root
       function onOpened() {
         Qt.callLater(() => {
-                       panelContent.forceActiveFocus();
-                     });
+          panelContent.forceActiveFocus();
+        });
       }
     }
 
     Keys.onPressed: event => {
-                      // Check custom entry keybinds first
-                      if (root.checkKeybind(event)) {
-                        event.accepted = true;
-                        return;
-                      }
+      // Check custom entry keybinds first
+      if (root.checkKeybind(event)) {
+        event.accepted = true;
+        return;
+      }
 
-                      // Check global navigation keybinds
-                      if (checkKey(event, 'up')) {
-                        handleUp();
-                        event.accepted = true;
-                        return;
-                      }
-                      if (checkKey(event, 'down')) {
-                        handleDown();
-                        event.accepted = true;
-                        return;
-                      }
-                      if (checkKey(event, 'left')) {
-                        handleLeft();
-                        event.accepted = true;
-                        return;
-                      }
-                      if (checkKey(event, 'right')) {
-                        handleRight();
-                        event.accepted = true;
-                        return;
-                      }
-                      if (checkKey(event, 'enter')) {
-                        handleEnter();
-                        event.accepted = true;
-                        return;
-                      }
-                      if (checkKey(event, 'escape')) {
-                        handleEscape();
-                        event.accepted = true;
-                        return;
-                      }
+      // Check global navigation keybinds
+      if (checkKey(event, 'up')) {
+        handleUp();
+        event.accepted = true;
+        return;
+      }
+      if (checkKey(event, 'down')) {
+        handleDown();
+        event.accepted = true;
+        return;
+      }
+      if (checkKey(event, 'left')) {
+        handleLeft();
+        event.accepted = true;
+        return;
+      }
+      if (checkKey(event, 'right')) {
+        handleRight();
+        event.accepted = true;
+        return;
+      }
+      if (checkKey(event, 'enter')) {
+        handleEnter();
+        event.accepted = true;
+        return;
+      }
+      if (checkKey(event, 'escape')) {
+        handleEscape();
+        event.accepted = true;
+        return;
+      }
 
-                      // Block default keys if they weren't matched above
-                      // This prevents 'Up' from working if rebinned to something else
-                      if (event.key === Qt.Key_Up || event.key === Qt.Key_Down || event.key === Qt.Key_Left || event.key === Qt.Key_Right || event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Escape) {
-                        event.accepted = true;
-                        return;
-                      }
-                    }
+      // Block default keys if they weren't matched above
+      // This prevents 'Up' from working if rebinned to something else
+      if (event.key === Qt.Key_Up || event.key === Qt.Key_Down || event.key === Qt.Key_Left || event.key === Qt.Key_Right || event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Escape) {
+        event.accepted = true;
+        return;
+      }
+    }
 
     HoverHandler {
       id: globalHoverHandler
@@ -735,15 +735,15 @@ SmartPanel {
       z: -1
       acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
       onClicked: mouse => {
-                   // Only close if not clicking on a button
-                   // The buttons are above this MouseArea, so clicks on them won't reach here
-                   if (timerActive) {
-                     // Cancel countdown if active
-                     cancelTimer();
-                   } else {
-                     root.close();
-                   }
-                 }
+        // Only close if not clicking on a button
+        // The buttons are above this MouseArea, so clicks on them won't reach here
+        if (timerActive) {
+          // Cancel countdown if active
+          cancelTimer();
+        } else {
+          root.close();
+        }
+      }
     }
   }
 

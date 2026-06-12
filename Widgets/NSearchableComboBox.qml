@@ -243,39 +243,39 @@ RowLayout {
           fontSize: Style.fontSizeS
 
           Keys.onPressed: event => {
-                            if (Keybinds.checkKey(event, 'enter', Settings)) {
-                              selectHighlighted();
-                              combo.popup.close();
-                              event.accepted = true;
-                              return;
-                            }
+            if (Keybinds.checkKey(event, 'enter', Settings)) {
+              selectHighlighted();
+              combo.popup.close();
+              event.accepted = true;
+              return;
+            }
 
-                            if (Keybinds.checkKey(event, 'escape', Settings)) {
-                              combo.popup.close();
-                              event.accepted = true;
-                              return;
-                            }
+            if (Keybinds.checkKey(event, 'escape', Settings)) {
+              combo.popup.close();
+              event.accepted = true;
+              return;
+            }
 
-                            if (Keybinds.checkKey(event, 'up', Settings)) {
-                              if (listView.currentIndex > 0) {
-                                listView.currentIndex--;
-                                if (root.selectOnNavigation)
-                                selectHighlighted();
-                              }
-                              event.accepted = true;
-                              return;
-                            }
+            if (Keybinds.checkKey(event, 'up', Settings)) {
+              if (listView.currentIndex > 0) {
+                listView.currentIndex--;
+                if (root.selectOnNavigation)
+                  selectHighlighted();
+              }
+              event.accepted = true;
+              return;
+            }
 
-                            if (Keybinds.checkKey(event, 'down', Settings)) {
-                              if (listView.currentIndex < listView.count - 1) {
-                                listView.currentIndex++;
-                                if (root.selectOnNavigation)
-                                selectHighlighted();
-                              }
-                              event.accepted = true;
-                              return;
-                            }
-                          }
+            if (Keybinds.checkKey(event, 'down', Settings)) {
+              if (listView.currentIndex < listView.count - 1) {
+                listView.currentIndex++;
+                if (root.selectOnNavigation)
+                  selectHighlighted();
+              }
+              event.accepted = true;
+              return;
+            }
+          }
 
           function selectHighlighted() {
             if (listView.currentIndex >= 0 && listView.model && listView.currentIndex < listView.model.count) {
@@ -423,10 +423,10 @@ RowLayout {
           listView.currentIndex = Math.max(0, root.findIndexInActiveModel(root.currentKey));
           // Small delay to ensure the popup is fully rendered
           Qt.callLater(() => {
-                         if (searchInput && searchInput.inputItem) {
-                           searchInput.inputItem.forceActiveFocus();
-                         }
-                       });
+            if (searchInput && searchInput.inputItem) {
+              searchInput.inputItem.forceActiveFocus();
+            }
+          });
         } else {
           root.searchText = "";
         }

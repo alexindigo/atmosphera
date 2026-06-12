@@ -71,9 +71,9 @@ ColumnLayout {
     description: I18n.tr("bar.system-monitor.compact-mode-description")
     checked: valueCompactMode
     onToggled: checked => {
-                 valueCompactMode = checked;
-                 saveSettings();
-               }
+      valueCompactMode = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.compactMode
   }
 
@@ -81,18 +81,18 @@ ColumnLayout {
     label: I18n.tr("common.select-icon-color")
     currentKey: valueIconColor
     onSelected: key => {
-                  valueIconColor = key;
-                  saveSettings();
-                }
+      valueIconColor = key;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.iconColor
   }
 
   NColorChoice {
     currentKey: valueTextColor
     onSelected: key => {
-                  valueTextColor = key;
-                  saveSettings();
-                }
+      valueTextColor = key;
+      saveSettings();
+    }
     visible: !valueCompactMode
     defaultValue: widgetMetadata.textColor
   }
@@ -103,9 +103,9 @@ ColumnLayout {
     description: I18n.tr("bar.system-monitor.use-monospace-font-description")
     checked: valueUseMonospaceFont
     onToggled: checked => {
-                 valueUseMonospaceFont = checked;
-                 saveSettings();
-               }
+      valueUseMonospaceFont = checked;
+      saveSettings();
+    }
     visible: !valueCompactMode
     defaultValue: widgetMetadata.useMonospaceFont
   }
@@ -116,9 +116,9 @@ ColumnLayout {
     description: isVerticalBar ? I18n.tr("bar.system-monitor.use-padding-description-disabled-vertical") : !valueUseMonospaceFont ? I18n.tr("bar.system-monitor.use-padding-description-disabled-monospace-font") : I18n.tr("bar.system-monitor.use-padding-description")
     checked: valueUsePadding && !isVerticalBar && valueUseMonospaceFont
     onToggled: checked => {
-                 valueUsePadding = checked;
-                 saveSettings();
-               }
+      valueUsePadding = checked;
+      saveSettings();
+    }
     visible: !valueCompactMode
     enabled: !isVerticalBar && valueUseMonospaceFont
     defaultValue: widgetMetadata.usePadding
@@ -135,9 +135,9 @@ ColumnLayout {
     description: I18n.tr("bar.system-monitor.cpu-usage-description")
     checked: valueShowCpuUsage
     onToggled: checked => {
-                 valueShowCpuUsage = checked;
-                 saveSettings();
-               }
+      valueShowCpuUsage = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showCpuUsage
   }
 
@@ -148,9 +148,9 @@ ColumnLayout {
     description: I18n.tr("bar.system-monitor.cpu-cores-description")
     checked: valueShowCpuCores
     onToggled: checked => {
-                 valueShowCpuCores = checked;
-                 saveSettings();
-               }
+      valueShowCpuCores = checked;
+      saveSettings();
+    }
     visible: valueCompactMode
   }
 
@@ -161,9 +161,9 @@ ColumnLayout {
     description: I18n.tr("bar.system-monitor.cpu-frequency-description")
     checked: valueShowCpuFreq
     onToggled: checked => {
-                 valueShowCpuFreq = checked;
-                 saveSettings();
-               }
+      valueShowCpuFreq = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showCpuFreq
   }
 
@@ -174,9 +174,9 @@ ColumnLayout {
     description: I18n.tr("bar.system-monitor.cpu-temperature-description")
     checked: valueShowCpuTemp
     onToggled: checked => {
-                 valueShowCpuTemp = checked;
-                 saveSettings();
-               }
+      valueShowCpuTemp = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showCpuTemp
   }
 
@@ -187,9 +187,9 @@ ColumnLayout {
     description: I18n.tr("bar.system-monitor.load-average-description")
     checked: valueShowLoadAverage
     onToggled: checked => {
-                 valueShowLoadAverage = checked;
-                 saveSettings();
-               }
+      valueShowLoadAverage = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showLoadAverage
   }
 
@@ -200,9 +200,9 @@ ColumnLayout {
     description: I18n.tr("bar.system-monitor.gpu-temperature-description")
     checked: valueShowGpuTemp
     onToggled: checked => {
-                 valueShowGpuTemp = checked;
-                 saveSettings();
-               }
+      valueShowGpuTemp = checked;
+      saveSettings();
+    }
     visible: SystemStatService.gpuAvailable
     defaultValue: widgetMetadata.showGpuTemp
   }
@@ -214,9 +214,9 @@ ColumnLayout {
     description: I18n.tr("bar.system-monitor.memory-usage-description")
     checked: valueShowMemoryUsage
     onToggled: checked => {
-                 valueShowMemoryUsage = checked;
-                 saveSettings();
-               }
+      valueShowMemoryUsage = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showMemoryUsage
   }
 
@@ -227,9 +227,9 @@ ColumnLayout {
     description: I18n.tr("bar.system-monitor.memory-percentage-description")
     checked: valueShowMemoryAsPercent
     onToggled: checked => {
-                 valueShowMemoryAsPercent = checked;
-                 saveSettings();
-               }
+      valueShowMemoryAsPercent = checked;
+      saveSettings();
+    }
     visible: valueShowMemoryUsage
     defaultValue: widgetMetadata.showMemoryAsPercent
   }
@@ -241,9 +241,9 @@ ColumnLayout {
     description: I18n.tr("bar.system-monitor.swap-usage-description")
     checked: valueShowSwapUsage
     onToggled: checked => {
-                 valueShowSwapUsage = checked;
-                 saveSettings();
-               }
+      valueShowSwapUsage = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showSwapUsage
   }
 
@@ -254,9 +254,9 @@ ColumnLayout {
     description: I18n.tr("bar.system-monitor.network-traffic-description")
     checked: valueShowNetworkStats
     onToggled: checked => {
-                 valueShowNetworkStats = checked;
-                 saveSettings();
-               }
+      valueShowNetworkStats = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showNetworkStats
   }
 
@@ -271,9 +271,9 @@ ColumnLayout {
     description: I18n.tr("bar.system-monitor.storage-usage-description")
     checked: valueShowDiskUsage
     onToggled: checked => {
-                 valueShowDiskUsage = checked;
-                 saveSettings();
-               }
+      valueShowDiskUsage = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showDiskUsage
   }
 
@@ -284,9 +284,9 @@ ColumnLayout {
     description: I18n.tr("bar.system-monitor.storage-as-percentage-description")
     checked: valueShowDiskUsageAsPercent
     onToggled: checked => {
-                 valueShowDiskUsageAsPercent = checked;
-                 saveSettings();
-               }
+      valueShowDiskUsageAsPercent = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showDiskUsageAsPercent
   }
 
@@ -297,9 +297,9 @@ ColumnLayout {
     description: I18n.tr("bar.system-monitor.storage-available-description")
     checked: valueShowDiskAvailable
     onToggled: checked => {
-                 valueShowDiskAvailable = checked;
-                 saveSettings();
-               }
+      valueShowDiskAvailable = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showDiskAvailable
   }
 
@@ -311,15 +311,15 @@ ColumnLayout {
     model: {
       const paths = Object.keys(SystemStatService.diskPercents).sort();
       return paths.map(path => ({
-                                  key: path,
-                                  name: path
-                                }));
+        key: path,
+        name: path
+      }));
     }
-    currentKey: valueDiskPath
-    onSelected: key => {
-                  valueDiskPath = key;
-                  saveSettings();
-                }
-    defaultValue: widgetMetadata.diskPath
-  }
-}
+      currentKey: valueDiskPath
+      onSelected: key => {
+      valueDiskPath = key;
+      saveSettings();
+    }
+      defaultValue: widgetMetadata.diskPath
+    }
+    }

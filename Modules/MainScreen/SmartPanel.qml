@@ -1302,8 +1302,8 @@ Item {
         acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
         z: -1 // Behind content, but on the panel background
         onClicked: mouse => {
-                     mouse.accepted = true; // Accept and ignore - prevents propagation to background
-                   }
+          mouse.accepted = true; // Accept and ignore - prevents propagation to background
+        }
       }
     }
 

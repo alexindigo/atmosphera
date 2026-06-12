@@ -68,9 +68,9 @@ Singleton {
       const identity = String(allPlayers[i].identity || "").toLowerCase();
       const dbusName = String(allPlayers[i].dbusName || "").toLowerCase();
       const match = blacklist.find(b => {
-                                     const s = String(b || "").toLowerCase();
-                                     return s && (identity.includes(s) || dbusName.includes(s));
-                                   });
+        const s = String(b || "").toLowerCase();
+        return s && (identity.includes(s) || dbusName.includes(s));
+      });
       if (match)
         continue;
       if (genericBrowsers.some(b => identity.includes(b))) {

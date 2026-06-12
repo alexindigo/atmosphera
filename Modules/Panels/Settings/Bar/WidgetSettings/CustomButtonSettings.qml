@@ -130,9 +130,9 @@ ColumnLayout {
           onExited: TooltipService.hide()
           checked: widgetData?.leftClickUpdateText ?? widgetMetadata.leftClickUpdateText
           onToggled: isChecked => {
-                       checked = isChecked;
-                       saveSettings();
-                     }
+            checked = isChecked;
+            saveSettings();
+          }
           defaultValue: widgetMetadata.leftClickUpdateText
         }
       }
@@ -160,9 +160,9 @@ ColumnLayout {
           onExited: TooltipService.hide()
           checked: widgetData?.rightClickUpdateText ?? widgetMetadata.rightClickUpdateText
           onToggled: isChecked => {
-                       checked = isChecked;
-                       saveSettings();
-                     }
+            checked = isChecked;
+            saveSettings();
+          }
           defaultValue: widgetMetadata.rightClickUpdateText
         }
       }
@@ -190,9 +190,9 @@ ColumnLayout {
           onExited: TooltipService.hide()
           checked: widgetData?.middleClickUpdateText ?? widgetMetadata.middleClickUpdateText
           onToggled: isChecked => {
-                       checked = isChecked;
-                       saveSettings();
-                     }
+            checked = isChecked;
+            saveSettings();
+          }
           defaultValue: widgetMetadata.middleClickUpdateText
         }
       }
@@ -205,9 +205,9 @@ ColumnLayout {
         property bool internalChecked: (widgetData?.wheelMode || widgetMetadata?.wheelMode) === "separate"
         checked: internalChecked
         onToggled: checked => {
-                     internalChecked = checked;
-                     saveSettings();
-                   }
+          internalChecked = checked;
+          saveSettings();
+        }
         defaultValue: widgetMetadata.wheelMode === "separate"
       }
 
@@ -239,9 +239,9 @@ ColumnLayout {
             onExited: TooltipService.hide()
             checked: widgetData?.wheelUpdateText ?? widgetMetadata?.wheelUpdateText
             onToggled: isChecked => {
-                         checked = isChecked;
-                         saveSettings();
-                       }
+              checked = isChecked;
+              saveSettings();
+            }
             defaultValue: widgetMetadata.wheelUpdateText
           }
         }
@@ -274,9 +274,9 @@ ColumnLayout {
               onExited: TooltipService.hide()
               checked: widgetData?.wheelUpUpdateText ?? widgetMetadata?.wheelUpUpdateText
               onToggled: isChecked => {
-                           checked = isChecked;
-                           saveSettings();
-                         }
+                checked = isChecked;
+                saveSettings();
+              }
               defaultValue: widgetMetadata.wheelUpUpdateText
             }
           }
@@ -304,9 +304,9 @@ ColumnLayout {
               onExited: TooltipService.hide()
               checked: widgetData?.wheelDownUpdateText ?? widgetMetadata?.wheelDownUpdateText
               onToggled: isChecked => {
-                           checked = isChecked;
-                           saveSettings();
-                         }
+                checked = isChecked;
+                saveSettings();
+              }
               defaultValue: widgetMetadata.wheelDownUpdateText
             }
           }
@@ -324,9 +324,9 @@ ColumnLayout {
         description: I18n.tr("bar.custom-button.show-icon-description")
         checked: valueShowIcon
         onToggled: checked => {
-                     valueShowIcon = checked;
-                     saveSettings();
-                   }
+          valueShowIcon = checked;
+          saveSettings();
+        }
         visible: textCommandInput.text !== ""
         defaultValue: widgetMetadata.showIcon
       }
@@ -388,9 +388,9 @@ ColumnLayout {
                                ]
         currentKey: valueIconPosition
         onSelected: key => {
-                      valueIconPosition = key;
-                      saveSettings();
-                    }
+          valueIconPosition = key;
+          saveSettings();
+        }
         defaultValue: widgetMetadata.iconPosition
       }
 
@@ -399,9 +399,9 @@ ColumnLayout {
         description: I18n.tr("bar.custom-button.icon-color-selection-description")
         currentKey: valueColorizeSystemIcon
         onSelected: key => {
-                      valueColorizeSystemIcon = key;
-                      saveSettings();
-                    }
+          valueColorizeSystemIcon = key;
+          saveSettings();
+        }
         defaultValue: widgetMetadata.colorizeSystemIcon
       }
 
@@ -424,9 +424,9 @@ ColumnLayout {
         description: I18n.tr("bar.custom-button.show-exec-tooltip-description")
         checked: valueShowExecTooltip
         onToggled: checked => {
-                     valueShowExecTooltip = checked;
-                     saveSettings();
-                   }
+          valueShowExecTooltip = checked;
+          saveSettings();
+        }
         defaultValue: widgetMetadata.showExecTooltip
       }
 
@@ -436,9 +436,9 @@ ColumnLayout {
         description: I18n.tr("bar.custom-button.show-text-tooltip-description")
         checked: valueShowTextTooltip
         onToggled: checked => {
-                     valueShowTextTooltip = checked;
-                     saveSettings();
-                   }
+          valueShowTextTooltip = checked;
+          saveSettings();
+        }
         defaultValue: widgetMetadata.showTextTooltip
       }
 
@@ -465,9 +465,9 @@ ColumnLayout {
         description: I18n.tr("bar.custom-button.text-color-selection-description")
         currentKey: valueColorizeSystemText
         onSelected: key => {
-                      valueColorizeSystemText = key;
-                      saveSettings();
-                    }
+          valueColorizeSystemText = key;
+          saveSettings();
+        }
         defaultValue: widgetMetadata.colorizeSystemText
       }
 
@@ -503,9 +503,9 @@ ColumnLayout {
         description: I18n.tr("bar.custom-button.text-stream-description")
         checked: valueTextStream
         onToggled: checked => {
-                     valueTextStream = checked;
-                     saveSettings();
-                   }
+          valueTextStream = checked;
+          saveSettings();
+        }
         defaultValue: widgetMetadata.textStream
       }
 
@@ -515,9 +515,9 @@ ColumnLayout {
         description: I18n.tr("bar.custom-button.parse-json-description")
         checked: valueParseJson
         onToggled: checked => {
-                     valueParseJson = checked;
-                     saveSettings();
-                   }
+          valueParseJson = checked;
+          saveSettings();
+        }
         defaultValue: widgetMetadata.parseJson
       }
 
@@ -576,9 +576,9 @@ ColumnLayout {
         ]
         currentKey: valueHideMode
         onSelected: key => {
-                      valueHideMode = key;
-                      saveSettings();
-                    }
+          valueHideMode = key;
+          saveSettings();
+        }
         visible: textCommandInput.text !== "" && valueTextStream == true
         defaultValue: widgetMetadata.hideMode
       }

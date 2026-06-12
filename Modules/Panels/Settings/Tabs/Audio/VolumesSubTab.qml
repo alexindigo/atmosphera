@@ -188,9 +188,9 @@ ColumnLayout {
     initialPath: Quickshell.env("HOME")
     nameFilters: ["*.wav", "*.mp3", "*.ogg", "*.flac", "*.m4a", "*.aac"]
     onAccepted: paths => {
-                  if (paths.length > 0) {
-                    Settings.data.audio.volumeFeedbackSoundFile = paths[0];
-                  }
-                }
+      if (paths.length > 0) {
+        Settings.data.audio.volumeFeedbackSoundFile = paths[0];
+      }
+    }
   }
 }

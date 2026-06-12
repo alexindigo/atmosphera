@@ -137,12 +137,12 @@ ColumnLayout {
         }
         checked: (Settings.data.notifications.monitors || []).indexOf(modelData.name) !== -1
         onToggled: checked => {
-                     if (checked) {
-                       Settings.data.notifications.monitors = root.addMonitor(Settings.data.notifications.monitors, modelData.name);
-                     } else {
-                       Settings.data.notifications.monitors = root.removeMonitor(Settings.data.notifications.monitors, modelData.name);
-                     }
-                   }
+          if (checked) {
+            Settings.data.notifications.monitors = root.addMonitor(Settings.data.notifications.monitors, modelData.name);
+          } else {
+            Settings.data.notifications.monitors = root.removeMonitor(Settings.data.notifications.monitors, modelData.name);
+          }
+        }
       }
     }
   }

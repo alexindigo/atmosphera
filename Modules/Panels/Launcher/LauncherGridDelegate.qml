@@ -95,11 +95,11 @@ Item {
           }
 
           onStatusChanged: status => {
-                             if (status === Image.Error) {
-                               gridIconLoader.visible = true;
-                               gridImagePreview.visible = false;
-                             }
-                           }
+            if (status === Image.Error) {
+              gridIconLoader.visible = true;
+              gridImagePreview.visible = false;
+            }
+          }
         }
 
         Loader {
@@ -261,12 +261,12 @@ Item {
       }
     }
     onClicked: mouse => {
-                 if (mouse.button === Qt.LeftButton) {
-                   launcher.selectedIndex = gridEntryContainer.index;
-                   launcher.activate();
-                   mouse.accepted = true;
-                 }
-               }
+      if (mouse.button === Qt.LeftButton) {
+        launcher.selectedIndex = gridEntryContainer.index;
+        launcher.activate();
+        mouse.accepted = true;
+      }
+    }
     acceptedButtons: Qt.LeftButton
   }
 }

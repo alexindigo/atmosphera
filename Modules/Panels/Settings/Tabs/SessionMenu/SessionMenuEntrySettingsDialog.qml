@@ -169,9 +169,9 @@ Popup {
         currentKeybinds: keybindInputText ? [keybindInputText] : []
         settingsPath: "sessionMenu.powerOptions[" + root.entryIndex + "].keybind"
         onKeybindsChanged: newKeybinds => {
-                             keybindInputText = newKeybinds.length > 0 ? newKeybinds[0] : "";
-                             root.save();
-                           }
+          keybindInputText = newKeybinds.length > 0 ? newKeybinds[0] : "";
+          root.save();
+        }
       }
 
       // Hidden property to store the text since NKeybindRecorder manages its own state

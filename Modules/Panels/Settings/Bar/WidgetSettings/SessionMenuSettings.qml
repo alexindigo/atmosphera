@@ -30,9 +30,9 @@ ColumnLayout {
     label: I18n.tr("common.select-icon-color")
     currentKey: root.valueIconColor
     onSelected: key => {
-                  root.valueIconColor = key;
-                  saveSettings();
-                }
+      root.valueIconColor = key;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.iconColor
   }
 }

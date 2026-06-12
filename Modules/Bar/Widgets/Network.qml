@@ -64,17 +64,17 @@ Item {
     ]
 
     onTriggered: action => {
-                   contextMenu.close();
-                   PanelService.closeContextMenu(screen);
+      contextMenu.close();
+      PanelService.closeContextMenu(screen);
 
-                   if (action === "toggle-wifi") {
-                     NetworkService.setWifiEnabled(!NetworkService.wifiEnabled);
-                   } else if (action === "wifi-settings") {
-                     SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 0, screen);
-                   } else if (action === "widget-settings") {
-                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
-                   }
-                 }
+      if (action === "toggle-wifi") {
+        NetworkService.setWifiEnabled(!NetworkService.wifiEnabled);
+      } else if (action === "wifi-settings") {
+        SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 0, screen);
+      } else if (action === "widget-settings") {
+        BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+      }
+    }
   }
 
   BarPill {

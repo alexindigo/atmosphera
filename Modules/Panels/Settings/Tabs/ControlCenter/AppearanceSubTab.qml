@@ -71,17 +71,17 @@ ColumnLayout {
       model: {
         const paths = Object.keys(SystemStatService.diskPercents).sort();
         return paths.map(path => ({
-                                    key: path,
-                                    name: path
-                                  }));
+          key: path,
+          name: path
+        }));
       }
-      currentKey: Settings.data.controlCenter.diskPath || "/"
-      onSelected: key => Settings.data.controlCenter.diskPath = key
-      defaultValue: Settings.getDefaultValue("controlCenter.diskPath") || "/"
-    }
-  }
+        currentKey: Settings.data.controlCenter.diskPath || "/"
+        onSelected: key => Settings.data.controlCenter.diskPath = key
+        defaultValue: Settings.getDefaultValue("controlCenter.diskPath") || "/"
+      }
+      }
 
-  Rectangle {
-    Layout.fillHeight: true
-  }
-}
+        Rectangle {
+        Layout.fillHeight: true
+      }
+      }

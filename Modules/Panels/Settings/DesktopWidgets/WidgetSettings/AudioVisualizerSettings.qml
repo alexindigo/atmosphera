@@ -93,9 +93,9 @@ ColumnLayout {
     ]
     currentKey: valueVisualizerType
     onSelected: key => {
-                  valueVisualizerType = key;
-                  saveSettings();
-                }
+      valueVisualizerType = key;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.visualizerType
   }
 
@@ -105,9 +105,9 @@ ColumnLayout {
     description: I18n.tr("bar.audio-visualizer.color-name-description")
     currentKey: valueColorName
     onSelected: key => {
-                  valueColorName = key;
-                  saveSettings();
-                }
+      valueColorName = key;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.colorName
   }
 
@@ -117,9 +117,9 @@ ColumnLayout {
     description: I18n.tr("bar.audio-visualizer.hide-when-idle-description")
     checked: valueHideWhenIdle
     onToggled: checked => {
-                 valueHideWhenIdle = checked;
-                 saveSettings();
-               }
+      valueHideWhenIdle = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.hideWhenIdle
   }
 
@@ -133,9 +133,9 @@ ColumnLayout {
     description: I18n.tr("panels.desktop-widgets.media-player-show-background-description")
     checked: valueShowBackground
     onToggled: checked => {
-                 valueShowBackground = checked;
-                 saveSettings();
-               }
+      valueShowBackground = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showBackground
   }
 
@@ -146,9 +146,9 @@ ColumnLayout {
     description: I18n.tr("panels.desktop-widgets.media-player-rounded-corners-description")
     checked: valueRoundedCorners
     onToggled: checked => {
-                 valueRoundedCorners = checked;
-                 saveSettings();
-               }
+      valueRoundedCorners = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.roundedCorners
   }
 }
