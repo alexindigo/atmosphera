@@ -64,17 +64,17 @@ Item {
     ]
 
     onTriggered: action => {
-                   contextMenu.close();
-                   PanelService.closeContextMenu(screen);
+      contextMenu.close();
+      PanelService.closeContextMenu(screen);
 
-                   if (action === "toggle-bluetooth") {
-                     BluetoothService.setBluetoothEnabled(!BluetoothService.enabled);
-                   } else if (action === "bluetooth-settings") {
-                     SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 1, screen);
-                   } else if (action === "widget-settings") {
-                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
-                   }
-                 }
+      if (action === "toggle-bluetooth") {
+        BluetoothService.setBluetoothEnabled(!BluetoothService.enabled);
+      } else if (action === "bluetooth-settings") {
+        SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 1, screen);
+      } else if (action === "widget-settings") {
+        BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+      }
+    }
   }
 
   BarPill {

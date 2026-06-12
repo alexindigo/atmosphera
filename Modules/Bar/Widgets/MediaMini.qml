@@ -209,24 +209,24 @@ Item {
     }
 
     onTriggered: action => {
-                   contextMenu.close();
-                   PanelService.closeContextMenu(screen);
+      contextMenu.close();
+      PanelService.closeContextMenu(screen);
 
-                   if (action === "play-pause")
-                   MediaService.playPause();
-                   else if (action === "previous")
-                   MediaService.previous();
-                   else if (action === "next")
-                   MediaService.next();
-                   else if (action && action.indexOf("player-") === 0) {
-                     var idx = parseInt(action.split("-")[1]);
-                     if (!isNaN(idx)) {
-                       MediaService.switchToPlayer(idx);
-                     }
-                   } else if (action === "widget-settings") {
-                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
-                   }
-                 }
+      if (action === "play-pause")
+        MediaService.playPause();
+      else if (action === "previous")
+        MediaService.previous();
+      else if (action === "next")
+        MediaService.next();
+      else if (action && action.indexOf("player-") === 0) {
+        var idx = parseInt(action.split("-")[1]);
+        if (!isNaN(idx)) {
+          MediaService.switchToPlayer(idx);
+        }
+      } else if (action === "widget-settings") {
+        BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+      }
+    }
   }
 
   // Main container - stays at content size, pixel-perfect centered in parent
@@ -393,19 +393,19 @@ Item {
     acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton | Qt.ForwardButton | Qt.BackButton
 
     onClicked: mouse => {
-                 TooltipService.hide();
-                 if (mouse.button === Qt.LeftButton) {
-                   PanelService.getPanel("mediaPlayerPanel", screen)?.toggle(container);
-                 } else if (mouse.button === Qt.RightButton) {
-                   PanelService.showContextMenu(contextMenu, container, screen);
-                 } else if (mouse.button === Qt.MiddleButton && hasPlayer) {
-                   MediaService.playPause();
-                 } else if (mouse.button === Qt.ForwardButton && hasPlayer) {
-                   MediaService.next();
-                 } else if (mouse.button === Qt.BackButton && hasPlayer) {
-                   MediaService.previous();
-                 }
-               }
+      TooltipService.hide();
+      if (mouse.button === Qt.LeftButton) {
+        PanelService.getPanel("mediaPlayerPanel", screen)?.toggle(container);
+      } else if (mouse.button === Qt.RightButton) {
+        PanelService.showContextMenu(contextMenu, container, screen);
+      } else if (mouse.button === Qt.MiddleButton && hasPlayer) {
+        MediaService.playPause();
+      } else if (mouse.button === Qt.ForwardButton && hasPlayer) {
+        MediaService.next();
+      } else if (mouse.button === Qt.BackButton && hasPlayer) {
+        MediaService.previous();
+      }
+    }
 
     onEntered: {
       if (!root || !screen) {

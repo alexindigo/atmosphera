@@ -293,23 +293,23 @@ Loader {
 
         // Extract pinned apps in their current visual order
         dockApps.forEach(app => {
-                           if (app.appId && !seen.has(app.appId)) {
-                             const isPinned = currentPinned.some(p => normalizeAppId(p) === normalizeAppId(app.appId));
+          if (app.appId && !seen.has(app.appId)) {
+            const isPinned = currentPinned.some(p => normalizeAppId(p) === normalizeAppId(app.appId));
 
-                             if (isPinned) {
-                               newPinned.push(app.appId);
-                               seen.add(app.appId);
-                             }
-                           }
-                         });
+            if (isPinned) {
+              newPinned.push(app.appId);
+              seen.add(app.appId);
+            }
+          }
+        });
 
         // Check if any pinned apps were missed (unlikely if dockApps is correct)
         currentPinned.forEach(p => {
-                                if (!seen.has(p)) {
-                                  newPinned.push(p);
-                                  seen.add(p);
-                                }
-                              });
+          if (!seen.has(p)) {
+            newPinned.push(p);
+            seen.add(p);
+          }
+        });
 
         if (JSON.stringify(currentPinned) !== JSON.stringify(newPinned)) {
           Settings.data.dock.pinnedApps = newPinned;
@@ -426,55 +426,55 @@ Loader {
       function buildGroupedDockApps(apps) {
         if (!Settings.data.dock.groupApps) {
           return apps.map(app => {
-                            const entry = Object.assign({}, app);
-                            entry.toplevels = getToplevelsForEntry(app);
-                            return entry;
-                          });
+            const entry = Object.assign({}, app);
+            entry.toplevels = getToplevelsForEntry(app);
+            return entry;
+          });
         }
 
         const grouped = [];
         const groupedById = new Map();
 
         apps.forEach(app => {
-                       const appId = app.appId;
-                       const toplevels = getToplevelsForEntry(app);
-                       const existing = groupedById.get(appId);
+          const appId = app.appId;
+          const toplevels = getToplevelsForEntry(app);
+          const existing = groupedById.get(appId);
 
-                       if (existing) {
-                         toplevels.forEach(toplevel => {
-                                             if (!existing.toplevels.includes(toplevel)) {
-                                               existing.toplevels.push(toplevel);
-                                             }
-                                           });
-                         if (app.type === "pinned" || app.type === "pinned-running") {
-                           existing.isPinned = true;
-                         }
-                       } else {
-                         const entry = {
-                           "type": app.type,
-                           "appId": appId,
-                           "title": app.title,
-                           "toplevels": toplevels.slice(),
-                           "isPinned": app.type === "pinned" || app.type === "pinned-running"
-                         };
-                         grouped.push(entry);
-                         groupedById.set(appId, entry);
-                       }
-                     });
+          if (existing) {
+            toplevels.forEach(toplevel => {
+              if (!existing.toplevels.includes(toplevel)) {
+                existing.toplevels.push(toplevel);
+              }
+            });
+            if (app.type === "pinned" || app.type === "pinned-running") {
+              existing.isPinned = true;
+            }
+          } else {
+            const entry = {
+              "type": app.type,
+              "appId": appId,
+              "title": app.title,
+              "toplevels": toplevels.slice(),
+              "isPinned": app.type === "pinned" || app.type === "pinned-running"
+            };
+            grouped.push(entry);
+            groupedById.set(appId, entry);
+          }
+        });
 
         grouped.forEach(entry => {
-                          entry.toplevel = getPrimaryToplevelForEntry(entry);
-                          if (entry.toplevels.length > 0 && entry.isPinned) {
-                            entry.type = "pinned-running";
-                          } else if (entry.toplevels.length > 0) {
-                            entry.type = "running";
-                          } else {
-                            entry.type = "pinned";
-                          }
-                          if (entry.toplevel && entry.toplevel.title && entry.toplevel.title.trim() !== "") {
-                            entry.title = entry.toplevel.title;
-                          }
-                        });
+          entry.toplevel = getPrimaryToplevelForEntry(entry);
+          if (entry.toplevels.length > 0 && entry.isPinned) {
+            entry.type = "pinned-running";
+          } else if (entry.toplevels.length > 0) {
+            entry.type = "running";
+          } else {
+            entry.type = "pinned";
+          }
+          if (entry.toplevel && entry.toplevel.title && entry.toplevel.title.trim() !== "") {
+            entry.title = entry.toplevel.title;
+          }
+        });
 
         return grouped;
       }
@@ -526,42 +526,42 @@ Loader {
 
         function pushRunning(first) {
           runningApps.forEach(toplevel => {
-                                if (toplevel) {
-                                  // Use robust matching to check if pinned
-                                  const isPinned = isAppIdPinned(toplevel.appId, pinnedApps);
-                                  if (!first && isPinned && processedToplevels.has(toplevel)) {
-                                    return; // Already added by pushPinned()
-                                  }
-                                  pushApp((first && isPinned) ? "pinned-running" : "running", toplevel, toplevel.appId, toplevel.title);
-                                }
-                              });
+            if (toplevel) {
+              // Use robust matching to check if pinned
+              const isPinned = isAppIdPinned(toplevel.appId, pinnedApps);
+              if (!first && isPinned && processedToplevels.has(toplevel)) {
+                return; // Already added by pushPinned()
+              }
+              pushApp((first && isPinned) ? "pinned-running" : "running", toplevel, toplevel.appId, toplevel.title);
+            }
+          });
         }
 
         function pushPinned() {
           pinnedApps.forEach(pinnedAppId => {
-                               // Find all running instances of this pinned app using robust matching
-                               // Also resolve toplevel appId via desktop entry lookup to handle
-                               // StartupWMClass != .desktop filename (e.g. zen -> zen-browser-bin)
-                               const normalizedPinned = normalizeAppId(pinnedAppId);
-                               const matchingToplevels = runningApps.filter(app => {
-                                                                              if (!app)
-                                                                              return false;
-                                                                              if (normalizeAppId(app.appId) === normalizedPinned)
-                                                                              return true;
-                                                                              const resolved = resolveToDesktopEntryId(app.appId);
-                                                                              return resolved !== app.appId && normalizeAppId(resolved) === normalizedPinned;
-                                                                            });
+            // Find all running instances of this pinned app using robust matching
+            // Also resolve toplevel appId via desktop entry lookup to handle
+            // StartupWMClass != .desktop filename (e.g. zen -> zen-browser-bin)
+            const normalizedPinned = normalizeAppId(pinnedAppId);
+            const matchingToplevels = runningApps.filter(app => {
+              if (!app)
+                return false;
+              if (normalizeAppId(app.appId) === normalizedPinned)
+                return true;
+              const resolved = resolveToDesktopEntryId(app.appId);
+              return resolved !== app.appId && normalizeAppId(resolved) === normalizedPinned;
+            });
 
-                               if (matchingToplevels.length > 0) {
-                                 // Add all running instances as pinned-running
-                                 matchingToplevels.forEach(toplevel => {
-                                                             pushApp("pinned-running", toplevel, pinnedAppId, toplevel.title);
-                                                           });
-                               } else {
-                                 // App is pinned but not running - add once
-                                 pushApp("pinned", null, pinnedAppId, getAppNameFromDesktopEntry(pinnedAppId) || pinnedAppId);
-                               }
-                             });
+            if (matchingToplevels.length > 0) {
+              // Add all running instances as pinned-running
+              matchingToplevels.forEach(toplevel => {
+                pushApp("pinned-running", toplevel, pinnedAppId, toplevel.title);
+              });
+            } else {
+              // App is pinned but not running - add once
+              pushApp("pinned", null, pinnedAppId, getAppNameFromDesktopEntry(pinnedAppId) || pinnedAppId);
+            }
+          });
         }
 
         //if pinnedStatic then push all pinned and then all remaining running apps
@@ -580,10 +580,10 @@ Loader {
         const cycleState = root.groupCycleIndices || {};
         const nextCycleState = {};
         dockApps.forEach(app => {
-                           if (app && app.appId && cycleState[app.appId] !== undefined) {
-                             nextCycleState[app.appId] = cycleState[app.appId];
-                           }
-                         });
+          if (app && app.appId && cycleState[app.appId] !== undefined) {
+            nextCycleState[app.appId] = cycleState[app.appId];
+          }
+        });
         root.groupCycleIndices = nextCycleState;
 
         // Sync session order if needed
@@ -597,20 +597,20 @@ Loader {
 
           // Keep existing keys that are still present
           sessionAppOrder.forEach(key => {
-                                    if (currentKeys.has(key)) {
-                                      newOrder.push(key);
-                                      existingKeys.add(key);
-                                    }
-                                  });
+            if (currentKeys.has(key)) {
+              newOrder.push(key);
+              existingKeys.add(key);
+            }
+          });
 
           // Add new keys at the end
           dockApps.forEach(app => {
-                             const key = getAppKey(app);
-                             if (!existingKeys.has(key)) {
-                               newOrder.push(key);
-                               existingKeys.add(key);
-                             }
-                           });
+            const key = getAppKey(app);
+            if (!existingKeys.has(key)) {
+              newOrder.push(key);
+              existingKeys.add(key);
+            }
+          });
 
           if (JSON.stringify(newOrder) !== JSON.stringify(sessionAppOrder)) {
             sessionAppOrder = newOrder;
@@ -818,12 +818,12 @@ Loader {
           _reloading = true;
           // Brief unload/reload cycle to reset layout
           Qt.callLater(() => {
-                         dockLoaded = false;
-                         Qt.callLater(() => {
-                                        dockLoaded = true;
-                                        _reloading = false;
-                                      });
-                       });
+            dockLoaded = false;
+            Qt.callLater(() => {
+              dockLoaded = true;
+              _reloading = false;
+            });
+          });
         }
       }
 

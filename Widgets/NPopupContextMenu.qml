@@ -358,8 +358,8 @@ PopupWindow {
 
     // Force anchor recalculation after showing
     Qt.callLater(() => {
-                   anchor.updateAnchor();
-                 });
+      anchor.updateAnchor();
+    });
   }
 
   function close() {

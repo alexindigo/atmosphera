@@ -662,9 +662,9 @@ Item {
     const isNvidia = SystemStatService.gpuType === "nvidia";
     if (sidebarExpanded && !isNvidia) {
       Qt.callLater(() => {
-                     if (searchInput.inputItem)
-                     searchInput.inputItem.forceActiveFocus();
-                   });
+        if (searchInput.inputItem)
+          searchInput.inputItem.forceActiveFocus();
+      });
     } else {
       // Ensure root has focus so it can catch typing
       Qt.callLater(() => root.forceActiveFocus());
@@ -674,28 +674,28 @@ Item {
   // Handle typing when sidebar is collapsed
   focus: true
   Keys.onPressed: event => {
-                    if (!sidebarExpanded && event.text.length > 0 && event.text.trim() !== "") {
-                      // Only capture if it looks like visible text
-                      if (event.modifiers & (Qt.ControlModifier | Qt.AltModifier | Qt.MetaModifier))
-                      return;
+    if (!sidebarExpanded && event.text.length > 0 && event.text.trim() !== "") {
+      // Only capture if it looks like visible text
+      if (event.modifiers & (Qt.ControlModifier | Qt.AltModifier | Qt.MetaModifier))
+        return;
 
-                      // Explicitly ignore backspace and similar keys that might have text but shouldn't trigger search
-                      if (event.key === Qt.Key_Backspace || event.key === Qt.Key_Delete || event.key === Qt.Key_Escape)
-                      return;
+      // Explicitly ignore backspace and similar keys that might have text but shouldn't trigger search
+      if (event.key === Qt.Key_Backspace || event.key === Qt.Key_Delete || event.key === Qt.Key_Escape)
+        return;
 
-                      wasCollapsedBeforeSearch = true;
-                      sidebarExpanded = true;
-                      searchInput.text = event.text;
-                      Qt.callLater(() => {
-                                     if (searchInput.inputItem) {
-                                       searchInput.inputItem.forceActiveFocus();
-                                       // Cursor moves to end automatically usually, but let's be safe
-                                       searchInput.inputItem.cursorPosition = 1;
-                                     }
-                                   });
-                      event.accepted = true;
-                    }
-                  }
+      wasCollapsedBeforeSearch = true;
+      sidebarExpanded = true;
+      searchInput.text = event.text;
+      Qt.callLater(() => {
+        if (searchInput.inputItem) {
+          searchInput.inputItem.forceActiveFocus();
+          // Cursor moves to end automatically usually, but let's be safe
+          searchInput.inputItem.cursorPosition = 1;
+        }
+      });
+      event.accepted = true;
+    }
+  }
 
   // Scroll functions
   function scrollDown() {

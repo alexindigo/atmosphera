@@ -193,17 +193,17 @@ ColumnLayout {
         }
         checked: (Settings.data.dock.monitors || []).indexOf(modelData.name) !== -1
         onToggled: checked => {
-                     if (checked) {
-                       const arr = (Settings.data.dock.monitors || []).slice();
-                       if (arr.indexOf(modelData.name) === -1)
-                       arr.push(modelData.name);
-                       Settings.data.dock.monitors = arr;
-                     } else {
-                       Settings.data.dock.monitors = (Settings.data.dock.monitors || []).filter(function (n) {
-                         return n !== modelData.name;
-                       });
-                     }
-                   }
+          if (checked) {
+            const arr = (Settings.data.dock.monitors || []).slice();
+            if (arr.indexOf(modelData.name) === -1)
+              arr.push(modelData.name);
+            Settings.data.dock.monitors = arr;
+          } else {
+            Settings.data.dock.monitors = (Settings.data.dock.monitors || []).filter(function (n) {
+              return n !== modelData.name;
+            });
+          }
+        }
       }
     }
   }

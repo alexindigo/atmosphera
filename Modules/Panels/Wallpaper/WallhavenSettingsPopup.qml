@@ -38,10 +38,10 @@ Popup {
       y = Math.round((screen.height - height) / 2 - parentPos.y);
     }
     Qt.callLater(() => {
-                   if (resolutionWidthInput.inputItem) {
-                     resolutionWidthInput.inputItem.forceActiveFocus();
-                   }
-                 });
+      if (resolutionWidthInput.inputItem) {
+        resolutionWidthInput.inputItem.forceActiveFocus();
+      }
+    });
   }
 
   function hide() {
@@ -213,12 +213,12 @@ Popup {
         ]
         currentKey: Settings.data.wallpaper.wallhavenSorting || "relevance"
         onSelected: key => {
-                      Settings.data.wallpaper.wallhavenSorting = key;
-                      if (typeof WallhavenService !== "undefined") {
-                        WallhavenService.sorting = key;
-                        WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1);
-                      }
-                    }
+          Settings.data.wallpaper.wallhavenSorting = key;
+          if (typeof WallhavenService !== "undefined") {
+            WallhavenService.sorting = key;
+            WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1);
+          }
+        }
       }
     }
 
@@ -251,12 +251,12 @@ Popup {
         ]
         currentKey: Settings.data.wallpaper.wallhavenOrder || "desc"
         onSelected: key => {
-                      Settings.data.wallpaper.wallhavenOrder = key;
-                      if (typeof WallhavenService !== "undefined") {
-                        WallhavenService.order = key;
-                        WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1);
-                      }
-                    }
+          Settings.data.wallpaper.wallhavenOrder = key;
+          if (typeof WallhavenService !== "undefined") {
+            WallhavenService.order = key;
+            WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1);
+          }
+        }
       }
     }
 
@@ -473,8 +473,8 @@ Popup {
           property bool checked: false
           signal toggled(bool checked)
           onToggled: checked => {
-                       purityRow.updatePurity(checked, purityRow.getPurityValue(1), purityRow.getPurityValue(2));
-                     }
+            purityRow.updatePurity(checked, purityRow.getPurityValue(1), purityRow.getPurityValue(2));
+          }
         }
 
         QtObject {
@@ -482,8 +482,8 @@ Popup {
           property bool checked: false
           signal toggled(bool checked)
           onToggled: checked => {
-                       purityRow.updatePurity(purityRow.getPurityValue(0), checked, purityRow.getPurityValue(2));
-                     }
+            purityRow.updatePurity(purityRow.getPurityValue(0), checked, purityRow.getPurityValue(2));
+          }
         }
 
         QtObject {
@@ -491,8 +491,8 @@ Popup {
           property bool checked: false
           signal toggled(bool checked)
           onToggled: checked => {
-                       purityRow.updatePurity(purityRow.getPurityValue(0), purityRow.getPurityValue(1), checked);
-                     }
+            purityRow.updatePurity(purityRow.getPurityValue(0), purityRow.getPurityValue(1), checked);
+          }
         }
       }
     }
@@ -577,12 +577,12 @@ Popup {
         ]
         currentKey: Settings.data.wallpaper.wallhavenRatios || ""
         onSelected: key => {
-                      Settings.data.wallpaper.wallhavenRatios = key;
-                      if (typeof WallhavenService !== "undefined") {
-                        WallhavenService.ratios = key;
-                        WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1);
-                      }
-                    }
+          Settings.data.wallpaper.wallhavenRatios = key;
+          if (typeof WallhavenService !== "undefined") {
+            WallhavenService.ratios = key;
+            WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1);
+          }
+        }
       }
     }
 
@@ -792,8 +792,8 @@ Popup {
           property bool checked: false
           signal toggled(bool checked)
           onToggled: checked => {
-                       categoriesRow.updateCategories(checked, categoriesRow.getCategoryValue(1), categoriesRow.getCategoryValue(2));
-                     }
+            categoriesRow.updateCategories(checked, categoriesRow.getCategoryValue(1), categoriesRow.getCategoryValue(2));
+          }
         }
 
         QtObject {
@@ -801,8 +801,8 @@ Popup {
           property bool checked: false
           signal toggled(bool checked)
           onToggled: checked => {
-                       categoriesRow.updateCategories(categoriesRow.getCategoryValue(0), checked, categoriesRow.getCategoryValue(2));
-                     }
+            categoriesRow.updateCategories(categoriesRow.getCategoryValue(0), checked, categoriesRow.getCategoryValue(2));
+          }
         }
 
         QtObject {
@@ -810,8 +810,8 @@ Popup {
           property bool checked: false
           signal toggled(bool checked)
           onToggled: checked => {
-                       categoriesRow.updateCategories(categoriesRow.getCategoryValue(0), categoriesRow.getCategoryValue(1), checked);
-                     }
+            categoriesRow.updateCategories(categoriesRow.getCategoryValue(0), categoriesRow.getCategoryValue(1), checked);
+          }
         }
       }
     }
@@ -864,9 +864,9 @@ Popup {
           }
 
           onSelected: key => {
-                        Settings.data.wallpaper.wallhavenResolutionMode = key;
-                        updateResolution(false);
-                      }
+            Settings.data.wallpaper.wallhavenResolutionMode = key;
+            updateResolution(false);
+          }
         }
       }
 
@@ -984,8 +984,8 @@ Popup {
 
           // Close the popup after applying (delay to prevent click propagation)
           Qt.callLater(() => {
-                         root.hide();
-                       });
+            root.hide();
+          });
         }
       }
     }

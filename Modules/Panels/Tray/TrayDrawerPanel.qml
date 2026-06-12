@@ -217,61 +217,61 @@ SmartPanel {
               acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
 
               onClicked: mouse => {
-                           if (!modelData)
-                           return;
-                           if (mouse.button === Qt.LeftButton) {
-                             if (!modelData.onlyMenu) {
-                               modelData.activate();
-                             }
-                             if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
-                               PanelService.openedPanel.close();
-                             }
-                           } else if (mouse.button === Qt.MiddleButton) {
-                             modelData.secondaryActivate && modelData.secondaryActivate();
-                             if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
-                               PanelService.openedPanel.close();
-                             }
-                           } else if (mouse.button === Qt.RightButton) {
-                             TooltipService.hideImmediately();
+                if (!modelData)
+                  return;
+                if (mouse.button === Qt.LeftButton) {
+                  if (!modelData.onlyMenu) {
+                    modelData.activate();
+                  }
+                  if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
+                    PanelService.openedPanel.close();
+                  }
+                } else if (mouse.button === Qt.MiddleButton) {
+                  modelData.secondaryActivate && modelData.secondaryActivate();
+                  if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
+                    PanelService.openedPanel.close();
+                  }
+                } else if (mouse.button === Qt.RightButton) {
+                  TooltipService.hideImmediately();
 
-                             if (panelContent.popupMenuWindow && panelContent.popupMenuWindow.visible) {
-                               panelContent.popupMenuWindow.close();
-                               return;
-                             }
+                  if (panelContent.popupMenuWindow && panelContent.popupMenuWindow.visible) {
+                    panelContent.popupMenuWindow.close();
+                    return;
+                  }
 
-                             if (modelData.hasMenu && modelData.menu && panelContent.trayMenu && panelContent.trayMenu.item) {
-                               const barPosition = Settings.getBarPositionForScreen(root.screen?.name);
-                               // Increased spacing for better alignment with other context menus
-                               let menuX, menuY;
+                  if (modelData.hasMenu && modelData.menu && panelContent.trayMenu && panelContent.trayMenu.item) {
+                    const barPosition = Settings.getBarPositionForScreen(root.screen?.name);
+                    // Increased spacing for better alignment with other context menus
+                    let menuX, menuY;
 
-                               if (barPosition === "left") {
-                                 menuX = trayIcon.width + Style.marginL;
-                                 menuY = 0;
-                               } else if (barPosition === "right") {
-                                 menuX = -panelContent.trayMenu.item.width - Style.marginL;
-                                 menuY = 0;
-                               } else if (barPosition === "bottom") {
-                                 // For bottom bar: let TrayMenu handle positioning by passing anchorY >= 0
-                                 // TrayMenu will position above the anchor item
-                                 menuX = (trayIcon.width / 2) - (panelContent.trayMenu.item.width / 2);
-                                 menuY = trayIcon.height + Style.marginL;
-                               } else {
-                                 // For top bar: position menu below the icon with more spacing
-                                 menuX = (trayIcon.width / 2) - (panelContent.trayMenu.item.width / 2);
-                                 menuY = trayIcon.height + Style.marginL;
-                               }
+                    if (barPosition === "left") {
+                      menuX = trayIcon.width + Style.marginL;
+                      menuY = 0;
+                    } else if (barPosition === "right") {
+                      menuX = -panelContent.trayMenu.item.width - Style.marginL;
+                      menuY = 0;
+                    } else if (barPosition === "bottom") {
+                      // For bottom bar: let TrayMenu handle positioning by passing anchorY >= 0
+                      // TrayMenu will position above the anchor item
+                      menuX = (trayIcon.width / 2) - (panelContent.trayMenu.item.width / 2);
+                      menuY = trayIcon.height + Style.marginL;
+                    } else {
+                      // For top bar: position menu below the icon with more spacing
+                      menuX = (trayIcon.width / 2) - (panelContent.trayMenu.item.width / 2);
+                      menuY = trayIcon.height + Style.marginL;
+                    }
 
-                               PanelService.showTrayMenu(root.screen, modelData, panelContent.trayMenu.item, trayIcon, menuX, menuY, root.widgetSection, root.widgetIndex);
-                             }
-                           }
-                         }
+                    PanelService.showTrayMenu(root.screen, modelData, panelContent.trayMenu.item, trayIcon, menuX, menuY, root.widgetSection, root.widgetIndex);
+                  }
+                }
+              }
 
               onWheel: wheel => {
-                         if (wheel.angleDelta.y > 0)
-                         modelData?.scrollUp();
-                         else if (wheel.angleDelta.y < 0)
-                         modelData?.scrollDown();
-                       }
+                if (wheel.angleDelta.y > 0)
+                  modelData?.scrollUp();
+                else if (wheel.angleDelta.y < 0)
+                  modelData?.scrollDown();
+              }
 
               onEntered: {
                 if (panelContent.popupMenuWindow) {

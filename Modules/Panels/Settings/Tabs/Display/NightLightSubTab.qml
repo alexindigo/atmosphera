@@ -20,15 +20,15 @@ ColumnLayout {
     description: I18n.tr("panels.display.night-light-enable-description")
     checked: Settings.data.nightLight.enabled
     onToggled: checked => {
-                 if (checked) {
-                   root.checkWlsunset();
-                 } else {
-                   Settings.data.nightLight.enabled = false;
-                   Settings.data.nightLight.forced = false;
-                   NightLightService.apply();
-                   ToastService.showNotice(I18n.tr("common.night-light"), I18n.tr("common.disabled"), "nightlight-off");
-                 }
-               }
+      if (checked) {
+        root.checkWlsunset();
+      } else {
+        Settings.data.nightLight.enabled = false;
+        Settings.data.nightLight.forced = false;
+        NightLightService.apply();
+        ToastService.showNotice(I18n.tr("common.night-light"), I18n.tr("common.disabled"), "nightlight-off");
+      }
+    }
   }
 
   ColumnLayout {
@@ -207,13 +207,13 @@ ColumnLayout {
       description: I18n.tr("panels.display.night-light-force-activation-description")
       checked: Settings.data.nightLight.forced
       onToggled: checked => {
-                   Settings.data.nightLight.forced = checked;
-                   if (checked && !Settings.data.nightLight.enabled) {
-                     root.checkWlsunset();
-                   } else {
-                     NightLightService.apply();
-                   }
-                 }
+        Settings.data.nightLight.forced = checked;
+        if (checked && !Settings.data.nightLight.enabled) {
+          root.checkWlsunset();
+        } else {
+          NightLightService.apply();
+        }
+      }
     }
   }
 }

@@ -154,8 +154,8 @@ Item {
         launcher.close();
 
       Qt.callLater(() => {
-                     SettingsPanelService.openToEntry(entry, launcher.screen);
-                   });
+        SettingsPanelService.openToEntry(entry, launcher.screen);
+      });
     };
   }
 }

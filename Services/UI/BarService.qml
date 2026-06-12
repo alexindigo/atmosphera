@@ -559,30 +559,30 @@ Singleton {
 
       if (dialog) {
         dialog.updateWidgetSettings.connect((sec, idx, settings) => {
-                                              var screenName = screen?.name || "";
-                                              if (Settings.hasScreenOverride(screenName, "widgets")) {
-                                                var overrideWidgets = Settings.getBarWidgetsForScreen(screenName);
-                                                if (overrideWidgets && overrideWidgets[sec] && idx < overrideWidgets[sec].length) {
-                                                  overrideWidgets[sec][idx] = Object.assign({}, overrideWidgets[sec][idx], settings);
-                                                  Settings.setScreenOverride(screenName, "widgets", overrideWidgets);
-                                                }
-                                              } else {
-                                                var widgets = Settings.data.bar.widgets[sec];
-                                                if (widgets && idx < widgets.length) {
-                                                  widgets[idx] = Object.assign({}, widgets[idx], settings);
-                                                  Settings.data.bar.widgets[sec] = widgets;
-                                                  Settings.saveImmediate();
-                                                }
-                                              }
-                                            });
+          var screenName = screen?.name || "";
+          if (Settings.hasScreenOverride(screenName, "widgets")) {
+            var overrideWidgets = Settings.getBarWidgetsForScreen(screenName);
+            if (overrideWidgets && overrideWidgets[sec] && idx < overrideWidgets[sec].length) {
+              overrideWidgets[sec][idx] = Object.assign({}, overrideWidgets[sec][idx], settings);
+              Settings.setScreenOverride(screenName, "widgets", overrideWidgets);
+            }
+          } else {
+            var widgets = Settings.data.bar.widgets[sec];
+            if (widgets && idx < widgets.length) {
+              widgets[idx] = Object.assign({}, widgets[idx], settings);
+              Settings.data.bar.widgets[sec] = widgets;
+              Settings.saveImmediate();
+            }
+          }
+        });
         // Enable keyboard focus for the popup menu window when dialog is open
         popupMenuWindow.hasDialog = true;
         // Close the popup menu window when dialog closes
         dialog.closed.connect(() => {
-                                popupMenuWindow.hasDialog = false;
-                                popupMenuWindow.close();
-                                dialog.destroy();
-                              });
+          popupMenuWindow.hasDialog = false;
+          popupMenuWindow.close();
+          dialog.destroy();
+        });
         // Show the popup menu window and open the dialog
         popupMenuWindow.open();
         dialog.open();
@@ -639,10 +639,10 @@ Singleton {
         popupMenuWindow.hasDialog = true;
         // Close the popup menu window when dialog closes
         dialog.closed.connect(() => {
-                                popupMenuWindow.hasDialog = false;
-                                popupMenuWindow.close();
-                                dialog.destroy();
-                              });
+          popupMenuWindow.hasDialog = false;
+          popupMenuWindow.close();
+          dialog.destroy();
+        });
         // Show the popup menu window and open the dialog
         popupMenuWindow.open();
         dialog.openPluginSettings(pluginManifest);

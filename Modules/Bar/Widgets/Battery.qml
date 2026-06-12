@@ -137,13 +137,13 @@ Item {
     ]
 
     onTriggered: action => {
-                   contextMenu.close();
-                   PanelService.closeContextMenu(screen);
+      contextMenu.close();
+      PanelService.closeContextMenu(screen);
 
-                   if (action === "widget-settings") {
-                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
-                   }
-                 }
+      if (action === "widget-settings") {
+        BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+      }
+    }
   }
 
   // ==================== GRAPHIC MODE ====================
@@ -204,13 +204,13 @@ Item {
       TooltipService.hide();
     }
     onClicked: mouse => {
-                 TooltipService.hide();
-                 if (mouse.button === Qt.RightButton) {
-                   PanelService.showContextMenu(contextMenu, nBattery, screen);
-                 } else {
-                   toggleBatteryPanel();
-                 }
-               }
+      TooltipService.hide();
+      if (mouse.button === Qt.RightButton) {
+        PanelService.showContextMenu(contextMenu, nBattery, screen);
+      } else {
+        toggleBatteryPanel();
+      }
+    }
   }
 
   Timer {

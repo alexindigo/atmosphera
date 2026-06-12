@@ -88,9 +88,9 @@ Popup {
         ]
         currentKey: actionValue
         onSelected: key => {
-                      actionValue = key;
-                      _selectedAction = key;
-                    }
+          actionValue = key;
+          _selectedAction = key;
+        }
       }
 
       NLabel {

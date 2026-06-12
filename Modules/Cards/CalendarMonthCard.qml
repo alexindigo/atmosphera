@@ -182,8 +182,8 @@ NBox {
         const targetStart = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime() / 1000;
         const targetEnd = targetStart + 86400;
         return CalendarService.events.some(event => {
-                                             return (event.start >= targetStart && event.start < targetEnd) || (event.end > targetStart && event.end <= targetEnd) || (event.start < targetStart && event.end > targetEnd);
-                                           });
+          return (event.start >= targetStart && event.start < targetEnd) || (event.end > targetStart && event.end <= targetEnd) || (event.start < targetStart && event.end > targetEnd);
+        });
       }
 
       function getEventsForDate(year, month, day) {
@@ -193,8 +193,8 @@ NBox {
         const targetStart = Math.floor(new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime() / 1000);
         const targetEnd = targetStart + 86400;
         return CalendarService.events.filter(event => {
-                                               return (event.start >= targetStart && event.start < targetEnd) || (event.end > targetStart && event.end <= targetEnd) || (event.start < targetStart && event.end > targetEnd);
-                                             });
+          return (event.start >= targetStart && event.start < targetEnd) || (event.end > targetStart && event.end <= targetEnd) || (event.start < targetStart && event.end > targetEnd);
+        });
       }
 
       function isMultiDayEvent(event) {
@@ -388,17 +388,17 @@ NBox {
                   const events = parent.parent.parent.parent.getEventsForDate(modelData.year, modelData.month, modelData.day);
                   if (events.length > 0) {
                     const summaries = events.map(event => {
-                                                   if (root.isAllDayEvent(event)) {
-                                                     return event.summary;
-                                                   } else {
-                                                     const timeFormat = Settings.data.location.use12hourFormat ? "hh:mm AP" : "HH:mm";
-                                                     const start = new Date(event.start * 1000);
-                                                     const startFormatted = I18n.locale.toString(start, timeFormat);
-                                                     const end = new Date(event.end * 1000);
-                                                     const endFormatted = I18n.locale.toString(end, timeFormat);
-                                                     return `${startFormatted}-${endFormatted} ${event.summary}`;
-                                                   }
-                                                 }).join('\n');
+                      if (root.isAllDayEvent(event)) {
+                        return event.summary;
+                      } else {
+                        const timeFormat = Settings.data.location.use12hourFormat ? "hh:mm AP" : "HH:mm";
+                        const start = new Date(event.start * 1000);
+                        const startFormatted = I18n.locale.toString(start, timeFormat);
+                        const end = new Date(event.end * 1000);
+                        const endFormatted = I18n.locale.toString(end, timeFormat);
+                        return `${startFormatted}-${endFormatted} ${event.summary}`;
+                      }
+                    }).join('\n');
                     TooltipService.show(parent, summaries, "auto", Style.tooltipDelay, Settings.data.ui.fontFixed);
                   }
                 }

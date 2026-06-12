@@ -68,20 +68,20 @@ Item {
         continue;
 
       ws.activeChanged.connect(() => {
-                                 Qt.callLater(root.syncWorkspaces);
-                               });
+        Qt.callLater(root.syncWorkspaces);
+      });
 
       ws.urgentChanged.connect(() => {
-                                 Qt.callLater(root.syncWorkspaces);
-                               });
+        Qt.callLater(root.syncWorkspaces);
+      });
 
       ws.shouldDisplayChanged.connect(() => {
-                                        Qt.callLater(root.syncWorkspaces);
-                                      });
+        Qt.callLater(root.syncWorkspaces);
+      });
 
       ws.nameChanged.connect(() => {
-                               Qt.callLater(root.syncWorkspaces);
-                             });
+        Qt.callLater(root.syncWorkspaces);
+      });
     }
 
     connectedWorkspaces = newConnected;
@@ -173,12 +173,12 @@ Item {
       return;
 
     toplevel.activatedChanged.connect(() => {
-                                        Qt.callLater(onToplevelActivationChanged);
-                                      });
+      Qt.callLater(onToplevelActivationChanged);
+    });
 
     toplevel.titleChanged.connect(() => {
-                                    Qt.callLater(updateWindows);
-                                  });
+      Qt.callLater(updateWindows);
+    });
   }
 
   function onToplevelActivationChanged() {

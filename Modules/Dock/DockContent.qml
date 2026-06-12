@@ -91,16 +91,16 @@ Item {
       WheelHandler {
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
         onWheel: event => {
-                   var delta = (event.angleDelta.y !== 0) ? event.angleDelta.y : event.angleDelta.x;
-                   if (dockRoot.isVertical) {
-                     dock.contentY = Math.max(-dock.topMargin, Math.min(dock.contentHeight - dock.height + dock.bottomMargin, dock.contentY - delta));
-                   } else {
-                     // For horizontal dock, we want to scroll contentX with BOTH x and y wheels
-                     var hDelta = (event.angleDelta.x !== 0) ? event.angleDelta.x : event.angleDelta.y;
-                     dock.contentX = Math.max(-dock.leftMargin, Math.min(dock.contentWidth - dock.width + dock.rightMargin, dock.contentX - hDelta));
-                   }
-                   event.accepted = true;
-                 }
+          var delta = (event.angleDelta.y !== 0) ? event.angleDelta.y : event.angleDelta.x;
+          if (dockRoot.isVertical) {
+            dock.contentY = Math.max(-dock.topMargin, Math.min(dock.contentHeight - dock.height + dock.bottomMargin, dock.contentY - delta));
+          } else {
+            // For horizontal dock, we want to scroll contentX with BOTH x and y wheels
+            var hDelta = (event.angleDelta.x !== 0) ? event.angleDelta.x : event.angleDelta.y;
+            dock.contentX = Math.max(-dock.leftMargin, Math.min(dock.contentWidth - dock.width + dock.rightMargin, dock.contentX - hDelta));
+          }
+          event.accepted = true;
+        }
       }
 
       ScrollBar.horizontal: ScrollBar {
@@ -331,27 +331,27 @@ Item {
               }
 
               onClicked: mouse => {
-                           const targetScreen = dockRoot.modelData || dockRoot.screen || null;
-                           if (!targetScreen) {
-                             return;
-                           }
+                const targetScreen = dockRoot.modelData || dockRoot.screen || null;
+                if (!targetScreen) {
+                  return;
+                }
 
-                           if (mouse.button === Qt.RightButton) {
-                             if (dockRoot.currentContextMenu === launcherContextMenu && launcherContextMenu.visible) {
-                               dockRoot.closeAllContextMenus();
-                               return;
-                             }
-                             dockRoot.closeAllContextMenus();
-                             TooltipService.hideImmediately();
-                             launcherContextMenu.show(launcherButton, null, targetScreen);
-                             return;
-                           }
+                if (mouse.button === Qt.RightButton) {
+                  if (dockRoot.currentContextMenu === launcherContextMenu && launcherContextMenu.visible) {
+                    dockRoot.closeAllContextMenus();
+                    return;
+                  }
+                  dockRoot.closeAllContextMenus();
+                  TooltipService.hideImmediately();
+                  launcherContextMenu.show(launcherButton, null, targetScreen);
+                  return;
+                }
 
-                           if (mouse.button === Qt.LeftButton || mouse.button === Qt.MiddleButton) {
-                             dockRoot.closeAllContextMenus();
-                             PanelService.toggleLauncher(targetScreen);
-                           }
-                         }
+                if (mouse.button === Qt.LeftButton || mouse.button === Qt.MiddleButton) {
+                  dockRoot.closeAllContextMenus();
+                  PanelService.toggleLauncher(targetScreen);
+                }
+              }
             }
 
             DockMenu {
@@ -503,11 +503,11 @@ Item {
                 } else {
                   // Reset if not handled by drop (e.g. dropped outside)
                   Qt.callLater(() => {
-                                 if (!appMouseArea.drag.active && dockRoot.dragSourceIndex === index) {
-                                   dockRoot.dragSourceIndex = -1;
-                                   dockRoot.dragTargetIndex = -1;
-                                 }
-                               });
+                    if (!appMouseArea.drag.active && dockRoot.dragSourceIndex === index) {
+                      dockRoot.dragSourceIndex = -1;
+                      dockRoot.dragTargetIndex = -1;
+                    }
+                  });
                 }
               }
 
@@ -713,64 +713,64 @@ Item {
               }
 
               onClicked: mouse => {
-                           if (mouse.button === Qt.RightButton) {
-                             const targetScreen = dockRoot.modelData || dockRoot.screen || null;
-                             // If right-clicking on the same app with an open context menu, close it
-                             if (dockRoot.currentContextMenu === contextMenu && contextMenu.visible) {
-                               dockRoot.closeAllContextMenus();
-                               return;
-                             }
-                             // Close any other existing context menu first
-                             dockRoot.closeAllContextMenus();
-                             // Hide tooltip when showing context menu
-                             TooltipService.hideImmediately();
-                             contextMenu.show(appButton, modelData, targetScreen);
-                             return;
-                           }
+                if (mouse.button === Qt.RightButton) {
+                  const targetScreen = dockRoot.modelData || dockRoot.screen || null;
+                  // If right-clicking on the same app with an open context menu, close it
+                  if (dockRoot.currentContextMenu === contextMenu && contextMenu.visible) {
+                    dockRoot.closeAllContextMenus();
+                    return;
+                  }
+                  // Close any other existing context menu first
+                  dockRoot.closeAllContextMenus();
+                  // Hide tooltip when showing context menu
+                  TooltipService.hideImmediately();
+                  contextMenu.show(appButton, modelData, targetScreen);
+                  return;
+                }
 
-                           // Close any existing context menu for non-right-click actions
-                           dockRoot.closeAllContextMenus();
+                // Close any existing context menu for non-right-click actions
+                dockRoot.closeAllContextMenus();
 
-                           const runningToplevels = dock.getValidToplevels(modelData);
-                           const primaryToplevel = dock.getPrimaryToplevel(modelData);
+                const runningToplevels = dock.getValidToplevels(modelData);
+                const primaryToplevel = dock.getPrimaryToplevel(modelData);
 
-                           if (mouse.button === Qt.MiddleButton) {
-                             if (primaryToplevel && primaryToplevel.close) {
-                               primaryToplevel.close();
-                               Qt.callLater(dockRoot.updateDockApps);
-                             }
-                           } else if (mouse.button === Qt.LeftButton) {
-                             if (runningToplevels.length === 0) {
-                               dock.launchAppById(modelData?.appId);
-                               return;
-                             }
+                if (mouse.button === Qt.MiddleButton) {
+                  if (primaryToplevel && primaryToplevel.close) {
+                    primaryToplevel.close();
+                    Qt.callLater(dockRoot.updateDockApps);
+                  }
+                } else if (mouse.button === Qt.LeftButton) {
+                  if (runningToplevels.length === 0) {
+                    dock.launchAppById(modelData?.appId);
+                    return;
+                  }
 
-                             if (!Settings.data.dock.groupApps || runningToplevels.length <= 1) {
-                               if (primaryToplevel && primaryToplevel.activate) {
-                                 primaryToplevel.activate();
-                               }
-                               return;
-                             }
+                  if (!Settings.data.dock.groupApps || runningToplevels.length <= 1) {
+                    if (primaryToplevel && primaryToplevel.activate) {
+                      primaryToplevel.activate();
+                    }
+                    return;
+                  }
 
-                             const clickAction = Settings.data.dock.groupClickAction || "cycle";
-                             if (clickAction === "list") {
-                               const targetScreen = dockRoot.modelData || dockRoot.screen || null;
-                               TooltipService.hideImmediately();
-                               // Left-click list should always open the grouped window list view.
-                               contextMenu.show(appButton, modelData, targetScreen, "list");
-                             } else {
-                               const appKey = modelData?.appId || "";
-                               const state = dockRoot.groupCycleIndices || {};
-                               const nextIndex = (state[appKey] || 0) % runningToplevels.length;
-                               const nextToplevel = runningToplevels[nextIndex];
-                               if (nextToplevel && nextToplevel.activate) {
-                                 nextToplevel.activate();
-                               }
-                               state[appKey] = (nextIndex + 1) % runningToplevels.length;
-                               dockRoot.groupCycleIndices = Object.assign({}, state);
-                             }
-                           }
-                         }
+                  const clickAction = Settings.data.dock.groupClickAction || "cycle";
+                  if (clickAction === "list") {
+                    const targetScreen = dockRoot.modelData || dockRoot.screen || null;
+                    TooltipService.hideImmediately();
+                    // Left-click list should always open the grouped window list view.
+                    contextMenu.show(appButton, modelData, targetScreen, "list");
+                  } else {
+                    const appKey = modelData?.appId || "";
+                    const state = dockRoot.groupCycleIndices || {};
+                    const nextIndex = (state[appKey] || 0) % runningToplevels.length;
+                    const nextToplevel = runningToplevels[nextIndex];
+                    if (nextToplevel && nextToplevel.activate) {
+                      nextToplevel.activate();
+                    }
+                    state[appKey] = (nextIndex + 1) % runningToplevels.length;
+                    dockRoot.groupCycleIndices = Object.assign({}, state);
+                  }
+                }
+              }
             }
 
             // Active indicator - positioned at the edge of the delegate area

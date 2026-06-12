@@ -44,9 +44,9 @@ ColumnLayout {
     description: I18n.tr("bar.audio-visualizer.color-name-description")
     currentKey: root.valueColorName
     onSelected: key => {
-                  root.valueColorName = key;
-                  saveSettings();
-                }
+      root.valueColorName = key;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.colorName
   }
 
@@ -55,9 +55,9 @@ ColumnLayout {
     description: I18n.tr("bar.audio-visualizer.hide-when-idle-description")
     checked: valueHideWhenIdle
     onToggled: checked => {
-                 valueHideWhenIdle = checked;
-                 saveSettings();
-               }
+      valueHideWhenIdle = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.hideWhenIdle
   }
 }

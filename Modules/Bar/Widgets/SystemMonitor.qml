@@ -171,20 +171,20 @@ Item {
     ]
 
     onTriggered: action => {
-                   contextMenu.close();
-                   PanelService.closeContextMenu(screen);
+      contextMenu.close();
+      PanelService.closeContextMenu(screen);
 
-                   if (action === "sysmon-settings") {
-                     let monitorCmd = Settings.data.systemMonitor.externalMonitor;
-                     if (monitorCmd && monitorCmd.trim() !== "") {
-                       openExternalMonitor();
-                     } else {
-                       SettingsPanelService.openToTab(SettingsPanel.Tab.System, 0, screen);
-                     }
-                   } else if (action === "widget-settings") {
-                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
-                   }
-                 }
+      if (action === "sysmon-settings") {
+        let monitorCmd = Settings.data.systemMonitor.externalMonitor;
+        if (monitorCmd && monitorCmd.trim() !== "") {
+          openExternalMonitor();
+        } else {
+          SettingsPanelService.openToTab(SettingsPanel.Tab.System, 0, screen);
+        }
+      } else if (action === "widget-settings") {
+        BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+      }
+    }
   }
 
   // Visual capsule centered in parent
@@ -931,17 +931,17 @@ Item {
     acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
     hoverEnabled: true
     onClicked: mouse => {
-                 if (mouse.button === Qt.LeftButton) {
-                   PanelService.getPanel("systemStatsPanel", screen)?.toggle(root);
-                   TooltipService.hide();
-                 } else if (mouse.button === Qt.RightButton) {
-                   TooltipService.hide();
-                   PanelService.showContextMenu(contextMenu, root, screen);
-                 } else if (mouse.button === Qt.MiddleButton) {
-                   TooltipService.hide();
-                   openExternalMonitor();
-                 }
-               }
+      if (mouse.button === Qt.LeftButton) {
+        PanelService.getPanel("systemStatsPanel", screen)?.toggle(root);
+        TooltipService.hide();
+      } else if (mouse.button === Qt.RightButton) {
+        TooltipService.hide();
+        PanelService.showContextMenu(contextMenu, root, screen);
+      } else if (mouse.button === Qt.MiddleButton) {
+        TooltipService.hide();
+        openExternalMonitor();
+      }
+    }
     onEntered: {
       if (!PanelService.getPanel("systemStatsPanel", screen).isPanelOpen) {
         TooltipService.show(root, buildTooltipContent(), BarService.getTooltipDirection(root.screen?.name));

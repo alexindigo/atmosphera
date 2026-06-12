@@ -73,10 +73,10 @@ ColumnLayout {
     title: I18n.tr("setup.wallpaper.dir-select-title")
     initialPath: Settings.data.wallpaper.directory || Quickshell.env("HOME") + "/Pictures"
     onAccepted: paths => {
-                  if (paths.length > 0) {
-                    Settings.data.wallpaper.directory = paths[0];
-                  }
-                }
+      if (paths.length > 0) {
+        Settings.data.wallpaper.directory = paths[0];
+      }
+    }
   }
 
   NFilePicker {
@@ -85,9 +85,9 @@ ColumnLayout {
     title: I18n.tr("panels.wallpaper.settings-select-monitor-folder")
     initialPath: WallpaperService.getMonitorDirectory(specificFolderMonitorName) || Quickshell.env("HOME") + "/Pictures"
     onAccepted: paths => {
-                  if (paths.length > 0) {
-                    WallpaperService.setMonitorDirectory(specificFolderMonitorName, paths[0]);
-                  }
-                }
+      if (paths.length > 0) {
+        WallpaperService.setMonitorDirectory(specificFolderMonitorName, paths[0]);
+      }
+    }
   }
 }

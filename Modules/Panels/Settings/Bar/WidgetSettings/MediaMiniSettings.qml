@@ -79,9 +79,9 @@ ColumnLayout {
     ]
     currentKey: root.valueHideMode
     onSelected: key => {
-                  root.valueHideMode = key;
-                  saveSettings();
-                }
+      root.valueHideMode = key;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.hideMode
   }
 
@@ -90,9 +90,9 @@ ColumnLayout {
     description: I18n.tr("bar.media-mini.show-album-art-description")
     checked: valueShowAlbumArt
     onToggled: checked => {
-                 valueShowAlbumArt = checked;
-                 saveSettings();
-               }
+      valueShowAlbumArt = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showAlbumArt
   }
 
@@ -101,9 +101,9 @@ ColumnLayout {
     description: I18n.tr("bar.media-mini.show-artist-first-description")
     checked: valueShowArtistFirst
     onToggled: checked => {
-                 valueShowArtistFirst = checked;
-                 saveSettings();
-               }
+      valueShowArtistFirst = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showArtistFirst
   }
 
@@ -112,9 +112,9 @@ ColumnLayout {
     description: I18n.tr("bar.media-mini.show-visualizer-description")
     checked: valueShowVisualizer
     onToggled: checked => {
-                 valueShowVisualizer = checked;
-                 saveSettings();
-               }
+      valueShowVisualizer = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showVisualizer
   }
 
@@ -138,9 +138,9 @@ ColumnLayout {
     ]
     currentKey: valueVisualizerType
     onSelected: key => {
-                  valueVisualizerType = key;
-                  saveSettings();
-                }
+      valueVisualizerType = key;
+      saveSettings();
+    }
     minimumWidth: 200
     defaultValue: widgetMetadata.visualizerType
   }
@@ -161,9 +161,9 @@ ColumnLayout {
     description: I18n.tr("bar.media-mini.use-fixed-width-description")
     checked: valueUseFixedWidth
     onToggled: checked => {
-                 valueUseFixedWidth = checked;
-                 saveSettings();
-               }
+      valueUseFixedWidth = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.useFixedWidth
   }
 
@@ -172,18 +172,18 @@ ColumnLayout {
     description: I18n.tr("bar.media-mini.show-progress-ring-description")
     checked: valueShowProgressRing
     onToggled: checked => {
-                 valueShowProgressRing = checked;
-                 saveSettings();
-               }
+      valueShowProgressRing = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showProgressRing
   }
 
   NColorChoice {
     currentKey: valueTextColor
     onSelected: key => {
-                  valueTextColor = key;
-                  saveSettings();
-                }
+      valueTextColor = key;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.textColor
   }
 
@@ -206,9 +206,9 @@ ColumnLayout {
     ]
     currentKey: valueScrollingMode
     onSelected: key => {
-                  valueScrollingMode = key;
-                  saveSettings();
-                }
+      valueScrollingMode = key;
+      saveSettings();
+    }
     minimumWidth: 200
     defaultValue: widgetMetadata.scrollingMode
   }
@@ -229,9 +229,9 @@ ColumnLayout {
     description: I18n.tr("bar.media-mini.show-album-art-description")
     checked: valuePanelShowAlbumArt
     onToggled: checked => {
-                 valuePanelShowAlbumArt = checked;
-                 saveSettings();
-               }
+      valuePanelShowAlbumArt = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.panelShowAlbumArt
   }
 
@@ -240,9 +240,9 @@ ColumnLayout {
     description: I18n.tr("bar.media-mini.compact-mode-description")
     checked: valueCompactMode
     onToggled: checked => {
-                 valueCompactMode = checked;
-                 saveSettings();
-               }
+      valueCompactMode = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.compactMode
   }
 }

@@ -357,9 +357,9 @@ Singleton {
       openLauncher(screen);
       // Set search text after core is ready
       Qt.callLater(() => {
-                     if (overlayLauncherCore)
-                     overlayLauncherCore.setSearchText(searchText);
-                   });
+        if (overlayLauncherCore)
+          overlayLauncherCore.setSearchText(searchText);
+      });
     } else {
       var panel = getPanel("launcherPanel", screen);
       if (panel) {

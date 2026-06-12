@@ -363,16 +363,16 @@ Item {
 
     stdout: SplitParser {
       onRead: line => {
-                scaleQuery.buffer += line + "\n";
-              }
+        scaleQuery.buffer += line + "\n";
+      }
     }
 
     onExited: code => {
-                if (code === 0) {
-                  internal.processScales(scaleQuery.buffer);
-                  scaleQuery.buffer = "";
-                }
-              }
+      if (code === 0) {
+        internal.processScales(scaleQuery.buffer);
+        scaleQuery.buffer = "";
+      }
+    }
   }
 
   // ===== TOPLEVEL MANAGER CONNECTION =====

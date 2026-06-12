@@ -67,15 +67,15 @@ NIconButton {
     ]
 
     onTriggered: action => {
-                   contextMenu.close();
-                   PanelService.closeContextMenu(screen);
+      contextMenu.close();
+      PanelService.closeContextMenu(screen);
 
-                   if (action === "random-wallpaper") {
-                     WallpaperService.setRandomWallpaper();
-                   } else if (action === "widget-settings") {
-                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
-                   }
-                 }
+      if (action === "random-wallpaper") {
+        WallpaperService.setRandomWallpaper();
+      } else if (action === "widget-settings") {
+        BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+      }
+    }
   }
 
   onClicked: {

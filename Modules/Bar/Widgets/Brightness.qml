@@ -123,17 +123,17 @@ Item {
     ]
 
     onTriggered: action => {
-                   contextMenu.close();
-                   PanelService.closeContextMenu(screen);
+      contextMenu.close();
+      PanelService.closeContextMenu(screen);
 
-                   if (action === "open-display-settings") {
-                     var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-                     settingsPanel.requestedTab = SettingsPanel.Tab.Display;
-                     settingsPanel.open();
-                   } else if (action === "widget-settings") {
-                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
-                   }
-                 }
+      if (action === "open-display-settings") {
+        var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+        settingsPanel.requestedTab = SettingsPanel.Tab.Display;
+        settingsPanel.open();
+      } else if (action === "widget-settings") {
+        BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+      }
+    }
   }
 
   BarPill {

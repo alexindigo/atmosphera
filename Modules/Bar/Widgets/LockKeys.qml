@@ -71,13 +71,13 @@ Item {
     ]
 
     onTriggered: action => {
-                   contextMenu.close();
-                   PanelService.closeContextMenu(screen);
+      contextMenu.close();
+      PanelService.closeContextMenu(screen);
 
-                   if (action === "widget-settings") {
-                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
-                   }
-                 }
+      if (action === "widget-settings") {
+        BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+      }
+    }
   }
 
   // Visual capsule centered in parent
@@ -157,9 +157,9 @@ Item {
     anchors.fill: parent
 
     onClicked: mouse => {
-                 if (mouse.button === Qt.RightButton) {
-                   PanelService.showContextMenu(contextMenu, root, screen);
-                 }
-               }
+      if (mouse.button === Qt.RightButton) {
+        PanelService.showContextMenu(contextMenu, root, screen);
+      }
+    }
   }
 }

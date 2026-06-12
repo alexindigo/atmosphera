@@ -57,28 +57,28 @@ ColumnLayout {
     availableWidgets.clear();
     var sortedEntries = ControlCenterWidgetRegistry.getAvailableWidgets().slice().sort();
     sortedEntries.forEach(entry => {
-                            const isPlugin = ControlCenterWidgetRegistry.isPluginWidget(entry);
-                            let displayName = entry;
-                            let badges = [];
-                            if (isPlugin) {
-                              const pluginId = entry.replace("plugin:", "");
-                              const manifest = PluginRegistry.getPluginManifest(pluginId);
-                              if (manifest && manifest.name) {
-                                displayName = manifest.name;
-                              } else {
-                                displayName = pluginId;
-                              }
-                              badges.push({
-                                            "icon": "plugin",
-                                            "color": Color.mSecondary
-                                          });
-                            }
-                            availableWidgets.append({
-                                                      "key": entry,
-                                                      "name": displayName,
-                                                      "badges": badges
-                                                    });
-                          });
+      const isPlugin = ControlCenterWidgetRegistry.isPluginWidget(entry);
+      let displayName = entry;
+      let badges = [];
+      if (isPlugin) {
+        const pluginId = entry.replace("plugin:", "");
+        const manifest = PluginRegistry.getPluginManifest(pluginId);
+        if (manifest && manifest.name) {
+          displayName = manifest.name;
+        } else {
+          displayName = pluginId;
+        }
+        badges.push({
+                      "icon": "plugin",
+                      "color": Color.mSecondary
+                    });
+      }
+      availableWidgets.append({
+                                "key": entry,
+                                "name": displayName,
+                                "badges": badges
+                              });
+    });
     // Starts empty
     cardsModel = [];
 

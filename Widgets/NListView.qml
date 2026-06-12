@@ -280,18 +280,18 @@ Item {
       enabled: !root.contentOverflows
       acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
       onWheel: event => {
-                 event.accepted = true;
-               }
+        event.accepted = true;
+      }
     }
 
     WheelHandler {
       enabled: root.wheelScrollMultiplier !== 1.0 && root.contentOverflows
       acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
       onWheel: event => {
-                 const delta = event.pixelDelta.y !== 0 ? event.pixelDelta.y : event.angleDelta.y / 2;
-                 root.applyWheelScroll(delta);
-                 event.accepted = true;
-               }
+        const delta = event.pixelDelta.y !== 0 ? event.pixelDelta.y : event.angleDelta.y / 2;
+        root.applyWheelScroll(delta);
+        event.accepted = true;
+      }
     }
 
     ScrollBar.vertical: ScrollBar {

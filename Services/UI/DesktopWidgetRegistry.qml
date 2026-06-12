@@ -312,17 +312,17 @@ Singleton {
       if (dialog) {
         root.currentSettingsDialog = dialog;
         dialog.updateWidgetSettings.connect((sec, idx, settings) => {
-                                              root.updateWidgetData(sec, idx, settings);
-                                            });
+          root.updateWidgetData(sec, idx, settings);
+        });
         popupMenuWindow.hasDialog = true;
         dialog.closed.connect(() => {
-                                popupMenuWindow.hasDialog = false;
-                                popupMenuWindow.close();
-                                if (root.currentSettingsDialog === dialog) {
-                                  root.currentSettingsDialog = null;
-                                }
-                                dialog.destroy();
-                              });
+          popupMenuWindow.hasDialog = false;
+          popupMenuWindow.close();
+          if (root.currentSettingsDialog === dialog) {
+            root.currentSettingsDialog = null;
+          }
+          dialog.destroy();
+        });
         dialog.open();
       } else {
         Logger.e("DesktopWidgetRegistry", "Failed to create widget settings dialog");
@@ -335,12 +335,12 @@ Singleton {
       Logger.e("DesktopWidgetRegistry", "Error loading settings dialog component:", component.errorString());
     } else {
       component.statusChanged.connect(() => {
-                                        if (component.status === Component.Ready) {
-                                          instantiateAndOpen();
-                                        } else if (component.status === Component.Error) {
-                                          Logger.e("DesktopWidgetRegistry", "Error loading settings dialog component:", component.errorString());
-                                        }
-                                      });
+        if (component.status === Component.Ready) {
+          instantiateAndOpen();
+        } else if (component.status === Component.Error) {
+          Logger.e("DesktopWidgetRegistry", "Error loading settings dialog component:", component.errorString());
+        }
+      });
     }
   }
 }

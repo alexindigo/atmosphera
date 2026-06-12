@@ -135,36 +135,36 @@ Item {
               z: 1000
 
               onPressed: mouse => {
-                           if (!delegateItem.canDrag) {
-                             return;
-                           }
-                           delegateItem.dragStartIndex = delegateItem.index;
-                           delegateItem.dragTargetIndex = delegateItem.index;
-                           delegateItem.dragStartY = delegateItem.y;
-                           delegateItem.dragging = true;
-                           delegateItem.z = 999;
+                if (!delegateItem.canDrag) {
+                  return;
+                }
+                delegateItem.dragStartIndex = delegateItem.index;
+                delegateItem.dragTargetIndex = delegateItem.index;
+                delegateItem.dragStartY = delegateItem.y;
+                delegateItem.dragging = true;
+                delegateItem.z = 999;
 
-                           // Signal that interaction started (prevents panel close)
-                           preventStealing = true;
-                           root.dragPotentialStarted();
-                         }
+                // Signal that interaction started (prevents panel close)
+                preventStealing = true;
+                root.dragPotentialStarted();
+              }
 
               onPositionChanged: mouse => {
-                                   if (delegateItem.dragging) {
-                                     var dy = mouse.y - dragHandle.height / 2;
-                                     var newY = delegateItem.y + dy;
+                if (delegateItem.dragging) {
+                  var dy = mouse.y - dragHandle.height / 2;
+                  var newY = delegateItem.y + dy;
 
-                                     // Constrain within bounds
-                                     newY = Math.max(0, Math.min(newY, root.contentHeight - delegateItem.height));
-                                     delegateItem.y = newY;
+                  // Constrain within bounds
+                  newY = Math.max(0, Math.min(newY, root.contentHeight - delegateItem.height));
+                  delegateItem.y = newY;
 
-                                     // Calculate target index (but don't apply yet)
-                                     var targetIndex = Math.floor((newY + delegateItem.height / 2) / (delegateItem.height + delegateItem.itemSpacing));
-                                     targetIndex = Math.max(0, Math.min(targetIndex, repeater.count - 1));
+                  // Calculate target index (but don't apply yet)
+                  var targetIndex = Math.floor((newY + delegateItem.height / 2) / (delegateItem.height + delegateItem.itemSpacing));
+                  targetIndex = Math.max(0, Math.min(targetIndex, repeater.count - 1));
 
-                                     delegateItem.dragTargetIndex = targetIndex;
-                                   }
-                                 }
+                  delegateItem.dragTargetIndex = targetIndex;
+                }
+              }
 
               onReleased: {
                 // Always signal end of interaction

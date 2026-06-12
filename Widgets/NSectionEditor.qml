@@ -275,11 +275,11 @@ NBox {
           root._activeDialog = dialog;
           dialog.updateWidgetSettings.connect(root.updateWidgetSettings);
           dialog.closed.connect(() => {
-                                  if (root._activeDialog === dialog) {
-                                    root._activeDialog = null;
-                                    dialog.destroy();
-                                  }
-                                });
+            if (root._activeDialog === dialog) {
+              root._activeDialog = null;
+              dialog.destroy();
+            }
+          });
           dialog.open();
         } else {
           Logger.e("NSectionEditor", "Failed to create settings dialog instance");
@@ -538,12 +538,12 @@ NBox {
               }
 
               onTriggered: action => {
-                             if (action === "remove") {
-                               root.removeWidget(root.sectionId, widgetItem.index);
-                             } else {
-                               root.moveWidget(root.sectionId, widgetItem.index, action);
-                             }
-                           }
+                if (action === "remove") {
+                  root.removeWidget(root.sectionId, widgetItem.index);
+                } else {
+                  root.moveWidget(root.sectionId, widgetItem.index, action);
+                }
+              }
             }
 
             // MouseArea for the context menu - only active when not dragging
@@ -556,14 +556,14 @@ NBox {
               enabled: !flowDragArea.dragStarted && !flowDragArea.potentialDrag
 
               onPressed: mouse => {
-                           mouse.accepted = true;
-                           // Check if click is not on the settings button area (if visible)
-                           const localX = mouse.x;
-                           const buttonsStartX = parent.width - (parent.buttonsCount * parent.buttonsWidth);
-                           if (localX < buttonsStartX || parent.buttonsCount === 0) {
-                             contextMenu.openAtItem(widgetItem, mouse.x, mouse.y);
-                           }
-                         }
+                mouse.accepted = true;
+                // Check if click is not on the settings button area (if visible)
+                const localX = mouse.x;
+                const buttonsStartX = parent.width - (parent.buttonsCount * parent.buttonsWidth);
+                if (localX < buttonsStartX || parent.buttonsCount === 0) {
+                  contextMenu.openAtItem(widgetItem, mouse.x, mouse.y);
+                }
+              }
             }
 
             RowLayout {
@@ -844,105 +844,105 @@ NBox {
         }
 
         onPressed: mouse => {
-                     // Reset state
-                     startPos = Qt.point(mouse.x, mouse.y);
-                     dragStarted = false;
-                     potentialDrag = false;
-                     draggedIndex = -1;
-                     draggedWidget = null;
-                     dropTargetIndex = -1;
-                     draggedModelData = null;
-                     isOverButtonArea = false;
+          // Reset state
+          startPos = Qt.point(mouse.x, mouse.y);
+          dragStarted = false;
+          potentialDrag = false;
+          draggedIndex = -1;
+          draggedWidget = null;
+          dropTargetIndex = -1;
+          draggedModelData = null;
+          isOverButtonArea = false;
 
-                     // Find which widget was clicked
-                     for (var i = 0; i < widgetModel.length; i++) {
-                       const widget = widgetRepeater.itemAt(i);
-                       if (widget && widget.widgetIndex !== undefined) {
-                         if (mouse.x >= widget.x && mouse.x <= widget.x + widget.width && mouse.y >= widget.y && mouse.y <= widget.y + widget.height) {
-                           const localX = mouse.x - widget.x;
-                           const buttonsStartX = widget.width - (widget.buttonsCount * widget.buttonsWidth * Style.uiScaleRatio);
+          // Find which widget was clicked
+          for (var i = 0; i < widgetModel.length; i++) {
+            const widget = widgetRepeater.itemAt(i);
+            if (widget && widget.widgetIndex !== undefined) {
+              if (mouse.x >= widget.x && mouse.x <= widget.x + widget.width && mouse.y >= widget.y && mouse.y <= widget.y + widget.height) {
+                const localX = mouse.x - widget.x;
+                const buttonsStartX = widget.width - (widget.buttonsCount * widget.buttonsWidth * Style.uiScaleRatio);
 
-                           if (localX >= buttonsStartX && widget.buttonsCount > 0) {
-                             // Click is on button area - don't start drag, propagate event
-                             isOverButtonArea = true;
-                             mouse.accepted = false;
-                             return;
-                           } else {
-                             // This is a draggable area
-                             draggedIndex = widget.widgetIndex;
-                             draggedWidget = widget;
-                             draggedModelData = widget.modelData;
-                             potentialDrag = true;
-                             mouse.accepted = true;
+                if (localX >= buttonsStartX && widget.buttonsCount > 0) {
+                  // Click is on button area - don't start drag, propagate event
+                  isOverButtonArea = true;
+                  mouse.accepted = false;
+                  return;
+                } else {
+                  // This is a draggable area
+                  draggedIndex = widget.widgetIndex;
+                  draggedWidget = widget;
+                  draggedModelData = widget.modelData;
+                  potentialDrag = true;
+                  mouse.accepted = true;
 
-                             // Signal that interaction started (prevents panel close)
-                             root.dragPotentialStarted();
-                             return;
-                           }
-                         }
-                       }
-                     }
+                  // Signal that interaction started (prevents panel close)
+                  root.dragPotentialStarted();
+                  return;
+                }
+              }
+            }
+          }
 
-                     // Click was not on any widget
-                     mouse.accepted = false;
-                   }
+          // Click was not on any widget
+          mouse.accepted = false;
+        }
 
         onPositionChanged: mouse => {
-                             if (potentialDrag && draggedIndex !== -1) {
-                               const deltaX = mouse.x - startPos.x;
-                               const deltaY = mouse.y - startPos.y;
-                               const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+          if (potentialDrag && draggedIndex !== -1) {
+            const deltaX = mouse.x - startPos.x;
+            const deltaY = mouse.y - startPos.y;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-                               // Start drag if threshold exceeded
-                               if (!dragStarted && distance > dragThreshold) {
-                                 dragStarted = true;
+            // Start drag if threshold exceeded
+            if (!dragStarted && distance > dragThreshold) {
+              dragStarted = true;
 
-                                 // Setup ghost widget
-                                 if (draggedWidget) {
-                                   dragGhost.width = draggedWidget.width;
-                                   dragGhost.color = root.getWidgetColor(draggedModelData)[0];
-                                   ghostText.text = draggedModelData.id;
-                                 }
+              // Setup ghost widget
+              if (draggedWidget) {
+                dragGhost.width = draggedWidget.width;
+                dragGhost.color = root.getWidgetColor(draggedModelData)[0];
+                ghostText.text = draggedModelData.id;
+              }
 
-                                 var startGlobal = flowDragArea.mapToGlobal(mouse.x, mouse.y);
-                                 root.updateCrossSectionHover(startGlobal.x, startGlobal.y);
-                               }
+              var startGlobal = flowDragArea.mapToGlobal(mouse.x, mouse.y);
+              root.updateCrossSectionHover(startGlobal.x, startGlobal.y);
+            }
 
-                               if (dragStarted) {
-                                 // Move ghost widget
-                                 dragGhost.x = mouse.x - dragGhost.width / 2;
-                                 dragGhost.y = mouse.y - dragGhost.height / 2;
+            if (dragStarted) {
+              // Move ghost widget
+              dragGhost.x = mouse.x - dragGhost.width / 2;
+              dragGhost.y = mouse.y - dragGhost.height / 2;
 
-                                 var moveGlobal = flowDragArea.mapToGlobal(mouse.x, mouse.y);
-                                 root.updateCrossSectionHover(moveGlobal.x, moveGlobal.y);
+              var moveGlobal = flowDragArea.mapToGlobal(mouse.x, mouse.y);
+              root.updateCrossSectionHover(moveGlobal.x, moveGlobal.y);
 
-                                 // Update drop indicator
-                                 updateDropIndicator(mouse.x, mouse.y);
-                               }
-                             }
-                           }
+              // Update drop indicator
+              updateDropIndicator(mouse.x, mouse.y);
+            }
+          }
+        }
 
         onReleased: mouse => {
-                      if (root.draggable && dragStarted && dropTargetIndex !== -1 && dropTargetIndex !== draggedIndex) {
-                        // Perform the reorder
-                        reorderWidget(sectionId, draggedIndex, dropTargetIndex);
-                      } else if (dragStarted && draggedIndex !== -1) {
-                        var globalPos = flowDragArea.mapToGlobal(mouse.x, mouse.y);
-                        var targetSectionId = root.findSectionAtGlobalPosition(globalPos.x, globalPos.y);
-                        if (targetSectionId !== "" && targetSectionId !== root.sectionId) {
-                          root.moveWidget(root.sectionId, draggedIndex, targetSectionId);
-                        }
-                      }
+          if (root.draggable && dragStarted && dropTargetIndex !== -1 && dropTargetIndex !== draggedIndex) {
+            // Perform the reorder
+            reorderWidget(sectionId, draggedIndex, dropTargetIndex);
+          } else if (dragStarted && draggedIndex !== -1) {
+            var globalPos = flowDragArea.mapToGlobal(mouse.x, mouse.y);
+            var targetSectionId = root.findSectionAtGlobalPosition(globalPos.x, globalPos.y);
+            if (targetSectionId !== "" && targetSectionId !== root.sectionId) {
+              root.moveWidget(root.sectionId, draggedIndex, targetSectionId);
+            }
+          }
 
-                      // Always signal end of interaction if we started one
-                      if (potentialDrag) {
-                        root.dragPotentialEnded();
-                      }
+          // Always signal end of interaction if we started one
+          if (potentialDrag) {
+            root.dragPotentialEnded();
+          }
 
-                      // Reset everything
-                      resetDragState();
-                      mouse.accepted = true;
-                    }
+          // Reset everything
+          resetDragState();
+          mouse.accepted = true;
+        }
 
         onCanceled: {
           // Handle cancel (e.g., ESC key pressed during drag)

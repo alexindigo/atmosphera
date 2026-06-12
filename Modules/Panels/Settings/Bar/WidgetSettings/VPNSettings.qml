@@ -46,25 +46,25 @@ ColumnLayout {
     ]
     currentKey: root.valueDisplayMode
     onSelected: key => {
-                  root.valueDisplayMode = key;
-                  saveSettings();
-                }
+      root.valueDisplayMode = key;
+      saveSettings();
+    }
   }
 
   NColorChoice {
     label: I18n.tr("common.select-icon-color")
     currentKey: valueIconColor
     onSelected: key => {
-                  valueIconColor = key;
-                  saveSettings();
-                }
+      valueIconColor = key;
+      saveSettings();
+    }
   }
 
   NColorChoice {
     currentKey: valueTextColor
     onSelected: key => {
-                  valueTextColor = key;
-                  saveSettings();
-                }
+      valueTextColor = key;
+      saveSettings();
+    }
   }
 }

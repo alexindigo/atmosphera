@@ -64,9 +64,9 @@ ColumnLayout {
       return items;
     }
     onSelected: key => {
-                  valueStatType = key;
-                  saveSettings();
-                }
+      valueStatType = key;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.statType
   }
 
@@ -78,71 +78,71 @@ ColumnLayout {
     model: {
       const paths = Object.keys(SystemStatService.diskPercents).sort();
       return paths.map(path => ({
-                                  key: path,
-                                  name: path
-                                }));
+        key: path,
+        name: path
+      }));
     }
-    currentKey: valueDiskPath
-    onSelected: key => {
-                  valueDiskPath = key;
-                  saveSettings();
-                }
-    defaultValue: widgetMetadata.diskPath
-  }
+      currentKey: valueDiskPath
+      onSelected: key => {
+      valueDiskPath = key;
+      saveSettings();
+    }
+      defaultValue: widgetMetadata.diskPath
+    }
 
-  NDivider {
-    Layout.fillWidth: true
-  }
+      NDivider {
+      Layout.fillWidth: true
+    }
 
-  NToggle {
-    Layout.fillWidth: true
-    label: I18n.tr("panels.desktop-widgets.system-stat-show-background-label")
-    description: I18n.tr("panels.desktop-widgets.system-stat-show-background-description")
-    checked: valueShowBackground
-    onToggled: checked => {
-                 valueShowBackground = checked;
-                 saveSettings();
-               }
-    defaultValue: widgetMetadata.showBackground
-  }
+      NToggle {
+      Layout.fillWidth: true
+      label: I18n.tr("panels.desktop-widgets.system-stat-show-background-label")
+      description: I18n.tr("panels.desktop-widgets.system-stat-show-background-description")
+      checked: valueShowBackground
+      onToggled: checked => {
+      valueShowBackground = checked;
+      saveSettings();
+    }
+      defaultValue: widgetMetadata.showBackground
+    }
 
-  NToggle {
-    Layout.fillWidth: true
-    visible: valueShowBackground
-    label: I18n.tr("panels.desktop-widgets.system-stat-rounded-corners-label")
-    description: I18n.tr("panels.desktop-widgets.system-stat-rounded-corners-description")
-    checked: valueRoundedCorners
-    onToggled: checked => {
-                 valueRoundedCorners = checked;
-                 saveSettings();
-               }
-    defaultValue: widgetMetadata.roundedCorners
-  }
+      NToggle {
+      Layout.fillWidth: true
+      visible: valueShowBackground
+      label: I18n.tr("panels.desktop-widgets.system-stat-rounded-corners-label")
+      description: I18n.tr("panels.desktop-widgets.system-stat-rounded-corners-description")
+      checked: valueRoundedCorners
+      onToggled: checked => {
+      valueRoundedCorners = checked;
+      saveSettings();
+    }
+      defaultValue: widgetMetadata.roundedCorners
+    }
 
-  NDivider {
-    Layout.fillWidth: true
-  }
+      NDivider {
+      Layout.fillWidth: true
+    }
 
-  NComboBox {
-    Layout.fillWidth: true
-    label: I18n.tr("panels.desktop-widgets.system-stat-layout-label")
-    description: I18n.tr("panels.desktop-widgets.system-stat-layout-description")
-    currentKey: valueLayout
-    minimumWidth: 260 * Style.uiScaleRatio
-    model: [
+      NComboBox {
+      Layout.fillWidth: true
+      label: I18n.tr("panels.desktop-widgets.system-stat-layout-label")
+      description: I18n.tr("panels.desktop-widgets.system-stat-layout-description")
+      currentKey: valueLayout
+      minimumWidth: 260 * Style.uiScaleRatio
+      model: [
       {
-        "key": "side",
-        "name": I18n.tr("panels.desktop-widgets.system-stat-layout-side")
-      },
+      "key": "side",
+      "name": I18n.tr("panels.desktop-widgets.system-stat-layout-side")
+    },
       {
-        "key": "bottom",
-        "name": I18n.tr("panels.desktop-widgets.system-stat-layout-bottom")
-      }
-    ]
-    onSelected: key => {
-                  valueLayout = key;
-                  saveSettings();
-                }
-    defaultValue: widgetMetadata.layout
-  }
-}
+      "key": "bottom",
+      "name": I18n.tr("panels.desktop-widgets.system-stat-layout-bottom")
+    }
+      ]
+      onSelected: key => {
+      valueLayout = key;
+      saveSettings();
+    }
+      defaultValue: widgetMetadata.layout
+    }
+    }

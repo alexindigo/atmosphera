@@ -177,13 +177,13 @@ Rectangle {
     focusSearchInput();
 
     Qt.callLater(() => {
-                   syncPluginProviders();
-                   for (let provider of providers) {
-                     if (provider.onOpened)
-                     provider.onOpened();
-                   }
-                   updateResults();
-                 });
+      syncPluginProviders();
+      for (let provider of providers) {
+        if (provider.onOpened)
+          provider.onOpened();
+      }
+      updateResults();
+    });
   }
 
   function onClosed() {
@@ -342,22 +342,22 @@ Rectangle {
         const boostByUsage = Settings.data.appLauncher.sortByMostUsed;
 
         allResults.sort((a, b) => {
-                          let sa = a._score !== undefined ? a._score : 0;
-                          let sb = b._score !== undefined ? b._score : 0;
+          let sa = a._score !== undefined ? a._score : 0;
+          let sb = b._score !== undefined ? b._score : 0;
 
-                          // Boost scores for frequently used items from tracked providers
-                          // _score is normalized 0–1, so boost is scaled to nudge, not overwhelm
-                          if (boostByUsage) {
-                            if (a.provider && a.provider.trackUsage && a.usageKey) {
-                              sa += 0.1 * Math.log2(1 + ShellState.getLauncherUsageCount(a.usageKey));
-                            }
-                            if (b.provider && b.provider.trackUsage && b.usageKey) {
-                              sb += 0.1 * Math.log2(1 + ShellState.getLauncherUsageCount(b.usageKey));
-                            }
-                          }
+          // Boost scores for frequently used items from tracked providers
+          // _score is normalized 0–1, so boost is scaled to nudge, not overwhelm
+          if (boostByUsage) {
+            if (a.provider && a.provider.trackUsage && a.usageKey) {
+              sa += 0.1 * Math.log2(1 + ShellState.getLauncherUsageCount(a.usageKey));
+            }
+            if (b.provider && b.provider.trackUsage && b.usageKey) {
+              sb += 0.1 * Math.log2(1 + ShellState.getLauncherUsageCount(b.usageKey));
+            }
+          }
 
-                          return sb - sa;
-                        });
+          return sb - sa;
+        });
       }
       results = allResults;
     }
@@ -421,8 +421,8 @@ Rectangle {
           item.onAutoPaste();
         closeImmediately();
         Qt.callLater(() => {
-                       ClipboardService.pasteText(item.autoPasteText);
-                     });
+          ClipboardService.pasteText(item.autoPasteText);
+        });
         return;
       }
 
@@ -860,11 +860,11 @@ Rectangle {
             }
 
             Qt.callLater(() => {
-                           if (root.isGridView && resultsGrid && resultsGrid.cancelFlick) {
-                             resultsGrid.cancelFlick();
-                             resultsGrid.positionViewAtIndex(root.selectedIndex, GridView.Contain);
-                           }
-                         });
+              if (root.isGridView && resultsGrid && resultsGrid.cancelFlick) {
+                resultsGrid.cancelFlick();
+                resultsGrid.positionViewAtIndex(root.selectedIndex, GridView.Contain);
+              }
+            });
           }
         }
 

@@ -39,9 +39,9 @@ ColumnLayout {
     description: I18n.tr("panels.desktop-widgets.media-player-show-background-description")
     checked: valueShowBackground
     onToggled: checked => {
-                 valueShowBackground = checked;
-                 saveSettings();
-               }
+      valueShowBackground = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showBackground
   }
 
@@ -51,9 +51,9 @@ ColumnLayout {
     description: I18n.tr("panels.desktop-widgets.media-player-rounded-corners-description")
     checked: valueRoundedCorners
     onToggled: checked => {
-                 valueRoundedCorners = checked;
-                 saveSettings();
-               }
+      valueRoundedCorners = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.roundedCorners
   }
 
@@ -63,9 +63,9 @@ ColumnLayout {
     description: I18n.tr("panels.desktop-widgets.media-player-show-album-art-description")
     checked: valueShowAlbumArt
     onToggled: checked => {
-                 valueShowAlbumArt = checked;
-                 saveSettings();
-               }
+      valueShowAlbumArt = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showAlbumArt
   }
 
@@ -75,9 +75,9 @@ ColumnLayout {
     description: I18n.tr("panels.desktop-widgets.media-player-show-visualizer-description")
     checked: valueShowVisualizer
     onToggled: checked => {
-                 valueShowVisualizer = checked;
-                 saveSettings();
-               }
+      valueShowVisualizer = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showVisualizer
   }
 
@@ -87,9 +87,9 @@ ColumnLayout {
     description: I18n.tr("panels.desktop-widgets.media-player-show-buttons-description")
     checked: valueShowButtons
     onToggled: checked => {
-                 valueShowButtons = checked;
-                 saveSettings();
-               }
+      valueShowButtons = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showButtons
   }
 
@@ -114,9 +114,9 @@ ColumnLayout {
     ]
     currentKey: valueVisualizerType
     onSelected: key => {
-                  valueVisualizerType = key;
-                  saveSettings();
-                }
+      valueVisualizerType = key;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.visualizerType
   }
 
@@ -140,9 +140,9 @@ ColumnLayout {
     ]
     currentKey: valueHideMode
     onSelected: key => {
-                  valueHideMode = key;
-                  saveSettings();
-                }
+      valueHideMode = key;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.hideMode
   }
 }

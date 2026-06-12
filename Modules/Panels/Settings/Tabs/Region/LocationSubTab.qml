@@ -30,16 +30,16 @@ ColumnLayout {
     currentKey: Settings.data.general.language
     settingsPath: "general.language"
     onSelected: key => {
-                  // Need to change language on next frame using "callLater" or it will pull the rug below our feet: the NComboBox would be rebuilt immediately before it can close properly.
-                  Qt.callLater(() => {
-                                 Settings.data.general.language = key;
-                                 if (key === "") {
-                                   I18n.detectLanguage(); // Re-detect system language if "Automatic" is selected
-                                 } else {
-                                   I18n.setLanguage(key); // Set specific language
-                                 }
-                               });
-                }
+      // Need to change language on next frame using "callLater" or it will pull the rug below our feet: the NComboBox would be rebuilt immediately before it can close properly.
+      Qt.callLater(() => {
+        Settings.data.general.language = key;
+        if (key === "") {
+          I18n.detectLanguage(); // Re-detect system language if "Automatic" is selected
+        } else {
+          I18n.setLanguage(key); // Set specific language
+        }
+      });
+    }
   }
 
   NDivider {

@@ -47,9 +47,9 @@ ColumnLayout {
     model: BatteryService.deviceModel
     currentKey: root.valueDeviceNativePath
     onSelected: key => {
-                  root.valueDeviceNativePath = key;
-                  saveSettings();
-                }
+      root.valueDeviceNativePath = key;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.deviceNativePath
   }
 
@@ -82,9 +82,9 @@ ColumnLayout {
     ]
     currentKey: root.valueDisplayMode
     onSelected: key => {
-                  root.valueDisplayMode = key;
-                  saveSettings();
-                }
+      root.valueDisplayMode = key;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.displayMode
   }
 
@@ -93,9 +93,9 @@ ColumnLayout {
     description: I18n.tr("bar.battery.hide-if-not-detected-description")
     checked: valueHideIfNotDetected
     onToggled: checked => {
-                 valueHideIfNotDetected = checked;
-                 saveSettings();
-               }
+      valueHideIfNotDetected = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.hideIfNotDetected
   }
 
@@ -104,9 +104,9 @@ ColumnLayout {
     description: I18n.tr("bar.battery.hide-if-idle-description")
     checked: valueHideIfIdle
     onToggled: checked => {
-                 valueHideIfIdle = checked;
-                 saveSettings();
-               }
+      valueHideIfIdle = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.hideIfIdle
   }
 
@@ -119,9 +119,9 @@ ColumnLayout {
     description: I18n.tr("bar.battery.show-power-profile-description")
     checked: valueShowPowerProfiles
     onToggled: checked => {
-                 valueShowPowerProfiles = checked;
-                 saveSettings();
-               }
+      valueShowPowerProfiles = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showPowerProfiles
   }
 
@@ -130,9 +130,9 @@ ColumnLayout {
     description: I18n.tr("bar.battery.show-atmosphera-performance-description")
     checked: valueShowAtmospheraPerformance
     onToggled: checked => {
-                 valueShowAtmospheraPerformance = checked;
-                 saveSettings();
-               }
+      valueShowAtmospheraPerformance = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showAtmospheraPerformance
   }
 }

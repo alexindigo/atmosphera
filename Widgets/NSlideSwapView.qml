@@ -61,19 +61,19 @@ Item {
     snapshot.scheduleUpdate();
 
     Qt.callLater(() => {
-                   if (!_running) {
-                     return;
-                   }
+      if (!_running) {
+        return;
+      }
 
-                   const applyFn = _pendingApplyChange;
-                   _pendingApplyChange = null;
-                   const shouldAnimate = applyFn ? applyFn() !== false : true;
-                   if (!shouldAnimate) {
-                     resetVisuals();
-                     return;
-                   }
-                   transition.restart();
-                 });
+      const applyFn = _pendingApplyChange;
+      _pendingApplyChange = null;
+      const shouldAnimate = applyFn ? applyFn() !== false : true;
+      if (!shouldAnimate) {
+        resetVisuals();
+        return;
+      }
+      transition.restart();
+    });
   }
 
   ShaderEffectSource {

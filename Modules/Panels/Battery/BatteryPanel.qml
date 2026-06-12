@@ -331,13 +331,13 @@ SmartPanel {
               value: profileIndex
               enabled: profilesAvailable
               onPressedChanged: (pressed, v) => {
-                                  if (!pressed) {
-                                    setProfileByIndex(v);
-                                  }
-                                }
+                if (!pressed) {
+                  setProfileByIndex(v);
+                }
+              }
               onMoved: v => {
-                         profileIndex = v;
-                       }
+                profileIndex = v;
+              }
             }
 
             RowLayout {

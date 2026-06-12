@@ -74,17 +74,17 @@ NIconButton {
     ]
 
     onTriggered: action => {
-                   contextMenu.close();
-                   PanelService.closeContextMenu(screen);
+      contextMenu.close();
+      PanelService.closeContextMenu(screen);
 
-                   if (action === "launcher-settings") {
-                     var panel = PanelService.getPanel("settingsPanel", screen);
-                     panel.requestedTab = SettingsPanel.Tab.Launcher;
-                     panel.toggle();
-                   } else if (action === "widget-settings") {
-                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
-                   }
-                 }
+      if (action === "launcher-settings") {
+        var panel = PanelService.getPanel("settingsPanel", screen);
+        panel.requestedTab = SettingsPanel.Tab.Launcher;
+        panel.toggle();
+      } else if (action === "widget-settings") {
+        BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+      }
+    }
   }
 
   onClicked: PanelService.toggleLauncher(screen)

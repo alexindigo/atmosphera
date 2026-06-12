@@ -89,19 +89,19 @@ NIconButton {
     ]
 
     onTriggered: action => {
-                   contextMenu.close();
-                   PanelService.closeContextMenu(screen);
+      contextMenu.close();
+      PanelService.closeContextMenu(screen);
 
-                   if (action === "open-launcher") {
-                     PanelService.toggleLauncher(screen);
-                   } else if (action === "open-settings") {
-                     var panel = PanelService.getPanel("settingsPanel", screen);
-                     panel.requestedTab = SettingsPanel.Tab.General;
-                     panel.toggle();
-                   } else if (action === "widget-settings") {
-                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
-                   }
-                 }
+      if (action === "open-launcher") {
+        PanelService.toggleLauncher(screen);
+      } else if (action === "open-settings") {
+        var panel = PanelService.getPanel("settingsPanel", screen);
+        panel.requestedTab = SettingsPanel.Tab.General;
+        panel.toggle();
+      } else if (action === "widget-settings") {
+        BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+      }
+    }
   }
 
   onClicked: {

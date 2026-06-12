@@ -688,235 +688,235 @@ Singleton {
         Logger.d("Network", "Device sync: wifiAvailable: " + wifiAvailable + ", ethAvailable: " + ethernetAvailable + ", wifiConnected: " + root.wifiConnected + " (" + activeWifiIf + "), ethConnected: " + root.ethernetConnected + " (" + activeEthIf + ")");
 
         ethList.sort((a, b) => (a.connected !== b.connected) ? (a.connected ? -1 : 1) : a.ifname.localeCompare(b.ifname));
-        root.ethernetInterfaces = ethList;
+root.ethernetInterfaces = ethList;
 
-        root.activeEthernetIf = activeEthIf;
-        root.activeEthernetDetails = newActiveEthernetDetails;
-        root.activeEthernetDetailsTimestamp = Date.now();
-        root.ethernetDetailsLoading = false;
+root.activeEthernetIf = activeEthIf;
+root.activeEthernetDetails = newActiveEthernetDetails;
+root.activeEthernetDetailsTimestamp = Date.now();
+root.ethernetDetailsLoading = false;
 
-        root.activeWifiIf = activeWifiIf;
-        root.activeWifiDetails = newActiveWifiDetails;
-        root.activeWifiDetailsTimestamp = Date.now();
-        root.wifiDetailsLoading = false;
-      }
+root.activeWifiIf = activeWifiIf;
+root.activeWifiDetails = newActiveWifiDetails;
+root.activeWifiDetailsTimestamp = Date.now();
+root.wifiDetailsLoading = false;
+}
+}
+stderr: StdioCollector {
+  onStreamFinished: {
+    if (text && text.trim()) {
+      Logger.w("Network", "nmcli device show stderr:", text.trim());
     }
-    stderr: StdioCollector {
-      onStreamFinished: {
-        if (text && text.trim()) {
-          Logger.w("Network", "nmcli device show stderr:", text.trim());
-        }
-        root.ethernetDetailsLoading = false;
-        root.wifiDetailsLoading = false;
+    root.ethernetDetailsLoading = false;
+    root.wifiDetailsLoading = false;
+  }
+}
+}
+
+// Process to check the internet connectivity of the connected network
+Process {
+  id: connectivityCheckProcess
+  running: false
+  command: ["nmcli", "networking", "connectivity", "check"]
+  stdout: StdioCollector {
+    onStreamFinished: {
+      const r = text.trim();
+      if (!r) {
+        return;
+      }
+      root._networkConnectivity = (r === "none") ? "unknown" : r;
+      root._internetConnectivity = (r === "full");
+    }
+  }
+  stderr: StdioCollector {
+    onStreamFinished: {
+      if (text.trim()) {
+        Logger.w("Network", "Connectivity check error: " + text);
       }
     }
   }
+}
 
-  // Process to check the internet connectivity of the connected network
-  Process {
-    id: connectivityCheckProcess
-    running: false
-    command: ["nmcli", "networking", "connectivity", "check"]
-    stdout: StdioCollector {
-      onStreamFinished: {
-        const r = text.trim();
-        if (!r) {
-          return;
-        }
-        root._networkConnectivity = (r === "none") ? "unknown" : r;
-        root._internetConnectivity = (r === "full");
-      }
-    }
-    stderr: StdioCollector {
-      onStreamFinished: {
-        if (text.trim()) {
-          Logger.w("Network", "Connectivity check error: " + text);
+// Helper process to get existing profiles
+Process {
+  id: profileCheckProcess
+  running: false
+  command: ["nmcli", "-t", "-f", "NAME", "connection", "show"]
+
+  stdout: StdioCollector {
+    onStreamFinished: {
+      var profiles = {};
+      var lines = text.split("\n");
+      for (var i = 0; i < lines.length; i++) {
+        var l = lines[i];
+        if (l && l.trim()) {
+          profiles[l.trim()] = true;
         }
       }
+      root.existingProfiles = profiles;
+      scanProcess.running = true;
     }
   }
-
-  // Helper process to get existing profiles
-  Process {
-    id: profileCheckProcess
-    running: false
-    command: ["nmcli", "-t", "-f", "NAME", "connection", "show"]
-
-    stdout: StdioCollector {
-      onStreamFinished: {
-        var profiles = {};
-        var lines = text.split("\n");
-        for (var i = 0; i < lines.length; i++) {
-          var l = lines[i];
-          if (l && l.trim()) {
-            profiles[l.trim()] = true;
-          }
-        }
-        root.existingProfiles = profiles;
-        scanProcess.running = true;
-      }
-    }
-    stderr: StdioCollector {
-      onStreamFinished: {
-        if (text && text.trim()) {
-          Logger.w("Network", "Profile check stderr:", text.trim());
-          if (root.scanningActive) {
-            if (root.scanPending) {
-              root.scanPending = false;
-              delayedScanTimer.interval = 3000;
-            } else {
-              delayedScanTimer.interval = 5000;
-            }
-            delayedScanTimer.restart();
-          }
-        }
-      }
-    }
-  }
-
-  // Scan for Wi-Fi networks
-  Process {
-    id: scanProcess
-    running: false
-    command: ["nmcli", "-t", "-f", "SSID,SECURITY,SIGNAL,IN-USE", "device", "wifi", "list", "--rescan", "yes"]
-
-    stdout: StdioCollector {
-      onStreamFinished: {
-        const lines = text.trim().split("\n");
-        const networksMap = {};
-
-        for (let i = 0; i < lines.length; i++) {
-          const line = lines[i].trim();
-          if (!line) {
-            continue;
-          }
-
-          // Parse SSID:SECURITY:SIGNAL:IN-USE
-          const parts = line.split(":");
-          if (parts.length < 4) {
-            continue;
-          }
-
-          const inUse = parts[parts.length - 1];
-          const signal = parseInt(parts[parts.length - 2]) || 0;
-          let security = parts[parts.length - 3];
-          if (security) {
-            security = security.replace("WPA2 WPA3", "WPA2/WPA3").replace("WPA1 WPA2", "WPA1/WPA2");
-          }
-          const ssid = parts.slice(0, parts.length - 3).join(":");
-
-          if (ssid) {
-            const isConnected = (inUse === "*");
-            if (!networksMap[ssid]) {
-              networksMap[ssid] = {
-                "ssid": ssid,
-                "security": security || "--",
-                "signal": signal,
-                "connected": isConnected,
-                "existing": !!root.existingProfiles[ssid]
-              };
-            } else {
-              if (isConnected) {
-                networksMap[ssid].connected = true;
-                networksMap[ssid].signal = signal;
-                connectivityCheckProcess.running = true;
-              } else if (!networksMap[ssid].connected && signal > networksMap[ssid].signal) {
-                networksMap[ssid].signal = signal;
-              }
-            }
-          }
-        }
-
-        // Logging & Diffing
-        const oldSSIDs = Object.keys(root.networks);
-        const newSSIDs = Object.keys(networksMap);
-        const newNetworks = newSSIDs.filter(s => oldSSIDs.indexOf(s) === -1);
-        const lostNetworks = oldSSIDs.filter(s => newSSIDs.indexOf(s) === -1);
-
-        // Always update networks, this makes more reflective of state/signal.
-        root.networks = networksMap;
-
-        if (newNetworks.length > 0 || lostNetworks.length > 0) {
-          if (newNetworks.length > 0) {
-            Logger.d("Network", "New Wi-Fi network appeared:", newNetworks.join(", "));
-          }
-          if (lostNetworks.length > 0) {
-            Logger.d("Network", "Wi-Fi network disappeared:", lostNetworks.join(", "));
-          }
-          Logger.d("Network", "Total Wi-Fi networks:", Object.keys(networksMap).length);
-        }
-
-        if (Object.values(networksMap).some(n => n.connected)) {
-          root.refreshActiveWifiDetails();
-        }
-
-        if (root.scanPending) {
-          root.scanPending = false;
-          delayedScanTimer.interval = 100;
-          delayedScanTimer.restart();
-        }
-        root.scanningActive = false;
-      }
-    }
-
-    stderr: StdioCollector {
-      onStreamFinished: {
-        if (text.trim()) {
-          Logger.w("Network", "Scan error: " + text);
-
-          // Even on error, if a scan was pending, try again
+  stderr: StdioCollector {
+    onStreamFinished: {
+      if (text && text.trim()) {
+        Logger.w("Network", "Profile check stderr:", text.trim());
+        if (root.scanningActive) {
           if (root.scanPending) {
             root.scanPending = false;
             delayedScanTimer.interval = 3000;
-          } else if (root.scanningActive) {
-            delayedScanTimer.interval = 10000;
+          } else {
+            delayedScanTimer.interval = 5000;
           }
           delayedScanTimer.restart();
         }
-        root.scanningActive = false;
       }
     }
   }
+}
 
-  // Connect to Wi-Fi network
-  Process {
-    id: connectProcess
-    property string mode: "new" // "saved", "new", or "manual"
-    property string ssid: ""
-    property string password: ""
-    property bool isHidden: false
-    // Manual properties
-    property string securityKey: ""
-    property string identity: ""
-    property string eap: "peap"
-    property string phase2: "mschapv2"
-    property string anonIdentity: ""
-    property string caCert: ""
-    running: false
+// Scan for Wi-Fi networks
+Process {
+  id: scanProcess
+  running: false
+  command: ["nmcli", "-t", "-f", "SSID,SECURITY,SIGNAL,IN-USE", "device", "wifi", "list", "--rescan", "yes"]
 
-    command: {
-      if (mode === "saved") {
-        return ["nmcli", "-t", "connection", "up", "id", ssid];
-      } else if (mode === "manual") {
-        const nmArgs = ["connection", "add", "type", "wifi", "con-name", ssid, "ssid", ssid, "--", "802-11-wireless.hidden", isHidden ? "yes" : "no"];
+  stdout: StdioCollector {
+    onStreamFinished: {
+      const lines = text.trim().split("\n");
+      const networksMap = {};
 
-        if (securityKey === "wpa-psk" || securityKey === "wpa2-psk") {
-          nmArgs.push("wifi-sec.key-mgmt", "wpa-psk", "wifi-sec.psk", password);
-        } else if (securityKey === "sae") {
-          nmArgs.push("wifi-sec.key-mgmt", "sae", "wifi-sec.psk", password);
-        } else if (securityKey === "wep") {
-          nmArgs.push("wifi-sec.key-mgmt", "none", "wifi-sec.wep-key0", password);
-        } else if (securityKey && securityKey.indexOf("-eap") !== -1) {
-          nmArgs.push("wifi-sec.key-mgmt", "wpa-eap", "802-1x.eap", eap, "802-1x.phase2-auth", phase2, "802-1x.identity", identity, "802-1x.password", password);
-          if (anonIdentity) {
-            nmArgs.push("802-1x.anonymous-identity", anonIdentity);
-          }
-          if (caCert) {
-            nmArgs.push("802-1x.ca-cert", caCert);
-          }
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) {
+          continue;
         }
 
-        const script = `
+        // Parse SSID:SECURITY:SIGNAL:IN-USE
+        const parts = line.split(":");
+        if (parts.length < 4) {
+          continue;
+        }
+
+        const inUse = parts[parts.length - 1];
+        const signal = parseInt(parts[parts.length - 2]) || 0;
+        let security = parts[parts.length - 3];
+        if (security) {
+          security = security.replace("WPA2 WPA3", "WPA2/WPA3").replace("WPA1 WPA2", "WPA1/WPA2");
+        }
+        const ssid = parts.slice(0, parts.length - 3).join(":");
+
+        if (ssid) {
+          const isConnected = (inUse === "*");
+          if (!networksMap[ssid]) {
+            networksMap[ssid] = {
+              "ssid": ssid,
+              "security": security || "--",
+              "signal": signal,
+              "connected": isConnected,
+              "existing": !!root.existingProfiles[ssid]
+            };
+          } else {
+            if (isConnected) {
+              networksMap[ssid].connected = true;
+              networksMap[ssid].signal = signal;
+              connectivityCheckProcess.running = true;
+            } else if (!networksMap[ssid].connected && signal > networksMap[ssid].signal) {
+              networksMap[ssid].signal = signal;
+            }
+          }
+        }
+      }
+
+      // Logging & Diffing
+      const oldSSIDs = Object.keys(root.networks);
+      const newSSIDs = Object.keys(networksMap);
+      const newNetworks = newSSIDs.filter(s => oldSSIDs.indexOf(s) === -1);
+      const lostNetworks = oldSSIDs.filter(s => newSSIDs.indexOf(s) === -1);
+
+      // Always update networks, this makes more reflective of state/signal.
+      root.networks = networksMap;
+
+      if (newNetworks.length > 0 || lostNetworks.length > 0) {
+        if (newNetworks.length > 0) {
+          Logger.d("Network", "New Wi-Fi network appeared:", newNetworks.join(", "));
+        }
+        if (lostNetworks.length > 0) {
+          Logger.d("Network", "Wi-Fi network disappeared:", lostNetworks.join(", "));
+        }
+        Logger.d("Network", "Total Wi-Fi networks:", Object.keys(networksMap).length);
+      }
+
+      if (Object.values(networksMap).some(n => n.connected)) {
+        root.refreshActiveWifiDetails();
+      }
+
+      if (root.scanPending) {
+        root.scanPending = false;
+        delayedScanTimer.interval = 100;
+        delayedScanTimer.restart();
+      }
+      root.scanningActive = false;
+    }
+  }
+
+  stderr: StdioCollector {
+    onStreamFinished: {
+      if (text.trim()) {
+        Logger.w("Network", "Scan error: " + text);
+
+        // Even on error, if a scan was pending, try again
+        if (root.scanPending) {
+          root.scanPending = false;
+          delayedScanTimer.interval = 3000;
+        } else if (root.scanningActive) {
+          delayedScanTimer.interval = 10000;
+        }
+        delayedScanTimer.restart();
+      }
+      root.scanningActive = false;
+    }
+  }
+}
+
+// Connect to Wi-Fi network
+Process {
+  id: connectProcess
+  property string mode: "new" // "saved", "new", or "manual"
+  property string ssid: ""
+  property string password: ""
+  property bool isHidden: false
+  // Manual properties
+  property string securityKey: ""
+  property string identity: ""
+  property string eap: "peap"
+  property string phase2: "mschapv2"
+  property string anonIdentity: ""
+  property string caCert: ""
+  running: false
+
+  command: {
+    if (mode === "saved") {
+      return ["nmcli", "-t", "connection", "up", "id", ssid];
+    } else if (mode === "manual") {
+      const nmArgs = ["connection", "add", "type", "wifi", "con-name", ssid, "ssid", ssid, "--", "802-11-wireless.hidden", isHidden ? "yes" : "no"];
+
+      if (securityKey === "wpa-psk" || securityKey === "wpa2-psk") {
+        nmArgs.push("wifi-sec.key-mgmt", "wpa-psk", "wifi-sec.psk", password);
+      } else if (securityKey === "sae") {
+        nmArgs.push("wifi-sec.key-mgmt", "sae", "wifi-sec.psk", password);
+      } else if (securityKey === "wep") {
+        nmArgs.push("wifi-sec.key-mgmt", "none", "wifi-sec.wep-key0", password);
+      } else if (securityKey && securityKey.indexOf("-eap") !== -1) {
+        nmArgs.push("wifi-sec.key-mgmt", "wpa-eap", "802-1x.eap", eap, "802-1x.phase2-auth", phase2, "802-1x.identity", identity, "802-1x.password", password);
+        if (anonIdentity) {
+          nmArgs.push("802-1x.anonymous-identity", anonIdentity);
+        }
+        if (caCert) {
+          nmArgs.push("802-1x.ca-cert", caCert);
+        }
+      }
+
+      const script = `
         SSID="$1"
         shift
         # Find existing profile by Name and Type
@@ -932,124 +932,124 @@ Singleton {
         nmcli connection up id "$SSID"
       `;
 
-        return ["sh", "-c", script, "--", ssid].concat(nmArgs);
-      } else {
-        var cmd = ["nmcli", "-t", "device", "wifi", "connect", ssid];
-        if (isHidden) {
-          cmd.push("hidden", "yes");
-        }
-        if (password) {
-          cmd.push("password", password);
-        }
-        if (root.activeWifiIf) {
-          cmd.push("ifname", root.activeWifiIf);
-        }
-        return cmd;
+      return ["sh", "-c", script, "--", ssid].concat(nmArgs);
+    } else {
+      var cmd = ["nmcli", "-t", "device", "wifi", "connect", ssid];
+      if (isHidden) {
+        cmd.push("hidden", "yes");
       }
+      if (password) {
+        cmd.push("password", password);
+      }
+      if (root.activeWifiIf) {
+        cmd.push("ifname", root.activeWifiIf);
+      }
+      return cmd;
     }
+  }
 
-    environment: ({
-                    "LC_ALL": "C"
-                  })
+  environment: ({
+                  "LC_ALL": "C"
+                })
 
-    stdout: StdioCollector {
-      onStreamFinished: {
-        const output = text.trim();
-        if (!output || (output.indexOf("successfully activated") === -1 && output.indexOf("Connection successfully") === -1)) {
-          return;
-        }
+  stdout: StdioCollector {
+    onStreamFinished: {
+      const output = text.trim();
+      if (!output || (output.indexOf("successfully activated") === -1 && output.indexOf("Connection successfully") === -1)) {
+        return;
+      }
 
-        root.wifiConnected = true;
-        root.updateNetworkStatus(connectProcess.ssid, true);
-        root.refreshActiveWifiDetails(); // This needs wifiConnected true.
+      root.wifiConnected = true;
+      root.updateNetworkStatus(connectProcess.ssid, true);
+      root.refreshActiveWifiDetails(); // This needs wifiConnected true.
 
+      root.connecting = false;
+      root.connectingTo = "";
+      Logger.i("Network", "Connected to network: '" + connectProcess.ssid + "' (" + connectProcess.mode + ")");
+      ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("toast.wifi.connected", {
+                                                                "ssid": connectProcess.ssid
+                                                              }), root.getIcon(false));
+
+      delayedScanTimer.interval = 5000;
+      delayedScanTimer.restart();
+    }
+  }
+
+  stderr: StdioCollector {
+    onStreamFinished: {
+      if (text.trim()) {
         root.connecting = false;
         root.connectingTo = "";
-        Logger.i("Network", "Connected to network: '" + connectProcess.ssid + "' (" + connectProcess.mode + ")");
-        ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("toast.wifi.connected", {
-                                                                  "ssid": connectProcess.ssid
-                                                                }), root.getIcon(false));
 
-        delayedScanTimer.interval = 5000;
-        delayedScanTimer.restart();
-      }
-    }
-
-    stderr: StdioCollector {
-      onStreamFinished: {
-        if (text.trim()) {
-          root.connecting = false;
-          root.connectingTo = "";
-
-          if (text.indexOf("Secrets were required") !== -1 || text.indexOf("no secrets provided") !== -1) {
-            root.lastError = I18n.tr("toast.wifi.incorrect-password");
-            forget(connectProcess.ssid);
-          } else if (text.indexOf("No network with SSID") !== -1) {
-            root.lastError = I18n.tr("toast.wifi.network-not-found");
-          } else if (text.indexOf("Timeout") !== -1) {
-            root.lastError = I18n.tr("toast.wifi.connection-timeout");
-          } else {
-            root.lastError = I18n.tr("toast.wifi.connection-failed");
-          }
-
-          Logger.w("Network", "Connect error (" + connectProcess.mode + "): " + text);
-          ToastService.showWarning(I18n.tr("common.wifi"), root.lastError || I18n.tr("toast.wifi.connection-failed"), "wifi-exclamation");
-          wifiConnected = false;
+        if (text.indexOf("Secrets were required") !== -1 || text.indexOf("no secrets provided") !== -1) {
+          root.lastError = I18n.tr("toast.wifi.incorrect-password");
+          forget(connectProcess.ssid);
+        } else if (text.indexOf("No network with SSID") !== -1) {
+          root.lastError = I18n.tr("toast.wifi.network-not-found");
+        } else if (text.indexOf("Timeout") !== -1) {
+          root.lastError = I18n.tr("toast.wifi.connection-timeout");
+        } else {
+          root.lastError = I18n.tr("toast.wifi.connection-failed");
         }
+
+        Logger.w("Network", "Connect error (" + connectProcess.mode + "): " + text);
+        ToastService.showWarning(I18n.tr("common.wifi"), root.lastError || I18n.tr("toast.wifi.connection-failed"), "wifi-exclamation");
+        wifiConnected = false;
       }
     }
   }
+}
 
-  // Disconnect from Wi-Fi network
-  Process {
-    id: disconnectProcess
-    property string ssid: ""
-    running: false
-    command: ["nmcli", "connection", "down", "id", ssid]
+// Disconnect from Wi-Fi network
+Process {
+  id: disconnectProcess
+  property string ssid: ""
+  running: false
+  command: ["nmcli", "connection", "down", "id", ssid]
 
-    stdout: StdioCollector {
-      onStreamFinished: {
-        Logger.i("Network", "Disconnected from network: '" + disconnectProcess.ssid + "'");
-        root.wifiConnected = false;
-        ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("toast.wifi.disconnected", {
-                                                                  "ssid": disconnectProcess.ssid
-                                                                }), "wifi-off");
+  stdout: StdioCollector {
+    onStreamFinished: {
+      Logger.i("Network", "Disconnected from network: '" + disconnectProcess.ssid + "'");
+      root.wifiConnected = false;
+      ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("toast.wifi.disconnected", {
+                                                                "ssid": disconnectProcess.ssid
+                                                              }), "wifi-off");
 
-        // Immediately update UI on successful disconnect
-        root.updateNetworkStatus(disconnectProcess.ssid, false);
-        root.disconnectingFrom = "";
+      // Immediately update UI on successful disconnect
+      root.updateNetworkStatus(disconnectProcess.ssid, false);
+      root.disconnectingFrom = "";
 
-        // Do a scan to refresh the list
-        delayedScanTimer.interval = 3000;
-        delayedScanTimer.restart();
-      }
-    }
-
-    stderr: StdioCollector {
-      onStreamFinished: {
-        root.disconnectingFrom = "";
-        if (text.trim()) {
-          Logger.w("Network", "Disconnect error: " + text);
-        }
-        // Still trigger a scan even on error
-        delayedScanTimer.interval = 5000;
-        delayedScanTimer.restart();
-      }
+      // Do a scan to refresh the list
+      delayedScanTimer.interval = 3000;
+      delayedScanTimer.restart();
     }
   }
 
-  // Forget given Wi-Fi network
-  Process {
-    id: forgetProcess
-    property string ssid: ""
-    running: false
-    environment: ({
-                    "LC_ALL": "C"
-                  })
+  stderr: StdioCollector {
+    onStreamFinished: {
+      root.disconnectingFrom = "";
+      if (text.trim()) {
+        Logger.w("Network", "Disconnect error: " + text);
+      }
+      // Still trigger a scan even on error
+      delayedScanTimer.interval = 5000;
+      delayedScanTimer.restart();
+    }
+  }
+}
 
-    // Try multiple common profile name patterns
-    command: {
-      var script = `
+// Forget given Wi-Fi network
+Process {
+  id: forgetProcess
+  property string ssid: ""
+  running: false
+  environment: ({
+                  "LC_ALL": "C"
+                })
+
+  // Try multiple common profile name patterns
+  command: {
+    var script = `
         ssid="$1"
         deleted=false
 
@@ -1085,60 +1085,60 @@ Singleton {
         fi
       `;
 
-      return ["sh", "-c", script, "--", ssid];
-    }
+    return ["sh", "-c", script, "--", ssid];
+  }
 
-    stdout: StdioCollector {
-      onStreamFinished: {
-        Logger.i("Network", "Forget network: \"" + forgetProcess.ssid + "\"");
-        Logger.d("Network", text.trim().replace(/[\r\n]/g, " "));
+  stdout: StdioCollector {
+    onStreamFinished: {
+      Logger.i("Network", "Forget network: \"" + forgetProcess.ssid + "\"");
+      Logger.d("Network", text.trim().replace(/[\r\n]/g, " "));
 
-        // Update existing status immediately
-        let nets = root.networks;
-        if (nets[forgetProcess.ssid]) {
-          nets[forgetProcess.ssid].existing = false;
-          // Trigger property change
-          root.networks = ({});
-          root.networks = nets;
-        }
-
-        root.forgettingNetwork = "";
-
-        // Scan to verify the profile is gone
-        delayedScanTimer.interval = 5000;
-        delayedScanTimer.restart();
+      // Update existing status immediately
+      let nets = root.networks;
+      if (nets[forgetProcess.ssid]) {
+        nets[forgetProcess.ssid].existing = false;
+        // Trigger property change
+        root.networks = ({});
+        root.networks = nets;
       }
-    }
 
-    stderr: StdioCollector {
-      onStreamFinished: {
-        root.forgettingNetwork = "";
-        if (text.trim() && text.indexOf("No profiles found") === -1) {
-          Logger.w("Network", "Forget error: " + text);
-        }
-        // Still Trigger a scan even on error
-        delayedScanTimer.interval = 5000;
-        delayedScanTimer.restart();
-      }
+      root.forgettingNetwork = "";
+
+      // Scan to verify the profile is gone
+      delayedScanTimer.interval = 5000;
+      delayedScanTimer.restart();
     }
   }
 
-  // Listen to NetworkManager events in real-time (roaming, auto-connect)  -- ~9mb Memory usage.
-  Process {
-    id: networkMonitorProcess
-    running: ProgramCheckerService.nmcliAvailable
-    command: ["nmcli", "-t", "monitor"]
-    environment: ({
-                    "LC_ALL": "C"
-                  })
-    stdout: SplitParser {
-      onRead: data => {
-        if (data.endsWith(": connected") || data.endsWith(": disconnected")) {
-          Logger.d("Network", "State changed: " + data);
-          deviceStatusProcess.running = true;
-          connectivityCheckProcess.running = true;
-        }
+  stderr: StdioCollector {
+    onStreamFinished: {
+      root.forgettingNetwork = "";
+      if (text.trim() && text.indexOf("No profiles found") === -1) {
+        Logger.w("Network", "Forget error: " + text);
+      }
+      // Still Trigger a scan even on error
+      delayedScanTimer.interval = 5000;
+      delayedScanTimer.restart();
+    }
+  }
+}
+
+// Listen to NetworkManager events in real-time (roaming, auto-connect)  -- ~9mb Memory usage.
+Process {
+  id: networkMonitorProcess
+  running: ProgramCheckerService.nmcliAvailable
+  command: ["nmcli", "-t", "monitor"]
+  environment: ({
+                  "LC_ALL": "C"
+                })
+  stdout: SplitParser {
+    onRead: data => {
+      if (data.endsWith(": connected") || data.endsWith(": disconnected")) {
+        Logger.d("Network", "State changed: " + data);
+        deviceStatusProcess.running = true;
+        connectivityCheckProcess.running = true;
       }
     }
   }
+}
 }

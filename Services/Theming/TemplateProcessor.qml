@@ -179,15 +179,15 @@ Singleton {
 
     // Add terminal templates
     TemplateRegistry.terminals.forEach(terminal => {
-                                         if (isTemplateEnabled(terminal.id)) {
-                                           lines.push(`\n[templates.${terminal.id}]`);
-                                           lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${terminal.predefinedTemplatePath}"`);
-                                           const outputPath = terminal.outputPath.replace("~", homeDir);
-                                           lines.push(`output_path = "${outputPath}"`);
-                                           const postHookEsc = escapeTomlString(terminal.postHook);
-                                           lines.push(`post_hook = "${postHookEsc}"`);
-                                         }
-                                       });
+      if (isTemplateEnabled(terminal.id)) {
+        lines.push(`\n[templates.${terminal.id}]`);
+        lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${terminal.predefinedTemplatePath}"`);
+        const outputPath = terminal.outputPath.replace("~", homeDir);
+        lines.push(`output_path = "${outputPath}"`);
+        const postHookEsc = escapeTomlString(terminal.postHook);
+        lines.push(`post_hook = "${postHookEsc}"`);
+      }
+    });
 
     addApplicationTheming(lines, mode);
 
@@ -225,85 +225,85 @@ Singleton {
 
     // Terminal templates
     TemplateRegistry.terminals.forEach(terminal => {
-                                         if (isTemplateEnabled(terminal.id)) {
-                                           lines.push(`\n[templates.${terminal.id}]`);
-                                           lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${terminal.templatePath}"`);
-                                           const outputPath = terminal.outputPath.replace("~", homeDir);
-                                           lines.push(`output_path = "${outputPath}"`);
-                                           const postHookEsc = escapeTomlString(terminal.postHook);
-                                           lines.push(`post_hook = "${postHookEsc}"`);
-                                         }
-                                       });
+      if (isTemplateEnabled(terminal.id)) {
+        lines.push(`\n[templates.${terminal.id}]`);
+        lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${terminal.templatePath}"`);
+        const outputPath = terminal.outputPath.replace("~", homeDir);
+        lines.push(`output_path = "${outputPath}"`);
+        const postHookEsc = escapeTomlString(terminal.postHook);
+        lines.push(`post_hook = "${postHookEsc}"`);
+      }
+    });
   }
 
   function addApplicationTheming(lines, mode) {
     const homeDir = Quickshell.env("HOME");
     TemplateRegistry.applications.forEach(app => {
-                                            if (app.id === "discord") {
-                                              // Handle Discord clients specially - multiple CSS themes
-                                              if (isTemplateEnabled("discord")) {
-                                                const inputs = Array.isArray(app.input) ? app.input : [app.input];
-                                                inputs.forEach((inputFile, idx) => {
-                                                                 // Derive theme suffix from input filename: discord-midnight.css → midnight
-                                                                 const themeSuffix = inputFile.replace(/^discord-/, "").replace(/\.css$/, "");
-                                                                 app.clients.forEach(client => {
-                                                                                       if (isDiscordClientEnabled(client.name)) {
-                                                                                         lines.push(`\n[templates.discord_${themeSuffix}_${client.name}]`);
-                                                                                         lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${inputFile}"`);
-                                                                                         // First input uses legacy name for backward compatibility
-                                                                                         const outputFile = idx === 0 ? "noctalia.theme.css" : `noctalia-${themeSuffix}.theme.css`;
-                                                                                         const outputPath = client.path.replace("~", homeDir) + `/themes/${outputFile}`;
-                                                                                         lines.push(`output_path = "${outputPath}"`);
-                                                                                       }
-                                                                                     });
-                                                               });
-                                              }
-                                            } else if (app.id === "code") {
-                                              // Handle Code clients specially
-                                              if (isTemplateEnabled("code")) {
-                                                app.clients.forEach(client => {
-                                                                      // Check if this specific client is detected
-                                                                      var resolvedPaths = TemplateRegistry.resolvedCodeClientPaths(client.name);
-                                                                      if (isCodeClientEnabled(client.name) && resolvedPaths.length > 0) {
-                                                                        resolvedPaths.forEach((resolvedPath, pathIndex) => {
-                                                                                                var suffix = resolvedPaths.length > 1 ? `_${pathIndex}` : "";
-                                                                                                lines.push(`\n[templates.code_${client.name}${suffix}]`);
-                                                                                                lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${app.input}"`);
-                                                                                                lines.push(`output_path = "${resolvedPath}"`);
-                                                                                              });
-                                                                      }
-                                                                    });
-                                              }
-                                            } else if (app.id === "emacs") {
-                                              if (isTemplateEnabled("emacs")) {
-                                                ProgramCheckerService.availableEmacsClients.forEach(client => {
-                                                                                                      lines.push(`\n[templates.emacs_${client.name}]`);
-                                                                                                      lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${app.input}"`);
-                                                                                                      const expandedPath = client.path.replace("~", homeDir) + "/themes/noctalia-theme.el";
-                                                                                                      lines.push(`output_path = "${expandedPath}"`);
-                                                                                                      if (app.postProcess) {
-                                                                                                        const postHook = escapeTomlString(app.postProcess(mode));
-                                                                                                        lines.push(`post_hook = "${postHook}"`);
-                                                                                                      }
-                                                                                                    });
-                                              }
-                                            } else {
-                                              // Handle regular apps
-                                              if (isTemplateEnabled(app.id)) {
-                                                app.outputs.forEach((output, idx) => {
-                                                                      lines.push(`\n[templates.${app.id}_${idx}]`);
-                                                                      const inputFile = output.input || app.input;
-                                                                      lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${inputFile}"`);
-                                                                      const outputPath = output.path.replace("~", homeDir);
-                                                                      lines.push(`output_path = "${outputPath}"`);
-                                                                      if (app.postProcess && output.postProcess !== false) {
-                                                                        const postHook = escapeTomlString(app.postProcess(mode));
-                                                                        lines.push(`post_hook = "${postHook}"`);
-                                                                      }
-                                                                    });
-                                              }
-                                            }
-                                          });
+      if (app.id === "discord") {
+        // Handle Discord clients specially - multiple CSS themes
+        if (isTemplateEnabled("discord")) {
+          const inputs = Array.isArray(app.input) ? app.input : [app.input];
+          inputs.forEach((inputFile, idx) => {
+            // Derive theme suffix from input filename: discord-midnight.css → midnight
+            const themeSuffix = inputFile.replace(/^discord-/, "").replace(/\.css$/, "");
+            app.clients.forEach(client => {
+              if (isDiscordClientEnabled(client.name)) {
+                lines.push(`\n[templates.discord_${themeSuffix}_${client.name}]`);
+                lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${inputFile}"`);
+                // First input uses legacy name for backward compatibility
+                const outputFile = idx === 0 ? "noctalia.theme.css" : `noctalia-${themeSuffix}.theme.css`;
+                const outputPath = client.path.replace("~", homeDir) + `/themes/${outputFile}`;
+                lines.push(`output_path = "${outputPath}"`);
+              }
+            });
+          });
+        }
+      } else if (app.id === "code") {
+        // Handle Code clients specially
+        if (isTemplateEnabled("code")) {
+          app.clients.forEach(client => {
+            // Check if this specific client is detected
+            var resolvedPaths = TemplateRegistry.resolvedCodeClientPaths(client.name);
+            if (isCodeClientEnabled(client.name) && resolvedPaths.length > 0) {
+              resolvedPaths.forEach((resolvedPath, pathIndex) => {
+                var suffix = resolvedPaths.length > 1 ? `_${pathIndex}` : "";
+                lines.push(`\n[templates.code_${client.name}${suffix}]`);
+                lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${app.input}"`);
+                lines.push(`output_path = "${resolvedPath}"`);
+              });
+            }
+          });
+        }
+      } else if (app.id === "emacs") {
+        if (isTemplateEnabled("emacs")) {
+          ProgramCheckerService.availableEmacsClients.forEach(client => {
+            lines.push(`\n[templates.emacs_${client.name}]`);
+            lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${app.input}"`);
+            const expandedPath = client.path.replace("~", homeDir) + "/themes/noctalia-theme.el";
+            lines.push(`output_path = "${expandedPath}"`);
+            if (app.postProcess) {
+              const postHook = escapeTomlString(app.postProcess(mode));
+              lines.push(`post_hook = "${postHook}"`);
+            }
+          });
+        }
+      } else {
+        // Handle regular apps
+        if (isTemplateEnabled(app.id)) {
+          app.outputs.forEach((output, idx) => {
+            lines.push(`\n[templates.${app.id}_${idx}]`);
+            const inputFile = output.input || app.input;
+            lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${inputFile}"`);
+            const outputPath = output.path.replace("~", homeDir);
+            lines.push(`output_path = "${outputPath}"`);
+            if (app.postProcess && output.postProcess !== false) {
+              const postHook = escapeTomlString(app.postProcess(mode));
+              lines.push(`post_hook = "${postHook}"`);
+            }
+          });
+        }
+      }
+    });
   }
 
   function isDiscordClientEnabled(clientName) {

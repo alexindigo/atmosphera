@@ -109,25 +109,25 @@ Item {
       root.exited();
     }
     onClicked: mouse => {
-                 if (tooltipText && (!Array.isArray(tooltipText) || tooltipText.length > 0)) {
-                   TooltipService.hide(root);
-                 }
-                 if (!root.enabled && !allowClickWhenDisabled) {
-                   return;
-                 }
-                 if (mouse.button === Qt.LeftButton) {
-                   root.clicked();
-                 } else if (mouse.button === Qt.RightButton) {
-                   root.rightClicked();
-                 } else if (mouse.button === Qt.MiddleButton) {
-                   root.middleClicked();
-                 }
-               }
+      if (tooltipText && (!Array.isArray(tooltipText) || tooltipText.length > 0)) {
+        TooltipService.hide(root);
+      }
+      if (!root.enabled && !allowClickWhenDisabled) {
+        return;
+      }
+      if (mouse.button === Qt.LeftButton) {
+        root.clicked();
+      } else if (mouse.button === Qt.RightButton) {
+        root.rightClicked();
+      } else if (mouse.button === Qt.MiddleButton) {
+        root.middleClicked();
+      }
+    }
     onWheel: wheel => {
-               if (root.handleWheel) {
-                 root.wheel(wheel.angleDelta.y);
-               }
-               wheel.accepted = false;
-             }
+      if (root.handleWheel) {
+        root.wheel(wheel.angleDelta.y);
+      }
+      wheel.accepted = false;
+    }
   }
 }

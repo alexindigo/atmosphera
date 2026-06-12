@@ -45,9 +45,9 @@ ColumnLayout {
     description: I18n.tr("bar.tray.drawer-enabled-description")
     checked: root.valueDrawerEnabled
     onToggled: checked => {
-                 root.valueDrawerEnabled = checked;
-                 saveSettings();
-               }
+      root.valueDrawerEnabled = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.drawerEnabled
   }
 
@@ -56,9 +56,9 @@ ColumnLayout {
     description: I18n.tr("bar.tray.chevron-color-description")
     currentKey: root.valueChevronColor
     onSelected: key => {
-                  root.valueChevronColor = key;
-                  saveSettings();
-                }
+      root.valueChevronColor = key;
+      saveSettings();
+    }
     visible: root.valueDrawerEnabled
     defaultValue: widgetMetadata.chevronColor
   }
@@ -69,9 +69,9 @@ ColumnLayout {
     description: I18n.tr("bar.tray.colorize-icons-description")
     checked: root.valueColorizeIcons
     onToggled: checked => {
-                 root.valueColorizeIcons = checked;
-                 saveSettings();
-               }
+      root.valueColorizeIcons = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.colorizeIcons
   }
 
@@ -81,9 +81,9 @@ ColumnLayout {
     description: I18n.tr("bar.tray.hide-passive-description")
     checked: root.valueHidePassive
     onToggled: checked => {
-                 root.valueHidePassive = checked;
-                 saveSettings();
-               }
+      root.valueHidePassive = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.hidePassive
   }
 

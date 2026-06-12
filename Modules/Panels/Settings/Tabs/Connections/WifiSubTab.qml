@@ -453,8 +453,8 @@ Item {
         model: NetworkService.supportedSecurityTypes
         currentKey: addNetworkPopup.customSecurityKey
         onSelected: key => {
-                      addNetworkPopup.customSecurityKey = key;
-                    }
+          addNetworkPopup.customSecurityKey = key;
+        }
       }
 
       ColumnLayout {
@@ -1450,13 +1450,13 @@ Item {
     }
 
     onAccepted: paths => {
-                  if (paths.length > 0) {
-                    if (isForAddNetwork) {
-                      addNetworkPopup.customEnterpriseCaCert = paths[0];
-                    } else {
-                      root.enterpriseCaCert = paths[0];
-                    }
-                  }
-                }
+      if (paths.length > 0) {
+        if (isForAddNetwork) {
+          addNetworkPopup.customEnterpriseCaCert = paths[0];
+        } else {
+          root.enterpriseCaCert = paths[0];
+        }
+      }
+    }
   }
 }

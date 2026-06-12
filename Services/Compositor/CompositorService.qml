@@ -46,10 +46,10 @@ Singleton {
   Component.onCompleted: {
     // Load display scales from ShellState
     Qt.callLater(() => {
-                   if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
-                     loadDisplayScalesFromState();
-                   }
-                 });
+      if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
+        loadDisplayScalesFromState();
+      }
+    });
 
     detectCompositor();
   }
@@ -213,33 +213,33 @@ Singleton {
 
     // Connect backend signals to facade signals
     backend.workspaceChanged.connect(() => {
-                                       // Sync workspaces when they change
-                                       syncWorkspaces();
-                                       // Forward the signal
-                                       workspaceChanged();
-                                     });
+      // Sync workspaces when they change
+      syncWorkspaces();
+      // Forward the signal
+      workspaceChanged();
+    });
 
     backend.activeWindowChanged.connect(() => {
-                                          // Only sync focus state, not entire window list
-                                          syncFocusedWindow();
-                                          // Forward the signal
-                                          activeWindowChanged();
-                                        });
+      // Only sync focus state, not entire window list
+      syncFocusedWindow();
+      // Forward the signal
+      activeWindowChanged();
+    });
 
     backend.windowListChanged.connect(() => {
-                                        syncWindows();
-                                      });
+      syncWindows();
+    });
 
     // Property bindings - use automatic property change signal
     backend.focusedWindowIndexChanged.connect(() => {
-                                                focusedWindowIndex = backend.focusedWindowIndex;
-                                              });
+      focusedWindowIndex = backend.focusedWindowIndex;
+    });
 
     // Overview state (Niri-specific)
     if (backend.overviewActiveChanged) {
       backend.overviewActiveChanged.connect(() => {
-                                              overviewActive = backend.overviewActive;
-                                            });
+        overviewActive = backend.overviewActive;
+      });
     }
 
     // Initial sync
@@ -503,8 +503,8 @@ Singleton {
       return;
 
     HooksService.executeSessionHook("shutdown", () => {
-                                      Quickshell.execDetached(["sh", "-c", "systemctl poweroff || loginctl poweroff"]);
-                                    });
+      Quickshell.execDetached(["sh", "-c", "systemctl poweroff || loginctl poweroff"]);
+    });
   }
 
   function reboot() {
@@ -513,8 +513,8 @@ Singleton {
       return;
 
     HooksService.executeSessionHook("reboot", () => {
-                                      Quickshell.execDetached(["sh", "-c", "systemctl reboot || loginctl reboot"]);
-                                    });
+      Quickshell.execDetached(["sh", "-c", "systemctl reboot || loginctl reboot"]);
+    });
   }
 
   function userspaceReboot() {
@@ -523,8 +523,8 @@ Singleton {
       return;
 
     HooksService.executeSessionHook("userspaceReboot", () => {
-                                      Quickshell.execDetached(["sh", "-c", "systemctl soft-reboot"]);
-                                    });
+      Quickshell.execDetached(["sh", "-c", "systemctl soft-reboot"]);
+    });
   }
 
   function rebootToUefi() {
@@ -533,8 +533,8 @@ Singleton {
       return;
 
     HooksService.executeSessionHook("rebootToUefi", () => {
-                                      Quickshell.execDetached(["sh", "-c", "systemctl reboot --firmware-setup || loginctl reboot --firmware-setup"]);
-                                    });
+      Quickshell.execDetached(["sh", "-c", "systemctl reboot --firmware-setup || loginctl reboot --firmware-setup"]);
+    });
   }
 
   function turnOffMonitors() {

@@ -195,16 +195,16 @@ ColumnLayout {
         NToggle {
           checked: Settings.data.colorSchemes.useWallpaperColors
           onToggled: checked => {
-                       if (checked) {
-                         Settings.data.colorSchemes.useWallpaperColors = true;
-                         AppThemeService.generate();
-                       } else {
-                         Settings.data.colorSchemes.useWallpaperColors = false;
-                         if (Settings.data.colorSchemes.predefinedScheme) {
-                           ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme);
-                         }
-                       }
-                     }
+            if (checked) {
+              Settings.data.colorSchemes.useWallpaperColors = true;
+              AppThemeService.generate();
+            } else {
+              Settings.data.colorSchemes.useWallpaperColors = false;
+              if (Settings.data.colorSchemes.predefinedScheme) {
+                ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme);
+              }
+            }
+          }
         }
       }
 

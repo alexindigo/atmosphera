@@ -39,12 +39,12 @@ ColumnLayout {
       description: I18n.tr("panels.osd." + modelData.key + "-description")
       checked: (Settings.data.osd.enabledTypes || []).includes(modelData.type)
       onToggled: checked => {
-                   if (checked) {
-                     Settings.data.osd.enabledTypes = root.addType(Settings.data.osd.enabledTypes, modelData.type);
-                   } else {
-                     Settings.data.osd.enabledTypes = root.removeType(Settings.data.osd.enabledTypes, modelData.type);
-                   }
-                 }
+        if (checked) {
+          Settings.data.osd.enabledTypes = root.addType(Settings.data.osd.enabledTypes, modelData.type);
+        } else {
+          Settings.data.osd.enabledTypes = root.removeType(Settings.data.osd.enabledTypes, modelData.type);
+        }
+      }
     }
   }
 }

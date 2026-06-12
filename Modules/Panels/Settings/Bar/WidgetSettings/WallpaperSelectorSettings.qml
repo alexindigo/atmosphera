@@ -26,8 +26,8 @@ ColumnLayout {
     label: I18n.tr("common.select-icon-color")
     currentKey: valueIconColor
     onSelected: key => {
-                  valueIconColor = key;
-                  saveSettings();
-                }
+      valueIconColor = key;
+      saveSettings();
+    }
   }
 }

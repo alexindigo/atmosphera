@@ -51,7 +51,8 @@ Variants {
 
     // Only create PanelWindow if enabled AND (screen has widgets OR in edit mode)
     // During compositor overview, show widgets only when overviewEnabled is true.
-    active: modelData && Settings.data.desktopWidgets.enabled && (screenWidgets.length > 0 || DesktopWidgetRegistry.editMode) && (!CompositorService.overviewActive || Settings.data.desktopWidgets.overviewEnabled) && (!PowerProfileService.atmospheraPerformanceMode || !Settings.data.atmospheraPerformance.disableDesktopWidgets) && !PanelService.lockScreen?.active
+    active: modelData && Settings.data.desktopWidgets.enabled && (screenWidgets.length > 0 || DesktopWidgetRegistry.editMode) && (!CompositorService.overviewActive || Settings.data.desktopWidgets.overviewEnabled) && (!PowerProfileService.atmospheraPerformanceMode || !Settings.data.atmospheraPerformance.disableDesktopWidgets) && !PanelService.lockScreen
+            ?.active
 
     sourceComponent: PanelWindow {
       id: window
@@ -420,29 +421,29 @@ Variants {
             property point pressPos: Qt.point(0, 0)
 
             onPressed: mouse => {
-                         pressPos = mapToItem(widgetsContainer, mouse.x, mouse.y);
-                         panelInternal.dragOffsetX = editModeControlsPanel.x;
-                         panelInternal.dragOffsetY = editModeControlsPanel.y;
-                         panelInternal.isDragging = true;
-                       }
+              pressPos = mapToItem(widgetsContainer, mouse.x, mouse.y);
+              panelInternal.dragOffsetX = editModeControlsPanel.x;
+              panelInternal.dragOffsetY = editModeControlsPanel.y;
+              panelInternal.isDragging = true;
+            }
 
             onPositionChanged: mouse => {
-                                 if (panelInternal.isDragging && pressed) {
-                                   var currentPos = mapToItem(widgetsContainer, mouse.x, mouse.y);
-                                   var deltaX = currentPos.x - pressPos.x;
-                                   var deltaY = currentPos.y - pressPos.y;
+              if (panelInternal.isDragging && pressed) {
+                var currentPos = mapToItem(widgetsContainer, mouse.x, mouse.y);
+                var deltaX = currentPos.x - pressPos.x;
+                var deltaY = currentPos.y - pressPos.y;
 
-                                   var newX = panelInternal.baseX + deltaX;
-                                   var newY = panelInternal.baseY + deltaY;
+                var newX = panelInternal.baseX + deltaX;
+                var newY = panelInternal.baseY + deltaY;
 
-                                   // Boundary clamping
-                                   newX = Math.max(0, Math.min(newX, widgetsContainer.width - editModeControlsPanel.width));
-                                   newY = Math.max(0, Math.min(newY, widgetsContainer.height - editModeControlsPanel.height));
+                // Boundary clamping
+                newX = Math.max(0, Math.min(newX, widgetsContainer.width - editModeControlsPanel.width));
+                newY = Math.max(0, Math.min(newY, widgetsContainer.height - editModeControlsPanel.height));
 
-                                   panelInternal.dragOffsetX = newX;
-                                   panelInternal.dragOffsetY = newY;
-                                 }
-                               }
+                panelInternal.dragOffsetX = newX;
+                panelInternal.dragOffsetY = newY;
+              }
+            }
 
             onReleased: {
               if (panelInternal.isDragging) {

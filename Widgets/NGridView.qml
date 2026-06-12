@@ -370,19 +370,19 @@ Item {
 
     // Emit keyPressed signal for custom key handling
     Keys.onPressed: event => {
-                      if (keyNavigationEnabled) {
-                        root.keyPressed(event);
-                      }
-                    }
+      if (keyNavigationEnabled) {
+        root.keyPressed(event);
+      }
+    }
 
     WheelHandler {
       enabled: root.wheelScrollMultiplier !== 1.0
       acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
       onWheel: event => {
-                 const delta = event.pixelDelta.y !== 0 ? event.pixelDelta.y : event.angleDelta.y / 2;
-                 root.applyWheelScroll(delta);
-                 event.accepted = true;
-               }
+        const delta = event.pixelDelta.y !== 0 ? event.pixelDelta.y : event.angleDelta.y / 2;
+        root.applyWheelScroll(delta);
+        event.accepted = true;
+      }
     }
 
     ScrollBar.vertical: ScrollBar {

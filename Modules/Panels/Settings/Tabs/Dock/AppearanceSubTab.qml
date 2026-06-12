@@ -94,8 +94,8 @@ ColumnLayout {
       currentKey: Settings.data.dock.displayMode
       defaultValue: Settings.getDefaultValue("dock.displayMode")
       onSelected: key => {
-                    Settings.data.dock.displayMode = key;
-                  }
+        Settings.data.dock.displayMode = key;
+      }
     }
 
     NToggle {
@@ -416,9 +416,9 @@ ColumnLayout {
       id: launcherIconPicker
       initialIcon: (Settings.data.dock.launcherIcon && Settings.data.dock.launcherIcon !== "") ? Settings.data.dock.launcherIcon : "search"
       onIconSelected: iconName => {
-                        Settings.data.dock.launcherIcon = iconName;
-                        Settings.saveImmediate();
-                      }
+        Settings.data.dock.launcherIcon = iconName;
+        Settings.saveImmediate();
+      }
     }
 
     NColorChoice {

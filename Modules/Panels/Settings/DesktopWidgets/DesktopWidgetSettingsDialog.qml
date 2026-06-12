@@ -104,13 +104,13 @@ Popup {
             onLoaded: {
               if (item) {
                 Qt.callLater(() => {
-                               var firstInput = findFirstFocusable(item);
-                               if (firstInput) {
-                                 firstInput.forceActiveFocus();
-                               } else {
-                                 focusScope.forceActiveFocus();
-                               }
-                             });
+                  var firstInput = findFirstFocusable(item);
+                  if (firstInput) {
+                    firstInput.forceActiveFocus();
+                  } else {
+                    focusScope.forceActiveFocus();
+                  }
+                });
               }
             }
 
@@ -151,24 +151,24 @@ Popup {
     property real pressY: 0
 
     onPressed: mouse => {
-                 pressX = mouse.x;
-                 pressY = mouse.y;
-                 cursorShape = Qt.ClosedHandCursor;
-               }
+      pressX = mouse.x;
+      pressY = mouse.y;
+      cursorShape = Qt.ClosedHandCursor;
+    }
 
     onReleased: {
       cursorShape = Qt.OpenHandCursor;
     }
 
     onPositionChanged: mouse => {
-                         if (pressed) {
-                           var deltaX = mouse.x - pressX;
-                           var deltaY = mouse.y - pressY;
+      if (pressed) {
+        var deltaX = mouse.x - pressX;
+        var deltaY = mouse.y - pressY;
 
-                           root.x += deltaX;
-                           root.y += deltaY;
-                         }
-                       }
+        root.x += deltaX;
+        root.y += deltaY;
+      }
+    }
   }
 
   Timer {

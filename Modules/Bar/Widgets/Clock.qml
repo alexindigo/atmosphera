@@ -159,16 +159,16 @@ Item {
     ]
 
     onTriggered: action => {
-                   // Close the context menu
-                   contextMenu.close();
-                   PanelService.closeContextMenu(screen);
+      // Close the context menu
+      contextMenu.close();
+      PanelService.closeContextMenu(screen);
 
-                   if (action === "open-calendar") {
-                     PanelService.getPanel("clockPanel", screen)?.toggle(root);
-                   } else if (action === "widget-settings") {
-                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
-                   }
-                 }
+      if (action === "open-calendar") {
+        PanelService.getPanel("clockPanel", screen)?.toggle(root);
+      } else if (action === "widget-settings") {
+        BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+      }
+    }
   }
 
   // Build tooltip text with formatted time/date
@@ -197,13 +197,13 @@ Item {
       TooltipService.hide();
     }
     onClicked: mouse => {
-                 TooltipService.hide();
-                 if (mouse.button === Qt.RightButton) {
-                   PanelService.showContextMenu(contextMenu, root, screen);
-                 } else {
-                   PanelService.getPanel("clockPanel", screen)?.toggle(this);
-                 }
-               }
+      TooltipService.hide();
+      if (mouse.button === Qt.RightButton) {
+        PanelService.showContextMenu(contextMenu, root, screen);
+      } else {
+        PanelService.getPanel("clockPanel", screen)?.toggle(this);
+      }
+    }
   }
 
   Timer {

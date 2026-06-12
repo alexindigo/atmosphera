@@ -39,9 +39,9 @@ ColumnLayout {
     description: I18n.tr("bar.control-center.use-distro-logo-description")
     checked: valueUseDistroLogo
     onToggled: checked => {
-                 valueUseDistroLogo = checked;
-                 saveSettings();
-               }
+      valueUseDistroLogo = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.useDistroLogo
   }
 
@@ -50,9 +50,9 @@ ColumnLayout {
     description: I18n.tr("bar.control-center.enable-colorization-description")
     checked: valueEnableColorization
     onToggled: checked => {
-                 valueEnableColorization = checked;
-                 saveSettings();
-               }
+      valueEnableColorization = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.enableColorization
   }
 
@@ -112,10 +112,10 @@ ColumnLayout {
     id: iconPicker
     initialIcon: valueIcon
     onIconSelected: iconName => {
-                      valueIcon = iconName;
-                      valueCustomIconPath = "";
-                      saveSettings();
-                    }
+      valueIcon = iconName;
+      valueCustomIconPath = "";
+      saveSettings();
+    }
   }
 
   NFilePicker {
@@ -125,10 +125,10 @@ ColumnLayout {
     nameFilters: ImageCacheService.basicImageFilters.concat(["*.svg"])
     initialPath: Quickshell.env("HOME")
     onAccepted: paths => {
-                  if (paths.length > 0) {
-                    valueCustomIconPath = paths[0];
-                    saveSettings();
-                  }
-                }
+      if (paths.length > 0) {
+        valueCustomIconPath = paths[0];
+        saveSettings();
+      }
+    }
   }
 }

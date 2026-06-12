@@ -130,23 +130,23 @@ ColumnLayout {
     availableWidgets.clear();
     const widgets = BarWidgetRegistry.getAvailableWidgets();
     widgets.forEach(entry => {
-                      const isPlugin = BarWidgetRegistry.isPluginWidget(entry);
-                      let displayName = entry;
-                      if (isPlugin) {
-                        const pluginId = entry.replace("plugin:", "");
-                        const manifest = PluginRegistry.getPluginManifest(pluginId);
-                        if (manifest && manifest.name) {
-                          displayName = manifest.name;
-                        } else {
-                          displayName = pluginId;
-                        }
-                      }
-                      availableWidgets.append({
-                                                "key": entry,
-                                                "name": displayName,
-                                                "badges": createBadges(isPlugin, getWidgetLocations(entry))
-                                              });
-                    });
+      const isPlugin = BarWidgetRegistry.isPluginWidget(entry);
+      let displayName = entry;
+      if (isPlugin) {
+        const pluginId = entry.replace("plugin:", "");
+        const manifest = PluginRegistry.getPluginManifest(pluginId);
+        if (manifest && manifest.name) {
+          displayName = manifest.name;
+        } else {
+          displayName = pluginId;
+        }
+      }
+      availableWidgets.append({
+                                "key": entry,
+                                "name": displayName,
+                                "badges": createBadges(isPlugin, getWidgetLocations(entry))
+                              });
+    });
   }
 
   ListModel {

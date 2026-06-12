@@ -108,13 +108,13 @@ ColumnLayout {
     initialPath: Quickshell.env("HOME")
     nameFilters: ["*.wav", "*.mp3", "*.ogg", "*.flac", "*.m4a", "*.aac"]
     onAccepted: paths => {
-                  if (paths.length > 0) {
-                    const soundPath = paths[0];
-                    Settings.data.notifications.sounds.normalSoundFile = soundPath;
-                    Settings.data.notifications.sounds.lowSoundFile = soundPath;
-                    Settings.data.notifications.sounds.criticalSoundFile = soundPath;
-                  }
-                }
+      if (paths.length > 0) {
+        const soundPath = paths[0];
+        Settings.data.notifications.sounds.normalSoundFile = soundPath;
+        Settings.data.notifications.sounds.lowSoundFile = soundPath;
+        Settings.data.notifications.sounds.criticalSoundFile = soundPath;
+      }
+    }
   }
 
   NFilePicker {
@@ -124,10 +124,10 @@ ColumnLayout {
     initialPath: Quickshell.env("HOME")
     nameFilters: ["*.wav", "*.mp3", "*.ogg", "*.flac", "*.m4a", "*.aac"]
     onAccepted: paths => {
-                  if (paths.length > 0) {
-                    Settings.data.notifications.sounds.lowSoundFile = paths[0];
-                  }
-                }
+      if (paths.length > 0) {
+        Settings.data.notifications.sounds.lowSoundFile = paths[0];
+      }
+    }
   }
 
   NFilePicker {
@@ -137,10 +137,10 @@ ColumnLayout {
     initialPath: Quickshell.env("HOME")
     nameFilters: ["*.wav", "*.mp3", "*.ogg", "*.flac", "*.m4a", "*.aac"]
     onAccepted: paths => {
-                  if (paths.length > 0) {
-                    Settings.data.notifications.sounds.normalSoundFile = paths[0];
-                  }
-                }
+      if (paths.length > 0) {
+        Settings.data.notifications.sounds.normalSoundFile = paths[0];
+      }
+    }
   }
 
   NFilePicker {
@@ -150,9 +150,9 @@ ColumnLayout {
     initialPath: Quickshell.env("HOME")
     nameFilters: ["*.wav", "*.mp3", "*.ogg", "*.flac", "*.m4a", "*.aac"]
     onAccepted: paths => {
-                  if (paths.length > 0) {
-                    Settings.data.notifications.sounds.criticalSoundFile = paths[0];
-                  }
-                }
+      if (paths.length > 0) {
+        Settings.data.notifications.sounds.criticalSoundFile = paths[0];
+      }
+    }
   }
 }

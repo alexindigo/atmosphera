@@ -151,21 +151,21 @@ ColumnLayout {
         target: galleryScroll.contentItem
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
         onWheel: event => {
-                   const flick = galleryScroll.contentItem;
-                   if (!flick)
-                   return;
-                   const delta = event.pixelDelta.x !== 0 || event.pixelDelta.y !== 0 ? (event.pixelDelta.y !== 0 ? event.pixelDelta.y : event.pixelDelta.x) : (event.angleDelta.y !== 0 ? event.angleDelta.y : event.angleDelta.x);
-                   // Move opposite of wheel to scroll content to the right for wheel down
-                   const step = -delta;
-                   const maxX = Math.max(0, flick.contentWidth - flick.width);
-                   let newX = flick.contentX + step;
-                   if (newX < 0)
-                   newX = 0;
-                   if (newX > maxX)
-                   newX = maxX;
-                   flick.contentX = newX;
-                   event.accepted = true;
-                 }
+          const flick = galleryScroll.contentItem;
+          if (!flick)
+            return;
+          const delta = event.pixelDelta.x !== 0 || event.pixelDelta.y !== 0 ? (event.pixelDelta.y !== 0 ? event.pixelDelta.y : event.pixelDelta.x) : (event.angleDelta.y !== 0 ? event.angleDelta.y : event.angleDelta.x);
+          // Move opposite of wheel to scroll content to the right for wheel down
+          const step = -delta;
+          const maxX = Math.max(0, flick.contentWidth - flick.width);
+          let newX = flick.contentX + step;
+          if (newX < 0)
+            newX = 0;
+          if (newX > maxX)
+            newX = maxX;
+          flick.contentX = newX;
+          event.accepted = true;
+        }
       }
 
       RowLayout {
@@ -333,9 +333,9 @@ ColumnLayout {
       buttonTooltip: I18n.tr("setup.wallpaper.dir-browse")
       Layout.fillWidth: true
       onInputTextChanged: text => {
-                            selectedDirectory = text;
-                            directoryChanged(text);
-                          }
+        selectedDirectory = text;
+        directoryChanged(text);
+      }
       onButtonClicked: directoryPicker.open()
     }
   }
@@ -429,11 +429,11 @@ ColumnLayout {
     title: I18n.tr("setup.wallpaper.dir-select-title")
     initialPath: selectedDirectory || Quickshell.env("HOME") + "/Pictures"
     onAccepted: paths => {
-                  if (paths.length > 0) {
-                    selectedDirectory = paths[0];
-                    directoryChanged(paths[0]);
-                  }
-                }
+      if (paths.length > 0) {
+        selectedDirectory = paths[0];
+        directoryChanged(paths[0]);
+      }
+    }
   }
 
   Process {
