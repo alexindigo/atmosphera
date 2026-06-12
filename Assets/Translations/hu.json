@@ -391,6 +391,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Műveletek",
     "active": "Aktív",
     "add": "Hozzáadás",
@@ -774,11 +776,7 @@
       "system-title": "Rendszerinformációk",
       "system-uptime": "Működési idő:",
       "system-wm": "WM:",
-      "telemetry-data-copied": "Telemetriai adatok a vágólapra másolva",
-      "telemetry-desc": "Segíts a Atmosphera fejlesztésében névtelen rendszerinformációk (képernyőfelbontás, kompozitor, disztribúció) megosztásával. Egyszer kerül elküldésre indításkor, nincs nyomon követés, az adatok 30 nap után automatikusan törlődnek.",
-      "telemetry-enabled": "Névtelen rendszerinformációk küldése",
-      "telemetry-show-data": "Adatok megtekintése",
-      "telemetry-title": "Adatvédelem",
+      "privacy-title": "Adatvédelem",
       "title": "Névjegy",
       "up-to-date": "Naprakész vagy!",
       "update-available": "Frissítés elérhető",
@@ -1864,10 +1862,6 @@
       "subheader": "A sáv pozíciója, sűrűsége, méretezése és egyebek."
     },
     "skip-setup": "Beállítás kihagyása",
-    "telemetry-wizard-done": "Értettem!",
-    "telemetry-wizard-note": "Te irányítasz — bármikor engedélyezheted vagy letilthatod a beállításokban",
-    "telemetry-wizard-subtitle": "Névtelen analitikát adtunk hozzá, hogy segítsük a Atmosphera fejlesztését",
-    "telemetry-wizard-title": "Adatvédelmi frissítés",
     "wallpaper": {
       "choose-dir": "A könyvtár, amely tartalmazza a háttérképeket",
       "dir-browse": "Háttérkép mappa böngészése",

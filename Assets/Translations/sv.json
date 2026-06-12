@@ -391,6 +391,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Åtgärder",
     "active": "Aktiv",
     "add": "Lägg till",
@@ -774,11 +776,7 @@
       "system-title": "Systeminformation",
       "system-uptime": "Driftstid:",
       "system-wm": "WM:",
-      "telemetry-data-copied": "Telemetridata kopierad till urklipp",
-      "telemetry-desc": "Hjälp till att förbättra Atmosphera genom att dela anonym systeminformation (skärmupplösning, kompositör, distro). Skickas en gång vid start, ingen spårning, data raderas automatiskt efter 30 dagar.",
-      "telemetry-enabled": "Skicka anonym systeminformation",
-      "telemetry-show-data": "Visa data",
-      "telemetry-title": "Integritet",
+      "privacy-title": "Integritet",
       "title": "Om",
       "up-to-date": "Du är uppdaterad!",
       "update-available": "Uppdatering tillgänglig",
@@ -1864,10 +1862,6 @@
       "subheader": "Justera fältets position, densitet, skalning och mer."
     },
     "skip-setup": "Hoppa över inställningar",
-    "telemetry-wizard-done": "Jag fattar!",
-    "telemetry-wizard-note": "Du har kontrollen — aktivera eller inaktivera detta när som helst i inställningar",
-    "telemetry-wizard-subtitle": "Vi har lagt till anonym analys för att förbättra Atmosphera",
-    "telemetry-wizard-title": "Uppdatering av integritet",
     "wallpaper": {
       "choose-dir": "Välj en katalog som innehåller dina bakgrundsbilder",
       "dir-browse": "Bläddra efter bakgrundsbildsmapp",

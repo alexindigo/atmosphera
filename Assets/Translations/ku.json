@@ -343,6 +343,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Çalakî",
     "add": "Tevlî bike",
     "appearance": "Xuyang",
@@ -680,11 +682,7 @@
       "system-title": "Zanyariyên pergalê",
       "system-uptime": "Dema xebitandinê:",
       "system-wm": "RÇ:",
-      "telemetry-data-copied": "Daneyên Telemetry hatin jê girtin bo jêgirtindankê",
-      "telemetry-desc": "Bi parvekirina agahdariya sîstema anonîm (çareseriya ekranê, berhevkar, belavkirin) alîkariya pêşxistina Atmosphera bikin. Carekê di destpêkê de tê şandin, şopandin tune, dane piştî 30 rojan bixweber têne jêbirin.",
-      "telemetry-enabled": "Agahiyên pergalê yên nenas bişîne",
-      "telemetry-show-data": "Dîtina daneyan",
-      "telemetry-title": "Taybetî",
+      "privacy-title": "Taybetî",
       "title": "Derbar",
       "up-to-date": "Tu rojane ye!",
       "update-available": "Rojanekirin heye",
@@ -1515,10 +1513,6 @@
       "subheader": "Rewşa bar, dendikbûn, pîvan û hwd. eyar bike."
     },
     "skip-setup": "Sazkirinê Derbas Bike",
-    "telemetry-wizard-done": "Gihîşt!",
-    "telemetry-wizard-note": "Hûn di kontrolê de ne — hûn dikarin vê yekê di mîhengan de her dem çalak an neçalak bikin",
-    "telemetry-wizard-subtitle": "Me analîtîkên anonîm zêde kirin da ku alîkariya başkirina Atmosphera bikin",
-    "telemetry-wizard-title": "Nûkirina Nepenîtiyê",
     "wallpaper": {
       "choose-dir": "Dîrekteriyek ku wêneyên dîwarê te tê de hilbijêre",
       "dir-browse": "Geroka peldanka dîwêr",

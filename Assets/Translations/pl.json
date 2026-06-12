@@ -391,6 +391,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Akcje",
     "active": "Aktywny",
     "add": "Dodaj",
@@ -774,11 +776,7 @@
       "system-title": "Informacje o systemie",
       "system-uptime": "Czas pracy:",
       "system-wm": "WM:",
-      "telemetry-data-copied": "Dane telemetryczne skopiowane do schowka.",
-      "telemetry-desc": "Pomóż ulepszyć Noctalię, udostępniając anonimowe informacje o systemie (rozdzielczość ekranu, kompozytor, dystrybucja). Wysyłane raz przy uruchomieniu, bez śledzenia, dane usuwane automatycznie po 30 dniach.",
-      "telemetry-enabled": "Wyślij anonimowe informacje o systemie.",
-      "telemetry-show-data": "Wyświetl dane",
-      "telemetry-title": "Prywatność",
+      "privacy-title": "Prywatność",
       "title": "O programie",
       "up-to-date": "Jesteś na bieżąco!",
       "update-available": "Dostępna aktualizacja",
@@ -1864,10 +1862,6 @@
       "subheader": "Dostosuj pozycję paska, zagęszczenie, skalowanie i inne."
     },
     "skip-setup": "Pomiń konfigurację",
-    "telemetry-wizard-done": "Rozumiem!",
-    "telemetry-wizard-note": "Masz kontrolę — możesz to włączyć lub wyłączyć w dowolnym momencie w ustawieniach",
-    "telemetry-wizard-subtitle": "Dodaliśmy anonimowe analizy, aby pomóc w ulepszaniu Atmosphera",
-    "telemetry-wizard-title": "Aktualizacja prywatności",
     "wallpaper": {
       "choose-dir": "Wybierz katalog zawierający obrazy tapet",
       "dir-browse": "Przeglądaj folder tapet",

@@ -391,6 +391,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Akce",
     "active": "Aktivní",
     "add": "Přidat",
@@ -774,11 +776,7 @@
       "system-title": "Systémové informace",
       "system-uptime": "Provozní doba:",
       "system-wm": "Správce oken:",
-      "telemetry-data-copied": "Data telemetrie zkopírována do schránky",
-      "telemetry-desc": "Pomozte zlepšit Atmosphera sdílením anonymních systémových informací (rozlišení obrazovky, compositor, distribuce). Odesláno jednou při startu, bez sledování, data automaticky smazána po 30 dnech.",
-      "telemetry-enabled": "Odesílat anonymní systémové informace",
-      "telemetry-show-data": "Zobrazit data",
-      "telemetry-title": "Soukromí",
+      "privacy-title": "Soukromí",
       "title": "O aplikaci",
       "up-to-date": "Máte nejnovější verzi!",
       "update-available": "Dostupná aktualizace",
@@ -1864,10 +1862,6 @@
       "subheader": "Upravte pozici lišty, hustotu, škálování a další."
     },
     "skip-setup": "Přeskočit nastavení",
-    "telemetry-wizard-done": "Rozumím!",
-    "telemetry-wizard-note": "Máte plnou kontrolu – kdykoli to zapněte nebo vypněte v nastavení",
-    "telemetry-wizard-subtitle": "Přidali jsme anonymní analytiku pro zlepšení Atmosphera",
-    "telemetry-wizard-title": "Aktualizace soukromí",
     "wallpaper": {
       "choose-dir": "Vyberte složku obsahující obrázky tapet",
       "dir-browse": "Procházet složku tapet",

@@ -391,6 +391,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Eylemler",
     "active": "Aktif",
     "add": "Ekle",
@@ -774,11 +776,7 @@
       "system-title": "Sistem Bilgisi",
       "system-uptime": "Çalışma süresi:",
       "system-wm": "WM:",
-      "telemetry-data-copied": "Telemetri verileri panoya kopyalandı.",
-      "telemetry-desc": "Anonim sistem bilgisi (ekran çözünürlüğü, kompozitör, dağıtım) paylaşarak Atmosphera'yı geliştirmeye yardımcı olun. Başlangıçta bir kez gönderilir, izleme yapılmaz, veriler 30 gün sonra otomatik olarak silinir.",
-      "telemetry-enabled": "Anonim sistem bilgisi gönder.",
-      "telemetry-show-data": "Verileri görüntüle",
-      "telemetry-title": "Gizlilik",
+      "privacy-title": "Gizlilik",
       "title": "Hakkında",
       "up-to-date": "Güncelsiniz!",
       "update-available": "Güncelleme mevcut",
@@ -1864,10 +1862,6 @@
       "subheader": "Araç çubuğu konumunu, yoğunluğunu, ölçeğini ve daha fazlasını ayarlayın."
     },
     "skip-setup": "Kurulumu Atla",
-    "telemetry-wizard-done": "Anlaşıldı!",
-    "telemetry-wizard-note": "Kontrol sizde — istediğiniz zaman ayarlar'dan etkinleştirebilir veya devre dışı bırakabilirsiniz",
-    "telemetry-wizard-subtitle": "Atmosphera'yı geliştirmeye yardımcı olmak için anonim analizler ekledik",
-    "telemetry-wizard-title": "Gizlilik Güncellemesi",
     "wallpaper": {
       "choose-dir": "Duvar kâğıdı görüntülerinizi içeren bir dizin seçin",
       "dir-browse": "Duvar kâğıdı klasörüne göz at",

@@ -391,6 +391,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Дії",
     "active": "Активний",
     "add": "Додати",
@@ -774,11 +776,7 @@
       "system-title": "Інформація про систему",
       "system-uptime": "Час безперебійної роботи:",
       "system-wm": "WM:\nВМ:",
-      "telemetry-data-copied": "Дані телеметрії скопійовано до буфера обміну",
-      "telemetry-desc": "Допоможіть покращити Atmosphera, поділившись анонімною інформацією про систему (роздільна здатність екрана, композитор, дистрибутив). Надсилається один раз під час запуску, без відстеження, дані автоматично видаляються через 30 днів.",
-      "telemetry-enabled": "Відправити анонімну системну інформацію",
-      "telemetry-show-data": "Перегляд даних",
-      "telemetry-title": "Конфіденційність",
+      "privacy-title": "Конфіденційність",
       "title": "Про Atmosphera",
       "up-to-date": "У вас остання версія!",
       "update-available": "Доступне оновлення",
@@ -1864,10 +1862,6 @@
       "subheader": "Налаштуйте положення панелі, щільність, масштабування та інше."
     },
     "skip-setup": "Пропустити налаштування",
-    "telemetry-wizard-done": "Зрозуміло!",
-    "telemetry-wizard-note": "Ви все контролюєте — увімкніть або вимкніть це будь-коли в налаштуваннях",
-    "telemetry-wizard-subtitle": "Ми додали анонімну аналітику, щоб допомогти покращити Atmosphera",
-    "telemetry-wizard-title": "Оновлення конфіденційності",
     "wallpaper": {
       "choose-dir": "Виберіть теку, що містить ваші зображення шпалер",
       "dir-browse": "Огляд теки шпалер",

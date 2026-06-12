@@ -391,6 +391,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "작업",
     "active": "활성",
     "add": "추가",
@@ -774,11 +776,7 @@
       "system-title": "시스템 정보",
       "system-uptime": "가동 시간:",
       "system-wm": "WM:",
-      "telemetry-data-copied": "원격 분석 데이터가 클립보드에 복사됨",
-      "telemetry-desc": "익명 시스템 정보(화면 해상도, 컴포지터, 배포판)를 공유하여 Atmosphera 개선을 도와주세요. 시작 시 한 번 전송되며 추적하지 않고 데이터는 30일 후 자동 삭제됩니다.",
-      "telemetry-enabled": "익명 시스템 정보 전송",
-      "telemetry-show-data": "데이터 보기",
-      "telemetry-title": "개인정보 보호",
+      "privacy-title": "개인정보 보호",
       "title": "정보",
       "up-to-date": "최신 상태입니다!",
       "update-available": "업데이트 가능",
@@ -1864,10 +1862,6 @@
       "subheader": "바 위치, 밀도, 배율 등을 조정합니다."
     },
     "skip-setup": "설정 건너뛰기",
-    "telemetry-wizard-done": "알겠습니다!",
-    "telemetry-wizard-note": "언제든지 설정에서 활성화하거나 비활성화할 수 있습니다",
-    "telemetry-wizard-subtitle": "Atmosphera 개선을 돕기 위해 익명 분석을 추가했습니다",
-    "telemetry-wizard-title": "개인정보 보호 업데이트",
     "wallpaper": {
       "choose-dir": "배경화면 이미지가 포함된 디렉토리를 선택하세요",
       "dir-browse": "배경화면 폴더 찾아보기",

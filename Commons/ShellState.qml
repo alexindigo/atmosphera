@@ -27,11 +27,11 @@ Singleton {
   Component.onCompleted: {
     // Setup state file path (needs Settings to be available)
     Qt.callLater(() => {
-                   if (typeof Settings !== 'undefined' && Settings.cacheDir) {
-                     stateFile = Settings.cacheDir + "shell-state.json";
-                     stateFileView.path = stateFile;
-                   }
-                 });
+      if (typeof Settings !== 'undefined' && Settings.cacheDir) {
+        stateFile = Settings.cacheDir + "shell-state.json";
+        stateFileView.path = stateFile;
+      }
+    });
   }
 
   // FileView for shell state
@@ -66,11 +66,6 @@ Singleton {
       property var ui: ({
                           settingsSidebarExpanded: true
                         })
-
-      // Telemetry state
-      property var telemetry: ({
-                                 instanceId: ""
-                               })
 
       // Launcher app usage counts
       property var launcherUsage: ({})
@@ -146,13 +141,13 @@ Singleton {
       Quickshell.execDetached(["mkdir", "-p", Settings.cacheDir]);
 
       Qt.callLater(() => {
-                     try {
-                       stateFileView.writeAdapter();
-                       Logger.d("ShellState", "Saved state file");
-                     } catch (writeError) {
-                       Logger.e("ShellState", "Failed to write state file:", writeError);
-                     }
-                   });
+        try {
+          stateFileView.writeAdapter();
+          Logger.d("ShellState", "Saved state file");
+        } catch (writeError) {
+          Logger.e("ShellState", "Failed to write state file:", writeError);
+        }
+      });
     } catch (error) {
       Logger.e("ShellState", "Failed to save state:", error);
     }
@@ -231,28 +226,6 @@ Singleton {
 
   function getSettingsSidebarExpanded() {
     return getUiState().settingsSidebarExpanded !== false; // default to true
-  }
-
-  // Telemetry state
-  function setTelemetryState(stateData) {
-    adapter.telemetry = stateData;
-    save();
-  }
-
-  function getTelemetryState() {
-    return adapter.telemetry || {
-      instanceId: ""
-    };
-  }
-
-  function getTelemetryInstanceId() {
-    return getTelemetryState().instanceId || "";
-  }
-
-  function setTelemetryInstanceId(instanceId) {
-    let state = getTelemetryState();
-    state.instanceId = instanceId;
-    setTelemetryState(state);
   }
 
   // -----------------------------------------------------

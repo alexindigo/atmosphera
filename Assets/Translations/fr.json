@@ -391,6 +391,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Actions",
     "active": "Actif",
     "add": "Ajouter",
@@ -774,11 +776,7 @@
       "system-title": "Informations système",
       "system-uptime": "Temps de disponibilité :",
       "system-wm": "WM :",
-      "telemetry-data-copied": "Données de télémétrie copiées dans le presse-papiers",
-      "telemetry-desc": "Aidez à améliorer Atmosphera en partageant des informations système anonymes (résolution d'écran, compositeur, distribution). Envoyé une fois au démarrage, pas de suivi, les données sont automatiquement supprimées après 30 jours.",
-      "telemetry-enabled": "Envoyer des informations système anonymes",
-      "telemetry-show-data": "Afficher les données",
-      "telemetry-title": "Confidentialité",
+      "privacy-title": "Confidentialité",
       "title": "À propos",
       "up-to-date": "Vous êtes à jour !",
       "update-available": "Mise à jour disponible",
@@ -1864,10 +1862,6 @@
       "subheader": "Ajustez la position de la barre, la densité, l'échelle et plus encore."
     },
     "skip-setup": "Ignorer la configuration",
-    "telemetry-wizard-done": "Bien reçu !",
-    "telemetry-wizard-note": "Vous avez le contrôle — activez ou désactivez cette option à tout moment dans les paramètres",
-    "telemetry-wizard-subtitle": "Nous avons ajouté des analyses anonymes pour aider à améliorer Atmosphera",
-    "telemetry-wizard-title": "Mise à jour de la confidentialité",
     "wallpaper": {
       "choose-dir": "Choisissez un répertoire contenant vos fonds d'écran",
       "dir-browse": "Parcourir le dossier",

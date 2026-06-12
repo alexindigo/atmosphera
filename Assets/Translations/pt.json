@@ -391,6 +391,8 @@
     }
   },
   "common": {
+    "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
+    "feedback-use-github": "For feedback or questions use GitHub issues.",
     "actions": "Ações",
     "active": "Ativo",
     "add": "Adicionar",
@@ -774,11 +776,7 @@
       "system-title": "Informações do Sistema",
       "system-uptime": "Tempo de atividade:",
       "system-wm": "WM:",
-      "telemetry-data-copied": "Dados de telemetria copiados para a área de transferência.",
-      "telemetry-desc": "Ajude a melhorar o Atmosphera compartilhando informações anônimas do sistema (resolução da tela, compositor, distribuição). Enviado uma vez na inicialização, sem rastreamento, os dados são excluídos automaticamente após 30 dias.",
-      "telemetry-enabled": "Enviar informações anônimas do sistema",
-      "telemetry-show-data": "Visualizar dados",
-      "telemetry-title": "Privacidade",
+      "privacy-title": "Privacidade",
       "title": "Sobre",
       "up-to-date": "Você está atualizado!",
       "update-available": "Atualização disponível",
@@ -1864,10 +1862,6 @@
       "subheader": "Ajuste a posição da barra, densidade, escala e mais."
     },
     "skip-setup": "Ignorar configuração",
-    "telemetry-wizard-done": "Entendi!",
-    "telemetry-wizard-note": "Você está no controle — ative ou desative isso a qualquer momento nas configurações",
-    "telemetry-wizard-subtitle": "Adicionámos análises anónimas para ajudar a melhorar o Atmosphera",
-    "telemetry-wizard-title": "Atualização de privacidade",
     "wallpaper": {
       "choose-dir": "Escolha um diretório contendo seus papéis de parede",
       "dir-browse": "Procurar pasta",
