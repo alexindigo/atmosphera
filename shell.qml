@@ -10,6 +10,7 @@
 
 // Qt & Quickshell Core
 import QtQuick
+import QtQuick.Controls
 import Quickshell
 
 // Commons & Services

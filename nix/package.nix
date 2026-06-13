@@ -87,6 +87,11 @@ stdenvNoCC.mkDerivation {
     mkdir -p $out/share/atmosphera $out/bin
     cp -r . $out/share/atmosphera
     ln -s ${quickshell}/bin/qs $out/bin/atmosphera
+    ln -s ${quickshell}/bin/qs $out/bin/atmosphera-ipc
+    cp Scripts/bash/atmosphera-prompt $out/bin/atmosphera-prompt
+    cp Scripts/bash/atmosphera-confirm $out/bin/atmosphera-confirm
+    cp Scripts/bash/atmosphera-alert $out/bin/atmosphera-alert
+    chmod +x $out/bin/atmosphera-prompt $out/bin/atmosphera-confirm $out/bin/atmosphera-alert
   '';
 
   preFixup = ''

@@ -29,6 +29,7 @@ import qs.Modules.Panels.SetupWizard
 import qs.Modules.Panels.SystemStats
 import qs.Modules.Panels.Tray
 import qs.Modules.Panels.Wallpaper
+import qs.Modules.Dialog
 import qs.Services.Compositor
 import qs.Services.Power
 import qs.Services.UI
@@ -367,6 +368,11 @@ PanelWindow {
     SettingsPanel {
       id: settingsPanel
       objectName: "settingsPanel-" + (root.screen?.name || "unknown")
+      screen: root.screen
+    }
+
+    DialogPanel {
+      id: dialogPanel
       screen: root.screen
     }
 

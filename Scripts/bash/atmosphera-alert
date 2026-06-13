@@ -1,0 +1,22 @@
+#!/bin/bash
+set -euo pipefail
+
+question="${1:?Usage: atmosphera-alert <message>}"
+
+fifo=$(mktemp -u /dev/shm/atmosphera-alert-XXXXXXXX)
+mkfifo "$fifo"
+
+QS="${ATMOSPHERA_QS:-qs}"
+PID="${ATMOSPHERA_PID:-$(pgrep -n -x qs 2>/dev/null || true)}"
+TARGET=""
+[ -n "$PID" ] && TARGET="--pid $PID"
+
+cleanup() {
+  $QS ipc $TARGET call dialog cancel &>/dev/null || true
+}
+trap cleanup EXIT INT TERM
+
+$QS ipc $TARGET call dialog alert "$question" "$fifo" &>/dev/null &
+
+read -t 86400 result < "$fifo" 2>/dev/null || true
+rm -f "$fifo" 2>/dev/null || true
