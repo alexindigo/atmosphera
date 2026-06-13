@@ -1,0 +1,42 @@
+#!/bin/bash
+set -euo pipefail
+
+[ $# -ge 2 ] || { echo "Usage: atmosphera-survey [<title>] <name1> <value1> [name2 value2] ..." >&2; exit 1; }
+
+title=""
+if [ $(( $# % 2 )) -eq 1 ]; then
+  title="$1"; shift
+fi
+
+# Build JSON array from remaining args (name value pairs)
+json="["
+sep=""
+while [ $# -ge 2 ]; do
+  name="$1"; value="$2"; shift 2
+  name_esc=$(printf '%s' "$name" | sed 's/[\\"]/\\&/g')
+  [ "$value" = "-" ] && value=""
+  value_esc=$(printf '%s' "$value" | sed 's/[\\"]/\\&/g')
+  json="${json}${sep}{\"label\":\"${name_esc}\",\"default\":\"${value_esc}\"}"
+  sep=","
+done
+json="${json}]"
+
+fifo=$(mktemp -u /dev/shm/atmosphera-survey-XXXXXXXX)
+mkfifo "$fifo"
+
+QS="${ATMOSPHERA_QS:-qs}"
+PID="${ATMOSPHERA_PID:-$(pgrep -n -x qs 2>/dev/null || true)}"
+TARGET=""
+[ -n "$PID" ] && TARGET="--pid $PID"
+
+cleanup() {
+  $QS ipc $TARGET call dialog cancel &>/dev/null || true
+}
+trap cleanup EXIT INT TERM
+
+b64=$(printf '%s' "$json" | base64 -w0)
+$QS ipc $TARGET call dialog survey "$title" "$b64" "$fifo" &>/dev/null &
+
+read -t 86400 result < "$fifo" 2>/dev/null || true
+rm -f "$fifo" 2>/dev/null || true
+echo "${result:-}"

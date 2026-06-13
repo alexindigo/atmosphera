@@ -24,4 +24,14 @@ Singleton {
     if (panel)
       panel.showFor(2, question, defaultText || "", replyPath);
   }
+
+  function survey(question: string, b64fields: string, replyPath: string) {
+    var fields = b64fields;
+    try {
+      fields = Qt.atob(b64fields);
+    } catch (e) {}
+    var panel = PanelService.getPanel("dialogPanel", Quickshell.screens[0]);
+    if (panel)
+      panel.showFor(3, question, fields, replyPath);
+  }
 }

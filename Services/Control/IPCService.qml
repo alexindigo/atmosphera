@@ -954,6 +954,10 @@ Singleton {
       DialogService.prompt(question, replyPath, defaultText);
     }
 
+    function survey(question: string, b64fields: string, replyPath: string) {
+      DialogService.survey(question, b64fields, replyPath);
+    }
+
     function cancel() {
       var panel = PanelService.getPanel("dialogPanel", Quickshell.screens[0]);
       if (panel)

@@ -91,7 +91,8 @@ stdenvNoCC.mkDerivation {
     cp Scripts/bash/atmosphera-prompt $out/bin/atmosphera-prompt
     cp Scripts/bash/atmosphera-confirm $out/bin/atmosphera-confirm
     cp Scripts/bash/atmosphera-alert $out/bin/atmosphera-alert
-    chmod +x $out/bin/atmosphera-prompt $out/bin/atmosphera-confirm $out/bin/atmosphera-alert
+    cp Scripts/bash/atmosphera-survey $out/bin/atmosphera-survey
+    chmod +x $out/bin/atmosphera-prompt $out/bin/atmosphera-confirm $out/bin/atmosphera-alert $out/bin/atmosphera-survey
   '';
 
   preFixup = ''
