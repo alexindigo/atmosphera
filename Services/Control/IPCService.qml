@@ -938,4 +938,26 @@ Singleton {
                                             });
     }
   }
+
+  IpcHandler {
+    target: "dialog"
+
+    function alert(question: string, replyPath: string) {
+      DialogService.alert(question, replyPath);
+    }
+
+    function confirm(question: string, replyPath: string) {
+      DialogService.confirm(question, replyPath);
+    }
+
+    function prompt(question: string, replyPath: string, defaultText: string) {
+      DialogService.prompt(question, replyPath, defaultText);
+    }
+
+    function cancel() {
+      var panel = PanelService.getPanel("dialogPanel", Quickshell.screens[0]);
+      if (panel)
+        panel.visible = false;
+    }
+  }
 }
