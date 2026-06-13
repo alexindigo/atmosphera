@@ -3,6 +3,7 @@ set -euo pipefail
 
 question="${1:?Usage: atmosphera-prompt <question> [default]}"
 default="${2:-}"
+[ "$default" = "-" ] && default=""
 
 fifo=$(mktemp -u /dev/shm/atmosphera-prompt-XXXXXXXX)
 mkfifo "$fifo"

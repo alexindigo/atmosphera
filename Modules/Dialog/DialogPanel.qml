@@ -15,6 +15,9 @@ PanelWindow {
   property string dialogDefault: ""
   property bool responded: false
   property string replyPath: ""
+  property var _surveyFields: []
+  property var _surveyInputs: ({})
+  readonly property int _maxCardHeight: screen ? Math.round(screen.height * 0.75) : 600
 
   objectName: "dialogPanel-" + (screen?.name || "unknown")
 
@@ -36,6 +39,14 @@ PanelWindow {
     dialogDefault = defaultText || "";
     replyPath = path;
     responded = false;
+    _surveyFields = [];
+    _surveyInputs = ({});
+
+    if (type === 3) {
+      try {
+        _surveyFields = JSON.parse(defaultText || "[]");
+      } catch (e) {}
+    }
 
     if (inputField)
       inputField.text = defaultText || "";
@@ -47,8 +58,13 @@ PanelWindow {
 
     visible = true;
     Qt.callLater(function () {
-      if (inputField && inputField.inputItem)
+      if (dialogType === 2 && inputField && inputField.inputItem)
         inputField.inputItem.forceActiveFocus();
+      else if (dialogType === 3) {
+        var firstKey = Object.keys(root._surveyInputs)[0];
+        if (firstKey && root._surveyInputs[firstKey] && root._surveyInputs[firstKey].inputItem)
+          root._surveyInputs[firstKey].inputItem.forceActiveFocus();
+      }
     });
   }
 
@@ -85,7 +101,7 @@ PanelWindow {
   // Dialog card
   Item {
     width: 420
-    height: 220
+    height: root.dialogType === 3 ? Math.min(root._maxCardHeight, Math.max(220, root._surveyFields.length * 60 + 140)) : 220
     anchors.centerIn: parent
     z: 1
 
@@ -126,8 +142,47 @@ PanelWindow {
           }
         }
 
+        // Survey fields
+        ScrollView {
+          Layout.fillWidth: true
+          Layout.fillHeight: root.dialogType === 3
+          visible: root.dialogType === 3
+          clip: true
+          ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+
+          ColumnLayout {
+            width: parent.width
+            spacing: Style.marginXS
+
+            Repeater {
+              model: root._surveyFields
+
+              delegate: ColumnLayout {
+                required property var modelData
+                Layout.fillWidth: true
+                spacing: 2
+
+                Text {
+                  text: modelData.label || ""
+                  color: Color.mOnSurfaceVariant
+                  font.pointSize: Style.fontSizeXS
+                  font.weight: Style.fontWeightMedium
+                }
+
+                NTextInput {
+                  Layout.fillWidth: true
+                  text: modelData.default || ""
+                  Component.onCompleted: {
+                    root._surveyInputs[modelData.label] = this;
+                  }
+                }
+              }
+            }
+          }
+        }
+
         Item {
-          Layout.fillHeight: true
+          Layout.fillHeight: root.dialogType !== 3
         }
 
         RowLayout {
@@ -147,7 +202,22 @@ PanelWindow {
             icon: root.dialogType === 1 ? "check" : ""
             onClicked: {
               root.responded = true;
-              var v = root.dialogType === 2 ? inputField.text : root.dialogType === 1 ? "true" : "";
+              var v = "";
+              if (root.dialogType === 2) {
+                v = inputField.text;
+              } else if (root.dialogType === 3) {
+                var pairs = [];
+                for (var fi = 0; fi < root._surveyFields.length; fi++) {
+                  var f = root._surveyFields[fi];
+                  var inp = root._surveyInputs[f.label];
+                  pairs.push(f.label);
+                  var val = inp ? inp.text : "";
+                  pairs.push(val === "" ? "-" : val);
+                }
+                v = pairs.join(" ");
+              } else if (root.dialogType === 1) {
+                v = "true";
+              }
               root.writeReply(v);
               root.visible = false;
             }
