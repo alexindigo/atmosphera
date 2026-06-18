@@ -87,6 +87,21 @@ Popup {
         Layout.topMargin: Style.marginM
         spacing: Style.marginM
 
+        Repeater {
+          model: settingsLoader.item?.auxButtons || []
+
+          delegate: NButton {
+            required property var modelData
+            text: modelData.text || ""
+            icon: modelData.icon || ""
+            outlined: true
+            onClicked: {
+              if (modelData.clicked)
+                modelData.clicked();
+            }
+          }
+        }
+
         Item {
           Layout.fillWidth: true
         }
