@@ -44,10 +44,11 @@
     },
     "ControlCenter": {
       "useDistroLogo": false,
-      "icon": "atmosphera",
+      "icon": "noctalia",
       "customIconPath": "",
       "colorizeDistroLogo": false,
       "colorizeSystemIcon": "none",
+      "colorizeSystemText": "none",
       "enableColorization": false
     },
     "CustomButton": {
@@ -111,6 +112,7 @@
       "icon": "rocket",
       "customIconPath": "",
       "colorizeSystemIcon": "none",
+      "colorizeSystemText": "none",
       "enableColorization": false,
       "iconColor": "none"
     },

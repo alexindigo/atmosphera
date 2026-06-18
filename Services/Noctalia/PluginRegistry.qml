@@ -13,8 +13,6 @@ Singleton {
   readonly property string pluginsFile: Settings.configDir + "plugins.json"
 
   readonly property int currentVersion: 2
-  // Main source URL - plugins from this source keep plain IDs
-  readonly property string mainSourceUrl: "https://github.com/noctalia-dev/noctalia-plugins"
 
   Component.onCompleted: {
     ensurePluginsDirectory();
@@ -27,14 +25,9 @@ Singleton {
     return hash.substring(0, 6);
   }
 
-  // Check if a source is the main Noctalia plugins repository
-  function isMainSource(sourceUrl) {
-    return sourceUrl === root.mainSourceUrl;
-  }
-
-  // Generate composite key: plain ID for official, "hash:id" for custom
+  // Generate composite key: plain ID for null/empty URLs, "hash:id" for everything else
   function generateCompositeKey(pluginId, sourceUrl) {
-    if (!sourceUrl || isMainSource(sourceUrl)) {
+    if (!sourceUrl) {
       return pluginId;
     }
     var hash = generateSourceHash(sourceUrl);
@@ -44,19 +37,15 @@ Singleton {
   // Parse composite key back to components
   function parseCompositeKey(compositeKey) {
     var colonIndex = compositeKey.indexOf(":");
-    // If no colon or colon is after position 6 (hash length), it's a plain ID
     if (colonIndex === -1 || colonIndex > 6) {
       return {
         sourceHash: null,
-        pluginId: compositeKey,
-        isOfficial: true
+        pluginId: compositeKey
       };
     }
-    // Has hash prefix (custom source plugin)
     return {
       sourceHash: compositeKey.substring(0, colonIndex),
-      pluginId: compositeKey.substring(colonIndex + 1),
-      isOfficial: false
+      pluginId: compositeKey.substring(colonIndex + 1)
     };
   }
 
@@ -83,7 +72,7 @@ Singleton {
   // Get source URL from plugin state
   function getPluginSourceUrl(compositeKey) {
     var state = root.pluginStates[compositeKey];
-    return state?.sourceUrl || root.mainSourceUrl;
+    return state ? state.sourceUrl : null;
   }
 
   // Signals
@@ -115,37 +104,28 @@ Singleton {
       root.pluginStates = adapter.states || {};
       root.pluginSources = adapter.sources || [];
 
-      // Ensure default repo is in sources
-      if (root.pluginSources.length === 0) {
-        root.pluginSources = [
-          {
-            "name": "Noctalia Plugins",
-            "url": "https://github.com/noctalia-dev/noctalia-plugins",
-            "enabled": true
-          }
-        ];
+      // Migrate sources with path but no url to file:// url
+      var needsSave = false;
+      for (var i = 0; i < root.pluginSources.length; i++) {
+        var src = root.pluginSources[i];
+        if (!src.url && src.path) {
+          src.url = "file://" + src.path;
+          delete src.path;
+          needsSave = true;
+        }
+      }
+      if (needsSave) {
         root.save();
       }
 
-      // Migrate from v1 to v2 (add sourceUrl to states)
       root.migratePluginData();
-
-      // Scan plugin folder to discover installed plugins
       scanPluginFolder();
     }
 
     onLoadFailed: function (error) {
       Logger.w("PluginRegistry", "Failed to load plugins.json, will create it:", error);
-      // Initialize defaults and continue
       root.pluginStates = {};
-      root.pluginSources = [
-            {
-              "name": "Noctalia Plugins",
-              "url": "https://github.com/noctalia-dev/noctalia-plugins",
-              "enabled": true
-            }
-          ];
-      // Scan for installed plugins
+      root.pluginSources = [];
       root.scanPluginFolder();
     }
   }
@@ -156,50 +136,23 @@ Singleton {
     PluginService.initialized;
   }
 
-  // Migrate plugin data from older versions
   function migratePluginData() {
     var needsSave = false;
 
-    // Migration v1 -> v2: add sourceUrl to states
     for (var pluginId in root.pluginStates) {
       if (root.pluginStates[pluginId].sourceUrl === undefined) {
         Logger.i("PluginRegistry", "Migrating plugin data to v2 (adding sourceUrl)");
-
         var newStates = {};
         for (var id in root.pluginStates) {
-          // For v1 -> v2 migration, we assume plugins are from main source
-          // Custom plugins installed before this feature need to be reinstalled
           newStates[id] = {
             enabled: root.pluginStates[id].enabled,
-            sourceUrl: root.mainSourceUrl
+            sourceUrl: root.pluginStates[id].sourceUrl || null
           };
         }
         root.pluginStates = newStates;
         needsSave = true;
         break;
       }
-    }
-
-    // Migration: rename "Official Noctalia Plugins" -> "Noctalia Plugins"
-    var newSources = [];
-    var sourcesChanged = false;
-    for (var i = 0; i < root.pluginSources.length; i++) {
-      var source = root.pluginSources[i];
-      if (source.name === "Official Noctalia Plugins") {
-        newSources.push({
-                          name: "Noctalia Plugins",
-                          url: source.url,
-                          enabled: source.enabled
-                        });
-        sourcesChanged = true;
-        Logger.i("PluginRegistry", "Migrating source name: 'Official Noctalia Plugins' -> 'Noctalia Plugins'");
-      } else {
-        newSources.push(source);
-      }
-    }
-    if (sourcesChanged) {
-      root.pluginSources = newSources;
-      needsSave = true;
     }
 
     if (needsSave) {
@@ -373,9 +326,9 @@ Singleton {
     adapter.sources = root.pluginSources;
 
     Qt.callLater(() => {
-                   pluginsFileView.writeAdapter();
-                   Logger.d("PluginRegistry", "Plugin states saved");
-                 });
+      pluginsFileView.writeAdapter();
+      Logger.d("PluginRegistry", "Plugin states saved");
+    });
   }
 
   // Enable/disable a plugin
@@ -432,15 +385,13 @@ Singleton {
     manifest.compositeKey = compositeKey;
     root.installedPlugins[compositeKey] = manifest;
 
-    // Ensure state exists (default to disabled, store sourceUrl)
     if (!root.pluginStates[compositeKey]) {
       root.pluginStates[compositeKey] = {
         enabled: false,
-        sourceUrl: sourceUrl || root.mainSourceUrl
+        sourceUrl: sourceUrl || null
       };
     } else {
-      // Preserve enabled state but update sourceUrl
-      root.pluginStates[compositeKey].sourceUrl = sourceUrl || root.mainSourceUrl;
+      root.pluginStates[compositeKey].sourceUrl = sourceUrl || null;
     }
 
     save();
@@ -515,6 +466,32 @@ Singleton {
     root.pluginSources = newSources;
     save();
     Logger.i("PluginRegistry", "Removed plugin source:", url);
+    return true;
+  }
+
+  // Edit a plugin source (identify by oldUrl, update name and url)
+  function editPluginSource(oldUrl, name, url) {
+    var newSources = [];
+    var found = false;
+    for (var i = 0; i < root.pluginSources.length; i++) {
+      if (root.pluginSources[i].url === oldUrl) {
+        newSources.push({
+                          name: name,
+                          url: url,
+                          enabled: root.pluginSources[i].enabled !== false
+                        });
+        found = true;
+      } else {
+        newSources.push(root.pluginSources[i]);
+      }
+    }
+    if (!found) {
+      Logger.w("PluginRegistry", "Source not found:", oldUrl);
+      return false;
+    }
+    root.pluginSources = newSources;
+    save();
+    Logger.i("PluginRegistry", "Edited plugin source:", name, url);
     return true;
   }
 

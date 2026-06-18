@@ -11,6 +11,62 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
+  property string homeDir: ""
+
+  Component.onCompleted: {
+    var getHome = Qt.createQmlObject('import QtQuick; import Quickshell.Io; Process { command: ["sh", "-c", "echo $HOME"]; stdout: StdioCollector {} }', root, "GetHome");
+    getHome.stdout.onStreamFinished.connect(function () {
+      root.homeDir = getHome.stdout.text.trim();
+      getHome.destroy();
+    });
+    getHome.running = true;
+  }
+
+  function sourceIcon(url) {
+    if (!url)
+      return "brand-git";
+    if (url.startsWith("file://"))
+      return "folder";
+    var domain = url;
+    var protoIdx = domain.indexOf("://");
+    if (protoIdx !== -1)
+      domain = domain.substring(protoIdx + 3);
+    var slashIdx = domain.indexOf("/");
+    if (slashIdx !== -1)
+      domain = domain.substring(0, slashIdx);
+    var colonIdx = domain.indexOf(":");
+    if (colonIdx !== -1)
+      domain = domain.substring(0, colonIdx);
+    var atIdx = domain.indexOf("@");
+    if (atIdx !== -1)
+      domain = domain.substring(atIdx + 1);
+    var dotIdx = domain.lastIndexOf(".");
+    if (dotIdx !== -1)
+      domain = domain.substring(0, dotIdx);
+    domain = domain.replace(/[^a-zA-Z0-9-]/g, "");
+    var brandIcon = "brand-" + domain;
+    if (brandIcon in Icons.icons)
+      return brandIcon;
+    return "brand-git";
+  }
+
+  function normalizeSourceUrl(input) {
+    if (!input)
+      return "";
+    if (input.startsWith("file://"))
+      return input;
+    if (input.startsWith("~")) {
+      return "file://" + root.homeDir + input.substring(1);
+    }
+    if (input.startsWith("/"))
+      return "file://" + input;
+    var firstSlash = input.indexOf("/");
+    var firstWord = firstSlash === -1 ? input : input.substring(0, firstSlash);
+    if (firstWord.indexOf(".") !== -1)
+      return "https://" + input;
+    return input;
+  }
+
   // List of plugin sources
   ColumnLayout {
     spacing: Style.marginM
@@ -32,7 +88,7 @@ ColumnLayout {
           spacing: Style.marginM
 
           NIcon {
-            icon: "brand-github"
+            icon: root.sourceIcon(modelData.url)
             pointSize: Style.fontSizeL
           }
 
@@ -56,49 +112,70 @@ ColumnLayout {
           }
 
           NIconButton {
+            icon: "pencil"
+            tooltipText: I18n.tr("panels.plugins.sources-edit-tooltip")
+            baseSize: Style.baseWidgetSize * 0.7
+            onClicked: {
+              sourceDialog.editSource(modelData.name, modelData.url);
+              sourceDialog.open();
+            }
+          }
+
+          NIconButton {
             icon: "trash"
             tooltipText: I18n.tr("panels.plugins.sources-remove-tooltip")
-            visible: index !== 0 // Cannot remove official source
             baseSize: Style.baseWidgetSize * 0.7
             onClicked: {
               PluginRegistry.removePluginSource(modelData.url);
             }
           }
 
-          // Enable/Disable a source
           NToggle {
-            checked: modelData.enabled !== false // Default to true if not set
+            checked: modelData.enabled !== false
             baseSize: Style.baseWidgetSize * 0.7
             onToggled: checked => {
-                         PluginRegistry.setSourceEnabled(modelData.url, checked);
-                         PluginService.refreshAvailablePlugins();
-                         ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.refresh-refreshing"));
-                       }
+              PluginRegistry.setSourceEnabled(modelData.url, checked);
+              PluginService.refreshAvailablePlugins();
+              ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.refresh-refreshing"));
+            }
           }
         }
       }
     }
   }
 
-  // Add custom repository
   NButton {
     text: I18n.tr("panels.plugins.sources-add-custom")
     icon: "plus"
     onClicked: {
-      addSourceDialog.open();
+      sourceDialog.addSource();
+      sourceDialog.open();
     }
     Layout.fillWidth: true
   }
 
-  // Add source dialog
   Popup {
-    id: addSourceDialog
+    id: sourceDialog
     parent: Overlay.overlay
     modal: true
     dim: false
     anchors.centerIn: parent
     width: 500
     padding: Style.marginL
+
+    property string editingUrl: ""
+
+    function addSource() {
+      editingUrl = "";
+      sourceNameInput.text = "";
+      sourceUrlInput.text = "";
+    }
+
+    function editSource(name, url) {
+      editingUrl = url;
+      sourceNameInput.text = name;
+      sourceUrlInput.text = url;
+    }
 
     background: Rectangle {
       color: Color.mSurface
@@ -112,8 +189,8 @@ ColumnLayout {
       spacing: Style.marginL
 
       NHeader {
-        label: I18n.tr("panels.plugins.sources-add-dialog-title")
-        description: I18n.tr("panels.plugins.sources-add-dialog-description")
+        label: sourceDialog.editingUrl ? I18n.tr("panels.plugins.sources-edit-dialog-title") : I18n.tr("panels.plugins.sources-add-dialog-title")
+        description: sourceDialog.editingUrl ? I18n.tr("panels.plugins.sources-edit-dialog-description") : I18n.tr("panels.plugins.sources-add-dialog-description")
       }
 
       NTextInput {
@@ -123,11 +200,37 @@ ColumnLayout {
         Layout.fillWidth: true
       }
 
-      NTextInput {
-        id: sourceUrlInput
-        label: I18n.tr("panels.plugins.sources-add-dialog-url")
-        placeholderText: "https://github.com/user/repo"
+      RowLayout {
+        spacing: Style.marginS
         Layout.fillWidth: true
+
+        NTextInput {
+          id: sourceUrlInput
+          label: I18n.tr("panels.plugins.sources-add-dialog-url")
+          placeholderText: I18n.tr("panels.plugins.sources-add-dialog-url-placeholder")
+          Layout.fillWidth: true
+        }
+
+        NIconButton {
+          icon: "folder"
+          tooltipText: I18n.tr("panels.plugins.sources-add-dialog-browse")
+          border.width: 0
+          Layout.preferredWidth: Style.baseWidgetSize * 1.1 * Style.uiScaleRatio
+          Layout.preferredHeight: Style.baseWidgetSize * 1.1 * Style.uiScaleRatio
+          Layout.alignment: Qt.AlignBottom
+          colorBg: "transparent"
+          colorBgHover: Qt.alpha(Color.mPrimary, 0.1)
+          onClicked: folderPicker.openFilePicker()
+        }
+      }
+
+      NFilePicker {
+        id: folderPicker
+        title: I18n.tr("panels.plugins.sources-add-dialog-browse-title")
+        selectionMode: "folders"
+        onAccepted: function (paths) {
+          sourceUrlInput.text = paths[0];
+        }
       }
 
       RowLayout {
@@ -139,24 +242,31 @@ ColumnLayout {
         }
 
         NButton {
-          text: I18n.tr("common.cancel")
-          onClicked: addSourceDialog.close()
+          text: "Preview"
+          icon: "folder"
+          outlined: true
+          onClicked: folderPicker.openFilePicker()
         }
 
         NButton {
-          text: I18n.tr("common.add")
+          text: I18n.tr("common.cancel")
+          onClicked: sourceDialog.close()
+        }
+
+        NButton {
+          text: sourceDialog.editingUrl ? I18n.tr("common.save") : I18n.tr("common.add")
           backgroundColor: Color.mPrimary
           textColor: Color.mOnPrimary
           enabled: sourceNameInput.text.length > 0 && sourceUrlInput.text.length > 0
           onClicked: {
-            if (PluginRegistry.addPluginSource(sourceNameInput.text, sourceUrlInput.text)) {
-              ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.sources-add-dialog-success"));
+            var url = root.normalizeSourceUrl(sourceUrlInput.text);
+            var success = sourceDialog.editingUrl ? PluginRegistry.editPluginSource(sourceDialog.editingUrl, sourceNameInput.text, url) : PluginRegistry.addPluginSource(sourceNameInput.text, url);
+            if (success) {
+              ToastService.showNotice(I18n.tr("panels.plugins.title"), sourceDialog.editingUrl ? I18n.tr("panels.plugins.sources-edit-dialog-success") : I18n.tr("panels.plugins.sources-add-dialog-success"));
               PluginService.refreshAvailablePlugins();
-              addSourceDialog.close();
-              sourceNameInput.text = "";
-              sourceUrlInput.text = "";
+              sourceDialog.close();
             } else {
-              ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.sources-add-dialog-error"));
+              ToastService.showError(I18n.tr("panels.plugins.title"), sourceDialog.editingUrl ? I18n.tr("panels.plugins.sources-edit-dialog-error") : I18n.tr("panels.plugins.sources-add-dialog-error"));
             }
           }
         }
