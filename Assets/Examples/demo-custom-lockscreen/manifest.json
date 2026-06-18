@@ -1,0 +1,12 @@
+{
+  "id": "demo-custom-lockscreen",
+  "name": "Example Custom Lock Screen",
+  "description": "A minimal example custom lock screen",
+  "author": "Atmosphera",
+  "version": "1.0.0",
+  "minNoctaliaVersion": "0.0.0",
+  "entryPoints": {
+    "lockScreen": "LockScreenView.qml",
+    "settings": "Settings.qml"
+  }
+}
