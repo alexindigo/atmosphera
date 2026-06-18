@@ -115,6 +115,7 @@
     "clockFormat": "hh\\nmm",
     "passwordChars": false,
     "lockScreenMonitors": [],
+    "lockScreenPlugin": "",
     "lockScreenBlur": 0,
     "lockScreenTint": 0,
     "keybinds": {
@@ -172,7 +173,7 @@
     "firstDayOfWeek": -1,
     "hideWeatherTimezone": false,
     "hideWeatherCityName": false,
-    "autoLocate": true
+    "autoLocate": false
   },
   "calendar": {
     "cards": [
