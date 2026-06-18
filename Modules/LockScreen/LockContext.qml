@@ -10,7 +10,7 @@ Scope {
   signal unlocked
   signal failed
 
-  property string currentText: ""
+  property string passwordText: ""
   property bool waitingForPassword: false
   property bool unlockInProgress: false
   property bool showFailure: false
@@ -57,7 +57,7 @@ Scope {
 
   onPamReadyChanged: {
     if (pamReady) {
-      if (Settings.data.general.autoStartAuth && currentText === "") {
+      if (Settings.data.general.autoStartAuth && passwordText === "") {
         pam.start();
       }
     }
@@ -75,8 +75,8 @@ Scope {
     }
   }
 
-  onCurrentTextChanged: {
-    if (currentText !== "") {
+  onPasswordTextChanged: {
+    if (passwordText !== "") {
       showInfo = false;
       showFailure = false;
       if (!waitingForPassword) {
@@ -100,7 +100,7 @@ Scope {
     }
 
     if (waitingForPassword) {
-      pam.respond(currentText);
+      pam.respond(passwordText);
       unlockInProgress = true;
       waitingForPassword = false;
       showInfo = false;
@@ -127,8 +127,8 @@ Scope {
 
       if (this.responseRequired) {
         Logger.i("LockContext", "Responding to PAM with password");
-        if (root.currentText !== "") {
-          this.respond(root.currentText);
+        if (root.passwordText !== "") {
+          this.respond(root.passwordText);
           unlockInProgress = true;
         } else {
           root.waitingForPassword = true;
@@ -145,19 +145,19 @@ Scope {
     }
 
     onCompleted: result => {
-                   Logger.i("LockContext", "PAM completed with result:", result);
-                   if (result === PamResult.Success) {
-                     Logger.i("LockContext", "Authentication successful");
-                     root.unlocked();
-                   } else {
-                     Logger.i("LockContext", "Authentication failed");
-                     root.currentText = "";
-                     errorMessage = I18n.tr("authentication.failed");
-                     showFailure = true;
-                     root.failed();
-                   }
-                   root.unlockInProgress = false;
-                 }
+      Logger.i("LockContext", "PAM completed with result:", result);
+      if (result === PamResult.Success) {
+        Logger.i("LockContext", "Authentication successful");
+        root.unlocked();
+      } else {
+        Logger.i("LockContext", "Authentication failed");
+        root.passwordText = "";
+        errorMessage = I18n.tr("authentication.failed");
+        showFailure = true;
+        root.failed();
+      }
+      root.unlockInProgress = false;
+    }
 
     onError: {
       Logger.i("LockContext", "PAM error:", error, "message:", message);

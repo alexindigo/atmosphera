@@ -911,6 +911,21 @@ Singleton {
         }
       }
 
+      // Load lock screen component if provided
+      if (manifest.entryPoints && manifest.entryPoints.lockScreen) {
+        var lockScreenPath = pluginDir + "/" + manifest.entryPoints.lockScreen;
+        var lockScreenLoadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
+        var lockScreenComponent = Qt.createComponent("file://" + lockScreenPath + "?v=" + lockScreenLoadVersion);
+
+        if (lockScreenComponent.status === Component.Ready) {
+          root.loadedPlugins[pluginId].lockScreen = lockScreenComponent;
+          LockScreenRegistry.register(pluginId, lockScreenComponent, manifest.metadata?.name ?? manifest.name);
+          Logger.i("PluginService", "Loaded lock screen for plugin:", pluginId);
+        } else if (lockScreenComponent.status === Component.Error) {
+          root.recordPluginError(pluginId, "lockScreen", lockScreenComponent.errorString());
+        }
+      }
+
       Logger.i("PluginService", "Plugin loaded:", pluginId);
       root.pluginLoaded(pluginId);
 
@@ -958,6 +973,11 @@ Singleton {
     // Unregister from ControlCenterWidgetRegistry
     if (plugin.manifest.entryPoints && plugin.manifest.entryPoints.controlCenterWidget) {
       ControlCenterWidgetRegistry.unregisterPluginWidget(pluginId);
+    }
+
+    // Unregister lock screen plugin
+    if (plugin.manifest.entryPoints && plugin.manifest.entryPoints.lockScreen) {
+      LockScreenRegistry.unregister(pluginId);
     }
 
     // Destroy Main instance if any
