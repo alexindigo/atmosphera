@@ -408,11 +408,16 @@ Singleton {
   IpcHandler {
     target: "lockScreen"
 
-    // New preferred method - lock the screen
     function lock() {
-      // Only lock if not already locked (prevents the red screen issue)
       if (!PanelService.lockScreen.active) {
         CompositorService.lock();
+      }
+    }
+
+    function preview() {
+      if (PanelService.lockScreen && !PanelService.lockScreen.active) {
+        PanelService.lockScreen.active = true;
+        PanelService.lockScreen.previewMode = true;
       }
     }
   }
