@@ -3,11 +3,52 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Services.UI
 import qs.Widgets
 
 ColumnLayout {
   id: root
   spacing: Style.marginL
+
+  RowLayout {
+    Layout.fillWidth: true
+    spacing: Style.marginM
+
+    NComboBox {
+      id: _styleSelector
+      Layout.fillWidth: true
+      label: "Lock Screen Style"
+      description: "Choose a custom lock screen from installed plugins, or use the built-in one"
+      model: {
+        var items = [];
+        for (var id in LockScreenRegistry.plugins) {
+          items.push({
+                       "key": id,
+                       "name": LockScreenRegistry.pluginNames[id] ?? id
+                     });
+        }
+        items.sort((a, b) => a.key === "default" ? -1 : b.key === "default" ? 1 : 0);
+        return items;
+      }
+      currentKey: Settings.data.general.lockScreenPlugin || "default"
+      onSelected: key => Settings.data.general.lockScreenPlugin = key === "default" ? "" : key
+      defaultValue: ""
+    }
+
+    NButton {
+      text: "Preview"
+      icon: "eye"
+      outlined: true
+      Layout.alignment: Qt.AlignVCenter
+      onClicked: {
+        if (PanelService.lockScreen && !PanelService.lockScreen.active) {
+          PanelService.lockScreen.active = true;
+          PanelService.lockScreen.previewMode = true;
+        }
+      }
+    }
+  }
+
   function insertToken(token) {
     if (formatInput.inputItem) {
       var input = formatInput.inputItem;
