@@ -52,7 +52,7 @@ https://github.com/user-attachments/assets/bf46f233-8d66-439a-a1ae-ab0446270f2d
 ## Getting Started
 
 **New to Atmosphera?**
-Check the [installation guide](#) and [FAQ](https://github.com/alexindigo/atmosphera/issues) to get up and running!
+Check the [installation guide](https://github.com/alexindigo/atmosphera/releases) and [FAQ](https://github.com/alexindigo/atmosphera/issues) to get up and running!
 
 ---
 
@@ -81,7 +81,7 @@ Some examples of features that are better suited as plugins:
 - Niche productivity tools (e.g., Pomodoro timer, RSS reader, Docker manager)
 - Alternative visualizations or widgets
 
-If you have an idea that fits this category, consider [building a plugin](./docs/development/guideline.md) for it!
+If you have an idea that fits this category, consider [building a plugin](./docs/development/) for it!
 
 ### What falls outside our scope
 
