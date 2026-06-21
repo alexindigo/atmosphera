@@ -54,6 +54,7 @@ Singleton {
   readonly property int marginM: Math.round(9 * uiScaleRatio)
   readonly property int marginL: Math.round(13 * uiScaleRatio)
   readonly property int marginXL: Math.round(18 * uiScaleRatio)
+  readonly property int marginXXL: Math.round(24 * uiScaleRatio)
 
   // Double margins, for proper container sizing only (e.g. height: id.implicitHeight + Style.margin2M)
   readonly property int margin2XXXS: marginXXXS * 2

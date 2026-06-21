@@ -163,6 +163,10 @@ Singleton {
         files.sort(function (a, b) {
           var nameA = getBasename(a).toLowerCase();
           var nameB = getBasename(b).toLowerCase();
+          if (nameA === "custom")
+            return -1;
+          if (nameB === "custom")
+            return 1;
           return nameA.localeCompare(nameB);
         });
         schemes = files;
@@ -288,5 +292,13 @@ Singleton {
     colorsWriter.path = "";
     colorsWriter.path = colorsJsonFilePath;
     colorsWriter.writeAdapter();
+  }
+
+  function saveCustomScheme(schemeData) {
+    var dir = Settings.configDir + "colorschemes/Custom";
+    var path = dir + "/Custom.json";
+    var json = JSON.stringify(schemeData, null, "  ");
+    Quickshell.execDetached(["mkdir", "-p", dir]);
+    Quickshell.execDetached(["sh", "-c", "cat > '" + path.replace(/'/g, "'\\''") + "' << 'ATMOSPHERA_EOF'\n" + json + "\nATMOSPHERA_EOF"]);
   }
 }

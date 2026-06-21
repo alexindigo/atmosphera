@@ -95,7 +95,6 @@ ColumnLayout {
     currentIndex: subTabBar.currentIndex
 
     ColorsSubTab {
-      screen: root.screen
       timeOptions: timeOptions
       onOpenDownloadPopup: downloadPopupLoader.open()
     }
