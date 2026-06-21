@@ -14,10 +14,10 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
+  property var screen
   property var timeOptions
   property var schemeColorsCache: ({})
   property int cacheVersion: 0
-  property var screen
 
   signal openDownloadPopup
 
@@ -365,6 +365,7 @@ ColumnLayout {
             NText {
               text: schemeItem.schemeName
               pointSize: Style.fontSizeS
+              font.weight: schemeItem.schemeName === "Custom" ? Style.fontWeightBold : Style.fontWeightNormal
               color: Color.mOnSurface
               Layout.fillWidth: true
               elide: Text.ElideRight
@@ -449,12 +450,35 @@ ColumnLayout {
       }
     }
 
-    NButton {
-      text: I18n.tr("panels.color-scheme.download-button")
-      icon: "download"
-      onClicked: root.openDownloadPopup()
-      Layout.alignment: Qt.AlignRight
-      Layout.topMargin: Style.marginS
+    RowLayout {
+      Layout.fillWidth: true
+      Layout.topMargin: Style.marginXXL
+      spacing: Style.marginM
+
+      NButton {
+        text: I18n.tr("common.customize")
+        icon: "settings"
+        Layout.preferredHeight: Style.baseWidgetSize * 1.4 * Style.uiScaleRatio
+        onClicked: {
+          colorCustomizer.open();
+        }
+      }
+
+      Item {
+        Layout.fillWidth: true
+      }
+
+      NButton {
+        text: I18n.tr("panels.color-scheme.download-button")
+        icon: "download"
+        Layout.preferredHeight: Style.baseWidgetSize * 1.4 * Style.uiScaleRatio
+        onClicked: root.openDownloadPopup()
+      }
     }
+  }
+
+  ColorCustomizer {
+    id: colorCustomizer
+    screen: root.screen
   }
 }
