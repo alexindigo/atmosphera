@@ -571,7 +571,8 @@
     "width": "宽度",
     "wifi": "Wi-Fi",
     "windows": "窗口",
-    "yes": "是"
+    "yes": "是",
+    "icons": "Icons"
   },
   "control-center": {
     "power-profile": {
@@ -1812,6 +1813,11 @@
       "view-mode-cycle-tooltip": "查看模式：{mode}（点击更改）",
       "view-mode-recursive": "扁平化子目录",
       "view-mode-single": "根目录"
+    },
+    "icons": {
+      "title": "Icons",
+      "description": "Manage icon themes and appearance.",
+      "count": "{count} of {total} icons"
     }
   },
   "placeholders": {

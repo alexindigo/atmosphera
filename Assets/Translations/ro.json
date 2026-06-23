@@ -571,7 +571,8 @@
     "width": "Lățime",
     "wifi": "Wi-Fi",
     "windows": "Windows",
-    "yes": "Da"
+    "yes": "Da",
+    "icons": "Icons"
   },
   "control-center": {
     "power-profile": {
@@ -1812,6 +1813,11 @@
       "view-mode-cycle-tooltip": "Mod vizualizare: {mode} (clic pentru a schimba)",
       "view-mode-recursive": "Subdirectoare aplatizate",
       "view-mode-single": "Director rădăcină"
+    },
+    "icons": {
+      "title": "Icons",
+      "description": "Manage icon themes and appearance.",
+      "count": "{count} of {total} icons"
     }
   },
   "placeholders": {

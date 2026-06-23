@@ -573,6 +573,15 @@
     "subTabLabel": "common.colors"
   },
   {
+    "labelKey": "common.search",
+    "descriptionKey": null,
+    "widget": "NTextInput",
+    "tab": 2,
+    "tabLabel": "panels.color-scheme.title",
+    "subTab": 2,
+    "subTabLabel": "common.icons"
+  },
+  {
     "labelKey": "panels.color-scheme.templates-misc-user-templates-label",
     "descriptionKey": "panels.color-scheme.templates-misc-user-templates-description",
     "widget": "NCheckbox",

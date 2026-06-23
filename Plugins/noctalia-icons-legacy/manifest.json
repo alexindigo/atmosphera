@@ -1,0 +1,12 @@
+{
+  "id": "noctalia-icons-legacy",
+  "name": "Noctalia Icons (Legacy)",
+  "version": "1.0.0",
+  "author": "alexindigo",
+  "license": "GPL-3.0",
+  "description": "Original icon set based on Tabler Icons, custom-built via Fontello. Provides 6,085 semantic icon mappings including custom Noctalia/Atmosphera, Hyprland, and Niri icons.",
+  "tags": ["Icons", "Built-in"],
+  "entryPoints": {
+    "icons": "icons.json"
+  }
+}

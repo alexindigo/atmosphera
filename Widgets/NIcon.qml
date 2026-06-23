@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import qs.Commons
+import qs.Services.UI
 import qs.Widgets
 
 Text {
@@ -11,18 +12,38 @@ Text {
   property bool applyUiScale: true
 
   visible: (icon !== undefined) && (icon !== "")
-  text: {
+
+  property string _resolvedChar: ""
+  property string _resolvedFontFamily: Icons.fontFamily
+
+  Component.onCompleted: _resolveIcon()
+  onIconChanged: _resolveIcon()
+
+  function _resolveIcon() {
     if ((icon === undefined) || (icon === "")) {
-      return "";
+      root.text = "";
+      return;
     }
+
+    var resolved = IconRegistry.resolve(icon);
+    if (resolved && resolved.type === "font") {
+      root._resolvedChar = resolved.char;
+      root._resolvedFontFamily = Icons.fontFamily;
+      root.text = resolved.char;
+      root.visible = true;
+      return;
+    }
+
     if (Icons.get(icon) === undefined) {
       Logger.w("Icon", `"${icon}"`, "doesn't exist in the icons font");
       Logger.callStack();
-      return Icons.get(Icons.defaultIcon);
+      root.text = Icons.get(Icons.defaultIcon);
+      return;
     }
-    return Icons.get(icon);
+    root.text = Icons.get(icon);
   }
-  font.family: Icons.fontFamily
+
+  font.family: root._resolvedFontFamily
   font.pointSize: Math.max(1, applyUiScale ? root.pointSize * Style.uiScaleRatio : root.pointSize)
   color: Color.mOnSurface
   verticalAlignment: Text.AlignVCenter

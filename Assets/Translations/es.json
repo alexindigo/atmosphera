@@ -571,7 +571,8 @@
     "width": "Ancho",
     "wifi": "Wi-Fi",
     "windows": "Ventanas",
-    "yes": "Sí"
+    "yes": "Sí",
+    "icons": "Icons"
   },
   "control-center": {
     "power-profile": {
@@ -1812,6 +1813,11 @@
       "view-mode-cycle-tooltip": "Modo de visualización: {mode} (clic para cambiar)",
       "view-mode-recursive": "Incluir subdirectorios",
       "view-mode-single": "Directorio raíz"
+    },
+    "icons": {
+      "title": "Icons",
+      "description": "Manage icon themes and appearance.",
+      "count": "{count} of {total} icons"
     }
   },
   "placeholders": {

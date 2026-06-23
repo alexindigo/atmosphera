@@ -496,7 +496,8 @@
     "widgets": "Sepanok",
     "width": "Firehî",
     "windows": "Çarçove",
-    "yes": "Erê"
+    "yes": "Erê",
+    "icons": "Icons"
   },
   "control-center": {
     "power-profile": {
@@ -1465,6 +1466,11 @@
       "view-mode-cycle-tooltip": "Awayê dîtinê: {mode} (bitikîne da biguherî)",
       "view-mode-recursive": "Binkêşkên jêrîn ên rûxandî",
       "view-mode-single": "Peldaîna bingehîn"
+    },
+    "icons": {
+      "title": "Icons",
+      "description": "Manage icon themes and appearance.",
+      "count": "{count} of {total} icons"
     }
   },
   "placeholders": {

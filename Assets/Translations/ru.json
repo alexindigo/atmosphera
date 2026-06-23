@@ -571,7 +571,8 @@
     "width": "Ширина",
     "wifi": "Wi-Fi",
     "windows": "Окна ",
-    "yes": "Да"
+    "yes": "Да",
+    "icons": "Icons"
   },
   "control-center": {
     "power-profile": {
@@ -1812,6 +1813,11 @@
       "view-mode-cycle-tooltip": "Режим просмотра: {mode} (нажмите, чтобы изменить)",
       "view-mode-recursive": "Объединить с подкаталогами",
       "view-mode-single": "Корневой каталог"
+    },
+    "icons": {
+      "title": "Icons",
+      "description": "Manage icon themes and appearance.",
+      "count": "{count} of {total} icons"
     }
   },
   "placeholders": {

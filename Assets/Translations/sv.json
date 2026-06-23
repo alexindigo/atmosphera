@@ -571,7 +571,8 @@
     "width": "Bredd",
     "wifi": "Wi-Fi",
     "windows": "Fönster",
-    "yes": "Ja"
+    "yes": "Ja",
+    "icons": "Icons"
   },
   "control-center": {
     "power-profile": {
@@ -1812,6 +1813,11 @@
       "view-mode-cycle-tooltip": "Visningsläge: {läge} (klicka för att ändra)",
       "view-mode-recursive": "Platta underkataloger",
       "view-mode-single": "Rotkatalog"
+    },
+    "icons": {
+      "title": "Icons",
+      "description": "Manage icon themes and appearance.",
+      "count": "{count} of {total} icons"
     }
   },
   "placeholders": {

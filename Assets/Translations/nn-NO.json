@@ -549,7 +549,8 @@
     "width": "Breidde",
     "wifi": "Wi-Fi",
     "windows": "Vindauge",
-    "yes": "Ja"
+    "yes": "Ja",
+    "icons": "Icons"
   },
   "control-center": {
     "power-profile": {
@@ -1636,6 +1637,11 @@
       "view-mode-cycle-tooltip": "Visningsmodus: {mode} (klikk for å endra)",
       "view-mode-recursive": "Flate undermapper",
       "view-mode-single": "Rotmappe"
+    },
+    "icons": {
+      "title": "Icons",
+      "description": "Manage icon themes and appearance.",
+      "count": "{count} of {total} icons"
     }
   },
   "placeholders": {

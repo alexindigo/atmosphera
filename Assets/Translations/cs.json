@@ -571,7 +571,8 @@
     "width": "Šířka",
     "wifi": "Wi-Fi",
     "windows": "Okna",
-    "yes": "Ano"
+    "yes": "Ano",
+    "icons": "Icons"
   },
   "control-center": {
     "power-profile": {
@@ -1812,6 +1813,11 @@
       "view-mode-cycle-tooltip": "Režim zobrazení: {mode} (kliknutím změnit)",
       "view-mode-recursive": "Sloučené podsložky",
       "view-mode-single": "Kořenová složka"
+    },
+    "icons": {
+      "title": "Icons",
+      "description": "Manage icon themes and appearance.",
+      "count": "{count} of {total} icons"
     }
   },
   "placeholders": {

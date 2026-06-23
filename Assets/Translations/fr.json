@@ -571,7 +571,8 @@
     "width": "Largeur",
     "wifi": "Wi-Fi",
     "windows": "Fenêtres",
-    "yes": "Oui"
+    "yes": "Oui",
+    "icons": "Icons"
   },
   "control-center": {
     "power-profile": {
@@ -1812,6 +1813,11 @@
       "view-mode-cycle-tooltip": "Mode d'affichage : {mode} (cliquez pour modifier)",
       "view-mode-recursive": "Sous-répertoires aplatis",
       "view-mode-single": "Répertoire racine"
+    },
+    "icons": {
+      "title": "Icons",
+      "description": "Manage icon themes and appearance.",
+      "count": "{count} of {total} icons"
     }
   },
   "placeholders": {

@@ -223,7 +223,8 @@
     "privacy-no-telemetry": "Atmosphera does not collect telemetry.",
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "brightness": "Ljosstyrke",
-    "select-color-description": "Lita med hamlitene for tyngd."
+    "select-color-description": "Lita med hamlitene for tyngd.",
+    "icons": "Icons"
   },
   "options": {
     "bar": {

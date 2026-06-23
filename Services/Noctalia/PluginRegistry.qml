@@ -573,6 +573,7 @@ Singleton {
       }
     }
 
+    // TODO: rename "entryPoints" to "capabilities"
     if (!manifest.entryPoints) {
       return {
         valid: false,

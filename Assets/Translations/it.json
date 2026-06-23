@@ -571,7 +571,8 @@
     "width": "Larghezza",
     "wifi": "Wi-Fi",
     "windows": "Finestre",
-    "yes": "Sì"
+    "yes": "Sì",
+    "icons": "Icons"
   },
   "control-center": {
     "power-profile": {
@@ -1812,6 +1813,11 @@
       "view-mode-cycle-tooltip": "Modalità visualizzazione: {mode} (clic per cambiare)",
       "view-mode-recursive": "Sottocartelle appiattite",
       "view-mode-single": "Cartella radice"
+    },
+    "icons": {
+      "title": "Icons",
+      "description": "Manage icon themes and appearance.",
+      "count": "{count} of {total} icons"
     }
   },
   "placeholders": {
