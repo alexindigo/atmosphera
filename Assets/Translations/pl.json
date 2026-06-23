@@ -571,7 +571,8 @@
     "width": "Szerokość",
     "wifi": "Wi-Fi",
     "windows": "Okna",
-    "yes": "Tak"
+    "yes": "Tak",
+    "icons": "Icons"
   },
   "control-center": {
     "power-profile": {
@@ -1812,6 +1813,11 @@
       "view-mode-cycle-tooltip": "Tryb widoku: {mode} (kliknij, aby zmienić)",
       "view-mode-recursive": "Spłaszczone podkatalogi",
       "view-mode-single": "Katalog główny"
+    },
+    "icons": {
+      "title": "Icons",
+      "description": "Manage icon themes and appearance.",
+      "count": "{count} of {total} icons"
     }
   },
   "placeholders": {

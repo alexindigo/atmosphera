@@ -571,7 +571,8 @@
     "width": "Chiều rộng",
     "wifi": "Wi-Fi",
     "windows": "Cửa sổ",
-    "yes": "Có"
+    "yes": "Có",
+    "icons": "Icons"
   },
   "control-center": {
     "power-profile": {
@@ -1812,6 +1813,11 @@
       "view-mode-cycle-tooltip": "Chế độ xem: {mode} (nhấn để thay đổi)",
       "view-mode-recursive": "Thư mục con được làm phẳng",
       "view-mode-single": "Thư mục gốc"
+    },
+    "icons": {
+      "title": "Icons",
+      "description": "Manage icon themes and appearance.",
+      "count": "{count} of {total} icons"
     }
   },
   "placeholders": {

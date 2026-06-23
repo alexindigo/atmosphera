@@ -926,6 +926,24 @@ Singleton {
         }
       }
 
+      // Load icon set data if provided (data-only, no QML)
+      if (manifest.entryPoints && manifest.entryPoints.icons) {
+        var iconsPath = pluginDir + "/" + manifest.entryPoints.icons;
+        var iconsFileView = Qt.createQmlObject('import Quickshell.Io; FileView { path: "' + iconsPath + '" }', root, "iconsLoader_" + pluginId);
+        iconsFileView.blockLoading = false;
+        iconsFileView.loaded.connect(function () {
+          try {
+            var iconsData = JSON.parse(iconsFileView.text());
+            IconRegistry.register(pluginId, iconsData, pluginDir);
+            Logger.i("PluginService", "Loaded icon set for plugin:", pluginId);
+          } catch (e) {
+            Logger.e("PluginService", "Failed to parse icons.json for plugin:", pluginId, e);
+            root.recordPluginError(pluginId, "icons", e.toString());
+          }
+          iconsFileView.destroy();
+        });
+      }
+
       Logger.i("PluginService", "Plugin loaded:", pluginId);
       root.pluginLoaded(pluginId);
 
@@ -978,6 +996,11 @@ Singleton {
     // Unregister lock screen plugin
     if (plugin.manifest.entryPoints && plugin.manifest.entryPoints.lockScreen) {
       LockScreenRegistry.unregister(pluginId);
+    }
+
+    // Unregister icon set
+    if (plugin.manifest.entryPoints && plugin.manifest.entryPoints.icons) {
+      IconRegistry.unregister(pluginId);
     }
 
     // Destroy Main instance if any
