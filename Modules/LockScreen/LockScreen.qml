@@ -132,6 +132,9 @@ Loader {
                                                  pluginApi: pluginApi
                                                });
                   if (inst) {
+                    inst.screen = Qt.binding(function () {
+                      return lockSurface.screen;
+                    });
                     inst.anchors.fill = pluginWrapper;
                   }
                 }

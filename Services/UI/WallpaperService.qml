@@ -39,8 +39,7 @@ Singleton {
   property string wallpaperCacheFile: ""
 
   readonly property bool scanning: (scanningCount > 0)
-  readonly property string atmospheraDefaultWallpaper: Quickshell.shellDir + "/Assets/Wallpaper/atmosphera.png"
-  property string defaultWallpaper: atmospheraDefaultWallpaper
+  property string defaultWallpaper: ""
 
   // Signals for reactive UI updates
   signal wallpaperChanged(string screenName, string path)
@@ -585,7 +584,9 @@ Singleton {
       return inherited;
     }
 
-    return root.defaultWallpaper;
+    var result = root.defaultWallpaper;
+    Logger.i("Wallpaper", `getWallpaper(${screenName}) = "${result}" (defaultWallpaper)`);
+    return result;
   }
 
   // -------------------------------------------------------------------
@@ -1629,7 +1630,7 @@ Singleton {
     adapter: JsonAdapter {
       id: wallpaperCacheAdapter
       property var wallpapers: ({})
-      property string defaultWallpaper: root.atmospheraDefaultWallpaper
+      property string defaultWallpaper: ""
       property var usedRandomWallpapers: ({})
     }
 
@@ -1650,8 +1651,8 @@ Singleton {
         root.defaultWallpaper = wallpaperCacheAdapter.defaultWallpaper;
         Logger.d("Wallpaper", "Loaded default wallpaper from cache:", wallpaperCacheAdapter.defaultWallpaper);
       } else {
-        root.defaultWallpaper = root.atmospheraDefaultWallpaper;
-        Logger.d("Wallpaper", "Using bundled default wallpaper");
+        root.defaultWallpaper = "";
+        Logger.d("Wallpaper", "No default wallpaper set");
       }
 
       Logger.d("Wallpaper", "Loaded wallpapers from cache file:", Object.keys(root.currentWallpapers).length, "screens");

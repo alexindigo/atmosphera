@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# atmosphera-niri-setup
+# Installs Atmosphera's Niri configuration and adds the include to config.kdl
+
+NIRI_DIR="${HOME}/.config/niri"
+CONFIG_FILE="${NIRI_DIR}/config.kdl"
+ATMOSPHERA_KDL="$(dirname "$(readlink -f "$0")")/../../Configs/niri/atmosphera.kdl"
+TARGET="${NIRI_DIR}/atmosphera.kdl"
+INCLUDE_LINE='include "atmosphera.kdl"'
+
+if [[ ! -f "$CONFIG_FILE" ]]; then
+  echo "Error: Niri config not found at ${CONFIG_FILE}"
+  exit 1
+fi
+
+mkdir -p "$NIRI_DIR"
+
+# Copy Atmosphera config
+cp "$ATMOSPHERA_KDL" "$TARGET"
+echo "Installed: ${TARGET}"
+
+# Add include if not already present
+if ! grep -qF "$INCLUDE_LINE" "$CONFIG_FILE"; then
+  echo "" >> "$CONFIG_FILE"
+  echo "$INCLUDE_LINE" >> "$CONFIG_FILE"
+  echo "Added include to: ${CONFIG_FILE}"
+else
+  echo "Include already present in: ${CONFIG_FILE}"
+fi
+
+echo "Done. Restart Niri (Mod+Shift+R) to apply."

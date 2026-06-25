@@ -67,7 +67,7 @@ Loader {
       screen: modelData
       WlrLayershell.layer: WlrLayer.Background
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
-      WlrLayershell.namespace: "atmosphera-overview-" + (screen?.name || "unknown")
+      WlrLayershell.namespace: "atmosphera-backdrop-overview-" + (screen?.name || "unknown")
 
       anchors {
         top: true

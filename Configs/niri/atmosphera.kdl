@@ -1,0 +1,32 @@
+// Atmosphera Niri Configuration
+// Install: include this from ~/.config/niri/config.kdl or use atmosphera-niri-setup
+
+// --- Blur ---
+blur {
+    passes 2
+    offset 3.0
+    noise 0.03
+    saturation 1.0
+}
+
+// --- Blur and transparency for all atmosphera surfaces ---
+// Opacity is controlled per-surface in Atmosphera settings (bar, widgets, panels).
+// Opaque surfaces show no blur regardless of this rule.
+layer-rule {
+    match namespace="^atmosphera-.*$"
+    background-effect { blur true xray true }
+}
+
+// --- Backdrop ---
+// Surfaces with the atmosphera-backdrop- namespace prefix are placed
+// into the Niri backdrop (visible between workspaces and during overview).
+// The shell controls which surfaces use this namespace at runtime.
+layer-rule {
+    match namespace="^atmosphera-backdrop-.*$"
+    place-within-backdrop true
+}
+
+// --- Workspace background ---
+layout {
+    background-color "transparent"
+}

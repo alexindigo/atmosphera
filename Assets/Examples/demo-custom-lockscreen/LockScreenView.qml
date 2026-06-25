@@ -6,20 +6,23 @@ import qs.Commons
 import qs.Widgets
 
 Item {
+  id: root
+
+  // `screen` must be transferred to AtmoWallpaperBackground for the shell
+  // to resolve the current wallpaper or apply the background-color fallback.
   required property var lockContext
   property var pluginApi: null
+  property var screen
   property bool compactMode: false
   property bool animationsEnabled: true
 
-  Image {
-    anchors.fill: parent
-    source: Quickshell.shellDir + "/Assets/Wallpaper/noctalia.png"
-    fillMode: Image.PreserveAspectCrop
+  AtmoWallpaperBackground {
+    screen: root.screen
+  }
 
-    Rectangle {
-      anchors.fill: parent
-      color: "#80000000"
-    }
+  Rectangle {
+    anchors.fill: parent
+    color: "#80000000"
   }
 
   ColumnLayout {
