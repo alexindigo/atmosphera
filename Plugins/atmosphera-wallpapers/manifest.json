@@ -1,0 +1,12 @@
+{
+  "id": "atmosphera-wallpapers",
+  "name": "Atmosphera Wallpapers",
+  "version": "1.0.0",
+  "author": "Atmosphera",
+  "license": "GPL-3.0",
+  "description": "Built-in wallpaper collection",
+  "tags": ["Wallpapers", "Built-in"],
+  "entryPoints": {
+    "wallpapers": "."
+  }
+}

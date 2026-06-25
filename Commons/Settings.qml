@@ -443,6 +443,8 @@ Singleton {
 
       property string wallhavenResolutionHeight: ""
       property string sortOrder: "name" // "name", "name_desc", "date", "date_desc", "random"
+      property list<var> monitorPools: []
+      // Format: [{ "name": "eDP-1", "pools": [{ "id": "user:/path", "active": true, "rotate": true }] }]
       property list<var> favorites: []
       // Format: [{ "path": "...", "appearance": "light"|"dark", "colorScheme": "...", "darkMode": bool, "useWallpaperColors": bool, "generationMethod": "...", "paletteColors": [...] }]
       // Legacy entries omit "appearance" and use darkMode to infer light vs dark slot.

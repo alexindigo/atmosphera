@@ -59,6 +59,16 @@ Singleton {
     return null;
   }
 
+  // Check if the source URL is from the official/main plugin registry
+  function isMainSource(sourceUrl) {
+    for (var i = 0; i < root.pluginSources.length; i++) {
+      if (root.pluginSources[i].url === sourceUrl) {
+        return root.pluginSources[i].isOfficial === true;
+      }
+    }
+    return false;
+  }
+
   // Get source name by hash
   function getSourceNameByHash(hash) {
     for (var i = 0; i < root.pluginSources.length; i++) {
@@ -114,6 +124,13 @@ Singleton {
           needsSave = true;
         }
       }
+
+      // Ensure seed defaults are present
+      var seedChanged = root._ensureSeedDefaults();
+      if (seedChanged) {
+        needsSave = true;
+      }
+
       if (needsSave) {
         root.save();
       }
@@ -183,7 +200,7 @@ Singleton {
     mkdirProcess.running = true;
   }
 
-  // Ensure plugins.json exists (create minimal one if it doesn't)
+  // Ensure plugins.json exists (create minimal one if it doesn't; seed defaults merged in _ensureSeedDefaults)
   function ensurePluginsFile() {
     var checkProcess = Qt.createQmlObject(`
       import QtQuick
@@ -201,6 +218,56 @@ Singleton {
     });
 
     checkProcess.running = true;
+  }
+
+  // Ensure seeded default sources and plugin states exist
+  function _ensureSeedDefaults() {
+    var shellDir = Quickshell.shellDir;
+    var builtInUrl = "file://" + shellDir + "/Plugins";
+    var changed = false;
+
+    // Ensure built-in source exists
+    var hasBuiltIn = false;
+    for (var i = 0; i < root.pluginSources.length; i++) {
+      if (root.pluginSources[i].url === builtInUrl) {
+        hasBuiltIn = true;
+        break;
+      }
+    }
+    if (!hasBuiltIn) {
+      root.pluginSources.push({
+                                enabled: true,
+                                name: "Built-in",
+                                url: builtInUrl
+                              });
+      Logger.i("PluginRegistry", "Added default Built-in source:", builtInUrl);
+      changed = true;
+    }
+
+    // Ensure default plugin states exist (using composite keys so state key matches installed dir)
+    var defaults = [
+          {
+            id: "noctalia-icons-legacy",
+            name: "noctalia-icons-legacy"
+          },
+          {
+            id: "atmosphera-wallpapers",
+            name: "atmosphera-wallpapers"
+          }
+        ];
+    for (var di = 0; di < defaults.length; di++) {
+      var compositeKey = root.generateCompositeKey(defaults[di].id, builtInUrl);
+      if (!root.pluginStates[compositeKey]) {
+        root.pluginStates[compositeKey] = {
+          enabled: true,
+          sourceUrl: builtInUrl
+        };
+        Logger.i("PluginRegistry", "Added default plugin state:", compositeKey);
+        changed = true;
+      }
+    }
+
+    return changed;
   }
 
   // Scan plugin folder to discover installed plugins (single process reads all manifests)
