@@ -239,5 +239,8 @@
   },
   "system": {
     "welcome-back": "Velkomen attende,"
+  },
+  "panels": {
+    "wallpaper": {}
   }
 }

@@ -208,7 +208,7 @@ Singleton {
       property string density: "default" // "compact", "default", "comfortable"
       property bool showOutline: false
       property bool showCapsule: true
-      property real capsuleOpacity: 1.0
+      property real capsuleOpacity: 0.70
       property string capsuleColorKey: "none"
       property int widgetSpacing: 6
       property int contentPadding: 2
@@ -216,8 +216,8 @@ Singleton {
       property bool enableExclusionZoneInset: true
 
       // Bar background opacity settings
-      property real backgroundOpacity: 0.93
-      property bool useSeparateOpacity: false
+      property real backgroundOpacity: 0.70
+      property bool useSeparateOpacity: true
 
       // Floating bar settings
       property int marginVertical: 4

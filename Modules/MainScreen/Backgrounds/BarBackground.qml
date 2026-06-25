@@ -134,7 +134,7 @@ ShapePath {
 
   // ShapePath configuration
   strokeWidth: -1 // No stroke, fill only
-  fillColor: isRenderable ? Qt.rgba(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a * opacityFactor) : "transparent"
+  fillColor: isRenderable ? Qt.rgba(backgroundColor.r, backgroundColor.g, backgroundColor.b, Settings.data.bar.useSeparateOpacity ? Settings.data.bar.backgroundOpacity : Style.effectivePanelOpacity) : "transparent"
   fillRule: isFramed ? ShapePath.OddEvenFill : ShapePath.WindingFill
 
   // Starting position — falls back to off-screen when not renderable so that

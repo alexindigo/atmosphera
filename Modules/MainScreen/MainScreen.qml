@@ -40,6 +40,8 @@ import qs.Services.UI
 PanelWindow {
   id: root
 
+  surfaceFormat.opaque: false
+
   Component.onCompleted: {
     Logger.d("MainScreen", "Initialized for screen:", screen?.name, "- Dimensions:", screen?.width, "x", screen?.height, "- Position:", screen?.x, ",", screen?.y);
   }
