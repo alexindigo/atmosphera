@@ -1081,9 +1081,17 @@ Singleton {
   }
 
   // -------------------------------------------------------------------
+  property var _pendingPoolScans: ({}) // { screenName: { count: N, paths: [] } }
+
   function refreshWallpapersList() {
     // Wait for imageMagickAvailable to be correctly set for ImageCacheService.imageFilters
     if (!ImageCacheService.initialized) {
+      Qt.callLater(refreshWallpapersList);
+      return;
+    }
+
+    if (typeof WallpaperProviderRegistry === "undefined") {
+      // Services not ready yet, retry
       Qt.callLater(refreshWallpapersList);
       return;
     }
@@ -1092,30 +1100,67 @@ Singleton {
     Logger.d("Wallpaper", "refreshWallpapersList", "viewMode:", mode);
     scanningCount = 0;
 
-    if (mode === "recursive") {
-      // Use Process-based recursive search for all screens
-      for (var i = 0; i < Quickshell.screens.length; i++) {
-        var screenName = Quickshell.screens[i].name;
-        var directory = getMonitorDirectory(screenName);
-        scanDirectoryRecursive(screenName, directory);
+    for (var i = 0; i < Quickshell.screens.length; i++) {
+      var screenName = Quickshell.screens[i].name;
+      root._pendingPoolScans[screenName] = {
+        count: 0,
+        paths: []
+      };
+
+      // Scan user folder according to view mode
+      if (mode === "recursive") {
+        scanDirectoryRecursive(screenName, getMonitorDirectory(screenName));
+      } else if (mode === "browse") {
+        _scanDirectoryInternal(screenName, getCurrentBrowsePath(screenName), false, true, null);
+      } else {
+        _scanDirectoryInternal(screenName, getMonitorDirectory(screenName), false, true, null);
       }
-    } else if (mode === "browse") {
-      // Browse mode: scan current browse path (non-recursive)
-      // Note: The actual directory+subdirectory scanning happens in WallpaperPanel
-      // Here we just scan the current browse path for files
-      for (var i = 0; i < Quickshell.screens.length; i++) {
-        var screenName = Quickshell.screens[i].name;
-        var directory = getCurrentBrowsePath(screenName);
-        _scanDirectoryInternal(screenName, directory, false, true, null);
-      }
-    } else {
-      // Single directory mode (non-recursive)
-      for (var i = 0; i < Quickshell.screens.length; i++) {
-        var screenName = Quickshell.screens[i].name;
-        var directory = getMonitorDirectory(screenName);
-        _scanDirectoryInternal(screenName, directory, false, true, null);
+
+      // Scan active pack pools
+      var activePools = WallpaperProviderRegistry.getActivePools(screenName);
+      for (var p = 0; p < activePools.length; p++) {
+        var pool = activePools[p];
+        if (pool.source === "plugin") {
+          root._pendingPoolScans[screenName].count++;
+          root._scanPoolDir(screenName, pool.dir);
+        }
       }
     }
+  }
+
+  function _scanPoolDir(screenName, poolDir) {
+    var proc = Qt.createQmlObject('import QtQuick; import Quickshell.Io; Process { command: ["find", "' + poolDir + '", "-maxdepth", "1", "-mindepth", "1", "-type", "f", "-iname", "*.jpg", "-o", "-iname", "*.png", "-o", "-iname", "*.jpeg", "-o", "-iname", "*.webp"]; stdout: StdioCollector {} }', root, "PoolScan_" + screenName);
+    proc.exited.connect(function () {
+      var output = proc.stdout.text().trim();
+      var state = root._pendingPoolScans[screenName];
+      if (state) {
+        if (output) {
+          var lines = output.split('\n');
+          for (var i = 0; i < lines.length; i++) {
+            var p = lines[i].trim();
+            if (p && state.paths.indexOf(p) === -1) {
+              state.paths.push(p);
+            }
+          }
+        }
+        state.count--;
+        if (state.count <= 0) {
+          // Union with existing wallpaperLists for this screen
+          var existing = wallpaperLists[screenName] || [];
+          var merged = existing.slice();
+          for (var j = 0; j < state.paths.length; j++) {
+            if (merged.indexOf(state.paths[j]) === -1) {
+              merged.push(state.paths[j]);
+            }
+          }
+          wallpaperLists[screenName] = merged;
+          wallpaperListChanged(screenName, merged.length);
+          delete root._pendingPoolScans[screenName];
+        }
+      }
+      proc.destroy();
+    });
+    proc.running = true;
   }
 
   // Internal scan function

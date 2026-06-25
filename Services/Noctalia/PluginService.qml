@@ -438,11 +438,18 @@ Singleton {
     var pluginDir = PluginRegistry.getPluginDir(compositeKey);
     var repoUrl = source.url;
 
-    // Use git sparse-checkout to clone only the plugin subfolder
-    // GIT_TERMINAL_PROMPT=0 prevents hanging on private repos that need auth
-    // Note: We download from the original pluginId folder in the repo, but save to compositeKey folder
-    var downloadCmd = "temp_dir=$(mktemp -d) && GIT_TERMINAL_PROMPT=0 git clone --filter=blob:none --sparse --depth=1 --quiet '" + repoUrl + "' \"$temp_dir\" 2>/dev/null && cd \"$temp_dir\" && git sparse-checkout set '" + pluginId + "' 2>/dev/null && mkdir -p '" + pluginDir + "' && rm -f \"$temp_dir/" + pluginId + "/settings.json\" && cp -r \"$temp_dir/" + pluginId
-        + "/.\" '" + pluginDir + "/'; exit_code=$?; rm -rf \"$temp_dir\"; exit $exit_code";
+    var downloadCmd;
+    if (repoUrl.startsWith("file://")) {
+      // Local source: copy directly without git
+      var srcBase = repoUrl.substring(7);
+      downloadCmd = "mkdir -p '" + pluginDir + "' && cp -r '" + srcBase + "/" + pluginId + "/.' '" + pluginDir + "/'";
+    } else {
+      // Use git sparse-checkout to clone only the plugin subfolder
+      // GIT_TERMINAL_PROMPT=0 prevents hanging on private repos that need auth
+      // Note: We download from the original pluginId folder in the repo, but save to compositeKey folder
+      downloadCmd = "temp_dir=$(mktemp -d) && GIT_TERMINAL_PROMPT=0 git clone --filter=blob:none --sparse --depth=1 --quiet '" + repoUrl + "' \"$temp_dir\" 2>/dev/null && cd \"$temp_dir\" && git sparse-checkout set '" + pluginId + "' 2>/dev/null && mkdir -p '" + pluginDir + "' && rm -f \"$temp_dir/" + pluginId + "/settings.json\" && cp -r \"$temp_dir/" + pluginId
+          + "/.\" '" + pluginDir + "/'; exit_code=$?; rm -rf \"$temp_dir\"; exit $exit_code";
+    }
 
     // Mark as installing
     var newInstalling = Object.assign({}, root.installingPlugins);
@@ -929,19 +936,27 @@ Singleton {
       // Load icon set data if provided (data-only, no QML)
       if (manifest.entryPoints && manifest.entryPoints.icons) {
         var iconsPath = pluginDir + "/" + manifest.entryPoints.icons;
-        var iconsFileView = Qt.createQmlObject('import Quickshell.Io; FileView { path: "' + iconsPath + '" }', root, "iconsLoader_" + pluginId);
-        iconsFileView.blockLoading = false;
-        iconsFileView.loaded.connect(function () {
+        Logger.i("PluginService", "Loading icon set via readFile for plugin:", pluginId, "from:", iconsPath);
+        var readProc = Qt.createQmlObject('import QtQuick; import Quickshell.Io; Process { command: ["cat", "' + iconsPath + '"]; stdout: StdioCollector {} }', root, "iconRead_" + pluginId);
+        readProc.exited.connect(function () {
+          var iconText = readProc.stdout.text;
           try {
-            var iconsData = JSON.parse(iconsFileView.text());
+            var iconsData = JSON.parse(iconText);
             IconRegistry.register(pluginId, iconsData, pluginDir);
             Logger.i("PluginService", "Loaded icon set for plugin:", pluginId);
           } catch (e) {
             Logger.e("PluginService", "Failed to parse icons.json for plugin:", pluginId, e);
             root.recordPluginError(pluginId, "icons", e.toString());
           }
-          iconsFileView.destroy();
+          readProc.destroy();
         });
+        readProc.running = true;
+      }
+
+      // Register wallpaper pools if provided (data-only)
+      if (manifest.entryPoints && manifest.entryPoints.wallpapers) {
+        var packDir = pluginDir + "/" + manifest.entryPoints.wallpapers;
+        root._registerWallpaperPacks(pluginId, packDir, manifest);
       }
 
       Logger.i("PluginService", "Plugin loaded:", pluginId);
@@ -953,6 +968,59 @@ Singleton {
       // Notify that this plugin finished loading (for init tracking)
       root._onPluginLoadComplete();
     });
+  }
+
+  // Register wallpaper pools from a pack plugin
+  // Scans the pack directory: subdirectories = multiple packs; flat = single pack
+  function _registerWallpaperPacks(pluginId, packDir, manifest) {
+    var scanProc = Qt.createQmlObject('import QtQuick; import Quickshell.Io; Process { command: ["find", "' + packDir + '", "-maxdepth", "1", "-mindepth", "1", "-type", "d"]; stdout: StdioCollector {} }', root, "wpScan_" + pluginId);
+    scanProc.exited.connect(function () {
+      var output = scanProc.stdout.text.trim();
+      var dirs = output ? output.split('\n').filter(function (l) {
+        return l.length > 0;
+      }) : [];
+
+      var pluginName = manifest.metadata?.name ?? manifest.name;
+
+      if (dirs.length > 0) {
+        // Subdirectories = one pack per subfolder
+        for (var i = 0; i < dirs.length; i++) {
+          var packLabel = dirs[i].split('/').pop();
+          var packKey = pluginId + ":" + packLabel;
+          WallpaperProviderRegistry.registerPool(packKey, {
+                                                   id: packKey,
+                                                   label: packLabel,
+                                                   dir: dirs[i],
+                                                   source: "plugin",
+                                                   pluginId: pluginId
+                                                 });
+        }
+      } else {
+        // Flat directory = single pack (check for image files to confirm)
+        var imgCheck = Qt.createQmlObject('import QtQuick; import Quickshell.Io; Process { command: ["find", "' + packDir + '", "-maxdepth", "1", "-type", "f", "-iname", "*.jpg", "-o", "-iname", "*.png", "-o", "-iname", "*.jpeg"]; stdout: StdioCollector {} }', root, "wpImg_" + pluginId);
+        imgCheck.exited.connect(function () {
+          var imgOutput = imgCheck.stdout.text.trim();
+          if (!imgOutput) {
+            Logger.w("PluginService", "No wallpaper images found in pack:", packDir);
+            imgCheck.destroy();
+            return;
+          }
+          var packKey = pluginId + ":" + pluginName;
+          WallpaperProviderRegistry.registerPool(packKey, {
+                                                   id: packKey,
+                                                   label: pluginName,
+                                                   dir: packDir,
+                                                   source: "plugin",
+                                                   pluginId: pluginId
+                                                 });
+          Logger.i("PluginService", "Registered wallpaper pool for plugin:", pluginId, "-", pluginName);
+          imgCheck.destroy();
+        });
+        imgCheck.running = true;
+      }
+      scanProc.destroy();
+    });
+    scanProc.running = true;
   }
 
   // Unload a plugin
@@ -1001,6 +1069,11 @@ Singleton {
     // Unregister icon set
     if (plugin.manifest.entryPoints && plugin.manifest.entryPoints.icons) {
       IconRegistry.unregister(pluginId);
+    }
+
+    // Unregister wallpaper pools
+    if (plugin.manifest.entryPoints && plugin.manifest.entryPoints.wallpapers) {
+      WallpaperProviderRegistry.unregisterPluginPools(pluginId);
     }
 
     // Destroy Main instance if any

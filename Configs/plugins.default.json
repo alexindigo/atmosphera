@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "sources": [
+    {
+      "enabled": true,
+      "name": "Built-in",
+      "url": "file://<shellDir>/Plugins"
+    },
+    {
+      "enabled": false,
+      "name": "Atmosphera Wallpapers",
+      "url": "https://github.com/atmosphera/atmosphera-wallpapers"
+    }
+  ],
+  "states": {
+    "noctalia-icons-legacy": {
+      "enabled": true,
+      "sourceUrl": "file://<shellDir>/Plugins"
+    },
+    "atmosphera-wallpapers": {
+      "enabled": true,
+      "sourceUrl": "file://<shellDir>/Plugins"
+    }
+  }
+}

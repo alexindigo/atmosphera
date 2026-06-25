@@ -140,6 +140,7 @@ SmartPanel {
     }
     property var currentScreen: Quickshell.screens[currentScreenIndex]
     property string filterText: ""
+    property string selectedPoolId: ""
     property int appearanceTabIndex: 0
     readonly property bool headerScreensStripAvailable: !Settings.data.wallpaper.setWallpaperOnAllMonitors || Settings.data.wallpaper.enableMultiMonitorDirectories
     readonly property bool headerDevicesButtonVisible: Quickshell.screens.length > 1 || Settings.data.wallpaper.enableMultiMonitorDirectories
@@ -558,20 +559,32 @@ SmartPanel {
               id: sourceComboBox
               Layout.fillWidth: false
 
-              model: [
-                {
-                  "key": "local",
-                  "name": I18n.tr("common.local")
-                },
-                {
-                  "key": "wallhaven",
-                  "name": I18n.tr("wallpaper.panel.source-wallhaven")
+              // Build model: local + pools + wallhaven
+              model: {
+                var items = [];
+                items.push({
+                             "key": "local",
+                             "name": I18n.tr("common.local")
+                           });
+                // Add wallpaper provider pools
+                if (typeof WallpaperProviderRegistry !== "undefined") {
+                  var pools = WallpaperProviderRegistry.availablePools();
+                  for (var pi = 0; pi < pools.length; pi++) {
+                    items.push({
+                                 "key": "pool:" + pools[pi].id,
+                                 "name": pools[pi].label || pools[pi].id
+                               });
+                  }
                 }
-              ]
-              currentKey: Settings.data.wallpaper.useWallhaven ? "wallhaven" : "local"
+                items.push({
+                             "key": "wallhaven",
+                             "name": I18n.tr("wallpaper.panel.source-wallhaven")
+                           });
+                return items;
+              }
+              currentKey: Settings.data.wallpaper.useWallhaven ? "wallhaven" : (panelContent.selectedPoolId ? "pool:" + panelContent.selectedPoolId : "local")
               property bool skipNextSelected: false
               Component.onCompleted: {
-                // Skip the first onSelected if it fires during initialization
                 skipNextSelected = true;
                 Qt.callLater(function () {
                   skipNextSelected = false;
@@ -582,7 +595,15 @@ SmartPanel {
                   return;
                 }
                 var useWallhaven = (key === "wallhaven");
+                var isPool = key.startsWith("pool:");
                 Settings.data.wallpaper.useWallhaven = useWallhaven;
+
+                if (isPool) {
+                  panelContent.selectedPoolId = key.substring(5);
+                } else {
+                  panelContent.selectedPoolId = "";
+                }
+
                 // Update search input text based on mode
                 if (useWallhaven) {
                   searchInput.text = Settings.data.wallpaper.wallhavenQuery || "";
@@ -590,24 +611,19 @@ SmartPanel {
                   searchInput.text = panelContent.filterText || "";
                 }
                 if (useWallhaven && typeof WallhavenService !== "undefined") {
-                  // Update service properties when switching to Wallhaven
-                  // Don't search here - Component.onCompleted will handle it when the component is created
-                  // This prevents duplicate searches
                   WallhavenService.categories = Settings.data.wallpaper.wallhavenCategories;
                   WallhavenService.purity = Settings.data.wallpaper.wallhavenPurity;
                   WallhavenService.sorting = Settings.data.wallpaper.wallhavenSorting;
                   WallhavenService.order = Settings.data.wallpaper.wallhavenOrder;
-
-                  // Update resolution settings
                   panelContent.updateWallhavenResolution();
-
-                  // If the view is already initialized, trigger a new search when switching to it
-                  // Preserve current page when switching back to Wallhaven source
                   if (wallhavenView && wallhavenView.initialized && !WallhavenService.fetching) {
                     wallhavenView.loading = true;
                     WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", WallhavenService.currentPage);
                   }
                 }
+
+                // Refresh wallpaper lists to reflect pool selection
+                WallpaperService.refreshWallpapersList();
               }
             }
 
@@ -722,8 +738,23 @@ SmartPanel {
         }
       }
 
-      // Add files
+      // Resolve pool directory filter
+      var poolDir = "";
+      if (panelContent.selectedPoolId && typeof WallpaperProviderRegistry !== "undefined") {
+        var pools = WallpaperProviderRegistry.availablePools();
+        for (var pi = 0; pi < pools.length; pi++) {
+          if (pools[pi].id === panelContent.selectedPoolId) {
+            poolDir = pools[pi].dir;
+            break;
+          }
+        }
+      }
+
+      // Add files (filtered by pool directory if selected)
       for (var i = 0; i < wallpapersList.length; i++) {
+        if (poolDir && wallpapersList[i].indexOf(poolDir) !== 0) {
+          continue;
+        }
         combinedItems.push({
                              "path": wallpapersList[i],
                              "name": wallpapersList[i].split('/').pop(),
