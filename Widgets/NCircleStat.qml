@@ -9,7 +9,7 @@ Item {
   id: root
 
   property real ratio: 0 // 0..1 range
-  property string icon: ""
+  property var icon: ""
   property string suffix: "%"
   property real contentScale: 1.0
   property color fillColor: Color.mPrimary

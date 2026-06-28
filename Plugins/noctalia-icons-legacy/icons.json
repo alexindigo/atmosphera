@@ -18257,6 +18257,93 @@
     },
     "zzz-off": {
       "codepoint": "f440"
+    },
+    "changelog": {
+      "codepoint": "f6d7"
+    },
+    "commits": {
+      "codepoint": "eab3"
+    },
+    "credentials": {
+      "codepoint": "f633"
+    },
+    "device-address": {
+      "codepoint": "eabc"
+    },
+    "favorite": {
+      "codepoint": "f67c"
+    },
+    "featured": {
+      "codepoint": "f6d7"
+    },
+    "feedback": {
+      "codepoint": "ee8f"
+    },
+    "format-json": {
+      "codepoint": "f7b2"
+    },
+    "login-key": {
+      "codepoint": "fc76"
+    },
+    "navigate-up": {
+      "codepoint": "ea19"
+    },
+    "network-download": {
+      "codepoint": "ea16"
+    },
+    "network-upload": {
+      "codepoint": "ea25"
+    },
+    "position-bottom": {
+      "codepoint": "ea16"
+    },
+    "position-left": {
+      "codepoint": "ea19"
+    },
+    "position-right": {
+      "codepoint": "ea1f"
+    },
+    "position-top": {
+      "codepoint": "ea25"
+    },
+    "restore-defaults": {
+      "codepoint": "fafd"
+    },
+    "session-control": {
+      "codepoint": "eb0d"
+    },
+    "setup-wizard": {
+      "codepoint": "ebcb"
+    },
+    "submit": {
+      "codepoint": "ea17"
+    },
+    "success": {
+      "codepoint": "ea67"
+    },
+    "system-load": {
+      "codepoint": "f589"
+    },
+    "system-memory": {
+      "codepoint": "ef8e"
+    },
+    "system-stats": {
+      "codepoint": "ee72"
+    },
+    "system-storage": {
+      "codepoint": "ea88"
+    },
+    "system-swap": {
+      "codepoint": "ebe7"
+    },
+    "ui-arrow-right": {
+      "codepoint": "ea1f"
+    },
+    "ui-shadow": {
+      "codepoint": "eed8"
+    },
+    "verified": {
+      "codepoint": "eb22"
     }
   }
 }

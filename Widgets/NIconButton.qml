@@ -10,7 +10,7 @@ Item {
   property real baseSize: Style.baseWidgetSize
   property bool applyUiScale: true
 
-  property string icon
+  property var icon
   property var tooltipText
   property string tooltipDirection: "auto"
   property bool allowClickWhenDisabled: false
