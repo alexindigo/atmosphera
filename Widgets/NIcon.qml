@@ -13,8 +13,12 @@ Text {
 
   readonly property var _resolved: {
     if (typeof icon === "string") {
-      // Compat path for Noctalia call sites that pass strings
-      return IconRegistry.resolved[icon];
+      var entry = IconRegistry.resolved[icon];
+      if (entry === undefined) {
+        Logger.w("NIcon", "\"" + icon + "\" not found in icons, falling back to \"" + Icons.defaultIcon + "\"");
+        return IconRegistry.resolved[Icons.defaultIcon];
+      }
+      return entry;
     }
     return icon;
   }

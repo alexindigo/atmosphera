@@ -11,7 +11,7 @@ Singleton {
 
   // Expose the font family name for easy access (fallback for Noctalia compat)
   readonly property string fontFamily: currentFontLoader ? currentFontLoader.name : ""
-  readonly property string defaultIcon: "close"
+  readonly property string defaultIcon: "circle-off"
   readonly property var icons: IconRegistry.resolved
   readonly property var aliases: ({})
   readonly property string fontPath: "/Assets/Fonts/tabler/atmosphera-tabler-icons.ttf"

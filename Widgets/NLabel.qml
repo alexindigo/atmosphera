@@ -8,7 +8,7 @@ ColumnLayout {
 
   property string label: ""
   property string description: ""
-  property string icon: ""
+  property var icon: ""
   property color labelColor: Color.mOnSurface
   property color descriptionColor: Color.mOnSurfaceVariant
   property color iconColor: Color.mOnSurface

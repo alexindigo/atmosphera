@@ -10,7 +10,7 @@ Rectangle {
 
   // Public properties
   property string text: ""
-  property string icon: ""
+  property var icon: ""
   property var tooltipText
   property bool checked: false
   property int tabIndex: 0

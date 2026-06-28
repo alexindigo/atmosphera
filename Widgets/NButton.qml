@@ -9,7 +9,7 @@ Item {
 
   // Public properties
   property string text: ""
-  property string icon: ""
+  property var icon: ""
   property var tooltipText
   property color backgroundColor: Color.mPrimary
   property color textColor: Color.mOnPrimary
