@@ -17,7 +17,6 @@ Singleton {
   readonly property string currentVersion: `v${!isDevelopment ? baseVersion : baseVersion + developmentSuffix}`
 
   // URLs
-  readonly property string feedbackUrl: Quickshell.env("ATMOSPHERA_CHANGELOG_FEEDBACK_URL") || ""
   readonly property string upgradeLogBaseUrl: Quickshell.env("ATMOSPHERA_UPGRADELOG_URL") || ""
 
   // Changelog properties

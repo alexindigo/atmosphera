@@ -377,9 +377,7 @@
       "rate-limit": "Превышен лимит GitHub. Попробуйте снова через несколько минут."
     },
     "panel": {
-      "buttons-discord": "Присоединиться к нашему Discord",
       "buttons-dismiss": "ОК",
-      "buttons-feedback": "Оставьте отзыв",
       "empty": "Примечания к выпуску пока недоступны.",
       "highlight-title": "Основные изменения",
       "released": "Выпущено {date}",
@@ -423,7 +421,6 @@
     "connected": "Подключено",
     "connecting": "Соединение...",
     "continue": "Продолжить",
-    "contributors": "Участники",
     "copied-to-clipboard": "Скопировано в буфер обмена",
     "countdown": "Обратный отсчёт",
     "customize": "Настроить",
@@ -540,7 +537,6 @@
     "sources": "Источники",
     "start": "Начать",
     "stop": "Стоп",
-    "supporters": "Поддерживающие",
     "suspend": "Приостановить",
     "templates": "Шаблоны",
     "tertiary": "Третичный",
@@ -572,7 +568,8 @@
     "wifi": "Wi-Fi",
     "windows": "Окна ",
     "yes": "Да",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -738,7 +735,6 @@
   "panels": {
     "about": {
       "become-supporter": "Стать спонсором",
-      "changelog": "Посмотреть список изменений",
       "changelog-on-startup": "Показывать журнал изменений при обновлении",
       "changelog-on-startup-desc": "Автоматически показывать журнал изменений при обновлении Atmosphera.",
       "contributors-description": "Благодарим нашего <b>замечательного</b> участника: {count}!",
@@ -756,10 +752,8 @@
       "atmosphera-title": "Оболочка Atmosphera",
       "privacy-policy": "Политика конфиденциальности",
       "support": "Поддержать нас",
-      "supporter-badge": "Сторонник",
       "supporters-desc": "Огромное спасибо нашему замечательному стороннику!",
       "supporters-desc-plural": "Огромное спасибо нашим <b>{count} замечательным</b> сторонникам!",
-      "supporters-loading": "Загрузка спонсоров...",
       "system-board": "Материнская плата:",
       "system-cpu": "ЦП:",
       "system-disk": "Диск:",

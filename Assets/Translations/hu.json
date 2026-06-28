@@ -377,9 +377,7 @@
       "rate-limit": "Túllépte a GitHub sebességkorlátját. Próbálja újra néhány perc múlva."
     },
     "panel": {
-      "buttons-discord": "Csatlakozz a Discordunkhoz",
       "buttons-dismiss": "OK",
-      "buttons-feedback": "Adj visszajelzést",
       "empty": "A kiadási jegyzetek még nem érhetők el.",
       "highlight-title": "Főbb újdonságok",
       "released": "Kiadva: {date}",
@@ -423,7 +421,6 @@
     "connected": "Csatlakoztatva",
     "connecting": "Csatlakozás…",
     "continue": "Folytatás",
-    "contributors": "Közreműködők",
     "copied-to-clipboard": "Vágólapra másolva",
     "countdown": "Visszaszámlálás",
     "customize": "Testreszabás",
@@ -540,7 +537,6 @@
     "sources": "Források",
     "start": "Kezdés",
     "stop": "Állj",
-    "supporters": "Támogatók",
     "suspend": "Felfüggesztés",
     "templates": "Sablonok",
     "tertiary": "Harmadlagos",
@@ -572,7 +568,8 @@
     "wifi": "Wi-Fi",
     "windows": "Ablakok",
     "yes": "Igen",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -738,7 +735,6 @@
   "panels": {
     "about": {
       "become-supporter": "Legyél támogató",
-      "changelog": "Változások megtekintése",
       "changelog-on-startup": "Változási napló megjelenítése frissítéskor",
       "changelog-on-startup-desc": "Automatikusan jelenítse meg a változási naplót, amikor a Atmosphera frissül.",
       "contributors-description": "Köszönet a(z) {count} <b>fantasztikus</b> közreműködőnknek!",
@@ -756,10 +752,8 @@
       "atmosphera-title": "Atmosphera shell",
       "privacy-policy": "Adatvédelmi irányelvek",
       "support": "Támogass minket",
-      "supporter-badge": "Támogató",
       "supporters-desc": "Hatalmas köszönet csodálatos támogatóinknak!",
       "supporters-desc-plural": "Hatalmas köszönet a <b>{count} csodálatos</b> támogatóinknak!",
-      "supporters-loading": "Támogatók betöltése…",
       "system-board": "Alaplap:",
       "system-cpu": "CPU:",
       "system-disk": "Lemez:",

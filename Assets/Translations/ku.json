@@ -329,9 +329,7 @@
       "rate-limit": "Rêjeya GitHub derbas bû. Di nav çend xulekanan de dîsa biceribîne."
     },
     "panel": {
-      "buttons-discord": "Têkeve Discorda me",
       "buttons-dismiss": "Baş e",
-      "buttons-feedback": "Nerînan bide",
       "empty": "Nîşeyên weşanê hîn ne pêkan in.",
       "highlight-title": "Berbiroj",
       "released": "Di {date} de hat weşandin",
@@ -371,7 +369,6 @@
     "connected": "Girêdayî",
     "connecting": "Tê girêdan...",
     "continue": "Berdewam",
-    "contributors": "Beşdar",
     "copied-to-clipboard": "Hate bîra miqeyd kirin",
     "countdown": "Jimartin",
     "date": "Dîrok",
@@ -469,7 +466,6 @@
     "sources": "Çavkanî",
     "start": "Destpêkirin",
     "stop": "Raweste",
-    "supporters": "Piştgir",
     "suspend": "Rawestîne",
     "templates": "Şablonan",
     "tertiary": "Sêyemîn",
@@ -497,7 +493,8 @@
     "width": "Firehî",
     "windows": "Çarçove",
     "yes": "Erê",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -654,7 +651,6 @@
   },
   "panels": {
     "about": {
-      "changelog": "Dîroka guhertinan bibîne",
       "contributors-description": "Silav ji {count} beşkdarên me yên <b>gewre</b> re!",
       "contributors-description-plural": "Spas ji {count} beşdarên me yên <b>ecêb</b>!",
       "copy-info": "Zanyariyan jê bigire",
@@ -666,7 +662,6 @@
       "atmosphera-title": "Atmosphera qalik",
       "privacy-policy": "Siyaseta nepenîtiyê",
       "support": "Piştgiriya me bike",
-      "supporter-badge": "Piştgir",
       "system-cpu": "YKN:",
       "system-disk": "Dîsk:",
       "system-gpu": "YKG:",

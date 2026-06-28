@@ -377,9 +377,7 @@
       "rate-limit": "Đã vượt quá giới hạn tốc độ của GitHub. Vui lòng thử lại sau vài phút."
     },
     "panel": {
-      "buttons-discord": "Tham gia Discord của chúng tôi",
       "buttons-dismiss": "Đồng ý",
-      "buttons-feedback": "Gửi phản hồi",
       "empty": "Ghi chú phát hành chưa có sẵn.",
       "highlight-title": "Điểm nổi bật",
       "released": "Phát hành vào {date}",
@@ -423,7 +421,6 @@
     "connected": "Đã kết nối",
     "connecting": "Đang kết nối...",
     "continue": "Tiếp tục",
-    "contributors": "Người đóng góp",
     "copied-to-clipboard": "Đã sao chép vào bộ nhớ tạm",
     "countdown": "Đếm ngược",
     "customize": "Tùy chỉnh",
@@ -540,7 +537,6 @@
     "sources": "Nguồn",
     "start": "Bắt đầu",
     "stop": "Dừng",
-    "supporters": "Người ủng hộ",
     "suspend": "Tạm dừng",
     "templates": "Mẫu",
     "tertiary": "Thứ ba",
@@ -572,7 +568,8 @@
     "wifi": "Wi-Fi",
     "windows": "Cửa sổ",
     "yes": "Có",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -738,7 +735,6 @@
   "panels": {
     "about": {
       "become-supporter": "Trở thành người ủng hộ",
-      "changelog": "Xem nhật ký thay đổi",
       "changelog-on-startup": "Hiển thị nhật ký thay đổi khi cập nhật",
       "changelog-on-startup-desc": "Tự động hiển thị nhật ký thay đổi khi Atmosphera được cập nhật",
       "contributors-description": "Lời cảm ơn đến {count} <b>người đóng góp tuyệt vời</b> của chúng tôi!",
@@ -756,10 +752,8 @@
       "atmosphera-title": "Giao diện Atmosphera",
       "privacy-policy": "Chính sách quyền riêng tư",
       "support": "Ủng hộ chúng tôi",
-      "supporter-badge": "Người ủng hộ",
       "supporters-desc": "Xin chân thành cảm ơn người ủng hộ tuyệt vời của chúng tôi!",
       "supporters-desc-plural": "Cảm ơn rất nhiều tới <b>{count}</b> người ủng hộ tuyệt vời của chúng tôi!",
-      "supporters-loading": "Đang tải những người ủng hộ...",
       "system-board": "Bảng:",
       "system-cpu": "CPU:",
       "system-disk": "Ổ đĩa:",

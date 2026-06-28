@@ -360,9 +360,7 @@
       "rate-limit": "Du har nått lastgrensa på GitHub. Prøv att om nokre minutt."
     },
     "panel": {
-      "buttons-discord": "Vert med på Discorden vår",
       "buttons-dismiss": "Greitt",
-      "buttons-feedback": "Gjev attermelding",
       "empty": "Versjonsnotatar er ikkje tilgjengelege enno.",
       "highlight-title": "Høgdepunkt",
       "released": "Gjeven ut på {date}",
@@ -406,7 +404,6 @@
     "connected": "Kopla til",
     "connecting": "Koplar til...",
     "continue": "Hald fram",
-    "contributors": "Medverkarar",
     "copied-to-clipboard": "Kopiert til utklippstavla",
     "countdown": "Nedteljing",
     "customize": "Måta til",
@@ -520,7 +517,6 @@
     "sources": "Kjelder",
     "start": "Start",
     "stop": "Stogg",
-    "supporters": "Støttarar",
     "suspend": "Set i lett dvale",
     "templates": "Malar",
     "tertiary": "Tertiær",
@@ -550,7 +546,8 @@
     "wifi": "Wi-Fi",
     "windows": "Vindauge",
     "yes": "Ja",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -716,7 +713,6 @@
   "panels": {
     "about": {
       "become-supporter": "Vert med og støtt",
-      "changelog": "Sjå endringar",
       "changelog-on-startup": "Syn endringshistorikk etter oppdatering",
       "changelog-on-startup-desc": "Syn endringshistorikken automatisk når Atmosphera er oppdatert",
       "contributors-description": "Takk og ære til den {count} <b>framifrå</b> medverkaren vår!",
@@ -734,10 +730,8 @@
       "atmosphera-title": "Atmospheraskal",
       "privacy-policy": "Personvernfråsegn",
       "support": "Støtt oss",
-      "supporter-badge": "Støttar",
       "supporters-desc": "Ein stor takk til alle framifrå støttarar!",
       "supporters-desc-plural": "Ein stor takk til alle <b>{count} framifrå</b> støttarar!",
-      "supporters-loading": "Lastar inn støttarar...",
       "system-board": "Brett:",
       "system-cpu": "Prosessor:",
       "system-disk": "Disk:",

@@ -377,9 +377,7 @@
       "rate-limit": "Byl překročen limit požadavků na GitHub. Zkuste to znovu za několik minut."
     },
     "panel": {
-      "buttons-discord": "Přidat se na Discord",
       "buttons-dismiss": "OK",
-      "buttons-feedback": "Poskytnout zpětnou vazbu",
       "empty": "Poznámky k vydání zatím nejsou dostupné.",
       "highlight-title": "Hlavní novinky",
       "released": "Vydáno {date}",
@@ -423,7 +421,6 @@
     "connected": "Připojeno",
     "connecting": "Připojování...",
     "continue": "Pokračovat",
-    "contributors": "Přispěvatelé",
     "copied-to-clipboard": "Zkopírováno do schránky",
     "countdown": "Odpočet",
     "customize": "Přizpůsobit",
@@ -540,7 +537,6 @@
     "sources": "Zdroje",
     "start": "Spustit",
     "stop": "Zastavit",
-    "supporters": "Podporovatelé",
     "suspend": "Uspat",
     "templates": "Šablony",
     "tertiary": "Terciární",
@@ -572,7 +568,8 @@
     "wifi": "Wi-Fi",
     "windows": "Okna",
     "yes": "Ano",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -738,7 +735,6 @@
   "panels": {
     "about": {
       "become-supporter": "Stát se podporovatelem",
-      "changelog": "Zobrazit changelog",
       "changelog-on-startup": "Zobrazit changelog při aktualizaci",
       "changelog-on-startup-desc": "Automaticky zobrazit changelog při aktualizaci Atmosphera",
       "contributors-description": "Díky našemu {count} <b>skvělému</b> přispěvateli!",
@@ -756,10 +752,8 @@
       "atmosphera-title": "Atmosphera Shell",
       "privacy-policy": "Zásady ochrany soukromí",
       "support": "Podpořte nás",
-      "supporter-badge": "Podporovatel",
       "supporters-desc": "Velké díky našemu úžasnému podporovateli!",
       "supporters-desc-plural": "Velké díky našim <b>{count} úžasným</b> podporovatelům!",
-      "supporters-loading": "Načítání podporovatelů...",
       "system-board": "Základní deska:",
       "system-cpu": "CPU:",
       "system-disk": "Disk:",

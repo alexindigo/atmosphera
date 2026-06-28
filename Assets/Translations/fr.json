@@ -377,9 +377,7 @@
       "rate-limit": "Limite de GitHub atteinte. Réessayez dans quelques minutes."
     },
     "panel": {
-      "buttons-discord": "Rejoindre notre Discord",
       "buttons-dismiss": "OK",
-      "buttons-feedback": "Donner un avis",
       "empty": "Les notes de version ne sont pas encore disponibles.",
       "highlight-title": "Points importants",
       "released": "Publié le {date}",
@@ -423,7 +421,6 @@
     "connected": "Connecté",
     "connecting": "Connexion en cours...",
     "continue": "Continuer",
-    "contributors": "Contributeurs",
     "copied-to-clipboard": "Copié dans le presse-papier",
     "countdown": "Compte à rebours",
     "customize": "Personnaliser",
@@ -540,7 +537,6 @@
     "sources": "Sources",
     "start": "Commencer",
     "stop": "Arrêtez",
-    "supporters": "Soutiens",
     "suspend": "Mettre en veille",
     "templates": "Modèles",
     "tertiary": "Tertiaire",
@@ -572,7 +568,8 @@
     "wifi": "Wi-Fi",
     "windows": "Fenêtres",
     "yes": "Oui",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -738,7 +735,6 @@
   "panels": {
     "about": {
       "become-supporter": "Devenir un soutien",
-      "changelog": "Afficher le journal des modifications",
       "changelog-on-startup": "Afficher le journal des modifications lors de la mise à jour",
       "changelog-on-startup-desc": "Afficher automatiquement le journal des modifications lors de la mise à jour de Atmosphera.",
       "contributors-description": "Un grand merci à notre {count} <b>super</b> contributeur !",
@@ -756,10 +752,8 @@
       "atmosphera-title": "Shell Atmosphera",
       "privacy-policy": "Politique de confidentialité",
       "support": "Soutenez-nous",
-      "supporter-badge": "Soutien",
       "supporters-desc": "Un immense merci à notre incroyable soutien !",
       "supporters-desc-plural": "Un grand merci à nos <b>{count} incroyables</b> supporters !",
-      "supporters-loading": "Chargement des contributeurs...",
       "system-board": "Carte mère :",
       "system-cpu": "Processeur :",
       "system-disk": "Disque :",

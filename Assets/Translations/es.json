@@ -377,9 +377,7 @@
       "rate-limit": "Se alcanzó el límite de GitHub. Inténtalo de nuevo en unos minutos."
     },
     "panel": {
-      "buttons-discord": "Únete a nuestro Discord",
       "buttons-dismiss": "OK",
-      "buttons-feedback": "Dejar comentario",
       "empty": "Las notas de la versión aún no están disponibles.",
       "highlight-title": "Cambios destacados",
       "released": "Publicado el {date}",
@@ -423,7 +421,6 @@
     "connected": "Conectado",
     "connecting": "Conectando...",
     "continue": "Continuar",
-    "contributors": "Colaboradores",
     "copied-to-clipboard": "Copiado al portapapeles",
     "countdown": "Cuenta regresiva",
     "customize": "Personalizar",
@@ -540,7 +537,6 @@
     "sources": "Fuentes",
     "start": "Comienzo",
     "stop": "Parar",
-    "supporters": "Patrocinadores",
     "suspend": "Suspender",
     "templates": "Plantillas",
     "tertiary": "Terciario",
@@ -572,7 +568,8 @@
     "wifi": "Wi-Fi",
     "windows": "Ventanas",
     "yes": "Sí",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -738,7 +735,6 @@
   "panels": {
     "about": {
       "become-supporter": "Hazte patrocinador",
-      "changelog": "Ver registro de cambios",
       "changelog-on-startup": "Mostrar registro de cambios al actualizar",
       "changelog-on-startup-desc": "Mostrar automáticamente el registro de cambios cuando Atmosphera se actualice.",
       "contributors-description": "¡Un saludo a nuestro <b>increíble</b> colaborador número {count}!",
@@ -756,10 +752,8 @@
       "atmosphera-title": "Shell Atmosphera",
       "privacy-policy": "Política de privacidad",
       "support": "Apóyanos",
-      "supporter-badge": "Colaborador",
       "supporters-desc": "¡Un enorme agradecimiento a nuestro increíble colaborador!",
       "supporters-desc-plural": "¡Muchísimas gracias a nuestros <b>{count} increíbles</b> seguidores!",
-      "supporters-loading": "Cargando patrocinadores...",
       "system-board": "Placa:",
       "system-cpu": "CPU:",
       "system-disk": "Disco:",

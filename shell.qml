@@ -114,7 +114,6 @@ ShellRoot {
           HostService.init();
           NotificationRulesService.init();
           GitHubService.init();
-          SupporterService.init();
           CustomButtonIPCService.init();
           IPCService.init(screenDetector);
 

@@ -377,9 +377,7 @@
       "rate-limit": "GitHub sınırına ulaşıldı. Lütfen birkaç dakika sonra tekrar dene."
     },
     "panel": {
-      "buttons-discord": "Discord sunucumuza katıl",
       "buttons-dismiss": "Tamam",
-      "buttons-feedback": "Geri bildirim verin",
       "empty": "Sürüm notları henüz hazır değil.",
       "highlight-title": "Öne çıkanlar",
       "released": "{date} tarihinde yayımlandı",
@@ -423,7 +421,6 @@
     "connected": "Bağlı",
     "connecting": "Bağlanıyor...",
     "continue": "Devam Et",
-    "contributors": "Katkıda bulunanlar",
     "copied-to-clipboard": "Panoya kopyalandı",
     "countdown": "Geri sayım",
     "customize": "Özelleştir",
@@ -540,7 +537,6 @@
     "sources": "Kaynaklar",
     "start": "Başlat",
     "stop": "Dur",
-    "supporters": "Destekçiler",
     "suspend": "Askıya al",
     "templates": "Şablonlar",
     "tertiary": "Üçüncül",
@@ -572,7 +568,8 @@
     "wifi": "Wi-Fi",
     "windows": "Pencereler",
     "yes": "Evet",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -738,7 +735,6 @@
   "panels": {
     "about": {
       "become-supporter": "Destekçi ol",
-      "changelog": "Değişiklik günlüğünü görüntüle",
       "changelog-on-startup": "Güncellemede değişiklik günlüğünü göster",
       "changelog-on-startup-desc": "Atmosphera güncellendiğinde değişiklik günlüğünü otomatik olarak göster.",
       "contributors-description": "{count} <b>harika</b> katılımcımıza <b>teşekkürler</b>!",
@@ -756,10 +752,8 @@
       "atmosphera-title": "Atmosphera kabuğu",
       "privacy-policy": "Gizlilik politikası",
       "support": "Bizi destekleyin",
-      "supporter-badge": "Destekçi",
       "supporters-desc": "Harika destekçimize kocaman bir teşekkür!",
       "supporters-desc-plural": "<b>{count} harika</b> destekçimize kocaman teşekkürler!",
-      "supporters-loading": "Destekçiler yükleniyor...",
       "system-board": "Anakart:",
       "system-cpu": "İşlemci:",
       "system-disk": "Disk:",
