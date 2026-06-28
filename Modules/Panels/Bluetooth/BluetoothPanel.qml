@@ -68,14 +68,14 @@ SmartPanel {
           }
 
           NIconButton {
-            icon: "settings"
+            icon: Icon.settings
             tooltipText: I18n.tr("tooltips.open-settings")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 1, screen)
           }
 
           NIconButton {
-            icon: "close"
+            icon: Icon.close
             tooltipText: I18n.tr("common.close")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
@@ -117,7 +117,7 @@ SmartPanel {
               }
 
               NIcon {
-                icon: "bluetooth-off"
+                icon: Icon.bluetoothOff
                 pointSize: 48
                 color: Color.mOnSurfaceVariant
                 Layout.alignment: Qt.AlignHCenter
@@ -168,7 +168,7 @@ SmartPanel {
               }
 
               NIcon {
-                icon: "bluetooth"
+                icon: Icon.bluetooth
                 pointSize: 48
                 color: Color.mOnSurfaceVariant
                 Layout.alignment: Qt.AlignHCenter
@@ -183,7 +183,7 @@ SmartPanel {
 
               NButton {
                 text: I18n.tr("common.settings")
-                icon: "settings"
+                icon: Icon.settings
                 Layout.alignment: Qt.AlignHCenter
                 onClicked: SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 1, screen)
               }

@@ -110,12 +110,12 @@ NBox {
       }
 
       NIconButton {
-        icon: "chevron-left"
+        icon: Icon.chevronLeft
         onClicked: root.navigateToPreviousMonth()
       }
 
       NIconButton {
-        icon: "calendar"
+        icon: Icon.calendar
         onClicked: {
           root.calendarMonth = root.now.getMonth();
           root.calendarYear = root.now.getFullYear();
@@ -124,7 +124,7 @@ NBox {
       }
 
       NIconButton {
-        icon: "chevron-right"
+        icon: Icon.chevronRight
         onClicked: root.navigateToNextMonth()
       }
     }

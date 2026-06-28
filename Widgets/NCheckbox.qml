@@ -64,7 +64,7 @@ RowLayout {
       visible: root.checked
       x: Style.pixelAlignCenter(parent.width, width)
       y: Style.pixelAlignCenter(parent.height, height)
-      icon: "check"
+      icon: Icon.check
       color: root.activeOnColor
       pointSize: Style.toOdd(root.baseSize * 0.5)
     }

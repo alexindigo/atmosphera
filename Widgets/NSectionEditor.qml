@@ -391,7 +391,7 @@ NBox {
       }
 
       NIconButton {
-        icon: "add"
+        icon: Icon.add
         colorBg: Color.mPrimary
         colorFg: Color.mOnPrimary
         colorBgHover: Color.mSecondary
@@ -531,7 +531,7 @@ NBox {
                 items.push({
                              "label": I18n.tr("tooltips.remove-widget"),
                              "action": "remove",
-                             "icon": "trash",
+                             "icon": Icon.trash,
                              "visible": true
                            });
                 return items;
@@ -601,7 +601,7 @@ NBox {
               // Plugin indicator icon
               NIcon {
                 visible: root.widgetRegistry && root.widgetRegistry.isPluginWidget(modelData.id)
-                icon: "plugin"
+                icon: Icon.plugin
                 pointSize: Style.fontSizeXXS
                 color: root.getWidgetColor(modelData)[1]
                 Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.5 : 0
@@ -611,7 +611,7 @@ NBox {
               // CPU intensive indicator icon
               NIcon {
                 visible: root.widgetRegistry && root.widgetRegistry.isCpuIntensive(modelData.id)
-                icon: "cpu-intensive"
+                icon: Icon.cpuIntensive
                 pointSize: Style.fontSizeXXS
                 color: root.getWidgetColor(modelData)[1]
                 Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.5 : 0
@@ -626,7 +626,7 @@ NBox {
                 Loader {
                   active: root.widgetHasSettings(modelData.id) && root.enabled
                   sourceComponent: NIconButton {
-                    icon: "settings"
+                    icon: Icon.settings
                     tooltipText: I18n.tr("actions.widget-settings")
                     baseSize: miniButtonSize
                     colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)

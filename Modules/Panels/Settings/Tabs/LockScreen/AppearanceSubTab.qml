@@ -37,7 +37,7 @@ ColumnLayout {
 
     NButton {
       text: "Preview"
-      icon: "eye"
+      icon: Icon.eye
       outlined: true
       Layout.alignment: Qt.AlignVCenter
       onClicked: {

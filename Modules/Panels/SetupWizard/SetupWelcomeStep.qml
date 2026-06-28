@@ -44,7 +44,7 @@ ColumnLayout {
         visible: parent.status === Image.Error
 
         NIcon {
-          icon: "sparkles"
+          icon: Icon.featured
           pointSize: Style.fontSizeXXL * 1.5
           color: Color.mPrimary
           anchors.centerIn: parent

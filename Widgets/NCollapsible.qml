@@ -82,7 +82,7 @@ ColumnLayout {
       // Expand/collapse icon with rotation animation
       NIcon {
         id: chevronIcon
-        icon: "chevron-right"
+        icon: Icon.chevronRight
         pointSize: Style.fontSizeL
         color: root.expanded ? Color.mOnSecondary : Color.mOnPrimary
         Layout.alignment: Qt.AlignVCenter

@@ -104,7 +104,7 @@ RowLayout {
     Layout.preferredHeight: 30 * Style.uiScaleRatio
 
     NIconButton {
-      icon: "restore"
+      icon: Icon.restoreDefaults
       enabled: root.enabled
       baseSize: Style.baseWidgetSize * 0.8
       tooltipText: I18n.tr("common.reset")

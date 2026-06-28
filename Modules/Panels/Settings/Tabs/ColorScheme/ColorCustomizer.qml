@@ -189,7 +189,7 @@ Popup {
             }
 
             NButton {
-              icon: "color-picker"
+              icon: Icon.colorPicker
               Layout.preferredWidth: 28 * Style.uiScaleRatio
               Layout.preferredHeight: 28 * Style.uiScaleRatio
               buttonRadius: 14 * Style.uiScaleRatio
@@ -258,7 +258,7 @@ Popup {
       }
 
       NIconButton {
-        icon: "close"
+        icon: Icon.close
         tooltipText: I18n.tr("common.close")
         onClicked: root.close()
       }
@@ -306,7 +306,7 @@ Popup {
 
       NButton {
         text: I18n.tr("common.reset")
-        icon: "refresh"
+        icon: Icon.refresh
         outlined: true
         onClicked: root.resetColors()
       }
@@ -317,7 +317,7 @@ Popup {
 
       NButton {
         text: I18n.tr("common.apply")
-        icon: "check"
+        icon: Icon.check
         onClicked: root.applyColors()
       }
 

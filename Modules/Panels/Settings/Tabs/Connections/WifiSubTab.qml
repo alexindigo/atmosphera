@@ -287,7 +287,7 @@ Item {
             spacing: Style.marginM
 
             NIcon {
-              icon: "plus"
+              icon: Icon.add
               pointSize: Style.fontSizeXXL
               color: Color.mOnSurfaceVariant
             }
@@ -532,7 +532,7 @@ Item {
         }
 
         NIconButton {
-          icon: "folder-open"
+          icon: Icon.folderOpen
           Layout.alignment: Qt.AlignBottom
           onClicked: caCertPicker.openForAddNetwork()
         }
@@ -747,7 +747,7 @@ Item {
 
                 NIcon {
                   visible: SystemStatService.rxSpeed > 0
-                  icon: "arrow-down"
+                  icon: Icon.networkDownload
                   pointSize: Style.fontSizeXXS
                   color: Qt.alpha(networkItem.getContentColors()[1], Style.opacityHeavy)
                 }
@@ -768,7 +768,7 @@ Item {
 
                 NIcon {
                   visible: SystemStatService.txSpeed > 0
-                  icon: "arrow-up"
+                  icon: Icon.networkUpload
                   pointSize: Style.fontSizeXXS
                   color: Qt.alpha(networkItem.getContentColors()[1], Style.opacityHeavy)
                 }
@@ -800,7 +800,7 @@ Item {
 
             NIconButton {
               visible: modelData.connected && NetworkService.disconnectingFrom !== modelData.ssid
-              icon: "info"
+              icon: Icon.info
               tooltipText: I18n.tr("common.info")
               baseSize: Style.baseWidgetSize * 0.75
               colorBg: Color.mSurfaceVariant
@@ -819,7 +819,7 @@ Item {
 
             NIconButton {
               visible: !root.showOnlyLists && modelData.existing && !modelData.connected && !networkItem.isBusy
-              icon: "trash"
+              icon: Icon.trash
               tooltipText: I18n.tr("tooltips.forget-network")
               baseSize: Style.baseWidgetSize * 0.75
               colorBg: Color.mPrimary
@@ -914,7 +914,7 @@ Item {
               Layout.preferredWidth: 1
               spacing: Style.marginXS
               NIcon {
-                icon: "network"
+                icon: Icon.network
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
                 MouseArea {
@@ -957,7 +957,7 @@ Item {
               Layout.preferredWidth: 1
               spacing: Style.marginXS
               NIcon {
-                icon: "router"
+                icon: Icon.router
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
                 MouseArea {
@@ -979,7 +979,7 @@ Item {
               Layout.preferredWidth: 1
               spacing: Style.marginXS
               NIcon {
-                icon: "gauge"
+                icon: Icon.gauge
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
                 MouseArea {
@@ -1002,7 +1002,7 @@ Item {
               Layout.preferredWidth: 1
               spacing: Style.marginXS
               NIcon {
-                icon: "network"
+                icon: Icon.network
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
                 MouseArea {
@@ -1045,7 +1045,7 @@ Item {
               Layout.preferredWidth: 1
               spacing: Style.marginXS
               NIcon {
-                icon: "world"
+                icon: Icon.world
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
                 MouseArea {
@@ -1088,7 +1088,7 @@ Item {
               Layout.preferredWidth: 1
               spacing: Style.marginXS
               NIcon {
-                icon: "router"
+                icon: Icon.router
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
                 MouseArea {
@@ -1233,7 +1233,7 @@ Item {
                   }
 
                   NIconButton {
-                    icon: "folder-open"
+                    icon: Icon.folderOpen
                     baseSize: Style.baseWidgetSize * 0.75
                     onClicked: caCertPicker.openForInline()
                   }
@@ -1373,7 +1373,7 @@ Item {
               }
 
               NIconButton {
-                icon: "close"
+                icon: Icon.close
                 baseSize: Style.baseWidgetSize * 0.75
                 onClicked: root.cancelPassword()
               }
@@ -1399,7 +1399,7 @@ Item {
 
             RowLayout {
               NIcon {
-                icon: "trash"
+                icon: Icon.trash
                 pointSize: Style.fontSizeL
                 color: Color.mError
               }
@@ -1422,7 +1422,7 @@ Item {
             }
 
             NIconButton {
-              icon: "close"
+              icon: Icon.close
               baseSize: Style.baseWidgetSize * 0.75
               onClicked: root.cancelForget()
             }

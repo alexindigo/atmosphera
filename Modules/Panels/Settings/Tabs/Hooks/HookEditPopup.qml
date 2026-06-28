@@ -53,7 +53,7 @@ Popup {
         Layout.fillWidth: true
       }
       NIconButton {
-        icon: "close"
+        icon: Icon.close
         onClicked: root.close()
       }
     }
@@ -87,7 +87,7 @@ Popup {
 
       NButton {
         text: I18n.tr("common.test")
-        icon: "caret-right"
+        icon: Icon.caretRight
         onClicked: root.test(commandInput.text)
         // Disable test if empty? Or maybe allow testing defined script.
         enabled: commandInput.text !== ""
@@ -105,7 +105,7 @@ Popup {
 
       NButton {
         text: I18n.tr("common.save")
-        icon: "check"
+        icon: Icon.check
         backgroundColor: Color.mPrimary
         textColor: Color.mOnPrimary
         onClicked: {

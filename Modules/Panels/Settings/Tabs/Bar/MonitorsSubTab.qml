@@ -242,7 +242,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 fontSize: Style.fontSizeS
                 text: I18n.tr("panels.bar.use-global-widgets")
-                icon: "refresh"
+                icon: Icon.refresh
                 onClicked: {
                   Settings.clearScreenOverride(monitorCard.screenName, "widgets");
                   BarService.widgetsRevision++;
@@ -253,7 +253,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 fontSize: Style.fontSizeS
                 text: I18n.tr("panels.bar.monitor-reset-all")
-                icon: "restore"
+                icon: Icon.restoreDefaults
                 onClicked: {
                   Settings.clearScreenOverride(monitorCard.screenName);
                   BarService.widgetsRevision++;

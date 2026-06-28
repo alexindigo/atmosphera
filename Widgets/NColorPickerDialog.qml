@@ -74,7 +74,7 @@ Popup {
         spacing: Style.marginS
 
         NIcon {
-          icon: "color-picker"
+          icon: Icon.colorPicker
           pointSize: Style.fontSizeXXL
           color: Color.mPrimary
         }
@@ -92,7 +92,7 @@ Popup {
       }
 
       NIconButton {
-        icon: "close"
+        icon: Icon.close
         onClicked: root.close()
       }
     }
@@ -761,7 +761,7 @@ Popup {
 
       NButton {
         text: I18n.tr("common.apply")
-        icon: "check"
+        icon: Icon.check
         onClicked: {
           root.colorSelected(root.selectedColor);
           // Delay close to prevent click propagation to elements behind the dialog

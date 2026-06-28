@@ -209,7 +209,7 @@ NBox {
       spacing: Style.marginS
 
       NIcon {
-        icon: "caret-down"
+        icon: Icon.caretDown
         pointSize: Style.fontSizeXXL
         color: Color.mOnSurfaceVariant
       }
@@ -235,7 +235,7 @@ NBox {
           menuItems.push({
                            "label": players[i].identity,
                            "action": i.toString(),
-                           "icon": "disc",
+                           "icon": Icon.disc,
                            "enabled": true,
                            "visible": true
                          });
@@ -272,7 +272,7 @@ NBox {
     NIcon {
       anchors.centerIn: parent
       visible: !root.hasActivePlayer && SpectrumService.isIdle
-      icon: "disc"
+      icon: Icon.disc
       pointSize: Style.fontSizeXXXL * 3
       color: Color.mOnSurfaceVariant
       opacity: 1.0
@@ -432,7 +432,7 @@ NBox {
             Layout.alignment: Qt.AlignHCenter
 
             NIconButton {
-              icon: "media-prev"
+              icon: Icon.mediaPrev
               visible: MediaService.canGoPrevious
               onClicked: MediaService.canGoPrevious ? MediaService.previous() : {}
             }
@@ -444,7 +444,7 @@ NBox {
             }
 
             NIconButton {
-              icon: "media-next"
+              icon: Icon.mediaNext
               visible: MediaService.canGoNext
               onClicked: MediaService.canGoNext ? MediaService.next() : {}
             }

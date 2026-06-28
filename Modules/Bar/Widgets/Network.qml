@@ -54,12 +54,12 @@ Item {
       {
         "label": I18n.tr("common.wifi") + " " + I18n.tr("tooltips.open-settings"),
         "action": "wifi-settings",
-        "icon": "settings"
+        "icon": Icon.settings
       },
       {
         "label": I18n.tr("actions.widget-settings"),
         "action": "widget-settings",
-        "icon": "settings"
+        "icon": Icon.settings
       },
     ]
 

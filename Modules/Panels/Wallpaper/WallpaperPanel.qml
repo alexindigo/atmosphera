@@ -284,7 +284,7 @@ SmartPanel {
             spacing: Style.marginM
 
             NIcon {
-              icon: "settings-wallpaper-selector"
+              icon: Icon.settingsWallpaperSelector
               pointSize: Style.fontSizeXXL
               color: Color.mPrimary
             }
@@ -299,7 +299,7 @@ SmartPanel {
 
             NIconButton {
               visible: Settings.data.wallpaper.enabled
-              icon: "dark-mode"
+              icon: Icon.darkMode
               tooltipText: Settings.data.wallpaper.linkLightAndDarkWallpapers ? I18n.tr("wallpaper.panel.header-separate-light-dark-tooltip") : I18n.tr("wallpaper.panel.header-link-light-dark-tooltip")
               baseSize: Style.baseWidgetSize * 0.8
               colorBg: !Settings.data.wallpaper.linkLightAndDarkWallpapers ? Color.mPrimary : Color.smartAlpha(Color.mSurfaceVariant)
@@ -309,7 +309,7 @@ SmartPanel {
 
             NIconButton {
               visible: Settings.data.wallpaper.enabled && panelContent.headerDevicesButtonVisible
-              icon: "devices"
+              icon: Icon.devices
               tooltipText: Settings.data.wallpaper.setWallpaperOnAllMonitors ? I18n.tr("wallpaper.panel.header-devices-apply-all-tooltip") : I18n.tr("wallpaper.panel.header-devices-per-monitor-tooltip")
               baseSize: Style.baseWidgetSize * 0.8
               colorBg: !Settings.data.wallpaper.setWallpaperOnAllMonitors ? Color.mPrimary : Color.smartAlpha(Color.mSurfaceVariant)
@@ -318,7 +318,7 @@ SmartPanel {
             }
 
             NIconButton {
-              icon: "palette"
+              icon: Icon.palette
               tooltipText: I18n.tr("wallpaper.panel.solid-color-tooltip")
               baseSize: Style.baseWidgetSize * 0.8
               colorBg: Settings.data.wallpaper.useSolidColor ? Color.mPrimary : Color.mSurfaceVariant
@@ -327,7 +327,7 @@ SmartPanel {
             }
 
             NIconButton {
-              icon: "settings"
+              icon: Icon.settings
               tooltipText: I18n.tr("panels.wallpaper.settings-title")
               baseSize: Style.baseWidgetSize * 0.8
               onClicked: {
@@ -338,7 +338,7 @@ SmartPanel {
             }
 
             NIconButton {
-              icon: "close"
+              icon: Icon.close
               tooltipText: I18n.tr("common.close")
               baseSize: Style.baseWidgetSize * 0.8
               onClicked: root.close()
@@ -484,7 +484,7 @@ SmartPanel {
             }
 
             NIconButton {
-              icon: "color-swatch"
+              icon: Icon.colorSwatch
               tooltipText: Settings.data.colorSchemes.useWallpaperColors ? I18n.tr("wallpaper.panel.color-extraction-enabled") : I18n.tr("wallpaper.panel.color-extraction-disabled")
               baseSize: Style.baseWidgetSize * 0.8
               onClicked: {
@@ -630,7 +630,7 @@ SmartPanel {
             // Settings button (only visible for Wallhaven)
             NIconButton {
               id: wallhavenSettingsButton
-              icon: "settings"
+              icon: Icon.settings
               tooltipText: I18n.tr("wallpaper.panel.wallhaven-settings-title")
               baseSize: Style.baseWidgetSize * 0.8
               visible: Settings.data.wallpaper.useWallhaven
@@ -982,7 +982,7 @@ SmartPanel {
 
         // Left side: navigation (back, home, path)
         NIconButton {
-          icon: "arrow-left"
+          icon: Icon.navigateUp
           tooltipText: I18n.tr("wallpaper.browse.go-up")
           enabled: isBrowseMode && currentBrowsePath !== WallpaperService.getMonitorDirectory(targetScreen?.name ?? "")
           onClicked: WallpaperService.navigateUp(targetScreen?.name ?? "")
@@ -990,7 +990,7 @@ SmartPanel {
         }
 
         NIconButton {
-          icon: "home"
+          icon: Icon.home
           tooltipText: I18n.tr("wallpaper.browse.go-root")
           enabled: isBrowseMode && currentBrowsePath !== WallpaperService.getMonitorDirectory(targetScreen?.name ?? "")
           onClicked: WallpaperService.navigateToRoot(targetScreen?.name ?? "")
@@ -1083,7 +1083,7 @@ SmartPanel {
         }
 
         NIconButton {
-          icon: "refresh"
+          icon: Icon.refresh
           tooltipText: I18n.tr("tooltips.refresh-wallpaper-list")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: {
@@ -1198,7 +1198,7 @@ SmartPanel {
                   spacing: Style.marginS
 
                   NIcon {
-                    icon: "folder"
+                    icon: Icon.folder
                     pointSize: Style.fontSizeXXXL
                     color: Color.mPrimary
                     Layout.alignment: Qt.AlignHCenter
@@ -1240,7 +1240,7 @@ SmartPanel {
                 visible: !wallpaperItem.isDirectory && (img.status === Image.Loading || img.status === Image.Error || wallpaperItem.cachedPath === "")
 
                 NIcon {
-                  icon: "image"
+                  icon: Icon.image
                   pointSize: Style.fontSizeL
                   color: Color.mOnSurfaceVariant
                   anchors.centerIn: parent
@@ -1269,7 +1269,7 @@ SmartPanel {
                 visible: wallpaperItem.isSelected
 
                 NIcon {
-                  icon: "check"
+                  icon: Icon.check
                   pointSize: Style.fontSizeM
                   color: Color.mOnSecondary
                   anchors.centerIn: parent
@@ -1390,7 +1390,7 @@ SmartPanel {
                     border.width: Style.borderS
 
                     NIcon {
-                      icon: paletteRow.isDark ? "moon" : "sun"
+                      icon: paletteRow.isDark ? "dark-mode" : "sun"
                       pointSize: parent.width * 0.45
                       color: Color.mOnSurface
                       anchors.centerIn: parent
@@ -1485,7 +1485,7 @@ SmartPanel {
             Layout.fillHeight: true
           }
           NIcon {
-            icon: "folder-open"
+            icon: Icon.folderOpen
             pointSize: Style.fontSizeXXL
             color: Color.mOnSurface
             Layout.alignment: Qt.AlignHCenter
@@ -1690,7 +1690,7 @@ SmartPanel {
                   visible: img.status === Image.Loading || img.status === Image.Error || wallhavenItem.thumbnailUrl === ""
 
                   NIcon {
-                    icon: "image"
+                    icon: Icon.image
                     pointSize: Style.fontSizeL
                     color: Color.mOnSurfaceVariant
                     anchors.centerIn: parent
@@ -1848,7 +1848,7 @@ SmartPanel {
             }
 
             NIcon {
-              icon: "image"
+              icon: Icon.image
               pointSize: Style.fontSizeXXL
               color: Color.mOnSurfaceVariant
               Layout.alignment: Qt.AlignHCenter
@@ -1881,7 +1881,7 @@ SmartPanel {
         }
 
         NIconButton {
-          icon: "chevron-left"
+          icon: Icon.chevronLeft
           enabled: !loading && WallhavenService.currentPage > 1 && !WallhavenService.fetching
           onClicked: WallhavenService.previousPage()
         }
@@ -1937,7 +1937,7 @@ SmartPanel {
         }
 
         NIconButton {
-          icon: "chevron-right"
+          icon: Icon.chevronRight
           enabled: WallhavenService.currentPage < WallhavenService.lastPage && !WallhavenService.fetching
           onClicked: WallhavenService.nextPage()
         }

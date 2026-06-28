@@ -78,7 +78,7 @@ ColumnLayout {
             }
 
             NIconButton {
-              icon: "close"
+              icon: Icon.close
               baseSize: Style.baseWidgetSize * 0.8
               Layout.alignment: Qt.AlignVCenter
               Layout.rightMargin: Style.marginXS

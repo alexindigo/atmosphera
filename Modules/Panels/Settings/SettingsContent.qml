@@ -504,133 +504,133 @@ Item {
           {
             "id": SettingsPanel.Tab.General,
             "label": "common.general",
-            "icon": "settings-general",
+            "icon": Icon.settingsGeneral,
             "source": generalTab
           },
           {
             "id": SettingsPanel.Tab.UserInterface,
             "label": "panels.user-interface.title",
-            "icon": "settings-user-interface",
+            "icon": Icon.settingsUserInterface,
             "source": userInterfaceTab
           },
           {
             "id": SettingsPanel.Tab.ColorScheme,
             "label": "panels.color-scheme.title",
-            "icon": "settings-color-scheme",
+            "icon": Icon.settingsColorScheme,
             "source": colorSchemeTab
           },
           {
             "id": SettingsPanel.Tab.Wallpaper,
             "label": "common.wallpaper",
-            "icon": "settings-wallpaper",
+            "icon": Icon.settingsWallpaper,
             "source": wallpaperTab
           },
           {
             "id": SettingsPanel.Tab.Bar,
             "label": "panels.bar.title",
-            "icon": "settings-bar",
+            "icon": Icon.settingsBar,
             "source": barTab
           },
           {
             "id": SettingsPanel.Tab.Dock,
             "label": "panels.dock.title",
-            "icon": "settings-dock",
+            "icon": Icon.settingsDock,
             "source": dockTab
           },
           {
             "id": SettingsPanel.Tab.DesktopWidgets,
             "label": "panels.desktop-widgets.title",
-            "icon": "clock",
+            "icon": Icon.clock,
             "source": desktopWidgetsTab
           },
           {
             "id": SettingsPanel.Tab.ControlCenter,
             "label": "panels.control-center.title",
-            "icon": "settings-control-center",
+            "icon": Icon.settingsControlCenter,
             "source": controlCenterTab
           },
           {
             "id": SettingsPanel.Tab.Launcher,
             "label": "panels.launcher.title",
-            "icon": "settings-launcher",
+            "icon": Icon.settingsLauncher,
             "source": launcherTab
           },
           {
             "id": SettingsPanel.Tab.Notifications,
             "label": "common.notifications",
-            "icon": "settings-notifications",
+            "icon": Icon.settingsNotifications,
             "source": notificationsTab
           },
           {
             "id": SettingsPanel.Tab.OSD,
             "label": "panels.osd.title",
-            "icon": "settings-osd",
+            "icon": Icon.settingsOsd,
             "source": osdTab
           },
           {
             "id": SettingsPanel.Tab.LockScreen,
             "label": "panels.lock-screen.title",
-            "icon": "settings-lock-screen",
+            "icon": Icon.settingsLockScreen,
             "source": lockScreenTab
           },
           {
             "id": SettingsPanel.Tab.SessionMenu,
             "label": "session-menu.title",
-            "icon": "settings-session-menu",
+            "icon": Icon.settingsSessionMenu,
             "source": sessionMenuTab
           },
           {
             "id": SettingsPanel.Tab.Idle,
             "label": "panels.idle.title",
-            "icon": "settings-idle",
+            "icon": Icon.settingsIdle,
             "source": idleTab
           },
           {
             "id": SettingsPanel.Tab.Audio,
             "label": "panels.audio.title",
-            "icon": "settings-audio",
+            "icon": Icon.settingsAudio,
             "source": audioTab
           },
           {
             "id": SettingsPanel.Tab.Display,
             "label": "panels.display.title",
-            "icon": "settings-display",
+            "icon": Icon.settingsDisplay,
             "source": displayTab
           },
           {
             "id": SettingsPanel.Tab.Connections,
             "label": "panels.connections.title",
-            "icon": "settings-network",
+            "icon": Icon.settingsNetwork,
             "source": connectionsTab
           },
           {
             "id": SettingsPanel.Tab.Location,
             "label": "panels.region.title",
-            "icon": "settings-location",
+            "icon": Icon.settingsLocation,
             "source": regionTab
           },
           {
             "id": SettingsPanel.Tab.System,
             "label": "panels.system.title",
-            "icon": "settings-system-monitor",
+            "icon": Icon.settingsSystemMonitor,
             "source": systemMonitorTab
           },
           {
             "id": SettingsPanel.Tab.Plugins,
             "label": "panels.plugins.title",
-            "icon": "plugin",
+            "icon": Icon.plugin,
             "source": pluginsTab
           },
           {
             "id": SettingsPanel.Tab.Hooks,
             "label": "panels.hooks.title",
-            "icon": "settings-hooks",
+            "icon": Icon.settingsHooks,
             "source": hooksTab
           },
           {
             "id": SettingsPanel.Tab.About,
             "label": "panels.about.title",
-            "icon": "settings-about",
+            "icon": Icon.settingsAbout,
             "source": aboutTab
           }
         ];
@@ -907,7 +907,7 @@ Item {
                   spacing: 0
 
                   NIcon {
-                    icon: "search"
+                    icon: Icon.search
                     color: searchCollapsedMouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface
                     pointSize: Style.fontSizeXL
                   }
@@ -1205,7 +1205,7 @@ Item {
             }
 
             NIconButton {
-              icon: "close"
+              icon: Icon.close
               tooltipText: I18n.tr("common.close")
               Layout.alignment: Qt.AlignVCenter
               onClicked: root.closeRequested()

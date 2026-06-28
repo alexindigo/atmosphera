@@ -215,7 +215,7 @@ ColumnLayout {
     }
 
     NIconButton {
-      icon: "filter"
+      icon: Icon.filter
       tooltipText: root.showOnlyActive ? I18n.tr("actions.show-all") : I18n.tr("actions.show-active-only")
 
       colorBg: root.showOnlyActive ? Color.mPrimary : Color.mSurface

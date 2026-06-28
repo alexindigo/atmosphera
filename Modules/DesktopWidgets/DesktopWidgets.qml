@@ -472,7 +472,7 @@ Variants {
 
               NIconButton {
                 id: addWidgetButton
-                icon: "layout-grid-add"
+                icon: Icon.layoutGridAdd
                 tooltipText: I18n.tr("tooltips.add-widget")
                 onClicked: {
                   var popupMenuWindow = PanelService.getPopupMenuWindow(window.screen);
@@ -484,7 +484,7 @@ Variants {
                       items.push({
                                    action: id,
                                    text: DesktopWidgetRegistry.getWidgetDisplayName(id),
-                                   icon: "layout-grid-add"
+                                   icon: Icon.layoutGridAdd
                                  });
                     }
                     var globalPos = addWidgetButton.mapToItem(null, 0, addWidgetButton.height + Style.marginS);
@@ -497,7 +497,7 @@ Variants {
               }
 
               NIconButton {
-                icon: "grid-3x3"
+                icon: Icon.grid3x3
                 visible: Settings.data.desktopWidgets.gridSnap
                 tooltipText: I18n.tr("panels.desktop-widgets.edit-mode-grid-snap-scale-label")
                 colorBg: Settings.data.desktopWidgets.gridSnapScale ? Color.mPrimary : Color.mSurfaceVariant
@@ -506,7 +506,7 @@ Variants {
               }
 
               NIconButton {
-                icon: "grid-4x4"
+                icon: Icon.grid4x4
                 tooltipText: I18n.tr("panels.desktop-widgets.edit-mode-grid-snap-label")
                 colorBg: Settings.data.desktopWidgets.gridSnap ? Color.mPrimary : Color.mSurfaceVariant
                 colorFg: Settings.data.desktopWidgets.gridSnap ? Color.mOnPrimary : Color.mPrimary
@@ -514,7 +514,7 @@ Variants {
               }
 
               NIconButton {
-                icon: "settings"
+                icon: Icon.settings
                 tooltipText: I18n.tr("actions.open-settings")
                 onClicked: {
                   SettingsPanelService.toggle(SettingsPanel.Tab.DesktopWidgets, -1, screenLoader.modelData);
@@ -523,7 +523,7 @@ Variants {
 
               NButton {
                 text: I18n.tr("panels.desktop-widgets.edit-mode-exit-button")
-                icon: "logout"
+                icon: Icon.logout
                 outlined: false
                 fontSize: Style.fontSizeS
                 iconSize: Style.fontSizeM

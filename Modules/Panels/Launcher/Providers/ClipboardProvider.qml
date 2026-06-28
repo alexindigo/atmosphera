@@ -387,7 +387,7 @@ Item {
     // Annotation tool for images
     if (item.isImage && Settings.data.appLauncher.screenshotAnnotationTool.trim() !== "") {
       actions.push({
-                     "icon": "pencil",
+                     "icon": Icon.edit,
                      "tooltip": I18n.tr("tooltips.open-annotation-tool"),
                      "action": function () {
                        var tool = Settings.data.appLauncher.screenshotAnnotationTool.trim();
@@ -400,7 +400,7 @@ Item {
 
     // Delete action
     actions.push({
-                   "icon": "trash",
+                   "icon": Icon.trash,
                    "tooltip": I18n.tr("launcher.providers.clipboard-delete"),
                    "action": function () {
                      deleteItem(item);

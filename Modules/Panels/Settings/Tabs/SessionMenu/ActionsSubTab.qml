@@ -158,7 +158,7 @@ ColumnLayout {
               visible: modelData.enabled
               anchors.centerIn: parent
               anchors.horizontalCenterOffset: -1
-              icon: "check"
+              icon: Icon.check
               color: Color.mOnPrimary
               pointSize: Math.max(Style.fontSizeXS, Style.baseWidgetSize * 0.35)
             }
@@ -186,7 +186,7 @@ ColumnLayout {
           // Countdown toggle (only shown when global countdown is enabled)
           NIconButtonHot {
             visible: Settings.data.sessionMenu.enableCountdown
-            icon: "clock"
+            icon: Icon.clock
             hot: modelData.countdownEnabled !== undefined ? modelData.countdownEnabled : true
             baseSize: Style.baseWidgetSize * 0.8
             Layout.alignment: Qt.AlignVCenter
@@ -198,7 +198,7 @@ ColumnLayout {
 
           // Settings button (cogwheel)
           NIconButton {
-            icon: "settings"
+            icon: Icon.settings
             tooltipText: I18n.tr("panels.session-menu.entry-settings-tooltip")
             baseSize: Style.baseWidgetSize * 0.8
             Layout.alignment: Qt.AlignVCenter

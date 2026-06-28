@@ -165,7 +165,7 @@ ColumnLayout {
 
         NIconButton {
           anchors.verticalCenter: parent.verticalCenter
-          icon: "close"
+          icon: Icon.close
           baseSize: 12 * Style.uiScaleRatio
           colorBg: Color.mSurfaceVariant
           colorFg: Color.mOnSurfaceVariant

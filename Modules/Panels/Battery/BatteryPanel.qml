@@ -109,7 +109,7 @@ SmartPanel {
           }
 
           NIconButton {
-            icon: "close"
+            icon: Icon.close
             tooltipText: I18n.tr("common.close")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: root.close()
@@ -345,20 +345,20 @@ SmartPanel {
               spacing: Style.marginS
 
               NIcon {
-                icon: "powersaver"
+                icon: Icon.powersaver
                 pointSize: Style.fontSizeS
                 color: PowerProfileService.getIcon() === "powersaver" ? Color.mPrimary : Color.mOnSurfaceVariant
               }
 
               NIcon {
-                icon: "balanced"
+                icon: Icon.balanced
                 pointSize: Style.fontSizeS
                 color: PowerProfileService.getIcon() === "balanced" ? Color.mPrimary : Color.mOnSurfaceVariant
                 Layout.fillWidth: true
               }
 
               NIcon {
-                icon: "performance"
+                icon: Icon.performance
                 pointSize: Style.fontSizeS
                 color: PowerProfileService.getIcon() === "performance" ? Color.mPrimary : Color.mOnSurfaceVariant
               }

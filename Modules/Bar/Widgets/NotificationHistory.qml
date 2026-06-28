@@ -86,12 +86,12 @@ NIconButton {
       {
         "label": I18n.tr("actions.clear-history"),
         "action": "clear-history",
-        "icon": "trash"
+        "icon": Icon.trash
       },
       {
         "label": I18n.tr("actions.widget-settings"),
         "action": "widget-settings",
-        "icon": "settings"
+        "icon": Icon.settings
       },
     ]
 

@@ -26,7 +26,7 @@ DraggableDesktopWidget {
     case "CPU":
       return [
             {
-              icon: "cpu-usage",
+              icon: Icon.cpuUsage,
               text: Math.round(SystemStatService.cpuUsage) + "%",
               color: root.color
             },
@@ -37,7 +37,7 @@ DraggableDesktopWidget {
               opacity: 0.8
             },
             {
-              icon: "cpu-temperature",
+              icon: Icon.cpuTemperature,
               text: SystemStatService.cpuTemp + "°C",
               color: root.color2
             }
@@ -45,7 +45,7 @@ DraggableDesktopWidget {
     case "GPU":
       return [
             {
-              icon: "gpu-temperature",
+              icon: Icon.gpuTemperature,
               text: Math.round(SystemStatService.gpuTemp) + "°C",
               color: root.color
             }
@@ -53,7 +53,7 @@ DraggableDesktopWidget {
     case "Memory":
       return [
             {
-              icon: "memory",
+              icon: Icon.systemMemory,
               text: Math.round(SystemStatService.memPercent) + "%",
               color: root.color
             }
@@ -61,7 +61,7 @@ DraggableDesktopWidget {
     case "Disk":
       var items = [
             {
-              icon: "storage",
+              icon: Icon.systemStorage,
               text: Math.round(SystemStatService.diskPercents[root.diskPath] || 0) + "%",
               color: root.color
             }
@@ -78,12 +78,12 @@ DraggableDesktopWidget {
     case "Network":
       return [
             {
-              icon: "download-speed",
+              icon: Icon.networkDownload,
               text: SystemStatService.formatSpeed(SystemStatService.rxSpeed),
               color: root.color
             },
             {
-              icon: "upload-speed",
+              icon: Icon.networkUpload,
               text: SystemStatService.formatSpeed(SystemStatService.txSpeed),
               color: root.color2
             }

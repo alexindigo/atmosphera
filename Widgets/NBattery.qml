@@ -81,7 +81,7 @@ Item {
   // State icon logic
   readonly property string stateIcon: {
     if (!ready)
-      return "x";
+      return "close";
     if (charging)
       return "bolt-filled";
     if (pluggedIn)

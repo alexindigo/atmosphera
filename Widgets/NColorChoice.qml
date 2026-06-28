@@ -71,7 +71,7 @@ RowLayout {
 
         NIcon {
           anchors.centerIn: parent
-          icon: "check"
+          icon: Icon.check
           pointSize: Math.max(Style.fontSizeXS, colorCircle.width * 0.4)
           color: (modelData.key === "none" && root.noneOnColor !== undefined) ? root.noneOnColor : Color.resolveOnColorKey(modelData.key)
           font.weight: Style.fontWeightBold

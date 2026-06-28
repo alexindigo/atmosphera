@@ -66,7 +66,7 @@ Rectangle {
       }
 
       NIcon {
-        icon: "color-picker"
+        icon: Icon.colorPicker
         color: Color.mOnSurfaceVariant
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignVCenter

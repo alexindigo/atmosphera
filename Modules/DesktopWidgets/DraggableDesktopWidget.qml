@@ -343,13 +343,13 @@ Item {
       items.push({
                    "label": I18n.tr("actions.widget-settings"),
                    "action": "widget-settings",
-                   "icon": "settings"
+                   "icon": Icon.settings
                  });
     }
     items.push({
                  "label": I18n.tr("common.reset"),
                  "action": "reset",
-                 "icon": "restore"
+                 "icon": Icon.restoreDefaults
                });
     items.push({
                  "label": I18n.tr("actions.raise-to-top"),
@@ -364,7 +364,7 @@ Item {
     items.push({
                  "label": I18n.tr("common.delete"),
                  "action": "delete",
-                 "icon": "trash"
+                 "icon": Icon.trash
                });
     return items;
   }

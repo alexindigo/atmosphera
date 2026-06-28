@@ -114,7 +114,7 @@ SmartPanel {
           spacing: Style.marginM
 
           NIcon {
-            icon: "settings-display"
+            icon: Icon.settingsDisplay
             pointSize: Style.fontSizeXXL
             color: Color.mPrimary
           }
@@ -128,7 +128,7 @@ SmartPanel {
           }
 
           NIconButton {
-            icon: "close"
+            icon: Icon.close
             tooltipText: I18n.tr("common.close")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {

@@ -157,7 +157,7 @@ RowLayout {
 
       NIcon {
         anchors.centerIn: parent
-        icon: "chevron-left"
+        icon: Icon.chevronLeft
         pointSize: Style.fontSizeS
         color: decreaseArea.containsMouse ? Color.mOnHover : Color.mPrimary
       }
@@ -204,7 +204,7 @@ RowLayout {
 
       NIcon {
         anchors.centerIn: parent
-        icon: "chevron-right"
+        icon: Icon.chevronRight
         pointSize: Style.fontSizeS
         color: increaseArea.containsMouse ? Color.mOnHover : Color.mPrimary
       }

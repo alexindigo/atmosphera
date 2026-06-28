@@ -25,7 +25,7 @@ ColumnLayout {
       opacity: 0.6
 
       NIcon {
-        icon: "device-desktop"
+        icon: Icon.deviceDesktop
         pointSize: Style.fontSizeL
         color: Color.mPrimary
         anchors.centerIn: parent

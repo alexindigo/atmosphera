@@ -30,7 +30,7 @@ ColumnLayout {
       opacity: 0.6
 
       NIcon {
-        icon: "palette"
+        icon: Icon.palette
         pointSize: Style.fontSizeL
         color: Color.mPrimary
         anchors.centerIn: parent
@@ -83,7 +83,7 @@ ColumnLayout {
             color: Color.mSurface
 
             NIcon {
-              icon: "layout-2"
+              icon: Icon.layout2
               pointSize: Style.fontSizeL
               color: Color.mPrimary
               anchors.centerIn: parent
@@ -118,22 +118,22 @@ ColumnLayout {
               {
                 "key": "top",
                 "name": I18n.tr("positions.top"),
-                "icon": "arrow-up"
+                "icon": Icon.positionTop
               },
               {
                 "key": "bottom",
                 "name": I18n.tr("positions.bottom"),
-                "icon": "arrow-down"
+                "icon": Icon.positionBottom
               },
               {
                 "key": "left",
                 "name": I18n.tr("positions.left"),
-                "icon": "arrow-left"
+                "icon": Icon.positionLeft
               },
               {
                 "key": "right",
                 "name": I18n.tr("positions.right"),
-                "icon": "arrow-right"
+                "icon": Icon.positionRight
               }
             ]
             delegate: Rectangle {
@@ -209,7 +209,7 @@ ColumnLayout {
           radius: Style.radiusM
           color: Color.mSurface
           NIcon {
-            icon: "minimize"
+            icon: Icon.minimize
             pointSize: Style.fontSizeL
             color: Color.mPrimary
             anchors.centerIn: parent
@@ -335,7 +335,7 @@ ColumnLayout {
             radius: Style.radiusM
             color: Color.mSurface
             NIcon {
-              icon: "maximize"
+              icon: Icon.maximize
               pointSize: Style.fontSizeL
               color: Color.mPrimary
               anchors.centerIn: parent
@@ -398,7 +398,7 @@ ColumnLayout {
             color: Color.mSurface
 
             NIcon {
-              icon: "layout-2"
+              icon: Icon.layout2
               pointSize: Style.fontSizeL
               color: Color.mPrimary
               anchors.centerIn: parent
@@ -524,7 +524,7 @@ ColumnLayout {
           radius: Style.radiusM
           color: Color.mSurface
           NIcon {
-            icon: "screen-share"
+            icon: Icon.screenShare
             pointSize: Style.fontSizeL
             color: Color.mPrimary
             anchors.centerIn: parent
@@ -579,7 +579,7 @@ ColumnLayout {
           radius: Style.radiusM
           color: Color.mSurface
           NIcon {
-            icon: "shadow"
+            icon: Icon.uiShadow
             pointSize: Style.fontSizeL
             color: Color.mPrimary
             anchors.centerIn: parent

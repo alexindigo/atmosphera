@@ -51,7 +51,7 @@ ColumnLayout {
         opacity: 0.6
 
         NIcon {
-          icon: "image"
+          icon: Icon.image
           pointSize: Style.fontSizeL
           color: Color.mPrimary
           anchors.centerIn: parent
@@ -109,7 +109,7 @@ ColumnLayout {
         color: Color.mPrimary
 
         NIcon {
-          icon: "sparkles"
+          icon: Icon.featured
           pointSize: Style.fontSizeXXL
           color: Color.mOnPrimary
           anchors.centerIn: parent
@@ -214,7 +214,7 @@ ColumnLayout {
               visible: thumbImage.status === Image.Loading || thumbImage.status === Image.Error || thumbDelegate.cachedPath === ""
 
               NIcon {
-                icon: "image"
+                icon: Icon.image
                 pointSize: Style.fontSizeL
                 color: Color.mOnSurfaceVariant
                 anchors.centerIn: parent
@@ -253,7 +253,7 @@ ColumnLayout {
               color: Color.mPrimary
 
               NIcon {
-                icon: "check"
+                icon: Icon.check
                 pointSize: Style.fontSizeS
                 color: Color.mOnPrimary
                 anchors.centerIn: parent
@@ -291,7 +291,7 @@ ColumnLayout {
       spacing: Style.marginM
 
       NIcon {
-        icon: "folder-open"
+        icon: Icon.folderOpen
         pointSize: Style.fontSizeL
         color: Color.mOnSurfaceVariant
       }

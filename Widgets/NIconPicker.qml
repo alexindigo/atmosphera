@@ -59,7 +59,7 @@ Popup {
         Layout.fillWidth: true
       }
       NIconButton {
-        icon: "close"
+        icon: Icon.close
         tooltipText: I18n.tr("common.close")
         onClicked: root.close()
       }
@@ -158,7 +158,7 @@ Popup {
       }
       NButton {
         text: I18n.tr("common.apply")
-        icon: "check"
+        icon: Icon.check
         enabled: root.selectedIcon !== ""
         onClicked: {
           root.iconSelected(root.selectedIcon);

@@ -56,7 +56,7 @@ Item {
       {
         "label": I18n.tr("actions.widget-settings"),
         "action": "widget-settings",
-        "icon": "settings"
+        "icon": Icon.settings
       },
     ]
 

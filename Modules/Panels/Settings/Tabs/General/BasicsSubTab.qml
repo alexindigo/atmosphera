@@ -170,7 +170,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NButton {
-      icon: "wand"
+      icon: Icon.setupWizard
       text: I18n.tr("panels.general.launch-setup-wizard")
       outlined: true
       Layout.fillWidth: true
@@ -194,7 +194,7 @@ ColumnLayout {
     }
 
     NButton {
-      icon: "external-link"
+      icon: Icon.externalLink
       text: I18n.tr("common.documentation")
       outlined: true
       Layout.fillWidth: true
@@ -204,7 +204,7 @@ ColumnLayout {
     }
 
     NButton {
-      icon: "json"
+      icon: Icon.formatJson
       text: I18n.tr("panels.general.copy-settings")
       outlined: true
       Layout.fillWidth: true

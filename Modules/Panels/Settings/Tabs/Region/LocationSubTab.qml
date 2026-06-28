@@ -67,7 +67,7 @@ ColumnLayout {
 
       NButton {
         text: I18n.tr("panels.location.geolocate-now-button")
-        icon: "current-location"
+        icon: Icon.currentLocation
         enabled: !LocationService.isFetchingWeather
         onClicked: LocationService.geolocateAndApply()
       }

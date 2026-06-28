@@ -106,7 +106,7 @@ SmartPanel {
           spacing: Style.marginM
 
           NIcon {
-            icon: "music"
+            icon: Icon.music
             pointSize: Style.fontSizeL
             color: Color.mPrimary
           }
@@ -137,7 +137,7 @@ SmartPanel {
                 color: playerSelectorMouse.containsMouse ? Color.mOnPrimary : Color.mOnSurfaceVariant
               }
               NIcon {
-                icon: "chevron-down"
+                icon: Icon.chevronDown
                 pointSize: Style.fontSizeXS
                 color: playerSelectorMouse.containsMouse ? Color.mOnPrimary : Color.mOnSurfaceVariant
               }
@@ -187,7 +187,7 @@ SmartPanel {
 
                       NIcon {
                         visible: MediaService.currentPlayer && MediaService.currentPlayer.identity === modelData.identity
-                        icon: "check"
+                        icon: Icon.check
                         color: itemMouse.containsMouse ? Color.mOnPrimary : Color.mPrimary
                         pointSize: Style.fontSizeS
                       }
@@ -218,7 +218,7 @@ SmartPanel {
           }
 
           NIconButton {
-            icon: "close"
+            icon: Icon.close
             tooltipText: I18n.tr("common.close")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: root.close()
@@ -487,7 +487,7 @@ SmartPanel {
               spacing: root.isSideBySide ? Style.marginL : Style.marginXL
 
               NIconButton {
-                icon: "media-prev"
+                icon: Icon.mediaPrev
                 baseSize: root.compactMode ? (Style.baseWidgetSize * 0.9) : (Style.baseWidgetSize * 1.2)
                 onClicked: MediaService.previous()
               }
@@ -515,7 +515,7 @@ SmartPanel {
               }
 
               NIconButton {
-                icon: "media-next"
+                icon: Icon.mediaNext
                 baseSize: root.compactMode ? (Style.baseWidgetSize * 0.9) : (Style.baseWidgetSize * 1.2)
                 onClicked: MediaService.next()
               }

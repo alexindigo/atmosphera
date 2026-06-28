@@ -332,7 +332,7 @@ PopupWindow {
                     visible: parent.parent.isChecked
                     anchors.centerIn: parent
                     anchors.horizontalCenterOffset: -1
-                    icon: "check"
+                    icon: Icon.check
                     color: parent.parent.activeColor
                     pointSize: Math.max(Style.fontSizeXXS, parent.width * 0.6)
                   }

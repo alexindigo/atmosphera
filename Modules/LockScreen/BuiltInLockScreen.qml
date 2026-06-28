@@ -72,7 +72,7 @@ Item {
         spacing: Style.marginM
 
         NIcon {
-          icon: "circle-key"
+          icon: Icon.credentials
           pointSize: Style.fontSizeXL
           color: Color.mOnTertiary
         }
@@ -151,7 +151,7 @@ Item {
         spacing: Style.marginM
 
         NIcon {
-          icon: "clock"
+          icon: Icon.clock
           pointSize: Style.fontSizeXL
           color: Color.mPrimary
         }
@@ -172,7 +172,7 @@ Item {
         }
 
         NIconButton {
-          icon: "x"
+          icon: Icon.close
           tooltipText: I18n.tr("session-menu.cancel-timer")
           baseSize: 32
           colorBg: Qt.alpha(Color.mPrimary, 0.1)

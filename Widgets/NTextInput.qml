@@ -212,7 +212,7 @@ ColumnLayout {
           }
           NIconButton {
             id: clearButton
-            icon: "x"
+            icon: Icon.close
             tooltipText: (input.text.length > 0 && !root.readOnly && root.enabled) ? I18n.tr("common.clear") : ""
 
             Layout.alignment: Qt.AlignVCenter

@@ -113,7 +113,7 @@ ColumnLayout {
     const badges = [];
     if (isPlugin) {
       badges.push({
-                    "icon": "plugin",
+                    "icon": Icon.plugin,
                     "color": Color.mSecondary
                   });
     }
