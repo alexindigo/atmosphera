@@ -177,7 +177,7 @@ Item {
                 NIconButton {
                   anchors.centerIn: parent
                   visible: root.recordingIndex === -1 && (root.currentKeybinds.length > 1 || root.allowEmpty)
-                  icon: "x"
+                  icon: Icon.close
                   colorBg: "transparent"
                   colorBgHover: Qt.alpha(Color.mError, 0.1)
                   colorFg: Color.mOnSurfaceVariant

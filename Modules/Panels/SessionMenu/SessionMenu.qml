@@ -87,22 +87,22 @@ SmartPanel {
   // Action metadata mapping
   readonly property var actionMetadata: {
     "lock": {
-      "icon": "lock",
+      "icon": Icon.lock,
       "title": I18n.tr("common.lock"),
       "isShutdown": false
     },
     "suspend": {
-      "icon": "suspend",
+      "icon": Icon.suspend,
       "title": I18n.tr("common.suspend"),
       "isShutdown": false
     },
     "hibernate": {
-      "icon": "hibernate",
+      "icon": Icon.hibernate,
       "title": I18n.tr("common.hibernate"),
       "isShutdown": false
     },
     "reboot": {
-      "icon": "reboot",
+      "icon": Icon.reboot,
       "title": I18n.tr("common.reboot"),
       "isShutdown": false
     },
@@ -112,17 +112,17 @@ SmartPanel {
       "isShutdown": false
     },
     "rebootToUefi": {
-      "icon": "reboot",
+      "icon": Icon.reboot,
       "title": I18n.tr("common.reboot-to-uefi"),
       "isShutdown": false
     },
     "logout": {
-      "icon": "logout",
+      "icon": Icon.logout,
       "title": I18n.tr("common.logout"),
       "isShutdown": false
     },
     "shutdown": {
-      "icon": "shutdown",
+      "icon": Icon.shutdown,
       "title": I18n.tr("common.shutdown"),
       "isShutdown": true
     }

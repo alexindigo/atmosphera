@@ -51,7 +51,7 @@ Popup {
         Layout.fillWidth: true
       }
       NIconButton {
-        icon: "close"
+        icon: Icon.close
         onClicked: root.close()
       }
     }
@@ -116,7 +116,7 @@ Popup {
 
       NButton {
         text: I18n.tr("common.save")
-        icon: "check"
+        icon: Icon.check
         backgroundColor: Color.mPrimary
         textColor: Color.mOnPrimary
         enabled: patternInput.text.trim() !== ""

@@ -53,7 +53,7 @@ Popup {
         }
 
         NIconButton {
-          icon: "close"
+          icon: Icon.close
           tooltipText: I18n.tr("common.close")
           onClicked: root.close()
         }
@@ -114,7 +114,7 @@ Popup {
 
         NButton {
           text: I18n.tr("common.apply")
-          icon: "check"
+          icon: Icon.check
           onClicked: {
             if (settingsLoader.item && settingsLoader.item.saveSettings) {
               settingsLoader.item.saveSettings();

@@ -58,7 +58,7 @@ ColumnLayout {
       Layout.topMargin: Style.marginM
       Layout.bottomMargin: Style.marginM
       text: DesktopWidgetRegistry.editMode ? I18n.tr("panels.desktop-widgets.edit-mode-exit-button") : I18n.tr("panels.desktop-widgets.edit-mode-button-label")
-      icon: "edit"
+      icon: Icon.edit
       onClicked: {
         DesktopWidgetRegistry.editMode = !DesktopWidgetRegistry.editMode;
         if (DesktopWidgetRegistry.editMode && Settings.data.ui.settingsPanelMode !== "window") {
@@ -193,13 +193,13 @@ ColumnLayout {
         const badges = [];
         if (isPlugin) {
           badges.push({
-                        "icon": "plugin",
+                        "icon": Icon.plugin,
                         "color": Color.mSecondary
                       });
         }
         if (DesktopWidgetRegistry.isCpuIntensive(widgetId)) {
           badges.push({
-                        "icon": "cpu-intensive",
+                        "icon": Icon.cpuIntensive,
                         "color": Color.mSecondary
                       });
         }

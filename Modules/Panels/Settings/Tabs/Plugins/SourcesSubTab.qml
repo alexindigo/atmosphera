@@ -112,7 +112,7 @@ ColumnLayout {
           }
 
           NIconButton {
-            icon: "pencil"
+            icon: Icon.edit
             tooltipText: I18n.tr("panels.plugins.sources-edit-tooltip")
             baseSize: Style.baseWidgetSize * 0.7
             onClicked: {
@@ -122,7 +122,7 @@ ColumnLayout {
           }
 
           NIconButton {
-            icon: "trash"
+            icon: Icon.trash
             tooltipText: I18n.tr("panels.plugins.sources-remove-tooltip")
             baseSize: Style.baseWidgetSize * 0.7
             onClicked: {
@@ -146,7 +146,7 @@ ColumnLayout {
 
   NButton {
     text: I18n.tr("panels.plugins.sources-add-custom")
-    icon: "plus"
+    icon: Icon.add
     onClicked: {
       sourceDialog.addSource();
       sourceDialog.open();
@@ -212,7 +212,7 @@ ColumnLayout {
         }
 
         NIconButton {
-          icon: "folder"
+          icon: Icon.folder
           tooltipText: I18n.tr("panels.plugins.sources-add-dialog-browse")
           border.width: 0
           Layout.preferredWidth: Style.baseWidgetSize * 1.1 * Style.uiScaleRatio
@@ -243,7 +243,7 @@ ColumnLayout {
 
         NButton {
           text: "Preview"
-          icon: "folder"
+          icon: Icon.folder
           outlined: true
           onClicked: folderPicker.openFilePicker()
         }

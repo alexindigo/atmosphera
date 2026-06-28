@@ -485,7 +485,7 @@ Item {
 
             NIconButton {
               visible: modelData.connected && modelData.state !== BluetoothDeviceState.Disconnecting
-              icon: "info"
+              icon: Icon.info
               tooltipText: I18n.tr("common.info")
               baseSize: Style.baseWidgetSize * 0.75
               colorBg: Color.mSurfaceVariant
@@ -500,7 +500,7 @@ Item {
 
             NIconButton {
               visible: !root.showOnlyLists && (modelData.paired || modelData.trusted) && !modelData.connected && !isBusy && !modelData.blocked
-              icon: "trash"
+              icon: Icon.trash
               tooltipText: I18n.tr("common.unpair")
               baseSize: Style.baseWidgetSize * 0.75
               colorBg: Color.mPrimary
@@ -625,7 +625,7 @@ Item {
               Layout.preferredWidth: 1
               spacing: Style.marginXS
               NIcon {
-                icon: "link"
+                icon: Icon.link
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
               }
@@ -642,7 +642,7 @@ Item {
               Layout.preferredWidth: 1
               spacing: Style.marginXS
               NIcon {
-                icon: "shield-check"
+                icon: Icon.verified
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
               }
@@ -659,7 +659,7 @@ Item {
               Layout.preferredWidth: 1
               spacing: Style.marginXS
               NIcon {
-                icon: "hash"
+                icon: Icon.deviceAddress
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
               }
@@ -722,7 +722,7 @@ Item {
       spacing: Style.marginL
 
       NIcon {
-        icon: "lock"
+        icon: Icon.lock
         pointSize: 48
         color: Color.mPrimary
         Layout.alignment: Qt.AlignHCenter
@@ -766,12 +766,12 @@ Item {
         spacing: Style.marginM
         NButton {
           text: I18n.tr("common.cancel")
-          icon: "x"
+          icon: Icon.close
           onClicked: BluetoothService.cancelPairing()
         }
         NButton {
           text: I18n.tr("common.confirm")
-          icon: "check"
+          icon: Icon.check
           backgroundColor: Color.mPrimary
           textColor: Color.mOnPrimary
           enabled: pinInput.text.length > 0

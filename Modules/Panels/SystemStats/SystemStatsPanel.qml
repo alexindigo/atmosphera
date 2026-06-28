@@ -48,7 +48,7 @@ SmartPanel {
           spacing: Style.marginM
 
           NIcon {
-            icon: "device-analytics"
+            icon: Icon.systemStats
             pointSize: Style.fontSizeXXL
             color: Color.mPrimary
           }
@@ -62,7 +62,7 @@ SmartPanel {
           }
 
           NIconButton {
-            icon: "close"
+            icon: Icon.close
             tooltipText: I18n.tr("common.close")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
@@ -88,7 +88,7 @@ SmartPanel {
             spacing: Style.marginXS
 
             NIcon {
-              icon: "cpu-usage"
+              icon: Icon.cpuUsage
               pointSize: Style.fontSizeXS
               color: Color.mPrimary
             }
@@ -101,7 +101,7 @@ SmartPanel {
             }
 
             NIcon {
-              icon: "cpu-temperature"
+              icon: Icon.cpuTemperature
               pointSize: Style.fontSizeXS
               color: Color.mSecondary
             }
@@ -160,7 +160,7 @@ SmartPanel {
             spacing: Style.marginXS
 
             NIcon {
-              icon: "memory"
+              icon: Icon.systemMemory
               pointSize: Style.fontSizeXS
               color: Color.mPrimary
             }
@@ -214,7 +214,7 @@ SmartPanel {
             spacing: Style.marginXS
 
             NIcon {
-              icon: "download-speed"
+              icon: Icon.networkDownload
               pointSize: Style.fontSizeXS
               color: Color.mPrimary
             }
@@ -228,7 +228,7 @@ SmartPanel {
             }
 
             NIcon {
-              icon: "upload-speed"
+              icon: Icon.networkUpload
               pointSize: Style.fontSizeXS
               color: Color.mSecondary
             }
@@ -291,7 +291,7 @@ SmartPanel {
             visible: SystemStatService.nproc > 0
 
             NIcon {
-              icon: "cpu-usage"
+              icon: Icon.cpuUsage
               pointSize: Style.fontSizeM
               color: Color.mPrimary
             }
@@ -318,7 +318,7 @@ SmartPanel {
             visible: SystemStatService.gpuAvailable
 
             NIcon {
-              icon: "gpu-temperature"
+              icon: Icon.gpuTemperature
               pointSize: Style.fontSizeM
               color: Color.mPrimary
             }
@@ -344,7 +344,7 @@ SmartPanel {
             spacing: Style.marginS
 
             NIcon {
-              icon: "storage"
+              icon: Icon.systemStorage
               pointSize: Style.fontSizeM
               color: Color.mPrimary
             }
@@ -377,7 +377,7 @@ SmartPanel {
             visible: SystemStatService.swapTotalGb > 0
 
             NIcon {
-              icon: "exchange"
+              icon: Icon.systemSwap
               pointSize: Style.fontSizeM
               color: Color.mPrimary
             }

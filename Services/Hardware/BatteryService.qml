@@ -226,23 +226,23 @@ Singleton {
     const icons = [
             {
               threshold: 86,
-              icon: "battery-4"
+              icon: Icon.battery4
             },
             {
               threshold: 56,
-              icon: "battery-3"
+              icon: Icon.battery3
             },
             {
               threshold: 31,
-              icon: "battery-2"
+              icon: Icon.battery2
             },
             {
               threshold: 11,
-              icon: "battery-1"
+              icon: Icon.battery1
             },
             {
               threshold: 0,
-              icon: "battery"
+              icon: Icon.battery
             }
           ];
 

@@ -254,14 +254,14 @@ ColumnLayout {
             }
 
             NIconButton {
-              icon: "folder"
+              icon: Icon.folder
               tooltipText: I18n.tr("common.browse")
               baseSize: Style?.buttonSizeS ?? 24
               onClicked: iconPickerDelegate.open()
             }
 
             NIconButton {
-              icon: "close"
+              icon: Icon.close
               tooltipText: I18n.tr("panels.control-center.shortcuts-custom-button-state-checks-remove")
               baseSize: Style?.buttonSizeS ?? 24
               colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)

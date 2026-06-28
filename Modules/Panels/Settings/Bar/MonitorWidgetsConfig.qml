@@ -127,13 +127,13 @@ NBox {
           displayName = pluginId;
         }
         badges.push({
-                      "icon": "plugin",
+                      "icon": Icon.plugin,
                       "color": Color.mSecondary
                     });
       }
       if (BarWidgetRegistry.isCpuIntensive(id)) {
         badges.push({
-                      "icon": "cpu-intensive",
+                      "icon": Icon.cpuIntensive,
                       "color": Color.mSecondary
                     });
       }

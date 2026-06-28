@@ -88,7 +88,7 @@ Popup {
         }
 
         NIconButton {
-          icon: "close"
+          icon: Icon.close
           tooltipText: I18n.tr("common.close")
           onClicked: {
             root.save();
@@ -140,7 +140,7 @@ Popup {
             spacing: Style.marginS
 
             NIcon {
-              icon: "info"
+              icon: Icon.info
               color: Color.mOnSurfaceVariant
               pointSize: Style.fontSizeM
             }

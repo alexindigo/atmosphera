@@ -139,13 +139,13 @@ ColumnLayout {
       }
 
       NIconButton {
-        icon: "settings"
+        icon: Icon.settings
         tooltipText: I18n.tr("common.edit")
         onClicked: root.openEdit(entryDelegate.index, entryDelegate.name, entryDelegate.timeout, entryDelegate.command, entryDelegate.resumeCommand)
       }
 
       NIconButton {
-        icon: "trash"
+        icon: Icon.trash
         tooltipText: I18n.tr("panels.idle.custom-entry-delete")
         onClicked: root._removeEntry(entryDelegate.index)
       }
@@ -154,7 +154,7 @@ ColumnLayout {
 
   NButton {
     text: I18n.tr("panels.idle.custom-add")
-    icon: "add"
+    icon: Icon.add
     enabled: Settings.data.idle.enabled
     onClicked: {
       root.openEdit(-1, "", 60, "", "");

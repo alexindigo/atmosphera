@@ -173,7 +173,7 @@ SmartPanel {
 
           RowLayout {
             NIcon {
-              icon: "settings-audio"
+              icon: Icon.settingsAudio
               pointSize: Style.fontSizeXXL
               color: Color.mPrimary
             }
@@ -187,7 +187,7 @@ SmartPanel {
             }
 
             NIconButton {
-              icon: "close"
+              icon: Icon.close
               tooltipText: I18n.tr("common.close")
               baseSize: Style.baseWidgetSize * 0.8
               onClicked: {
@@ -638,7 +638,7 @@ SmartPanel {
                     // Fallback icon if image fails to load
                     NIcon {
                       anchors.fill: parent
-                      icon: "apps"
+                      icon: Icon.apps
                       pointSize: Style.fontSizeXL
                       color: Color.mPrimary
                       visible: appIconImage.status === Image.Error || appIconImage.status === Image.Null || appBox.appIcon === ""

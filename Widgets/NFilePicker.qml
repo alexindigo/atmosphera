@@ -227,7 +227,7 @@ Popup {
         spacing: Style.marginM
 
         NIcon {
-          icon: "filepicker-folder"
+          icon: Icon.filepickerFolder
           color: Color.mPrimary
           pointSize: Style.fontSizeXXL
         }
@@ -242,7 +242,7 @@ Popup {
         // "Select Current" button only visible in folder selection mode
         NButton {
           text: I18n.tr("widgets.file-picker.select-current")
-          icon: "filepicker-folder-current"
+          icon: Icon.filepickerFolderCurrent
           visible: root.selectionMode === "folders"
           onClicked: {
             filePickerPanel.currentSelection = [root.currentPath];
@@ -251,7 +251,7 @@ Popup {
         }
 
         NIconButton {
-          icon: "filepicker-refresh"
+          icon: Icon.filepickerRefresh
           tooltipText: I18n.tr("common.refresh")
           onClicked: {
             // Force a proper refresh by resetting the folder
@@ -262,7 +262,7 @@ Popup {
           }
         }
         NIconButton {
-          icon: "filepicker-close"
+          icon: Icon.filepickerClose
           tooltipText: I18n.tr("common.close")
           onClicked: {
             root.cancelled();
@@ -293,7 +293,7 @@ Popup {
           spacing: Style.marginS
 
           NIconButton {
-            icon: "filepicker-arrow-up"
+            icon: Icon.filepickerArrowUp
             tooltipText: I18n.tr("tooltips.up")
             baseSize: Style.baseWidgetSize * 0.8
             enabled: folderModel.folder.toString() !== "file:///"
@@ -305,7 +305,7 @@ Popup {
           }
 
           NIconButton {
-            icon: "filepicker-home"
+            icon: Icon.filepickerHome
             tooltipText: I18n.tr("tooltips.home")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
@@ -554,7 +554,7 @@ Popup {
                     radius: Style.iRadiusS
                     visible: thumbnail.status === Image.Loading
                     NIcon {
-                      icon: "filepicker-photo"
+                      icon: Icon.filepickerPhoto
                       pointSize: Style.fontSizeL
                       color: Color.mOnSurfaceVariant
                       anchors.centerIn: parent
@@ -589,7 +589,7 @@ Popup {
                   border.width: Style.borderS
                   visible: isSelected
                   NIcon {
-                    icon: "filepicker-check"
+                    icon: Icon.filepickerCheck
                     pointSize: Style.fontSizeS
                     color: Color.mOnSecondary
                     anchors.centerIn: parent
@@ -791,7 +791,7 @@ Popup {
 
         NButton {
           text: root.selectionMode === "folders" ? I18n.tr("widgets.file-picker.select-folder") : I18n.tr("widgets.file-picker.select-file")
-          icon: "filepicker-check"
+          icon: Icon.filepickerCheck
           enabled: filePickerPanel.currentSelection.length > 0
           onClicked: root.confirmSelection()
         }

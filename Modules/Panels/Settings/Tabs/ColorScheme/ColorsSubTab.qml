@@ -434,7 +434,7 @@ ColumnLayout {
             border.color: Color.mOnSecondary
 
             NIcon {
-              icon: "check"
+              icon: Icon.check
               pointSize: Style.fontSizeXS
               color: Color.mOnSecondary
               anchors.centerIn: parent
@@ -457,7 +457,7 @@ ColumnLayout {
 
       NButton {
         text: I18n.tr("common.customize")
-        icon: "settings"
+        icon: Icon.settings
         Layout.preferredHeight: Style.baseWidgetSize * 1.4 * Style.uiScaleRatio
         onClicked: {
           colorCustomizer.open();
@@ -470,7 +470,7 @@ ColumnLayout {
 
       NButton {
         text: I18n.tr("panels.color-scheme.download-button")
-        icon: "download"
+        icon: Icon.download
         Layout.preferredHeight: Style.baseWidgetSize * 1.4 * Style.uiScaleRatio
         onClicked: root.openDownloadPopup()
       }

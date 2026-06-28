@@ -223,7 +223,7 @@ Item {
               visible: delegateItem.itemEnabled
               anchors.centerIn: parent
               anchors.horizontalCenterOffset: -1
-              icon: "check"
+              icon: Icon.check
               color: root.activeOnColor
               pointSize: Math.max(Style.fontSizeXS, root.baseSize * 0.5)
             }

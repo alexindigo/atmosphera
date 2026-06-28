@@ -61,7 +61,7 @@ ColumnLayout {
       opacity: 0.6
 
       NIcon {
-        icon: "palette"
+        icon: Icon.palette
         pointSize: Style.fontSizeL
         color: Color.mPrimary
         anchors.centerIn: parent
@@ -110,7 +110,7 @@ ColumnLayout {
           color: Color.mSurface
 
           NIcon {
-            icon: "moon"
+            icon: Icon.darkMode
             pointSize: Style.fontSizeL
             color: Color.mPrimary
             anchors.centerIn: parent
@@ -165,7 +165,7 @@ ColumnLayout {
           color: Color.mSurface
 
           NIcon {
-            icon: "color-picker"
+            icon: Icon.colorPicker
             pointSize: Style.fontSizeL
             color: Color.mPrimary
             anchors.centerIn: parent
@@ -236,7 +236,7 @@ ColumnLayout {
             color: Color.mSurface
 
             NIcon {
-              icon: "palette"
+              icon: Icon.palette
               pointSize: Style.fontSizeL
               color: Color.mPrimary
               anchors.centerIn: parent

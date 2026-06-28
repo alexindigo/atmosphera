@@ -393,7 +393,7 @@ SmartPanel {
           RowLayout {
             id: headerRow
             NIcon {
-              icon: "bell"
+              icon: Icon.bell
               pointSize: Style.fontSizeXXL
               color: Color.mPrimary
             }
@@ -414,7 +414,7 @@ SmartPanel {
             }
 
             NIconButton {
-              icon: "trash"
+              icon: Icon.trash
               tooltipText: I18n.tr("actions.clear-history")
               baseSize: Style.baseWidgetSize * 0.8
               onClicked: {
@@ -425,7 +425,7 @@ SmartPanel {
             }
 
             NIconButton {
-              icon: "settings"
+              icon: Icon.settings
               tooltipText: I18n.tr("common.settings")
               baseSize: Style.baseWidgetSize * 0.8
               onClicked: {
@@ -435,7 +435,7 @@ SmartPanel {
             }
 
             NIconButton {
-              icon: "close"
+              icon: Icon.close
               tooltipText: I18n.tr("common.close")
               baseSize: Style.baseWidgetSize * 0.8
               onClicked: root.close()
@@ -524,7 +524,7 @@ SmartPanel {
                 }
 
                 NIcon {
-                  icon: "bell-off"
+                  icon: Icon.bellOff
                   pointSize: (NotificationService.historyModel.count === 0) ? 48 : Style.baseWidgetSize
                   color: Color.mOnSurfaceVariant
                   Layout.alignment: Qt.AlignHCenter
@@ -998,7 +998,7 @@ SmartPanel {
 
                             // Delete button
                             NIconButton {
-                              icon: "trash"
+                              icon: Icon.trash
                               tooltipText: I18n.tr("tooltips.delete-notification")
                               baseSize: notificationDelegate.actionButtonSize
 

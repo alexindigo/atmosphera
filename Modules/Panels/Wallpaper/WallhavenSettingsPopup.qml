@@ -99,7 +99,7 @@ Popup {
       spacing: Style.marginM
 
       NIcon {
-        icon: "settings"
+        icon: Icon.settings
         pointSize: Style.fontSizeL
         color: Color.mPrimary
       }
@@ -113,7 +113,7 @@ Popup {
       }
 
       NIconButton {
-        icon: "close"
+        icon: Icon.close
         tooltipText: I18n.tr("common.close")
         baseSize: Style.baseWidgetSize * 0.8
         onClicked: root.hide()
@@ -354,7 +354,7 @@ Popup {
                 visible: sfwToggle.checked
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: -1
-                icon: "check"
+                icon: Icon.check
                 color: Color.mOnPrimary
                 pointSize: Math.max(Style.fontSizeXS, sfwBox.width * 0.5)
               }
@@ -403,7 +403,7 @@ Popup {
                 visible: sketchyToggle.checked
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: -1
-                icon: "check"
+                icon: Icon.check
                 color: Color.mOnPrimary
                 pointSize: Math.max(Style.fontSizeXS, sketchyBox.width * 0.5)
               }
@@ -453,7 +453,7 @@ Popup {
                 visible: nsfwToggle.checked
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: -1
-                icon: "check"
+                icon: Icon.check
                 color: Color.mOnPrimary
                 pointSize: Math.max(Style.fontSizeXS, nsfwBox.width * 0.5)
               }
@@ -674,7 +674,7 @@ Popup {
                 visible: generalToggle.checked
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: -1
-                icon: "check"
+                icon: Icon.check
                 color: Color.mOnPrimary
                 pointSize: Math.max(Style.fontSizeXS, generalBox.width * 0.5)
               }
@@ -723,7 +723,7 @@ Popup {
                 visible: animeToggle.checked
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: -1
-                icon: "check"
+                icon: Icon.check
                 color: Color.mOnPrimary
                 pointSize: Math.max(Style.fontSizeXS, animeBox.width * 0.5)
               }
@@ -772,7 +772,7 @@ Popup {
                 visible: peopleToggle.checked
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: -1
-                icon: "check"
+                icon: Icon.check
                 color: Color.mOnPrimary
                 pointSize: Math.max(Style.fontSizeXS, peopleBox.width * 0.5)
               }

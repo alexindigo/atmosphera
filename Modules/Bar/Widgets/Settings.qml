@@ -33,7 +33,7 @@ NIconButton {
 
   readonly property color iconColor: Color.resolveColorKey(valueIconColor)
 
-  icon: "settings"
+  icon: Icon.settings
   tooltipText: {
     if (PanelService.getPanel("settingsPanel", screen)?.isPanelOpen) {
       return "";
@@ -59,7 +59,7 @@ NIconButton {
       {
         "label": I18n.tr("actions.widget-settings"),
         "action": "widget-settings",
-        "icon": "settings"
+        "icon": Icon.settings
       },
     ]
 

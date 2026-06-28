@@ -78,7 +78,7 @@ ColumnLayout {
     }
 
     NIconButton {
-      icon: "refresh"
+      icon: Icon.refresh
       tooltipText: I18n.tr("panels.plugins.refresh-tooltip")
       baseSize: Style.baseWidgetSize * 0.9
       onClicked: {
@@ -189,7 +189,7 @@ ColumnLayout {
             Layout.fillWidth: true
 
             NIcon {
-              icon: "plugin"
+              icon: Icon.plugin
               pointSize: Style.fontSizeL
               color: Color.mPrimary
             }
@@ -214,7 +214,7 @@ ColumnLayout {
                 spacing: Style.marginXS
 
                 NIcon {
-                  icon: "official-plugin"
+                  icon: Icon.officialPlugin
                   pointSize: Style.fontSizeXXS
                   color: Color.mOnSecondary
                 }
@@ -235,7 +235,7 @@ ColumnLayout {
 
             // Open plugin page button
             NIconButton {
-              icon: "external-link"
+              icon: Icon.externalLink
               baseSize: Style.baseWidgetSize * 0.7
               tooltipText: I18n.tr("panels.plugins.open-plugin-page")
               onClicked: {
@@ -246,7 +246,7 @@ ColumnLayout {
 
             // Downloaded indicator
             NIcon {
-              icon: "circle-check"
+              icon: Icon.success
               pointSize: Style.baseWidgetSize * 0.5
               color: Color.mPrimary
               visible: modelData.downloaded === true
@@ -255,7 +255,7 @@ ColumnLayout {
             // Install button (only shown when not downloaded and not installing)
             NIconButton {
               visible: modelData.downloaded === false && !PluginService.installingPlugins[modelData.id]
-              icon: "download"
+              icon: Icon.download
               baseSize: Style.baseWidgetSize * 0.7
               tooltipText: I18n.tr("common.install")
               onClicked: installPlugin(modelData)

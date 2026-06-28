@@ -32,7 +32,7 @@ NBox {
           id: cpuUsageGauge
           anchors.centerIn: parent
           ratio: SystemStatService.cpuUsage / 100
-          icon: "cpu-usage"
+          icon: Icon.cpuUsage
           contentScale: root.contentScale
           fillColor: SystemStatService.cpuColor
           tooltipText: I18n.tr("system-monitor.cpu-usage") + `: ${Math.round(SystemStatService.cpuUsage)}%`
@@ -57,7 +57,7 @@ NBox {
           anchors.centerIn: parent
           ratio: SystemStatService.cpuTemp / 100
           suffix: "°C"
-          icon: "cpu-temperature"
+          icon: Icon.cpuTemperature
           contentScale: root.contentScale
           fillColor: SystemStatService.tempColor
           tooltipText: I18n.tr("system-monitor.cpu-temp") + `: ${Math.round(SystemStatService.cpuTemp)}°C`
@@ -81,7 +81,7 @@ NBox {
           id: memPercentGauge
           anchors.centerIn: parent
           ratio: SystemStatService.memPercent / 100
-          icon: "memory"
+          icon: Icon.systemMemory
           contentScale: root.contentScale
           fillColor: SystemStatService.memColor
           tooltipText: I18n.tr("common.memory") + `: ${Math.round(SystemStatService.memPercent)}%`
@@ -105,7 +105,7 @@ NBox {
           id: diskPercentsGauge
           anchors.centerIn: parent
           ratio: (SystemStatService.diskPercents[root.diskPath] ?? 0) / 100
-          icon: "storage"
+          icon: Icon.systemStorage
           contentScale: root.contentScale
           fillColor: SystemStatService.getDiskColor(root.diskPath)
           tooltipText: I18n.tr("system-monitor.disk") + `: ${SystemStatService.diskPercents[root.diskPath] || 0}%\n${root.diskPath}`

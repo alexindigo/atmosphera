@@ -7,43 +7,22 @@ import qs.Widgets
 Text {
   id: root
 
-  property string icon: Icons.defaultIcon
+  property var icon: Icon.close
   property real pointSize: Style.fontSizeL
   property bool applyUiScale: true
 
-  visible: (icon !== undefined) && (icon !== "")
-
-  property string _resolvedChar: ""
-  property string _resolvedFontFamily: Icons.fontFamily
-
-  Component.onCompleted: _resolveIcon()
-  onIconChanged: _resolveIcon()
-
-  function _resolveIcon() {
-    if ((icon === undefined) || (icon === "")) {
-      root.text = "";
-      return;
+  readonly property var _resolved: {
+    if (typeof icon === "string") {
+      // Compat path for Noctalia call sites that pass strings
+      return IconRegistry.resolved[icon];
     }
-
-    var resolved = IconRegistry.resolve(icon);
-    if (resolved && resolved.type === "font") {
-      root._resolvedChar = resolved.char;
-      root._resolvedFontFamily = Icons.fontFamily;
-      root.text = resolved.char;
-      root.visible = true;
-      return;
-    }
-
-    if (Icons.get(icon) === undefined) {
-      Logger.w("Icon", `"${icon}"`, "doesn't exist in the icons font");
-      Logger.callStack();
-      root.text = Icons.get(Icons.defaultIcon);
-      return;
-    }
-    root.text = Icons.get(icon);
+    return icon;
   }
 
-  font.family: root._resolvedFontFamily
+  visible: _resolved !== undefined && _resolved !== null
+
+  text: _resolved && _resolved.char ? _resolved.char : ""
+  font.family: _resolved && _resolved.fontFamily ? _resolved.fontFamily : Icons.fontFamily
   font.pointSize: Math.max(1, applyUiScale ? root.pointSize * Style.uiScaleRatio : root.pointSize)
   color: Color.mOnSurface
   verticalAlignment: Text.AlignVCenter

@@ -54,7 +54,7 @@ ColumnLayout {
           spacing: Style.marginS
 
           NIcon {
-            icon: "palette"
+            icon: Icon.palette
             pointSize: Style.fontSizeM
           }
 

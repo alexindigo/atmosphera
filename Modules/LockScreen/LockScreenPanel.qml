@@ -177,7 +177,7 @@ Item {
         visible: keyboardLayout.currentLayout !== "Unknown"
 
         NIcon {
-          icon: "keyboard"
+          icon: Icon.keyboard
           pointSize: Style.fontSizeM
           color: Color.mOnSurfaceVariant
         }
@@ -196,7 +196,7 @@ Item {
         visible: batteryIndicator.isReady || keyboardLayout.currentLayout !== "Unknown" || LockKeysService.capsLockOn
 
         NIcon {
-          icon: "lock"
+          icon: Icon.lock
           pointSize: Style.fontSizeM
           color: LockKeysService.capsLockOn ? Color.mPrimary : Qt.alpha(Color.mOnSurfaceVariant, 0.5)
         }
@@ -364,7 +364,7 @@ Item {
 
                 NIcon {
                   anchors.centerIn: parent
-                  icon: "media-prev"
+                  icon: Icon.mediaPrev
                   pointSize: Style.fontSizeM
                   color: prevButtonArea.containsMouse ? Color.mOnPrimary : Color.mOnSurface
 
@@ -438,7 +438,7 @@ Item {
 
                 NIcon {
                   anchors.centerIn: parent
-                  icon: "media-next"
+                  icon: Icon.mediaNext
                   pointSize: Style.fontSizeM
                   color: nextButtonArea.containsMouse ? Color.mOnPrimary : Color.mOnSurface
 
@@ -688,7 +688,7 @@ Item {
             visible: keyboardLayout.currentLayout !== "Unknown"
 
             NIcon {
-              icon: "keyboard"
+              icon: Icon.keyboard
               pointSize: Style.fontSizeM
               color: Color.mOnSurfaceVariant
             }
@@ -707,7 +707,7 @@ Item {
             visible: batteryIndicator.isReady || keyboardLayout.currentLayout !== "Unknown" || LockKeysService.capsLockOn
 
             NIcon {
-              icon: "lock"
+              icon: Icon.lock
               pointSize: Style.fontSizeM
               color: LockKeysService.capsLockOn ? Color.mPrimary : Qt.alpha(Color.mOnSurfaceVariant, 0.5)
             }
@@ -767,7 +767,7 @@ Item {
             spacing: Style.marginL
 
             NIcon {
-              icon: "login-2"
+              icon: Icon.loginKey
               pointSize: Style.fontSizeL
               color: passwordInput.activeFocus ? Color.mPrimary : Color.mOnSurfaceVariant
               anchors.verticalCenter: parent.verticalCenter
@@ -1060,7 +1060,7 @@ Item {
 
             NIcon {
               anchors.centerIn: parent
-              icon: "arrow-forward"
+              icon: Icon.submit
               pointSize: Style.fontSizeM
               color: submitButtonArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
 
@@ -1121,7 +1121,7 @@ Item {
 
           NButton {
             anchors.fill: parent
-            icon: "logout"
+            icon: Icon.logout
             text: I18n.tr("common.logout")
             outlined: true
             backgroundColor: Color.mOnSurfaceVariant
@@ -1140,7 +1140,7 @@ Item {
 
           NButton {
             anchors.fill: parent
-            icon: "suspend"
+            icon: Icon.suspend
             text: I18n.tr("common.suspend")
             outlined: true
             backgroundColor: Color.mOnSurfaceVariant
@@ -1160,7 +1160,7 @@ Item {
 
           NButton {
             anchors.fill: parent
-            icon: "hibernate"
+            icon: Icon.hibernate
             text: I18n.tr("common.hibernate")
             outlined: true
             backgroundColor: Color.mOnSurfaceVariant
@@ -1179,7 +1179,7 @@ Item {
 
           NButton {
             anchors.fill: parent
-            icon: "reboot"
+            icon: Icon.reboot
             text: I18n.tr("common.reboot")
             outlined: true
             backgroundColor: Color.mOnSurfaceVariant
@@ -1198,7 +1198,7 @@ Item {
 
           NButton {
             anchors.fill: parent
-            icon: "shutdown"
+            icon: Icon.shutdown
             text: I18n.tr("common.shutdown")
             outlined: true
             backgroundColor: Color.mError

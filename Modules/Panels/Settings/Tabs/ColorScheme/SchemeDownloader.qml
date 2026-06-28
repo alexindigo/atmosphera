@@ -763,7 +763,7 @@ Popup {
       }
 
       NIconButton {
-        icon: "refresh"
+        icon: Icon.refresh
         tooltipText: I18n.tr("common.refresh")
         enabled: !fetching && !downloading
         onClicked: {
@@ -780,7 +780,7 @@ Popup {
       }
 
       NIconButton {
-        icon: "close"
+        icon: Icon.close
         tooltipText: I18n.tr("common.close")
         onClicked: root.close()
       }
@@ -956,7 +956,7 @@ Popup {
       visible: !fetching && availableSchemes.length === 0 && downloadError === ""
 
       NIcon {
-        icon: "package"
+        icon: Icon.pkg
         pointSize: 48
         color: Color.mOnSurfaceVariant
         Layout.alignment: Qt.AlignHCenter

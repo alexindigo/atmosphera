@@ -36,7 +36,7 @@ NIconButton {
   baseSize: Style.getCapsuleHeightForScreen(screen?.name)
   applyUiScale: false
   customRadius: Style.radiusL
-  icon: "wallpaper-selector"
+  icon: Icon.wallpaperSelector
   tooltipText: {
     if (PanelService.getPanel("wallpaperPanel", screen)?.isPanelOpen) {
       return "";
@@ -62,7 +62,7 @@ NIconButton {
       {
         "label": I18n.tr("actions.widget-settings"),
         "action": "widget-settings",
-        "icon": "settings"
+        "icon": Icon.settings
       },
     ]
 

@@ -191,7 +191,7 @@ ColumnLayout {
 
     NIconButton {
       Layout.alignment: Qt.AlignVCenter
-      icon: "settings"
+      icon: Icon.settings
       tooltipText: I18n.tr("common.edit")
       onClicked: root.openEdit(rowRoot.actionName, rowRoot.command, rowRoot.resumeCommand, rowRoot.actionCommandChanged, rowRoot.actionResumeCommandChanged)
     }

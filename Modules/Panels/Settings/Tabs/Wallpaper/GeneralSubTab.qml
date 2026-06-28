@@ -39,7 +39,7 @@ ColumnLayout {
       }
 
       NIconButton {
-        icon: "wallpaper-selector"
+        icon: Icon.wallpaperSelector
         tooltipText: I18n.tr("tooltips.wallpaper-selector")
         onClicked: PanelService.getPanel("wallpaperPanel", root.screen)?.toggle()
       }
@@ -199,7 +199,7 @@ ColumnLayout {
     }
 
     NButton {
-      icon: "trash"
+      icon: Icon.trash
       text: I18n.tr("panels.wallpaper.settings-clear-cache-button")
       outlined: true
       onClicked: {

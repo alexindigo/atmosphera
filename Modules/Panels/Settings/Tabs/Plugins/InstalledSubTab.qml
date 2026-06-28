@@ -53,7 +53,7 @@ ColumnLayout {
     property bool isChecking: Object.keys(PluginService.activeFetches).length > 0
 
     text: isChecking ? I18n.tr("panels.plugins.checking-for-updates") : I18n.tr("panels.plugins.check-for-updates")
-    icon: "refresh"
+    icon: Icon.refresh
     enabled: !isChecking
     visible: Object.keys(PluginService.pluginUpdates).length === 0
     Layout.fillWidth: true
@@ -68,7 +68,7 @@ ColumnLayout {
     text: I18n.tr("panels.plugins.update-all", {
                     "count": updateCount
                   })
-    icon: "download"
+    icon: Icon.download
     visible: (updateCount > 0)
     enabled: !isUpdating
     backgroundColor: Color.mPrimary
@@ -170,7 +170,7 @@ ColumnLayout {
             Layout.fillWidth: true
 
             NIcon {
-              icon: "plugin"
+              icon: Icon.plugin
               pointSize: Style.fontSizeL
               color: PluginService.hasPluginError(modelData.compositeKey) ? Color.mError : Color.mPrimary
             }
@@ -195,7 +195,7 @@ ColumnLayout {
                 spacing: Style.marginXS
 
                 NIcon {
-                  icon: "official-plugin"
+                  icon: Icon.officialPlugin
                   pointSize: Style.fontSizeXXS
                   color: Color.mOnSecondary
                 }
@@ -215,7 +215,7 @@ ColumnLayout {
             }
 
             NIconButtonHot {
-              icon: "bug"
+              icon: Icon.bug
               hot: PluginService.isPluginHotReloadEnabled(modelData.id)
               tooltipText: PluginService.isPluginHotReloadEnabled(modelData.id) ? I18n.tr("panels.plugins.development-disable") : I18n.tr("panels.plugins.development-enable")
               baseSize: Style.baseWidgetSize * 0.7
@@ -224,7 +224,7 @@ ColumnLayout {
             }
 
             NIconButton {
-              icon: "settings"
+              icon: Icon.settings
               tooltipText: I18n.tr("panels.plugins.settings-tooltip")
               baseSize: Style.baseWidgetSize * 0.7
               visible: (modelData.entryPoints?.settings !== undefined)
@@ -235,7 +235,7 @@ ColumnLayout {
             }
 
             NIconButton {
-              icon: "external-link"
+              icon: Icon.externalLink
               tooltipText: I18n.tr("panels.plugins.open-plugin-page")
               baseSize: Style.baseWidgetSize * 0.7
               visible: true
@@ -246,7 +246,7 @@ ColumnLayout {
             }
 
             NIconButton {
-              icon: "trash"
+              icon: Icon.trash
               tooltipText: I18n.tr("common.uninstall")
               baseSize: Style.baseWidgetSize * 0.7
               onClicked: {

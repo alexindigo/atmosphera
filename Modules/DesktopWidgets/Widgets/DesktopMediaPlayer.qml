@@ -210,7 +210,7 @@ DraggableDesktopWidget {
       NIcon {
         visible: !hasPlayer
         anchors.centerIn: parent
-        icon: "disc"
+        icon: Icon.disc
         pointSize: Math.round(24 * widgetScale)
         color: Color.mOnSurfaceVariant
       }
@@ -260,7 +260,7 @@ DraggableDesktopWidget {
           }
         }
         baseSize: Math.round(32 * widgetScale)
-        icon: "media-prev"
+        icon: Icon.mediaPrev
         enabled: hasPlayer && MediaService.canGoPrevious
         colorBg: Color.mSurfaceVariant
         colorFg: enabled ? Color.mPrimary : Color.mOnSurfaceVariant
@@ -296,7 +296,7 @@ DraggableDesktopWidget {
           }
         }
         baseSize: Math.round(32 * widgetScale)
-        icon: "media-next"
+        icon: Icon.mediaNext
         enabled: hasPlayer && MediaService.canGoNext
         colorBg: Color.mSurfaceVariant
         colorFg: enabled ? Color.mPrimary : Color.mOnSurfaceVariant

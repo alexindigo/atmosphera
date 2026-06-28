@@ -36,7 +36,7 @@ NIconButton {
   baseSize: Style.getCapsuleHeightForScreen(screenName)
   applyUiScale: false
   customRadius: Style.radiusL
-  icon: "power"
+  icon: Icon.sessionControl
   tooltipText: {
     if (PanelService.getPanel("sessionMenuPanel", screen)?.isPanelOpen)
       return "";
@@ -56,7 +56,7 @@ NIconButton {
       {
         "label": I18n.tr("actions.widget-settings"),
         "action": "widget-settings",
-        "icon": "settings"
+        "icon": Icon.settings
       },
     ]
 

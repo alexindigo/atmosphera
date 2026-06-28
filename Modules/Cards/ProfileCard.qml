@@ -63,7 +63,7 @@ NBox {
         Layout.fillWidth: true
       }
       NIconButton {
-        icon: "settings"
+        icon: Icon.settings
         tooltipText: I18n.tr("tooltips.open-settings")
         onClicked: {
           // Better close the control center in case the settings open in a separate window
@@ -76,7 +76,7 @@ NBox {
       }
 
       NIconButton {
-        icon: "power"
+        icon: Icon.sessionControl
         tooltipText: I18n.tr("tooltips.session-menu")
         onClicked: {
           PanelService.getPanel("sessionMenuPanel", screen)?.open();
@@ -85,7 +85,7 @@ NBox {
       }
 
       NIconButton {
-        icon: "close"
+        icon: Icon.close
         tooltipText: I18n.tr("common.close")
         onClicked: {
           PanelService.getPanel("controlCenterPanel", screen)?.close();

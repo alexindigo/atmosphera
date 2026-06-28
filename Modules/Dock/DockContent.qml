@@ -604,7 +604,7 @@ Item {
               NIcon {
                 anchors.centerIn: parent
                 visible: !appIcon.visible
-                icon: "question-mark"
+                icon: Icon.questionMark
                 pointSize: dockRoot.iconSize * 0.7
                 color: appButton.isActive ? Color.mPrimary : Color.mOnSurfaceVariant
                 opacity: appButton.isRunning ? 1.0 : 0.6

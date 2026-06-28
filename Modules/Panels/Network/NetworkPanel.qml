@@ -150,14 +150,14 @@ SmartPanel {
             }
 
             NIconButton {
-              icon: "settings"
+              icon: Icon.settings
               tooltipText: I18n.tr("tooltips.open-settings")
               baseSize: Style.baseWidgetSize * 0.8
               onClicked: SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 0, screen)
             }
 
             NIconButton {
-              icon: "close"
+              icon: Icon.close
               tooltipText: I18n.tr("common.close")
               baseSize: Style.baseWidgetSize * 0.8
               onClicked: root.close()
@@ -216,7 +216,7 @@ SmartPanel {
             spacing: Style.marginS
 
             NIcon {
-              icon: "warning"
+              icon: Icon.warning
               pointSize: Style.fontSizeL
               color: Color.mError
             }
@@ -230,7 +230,7 @@ SmartPanel {
             }
 
             NIconButton {
-              icon: "close"
+              icon: Icon.close
               baseSize: Style.baseWidgetSize * 0.6
               onClicked: NetworkService.lastError = ""
             }
@@ -270,7 +270,7 @@ SmartPanel {
                 }
 
                 NIcon {
-                  icon: "wifi-off"
+                  icon: Icon.wifiOff
                   pointSize: 48
                   color: Color.mOnSurfaceVariant
                   Layout.alignment: Qt.AlignHCenter
@@ -353,7 +353,7 @@ SmartPanel {
                 }
 
                 NIcon {
-                  icon: "wifi-question"
+                  icon: Icon.wifiQuestion
                   pointSize: 48
                   color: Color.mOnSurfaceVariant
                   Layout.alignment: Qt.AlignHCenter
@@ -418,7 +418,7 @@ SmartPanel {
                   }
 
                   NIcon {
-                    icon: "ethernet-off"
+                    icon: Icon.ethernetOff
                     pointSize: 48
                     color: Color.mOnSurfaceVariant
                     Layout.alignment: Qt.AlignHCenter
@@ -532,7 +532,7 @@ SmartPanel {
 
                                 NIcon {
                                   visible: SystemStatService.rxSpeed > 0
-                                  icon: "arrow-down"
+                                  icon: Icon.networkDownload
                                   pointSize: Style.fontSizeXXS
                                   color: Qt.alpha(ethItem.getContentColors()[1], Style.opacityHeavy)
                                 }
@@ -553,7 +553,7 @@ SmartPanel {
 
                                 NIcon {
                                   visible: SystemStatService.txSpeed > 0
-                                  icon: "arrow-up"
+                                  icon: Icon.networkUpload
                                   pointSize: Style.fontSizeXXS
                                   color: Qt.alpha(ethItem.getContentColors()[1], Style.opacityHeavy)
                                 }
@@ -571,7 +571,7 @@ SmartPanel {
 
                           // Info button on the right
                           NIconButton {
-                            icon: "info"
+                            icon: Icon.info
                             tooltipText: I18n.tr("common.info")
                             baseSize: Style.baseWidgetSize * 0.75
                             colorBg: Color.mSurfaceVariant
@@ -664,7 +664,7 @@ SmartPanel {
                               Layout.preferredWidth: 1
                               spacing: Style.marginXS
                               NIcon {
-                                icon: "ethernet"
+                                icon: Icon.ethernet
                                 pointSize: Style.fontSizeXS
                                 color: Color.mOnSurface
                                 Layout.alignment: Qt.AlignVCenter
@@ -712,7 +712,7 @@ SmartPanel {
                               Layout.preferredWidth: 1
                               spacing: Style.marginXS
                               NIcon {
-                                icon: "hash"
+                                icon: Icon.deviceAddress
                                 pointSize: Style.fontSizeXS
                                 color: Color.mOnSurface
                                 Layout.alignment: Qt.AlignVCenter
@@ -758,7 +758,7 @@ SmartPanel {
                               Layout.preferredWidth: 1
                               spacing: Style.marginXS
                               NIcon {
-                                icon: "gauge"
+                                icon: Icon.gauge
                                 pointSize: Style.fontSizeXS
                                 color: Color.mOnSurface
                                 Layout.alignment: Qt.AlignVCenter
@@ -788,7 +788,7 @@ SmartPanel {
                               Layout.preferredWidth: 1
                               spacing: Style.marginXS
                               NIcon {
-                                icon: "network"
+                                icon: Icon.network
                                 pointSize: Style.fontSizeXS
                                 color: Color.mOnSurface
                                 Layout.alignment: Qt.AlignVCenter
@@ -839,7 +839,7 @@ SmartPanel {
                               Layout.preferredWidth: 1
                               spacing: Style.marginXS
                               NIcon {
-                                icon: "world"
+                                icon: Icon.world
                                 pointSize: Style.fontSizeXS
                                 color: Color.mOnSurface
                                 Layout.alignment: Qt.AlignVCenter
@@ -890,7 +890,7 @@ SmartPanel {
                               Layout.preferredWidth: 1
                               spacing: Style.marginXS
                               NIcon {
-                                icon: "router"
+                                icon: Icon.router
                                 pointSize: Style.fontSizeXS
                                 color: Color.mOnSurface
                                 Layout.alignment: Qt.AlignVCenter

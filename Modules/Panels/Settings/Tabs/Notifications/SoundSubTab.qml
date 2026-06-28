@@ -30,7 +30,7 @@ ColumnLayout {
       spacing: Style.marginM
 
       NIcon {
-        icon: "warning"
+        icon: Icon.warning
         color: Color.mOnSurfaceVariant
         pointSize: Style.fontSizeXL
         Layout.alignment: Qt.AlignVCenter

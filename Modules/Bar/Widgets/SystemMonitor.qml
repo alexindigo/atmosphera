@@ -161,12 +161,12 @@ Item {
       {
         "label": I18n.tr("system-monitor.title"),
         "action": "sysmon-settings",
-        "icon": "settings"
+        "icon": Icon.settings
       },
       {
         "label": I18n.tr("actions.widget-settings"),
         "action": "widget-settings",
-        "icon": "settings"
+        "icon": Icon.settings
       },
     ]
 
@@ -249,7 +249,7 @@ Item {
             Layout.column: 0
 
             NIcon {
-              icon: "cpu-usage"
+              icon: Icon.cpuUsage
               pointSize: iconSize
               applyUiScale: false
               x: Style.pixelAlignCenter(parent.width, width)
@@ -331,7 +331,7 @@ Item {
             Layout.column: 0
 
             NIcon {
-              icon: "cpu-usage"
+              icon: Icon.cpuUsage
               pointSize: iconSize
               applyUiScale: false
               x: Style.pixelAlignCenter(parent.width, width)
@@ -398,7 +398,7 @@ Item {
             Layout.column: 0
 
             NIcon {
-              icon: "cpu-temperature"
+              icon: Icon.cpuTemperature
               pointSize: iconSize
               applyUiScale: false
               x: Style.pixelAlignCenter(parent.width, width)
@@ -466,7 +466,7 @@ Item {
             Layout.column: 0
 
             NIcon {
-              icon: "gpu-temperature"
+              icon: Icon.gpuTemperature
               pointSize: iconSize
               applyUiScale: false
               x: Style.pixelAlignCenter(parent.width, width)
@@ -534,7 +534,7 @@ Item {
             Layout.column: 0
 
             NIcon {
-              icon: "weight"
+              icon: Icon.systemLoad
               pointSize: iconSize
               applyUiScale: false
               x: Style.pixelAlignCenter(parent.width, width)
@@ -601,7 +601,7 @@ Item {
             Layout.column: 0
 
             NIcon {
-              icon: "memory"
+              icon: Icon.systemMemory
               pointSize: iconSize
               applyUiScale: false
               x: Style.pixelAlignCenter(parent.width, width)
@@ -672,7 +672,7 @@ Item {
             Layout.column: 0
 
             NIcon {
-              icon: "exchange"
+              icon: Icon.systemSwap
               pointSize: iconSize
               applyUiScale: false
               x: Style.pixelAlignCenter(parent.width, width)
@@ -743,7 +743,7 @@ Item {
             Layout.column: 0
 
             NIcon {
-              icon: "download-speed"
+              icon: Icon.networkDownload
               pointSize: iconSize
               applyUiScale: false
               x: Style.pixelAlignCenter(parent.width, width)
@@ -809,7 +809,7 @@ Item {
             Layout.column: 0
 
             NIcon {
-              icon: "upload-speed"
+              icon: Icon.networkUpload
               pointSize: iconSize
               applyUiScale: false
               x: Style.pixelAlignCenter(parent.width, width)
@@ -876,7 +876,7 @@ Item {
             Layout.column: 0
 
             NIcon {
-              icon: "storage"
+              icon: Icon.systemStorage
               pointSize: iconSize
               applyUiScale: false
               x: Style.pixelAlignCenter(parent.width, width)

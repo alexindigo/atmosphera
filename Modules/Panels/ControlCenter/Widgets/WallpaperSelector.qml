@@ -8,7 +8,7 @@ NIconButtonHot {
   property ShellScreen screen
 
   enabled: Settings.data.wallpaper.enabled
-  icon: "wallpaper-selector"
+  icon: Icon.wallpaperSelector
   tooltipText: I18n.tr("wallpaper.panel.title")
   onClicked: PanelService.getPanel("wallpaperPanel", screen)?.toggle()
   onRightClicked: WallpaperService.setRandomWallpaper()

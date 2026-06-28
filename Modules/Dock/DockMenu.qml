@@ -183,7 +183,7 @@ PopupWindow {
     if (!grouped || menuModeForGroup === "single") {
       if (isRunning) {
         next.push({
-                    "icon": "eye",
+                    "icon": Icon.eye,
                     "text": I18n.tr("common.focus"),
                     "action": function () {
                       handleFocus(primaryToplevel);
@@ -201,7 +201,7 @@ PopupWindow {
 
       if (isRunning) {
         next.push({
-                    "icon": "close",
+                    "icon": Icon.close,
                     "text": I18n.tr("common.close"),
                     "action": function () {
                       handleClose(primaryToplevel);
@@ -225,7 +225,7 @@ PopupWindow {
                     "separator": true
                   });
         next.push({
-                    "icon": "eye",
+                    "icon": Icon.eye,
                     "text": I18n.tr("common.focus"),
                     "action": function () {
                       handleFocus(primaryToplevel);
@@ -239,7 +239,7 @@ PopupWindow {
                     }
                   });
         next.push({
-                    "icon": "close",
+                    "icon": Icon.close,
                     "text": I18n.tr("common.close") + " All",
                     "action": function () {
                       handleCloseAll(windows);
@@ -257,7 +257,7 @@ PopupWindow {
       if (entry != null) {
         entry.actions.forEach(function (action) {
           next.push({
-                      "icon": "chevron-right",
+                      "icon": Icon.chevronRight,
                       "text": action.name,
                       "action": function () {
                         if (action.command && action.command.length > 0) {

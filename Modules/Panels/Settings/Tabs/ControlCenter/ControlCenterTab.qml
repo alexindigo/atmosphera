@@ -69,7 +69,7 @@ ColumnLayout {
           displayName = pluginId;
         }
         badges.push({
-                      "icon": "plugin",
+                      "icon": Icon.plugin,
                       "color": Color.mSecondary
                     });
       }

@@ -49,7 +49,7 @@ PopupWindow {
   NIcon {
     id: iconMeasure
     visible: false
-    icon: "bell"
+    icon: Icon.bell
     pointSize: Style.fontSizeS
     applyUiScale: false
   }

@@ -136,23 +136,23 @@ SmartPanel {
           Repeater {
             model: [
               {
-                "icon": "sparkles",
+                "icon": Icon.featured,
                 "label": I18n.tr("setup.welcome")
               },
               {
-                "icon": "image",
+                "icon": Icon.image,
                 "label": I18n.tr("common.wallpaper")
               },
               {
-                "icon": "palette",
+                "icon": Icon.palette,
                 "label": I18n.tr("common.appearance")
               },
               {
-                "icon": "settings",
+                "icon": Icon.settings,
                 "label": I18n.tr("common.customize")
               },
               {
-                "icon": "device-desktop",
+                "icon": Icon.deviceDesktop,
                 "label": I18n.tr("panels.dock.title")
               }
             ]

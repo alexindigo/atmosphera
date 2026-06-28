@@ -149,12 +149,12 @@ Item {
       {
         "label": I18n.tr("actions.open-calendar"),
         "action": "open-calendar",
-        "icon": "calendar"
+        "icon": Icon.calendar
       },
       {
         "label": I18n.tr("actions.widget-settings"),
         "action": "widget-settings",
-        "icon": "settings"
+        "icon": Icon.settings
       },
     ]
 

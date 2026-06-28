@@ -242,7 +242,7 @@ RowLayout {
     indicator: NIcon {
       x: combo.width - width - Style.marginM
       y: combo.topPadding + (combo.availableHeight - height) / 2
-      icon: "caret-down"
+      icon: Icon.caretDown
       pointSize: Style.fontSizeL
     }
 
