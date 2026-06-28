@@ -377,9 +377,7 @@
       "rate-limit": "Перевищено ліміт GitHub. Спробуйте ще раз за кілька хвилин."
     },
     "panel": {
-      "buttons-discord": "Приєднатися до нашого Discord",
       "buttons-dismiss": "ОК",
-      "buttons-feedback": "Надати відгук",
       "empty": "Примітки до релізу ще недоступні.",
       "highlight-title": "Основні зміни",
       "released": "Випущено {date}",
@@ -423,7 +421,6 @@
     "connected": "Підключено",
     "connecting": "Підключення...",
     "continue": "Продовжити",
-    "contributors": "Учасники",
     "copied-to-clipboard": "Скопійовано до буфера обміну",
     "countdown": "Зворотний відлік",
     "customize": "Налаштувати",
@@ -540,7 +537,6 @@
     "sources": "Джерела",
     "start": "Почати",
     "stop": "Зупиніться",
-    "supporters": "Прихильники",
     "suspend": "Призупинити",
     "templates": "Шаблони",
     "tertiary": "Третинний",
@@ -572,7 +568,8 @@
     "wifi": "Wi-Fi",
     "windows": "Вікна",
     "yes": "Так",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -738,7 +735,6 @@
   "panels": {
     "about": {
       "become-supporter": "Стати прихильником",
-      "changelog": "Переглянути журнал змін",
       "changelog-on-startup": "Показувати журнал змін під час оновлення",
       "changelog-on-startup-desc": "Автоматично показувати журнал змін при оновленні Atmosphera.",
       "contributors-description": "Подяка нашому {count} <b>чудовому</b> учаснику!",
@@ -756,10 +752,8 @@
       "atmosphera-title": "Оболонка Atmosphera",
       "privacy-policy": "Політика конфіденційності",
       "support": "Підтримати нас",
-      "supporter-badge": "Прихильник",
       "supporters-desc": "Величезне дякую нашому чудовому прихильнику!",
       "supporters-desc-plural": "Величезна подяка нашим <b>{count} чудовим</b> прихильникам!",
-      "supporters-loading": "Завантаження прихильників...",
       "system-board": "Материнська плата:",
       "system-cpu": "ЦП:",
       "system-disk": "Диск:",

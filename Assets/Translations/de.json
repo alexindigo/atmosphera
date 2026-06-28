@@ -377,9 +377,7 @@
       "rate-limit": "GitHub-Limit erreicht. Bitte versuche es in ein paar Minuten erneut."
     },
     "panel": {
-      "buttons-discord": "Unserem Discord beitreten",
       "buttons-dismiss": "OK",
-      "buttons-feedback": "Feedback geben",
       "empty": "Es sind noch keine Versionshinweise verfügbar.",
       "highlight-title": "Highlights",
       "released": "Veröffentlicht am {date}",
@@ -423,7 +421,6 @@
     "connected": "Verbunden",
     "connecting": "Verbinden...",
     "continue": "Fortsetzen",
-    "contributors": "Mitwirkende",
     "copied-to-clipboard": "In die Zwischenablage kopiert",
     "countdown": "Countdown",
     "customize": "Anpassen",
@@ -540,7 +537,6 @@
     "sources": "Quellen",
     "start": "Start",
     "stop": "Stopp",
-    "supporters": "Unterstützer",
     "suspend": "Energie sparen",
     "templates": "Vorlagen",
     "tertiary": "Tertiär",
@@ -572,7 +568,8 @@
     "wifi": "Wi-Fi",
     "windows": "Fenster",
     "yes": "Ja",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -738,7 +735,6 @@
   "panels": {
     "about": {
       "become-supporter": "Werde Unterstützer",
-      "changelog": "Änderungsprotokoll anzeigen",
       "changelog-on-startup": "Änderungsprotokoll bei Update anzeigen",
       "changelog-on-startup-desc": "Automatisch den Changelog anzeigen, wenn Atmosphera aktualisiert wird.",
       "contributors-description": "Ein Dankeschön an unseren {count} <b>großartigen</b> Mitwirkenden!",
@@ -756,10 +752,8 @@
       "atmosphera-title": "Atmosphera Shell",
       "privacy-policy": "Datenschutzbestimmungen",
       "support": "Unterstütze uns",
-      "supporter-badge": "Unterstützer",
       "supporters-desc": "Ein riesiges Dankeschön an unseren großartigen Unterstützer!",
       "supporters-desc-plural": "Ein riesiges Dankeschön an unsere <b>{count} großartigen</b> Unterstützer!",
-      "supporters-loading": "Supporter werden geladen...",
       "system-board": "Motherboard:",
       "system-cpu": "CPU:",
       "system-disk": "Festplatte:",

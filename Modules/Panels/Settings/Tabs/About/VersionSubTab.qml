@@ -432,7 +432,7 @@ ColumnLayout {
           NIcon {
             id: upToDateIcon
             visible: root.isUpToDate
-            icon: "circle-check"
+            icon: Icon.success
             pointSize: Style.fontSizeM
             color: Color.mPrimary
 
@@ -447,7 +447,7 @@ ColumnLayout {
           NIcon {
             id: updateAvailableIcon
             visible: root.updateAvailable
-            icon: "arrow-up-circle"
+            icon: Icon.upload
             pointSize: Style.fontSizeS
             color: Color.mPrimary
 
@@ -526,7 +526,7 @@ ColumnLayout {
           NIcon {
             id: qsUpToDateIcon
             visible: root.qsIsUpToDate
-            icon: "circle-check"
+            icon: Icon.success
             pointSize: Style.fontSizeM
             color: Color.mPrimary
 
@@ -541,7 +541,7 @@ ColumnLayout {
           NIcon {
             id: qsUpdateAvailableIcon
             visible: root.qsUpdateAvailable
-            icon: "arrow-up-circle"
+            icon: Icon.upload
             pointSize: Style.fontSizeS
             color: Color.mPrimary
 
@@ -580,24 +580,11 @@ ColumnLayout {
     rowSpacing: Style.marginM
     columnSpacing: Style.marginM
 
-    columns: (changelogBtn.implicitWidth + copyBtn.implicitWidth + supportBtn.implicitWidth + 2 * columnSpacing) < root.width ? 3 : 1
-
-    NButton {
-      id: changelogBtn
-      icon: "sparkles"
-      text: I18n.tr("panels.about.changelog")
-      outlined: true
-      Layout.alignment: Qt.AlignHCenter
-      onClicked: {
-        var screen = PanelService.openedPanel?.screen || SettingsPanelService.settingsWindow?.screen || PanelService.findScreenForPanels();
-        SettingsPanelService.close(screen);
-        UpdateService.viewChangelog(screen);
-      }
-    }
+    columns: 1
 
     NButton {
       id: copyBtn
-      icon: "copy"
+      icon: Icon.copy
       text: I18n.tr("panels.about.copy-info")
       outlined: true
       Layout.alignment: Qt.AlignHCenter

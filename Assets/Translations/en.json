@@ -377,9 +377,7 @@
       "rate-limit": "GitHub rate limit exceeded. Please try again in a few minutes."
     },
     "panel": {
-      "buttons-discord": "Join our Discord",
       "buttons-dismiss": "OK",
-      "buttons-feedback": "Give feedback",
       "empty": "Release notes are not available yet.",
       "highlight-title": "Highlights",
       "released": "Released on {date}",
@@ -423,7 +421,6 @@
     "connected": "Connected",
     "connecting": "Connecting...",
     "continue": "Continue",
-    "contributors": "Contributors",
     "copied-to-clipboard": "Copied to clipboard",
     "countdown": "Countdown",
     "customize": "Customize",
@@ -540,7 +537,6 @@
     "sources": "Sources",
     "start": "Start",
     "stop": "Stop",
-    "supporters": "Supporters",
     "suspend": "Suspend",
     "templates": "Templates",
     "tertiary": "Tertiary",
@@ -572,7 +568,8 @@
     "wifi": "Wi-Fi",
     "windows": "Windows",
     "yes": "Yes",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -738,7 +735,6 @@
   "panels": {
     "about": {
       "become-supporter": "Become a supporter",
-      "changelog": "View changelog",
       "changelog-on-startup": "Show changelog on update",
       "changelog-on-startup-desc": "Automatically show the changelog when Atmosphera is updated",
       "contributors-description": "Shout-out to our {count} <b>awesome</b> contributor!",
@@ -756,10 +752,8 @@
       "atmosphera-title": "Atmosphera Shell",
       "privacy-policy": "Privacy policy",
       "support": "Support us",
-      "supporter-badge": "Supporter",
       "supporters-desc": "A huge thank you to our amazing supporter!",
       "supporters-desc-plural": "A huge thank you to our <b>{count} amazing</b> supporters!",
-      "supporters-loading": "Loading supporters...",
       "system-board": "Board:",
       "system-cpu": "CPU:",
       "system-disk": "Disk:",

@@ -377,9 +377,7 @@
       "rate-limit": "Przekroczono limit zapytań GitHub. Spróbuj ponownie za kilka minut."
     },
     "panel": {
-      "buttons-discord": "Dołącz do Discorda",
       "buttons-dismiss": "OK",
-      "buttons-feedback": "Przekaż opinię",
       "empty": "Informacje o wydaniu nie są jeszcze dostępne.",
       "highlight-title": "Najważniejsze zmiany",
       "released": "Wydano: {date}",
@@ -423,7 +421,6 @@
     "connected": "Połączone",
     "connecting": "Łączenie...",
     "continue": "Kontynuuj",
-    "contributors": "Współtwórcy",
     "copied-to-clipboard": "Skopiowano do schowka",
     "countdown": "Odliczanie",
     "customize": "Dostosuj",
@@ -540,7 +537,6 @@
     "sources": "Źródła",
     "start": "Start",
     "stop": "Stop",
-    "supporters": "Wspierający",
     "suspend": "Wstrzymaj",
     "templates": "Szablony",
     "tertiary": "Trzeciorzędowy",
@@ -572,7 +568,8 @@
     "wifi": "Wi-Fi",
     "windows": "Okna",
     "yes": "Tak",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -738,7 +735,6 @@
   "panels": {
     "about": {
       "become-supporter": "Zostań wspierającym",
-      "changelog": "Zobacz dziennik zmian",
       "changelog-on-startup": "Pokaż dziennik zmian po aktualizacji",
       "changelog-on-startup-desc": "Automatycznie pokazuj dziennik zmian po aktualizacji Atmosphera.",
       "contributors-description": "Podziękowania dla naszego {count} <b>niesamowitego</b> współtwórcy!",
@@ -756,10 +752,8 @@
       "atmosphera-title": "Atmosphera shell",
       "privacy-policy": "Polityka prywatności",
       "support": "Wesprzyj nas",
-      "supporter-badge": "Wspierający",
       "supporters-desc": "Ogromne podziękowania dla naszego wspaniałego wspierającego!",
       "supporters-desc-plural": "Ogromne podziękowania dla naszych <b>{count} wspaniałych</b> wspierających!",
-      "supporters-loading": "Ładowanie wspierających...",
       "system-board": "Płyta główna:",
       "system-cpu": "Procesor:",
       "system-disk": "Dysk:",

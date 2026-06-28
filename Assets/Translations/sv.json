@@ -377,9 +377,7 @@
       "rate-limit": "GitHub-hastighetsgränsen överskreds. Försök igen om några minuter."
     },
     "panel": {
-      "buttons-discord": "Gå med i vår Discord",
       "buttons-dismiss": "OK",
-      "buttons-feedback": "Ge feedback",
       "empty": "Versionsfakta är ännu inte tillgängliga.",
       "highlight-title": "Höjdpunkter",
       "released": "Släpptes den {date}",
@@ -423,7 +421,6 @@
     "connected": "Ansluten",
     "connecting": "Ansluter...",
     "continue": "Fortsätt",
-    "contributors": "Bidragsgivare",
     "copied-to-clipboard": "Kopierat till urklipp",
     "countdown": "Nedräkning",
     "customize": "Anpassa",
@@ -540,7 +537,6 @@
     "sources": "Källor",
     "start": "Starta",
     "stop": "Stoppa",
-    "supporters": "Stödjare",
     "suspend": "Strömsparläge",
     "templates": "Mallar",
     "tertiary": "Tertiär",
@@ -572,7 +568,8 @@
     "wifi": "Wi-Fi",
     "windows": "Fönster",
     "yes": "Ja",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -738,7 +735,6 @@
   "panels": {
     "about": {
       "become-supporter": "Bli supporter",
-      "changelog": "Visa ändringslogg",
       "changelog-on-startup": "Visa ändringslogg vid uppdatering",
       "changelog-on-startup-desc": "Visa ändringsloggen automatiskt när Atmosphera uppdateras.",
       "contributors-description": "Tack till våra {count} <b>fantastiska</b> bidragsgivare!",
@@ -756,10 +752,8 @@
       "atmosphera-title": "Atmosphera-skal",
       "privacy-policy": "Sekretesspolicy",
       "support": "Stöd oss",
-      "supporter-badge": "Supporter",
       "supporters-desc": "Ett stort tack till vår fantastiska supporter!",
       "supporters-desc-plural": "Ett stort tack till våra <b>{count} fantastiska</b> supportrar!",
-      "supporters-loading": "Laddar supportrar...",
       "system-board": "Moderkort:",
       "system-cpu": "CPU:",
       "system-disk": "Disk:",

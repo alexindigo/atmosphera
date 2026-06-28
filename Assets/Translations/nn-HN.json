@@ -224,7 +224,8 @@
     "feedback-use-github": "For feedback or questions use GitHub issues.",
     "brightness": "Ljosstyrke",
     "select-color-description": "Lita med hamlitene for tyngd.",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "options": {
     "bar": {

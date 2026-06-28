@@ -377,9 +377,7 @@
       "rate-limit": "Limite do GitHub atingido. Tente novamente em alguns minutos."
     },
     "panel": {
-      "buttons-discord": "Entre no nosso Discord",
       "buttons-dismiss": "OK",
-      "buttons-feedback": "Dar feedback",
       "empty": "As notas da versão ainda não estão disponíveis.",
       "highlight-title": "Destaques",
       "released": "Lançado em {date}",
@@ -423,7 +421,6 @@
     "connected": "Conectado(a)",
     "connecting": "Conectando...",
     "continue": "Continuar",
-    "contributors": "Colaboradores",
     "copied-to-clipboard": "Copiado para a área de transferência",
     "countdown": "Contagem regressiva",
     "customize": "Personalizar",
@@ -540,7 +537,6 @@
     "sources": "Fontes",
     "start": "Começar",
     "stop": "Pare",
-    "supporters": "Apoiadores",
     "suspend": "Suspender",
     "templates": "Modelos",
     "tertiary": "Terciário",
@@ -572,7 +568,8 @@
     "wifi": "Wi-Fi",
     "windows": "Janelas",
     "yes": "Sim",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -738,7 +735,6 @@
   "panels": {
     "about": {
       "become-supporter": "Torne-se um apoiador",
-      "changelog": "Ver histórico de alterações",
       "changelog-on-startup": "Mostrar changelog na atualização",
       "changelog-on-startup-desc": "Mostrar automaticamente o registo de alterações quando o Atmosphera for atualizado.",
       "contributors-description": "Agradecimentos ao nosso <b>incrível</b> colaborador!",
@@ -756,10 +752,8 @@
       "atmosphera-title": "Shell Atmosphera",
       "privacy-policy": "Política de privacidade",
       "support": "Apoie-nos",
-      "supporter-badge": "Apoiador",
       "supporters-desc": "Um enorme obrigado ao nosso incrível apoiador!",
       "supporters-desc-plural": "Um enorme obrigado aos nossos <b>{count} incríveis</b> apoiadores!",
-      "supporters-loading": "Carregando apoiadores...",
       "system-board": "Placa-mãe:",
       "system-cpu": "CPU:",
       "system-disk": "Disco:",

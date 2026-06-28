@@ -377,9 +377,7 @@
       "rate-limit": "超過 GitHub API 的存取量限制, 請在數分鐘後再試一次"
     },
     "panel": {
-      "buttons-discord": "加入我們的 Discord",
       "buttons-dismiss": "OK",
-      "buttons-feedback": "建議與回饋",
       "empty": "暫時沒有可用的發行說明",
       "highlight-title": "更新亮點",
       "released": "{date} 發布",
@@ -423,7 +421,6 @@
     "connected": "已連接",
     "connecting": "正在連線...",
     "continue": "繼續",
-    "contributors": "貢獻者",
     "copied-to-clipboard": "已複製到剪貼簿",
     "countdown": "倒數",
     "customize": "自訂",
@@ -540,7 +537,6 @@
     "sources": "來源",
     "start": "開始",
     "stop": "停止",
-    "supporters": "支持者",
     "suspend": "暫停",
     "templates": "模板",
     "tertiary": "第三",
@@ -572,7 +568,8 @@
     "wifi": "Wi-Fi",
     "windows": "視窗",
     "yes": "是",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -738,7 +735,6 @@
   "panels": {
     "about": {
       "become-supporter": "成為支持者",
-      "changelog": "檢視更新日誌",
       "changelog-on-startup": "更新時顯示變更日誌",
       "changelog-on-startup-desc": "Atmosphera 更新時自動顯示更新日誌。",
       "contributors-description": "特別感謝我們這{count}位<b>超讚</b>的貢獻者!!",
@@ -756,10 +752,8 @@
       "atmosphera-title": "Atmosphera Shell",
       "privacy-policy": "隱私權政策",
       "support": "支持我們",
-      "supporter-badge": "支持者",
       "supporters-desc": "非常感謝我們出色的支持者！",
       "supporters-desc-plural": "非常感謝我們的<b>{count}位出色</b>支持者！",
-      "supporters-loading": "正在載入支持者...",
       "system-board": "主機板:",
       "system-cpu": "CPU:",
       "system-disk": "磁碟:",

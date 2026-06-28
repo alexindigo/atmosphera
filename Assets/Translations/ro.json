@@ -377,9 +377,7 @@
       "rate-limit": "Limita de rată GitHub depășită. Vă rugăm să încercați din nou în câteva minute."
     },
     "panel": {
-      "buttons-discord": "Alătură-te pe Discord",
       "buttons-dismiss": "OK",
-      "buttons-feedback": "Oferă feedback",
       "empty": "Note de lansare nu sunt încă disponibile.",
       "highlight-title": "Evidențieri",
       "released": "Lansat pe {date}",
@@ -423,7 +421,6 @@
     "connected": "Conectat",
     "connecting": "Se conectează...",
     "continue": "Continuă",
-    "contributors": "Contribuitori",
     "copied-to-clipboard": "Copiat în clipboard",
     "countdown": "Numărătoare inversă",
     "customize": "Personalizare",
@@ -540,7 +537,6 @@
     "sources": "Surse",
     "start": "Pornire",
     "stop": "Oprește",
-    "supporters": "Susținători",
     "suspend": "Suspendare",
     "templates": "Șabloane",
     "tertiary": "Terțiar",
@@ -572,7 +568,8 @@
     "wifi": "Wi-Fi",
     "windows": "Windows",
     "yes": "Da",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -738,7 +735,6 @@
   "panels": {
     "about": {
       "become-supporter": "Devino un susținător",
-      "changelog": "Vezi jurnalul de modificări",
       "changelog-on-startup": "Afișează jurnalul de modificări la actualizare",
       "changelog-on-startup-desc": "Afișează automat jurnalul de modificări când Atmosphera este actualizată",
       "contributors-description": "Un salut pentru cei {count} <b>super</b> contribuitori ai noștri!",
@@ -756,10 +752,8 @@
       "atmosphera-title": "Atmosphera Shell",
       "privacy-policy": "Politica de confidențialitate",
       "support": "Susține-ne",
-      "supporter-badge": "Susținător",
       "supporters-desc": "Un mare mulțumesc susținătorului nostru uimitor!",
       "supporters-desc-plural": "Un mare mulțumesc celor <b>{count} minunați</b> susținători ai noștri!",
-      "supporters-loading": "Se încarcă susținătorii...",
       "system-board": "Tablou:",
       "system-cpu": "CPU:",
       "system-disk": "Disc:",

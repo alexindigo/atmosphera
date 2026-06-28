@@ -377,9 +377,7 @@
       "rate-limit": "GitHub-limiet bereikt. Probeer het over enkele minuten opnieuw."
     },
     "panel": {
-      "buttons-discord": "Word lid van onze Discord",
       "buttons-dismiss": "OK",
-      "buttons-feedback": "Geef feedback",
       "empty": "Er zijn nog geen release-opmerkingen beschikbaar.",
       "highlight-title": "Hoogtepunten",
       "released": "Uitgebracht op {date}",
@@ -423,7 +421,6 @@
     "connected": "Verbonden",
     "connecting": "Verbinden...",
     "continue": "Doorgaan",
-    "contributors": "Medewerkers",
     "copied-to-clipboard": "Gekopieerd naar klembord",
     "countdown": "Aftellen",
     "customize": "Aanpassen",
@@ -540,7 +537,6 @@
     "sources": "Bronnen",
     "start": "Begin",
     "stop": "Stop",
-    "supporters": "Ondersteuners",
     "suspend": "Onderbreken",
     "templates": "Sjablonen",
     "tertiary": "Tertiair",
@@ -572,7 +568,8 @@
     "wifi": "Wi-Fi",
     "windows": "Vensters",
     "yes": "Ja",
-    "icons": "Icons"
+    "icons": "Icons",
+    "changelog": "Changelog"
   },
   "control-center": {
     "power-profile": {
@@ -738,7 +735,6 @@
   "panels": {
     "about": {
       "become-supporter": "Word supporter",
-      "changelog": "Bekijk wijzigingslogboek",
       "changelog-on-startup": "Toon wijzigingslogboek bij update",
       "changelog-on-startup-desc": "Toon automatisch de changelog wanneer Atmosphera wordt bijgewerkt.",
       "contributors-description": "Een shout-out naar onze {count} <b>geweldige</b> bijdrager!",
@@ -756,10 +752,8 @@
       "atmosphera-title": "Atmosphera-shell",
       "privacy-policy": "Privacybeleid",
       "support": "Steun ons",
-      "supporter-badge": "Supporter",
       "supporters-desc": "Een enorme dank aan onze geweldige supporter!",
       "supporters-desc-plural": "Enorm bedankt aan onze <b>{count} geweldige</b> supporters!",
-      "supporters-loading": "Donateurs laden...",
       "system-board": "Moederbord:",
       "system-cpu": "CPU:",
       "system-disk": "Schijf:",
