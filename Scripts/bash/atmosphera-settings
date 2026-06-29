@@ -1,0 +1,50 @@
+#!/usr/bin/env -S bash
+set -euo pipefail
+
+#!/usr/bin/env -S bash
+set -euo pipefail
+
+QS_BIN="qs"
+
+# Detect running qs instance config path from process list
+QS_PATH=$(ps aux | grep "qs -p " | grep -v grep | sed -E 's/.*-p ([^ ]+).*/\1/' | head -1 2>/dev/null || echo "")
+
+# Default action
+ACTION="open"
+TAB=""
+
+usage() {
+  echo "Usage: $0 [open|toggle|help] [tab_name]"
+  echo ""
+  echo "Commands:"
+  echo "  open [tab]   Open settings (optionally to a specific tab)"
+  echo "  toggle       Toggle settings window open/close"
+  echo "  help         Show this help"
+  echo ""
+  echo "Examples:"
+  echo "  $0                   # Open settings to General tab"
+  echo "  $0 open bar         # Open settings to Bar tab"
+  echo "  $0 open wallpaper   # Open settings to Wallpaper tab"
+  echo "  $0 toggle           # Toggle settings"
+}
+
+IPC_ARGS=()
+if [ -n "$QS_PATH" ]; then
+  IPC_ARGS=(-p "$QS_PATH")
+fi
+
+case "${1:-}" in
+  help|--help|-h) usage; exit 0 ;;
+  toggle) ACTION="toggle" ;;
+  open) ACTION="open"; TAB="${2:-}" ;;
+  "") ;; # default open
+  *) TAB="${1}" ;; # treat first arg as tab name for open
+esac
+
+if [ "$ACTION" = "toggle" ]; then
+  exec "$QS_BIN" "${IPC_ARGS[@]}" ipc call settings toggle
+elif [ -n "$TAB" ]; then
+  exec "$QS_BIN" "${IPC_ARGS[@]}" ipc call settings openTab "$TAB"
+else
+  exec "$QS_BIN" "${IPC_ARGS[@]}" ipc call settings open
+fi
