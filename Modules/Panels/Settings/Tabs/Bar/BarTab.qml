@@ -171,6 +171,14 @@ ColumnLayout {
     }
   }
 
+  Connections {
+    target: Settings.data.bar
+    function onPositionChanged() {
+      if (Settings.data.bar.position === "none" && (tabView.currentIndex === 1 || tabView.currentIndex === 2))
+        tabView.currentIndex = 0;
+    }
+  }
+
   NTabBar {
     id: subTabBar
     Layout.fillWidth: true
@@ -186,11 +194,13 @@ ColumnLayout {
     NTabButton {
       text: I18n.tr("common.widgets")
       tabIndex: 1
+      enabled: Settings.data.bar.position !== "none"
       checked: subTabBar.currentIndex === 1
     }
     NTabButton {
       text: I18n.tr("common.behavior")
       tabIndex: 2
+      enabled: Settings.data.bar.position !== "none"
       checked: subTabBar.currentIndex === 2
     }
     NTabButton {
@@ -207,7 +217,11 @@ ColumnLayout {
 
   NTabView {
     id: tabView
-    currentIndex: subTabBar.currentIndex
+    currentIndex: {
+      if (Settings.data.bar.position === "none" && (subTabBar.currentIndex === 1 || subTabBar.currentIndex === 2))
+        return 0;
+      return subTabBar.currentIndex;
+    }
 
     AppearanceSubTab {}
     WidgetsSubTab {
