@@ -7,6 +7,7 @@ import qs.Widgets
 
 Rectangle {
   id: root
+  opacity: enabled ? 1.0 : 0.4
 
   // Public properties
   property string text: ""
@@ -101,7 +102,8 @@ Rectangle {
 
   MouseArea {
     anchors.fill: parent
-    hoverEnabled: true
+    hoverEnabled: root.enabled
+    enabled: root.enabled
     cursorShape: Qt.PointingHandCursor
     onEntered: {
       root.isHovered = true;
