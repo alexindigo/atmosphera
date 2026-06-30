@@ -62,6 +62,10 @@ Variants {
         if (!parent.windowLoaded || !parent.shouldBeActive)
           return false;
 
+        // Position "none": bar has no edge to attach to — skip rendering
+        if (Settings.getBarPositionForScreen(modelData?.name) === "none")
+          return false;
+
         // Check if bar is configured for this screen
         var monitors = Settings.data.bar.monitors || [];
         return monitors.length === 0 || monitors.includes(modelData?.name);
@@ -109,7 +113,12 @@ Variants {
     // windows from moving into the bar area. Auto-hide is handled by the component
     // itself via ExclusionMode.Ignore/Auto.
     Repeater {
-      model: Settings.data.bar.barType === "framed" ? ["top", "bottom", "left", "right"] : [Settings.getBarPositionForScreen(windowItem.modelData?.name)]
+      model: {
+        var pos = Settings.getBarPositionForScreen(windowItem.modelData?.name);
+        if (pos === "none")
+          return [];
+        return Settings.data.bar.barType === "framed" ? ["top", "bottom", "left", "right"] : [pos];
+      }
       delegate: Loader {
         active: {
           if (!windowItem.windowLoaded || !windowItem.shouldBeActive)

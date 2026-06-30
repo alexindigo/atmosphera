@@ -16,6 +16,10 @@ ColumnLayout {
     description: I18n.tr("panels.bar.appearance-position-description")
     model: [
       {
+        "key": "none",
+        "name": I18n.tr("positions.none")
+      },
+      {
         "key": "top",
         "name": I18n.tr("positions.top")
       },
