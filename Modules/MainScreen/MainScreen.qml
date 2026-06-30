@@ -468,6 +468,8 @@ PanelWindow {
       // Expose bar dimensions directly on this Item for BarBackground
       // Use screen dimensions directly
       x: {
+        if (barPosition === "none")
+          return 0;
         if (barPosition === "right")
           return (screen?.width ?? 0) - barHeight - barMarginH;
         if (isFramed && !barIsVertical)
@@ -475,6 +477,8 @@ PanelWindow {
         return barMarginH;
       }
       y: {
+        if (barPosition === "none")
+          return 0;
         if (barPosition === "bottom")
           return (screen?.height ?? 0) - barHeight - barMarginV;
         if (isFramed && barIsVertical)
@@ -482,6 +486,8 @@ PanelWindow {
         return barMarginV;
       }
       width: {
+        if (barPosition === "none")
+          return 0;
         if (barIsVertical) {
           return barHeight;
         }
@@ -490,6 +496,8 @@ PanelWindow {
         return (screen?.width ?? 0) - barMarginH * 2;
       }
       height: {
+        if (barPosition === "none")
+          return 0;
         if (!barIsVertical) {
           return barHeight;
         }

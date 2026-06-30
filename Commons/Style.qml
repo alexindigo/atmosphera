@@ -231,6 +231,8 @@ Singleton {
   function getBarHeightForScreen(screenName) {
     var density = Settings.getBarDensityForScreen(screenName);
     var position = Settings.getBarPositionForScreen(screenName);
+    if (position === "none")
+      return 0;
     var isVertical = position === "left" || position === "right";
     return getBarHeightForDensity(density, isVertical);
   }
