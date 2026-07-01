@@ -1310,7 +1310,8 @@
       "timeouts-description": "Set to 0 to disable a stage. Timeouts are paused while Keep Awake is active.",
       "timeouts-label": "Timeouts",
       "title": "Idle",
-      "unavailable": "Native idle monitoring is not available on this compositor."
+      "unavailable": "Native idle monitoring is not available on this compositor.",
+      "lock-external-mode-note": "Command editing is disabled because an external locker is being used. Set the lock command in Lock Screen → Appearance settings."
     },
     "indicator": {
       "default-value": "Default: {value}",
