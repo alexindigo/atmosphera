@@ -110,6 +110,7 @@ ColumnLayout {
     }
 
     DefaultActionRow {
+      showEdit: Settings.data.general.lockScreenPlugin !== "external"
       actionName: I18n.tr("panels.idle.lock-label")
       actionDescription: I18n.tr("panels.idle.lock-description")
       timeoutValue: Settings.data.idle.lockTimeout
@@ -125,6 +126,15 @@ ColumnLayout {
         Settings.data.idle.resumeLockCommand = cmd;
         Settings.saveImmediate();
       }
+    }
+
+    Text {
+      Layout.fillWidth: true
+      visible: Settings.data.general.lockScreenPlugin === "external"
+      text: I18n.tr("panels.idle.lock-external-mode-note")
+      color: Color.mOnSurfaceVariant
+      font.pointSize: Style.fontSizeXS
+      wrapMode: Text.WordWrap
     }
 
     DefaultActionRow {
@@ -173,6 +183,8 @@ ColumnLayout {
     property string command
     property string resumeCommand
 
+    property bool showEdit: true
+
     signal actionTimeoutChanged(int newValue)
     signal actionCommandChanged(string newCmd)
     signal actionResumeCommandChanged(string newCmd)
@@ -191,6 +203,7 @@ ColumnLayout {
 
     NIconButton {
       Layout.alignment: Qt.AlignVCenter
+      visible: rowRoot.showEdit
       icon: Icon.settings
       tooltipText: I18n.tr("common.edit")
       onClicked: root.openEdit(rowRoot.actionName, rowRoot.command, rowRoot.resumeCommand, rowRoot.actionCommandChanged, rowRoot.actionResumeCommandChanged)
