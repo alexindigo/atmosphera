@@ -194,10 +194,14 @@ Singleton {
       root._screenOffActive = true;
       root.screenOffRequested();
     } else if (stage === "lock") {
-      if (Settings.data.idle.lockCommand)
-        Quickshell.execDetached(["sh", "-c", Settings.data.idle.lockCommand]);
-      if (PanelService.lockScreen && !PanelService.lockScreen.active) {
-        PanelService.lockScreen.active = true;
+      if (Settings.data.general.lockScreenPlugin === "external") {
+        CompositorService.lock();
+      } else {
+        if (Settings.data.idle.lockCommand)
+          Quickshell.execDetached(["sh", "-c", Settings.data.idle.lockCommand]);
+        if (PanelService.lockScreen && !PanelService.lockScreen.active) {
+          PanelService.lockScreen.active = true;
+        }
       }
       root.lockRequested();
     } else if (stage === "suspend") {

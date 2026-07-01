@@ -337,6 +337,7 @@ Singleton {
       property string lockScreenPlugin: "" // plugin ID for custom lock screen UI, empty = default
       property real lockScreenBlur: 0.0
       property real lockScreenTint: 0.0
+      property string externalLockCommand: ""   // shell command to run when locking (e.g. "swaylock -c #1a1a1a")
       property JsonObject keybinds: JsonObject {
         property list<string> keyUp: ["Up"]
         property list<string> keyDown: ["Down"]
