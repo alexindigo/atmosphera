@@ -28,6 +28,7 @@ ColumnLayout {
     NTabButton {
       text: I18n.tr("common.monitors")
       tabIndex: 2
+      enabled: Settings.data.general.lockScreenPlugin !== "external"
       checked: subTabBar.currentIndex === 2
     }
   }

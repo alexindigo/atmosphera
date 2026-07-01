@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Services.Compositor
 import qs.Services.UI
 import qs.Widgets
 
@@ -10,41 +11,88 @@ ColumnLayout {
   id: root
   spacing: Style.marginL
 
-  RowLayout {
-    Layout.fillWidth: true
-    spacing: Style.marginM
+  property bool _externalCommandValid: false
 
-    NComboBox {
-      id: _styleSelector
-      Layout.fillWidth: true
-      label: "Lock Screen Style"
-      description: "Choose a custom lock screen from installed plugins, or use the built-in one"
-      model: {
-        var items = [];
-        for (var id in LockScreenRegistry.plugins) {
-          items.push({
-                       "key": id,
-                       "name": LockScreenRegistry.pluginNames[id] ?? id
-                     });
-        }
-        items.sort((a, b) => a.key === "default" ? -1 : b.key === "default" ? 1 : 0);
-        return items;
+  Timer {
+    id: _validateCmdTimer
+    interval: 400
+    onTriggered: {
+      var cmd = Settings.data.general.externalLockCommand;
+      var firstWord = cmd.trim().split(" ")[0];
+      if (firstWord) {
+        var result = Quickshell.exec("sh", ["-c", "command -v " + firstWord + " >/dev/null 2>&1 && echo 0 || echo 1"]);
+        _externalCommandValid = result.trim() === "0";
+      } else {
+        _externalCommandValid = true;
       }
-      currentKey: Settings.data.general.lockScreenPlugin || "default"
-      onSelected: key => Settings.data.general.lockScreenPlugin = key === "default" ? "" : key
-      defaultValue: ""
+    }
+  }
+
+  NComboBox {
+    id: _styleSelector
+    Layout.fillWidth: true
+    label: I18n.tr("panels.lock-screen.lock-screen-style-label")
+    description: I18n.tr("panels.lock-screen.lock-screen-style-description")
+    model: {
+      var items = [];
+      items.push({ "key": "external", "name": I18n.tr("panels.lock-screen.lock-screen-style-external") });
+      items.push({ "key": "",         "name": I18n.tr("panels.lock-screen.lock-screen-style-builtin") });
+      for (var id in LockScreenRegistry.plugins) {
+        if (id === "default")
+          continue;
+        items.push({ "key": id, "name": LockScreenRegistry.pluginNames[id] ?? id });
+      }
+      return items;
+    }
+    currentKey: Settings.data.general.lockScreenPlugin
+    onSelected: key => Settings.data.general.lockScreenPlugin = key
+    defaultValue: Settings.getDefaultValue("general.lockScreenPlugin")
+  }
+
+  ColumnLayout {
+    Layout.fillWidth: true
+    visible: Settings.data.general.lockScreenPlugin === "external"
+    spacing: Style.marginL
+
+    NTextInput {
+      Layout.fillWidth: true
+      label: I18n.tr("panels.lock-screen.behavior-command-label")
+      description: I18n.tr("panels.lock-screen.behavior-command-description")
+      text: Settings.data.general.externalLockCommand
+      placeholderText: "hyprlock"
+      onTextChanged: {
+        Settings.data.general.externalLockCommand = text;
+        _validateCmdTimer.restart();
+      }
     }
 
-    NButton {
-      text: "Preview"
-      icon: Icon.eye
-      outlined: true
-      Layout.alignment: Qt.AlignVCenter
-      onClicked: {
-        if (PanelService.lockScreen && !PanelService.lockScreen.active) {
-          PanelService.lockScreen.active = true;
-          PanelService.lockScreen.previewMode = true;
-        }
+    Text {
+      Layout.fillWidth: true
+      text: I18n.tr("panels.lock-screen.behavior-command-not-found")
+      color: "#e53935"
+      font.pointSize: Style.fontSizeXS
+      visible: Settings.data.general.lockScreenPlugin === "external"
+               && Settings.data.general.externalLockCommand !== ""
+               && !_externalCommandValid
+      wrapMode: Text.WordWrap
+    }
+
+    Text {
+      Layout.fillWidth: true
+      text: I18n.tr("panels.lock-screen.behavior-command-note")
+      color: Color.mOnSurfaceVariant
+      font.pointSize: Style.fontSizeXS
+      wrapMode: Text.WordWrap
+    }
+  }
+
+  NButton {
+    text: "Preview"
+    icon: Icon.eye
+    outlined: true
+    onClicked: {
+      if (PanelService.lockScreen && !PanelService.lockScreen.active) {
+        CompositorService.lock();
       }
     }
   }
@@ -60,6 +108,11 @@ ColumnLayout {
       input.forceActiveFocus();
     }
   }
+
+  ColumnLayout {
+    Layout.fillWidth: true
+    enabled: Settings.data.general.lockScreenPlugin !== "external"
+    spacing: Style.marginL
 
   NComboBox {
     label: I18n.tr("panels.lock-screen.clock-style-label")
@@ -160,5 +213,6 @@ ColumnLayout {
     onMoved: value => Settings.data.general.lockScreenTint = value
     text: ((Settings.data.general.lockScreenTint) * 100).toFixed(0) + "%"
     defaultValue: Settings.getDefaultValue("general.lockScreenTint")
+  }
   }
 }

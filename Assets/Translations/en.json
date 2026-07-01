@@ -1447,6 +1447,14 @@
       "show-hibernate-label": "Show hibernate",
       "show-session-buttons-description": "Allow access to power settings from the lock screen.",
       "show-session-buttons-label": "Power controls",
+      "lock-screen-style-label": "Lock screen style",
+      "lock-screen-style-description": "Choose a lock screen — built-in, an external locker, or a plugin",
+      "lock-screen-style-external": "External locker",
+      "lock-screen-style-builtin": "Built-in lock screen",
+      "behavior-command-label": "External lock command",
+      "behavior-command-description": "Shell command to run when locking (e.g. hyprlock)",
+      "behavior-command-note": "The external binary handles its own authentication and Wayland session lock. The shell will not create its own lock screen when this mode is active.",
+      "behavior-command-not-found": "Command not found. Check the spelling or install the binary.",
       "title": "Lock Screen"
     },
     "network": {
@@ -2136,7 +2144,10 @@
       "page": "{current} of {total}",
       "page-prefix": "Page",
       "page-suffix": "of {total}"
-    }
+    },
+    "external-locker-launched": "External locker launched",
+    "external-locker-failed": "External locker failed",
+    "external-locker-failed-description": "Exit code: {code}"
   },
   "weather": {
     "clear-sky": "Clear sky",

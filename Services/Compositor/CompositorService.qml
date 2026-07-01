@@ -563,9 +563,25 @@ Singleton {
     Quickshell.execDetached(["sh", "-c", "systemctl suspend || loginctl suspend"]);
   }
 
+  function _spawnExternalLocker() {
+    var cmd = Settings.data.general.externalLockCommand;
+    if (cmd !== "") {
+      HooksService.executeLockHook();
+      Logger.i("Compositor", "Launching external locker:", cmd);
+      externalLockerProcess.command = ["sh", "-c", cmd];
+      externalLockerProcess.running = true;
+      return true;
+    }
+    Logger.w("Compositor", "External lock mode enabled but no command configured");
+    return false;
+  }
+
   function lock() {
     Logger.i("Compositor", "LockScreen requested");
     if (executeSessionAction("lock"))
+      return;
+
+    if (Settings.data.general.lockScreenPlugin === "external" && _spawnExternalLocker())
       return;
 
     if (PanelService && PanelService.lockScreen) {
@@ -594,6 +610,12 @@ Singleton {
 
     // if a custom lock command exists, execute it and suspend without wait
     if (executeSessionAction("lock")) {
+      suspend();
+      return;
+    }
+
+    // External lock screen mode: spawn locker, then suspend immediately
+    if (Settings.data.general.lockScreenPlugin === "external" && _spawnExternalLocker()) {
       suspend();
       return;
     }
@@ -659,6 +681,24 @@ Singleton {
           lockAndSuspendCheckCount = 0;
           suspend();
         }
+      }
+    }
+  }
+
+  Process {
+    id: externalLockerProcess
+    running: false
+    command: []
+
+    stdout: StdioCollector {}
+    stderr: StdioCollector {}
+
+    onExited: function (exitCode) {
+      if (exitCode !== 0) {
+        Logger.e("Compositor", "External locker failed, exit code:", exitCode, "\nstderr:", stderr.text);
+        ToastService.showError(I18n.tr("toast.external-locker-failed"), I18n.tr("toast.external-locker-failed-description", {
+                                                                                  "code": exitCode
+                                                                                }), 5000);
       }
     }
   }

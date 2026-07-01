@@ -158,9 +158,7 @@ Item {
       Qt.callLater(() => {
         switch (action) {
         case "lock":
-          if (PanelService.lockScreen && !PanelService.lockScreen.active) {
-            PanelService.lockScreen.active = true;
-          }
+          CompositorService.lock();
           break;
         case "suspend":
           if (Settings.data.general.lockOnSuspend) {

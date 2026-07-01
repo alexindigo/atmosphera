@@ -23,6 +23,8 @@ Singleton {
 
   function selectedComponent() {
     var id = Settings.data.general.lockScreenPlugin || "default";
+    if (id === "external")
+      return null;
     return root.plugins[id] || root.plugins["default"];
   }
 }

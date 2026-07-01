@@ -1659,6 +1659,27 @@
     "subTabLabel": "common.general"
   },
   {
+    "labelKey": "panels.lock-screen.lock-screen-style-label",
+    "descriptionKey": "panels.lock-screen.lock-screen-style-description",
+    "widget": "NComboBox",
+    "tab": 11,
+    "tabLabel": "panels.lock-screen.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance"
+  },
+  {
+    "labelKey": "panels.lock-screen.behavior-command-label",
+    "descriptionKey": "panels.lock-screen.behavior-command-description",
+    "widget": "NTextInput",
+    "tab": 11,
+    "tabLabel": "panels.lock-screen.title",
+    "subTab": 0,
+    "subTabLabel": "common.appearance",
+    "visibleWhen": [
+      "Settings.data.general.lockScreenPlugin === \"external\""
+    ]
+  },
+  {
     "labelKey": "panels.lock-screen.clock-style-label",
     "descriptionKey": "panels.lock-screen.clock-style-description",
     "widget": "NComboBox",
