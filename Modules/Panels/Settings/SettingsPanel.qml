@@ -160,7 +160,11 @@ SmartPanel {
   function openToTab(tab, subTab, buttonItem, buttonName) {
     requestedTab = tab !== undefined ? tab : SettingsPanel.Tab.General;
     requestedSubTab = subTab !== undefined ? subTab : -1;
-    open(buttonItem, buttonName);
+    if (isPanelOpen && _settingsContent) {
+      _settingsContent.navigateToTab(requestedTab, requestedSubTab);
+    } else {
+      open(buttonItem, buttonName);
+    }
   }
 
   // When the panel opens, initialize content
