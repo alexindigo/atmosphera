@@ -3,6 +3,8 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
 import qs.Services.Power
+import qs.Services.UI
+import qs.Modules.Panels.Settings
 import qs.Widgets
 
 ColumnLayout {
@@ -128,13 +130,30 @@ ColumnLayout {
       }
     }
 
-    Text {
+    RowLayout {
       Layout.fillWidth: true
       visible: Settings.data.general.lockScreenPlugin === "external"
-      text: I18n.tr("panels.idle.lock-external-mode-note")
-      color: Color.mOnSurfaceVariant
-      font.pointSize: Style.fontSizeXS
-      wrapMode: Text.WordWrap
+
+      Text {
+        Layout.fillWidth: true
+        text: I18n.tr("panels.idle.lock-external-mode-note")
+        color: Color.mOnSurfaceVariant
+        font.pointSize: Style.fontSizeXS
+        wrapMode: Text.WordWrap
+      }
+
+      NButton {
+        text: I18n.tr("panels.idle.lock-external-mode-button")
+        icon: Icon.settings
+        outlined: true
+        Layout.alignment: Qt.AlignVCenter
+        onClicked: {
+          var panel = PanelService.getPanel("settingsPanel");
+          if (panel) {
+            panel.openToTab(SettingsPanel.Tab.LockScreen, 0);
+          }
+        }
+      }
     }
 
     DefaultActionRow {
@@ -203,7 +222,7 @@ ColumnLayout {
 
     NIconButton {
       Layout.alignment: Qt.AlignVCenter
-      visible: rowRoot.showEdit
+      enabled: rowRoot.showEdit
       icon: Icon.settings
       tooltipText: I18n.tr("common.edit")
       onClicked: root.openEdit(rowRoot.actionName, rowRoot.command, rowRoot.resumeCommand, rowRoot.actionCommandChanged, rowRoot.actionResumeCommandChanged)
