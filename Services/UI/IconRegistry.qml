@@ -101,6 +101,15 @@ Singleton {
     if (entry.plugin) {
       p = root.iconSets[entry.plugin];
       if (!p) {
+        // Try matching by bare plugin ID (strip hash prefix)
+        for (var key in root.iconSets) {
+          if (root._barePluginId(key) === entry.plugin) {
+            p = root.iconSets[key];
+            break;
+          }
+        }
+      }
+      if (!p) {
         Logger.w("IconRegistry", "Plugin not found:", entry.plugin);
         return null;
       }

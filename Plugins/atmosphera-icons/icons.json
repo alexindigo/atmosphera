@@ -2,16 +2,13 @@
   "name": "Atmosphera Icon Set",
   "icons": {
     "suspend": {
-      "plugin": "noctalia-icons-legacy",
-      "codepoint": "f228"
+      "filename": "zzz.svg"
     },
     "hibernate": {
-      "plugin": "noctalia-icons-legacy",
-      "codepoint": "ec0b"
+      "filename": "snowflake.svg"
     },
     "login": {
-      "plugin": "noctalia-icons-legacy",
-      "codepoint": "fc76"
+      "filename": "login-2.svg"
     }
   }
 }
