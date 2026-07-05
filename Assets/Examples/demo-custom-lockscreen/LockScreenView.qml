@@ -13,8 +13,7 @@ Item {
   required property var lockContext
   property var pluginApi: null
   property var screen
-  property bool compactMode: false
-  property bool animationsEnabled: true
+  property var lockScreenApi: null
 
   AtmoWallpaperBackground {
     screen: root.screen

@@ -124,11 +124,24 @@ Loader {
                 if (comp && comp.status === Component.Ready) {
                   var pluginId = Settings.data.general.lockScreenPlugin || "default";
                   var pluginApi = pluginId !== "default" ? PluginService.getPluginAPI(pluginId) : null;
+                  var lockScreenApi = {
+                    compactMode: Settings.data.general.compactLockScreen,
+                    animationsEnabled: Settings.data.general.lockScreenAnimations,
+                    clockStyle: Settings.data.general.clockStyle,
+                    clockFormat: Settings.data.general.clockFormat,
+                    passwordChars: Settings.data.general.passwordChars,
+                    showSessionButtons: Settings.data.general.showSessionButtonsOnLockScreen,
+                    showHibernate: Settings.data.general.showHibernateOnLockScreen,
+                    showMediaControls: Settings.data.general.enableLockScreenMediaControls,
+                    showCountdown: Settings.data.general.enableLockScreenCountdown,
+                    countdownDuration: Settings.data.general.lockScreenCountdownDuration,
+                    lockBlur: Settings.data.general.lockScreenBlur,
+                    lockTint: Settings.data.general.lockScreenTint
+                  };
                   var inst = comp.createObject(pluginWrapper, {
                                                  lockContext: lockContext,
                                                  screen: lockSurface.screen,
-                                                 compactMode: Settings.data.general.compactLockScreen,
-                                                 animationsEnabled: Settings.data.general.lockScreenAnimations,
+                                                 lockScreenApi: lockScreenApi,
                                                  pluginApi: pluginApi
                                                });
                   if (inst) {
