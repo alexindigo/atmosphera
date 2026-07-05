@@ -1,0 +1,35 @@
+#!/usr/bin/env -S bash
+set -euo pipefail
+
+QS_BIN="qs"
+
+# Detect running qs instance config path from process list
+QS_PATH=$(ps aux | grep "qs -p " | grep -v grep | sed -E 's/.*-p ([^ ]+).*/\1/' | head -1 2>/dev/null || echo "")
+
+ACTION="${1:-lock}"
+
+usage() {
+  echo "Usage: $0 [lock|preview|help]"
+  echo ""
+  echo "Commands:"
+  echo "  lock      Lock the screen (default)"
+  echo "  preview   Open lock screen in preview mode"
+  echo "  help      Show this help"
+  echo ""
+  echo "Examples:"
+  echo "  $0           # Lock the screen"
+  echo "  $0 lock      # Lock the screen"
+  echo "  $0 preview   # Preview lock screen"
+}
+
+IPC_ARGS=()
+if [ -n "$QS_PATH" ]; then
+  IPC_ARGS=(-p "$QS_PATH")
+fi
+
+case "$ACTION" in
+  help|--help|-h) usage; exit 0 ;;
+  lock)     exec "$QS_BIN" "${IPC_ARGS[@]}" ipc call lockScreen lock ;;
+  preview)  exec "$QS_BIN" "${IPC_ARGS[@]}" ipc call lockScreen preview ;;
+  *)        echo "Unknown action: $ACTION"; usage; exit 1 ;;
+esac
