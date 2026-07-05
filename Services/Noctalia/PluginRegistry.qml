@@ -200,7 +200,8 @@ Singleton {
       import QtQuick
       import Quickshell.Io
       Process {
-        command: ["sh", "-c", "test -f '${root.pluginsFile}' || echo '{\\"version\\":${root.currentVersion},\\"sources\\":[{\\"enabled\\":true,\\"name\\":\\"Built-in\\",\\"url\\":\\"file://${Quickshell.shellDir}/Plugins\\"}],\\"states\\":{\\"noctalia-icons-legacy\\":{\\"enabled\\":true,\\"sourceUrl\\":\\"file://${Quickshell.shellDir}/Plugins\\"}}}' > '
+        command: ["sh", "-c", "test -f '${root.pluginsFile}' || echo '{\\"version\\":${root.currentVersion},\\"sources\\":[{\\"enabled\\":true,\\"name\\":\\"Built-in\\",\\"url\\":\\"file://${Quickshell.shellDir}/Plugins\\"}],\\"states\\":{\\"noctalia-icons-legacy\\":{\\"enabled\\":true,\\"sourceUrl\\":\\"file://${Quickshell.shellDir}/Plugins\\"},\\"atmosphera-icons\\":{\\"enabled\\":true,\\"sourceUrl\\":\\"file://
+${Quickshell.shellDir}/Plugins\\"}}}' > '
 ${root.pluginsFile}'"]
       }
     `, root, "EnsurePluginsFile");

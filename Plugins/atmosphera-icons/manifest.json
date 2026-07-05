@@ -1,0 +1,11 @@
+{
+  "id": "atmosphera-icons",
+  "name": "Atmosphera Icon Set",
+  "description": "Overrides semantic icon names with Atmosphera-specific glyphs",
+  "author": "Atmosphera",
+  "version": "1.0.0",
+  "minNoctaliaVersion": "0.0.0",
+  "entryPoints": {
+    "icons": "icons.json"
+  }
+}

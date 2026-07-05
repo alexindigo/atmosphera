@@ -1,0 +1,17 @@
+{
+  "name": "Atmosphera Icon Set",
+  "icons": {
+    "suspend": {
+      "plugin": "noctalia-icons-legacy",
+      "codepoint": "f228"
+    },
+    "hibernate": {
+      "plugin": "noctalia-icons-legacy",
+      "codepoint": "ec0b"
+    },
+    "login": {
+      "plugin": "noctalia-icons-legacy",
+      "codepoint": "fc76"
+    }
+  }
+}

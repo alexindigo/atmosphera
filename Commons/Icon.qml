@@ -44,6 +44,7 @@ Singleton {
   readonly property var reboot: IconRegistry.resolved["reboot"]
   readonly property var suspend: IconRegistry.resolved["suspend"]
   readonly property var hibernate: IconRegistry.resolved["hibernate"]
+  readonly property var login: IconRegistry.resolved["login"]
   readonly property var nightlightOn: IconRegistry.resolved["nightlight-on"]
   readonly property var nightlightOff: IconRegistry.resolved["nightlight-off"]
   readonly property var nightlightForced: IconRegistry.resolved["nightlight-forced"]
