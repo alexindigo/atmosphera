@@ -106,7 +106,7 @@ Item {
 
           NIcon {
             icon: root._networkIcon()
-            pointSize: 15
+            pointSize: Style.fontSizeL
             color: "white"
           }
         }
@@ -130,7 +130,7 @@ Item {
 
           NIcon {
             icon: BatteryService.batteryIcon
-            pointSize: 15
+            pointSize: Style.fontSizeL
             color: "white"
           }
         }
@@ -155,7 +155,7 @@ Item {
           NText {
             text: KeyboardLayoutService.currentLayout
             color: "white"
-            pointSize: 13
+            pointSize: Style.fontSizeM
           }
         }
       }
@@ -189,7 +189,7 @@ Item {
     Text {
       id: clockText
       Layout.alignment: Qt.AlignHCenter
-      font.pointSize: (lockScreenApi && lockScreenApi.compactMode) ? Style.fontSizeXXL : Style.fontSizeXXXL * 2
+      font.pointSize: (lockScreenApi && lockScreenApi.compactMode) ? Style.fontSizeXXL : Style.fontSizeXXXL * 2.5
       font.weight: Style.fontWeightLight
       color: "white"
       Timer {
@@ -223,8 +223,8 @@ Item {
 
       NIconButton {
         icon: Icon.close
-        baseSize: 32
-        customRadius: 16
+        baseSize: 28
+        customRadius: 14
         colorBg: Qt.rgba(1, 1, 1, 0.12)
         colorBorder: Qt.rgba(1, 1, 1, 0.25)
         colorFg: "white"
@@ -238,8 +238,8 @@ Item {
 
       NIconButton {
         icon: Icon.suspend
-        baseSize: 32
-        customRadius: 16
+        baseSize: 28
+        customRadius: 14
         colorBg: Qt.rgba(1, 1, 1, 0.12)
         colorBorder: Qt.rgba(1, 1, 1, 0.25)
         colorFg: "white"
@@ -252,8 +252,8 @@ Item {
 
       NIconButton {
         icon: Icon.hibernate
-        baseSize: 32
-        customRadius: 16
+        baseSize: 28
+        customRadius: 14
         colorBg: Qt.rgba(1, 1, 1, 0.12)
         colorBorder: Qt.rgba(1, 1, 1, 0.25)
         colorFg: "white"
@@ -267,8 +267,8 @@ Item {
 
       NIconButton {
         icon: Icon.reboot
-        baseSize: 32
-        customRadius: 16
+        baseSize: 28
+        customRadius: 14
         colorBg: Qt.rgba(1, 1, 1, 0.12)
         colorBorder: Qt.rgba(1, 1, 1, 0.25)
         colorFg: "white"
@@ -281,8 +281,8 @@ Item {
 
       NIconButton {
         icon: Icon.shutdown
-        baseSize: 32
-        customRadius: 16
+        baseSize: 28
+        customRadius: 14
         colorBg: Qt.rgba(1, 1, 1, 0.12)
         colorBorder: Qt.rgba(1, 1, 1, 0.25)
         colorFg: "white"
@@ -368,21 +368,21 @@ Item {
       NIconButton {
         icon: Icon.mediaPrev
         colorFg: "white"
-        baseSize: 32
+        baseSize: 28
         visible: MediaService.canGoPrevious
         onClicked: MediaService.previous()
       }
       NIconButton {
         icon: MediaService.isPlaying ? Icon.mediaPause : Icon.mediaPlay
         colorFg: "white"
-        baseSize: 32
+        baseSize: 28
         visible: MediaService.canPlay || MediaService.canPause
         onClicked: MediaService.playPause()
       }
       NIconButton {
         icon: Icon.mediaNext
         colorFg: "white"
-        baseSize: 32
+        baseSize: 28
         visible: MediaService.canGoNext
         onClicked: MediaService.next()
       }
@@ -422,8 +422,8 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 4
         icon: Icon.login
-        baseSize: 32
-        customRadius: 16
+        baseSize: 28
+        customRadius: 14
         colorBg: "transparent"
         colorBorder: "transparent"
         colorFg: "white"
