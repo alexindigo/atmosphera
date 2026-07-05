@@ -1,12 +1,16 @@
 {
   "id": "demo-custom-lockscreen",
   "name": "Example Custom Lock Screen",
-  "description": "A minimal example custom lock screen",
+  "description": "A feature-rich example custom lock screen with status indicators, media controls, and session actions",
   "author": "Atmosphera",
   "version": "1.0.0",
   "minNoctaliaVersion": "0.0.0",
   "entryPoints": {
     "lockScreen": "LockScreenView.qml",
     "settings": "Settings.qml"
+  },
+  "defaultSettings": {
+    "showMediaControls": true,
+    "showSessionButtons": true
   }
 }

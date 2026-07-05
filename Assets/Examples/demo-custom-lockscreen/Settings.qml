@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 import qs.Commons
+import qs.Services.Media
+import qs.Services.Compositor
 import qs.Services.UI
 import qs.Widgets
 
@@ -9,17 +11,13 @@ ColumnLayout {
 
   property var pluginApi: null
 
-  property string editGreeting: pluginApi?.pluginSettings?.greeting ?? pluginApi?.manifest?.metadata?.defaultSettings?.greeting ?? "Custom Lock Screen"
-
-  // Auxiliary buttons shown on the left side of the settings popup's button row
   readonly property var auxButtons: [
     {
       text: "Preview",
-      icon: "eye",
+      icon: Icon.eye,
       clicked: function () {
         if (PanelService.lockScreen && !PanelService.lockScreen.active) {
-          pluginApi.pluginSettings.greeting = root.editGreeting;
-          pluginApi.saveSettings();
+          saveSettings();
           PanelService.lockScreen.active = true;
           PanelService.lockScreen.previewMode = true;
         }
@@ -27,20 +25,28 @@ ColumnLayout {
     }
   ]
 
-  spacing: Style.marginM
+  spacing: Style.marginL
 
-  NTextInput {
-    Layout.fillWidth: true
-    label: "Greeting text"
-    placeholderText: "Hello!"
-    text: root.editGreeting
-    onTextChanged: root.editGreeting = text
+  NToggle {
+    label: "Show media controls"
+    checked: pluginApi?.pluginSettings?.showMediaControls !== false
+    onToggled: checked => {
+      pluginApi.pluginSettings.showMediaControls = checked;
+      saveSettings();
+    }
+  }
+
+  NToggle {
+    label: "Show session buttons"
+    checked: pluginApi?.pluginSettings?.showSessionButtons !== false
+    onToggled: checked => {
+      pluginApi.pluginSettings.showSessionButtons = checked;
+      saveSettings();
+    }
   }
 
   function saveSettings() {
-    if (!pluginApi)
-      return;
-    pluginApi.pluginSettings.greeting = root.editGreeting;
-    pluginApi.saveSettings();
+    if (pluginApi)
+      pluginApi.saveSettings();
   }
 }
