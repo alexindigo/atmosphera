@@ -1076,7 +1076,20 @@
       "title": "Desktop Widgets",
       "weather-enabled-description": "Show a weather widget on the desktop.",
       "weather-enabled-label": "Enable weather widget",
-      "weather-show-background-description": "Show the background container for the weather widget."
+      "weather-show-background-description": "Show the background container for the weather widget.",
+      "app-shortcut-application-description": "Choose which application this shortcut launches.",
+      "app-shortcut-application-label": "Application",
+      "app-shortcut-application-placeholder": "Type to search apps...",
+      "app-shortcut-custom-label": "Custom label",
+      "app-shortcut-custom-label-description": "Leave empty to use the application name.",
+      "app-shortcut-rounded-corners": "Rounded corners",
+      "app-shortcut-rounded-corners-description": "Use rounded corners for the widget background.",
+      "app-shortcut-show-background": "Show background",
+      "app-shortcut-show-background-description": "Show the background container for the shortcut widget.",
+      "app-shortcut-show-label": "Show label",
+      "app-shortcut-show-label-description": "Display the application name below the icon.",
+      "app-shortcut-single-click": "Single-click to launch",
+      "app-shortcut-single-click-description": "Launch the application with a single click instead of double-click."
     },
     "display": {
       "monitors-backlight-device-auto-option": "Default",
