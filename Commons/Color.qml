@@ -392,33 +392,25 @@ Singleton {
   ]
 
   // --------------------------------
-  // Default colors: Atmosphera (default) dark — must match Assets/ColorScheme/Atmosphera-default
+  // Default colors: MacOS dark — must match Assets/ColorScheme/MacOS
   QtObject {
     id: defaultColors
-
-    readonly property color mPrimary: "#fff59b"
-    readonly property color mOnPrimary: "#0e0e43"
-
-    readonly property color mSecondary: "#a9aefe"
-    readonly property color mOnSecondary: "#0e0e43"
-
-    readonly property color mTertiary: "#9BFECE"
-    readonly property color mOnTertiary: "#0e0e43"
-
-    readonly property color mError: "#FD4663"
-    readonly property color mOnError: "#0e0e43"
-
-    readonly property color mSurface: "#070722"
-    readonly property color mOnSurface: "#f3edf7"
-
-    readonly property color mSurfaceVariant: "#11112d"
-    readonly property color mOnSurfaceVariant: "#7c80b4"
-
-    readonly property color mOutline: "#21215F"
-    readonly property color mShadow: "#070722"
-
-    readonly property color mHover: "#9BFECE"
-    readonly property color mOnHover: "#0e0e43"
+    readonly property color mPrimary: "#0A84FF"
+    readonly property color mOnPrimary: "#FFFFFF"
+    readonly property color mSecondary: "#BF5AF2"
+    readonly property color mOnSecondary: "#FFFFFF"
+    readonly property color mTertiary: "#30D158"
+    readonly property color mOnTertiary: "#FFFFFF"
+    readonly property color mError: "#FF453A"
+    readonly property color mOnError: "#FFFFFF"
+    readonly property color mSurface: "#1E1E1E"
+    readonly property color mOnSurface: "#F5F5F7"
+    readonly property color mSurfaceVariant: "#2C2C2E"
+    readonly property color mOnSurfaceVariant: "#98989D"
+    readonly property color mOutline: "#3A3A3C"
+    readonly property color mShadow: "#000000"
+    readonly property color mHover: "#0A84FF"
+    readonly property color mOnHover: "#FFFFFF"
   }
 
   // ----------------------------------------------------------------

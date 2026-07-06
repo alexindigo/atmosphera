@@ -135,9 +135,29 @@ Singleton {
 
     onLoadFailed: function (error) {
       Logger.w("PluginRegistry", "Failed to load plugins.json, will create it:", error);
-      root.pluginStates = {};
-      root.pluginSources = [];
-      root.scanPluginFolder();
+      // Write seeded data synchronously so the file exists on next reload
+      adapter.version = root.currentVersion;
+      adapter.states = {
+        "noctalia-icons-legacy": {
+          "enabled": true,
+          "sourceUrl": "file://" + Quickshell.shellDir + "/Plugins"
+        },
+        "atmosphera-icons": {
+          "enabled": true,
+          "sourceUrl": "file://" + Quickshell.shellDir + "/Plugins"
+        }
+      };
+      adapter.sources = [
+            {
+              "enabled": true,
+              "name": "Built-in",
+              "url": "file://" + Quickshell.shellDir + "/Plugins"
+            }
+          ];
+      writeAdapter();
+      // Reload to pick up the now-existing file
+      pluginsFileView.path = "";
+      pluginsFileView.path = root.pluginsFile;
     }
   }
 
@@ -200,7 +220,9 @@ Singleton {
       import QtQuick
       import Quickshell.Io
       Process {
-        command: ["sh", "-c", "test -f '${root.pluginsFile}' || echo '{\\"version\\":${root.currentVersion},\\"sources\\":[{\\"enabled\\":true,\\"name\\":\\"Built-in\\",\\"url\\":\\"file://${Quickshell.shellDir}/Plugins\\"}],\\"states\\":{\\"noctalia-icons-legacy\\":{\\"enabled\\":true,\\"sourceUrl\\":\\"file://${Quickshell.shellDir}/Plugins\\"},\\"atmosphera-icons\\":{\\"enabled\\":true,\\"sourceUrl\\":\\"file://
+        command: ["sh", "-c", "test -f '${root.pluginsFile}' || echo '{\\"version\\":${root.currentVersion},\\"sources\\":[{\\"enabled\\":true,\\"name\\":\\"Built-in\\",\\"url\\":\\"file://${Quickshell.shellDir}/Plugins\\"}],\\"states\\":{\\"noctalia-icons-legacy\\":{\\"enabled\\":true,\\"sourceUrl\\":\\"file://${Quickshell.shellDir
+                                          }/Plugins\\"},\\"atmosphera-icons\\":{\\"enabled\\":true,\\"sourceUrl\\":\\"file://
+
 ${Quickshell.shellDir}/Plugins\\"}}}' > '
 ${root.pluginsFile}'"]
       }

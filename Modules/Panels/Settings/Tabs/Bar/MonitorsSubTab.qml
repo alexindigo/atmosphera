@@ -37,7 +37,10 @@ ColumnLayout {
         const info = CompositorService.displayScales[screenName];
         return (info && info.scale) ? info.scale : 1.0;
       }
-      readonly property bool barEnabled: (Settings.data.bar.monitors || []).indexOf(screenName) !== -1
+      readonly property bool barEnabled: {
+        var monitors = Settings.data.bar.monitors || [];
+        return monitors.length === 0 || monitors.indexOf(screenName) !== -1;
+      }
       readonly property bool hasOverride: Settings.hasScreenOverride(screenName)
 
       // Track if override is enabled (controls both visibility AND whether overrides are applied)
