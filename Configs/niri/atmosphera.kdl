@@ -9,12 +9,24 @@ blur {
     saturation 1.0
 }
 
-// --- Blur and transparency for all atmosphera surfaces ---
-// Opacity is controlled per-surface in Atmosphera settings (bar, widgets, panels).
-// Opaque surfaces show no blur regardless of this rule.
+// --- xray false on all atmosphera surfaces ---
+// ext-background-effect handles actual blur shapes; niri-side blur conflicts.
 layer-rule {
     match namespace="^atmosphera-.*$"
-    background-effect { blur true xray false }
+    background-effect {
+        xray false
+    }
+}
+
+// --- Notifications: no background-effect ---
+// Notification surfaces have transparent shadow-padding halo; any effect here
+// would carve a rectangle out of windows below.
+layer-rule {
+    match namespace="^atmosphera-notifications.*"
+    background-effect {
+        blur false
+        xray false
+    }
 }
 
 // --- Backdrop ---
