@@ -16,7 +16,7 @@ Singleton {
 
   Component.onCompleted: {
     ensurePluginsDirectory();
-    ensurePluginsFile();
+    bootstrap();
   }
 
   // Generate a short hash (6 characters) from a source URL
@@ -100,7 +100,7 @@ Singleton {
   // File storage (minimal - only states and sources)
   property FileView pluginsFileView: FileView {
     id: pluginsFileView
-    path: root.pluginsFile
+    path: ""
 
     adapter: JsonAdapter {
       id: adapter
@@ -114,7 +114,6 @@ Singleton {
       root.pluginStates = adapter.states || {};
       root.pluginSources = adapter.sources || [];
 
-      // Migrate sources with path but no url to file:// url
       var needsSave = false;
       for (var i = 0; i < root.pluginSources.length; i++) {
         var src = root.pluginSources[i];
@@ -135,29 +134,9 @@ Singleton {
 
     onLoadFailed: function (error) {
       Logger.w("PluginRegistry", "Failed to load plugins.json, will create it:", error);
-      // Write seeded data synchronously so the file exists on next reload
-      adapter.version = root.currentVersion;
-      adapter.states = {
-        "noctalia-icons-legacy": {
-          "enabled": true,
-          "sourceUrl": "file://" + Quickshell.shellDir + "/Plugins"
-        },
-        "atmosphera-icons": {
-          "enabled": true,
-          "sourceUrl": "file://" + Quickshell.shellDir + "/Plugins"
-        }
-      };
-      adapter.sources = [
-            {
-              "enabled": true,
-              "name": "Built-in",
-              "url": "file://" + Quickshell.shellDir + "/Plugins"
-            }
-          ];
-      writeAdapter();
-      // Reload to pick up the now-existing file
-      pluginsFileView.path = "";
-      pluginsFileView.path = root.pluginsFile;
+      root.pluginStates = {};
+      root.pluginSources = [];
+      root.scanPluginFolder();
     }
   }
 
@@ -214,28 +193,82 @@ Singleton {
     mkdirProcess.running = true;
   }
 
-  // Ensure plugins.json exists (create seeded one if it doesn't)
-  function ensurePluginsFile() {
-    var checkProcess = Qt.createQmlObject(`
+  // Bootstrap bundled plugins on first run — copies from system dir to user config
+  // and writes seeded plugins.json with composite keys (hash:id) for all 3 bundled plugins.
+  function bootstrap() {
+    var probeProcess = Qt.createQmlObject(`
       import QtQuick
       import Quickshell.Io
       Process {
-        command: ["sh", "-c", "test -f '${root.pluginsFile}' || echo '{\\"version\\":${root.currentVersion},\\"sources\\":[{\\"enabled\\":true,\\"name\\":\\"Built-in\\",\\"url\\":\\"file://${Quickshell.shellDir}/Plugins\\"}],\\"states\\":{\\"noctalia-icons-legacy\\":{\\"enabled\\":true,\\"sourceUrl\\":\\"file://${Quickshell.shellDir
-                                          }/Plugins\\"},\\"atmosphera-icons\\":{\\"enabled\\":true,\\"sourceUrl\\":\\"file://
-
-${Quickshell.shellDir}/Plugins\\"}}}' > '
-${root.pluginsFile}'"]
+        command: ["sh", "-c", "test -f '${root.pluginsFile}' && echo EXISTS || echo MISSING"]
+        stdout: StdioCollector {}
       }
-    `, root, "EnsurePluginsFile");
+    `, root, "BootstrapProbe");
 
-    checkProcess.exited.connect(function (exitCode) {
-      if (exitCode === 0) {
-        Logger.d("PluginRegistry", "Plugins file ensured:", root.pluginsFile);
+    probeProcess.exited.connect(function () {
+      var out = (String(probeProcess.stdout.text || "")).trim();
+      if (out === "EXISTS") {
+        Logger.d("PluginRegistry", "Plugins file exists, skipping bootstrap");
+        pluginsFileView.path = root.pluginsFile;
+        probeProcess.destroy();
+        return;
       }
-      checkProcess.destroy();
+
+      Logger.i("PluginRegistry", "First run — bootstrapping bundled plugins");
+
+      var sourceUrl = "file://" + Quickshell.shellDir + "/Plugins";
+      var hash = root.generateSourceHash(sourceUrl);
+      var bundledPlugins = ["noctalia-icons-legacy", "atmosphera-icons", "atmosphera-wallpapers"];
+      var pluginId, compositeKey, targetDir, srcDir;
+      var pending = 0;
+
+      for (var i = 0; i < bundledPlugins.length; i++) {
+        pluginId = bundledPlugins[i];
+        compositeKey = hash + ":" + pluginId;
+        targetDir = root.pluginsDir + "/" + compositeKey;
+        srcDir = Quickshell.shellDir + "/Plugins/" + pluginId;
+
+        pending++;
+        var copyProc = Qt.createQmlObject(`
+          import QtQuick
+          import Quickshell.Io
+          Process {
+            command: ["sh", "-c", "test -d '${targetDir}' || mkdir -p '${targetDir}' && cp -r '${srcDir}/.' '${targetDir}/'"]
+          }
+        `, root, "CopyPlugin_" + pluginId);
+
+        copyProc.exited.connect((function (proc) {
+          return function () {
+            proc.destroy();
+            pending--;
+            if (pending === 0) {
+              root.writeSeedJson(sourceUrl, hash);
+            }
+          };
+        })(copyProc));
+
+        copyProc.running = true;
+      }
+
+      probeProcess.destroy();
     });
 
-    checkProcess.running = true;
+    probeProcess.running = true;
+  }
+
+  // Write seeded plugins.json with composite keys for bundled plugins.
+  // Uses a temporary FileView with declared JsonAdapter properties to avoid
+  // the runtime-assignment persistence issue with failed-state adapters.
+  function writeSeedJson(sourceUrl, hash) {
+    var template = 'import QtQuick\n' + 'import Quickshell.Io\n' + 'import qs.Commons\n' + 'FileView {\n' + '  path: "' + root.pluginsFile + '"\n' + '  adapter: JsonAdapter {\n' + '    property int version: ' + root.currentVersion + '\n' + '    property var sources: [{"enabled":true,"name":"Built-in","url":"' + sourceUrl + '"}]\n'
+        + '    property var states: ({\n' + '      "' + hash + ':noctalia-icons-legacy": {"enabled":true,"sourceUrl":"' + sourceUrl + '"},\n' + '      "' + hash + ':atmosphera-icons":       {"enabled":true,"sourceUrl":"' + sourceUrl + '"},\n' + '      "' + hash + ':atmosphera-wallpapers":  {"enabled":true,"sourceUrl":"' + sourceUrl + '"}\n' + '    })\n'
+        + '  }\n' + '  Component.onCompleted: { writeAdapter(); Qt.callLater(destroy) }\n' + '}';
+
+    var writer = Qt.createQmlObject(template, root, "SeedPluginsWriter");
+    Qt.callLater(function () {
+      pluginsFileView.path = root.pluginsFile;
+      writer.destroy();
+    });
   }
 
   // Scan plugin folder to discover installed plugins (single process reads all manifests)
