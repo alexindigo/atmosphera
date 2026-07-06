@@ -218,7 +218,7 @@ Singleton {
 
       var sourceUrl = "file://" + Quickshell.shellDir + "/Plugins";
       var hash = root.generateSourceHash(sourceUrl);
-      var bundledPlugins = ["noctalia-icons-legacy", "atmosphera-icons", "atmosphera-wallpapers"];
+      var bundledPlugins = ["noctalia-icons-legacy", "atmosphera-icons", "atmosphera-wallpapers", "demo-custom-lockscreen"];
       var pluginId, compositeKey, targetDir, srcDir;
       var pending = 0;
 
@@ -261,8 +261,8 @@ Singleton {
   // the runtime-assignment persistence issue with failed-state adapters.
   function writeSeedJson(sourceUrl, hash) {
     var template = 'import QtQuick\n' + 'import Quickshell.Io\n' + 'import qs.Commons\n' + 'FileView {\n' + '  path: "' + root.pluginsFile + '"\n' + '  adapter: JsonAdapter {\n' + '    property int version: ' + root.currentVersion + '\n' + '    property var sources: [{"enabled":true,"name":"Built-in","url":"' + sourceUrl + '"}]\n'
-        + '    property var states: ({\n' + '      "' + hash + ':noctalia-icons-legacy": {"enabled":true,"sourceUrl":"' + sourceUrl + '"},\n' + '      "' + hash + ':atmosphera-icons":       {"enabled":true,"sourceUrl":"' + sourceUrl + '"},\n' + '      "' + hash + ':atmosphera-wallpapers":  {"enabled":true,"sourceUrl":"' + sourceUrl + '"}\n' + '    })\n'
-        + '  }\n' + '  Component.onCompleted: { writeAdapter(); Qt.callLater(destroy) }\n' + '}';
+        + '    property var states: ({\n' + '      "' + hash + ':noctalia-icons-legacy":     {"enabled":true,"sourceUrl":"' + sourceUrl + '"},\n' + '      "' + hash + ':atmosphera-icons":           {"enabled":true,"sourceUrl":"' + sourceUrl + '"},\n' + '      "' + hash + ':atmosphera-wallpapers":      {"enabled":true,"sourceUrl":"' + sourceUrl + '"},\n'
+        + '      "' + hash + ':demo-custom-lockscreen":     {"enabled":true,"sourceUrl":"' + sourceUrl + '"}\n' + '    })\n' + '  }\n' + '  Component.onCompleted: { writeAdapter(); Qt.callLater(destroy) }\n' + '}';
 
     var writer = Qt.createQmlObject(template, root, "SeedPluginsWriter");
     Qt.callLater(function () {
