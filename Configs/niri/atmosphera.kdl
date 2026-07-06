@@ -14,7 +14,7 @@ blur {
 // Opaque surfaces show no blur regardless of this rule.
 layer-rule {
     match namespace="^atmosphera-.*$"
-    background-effect { blur true xray true }
+    background-effect { blur true xray false }
 }
 
 // --- Backdrop ---
