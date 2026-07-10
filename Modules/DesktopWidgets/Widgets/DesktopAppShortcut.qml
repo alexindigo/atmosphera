@@ -72,12 +72,41 @@ DraggableDesktopWidget {
     }
   }
 
+  function _shellQuote(s) {
+    return "'" + String(s).replace(/'/g, "'\\''") + "'";
+  }
+
   function launch() {
     if (!_entry)
       return;
-    if (_entry.command && _entry.command.length > 0)
-      CompositorService.spawn(_entry.command);
-    else if (_entry.execute)
+
+    var envVars = (widgetData && widgetData.environmentVars) || [];
+
+    if (_entry.command && _entry.command.length > 0) {
+      if (envVars.length > 0) {
+        var envParts = [];
+        for (var i = 0; i < envVars.length; i++) {
+          var kv = envVars[i];
+          if (kv && kv.key && kv.key.trim() !== "") {
+            envParts.push(kv.key.trim() + "=" + _shellQuote(kv.value || ""));
+          }
+        }
+
+        if (envParts.length > 0) {
+          var cmdParts = [];
+          for (var j = 0; j < _entry.command.length; j++) {
+            var c = _entry.command[j];
+            cmdParts.push(c.includes(" ") ? _shellQuote(c) : c);
+          }
+          CompositorService.spawn(["sh", "-c", "env " + envParts.join(" ") + " " + cmdParts.join(" ")]);
+        } else {
+          CompositorService.spawn(_entry.command);
+        }
+      } else {
+        CompositorService.spawn(_entry.command);
+      }
+    } else if (_entry.execute) {
       _entry.execute();
+    }
   }
 }

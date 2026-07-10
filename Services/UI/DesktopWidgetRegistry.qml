@@ -122,7 +122,8 @@ Singleton {
                                     "appId": "",
                                     "customLabel": "",
                                     "showLabel": true,
-                                    "singleClick": false
+                                    "singleClick": false,
+                                    "environmentVars": []
                                   }
                                 })
 

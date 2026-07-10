@@ -6,6 +6,7 @@ import qs.Commons
 import qs.Services.Compositor
 import qs.Services.Noctalia
 import qs.Services.UI
+import qs.Modules.Panels.Settings.DesktopWidgets
 import qs.Widgets
 
 ColumnLayout {
@@ -114,6 +115,13 @@ ColumnLayout {
       }
     }
   }
+
+  NDivider {
+    Layout.topMargin: Style.marginM
+    Layout.bottomMargin: Style.marginM
+  }
+
+  DesktopMenuSubTab {}
 
   // Shared Plugin Settings Popup
   NPluginSettingsPopup {

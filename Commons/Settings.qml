@@ -778,6 +778,9 @@ Singleton {
       property string startup: ""
       property string session: ""
       property string colorGeneration: ""
+      property string desktopLeftClick: ""
+      property string desktopRightClick: ""
+      property string desktopMiddleClick: ""
     }
 
     // plugins
@@ -810,6 +813,27 @@ Singleton {
       property bool gridSnapScale: false
       property list<var> monitorWidgets: []
       // Format: [{ "name": "DP-1", "widgets": [...] }, { "name": "HDMI-1", "widgets": [...] }]
+    }
+
+    property JsonObject desktopContextMenu: JsonObject {
+      property bool enabled: true
+      property list<var> items: [
+        {
+          "id": "add-app-shortcut"
+        },
+        {
+          "id": "divider"
+        },
+        {
+          "id": "change-wallpaper"
+        },
+        {
+          "id": "display-settings"
+        },
+        {
+          "id": "toggle-edit-mode"
+        }
+      ]
     }
   }
 

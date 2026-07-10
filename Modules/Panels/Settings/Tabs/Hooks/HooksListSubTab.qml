@@ -169,4 +169,46 @@ ColumnLayout {
         Quickshell.execDetached(["sh", "-lc", val + " test"]);
     })
   }
+
+  // Desktop Left Click Hook
+  HookRow {
+    label: I18n.tr("panels.hooks.desktop-left-click-label")
+    description: I18n.tr("panels.hooks.desktop-left-click-description")
+    value: Settings.data.hooks.desktopLeftClick
+    onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.desktop-left-click-placeholder"), value, newValue => {
+      Settings.data.hooks.desktopLeftClick = newValue;
+      Settings.saveImmediate();
+    }, val => {
+      if (val)
+        Quickshell.execDetached(["sh", "-lc", val.replace("$1", "test_screen").replace("$2", "0").replace("$3", "0")]);
+    })
+  }
+
+  // Desktop Right Click Hook
+  HookRow {
+    label: I18n.tr("panels.hooks.desktop-right-click-label")
+    description: I18n.tr("panels.hooks.desktop-right-click-description")
+    value: Settings.data.hooks.desktopRightClick
+    onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.desktop-right-click-placeholder"), value, newValue => {
+      Settings.data.hooks.desktopRightClick = newValue;
+      Settings.saveImmediate();
+    }, val => {
+      if (val)
+        Quickshell.execDetached(["sh", "-lc", val.replace("$1", "test_screen").replace("$2", "0").replace("$3", "0")]);
+    })
+  }
+
+  // Desktop Middle Click Hook
+  HookRow {
+    label: I18n.tr("panels.hooks.desktop-middle-click-label")
+    description: I18n.tr("panels.hooks.desktop-middle-click-description")
+    value: Settings.data.hooks.desktopMiddleClick
+    onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.desktop-middle-click-placeholder"), value, newValue => {
+      Settings.data.hooks.desktopMiddleClick = newValue;
+      Settings.saveImmediate();
+    }, val => {
+      if (val)
+        Quickshell.execDetached(["sh", "-lc", val.replace("$1", "test_screen").replace("$2", "0").replace("$3", "0")]);
+    })
+  }
 }
