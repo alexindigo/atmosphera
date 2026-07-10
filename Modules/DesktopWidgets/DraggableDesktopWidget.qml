@@ -460,7 +460,7 @@ Item {
     id: contextMenuArea
     anchors.fill: parent
     z: 1001
-    visible: DesktopWidgetRegistry.editMode
+    visible: true
     acceptedButtons: Qt.RightButton
     hoverEnabled: true
 

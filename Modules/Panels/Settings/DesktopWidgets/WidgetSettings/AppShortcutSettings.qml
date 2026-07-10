@@ -29,7 +29,10 @@ ColumnLayout {
     }
   }
 
-  Component.onCompleted: _rebuildAppList()
+  Component.onCompleted: {
+    _rebuildAppList();
+    rebuildEnvVarsModel();
+  }
 
   Connections {
     target: DesktopEntries.applications
@@ -44,6 +47,23 @@ ColumnLayout {
   property bool valueSingleClick: widgetData?.singleClick === true
   property bool valueShowBg: widgetData?.showBackground !== false
   property bool valueRounded: widgetData?.roundedCorners !== false
+  property var valueEnvVars: widgetData?.environmentVars ?? []
+
+  ListModel {
+    id: envVarsModel
+  }
+
+  function rebuildEnvVarsModel() {
+    envVarsModel.clear();
+    var vars = root.valueEnvVars || [];
+    for (var i = 0; i < vars.length; i++) {
+      var v = vars[i];
+      envVarsModel.append({
+                            key: v.key || "",
+                            value: v.value || ""
+                          });
+    }
+  }
 
   NSearchableComboBox {
     Layout.fillWidth: true
@@ -109,14 +129,85 @@ ColumnLayout {
     }
   }
 
+  NDivider {
+    Layout.topMargin: Style.marginM
+    Layout.bottomMargin: Style.marginM
+  }
+
+  NHeader {
+    label: I18n.tr("panels.desktop-widgets.app-shortcut-environment-vars-label")
+    description: I18n.tr("panels.desktop-widgets.app-shortcut-environment-vars-description")
+  }
+
+  Repeater {
+    model: envVarsModel
+
+    delegate: RowLayout {
+      width: parent.width
+      spacing: Style.marginS
+
+      NTextInput {
+        Layout.fillWidth: true
+        placeholderText: I18n.tr("panels.desktop-widgets.app-shortcut-env-var-key-placeholder")
+        text: model.key
+        onTextChanged: {
+          envVarsModel.setProperty(index, "key", text);
+          save();
+        }
+      }
+
+      NTextInput {
+        Layout.fillWidth: true
+        placeholderText: I18n.tr("panels.desktop-widgets.app-shortcut-env-var-value-placeholder")
+        text: model.value
+        onTextChanged: {
+          envVarsModel.setProperty(index, "value", text);
+          save();
+        }
+      }
+
+      NButton {
+        icon: Icon.trash
+        tooltipText: I18n.tr("common.remove")
+        onClicked: {
+          envVarsModel.remove(index);
+          save();
+        }
+      }
+    }
+  }
+
+  NButton {
+    text: I18n.tr("panels.desktop-widgets.app-shortcut-env-var-add")
+    icon: Icon.add
+    onClicked: {
+      envVarsModel.append({
+                            key: "",
+                            value: ""
+                          });
+    }
+  }
+
   function save() {
+    var envVars = [];
+    for (var i = 0; i < envVarsModel.count; i++) {
+      var item = envVarsModel.get(i);
+      if (item.key && item.key.trim() !== "") {
+        envVars.push({
+                       key: item.key.trim(),
+                       value: item.value
+                     });
+      }
+    }
+
     settingsChanged({
                       appId: valueAppId,
                       customLabel: valueCustomLabel,
                       showLabel: valueShowLabel,
                       singleClick: valueSingleClick,
                       showBackground: valueShowBg,
-                      roundedCorners: valueRounded
+                      roundedCorners: valueRounded,
+                      environmentVars: envVars
                     });
   }
 }

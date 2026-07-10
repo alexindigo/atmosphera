@@ -247,6 +247,52 @@ Singleton {
     }
   }
 
+  // Desktop click hooks — $1=screenName, $2=x, $3=y
+  function executeDesktopLeftClickHook(screenName, x, y) {
+    if (!Settings.data.hooks?.enabled)
+      return;
+    const script = Settings.data.hooks?.desktopLeftClick;
+    if (!script || script === "")
+      return;
+    try {
+      const command = script.replace(/\$1/g, screenName).replace(/\$2/g, String(x)).replace(/\$3/g, String(y));
+      Quickshell.execDetached(["sh", "-lc", command]);
+      Logger.d("HooksService", `Executed desktop left click hook: ${command}`);
+    } catch (e) {
+      Logger.e("HooksService", `Failed to execute desktop left click hook: ${e}`);
+    }
+  }
+
+  function executeDesktopRightClickHook(screenName, x, y) {
+    if (!Settings.data.hooks?.enabled)
+      return;
+    const script = Settings.data.hooks?.desktopRightClick;
+    if (!script || script === "")
+      return;
+    try {
+      const command = script.replace(/\$1/g, screenName).replace(/\$2/g, String(x)).replace(/\$3/g, String(y));
+      Quickshell.execDetached(["sh", "-lc", command]);
+      Logger.d("HooksService", `Executed desktop right click hook: ${command}`);
+    } catch (e) {
+      Logger.e("HooksService", `Failed to execute desktop right click hook: ${e}`);
+    }
+  }
+
+  function executeDesktopMiddleClickHook(screenName, x, y) {
+    if (!Settings.data.hooks?.enabled)
+      return;
+    const script = Settings.data.hooks?.desktopMiddleClick;
+    if (!script || script === "")
+      return;
+    try {
+      const command = script.replace(/\$1/g, screenName).replace(/\$2/g, String(x)).replace(/\$3/g, String(y));
+      Quickshell.execDetached(["sh", "-lc", command]);
+      Logger.d("HooksService", `Executed desktop middle click hook: ${command}`);
+    } catch (e) {
+      Logger.e("HooksService", `Failed to execute desktop middle click hook: ${e}`);
+    }
+  }
+
   // Blocking power hook infrastructure
   property var pendingPowerCallback: null
 

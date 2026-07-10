@@ -1395,6 +1395,33 @@
     "subTabLabel": "panels.hooks.title"
   },
   {
+    "labelKey": "panels.hooks.desktop-left-click-label",
+    "descriptionKey": "panels.hooks.desktop-left-click-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 1,
+    "subTabLabel": "panels.hooks.title"
+  },
+  {
+    "labelKey": "panels.hooks.desktop-right-click-label",
+    "descriptionKey": "panels.hooks.desktop-right-click-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 1,
+    "subTabLabel": "panels.hooks.title"
+  },
+  {
+    "labelKey": "panels.hooks.desktop-middle-click-label",
+    "descriptionKey": "panels.hooks.desktop-middle-click-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 1,
+    "subTabLabel": "panels.hooks.title"
+  },
+  {
     "labelKey": "panels.idle.enable-label",
     "descriptionKey": "panels.idle.enable-description",
     "widget": "NToggle",

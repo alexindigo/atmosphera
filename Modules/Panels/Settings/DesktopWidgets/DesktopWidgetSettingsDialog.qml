@@ -101,6 +101,13 @@ Popup {
           Loader {
             id: settingsLoader
             Layout.fillWidth: true
+            onStatusChanged: {
+              if (status === Loader.Error) {
+                Logger.e("DesktopWidgetSettingsDialog", "Settings loader error:", errorString(), "source:", source);
+              } else if (status === Loader.Ready) {
+                Logger.d("DesktopWidgetSettingsDialog", "Settings loader ready:", source);
+              }
+            }
             onLoaded: {
               if (item) {
                 Qt.callLater(() => {
@@ -208,6 +215,8 @@ Popup {
   }
 
   function loadWidgetSettings() {
+    Logger.d("DesktopWidgetSettingsDialog", "loadWidgetSettings:", widgetId, "widgetIndex:", widgetIndex, "sectionId:", sectionId);
+
     // Handle plugin widgets
     if (DesktopWidgetRegistry.isPluginWidget(widgetId)) {
       var pluginId = widgetId.replace("plugin:", "");
@@ -254,23 +263,30 @@ Popup {
 
     // Handle core widgets
     const source = DesktopWidgetRegistry.widgetSettingsMap[widgetId];
+    Logger.d("DesktopWidgetSettingsDialog", "core widget source:", source);
     if (source) {
       var currentWidgetData = widgetData;
       var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
+      var foundWidget = false;
       for (var i = 0; i < monitorWidgets.length; i++) {
         if (monitorWidgets[i].name === sectionId) {
           var widgets = monitorWidgets[i].widgets || [];
           if (widgetIndex >= 0 && widgetIndex < widgets.length) {
             currentWidgetData = widgets[widgetIndex];
+            foundWidget = true;
           }
           break;
         }
       }
+      Logger.d("DesktopWidgetSettingsDialog", "foundWidget:", foundWidget, "monitorWidgets count:", monitorWidgets.length, "sectionId:", sectionId);
       var fullPath = Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/DesktopWidgets/" + source);
+      Logger.d("DesktopWidgetSettingsDialog", "fullPath:", fullPath);
       settingsLoader.setSource(fullPath, {
                                  "widgetData": currentWidgetData,
                                  "widgetMetadata": DesktopWidgetRegistry.widgetMetadata[widgetId]
                                });
+    } else {
+      Logger.w("DesktopWidgetSettingsDialog", "No settings source for widget:", widgetId);
     }
   }
 }

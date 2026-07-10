@@ -510,6 +510,7 @@
     "reboot-to-uefi": "Reboot to UEFI",
     "record": "Start recording",
     "refresh": "Refresh",
+    "remove": "Remove",
     "required": "(required)",
     "reset": "Reset",
     "reset-to-default": "Reset to Default",
@@ -1089,7 +1090,21 @@
       "app-shortcut-show-label": "Show label",
       "app-shortcut-show-label-description": "Display the application name below the icon.",
       "app-shortcut-single-click": "Single-click to launch",
-      "app-shortcut-single-click-description": "Launch the application with a single click instead of double-click."
+      "app-shortcut-single-click-description": "Launch the application with a single click instead of double-click.",
+      "app-shortcut-environment-vars-label": "Environment variables",
+      "app-shortcut-environment-vars-description": "Set environment variables that will be passed to the application when launched.",
+      "app-shortcut-env-var-key-placeholder": "VARIABLE_NAME",
+      "app-shortcut-env-var-value-placeholder": "Value",
+      "app-shortcut-env-var-add": "Add variable",
+      "menu-add-app-shortcut": "Add Application Shortcut",
+      "menu-change-wallpaper": "Change Wallpaper",
+      "menu-display-settings": "Display Settings",
+      "menu-toggle-edit-mode": "Toggle Edit Mode",
+      "menu-section-title": "Desktop context menu",
+      "menu-section-description": "Customize which items appear when right-clicking on the desktop.",
+      "menu-move-up": "Move up",
+      "menu-move-down": "Move down",
+      "menu-add-item": "Add item"
     },
     "display": {
       "monitors-backlight-device-auto-option": "Default",
@@ -1290,7 +1305,16 @@
       "title": "Hooks",
       "wallpaper-changed-description": "Command to be executed when wallpaper changes.",
       "wallpaper-changed-label": "Wallpaper changed",
-      "wallpaper-changed-placeholder": "e.g. notify-send \"Wallpaper\" \"Changed\""
+      "wallpaper-changed-placeholder": "e.g. notify-send \"Wallpaper\" \"Changed\"",
+      "desktop-left-click-label": "Desktop left click",
+      "desktop-left-click-description": "Command to be executed when left-clicking on the desktop. Receives screen name as $1, x as $2, y as $3.",
+      "desktop-left-click-placeholder": "e.g. notify-send \"Desktop\" \"Left-clicked at $2,$3\"",
+      "desktop-right-click-label": "Desktop right click",
+      "desktop-right-click-description": "Command to be executed when right-clicking on the desktop. Receives screen name as $1, x as $2, y as $3.",
+      "desktop-right-click-placeholder": "e.g. notify-send \"Desktop\" \"Right-clicked at $2,$3\"",
+      "desktop-middle-click-label": "Desktop middle click",
+      "desktop-middle-click-description": "Command to be executed when middle-clicking on the desktop. Receives screen name as $1, x as $2, y as $3.",
+      "desktop-middle-click-placeholder": "e.g. notify-send \"Desktop\" \"Middle-clicked at $2,$3\""
     },
     "idle": {
       "custom-add": "Add command",

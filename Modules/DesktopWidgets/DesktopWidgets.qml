@@ -8,6 +8,7 @@ import qs.Modules.Panels.Settings
 import qs.Services.Compositor
 import qs.Services.Noctalia
 import qs.Services.Power
+import qs.Services.Control
 import qs.Services.UI
 import qs.Widgets
 
@@ -58,20 +59,7 @@ Variants {
       id: window
       color: "transparent"
       screen: screenLoader.modelData
-      mask: DesktopWidgetRegistry.editMode ? null : widgetsMask
-
-      // Dynamic mask: combine clickable regions for each loaded widget
-      property var _maskRegions: []
-
-      Component {
-        id: maskRegionComponent
-        Region {}
-      }
-
-      Region {
-        id: widgetsMask
-        regions: window._maskRegions
-      }
+      mask: null
 
       WlrLayershell.layer: WlrLayer.Bottom
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
@@ -89,7 +77,7 @@ Variants {
       }
 
       // Add a new widget to the current screen
-      function addWidgetToCurrentScreen(widgetId) {
+      function addWidgetToCurrentScreen(widgetId, x, y) {
         var monitorName = window.screen.name;
         var newWidget = {
           "id": widgetId
@@ -103,9 +91,13 @@ Variants {
           });
         }
 
-        // Place at screen center
-        newWidget.x = (window.screen.width / 2) - 100;
-        newWidget.y = (window.screen.height / 2) - 100;
+        // When added from context menu, make the widget visible immediately
+        newWidget.showBackground = true;
+        newWidget.roundedCorners = true;
+
+        // Place at click position or screen center
+        newWidget.x = x !== undefined ? x - 50 : (window.screen.width / 2) - 100;
+        newWidget.y = y !== undefined ? y - 50 : (window.screen.height / 2) - 100;
         newWidget.scale = 1.0;
 
         // Get current widgets and add new one
@@ -135,6 +127,93 @@ Variants {
 
         Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
         Logger.i("DesktopWidgets", "Added widget", widgetId, "to", monitorName);
+        return newWidget;
+      }
+
+      function buildDesktopContextMenuModel() {
+        var items = Settings.data.desktopContextMenu?.items || [];
+        var model = [];
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          if (item.id === "divider")
+            continue;
+          model.push({
+                       action: item.id,
+                       text: I18n.tr("panels.desktop-widgets.menu-" + item.id),
+                       icon: iconForAction(item.id)
+                     });
+        }
+        return model;
+      }
+
+      function iconForAction(action) {
+        switch (action) {
+        case "add-app-shortcut":
+          return Icon.add;
+        case "change-wallpaper":
+          return Icon.settingsWallpaper;
+        case "display-settings":
+          return Icon.settingsDisplay;
+        case "toggle-edit-mode":
+          return Icon.edit;
+        default:
+          return Icon.add;
+        }
+      }
+
+      function handleDesktopContextMenuAction(action, x, y) {
+        Logger.d("DesktopWidgets", "handleDesktopContextMenuAction:", action, x, y);
+        switch (action) {
+        case "add-app-shortcut":
+          var widgetData = addWidgetToCurrentScreen("AppShortcut", x, y);
+          if (widgetData) {
+            var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
+            for (var i = 0; i < monitorWidgets.length; i++) {
+              if (monitorWidgets[i].name === window.screen.name) {
+                var widgets = monitorWidgets[i].widgets || [];
+                DesktopWidgetRegistry.openWidgetSettings(window.screen, widgets.length - 1, "AppShortcut", widgetData);
+                break;
+              }
+            }
+          }
+          return true;
+        case "change-wallpaper":
+          SettingsPanelService.openToTab(SettingsPanel.Tab.Wallpaper, -1, window.screen);
+          return false;
+        case "display-settings":
+          SettingsPanelService.openToTab(SettingsPanel.Tab.Display, -1, window.screen);
+          return false;
+        case "toggle-edit-mode":
+          DesktopWidgetRegistry.editMode = !DesktopWidgetRegistry.editMode;
+          return false;
+        }
+        return false;
+      }
+
+      // Temporary storage for context menu click coordinates
+      property real _desktopClickX: 0
+      property real _desktopClickY: 0
+
+      function _onDesktopContextMenuAction(action) {
+        Logger.d("DesktopWidgets", "Desktop context menu action:", action, "at", _desktopClickX, _desktopClickY);
+        var keepOpen = handleDesktopContextMenuAction(action, _desktopClickX, _desktopClickY);
+        return keepOpen;
+      }
+
+      function showDesktopContextMenu(globalX, globalY) {
+        if (!Settings.data.desktopContextMenu?.enabled)
+          return;
+        var menuItems = Settings.data.desktopContextMenu?.items || [];
+        if (menuItems.length === 0)
+          return;
+        var popupMenuWindow = PanelService.getPopupMenuWindow(window.screen);
+        if (!popupMenuWindow)
+          return;
+
+        _desktopClickX = globalX;
+        _desktopClickY = globalY;
+
+        popupMenuWindow.showDynamicContextMenu(buildDesktopContextMenuModel(), globalX, globalY, _onDesktopContextMenuAction);
       }
 
       Item {
@@ -288,7 +367,6 @@ Variants {
 
             required property var modelData
             required property int index
-            property var _maskRegion: null
             readonly property bool _isPlugin: DesktopWidgetRegistry.isPluginWidget(modelData.id)
 
             // All widgets use setSource() so that screen, widgetData, and
@@ -332,27 +410,28 @@ Variants {
             onLoaded: {
               if (item) {
                 item.parent = widgetsContainer;
-
-                // Create mask region so this widget receives mouse input
-                _maskRegion = maskRegionComponent.createObject(window);
-                _maskRegion.item = item;
-                var newRegions = window._maskRegions.slice();
-                newRegions.push(_maskRegion);
-                window._maskRegions = newRegions;
               }
             }
+          }
+        }
 
-            // Clean up mask region when widget unloads
-            onItemChanged: {
-              if (!item && _maskRegion) {
-                var region = _maskRegion;
-                _maskRegion = null;
-                window._maskRegions = window._maskRegions.filter(function (r) {
-                  return r !== region;
-                });
-                region.destroy();
-              }
-            }
+        // Desktop click handler — catches clicks on empty desktop space
+        // Widget MouseAreas at higher z-order intercept events on their areas first
+        MouseArea {
+          id: desktopClickArea
+          anchors.fill: parent
+          z: -2
+          acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+          onClicked: mouse => {
+            var screenName = window.screen?.name || "";
+            var globalPos = mapToItem(null, mouse.x, mouse.y);
+            if (mouse.button === Qt.LeftButton)
+              HooksService.executeDesktopLeftClickHook(screenName, globalPos.x, globalPos.y);
+            else if (mouse.button === Qt.RightButton) {
+              HooksService.executeDesktopRightClickHook(screenName, globalPos.x, globalPos.y);
+              showDesktopContextMenu(globalPos.x, globalPos.y);
+            } else if (mouse.button === Qt.MiddleButton)
+              HooksService.executeDesktopMiddleClickHook(screenName, globalPos.x, globalPos.y);
           }
         }
 
