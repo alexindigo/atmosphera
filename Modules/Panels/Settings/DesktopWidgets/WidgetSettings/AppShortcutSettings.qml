@@ -47,6 +47,7 @@ ColumnLayout {
   property bool valueSingleClick: widgetData?.singleClick === true
   property bool valueShowBg: widgetData?.showBackground !== false
   property bool valueRounded: widgetData?.roundedCorners !== false
+  property real valueContentPadding: widgetData?.contentPadding ?? Settings.data.desktopWidgets.widgetContentPadding
   property var valueEnvVars: widgetData?.environmentVars ?? []
   property real valueBlendStrength: widgetData?.blendStrength ?? Settings.data.desktopWidgets.iconBlendStrength
   property real valueHueAdjustment: widgetData?.hueAdjustment ?? Settings.data.desktopWidgets.iconHueAdjustment
@@ -232,6 +233,22 @@ ColumnLayout {
     text: (root.valueHueAdjustment > 0 ? "+" : "") + root.valueHueAdjustment + "°"
   }
 
+  NValueSlider {
+    Layout.fillWidth: true
+    label: I18n.tr("panels.desktop-widgets.widget-content-padding-label")
+    from: 0
+    to: 48
+    stepSize: 2
+    showReset: true
+    value: root.valueContentPadding
+    defaultValue: Settings.data.desktopWidgets.widgetContentPadding
+    onMoved: v => {
+      root.valueContentPadding = v;
+      save();
+    }
+    text: Math.round(root.valueContentPadding) + "px"
+  }
+
   function save() {
     var envVars = [];
     for (var i = 0; i < envVarsModel.count; i++) {
@@ -253,7 +270,8 @@ ColumnLayout {
                       roundedCorners: valueRounded,
                       environmentVars: envVars,
                       blendStrength: valueBlendStrength,
-                      hueAdjustment: valueHueAdjustment
+                      hueAdjustment: valueHueAdjustment,
+                      contentPadding: valueContentPadding
                     });
   }
 }

@@ -25,6 +25,7 @@ Item {
   readonly property var _metadata: widgetData?.id ? DesktopWidgetRegistry.widgetMetadata[widgetData.id] : null
   property bool showBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : (_metadata?.showBackground ?? true)
   property bool roundedCorners: widgetData.roundedCorners !== undefined ? widgetData.roundedCorners : (_metadata?.roundedCorners ?? true)
+  property real contentPadding: widgetData?.contentPadding !== undefined ? widgetData.contentPadding : (_metadata?.contentPadding ?? Settings.data.desktopWidgets.widgetContentPadding)
 
   property real widgetScale: 1.0
   property real minScale: 0.5
@@ -320,6 +321,7 @@ Item {
   Item {
     id: contentContainer
     anchors.fill: parent
+    anchors.margins: root.contentPadding
     z: 1
     clip: true
   }

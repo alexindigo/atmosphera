@@ -161,6 +161,20 @@ ColumnLayout {
     text: (Settings.data.desktopWidgets.iconHueAdjustment > 0 ? "+" : "") + Settings.data.desktopWidgets.iconHueAdjustment + "°"
   }
 
+  NValueSlider {
+    Layout.fillWidth: true
+    label: I18n.tr("panels.desktop-widgets.widget-content-padding-label")
+    description: I18n.tr("panels.desktop-widgets.widget-content-padding-description")
+    from: 0
+    to: 48
+    stepSize: 2
+    showReset: true
+    value: Settings.data.desktopWidgets.widgetContentPadding
+    defaultValue: 0.0
+    onMoved: v => Settings.data.desktopWidgets.widgetContentPadding = v
+    text: Math.round(Settings.data.desktopWidgets.widgetContentPadding) + "px"
+  }
+
   // Shared Plugin Settings Popup
   NPluginSettingsPopup {
     id: pluginSettingsDialog

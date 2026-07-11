@@ -1112,7 +1112,9 @@
       "icon-hue-adjustment-label": "Hue adjustment",
       "icon-hue-adjustment-description": "Shift the tint hue. Positive = clockwise, negative = counter-clockwise.",
       "app-shortcut-icon-colorize-label": "Icon colorize",
-      "app-shortcut-icon-colorize-description": "Override global colorize settings for this widget."
+      "app-shortcut-icon-colorize-description": "Override global colorize settings for this widget.",
+      "widget-content-padding-label": "Content padding",
+      "widget-content-padding-description": "Space between the widget edge and its content."
     },
     "display": {
       "monitors-backlight-device-auto-option": "Default",
