@@ -15,6 +15,8 @@ DraggableDesktopWidget {
   readonly property string customLabel: (widgetData && widgetData.customLabel !== undefined) ? widgetData.customLabel : widgetMetadata.customLabel
   readonly property bool showLabel: (widgetData && widgetData.showLabel !== undefined) ? widgetData.showLabel : widgetMetadata.showLabel
   readonly property bool singleClick: (widgetData && widgetData.singleClick !== undefined) ? widgetData.singleClick : widgetMetadata.singleClick
+  readonly property real _blendStrength: widgetData?.blendStrength ?? Settings.data.desktopWidgets.iconBlendStrength
+  readonly property real _hueAdjustment: widgetData?.hueAdjustment ?? Settings.data.desktopWidgets.iconHueAdjustment
 
   readonly property var _entry: appId ? ThemeIcons.findAppEntry(appId) : null
   readonly property string _displayLabel: customLabel || (_entry ? _entry.name : "")
@@ -49,7 +51,11 @@ DraggableDesktopWidget {
         fillMode: Image.PreserveAspectFit
         layer.enabled: true
         layer.smooth: true
-        layer.effect: NIconColorizeEffect {}
+        layer.effect: NIconColorizeEffect {
+          targetColor: Color.mPrimary
+          blendStrength: root._blendStrength
+          hueAdjustment: root._hueAdjustment
+        }
       }
 
       Text {
