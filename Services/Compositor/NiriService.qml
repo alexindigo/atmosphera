@@ -25,6 +25,15 @@ Item {
   property var outputCache: ({})
   property var workspaceCache: ({})
 
+  function updateKeyboardLayouts() {
+    keyboardLayouts = Niri.keyboardLayoutNames;
+    const layoutName = Niri.currentKeyboardLayoutName;
+    if (layoutName) {
+      KeyboardLayoutService.setCurrentLayout(layoutName, keyboardLayouts[0]);
+    }
+    Logger.d("NiriService", "Keyboard layouts updated:", keyboardLayouts.toString());
+  }
+
   function initialize() {
     Niri.refreshOutputs();
     Niri.refreshWorkspaces();
@@ -35,6 +44,7 @@ Item {
       safeUpdateWorkspaces();
       safeUpdateWindows();
       queryDisplayScales();
+      updateKeyboardLayouts();
     });
 
     Logger.i("NiriService", "Service started");
@@ -60,19 +70,10 @@ Item {
       overviewActive = Niri.overviewActive;
     }
     function onKeyboardLayoutsChanged() {
-      keyboardLayouts = Niri.keyboardLayoutNames;
-      const layoutName = Niri.currentKeyboardLayoutName;
-      if (layoutName) {
-        KeyboardLayoutService.setCurrentLayout(layoutName);
-      }
-      Logger.d("NiriService", "Keyboard layouts changed:", keyboardLayouts.toString());
+      updateKeyboardLayouts();
     }
     function onKeyboardLayoutSwitched() {
-      const layoutName = Niri.currentKeyboardLayoutName;
-      if (layoutName) {
-        KeyboardLayoutService.setCurrentLayout(layoutName);
-      }
-      Logger.d("NiriService", "Keyboard layout switched:", layoutName);
+      updateKeyboardLayouts();
     }
   }
 
