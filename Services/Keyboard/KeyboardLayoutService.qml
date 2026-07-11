@@ -14,17 +14,21 @@ Singleton {
   property string previousLayout: ""
   property bool isInitialized: false
 
-  // Updates current layout from various format strings. Called by compositors
-  function setCurrentLayout(layoutString) {
+  // Updates current layout from various format strings. Called by compositors.
+  // fallbackCode: raw short code (e.g. "us", "ru") to use if display name can't be parsed
+  function setCurrentLayout(layoutString, fallbackCode) {
     root.fullLayoutName = layoutString || I18n.tr("common.unknown");
-    root.currentLayout = extractLayoutCode(layoutString);
+    root.currentLayout = extractLayoutCode(layoutString, fallbackCode);
   }
 
   // Extract layout code from various format strings
-  // Priority: variant > country code > language lookup > fallback
-  function extractLayoutCode(layoutString) {
-    if (!layoutString)
+  // Priority: variant > country code > language lookup > fallback code > unknown
+  function extractLayoutCode(layoutString, fallbackCode) {
+    if (!layoutString) {
+      if (fallbackCode)
+        return fallbackCode.toUpperCase();
       return I18n.tr("common.unknown");
+    }
 
     const str = layoutString.toLowerCase();
 
@@ -64,7 +68,12 @@ Singleton {
 
     // If nothing matches, try first 2-3 characters if they look like a code
     const codeMatch = str.match(/^([a-z]{2,3})/);
-    return codeMatch ? codeMatch[1].toUpperCase() : I18n.tr("common.unknown");
+    if (codeMatch)
+      return codeMatch[1].toUpperCase();
+    // Use raw short code from compositor as final fallback
+    if (fallbackCode)
+      return fallbackCode.toUpperCase();
+    return I18n.tr("common.unknown");
   }
 
   // Watch for layout changes and show toast
