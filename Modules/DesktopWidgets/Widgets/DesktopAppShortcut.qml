@@ -47,6 +47,9 @@ DraggableDesktopWidget {
         asynchronous: true
         sourceSize: Qt.size(width, height)
         fillMode: Image.PreserveAspectFit
+        layer.enabled: true
+        layer.smooth: true
+        layer.effect: NIconColorizeEffect {}
       }
 
       Text {
