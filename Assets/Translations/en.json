@@ -1104,7 +1104,15 @@
       "menu-section-description": "Customize which items appear when right-clicking on the desktop.",
       "menu-move-up": "Move up",
       "menu-move-down": "Move down",
-      "menu-add-item": "Add item"
+      "menu-add-item": "Add item",
+      "icon-colorize-title": "Icon colorize",
+      "icon-colorize-description": "Tint app shortcut icons toward the theme color.",
+      "icon-blend-strength-label": "Blend strength",
+      "icon-blend-strength-description": "How much of the effect to apply.",
+      "icon-hue-adjustment-label": "Hue adjustment",
+      "icon-hue-adjustment-description": "Shift the tint hue. Positive = clockwise, negative = counter-clockwise.",
+      "app-shortcut-icon-colorize-label": "Icon colorize",
+      "app-shortcut-icon-colorize-description": "Override global colorize settings for this widget."
     },
     "display": {
       "monitors-backlight-device-auto-option": "Default",

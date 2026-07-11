@@ -811,6 +811,8 @@ Singleton {
       property bool overviewEnabled: true
       property bool gridSnap: false
       property bool gridSnapScale: false
+      property real iconBlendStrength: 1.0
+      property real iconHueAdjustment: 0.0
       property list<var> monitorWidgets: []
       // Format: [{ "name": "DP-1", "widgets": [...] }, { "name": "HDMI-1", "widgets": [...] }]
     }
