@@ -191,62 +191,27 @@ ColumnLayout {
     }
   }
 
-  NDivider {
-    Layout.topMargin: Style.marginM
-    Layout.bottomMargin: Style.marginM
-  }
-
-  NHeader {
-    label: I18n.tr("panels.desktop-widgets.app-shortcut-icon-colorize-label")
-    description: I18n.tr("panels.desktop-widgets.app-shortcut-icon-colorize-description")
-  }
-
-  NValueSlider {
-    Layout.fillWidth: true
-    label: I18n.tr("panels.desktop-widgets.icon-blend-strength-label")
-    from: 0
-    to: 1
-    stepSize: 0.05
-    showReset: true
-    value: root.valueBlendStrength
-    defaultValue: Settings.data.desktopWidgets.iconBlendStrength
-    onMoved: v => {
+  AtmoWidgetAppearance {
+    blendStrength: root.valueBlendStrength
+    blendStrengthDefault: Settings.data.desktopWidgets.iconBlendStrength
+    onBlendStrengthChanged: v => {
       root.valueBlendStrength = v;
       save();
     }
-    text: Math.round(root.valueBlendStrength * 100) + "%"
-  }
 
-  NValueSlider {
-    Layout.fillWidth: true
-    label: I18n.tr("panels.desktop-widgets.icon-hue-adjustment-label")
-    from: -180
-    to: 180
-    stepSize: 5
-    showReset: true
-    value: root.valueHueAdjustment
-    defaultValue: Settings.data.desktopWidgets.iconHueAdjustment
-    onMoved: v => {
+    hueAdjustment: root.valueHueAdjustment
+    hueAdjustmentDefault: Settings.data.desktopWidgets.iconHueAdjustment
+    onHueAdjustmentChanged: v => {
       root.valueHueAdjustment = v;
       save();
     }
-    text: (root.valueHueAdjustment > 0 ? "+" : "") + root.valueHueAdjustment + "°"
-  }
 
-  NValueSlider {
-    Layout.fillWidth: true
-    label: I18n.tr("panels.desktop-widgets.widget-content-padding-label")
-    from: 0
-    to: 48
-    stepSize: 2
-    showReset: true
-    value: root.valueContentPadding
-    defaultValue: Settings.data.desktopWidgets.widgetContentPadding
-    onMoved: v => {
+    contentPadding: root.valueContentPadding
+    contentPaddingDefault: Settings.data.desktopWidgets.widgetContentPadding
+    onContentPaddingChanged: v => {
       root.valueContentPadding = v;
       save();
     }
-    text: Math.round(root.valueContentPadding) + "px"
   }
 
   function save() {

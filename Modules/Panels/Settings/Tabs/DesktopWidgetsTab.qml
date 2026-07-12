@@ -123,56 +123,18 @@ ColumnLayout {
 
   DesktopMenuSubTab {}
 
-  NDivider {
-    Layout.topMargin: Style.marginM
-    Layout.bottomMargin: Style.marginM
-  }
+  AtmoWidgetAppearance {
+    blendStrength: Settings.data.desktopWidgets.iconBlendStrength
+    blendStrengthDefault: 1.0
+    onBlendStrengthChanged: v => Settings.data.desktopWidgets.iconBlendStrength = v
 
-  NHeader {
-    label: I18n.tr("panels.desktop-widgets.icon-colorize-title")
-    description: I18n.tr("panels.desktop-widgets.icon-colorize-description")
-  }
+    hueAdjustment: Settings.data.desktopWidgets.iconHueAdjustment
+    hueAdjustmentDefault: 0.0
+    onHueAdjustmentChanged: v => Settings.data.desktopWidgets.iconHueAdjustment = v
 
-  NValueSlider {
-    Layout.fillWidth: true
-    label: I18n.tr("panels.desktop-widgets.icon-blend-strength-label")
-    description: I18n.tr("panels.desktop-widgets.icon-blend-strength-description")
-    from: 0
-    to: 1
-    stepSize: 0.05
-    showReset: true
-    value: Settings.data.desktopWidgets.iconBlendStrength
-    defaultValue: 1.0
-    onMoved: v => Settings.data.desktopWidgets.iconBlendStrength = v
-    text: Math.round(Settings.data.desktopWidgets.iconBlendStrength * 100) + "%"
-  }
-
-  NValueSlider {
-    Layout.fillWidth: true
-    label: I18n.tr("panels.desktop-widgets.icon-hue-adjustment-label")
-    description: I18n.tr("panels.desktop-widgets.icon-hue-adjustment-description")
-    from: -180
-    to: 180
-    stepSize: 5
-    showReset: true
-    value: Settings.data.desktopWidgets.iconHueAdjustment
-    defaultValue: 0.0
-    onMoved: v => Settings.data.desktopWidgets.iconHueAdjustment = v
-    text: (Settings.data.desktopWidgets.iconHueAdjustment > 0 ? "+" : "") + Settings.data.desktopWidgets.iconHueAdjustment + "°"
-  }
-
-  NValueSlider {
-    Layout.fillWidth: true
-    label: I18n.tr("panels.desktop-widgets.widget-content-padding-label")
-    description: I18n.tr("panels.desktop-widgets.widget-content-padding-description")
-    from: 0
-    to: 48
-    stepSize: 2
-    showReset: true
-    value: Settings.data.desktopWidgets.widgetContentPadding
-    defaultValue: 0.0
-    onMoved: v => Settings.data.desktopWidgets.widgetContentPadding = v
-    text: Math.round(Settings.data.desktopWidgets.widgetContentPadding) + "px"
+    contentPadding: Settings.data.desktopWidgets.widgetContentPadding
+    contentPaddingDefault: 0.0
+    onContentPaddingChanged: v => Settings.data.desktopWidgets.widgetContentPadding = v
   }
 
   // Shared Plugin Settings Popup
