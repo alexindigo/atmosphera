@@ -194,21 +194,21 @@ ColumnLayout {
   AtmoWidgetAppearance {
     blendStrength: root.valueBlendStrength
     blendStrengthDefault: Settings.data.desktopWidgets.iconBlendStrength
-    onBlendStrengthChanged: v => {
+    onBlendStrengthEdited: v => {
       root.valueBlendStrength = v;
       save();
     }
 
     hueAdjustment: root.valueHueAdjustment
     hueAdjustmentDefault: Settings.data.desktopWidgets.iconHueAdjustment
-    onHueAdjustmentChanged: v => {
+    onHueAdjustmentEdited: v => {
       root.valueHueAdjustment = v;
       save();
     }
 
     contentPadding: root.valueContentPadding
     contentPaddingDefault: Settings.data.desktopWidgets.widgetContentPadding
-    onContentPaddingChanged: v => {
+    onContentPaddingEdited: v => {
       root.valueContentPadding = v;
       save();
     }

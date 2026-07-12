@@ -126,15 +126,15 @@ ColumnLayout {
   AtmoWidgetAppearance {
     blendStrength: Settings.data.desktopWidgets.iconBlendStrength
     blendStrengthDefault: 1.0
-    onBlendStrengthChanged: v => Settings.data.desktopWidgets.iconBlendStrength = v
+    onBlendStrengthEdited: v => Settings.data.desktopWidgets.iconBlendStrength = v
 
     hueAdjustment: Settings.data.desktopWidgets.iconHueAdjustment
     hueAdjustmentDefault: 0.0
-    onHueAdjustmentChanged: v => Settings.data.desktopWidgets.iconHueAdjustment = v
+    onHueAdjustmentEdited: v => Settings.data.desktopWidgets.iconHueAdjustment = v
 
     contentPadding: Settings.data.desktopWidgets.widgetContentPadding
     contentPaddingDefault: 0.0
-    onContentPaddingChanged: v => Settings.data.desktopWidgets.widgetContentPadding = v
+    onContentPaddingEdited: v => Settings.data.desktopWidgets.widgetContentPadding = v
   }
 
   // Shared Plugin Settings Popup

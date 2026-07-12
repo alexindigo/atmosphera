@@ -16,10 +16,10 @@ ColumnLayout {
   property real contentPadding: 0.0
   property real contentPaddingDefault: 0.0
 
-  // Outbound signals
-  signal blendStrengthChanged(real value)
-  signal hueAdjustmentChanged(real value)
-  signal contentPaddingChanged(real value)
+  // Outbound signals (different names from auto-generated property change signals)
+  signal blendStrengthEdited(real value)
+  signal hueAdjustmentEdited(real value)
+  signal contentPaddingEdited(real value)
 
   NHeader {
     label: I18n.tr("panels.desktop-widgets.icon-colorize-title")
@@ -36,7 +36,7 @@ ColumnLayout {
     showReset: true
     value: root.blendStrength
     defaultValue: root.blendStrengthDefault
-    onMoved: v => root.blendStrengthChanged(v)
+    onMoved: v => root.blendStrengthEdited(v)
     text: Math.round(root.blendStrength * 100) + "%"
   }
 
@@ -50,7 +50,7 @@ ColumnLayout {
     showReset: true
     value: root.hueAdjustment
     defaultValue: root.hueAdjustmentDefault
-    onMoved: v => root.hueAdjustmentChanged(v)
+    onMoved: v => root.hueAdjustmentEdited(v)
     text: (root.hueAdjustment > 0 ? "+" : "") + root.hueAdjustment + "°"
   }
 
@@ -64,7 +64,7 @@ ColumnLayout {
     showReset: true
     value: root.contentPadding
     defaultValue: root.contentPaddingDefault
-    onMoved: v => root.contentPaddingChanged(v)
+    onMoved: v => root.contentPaddingEdited(v)
     text: Math.round(root.contentPadding) + "px"
   }
 }
