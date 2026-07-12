@@ -5,6 +5,7 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
+  Layout.fillWidth: true
   enabled: Settings.data.desktopWidgets.enabled
   spacing: Style.marginL
 
