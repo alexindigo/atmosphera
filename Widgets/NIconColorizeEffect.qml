@@ -6,14 +6,14 @@ ShaderEffect {
   id: root
 
   // Named mode constants
-  readonly property int ModeDock: 0
-  readonly property int ModeTray: 1
-  readonly property int ModeDistro: 2
-  readonly property int ModeHueReplace: 3
+  readonly property int modeDock: 0
+  readonly property int modeTray: 1
+  readonly property int modeDistro: 2
+  readonly property int modeHueReplace: 3
 
   // Shader controls
   property color targetColor: Color.mPrimary
-  property real colorizeMode: root.ModeHueReplace
+  property real colorizeMode: root.modeHueReplace
   property real blendStrength: 1.0
   property real hueAdjustment: 0.0
 
