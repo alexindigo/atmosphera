@@ -5,6 +5,7 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
+  Layout.fillWidth: true
   spacing: Style.marginL
 
   // Inbound values
