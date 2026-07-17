@@ -15,12 +15,15 @@ Singleton {
   readonly property var primaryDevice: _laptopBattery || _bluetoothBattery || null // Primary battery device (prioritizes laptop over Bluetooth)
   readonly property real batteryPercentage: getPercentage(primaryDevice)
   readonly property bool batteryCharging: isCharging(primaryDevice)
+  readonly property bool batteryCharged: isCharged(primaryDevice)
   readonly property bool batteryPluggedIn: isPluggedIn(primaryDevice)
+  readonly property bool batteryUnderpowered: isUnderpowered(primaryDevice)
   readonly property bool batteryReady: isDeviceReady(primaryDevice)
   readonly property bool batteryPresent: isDevicePresent(primaryDevice)
   readonly property real warningThreshold: Settings.data.systemMonitor.batteryWarningThreshold
   readonly property real criticalThreshold: Settings.data.systemMonitor.batteryCriticalThreshold
   readonly property string batteryIcon: getIcon(batteryPercentage, batteryCharging, batteryPluggedIn, batteryReady)
+  readonly property string batteryStatus: getStatusText(primaryDevice)
 
   readonly property var laptopBatteries: UPower.devices.values.filter(d => d.isLaptopBattery).sort((x, y) => {
     // Force DisplayDevice to the top
@@ -145,10 +148,9 @@ Singleton {
     return false;
   }
 
-  function isPluggedIn(device) {
+  function isCharged(device) {
     if (!device || isBluetoothDevice(device)) {
-      // Tracking bluetooth devices can charge or not is a loop hole, none of my devices has it, even if it possible?!
-      return false;  // Assuming not charging until someone/quickshell brings a way to do pretty unlikely.
+      return false;
     }
     if (device.state !== undefined) {
       return device.state === UPowerDeviceState.FullyCharged || device.state === UPowerDeviceState.PendingCharge;
@@ -156,12 +158,25 @@ Singleton {
     return false;
   }
 
+  // AC line power is online — covers all plugged-in states (charging, underpowered, settled)
+  function isPluggedIn(device) {
+    if (!device || isBluetoothDevice(device)) {
+      return false;
+    }
+    return !UPower.onBattery;
+  }
+
+  // AC is connected but the battery is still discharging (not keeping up with draw).
+  function isUnderpowered(device) {
+    return isPluggedIn(device) && !isCharged(device) && !isCharging(device);
+  }
+
   function isCriticalBattery(device) {
-    return (!isCharging(device) && !isPluggedIn(device)) && getPercentage(device) <= criticalThreshold;
+    return !isCharging(device) && getPercentage(device) <= criticalThreshold;
   }
 
   function isLowBattery(device) {
-    return (!isCharging(device) && !isPluggedIn(device)) && getPercentage(device) <= warningThreshold && getPercentage(device) > criticalThreshold;
+    return !isCharging(device) && getPercentage(device) <= warningThreshold && getPercentage(device) > criticalThreshold;
   }
 
   function isBluetoothDevice(device) {
@@ -270,7 +285,7 @@ Singleton {
     if (!isDeviceReady(device)) {
       return I18n.tr("battery.no-battery-detected");
     }
-    if (isPluggedIn(device)) {
+    if (isCharged(device)) {
       return I18n.tr("battery.plugged-in");
     } else if (device.timeToFull > 0) {
       return I18n.tr("battery.time-until-full", {
@@ -282,6 +297,22 @@ Singleton {
                      });
     }
     return I18n.tr("common.idle");
+  }
+
+  function getStatusText(device) {
+    if (!isDeviceReady(device)) {
+      return "";
+    }
+    if (isCharging(device)) {
+      return I18n.tr("battery.charging");
+    }
+    if (isCharged(device)) {
+      return I18n.tr("battery.fully-charged");
+    }
+    if (isUnderpowered(device)) {
+      return I18n.tr("battery.not-charging");
+    }
+    return I18n.tr("battery.on-battery");
   }
 
   function checkDevice(device) {
@@ -302,7 +333,7 @@ Singleton {
       };
     }
 
-    if (charging || pluggedIn) {
+    if (charging || isCharged(device)) {
       _hasNotified[deviceKey].low = false;
       _hasNotified[deviceKey].critical = false;
     }

@@ -49,12 +49,14 @@ Item {
   readonly property bool isPresent: BatteryService.isDevicePresent(selectedDevice)
   readonly property real percent: isReady ? BatteryService.getPercentage(selectedDevice) : -1
   readonly property bool isCharging: isReady ? BatteryService.isCharging(selectedDevice) : false
+  readonly property bool isCharged: isReady ? BatteryService.isCharged(selectedDevice) : false
   readonly property bool isPluggedIn: isReady ? BatteryService.isPluggedIn(selectedDevice) : false
+  readonly property bool isUnderpowered: isReady ? BatteryService.isUnderpowered(selectedDevice) : false
   readonly property bool isLowBattery: isReady ? BatteryService.isLowBattery(selectedDevice) : false
   readonly property bool isCriticalBattery: isReady ? BatteryService.isCriticalBattery(selectedDevice) : false
 
   // Visibility: show if hideIfNotDetected is false, or if battery is ready
-  readonly property bool shouldShow: !hideIfNotDetected || (isReady && (hideIfIdle ? !isPluggedIn : true))
+  readonly property bool shouldShow: !hideIfNotDetected || (isReady && (hideIfIdle ? !isCharged : true))
   readonly property string deviceNativePath: widgetSettings.deviceNativePath !== undefined ? widgetSettings.deviceNativePath : widgetMetadata.deviceNativePath
   readonly property var selectedDevice: BatteryService.isDevicePresent(BatteryService.findDevice(deviceNativePath)) ? BatteryService.findDevice(deviceNativePath) : null
 
@@ -69,6 +71,16 @@ Item {
       // Show charge percentage
       rows.push([I18n.tr("battery.battery-level"), `${percent}%`]);
 
+      if (isUnderpowered) {
+        rows.push([I18n.tr("battery.status"), I18n.tr("battery.not-charging")]);
+      } else if (isCharging) {
+        rows.push([I18n.tr("battery.status"), I18n.tr("battery.charging")]);
+      } else if (isCharged) {
+        rows.push([I18n.tr("battery.status"), I18n.tr("battery.fully-charged")]);
+      } else {
+        rows.push([I18n.tr("battery.status"), I18n.tr("battery.on-battery")]);
+      }
+
       let timeText = BatteryService.getTimeRemainingText(selectedDevice);
       if (timeText) {
         const colonIdx = timeText.indexOf(":");
@@ -80,7 +92,7 @@ Item {
       }
 
       let rateText = BatteryService.getRateText(selectedDevice);
-      if (!isPluggedIn && rateText) {
+      if (!isCharged && rateText) {
         const colonIdx = rateText.indexOf(":");
         if (colonIdx >= 0) {
           rows.push([rateText.substring(0, colonIdx).trim(), rateText.substring(colonIdx + 1).trim()]);
@@ -180,6 +192,7 @@ Item {
     ready: root.isReady
     charging: root.isCharging
     pluggedIn: root.isPluggedIn
+    charged: root.isCharged
     low: root.isLowBattery
     critical: root.isCriticalBattery
     baseColor: graphicMouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface
