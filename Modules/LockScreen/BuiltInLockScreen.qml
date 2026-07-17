@@ -22,7 +22,7 @@ Item {
     property bool isReady: BatteryService.batteryReady
     property real percent: BatteryService.batteryPercentage
     property bool charging: BatteryService.batteryCharging
-    property bool pluggedIn: BatteryService.batteryPluggedIn
+    property bool pluggedIn: BatteryService.batteryCharged
     property bool batteryVisible: isReady
     property string icon: BatteryService.batteryIcon
   }

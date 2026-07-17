@@ -11,6 +11,7 @@ Item {
   required property real percentage
   required property bool charging
   required property bool pluggedIn
+  required property bool charged
   required property bool ready
   required property bool low
   required property bool critical
@@ -28,19 +29,27 @@ Item {
   property bool showPercentageText: true
   property bool vertical: false
 
-  // Alternating state icon display (toggles between percentage and icon when charging)
+  // Alternating state icon display (toggles between percentage and icon when charging/underpowered)
   property bool showStateIcon: false
 
-  onChargingChanged: {
-    if (!charging)
-      showStateIcon = false;
-  }
+  // Override percentage visibility when critical — user always needs to see the number
+  readonly property bool effectiveShowPercent: root.critical || root.showPercentageText
+
+  // Charge is actively moving — cable in, battery not settled: show bolt or plug ↔ percentage
+  readonly property bool isMoving: pluggedIn && !charged
+
+  onChargingChanged: if (!root.isMoving)
+                       root.showStateIcon = false
+  onPluggedInChanged: if (!root.isMoving)
+                        root.showStateIcon = false
+  onChargedChanged: if (!root.isMoving)
+                      root.showStateIcon = false
 
   // Internal sizing calculations based on baseSize
   readonly property real scaleFactor: baseSize / Style.fontSizeM
   readonly property real bodyWidth: {
     const min = Style.toOdd(22 * scaleFactor);
-    if (!showPercentageText) {
+    if (!effectiveShowPercent) {
       return min;
     }
 
@@ -75,10 +84,10 @@ Item {
     return baseColor;
   }
 
-  // Background color for empty portion (semi-transparent)
-  readonly property color emptyColor: Qt.alpha(baseColor, 0.66)
+  // Background color for empty portion (semi-transparent, red-tinted when critical)
+  readonly property color emptyColor: root.critical ? Qt.alpha(root.lowColor, 0.66) : Qt.alpha(baseColor, 0.66)
 
-  // State icon logic
+  // State icon logic — bolt when charging, plug when cable connected, nothing otherwise
   readonly property string stateIcon: {
     if (!ready)
       return "close";
@@ -100,12 +109,12 @@ Item {
     }
   }
 
-  // Timer to alternate between percentage text and state icon when charging/plugged
+  // Timer to alternate between percentage text and state icon when charge is moving
   Timer {
     id: alternateTimer
     interval: 4000
     repeat: true
-    running: root.charging && root.showPercentageText
+    running: root.isMoving && root.effectiveShowPercent
     onTriggered: root.showStateIcon = !root.showStateIcon
   }
 
@@ -144,14 +153,14 @@ Item {
       color: root.critical ? root.lowColor : root.emptyColor
     }
 
-    // Fill level
+    // Fill level — always honest percentage, no critical-force-to-full
     Rectangle {
       id: fillRect
-      visible: root.ready && (root.animatedPercentage > 0 || root.critical)
+      visible: root.ready && root.animatedPercentage > 0
       x: 0
-      y: root.vertical ? root.terminalWidth + root.bodyWidth * (1 - (root.critical ? 1 : root.animatedPercentage / 100)) : 0
-      width: root.vertical ? root.bodyHeight : root.bodyWidth * (root.critical ? 1 : root.animatedPercentage / 100)
-      height: root.vertical ? root.bodyWidth * (root.critical ? 1 : root.animatedPercentage / 100) : root.bodyHeight
+      y: root.vertical ? root.terminalWidth + root.bodyWidth * (1 - root.animatedPercentage / 100) : 0
+      width: root.vertical ? root.bodyHeight : root.bodyWidth * root.animatedPercentage / 100
+      height: root.vertical ? root.bodyWidth * root.animatedPercentage / 100 : root.bodyHeight
       radius: root.cornerRadius
       color: root.activeColor
     }
@@ -161,7 +170,7 @@ Item {
   NText {
     id: percentageText
     visible: opacity > 0
-    opacity: root.showPercentageText && root.ready && (root.charging ? !root.showStateIcon : !root.pluggedIn) ? 1 : 0
+    opacity: root.effectiveShowPercent && root.ready && (root.isMoving ? !root.showStateIcon : !root.pluggedIn) ? 1 : 0
     x: batteryBody.x + Style.pixelAlignCenter(bodyBackground.width, width)
     y: batteryBody.y + bodyBackground.y + Style.pixelAlignCenter(bodyBackground.height, height)
     font.family: Settings.data.ui.fontFixed
@@ -187,7 +196,7 @@ Item {
   NIcon {
     id: stateIconOverlay
     visible: opacity > 0
-    opacity: !root.ready || (root.charging ? (root.showStateIcon || !root.showPercentageText) : root.pluggedIn) ? 1 : 0
+    opacity: !root.ready || (root.isMoving ? (root.showStateIcon || !root.effectiveShowPercent) : root.pluggedIn) ? 1 : 0
     x: batteryBody.x + Style.pixelAlignCenter(bodyBackground.width, width)
     y: batteryBody.y + bodyBackground.y + Style.pixelAlignCenter(bodyBackground.height, height)
     icon: root.stateIcon

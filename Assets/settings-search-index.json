@@ -874,30 +874,6 @@
     "subTab": null
   },
   {
-    "labelKey": "panels.desktop-widgets.icon-blend-strength-label",
-    "descriptionKey": "panels.desktop-widgets.icon-blend-strength-description",
-    "widget": "NValueSlider",
-    "tab": 6,
-    "tabLabel": "panels.desktop-widgets.title",
-    "subTab": null
-  },
-  {
-    "labelKey": "panels.desktop-widgets.icon-hue-adjustment-label",
-    "descriptionKey": "panels.desktop-widgets.icon-hue-adjustment-description",
-    "widget": "NValueSlider",
-    "tab": 6,
-    "tabLabel": "panels.desktop-widgets.title",
-    "subTab": null
-  },
-  {
-    "labelKey": "panels.desktop-widgets.widget-content-padding-label",
-    "descriptionKey": "panels.desktop-widgets.widget-content-padding-description",
-    "widget": "NValueSlider",
-    "tab": 6,
-    "tabLabel": "panels.desktop-widgets.title",
-    "subTab": null
-  },
-  {
     "labelKey": "panels.display.monitors-backlight-device-label",
     "descriptionKey": "panels.display.monitors-backlight-device-description",
     "widget": "NComboBox",
