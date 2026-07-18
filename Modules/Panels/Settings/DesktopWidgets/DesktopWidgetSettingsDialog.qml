@@ -17,6 +17,12 @@ Popup {
   property string sectionId: "" // Not used for desktop widgets, but required by NSectionEditor
   property var screen: null
   property var settingsCache: ({})
+  // Optional anchor rect — if set, dialog positions itself beside this rect
+  // (so it doesn't cover the widget being edited).
+  property real anchorX: -1
+  property real anchorY: -1
+  property real anchorW: 0
+  property real anchorH: 0
 
   readonly property real maxHeight: (screen ? screen.height : (parent ? parent.height : 800)) * 0.8
 
@@ -29,9 +35,76 @@ Popup {
   closePolicy: Popup.NoAutoClose
   dim: false
 
-  // Center in parent
-  x: Math.round((parent.width - width) / 2)
-  y: Math.round((parent.height - height) / 2)
+  // Position: if anchor rect is set, place beside the widget without covering it.
+  // Try right → left → above → below → clamped fallback.
+  readonly property real _parentW: parent ? parent.width : 0
+  readonly property real _parentH: parent ? parent.height : 0
+  readonly property real _gap: Style.marginM
+
+  // Preferred candidate positions computed once per size/anchor change
+  readonly property var _positioned: {
+    if (root.anchorX < 0) {
+      // No anchor — center in parent
+      return {
+        "x": Math.round((_parentW - width) / 2),
+        "y": Math.round((_parentH - height) / 2)
+      };
+    }
+
+    var minX = Style.marginM;
+    var maxX = _parentW - width - Style.marginM;
+    var minY = Style.marginM;
+    var maxY = _parentH - height - Style.marginM;
+
+    // Try right of widget
+    var rx = root.anchorX + root.anchorW + _gap;
+    if (rx + width <= _parentW - Style.marginM) {
+      var ry = Math.max(minY, Math.min(root.anchorY, maxY));
+      return {
+        "x": rx,
+        "y": ry
+      };
+    }
+
+    // Try left of widget
+    var lx = root.anchorX - width - _gap;
+    if (lx >= Style.marginM) {
+      var ly = Math.max(minY, Math.min(root.anchorY, maxY));
+      return {
+        "x": lx,
+        "y": ly
+      };
+    }
+
+    // Try below widget
+    var by = root.anchorY + root.anchorH + _gap;
+    if (by + height <= _parentH - Style.marginM) {
+      var bx = Math.max(minX, Math.min(root.anchorX, maxX));
+      return {
+        "x": bx,
+        "y": by
+      };
+    }
+
+    // Try above widget
+    var ay = root.anchorY - height - _gap;
+    if (ay >= Style.marginM) {
+      var ax = Math.max(minX, Math.min(root.anchorX, maxX));
+      return {
+        "x": ax,
+        "y": ay
+      };
+    }
+
+    // Fallback — no space to avoid covering. Clamp on-screen.
+    return {
+      "x": Math.max(minX, Math.min(root.anchorX, maxX)),
+      "y": Math.max(minY, Math.min(root.anchorY, maxY))
+    };
+  }
+
+  x: _positioned.x
+  y: _positioned.y
 
   onOpened: {
     if (widgetData && widgetId) {
@@ -101,9 +174,10 @@ Popup {
           Loader {
             id: settingsLoader
             Layout.fillWidth: true
+            Layout.preferredWidth: 500
             onStatusChanged: {
               if (status === Loader.Error) {
-                Logger.e("DesktopWidgetSettingsDialog", "Settings loader error:", errorString(), "source:", source);
+                Logger.e("DesktopWidgetSettingsDialog", "Settings loader error:", settingsLoader.errorString(), "source:", source);
               } else if (status === Loader.Ready) {
                 Logger.d("DesktopWidgetSettingsDialog", "Settings loader ready:", source);
               }
