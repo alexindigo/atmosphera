@@ -76,6 +76,42 @@ Variants {
         Logger.d("DesktopWidgets", "Created panel window for", screen?.name);
       }
 
+      // Compute the grid size for the current screen — matches the formula in
+      // DraggableDesktopWidget so creation snap aligns with edit-mode snap.
+      // TODO: Extract into a shared helper (DesktopWidgetRegistry.gridSizeForScreen()).
+      function _gridSizeForScreen() {
+        if (!window.screen)
+          return 30;
+        var baseSize = Math.round(window.screen.width * 0.015);
+        baseSize = Math.max(20, Math.min(60, baseSize));
+        var centerX = window.screen.width / 2;
+        var centerY = window.screen.height / 2;
+        var bestSize = baseSize;
+        var bestDistance = Infinity;
+        for (var offset = -10; offset <= 10; offset++) {
+          var candidate = baseSize + offset;
+          if (candidate < 20 || candidate > 60)
+            continue;
+          var remainderX = centerX % candidate;
+          var remainderY = centerY % candidate;
+          if (remainderX === 0 && remainderY === 0)
+            return candidate;
+          var distance = Math.abs(remainderX) + Math.abs(remainderY);
+          if (distance < bestDistance) {
+            bestDistance = distance;
+            bestSize = candidate;
+          }
+        }
+        return bestSize;
+      }
+
+      function _snapToGrid(coord) {
+        if (!Settings.data.desktopWidgets.gridSnap)
+          return coord;
+        var g = _gridSizeForScreen();
+        return Math.round(coord / g) * g;
+      }
+
       // Add a new widget to the current screen
       function addWidgetToCurrentScreen(widgetId, x, y) {
         var monitorName = window.screen.name;
@@ -95,9 +131,40 @@ Variants {
         newWidget.showBackground = true;
         newWidget.roundedCorners = true;
 
-        // Place at click position or screen center
-        newWidget.x = x !== undefined ? x - 50 : (window.screen.width / 2) - 100;
-        newWidget.y = y !== undefined ? y - 50 : (window.screen.height / 2) - 100;
+        // Widget's approximate on-screen footprint (AppShortcut default: 80×108 with label)
+        var widgetW = 80;
+        var widgetH = 108;
+
+        // Place centered on click position, or at screen center as fallback
+        var newX = x !== undefined ? x - widgetW / 2 : (window.screen.width / 2) - widgetW / 2;
+        var newY = y !== undefined ? y - widgetH / 2 : (window.screen.height / 2) - widgetH / 2;
+
+        // Clamp fully on-screen first (widget edges within screen)
+        if (window.screen) {
+          newX = Math.max(0, Math.min(newX, window.screen.width - widgetW));
+          newY = Math.max(0, Math.min(newY, window.screen.height - widgetH));
+        }
+
+        // Then snap to grid (if enabled), then re-clamp so snap doesn't push off-screen
+        if (Settings.data.desktopWidgets.gridSnap) {
+          newX = _snapToGrid(newX);
+          newY = _snapToGrid(newY);
+          if (window.screen) {
+            var g = _gridSizeForScreen();
+            // If snapping pushed us off, step back one grid cell
+            if (newX + widgetW > window.screen.width)
+              newX = Math.floor((window.screen.width - widgetW) / g) * g;
+            if (newX < 0)
+              newX = 0;
+            if (newY + widgetH > window.screen.height)
+              newY = Math.floor((window.screen.height - widgetH) / g) * g;
+            if (newY < 0)
+              newY = 0;
+          }
+        }
+
+        newWidget.x = newX;
+        newWidget.y = newY;
         newWidget.scale = 1.0;
 
         // Get current widgets and add new one
@@ -171,7 +238,29 @@ Variants {
             for (var i = 0; i < monitorWidgets.length; i++) {
               if (monitorWidgets[i].name === window.screen.name) {
                 var widgets = monitorWidgets[i].widgets || [];
-                DesktopWidgetRegistry.openWidgetSettings(window.screen, widgets.length - 1, "AppShortcut", widgetData);
+                var idx = widgets.length - 1;
+                DesktopWidgetRegistry.openWidgetSettings(window.screen, idx, "AppShortcut", widgetData, function (scrn, wi, wid) {
+                  // Auto-delete the widget if no app was assigned
+                  if (wid !== "AppShortcut")
+                    return;
+                  var monitors = Settings.data.desktopWidgets.monitorWidgets || [];
+                  for (var m = 0; m < monitors.length; m++) {
+                    if (monitors[m].name === scrn.name) {
+                      var wList = monitors[m].widgets || [];
+                      if (wi >= 0 && wi < wList.length && (!wList[wi].appId || wList[wi].appId === "")) {
+                        var newList = wList.slice();
+                        newList.splice(wi, 1);
+                        var newMonitors = monitors.slice();
+                        newMonitors[m] = {
+                          "name": scrn.name,
+                          "widgets": newList
+                        };
+                        Settings.data.desktopWidgets.monitorWidgets = newMonitors;
+                      }
+                      break;
+                    }
+                  }
+                }, widgetData.x, widgetData.y, 80, 108);
                 break;
               }
             }

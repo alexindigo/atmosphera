@@ -224,7 +224,8 @@ Item {
   }
 
   function openWidgetSettings() {
-    DesktopWidgetRegistry.openWidgetSettings(screen, widgetIndex, widgetData.id, widgetData);
+    // Pass current on-screen rect so dialog can position itself beside the widget
+    DesktopWidgetRegistry.openWidgetSettings(screen, widgetIndex, widgetData.id, widgetData, undefined, root.x, root.y, root.width, root.height);
   }
 
   function handleContextMenuAction(action) {
