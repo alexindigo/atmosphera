@@ -1,0 +1,14 @@
+{
+  "com.mitchellh.ghostty": { "name": "Ghostty", "exec": "ghostty", "runArgs": ["-e"] },
+  "Alacritty":             { "name": "Alacritty", "exec": "alacritty", "runArgs": ["-e"] },
+  "kitty":                 { "name": "kitty", "exec": "kitty", "runArgs": [] },
+  "org.wezfurlong.wezterm":{ "name": "WezTerm", "exec": "wezterm", "runArgs": ["start", "--"] },
+  "org.gnome.Terminal":    { "name": "GNOME Terminal", "exec": "gnome-terminal", "runArgs": ["--"] },
+  "foot":                  { "name": "foot", "exec": "foot", "runArgs": ["-e"] },
+  "org.kde.konsole":       { "name": "Konsole", "exec": "konsole", "runArgs": ["-e"] },
+  "xterm":                 { "name": "xterm", "exec": "xterm", "runArgs": ["-e"] },
+  "urxvt":                 { "name": "URxvt", "exec": "urxvt", "runArgs": ["-e"] },
+  "st":                    { "name": "st", "exec": "st", "runArgs": ["-e"] },
+  "lxterminal":            { "name": "LXTerminal", "exec": "lxterminal", "runArgs": ["-e"] },
+  "xfce4-terminal":        { "name": "Xfce Terminal", "exec": "xfce4-terminal", "runArgs": ["-e"] }
+}

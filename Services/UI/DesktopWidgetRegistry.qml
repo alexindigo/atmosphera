@@ -121,9 +121,12 @@ Singleton {
                                     "roundedCorners": true,
                                     "appId": "",
                                     "customLabel": "",
-                                    "showLabel": true,
-                                    "singleClick": false,
-                                    "environmentVars": []
+                                    "showLabel": false,
+                                    "singleClick": true,
+                                    "environmentVars": [],
+                                    "params": [],
+                                    "iconSource": "",
+                                    "iconType": "auto"
                                   }
                                 })
 
@@ -276,7 +279,7 @@ Singleton {
 
   property var currentSettingsDialog: null
 
-  function openWidgetSettings(screen, widgetIndex, widgetId, widgetData) {
+  function openWidgetSettings(screen, widgetIndex, widgetId, widgetData, onCloseCallback, anchorX, anchorY, anchorW, anchorH) {
     if (!widgetId || !screen) {
       return;
     }
@@ -316,13 +319,20 @@ Singleton {
     var component = Qt.createComponent(Quickshell.shellDir + "/Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml");
 
     function instantiateAndOpen() {
-      var dialog = component.createObject(popupMenuWindow.dialogParent, {
-                                            "widgetIndex": widgetIndex,
-                                            "widgetData": widgetData,
-                                            "widgetId": widgetId,
-                                            "sectionId": screen.name,
-                                            "screen": screen
-                                          });
+      var dialogProps = {
+        "widgetIndex": widgetIndex,
+        "widgetData": widgetData,
+        "widgetId": widgetId,
+        "sectionId": screen.name,
+        "screen": screen
+      };
+      if (anchorX !== undefined && anchorX >= 0) {
+        dialogProps.anchorX = anchorX;
+        dialogProps.anchorY = anchorY !== undefined ? anchorY : 0;
+        dialogProps.anchorW = anchorW !== undefined ? anchorW : 0;
+        dialogProps.anchorH = anchorH !== undefined ? anchorH : 0;
+      }
+      var dialog = component.createObject(popupMenuWindow.dialogParent, dialogProps);
 
       if (dialog) {
         root.currentSettingsDialog = dialog;
@@ -337,6 +347,11 @@ Singleton {
             root.currentSettingsDialog = null;
           }
           dialog.destroy();
+
+          // Optional close callback — used for post-dismiss cleanup (e.g. delete empty widget)
+          if (typeof onCloseCallback === "function") {
+            onCloseCallback(screen, widgetIndex, widgetId);
+          }
         });
         dialog.open();
       } else {

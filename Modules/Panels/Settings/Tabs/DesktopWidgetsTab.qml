@@ -56,6 +56,13 @@ ColumnLayout {
 
     NButton {
       Layout.fillWidth: true
+      text: I18n.tr("panels.desktop-widgets.add-app-shortcut-button")
+      icon: Icon.add
+      onClicked: _createAndEditAppShortcut()
+    }
+
+    NButton {
+      Layout.fillWidth: true
       Layout.topMargin: Style.marginM
       Layout.bottomMargin: Style.marginM
       text: DesktopWidgetRegistry.editMode ? I18n.tr("panels.desktop-widgets.edit-mode-exit-button") : I18n.tr("panels.desktop-widgets.edit-mode-button-label")
@@ -350,5 +357,94 @@ ColumnLayout {
     // Update both monitors
     setWidgetsForMonitor(fromMonitor, newSourceWidgets);
     setWidgetsForMonitor(toMonitor, destWidgets);
+  }
+
+  function _createAndEditAppShortcut() {
+    // Add a new AppShortcut widget at screen center, then open its settings
+    var monitorName = "";
+    var firstScreen = Quickshell.screens && Quickshell.screens[0];
+    if (firstScreen && firstScreen.name) {
+      monitorName = firstScreen.name;
+    }
+    if (!monitorName) {
+      Logger.w("DesktopWidgetsTab", "No screen available to create app shortcut");
+      return;
+    }
+
+    var newWidget = {
+      "id": "AppShortcut"
+    };
+    var metadata = DesktopWidgetRegistry.widgetMetadata["AppShortcut"];
+    if (metadata) {
+      Object.keys(metadata).forEach(function (key) {
+        newWidget[key] = metadata[key];
+      });
+    }
+    newWidget.x = firstScreen ? Math.round(firstScreen.width / 2) - 50 : 100;
+    newWidget.y = firstScreen ? Math.round(firstScreen.height / 2) - 50 : 100;
+    newWidget.scale = 1.0;
+    newWidget.showBackground = true;
+    newWidget.roundedCorners = true;
+
+    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
+    var newMonitorWidgets = monitorWidgets.slice();
+    var found = false;
+
+    for (var i = 0; i < newMonitorWidgets.length; i++) {
+      if (newMonitorWidgets[i].name === monitorName) {
+        var widgets = (newMonitorWidgets[i].widgets || []).slice();
+        widgets.push(newWidget);
+        newMonitorWidgets[i] = {
+          "name": monitorName,
+          "widgets": widgets
+        };
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      newMonitorWidgets.push({
+                               "name": monitorName,
+                               "widgets": [newWidget]
+                             });
+    }
+
+    Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
+    Logger.i("DesktopWidgetsTab", "Created AppShortcut on", monitorName);
+
+    // Open settings dialog for the new widget
+    if (firstScreen) {
+      DesktopWidgetRegistry.openWidgetSettings(firstScreen, newWidgetsCount(monitorName, newMonitorWidgets), "AppShortcut", newWidget, function (scrn, wi, wid) {
+        if (wid !== "AppShortcut")
+          return;
+        var monitors = Settings.data.desktopWidgets.monitorWidgets || [];
+        for (var m = 0; m < monitors.length; m++) {
+          if (monitors[m].name === scrn.name) {
+            var wList = monitors[m].widgets || [];
+            if (wi >= 0 && wi < wList.length && (!wList[wi].appId || wList[wi].appId === "")) {
+              var newList = wList.slice();
+              newList.splice(wi, 1);
+              var newMonitors = monitors.slice();
+              newMonitors[m] = {
+                "name": scrn.name,
+                "widgets": newList
+              };
+              Settings.data.desktopWidgets.monitorWidgets = newMonitors;
+            }
+            break;
+          }
+        }
+      });
+    }
+  }
+
+  function newWidgetsCount(monitorName, monitors) {
+    for (var i = 0; i < monitors.length; i++) {
+      if (monitors[i].name === monitorName) {
+        return (monitors[i].widgets || []).length - 1;
+      }
+    }
+    return 0;
   }
 }

@@ -103,6 +103,7 @@ ShellRoot {
         AppThemeService.init();
         ColorSchemeService.init();
         DarkModeService.init();
+        TerminalRegistry.init();
 
         // Defer non-critical services to unblock first frame
         Qt.callLater(function () {
