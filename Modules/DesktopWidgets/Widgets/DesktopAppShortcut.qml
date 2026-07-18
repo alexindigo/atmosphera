@@ -19,7 +19,26 @@ DraggableDesktopWidget {
   readonly property real _hueAdjustment: widgetData?.hueAdjustment ?? Settings.data.desktopWidgets.iconHueAdjustment
 
   readonly property var _entry: appId ? ThemeIcons.findAppEntry(appId) : null
-  readonly property string _displayLabel: customLabel || (_entry ? _entry.name : "")
+  readonly property string _displayLabel: customLabel || (_entry ? _entry.name : appId)
+
+  // Icon source: auto → derive from appId, theme/file → use stored source
+  readonly property string _iconSource: {
+    var iconType = (widgetData && widgetData.iconType) || "auto";
+    var iconSrc = (widgetData && widgetData.iconSource) || "";
+    if (iconType === "file" && iconSrc)
+      return "file://" + iconSrc;
+    if (iconType === "icons" && iconSrc)
+      return "file://" + iconSrc;
+    if (iconType === "theme" && iconSrc)
+      return ThemeIcons.iconFromName(iconSrc);
+    // auto / fallback
+    if (appId)
+      return ThemeIcons.iconForAppId(appId);
+    return "";
+  }
+
+  // Extra params from widget data (e.g. ["-e", "neomutt"] or ["--xwayland"])
+  readonly property var _params: (widgetData && widgetData.params) || []
 
   implicitWidth: 80 * widgetScale
   implicitHeight: (showLabel ? 108 : 80) * widgetScale
@@ -44,7 +63,7 @@ DraggableDesktopWidget {
         Layout.alignment: Qt.AlignHCenter
         Layout.preferredWidth: 64 * root.widgetScale
         Layout.preferredHeight: 64 * root.widgetScale
-        source: root._entry ? ThemeIcons.iconForAppId(root.appId) : ""
+        source: root._iconSource
         smooth: true
         asynchronous: true
         sourceSize: Qt.size(width, height)
@@ -74,7 +93,7 @@ DraggableDesktopWidget {
       id: pressArea
       anchors.fill: parent
       cursorShape: Qt.PointingHandCursor
-      enabled: !DesktopWidgetRegistry.editMode && root._entry !== null
+      enabled: !DesktopWidgetRegistry.editMode && root.appId !== ""
       onClicked: if (root.singleClick)
                    root.launch()
       onDoubleClicked: root.launch()
@@ -86,12 +105,20 @@ DraggableDesktopWidget {
   }
 
   function launch() {
-    if (!_entry)
+    if (!appId)
       return;
 
     var envVars = (widgetData && widgetData.environmentVars) || [];
+    var params = root._params;
+    var baseCmd = (_entry && _entry.command) || [];
 
-    if (_entry.command && _entry.command.length > 0) {
+    // Build the full command: entry.command + params
+    var fullCmd = baseCmd.slice();
+    for (var i = 0; i < params.length; i++) {
+      fullCmd.push(String(params[i]));
+    }
+
+    if (fullCmd.length > 0) {
       if (envVars.length > 0) {
         var envParts = [];
         for (var i = 0; i < envVars.length; i++) {
@@ -103,18 +130,18 @@ DraggableDesktopWidget {
 
         if (envParts.length > 0) {
           var cmdParts = [];
-          for (var j = 0; j < _entry.command.length; j++) {
-            var c = _entry.command[j];
+          for (var j = 0; j < fullCmd.length; j++) {
+            var c = fullCmd[j];
             cmdParts.push(c.includes(" ") ? _shellQuote(c) : c);
           }
           CompositorService.spawn(["sh", "-c", "env " + envParts.join(" ") + " " + cmdParts.join(" ")]);
         } else {
-          CompositorService.spawn(_entry.command);
+          CompositorService.spawn(fullCmd);
         }
       } else {
-        CompositorService.spawn(_entry.command);
+        CompositorService.spawn(fullCmd);
       }
-    } else if (_entry.execute) {
+    } else if (_entry && _entry.execute) {
       _entry.execute();
     }
   }
