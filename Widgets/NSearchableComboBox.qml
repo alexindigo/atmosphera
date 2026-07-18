@@ -4,7 +4,7 @@ import QtQuick.Layouts
 import qs.Commons
 import qs.Widgets
 
-RowLayout {
+GridLayout {
   id: root
 
   property real minimumWidth: 280
@@ -13,6 +13,7 @@ RowLayout {
   property bool selectOnNavigation: true
   property string label: ""
   property string description: ""
+  property bool stacked: false
   property ListModel model: {}
   property string currentKey: ""
   property string placeholder: ""
@@ -25,7 +26,10 @@ RowLayout {
 
   signal selected(string key)
 
-  spacing: Style.marginL
+  columns: root.stacked ? 1 : 2
+  flow: root.stacked ? GridLayout.TopToBottom : GridLayout.LeftToRight
+  columnSpacing: root.stacked ? 0 : Style.marginL
+  rowSpacing: root.stacked ? Style.marginM : 0
   Layout.fillWidth: true
 
   readonly property bool isValueChanged: (defaultValue !== undefined) && (currentKey !== defaultValue)
@@ -159,24 +163,23 @@ RowLayout {
   }
 
   NLabel {
+    Layout.fillWidth: true
     label: root.label
     description: root.description
     showIndicator: root.isValueChanged
     indicatorTooltip: root.indicatorTooltip
   }
 
-  Item {
-    Layout.fillWidth: true
-  }
-
   ComboBox {
     id: combo
 
     opacity: enabled ? 1.0 : 0.6
-    Layout.margins: Style.borderS
-    Layout.minimumWidth: Math.round(root.minimumWidth * Style.uiScaleRatio)
+    Layout.fillWidth: root.stacked
+    Layout.margins: root.stacked ? 0 : Style.borderS
+    Layout.minimumWidth: root.stacked ? 0 : Math.round(root.minimumWidth * Style.uiScaleRatio)
     Layout.preferredHeight: Math.round(root.preferredHeight * Style.uiScaleRatio)
     implicitWidth: Layout.minimumWidth
+    Layout.alignment: root.stacked ? (Qt.AlignLeft | Qt.AlignTop) : Qt.AlignRight
     model: root.activeModel
     textRole: "name"
     currentIndex: findIndexInActiveModel(currentKey)
