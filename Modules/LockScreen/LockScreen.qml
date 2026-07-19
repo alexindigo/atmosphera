@@ -21,6 +21,15 @@ Loader {
   readonly property bool needsSpectrum: root.active && !Settings.data.general.compactLockScreen && Settings.data.audio.visualizerType !== "" && Settings.data.audio.visualizerType !== "none"
 
   onActiveChanged: {
+    // Suppress fcitx5 IME composition while locked — prevents CJK IME
+    // leaks (JP mozc unmasked) and lock-client crashes on focus handoff
+    // (noctalia#2212). Restore previous IM state on unlock.
+    if (root.active) {
+      InputMethodService.enterSecureMode();
+    } else {
+      InputMethodService.exitSecureMode();
+    }
+
     if (!root.active) {
       root.previewMode = false;
     }
