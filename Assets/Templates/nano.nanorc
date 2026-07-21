@@ -1,0 +1,23 @@
+# nano config — atmosphera template.
+#
+# All UI color settings are prepended by nano-color-mapper (the post_hook)
+# from the current wallpaper palette (~/.config/atmosphera/colors.json).
+# See Scripts/python/src/theming/nano-color-mapper.py for the design.
+#
+# The line below carries current palette hex values so this template's
+# rendered output changes when the wallpaper changes, triggering the
+# render_file wrote=True path in atmosphera's template-processor so
+# the post_hook actually runs on every wallpaper regeneration.
+# palette-trigger: p={{colors.primary.dark.hex}} s={{colors.secondary.dark.hex}} t={{colors.tertiary.dark.hex}} e={{colors.error.dark.hex}}
+
+# --- Editor defaults ---
+set linenumbers
+set autoindent
+set tabsize 4
+set tabstospaces
+set indicator
+set trimblanks
+set constantshow
+set zap
+
+include /usr/share/nano/*.nanorc

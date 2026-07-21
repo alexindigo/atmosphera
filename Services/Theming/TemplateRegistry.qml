@@ -447,10 +447,10 @@ Singleton {
       "input": "nano.nanorc",
       "outputs": [
         {
-          "path": "~/.config/nano/noctalia.nanorc"
+          "path": "~/.config/nano/nanorc"
         }
       ],
-      "postProcess": () => `${templateApplyScript} nano`
+      "postProcess": () => `python3 ${Quickshell.shellDir}/Scripts/python/src/theming/nano-color-mapper.py ~/.config/nano/nanorc`
     },
     {
       "id": "mc",
@@ -470,10 +470,9 @@ Singleton {
       "input": "neomutt.colors",
       "outputs": [
         {
-          "path": "~/.config/neomutt/noctalia.colors"
+          "path": "~/.config/neomutt/colors"
         }
-      ],
-      "postProcess": () => `${templateApplyScript} neomutt`
+      ]
     },
     {
       "id": "steam",
