@@ -499,51 +499,57 @@ Singleton {
 
   function shutdown() {
     Logger.i("Compositor", "Shutdown requested");
-    if (executeSessionAction("shutdown"))
-      return;
-
-    HooksService.executeSessionHook("shutdown", () => {
-      Quickshell.execDetached(["sh", "-c", "systemctl poweroff || loginctl poweroff"]);
+    HooksService.runHandler("shutdownAction", () => {
+      if (executeSessionAction("shutdown"))
+        return;
+      HooksService.executeSessionHook("shutdown", () => {
+        Quickshell.execDetached(["sh", "-c", "systemctl poweroff || loginctl poweroff"]);
+      });
     });
   }
 
   function reboot() {
     Logger.i("Compositor", "Reboot requested");
-    if (executeSessionAction("reboot"))
-      return;
-
-    HooksService.executeSessionHook("reboot", () => {
-      Quickshell.execDetached(["sh", "-c", "systemctl reboot || loginctl reboot"]);
+    HooksService.runHandler("rebootAction", () => {
+      if (executeSessionAction("reboot"))
+        return;
+      HooksService.executeSessionHook("reboot", () => {
+        Quickshell.execDetached(["sh", "-c", "systemctl reboot || loginctl reboot"]);
+      });
     });
   }
 
   function userspaceReboot() {
     Logger.i("Compositor", "Userspace reboot requested");
-    if (executeSessionAction("userspaceReboot"))
-      return;
-
-    HooksService.executeSessionHook("userspaceReboot", () => {
-      Quickshell.execDetached(["sh", "-c", "systemctl soft-reboot"]);
+    HooksService.runHandler("userspaceRebootAction", () => {
+      if (executeSessionAction("userspaceReboot"))
+        return;
+      HooksService.executeSessionHook("userspaceReboot", () => {
+        Quickshell.execDetached(["sh", "-c", "systemctl soft-reboot"]);
+      });
     });
   }
 
   function rebootToUefi() {
-    Logger.i("Compositor", "Reboot to UEFI firmware requested requested");
-    if (executeSessionAction("rebootToUefi"))
-      return;
-
-    HooksService.executeSessionHook("rebootToUefi", () => {
-      Quickshell.execDetached(["sh", "-c", "systemctl reboot --firmware-setup || loginctl reboot --firmware-setup"]);
+    Logger.i("Compositor", "Reboot to UEFI firmware requested");
+    HooksService.runHandler("rebootToUefiAction", () => {
+      if (executeSessionAction("rebootToUefi"))
+        return;
+      HooksService.executeSessionHook("rebootToUefi", () => {
+        Quickshell.execDetached(["sh", "-c", "systemctl reboot --firmware-setup || loginctl reboot --firmware-setup"]);
+      });
     });
   }
 
   function turnOffMonitors() {
     Logger.i("Compositor", "Turn off monitors requested");
-    if (backend && backend.turnOffMonitors) {
-      backend.turnOffMonitors();
-    } else {
-      Logger.w("Compositor", "No backend available for turnOffMonitors");
-    }
+    HooksService.runHandler("screenOffAction", () => {
+      if (backend && backend.turnOffMonitors) {
+        backend.turnOffMonitors();
+      } else {
+        Logger.w("Compositor", "No backend available for turnOffMonitors");
+      }
+    });
   }
 
   function turnOnMonitors() {
@@ -557,10 +563,11 @@ Singleton {
 
   function suspend() {
     Logger.i("Compositor", "Suspend requested");
-    if (executeSessionAction("suspend"))
-      return;
-
-    Quickshell.execDetached(["sh", "-c", "systemctl suspend || loginctl suspend"]);
+    HooksService.runHandler("suspendAction", () => {
+      if (executeSessionAction("suspend"))
+        return;
+      Quickshell.execDetached(["sh", "-c", "systemctl suspend || loginctl suspend"]);
+    });
   }
 
   function _spawnExternalLocker() {
@@ -578,23 +585,24 @@ Singleton {
 
   function lock() {
     Logger.i("Compositor", "LockScreen requested");
-    if (executeSessionAction("lock"))
-      return;
-
-    if (Settings.data.general.lockScreenPlugin === "external" && _spawnExternalLocker())
-      return;
-
-    if (PanelService && PanelService.lockScreen) {
-      PanelService.lockScreen.active = true;
-    }
+    HooksService.runHandler("lockAction", () => {
+      if (executeSessionAction("lock"))
+        return;
+      if (Settings.data.general.lockScreenPlugin === "external" && _spawnExternalLocker())
+        return;
+      if (PanelService && PanelService.lockScreen) {
+        PanelService.lockScreen.active = true;
+      }
+    });
   }
 
   function hibernate() {
     Logger.i("Compositor", "Hibernate requested");
-    if (executeSessionAction("hibernate"))
-      return;
-
-    Quickshell.execDetached(["sh", "-c", "systemctl hibernate || loginctl hibernate"]);
+    HooksService.runHandler("hibernateAction", () => {
+      if (executeSessionAction("hibernate"))
+        return;
+      Quickshell.execDetached(["sh", "-c", "systemctl hibernate || loginctl hibernate"]);
+    });
   }
 
   function cycleKeyboardLayout() {
@@ -630,7 +638,9 @@ Singleton {
     // Lock the screen first
     try {
       if (PanelService && PanelService.lockScreen) {
-        PanelService.lockScreen.active = true;
+        HooksService.runHandler("lockAction", () => {
+          PanelService.lockScreen.active = true;
+        });
         lockAndSuspendCheckCount = 0;
 
         // Wait for lock screen to be confirmed active before suspending
