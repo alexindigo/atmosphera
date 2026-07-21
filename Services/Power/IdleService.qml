@@ -188,25 +188,19 @@ Singleton {
   function _executeAction(stage) {
     Logger.i("IdleService", "Executing action:", stage);
     if (stage === "screenOff") {
-      if (Settings.data.idle.screenOffCommand)
-        Quickshell.execDetached(["sh", "-c", Settings.data.idle.screenOffCommand]);
+      // screenOffCommand legacy path is now a handler in HooksService;
+      // CompositorService.turnOffMonitors() runs the handler + built-in.
       CompositorService.turnOffMonitors();
       root._screenOffActive = true;
       root.screenOffRequested();
     } else if (stage === "lock") {
-      if (Settings.data.general.lockScreenPlugin === "external") {
-        CompositorService.lock();
-      } else {
-        if (Settings.data.idle.lockCommand)
-          Quickshell.execDetached(["sh", "-c", Settings.data.idle.lockCommand]);
-        if (PanelService.lockScreen && !PanelService.lockScreen.active) {
-          PanelService.lockScreen.active = true;
-        }
-      }
+      // lockCommand legacy path is now a handler in HooksService;
+      // CompositorService.lock() runs the handler + built-in.
+      CompositorService.lock();
       root.lockRequested();
     } else if (stage === "suspend") {
-      if (Settings.data.idle.suspendCommand)
-        Quickshell.execDetached(["sh", "-c", Settings.data.idle.suspendCommand]);
+      // suspendCommand legacy path is now a handler in HooksService;
+      // CompositorService.suspend() / lockAndSuspend() run the handler + built-in.
       if (Settings.data.general.lockOnSuspend) {
         CompositorService.lockAndSuspend();
       } else {
