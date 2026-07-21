@@ -22,9 +22,14 @@ ColumnLayout {
       checked: subTabBar.currentIndex === 0
     }
     NTabButton {
-      text: I18n.tr("panels.hooks.title")
+      text: I18n.tr("panels.hooks.handlers-title")
       tabIndex: 1
       checked: subTabBar.currentIndex === 1
+    }
+    NTabButton {
+      text: I18n.tr("panels.hooks.listeners-title")
+      tabIndex: 2
+      checked: subTabBar.currentIndex === 2
     }
   }
 
@@ -38,6 +43,7 @@ ColumnLayout {
     currentIndex: subTabBar.currentIndex
 
     GeneralSubTab {}
-    HooksListSubTab {}
+    HandlersSubTab {}
+    ListenersSubTab {}
   }
 }
