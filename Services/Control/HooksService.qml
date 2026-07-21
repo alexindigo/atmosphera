@@ -293,7 +293,81 @@ Singleton {
     }
   }
 
-  // Blocking power hook infrastructure
+  // ─── Handler infrastructure ───
+
+  readonly property int handlerTimeoutMs: 5000
+
+  property var pendingHandlerCallback: null
+  property bool handlerWasExclusive: false
+
+  Timer {
+    id: handlerTimeoutTimer
+    interval: root.handlerTimeoutMs
+    repeat: false
+    onTriggered: {
+      Logger.w("HooksService", `Handler timed out after ${root.handlerTimeoutMs}ms, proceeding with fallback`);
+      if (handlerProcess.running) {
+        handlerProcess.running = false;
+      }
+      root._completeHandler(true);
+    }
+  }
+
+  Process {
+    id: handlerProcess
+    onExited: (exitCode, exitStatus) => {
+      handlerTimeoutTimer.stop();
+      if (exitCode !== 0) {
+        Logger.w("HooksService", `Handler exited with code ${exitCode}`);
+      }
+      root._completeHandler(!root.handlerWasExclusive || exitCode === 0);
+    }
+  }
+
+  function _completeHandler(runBuiltin) {
+    const callback = root.pendingHandlerCallback;
+    root.pendingHandlerCallback = null;
+    if (runBuiltin && callback) {
+      callback();
+    }
+  }
+
+  function handlerFor(name) {
+    if (!Settings.data.hooks?.enabled) {
+      return null;
+    }
+    try {
+      const h = Settings.data.hooks?.handlers?.[name];
+      if (h && h.command && h.command !== "") {
+        return {
+          command: h.command,
+          exclusive: h.exclusive === true
+        };
+      }
+    } catch (e) {
+      // Schema not yet initialized — handler not configured
+    }
+    return null;
+  }
+
+  function runHandler(name, builtinCallback) {
+    const handler = handlerFor(name);
+    if (!handler) {
+      if (builtinCallback)
+        builtinCallback();
+      return;
+    }
+
+    Logger.i("HooksService", `Running handler '${name}': ${handler.command}` + (handler.exclusive ? " (exclusive)" : ""));
+    root.pendingHandlerCallback = builtinCallback || null;
+    root.handlerWasExclusive = handler.exclusive;
+    handlerTimeoutTimer.restart();
+    handlerProcess.command = ["sh", "-lc", handler.command];
+    handlerProcess.running = true;
+  }
+
+  // ─── Legacy blocking power hook (deprecated) ───
+
   property var pendingPowerCallback: null
 
   Process {
