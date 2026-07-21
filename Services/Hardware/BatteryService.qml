@@ -153,12 +153,11 @@ Singleton {
       return false;
     }
     if (device.state !== undefined) {
-      return device.state === UPowerDeviceState.FullyCharged || device.state === UPowerDeviceState.PendingCharge;
+      return device.state === UPowerDeviceState.FullyCharged;
     }
     return false;
   }
 
-  // AC line power is online — covers all plugged-in states (charging, underpowered, settled)
   function isPluggedIn(device) {
     if (!device || isBluetoothDevice(device)) {
       return false;
@@ -166,8 +165,13 @@ Singleton {
     return !UPower.onBattery;
   }
 
-  // AC is connected but the battery is still discharging (not keeping up with draw).
   function isUnderpowered(device) {
+    if (!device || isBluetoothDevice(device)) {
+      return false;
+    }
+    if (device.state !== undefined) {
+      return device.state === UPowerDeviceState.PendingCharge;
+    }
     return isPluggedIn(device) && !isCharged(device) && !isCharging(device);
   }
 
@@ -287,7 +291,11 @@ Singleton {
     }
     if (isCharged(device)) {
       return I18n.tr("battery.plugged-in");
-    } else if (device.timeToFull > 0) {
+    }
+    if (isUnderpowered(device)) {
+      return I18n.tr("battery.not-charging");
+    }
+    if (device.timeToFull > 0) {
       return I18n.tr("battery.time-until-full", {
                        "time": Time.formatVagueHumanReadableDuration(device.timeToFull)
                      });
@@ -306,11 +314,11 @@ Singleton {
     if (isCharging(device)) {
       return I18n.tr("battery.charging");
     }
-    if (isCharged(device)) {
-      return I18n.tr("battery.fully-charged");
-    }
     if (isUnderpowered(device)) {
       return I18n.tr("battery.not-charging");
+    }
+    if (isCharged(device)) {
+      return I18n.tr("battery.fully-charged");
     }
     return I18n.tr("battery.on-battery");
   }
