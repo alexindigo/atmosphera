@@ -781,6 +781,64 @@ Singleton {
       property string desktopLeftClick: ""
       property string desktopRightClick: ""
       property string desktopMiddleClick: ""
+
+      property JsonObject handlers: JsonObject {
+        property JsonObject suspendAction: JsonObject {
+          property string command: ""
+          property bool exclusive: false
+        }
+        property JsonObject hibernateAction: JsonObject {
+          property string command: ""
+          property bool exclusive: false
+        }
+        property JsonObject lockAction: JsonObject {
+          property string command: ""
+          property bool exclusive: false
+        }
+        property JsonObject screenOffAction: JsonObject {
+          property string command: ""
+          property bool exclusive: false
+        }
+        property JsonObject shutdownAction: JsonObject {
+          property string command: ""
+          property bool exclusive: false
+        }
+        property JsonObject rebootAction: JsonObject {
+          property string command: ""
+          property bool exclusive: false
+        }
+        property JsonObject userspaceRebootAction: JsonObject {
+          property string command: ""
+          property bool exclusive: false
+        }
+        property JsonObject rebootToUefiAction: JsonObject {
+          property string command: ""
+          property bool exclusive: false
+        }
+        property JsonObject desktopLeftClick: JsonObject {
+          property string command: ""
+          property bool exclusive: false
+        }
+        property JsonObject desktopRightClick: JsonObject {
+          property string command: ""
+          property bool exclusive: false
+        }
+        property JsonObject desktopMiddleClick: JsonObject {
+          property string command: ""
+          property bool exclusive: false
+        }
+      }
+
+      property JsonObject listeners: JsonObject {
+        property string startup: ""
+        property string wallpaperChange: ""
+        property string colorGeneration: ""
+        property string darkModeChange: ""
+        property string screenLock: ""
+        property string screenUnlock: ""
+        property string performanceModeEnabled: ""
+        property string performanceModeDisabled: ""
+      }
     }
 
     // plugins
