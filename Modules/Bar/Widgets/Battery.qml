@@ -86,8 +86,6 @@ Item {
         const colonIdx = timeText.indexOf(":");
         if (colonIdx >= 0) {
           rows.push([timeText.substring(0, colonIdx).trim(), timeText.substring(colonIdx + 1).trim()]);
-        } else {
-          rows.push([timeText, ""]);
         }
       }
 
@@ -96,8 +94,6 @@ Item {
         const colonIdx = rateText.indexOf(":");
         if (colonIdx >= 0) {
           rows.push([rateText.substring(0, colonIdx).trim(), rateText.substring(colonIdx + 1).trim()]);
-        } else {
-          rows.push([rateText, ""]);
         }
       }
 
