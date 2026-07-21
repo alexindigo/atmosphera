@@ -353,8 +353,7 @@ Singleton {
   function runHandler(name, builtinCallback) {
     const handler = handlerFor(name);
     if (!handler) {
-      if (builtinCallback)
-        builtinCallback();
+      if (builtinCallback) builtinCallback();
       return;
     }
 
