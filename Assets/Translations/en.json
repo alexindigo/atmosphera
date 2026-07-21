@@ -171,6 +171,10 @@
       "wheel-up-label": "Wheel up command",
       "wheel-update-text": "Update displayed text on scroll"
     },
+    "input-method": {
+      "display-mode-description": "Choose how the input method indicator is displayed.",
+      "show-icon-description": "Display the keyboard icon alongside the indicator."
+    },
     "keyboard-layout": {
       "show-icon-description": "Display the keyboard layout icon."
     },
@@ -592,6 +596,13 @@
     "always-show": "Always show",
     "force-open": "Force open",
     "on-hover": "On hover"
+  },
+  "input-method": {
+    "display-modes": {
+      "flag": "Flag",
+      "flag-and-text": "Flag and text",
+      "text": "Text"
+    }
   },
   "hide-modes": {
     "auto-hide": "Auto-hide",
