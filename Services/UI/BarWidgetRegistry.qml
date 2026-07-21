@@ -22,6 +22,7 @@ Singleton {
                            "CustomButton": customButtonComponent,
                            "DarkMode": darkModeComponent,
                            "KeepAwake": keepAwakeComponent,
+                           "InputMethod": inputMethodComponent,
                            "KeyboardLayout": keyboardLayoutComponent,
                            "LockKeys": lockKeysComponent,
                            "Launcher": launcherComponent,
@@ -55,6 +56,7 @@ Singleton {
                                      "CustomButton": "WidgetSettings/CustomButtonSettings.qml",
                                      "DarkMode": "WidgetSettings/DarkModeSettings.qml",
                                      "KeepAwake": "WidgetSettings/KeepAwakeSettings.qml",
+                                     "InputMethod": "WidgetSettings/InputMethodSettings.qml",
                                      "KeyboardLayout": "WidgetSettings/KeyboardLayoutSettings.qml",
                                      "Launcher": "WidgetSettings/LauncherSettings.qml",
                                      "LockKeys": "WidgetSettings/LockKeysSettings.qml",
@@ -167,6 +169,12 @@ Singleton {
                                     "iconColor": "none"
                                   },
                                   "KeepAwake": {
+                                    "iconColor": "none",
+                                    "textColor": "none"
+                                  },
+                                  "InputMethod": {
+                                    "displayMode": "flag",
+                                    "showIcon": true,
                                     "iconColor": "none",
                                     "textColor": "none"
                                   },
@@ -346,6 +354,9 @@ Singleton {
   }
   property Component darkModeComponent: Component {
     DarkMode {}
+  }
+  property Component inputMethodComponent: Component {
+    InputMethod {}
   }
   property Component keyboardLayoutComponent: Component {
     KeyboardLayout {}

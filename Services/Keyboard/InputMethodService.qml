@@ -20,6 +20,13 @@ Singleton {
   property string currentLayout: ""
   property bool secureModeActive: false
 
+  // ——— IM metadata (reactive, refreshed on IM change) ———
+  property var availableIMs: ([])
+  property var groups: ([])
+  property string currentIMLanguage: ""
+  property string currentIMIcon: ""
+  property string currentIMUniqueName: ""
+
   // ——— Snapshots for enterSecureMode/exitSecureMode ———
   property string _savedIM: ""
   property bool _savedActive: false
@@ -38,6 +45,7 @@ Singleton {
       if (status === 2) {                                   // Ready
         root.fcitx5Available = true;
         Logger.i("InputMethodService", "fcitx5 controller ready");
+        refreshTimer.start();
       } else if (status === 3) {                            // Error
         root.fcitx5Available = false;
         Logger.w("InputMethodService", "fcitx5 controller unreachable");
@@ -48,12 +56,17 @@ Singleton {
       if (!serviceAvailable) {
         root.fcitx5Available = false;
         Logger.w("InputMethodService", "fcitx5 service disappeared");
+      } else {
+        root.fcitx5Available = true;
+        Logger.i("InputMethodService", "fcitx5 service appeared, refreshing metadata");
+        refreshTimer.start();
       }
     }
 
     onSignalReceived: function (name, args) {
       if (name === "CurrentInputMethodChanged") {
         root.currentIM = args && args.length > 0 ? String(args[0]) : "";
+        root.refreshCurrentIMInfo();
       } else if (name === "CurrentGroupChanged") {
         root.currentGroup = args && args.length > 0 ? String(args[0]) : "";
       }
@@ -84,6 +97,7 @@ Singleton {
     if (!root.fcitx5Available)
       return;
     fcitx5.toggle();
+    root.active = !root.active;
   }
 
   function setCurrentIM(name) {
@@ -102,6 +116,251 @@ Singleton {
     if (!root.fcitx5Available)
       return;
     fcitx5.call("ReloadConfig");
+  }
+
+  // ——— Metadata refresh ———
+
+  Timer {
+    id: refreshTimer
+    interval: 500
+    onTriggered: root.refresh()
+  }
+
+  function refresh() {
+    if (!root.fcitx5Available)
+      return;
+    _fetchAvailableIMs();
+    _fetchGroups();
+    refreshCurrentIMInfo();
+    Logger.d("InputMethodService", "Metadata refreshed");
+  }
+
+  function refreshCurrentIMInfo() {
+    if (!root.fcitx5Available)
+      return;
+    fcitx5.call("CurrentInputMethodInfo", [], function (result) {
+      if (result && result.length >= 9) {
+        root.currentIMUniqueName = String(result[0] || "");
+        root.currentIMLanguage = String(result[3] || "");
+        root.currentIMIcon = String(result[5] || "");
+      }
+    });
+  }
+
+  function _fetchAvailableIMs() {
+    if (!root.fcitx5Available)
+      return;
+    fcitx5.call("AvailableInputMethods", [], function (result) {
+      if (!result || result.length === 0)
+        return;
+      var ims = [];
+      var arr = result[0];
+      if (Array.isArray(arr)) {
+        for (var i = 0; i < arr.length; i++) {
+          var im = arr[i];
+          if (Array.isArray(im) && im.length >= 6) {
+            ims.push({
+                       "uniqueName": String(im[0] || ""),
+                       "name": String(im[1] || ""),
+                       "addon": String(im[2] || ""),
+                       "language": String(im[3] || ""),
+                       "label": String(im[4] || ""),
+                       "icon": String(im[5] || ""),
+                       "configurable": im.length >= 7 ? Boolean(im[6]) : false
+                     });
+          }
+        }
+      }
+      root.availableIMs = ims;
+    });
+  }
+
+  function _fetchGroups() {
+    if (!root.fcitx5Available)
+      return;
+    fcitx5.call("InputMethodGroups", [], function (result) {
+      if (!result || result.length === 0)
+        return;
+      var groups = [];
+      var arr = result[0];
+      if (Array.isArray(arr)) {
+        for (var i = 0; i < arr.length; i++) {
+          groups.push(String(arr[i] || ""));
+        }
+      }
+      root.groups = groups;
+    });
+  }
+
+  // ——— Flag emoji lookup ———
+  // Tier 1: exact uniqueName match (most precise, region-aware)
+  // Tier 2: locale-suffix parsing from uniqueName or language field
+  // Tier 3: bare language code fallback
+  // Tier 4: none → returns "" (widget renders as text)
+  function flagFor(uniqueName, languageCode) {
+    var un = (uniqueName || "").toLowerCase();
+    var lc = (languageCode || "").toLowerCase();
+
+    if (exactFlagMap[un])
+      return exactFlagMap[un];
+
+    var candidate = lc || un;
+    var suffixMatch = candidate.match(/[_-](tw|hk|cn|gb|us|ca|au|br|pt|mx|in|sg|my|id|jp|kr|ru|ua|de|at|ch|fr|be|lu|it|es|pl|cz|sk|hu|nl|se|no|dk|fi|is|il|ir|tr|gr|th|vn)\b/i);
+    if (suffixMatch) {
+      var region = suffixMatch[1].toLowerCase();
+      if (regionFlagMap[region])
+        return regionFlagMap[region];
+    }
+
+    var bare = lc.replace(/[_-].*$/, "");
+    if (bare && languageFlagMap[bare])
+      return languageFlagMap[bare];
+
+    return "";
+  }
+
+  property var exactFlagMap: {
+    "keyboard-us": "🇺🇸",
+    "keyboard-gb": "🇬🇧",
+    "keyboard-ca": "🇨🇦",
+    "keyboard-au": "🇦🇺",
+    "keyboard-nz": "🇳🇿",
+    "keyboard-de": "🇩🇪",
+    "keyboard-fr": "🇫🇷",
+    "keyboard-es": "🇪🇸",
+    "keyboard-it": "🇮🇹",
+    "keyboard-pt": "🇵🇹",
+    "keyboard-br": "🇧🇷",
+    "keyboard-ru": "🇷🇺",
+    "keyboard-ua": "🇺🇦",
+    "keyboard-pl": "🇵🇱",
+    "keyboard-cz": "🇨🇿",
+    "keyboard-sk": "🇸🇰",
+    "keyboard-hu": "🇭🇺",
+    "keyboard-jp": "🇯🇵",
+    "keyboard-kr": "🇰🇷",
+    "keyboard-cn": "🇨🇳",
+    "keyboard-tw": "🇹🇼",
+    "keyboard-hk": "🇭🇰",
+    "keyboard-tr": "🇹🇷",
+    "keyboard-gr": "🇬🇷",
+    "keyboard-il": "🇮🇱",
+    "keyboard-ir": "🇮🇷",
+    "keyboard-in": "🇮🇳",
+    "keyboard-th": "🇹🇭",
+    "keyboard-vn": "🇻🇳",
+    "keyboard-se": "🇸🇪",
+    "keyboard-no": "🇳🇴",
+    "keyboard-dk": "🇩🇰",
+    "keyboard-fi": "🇫🇮",
+    "keyboard-is": "🇮🇸",
+    "keyboard-nl": "🇳🇱",
+    "keyboard-be": "🇧🇪",
+    "keyboard-ch": "🇨🇭",
+    "keyboard-at": "🇦🇹",
+    "keyboard-ro": "🇷🇴",
+    "keyboard-bg": "🇧🇬",
+    "keyboard-rs": "🇷🇸",
+    "keyboard-hr": "🇭🇷",
+    "keyboard-si": "🇸🇮",
+    "keyboard-ee": "🇪🇪",
+    "keyboard-lv": "🇱🇻",
+    "keyboard-lt": "🇱🇹",
+    "mozc": "🇯🇵",
+    "anthy": "🇯🇵",
+    "skk": "🇯🇵",
+    "hangul": "🇰🇷",
+    "chewing": "🇹🇼",
+    "libpinyin": "🇨🇳",
+    "sunpinyin": "🇨🇳",
+    "shuangpin": "🇨🇳",
+    "wubi": "🇨🇳",
+    "zhuyin": "🇹🇼",
+    "cangjie5": "🇹🇼",
+    "cangjie3": "🇹🇼",
+    "rime": "🇨🇳",
+    "unikey": "🇻🇳",
+    "thai": "🇹🇭",
+    "sayura": "🇱🇰",
+    "m17n": "🌐"
+  }
+
+  property var regionFlagMap: {
+    "tw": "🇹🇼",
+    "hk": "🇭🇰",
+    "cn": "🇨🇳",
+    "gb": "🇬🇧",
+    "us": "🇺🇸",
+    "ca": "🇨🇦",
+    "au": "🇦🇺",
+    "br": "🇧🇷",
+    "pt": "🇵🇹",
+    "mx": "🇲🇽",
+    "in": "🇮🇳",
+    "sg": "🇸🇬",
+    "my": "🇲🇾",
+    "id": "🇮🇩",
+    "jp": "🇯🇵",
+    "kr": "🇰🇷",
+    "ru": "🇷🇺",
+    "ua": "🇺🇦",
+    "de": "🇩🇪",
+    "at": "🇦🇹",
+    "ch": "🇨🇭",
+    "fr": "🇫🇷",
+    "be": "🇧🇪",
+    "lu": "🇱🇺",
+    "it": "🇮🇹",
+    "es": "🇪🇸",
+    "pl": "🇵🇱",
+    "cz": "🇨🇿",
+    "sk": "🇸🇰",
+    "hu": "🇭🇺",
+    "nl": "🇳🇱",
+    "se": "🇸🇪",
+    "no": "🇳🇴",
+    "dk": "🇩🇰",
+    "fi": "🇫🇮",
+    "is": "🇮🇸",
+    "il": "🇮🇱",
+    "ir": "🇮🇷",
+    "tr": "🇹🇷",
+    "gr": "🇬🇷",
+    "th": "🇹🇭",
+    "vn": "🇻🇳"
+  }
+
+  property var languageFlagMap: {
+    "en": "🇺🇸",
+    "zh": "🇨🇳",
+    "pt": "🇵🇹",
+    "de": "🇩🇪",
+    "fr": "🇫🇷",
+    "es": "🇪🇸",
+    "ja": "🇯🇵",
+    "ko": "🇰🇷",
+    "ru": "🇷🇺",
+    "ar": "🇸🇦",
+    "fa": "🇮🇷",
+    "hi": "🇮🇳",
+    "he": "🇮🇱",
+    "tr": "🇹🇷",
+    "gr": "🇬🇷",
+    "th": "🇹🇭",
+    "vi": "🇻🇳",
+    "pl": "🇵🇱",
+    "cs": "🇨🇿",
+    "sk": "🇸🇰",
+    "hu": "🇭🇺",
+    "ro": "🇷🇴",
+    "bg": "🇧🇬",
+    "uk": "🇺🇦",
+    "nl": "🇳🇱",
+    "sv": "🇸🇪",
+    "no": "🇳🇴",
+    "da": "🇩🇰",
+    "fi": "🇫🇮",
+    "it": "🇮🇹"
   }
 
   // ——— Composite operations (lock screen) ———
