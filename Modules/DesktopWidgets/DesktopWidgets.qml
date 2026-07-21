@@ -514,13 +514,20 @@ Variants {
           onClicked: mouse => {
             var screenName = window.screen?.name || "";
             var globalPos = mapToItem(null, mouse.x, mouse.y);
-            if (mouse.button === Qt.LeftButton)
-              HooksService.executeDesktopLeftClickHook(screenName, globalPos.x, globalPos.y);
-            else if (mouse.button === Qt.RightButton) {
-              HooksService.executeDesktopRightClickHook(screenName, globalPos.x, globalPos.y);
-              showDesktopContextMenu(globalPos.x, globalPos.y);
-            } else if (mouse.button === Qt.MiddleButton)
-              HooksService.executeDesktopMiddleClickHook(screenName, globalPos.x, globalPos.y);
+            if (mouse.button === Qt.LeftButton) {
+              HooksService.runHandler("desktopLeftClick", () => {
+                HooksService.executeDesktopLeftClickHook(screenName, globalPos.x, globalPos.y);
+              });
+            } else if (mouse.button === Qt.RightButton) {
+              HooksService.runHandler("desktopRightClick", () => {
+                HooksService.executeDesktopRightClickHook(screenName, globalPos.x, globalPos.y);
+                showDesktopContextMenu(globalPos.x, globalPos.y);
+              });
+            } else if (mouse.button === Qt.MiddleButton) {
+              HooksService.runHandler("desktopMiddleClick", () => {
+                HooksService.executeDesktopMiddleClickHook(screenName, globalPos.x, globalPos.y);
+              });
+            }
           }
         }
 
