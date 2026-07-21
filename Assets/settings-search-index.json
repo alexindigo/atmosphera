@@ -1296,6 +1296,141 @@
     "subTab": null
   },
   {
+    "labelKey": "panels.hooks.session-label",
+    "descriptionKey": "panels.hooks.session-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 3,
+    "subTabLabel": "panels.hooks.deprecated-title"
+  },
+  {
+    "labelKey": "panels.hooks.wallpaper-changed-label",
+    "descriptionKey": "panels.hooks.wallpaper-changed-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 3,
+    "subTabLabel": "panels.hooks.deprecated-title"
+  },
+  {
+    "labelKey": "panels.hooks.theme-changed-label",
+    "descriptionKey": "panels.hooks.theme-changed-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 3,
+    "subTabLabel": "panels.hooks.deprecated-title"
+  },
+  {
+    "labelKey": "panels.hooks.screen-lock-label",
+    "descriptionKey": "panels.hooks.screen-lock-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 3,
+    "subTabLabel": "panels.hooks.deprecated-title"
+  },
+  {
+    "labelKey": "panels.hooks.screen-unlock-label",
+    "descriptionKey": "panels.hooks.screen-unlock-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 3,
+    "subTabLabel": "panels.hooks.deprecated-title"
+  },
+  {
+    "labelKey": "panels.hooks.performance-mode-enabled-label",
+    "descriptionKey": "panels.hooks.performance-mode-enabled-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 3,
+    "subTabLabel": "panels.hooks.deprecated-title"
+  },
+  {
+    "labelKey": "panels.hooks.performance-mode-disabled-label",
+    "descriptionKey": "panels.hooks.performance-mode-disabled-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 3,
+    "subTabLabel": "panels.hooks.deprecated-title"
+  },
+  {
+    "labelKey": "panels.hooks.atmosphera-started-label",
+    "descriptionKey": "panels.hooks.atmosphera-started-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 3,
+    "subTabLabel": "panels.hooks.deprecated-title"
+  },
+  {
+    "labelKey": "panels.hooks.color-generation-label",
+    "descriptionKey": "panels.hooks.color-generation-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 3,
+    "subTabLabel": "panels.hooks.deprecated-title"
+  },
+  {
+    "labelKey": "panels.hooks.desktop-left-click-label",
+    "descriptionKey": "panels.hooks.desktop-left-click-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 3,
+    "subTabLabel": "panels.hooks.deprecated-title"
+  },
+  {
+    "labelKey": "panels.hooks.desktop-right-click-label",
+    "descriptionKey": "panels.hooks.desktop-right-click-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 3,
+    "subTabLabel": "panels.hooks.deprecated-title"
+  },
+  {
+    "labelKey": "panels.hooks.desktop-middle-click-label",
+    "descriptionKey": "panels.hooks.desktop-middle-click-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 3,
+    "subTabLabel": "panels.hooks.deprecated-title"
+  },
+  {
+    "labelKey": "panels.hooks.screenoff-label",
+    "descriptionKey": "panels.hooks.screenoff-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 3,
+    "subTabLabel": "panels.hooks.deprecated-title"
+  },
+  {
+    "labelKey": "panels.hooks.lock-label",
+    "descriptionKey": "panels.hooks.lock-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 3,
+    "subTabLabel": "panels.hooks.deprecated-title"
+  },
+  {
+    "labelKey": "panels.hooks.suspend-label",
+    "descriptionKey": "panels.hooks.suspend-description",
+    "widget": "HookRow",
+    "tab": 20,
+    "tabLabel": "panels.hooks.title",
+    "subTab": 3,
+    "subTabLabel": "panels.hooks.deprecated-title"
+  },
+  {
     "labelKey": "panels.hooks.system-hooks-enable-label",
     "descriptionKey": "panels.hooks.system-hooks-enable-description",
     "widget": "NToggle",
