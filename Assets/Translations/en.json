@@ -1441,7 +1441,10 @@
       "title": "Idle",
       "unavailable": "Native idle monitoring is not available on this compositor.",
       "lock-external-mode-note": "Command editing is disabled because an external locker is being used.",
-      "lock-external-mode-button": "Open Lock Screen settings"
+      "lock-external-mode-button": "Open Lock Screen settings",
+      "command-moved-notice": "Command fields have moved to Hooks → Handlers → Power actions. Your existing values are preserved and can be edited in Hooks → Deprecated.",
+      "go-to-power-actions": "Go to Power Actions",
+      "command-moved-tooltip": "Where is this setting?"
     },
     "indicator": {
       "default-value": "Default: {value}",

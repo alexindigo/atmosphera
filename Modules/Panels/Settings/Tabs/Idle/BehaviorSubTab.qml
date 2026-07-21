@@ -55,31 +55,74 @@ ColumnLayout {
     Layout.fillWidth: true
   }
 
-  IdleCommandEditPopup {
-    id: editPopup
+  Popup {
+    id: idleInfoPopup
     parent: Overlay.overlay
-  }
+    modal: true
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    dim: true
+    width: Math.min(500 * Style.uiScaleRatio, parent.width * 0.8)
 
-  function openEdit(actionName, cmdVal, resumeCmdVal, onSaveCmd, onSaveResume) {
-    editPopup.editIndex = -1;
-    editPopup.showCommand = true;
-    editPopup.showTimeout = false;
-    editPopup.titleText = I18n.tr("common.edit") + " " + actionName;
-    editPopup.timeoutValue = 0;
-    editPopup.commandValue = cmdVal;
-    editPopup.resumeCommandValue = resumeCmdVal;
+    property string actionTitle: ""
 
-    try {
-      editPopup.saved.disconnect(editPopup._savedSlot);
-    } catch (e) {}
+    background: Rectangle {
+      color: Color.mSurface
+      radius: Style.radiusL
+      border.color: Color.mOutline
+      border.width: Style.borderS
+    }
 
-    editPopup._savedSlot = function (timeout, cmd, resumeCmd, name) {
-      onSaveCmd(cmd);
-      onSaveResume(resumeCmd);
-    };
+    contentItem: ColumnLayout {
+      padding: Style.marginL
+      spacing: Style.marginL
 
-    editPopup.saved.connect(editPopup._savedSlot);
-    editPopup.open();
+      RowLayout {
+        NText {
+          text: idleInfoPopup.actionTitle
+          font.weight: Style.fontWeightBold
+          pointSize: Style.fontSizeL
+          Layout.fillWidth: true
+        }
+        NIconButton {
+          icon: Icon.close
+          onClicked: idleInfoPopup.close()
+        }
+      }
+
+      NText {
+        text: I18n.tr("panels.idle.command-moved-notice")
+        wrapMode: Text.WordWrap
+        Layout.fillWidth: true
+      }
+
+      RowLayout {
+        spacing: Style.marginM
+
+        Item {
+          Layout.fillWidth: true
+        }
+
+        NButton {
+          text: I18n.tr("common.close")
+          outlined: true
+          onClicked: idleInfoPopup.close()
+        }
+
+        NButton {
+          text: I18n.tr("panels.idle.go-to-power-actions")
+          icon: Icon.caretRight
+          backgroundColor: Color.mPrimary
+          textColor: Color.mOnPrimary
+          onClicked: {
+            idleInfoPopup.close();
+            var panel = PanelService.getPanel("settingsPanel");
+            if (panel) {
+              panel.openToTab(SettingsPanel.Tab.Hooks, 1);
+            }
+          }
+        }
+      }
+    }
   }
 
   // Timeout spinboxes and resume commands
@@ -223,9 +266,12 @@ ColumnLayout {
     NIconButton {
       Layout.alignment: Qt.AlignVCenter
       enabled: rowRoot.showEdit
-      icon: Icon.settings
-      tooltipText: I18n.tr("common.edit")
-      onClicked: root.openEdit(rowRoot.actionName, rowRoot.command, rowRoot.resumeCommand, rowRoot.actionCommandChanged, rowRoot.actionResumeCommandChanged)
+      icon: Icon.info
+      tooltipText: I18n.tr("panels.idle.command-moved-tooltip")
+      onClicked: {
+        idleInfoPopup.actionTitle = rowRoot.actionName;
+        idleInfoPopup.open();
+      }
     }
   }
 }
