@@ -4,7 +4,7 @@
 if [ "$#" -lt 1 ]; then
     # Print usage information to standard error.
     echo "Error: No application specified." >&2
-    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|starship|fuzzel|walker|pywalfox|cava|yazi|labwc|niri|hyprland|sway|scroll|mango|btop|zathura} [dark|light]" >&2
+    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|starship|fuzzel|walker|pywalfox|cava|yazi|labwc|niri|hyprland|sway|scroll|mango|btop|zathura|nano|neomutt} [dark|light]" >&2
     exit 1
 fi
 
@@ -567,6 +567,34 @@ zathura)
             org.pwmt.zathura.ExecuteCommand \
             string:"source"
     done
+    ;;
+
+nano)
+    NANO_RC="$HOME/.config/nano/nanorc"
+    THEME_INCLUDE="include \"$HOME/.config/nano/noctalia.nanorc\""
+
+    if [ ! -f "$NANO_RC" ]; then
+        mkdir -p "$HOME/.config/nano"
+        echo "$THEME_INCLUDE" >"$NANO_RC"
+    elif ! grep -qF "$THEME_INCLUDE" "$NANO_RC"; then
+        echo "$THEME_INCLUDE" >>"$NANO_RC"
+    fi
+    ;;
+
+neomutt)
+    NEOMUTT_RC="$HOME/.config/neomutt/neomuttrc"
+    THEME_INCLUDE="source $HOME/.config/neomutt/noctalia.colors"
+
+    if [ ! -f "$NEOMUTT_RC" ]; then
+        mkdir -p "$HOME/.config/neomutt"
+        echo "$THEME_INCLUDE" >"$NEOMUTT_RC"
+    elif ! grep -qF "$THEME_INCLUDE" "$NEOMUTT_RC"; then
+        echo "$THEME_INCLUDE" >>"$NEOMUTT_RC"
+    fi
+
+    if pgrep -x neomutt >/dev/null 2>&1; then
+        killall -USR1 neomutt 2>/dev/null || true
+    fi
     ;;
 
 starship)

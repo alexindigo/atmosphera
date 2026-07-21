@@ -441,6 +441,41 @@ Singleton {
       "postProcess": () => `${templateApplyScript} zathura`
     },
     {
+      "id": "nano",
+      "name": "nano",
+      "category": "editor",
+      "input": "nano.nanorc",
+      "outputs": [
+        {
+          "path": "~/.config/nano/noctalia.nanorc"
+        }
+      ],
+      "postProcess": () => `${templateApplyScript} nano`
+    },
+    {
+      "id": "mc",
+      "name": "Midnight Commander",
+      "category": "misc",
+      "input": "mc.ini",
+      "outputs": [
+        {
+          "path": "~/.local/share/mc/skins/atmosphera.ini"
+        }
+      ]
+    },
+    {
+      "id": "neomutt",
+      "name": "Neomutt",
+      "category": "misc",
+      "input": "neomutt.colors",
+      "outputs": [
+        {
+          "path": "~/.config/neomutt/noctalia.colors"
+        }
+      ],
+      "postProcess": () => `${templateApplyScript} neomutt`
+    },
+    {
       "id": "steam",
       "name": "Steam",
       "category": "misc",
