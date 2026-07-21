@@ -109,12 +109,8 @@ Singleton {
 
   // Execute wallpaper change hook
   function executeWallpaperHook(wallpaperPath, screenName) {
-    if (!Settings.data.hooks?.enabled) {
-      return;
-    }
-
-    const script = Settings.data.hooks?.wallpaperChange;
-    if (!script || script === "") {
+    const script = listenerCommandFor("wallpaperChange", "wallpaperChange");
+    if (!script) {
       return;
     }
 
@@ -132,12 +128,8 @@ Singleton {
 
   // Execute dark mode change hook
   function executeDarkModeHook(isDarkMode) {
-    if (!Settings.data.hooks?.enabled) {
-      return;
-    }
-
-    const script = Settings.data.hooks?.darkModeChange;
-    if (!script || script === "") {
+    const script = listenerCommandFor("darkModeChange", "darkModeChange");
+    if (!script) {
       return;
     }
 
@@ -152,12 +144,8 @@ Singleton {
 
   // Execute screen lock hook
   function executeLockHook() {
-    if (!Settings.data.hooks?.enabled) {
-      return;
-    }
-
-    const script = Settings.data.hooks?.screenLock;
-    if (!script || script === "") {
+    const script = listenerCommandFor("screenLock", "screenLock");
+    if (!script) {
       return;
     }
 
@@ -172,12 +160,8 @@ Singleton {
 
   // Execute screen unlock hook
   function executeUnlockHook() {
-    if (!Settings.data.hooks?.enabled) {
-      return;
-    }
-
-    const script = Settings.data.hooks?.screenUnlock;
-    if (!script || script === "") {
+    const script = listenerCommandFor("screenUnlock", "screenUnlock");
+    if (!script) {
       return;
     }
 
@@ -192,12 +176,8 @@ Singleton {
 
   // Execute performance mode enabled hook
   function executePerformanceModeEnabledHook() {
-    if (!Settings.data.hooks?.enabled) {
-      return;
-    }
-
-    const script = Settings.data.hooks?.performanceModeEnabled;
-    if (!script || script === "") {
+    const script = listenerCommandFor("performanceModeEnabled", "performanceModeEnabled");
+    if (!script) {
       return;
     }
 
@@ -210,12 +190,8 @@ Singleton {
 
   // Execute performance mode disabled hook
   function executePerformanceModeDisabledHook() {
-    if (!Settings.data.hooks?.enabled) {
-      return;
-    }
-
-    const script = Settings.data.hooks?.performanceModeDisabled;
-    if (!script || script === "") {
+    const script = listenerCommandFor("performanceModeDisabled", "performanceModeDisabled");
+    if (!script) {
       return;
     }
 
@@ -228,12 +204,8 @@ Singleton {
 
   // Execute color generation hook
   function executeColorGenerationHook() {
-    if (!Settings.data.hooks?.enabled) {
-      return;
-    }
-
-    const script = Settings.data.hooks?.colorGeneration;
-    if (!script || script === "") {
+    const script = listenerCommandFor("colorGeneration", "colorGeneration");
+    if (!script) {
       return;
     }
 
@@ -291,6 +263,20 @@ Singleton {
     } catch (e) {
       Logger.e("HooksService", `Failed to execute desktop middle click hook: ${e}`);
     }
+  }
+
+  function listenerCommandFor(name, legacyName) {
+    if (!Settings.data.hooks?.enabled)
+      return "";
+    try {
+      const l = Settings.data.hooks?.listeners?.[name];
+      if (l && l !== "")
+        return l;
+      const legacy = Settings.data.hooks?.[legacyName || name];
+      if (legacy && typeof legacy === "string" && legacy !== "")
+        return legacy;
+    } catch (e) {}
+    return "";
   }
 
   // ─── Handler infrastructure ───
@@ -410,12 +396,8 @@ Singleton {
 
   // Execute startup hook
   function executeStartupHook() {
-    if (!Settings.data.hooks?.enabled) {
-      return;
-    }
-
-    const script = Settings.data.hooks?.startup;
-    if (!script || script === "") {
+    const script = listenerCommandFor("startup", "startup");
+    if (!script) {
       return;
     }
 
