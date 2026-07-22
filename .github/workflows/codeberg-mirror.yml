@@ -18,8 +18,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Fetch all remote branches and tags
-        run: git fetch --all --tags --prune
+      - name: Fetch all remote branches
+        run: git fetch --all --prune --no-tags
 
       - name: Setup SSH agent
         uses: webfactory/ssh-agent@v0.10.0
