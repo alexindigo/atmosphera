@@ -1114,6 +1114,7 @@
       "app-shortcut-terminal-placeholder": "Type to search terminals...",
       "app-shortcut-params-label": "Arguments",
       "app-shortcut-params-description": "The terminal's run flag is prefilled — add your command and its arguments as separate rows.",
+      "app-shortcut-working-directory-description": "Set to ~ (home) by default. Change it to launch the command in a different directory.",
       "app-shortcut-params-app-description": "Extra command-line arguments, one per row.",
       "app-shortcut-params-placeholder": "e.g. -e",
       "app-shortcut-params-add": "Add argument",
