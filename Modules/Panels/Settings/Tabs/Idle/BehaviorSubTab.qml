@@ -62,6 +62,7 @@ ColumnLayout {
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     dim: true
     width: Math.min(500 * Style.uiScaleRatio, parent.width * 0.8)
+    padding: Style.marginL
 
     property string actionTitle: ""
 
@@ -73,7 +74,6 @@ ColumnLayout {
     }
 
     contentItem: ColumnLayout {
-      padding: Style.marginL
       spacing: Style.marginL
 
       RowLayout {
