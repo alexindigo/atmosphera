@@ -26,8 +26,9 @@ fi
 
 QMLLINT_VERSION=$("$QMLLINT" --version 2>&1 || echo "unknown")
 if [[ ! "$QMLLINT_VERSION" =~ ^qmllint\ [6-9]\. ]]; then
-    echo "Warning: qmllint version $QMLLINT_VERSION may not support full error detection." >&2
-    echo "Install Qt6 qmllint via 'qt6-declarative-tools'." >&2
+    echo "qmllint version $QMLLINT_VERSION is too old." >&2
+    echo "Install Qt 6.6+ qmllint via 'qt6-declarative-tools' or equivalent." >&2
+    exit 1
 fi
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"

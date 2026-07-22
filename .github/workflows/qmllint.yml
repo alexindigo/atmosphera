@@ -27,8 +27,21 @@ jobs:
             if [ -x "$p" ]; then echo "qmllint=$p" >> $GITHUB_OUTPUT; break; fi
           done
 
-      - name: Run qmllint
+      - name: Check qmllint version
         if: steps.find-qmllint.outputs.qmllint != ''
+        id: version-check
+        run: |
+          VERSION=$(${{ steps.find-qmllint.outputs.qmllint }} --version 2>&1 | head -1)
+          echo "qmllint version: $VERSION"
+          if echo "$VERSION" | grep -q 'qmllint [6-9]\.' && echo "$VERSION" | grep -v 'qmllint 6\.[0-5]\.'; then
+            echo "supported=true" >> $GITHUB_OUTPUT
+          else
+            echo "supported=false" >> $GITHUB_OUTPUT
+            echo "qmllint too old for .qmllint.ini support — skipping lint (requires Qt 6.6+)"
+          fi
+
+      - name: Run qmllint
+        if: steps.version-check.outputs.supported == 'true'
         run: |
           chmod +x Scripts/dev/qmllint.sh
           Scripts/dev/qmllint.sh
