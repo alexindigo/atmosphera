@@ -1,38 +1,39 @@
-# neomutt colors — generated from atmosphera theme by TemplateProcessor.
-# Pinned to dark mode (.dark. variants) for terminal background.
+# neomutt colors — generated from atmosphera theme by TemplateProcessor
+# Pinned to DARK mode via .dark. variants (terminal background is always #000000).
+# One hardcode: warning yellow #ffff00 (no dedicated warning token; tertiary=green).
 
 color normal     default         default
-color error      {{colors.error.default.hex}}              default
+color error      {{colors.error.dark.hex}}              default
 color warning    #ffff00                                   default
-color message    {{colors.primary.default.hex}}              default
-color status     {{colors.on_surface_variant.default.hex}}     {{colors.surface_variant.default.hex}}
+color message    {{colors.primary.dark.hex}}             default
+color status     {{colors.on_surface_variant.dark.hex}}  {{colors.surface_variant.dark.hex}}
 
-color index      {{colors.primary.default.hex}}              default   "~U"
+color index      {{colors.primary.dark.hex}}             default   "~U"
 color index      default                                    default   "~R"
-color index      {{colors.on_surface_variant.default.hex}}     default   "~Q"
-color index      {{colors.error.default.hex}}                default   "~D"
-color index      {{colors.secondary.default.hex}}            default   "~T"
-color index_number  {{colors.tertiary.default.hex}}          default
+color index      {{colors.on_surface_variant.dark.hex}}  default   "~Q"
+color index      {{colors.error.dark.hex}}               default   "~D"
+color index      {{colors.secondary.dark.hex}}           default   "~T"
+color index_number  {{colors.tertiary.dark.hex}}         default
 color index_subject default                                default
 
-color sidebar_unread    {{colors.primary.default.hex}}           default
-color sidebar_highlight {{colors.on_surface.default.hex}}       default
-color sidebar_indicator {{colors.on_primary.default.hex}}       {{colors.primary.default.hex}}
-color sidebar_spoolfile {{colors.on_surface_variant.default.hex}}  default
-color sidebar_ordinary  {{colors.on_surface_variant.default.hex}}  default
-color sidebar_divider   {{colors.outline.default.hex}}          default
-color sidebar_flagged   {{colors.primary.default.hex}}          default
+color sidebar_unread    {{colors.primary.dark.hex}}          default
+color sidebar_highlight {{colors.on_surface.dark.hex}}      default
+color sidebar_indicator {{colors.on_primary.dark.hex}}      {{colors.primary.dark.hex}}
+color sidebar_spoolfile {{colors.on_surface_variant.dark.hex}} default
+color sidebar_ordinary  {{colors.on_surface_variant.dark.hex}} default
+color sidebar_divider   {{colors.outline.dark.hex}}         default
+color sidebar_flagged   {{colors.primary.dark.hex}}         default
 
-color indicator      {{colors.on_primary.default.hex}}          {{colors.primary.default.hex}}
-color header         {{colors.primary.default.hex}}              default   "^From:"
-color header         {{colors.primary.default.hex}}              default   "^Subject:"
-color header         {{colors.primary.default.hex}}              default   "^Date:"
-color header         {{colors.secondary.default.hex}}            default   "^To:"
-color quoted         {{colors.primary.default.hex}}    default
-color quoted1        {{colors.secondary.default.hex}}  default
-color quoted2        {{colors.primary.default.hex}}              default
-color signature      {{colors.outline.default.hex}}              default
-color tilde          {{colors.outline.default.hex}}              default
-color attachment     {{colors.secondary.default.hex}}            default
-color tree           {{colors.on_surface_variant.default.hex}}   default
-color progress       {{colors.on_primary.default.hex}}          {{colors.primary.default.hex}}
+color indicator      {{colors.on_primary.dark.hex}}         {{colors.primary.dark.hex}}
+color header         {{colors.primary.dark.hex}}             default   "^From:"
+color header         {{colors.primary.dark.hex}}             default   "^Subject:"
+color header         {{colors.primary.dark.hex}}             default   "^Date:"
+color header         {{colors.secondary.dark.hex}}           default   "^To:"
+color quoted         {{colors.primary_fixed_dim.dark.hex}}   default
+color quoted1        {{colors.secondary_fixed_dim.dark.hex}} default
+color quoted2        {{colors.primary.dark.hex}}             default
+color signature      {{colors.outline.dark.hex}}             default
+color tilde          {{colors.outline.dark.hex}}             default
+color attachment     {{colors.secondary.dark.hex}}           default
+color tree           {{colors.on_surface_variant.dark.hex}}  default
+color progress       {{colors.on_primary.dark.hex}}         {{colors.primary.dark.hex}}
