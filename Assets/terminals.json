@@ -1,14 +1,14 @@
 {
-  "com.mitchellh.ghostty": { "name": "Ghostty", "exec": "ghostty", "runArgs": ["-e"] },
-  "Alacritty":             { "name": "Alacritty", "exec": "alacritty", "runArgs": ["-e"] },
-  "kitty":                 { "name": "kitty", "exec": "kitty", "runArgs": [] },
+  "com.mitchellh.ghostty": { "name": "Ghostty", "exec": "ghostty", "runArgs": ["-e"], "workingDirectoryArg": "--working-directory" },
+  "Alacritty":             { "name": "Alacritty", "exec": "alacritty", "runArgs": ["-e"], "workingDirectoryArg": "--working-directory" },
+  "kitty":                 { "name": "kitty", "exec": "kitty", "runArgs": [], "workingDirectoryArg": "--directory" },
   "org.wezfurlong.wezterm":{ "name": "WezTerm", "exec": "wezterm", "runArgs": ["start", "--"] },
-  "org.gnome.Terminal":    { "name": "GNOME Terminal", "exec": "gnome-terminal", "runArgs": ["--"] },
-  "foot":                  { "name": "foot", "exec": "foot", "runArgs": ["-e"] },
-  "org.kde.konsole":       { "name": "Konsole", "exec": "konsole", "runArgs": ["-e"] },
+  "org.gnome.Terminal":    { "name": "GNOME Terminal", "exec": "gnome-terminal", "runArgs": ["--"], "workingDirectoryArg": "--working-directory" },
+  "foot":                  { "name": "foot", "exec": "foot", "runArgs": ["-e"], "workingDirectoryArg": "--working-directory" },
+  "org.kde.konsole":       { "name": "Konsole", "exec": "konsole", "runArgs": ["-e"], "workingDirectoryArg": "--workdir" },
   "xterm":                 { "name": "xterm", "exec": "xterm", "runArgs": ["-e"] },
-  "urxvt":                 { "name": "URxvt", "exec": "urxvt", "runArgs": ["-e"] },
+  "urxvt":                 { "name": "URxvt", "exec": "urxvt", "runArgs": ["-e"], "workingDirectoryArg": "-cd" },
   "st":                    { "name": "st", "exec": "st", "runArgs": ["-e"] },
   "lxterminal":            { "name": "LXTerminal", "exec": "lxterminal", "runArgs": ["-e"] },
-  "xfce4-terminal":        { "name": "Xfce Terminal", "exec": "xfce4-terminal", "runArgs": ["-e"] }
+  "xfce4-terminal":        { "name": "Xfce Terminal", "exec": "xfce4-terminal", "runArgs": ["-e"], "workingDirectoryArg": "--working-directory" }
 }

@@ -194,7 +194,13 @@ ColumnLayout {
       if (c && terminalListModel.count > 0 && !(root.valueAppId in TerminalRegistry.terminals)) {
         var firstTermId = terminalListModel.get(0).key;
         root.valueAppId = firstTermId;
-        root.valueParams = TerminalRegistry.defaultRunArgs(firstTermId).slice();
+        var runArgs = TerminalRegistry.defaultRunArgs(firstTermId).slice();
+        var wdArg = TerminalRegistry.workingDirectoryArg(firstTermId);
+        if (wdArg) {
+          root.valueParams = [wdArg, "~"].concat(runArgs);
+        } else {
+          root.valueParams = runArgs;
+        }
         if (root.valueParams.length === 0 || root.valueParams[root.valueParams.length - 1] !== "")
           root.valueParams.push("");
         rebuildParamsModel();
@@ -245,7 +251,13 @@ ColumnLayout {
     currentKey: root.valueAppId
     onSelected: k => {
       root.valueAppId = k;
-      root.valueParams = TerminalRegistry.defaultRunArgs(k).slice();
+      var runArgs = TerminalRegistry.defaultRunArgs(k).slice();
+      var wdArg = TerminalRegistry.workingDirectoryArg(k);
+      if (wdArg) {
+        root.valueParams = [wdArg, "~"].concat(runArgs);
+      } else {
+        root.valueParams = runArgs;
+      }
       // Ensure a blank slot so the user can type their command
       if (root.valueParams.length === 0 || root.valueParams[root.valueParams.length - 1] !== "")
         root.valueParams.push("");
@@ -260,6 +272,13 @@ ColumnLayout {
     visible: terminalToggle.checked
     label: I18n.tr("panels.desktop-widgets.app-shortcut-params-label")
     description: I18n.tr("panels.desktop-widgets.app-shortcut-params-description")
+  }
+
+  NLabel {
+    visible: root.isCreateMode && root.valueTerminalMode && TerminalRegistry.workingDirectoryArg(root.valueAppId)
+    label: "Working directory"
+    labelColor: Color.mOnSurface
+    description: I18n.tr("panels.desktop-widgets.app-shortcut-working-directory-description")
   }
 
   NHeader {

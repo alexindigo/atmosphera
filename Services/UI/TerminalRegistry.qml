@@ -66,6 +66,14 @@ Singleton {
     return root.terminals[appId].runArgs || [];
   }
 
+  // Get the native working-directory flag for a terminal (e.g. "--directory" for kitty).
+  // Returns "" for terminals without native support (xterm, st, etc.).
+  function workingDirectoryArg(appId) {
+    if (!appId || !(appId in root.terminals))
+      return "";
+    return root.terminals[appId].workingDirectoryArg || "";
+  }
+
   // Get list of terminals that are actually installed on the system.
   // Each result: { id (desktop-entry key), name }
   function getInstalledTerminals() {
