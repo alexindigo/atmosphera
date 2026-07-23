@@ -1,0 +1,23 @@
+{
+  "name": "Atmosphera Dev",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bierner.qml",
+        "ms-python.python",
+        "timonwong.shellcheck",
+        "editorconfig.editorconfig"
+      ],
+      "settings": {
+        "files.associations": {
+          "*.qml": "qml"
+        }
+      }
+    }
+  },
+  "remoteUser": "dev"
+}
