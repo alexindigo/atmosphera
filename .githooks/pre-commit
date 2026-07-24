@@ -4,44 +4,34 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_ROOT"
 
-# -- QML formatting (same as existing local hook) --
-QMLFORMAT=""
-for path in "/usr/lib64/qt6/bin/qmlformat" "/usr/lib/qt6/bin/qmlformat"; do
-  [ -x "$path" ] && { QMLFORMAT="$path"; break; }
-done
-[ -z "$QMLFORMAT" ] && command -v qmlformat &>/dev/null && QMLFORMAT="qmlformat"
-
 STAGED_QML=$(git diff --cached --name-only --diff-filter=ACM | grep '\.qml$' || true)
-if [ -n "$STAGED_QML" ] && [ -n "$QMLFORMAT" ]; then
-  echo "$STAGED_QML" | xargs -I {} "$QMLFORMAT" -i -w 2 -W 360 {} 2>/dev/null || true
+
+if [ -n "$STAGED_QML" ]; then
+  if ! command -v docker &>/dev/null; then
+    echo "docker not found — required for pre-commit checks." >&2
+    echo "Install docker, or bypass with 'git commit --no-verify'." >&2
+    exit 1
+  fi
+
+  IMAGE="atmosphera-dev:local"
+  if ! docker image inspect "$IMAGE" &>/dev/null; then
+    echo "Building $IMAGE (first run only)..." >&2
+    docker build -t "$IMAGE" .devcontainer >&2
+  fi
+
+  mapfile -t files <<< "$STAGED_QML"
+
+  docker run --rm \
+    --user "$(id -u):$(id -g)" \
+    -v "$REPO_ROOT:$REPO_ROOT" \
+    -w "$REPO_ROOT" \
+    "$IMAGE" \
+    .devcontainer/precommit-check.sh "${files[@]}"
+
   git update-index --again
 fi
 
-# -- QML linting (new) --
-QMLLINT=""
-for path in "/usr/lib64/qt6/bin/qmllint" "/usr/lib/qt6/bin/qmllint"; do
-  [ -x "$path" ] && { QMLLINT="$path"; break; }
-done
-[ -z "$QMLLINT" ] && command -v qmllint &>/dev/null && QMLLINT="qmllint"
-
-if [ -n "$QMLLINT" ] && [ -n "$STAGED_QML" ]; then
-  IMPORT_OPTS=(-I "$REPO_ROOT" -I /usr/lib/qt6/qml/ -I /usr/lib/qt6/qml/Quickshell/)
-  HAS_ERRORS=0
-  while IFS= read -r file; do
-    output=$("$QMLLINT" "${IMPORT_OPTS[@]}" "$file" 2>&1) || true
-    if echo "$output" | grep -q 'Error:\|error\]'; then
-      echo "qmllint errors in $file:" >&2
-      echo "$output" >&2
-      HAS_ERRORS=1
-    fi
-  done <<< "$STAGED_QML"
-  if [ $HAS_ERRORS -eq 1 ]; then
-    echo "qmllint: errors found — commit blocked. Fix errors before committing." >&2
-    exit 1
-  fi
-fi
-
-# -- Settings search index (same as existing local hook) --
+# -- Settings search index (unchanged, still runs on host) --
 if git diff --cached --name-only --diff-filter=ACM | grep -q 'Assets/Translations/.*\.json\|Commons/Settings\.qml'; then
   python3 Scripts/dev/build-settings-search-index.py
   git add Assets/settings-search-index.json

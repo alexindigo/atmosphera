@@ -1,6 +1,6 @@
 FROM archlinux:base-devel
 
-RUN pacman -S --noconfirm --needed \
+RUN pacman -Sy --noconfirm --needed \
     qt6-declarative qt6-tools \
     python python-pip \
     shellcheck shfmt \
