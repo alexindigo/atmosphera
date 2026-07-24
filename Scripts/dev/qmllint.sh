@@ -75,8 +75,9 @@ has_errors=0
 
 # Check explicitly enforced categories (these may not always cause
 # non-zero exit from qmllint itself, especially in Qt 6.11).
+# Only matches Warning/Error lines to respect .qmllint.ini severity.
 for cat in "${ENFORCED_CATEGORIES[@]}"; do
-    if grep -qF "[$cat]" <<< "$output"; then
+    if grep -E "^(Warning|Error):.*\[$cat\]" <<< "$output" >/dev/null 2>&1; then
         has_errors=1
         break
     fi
