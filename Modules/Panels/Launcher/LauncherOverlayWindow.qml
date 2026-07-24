@@ -40,7 +40,12 @@ Variants {
       WlrLayershell.layer: WlrLayer.Overlay
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
 
+      // qmllint disable missing-type
+      // BackgroundEffect.blurRegion is typed as PendingRegion in Quickshell's
+      // qmltypes, but only exported as `Region` — qmllint can't resolve the
+      // C++ name across the export boundary.
       BackgroundEffect.blurRegion: Settings.data.general.enableBlurBehind ? launcherBlurRegion : null
+      // qmllint enable missing-type
       Region {
         id: launcherBlurRegion
 

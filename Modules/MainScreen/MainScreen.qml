@@ -205,7 +205,12 @@ PanelWindow {
   }
 
   // Blur behind the bar and open panels — attached to PanelWindow (required by BackgroundEffect API)
+  // qmllint disable missing-type
+  // BackgroundEffect.blurRegion is typed as PendingRegion in Quickshell's
+  // qmltypes, but only exported as `Region` — qmllint can't resolve the
+  // C++ name across the export boundary.
   BackgroundEffect.blurRegion: Settings.data.general.enableBlurBehind ? blurRegion : null
+  // qmllint enable missing-type
   Region {
     id: blurRegion
     // ── Non-framed bar (simple/floating): single rectangle with bar corner states ──

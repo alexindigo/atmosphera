@@ -862,7 +862,12 @@ Loader {
           readonly property real slideY: dockPosition === "top" ? -slideOffset : dockPosition === "bottom" ? slideOffset : 0
 
           // Blur behind dock — offset by slide so it follows the content
+          // qmllint disable missing-type
+          // BackgroundEffect.blurRegion is typed as PendingRegion in Quickshell's
+          // qmltypes, but only exported as `Region` — qmllint can't resolve the
+          // C++ name across the export boundary.
           BackgroundEffect.blurRegion: Settings.data.general.enableBlurBehind ? dockBlurRegion : null
+          // qmllint enable missing-type
           Region {
             id: dockBlurRegion
             Region {
