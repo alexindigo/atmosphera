@@ -394,9 +394,7 @@ SmartPanel {
                 required property int index
                 text: modelData.name || `Screen ${index + 1}`
                 tabIndex: index
-                checked: {
-                  screenTabBar.currentIndex === index;
-                }
+                checked: screenTabBar.currentIndex === index
               }
             }
           }

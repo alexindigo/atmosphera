@@ -48,6 +48,7 @@ ENFORCED_CATEGORIES=(
     unresolved-alias
     unintentional-empty-block
     read-only-property
+    confusing-expression-statement
     syntax
 )
 
