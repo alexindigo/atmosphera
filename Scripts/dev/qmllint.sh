@@ -50,6 +50,7 @@ ENFORCED_CATEGORIES=(
     read-only-property
     confusing-expression-statement
     alias-cycle
+    duplicate-property-binding
     syntax
 )
 
