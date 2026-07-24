@@ -497,9 +497,9 @@ Popup {
 
             Rectangle {
               anchors.fill: parent
-              color: (mouseArea.containsMouse && !isSelected) ? Color.mHover : "transparent"
+              color: (gridMouseArea.containsMouse && !isSelected) ? Color.mHover : "transparent"
               radius: parent.radius
-              border.color: (mouseArea.containsMouse && !isSelected) ? Color.mHover : "transparent"
+              border.color: (gridMouseArea.containsMouse && !isSelected) ? Color.mHover : "transparent"
               border.width: Style.borderS
               Behavior on color {
                 ColorAnimation {
@@ -568,7 +568,7 @@ Popup {
                   color: {
                     if (isSelected)
                       return Color.mSecondary;
-                    else if (mouseArea.containsMouse)
+                    else if (gridMouseArea.containsMouse)
                       return Color.mOnHover;
                     else
                       return model.fileIsDir ? Color.mPrimary : Color.mOnSurfaceVariant;
@@ -602,7 +602,7 @@ Popup {
                 color: {
                   if (isSelected)
                     return Color.mSecondary;
-                  else if (mouseArea.containsMouse)
+                  else if (gridMouseArea.containsMouse)
                     return Color.mOnHover;
                   else
                     return Color.mOnSurfaceVariant;
@@ -618,7 +618,7 @@ Popup {
             }
 
             MouseArea {
-              id: mouseArea
+              id: gridMouseArea
               anchors.fill: parent
               hoverEnabled: true
               acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -675,7 +675,7 @@ Popup {
             color: {
               if (filePickerPanel.currentSelection.includes(model.filePath))
                 return Color.mSecondary;
-              if (mouseArea.containsMouse)
+              if (listMouseArea.containsMouse)
                 return Color.mHover;
               return "transparent";
             }
@@ -717,7 +717,7 @@ Popup {
             }
 
             MouseArea {
-              id: mouseArea
+              id: listMouseArea
               anchors.fill: parent
               hoverEnabled: true
               acceptedButtons: Qt.LeftButton | Qt.RightButton
