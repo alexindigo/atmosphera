@@ -6,18 +6,18 @@ import qs.Services.Compositor
 import qs.Services.UI
 import qs.Widgets
 
-// Generic full-screen popup window for menus and context menus
+// Generic full-shellScreen popup window for menus and context menus
 // This is a top-level PanelWindow (sibling to MainScreen, not nested inside it)
 // Provides click-outside-to-close functionality for any popup content
 // Loads TrayMenu by default but can show context menus via showContextMenu()
 PanelWindow {
   id: root
 
-  required property ShellScreen screen
+  required property ShellScreen shellScreen
   property string windowType: "popupmenu"  // Used for namespace and registration
 
   // Content item to display (set by the popup that uses this window)
-  property var contentItem: null
+  property var popupContentItem: null
 
   // Expose the trayMenu Loader directly (for backward compatibility)
   readonly property alias trayMenuLoader: trayMenuLoader
@@ -37,7 +37,7 @@ PanelWindow {
   // However, when a dialog is open, always use Top so dialogs appear above apps.
   WlrLayershell.layer: (CompositorService.isLabwc && !hasDialog) ? WlrLayer.Bottom : WlrLayer.Top
   WlrLayershell.keyboardFocus: hasDialog ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
-  WlrLayershell.namespace: "atmosphera-" + windowType + "-" + (screen?.name || "unknown")
+  WlrLayershell.namespace: "atmosphera-" + windowType + "-" + (shellScreen?.name || "unknown")
   WlrLayershell.exclusionMode: ExclusionMode.Ignore
 
   // Track if a dialog is currently open (needed for keyboard focus)
@@ -45,12 +45,12 @@ PanelWindow {
 
   // Register with PanelService so widgets can find this window
   Component.onCompleted: {
-    objectName = "popupMenuWindow-" + (screen?.name || "unknown");
-    PanelService.registerPopupMenuWindow(screen, root);
+    objectName = "popupMenuWindow-" + (shellScreen?.name || "unknown");
+    PanelService.registerPopupMenuWindow(shellScreen, root);
   }
 
   Component.onDestruction: {
-    PanelService.unregisterPopupMenuWindow(screen);
+    PanelService.unregisterPopupMenuWindow(shellScreen);
   }
 
   // Load TrayMenu as the default content
@@ -59,9 +59,9 @@ PanelWindow {
     source: Quickshell.shellDir + "/Modules/Bar/Extras/TrayMenu.qml"
     onLoaded: {
       if (item) {
-        item.screen = root.screen;
+        item.shellScreen = root.shellScreen;
         // Set the loaded item as default content
-        root.contentItem = item;
+        root.popupContentItem = item;
       }
     }
   }
@@ -71,7 +71,7 @@ PanelWindow {
   NPopupContextMenu {
     id: dynamicMenu
     visible: false
-    screen: root.screen
+    shellScreen: root.shellScreen
     minWidth: 180
 
     onTriggered: (action, item) => {
@@ -95,12 +95,12 @@ PanelWindow {
   // Show a context menu (temporarily replaces TrayMenu as content)
   function showContextMenu(menu) {
     if (menu) {
-      contentItem = menu;
+      popupContentItem = menu;
       open();
     }
   }
 
-  // Show a dynamic context menu with model and callback at screen coordinates
+  // Show a dynamic context menu with model and callback at shellScreen coordinates
   // Used for items in other window layers (e.g., desktop widgets in bottom layer)
   function showDynamicContextMenu(model, screenX, screenY, callback) {
     dynamicMenu.model = model;
@@ -111,7 +111,7 @@ PanelWindow {
     anchorPoint.x = screenX;
     anchorPoint.y = screenY;
 
-    contentItem = dynamicMenu;
+    popupContentItem = dynamicMenu;
     dynamicMenu.visible = true;
     open();
   }
@@ -133,11 +133,11 @@ PanelWindow {
     visible = false;
     BarService.popupOpen = false;
     // Call close/hide method on current content
-    if (contentItem) {
-      if (typeof contentItem.hideMenu === "function") {
-        contentItem.hideMenu();
-      } else if (typeof contentItem.close === "function") {
-        contentItem.close();
+    if (popupContentItem) {
+      if (typeof popupContentItem.hideMenu === "function") {
+        popupContentItem.hideMenu();
+      } else if (typeof popupContentItem.close === "function") {
+        popupContentItem.close();
       }
     }
     // Hide dynamic menu
@@ -145,18 +145,18 @@ PanelWindow {
     dynamicMenuCallback = null;
     // Restore TrayMenu as default content
     if (trayMenuLoader.item) {
-      contentItem = trayMenuLoader.item;
+      popupContentItem = trayMenuLoader.item;
     }
   }
 
-  // Full-screen click catcher - click anywhere outside content closes the window
+  // Full-shellScreen click catcher - click anywhere outside content closes the window
   MouseArea {
     anchors.fill: parent
     acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
     onClicked: root.close()
   }
 
-  // Container for dialogs that need a full-screen Item parent (e.g., Qt Popup)
+  // Container for dialogs that need a full-shellScreen Item parent (e.g., Qt Popup)
   Item {
     id: dialogContainer
     anchors.fill: parent

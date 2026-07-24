@@ -56,7 +56,7 @@ SmartPanel {
   panelAnchorTop: !largeButtonsStyle && panelPosition.startsWith("top_")
 
   // SessionMenu handle it's own closing logic
-  property bool closeWithEscape: false
+  property bool menuCloseWithEscape: false
 
   // Timer properties
   readonly property int timerDuration: Settings.data.sessionMenu.countdownDuration

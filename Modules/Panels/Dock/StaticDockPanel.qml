@@ -11,9 +11,9 @@ SmartPanel {
 
   readonly property string dockPosition: Settings.data.dock.position
   readonly property bool isVertical: dockPosition === "left" || dockPosition === "right"
-  readonly property bool hasBar: modelData && modelData.name ? (Settings.data.bar.monitors.includes(modelData.name) || (Settings.data.bar.monitors.length === 0)) : false
-  readonly property bool barAtSameEdge: hasBar && Settings.getBarPositionForScreen(modelData?.name) === dockPosition
-  readonly property bool isFramed: Settings.data.bar.barType === "framed" && hasBar
+  readonly property bool dockHasBar: modelData && modelData.name ? (Settings.data.bar.monitors.includes(modelData.name) || (Settings.data.bar.monitors.length === 0)) : false
+  readonly property bool barAtSameEdge: dockHasBar && Settings.getBarPositionForScreen(modelData?.name) === dockPosition
+  readonly property bool dockIsFramed: Settings.data.bar.barType === "framed" && dockHasBar
   property bool isDockHovered: false
   property bool panelHovered: false
   readonly property int iconSize: Math.round(12 + 24 * (Settings.data.dock.size ?? 1))
@@ -82,7 +82,7 @@ SmartPanel {
   panelAnchorHorizontalCenter: !isVertical
   panelAnchorVerticalCenter: isVertical
 
-  forceAttachToBar: hasBar
+  forceAttachToBar: dockHasBar
   exclusiveKeyboard: false
 
   // when dragging ended but the cursor is outside the dock area, restart the timer
@@ -561,7 +561,7 @@ SmartPanel {
     id: panelContent
 
     property bool allowAttach: true
-    property real frameThickness: isFramed && !barAtSameEdge && !Settings.data.dock.sitOnFrame ? Settings.data.bar.frameThickness : 0
+    property real frameThickness: dockIsFramed && !barAtSameEdge && !Settings.data.dock.sitOnFrame ? Settings.data.bar.frameThickness : 0
     property real contentPreferredWidth: Math.round(dockContainerWrapper.width) - (isVertical ? frameThickness : 0)
     property real contentPreferredHeight: Math.round(dockContainerWrapper.height) - (!isVertical ? frameThickness : 0)
 
@@ -593,7 +593,7 @@ SmartPanel {
 
     Item {
       id: dockContainerWrapper
-      readonly property real frameThickness: isFramed ? Settings.data.bar.frameThickness : 0
+      readonly property real frameThickness: dockIsFramed ? Settings.data.bar.frameThickness : 0
       width: dockContent.dockContainer.width
       height: dockContent.dockContainer.height
       anchors.top: root.dockPosition === "bottom" ? parent.top : undefined

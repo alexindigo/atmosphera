@@ -6,7 +6,7 @@ import qs.Commons
 
 // Simple context menu PopupWindow (similar to TrayMenu)
 // Designed to be rendered inside a PopupMenuWindow for click-outside-to-close
-// Automatically positions itself to respect screen boundaries
+// Automatically positions itself to respect shellScreen boundaries
 PopupWindow {
   id: root
 
@@ -17,7 +17,7 @@ PopupWindow {
   property int horizontalPolicy: ScrollBar.AsNeeded
 
   property var anchorItem: null
-  property ShellScreen screen: null
+  property ShellScreen shellScreen: null
   property real minWidth: 120
   property real calculatedWidth: 180
 
@@ -27,8 +27,8 @@ PopupWindow {
   property real targetWidth: 0
   property real targetHeight: 0
 
-  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
-  readonly property real barHeight: Style.getBarHeightForScreen(screen?.name)
+  readonly property string barPosition: Settings.getBarPositionForScreen(shellScreen?.name)
+  readonly property real barHeight: Style.getBarHeightForScreen(shellScreen?.name)
 
   signal triggered(string action, var item)
 
@@ -88,7 +88,7 @@ PopupWindow {
   anchor.item: anchorItem
 
   anchor.rect.x: {
-    if (anchorItem && screen) {
+    if (anchorItem && shellScreen) {
       const anchorGlobalPos = anchorItem.mapToItem(null, 0, 0);
 
       // Use stored targetOffsetX and targetWidth for positioning
@@ -115,8 +115,8 @@ PopupWindow {
       const menuRight = menuScreenX + implicitWidth;
 
       // Adjust if menu would clip on the right
-      if (menuRight > screen.width - Style.marginM) {
-        const overflow = menuRight - (screen.width - Style.marginM);
+      if (menuRight > shellScreen.width - Style.marginM) {
+        const overflow = menuRight - (shellScreen.width - Style.marginM);
         return baseX - overflow;
       }
       // Adjust if menu would clip on the left
@@ -128,7 +128,7 @@ PopupWindow {
     return 0;
   }
   anchor.rect.y: {
-    if (anchorItem && screen) {
+    if (anchorItem && shellScreen) {
       // Check if using absolute positioning (small anchor point item)
       const isAbsolutePosition = anchorItem.width <= 1 && anchorItem.height <= 1;
 
@@ -138,7 +138,7 @@ PopupWindow {
         const anchorGlobalPos = anchorItem.mapToItem(null, 0, 0);
         const menuBottom = anchorGlobalPos.y + implicitHeight;
 
-        if (menuBottom > screen.height - Style.marginM) {
+        if (menuBottom > shellScreen.height - Style.marginM) {
           // Position above the click point instead
           return -implicitHeight;
         }
@@ -171,7 +171,7 @@ PopupWindow {
 
       // Define clipping boundaries based on bar position
       const topLimit = Style.marginM;
-      const bottomLimit = root.barPosition === "bottom" ? screen.height - barHeight - Style.marginS : screen.height - Style.marginM;
+      const bottomLimit = root.barPosition === "bottom" ? shellScreen.height - barHeight - Style.marginS : shellScreen.height - Style.marginM;
 
       // Adjust if menu would clip at top (skip for bottom bar - don't push menu down over bar)
       if (menuScreenY < topLimit && root.barPosition !== "bottom") {
@@ -188,7 +188,7 @@ PopupWindow {
       return baseY;
     }
 
-    // Fallback if no screen
+    // Fallback if no shellScreen
     if (root.barPosition === "bottom") {
       return -implicitHeight - Style.marginS;
     }
@@ -325,7 +325,7 @@ PopupWindow {
   }
 
   // Helper function to open context menu anchored to an item
-  // Position is calculated automatically based on bar position and screen boundaries
+  // Position is calculated automatically based on bar position and shellScreen boundaries
   // Optional centerOnItem: if provided, menu will be horizontally centered on this item instead of anchorItem
   function openAtItem(item, itemScreen, centerOnItem) {
     if (!item) {
@@ -333,9 +333,9 @@ PopupWindow {
       return;
     }
 
-    // Set anchor and screen first
+    // Set anchor and shellScreen first
     anchorItem = item;
-    screen = itemScreen || null;
+    shellScreen = itemScreen || null;
 
     // Compute target offset and dimensions from centerOnItem
     if (centerOnItem && centerOnItem !== item) {

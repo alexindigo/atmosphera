@@ -20,7 +20,7 @@ DraggableDesktopWidget {
   readonly property bool showAlbumArt: (widgetData && widgetData.showAlbumArt !== undefined) ? widgetData.showAlbumArt : true
   readonly property bool showVisualizer: (widgetData && widgetData.showVisualizer !== undefined) ? widgetData.showVisualizer : true
   readonly property string visualizerType: (widgetData && widgetData.visualizerType && widgetData.visualizerType !== "") ? widgetData.visualizerType : "linear"
-  readonly property bool roundedCorners: (widgetData && widgetData.roundedCorners !== undefined) ? widgetData.roundedCorners : true
+  readonly property bool playerRoundedCorners: (widgetData && widgetData.roundedCorners !== undefined) ? widgetData.roundedCorners : true
   readonly property bool hasPlayer: MediaService.currentPlayer !== null
   readonly property bool isPlaying: MediaService.isPlaying
   readonly property bool hasActiveTrack: hasPlayer && (MediaService.trackTitle || MediaService.trackArtist)
@@ -86,12 +86,12 @@ DraggableDesktopWidget {
     layer.enabled: true
     layer.smooth: true
     layer.effect: MultiEffect {
-      maskEnabled: root.roundedCorners
+      maskEnabled: root.playerRoundedCorners
       maskSource: ShaderEffectSource {
         sourceItem: Rectangle {
           width: root.width - Math.round(Style.marginXS * widgetScale) * 2
           height: root.height - Math.round(Style.marginXS * widgetScale)
-          radius: root.roundedCorners ? Math.round(Math.max(0, (Style.radiusL - Style.marginXS) * widgetScale)) : 0
+          radius: root.playerRoundedCorners ? Math.round(Math.max(0, (Style.radiusL - Style.marginXS) * widgetScale)) : 0
           color: "white"
         }
       }

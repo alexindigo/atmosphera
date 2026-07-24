@@ -52,6 +52,7 @@ ENFORCED_CATEGORIES=(
     alias-cycle
     duplicate-property-binding
     assignment-in-condition
+    property-override
     syntax
 )
 
