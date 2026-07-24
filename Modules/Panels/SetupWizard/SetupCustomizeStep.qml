@@ -144,20 +144,20 @@ ColumnLayout {
 
               property bool isActive: selectedBarPosition === modelData.key
 
-              color: (hoverHandler.hovered || isActive) ? Color.mPrimary : Color.mSurfaceVariant
-              border.color: (hoverHandler.hovered || isActive) ? Color.mPrimary : Color.mOutline
-              opacity: (hoverHandler.hovered || isActive) ? 1.0 : 0.8
+              color: (positionHoverHandler.hovered || isActive) ? Color.mPrimary : Color.mSurfaceVariant
+              border.color: (positionHoverHandler.hovered || isActive) ? Color.mPrimary : Color.mOutline
+              opacity: (positionHoverHandler.hovered || isActive) ? 1.0 : 0.8
 
               NText {
                 text: modelData.name
                 pointSize: Style.fontSizeM
-                font.weight: (hoverHandler.hovered || parent.isActive) ? Style.fontWeightBold : Style.fontWeightMedium
-                color: (hoverHandler.hovered || parent.isActive) ? Color.mOnPrimary : Color.mOnSurface
+                font.weight: (positionHoverHandler.hovered || parent.isActive) ? Style.fontWeightBold : Style.fontWeightMedium
+                color: (positionHoverHandler.hovered || parent.isActive) ? Color.mOnPrimary : Color.mOnSurface
                 anchors.centerIn: parent
               }
 
               HoverHandler {
-                id: hoverHandler
+                id: positionHoverHandler
               }
               MouseArea {
                 anchors.fill: parent
@@ -267,21 +267,21 @@ ColumnLayout {
 
               property bool isActive: Settings.data.bar.density === modelData.key
 
-              color: (hoverHandler.hovered || isActive) ? Color.mPrimary : Color.mSurfaceVariant
-              border.color: (hoverHandler.hovered || isActive) ? Color.mPrimary : Color.mOutline
-              opacity: (hoverHandler.hovered || isActive) ? 1.0 : 0.8
+              color: (densityHoverHandler.hovered || isActive) ? Color.mPrimary : Color.mSurfaceVariant
+              border.color: (densityHoverHandler.hovered || isActive) ? Color.mPrimary : Color.mOutline
+              opacity: (densityHoverHandler.hovered || isActive) ? 1.0 : 0.8
 
               NText {
                 id: densityText
                 text: modelData.name
                 pointSize: Style.fontSizeS
-                font.weight: (hoverHandler.hovered || parent.isActive) ? Style.fontWeightBold : Style.fontWeightMedium
-                color: (hoverHandler.hovered || parent.isActive) ? Color.mOnPrimary : Color.mOnSurface
+                font.weight: (densityHoverHandler.hovered || parent.isActive) ? Style.fontWeightBold : Style.fontWeightMedium
+                color: (densityHoverHandler.hovered || parent.isActive) ? Color.mOnPrimary : Color.mOnSurface
                 anchors.centerIn: parent
               }
 
               HoverHandler {
-                id: hoverHandler
+                id: densityHoverHandler
               }
               MouseArea {
                 anchors.fill: parent
@@ -451,20 +451,20 @@ ColumnLayout {
 
               property bool isActive: Settings.data.bar.barType === modelData.key
 
-              color: (hoverHandler.hovered || isActive) ? Color.mPrimary : Color.mSurfaceVariant
-              border.color: (hoverHandler.hovered || isActive) ? Color.mPrimary : Color.mOutline
-              opacity: (hoverHandler.hovered || isActive) ? 1.0 : 0.8
+              color: (barTypeHoverHandler.hovered || isActive) ? Color.mPrimary : Color.mSurfaceVariant
+              border.color: (barTypeHoverHandler.hovered || isActive) ? Color.mPrimary : Color.mOutline
+              opacity: (barTypeHoverHandler.hovered || isActive) ? 1.0 : 0.8
 
               NText {
                 text: modelData.name
                 pointSize: Style.fontSizeM
-                font.weight: (hoverHandler.hovered || parent.isActive) ? Style.fontWeightBold : Style.fontWeightMedium
-                color: (hoverHandler.hovered || parent.isActive) ? Color.mOnPrimary : Color.mOnSurface
+                font.weight: (barTypeHoverHandler.hovered || parent.isActive) ? Style.fontWeightBold : Style.fontWeightMedium
+                color: (barTypeHoverHandler.hovered || parent.isActive) ? Color.mOnPrimary : Color.mOnSurface
                 anchors.centerIn: parent
               }
 
               HoverHandler {
-                id: hoverHandler
+                id: barTypeHoverHandler
               }
               MouseArea {
                 anchors.fill: parent
