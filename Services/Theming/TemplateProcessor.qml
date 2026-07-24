@@ -449,7 +449,7 @@ Singleton {
     workingDirectory: Quickshell.shellDir
     running: false
 
-    onExited: function (exitCode, exitStatus) {
+    onExited: function (exitCode) {
       // Execute any pending request (handles both kill case and debounce timer interval case)
       if (pendingWallpaperRequest || pendingPredefinedRequest) {
         Logger.d("TemplateProcessor", "generateProcess onExited: has pending request, executing");

@@ -67,7 +67,7 @@ Item {
     id: stateCheckProcessExecutor
     running: false
     command: _currentStateCheckIndex !== -1 && _parsedStateChecks.length > _currentStateCheckIndex ? ["sh", "-lc", _parsedStateChecks[_currentStateCheckIndex].command] : []
-    onExited: function (exitCode, stdout, stderr) {
+    onExited: function (exitCode) {
       var currentCheckItem = _parsedStateChecks[_currentStateCheckIndex];
       var currentCommand = currentCheckItem.command;
       if (exitCode === 0) {

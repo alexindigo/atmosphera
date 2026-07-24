@@ -69,7 +69,7 @@ Singleton {
   Process {
     id: dependencyCheckProcess
     stdout: StdioCollector {}
-    onExited: (exitCode, exitStatus) => {
+    onExited: (exitCode) => {
       root.dependencyChecked = true;
       if (exitCode === 0) {
         root.cliphistAvailable = true;
@@ -110,7 +110,7 @@ Singleton {
   Process {
     id: listProc
     stdout: StdioCollector {}
-    onExited: (exitCode, exitStatus) => {
+    onExited: (exitCode) => {
       const out = String(stdout.text);
       const lines = out.split('\n').filter(l => l.length > 0);
       // cliphist list default format: "<id> <preview>" or "<id>\t<preview>"
@@ -206,7 +206,7 @@ Singleton {
     id: decodeProc
     property int requestId: 0
     stdout: StdioCollector {}
-    onExited: (exitCode, exitStatus) => {
+    onExited: (exitCode) => {
       if (requestId === root._decodeRequestId && root._decodeCallback) {
         const out = String(stdout.text);
         try {
@@ -231,7 +231,7 @@ Singleton {
   Process {
     id: deleteProc
     stdout: StdioCollector {}
-    onExited: (exitCode, exitStatus) => {
+    onExited: (exitCode) => {
       revision++;
       Qt.callLater(() => list());
     }
@@ -241,7 +241,7 @@ Singleton {
   Process {
     id: decodeB64Proc
     stdout: StdioCollector {}
-    onExited: (exitCode, exitStatus) => {
+    onExited: (exitCode) => {
       const b64 = String(stdout.text).trim();
       if (root._b64CurrentCb) {
         const url = `data:${root._b64CurrentMime};base64,${b64}`;
@@ -271,7 +271,7 @@ Singleton {
   Process {
     id: watchText
     stdout: StdioCollector {}
-    onExited: (exitCode, exitStatus) => {
+    onExited: (exitCode) => {
       if (root.autoWatch && root.watchersStarted && Settings.data.appLauncher.clipboardWatchTextCommand.trim() !== "") {
         watchTextRestartTimer.restart();
       }
@@ -292,7 +292,7 @@ Singleton {
   Process {
     id: watchImage
     stdout: StdioCollector {}
-    onExited: (exitCode, exitStatus) => {
+    onExited: (exitCode) => {
       if (root.autoWatch && root.watchersStarted && Settings.data.appLauncher.clipboardWatchImageCommand.trim() !== "") {
         watchImageRestartTimer.restart();
       }
@@ -313,7 +313,7 @@ Singleton {
   Process {
     id: captureTextProc
     stdout: StdioCollector {}
-    onExited: (exitCode, exitStatus) => {
+    onExited: (exitCode) => {
       if (exitCode === 0) {
         const content = String(stdout.text);
         if (content.length > 0) {

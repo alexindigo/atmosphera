@@ -97,7 +97,7 @@ NBox {
             }
           }
 
-          onStatusChanged: status => {
+          onStatusChanged: {
             if (status === Image.Error) {
               iconLoader.visible = true;
               imagePreview.visible = false;

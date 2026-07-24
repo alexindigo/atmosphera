@@ -26,7 +26,7 @@ QtObject {
     stdout: StdioCollector {
       id: out
     }
-    onExited: function (exitCode, exitStatus) {
+    onExited: function (exitCode) {
       try {
         var text = out.text || "";
         var dbm = BluetoothUtils.parseRssiOutput(text);
