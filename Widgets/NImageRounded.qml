@@ -16,7 +16,7 @@ Item {
   property int imageFillMode: Image.PreserveAspectCrop
 
   readonly property bool _isAnimated: imagePath.toLowerCase().endsWith(".gif")
-  readonly property Item imageSource: imageSourceLoader.item
+  readonly property QtObject imageSource: imageSourceLoader.item
   readonly property bool showFallback: fallbackIcon !== "" && (imagePath === "" || (imageSource && imageSource.status === Image.Error))
   readonly property int status: imageSource ? imageSource.status : Image.Null
 
