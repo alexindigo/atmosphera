@@ -974,8 +974,6 @@ Popup {
           WallhavenService.sorting = Settings.data.wallpaper.wallhavenSorting;
           WallhavenService.order = Settings.data.wallpaper.wallhavenOrder;
           WallhavenService.ratios = Settings.data.wallpaper.wallhavenRatios;
-          WallhavenService.apiKey = Settings.data.wallpaper.wallhavenApiKey;
-
           // Update resolution settings (without triggering search)
           updateResolution(false);
 

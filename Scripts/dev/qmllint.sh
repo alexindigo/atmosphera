@@ -47,6 +47,7 @@ ENFORCED_CATEGORIES=(
     missing-type
     unresolved-alias
     unintentional-empty-block
+    read-only-property
     syntax
 )
 
