@@ -2,6 +2,9 @@
 set -euo pipefail
 
 # QML Linter Script — runs Qt6 qmllint with Atmosphera import paths.
+# When run inside the devcontainer, QS_VFS should point at the
+# generated VFS (set by precommit-check.sh). In host-mode (no QS_VFS),
+# falls back to repo-relative imports (noisier but backwards compatible).
 
 export QT_LOGGING_RULES="qt.qmldom.*=false"
 
@@ -33,25 +36,34 @@ fi
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 IMPORT_OPTS=(-I "$REPO_ROOT" -I /usr/lib/qt6/qml/ -I /usr/lib/qt6/qml/Quickshell/)
+
+if [ -n "${QS_VFS:-}" ] && [ -d "$QS_VFS" ]; then
+    IMPORT_OPTS=(-I "$QS_VFS" "${IMPORT_OPTS[@]}")
+fi
+
 ERROR_COUNT=0
 
 lint_file() {
     local file=$1
     local output
-    output=$("$QMLLINT" "${IMPORT_OPTS[@]}" "$file" 2>&1) || true
+    local ec=0
+    output=$("$QMLLINT" "${IMPORT_OPTS[@]}" "$file" 2>&1) || ec=$?
+
+    # Non-zero exit = real error (e.g. missing-property at error severity)
     local has_errors=0
-    # Check for error-severity warnings (they produce non-zero exit)
-    # Also check for explicit error/warning markers
-    if echo "$output" | grep -q 'Error:\|error\]'; then
+    [ $ec -ne 0 ] && has_errors=1
+
+    # qmllint 6.11 tags parse errors (unbalanced braces, etc.) as
+    # Warning-level [syntax] — the exit code stays 0 even with
+    # --max-warnings 0. Catch them explicitly.
+    if echo "$output" | grep -qE '\[syntax[-.]'; then
         has_errors=1
     fi
+
     if [ -n "$output" ]; then
         if [ $has_errors -eq 1 ]; then
             echo "$output" >&2
             return 1
-        else
-            # Info/warning only — print but don't fail
-            echo "$output" >&2
         fi
     fi
     return 0

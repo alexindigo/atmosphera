@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Runs inside devcontainer. Called by .githooks/pre-commit with staged .qml files.
-# Marshals which Scripts/dev/* checks run in pre-commit context.
+# Runs inside devcontainer via atmo-dev. Called by .githooks/pre-commit
+# with staged .qml files. atmo-dev has already set up overlay + VFS + env.
+# This script only cares about formatting and linting the staged files.
 
 STAGED_QML=("$@")
 [ ${#STAGED_QML[@]} -eq 0 ] && exit 0

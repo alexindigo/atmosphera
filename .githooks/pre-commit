@@ -21,12 +21,21 @@ if [ -n "$STAGED_QML" ]; then
 
   mapfile -t files <<< "$STAGED_QML"
 
-  docker run --rm \
+  # Capture output into a variable rather than piping directly to git's
+  # stdout/stderr — a filled pipe buffer from docker's output can stall
+  # git's commit pipeline. Only print the output on failure.
+  hook_output=$(docker run --rm \
     --user "$(id -u):$(id -g)" \
-    -v "$REPO_ROOT:$REPO_ROOT" \
-    -w "$REPO_ROOT" \
+    --cap-add SYS_ADMIN \
+    --tmpfs /tmp/overlay:size=256m,mode=1777 \
+    -v "$REPO_ROOT:/workspaces/atmosphera" \
+    -w /workspaces/atmosphera \
     "$IMAGE" \
-    .devcontainer/precommit-check.sh "${files[@]}"
+    atmo-dev .devcontainer/precommit-check.sh "${files[@]}" 2>&1) && hook_ec=0 || hook_ec=$?
+  if [ $hook_ec -ne 0 ]; then
+    echo "$hook_output" >&2
+    exit 1
+  fi
 
   git update-index --again
 fi
