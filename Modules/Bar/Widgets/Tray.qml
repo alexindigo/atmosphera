@@ -496,7 +496,8 @@ Item {
                 popupMenuWindow.close();
                 return;
               }
-              modelData.secondaryActivate && modelData.secondaryActivate();
+              if (modelData.secondaryActivate)
+                modelData.secondaryActivate();
             } else if (mouse.button === Qt.RightButton) {
               TooltipService.hideImmediately();
 

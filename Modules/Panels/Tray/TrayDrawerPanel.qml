@@ -227,7 +227,7 @@ SmartPanel {
                     PanelService.openedPanel.close();
                   }
                 } else if (mouse.button === Qt.MiddleButton) {
-                  modelData.secondaryActivate && modelData.secondaryActivate();
+                  if (modelData.secondaryActivate) modelData.secondaryActivate();
                   if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
                     PanelService.openedPanel.close();
                   }
