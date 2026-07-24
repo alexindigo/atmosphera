@@ -10,9 +10,6 @@ NCollapsible {
   // Public API
   property var tags: []  // Array of tag strings
   property string selectedTag: ""
-  property alias label: root.label
-  property alias description: root.description
-  property alias expanded: root.expanded
 
   // Formatting function for tag display (optional override)
   property var formatTag: function (tag) {

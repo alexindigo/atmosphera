@@ -49,6 +49,7 @@ ENFORCED_CATEGORIES=(
     unintentional-empty-block
     read-only-property
     confusing-expression-statement
+    alias-cycle
     syntax
 )
 
