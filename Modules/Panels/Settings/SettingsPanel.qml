@@ -19,18 +19,18 @@ SmartPanel {
   readonly property bool attachToBar: settingsPanelMode === "attached"
 
   readonly property string barDensity: Settings.data.bar.density
-  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
-  readonly property bool barFloating: Settings.data.bar.barType === "floating"
-  readonly property real barMarginH: barFloating ? Math.ceil(Settings.data.bar.marginHorizontal) : 0
-  readonly property real barMarginV: barFloating ? Math.ceil(Settings.data.bar.marginVertical) : 0
+  readonly property string settingsBarPosition: Settings.getBarPositionForScreen(screen?.name)
+  readonly property bool settingsBarFloating: Settings.data.bar.barType === "floating"
+  readonly property real settingsBarMarginH: settingsBarFloating ? Math.ceil(Settings.data.bar.marginHorizontal) : 0
+  readonly property real settingsBarMarginV: settingsBarFloating ? Math.ceil(Settings.data.bar.marginVertical) : 0
 
   forceAttachToBar: attachToBar
-  panelAnchorHorizontalCenter: !root.useButtonPosition && (attachToBar ? (barPosition === "top" || barPosition === "bottom") : true)
-  panelAnchorVerticalCenter: !root.useButtonPosition && (attachToBar ? (barPosition === "left" || barPosition === "right") : true)
-  panelAnchorTop: !root.useButtonPosition && attachToBar && barPosition === "top"
-  panelAnchorBottom: !root.useButtonPosition && attachToBar && barPosition === "bottom"
-  panelAnchorLeft: !root.useButtonPosition && attachToBar && barPosition === "left"
-  panelAnchorRight: !root.useButtonPosition && attachToBar && barPosition === "right"
+  panelAnchorHorizontalCenter: !root.useButtonPosition && (attachToBar ? (settingsBarPosition === "top" || settingsBarPosition === "bottom") : true)
+  panelAnchorVerticalCenter: !root.useButtonPosition && (attachToBar ? (settingsBarPosition === "left" || settingsBarPosition === "right") : true)
+  panelAnchorTop: !root.useButtonPosition && attachToBar && settingsBarPosition === "top"
+  panelAnchorBottom: !root.useButtonPosition && attachToBar && settingsBarPosition === "bottom"
+  panelAnchorLeft: !root.useButtonPosition && attachToBar && settingsBarPosition === "left"
+  panelAnchorRight: !root.useButtonPosition && attachToBar && settingsBarPosition === "right"
 
   onAttachToBarChanged: {
     if (isPanelOpen) {

@@ -9,7 +9,7 @@ import qs.Widgets
 PopupWindow {
   id: root
 
-  property ShellScreen screen
+  property ShellScreen shellScreen
 
   property var trayItem: null
   property var anchorItem: null
@@ -26,7 +26,7 @@ PopupWindow {
   readonly property bool isPinned: {
     if (!trayItem || widgetSection === "" || widgetIndex < 0)
       return false;
-    var widgets = Settings.getBarWidgetsForScreen(root.screen?.name)[widgetSection];
+    var widgets = Settings.getBarWidgetsForScreen(root.shellScreen?.name)[widgetSection];
     if (!widgets || widgetIndex >= widgets.length)
       return false;
     var widgetSettings = widgets[widgetIndex];
@@ -46,7 +46,7 @@ PopupWindow {
   implicitWidth: menuWidth
 
   // Use the content height of the Flickable for implicit height
-  implicitHeight: Math.min(screen?.height * 0.9, flickable.contentHeight + Style.margin2S)
+  implicitHeight: Math.min(shellScreen?.height * 0.9, flickable.contentHeight + Style.margin2S)
 
   // When implicitHeight changes (menu content loads), force anchor recalculation
   onImplicitHeightChanged: {
@@ -61,15 +61,15 @@ PopupWindow {
   color: "transparent"
   anchor.item: anchorItem
   anchor.rect.x: {
-    if (anchorItem && screen) {
+    if (anchorItem && shellScreen) {
       let baseX = anchorX;
 
-      // Calculate position relative to current screen
+      // Calculate position relative to current shellScreen
       let menuScreenX;
       if (isSubMenu && anchorItem.Window && anchorItem.Window.window) {
         const posInPopup = anchorItem.mapToItem(null, 0, 0);
         const parentWindow = anchorItem.Window.window;
-        const windowXOnScreen = parentWindow.x - screen.x;
+        const windowXOnScreen = parentWindow.x - shellScreen.x;
         menuScreenX = windowXOnScreen + posInPopup.x + baseX;
       } else {
         const anchorGlobalPos = anchorItem.mapToItem(null, 0, 0);
@@ -78,10 +78,10 @@ PopupWindow {
       }
 
       const menuRight = menuScreenX + implicitWidth;
-      const screenRight = screen.width;
+      const screenRight = shellScreen.width;
       const menuLeft = menuScreenX;
 
-      // Only adjust if menu would clip off screen boundaries
+      // Only adjust if menu would clip off shellScreen boundaries
       // Don't adjust if the positioning is intentional (e.g., negative offset for right bar)
       if (menuRight > screenRight && menuLeft < screenRight) {
         // Clipping on right edge - shift left
@@ -97,8 +97,8 @@ PopupWindow {
     return anchorX;
   }
   anchor.rect.y: {
-    if (anchorItem && screen) {
-      const barPosition = Settings.getBarPositionForScreen(root.screen?.name);
+    if (anchorItem && shellScreen) {
+      const barPosition = Settings.getBarPositionForScreen(root.shellScreen?.name);
 
       let baseY = anchorY;
 
@@ -113,30 +113,30 @@ PopupWindow {
         baseY = -(implicitHeight + Style.marginS);
       } else if (barPosition === "top" && !isSubMenu && anchorY >= 0) {
         // For top bar: position menu below bar with margin
-        const barHeight = Style.getBarHeightForScreen(root.screen?.name);
+        const barHeight = Style.getBarHeightForScreen(root.shellScreen?.name);
         baseY = barHeight + Style.marginS;
       }
 
-      // Use a robust way to get screen coordinates
+      // Use a robust way to get shellScreen coordinates
       const posInWindow = anchorItem.mapToItem(null, 0, 0);
       const parentWindow = anchorItem.Window.window;
 
-      // Calculate screen-relative Y of the window
-      let windowYOnScreen = (parentWindow && screen) ? (parentWindow.y - screen.y) : 0;
+      // Calculate shellScreen-relative Y of the window
+      let windowYOnScreen = (parentWindow && shellScreen) ? (parentWindow.y - shellScreen.y) : 0;
 
-      // If window reported 0 but bar is at bottom, assume it's at screen bottom
-      if (windowYOnScreen === 0 && barPosition === "bottom" && screen) {
-        windowYOnScreen = screen.height - (parentWindow ? parentWindow.height : Style.getBarHeightForScreen(screen.name));
+      // If window reported 0 but bar is at bottom, assume it's at shellScreen bottom
+      if (windowYOnScreen === 0 && barPosition === "bottom" && shellScreen) {
+        windowYOnScreen = shellScreen.height - (parentWindow ? parentWindow.height : Style.getBarHeightForScreen(shellScreen.name));
       }
 
-      // Calculate the screen Y of the menu top
+      // Calculate the shellScreen Y of the menu top
       // Use a small guess for height if implicitHeight is 0 to avoid covering the bar on the first frame
       const effectiveHeight = implicitHeight > 0 ? implicitHeight : 200;
       const effectiveBaseY = shouldApplyBottomBarLogic ? -(effectiveHeight + Style.marginS) : baseY;
 
       const menuScreenY = windowYOnScreen + posInWindow.y + effectiveBaseY;
       const menuBottom = menuScreenY + (implicitHeight > 0 ? implicitHeight : effectiveHeight);
-      const screenHeight = screen ? screen.height : 1080;
+      const screenHeight = shellScreen ? shellScreen.height : 1080;
 
       // Adjust the final baseY (the actual value returned to anchor.rect.y)
       let finalBaseY = shouldApplyBottomBarLogic ? -(implicitHeight + Style.marginS) : baseY;
@@ -148,7 +148,7 @@ PopupWindow {
       }
 
       // Adjust if menu would clip off the top
-      // menuScreenY < 0 means it's above the screen edge
+      // menuScreenY < 0 means it's above the shellScreen edge
       if (menuScreenY < 0) {
         finalBaseY -= (menuScreenY - Style.marginS);
       }
@@ -156,11 +156,11 @@ PopupWindow {
       return finalBaseY;
     }
 
-    // Fallback if no anchor/screen
+    // Fallback if no anchor/shellScreen
     if (isSubMenu) {
       return anchorY;
     }
-    return anchorY + (Settings.getBarPositionForScreen(root.screen?.name) === "bottom" ? -implicitHeight : Style.getBarHeightForScreen(root.screen?.name));
+    return anchorY + (Settings.getBarPositionForScreen(root.shellScreen?.name) === "bottom" ? -implicitHeight : Style.getBarHeightForScreen(root.shellScreen?.name));
   }
 
   function showAt(item, x, y) {
@@ -429,7 +429,7 @@ PopupWindow {
 
                       // Determine submenu opening direction
                       let openLeft = false;
-                      const barPosition = Settings.getBarPositionForScreen(root.screen?.name);
+                      const barPosition = Settings.getBarPositionForScreen(root.shellScreen?.name);
                       const globalPos = entry.mapToItem(null, 0, 0);
 
                       if (barPosition === "right") {
@@ -444,7 +444,7 @@ PopupWindow {
                       entry.subMenu = Qt.createComponent("TrayMenu.qml").createObject(root, {
                                                                                         "menu": modelData,
                                                                                         "isSubMenu": true,
-                                                                                        "screen": root.screen
+                                                                                        "shellScreen": root.shellScreen
                                                                                       });
 
                       if (entry.subMenu) {
@@ -465,8 +465,8 @@ PopupWindow {
                     root.hideMenu();
 
                     // Close the drawer if it's open
-                    if (root.screen) {
-                      const panel = PanelService.getPanel("trayDrawerPanel", root.screen);
+                    if (root.shellScreen) {
+                      const panel = PanelService.getPanel("trayDrawerPanel", root.shellScreen);
                       if (panel && panel.visible) {
                         panel.close();
                       }
@@ -491,7 +491,7 @@ PopupWindow {
         visible: {
           if (widgetSection === "" || widgetIndex < 0)
             return false;
-          var widgets = Settings.getBarWidgetsForScreen(root.screen?.name)[widgetSection];
+          var widgets = Settings.getBarWidgetsForScreen(root.shellScreen?.name)[widgetSection];
           if (!widgets || widgetIndex >= widgets.length)
             return false;
           var widgetSettings = widgets[widgetIndex];
@@ -557,7 +557,7 @@ PopupWindow {
       Logger.w("TrayMenu", "Cannot pin: tray item has no name");
       return;
     }
-    var screenName = root.screen?.name || "";
+    var screenName = root.shellScreen?.name || "";
     var widgets = Settings.getBarWidgetsForScreen(screenName)[widgetSection];
     if (!widgets || widgetIndex >= widgets.length) {
       Logger.w("TrayMenu", "Cannot pin: invalid widget index");
@@ -575,7 +575,7 @@ PopupWindow {
     newSettings.pinned = newPinned;
     widgets[widgetIndex] = newSettings;
 
-    // Write to the correct location: screen override or global
+    // Write to the correct location: shellScreen override or global
     if (Settings.hasScreenOverride(screenName, "widgets")) {
       var overrideWidgets = Settings.getBarWidgetsForScreen(screenName);
       overrideWidgets[widgetSection] = widgets;
@@ -586,8 +586,8 @@ PopupWindow {
     Settings.saveImmediate();
 
     // Close drawer when pinning (drawer needs to resize)
-    if (screen) {
-      const panel = PanelService.getPanel("trayDrawerPanel", screen);
+    if (shellScreen) {
+      const panel = PanelService.getPanel("trayDrawerPanel", shellScreen);
       if (panel)
         panel.close();
     }
@@ -603,7 +603,7 @@ PopupWindow {
       Logger.w("TrayMenu", "Cannot unpin: tray item has no name");
       return;
     }
-    var screenName = root.screen?.name || "";
+    var screenName = root.shellScreen?.name || "";
     var widgets = Settings.getBarWidgetsForScreen(screenName)[widgetSection];
     if (!widgets || widgetIndex >= widgets.length) {
       Logger.w("TrayMenu", "Cannot unpin: invalid widget index");
@@ -625,7 +625,7 @@ PopupWindow {
     newSettings.pinned = newPinned;
     widgets[widgetIndex] = newSettings;
 
-    // Write to the correct location: screen override or global
+    // Write to the correct location: shellScreen override or global
     if (Settings.hasScreenOverride(screenName, "widgets")) {
       var overrideWidgets = Settings.getBarWidgetsForScreen(screenName);
       overrideWidgets[widgetSection] = widgets;

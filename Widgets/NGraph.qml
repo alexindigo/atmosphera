@@ -26,7 +26,7 @@ Item {
   property real strokeWidth: 1
   property bool fill: true
   property real fillOpacity: 0.15
-  property real antialiasing: 0.5
+  property real aaWidth: 0.5
 
   // Smooth scrolling interval (how often data updates)
   property int updateInterval: 1000
@@ -226,7 +226,7 @@ Item {
     property real graphFillOpacity: root.fill ? root.fillOpacity : 0.0
     property real texWidth: _dataRow.width
     property real resY: height
-    property real aaSize: root.antialiasing
+    property real aaSize: root.aaWidth
 
     fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/graph.frag.qsb")
     blending: true
