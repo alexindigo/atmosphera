@@ -51,6 +51,7 @@ ENFORCED_CATEGORIES=(
     confusing-expression-statement
     alias-cycle
     duplicate-property-binding
+    assignment-in-condition
     syntax
 )
 
