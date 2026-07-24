@@ -41,36 +41,14 @@ if [ -n "${QS_VFS:-}" ] && [ -d "$QS_VFS" ]; then
     IMPORT_OPTS=(-I "$QS_VFS" "${IMPORT_OPTS[@]}")
 fi
 
-ERROR_COUNT=0
-
-lint_file() {
-    local file=$1
-    local output
-    local ec=0
-    output=$("$QMLLINT" "${IMPORT_OPTS[@]}" "$file" 2>&1) || ec=$?
-
-    # Non-zero exit = real error (e.g. missing-property at error severity)
-    local has_errors=0
-    [ $ec -ne 0 ] && has_errors=1
-
-    # qmllint 6.11 tags parse errors (unbalanced braces, etc.) as
-    # Warning-level [syntax] — the exit code stays 0 even with
-    # --max-warnings 0. Catch them explicitly.
-    if echo "$output" | grep -qE '\[syntax[-.]'; then
-        has_errors=1
-    fi
-
-    if [ -n "$output" ]; then
-        if [ $has_errors -eq 1 ]; then
-            echo "$output" >&2
-            return 1
-        fi
-    fi
-    return 0
-}
-
-export -f lint_file
-export QMLLINT IMPORT_OPTS
+# Categories enforced as errors, beyond those qmllint exits non-zero for.
+# Added progressively as they are fixed across the codebase.
+ENFORCED_CATEGORIES=(
+    missing-type
+    unresolved-alias
+    unintentional-empty-block
+    syntax
+)
 
 # Collect all .qml files or use provided args
 if [ $# -gt 0 ]; then
@@ -82,14 +60,29 @@ fi
 [ ${#all_files[@]} -eq 0 ] && { echo "No QML files found"; exit 0; }
 
 echo "Linting ${#all_files[@]} QML files..."
-for f in "${all_files[@]}"; do
-    if ! lint_file "$f"; then
-        ERROR_COUNT=$((ERROR_COUNT + 1))
+ec=0
+output=$("$QMLLINT" "${IMPORT_OPTS[@]}" "${all_files[@]}" 2>&1) || ec=$?
+
+has_errors=0
+
+# Check exit code — qmllint may exit non-zero for hard errors.
+[ $ec -ne 0 ] && has_errors=1
+
+# Check explicitly enforced categories (these may not always cause
+# non-zero exit from qmllint itself, especially in Qt 6.11).
+for cat in "${ENFORCED_CATEGORIES[@]}"; do
+    if grep -qF "[$cat]" <<< "$output"; then
+        has_errors=1
+        break
     fi
 done
 
-if [ $ERROR_COUNT -gt 0 ]; then
-    echo "qmllint: $ERROR_COUNT file(s) with errors" >&2
+if [ -n "$output" ]; then
+    echo "$output" >&2
+fi
+
+if [ $has_errors -eq 1 ]; then
+    echo "qmllint: FAILED" >&2
     exit 1
 fi
 
