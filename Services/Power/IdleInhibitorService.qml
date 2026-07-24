@@ -104,7 +104,7 @@ Singleton {
     id: inhibitorProcess
     running: false
 
-    onExited: function (exitCode, exitStatus) {
+    onExited: function (exitCode) {
       if (isInhibited) {
         Logger.w("IdleInhibitor", "Inhibitor process exited unexpectedly:", exitCode);
         isInhibited = false;

@@ -147,7 +147,7 @@ Singleton {
       }
     }
 
-    onExited: function (exitCode, exitStatus) {
+    onExited: function (exitCode) {
       if (exitCode !== 0) {
         Logger.w("Font", "fc-list failed with exit code", exitCode);
         root._allFontsOutput = "";
@@ -171,7 +171,7 @@ Singleton {
       }
     }
 
-    onExited: function (exitCode, exitStatus) {
+    onExited: function (exitCode) {
       if (exitCode !== 0) {
         root._monoFontsOutput = "";
         root._monoFontsDone = true;

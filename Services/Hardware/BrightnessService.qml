@@ -347,7 +347,7 @@ Singleton {
 
     readonly property Process setBrightnessProc: Process {
       stdout: StdioCollector {}
-      onExited: (exitCode, exitStatus) => {
+      onExited: (exitCode) => {
         monitor.commandRunning = false;
         // If there's a queued brightness change, process it now
         if (!isNaN(monitor.queuedBrightness)) {
@@ -444,7 +444,7 @@ Singleton {
           monitor.initInProgress = false;
         }
       }
-      onExited: (exitCode, exitStatus) => {
+      onExited: (exitCode) => {
         monitor.initInProgress = false;
       }
     }

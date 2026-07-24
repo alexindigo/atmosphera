@@ -422,7 +422,7 @@ Item {
     id: textProc
     stdout: textStream ? textStdoutSplit : textStdoutCollect
     stderr: StdioCollector {}
-    onExited: (exitCode, exitStatus) => {
+    onExited: exitCode => {
       if (textStream) {
         Logger.w("CustomButton", `Streaming text command exited (code: ${exitCode}), restarting...`);
         return;

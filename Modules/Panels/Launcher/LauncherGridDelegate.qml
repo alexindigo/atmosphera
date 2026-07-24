@@ -94,7 +94,7 @@ Item {
             }
           }
 
-          onStatusChanged: status => {
+          onStatusChanged: {
             if (status === Image.Error) {
               gridIconLoader.visible = true;
               gridImagePreview.visible = false;

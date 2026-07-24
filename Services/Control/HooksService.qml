@@ -301,7 +301,7 @@ Singleton {
 
   Process {
     id: handlerProcess
-    onExited: (exitCode, exitStatus) => {
+    onExited: (exitCode) => {
       handlerTimeoutTimer.stop();
       if (exitCode !== 0) {
         Logger.w("HooksService", `Handler exited with code ${exitCode}`);
@@ -357,7 +357,7 @@ Singleton {
 
   Process {
     id: powerHookProcess
-    onExited: (exitCode, exitStatus) => {
+    onExited: (exitCode) => {
       if (exitCode !== 0) {
         Logger.w("HooksService", `Power hook failed with exit code ${exitCode}`);
       }
