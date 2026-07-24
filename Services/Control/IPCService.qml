@@ -31,7 +31,7 @@ Singleton {
   }
 
   // Helper for index-based notification lookups in IPC
-  function _getNotificationByIndex(index: string, funcName: string) {
+  function _getNotificationByIndex(index: string, funcName: string): var {
     var idx = index === "" ? 0 : parseInt(index);
     if (isNaN(idx)) {
       Logger.w("IPC", "Argument to ipc call '" + funcName + "' must be a number");

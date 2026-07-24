@@ -14,7 +14,7 @@ GridLayout {
   property string label: ""
   property string description: ""
   property bool stacked: false
-  property ListModel model: ({})
+  property ListModel model: ListModel {}
   property string currentKey: ""
   property string placeholder: ""
   property string searchPlaceholder: I18n.tr("placeholders.search")

@@ -882,8 +882,7 @@ Item {
                             properties: "scale"
                             to: 1
                             duration: Style.animationFast
-                            easing.type: Easing.BezierSpline
-                            easing.bezierCurve: Easing.OutInBounce
+                            easing.type: Easing.OutInBounce
                           }
                         }
                         Component.onCompleted: {
