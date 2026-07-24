@@ -22,14 +22,10 @@ Variants {
   // Force reload counter - incremented when plugin widget registry changes
   property int pluginReloadCounter: 0
 
-  Connections {
-    target: DesktopWidgetRegistry
-
-    function onPluginWidgetRegistryUpdated() {
-      root.pluginReloadCounter++;
-      Logger.d("DesktopWidgets", "Plugin widget registry updated, reload counter:", root.pluginReloadCounter);
-    }
-  }
+  Component.onCompleted: DesktopWidgetRegistry.pluginWidgetRegistryUpdated.connect(function() {
+    root.pluginReloadCounter++;
+    Logger.d("DesktopWidgets", "Plugin widget registry updated, reload counter:", root.pluginReloadCounter);
+  })
 
   delegate: Loader {
     id: screenLoader

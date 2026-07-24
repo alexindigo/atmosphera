@@ -737,7 +737,7 @@ Item {
 
             // Visual shifting logic
             readonly property bool isDragged: root.dragSourceIndex === index
-            property real shiftOffset: 0
+            property real shiftOffset
 
             // Calculate shift based on drag state
             // If I am NOT the dragged item, but I am in the path of the drag

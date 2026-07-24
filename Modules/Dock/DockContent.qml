@@ -529,7 +529,7 @@ Item {
 
               // Visual shifting logic
               readonly property bool isDragged: dockRoot.dragSourceIndex === index
-              property real shiftOffset: 0
+              property real shiftOffset
 
               Binding on shiftOffset {
                 value: {

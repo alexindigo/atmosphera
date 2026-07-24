@@ -41,7 +41,7 @@ NBox {
       anchors.fill: parent
 
       // Animated time for shaders
-      property real shaderTime: 0
+      property real shaderTime
       NumberAnimation on shaderTime {
         loops: Animation.Infinite
         from: 0
