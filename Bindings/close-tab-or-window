@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# Close tab (if the app supports tabs) or close the window.
+# macOS-like Cmd+W behavior for niri.
+
+set -euo pipefail
+
+log="/tmp/atmosphera-close.log"
+
+echo "--- $(date) ---" >> "$log"
+echo "args: $*" >> "$log"
+
+tabbed_apps=(
+    # Browsers
+    firefox
+    org.mozilla.firefox
+    firefoxdeveloperedition
+    org.mozilla.firefoxdeveloperedition
+    chromium
+    google-chrome
+    zen
+    org.zen_browser.zen
+    brave-browser
+    thorium
+    vivaldi
+    edge
+    microsoft-edge
+    # Editors & Terminals (tabbed)
+    dev.zed.Zed
+    zed
+    code
+    code-oss
+    vscodium
+    codium
+)
+
+window_info=$(niri msg focused-window 2>/dev/null || true)
+echo "window_info: $window_info" >> "$log"
+
+app_id=$(echo "$window_info" | grep -oP 'App ID: "\K[^"]+' || true)
+echo "app_id: $app_id" >> "$log"
+
+if [ -z "$app_id" ]; then
+    echo "result: no window, closing" >> "$log"
+    niri msg action close-window
+    exit 0
+fi
+
+for tabbed in "${tabbed_apps[@]}"; do
+    if [ "$app_id" = "$tabbed" ]; then
+        echo "result: tabbed app ($app_id), sending Ctrl+W" >> "$log"
+        wtype -M ctrl w -m ctrl
+        exit 0
+    fi
+done
+
+echo "result: non-tabbed app ($app_id), closing window" >> "$log"
+niri msg action close-window

@@ -1,0 +1,103 @@
+[
+  // macOS-style keybindings for Zed on Linux
+  // physical Alt + key → Super + key (via xremap modmap) → matched by super- prefix
+  //
+  // Install: copy to ~/.config/zed/keymap.json
+  // Zed never overwrites user keymaps on update.
+  // See also: _research/zed/zed-keybindings-macos.md
+
+  // ═══════════════════════════════════════════════════
+  // Editor - App Actions
+  // ═══════════════════════════════════════════════════
+  {
+    "context": "Editor",
+    "bindings": {
+      // Save / Undo / Redo / Select All / Find
+      "super-s": "workspace::Save",
+      "super-z": "editor::Undo",
+      "super-shift-z": "editor::Redo",
+      "super-a": "editor::SelectAll",
+      "super-f": "buffer_search::Deploy",
+      "super-g": ["buffer_search::SelectNextMatch"],
+      "super-shift-g": ["buffer_search::SelectPrevMatch"],
+      "super-shift-f": "buffer_search::DeployReplace",
+
+      // Copy / Paste / Cut
+      "super-c": "editor::Copy",
+      "super-v": "editor::Paste",
+      "super-x": "editor::Cut",
+
+      // Text Navigation - beginning/end of line
+      "super-left": ["editor::MoveToBeginningOfLine", { "stop_at_soft_wraps": true, "stop_at_indent": true }],
+      "super-right": ["editor::MoveToEndOfLine", { "stop_at_soft_wraps": true }],
+      "super-shift-left": ["editor::SelectToBeginningOfLine", { "stop_at_soft_wraps": true, "stop_at_indent": true }],
+      "super-shift-right": ["editor::SelectToEndOfLine", { "stop_at_soft_wraps": true }],
+
+      // Text Navigation - beginning/end of document
+      "super-up": "editor::MoveToBeginning",
+      "super-down": "editor::MoveToEnd",
+      "super-shift-up": "editor::SelectToBeginning",
+      "super-shift-down": "editor::SelectToEnd",
+
+      // Word navigation
+      "alt-left": "editor::MoveToPreviousWordStart",
+      "alt-right": "editor::MoveToNextWordEnd",
+      "alt-shift-left": "editor::SelectToPreviousWordStart",
+      "alt-shift-right": "editor::SelectToNextWordEnd"
+    }
+  },
+
+  // ═══════════════════════════════════════════════════
+  // Terminal - Forward keystrokes
+  // ═══════════════════════════════════════════════════
+  {
+    "context": "Terminal",
+    "bindings": {
+      // Forward Ctrl+letter combos to terminal process
+      "ctrl-c": ["terminal::SendKeystroke", "ctrl-c"],
+      "ctrl-d": ["terminal::SendKeystroke", "ctrl-d"],
+      "ctrl-z": ["terminal::SendKeystroke", "ctrl-z"],
+      "ctrl-a": ["terminal::SendKeystroke", "ctrl-a"],
+      "ctrl-s": ["terminal::SendKeystroke", "ctrl-s"],
+      "ctrl-w": ["terminal::SendKeystroke", "ctrl-w"],
+      "ctrl-r": ["terminal::SendKeystroke", "ctrl-r"],
+      "ctrl-e": ["terminal::SendKeystroke", "ctrl-e"],
+      "ctrl-u": ["terminal::SendKeystroke", "ctrl-u"],
+      "ctrl-k": ["terminal::SendKeystroke", "ctrl-k"],
+      "ctrl-t": ["terminal::SendKeystroke", "ctrl-t"],
+      "ctrl-o": ["terminal::SendKeystroke", "ctrl-o"],
+      "ctrl-p": ["terminal::SendKeystroke", "ctrl-p"],
+      "ctrl-b": ["terminal::SendKeystroke", "ctrl-b"],
+      "ctrl-n": ["terminal::SendKeystroke", "ctrl-n"],
+      "ctrl-l": ["terminal::SendKeystroke", "ctrl-l"],
+      "ctrl-h": ["terminal::SendKeystroke", "ctrl-h"],
+      "ctrl-f": ["terminal::SendKeystroke", "ctrl-f"],
+
+      // Super shortcuts forwarded to terminal as Ctrl
+      "super-c": ["terminal::SendKeystroke", "ctrl-c"],
+      "super-d": ["terminal::SendKeystroke", "ctrl-d"],
+      "super-z": ["terminal::SendKeystroke", "ctrl-z"],
+      "super-a": ["terminal::SendKeystroke", "ctrl-a"],
+      "super-s": ["terminal::SendKeystroke", "ctrl-s"],
+      "super-w": ["terminal::SendKeystroke", "ctrl-w"],
+      "super-r": ["terminal::SendKeystroke", "ctrl-r"],
+      "super-e": ["terminal::SendKeystroke", "ctrl-e"],
+      "super-u": ["terminal::SendKeystroke", "ctrl-u"],
+      "super-k": ["terminal::SendKeystroke", "ctrl-k"],
+      "super-t": ["terminal::SendKeystroke", "ctrl-t"],
+      "super-o": ["terminal::SendKeystroke", "ctrl-o"],
+      "super-p": ["terminal::SendKeystroke", "ctrl-p"],
+      "super-b": ["terminal::SendKeystroke", "ctrl-b"],
+      "super-n": ["terminal::SendKeystroke", "ctrl-n"],
+      "super-l": ["terminal::SendKeystroke", "ctrl-l"],
+      "super-f": ["terminal::SendKeystroke", "ctrl-f"],
+      "super-h": ["terminal::SendKeystroke", "ctrl-h"],
+
+      // Forward Super+arrows to terminal as Ctrl+arrows (word skip)
+      "super-left": ["terminal::SendKeystroke", "ctrl-left"],
+      "super-right": ["terminal::SendKeystroke", "ctrl-right"],
+      "super-shift-left": ["terminal::SendKeystroke", "ctrl-shift-left"],
+      "super-shift-right": ["terminal::SendKeystroke", "ctrl-shift-right"]
+    }
+  }
+]

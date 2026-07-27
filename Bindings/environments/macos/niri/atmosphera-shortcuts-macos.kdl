@@ -1,0 +1,231 @@
+// Atmosphera: macOS-style shortcuts for niri
+// With the Mac Layout Modmap:
+//   Physical Ctrl (corner) → Super  (WM actions)
+//   Physical Super (Win)   → Alt    (Option/word nav)
+//   Physical Alt (next to Space) → Ctrl  (App actions)
+//
+// So in niri binds:
+//   Super+ → WM actions (workspace, column, etc.) — press corner Ctrl
+//   Ctrl+  → App actions (Save, Find, Paste, etc.) — press next-to-Space Alt
+//   Alt+   → Option actions (typographic symbols) — press physical Win key
+//
+// RESERVED: Ctrl+Space
+//   Input-method switcher (fcitx5 owns switching — single authority across
+//   all installed IMEs including Japanese Mozc and Russian).
+//   Handled at the niri-bind level in config.kdl → spawns /usr/local/bin/fcitx5-input.
+//   Press physical Alt (next to Space) + Space to switch input methods.
+//   Note: xkb layout toggle (grp:*_space_toggle) is intentionally disabled below.
+
+input {
+    // Mod is disabled via ghost modifier so upstream Mod+ binds become inert.
+    // We use explicit Super/Alt/Ctrl instead — this avoids the Mod+Alt/Mod+Ctrl
+    // conflict trap, and prevents upstream Mod+ binds from colliding at runtime
+    // (niri deduplicates by string, so Mod+W and Super+W are treated as different).
+    mod-key "ISO_Level5_Shift"
+
+    keyboard {
+        xkb {
+            layout "us,ru"
+            variant ",mac"
+            // xkb-level layout toggle intentionally disabled: fcitx5 is the
+            // single authority on input-method switching. Physical Alt+Space
+            // fires niri's Ctrl+Space keybind (see config.kdl) → fcitx5-input ru
+            // → fcitx5 activates keyboard-ru IM. Both `us` and `ru` layouts
+            // stay loaded so fcitx5's `keyboard-ru` IM has a valid backend.
+            options ""
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════
+// Window Management — Super (corner Ctrl) for WM
+// ═══════════════════════════════════════════════════
+
+layout {
+    // Don't auto-center focused column — allows panning across wide columns.
+    center-focused-column "never"
+    always-center-single-column
+}
+
+binds {
+    // ═══════════════════════════════════════════════════
+    // App Launcher — macOS: Cmd+Space
+    // ═══════════════════════════════════════════════════
+    // Super+Space (corner Ctrl+Space) — launches app launcher.
+    // Ctrl+Space (alt+Space) is reserved for input switching (xkb).
+    // TODO: replace fuzzel with a proper app launcher
+    Super+Space hotkey-overlay-title="Application Launcher" {
+        spawn "fuzzel";
+    }
+
+    // ═══════════════════════════════════════════════════
+    // Window Management — Super (corner Ctrl) for WM
+    // ═══════════════════════════════════════════════════
+
+    // Close Tab — macOS: Cmd+W
+    // Physical Alt (next to Space) + W → Ctrl+W → runs close-tab script
+    Ctrl+W { spawn "/home/user/Projects/atmosphera-bindings/niri/atmosphera-close-tab-or-window"; }
+
+    // Close Window — Ctrl+Shift+W
+    Ctrl+Shift+W { close-window; }
+
+    // Toggle floating window
+    // Ctrl+T { toggle-window-floating; }
+
+    // Minimize — macOS: Cmd+M
+    // Ctrl+M { minimize-window; }
+
+    // Hide — macOS: Cmd+H
+    // Ctrl+H { hide-app-or-similar; }
+
+    // Hide all others — macOS: Cmd+Opt+H
+    // Ctrl+Alt+H { hide-other-apps-or-similar; }
+
+    // Full screen — Super+F = maximize, Super+Shift+F = true fullscreen
+    Super+F { maximize-column; }
+    Super+Shift+F { fullscreen-window; }
+
+    // Overview — macOS: Mission Control via Ctrl+Up (or F3)
+    Super+O repeat=false { toggle-overview; }
+
+    // Workspace switching — Super+Up/Down, Super+Left/Right for columns
+    // Numbered workspace binds (commented — vertical layout makes them less useful)
+    // Super+1 { focus-workspace 1; }
+    // Super+2 { focus-workspace 2; }
+    // Super+3 { focus-workspace 3; }
+    // Super+4 { focus-workspace 4; }
+    // Super+5 { focus-workspace 5; }
+    // Super+6 { focus-workspace 6; }
+    // Super+7 { focus-workspace 7; }
+    // Super+8 { focus-workspace 8; }
+    // Super+9 { focus-workspace 9; }
+    // Super+0 { focus-workspace 10; }
+
+    // Niri-adapted navigation (macOS-inspired chords, niri-native logic):
+    // Super+Up/Down  → switch workspace
+    // Super+Left/Right → switch column (window) within workspace
+    Super+Up    { focus-workspace-up; }
+    Super+Down  { focus-workspace-down; }
+    Super+Left  { focus-column-left; }
+    Super+Right { focus-column-right; }
+
+    // Alt augments: same chords + Alt → move window/column instead of focus
+    Super+Alt+Up    { move-column-to-workspace-up; }
+    Super+Alt+Down  { move-column-to-workspace-down; }
+    Super+Alt+Left  { move-column-left; }
+    Super+Alt+Right { move-column-right; }
+
+    // Ctrl+Space (physical Alt+Space) is bound in config.kdl to fcitx5-input ru
+    // (the RU input-method toggle). No sink needed here — the config.kdl bind
+    // consumes the chord and prevents propagation to apps.
+
+    // ═══════════════════════════════════════════════════
+    // Screenshots — macOS: Cmd+Shift+3/4/5
+    // ═══════════════════════════════════════════════════
+    // Super+Shift+4 → interactive region/window (macOS Cmd+Shift+4)
+    // Super+Shift+3 → window screenshot
+    // Super+Shift+Alt+3 → full screen screenshot
+    // Print → full screen screenshot (convenience)
+    // Super+Print → color picker (requires hyprpicker)
+    Print { screenshot-screen; }
+    // Super+Print { spawn-sh "pkill hyprpicker || hyprpicker -a"; }
+    // Super+Shift+5 → screen recording toggle
+    //   Invokes noctalia screen-recorder plugin via Quickshell IPC
+    //   Plugin: ~/.config/noctalia/plugins/screen-recorder/
+    Super+Shift+5 { spawn-sh "qs -c noctalia-shell ipc call plugin:screen-recorder toggle"; }
+
+    // Window drag/resize — niri handles this natively:
+    //   Super+drag = move window, Super+right-drag = resize window
+    // No binds needed.
+
+    // ═══════════════════════════════════════════════════
+    // Common App Actions — handled naturally by the modmap
+    // Physical Alt (next to Space) = Ctrl → app receives standard Linux shortcuts
+    //   Ctrl+S → Save, Ctrl+Z → Undo, Ctrl+A → Select All
+    //   Ctrl+F → Find, Ctrl+G → Find Next
+    //   Ctrl+C → Copy, Ctrl+V → Paste, Ctrl+X → Cut
+    // No niri binds needed.
+    // ═══════════════════════════════════════════════════
+
+    // Notification dismiss — macOS: Cmd+,
+    // Ctrl+Comma { spawn "makoctl dismiss"; }
+
+    // TODO: organize these into proper macOS-inspired sections
+    Super+Equal { set-column-width "+10%"; }
+    Super+Minus { set-column-width "-10%"; }
+    Super+Alt+Equal { set-window-height "+10%"; }
+    Super+Alt+Minus { set-window-height "-10%"; }
+
+    // ═══════════════════════════════════════════════════
+    // Text Navigation — macOS cursor movement
+    // Handled by xremap: Super+Left/Right/Up/Down → Home/End/Ctrl-Home/Ctrl-End
+    // ═══════════════════════════════════════════════════
+    //   Super+Left  → Home         (beginning of line)
+    //   Super+Right → End          (end of line)
+    //   Super+Up    → Ctrl+Home    (beginning of document)
+    //   Super+Down  → Ctrl+End     (end of document)
+    //   Alt+Left    → Ctrl+Left    (previous word)
+    //   Alt+Right   → Ctrl+Right   (next word)
+
+    // ═══════════════════════════════════════════════════
+    // Text Editing — macOS clipboard & formatting
+    // Handled by modmap: physical Alt (next to Space) = Ctrl → native Linux shortcuts
+    // ═══════════════════════════════════════════════════
+    //   Ctrl+A      → Select All
+    //   Ctrl+C      → Copy
+    //   Ctrl+X      → Cut
+    //   Ctrl+V      → Paste
+    //   Ctrl+Shift+V → Paste and match style
+    //   Ctrl+Z      → Undo
+    //   Ctrl+Shift+Z → Redo
+
+    // ═══════════════════════════════════════════════════
+    // macOS typographic niceties — Alt (physical Win key) + key combos
+    // Physical Super (Win) → Alt → Option key for special characters
+    // ═══════════════════════════════════════════════════
+    Alt+Minus { spawn-sh "wtype '–'"; }
+    Alt+Shift+Minus { spawn-sh "wtype '—'"; }
+    //
+    // Full macOS Option key special characters:
+    Alt+1         { spawn-sh "wtype '¡'"; }
+    Alt+2         { spawn-sh "wtype '™'"; }
+    Alt+3         { spawn-sh "wtype '£'"; }
+    Alt+4         { spawn-sh "wtype '¢'"; }
+    Alt+5         { spawn-sh "wtype '∞'"; }
+    Alt+6         { spawn-sh "wtype '§'"; }
+    Alt+7         { spawn-sh "wtype '¶'"; }
+    Alt+8         { spawn-sh "wtype '•'"; }
+    Alt+9         { spawn-sh "wtype 'ª'"; }
+    Alt+0         { spawn-sh "wtype 'º'"; }
+    Alt+Equal     { spawn-sh "wtype '≠'"; }
+    Alt+Shift+1   { spawn-sh "wtype '⁄'"; }
+    Alt+Shift+2   { spawn-sh "wtype '€'"; }
+    Alt+Shift+3   { spawn-sh "wtype '‹'"; }
+    Alt+Shift+4   { spawn-sh "wtype '›'"; }
+    Alt+Shift+5   { spawn-sh "wtype 'ﬁ'"; }
+    Alt+Shift+6   { spawn-sh "wtype 'ﬂ'"; }
+    Alt+Shift+7   { spawn-sh "wtype '‡'"; }
+    Alt+Shift+8   { spawn-sh "wtype '°'"; }
+    Alt+Shift+9   { spawn-sh "wtype '·'"; }
+    Alt+Shift+0   { spawn-sh "wtype '‚'"; }
+    Alt+Shift+Equal { spawn-sh "wtype '±'"; }
+
+    // ═══════════════════════════════════════════════════
+    // Window & System Actions (commented — pending Atmosphera features)
+    // ═══════════════════════════════════════════════════
+
+        // Force Quit dialog — macOS: Cmd+Option+Esc
+        // Ctrl+Alt+Esc { show-hotkey-overlay; }
+
+        // Lock Screen — macOS: Ctrl+Cmd+Q
+        // Ctrl+Super+Q { spawn "/home/user/bin/lock-with-aerial"; }
+
+        // Show/hide Dock — macOS: Cmd+Option+D
+        // Ctrl+Alt+D { toggle-dock-or-similar; }
+
+        // Show Desktop — macOS: Fn+F11
+        // F11 { focus-workspace-previous; }
+
+        // App Preferences — macOS: Cmd+,
+        // Ctrl+Comma { spawn "gnome-control-center"; }
+}
