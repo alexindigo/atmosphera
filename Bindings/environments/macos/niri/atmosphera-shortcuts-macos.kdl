@@ -64,7 +64,7 @@ binds {
 
     // Close Tab — macOS: Cmd+W
     // Physical Alt (next to Space) + W → Ctrl+W → runs close-tab script
-    Ctrl+W { spawn "/home/user/Projects/atmosphera-bindings/niri/atmosphera-close-tab-or-window"; }
+    Ctrl+W { spawn "atmosphera-close-tab-or-window"; }
 
     // Close Window — Ctrl+Shift+W
     Ctrl+Shift+W { close-window; }
@@ -218,7 +218,7 @@ binds {
         // Ctrl+Alt+Esc { show-hotkey-overlay; }
 
         // Lock Screen — macOS: Ctrl+Cmd+Q
-        // Ctrl+Super+Q { spawn "/home/user/bin/lock-with-aerial"; }
+        // Ctrl+Super+Q { spawn "atmosphera-lock"; }
 
         // Show/hide Dock — macOS: Cmd+Option+D
         // Ctrl+Alt+D { toggle-dock-or-similar; }
