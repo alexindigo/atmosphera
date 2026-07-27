@@ -1,0 +1,86 @@
+# Atmosphera: xremap config for macOS-style keyboard behavior
+#
+# Single config — modmap + keymaps together.
+# xremap operates at the evdev level, before niri sees key events.
+#
+# With the Mac Layout Modmap:
+#   Physical Ctrl (corner) → Super  (WM actions in niri)
+#   Physical Super (Win)   → Alt    (Option/word nav)
+#   Physical Alt (next to Space) → Ctrl  (App actions = macOS Cmd)
+#
+# Key name reference:
+#   https://github.com/emberian/evdev/blob/master/src/scancodes.rs
+#   https://github.com/k0kubun/xremap/blob/master/src/config/key.rs
+
+keypress_delay_ms: 50
+
+modmap:
+  - name: Mac-Style Laptop Bottom Row
+    device:
+      only: "AT Translated Set 2 keyboard"
+    remap:
+      # Physical Ctrl (corner) → Super (WM modifier for niri)
+      Control_L: Super_L
+      # Physical Super (Win, left of Alt) → Alt (Option key)
+      Super_L: Alt_L
+      # Physical Alt (next to Space) → Ctrl (Cmd equivalent for app actions)
+      Alt_L: Control_L
+      # Right side: AltGr → Ctrl
+      Alt_R: Control_R
+      # Right Ctrl → Super (same as left corner Ctrl). Makes right Ctrl act as
+      # another Cmd key for WM. Uncomment the line below to make it Option instead.
+      Control_R: Super_R
+
+keymap:
+  # macOS text navigation: physical Alt (next to Space) + arrows → Home/End etc.
+  # physical Alt → Ctrl (modmap), so Ctrl-Left = Home (macOS Cmd+Left)
+  - name: Mac text navigation
+    remap:
+      Ctrl-Left: Home
+      Ctrl-Right: End
+      Ctrl-Up: Ctrl-Home
+      Ctrl-Down: Ctrl-End
+
+  # Word navigation: press physical Win + arrows → Ctrl-arrows (word skip)
+  # (physical Win becomes Alt, so Alt-Left triggers → remap to Ctrl-Left)
+  - name: Word navigation
+    remap:
+      Alt-Left: Ctrl-Left
+      Alt-Right: Ctrl-Right
+      Alt-Shift-Left: Ctrl-Shift-Left
+      Alt-Shift-Right: Ctrl-Shift-Right
+
+  # Terminal fixes: physical Alt (next to Space) becomes Ctrl.
+  # In terminals, Ctrl+C = SIGINT, Ctrl+V = literal paste.
+  # Remap to Ctrl+Shift+C/V for copy/paste.
+  # Corner Ctrl (Super) + C/V passes through as Ctrl+C/V for SIGINT etc.
+  - name: Terminal copy-paste
+    application:
+      only: ["/ghostty/", "/alacritty/", "/kitty/", "/wezterm/", "/foot/"]
+    remap:
+      Ctrl-c: Ctrl-Shift-c
+      Ctrl-v: Ctrl-Shift-v
+      Ctrl-x: Ctrl-Shift-x
+      Super-c: Ctrl-c
+      Super-d: Ctrl-d
+      Super-z: Ctrl-z
+      Super-a: Ctrl-a
+      Super-e: Ctrl-e
+      Super-u: Ctrl-u
+      Super-k: Ctrl-k
+      Super-l: Ctrl-l
+      Super-w: Ctrl-w
+      Super-r: Ctrl-r
+      Super-v: Ctrl-v
+
+  # App Switcher: physical Alt+Tab → Super+Tab for niri's window switcher
+  - name: App Switcher
+    remap:
+      Ctrl-Tab: Super-Tab
+      Ctrl-Shift-Tab: Super-Shift-Tab
+      Ctrl-grave: Super-grave
+      Ctrl-Shift-grave: Super-Shift-grave
+
+  # Copy/paste for GUI apps: physical Alt (next to Space) → Ctrl already,
+  # so Ctrl+C/V/X reach apps natively. No remap needed for app modifier.
+  # Corner Ctrl (Super) is for WM only — no app shortcut fallback
