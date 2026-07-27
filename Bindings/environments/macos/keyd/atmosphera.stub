@@ -1,0 +1,8 @@
+# atmosphera keyd include — neutral stub
+# This file is written to /etc/keyd/atmosphera when the user has NOT
+# opted into any environment. It defines no bindings; keyd loads it
+# but does nothing. `atmosphera-bindings-apply` replaces its contents
+# with the real swap rules when the user picks an environment.
+#
+# NOTE: This file has NO [ids] section — included files must not
+# have one (per keyd(1) File Inclusion limitations).
