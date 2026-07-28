@@ -27,7 +27,7 @@ SmartPanel {
     id: panelContent
 
     property int currentStep: 0
-    readonly property int totalSteps: 5
+    readonly property int totalSteps: 6
     property bool isCompleting: false
 
     property string selectedWallpaperDirectory: Settings.defaultWallpapersDirectory
@@ -93,6 +93,12 @@ SmartPanel {
         Settings.saveImmediate();
         Logger.i("SetupWizard", "Setup completed successfully, waiting for settings save confirmation");
 
+        // Deploy bindings if the user picked a non-"none" environment.
+        if (Settings.data.bindings.environment && Settings.data.bindings.environment !== "none") {
+          Quickshell.execDetached(["atmosphera-bindings-apply"]);
+          Logger.i("SetupWizard", "Triggered atmosphera-bindings-apply for env:", Settings.data.bindings.environment);
+        }
+
         closeTimer.start();
       } catch (error) {
         Logger.e("SetupWizard", "Error completing setup:", error);
@@ -150,6 +156,10 @@ SmartPanel {
               {
                 "icon": Icon.settings,
                 "label": I18n.tr("common.customize")
+              },
+              {
+                "icon": Icon.keyboard,
+                "label": I18n.tr("setup.bindings.title")
               },
               {
                 "icon": Icon.deviceDesktop,
@@ -245,6 +255,10 @@ SmartPanel {
               panelContent.selectedBarPosition = p;
               panelContent.applyUISettings();
             }
+          }
+
+          SetupBindingsStep {
+            id: stepBindings
           }
 
           SetupDockStep {
