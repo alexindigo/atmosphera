@@ -1,5 +1,54 @@
 # Changelog
 
+## [Unreleased]
+
+### 2026-07-27
+
+**Feature**
+
+Integrated the atmosphera-bindings repository as a self-contained `Bindings/`
+module organized by shortcut *environment*. A new step in the setup wizard and
+a Settings → General → Shortcuts sub-tab let users opt into a **macOS-style**
+shortcut environment that spans keyd (hardware Alt↔Super swap), xremap (text
+navigation, word navigation, terminal fixes), niri (window management,
+screenshots, Cmd+W close-tab helper), and Zed (editor keymap). Default remains
+`"none"` — no behaviour changes for upgrading users. Migration60 seeds the new
+`bindings.environment` field so existing settings.json files upgrade cleanly.
+
+Two apply scripts orchestrate deployment: `atmosphera-bindings-apply` handles
+all user-space layers (niri include, xremap config, zed keymap) without
+elevation, and `atmosphera-bindings-apply-keyd` performs the one-time root
+bootstrap that makes `/etc/keyd/atmosphera` an include-file managed by
+subsequent user-level toggles. The wizard and settings-tab both fire the
+user-space apply as a detached process on selection change, and request a
+niri config reload when a niri socket is available.
+
+Nix support: `programs.atmosphera.bindings.environment` (home-module) seeds
+the per-user setting; `services.atmosphera.bindings.environment` (NixOS
+module) declaratively enables `services.keyd` on `"macos"`, bypassing the
+include-file mechanism entirely on NixOS installs. Windows- and KDE-style
+environments are planned as additional folders under `Bindings/environments/`.
+
+- Bindings module seeded from atmosphera-bindings + per-layer READMEs (`1e27531f2`, `a3350075a`, `4662d7f97`, `4163493ea`, `d82c016c4`, `13c4a399a`)
+- Settings schema + defaults + Migration60 (`be4201733`, `667089935`, `7efdd1a11`)
+- User-space + root-side apply scripts (`9665b6964`, `d329ff4da`)
+- Wizard step + Shortcuts sub-tab + translations (`6f3c8f477`, `354c504dc`, `fcccca9cd`, `58b2f44f4`)
+- Nix package + home-module + NixOS module (`41a1ba279`, `2d8e8a7e4`, `555ba67a9`)
+
+**Chore**
+
+Devcontainer infrastructure hardening. Added `runArgs` to `.devcontainer/devcontainer.json`
+(`--memory=12g`, `--memory-swap=12g`, `--pids-limit=2048`, `--cpus=12`) and mirrored the
+same caps into `.githooks/pre-commit`'s raw `docker run` so behavior is identical whether
+the container is launched by VS Code or the git hook. Paired with a host-side raise of
+`docker.slice` (48G/64G/16384) and `/etc/docker/daemon.json` `default-ulimits` (nproc
+32768/65536, nofile 65536/131072) — landed separately at the OS level. Together these
+make `docker run --user 1000:1000` on this host actually work again after the earlier
+conservative post-fork-bomb defaults blocked every containerized dev workflow.
+
+- devcontainer.json runArgs with memory/pids/cpu caps (`39e8802ea`)
+- pre-commit hook mirrors container caps (`76474a2fc`)
+
 ## [0.2.0] — 2026-07-19
 
 ### 2026-07-19
