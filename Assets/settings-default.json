@@ -1,5 +1,8 @@
 {
   "settingsVersion": 0,
+  "bindings": {
+    "environment": "none"
+  },
   "bar": {
     "barType": "simple",
     "position": "top",
