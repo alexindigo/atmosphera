@@ -21,6 +21,20 @@ in
       example = "hyprland-session.target";
       description = "The systemd target for the atmosphera service.";
     };
+
+    bindings = {
+      environment = lib.mkOption {
+        type = lib.types.enum [ "none" "macos" ];
+        default = "none";
+        description = ''
+          Which keyboard shortcut environment to bootstrap at the system level.
+          When set to "macos", enables NixOS's services.keyd with the
+          appropriate Alt<->Super hardware modifier swap. Users still opt in
+          per-user via the setup wizard for the non-root layers (niri, xremap,
+          zed).
+        '';
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -49,5 +63,20 @@ in
     };
 
     environment.systemPackages = [ cfg.package ];
+
+    services.keyd = lib.mkIf (cfg.bindings.environment == "macos") {
+      enable = true;
+      keyboards.atmosphera = {
+        ids = [ "*" ];
+        settings = {
+          main = {
+            leftalt = "leftmeta";
+            leftmeta = "leftalt";
+            rightalt = "rightmeta";
+            rightmeta = "rightalt";
+          };
+        };
+      };
+    };
   };
 }
