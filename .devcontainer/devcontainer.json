@@ -4,6 +4,12 @@
     "dockerfile": "Dockerfile",
     "context": "."
   },
+  "runArgs": [
+    "--memory=12g",
+    "--memory-swap=12g",
+    "--pids-limit=2048",
+    "--cpus=12"
+  ],
   "customizations": {
     "vscode": {
       "extensions": [
