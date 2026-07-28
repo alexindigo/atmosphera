@@ -179,6 +179,21 @@ in
         or filepath, to be written to ~/.config/atmosphera/plugins/plugin-name/settings.json.
       '';
     };
+
+    bindings = {
+      environment = lib.mkOption {
+        type = lib.types.enum [ "none" "macos" ];
+        default = "none";
+        example = "macos";
+        description = ''
+          Which keyboard shortcut environment to apply. "none" leaves the
+          system untouched. "macos" deploys macOS-style shortcuts to niri,
+          xremap, zed, and (via the NixOS module) keyd.
+
+          This option is merged into settings.json as bindings.environment.
+        '';
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -218,9 +233,20 @@ in
     home.packages = lib.optional (cfg.package != null) cfg.package;
 
     xdg.configFile = {
-      "atmosphera/settings.json" = lib.mkIf (cfg.settings != { }) {
-        source = generateJson "settings" cfg.settings;
-      };
+      "atmosphera/settings.json" =
+        let
+          mergedSettings =
+            if lib.isString cfg.settings || builtins.isPath cfg.settings || lib.isStorePath cfg.settings then
+              cfg.settings
+            else
+              lib.recursiveUpdate cfg.settings {
+                bindings = { environment = cfg.bindings.environment; };
+              };
+          shouldWrite = cfg.settings != { } || cfg.bindings.environment != "none";
+        in
+        lib.mkIf shouldWrite {
+          source = generateJson "settings" mergedSettings;
+        };
       "atmosphera/colors.json" = lib.mkIf (cfg.colors != { }) {
         source = generateJson "colors" cfg.colors;
       };
