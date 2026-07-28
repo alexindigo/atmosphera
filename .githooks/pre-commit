@@ -28,6 +28,10 @@ if [ -n "$STAGED_QML" ]; then
     --user "$(id -u):$(id -g)" \
     --cap-add SYS_ADMIN \
     --tmpfs /tmp/overlay:size=256m,mode=1777 \
+    --memory=12g \
+    --memory-swap=12g \
+    --pids-limit=2048 \
+    --cpus=12 \
     -v "$REPO_ROOT:/workspaces/atmosphera" \
     -w /workspaces/atmosphera \
     "$IMAGE" \
