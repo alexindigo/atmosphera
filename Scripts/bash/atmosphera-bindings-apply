@@ -1,0 +1,153 @@
+#!/usr/bin/env bash
+# atmosphera-bindings-apply
+# Deploy per-environment shortcut configs to the user's system.
+#
+# Reads Settings.data.bindings.environment from
+# ~/.config/atmosphera/settings.json and applies the corresponding files
+# from <shellDir>/Bindings/environments/<env>/.
+#
+# Non-root operations only. keyd-side changes require sudo and are
+# performed by atmosphera-bindings-apply-keyd (or the NixOS module).
+
+set -euo pipefail
+
+SETTINGS_FILE="${ATMOSPHERA_SETTINGS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/atmosphera/settings.json}"
+
+# Resolve shell directory (the checkout or install path).
+if [ -n "${ATMOSPHERA_SHELL_DIR:-}" ]; then
+  SHELL_DIR="$ATMOSPHERA_SHELL_DIR"
+else
+  # Script lives in <shellDir>/Scripts/bash/; walk two levels up.
+  SCRIPT_PATH="$(readlink -f "$0")"
+  SHELL_DIR="$(dirname "$(dirname "$(dirname "$SCRIPT_PATH")")")"
+fi
+
+BINDINGS_DIR="$SHELL_DIR/Bindings"
+
+NIRI_DIR="$HOME/.config/niri"
+NIRI_CONFIG="$NIRI_DIR/config.kdl"
+XREMAP_DIR="$HOME/.config/xremap"
+ZED_DIR="$HOME/.config/zed"
+
+log() { printf '[bindings-apply] %s\n' "$*" >&2; }
+
+read_environment() {
+  if [ ! -f "$SETTINGS_FILE" ]; then
+    echo "none"
+    return
+  fi
+  python3 -c "
+import json, sys
+try:
+    with open('$SETTINGS_FILE') as f:
+        d = json.load(f)
+    print(d.get('bindings', {}).get('environment', 'none'))
+except Exception:
+    print('none')
+"
+}
+
+ensure_line() {
+  local file="$1" line="$2"
+  [ -f "$file" ] || { log "niri config not found: $file — skipping include"; return 0; }
+  if ! grep -qxF "$line" "$file"; then
+    printf '\n%s\n' "$line" >> "$file"
+    log "added to $file: $line"
+  fi
+}
+
+remove_line() {
+  local file="$1" line="$2"
+  [ -f "$file" ] || return 0
+  local tmp
+  tmp="$(mktemp)"
+  grep -vxF "$line" "$file" > "$tmp" || true
+  mv "$tmp" "$file"
+}
+
+backup_if_exists() {
+  local file="$1"
+  [ -e "$file" ] || return 0
+  [ -L "$file" ] && return 0            # symlink, no backup
+  local backup="${file}.pre-atmosphera"
+  [ -e "$backup" ] && return 0          # already backed up
+  cp -a "$file" "$backup"
+  log "backed up existing $file to $backup"
+}
+
+apply_macos() {
+  local env_dir="$BINDINGS_DIR/environments/macos"
+  [ -d "$env_dir" ] || { log "environment dir missing: $env_dir"; exit 1; }
+
+  # niri
+  mkdir -p "$NIRI_DIR"
+  install -m 0644 "$env_dir/niri/atmosphera-shortcuts-macos.kdl" \
+    "$NIRI_DIR/atmosphera-shortcuts-macos.kdl"
+  ensure_line "$NIRI_CONFIG" 'include "atmosphera-shortcuts-macos.kdl"'
+  log "deployed niri: atmosphera-shortcuts-macos.kdl"
+
+  # xremap
+  mkdir -p "$XREMAP_DIR"
+  install -m 0644 "$env_dir/xremap/atmosphera-xremap.yml" \
+    "$XREMAP_DIR/atmosphera-xremap.yml"
+  log "deployed xremap: atmosphera-xremap.yml"
+
+  # zed
+  mkdir -p "$ZED_DIR"
+  backup_if_exists "$ZED_DIR/keymap.json"
+  install -m 0644 "$env_dir/zed/keymap.json" "$ZED_DIR/keymap.json"
+  log "deployed zed: keymap.json"
+
+  # keyd content (writes /etc/keyd/atmosphera if writable, otherwise instructs user)
+  if [ -w /etc/keyd/atmosphera ] 2>/dev/null; then
+    install -m 0644 "$env_dir/keyd/default.conf" /etc/keyd/atmosphera
+    log "updated /etc/keyd/atmosphera with macos rules"
+    if command -v keyd >/dev/null 2>&1 && systemctl is-active --quiet keyd; then
+      sudo -n keyd reload 2>/dev/null || log "run 'sudo keyd reload' to apply keyd changes"
+    fi
+  else
+    log "keyd file not writable — run 'sudo atmosphera-bindings-apply-keyd macos' to enable hardware swap"
+  fi
+
+  # niri live reload
+  if command -v niri >/dev/null 2>&1 && [ -n "${NIRI_SOCKET:-}" ]; then
+    niri msg action reload-config || true
+    log "requested niri config reload"
+  fi
+}
+
+apply_none() {
+  # niri
+  remove_line "$NIRI_CONFIG" 'include "atmosphera-shortcuts-macos.kdl"'
+  log "removed niri include (file left in place)"
+
+  # keyd → revert to neutral stub if writable
+  local stub="$BINDINGS_DIR/environments/macos/keyd/atmosphera.stub"
+  if [ -w /etc/keyd/atmosphera ] 2>/dev/null && [ -f "$stub" ]; then
+    install -m 0644 "$stub" /etc/keyd/atmosphera
+    log "reverted /etc/keyd/atmosphera to neutral stub"
+    if command -v keyd >/dev/null 2>&1 && systemctl is-active --quiet keyd; then
+      sudo -n keyd reload 2>/dev/null || log "run 'sudo keyd reload' to apply keyd changes"
+    fi
+  fi
+
+  # xremap / zed are left in place — inert without their service/editor loading them
+
+  if command -v niri >/dev/null 2>&1 && [ -n "${NIRI_SOCKET:-}" ]; then
+    niri msg action reload-config || true
+  fi
+}
+
+main() {
+  local env
+  env="$(read_environment)"
+  log "environment: $env"
+  case "$env" in
+    macos) apply_macos ;;
+    none)  apply_none  ;;
+    *)     log "unknown environment: $env (expected: none|macos)"; exit 2 ;;
+  esac
+  log "done."
+}
+
+main "$@"
