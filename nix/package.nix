@@ -92,7 +92,12 @@ stdenvNoCC.mkDerivation {
     cp Scripts/bash/atmosphera-confirm $out/bin/atmosphera-confirm
     cp Scripts/bash/atmosphera-alert $out/bin/atmosphera-alert
     cp Scripts/bash/atmosphera-survey $out/bin/atmosphera-survey
-    chmod +x $out/bin/atmosphera-prompt $out/bin/atmosphera-confirm $out/bin/atmosphera-alert $out/bin/atmosphera-survey
+    cp Scripts/bash/atmosphera-bindings-apply $out/bin/atmosphera-bindings-apply
+    cp Scripts/bash/atmosphera-bindings-apply-keyd $out/bin/atmosphera-bindings-apply-keyd
+    cp Scripts/bash/atmosphera-close-tab-or-window $out/bin/atmosphera-close-tab-or-window
+    chmod +x $out/bin/atmosphera-prompt $out/bin/atmosphera-confirm $out/bin/atmosphera-alert $out/bin/atmosphera-survey \
+             $out/bin/atmosphera-bindings-apply $out/bin/atmosphera-bindings-apply-keyd \
+             $out/bin/atmosphera-close-tab-or-window
   '';
 
   preFixup = ''
