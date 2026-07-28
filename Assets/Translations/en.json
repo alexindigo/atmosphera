@@ -1310,10 +1310,13 @@
       "screen-corners-solid-black-label": "Solid black corners",
       "screen-corners-title": "Screen corners",
       "settings-copied": "Settings copied to clipboard",
+      "shortcuts-description": "System-wide keyboard shortcut style. Changing this deploys config files for niri, xremap, zed, and optionally keyd.",
+      "shortcuts-title": "Shortcut environment",
       "smooth-scrolling-description": "Animate list scrolling for a smoother wheel experience.",
       "smooth-scrolling-label": "Smooth scrolling",
       "tab-basics": "Basics",
-      "tab-keybinds": "Keybinds"
+      "tab-keybinds": "Keybinds",
+      "tab-shortcuts": "Shortcuts"
     },
     "hooks": {
       "color-generation-description": "Command to be executed when color generation completes (e.g. after wallpaper-based theming).",
@@ -2001,6 +2004,14 @@
     "all-done": "All Done!",
     "appearance": {
       "subheader": "Choose Dark Mode and color sources (wallpaper or predefined)."
+    },
+    "bindings": {
+      "title": "Keyboard shortcuts",
+      "subtitle": "Choose a shortcut environment",
+      "none-label": "No custom shortcuts",
+      "none-description": "Keep the default Linux keybindings. Recommended if you're unsure — you can change this anytime in Settings.",
+      "macos-label": "macOS-style",
+      "macos-description": "Cmd for window management, Option for special characters, Ctrl for app actions. Best for users switching from a Mac."
     },
     "customize": {
       "header": "Customize your experience",
