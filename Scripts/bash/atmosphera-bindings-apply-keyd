@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+# atmosphera-bindings-apply-keyd <environment>
+# Root-side keyd bootstrap for atmosphera bindings.
+#
+# environment: none | macos   (default: read from settings.json)
+#
+# Idempotent. Writes:
+#   /etc/keyd/default.conf   -- stub with 'include atmosphera' (only if absent)
+#   /etc/keyd/atmosphera     -- neutral stub OR environment's default.conf
+# Then reloads keyd if it's running.
+
+set -euo pipefail
+
+if [ "$(id -u)" -ne 0 ]; then
+  echo "atmosphera-bindings-apply-keyd must run as root (try: sudo $0 $*)" >&2
+  exit 1
+fi
+
+if [ -n "${ATMOSPHERA_SHELL_DIR:-}" ]; then
+  SHELL_DIR="$ATMOSPHERA_SHELL_DIR"
+else
+  SCRIPT_PATH="$(readlink -f "$0")"
+  SHELL_DIR="$(dirname "$(dirname "$(dirname "$SCRIPT_PATH")")")"
+fi
+
+BINDINGS_DIR="$SHELL_DIR/Bindings"
+KEYD_DIR="/etc/keyd"
+KEYD_MAIN="$KEYD_DIR/default.conf"
+KEYD_INCLUDE="$KEYD_DIR/atmosphera"
+
+ENV_NAME="${1:-}"
+if [ -z "$ENV_NAME" ]; then
+  # Read from settings.json of the invoking user
+  SETTINGS_USER="${SUDO_USER:-$USER}"
+  SETTINGS_HOME="$(getent passwd "$SETTINGS_USER" | cut -d: -f6)"
+  SETTINGS_FILE="$SETTINGS_HOME/.config/atmosphera/settings.json"
+  if [ -f "$SETTINGS_FILE" ]; then
+    ENV_NAME="$(python3 -c "
+import json, sys
+try:
+    d = json.load(open('$SETTINGS_FILE'))
+    print(d.get('bindings', {}).get('environment', 'none'))
+except Exception:
+    print('none')
+")"
+  else
+    ENV_NAME="none"
+  fi
+fi
+
+log() { printf '[bindings-apply-keyd] %s\n' "$*" >&2; }
+
+mkdir -p "$KEYD_DIR"
+
+# 1. Ensure /etc/keyd/default.conf exists with our include
+if [ ! -f "$KEYD_MAIN" ]; then
+  cat > "$KEYD_MAIN" <<'CONF'
+# Written by atmosphera-bindings-apply-keyd
+# Extend by editing this file. The 'atmosphera' include is managed separately.
+[ids]
+*
+
+[main]
+include atmosphera
+CONF
+  chmod 0644 "$KEYD_MAIN"
+  log "created $KEYD_MAIN"
+elif ! grep -qE '^\s*include\s+atmosphera\s*$' "$KEYD_MAIN"; then
+  log "WARNING: $KEYD_MAIN exists but does not include atmosphera"
+  log "add this line under [main] to activate the atmosphera environment:"
+  log "    include atmosphera"
+fi
+
+# 2. Write the include target based on environment
+case "$ENV_NAME" in
+  macos)
+    install -m 0644 "$BINDINGS_DIR/environments/macos/keyd/default.conf" "$KEYD_INCLUDE"
+    log "wrote $KEYD_INCLUDE from environments/macos/keyd/default.conf"
+    ;;
+  none|"")
+    install -m 0644 "$BINDINGS_DIR/environments/macos/keyd/atmosphera.stub" "$KEYD_INCLUDE"
+    log "wrote $KEYD_INCLUDE as neutral stub"
+    ;;
+  *)
+    log "unknown environment: $ENV_NAME"
+    exit 2
+    ;;
+esac
+
+# 3. Reload keyd if active
+if command -v keyd >/dev/null 2>&1 && systemctl is-active --quiet keyd 2>/dev/null; then
+  keyd reload && log "keyd reloaded"
+else
+  log "keyd not active — run 'systemctl enable --now keyd' to activate"
+fi
+
+log "done."
