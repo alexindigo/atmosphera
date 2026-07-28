@@ -25,7 +25,7 @@ Singleton {
   - Default cache directory: ~/.cache/atmosphera
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 59
+  readonly property int settingsVersion: 60
   property bool isDebug: Quickshell.env("ATMOSPHERA_DEBUG") === "1"
   readonly property string shellName: "atmosphera"
   readonly property string configDir: ensureTrailingSlash(Quickshell.env("ATMOSPHERA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/")
@@ -349,6 +349,13 @@ Singleton {
       }
       property bool reverseScroll: false
       property bool smoothScrollEnabled: true
+    }
+
+    // bindings
+    property JsonObject bindings: JsonObject {
+      // Which shortcut environment to apply. "none" leaves the system untouched.
+      // Values: "none" | "macos"  (future: "windows", "kde")
+      property string environment: "none"
     }
 
     // ui
