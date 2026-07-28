@@ -1296,6 +1296,14 @@
     "subTab": null
   },
   {
+    "labelKey": "panels.general.shortcuts-title",
+    "descriptionKey": "panels.general.shortcuts-description",
+    "widget": "NLabel",
+    "tab": 0,
+    "tabLabel": "common.general",
+    "subTab": null
+  },
+  {
     "labelKey": "panels.hooks.session-label",
     "descriptionKey": "panels.hooks.session-description",
     "widget": "HookRow",
