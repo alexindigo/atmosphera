@@ -1,13 +1,13 @@
 #!/usr/bin/env -S bash
 set -euo pipefail
 
-#!/usr/bin/env -S bash
-set -euo pipefail
-
 QS_BIN="qs"
 
-# Detect running qs instance config path from process list
-QS_PATH=$(ps aux | grep "qs -p " | grep -v grep | sed -E 's/.*-p ([^ ]+).*/\1/' | head -1 2>/dev/null || echo "")
+find_config() {
+  [ -n "${ATMOSPHERA_CONFIG:-}" ] && { echo "$ATMOSPHERA_CONFIG"; return 0; }
+  [ -d "$HOME/Projects/atmosphera" ] && { echo "$HOME/Projects/atmosphera"; return 0; }
+  echo "/etc/xdg/quickshell/atmosphera"
+}
 
 # Default action
 ACTION="open"
@@ -28,11 +28,6 @@ usage() {
   echo "  $0 toggle           # Toggle settings"
 }
 
-IPC_ARGS=()
-if [ -n "$QS_PATH" ]; then
-  IPC_ARGS=(-p "$QS_PATH")
-fi
-
 case "${1:-}" in
   help|--help|-h) usage; exit 0 ;;
   toggle) ACTION="toggle" ;;
@@ -42,9 +37,9 @@ case "${1:-}" in
 esac
 
 if [ "$ACTION" = "toggle" ]; then
-  exec "$QS_BIN" "${IPC_ARGS[@]}" ipc call settings toggle
+  exec "$QS_BIN" -p "$(find_config)" ipc call settings toggle
 elif [ -n "$TAB" ]; then
-  exec "$QS_BIN" "${IPC_ARGS[@]}" ipc call settings openTab "$TAB"
+  exec "$QS_BIN" -p "$(find_config)" ipc call settings openTab "$TAB"
 else
-  exec "$QS_BIN" "${IPC_ARGS[@]}" ipc call settings open
+  exec "$QS_BIN" -p "$(find_config)" ipc call settings open
 fi

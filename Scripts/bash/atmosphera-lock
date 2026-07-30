@@ -3,8 +3,11 @@ set -euo pipefail
 
 QS_BIN="qs"
 
-# Detect running qs instance config path from process list
-QS_PATH=$(ps aux | grep "qs -p " | grep -v grep | sed -E 's/.*-p ([^ ]+).*/\1/' | head -1 2>/dev/null || echo "")
+find_config() {
+  [ -n "${ATMOSPHERA_CONFIG:-}" ] && { echo "$ATMOSPHERA_CONFIG"; return 0; }
+  [ -d "$HOME/Projects/atmosphera" ] && { echo "$HOME/Projects/atmosphera"; return 0; }
+  echo "/etc/xdg/quickshell/atmosphera"
+}
 
 ACTION="${1:-lock}"
 
@@ -22,14 +25,9 @@ usage() {
   echo "  $0 preview   # Preview lock screen"
 }
 
-IPC_ARGS=()
-if [ -n "$QS_PATH" ]; then
-  IPC_ARGS=(-p "$QS_PATH")
-fi
-
 case "$ACTION" in
   help|--help|-h) usage; exit 0 ;;
-  lock)     exec "$QS_BIN" "${IPC_ARGS[@]}" ipc call lockScreen lock ;;
-  preview)  exec "$QS_BIN" "${IPC_ARGS[@]}" ipc call lockScreen preview ;;
+  lock)     exec "$QS_BIN" -p "$(find_config)" ipc call lockScreen lock ;;
+  preview)  exec "$QS_BIN" -p "$(find_config)" ipc call lockScreen preview ;;
   *)        echo "Unknown action: $ACTION"; usage; exit 1 ;;
 esac
