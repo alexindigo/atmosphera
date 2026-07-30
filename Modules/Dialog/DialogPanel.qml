@@ -71,7 +71,7 @@ PanelWindow {
   function writeReply(text) {
     if (!replyPath)
       return;
-    Quickshell.execDetached(["python3", "-c", "import sys; open(sys.argv[1], 'w').write(sys.argv[2])", replyPath, text]);
+    Quickshell.execDetached(["sh", "-c", "printf '%s' \"$1\" > \"$2\"", "dialog-reply", text, replyPath]);
     replyPath = "";
   }
 

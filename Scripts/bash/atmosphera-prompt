@@ -5,9 +5,6 @@ question="${1:?Usage: atmosphera-prompt <question> [default]}"
 default="${2:-}"
 [ "$default" = "-" ] && default=""
 
-fifo=$(mktemp -u /dev/shm/atmosphera-prompt-XXXXXXXX)
-mkfifo "$fifo"
-
 QS="${ATMOSPHERA_QS:-qs}"
 
 find_config() {
@@ -17,13 +14,22 @@ find_config() {
 }
 CONFIG="$(find_config)"
 
+tmpdir=$(mktemp -d "${XDG_RUNTIME_DIR:-/dev/shm}/atmosphera-dialog-XXXXXX")
+fifo="$tmpdir/reply"
+mkfifo "$fifo"
+
 cleanup() {
   $QS ipc -p "$CONFIG" call dialog cancel &>/dev/null || true
+  rm -rf "$tmpdir"
 }
 trap cleanup EXIT INT TERM
 
 $QS ipc -p "$CONFIG" call dialog prompt "$question" "$fifo" "$default" &>/dev/null &
 
-read -t 86400 result < "$fifo" 2>/dev/null || true
-rm -f "$fifo" 2>/dev/null || true
+TIMEOUT="${ATMOSPHERA_DIALOG_TIMEOUT:-30}"
+read -t "$TIMEOUT" result < "$fifo" 2>/dev/null || {
+  $QS ipc -p "$CONFIG" call dialog cancel &>/dev/null || true
+  echo ""
+  exit 0
+}
 echo "${result:-}"
