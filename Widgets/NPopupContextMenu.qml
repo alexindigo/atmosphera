@@ -275,8 +275,24 @@ PopupWindow {
               spacing: Style.marginS
 
               NIcon {
-                visible: modelData.icon !== undefined
-                icon: modelData.icon || ""
+                visible: modelData.action !== undefined
+                icon: {
+                  if (!modelData.action)
+                    return "";
+                  switch (modelData.action) {
+                  case "widget-settings":
+                  case "open-settings":
+                    return Icon.settings;
+                  case "open-launcher":
+                    return Icon.search;
+                  case "open-calendar":
+                    return Icon.calendar;
+                  case "clear":
+                    return Icon.trash;
+                  default:
+                    return Icon.settings;
+                  }
+                }
                 pointSize: Style.fontSizeS
                 applyUiScale: false
                 color: mouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface
