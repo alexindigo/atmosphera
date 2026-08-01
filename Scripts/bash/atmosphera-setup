@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# atmosphera-setup — child router for setup subcommands
+set -euo pipefail
+SELF_DIR="$(dirname "$(readlink -f "$0")")"
+
+case "${1:-}" in
+  niri) exec "$SELF_DIR/atmosphera-niri-setup" ;;
+  ""|help)
+    echo "atmosphera setup <target>"
+    echo "  niri    Install atmosphera's niri config include"
+    ;;
+  *) echo "atmosphera setup: unknown target '$1'" >&2; exit 1 ;;
+esac

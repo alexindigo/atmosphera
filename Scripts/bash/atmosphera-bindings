@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# atmosphera-bindings — child router for bindings subcommands
+set -euo pipefail
+SELF_DIR="$(dirname "$(readlink -f "$0")")"
+
+case "${1:-}" in
+  apply)       exec "$SELF_DIR/atmosphera-bindings-apply" ;;
+  apply-keyd)  exec "$SELF_DIR/atmosphera-bindings-apply-keyd" ;;
+  status|help|"")
+    # status: report current environment + deployed state (future)
+    # no-arg: show help
+    echo "atmosphera bindings <subcommand>"
+    echo "  apply         Deploy the selected shortcut environment"
+    echo "  apply-keyd    Root-side keyd bootstrap"
+    echo "  status        Show current environment and deployed state"
+    ;;
+  *) echo "atmosphera bindings: unknown subcommand '$1'" >&2; exit 1 ;;
+esac
