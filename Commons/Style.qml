@@ -76,6 +76,11 @@ Singleton {
   readonly property real effectivePanelOpacity: PowerProfileService.atmospheraPerformanceMode ? 1.0 : Color.adaptiveOpacity(Settings.data.ui.panelBackgroundOpacity)
   readonly property real effectiveBarOpacity: PowerProfileService.atmospheraPerformanceMode ? 1.0 : Settings.data.bar.backgroundOpacity
 
+  readonly property real effectiveSessionMenuOpacity:
+    Settings.data.sessionMenu.useSharedOpacity
+        ? effectivePanelOpacity
+        : Settings.data.sessionMenu.backgroundOpacity
+
   // Shadows
   readonly property real shadowOpacity: 0.85
   readonly property real shadowBlur: 1.0

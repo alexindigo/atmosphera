@@ -2384,6 +2384,27 @@
     "subTabLabel": "common.general"
   },
   {
+    "labelKey": "panels.session-menu.use-shared-opacity-label",
+    "descriptionKey": "panels.session-menu.use-shared-opacity-description",
+    "widget": "NToggle",
+    "tab": 12,
+    "tabLabel": "session-menu.title",
+    "subTab": 0,
+    "subTabLabel": "common.general"
+  },
+  {
+    "labelKey": "panels.session-menu.background-opacity-label",
+    "descriptionKey": "panels.session-menu.background-opacity-description",
+    "widget": "NValueSlider",
+    "tab": 12,
+    "tabLabel": "session-menu.title",
+    "subTab": 0,
+    "subTabLabel": "common.general",
+    "visibleWhen": [
+      "!Settings.data.sessionMenu.useSharedOpacity"
+    ]
+  },
+  {
     "labelKey": "panels.system-monitor.enable-dgpu-monitoring-label",
     "descriptionKey": "panels.system-monitor.enable-dgpu-monitoring-description",
     "widget": "NToggle",
