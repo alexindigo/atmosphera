@@ -102,10 +102,26 @@ Popup {
       contentItem: RowLayout {
         spacing: Style.marginS
 
-        // Optional icon
+        // Optional icon — resolved via action rather than pre-captured icon
         NIcon {
-          visible: modelData.icon !== undefined
-          icon: modelData.icon || ""
+          visible: modelData.action !== undefined
+          icon: {
+            if (!modelData.action)
+              return "";
+            switch (modelData.action) {
+            case "widget-settings":
+            case "open-settings":
+              return Icon.settings;
+            case "open-launcher":
+              return Icon.search;
+            case "open-calendar":
+              return Icon.calendar;
+            case "clear":
+              return Icon.trash;
+            default:
+              return Icon.settings;
+            }
+          }
           pointSize: Style.fontSizeM
           color: menuItem.hovered && menuItem.enabled ? Color.mOnHover : Color.mOnSurface
           Layout.leftMargin: root.itemPadding
