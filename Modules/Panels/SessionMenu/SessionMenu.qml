@@ -87,44 +87,61 @@ SmartPanel {
   // Action metadata mapping
   readonly property var actionMetadata: {
     "lock": {
-      "icon": Icon.lock,
       "title": I18n.tr("common.lock"),
       "isShutdown": false
     },
     "suspend": {
-      "icon": Icon.suspend,
       "title": I18n.tr("common.suspend"),
       "isShutdown": false
     },
     "hibernate": {
-      "icon": Icon.hibernate,
       "title": I18n.tr("common.hibernate"),
       "isShutdown": false
     },
     "reboot": {
-      "icon": Icon.reboot,
       "title": I18n.tr("common.reboot"),
       "isShutdown": false
     },
     "userspaceReboot": {
-      "icon": "rotate",
       "title": I18n.tr("common.userspace-reboot"),
       "isShutdown": false
     },
     "rebootToUefi": {
-      "icon": Icon.reboot,
       "title": I18n.tr("common.reboot-to-uefi"),
       "isShutdown": false
     },
     "logout": {
-      "icon": Icon.logout,
       "title": I18n.tr("common.logout"),
       "isShutdown": false
     },
     "shutdown": {
-      "icon": Icon.shutdown,
       "title": I18n.tr("common.shutdown"),
       "isShutdown": true
+    }
+  }
+
+  // Live QML binding bridge: resolves icon at read time, not capture time.
+  // JS object literals evaluate Icon.* once — before plugin registration.
+  // Delegates bind icon via this function instead, so the binding re-evaluates
+  // naturally when IconRegistry.resolved updates.
+  function _actionIcon(action) {
+    switch (action) {
+    case "lock":
+      return Icon.lock;
+    case "suspend":
+      return Icon.suspend;
+    case "hibernate":
+      return Icon.hibernate;
+    case "reboot":
+      return Icon.reboot;
+    case "userspaceReboot":
+      return Icon.reboot;
+    case "rebootToUefi":
+      return Icon.reboot;
+    case "logout":
+      return Icon.logout;
+    case "shutdown":
+      return Icon.shutdown;
     }
   }
 
@@ -143,7 +160,6 @@ SmartPanel {
         var metadata = actionMetadata[settingOption.action];
         options.push({
                        "action": settingOption.action,
-                       "icon": metadata.icon,
                        "title": metadata.title,
                        "isShutdown": metadata.isShutdown,
                        "countdownEnabled": settingOption.countdownEnabled !== undefined ? settingOption.countdownEnabled : true,
@@ -627,7 +643,7 @@ SmartPanel {
           delegate: LargeButton {
             Layout.preferredWidth: Math.round(200 * Style.uiScaleRatio)
             Layout.preferredHeight: Math.round(200 * Style.uiScaleRatio)
-            icon: modelData.icon
+            icon: root._actionIcon(modelData.action)
             title: modelData.title
             isShutdown: modelData.isShutdown || false
             isSelected: index === selectedIndex
@@ -710,7 +726,7 @@ SmartPanel {
             model: powerOptions
             delegate: PowerButton {
               Layout.fillWidth: true
-              icon: modelData.icon
+              icon: root._actionIcon(modelData.action)
               title: modelData.title
               isShutdown: modelData.isShutdown || false
               isSelected: index === selectedIndex
@@ -751,7 +767,7 @@ SmartPanel {
   component PowerButton: Rectangle {
     id: buttonRoot
 
-    property string icon: ""
+    property var icon: undefined
     property string title: ""
     property bool pending: false
     property bool isShutdown: false
@@ -931,7 +947,7 @@ SmartPanel {
   component LargeButton: Rectangle {
     id: largeButtonRoot
 
-    property string icon: ""
+    property var icon: undefined
     property string title: ""
     property bool pending: false
     property bool isShutdown: false
