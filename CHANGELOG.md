@@ -49,6 +49,27 @@ conservative post-fork-bomb defaults blocked every containerized dev workflow.
 - devcontainer.json runArgs with memory/pids/cpu caps (`39e8802ea`)
 - pre-commit hook mirrors container caps (`76474a2fc`)
 
+**Breaking**
+
+The scattered `atmosphera-*` helper scripts (lock, settings, prompt, confirm,
+alert, survey, session, niri-setup, bindings-apply, bindings-apply-keyd,
+close-tab-or-window) are consolidated into a single `atmosphera` multi-call
+dispatcher using the matryoshka pattern. Use `atmosphera <subcommand>` instead
+of the standalone script names. No backward-compat symlinks are shipped —
+callers must update.
+
+The Nix package's `$out/bin/atmosphera` is now the dispatcher script (was a
+symlink to `qs`). `install/install_scripts.sh` now installs only the dispatcher
+symlink instead of glob-symlinking all helpers individually.
+
+- Unified CLI dispatcher with child routers for bindings, setup (`78334b0b6`)
+- QML call sites updated to `atmosphera bindings apply` (`fb3ad808c`)
+- niri spawn paths updated to `atmosphera close-tab` and `atmosphera lock` (`245aacde4`)
+- Nix package simplified to dispatcher-only `$out/bin/` (`ca22c56be`)
+- `install/install_scripts.sh` simplified (`fe8087313`)
+- Install docs updated with dispatcher step (`56709a372`)
+- Session module renamed: `atmosphera-session.sh` → `atmosphera-session` (`78334b0b6`)
+
 ## [0.2.0] — 2026-07-19
 
 ### 2026-07-19
