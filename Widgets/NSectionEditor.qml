@@ -531,7 +531,6 @@ NBox {
                 items.push({
                              "label": I18n.tr("tooltips.remove-widget"),
                              "action": "remove",
-                             "icon": Icon.trash,
                              "visible": true
                            });
                 return items;

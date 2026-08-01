@@ -346,13 +346,11 @@ Item {
       items.push({
                    "label": I18n.tr("actions.widget-settings"),
                    "action": "widget-settings",
-                   "icon": Icon.settings
                  });
     }
     items.push({
                  "label": I18n.tr("common.reset"),
                  "action": "reset",
-                 "icon": Icon.restoreDefaults
                });
     items.push({
                  "label": I18n.tr("actions.raise-to-top"),
@@ -367,7 +365,6 @@ Item {
     items.push({
                  "label": I18n.tr("common.delete"),
                  "action": "delete",
-                 "icon": Icon.trash
                });
     return items;
   }

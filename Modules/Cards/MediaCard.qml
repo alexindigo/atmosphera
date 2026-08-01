@@ -235,7 +235,6 @@ NBox {
           menuItems.push({
                            "label": players[i].identity,
                            "action": i.toString(),
-                           "icon": Icon.disc,
                            "enabled": true,
                            "visible": true
                          });
