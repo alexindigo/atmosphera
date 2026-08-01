@@ -86,18 +86,12 @@ stdenvNoCC.mkDerivation {
   installPhase = ''
     mkdir -p $out/share/atmosphera $out/bin
     cp -r . $out/share/atmosphera
-    ln -s ${quickshell}/bin/qs $out/bin/atmosphera
+
+    # atmosphera — unified CLI dispatcher (replaces the old symlink to qs)
+    install -Dm755 Scripts/bash/atmosphera $out/bin/atmosphera
+
+    # atmosphera-ipc — raw IPC entry point (stays as a symlink to qs)
     ln -s ${quickshell}/bin/qs $out/bin/atmosphera-ipc
-    cp Scripts/bash/atmosphera-prompt $out/bin/atmosphera-prompt
-    cp Scripts/bash/atmosphera-confirm $out/bin/atmosphera-confirm
-    cp Scripts/bash/atmosphera-alert $out/bin/atmosphera-alert
-    cp Scripts/bash/atmosphera-survey $out/bin/atmosphera-survey
-    cp Scripts/bash/atmosphera-bindings-apply $out/bin/atmosphera-bindings-apply
-    cp Scripts/bash/atmosphera-bindings-apply-keyd $out/bin/atmosphera-bindings-apply-keyd
-    cp Scripts/bash/atmosphera-close-tab-or-window $out/bin/atmosphera-close-tab-or-window
-    chmod +x $out/bin/atmosphera-prompt $out/bin/atmosphera-confirm $out/bin/atmosphera-alert $out/bin/atmosphera-survey \
-             $out/bin/atmosphera-bindings-apply $out/bin/atmosphera-bindings-apply-keyd \
-             $out/bin/atmosphera-close-tab-or-window
   '';
 
   preFixup = ''
