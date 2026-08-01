@@ -23,5 +23,6 @@ without touching upstream files. All binds here use explicit `Super+`, `Ctrl+`, 
 
 ## Runtime dependency
 
-Requires `atmosphera-close-tab-or-window` on PATH (installed by
-`install/install_scripts.sh` from `Scripts/bash/atmosphera-close-tab-or-window`).
+Requires the `atmosphera` CLI dispatcher on PATH (installed by `install/install_scripts.sh`
+or via the Nix package). The niri config uses `spawn "atmosphera" "close-tab"` which
+delegates to the close-tab helper.
