@@ -13,22 +13,18 @@ ColumnLayout {
     {
       "id": "add-app-shortcut",
       "labelKey": "panels.desktop-widgets.menu-add-app-shortcut",
-      "icon": Icon.add
     },
     {
       "id": "change-wallpaper",
       "labelKey": "panels.desktop-widgets.menu-change-wallpaper",
-      "icon": Icon.settingsWallpaper
     },
     {
       "id": "display-settings",
       "labelKey": "panels.desktop-widgets.menu-display-settings",
-      "icon": Icon.settingsDisplay
     },
     {
       "id": "toggle-edit-mode",
       "labelKey": "panels.desktop-widgets.menu-toggle-edit-mode",
-      "icon": Icon.edit
     }
   ]
 

@@ -504,133 +504,111 @@ Item {
           {
             "id": SettingsPanel.Tab.General,
             "label": "common.general",
-            "icon": Icon.settingsGeneral,
             "source": generalTab
           },
           {
             "id": SettingsPanel.Tab.UserInterface,
             "label": "panels.user-interface.title",
-            "icon": Icon.settingsUserInterface,
             "source": userInterfaceTab
           },
           {
             "id": SettingsPanel.Tab.ColorScheme,
             "label": "panels.color-scheme.title",
-            "icon": Icon.settingsColorScheme,
             "source": colorSchemeTab
           },
           {
             "id": SettingsPanel.Tab.Wallpaper,
             "label": "common.wallpaper",
-            "icon": Icon.settingsWallpaper,
             "source": wallpaperTab
           },
           {
             "id": SettingsPanel.Tab.Bar,
             "label": "panels.bar.title",
-            "icon": Icon.settingsBar,
             "source": barTab
           },
           {
             "id": SettingsPanel.Tab.Dock,
             "label": "panels.dock.title",
-            "icon": Icon.settingsDock,
             "source": dockTab
           },
           {
             "id": SettingsPanel.Tab.DesktopWidgets,
             "label": "panels.desktop-widgets.title",
-            "icon": Icon.clock,
             "source": desktopWidgetsTab
           },
           {
             "id": SettingsPanel.Tab.ControlCenter,
             "label": "panels.control-center.title",
-            "icon": Icon.settingsControlCenter,
             "source": controlCenterTab
           },
           {
             "id": SettingsPanel.Tab.Launcher,
             "label": "panels.launcher.title",
-            "icon": Icon.settingsLauncher,
             "source": launcherTab
           },
           {
             "id": SettingsPanel.Tab.Notifications,
             "label": "common.notifications",
-            "icon": Icon.settingsNotifications,
             "source": notificationsTab
           },
           {
             "id": SettingsPanel.Tab.OSD,
             "label": "panels.osd.title",
-            "icon": Icon.settingsOsd,
             "source": osdTab
           },
           {
             "id": SettingsPanel.Tab.LockScreen,
             "label": "panels.lock-screen.title",
-            "icon": Icon.settingsLockScreen,
             "source": lockScreenTab
           },
           {
             "id": SettingsPanel.Tab.SessionMenu,
             "label": "session-menu.title",
-            "icon": Icon.settingsSessionMenu,
             "source": sessionMenuTab
           },
           {
             "id": SettingsPanel.Tab.Idle,
             "label": "panels.idle.title",
-            "icon": Icon.settingsIdle,
             "source": idleTab
           },
           {
             "id": SettingsPanel.Tab.Audio,
             "label": "panels.audio.title",
-            "icon": Icon.settingsAudio,
             "source": audioTab
           },
           {
             "id": SettingsPanel.Tab.Display,
             "label": "panels.display.title",
-            "icon": Icon.settingsDisplay,
             "source": displayTab
           },
           {
             "id": SettingsPanel.Tab.Connections,
             "label": "panels.connections.title",
-            "icon": Icon.settingsNetwork,
             "source": connectionsTab
           },
           {
             "id": SettingsPanel.Tab.Location,
             "label": "panels.region.title",
-            "icon": Icon.settingsLocation,
             "source": regionTab
           },
           {
             "id": SettingsPanel.Tab.System,
             "label": "panels.system.title",
-            "icon": Icon.settingsSystemMonitor,
             "source": systemMonitorTab
           },
           {
             "id": SettingsPanel.Tab.Plugins,
             "label": "panels.plugins.title",
-            "icon": Icon.plugin,
             "source": pluginsTab
           },
           {
             "id": SettingsPanel.Tab.Hooks,
             "label": "panels.hooks.title",
-            "icon": Icon.settingsHooks,
             "source": hooksTab
           },
           {
             "id": SettingsPanel.Tab.About,
             "label": "panels.about.title",
-            "icon": Icon.settingsAbout,
             "source": aboutTab
           }
         ];
