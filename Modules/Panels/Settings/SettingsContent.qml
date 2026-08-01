@@ -885,7 +885,7 @@ Item {
                   spacing: 0
 
                   NIcon {
-                    icon: Icon.search
+                    icon: "search"
                     color: searchCollapsedMouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface
                     pointSize: Style.fontSizeXL
                   }
@@ -1183,7 +1183,7 @@ Item {
             }
 
             NIconButton {
-              icon: Icon.close
+              icon: "close"
               tooltipText: I18n.tr("common.close")
               Layout.alignment: Qt.AlignVCenter
               onClicked: root.closeRequested()

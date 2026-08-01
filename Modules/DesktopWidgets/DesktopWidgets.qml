@@ -202,8 +202,7 @@ Variants {
             continue;
           model.push({
                        action: item.id,
-                       text: I18n.tr("panels.desktop-widgets.menu-" + item.id),
-                       icon: iconForAction(item.id)
+                       text: I18n.tr("panels.desktop-widgets.menu-" + item.id)
                      });
         }
         return model;
@@ -655,7 +654,7 @@ Variants {
                       items.push({
                                    action: id,
                                    text: DesktopWidgetRegistry.getWidgetDisplayName(id),
-                                   icon: Icon.layoutGridAdd
+                                   icon: "layout-grid-add"
                                  });
                     }
                     var globalPos = addWidgetButton.mapToItem(null, 0, addWidgetButton.height + Style.marginS);

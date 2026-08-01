@@ -600,7 +600,7 @@ NBox {
               // Plugin indicator icon
               NIcon {
                 visible: root.widgetRegistry && root.widgetRegistry.isPluginWidget(modelData.id)
-                icon: Icon.plugin
+                icon: "plugin"
                 pointSize: Style.fontSizeXXS
                 color: root.getWidgetColor(modelData)[1]
                 Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.5 : 0
@@ -610,7 +610,7 @@ NBox {
               // CPU intensive indicator icon
               NIcon {
                 visible: root.widgetRegistry && root.widgetRegistry.isCpuIntensive(modelData.id)
-                icon: Icon.cpuIntensive
+                icon: "cpu-intensive"
                 pointSize: Style.fontSizeXXS
                 color: root.getWidgetColor(modelData)[1]
                 Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.5 : 0
@@ -625,7 +625,7 @@ NBox {
                 Loader {
                   active: root.widgetHasSettings(modelData.id) && root.enabled
                   sourceComponent: NIconButton {
-                    icon: Icon.settings
+                    icon: "settings"
                     tooltipText: I18n.tr("actions.widget-settings")
                     baseSize: miniButtonSize
                     colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)

@@ -271,7 +271,7 @@ NBox {
     NIcon {
       anchors.centerIn: parent
       visible: !root.hasActivePlayer && SpectrumService.isIdle
-      icon: Icon.disc
+      icon: "disc"
       pointSize: Style.fontSizeXXXL * 3
       color: Color.mOnSurfaceVariant
       opacity: 1.0

@@ -26,7 +26,7 @@ DraggableDesktopWidget {
     case "CPU":
       return [
             {
-              icon: Icon.cpuUsage,
+              icon: "cpu-usage",
               text: Math.round(SystemStatService.cpuUsage) + "%",
               color: root.color
             },
