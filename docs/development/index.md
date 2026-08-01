@@ -51,6 +51,16 @@ mkdir -p ~/.config/quickshell/atmosphera
 cp -r . ~/.config/quickshell/atmosphera/
 ```
 
+Then install the CLI dispatcher to your PATH:
+
+```sh
+./install/install_scripts.sh
+```
+
+This places `atmosphera` in `~/.local/bin/`. The shell itself is launched
+with `qs -c atmosphera`, but all helper commands (lock, settings, bindings,
+alerts, IPC, etc.) are reached through `atmosphera <subcommand>`.
+
 Then run `qs -c atmosphera`.
 
 ### System-wide (manual)
@@ -58,6 +68,7 @@ Then run `qs -c atmosphera`.
 ```sh
 sudo mkdir -p /etc/xdg/quickshell/atmosphera
 sudo cp -r . /etc/xdg/quickshell/atmosphera/
+sudo ./install/install_scripts.sh /usr/local/bin
 ```
 
 ### Nix
