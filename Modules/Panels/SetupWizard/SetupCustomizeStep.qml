@@ -118,22 +118,22 @@ ColumnLayout {
               {
                 "key": "top",
                 "name": I18n.tr("positions.top"),
-                "icon": Icon.positionTop
+                "icon": "position-top"
               },
               {
                 "key": "bottom",
                 "name": I18n.tr("positions.bottom"),
-                "icon": Icon.positionBottom
+                "icon": "position-bottom"
               },
               {
                 "key": "left",
                 "name": I18n.tr("positions.left"),
-                "icon": Icon.positionLeft
+                "icon": "position-left"
               },
               {
                 "key": "right",
                 "name": I18n.tr("positions.right"),
-                "icon": Icon.positionRight
+                "icon": "position-right"
               }
             ]
             delegate: Rectangle {
