@@ -972,7 +972,7 @@ SmartPanel {
       if (isSelected || effectiveHover) {
         return Qt.alpha(Color.mPrimary, 1.0);
       }
-      return Color.mSurface;
+      return Qt.alpha(Color.mSurface, Style.effectiveSessionMenuOpacity);
     }
 
     border.width: Style.borderS

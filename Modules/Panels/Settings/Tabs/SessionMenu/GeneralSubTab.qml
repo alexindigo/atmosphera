@@ -119,4 +119,28 @@ ColumnLayout {
     text: Math.round(Settings.data.sessionMenu.countdownDuration / 1000) + "s"
     defaultValue: Settings.getDefaultValue("sessionMenu.countdownDuration")
   }
+
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("panels.session-menu.use-shared-opacity-label")
+    description: I18n.tr("panels.session-menu.use-shared-opacity-description")
+    checked: Settings.data.sessionMenu.useSharedOpacity
+    defaultValue: Settings.getDefaultValue("sessionMenu.useSharedOpacity")
+    onToggled: checked => Settings.data.sessionMenu.useSharedOpacity = checked
+  }
+
+  NValueSlider {
+    visible: !Settings.data.sessionMenu.useSharedOpacity
+    Layout.fillWidth: true
+    label: I18n.tr("panels.session-menu.background-opacity-label")
+    description: I18n.tr("panels.session-menu.background-opacity-description")
+    from: 0
+    to: 1
+    stepSize: 0.01
+    showReset: true
+    value: Settings.data.sessionMenu.backgroundOpacity
+    defaultValue: Settings.getDefaultValue("sessionMenu.backgroundOpacity")
+    onMoved: value => Settings.data.sessionMenu.backgroundOpacity = value
+    text: Math.floor(Settings.data.sessionMenu.backgroundOpacity * 100) + "%"
+  }
 }

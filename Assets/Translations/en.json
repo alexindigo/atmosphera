@@ -1816,7 +1816,11 @@
       "show-header-description": "Display the title and close button at the top of the session menu.",
       "show-header-label": "Show header",
       "show-keybinds-description": "Display keybind hints on session options.",
-      "show-keybinds-label": "Show keybinds"
+      "show-keybinds-label": "Show keybinds",
+      "use-shared-opacity-description": "When enabled, session menu buttons share the panel transparency. Disable to set a custom opacity.",
+      "use-shared-opacity-label": "Use shared panel opacity",
+      "background-opacity-description": "Set the background opacity for session menu buttons when not using shared panel opacity.",
+      "background-opacity-label": "Button background opacity"
     },
     "system": {
       "atmosphera-performance-disable-desktop-widgets-description": "Keep desktop widgets visible while Atmosphera performance mode is enabled.",

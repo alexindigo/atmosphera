@@ -675,6 +675,8 @@ Singleton {
           "keybind": "7"
         }
       ]
+      property bool useSharedOpacity: true
+      property real backgroundOpacity: 0.93
     }
 
     // notifications
