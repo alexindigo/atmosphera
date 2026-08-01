@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+# atmosphera — unified CLI dispatcher
+#
+# Usage:
+#   atmosphera                        run the shell (forward to qs)
+#   atmosphera <subcommand> [args]    dispatch to handler
+#   atmosphera help                   list subcommands
+#   atmosphera version                show version info
+#
+# Multi-call pattern: if invoked via a legacy symlink name
+# (e.g., 'atmosphera-lock'), that name is treated as a subcommand
+# without the 'atmosphera-' prefix.
+
+set -euo pipefail
+
+# Resolve our own directory (where sibling handler scripts live)
+SELF="$(readlink -f "$0")"
+SELF_DIR="$(dirname "$SELF")"
+
+# Determine invocation name for multi-call detection
+INVOKED_NAME="${0##*/}"
+
+# --- helper: forward to Quickshell as the atmosphera shell ---
+run_shell() {
+  exec qs -c atmosphera "$@"
+}
+
+# --- helper: simple exec-style handlers ---
+exec_handler() {
+  local handler_script="$1"
+  shift
+  if [ -x "$handler_script" ]; then
+    exec "$handler_script" "$@"
+  else
+    echo "atmosphera: handler not found or not executable: $handler_script" >&2
+    exit 1
+  fi
+}
+
+# --- multi-call detection ---
+# If invoked as 'atmosphera-lock', 'atmosphera-settings', etc.,
+# treat the suffix as the subcommand.
+if [ "$INVOKED_NAME" != "atmosphera" ]; then
+  # Strip the 'atmosphera-' prefix to get the subcommand
+  SUBCMD="${INVOKED_NAME#atmosphera-}"
+  set -- "$SUBCMD" "$@"
+fi
+
+# --- no-argument case: run the shell ---
+if [ $# -eq 0 ]; then
+  run_shell
+fi
+
+SUBCMD="$1"
+shift
+
+case "$SUBCMD" in
+  # --- shell passthrough ---
+  run|shell)
+    run_shell "$@"
+    ;;
+
+  # --- built-ins ---
+  help)
+    echo "atmosphera <subcommand> [args...]"
+    echo ""
+    echo "Subcommands:"
+    echo "  run / shell          Run the Atmosphera shell"
+    echo "  help                 Show this help"
+    echo "  version              Show version information"
+    echo ""
+    echo "  ipc <target> <fn> [args...]   Generic IPC"
+    echo "  fire <event> [json]           Fire a hook event"
+    echo "  custom <name> <method>        Trigger custom widget"
+    echo "  plugin <name> <method>        Trigger bar plugin"
+    echo "  lock [action]                 Lock screen"
+    echo "  session <subcmd>              Shell version switcher"
+    echo "  settings [tab]                Open settings panel"
+    echo "  alert <msg>                   Show alert dialog"
+    echo "  confirm <q>                   Show confirm dialog"
+    echo "  prompt <q> [default]          Show prompt dialog"
+    echo "  survey <args>                 Show survey dialog"
+    echo "  setup niri                    Install niri config include"
+    echo "  bindings apply                Deploy shortcut environment"
+    echo "  bindings apply-keyd           Root-side keyd bootstrap"
+    echo "  close-tab                     Close tab or window"
+    ;;
+
+  version)
+    echo "atmosphera (unified CLI dispatcher)"
+    echo "handlers: $SELF_DIR/"
+    ;;
+
+  # --- ipc + shortcuts (ipc is the real module; fire/custom/plugin route through it) ---
+  ipc)
+    exec qs -c atmosphera ipc call "$@"
+    ;;
+
+  fire)
+    exec "$SELF_DIR/atmosphera" ipc event fire "$@"
+    ;;
+
+  custom)
+    exec "$SELF_DIR/atmosphera" ipc custom "$@"
+    ;;
+
+  plugin)
+    exec "$SELF_DIR/atmosphera" ipc plugin "$@"
+    ;;
+
+  # --- helpers (existing, delegated direct) ---
+  lock)
+    exec_handler "$SELF_DIR/atmosphera-lock" "$@"
+    ;;
+
+  session)
+    exec_handler "$SELF_DIR/atmosphera-session" "$@"
+    ;;
+
+  settings)
+    exec_handler "$SELF_DIR/atmosphera-settings" "$@"
+    ;;
+
+  alert)
+    exec_handler "$SELF_DIR/atmosphera-alert" "$@"
+    ;;
+
+  confirm)
+    exec_handler "$SELF_DIR/atmosphera-confirm" "$@"
+    ;;
+
+  prompt)
+    exec_handler "$SELF_DIR/atmosphera-prompt" "$@"
+    ;;
+
+  survey)
+    exec_handler "$SELF_DIR/atmosphera-survey" "$@"
+    ;;
+
+  close-tab)
+    exec_handler "$SELF_DIR/atmosphera-close-tab-or-window"
+    ;;
+
+  # --- child routers (one level down only) ---
+  bindings)
+    exec_handler "$SELF_DIR/atmosphera-bindings" "$@"
+    ;;
+
+  setup)
+    exec_handler "$SELF_DIR/atmosphera-setup" "$@"
+    ;;
+
+  # --- catch-all: forward unknown subcommands as qs flags ---
+  *)
+    # If the first arg looks like a qs flag (starts with -), run the shell
+    if [[ "$SUBCMD" == -* ]]; then
+      run_shell "$SUBCMD" "$@"
+    else
+      echo "atmosphera: unknown subcommand '$SUBCMD'. Try 'atmosphera help'." >&2
+      exit 1
+    fi
+    ;;
+esac
