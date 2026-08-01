@@ -174,14 +174,12 @@ Item {
         items.push({
                      "label": I18n.tr("common.previous"),
                      "action": "previous",
-                     "icon": Icon.mediaPrev
                    });
       }
       if (hasPlayer && MediaService.canGoNext) {
         items.push({
                      "label": I18n.tr("common.next"),
                      "action": "next",
-                     "icon": Icon.mediaNext
                    });
       }
 
@@ -203,7 +201,6 @@ Item {
       items.push({
                    "label": I18n.tr("actions.widget-settings"),
                    "action": "widget-settings",
-                   "icon": Icon.settings
                  });
       return items;
     }

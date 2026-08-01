@@ -54,12 +54,10 @@ Item {
       {
         "label": I18n.tr("common.bluetooth") + " " + I18n.tr("tooltips.open-settings"),
         "action": "bluetooth-settings",
-        "icon": Icon.settings
       },
       {
         "label": I18n.tr("actions.widget-settings"),
         "action": "widget-settings",
-        "icon": Icon.settings
       },
     ]
 
