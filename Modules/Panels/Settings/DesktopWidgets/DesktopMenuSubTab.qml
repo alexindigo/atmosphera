@@ -12,19 +12,19 @@ ColumnLayout {
   readonly property var availableItems: [
     {
       "id": "add-app-shortcut",
-      "labelKey": "panels.desktop-widgets.menu-add-app-shortcut",
+      "labelKey": "panels.desktop-widgets.menu-add-app-shortcut"
     },
     {
       "id": "change-wallpaper",
-      "labelKey": "panels.desktop-widgets.menu-change-wallpaper",
+      "labelKey": "panels.desktop-widgets.menu-change-wallpaper"
     },
     {
       "id": "display-settings",
-      "labelKey": "panels.desktop-widgets.menu-display-settings",
+      "labelKey": "panels.desktop-widgets.menu-display-settings"
     },
     {
       "id": "toggle-edit-mode",
-      "labelKey": "panels.desktop-widgets.menu-toggle-edit-mode",
+      "labelKey": "panels.desktop-widgets.menu-toggle-edit-mode"
     }
   ]
 

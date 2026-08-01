@@ -659,19 +659,19 @@ PopupWindow {
               visible: !isSeparator
 
               NIcon {
-                icon: modelData.icon
+                visible: modelData.icon !== undefined
+                icon: modelData.icon || ""
                 pointSize: Style.fontSizeL
                 color: root.hoveredItem === index ? Color.mOnHover : Color.mOnSurfaceVariant
-                visible: icon !== ""
                 anchors.verticalCenter: parent.verticalCenter
               }
 
               NText {
-                text: modelData.text
+                text: modelData.text || ""
                 pointSize: Style.fontSizeS
                 color: root.hoveredItem === index ? Color.mOnHover : Color.mOnSurfaceVariant
                 anchors.verticalCenter: parent.verticalCenter
-                width: rowLayout.width - ((modelData.icon && modelData.icon !== "") ? (Style.fontSizeL + Style.marginS) : 0)
+                width: rowLayout.width - (modelData.icon ? (Style.fontSizeL + Style.marginS) : 0)
                 elide: Text.ElideRight
               }
             }
