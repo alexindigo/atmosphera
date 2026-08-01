@@ -74,7 +74,6 @@ NIconButton {
       {
         "label": I18n.tr("actions.open-launcher"),
         "action": "open-launcher",
-        "icon": Icon.search
       },
       {
         "label": I18n.tr("actions.open-settings"),
@@ -84,7 +83,6 @@ NIconButton {
       {
         "label": I18n.tr("actions.widget-settings"),
         "action": "widget-settings",
-        "icon": Icon.settings
       },
     ]
 

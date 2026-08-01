@@ -69,7 +69,6 @@ Item {
       items.push({
                    "label": I18n.tr("actions.widget-settings"),
                    "action": "widget-settings",
-                   "icon": Icon.settings
                  });
       return items;
     }

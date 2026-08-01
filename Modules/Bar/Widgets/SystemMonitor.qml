@@ -161,12 +161,10 @@ Item {
       {
         "label": I18n.tr("system-monitor.title"),
         "action": "sysmon-settings",
-        "icon": Icon.settings
       },
       {
         "label": I18n.tr("actions.widget-settings"),
         "action": "widget-settings",
-        "icon": Icon.settings
       },
     ]
 

@@ -456,7 +456,6 @@ Item {
         items.push({
                      "label": I18n.tr("common.focus"),
                      "action": "focus",
-                     "icon": Icon.eye
                    });
 
         // Pin/Unpin item (always available when right-clicking an app)
@@ -471,7 +470,6 @@ Item {
         items.push({
                      "label": I18n.tr("common.close"),
                      "action": "close",
-                     "icon": Icon.close
                    });
 
         // Add desktop entry actions (like "New Window", "Private Window", etc.)
@@ -482,7 +480,6 @@ Item {
               items.push({
                            "label": action.name,
                            "action": "desktop-action-" + action.name,
-                           "icon": Icon.chevronRight,
                            "desktopAction": action
                          });
             });
@@ -492,7 +489,6 @@ Item {
       items.push({
                    "label": I18n.tr("actions.widget-settings"),
                    "action": "widget-settings",
-                   "icon": Icon.settings
                  });
       return items;
     }
@@ -978,7 +974,6 @@ Item {
       items.push({
                    "label": I18n.tr("common.focus"),
                    "action": "focus",
-                   "icon": Icon.eye
                  });
 
       // Pin/Unpin item
@@ -993,7 +988,6 @@ Item {
       items.push({
                    "label": I18n.tr("common.close"),
                    "action": "close",
-                   "icon": Icon.close
                  });
 
       // Add desktop entry actions (like "New Window", "Private Window", etc.)
@@ -1004,7 +998,6 @@ Item {
             items.push({
                          "label": action.name,
                          "action": "desktop-action-" + action.name,
-                         "icon": Icon.chevronRight,
                          "desktopAction": action
                        });
           });
@@ -1014,7 +1007,6 @@ Item {
     items.push({
                  "label": I18n.tr("actions.widget-settings"),
                  "action": "widget-settings",
-                 "icon": Icon.settings
                });
 
     // Set the model directly
