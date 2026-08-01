@@ -45,7 +45,7 @@ ColumnLayout {
             return;
           Settings.data.bindings.environment = modelData.value;
           Settings.saveImmediate();
-          Quickshell.execDetached(["atmosphera-bindings-apply"]);
+          Quickshell.execDetached(["atmosphera", "bindings", "apply"]);
         }
       }
 

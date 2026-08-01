@@ -95,8 +95,8 @@ SmartPanel {
 
         // Deploy bindings if the user picked a non-"none" environment.
         if (Settings.data.bindings.environment && Settings.data.bindings.environment !== "none") {
-          Quickshell.execDetached(["atmosphera-bindings-apply"]);
-          Logger.i("SetupWizard", "Triggered atmosphera-bindings-apply for env:", Settings.data.bindings.environment);
+          Quickshell.execDetached(["atmosphera", "bindings", "apply"]);
+          Logger.i("SetupWizard", "Triggered atmosphera bindings apply for env:", Settings.data.bindings.environment);
         }
 
         closeTimer.start();
