@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import XdgIcon 1.0
 import qs.Commons
 
 Singleton {
@@ -24,6 +25,18 @@ Singleton {
 
   // Internal: pending logo name for fallback after probe fails
   property string pendingLogoName: ""
+
+  XdgIcon {
+    id: logoIcon
+    name: root.pendingLogoName
+    onPathChanged: {
+      if (path && root.pendingLogoName) {
+        root.osLogo = path;
+        root.pendingLogoName = "";
+        Logger.d("HostService", "Found logo via XdgIcon:", root.osLogo);
+      }
+    }
+  }
 
   readonly property string displayName: {
     // Explicit override
@@ -95,30 +108,13 @@ Singleton {
     if (!n)
       return;
 
-    // First try Quickshell's icon lookup for direct file paths
-    try {
-      const path = Quickshell.iconPath(n, "");
-      if (path && path !== "" && !path.startsWith("image://")) {
-        // Got a direct file path - use it
-        const finalPath = path.startsWith("file://") ? path : "file://" + path;
-        root.osLogo = finalPath;
-        Logger.d("HostService", "Found logo via icon theme:", root.osLogo);
-        return;
-      }
-    } catch (e) {
-      // Ignore and continue to manual probe
-    }
-
-    // Try manual probing for hicolor/pixmaps paths
-    // Store name for fallback to image:// URI if probe fails
+    // Trigger XdgIcon reactive theme resolution
     root.pendingLogoName = n;
+
+    // Manual filesystem probe for hicolor/pixmaps paths (faster than icon theme walk)
     const all = buildCandidates(n);
-    if (all.length === 0) {
-      // No candidates, try image:// URI directly
-      root.osLogo = `image://icon/${n}`;
-      Logger.d("HostService", "Using theme icon URI:", root.osLogo);
+    if (all.length === 0)
       return;
-    }
     const script = all.map(p => `if [ -f "${p}" ]; then echo "${p}"; exit 0; fi`).join("; ") + "; exit 1";
     probe.command = ["sh", "-c", script];
     probe.running = true;
@@ -160,15 +156,11 @@ Singleton {
         root.osLogo = `file://${p}`;
         root.pendingLogoName = "";
         Logger.d("HostService", "Found", root.osLogo);
-      } else if (root.pendingLogoName) {
-        // Manual probe failed, fallback to image:// URI (theme icon)
-        root.osLogo = `image://icon/${root.pendingLogoName}`;
-        root.pendingLogoName = "";
-        Logger.d("HostService", "Using theme icon URI:", root.osLogo);
-      } else {
+      } else if (!root.pendingLogoName) {
         root.osLogo = "";
         Logger.w("HostService", "No distro logo found");
       }
+      // If pendingLogoName is still set, XdgIcon will resolve it reactively
     }
     stdout: StdioCollector {}
     stderr: StdioCollector {}
