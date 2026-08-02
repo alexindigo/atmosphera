@@ -84,6 +84,14 @@ Singleton {
     }));
   }
 
+  function iconNameForAppId(appId) {
+    if (!appId)
+      return "";
+
+    const entry = findAppEntry(appId);
+    return entry ? entry.icon : appId;
+  }
+
   function iconForAppId(appId, fallbackName) {
     const fallback = fallbackName || "application-x-executable";
     if (!appId)
