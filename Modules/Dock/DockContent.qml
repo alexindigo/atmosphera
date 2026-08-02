@@ -112,10 +112,10 @@ Item {
         policy: ScrollBar.AsNeeded
       }
 
-      function getAppIcon(appData): string {
+      function getAppIconName(appData): string {
         if (!appData || !appData.appId)
           return "";
-        return ThemeIcons.iconForAppId(appData.appId?.toLowerCase());
+        return ThemeIcons.iconNameForAppId(appData.appId?.toLowerCase());
       }
 
       function getValidToplevels(appData) {
@@ -568,16 +568,12 @@ Item {
                 }
               }
 
-              IconImage {
+              AtmoIcon {
                 id: appIcon
                 anchors.fill: parent
-                source: {
-                  dockRoot.iconRevision; // Force re-evaluation when revision changes
-                  return dock.getAppIcon(modelData);
-                }
-                visible: source.toString() !== ""
+                name: dock.getAppIconName(modelData)
+                visible: name !== ""
                 smooth: true
-                asynchronous: true
 
                 // Dim pinned apps that aren't running
                 opacity: appButton.isRunning ? 1.0 : Settings.data.dock.deadOpacity
