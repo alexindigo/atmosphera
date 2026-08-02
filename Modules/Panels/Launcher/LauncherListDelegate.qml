@@ -142,11 +142,10 @@ NBox {
 
           Component {
             id: systemIconComponent
-            IconImage {
+            AtmoIcon {
               anchors.fill: parent
-              source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
-              visible: modelData.icon && source !== "" && !modelData.displayString
-              asynchronous: true
+              name: modelData.icon || ""
+              visible: modelData.icon && !modelData.displayString
             }
           }
         }
