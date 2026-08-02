@@ -770,9 +770,7 @@ Singleton {
     return "";
     if (icon.startsWith("/") || icon.startsWith("file://"))
     return icon;
-    if (!ThemeIcons.iconExists(icon))
-    return "";
-    return ThemeIcons.iconFromName(icon);
+    return icon;
   }
 
     function escapeHtml(text) {
