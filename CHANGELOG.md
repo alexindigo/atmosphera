@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.4.0] — 2026-08-01
 
 ### 2026-07-27
 
@@ -69,6 +69,87 @@ symlink instead of glob-symlinking all helpers individually.
 - `install/install_scripts.sh` simplified (`fe8087313`)
 - Install docs updated with dispatcher step (`56709a372`)
 - Session module renamed: `atmosphera-session.sh` → `atmosphera-session` (`78334b0b6`)
+
+### 2026-07-28
+
+**Feature**
+
+Session menu buttons now get a "Use shared panel opacity" toggle (Settings →
+Session Menu → General), mirroring the Bar's `useSeparateOpacity` pattern.
+When enabled, buttons share the panel's background opacity; when disabled, a
+custom opacity slider appears. The LargeButton component default color uses
+`Style.effectiveSessionMenuOpacity` which resolves reactively.
+
+- Settings schema, Style property, GeneralSubTab toggle + slider (`bc17cb04d`)
+
+**Fix**
+
+The icon timing race condition is eliminated. `Icon.*` references inside JS
+object literals — context menu models, action metadata, session menu entries,
+bar widget lists, setup wizard step indicators — were capturing their value
+at parse time (before plugin icon sets registered), resulting in permanently
+`undefined` icons. The fix removes all `Icon.*` from model data, replacing
+them with either action-based mapping functions (`_actionIcon()` in SessionMenu)
+or plain string icon names (e.g. `"noctalia"` → `"home"` for Control Center).
+`NPopupContextMenu` and `NContextMenu` delegates now resolve icons via live
+`switch` bindings instead of reading pre-captured model data.
+
+47 files changed across SessionMenu, NPopupContextMenu, NContextMenu, all bar
+widgets, dock menu, desktop widgets, launcher, setup wizard, media card, and
+settings panels. Zero `Icon.*` references remain in any JS model data.
+
+- SessionMenu `_actionIcon()` bridge (`9d8e9c2a7`)
+- NPopupContextMenu + NContextMenu action-based mapping (`db3aec66d`, `f4d0d6b90`)
+- 27 bar widget model icon removals (`3e0aadf93`)
+- 11 remaining file model icon removals (`4dfed51fb`)
+- Property binding Icon.* → strings + DockMenu delegate fix (`1627b5738`)
+- SetupWizard + SetupCustomizeStep model icon string migration (`f6ef0764f`)
+- Control Center default icon `noctalia` → `home` (`aeca865e1`)
+
+**Fix**
+
+Progressive QML lint hardening. Nine categories enforced and all pre-existing
+violations resolved across the codebase: `alias-cycle`, `confusing-expression-statement`,
+`duplicate-property-binding`, `assignment-in-condition`, `unintentional-empty-block`,
+`read-only-property`, `incompatible-type`, `property-override`, and `uncreatable-type`
+(false-positive suppression). These took the codebase from zero lint enforcement
+to 9 categories passing clean, with `missing-property` and `missing-type` known-
+suppressed at the config level (JsonObject false positives).
+
+- `alias-cycle` (3 resolved, `1f8e90a98`)
+- `confusing-expression-statement` (3 resolved, `7362da283`)
+- `duplicate-property-binding` (5 resolved, `78f18a55f`)
+- `assignment-in-condition` (6 resolved, `077be6374`)
+- `unintentional-empty-block` (1 resolved, `e45608e2d`)
+- `read-only-property` (1 resolved, `b6e63f8a3`)
+- `incompatible-type` (6 real + 6 false positives, `b60179f3b`)
+- `property-override` (15 resolved, `3c9529aad`)
+- `uncreatable-type` false-positive suppression (`e789cefc4`)
+
+**Fix**
+
+Dialog FIFO hardened against races, hangs, and missing dependencies. The `mktemp`
++ `mkfifo` + `trap cleanup EXIT` pattern ensures dialog scripts don't orphan FIFO
+files or hang waiting for readers that never arrive (`169c29d50`).
+
+CLI instance discovery: replace fragile PID-file crawling with config-path
+resolution (`qs -c atmosphera` lookup), eliminating stale-PID false positives that
+blocked `atmosphera-session launch` after a crash (`9f89a824d`).
+
+Duplicate `hoverHandler` IDs in `SetupCustomizeStep` and duplicate `mouseArea` IDs
+in `NFilePicker` resolved (`2abd994b8`, `3b6c872a7`).
+
+**Chore**
+
+Devcontainer tooling built from scratch. A Dockerfile with `archlinux:base-devel`,
+Qt6 declarative tools, `quickshell`, `tree-sitter`, `rustup`, `shellcheck`, and
+`shfmt`. The `atmo-dev.sh` wrapper provides overlay-based write isolation and
+VFS generation via `qs -p`. The pre-commit hook runs `Docker run` into the
+devcontainer with `qmllint` and `qmlformat` on staged `.qml` files, using
+kernel overlay to keep host changes isolated.
+
+- Dockerfile + atmo-dev + pre-commit hook (`0f02d727b`, `5f21645b4`)
+- Devcontainer devcontainer.json (`39e8802ea`)
 
 ## [0.2.0] — 2026-07-19
 
