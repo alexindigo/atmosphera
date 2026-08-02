@@ -845,13 +845,12 @@ Item {
                   Layout.preferredHeight: root.itemSize
                   Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
 
-                  IconImage {
+                  AtmoIcon {
                     id: appIcon
                     anchors.fill: parent
 
-                    source: ThemeIcons.iconForAppId(taskbarItem.modelData.appId)
+                    name: ThemeIcons.iconNameForAppId(taskbarItem.modelData.appId)
                     smooth: true
-                    asynchronous: true
 
                     // Apply dock shader to all taskbar icons
                     layer.enabled: widgetSettings.colorizeIcons !== false
