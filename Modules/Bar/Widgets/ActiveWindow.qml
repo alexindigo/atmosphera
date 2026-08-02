@@ -131,35 +131,31 @@ Item {
     return Math.min(calculateContentWidth(), maxWidth);
   }
 
-  function getAppIcon() {
+  function getAppIconName() {
     try {
-      // Try CompositorService first
       const focusedWindow = CompositorService.getFocusedWindow();
       if (focusedWindow && focusedWindow.appId) {
         try {
           const idValue = focusedWindow.appId;
           const normalizedId = (typeof idValue === 'string') ? idValue : String(idValue);
-          const iconResult = ThemeIcons.iconForAppId(normalizedId.toLowerCase());
-          if (iconResult && iconResult !== "") {
-            return iconResult;
-          }
+          const iconName = ThemeIcons.iconNameForAppId(normalizedId.toLowerCase());
+          if (iconName)
+            return iconName;
         } catch (iconError) {
           Logger.w("ActiveWindow", "Error getting icon from CompositorService:", iconError);
         }
       }
 
       if (CompositorService.isHyprland) {
-        // Fallback to ToplevelManager
         if (ToplevelManager && ToplevelManager.activeToplevel) {
           try {
             const activeToplevel = ToplevelManager.activeToplevel;
             if (activeToplevel.appId) {
               const idValue2 = activeToplevel.appId;
               const normalizedId2 = (typeof idValue2 === 'string') ? idValue2 : String(idValue2);
-              const iconResult2 = ThemeIcons.iconForAppId(normalizedId2.toLowerCase());
-              if (iconResult2 && iconResult2 !== "") {
-                return iconResult2;
-              }
+              const iconName2 = ThemeIcons.iconNameForAppId(normalizedId2.toLowerCase());
+              if (iconName2)
+                return iconName2;
             }
           } catch (fallbackError) {
             Logger.w("ActiveWindow", "Error getting icon from ToplevelManager:", fallbackError);
@@ -167,10 +163,10 @@ Item {
         }
       }
 
-      return ThemeIcons.iconFromName(fallbackIcon);
+      return fallbackIcon;
     } catch (e) {
-      Logger.w("ActiveWindow", "Error in getAppIcon:", e);
-      return ThemeIcons.iconFromName(fallbackIcon);
+      Logger.w("ActiveWindow", "Error in getAppIconName:", e);
+      return fallbackIcon;
     }
   }
 
@@ -235,13 +231,11 @@ Item {
           Layout.alignment: Qt.AlignVCenter
           visible: showIcon
 
-          IconImage {
+          AtmoIcon {
             id: windowIcon
             anchors.fill: parent
-            source: getAppIcon()
-            asynchronous: true
+            name: getAppIconName()
             smooth: true
-            visible: source !== ""
 
             // Apply dock shader to active window icon (always themed)
             layer.enabled: widgetSettings.colorizeIcons !== false
@@ -309,13 +303,11 @@ Item {
           y: Style.pixelAlignCenter(parent.height, height)
           visible: windowTitle !== ""
 
-          IconImage {
+          AtmoIcon {
             id: windowIconVertical
             anchors.fill: parent
-            source: getAppIcon()
-            asynchronous: true
+            name: getAppIconName()
             smooth: true
-            visible: source !== ""
 
             // Apply dock shader to active window icon (always themed)
             layer.enabled: widgetSettings.colorizeIcons !== false

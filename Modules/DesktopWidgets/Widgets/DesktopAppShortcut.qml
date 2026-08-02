@@ -21,8 +21,7 @@ DraggableDesktopWidget {
   readonly property var _entry: appId ? ThemeIcons.findAppEntry(appId) : null
   readonly property string _displayLabel: customLabel || (_entry ? _entry.name : appId)
 
-  // Icon source: auto → derive from appId, theme/file → use stored source
-  readonly property string _iconSource: {
+  readonly property string _iconName: {
     var iconType = (widgetData && widgetData.iconType) || "auto";
     var iconSrc = (widgetData && widgetData.iconSource) || "";
     if (iconType === "file" && iconSrc)
@@ -30,11 +29,24 @@ DraggableDesktopWidget {
     if (iconType === "icons" && iconSrc)
       return "file://" + iconSrc;
     if (iconType === "theme" && iconSrc)
-      return ThemeIcons.iconFromName(iconSrc);
-    // auto / fallback
+      return iconSrc;
     if (appId)
-      return ThemeIcons.iconForAppId(appId);
+      return ThemeIcons.iconNameForAppId(appId);
     return "";
+  }
+
+  AtmoIcon {
+    Layout.alignment: Qt.AlignHCenter
+    Layout.preferredWidth: 64 * root.widgetScale
+    Layout.preferredHeight: 64 * root.widgetScale
+    name: root._iconName
+    layer.enabled: true
+    layer.smooth: true
+    layer.effect: NIconColorizeEffect {
+      targetColor: Color.mPrimary
+      blendStrength: root._blendStrength
+      hueAdjustment: root._hueAdjustment
+    }
   }
 
   // Extra params from widget data (e.g. ["-e", "neomutt"] or ["--xwayland"])

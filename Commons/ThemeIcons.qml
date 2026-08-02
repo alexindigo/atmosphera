@@ -84,17 +84,12 @@ Singleton {
     }));
   }
 
-  function iconForAppId(appId, fallbackName) {
-    const fallback = fallbackName || "application-x-executable";
+  function iconNameForAppId(appId) {
     if (!appId)
-      return iconFromName(fallback, fallback);
+      return "";
 
     const entry = findAppEntry(appId);
-    if (entry) {
-      return iconFromName(entry.icon, fallback);
-    }
-
-    return iconFromName(appId, fallback);
+    return entry ? entry.icon : appId;
   }
 
   // Robust lookup strategy
@@ -124,23 +119,6 @@ Singleton {
       return result;
 
     return null;
-  }
-
-  function iconFromName(iconName, fallbackName) {
-    const fallback = fallbackName || "application-x-executable";
-    try {
-      if (iconName && typeof Quickshell !== 'undefined' && Quickshell.iconPath) {
-        const p = Quickshell.iconPath(iconName, fallback);
-        if (p && p !== "")
-          return p;
-      }
-    } catch (e) {}
-
-    try {
-      return Quickshell.iconPath ? (Quickshell.iconPath(fallback, true) || "") : "";
-    } catch (e2) {
-      return "";
-    }
   }
 
   function distroLogoPath() {
@@ -263,16 +241,6 @@ Singleton {
                           all: true,
                           key: "name"
                         }).map(r => r.obj.entry);
-  }
-
-  function iconExists(iconName) {
-    if (!iconName || iconName.length === 0)
-      return false;
-    if (iconName.startsWith("/"))
-      return true;
-
-    const path = Quickshell.iconPath(iconName, true);
-    return path && path.length > 0 && !path.includes("image-missing");
   }
 
   function getFromReverseDomain(str) {
