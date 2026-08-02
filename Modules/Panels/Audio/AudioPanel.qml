@@ -556,9 +556,9 @@ SmartPanel {
                   return raw;
                 }
 
-                readonly property string appIcon: {
+                readonly property string appIconName: {
                   if (!modelData)
-                    return ThemeIcons.iconFromName("application-x-executable", "application-x-executable");
+                    return "application-x-executable";
 
                   var props = modelData.properties;
 
@@ -569,10 +569,10 @@ SmartPanel {
                       if (nameParts.length > 0) {
                         var entry = ThemeIcons.findAppEntry(nameParts[0].toLowerCase());
                         if (entry && entry.icon && isValidMatch(nameParts[0].toLowerCase(), entry))
-                          return ThemeIcons.iconFromName(entry.icon, "application-x-executable");
+                          return entry.icon;
                       }
                     }
-                    return ThemeIcons.iconFromName("application-x-executable", "application-x-executable");
+                    return "application-x-executable";
                   }
 
                   var binaryName = props["application.process.binary"] || "";
@@ -582,29 +582,26 @@ SmartPanel {
                       var binName = binParts[binParts.length - 1].toLowerCase();
                       var entry = ThemeIcons.findAppEntry(binName);
                       if (entry && entry.icon && isValidMatch(binName, entry))
-                        return ThemeIcons.iconFromName(entry.icon, "");
+                        return entry.icon;
                     }
                   }
 
                   var iconName = props["application.icon-name"] || "";
-                  if (iconName && ThemeIcons.iconExists(iconName)) {
-                    var iconPath = ThemeIcons.iconFromName(iconName, "");
-                    if (iconPath && iconPath !== "")
-                      return iconPath;
-                  }
+                  if (iconName)
+                    return iconName;
 
                   var appId = props["application.id"] || "";
                   if (appId) {
                     var entry = ThemeIcons.findAppEntry(appId);
                     if (entry && entry.icon && isValidMatch(appId, entry))
-                      return ThemeIcons.iconFromName(entry.icon, "");
+                      return entry.icon;
                   }
 
                   var appName = props["application.name"] || "";
                   if (appName) {
                     var entry = ThemeIcons.findAppEntry(appName.toLowerCase());
                     if (entry && entry.icon && isValidMatch(appName.toLowerCase(), entry))
-                      return ThemeIcons.iconFromName(entry.icon, "");
+                      return entry.icon;
                   }
 
                   var name = modelData.name || "";
@@ -613,11 +610,11 @@ SmartPanel {
                     if (nameParts.length > 0) {
                       var entry = ThemeIcons.findAppEntry(nameParts[0].toLowerCase());
                       if (entry && entry.icon && isValidMatch(nameParts[0].toLowerCase(), entry))
-                        return ThemeIcons.iconFromName(entry.icon, "");
+                        return entry.icon;
                     }
                   }
 
-                  return ThemeIcons.iconFromName("application-x-executable", "application-x-executable");
+                  return "application-x-executable";
                 }
 
                 RowLayout {
@@ -627,21 +624,18 @@ SmartPanel {
                   spacing: Style.marginM
 
                   // App Icon
-                  IconImage {
+                  AtmoIcon {
                     id: appIconImage
                     Layout.preferredWidth: Style.baseWidgetSize
                     Layout.preferredHeight: Style.baseWidgetSize
-                    source: appBox.appIcon
-                    smooth: true
-                    asynchronous: true
+                    name: appBox.appIconName
 
-                    // Fallback icon if image fails to load
                     NIcon {
                       anchors.fill: parent
                       icon: Icon.apps
                       pointSize: Style.fontSizeXL
                       color: Color.mPrimary
-                      visible: appIconImage.status === Image.Error || appIconImage.status === Image.Null || appBox.appIcon === ""
+                      visible: appIconImage.status === Image.Error || appIconImage.status === Image.Null || appBox.appIconName === ""
                     }
                   }
 
