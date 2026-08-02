@@ -784,18 +784,14 @@ Item {
               id: windowHoverHandler
             }
 
-            IconImage {
+            AtmoIcon {
               id: groupedAppIcon
 
               width: parent.width
               height: parent.height
 
-              source: {
-                root.iconRevision; // Force re-evaluation when revision changes
-                return ThemeIcons.iconForAppId(modelData?.appId?.toLowerCase());
-              }
+              name: ThemeIcons.iconNameForAppId(modelData?.appId?.toLowerCase())
               smooth: true
-              asynchronous: true
               opacity: groupedTaskbarItem.isFocused ? Style.opacityFull : unfocusedIconsOpacity
               layer.enabled: root.colorizeIcons && !groupedTaskbarItem.isFocused
 
