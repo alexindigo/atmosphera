@@ -35,21 +35,6 @@ DraggableDesktopWidget {
     return "";
   }
 
-  AtmoIcon {
-    Layout.alignment: Qt.AlignHCenter
-    Layout.preferredWidth: 64 * root.widgetScale
-    Layout.preferredHeight: 64 * root.widgetScale
-    name: root._iconName
-    size: 64 * root.widgetScale
-    layer.enabled: true
-    layer.smooth: true
-    layer.effect: NIconColorizeEffect {
-      targetColor: Color.mPrimary
-      blendStrength: root._blendStrength
-      hueAdjustment: root._hueAdjustment
-    }
-  }
-
   // Extra params from widget data (e.g. ["-e", "neomutt"] or ["--xwayland"])
   readonly property var _params: (widgetData && widgetData.params) || []
 
@@ -72,15 +57,12 @@ DraggableDesktopWidget {
       anchors.fill: parent
       spacing: 4 * root.widgetScale
 
-      Image {
+      AtmoIcon {
         Layout.alignment: Qt.AlignHCenter
         Layout.preferredWidth: 64 * root.widgetScale
         Layout.preferredHeight: 64 * root.widgetScale
-        source: root._iconSource
-        smooth: true
-        asynchronous: true
-        sourceSize: Qt.size(width, height)
-        fillMode: Image.PreserveAspectFit
+        name: root._iconName
+        size: 64 * root.widgetScale
         layer.enabled: true
         layer.smooth: true
         layer.effect: NIconColorizeEffect {
