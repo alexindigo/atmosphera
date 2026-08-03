@@ -25,9 +25,9 @@ DraggableDesktopWidget {
     var iconType = (widgetData && widgetData.iconType) || "auto";
     var iconSrc = (widgetData && widgetData.iconSource) || "";
     if (iconType === "file" && iconSrc)
-      return "file://" + iconSrc;
+      return iconSrc;
     if (iconType === "icons" && iconSrc)
-      return "file://" + iconSrc;
+      return iconSrc;
     if (iconType === "theme" && iconSrc)
       return iconSrc;
     if (appId)
@@ -40,6 +40,7 @@ DraggableDesktopWidget {
     Layout.preferredWidth: 64 * root.widgetScale
     Layout.preferredHeight: 64 * root.widgetScale
     name: root._iconName
+    size: 64 * root.widgetScale
     layer.enabled: true
     layer.smooth: true
     layer.effect: NIconColorizeEffect {
