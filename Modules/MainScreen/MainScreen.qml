@@ -10,6 +10,7 @@ import qs.Commons
 // All panels
 import qs.Modules.Bar
 import qs.Modules.Bar.Extras
+import qs.Modules.Dialog
 import qs.Modules.Panels.Audio
 import qs.Modules.Panels.Battery
 import qs.Modules.Panels.Bluetooth
@@ -29,7 +30,6 @@ import qs.Modules.Panels.SetupWizard
 import qs.Modules.Panels.SystemStats
 import qs.Modules.Panels.Tray
 import qs.Modules.Panels.Wallpaper
-import qs.Modules.Dialog
 import qs.Services.Compositor
 import qs.Services.Power
 import qs.Services.UI
@@ -83,7 +83,7 @@ PanelWindow {
   property bool isAnyPanelOpen: PanelService.openedPanel !== null
 
   color: {
-    if (dimmerOpacity > 0 && isPanelOpen && !isPanelClosing) {
+    if (dimmerOpacity > 0 && isPanelOpen && !isPanelClosing && (PanelService.openedPanel?.dimEnabled !== false)) {
       return Qt.alpha(Color.mShadow, dimmerOpacity);
     }
     return "transparent";
@@ -132,7 +132,7 @@ PanelWindow {
 
     // Only include regions that are actually needed
     // panelRegions is handled by PanelService, bar is local to this screen
-    regions: [barMaskRegion, backgroundMaskRegion]
+    regions: [barMaskRegion, backgroundMaskRegion, coexistingPanelMaskRegion]
 
     // Bar region - subtract bar area from mask (only if bar should be shown on this screen)
     Region {
@@ -193,13 +193,31 @@ PanelWindow {
     }
 
     // Background region for click-to-close - reactive sizing
-    // Uses isAnyPanelOpen so clicking on any screen's background closes the panel
+    // Uses isAnyPanelOpen so clicking on any screen's background closes the panel.
+    // Panels can opt out via closeOnClickOutside: false (e.g. overlay maps that
+    // need click-through to windows underneath).
     Region {
       id: backgroundMaskRegion
+      readonly property bool active: root.isAnyPanelOpen && (PanelService.openedPanel?.closeOnClickOutside !== false)
       x: 0
       y: 0
-      width: root.isAnyPanelOpen ? root.width : 0
-      height: root.isAnyPanelOpen ? root.height : 0
+      width: active ? root.width : 0
+      height: active ? root.height : 0
+      intersection: Intersection.Subtract
+    }
+
+    // Coexisting (non-exclusive) panel region — unblock input on the panel's
+    // rect so its contents are interactive (click, hover), while the rest of
+    // the screen stays click-through for closeOnClickOutside: false panels.
+    Region {
+      id: coexistingPanelMaskRegion
+      readonly property var xp: PanelService.coexistingPanel
+      readonly property var region: (xp && xp.screen === root.screen) ? xp.panelRegion : null
+      readonly property var geom: (region && region.visible) ? region.panelItem : null
+      x: geom ? geom.x : 0
+      y: geom ? geom.y : 0
+      width: geom ? geom.width : 0
+      height: geom ? geom.height : 0
       intersection: Intersection.Subtract
     }
   }
@@ -268,6 +286,19 @@ PanelWindow {
       topRightCorner: backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.topRightCornerState : CornerState.Normal
       bottomLeftCorner: backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.bottomLeftCornerState : CornerState.Normal
       bottomRightCorner: backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.bottomRightCornerState : CornerState.Normal
+    }
+
+    // Coexisting (non-exclusive) panel — e.g. persistent overlay map
+    Region {
+      x: backgroundBlur.coexistingPanelBg ? Math.round(backgroundBlur.coexistingPanelBg.x) : 0
+      y: backgroundBlur.coexistingPanelBg ? Math.round(backgroundBlur.coexistingPanelBg.y) : 0
+      width: backgroundBlur.coexistingPanelBg ? Math.round(backgroundBlur.coexistingPanelBg.width) : 0
+      height: backgroundBlur.coexistingPanelBg ? Math.round(backgroundBlur.coexistingPanelBg.height) : 0
+      radius: Style.radiusL
+      topLeftCorner: backgroundBlur.coexistingPanelBg ? backgroundBlur.coexistingPanelBg.topLeftCornerState : CornerState.Normal
+      topRightCorner: backgroundBlur.coexistingPanelBg ? backgroundBlur.coexistingPanelBg.topRightCornerState : CornerState.Normal
+      bottomLeftCorner: backgroundBlur.coexistingPanelBg ? backgroundBlur.coexistingPanelBg.bottomLeftCornerState : CornerState.Normal
+      bottomRightCorner: backgroundBlur.coexistingPanelBg ? backgroundBlur.coexistingPanelBg.bottomRightCornerState : CornerState.Normal
     }
   }
 
@@ -588,6 +619,16 @@ PanelWindow {
         if (!cp || cp.screen !== root.screen || cp.blurEnabled === false)
           return null;
         var region = cp.panelRegion;
+        return (region && region.visible) ? region.panelItem : null;
+      }
+
+      // Panel background geometry for a non-exclusive coexisting panel
+      // (e.g. persistent overlay map) so blur renders behind it too.
+      readonly property var coexistingPanelBg: {
+        var xp = PanelService.coexistingPanel;
+        if (!xp || xp.screen !== root.screen || xp.blurEnabled === false)
+          return null;
+        var region = xp.panelRegion;
         return (region && region.visible) ? region.panelItem : null;
       }
 

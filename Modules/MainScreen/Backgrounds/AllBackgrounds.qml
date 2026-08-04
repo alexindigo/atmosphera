@@ -87,6 +87,17 @@ Item {
           shapeContainer: unifiedBackgroundsShape
           defaultBackgroundColor: panelBackgroundColor
         }
+
+        // Slot 2: Non-exclusive coexisting panel (e.g. overlay map)
+        PanelBackground {
+          assignedPanel: {
+            var p = PanelService.backgroundSlotAssignments[2];
+            // Only render if this panel belongs to this screen
+            return (p && p.screen === root.windowRoot.screen) ? p : null;
+          }
+          shapeContainer: unifiedBackgroundsShape
+          defaultBackgroundColor: panelBackgroundColor
+        }
       }
 
       // Apply shadow to the unified backgrounds
@@ -135,6 +146,17 @@ Item {
           PanelBackground {
             assignedPanel: {
               var p = PanelService.backgroundSlotAssignments[1];
+              // Only render if this panel belongs to this screen
+              return (p && p.screen === root.windowRoot.screen) ? p : null;
+            }
+            shapeContainer: panelBackgroundsShape
+            defaultBackgroundColor: panelBackgroundColor
+          }
+
+          // Slot 2: Non-exclusive coexisting panel (e.g. overlay map)
+          PanelBackground {
+            assignedPanel: {
+              var p = PanelService.backgroundSlotAssignments[2];
               // Only render if this panel belongs to this screen
               return (p && p.screen === root.windowRoot.screen) ? p : null;
             }

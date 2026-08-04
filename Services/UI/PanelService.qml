@@ -15,6 +15,10 @@ Singleton {
   property var registeredPanels: ({})
   property var openedPanel: null
   property var closingPanel: null
+  // Non-exclusive coexisting panel (e.g. persistent overlay maps). Tracked
+  // separately from openedPanel so it doesn't participate in single-panel
+  // mutual exclusion, but MainScreen can still render blur behind it.
+  property var coexistingPanel: null
   property bool closedImmediately: false
 
   // Overlay launcher state (separate from normal panels)
@@ -32,8 +36,9 @@ Singleton {
   signal didClose
 
   // Background slot assignments for dynamic panel background rendering
-  // Slot 0: currently opening/open panel, Slot 1: closing panel
-  property var backgroundSlotAssignments: [null, null]
+  // Slot 0: currently opening/open panel, Slot 1: closing panel,
+  // Slot 2: non-exclusive coexisting panel (e.g. overlay map)
+  property var backgroundSlotAssignments: [null, null, null]
   signal slotAssignmentChanged(int slotIndex, var panel)
 
   function assignToSlot(slotIndex, panel) {
