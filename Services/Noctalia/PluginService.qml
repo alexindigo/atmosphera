@@ -273,9 +273,18 @@ Singleton {
 
     Logger.d("PluginService", "Fetching registry from:", repoUrl);
 
-    // Use git sparse-checkout to fetch only registry.json (--no-cone for single file)
-    // GIT_TERMINAL_PROMPT=0 prevents hanging on private repos that need auth
-    var fetchCmd = "temp_dir=$(mktemp -d) && GIT_TERMINAL_PROMPT=0 git clone --filter=blob:none --sparse --depth=1 --quiet '" + repoUrl + "' \"$temp_dir\" 2>/dev/null && cd \"$temp_dir\" && git sparse-checkout set --no-cone /registry.json 2>/dev/null && cat \"$temp_dir/registry.json\"; rm -rf \"$temp_dir\"";
+    var fetchCmd;
+    if (repoUrl.startsWith("file://")) {
+      // Local directory source: read the catalog directly. The directory may
+      // not be a git repo (e.g. the Built-in shellDir/Plugins source), and
+      // even when it is, the checked-out working tree is what we want.
+      var localPath = repoUrl.substring(7);
+      fetchCmd = "cat '" + localPath + "/registry.json' 2>/dev/null";
+    } else {
+      // Use git sparse-checkout to fetch only registry.json (--no-cone for single file)
+      // GIT_TERMINAL_PROMPT=0 prevents hanging on private repos that need auth
+      fetchCmd = "temp_dir=$(mktemp -d) && GIT_TERMINAL_PROMPT=0 git clone --filter=blob:none --sparse --depth=1 --quiet '" + repoUrl + "' \"$temp_dir\" 2>/dev/null && cd \"$temp_dir\" && git sparse-checkout set --no-cone /registry.json 2>/dev/null && cat \"$temp_dir/registry.json\"; rm -rf \"$temp_dir\"";
+    }
 
     var fetchProcess = Qt.createQmlObject('import QtQuick; import Quickshell.Io; Process { command: ["sh", "-c", "' + fetchCmd.replace(/"/g, '\\"') + '"]; stdout: StdioCollector {} }', root, "FetchRegistry_" + Date.now());
 

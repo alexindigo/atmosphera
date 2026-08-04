@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "plugins": [
+    {
+      "id": "niri-windows-map",
+      "name": "Niri Windows Map",
+      "version": "1.0.0",
+      "official": true,
+      "author": "Atmosphera",
+      "description": "Spatial overview map of niri windows — workspaces as rows, columns and tiles laid out like niri's scrolling layout. Click a tile to focus it, click a row to switch workspace.",
+      "license": "GPL-3.0",
+      "tags": [
+        "Panel",
+        "Niri",
+        "Overview",
+        "Built-in"
+      ]
+    },
+    {
+      "id": "atmosphera-icons",
+      "name": "Atmosphera Icons",
+      "version": "1.0.0",
+      "official": true,
+      "author": "Atmosphera",
+      "description": "Built-in icon theme for Atmosphera",
+      "license": "GPL-3.0",
+      "tags": [
+        "Icons",
+        "Built-in"
+      ]
+    },
+    {
+      "id": "atmosphera-wallpapers",
+      "name": "Atmosphera Wallpapers",
+      "version": "1.0.0",
+      "official": true,
+      "author": "Atmosphera",
+      "description": "Built-in wallpaper collection",
+      "license": "GPL-3.0",
+      "tags": [
+        "Wallpapers",
+        "Built-in"
+      ]
+    },
+    {
+      "id": "noctalia-icons-legacy",
+      "name": "Noctalia Icons (Legacy)",
+      "version": "1.0.0",
+      "official": true,
+      "author": "Atmosphera",
+      "description": "Legacy Noctalia icon set kept for compatibility",
+      "license": "GPL-3.0",
+      "tags": [
+        "Icons",
+        "Built-in"
+      ]
+    },
+    {
+      "id": "demo-custom-lockscreen",
+      "name": "Example Custom Lock Screen",
+      "version": "1.0.0",
+      "official": true,
+      "author": "Atmosphera",
+      "description": "A feature-rich example custom lock screen with status indicators, media controls, and session actions",
+      "license": "GPL-3.0",
+      "tags": [
+        "Lock Screen",
+        "Example",
+        "Built-in"
+      ]
+    }
+  ]
+}
