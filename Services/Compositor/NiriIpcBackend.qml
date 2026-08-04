@@ -82,7 +82,8 @@ Item {
       isFocused: ws.isFocused,
       isActive: ws.isActive,
       isUrgent: ws.isUrgent,
-      isOccupied: ws.activeWindowId !== 0 || false
+      activeWindowId: ws.activeWindowId || 0,
+      isOccupied: ws.isOccupied !== undefined ? ws.isOccupied : (ws.activeWindowId !== 0 || false)
     };
   }
 
@@ -123,7 +124,9 @@ Item {
     for (var i = 0; i < windows.length; i++) {
       if (windows[i].id === w.id) {
         windows[i] = w;
-        windows = windows;
+        // New array identity: self-assignment of the same var array does
+        // NOT emit the change notification, so bindings would never update
+        windows = windows.slice();
         safeUpdateFocusedWindow();
         windowListChanged();
         activeWindowChanged();
@@ -141,7 +144,8 @@ Item {
     for (var i = 0; i < windows.length; i++) {
       if (windows[i].id === id) {
         windows.splice(i, 1);
-        windows = windows;
+        // New array identity so property bindings re-evaluate (see upsertWindow)
+        windows = windows.slice();
         safeUpdateFocusedWindow();
         windowListChanged();
         activeWindowChanged();
@@ -300,13 +304,92 @@ Item {
       removeWindow(id);
     }
 
+    function onWindowLayoutsChanged(changes) {
+      // niri emits layout-only updates (tile moves/resizes) via this event,
+      // NOT WindowOpenedOrChanged — update layouts in place so consumers
+      // (e.g. the overview map) stay in sync on every move
+      var updated = false;
+      for (var i = 0; i < changes.length; i++) {
+        var pair = changes[i];
+        if (!pair || pair.length < 2)
+          continue;
+        var id = pair[0];
+        var lay = pair[1];
+        for (var j = 0; j < windows.length; j++) {
+          if (windows[j].id === id) {
+            windows[j].layout = {
+              posInScrollingLayout: lay.pos_in_scrolling_layout ? Array.from(lay.pos_in_scrolling_layout) : [],
+              tileSize: lay.tile_size ? Array.from(lay.tile_size) : [],
+              windowSize: lay.window_size ? Array.from(lay.window_size) : [],
+              tilePosInWorkspaceView: lay.tile_pos_in_workspace_view ? Array.from(lay.tile_pos_in_workspace_view) : [],
+              windowOffsetInTile: lay.window_offset_in_tile ? Array.from(lay.window_offset_in_tile) : []
+            };
+            updated = true;
+            break;
+          }
+        }
+      }
+      if (updated) {
+        // New array identity so property bindings re-evaluate (see upsertWindow)
+        windows = windows.slice();
+        windowListChanged();
+      }
+    }
+
     function onWindowFocusChanged(id) {
       for (var i = 0; i < windows.length; i++) {
         windows[i].isFocused = (windows[i].id === id);
       }
-      windows = windows;
+      // New array identity so property bindings re-evaluate (see upsertWindow)
+      windows = windows.slice();
       safeUpdateFocusedWindow();
       activeWindowChanged();
+    }
+
+    function onWorkspaceActiveWindowChanged(workspaceId, windowId) {
+      // Update a single workspace's active window in place (no full rebuild)
+      for (var i = 0; i < workspaces.count; i++) {
+        if (workspaces.get(i).id === workspaceId) {
+          workspaces.setProperty(i, "activeWindowId", windowId);
+          break;
+        }
+      }
+      var cached = workspaceCache[workspaceId];
+      if (cached)
+        cached.activeWindowId = windowId;
+      workspaceChanged();
+    }
+
+    function onWorkspaceActivated(workspaceId, focused) {
+      // niri does NOT resend WorkspacesChanged on activation — apply the
+      // event incrementally instead of re-querying (reactive, no round-trip):
+      // per IPC spec, the activated workspace becomes active on its output
+      // (all others on that output become inactive), and when focused=true
+      // it becomes the single focused workspace globally.
+      var targetWs = workspaceCache[workspaceId];
+      var targetOutput = targetWs ? targetWs.output : "";
+      for (var i = 0; i < workspaces.count; i++) {
+        var ws = workspaces.get(i);
+        if (ws.output === targetOutput) {
+          var nowActive = (ws.id === workspaceId);
+          if (ws.isActive !== nowActive)
+            workspaces.setProperty(i, "isActive", nowActive);
+        }
+        if (focused) {
+          var nowFocused = (ws.id === workspaceId);
+          if (ws.isFocused !== nowFocused)
+            workspaces.setProperty(i, "isFocused", nowFocused);
+        }
+      }
+      // Keep the internal cache in sync
+      for (var id in workspaceCache) {
+        var c = workspaceCache[id];
+        if (c.output === targetOutput)
+          c.isActive = (c.id === workspaceId);
+        if (focused)
+          c.isFocused = (c.id === workspaceId);
+      }
+      workspaceChanged();
     }
 
     function onKeyboardLayoutsChanged(layouts) {
@@ -332,6 +415,28 @@ Item {
   }
 
   Component.onCompleted: {
+    // Seed current state with one-shot queries. The event stream's initial
+    // WindowsChanged/WorkspacesChanged snapshot is dispatched exactly once at
+    // connection time — if this backend armed after it (startup race against
+    // the NiriService Loader), we'd otherwise stay empty until enough live
+    // events trickle in. The queries return the same gadget payloads the
+    // live signals deliver, so the rebuild paths are identical.
+    var winsReply = NiriRequests.windows();
+    winsReply.finished.connect(function () {
+      if (winsReply.isError) {
+        Logger.w("NiriIpcBackend", "windows seed request failed:", winsReply.error.message);
+        return;
+      }
+      rebuildWindows(winsReply.value);
+    });
+    var wsReply = NiriRequests.workspaces();
+    wsReply.finished.connect(function () {
+      if (wsReply.isError) {
+        Logger.w("NiriIpcBackend", "workspaces seed request failed:", wsReply.error.message);
+        return;
+      }
+      rebuildWorkspaces(wsReply.value);
+    });
     if (NiriConnection.isConnected)
       bootstrap();
   }
