@@ -26,16 +26,37 @@ Item {
   readonly property bool flattenScreenCorners: true
   readonly property bool exclusiveOpen: false
 
-  // Container fits the content in BOTH dimensions — width capped at the
-  // ControlCenter panel's width (440 × uiScaleRatio), height dynamic up
-  // to 200. When the map needs less space, the panel shrinks.
-  readonly property real contentPreferredWidth: Math.min(mapCanvas.maxPanelW, mapCanvas.renderedW + 16)
-  readonly property real contentPreferredHeight: Math.min(200, mapCanvas.renderedH + 16)
+  // Size preset from plugin settings (compact/regular/large). These are
+  // LIMITS, not fixed sizes — the panel still shrinks to fit the content.
+  readonly property var _sizePreset: {
+    var s = pluginApi?.pluginSettings?.panelSize || "regular";
+    if (s === "large")
+      return {
+        w: Math.round(880 * Style.uiScaleRatio),
+        h: 400
+      };
+    if (s === "compact")
+      return {
+        w: Math.round(300 * Style.uiScaleRatio),
+        h: 200
+      };
+    return {
+      w: Math.round(440 * Style.uiScaleRatio),
+      h: 200
+    };
+  }
+
+  // Container fits the content in BOTH dimensions — capped by the size
+  // preset. When the map needs less space, the panel shrinks.
+  readonly property real contentPreferredWidth: Math.min(_sizePreset.w, mapCanvas.renderedW + 16)
+  readonly property real contentPreferredHeight: Math.min(_sizePreset.h, mapCanvas.renderedH + 16)
 
   MapCanvas {
     id: mapCanvas
     anchors.fill: parent
     anchors.margins: 8
     screen: root.screen
+    maxPanelW: root._sizePreset.w
+    maxPanelH: root._sizePreset.h
   }
 }

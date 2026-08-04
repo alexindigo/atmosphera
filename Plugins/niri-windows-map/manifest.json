@@ -8,6 +8,12 @@
   "tags": ["Panel", "Niri", "Overview", "Built-in"],
   "entryPoints": {
     "panel": "Panel.qml",
-    "barWidget": "BarWidget.qml"
+    "barWidget": "BarWidget.qml",
+    "settings": "Settings.qml"
+  },
+  "metadata": {
+    "defaultSettings": {
+      "panelSize": "regular"
+    }
   }
 }
