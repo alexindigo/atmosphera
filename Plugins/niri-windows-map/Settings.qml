@@ -9,6 +9,7 @@ ColumnLayout {
   property var pluginApi: null
 
   property string editPanelSize: pluginApi?.pluginSettings?.panelSize || pluginApi?.manifest?.metadata?.defaultSettings?.panelSize || "regular"
+  property string editCorner: pluginApi?.pluginSettings?.corner || pluginApi?.manifest?.metadata?.defaultSettings?.corner || "bottomRight"
 
   NText {
     text: "Panel"
@@ -42,12 +43,42 @@ ColumnLayout {
     }
   }
 
+  NComboBox {
+    Layout.fillWidth: true
+    label: "Corner"
+    description: "Which screen corner the map anchors to"
+    model: [
+      {
+        "key": "bottomRight",
+        "name": "Bottom right"
+      },
+      {
+        "key": "bottomLeft",
+        "name": "Bottom left"
+      },
+      {
+        "key": "topRight",
+        "name": "Top right"
+      },
+      {
+        "key": "topLeft",
+        "name": "Top left"
+      }
+    ]
+    currentKey: root.editCorner
+    defaultValue: "bottomRight"
+    onSelected: function (key) {
+      root.editCorner = key;
+    }
+  }
+
   function saveSettings() {
     if (!pluginApi) {
       Logger.e("NiriWindowsMap", "Cannot save settings: pluginApi is null");
       return;
     }
     pluginApi.pluginSettings.panelSize = root.editPanelSize;
+    pluginApi.pluginSettings.corner = root.editCorner;
     pluginApi.saveSettings();
   }
 }
