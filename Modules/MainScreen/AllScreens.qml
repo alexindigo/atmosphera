@@ -162,7 +162,7 @@ Variants {
       asynchronous: false
 
       sourceComponent: PopupMenuWindow {
-        screen: modelData
+        shellScreen: modelData
       }
 
       onLoaded: {
