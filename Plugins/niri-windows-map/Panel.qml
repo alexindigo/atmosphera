@@ -15,9 +15,13 @@ Item {
 
   anchors.fill: parent
 
-  // SmartPanel anchors (passed through by the slot)
-  readonly property bool panelAnchorRight: true
-  readonly property bool panelAnchorBottom: true
+  // SmartPanel anchors (passed through by the slot) — from the corner
+  // setting; bottom-right is the default
+  readonly property string _corner: pluginApi?.pluginSettings?.corner || "bottomRight"
+  readonly property bool panelAnchorRight: _corner.endsWith("Right")
+  readonly property bool panelAnchorLeft: _corner.endsWith("Left")
+  readonly property bool panelAnchorBottom: _corner.startsWith("bottom")
+  readonly property bool panelAnchorTop: _corner.startsWith("top")
 
   // SmartPanel behavior opt-outs (passed through by the slot)
   readonly property bool dimEnabled: false

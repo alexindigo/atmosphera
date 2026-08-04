@@ -13,7 +13,8 @@
   },
   "metadata": {
     "defaultSettings": {
-      "panelSize": "regular"
+      "panelSize": "regular",
+      "corner": "bottomRight"
     }
   }
 }
