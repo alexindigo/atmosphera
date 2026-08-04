@@ -299,7 +299,7 @@ Singleton {
                                   "PowerProfile": {
                                     "iconColor": "none"
                                   },
-                                  "Workspace": {
+                                   "Workspace": {
                                     "labelMode": "index",
                                     "followFocusedScreen": false,
                                     "hideUnoccupied": false,

@@ -736,6 +736,16 @@ Singleton {
 
   // Get plugin directory path
   function getPluginDir(pluginId) {
+    // Built-in plugins run from the source tree (shellDir/Plugins) — never
+    // from a copied install in the config dir, which goes stale every time
+    // the source changes (observed: shell rendering a weeks-old copy of a
+    // built-in plugin while the source had moved on).
+    var builtInUrl = "file://" + Quickshell.shellDir + "/Plugins";
+    var src = root.pluginStates[pluginId]?.sourceUrl || "";
+    if (src === builtInUrl) {
+      var parsed = root.parseCompositeKey(pluginId);
+      return Quickshell.shellDir + "/Plugins/" + parsed.pluginId;
+    }
     return root.pluginsDir + "/" + pluginId;
   }
 

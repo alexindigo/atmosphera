@@ -989,4 +989,28 @@ Singleton {
       }
     }
   }
+
+  IpcHandler {
+    target: "niriMap"
+
+    function open() {
+      root.screenDetector.withCurrentScreen(function (screen) {
+        PluginService.openPluginPanel("c92ef2:niri-windows-map", screen);
+      });
+    }
+
+    function close() {
+      root.screenDetector.withCurrentScreen(function (screen) {
+        var api = PluginService.getPluginAPI("c92ef2:niri-windows-map");
+        if (api)
+          api.closePanel(screen);
+      });
+    }
+
+    function toggle() {
+      root.screenDetector.withCurrentScreen(function (screen) {
+        PluginService.togglePluginPanel("c92ef2:niri-windows-map", screen);
+      });
+    }
+  }
 }

@@ -29,6 +29,15 @@ vec3 hsv2rgb(vec3 c) {
 void main() {
     vec4 tex = texture(source, qt_TexCoord0);
 
+    // Mode 4.0: Washed-out mask — flat target color with alpha from
+    // luminance, so dark icon backgrounds vanish (instead of rendering as
+    // opaque blobs) and every icon reads as a uniform soft watermark
+    if (ubuf.colorizeMode > 3.5) {
+        float lum = dot(tex.rgb, vec3(0.299, 0.587, 0.114));
+        fragColor = vec4(ubuf.targetColor.rgb * lum, lum) * ubuf.qt_Opacity;
+        return;
+    }
+
     // Mode 3.0: Hue-replace — shift colored pixels' hue toward target, keep neutrals
     if (ubuf.colorizeMode > 2.5) {
         if (tex.a < 0.0039) { fragColor = vec4(0.0); return; }

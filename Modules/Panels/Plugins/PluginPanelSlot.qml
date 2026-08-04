@@ -31,6 +31,15 @@ SmartPanel {
   panelAnchorLeft: pluginInstance?.panelAnchorLeft ?? false
   panelAnchorRight: pluginInstance?.panelAnchorRight ?? false
 
+  // Pass through SmartPanel behavior opt-outs when the plugin declares them
+  // (defaults preserve the standard modal panel behavior)
+  dimEnabled: pluginInstance?.dimEnabled ?? true
+  closeOnClickOutside: pluginInstance?.closeOnClickOutside ?? true
+  exclusiveKeyboard: pluginInstance?.exclusiveKeyboard ?? true
+  flattenScreenCorners: pluginInstance?.flattenScreenCorners ?? false
+  exclusiveOpen: pluginInstance?.exclusiveOpen ?? true
+  blurEnabled: pluginInstance?.blurEnabled ?? true
+
   // Panel background color
   panelBackgroundColor: pluginInstance?.panelBackgroundColor ?? Color.mSurface
 
@@ -164,12 +173,15 @@ SmartPanel {
     // Get plugin API
     var api = PluginService.getPluginAPI(pluginId);
 
-    // Use setSource with initial properties so pluginApi is available
-    // from the first binding evaluation (before onLoaded)
+    // Use setSource with initial properties so pluginApi and screen are
+    // available from the first binding evaluation (before onLoaded)
     root.contentLoader.active = true;
     root.contentLoader.setSource(component.url, api ? {
-                                                        "pluginApi": api
-                                                      } : {});
+                                                        "pluginApi": api,
+                                                        "screen": root.screen
+                                                      } : {
+                                   "screen": root.screen
+                                 });
 
     if (root.contentLoader.item) {
       root.pluginInstance = root.contentLoader.item;
