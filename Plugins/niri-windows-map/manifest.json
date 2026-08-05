@@ -18,7 +18,8 @@
       "hideIcons": false,
       "hideOnClick": false,
       "terminalIcons": true,
-      "browserIcons": true
+      "browserIcons": true,
+      "audioIndicators": true
     }
   }
 }
