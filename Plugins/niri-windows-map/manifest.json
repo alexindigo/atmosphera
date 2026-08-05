@@ -17,7 +17,8 @@
       "corner": "bottomRight",
       "hideIcons": false,
       "hideOnClick": false,
-      "terminalIcons": true
+      "terminalIcons": true,
+      "browserIcons": true
     }
   }
 }

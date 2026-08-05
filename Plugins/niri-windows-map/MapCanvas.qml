@@ -1,6 +1,7 @@
 import Niri 1.0
 import Niri 1.0
 import QtQuick
+import QtQuick.Effects
 import Quickshell
 import qs.Commons
 import qs.Services.Compositor
@@ -27,6 +28,11 @@ Item {
   // tile shows the fg app's icon instead of the terminal's.
   property var terminalInfo: ({})
   property bool terminalIcons: true
+  // Browser identity: winId -> {url, host, icon}. When browserIcons is on
+  // and the bridge resolved a favicon, the tile shows the site favicon
+  // instead of the browser's app icon.
+  property var browserInfo: ({})
+  property bool browserIcons: true
   property real _userScale: 1.0
 
   // Emitted only when the user NAVIGATES via the map (tile focus click,
@@ -493,6 +499,13 @@ Item {
           readonly property var _term: root.terminalInfo ? root.terminalInfo[modelData.id] : null
           readonly property string _appIcon: ThemeIcons.iconNameForAppId(modelData.appId || "")
           readonly property string _fgIcon: (root.terminalIcons && _term && _term.fg) ? ThemeIcons.iconNameForAppId(_term.fg) : ""
+          // Browser favicon (file path from the bridge's cache) wins over
+          // app/fg icons when resolved; empty string means "no favicon"
+          readonly property var _browser: root.browserInfo ? root.browserInfo[modelData.id] : null
+          readonly property string _favicon: (root.browserIcons && _browser && _browser.icon) ? ("file://" + _browser.icon) : ""
+          // Native favicon px (0 = unknown); the overlay never renders
+          // larger than this — small cached icons stay crisp
+          readonly property real _faviconW: (_browser && _browser.iconW) || 32
 
           // Tile body. Hover replaces the color with tertiary at full
           // opacity, regardless of tier.
@@ -504,10 +517,12 @@ Item {
             border.width: (modelData.isFocused || winRect._secondary || winRect._hovered) ? 2 : 1
           }
 
-          // App icon overlay: washed-out monochrome mask (luminance alpha,
-          // mOnSurface) at 75% opacity — EXCEPT on the focused tile and on
-          // hover, where it renders full color at full opacity (shader off).
-          AtmoAppIcon {
+          // Base app icon (terminal fg-app or window app), with a rounded
+          // chunk CUT OUT of its bottom-right corner while a site favicon
+          // badge sits there. The wash shader stays on the inner icon; the
+          // cutout mask lives on this wrapper (inverted MultiEffect mask).
+          Item {
+            id: iconWrap
             anchors.centerIn: parent
             // Square icon filling the tile with a uniform 4px padding on all
             // sides (sized from the tile's smaller dimension)
@@ -518,16 +533,88 @@ Item {
             // they become readable; user setting hides them entirely
             visible: !root.hideIcons && width * root._userScale >= 14
             opacity: (modelData.isFocused || winRect._hovered) ? 1.0 : 0.75
-            name: winRect._fgIcon || winRect._appIcon
-            fallbackName: winRect._appIcon
+
+            // Badge rect (tile bottom-right, 2px margin) mapped into this
+            // item's coordinate space for the cutout
+            readonly property real _badgeX: (winRect.width - favBadge.width - 2) - x
+            readonly property real _badgeY: (winRect.height - favBadge.height - 2) - y
+
+            AtmoAppIcon {
+              anchors.fill: parent
+              name: winRect._fgIcon || winRect._appIcon
+              fallbackName: winRect._appIcon
+              smooth: true
+
+              layer.enabled: !(modelData.isFocused || winRect._hovered)
+              layer.effect: ShaderEffect {
+                property color targetColor: Color.mOnSurface
+                // Mask mode (4.0): flat washed-out color, alpha from luminance —
+                // dark icon backgrounds vanish, every icon reads as a uniform
+                // soft watermark regardless of its original colors
+                property real colorizeMode: 4.0
+                property real blendStrength: 0.0
+                property real hueAdjustment: 0.0
+                fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+              }
+            }
+
+            // Cutout shape for the mask. Lives in place (MultiEffect needs
+            // the item in-scene to capture it); hideSource keeps it off the
+            // screen while the layer is active, and the rect's own visible
+            // binding keeps it from painting when the layer is disabled
+            // (non-browser tiles — an in-tree white rect would show).
+            Item {
+              id: cutoutMask
+              anchors.fill: parent
+              Rectangle {
+                visible: favBadge.visible
+                x: iconWrap._badgeX - 3
+                y: iconWrap._badgeY - 3
+                width: favBadge.width + 6
+                height: favBadge.height + 6
+                radius: 4
+                color: "white"
+              }
+            }
+
+            layer.enabled: favBadge.visible
+            layer.effect: MultiEffect {
+              maskEnabled: true
+              maskInverted: true
+              maskThresholdMin: 0.5
+              maskSpreadAtMin: 1.0
+              maskSource: ShaderEffectSource {
+                sourceItem: cutoutMask
+                hideSource: true
+              }
+            }
+          }
+
+          // Site favicon for browser tiles — small badge anchored to the
+          // tile's bottom-right corner, in the area cut out of the base
+          // icon. Size is the smaller of 60% of the icon box and the
+          // favicon's native resolution (clamped via the rendered scale),
+          // so cached 32px icons stay crisp on huge tiles.
+          Image {
+            id: favBadge
+            anchors.right: parent.right
+            anchors.rightMargin: 2
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 2
+            readonly property real _box: Math.max(4, Math.min(parent.width, parent.height) - 8)
+            width: Math.max(4, Math.min(_box * 0.6, winRect._faviconW / root._userScale))
+            height: width
+            visible: !root.hideIcons && winRect._favicon !== "" && iconWrap.visible
+            opacity: (modelData.isFocused || winRect._hovered) ? 1.0 : 0.75
+            source: winRect._favicon
+            fillMode: Image.PreserveAspectFit
             smooth: true
+            asynchronous: true
+            sourceSize: Qt.size(width, height)
 
             layer.enabled: !(modelData.isFocused || winRect._hovered)
             layer.effect: ShaderEffect {
               property color targetColor: Color.mOnSurface
-              // Mask mode (4.0): flat washed-out color, alpha from luminance —
-              // dark icon backgrounds vanish, every icon reads as a uniform
-              // soft watermark regardless of its original colors
               property real colorizeMode: 4.0
               property real blendStrength: 0.0
               property real hueAdjustment: 0.0

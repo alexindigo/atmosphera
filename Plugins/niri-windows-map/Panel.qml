@@ -58,6 +58,35 @@ Item {
     }
   }
 
+  // Browser identity bridge: winId -> {url, host, icon} for browser
+  // windows, resolved locally from browser history + favicon caches.
+  readonly property bool browserIcons: pluginApi?.pluginSettings?.browserIcons ?? true
+  property var browserInfo: ({})
+  readonly property string _browserBridgePath: Qt.resolvedUrl("browser-bridge.py").toString().replace("file://", "")
+
+  Process {
+    id: browserBridge
+    running: root.visible && root.browserIcons
+    command: ["python3", root._browserBridgePath]
+    onRunningChanged: {
+      if (!running)
+        root.browserInfo = ({});
+    }
+    stdout: SplitParser {
+      onRead: data => {
+        try {
+          const arr = JSON.parse(data);
+          const m = {};
+          for (const e of arr)
+            m[e.winId] = e;
+          root.browserInfo = m;
+        } catch (err) {
+          // partial line — ignore
+        }
+      }
+    }
+  }
+
   // Size preset from plugin settings (compact/regular/large). Each is a
   // FIXED bounding box; content uniform-fits inside without scrolling.
   //   compact = 300 x 300
@@ -105,6 +134,8 @@ Item {
     hideIcons: pluginApi?.pluginSettings?.hideIcons ?? false
     terminalIcons: root.terminalIcons
     terminalInfo: root.terminalInfo
+    browserIcons: root.browserIcons
+    browserInfo: root.browserInfo
     // Hide after navigation only (tile focus / workspace switch / menu
     // Focus) — future interactions (drag, zoom, menu Close) won't hide
     onNavigationRequested: {
