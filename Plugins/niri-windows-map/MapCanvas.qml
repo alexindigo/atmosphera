@@ -33,7 +33,15 @@ Item {
   // instead of the browser's app icon.
   property var browserInfo: ({})
   property bool browserIcons: true
+  // Audio attribution: winId -> {node, muted} for sounding windows.
+  // Top-left speaker badge + top-right mute/unmute button when present.
+  property var audioInfo: ({})
+  property bool audioIndicators: true
   property real _userScale: 1.0
+
+  // Emitted when a tile's mute button is clicked (NOT navigation — the
+  // panel stays open regardless of hide-on-click)
+  signal muteToggleRequested(int winId)
 
   // Emitted only when the user NAVIGATES via the map (tile focus click,
   // workspace-row click, context-menu Focus). Other interactions (context
@@ -506,6 +514,9 @@ Item {
           // Native favicon px (0 = unknown); the overlay never renders
           // larger than this — small cached icons stay crisp
           readonly property real _faviconW: (_browser && _browser.iconW) || 32
+          // Audio attribution for this tile's window (null = not sounding
+          // or not confidently attributed — no badges then)
+          readonly property var _audio: root.audioInfo ? root.audioInfo[modelData.id] : null
 
           // Tile body. Hover replaces the color with tertiary at full
           // opacity, regardless of tier.
@@ -639,6 +650,67 @@ Item {
                 contextMenu.windowData = modelData;
                 contextMenu.open();
               }
+            }
+          }
+
+          // Audio badges — declared AFTER hoverArea so the mute button's
+          // own MouseArea wins clicks in its corner (clicking mute must
+          // never focus the window or close the panel)
+
+          // Top-left: speaker state badge (mirrors muted state)
+          AtmoIcon {
+            id: speakerBadge
+            anchors.left: parent.left
+            anchors.leftMargin: 2
+            anchors.top: parent.top
+            anchors.topMargin: 2
+            readonly property real _box: Math.max(4, Math.min(parent.width, parent.height) - 8)
+            visible: root.audioIndicators && !!winRect._audio && iconWrap.visible
+            icon: (winRect._audio && winRect._audio.muted) ? Icon.volumeMute : Icon.volumeHigh
+            pointSize: Math.max(5, _box * 0.33)
+            applyUiScale: false
+            color: Color.mOnSurface
+            opacity: (modelData.isFocused || winRect._hovered) ? 1.0 : 0.75
+
+            layer.enabled: !(modelData.isFocused || winRect._hovered)
+            layer.effect: ShaderEffect {
+              property color targetColor: Color.mOnSurface
+              property real colorizeMode: 4.0
+              property real blendStrength: 0.0
+              property real hueAdjustment: 0.0
+              fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+            }
+          }
+
+          // Top-right: mute/unmute button (icon flips with state so the
+          // action is always reversible — "change my mind")
+          Item {
+            id: muteButton
+            anchors.right: parent.right
+            anchors.rightMargin: 2
+            anchors.top: parent.top
+            anchors.topMargin: 2
+            readonly property real _box: Math.max(4, Math.min(parent.width, parent.height) - 8)
+            width: Math.max(5, _box * 0.33)
+            height: width
+            visible: root.audioIndicators && !!winRect._audio && iconWrap.visible
+
+            AtmoIcon {
+              anchors.fill: parent
+              icon: (winRect._audio && winRect._audio.muted) ? Icon.volumeX : Icon.volumeMute
+              pointSize: Math.max(5, muteButton._box * 0.33)
+              applyUiScale: false
+              color: muteArea.containsMouse ? Color.mOnHover : Color.mOnSurface
+              opacity: (modelData.isFocused || winRect._hovered) ? 1.0 : 0.75
+            }
+
+            MouseArea {
+              id: muteArea
+              anchors.fill: parent
+              hoverEnabled: true
+              cursorShape: Qt.PointingHandCursor
+              acceptedButtons: Qt.LeftButton
+              onClicked: root.muteToggleRequested(modelData.id)
             }
           }
         }

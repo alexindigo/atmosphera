@@ -1,5 +1,4 @@
 import QtQuick
-import Quickshell
 import Quickshell.Io
 import qs.Commons
 
@@ -62,6 +61,19 @@ Item {
   // windows, resolved locally from browser history + favicon caches.
   readonly property bool browserIcons: pluginApi?.pluginSettings?.browserIcons ?? true
   property var browserInfo: ({})
+
+  // Audio attribution: winId -> {node, muted} for windows confidently
+  // matched to a live output stream (sticky cache in AudioMap)
+  readonly property bool audioIndicators: pluginApi?.pluginSettings?.audioIndicators ?? true
+
+  AudioMap {
+    id: audioMap
+    // NOT tied to root.visible: the sticky stream↔window cache must stay
+    // warm while the map is closed, or pairs formed during the
+    // single-stream era are lost before the map ever opens
+    active: root.audioIndicators
+  }
+
   readonly property string _browserBridgePath: Qt.resolvedUrl("browser-bridge.py").toString().replace("file://", "")
 
   Process {
@@ -136,6 +148,9 @@ Item {
     terminalInfo: root.terminalInfo
     browserIcons: root.browserIcons
     browserInfo: root.browserInfo
+    audioIndicators: root.audioIndicators
+    audioInfo: audioMap.audioInfo
+    onMuteToggleRequested: winId => audioMap.toggleMute(winId)
     // Hide after navigation only (tile focus / workspace switch / menu
     // Focus) — future interactions (drag, zoom, menu Close) won't hide
     onNavigationRequested: {

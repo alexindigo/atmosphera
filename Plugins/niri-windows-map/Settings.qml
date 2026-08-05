@@ -120,6 +120,16 @@ ColumnLayout {
     }
   }
 
+  NToggle {
+    label: "Audio indicators"
+    description: "Show a speaker badge on windows producing sound, with a mute/unmute button on the tile"
+    checked: pluginApi?.pluginSettings?.audioIndicators ?? true
+    onToggled: checked => {
+      pluginApi.pluginSettings.audioIndicators = checked;
+      pluginApi.saveSettings();
+    }
+  }
+
   function saveSettings() {
     if (!pluginApi) {
       Logger.e("NiriWindowsMap", "Cannot save settings: pluginApi is null");
