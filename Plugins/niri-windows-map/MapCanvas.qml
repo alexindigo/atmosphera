@@ -22,6 +22,11 @@ Item {
   property var screen: null
   // When true, app icons are not drawn on tiles (user setting)
   property bool hideIcons: false
+  // Terminal identity from Panel's bridge process: winId -> {cwd, fg, ...}.
+  // When terminalIcons is on and the fg app resolves to a themed icon, the
+  // tile shows the fg app's icon instead of the terminal's.
+  property var terminalInfo: ({})
+  property bool terminalIcons: true
   property real _userScale: 1.0
 
   // Emitted only when the user NAVIGATES via the map (tile focus click,
@@ -481,6 +486,14 @@ Item {
           readonly property color winColor: modelData.isUrgent ? Color.mError : (_secondary ? Color.mSecondary : Color.mPrimary)
           readonly property bool _hovered: hoverArea.containsMouse
 
+          // Icon selection: foreground-app icon for terminal tiles when the
+          // bridge resolved one (and the setting allows), else the window's
+          // own app icon. An unresolvable fg icon falls through to the app
+          // icon via AtmoAppIcon's fallbackName — "if available" is automatic.
+          readonly property var _term: root.terminalInfo ? root.terminalInfo[modelData.id] : null
+          readonly property string _appIcon: ThemeIcons.iconNameForAppId(modelData.appId || "")
+          readonly property string _fgIcon: (root.terminalIcons && _term && _term.fg) ? ThemeIcons.iconNameForAppId(_term.fg) : ""
+
           // Tile body. Hover replaces the color with tertiary at full
           // opacity, regardless of tier.
           Rectangle {
@@ -505,7 +518,8 @@ Item {
             // they become readable; user setting hides them entirely
             visible: !root.hideIcons && width * root._userScale >= 14
             opacity: (modelData.isFocused || winRect._hovered) ? 1.0 : 0.75
-            name: ThemeIcons.iconNameForAppId(modelData.appId || "")
+            name: winRect._fgIcon || winRect._appIcon
+            fallbackName: winRect._appIcon
             smooth: true
 
             layer.enabled: !(modelData.isFocused || winRect._hovered)

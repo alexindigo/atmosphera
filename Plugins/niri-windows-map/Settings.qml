@@ -100,6 +100,16 @@ ColumnLayout {
     }
   }
 
+  NToggle {
+    label: "Show terminal process icon (if available)"
+    description: "On terminal tiles, show the icon of the app running in the foreground instead of the terminal's icon"
+    checked: pluginApi?.pluginSettings?.terminalIcons ?? true
+    onToggled: checked => {
+      pluginApi.pluginSettings.terminalIcons = checked;
+      pluginApi.saveSettings();
+    }
+  }
+
   function saveSettings() {
     if (!pluginApi) {
       Logger.e("NiriWindowsMap", "Cannot save settings: pluginApi is null");
