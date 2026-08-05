@@ -16,7 +16,8 @@
       "panelSize": "regular",
       "corner": "bottomRight",
       "hideIcons": false,
-      "hideOnClick": false
+      "hideOnClick": false,
+      "terminalIcons": true
     }
   }
 }

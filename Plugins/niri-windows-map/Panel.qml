@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 
 // Niri Windows Map — panel content loaded by PluginPanelSlot (a SmartPanel).
@@ -26,6 +27,36 @@ Item {
   readonly property bool exclusiveKeyboard: false
   readonly property bool flattenScreenCorners: true
   readonly property bool exclusiveOpen: false
+
+  // Terminal identity bridge: winId -> {cwd, cwdBase, fg, fgCmd} for
+  // terminal windows, resolved by the python helper from /proc.
+  readonly property bool terminalIcons: pluginApi?.pluginSettings?.terminalIcons ?? true
+  property var terminalInfo: ({})
+  readonly property string _bridgePath: Qt.resolvedUrl("terminal-bridge.py").toString().replace("file://", "")
+
+  Process {
+    id: terminalBridge
+    // Only poll while the map is actually open and the feature is on
+    running: root.visible && root.terminalIcons
+    command: ["python3", root._bridgePath]
+    onRunningChanged: {
+      if (!running)
+        root.terminalInfo = ({});
+    }
+    stdout: SplitParser {
+      onRead: data => {
+        try {
+          const arr = JSON.parse(data);
+          const m = {};
+          for (const e of arr)
+            m[e.winId] = e;
+          root.terminalInfo = m;
+        } catch (err) {
+          // partial line — ignore
+        }
+      }
+    }
+  }
 
   // Size preset from plugin settings (compact/regular/large). Each is a
   // FIXED bounding box; content uniform-fits inside without scrolling.
@@ -72,6 +103,8 @@ Item {
     maxPanelW: root._sizePreset.w
     maxPanelH: root._sizePreset.h
     hideIcons: pluginApi?.pluginSettings?.hideIcons ?? false
+    terminalIcons: root.terminalIcons
+    terminalInfo: root.terminalInfo
     // Hide after navigation only (tile focus / workspace switch / menu
     // Focus) — future interactions (drag, zoom, menu Close) won't hide
     onNavigationRequested: {
