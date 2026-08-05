@@ -36,6 +36,22 @@ Item {
   property bool panelAnchorLeft: false
   property bool panelAnchorRight: false
 
+  // Re-position live when anchors change while the panel is open (e.g. a
+  // plugin changing its corner setting). Deferred via Qt.callLater so ALL
+  // anchor bindings settle first — firing setPosition against the stale
+  // intermediate state (e.g. top+bottom both true mid-transition) computes
+  // the wrong corner.
+  function _repositionIfOpen() {
+    if (isPanelOpen)
+      Qt.callLater(setPosition);
+  }
+  onPanelAnchorHorizontalCenterChanged: _repositionIfOpen()
+  onPanelAnchorVerticalCenterChanged: _repositionIfOpen()
+  onPanelAnchorTopChanged: _repositionIfOpen()
+  onPanelAnchorBottomChanged: _repositionIfOpen()
+  onPanelAnchorLeftChanged: _repositionIfOpen()
+  onPanelAnchorRightChanged: _repositionIfOpen()
+
   // Button position properties
   property bool useButtonPosition: false
   property point buttonPosition: Qt.point(0, 0)
@@ -703,6 +719,7 @@ Item {
     // Apply calculated positions (set targets for animation)
     panelBackground.targetX = calculatedX;
     panelBackground.targetY = calculatedY;
+    Logger.w("SmartPanel", "DBG setPosition anchors T:" + panelAnchorTop + " B:" + panelAnchorBottom + " L:" + panelAnchorLeft + " R:" + panelAnchorRight + " useBtn:" + useButtonPosition + " -> x=" + calculatedX + " y=" + calculatedY + " w=" + panelWidth + " h=" + panelHeight, objectName);
 
     // Logger.d("SmartPanel", "Position calculated:", calculatedX, calculatedY);
     // Logger.d("SmartPanel", "  Panel size:", panelWidth, "x", panelHeight);

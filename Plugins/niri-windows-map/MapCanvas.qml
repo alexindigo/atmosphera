@@ -20,7 +20,15 @@ Item {
   id: root
 
   property var screen: null
+  // When true, app icons are not drawn on tiles (user setting)
+  property bool hideIcons: false
   property real _userScale: 1.0
+
+  // Emitted only when the user NAVIGATES via the map (tile focus click,
+  // workspace-row click, context-menu Focus). Other interactions (context
+  // menu open/close, zoom, drag, close-window) deliberately do NOT emit —
+  // the hide-on-click setting keys off this signal.
+  signal navigationRequested
   readonly property real _monH: screen ? screen.height : 960
   // Workspace under the mouse (0 = none) — drives the hover row band.
   // _hoverCount tracks how many hover areas currently hold the cursor
@@ -329,7 +337,7 @@ Item {
   readonly property real _autoScale: {
     if (_canvasW <= 0 || _canvasH <= 0)
       return 1.0;
-    return Math.min((root.width - _gapsW) / _canvasW, (root.height - _gapsH) / _canvasH, 1.0);
+    return Math.min((root.width - _gapsW) / _canvasW, (root.height - _gapsH) / _canvasH);
   }
 
   // Panel size limits: the panel shrinks to fit the content in BOTH
@@ -339,11 +347,12 @@ Item {
   property real maxPanelH: 200
   readonly property real _panelMargin: 8
 
-  // Scale that fits the whole map within the limits
+  // Scale that fits the whole map within the limits — may exceed 1.0 so
+  // content also EXPANDS to fill the box when it's smaller than the limits
   readonly property real fitScale: {
     if (_canvasW <= 0 || _canvasH <= 0)
       return 1.0;
-    var s = Math.min((maxPanelW - 2 * _panelMargin - _gapsW) / _canvasW, (maxPanelH - 2 * _panelMargin - _gapsH) / _canvasH, 1.0);
+    var s = Math.min((maxPanelW - 2 * _panelMargin - _gapsW) / _canvasW, (maxPanelH - 2 * _panelMargin - _gapsH) / _canvasH);
     return s > 0 ? s : 1.0;
   }
   // What the map actually renders at that scale (before panel margins)
@@ -353,6 +362,8 @@ Item {
   // Single shared context menu instance
   MapWindowContextMenu {
     id: contextMenu
+    // Focus from the menu is navigation too; Close is not
+    onNavigationRequested: root.navigationRequested()
   }
 
   Flickable {
@@ -425,7 +436,10 @@ Item {
             acceptedButtons: Qt.LeftButton
             onEntered: root.hoverEnter(modelData.id)
             onExited: root.hoverExit()
-            onClicked: CompositorService.switchToWorkspace(modelData)
+            onClicked: {
+              CompositorService.switchToWorkspace(modelData);
+              root.navigationRequested();
+            }
           }
         }
       }
@@ -488,8 +502,8 @@ Item {
             height: width
             // Hide icons on tiles too small to read them — evaluated at the
             // rendered size, so zooming in (Ctrl+scroll) reveals icons as
-            // they become readable
-            visible: width * root._userScale >= 14
+            // they become readable; user setting hides them entirely
+            visible: !root.hideIcons && width * root._userScale >= 14
             opacity: (modelData.isFocused || winRect._hovered) ? 1.0 : 0.75
             name: ThemeIcons.iconNameForAppId(modelData.appId || "")
             smooth: true
@@ -519,6 +533,7 @@ Item {
                 CompositorService.focusWindow({
                                                 id: modelData.id
                                               });
+                root.navigationRequested();
               } else if (mouse.button === Qt.RightButton) {
                 contextMenu.windowData = modelData;
                 contextMenu.open();

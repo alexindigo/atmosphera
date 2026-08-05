@@ -25,15 +25,15 @@ ColumnLayout {
     model: [
       {
         "key": "compact",
-        "name": "Compact (300×200)"
+        "name": "Compact"
       },
       {
         "key": "regular",
-        "name": "Regular (440×200 — Control Center width)"
+        "name": "Regular"
       },
       {
         "key": "large",
-        "name": "Large (880×400 — 2× Control Center)"
+        "name": "Large"
       }
     ]
     currentKey: root.editPanelSize
@@ -49,26 +49,54 @@ ColumnLayout {
     description: "Which screen corner the map anchors to"
     model: [
       {
-        "key": "bottomRight",
-        "name": "Bottom right"
+        "key": "topLeft",
+        "name": "Top left"
       },
       {
-        "key": "bottomLeft",
-        "name": "Bottom left"
+        "key": "topCenter",
+        "name": "Top center"
       },
       {
         "key": "topRight",
         "name": "Top right"
       },
       {
-        "key": "topLeft",
-        "name": "Top left"
+        "key": "bottomLeft",
+        "name": "Bottom left"
+      },
+      {
+        "key": "bottomCenter",
+        "name": "Bottom center"
+      },
+      {
+        "key": "bottomRight",
+        "name": "Bottom right"
       }
     ]
     currentKey: root.editCorner
     defaultValue: "bottomRight"
     onSelected: function (key) {
       root.editCorner = key;
+    }
+  }
+
+  NToggle {
+    label: "Hide icons"
+    description: "Don't draw app icons on the map tiles"
+    checked: pluginApi?.pluginSettings?.hideIcons ?? false
+    onToggled: checked => {
+      pluginApi.pluginSettings.hideIcons = checked;
+      pluginApi.saveSettings();
+    }
+  }
+
+  NToggle {
+    label: "Hide on click"
+    description: "Close the map after clicking a window tile"
+    checked: pluginApi?.pluginSettings?.hideOnClick ?? false
+    onToggled: checked => {
+      pluginApi.pluginSettings.hideOnClick = checked;
+      pluginApi.saveSettings();
     }
   }
 
