@@ -14,7 +14,9 @@
   "metadata": {
     "defaultSettings": {
       "panelSize": "regular",
-      "corner": "bottomRight"
+      "corner": "bottomRight",
+      "hideIcons": false,
+      "hideOnClick": false
     }
   }
 }

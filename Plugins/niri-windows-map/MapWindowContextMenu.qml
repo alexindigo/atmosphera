@@ -7,6 +7,9 @@ NPopupContextMenu {
   id: root
   property var windowData: null
 
+  // Emitted when a menu action navigates (Focus) — NOT for Close
+  signal navigationRequested
+
   model: [
     { id: "focus", text: "Focus", icon: Icon.apps },
     { id: "close", text: "Close", icon: Icon.close }
@@ -17,6 +20,7 @@ NPopupContextMenu {
     switch (actionId) {
     case "focus":
       CompositorService.focusWindow({ id: root.windowData.id })
+      root.navigationRequested()
       break
     case "close":
       CompositorService.niriBackend.closeWindow({ id: root.windowData.id })
