@@ -110,6 +110,16 @@ ColumnLayout {
     }
   }
 
+  NToggle {
+    label: "Browser tab favicons"
+    description: "On browser tiles, show the current tab's site favicon (resolved locally from browser history — no network access)"
+    checked: pluginApi?.pluginSettings?.browserIcons ?? true
+    onToggled: checked => {
+      pluginApi.pluginSettings.browserIcons = checked;
+      pluginApi.saveSettings();
+    }
+  }
+
   function saveSettings() {
     if (!pluginApi) {
       Logger.e("NiriWindowsMap", "Cannot save settings: pluginApi is null");
