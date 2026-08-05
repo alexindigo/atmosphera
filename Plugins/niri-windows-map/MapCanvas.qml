@@ -42,6 +42,8 @@ Item {
   // Emitted when a tile's mute button is clicked (NOT navigation — the
   // panel stays open regardless of hide-on-click)
   signal muteToggleRequested(int winId)
+  // Emitted when a tile's play/pause button is clicked
+  signal playToggleRequested(int winId)
 
   // Emitted only when the user NAVIGATES via the map (tile focus click,
   // workspace-row click, context-menu Focus). Other interactions (context
@@ -452,6 +454,7 @@ Item {
             width: mapContent.width
             height: root._monH * root._autoScale
             hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
             acceptedButtons: Qt.LeftButton
             onEntered: root.hoverEnter(modelData.id)
             onExited: root.hoverExit()
@@ -498,7 +501,23 @@ Item {
           // strongest fill) > secondary (active in workspace or in active
           // column) > normal
           readonly property color winColor: modelData.isUrgent ? Color.mError : (_secondary ? Color.mSecondary : Color.mPrimary)
-          readonly property bool _hovered: hoverArea.containsMouse
+          // Hover includes the audio button corner: its MouseArea steals
+          // hover events from hoverArea, but the cursor is still ON the tile
+          readonly property bool _hovered: hoverArea.containsMouse || audioArea.containsMouse || playArea.containsMouse
+
+          // Contrast glyph color derived from the tile's EFFECTIVE
+          // background (tile color at its opacity, blended over the panel
+          // surface): bright tile (green hover) -> dark glyph; dark tile
+          // (blue focus, dim normal) -> light glyph
+          function _lum(c) {
+            return 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
+          }
+          readonly property color _tileBg: _hovered ? Color.mTertiary : winColor
+          readonly property real _tileBgOpacity: _hovered ? 1.0 : (modelData.isFocused ? 1.0 : (_secondary ? 0.3 : 0.15))
+          readonly property real _bgLum: _tileBgOpacity * _lum(_tileBg) + (1 - _tileBgOpacity) * _lum(Color.mSurface)
+          readonly property color _contrastColor: _bgLum > 0.5 ? Color.mSurface : Color.mOnSurface
+          // Shared by the tile's corner buttons: 50% mOnTertiary preview
+          readonly property color _onTertiaryHalf: Qt.rgba(Color.mOnTertiary.r, Color.mOnTertiary.g, Color.mOnTertiary.b, 0.5)
 
           // Icon selection: foreground-app icon for terminal tiles when the
           // bridge resolved one (and the setting allows), else the window's
@@ -637,6 +656,7 @@ Item {
             id: hoverArea
             anchors.fill: parent
             hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             onEntered: root.hoverEnter(modelData.workspaceId)
             onExited: root.hoverExit()
@@ -653,39 +673,56 @@ Item {
             }
           }
 
-          // Audio badges — declared AFTER hoverArea so the mute button's
-          // own MouseArea wins clicks in its corner (clicking mute must
-          // never focus the window or close the panel)
-
-          // Top-left: speaker state badge (mirrors muted state)
-          AtmoIcon {
-            id: speakerBadge
+          // Play/pause button — top-left corner, mirrors the mute button.
+          // Only shown when the window has a controllable MPRIS player
+          Item {
+            id: playButton
             anchors.left: parent.left
             anchors.leftMargin: 2
             anchors.top: parent.top
             anchors.topMargin: 2
             readonly property real _box: Math.max(4, Math.min(parent.width, parent.height) - 8)
-            visible: root.audioIndicators && !!winRect._audio && iconWrap.visible
-            icon: (winRect._audio && winRect._audio.muted) ? Icon.volumeMute : Icon.volumeHigh
-            pointSize: Math.max(5, _box * 0.33)
-            applyUiScale: false
-            color: Color.mOnSurface
-            opacity: (modelData.isFocused || winRect._hovered) ? 1.0 : 0.75
+            width: Math.max(5, _box * 0.33)
+            height: width
+            visible: root.audioIndicators && !!winRect._audio && !!winRect._audio.player && iconWrap.visible
 
-            layer.enabled: !(modelData.isFocused || winRect._hovered)
-            layer.effect: ShaderEffect {
-              property color targetColor: Color.mOnSurface
-              property real colorizeMode: 4.0
-              property real blendStrength: 0.0
-              property real hueAdjustment: 0.0
-              fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+            AtmoIcon {
+              anchors.fill: parent
+              icon: (winRect._audio && winRect._audio.playing) ? Icon.mediaPause : Icon.mediaPlay
+              pointSize: Math.max(5, playButton._box * 0.33)
+              applyUiScale: false
+              color: playArea.containsMouse ? Color.mOnTertiary : ((winRect._hovered || modelData.isFocused) ? winRect._onTertiaryHalf : winRect._contrastColor)
+              opacity: (modelData.isFocused || winRect._hovered) ? 1.0 : 0.75
+
+              layer.enabled: !(modelData.isFocused || winRect._hovered)
+              layer.effect: ShaderEffect {
+                property color targetColor: Color.mOnSurface
+                property real colorizeMode: 4.0
+                property real blendStrength: 0.0
+                property real hueAdjustment: 0.0
+                fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+              }
+            }
+
+            MouseArea {
+              id: playArea
+              anchors.fill: parent
+              hoverEnabled: true
+              cursorShape: Qt.PointingHandCursor
+              acceptedButtons: Qt.LeftButton
+              onEntered: root.hoverEnter(modelData.workspaceId)
+              onExited: root.hoverExit()
+              onClicked: root.playToggleRequested(modelData.id)
             }
           }
 
-          // Top-right: mute/unmute button (icon flips with state so the
-          // action is always reversible — "change my mind")
+          // Audio indicator — combined state-icon + mute button at the
+          // tile's top-right. Declared AFTER hoverArea so its MouseArea
+          // wins clicks in its corner (clicking it must never focus the
+          // window or close the panel). Icon shows stream state and flips
+          // on mute, so the action is always reversible.
           Item {
-            id: muteButton
+            id: audioButton
             anchors.right: parent.right
             anchors.rightMargin: 2
             anchors.top: parent.top
@@ -697,19 +734,35 @@ Item {
 
             AtmoIcon {
               anchors.fill: parent
-              icon: (winRect._audio && winRect._audio.muted) ? Icon.volumeX : Icon.volumeMute
-              pointSize: Math.max(5, muteButton._box * 0.33)
+              icon: (winRect._audio && winRect._audio.muted) ? Icon.volumeMute : Icon.volumeHigh
+              pointSize: Math.max(5, audioButton._box * 0.33)
               applyUiScale: false
-              color: muteArea.containsMouse ? Color.mOnHover : Color.mOnSurface
+              // Icon hover -> mOnTertiary full; active/hovered tile ->
+              // same color at 50% opacity (softer preview of the armed
+              // state); otherwise luminance-derived contrast
+              color: audioArea.containsMouse ? Color.mOnTertiary : ((winRect._hovered || modelData.isFocused) ? winRect._onTertiaryHalf : winRect._contrastColor)
               opacity: (modelData.isFocused || winRect._hovered) ? 1.0 : 0.75
+
+              layer.enabled: !(modelData.isFocused || winRect._hovered)
+              layer.effect: ShaderEffect {
+                property color targetColor: Color.mOnSurface
+                property real colorizeMode: 4.0
+                property real blendStrength: 0.0
+                property real hueAdjustment: 0.0
+                fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+              }
             }
 
             MouseArea {
-              id: muteArea
+              id: audioArea
               anchors.fill: parent
               hoverEnabled: true
               cursorShape: Qt.PointingHandCursor
               acceptedButtons: Qt.LeftButton
+              // Feed the workspace hover-band counter just like the tile's
+              // own area, so crossing tile<->button doesn't flicker the band
+              onEntered: root.hoverEnter(modelData.workspaceId)
+              onExited: root.hoverExit()
               onClicked: root.muteToggleRequested(modelData.id)
             }
           }

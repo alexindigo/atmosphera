@@ -151,6 +151,7 @@ Item {
     audioIndicators: root.audioIndicators
     audioInfo: audioMap.audioInfo
     onMuteToggleRequested: winId => audioMap.toggleMute(winId)
+    onPlayToggleRequested: winId => audioMap.togglePlay(winId)
     // Hide after navigation only (tile focus / workspace switch / menu
     // Focus) — future interactions (drag, zoom, menu Close) won't hide
     onNavigationRequested: {

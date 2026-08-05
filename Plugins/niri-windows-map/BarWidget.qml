@@ -49,15 +49,15 @@ AtmoIconButton {
     return [
           {
             "label": "Size: " + _sizeNames[_size],
-            "action": "menu-size"
+            "key": "menu-size"
           },
           {
             "label": "Position: " + _cornerNames[_corner],
-            "action": "menu-corner"
+            "key": "menu-corner"
           },
           {
             "label": "Widget's Settings",
-            "action": "widget-settings"
+            "key": "widget-settings"
           }
         ];
   }
@@ -66,13 +66,13 @@ AtmoIconButton {
     let items = [
           {
             "label": "← Size",
-            "action": "back"
+            "key": "back"
           }
         ];
     for (const key of ["compact", "regular", "large"])
       items.push({
                    "label": (_size === key ? "✓ " : "") + _sizeNames[key],
-                   "action": "size:" + key
+                   "key": "size:" + key
                  });
     return items;
   }
@@ -81,13 +81,13 @@ AtmoIconButton {
     let items = [
           {
             "label": "← Position",
-            "action": "back"
+            "key": "back"
           }
         ];
     for (const key of ["topLeft", "topCenter", "topRight", "bottomLeft", "bottomCenter", "bottomRight"])
       items.push({
                    "label": (_corner === key ? "✓ " : "") + _cornerNames[key],
-                   "action": "corner:" + key
+                   "key": "corner:" + key
                  });
     return items;
   }

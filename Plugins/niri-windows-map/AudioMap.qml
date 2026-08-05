@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell.Services.Mpris
 import Quickshell.Services.Pipewire
 import qs.Services.Compositor
 import qs.Services.Media
@@ -120,7 +121,7 @@ Item {
       // else: leave unattributed — no badge (deliberate)
     }
 
-    // 3. project pairs into winId -> {node, muted}
+    // 3. project pairs into winId -> {node, muted, player, playing}
     const byId = {};
     for (const s of streams)
       byId[s.id] = s;
@@ -129,14 +130,45 @@ Item {
       const node = byId[sid];
       if (!node)
         continue;
+      const win = wins.find(w => w.id === pairs[sid]);
+      const player = root._playerFor(win);
       info[pairs[sid]] = {
         "node": node,
-        "muted": node.audio ? node.audio.muted : false
+        "muted": node.audio ? node.audio.muted : false,
+        "player": player,
+        "playing": player ? (player.playbackState === MprisPlaybackState.Playing) : false
       };
     }
 
     root._pairs = pairs;
     root.audioInfo = info;
+  }
+
+  // Best MPRIS player for a window: players whose identity/dbusName
+  // mentions the app (browsers expose ONE player per profile — in
+  // multi-session browsers it controls the *current* session, which may
+  // be another tab's; per-tab control needs the extension tier)
+  function _playerFor(win) {
+    const players = (Mpris.players && Mpris.players.values) ? Mpris.players.values : [];
+    if (!win || players.length === 0)
+      return null;
+    const base = String(win.appId || "").toLowerCase().replace(/-browser$/, "").replace(/^(com|org)\..*?\./, "");
+    const matches = players.filter(p => {
+      if (!p)
+        return false;
+      const hay = (String(p.identity || "") + " " + String(p.dbusName || "")).toLowerCase();
+      return base !== "" && hay.indexOf(base) !== -1;
+    });
+    if (matches.length === 0)
+      return null;
+    if (matches.length === 1)
+      return matches[0];
+    const wt = root._normTitle(win.title);
+    const tm = matches.filter(p => {
+      const tt = root._normTitle(p.trackTitle);
+      return tt.length >= 4 && wt.indexOf(tt) !== -1;
+    });
+    return tm.length > 0 ? tm[0] : matches[0];
   }
 
   // Toggle mute on the stream attributed to a window. Returns the new
@@ -148,6 +180,23 @@ Item {
     entry.node.audio.muted = !entry.node.audio.muted;
     _update();
     return entry.node.audio.muted;
+  }
+
+  // Play/pause on the window's resolved MPRIS player
+  function togglePlay(winId) {
+    const entry = root.audioInfo[winId];
+    if (!entry || !entry.player)
+      return null;
+    const player = entry.player;
+    if (player.playbackState === MprisPlaybackState.Playing) {
+      if (player.canPause)
+        player.pause();
+    } else {
+      if (player.canPlay)
+        player.play();
+    }
+    _update();
+    return player.playbackState;
   }
 
   onActiveChanged: _update()
