@@ -17,6 +17,7 @@ scrollMode: NScrollText.ScrollMode.Always
 
 Item {
   id: root
+  clip: true
 
   required property string text
   default property Component delegate: NText {
@@ -131,13 +132,13 @@ Item {
   }
 
   function ensureReset() {
-    if (state === NScrollText.ScrollState.Scrolling)
-      state = NScrollText.ScrollState.Resetting;
+    if (scrollState === NScrollText.ScrollState.Scrolling)
+      scrollState = NScrollText.ScrollState.Resetting;
   }
 
   function updateState() {
     if (contentWidth <= root.maxWidth || scrollMode === NScrollText.ScrollMode.Never) {
-      state = NScrollText.ScrollState.None;
+      scrollState = NScrollText.ScrollState.None;
       return;
     }
     if (scrollMode === NScrollText.ScrollMode.Always) {
@@ -148,7 +149,7 @@ Item {
       }
     } else if (scrollMode === NScrollText.ScrollMode.Hover) {
       if (hoverArea.containsMouse || forcedHover)
-        state = NScrollText.ScrollState.Scrolling;
+        scrollState = NScrollText.ScrollState.Scrolling;
       else
         ensureReset();
     }
