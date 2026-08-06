@@ -280,6 +280,7 @@ def snapshot():
                 "pid": pid,
                 "cwd": cwd,
                 "cwdBase": os.path.basename(cwd) if cwd else None,
+                "cwdDisp": tilde(cwd),
                 "fg": sh["fg"],
                 "fgCmd": sh["fgCmd"],
             })

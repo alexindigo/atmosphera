@@ -168,6 +168,8 @@ Item {
   // another area still holds it — enter/exit ordering between stacked
   // MouseAreas is not guaranteed.
   property int hoveredWs: 0
+  // Hovered tile's window id (0 = none) — drives the bottom-row info line
+  property int hoveredWinId: 0
   property int _hoverCount: 0
 
   function hoverEnter(wsId) {
@@ -188,7 +190,37 @@ Item {
     if (!visible) {
       _hoverCount = 0;
       hoveredWs = 0;
+      hoveredWinId = 0;
     }
+  }
+
+  // One-line identity of the hovered tile's window, shown in the
+  // always-empty trailing workspace row: app name + detail (terminal
+  // cwd, browser host + page title, else window title)
+  readonly property string _hoverInfoText: {
+    if (hoveredWinId === 0)
+      return "";
+    var w = null;
+    for (var i = 0; i < _windows.length; i++) {
+      if (_windows[i].id === hoveredWinId) {
+        w = _windows[i];
+        break;
+      }
+    }
+    if (!w)
+      return "";
+    var entry = ThemeIcons.findAppEntry(w.appId || "");
+    var appName = entry ? (entry.name || w.appId) : (w.appId || "");
+    var term = terminalInfo ? terminalInfo[w.id] : null;
+    var brw = browserInfo ? browserInfo[w.id] : null;
+    var detail = "";
+    if (term && (term.cwdDisp || term.cwd))
+      detail = term.cwdDisp || term.cwd;
+    else if (brw && brw.host)
+      detail = brw.host + (w.title ? " — " + w.title : "");
+    else
+      detail = w.title || "";
+    return appName + (detail !== "" ? "  ·  " + detail : "");
   }
 
   // Authoritative "cursor is over the widget" signal — independent of the
@@ -811,8 +843,14 @@ Item {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             acceptedButtons: Qt.LeftButton | Qt.RightButton
-            onEntered: root.hoverEnter(modelData.workspaceId)
-            onExited: root.hoverExit()
+            onEntered: {
+              root.hoverEnter(modelData.workspaceId);
+              root.hoveredWinId = modelData.id;
+            }
+            onExited: {
+              root.hoveredWinId = 0;
+              root.hoverExit();
+            }
             onPressed: mouse => {
               // Record press position/time; start the hold timer that will
               // BEGIN the drag (position 0) at 300ms
@@ -928,8 +966,14 @@ Item {
               hoverEnabled: true
               cursorShape: Qt.PointingHandCursor
               acceptedButtons: Qt.LeftButton
-              onEntered: root.hoverEnter(modelData.workspaceId)
-              onExited: root.hoverExit()
+              onEntered: {
+                root.hoverEnter(modelData.workspaceId);
+                root.hoveredWinId = modelData.id;
+              }
+              onExited: {
+                root.hoveredWinId = 0;
+                root.hoverExit();
+              }
               onClicked: root.playToggleRequested(modelData.id)
             }
           }
@@ -979,8 +1023,14 @@ Item {
               acceptedButtons: Qt.LeftButton
               // Feed the workspace hover-band counter just like the tile's
               // own area, so crossing tile<->button doesn't flicker the band
-              onEntered: root.hoverEnter(modelData.workspaceId)
-              onExited: root.hoverExit()
+              onEntered: {
+                root.hoverEnter(modelData.workspaceId);
+                root.hoveredWinId = modelData.id;
+              }
+              onExited: {
+                root.hoveredWinId = 0;
+                root.hoverExit();
+              }
               onClicked: root.muteToggleRequested(modelData.id)
             }
           }
@@ -1019,6 +1069,23 @@ Item {
           height: width
           name: dragGhost._win ? ThemeIcons.iconNameForAppId(dragGhost._win.appId || "") : "application-x-executable"
         }
+      }
+
+      // Hover info line — centered in the trailing workspace row (niri's
+      // dynamic workspaces guarantee it exists and never has windows)
+      NText {
+        readonly property int _lastSlot: Math.max(0, root.workspaceOrder().length - 1)
+        readonly property real _rowH: root._monH * root._autoScale
+        visible: root._hoverInfoText !== ""
+        text: root._hoverInfoText
+        color: Color.mOnSurfaceVariant
+        pointSize: Math.max(1, _rowH * 0.3)
+        width: Math.min(implicitWidth, mapContent.width - 16)
+        elide: Text.ElideRight
+        horizontalAlignment: Text.AlignHCenter
+        anchors.horizontalCenter: mapContent.horizontalCenter
+        y: _lastSlot * (root._monH * root._autoScale + root._rowGap) + (_rowH - implicitHeight) / 2
+        z: 90
       }
     }
   }
