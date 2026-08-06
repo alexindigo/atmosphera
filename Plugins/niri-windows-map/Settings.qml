@@ -130,6 +130,16 @@ ColumnLayout {
     }
   }
 
+  NToggle {
+    label: "Hover info line"
+    description: "Show the hovered window's details (path, page title, app) in the empty bottom workspace row"
+    checked: pluginApi?.pluginSettings?.hoverInfo ?? true
+    onToggled: checked => {
+      pluginApi.pluginSettings.hoverInfo = checked;
+      pluginApi.saveSettings();
+    }
+  }
+
   function saveSettings() {
     if (!pluginApi) {
       Logger.e("NiriWindowsMap", "Cannot save settings: pluginApi is null");

@@ -146,6 +146,8 @@ Item {
     browserInfo: root.browserInfo
     audioIndicators: root.audioIndicators
     audioInfo: audioMap.audioInfo
+    hoverInfo: pluginApi?.pluginSettings?.hoverInfo ?? true
+    sizeKey: root._sizeKey
     onMuteToggleRequested: winId => audioMap.toggleMute(winId)
     onPlayToggleRequested: winId => audioMap.togglePlay(winId)
     // Hide after navigation only (tile focus / workspace switch / menu
