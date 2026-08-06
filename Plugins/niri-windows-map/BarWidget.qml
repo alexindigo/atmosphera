@@ -43,52 +43,47 @@ AtmoIconButton {
                                          "bottomRight": "Bottom right"
                                        })
 
-  // Context menu models (flat menu — Size/Position swap the model in place,
-  // "Back" returns). Current value is checkmarked.
-  function _rootModel() {
-    return [
-          {
-            "label": "Size: " + _sizeNames[_size],
-            "key": "menu-size"
-          },
-          {
-            "label": "Position: " + _cornerNames[_corner],
-            "key": "menu-corner"
-          },
-          {
-            "label": "Widget's Settings",
-            "key": "widget-settings"
-          }
-        ];
+  // Flat context menu: all size + position options in one list with
+  // disabled section headers. Options reserve an icon slot on the left;
+  // only the current value shows a check icon there
+  function _option(key, name, current) {
+    let opt = {
+      "label": name,
+      "key": key,
+      "reserveIconSpace": true
+    };
+    if (current)
+      opt.icon = Icon.check;
+    return opt;
   }
 
-  function _sizeModel() {
+  function _rootModel() {
     let items = [
           {
-            "label": "← Size",
-            "key": "back"
+            "label": "Size",
+            "key": "hdr-size",
+            "enabled": false
           }
         ];
     for (const key of ["compact", "regular", "large"])
-      items.push({
-                   "label": (_size === key ? "✓ " : "") + _sizeNames[key],
-                   "key": "size:" + key
-                 });
-    return items;
-  }
-
-  function _cornerModel() {
-    let items = [
-          {
-            "label": "← Position",
-            "key": "back"
-          }
-        ];
+      items.push(root._option("size:" + key, _sizeNames[key], _size === key));
+    items.push({
+                 "label": "Position",
+                 "key": "hdr-corner",
+                 "enabled": false
+               });
     for (const key of ["topLeft", "topCenter", "topRight", "bottomLeft", "bottomCenter", "bottomRight"])
-      items.push({
-                   "label": (_corner === key ? "✓ " : "") + _cornerNames[key],
-                   "key": "corner:" + key
-                 });
+      items.push(root._option("corner:" + key, _cornerNames[key], _corner === key));
+    items.push({
+                 "label": "",
+                 "key": "sep-settings",
+                 "isSeparator": true,
+                 "enabled": false
+               });
+    items.push({
+                 "label": "Widget's Settings",
+                 "key": "widget-settings"
+               });
     return items;
   }
 
@@ -110,37 +105,24 @@ AtmoIconButton {
     id: contextMenu
 
     onTriggered: action => {
-      if (action === "menu-size") {
-        model = root._sizeModel();
-        return;
-      }
-      if (action === "menu-corner") {
-        model = root._cornerModel();
-        return;
-      }
-      if (action === "back") {
-        model = root._rootModel();
-        return;
-      }
       if (!pluginApi)
         return;
-      if (action.startsWith("size:")) {
+      if (action.startsWith("size:"))
         pluginApi.pluginSettings.panelSize = action.substring(5);
-        pluginApi.saveSettings();
-        model = root._sizeModel();
-        return;
-      }
-      if (action.startsWith("corner:")) {
+      else if (action.startsWith("corner:"))
         pluginApi.pluginSettings.corner = action.substring(7);
-        pluginApi.saveSettings();
-        model = root._cornerModel();
-        return;
-      }
-      if (action === "widget-settings") {
+      else if (action === "widget-settings") {
         contextMenu.close();
         PanelService.closeContextMenu(screen);
         BarService.openPluginSettings(root.screen, pluginApi.manifest);
-      }
+        return;
+      } else
+        return;  // headers/separator rows are disabled and never reach here
+
+      pluginApi.saveSettings();
+      // Any selection closes the menu
+      contextMenu.close();
+      PanelService.closeContextMenu(screen);
     }
   }
 }

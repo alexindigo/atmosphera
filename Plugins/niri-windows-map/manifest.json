@@ -19,7 +19,8 @@
       "hideOnClick": false,
       "terminalIcons": true,
       "browserIcons": true,
-      "audioIndicators": true
+      "audioIndicators": true,
+      "hoverInfo": true
     }
   }
 }

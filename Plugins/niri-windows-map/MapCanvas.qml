@@ -38,6 +38,11 @@ Item {
   // Top-left speaker badge + top-right mute/unmute button when present.
   property var audioInfo: ({})
   property bool audioIndicators: true
+  // Show the hovered window's identity lines in the empty trailing row
+  property bool hoverInfo: true
+  // Current panel size preset ("compact"/"regular"/"large") — info line
+  // count and tile icon padding scale with it
+  property string sizeKey: "regular"
   property real _userScale: 1.0
 
   // Emitted when a tile's mute button is clicked (NOT navigation — the
@@ -194,34 +199,52 @@ Item {
     }
   }
 
-  // One-line identity of the hovered tile's window, shown in the
-  // always-empty trailing workspace row: app name + detail (terminal
-  // cwd, browser host + page title, else window title)
-  readonly property string _hoverInfoText: {
-    if (hoveredWinId === 0)
+  // Memoized app-name lookup — findAppEntry fuzzy-searches all desktop
+  // entries; never run it more than once per appId per session
+  property var _appNameCache: ({})
+
+  function _appName(appId) {
+    if (!appId)
       return "";
-    var w = null;
-    for (var i = 0; i < _windows.length; i++) {
-      if (_windows[i].id === hoveredWinId) {
-        w = _windows[i];
-        break;
-      }
-    }
-    if (!w)
-      return "";
-    var entry = ThemeIcons.findAppEntry(w.appId || "");
-    var appName = entry ? (entry.name || w.appId) : (w.appId || "");
-    var term = terminalInfo ? terminalInfo[w.id] : null;
-    var brw = browserInfo ? browserInfo[w.id] : null;
-    var detail = "";
-    if (term && (term.cwdDisp || term.cwd))
-      detail = term.cwdDisp || term.cwd;
-    else if (brw && brw.host)
-      detail = brw.host + (w.title ? " — " + w.title : "");
-    else
-      detail = w.title || "";
-    return appName + (detail !== "" ? "  ·  " + detail : "");
+    var cached = root._appNameCache[appId];
+    if (cached !== undefined)
+      return cached;
+    var entry = ThemeIcons.findAppEntry(appId);
+    var name = entry ? (entry.name || appId) : appId;
+    root._appNameCache[appId] = name;
+    return name;
   }
+
+  // Proactively assembled identity lines for EVERY window — recomputed
+  // when the window list or bridge data changes (not on hover)
+  readonly property var windowInfo: {
+    var info = {};
+    for (var i = 0; i < _windows.length; i++) {
+      var w = _windows[i];
+      var appName = root._appName(w.appId || "");
+      var term = terminalInfo ? terminalInfo[w.id] : null;
+      var brw = browserInfo ? browserInfo[w.id] : null;
+      var parts = [];
+      if (term && (term.cwdDisp || term.cwd)) {
+        parts.push(term.cwdDisp || term.cwd);
+        if (term.fg)
+          parts.push(term.fg);
+      } else if (brw && brw.host) {
+        parts.push(brw.host);
+        if (w.title)
+          parts.push(w.title);
+      } else if (w.title) {
+        parts.push(w.title);
+      }
+      if (parts.length === 0 && appName)
+        parts.push(appName);
+      info[w.id] = parts.slice(0, 3);
+    }
+    return info;
+  }
+
+  // Hover reads the pre-assembled map — O(1), no hover-time work
+  readonly property var _hoverInfoLines: hoveredWinId !== 0 ? (windowInfo[hoveredWinId] || []) : []
 
   // Authoritative "cursor is over the widget" signal — independent of the
   // stacked tile/row MouseAreas (which don't reliably emit every exit, so
@@ -660,9 +683,11 @@ Item {
           // strongest fill) > secondary (active in workspace or in active
           // column) > normal
           readonly property color winColor: modelData.isUrgent ? Color.mError : (_secondary ? Color.mSecondary : Color.mPrimary)
-          // Hover includes the audio button corner: its MouseArea steals
-          // hover events from hoverArea, but the cursor is still ON the tile
-          readonly property bool _hovered: hoverArea.containsMouse || audioArea.containsMouse || playArea.containsMouse
+          // Hover is STATE-DRIVEN: hoveredWinId is the single source of
+          // truth — tile color, corner-button colors, icon wash and the
+          // info line all derive from it, so setting hoveredWinId
+          // programmatically renders exactly like a real mouseover
+          readonly property bool _hovered: modelData.id === root.hoveredWinId
 
           // If this tile dies mid-gesture (model churn), abort the drag
           // rather than leaving a stuck ghost/highlight behind
@@ -741,7 +766,7 @@ Item {
             anchors.centerIn: parent
             // Square icon filling the tile with a uniform 4px padding on all
             // sides (sized from the tile's smaller dimension)
-            width: Math.max(4, Math.min(parent.width, parent.height) - 8)
+            width: Math.max(4, Math.min(parent.width, parent.height) - winRect._iconPad)
             height: width
             // Hide icons on tiles too small to read them — evaluated at the
             // rendered size, so zooming in (Ctrl+scroll) reveals icons as
@@ -816,8 +841,11 @@ Item {
             anchors.rightMargin: 2
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 2
-            readonly property real _box: Math.max(4, Math.min(parent.width, parent.height) - 8)
-            width: Math.max(4, Math.min(_box * 0.6, winRect._faviconW / root._userScale))
+            readonly property real _box: Math.max(4, Math.min(parent.width, parent.height) - winRect._iconPad)
+            // Per-mode rendered px cap: 32 on Large, 16 on Compact/Regular
+            readonly property real _favCap: root.sizeKey === "large" ? 32 : 16
+            // Native-res clamp with the mode cap on top
+            width: Math.max(4, Math.min(_box * 0.6, Math.min(_favCap, winRect._faviconW) / root._userScale))
             height: width
             visible: !root.hideIcons && !winRect._dragged && winRect._favicon !== "" && iconWrap.visible
             opacity: (modelData.isFocused || winRect._hovered) ? 1.0 : 0.75
@@ -848,7 +876,8 @@ Item {
               root.hoveredWinId = modelData.id;
             }
             onExited: {
-              root.hoveredWinId = 0;
+              if (root.hoveredWinId === modelData.id)
+                root.hoveredWinId = 0;
               root.hoverExit();
             }
             onPressed: mouse => {
@@ -937,7 +966,7 @@ Item {
             anchors.leftMargin: 2
             anchors.top: parent.top
             anchors.topMargin: 2
-            readonly property real _box: Math.max(4, Math.min(parent.width, parent.height) - 8)
+            readonly property real _box: Math.max(4, Math.min(parent.width, parent.height) - winRect._iconPad)
             width: Math.max(5, _box * 0.33)
             height: width
             visible: root.audioIndicators && !winRect._dragged && !!winRect._audio && !!winRect._audio.player && iconWrap.visible
@@ -971,7 +1000,8 @@ Item {
                 root.hoveredWinId = modelData.id;
               }
               onExited: {
-                root.hoveredWinId = 0;
+                if (root.hoveredWinId === modelData.id)
+                  root.hoveredWinId = 0;
                 root.hoverExit();
               }
               onClicked: root.playToggleRequested(modelData.id)
@@ -989,7 +1019,7 @@ Item {
             anchors.rightMargin: 2
             anchors.top: parent.top
             anchors.topMargin: 2
-            readonly property real _box: Math.max(4, Math.min(parent.width, parent.height) - 8)
+            readonly property real _box: Math.max(4, Math.min(parent.width, parent.height) - winRect._iconPad)
             width: Math.max(5, _box * 0.33)
             height: width
             visible: root.audioIndicators && !winRect._dragged && !!winRect._audio && iconWrap.visible
@@ -1028,7 +1058,8 @@ Item {
                 root.hoveredWinId = modelData.id;
               }
               onExited: {
-                root.hoveredWinId = 0;
+                if (root.hoveredWinId === modelData.id)
+                  root.hoveredWinId = 0;
                 root.hoverExit();
               }
               onClicked: root.muteToggleRequested(modelData.id)
@@ -1071,20 +1102,25 @@ Item {
         }
       }
 
-      // Hover info line — centered in the trailing workspace row (niri's
-      // dynamic workspaces guarantee it exists and never has windows)
+      // Hover info block — up to 3 small lines centered in the trailing
+      // workspace row (niri's dynamic workspaces guarantee it exists and
+      // never has windows)
       NText {
         readonly property int _lastSlot: Math.max(0, root.workspaceOrder().length - 1)
         readonly property real _rowH: root._monH * root._autoScale
-        visible: root._hoverInfoText !== ""
-        text: root._hoverInfoText
+        readonly property var _lines: root._hoverInfoLines
+        visible: root.hoverInfo && _lines.length > 0
+        text: _lines.join("\n")
         color: Color.mOnSurfaceVariant
-        pointSize: Math.max(1, _rowH * 0.3)
-        width: Math.min(implicitWidth, mapContent.width - 16)
+        // Fixed per size preset (independent of content/fitScale)
+        pointSize: root.sizeKey === "compact" ? 8 : (root.sizeKey === "large" ? 11 : 9)
+        width: mapContent.width - 16
+        maximumLineCount: root.sizeKey === "compact" ? 2 : (root.sizeKey === "large" ? 4 : 3)
+        wrapMode: Text.WordWrap
         elide: Text.ElideRight
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: mapContent.horizontalCenter
-        y: _lastSlot * (root._monH * root._autoScale + root._rowGap) + (_rowH - implicitHeight) / 2
+        y: _lastSlot * (_rowH + root._rowGap) + (_rowH - implicitHeight) / 2
         z: 90
       }
     }
