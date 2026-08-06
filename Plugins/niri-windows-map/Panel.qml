@@ -128,13 +128,9 @@ Item {
   // Bounding box is the UPPER LIMIT; the visible panel hugs the content
   // so aspect-mismatch never leaves letterbox gaps around the map.
   readonly property real contentPreferredWidth: Math.min(_sizePreset.w, mapCanvas.renderedW + 16)
-  readonly property real contentPreferredHeight: Math.min(_sizePreset.h, mapCanvas.renderedH + 16)
-
-  // DEBUG: measure the sizing chain
-  on_SizePresetChanged: Logger.w("NiriMapPanel", "preset=" + JSON.stringify(_sizePreset) + " contentPrefW=" + contentPreferredWidth + " contentPrefH=" + contentPreferredHeight + " renderedW=" + mapCanvas.renderedW.toFixed(1) + " renderedH=" + mapCanvas.renderedH.toFixed(1) + " fitScale=" + mapCanvas.fitScale.toFixed(4))
-  Component.onCompleted: Qt.callLater(function () {
-    root._sizePresetChanged();
-  })
+  // The cap applies to the MAP's budget; the phantom strip adds BEYOND it
+  // during a drag (the container grows upward to reveal it, per the design)
+  readonly property real contentPreferredHeight: Math.min(_sizePreset.h, mapCanvas.renderedH + 16) + (mapCanvas.dragActive ? mapCanvas.phantomHeight : 0)
 
   MapCanvas {
     id: mapCanvas
