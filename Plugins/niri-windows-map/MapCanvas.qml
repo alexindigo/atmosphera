@@ -3,6 +3,7 @@ import Niri 1.0
 import QtQuick
 import QtQuick.Effects
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 import qs.Services.Compositor
 import qs.Widgets
@@ -44,6 +45,116 @@ Item {
   signal muteToggleRequested(int winId)
   // Emitted when a tile's play/pause button is clicked
   signal playToggleRequested(int winId)
+
+  // ── Drag-to-move (DragHandler architecture) ──
+  // The DragHandler owns the gesture; it takes the point over from the
+  // Flickable, so drags and map-panning can't conflict. There is no
+  // separate "armed" state: a drag BEGINS at the 300ms hold — at position
+  // 0 (ghost at the press point) — and the handler continues it on move.
+  property int _pressWinId: 0  // pressed candidate (also gates the model freeze)
+  property real _pressTime: 0  // press timestamp for the pan-vs-drag decision
+  property point _pressStart: Qt.point(0, 0)  // press point in mapContent (ghost's position 0)
+  property int _dragWinId: 0
+  property bool _dragging: false
+
+  // The hold timer STARTS the drag (position 0): ghost appears, source
+  // becomes an empty slot, others dim — before any movement
+  Timer {
+    id: pressHoldTimer
+    interval: 300
+    repeat: false
+    onTriggered: {
+      if (root._pressWinId !== 0) {
+        root._dragWinId = root._pressWinId;
+        root._dragging = true;
+      }
+    }
+  }
+  // Phantom strip height — a FULL workspace-row-height box above the first
+  // row (the insert-above drop target), per the design
+  readonly property real _phantomH: _monH * _autoScale
+  readonly property bool dragActive: root._dragging
+  readonly property real phantomHeight: root._phantomH
+  // The delegate + handler of the active drag (for centroid mapping)
+  property var _activeDragDelegate: null
+  property var _activeDragHandler: null
+
+  function _cancelDrag() {
+    _pressWinId = 0;
+    _activeDragDelegate = null;
+    _activeDragHandler = null;
+    _dragWinId = 0;
+    _dragging = false;
+    pressHoldTimer.stop();
+  }
+
+  // Ghost center in mapContent coordinates: the handler's centroid while
+  // the drag is moving, else the press point (position 0)
+  readonly property point _ghostPos: {
+    if (root._activeDragDelegate && root._activeDragHandler)
+      return root._activeDragDelegate.mapToItem(mapContent, root._activeDragHandler.centroid.position.x, root._activeDragHandler.centroid.position.y);
+    if (root._dragging)
+      return root._pressStart;
+    return Qt.point(0, 0);
+  }
+
+  // Workspace row under the ghost center. The phantom strip lives ABOVE the
+  // content's top edge (ghostPos.y < 0 during a drag), so that's the
+  // insert-above target; real rows sit in place beneath it (no shifting).
+  readonly property int _dragTargetWs: {
+    if (!root._dragging)
+      return 0;
+    var rowH = _monH * _autoScale;
+    var stride = rowH + _rowGap;
+    var order = workspaceOrder();
+    var y = root._ghostPos.y;
+    // Above the content's top edge = the phantom strip (grown panel area);
+    // tolerate up to one row above the panel before calling it a miss
+    if (y < 0)
+      return (y > -rowH) ? -1 : 0;
+    var slot = Math.floor(y / stride);
+    if (slot >= order.length)
+      slot = (y < order.length * stride + rowH) ? order.length - 1 : order.length;
+    return (slot >= 0 && slot < order.length) ? order[slot].id : 0;
+  }
+
+  function _moveWindowToWorkspace(winId, wsId) {
+    var idx = -1;
+    for (var i = 0; i < CompositorService.workspaces.count; i++) {
+      var ws = CompositorService.workspaces.get(i);
+      if (ws.id === wsId) {
+        idx = ws.idx;
+        break;
+      }
+    }
+    if (idx < 0)
+      return;
+    moveWindowProcess.command = ["niri", "msg", "action", "move-window-to-workspace", String(idx), "--window-id", String(winId), "--focus", "false"];
+    moveWindowProcess.running = true;
+  }
+
+  // Emulate "insert workspace above first" (no IPC for it): drop the window
+  // on the trailing empty dynamic workspace, then reorder that workspace to
+  // index 1 — niri's own reorder shifts everything else down. Two focus-free
+  // ops, no window-level cascade (which niri's empty-ws removal breaks).
+  function _insertAboveFirst(winId) {
+    var trail = 1;
+    for (var i = 0; i < CompositorService.workspaces.count; i++) {
+      var ws = CompositorService.workspaces.get(i);
+      if (ws.idx > trail)
+        trail = ws.idx;
+    }
+    insertProcess.command = ["sh", "-c", "niri msg action move-window-to-workspace " + trail + " --window-id " + winId + " --focus false && " + "niri msg action move-workspace-to-index 1 --reference " + trail];
+    insertProcess.running = true;
+  }
+
+  Process {
+    id: insertProcess
+  }
+
+  Process {
+    id: moveWindowProcess
+  }
 
   // Emitted only when the user NAVIGATES via the map (tile focus click,
   // workspace-row click, context-menu Focus). Other interactions (context
@@ -104,8 +215,8 @@ Item {
   readonly property real _leftInset: 12 // 4px bar + 8px gap before the first column
 
   readonly property var _backend: CompositorService.niriBackend
-  // Windows that can be placed in the scrolling layout (skips floating etc.)
-  readonly property var _windows: {
+  // Pure live view of laid-out windows (never frozen)
+  readonly property var _windowsLive: {
     var all = (_backend && _backend.windows) ? _backend.windows : [];
     var out = [];
     for (var i = 0; i < all.length; i++) {
@@ -114,6 +225,17 @@ Item {
         out.push(all[i]);
     }
     return out;
+  }
+  // Frozen snapshot while a gesture holds the mouse grab (delegate survival)
+  property var _windowsCache: []
+  // The map's view: frozen during press/drag, live otherwise. No read+write
+  // of the cache inside this binding — that was a binding loop.
+  readonly property var _windows: (root._pressWinId !== 0 || root._dragging) ? _windowsCache : _windowsLive
+
+  // Keep the frozen snapshot current only while idle (no gesture)
+  on_WindowsLiveChanged: {
+    if (root._pressWinId === 0 && !root._dragging)
+      root._windowsCache = _windowsLive;
   }
 
   Connections {
@@ -306,17 +428,6 @@ Item {
     return null;
   }
 
-  // DEBUG: verify current-workspace detection
-  on_WsRevChanged: {
-    var dump = [];
-    for (var i = 0; i < CompositorService.workspaces.count; i++) {
-      var ws = CompositorService.workspaces.get(i);
-      dump.push(ws.id + (ws.isFocused ? "*" : "") + (ws.isActive ? "+" : ""));
-    }
-    Logger.w("MapCanvas", "wsRev=" + _wsRev + " currentWs=" + NiriState.focusedWorkspaceId + " focusedWin=" + NiriState.focusedWindowId + " flags: " + dump.join(" "));
-  }
-  Component.onCompleted: _wsRevChanged()
-
   // ── Canvas extent (raw canvas units; horizontal gaps reserved separately) ──
 
   readonly property real _canvasW: {
@@ -409,9 +520,11 @@ Item {
       width: root._canvasW * root._autoScale + root._gapsW
       height: root._canvasH * root._autoScale + root._gapsH
       // Center within the Flickable viewport so any residual letterbox
-      // distributes equally
+      // distributes equally — EXCEPT during a drag, when the panel grows
+      // upward for the phantom strip and the content stays bottom-anchored
+      // (so the rows don't jump)
       x: Math.max(0, (flick.width - width * root._userScale) / 2)
-      y: Math.max(0, (flick.height - height * root._userScale) / 2)
+      y: root._dragging ? Math.max(0, flick.height - height * root._userScale) : Math.max(0, (flick.height - height * root._userScale) / 2)
       scale: root._userScale
       transformOrigin: Item.TopLeft
 
@@ -434,6 +547,20 @@ Item {
             color: Color.mPrimary
             opacity: 0.07
             z: -1
+          }
+
+          // Drop-target outline while a drag hovers this row
+          Rectangle {
+            visible: root._dragging && modelData.id === root._dragTargetWs
+            x: 0
+            y: index * (root._monH * root._autoScale + root._rowGap)
+            width: mapContent.width
+            height: root._monH * root._autoScale
+            color: Color.mPrimary
+            opacity: 0.12
+            border.color: Color.mPrimary
+            border.width: 2
+            z: 5
           }
 
           // Row indicator bar
@@ -505,6 +632,26 @@ Item {
           // hover events from hoverArea, but the cursor is still ON the tile
           readonly property bool _hovered: hoverArea.containsMouse || audioArea.containsMouse || playArea.containsMouse
 
+          // If this tile dies mid-gesture (model churn), abort the drag
+          // rather than leaving a stuck ghost/highlight behind
+          Component.onDestruction: {
+            if (root._pressWinId === modelData.id || root._dragWinId === modelData.id)
+              root._cancelDrag();
+          }
+
+          // This tile is the one being dragged — render as an empty slot
+          // (outline only) so it reads as "will move", not "will copy"
+          readonly property bool _dragged: modelData.id === root._dragWinId && root._dragging
+
+          // DRAG AFFORDANCE: while a drag runs (from the 300ms hold), every
+          // tile except the source dims to ~55% so the dragged window
+          // (empty slot + ghost) is unmistakable
+          readonly property real _dragDim: (root._dragging && modelData.id !== root._dragWinId) ? 0.55 : 1.0
+
+          // Total padding subtracted from the icon box: 8px/side on Large
+          // tiles, 4px/side otherwise
+          readonly property real _iconPad: root.sizeKey === "large" ? 16 : 8
+
           // Contrast glyph color derived from the tile's EFFECTIVE
           // background (tile color at its opacity, blended over the panel
           // surface): bright tile (green hover) -> dark glyph; dark tile
@@ -538,13 +685,19 @@ Item {
           readonly property var _audio: root.audioInfo ? root.audioInfo[modelData.id] : null
 
           // Tile body. Hover replaces the color with tertiary at full
-          // opacity, regardless of tier.
+          // opacity, regardless of tier. While dragged it becomes an
+          // empty outline slot (the ghost carries the window's identity).
           Rectangle {
             anchors.fill: parent
-            color: winRect._hovered ? Color.mTertiary : winRect.winColor
-            opacity: winRect._hovered ? 1.0 : (modelData.isFocused ? 1.0 : (winRect._secondary ? 0.3 : 0.15))
-            border.color: winRect._hovered ? Color.mTertiary : winRect.winColor
-            border.width: (modelData.isFocused || winRect._secondary || winRect._hovered) ? 2 : 1
+            color: winRect._dragged ? "transparent" : (winRect._hovered ? Color.mTertiary : winRect.winColor)
+            opacity: winRect._dragDim * (winRect._dragged ? 1.0 : (winRect._hovered ? 1.0 : (modelData.isFocused ? 1.0 : (winRect._secondary ? 0.3 : 0.15))))
+            Behavior on opacity {
+              NumberAnimation {
+                duration: 150
+              }
+            }
+            border.color: winRect._dragged ? Color.mOutline : (winRect._hovered ? Color.mTertiary : winRect.winColor)
+            border.width: winRect._dragged ? 1 : ((modelData.isFocused || winRect._secondary || winRect._hovered) ? 2 : 1)
           }
 
           // Base app icon (terminal fg-app or window app), with a rounded
@@ -561,7 +714,7 @@ Item {
             // Hide icons on tiles too small to read them — evaluated at the
             // rendered size, so zooming in (Ctrl+scroll) reveals icons as
             // they become readable; user setting hides them entirely
-            visible: !root.hideIcons && width * root._userScale >= 14
+            visible: !root.hideIcons && !winRect._dragged && width * root._userScale >= 14
             opacity: (modelData.isFocused || winRect._hovered) ? 1.0 : 0.75
 
             // Badge rect (tile bottom-right, 2px margin) mapped into this
@@ -634,7 +787,7 @@ Item {
             readonly property real _box: Math.max(4, Math.min(parent.width, parent.height) - 8)
             width: Math.max(4, Math.min(_box * 0.6, winRect._faviconW / root._userScale))
             height: width
-            visible: !root.hideIcons && winRect._favicon !== "" && iconWrap.visible
+            visible: !root.hideIcons && !winRect._dragged && winRect._favicon !== "" && iconWrap.visible
             opacity: (modelData.isFocused || winRect._hovered) ? 1.0 : 0.75
             source: winRect._favicon
             fillMode: Image.PreserveAspectFit
@@ -660,7 +813,29 @@ Item {
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             onEntered: root.hoverEnter(modelData.workspaceId)
             onExited: root.hoverExit()
+            onPressed: mouse => {
+              // Record press position/time; start the hold timer that will
+              // BEGIN the drag (position 0) at 300ms
+              root._cancelDrag();
+              if (mouse.button === Qt.LeftButton) {
+                root._pressTime = Date.now();
+                root._pressWinId = modelData.id;
+                root._pressStart = mapToItem(mapContent, mouse.x, mouse.y);
+                dragH.enabled = true;
+                pressHoldTimer.restart();
+              }
+            }
+            onReleased: {
+              root._pressWinId = 0;
+              pressHoldTimer.stop();
+              // Held long enough to start the drag but never moved → the
+              // handler never activated: cancel, no drop, no navigation
+              if (root._dragging && !root._activeDragHandler)
+                root._cancelDrag();
+            }
             onClicked: function (mouse) {
+              // A drag that the DragHandler consumed never reaches here —
+              // the handler's takeover cancels the MouseArea's press
               if (mouse.button === Qt.LeftButton) {
                 CompositorService.focusWindow({
                                                 id: modelData.id
@@ -669,6 +844,49 @@ Item {
               } else if (mouse.button === Qt.RightButton) {
                 contextMenu.windowData = modelData;
                 contextMenu.open();
+              }
+            }
+          }
+
+          // The drag itself: ALWAYS enabled so it activates on any
+          // press+move (enabling mid-press doesn't work — the handler only
+          // arms for presses that START while enabled). Long-press is a
+          // DECISION made at activation: grab too early (< 300ms) and we
+          // deactivate, handing the gesture back to the Flickable as a map
+          // pan; grab at/after 300ms and it's a real tile drag.
+          DragHandler {
+            id: dragH
+            acceptedButtons: Qt.LeftButton
+            target: null
+            onActiveChanged: {
+              if (dragH.active) {
+                var heldMs = Date.now() - root._pressTime;
+                if (heldMs < 300) {
+                  // Too early — this is a map pan, not a tile drag. Hand
+                  // the gesture back to the Flickable; next press re-arms.
+                  dragH.enabled = false;
+                  root._pressWinId = 0;
+                  pressHoldTimer.stop();
+                  return;
+                }
+                // Drag already running (started at the hold timer); claim
+                // the handler for centroid tracking
+                root._activeDragDelegate = winRect;
+                root._activeDragHandler = dragH;
+                root._pressWinId = 0;
+              } else {
+                if (root._dragWinId === modelData.id) {
+                  // Phantom strip = insert-above-first; a real row = plain
+                  // move; no target = cancel
+                  if (root._dragTargetWs === -1)
+                    root._insertAboveFirst(modelData.id);
+                  else if (root._dragTargetWs !== 0 && root._dragTargetWs !== modelData.workspaceId)
+                    root._moveWindowToWorkspace(modelData.id, root._dragTargetWs);
+                  root._activeDragDelegate = null;
+                  root._activeDragHandler = null;
+                  root._dragWinId = 0;
+                  root._dragging = false;
+                }
               }
             }
           }
@@ -684,7 +902,7 @@ Item {
             readonly property real _box: Math.max(4, Math.min(parent.width, parent.height) - 8)
             width: Math.max(5, _box * 0.33)
             height: width
-            visible: root.audioIndicators && !!winRect._audio && !!winRect._audio.player && iconWrap.visible
+            visible: root.audioIndicators && !winRect._dragged && !!winRect._audio && !!winRect._audio.player && iconWrap.visible
 
             AtmoIcon {
               anchors.fill: parent
@@ -730,7 +948,7 @@ Item {
             readonly property real _box: Math.max(4, Math.min(parent.width, parent.height) - 8)
             width: Math.max(5, _box * 0.33)
             height: width
-            visible: root.audioIndicators && !!winRect._audio && iconWrap.visible
+            visible: root.audioIndicators && !winRect._dragged && !!winRect._audio && iconWrap.visible
 
             AtmoIcon {
               anchors.fill: parent
@@ -768,6 +986,84 @@ Item {
           }
         }
       }
+
+      // Drag ghost: follows the cursor while a window is being dragged to
+      // another workspace. Semi-transparent chip with the window's icon.
+      Item {
+        id: dragGhost
+        visible: root._dragging
+        readonly property var _win: {
+          for (var i = 0; i < root._windows.length; i++) {
+            if (root._windows[i].id === root._dragWinId)
+              return root._windows[i];
+          }
+          return null;
+        }
+        width: Math.max(32, 240 * root._autoScale)
+        height: width * 0.7
+        x: root._ghostPos.x - width / 2
+        y: root._ghostPos.y - height / 2
+        z: 100
+
+        Rectangle {
+          anchors.fill: parent
+          radius: 6
+          color: Color.mSurface
+          border.color: Color.mPrimary
+          border.width: 2
+          opacity: 0.92
+        }
+        AtmoAppIcon {
+          anchors.centerIn: parent
+          width: Math.max(12, parent.height - 12)
+          height: width
+          name: dragGhost._win ? ThemeIcons.iconNameForAppId(dragGhost._win.appId || "") : "application-x-executable"
+        }
+      }
+    }
+  }
+
+  // Phantom "insert above first workspace" strip — rendered at the TOP of
+  // the panel's content area, above the map. During a drag the panel grows
+  // upward by _phantomH (Panel.qml) and the map content bottom-anchors, so
+  // the strip appears above the rows without moving them.
+  Item {
+    id: phantomRow
+    visible: root._dragging
+    x: 0
+    y: 0
+    width: root.width
+    height: root._phantomH
+    z: 100
+
+    // Soft band — clearly visible, brighter when it's the drop target
+    Rectangle {
+      anchors.fill: parent
+      color: Color.mPrimary
+      opacity: root._dragTargetWs === -1 ? 0.32 : 0.16
+      Behavior on opacity {
+        NumberAnimation {
+          duration: 120
+        }
+      }
+    }
+    // Bright line at the very top edge
+    Rectangle {
+      x: 0
+      y: 0
+      width: parent.width
+      height: 2
+      color: Color.mPrimary
+      opacity: root._dragTargetWs === -1 ? 1.0 : 0.6
+    }
+    // Left indicator bar (same as real rows)
+    Rectangle {
+      x: 0
+      y: 0
+      width: root._barWidth
+      height: parent.height
+      color: Color.mPrimary
+      opacity: root._dragTargetWs === -1 ? 1.0 : 0.6
     }
   }
 
