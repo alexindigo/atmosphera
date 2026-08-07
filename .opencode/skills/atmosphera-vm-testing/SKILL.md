@@ -127,6 +127,49 @@ ssh tester@<ip> 'ping -c 1 1.1.1.1'
 ssh tester@<ip> 'sudo mount -t virtiofs hostshare /mnt/hostshare && ls /mnt/hostshare'
 ```
 
+## Shell smoke test (headless)
+
+The shell needs a running Wayland compositor (PanelWindow backend). On the
+VM, use cage with the wlroots headless backend — no display needed:
+
+```bash
+# In-VM:
+sudo pacman -S --needed --noconfirm cage
+rm -rf ~/.config/atmosphera   # only for fresh-bootstrap testing
+WLR_BACKENDS=headless WLR_HEADLESS_OUTPUTS=1 \
+  timeout 40 cage -- qs -c atmosphera > /tmp/qs-run.log 2>&1
+# exit 124 (timeout kill) = shell stayed alive. exit 255/134 = load failure.
+
+# Then inspect:
+cat ~/.config/atmosphera/plugins.json          # seeded states/sources
+grep -iE "bootstrap|Registered icon set" /tmp/qs-run.log
+```
+
+Expected on fresh install: Built-in source + 4 bundled plugin states
+`enabled:true`, and log lines `Registered icon set: <hash>:atmosphera-icons`
+and `<hash>:noctalia-icons-legacy`.
+
+## Custom (non-repo) dependencies
+
+Three deps are not in official repos; pre-install on the VM before
+`makepkg -s`, else dependency resolution fails:
+
+| Package | Built from |
+|---|---|
+| `noctalia-qs` | PKGBUILD at `/home/domovoy/aur/noctalia-qs/` |
+| `qt6-dbusqml` | `~/Projects/qt6-dbusqml/` |
+| `qt6-xdgiconqml-git` | `~/Projects/qt6-xdgiconqml-git/` (AUR-published) |
+
+```bash
+scp *.pkg.tar.zst tester@<ip>:/tmp/
+ssh tester@<ip> 'sudo pacman -Udd --noconfirm /tmp/*.pkg.tar.zst'
+# NOTE: -Udd skips dep resolution — install noctalia-qs's deps separately:
+ssh tester@<ip> 'sudo pacman -S --needed --noconfirm jemalloc qt6-base \
+  qt6-declarative qt6-svg qt6-wayland libpipewire polkit'
+```
+
+Missing `libjemalloc.so.2` at `qs` launch = forgot the second step.
+
 ## Drift guard (dev mode)
 
 Ensure `dev/vm/aur/PKGBUILD` hasn't drifted from the AUR PKGBUILD:
