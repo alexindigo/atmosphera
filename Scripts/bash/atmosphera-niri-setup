@@ -22,7 +22,7 @@ cp "$ATMOSPHERA_KDL" "$TARGET"
 echo "Installed: ${TARGET}"
 
 # Add include if not already present
-if ! grep -qF "$INCLUDE_LINE" "$CONFIG_FILE"; then
+if ! grep -v '^\s*//' "$CONFIG_FILE" | grep -qF "$INCLUDE_LINE"; then
   echo "" >> "$CONFIG_FILE"
   echo "$INCLUDE_LINE" >> "$CONFIG_FILE"
   echo "Added include to: ${CONFIG_FILE}"
@@ -30,4 +30,4 @@ else
   echo "Include already present in: ${CONFIG_FILE}"
 fi
 
-echo "Done. Restart Niri (Mod+Shift+R) to apply."
+echo "Done. Restart Niri to apply (e.g. niri msg action quit, or use your system restart keybind)."

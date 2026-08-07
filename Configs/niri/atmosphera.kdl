@@ -38,6 +38,9 @@ layer-rule {
     place-within-backdrop true
 }
 
+// --- Launch Atmosphera on startup ---
+spawn-at-startup "qs" "-c" "atmosphera"
+
 // --- Workspace background ---
 layout {
     background-color "transparent"
