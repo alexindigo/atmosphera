@@ -72,8 +72,8 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: 80
         radius: Style.radiusL
-        color: Settings.data.bindings.environment === modelData.value ? Color.mPrimaryContainer : Color.mSurfaceVariant
-        border.color: Settings.data.bindings.environment === modelData.value ? Color.mPrimary : Color.mOutline
+        color: Settings.data.bindings.environment === modelData.value ? (Color.mPrimaryContainer || "transparent") : (Color.mSurfaceVariant || "transparent")
+        border.color: Settings.data.bindings.environment === modelData.value ? (Color.mPrimary || "transparent") : (Color.mOutline || "transparent")
         border.width: Settings.data.bindings.environment === modelData.value ? 2 : 1
 
         MouseArea {
