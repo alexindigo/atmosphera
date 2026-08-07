@@ -17,6 +17,15 @@ set -euo pipefail
 SELF="$(readlink -f "$0")"
 SELF_DIR="$(dirname "$SELF")"
 
+# Auto-detect system install: if non-symlinked handler scripts aren't at
+# our own directory (e.g., when installed to /usr/local/bin/), fall back
+# to the known install prefix.
+# atmosphera-bindings is NOT symlinked into /usr/local/bin/, so it only
+# exists at the real install tree (and the dev tree).
+if [ ! -f "$SELF_DIR/atmosphera-bindings" ] && [ -d "/etc/xdg/quickshell/atmosphera/Scripts/bash" ]; then
+  SELF_DIR="/etc/xdg/quickshell/atmosphera/Scripts/bash"
+fi
+
 # Determine invocation name for multi-call detection
 INVOKED_NAME="${0##*/}"
 
