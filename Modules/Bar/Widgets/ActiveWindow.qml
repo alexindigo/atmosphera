@@ -358,16 +358,16 @@ Item {
     target: CompositorService
     function onActiveWindowChanged() {
       try {
-        windowIcon.source = Qt.binding(getAppIcon);
-        windowIconVertical.source = Qt.binding(getAppIcon);
+        windowIcon.source = Qt.binding(getAppIconName);
+        windowIconVertical.source = Qt.binding(getAppIconName);
       } catch (e) {
         Logger.w("ActiveWindow", "Error in onActiveWindowChanged:", e);
       }
     }
     function onWindowListChanged() {
       try {
-        windowIcon.source = Qt.binding(getAppIcon);
-        windowIconVertical.source = Qt.binding(getAppIcon);
+        windowIcon.source = Qt.binding(getAppIconName);
+        windowIconVertical.source = Qt.binding(getAppIconName);
       } catch (e) {
         Logger.w("ActiveWindow", "Error in onWindowListChanged:", e);
       }
