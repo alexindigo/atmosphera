@@ -56,7 +56,9 @@ mkdir -p "$DIR"
 
 PID="$PEER_PID"
 if [ -z "$PID" ]; then
-  INODE=$(stat -Lc %i "$NIRI_SOCKET" 2>/dev/null || true)
+  # /proc/net/unix maps socket path → kernel socket inode (fs inode of the
+  # socket file is a DIFFERENT namespace — do not stat the file).
+  INODE=$(awk -v p="$NIRI_SOCKET" '$NF == p {print $7; exit}' /proc/net/unix 2>/dev/null || true)
   if [ -n "$INODE" ]; then
     for fd_dir in /proc/[0-9]*/fd; do
       if ls -l "$fd_dir" 2>/dev/null | grep -q "socket:\\\\[$INODE\\\\]"; then

@@ -49,7 +49,9 @@ fi
 # (cmdline/environ are frozen at exec time — immune to later config switches)
 BASE=""
 if [ -n "${NIRI_SOCKET:-}" ]; then
-  INODE=$(stat -Lc %i "$NIRI_SOCKET" 2>/dev/null || true)
+  # /proc/net/unix maps socket path → kernel socket inode (the fs inode of
+  # the socket file is a different namespace — do not stat the file).
+  INODE=$(awk -v p="$NIRI_SOCKET" '$NF == p {print $7; exit}' /proc/net/unix 2>/dev/null || true)
   PID=""
   if [ -n "$INODE" ]; then
     for fd_dir in /proc/[0-9]*/fd; do
