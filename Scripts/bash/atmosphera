@@ -89,7 +89,7 @@ case "$SUBCMD" in
     echo "  confirm <q>                   Show confirm dialog"
     echo "  prompt <q> [default]          Show prompt dialog"
     echo "  survey <args>                 Show survey dialog"
-    echo "  setup niri                    Install niri config include"
+    echo "  setup niri                    Compose & activate niri session config"
     echo "  bindings apply                Deploy shortcut environment"
     echo "  bindings apply-keyd           Root-side keyd bootstrap"
     echo "  close-tab                     Close tab or window"

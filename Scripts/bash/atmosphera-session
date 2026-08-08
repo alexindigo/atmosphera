@@ -31,6 +31,20 @@ launch() {
     exit 1
   fi
 
+  # Leaving atmosphera → restore niri's boot-time base config
+  if [ "${SHELLS[atmosphera]}" != "$target" ] && [ -n "${NIRI_SOCKET:-}" ]; then
+    local session_file="${XDG_CONFIG_HOME:-$HOME/.config}/niri/atmosphera-session.kdl"
+    if [ -f "$session_file" ]; then
+      local marker base=""
+      marker=$(grep -m1 '^// Base config detected at niri boot: ' "$session_file" || true)
+      base="${marker#// Base config detected at niri boot: }"
+      if [ -n "$base" ] && [ -f "$base" ]; then
+        niri msg action load-config-file --path "$base" 2>/dev/null \
+          && echo "Restored niri config: $base" || true
+      fi
+    fi
+  fi
+
   echo "Launching: $target"
   "$QS_BIN" kill -p "$target" 2>/dev/null || true
   sleep 0.3
