@@ -56,6 +56,27 @@ Check the [installation guide](https://github.com/alexindigo/atmosphera/releases
 
 ---
 
+### Arch Linux (AUR)
+
+```bash
+yay -S atmosphera      # release
+yay -S atmosphera-git  # git master
+```
+
+If AUR is unavailable, install directly from the GitHub mirrors:
+
+```bash
+# git master
+git clone https://github.com/alexindigo/aur-atmosphera-git.git
+cd aur-atmosphera-git && makepkg -si
+
+# release
+git clone https://github.com/alexindigo/aur-atmosphera.git
+cd aur-atmosphera && makepkg -si
+```
+
+---
+
 ## Wayland Compositors
 
 Atmosphera provides native support for **Niri**, **Hyprland**, **Sway**, **Scroll**, **Labwc** and **MangoWC**. Other Wayland compositors may work but could require additional configuration for compositor-specific features like workspaces and window management.
