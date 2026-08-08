@@ -3,8 +3,9 @@ import Niri 1.0
 import qs.Commons
 
 // niriqml-backed IPC helper for NiriSessionInit. Kept in a separate file
-// loaded via Loader so systems without qt6-niriqml installed degrade to the
-// `niri msg` CLI fallback instead of failing to load the singleton.
+// loaded via Loader so systems without qt6-niriqml installed degrade
+// gracefully (no IPC activation; user is notified) instead of the
+// singleton failing to load.
 Item {
   id: root
 
