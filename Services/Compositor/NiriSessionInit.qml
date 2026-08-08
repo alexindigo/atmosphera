@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Services.UI
 
 // Niri session init: composes ~/.config/niri/atmosphera-session.kdl
 // (user's base config + atmosphera layers) and switches the running niri
@@ -117,24 +118,11 @@ fi
   function _activate() {
     if (ipcLoader.item) {
       ipcLoader.item.activate(sessionConfig);
-      return;
     }
-    // niriqml absent — fall back to the niri CLI
-    var proc = Qt.createQmlObject(`
-      import QtQuick
-      import Quickshell.Io
-      Process {
-        command: ["niri", "msg", "action", "load-config-file", "--path", "${root.sessionConfig}"]
-      }
-    `, root, "NiriSessionActivateFallback");
-    proc.exited.connect(function (exitCode) {
-      if (exitCode === 0)
-        Logger.i("NiriSessionInit", "Session config activated via niri msg");
-      else
-        Logger.w("NiriSessionInit", "load-config-file failed (niri not running?)");
-      proc.destroy();
-    });
-    proc.running = true;
+    // No niriqml → no IPC path, and deliberately no CLI fallback: the shell
+    // relies on the QML library by design. The config file is still composed
+    // and will activate on a later start once qt6-niriqml is installed; the
+    // user was already notified from the Loader error path.
   }
 
   // Regenerate + reload when the bindings environment changes
@@ -148,14 +136,21 @@ fi
     }
   }
 
+  property bool _toastShown: false
+
   // niriqml-backed IPC (optional dep); loaded only when present
   Loader {
     id: ipcLoader
     active: false
     source: "NiriSessionIpc.qml"
     onStatusChanged: {
-      if (status === Loader.Error)
-        Logger.w("NiriSessionInit", "niriqml unavailable (install qt6-niriqml) — using niri msg fallback");
+      if (status === Loader.Error) {
+        Logger.w("NiriSessionInit", "niriqml unavailable — niri session config will not activate");
+        if (!root._toastShown) {
+          root._toastShown = true;
+          ToastService.showWarning(I18n.tr("toast.niriqml-missing") || "Degraded niri experience", I18n.tr("toast.niriqml-missing-desc") || "Install qt6-niriqml to enable niri integration (workspaces, windows, keybinds, session config).", 8000);
+        }
+      }
     }
   }
 }
