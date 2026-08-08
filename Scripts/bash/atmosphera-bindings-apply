@@ -25,7 +25,6 @@ fi
 BINDINGS_DIR="$SHELL_DIR/Bindings"
 
 NIRI_DIR="$HOME/.config/niri"
-NIRI_CONFIG="$NIRI_DIR/config.kdl"
 XREMAP_DIR="$HOME/.config/xremap"
 ZED_DIR="$HOME/.config/zed"
 
@@ -47,24 +46,6 @@ except Exception:
 "
 }
 
-ensure_line() {
-  local file="$1" line="$2"
-  [ -f "$file" ] || { log "niri config not found: $file — skipping include"; return 0; }
-  if ! grep -qxF "$line" "$file"; then
-    printf '\n%s\n' "$line" >> "$file"
-    log "added to $file: $line"
-  fi
-}
-
-remove_line() {
-  local file="$1" line="$2"
-  [ -f "$file" ] || return 0
-  local tmp
-  tmp="$(mktemp)"
-  grep -vxF "$line" "$file" > "$tmp" || true
-  mv "$tmp" "$file"
-}
-
 backup_if_exists() {
   local file="$1"
   [ -e "$file" ] || return 0
@@ -79,11 +60,12 @@ apply_macos() {
   local env_dir="$BINDINGS_DIR/environments/macos"
   [ -d "$env_dir" ] || { log "environment dir missing: $env_dir"; exit 1; }
 
-  # niri
+  # niri — deploy the shortcuts layer; the session config picks it up
+  # (composed + activated by NiriSessionInit in the running shell, or on
+  # next shell start). We never touch the user's config.kdl.
   mkdir -p "$NIRI_DIR"
   install -m 0644 "$env_dir/niri/atmosphera-shortcuts-macos.kdl" \
     "$NIRI_DIR/atmosphera-shortcuts-macos.kdl"
-  ensure_line "$NIRI_CONFIG" 'include "atmosphera-shortcuts-macos.kdl"'
   log "deployed niri: atmosphera-shortcuts-macos.kdl"
 
   # xremap
@@ -109,17 +91,12 @@ apply_macos() {
     log "keyd file not writable — run 'sudo atmosphera-bindings-apply-keyd macos' to enable hardware swap"
   fi
 
-  # niri live reload
-  if command -v niri >/dev/null 2>&1 && [ -n "${NIRI_SOCKET:-}" ]; then
-    niri msg action reload-config || true
-    log "requested niri config reload"
-  fi
 }
 
 apply_none() {
-  # niri
-  remove_line "$NIRI_CONFIG" 'include "atmosphera-shortcuts-macos.kdl"'
-  log "removed niri include (file left in place)"
+  # niri: the shortcuts layer file is left in place but drops out of the
+  # composed session config (NiriSessionInit regenerates without it when
+  # the environment is "none").
 
   # keyd → revert to neutral stub if writable
   local stub="$BINDINGS_DIR/environments/macos/keyd/atmosphera.stub"
@@ -132,10 +109,6 @@ apply_none() {
   fi
 
   # xremap / zed are left in place — inert without their service/editor loading them
-
-  if command -v niri >/dev/null 2>&1 && [ -n "${NIRI_SOCKET:-}" ]; then
-    niri msg action reload-config || true
-  fi
 }
 
 main() {
