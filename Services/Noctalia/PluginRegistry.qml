@@ -194,7 +194,7 @@ Singleton {
   }
 
   // Bootstrap bundled plugins on first run — copies from system dir to user config
-  // and writes seeded plugins.json with composite keys (hash:id) for all 3 bundled plugins.
+  // and writes seeded plugins.json with composite keys (hash:id) for all bundled plugins.
   function bootstrap() {
     var probeProcess = Qt.createQmlObject(`
       import QtQuick
@@ -257,18 +257,63 @@ Singleton {
   }
 
   // Write seeded plugins.json with composite keys for bundled plugins.
-  // Uses a temporary FileView with declared JsonAdapter properties to avoid
-  // the runtime-assignment persistence issue with failed-state adapters.
+  // Written via a process (not FileView) so write completion is deterministic:
+  // the real FileView's path is only assigned once the seed is fully on disk.
+  // Previously the temp FileView wrote asynchronously while the main FileView
+  // immediately tried to load the same path — a race that left plugins.json
+  // unread on first run, so the scanner defaulted all bundled plugins to
+  // enabled:false and no sources were listed.
+  // Note: seed JSON is ASCII-safe (hex hash, file:// URL, plain keys), so
+  // Qt.btoa is safe here.
   function writeSeedJson(sourceUrl, hash) {
-    var template = 'import QtQuick\n' + 'import Quickshell.Io\n' + 'import qs.Commons\n' + 'FileView {\n' + '  path: "' + root.pluginsFile + '"\n' + '  adapter: JsonAdapter {\n' + '    property int version: ' + root.currentVersion + '\n' + '    property var sources: [{"enabled":true,"name":"Built-in","url":"' + sourceUrl + '"}]\n'
-        + '    property var states: ({\n' + '      "' + hash + ':noctalia-icons-legacy":     {"enabled":true,"sourceUrl":"' + sourceUrl + '"},\n' + '      "' + hash + ':atmosphera-icons":           {"enabled":true,"sourceUrl":"' + sourceUrl + '"},\n' + '      "' + hash + ':atmosphera-wallpapers":      {"enabled":true,"sourceUrl":"' + sourceUrl + '"},\n'
-        + '      "' + hash + ':demo-custom-lockscreen":     {"enabled":true,"sourceUrl":"' + sourceUrl + '"}\n' + '    })\n' + '  }\n' + '  Component.onCompleted: { writeAdapter(); Qt.callLater(destroy) }\n' + '}';
+    var seed = {
+      "version": root.currentVersion,
+      "sources": [
+        {
+          "enabled": true,
+          "name": "Built-in",
+          "url": sourceUrl
+        }
+      ],
+      "states": ({})
+    };
+    seed.states[hash + ":noctalia-icons-legacy"] = {
+      "enabled": true,
+      "sourceUrl": sourceUrl
+    };
+    seed.states[hash + ":atmosphera-icons"] = {
+      "enabled": true,
+      "sourceUrl": sourceUrl
+    };
+    seed.states[hash + ":atmosphera-wallpapers"] = {
+      "enabled": true,
+      "sourceUrl": sourceUrl
+    };
+    seed.states[hash + ":demo-custom-lockscreen"] = {
+      "enabled": true,
+      "sourceUrl": sourceUrl
+    };
 
-    var writer = Qt.createQmlObject(template, root, "SeedPluginsWriter");
-    Qt.callLater(function () {
+    var b64 = Qt.btoa(JSON.stringify(seed));
+    var writerProc = Qt.createQmlObject(`
+      import QtQuick
+      import Quickshell.Io
+      Process {
+        command: ["sh", "-c", "echo '${b64}' | base64 -d > '${root.pluginsFile}'"]
+      }
+    `, root, "SeedPluginsWriter");
+
+    writerProc.exited.connect(function (exitCode) {
+      if (exitCode === 0) {
+        Logger.i("PluginRegistry", "Seeded plugins.json with bundled defaults");
+      } else {
+        Logger.e("PluginRegistry", "Failed to write seed plugins.json, exit:", exitCode);
+      }
+      // Write outcome is final (success or failure) — safe to hand to FileView now.
       pluginsFileView.path = root.pluginsFile;
-      writer.destroy();
+      writerProc.destroy();
     });
+    writerProc.running = true;
   }
 
   // Scan plugin folder to discover installed plugins (single process reads all manifests)

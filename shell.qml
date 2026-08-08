@@ -36,6 +36,7 @@ import qs.Services.Location
 import qs.Services.Networking
 import qs.Services.Noctalia
 import qs.Services.Power
+import qs.Services.Session
 import qs.Services.System
 import qs.Services.Theming
 import qs.Services.UI
@@ -96,6 +97,10 @@ ShellRoot {
     sourceComponent: Item {
       Component.onCompleted: {
         Logger.i("Shell", "---------------------------");
+
+        // Session init first: compositor integration (niri session config
+        // switch) so atmosphera's layers are active before panels draw
+        InitService.init();
 
         // Critical services needed for initial UI rendering
         WallpaperService.init();
