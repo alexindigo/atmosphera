@@ -27,13 +27,15 @@ Singleton {
 
     var src = (env === "macos") ? Quickshell.shellDir + "/Bindings/environments/macos/keyd/default.conf" : Quickshell.shellDir + "/Bindings/environments/macos/keyd/atmosphera.stub";
 
-    // cat-truncate: the file is user-owned; install(1) would need write
-    // permission on the root-owned /etc/keyd directory.
+    // cat-truncate with [ids] stripped: included files must not carry an
+    // [ids] section (keyd include limitation — a stray [ids] mid-[main]
+    // silently kills the mapping), and direct key assignments no-op inside
+    // includes (layer() form required — both caught by the VM).
     var proc = Qt.createQmlObject(`
       import QtQuick
       import Quickshell.Io
       Process {
-        command: ["sh", "-c", "cat \\"$1\\" > \\"$2\\"", "sh", "${src}", "${root.layerFile}"]
+        command: ["sh", "-c", "awk '/^\\\\[ids\\\\]/{skip=1; next} /^\\\\[/{skip=0} !skip' \\"$1\\" > \\"$2\\"", "sh", "${src}", "${root.layerFile}"]
       }
     `, root, "KeydLayerWrite");
 
