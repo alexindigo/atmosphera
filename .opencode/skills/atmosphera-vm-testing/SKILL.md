@@ -18,7 +18,7 @@ test cycle and the local dev loop.
 
 ```
 atmosphera-vm-testing              ← YOU ARE HERE
-  ├── arch-niri-vm                 VM lifecycle (revert, boot, SSH, destroy)
+  ├── arch-niri-vm                 VM lifecycle (rollback, boot, SSH)
   ├── arch-niri-vm-dev             dev loop (bind mount, build, install, iterate)
   ├── arch-hypr-vm                 Hyprland variant (future)
   ├── talk-to-domovoy              sudo operations (bind mount, package installs)
