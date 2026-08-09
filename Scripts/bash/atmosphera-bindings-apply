@@ -85,7 +85,9 @@ apply_macos() {
   # this CLI path covers the shell-not-running case. Reload goes through the
   # atmosphera-keyd-reload service (polkit rule allows it without sudo).
   if [ -w /etc/keyd/atmosphera ] 2>/dev/null; then
-    if cat "$env_dir/keyd/default.conf" > /etc/keyd/atmosphera 2>/dev/null; then
+    # [ids] must be stripped: included files may not carry one (keyd
+    # include limitation) — it silently kills the mapping otherwise.
+    if awk '/^\[ids\]/{skip=1; next} /^\[/{skip=0} !skip' "$env_dir/keyd/default.conf" > /etc/keyd/atmosphera 2>/dev/null; then
       log "updated /etc/keyd/atmosphera with macos rules"
       busctl call --system org.freedesktop.systemd1 /org/freedesktop/systemd1 \
         org.freedesktop.systemd1.Manager StartUnit ss atmosphera-keyd-reload.service replace \

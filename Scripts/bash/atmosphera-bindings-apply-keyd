@@ -80,8 +80,11 @@ fi
 #    invoking user so future `atmosphera bindings apply` runs need no root.
 case "$ENV_NAME" in
   macos)
-    install -m 0644 "$BINDINGS_DIR/environments/macos/keyd/default.conf" "$KEYD_INCLUDE"
-    log "wrote $KEYD_INCLUDE from environments/macos/keyd/default.conf"
+    # [ids] stripped: the include target must not carry one (keyd include
+    # limitation — it silently kills the mapping).
+    awk '/^\[ids\]/{skip=1; next} /^\[/{skip=0} !skip' "$BINDINGS_DIR/environments/macos/keyd/default.conf" > "$KEYD_INCLUDE"
+    chmod 0644 "$KEYD_INCLUDE"
+    log "wrote $KEYD_INCLUDE from environments/macos/keyd/default.conf (ids stripped)"
     ;;
   none|"")
     install -m 0644 "$BINDINGS_DIR/environments/macos/keyd/atmosphera.stub" "$KEYD_INCLUDE"
