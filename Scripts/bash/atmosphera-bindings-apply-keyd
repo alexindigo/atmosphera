@@ -76,7 +76,8 @@ elif ! grep -qE '^\s*include\s+atmosphera\s*$' "$KEYD_MAIN"; then
   log "    include atmosphera"
 fi
 
-# 2. Write the include target based on environment
+# 2. Write the include target based on environment, then hand it to the
+#    invoking user so future `atmosphera bindings apply` runs need no root.
 case "$ENV_NAME" in
   macos)
     install -m 0644 "$BINDINGS_DIR/environments/macos/keyd/default.conf" "$KEYD_INCLUDE"
@@ -91,6 +92,9 @@ case "$ENV_NAME" in
     exit 2
     ;;
 esac
+if [ -n "${SUDO_USER:-}" ]; then
+  chown "$SUDO_USER" "$KEYD_INCLUDE" 2>/dev/null && log "handed $KEYD_INCLUDE to $SUDO_USER" || true
+fi
 
 # 3. Reload keyd if active
 if command -v keyd >/dev/null 2>&1 && systemctl is-active --quiet keyd 2>/dev/null; then

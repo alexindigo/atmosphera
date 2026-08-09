@@ -80,15 +80,22 @@ apply_macos() {
   install -m 0644 "$env_dir/zed/keymap.json" "$ZED_DIR/keymap.json"
   log "deployed zed: keymap.json"
 
-  # keyd content (writes /etc/keyd/atmosphera if writable, otherwise instructs user)
+  # keyd: the package's install hook created /etc/keyd/atmosphera as a
+  # user-owned managed layer — write env content directly, no root needed.
+  # NOTE: cat-truncate, not install(1) — install unlinks the target first,
+  # which requires write permission on the /etc/keyd directory (root).
   if [ -w /etc/keyd/atmosphera ] 2>/dev/null; then
-    install -m 0644 "$env_dir/keyd/default.conf" /etc/keyd/atmosphera
-    log "updated /etc/keyd/atmosphera with macos rules"
-    if command -v keyd >/dev/null 2>&1 && systemctl is-active --quiet keyd; then
-      sudo -n keyd reload 2>/dev/null || log "run 'sudo keyd reload' to apply keyd changes"
+    if cat "$env_dir/keyd/default.conf" > /etc/keyd/atmosphera 2>/dev/null; then
+      log "updated /etc/keyd/atmosphera with macos rules"
+      if command -v keyd >/dev/null 2>&1 && systemctl is-active --quiet keyd; then
+        keyd reload 2>/dev/null && log "keyd reloaded" \
+          || log "could not reload keyd — add yourself to the keyd group: sudo usermod -aG keyd $USER"
+      fi
+    else
+      log "failed to write /etc/keyd/atmosphera"
     fi
   else
-    log "keyd file not writable — run 'sudo atmosphera-bindings-apply-keyd macos' to enable hardware swap"
+    log "keyd layer /etc/keyd/atmosphera not user-writable — reinstall the package or run 'sudo atmosphera-bindings-apply-keyd macos'"
   fi
 
 }
@@ -98,13 +105,15 @@ apply_none() {
   # composed session config (NiriSessionInit regenerates without it when
   # the environment is "none").
 
-  # keyd → revert to neutral stub if writable
+  # keyd → revert to neutral stub (user-owned managed layer, no root needed)
   local stub="$BINDINGS_DIR/environments/macos/keyd/atmosphera.stub"
   if [ -w /etc/keyd/atmosphera ] 2>/dev/null && [ -f "$stub" ]; then
-    install -m 0644 "$stub" /etc/keyd/atmosphera
-    log "reverted /etc/keyd/atmosphera to neutral stub"
-    if command -v keyd >/dev/null 2>&1 && systemctl is-active --quiet keyd; then
-      sudo -n keyd reload 2>/dev/null || log "run 'sudo keyd reload' to apply keyd changes"
+    if cat "$stub" > /etc/keyd/atmosphera 2>/dev/null; then
+      log "reverted /etc/keyd/atmosphera to neutral stub"
+      if command -v keyd >/dev/null 2>&1 && systemctl is-active --quiet keyd; then
+        keyd reload 2>/dev/null && log "keyd reloaded" \
+          || log "could not reload keyd — add yourself to the keyd group: sudo usermod -aG keyd $USER"
+      fi
     fi
   fi
 
