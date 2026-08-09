@@ -1,9 +1,9 @@
 pragma Singleton
+import DBus 1.0
 
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import DBus 1.0
 import qs.Commons
 import qs.Services.Compositor
 import qs.Services.UI
@@ -138,19 +138,34 @@ Singleton {
   function refreshCurrentIMInfo() {
     if (!root.fcitx5Available)
       return;
-    fcitx5.call("CurrentInputMethodInfo", [], function (result) {
+    var reply = fcitx5.call("CurrentInputMethodInfo", []);
+    if (!reply)
+      return;
+    var done = function () {
+      if (reply.isError)
+        return;
+      var result = reply.values;
       if (result && result.length >= 9) {
         root.currentIMUniqueName = String(result[0] || "");
         root.currentIMLanguage = String(result[3] || "");
         root.currentIMIcon = String(result[5] || "");
       }
-    });
+    };
+    reply.finished.connect(done);
+    if (reply.isFinished)
+      done();
   }
 
   function _fetchAvailableIMs() {
     if (!root.fcitx5Available)
       return;
-    fcitx5.call("AvailableInputMethods", [], function (result) {
+    var reply = fcitx5.call("AvailableInputMethods", []);
+    if (!reply)
+      return;
+    var done = function () {
+      if (reply.isError)
+        return;
+      var result = reply.values;
       if (!result || result.length === 0)
         return;
       var ims = [];
@@ -172,13 +187,22 @@ Singleton {
         }
       }
       root.availableIMs = ims;
-    });
+    };
+    reply.finished.connect(done);
+    if (reply.isFinished)
+      done();
   }
 
   function _fetchGroups() {
     if (!root.fcitx5Available)
       return;
-    fcitx5.call("InputMethodGroups", [], function (result) {
+    var reply = fcitx5.call("InputMethodGroups", []);
+    if (!reply)
+      return;
+    var done = function () {
+      if (reply.isError)
+        return;
+      var result = reply.values;
       if (!result || result.length === 0)
         return;
       var groups = [];
@@ -189,7 +213,10 @@ Singleton {
         }
       }
       root.groups = groups;
-    });
+    };
+    reply.finished.connect(done);
+    if (reply.isFinished)
+      done();
   }
 
   // ——— Flag emoji lookup ———
