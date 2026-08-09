@@ -173,7 +173,9 @@ Singleton {
       if (Array.isArray(arr)) {
         for (var i = 0; i < arr.length; i++) {
           var im = arr[i];
-          if (Array.isArray(im) && im.length >= 6) {
+          // length-based check: dbusqml's nested struct lists are
+          // array-like (indexable, .length) but fail Array.isArray()
+          if (im && typeof im.length === "number" && im.length >= 6) {
             ims.push({
                        "uniqueName": String(im[0] || ""),
                        "name": String(im[1] || ""),
