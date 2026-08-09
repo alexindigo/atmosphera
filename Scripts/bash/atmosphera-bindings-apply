@@ -87,9 +87,10 @@ apply_macos() {
   if [ -w /etc/keyd/atmosphera ] 2>/dev/null; then
     if cat "$env_dir/keyd/default.conf" > /etc/keyd/atmosphera 2>/dev/null; then
       log "updated /etc/keyd/atmosphera with macos rules"
+      # The atmosphera-keyd-reload path unit applies the change automatically;
+      # try an immediate reload too when permitted (keyd group members).
       if command -v keyd >/dev/null 2>&1 && systemctl is-active --quiet keyd; then
-        keyd reload 2>/dev/null && log "keyd reloaded" \
-          || log "could not reload keyd — add yourself to the keyd group: sudo usermod -aG keyd $USER"
+        keyd reload 2>/dev/null || true
       fi
     else
       log "failed to write /etc/keyd/atmosphera"
@@ -110,9 +111,9 @@ apply_none() {
   if [ -w /etc/keyd/atmosphera ] 2>/dev/null && [ -f "$stub" ]; then
     if cat "$stub" > /etc/keyd/atmosphera 2>/dev/null; then
       log "reverted /etc/keyd/atmosphera to neutral stub"
+      # atmosphera-keyd-reload path unit applies it; immediate reload if permitted
       if command -v keyd >/dev/null 2>&1 && systemctl is-active --quiet keyd; then
-        keyd reload 2>/dev/null && log "keyd reloaded" \
-          || log "could not reload keyd — add yourself to the keyd group: sudo usermod -aG keyd $USER"
+        keyd reload 2>/dev/null || true
       fi
     fi
   fi

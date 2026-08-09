@@ -1,0 +1,8 @@
+[Unit]
+Description=Reload keyd after atmosphera layer change
+# Only attempt when keyd is actually running
+ConditionPathExists=/var/run/keyd.socket
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/keyd reload
