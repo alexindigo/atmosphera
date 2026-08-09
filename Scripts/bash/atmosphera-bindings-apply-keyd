@@ -52,19 +52,24 @@ log() { printf '[bindings-apply-keyd] %s\n' "$*" >&2; }
 
 mkdir -p "$KEYD_DIR"
 
-# 1. Ensure /etc/keyd/default.conf exists with our include
+# 1. Ensure /etc/keyd/default.conf exists with our include, scoped to the
+#    environment's device ids — never a wildcard, so the Mac rotation does
+#    not leak onto external keyboards.
 if [ ! -f "$KEYD_MAIN" ]; then
-  cat > "$KEYD_MAIN" <<'CONF'
-# Written by atmosphera-bindings-apply-keyd
-# Extend by editing this file. The 'atmosphera' include is managed separately.
-[ids]
-*
-
-[main]
-include atmosphera
-CONF
+  IDS="$(awk '/^\[ids\]/{f=1;next} /^\[/{f=0} f && /^[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]:/ {print}' \
+        "$BINDINGS_DIR/environments/macos/keyd/default.conf" 2>/dev/null)"
+  [ -n "$IDS" ] || IDS="0001:0001"
+  {
+    echo "# Written by atmosphera-bindings-apply-keyd"
+    echo "# Extend by editing this file. The 'atmosphera' include is managed separately."
+    echo "[ids]"
+    echo "$IDS"
+    echo ""
+    echo "[main]"
+    echo "include atmosphera"
+  } > "$KEYD_MAIN"
   chmod 0644 "$KEYD_MAIN"
-  log "created $KEYD_MAIN"
+  log "created $KEYD_MAIN (scoped to: $(echo "$IDS" | tr '\n' ' '))"
 elif ! grep -qE '^\s*include\s+atmosphera\s*$' "$KEYD_MAIN"; then
   log "WARNING: $KEYD_MAIN exists but does not include atmosphera"
   log "add this line under [main] to activate the atmosphera environment:"
