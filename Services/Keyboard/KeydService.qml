@@ -50,7 +50,8 @@ Singleton {
   }
 
   // system bus handle to systemd's Manager
-  property DBus _systemd: DBus {
+  DBus {
+    id: systemdBus
     service: "org.freedesktop.systemd1"
     path: "/org/freedesktop/systemd1"
     iface: "org.freedesktop.systemd1.Manager"
@@ -60,8 +61,17 @@ Singleton {
   function _reload() {
     // StartUnit(name, mode) — polkit rule Scripts/polkit/atmosphera-keyd.rules
     // lets active sessions / wheel start this one service without a prompt.
-    root._systemd.call("StartUnit", ["atmosphera-keyd-reload.service", "replace"]);
-    Logger.d("KeydService", "Requested keyd reload via systemd");
+    var reply = systemdBus.call("StartUnit", ["atmosphera-keyd-reload.service", "replace"]);
+    if (!reply) {
+      Logger.w("KeydService", "StartUnit call failed to build");
+      return;
+    }
+    reply.finished.connect(function () {
+      if (reply.isError)
+        Logger.w("KeydService", "keyd reload trigger failed:", reply.error.message);
+      else
+        Logger.i("KeydService", "keyd reload triggered via systemd");
+    });
   }
 
   // Re-apply on bindings environment change
