@@ -149,6 +149,57 @@ Expected on fresh install: Built-in source + 4 bundled plugin states
 `enabled:true`, and log lines `Registered icon set: <hash>:atmosphera-icons`
 and `<hash>:noctalia-icons-legacy`.
 
+## Input-device / keybind testing (keyd, xremap)
+
+**Inject keys at the emulated-hardware level with QEMU `send-key`** — this
+flows through the guest's evdev → keyd/xremap → virtual keyboard →
+compositor, the REAL chain:
+
+```bash
+# From host, press+release a key (hold-time ms):
+virsh -c qemu:///system qemu-monitor-command arch-niri \
+  '{"execute":"send-key","arguments":{"keys":[{"type":"qcode","data":"alt"}],"hold-time":150}}'
+
+# Chord (Alt held + F1):
+virsh -c qemu:///system qemu-monitor-command arch-niri \
+  '{"execute":"send-key","arguments":{"keys":[{"type":"qcode","data":"alt"},{"type":"qcode","data":"f1"}],"hold-time":200}}'
+```
+
+Valid qcodes: `alt`, `ctrl`, `meta_l`/`meta_r` (NOT bare `meta`), `f1`…
+Full list: QEMU `QKeyCode` enum.
+
+**Gotcha — injection target moves with hotplug:** `send-key` goes to the
+MOST RECENTLY ADDED input device. Hotplugging a `usb-kbd` for scoping tests
+(`device_add driver=usb-kbd id=…`) silently reroutes injection from PS/2 to
+USB. `device_del id=…` after the scoping check, or your key tests hit the
+wrong device.
+
+**Observe results in-guest** on the keyd/xremap virtual keyboard:
+
+```bash
+# find it: sudo evtest   (look for "keyd virtual keyboard" / "xremap")
+sudo timeout 10 evtest /dev/input/eventN > /tmp/ev.log &
+# then inject from host; expect remapped KEY_* in the log:
+grep "Event: time" /tmp/ev.log
+```
+
+keyd notes (learned the hard way):
+
+- keyd reads ALL files in `/etc/keyd/`, not just `*.conf` — an
+  extensionless `atmosphera` include target IS parsed.
+- keyd 2.5+ deprecates direct modifier assignment (`leftalt = leftmeta`);
+  use `layer()` form (`leftalt = layer(meta)`). Side effect: a bare
+  modifier tap emits NOTHING (correct) — verify remaps with chords, not
+  taps.
+- `[ids]` scoping only works when the including config doesn't wildcard:
+  a generated `[ids] *` upstream of an `include` defeats the included
+  file's own scoping.
+
+`wtype` (virtual-keyboard protocol) does NOT reach keyd/xremap (it injects
+at the compositor, after evdev) and is unreliable in cage→nested-niri
+topologies. Use QEMU `send-key` for anything that must pass through
+evdev remappers.
+
 ## Custom (non-repo) dependencies
 
 Three deps are not in official repos; pre-install on the VM before
