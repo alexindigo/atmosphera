@@ -969,4 +969,24 @@ Singleton {
         panel.visible = false;
     }
   }
+
+  IpcHandler {
+    target: "inputmethod"
+
+    function toggle() { InputMethodService.toggle(); }
+    function setIM(name: string) { InputMethodService.setCurrentIM(name); }
+    function setGroup(name: string) { InputMethodService.setGroup(name); }
+
+    // Replicates the old fcitx5-input script's toggle semantics:
+    // first press → switch to the given IM (auto-switching group first);
+    // press again → back to English (keyboard-us passthrough).
+    function toggleIM(name: string, group: string) {
+      if (InputMethodService.currentIM === name)
+        InputMethodService.setCurrentIM("keyboard-us");
+      else {
+        InputMethodService.setGroup(group);
+        InputMethodService.setCurrentIM(name);
+      }
+    }
+  }
 }
