@@ -18,11 +18,13 @@ LEGACY_INCLUDE='include "atmosphera.kdl"'
 SCRIPT_PATH="$(readlink -f "$0")"
 SHELL_DIR="$(dirname "$(dirname "$(dirname "$SCRIPT_PATH")")")"
 ATMOSPHERA_KDL_SRC="${SHELL_DIR}/Configs/niri/atmosphera.kdl"
+ATMOSPHERA_I18N_SRC="${SHELL_DIR}/Configs/niri/atmosphera-i18n.kdl"
 
 mkdir -p "$NIRI_DIR"
 
 # Refresh the baseline layer (user explicitly invoked setup)
 install -m 0644 "$ATMOSPHERA_KDL_SRC" "${NIRI_DIR}/atmosphera.kdl"
+install -m 0644 "$ATMOSPHERA_I18N_SRC" "${NIRI_DIR}/atmosphera-i18n.kdl"
 echo "Installed: ${NIRI_DIR}/atmosphera.kdl"
 
 # Strip legacy include from the user's config (exact-match reversal)
@@ -83,6 +85,7 @@ fi
     fi
   fi
   echo 'include "atmosphera.kdl"'
+  echo 'include "atmosphera-i18n.kdl"'
   if [ "$env_val" = "macos" ] && [ -f "${NIRI_DIR}/atmosphera-shortcuts-macos.kdl" ]; then
     echo 'include "atmosphera-shortcuts-macos.kdl"'
   fi
