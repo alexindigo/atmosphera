@@ -1,9 +1,0 @@
-[Unit]
-Description=Reload keyd when the atmosphera layer changes
-
-[Path]
-PathChanged=/etc/keyd/atmosphera
-Unit=atmosphera-keyd-reload.service
-
-[Install]
-WantedBy=multi-user.target

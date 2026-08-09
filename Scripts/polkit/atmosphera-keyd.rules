@@ -1,0 +1,10 @@
+// Allow active local sessions (and wheel) to trigger the atmosphera keyd
+// reload service without a password prompt. Scoped to exactly one unit —
+// no blanket manage-units access.
+polkit.addRule(function(action, subject) {
+  if (action.id == "org.freedesktop.systemd1.manage-units" &&
+      (subject.active || subject.isInGroup("wheel")) &&
+      action.lookup("unit") == "atmosphera-keyd-reload.service") {
+    return polkit.Result.YES;
+  }
+});
