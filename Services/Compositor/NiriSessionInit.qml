@@ -26,6 +26,7 @@ Singleton {
   readonly property string niriDir: xdgConfigHome + "/niri"
   readonly property string sessionConfig: niriDir + "/atmosphera-session.kdl"
   readonly property string baselineSource: Quickshell.shellDir + "/Configs/niri/atmosphera.kdl"
+  readonly property string i18nSource: Quickshell.shellDir + "/Configs/niri/atmosphera-i18n.kdl"
 
   function init() {
     if (!Quickshell.env("NIRI_SOCKET")) {
@@ -50,9 +51,10 @@ Singleton {
     // NOTE: no ${} expansions inside — this script is embedded in a JS
     // template literal below, where ${ would be interpolated by JS.
     var script = `set -e
-DIR="$1"; BASELINE_SRC="$2"; PEER_PID="$3"; ENVV="$4"; SESSION_FILE="$5"
+DIR="$1"; BASELINE_SRC="$2"; PEER_PID="$3"; ENVV="$4"; SESSION_FILE="$5"; I18N_SRC="$6"
 mkdir -p "$DIR"
 [ -f "$DIR/atmosphera.kdl" ] || cp "$BASELINE_SRC" "$DIR/atmosphera.kdl"
+[ -f "$DIR/atmosphera-i18n.kdl" ] || cp "$I18N_SRC" "$DIR/atmosphera-i18n.kdl"
 
 PID="$PEER_PID"
 if [ -z "$PID" ]; then
@@ -89,6 +91,7 @@ fi
     fi
   fi
   echo 'include "atmosphera.kdl"'
+  echo 'include "atmosphera-i18n.kdl"'
   if [ "$ENVV" = "macos" ] && [ -f "$DIR/atmosphera-shortcuts-macos.kdl" ]; then
     echo 'include "atmosphera-shortcuts-macos.kdl"'
   fi
@@ -100,7 +103,7 @@ fi
       import Quickshell.Io
       Process {
         command: ["sh", "-c", ${JSON.stringify(script)}, "sh",
-                  "${root.niriDir}", "${root.baselineSource}", "${peerPid}", "${env}", "${root.sessionConfig}"]
+                  "${root.niriDir}", "${root.baselineSource}", "${peerPid}", "${env}", "${root.sessionConfig}", "${root.i18nSource}"]
         stderr: StdioCollector {}
       }
     `, root, "NiriSessionGenerate");

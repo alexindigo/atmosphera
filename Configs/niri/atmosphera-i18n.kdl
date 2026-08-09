@@ -1,0 +1,16 @@
+// Atmosphera i18n / input-method layer
+// Launches fcitx5 and provides IM-switching keybinds routed through the shell's IPC
+// (InputMethodService → fcitx5 D-Bus controller). The old two-bind layout
+// preserved: Alt+Space toggles Japanese (mozc), Ctrl+Space toggles Russian.
+// Both work at the lock screen so you can switch back to English on lock.
+
+spawn-at-startup "fcitx5"
+
+binds {
+    Alt+Space   allow-when-locked=true hotkey-overlay-title="Input method: Japanese (mozc)" {
+        spawn "atmosphera" "ipc" "inputmethod" "toggleIM" "mozc" "US+JP";
+    }
+    Ctrl+Space  allow-when-locked=true hotkey-overlay-title="Input method: Russian" {
+        spawn "atmosphera" "ipc" "inputmethod" "toggleIM" "keyboard-ru-mac" "US+RU";
+    }
+}
