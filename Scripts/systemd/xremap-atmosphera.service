@@ -1,0 +1,11 @@
+[Unit]
+Description=xremap (Atmosphera macOS bindings layer)
+# Session-level remapper: app-scoped keymaps + the device-scoped
+# belt-and-braces modmap duplicate of keyd's swap (inert while keyd holds
+# the grab). Only start when the bindings layer is deployed.
+ConditionPathExists=%h/.config/xremap/atmosphera-xremap.yml
+
+[Service]
+ExecStart=/usr/bin/xremap --watch=device --watch=config %h/.config/xremap/atmosphera-xremap.yml
+Restart=on-failure
+RestartSec=1
