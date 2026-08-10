@@ -200,6 +200,18 @@ at the compositor, after evdev) and is unreliable in cage→nested-niri
 topologies. Use QEMU `send-key` for anything that must pass through
 evdev remappers.
 
+More input-testing lessons learned the hard way:
+
+- **User services die with the SSH session.** `systemd --user` exits when
+  the last session closes unless lingering is on: `loginctl enable-linger
+  tester`. Without it, user units (xremap) stop mid-test with a
+  mysterious "Exit the Session" journal block.
+- **evtest on a grabbed device shows nothing.** keyd/xremap grab their
+  input exclusively — capture the FINAL output device in the chain
+  (xremap's device after keyd's), not the grabbed intermediate.
+- **New group membership needs a fresh session.** After `usermod -aG
+  input tester`, `sudo loginctl terminate-user tester` then reconnect.
+
 ## Custom (non-repo) dependencies
 
 Three deps are not in official repos; pre-install on the VM before
