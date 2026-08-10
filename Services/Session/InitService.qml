@@ -19,6 +19,7 @@ Singleton {
     _initialized = true;
     Logger.d("InitService", "Session init");
     KeydService.init();
+    XremapService.init();
     CompositorInit.init();
   }
 }

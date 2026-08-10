@@ -68,11 +68,18 @@ apply_macos() {
     "$NIRI_DIR/atmosphera-shortcuts-macos.kdl"
   log "deployed niri: atmosphera-shortcuts-macos.kdl"
 
-  # xremap
+  # xremap — deploy config; the running shell starts/restarts the user
+  # service via the systemd user manager (XremapService). CLI fallback
+  # for the shell-off case: restart it directly (user units need no root).
   mkdir -p "$XREMAP_DIR"
   install -m 0644 "$env_dir/xremap/atmosphera-xremap.yml" \
     "$XREMAP_DIR/atmosphera-xremap.yml"
   log "deployed xremap: atmosphera-xremap.yml"
+  if command -v systemctl >/dev/null 2>&1; then
+    systemctl --user restart xremap-atmosphera.service 2>/dev/null \
+      && log "xremap-atmosphera restarted" \
+      || log "xremap service not started (start with: systemctl --user start xremap-atmosphera.service)"
+  fi
 
   # zed
   mkdir -p "$ZED_DIR"
@@ -117,7 +124,12 @@ apply_none() {
     fi
   fi
 
-  # xremap / zed are left in place — inert without their service/editor loading them
+  # xremap: stop the user service (config left in place — inert without it);
+  # zed keymap left in place (inert without the editor loading it).
+  if command -v systemctl >/dev/null 2>&1; then
+    systemctl --user stop xremap-atmosphera.service 2>/dev/null \
+      && log "xremap-atmosphera stopped" || true
+  fi
 }
 
 main() {
