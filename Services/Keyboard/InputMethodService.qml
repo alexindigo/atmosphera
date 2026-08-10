@@ -73,6 +73,40 @@ Singleton {
     }
   }
 
+  // ——— State publishing (fcitx-input-state.json) ———
+  // Publishes the current IM state for non-shell consumers (e.g. a
+  // screen-border glow when a composing IM is active). Publish-on-change:
+  // the shell is the switch authority (binds/UI route through us) and
+  // fcitx5 pushes CurrentInputMethodChanged/CurrentGroupChanged, so no
+  // polling daemon is needed. Atomic write (tmp + rename).
+  readonly property string _stateFile: {
+    var rd = Quickshell.env("XDG_RUNTIME_DIR");
+    return (rd && rd.length > 0 ? rd : "/tmp") + "/fcitx-input-state.json";
+  }
+
+  function _publishState() {
+    var st = {
+      "im": root.currentIMUniqueName || root.currentIM || "",
+      "group": root.currentGroup || "",
+      "lang": root.currentIMLanguage || ""
+    };
+    var b64 = Qt.btoa(JSON.stringify(st));
+    var proc = Qt.createQmlObject(`
+      import QtQuick
+      import Quickshell.Io
+      Process {
+        command: ["sh", "-c", "echo '${b64}' | base64 -d > '${root._stateFile}.tmp' && mv '${root._stateFile}.tmp' '${root._stateFile}'"]
+      }
+    `, root, "imStateWriter");
+    proc.exited.connect(function () {
+      proc.destroy();
+    });
+    proc.running = true;
+  }
+
+  onCurrentIMUniqueNameChanged: root._publishState()
+  onCurrentGroupChanged: root._publishState()
+
   // ——— Init ———
   function init() {
     Logger.i("InputMethodService", "Service started");
