@@ -1,19 +1,20 @@
 // Atmosphera: macOS-style shortcuts for niri
-// With the Mac Layout Modmap:
-//   Physical Ctrl (corner) → Super  (WM actions)
-//   Physical Super (Win)   → Alt    (Option/word nav)
-//   Physical Alt (next to Space) → Ctrl  (App actions)
+// With the Mac Layout Modmap (2-way Alt↔Super swap; keyd owns it system-wide,
+// xremap carries a device-scoped duplicate as session fallback):
+//   Physical Alt  (next to Space) → Super  (WM actions / macOS Cmd position)
+//   Physical Win/Super (left of Alt) → Alt  (Option/word nav)
+//   Physical Ctrl (corner)        → Ctrl   (unchanged — terminals/readline)
 //
 // So in niri binds:
-//   Super+ → WM actions (workspace, column, etc.) — press corner Ctrl
-//   Ctrl+  → App actions (Save, Find, Paste, etc.) — press next-to-Space Alt
+//   Super+ → WM actions (workspace, column, etc.) — press physical Alt
+//   Ctrl+  → App/terminal actions (Save, Find, SIGINT) — press corner Ctrl
 //   Alt+   → Option actions (typographic symbols) — press physical Win key
 //
-// RESERVED: Ctrl+Space
-//   Input-method switcher (fcitx5 owns switching — single authority across
-//   all installed IMEs including Japanese Mozc and Russian).
-//   Handled at the niri-bind level in config.kdl → spawns /usr/local/bin/fcitx5-input.
-//   Press physical Alt (next to Space) + Space to switch input methods.
+// RESERVED: Ctrl+Space and Alt+Space
+//   Input-method switchers, owned by the i18n layer (atmosphera-i18n.kdl):
+//   Ctrl+Space → toggle Russian (fcitx5 owns switching — single authority
+//   across all installed IMEs including Japanese Mozc and Russian).
+//   Alt+Space  → toggle Japanese (Mozc).
 //   Note: xkb layout toggle (grp:*_space_toggle) is intentionally disabled below.
 
 input {
