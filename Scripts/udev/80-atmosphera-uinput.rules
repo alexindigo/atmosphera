@@ -1,0 +1,3 @@
+# Atmosphera: give the input group access to /dev/uinput
+# (session remappers like xremap create their virtual keyboard via uinput).
+KERNEL=="uinput", GROUP="input", MODE="0660", OPTIONS+="static_node=uinput"
