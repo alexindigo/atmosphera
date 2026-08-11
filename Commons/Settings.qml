@@ -24,7 +24,7 @@ Singleton {
   - Default config directory: ~/.config/atmosphera
   - Default cache directory: ~/.cache/atmosphera
   */
-  readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
+  readonly property alias data: settingsAdapter  // Used to access via Settings.data.xxx.yyy
   readonly property int settingsVersion: 60
   property bool isDebug: Quickshell.env("ATMOSPHERA_DEBUG") === "1"
   readonly property string shellName: "atmosphera"
@@ -71,12 +71,10 @@ Singleton {
   // -----------------------------------------------------
   // Ensure directories exist before FileView tries to read files
   Component.onCompleted: {
-    // ensure settings dir exists
+    // ensure settings dirs exist
     Quickshell.execDetached(["mkdir", "-p", configDir]);
+    Quickshell.execDetached(["mkdir", "-p", overridesDir]);
     Quickshell.execDetached(["mkdir", "-p", cacheDir]);
-
-    // Mark directories as created and trigger file loading
-    directoriesCreated = true;
 
     // This should only be activated once when the settings structure has changed
     // Then it should be commented out again, regular users don't need to generate
@@ -87,13 +85,30 @@ Singleton {
     }
 
     // Patch-in the local default, resolved to user's home
-    adapter.general.avatarImage = defaultAvatar;
-    adapter.wallpaper.directory = defaultWallpapersDirectory;
-    adapter.ui.fontDefault = Qt.application.font.family;
-    adapter.ui.fontFixed = "monospace";
+    settingsAdapter.general.avatarImage = defaultAvatar;
+    settingsAdapter.wallpaper.directory = defaultWallpapersDirectory;
+    settingsAdapter.ui.fontDefault = Qt.application.font.family;
+    settingsAdapter.ui.fontFixed = "monospace";
 
-    // Set the adapter to the settingsFileView to trigger the real settings load
-    settingsFileView.adapter = adapter;
+    // Sections = settingsAdapter root keys (minus the version marker)
+    var plain = QtObj2JS.qtObjectToPlainObject(settingsAdapter);
+    var keys = [];
+    for (var k in plain) {
+      if (k !== "settingsVersion") {
+        keys.push(k);
+        sectionsModel.append({
+                               "name": k
+                             });
+      }
+    }
+    root._sections = keys;
+
+    // Mark directories as created and trigger the legacy file load; section
+    // files load after the legacy layer lands (they take precedence).
+    directoriesCreated = true;
+
+    // Set the settingsAdapter to the settingsFileView to trigger the legacy load
+    settingsFileView.adapter = settingsAdapter;
   }
 
   // Don't write settings to disk immediately
@@ -124,9 +139,9 @@ Singleton {
     }
     onLoaded: function () {
       if (!isLoaded) {
-        Logger.i("Settings", "Settings loaded");
+        Logger.i("Settings", "Legacy settings file loaded");
 
-        // Load raw JSON for migrations (adapter doesn't expose removed properties)
+        // Load raw JSON for migrations (settingsAdapter doesn't expose removed properties)
         var rawJson = null;
         try {
           rawJson = JSON.parse(settingsFileView.text());
@@ -138,62 +153,76 @@ Singleton {
         runVersionedMigrations(rawJson);
 
         // Finally, update our local settings version
-        adapter.settingsVersion = settingsVersion;
+        settingsAdapter.settingsVersion = settingsVersion;
 
-        // The user file content IS the override layer (sparse for new-format
-        // files, full tree for pre-refactor files — either way it is adopted
-        // as-is and never pruned or rewritten except via tracked changes).
-        root._overrides = rawJson || {};
-        root._snapshot = QtObj2JS.qtObjectToPlainObject(adapter);
+        // The legacy monolith is the bottom override layer: adopted as-is,
+        // never rewritten. Section files (settings/<section>.json) load on
+        // top of it next and take precedence.
+        root._legacyOverrides = rawJson || {};
+        root._sawAnyFile = true;
 
-        // Emit the signal
-        root.isLoaded = true;
-        root.settingsLoaded();
-
-        upgradeSettings();
+        beginSectionLoads();
       } else {
-        // External file change. The directory watcher also fires for sibling
-        // files (colors.json, plugins.json, our own tmp+mv), so gate on an
-        // actual content diff vs the override tree: spurious reloads are a
-        // no-op. CRITICAL: never re-baseline _snapshot here without recording
-        // — a pending debounced user change would be silently absorbed.
+        // External edit of the legacy file: gate on an actual content diff
+        // vs the adopted legacy tree; section files keep precedence.
         var externalJson = null;
         try {
           externalJson = JSON.parse(settingsFileView.text());
         } catch (e) {
           Logger.w("Settings", "Could not parse externally-modified settings file");
         }
-        if (externalJson) {
-          var extChanges = [];
-          diffLeaves(root._overrides || {}, externalJson, "", extChanges);
-          if (extChanges.length === 0) {
-            Logger.d("Settings", "Spurious reload (no content change) — ignoring");
-            return;
-          }
-          Logger.d("Settings", "Settings reloaded from external file change (" + extChanges.length + " changed paths)");
-          for (var xi = 0; xi < extChanges.length; xi++) {
-            var xc = extChanges[xi];
-            if (xc.deleted) {
-              // Key removed externally: fall back to the shipped default
-              var def = getDefaultValue(xc.path);
-              if (def !== undefined) {
-                setPathValue(adapter, xc.path, def);
-              }
-            } else if (xc.value !== null && typeof xc.value === "object" && !Array.isArray(xc.value)) {
-              var existing = getPathValue(adapter, xc.path);
-              if (existing !== undefined && existing !== null && typeof existing === "object") {
-                deepApply(existing, xc.value);
-              } else {
-                setPathValue(adapter, xc.path, xc.value);
-              }
-            } else {
-              setPathValue(adapter, xc.path, xc.value);
-            }
-          }
-          root._overrides = externalJson;
-          root._snapshot = QtObj2JS.qtObjectToPlainObject(adapter);
-          root.settingsReloaded();
+        if (!externalJson) {
+          return;
         }
+        var extChanges = [];
+        diffLeaves(root._legacyOverrides || {}, externalJson, "", extChanges);
+        if (extChanges.length === 0) {
+          Logger.d("Settings", "Spurious legacy reload (no content change) — ignoring");
+          return;
+        }
+        Logger.d("Settings", "Legacy settings changed externally (" + extChanges.length + " paths)");
+        var touchedSections = [];
+        for (var xi = 0; xi < extChanges.length; xi++) {
+          var xc = extChanges[xi];
+          var dot = xc.path.indexOf(".");
+          var sec = dot === -1 ? xc.path : xc.path.substring(0, dot);
+          var rel = dot === -1 ? "" : xc.path.substring(dot + 1);
+          if (sec === "settingsVersion") {
+            continue;
+          }
+          // Section file wins over the legacy layer for that path
+          var sectionTree = root._overrides[sec] || {};
+          if (rel === "" || getPathValue(sectionTree, rel) !== undefined) {
+            continue;
+          }
+          if (xc.deleted) {
+            var def = getDefaultValue(xc.path);
+            if (def !== undefined) {
+              setPathValue(settingsAdapter, xc.path, def);
+            }
+          } else if (xc.value !== null && typeof xc.value === "object" && !Array.isArray(xc.value)) {
+            var existing = getPathValue(settingsAdapter, xc.path);
+            if (existing !== undefined && existing !== null && typeof existing === "object") {
+              deepApply(existing, xc.value);
+            } else {
+              setPathValue(settingsAdapter, xc.path, xc.value);
+            }
+          } else {
+            setPathValue(settingsAdapter, xc.path, xc.value);
+          }
+          if (touchedSections.indexOf(sec) === -1) {
+            touchedSections.push(sec);
+          }
+        }
+        root._legacyOverrides = externalJson;
+        // Re-baseline only the sections whose values were actually applied
+        for (var ti = 0; ti < touchedSections.length; ti++) {
+          var ts = touchedSections[ti];
+          if (root._snapshot && settingsAdapter[ts] !== undefined) {
+            root._snapshot[ts] = QtObj2JS.qtObjectToPlainObject(settingsAdapter[ts]);
+          }
+        }
+        root.settingsReloaded();
       }
     }
     onLoadFailed: function (error) {
@@ -202,21 +231,160 @@ Singleton {
         return;
       }
       if (error.toString().includes("No such file") || error === 2) {
-        // File doesn't exist: run purely on schema defaults.
-        // The override file is NOT created here — it appears only when the
-        // user actually changes a setting (tracked-set write path).
-        root.isFreshInstall = true;
-        adapter.settingsVersion = settingsVersion;
-        root._overrides = {};
-        root._snapshot = QtObj2JS.qtObjectToPlainObject(adapter);
-        root.isLoaded = true;
-        root.settingsLoaded();
-        upgradeSettings();
-
-        // We started without settings, we should open the setupWizard
-        root.shouldOpenSetupWizard = true;
+        // No legacy monolith — normal for fresh installs and post-split
+        // setups. Section files load next; freshness is decided there.
+        root._legacyOverrides = {};
+        settingsAdapter.settingsVersion = settingsVersion;
+        beginSectionLoads();
       }
     }
+  }
+
+  // -----------------------------------------------------
+  // Section override files: <configDir>/settings/<section>.json, one per
+  // settingsAdapter root key. Text-mode FileViews (no settingsAdapter attachment — the
+  // legacy view owns the root settingsAdapter); applied manually via deepApply.
+  // The model is gated on sectionsReady so delegates are created only
+  // after the legacy layer lands (section files take precedence).
+  ListModel {
+    id: sectionsModel
+  }
+
+  Instantiator {
+    model: root.sectionsReady ? sectionsModel : []
+
+    delegate: FileView {
+      id: sectionView
+
+      // `required` makes the Instantiator assign the role before component
+      // completion — without it, delegate-declared bindings evaluate too
+      // early and see undefined (verified against DankMaterialShell /
+      // caelestia delegate patterns).
+      required property string name
+      property string section: name
+
+      path: root.overridesDir + name + ".json"
+      printErrors: false
+      watchChanges: true
+
+      Component.onCompleted: {
+        root._sectionViews[name] = sectionView;
+      }
+
+      onPathChanged: {
+        if (path !== undefined) {
+          reload();
+        }
+      }
+
+      onFileChanged: {
+        if (Date.now() - root._lastWriteTime < 1000) {
+          return; // our own tmp+mv write
+        }
+        reload();
+      }
+
+      onLoaded: function () {
+        var parsed = null;
+        try {
+          parsed = JSON.parse(sectionView.text());
+        } catch (e) {
+          Logger.w("Settings", "Corrupt section file, using defaults for: " + section);
+        }
+
+        if (!root.isLoaded) {
+          root._overrides[section] = parsed || {};
+          if (parsed) {
+            deepApply(settingsAdapter[section], parsed);
+            root._sawAnyFile = true;
+          }
+          root.sectionSettled();
+        } else {
+          // External edit of this section file (post-load): content-diff gate
+          if (parsed) {
+            root.applyExternalSectionEdit(section, parsed);
+          }
+        }
+      }
+
+      onLoadFailed: function (error) {
+        if (!root.isLoaded) {
+          root._overrides[section] = {};
+          root.sectionSettled();
+        }
+      }
+    }
+  }
+
+  // Trigger section file loads once the legacy layer has landed
+  function beginSectionLoads() {
+    if (root._sections.length === 0) {
+      finishLoad();
+      return;
+    }
+    root.sectionsReady = true;
+  }
+
+  // Called by each section FileView when its initial read settles
+  function sectionSettled() {
+    root._sectionsSettled++;
+    if (root._sectionsSettled >= root._sections.length) {
+      finishLoad();
+    }
+  }
+
+  // All layers have landed: baseline and go live
+  function finishLoad() {
+    if (root.isLoaded) {
+      return;
+    }
+    root._snapshot = QtObj2JS.qtObjectToPlainObject(settingsAdapter);
+    root.isLoaded = true;
+    root.settingsLoaded();
+    upgradeSettings();
+
+    if (!root._sawAnyFile) {
+      // No legacy file, no section files: genuine first start
+      root.isFreshInstall = true;
+      root.shouldOpenSetupWizard = true;
+    }
+  }
+
+  // External edit of a section file: apply the real diff (section-scoped),
+  // never clobbering pending debounced changes in other sections.
+  function applyExternalSectionEdit(section, parsed) {
+    var currentTree = root._overrides[section] || {};
+    var changes = [];
+    diffLeaves(currentTree, parsed, "", changes);
+    if (changes.length === 0) {
+      Logger.d("Settings", "Spurious reload of section " + section + " — ignoring");
+      return;
+    }
+    Logger.d("Settings", "Section " + section + " changed externally (" + changes.length + " paths)");
+    for (var i = 0; i < changes.length; i++) {
+      var c = changes[i];
+      if (c.deleted) {
+        var def = getDefaultValue(section + "." + c.path);
+        if (def !== undefined) {
+          setPathValue(settingsAdapter[section], c.path, def);
+        }
+      } else if (c.value !== null && typeof c.value === "object" && !Array.isArray(c.value)) {
+        var existing = getPathValue(settingsAdapter[section], c.path);
+        if (existing !== undefined && existing !== null && typeof existing === "object") {
+          deepApply(existing, c.value);
+        } else {
+          setPathValue(settingsAdapter[section], c.path, c.value);
+        }
+      } else {
+        setPathValue(settingsAdapter[section], c.path, c.value);
+      }
+    }
+    root._overrides[section] = parsed;
+    // Re-baseline this section only (pending changes elsewhere stay tracked)
+    if (root._snapshot && settingsAdapter[section] !== undefined) {
+      root._snapshot[section] = QtObj2JS.qtObjectToPlainObject(settingsAdapter[section]);
+    }
+    root.settingsReloaded();
   }
 
   // Watch parent config directory as a fallback for declarative setups where
@@ -227,6 +395,26 @@ Singleton {
     printErrors: false
     watchChanges: true
     onFileChanged: scheduleExternalReload()
+  }
+
+  // Watch the settings/ directory for the same reason (section files swapped
+  // atomically). Section reloads are content-gated, so noise is harmless.
+  FileView {
+    id: overridesDirWatcher
+    path: directoriesCreated ? overridesDir : undefined
+    printErrors: false
+    watchChanges: true
+    onFileChanged: {
+      if (Date.now() - root._lastWriteTime < 1000) {
+        return;
+      }
+      for (var i = 0; i < root._sections.length; i++) {
+        var view = root._sectionViews[root._sections[i]];
+        if (view && view.path !== undefined) {
+          view.reload();
+        }
+      }
+    }
   }
 
   // FileView to load default settings for comparison
@@ -240,13 +428,28 @@ Singleton {
   // Cached default settings object
   property var _defaultSettings: null
 
-  // Two-layer settings state:
-  // - _overrides: the sparse user-override tree (mirrors settings.json content)
-  // - _snapshot: last persisted adapter state (baseline for the tracked-set diff)
-  // - _lastWriteTime: timestamp of our last override write (watcher feedback suppression)
-  property var _overrides: null
+  // Per-panel (per-section) override layout:
+  //   <configDir>/settings/<section>.json   — sparse user overrides per panel
+  //   <configDir>/settings.json             — legacy monolith, bottom layer,
+  //                                           adopted as-is, never rewritten
+  // Precedence: section file > legacy file > schema defaults.
+  readonly property string overridesDir: configDir + "settings/"
+
+  // _sections: settingsAdapter root keys (derived at startup, minus settingsVersion)
+  // _overrides: section -> sparse tree (mirrors settings/<section>.json)
+  // _legacyOverrides: legacy settings.json content (read-only after load)
+  // _snapshot: last persisted settingsAdapter state (baseline for tracked-set diff)
+  // _sectionViews: section -> FileView (for gated reloads)
+  // _lastWriteTime: timestamp of our last write (watcher feedback suppression)
+  property var _sections: []
+  property bool sectionsReady: false
+  property int _sectionsSettled: 0
+  property var _overrides: ({})
+  property var _legacyOverrides: ({})
   property var _snapshot: null
+  property var _sectionViews: ({})
   property double _lastWriteTime: 0
+  property bool _sawAnyFile: false
 
   // Load default settings when file is loaded
   Connections {
@@ -262,7 +465,7 @@ Singleton {
   }
 
   JsonAdapter {
-    id: adapter
+    id: settingsAdapter
 
     property int settingsVersion: 0
 
@@ -1243,45 +1446,83 @@ Singleton {
 
   // -----------------------------------------------------
   // Public function to trigger immediate settings saving.
-  // Tracked-set write: diff the adapter against the last snapshot and merge
-  // only the changed leaf paths into the sparse override tree, then write
-  // that tree. A change to a value matching today's default is STILL
-  // recorded — an explicit user choice always lands in the override file.
+  // Tracked-set write: diff the settingsAdapter against the last snapshot and merge
+  // only the changed leaf paths into the per-section override trees, then
+  // write those section files. A change to a value matching today's default
+  // is STILL recorded — an explicit user choice always lands in the file.
   function saveImmediate() {
-    if (mergePendingChanges()) {
-      writeOverridesFile();
+    var touched = mergePendingChanges();
+    if (touched.length > 0) {
+      persistSections(touched);
     }
     root.settingsSaved(); // Emit signal after saving
   }
 
   // -----------------------------------------------------
-  // Merge adapter changes since the last snapshot into the override tree
-  // (no file write). Returns true when anything was merged.
+  // Merge settingsAdapter changes since the last snapshot into the per-section
+  // override trees (no file write). Returns the list of touched sections.
   function mergePendingChanges() {
     if (!root.isLoaded || !root._snapshot) {
-      return false;
+      return [];
     }
 
-    var current = QtObj2JS.qtObjectToPlainObject(adapter);
+    var current = QtObj2JS.qtObjectToPlainObject(settingsAdapter);
     var changes = [];
     diffLeaves(root._snapshot, current, "", changes);
     if (changes.length === 0) {
-      return false;
+      return [];
     }
 
-    if (!root._overrides) {
-      root._overrides = {};
-    }
+    var touched = [];
     for (var i = 0; i < changes.length; i++) {
       var c = changes[i];
+      var dot = c.path.indexOf(".");
+      var section = dot === -1 ? c.path : c.path.substring(0, dot);
+      var rel = dot === -1 ? "" : c.path.substring(dot + 1);
+      if (section === "settingsVersion") {
+        continue; // version marker is never persisted to user files
+      }
+      if (root._overrides[section] === undefined) {
+        root._overrides[section] = {};
+      }
       if (c.deleted) {
-        deepDelete(root._overrides, c.path);
+        if (rel !== "") {
+          deepDelete(root._overrides[section], rel);
+        }
+      } else if (rel === "") {
+        root._overrides[section] = c.value;
       } else {
-        deepSet(root._overrides, c.path, c.value);
+        deepSet(root._overrides[section], rel, c.value);
+      }
+      if (touched.indexOf(section) === -1) {
+        touched.push(section);
       }
     }
     root._snapshot = current;
-    return true;
+    return touched;
+  }
+
+  // -----------------------------------------------------
+  // Write (or delete, when empty) each touched section's override file.
+  // An empty tree means no user choices remain for that panel: the file is
+  // removed so "file exists" always means "user chose something here".
+  // Writes are tmp+mv so a crash mid-write cannot truncate the file.
+  function persistSections(sections) {
+    for (var i = 0; i < sections.length; i++) {
+      var section = sections[i];
+      var tree = root._overrides[section] || {};
+      var filePath = root.overridesDir + section + ".json";
+      root._lastWriteTime = Date.now();
+      if (Object.keys(tree).length === 0) {
+        Quickshell.execDetached(["rm", "-f", filePath]);
+      } else {
+        var jsonData = JSON.stringify(tree, null, 2);
+        var tmpPath = filePath + ".tmp";
+        // Note: the && belongs on the command line — a line starting with &&
+        // after the heredoc terminator is a syntax error.
+        Quickshell.execDetached(["sh", "-c", `cat > "${tmpPath}" << 'ATMOSPHERA_EOF' && mv "${tmpPath}" "${filePath}"\n${jsonData}\nATMOSPHERA_EOF\n`]);
+      }
+    }
   }
 
   // -----------------------------------------------------
@@ -1413,66 +1654,56 @@ Singleton {
   }
 
   // -----------------------------------------------------
-  // Write the sparse override tree to the user settings file.
-  // Temp-file + mv so a crash mid-write cannot truncate the file.
-  function writeOverridesFile() {
-    try {
-      var jsonData = JSON.stringify(root._overrides, null, 2);
-      var tmpPath = settingsFile + ".tmp";
-      root._lastWriteTime = Date.now();
-      // Note: the && belongs on the command line — a line starting with &&
-      // after the heredoc terminator is a syntax error.
-      Quickshell.execDetached(["sh", "-c", `cat > "${tmpPath}" << 'ATMOSPHERA_EOF' && mv "${tmpPath}" "${settingsFile}"\n${jsonData}\nATMOSPHERA_EOF\n`]);
-    } catch (error) {
-      Logger.e("Settings", "Failed to write settings overrides: " + error);
-    }
-  }
-
-  // -----------------------------------------------------
   // Reset one section (panel root key, e.g. "bar") to shipped defaults:
-  // drop the section from the override tree and re-apply defaults in memory.
+  // drop the section's override tree, delete its file, re-apply defaults.
   function resetSection(key) {
-    if (!root._overrides) {
+    if (!root._snapshot) {
       return;
     }
     // Flush pending debounced changes first so they are not lost
-    mergePendingChanges();
-    delete root._overrides[key];
-    if (root._defaultSettings && root._defaultSettings[key] !== undefined && adapter[key] !== undefined) {
-      deepApply(adapter[key], root._defaultSettings[key]);
+    var touched = mergePendingChanges();
+    root._overrides[key] = {};
+    if (root._defaultSettings && root._defaultSettings[key] !== undefined && settingsAdapter[key] !== undefined) {
+      deepApply(settingsAdapter[key], root._defaultSettings[key]);
     }
-    // Persist: diff against snapshot will see the restored defaults as the
-    // change, but the section is already gone from _overrides, so update the
-    // snapshot directly and write.
-    root._snapshot = QtObj2JS.qtObjectToPlainObject(adapter);
-    writeOverridesFile();
+    // The restored defaults are the new baseline for this section; the
+    // emptied tree deletes the file.
+    root._snapshot = QtObj2JS.qtObjectToPlainObject(settingsAdapter);
+    if (touched.indexOf(key) === -1) {
+      touched.push(key);
+    }
+    persistSections(touched);
     root.settingsSaved();
   }
 
   // -----------------------------------------------------
   // Reset a single setting path (e.g. "bar.position") to its shipped default:
-  // drop that key from the override tree and re-apply the default in memory.
+  // drop that key from the section's override tree and re-apply the default.
   function resetValue(path) {
-    if (!root._overrides) {
+    if (!root._snapshot) {
       return;
     }
     // Flush pending debounced changes first so they are not lost
-    mergePendingChanges();
-    deepDelete(root._overrides, path);
+    var touched = mergePendingChanges();
+    var dot = path.indexOf(".");
+    var section = dot === -1 ? path : path.substring(0, dot);
+    var rel = dot === -1 ? "" : path.substring(dot + 1);
+    if (root._overrides[section] !== undefined) {
+      if (rel === "") {
+        root._overrides[section] = {};
+      } else {
+        deepDelete(root._overrides[section], rel);
+      }
+    }
     var defaultValue = getDefaultValue(path);
     if (defaultValue !== undefined) {
-      var parts = path.split(".");
-      var target = adapter;
-      for (var i = 0; i < parts.length - 1; i++) {
-        target = target[parts[i]];
-        if (target === undefined || target === null) {
-          return;
-        }
-      }
-      target[parts[parts.length - 1]] = defaultValue;
+      setPathValue(settingsAdapter, path, defaultValue);
     }
-    root._snapshot = QtObj2JS.qtObjectToPlainObject(adapter);
-    writeOverridesFile();
+    root._snapshot = QtObj2JS.qtObjectToPlainObject(settingsAdapter);
+    if (touched.indexOf(section) === -1) {
+      touched.push(section);
+    }
+    persistSections(touched);
     root.settingsSaved();
   }
 
@@ -1483,7 +1714,7 @@ Singleton {
       Logger.d("Settings", "Generating Configs/defaults.json");
 
       // Prepare a clean JSON
-      var plainAdapter = QtObj2JS.qtObjectToPlainObject(adapter);
+      var plainAdapter = QtObj2JS.qtObjectToPlainObject(settingsAdapter);
       var jsonData = JSON.stringify(plainAdapter, null, 2);
 
       var defaultPath = Quickshell.shellDir + "/Configs/defaults.json";
@@ -1517,7 +1748,7 @@ Singleton {
 
   // -----------------------------------------------------
   // Run versioned migrations using MigrationRegistry
-  // rawJson is the parsed JSON file content (before adapter filtering)
+  // rawJson is the parsed JSON file content (before settingsAdapter filtering)
   function runVersionedMigrations(rawJson) {
     // Skip migrations on fresh installs (no prior settings file)
     if (!rawJson || root.isFreshInstall) {
@@ -1525,10 +1756,10 @@ Singleton {
       return;
     }
 
-    const currentVersion = adapter.settingsVersion;
+    const currentVersion = settingsAdapter.settingsVersion;
     const migrations = MigrationRegistry.migrations;
 
-    Logger.i("Settings", "adapter.settingsVersion:", adapter.settingsVersion);
+    Logger.i("Settings", "settingsAdapter.settingsVersion:", settingsAdapter.settingsVersion);
 
     // Get all migration versions and sort them
     const versions = Object.keys(migrations).map(v => parseInt(v)).sort((a, b) => a - b);
@@ -1543,7 +1774,7 @@ Singleton {
         const migration = migrationComponent.createObject(root);
 
         if (migration && typeof migration.migrate === "function") {
-          const success = migration.migrate(adapter, Logger, rawJson);
+          const success = migration.migrate(settingsAdapter, Logger, rawJson);
           if (!success) {
             Logger.e("Settings", "Migration to v" + version + " failed");
           }
@@ -1581,7 +1812,7 @@ Singleton {
     // Flush any user changes that landed during the startup window BEFORE
     // housekeeping runs — the re-baseline at the end must absorb only
     // housekeeping mutations, never user edits.
-    var hadUserChanges = mergePendingChanges();
+    var userTouchedSections = mergePendingChanges();
 
     // -----------------
     const sections = ["left", "center", "right"];
@@ -1590,7 +1821,7 @@ Singleton {
     var removedWidget = false;
     for (var s = 0; s < sections.length; s++) {
       const sectionName = sections[s];
-      const widgets = adapter.bar.widgets[sectionName];
+      const widgets = settingsAdapter.bar.widgets[sectionName];
       // Iterate backward through the widgets array, so it does not break when removing a widget
       for (var i = widgets.length - 1; i >= 0; i--) {
         var widget = widgets[i];
@@ -1607,7 +1838,7 @@ Singleton {
     const ccSections = ["left", "right"];
     for (var s = 0; s < ccSections.length; s++) {
       const sectionName = ccSections[s];
-      const shortcuts = adapter.controlCenter.shortcuts[sectionName];
+      const shortcuts = settingsAdapter.controlCenter.shortcuts[sectionName];
       for (var i = shortcuts.length - 1; i >= 0; i--) {
         var shortcut = shortcuts[i];
         if (!ControlCenterWidgetRegistry.hasWidget(shortcut.id)) {
@@ -1620,7 +1851,7 @@ Singleton {
 
     // -----------------
     // 3. remove any non existing desktop widget type
-    const monitorWidgets = adapter.desktopWidgets.monitorWidgets;
+    const monitorWidgets = settingsAdapter.desktopWidgets.monitorWidgets;
     for (var m = 0; m < monitorWidgets.length; m++) {
       const monitor = monitorWidgets[m];
       if (!monitor.widgets)
@@ -1639,8 +1870,8 @@ Singleton {
     // 4. upgrade user widget settings
     for (var s = 0; s < sections.length; s++) {
       const sectionName = sections[s];
-      for (var i = 0; i < adapter.bar.widgets[sectionName].length; i++) {
-        var widget = adapter.bar.widgets[sectionName][i];
+      for (var i = 0; i < settingsAdapter.bar.widgets[sectionName].length; i++) {
+        var widget = settingsAdapter.bar.widgets[sectionName][i];
 
         // Check if widget registry supports user settings, if it does not, then there is nothing to do
         if (BarWidgetRegistry.widgetMetadata[widget.id] === undefined) {
@@ -1655,10 +1886,10 @@ Singleton {
 
     // Housekeeping (widget pruning / metadata injection) stays in-memory
     // only: re-baseline the snapshot so it is never persisted to the
-    // user's override file. User changes flushed above are written now.
-    root._snapshot = QtObj2JS.qtObjectToPlainObject(adapter);
-    if (hadUserChanges) {
-      writeOverridesFile();
+    // user's override files. User changes flushed above are written now.
+    root._snapshot = QtObj2JS.qtObjectToPlainObject(settingsAdapter);
+    if (userTouchedSections.length > 0) {
+      persistSections(userTouchedSections);
       root.settingsSaved();
     }
   }
