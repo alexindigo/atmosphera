@@ -662,8 +662,15 @@ Singleton {
     return root.pluginsDir + "/" + pluginId;
   }
 
-  // Get plugin settings file path
+  // Get plugin settings file path (user-owned area: survives plugin
+  // uninstall/reinstall, which wipes only the plugin's code dir)
   function getPluginSettingsFile(pluginId) {
+    return Settings.configDir + "settings/plugins/" + pluginId + ".json";
+  }
+
+  // Legacy per-plugin settings location (inside the plugin dir); read-only
+  // fallback for users upgrading from before the path move.
+  function getLegacyPluginSettingsFile(pluginId) {
     return getPluginDir(pluginId) + "/settings.json";
   }
 

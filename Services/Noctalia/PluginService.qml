@@ -1421,10 +1421,11 @@ Singleton {
   }
 
   // Load plugin config: plugin-shipped config.default.json merged with the
-  // user's sparse override at ~/.config/atmosphera/plugins/<id>/config.json
+  // user's sparse override at settings/plugins/<id>.config.json (user-owned
+  // area, survives plugin uninstall/reinstall)
   function loadPluginConfig(pluginId, callback) {
     var defaultFile = PluginRegistry.getPluginDir(pluginId) + "/config.default.json";
-    var userFile = Settings.configDir + "plugins/" + pluginId + "/config.json";
+    var userFile = Settings.configDir + "settings/plugins/" + pluginId + ".config.json";
 
     readJsonFile(defaultFile, function (defaults) {
       readJsonFile(userFile, function (user) {
@@ -1433,12 +1434,20 @@ Singleton {
     });
   }
 
-  // Load plugin settings
+  // Load plugin settings (new user-owned path, with read-only fallback to
+  // the legacy in-plugin-dir location for upgrades)
   function loadPluginSettings(pluginId, callback) {
     var settingsFile = PluginRegistry.getPluginSettingsFile(pluginId);
 
     readJsonFile(settingsFile, function (settings) {
-      callback(settings);
+      if (Object.keys(settings).length > 0) {
+        callback(settings);
+        return;
+      }
+      // Fallback: legacy location inside the plugin dir (pre-path-move)
+      readJsonFile(PluginRegistry.getLegacyPluginSettingsFile(pluginId), function (legacySettings) {
+        callback(legacySettings);
+      });
     });
   }
 
