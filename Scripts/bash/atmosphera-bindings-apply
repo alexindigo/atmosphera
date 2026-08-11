@@ -31,17 +31,22 @@ ZED_DIR="$HOME/.config/zed"
 log() { printf '[bindings-apply] %s\n' "$*" >&2; }
 
 read_environment() {
-  if [ ! -f "$SETTINGS_FILE" ]; then
-    echo "none"
-    return
-  fi
+  # Per-panel layout: settings/bindings.json takes precedence; the legacy
+  # monolith (settings.json) is the fallback layer.
+  local section_file="$(dirname "$SETTINGS_FILE")/settings/bindings.json"
   python3 -c "
-import json, sys
-try:
-    with open('$SETTINGS_FILE') as f:
-        d = json.load(f)
-    print(d.get('bindings', {}).get('environment', 'none'))
-except Exception:
+import json
+for path in ('$section_file', '$SETTINGS_FILE'):
+    try:
+        with open(path) as f:
+            d = json.load(f)
+        env = d.get('environment') if path.endswith('bindings.json') else d.get('bindings', {}).get('environment')
+        if isinstance(env, str) and env:
+            print(env)
+            break
+    except Exception:
+        continue
+else:
     print('none')
 "
 }

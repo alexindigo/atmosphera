@@ -30,22 +30,27 @@ KEYD_INCLUDE="$KEYD_DIR/atmosphera"
 
 ENV_NAME="${1:-}"
 if [ -z "$ENV_NAME" ]; then
-  # Read from settings.json of the invoking user
+  # Read from the invoking user's settings (per-panel file first, legacy
+  # monolith as fallback layer)
   SETTINGS_USER="${SUDO_USER:-$USER}"
   SETTINGS_HOME="$(getent passwd "$SETTINGS_USER" | cut -d: -f6)"
+  SECTION_FILE="$SETTINGS_HOME/.config/atmosphera/settings/bindings.json"
   SETTINGS_FILE="$SETTINGS_HOME/.config/atmosphera/settings.json"
-  if [ -f "$SETTINGS_FILE" ]; then
-    ENV_NAME="$(python3 -c "
-import json, sys
-try:
-    d = json.load(open('$SETTINGS_FILE'))
-    print(d.get('bindings', {}).get('environment', 'none'))
-except Exception:
+  ENV_NAME="$(python3 -c "
+import json
+for path in ('$SECTION_FILE', '$SETTINGS_FILE'):
+    try:
+        with open(path) as f:
+            d = json.load(f)
+        env = d.get('environment') if path.endswith('bindings.json') else d.get('bindings', {}).get('environment')
+        if isinstance(env, str) and env:
+            print(env)
+            break
+    except Exception:
+        continue
+else:
     print('none')
 ")"
-  else
-    ENV_NAME="none"
-  fi
 fi
 
 log() { printf '[bindings-apply-keyd] %s\n' "$*" >&2; }

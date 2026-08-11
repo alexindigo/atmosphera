@@ -33,19 +33,24 @@ if [ -f "$CONFIG_FILE" ] && grep -qxF "$LEGACY_INCLUDE" "$CONFIG_FILE"; then
   echo "Removed legacy include from: ${CONFIG_FILE}"
 fi
 
-# Bindings environment (same source as atmosphera-bindings-apply)
-env_val="none"
-if [ -f "$SETTINGS_FILE" ]; then
-  env_val=$(python3 -c "
+# Bindings environment (same source as atmosphera-bindings-apply):
+# per-panel settings/bindings.json first, legacy settings.json as fallback
+SECTION_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/atmosphera/settings/bindings.json"
+env_val=$(python3 -c "
 import json
-try:
-    with open('$SETTINGS_FILE') as f:
-        d = json.load(f)
-    print(d.get('bindings', {}).get('environment', 'none'))
-except Exception:
+for path in ('$SECTION_FILE', '$SETTINGS_FILE'):
+    try:
+        with open(path) as f:
+            d = json.load(f)
+        env = d.get('environment') if path.endswith('bindings.json') else d.get('bindings', {}).get('environment')
+        if isinstance(env, str) and env:
+            print(env)
+            break
+    except Exception:
+        continue
+else:
     print('none')
 ")
-fi
 
 # Detect niri's boot-time base config from the process hosting this session
 # (cmdline/environ are frozen at exec time — immune to later config switches)
