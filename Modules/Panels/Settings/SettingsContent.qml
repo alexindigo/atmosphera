@@ -43,6 +43,31 @@ Item {
 
   // Exposed state for parent to access
   property int currentTabIndex: 0
+
+  // Tab → settings root-key map for the per-tab reset button.
+  // Tabs without a dedicated settings root key are omitted (button hidden).
+  readonly property var tabResetKeys: ({
+                                         [SettingsPanel.Tab.General]: "general",
+                                         [SettingsPanel.Tab.UserInterface]: "ui",
+                                         [SettingsPanel.Tab.ColorScheme]: "colorSchemes",
+                                         [SettingsPanel.Tab.Wallpaper]: "wallpaper",
+                                         [SettingsPanel.Tab.Bar]: "bar",
+                                         [SettingsPanel.Tab.Dock]: "dock",
+                                         [SettingsPanel.Tab.DesktopWidgets]: "desktopWidgets",
+                                         [SettingsPanel.Tab.ControlCenter]: "controlCenter",
+                                         [SettingsPanel.Tab.Launcher]: "appLauncher",
+                                         [SettingsPanel.Tab.Notifications]: "notifications",
+                                         [SettingsPanel.Tab.OSD]: "osd",
+                                         [SettingsPanel.Tab.SessionMenu]: "sessionMenu",
+                                         [SettingsPanel.Tab.Idle]: "idle",
+                                         [SettingsPanel.Tab.Audio]: "audio",
+                                         [SettingsPanel.Tab.System]: "systemMonitor",
+                                         [SettingsPanel.Tab.Hooks]: "hooks"
+                                       })
+  readonly property string currentTabResetKey: {
+    var t = root.tabsModel[root.currentTabIndex];
+    return (t && root.tabResetKeys[t.id]) || "";
+  }
   property var tabsModel: []
   property var activeScrollView: null
   property var activeTabContent: null
@@ -1202,6 +1227,14 @@ Item {
               color: Color.mPrimary
               Layout.fillWidth: true
               Layout.alignment: Qt.AlignVCenter
+            }
+
+            NIconButton {
+              visible: root.currentTabResetKey !== ""
+              icon: "restore"
+              tooltipText: I18n.tr("common.reset-to-default")
+              Layout.alignment: Qt.AlignVCenter
+              onClicked: Settings.resetSection(root.currentTabResetKey)
             }
 
             NIconButton {
