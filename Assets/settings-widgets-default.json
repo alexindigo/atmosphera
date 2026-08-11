@@ -92,6 +92,12 @@
       "iconColor": "none",
       "textColor": "none"
     },
+    "InputMethod": {
+      "displayMode": "flag",
+      "showIcon": true,
+      "iconColor": "none",
+      "textColor": "none"
+    },
     "KeyboardLayout": {
       "displayMode": "onhover",
       "showIcon": true,
@@ -293,6 +299,18 @@
       "visualizerType": "linear",
       "hideWhenIdle": false,
       "colorName": "primary"
+    },
+    "AppShortcut": {
+      "showBackground": false,
+      "roundedCorners": true,
+      "appId": "",
+      "customLabel": "",
+      "showLabel": false,
+      "singleClick": true,
+      "environmentVars": [],
+      "params": [],
+      "iconSource": "",
+      "iconType": "auto"
     }
   }
 }
