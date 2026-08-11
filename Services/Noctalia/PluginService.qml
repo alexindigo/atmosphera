@@ -1121,6 +1121,7 @@ Singleton {
 
         // Functions will be bound below
         property var saveSettings: null
+        property var getConfig: null
         property var openPanel: null
         property var closePanel: null
         property var togglePanel: null
@@ -1169,6 +1170,14 @@ Singleton {
       // Replace the entire pluginSettings object to trigger QML property bindings
       // Make a shallow copy so bindings detect the change
       api.pluginSettings = Object.assign({}, api.pluginSettings);
+    };
+
+    // ----------------------------------------
+    // Two-layer plugin config: plugin-shipped config.default.json merged with
+    // the user's sparse override at ~/.config/atmosphera/plugins/<id>/config.json
+    // (user wins). Read-only for the shipped file; async via callback.
+    api.getConfig = function (callback) {
+      loadPluginConfig(pluginId, callback);
     };
 
     // ----------------------------------------
@@ -1368,37 +1377,69 @@ Singleton {
     readProcess.running = true;
   }
 
-  // Load plugin settings
-  function loadPluginSettings(pluginId, callback) {
-    var settingsFile = PluginRegistry.getPluginSettingsFile(pluginId);
-
+  // Read a JSON file via cat Process; callback({}) when missing/unparseable
+  function readJsonFile(filePath, callback) {
     var readProcess = Qt.createQmlObject(`
       import QtQuick
       import Quickshell.Io
       Process {
-        command: ["cat", "${settingsFile}"]
+        command: ["cat", "${filePath}"]
         stdout: StdioCollector {}
       }
-    `, root, "ReadSettings_" + pluginId);
+    `, root, "ReadJson_" + Math.random().toString(36).substr(2, 9));
 
     readProcess.exited.connect(function (exitCode) {
+      var result = {};
       if (exitCode === 0) {
         try {
-          var settings = JSON.parse(readProcess.stdout.text);
-          callback(settings);
+          result = JSON.parse(readProcess.stdout.text);
         } catch (e) {
-          Logger.w("PluginService", "Failed to parse settings for", pluginId, "- using defaults");
-          callback({});
+          Logger.w("PluginService", "Failed to parse JSON file:", filePath);
         }
-      } else {
-        // File doesn't exist - use defaults
-        callback({});
       }
-
+      callback(result);
       readProcess.destroy();
     });
 
     readProcess.running = true;
+  }
+
+  // Deep-merge two plain objects; user wins on conflicts (objects recurse,
+  // everything else including arrays is replaced by the user value)
+  function deepMergeObjects(defaults, user) {
+    var result = Object.assign({}, defaults);
+    for (var key in user) {
+      var u = user[key];
+      var d = result[key];
+      if (u !== null && d !== null && typeof u === "object" && typeof d === "object" && !Array.isArray(u) && !Array.isArray(d)) {
+        result[key] = deepMergeObjects(d, u);
+      } else {
+        result[key] = u;
+      }
+    }
+    return result;
+  }
+
+  // Load plugin config: plugin-shipped config.default.json merged with the
+  // user's sparse override at ~/.config/atmosphera/plugins/<id>/config.json
+  function loadPluginConfig(pluginId, callback) {
+    var defaultFile = PluginRegistry.getPluginDir(pluginId) + "/config.default.json";
+    var userFile = Settings.configDir + "plugins/" + pluginId + "/config.json";
+
+    readJsonFile(defaultFile, function (defaults) {
+      readJsonFile(userFile, function (user) {
+        callback(deepMergeObjects(defaults, user));
+      });
+    });
+  }
+
+  // Load plugin settings
+  function loadPluginSettings(pluginId, callback) {
+    var settingsFile = PluginRegistry.getPluginSettingsFile(pluginId);
+
+    readJsonFile(settingsFile, function (settings) {
+      callback(settings);
+    });
   }
 
   // Save plugin settings
