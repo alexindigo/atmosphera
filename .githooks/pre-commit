@@ -49,3 +49,18 @@ if git diff --cached --name-only --diff-filter=ACM | grep -q 'Assets/Translation
   python3 Scripts/dev/build-settings-search-index.py
   git add Assets/settings-search-index.json
 fi
+
+# -- Defaults freshness reminder --
+# Configs/defaults.json is generated from the Settings.qml adapter schema by a
+# dev shell running with ATMOSPHERA_DEBUG=1. If the schema region changed
+# (property lines in the JsonAdapter), the file should be regenerated and
+# staged alongside. Logic-only edits don't need it, so this is a warning.
+if git diff --cached --name-only --diff-filter=ACM | grep -q 'Commons/Settings\.qml'; then
+  if ! git diff --cached --name-only --diff-filter=ACM | grep -q 'Configs/defaults\.json'; then
+    if git diff --cached -- Commons/Settings.qml | grep -qE '^\+[[:space:]]*(readonly )?property (JsonObject|var|bool|int|string|real|color) '; then
+      echo "WARNING: Settings.qml schema changed but Configs/defaults.json is not staged." >&2
+      echo "  Regenerate with a debug shell run (ATMOSPHERA_DEBUG=1) and stage it," >&2
+      echo "  or ignore if the property change is not part of the settings schema." >&2
+    fi
+  fi
+fi

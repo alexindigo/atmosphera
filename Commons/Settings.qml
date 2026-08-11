@@ -59,6 +59,11 @@ Singleton {
     if (!directoriesCreated || settingsFileView.path === undefined) {
       return;
     }
+    // Suppress feedback from our own override writes (tmp+mv shows up as a
+    // file change); genuine external edits still reload after the window.
+    if (Date.now() - root._lastWriteTime < 1000) {
+      return;
+    }
     externalReloadTimer.restart();
   }
 
@@ -135,14 +140,60 @@ Singleton {
         // Finally, update our local settings version
         adapter.settingsVersion = settingsVersion;
 
+        // The user file content IS the override layer (sparse for new-format
+        // files, full tree for pre-refactor files — either way it is adopted
+        // as-is and never pruned or rewritten except via tracked changes).
+        root._overrides = rawJson || {};
+        root._snapshot = QtObj2JS.qtObjectToPlainObject(adapter);
+
         // Emit the signal
         root.isLoaded = true;
         root.settingsLoaded();
 
         upgradeSettings();
       } else {
-        Logger.d("Settings", "Settings reloaded from external file change");
-        root.settingsReloaded();
+        // External file change. The directory watcher also fires for sibling
+        // files (colors.json, plugins.json, our own tmp+mv), so gate on an
+        // actual content diff vs the override tree: spurious reloads are a
+        // no-op. CRITICAL: never re-baseline _snapshot here without recording
+        // — a pending debounced user change would be silently absorbed.
+        var externalJson = null;
+        try {
+          externalJson = JSON.parse(settingsFileView.text());
+        } catch (e) {
+          Logger.w("Settings", "Could not parse externally-modified settings file");
+        }
+        if (externalJson) {
+          var extChanges = [];
+          diffLeaves(root._overrides || {}, externalJson, "", extChanges);
+          if (extChanges.length === 0) {
+            Logger.d("Settings", "Spurious reload (no content change) — ignoring");
+            return;
+          }
+          Logger.d("Settings", "Settings reloaded from external file change (" + extChanges.length + " changed paths)");
+          for (var xi = 0; xi < extChanges.length; xi++) {
+            var xc = extChanges[xi];
+            if (xc.deleted) {
+              // Key removed externally: fall back to the shipped default
+              var def = getDefaultValue(xc.path);
+              if (def !== undefined) {
+                setPathValue(adapter, xc.path, def);
+              }
+            } else if (xc.value !== null && typeof xc.value === "object" && !Array.isArray(xc.value)) {
+              var existing = getPathValue(adapter, xc.path);
+              if (existing !== undefined && existing !== null && typeof existing === "object") {
+                deepApply(existing, xc.value);
+              } else {
+                setPathValue(adapter, xc.path, xc.value);
+              }
+            } else {
+              setPathValue(adapter, xc.path, xc.value);
+            }
+          }
+          root._overrides = externalJson;
+          root._snapshot = QtObj2JS.qtObjectToPlainObject(adapter);
+          root.settingsReloaded();
+        }
       }
     }
     onLoadFailed: function (error) {
@@ -151,9 +202,16 @@ Singleton {
         return;
       }
       if (error.toString().includes("No such file") || error === 2) {
-        // File doesn't exist, create it with default values
+        // File doesn't exist: run purely on schema defaults.
+        // The override file is NOT created here — it appears only when the
+        // user actually changes a setting (tracked-set write path).
         root.isFreshInstall = true;
-        writeAdapter();
+        adapter.settingsVersion = settingsVersion;
+        root._overrides = {};
+        root._snapshot = QtObj2JS.qtObjectToPlainObject(adapter);
+        root.isLoaded = true;
+        root.settingsLoaded();
+        upgradeSettings();
 
         // We started without settings, we should open the setupWizard
         root.shouldOpenSetupWizard = true;
@@ -174,13 +232,21 @@ Singleton {
   // FileView to load default settings for comparison
   FileView {
     id: defaultSettingsFileView
-    path: Quickshell.shellDir + "/Assets/settings-default.json"
+    path: Quickshell.shellDir + "/Configs/defaults.json"
     printErrors: false
     watchChanges: false
   }
 
   // Cached default settings object
   property var _defaultSettings: null
+
+  // Two-layer settings state:
+  // - _overrides: the sparse user-override tree (mirrors settings.json content)
+  // - _snapshot: last persisted adapter state (baseline for the tracked-set diff)
+  // - _lastWriteTime: timestamp of our last override write (watcher feedback suppression)
+  property var _overrides: null
+  property var _snapshot: null
+  property double _lastWriteTime: 0
 
   // Load default settings when file is loaded
   Connections {
@@ -1176,23 +1242,251 @@ Singleton {
   }
 
   // -----------------------------------------------------
-  // Public function to trigger immediate settings saving
+  // Public function to trigger immediate settings saving.
+  // Tracked-set write: diff the adapter against the last snapshot and merge
+  // only the changed leaf paths into the sparse override tree, then write
+  // that tree. A change to a value matching today's default is STILL
+  // recorded — an explicit user choice always lands in the override file.
   function saveImmediate() {
-    settingsFileView.writeAdapter();
+    if (mergePendingChanges()) {
+      writeOverridesFile();
+    }
     root.settingsSaved(); // Emit signal after saving
+  }
+
+  // -----------------------------------------------------
+  // Merge adapter changes since the last snapshot into the override tree
+  // (no file write). Returns true when anything was merged.
+  function mergePendingChanges() {
+    if (!root.isLoaded || !root._snapshot) {
+      return false;
+    }
+
+    var current = QtObj2JS.qtObjectToPlainObject(adapter);
+    var changes = [];
+    diffLeaves(root._snapshot, current, "", changes);
+    if (changes.length === 0) {
+      return false;
+    }
+
+    if (!root._overrides) {
+      root._overrides = {};
+    }
+    for (var i = 0; i < changes.length; i++) {
+      var c = changes[i];
+      if (c.deleted) {
+        deepDelete(root._overrides, c.path);
+      } else {
+        deepSet(root._overrides, c.path, c.value);
+      }
+    }
+    root._snapshot = current;
+    return true;
+  }
+
+  // -----------------------------------------------------
+  // Recursively collect leaf-path differences between two plain objects.
+  // Arrays are treated as leaves (replaced wholesale). Objects present in
+  // `before` but missing in `after` are reported as deletions.
+  function diffLeaves(before, after, prefix, out) {
+    var key;
+    if (before === after) {
+      return;
+    }
+    var beforeIsObj = (before !== null && typeof before === "object" && !Array.isArray(before));
+    var afterIsObj = (after !== null && typeof after === "object" && !Array.isArray(after));
+    if (!beforeIsObj || !afterIsObj) {
+      if (JSON.stringify(before) !== JSON.stringify(after)) {
+        out.push({
+                   "path": prefix,
+                   "value": after,
+                   "deleted": after === undefined
+                 });
+      }
+      return;
+    }
+    for (key in before) {
+      var p = prefix ? prefix + "." + key : key;
+      if (!(key in after)) {
+        out.push({
+                   "path": p,
+                   "value": undefined,
+                   "deleted": true
+                 });
+      } else {
+        diffLeaves(before[key], after[key], p, out);
+      }
+    }
+    for (key in after) {
+      if (!(key in before)) {
+        out.push({
+                   "path": prefix ? prefix + "." + key : key,
+                   "value": after[key],
+                   "deleted": false
+                 });
+      }
+    }
+  }
+
+  // -----------------------------------------------------
+  // Set a dotted path (e.g. "bar.position") inside a plain object tree
+  function deepSet(obj, path, value) {
+    var parts = path.split(".");
+    var current = obj;
+    for (var i = 0; i < parts.length - 1; i++) {
+      if (current[parts[i]] === undefined || current[parts[i]] === null || typeof current[parts[i]] !== "object") {
+        current[parts[i]] = {};
+      }
+      current = current[parts[i]];
+    }
+    current[parts[parts.length - 1]] = value;
+  }
+
+  // -----------------------------------------------------
+  // Read a dotted path from a (possibly JsonObject-based) tree
+  function getPathValue(obj, path) {
+    var parts = path.split(".");
+    var current = obj;
+    for (var i = 0; i < parts.length; i++) {
+      if (current === undefined || current === null) {
+        return undefined;
+      }
+      current = current[parts[i]];
+    }
+    return current;
+  }
+
+  // -----------------------------------------------------
+  // Write a dotted path on a (possibly JsonObject-based) tree
+  function setPathValue(obj, path, value) {
+    var parts = path.split(".");
+    var current = obj;
+    for (var i = 0; i < parts.length - 1; i++) {
+      current = current[parts[i]];
+      if (current === undefined || current === null) {
+        return;
+      }
+    }
+    current[parts[parts.length - 1]] = value;
+  }
+
+  // -----------------------------------------------------
+  // Delete a dotted path from a plain object tree (prunes empty parents)
+  function deepDelete(obj, path) {
+    var parts = path.split(".");
+    var stack = [];
+    var current = obj;
+    for (var i = 0; i < parts.length - 1; i++) {
+      if (current[parts[i]] === undefined || current[parts[i]] === null || typeof current[parts[i]] !== "object") {
+        return;
+      }
+      stack.push({
+                   "obj": current,
+                   "key": parts[i]
+                 });
+      current = current[parts[i]];
+    }
+    delete current[parts[parts.length - 1]];
+    // Prune parents that became empty
+    for (var j = stack.length - 1; j >= 0; j--) {
+      var entry = stack[j];
+      if (Object.keys(entry.obj[entry.key]).length === 0) {
+        delete entry.obj[entry.key];
+      } else {
+        break;
+      }
+    }
+  }
+
+  // -----------------------------------------------------
+  // Deep-apply a plain-object tree onto a JsonObject subtree (used to
+  // restore defaults for a section). Arrays replace; plain objects recurse.
+  function deepApply(target, source) {
+    for (var key in source) {
+      var value = source[key];
+      if (value !== null && typeof value === "object" && !Array.isArray(value) && target[key] !== undefined && target[key] !== null && typeof target[key] === "object") {
+        deepApply(target[key], value);
+      } else {
+        target[key] = value;
+      }
+    }
+  }
+
+  // -----------------------------------------------------
+  // Write the sparse override tree to the user settings file.
+  // Temp-file + mv so a crash mid-write cannot truncate the file.
+  function writeOverridesFile() {
+    try {
+      var jsonData = JSON.stringify(root._overrides, null, 2);
+      var tmpPath = settingsFile + ".tmp";
+      root._lastWriteTime = Date.now();
+      // Note: the && belongs on the command line — a line starting with &&
+      // after the heredoc terminator is a syntax error.
+      Quickshell.execDetached(["sh", "-c", `cat > "${tmpPath}" << 'ATMOSPHERA_EOF' && mv "${tmpPath}" "${settingsFile}"\n${jsonData}\nATMOSPHERA_EOF\n`]);
+    } catch (error) {
+      Logger.e("Settings", "Failed to write settings overrides: " + error);
+    }
+  }
+
+  // -----------------------------------------------------
+  // Reset one section (panel root key, e.g. "bar") to shipped defaults:
+  // drop the section from the override tree and re-apply defaults in memory.
+  function resetSection(key) {
+    if (!root._overrides) {
+      return;
+    }
+    // Flush pending debounced changes first so they are not lost
+    mergePendingChanges();
+    delete root._overrides[key];
+    if (root._defaultSettings && root._defaultSettings[key] !== undefined && adapter[key] !== undefined) {
+      deepApply(adapter[key], root._defaultSettings[key]);
+    }
+    // Persist: diff against snapshot will see the restored defaults as the
+    // change, but the section is already gone from _overrides, so update the
+    // snapshot directly and write.
+    root._snapshot = QtObj2JS.qtObjectToPlainObject(adapter);
+    writeOverridesFile();
+    root.settingsSaved();
+  }
+
+  // -----------------------------------------------------
+  // Reset a single setting path (e.g. "bar.position") to its shipped default:
+  // drop that key from the override tree and re-apply the default in memory.
+  function resetValue(path) {
+    if (!root._overrides) {
+      return;
+    }
+    // Flush pending debounced changes first so they are not lost
+    mergePendingChanges();
+    deepDelete(root._overrides, path);
+    var defaultValue = getDefaultValue(path);
+    if (defaultValue !== undefined) {
+      var parts = path.split(".");
+      var target = adapter;
+      for (var i = 0; i < parts.length - 1; i++) {
+        target = target[parts[i]];
+        if (target === undefined || target === null) {
+          return;
+        }
+      }
+      target[parts[parts.length - 1]] = defaultValue;
+    }
+    root._snapshot = QtObj2JS.qtObjectToPlainObject(adapter);
+    writeOverridesFile();
+    root.settingsSaved();
   }
 
   // -----------------------------------------------------
   // Generate default settings: for reference only, not used by the shell
   function generateDefaultSettings() {
     try {
-      Logger.d("Settings", "Generating settings-default.json");
+      Logger.d("Settings", "Generating Configs/defaults.json");
 
       // Prepare a clean JSON
       var plainAdapter = QtObj2JS.qtObjectToPlainObject(adapter);
       var jsonData = JSON.stringify(plainAdapter, null, 2);
 
-      var defaultPath = Quickshell.shellDir + "/Assets/settings-default.json";
+      var defaultPath = Quickshell.shellDir + "/Configs/defaults.json";
 
       Quickshell.execDetached(["sh", "-c", `cat > "${defaultPath}" << 'ATMOSPHERA_EOF'\n${jsonData}\nATMOSPHERA_EOF`]);
     } catch (error) {
@@ -1284,6 +1578,11 @@ Singleton {
       return;
     }
 
+    // Flush any user changes that landed during the startup window BEFORE
+    // housekeeping runs — the re-baseline at the end must absorb only
+    // housekeeping mutations, never user edits.
+    var hadUserChanges = mergePendingChanges();
+
     // -----------------
     const sections = ["left", "center", "right"];
 
@@ -1352,6 +1651,15 @@ Singleton {
           Logger.d("Settings", `Upgraded ${widget.id} widget:`, JSON.stringify(widget));
         }
       }
+    }
+
+    // Housekeeping (widget pruning / metadata injection) stays in-memory
+    // only: re-baseline the snapshot so it is never persisted to the
+    // user's override file. User changes flushed above are written now.
+    root._snapshot = QtObj2JS.qtObjectToPlainObject(adapter);
+    if (hadUserChanges) {
+      writeOverridesFile();
+      root.settingsSaved();
     }
   }
 

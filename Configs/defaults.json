@@ -1,8 +1,5 @@
 {
   "settingsVersion": 0,
-  "bindings": {
-    "environment": "none"
-  },
   "bar": {
     "barType": "simple",
     "position": "top",
@@ -10,14 +7,14 @@
     "density": "default",
     "showOutline": false,
     "showCapsule": true,
-    "capsuleOpacity": 1,
+    "capsuleOpacity": 0.7,
     "capsuleColorKey": "none",
     "widgetSpacing": 6,
     "contentPadding": 2,
     "fontScale": 1,
     "enableExclusionZoneInset": true,
-    "backgroundOpacity": 0.93,
-    "useSeparateOpacity": false,
+    "backgroundOpacity": 0.7,
+    "useSeparateOpacity": true,
     "marginVertical": 4,
     "marginHorizontal": 4,
     "frameThickness": 8,
@@ -148,6 +145,9 @@
     "reverseScroll": false,
     "smoothScrollEnabled": true
   },
+  "bindings": {
+    "environment": "none"
+  },
   "ui": {
     "fontDefault": "",
     "fontFixed": "",
@@ -239,6 +239,7 @@
     "wallhavenResolutionWidth": "",
     "wallhavenResolutionHeight": "",
     "sortOrder": "name",
+    "monitorPools": [],
     "favorites": []
   },
   "appLauncher": {
@@ -539,7 +540,66 @@
     "performanceModeDisabled": "",
     "startup": "",
     "session": "",
-    "colorGeneration": ""
+    "colorGeneration": "",
+    "desktopLeftClick": "",
+    "desktopRightClick": "",
+    "desktopMiddleClick": "",
+    "handlers": {
+      "suspendAction": {
+        "command": "",
+        "exclusive": false
+      },
+      "hibernateAction": {
+        "command": "",
+        "exclusive": false
+      },
+      "lockAction": {
+        "command": "",
+        "exclusive": false
+      },
+      "screenOffAction": {
+        "command": "",
+        "exclusive": false
+      },
+      "shutdownAction": {
+        "command": "",
+        "exclusive": false
+      },
+      "rebootAction": {
+        "command": "",
+        "exclusive": false
+      },
+      "userspaceRebootAction": {
+        "command": "",
+        "exclusive": false
+      },
+      "rebootToUefiAction": {
+        "command": "",
+        "exclusive": false
+      },
+      "desktopLeftClick": {
+        "command": "",
+        "exclusive": false
+      },
+      "desktopRightClick": {
+        "command": "",
+        "exclusive": false
+      },
+      "desktopMiddleClick": {
+        "command": "",
+        "exclusive": false
+      }
+    },
+    "listeners": {
+      "startup": "",
+      "wallpaperChange": "",
+      "colorGeneration": "",
+      "darkModeChange": "",
+      "screenLock": "",
+      "screenUnlock": "",
+      "performanceModeEnabled": "",
+      "performanceModeDisabled": ""
+    }
   },
   "plugins": {
     "autoUpdate": false,
@@ -564,6 +624,29 @@
     "overviewEnabled": true,
     "gridSnap": false,
     "gridSnapScale": false,
+    "iconBlendStrength": 1,
+    "iconHueAdjustment": 0,
+    "widgetContentPadding": 0,
     "monitorWidgets": []
+  },
+  "desktopContextMenu": {
+    "enabled": true,
+    "items": [
+      {
+        "id": "add-app-shortcut"
+      },
+      {
+        "id": "divider"
+      },
+      {
+        "id": "change-wallpaper"
+      },
+      {
+        "id": "display-settings"
+      },
+      {
+        "id": "toggle-edit-mode"
+      }
+    ]
   }
 }
