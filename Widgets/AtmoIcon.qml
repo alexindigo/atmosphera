@@ -5,12 +5,27 @@ import qs.Commons
 import qs.Services.UI
 import qs.Widgets
 
-Text {
+// Renders an icon from the shell's icon sets (IconRegistry).
+// Font-glyph entries render as text; SVG entries render as a colored
+// rectangle shaped by the SVG alpha mask.
+//
+// Root is an Item (not Text) so implicitWidth is bindable: SVG entries have
+// no text, so a Text root would report implicitWidth 0 and collapse in
+// layouts (icons losing all layout padding).
+Item {
   id: root
 
   property var icon: Icon.close
   property real pointSize: Style.fontSizeL
   property bool applyUiScale: true
+  property color color: Color.mOnSurface
+
+  // Text-compat forwarded properties (consumers used these when the root was a Text)
+  property alias verticalAlignment: textItem.verticalAlignment
+  property alias horizontalAlignment: textItem.horizontalAlignment
+  property alias font: textItem.font
+  readonly property real contentHeight: textItem.contentHeight
+  readonly property real contentWidth: textItem.contentWidth
 
   readonly property var _resolved: {
     if (typeof icon === "string") {
@@ -24,21 +39,29 @@ Text {
     return icon;
   }
 
+  // Square box for SVG entries (line height); natural glyph advance for font entries
+  implicitWidth: root._resolved?.type === "svg" ? textItem.implicitHeight : textItem.implicitWidth
+  implicitHeight: textItem.implicitHeight
+
   visible: _resolved !== undefined && _resolved !== null
 
-  text: _resolved && _resolved.char ? _resolved.char : ""
-  font.family: _resolved && _resolved.fontFamily ? _resolved.fontFamily : Icons.fontFamily
-  font.pointSize: Math.max(1, applyUiScale ? root.pointSize * Style.uiScaleRatio : root.pointSize)
-  color: Color.mOnSurface
-  verticalAlignment: Text.AlignVCenter
-  horizontalAlignment: Text.AlignHCenter
+  Text {
+    id: textItem
+    anchors.centerIn: parent
+    text: root._resolved && root._resolved.char ? root._resolved.char : ""
+    font.family: root._resolved && root._resolved.fontFamily ? root._resolved.fontFamily : Icons.fontFamily
+    font.pointSize: Math.max(1, root.applyUiScale ? root.pointSize * Style.uiScaleRatio : root.pointSize)
+    color: root.color
+    verticalAlignment: Text.AlignVCenter
+    horizontalAlignment: Text.AlignHCenter
+  }
 
   // SVG path — colored Rectangle shaped by SVG alpha mask
   Item {
     id: svgContainer
     anchors.centerIn: parent
-    width: parent.implicitHeight
-    height: parent.implicitHeight
+    width: root.implicitHeight
+    height: root.implicitHeight
     visible: root._resolved?.type === "svg"
 
     Rectangle {
