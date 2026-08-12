@@ -834,7 +834,7 @@ Item {
                 anchors.leftMargin: Style.marginS
                 spacing: 0
 
-                NIcon {
+                AtmoIcon {
                   icon: root.sidebarExpanded ? "layout-sidebar-right-expand" : "layout-sidebar-left-expand"
                   color: toggleMouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface
                   pointSize: Style.fontSizeXL
@@ -931,7 +931,7 @@ Item {
                   anchors.leftMargin: Style.marginS
                   spacing: 0
 
-                  NIcon {
+                  AtmoIcon {
                     icon: "search"
                     color: searchCollapsedMouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface
                     pointSize: Style.fontSizeXL
@@ -1109,7 +1109,7 @@ Item {
                   anchors.rightMargin: Style.marginS
                   spacing: Style.marginM
 
-                  NIcon {
+                  AtmoIcon {
                     icon: modelData.icon
                     color: tabTextColor
                     pointSize: Style.fontSizeXL
@@ -1214,7 +1214,7 @@ Item {
             Layout.fillWidth: true
             spacing: Style.marginS
 
-            NIcon {
+            AtmoIcon {
               icon: root.tabsModel[currentTabIndex]?.icon ?? ""
               color: Color.mPrimary
               pointSize: Style.fontSizeXXL
@@ -1229,7 +1229,7 @@ Item {
               Layout.alignment: Qt.AlignVCenter
             }
 
-            NIconButton {
+            AtmoIconButton {
               visible: root.currentTabResetKey !== ""
               icon: "restore"
               tooltipText: I18n.tr("common.reset-to-default")
@@ -1237,7 +1237,7 @@ Item {
               onClicked: Settings.resetSection(root.currentTabResetKey)
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: "close"
               tooltipText: I18n.tr("common.close")
               Layout.alignment: Qt.AlignVCenter

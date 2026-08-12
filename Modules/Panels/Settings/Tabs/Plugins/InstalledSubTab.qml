@@ -169,7 +169,7 @@ ColumnLayout {
             spacing: Style.marginM
             Layout.fillWidth: true
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.plugin
               pointSize: Style.fontSizeL
               color: PluginService.hasPluginError(modelData.compositeKey) ? Color.mError : Color.mPrimary
@@ -194,7 +194,7 @@ ColumnLayout {
                 anchors.centerIn: parent
                 spacing: Style.marginXS
 
-                NIcon {
+                AtmoIcon {
                   icon: Icon.officialPlugin
                   pointSize: Style.fontSizeXXS
                   color: Color.mOnSecondary
@@ -214,7 +214,7 @@ ColumnLayout {
               Layout.fillWidth: true
             }
 
-            NIconButtonHot {
+            AtmoIconButtonHot {
               icon: Icon.bug
               hot: PluginService.isPluginHotReloadEnabled(modelData.id)
               tooltipText: PluginService.isPluginHotReloadEnabled(modelData.id) ? I18n.tr("panels.plugins.development-disable") : I18n.tr("panels.plugins.development-enable")
@@ -223,7 +223,7 @@ ColumnLayout {
               visible: Settings.isDebug
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.settings
               tooltipText: I18n.tr("panels.plugins.settings-tooltip")
               baseSize: Style.baseWidgetSize * 0.7
@@ -234,7 +234,7 @@ ColumnLayout {
               }
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.externalLink
               tooltipText: I18n.tr("panels.plugins.open-plugin-page")
               baseSize: Style.baseWidgetSize * 0.7
@@ -245,7 +245,7 @@ ColumnLayout {
               }
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.trash
               tooltipText: I18n.tr("common.uninstall")
               baseSize: Style.baseWidgetSize * 0.7
@@ -399,7 +399,7 @@ ColumnLayout {
             spacing: Style.marginS
             visible: PluginService.hasPluginError(modelData.compositeKey)
 
-            NIcon {
+            AtmoIcon {
               icon: "alert-triangle"
               pointSize: Style.fontSizeS
               color: Color.mError

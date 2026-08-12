@@ -340,7 +340,7 @@ ColumnLayout {
           description: I18n.tr("bar.custom-button.icon-description")
         }
 
-        NIcon {
+        AtmoIcon {
           Layout.alignment: Qt.AlignVCenter
           icon: valueIcon
           pointSize: Style.fontSizeXL
@@ -353,7 +353,7 @@ ColumnLayout {
         }
       }
 
-      NIconPicker {
+      AtmoIconPicker {
         id: iconPicker
         initialIcon: valueIcon
         onIconSelected: function (iconName) {

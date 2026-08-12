@@ -130,7 +130,7 @@ ColumnLayout {
           anchors.fill: parent
           spacing: 0
 
-          NIcon {
+          AtmoIcon {
             id: inputIcon
             icon: root.inputIconName
 
@@ -210,7 +210,7 @@ ColumnLayout {
               }
             }
           }
-          NIconButton {
+          AtmoIconButton {
             id: clearButton
             icon: Icon.close
             tooltipText: (input.text.length > 0 && !root.readOnly && root.enabled) ? I18n.tr("common.clear") : ""

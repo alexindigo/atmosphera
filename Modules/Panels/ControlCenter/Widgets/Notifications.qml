@@ -5,7 +5,7 @@ import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
 
-NIconButtonHot {
+AtmoIconButtonHot {
   property ShellScreen screen
 
   icon: NotificationService.doNotDisturb ? "bell-off" : "bell"

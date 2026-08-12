@@ -67,7 +67,7 @@ Item {
       }
     }
 
-    NIcon {
+    AtmoIcon {
       icon: root.icon
       pointSize: Style.toOdd(visualButton.width * 0.48)
       applyUiScale: root.applyUiScale

@@ -88,7 +88,7 @@ SmartPanel {
           anchors.margins: Style.marginM
           spacing: Style.marginM
 
-          NIcon {
+          AtmoIcon {
             pointSize: Style.fontSizeXXL
             color: (BatteryService.isCharging(primaryDevice) || BatteryService.isCharged(primaryDevice)) ? Color.mPrimary : (BatteryService.isCriticalBattery(primaryDevice) || BatteryService.isLowBattery(primaryDevice)) ? Color.mError : Color.mOnSurface
             icon: BatteryService.getIcon(BatteryService.getPercentage(primaryDevice), BatteryService.isCharging(primaryDevice), BatteryService.isCharged(primaryDevice), BatteryService.isDeviceReady(primaryDevice))
@@ -108,7 +108,7 @@ SmartPanel {
             }
           }
 
-          NIconButton {
+          AtmoIconButton {
             icon: Icon.close
             tooltipText: I18n.tr("common.close")
             baseSize: Style.baseWidgetSize * 0.8
@@ -154,7 +154,7 @@ SmartPanel {
                         id: batteryInfoRow
                         anchors.fill: parent
 
-                        NIcon {
+                        AtmoIcon {
                           icon: BatteryService.getIcon(BatteryService.getPercentage(modelData), BatteryService.isCharging(modelData), BatteryService.isCharged(modelData), BatteryService.isDeviceReady(modelData))
                           color: (BatteryService.isCharging(modelData) || BatteryService.isCharged(modelData)) ? Color.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? Color.mError : Color.mOnSurface
                         }
@@ -241,7 +241,7 @@ SmartPanel {
                 Layout.fillWidth: true
                 spacing: Style.marginS
 
-                NIcon {
+                AtmoIcon {
                   icon: BluetoothService.getDeviceIcon(modelData)
                   color: (BatteryService.isCharging(modelData) || BatteryService.isCharged(modelData)) ? Color.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? Color.mError : Color.mOnSurface
                 }
@@ -344,20 +344,20 @@ SmartPanel {
               Layout.fillWidth: true
               spacing: Style.marginS
 
-              NIcon {
+              AtmoIcon {
                 icon: Icon.powersaver
                 pointSize: Style.fontSizeS
                 color: PowerProfileService.getIcon() === "powersaver" ? Color.mPrimary : Color.mOnSurfaceVariant
               }
 
-              NIcon {
+              AtmoIcon {
                 icon: Icon.balanced
                 pointSize: Style.fontSizeS
                 color: PowerProfileService.getIcon() === "balanced" ? Color.mPrimary : Color.mOnSurfaceVariant
                 Layout.fillWidth: true
               }
 
-              NIcon {
+              AtmoIcon {
                 icon: Icon.performance
                 pointSize: Style.fontSizeS
                 color: PowerProfileService.getIcon() === "performance" ? Color.mPrimary : Color.mOnSurfaceVariant
@@ -383,7 +383,7 @@ SmartPanel {
               Layout.fillWidth: true
             }
 
-            NIcon {
+            AtmoIcon {
               icon: PowerProfileService.atmospheraPerformanceMode ? "rocket" : "rocket-off"
               pointSize: Style.fontSizeL
               color: PowerProfileService.atmospheraPerformanceMode ? Color.mPrimary : Color.mOnSurfaceVariant

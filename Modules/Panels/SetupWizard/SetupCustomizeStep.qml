@@ -29,7 +29,7 @@ ColumnLayout {
       color: Color.mSurfaceVariant
       opacity: 0.6
 
-      NIcon {
+      AtmoIcon {
         icon: Icon.palette
         pointSize: Style.fontSizeL
         color: Color.mPrimary
@@ -82,7 +82,7 @@ ColumnLayout {
             radius: Style.radiusM
             color: Color.mSurface
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.layout2
               pointSize: Style.fontSizeL
               color: Color.mPrimary
@@ -208,7 +208,7 @@ ColumnLayout {
           height: 32
           radius: Style.radiusM
           color: Color.mSurface
-          NIcon {
+          AtmoIcon {
             icon: Icon.minimize
             pointSize: Style.fontSizeL
             color: Color.mPrimary
@@ -334,7 +334,7 @@ ColumnLayout {
             height: 32
             radius: Style.radiusM
             color: Color.mSurface
-            NIcon {
+            AtmoIcon {
               icon: Icon.maximize
               pointSize: Style.fontSizeL
               color: Color.mPrimary
@@ -397,7 +397,7 @@ ColumnLayout {
             radius: Style.radiusM
             color: Color.mSurface
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.layout2
               pointSize: Style.fontSizeL
               color: Color.mPrimary
@@ -523,7 +523,7 @@ ColumnLayout {
           height: 32
           radius: Style.radiusM
           color: Color.mSurface
-          NIcon {
+          AtmoIcon {
             icon: Icon.screenShare
             pointSize: Style.fontSizeL
             color: Color.mPrimary
@@ -578,7 +578,7 @@ ColumnLayout {
           height: 32
           radius: Style.radiusM
           color: Color.mSurface
-          NIcon {
+          AtmoIcon {
             icon: Icon.uiShadow
             pointSize: Style.fontSizeL
             color: Color.mPrimary

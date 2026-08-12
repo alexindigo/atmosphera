@@ -61,7 +61,7 @@ Popup {
         pointSize: Style.fontSizeL
         Layout.fillWidth: true
       }
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.close
         onClicked: root.close()
       }

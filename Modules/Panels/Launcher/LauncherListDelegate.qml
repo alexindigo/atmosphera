@@ -132,7 +132,7 @@ NBox {
 
           Component {
             id: tablerIconComponent
-            NIcon {
+            AtmoIcon {
               icon: modelData.icon
               pointSize: Style.fontSizeXXXL
               visible: modelData.icon && !modelData.displayString
@@ -196,7 +196,7 @@ NBox {
           height: Style.fontSizeM + Style.marginXS
           color: Color.mSurfaceVariant
           radius: Style.radiusXXS
-          NIcon {
+          AtmoIcon {
             anchors.centerIn: parent
             icon: modelData.badgeIcon || ""
             pointSize: Style.fontSizeS
@@ -251,7 +251,7 @@ NBox {
 
         Repeater {
           model: parent.itemActions
-          NIconButton {
+          AtmoIconButton {
             required property var modelData
             icon: modelData.icon
             baseSize: Style.baseWidgetSize * 0.75

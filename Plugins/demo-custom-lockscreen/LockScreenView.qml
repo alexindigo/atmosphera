@@ -104,7 +104,7 @@ Item {
           id: networkRow
           spacing: Style.marginS
 
-          NIcon {
+          AtmoIcon {
             icon: root._networkIcon()
             pointSize: Style.fontSizeL
             color: "white"
@@ -128,7 +128,7 @@ Item {
           id: batteryRow
           spacing: Style.marginS
 
-          NIcon {
+          AtmoIcon {
             icon: BatteryService.batteryIcon
             pointSize: Style.fontSizeL
             color: "white"
@@ -221,7 +221,7 @@ Item {
       Layout.alignment: Qt.AlignRight
       spacing: 8
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.close
         baseSize: 28
         customRadius: 14
@@ -236,7 +236,7 @@ Item {
         onClicked: root.lockContext.unlocked()
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.suspend
         baseSize: 28
         customRadius: 14
@@ -250,7 +250,7 @@ Item {
         onClicked: CompositorService.suspend()
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.hibernate
         baseSize: 28
         customRadius: 14
@@ -265,7 +265,7 @@ Item {
         onClicked: CompositorService.hibernate()
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.reboot
         baseSize: 28
         customRadius: 14
@@ -279,7 +279,7 @@ Item {
         onClicked: CompositorService.reboot()
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.shutdown
         baseSize: 28
         customRadius: 14
@@ -365,21 +365,21 @@ Item {
       visible: _mediaVisible
       spacing: Style.marginS
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.mediaPrev
         colorFg: "white"
         baseSize: 28
         visible: MediaService.canGoPrevious
         onClicked: MediaService.previous()
       }
-      NIconButton {
+      AtmoIconButton {
         icon: MediaService.isPlaying ? Icon.mediaPause : Icon.mediaPlay
         colorFg: "white"
         baseSize: 28
         visible: MediaService.canPlay || MediaService.canPause
         onClicked: MediaService.playPause()
       }
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.mediaNext
         colorFg: "white"
         baseSize: 28
@@ -417,7 +417,7 @@ Item {
         Keys.onEscapePressed: passInput.text = ""
       }
 
-      NIconButton {
+      AtmoIconButton {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 4

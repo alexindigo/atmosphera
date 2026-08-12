@@ -30,7 +30,7 @@ ColumnLayout {
     Layout.fillWidth: true
     spacing: Style.marginM
 
-    NIcon {
+    AtmoIcon {
       icon: Icon.changelog
       color: Color.mPrimary
       pointSize: Style.fontSizeXXL
@@ -78,7 +78,7 @@ ColumnLayout {
         color: Color.mPrimary
       }
 
-      NIcon {
+      AtmoIcon {
         icon: Icon.uiArrowRight
         color: Color.mPrimary
       }

@@ -283,7 +283,7 @@ SmartPanel {
             Layout.fillWidth: true
             spacing: Style.marginM
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.settingsWallpaperSelector
               pointSize: Style.fontSizeXXL
               color: Color.mPrimary
@@ -297,7 +297,7 @@ SmartPanel {
               Layout.fillWidth: true
             }
 
-            NIconButton {
+            AtmoIconButton {
               visible: Settings.data.wallpaper.enabled
               icon: Icon.darkMode
               tooltipText: Settings.data.wallpaper.linkLightAndDarkWallpapers ? I18n.tr("wallpaper.panel.header-separate-light-dark-tooltip") : I18n.tr("wallpaper.panel.header-link-light-dark-tooltip")
@@ -307,7 +307,7 @@ SmartPanel {
               onClicked: Settings.data.wallpaper.linkLightAndDarkWallpapers = !Settings.data.wallpaper.linkLightAndDarkWallpapers
             }
 
-            NIconButton {
+            AtmoIconButton {
               visible: Settings.data.wallpaper.enabled && panelContent.headerDevicesButtonVisible
               icon: Icon.devices
               tooltipText: Settings.data.wallpaper.setWallpaperOnAllMonitors ? I18n.tr("wallpaper.panel.header-devices-apply-all-tooltip") : I18n.tr("wallpaper.panel.header-devices-per-monitor-tooltip")
@@ -317,7 +317,7 @@ SmartPanel {
               onClicked: Settings.data.wallpaper.setWallpaperOnAllMonitors = !Settings.data.wallpaper.setWallpaperOnAllMonitors
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.palette
               tooltipText: I18n.tr("wallpaper.panel.solid-color-tooltip")
               baseSize: Style.baseWidgetSize * 0.8
@@ -326,7 +326,7 @@ SmartPanel {
               onClicked: solidColorPicker.open()
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.settings
               tooltipText: I18n.tr("panels.wallpaper.settings-title")
               baseSize: Style.baseWidgetSize * 0.8
@@ -337,7 +337,7 @@ SmartPanel {
               }
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.close
               tooltipText: I18n.tr("common.close")
               baseSize: Style.baseWidgetSize * 0.8
@@ -481,7 +481,7 @@ SmartPanel {
               }
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.colorSwatch
               tooltipText: Settings.data.colorSchemes.useWallpaperColors ? I18n.tr("wallpaper.panel.color-extraction-enabled") : I18n.tr("wallpaper.panel.color-extraction-disabled")
               baseSize: Style.baseWidgetSize * 0.8
@@ -626,7 +626,7 @@ SmartPanel {
             }
 
             // Settings button (only visible for Wallhaven)
-            NIconButton {
+            AtmoIconButton {
               id: wallhavenSettingsButton
               icon: Icon.settings
               tooltipText: I18n.tr("wallpaper.panel.wallhaven-settings-title")
@@ -979,7 +979,7 @@ SmartPanel {
         spacing: Style.marginS
 
         // Left side: navigation (back, home, path)
-        NIconButton {
+        AtmoIconButton {
           icon: Icon.navigateUp
           tooltipText: I18n.tr("wallpaper.browse.go-up")
           enabled: isBrowseMode && currentBrowsePath !== WallpaperService.getMonitorDirectory(targetScreen?.name ?? "")
@@ -987,7 +987,7 @@ SmartPanel {
           baseSize: Style.baseWidgetSize * 0.8
         }
 
-        NIconButton {
+        AtmoIconButton {
           icon: Icon.home
           tooltipText: I18n.tr("wallpaper.browse.go-root")
           enabled: isBrowseMode && currentBrowsePath !== WallpaperService.getMonitorDirectory(targetScreen?.name ?? "")
@@ -1009,7 +1009,7 @@ SmartPanel {
         }
 
         // Right side: actions (view mode, hide filenames, refresh)
-        NIconButton {
+        AtmoIconButton {
           property string sortOrder: Settings.data.wallpaper.sortOrder || "name"
           icon: {
             if (sortOrder === "date_desc")
@@ -1059,28 +1059,28 @@ SmartPanel {
           }
         }
 
-        NIconButton {
+        AtmoIconButton {
           icon: getViewModeIcon()
           tooltipText: getViewModeTooltip()
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: cycleViewMode()
         }
 
-        NIconButton {
+        AtmoIconButton {
           icon: Settings.data.wallpaper.hideWallpaperFilenames ? "id-off" : "id"
           tooltipText: Settings.data.wallpaper.hideWallpaperFilenames ? I18n.tr("panels.wallpaper.settings-hide-wallpaper-filenames-tooltip-show") : I18n.tr("panels.wallpaper.settings-hide-wallpaper-filenames-tooltip-hide")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: Settings.data.wallpaper.hideWallpaperFilenames = !Settings.data.wallpaper.hideWallpaperFilenames
         }
 
-        NIconButton {
+        AtmoIconButton {
           icon: Settings.data.wallpaper.showHiddenFiles ? "eye" : "eye-closed"
           tooltipText: Settings.data.wallpaper.showHiddenFiles ? I18n.tr("panels.wallpaper.settings-show-hidden-files-tooltip-hide") : I18n.tr("panels.wallpaper.settings-show-hidden-files-tooltip-show")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: Settings.data.wallpaper.showHiddenFiles = !Settings.data.wallpaper.showHiddenFiles
         }
 
-        NIconButton {
+        AtmoIconButton {
           icon: Icon.refresh
           tooltipText: I18n.tr("tooltips.refresh-wallpaper-list")
           baseSize: Style.baseWidgetSize * 0.8
@@ -1195,7 +1195,7 @@ SmartPanel {
                   anchors.centerIn: parent
                   spacing: Style.marginS
 
-                  NIcon {
+                  AtmoIcon {
                     icon: Icon.folder
                     pointSize: Style.fontSizeXXXL
                     color: Color.mPrimary
@@ -1237,7 +1237,7 @@ SmartPanel {
                 radius: Style.radiusM
                 visible: !wallpaperItem.isDirectory && (img.status === Image.Loading || img.status === Image.Error || wallpaperItem.cachedPath === "")
 
-                NIcon {
+                AtmoIcon {
                   icon: Icon.image
                   pointSize: Style.fontSizeL
                   color: Color.mOnSurfaceVariant
@@ -1266,7 +1266,7 @@ SmartPanel {
                 border.width: Style.borderS
                 visible: wallpaperItem.isSelected
 
-                NIcon {
+                AtmoIcon {
                   icon: Icon.check
                   pointSize: Style.fontSizeM
                   color: Color.mOnSecondary
@@ -1307,7 +1307,7 @@ SmartPanel {
                   }
                 }
 
-                NIcon {
+                AtmoIcon {
                   icon: wallpaperItem.isFavorited ? "star-filled" : "star"
                   pointSize: Style.fontSizeM
                   color: {
@@ -1387,7 +1387,7 @@ SmartPanel {
                     border.color: Color.mShadow
                     border.width: Style.borderS
 
-                    NIcon {
+                    AtmoIcon {
                       icon: paletteRow.isDark ? "dark-mode" : "sun"
                       pointSize: parent.width * 0.45
                       color: Color.mOnSurface
@@ -1482,7 +1482,7 @@ SmartPanel {
           Item {
             Layout.fillHeight: true
           }
-          NIcon {
+          AtmoIcon {
             icon: Icon.folderOpen
             pointSize: Style.fontSizeXXL
             color: Color.mOnSurface
@@ -1687,7 +1687,7 @@ SmartPanel {
                   radius: Style.radiusM
                   visible: img.status === Image.Loading || img.status === Image.Error || wallhavenItem.thumbnailUrl === ""
 
-                  NIcon {
+                  AtmoIcon {
                     icon: Icon.image
                     pointSize: Style.fontSizeL
                     color: Color.mOnSurfaceVariant
@@ -1804,7 +1804,7 @@ SmartPanel {
               Layout.fillHeight: true
             }
 
-            NIcon {
+            AtmoIcon {
               icon: "alert-circle"
               pointSize: Style.fontSizeXXL
               color: Color.mError
@@ -1845,7 +1845,7 @@ SmartPanel {
               Layout.fillHeight: true
             }
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.image
               pointSize: Style.fontSizeXXL
               color: Color.mOnSurfaceVariant
@@ -1878,7 +1878,7 @@ SmartPanel {
           Layout.fillWidth: true
         }
 
-        NIconButton {
+        AtmoIconButton {
           icon: Icon.chevronLeft
           enabled: !loading && WallhavenService.currentPage > 1 && !WallhavenService.fetching
           onClicked: WallhavenService.previousPage()
@@ -1934,7 +1934,7 @@ SmartPanel {
           }
         }
 
-        NIconButton {
+        AtmoIconButton {
           icon: Icon.chevronRight
           enabled: WallhavenService.currentPage < WallhavenService.lastPage && !WallhavenService.fetching
           onClicked: WallhavenService.nextPage()

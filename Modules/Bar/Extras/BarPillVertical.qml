@@ -196,7 +196,7 @@ Item {
     y: openUpward ? (root.contentHeight - height) : 0
     anchors.horizontalCenter: parent.horizontalCenter
 
-    NIcon {
+    AtmoIcon {
       icon: root.icon
       pointSize: iconSize
       applyUiScale: false

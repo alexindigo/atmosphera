@@ -85,7 +85,7 @@ ColumnLayout {
       visible: valueCustomIconPath !== "" && !valueUseDistroLogo
     }
 
-    NIcon {
+    AtmoIcon {
       Layout.alignment: Qt.AlignVCenter
       icon: valueIcon
       pointSize: Style.fontSizeXXL * 1.5
@@ -108,7 +108,7 @@ ColumnLayout {
     }
   }
 
-  NIconPicker {
+  AtmoIconPicker {
     id: iconPicker
     initialIcon: valueIcon
     onIconSelected: iconName => {

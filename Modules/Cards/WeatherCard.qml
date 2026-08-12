@@ -115,7 +115,7 @@ NBox {
           Layout.alignment: Qt.AlignVCenter
           readonly property int mainWeatherIconSide: Math.round(Style.fontSizeXXXL * 1.75 * Style.uiScaleRatio * 1.6)
 
-          NIcon {
+          AtmoIcon {
             visible: !LocationService.taliaWeatherMascotActive
             anchors.centerIn: parent
             icon: weatherReady ? LocationService.weatherSymbolFromCode(LocationService.data.weather.current_weather.weathercode) : ""
@@ -214,7 +214,7 @@ NBox {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             readonly property int forecastWeatherIconSide: Math.round(Style.fontSizeXXL * 1.6 * Style.uiScaleRatio * 1.6)
 
-            NIcon {
+            AtmoIcon {
               visible: !LocationService.taliaWeatherMascotActive
               anchors.centerIn: parent
               icon: LocationService.weatherSymbolFromCode(LocationService.data.weather.daily.weathercode[index])

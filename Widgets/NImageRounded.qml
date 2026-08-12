@@ -92,7 +92,7 @@ Item {
       blending: true
     }
 
-    NIcon {
+    AtmoIcon {
       anchors.fill: parent
       anchors.margins: root.borderWidth
       visible: root.showFallback

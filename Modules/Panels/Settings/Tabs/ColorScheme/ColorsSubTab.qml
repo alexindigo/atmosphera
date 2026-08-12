@@ -433,7 +433,7 @@ ColumnLayout {
             border.width: Style.borderS
             border.color: Color.mOnSecondary
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.check
               pointSize: Style.fontSizeXS
               color: Color.mOnSecondary

@@ -188,7 +188,7 @@ Item {
     // iconPosition takes precedence, fallback to oppositeDirection
     x: iconPosition ? (iconPosition === "right" ? (parent.width - width) : 0) : (oppositeDirection ? 0 : (parent.width - width))
 
-    NIcon {
+    AtmoIcon {
       icon: root.icon
       pointSize: iconSize
       applyUiScale: false

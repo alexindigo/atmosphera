@@ -73,7 +73,7 @@ Popup {
       RowLayout {
         spacing: Style.marginS
 
-        NIcon {
+        AtmoIcon {
           icon: Icon.colorPicker
           pointSize: Style.fontSizeXXL
           color: Color.mPrimary
@@ -91,7 +91,7 @@ Popup {
         Layout.fillWidth: true
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.close
         onClicked: root.close()
       }

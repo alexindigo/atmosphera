@@ -9,7 +9,7 @@ import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
 
-NIconButton {
+AtmoIconButton {
   id: root
 
   property ShellScreen screen

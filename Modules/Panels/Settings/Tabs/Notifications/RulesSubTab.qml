@@ -91,13 +91,13 @@ ColumnLayout {
         labelColor: entryDelegate.pattern ? Color.mPrimary : Color.mOnSurface
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.settings
         tooltipText: I18n.tr("common.edit")
         onClicked: root.openEdit(entryDelegate.index, entryDelegate.pattern, entryDelegate.action)
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.trash
         tooltipText: I18n.tr("panels.notifications.rules-delete")
         onClicked: root._removeRule(entryDelegate.index)

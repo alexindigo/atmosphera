@@ -135,7 +135,7 @@ Item {
     horizontalAlignment: Text.AlignHCenter
   }
 
-  NIcon {
+  AtmoIcon {
     id: iconText
     anchors.horizontalCenter: gauge.horizontalCenter
     anchors.top: valueLabel.bottom

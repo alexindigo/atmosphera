@@ -246,7 +246,7 @@ Item {
             Layout.row: (isVertical && !compactMode) ? 1 : 0
             Layout.column: 0
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.cpuUsage
               pointSize: iconSize
               applyUiScale: false
@@ -328,7 +328,7 @@ Item {
             Layout.row: (isVertical && !compactMode) ? 1 : 0
             Layout.column: 0
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.cpuUsage
               pointSize: iconSize
               applyUiScale: false
@@ -395,7 +395,7 @@ Item {
             Layout.row: (isVertical && !compactMode) ? 1 : 0
             Layout.column: 0
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.cpuTemperature
               pointSize: iconSize
               applyUiScale: false
@@ -463,7 +463,7 @@ Item {
             Layout.row: (isVertical && !compactMode) ? 1 : 0
             Layout.column: 0
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.gpuTemperature
               pointSize: iconSize
               applyUiScale: false
@@ -531,7 +531,7 @@ Item {
             Layout.row: (isVertical && !compactMode) ? 1 : 0
             Layout.column: 0
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.systemLoad
               pointSize: iconSize
               applyUiScale: false
@@ -598,7 +598,7 @@ Item {
             Layout.row: (isVertical && !compactMode) ? 1 : 0
             Layout.column: 0
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.systemMemory
               pointSize: iconSize
               applyUiScale: false
@@ -669,7 +669,7 @@ Item {
             Layout.row: (isVertical && !compactMode) ? 1 : 0
             Layout.column: 0
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.systemSwap
               pointSize: iconSize
               applyUiScale: false
@@ -740,7 +740,7 @@ Item {
             Layout.row: (isVertical && !compactMode) ? 1 : 0
             Layout.column: 0
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.networkDownload
               pointSize: iconSize
               applyUiScale: false
@@ -806,7 +806,7 @@ Item {
             Layout.row: (isVertical && !compactMode) ? 1 : 0
             Layout.column: 0
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.networkUpload
               pointSize: iconSize
               applyUiScale: false
@@ -873,7 +873,7 @@ Item {
             Layout.row: (isVertical && !compactMode) ? 1 : 0
             Layout.column: 0
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.systemStorage
               pointSize: iconSize
               applyUiScale: false

@@ -61,7 +61,7 @@ DraggableDesktopWidget {
       Layout.preferredHeight: Math.round(64 * widgetScale)
       Layout.alignment: Qt.AlignVCenter
 
-      NIcon {
+      AtmoIcon {
         visible: !LocationService.taliaWeatherMascotActive || !weatherReady
         anchors.centerIn: parent
         icon: weatherReady ? LocationService.weatherSymbolFromCode(currentWeatherCode) : (LocationService.locationConfigured ? "weather-cloud-off" : "map-pin-off")

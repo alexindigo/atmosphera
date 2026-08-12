@@ -52,7 +52,7 @@ ColumnLayout {
       defaultValue: widgetMetadata.showCapsLock
     }
 
-    NIcon {
+    AtmoIcon {
       Layout.alignment: Qt.AlignVCenter
       icon: capsIcon
       pointSize: Style.fontSizeXL
@@ -66,7 +66,7 @@ ColumnLayout {
     }
   }
 
-  NIconPicker {
+  AtmoIconPicker {
     id: capsPicker
     initialIcon: capsIcon
     query: "letter-c"
@@ -90,7 +90,7 @@ ColumnLayout {
       defaultValue: widgetMetadata.showNumLock
     }
 
-    NIcon {
+    AtmoIcon {
       Layout.alignment: Qt.AlignVCenter
       icon: numIcon
       pointSize: Style.fontSizeXL
@@ -104,7 +104,7 @@ ColumnLayout {
     }
   }
 
-  NIconPicker {
+  AtmoIconPicker {
     id: numPicker
     initialIcon: numIcon
     query: "letter-n"
@@ -128,7 +128,7 @@ ColumnLayout {
       defaultValue: widgetMetadata.showScrollLock
     }
 
-    NIcon {
+    AtmoIcon {
       Layout.alignment: Qt.AlignVCenter
       icon: scrollIcon
       pointSize: Style.fontSizeXL
@@ -142,7 +142,7 @@ ColumnLayout {
     }
   }
 
-  NIconPicker {
+  AtmoIconPicker {
     id: scrollPicker
     initialIcon: scrollIcon
     query: "letter-s"

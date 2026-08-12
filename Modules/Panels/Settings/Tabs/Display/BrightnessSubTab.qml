@@ -181,7 +181,7 @@ ColumnLayout {
               Item {
                 Layout.preferredWidth: 30
                 Layout.fillHeight: true
-                NIcon {
+                AtmoIcon {
                   icon: brightnessMonitor && brightnessMonitor.method == "internal" ? "device-laptop" : "device-desktop"
                   anchors.right: parent.right
                   anchors.verticalCenter: parent.verticalCenter

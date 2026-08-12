@@ -207,7 +207,7 @@ DraggableDesktopWidget {
         borderWidth: 0
       }
 
-      NIcon {
+      AtmoIcon {
         visible: !hasPlayer
         anchors.centerIn: parent
         icon: Icon.disc
@@ -251,7 +251,7 @@ DraggableDesktopWidget {
       visible: root.showButtons
       Layout.alignment: root.showAlbumArt ? Qt.AlignVCenter : Qt.AlignCenter
 
-      NIconButton {
+      AtmoIconButton {
         opacity: showPrev ? 1 : 0
         Behavior on opacity {
           NumberAnimation {
@@ -271,7 +271,7 @@ DraggableDesktopWidget {
         }
       }
 
-      NIconButton {
+      AtmoIconButton {
         baseSize: Math.round(36 * widgetScale)
         icon: isPlaying ? "media-pause" : "media-play"
         enabled: hasPlayer && (MediaService.canPlay || MediaService.canPause)
@@ -287,7 +287,7 @@ DraggableDesktopWidget {
         }
       }
 
-      NIconButton {
+      AtmoIconButton {
         opacity: showNext ? 1 : 0
         Behavior on opacity {
           NumberAnimation {

@@ -429,7 +429,7 @@ ColumnLayout {
           }
 
           // Update status indicator
-          NIcon {
+          AtmoIcon {
             id: upToDateIcon
             visible: root.isUpToDate
             icon: Icon.success
@@ -444,7 +444,7 @@ ColumnLayout {
             }
           }
 
-          NIcon {
+          AtmoIcon {
             id: updateAvailableIcon
             visible: root.updateAvailable
             icon: Icon.upload
@@ -523,7 +523,7 @@ ColumnLayout {
           }
 
           // Update status indicator
-          NIcon {
+          AtmoIcon {
             id: qsUpToDateIcon
             visible: root.qsIsUpToDate
             icon: Icon.success
@@ -538,7 +538,7 @@ ColumnLayout {
             }
           }
 
-          NIcon {
+          AtmoIcon {
             id: qsUpdateAvailableIcon
             visible: root.qsUpdateAvailable
             icon: Icon.upload

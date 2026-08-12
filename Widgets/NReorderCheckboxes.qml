@@ -219,7 +219,7 @@ Item {
               }
             }
 
-            NIcon {
+            AtmoIcon {
               visible: delegateItem.itemEnabled
               anchors.centerIn: parent
               anchors.horizontalCenterOffset: -1

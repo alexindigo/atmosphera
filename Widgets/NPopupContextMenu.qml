@@ -46,7 +46,7 @@ PopupWindow {
     width: undefined
   }
 
-  NIcon {
+  AtmoIcon {
     id: iconMeasure
     visible: false
     icon: Icon.bell
@@ -274,7 +274,7 @@ PopupWindow {
               anchors.rightMargin: Style.marginM
               spacing: Style.marginS
 
-              NIcon {
+              AtmoIcon {
                 visible: modelData.action !== undefined
                 icon: {
                   if (!modelData.action)

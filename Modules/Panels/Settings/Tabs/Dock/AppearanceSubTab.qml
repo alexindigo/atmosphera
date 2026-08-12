@@ -374,7 +374,7 @@ ColumnLayout {
         description: I18n.tr("panels.dock.appearance-launcher-icon-description")
       }
 
-      NIconButton {
+      AtmoIconButton {
         visible: !Settings.data.dock.launcherUseDistroLogo
         enabled: !Settings.data.dock.launcherUseDistroLogo
         icon: (Settings.data.dock.launcherIcon && Settings.data.dock.launcherIcon !== "") ? Settings.data.dock.launcherIcon : "search"
@@ -412,7 +412,7 @@ ColumnLayout {
       }
     }
 
-    NIconPicker {
+    AtmoIconPicker {
       id: launcherIconPicker
       initialIcon: (Settings.data.dock.launcherIcon && Settings.data.dock.launcherIcon !== "") ? Settings.data.dock.launcherIcon : "search"
       onIconSelected: iconName => {

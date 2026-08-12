@@ -87,7 +87,7 @@ Popup {
           Layout.fillWidth: true
         }
 
-        NIconButton {
+        AtmoIconButton {
           icon: Icon.close
           tooltipText: I18n.tr("common.close")
           onClicked: {
@@ -139,7 +139,7 @@ Popup {
             anchors.margins: Style.marginM
             spacing: Style.marginS
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.info
               color: Color.mOnSurfaceVariant
               pointSize: Style.fontSizeM

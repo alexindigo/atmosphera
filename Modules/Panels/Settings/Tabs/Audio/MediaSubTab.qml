@@ -77,7 +77,7 @@ ColumnLayout {
               Layout.leftMargin: Style.marginS
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.close
               baseSize: Style.baseWidgetSize * 0.8
               Layout.alignment: Qt.AlignVCenter

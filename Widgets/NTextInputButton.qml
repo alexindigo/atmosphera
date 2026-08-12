@@ -48,7 +48,7 @@ ColumnLayout {
     }
 
     // Button
-    NIconButton {
+    AtmoIconButton {
       id: button
       baseSize: Style.baseWidgetSize
       onClicked: root.buttonClicked()

@@ -109,12 +109,12 @@ NBox {
         Layout.fillWidth: true
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.chevronLeft
         onClicked: root.navigateToPreviousMonth()
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.calendar
         onClicked: {
           root.calendarMonth = root.now.getMonth();
@@ -123,7 +123,7 @@ NBox {
         }
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.chevronRight
         onClicked: root.navigateToNextMonth()
       }

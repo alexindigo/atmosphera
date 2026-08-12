@@ -208,7 +208,7 @@ NBox {
       anchors.fill: parent
       spacing: Style.marginS
 
-      NIcon {
+      AtmoIcon {
         icon: Icon.caretDown
         pointSize: Style.fontSizeXXL
         color: Color.mOnSurfaceVariant
@@ -268,7 +268,7 @@ NBox {
     anchors.bottomMargin: Style.marginM
 
     // No media player detected - centered disc icon
-    NIcon {
+    AtmoIcon {
       anchors.centerIn: parent
       visible: !root.hasActivePlayer && SpectrumService.isIdle
       icon: "disc"
@@ -430,19 +430,19 @@ NBox {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.mediaPrev
               visible: MediaService.canGoPrevious
               onClicked: MediaService.canGoPrevious ? MediaService.previous() : {}
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: MediaService.isPlaying ? "media-pause" : "media-play"
               visible: (MediaService.canPlay || MediaService.canPause)
               onClicked: (MediaService.canPlay || MediaService.canPause) ? MediaService.playPause() : {}
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.mediaNext
               visible: MediaService.canGoNext
               onClicked: MediaService.canGoNext ? MediaService.next() : {}

@@ -62,7 +62,7 @@ NBox {
       Item {
         Layout.fillWidth: true
       }
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.settings
         tooltipText: I18n.tr("tooltips.open-settings")
         onClicked: {
@@ -75,7 +75,7 @@ NBox {
         }
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.sessionControl
         tooltipText: I18n.tr("tooltips.session-menu")
         onClicked: {
@@ -84,7 +84,7 @@ NBox {
         }
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.close
         tooltipText: I18n.tr("common.close")
         onClicked: {

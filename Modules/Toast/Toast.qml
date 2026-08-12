@@ -290,7 +290,7 @@ Item {
     spacing: isCompact ? Style.marginM : Style.marginL
 
     // Icon
-    NIcon {
+    AtmoIcon {
       icon: if (root.icon !== "") {
               return root.icon;
             } else if (type === "warning") {

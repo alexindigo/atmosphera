@@ -5,7 +5,7 @@ import qs.Services.Networking
 import qs.Services.UI
 import qs.Widgets
 
-NIconButtonHot {
+AtmoIconButtonHot {
   property ShellScreen screen
 
   icon: !NetworkService.airplaneModeEnabled ? "plane-off" : "plane"

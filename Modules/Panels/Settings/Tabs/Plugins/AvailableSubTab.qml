@@ -77,7 +77,7 @@ ColumnLayout {
       Layout.fillWidth: true
     }
 
-    NIconButton {
+    AtmoIconButton {
       icon: Icon.refresh
       tooltipText: I18n.tr("panels.plugins.refresh-tooltip")
       baseSize: Style.baseWidgetSize * 0.9
@@ -188,7 +188,7 @@ ColumnLayout {
             spacing: Style.marginM
             Layout.fillWidth: true
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.plugin
               pointSize: Style.fontSizeL
               color: Color.mPrimary
@@ -213,7 +213,7 @@ ColumnLayout {
                 anchors.centerIn: parent
                 spacing: Style.marginXS
 
-                NIcon {
+                AtmoIcon {
                   icon: Icon.officialPlugin
                   pointSize: Style.fontSizeXXS
                   color: Color.mOnSecondary
@@ -234,7 +234,7 @@ ColumnLayout {
             }
 
             // Open plugin page button
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.externalLink
               baseSize: Style.baseWidgetSize * 0.7
               tooltipText: I18n.tr("panels.plugins.open-plugin-page")
@@ -245,7 +245,7 @@ ColumnLayout {
             }
 
             // Downloaded indicator
-            NIcon {
+            AtmoIcon {
               icon: Icon.success
               pointSize: Style.baseWidgetSize * 0.5
               color: Color.mPrimary
@@ -253,7 +253,7 @@ ColumnLayout {
             }
 
             // Install button (only shown when not downloaded and not installing)
-            NIconButton {
+            AtmoIconButton {
               visible: modelData.downloaded === false && !PluginService.installingPlugins[modelData.id]
               icon: Icon.download
               baseSize: Style.baseWidgetSize * 0.7

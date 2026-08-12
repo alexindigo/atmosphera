@@ -278,7 +278,7 @@ Item {
                 }
               }
 
-              NIcon {
+              AtmoIcon {
                 anchors.centerIn: parent
                 icon: launcherButton.launcherIcon
                 pointSize: dockRoot.iconSize * 0.7
@@ -597,7 +597,7 @@ Item {
               }
 
               // Fall back if no icon
-              NIcon {
+              AtmoIcon {
                 anchors.centerIn: parent
                 visible: !appIcon.visible
                 icon: Icon.questionMark

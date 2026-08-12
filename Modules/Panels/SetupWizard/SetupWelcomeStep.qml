@@ -43,7 +43,7 @@ ColumnLayout {
         border.width: Style.borderM
         visible: parent.status === Image.Error
 
-        NIcon {
+        AtmoIcon {
           icon: Icon.featured
           pointSize: Style.fontSizeXXL * 1.5
           color: Color.mPrimary

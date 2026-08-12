@@ -103,7 +103,7 @@ RowLayout {
     Layout.preferredWidth: 30 * Style.uiScaleRatio
     Layout.preferredHeight: 30 * Style.uiScaleRatio
 
-    NIconButton {
+    AtmoIconButton {
       icon: Icon.restoreDefaults
       enabled: root.enabled
       baseSize: Style.baseWidgetSize * 0.8

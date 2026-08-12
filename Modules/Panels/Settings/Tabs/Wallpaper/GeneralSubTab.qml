@@ -38,7 +38,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignTop
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.wallpaperSelector
         tooltipText: I18n.tr("tooltips.wallpaper-selector")
         onClicked: PanelService.getPanel("wallpaperPanel", root.screen)?.toggle()

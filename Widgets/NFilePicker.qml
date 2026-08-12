@@ -226,7 +226,7 @@ Popup {
         Layout.fillWidth: true
         spacing: Style.marginM
 
-        NIcon {
+        AtmoIcon {
           icon: Icon.filepickerFolder
           color: Color.mPrimary
           pointSize: Style.fontSizeXXL
@@ -250,7 +250,7 @@ Popup {
           }
         }
 
-        NIconButton {
+        AtmoIconButton {
           icon: Icon.filepickerRefresh
           tooltipText: I18n.tr("common.refresh")
           onClicked: {
@@ -261,7 +261,7 @@ Popup {
             Qt.callLater(root.updateFilteredModel);
           }
         }
-        NIconButton {
+        AtmoIconButton {
           icon: Icon.filepickerClose
           tooltipText: I18n.tr("common.close")
           onClicked: {
@@ -292,7 +292,7 @@ Popup {
           anchors.rightMargin: Style.marginS
           spacing: Style.marginS
 
-          NIconButton {
+          AtmoIconButton {
             icon: Icon.filepickerArrowUp
             tooltipText: I18n.tr("tooltips.up")
             baseSize: Style.baseWidgetSize * 0.8
@@ -304,7 +304,7 @@ Popup {
             }
           }
 
-          NIconButton {
+          AtmoIconButton {
             icon: Icon.filepickerHome
             tooltipText: I18n.tr("tooltips.home")
             baseSize: Style.baseWidgetSize * 0.8
@@ -315,7 +315,7 @@ Popup {
             }
           }
 
-          NIconButton {
+          AtmoIconButton {
             icon: filePickerPanel.showSearchBar ? "filepicker-x" : "filepicker-search"
             tooltipText: filePickerPanel.showSearchBar ? I18n.tr("tooltips.search-close") : I18n.tr("common.search")
             baseSize: Style.baseWidgetSize * 0.8
@@ -380,13 +380,13 @@ Popup {
             }
           }
 
-          NIconButton {
+          AtmoIconButton {
             icon: filePickerPanel.viewMode ? "filepicker-list" : "filepicker-layout-grid"
             tooltipText: filePickerPanel.viewMode ? I18n.tr("tooltips.list-view") : I18n.tr("tooltips.grid-view")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: filePickerPanel.viewMode = !filePickerPanel.viewMode
           }
-          NIconButton {
+          AtmoIconButton {
             icon: root.showHiddenFiles ? "filepicker-eye-off" : "filepicker-eye"
             tooltipText: root.showHiddenFiles ? I18n.tr("tooltips.hidden-files-hide") : I18n.tr("tooltips.hidden-files-hide")
             baseSize: Style.baseWidgetSize * 0.8
@@ -553,7 +553,7 @@ Popup {
                     color: Color.mSurfaceVariant
                     radius: Style.iRadiusS
                     visible: thumbnail.status === Image.Loading
-                    NIcon {
+                    AtmoIcon {
                       icon: Icon.filepickerPhoto
                       pointSize: Style.fontSizeL
                       color: Color.mOnSurfaceVariant
@@ -562,7 +562,7 @@ Popup {
                   }
                 }
 
-                NIcon {
+                AtmoIcon {
                   icon: model.fileIsDir ? "filepicker-folder" : root.getFileIcon(model.fileName)
                   pointSize: Style.fontSizeXXL * 2
                   color: {
@@ -588,7 +588,7 @@ Popup {
                   border.color: Color.mOutline
                   border.width: Style.borderS
                   visible: isSelected
-                  NIcon {
+                  AtmoIcon {
                     icon: Icon.filepickerCheck
                     pointSize: Style.fontSizeS
                     color: Color.mOnSecondary
@@ -692,7 +692,7 @@ Popup {
               anchors.rightMargin: Style.marginM
               spacing: Style.marginM
 
-              NIcon {
+              AtmoIcon {
                 icon: model.fileIsDir ? "filepicker-folder" : root.getFileIcon(model.fileName)
                 pointSize: Style.fontSizeL
                 color: model.fileIsDir ? (filePickerPanel.currentSelection.includes(model.filePath) ? Color.mOnSecondary : Color.mPrimary) : Color.mOnSurfaceVariant

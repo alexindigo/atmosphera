@@ -58,7 +58,7 @@ Popup {
         color: Color.mPrimary
         Layout.fillWidth: true
       }
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.close
         tooltipText: I18n.tr("common.close")
         onClicked: root.close()
@@ -121,7 +121,7 @@ Popup {
             Layout.fillHeight: true
             Layout.preferredHeight: 4
           }
-          NIcon {
+          AtmoIcon {
             Layout.alignment: Qt.AlignHCenter
             icon: modelData
             pointSize: 42

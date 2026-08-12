@@ -658,7 +658,7 @@ PopupWindow {
               spacing: Style.marginS
               visible: !isSeparator
 
-              NIcon {
+              AtmoIcon {
                 visible: modelData.icon !== undefined
                 icon: modelData.icon || ""
                 pointSize: Style.fontSizeL
@@ -751,7 +751,7 @@ PopupWindow {
             anchors.rightMargin: Style.marginS
             spacing: Style.marginS
 
-            NIcon {
+            AtmoIcon {
               icon: modelData.icon
               pointSize: Style.fontSizeL
               color: root.hoveredItem === fixedItemRect.globalIndex ? Color.mOnHover : Color.mOnSurfaceVariant

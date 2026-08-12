@@ -158,7 +158,7 @@ Item {
         spacing: Style.marginS
         visible: batteryIndicator.isReady
 
-        NIcon {
+        AtmoIcon {
           icon: batteryIndicator.icon
           pointSize: Style.fontSizeM
           color: batteryIndicator.charging ? Color.mPrimary : Color.mOnSurfaceVariant
@@ -176,7 +176,7 @@ Item {
         spacing: 6
         visible: keyboardLayout.currentLayout !== "Unknown"
 
-        NIcon {
+        AtmoIcon {
           icon: Icon.keyboard
           pointSize: Style.fontSizeM
           color: Color.mOnSurfaceVariant
@@ -195,7 +195,7 @@ Item {
         spacing: 6
         visible: batteryIndicator.isReady || keyboardLayout.currentLayout !== "Unknown" || LockKeysService.capsLockOn
 
-        NIcon {
+        AtmoIcon {
           icon: Icon.lock
           pointSize: Style.fontSizeM
           color: LockKeysService.capsLockOn ? Color.mPrimary : Qt.alpha(Color.mOnSurfaceVariant, 0.5)
@@ -362,7 +362,7 @@ Item {
                 color: prevButtonArea.containsMouse ? Color.mPrimary : Qt.alpha(Color.mOnSurface, 0.1)
                 visible: MediaService.canGoPrevious
 
-                NIcon {
+                AtmoIcon {
                   anchors.centerIn: parent
                   icon: Icon.mediaPrev
                   pointSize: Style.fontSizeM
@@ -399,7 +399,7 @@ Item {
                 color: playPauseButtonArea.containsMouse ? Color.mPrimary : Qt.alpha(Color.mOnSurface, 0.15)
                 visible: MediaService.canPlay || MediaService.canPause
 
-                NIcon {
+                AtmoIcon {
                   anchors.centerIn: parent
                   icon: MediaService.isPlaying ? "media-pause" : "media-play"
                   pointSize: Style.fontSizeL
@@ -436,7 +436,7 @@ Item {
                 color: nextButtonArea.containsMouse ? Color.mPrimary : Qt.alpha(Color.mOnSurface, 0.1)
                 visible: MediaService.canGoNext
 
-                NIcon {
+                AtmoIcon {
                   anchors.centerIn: parent
                   icon: Icon.mediaNext
                   pointSize: Style.fontSizeM
@@ -494,7 +494,7 @@ Item {
             Layout.alignment: Qt.AlignVCenter
             readonly property int lockMainWeatherIconSide: Math.round(Style.fontSizeXXXL * Style.uiScaleRatio * 1.6)
 
-            NIcon {
+            AtmoIcon {
               visible: !LocationService.taliaWeatherMascotActive || !weatherReady
               anchors.centerIn: parent
               icon: weatherReady ? LocationService.weatherSymbolFromCode(LocationService.data.weather.current_weather.weathercode) : "weather-cloud-off"
@@ -608,7 +608,7 @@ Item {
                 Layout.alignment: Qt.AlignHCenter
                 readonly property int lockForecastWeatherIconSide: Math.round(Style.fontSizeXL * Style.uiScaleRatio * 1.6)
 
-                NIcon {
+                AtmoIcon {
                   visible: !LocationService.taliaWeatherMascotActive
                   anchors.centerIn: parent
                   icon: LocationService.weatherSymbolFromCode(LocationService.data.weather.daily.weathercode[index])
@@ -669,7 +669,7 @@ Item {
             spacing: Style.marginXS
             visible: batteryIndicator.isReady
 
-            NIcon {
+            AtmoIcon {
               icon: batteryIndicator.icon
               pointSize: Style.fontSizeM
               color: batteryIndicator.charging ? Color.mPrimary : Color.mOnSurfaceVariant
@@ -687,7 +687,7 @@ Item {
             spacing: Style.marginXS
             visible: keyboardLayout.currentLayout !== "Unknown"
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.keyboard
               pointSize: Style.fontSizeM
               color: Color.mOnSurfaceVariant
@@ -706,7 +706,7 @@ Item {
             spacing: Style.marginXS
             visible: batteryIndicator.isReady || keyboardLayout.currentLayout !== "Unknown" || LockKeysService.capsLockOn
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.lock
               pointSize: Style.fontSizeM
               color: LockKeysService.capsLockOn ? Color.mPrimary : Qt.alpha(Color.mOnSurfaceVariant, 0.5)
@@ -766,7 +766,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             spacing: Style.marginL
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.loginKey
               pointSize: Style.fontSizeL
               color: passwordInput.activeFocus ? Color.mPrimary : Color.mOnSurfaceVariant
@@ -860,7 +860,7 @@ Item {
 
                       property list<string> passwordChars: ["circle-filled", "pentagon-filled", "michelin-star-filled", "square-rounded-filled", "guitar-pick-filled", "blob-filled", "triangle-filled"]
 
-                      NIcon {
+                      AtmoIcon {
                         id: icon
 
                         required property int index
@@ -1013,7 +1013,7 @@ Item {
             visible: passwordInput.text.length > 0
             enabled: !lockContext || !lockContext.unlockInProgress
 
-            NIcon {
+            AtmoIcon {
               anchors.centerIn: parent
               icon: parent.parent.passwordVisible ? "eye-off" : "eye"
               pointSize: Style.fontSizeM
@@ -1057,7 +1057,7 @@ Item {
             border.width: Style.borderS
             enabled: !lockContext || !lockContext.unlockInProgress
 
-            NIcon {
+            AtmoIcon {
               anchors.centerIn: parent
               icon: Icon.submit
               pointSize: Style.fontSizeM

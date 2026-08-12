@@ -102,7 +102,7 @@ Item {
       spacing: Style.marginXS
 
       // Icon (optional)
-      NIcon {
+      AtmoIcon {
         Layout.alignment: Qt.AlignVCenter
         visible: root.icon !== ""
         icon: root.icon

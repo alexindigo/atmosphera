@@ -60,7 +60,7 @@ ColumnLayout {
       color: Color.mSurfaceVariant
       opacity: 0.6
 
-      NIcon {
+      AtmoIcon {
         icon: Icon.palette
         pointSize: Style.fontSizeL
         color: Color.mPrimary
@@ -109,7 +109,7 @@ ColumnLayout {
           radius: Style.radiusM
           color: Color.mSurface
 
-          NIcon {
+          AtmoIcon {
             icon: Icon.darkMode
             pointSize: Style.fontSizeL
             color: Color.mPrimary
@@ -164,7 +164,7 @@ ColumnLayout {
           radius: Style.radiusM
           color: Color.mSurface
 
-          NIcon {
+          AtmoIcon {
             icon: Icon.colorPicker
             pointSize: Style.fontSizeL
             color: Color.mPrimary
@@ -235,7 +235,7 @@ ColumnLayout {
             radius: Style.radiusM
             color: Color.mSurface
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.palette
               pointSize: Style.fontSizeL
               color: Color.mPrimary
