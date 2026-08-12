@@ -136,7 +136,7 @@ ColumnLayout {
 
     if (root.qsVersion) {
       let qsV = root.qsVersion.startsWith("v") ? root.qsVersion : "v" + root.qsVersion;
-      info += "Atmosphera QS: " + qsV;
+      info += "Noctalia QS: " + qsV;
       if (root.qsRevision) {
         info += " (" + root.qsRevision + ")";
       }
@@ -485,7 +485,7 @@ ColumnLayout {
         // Quickshell Version
         NText {
           visible: root.qsVersion !== ""
-          text: "Atmosphera QS:"
+          text: "Noctalia QS:"
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
         }
