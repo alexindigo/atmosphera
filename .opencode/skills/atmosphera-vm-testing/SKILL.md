@@ -32,7 +32,10 @@ arch-base (clean Arch + dev-agent tools)
   ├── baseline
   │
   ├── virt-clone → arch-niri (niri 26.04)
-  │     └── niri-base
+  │     ├── niri-base     (pristine headless test baseline)
+  │     └── niri-gui      (GUI baseline: virtio-gpu+VirGL console, autologin
+  │                        tty1 → niri --session, full Atmosphera install,
+  │                        keyd+xremap macos env — see arch-niri-vm skill)
   │
   └── virt-clone → arch-hypr (hyprland)
         └── hypr-base
