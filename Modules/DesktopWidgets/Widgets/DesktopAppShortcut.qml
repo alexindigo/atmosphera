@@ -57,7 +57,7 @@ DraggableDesktopWidget {
       anchors.fill: parent
       spacing: 4 * root.widgetScale
 
-      AtmoIcon {
+      AtmoAppIcon {
         Layout.alignment: Qt.AlignHCenter
         Layout.preferredWidth: 64 * root.widgetScale
         Layout.preferredHeight: 64 * root.widgetScale

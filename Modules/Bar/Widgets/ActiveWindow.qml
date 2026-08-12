@@ -231,7 +231,7 @@ Item {
           Layout.alignment: Qt.AlignVCenter
           visible: showIcon
 
-          AtmoIcon {
+          AtmoAppIcon {
             id: windowIcon
             anchors.fill: parent
             name: getAppIconName()
@@ -303,7 +303,7 @@ Item {
           y: Style.pixelAlignCenter(parent.height, height)
           visible: windowTitle !== ""
 
-          AtmoIcon {
+          AtmoAppIcon {
             id: windowIconVertical
             anchors.fill: parent
             name: getAppIconName()

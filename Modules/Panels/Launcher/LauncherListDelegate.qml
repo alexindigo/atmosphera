@@ -142,7 +142,7 @@ NBox {
 
           Component {
             id: systemIconComponent
-            AtmoIcon {
+            AtmoAppIcon {
               anchors.fill: parent
               name: modelData.icon || ""
               visible: modelData.icon && !modelData.displayString

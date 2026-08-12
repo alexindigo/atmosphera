@@ -845,7 +845,7 @@ Item {
                   Layout.preferredHeight: root.itemSize
                   Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
 
-                  AtmoIcon {
+                  AtmoAppIcon {
                     id: appIcon
                     anchors.fill: parent
 

@@ -784,7 +784,7 @@ Item {
               id: windowHoverHandler
             }
 
-            AtmoIcon {
+            AtmoAppIcon {
               id: groupedAppIcon
 
               width: parent.width
