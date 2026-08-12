@@ -34,48 +34,6 @@ ColumnLayout {
 
   spacing: Style.marginL
 
-  // Beautiful header with icon
-  ColumnLayout {
-    Layout.fillWidth: true
-    Layout.bottomMargin: Style.marginL
-    spacing: Style.marginM
-
-    RowLayout {
-      spacing: Style.marginM
-
-      Rectangle {
-        width: 40
-        height: 40
-        radius: Style.radiusL
-        color: Color.mSurfaceVariant
-        opacity: 0.6
-
-        AtmoIcon {
-          icon: Icon.image
-          pointSize: Style.fontSizeL
-          color: Color.mPrimary
-          anchors.centerIn: parent
-        }
-      }
-
-      ColumnLayout {
-        spacing: Style.marginXS
-
-        NText {
-          text: I18n.tr("setup.wallpaper.header")
-          pointSize: Style.fontSizeXL
-          font.weight: Style.fontWeightBold
-          color: Color.mPrimary
-        }
-
-        NText {
-          text: I18n.tr("setup.wallpaper.subheader")
-          pointSize: Style.fontSizeM
-          color: Color.mOnSurfaceVariant
-        }
-      }
-    }
-  }
 
   // Large preview area
   Rectangle {

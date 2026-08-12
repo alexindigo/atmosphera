@@ -14,57 +14,9 @@ ColumnLayout {
   signal scaleRatioChanged(real ratio)
   signal barPositionChanged(string position)
 
-  spacing: Style.marginM
 
-  // Beautiful header with icon
-  RowLayout {
+  ColumnLayout {
     Layout.fillWidth: true
-    Layout.bottomMargin: Style.marginL
-    spacing: Style.marginM
-
-    Rectangle {
-      width: 40
-      height: 40
-      radius: Style.radiusL
-      color: Color.mSurfaceVariant
-      opacity: 0.6
-
-      AtmoIcon {
-        icon: Icon.palette
-        pointSize: Style.fontSizeL
-        color: Color.mPrimary
-        anchors.centerIn: parent
-      }
-    }
-
-    ColumnLayout {
-      Layout.fillWidth: true
-      spacing: Style.marginXS
-
-      NText {
-        text: I18n.tr("setup.customize.header")
-        pointSize: Style.fontSizeXL
-        font.weight: Style.fontWeightBold
-        color: Color.mPrimary
-      }
-
-      NText {
-        text: I18n.tr("setup.customize.subheader")
-        pointSize: Style.fontSizeM
-        color: Color.mOnSurfaceVariant
-      }
-    }
-  }
-
-  NScrollView {
-    id: customizeScrollView
-    Layout.fillWidth: true
-    Layout.fillHeight: true
-    horizontalPolicy: ScrollBar.AlwaysOff
-    verticalPolicy: ScrollBar.AsNeeded
-
-    ColumnLayout {
-      width: customizeScrollView.availableWidth
       spacing: Style.marginM
 
       // Bar Position section
@@ -613,5 +565,4 @@ ColumnLayout {
         Layout.preferredHeight: Style.marginL
       }
     }
-  }
 }
