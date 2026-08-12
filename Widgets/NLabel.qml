@@ -27,7 +27,7 @@ ColumnLayout {
     Layout.fillWidth: true
     visible: root.label !== ""
 
-    NIcon {
+    AtmoIcon {
       visible: root.icon !== ""
       icon: root.icon
       pointSize: Style.fontSizeXXL

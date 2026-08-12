@@ -50,7 +50,7 @@ ColumnLayout {
         color: Color.mSurfaceVariant
         opacity: 0.6
 
-        NIcon {
+        AtmoIcon {
           icon: Icon.image
           pointSize: Style.fontSizeL
           color: Color.mPrimary
@@ -108,7 +108,7 @@ ColumnLayout {
         radius: width / 2
         color: Color.mPrimary
 
-        NIcon {
+        AtmoIcon {
           icon: Icon.featured
           pointSize: Style.fontSizeXXL
           color: Color.mOnPrimary
@@ -213,7 +213,7 @@ ColumnLayout {
               radius: thumbDelegate.thumbRadius
               visible: thumbImage.status === Image.Loading || thumbImage.status === Image.Error || thumbDelegate.cachedPath === ""
 
-              NIcon {
+              AtmoIcon {
                 icon: Icon.image
                 pointSize: Style.fontSizeL
                 color: Color.mOnSurfaceVariant
@@ -252,7 +252,7 @@ ColumnLayout {
               radius: width / 2
               color: Color.mPrimary
 
-              NIcon {
+              AtmoIcon {
                 icon: Icon.check
                 pointSize: Style.fontSizeS
                 color: Color.mOnPrimary
@@ -290,7 +290,7 @@ ColumnLayout {
       anchors.margins: Style.marginL
       spacing: Style.marginM
 
-      NIcon {
+      AtmoIcon {
         icon: Icon.folderOpen
         pointSize: Style.fontSizeL
         color: Color.mOnSurfaceVariant

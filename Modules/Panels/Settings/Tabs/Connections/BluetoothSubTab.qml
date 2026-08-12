@@ -408,7 +408,7 @@ Item {
           spacing: Style.marginM
           Layout.alignment: Qt.AlignVCenter
 
-          NIcon {
+          AtmoIcon {
             Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
             horizontalAlignment: Text.AlignLeft
             icon: BluetoothService.getDeviceIcon(modelData)
@@ -450,7 +450,7 @@ Item {
             RowLayout {
               visible: modelData.batteryAvailable
               spacing: Style.marginS
-              NIcon {
+              AtmoIcon {
                 icon: {
                   var b = BluetoothService.getBatteryPercent(modelData);
                   return BatteryService.getIcon(b !== null ? b : 0, false, false, b !== null);
@@ -483,7 +483,7 @@ Item {
               size: Style.baseWidgetSize * 0.5
             }
 
-            NIconButton {
+            AtmoIconButton {
               visible: modelData.connected && modelData.state !== BluetoothDeviceState.Disconnecting
               icon: Icon.info
               tooltipText: I18n.tr("common.info")
@@ -498,7 +498,7 @@ Item {
               }
             }
 
-            NIconButton {
+            AtmoIconButton {
               visible: !root.showOnlyLists && (modelData.paired || modelData.trusted) && !modelData.connected && !isBusy && !modelData.blocked
               icon: Icon.trash
               tooltipText: I18n.tr("common.unpair")
@@ -554,7 +554,7 @@ Item {
           border.color: Style.boxBorderColor
           clip: true
 
-          NIconButton {
+          AtmoIconButton {
             anchors.top: parent.top
             anchors.right: parent.right
             anchors.margins: Style.marginS
@@ -583,7 +583,7 @@ Item {
               Layout.fillWidth: true
               Layout.preferredWidth: 1
               spacing: Style.marginXS
-              NIcon {
+              AtmoIcon {
                 icon: BluetoothService.getSignalIcon(modelData)
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
@@ -601,7 +601,7 @@ Item {
               Layout.fillWidth: true
               Layout.preferredWidth: 1
               spacing: Style.marginXS
-              NIcon {
+              AtmoIcon {
                 icon: {
                   var b = BluetoothService.getBatteryPercent(modelData);
                   return BatteryService.getIcon(b !== null ? b : 0, false, false, b !== null);
@@ -624,7 +624,7 @@ Item {
               Layout.fillWidth: true
               Layout.preferredWidth: 1
               spacing: Style.marginXS
-              NIcon {
+              AtmoIcon {
                 icon: Icon.link
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
@@ -641,7 +641,7 @@ Item {
               Layout.fillWidth: true
               Layout.preferredWidth: 1
               spacing: Style.marginXS
-              NIcon {
+              AtmoIcon {
                 icon: Icon.verified
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
@@ -658,7 +658,7 @@ Item {
               Layout.fillWidth: true
               Layout.preferredWidth: 1
               spacing: Style.marginXS
-              NIcon {
+              AtmoIcon {
                 icon: Icon.deviceAddress
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
@@ -677,7 +677,7 @@ Item {
               Layout.topMargin: -Style.marginXXS
               spacing: Style.marginXS
               visible: Settings.data.network.bluetoothAutoConnect
-              NIcon {
+              AtmoIcon {
                 icon: BluetoothService.getDeviceAutoConnect(modelData) ? "repeat" : "repeat-off"
                 pointSize: Style.fontSizeXS
               }
@@ -721,7 +721,7 @@ Item {
       anchors.margins: Style.marginL
       spacing: Style.marginL
 
-      NIcon {
+      AtmoIcon {
         icon: Icon.lock
         pointSize: 48
         color: Color.mPrimary

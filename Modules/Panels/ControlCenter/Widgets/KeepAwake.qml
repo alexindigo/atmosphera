@@ -4,7 +4,7 @@ import qs.Commons
 import qs.Services.Power
 import qs.Widgets
 
-NIconButtonHot {
+AtmoIconButtonHot {
   property ShellScreen screen
 
   icon: IdleInhibitorService.isInhibited ? "keep-awake-on" : "keep-awake-off"

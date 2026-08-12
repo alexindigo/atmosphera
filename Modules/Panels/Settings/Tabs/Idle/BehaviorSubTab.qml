@@ -83,7 +83,7 @@ ColumnLayout {
           pointSize: Style.fontSizeL
           Layout.fillWidth: true
         }
-        NIconButton {
+        AtmoIconButton {
           icon: Icon.close
           onClicked: idleInfoPopup.close()
         }
@@ -263,7 +263,7 @@ ColumnLayout {
       onValueChanged: rowRoot.actionTimeoutChanged(value)
     }
 
-    NIconButton {
+    AtmoIconButton {
       Layout.alignment: Qt.AlignVCenter
       enabled: rowRoot.showEdit
       icon: Icon.info

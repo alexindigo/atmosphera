@@ -193,7 +193,7 @@ Item {
   }
 
   // State icon centered inside battery body (shown when alternating)
-  NIcon {
+  AtmoIcon {
     id: stateIconOverlay
     visible: opacity > 0
     opacity: !root.ready || (root.isMoving ? (root.showStateIcon || !root.effectiveShowPercent) : root.pluggedIn) ? 1 : 0

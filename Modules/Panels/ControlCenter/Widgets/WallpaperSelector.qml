@@ -4,7 +4,7 @@ import qs.Commons
 import qs.Services.UI
 import qs.Widgets
 
-NIconButtonHot {
+AtmoIconButtonHot {
   property ShellScreen screen
 
   enabled: Settings.data.wallpaper.enabled

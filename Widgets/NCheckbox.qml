@@ -60,7 +60,7 @@ RowLayout {
       }
     }
 
-    NIcon {
+    AtmoIcon {
       visible: root.checked
       x: Style.pixelAlignCenter(parent.width, width)
       y: Style.pixelAlignCenter(parent.height, height)

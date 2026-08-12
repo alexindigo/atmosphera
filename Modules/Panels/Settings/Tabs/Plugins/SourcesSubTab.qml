@@ -87,7 +87,7 @@ ColumnLayout {
           anchors.margins: Style.marginL
           spacing: Style.marginM
 
-          NIcon {
+          AtmoIcon {
             icon: root.sourceIcon(modelData.url)
             pointSize: Style.fontSizeL
           }
@@ -111,7 +111,7 @@ ColumnLayout {
             }
           }
 
-          NIconButton {
+          AtmoIconButton {
             icon: Icon.edit
             tooltipText: I18n.tr("panels.plugins.sources-edit-tooltip")
             baseSize: Style.baseWidgetSize * 0.7
@@ -121,7 +121,7 @@ ColumnLayout {
             }
           }
 
-          NIconButton {
+          AtmoIconButton {
             icon: Icon.trash
             tooltipText: I18n.tr("panels.plugins.sources-remove-tooltip")
             baseSize: Style.baseWidgetSize * 0.7
@@ -211,7 +211,7 @@ ColumnLayout {
           Layout.fillWidth: true
         }
 
-        NIconButton {
+        AtmoIconButton {
           icon: Icon.folder
           tooltipText: I18n.tr("panels.plugins.sources-add-dialog-browse")
           border.width: 0

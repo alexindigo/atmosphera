@@ -214,7 +214,7 @@ ColumnLayout {
       onTextChanged: root.searchText = text
     }
 
-    NIconButton {
+    AtmoIconButton {
       icon: Icon.filter
       tooltipText: root.showOnlyActive ? I18n.tr("actions.show-all") : I18n.tr("actions.show-active-only")
 

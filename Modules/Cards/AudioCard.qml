@@ -150,7 +150,7 @@ NBox {
         Layout.fillWidth: true
         spacing: Style.marginXS
 
-        NIconButton {
+        AtmoIconButton {
           icon: AudioService.muted ? "volume-off" : "volume-high"
           baseSize: Style.baseWidgetSize * 0.5
           colorFg: AudioService.muted ? Color.mError : Color.mOnSurface
@@ -218,7 +218,7 @@ NBox {
         Layout.fillWidth: true
         spacing: Style.marginXS
 
-        NIconButton {
+        AtmoIconButton {
           icon: AudioService.inputMuted ? "microphone-off" : "microphone"
           baseSize: Style.baseWidgetSize * 0.5
           colorFg: AudioService.inputMuted ? Color.mError : Color.mOnSurface

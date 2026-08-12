@@ -172,7 +172,7 @@ SmartPanel {
           spacing: Style.marginM
 
           RowLayout {
-            NIcon {
+            AtmoIcon {
               icon: Icon.settingsAudio
               pointSize: Style.fontSizeXXL
               color: Color.mPrimary
@@ -186,7 +186,7 @@ SmartPanel {
               Layout.fillWidth: true
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.close
               tooltipText: I18n.tr("common.close")
               baseSize: Style.baseWidgetSize * 0.8
@@ -301,7 +301,7 @@ SmartPanel {
                     horizontalAlignment: Text.AlignRight
                   }
 
-                  NIconButton {
+                  AtmoIconButton {
                     icon: AudioService.getOutputIcon()
                     tooltipText: I18n.tr("tooltips.output-muted")
                     baseSize: Style.baseWidgetSize * 0.7
@@ -377,7 +377,7 @@ SmartPanel {
                     horizontalAlignment: Text.AlignRight
                   }
 
-                  NIconButton {
+                  AtmoIconButton {
                     icon: AudioService.getInputIcon()
                     tooltipText: I18n.tr("tooltips.input-muted")
                     baseSize: Style.baseWidgetSize * 0.7
@@ -630,7 +630,7 @@ SmartPanel {
                     Layout.preferredHeight: Style.baseWidgetSize
                     name: appBox.appIconName
 
-                    NIcon {
+                    AtmoIcon {
                       anchors.fill: parent
                       icon: Icon.apps
                       pointSize: Style.fontSizeXL
@@ -696,7 +696,7 @@ SmartPanel {
                       }
 
                       // Mute Button
-                      NIconButton {
+                      AtmoIconButton {
                         icon: (appBox.appMuted === true) ? "volume-mute" : "volume-high"
                         tooltipText: (appBox.appMuted === true) ? I18n.tr("tooltips.unmute") : I18n.tr("tooltips.mute")
                         baseSize: Style.baseWidgetSize * 0.7

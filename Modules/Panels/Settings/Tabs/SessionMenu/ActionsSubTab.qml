@@ -154,7 +154,7 @@ ColumnLayout {
               }
             }
 
-            NIcon {
+            AtmoIcon {
               visible: modelData.enabled
               anchors.centerIn: parent
               anchors.horizontalCenterOffset: -1
@@ -184,7 +184,7 @@ ColumnLayout {
           }
 
           // Countdown toggle (only shown when global countdown is enabled)
-          NIconButtonHot {
+          AtmoIconButtonHot {
             visible: Settings.data.sessionMenu.enableCountdown
             icon: Icon.clock
             hot: modelData.countdownEnabled !== undefined ? modelData.countdownEnabled : true
@@ -197,7 +197,7 @@ ColumnLayout {
           }
 
           // Settings button (cogwheel)
-          NIconButton {
+          AtmoIconButton {
             icon: Icon.settings
             tooltipText: I18n.tr("panels.session-menu.entry-settings-tooltip")
             baseSize: Style.baseWidgetSize * 0.8

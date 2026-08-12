@@ -762,7 +762,7 @@ Popup {
         Layout.fillWidth: true
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.refresh
         tooltipText: I18n.tr("common.refresh")
         enabled: !fetching && !downloading
@@ -779,7 +779,7 @@ Popup {
         }
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.close
         tooltipText: I18n.tr("common.close")
         onClicked: root.close()
@@ -923,7 +923,7 @@ Popup {
               }
 
               // Download/Delete button
-              NIconButton {
+              AtmoIconButton {
                 property bool isDownloading: downloading && downloadingScheme === schemeRow.schemeName
                 property bool isInstalled: root.isSchemeInstalled(schemeRow.schemeName)
                 property bool isDownloaded: root.isSchemeDownloaded(schemeRow.schemeName)
@@ -955,7 +955,7 @@ Popup {
       spacing: Style.marginM
       visible: !fetching && availableSchemes.length === 0 && downloadError === ""
 
-      NIcon {
+      AtmoIcon {
         icon: Icon.pkg
         pointSize: 48
         color: Color.mOnSurfaceVariant

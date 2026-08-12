@@ -6,7 +6,7 @@ import qs.Services.Power
 import qs.Widgets
 
 // Performance
-NIconButtonHot {
+AtmoIconButtonHot {
   property ShellScreen screen
 
   readonly property bool hasPP: PowerProfileService.available

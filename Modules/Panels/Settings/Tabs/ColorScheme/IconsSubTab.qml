@@ -53,7 +53,7 @@ ColumnLayout {
           Layout.fillWidth: true
           spacing: Style.marginS
 
-          NIcon {
+          AtmoIcon {
             icon: Icon.palette
             pointSize: Style.fontSizeM
           }
@@ -125,7 +125,7 @@ ColumnLayout {
           Layout.preferredHeight: 4
         }
 
-        NIcon {
+        AtmoIcon {
           Layout.alignment: Qt.AlignHCenter
           Layout.preferredWidth: 32 * Style.uiScaleRatio
           Layout.preferredHeight: 32 * Style.uiScaleRatio

@@ -163,7 +163,7 @@ ColumnLayout {
           elide: Text.ElideRight
         }
 
-        NIconButton {
+        AtmoIconButton {
           anchors.verticalCenter: parent.verticalCenter
           icon: Icon.close
           baseSize: 12 * Style.uiScaleRatio

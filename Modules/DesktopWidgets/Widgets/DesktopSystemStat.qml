@@ -222,7 +222,7 @@ DraggableDesktopWidget {
           Layout.alignment: Qt.AlignHCenter
           spacing: Math.round(Style.marginXXS * root.widgetScale)
 
-          NIcon {
+          AtmoIcon {
             visible: !!modelData.icon
             icon: modelData.icon || ""
             color: modelData.color
@@ -278,7 +278,7 @@ DraggableDesktopWidget {
           Layout.alignment: Qt.AlignVCenter
           spacing: Math.round(Style.marginXXS * root.widgetScale)
 
-          NIcon {
+          AtmoIcon {
             Layout.alignment: Qt.AlignVCenter
             visible: !!modelData.icon
             icon: modelData.icon || ""

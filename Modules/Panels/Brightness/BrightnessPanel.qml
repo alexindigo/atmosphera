@@ -113,7 +113,7 @@ SmartPanel {
           anchors.margins: Style.marginM
           spacing: Style.marginM
 
-          NIcon {
+          AtmoIcon {
             icon: Icon.settingsDisplay
             pointSize: Style.fontSizeXXL
             color: Color.mPrimary
@@ -127,7 +127,7 @@ SmartPanel {
             Layout.fillWidth: true
           }
 
-          NIconButton {
+          AtmoIconButton {
             icon: Icon.close
             tooltipText: I18n.tr("common.close")
             baseSize: Style.baseWidgetSize * 0.8
@@ -175,7 +175,7 @@ SmartPanel {
                 Layout.fillWidth: true
                 spacing: Style.marginS
 
-                NIcon {
+                AtmoIcon {
                   icon: panelContent.getIcon(panelContent.globalBrightness)
                   pointSize: Style.fontSizeXL
                   color: Color.mOnSurface
@@ -248,7 +248,7 @@ SmartPanel {
 
                   Layout.fillWidth: true
                   spacing: Style.marginS
-                  NIcon {
+                  AtmoIcon {
                     icon: getIcon(brightnessMonitor ? brightnessMonitor.brightness : 0)
                     pointSize: Style.fontSizeXL
                     color: Color.mOnSurface

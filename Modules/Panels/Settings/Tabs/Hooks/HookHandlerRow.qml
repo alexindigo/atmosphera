@@ -29,7 +29,7 @@ RowLayout {
         labelColor: root.command ? Color.mPrimary : Color.mOnSurface
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.settings
         onClicked: root.editClicked()
         tooltipText: I18n.tr("common.edit")

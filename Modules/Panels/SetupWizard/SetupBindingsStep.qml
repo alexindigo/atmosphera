@@ -22,7 +22,7 @@ ColumnLayout {
       color: Color.mSurfaceVariant
       opacity: 0.6
 
-      NIcon {
+      AtmoIcon {
         icon: Icon.keyboard
         pointSize: Style.fontSizeL
         color: Color.mPrimary

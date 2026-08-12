@@ -390,7 +390,7 @@ NBox {
         }
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.add
         colorBg: Color.mPrimary
         colorFg: Color.mOnPrimary
@@ -598,7 +598,7 @@ NBox {
               }
 
               // Plugin indicator icon
-              NIcon {
+              AtmoIcon {
                 visible: root.widgetRegistry && root.widgetRegistry.isPluginWidget(modelData.id)
                 icon: "plugin"
                 pointSize: Style.fontSizeXXS
@@ -608,7 +608,7 @@ NBox {
               }
 
               // CPU intensive indicator icon
-              NIcon {
+              AtmoIcon {
                 visible: root.widgetRegistry && root.widgetRegistry.isCpuIntensive(modelData.id)
                 icon: "cpu-intensive"
                 pointSize: Style.fontSizeXXS
@@ -624,7 +624,7 @@ NBox {
 
                 Loader {
                   active: root.widgetHasSettings(modelData.id) && root.enabled
-                  sourceComponent: NIconButton {
+                  sourceComponent: AtmoIconButton {
                     icon: "settings"
                     tooltipText: I18n.tr("actions.widget-settings")
                     baseSize: miniButtonSize

@@ -392,7 +392,7 @@ SmartPanel {
 
           RowLayout {
             id: headerRow
-            NIcon {
+            AtmoIcon {
               icon: Icon.bell
               pointSize: Style.fontSizeXXL
               color: Color.mPrimary
@@ -406,14 +406,14 @@ SmartPanel {
               Layout.fillWidth: true
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: NotificationService.doNotDisturb ? "bell-off" : "bell"
               tooltipText: NotificationService.doNotDisturb ? I18n.tr("tooltips.do-not-disturb-enabled") : I18n.tr("tooltips.do-not-disturb-enabled")
               baseSize: Style.baseWidgetSize * 0.8
               onClicked: NotificationService.doNotDisturb = !NotificationService.doNotDisturb
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.trash
               tooltipText: I18n.tr("actions.clear-history")
               baseSize: Style.baseWidgetSize * 0.8
@@ -424,7 +424,7 @@ SmartPanel {
               }
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.settings
               tooltipText: I18n.tr("common.settings")
               baseSize: Style.baseWidgetSize * 0.8
@@ -434,7 +434,7 @@ SmartPanel {
               }
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.close
               tooltipText: I18n.tr("common.close")
               baseSize: Style.baseWidgetSize * 0.8
@@ -523,7 +523,7 @@ SmartPanel {
                   Layout.fillHeight: true
                 }
 
-                NIcon {
+                AtmoIcon {
                   icon: Icon.bellOff
                   pointSize: (NotificationService.historyModel.count === 0) ? 48 : Style.baseWidgetSize
                   color: Color.mOnSurfaceVariant
@@ -977,7 +977,7 @@ SmartPanel {
                             anchors.right: parent.right
                             spacing: Style.marginXS
 
-                            NIconButton {
+                            AtmoIconButton {
                               id: expandButton
                               icon: notificationDelegate.isExpanded ? "chevron-up" : "chevron-down"
                               tooltipText: notificationDelegate.isExpanded ? I18n.tr("notifications.panel.click-to-collapse") || "Click to collapse" : I18n.tr("notifications.panel.click-to-expand") || "Click to expand"
@@ -997,7 +997,7 @@ SmartPanel {
                             }
 
                             // Delete button
-                            NIconButton {
+                            AtmoIconButton {
                               icon: Icon.trash
                               tooltipText: I18n.tr("tooltips.delete-notification")
                               baseSize: notificationDelegate.actionButtonSize

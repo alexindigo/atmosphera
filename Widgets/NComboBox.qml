@@ -239,7 +239,7 @@ RowLayout {
       }
     }
 
-    indicator: NIcon {
+    indicator: AtmoIcon {
       x: combo.width - width - Style.marginM
       y: combo.topPadding + (combo.availableHeight - height) / 2
       icon: Icon.caretDown

@@ -81,7 +81,7 @@ NBox {
         Layout.fillWidth: true
         spacing: Style.marginXS
 
-        NIconButton {
+        AtmoIconButton {
           icon: {
             if (!brightnessMonitor)
               return "brightness-low";

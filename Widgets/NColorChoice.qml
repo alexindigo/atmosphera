@@ -69,7 +69,7 @@ RowLayout {
           }
         }
 
-        NIcon {
+        AtmoIcon {
           anchors.centerIn: parent
           icon: Icon.check
           pointSize: Math.max(Style.fontSizeXS, colorCircle.width * 0.4)

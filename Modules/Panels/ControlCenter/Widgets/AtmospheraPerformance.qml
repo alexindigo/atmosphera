@@ -4,7 +4,7 @@ import qs.Commons
 import qs.Services.Power
 import qs.Widgets
 
-NIconButtonHot {
+AtmoIconButtonHot {
   property ShellScreen screen
 
   icon: PowerProfileService.atmospheraPerformanceMode ? "rocket" : "rocket-off"

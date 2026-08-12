@@ -65,7 +65,7 @@ Rectangle {
         Layout.alignment: Qt.AlignVCenter
       }
 
-      NIcon {
+      AtmoIcon {
         icon: Icon.colorPicker
         color: Color.mOnSurfaceVariant
         Layout.fillWidth: true

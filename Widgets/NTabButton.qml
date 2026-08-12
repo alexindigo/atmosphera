@@ -52,7 +52,7 @@ Rectangle {
     width: Math.min(implicitWidth, parent.width - Style.margin2S)
     spacing: (root.icon !== "" && root.text !== "") ? Style.marginXS : 0
 
-    NIcon {
+    AtmoIcon {
       visible: root.icon !== ""
       Layout.alignment: Qt.AlignVCenter
       icon: root.icon

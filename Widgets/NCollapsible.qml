@@ -80,7 +80,7 @@ ColumnLayout {
       spacing: Style.marginM
 
       // Expand/collapse icon with rotation animation
-      NIcon {
+      AtmoIcon {
         id: chevronIcon
         icon: Icon.chevronRight
         pointSize: Style.fontSizeL

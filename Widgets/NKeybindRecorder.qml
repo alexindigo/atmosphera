@@ -151,7 +151,7 @@ Item {
               anchors.rightMargin: Style.marginS
               spacing: Style.marginXS
 
-              NIcon {
+              AtmoIcon {
                 icon: root.hasConflict && slotArea.isRecordingThis ? "alert-circle" : (slotArea.isRecordingThis ? "circle-dot" : "keyboard")
                 color: slotArea.isRecordingThis ? Color.mOnSecondary : (slotArea.isOccupied ? Color.mOnSurfaceVariant : Qt.alpha(Color.mOnSurfaceVariant, 0.4))
                 opacity: 0.8
@@ -174,7 +174,7 @@ Item {
                 Layout.fillHeight: true
                 visible: slotArea.isOccupied && root.recordingIndex === -1
 
-                NIconButton {
+                AtmoIconButton {
                   anchors.centerIn: parent
                   visible: root.recordingIndex === -1 && (root.currentKeybinds.length > 1 || root.allowEmpty)
                   icon: Icon.close

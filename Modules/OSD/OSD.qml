@@ -613,7 +613,7 @@ Variants {
             }
 
             // Common Icon for all types
-            NIcon {
+            AtmoIcon {
               icon: root.getIcon()
               color: root.getIconColor()
               pointSize: Style.fontSizeXL
@@ -803,7 +803,7 @@ Variants {
               }
             }
 
-            NIcon {
+            AtmoIcon {
               icon: root.getIcon()
               color: root.getIconColor()
               pointSize: root.currentOSDType === OSD.Type.LockKey ? Style.fontSizeXL : Style.fontSizeL

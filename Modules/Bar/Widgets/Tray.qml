@@ -343,7 +343,7 @@ Item {
     anchors.centerIn: visualCapsule
 
     // Drawer opener (before items if opposite direction)
-    NIconButton {
+    AtmoIconButton {
       id: chevronIconBefore
       visible: root.drawerEnabled && dropdownItems.length > 0 && BarService.getPillDirection(root)
       width: isVertical ? barHeight : capsuleHeight
@@ -546,7 +546,7 @@ Item {
     }
 
     // Drawer opener (after items if normal direction)
-    NIconButton {
+    AtmoIconButton {
       id: chevronIconAfter
       visible: root.drawerEnabled && dropdownItems.length > 0 && !BarService.getPillDirection(root)
       width: isVertical ? barHeight : capsuleHeight

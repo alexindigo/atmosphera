@@ -423,7 +423,7 @@ ColumnLayout {
           color: Color.mPrimary
           Layout.fillWidth: true
         }
-        NIconButton {
+        AtmoIconButton {
           icon: Icon.close
           tooltipText: I18n.tr("common.close")
           onClicked: iconsPicker.close()

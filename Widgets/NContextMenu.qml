@@ -103,7 +103,7 @@ Popup {
         spacing: Style.marginS
 
         // Optional icon — resolved via action rather than pre-captured icon
-        NIcon {
+        AtmoIcon {
           visible: modelData.action !== undefined
           icon: {
             if (!modelData.action)

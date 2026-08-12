@@ -98,7 +98,7 @@ Popup {
       Layout.fillWidth: true
       spacing: Style.marginM
 
-      NIcon {
+      AtmoIcon {
         icon: Icon.settings
         pointSize: Style.fontSizeL
         color: Color.mPrimary
@@ -112,7 +112,7 @@ Popup {
         Layout.fillWidth: true
       }
 
-      NIconButton {
+      AtmoIconButton {
         icon: Icon.close
         tooltipText: I18n.tr("common.close")
         baseSize: Style.baseWidgetSize * 0.8
@@ -350,7 +350,7 @@ Popup {
                 }
               }
 
-              NIcon {
+              AtmoIcon {
                 visible: sfwToggle.checked
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: -1
@@ -399,7 +399,7 @@ Popup {
                 }
               }
 
-              NIcon {
+              AtmoIcon {
                 visible: sketchyToggle.checked
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: -1
@@ -449,7 +449,7 @@ Popup {
                 }
               }
 
-              NIcon {
+              AtmoIcon {
                 visible: nsfwToggle.checked
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: -1
@@ -670,7 +670,7 @@ Popup {
                 }
               }
 
-              NIcon {
+              AtmoIcon {
                 visible: generalToggle.checked
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: -1
@@ -719,7 +719,7 @@ Popup {
                 }
               }
 
-              NIcon {
+              AtmoIcon {
                 visible: animeToggle.checked
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: -1
@@ -768,7 +768,7 @@ Popup {
                 }
               }
 
-              NIcon {
+              AtmoIcon {
                 visible: peopleToggle.checked
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: -1

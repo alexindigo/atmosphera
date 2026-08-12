@@ -219,7 +219,7 @@ GridLayout {
       text: hasSelection ? root.model.get(sourceIndex).name : root.placeholder
     }
 
-    indicator: NIcon {
+    indicator: AtmoIcon {
       x: combo.width - width - Style.marginM
       y: combo.topPadding + (combo.availableHeight - height) / 2
       icon: Icon.caretDown
@@ -358,7 +358,7 @@ GridLayout {
                       return 0;
                     }
 
-                    delegate: NIcon {
+                    delegate: AtmoIcon {
                       required property int index
                       readonly property var badgeData: {
                         if (typeof badges === 'undefined' || badges === null)

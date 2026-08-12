@@ -105,7 +105,7 @@ SmartPanel {
           spacing: Style.marginM
 
           RowLayout {
-            NIcon {
+            AtmoIcon {
               id: modeIcon
               icon: panelViewMode === "wifi" ? (NetworkService.wifiEnabled ? "wifi" : "wifi-off") : (NetworkService.ethernetAvailable ? (NetworkService.ethernetConnected ? "ethernet" : "ethernet") : "ethernet-off")
               pointSize: Style.fontSizeXXL
@@ -149,14 +149,14 @@ SmartPanel {
               baseSize: Style.baseWidgetSize * 0.7 // Slightly smaller
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.settings
               tooltipText: I18n.tr("tooltips.open-settings")
               baseSize: Style.baseWidgetSize * 0.8
               onClicked: SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 0, screen)
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.close
               tooltipText: I18n.tr("common.close")
               baseSize: Style.baseWidgetSize * 0.8
@@ -215,7 +215,7 @@ SmartPanel {
             anchors.margins: Style.marginM
             spacing: Style.marginS
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.warning
               pointSize: Style.fontSizeL
               color: Color.mError
@@ -229,7 +229,7 @@ SmartPanel {
               Layout.fillWidth: true
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.close
               baseSize: Style.baseWidgetSize * 0.6
               onClicked: NetworkService.lastError = ""
@@ -269,7 +269,7 @@ SmartPanel {
                   Layout.fillHeight: true
                 }
 
-                NIcon {
+                AtmoIcon {
                   icon: Icon.wifiOff
                   pointSize: 48
                   color: Color.mOnSurfaceVariant
@@ -352,7 +352,7 @@ SmartPanel {
                   Layout.fillHeight: true
                 }
 
-                NIcon {
+                AtmoIcon {
                   icon: Icon.wifiQuestion
                   pointSize: 48
                   color: Color.mOnSurfaceVariant
@@ -417,7 +417,7 @@ SmartPanel {
                     Layout.fillHeight: true
                   }
 
-                  NIcon {
+                  AtmoIcon {
                     icon: Icon.ethernetOff
                     pointSize: 48
                     color: Color.mOnSurfaceVariant
@@ -478,7 +478,7 @@ SmartPanel {
                           Layout.fillWidth: true
                           spacing: Style.marginS
 
-                          NIcon {
+                          AtmoIcon {
                             Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
                             horizontalAlignment: Text.AlignLeft
                             icon: NetworkService.getIcon(true)
@@ -530,7 +530,7 @@ SmartPanel {
                                 Layout.leftMargin: Style.marginXS
                                 Layout.fillWidth: false
 
-                                NIcon {
+                                AtmoIcon {
                                   visible: SystemStatService.rxSpeed > 0
                                   icon: Icon.networkDownload
                                   pointSize: Style.fontSizeXXS
@@ -551,7 +551,7 @@ SmartPanel {
                                   height: 1
                                 }
 
-                                NIcon {
+                                AtmoIcon {
                                   visible: SystemStatService.txSpeed > 0
                                   icon: Icon.networkUpload
                                   pointSize: Style.fontSizeXXS
@@ -570,7 +570,7 @@ SmartPanel {
                           }
 
                           // Info button on the right
-                          NIconButton {
+                          AtmoIconButton {
                             icon: Icon.info
                             tooltipText: I18n.tr("common.info")
                             baseSize: Style.baseWidgetSize * 0.75
@@ -626,7 +626,7 @@ SmartPanel {
                           Layout.topMargin: Style.marginXS
 
                           // Grid/List toggle
-                          NIconButton {
+                          AtmoIconButton {
                             anchors.top: parent.top
                             anchors.right: parent.right
                             anchors.margins: Style.marginS
@@ -663,7 +663,7 @@ SmartPanel {
                               Layout.fillWidth: true
                               Layout.preferredWidth: 1
                               spacing: Style.marginXS
-                              NIcon {
+                              AtmoIcon {
                                 icon: Icon.ethernet
                                 pointSize: Style.fontSizeXS
                                 color: Color.mOnSurface
@@ -711,7 +711,7 @@ SmartPanel {
                               Layout.fillWidth: true
                               Layout.preferredWidth: 1
                               spacing: Style.marginXS
-                              NIcon {
+                              AtmoIcon {
                                 icon: Icon.deviceAddress
                                 pointSize: Style.fontSizeXS
                                 color: Color.mOnSurface
@@ -757,7 +757,7 @@ SmartPanel {
                               Layout.fillWidth: true
                               Layout.preferredWidth: 1
                               spacing: Style.marginXS
-                              NIcon {
+                              AtmoIcon {
                                 icon: Icon.gauge
                                 pointSize: Style.fontSizeXS
                                 color: Color.mOnSurface
@@ -787,7 +787,7 @@ SmartPanel {
                               Layout.fillWidth: true
                               Layout.preferredWidth: 1
                               spacing: Style.marginXS
-                              NIcon {
+                              AtmoIcon {
                                 icon: Icon.network
                                 pointSize: Style.fontSizeXS
                                 color: Color.mOnSurface
@@ -838,7 +838,7 @@ SmartPanel {
                               Layout.fillWidth: true
                               Layout.preferredWidth: 1
                               spacing: Style.marginXS
-                              NIcon {
+                              AtmoIcon {
                                 icon: Icon.world
                                 pointSize: Style.fontSizeXS
                                 color: Color.mOnSurface
@@ -889,7 +889,7 @@ SmartPanel {
                               Layout.fillWidth: true
                               Layout.preferredWidth: 1
                               spacing: Style.marginXS
-                              NIcon {
+                              AtmoIcon {
                                 icon: Icon.router
                                 pointSize: Style.fontSizeXS
                                 color: Color.mOnSurface

@@ -47,7 +47,7 @@ SmartPanel {
           anchors.margins: Style.marginM
           spacing: Style.marginM
 
-          NIcon {
+          AtmoIcon {
             icon: Icon.systemStats
             pointSize: Style.fontSizeXXL
             color: Color.mPrimary
@@ -61,7 +61,7 @@ SmartPanel {
             Layout.fillWidth: true
           }
 
-          NIconButton {
+          AtmoIconButton {
             icon: Icon.close
             tooltipText: I18n.tr("common.close")
             baseSize: Style.baseWidgetSize * 0.8
@@ -87,7 +87,7 @@ SmartPanel {
             Layout.fillWidth: true
             spacing: Style.marginXS
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.cpuUsage
               pointSize: Style.fontSizeXS
               color: Color.mPrimary
@@ -100,7 +100,7 @@ SmartPanel {
               font.family: Settings.data.ui.fontFixed
             }
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.cpuTemperature
               pointSize: Style.fontSizeXS
               color: Color.mSecondary
@@ -159,7 +159,7 @@ SmartPanel {
             Layout.fillWidth: true
             spacing: Style.marginXS
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.systemMemory
               pointSize: Style.fontSizeXS
               color: Color.mPrimary
@@ -213,7 +213,7 @@ SmartPanel {
             Layout.fillWidth: true
             spacing: Style.marginXS
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.networkDownload
               pointSize: Style.fontSizeXS
               color: Color.mPrimary
@@ -227,7 +227,7 @@ SmartPanel {
               Layout.rightMargin: Style.marginS
             }
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.networkUpload
               pointSize: Style.fontSizeXS
               color: Color.mSecondary
@@ -290,7 +290,7 @@ SmartPanel {
             spacing: Style.marginS
             visible: SystemStatService.nproc > 0
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.cpuUsage
               pointSize: Style.fontSizeM
               color: Color.mPrimary
@@ -317,7 +317,7 @@ SmartPanel {
             spacing: Style.marginS
             visible: SystemStatService.gpuAvailable
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.gpuTemperature
               pointSize: Style.fontSizeM
               color: Color.mPrimary
@@ -343,7 +343,7 @@ SmartPanel {
             Layout.fillWidth: true
             spacing: Style.marginS
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.systemStorage
               pointSize: Style.fontSizeM
               color: Color.mPrimary
@@ -376,7 +376,7 @@ SmartPanel {
             spacing: Style.marginS
             visible: SystemStatService.swapTotalGb > 0
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.systemSwap
               pointSize: Style.fontSizeM
               color: Color.mPrimary

@@ -328,7 +328,7 @@ PopupWindow {
                     }
                   }
 
-                  NIcon {
+                  AtmoIcon {
                     visible: parent.parent.isChecked
                     anchors.centerIn: parent
                     anchors.horizontalCenterOffset: -1
@@ -390,7 +390,7 @@ PopupWindow {
                 fillMode: Image.PreserveAspectFit
               }
 
-              NIcon {
+              AtmoIcon {
                 icon: modelData?.hasChildren ? "menu" : ""
                 pointSize: Style.fontSizeS
                 applyUiScale: false
@@ -512,7 +512,7 @@ PopupWindow {
           anchors.rightMargin: Style.marginM
           spacing: Style.marginS
 
-          NIcon {
+          AtmoIcon {
             icon: root.isPinned ? "unpin" : "pin"
             pointSize: Style.fontSizeS
             applyUiScale: false

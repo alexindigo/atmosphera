@@ -67,7 +67,7 @@ ColumnLayout {
           }
         }
 
-        NIconButton {
+        AtmoIconButton {
           baseSize: 24
           icon: Icon.chevronUp
           tooltipText: I18n.tr("panels.desktop-widgets.menu-move-up")
@@ -75,7 +75,7 @@ ColumnLayout {
           onClicked: _swapItems(index, index - 1)
         }
 
-        NIconButton {
+        AtmoIconButton {
           baseSize: 24
           icon: Icon.chevronDown
           tooltipText: I18n.tr("panels.desktop-widgets.menu-move-down")
@@ -102,7 +102,7 @@ ColumnLayout {
         Layout.fillWidth: true
         spacing: Style.marginS
 
-        NIcon {
+        AtmoIcon {
           icon: modelData.icon
           pointSize: Style.fontSizeM
           color: Color.mOnSurfaceVariant

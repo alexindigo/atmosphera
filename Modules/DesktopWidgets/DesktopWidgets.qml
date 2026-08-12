@@ -640,7 +640,7 @@ Variants {
               Layout.alignment: Qt.AlignRight
               spacing: Style.marginS
 
-              NIconButton {
+              AtmoIconButton {
                 id: addWidgetButton
                 icon: Icon.layoutGridAdd
                 tooltipText: I18n.tr("tooltips.add-widget")
@@ -666,7 +666,7 @@ Variants {
                 }
               }
 
-              NIconButton {
+              AtmoIconButton {
                 icon: Icon.grid3x3
                 visible: Settings.data.desktopWidgets.gridSnap
                 tooltipText: I18n.tr("panels.desktop-widgets.edit-mode-grid-snap-scale-label")
@@ -675,7 +675,7 @@ Variants {
                 onClicked: Settings.data.desktopWidgets.gridSnapScale = !Settings.data.desktopWidgets.gridSnapScale
               }
 
-              NIconButton {
+              AtmoIconButton {
                 icon: Icon.grid4x4
                 tooltipText: I18n.tr("panels.desktop-widgets.edit-mode-grid-snap-label")
                 colorBg: Settings.data.desktopWidgets.gridSnap ? Color.mPrimary : Color.mSurfaceVariant
@@ -683,7 +683,7 @@ Variants {
                 onClicked: Settings.data.desktopWidgets.gridSnap = !Settings.data.desktopWidgets.gridSnap
               }
 
-              NIconButton {
+              AtmoIconButton {
                 icon: Icon.settings
                 tooltipText: I18n.tr("actions.open-settings")
                 onClicked: {

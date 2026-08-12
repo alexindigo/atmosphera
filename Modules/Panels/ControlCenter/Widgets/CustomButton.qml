@@ -151,7 +151,7 @@ Item {
     return tooltip;
   }
 
-  NIconButtonHot {
+  AtmoIconButtonHot {
     id: button
     icon: _activeStateIcon
     hot: _isHot

@@ -105,7 +105,7 @@ SmartPanel {
           anchors.margins: Style.marginM
           spacing: Style.marginM
 
-          NIcon {
+          AtmoIcon {
             icon: Icon.music
             pointSize: Style.fontSizeL
             color: Color.mPrimary
@@ -136,7 +136,7 @@ SmartPanel {
                 pointSize: Style.fontSizeXS
                 color: playerSelectorMouse.containsMouse ? Color.mOnPrimary : Color.mOnSurfaceVariant
               }
-              NIcon {
+              AtmoIcon {
                 icon: Icon.chevronDown
                 pointSize: Style.fontSizeXS
                 color: playerSelectorMouse.containsMouse ? Color.mOnPrimary : Color.mOnSurfaceVariant
@@ -185,7 +185,7 @@ SmartPanel {
                       anchors.margins: Style.marginS
                       spacing: Style.marginS
 
-                      NIcon {
+                      AtmoIcon {
                         visible: MediaService.currentPlayer && MediaService.currentPlayer.identity === modelData.identity
                         icon: Icon.check
                         color: itemMouse.containsMouse ? Color.mOnPrimary : Color.mPrimary
@@ -217,7 +217,7 @@ SmartPanel {
             }
           }
 
-          NIconButton {
+          AtmoIconButton {
             icon: Icon.close
             tooltipText: I18n.tr("common.close")
             baseSize: Style.baseWidgetSize * 0.8
@@ -486,7 +486,7 @@ SmartPanel {
               Layout.alignment: Qt.AlignHCenter
               spacing: root.isSideBySide ? Style.marginL : Style.marginXL
 
-              NIconButton {
+              AtmoIconButton {
                 icon: Icon.mediaPrev
                 baseSize: root.compactMode ? (Style.baseWidgetSize * 0.9) : (Style.baseWidgetSize * 1.2)
                 onClicked: MediaService.previous()
@@ -498,7 +498,7 @@ SmartPanel {
                 radius: root.compactMode ? Style.iRadiusM : Style.iRadiusL
                 color: Color.mPrimary
 
-                NIcon {
+                AtmoIcon {
                   anchors.centerIn: parent
                   icon: MediaService.isPlaying ? "media-pause" : "media-play"
                   pointSize: root.compactMode ? Style.fontSizeL : Style.fontSizeXXL
@@ -514,7 +514,7 @@ SmartPanel {
                 }
               }
 
-              NIconButton {
+              AtmoIconButton {
                 icon: Icon.mediaNext
                 baseSize: root.compactMode ? (Style.baseWidgetSize * 0.9) : (Style.baseWidgetSize * 1.2)
                 onClicked: MediaService.next()

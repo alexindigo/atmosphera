@@ -670,7 +670,7 @@ Rectangle {
         }
       }
 
-      NIconButton {
+      AtmoIconButton {
         visible: root.showLayoutToggle
         icon: Settings.data.appLauncher.viewMode === "grid" ? "layout-list" : "layout-grid"
         tooltipText: Settings.data.appLauncher.viewMode === "grid" ? I18n.tr("tooltips.list-view") : I18n.tr("tooltips.grid-view")

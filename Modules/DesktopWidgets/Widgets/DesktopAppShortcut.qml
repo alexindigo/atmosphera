@@ -65,7 +65,7 @@ DraggableDesktopWidget {
         size: 64 * root.widgetScale
         layer.enabled: true
         layer.smooth: true
-        layer.effect: NIconColorizeEffect {
+        layer.effect: AtmoIconColorizeEffect {
           targetColor: Color.mPrimary
           blendStrength: root._blendStrength
           hueAdjustment: root._hueAdjustment

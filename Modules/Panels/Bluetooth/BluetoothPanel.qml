@@ -40,7 +40,7 @@ SmartPanel {
           anchors.fill: parent
           anchors.margins: Style.marginM
 
-          NIcon {
+          AtmoIcon {
             icon: BluetoothService.enabled ? "bluetooth" : "bluetooth-off"
             pointSize: Style.fontSizeXXL
             color: BluetoothService.enabled ? Color.mPrimary : Color.mOnSurfaceVariant
@@ -59,7 +59,7 @@ SmartPanel {
             baseSize: Style.baseWidgetSize * 0.65
           }
 
-          NIconButton {
+          AtmoIconButton {
             icon: Settings.data.network.bluetoothAutoConnect ? "bluetooth-connected" : "bluetooth"
             tooltipText: Settings.data.network.bluetoothAutoConnect ? I18n.tr("tooltips.bluetooth-auto-connect-on") : I18n.tr("tooltips.bluetooth-auto-connect-off")
             colorFg: Settings.data.network.bluetoothAutoConnect ? Color.mPrimary : Color.mOnSurfaceVariant
@@ -67,14 +67,14 @@ SmartPanel {
             onClicked: Settings.data.network.bluetoothAutoConnect = !Settings.data.network.bluetoothAutoConnect
           }
 
-          NIconButton {
+          AtmoIconButton {
             icon: Icon.settings
             tooltipText: I18n.tr("tooltips.open-settings")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: SettingsPanelService.openToTab(SettingsPanel.Tab.Connections, 1, screen)
           }
 
-          NIconButton {
+          AtmoIconButton {
             icon: Icon.close
             tooltipText: I18n.tr("common.close")
             baseSize: Style.baseWidgetSize * 0.8
@@ -116,7 +116,7 @@ SmartPanel {
                 Layout.fillHeight: true
               }
 
-              NIcon {
+              AtmoIcon {
                 icon: Icon.bluetoothOff
                 pointSize: 48
                 color: Color.mOnSurfaceVariant
@@ -167,7 +167,7 @@ SmartPanel {
                 Layout.fillHeight: true
               }
 
-              NIcon {
+              AtmoIcon {
                 icon: Icon.bluetooth
                 pointSize: 48
                 color: Color.mOnSurfaceVariant

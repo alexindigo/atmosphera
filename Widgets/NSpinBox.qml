@@ -155,7 +155,7 @@ RowLayout {
         }
       }
 
-      NIcon {
+      AtmoIcon {
         anchors.centerIn: parent
         icon: Icon.chevronLeft
         pointSize: Style.fontSizeS
@@ -202,7 +202,7 @@ RowLayout {
         }
       }
 
-      NIcon {
+      AtmoIcon {
         anchors.centerIn: parent
         icon: Icon.chevronRight
         pointSize: Style.fontSizeS

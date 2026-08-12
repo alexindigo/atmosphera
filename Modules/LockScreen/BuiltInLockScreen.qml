@@ -71,7 +71,7 @@ Item {
         anchors.centerIn: parent
         spacing: Style.marginM
 
-        NIcon {
+        AtmoIcon {
           icon: Icon.credentials
           pointSize: Style.fontSizeXL
           color: Color.mOnTertiary
@@ -110,7 +110,7 @@ Item {
         anchors.centerIn: parent
         spacing: Style.marginM
 
-        NIcon {
+        AtmoIcon {
           icon: "alert-circle"
           pointSize: Style.fontSizeXL
           color: Color.mOnError
@@ -150,7 +150,7 @@ Item {
         anchors.margins: Style.marginM
         spacing: Style.marginM
 
-        NIcon {
+        AtmoIcon {
           icon: Icon.clock
           pointSize: Style.fontSizeXL
           color: Color.mPrimary
@@ -171,7 +171,7 @@ Item {
           Layout.fillWidth: true
         }
 
-        NIconButton {
+        AtmoIconButton {
           icon: Icon.close
           tooltipText: I18n.tr("session-menu.cancel-timer")
           baseSize: 32

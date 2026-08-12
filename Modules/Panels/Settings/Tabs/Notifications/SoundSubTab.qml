@@ -29,7 +29,7 @@ ColumnLayout {
       anchors.margins: Style.marginL
       spacing: Style.marginM
 
-      NIcon {
+      AtmoIcon {
         icon: Icon.warning
         color: Color.mOnSurfaceVariant
         pointSize: Style.fontSizeXL

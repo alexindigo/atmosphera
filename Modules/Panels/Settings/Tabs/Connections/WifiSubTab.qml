@@ -286,7 +286,7 @@ Item {
             anchors.margins: Style.marginM
             spacing: Style.marginM
 
-            NIcon {
+            AtmoIcon {
               icon: Icon.add
               pointSize: Style.fontSizeXXL
               color: Color.mOnSurfaceVariant
@@ -531,7 +531,7 @@ Item {
           onTextChanged: addNetworkPopup.customEnterpriseCaCert = text
         }
 
-        NIconButton {
+        AtmoIconButton {
           icon: Icon.folderOpen
           Layout.alignment: Qt.AlignBottom
           onClicked: caCertPicker.openForAddNetwork()
@@ -674,7 +674,7 @@ Item {
           spacing: Style.marginM
           Layout.alignment: Qt.AlignVCenter
 
-          NIcon {
+          AtmoIcon {
             Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
             horizontalAlignment: Text.AlignLeft
             icon: NetworkService.getSignalInfo(modelData.signal, modelData.connected).icon
@@ -705,7 +705,7 @@ Item {
             RowLayout {
               spacing: Style.marginXS
 
-              NIcon {
+              AtmoIcon {
                 icon: NetworkService.isSecured(modelData.security) ? "lock" : "lock-open"
                 pointSize: Style.fontSizeXXS
                 color: Qt.alpha(networkItem.getContentColors()[1], Style.opacityHeavy)
@@ -745,7 +745,7 @@ Item {
                 Layout.leftMargin: Style.marginXS
                 Layout.fillWidth: false
 
-                NIcon {
+                AtmoIcon {
                   visible: SystemStatService.rxSpeed > 0
                   icon: Icon.networkDownload
                   pointSize: Style.fontSizeXXS
@@ -766,7 +766,7 @@ Item {
                   height: 1
                 }
 
-                NIcon {
+                AtmoIcon {
                   visible: SystemStatService.txSpeed > 0
                   icon: Icon.networkUpload
                   pointSize: Style.fontSizeXXS
@@ -798,7 +798,7 @@ Item {
               size: Style.baseWidgetSize * 0.5
             }
 
-            NIconButton {
+            AtmoIconButton {
               visible: modelData.connected && NetworkService.disconnectingFrom !== modelData.ssid
               icon: Icon.info
               tooltipText: I18n.tr("common.info")
@@ -817,7 +817,7 @@ Item {
               }
             }
 
-            NIconButton {
+            AtmoIconButton {
               visible: !root.showOnlyLists && modelData.existing && !modelData.connected && !networkItem.isBusy
               icon: Icon.trash
               tooltipText: I18n.tr("tooltips.forget-network")
@@ -877,7 +877,7 @@ Item {
             }
           }
 
-          NIconButton {
+          AtmoIconButton {
             anchors.top: parent.top
             anchors.right: parent.right
             anchors.margins: Style.marginS
@@ -913,7 +913,7 @@ Item {
               Layout.fillWidth: true
               Layout.preferredWidth: 1
               spacing: Style.marginXS
-              NIcon {
+              AtmoIcon {
                 icon: Icon.network
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
@@ -956,7 +956,7 @@ Item {
               Layout.fillWidth: true
               Layout.preferredWidth: 1
               spacing: Style.marginXS
-              NIcon {
+              AtmoIcon {
                 icon: Icon.router
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
@@ -978,7 +978,7 @@ Item {
               Layout.fillWidth: true
               Layout.preferredWidth: 1
               spacing: Style.marginXS
-              NIcon {
+              AtmoIcon {
                 icon: Icon.gauge
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
@@ -1001,7 +1001,7 @@ Item {
               Layout.fillWidth: true
               Layout.preferredWidth: 1
               spacing: Style.marginXS
-              NIcon {
+              AtmoIcon {
                 icon: Icon.network
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
@@ -1044,7 +1044,7 @@ Item {
               Layout.fillWidth: true
               Layout.preferredWidth: 1
               spacing: Style.marginXS
-              NIcon {
+              AtmoIcon {
                 icon: Icon.world
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
@@ -1087,7 +1087,7 @@ Item {
               Layout.fillWidth: true
               Layout.preferredWidth: 1
               spacing: Style.marginXS
-              NIcon {
+              AtmoIcon {
                 icon: Icon.router
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurface
@@ -1232,7 +1232,7 @@ Item {
                     }
                   }
 
-                  NIconButton {
+                  AtmoIconButton {
                     icon: Icon.folderOpen
                     baseSize: Style.baseWidgetSize * 0.75
                     onClicked: caCertPicker.openForInline()
@@ -1372,7 +1372,7 @@ Item {
                 onClicked: root.submitPassword(modelData.ssid, pwdInput.text, identityInput.text)
               }
 
-              NIconButton {
+              AtmoIconButton {
                 icon: Icon.close
                 baseSize: Style.baseWidgetSize * 0.75
                 onClicked: root.cancelPassword()
@@ -1398,7 +1398,7 @@ Item {
             spacing: Style.marginM
 
             RowLayout {
-              NIcon {
+              AtmoIcon {
                 icon: Icon.trash
                 pointSize: Style.fontSizeL
                 color: Color.mError
@@ -1421,7 +1421,7 @@ Item {
               onClicked: root.confirmForget(modelData.ssid)
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.close
               baseSize: Style.baseWidgetSize * 0.75
               onClicked: root.cancelForget()

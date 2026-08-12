@@ -740,7 +740,7 @@ Variants {
               }
 
               // Close button
-              NIconButton {
+              AtmoIconButton {
                 visible: !notifWindow.isCompact
                 icon: Icon.close
                 tooltipText: I18n.tr("tooltips.dismiss-notification")

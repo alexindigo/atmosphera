@@ -69,7 +69,7 @@ Rectangle {
   }
 
   // Icon
-  NIcon {
+  AtmoIcon {
     icon: root.icon
     pointSize: Math.max(1, Math.round(root.width * 0.48))
     applyUiScale: root.applyUiScale

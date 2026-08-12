@@ -694,7 +694,7 @@ SmartPanel {
             Layout.fillWidth: true
           }
 
-          NIconButton {
+          AtmoIconButton {
             icon: timerActive ? "stop" : "close"
             tooltipText: timerActive ? I18n.tr("session-menu.cancel-timer") : I18n.tr("common.close")
             Layout.alignment: Qt.AlignVCenter
@@ -809,7 +809,7 @@ SmartPanel {
       anchors.margins: Style.marginM
 
       // Icon on the left
-      NIcon {
+      AtmoIcon {
         id: iconElement
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
@@ -1019,7 +1019,7 @@ SmartPanel {
       spacing: Style.marginM
 
       // Large icon with scale animation
-      NIcon {
+      AtmoIcon {
         id: iconElement
         Layout.alignment: Qt.AlignHCenter
         icon: largeButtonRoot.icon

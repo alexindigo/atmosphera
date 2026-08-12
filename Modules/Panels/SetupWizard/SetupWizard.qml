@@ -177,7 +177,7 @@ SmartPanel {
                 border.color: index === currentStep ? Color.mPrimary : "transparent"
                 border.width: index === currentStep ? 2 : 0
 
-                NIcon {
+                AtmoIcon {
                   anchors.centerIn: parent
                   icon: modelData.icon
                   pointSize: Style.fontSizeS

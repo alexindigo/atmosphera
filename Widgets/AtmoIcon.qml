@@ -16,7 +16,7 @@ Text {
     if (typeof icon === "string") {
       var entry = IconRegistry.resolved[icon];
       if (entry === undefined) {
-        Logger.w("NIcon", "\"" + icon + "\" not found in icons, falling back to \"" + Icons.defaultIcon + "\"");
+        Logger.w("AtmoIcon", "\"" + icon + "\" not found in icons, falling back to \"" + Icons.defaultIcon + "\"");
         return IconRegistry.resolved[Icons.defaultIcon];
       }
       return entry;

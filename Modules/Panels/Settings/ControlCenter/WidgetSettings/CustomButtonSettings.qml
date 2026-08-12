@@ -111,7 +111,7 @@ ColumnLayout {
       description: I18n.tr("panels.control-center.shortcuts-custom-button-icon-description")
     }
 
-    NIcon {
+    AtmoIcon {
       Layout.alignment: Qt.AlignVCenter
       icon: _settings.icon || (widgetMetadata && widgetMetadata.icon ? widgetMetadata.icon : "")
       pointSize: Style?.fontSizeXL ?? 24
@@ -124,7 +124,7 @@ ColumnLayout {
     }
   }
 
-  NIconPicker {
+  AtmoIconPicker {
     id: iconPicker
     initialIcon: _settings.icon
     onIconSelected: function (iconName) {
@@ -247,20 +247,20 @@ ColumnLayout {
             Layout.alignment: Qt.AlignVCenter
             spacing: Style?.marginS ?? 4
 
-            NIcon {
+            AtmoIcon {
               icon: model.icon
               pointSize: Style?.fontSizeL ?? 20
               visible: model.icon !== undefined && model.icon !== ""
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.folder
               tooltipText: I18n.tr("common.browse")
               baseSize: Style?.buttonSizeS ?? 24
               onClicked: iconPickerDelegate.open()
             }
 
-            NIconButton {
+            AtmoIconButton {
               icon: Icon.close
               tooltipText: I18n.tr("panels.control-center.shortcuts-custom-button-state-checks-remove")
               baseSize: Style?.buttonSizeS ?? 24
@@ -276,7 +276,7 @@ ColumnLayout {
           }
         }
 
-        NIconPicker {
+        AtmoIconPicker {
           id: iconPickerDelegate
           initialIcon: model.icon
           onIconSelected: function (iconName) {
