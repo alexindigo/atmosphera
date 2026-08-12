@@ -26,8 +26,6 @@ SmartPanel {
   panelContent: Item {
     id: panelContent
 
-    property int currentStep: 0
-    readonly property int totalSteps: 6
     property bool isCompleting: false
 
     property string selectedWallpaperDirectory: Settings.defaultWallpapersDirectory
@@ -130,191 +128,108 @@ SmartPanel {
       anchors.margins: Style.marginXL
       spacing: Style.marginL
 
-      // Step indicator navbar at top
-      Item {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 32
-
-        RowLayout {
-          anchors.centerIn: parent
-          spacing: Style.marginM
-
-          Repeater {
-            model: [
-              {
-                "icon": "featured",
-                "label": I18n.tr("setup.welcome")
-              },
-              {
-                "icon": "image",
-                "label": I18n.tr("common.wallpaper")
-              },
-              {
-                "icon": "palette",
-                "label": I18n.tr("common.appearance")
-              },
-              {
-                "icon": "settings",
-                "label": I18n.tr("common.customize")
-              },
-              {
-                "icon": "keyboard",
-                "label": I18n.tr("setup.bindings.title")
-              },
-              {
-                "icon": "device-desktop",
-                "label": I18n.tr("panels.dock.title")
-              }
-            ]
-            delegate: RowLayout {
-              spacing: Style.marginS
-
-              Rectangle {
-                width: 24
-                height: 24
-                radius: width / 2
-                color: index <= currentStep ? Color.mPrimary : Color.mSurfaceVariant
-                border.color: index === currentStep ? Color.mPrimary : "transparent"
-                border.width: index === currentStep ? 2 : 0
-
-                AtmoIcon {
-                  anchors.centerIn: parent
-                  icon: modelData.icon
-                  pointSize: Style.fontSizeS
-                  color: index <= currentStep ? Color.mOnPrimary : Color.mOnSurfaceVariant
-                }
-              }
-
-              NText {
-                text: modelData.label
-                pointSize: Style.fontSizeS
-                color: index <= currentStep ? Color.mPrimary : Color.mOnSurfaceVariant
-                font.weight: index === currentStep ? Style.fontWeightBold : Style.fontWeightRegular
-              }
-
-              Rectangle {
-                width: 40
-                height: 2
-                radius: 1
-                color: index < currentStep ? Color.mPrimary : Color.mSurfaceVariant
-                visible: index < totalSteps - 1
-              }
-            }
-          }
-        }
-      }
-
-      // Divider
-      Rectangle {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 1
-        color: Color.mOutline
-        opacity: 0.2
-      }
-
-      // Step content
-      Item {
+      WizardPanel {
+        id: wizard
         Layout.fillWidth: true
         Layout.fillHeight: true
-        Layout.minimumHeight: Math.round(300 * Style.uiScaleRatio)
 
-        StackLayout {
-          id: stepStack
-          anchors.fill: parent
-          currentIndex: currentStep
-
-          SetupWelcomeStep {}
-
-          SetupWallpaperStep {
-            id: step1
-            selectedDirectory: panelContent.selectedWallpaperDirectory
-            selectedWallpaper: panelContent.selectedWallpaper
-            onDirectoryChanged: function (d) {
-              panelContent.selectedWallpaperDirectory = d;
-              panelContent.applyWallpaperSettings();
-            }
-            onWallpaperChanged: function (w) {
-              panelContent.selectedWallpaper = w;
-              panelContent.applyWallpaperSettings();
-            }
+        steps: [
+          {
+            "icon": "featured",
+            "label": "",
+            "content": welcomeContent
+          },
+          {
+            "icon": "image",
+            "label": I18n.tr("setup.wallpaper.header"),
+            "description": I18n.tr("setup.wallpaper.subheader"),
+            "resetKey": "wallpaper",
+            "content": wallpaperContent
+          },
+          {
+            "icon": "palette",
+            "label": I18n.tr("common.appearance"),
+            "description": I18n.tr("setup.appearance.subheader"),
+            "resetKey": "colorSchemes",
+            "content": appearanceContent
+          },
+          {
+            "icon": "settings",
+            "label": I18n.tr("setup.customize.header"),
+            "description": I18n.tr("setup.customize.subheader"),
+            "content": customizeContent
+          },
+          {
+            "icon": "keyboard",
+            "label": I18n.tr("setup.bindings.title"),
+            "description": I18n.tr("setup.bindings.subtitle"),
+            "resetKey": "bindings",
+            "content": bindingsContent
+          },
+          {
+            "icon": "device-desktop",
+            "label": I18n.tr("panels.dock.title"),
+            "description": I18n.tr("panels.dock.monitors-desc"),
+            "resetKey": "dock",
+            "content": dockContent
           }
+        ]
 
-          SetupAppearanceStep {
-            id: step3
-          }
+        onFinished: panelContent.completeSetup()
+        onSkipped: panelContent.completeSetup()
+      }
+    }
 
-          SetupCustomizeStep {
-            id: step2
-            selectedScaleRatio: panelContent.selectedScaleRatio
-            selectedBarPosition: panelContent.selectedBarPosition
-            onScaleRatioChanged: function (r) {
-              panelContent.selectedScaleRatio = r;
-              panelContent.applyUISettings();
-            }
-            onBarPositionChanged: function (p) {
-              panelContent.selectedBarPosition = p;
-              panelContent.applyUISettings();
-            }
-          }
+    Component {
+      id: welcomeContent
+      SetupWelcomeStep {}
+    }
 
-          SetupBindingsStep {
-            id: stepBindings
-          }
-
-          SetupDockStep {
-            id: stepDock
-          }
+    Component {
+      id: wallpaperContent
+      SetupWallpaperStep {
+        selectedDirectory: panelContent.selectedWallpaperDirectory
+        selectedWallpaper: panelContent.selectedWallpaper
+        onDirectoryChanged: function (d) {
+          panelContent.selectedWallpaperDirectory = d;
+          panelContent.applyWallpaperSettings();
+        }
+        onWallpaperChanged: function (w) {
+          panelContent.selectedWallpaper = w;
+          panelContent.applyWallpaperSettings();
         }
       }
+    }
 
-      // Divider
-      Rectangle {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 1
-        color: Color.mOutline
-        opacity: 0.2
-      }
+    Component {
+      id: appearanceContent
+      SetupAppearanceStep {}
+    }
 
-      // Bottom controls
-      RowLayout {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 44
-
-        NButton {
-          text: I18n.tr("setup.skip-setup")
-          outlined: true
-          Layout.preferredHeight: 44
-          onClicked: panelContent.completeSetup()
+    Component {
+      id: customizeContent
+      SetupCustomizeStep {
+        selectedScaleRatio: panelContent.selectedScaleRatio
+        selectedBarPosition: panelContent.selectedBarPosition
+        onScaleRatioChanged: function (r) {
+          panelContent.selectedScaleRatio = r;
+          panelContent.applyUISettings();
         }
-
-        Item {
-          Layout.fillWidth: true
-        }
-
-        NButton {
-          text: "← " + I18n.tr("common.back")
-          outlined: true
-          visible: currentStep > 0
-          Layout.preferredHeight: 44
-          onClicked: {
-            if (currentStep > 0)
-              currentStep--;
-          }
-        }
-
-        NButton {
-          text: currentStep === totalSteps - 1 ? I18n.tr("setup.all-done") : I18n.tr("common.continue") + " →"
-          Layout.preferredHeight: 44
-          onClicked: {
-            if (currentStep < totalSteps - 1)
-              currentStep++;
-            else
-              panelContent.completeSetup();
-          }
+        onBarPositionChanged: function (p) {
+          panelContent.selectedBarPosition = p;
+          panelContent.applyUISettings();
         }
       }
+    }
 
-      // Privacy notice — shown inside the Welcome step
+    Component {
+      id: bindingsContent
+      SetupBindingsStep {}
+    }
+
+    Component {
+      id: dockContent
+      SetupDockStep {}
     }
   }
 }

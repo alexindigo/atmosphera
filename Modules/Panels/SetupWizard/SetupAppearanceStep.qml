@@ -47,116 +47,140 @@ ColumnLayout {
     }
   }
 
-  // Beautiful header with icon
-  RowLayout {
+  ColumnLayout {
     Layout.fillWidth: true
-    Layout.bottomMargin: Style.marginL
     spacing: Style.marginM
 
-    Rectangle {
-      width: 40
-      height: 40
-      radius: Style.radiusL
-      color: Color.mSurfaceVariant
-      opacity: 0.6
-
-      AtmoIcon {
-        icon: Icon.palette
-        pointSize: Style.fontSizeL
-        color: Color.mPrimary
-        anchors.centerIn: parent
-      }
-    }
-
-    ColumnLayout {
+    // Dark Mode Toggle
+    RowLayout {
       Layout.fillWidth: true
-      spacing: Style.marginXS
-
-      NText {
-        text: I18n.tr("common.appearance")
-        pointSize: Style.fontSizeXL
-        font.weight: Style.fontWeightBold
-        color: Color.mPrimary
-      }
-
-      NText {
-        text: I18n.tr("setup.appearance.subheader")
-        pointSize: Style.fontSizeM
-        color: Color.mOnSurfaceVariant
-      }
-    }
-  }
-
-  NScrollView {
-    id: appearanceScrollView
-    Layout.fillWidth: true
-    Layout.fillHeight: true
-    horizontalPolicy: ScrollBar.AlwaysOff
-    verticalPolicy: ScrollBar.AsNeeded
-
-    ColumnLayout {
-      width: appearanceScrollView.availableWidth
       spacing: Style.marginM
 
-      // Dark Mode Toggle
-      RowLayout {
-        Layout.fillWidth: true
-        spacing: Style.marginM
-
-        Rectangle {
-          width: 28
-          height: 28
-          radius: Style.radiusM
-          color: Color.mSurface
-
-          AtmoIcon {
-            icon: Icon.darkMode
-            pointSize: Style.fontSizeL
-            color: Color.mPrimary
-            anchors.centerIn: parent
-          }
-        }
-
-        ColumnLayout {
-          Layout.fillWidth: true
-          spacing: 2
-
-          NText {
-            text: I18n.tr("tooltips.switch-to-dark-mode")
-            pointSize: Style.fontSizeL
-            font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
-          }
-
-          NText {
-            text: I18n.tr("panels.color-scheme.dark-mode-switch-description")
-            pointSize: Style.fontSizeS
-            color: Color.mOnSurfaceVariant
-            wrapMode: Text.WordWrap
-            Layout.fillWidth: true
-          }
-        }
-
-        NToggle {
-          checked: Settings.data.colorSchemes.darkMode
-          onToggled: checked => Settings.data.colorSchemes.darkMode = checked
-        }
-      }
-
-      // Divider
       Rectangle {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 1
-        color: Color.mOutline
-        opacity: 0.2
-        Layout.topMargin: Style.marginS
-        Layout.bottomMargin: Style.marginS
+        width: 28
+        height: 28
+        radius: Style.radiusM
+        color: Color.mSurface
+
+        AtmoIcon {
+          icon: Icon.darkMode
+          pointSize: Style.fontSizeL
+          color: Color.mPrimary
+          anchors.centerIn: parent
+        }
       }
 
-      // Wallpaper Colors Toggle
+      ColumnLayout {
+        Layout.fillWidth: true
+        spacing: 2
+
+        NText {
+          text: I18n.tr("tooltips.switch-to-dark-mode")
+          pointSize: Style.fontSizeL
+          font.weight: Style.fontWeightBold
+          color: Color.mOnSurface
+        }
+
+        NText {
+          text: I18n.tr("panels.color-scheme.dark-mode-switch-description")
+          pointSize: Style.fontSizeS
+          color: Color.mOnSurfaceVariant
+          wrapMode: Text.WordWrap
+          Layout.fillWidth: true
+        }
+      }
+
+      NToggle {
+        checked: Settings.data.colorSchemes.darkMode
+        onToggled: checked => Settings.data.colorSchemes.darkMode = checked
+      }
+    }
+
+    // Divider
+    Rectangle {
+      Layout.fillWidth: true
+      Layout.preferredHeight: 1
+      color: Color.mOutline
+      opacity: 0.2
+      Layout.topMargin: Style.marginS
+      Layout.bottomMargin: Style.marginS
+    }
+
+    // Wallpaper Colors Toggle
+    RowLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginM
+
+      Rectangle {
+        width: 28
+        height: 28
+        radius: Style.radiusM
+        color: Color.mSurface
+
+        AtmoIcon {
+          icon: Icon.colorPicker
+          pointSize: Style.fontSizeL
+          color: Color.mPrimary
+          anchors.centerIn: parent
+        }
+      }
+
+      ColumnLayout {
+        Layout.fillWidth: true
+        spacing: 2
+
+        NText {
+          text: I18n.tr("panels.color-scheme.color-source-use-wallpaper-colors-label")
+          pointSize: Style.fontSizeL
+          font.weight: Style.fontWeightBold
+          color: Color.mOnSurface
+        }
+
+        NText {
+          text: I18n.tr("panels.color-scheme.color-source-use-wallpaper-colors-description")
+          pointSize: Style.fontSizeS
+          color: Color.mOnSurfaceVariant
+          wrapMode: Text.WordWrap
+          Layout.fillWidth: true
+        }
+      }
+
+      NToggle {
+        checked: Settings.data.colorSchemes.useWallpaperColors
+        onToggled: checked => {
+          if (checked) {
+            Settings.data.colorSchemes.useWallpaperColors = true;
+            AppThemeService.generate();
+          } else {
+            Settings.data.colorSchemes.useWallpaperColors = false;
+            if (Settings.data.colorSchemes.predefinedScheme) {
+              ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme);
+            }
+          }
+        }
+      }
+    }
+
+    // Divider
+    Rectangle {
+      Layout.fillWidth: true
+      Layout.preferredHeight: 1
+      color: Color.mOutline
+      opacity: 0.2
+      Layout.topMargin: Style.marginS
+      Layout.bottomMargin: Style.marginS
+      visible: !Settings.data.colorSchemes.useWallpaperColors
+    }
+
+    // Predefined schemes section (visible when wallpaper colors disabled)
+    ColumnLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginM
+      visible: !Settings.data.colorSchemes.useWallpaperColors
+
       RowLayout {
         Layout.fillWidth: true
-        spacing: Style.marginM
+        spacing: Style.marginS
 
         Rectangle {
           width: 28
@@ -165,7 +189,7 @@ ColumnLayout {
           color: Color.mSurface
 
           AtmoIcon {
-            icon: Icon.colorPicker
+            icon: Icon.palette
             pointSize: Style.fontSizeL
             color: Color.mPrimary
             anchors.centerIn: parent
@@ -177,196 +201,124 @@ ColumnLayout {
           spacing: 2
 
           NText {
-            text: I18n.tr("panels.color-scheme.color-source-use-wallpaper-colors-label")
+            text: I18n.tr("panels.color-scheme.predefined-title")
             pointSize: Style.fontSizeL
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
           }
 
           NText {
-            text: I18n.tr("panels.color-scheme.color-source-use-wallpaper-colors-description")
+            text: I18n.tr("panels.color-scheme.predefined-desc")
             pointSize: Style.fontSizeS
             color: Color.mOnSurfaceVariant
-            wrapMode: Text.WordWrap
-            Layout.fillWidth: true
           }
         }
+      }
 
-        NToggle {
-          checked: Settings.data.colorSchemes.useWallpaperColors
-          onToggled: checked => {
-            if (checked) {
-              Settings.data.colorSchemes.useWallpaperColors = true;
-              AppThemeService.generate();
-            } else {
-              Settings.data.colorSchemes.useWallpaperColors = false;
-              if (Settings.data.colorSchemes.predefinedScheme) {
+      // Predefined schemes Grid (matches ColorSchemeTab)
+      GridLayout {
+        id: schemesGrid
+        columns: Math.max(2, Math.floor((parent.width - Style.margin2M) / 180))
+        rowSpacing: Style.marginM
+        columnSpacing: Style.marginM
+        Layout.fillWidth: true
+
+        Repeater {
+          model: ColorSchemeService.schemes
+
+          delegate: Rectangle {
+            id: schemeItem
+
+            property string schemePath: modelData
+            property string schemeName: root.extractSchemeName(modelData)
+
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+            height: 50
+            radius: Style.radiusS
+            color: root.cacheVersion >= 0 ? root.getSchemeColor(schemeName, "mSurface") : root.getSchemeColor(schemeName, "mSurface")
+            border.width: Style.borderL
+            border.color: itemMouseArea.containsMouse ? Color.mHover : (Settings.data.colorSchemes.predefinedScheme === schemeName ? Color.mSecondary : Color.mOutline)
+
+            RowLayout {
+              anchors.fill: parent
+              anchors.margins: Style.marginL
+              spacing: Style.marginXS
+
+              NText {
+                text: schemeItem.schemeName
+                pointSize: Style.fontSizeS
+                font.weight: Style.fontWeightMedium
+                color: Color.mOnSurface
+                Layout.fillWidth: true
+                elide: Text.ElideRight
+                verticalAlignment: Text.AlignVCenter
+                wrapMode: Text.WordWrap
+                maximumLineCount: 1
+              }
+
+              Rectangle {
+                width: 14
+                height: 14
+                radius: width * 0.5
+                color: root.cacheVersion >= 0 ? (function () {
+                  var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
+                  var cached = root.schemeColorsCache[schemeItem.schemeName];
+                  return (cached && cached[mode] && cached[mode].mPrimary) || root.getSchemeColor(schemeItem.schemeName, "mPrimary");
+                })() : Color.mPrimary
+              }
+              Rectangle {
+                width: 14
+                height: 14
+                radius: width * 0.5
+                color: root.cacheVersion >= 0 ? (function () {
+                  var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
+                  var cached = root.schemeColorsCache[schemeItem.schemeName];
+                  return (cached && cached[mode] && cached[mode].mSecondary) || root.getSchemeColor(schemeItem.schemeName, "mSecondary");
+                })() : Color.mSecondary
+              }
+              Rectangle {
+                width: 14
+                height: 14
+                radius: width * 0.5
+                color: root.cacheVersion >= 0 ? (function () {
+                  var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
+                  var cached = root.schemeColorsCache[schemeItem.schemeName];
+                  return (cached && cached[mode] && cached[mode].mTertiary) || root.getSchemeColor(schemeItem.schemeName, "mTertiary");
+                })() : Color.mTertiary
+              }
+              Rectangle {
+                width: 14
+                height: 14
+                radius: width * 0.5
+                color: root.cacheVersion >= 0 ? (function () {
+                  var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
+                  var cached = root.schemeColorsCache[schemeItem.schemeName];
+                  return (cached && cached[mode] && cached[mode].mError) || root.getSchemeColor(schemeItem.schemeName, "mError");
+                })() : Color.mError
+              }
+            }
+
+            MouseArea {
+              id: itemMouseArea
+              anchors.fill: parent
+              hoverEnabled: true
+              cursorShape: Qt.PointingHandCursor
+              onClicked: {
+                Settings.data.colorSchemes.useWallpaperColors = false;
+                Settings.data.colorSchemes.predefinedScheme = schemeItem.schemeName;
                 ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme);
               }
             }
           }
         }
       }
+    }
 
-      // Divider
-      Rectangle {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 1
-        color: Color.mOutline
-        opacity: 0.2
-        Layout.topMargin: Style.marginS
-        Layout.bottomMargin: Style.marginS
-        visible: !Settings.data.colorSchemes.useWallpaperColors
-      }
-
-      // Predefined schemes section (visible when wallpaper colors disabled)
-      ColumnLayout {
-        Layout.fillWidth: true
-        spacing: Style.marginM
-        visible: !Settings.data.colorSchemes.useWallpaperColors
-
-        RowLayout {
-          Layout.fillWidth: true
-          spacing: Style.marginS
-
-          Rectangle {
-            width: 28
-            height: 28
-            radius: Style.radiusM
-            color: Color.mSurface
-
-            AtmoIcon {
-              icon: Icon.palette
-              pointSize: Style.fontSizeL
-              color: Color.mPrimary
-              anchors.centerIn: parent
-            }
-          }
-
-          ColumnLayout {
-            Layout.fillWidth: true
-            spacing: 2
-
-            NText {
-              text: I18n.tr("panels.color-scheme.predefined-title")
-              pointSize: Style.fontSizeL
-              font.weight: Style.fontWeightBold
-              color: Color.mOnSurface
-            }
-
-            NText {
-              text: I18n.tr("panels.color-scheme.predefined-desc")
-              pointSize: Style.fontSizeS
-              color: Color.mOnSurfaceVariant
-            }
-          }
-        }
-
-        // Predefined schemes Grid (matches ColorSchemeTab)
-        GridLayout {
-          id: schemesGrid
-          columns: Math.max(2, Math.floor((parent.width - Style.margin2M) / 180))
-          rowSpacing: Style.marginM
-          columnSpacing: Style.marginM
-          Layout.fillWidth: true
-
-          Repeater {
-            model: ColorSchemeService.schemes
-
-            delegate: Rectangle {
-              id: schemeItem
-
-              property string schemePath: modelData
-              property string schemeName: root.extractSchemeName(modelData)
-
-              Layout.fillWidth: true
-              Layout.alignment: Qt.AlignHCenter
-              height: 50
-              radius: Style.radiusS
-              color: root.cacheVersion >= 0 ? root.getSchemeColor(schemeName, "mSurface") : root.getSchemeColor(schemeName, "mSurface")
-              border.width: Style.borderL
-              border.color: itemMouseArea.containsMouse ? Color.mHover : (Settings.data.colorSchemes.predefinedScheme === schemeName ? Color.mSecondary : Color.mOutline)
-
-              RowLayout {
-                anchors.fill: parent
-                anchors.margins: Style.marginL
-                spacing: Style.marginXS
-
-                NText {
-                  text: schemeItem.schemeName
-                  pointSize: Style.fontSizeS
-                  font.weight: Style.fontWeightMedium
-                  color: Color.mOnSurface
-                  Layout.fillWidth: true
-                  elide: Text.ElideRight
-                  verticalAlignment: Text.AlignVCenter
-                  wrapMode: Text.WordWrap
-                  maximumLineCount: 1
-                }
-
-                Rectangle {
-                  width: 14
-                  height: 14
-                  radius: width * 0.5
-                  color: root.cacheVersion >= 0 ? (function () {
-                    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
-                    var cached = root.schemeColorsCache[schemeItem.schemeName];
-                    return (cached && cached[mode] && cached[mode].mPrimary) || root.getSchemeColor(schemeItem.schemeName, "mPrimary");
-                  })() : Color.mPrimary
-                }
-                Rectangle {
-                  width: 14
-                  height: 14
-                  radius: width * 0.5
-                  color: root.cacheVersion >= 0 ? (function () {
-                    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
-                    var cached = root.schemeColorsCache[schemeItem.schemeName];
-                    return (cached && cached[mode] && cached[mode].mSecondary) || root.getSchemeColor(schemeItem.schemeName, "mSecondary");
-                  })() : Color.mSecondary
-                }
-                Rectangle {
-                  width: 14
-                  height: 14
-                  radius: width * 0.5
-                  color: root.cacheVersion >= 0 ? (function () {
-                    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
-                    var cached = root.schemeColorsCache[schemeItem.schemeName];
-                    return (cached && cached[mode] && cached[mode].mTertiary) || root.getSchemeColor(schemeItem.schemeName, "mTertiary");
-                  })() : Color.mTertiary
-                }
-                Rectangle {
-                  width: 14
-                  height: 14
-                  radius: width * 0.5
-                  color: root.cacheVersion >= 0 ? (function () {
-                    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
-                    var cached = root.schemeColorsCache[schemeItem.schemeName];
-                    return (cached && cached[mode] && cached[mode].mError) || root.getSchemeColor(schemeItem.schemeName, "mError");
-                  })() : Color.mError
-                }
-              }
-
-              MouseArea {
-                id: itemMouseArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                  Settings.data.colorSchemes.useWallpaperColors = false;
-                  Settings.data.colorSchemes.predefinedScheme = schemeItem.schemeName;
-                  ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme);
-                }
-              }
-            }
-          }
-        }
-      }
-
-      // Bottom spacer
-      Item {
-        Layout.fillWidth: true
-        Layout.preferredHeight: Style.marginL
-      }
+    // Bottom spacer
+    Item {
+      Layout.fillWidth: true
+      Layout.preferredHeight: Style.marginL
     }
   }
 
