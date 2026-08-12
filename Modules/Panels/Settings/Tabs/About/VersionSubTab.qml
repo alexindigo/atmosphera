@@ -34,17 +34,46 @@ ColumnLayout {
   property string qsVersion: ""
   property string qsRevision: ""
 
-  readonly property bool isGitVersion: root.currentVersion.endsWith("-git")
+  readonly property bool isGitVersion: UpdateService.isGitVersion
   readonly property int gigaB: (1024 * 1024 * 1024)
   readonly property int gigaD: (1000 * 1000 * 1000)
 
-  // Update status: compare versions
+  // Compact display: "0.4.0.r75.g9615d8519" → "v0.4.0-r75"; describe
+  // "v0.4.0-75-g9615d851" → "v0.4.0-r75"; anything else as-is (v-prefixed)
+  readonly property string displayVersion: formatVersion(root.currentVersion)
+  readonly property string commitDisplay: UpdateService.versionCommitHash(root.currentVersion) || root.commitInfo
+
+  function formatVersion(v) {
+    var m = v.match(/^v?(\d+\.\d+\.\d+)[.-]r?(\d+)[.-]g([0-9a-f]+)/);
+    if (m) {
+      return "v" + m[1] + "-r" + m[2];
+    }
+    return v.startsWith("v") ? v : "v" + v;
+  }
+
+  // Update status: git builds compare commit hashes against main; release
+  // builds compare version tags. Only meaningful for packaged installs —
+  // dev checkouts manage their own git state.
   readonly property bool updateAvailable: {
+    if (!UpdateService.versionFromPackage)
+      return false;
+    if (root.isGitVersion) {
+      if (!root.commitDisplay || !GitHubService.latestMainCommit)
+        return false;
+      return !GitHubService.latestMainCommit.startsWith(root.commitDisplay);
+    }
     if (!root.latestVersion || !root.currentVersion || root.latestVersion === I18n.tr("common.unknown"))
       return false;
-    return UpdateService.compareVersions(root.latestVersion, root.currentVersion) > 0 && !root.isGitVersion;
+    return UpdateService.compareVersions(root.latestVersion, root.currentVersion) > 0;
   }
   readonly property bool isUpToDate: {
+    if (!UpdateService.versionFromPackage)
+      return false;
+    if (root.isGitVersion) {
+      if (!root.commitDisplay || !GitHubService.latestMainCommit)
+        return false;
+      return GitHubService.latestMainCommit.startsWith(root.commitDisplay);
+    }
     if (!root.latestVersion || !root.currentVersion || root.latestVersion === I18n.tr("common.unknown"))
       return false;
     return UpdateService.compareVersions(root.latestVersion, root.currentVersion) <= 0;
@@ -395,7 +424,7 @@ ColumnLayout {
           spacing: Style.marginS
 
           NText {
-            text: root.currentVersion
+            text: root.displayVersion
             color: Color.mOnSurface
             font.weight: Style.fontWeightBold
           }
@@ -404,7 +433,7 @@ ColumnLayout {
           NText {
             id: commitText
             visible: root.isGitVersion
-            text: "(" + (root.commitInfo || I18n.tr("common.loading")) + ")"
+            text: "(" + (root.commitDisplay || I18n.tr("common.loading")) + ")"
             color: commitMouseArea.containsMouse ? Color.mPrimary : Color.mOnSurfaceVariant
             pointSize: Style.fontSizeXS
             font.underline: commitMouseArea.containsMouse && root.commitInfo
