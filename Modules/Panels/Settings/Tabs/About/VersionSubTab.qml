@@ -436,22 +436,22 @@ ColumnLayout {
             text: "(" + (root.commitDisplay || I18n.tr("common.loading")) + ")"
             color: commitMouseArea.containsMouse ? Color.mPrimary : Color.mOnSurfaceVariant
             pointSize: Style.fontSizeXS
-            font.underline: commitMouseArea.containsMouse && root.commitInfo
+            font.underline: commitMouseArea.containsMouse && root.commitDisplay
 
             MouseArea {
               id: commitMouseArea
               anchors.fill: parent
               hoverEnabled: true
-              cursorShape: root.commitInfo ? Qt.PointingHandCursor : Qt.ArrowCursor
+              cursorShape: root.commitDisplay ? Qt.PointingHandCursor : Qt.ArrowCursor
               onEntered: {
-                if (root.commitInfo) {
+                if (root.commitDisplay) {
                   TooltipService.show(commitText, I18n.tr("panels.about.view-commit"));
                 }
               }
               onExited: TooltipService.hide()
               onClicked: {
-                if (root.commitInfo) {
-                  Quickshell.execDetached(["xdg-open", "https://github.com/noctalia-dev/noctalia-shell/commit/" + root.commitInfo]);
+                if (root.commitDisplay) {
+                  Quickshell.execDetached(["xdg-open", "https://github.com/alexindigo/atmosphera/commit/" + root.commitDisplay]);
                 }
               }
             }
