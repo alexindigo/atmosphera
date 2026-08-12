@@ -11,10 +11,60 @@ Singleton {
   id: root
 
   // Version properties
+  // currentVersion is detected at init (real installed version):
+  //   1. <shellDir>/VERSION — written by the package at build time (pkgver)
+  //   2. git describe of the shell dir — dev checkouts
+  //   3. the hardcoded fallback below — source builds / other distros
   readonly property string baseVersion: "0.1.0"
-  readonly property bool isDevelopment: true
   readonly property string developmentSuffix: "-git"
-  readonly property string currentVersion: `v${!isDevelopment ? baseVersion : baseVersion + developmentSuffix}`
+  readonly property string fallbackVersion: `v${baseVersion + developmentSuffix}`
+
+  property string currentVersion: fallbackVersion
+  property bool isGitVersion: true
+  // True when the version came from the packaged VERSION file (real installs).
+  // The update check only makes sense for packaged installs — dev checkouts
+  // manage their own git state and would false-positive when ahead of origin.
+  property bool versionFromPackage: false
+
+  // Classify a version string as a -git/dev build (drives the update-check
+  // channel: commit-hash comparison for git builds, release tags otherwise)
+  function classifyIsGitVersion(v) {
+    return /\.r\d+\.g[0-9a-f]+/.test(v) || /-\d+-g[0-9a-f]+/.test(v) || v.endsWith("-dirty") || v.endsWith(developmentSuffix);
+  }
+
+  // Extract the commit hash from a -git style version (pkgver g<hash> or
+  // describe -g<hash>); "" when not a git build
+  function versionCommitHash(v) {
+    var m = v.match(/\.g([0-9a-f]{7,})/) || v.match(/-g([0-9a-f]{7,})/);
+    return m ? m[1] : "";
+  }
+
+  Process {
+    id: versionDetectProcess
+    command: ["sh", "-c", `if [ -f "${Quickshell.shellDir}/VERSION" ]; then echo "pkg:$(cat "${Quickshell.shellDir}/VERSION")"; elif [ -d "${Quickshell.shellDir}/.git" ]; then echo "git:$(git -C "${Quickshell.shellDir}" describe --tags --always --dirty 2>/dev/null)"; fi`]
+    running: false
+
+    onExited: function (exitCode) {
+      var detected = stdout.text.trim();
+      var fromPackage = detected.startsWith("pkg:");
+      if (fromPackage || detected.startsWith("git:")) {
+        detected = detected.substring(4);
+      }
+      if (detected !== "") {
+        // Strip pacman pkgrel suffix ("...-1") from packaged versions
+        var stripped = detected.replace(/-\d+$/, "");
+        root.currentVersion = stripped;
+        root.isGitVersion = root.classifyIsGitVersion(stripped);
+        root.versionFromPackage = fromPackage;
+        Logger.i("UpdateService", "Detected installed version:", stripped, "(git:", root.isGitVersion + ", packaged:", root.versionFromPackage + ")");
+      } else {
+        Logger.i("UpdateService", "No VERSION file or git describe — using fallback version:", root.currentVersion);
+      }
+    }
+
+    stdout: StdioCollector {}
+    stderr: StdioCollector {}
+  }
 
   // URLs
   readonly property string upgradeLogBaseUrl: Quickshell.env("ATMOSPHERA_UPGRADELOG_URL") || ""
@@ -57,7 +107,7 @@ Singleton {
       return;
 
     initialized = true;
-    Logger.i("UpdateService", "Version:", root.currentVersion);
+    versionDetectProcess.running = true;
 
     // Load changelog state from ShellState
     Qt.callLater(() => {

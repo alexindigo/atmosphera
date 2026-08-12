@@ -18,6 +18,7 @@ Singleton {
   // Public properties for easy access
   property string latestVersion: I18n.tr("common.unknown")
   property string latestQSVersion: I18n.tr("common.unknown")
+  property string latestMainCommit: ""
   property var contributors: []
 
   // Avatar caching properties (simplified - uses ImageCacheService)
@@ -105,6 +106,33 @@ Singleton {
     versionProcess.running = true;
     qsVersionProcess.running = true;
     contributorsProcess.running = true;
+    mainCommitProcess.running = true;
+  }
+
+  // Latest main-branch commit of our repo — drives the -git update check
+  Process {
+    id: mainCommitProcess
+
+    command: ["curl", "-s", "https://api.github.com/repos/alexindigo/atmosphera/commits/main"]
+
+    stdout: StdioCollector {
+      onStreamFinished: {
+        try {
+          const response = text;
+          if (response && response.trim()) {
+            const data = JSON.parse(response);
+            if (data.sha) {
+              root.latestMainCommit = data.sha;
+              Logger.d("GitHub", "Latest main commit fetched:", data.sha.substring(0, 9));
+            } else if (data.message) {
+              Logger.w("GitHub", "Main commit API error:", data.message);
+            }
+          }
+        } catch (e) {
+          Logger.e("GitHub", "Failed to parse main commit response:", e);
+        }
+      }
+    }
   }
 
   // --------------------------------
@@ -221,7 +249,7 @@ Singleton {
     property bool fetchSucceeded: false
     property bool wasRateLimited: false
 
-    command: ["curl", "-s", "https://api.github.com/repos/noctalia-dev/noctalia-shell/releases/latest"]
+    command: ["curl", "-s", "https://api.github.com/repos/alexindigo/atmosphera/releases/latest"]
 
     stdout: StdioCollector {
       onStreamFinished: {
