@@ -624,7 +624,7 @@ SmartPanel {
                   spacing: Style.marginM
 
                   // App Icon
-                  AtmoIcon {
+                  AtmoAppIcon {
                     id: appIconImage
                     Layout.preferredWidth: Style.baseWidgetSize
                     Layout.preferredHeight: Style.baseWidgetSize

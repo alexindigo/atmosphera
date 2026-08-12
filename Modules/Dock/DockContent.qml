@@ -568,7 +568,7 @@ Item {
                 }
               }
 
-              AtmoIcon {
+              AtmoAppIcon {
                 id: appIcon
                 anchors.fill: parent
                 name: dock.getAppIconName(modelData)
