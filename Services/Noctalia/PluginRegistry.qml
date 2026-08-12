@@ -12,7 +12,11 @@ Singleton {
   readonly property string pluginsDir: Settings.configDir + "plugins"
   readonly property string pluginsFile: Settings.configDir + "plugins.json"
 
-  readonly property int currentVersion: 2
+  readonly property int currentVersion: 3
+
+  // Registry version as read from plugins.json at load (before any save
+  // bumps it) — drives one-time content migrations
+  property int _loadedVersion: 0
 
   Component.onCompleted: {
     ensurePluginsDirectory();
@@ -113,6 +117,7 @@ Singleton {
       Logger.i("PluginRegistry", "Loaded plugin states from:", path);
       root.pluginStates = adapter.states || {};
       root.pluginSources = adapter.sources || [];
+      root._loadedVersion = adapter.version;
 
       var needsSave = false;
       for (var i = 0; i < root.pluginSources.length; i++) {
@@ -128,8 +133,9 @@ Singleton {
         root.save();
       }
 
-      root.migratePluginData();
-      scanPluginFolder();
+      root.migratePluginData(function () {
+        scanPluginFolder();
+      });
     }
 
     onLoadFailed: function (error) {
@@ -146,7 +152,70 @@ Singleton {
     PluginService.initialized;
   }
 
-  function migratePluginData() {
+  // Icon set consolidation (v3): noctalia-icons-legacy merged into
+  // atmosphera-icons. Bundled plugin copies in the user plugins dir are
+  // shell-managed (not user data) and only ever copied on first run, so a
+  // package upgrade leaves them stale — remove the legacy copy and refresh
+  // the atmosphera-icons copy from the Built-in source. Runs once per user
+  // (gated on the registry version read at load).
+  function migrateIconSetsV3(done) {
+    if (root._loadedVersion >= 3) {
+      done();
+      return;
+    }
+
+    var builtinUrl = "file://" + Quickshell.shellDir + "/Plugins";
+    var cmds = [];
+    var statesChanged = false;
+
+    for (var key in root.pluginStates) {
+      var state = root.pluginStates[key];
+      if (state.sourceUrl !== builtinUrl) {
+        continue; // only touch Built-in source copies
+      }
+      var dir = root.pluginsDir + "/" + key;
+      var dirEsc = dir.replace(/'/g, "'\\''");
+      if (key.endsWith(":noctalia-icons-legacy")) {
+        Logger.i("PluginRegistry", "v3 migration: removing retired icon set copy:", key);
+        cmds.push("rm -rf '" + dirEsc + "'");
+        delete root.pluginStates[key];
+        statesChanged = true;
+      } else if (key.endsWith(":atmosphera-icons")) {
+        Logger.i("PluginRegistry", "v3 migration: refreshing atmosphera-icons from package");
+        var src = Quickshell.shellDir + "/Plugins/atmosphera-icons";
+        var srcEsc = src.replace(/'/g, "'\\''");
+        cmds.push("rm -rf '" + dirEsc + "' && mkdir -p '" + dirEsc + "' && cp -r '" + srcEsc + "/.' '" + dirEsc + "/'");
+      }
+    }
+
+    if (cmds.length === 0) {
+      done();
+      return;
+    }
+
+    var migrateProcess = Qt.createQmlObject(`
+      import QtQuick
+      import Quickshell.Io
+      Process {
+        command: ["sh", "-c", "${cmds.join(" && ").replace(/"/g, '\\"')}"]
+      }
+    `, root, "MigrateIconSetsV3");
+
+    migrateProcess.exited.connect(function (exitCode) {
+      if (exitCode !== 0) {
+        Logger.e("PluginRegistry", "v3 icon set migration failed (exit " + exitCode + ") — continuing with existing copies");
+      }
+      if (statesChanged) {
+        root.save();
+      }
+      migrateProcess.destroy();
+      done();
+    });
+
+    migrateProcess.running = true;
+  }
+
+  function migratePluginData(done) {
     var needsSave = false;
 
     for (var pluginId in root.pluginStates) {
@@ -169,6 +238,8 @@ Singleton {
       root.save();
       Logger.i("PluginRegistry", "Migration complete");
     }
+
+    root.migrateIconSetsV3(done);
   }
 
   // Ensure plugins directory exists
@@ -218,7 +289,7 @@ Singleton {
 
       var sourceUrl = "file://" + Quickshell.shellDir + "/Plugins";
       var hash = root.generateSourceHash(sourceUrl);
-      var bundledPlugins = ["noctalia-icons-legacy", "atmosphera-icons", "atmosphera-wallpapers", "demo-custom-lockscreen"];
+      var bundledPlugins = ["atmosphera-icons", "atmosphera-wallpapers", "demo-custom-lockscreen"];
       var pluginId, compositeKey, targetDir, srcDir;
       var pending = 0;
 
@@ -276,10 +347,6 @@ Singleton {
         }
       ],
       "states": ({})
-    };
-    seed.states[hash + ":noctalia-icons-legacy"] = {
-      "enabled": true,
-      "sourceUrl": sourceUrl
     };
     seed.states[hash + ":atmosphera-icons"] = {
       "enabled": true,

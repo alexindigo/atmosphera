@@ -133,7 +133,7 @@ Singleton {
     return null;
   }
 
-  // Build resolution order: custom first, then others, then legacy as floor
+  // Build resolution order: custom first, then others, then the bundled set as floor
   function _rebuildOrder() {
     var all = Object.keys(root.iconSets);
     var custom = [];
@@ -145,7 +145,7 @@ Singleton {
       var bareId = root._barePluginId(id);
       if (bareId === "custom-icon-set") {
         custom.push(id);
-      } else if (bareId === "noctalia-icons-legacy") {
+      } else if (bareId === "atmosphera-icons") {
         builtins.push(id);
       } else {
         others.push(id);

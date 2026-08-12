@@ -13,7 +13,7 @@
     }
   ],
   "states": {
-    "noctalia-icons-legacy": {
+    "atmosphera-icons": {
       "enabled": true,
       "sourceUrl": "file://<shellDir>/Plugins"
     },
