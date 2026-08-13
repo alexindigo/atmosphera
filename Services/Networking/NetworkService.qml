@@ -87,6 +87,7 @@ Singleton {
   property bool scanPending: false
   property bool scanningActive: false
   property var existingProfiles: ({})
+  property var _apPaths: ({})
 
   // Airplane mode status
   property bool airplaneModeEnabled: false
@@ -273,13 +274,20 @@ Singleton {
     connectingTo = ssid;
     lastError = "";
 
+    if (isSaved) {
+      // D-Bus: activate the saved profile for this SSID
+      root._connectSaved(ssid);
+      return;
+    }
+
+    // New / manual / enterprise connections still go through nmcli — the
+    // AddAndActivateConnection dict (a{sa{sv}}) + SSID byte-array (ay)
+    // marshaling need dbusqml support that isn't in 0.3.0.
     connectProcess.ssid = ssid;
     connectProcess.password = password;
     connectProcess.isHidden = isHidden;
 
-    if (isSaved) {
-      connectProcess.mode = "saved";
-    } else if (isEnt || securityKey === "wep" || (securityKey && securityKey !== "open" && securityKey !== "wpa-psk" && securityKey !== "wpa2-psk")) {
+    if (isEnt || securityKey === "wep" || (securityKey && securityKey !== "open" && securityKey !== "wpa-psk" && securityKey !== "wpa2-psk")) {
       connectProcess.mode = "manual";
       connectProcess.securityKey = securityKey || (networks[ssid] ? networks[ssid].security : "wpa-psk");
       connectProcess.identity = identity;
@@ -294,13 +302,93 @@ Singleton {
     connectProcess.running = true;
   }
 
+  // Activate a saved profile over D-Bus: ActivateConnection(conn, dev, ap)
+  function _connectSaved(ssid) {
+    root._findSavedConnectionBySsid(ssid, function (connPath) {
+      if (!connPath) {
+        Logger.w("Network", "Connect: no saved profile found for", ssid);
+        root.connecting = false;
+        root.connectingTo = "";
+        return;
+      }
+      var devPath = root._activeWifiDevicePath();
+      var apPath = root._apPaths[ssid] || "/";
+      if (!devPath) {
+        Logger.w("Network", "Connect: no wifi device for", ssid);
+        root.connecting = false;
+        root.connectingTo = "";
+        return;
+      }
+      Logger.d("Network", "Connect (D-Bus, saved):", ssid, "via", connPath);
+      var reply = nmManager.call("ActivateConnection", [connPath, devPath, apPath]);
+      if (!reply) {
+        root.connecting = false;
+        root.connectingTo = "";
+        return;
+      }
+      reply.finished.connect(function () {
+        if (!reply.isError) {
+          Logger.i("Network", "Connected to network: '" + ssid + "' (saved, D-Bus)");
+          root.wifiConnected = true;
+          root.updateNetworkStatus(ssid, true);
+          root.refreshActiveWifiDetails();
+          ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("toast.wifi.connected", {
+                                                                    "ssid": ssid
+                                                                  }), root.getIcon(false));
+        } else {
+          Logger.w("Network", "Connect (saved) error:", reply.error.message);
+          root.lastError = I18n.tr("toast.wifi.connection-failed");
+          ToastService.showWarning(I18n.tr("common.wifi"), root.lastError, "wifi-exclamation");
+          root.wifiConnected = false;
+        }
+        root.connecting = false;
+        root.connectingTo = "";
+        delayedScanTimer.interval = 5000;
+        delayedScanTimer.restart();
+      });
+    });
+  }
+
+  // Active (or first) wifi device's object path
+  function _activeWifiDevicePath() {
+    var first = "";
+    for (var path in _devices) {
+      var dev = _devices[path];
+      if (dev.ready && dev.deviceType === 2) {
+        if (!first) {
+          first = path;
+        }
+        if (dev.connected) {
+          return path;
+        }
+      }
+    }
+    return first;
+  }
+
   function disconnect(ssid) {
     if (!ProgramCheckerService.nmcliAvailable) {
       return;
     }
     disconnectingFrom = ssid;
-    disconnectProcess.ssid = ssid;
-    disconnectProcess.running = true;
+    // D-Bus: deactivate the active connection whose Id matches the ssid
+    root._findActiveConnectionById(ssid, function (acPath) {
+      if (!acPath) {
+        Logger.w("Network", "Disconnect: no active connection found for", ssid);
+        root.disconnectingFrom = "";
+        delayedScanTimer.interval = 5000;
+        delayedScanTimer.restart();
+        return;
+      }
+      var reply = nmManager.call("DeactivateConnection", [acPath]);
+      if (!reply) {
+        root.disconnectingFrom = "";
+        return;
+      }
+      reply.finished.connect(function () {
+        root._onActionFinished(reply, "disconnect", ssid);
+      });
+    });
   }
 
   function forget(ssid) {
@@ -309,9 +397,193 @@ Singleton {
     }
     forgettingNetwork = ssid;
 
-    // Remove from system
-    forgetProcess.ssid = ssid;
-    forgetProcess.running = true;
+    // D-Bus: find the saved profile for this SSID and delete it
+    root._findSavedConnectionBySsid(ssid, function (connPath) {
+      if (!connPath) {
+        Logger.w("Network", "Forget: no saved profile found for", ssid);
+        root._finishForget(ssid, null);
+        return;
+      }
+      var proxy = connDeleteComponent.createObject(root, {
+                                                     "path": connPath
+                                                   });
+      var reply = proxy.call("Delete", []);
+      if (!reply) {
+        proxy.destroy();
+        root._finishForget(ssid, null);
+        return;
+      }
+      reply.finished.connect(function () {
+        proxy.destroy();
+        root._finishForget(ssid, reply);
+      });
+    });
+  }
+
+  // Shared action-result handling (keeps the toast/scan behavior of the old
+  // nmcli processes)
+  function _onActionFinished(reply, action, ssid) {
+    if (action === "disconnect") {
+      if (!reply.isError) {
+        Logger.i("Network", "Disconnected from network: '" + ssid + "'");
+        root.wifiConnected = false;
+        root.updateNetworkStatus(ssid, false);
+        ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("toast.wifi.disconnected", {
+                                                                  "ssid": ssid
+                                                                }), "wifi-off");
+      } else {
+        Logger.w("Network", "Disconnect error: " + reply.error.message);
+      }
+      root.disconnectingFrom = "";
+      delayedScanTimer.interval = 5000;
+      delayedScanTimer.restart();
+    }
+  }
+
+  function _finishForget(ssid, reply) {
+    if (reply && reply.isError) {
+      Logger.w("Network", "Forget error: " + reply.error.message);
+    } else {
+      Logger.i("Network", "Forget network: \"" + ssid + "\"");
+      // Update existing status immediately
+      let nets = root.networks;
+      if (nets[ssid]) {
+        nets[ssid].existing = false;
+        root.networks = ({});
+        root.networks = nets;
+      }
+    }
+    root.forgettingNetwork = "";
+    delayedScanTimer.interval = 5000;
+    delayedScanTimer.restart();
+  }
+
+  // Find the active connection object path whose Id matches
+  function _findActiveConnectionById(id, cb) {
+    var acs = nmManager.activeConnections || [];
+    if (acs.length === 0) {
+      cb("");
+      return;
+    }
+    var pending = acs.length;
+    var found = "";
+    var doneOne = function () {
+      pending--;
+      if (pending <= 0) {
+        cb(found);
+      }
+    };
+    for (var i = 0; i < acs.length; i++) {
+      root._readActiveConnId(acs[i], id, function (p, matched) {
+        if (matched && !found) {
+          found = p;
+        }
+        doneOne();
+      });
+    }
+  }
+
+  function _readActiveConnId(acPath, wantId, cb) {
+    var proxy = acIdComponent.createObject(root, {
+                                             "path": acPath
+                                           });
+    var reply = proxy.getProperty("Id");
+    if (!reply) {
+      proxy.destroy();
+      cb(acPath, false);
+      return;
+    }
+    reply.finished.connect(function () {
+      var ok = !reply.isError && String(reply.value) === wantId;
+      proxy.destroy();
+      cb(acPath, ok);
+    });
+  }
+
+  Component {
+    id: acIdComponent
+    DBus {
+      service: "org.freedesktop.NetworkManager"
+      iface: "org.freedesktop.NetworkManager.Connection.Active"
+      connection: SystemBus
+    }
+  }
+
+  // Find the saved profile path for a wifi SSID (for forget / connect-saved)
+  function _findSavedConnectionBySsid(ssid, cb) {
+    var reply = nmSettings.call("ListConnections", []);
+    if (!reply) {
+      cb("");
+      return;
+    }
+    reply.finished.connect(function () {
+      if (reply.isError) {
+        cb("");
+        return;
+      }
+      var paths = reply.value || [];
+      if (paths.length === 0) {
+        cb("");
+        return;
+      }
+      var pending = paths.length;
+      var found = "";
+      var doneOne = function () {
+        pending--;
+        if (pending <= 0) {
+          cb(found);
+        }
+      };
+      for (var i = 0; i < paths.length; i++) {
+        root._matchProfileSsid(paths[i], ssid, function (p, matched) {
+          if (matched && !found) {
+            found = p;
+          }
+          doneOne();
+        });
+      }
+    });
+  }
+
+  function _matchProfileSsid(connPath, wantSsid, cb) {
+    var proxy = profileReadComponent.createObject(root, {
+                                                    "path": connPath
+                                                  });
+    var reply = proxy.call("GetSettings", []);
+    if (!reply) {
+      proxy.destroy();
+      cb(connPath, false);
+      return;
+    }
+    reply.finished.connect(function () {
+      var ok = false;
+      if (!reply.isError && reply.value && typeof reply.value === "object") {
+        var s = reply.value;
+        var wireless = s["802-11-wireless"] || {};
+        var profSsid = root._decodeSsid(wireless["ssid"]);
+        ok = (profSsid === wantSsid);
+      }
+      proxy.destroy();
+      cb(connPath, ok);
+    });
+  }
+
+  Component {
+    id: profileReadComponent
+    DBus {
+      service: "org.freedesktop.NetworkManager"
+      iface: "org.freedesktop.NetworkManager.Settings.Connection"
+      connection: SystemBus
+    }
+  }
+
+  Component {
+    id: connDeleteComponent
+    DBus {
+      service: "org.freedesktop.NetworkManager"
+      iface: "org.freedesktop.NetworkManager.Settings.Connection"
+      connection: SystemBus
+    }
   }
 
   // Refresh details for the currently active Wi‑Fi link
@@ -585,129 +857,6 @@ Singleton {
           ToastService.showWarning(I18n.tr("common.wifi"), root.lastError || I18n.tr("toast.wifi.connection-failed"), "wifi-exclamation");
           wifiConnected = false;
         }
-      }
-    }
-  }
-
-  // Disconnect from Wi-Fi network
-  Process {
-    id: disconnectProcess
-    property string ssid: ""
-    running: false
-    command: ["nmcli", "connection", "down", "id", ssid]
-
-    stdout: StdioCollector {
-      onStreamFinished: {
-        Logger.i("Network", "Disconnected from network: '" + disconnectProcess.ssid + "'");
-        root.wifiConnected = false;
-        ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("toast.wifi.disconnected", {
-                                                                  "ssid": disconnectProcess.ssid
-                                                                }), "wifi-off");
-
-        // Immediately update UI on successful disconnect
-        root.updateNetworkStatus(disconnectProcess.ssid, false);
-        root.disconnectingFrom = "";
-
-        // Do a scan to refresh the list
-        delayedScanTimer.interval = 3000;
-        delayedScanTimer.restart();
-      }
-    }
-
-    stderr: StdioCollector {
-      onStreamFinished: {
-        root.disconnectingFrom = "";
-        if (text.trim()) {
-          Logger.w("Network", "Disconnect error: " + text);
-        }
-        // Still trigger a scan even on error
-        delayedScanTimer.interval = 5000;
-        delayedScanTimer.restart();
-      }
-    }
-  }
-
-  // Forget given Wi-Fi network
-  Process {
-    id: forgetProcess
-    property string ssid: ""
-    running: false
-    environment: ({
-                    "LC_ALL": "C"
-                  })
-
-    // Try multiple common profile name patterns
-    command: {
-      var script = `
-        ssid="$1"
-        deleted=false
-
-        # Find existing profile by Name and Type
-        UUID=$(nmcli -t -f NAME,UUID,TYPE connection show | awk -F: -v target="$ssid" '$1 == target && $3 == "802-11-wireless" { print $2; exit }')
-
-        if [ -n "$UUID" ]; then
-            if nmcli connection delete uuid "$UUID" 2>/dev/null; then
-                echo "Deleted profile: $ssid ($UUID)"
-                deleted=true
-            fi
-        fi
-
-        # Fallback: try common patterns if UUID lookup failed
-        if [ "$deleted" = "false" ]; then
-            # Try "Auto $ssid" pattern
-            if nmcli connection delete id "Auto $ssid" 2>/dev/null; then
-                echo "Deleted profile: Auto $ssid"
-                deleted=true
-            fi
-
-            # Try "$ssid 1", "$ssid 2", etc. patterns
-            for i in 1 2 3; do
-                if nmcli connection delete id "$ssid $i" 2>/dev/null; then
-                    echo "Deleted profile: $ssid $i"
-                    deleted=true
-                fi
-            done
-        fi
-
-        if [ "$deleted" = "false" ]; then
-            echo "No profiles found for SSID: $ssid"
-        fi
-      `;
-
-      return ["sh", "-c", script, "--", ssid];
-    }
-
-    stdout: StdioCollector {
-      onStreamFinished: {
-        Logger.i("Network", "Forget network: \"" + forgetProcess.ssid + "\"");
-        Logger.d("Network", text.trim().replace(/[\r\n]/g, " "));
-
-        // Update existing status immediately
-        let nets = root.networks;
-        if (nets[forgetProcess.ssid]) {
-          nets[forgetProcess.ssid].existing = false;
-          // Trigger property change
-          root.networks = ({});
-          root.networks = nets;
-        }
-
-        root.forgettingNetwork = "";
-
-        // Scan to verify the profile is gone
-        delayedScanTimer.interval = 5000;
-        delayedScanTimer.restart();
-      }
-    }
-
-    stderr: StdioCollector {
-      onStreamFinished: {
-        root.forgettingNetwork = "";
-        if (text.trim() && text.indexOf("No profiles found") === -1) {
-          Logger.w("Network", "Forget error: " + text);
-        }
-        // Still Trigger a scan even on error
-        delayedScanTimer.interval = 5000;
-        delayedScanTimer.restart();
       }
     }
   }
@@ -1142,6 +1291,7 @@ Singleton {
               "connected": isConnected,
               "existing": !!root.existingProfiles[ssid]
             };
+            root._apPaths[ssid] = apPath;
           } else {
             if (isConnected) {
               nets[ssid].connected = true;
