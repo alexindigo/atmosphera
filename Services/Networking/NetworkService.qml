@@ -1,4 +1,5 @@
 pragma Singleton
+import DBus 1.0
 
 import QtQuick
 import Quickshell
@@ -1123,22 +1124,46 @@ Process {
   }
 }
 
-// Listen to NetworkManager events in real-time (roaming, auto-connect)  -- ~9mb Memory usage.
-Process {
-  id: networkMonitorProcess
-  running: ProgramCheckerService.nmcliAvailable
-  command: ["nmcli", "-t", "monitor"]
-  environment: ({
-                  "LC_ALL": "C"
-                })
-  stdout: SplitParser {
-    onRead: data => {
-      if (data.endsWith(": connected") || data.endsWith(": disconnected")) {
-        Logger.d("Network", "State changed: " + data);
-        deviceStatusProcess.running = true;
-        connectivityCheckProcess.running = true;
-      }
+// NetworkManager D-Bus event source (replaces the old `nmcli -t monitor`
+// process, which had no restart-on-exit and whose text parse missed events
+// like cable-unplug reporting device state "unavailable").
+// Manager-level signals cover every connection/device state transition.
+DBus {
+  id: nmManager
+  service: "org.freedesktop.NetworkManager"
+  path: "/org/freedesktop/NetworkManager"
+  iface: "org.freedesktop.NetworkManager"
+  connection: SystemBus
+  watchServiceStatus: true
+}
+
+Connections {
+  target: nmManager
+
+  function onSignalReceived(name, args) {
+    if (name === "PropertiesChanged" || name === "StateChanged" || name === "DeviceAdded" || name === "DeviceRemoved") {
+      nmEventDebounce.restart();
     }
+  }
+
+  function onServiceAvailableChanged() {
+    if (nmManager.serviceAvailable) {
+      // NetworkManager (re)started — full re-sync
+      nmEventDebounce.restart();
+    }
+  }
+}
+
+// Coalesce the burst of D-Bus signals that accompany a single transition
+Timer {
+  id: nmEventDebounce
+  interval: 150
+  onTriggered: {
+    if (!ProgramCheckerService.nmcliAvailable) {
+      return;
+    }
+    deviceStatusProcess.running = true;
+    connectivityCheckProcess.running = true;
   }
 }
 }
