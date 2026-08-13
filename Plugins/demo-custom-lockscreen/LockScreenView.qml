@@ -3,13 +3,12 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
-import qs.Services.Media
 import qs.Services.Compositor
-import qs.Services.UI
 import qs.Services.Hardware
 import qs.Services.Keyboard
+import qs.Services.Media
 import qs.Services.Networking
-import Quickshell.Io
+import qs.Services.UI
 import qs.Widgets
 
 Item {
@@ -31,50 +30,6 @@ Item {
   Rectangle {
     anchors.fill: parent
     color: Qt.rgba(0, 0, 0, 0.4 + (lockScreenApi?.lockTint ?? 0) * 0.35)
-  }
-
-  // Network fallback detection (independent of NetworkManager)
-  QtObject {
-    id: networkFallback
-    property string state: "disconnected"
-    property string iface: ""
-    property string type: ""
-    property string ssid: ""
-  }
-
-  Timer {
-    id: networkProbeTimer
-    interval: 5000
-    running: true
-    repeat: true
-    triggeredOnStart: true
-    onTriggered: networkProbe.running = true
-  }
-
-  Process {
-    id: networkProbe
-    command: ["sh", "-c",
-      "IFACE=$(ip -4 route show default | awk '/default/ {print $5; exit}'); if [ -z \"$IFACE\" ]; then echo \"STATE=disconnected\"; exit 0; fi; case \"$IFACE\" in wl*) TYPE=wifi;; en*|eth*) TYPE=ethernet;; *) TYPE=other;; esac; SSID=\"\"; if [ \"$TYPE\" = \"wifi\" ]; then for probe in iwgetid iw nmcli iwctl; do command -v \"$probe\" >/dev/null 2>&1 || continue; case \"$probe\" in iwgetid) SSID=$(iwgetid -r 2>/dev/null);; iw) SSID=$(iw dev \"$IFACE\" link 2>/dev/null | sed -n 's/^\\s*SSID: //p');; nmcli) SSID=$(nmcli -t -f active,ssid device wifi 2>/dev/null | awk -F: '/^yes/ {print $2; exit}');; iwctl) SSID=$(iwctl station \"$IFACE\" show 2>/dev/null | awk -F': +' '/Connected network/ {print $2; exit}');; esac; [ -n \"$SSID\" ] && break; done; fi; echo \"STATE=connected\"; echo \"IFACE=$IFACE\"; echo \"TYPE=$TYPE\"; echo \"SSID=$SSID\""]
-    stdout: StdioCollector {
-      onStreamFinished: {
-        var lines = text.trim().split("\n");
-        for (var i = 0; i < lines.length; i++) {
-          var parts = lines[i].split("=", 2);
-          if (parts.length === 2) {
-            var key = parts[0].trim();
-            var val = parts[1].trim();
-            if (key === "STATE")
-              networkFallback.state = val;
-            else if (key === "IFACE")
-              networkFallback.iface = val;
-            else if (key === "TYPE")
-              networkFallback.type = val;
-            else if (key === "SSID")
-              networkFallback.ssid = val;
-          }
-        }
-      }
-    }
   }
 
   // TOP-LEFT: Network + Battery + Keyboard status
@@ -472,33 +427,11 @@ Item {
   }
 
   function _networkIcon() {
-    if (NetworkService.wifiConnected || NetworkService.ethernetConnected)
-      return NetworkService.getIcon();
-    if (networkFallback.state === "connected") {
-      if (networkFallback.type === "wifi")
-        return "wifi";
-      if (networkFallback.type === "ethernet")
-        return "ethernet";
-      return "wifi";
-    }
-    return "wifi-off";
+    return NetworkService.getIcon();
   }
 
   function _networkLabel() {
-    if (NetworkService.wifiConnected || NetworkService.ethernetConnected) {
-      if (NetworkService.ethernetConnected)
-        return "Ethernet connected";
-      var ssid = NetworkService.getStatusText(false);
-      return ssid !== "" ? "WiFi: " + ssid : "WiFi connected";
-    }
-    if (networkFallback.state === "connected") {
-      if (networkFallback.type === "wifi")
-        return networkFallback.ssid !== "" ? "WiFi: " + networkFallback.ssid : "WiFi connected";
-      if (networkFallback.type === "ethernet")
-        return "Ethernet connected";
-      return "Connected (" + networkFallback.iface + ")";
-    }
-    return "WiFi disconnected";
+    return NetworkService.getStatusText(true);
   }
 
   function _batteryLabel() {
