@@ -6,7 +6,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
-import qs.Services.System
 import qs.Services.UI
 
 Singleton {
@@ -151,7 +150,7 @@ Singleton {
     id: wifiDebounce
     interval: 300
     onTriggered: {
-      if (!ProgramCheckerService.nmcliAvailable) {
+      if (!nmManager.serviceAvailable) {
         return;
       }
       if (root.airplaneModeToggled) {
@@ -182,7 +181,7 @@ Singleton {
 
   // Core functions
   function setWifiEnabled(enabled) {
-    if (!ProgramCheckerService.nmcliAvailable) {
+    if (!nmManager.serviceAvailable) {
       return;
     }
     Logger.i("Wi-Fi", "SetWifiEnabled", enabled);
@@ -210,7 +209,7 @@ Singleton {
   }
 
   function scan() {
-    if (!ProgramCheckerService.nmcliAvailable || !root.wifiEnabled) {
+    if (!nmManager.serviceAvailable || !root.wifiEnabled) {
       return;
     }
     lastError = "";
@@ -278,7 +277,7 @@ Singleton {
   }
 
   function connect(ssid, password = "", isHidden = false, securityKey = "", identity = "", enterpriseConfig = {}) {
-    if (!ProgramCheckerService.nmcliAvailable || connecting) {
+    if (!nmManager.serviceAvailable || connecting) {
       return;
     }
 
@@ -467,7 +466,7 @@ Singleton {
   }
 
   function disconnect(ssid) {
-    if (!ProgramCheckerService.nmcliAvailable) {
+    if (!nmManager.serviceAvailable) {
       return;
     }
     disconnectingFrom = ssid;
@@ -492,7 +491,7 @@ Singleton {
   }
 
   function forget(ssid) {
-    if (!ProgramCheckerService.nmcliAvailable) {
+    if (!nmManager.serviceAvailable) {
       return;
     }
     forgettingNetwork = ssid;
