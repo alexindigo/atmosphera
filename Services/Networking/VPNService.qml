@@ -1,8 +1,10 @@
 pragma Singleton
 
+import DBus 1.0
+import DBus 1.0 as DBusQML
+
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import qs.Commons
 import qs.Services.UI
 
@@ -44,6 +46,11 @@ Singleton {
 
   readonly property bool hasActiveConnection: activeConnections.length > 0
 
+  // Per-profile D-Bus object paths, keyed by UUID
+  property var _connPaths: ({})
+  // Reverse map: active-connection path → UUID
+  property var _acToUuid: ({})
+
   Timer {
     id: refreshTimer
     interval: 5000
@@ -60,8 +67,64 @@ Singleton {
   }
 
   Component.onCompleted: {
-    Logger.i("VPN", "Service started");
+    Logger.i("VPN", "Service started (D-Bus)");
     refresh();
+  }
+
+  // NetworkManager manager (for ActivateConnection + active-connection list)
+  DBus {
+    id: nmManager
+    service: "org.freedesktop.NetworkManager"
+    path: "/org/freedesktop/NetworkManager"
+    iface: "org.freedesktop.NetworkManager"
+    connection: SystemBus
+    watchServiceStatus: true
+  }
+
+  // Settings service (saved profiles)
+  DBus {
+    id: nmSettings
+    service: "org.freedesktop.NetworkManager"
+    path: "/org/freedesktop/NetworkManager/Settings"
+    iface: "org.freedesktop.NetworkManager.Settings"
+    connection: SystemBus
+  }
+
+  // Manager Properties iface (for future property reads if needed)
+  DBus {
+    id: nmManagerProps
+    service: "org.freedesktop.NetworkManager"
+    path: "/org/freedesktop/NetworkManager"
+    iface: "org.freedesktop.DBus.Properties"
+    connection: SystemBus
+  }
+
+  Connections {
+    target: nmManager
+
+    function onSignalReceived(name, args) {
+      if (name === "PropertiesChanged" || name === "StateChanged") {
+        vpnEventDebounce.restart();
+      }
+    }
+
+    function onStatusChanged() {
+      if (nmManager.status === 2) {
+        refresh();
+      }
+    }
+
+    function onServiceAvailableChanged() {
+      if (nmManager.serviceAvailable) {
+        refresh();
+      }
+    }
+  }
+
+  Timer {
+    id: vpnEventDebounce
+    interval: 200
+    onTriggered: refresh()
   }
 
   function refresh() {
@@ -71,23 +134,210 @@ Singleton {
     }
     refreshing = true;
     lastError = "";
-    refreshProcess.running = true;
+    _loadProfiles();
+  }
+
+  function _loadProfiles() {
+    var reply = nmSettings.call("ListConnections", []);
+    if (!reply) {
+      _finishRefresh();
+      return;
+    }
+    reply.finished.connect(function () {
+      if (reply.isError) {
+        Logger.w("VPN", "ListConnections failed:", reply.error.message);
+        _finishRefresh();
+        return;
+      }
+      var paths = reply.value || [];
+      var newConns = {};
+      var newPaths = {};
+      var pending = paths.length;
+      if (pending === 0) {
+        connections = newConns;
+        _connPaths = newPaths;
+        _refreshActiveState();
+        return;
+      }
+      var doneOne = function () {
+        pending--;
+        if (pending <= 0) {
+          connections = newConns;
+          _connPaths = newPaths;
+          _refreshActiveState();
+        }
+      };
+      for (var i = 0; i < paths.length; i++) {
+        root._readProfile(paths[i], newConns, newPaths, doneOne);
+      }
+    });
+  }
+
+  function _readProfile(connPath, newConns, newPaths, done) {
+    var proxy = profileReadComponent.createObject(root, {
+                                                     "path": connPath
+                                                   });
+    var reply = proxy.call("GetSettings", []);
+    if (!reply) {
+      proxy.destroy();
+      done();
+      return;
+    }
+    reply.finished.connect(function () {
+      if (!reply.isError && reply.value && typeof reply.value === "object") {
+        var s = reply.value;
+        var conn = s["connection"] || {};
+        var ctype = conn["type"] || "";
+        if (ctype === "vpn" || ctype === "wireguard") {
+          var uuid = conn["uuid"] || "";
+          var name = conn["id"] || "";
+          if (uuid) {
+            newConns[uuid] = {
+              "uuid": uuid,
+              "name": name,
+              "device": "",
+              "active": false
+            };
+            newPaths[uuid] = connPath;
+          }
+        }
+      }
+      proxy.destroy();
+      done();
+    });
+  }
+
+  Component {
+    id: profileReadComponent
+    DBus {
+      service: "org.freedesktop.NetworkManager"
+      iface: "org.freedesktop.NetworkManager.Settings.Connection"
+      connection: SystemBus
+    }
+  }
+
+  function _refreshActiveState() {
+    var acs = nmManager.activeConnections || [];
+    if (acs.length === 0) {
+      _markAllInactive();
+      _finishRefresh();
+      return;
+    }
+    var map = Object.assign({}, connections);
+    var acToUuid = {};
+    var pending = acs.length;
+    var doneOne = function () {
+      pending--;
+      if (pending <= 0) {
+        _acToUuid = acToUuid;
+        connections = map;
+        _finishRefresh();
+      }
+    };
+    for (var i = 0; i < acs.length; i++) {
+      root._readAcUuid(acs[i], map, acToUuid, doneOne);
+    }
+  }
+
+  function _readAcUuid(acPath, map, acToUuid, done) {
+    var proxy = acUuidComponent.createObject(root, {
+                                               "path": acPath
+                                             });
+    var reply = proxy.getProperty("Uuid");
+    if (!reply) {
+      proxy.destroy();
+      done();
+      return;
+    }
+    reply.finished.connect(function () {
+      if (!reply.isError && reply.value !== undefined) {
+        var u = String(reply.value);
+        acToUuid[acPath] = u;
+        if (map[u]) {
+          map[u] = Object.assign({}, map[u], {
+                                   "active": true
+                                 });
+        }
+      }
+      proxy.destroy();
+      done();
+    });
+  }
+
+  Component {
+    id: acUuidComponent
+    DBus {
+      service: "org.freedesktop.NetworkManager"
+      iface: "org.freedesktop.NetworkManager.Connection.Active"
+      connection: SystemBus
+    }
+  }
+
+  function _markAllInactive() {
+    var map = Object.assign({}, connections);
+    var changed = false;
+    for (var key in map) {
+      if (map[key].active) {
+        map[key] = Object.assign({}, map[key], {
+                                   "active": false
+                                 });
+        changed = true;
+      }
+    }
+    if (changed) {
+      connections = map;
+    }
+  }
+
+  function _finishRefresh() {
+    var pending = refreshPending;
+    refreshing = false;
+    refreshPending = false;
+    if (pending) {
+      scheduleRefresh(200);
+    }
   }
 
   function connect(uuid) {
     if (connecting || !uuid) {
       return;
     }
-    const conn = connections[uuid];
-    if (!conn) {
+    const connPath = _connPaths[uuid];
+    if (!connPath) {
+      Logger.w("VPN", "Connect: no profile path for", uuid);
       return;
     }
     connecting = true;
     connectingUuid = uuid;
     lastError = "";
-    connectProcess.uuid = uuid;
-    connectProcess.name = conn.name;
-    connectProcess.running = true;
+
+    // Device and AP are "/" for VPNs
+    Logger.i("VPN", "Connecting to", connections[uuid] ? connections[uuid].name : uuid, "(D-Bus)");
+    var reply = nmManager.call("ActivateConnection", [connPath, "/", "/"]);
+    if (!reply) {
+      connecting = false;
+      connectingUuid = "";
+      return;
+    }
+    reply.finished.connect(function () {
+      if (!reply.isError) {
+        Logger.i("VPN", "Connected to", connections[uuid] ? connections[uuid].name : uuid);
+        setConnection(uuid, {
+                        "active": true
+                      });
+        ToastService.showNotice(connections[uuid] ? connections[uuid].name : uuid, I18n.tr("toast.vpn.connected", {
+                                                                                               "name": connections[uuid] ? connections[uuid].name : uuid
+                                                                                             }), "shield-lock");
+      } else {
+        var msg = reply.error.message || "";
+        Logger.w("VPN", "Connect error:", msg);
+        lastError = msg.split("\n")[0].trim();
+        ToastService.showWarning(connections[uuid] ? connections[uuid].name : uuid, lastError);
+      }
+      connecting = false;
+      connectingUuid = "";
+      scheduleRefresh(1000);
+    });
   }
 
   function disconnect(uuid) {
@@ -101,9 +351,49 @@ Singleton {
     disconnecting = true;
     disconnectingUuid = uuid;
     lastError = "";
-    disconnectProcess.uuid = uuid;
-    disconnectProcess.name = conn.name;
-    disconnectProcess.running = true;
+
+    // Find the active connection whose UUID matches
+    var acPath = "";
+    for (var ap in _acToUuid) {
+      if (_acToUuid[ap] === uuid) {
+        acPath = ap;
+        break;
+      }
+    }
+    if (!acPath) {
+      Logger.w("VPN", "Disconnect: no active connection for", uuid);
+      disconnecting = false;
+      disconnectingUuid = "";
+      scheduleRefresh(1000);
+      return;
+    }
+    Logger.i("VPN", "Disconnecting from", conn.name, "(D-Bus)");
+    var reply = nmManager.call("DeactivateConnection", [acPath]);
+    if (!reply) {
+      disconnecting = false;
+      disconnectingUuid = "";
+      return;
+    }
+    reply.finished.connect(function () {
+      if (!reply.isError) {
+        Logger.i("VPN", "Disconnected from", conn.name);
+        setConnection(uuid, {
+                        "active": false,
+                        "device": ""
+                      });
+        ToastService.showNotice(conn.name, I18n.tr("toast.vpn.disconnected", {
+                                                      "name": conn.name
+                                                    }), "shield-off");
+      } else {
+        var msg = reply.error.message || "";
+        Logger.w("VPN", "Disconnect error:", msg);
+        lastError = msg.split("\n")[0].trim();
+        ToastService.showWarning(conn.name, lastError);
+      }
+      disconnecting = false;
+      disconnectingUuid = "";
+      scheduleRefresh(1000);
+    });
   }
 
   function toggle(uuid) {
@@ -132,156 +422,5 @@ Singleton {
   function scheduleRefresh(interval) {
     delayedRefreshTimer.interval = interval;
     delayedRefreshTimer.restart();
-  }
-
-  Process {
-    id: refreshProcess
-    running: false
-    command: ["nmcli", "-t", "-f", "NAME,UUID,TYPE,DEVICE", "connection", "show"]
-
-    stdout: StdioCollector {
-      onStreamFinished: {
-        const lines = text.split("\n");
-        const map = {};
-        for (let i = 0; i < lines.length; ++i) {
-          const line = lines[i].trim();
-          if (!line) {
-            continue;
-          }
-          const lastColonIdx = line.lastIndexOf(":");
-          if (lastColonIdx === -1) {
-            continue;
-          }
-          const device = line.substring(lastColonIdx + 1);
-          const remaining = line.substring(0, lastColonIdx);
-          const secondLastColonIdx = remaining.lastIndexOf(":");
-          if (secondLastColonIdx === -1) {
-            continue;
-          }
-          const type = remaining.substring(secondLastColonIdx + 1);
-          if (type !== "vpn" && type !== "wireguard") {
-            continue;
-          }
-          const remaining2 = remaining.substring(0, secondLastColonIdx);
-          const thirdLastColonIdx = remaining2.lastIndexOf(":");
-          if (thirdLastColonIdx === -1) {
-            continue;
-          }
-          const uuid = remaining2.substring(thirdLastColonIdx + 1);
-          const name = remaining2.substring(0, thirdLastColonIdx);
-          if (!uuid || !name) {
-            continue;
-          }
-          const active = device && device !== "--";
-          map[uuid] = {
-            "uuid": uuid,
-            "name": name,
-            "device": device,
-            "active": active
-          };
-        }
-        connections = map;
-        const pending = refreshPending;
-        refreshing = false;
-        refreshPending = false;
-        if (pending) {
-          scheduleRefresh(200);
-        }
-      }
-    }
-
-    stderr: StdioCollector {
-      onStreamFinished: {
-        const pending = refreshPending;
-        refreshing = false;
-        refreshPending = false;
-        if (text.trim()) {
-          lastError = text.split("\n")[0].trim();
-          Logger.w("VPN", "Refresh error: " + text);
-        }
-        if (pending) {
-          scheduleRefresh(2000);
-        }
-      }
-    }
-  }
-
-  Process {
-    id: connectProcess
-    property string uuid: ""
-    property string name: ""
-    running: false
-    command: ["nmcli", "connection", "up", "uuid", uuid]
-
-    stdout: StdioCollector {
-      onStreamFinished: {
-        const output = text.trim();
-        if (!output || (!output.includes("successfully activated") && !output.includes("Connection successfully"))) {
-          return;
-        }
-        setConnection(connectProcess.uuid, {
-                        "active": true
-                      });
-        connecting = false;
-        connectingUuid = "";
-        lastError = "";
-        Logger.i("VPN", "Connected to " + connectProcess.name);
-        ToastService.showNotice(connectProcess.name, I18n.tr("toast.vpn.connected", {
-                                                               "name": connectProcess.name
-                                                             }), "shield-lock");
-        scheduleRefresh(1000);
-      }
-    }
-
-    stderr: StdioCollector {
-      onStreamFinished: {
-        const trimmed = text.trim();
-        if (trimmed) {
-          lastError = trimmed.split("\n")[0].trim();
-          Logger.w("VPN", "Connect error: " + trimmed);
-          ToastService.showWarning(connectProcess.name, lastError);
-        }
-        connecting = false;
-        connectingUuid = "";
-      }
-    }
-  }
-
-  Process {
-    id: disconnectProcess
-    property string uuid: ""
-    property string name: ""
-    running: false
-    command: ["nmcli", "connection", "down", "uuid", uuid]
-
-    stdout: StdioCollector {
-      onStreamFinished: {
-        Logger.i("VPN", "Disconnected from " + disconnectProcess.name);
-        setConnection(disconnectProcess.uuid, {
-                        "active": false,
-                        "device": ""
-                      });
-        disconnecting = false;
-        disconnectingUuid = "";
-        lastError = "";
-        ToastService.showNotice(disconnectProcess.name, I18n.tr("toast.vpn.disconnected", {
-                                                                  "name": disconnectProcess.name
-                                                                }), "shield-off");
-        scheduleRefresh(1000);
-      }
-    }
-
-    stderr: StdioCollector {
-      onStreamFinished: {
-        const trimmed = text.trim();
-        if (trimmed) {
-          lastError = trimmed.split("\n")[0].trim();
-          Logger.w("VPN", "Disconnect error: " + trimmed);
-          ToastService.showWarning(disconnectProcess.name, lastError);
-        }
-        disconnecting = false;
-        disconnectingUuid = "";
-      }
-    }
   }
 }
