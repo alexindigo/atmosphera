@@ -5,7 +5,6 @@ import DBus 1.0 as DBusQML
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import Quickshell.Networking
 import qs.Commons
 import qs.Services.System
 import qs.Services.UI
@@ -71,7 +70,10 @@ Singleton {
   property double activeEthernetDetailsTimestamp: 0
 
   // Wi-Fi properties
-  readonly property bool wifiEnabled: Networking.wifiEnabled
+  // Wifi radio state — read reactively from the NM manager's
+  // WirelessEnabled property (reactive bindings via dbusqml), written via
+  // D-Bus Properties.Set. No Quickshell.Networking, no nmcli.
+  readonly property bool wifiEnabled: nmManager.wirelessEnabled === true
   property var networks: ({})
   property var activeWifiDetails: ({})
   property bool wifiConnected: false
@@ -184,7 +186,19 @@ Singleton {
       return;
     }
     Logger.i("Wi-Fi", "SetWifiEnabled", enabled);
-    Networking.wifiEnabled = enabled;
+    // Properties.Set with a reply so a polkit denial surfaces (the reactive
+    // wirelessEnabled read-back reverts the toggle visual if it didn't take).
+    var reply = nmManagerProps.call("Set", ["org.freedesktop.NetworkManager", "WirelessEnabled", new DBusQML.variant(enabled)]);
+    if (reply) {
+      reply.finished.connect(function () {
+        if (reply.isError) {
+          Logger.w("Wi-Fi", "Set WirelessEnabled failed:", reply.error.message);
+          ToastService.showWarning(I18n.tr("common.wifi"), I18n.tr("toast.wifi.toggle-failed", {
+                                                                     "error": reply.error.message
+                                                                   }), "wifi-off");
+        }
+      });
+    }
   }
 
   function setAirplaneMode(state) {
@@ -836,6 +850,16 @@ Singleton {
     iface: "org.freedesktop.NetworkManager"
     connection: SystemBus
     watchServiceStatus: true
+  }
+
+  // The manager's Properties iface — for property SETS with error feedback
+  // (setProperty() is fire-and-forget; a polkit denial should surface).
+  DBus {
+    id: nmManagerProps
+    service: "org.freedesktop.NetworkManager"
+    path: "/org/freedesktop/NetworkManager"
+    iface: "org.freedesktop.DBus.Properties"
+    connection: SystemBus
   }
 
   Connections {
