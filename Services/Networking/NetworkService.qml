@@ -1,5 +1,6 @@
 pragma Singleton
 import DBus 1.0
+import DBus 1.0 as DBusQML
 
 import QtQuick
 import Quickshell
@@ -280,26 +281,128 @@ Singleton {
       return;
     }
 
-    // New / manual / enterprise connections still go through nmcli — the
-    // AddAndActivateConnection dict (a{sa{sv}}) + SSID byte-array (ay)
-    // marshaling need dbusqml support that isn't in 0.3.0.
-    connectProcess.ssid = ssid;
-    connectProcess.password = password;
-    connectProcess.isHidden = isHidden;
+    // New / manual / enterprise connections: build the NM connection dict
+    // and activate via D-Bus AddAndActivateConnection. Plain JS objects
+    // marshal to a{sa{sv}} via dbusqml's introspection-driven marshaling;
+    // the SSID is a D-Bus byte array via DBusQML.bytes().
+    root._connectNew(ssid, password, isHidden, securityKey, identity, enterpriseConfig);
+  }
 
-    if (isEnt || securityKey === "wep" || (securityKey && securityKey !== "open" && securityKey !== "wpa-psk" && securityKey !== "wpa2-psk")) {
-      connectProcess.mode = "manual";
-      connectProcess.securityKey = securityKey || (networks[ssid] ? networks[ssid].security : "wpa-psk");
-      connectProcess.identity = identity;
-      connectProcess.eap = enterpriseConfig.eap || "peap";
-      connectProcess.phase2 = enterpriseConfig.phase2 || "mschapv2";
-      connectProcess.anonIdentity = enterpriseConfig.anonIdentity || "";
-      connectProcess.caCert = enterpriseConfig.caCert || "";
-    } else {
-      connectProcess.mode = "new";
+  // Build + activate a brand-new connection over D-Bus
+  function _connectNew(ssid, password, isHidden, securityKey, identity, enterpriseConfig) {
+    var devPath = root._activeWifiDevicePath();
+    if (!devPath) {
+      Logger.w("Network", "Connect: no wifi device for", ssid);
+      root.connecting = false;
+      root.connectingTo = "";
+      return;
     }
 
-    connectProcess.running = true;
+    var sec = securityKey || (networks[ssid] ? networks[ssid].security : "") || "wpa-psk";
+    var isEnt = isEnterprise(sec);
+
+    var wifiSection = {
+      "ssid": DBusQML.bytes(ssid),
+      "mode": "infrastructure",
+      "hidden": isHidden
+    };
+
+    var conn = {
+      "connection": {
+        "id": ssid,
+        "type": "802-11-wireless",
+        "autoconnect": true
+      },
+      "802-11-wireless": wifiSection,
+      "ipv4": {
+        "method": "auto"
+      },
+      "ipv6": {
+        "method": "auto"
+      }
+    };
+
+    if (sec && sec !== "open") {
+      var secSection = {};
+      if (sec === "wep") {
+        secSection = {
+          "key-mgmt": "none",
+          "wep-key0": password
+        };
+      } else if (sec === "sae") {
+        secSection = {
+          "key-mgmt": "sae",
+          "psk": password
+        };
+      } else if (isEnt) {
+        secSection = {
+          "key-mgmt": "wpa-eap",
+          "802-1x": {
+            "eap": [enterpriseConfig.eap || "peap"],
+            "phase2-auth": enterpriseConfig.phase2 || "mschapv2",
+            "identity": identity,
+            "password": password
+          }
+        };
+        if (enterpriseConfig.anonIdentity) {
+          secSection["802-1x"]["anonymous-identity"] = enterpriseConfig.anonIdentity;
+        }
+        if (enterpriseConfig.caCert) {
+          secSection["802-1x"]["ca-cert"] = enterpriseConfig.caCert;
+        }
+      } else {
+        // wpa-psk / wpa2-psk and anything unrecognized
+        secSection = {
+          "key-mgmt": "wpa-psk",
+          "psk": password
+        };
+      }
+      conn["802-11-wireless-security"] = secSection;
+    }
+
+    var apPath = root._apPaths[ssid] || "/";
+    Logger.d("Network", "Connect (D-Bus, new):", ssid, "sec:", sec);
+    var reply = nmManager.call("AddAndActivateConnection", [conn, devPath, apPath]);
+    if (!reply) {
+      root.connecting = false;
+      root.connectingTo = "";
+      return;
+    }
+    reply.finished.connect(function () {
+      root._onConnectFinished(reply, ssid);
+    });
+  }
+
+  // Shared connect-result handling for the D-Bus paths
+  function _onConnectFinished(reply, ssid) {
+    if (!reply.isError) {
+      Logger.i("Network", "Connected to network: '" + ssid + "' (D-Bus)");
+      root.wifiConnected = true;
+      root.updateNetworkStatus(ssid, true);
+      root.refreshActiveWifiDetails();
+      ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("toast.wifi.connected", {
+                                                                "ssid": ssid
+                                                              }), root.getIcon(false));
+    } else {
+      var msg = reply.error.message || "";
+      Logger.w("Network", "Connect error (D-Bus):", msg);
+      if (msg.indexOf("ecret") !== -1) {
+        root.lastError = I18n.tr("toast.wifi.incorrect-password");
+        forget(ssid);
+      } else if (msg.indexOf("not found") !== -1 || msg.indexOf("No network") !== -1) {
+        root.lastError = I18n.tr("toast.wifi.network-not-found");
+      } else if (msg.indexOf("imeout") !== -1) {
+        root.lastError = I18n.tr("toast.wifi.connection-timeout");
+      } else {
+        root.lastError = I18n.tr("toast.wifi.connection-failed");
+      }
+      ToastService.showWarning(I18n.tr("common.wifi"), root.lastError, "wifi-exclamation");
+      root.wifiConnected = false;
+    }
+    root.connecting = false;
+    root.connectingTo = "";
+    delayedScanTimer.interval = 5000;
+    delayedScanTimer.restart();
   }
 
   // Activate a saved profile over D-Bus: ActivateConnection(conn, dev, ap)
@@ -327,24 +430,7 @@ Singleton {
         return;
       }
       reply.finished.connect(function () {
-        if (!reply.isError) {
-          Logger.i("Network", "Connected to network: '" + ssid + "' (saved, D-Bus)");
-          root.wifiConnected = true;
-          root.updateNetworkStatus(ssid, true);
-          root.refreshActiveWifiDetails();
-          ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("toast.wifi.connected", {
-                                                                    "ssid": ssid
-                                                                  }), root.getIcon(false));
-        } else {
-          Logger.w("Network", "Connect (saved) error:", reply.error.message);
-          root.lastError = I18n.tr("toast.wifi.connection-failed");
-          ToastService.showWarning(I18n.tr("common.wifi"), root.lastError, "wifi-exclamation");
-          root.wifiConnected = false;
-        }
-        root.connecting = false;
-        root.connectingTo = "";
-        delayedScanTimer.interval = 5000;
-        delayedScanTimer.restart();
+        root._onConnectFinished(reply, ssid);
       });
     });
   }
@@ -737,128 +823,6 @@ Singleton {
       }
     }
     return (root.ethernetAvailable || root.ethernetConnected) ? "ethernet-off" : root.wifiAvailable ? "wifi-0" : "wifi-off";
-  }
-
-  // Connect to Wi-Fi network
-  Process {
-    id: connectProcess
-    property string mode: "new" // "saved", "new", or "manual"
-    property string ssid: ""
-    property string password: ""
-    property bool isHidden: false
-    // Manual properties
-    property string securityKey: ""
-    property string identity: ""
-    property string eap: "peap"
-    property string phase2: "mschapv2"
-    property string anonIdentity: ""
-    property string caCert: ""
-    running: false
-
-    command: {
-      if (mode === "saved") {
-        return ["nmcli", "-t", "connection", "up", "id", ssid];
-      } else if (mode === "manual") {
-        const nmArgs = ["connection", "add", "type", "wifi", "con-name", ssid, "ssid", ssid, "--", "802-11-wireless.hidden", isHidden ? "yes" : "no"];
-
-        if (securityKey === "wpa-psk" || securityKey === "wpa2-psk") {
-          nmArgs.push("wifi-sec.key-mgmt", "wpa-psk", "wifi-sec.psk", password);
-        } else if (securityKey === "sae") {
-          nmArgs.push("wifi-sec.key-mgmt", "sae", "wifi-sec.psk", password);
-        } else if (securityKey === "wep") {
-          nmArgs.push("wifi-sec.key-mgmt", "none", "wifi-sec.wep-key0", password);
-        } else if (securityKey && securityKey.indexOf("-eap") !== -1) {
-          nmArgs.push("wifi-sec.key-mgmt", "wpa-eap", "802-1x.eap", eap, "802-1x.phase2-auth", phase2, "802-1x.identity", identity, "802-1x.password", password);
-          if (anonIdentity) {
-            nmArgs.push("802-1x.anonymous-identity", anonIdentity);
-          }
-          if (caCert) {
-            nmArgs.push("802-1x.ca-cert", caCert);
-          }
-        }
-
-        const script = `
-        SSID="$1"
-        shift
-        # Find existing profile by Name and Type
-        UUID=$(nmcli -t -f NAME,UUID,TYPE connection show | awk -F: -v target="$SSID" '$1 == target && $3 == "802-11-wireless" { print $2; exit }')
-
-        if [ -n "$UUID" ]; then
-            echo "Using existing profile: $UUID"
-            nmcli connection delete uuid "$UUID" 2>/dev/null || true
-        else
-            echo "Creating new profile for $SSID"
-        fi
-        nmcli "$@"
-        nmcli connection up id "$SSID"
-      `;
-
-        return ["sh", "-c", script, "--", ssid].concat(nmArgs);
-      } else {
-        var cmd = ["nmcli", "-t", "device", "wifi", "connect", ssid];
-        if (isHidden) {
-          cmd.push("hidden", "yes");
-        }
-        if (password) {
-          cmd.push("password", password);
-        }
-        if (root.activeWifiIf) {
-          cmd.push("ifname", root.activeWifiIf);
-        }
-        return cmd;
-      }
-    }
-
-    environment: ({
-                    "LC_ALL": "C"
-                  })
-
-    stdout: StdioCollector {
-      onStreamFinished: {
-        const output = text.trim();
-        if (!output || (output.indexOf("successfully activated") === -1 && output.indexOf("Connection successfully") === -1)) {
-          return;
-        }
-
-        root.wifiConnected = true;
-        root.updateNetworkStatus(connectProcess.ssid, true);
-        root.refreshActiveWifiDetails(); // This needs wifiConnected true.
-
-        root.connecting = false;
-        root.connectingTo = "";
-        Logger.i("Network", "Connected to network: '" + connectProcess.ssid + "' (" + connectProcess.mode + ")");
-        ToastService.showNotice(I18n.tr("common.wifi"), I18n.tr("toast.wifi.connected", {
-                                                                  "ssid": connectProcess.ssid
-                                                                }), root.getIcon(false));
-
-        delayedScanTimer.interval = 5000;
-        delayedScanTimer.restart();
-      }
-    }
-
-    stderr: StdioCollector {
-      onStreamFinished: {
-        if (text.trim()) {
-          root.connecting = false;
-          root.connectingTo = "";
-
-          if (text.indexOf("Secrets were required") !== -1 || text.indexOf("no secrets provided") !== -1) {
-            root.lastError = I18n.tr("toast.wifi.incorrect-password");
-            forget(connectProcess.ssid);
-          } else if (text.indexOf("No network with SSID") !== -1) {
-            root.lastError = I18n.tr("toast.wifi.network-not-found");
-          } else if (text.indexOf("Timeout") !== -1) {
-            root.lastError = I18n.tr("toast.wifi.connection-timeout");
-          } else {
-            root.lastError = I18n.tr("toast.wifi.connection-failed");
-          }
-
-          Logger.w("Network", "Connect error (" + connectProcess.mode + "): " + text);
-          ToastService.showWarning(I18n.tr("common.wifi"), root.lastError || I18n.tr("toast.wifi.connection-failed"), "wifi-exclamation");
-          wifiConnected = false;
-        }
-      }
-    }
   }
 
   // NetworkManager D-Bus event source (replaces the old `nmcli -t monitor`
