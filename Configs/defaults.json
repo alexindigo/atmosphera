@@ -445,6 +445,9 @@
     "useSharedOpacity": true,
     "backgroundOpacity": 0.93
   },
+  "icons": {
+    "setOrder": []
+  },
   "notifications": {
     "enabled": true,
     "enableMarkdown": false,

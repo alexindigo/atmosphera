@@ -948,6 +948,11 @@ Singleton {
       property real backgroundOpacity: 0.93
     }
 
+    // icons
+    property JsonObject icons: JsonObject {
+      property list<string> setOrder: []
+    }
+
     // notifications
     property JsonObject notifications: JsonObject {
       property bool enabled: true
