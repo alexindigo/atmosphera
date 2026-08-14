@@ -1962,7 +1962,15 @@
     "icons": {
       "title": "Icons",
       "description": "Manage icon themes and appearance.",
-      "count": "{count} of {total} icons"
+      "count": "{count} of {total} icons",
+      "sets-title": "Icon Sets",
+      "sets-active": "active",
+      "priority-hint": "Higher sets override lower ones when icon names collide.",
+      "floor-tooltip": "Bundled fallback set — required by the shell.",
+      "empty": "No icons match your search.",
+      "all-sets": "All sets",
+      "set-disabled": "disabled",
+      "filter-by": "Showing only:"
     }
   },
   "placeholders": {
