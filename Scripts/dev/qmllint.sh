@@ -84,11 +84,29 @@ for cat in "${ENFORCED_CATEGORIES[@]}"; do
     fi
 done
 
+# Resolved-type property misses are always real bugs. The missing-property
+# category can't be enforced wholesale: dynamic member access on
+# JsonObject-based settings (Settings.data.*) legitimately fires
+# "Member X not found on type qs::io::JsonObject". But "Could not find
+# property X" only fires when the target type fully resolved, so it is
+# gated separately by message text.
+# Whitelist: Quickshell Region corner extensions — Region's qmltypes are
+# unavailable in the lint container; the properties exist at runtime.
+MISSING_PROP_NOISE='Could not find property "(topLeftCorner|topRightCorner|bottomLeftCorner|bottomRightCorner)"'
+prop_misses=$(grep -E "^(Warning|Error):.*Could not find property" <<< "$output" | grep -vE "$MISSING_PROP_NOISE" || true)
+if [ -n "$prop_misses" ]; then
+    has_errors=1
+fi
+
 if [ -n "$output" ]; then
     echo "$output" >&2
 fi
 
 if [ $has_errors -eq 1 ]; then
+    if [ -n "$prop_misses" ]; then
+        echo "qmllint: resolved-type property errors (always real bugs):" >&2
+        echo "$prop_misses" >&2
+    fi
     echo "qmllint: FAILED" >&2
     exit 1
 fi

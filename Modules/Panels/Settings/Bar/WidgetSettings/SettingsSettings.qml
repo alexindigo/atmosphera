@@ -30,6 +30,6 @@ ColumnLayout {
       valueIconColor = key;
       saveSettings();
     }
-    valueDefault: widgetMetadata.iconColor
+    defaultValue: widgetMetadata.iconColor
   }
 }
