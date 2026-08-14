@@ -133,26 +133,53 @@ Singleton {
     return null;
   }
 
-  // Build resolution order: custom first, then others, then the bundled set as floor
+  // User-controlled priority (persisted in settings)
+  function setSetOrder(keys) {
+    Settings.data.icons.setOrder = [];
+    var newOrder = [];
+    for (var i = 0; i < keys.length; i++) {
+      newOrder.push(keys[i]);
+    }
+    Settings.data.icons.setOrder = newOrder;
+    root._rebuildOrder();
+    root.rebuildResolved();
+  }
+
+  // Build resolution order: user setOrder first, then unlisted sets
+  // with the default tiebreak (custom-icon-set > others > atmosphera floor).
   function _rebuildOrder() {
     var all = Object.keys(root.iconSets);
-    var custom = [];
-    var builtins = [];
-    var others = [];
+    var userOrder = Settings.data.icons.setOrder || [];
+    var ordered = {};
+    var result = [];
 
-    for (var i = 0; i < all.length; i++) {
-      var id = all[i];
-      var bareId = root._barePluginId(id);
-      if (bareId === "custom-icon-set") {
-        custom.push(id);
-      } else if (bareId === "atmosphera-icons") {
-        builtins.push(id);
-      } else {
-        others.push(id);
+    for (var ui = 0; ui < userOrder.length; ui++) {
+      var key = userOrder[ui];
+      if (root.iconSets[key] !== undefined) {
+        result.push(key);
+        ordered[key] = true;
       }
     }
 
-    root.activeOrder = custom.concat(others).concat(builtins);
+    var tail = [];
+    var customTail = [];
+    var floor = [];
+    for (var i = 0; i < all.length; i++) {
+      var id = all[i];
+      if (ordered[id]) {
+        continue;
+      }
+      var bareId = root._barePluginId(id);
+      if (bareId === "atmosphera-icons") {
+        floor.push(id);
+      } else if (bareId === "custom-icon-set") {
+        customTail.push(id);
+      } else {
+        tail.push(id);
+      }
+    }
+
+    root.activeOrder = result.concat(customTail).concat(tail).concat(floor);
   }
 
   function _barePluginId(key) {
@@ -161,5 +188,13 @@ Singleton {
       return key.substring(ci + 1);
     }
     return key;
+  }
+
+  Connections {
+    target: Settings.data.icons
+    function onSetOrderChanged() {
+      root._rebuildOrder();
+      root.rebuildResolved();
+    }
   }
 }
