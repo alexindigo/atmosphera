@@ -10,6 +10,11 @@
       "enabled": false,
       "name": "Atmosphera Wallpapers",
       "url": "https://github.com/atmosphera/atmosphera-wallpapers"
+    },
+    {
+      "enabled": true,
+      "name": "Atmosphera Plugins",
+      "url": "https://github.com/alexindigo/atmosphera-plugins"
     }
   ],
   "states": {

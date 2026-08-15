@@ -344,6 +344,16 @@ Singleton {
           "enabled": true,
           "name": "Built-in",
           "url": sourceUrl
+        },
+        {
+          "enabled": true,
+          "name": "Atmosphera Plugins",
+          "url": "https://github.com/alexindigo/atmosphera-plugins"
+        },
+        {
+          "enabled": false,
+          "name": "Atmosphera Wallpapers",
+          "url": "https://github.com/atmosphera/atmosphera-wallpapers"
         }
       ],
       "states": ({})
