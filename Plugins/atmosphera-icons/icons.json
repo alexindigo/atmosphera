@@ -1,5 +1,4 @@
 {
-  "name": "Atmosphera Icon Set",
   "icons": {
     "12-hours": {
       "filename": "svg/12-hours.svg"
@@ -8073,6 +8072,9 @@
     },
     "fall": {
       "filename": "svg/fall.svg"
+    },
+    "fan": {
+      "filename": "svg/fan.svg"
     },
     "favicon": {
       "filename": "svg/favicon.svg"
@@ -18343,5 +18345,6 @@
     "zzz-off": {
       "filename": "svg/zzz-off.svg"
     }
-  }
+  },
+  "name": "Atmosphera Icon Set"
 }

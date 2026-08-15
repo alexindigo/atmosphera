@@ -338,6 +338,92 @@ SmartPanel {
             }
           }
 
+          // Hottest CPU core (coretemp per-core readings)
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: Style.marginS
+            visible: SystemStatService.hottestCoreTemp > 0
+
+            AtmoIcon {
+              icon: Icon.cpuTemperature
+              pointSize: Style.fontSizeM
+              color: Color.mPrimary
+            }
+
+            NText {
+              text: I18n.tr("system-monitor.cpu-hottest-core") + ":"
+              pointSize: Style.fontSizeXS
+              color: Color.mOnSurfaceVariant
+            }
+
+            NText {
+              text: `${SystemStatService.hottestCoreTemp}°C`
+              pointSize: Style.fontSizeXS
+              color: Color.mOnSurface
+              Layout.fillWidth: true
+              horizontalAlignment: Text.AlignRight
+            }
+          }
+
+          // Fan speed
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: Style.marginS
+            visible: SystemStatService.fanRpm > 0
+
+            AtmoIcon {
+              icon: Icon.fan
+              pointSize: Style.fontSizeM
+              color: Color.mPrimary
+            }
+
+            NText {
+              text: I18n.tr("system-monitor.fan-speed") + ":"
+              pointSize: Style.fontSizeXS
+              color: Color.mOnSurfaceVariant
+            }
+
+            NText {
+              text: `${SystemStatService.fanRpm} RPM`
+              pointSize: Style.fontSizeXS
+              color: Color.mOnSurface
+              Layout.fillWidth: true
+              horizontalAlignment: Text.AlignRight
+            }
+          }
+
+          // Extra sensors (DDR, EC, NVMe, etc.) — skip CPU/GPU, shown above
+          Repeater {
+            model: SystemStatService.sensors.filter(s => s.temp > 0 && s.chip !== "coretemp" && s.chip !== "amdgpu" && s.chip !== "xe")
+
+            delegate: RowLayout {
+              Layout.fillWidth: true
+              spacing: Style.marginS
+              required property var modelData
+
+              AtmoIcon {
+                icon: Icon.cpuTemperature
+                pointSize: Style.fontSizeM
+                color: Color.mPrimary
+              }
+
+              NText {
+                text: (modelData.label || modelData.chip) + ":"
+                pointSize: Style.fontSizeXS
+                color: Color.mOnSurfaceVariant
+                Layout.fillWidth: true
+                elide: Text.ElideRight
+              }
+
+              NText {
+                text: `${modelData.temp}°C` + (modelData.crit > 0 ? ` / ${modelData.crit}°C` : "")
+                pointSize: Style.fontSizeXS
+                color: modelData.crit > 0 && modelData.temp >= modelData.crit - Settings.data.hardwareHealth.warnOffsetC ? Color.mError : Color.mOnSurface
+                horizontalAlignment: Text.AlignRight
+              }
+            }
+          }
+
           // Disk usage
           RowLayout {
             Layout.fillWidth: true

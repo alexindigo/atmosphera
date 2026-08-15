@@ -2082,10 +2082,12 @@
   },
   "system-monitor": {
     "core-usage": "Core {id} usage",
+    "cpu-hottest-core": "Hottest core",
     "cpu-temp": "CPU temp",
     "cpu-usage": "CPU usage",
     "disk": "Disk",
     "download-speed": "Download speed",
+    "fan-speed": "Fan",
     "gpu-temp": "GPU temp",
     "load-average": "Load average",
     "title": "System Monitor",
