@@ -31,3 +31,9 @@ Font-extracted keys:
 - wifi-3
 - wifi-exclamation
 - wifi-question
+
+## Manual additions
+
+- `fan` (svg/fan.svg) — copy of `propeller` (Tabler, tags include "fan");
+  Tabler has no plain `fan` outline glyph. Added 2026-08-14 for the
+  hardware-health fan-speed display.

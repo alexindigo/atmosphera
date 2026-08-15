@@ -33,6 +33,7 @@ Singleton {
   readonly property var cpuUsage: IconRegistry.resolved["cpu-usage"]
   readonly property var cpuTemperature: IconRegistry.resolved["cpu-temperature"]
   readonly property var gpuTemperature: IconRegistry.resolved["gpu-temperature"]
+  readonly property var fan: IconRegistry.resolved["fan"]
   readonly property var performance: IconRegistry.resolved["performance"]
   readonly property var balanced: IconRegistry.resolved["balanced"]
   readonly property var powersaver: IconRegistry.resolved["powersaver"]

@@ -105,6 +105,20 @@ Item {
       rows.push([I18n.tr("system-monitor.cpu-temp"), `${Math.round(SystemStatService.cpuTemp)}°C`]);
     }
 
+    // Hottest core (coretemp per-core readings)
+    if (SystemStatService.hottestCoreTemp > 0) {
+      rows.push([I18n.tr("system-monitor.cpu-hottest-core"), `${SystemStatService.hottestCoreTemp}°C`]);
+    }
+
+    // Fan speed
+    if (SystemStatService.fanRpm > 0) {
+      rows.push([I18n.tr("system-monitor.fan-speed"), `${SystemStatService.fanRpm} RPM`]);
+    }
+
+    // Extra sensors (DDR, EC, NVMe, etc.) — skip CPU/GPU, already shown above
+    var extraSensors = SystemStatService.sensors.filter(s => s.temp > 0 && s.chip !== "coretemp" && s.chip !== "amdgpu" && s.chip !== "xe");
+    extraSensors.forEach(s => rows.push([s.label || s.chip, `${s.temp}°C`]));
+
     // GPU (if available)
     if (SystemStatService.gpuAvailable) {
       rows.push([I18n.tr("system-monitor.gpu-temp"), `${Math.round(SystemStatService.gpuTemp)}°C`]);
