@@ -2085,6 +2085,13 @@
       "low": "Low battery",
       "low-desc": "Battery is at {percent}% — please connect the charger"
     },
+    "hardware": {
+      "thermal-title": "High temperature",
+      "thermal-warning": "{sensor} at {temp} °C (critical {crit} °C) — sustained load can power the machine off instantly. Reduce load or check cooling.",
+      "mute-1h": "Mute for 1 hour",
+      "unclean-shutdown-title": "Unclean shutdown",
+      "unclean-shutdown": "The previous shutdown was not clean (power cut or crash). Check journalctl -b -1 and /var/lib/systemd/pstore/."
+    },
     "bluetooth": {
       "address-copied": "Address copied to clipboard",
       "auto-connect-disabled": "Auto-connect disabled",

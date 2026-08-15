@@ -187,6 +187,7 @@ ShellRoot {
       HooksService.init();
       FontService.init();
       UpdateService.init();
+      HardwareHealthService.init();
       showWizardOrChangelog();
     }
   }

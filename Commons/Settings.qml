@@ -847,6 +847,15 @@ Singleton {
       property string externalMonitor: "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
     }
 
+    // hardware health (thermal early-warning, unclean-shutdown notice, history log)
+    property JsonObject hardwareHealth: JsonObject {
+      property bool thermalWarnings: true
+      property int warnOffsetC: 15
+      property int sustainedPolls: 3
+      property bool uncleanShutdownNotice: true
+      property bool enableHistoryLog: true
+    }
+
     // performance
     property JsonObject atmospheraPerformance: JsonObject {
       property bool disableWallpaper: true
