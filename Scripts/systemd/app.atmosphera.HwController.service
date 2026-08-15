@@ -1,0 +1,14 @@
+[Unit]
+Description=Atmosphera hardware controller (privileged sysfs bridge)
+
+[Service]
+Type=dbus
+BusName=app.atmosphera.HwController
+ExecStart=/usr/lib/atmosphera/hw-controller
+
+# Hardening — note: ProtectKernelTunables must stay OFF; the helper's whole
+# job is writing /sys/devices/system/cpu/(intel_pstate|cpufreq).
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes

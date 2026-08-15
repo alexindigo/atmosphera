@@ -1,0 +1,5 @@
+[D-BUS Service]
+Name=app.atmosphera.HwController
+Exec=/usr/lib/atmosphera/hw-controller
+User=root
+SystemdService=app.atmosphera.HwController.service

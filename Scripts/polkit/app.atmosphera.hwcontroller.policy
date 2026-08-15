@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1.0/policyconfig.dtd">
+<policyconfig>
+  <vendor>Atmosphera</vendor>
+  <vendor_url>https://github.com/alexindigo/atmosphera</vendor_url>
+
+  <!-- Active local session flips turbo without a prompt (same posture as
+       the keyd reload rule); everyone else must authenticate. -->
+  <action id="app.atmosphera.hwcontroller.setturbo">
+    <description>Set CPU turbo boost state</description>
+    <message>Authentication is required to change the CPU turbo boost state.</message>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+  </action>
+</policyconfig>
