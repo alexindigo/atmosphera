@@ -267,6 +267,14 @@ Singleton {
   property var cpuThermalZonePaths: [] // All matching CPU zones for averaging
   property string gpuThermalZonePath: ""
 
+  // Extended hwmon inventory for hardware-health (thermal early-warning,
+  // fan visibility). One-shot probe at startup; values update via hwShell.
+  property var sensors: []        // [{id, chip, label, tempPath, temp, crit, max}] — temps in °C, crit/max 0 = unknown
+  property var fans: []           // [{chip, label, rpmPath, rpm}]
+  property int fanRpm: 0          // max across fans (0 = none)
+  property int cpuTempCrit: 0     // coretemp package crit °C (0 = unknown)
+  property int hottestCoreTemp: 0 // max of coretemp per-core readings °C (0 = unknown)
+
   // GPU temperature detection
   // On dual-GPU systems, we prioritize discrete GPUs over integrated GPUs
   // Priority: NVIDIA (opt-in) > AMD dGPU > Intel Arc > AMD iGPU
@@ -288,6 +296,9 @@ Singleton {
 
     // Get nproc on startup (one-time)
     nprocProcess.running = true;
+
+    // One-shot hwmon inventory (temps + labels + crit/max + fans)
+    hwmonInventory.running = true;
   }
 
   onShouldRunChanged: {
@@ -428,6 +439,20 @@ Singleton {
     onTriggered: updateGpuTemperature()
   }
 
+  // Timer for extended hwmon sensors (health inventory poll)
+  Timer {
+    id: hwmonTimer
+    interval: 5000
+    repeat: true
+    running: root.shouldRun && (root.sensors.length > 0 || root.fans.length > 0)
+    triggeredOnStart: true
+    onTriggered: {
+      if (hwShell.running) {
+        hwShell.write("poll\n");
+      }
+    }
+  }
+
   // --------------------------------------------
   // FileView components for reading system files
   FileView {
@@ -524,6 +549,181 @@ Singleton {
         root.pushDiskHistory();
       }
     }
+  }
+
+  // One-shot inventory of all hwmon temp/fan inputs (labels, crit, max).
+  // Line protocol:  T|<chip>|<base>|label|temp_path|crit_mC|max_mC
+  //                 F|<chip>|<base>|label|rpm_path
+  Process {
+    id: hwmonInventory
+    running: false
+    command: ["sh", "-c", `for h in /sys/class/hwmon/hwmon*; do
+      [ -r "$h/name" ] || continue
+      n=$(cat "$h/name")
+      for t in "$h"/temp*_input; do
+        [ -r "$t" ] || continue
+        b=\${t%_input}; l=; c=; m=
+        [ -r "\${b}_label" ] && l=$(cat "\${b}_label")
+        [ -r "\${b}_crit" ] && c=$(cat "\${b}_crit")
+        [ -r "\${b}_max" ] && m=$(cat "\${b}_max")
+        printf 'T|%s|%s|%s|%s|%s|%s\\n' "$n" "\${b##*/}" "$l" "$t" "$c" "$m"
+      done
+      for f in "$h"/fan*_input; do
+        [ -r "$f" ] || continue
+        b=\${f%_input}; l=
+        [ -r "\${b}_label" ] && l=$(cat "\${b}_label")
+        printf 'F|%s|%s|%s|%s\\n' "$n" "\${b##*/}" "$l" "$f"
+      done
+    done`]
+
+    stdout: StdioCollector {
+      onStreamFinished: root._parseHwmonInventory(text)
+    }
+  }
+
+  // Persistent poll shell for the inventory (same pattern as dfShell)
+  Process {
+    id: hwShell
+    command: ["sh"]
+    stdinEnabled: true
+    running: false
+
+    onRunningChanged: {
+      if (!running && root.shouldRun && (root.sensors.length > 0 || root.fans.length > 0)) {
+        Logger.w("SystemStat", "hwmon shell exited unexpectedly, restarting");
+        Qt.callLater(() => {
+          hwShell.running = true;
+        });
+      }
+    }
+
+    stdout: SplitParser {
+      splitMarker: "@@HW_END@@"
+      onRead: data => root._parseHwmonPoll(data)
+    }
+  }
+
+  function _parseHwmonInventory(text) {
+    var sensors = [];
+    var fans = [];
+    var tempPaths = [];
+    var fanPaths = [];
+    var lines = text.trim().split("\n");
+    for (var i = 0; i < lines.length; i++) {
+      var parts = lines[i].split("|");
+      if (parts[0] === "T" && parts.length >= 7) {
+        sensors.push({
+                       "id": parts[1] + ":" + parts[2],
+                       "chip": parts[1],
+                       "label": parts[3],
+                       "tempPath": parts[4],
+                       "temp": 0,
+                       "crit": parts[5] !== "" ? Math.round(parseInt(parts[5]) / 1000) : 0,
+                       "max": parts[6] !== "" ? Math.round(parseInt(parts[6]) / 1000) : 0
+                     });
+        tempPaths.push(parts[4]);
+      } else if (parts[0] === "F" && parts.length >= 5) {
+        fans.push({
+                    "chip": parts[1],
+                    "label": parts[3],
+                    "rpmPath": parts[4],
+                    "rpm": 0
+                  });
+        fanPaths.push(parts[4]);
+      }
+    }
+    root.sensors = sensors;
+    root.fans = fans;
+    root._recomputeTempCrit();
+    Logger.i("SystemStat", "hwmon inventory: " + sensors.length + " temp sensors, " + fans.length + " fans");
+    if (sensors.length > 0 || fans.length > 0) {
+      root._startHwShell(tempPaths, fanPaths);
+    }
+  }
+
+  // Write the read-loop program (with baked-in paths) to the persistent shell
+  function _startHwShell(tempPaths, fanPaths) {
+    var loop = 'while IFS= read -r line; do case "$line" in poll) ';
+    loop += 'i=0; for f in ' + tempPaths.join(' ') + '; do printf "T%d=%s\\n" "$i" "$(cat "$f" 2>/dev/null)"; i=$((i+1)); done; ';
+    loop += 'i=0; for f in ' + fanPaths.join(' ') + '; do printf "F%d=%s\\n" "$i" "$(cat "$f" 2>/dev/null)"; i=$((i+1)); done; ';
+    loop += 'echo @@HW_END@@;; esac; done\n';
+    hwShell.running = true;
+    hwShell.write(loop);
+  }
+
+  function _parseHwmonPoll(data) {
+    var lines = data.trim().split("\n");
+    var sensors = root.sensors.slice();
+    var fans = root.fans.slice();
+    var dirty = false;
+    for (var i = 0; i < lines.length; i++) {
+      var eq = lines[i].indexOf("=");
+      if (eq < 1) {
+        continue;
+      }
+      var kind = lines[i].charAt(0);
+      var idx = parseInt(lines[i].substring(1, eq));
+      var val = lines[i].substring(eq + 1);
+      if (isNaN(idx) || val === "") {
+        continue;
+      }
+      if (kind === "T" && idx < sensors.length) {
+        var t = Math.round(parseInt(val) / 1000);
+        if (sensors[idx].temp !== t) {
+          sensors[idx] = Object.assign({}, sensors[idx], {
+                                         "temp": t
+                                       });
+          dirty = true;
+        }
+      } else if (kind === "F" && idx < fans.length) {
+        var r = parseInt(val);
+        if (fans[idx].rpm !== r) {
+          fans[idx] = Object.assign({}, fans[idx], {
+                                      "rpm": r
+                                    });
+          dirty = true;
+        }
+      }
+    }
+    if (!dirty) {
+      return;
+    }
+    root.sensors = sensors;
+    root.fans = fans;
+    var maxRpm = 0;
+    for (var j = 0; j < fans.length; j++) {
+      if (fans[j].rpm > maxRpm) {
+        maxRpm = fans[j].rpm;
+      }
+    }
+    root.fanRpm = maxRpm;
+    var hottest = 0;
+    for (var k = 0; k < sensors.length; k++) {
+      var s = sensors[k];
+      if (s.chip === "coretemp" && s.label.indexOf("Core") === 0 && s.temp > hottest) {
+        hottest = s.temp;
+      }
+    }
+    root.hottestCoreTemp = hottest;
+  }
+
+  // Package crit from coretemp (prefer the "Package id N" sensor, else max)
+  function _recomputeTempCrit() {
+    var packageCrit = 0;
+    var maxCrit = 0;
+    for (var i = 0; i < root.sensors.length; i++) {
+      var s = root.sensors[i];
+      if (s.chip !== "coretemp" || s.crit <= 0) {
+        continue;
+      }
+      if (s.crit > maxCrit) {
+        maxCrit = s.crit;
+      }
+      if (s.label.indexOf("Package") === 0) {
+        packageCrit = s.crit;
+      }
+    }
+    root.cpuTempCrit = packageCrit > 0 ? packageCrit : maxCrit;
   }
 
   // Process to get number of processors
