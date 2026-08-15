@@ -1829,6 +1829,23 @@
       "atmosphera-performance-disable-wallpaper-label": "Enable wallpaper rendering in performance mode",
       "title": "System"
     },
+    "hardware-health": {
+      "title": "Hardware health",
+      "description": "Thermal early-warning, sensor visibility, and crash evidence.",
+      "thermal-warnings-label": "Thermal early-warning",
+      "thermal-warnings-description": "Warn when a sensor stays within the offset of its critical temperature. The shell warns — it never intervenes.",
+      "unclean-notice-label": "Unclean-shutdown notice",
+      "unclean-notice-description": "Notify at login when the previous shutdown was not clean (power cut or crash), if the machine reports it.",
+      "history-log-label": "Thermal history log",
+      "history-log-description": "Append a sensor snapshot every 30 s to a local log (used for the long-range temperature curve). User-space only, self-trimming.",
+      "power-profile-label": "Power profile",
+      "power-profile-description": "System power profile (power-profiles-daemon). Power saver is the thermal mitigation.",
+      "sensors-title": "Live sensors",
+      "sensor-crit": "crit",
+      "turbo-label": "CPU turbo boost",
+      "turbo-description": "Disabling turbo lowers peak temperature at the cost of burst performance. Runtime-only — resets at reboot unless the machine says otherwise.",
+      "turbo-helper-missing": "Control unavailable: the atmosphera-hw-controller helper is not installed on this machine."
+    },
     "system-monitor": {
       "critical-color-label": "Critical color",
       "custom-highlight-colors-title-label": "Custom highlight colors",
