@@ -3,8 +3,10 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell.Services.UPower
 import qs.Commons
+import qs.Services.Hardware
 import qs.Services.Power
 import qs.Services.System
+import qs.Widgets
 import qs.Widgets
 
 ColumnLayout {
@@ -96,6 +98,18 @@ ColumnLayout {
         PowerProfileService.setProfile(PowerProfile.Balanced);
       }
     }
+  }
+
+  // Turbo boost toggle (via app.atmosphera.HwController helper; display-only
+  // when the helper isn't installed, hidden when the platform has no knob)
+  NToggle {
+    Layout.fillWidth: true
+    visible: TurboService.available
+    label: I18n.tr("panels.hardware-health.turbo-label")
+    description: TurboService.helperAvailable ? I18n.tr("panels.hardware-health.turbo-description") : I18n.tr("panels.hardware-health.turbo-helper-missing")
+    checked: TurboService.turboEnabled
+    enabled: TurboService.helperAvailable
+    onToggled: checked => TurboService.setTurboEnabled(checked)
   }
 
   // Live sensor readings (when the machine exposes them)
