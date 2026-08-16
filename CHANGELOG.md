@@ -1,5 +1,230 @@
 # Changelog
 
+## [0.5.0] — 2026-08-15
+
+### 2026-08-15
+
+**Feature**
+
+The shell now ships with the [Atmosphera plugin registry](https://github.com/alexindigo/atmosphera-plugins)
+pre-linked as an enabled, out-of-the-box plugin source — a full conversion of
+the upstream Noctalia plugin catalog plus plugins vendored from unmerged
+upstream PRs. New installs can browse and install community plugins from
+Settings → Plugins without adding a source by hand. The first-run bootstrap
+seed was also fixed to actually write the configured default sources (it
+previously hardcoded only the Built-in source).
+
+- feat(plugins): add atmosphera-plugins as an out-of-the-box source (`7e4fcb50e`)
+
+### 2026-08-13
+
+**Feature**
+
+The Settings → Appearance → Icons panel became a real icon-set manager:
+installed sets can be enabled/disabled and drag-reordered for resolution
+priority (persisted in the new `icons.setOrder` setting), with friendly names
+instead of raw plugin ids, a live per-set preview filter, and a searchable
+fixed-height icon grid. The bundled fallback set is protected from being
+disabled since the shell's own UI icons resolve through it.
+
+- feat(settings): Icons panel becomes the icon-set manager (`af4d883e0`)
+- feat(settings): icons.setOrder schema + user-controlled icon-set priority (`7d4bd1045`)
+
+### 2026-08-12
+
+**Feature**
+
+The About panel now reports the real installed version: packaged builds read
+the VERSION file baked at package time, dev checkouts fall back to
+`git describe`, and git-based installs compare the installed commit against
+the latest main commit to offer updates.
+
+- feat(version): detect real installed version (VERSION file / git describe) (`f034b1bd8`)
+
+**Fix**
+
+About-panel polish: the commit-hash link now points at this repository and is
+clickable on packaged installs, and the QS component is correctly labeled.
+
+- fix(about): point commit-hash link at our repo, make it always clickable (`e2bb9beb3`)
+- fix(about): label the QS component as Noctalia QS (`7f40fe721`)
+
+### 2026-08-11
+
+**Feature**
+
+Second wave of the settings overhaul: per-panel override files under
+`~/.config/atmosphera/settings/` split user settings into one file per
+section, and plugins get user-owned per-plugin settings/config under
+`settings/plugins/` with a two-layer merge (plugin-shipped defaults plus user
+overrides). The setup wizard's chrome was unified into a shared WizardPanel
+component with consistent breadcrumbs, headers, and a guaranteed-scrollable
+content area.
+
+The icon set was rebuilt from scratch as per-icon SVGs — 6,114 icons converted
+from the legacy Fontello font to individual SVG files (mostly Tabler-sourced),
+retiring the `noctalia-icons-legacy` plugin as a separate set.
+
+- feat(settings): per-panel override files under ~/.config/atmosphera/settings/ (`7cee45d56`)
+- feat(plugins): user-owned per-plugin settings/config under settings/plugins/ (`a38be566e`)
+- feat(icons): full Atmosphera icon set as per-icon SVGs (`88458dde1`)
+- feat(icons): retire noctalia-icons-legacy, merged into atmosphera-icons (`a3d09d476`)
+- feat(setup-wizard): shared WizardPanel component for wizard chrome (`26179e853`)
+
+**Refactor**
+
+The icon widget family was renamed for clarity: `NIcon*` → `AtmoIcon*` (shell
+UI icons) and the app-icon renderer became `AtmoAppIcon`. No user-visible
+change.
+
+- refactor(icons): rename NIcon family to Atmo* (`04f2b3425`)
+- refactor(icons): rename AtmoIcon to AtmoAppIcon (`1837f15ef`)
+
+**Fix**
+
+- fix(scripts): read bindings.environment from per-panel settings with legacy fallback (`f2864726f`)
+
+### 2026-08-10
+
+**Feature**
+
+Settings became two-layer: the package ships schema-derived defaults and user
+writes land as sparse overrides, so defaults track new releases instead of
+freezing at first-run values. A per-tab reset-to-defaults button in the
+settings header makes recovery one click.
+
+- feat(settings): two-layer settings — schema defaults + sparse user overrides (`7d1a459d2`)
+- feat(settings-ui): per-tab reset-to-defaults button in settings header (`89f1db745`)
+- feat(plugins): pluginApi.getConfig — two-layer plugin config merge (`a1144063a`)
+
+**Fix**
+
+- fix(xremap): ship udev rule granting input group /dev/uinput access (`8201ea705`)
+
+### 2026-08-09
+
+**Feature**
+
+The macOS bindings environment became self-managing: the shell owns the keyd
+layer file (user-writable, applied without sudo) and reloads keyd through a
+systemd D-Bus trigger, and xremap runs as an env-gated user service the shell
+starts and stops over the session D-Bus. Switching shortcut environments no
+longer needs a terminal. fcitx5 input-method state is published on change for
+widgets and plugins.
+
+- refactor(keyd): shell-owned layer + systemd D-Bus reload trigger (`258d5a467`)
+- feat(keyd): systemd path unit auto-reloads keyd on layer change (`b7c6e4967`)
+- feat(keyd): install-time hook + user-owned layer for sudo-less env switching (`b989349b4`)
+- feat(xremap): env-gated user service, shell-controlled via session D-Bus (`e5579be77`)
+- feat(inputmethod): publish fcitx5-input-state.json on IM change (`1deb5130b`)
+
+**Fix**
+
+- fix(keyd): strip [ids] from the include target; layer() form required (`5cf4b6fed`)
+- fix(keyd): scope generated default.conf to built-in keyboard ids (`d7156c137`)
+- fix(keyd): use reply.finished pattern for systemd D-Bus call (`4601769ed`)
+- fix(inputmethod): use reply.finished for fcitx5 D-Bus calls (`b4c4952fa`)
+- fix(inputmethod): accept array-like struct members, not just real Arrays (`525c7a46a`)
+- fix(bindings): align macos pack to canonical 2-way Alt↔Super swap (`53215e346`)
+
+### 2026-08-08
+
+**Feature**
+
+A dedicated fcitx5 i18n layer with an IM-switching IPC target, wired into the
+niri setup flow.
+
+- feat(i18n): dedicated fcitx5 i18n layer with IM-switching IPC target (`dd6532a51`)
+
+**Fix**
+
+- fix(i18n): add i18n layer to niri-setup CLI (was missing from previous commit) (`963d26586`)
+
+**Docs**
+
+- docs: add Arch Linux install section (AUR + GitHub mirrors) (`e6a85203e`)
+
+### 2026-08-07
+
+**Feature**
+
+The niri session configuration is now composed by the shell through a QML init
+chain — compositor includes and reloads are managed for the user.
+
+- feat(session): QML init chain + session-composed niri config (`7810cc54d`)
+
+**Refactor**
+
+niri IPC moved to the typed niriqml API behind a Loader-based wrapper, with a
+startup notification when the optional `qt6-niriqml` package is missing.
+
+- refactor(session): drop niri msg CLI fallback, notify on missing niriqml (`468b09e3e`)
+- refactor(scripts): session-config flow for niri setup, bindings, switcher (`18575f649`)
+
+**Fix**
+
+- fix(session): add missing Quickshell import for Singleton root (`595c96715`)
+- fix(session): resolve socket owner via /proc/net/unix, not fs inode (`d154284e6`)
+- fix(dev): declare qt6-xdgiconqml-git dependency (`9526c97b9`)
+- chore(pkgbuild): optdepends qt6-niriqml for niri IPC integration (`1a938a559`)
+
+### 2026-08-06
+
+**Feature**
+
+A VM local-dev test loop: the repo bind-mounts into the test VM and packages
+build from the working tree, so unpushed commits are testable end-to-end.
+
+- feat(dev): VM local-dev test loop (`382306e90`)
+
+**Fix**
+
+- fix(plugins): eliminate bootstrap seed race on first run (`53e1c0863`)
+- fix(niri): spawn-at-startup, comment-safe include, restart hint (`b68d86d27`)
+- fix(cli): SELF_DIR auto-detect for system-installed dispatcher (`142cfae4a`)
+- fix(scroll-text): fix scrollState/state typo causing phantom marquee text (`32da38d4a`, `c39cbcbce`)
+- fix(qml): getAppIconName in ActiveWindow, Color fallbacks in SetupBindingsStep (`f8d596dc5`)
+- fix(dev): exclude dev/tmp from PKGBUILD install tree (`a1788a3ff`)
+
+### 2026-08-04
+
+**Fix**
+
+- fix(popupmenu): pass shellScreen to PopupMenuWindow in AllScreens (`8508bd9a8`, `c765fc9f0`)
+
+### 2026-08-02
+
+**Feature**
+
+A reactive `AtmoIcon` wrapper for app icons from XDG themes, and a typed
+`NiriIpcBackend` for niri IPC via the niriqml library.
+
+- feat(icons): add AtmoIcon reactive wrapper component (`b4bc15191`)
+- feat(niri): add NiriIpcBackend wrapping niriqml typed API (`14259d475`)
+- feat(icons): add ThemeIcons.iconNameForAppId helper (`28e1a1b8c`)
+
+**Refactor**
+
+Migrated icon consumers (Bar, Dock, Launcher, AudioPanel, NotificationService,
+DesktopAppShortcut, HostService) to the reactive icon components, and replaced
+the Quickshell.Niri plugin usage with the niriqml Loader wrapper.
+
+- refactor(icons): migrate Bar widgets to AtmoIcon (`3f66a32cb`)
+- refactor(icons): migrate NotificationService to AtmoIcon (`389f4c37f`)
+- refactor(icons): migrate Launcher delegates to AtmoIcon (`4d6accf6b`)
+- refactor(icons): migrate Dock to AtmoIcon (`854b6dc80`)
+- refactor(icons): migrate AudioPanel to AtmoIcon (`d07948a5b`)
+- refactor(icons): migrate HostService logo lookup to XdgIcon (`a138ce133`, `ae70b9604`)
+- refactor(icons): remove legacy ThemeIcons functions (`85ef573cb`)
+- refactor(niri): replace Quickshell.Niri with niriqml via Loader wrapper (`b73ae7d02`)
+- refactor(niri): migrate NiriService to Loader-based wrapper (`cc90e4fca`)
+
+**Fix**
+
+- fix(icons): correct AtmoIcon size and path format in DesktopAppShortcut (`9b0b754eb`, `c70a08db3`)
+- fix(icons): remove duplicate AtmoIcon in DesktopAppShortcut (`a07480ee4`, `dc6e3ba14`)
+- fix(settings): add missing icons to tab entries (`459ee91b3`)
+
 ## [0.4.0] — 2026-08-01
 
 ### 2026-07-27
