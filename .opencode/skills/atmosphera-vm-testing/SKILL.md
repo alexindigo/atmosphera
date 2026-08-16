@@ -96,6 +96,15 @@ verification.
 # See arch-niri-vm/SKILL.md for the full test flow
 ```
 
+**Mandatory AUR E2E rule (established 2026-08-16):** after EVERY AUR
+package change to `-git`, and after EVERY versioned release, run the full
+AUR-proper E2E on the VM: `git clone https://aur.archlinux.org/<pkg>.git`
+on the VM, `makepkg -s`, install, reboot, verify natural boot + fresh-profile
+seed + CLI dispatch (`atmosphera version`, `atmosphera-session help`).
+No host bind-mount shortcuts — the point is testing exactly what a user
+receives. (Adopted after the versioned 0.5.0 package shipped without the
+CLI/units and the gap was only caught by this test.)
+
 ### Mode B: Dev (local iteration)
 
 Use `arch-niri-vm-dev` skill. Host bind-mounts `~/Projects/atmosphera`
