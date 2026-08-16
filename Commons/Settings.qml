@@ -471,12 +471,12 @@ Singleton {
 
     // bar
     property JsonObject bar: JsonObject {
-      property string barType: "simple" // "simple", "floating", "framed"
+      property string barType: "framed" // "simple", "floating", "framed"
       property string position: "top" // "top", "bottom", "left", or "right"
       property list<string> monitors: [] // holds bar visibility per monitor
       property string density: "default" // "compact", "default", "comfortable"
       property bool showOutline: false
-      property bool showCapsule: true
+      property bool showCapsule: false
       property real capsuleOpacity: 0.70
       property string capsuleColorKey: "none"
       property int widgetSpacing: 6
@@ -486,7 +486,7 @@ Singleton {
 
       // Bar background opacity settings
       property real backgroundOpacity: 0.70
-      property bool useSeparateOpacity: true
+      property bool useSeparateOpacity: false
 
       // Floating bar settings
       property int marginVertical: 4
@@ -636,7 +636,7 @@ Singleton {
       property bool tooltipsEnabled: true
       property bool scrollbarAlwaysVisible: true
       property bool boxBorderEnabled: false
-      property real panelBackgroundOpacity: 0.93
+      property real panelBackgroundOpacity: 0.55
       property bool translucentWidgets: false
       property bool panelsAttachedToBar: true
       property string settingsPanelMode: "attached" // "centered", "attached", "window"
@@ -682,12 +682,12 @@ Singleton {
     // wallpaper
     property JsonObject wallpaper: JsonObject {
       property bool enabled: true
-      property bool overviewEnabled: false
+      property bool overviewEnabled: true
       property string directory: ""
       property list<var> monitorDirectories: []
       property bool enableMultiMonitorDirectories: false
       property bool showHiddenFiles: false
-      property string viewMode: "single" // "single" | "recursive" | "browse"
+      property string viewMode: "browse" // "single" | "recursive" | "browse"
       property bool setWallpaperOnAllMonitors: true
       property bool linkLightAndDarkWallpapers: true
       property string fillMode: "crop"
@@ -1029,7 +1029,7 @@ Singleton {
     }
 
     property JsonObject colorSchemes: JsonObject {
-      property bool useWallpaperColors: false
+      property bool useWallpaperColors: true
       property string predefinedScheme: "MacOS"
       property bool darkMode: true
       property string schedulingMode: "off"
