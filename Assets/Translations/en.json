@@ -1640,6 +1640,8 @@
       "rules-tab": "Rules",
       "settings-always-on-top-description": "Display notifications above fullscreen windows and other layers.",
       "settings-background-opacity-description": "Adjust the opacity of notification backgrounds.",
+      "test-notification-label": "Send test notification",
+      "test-notification-description": "Fires a test notification so you can preview your current opacity, density and location settings.",
       "settings-density-description": "Choose the notification card density.",
       "settings-density-label": "Density",
       "settings-desc": "Configure notifications appearance and behavior.",

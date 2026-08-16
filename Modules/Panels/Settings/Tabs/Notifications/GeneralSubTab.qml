@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 import qs.Services.Compositor
 import qs.Services.System
@@ -106,6 +107,21 @@ ColumnLayout {
       onMoved: value => Settings.data.notifications.backgroundOpacity = value
       text: Math.round(Settings.data.notifications.backgroundOpacity * 100) + "%"
       defaultValue: Settings.getDefaultValue("notifications.backgroundOpacity")
+    }
+
+    // Fire a test notification through the real D-Bus path so opacity,
+    // density and location changes can be previewed live.
+    NButton {
+      icon: Icon.bell
+      text: I18n.tr("panels.notifications.test-notification-label")
+      tooltipText: I18n.tr("panels.notifications.test-notification-description")
+      onClicked: testNotifyProcess.running = true
+    }
+
+    Process {
+      id: testNotifyProcess
+      running: false
+      command: ["notify-send", "-a", "Atmosphera", "Atmosphera", "Test notification — opacity, density and location reflect your current settings."]
     }
 
     NDivider {
