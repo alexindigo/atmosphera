@@ -2468,6 +2468,15 @@
     "subTabLabel": "panels.hardware-health.title"
   },
   {
+    "labelKey": "panels.hardware-health.turbo-label",
+    "descriptionKey": null,
+    "widget": "NToggle",
+    "tab": 18,
+    "tabLabel": "panels.system.title",
+    "subTab": 3,
+    "subTabLabel": "panels.hardware-health.title"
+  },
+  {
     "labelKey": "panels.system.atmosphera-performance-disable-wallpaper-label",
     "descriptionKey": "panels.system.atmosphera-performance-disable-wallpaper-description",
     "widget": "NToggle",
