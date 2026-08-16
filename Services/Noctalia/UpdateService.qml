@@ -19,13 +19,15 @@ Singleton {
   readonly property string developmentSuffix: "-git"
   readonly property string fallbackVersion: `v${baseVersion + developmentSuffix}`
 
-  // Noctalia API level this fork is compatible with — used for plugin
-  // minNoctaliaVersion checks (install + update). The fork descends from
-  // Noctalia v5.0.0-beta; upstream plugins declare requirements in the
-  // 3.x–4.x range, all below this. Distinct from baseVersion, which is only
-  // the display fallback for version detection on source builds — using
-  // baseVersion here made every registry plugin report as "incompatible".
-  readonly property string noctaliaCompatVersion: "5.0.0"
+  // Noctalia API banner for plugin minNoctaliaVersion checks (install +
+  // update): a plugin is compatible when its declared major version is at or
+  // below this ceiling — i.e. the whole Noctalia v4 line and older, any
+  // minor/patch. The v4 line is closed upstream (they moved to v5), so this
+  // is a fixed fact, not a version number that can go stale. Distinct from
+  // baseVersion, which is only the display fallback for version detection.
+  // Atmosphera-native plugins use minAtmospheraVersion instead, checked
+  // against the real fork version (see currentVersion).
+  readonly property int noctaliaCompatMajor: 4
 
   property string currentVersion: fallbackVersion
   property bool isGitVersion: true

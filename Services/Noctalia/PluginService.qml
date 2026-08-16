@@ -415,10 +415,23 @@ Singleton {
         return;
       }
 
-      // Check Noctalia version compatibility (skip when updating - that's handled in performUpdateCheck)
+      // Version compatibility checks (skip when updating - that's handled in performUpdateCheck).
+      // Two tracks: Atmosphera-native plugins gate on the real fork version;
+      // Noctalia plugins gate on the v4 banner (major version ceiling).
+      var minAtmo = pluginMetadata.minAtmospheraVersion;
+      if (minAtmo && compareVersions(minAtmo, UpdateService.currentVersion) > 0) {
+        var atmoMsg = I18n.tr("panels.plugins.install-incompatible", {
+                                "plugin": pluginMetadata.name,
+                                "version": minAtmo
+                              });
+        Logger.w("PluginService", "Plugin incompatible (needs Atmosphera", minAtmo + "):", atmoMsg);
+        if (callback)
+          callback(false, atmoMsg);
+        return;
+      }
       if (pluginMetadata.minNoctaliaVersion) {
-        var noctaliaVersion = UpdateService.noctaliaCompatVersion;
-        if (compareVersions(pluginMetadata.minNoctaliaVersion, noctaliaVersion) > 0) {
+        var declaredMajor = parseInt(String(pluginMetadata.minNoctaliaVersion).split(".")[0]) || 0;
+        if (declaredMajor > UpdateService.noctaliaCompatMajor) {
           var incompatibleMsg = I18n.tr("panels.plugins.install-incompatible", {
                                           "plugin": pluginMetadata.name,
                                           "version": pluginMetadata.minNoctaliaVersion
@@ -1583,17 +1596,26 @@ Singleton {
 
         // Compare versions
         if (compareVersions(availableVersion, currentVersion) > 0) {
-          // Check if the available version requires a higher Noctalia version
-          if (availablePlugin.minNoctaliaVersion) {
-            var noctaliaVersion = UpdateService.noctaliaCompatVersion;
-            if (compareVersions(availablePlugin.minNoctaliaVersion, noctaliaVersion) > 0) {
-              Logger.d("PluginService", "Pending update for", pluginId + ": requires Noctalia v" + availablePlugin.minNoctaliaVersion + " (current: v" + noctaliaVersion + ")");
+          // Check if the available version is compatible: Atmosphera-native
+          // plugins gate on the real fork version; Noctalia plugins gate on
+          // the v4 banner (major version ceiling).
+          var availMinAtmo = availablePlugin.minAtmospheraVersion;
+          if (availMinAtmo && compareVersions(availMinAtmo, UpdateService.currentVersion) > 0) {
+            Logger.d("PluginService", "Pending update for", pluginId + ": requires Atmosphera v" + availMinAtmo + " (current: v" + UpdateService.currentVersion + ")");
+            pendingUpdates[pluginId] = {
+              currentVersion: currentVersion,
+              availableVersion: availableVersion,
+              minNoctaliaVersion: availMinAtmo
+            };
+          } else if (availablePlugin.minNoctaliaVersion) {
+            var availMajor = parseInt(String(availablePlugin.minNoctaliaVersion).split(".")[0]) || 0;
+            if (availMajor > UpdateService.noctaliaCompatMajor) {
+              Logger.d("PluginService", "Pending update for", pluginId + ": requires Noctalia v" + availablePlugin.minNoctaliaVersion + " (banner: v" + UpdateService.noctaliaCompatMajor + ".x and older)");
               pendingUpdates[pluginId] = {
                 currentVersion: currentVersion,
                 availableVersion: availableVersion,
                 minNoctaliaVersion: availablePlugin.minNoctaliaVersion
               };
-              continue;
             }
           }
 
