@@ -1,5 +1,75 @@
 # Changelog
 
+## [0.5.1] — 2026-08-16
+
+### 2026-08-16
+
+**Feature**
+
+A batch of curated defaults was promoted to the schema — framed bar, no bar
+capsule, wallpaper-driven colors on by default, dimmer panels (0.55), and the
+wallpaper overview/browse view enabled out of the box. Fresh installs get the
+new defaults; existing users' explicit values keep winning under the two-layer
+settings design. The Notifications settings page also gained a "Send test
+notification" button that fires through the real D-Bus path so opacity,
+density and location changes can be previewed live.
+
+- feat(settings): promote curated defaults (framed bar, wallpaper colors, dimmer panels) (`7dfc971f4`)
+- feat(settings): test-notification button on Notifications panel (`2745ece5d`)
+
+### 2026-08-15
+
+**Feature**
+
+Hardware health landed: the shell reads hwmon labels/crit values and fan RPM
+alongside temperatures, warns early when any sensor sustains near-critical
+heat (crit-derived thresholds, sustained-poll + hysteresis + rate-limit +
+per-sensor mute), keeps a self-trimming fsync'd thermal history log in user
+space, and notices at login when the previous shutdown was not clean (given a
+machine-side marker). A new System → Hardware health settings sub-tab exposes
+the toggles, the power profile selector, live sensor readings, and a CPU
+turbo-boost toggle driven by a new polkit-gated D-Bus helper,
+`app.atmosphera.HwController`, that writes the pstate/boost sysfs node.
+System monitor tooltip and the system stats panel now show hottest core, fan
+speed and per-sensor temperatures.
+
+- feat(system): hwmon crit/max/labels + fan RPM reads in SystemStatService (`0b34e5f18`)
+- feat(health): HardwareHealthService — thermal early-warning + history logger + unclean-shutdown notice (`e5b73f458`)
+- feat(hardware): app.atmosphera.HwController helper + turbo toggle (`8543c7981`)
+- feat(settings): Hardware health sub-tab under System (`36c3ca964`)
+- feat(visibility): fan/thermal details in SystemMonitor tooltip + SystemStatsPanel (`72a72e0fb`)
+
+### 2026-08-13
+
+**Feature**
+
+The NetworkManager D-Bus migration completed: the wifi radio toggle and
+new-network connections (including enterprise 802.1X) now go through raw
+D-Bus with error toasts on polkit denial, and VPN connections are listed and
+toggled over D-Bus as well. The demo lock screen plugin was rewritten as a
+best-practices example of consuming shell domain objects instead of
+hand-rolled CLI probes.
+
+- feat(network): wifi radio toggle via raw D-Bus (phase 4) (`5b601808a`)
+- feat(network): connect-new via D-Bus AddAndActivateConnection (phase 3 complete) (`45003dd9a`)
+- refactor(network): VPNService over D-Bus, gates use nmManager.serviceAvailable (`10367a85d`)
+- docs(demo): lockscreen consumes NetworkService domain objects (best practices) (`c0f76fffa`)
+
+### 2026-08-12
+
+**Feature**
+
+The NetworkManager D-Bus migration began: nmcli left the network data plane.
+Device/connection state, link details (IP, gateway, DNS, MAC, speed, bitrate),
+the wifi AP list with security-type mapping, and connectivity now all come
+from D-Bus signals and properties — and disconnect/forget/connect-saved/scan
+moved to D-Bus calls as well, fixing the stuck-icon bug where cable-unplug
+left the bar showing a stale network.
+
+- feat(network): D-Bus event source for NetworkManager state (phase 1) (`2858b3793`)
+- feat(network): device state, link details, wifi list, connectivity via D-Bus (phase 2) (`fa51f3c8d`)
+- feat(network): disconnect/forget/connect-saved/scan via D-Bus (phase 3) (`378413466`)
+
 ## [0.5.0] — 2026-08-15
 
 ### 2026-08-15
