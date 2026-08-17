@@ -335,10 +335,17 @@ ColumnLayout {
                                    "new": modelData.updateInfo.availableVersion
                                  });
                 } else if (modelData.pendingUpdateInfo) {
+                  if (modelData.pendingUpdateInfo.track === "noctalia") {
+                    return I18n.tr("panels.plugins.update-pending-noctalia", {
+                                     "current": modelData.version,
+                                     "new": modelData.pendingUpdateInfo.availableVersion,
+                                     "required": modelData.pendingUpdateInfo.requiredVersion
+                                   });
+                  }
                   return I18n.tr("panels.plugins.update-pending", {
                                    "current": modelData.version,
                                    "new": modelData.pendingUpdateInfo.availableVersion,
-                                   "required": modelData.pendingUpdateInfo.minNoctaliaVersion
+                                   "required": modelData.pendingUpdateInfo.requiredVersion
                                  });
                 }
                 return "v" + modelData.version;
