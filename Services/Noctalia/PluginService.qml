@@ -419,7 +419,7 @@ Singleton {
       // Two tracks: Atmosphera-native plugins gate on the real fork version;
       // Noctalia plugins gate on the v4 banner (major version ceiling).
       var minAtmo = pluginMetadata.minAtmospheraVersion;
-      if (minAtmo && compareVersions(minAtmo, UpdateService.currentVersion) > 0) {
+      if (minAtmo && UpdateService.compareVersions(minAtmo, UpdateService.currentVersion) > 0) {
         var atmoMsg = I18n.tr("panels.plugins.install-incompatible", {
                                 "plugin": pluginMetadata.name,
                                 "version": minAtmo
@@ -430,7 +430,7 @@ Singleton {
         return;
       }
       if (pluginMetadata.minNoctaliaVersion) {
-        var declaredMajor = parseInt(String(pluginMetadata.minNoctaliaVersion).split(".")[0]) || 0;
+        var declaredMajor = UpdateService.parseVersionParts(pluginMetadata.minNoctaliaVersion)[0] || 0;
         if (declaredMajor > UpdateService.noctaliaCompatMajor) {
           var incompatibleMsg = I18n.tr("panels.plugins.install-incompatible", {
                                           "plugin": pluginMetadata.name,
@@ -1600,15 +1600,16 @@ Singleton {
           // plugins gate on the real fork version; Noctalia plugins gate on
           // the v4 banner (major version ceiling).
           var availMinAtmo = availablePlugin.minAtmospheraVersion;
-          if (availMinAtmo && compareVersions(availMinAtmo, UpdateService.currentVersion) > 0) {
+          if (availMinAtmo && UpdateService.compareVersions(availMinAtmo, UpdateService.currentVersion) > 0) {
             Logger.d("PluginService", "Pending update for", pluginId + ": requires Atmosphera v" + availMinAtmo + " (current: v" + UpdateService.currentVersion + ")");
             pendingUpdates[pluginId] = {
               currentVersion: currentVersion,
               availableVersion: availableVersion,
               minNoctaliaVersion: availMinAtmo
             };
+            continue;
           } else if (availablePlugin.minNoctaliaVersion) {
-            var availMajor = parseInt(String(availablePlugin.minNoctaliaVersion).split(".")[0]) || 0;
+            var availMajor = UpdateService.parseVersionParts(availablePlugin.minNoctaliaVersion)[0] || 0;
             if (availMajor > UpdateService.noctaliaCompatMajor) {
               Logger.d("PluginService", "Pending update for", pluginId + ": requires Noctalia v" + availablePlugin.minNoctaliaVersion + " (banner: v" + UpdateService.noctaliaCompatMajor + ".x and older)");
               pendingUpdates[pluginId] = {
@@ -1616,6 +1617,7 @@ Singleton {
                 availableVersion: availableVersion,
                 minNoctaliaVersion: availablePlugin.minNoctaliaVersion
               };
+              continue;
             }
           }
 
