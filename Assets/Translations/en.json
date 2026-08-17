@@ -1743,6 +1743,8 @@
       "hot-reloaded": "Reloaded plugin: {name}",
       "install-error": "Failed to install: {error}",
       "install-incompatible": "{plugin} requires Atmosphera v{version} or higher",
+      "install-incompatible-noctalia": "{plugin} requires Noctalia v{version} — Atmosphera provides the Noctalia v4 API",
+      "update-pending-noctalia": "v{current} → v{new} (requires Noctalia v{required})",
       "install-success": "Successfully installed {plugin}",
       "installed-description": "Manage and configure all locally installed plugins.",
       "installed-label": "Installed plugins",
