@@ -30,6 +30,12 @@ Singleton {
   readonly property int noctaliaCompatMajor: 4
 
   property string currentVersion: fallbackVersion
+  // True once versionDetectProcess produced a real version (VERSION file or git
+  // describe). While false, currentVersion is fallbackVersion, built from
+  // baseVersion ("0.1.0") — NOT a real version. Compatibility gates must not
+  // compare against it; that is precisely the original "every plugin is
+  // incompatible" bug, where baseVersion was the operand too.
+  property bool versionKnown: false
   property bool isGitVersion: true
   // True when the version came from the packaged VERSION file (real installs).
   // The update check only makes sense for packaged installs — dev checkouts
@@ -64,6 +70,7 @@ Singleton {
         // Strip pacman pkgrel suffix ("...-1") from packaged versions
         var stripped = detected.replace(/-\d+$/, "");
         root.currentVersion = stripped;
+        root.versionKnown = true;
         root.isGitVersion = root.classifyIsGitVersion(stripped);
         root.versionFromPackage = fromPackage;
         Logger.i("UpdateService", "Detected installed version:", stripped, "(git:", root.isGitVersion + ", packaged:", root.versionFromPackage + ")");
