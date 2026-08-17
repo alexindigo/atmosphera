@@ -1,7 +1,8 @@
 # Plugin Version Compatibility Model
 
 **Date:** 2026-08-16
-**Status:** Implemented (landed in `a81823058`)
+**Status:** Model sound; enforcement incomplete until the `plugin-compat-gate-fix`
+plan ran (see below).
 
 ---
 
@@ -31,23 +32,36 @@ Upstream Noctalia never needs (2) as a separate value — its product version
 
 ## The bug
 
-`PluginService.installPlugin()` (and the update check) compared
-`minNoctaliaVersion` against `UpdateService.baseVersion`, which is **"0.1.0"**
-— the *display fallback* for version detection on source builds, not a
-compatibility level.
+**What was initially reported:** `installPlugin` compared
+`minNoctaliaVersion` against `UpdateService.baseVersion` ("0.1.0", the
+*display fallback* for version detection), rejecting every registry plugin as
+"incompatible."
 
-Every registry plugin declares `minNoctaliaVersion ≥ 3.6.0`, and
-`compareVersions("3.6.0", "0.1.0") > 0`, so **every plugin install through the
-GUI was rejected as "incompatible"** — silently for the user (a toast that
-expires) and without any log line on the default path.
+**What the compatibility-gate investigation actually found:**
 
-This was found by the GUI install-click test on the VM: the Available tab
-rendered the registry, the install button fired, and nothing installed.
+1. **The stated mechanism cannot have occurred against the default source.**
+   `installPlugin` gates on the **registry index entry**, not the downloaded
+   `manifest.json` — and the index at `alexindigo/atmosphera-plugins` carried
+   `minNoctaliaVersion` on **0 of 158 entries** (the manifests carried it on
+   156). `if (pluginMetadata.minNoctaliaVersion)` was always falsy, so the
+   gate **never executed**. The comparison that was blamed for blocking
+   installs never ran.
 
-Note the trap: the check is inside `installPlugin`, which is only reachable
-from the GUI. Installs done file-side (directory copy + `plugins.json` edit)
-bypass it entirely — which is why the full plugin sweep loaded 162 plugins
-fine while no GUI install could ever succeed.
+2. **The rejection would have printed.** `Logger.w` is ungated
+   (`Commons/Logger.qml:43` — visible without debug mode), and the pre-fix
+   code called it on rejection. The absence of any "incompatible" warning in
+   the journal is further evidence the gate was not the cause of the observed
+   failure.
+
+3. **The observed GUI install failure therefore remains unexplained** — it
+   reproduced the symptom ("button fired, nothing installed") but the gate was
+   not the mechanism. It is investigated in the gate-fix plan's phase 4b and
+   closed on the strength of phase 5's installs, not of the gate fix.
+
+(The `baseVersion` misuse was still a real latent defect — it would fire the
+moment any manifest version reached the gate — but it is not the cause of the
+observed failure. Fixing it without claiming it caused the failure is what
+makes phase 1 of the gate-fix plan shippable-but-invisible.)
 
 ---
 
@@ -121,12 +135,34 @@ registry individually — the gate does not try to predict API drift.
 ## Consequences
 
 - GUI plugin installs work for the entire legacy-v4 registry (and our
-  converted mirror).
+  converted mirror). **Correction to an earlier claim:** the gate-fix
+  investigation established that on the default source the gate had never
+  executed — the known gaps below are what the missing `min*` check would have
+  hit, closed by phase 3.
 - `minAtmospheraVersion` becomes the contract for Atmosphera-native plugins.
-- The version-detection display fallback (`baseVersion: "0.1.0"`) is left
-  untouched — it was never meant to be a compatibility level, and nothing else
-  uses it as one anymore.
+- The version-detection display fallback (`baseVersion: "0.1.0"`) remains for
+  source builds — but **it is still consulted**: `currentVersion` initialises
+  to `fallbackVersion` built from `baseVersion`, and the native gate compares
+  against `currentVersion`. Phase 3 of the gate-fix plan added a
+  `versionKnown` property so the native gate is skipped (with a log) when the
+  real version is undetectable — instead of comparing against the invented
+  `0.1.0`, which is exactly the original bug returning through the new field.
 - The lesson that produced this doc: the bug shipped in v0.5.1 because the GUI
   install path was never exercised pre-release. The AUR E2E rule now requires
   a full user-path install test after every `-git` change and every versioned
   release.
+
+## Known gaps (closed by the gate-fix plan's phase 3)
+
+All four defects would have woken at the same moment — the first plugin
+declaring `minAtmospheraVersion` or a major ≥ 5:
+
+| # | Defect | Closed by |
+|---|---|---|
+| 1 | Update path lost its early exit, so an incompatible plugin was filed in both *pending* and *available* sets | phase 1 (`continue` restored) |
+| 2 | The native check used the naive comparator on `currentVersion`, mishandling `v`-prefixed / git-style versions | phase 1 (version-aware helpers) |
+| 3 | The banner check failed open on `v`-prefixed values (`parseInt("v5") \|\| 0 → 0`) | phase 1 (version-aware helpers) |
+| 4 | Native gate compared against the fallback `0.1.0` when the shell version is undetectable — the original bug returning | phase 3 (`versionKnown` guard) |
+| 5 | The rejection message said "requires **Atmosphera**" for Noctalia plugins (misbranded for v5) | phase 3 (two-track messaging) |
+| 6 | The gate was written twice (install + update paths), so `a81823058` fixed one copy and broke the other | phase 3 (single `checkPluginCompatibility`) |
+| 7 | Two comparators with an unstated domain split | phase 3 (documented comparator domain) |
