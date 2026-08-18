@@ -973,9 +973,15 @@ Singleton {
   IpcHandler {
     target: "inputmethod"
 
-    function toggle() { InputMethodService.toggle(); }
-    function setIM(name: string) { InputMethodService.setCurrentIM(name); }
-    function setGroup(name: string) { InputMethodService.setGroup(name); }
+    function toggle() {
+      InputMethodService.toggle();
+    }
+    function setIM(name: string) {
+      InputMethodService.setCurrentIM(name);
+    }
+    function setGroup(name: string) {
+      InputMethodService.setGroup(name);
+    }
 
     // Replicates the old fcitx5-input script's toggle semantics:
     // first press → switch to the given IM (auto-switching group first);
@@ -991,17 +997,24 @@ Singleton {
   }
 
   IpcHandler {
-    target: "niriMap"
+    target: "niriWindowsMap"
+
+    // The composite key is derived from the runtime install path — the
+    // hash differs between the dev tree and the installed shell, so it
+    // must be computed, never hardcoded
+    function _mapKey() {
+      return PluginRegistry.generateCompositeKey("niri-windows-map", "file://" + Quickshell.shellDir + "/Plugins");
+    }
 
     function open() {
       root.screenDetector.withCurrentScreen(function (screen) {
-        PluginService.openPluginPanel("c92ef2:niri-windows-map", screen);
+        PluginService.openPluginPanel(_mapKey(), screen);
       });
     }
 
     function close() {
       root.screenDetector.withCurrentScreen(function (screen) {
-        var api = PluginService.getPluginAPI("c92ef2:niri-windows-map");
+        var api = PluginService.getPluginAPI(_mapKey());
         if (api)
           api.closePanel(screen);
       });
@@ -1009,7 +1022,7 @@ Singleton {
 
     function toggle() {
       root.screenDetector.withCurrentScreen(function (screen) {
-        PluginService.togglePluginPanel("c92ef2:niri-windows-map", screen);
+        PluginService.togglePluginPanel(_mapKey(), screen);
       });
     }
   }
