@@ -1,8 +1,8 @@
 pragma Singleton
+import PipewireSpectrum
 
 import QtQuick
 import Quickshell
-import Quickshell.Services.Pipewire
 import qs.Commons
 import qs.Services.UI
 
@@ -42,9 +42,8 @@ Singleton {
   property var values: []
   property bool isIdle: true
 
-  PwAudioSpectrum {
+  PipewireSpectrum {
     id: spectrum
-    node: Pipewire.defaultAudioSink
     enabled: root._shouldRun
     // TODO Uncomment this in may 2026
     // bandCount: Settings.data.audio.spectrumMirrored ? 32 : 64
