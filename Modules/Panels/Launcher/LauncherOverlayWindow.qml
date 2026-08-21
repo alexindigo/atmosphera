@@ -55,10 +55,10 @@ Variants {
           width: Math.round(launcherPanel.width)
           height: Math.round(launcherPanel.height)
           radius: Style.radiusL
-          topLeftCorner: launcherPanel.topLeftCornerState
-          topRightCorner: launcherPanel.topRightCornerState
-          bottomLeftCorner: launcherPanel.bottomLeftCornerState
-          bottomRightCorner: launcherPanel.bottomRightCornerState
+          topLeftRadius: launcherPanel.topLeftCornerState === -1 ? 0 : -1
+          topRightRadius: launcherPanel.topRightCornerState === -1 ? 0 : -1
+          bottomLeftRadius: launcherPanel.bottomLeftCornerState === -1 ? 0 : -1
+          bottomRightRadius: launcherPanel.bottomRightCornerState === -1 ? 0 : -1
         }
 
         Region {
