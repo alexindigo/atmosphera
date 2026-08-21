@@ -147,6 +147,8 @@ Singleton {
   }
 
   // Adapter power (enable/disable) via bluetoothctl
+  // Note: noctalia-qs lifted rfkill soft-blocks automatically in C++.
+  // Upstream quickshell does not — we shell out to rfkill as a fallback.
   function setBluetoothEnabled(state) {
     if (!adapter) {
       Logger.d("Bluetooth", "Enable/Disable skipped: no adapter");
@@ -156,8 +158,43 @@ Singleton {
       adapter.enabled = state;
       Logger.i("Bluetooth", "SetBluetoothEnabled", state);
     } catch (e) {
-      Logger.w("Bluetooth", "Enable/Disable failed", e);
-      ToastService.showWarning(I18n.tr("common.bluetooth"), I18n.tr("toast.bluetooth.state-change-failed"));
+      // If enabling failed and the adapter is soft-blocked, try rfkill unblock first.
+      if (state && adapter.state === BluetoothAdapter.Blocked) {
+        Logger.d("Bluetooth", "Adapter soft-blocked, attempting rfkill unblock");
+        rfkillUnblockProcess.command = ["rfkill", "unblock", "bluetooth"];
+        rfkillUnblockProcess.running = true;
+        // Re-try enable after rfkill
+        retryEnableTimer.start();
+      } else {
+        Logger.w("Bluetooth", "Enable/Disable failed", e);
+        ToastService.showWarning(I18n.tr("common.bluetooth"), I18n.tr("toast.bluetooth.state-change-failed"));
+      }
+    }
+  }
+
+  Process {
+    id: rfkillUnblockProcess
+    running: false
+    onExited: (exitCode) => {
+      if (exitCode !== 0) {
+        Logger.w("Bluetooth", "rfkill unblock failed, exit code:", exitCode);
+        ToastService.showWarning(I18n.tr("common.bluetooth"), I18n.tr("toast.bluetooth.state-change-failed"));
+      }
+    }
+  }
+
+  Timer {
+    id: retryEnableTimer
+    interval: 500
+    repeat: false
+    onTriggered: {
+      try {
+        root.adapter.enabled = true;
+        Logger.i("Bluetooth", "SetBluetoothEnabled after rfkill unblock");
+      } catch (e) {
+        Logger.w("Bluetooth", "Enable still failed after rfkill unblock", e);
+        ToastService.showWarning(I18n.tr("common.bluetooth"), I18n.tr("toast.bluetooth.state-change-failed"));
+      }
     }
   }
 
