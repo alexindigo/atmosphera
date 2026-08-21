@@ -31,7 +31,7 @@ INVOKED_NAME="${0##*/}"
 
 # --- helper: forward to Quickshell as the atmosphera shell ---
 run_shell() {
-  exec qs -c atmosphera "$@"
+  exec qs -n -c atmosphera "$@"
 }
 
 # --- helper: simple exec-style handlers ---
@@ -102,7 +102,19 @@ case "$SUBCMD" in
 
   # --- ipc + shortcuts (ipc is the real module; fire/custom/plugin route through it) ---
   ipc)
-    exec qs -c atmosphera ipc call "$@"
+    # Upstream quickshell rejects calls with fewer args than the handler declares.
+    # Retry with "" padding when the call fails with "Too few arguments".
+    # Try up to 3 additional empty args (most handlers take 1-3 args).
+    for pad in 0 1 2 3; do
+      args=("$@")
+      for ((i=0; i<pad; i++)); do
+        args+=("")
+      done
+      output=$(qs -c atmosphera ipc call "${args[@]}" 2>&1) && exit 0
+      [[ "$output" == *"Too few arguments"* ]] || { echo "$output"; exit 1; }
+    done
+    echo "$output"
+    exit 1
     ;;
 
   fire)

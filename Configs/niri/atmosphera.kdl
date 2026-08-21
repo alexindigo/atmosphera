@@ -39,7 +39,7 @@ layer-rule {
 }
 
 // --- Launch Atmosphera on startup ---
-spawn-at-startup "qs" "-c" "atmosphera"
+spawn-at-startup "qs" "-n" "-c" "atmosphera"
 
 // --- Workspace background ---
 layout {
