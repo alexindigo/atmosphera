@@ -238,10 +238,10 @@ PanelWindow {
       width: (!barPlaceholder.isFramed && root.barShouldShow && !barPlaceholder.isHidden) ? barPlaceholder.width : 0
       height: (!barPlaceholder.isFramed && root.barShouldShow && !barPlaceholder.isHidden) ? barPlaceholder.height : 0
       radius: Style.radiusL
-      topLeftCorner: barPlaceholder.topLeftCornerState
-      topRightCorner: barPlaceholder.topRightCornerState
-      bottomLeftCorner: barPlaceholder.bottomLeftCornerState
-      bottomRightCorner: barPlaceholder.bottomRightCornerState
+      topLeftRadius: barPlaceholder.topLeftCornerState === -1 ? 0 : -1
+      topRightRadius: barPlaceholder.topRightCornerState === -1 ? 0 : -1
+      bottomLeftRadius: barPlaceholder.bottomLeftCornerState === -1 ? 0 : -1
+      bottomRightRadius: barPlaceholder.bottomRightCornerState === -1 ? 0 : -1
     }
 
     // ── Framed bar: full screen minus rounded hole ──
@@ -269,10 +269,10 @@ PanelWindow {
       width: backgroundBlur.panelBg ? Math.round(backgroundBlur.panelBg.width) : 0
       height: backgroundBlur.panelBg ? Math.round(backgroundBlur.panelBg.height) : 0
       radius: Style.radiusL
-      topLeftCorner: backgroundBlur.panelBg ? backgroundBlur.panelBg.topLeftCornerState : CornerState.Normal
-      topRightCorner: backgroundBlur.panelBg ? backgroundBlur.panelBg.topRightCornerState : CornerState.Normal
-      bottomLeftCorner: backgroundBlur.panelBg ? backgroundBlur.panelBg.bottomLeftCornerState : CornerState.Normal
-      bottomRightCorner: backgroundBlur.panelBg ? backgroundBlur.panelBg.bottomRightCornerState : CornerState.Normal
+      topLeftRadius: (backgroundBlur.panelBg ? backgroundBlur.panelBg.topLeftCornerState : 0) === -1 ? 0 : -1
+      topRightRadius: (backgroundBlur.panelBg ? backgroundBlur.panelBg.topRightCornerState : 0) === -1 ? 0 : -1
+      bottomLeftRadius: (backgroundBlur.panelBg ? backgroundBlur.panelBg.bottomLeftCornerState : 0) === -1 ? 0 : -1
+      bottomRightRadius: (backgroundBlur.panelBg ? backgroundBlur.panelBg.bottomRightCornerState : 0) === -1 ? 0 : -1
     }
 
     // Closing panel (coexists with opening panel during transition)
@@ -282,10 +282,10 @@ PanelWindow {
       width: backgroundBlur.closingPanelBg ? Math.round(backgroundBlur.closingPanelBg.width) : 0
       height: backgroundBlur.closingPanelBg ? Math.round(backgroundBlur.closingPanelBg.height) : 0
       radius: Style.radiusL
-      topLeftCorner: backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.topLeftCornerState : CornerState.Normal
-      topRightCorner: backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.topRightCornerState : CornerState.Normal
-      bottomLeftCorner: backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.bottomLeftCornerState : CornerState.Normal
-      bottomRightCorner: backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.bottomRightCornerState : CornerState.Normal
+      topLeftRadius: (backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.topLeftCornerState : 0) === -1 ? 0 : -1
+      topRightRadius: (backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.topRightCornerState : 0) === -1 ? 0 : -1
+      bottomLeftRadius: (backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.bottomLeftCornerState : 0) === -1 ? 0 : -1
+      bottomRightRadius: (backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.bottomRightCornerState : 0) === -1 ? 0 : -1
     }
 
     // Coexisting (non-exclusive) panel — e.g. persistent overlay map
@@ -295,10 +295,10 @@ PanelWindow {
       width: backgroundBlur.coexistingPanelBg ? Math.round(backgroundBlur.coexistingPanelBg.width) : 0
       height: backgroundBlur.coexistingPanelBg ? Math.round(backgroundBlur.coexistingPanelBg.height) : 0
       radius: Style.radiusL
-      topLeftCorner: backgroundBlur.coexistingPanelBg ? backgroundBlur.coexistingPanelBg.topLeftCornerState : CornerState.Normal
-      topRightCorner: backgroundBlur.coexistingPanelBg ? backgroundBlur.coexistingPanelBg.topRightCornerState : CornerState.Normal
-      bottomLeftCorner: backgroundBlur.coexistingPanelBg ? backgroundBlur.coexistingPanelBg.bottomLeftCornerState : CornerState.Normal
-      bottomRightCorner: backgroundBlur.coexistingPanelBg ? backgroundBlur.coexistingPanelBg.bottomRightCornerState : CornerState.Normal
+      topLeftRadius: (backgroundBlur.coexistingPanelBg ? backgroundBlur.coexistingPanelBg.topLeftCornerState : 0) === -1 ? 0 : -1
+      topRightRadius: (backgroundBlur.coexistingPanelBg ? backgroundBlur.coexistingPanelBg.topRightCornerState : 0) === -1 ? 0 : -1
+      bottomLeftRadius: (backgroundBlur.coexistingPanelBg ? backgroundBlur.coexistingPanelBg.bottomLeftCornerState : 0) === -1 ? 0 : -1
+      bottomRightRadius: (backgroundBlur.coexistingPanelBg ? backgroundBlur.coexistingPanelBg.bottomRightCornerState : 0) === -1 ? 0 : -1
     }
   }
 
