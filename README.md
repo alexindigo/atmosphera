@@ -45,7 +45,7 @@ https://github.com/user-attachments/assets/bf46f233-8d66-439a-a1ae-ab0446270f2d
 ## Requirements
 
 - Wayland compositor (see supported compositors below)
-- Quickshell: [noctalia-qs](https://github.com/noctalia-dev/noctalia-qs)
+- Quickshell: [quickshell](https://git.outfoxxed.me/quickshell/quickshell) (upstream)
 
 ---
 

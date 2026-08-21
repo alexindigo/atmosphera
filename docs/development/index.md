@@ -2,18 +2,12 @@
 
 ## Prerequisites
 
-**Engine:** [`noctalia-qs`](https://github.com/noctalia-dev/noctalia-qs) (AUR) — the Quickshell fork that powers the shell.
+**Engine:** [`quickshell`](https://git.outfoxxed.me/quickshell/quickshell) — upstream Quickshell, available in the Arch `extra` repo.
 
 ### Arch Linux
 
 ```sh
-sudo pacman -S qt6-multimedia imagemagick brightnessctl ffmpeg python wlr-randr
-```
-
-Engine (from AUR):
-
-```sh
-yay -S noctalia-qs
+sudo pacman -S quickshell qt6-multimedia imagemagick brightnessctl ffmpeg python wlr-randr
 ```
 
 Optional runtime:
@@ -40,7 +34,7 @@ No packages available yet — use Nix or build from source.
 
 ## Build
 
-The shell is QML-based and does not need compilation. Install the engine (`noctalia-qs`) as a dependency.
+The shell is QML-based and does not need compilation. Install the engine (`quickshell`) as a dependency.
 
 ## Install
 

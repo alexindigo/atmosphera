@@ -62,7 +62,7 @@ Singleton {
     }
   }
 
-  // TODO Remove in may 2026 - temporary until noctalia-qs is fully propagated
+  // Spectrum mirrored band count — set via bandCount or legacy barCount
   Connections {
     target: Settings.data.audio
     function onSpectrumMirroredChanged() {

@@ -294,6 +294,13 @@ ColumnLayout {
         if (match) {
           root.qsVersion = match[1];
           root.qsRevision = match[2] ? match[2].substring(0, 9) : "";
+        } else {
+          // Upstream quickshell format: "Quickshell X.Y.Z (revision ..., distributed by ...)"
+          var upstreamMatch = output.match(/Quickshell\s+(\S+?)[\s,(]+revision\s*([0-9a-f]*)/i);
+          if (upstreamMatch) {
+            root.qsVersion = upstreamMatch[1];
+            root.qsRevision = upstreamMatch[2] ? upstreamMatch[2].substring(0, 9) : "";
+          }
         }
       }
     }
