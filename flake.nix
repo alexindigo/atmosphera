@@ -3,19 +3,19 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    noctalia-qs = {
-      url = "github:noctalia-dev/noctalia-qs";
+    quickshell = {
+      url = "github:quickshell-mirror/quickshell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      noctalia-qs,
-      ...
-    }:
+      {
+        self,
+        nixpkgs,
+        quickshell,
+        ...
+      }:
     let
       eachSystem = nixpkgs.lib.genAttrs nixpkgs.lib.platforms.linux;
       pkgsFor = eachSystem (
@@ -44,7 +44,7 @@
 
       overlays = {
         default = nixpkgs.lib.composeManyExtensions [
-          noctalia-qs.overlays.default
+          quickshell.overlays.default
           (final: prev: {
             atmosphera = final.callPackage ./nix/package.nix {
               inherit version;
@@ -55,7 +55,7 @@
 
       devShells = eachSystem (system: {
         default = pkgsFor.${system}.callPackage ./nix/shell.nix {
-          quickshell = noctalia-qs.packages.${system}.default;
+          quickshell = quickshell.packages.${system}.quickshell;
         };
       });
 
