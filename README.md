@@ -75,6 +75,95 @@ git clone https://github.com/alexindigo/aur-atmosphera.git
 cd aur-atmosphera && makepkg -si
 ```
 
+> **Note — upstream Quickshell migration branch.** Atmosphera now runs on
+> **upstream [quickshell](https://git.outfoxxed.me/quickshell/quickshell)**
+> (not the `noctalia-qs` fork). That switch lives on the
+> `feat/niri-overview-map` branch and is **not yet on the AUR** — the AUR
+> packages above still target the previous dependency set. To run the
+> migration branch, use the manual install below.
+
+### Manual install (migration branch, no AUR)
+
+This installs the `feat/niri-overview-map` branch directly, tracking upstream
+Quickshell plus the new compositor IPC libraries. No AUR packages required
+for the shell itself (the QML module dependencies are built from source).
+
+**1. Install runtime dependencies**
+
+The packages below come from the official repos / AUR helper as usual. The
+two IPC modules (`qt6-niriqml`, `qt6-mangowcqml`) are built from source in
+steps 2–3 since they are not yet on the AUR.
+
+```bash
+# from the official repos
+sudo pacman -S --needed quickshell qt6-base qt6-declarative qt6-multimedia \
+  imagemagick brightnessctl ffmpeg python python-dbus python-gobject \
+  wlr-randr cliphist wlsunset
+
+# QML helper libs (AUR or build from source)
+yay -S --needed qt6-dbusqml qt6-xdgiconqml-git
+```
+
+**2. Build and install the niri IPC module (niri sessions)**
+
+```bash
+git clone https://github.com/alexindigo/niriqml.git
+cd niriqml
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+sudo cmake --install build --prefix /usr   # installs libniriqml + QML module
+cd ..
+```
+
+**3. Build and install the mangowc IPC module (MangoWC sessions)**
+
+```bash
+git clone https://github.com/alexindigo/mangowcqml.git
+cd mangowcqml
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+sudo cmake --install build --prefix /usr   # installs libmangowcqml + QML module
+cd ..
+```
+
+**4. Install the shell**
+
+```bash
+git clone -b feat/niri-overview-map https://github.com/alexindigo/atmosphera.git
+cd atmosphera
+
+# shell tree (plain QML — no build step)
+sudo install -dm755 /etc/xdg/quickshell/atmosphera
+sudo cp -r ./* /etc/xdg/quickshell/atmosphera/
+sudo rm -rf /etc/xdg/quickshell/atmosphera/dev /etc/xdg/quickshell/atmosphera/tmp
+echo "0.1.0-dev" | sudo tee /etc/xdg/quickshell/atmosphera/VERSION
+
+# dispatcher + integration units
+sudo install -Dm755 Scripts/bash/atmosphera /usr/local/bin/atmosphera
+sudo ln -sf atmosphera /usr/local/bin/atmosphera-session
+sudo ln -sf atmosphera /usr/local/bin/atmosphera-settings
+sudo ln -sf atmosphera /usr/local/bin/atmosphera-lock
+sudo install -Dm644 Scripts/systemd/atmosphera-keyd-reload.service /usr/lib/systemd/system/atmosphera-keyd-reload.service
+sudo install -Dm644 Scripts/systemd/xremap-atmosphera.service /usr/lib/systemd/user/xremap-atmosphera.service
+sudo install -Dm644 Scripts/udev/80-atmosphera-uinput.rules /usr/lib/udev/rules.d/80-atmosphera-uinput.rules
+sudo install -Dm644 Scripts/polkit/atmosphera-keyd.rules /usr/share/polkit-1/rules.d/atmosphera-keyd.rules
+```
+
+**5. Run it**
+
+```bash
+# niri session
+XDG_CURRENT_DESKTOP=niri qs -c atmosphera
+
+# MangoWC session
+XDG_CURRENT_DESKTOP=mango qs -c atmosphera
+```
+
+`XDG_CURRENT_DESKTOP` selects the compositor backend; `qs` is upstream
+Quickshell. The shell degrades gracefully if an IPC module is missing
+(empty workspaces for that compositor) — install the module matching your
+compositor for full workspace/window integration.
+
 ---
 
 ## Wayland Compositors
