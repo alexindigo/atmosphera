@@ -179,9 +179,70 @@ compositor for full workspace/window integration.
 
 ---
 
-## Wayland Compositors
+## Per-compositor setup
 
-Atmosphera provides native support for **Niri**, **Hyprland**, **Sway**, **Scroll**, **Labwc** and **MangoWC**. Other Wayland compositors may work but could require additional configuration for compositor-specific features like workspaces and window management.
+Beyond the shell itself (and upstream Quickshell ≥ 0.3.0), each compositor
+needs a small amount of extra wiring: an IPC module for workspace/window
+integration, and a way to launch the shell at session start. Listed in
+order of support depth.
+
+### Niri
+
+- **IPC module:** `qt6-niriqml` (built from source in step 2 of the manual
+  install; not yet on AUR). Provides workspaces, windows, focus, and
+  overview state over niri's socket. Detection is automatic via
+  `NIRI_SOCKET`.
+- **Session wiring:** run the bundled setup script once:
+  ```bash
+  atmosphera-niri-setup
+  ```
+  It composes `~/.config/niri/atmosphera-session.kdl` (your base config +
+  the Atmosphera layers), adds `spawn-at-startup "qs" "-n" "-c" "atmosphera"`,
+  and switches the running session to it — without touching your
+  `config.kdl`.
+- **Manual equivalent** (if you prefer your own config): include
+  `Configs/niri/atmosphera.kdl` and add the spawn line above to your niri
+  config.
+
+### Hyprland
+
+- **IPC module:** none. Hyprland integration uses Quickshell's **built-in**
+  `Quickshell.Hyprland` module — workspaces, toplevels, and focus work out
+  of the box. Detection is automatic via `HYPRLAND_INSTANCE_SIGNATURE`.
+- **Session wiring:** add a launch line to `~/.config/hypr/hyprland.conf`:
+  ```bash
+  exec-once = qs -n -c atmosphera
+  ```
+  No extra packages beyond the shell + Quickshell.
+
+### MangoWC
+
+- **IPC module:** `qt6-mangowcqml` (built from source in step 3 of the
+  manual install; not yet on AUR). Talks to mangowc's `mmsg` JSON socket for
+  workspaces (tags), windows, focus, keymode, and keyboard layout. Detection
+  requires `XDG_CURRENT_DESKTOP=mango`.
+- **Session wiring:** mangowc's `config.conf` has **no `exec-once`/autostart
+  keyword** — autostart is the session launcher's job, which is also where
+  the desktop identity gets set. On a bare tty session, add to
+  `~/.bash_profile` (or your display-manager session file):
+  ```bash
+  if [ -z "$WAYLAND_DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
+    export XDG_CURRENT_DESKTOP=mango
+    exec mango
+  fi
+  ```
+  then have Atmosphera start once mangowc is up (e.g. via a
+  `qs -n -c atmosphera` line in your session autostart, or bound to a key
+  with `bind=...,spawn,qs -n -c atmosphera`). The `XDG_CURRENT_DESKTOP=mango`
+  export is what selects the MangoWC backend.
+
+### Other compositors
+
+**Sway** (and i3-compatible) uses the built-in `Quickshell.I3` module, and
+**Labwc** / **Scroll** use built-in Quickshell Wayland support — no extra
+IPC module for any of these. Other Wayland compositors may work but could
+require additional configuration for compositor-specific features like
+workspaces and window management.
 
 ---
 
