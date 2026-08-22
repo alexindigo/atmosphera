@@ -45,7 +45,20 @@ https://github.com/user-attachments/assets/bf46f233-8d66-439a-a1ae-ab0446270f2d
 ## Requirements
 
 - Wayland compositor (see supported compositors below)
-- Quickshell: [quickshell](https://git.outfoxxed.me/quickshell/quickshell) (upstream)
+- Quickshell: [quickshell](https://git.outfoxxed.me/quickshell/quickshell) **(upstream, ≥ 0.3.0)**
+
+  Atmosphera previously ran on the `noctalia-qs` fork. The migration branch
+  moves to upstream Quickshell, which is where new development, bug fixes,
+  and compositor-protocol support land — the fork is no longer maintained.
+
+  **Why ≥ 0.3.0:** the branch targets upstream's API surface, which differs
+  from the fork it replaces. Per-corner region radii use upstream's
+  `PendingRegion` semantics (`undefined` inherits the base radius; a numeric
+  value is an explicit override — noctalia's `CornerState` enum does not
+  exist upstream), process spawning relies on the `-n` no-duplicate flag
+  (upstream defaults it OFF; noctalia had it ON), and IPC calls use
+  upstream's stricter argument-count handling. **0.3.0 is the version tested
+  on niri and MangoWC; earlier versions are untested.**
 
 ---
 
