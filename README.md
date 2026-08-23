@@ -76,6 +76,14 @@ yay -S atmosphera      # release
 yay -S atmosphera-git  # git master
 ```
 
+Or pull a complete session — shell + compositor + IPC module — with one
+meta package:
+
+```bash
+yay -S atmosphera-niri     # + niri, qt6-niriqml, xwayland-satellite
+yay -S atmosphera-mangowc  # + mangowm, qt6-mangowcqml
+```
+
 If AUR is unavailable, install directly from the GitHub mirrors:
 
 ```bash
