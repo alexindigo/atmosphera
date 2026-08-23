@@ -1,5 +1,128 @@
 # Changelog
 
+## [0.6.0] — 2026-08-22
+
+### 2026-08-22
+
+**Breaking**
+
+The shell no longer runs on the noctalia-qs fork: the compositor runtime is
+upstream Quickshell ≥ 0.3.0, plus QML extension modules for the compositors
+that need IPC (niriqml, mangowcqml) — both now packaged on the AUR. Per-corner
+radius semantics were ported to upstream's PendingRegion behavior, the
+spawn/dedup flag and IPC argument handling were aligned with upstream, and
+the last noctalia-qs-only calls were removed. The plugin compatibility gate
+learned to distinguish the Noctalia and Atmosphera tracks so a shell built on
+upstream Quickshell reports itself correctly to plugin authors.
+
+- feat: switch from noctalia-qs to upstream Quickshell (`82cb6f9a7`)
+- feat: complete upstream quickshell migration — IPC padding, flake, no-dup (`66e1341e7`)
+- feat: upstream Quickshell compat — inert MangoService, per-corner radius API (`08036c987`)
+- feat: wire MangoService to mangowcqml with Loader pattern (`40ba83a45`)
+- refactor(plugins): single compatibility gate for install and update (`71062d88f`)
+
+**Feature**
+
+MangoWC joins the compositor roster with a real IPC backend: the new
+mangowcqml module speaks mmsg JSON over mangowc's socket, and MangoService
+loads it via a graceful-degradation Loader (systems without the module still
+boot). The SpectrumService audio visualizer moved off the fork's built-ins
+onto the standalone PipewireSpectrum module.
+
+- feat: wire MangoService to mangowcqml with Loader pattern (`40ba83a45`)
+- Wire SpectrumService to PipewireSpectrum module (`a4dc29a68`)
+
+**Fix**
+
+Wallpaper plugin pools were unreachable on upstream Quickshell — a StdioCollector
+property was invoked as a function (fork tolerated the call form) and no
+rescan fired when pools registered — so monitorPools never reached the
+wallpaper lists. Both fixed and verified per-screen on the dual-monitor VM.
+Bluetooth soft-blocks are now unblocked with retry instead of failing the
+service, mangowc wire-format keys (snake_case, 1-based tags) were corrected
+in the backend, and flushWaylandState calls are guarded since the extension
+does not exist upstream.
+
+- fix: wallpaper pools unreachable on upstream Quickshell (`2ff9f82b0`)
+- fix: correct mangowc wire-format keys in MangoServiceBackend (`90d3aa26d`)
+- fix: guard flushWaylandState, add rfkill unblock for Bluetooth soft-blocks (`dcfdefbf3`)
+- fix: use undefined for per-corner radius fallback (inherit base radius) (`8dcd3b469`)
+
+**Docs**
+
+Migration-branch install docs: manual (non-AUR) steps for the new dependency
+set, the upstream Quickshell ≥ 0.3.0 requirement with the concrete API
+differences spelled out, and per-compositor setup guides (Niri, Hyprland,
+MangoWC) covering what each needs beyond the shell.
+
+- docs: add manual install steps for upstream-quickshell migration branch (`7b69a10e7`)
+- docs: require upstream quickshell >= 0.3.0, explain why (`c57eff07d`)
+- docs: per-compositor setup section (Niri, Hyprland, MangoWC) (`4acea2fc2`)
+
+### 2026-08-18
+
+**Feature**
+
+The Niri Windows Map plugin reached its initial ship state: a built-in map
+panel with compact/regular/large sizes, corner placement, bounding-box
+sizing, terminal foreground-app icons, favicon badges on browser tiles,
+per-window audio indicators with play/pause and mute controls, right-click
+context menus, hover info line, and long-press drag to move windows between
+workspaces. The IPC target was renamed to niriWindowsMap to match the
+plugin id. The plugin system gained a built-in source registry catalog for
+the Available tab.
+
+- feat(niri-map): drag windows between workspaces, with insert-above-first (wip) (`7a7066400`)
+- feat(niri-map): play/pause tile button, combined speaker/mute button, color ladder (`0dd9fb7ee`)
+- feat(niri-map): per-window audio indicators with sticky stream cache (`c95faef6f`)
+- feat(niri-map): right-click context menu on the bar widget (`120dab5f4`)
+- feat(niri-map): site favicon badges on browser tiles (`3b594093a`)
+- feat(niri-map): terminal foreground-app icons on tiles (`c73f2d360`)
+- feat(niri-map): bounding-box sizing, hide-icons and hide-on-click settings (`07c28afe6`)
+- feat(niri-map): flat bar context menu, per-mode info line sizing, hoverInfo toggle (`89ab33848`)
+- feat(niri-map): hover info line in the empty trailing workspace row (`005ac69da`)
+- feat(widgets): per-item icon, reserved icon slot, separator rows in NPopupContextMenu (`51f346a76`)
+- feat(ipc): rename niriMap target to niriWindowsMap to align with plugin id (`0df439c8f`)
+- feat(plugins): Built-in source registry catalog for the Available tab (`63b9a7877`)
+
+**Fix**
+
+The plugin compatibility gate became version-aware and track-aware: it uses
+noctaliaCompatVersion for Noctalia-track plugins, skips the native gate when
+the shell version is unknown, and reports the two tracks with distinct
+messages so authors get actionable errors.
+
+- fix(plugins): use noctaliaCompatVersion for plugin compatibility checks (`39b755486`)
+- fix(plugins): use version-aware comparison in the compatibility gate (`c67ab11c2`)
+- fix(plugins): skip the native gate when the shell version is unknown (`3060fc425`)
+- fix(plugins): distinct messaging for the Noctalia and Atmosphera tracks (`25c000def`)
+
+**Refactor**
+
+The plugin compatibility model was consolidated into a single gate with a v4
+banner for Noctalia-track plugins and a minAtmospheraVersion track for native
+ones, backed by an RFC in docs/planning.
+
+- refactor(plugins): v4 banner for Noctalia plugin compat + minAtmospheraVersion track (`064558006`)
+- docs(planning): RFC — plugin version compatibility model (v4 banner + native track) (`2e95e376e`)
+- docs(planning): correct the plugin compat RFC (`be2e041b6`)
+
+### 2026-08-03
+
+**Feature**
+
+The niri integration backend became fully reactive over niriqml (workspaces,
+windows, and overview state stream live instead of polling), SmartPanel
+learned to coexist with other overlay panels, and the first version of the
+Niri Windows Map built-in plugin landed with a bar widget, map canvas, and
+panel with size and corner settings.
+
+- feat(niri-backend): fully reactive niri IPC backend (`149f423ff`)
+- feat(SmartPanel): coexisting overlay panel support (`e72e4e832`)
+- feat(niri-map): "Niri Windows Map" built-in plugin (`ce521512b`)
+- feat(niri-map): panel size setting (compact/regular/large) (`d42605b18`)
+- feat(niri-map): corner setting for the map panel (`4f4a3908d`)
+
 ## [0.5.1] — 2026-08-16
 
 ### 2026-08-16
