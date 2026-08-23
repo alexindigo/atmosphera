@@ -12,7 +12,13 @@ Singleton {
   readonly property string pluginsDir: Settings.configDir + "plugins"
   readonly property string pluginsFile: Settings.configDir + "plugins.json"
 
-  readonly property int currentVersion: 3
+  readonly property int currentVersion: 4
+
+  // The shell-shipped source has a CONSTANT identity ("builtin"), not a URL
+  // hash — the payload path may move (it did: Plugins/ → builtin/plugins/)
+  // and built-in plugin identity must never change when it does.
+  readonly property string builtinSourceId: "builtin"
+  readonly property string builtinSourceUrl: "file://" + Quickshell.shellDir + "/builtin/plugins"
 
   // Registry version as read from plugins.json at load (before any save
   // bumps it) — drives one-time content migrations
@@ -29,10 +35,14 @@ Singleton {
     return hash.substring(0, 6);
   }
 
-  // Generate composite key: plain ID for null/empty URLs, "hash:id" for everything else
+  // Generate composite key: plain ID for null/empty URLs, "builtin:id" for
+  // the shell-shipped source, "hash:id" for everything else
   function generateCompositeKey(pluginId, sourceUrl) {
     if (!sourceUrl) {
       return pluginId;
+    }
+    if (sourceUrl === root.builtinSourceUrl) {
+      return root.builtinSourceId + ":" + pluginId;
     }
     var hash = generateSourceHash(sourceUrl);
     return hash + ":" + pluginId;
@@ -41,15 +51,24 @@ Singleton {
   // Parse composite key back to components
   function parseCompositeKey(compositeKey) {
     var colonIndex = compositeKey.indexOf(":");
-    if (colonIndex === -1 || colonIndex > 6) {
-      return {
-        sourceHash: null,
-        pluginId: compositeKey
-      };
+    if (colonIndex !== -1) {
+      var prefix = compositeKey.substring(0, colonIndex);
+      if (prefix === root.builtinSourceId) {
+        return {
+          sourceHash: root.builtinSourceId,
+          pluginId: compositeKey.substring(colonIndex + 1)
+        };
+      }
+      if (colonIndex <= 6) {
+        return {
+          sourceHash: prefix,
+          pluginId: compositeKey.substring(colonIndex + 1)
+        };
+      }
     }
     return {
-      sourceHash: compositeKey.substring(0, colonIndex),
-      pluginId: compositeKey.substring(colonIndex + 1)
+      sourceHash: null,
+      pluginId: compositeKey
     };
   }
 
@@ -75,6 +94,14 @@ Singleton {
 
   // Get source name by hash
   function getSourceNameByHash(hash) {
+    if (hash === root.builtinSourceId) {
+      for (var i = 0; i < root.pluginSources.length; i++) {
+        if (root.pluginSources[i].url === root.builtinSourceUrl) {
+          return root.pluginSources[i].name;
+        }
+      }
+      return "Built-in";
+    }
     for (var i = 0; i < root.pluginSources.length; i++) {
       if (generateSourceHash(root.pluginSources[i].url) === hash) {
         return root.pluginSources[i].name;
@@ -164,6 +191,9 @@ Singleton {
       return;
     }
 
+    // NOTE: this is intentionally the LEGACY pre-move payload path — the v3
+    // migration matches keys hashed from the old URL. Do not "fix" it to
+    // builtinSourceUrl.
     var builtinUrl = "file://" + Quickshell.shellDir + "/Plugins";
     var cmds = [];
     var statesChanged = false;
@@ -182,7 +212,7 @@ Singleton {
         statesChanged = true;
       } else if (key.endsWith(":atmosphera-icons")) {
         Logger.i("PluginRegistry", "v3 migration: refreshing atmosphera-icons from package");
-        var src = Quickshell.shellDir + "/Plugins/atmosphera-icons";
+        var src = Quickshell.shellDir + "/builtin/plugins/atmosphera-icons";
         var srcEsc = src.replace(/'/g, "'\\''");
         cmds.push("rm -rf '" + dirEsc + "' && mkdir -p '" + dirEsc + "' && cp -r '" + srcEsc + "/.' '" + dirEsc + "/'");
       }
@@ -204,6 +234,113 @@ Singleton {
     migrateProcess.exited.connect(function (exitCode) {
       if (exitCode !== 0) {
         Logger.e("PluginRegistry", "v3 icon set migration failed (exit " + exitCode + ") — continuing with existing copies");
+      }
+      if (statesChanged) {
+        root.save();
+      }
+      migrateProcess.destroy();
+      done();
+    });
+
+    migrateProcess.running = true;
+  }
+
+  // v4: remap built-in plugin keys from the legacy URL-hash prefix
+  // (hash of file://<shellDir>/Plugins) to the constant "builtin" source id.
+  // Remaps plugins.json states, materialized dirs, per-plugin settings files,
+  // and bar widget ids. Gated on _loadedVersion < 4.
+  function migrateBuiltinKeysV4(done) {
+    if (root._loadedVersion >= 4) {
+      done();
+      return;
+    }
+
+    var oldHash = generateSourceHash("file://" + Quickshell.shellDir + "/Plugins");
+    var oldPrefix = oldHash + ":";
+    var renames = [];
+    var statesChanged = false;
+
+    for (var key in root.pluginStates) {
+      if (key.indexOf(oldPrefix) !== 0) {
+        continue;
+      }
+      var suffix = key.substring(oldPrefix.length);
+      var newKey = root.builtinSourceId + ":" + suffix;
+      var state = root.pluginStates[key];
+      state.sourceUrl = root.builtinSourceUrl;
+      root.pluginStates[newKey] = state;
+      delete root.pluginStates[key];
+      statesChanged = true;
+      renames.push({
+                     "oldKey": key,
+                     "newKey": newKey
+                   });
+    }
+
+    if (renames.length === 0) {
+      done();
+      return;
+    }
+    Logger.i("PluginRegistry", "v4 migration: remapping", renames.length, "built-in plugin keys to 'builtin:'");
+
+    // Bar widget ids embed the composite key ("plugin:<key>")
+    function rewriteWidgetIds(widgets) {
+      var changed = false;
+      if (!widgets) {
+        return false;
+      }
+      var sections = ["left", "center", "right"];
+      for (var s = 0; s < sections.length; s++) {
+        var list = widgets[sections[s]] || [];
+        for (var i = 0; i < list.length; i++) {
+          var id = list[i].id || "";
+          for (var r = 0; r < renames.length; r++) {
+            if (id === "plugin:" + renames[r].oldKey) {
+              list[i].id = "plugin:" + renames[r].newKey;
+              changed = true;
+            }
+          }
+        }
+      }
+      return changed;
+    }
+
+    var widgetsChanged = rewriteWidgetIds(Settings.data.bar.widgets);
+    var overrides = Settings.data.bar.screenOverrides || [];
+    for (var o = 0; o < overrides.length; o++) {
+      if (overrides[o] && overrides[o].widgets) {
+        if (rewriteWidgetIds(overrides[o].widgets)) {
+          Settings.setScreenOverride(overrides[o].name, "widgets", overrides[o].widgets);
+        }
+      }
+    }
+    if (widgetsChanged) {
+      Settings.data.bar.widgets = Settings.data.bar.widgets;
+    }
+
+    // Filesystem: materialized dirs + per-plugin settings files
+    var cmds = [];
+    for (var i = 0; i < renames.length; i++) {
+      var oldDir = (root.pluginsDir + "/" + renames[i].oldKey).replace(/'/g, "'\\''");
+      var newDir = (root.pluginsDir + "/" + renames[i].newKey).replace(/'/g, "'\\''");
+      cmds.push("if [ -e '" + oldDir + "' ]; then if [ -e '" + newDir + "' ]; then rm -rf '" + oldDir + "'; else mv '" + oldDir + "' '" + newDir + "'; fi; fi");
+
+      var oldSettings = (Settings.configDir + "settings/plugins/" + renames[i].oldKey + ".json").replace(/'/g, "'\\''");
+      var newSettings = (Settings.configDir + "settings/plugins/" + renames[i].newKey + ".json").replace(/'/g, "'\\''");
+      cmds.push("if [ -e '" + oldSettings + "' ]; then if [ -e '" + newSettings + "' ]; then rm -f '" + oldSettings + "'; else mv '" + oldSettings + "' '" + newSettings + "'; fi; fi");
+    }
+
+    var migrateProcess = Qt.createQmlObject(`
+      import QtQuick
+      import Quickshell.Io
+      Process {
+        command: ["sh", "-c", "${cmds.join(" && ").replace(/"/g, '\\"')}"]
+      }
+    `, root, "MigrateBuiltinKeysV4");
+
+    migrateProcess.exited.connect(function (exitCode) {
+      if (exitCode !== 0) {
+        Logger.e("PluginRegistry", "v4 key remap had filesystem errors (exit " + exitCode + ") — states were still remapped");
       }
       if (statesChanged) {
         root.save();
@@ -239,7 +376,9 @@ Singleton {
       Logger.i("PluginRegistry", "Migration complete");
     }
 
-    root.migrateIconSetsV3(done);
+    root.migrateIconSetsV3(function () {
+      root.migrateBuiltinKeysV4(done);
+    });
   }
 
   // Ensure plugins directory exists
@@ -287,12 +426,11 @@ Singleton {
 
       Logger.i("PluginRegistry", "First run — bootstrapping bundled plugins");
 
-      var sourceUrl = "file://" + Quickshell.shellDir + "/Plugins";
-      var hash = root.generateSourceHash(sourceUrl);
+      var sourceUrl = root.builtinSourceUrl;
 
       // Discover bundled plugins by scanning Plugins/ for manifests — no
       // hardcoded list; each plugin declares itself and its default state.
-      var pluginsRoot = Quickshell.shellDir + "/Plugins";
+      var pluginsRoot = Quickshell.shellDir + "/builtin/plugins";
       var scanProc = Qt.createQmlObject(`
         import QtQuick
         import Quickshell.Io
@@ -306,7 +444,7 @@ Singleton {
         var out = (String(scanProc.stdout.text || "")).trim();
         scanProc.destroy();
         var paths = out ? out.split("\n") : [];
-        root._readBundledManifests(paths, sourceUrl, hash);
+        root._readBundledManifests(paths, sourceUrl);
       });
       scanProc.running = true;
 
@@ -318,12 +456,12 @@ Singleton {
 
   // Read each bundled manifest.json (cat → JSON.parse), collecting
   // {dirName, id, defaultEnabled}, then materialize all in parallel.
-  function _readBundledManifests(paths, sourceUrl, hash) {
+  function _readBundledManifests(paths, sourceUrl) {
     var manifests = [];
     var pending = 0;
 
     if (paths.length === 0) {
-      root._materializeBundled(manifests, sourceUrl, hash);
+      root._materializeBundled(manifests, sourceUrl);
       return;
     }
 
@@ -358,7 +496,7 @@ Singleton {
           }
           pending--;
           if (pending === 0) {
-            root._materializeBundled(manifests, sourceUrl, hash);
+            root._materializeBundled(manifests, sourceUrl);
           }
         };
       })(catProc, manifestPath));
@@ -369,20 +507,20 @@ Singleton {
 
   // Materialize each discovered plugin dir into the user plugins area,
   // then write the seed JSON with per-plugin default states.
-  function _materializeBundled(manifests, sourceUrl, hash) {
+  function _materializeBundled(manifests, sourceUrl) {
     var states = [];
     var pending = 0;
 
     if (manifests.length === 0) {
-      root.writeSeedJson(sourceUrl, hash, states);
+      root.writeSeedJson(sourceUrl, states);
       return;
     }
 
     for (var i = 0; i < manifests.length; i++) {
       var pluginId = manifests[i].id;
-      var compositeKey = hash + ":" + pluginId;
+      var compositeKey = root.generateCompositeKey(pluginId, sourceUrl);
       var targetDir = root.pluginsDir + "/" + compositeKey;
-      var srcDir = Quickshell.shellDir + "/Plugins/" + pluginId;
+      var srcDir = Quickshell.shellDir + "/builtin/plugins/" + pluginId;
 
       pending++;
       var copyProc = Qt.createQmlObject(`
@@ -402,7 +540,7 @@ Singleton {
                       });
           pending--;
           if (pending === 0) {
-            root.writeSeedJson(sourceUrl, hash, states);
+            root.writeSeedJson(sourceUrl, states);
           }
         };
       })(copyProc, manifests[i]));
@@ -420,7 +558,7 @@ Singleton {
   // enabled:false and no sources were listed.
   // Note: seed JSON is ASCII-safe (hex hash, file:// URL, plain keys), so
   // Qt.btoa is safe here.
-  function writeSeedJson(sourceUrl, hash, states) {
+  function writeSeedJson(sourceUrl, states) {
     var seed = {
       "version": root.currentVersion,
       "sources": [
@@ -443,7 +581,7 @@ Singleton {
       "states": ({})
     };
     for (var i = 0; i < states.length; i++) {
-      seed.states[hash + ":" + states[i].id] = {
+      seed.states[root.generateCompositeKey(states[i].id, sourceUrl)] = {
         "enabled": !!states[i].enabled,
         "sourceUrl": sourceUrl
       };
@@ -818,11 +956,11 @@ Singleton {
     // from a copied install in the config dir, which goes stale every time
     // the source changes (observed: shell rendering a weeks-old copy of a
     // built-in plugin while the source had moved on).
-    var builtInUrl = "file://" + Quickshell.shellDir + "/Plugins";
+    var builtInUrl = root.builtinSourceUrl;
     var src = root.pluginStates[pluginId]?.sourceUrl || "";
     if (src === builtInUrl) {
       var parsed = root.parseCompositeKey(pluginId);
-      return Quickshell.shellDir + "/Plugins/" + parsed.pluginId;
+      return Quickshell.shellDir + "/builtin/plugins/" + parsed.pluginId;
     }
     return root.pluginsDir + "/" + pluginId;
   }

@@ -9,10 +9,10 @@ Mapping chain:
              -> font-outline extraction (SVGPathPen) for custom/renamed glyphs
 
 Inputs:
-  --font      Plugins/noctalia-icons-legacy/assets/atmosphera-tabler-icons.ttf
-  --icons     Plugins/noctalia-icons-legacy/icons.json
+  --font      builtin/plugins/noctalia-icons-legacy/assets/atmosphera-tabler-icons.ttf
+  --icons     builtin/plugins/noctalia-icons-legacy/icons.json
   --tabler    checkout of tabler-icons (pinned commit recorded in output)
-  --out       output dir for the new plugin (e.g. Plugins/atmosphera-icons)
+  --out       output dir for the new plugin (e.g. builtin/plugins/atmosphera-icons)
 
 Output:
   <out>/icons.json            {"icons": {key: {"filename": "<key>.svg"}}}

@@ -86,4 +86,4 @@ Lock screen components receive additional properties from the shell:
 ## Example Plugin
 
 A complete example lock screen plugin is available at
-[`Plugins/demo-custom-lockscreen/`](https://github.com/alexindigo/atmosphera/tree/main/Plugins/demo-custom-lockscreen).
+[`builtin/plugins/demo-custom-lockscreen/`](https://github.com/alexindigo/atmosphera/tree/main/builtin/plugins/demo-custom-lockscreen).
