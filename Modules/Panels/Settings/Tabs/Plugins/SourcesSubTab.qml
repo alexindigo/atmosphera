@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
-import qs.Services.Noctalia
+import qs.Services.Plugins
 import qs.Services.UI
 import qs.Widgets
 
@@ -74,7 +74,7 @@ ColumnLayout {
 
     Repeater {
       id: pluginSourcesRepeater
-      model: PluginRegistry.pluginSources || []
+      model: Registry.pluginSources || []
 
       delegate: NBox {
         Layout.fillWidth: true
@@ -126,7 +126,7 @@ ColumnLayout {
             tooltipText: I18n.tr("panels.plugins.sources-remove-tooltip")
             baseSize: Style.baseWidgetSize * 0.7
             onClicked: {
-              PluginRegistry.removePluginSource(modelData.url);
+              Registry.removePluginSource(modelData.url);
             }
           }
 
@@ -134,8 +134,8 @@ ColumnLayout {
             checked: modelData.enabled !== false
             baseSize: Style.baseWidgetSize * 0.7
             onToggled: checked => {
-              PluginRegistry.setSourceEnabled(modelData.url, checked);
-              PluginService.refreshAvailablePlugins();
+              Registry.setSourceEnabled(modelData.url, checked);
+              Service.refreshAvailablePlugins();
               ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.refresh-refreshing"));
             }
           }
@@ -260,10 +260,10 @@ ColumnLayout {
           enabled: sourceNameInput.text.length > 0 && sourceUrlInput.text.length > 0
           onClicked: {
             var url = root.normalizeSourceUrl(sourceUrlInput.text);
-            var success = sourceDialog.editingUrl ? PluginRegistry.editPluginSource(sourceDialog.editingUrl, sourceNameInput.text, url) : PluginRegistry.addPluginSource(sourceNameInput.text, url);
+            var success = sourceDialog.editingUrl ? Registry.editPluginSource(sourceDialog.editingUrl, sourceNameInput.text, url) : Registry.addPluginSource(sourceNameInput.text, url);
             if (success) {
               ToastService.showNotice(I18n.tr("panels.plugins.title"), sourceDialog.editingUrl ? I18n.tr("panels.plugins.sources-edit-dialog-success") : I18n.tr("panels.plugins.sources-add-dialog-success"));
-              PluginService.refreshAvailablePlugins();
+              Service.refreshAvailablePlugins();
               sourceDialog.close();
             } else {
               ToastService.showError(I18n.tr("panels.plugins.title"), sourceDialog.editingUrl ? I18n.tr("panels.plugins.sources-edit-dialog-error") : I18n.tr("panels.plugins.sources-add-dialog-error"));
@@ -276,14 +276,14 @@ ColumnLayout {
 
   // Listen to plugin registry changes
   Connections {
-    target: PluginRegistry
+    target: Registry
 
     function onPluginsChanged() {
       // Force model refresh for plugin sources
       pluginSourcesRepeater.model = undefined;
       Qt.callLater(function () {
         pluginSourcesRepeater.model = Qt.binding(function () {
-          return PluginRegistry.pluginSources || [];
+          return Registry.pluginSources || [];
         });
       });
     }

@@ -9,7 +9,7 @@ import qs.Services.Compositor
 import qs.Services.Hardware
 import qs.Services.Keyboard
 import qs.Services.Media
-import qs.Services.Noctalia
+import qs.Services.Plugins
 import qs.Services.UI
 import qs.Widgets
 
@@ -132,7 +132,7 @@ Loader {
                 var comp = LockScreenRegistry.selectedComponent();
                 if (comp && comp.status === Component.Ready) {
                   var pluginId = Settings.data.general.lockScreenPlugin || "default";
-                  var pluginApi = pluginId !== "default" ? PluginService.getPluginAPI(pluginId) : null;
+                  var pluginApi = pluginId !== "default" ? Service.getPluginAPI(pluginId) : null;
                   var lockScreenApi = {
                     compactMode: Settings.data.general.compactLockScreen,
                     animationsEnabled: Settings.data.general.lockScreenAnimations,

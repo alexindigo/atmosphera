@@ -6,6 +6,7 @@ import Quickshell.Io
 import qs.Commons
 import qs.Modules.Panels.Settings
 import qs.Services.Noctalia
+import qs.Services.Plugins
 import qs.Services.UI
 
 Singleton {
@@ -76,7 +77,7 @@ Singleton {
 
   // Listen for PluginRegistry to finish loading
   Connections {
-    target: PluginRegistry
+    target: Registry
 
     function onPluginsChanged() {
       if (!root.initialized) {
@@ -165,23 +166,23 @@ Singleton {
     root.initialized = true;
 
     // Debug: Check what's in PluginRegistry
-    var allInstalled = PluginRegistry.getAllInstalledPluginIds();
+    var allInstalled = Registry.getAllInstalledPluginIds();
     Logger.d("PluginService", "All installed plugins:", JSON.stringify(allInstalled));
-    Logger.d("PluginService", "Plugin states:", JSON.stringify(PluginRegistry.pluginStates));
+    Logger.d("PluginService", "Plugin states:", JSON.stringify(Registry.pluginStates));
 
     // Load all enabled plugins
-    var enabledIds = PluginRegistry.getEnabledPluginIds();
+    var enabledIds = Registry.getEnabledPluginIds();
     Logger.i("PluginService", "Found", enabledIds.length, "enabled plugins:", JSON.stringify(enabledIds));
 
     // Count plugins that need to be loaded
     var pluginsToLoad = [];
     for (var i = 0; i < enabledIds.length; i++) {
-      var manifest = PluginRegistry.getPluginManifest(enabledIds[i]);
+      var manifest = Registry.getPluginManifest(enabledIds[i]);
       if (manifest) {
         pluginsToLoad.push(enabledIds[i]);
       } else {
         Logger.w("PluginService", "Plugin", enabledIds[i], "is enabled but not found on disk - install");
-        var sourceUrl = PluginRegistry.getPluginSourceUrl(enabledIds[i]);
+        var sourceUrl = Registry.getPluginSourceUrl(enabledIds[i]);
         root.installPlugin({
                              id: enabledIds[i],
                              source: {
@@ -196,7 +197,7 @@ Singleton {
                                loadPlugin(registeredKey);
 
                                // Add plugin widget to bar if it provides one
-                               var manifest = PluginRegistry.getPluginManifest(registeredKey);
+                               var manifest = Registry.getPluginManifest(registeredKey);
                                if (manifest && manifest.entryPoints && manifest.entryPoints.barWidget) {
                                  var widgetId = "plugin:" + registeredKey;
                                  addWidgetToBar(widgetId, "right");
@@ -260,7 +261,7 @@ Singleton {
     // Signal that we want to check for updates after refresh completes
     shouldCheckUpdatesAfterFetch = true;
 
-    var enabledSources = PluginRegistry.getEnabledSources();
+    var enabledSources = Registry.getEnabledSources();
     Logger.d("PluginService", "Fetching from", enabledSources.length, "enabled sources");
     for (var i = 0; i < enabledSources.length; i++) {
       fetchPluginRegistry(enabledSources[i]);
@@ -313,9 +314,9 @@ Singleton {
             plugin.source = source;
 
             // Check if already downloaded - use composite key
-            var compositeKey = PluginRegistry.generateCompositeKey(plugin.id, source.url);
-            plugin.downloaded = PluginRegistry.isPluginDownloaded(compositeKey);
-            plugin.enabled = PluginRegistry.isPluginEnabled(compositeKey);
+            var compositeKey = Registry.generateCompositeKey(plugin.id, source.url);
+            plugin.downloaded = Registry.isPluginDownloaded(compositeKey);
+            plugin.enabled = Registry.isPluginEnabled(compositeKey);
 
             root.availablePlugins.push(plugin);
           }
@@ -353,10 +354,10 @@ Singleton {
   // Check for plugin ID collision before installation
   function checkPluginCollision(pluginMetadata) {
     var sourceUrl = pluginMetadata.source.url;
-    var compositeKey = PluginRegistry.generateCompositeKey(pluginMetadata.id, sourceUrl);
+    var compositeKey = Registry.generateCompositeKey(pluginMetadata.id, sourceUrl);
 
     // Check if this exact composite key already exists
-    if (PluginRegistry.isPluginDownloaded(compositeKey)) {
+    if (Registry.isPluginDownloaded(compositeKey)) {
       return {
         collision: true,
         reason: "already_installed",
@@ -366,12 +367,12 @@ Singleton {
     }
 
     // For official plugins, also check if any custom version with same base ID exists
-    if (PluginRegistry.isMainSource(sourceUrl)) {
-      var allInstalled = PluginRegistry.getAllInstalledPluginIds();
+    if (Registry.isMainSource(sourceUrl)) {
+      var allInstalled = Registry.getAllInstalledPluginIds();
       for (var i = 0; i < allInstalled.length; i++) {
-        var parsed = PluginRegistry.parseCompositeKey(allInstalled[i]);
+        var parsed = Registry.parseCompositeKey(allInstalled[i]);
         if (parsed.pluginId === pluginMetadata.id && !parsed.isOfficial) {
-          var sourceName = PluginRegistry.getSourceNameByHash(parsed.sourceHash) || I18n.tr("panels.plugins.source-custom");
+          var sourceName = Registry.getSourceNameByHash(parsed.sourceHash) || I18n.tr("panels.plugins.source-custom");
           return {
             collision: true,
             reason: "custom_version_exists",
@@ -385,8 +386,8 @@ Singleton {
     }
 
     // For custom plugins, check if official version exists
-    if (!PluginRegistry.isMainSource(sourceUrl)) {
-      if (PluginRegistry.isPluginDownloaded(pluginMetadata.id)) {
+    if (!Registry.isMainSource(sourceUrl)) {
+      if (Registry.isPluginDownloaded(pluginMetadata.id)) {
         return {
           collision: true,
           reason: "official_version_exists",
@@ -483,10 +484,10 @@ Singleton {
     }
 
     // Generate composite key for the plugin folder
-    var compositeKey = PluginRegistry.generateCompositeKey(pluginId, source.url);
+    var compositeKey = Registry.generateCompositeKey(pluginId, source.url);
     Logger.i("PluginService", "Installing plugin:", compositeKey, "from", source.name);
 
-    var pluginDir = PluginRegistry.getPluginDir(compositeKey);
+    var pluginDir = Registry.getPluginDir(compositeKey);
     var repoUrl = source.url;
 
     var downloadCmd;
@@ -522,10 +523,10 @@ Singleton {
         var manifestPath = pluginDir + "/manifest.json";
         loadManifest(manifestPath, function (success, manifest) {
           if (success) {
-            var validation = PluginRegistry.validateManifest(manifest);
+            var validation = Registry.validateManifest(manifest);
             if (validation.valid) {
               // Register plugin with source URL
-              var registeredKey = PluginRegistry.registerPlugin(manifest, source.url);
+              var registeredKey = Registry.registerPlugin(manifest, source.url);
               Logger.i("PluginService", "Installed plugin:", registeredKey);
 
               // Update available plugins list
@@ -563,14 +564,14 @@ Singleton {
     Logger.i("PluginService", "Uninstalling plugin:", compositeKey);
 
     // Disable and unload first
-    if (PluginRegistry.isPluginEnabled(compositeKey)) {
+    if (Registry.isPluginEnabled(compositeKey)) {
       disablePlugin(compositeKey);
     }
 
     // Uninstall removes the user-owned copy — never the load path returned by
     // getPluginDir(), which for built-in-sourced plugins is the root-owned
     // source tree (shellDir/Plugins) and must never be deleted.
-    var pluginDir = PluginRegistry.pluginsDir + "/" + compositeKey;
+    var pluginDir = Registry.pluginsDir + "/" + compositeKey;
 
     var removeProcess = Qt.createQmlObject(`
       import QtQuick
@@ -582,11 +583,11 @@ Singleton {
 
     removeProcess.exited.connect(function (exitCode) {
       if (exitCode === 0) {
-        PluginRegistry.unregisterPlugin(compositeKey);
+        Registry.unregisterPlugin(compositeKey);
         Logger.i("PluginService", "Uninstalled plugin:", compositeKey);
 
         // Update available plugins list (use plain ID to match against availablePlugins)
-        var parsed = PluginRegistry.parseCompositeKey(compositeKey);
+        var parsed = Registry.parseCompositeKey(compositeKey);
         updatePluginInAvailable(parsed.pluginId, {
                                   downloaded: false,
                                   enabled: false
@@ -608,22 +609,22 @@ Singleton {
 
   // Enable a plugin (compositeKey is the full key like "abc123:my-plugin" or plain "my-plugin")
   function enablePlugin(compositeKey, skipAddToBar) {
-    if (PluginRegistry.isPluginEnabled(compositeKey)) {
+    if (Registry.isPluginEnabled(compositeKey)) {
       Logger.w("PluginService", "Plugin already enabled:", compositeKey);
       return true;
     }
 
-    if (!PluginRegistry.isPluginDownloaded(compositeKey)) {
+    if (!Registry.isPluginDownloaded(compositeKey)) {
       Logger.e("PluginService", "Cannot enable: plugin not downloaded:", compositeKey);
       return false;
     }
 
-    PluginRegistry.setPluginEnabled(compositeKey, true);
+    Registry.setPluginEnabled(compositeKey, true);
     loadPlugin(compositeKey);
 
     // Add plugin widget to bar if it provides one (unless we're restoring from backup)
     if (!skipAddToBar) {
-      var manifest = PluginRegistry.getPluginManifest(compositeKey);
+      var manifest = Registry.getPluginManifest(compositeKey);
       if (manifest && manifest.entryPoints && manifest.entryPoints.barWidget) {
         var widgetId = "plugin:" + compositeKey;
         addWidgetToBar(widgetId, "right");
@@ -631,7 +632,7 @@ Singleton {
     }
 
     // Update available plugins list (use plain ID to match against availablePlugins)
-    var parsed = PluginRegistry.parseCompositeKey(compositeKey);
+    var parsed = Registry.parseCompositeKey(compositeKey);
     updatePluginInAvailable(parsed.pluginId, {
                               enabled: true
                             });
@@ -698,7 +699,7 @@ Singleton {
 
   // Disable a plugin (compositeKey is the full key like "abc123:my-plugin" or plain "my-plugin")
   function disablePlugin(compositeKey) {
-    if (!PluginRegistry.isPluginEnabled(compositeKey)) {
+    if (!Registry.isPluginEnabled(compositeKey)) {
       Logger.w("PluginService", "Plugin already disabled:", compositeKey);
       return true;
     }
@@ -707,11 +708,11 @@ Singleton {
     var widgetId = "plugin:" + compositeKey;
     removeWidgetFromBar(widgetId);
 
-    PluginRegistry.setPluginEnabled(compositeKey, false);
+    Registry.setPluginEnabled(compositeKey, false);
     unloadPlugin(compositeKey);
 
     // Update available plugins list (use plain ID to match against availablePlugins)
-    var parsed = PluginRegistry.parseCompositeKey(compositeKey);
+    var parsed = Registry.parseCompositeKey(compositeKey);
     updatePluginInAvailable(parsed.pluginId, {
                               enabled: false
                             });
@@ -839,13 +840,13 @@ Singleton {
       return;
     }
 
-    var manifest = PluginRegistry.getPluginManifest(pluginId);
+    var manifest = Registry.getPluginManifest(pluginId);
     if (!manifest) {
       Logger.e("PluginService", "Cannot load: manifest not found for:", pluginId);
       return;
     }
 
-    var pluginDir = PluginRegistry.getPluginDir(pluginId);
+    var pluginDir = Registry.getPluginDir(pluginId);
 
     Logger.i("PluginService", "Loading plugin:", pluginId);
 
@@ -870,13 +871,13 @@ Singleton {
       // Load Main.qml entry point if it exists
       if (manifest.entryPoints && manifest.entryPoints.main) {
         var mainPath = pluginDir + "/" + manifest.entryPoints.main;
-        var loadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
+        var loadVersion = Registry.pluginLoadVersions[pluginId] || 0;
         var mainComponent = Qt.createComponent("file://" + mainPath + "?v=" + loadVersion);
 
         if (mainComponent.status === Component.Ready) {
           // Get the plugin container from shell.qml (must be in graphics scene)
           if (!root.pluginContainer) {
-            Logger.e("PluginService", "Plugin container not set. Shell must set PluginService.pluginContainer.");
+            Logger.e("PluginService", "Plugin container not set. Shell must set Service.pluginContainer.");
             return;
           }
 
@@ -900,7 +901,7 @@ Singleton {
       // Load bar widget component if provided (don't instantiate - BarWidgetRegistry will do that)
       if (manifest.entryPoints && manifest.entryPoints.barWidget) {
         var widgetPath = pluginDir + "/" + manifest.entryPoints.barWidget;
-        var widgetLoadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
+        var widgetLoadVersion = Registry.pluginLoadVersions[pluginId] || 0;
         var widgetComponent = Qt.createComponent("file://" + widgetPath + "?v=" + widgetLoadVersion);
 
         if (widgetComponent.status === Component.Ready) {
@@ -921,7 +922,7 @@ Singleton {
       // Load desktop widget component if provided (don't instantiate - DesktopWidgetRegistry will do that)
       if (manifest.entryPoints && manifest.entryPoints.desktopWidget) {
         var desktopWidgetPath = pluginDir + "/" + manifest.entryPoints.desktopWidget;
-        var desktopWidgetLoadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
+        var desktopWidgetLoadVersion = Registry.pluginLoadVersions[pluginId] || 0;
         var desktopWidgetComponent = Qt.createComponent("file://" + desktopWidgetPath + "?v=" + desktopWidgetLoadVersion);
 
         if (desktopWidgetComponent.status === Component.Ready) {
@@ -939,7 +940,7 @@ Singleton {
       // Load launcher provider component if provided (don't instantiate - Launcher will do that)
       if (manifest.entryPoints && manifest.entryPoints.launcherProvider) {
         var launcherProviderPath = pluginDir + "/" + manifest.entryPoints.launcherProvider;
-        var launcherProviderLoadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
+        var launcherProviderLoadVersion = Registry.pluginLoadVersions[pluginId] || 0;
         var launcherProviderComponent = Qt.createComponent("file://" + launcherProviderPath + "?v=" + launcherProviderLoadVersion);
 
         if (launcherProviderComponent.status === Component.Ready) {
@@ -957,7 +958,7 @@ Singleton {
       // Load control center widget component if provided
       if (manifest.entryPoints && manifest.entryPoints.controlCenterWidget) {
         var ccWidgetPath = pluginDir + "/" + manifest.entryPoints.controlCenterWidget;
-        var ccWidgetLoadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
+        var ccWidgetLoadVersion = Registry.pluginLoadVersions[pluginId] || 0;
         var ccWidgetComponent = Qt.createComponent("file://" + ccWidgetPath + "?v=" + ccWidgetLoadVersion);
 
         if (ccWidgetComponent.status === Component.Ready) {
@@ -975,7 +976,7 @@ Singleton {
       // Load lock screen component if provided
       if (manifest.entryPoints && manifest.entryPoints.lockScreen) {
         var lockScreenPath = pluginDir + "/" + manifest.entryPoints.lockScreen;
-        var lockScreenLoadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
+        var lockScreenLoadVersion = Registry.pluginLoadVersions[pluginId] || 0;
         var lockScreenComponent = Qt.createComponent("file://" + lockScreenPath + "?v=" + lockScreenLoadVersion);
 
         if (lockScreenComponent.status === Component.Ready) {
@@ -1142,7 +1143,7 @@ Singleton {
 
   // Create plugin API object with pre-loaded settings and translations
   function createPluginAPI(pluginId, manifest, settings, translations, fallbackTranslations) {
-    var pluginDir = PluginRegistry.getPluginDir(pluginId);
+    var pluginDir = Registry.getPluginDir(pluginId);
 
     var api = Qt.createQmlObject(`
       import QtQuick
@@ -1395,7 +1396,7 @@ Singleton {
 
   // Load plugin translations asynchronously
   function loadPluginTranslationsAsync(pluginId, manifest, language, callback) {
-    var pluginDir = PluginRegistry.getPluginDir(pluginId);
+    var pluginDir = Registry.getPluginDir(pluginId);
     var translationFile = pluginDir + "/i18n/" + language + ".json";
 
     var readProcess = Qt.createQmlObject(`
@@ -1478,7 +1479,7 @@ Singleton {
   // user's sparse override at settings/plugins/<id>.config.json (user-owned
   // area, survives plugin uninstall/reinstall)
   function loadPluginConfig(pluginId, callback) {
-    var defaultFile = PluginRegistry.getPluginDir(pluginId) + "/config.default.json";
+    var defaultFile = Registry.getPluginDir(pluginId) + "/config.default.json";
     var userFile = Settings.configDir + "settings/plugins/" + pluginId + ".config.json";
 
     readJsonFile(defaultFile, function (defaults) {
@@ -1491,7 +1492,7 @@ Singleton {
   // Load plugin settings (new user-owned path, with read-only fallback to
   // the legacy in-plugin-dir location for upgrades)
   function loadPluginSettings(pluginId, callback) {
-    var settingsFile = PluginRegistry.getPluginSettingsFile(pluginId);
+    var settingsFile = Registry.getPluginSettingsFile(pluginId);
 
     readJsonFile(settingsFile, function (settings) {
       if (Object.keys(settings).length > 0) {
@@ -1499,7 +1500,7 @@ Singleton {
         return;
       }
       // Fallback: legacy location inside the plugin dir (pre-path-move)
-      readJsonFile(PluginRegistry.getLegacyPluginSettingsFile(pluginId), function (legacySettings) {
+      readJsonFile(Registry.getLegacyPluginSettingsFile(pluginId), function (legacySettings) {
         callback(legacySettings);
       });
     });
@@ -1507,7 +1508,7 @@ Singleton {
 
   // Save plugin settings
   function savePluginSettings(pluginId, settings) {
-    var settingsFile = PluginRegistry.getPluginSettingsFile(pluginId);
+    var settingsFile = Registry.getPluginSettingsFile(pluginId);
     var settingsJson = JSON.stringify(settings, null, 2);
 
     // Use heredoc delimiter pattern to avoid all escaping issues
@@ -1574,9 +1575,9 @@ Singleton {
 
   // Find available plugin by ID
   function findAvailablePlugin(compositeKeyOrId) {
-    var parsed = PluginRegistry.parseCompositeKey(compositeKeyOrId);
+    var parsed = Registry.parseCompositeKey(compositeKeyOrId);
     var pluginId = parsed.pluginId;
-    var sourceUrl = PluginRegistry.getPluginSourceUrl(compositeKeyOrId);
+    var sourceUrl = Registry.getPluginSourceUrl(compositeKeyOrId);
 
     for (var i = 0; i < root.availablePlugins.length; i++) {
       if (root.availablePlugins[i].id === pluginId && root.availablePlugins[i].source.url === sourceUrl) {
@@ -1620,13 +1621,13 @@ Singleton {
   function performUpdateCheck() {
     var updates = {};
     var pendingUpdates = {};
-    var installedIds = PluginRegistry.getAllInstalledPluginIds();
+    var installedIds = Registry.getAllInstalledPluginIds();
 
     Logger.d("PluginService", "Checking", installedIds.length, "installed plugins against", root.availablePlugins.length, "available plugins");
 
     for (var i = 0; i < installedIds.length; i++) {
       var pluginId = installedIds[i];
-      var installedManifest = PluginRegistry.getPluginManifest(pluginId);
+      var installedManifest = Registry.getPluginManifest(pluginId);
       var availablePlugin = findAvailablePlugin(pluginId);
 
       if (installedManifest && availablePlugin) {
@@ -1739,7 +1740,7 @@ Singleton {
 
   // Simple version comparison (semantic versioning x.y.z)
   // Compare two PLUGIN MANIFEST versions. Both operands must be clean "x.y.z" —
-  // guaranteed by PluginRegistry.validateManifest (/^\d+\.\d+\.\d+$/). Do NOT pass
+  // guaranteed by Registry.validateManifest (/^\d+\.\d+\.\d+$/). Do NOT pass
   // shell/product versions: those come from git describe or the packaged VERSION file,
   // may carry a "v" prefix or git metadata, and `parseInt(x) || 0` silently substitutes
   // 0 for the unparseable segment. Use UpdateService.compareVersions for those.
@@ -1808,7 +1809,7 @@ Singleton {
     }
 
     // Disable plugin (this removes widgets and unloads code)
-    if (PluginRegistry.isPluginEnabled(pluginId)) {
+    if (Registry.isPluginEnabled(pluginId)) {
       disablePlugin(pluginId);
     }
 
@@ -1818,7 +1819,7 @@ Singleton {
         Logger.i("PluginService", "Plugin updated successfully:", pluginId);
 
         // Increment load version to invalidate Qt component cache
-        PluginRegistry.incrementPluginLoadVersion(pluginId);
+        Registry.incrementPluginLoadVersion(pluginId);
 
         // Re-enable the plugin first, so the new component is registered
         // Skip adding to bar since we'll restore the layout from backup
@@ -2018,12 +2019,12 @@ Singleton {
       return;
     }
 
-    var manifest = PluginRegistry.getPluginManifest(pluginId);
+    var manifest = Registry.getPluginManifest(pluginId);
     if (!manifest) {
       return;
     }
 
-    var pluginDir = PluginRegistry.getPluginDir(pluginId);
+    var pluginDir = Registry.getPluginDir(pluginId);
 
     // Create a debounce timer for this plugin
     var debounceTimer = Qt.createQmlObject(`
@@ -2211,7 +2212,7 @@ Singleton {
 
     Logger.i("PluginService", "Hot reloading plugin:", pluginId);
 
-    var manifest = PluginRegistry.getPluginManifest(pluginId);
+    var manifest = Registry.getPluginManifest(pluginId);
     if (!manifest) {
       Logger.e("PluginService", "Cannot reload: manifest not found for:", pluginId);
       return false;
@@ -2225,7 +2226,7 @@ Singleton {
     unloadPlugin(pluginId, true);
 
     // Increment load version to invalidate Qt's component cache
-    PluginRegistry.incrementPluginLoadVersion(pluginId);
+    Registry.incrementPluginLoadVersion(pluginId);
 
     // Use Qt.callLater to ensure destruction is complete before reloading
     // This prevents IPC handler conflicts and other timing issues

@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Effects
 import QtQuick.Layouts
 import qs.Commons
-import qs.Services.Noctalia
+import qs.Services.Plugins
 import qs.Widgets
 
 NBox {
@@ -199,7 +199,7 @@ NBox {
     // Check if it's a plugin with settings
     if (root.widgetRegistry && root.widgetRegistry.isPluginWidget(widgetId)) {
       var pluginId = widgetId.replace("plugin:", "");
-      var manifest = PluginRegistry.getPluginManifest(pluginId);
+      var manifest = Registry.getPluginManifest(pluginId);
       if (!manifest?.entryPoints)
         return false;
       for (var i = 0; i < root.pluginSettingsEntryPoints.length; i++) {
@@ -224,7 +224,7 @@ NBox {
 
     if (isPlugin) {
       var pluginId = widgetData.id.replace("plugin:", "");
-      var manifest = PluginRegistry.getPluginManifest(pluginId);
+      var manifest = Registry.getPluginManifest(pluginId);
 
       var settingsKey = null;
       if (manifest?.entryPoints) {
@@ -577,7 +577,7 @@ NBox {
                   // For plugin widgets, get the actual plugin name from manifest
                   if (root.widgetRegistry && root.widgetRegistry.isPluginWidget(modelData.id)) {
                     const pluginId = modelData.id.replace("plugin:", "");
-                    const manifest = PluginRegistry.getPluginManifest(pluginId);
+                    const manifest = Registry.getPluginManifest(pluginId);
                     if (manifest && manifest.name) {
                       return manifest.name;
                     }

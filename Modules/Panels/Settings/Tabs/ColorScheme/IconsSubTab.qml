@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
-import qs.Services.Noctalia
+import qs.Services.Plugins
 import qs.Services.UI
 import qs.Widgets
 
@@ -17,11 +17,11 @@ ColumnLayout {
     var _c = root.refreshCounter;
 
     var result = [];
-    var installed = PluginRegistry.installedPlugins;
+    var installed = Registry.installedPlugins;
     for (var key in installed) {
       var mf = installed[key];
       if (mf && mf.entryPoints && mf.entryPoints.icons) {
-        var parsed = PluginRegistry.parseCompositeKey(key);
+        var parsed = Registry.parseCompositeKey(key);
         var isFloor = parsed && parsed.pluginId === "atmosphera-icons";
         var isLoaded = IconRegistry.iconSets[key] !== undefined;
         result.push({
@@ -29,7 +29,7 @@ ColumnLayout {
                       "bareId": parsed ? parsed.pluginId : key,
                       "name": mf.name || parsed.pluginId || key,
                       "version": mf.version || "",
-                      "enabled": PluginRegistry.isPluginEnabled(key),
+                      "enabled": Registry.isPluginEnabled(key),
                       "isFloor": isFloor,
                       "isLoaded": isLoaded,
                       "iconCount": isLoaded && IconRegistry.iconSets[key].manifest && IconRegistry.iconSets[key].manifest.icons ? Object.keys(IconRegistry.iconSets[key].manifest.icons).length : 0
@@ -66,7 +66,7 @@ ColumnLayout {
   property int refreshCounter: 0
 
   Connections {
-    target: PluginRegistry
+    target: Registry
     function onPluginsChanged() {
       root.refreshCounter++;
     }
@@ -277,9 +277,9 @@ ColumnLayout {
                   baseSize: Style.baseWidgetSize * 0.7
                   onToggled: checked => {
                     if (checked) {
-                      PluginService.enablePlugin(modelData.key);
+                      Service.enablePlugin(modelData.key);
                     } else {
-                      PluginService.disablePlugin(modelData.key);
+                      Service.disablePlugin(modelData.key);
                     }
                   }
                 }
@@ -554,11 +554,11 @@ ColumnLayout {
   }
 
   function _setName(key) {
-    var mf = PluginRegistry.getPluginManifest(key);
+    var mf = Registry.getPluginManifest(key);
     if (mf && mf.name) {
       return mf.name;
     }
-    var parsed = PluginRegistry.parseCompositeKey(key);
+    var parsed = Registry.parseCompositeKey(key);
     return parsed ? parsed.pluginId : key;
   }
 

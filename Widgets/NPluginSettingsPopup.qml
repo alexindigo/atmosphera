@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
-import qs.Services.Noctalia
+import qs.Services.Plugins
 import qs.Services.UI
 import qs.Widgets
 
@@ -142,7 +142,7 @@ Popup {
     // Use composite key if available (for custom plugins), otherwise use manifest ID (for official plugins)
     var pluginId = pluginManifest.compositeKey || pluginManifest.id;
 
-    currentPluginApi = PluginService.getPluginAPI(pluginId);
+    currentPluginApi = Service.getPluginAPI(pluginId);
     if (!currentPluginApi) {
       Logger.e("NPluginSettingsPopup", "Cannot open settings: plugin not loaded:", pluginId);
       if (showToastOnSave) {
@@ -152,7 +152,7 @@ Popup {
     }
 
     // Get plugin directory
-    var pluginDir = PluginRegistry.getPluginDir(pluginId);
+    var pluginDir = Registry.getPluginDir(pluginId);
     var settingsEntry = settingsEntryPoint ? pluginManifest.entryPoints[settingsEntryPoint] : pluginManifest.entryPoints.settings;
     var settingsPath = pluginDir + "/" + settingsEntry;
 

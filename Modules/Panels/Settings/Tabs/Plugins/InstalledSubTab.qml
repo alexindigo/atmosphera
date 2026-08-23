@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
-import qs.Services.Noctalia
+import qs.Services.Plugins
 import qs.Services.UI
 import qs.Widgets
 
@@ -27,8 +27,8 @@ ColumnLayout {
 
   // Check for updates when tab becomes visible
   onVisibleChanged: {
-    if (visible && PluginService.pluginsFullyLoaded) {
-      PluginService.checkForUpdates();
+    if (visible && Service.pluginsFullyLoaded) {
+      Service.checkForUpdates();
     }
   }
 
@@ -50,19 +50,19 @@ ColumnLayout {
 
   // Check for updates button
   NButton {
-    property bool isChecking: Object.keys(PluginService.activeFetches).length > 0
+    property bool isChecking: Object.keys(Service.activeFetches).length > 0
 
     text: isChecking ? I18n.tr("panels.plugins.checking-for-updates") : I18n.tr("panels.plugins.check-for-updates")
     icon: Icon.refresh
     enabled: !isChecking
-    visible: Object.keys(PluginService.pluginUpdates).length === 0
+    visible: Object.keys(Service.pluginUpdates).length === 0
     Layout.fillWidth: true
-    onClicked: PluginService.checkForUpdates()
+    onClicked: Service.checkForUpdates()
   }
 
   // Update All button
   NButton {
-    property int updateCount: Object.keys(PluginService.pluginUpdates).length
+    property int updateCount: Object.keys(Service.pluginUpdates).length
     property bool isUpdating: false
 
     text: I18n.tr("panels.plugins.update-all", {
@@ -76,7 +76,7 @@ ColumnLayout {
     Layout.fillWidth: true
     onClicked: {
       isUpdating = true;
-      var pluginIds = Object.keys(PluginService.pluginUpdates);
+      var pluginIds = Object.keys(Service.pluginUpdates);
       var currentIndex = 0;
 
       function updateNext() {
@@ -89,7 +89,7 @@ ColumnLayout {
         var pluginId = pluginIds[currentIndex];
         currentIndex++;
 
-        PluginService.updatePlugin(pluginId, function (success, error) {
+        Service.updatePlugin(pluginId, function (success, error) {
           if (!success) {
             Logger.w("InstalledSubTab", "Failed to update", pluginId + ":", error);
           }
@@ -113,30 +113,30 @@ ColumnLayout {
         // Force refresh when counter changes
         var _ = root.installedPluginsRefreshCounter;
 
-        var allIds = PluginRegistry.getAllInstalledPluginIds();
+        var allIds = Registry.getAllInstalledPluginIds();
         var plugins = [];
         for (var i = 0; i < allIds.length; i++) {
           var compositeKey = allIds[i];
-          var manifest = PluginRegistry.getPluginManifest(compositeKey);
+          var manifest = Registry.getPluginManifest(compositeKey);
           if (manifest) {
             // Create a copy of manifest and include update info, enabled state, and source info
             var pluginData = JSON.parse(JSON.stringify(manifest));
             pluginData.compositeKey = compositeKey;
-            pluginData.updateInfo = PluginService.pluginUpdates[compositeKey];
-            pluginData.pendingUpdateInfo = PluginService.pluginUpdatesPending[compositeKey];
-            pluginData.enabled = PluginRegistry.isPluginEnabled(compositeKey);
+            pluginData.updateInfo = Service.pluginUpdates[compositeKey];
+            pluginData.pendingUpdateInfo = Service.pluginUpdatesPending[compositeKey];
+            pluginData.enabled = Registry.isPluginEnabled(compositeKey);
 
             // Add source info
-            var parsed = PluginRegistry.parseCompositeKey(compositeKey);
+            var parsed = Registry.parseCompositeKey(compositeKey);
             pluginData.isFromOfficialRepo = parsed.isOfficial;
             if (!parsed.isOfficial) {
-              pluginData.sourceName = PluginRegistry.getSourceNameByHash(parsed.sourceHash);
+              pluginData.sourceName = Registry.getSourceNameByHash(parsed.sourceHash);
             }
 
             // Look up "official" (team-maintained) status and lastUpdated from available plugins
             pluginData.official = false;
             pluginData.lastUpdated = null;
-            var availablePlugins = PluginService.availablePlugins || [];
+            var availablePlugins = Service.availablePlugins || [];
             for (var j = 0; j < availablePlugins.length; j++) {
               if (availablePlugins[j].id === manifest.id) {
                 pluginData.official = availablePlugins[j].official === true;
@@ -172,7 +172,7 @@ ColumnLayout {
             AtmoIcon {
               icon: Icon.plugin
               pointSize: Style.fontSizeL
-              color: PluginService.hasPluginError(modelData.compositeKey) ? Color.mError : Color.mPrimary
+              color: Service.hasPluginError(modelData.compositeKey) ? Color.mError : Color.mPrimary
             }
 
             NText {
@@ -216,10 +216,10 @@ ColumnLayout {
 
             AtmoIconButtonHot {
               icon: Icon.bug
-              hot: PluginService.isPluginHotReloadEnabled(modelData.id)
-              tooltipText: PluginService.isPluginHotReloadEnabled(modelData.id) ? I18n.tr("panels.plugins.development-disable") : I18n.tr("panels.plugins.development-enable")
+              hot: Service.isPluginHotReloadEnabled(modelData.id)
+              tooltipText: Service.isPluginHotReloadEnabled(modelData.id) ? I18n.tr("panels.plugins.development-disable") : I18n.tr("panels.plugins.development-enable")
               baseSize: Style.baseWidgetSize * 0.7
-              onClicked: PluginService.togglePluginHotReload(modelData.id)
+              onClicked: Service.togglePluginHotReload(modelData.id)
               visible: Settings.isDebug
             }
 
@@ -240,8 +240,8 @@ ColumnLayout {
               baseSize: Style.baseWidgetSize * 0.7
               visible: true
               onClicked: {
-                var sourceUrl = PluginRegistry.getPluginSourceUrl(modelData.compositeKey) || "";
-                Qt.openUrlExternally(sourceUrl && !PluginRegistry.isMainSource(sourceUrl) ? sourceUrl : "https://noctalia.dev/plugins/" + modelData.id);
+                var sourceUrl = Registry.getPluginSourceUrl(modelData.compositeKey) || "";
+                Qt.openUrlExternally(sourceUrl && !Registry.isMainSource(sourceUrl) ? sourceUrl : "https://noctalia.dev/plugins/" + modelData.id);
               }
             }
 
@@ -277,7 +277,7 @@ ColumnLayout {
                 updates[pid] = true;
                 rootRef.updatingPlugins = updates;
 
-                PluginService.updatePlugin(pid, function (success, error) {
+                Service.updatePlugin(pid, function (success, error) {
                   var updates2 = Object.assign({}, rootRef.updatingPlugins);
                   updates2[pid] = false;
                   rootRef.updatingPlugins = updates2;
@@ -302,9 +302,9 @@ ColumnLayout {
               baseSize: Style.baseWidgetSize * 0.7
               onToggled: checked => {
                 if (checked) {
-                  PluginService.enablePlugin(modelData.compositeKey);
+                  Service.enablePlugin(modelData.compositeKey);
                 } else {
-                  PluginService.disablePlugin(modelData.compositeKey);
+                  Service.disablePlugin(modelData.compositeKey);
                 }
               }
             }
@@ -404,7 +404,7 @@ ColumnLayout {
           // Error indicator
           RowLayout {
             spacing: Style.marginS
-            visible: PluginService.hasPluginError(modelData.compositeKey)
+            visible: Service.hasPluginError(modelData.compositeKey)
 
             AtmoIcon {
               icon: "alert-triangle"
@@ -413,7 +413,7 @@ ColumnLayout {
             }
 
             NText {
-              property var errorInfo: PluginService.getPluginError(modelData.compositeKey)
+              property var errorInfo: Service.getPluginError(modelData.compositeKey)
               text: errorInfo ? errorInfo.error : ""
               font.pointSize: Style.fontSizeXXS
               color: Color.mError
@@ -428,7 +428,7 @@ ColumnLayout {
     }
 
     NLabel {
-      visible: PluginRegistry.getAllInstalledPluginIds().length === 0
+      visible: Registry.getAllInstalledPluginIds().length === 0
       label: I18n.tr("panels.plugins.installed-no-plugins-label")
       description: I18n.tr("panels.plugins.installed-no-plugins-description")
       Layout.fillWidth: true
@@ -501,7 +501,7 @@ ColumnLayout {
   }
 
   function uninstallPlugin(pluginId) {
-    var manifest = PluginRegistry.getPluginManifest(pluginId);
+    var manifest = Registry.getPluginManifest(pluginId);
     var pluginName = manifest?.name || pluginId;
 
     BarService.widgetsRevision++;
@@ -510,7 +510,7 @@ ColumnLayout {
                                                                        "plugin": pluginName
                                                                      }));
 
-    PluginService.uninstallPlugin(pluginId, function (success, error) {
+    Service.uninstallPlugin(pluginId, function (success, error) {
       if (success) {
         ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.uninstall-success", {
                                                                            "plugin": pluginName
@@ -525,7 +525,7 @@ ColumnLayout {
 
   // Listen to plugin registry changes
   Connections {
-    target: PluginRegistry
+    target: Registry
 
     function onPluginsChanged() {
       root.installedPluginsRefreshCounter++;
@@ -534,7 +534,7 @@ ColumnLayout {
 
   // Listen to plugin service signals
   Connections {
-    target: PluginService
+    target: Service
 
     function onPluginUpdatesChanged() {
       root.installedPluginsRefreshCounter++;

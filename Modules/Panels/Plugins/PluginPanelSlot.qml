@@ -2,7 +2,7 @@ import QtQuick
 import Quickshell
 import qs.Commons
 import qs.Modules.MainScreen
-import qs.Services.Noctalia
+import qs.Services.Plugins
 import qs.Services.UI
 
 /**
@@ -112,12 +112,12 @@ SmartPanel {
 
   // Load a plugin's panel content
   function loadPluginPanel(pluginId) {
-    if (!PluginService.isPluginLoaded(pluginId)) {
+    if (!Service.isPluginLoaded(pluginId)) {
       Logger.w("PluginPanelSlot", "Plugin not loaded:", pluginId);
       return false;
     }
 
-    var plugin = PluginService.loadedPlugins[pluginId];
+    var plugin = Service.loadedPlugins[pluginId];
     if (!plugin || !plugin.manifest) {
       Logger.w("PluginPanelSlot", "Plugin data not found:", pluginId);
       return false;
@@ -137,13 +137,13 @@ SmartPanel {
     // Clear any stale pluginInstance before loading new content
     root.pluginInstance = null;
 
-    var pluginDir = PluginRegistry.getPluginDir(pluginId);
+    var pluginDir = Registry.getPluginDir(pluginId);
     var panelPath = pluginDir + "/" + plugin.manifest.entryPoints.panel;
 
     Logger.i("PluginPanelSlot", "Loading panel for plugin:", pluginId, "in slot", root.slotNumber);
 
     // Load the panel component with cache-busting version parameter
-    var loadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
+    var loadVersion = Registry.pluginLoadVersions[pluginId] || 0;
     var component = Qt.createComponent("file://" + panelPath + "?v=" + loadVersion);
 
     if (component.status === Component.Ready) {
@@ -160,12 +160,12 @@ SmartPanel {
             root.setPosition();
           }
         } else if (component.status === Component.Error) {
-          PluginService.recordPluginError(pluginId, "panel", component.errorString());
+          Service.recordPluginError(pluginId, "panel", component.errorString());
         }
       });
       return true; // Will be loaded asynchronously
     } else if (component.status === Component.Error) {
-      PluginService.recordPluginError(pluginId, "panel", component.errorString());
+      Service.recordPluginError(pluginId, "panel", component.errorString());
       return false;
     }
 
@@ -175,7 +175,7 @@ SmartPanel {
   // Helper function to finalize plugin content loading
   function finalizePluginLoad(pluginId, component) {
     // Get plugin API
-    var api = PluginService.getPluginAPI(pluginId);
+    var api = Service.getPluginAPI(pluginId);
 
     // Use setSource with initial properties so pluginApi and screen are
     // available from the first binding evaluation (before onLoaded)
@@ -221,7 +221,7 @@ SmartPanel {
   // Update plugin's panelOpenScreen when this panel opens/closes
   onOpened: {
     if (root.currentPluginId !== "") {
-      var api = PluginService.getPluginAPI(root.currentPluginId);
+      var api = Service.getPluginAPI(root.currentPluginId);
       if (api) {
         api.panelOpenScreen = root.screen;
         Logger.d("PluginPanelSlot", "Set panelOpenScreen for", root.currentPluginId, "to", root.screen?.name);
@@ -231,7 +231,7 @@ SmartPanel {
 
   onClosed: {
     if (root.currentPluginId !== "") {
-      var api = PluginService.getPluginAPI(root.currentPluginId);
+      var api = Service.getPluginAPI(root.currentPluginId);
       if (api) {
         api.panelOpenScreen = null;
         Logger.d("PluginPanelSlot", "Cleared panelOpenScreen for", root.currentPluginId);

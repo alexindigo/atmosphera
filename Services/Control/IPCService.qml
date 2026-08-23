@@ -13,7 +13,7 @@ import qs.Services.Hardware
 import qs.Services.Location
 import qs.Services.Media
 import qs.Services.Networking
-import qs.Services.Noctalia
+import qs.Services.Plugins
 import qs.Services.Power
 import qs.Services.System
 import qs.Services.Theming
@@ -36,7 +36,7 @@ Singleton {
     if (id.indexOf(":") !== -1) {
       return id;
     }
-    var installed = PluginRegistry.installedPlugins;
+    var installed = Registry.installedPlugins;
     for (var key in installed) {
       if (key.endsWith(":" + id)) {
         return key;
@@ -44,14 +44,14 @@ Singleton {
     }
     var meta = root._findAvailablePlugin(id);
     if (meta && meta.source && meta.source.url) {
-      return PluginRegistry.generateCompositeKey(id, meta.source.url);
+      return Registry.generateCompositeKey(id, meta.source.url);
     }
     return id;
   }
 
   // Find a plugin's catalog metadata (from enabled sources) by bare id.
   function _findAvailablePlugin(id) {
-    var avail = PluginService.availablePlugins || [];
+    var avail = Service.availablePlugins || [];
     for (var i = 0; i < avail.length; i++) {
       if (avail[i].id === id) {
         return avail[i];
@@ -913,7 +913,7 @@ Singleton {
     // List installed + available plugins with state (JSON array)
     function list(): string {
       var out = [];
-      var installed = PluginRegistry.installedPlugins;
+      var installed = Registry.installedPlugins;
       var installedBare = {};
       for (var key in installed) {
         var m = installed[key] || {};
@@ -923,11 +923,11 @@ Singleton {
                    "id": key,
                    "name": m.name || "",
                    "version": m.version || "",
-                   "enabled": PluginRegistry.isPluginEnabled(key),
-                   "downloaded": PluginRegistry.isPluginDownloaded(key)
+                   "enabled": Registry.isPluginEnabled(key),
+                   "downloaded": Registry.isPluginDownloaded(key)
                  });
       }
-      var avail = PluginService.availablePlugins || [];
+      var avail = Service.availablePlugins || [];
       for (var i = 0; i < avail.length; i++) {
         var a = avail[i];
         if (a && a.id && !installedBare[a.id]) {
@@ -945,20 +945,20 @@ Singleton {
 
     function enable(id: string): string {
       var key = root._resolvePluginKey(id);
-      if (PluginRegistry.isPluginEnabled(key)) {
+      if (Registry.isPluginEnabled(key)) {
         return "already enabled: " + key;
       }
-      if (PluginRegistry.isPluginDownloaded(key)) {
-        return PluginService.enablePlugin(key, false) ? "enabled: " + key : "enable failed: " + key;
+      if (Registry.isPluginDownloaded(key)) {
+        return Service.enablePlugin(key, false) ? "enabled: " + key : "enable failed: " + key;
       }
       // Not downloaded — install from its catalog source first (covers bundled plugins)
       var meta = root._findAvailablePlugin(id);
       if (!meta) {
         return "plugin not found: " + id;
       }
-      PluginService.installPlugin(meta, false, function (success, error, registeredKey) {
+      Service.installPlugin(meta, false, function (success, error, registeredKey) {
         if (success) {
-          PluginService.enablePlugin(registeredKey || key, false);
+          Service.enablePlugin(registeredKey || key, false);
         } else {
           Logger.w("IPC", "plugin install failed:", id, error);
         }
@@ -968,23 +968,23 @@ Singleton {
 
     function disable(id: string): string {
       var key = root._resolvePluginKey(id);
-      if (!PluginRegistry.isPluginEnabled(key)) {
+      if (!Registry.isPluginEnabled(key)) {
         return "not enabled: " + key;
       }
-      PluginService.disablePlugin(key);
+      Service.disablePlugin(key);
       return "disabled: " + key;
     }
 
     function install(id: string): string {
       var key = root._resolvePluginKey(id);
-      if (PluginRegistry.isPluginDownloaded(key)) {
+      if (Registry.isPluginDownloaded(key)) {
         return "already installed: " + key;
       }
       var meta = root._findAvailablePlugin(id);
       if (!meta) {
         return "plugin not found: " + id;
       }
-      PluginService.installPlugin(meta, false, function (success, error, registeredKey) {
+      Service.installPlugin(meta, false, function (success, error, registeredKey) {
         if (!success) {
           Logger.w("IPC", "plugin install failed:", id, error);
         }
@@ -994,10 +994,10 @@ Singleton {
 
     function uninstall(id: string): string {
       var key = root._resolvePluginKey(id);
-      if (!PluginRegistry.isPluginDownloaded(key)) {
+      if (!Registry.isPluginDownloaded(key)) {
         return "not installed: " + key;
       }
-      PluginService.uninstallPlugin(key, function (success) {
+      Service.uninstallPlugin(key, function (success) {
         if (!success) {
           Logger.w("IPC", "plugin uninstall failed:", id);
         }
@@ -1006,7 +1006,7 @@ Singleton {
     }
 
     function openSettings(key: string) {
-      var manifest = PluginRegistry.getPluginManifest(key);
+      var manifest = Registry.getPluginManifest(key);
       if (!manifest) {
         Logger.w("IPC", "Plugin not found:", key);
         return;
@@ -1021,7 +1021,7 @@ Singleton {
     }
 
     function openPanel(key: string) {
-      var manifest = PluginRegistry.getPluginManifest(key);
+      var manifest = Registry.getPluginManifest(key);
       if (!manifest) {
         Logger.w("IPC", "Plugin not found:", key);
         return;
@@ -1031,12 +1031,12 @@ Singleton {
         return;
       }
       root.screenDetector.withCurrentScreen(screen => {
-        PluginService.openPluginPanel(key, screen, null);
+        Service.openPluginPanel(key, screen, null);
       });
     }
 
     function closePanel(key: string) {
-      var manifest = PluginRegistry.getPluginManifest(key);
+      var manifest = Registry.getPluginManifest(key);
       if (!manifest) {
         Logger.w("IPC", "Plugin not found:", key);
         return;
@@ -1046,7 +1046,7 @@ Singleton {
         return;
       }
       root.screenDetector.withCurrentScreen(screen => {
-        var api = PluginService.getPluginAPI(key);
+        var api = Service.getPluginAPI(key);
         if (api) {
           api.closePanel(screen);
         }
@@ -1054,7 +1054,7 @@ Singleton {
     }
 
     function togglePanel(key: string) {
-      var manifest = PluginRegistry.getPluginManifest(key);
+      var manifest = Registry.getPluginManifest(key);
       if (!manifest) {
         Logger.w("IPC", "Plugin not found:", key);
         return;
@@ -1064,7 +1064,7 @@ Singleton {
         return;
       }
       root.screenDetector.withCurrentScreen(screen => {
-        PluginService.togglePluginPanel(key, screen, null);
+        Service.togglePluginPanel(key, screen, null);
       });
     }
   }
@@ -1133,13 +1133,13 @@ Singleton {
 
     function open() {
       root.screenDetector.withCurrentScreen(function (screen) {
-        PluginService.openPluginPanel(_mapKey(), screen);
+        Service.openPluginPanel(_mapKey(), screen);
       });
     }
 
     function close() {
       root.screenDetector.withCurrentScreen(function (screen) {
-        var api = PluginService.getPluginAPI(_mapKey());
+        var api = Service.getPluginAPI(_mapKey());
         if (api)
           api.closePanel(screen);
       });
@@ -1147,7 +1147,7 @@ Singleton {
 
     function toggle() {
       root.screenDetector.withCurrentScreen(function (screen) {
-        PluginService.togglePluginPanel(_mapKey(), screen);
+        Service.togglePluginPanel(_mapKey(), screen);
       });
     }
   }

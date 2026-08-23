@@ -4,7 +4,7 @@ import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
-import qs.Services.Noctalia
+import qs.Services.Plugins
 import qs.Services.UI
 import qs.Widgets
 
@@ -294,11 +294,11 @@ Popup {
     // Handle plugin widgets
     if (DesktopWidgetRegistry.isPluginWidget(widgetId)) {
       var pluginId = widgetId.replace("plugin:", "");
-      var manifest = PluginRegistry.getPluginManifest(pluginId);
+      var manifest = Registry.getPluginManifest(pluginId);
 
-      var pluginDir = PluginRegistry.getPluginDir(pluginId);
-      var loadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
-      var api = PluginService.getPluginAPI(pluginId);
+      var pluginDir = Registry.getPluginDir(pluginId);
+      var loadVersion = Registry.pluginLoadVersions[pluginId] || 0;
+      var api = Service.getPluginAPI(pluginId);
 
       var settingsPath;
       if (manifest && manifest.entryPoints && manifest.entryPoints.desktopWidgetSettings) {

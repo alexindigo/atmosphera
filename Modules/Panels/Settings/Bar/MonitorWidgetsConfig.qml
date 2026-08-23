@@ -4,7 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import "../../../../Helpers/QtObj2JS.js" as QtObj2JS
 import qs.Commons
-import qs.Services.Noctalia
+import qs.Services.Plugins
 import qs.Services.UI
 import qs.Widgets
 
@@ -120,7 +120,7 @@ NBox {
       const badges = [];
       if (BarWidgetRegistry.isPluginWidget(id)) {
         var pluginId = id.replace("plugin:", "");
-        var manifest = PluginRegistry.getPluginManifest(pluginId);
+        var manifest = Registry.getPluginManifest(pluginId);
         if (manifest && manifest.name) {
           displayName = manifest.name;
         } else {

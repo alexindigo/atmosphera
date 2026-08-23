@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Effects
 import Quickshell
 import qs.Commons
-import qs.Services.Noctalia
+import qs.Services.Plugins
 import qs.Services.UI
 import qs.Widgets
 
@@ -334,7 +334,7 @@ Item {
       var widgetId = widgetData.id;
       if (DesktopWidgetRegistry.isPluginWidget(widgetId)) {
         var pluginId = widgetId.replace("plugin:", "");
-        var manifest = PluginRegistry.getPluginManifest(pluginId);
+        var manifest = Registry.getPluginManifest(pluginId);
         hasSettings = manifest && manifest.entryPoints && (manifest.entryPoints.settings || manifest.entryPoints.desktopWidgetSettings);
       } else {
         hasSettings = DesktopWidgetRegistry.widgetSettingsMap[widgetId] !== undefined;

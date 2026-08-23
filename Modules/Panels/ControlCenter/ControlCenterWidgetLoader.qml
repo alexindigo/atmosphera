@@ -1,7 +1,7 @@
 import QtQuick
 import Quickshell
 import qs.Commons
-import qs.Services.Noctalia
+import qs.Services.Plugins
 import qs.Services.UI
 
 Item {
@@ -29,7 +29,7 @@ Item {
     if (!comp)
       return;
     var pluginId = widgetId.substring(7); // Remove "plugin:" prefix
-    var api = PluginService.getPluginAPI(pluginId);
+    var api = Service.getPluginAPI(pluginId);
     loader.setSource(comp.url, api ? {
                                        "pluginApi": api
                                      } : {});

@@ -3,7 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import qs.Commons
-import qs.Services.Noctalia
+import qs.Services.Plugins
 
 Singleton {
   id: root
@@ -35,7 +35,7 @@ Singleton {
     pluginProviderMetadata[providerId] = metadata || {};
 
     // Instantiate immediately so data loading starts in the background
-    var pluginApi = PluginService.getPluginAPI(pluginId);
+    var pluginApi = Service.getPluginAPI(pluginId);
     if (pluginApi) {
       var instance = component.createObject(null, {
                                               pluginApi: pluginApi

@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import qs.Commons
-import qs.Services.Noctalia
+import qs.Services.Plugins
 import qs.Services.UI
 import qs.Widgets
 
@@ -22,7 +22,7 @@ ColumnLayout {
     // Reference counter to force re-evaluation
     void (root.tagsRefreshCounter);
     var tags = {};
-    var plugins = PluginService.availablePlugins || [];
+    var plugins = Service.availablePlugins || [];
     for (var i = 0; i < plugins.length; i++) {
       var pluginTags = plugins[i].tags || [];
       for (var j = 0; j < pluginTags.length; j++) {
@@ -82,7 +82,7 @@ ColumnLayout {
       tooltipText: I18n.tr("panels.plugins.refresh-tooltip")
       baseSize: Style.baseWidgetSize * 0.9
       onClicked: {
-        PluginService.refreshAvailablePlugins();
+        Service.refreshAvailablePlugins();
         checkUpdatesTimer.restart();
         ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.refresh-refreshing"));
       }
@@ -101,7 +101,7 @@ ColumnLayout {
         // Reference counter to force re-evaluation when plugins are updated
         void (root.availablePluginsRefreshCounter);
 
-        var all = PluginService.availablePlugins || [];
+        var all = Service.availablePlugins || [];
         var filtered = [];
 
         // Apply filter based on selectedTag
@@ -240,7 +240,7 @@ ColumnLayout {
               tooltipText: I18n.tr("panels.plugins.open-plugin-page")
               onClicked: {
                 var sourceUrl = modelData.source?.url || "";
-                Qt.openUrlExternally(sourceUrl && !PluginRegistry.isMainSource(sourceUrl) ? sourceUrl : "https://noctalia.dev/plugins/" + modelData.id + "/");
+                Qt.openUrlExternally(sourceUrl && !Registry.isMainSource(sourceUrl) ? sourceUrl : "https://noctalia.dev/plugins/" + modelData.id + "/");
               }
             }
 
@@ -254,7 +254,7 @@ ColumnLayout {
 
             // Install button (only shown when not downloaded and not installing)
             AtmoIconButton {
-              visible: modelData.downloaded === false && !PluginService.installingPlugins[modelData.id]
+              visible: modelData.downloaded === false && !Service.installingPlugins[modelData.id]
               icon: Icon.download
               baseSize: Style.baseWidgetSize * 0.7
               tooltipText: I18n.tr("common.install")
@@ -263,7 +263,7 @@ ColumnLayout {
 
             // Installing spinner
             NBusyIndicator {
-              visible: !modelData.downloaded && (PluginService.installingPlugins[modelData.id] === true)
+              visible: !modelData.downloaded && (Service.installingPlugins[modelData.id] === true)
               size: Style.baseWidgetSize * 0.5
               running: visible
             }
@@ -351,7 +351,7 @@ ColumnLayout {
     id: checkUpdatesTimer
     interval: 100
     onTriggered: {
-      PluginService.checkForUpdates();
+      Service.checkForUpdates();
     }
   }
 
@@ -360,13 +360,13 @@ ColumnLayout {
                                                                        "plugin": pluginMetadata.name
                                                                      }));
 
-    PluginService.installPlugin(pluginMetadata, false, function (success, error, registeredKey) {
+    Service.installPlugin(pluginMetadata, false, function (success, error, registeredKey) {
       if (success) {
         ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.install-success", {
                                                                            "plugin": pluginMetadata.name
                                                                          }));
         // Auto-enable the plugin after installation (use registered key which may be composite)
-        PluginService.enablePlugin(registeredKey);
+        Service.enablePlugin(registeredKey);
       } else {
         ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.install-error", {
                                                                           "error": error || "Unknown error"
@@ -377,7 +377,7 @@ ColumnLayout {
 
   // Listen to plugin service signals
   Connections {
-    target: PluginService
+    target: Service
 
     function onAvailablePluginsUpdated() {
       // Force tags and plugins model to re-evaluate
@@ -386,7 +386,7 @@ ColumnLayout {
 
       // Manually trigger update check after a small delay to ensure all registries are loaded
       Qt.callLater(function () {
-        PluginService.checkForUpdates();
+        Service.checkForUpdates();
       });
     }
   }

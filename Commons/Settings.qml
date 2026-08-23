@@ -7,7 +7,7 @@ import "../Helpers/QtObj2JS.js" as QtObj2JS
 import qs.Commons
 import qs.Commons.Migrations
 import qs.Modules.OSD
-import qs.Services.Noctalia
+import qs.Services.Plugins
 import qs.Services.UI
 
 Singleton {
@@ -1810,7 +1810,7 @@ Singleton {
   function upgradeSettings() {
     // Wait for PluginService to finish loading plugins first
     // This prevents deleting plugin widgets during reload before plugins are registered
-    if (!PluginService.initialized || !PluginService.pluginsFullyLoaded) {
+    if (!Service.initialized || !Service.pluginsFullyLoaded) {
       Logger.d("Settings", "Plugins not fully loaded yet, deferring upgrade");
       Qt.callLater(upgradeSettings);
       return;

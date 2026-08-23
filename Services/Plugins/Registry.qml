@@ -149,7 +149,7 @@ Singleton {
   function init() {
     Logger.d("PluginRegistry", "Initialized");
     // Force instantiation of PluginService to set up signal listener
-    PluginService.initialized;
+    Service.initialized;
   }
 
   // Icon set consolidation (v3): noctalia-icons-legacy merged into

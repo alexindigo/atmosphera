@@ -35,6 +35,7 @@ import qs.Services.Keyboard
 import qs.Services.Location
 import qs.Services.Networking
 import qs.Services.Noctalia
+import qs.Services.Plugins
 import qs.Services.Power
 import qs.Services.Session
 import qs.Services.System
@@ -53,7 +54,7 @@ ShellRoot {
     Logger.i("Shell", "Atmosphera Hello!");
 
     // Initialize plugin system early so Settings can validate plugin widgets
-    PluginRegistry.init();
+    Registry.init();
   }
 
   Connections {
@@ -171,8 +172,8 @@ ShellRoot {
         visible: false
 
         Component.onCompleted: {
-          PluginService.pluginContainer = pluginContainer;
-          PluginService.screenDetector = screenDetector;
+          Service.pluginContainer = pluginContainer;
+          Service.screenDetector = screenDetector;
         }
       }
     }

@@ -6,7 +6,7 @@ import Quickshell.Wayland
 import qs.Commons
 import qs.Modules.Panels.Settings
 import qs.Services.Compositor
-import qs.Services.Noctalia
+import qs.Services.Plugins
 import qs.Services.Power
 import qs.Services.Control
 import qs.Services.UI
@@ -478,7 +478,7 @@ Variants {
 
               if (_isPlugin) {
                 var pluginId = widgetId.replace("plugin:", "");
-                var api = PluginService.getPluginAPI(pluginId);
+                var api = Service.getPluginAPI(pluginId);
                 if (api)
                   props.pluginApi = api;
                 setSource(comp.url, props);
