@@ -289,7 +289,7 @@ Singleton {
 
       var sourceUrl = "file://" + Quickshell.shellDir + "/Plugins";
       var hash = root.generateSourceHash(sourceUrl);
-      var bundledPlugins = ["atmosphera-icons", "atmosphera-wallpapers", "demo-custom-lockscreen"];
+      var bundledPlugins = ["atmosphera-icons", "atmosphera-wallpapers", "demo-custom-lockscreen", "niri-windows-map"];
       var pluginId, compositeKey, targetDir, srcDir;
       var pending = 0;
 
@@ -368,6 +368,12 @@ Singleton {
     };
     seed.states[hash + ":demo-custom-lockscreen"] = {
       "enabled": true,
+      "sourceUrl": sourceUrl
+    };
+    // Materialized but not auto-enabled: the map is niri-specific and its
+    // bar widget needs qt6-niriqml installed.
+    seed.states[hash + ":niri-windows-map"] = {
+      "enabled": false,
       "sourceUrl": sourceUrl
     };
 
