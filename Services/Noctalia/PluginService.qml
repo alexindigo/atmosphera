@@ -567,13 +567,16 @@ Singleton {
       disablePlugin(compositeKey);
     }
 
-    var pluginDir = PluginRegistry.getPluginDir(compositeKey);
+    // Uninstall removes the user-owned copy — never the load path returned by
+    // getPluginDir(), which for built-in-sourced plugins is the root-owned
+    // source tree (shellDir/Plugins) and must never be deleted.
+    var pluginDir = PluginRegistry.pluginsDir + "/" + compositeKey;
 
     var removeProcess = Qt.createQmlObject(`
       import QtQuick
       import Quickshell.Io
       Process {
-        command: ["rm", "-rf", "${pluginDir}"]
+        command: ["sh", "-c", "rm -rf '${pluginDir}'"]
       }
     `, root, "RemovePlugin_" + compositeKey);
 
@@ -592,7 +595,7 @@ Singleton {
         if (callback)
           callback(true, null);
       } else {
-        Logger.e("PluginService", "Failed to uninstall plugin:", pluginId);
+        Logger.e("PluginService", "Failed to uninstall plugin:", compositeKey);
         if (callback)
           callback(false, "Failed to remove plugin files");
       }
