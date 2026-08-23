@@ -352,6 +352,80 @@ Singleton {
     migrateProcess.running = true;
   }
 
+  // Upgrade refresh: when the shipped manifest of a built-in plugin is newer
+  // than the installed copy, re-copy it into the user dir. Keeps built-in
+  // installs fresh across shell updates now that all plugins run from the
+  // user folder (settings live outside the plugin dir and are preserved;
+  // a legacy in-dir settings.json is carried over).
+  function refreshBuiltinPlugins(done) {
+    var toCheck = [];
+    for (var key in root.pluginStates) {
+      var state = root.pluginStates[key];
+      if (state && state.sourceUrl === root.builtinSourceUrl) {
+        toCheck.push(key);
+      }
+    }
+
+    if (toCheck.length === 0) {
+      done();
+      return;
+    }
+
+    var script = `
+import json, os, shutil, sys
+
+src_root, dst_root = sys.argv[1], sys.argv[2]
+
+def vp(v):
+    try:
+        return [int(x) for x in str(v).split('.') if x.strip().isdigit()]
+    except Exception:
+        return []
+
+for key in sys.argv[3:]:
+    name = key.split(':', 1)[1] if ':' in key else key
+    src_dir = os.path.join(src_root, name)
+    dst_dir = os.path.join(dst_root, key)
+    try:
+        src_ver = json.load(open(os.path.join(src_dir, 'manifest.json'))).get('version', '0')
+        dst_ver = json.load(open(os.path.join(dst_dir, 'manifest.json'))).get('version', '0')
+    except Exception:
+        continue
+    if vp(src_ver) > vp(dst_ver):
+        legacy_settings = os.path.join(dst_dir, 'settings.json')
+        saved = None
+        if os.path.exists(legacy_settings):
+            saved = open(legacy_settings, 'rb').read()
+        shutil.rmtree(dst_dir, ignore_errors=True)
+        shutil.copytree(src_dir, dst_dir)
+        if saved is not None:
+            with open(legacy_settings, 'wb') as f:
+                f.write(saved)
+        print('refreshed', key)
+`;
+
+    var refreshProcess = Qt.createQmlObject(`
+      import QtQuick
+      import Quickshell.Io
+      Process {
+        stdout: StdioCollector {}
+      }
+    `, root, "RefreshBuiltinPlugins");
+    // Command assigned after creation (array interpolation into inline QML is fragile)
+    refreshProcess.command = ["python3", "-c", script, Quickshell.shellDir + "/builtin/plugins", root.pluginsDir].concat(toCheck);
+
+    refreshProcess.exited.connect(function () {
+      var out = (String(refreshProcess.stdout.text || "")).trim();
+      if (out) {
+        Logger.i("PluginRegistry", "Upgrade refresh:", out.split("\n").join(", "));
+      }
+      refreshProcess.destroy();
+      done();
+    });
+
+    refreshProcess.running = true;
+  }
+
   function migratePluginData(done) {
     var needsSave = false;
 
@@ -377,7 +451,9 @@ Singleton {
     }
 
     root.migrateIconSetsV3(function () {
-      root.migrateBuiltinKeysV4(done);
+      root.migrateBuiltinKeysV4(function () {
+        root.refreshBuiltinPlugins(done);
+      });
     });
   }
 
@@ -952,16 +1028,9 @@ Singleton {
 
   // Get plugin directory path
   function getPluginDir(pluginId) {
-    // Built-in plugins run from the source tree (shellDir/Plugins) — never
-    // from a copied install in the config dir, which goes stale every time
-    // the source changes (observed: shell rendering a weeks-old copy of a
-    // built-in plugin while the source had moved on).
-    var builtInUrl = root.builtinSourceUrl;
-    var src = root.pluginStates[pluginId]?.sourceUrl || "";
-    if (src === builtInUrl) {
-      var parsed = root.parseCompositeKey(pluginId);
-      return Quickshell.shellDir + "/builtin/plugins/" + parsed.pluginId;
-    }
+    // Uniform semantics: plugins always run from the user-owned install copy.
+    // The source tree (builtin/plugins/) is read-only distribution; installed
+    // copies stay fresh via the upgrade refresh (refreshBuiltinPlugins).
     return root.pluginsDir + "/" + pluginId;
   }
 
