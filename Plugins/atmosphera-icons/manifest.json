@@ -5,7 +5,11 @@
   "author": "alexindigo",
   "license": "GPL-3.0",
   "description": "The complete Atmosphera icon set: 6,114 semantic icons as SVGs (Tabler Icons + custom Noctalia/Hyprland/Niri glyphs), converted from the legacy Fontello icon font. See CONVERSION.md for provenance.",
-  "tags": ["Icons", "Built-in"],
+  "defaultEnabled": true,
+  "tags": [
+    "Icons",
+    "Built-in"
+  ],
   "entryPoints": {
     "icons": "icons.json"
   }

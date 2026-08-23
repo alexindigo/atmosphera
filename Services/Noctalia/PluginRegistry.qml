@@ -289,42 +289,126 @@ Singleton {
 
       var sourceUrl = "file://" + Quickshell.shellDir + "/Plugins";
       var hash = root.generateSourceHash(sourceUrl);
-      var bundledPlugins = ["atmosphera-icons", "atmosphera-wallpapers", "demo-custom-lockscreen", "niri-windows-map"];
-      var pluginId, compositeKey, targetDir, srcDir;
-      var pending = 0;
 
-      for (var i = 0; i < bundledPlugins.length; i++) {
-        pluginId = bundledPlugins[i];
-        compositeKey = hash + ":" + pluginId;
-        targetDir = root.pluginsDir + "/" + compositeKey;
-        srcDir = Quickshell.shellDir + "/Plugins/" + pluginId;
+      // Discover bundled plugins by scanning Plugins/ for manifests — no
+      // hardcoded list; each plugin declares itself and its default state.
+      var pluginsRoot = Quickshell.shellDir + "/Plugins";
+      var scanProc = Qt.createQmlObject(`
+        import QtQuick
+        import Quickshell.Io
+        Process {
+          command: ["sh", "-c", "find '${pluginsRoot}' -mindepth 2 -maxdepth 2 -name manifest.json -type f"]
+          stdout: StdioCollector {}
+        }
+      `, root, "ScanBundled");
 
-        pending++;
-        var copyProc = Qt.createQmlObject(`
-          import QtQuick
-          import Quickshell.Io
-          Process {
-            command: ["sh", "-c", "test -d '${targetDir}' || mkdir -p '${targetDir}' && cp -r '${srcDir}/.' '${targetDir}/'"]
-          }
-        `, root, "CopyPlugin_" + pluginId);
-
-        copyProc.exited.connect((function (proc) {
-          return function () {
-            proc.destroy();
-            pending--;
-            if (pending === 0) {
-              root.writeSeedJson(sourceUrl, hash);
-            }
-          };
-        })(copyProc));
-
-        copyProc.running = true;
-      }
+      scanProc.exited.connect(function () {
+        var out = (String(scanProc.stdout.text || "")).trim();
+        scanProc.destroy();
+        var paths = out ? out.split("\n") : [];
+        root._readBundledManifests(paths, sourceUrl, hash);
+      });
+      scanProc.running = true;
 
       probeProcess.destroy();
     });
 
     probeProcess.running = true;
+  }
+
+  // Read each bundled manifest.json (cat → JSON.parse), collecting
+  // {dirName, id, defaultEnabled}, then materialize all in parallel.
+  function _readBundledManifests(paths, sourceUrl, hash) {
+    var manifests = [];
+    var pending = 0;
+
+    if (paths.length === 0) {
+      root._materializeBundled(manifests, sourceUrl, hash);
+      return;
+    }
+
+    for (var i = 0; i < paths.length; i++) {
+      var manifestPath = paths[i];
+      pending++;
+      var catProc = Qt.createQmlObject(`
+        import QtQuick
+        import Quickshell.Io
+        Process {
+          command: ["cat", "${manifestPath}"]
+          stdout: StdioCollector {}
+        }
+      `, root, "ReadManifest_" + i);
+
+      catProc.exited.connect((function (proc, path) {
+        return function () {
+          var text = String(proc.stdout.text || "");
+          proc.destroy();
+          try {
+            var m = JSON.parse(text);
+            if (m && m.id) {
+              var dirName = path.split("/").slice(-2)[0];
+              manifests.push({
+                               "id": dirName,
+                               "manifestId": m.id,
+                               "defaultEnabled": (m.defaultEnabled === undefined) ? false : !!m.defaultEnabled
+                             });
+            }
+          } catch (e) {
+            Logger.w("PluginRegistry", "Malformed bundled manifest:", path, e);
+          }
+          pending--;
+          if (pending === 0) {
+            root._materializeBundled(manifests, sourceUrl, hash);
+          }
+        };
+      })(catProc, manifestPath));
+
+      catProc.running = true;
+    }
+  }
+
+  // Materialize each discovered plugin dir into the user plugins area,
+  // then write the seed JSON with per-plugin default states.
+  function _materializeBundled(manifests, sourceUrl, hash) {
+    var states = [];
+    var pending = 0;
+
+    if (manifests.length === 0) {
+      root.writeSeedJson(sourceUrl, hash, states);
+      return;
+    }
+
+    for (var i = 0; i < manifests.length; i++) {
+      var pluginId = manifests[i].id;
+      var compositeKey = hash + ":" + pluginId;
+      var targetDir = root.pluginsDir + "/" + compositeKey;
+      var srcDir = Quickshell.shellDir + "/Plugins/" + pluginId;
+
+      pending++;
+      var copyProc = Qt.createQmlObject(`
+        import QtQuick
+        import Quickshell.Io
+        Process {
+          command: ["sh", "-c", "test -d '${targetDir}' || mkdir -p '${targetDir}' && cp -r '${srcDir}/.' '${targetDir}/'"]
+        }
+      `, root, "CopyPlugin_" + pluginId);
+
+      copyProc.exited.connect((function (proc, entry) {
+        return function () {
+          proc.destroy();
+          states.push({
+                        "id": entry.manifestId,
+                        "enabled": entry.defaultEnabled
+                      });
+          pending--;
+          if (pending === 0) {
+            root.writeSeedJson(sourceUrl, hash, states);
+          }
+        };
+      })(copyProc, manifests[i]));
+
+      copyProc.running = true;
+    }
   }
 
   // Write seeded plugins.json with composite keys for bundled plugins.
@@ -336,7 +420,7 @@ Singleton {
   // enabled:false and no sources were listed.
   // Note: seed JSON is ASCII-safe (hex hash, file:// URL, plain keys), so
   // Qt.btoa is safe here.
-  function writeSeedJson(sourceUrl, hash) {
+  function writeSeedJson(sourceUrl, hash, states) {
     var seed = {
       "version": root.currentVersion,
       "sources": [
@@ -358,24 +442,12 @@ Singleton {
       ],
       "states": ({})
     };
-    seed.states[hash + ":atmosphera-icons"] = {
-      "enabled": true,
-      "sourceUrl": sourceUrl
-    };
-    seed.states[hash + ":atmosphera-wallpapers"] = {
-      "enabled": true,
-      "sourceUrl": sourceUrl
-    };
-    seed.states[hash + ":demo-custom-lockscreen"] = {
-      "enabled": true,
-      "sourceUrl": sourceUrl
-    };
-    // Materialized but not auto-enabled: the map is niri-specific and its
-    // bar widget needs qt6-niriqml installed.
-    seed.states[hash + ":niri-windows-map"] = {
-      "enabled": false,
-      "sourceUrl": sourceUrl
-    };
+    for (var i = 0; i < states.length; i++) {
+      seed.states[hash + ":" + states[i].id] = {
+        "enabled": !!states[i].enabled,
+        "sourceUrl": sourceUrl
+      };
+    }
 
     var b64 = Qt.btoa(JSON.stringify(seed));
     var writerProc = Qt.createQmlObject(`

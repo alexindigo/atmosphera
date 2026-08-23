@@ -5,7 +5,11 @@
   "author": "Atmosphera",
   "license": "GPL-3.0",
   "description": "Built-in wallpaper collection",
-  "tags": ["Wallpapers", "Built-in"],
+  "defaultEnabled": true,
+  "tags": [
+    "Wallpapers",
+    "Built-in"
+  ],
   "entryPoints": {
     "wallpapers": "."
   }
