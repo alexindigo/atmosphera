@@ -1,5 +1,49 @@
 # Changelog
 
+## [0.6.1] — 2026-08-23
+
+### 2026-08-23
+
+**Feature**
+
+Plugin management is now scriptable over IPC: `plugin list`,
+`enable`, `disable`, `install`, and `uninstall` accept bare plugin ids
+(no composite-key juggling) and auto-install from the catalog source when
+needed — so enabling a bundled or registry plugin is a one-liner from
+scripts and keybindings. The bundled-plugin bootstrap no longer uses a
+hardcoded list: it scans `Plugins/*/manifest.json` and honors each
+manifest's new `defaultEnabled` field, so adding a bundled plugin is just
+adding its directory. The Niri Windows Map moved out of the shell repo
+into the revived atmosphera-plugins registry — it installs from the
+Available tab or IPC, and uninstalling returns it to Available, marked
+Built-in.
+
+- feat(ipc): plugin management over IPC — list/enable/disable/install/uninstall (`996412473`)
+- refactor(plugins): scan bundled plugins from manifests instead of hardcoding (`e56b489ec`)
+- feat(plugins): move niri-windows-map to the atmosphera-plugins repo (`60d55533a`)
+
+**Fix**
+
+Uninstalling a plugin no longer targets the wrong directory or crashes on
+failure: the uninstall path used the loader's source-tree directory for
+built-in plugins (a root-owned path) and its error branch referenced an
+undefined variable. Both fixed — uninstall removes the user-owned copy and
+reports failures properly. Also fixed the first-run seed so the Windows
+Map plugin is materialized with the other bundled plugins.
+
+- fix(plugins): uninstall removed the wrong directory and its error path crashed (`519bf19d3`)
+- fix(plugins): include niri-windows-map in the first-run bundled seed (`61e02c149`)
+
+### 2026-08-22
+
+**Docs**
+
+Session meta packages `atmosphera-niri` and `atmosphera-mangowc` were added
+to the install docs — one AUR command pulls the shell plus the compositor
+and its IPC module.
+
+- docs: session meta packages atmosphera-niri / atmosphera-mangowc (`a0fd11067`)
+
 ## [0.6.0] — 2026-08-22
 
 ### 2026-08-22
