@@ -34,7 +34,7 @@ import qs.Services.Hardware
 import qs.Services.Keyboard
 import qs.Services.Location
 import qs.Services.Networking
-import qs.Services.Noctalia
+import qs.Services
 import qs.Services.Plugins
 import qs.Services.Power
 import qs.Services.Session
@@ -122,7 +122,7 @@ ShellRoot {
           PowerProfileService.init();
           HostService.init();
           NotificationRulesService.init();
-          GitHubService.init();
+          Version.init();
           CustomButtonIPCService.init();
           IPCService.init(screenDetector);
 
@@ -187,7 +187,7 @@ ShellRoot {
     onTriggered: {
       HooksService.init();
       FontService.init();
-      UpdateService.init();
+      Version.init();
       HardwareHealthService.init();
       showWizardOrChangelog();
     }
@@ -208,7 +208,7 @@ ShellRoot {
     } else if (Settings.shouldOpenSetupWizard) {
       // Show setup wizard
     } else {
-      UpdateService.checkChangelogPrompt();
+      Version.checkChangelogPrompt();
       return;
     }
 

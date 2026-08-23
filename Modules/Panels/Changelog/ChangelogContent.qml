@@ -3,17 +3,17 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
-import qs.Services.Noctalia
+import qs.Services
 import qs.Widgets
 
 ColumnLayout {
   id: contentRoot
   spacing: Style.marginM
 
-  readonly property string currentVersion: UpdateService.currentVersion
-  readonly property string previousVersion: UpdateService.previousVersion
+  readonly property string currentVersion: Version.currentVersion
+  readonly property string previousVersion: Version.previousVersion
   readonly property bool hasPreviousVersion: previousVersion && previousVersion.length > 0
-  readonly property string releaseContent: UpdateService.releaseContent || ""
+  readonly property string releaseContent: Version.releaseContent || ""
 
   function colorizeHeaders(text) {
     if (!text)
@@ -42,7 +42,7 @@ ColumnLayout {
 
       NText {
         text: I18n.tr("changelog.panel.title", {
-                        "version": currentVersion || UpdateService.currentVersion
+                        "version": currentVersion || Version.currentVersion
                       })
         pointSize: Style.fontSizeXL
         font.weight: Style.fontWeightBold
@@ -84,7 +84,7 @@ ColumnLayout {
       }
 
       NText {
-        text: currentVersion || UpdateService.currentVersion
+        text: currentVersion || Version.currentVersion
         font.weight: Style.fontWeightSemiBold
         color: Color.mPrimary
       }
@@ -108,8 +108,8 @@ ColumnLayout {
       spacing: Style.marginM
 
       NText {
-        visible: UpdateService.fetchError !== ""
-        text: UpdateService.fetchError
+        visible: Version.fetchError !== ""
+        text: Version.fetchError
         color: Color.mError
         wrapMode: Text.WordWrap
       }

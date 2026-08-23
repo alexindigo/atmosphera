@@ -2,7 +2,7 @@ import QtQuick
 import Quickshell
 import qs.Commons
 import qs.Services.Keyboard
-import qs.Services.Noctalia
+import qs.Services
 
 Item {
   id: root

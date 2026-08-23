@@ -5,7 +5,7 @@ import Quickshell
 import Quickshell.Wayland
 import qs.Commons
 import qs.Modules.MainScreen
-import qs.Services.Noctalia
+import qs.Services
 import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
@@ -86,7 +86,7 @@ SmartPanel {
         Settings.data.general.scaleRatio = selectedScaleRatio;
         Settings.data.bar.position = selectedBarPosition;
 
-        UpdateService.markChangelogSeen(UpdateService.currentVersion);
+        Version.markChangelogSeen(Version.currentVersion);
 
         Settings.saveImmediate();
         Logger.i("SetupWizard", "Setup completed successfully, waiting for settings save confirmation");

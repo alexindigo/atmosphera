@@ -5,7 +5,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Modules.Panels.Settings
-import qs.Services.Noctalia
+import qs.Services
 import qs.Services.Plugins
 import qs.Services.UI
 
@@ -412,9 +412,9 @@ Singleton {
   function checkPluginCompatibility(metadata) {
     var minAtmo = metadata.minAtmospheraVersion;
     if (minAtmo) {
-      if (!UpdateService.versionKnown) {
+      if (!Version.versionKnown) {
         Logger.w("PluginService", "Shell version unknown — skipping minAtmospheraVersion gate for", metadata.id || metadata.name);
-      } else if (UpdateService.compareVersions(minAtmo, UpdateService.currentVersion) > 0) {
+      } else if (Version.compareVersions(minAtmo, Version.currentVersion) > 0) {
         return {
           compatible: false,
           track: "atmosphera",
@@ -425,10 +425,10 @@ Singleton {
 
     var minNoct = metadata.minNoctaliaVersion;
     if (minNoct) {
-      var parts = UpdateService.parseVersionParts(minNoct);
+      var parts = Version.parseVersionParts(minNoct);
       if (parts.length === 0) {
         Logger.w("PluginService", "Unparseable minNoctaliaVersion", minNoct, "— treating as compatible");
-      } else if (parts[0] > UpdateService.noctaliaCompatMajor) {
+      } else if (parts[0] > Version.noctaliaCompatMajor) {
         return {
           compatible: false,
           track: "noctalia",
@@ -1743,7 +1743,7 @@ Singleton {
   // guaranteed by Registry.validateManifest (/^\d+\.\d+\.\d+$/). Do NOT pass
   // shell/product versions: those come from git describe or the packaged VERSION file,
   // may carry a "v" prefix or git metadata, and `parseInt(x) || 0` silently substitutes
-  // 0 for the unparseable segment. Use UpdateService.compareVersions for those.
+  // 0 for the unparseable segment. Use Version.compareVersions for those.
   function compareVersions(a, b) {
     var aParts = a.split('.').map(function (x) {
       return parseInt(x) || 0;

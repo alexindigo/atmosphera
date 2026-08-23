@@ -4,7 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Modules.MainScreen
-import qs.Services.Noctalia
+import qs.Services
 import qs.Services.UI
 import qs.Widgets
 
@@ -51,8 +51,8 @@ SmartPanel {
   }
 
   onClosed: {
-    if (UpdateService && UpdateService.changelogCurrentVersion) {
-      UpdateService.markChangelogSeen(UpdateService.changelogCurrentVersion);
+    if (UpdateService && Version.changelogCurrentVersion) {
+      Version.markChangelogSeen(Version.changelogCurrentVersion);
     }
   }
 }

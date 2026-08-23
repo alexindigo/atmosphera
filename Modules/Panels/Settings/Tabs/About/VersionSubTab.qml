@@ -5,7 +5,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Services.Compositor
-import qs.Services.Noctalia
+import qs.Services
 import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
@@ -28,20 +28,20 @@ ColumnLayout {
     running: false
   }
 
-  property string latestVersion: GitHubService.latestVersion
-  property string currentVersion: UpdateService.currentVersion
+  property string latestVersion: Version.latestVersion
+  property string currentVersion: Version.currentVersion
   property string commitInfo: ""
   property string qsVersion: ""
   property string qsRevision: ""
 
-  readonly property bool isGitVersion: UpdateService.isGitVersion
+  readonly property bool isGitVersion: Version.isGitVersion
   readonly property int gigaB: (1024 * 1024 * 1024)
   readonly property int gigaD: (1000 * 1000 * 1000)
 
   // Compact display: "0.4.0.r75.g9615d8519" → "v0.4.0-r75"; describe
   // "v0.4.0-75-g9615d851" → "v0.4.0-r75"; anything else as-is (v-prefixed)
   readonly property string displayVersion: formatVersion(root.currentVersion)
-  readonly property string commitDisplay: UpdateService.versionCommitHash(root.currentVersion) || root.commitInfo
+  readonly property string commitDisplay: Version.versionCommitHash(root.currentVersion) || root.commitInfo
 
   function formatVersion(v) {
     var m = v.match(/^v?(\d+\.\d+\.\d+)[.-]r?(\d+)[.-]g([0-9a-f]+)/);
@@ -55,40 +55,40 @@ ColumnLayout {
   // builds compare version tags. Only meaningful for packaged installs —
   // dev checkouts manage their own git state.
   readonly property bool updateAvailable: {
-    if (!UpdateService.versionFromPackage)
+    if (!Version.versionFromPackage)
       return false;
     if (root.isGitVersion) {
-      if (!root.commitDisplay || !GitHubService.latestMainCommit)
+      if (!root.commitDisplay || !Version.latestMainCommit)
         return false;
-      return !GitHubService.latestMainCommit.startsWith(root.commitDisplay);
+      return !Version.latestMainCommit.startsWith(root.commitDisplay);
     }
     if (!root.latestVersion || !root.currentVersion || root.latestVersion === I18n.tr("common.unknown"))
       return false;
-    return UpdateService.compareVersions(root.latestVersion, root.currentVersion) > 0;
+    return Version.compareVersions(root.latestVersion, root.currentVersion) > 0;
   }
   readonly property bool isUpToDate: {
-    if (!UpdateService.versionFromPackage)
+    if (!Version.versionFromPackage)
       return false;
     if (root.isGitVersion) {
-      if (!root.commitDisplay || !GitHubService.latestMainCommit)
+      if (!root.commitDisplay || !Version.latestMainCommit)
         return false;
-      return GitHubService.latestMainCommit.startsWith(root.commitDisplay);
+      return Version.latestMainCommit.startsWith(root.commitDisplay);
     }
     if (!root.latestVersion || !root.currentVersion || root.latestVersion === I18n.tr("common.unknown"))
       return false;
-    return UpdateService.compareVersions(root.latestVersion, root.currentVersion) <= 0;
+    return Version.compareVersions(root.latestVersion, root.currentVersion) <= 0;
   }
 
   readonly property bool qsUpdateAvailable: {
-    if (!GitHubService.latestQSVersion || !root.qsVersion || GitHubService.latestQSVersion === I18n.tr("common.unknown"))
+    if (!Version.latestQSVersion || !root.qsVersion || Version.latestQSVersion === I18n.tr("common.unknown"))
       return false;
-    return UpdateService.compareVersions(GitHubService.latestQSVersion, root.qsVersion) > 0;
+    return Version.compareVersions(Version.latestQSVersion, root.qsVersion) > 0;
   }
 
   readonly property bool qsIsUpToDate: {
-    if (!GitHubService.latestQSVersion || !root.qsVersion || GitHubService.latestQSVersion === I18n.tr("common.unknown"))
+    if (!Version.latestQSVersion || !root.qsVersion || Version.latestQSVersion === I18n.tr("common.unknown"))
       return false;
-    return UpdateService.compareVersions(GitHubService.latestQSVersion, root.qsVersion) <= 0;
+    return Version.compareVersions(Version.latestQSVersion, root.qsVersion) <= 0;
   }
 
   // System info properties
@@ -136,7 +136,7 @@ ColumnLayout {
     }
     return {
       instanceId: "",
-      version: UpdateService.currentVersion,
+      version: Version.currentVersion,
       compositor: "",
       os: HostService.osPretty || "Unknown",
       ramGb: Math.round((root.getModule("Memory")?.result?.total || 0) / root.gigaB),
@@ -600,7 +600,7 @@ ColumnLayout {
 
         NText {
           visible: root.qsUpdateAvailable
-          text: GitHubService.latestQSVersion
+          text: Version.latestQSVersion
           color: Color.mOnSurface
           font.weight: Style.fontWeightBold
         }
