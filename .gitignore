@@ -16,3 +16,4 @@ patches/*.patch
 
 # Rejects from partial patch application
 *.rej
+.opencode/
