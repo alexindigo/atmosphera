@@ -1124,11 +1124,11 @@ Singleton {
   IpcHandler {
     target: "niriWindowsMap"
 
-    // The composite key is derived from the runtime install path — the
-    // hash differs between the dev tree and the installed shell, so it
-    // must be computed, never hardcoded
+    // The composite key is resolved from the installed registry or the
+    // catalog source — never hardcoded to a source URL, so it works no
+    // matter which source the plugin was installed from
     function _mapKey() {
-      return PluginRegistry.generateCompositeKey("niri-windows-map", "file://" + Quickshell.shellDir + "/Plugins");
+      return root._resolvePluginKey("niri-windows-map");
     }
 
     function open() {

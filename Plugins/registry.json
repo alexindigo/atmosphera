@@ -2,21 +2,6 @@
   "version": 1,
   "plugins": [
     {
-      "id": "niri-windows-map",
-      "name": "Niri Windows Map",
-      "version": "1.0.0",
-      "official": true,
-      "author": "Atmosphera",
-      "description": "Spatial overview map of niri windows — workspaces as rows, columns and tiles laid out like niri's scrolling layout. Click a tile to focus it, click a row to switch workspace.",
-      "license": "GPL-3.0",
-      "tags": [
-        "Panel",
-        "Niri",
-        "Overview",
-        "Built-in"
-      ]
-    },
-    {
       "id": "atmosphera-icons",
       "name": "Atmosphera Icons",
       "version": "1.0.0",
