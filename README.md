@@ -88,24 +88,17 @@ git clone https://github.com/alexindigo/aur-atmosphera.git
 cd aur-atmosphera && makepkg -si
 ```
 
-> **Note — upstream Quickshell migration branch.** Atmosphera now runs on
+> **Note — upstream Quickshell.** Since v0.6.0, Atmosphera runs on
 > **upstream [quickshell](https://git.outfoxxed.me/quickshell/quickshell)**
-> (not the `noctalia-qs` fork). That switch lives on the
-> `feat/niri-overview-map` branch and is **not yet on the AUR** — the AUR
-> packages above still target the previous dependency set. To run the
-> migration branch, use the manual install below.
+> (≥ 0.3.0), not the `noctalia-qs` fork. Both AUR packages above carry the
+> migration; the compositor IPC modules are on the AUR as `qt6-niriqml` and
+> `qt6-mangowcqml`.
 
-### Manual install (migration branch, no AUR)
+### Manual install (from source, no AUR helper)
 
-This installs the `feat/niri-overview-map` branch directly, tracking upstream
-Quickshell plus the new compositor IPC libraries. No AUR packages required
-for the shell itself (the QML module dependencies are built from source).
+For installing the git `main` branch without an AUR helper.
 
 **1. Install runtime dependencies**
-
-The packages below come from the official repos / AUR helper as usual. The
-two IPC modules (`qt6-niriqml`, `qt6-mangowcqml`) are built from source in
-steps 2–3 since they are not yet on the AUR.
 
 ```bash
 # from the official repos
@@ -113,11 +106,11 @@ sudo pacman -S --needed quickshell qt6-base qt6-declarative qt6-multimedia \
   imagemagick brightnessctl ffmpeg python python-dbus python-gobject \
   wlr-randr cliphist wlsunset
 
-# QML helper libs (AUR or build from source)
-yay -S --needed qt6-dbusqml qt6-xdgiconqml-git
+# QML helper libs from the AUR (or build from source)
+yay -S --needed qt6-dbusqml qt6-xdgiconqml-git qt6-niriqml qt6-mangowcqml
 ```
 
-**2. Build and install the niri IPC module (niri sessions)**
+**2. Build and install the niri IPC module (niri sessions, from source)**
 
 ```bash
 git clone https://github.com/alexindigo/niriqml.git
@@ -128,7 +121,7 @@ sudo cmake --install build --prefix /usr   # installs libniriqml + QML module
 cd ..
 ```
 
-**3. Build and install the mangowc IPC module (MangoWC sessions)**
+**3. Build and install the mangowc IPC module (MangoWC sessions, from source)**
 
 ```bash
 git clone https://github.com/alexindigo/mangowcqml.git
@@ -142,7 +135,7 @@ cd ..
 **4. Install the shell**
 
 ```bash
-git clone -b feat/niri-overview-map https://github.com/alexindigo/atmosphera.git
+git clone https://github.com/alexindigo/atmosphera.git
 cd atmosphera
 
 # shell tree (plain QML — no build step)
@@ -189,7 +182,7 @@ order of support depth.
 ### Niri
 
 - **IPC module:** `qt6-niriqml` (built from source in step 2 of the manual
-  install; not yet on AUR). Provides workspaces, windows, focus, and
+  install; AUR: `qt6-niriqml`). Provides workspaces, windows, focus, and
   overview state over niri's socket. Detection is automatic via
   `NIRI_SOCKET`.
 - **Session wiring:** run the bundled setup script once:
@@ -218,7 +211,7 @@ order of support depth.
 ### MangoWC
 
 - **IPC module:** `qt6-mangowcqml` (built from source in step 3 of the
-  manual install; not yet on AUR). Talks to mangowc's `mmsg` JSON socket for
+  manual install; AUR: `qt6-mangowcqml`). Talks to mangowc's `mmsg` JSON socket for
   workspaces (tags), windows, focus, keymode, and keyboard layout. Detection
   requires `XDG_CURRENT_DESKTOP=mango`.
 - **Session wiring:** mangowc's `config.conf` has **no `exec-once`/autostart
