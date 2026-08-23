@@ -268,8 +268,8 @@ Singleton {
   }
 
   // Called by shell.qml to show changelog after init
-  function checkTelemetryWizardOrChangelog() {
-    Logger.d("UpdateService", "checkTelemetryWizardOrChangelog called, stateLoaded:", changelogStateLoaded);
+  function checkChangelogPrompt() {
+    Logger.d("UpdateService", "checkChangelogPrompt called, stateLoaded:", changelogStateLoaded);
     if (!changelogStateLoaded) {
       Logger.d("UpdateService", "State not loaded yet, setting pending flag");
       pendingShowRequest = true;

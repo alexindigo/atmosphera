@@ -207,7 +207,7 @@ ShellRoot {
     } else if (Settings.shouldOpenSetupWizard) {
       // Show setup wizard
     } else {
-      UpdateService.checkTelemetryWizardOrChangelog();
+      UpdateService.checkChangelogPrompt();
       return;
     }
 
