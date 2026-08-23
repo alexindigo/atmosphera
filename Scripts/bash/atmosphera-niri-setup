@@ -109,5 +109,5 @@ else
 fi
 
 echo "Boot note: ensure your niri startup launches the shell, e.g."
-echo '  spawn-at-startup "qs" "-c" "atmosphera"'
+echo '  spawn-at-startup "qs" "-n" "-c" "atmosphera"'
 echo "in your own config.kdl (atmosphera never modifies it)."

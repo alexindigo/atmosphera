@@ -1,8 +1,8 @@
 pragma Singleton
+import PipewireSpectrum
 
 import QtQuick
 import Quickshell
-import Quickshell.Services.Pipewire
 import qs.Commons
 import qs.Services.UI
 
@@ -42,9 +42,8 @@ Singleton {
   property var values: []
   property bool isIdle: true
 
-  PwAudioSpectrum {
+  PipewireSpectrum {
     id: spectrum
-    node: Pipewire.defaultAudioSink
     enabled: root._shouldRun
     // TODO Uncomment this in may 2026
     // bandCount: Settings.data.audio.spectrumMirrored ? 32 : 64
@@ -63,7 +62,7 @@ Singleton {
     }
   }
 
-  // TODO Remove in may 2026 - temporary until noctalia-qs is fully propagated
+  // Spectrum mirrored band count — set via bandCount or legacy barCount
   Connections {
     target: Settings.data.audio
     function onSpectrumMirroredChanged() {

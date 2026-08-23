@@ -10,6 +10,7 @@ import qs.Commons
 // All panels
 import qs.Modules.Bar
 import qs.Modules.Bar.Extras
+import qs.Modules.Dialog
 import qs.Modules.Panels.Audio
 import qs.Modules.Panels.Battery
 import qs.Modules.Panels.Bluetooth
@@ -29,7 +30,6 @@ import qs.Modules.Panels.SetupWizard
 import qs.Modules.Panels.SystemStats
 import qs.Modules.Panels.Tray
 import qs.Modules.Panels.Wallpaper
-import qs.Modules.Dialog
 import qs.Services.Compositor
 import qs.Services.Power
 import qs.Services.UI
@@ -83,7 +83,7 @@ PanelWindow {
   property bool isAnyPanelOpen: PanelService.openedPanel !== null
 
   color: {
-    if (dimmerOpacity > 0 && isPanelOpen && !isPanelClosing) {
+    if (dimmerOpacity > 0 && isPanelOpen && !isPanelClosing && (PanelService.openedPanel?.dimEnabled !== false)) {
       return Qt.alpha(Color.mShadow, dimmerOpacity);
     }
     return "transparent";
@@ -132,7 +132,7 @@ PanelWindow {
 
     // Only include regions that are actually needed
     // panelRegions is handled by PanelService, bar is local to this screen
-    regions: [barMaskRegion, backgroundMaskRegion]
+    regions: [barMaskRegion, backgroundMaskRegion, coexistingPanelMaskRegion]
 
     // Bar region - subtract bar area from mask (only if bar should be shown on this screen)
     Region {
@@ -193,13 +193,31 @@ PanelWindow {
     }
 
     // Background region for click-to-close - reactive sizing
-    // Uses isAnyPanelOpen so clicking on any screen's background closes the panel
+    // Uses isAnyPanelOpen so clicking on any screen's background closes the panel.
+    // Panels can opt out via closeOnClickOutside: false (e.g. overlay maps that
+    // need click-through to windows underneath).
     Region {
       id: backgroundMaskRegion
+      readonly property bool active: root.isAnyPanelOpen && (PanelService.openedPanel?.closeOnClickOutside !== false)
       x: 0
       y: 0
-      width: root.isAnyPanelOpen ? root.width : 0
-      height: root.isAnyPanelOpen ? root.height : 0
+      width: active ? root.width : 0
+      height: active ? root.height : 0
+      intersection: Intersection.Subtract
+    }
+
+    // Coexisting (non-exclusive) panel region — unblock input on the panel's
+    // rect so its contents are interactive (click, hover), while the rest of
+    // the screen stays click-through for closeOnClickOutside: false panels.
+    Region {
+      id: coexistingPanelMaskRegion
+      readonly property var xp: PanelService.coexistingPanel
+      readonly property var region: (xp && xp.screen === root.screen) ? xp.panelRegion : null
+      readonly property var geom: (region && region.visible) ? region.panelItem : null
+      x: geom ? geom.x : 0
+      y: geom ? geom.y : 0
+      width: geom ? geom.width : 0
+      height: geom ? geom.height : 0
       intersection: Intersection.Subtract
     }
   }
@@ -220,10 +238,10 @@ PanelWindow {
       width: (!barPlaceholder.isFramed && root.barShouldShow && !barPlaceholder.isHidden) ? barPlaceholder.width : 0
       height: (!barPlaceholder.isFramed && root.barShouldShow && !barPlaceholder.isHidden) ? barPlaceholder.height : 0
       radius: Style.radiusL
-      topLeftCorner: barPlaceholder.topLeftCornerState
-      topRightCorner: barPlaceholder.topRightCornerState
-      bottomLeftCorner: barPlaceholder.bottomLeftCornerState
-      bottomRightCorner: barPlaceholder.bottomRightCornerState
+      topLeftRadius: barPlaceholder.topLeftCornerState === -1 ? 0 : undefined
+      topRightRadius: barPlaceholder.topRightCornerState === -1 ? 0 : undefined
+      bottomLeftRadius: barPlaceholder.bottomLeftCornerState === -1 ? 0 : undefined
+      bottomRightRadius: barPlaceholder.bottomRightCornerState === -1 ? 0 : undefined
     }
 
     // ── Framed bar: full screen minus rounded hole ──
@@ -251,10 +269,10 @@ PanelWindow {
       width: backgroundBlur.panelBg ? Math.round(backgroundBlur.panelBg.width) : 0
       height: backgroundBlur.panelBg ? Math.round(backgroundBlur.panelBg.height) : 0
       radius: Style.radiusL
-      topLeftCorner: backgroundBlur.panelBg ? backgroundBlur.panelBg.topLeftCornerState : CornerState.Normal
-      topRightCorner: backgroundBlur.panelBg ? backgroundBlur.panelBg.topRightCornerState : CornerState.Normal
-      bottomLeftCorner: backgroundBlur.panelBg ? backgroundBlur.panelBg.bottomLeftCornerState : CornerState.Normal
-      bottomRightCorner: backgroundBlur.panelBg ? backgroundBlur.panelBg.bottomRightCornerState : CornerState.Normal
+      topLeftRadius: (backgroundBlur.panelBg ? backgroundBlur.panelBg.topLeftCornerState : 0) === -1 ? 0 : undefined
+      topRightRadius: (backgroundBlur.panelBg ? backgroundBlur.panelBg.topRightCornerState : 0) === -1 ? 0 : undefined
+      bottomLeftRadius: (backgroundBlur.panelBg ? backgroundBlur.panelBg.bottomLeftCornerState : 0) === -1 ? 0 : undefined
+      bottomRightRadius: (backgroundBlur.panelBg ? backgroundBlur.panelBg.bottomRightCornerState : 0) === -1 ? 0 : undefined
     }
 
     // Closing panel (coexists with opening panel during transition)
@@ -264,10 +282,23 @@ PanelWindow {
       width: backgroundBlur.closingPanelBg ? Math.round(backgroundBlur.closingPanelBg.width) : 0
       height: backgroundBlur.closingPanelBg ? Math.round(backgroundBlur.closingPanelBg.height) : 0
       radius: Style.radiusL
-      topLeftCorner: backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.topLeftCornerState : CornerState.Normal
-      topRightCorner: backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.topRightCornerState : CornerState.Normal
-      bottomLeftCorner: backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.bottomLeftCornerState : CornerState.Normal
-      bottomRightCorner: backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.bottomRightCornerState : CornerState.Normal
+      topLeftRadius: (backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.topLeftCornerState : 0) === -1 ? 0 : undefined
+      topRightRadius: (backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.topRightCornerState : 0) === -1 ? 0 : undefined
+      bottomLeftRadius: (backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.bottomLeftCornerState : 0) === -1 ? 0 : undefined
+      bottomRightRadius: (backgroundBlur.closingPanelBg ? backgroundBlur.closingPanelBg.bottomRightCornerState : 0) === -1 ? 0 : undefined
+    }
+
+    // Coexisting (non-exclusive) panel — e.g. persistent overlay map
+    Region {
+      x: backgroundBlur.coexistingPanelBg ? Math.round(backgroundBlur.coexistingPanelBg.x) : 0
+      y: backgroundBlur.coexistingPanelBg ? Math.round(backgroundBlur.coexistingPanelBg.y) : 0
+      width: backgroundBlur.coexistingPanelBg ? Math.round(backgroundBlur.coexistingPanelBg.width) : 0
+      height: backgroundBlur.coexistingPanelBg ? Math.round(backgroundBlur.coexistingPanelBg.height) : 0
+      radius: Style.radiusL
+      topLeftRadius: (backgroundBlur.coexistingPanelBg ? backgroundBlur.coexistingPanelBg.topLeftCornerState : 0) === -1 ? 0 : undefined
+      topRightRadius: (backgroundBlur.coexistingPanelBg ? backgroundBlur.coexistingPanelBg.topRightCornerState : 0) === -1 ? 0 : undefined
+      bottomLeftRadius: (backgroundBlur.coexistingPanelBg ? backgroundBlur.coexistingPanelBg.bottomLeftCornerState : 0) === -1 ? 0 : undefined
+      bottomRightRadius: (backgroundBlur.coexistingPanelBg ? backgroundBlur.coexistingPanelBg.bottomRightCornerState : 0) === -1 ? 0 : undefined
     }
   }
 
@@ -588,6 +619,16 @@ PanelWindow {
         if (!cp || cp.screen !== root.screen || cp.blurEnabled === false)
           return null;
         var region = cp.panelRegion;
+        return (region && region.visible) ? region.panelItem : null;
+      }
+
+      // Panel background geometry for a non-exclusive coexisting panel
+      // (e.g. persistent overlay map) so blur renders behind it too.
+      readonly property var coexistingPanelBg: {
+        var xp = PanelService.coexistingPanel;
+        if (!xp || xp.screen !== root.screen || xp.blurEnabled === false)
+          return null;
+        var region = xp.panelRegion;
         return (region && region.visible) ? region.panelItem : null;
       }
 

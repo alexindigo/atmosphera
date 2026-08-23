@@ -973,9 +973,15 @@ Singleton {
   IpcHandler {
     target: "inputmethod"
 
-    function toggle() { InputMethodService.toggle(); }
-    function setIM(name: string) { InputMethodService.setCurrentIM(name); }
-    function setGroup(name: string) { InputMethodService.setGroup(name); }
+    function toggle() {
+      InputMethodService.toggle();
+    }
+    function setIM(name: string) {
+      InputMethodService.setCurrentIM(name);
+    }
+    function setGroup(name: string) {
+      InputMethodService.setGroup(name);
+    }
 
     // Replicates the old fcitx5-input script's toggle semantics:
     // first press → switch to the given IM (auto-switching group first);
@@ -987,6 +993,37 @@ Singleton {
         InputMethodService.setGroup(group);
         InputMethodService.setCurrentIM(name);
       }
+    }
+  }
+
+  IpcHandler {
+    target: "niriWindowsMap"
+
+    // The composite key is derived from the runtime install path — the
+    // hash differs between the dev tree and the installed shell, so it
+    // must be computed, never hardcoded
+    function _mapKey() {
+      return PluginRegistry.generateCompositeKey("niri-windows-map", "file://" + Quickshell.shellDir + "/Plugins");
+    }
+
+    function open() {
+      root.screenDetector.withCurrentScreen(function (screen) {
+        PluginService.openPluginPanel(_mapKey(), screen);
+      });
+    }
+
+    function close() {
+      root.screenDetector.withCurrentScreen(function (screen) {
+        var api = PluginService.getPluginAPI(_mapKey());
+        if (api)
+          api.closePanel(screen);
+      });
+    }
+
+    function toggle() {
+      root.screenDetector.withCurrentScreen(function (screen) {
+        PluginService.togglePluginPanel(_mapKey(), screen);
+      });
     }
   }
 }

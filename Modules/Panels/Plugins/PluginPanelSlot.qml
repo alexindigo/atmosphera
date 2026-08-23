@@ -23,13 +23,26 @@ SmartPanel {
   // Reference to the plugin content loader (set when panel content is created)
   property var contentLoader: null
 
-  // Pass through anchor properties from plugin panel content
-  panelAnchorHorizontalCenter: pluginInstance?.panelAnchorHorizontalCenter ?? false
+  // Pass through anchor properties from plugin panel content.
+  // If the plugin exposes a single `corner` position string, derive all
+  // four anchors from it (same pattern as ControlCenter/Dock/Launcher —
+  // one atomic value, four consistent reads, no torn intermediate state).
+  readonly property string _corner: pluginInstance?.corner ?? ""
+  panelAnchorHorizontalCenter: _corner !== "" ? _corner.endsWith("Center") : (pluginInstance?.panelAnchorHorizontalCenter ?? false)
   panelAnchorVerticalCenter: pluginInstance?.panelAnchorVerticalCenter ?? false
-  panelAnchorTop: pluginInstance?.panelAnchorTop ?? false
-  panelAnchorBottom: pluginInstance?.panelAnchorBottom ?? false
-  panelAnchorLeft: pluginInstance?.panelAnchorLeft ?? false
-  panelAnchorRight: pluginInstance?.panelAnchorRight ?? false
+  panelAnchorTop: _corner !== "" ? _corner.startsWith("top") : (pluginInstance?.panelAnchorTop ?? false)
+  panelAnchorBottom: _corner !== "" ? _corner.startsWith("bottom") : (pluginInstance?.panelAnchorBottom ?? false)
+  panelAnchorLeft: _corner !== "" ? _corner.endsWith("Left") : (pluginInstance?.panelAnchorLeft ?? false)
+  panelAnchorRight: _corner !== "" ? _corner.endsWith("Right") : (pluginInstance?.panelAnchorRight ?? false)
+
+  // Pass through SmartPanel behavior opt-outs when the plugin declares them
+  // (defaults preserve the standard modal panel behavior)
+  dimEnabled: pluginInstance?.dimEnabled ?? true
+  closeOnClickOutside: pluginInstance?.closeOnClickOutside ?? true
+  exclusiveKeyboard: pluginInstance?.exclusiveKeyboard ?? true
+  flattenScreenCorners: pluginInstance?.flattenScreenCorners ?? false
+  exclusiveOpen: pluginInstance?.exclusiveOpen ?? true
+  blurEnabled: pluginInstance?.blurEnabled ?? true
 
   // Panel background color
   panelBackgroundColor: pluginInstance?.panelBackgroundColor ?? Color.mSurface
@@ -164,12 +177,15 @@ SmartPanel {
     // Get plugin API
     var api = PluginService.getPluginAPI(pluginId);
 
-    // Use setSource with initial properties so pluginApi is available
-    // from the first binding evaluation (before onLoaded)
+    // Use setSource with initial properties so pluginApi and screen are
+    // available from the first binding evaluation (before onLoaded)
     root.contentLoader.active = true;
     root.contentLoader.setSource(component.url, api ? {
-                                                        "pluginApi": api
-                                                      } : {});
+                                                        "pluginApi": api,
+                                                        "screen": root.screen
+                                                      } : {
+                                   "screen": root.screen
+                                 });
 
     if (root.contentLoader.item) {
       root.pluginInstance = root.contentLoader.item;

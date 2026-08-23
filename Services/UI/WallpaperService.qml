@@ -67,6 +67,15 @@ Singleton {
   // Signal emitted when browse path changes for a screen
   signal browsePathChanged(string screenName, string path)
 
+  // Rescan when wallpaper pools register/unregister (plugin load happens
+  // after the boot-time scan, so pools would otherwise never reach the lists)
+  Connections {
+    target: WallpaperProviderRegistry
+    function onPoolsChanged() {
+      root.refreshWallpapersList();
+    }
+  }
+
   Timer {
     id: favoriteSchemeDebounceTimer
     interval: 450
@@ -1131,7 +1140,7 @@ Singleton {
   function _scanPoolDir(screenName, poolDir) {
     var proc = Qt.createQmlObject('import QtQuick; import Quickshell.Io; Process { command: ["find", "' + poolDir + '", "-maxdepth", "1", "-mindepth", "1", "-type", "f", "-iname", "*.jpg", "-o", "-iname", "*.png", "-o", "-iname", "*.jpeg", "-o", "-iname", "*.webp"]; stdout: StdioCollector {} }', root, "PoolScan_" + screenName);
     proc.exited.connect(function () {
-      var output = proc.stdout.text().trim();
+      var output = proc.stdout.text.trim();
       var state = root._pendingPoolScans[screenName];
       if (state) {
         if (output) {

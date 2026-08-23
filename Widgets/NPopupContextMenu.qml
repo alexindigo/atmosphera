@@ -251,13 +251,26 @@ PopupWindow {
           required property int index
 
           Layout.preferredWidth: parent.width
-          Layout.preferredHeight: modelData.visible !== false ? root.itemHeight : 0
+          Layout.preferredHeight: modelData.isSeparator === true ? 9 : (modelData.visible !== false ? root.itemHeight : 0)
           visible: modelData.visible !== false
           color: "transparent"
+
+          // Horizontal rule for separator rows
+          Rectangle {
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: Style.marginM
+            anchors.rightMargin: Style.marginM
+            height: 1
+            color: Color.mOutline
+            visible: modelData.isSeparator === true
+          }
 
           Rectangle {
             id: innerRect
             anchors.fill: parent
+            visible: modelData.isSeparator !== true
             color: mouseArea.containsMouse ? Color.mHover : "transparent"
             radius: Style.radiusS
             opacity: modelData.enabled !== false ? 1.0 : 0.5
@@ -275,8 +288,14 @@ PopupWindow {
               spacing: Style.marginS
 
               AtmoIcon {
-                visible: modelData.action !== undefined
+                // Explicit per-item icon wins over the action-derived
+                // fallback; reserveIconSpace keeps the slot occupied
+                // (transparent) so labels align with icon-bearing items
+                visible: modelData.icon !== undefined || modelData.action !== undefined || modelData.reserveIconSpace === true
+                opacity: (modelData.icon !== undefined || modelData.action !== undefined) ? 1.0 : 0.0
                 icon: {
+                  if (modelData.icon !== undefined)
+                    return modelData.icon;
                   if (!modelData.action)
                     return "";
                   switch (modelData.action) {
@@ -324,7 +343,7 @@ PopupWindow {
               id: mouseArea
               anchors.fill: parent
               hoverEnabled: true
-              enabled: (modelData.enabled !== false) && root.visible
+              enabled: (modelData.enabled !== false) && root.visible && modelData.isSeparator !== true
               cursorShape: Qt.PointingHandCursor
 
               onClicked: {

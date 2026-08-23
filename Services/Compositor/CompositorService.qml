@@ -19,6 +19,8 @@ Singleton {
   property bool isExtWorkspace: false
   property bool isScroll: false
 
+  readonly property var niriBackend: isNiri ? backend : null
+
   // Generic workspace and window data
   property ListModel workspaces: ListModel {}
   property ListModel windows: ListModel {}

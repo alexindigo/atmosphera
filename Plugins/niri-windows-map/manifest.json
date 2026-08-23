@@ -1,0 +1,26 @@
+{
+  "id": "niri-windows-map",
+  "name": "Niri Windows Map",
+  "version": "1.0.0",
+  "author": "Atmosphera",
+  "license": "GPL-3.0",
+  "description": "Spatial overview map of niri windows — workspaces as rows, columns and tiles laid out like niri's scrolling layout. Click a tile to focus it, click a row to switch workspace.",
+  "tags": ["Panel", "Niri", "Overview", "Built-in"],
+  "entryPoints": {
+    "panel": "Panel.qml",
+    "barWidget": "BarWidget.qml",
+    "settings": "Settings.qml"
+  },
+  "metadata": {
+    "defaultSettings": {
+      "panelSize": "regular",
+      "corner": "bottomRight",
+      "hideIcons": false,
+      "hideOnClick": false,
+      "terminalIcons": true,
+      "browserIcons": true,
+      "audioIndicators": true,
+      "hoverInfo": true
+    }
+  }
+}

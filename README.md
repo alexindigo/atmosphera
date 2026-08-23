@@ -45,7 +45,20 @@ https://github.com/user-attachments/assets/bf46f233-8d66-439a-a1ae-ab0446270f2d
 ## Requirements
 
 - Wayland compositor (see supported compositors below)
-- Quickshell: [noctalia-qs](https://github.com/noctalia-dev/noctalia-qs)
+- Quickshell: [quickshell](https://git.outfoxxed.me/quickshell/quickshell) **(upstream, ≥ 0.3.0)**
+
+  Atmosphera previously ran on the `noctalia-qs` fork. The migration branch
+  moves to upstream Quickshell, which is where new development, bug fixes,
+  and compositor-protocol support land — the fork is no longer maintained.
+
+  **Why ≥ 0.3.0:** the branch targets upstream's API surface, which differs
+  from the fork it replaces. Per-corner region radii use upstream's
+  `PendingRegion` semantics (`undefined` inherits the base radius; a numeric
+  value is an explicit override — noctalia's `CornerState` enum does not
+  exist upstream), process spawning relies on the `-n` no-duplicate flag
+  (upstream defaults it OFF; noctalia had it ON), and IPC calls use
+  upstream's stricter argument-count handling. **0.3.0 is the version tested
+  on niri and MangoWC; earlier versions are untested.**
 
 ---
 
@@ -75,11 +88,161 @@ git clone https://github.com/alexindigo/aur-atmosphera.git
 cd aur-atmosphera && makepkg -si
 ```
 
+> **Note — upstream Quickshell migration branch.** Atmosphera now runs on
+> **upstream [quickshell](https://git.outfoxxed.me/quickshell/quickshell)**
+> (not the `noctalia-qs` fork). That switch lives on the
+> `feat/niri-overview-map` branch and is **not yet on the AUR** — the AUR
+> packages above still target the previous dependency set. To run the
+> migration branch, use the manual install below.
+
+### Manual install (migration branch, no AUR)
+
+This installs the `feat/niri-overview-map` branch directly, tracking upstream
+Quickshell plus the new compositor IPC libraries. No AUR packages required
+for the shell itself (the QML module dependencies are built from source).
+
+**1. Install runtime dependencies**
+
+The packages below come from the official repos / AUR helper as usual. The
+two IPC modules (`qt6-niriqml`, `qt6-mangowcqml`) are built from source in
+steps 2–3 since they are not yet on the AUR.
+
+```bash
+# from the official repos
+sudo pacman -S --needed quickshell qt6-base qt6-declarative qt6-multimedia \
+  imagemagick brightnessctl ffmpeg python python-dbus python-gobject \
+  wlr-randr cliphist wlsunset
+
+# QML helper libs (AUR or build from source)
+yay -S --needed qt6-dbusqml qt6-xdgiconqml-git
+```
+
+**2. Build and install the niri IPC module (niri sessions)**
+
+```bash
+git clone https://github.com/alexindigo/niriqml.git
+cd niriqml
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+sudo cmake --install build --prefix /usr   # installs libniriqml + QML module
+cd ..
+```
+
+**3. Build and install the mangowc IPC module (MangoWC sessions)**
+
+```bash
+git clone https://github.com/alexindigo/mangowcqml.git
+cd mangowcqml
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+sudo cmake --install build --prefix /usr   # installs libmangowcqml + QML module
+cd ..
+```
+
+**4. Install the shell**
+
+```bash
+git clone -b feat/niri-overview-map https://github.com/alexindigo/atmosphera.git
+cd atmosphera
+
+# shell tree (plain QML — no build step)
+sudo install -dm755 /etc/xdg/quickshell/atmosphera
+sudo cp -r ./* /etc/xdg/quickshell/atmosphera/
+sudo rm -rf /etc/xdg/quickshell/atmosphera/dev /etc/xdg/quickshell/atmosphera/tmp
+echo "0.1.0-dev" | sudo tee /etc/xdg/quickshell/atmosphera/VERSION
+
+# dispatcher + integration units
+sudo install -Dm755 Scripts/bash/atmosphera /usr/local/bin/atmosphera
+sudo ln -sf atmosphera /usr/local/bin/atmosphera-session
+sudo ln -sf atmosphera /usr/local/bin/atmosphera-settings
+sudo ln -sf atmosphera /usr/local/bin/atmosphera-lock
+sudo install -Dm644 Scripts/systemd/atmosphera-keyd-reload.service /usr/lib/systemd/system/atmosphera-keyd-reload.service
+sudo install -Dm644 Scripts/systemd/xremap-atmosphera.service /usr/lib/systemd/user/xremap-atmosphera.service
+sudo install -Dm644 Scripts/udev/80-atmosphera-uinput.rules /usr/lib/udev/rules.d/80-atmosphera-uinput.rules
+sudo install -Dm644 Scripts/polkit/atmosphera-keyd.rules /usr/share/polkit-1/rules.d/atmosphera-keyd.rules
+```
+
+**5. Run it**
+
+```bash
+# niri session
+XDG_CURRENT_DESKTOP=niri qs -c atmosphera
+
+# MangoWC session
+XDG_CURRENT_DESKTOP=mango qs -c atmosphera
+```
+
+`XDG_CURRENT_DESKTOP` selects the compositor backend; `qs` is upstream
+Quickshell. The shell degrades gracefully if an IPC module is missing
+(empty workspaces for that compositor) — install the module matching your
+compositor for full workspace/window integration.
+
 ---
 
-## Wayland Compositors
+## Per-compositor setup
 
-Atmosphera provides native support for **Niri**, **Hyprland**, **Sway**, **Scroll**, **Labwc** and **MangoWC**. Other Wayland compositors may work but could require additional configuration for compositor-specific features like workspaces and window management.
+Beyond the shell itself (and upstream Quickshell ≥ 0.3.0), each compositor
+needs a small amount of extra wiring: an IPC module for workspace/window
+integration, and a way to launch the shell at session start. Listed in
+order of support depth.
+
+### Niri
+
+- **IPC module:** `qt6-niriqml` (built from source in step 2 of the manual
+  install; not yet on AUR). Provides workspaces, windows, focus, and
+  overview state over niri's socket. Detection is automatic via
+  `NIRI_SOCKET`.
+- **Session wiring:** run the bundled setup script once:
+  ```bash
+  atmosphera-niri-setup
+  ```
+  It composes `~/.config/niri/atmosphera-session.kdl` (your base config +
+  the Atmosphera layers), adds `spawn-at-startup "qs" "-n" "-c" "atmosphera"`,
+  and switches the running session to it — without touching your
+  `config.kdl`.
+- **Manual equivalent** (if you prefer your own config): include
+  `Configs/niri/atmosphera.kdl` and add the spawn line above to your niri
+  config.
+
+### Hyprland
+
+- **IPC module:** none. Hyprland integration uses Quickshell's **built-in**
+  `Quickshell.Hyprland` module — workspaces, toplevels, and focus work out
+  of the box. Detection is automatic via `HYPRLAND_INSTANCE_SIGNATURE`.
+- **Session wiring:** add a launch line to `~/.config/hypr/hyprland.conf`:
+  ```bash
+  exec-once = qs -n -c atmosphera
+  ```
+  No extra packages beyond the shell + Quickshell.
+
+### MangoWC
+
+- **IPC module:** `qt6-mangowcqml` (built from source in step 3 of the
+  manual install; not yet on AUR). Talks to mangowc's `mmsg` JSON socket for
+  workspaces (tags), windows, focus, keymode, and keyboard layout. Detection
+  requires `XDG_CURRENT_DESKTOP=mango`.
+- **Session wiring:** mangowc's `config.conf` has **no `exec-once`/autostart
+  keyword** — autostart is the session launcher's job, which is also where
+  the desktop identity gets set. On a bare tty session, add to
+  `~/.bash_profile` (or your display-manager session file):
+  ```bash
+  if [ -z "$WAYLAND_DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
+    export XDG_CURRENT_DESKTOP=mango
+    exec mango
+  fi
+  ```
+  then have Atmosphera start once mangowc is up (e.g. via a
+  `qs -n -c atmosphera` line in your session autostart, or bound to a key
+  with `bind=...,spawn,qs -n -c atmosphera`). The `XDG_CURRENT_DESKTOP=mango`
+  export is what selects the MangoWC backend.
+
+### Other compositors
+
+**Sway** (and i3-compatible) uses the built-in `Quickshell.I3` module, and
+**Labwc** / **Scroll** use built-in Quickshell Wayland support — no extra
+IPC module for any of these. Other Wayland compositors may work but could
+require additional configuration for compositor-specific features like
+workspaces and window management.
 
 ---
 

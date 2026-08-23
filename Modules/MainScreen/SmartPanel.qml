@@ -36,6 +36,22 @@ Item {
   property bool panelAnchorLeft: false
   property bool panelAnchorRight: false
 
+  // Re-position live when anchors change while the panel is open (e.g. a
+  // plugin changing its corner setting). Deferred via Qt.callLater so ALL
+  // anchor bindings settle first — firing setPosition against the stale
+  // intermediate state (e.g. top+bottom both true mid-transition) computes
+  // the wrong corner.
+  function _repositionIfOpen() {
+    if (isPanelOpen)
+      Qt.callLater(setPosition);
+  }
+  onPanelAnchorHorizontalCenterChanged: _repositionIfOpen()
+  onPanelAnchorVerticalCenterChanged: _repositionIfOpen()
+  onPanelAnchorTopChanged: _repositionIfOpen()
+  onPanelAnchorBottomChanged: _repositionIfOpen()
+  onPanelAnchorLeftChanged: _repositionIfOpen()
+  onPanelAnchorRightChanged: _repositionIfOpen()
+
   // Button position properties
   property bool useButtonPosition: false
   property point buttonPosition: Qt.point(0, 0)
@@ -79,6 +95,23 @@ Item {
 
   // Whether blur should be applied behind this panel
   property bool blurEnabled: true
+
+  // Whether the screen-wide dimmer should darken behind this panel
+  property bool dimEnabled: true
+
+  // Whether clicks outside the panel should be intercepted (to close the panel).
+  // Set to false for overlay panels that must allow click-through to windows below.
+  property bool closeOnClickOutside: true
+
+  // When true, corners that sit in an actual screen corner (touching two adjacent
+  // screen edges) render as flat/square instead of the default rounded corner.
+  // Lets overlay panels fill the screen corner cleanly.
+  property bool flattenScreenCorners: false
+
+  // Whether this panel participates in PanelService's single-panel mutual exclusion.
+  // When false, opening/closing this panel does not touch PanelService.openedPanel,
+  // so it can coexist with other panels (e.g. persistent overlay maps).
+  property bool exclusiveOpen: true
 
   // Close with escape key
   property bool closeWithEscape: true
@@ -231,8 +264,15 @@ Item {
     // Set isPanelOpen to trigger content loading, but don't show yet
     isPanelOpen = true;
 
-    // Notify PanelService
-    PanelService.willOpenPanel(root);
+    // Notify PanelService (only exclusive panels participate in single-slot state).
+    // Non-exclusive panels register into a separate slot so MainScreen can still
+    // render their background and blur without triggering mutual exclusion.
+    if (root.exclusiveOpen) {
+      PanelService.willOpenPanel(root);
+    } else {
+      PanelService.coexistingPanel = root;
+      PanelService.assignToSlot(2, root);
+    }
 
     // Position and visibility will be set by Loader.onLoaded
     // This ensures no flicker from default size to content size
@@ -287,13 +327,21 @@ Item {
 
     // Signal immediate close so MainScreen can skip dimmer animation
     PanelService.closedImmediately = true;
-    PanelService.closedPanel(root);
+    if (root.exclusiveOpen) {
+      PanelService.closedPanel(root);
+    } else if (PanelService.coexistingPanel === root) {
+      PanelService.coexistingPanel = null;
+      PanelService.assignToSlot(2, null);
+    }
     closed();
 
     // Flush pending double-buffered Wayland state (blur regions) that won't
     // be committed otherwise — after an app launch the compositor may stop
     // sending frame callbacks, leaving the render loop idle.
-    Window.window?.flushWaylandState();
+    // flushWaylandState() is a noctalia-qs extension; upstream removed it.
+    if (typeof Window.window?.flushWaylandState === "function") {
+      Window.window.flushWaylandState();
+    }
 
     Logger.d("SmartPanel", "Panel closed immediately", objectName);
   }
@@ -318,11 +366,19 @@ Item {
     // Reset dimensionsInitialized for next opening
     panelBackground.dimensionsInitialized = false;
 
-    PanelService.closedPanel(root);
+    if (root.exclusiveOpen) {
+      PanelService.closedPanel(root);
+    } else if (PanelService.coexistingPanel === root) {
+      PanelService.coexistingPanel = null;
+      PanelService.assignToSlot(2, null);
+    }
     closed();
 
     // Flush pending double-buffered Wayland state (blur regions).
-    Window.window?.flushWaylandState();
+    // flushWaylandState() is a noctalia-qs extension; upstream removed it.
+    if (typeof Window.window?.flushWaylandState === "function") {
+      Window.window.flushWaylandState();
+    }
 
     Logger.d("SmartPanel", "Panel close finalized", objectName);
   }
@@ -669,6 +725,7 @@ Item {
     // Apply calculated positions (set targets for animation)
     panelBackground.targetX = calculatedX;
     panelBackground.targetY = calculatedY;
+    Logger.w("SmartPanel", "DBG setPosition anchors T:" + panelAnchorTop + " B:" + panelAnchorBottom + " L:" + panelAnchorLeft + " R:" + panelAnchorRight + " useBtn:" + useButtonPosition + " -> x=" + calculatedX + " y=" + calculatedY + " w=" + panelWidth + " h=" + panelHeight, objectName);
 
     // Logger.d("SmartPanel", "Position calculated:", calculatedX, calculatedY);
     // Logger.d("SmartPanel", "  Panel size:", panelWidth, "x", panelHeight);
@@ -1170,7 +1227,7 @@ Item {
           var edgeInverted = panelContent.allowAttach && (panelContent.touchingLeftEdge || panelContent.touchingTopEdge);
           if (edgeInverted) {
             if (panelContent.touchingLeftEdge && panelContent.touchingTopEdge)
-              return 0; // Both edges: no inversion (normal rounded corner)
+              return root.flattenScreenCorners ? -1 : 0; // Both edges: flat (opt-in) or normal rounded
             if (panelContent.touchingLeftEdge)
               return 2; // Left edge: vertical inversion
             if (panelContent.touchingTopEdge)
@@ -1203,7 +1260,7 @@ Item {
           var edgeInverted = panelContent.allowAttach && (panelContent.touchingRightEdge || panelContent.touchingTopEdge);
           if (edgeInverted) {
             if (panelContent.touchingRightEdge && panelContent.touchingTopEdge)
-              return 0; // Both edges: no inversion (normal rounded corner)
+              return root.flattenScreenCorners ? -1 : 0; // Both edges: flat (opt-in) or normal rounded
             if (panelContent.touchingRightEdge)
               return 2; // Right edge: vertical inversion
             if (panelContent.touchingTopEdge)
@@ -1236,7 +1293,7 @@ Item {
           var edgeInverted = panelContent.allowAttach && (panelContent.touchingLeftEdge || panelContent.touchingBottomEdge);
           if (edgeInverted) {
             if (panelContent.touchingLeftEdge && panelContent.touchingBottomEdge)
-              return 0; // Both edges: no inversion (normal rounded corner)
+              return root.flattenScreenCorners ? -1 : 0; // Both edges: flat (opt-in) or normal rounded
             if (panelContent.touchingLeftEdge)
               return 2; // Left edge: vertical inversion
             if (panelContent.touchingBottomEdge)
@@ -1269,7 +1326,7 @@ Item {
           var edgeInverted = panelContent.allowAttach && (panelContent.touchingRightEdge || panelContent.touchingBottomEdge);
           if (edgeInverted) {
             if (panelContent.touchingRightEdge && panelContent.touchingBottomEdge)
-              return 0; // Both edges: no inversion (normal rounded corner)
+              return root.flattenScreenCorners ? -1 : 0; // Both edges: flat (opt-in) or normal rounded
             if (panelContent.touchingRightEdge)
               return 2; // Right edge: vertical inversion
             if (panelContent.touchingBottomEdge)
