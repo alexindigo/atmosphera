@@ -30,6 +30,36 @@ Singleton {
     Logger.i("IPCService", "Service started");
   }
 
+  // Resolve a bare plugin id ("niri-windows-map") or composite key
+  // ("<hash>:niri-windows-map") to the composite key used by the registries.
+  function _resolvePluginKey(id) {
+    if (id.indexOf(":") !== -1) {
+      return id;
+    }
+    var installed = PluginRegistry.installedPlugins;
+    for (var key in installed) {
+      if (key.endsWith(":" + id)) {
+        return key;
+      }
+    }
+    var meta = root._findAvailablePlugin(id);
+    if (meta && meta.source && meta.source.url) {
+      return PluginRegistry.generateCompositeKey(id, meta.source.url);
+    }
+    return id;
+  }
+
+  // Find a plugin's catalog metadata (from enabled sources) by bare id.
+  function _findAvailablePlugin(id) {
+    var avail = PluginService.availablePlugins || [];
+    for (var i = 0; i < avail.length; i++) {
+      if (avail[i].id === id) {
+        return avail[i];
+      }
+    }
+    return null;
+  }
+
   // Helper for index-based notification lookups in IPC
   function _getNotificationByIndex(index: string, funcName: string): var {
     var idx = index === "" ? 0 : parseInt(index);
@@ -880,6 +910,101 @@ Singleton {
 
   IpcHandler {
     target: "plugin"
+    // List installed + available plugins with state (JSON array)
+    function list(): string {
+      var out = [];
+      var installed = PluginRegistry.installedPlugins;
+      var installedBare = {};
+      for (var key in installed) {
+        var m = installed[key] || {};
+        var bare = key.replace(/^[a-f0-9]{6}:/, "");
+        installedBare[bare] = true;
+        out.push({
+                   "id": key,
+                   "name": m.name || "",
+                   "version": m.version || "",
+                   "enabled": PluginRegistry.isPluginEnabled(key),
+                   "downloaded": PluginRegistry.isPluginDownloaded(key)
+                 });
+      }
+      var avail = PluginService.availablePlugins || [];
+      for (var i = 0; i < avail.length; i++) {
+        var a = avail[i];
+        if (a && a.id && !installedBare[a.id]) {
+          out.push({
+                     "id": a.id,
+                     "name": a.name || "",
+                     "version": a.version || "",
+                     "enabled": false,
+                     "downloaded": false
+                   });
+        }
+      }
+      return JSON.stringify(out);
+    }
+
+    function enable(id: string): string {
+      var key = root._resolvePluginKey(id);
+      if (PluginRegistry.isPluginEnabled(key)) {
+        return "already enabled: " + key;
+      }
+      if (PluginRegistry.isPluginDownloaded(key)) {
+        return PluginService.enablePlugin(key, false) ? "enabled: " + key : "enable failed: " + key;
+      }
+      // Not downloaded — install from its catalog source first (covers bundled plugins)
+      var meta = root._findAvailablePlugin(id);
+      if (!meta) {
+        return "plugin not found: " + id;
+      }
+      PluginService.installPlugin(meta, false, function (success, error, registeredKey) {
+        if (success) {
+          PluginService.enablePlugin(registeredKey || key, false);
+        } else {
+          Logger.w("IPC", "plugin install failed:", id, error);
+        }
+      });
+      return "installing + enabling (async): " + id;
+    }
+
+    function disable(id: string): string {
+      var key = root._resolvePluginKey(id);
+      if (!PluginRegistry.isPluginEnabled(key)) {
+        return "not enabled: " + key;
+      }
+      PluginService.disablePlugin(key);
+      return "disabled: " + key;
+    }
+
+    function install(id: string): string {
+      var key = root._resolvePluginKey(id);
+      if (PluginRegistry.isPluginDownloaded(key)) {
+        return "already installed: " + key;
+      }
+      var meta = root._findAvailablePlugin(id);
+      if (!meta) {
+        return "plugin not found: " + id;
+      }
+      PluginService.installPlugin(meta, false, function (success, error, registeredKey) {
+        if (!success) {
+          Logger.w("IPC", "plugin install failed:", id, error);
+        }
+      });
+      return "installing (async): " + id;
+    }
+
+    function uninstall(id: string): string {
+      var key = root._resolvePluginKey(id);
+      if (!PluginRegistry.isPluginDownloaded(key)) {
+        return "not installed: " + key;
+      }
+      PluginService.uninstallPlugin(key, function (success) {
+        if (!success) {
+          Logger.w("IPC", "plugin uninstall failed:", id);
+        }
+      });
+      return "uninstalling (async): " + id;
+    }
+
     function openSettings(key: string) {
       var manifest = PluginRegistry.getPluginManifest(key);
       if (!manifest) {
