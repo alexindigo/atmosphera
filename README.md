@@ -80,8 +80,8 @@ Or pull a complete session — shell + compositor + IPC module — with one
 meta package:
 
 ```bash
-yay -S atmosphera-niri     # + niri, qt6-niriqml, xwayland-satellite, portal
-yay -S atmosphera-mangowc  # + mangowm, qt6-mangowcqml, portal backends
+yay -S atmosphera-niri     # + niri, qt6-niriqml, xwayland-satellite
+yay -S atmosphera-mangowc  # + mangowm, qt6-mangowcqml
 ```
 
 If AUR is unavailable, install directly from the GitHub mirrors:
