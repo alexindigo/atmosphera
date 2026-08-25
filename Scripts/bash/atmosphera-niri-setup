@@ -27,6 +27,30 @@ install -m 0644 "$ATMOSPHERA_KDL_SRC" "${NIRI_DIR}/atmosphera.kdl"
 install -m 0644 "$ATMOSPHERA_I18N_SRC" "${NIRI_DIR}/atmosphera-i18n.kdl"
 echo "Installed: ${NIRI_DIR}/atmosphera.kdl"
 
+# --- Startup route: systemd unit vs compositor spawn ---
+# Systemd route (DMS pattern): the shell runs as a supervised user service
+# wanted by niri.service; the compositor spawn line is dropped from the
+# layer. Non-systemd sessions keep the spawn line (baseline behavior).
+SYSTEMD_ROUTE=false
+if command -v systemctl >/dev/null 2>&1 && systemctl --user show-environment >/dev/null 2>&1; then
+  if [ "$(systemctl --user show -p LoadState --value niri.service 2>/dev/null)" != "not-found" ] \
+     && [ "$(systemctl --user show -p LoadState --value atmosphera.service 2>/dev/null)" != "not-found" ]; then
+    SYSTEMD_ROUTE=true
+  fi
+fi
+
+if [ "$SYSTEMD_ROUTE" = true ]; then
+  sed -i '/^spawn-at-startup "qs" "-n" "-c" "atmosphera"$/d' "${NIRI_DIR}/atmosphera.kdl"
+  systemctl --user add-wants niri.service atmosphera.service
+  echo "Systemd route: shell supervised via niri.service -> atmosphera.service"
+else
+  # Drop a stale wants link from a previous systemd-route setup, if any
+  if [ "$(systemctl --user show -p LoadState --value atmosphera.service 2>/dev/null || true)" != "not-found" ]; then
+    systemctl --user disable atmosphera.service >/dev/null 2>&1 || true
+  fi
+  echo "Spawn route: shell started by niri's spawn-at-startup"
+fi
+
 # Strip legacy include from the user's config (exact-match reversal)
 if [ -f "$CONFIG_FILE" ] && grep -qxF "$LEGACY_INCLUDE" "$CONFIG_FILE"; then
   sed -i '/^include "atmosphera.kdl"$/d' "$CONFIG_FILE"
@@ -108,6 +132,11 @@ else
   echo "niri not running — session config applies when the shell next starts under niri."
 fi
 
-echo "Boot note: ensure your niri startup launches the shell, e.g."
-echo '  spawn-at-startup "qs" "-n" "-c" "atmosphera"'
-echo "in your own config.kdl (atmosphera never modifies it)."
+if [ "$SYSTEMD_ROUTE" = true ]; then
+  echo "Boot note: the shell starts via systemd (niri.service wants"
+  echo "atmosphera.service). No niri config changes needed."
+else
+  echo "Boot note: ensure your niri startup launches the shell, e.g."
+  echo '  spawn-at-startup "qs" "-n" "-c" "atmosphera"'
+  echo "in your own config.kdl (atmosphera never modifies it)."
+fi
