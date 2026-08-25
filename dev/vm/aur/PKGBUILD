@@ -13,7 +13,7 @@ license=('GPL-3.0-or-later')
 makedepends=('git')
 depends=(
   'quickshell'
-  'qt6-dbusqml'
+  'qt6-dbusqml>=0.4.0'
   'qt6-pipewirespectrum'
   'qt6-xdgiconqml-git'
   'imagemagick'
@@ -36,8 +36,9 @@ optdepends=(
   'xremap-niri-bin: session-level app-scoped keymaps (macos bindings)'
   'qt6-5compat: required by some registry plugins (e.g. cookie-clock)'
   'qt6-websockets: required by some registry plugins (e.g. hassio)'
+  'xdg-desktop-portal-gnome: screencast / screen-sharing support (niri cannot use -wlr)'
 )
-provides=('atmosphera')
+provides=('atmosphera' 'xdg-desktop-portal-impl')
 conflicts=('atmosphera')
 _ref="${ATMOSPHERA_REF:-main}"
 source=("atmosphera::git+file:///mnt/hostshare#branch=${_ref}")
@@ -71,6 +72,9 @@ package() {
   ln -sf atmosphera "$pkgdir/usr/local/bin/atmosphera-session"
   ln -sf atmosphera "$pkgdir/usr/local/bin/atmosphera-settings"
   ln -sf atmosphera "$pkgdir/usr/local/bin/atmosphera-lock"
+
+  # xdg-desktop-portal backend manifest (Settings interface served in-shell)
+  install -Dm644 Portals/atmosphera.portal "$pkgdir/usr/share/xdg-desktop-portal/portals/atmosphera.portal"
 
   # keyd reload service (triggered via systemd D-Bus StartUnit by the shell)
   install -Dm644 Scripts/systemd/atmosphera-keyd-reload.service "$pkgdir/usr/lib/systemd/system/atmosphera-keyd-reload.service"

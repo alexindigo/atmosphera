@@ -92,6 +92,9 @@ stdenvNoCC.mkDerivation {
 
     # atmosphera-ipc — raw IPC entry point (stays as a symlink to qs)
     ln -s ${quickshell}/bin/qs $out/bin/atmosphera-ipc
+
+    # xdg-desktop-portal backend manifest (Settings interface served in-shell)
+    install -Dm644 Portals/atmosphera.portal $out/share/xdg-desktop-portal/portals/atmosphera.portal
   '';
 
   preFixup = ''
