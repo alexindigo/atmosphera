@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Portals
 import qs.Services.UI
 import qs.Widgets
 
@@ -528,10 +529,9 @@ ColumnLayout {
     }
   }
 
-  // Icon file picker popup
-  AtmoFilePicker {
+  // Icon file picker (portal client)
+  PortalFilePicker {
     id: filePicker
-    parent: Overlay.overlay
     title: I18n.tr("panels.desktop-widgets.app-shortcut-icon-file-picker-title")
     nameFilters: ["*.png", "*.svg", "*.jpg", "*.jpeg", "*.ico"]
     onAccepted: paths => {

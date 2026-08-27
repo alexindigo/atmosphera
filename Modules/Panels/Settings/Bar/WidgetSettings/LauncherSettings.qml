@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Portals
 import qs.Services.UI
 import qs.Widgets
 
@@ -118,7 +119,7 @@ ColumnLayout {
     }
   }
 
-  AtmoFilePicker {
+  PortalFilePicker {
     id: imagePicker
     title: I18n.tr("bar.control-center.select-custom-icon")
     selectionMode: "files"

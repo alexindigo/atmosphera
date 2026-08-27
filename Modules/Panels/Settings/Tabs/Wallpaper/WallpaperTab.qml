@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Portals
 import qs.Services.UI
 import qs.Widgets
 
@@ -67,7 +68,7 @@ ColumnLayout {
     AutomationSubTab {}
   }
 
-  AtmoFilePicker {
+  PortalFilePicker {
     id: mainFolderPicker
     selectionMode: "folders"
     title: I18n.tr("setup.wallpaper.dir-select-title")
@@ -79,7 +80,7 @@ ColumnLayout {
     }
   }
 
-  AtmoFilePicker {
+  PortalFilePicker {
     id: monitorFolderPicker
     selectionMode: "folders"
     title: I18n.tr("panels.wallpaper.settings-select-monitor-folder")

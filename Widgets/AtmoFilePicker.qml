@@ -11,13 +11,21 @@ Popup {
   id: root
 
   // Properties
-  property string title: I18n.tr("widget.file-picker.title")
+  property string title: I18n.tr("widgets.file-picker.title")
   property string initialPath: Quickshell.env("HOME") || "/home"
   property string selectionMode: "files" // "files" or "folders"
   property var nameFilters: ["*"]
   property bool showDirs: true
   property bool showHiddenFiles: false
   property bool allowMultiSelection: false
+
+  property bool saveMode: false
+  property bool multiTarget: false
+  property string currentName: ""
+  property string initialName: ""
+  property string acceptLabel: ""
+
+  property string pendingOverwrite: ""
 
   property var selectedPaths: []
   property string currentPath: initialPath
@@ -31,6 +39,8 @@ Popup {
     if (!root.currentPath)
       root.currentPath = root.initialPath;
     shouldResetSelection = true;
+    targetListModel.clear();
+    root.pendingOverwrite = "";
     open();
   }
 
@@ -96,6 +106,60 @@ Popup {
     root.close();
   }
 
+  function saveTargetPath() {
+    var name = fileNameInput.text.trim();
+    if (name === "")
+      return "";
+    var base = root.currentPath;
+    while (base.endsWith("/"))
+      base = base.slice(0, -1);
+    return base + "/" + name;
+  }
+
+  function targetExists(path) {
+    for (var i = 0; i < filteredModel.count; i++) {
+      var entry = filteredModel.get(i);
+      if (!entry.fileIsDir && entry.filePath === path)
+        return true;
+    }
+    return false;
+  }
+
+  function confirmSave() {
+    var path = saveTargetPath();
+    if (path === "")
+      return;
+    if (targetExists(path)) {
+      root.pendingOverwrite = path;
+      return;
+    }
+    root.addOrAccept(path, false);
+  }
+
+  function addOrAccept(path, exists) {
+    root.pendingOverwrite = "";
+    if (root.multiTarget) {
+      targetListModel.append({
+                               "filePath": path,
+                               "exists": exists
+                             });
+      fileNameInput.text = "";
+    } else {
+      root.selectedPaths = [path];
+      root.accepted([path]);
+      root.close();
+    }
+  }
+
+  function saveAll() {
+    var paths = [];
+    for (var i = 0; i < targetListModel.count; i++)
+      paths.push(targetListModel.get(i).filePath);
+    root.selectedPaths = paths;
+    root.accepted(paths);
+    root.close();
+  }
+
   function updateFilteredModel() {
     filteredModel.clear();
     const searchText = filePickerPanel.filterText.toLowerCase();
@@ -137,6 +201,10 @@ Popup {
     radius: Style.iRadiusL
     border.color: Color.mOutline
     border.width: Style.borderS
+  }
+
+  ListModel {
+    id: targetListModel
   }
 
   Rectangle {
@@ -243,7 +311,7 @@ Popup {
         NButton {
           text: I18n.tr("widgets.file-picker.select-current")
           icon: Icon.filepickerFolderCurrent
-          visible: root.selectionMode === "folders"
+          visible: root.selectionMode === "folders" && !root.saveMode
           onClicked: {
             filePickerPanel.currentSelection = [root.currentPath];
             root.confirmSelection();
@@ -466,7 +534,7 @@ Popup {
           property int itemSize: Math.floor((availableWidth - leftMargin - rightMargin - (columns * Style.marginS)) / columns)
 
           cellWidth: Math.floor((availableWidth - leftMargin - rightMargin) / columns)
-          cellHeight: Math.floor(itemSize * 0.8) + Style.marginXS + Style.fontSizeS + Style.marginM
+          cellHeight: Math.floor((itemSize * 0.8)) + Style.marginXS + Style.fontSizeS + Style.marginM
 
           leftMargin: Style.marginS
           rightMargin: Style.marginS
@@ -760,40 +828,160 @@ Popup {
       }
 
       // Footer
-      RowLayout {
+      ColumnLayout {
         Layout.fillWidth: true
-        spacing: Style.marginM
+        spacing: Style.marginS
 
-        NText {
-          text: {
-            if (filePickerPanel.searchText.length > 0) {
-              return "Searching for: \"" + filePickerPanel.searchText + "\" (" + filteredModel.count + " matches)";
-            } else if (filePickerPanel.currentSelection.length > 0) {
-              const selectedName = filePickerPanel.currentSelection[0].split('/').pop();
-              return I18n.tr("widgets.file-picker.selected") + " " + selectedName;
-            } else {
-              return filteredModel.count + " " + (filteredModel.count === 1 ? I18n.tr("widgets.file-picker.item") : I18n.tr("widgets.file-picker.items"));
+        Rectangle {
+          visible: root.pendingOverwrite !== ""
+          Layout.fillWidth: true
+          Layout.preferredHeight: 45
+          color: Color.mSurfaceVariant
+          radius: Style.iRadiusS
+          border.color: Color.mOutline
+          border.width: Style.borderS
+
+          RowLayout {
+            anchors.fill: parent
+            anchors.leftMargin: Style.marginM
+            anchors.rightMargin: Style.marginM
+            spacing: Style.marginM
+
+            NText {
+              text: I18n.tr("widgets.file-picker.overwrite-description")
+              color: Color.mOnSurfaceVariant
+              pointSize: Style.fontSizeS
+              Layout.fillWidth: true
+              elide: Text.ElideRight
+            }
+            NButton {
+              text: I18n.tr("common.cancel")
+              outlined: true
+              onClicked: root.pendingOverwrite = ""
+            }
+            NButton {
+              text: I18n.tr("widgets.file-picker.replace")
+              onClicked: root.addOrAccept(root.pendingOverwrite, true)
             }
           }
-          color: filePickerPanel.searchText.length > 0 ? Color.mPrimary : Color.mOnSurfaceVariant
-          pointSize: Style.fontSizeS
-          Layout.fillWidth: true
         }
 
-        NButton {
-          text: I18n.tr("common.cancel")
-          outlined: true
-          onClicked: {
-            root.cancelled();
-            root.close();
+        Rectangle {
+          visible: root.multiTarget && targetListModel.count > 0
+          Layout.fillWidth: true
+          Layout.preferredHeight: 90
+          color: Color.mSurface
+          radius: Style.iRadiusM
+          border.color: Color.mOutline
+          border.width: Style.borderS
+
+          ListView {
+            anchors.fill: parent
+            anchors.margins: Style.marginS
+            model: targetListModel
+            clip: true
+
+            delegate: Rectangle {
+              width: ListView.view.width
+              height: 28
+              color: "transparent"
+
+              RowLayout {
+                anchors.fill: parent
+                spacing: Style.marginS
+
+                AtmoIcon {
+                  icon: "filepicker-file"
+                  pointSize: Style.fontSizeS
+                  color: Color.mOnSurfaceVariant
+                }
+                NText {
+                  text: model.filePath
+                  color: Color.mOnSurface
+                  pointSize: Style.fontSizeS
+                  Layout.fillWidth: true
+                  elide: Text.ElideRight
+                }
+                NText {
+                  text: model.exists ? I18n.tr("widgets.file-picker.target-list-overwrite") : ""
+                  color: Color.mSecondary
+                  pointSize: Style.fontSizeS
+                }
+              }
+            }
           }
         }
 
-        NButton {
-          text: root.selectionMode === "folders" ? I18n.tr("widgets.file-picker.select-folder") : I18n.tr("widgets.file-picker.select-file")
-          icon: Icon.filepickerCheck
-          enabled: filePickerPanel.currentSelection.length > 0
-          onClicked: root.confirmSelection()
+        RowLayout {
+          Layout.fillWidth: true
+          spacing: Style.marginM
+
+          NTextInput {
+            id: fileNameInput
+            visible: root.saveMode
+            placeholderText: I18n.tr("widgets.file-picker.file-name")
+            text: root.currentName !== "" ? root.currentName : root.initialName
+            Layout.fillWidth: true
+          }
+
+          NText {
+            visible: !root.saveMode
+            text: {
+              if (filePickerPanel.searchText.length > 0) {
+                return "Searching for: \"" + filePickerPanel.searchText + "\" (" + filteredModel.count + " matches)";
+              } else if (filePickerPanel.currentSelection.length > 0) {
+                const selectedName = filePickerPanel.currentSelection[0].split('/').pop();
+                return I18n.tr("widgets.file-picker.selected") + " " + selectedName;
+              } else {
+                return filteredModel.count + " " + (filteredModel.count === 1 ? I18n.tr("widgets.file-picker.item") : I18n.tr("widgets.file-picker.items"));
+              }
+            }
+            color: filePickerPanel.searchText.length > 0 ? Color.mPrimary : Color.mOnSurfaceVariant
+            pointSize: Style.fontSizeS
+            Layout.fillWidth: true
+          }
+
+          NButton {
+            visible: root.multiTarget
+            text: I18n.tr("widgets.file-picker.add-to-list")
+            enabled: fileNameInput.text.trim() !== ""
+            onClicked: root.confirmSave()
+          }
+
+          NButton {
+            text: I18n.tr("common.cancel")
+            outlined: true
+            onClicked: {
+              root.cancelled();
+              root.close();
+            }
+          }
+
+          NButton {
+            text: {
+              if (!root.saveMode)
+                return root.selectionMode === "folders" ? I18n.tr("widgets.file-picker.select-folder") : I18n.tr("widgets.file-picker.select-file");
+              if (root.multiTarget)
+                return I18n.tr("widgets.file-picker.save-all");
+              return root.acceptLabel !== "" ? root.acceptLabel : I18n.tr("widgets.file-picker.save");
+            }
+            icon: Icon.filepickerCheck
+            enabled: {
+              if (!root.saveMode)
+                return filePickerPanel.currentSelection.length > 0;
+              if (root.multiTarget)
+                return targetListModel.count > 0;
+              return fileNameInput.text.trim() !== "";
+            }
+            onClicked: {
+              if (!root.saveMode)
+                root.confirmSelection();
+              else if (root.multiTarget)
+                root.saveAll();
+              else
+                root.confirmSave();
+            }
+          }
         }
       }
     }

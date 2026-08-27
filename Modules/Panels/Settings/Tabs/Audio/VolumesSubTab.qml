@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Portals
 import qs.Services.Media
 import qs.Services.System
 import qs.Widgets
@@ -181,7 +182,7 @@ ColumnLayout {
     }
   }
 
-  AtmoFilePicker {
+  PortalFilePicker {
     id: volumeFeedbackFilePicker
     title: I18n.tr("panels.audio.volumes-feedback-sound-file-select-title")
     selectionMode: "files"

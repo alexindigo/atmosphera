@@ -124,6 +124,7 @@ ShellRoot {
           HostService.init();
           NotificationRulesService.init();
           SettingsPortal.init();
+          FileChooserPortal.init();
           Version.init();
           CustomButtonIPCService.init();
           IPCService.init(screenDetector);
