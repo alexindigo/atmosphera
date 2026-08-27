@@ -529,7 +529,7 @@ ColumnLayout {
   }
 
   // Icon file picker popup
-  NFilePicker {
+  AtmoFilePicker {
     id: filePicker
     parent: Overlay.overlay
     title: I18n.tr("panels.desktop-widgets.app-shortcut-icon-file-picker-title")

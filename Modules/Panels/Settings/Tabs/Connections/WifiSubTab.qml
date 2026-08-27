@@ -1432,7 +1432,7 @@ Item {
     }
   }
 
-  NFilePicker {
+  AtmoFilePicker {
     id: caCertPicker
     title: I18n.tr("wifi.enterprise.ca-cert")
     nameFilters: ["*.pem", "*.crt", "*.cer", "*.der", "*"]

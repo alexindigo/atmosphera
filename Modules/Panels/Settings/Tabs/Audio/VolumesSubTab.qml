@@ -181,7 +181,7 @@ ColumnLayout {
     }
   }
 
-  NFilePicker {
+  AtmoFilePicker {
     id: volumeFeedbackFilePicker
     title: I18n.tr("panels.audio.volumes-feedback-sound-file-select-title")
     selectionMode: "files"

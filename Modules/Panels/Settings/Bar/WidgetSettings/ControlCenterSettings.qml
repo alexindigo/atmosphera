@@ -118,7 +118,7 @@ ColumnLayout {
     }
   }
 
-  NFilePicker {
+  AtmoFilePicker {
     id: imagePicker
     title: I18n.tr("bar.control-center.select-custom-icon")
     selectionMode: "files"

@@ -381,7 +381,7 @@ ColumnLayout {
     initialRefreshTimer.start();
   }
 
-  NFilePicker {
+  AtmoFilePicker {
     id: directoryPicker
     selectionMode: "folders"
     title: I18n.tr("setup.wallpaper.dir-select-title")

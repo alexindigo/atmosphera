@@ -50,7 +50,7 @@ ColumnLayout {
     }
   }
 
-  NFilePicker {
+  AtmoFilePicker {
     id: avatarPicker
     title: I18n.tr("panels.general.profile-select-avatar")
     selectionMode: "files"

@@ -101,7 +101,7 @@ ColumnLayout {
   }
 
   // File Pickers for Sound Files
-  NFilePicker {
+  AtmoFilePicker {
     id: unifiedSoundFilePicker
     title: I18n.tr("panels.notifications.sounds-files-unified-select-title")
     selectionMode: "files"
@@ -117,7 +117,7 @@ ColumnLayout {
     }
   }
 
-  NFilePicker {
+  AtmoFilePicker {
     id: lowSoundFilePicker
     title: I18n.tr("panels.notifications.sounds-files-low-select-title")
     selectionMode: "files"
@@ -130,7 +130,7 @@ ColumnLayout {
     }
   }
 
-  NFilePicker {
+  AtmoFilePicker {
     id: normalSoundFilePicker
     title: I18n.tr("panels.notifications.sounds-files-normal-select-title")
     selectionMode: "files"
@@ -143,7 +143,7 @@ ColumnLayout {
     }
   }
 
-  NFilePicker {
+  AtmoFilePicker {
     id: criticalSoundFilePicker
     title: I18n.tr("panels.notifications.sounds-files-critical-select-title")
     selectionMode: "files"

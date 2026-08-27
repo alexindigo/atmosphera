@@ -224,7 +224,7 @@ ColumnLayout {
         }
       }
 
-      NFilePicker {
+      AtmoFilePicker {
         id: folderPicker
         title: I18n.tr("panels.plugins.sources-add-dialog-browse-title")
         selectionMode: "folders"

@@ -67,7 +67,7 @@ ColumnLayout {
     AutomationSubTab {}
   }
 
-  NFilePicker {
+  AtmoFilePicker {
     id: mainFolderPicker
     selectionMode: "folders"
     title: I18n.tr("setup.wallpaper.dir-select-title")
@@ -79,7 +79,7 @@ ColumnLayout {
     }
   }
 
-  NFilePicker {
+  AtmoFilePicker {
     id: monitorFolderPicker
     selectionMode: "folders"
     title: I18n.tr("panels.wallpaper.settings-select-monitor-folder")
