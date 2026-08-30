@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# atmosphera-mango-setup
+# Installs Atmosphera's MangoWC layer as a drop-in config fragment and
+# wires shell startup via exec-once. Never modifies the user's config
+# beyond one marked source line (reversible).
+#
+# MangoWC has no systemd session unit upstream, so the shell always
+# starts via the compositor's exec-once (DMS does the same for mango).
+
+MANGO_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/mango"
+USER_CONF="${MANGO_DIR}/config.conf"
+
+MARK_BEGIN="# >>> Atmosphera (managed by atmosphera-mango-setup) >>>"
+MARK_END="# <<< Atmosphera (managed by atmosphera-mango-setup) <<<"
+
+# Resolve shell dir (install tree or dev checkout): Scripts/bash/<this>
+SCRIPT_PATH="$(readlink -f "$0")"
+SHELL_DIR="$(dirname "$(dirname "$(dirname "$SCRIPT_PATH")")")"
+FRAG_SRC="${SHELL_DIR}/Configs/mango/atmosphera.conf"
+
+mkdir -p "$MANGO_DIR"
+
+# --- Install the drop-in (baseline fragment + startup line) ---
+DROPIN="${MANGO_DIR}/atmosphera.conf"
+install -m 0644 "$FRAG_SRC" "$DROPIN"
+printf '\n# Startup: exec-once only — mango re-runs plain exec= on every\n# config reload, which would respawn the shell each time.\nexec-once=qs -n -c atmosphera\n' >> "$DROPIN"
+echo "Installed: ${DROPIN}"
+
+# --- Wire the marked source line into the user's config ---
+# mangowc reads ~/.config/mango/config.conf, falling back to the system
+# skeleton /etc/mango/config.conf. If no user config exists yet, create it
+# from the skeleton (the standard mangowc customization flow).
+if [ ! -f "$USER_CONF" ] && [ -f /etc/mango/config.conf ]; then
+  install -m 0644 /etc/mango/config.conf "$USER_CONF"
+  echo "Created user config from system skeleton: ${USER_CONF}"
+fi
+
+if [ -f "$USER_CONF" ]; then
+  if grep -qF -- "$MARK_BEGIN" "$USER_CONF"; then
+    sed -i "\|${MARK_BEGIN}|,\|${MARK_END}|d" "$USER_CONF"
+    echo "Refreshed source line in: ${USER_CONF}"
+  fi
+  {
+    echo "$MARK_BEGIN"
+    echo "source=./atmosphera.conf"
+    echo "$MARK_END"
+  } >> "$USER_CONF"
+else
+  echo "Note: ${USER_CONF} not found — add this line to your mangowc config:" >&2
+  echo "  source=./atmosphera.conf" >&2
+fi
+
+echo "MangoWC has no systemd session unit — the shell starts via exec-once."
+echo "Applies on next mangowc start (or config reload, if your setup supports it)."

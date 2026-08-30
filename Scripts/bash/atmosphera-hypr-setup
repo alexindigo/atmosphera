@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# atmosphera-hypr-setup
+# Installs Atmosphera's Hyprland layer as a drop-in config fragment and
+# wires shell startup. Never modifies the user's config beyond one marked
+# source line (reversible — re-running setup refreshes it, uninstall strips
+# it).
+#
+# Startup routes:
+#   systemd     hyprland-session.target wants atmosphera.service; the
+#               drop-in's exec-once starts the target (DMS pattern).
+#   non-systemd drop-in's exec-once spawns the shell directly.
+
+HYPR_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/hypr"
+USER_CONF="${HYPR_DIR}/hyprland.conf"
+USER_LUA="${HYPR_DIR}/hyprland.lua"
+
+MARK_BEGIN_CONF="# >>> Atmosphera (managed by atmosphera-hypr-setup) >>>"
+MARK_END_CONF="# <<< Atmosphera (managed by atmosphera-hypr-setup) <<<"
+MARK_BEGIN_LUA="-- >>> Atmosphera (managed by atmosphera-hypr-setup) >>>"
+MARK_END_LUA="-- <<< Atmosphera (managed by atmosphera-hypr-setup) <<<"
+
+# Resolve shell dir (install tree or dev checkout): Scripts/bash/<this>
+SCRIPT_PATH="$(readlink -f "$0")"
+SHELL_DIR="$(dirname "$(dirname "$(dirname "$SCRIPT_PATH")")")"
+FRAG_CONF_SRC="${SHELL_DIR}/Configs/hypr/atmosphera.conf"
+FRAG_LUA_SRC="${SHELL_DIR}/Configs/hypr/atmosphera.lua"
+
+mkdir -p "$HYPR_DIR"
+
+# --- Startup route probe: systemd user manager + session target + unit ---
+SYSTEMD_ROUTE=false
+if command -v systemctl >/dev/null 2>&1 && systemctl --user show-environment >/dev/null 2>&1; then
+  if [ "$(systemctl --user show -p LoadState --value hyprland-session.target 2>/dev/null)" != "not-found" ] \
+     && [ "$(systemctl --user show -p LoadState --value atmosphera.service 2>/dev/null)" != "not-found" ]; then
+    SYSTEMD_ROUTE=true
+  fi
+fi
+
+# --- Config syntax: Lua (Hyprland >= 0.55) vs hyprlang ---
+LUA_MODE=false
+if [ -f "$USER_LUA" ]; then
+  LUA_MODE=true
+elif [ ! -f "$USER_CONF" ]; then
+  echo "Note: no ${USER_LUA} or ${USER_CONF} found — assuming hyprlang." >&2
+fi
+
+if [ "$SYSTEMD_ROUTE" = true ]; then
+  STARTUP_CONF='exec-once = dbus-update-activation-environment --systemd --all
+exec-once = systemctl --user start --no-block hyprland-session.target'
+  STARTUP_LUA='hl.exec_cmd("dbus-update-activation-environment --systemd --all")
+hl.exec_cmd("systemctl --user start --no-block hyprland-session.target")'
+else
+  STARTUP_CONF='exec-once = qs -n -c atmosphera'
+  STARTUP_LUA='hl.exec_cmd("qs -n -c atmosphera")'
+fi
+
+# --- Install the drop-in (baseline fragment + startup lines) ---
+if [ "$LUA_MODE" = true ]; then
+  DROPIN="${HYPR_DIR}/atmosphera.lua"
+  install -m 0644 "$FRAG_LUA_SRC" "$DROPIN"
+  printf '\n-- Startup (route: %s)\n%s\n' \
+    "$([ "$SYSTEMD_ROUTE" = true ] && echo systemd || echo spawn)" "$STARTUP_LUA" >> "$DROPIN"
+else
+  DROPIN="${HYPR_DIR}/atmosphera.conf"
+  install -m 0644 "$FRAG_CONF_SRC" "$DROPIN"
+  printf '\n# Startup (route: %s)\n%s\n' \
+    "$([ "$SYSTEMD_ROUTE" = true ] && echo systemd || echo spawn)" "$STARTUP_CONF" >> "$DROPIN"
+fi
+echo "Installed: ${DROPIN}"
+
+# --- Wire the marked source line into the user's config ---
+strip_block() {
+  local file="$1" begin="$2" end="$3"
+  [ -f "$file" ] || return 0
+  if grep -qF -- "$begin" "$file"; then
+    sed -i "\|${begin}|,\|${end}|d" "$file"
+    echo "Refreshed source line in: ${file}"
+  fi
+}
+
+if [ "$LUA_MODE" = true ]; then
+  strip_block "$USER_LUA" "$MARK_BEGIN_LUA" "$MARK_END_LUA"
+  {
+    echo "$MARK_BEGIN_LUA"
+    echo 'require("atmosphera")'
+    echo "$MARK_END_LUA"
+  } >> "$USER_LUA"
+else
+  strip_block "$USER_CONF" "$MARK_BEGIN_CONF" "$MARK_END_CONF"
+  {
+    echo "$MARK_BEGIN_CONF"
+    echo "source = ${DROPIN}"
+    echo "$MARK_END_CONF"
+  } >> "$USER_CONF"
+fi
+
+# --- Wants link management ---
+if [ "$SYSTEMD_ROUTE" = true ]; then
+  systemctl --user add-wants hyprland-session.target atmosphera.service
+  echo "Systemd route: hyprland-session.target -> atmosphera.service"
+else
+  if [ "$(systemctl --user show -p LoadState --value atmosphera.service 2>/dev/null || true)" != "not-found" ]; then
+    systemctl --user disable atmosphera.service >/dev/null 2>&1 || true
+  fi
+  echo "Spawn route: shell started by exec-once"
+fi
+
+# --- Live activation, if Hyprland is running ---
+if [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
+  if [ "$SYSTEMD_ROUTE" = true ]; then
+    systemctl --user start --no-block hyprland-session.target \
+      && echo "Activated: hyprland-session.target started (shell comes up supervised)." \
+      || echo "Note: could not start hyprland-session.target now (applies on next login)."
+  else
+    echo "Hyprland is running — the shell starts on next login, or run: qs -n -c atmosphera"
+  fi
+else
+  echo "Hyprland not running — wiring applies on next session start."
+fi

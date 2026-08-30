@@ -95,6 +95,11 @@ stdenvNoCC.mkDerivation {
 
     # xdg-desktop-portal backend manifest (Settings interface served in-shell)
     install -Dm644 Portals/atmosphera.portal $out/share/xdg-desktop-portal/portals/atmosphera.portal
+
+    # Supervised shell as a systemd user service (activated per compositor
+    # via `atmosphera setup <wm>`, never force-enabled)
+    install -Dm644 Scripts/systemd/atmosphera.service $out/share/systemd/user/atmosphera.service
+    install -Dm644 Scripts/systemd/hyprland-session.target $out/share/systemd/user/hyprland-session.target
   '';
 
   preFixup = ''

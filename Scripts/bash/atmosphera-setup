@@ -5,9 +5,13 @@ SELF_DIR="$(dirname "$(readlink -f "$0")")"
 
 case "${1:-}" in
   niri) exec "$SELF_DIR/atmosphera-niri-setup" ;;
+  hypr|hyprland) exec "$SELF_DIR/atmosphera-hypr-setup" ;;
+  mango|mangowc) exec "$SELF_DIR/atmosphera-mango-setup" ;;
   ""|help)
     echo "atmosphera setup <target>"
     echo "  niri    Install atmosphera's niri config include"
+    echo "  hypr    Install atmosphera's Hyprland drop-in + startup wiring"
+    echo "  mango   Install atmosphera's MangoWC drop-in + startup wiring"
     ;;
   *) echo "atmosphera setup: unknown target '$1'" >&2; exit 1 ;;
 esac

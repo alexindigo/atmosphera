@@ -1,0 +1,19 @@
+[Unit]
+Description=Atmosphera desktop shell (Quickshell)
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.Notifications
+ExecStart=/usr/bin/qs -n -c atmosphera
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=10
+SyslogIdentifier=atmosphera
+
+[Install]
+WantedBy=graphical-session.target

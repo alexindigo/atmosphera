@@ -195,26 +195,44 @@ order of support depth.
   `NIRI_SOCKET`.
 - **Session wiring:** run the bundled setup script once:
   ```bash
-  atmosphera-niri-setup
+  atmosphera setup niri
   ```
   It composes `~/.config/niri/atmosphera-session.kdl` (your base config +
-  the Atmosphera layers), adds `spawn-at-startup "qs" "-n" "-c" "atmosphera"`,
-  and switches the running session to it — without touching your
-  `config.kdl`.
+  the Atmosphera layers) and switches the running session to it — without
+  touching your `config.kdl`. Startup is wired one of two ways, probed
+  automatically:
+  - **systemd sessions** (niri runs as `niri.service`): the shell is a
+    supervised user service — `atmosphera.service`, wanted by
+    `niri.service`. Crashes restart it automatically
+    (`journalctl --user -u atmosphera.service` for logs). No spawn line.
+    If you previously added a spawn line to your own `config.kdl`, remove
+    it — the unit and the spawn would otherwise race at session start.
+  - **non-systemd sessions:** the layer keeps
+    `spawn-at-startup "qs" "-n" "-c" "atmosphera"`.
 - **Manual equivalent** (if you prefer your own config): include
-  `Configs/niri/atmosphera.kdl` and add the spawn line above to your niri
-  config.
+  `Configs/niri/atmosphera.kdl` and either add the spawn line above to
+  your niri config, or `systemctl --user add-wants niri.service
+  atmosphera.service` on systemd sessions.
 
 ### Hyprland
 
 - **IPC module:** none. Hyprland integration uses Quickshell's **built-in**
   `Quickshell.Hyprland` module — workspaces, toplevels, and focus work out
   of the box. Detection is automatic via `HYPRLAND_INSTANCE_SIGNATURE`.
-- **Session wiring:** add a launch line to `~/.config/hypr/hyprland.conf`:
+- **Session wiring:** run the bundled setup script once:
   ```bash
-  exec-once = qs -n -c atmosphera
+  atmosphera setup hypr
   ```
-  No extra packages beyond the shell + Quickshell.
+  It installs a drop-in fragment (`~/.config/hypr/atmosphera.conf`, or
+  `atmosphera.lua` on Hyprland ≥ 0.55 Lua configs) with the shell's layer
+  rules and startup line, and adds exactly one marked `source =` line to
+  your config (reversible — re-run to refresh, delete the block to undo).
+  Startup routes, probed automatically:
+  - **systemd:** the drop-in starts `hyprland-session.target`, which wants
+    `atmosphera.service` — supervised, crash-restarting shell.
+  - **non-systemd:** the drop-in carries `exec-once = qs -n -c atmosphera`.
+- **Manual equivalent:** source `Configs/hypr/atmosphera.conf` from your
+  Hyprland config and add one of the startup lines above.
 
 ### MangoWC
 
@@ -222,20 +240,27 @@ order of support depth.
   manual install; AUR: `qt6-mangowcqml`). Talks to mangowc's `mmsg` JSON socket for
   workspaces (tags), windows, focus, keymode, and keyboard layout. Detection
   requires `XDG_CURRENT_DESKTOP=mango`.
-- **Session wiring:** mangowc's `config.conf` has **no `exec-once`/autostart
-  keyword** — autostart is the session launcher's job, which is also where
-  the desktop identity gets set. On a bare tty session, add to
-  `~/.bash_profile` (or your display-manager session file):
+- **Session wiring:** run the bundled setup script once:
+  ```bash
+  atmosphera setup mango
+  ```
+  It installs a drop-in fragment (`~/.config/mango/atmosphera.conf`) with
+  `exec-once=qs -n -c atmosphera` and adds one marked `source=` line to
+  your `config.conf` (reversible). Note: use `exec-once=`, never `exec=` —
+  mangowc re-runs plain `exec=` on every config reload, which would respawn
+  the shell each time. MangoWC has no systemd session unit upstream, so the
+  shell always starts via `exec-once`.
+- **Bare tty sessions:** mangowc autostart is the session launcher's job.
+  On a bare tty, add to `~/.bash_profile` (or your display-manager session
+  file):
   ```bash
   if [ -z "$WAYLAND_DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
     export XDG_CURRENT_DESKTOP=mango
     exec mango
   fi
   ```
-  then have Atmosphera start once mangowc is up (e.g. via a
-  `qs -n -c atmosphera` line in your session autostart, or bound to a key
-  with `bind=...,spawn,qs -n -c atmosphera`). The `XDG_CURRENT_DESKTOP=mango`
-  export is what selects the MangoWC backend.
+  The `XDG_CURRENT_DESKTOP=mango` export is what selects the MangoWC
+  backend.
 
 ### Other compositors
 
