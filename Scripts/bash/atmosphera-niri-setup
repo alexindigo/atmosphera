@@ -33,7 +33,12 @@ echo "Installed: ${NIRI_DIR}/atmosphera.kdl"
 # layer. Non-systemd sessions keep the spawn line (baseline behavior).
 SYSTEMD_ROUTE=false
 if command -v systemctl >/dev/null 2>&1 && systemctl --user show-environment >/dev/null 2>&1; then
-  if [ "$(systemctl --user show -p LoadState --value niri.service 2>/dev/null)" != "not-found" ] \
+  # Probe for a systemd-driven session, not just installed unit files:
+  # niri.service must be active (i.e. the running session was started
+  # through it). A merely-installed-but-inactive niri.service (tty-spawned
+  # niri) must NOT select the systemd route — the wants link would never
+  # fire and the shell would never start.
+  if [ "$(systemctl --user is-active niri.service 2>/dev/null)" = "active" ] \
      && [ "$(systemctl --user show -p LoadState --value atmosphera.service 2>/dev/null)" != "not-found" ]; then
     SYSTEMD_ROUTE=true
   fi
