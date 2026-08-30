@@ -90,26 +90,68 @@ Both keys are served spec-shaped in `Read`/`ReadOne`/`ReadAll` (the
 `impl.portal.Settings` type catalog; the accent struct rides inside the
 variant payload), and `SettingChanged` is emitted live for both.
 
+## Served interface: FileChooser
+
+`org.freedesktop.impl.portal.FileChooser` at `/org/freedesktop/portal/desktop`:
+
+| Member | Signature | Notes |
+| --- | --- | --- |
+| `OpenFile` | `(osssa{sv}) -> (u a{sv})` | open files or folders, optional multi-select |
+| `SaveFile` | `(osssa{sv}) -> (u a{sv})` | single save target: filename field + inline overwrite confirm |
+| `SaveFiles` | `(osssa{sv}) -> (u a{sv})` | multi-target save list (accumulate targets, Save All) |
+
+Response codes: `0` ok (`results` carries `uris`), `1` cancelled, `2`
+error.
+
+The method reply is the response, **deferred**: the D-Bus call is held
+open (`holdReply()`) while the dialog is up and answered only when the
+user finishes — the reply carries `(u response, a{sv results})`, with
+`uris` marshaled as a typed `as` variant (`new DBusQML.variant(paths,
+"as")`; a plain array infers `av` and xdg-desktop-portal silently drops
+it).
+
+Each call also gets a per-call `org.freedesktop.impl.portal.Request`
+adaptor at the caller-supplied handle path; its `Close()` cancels the
+dialog and replies `(1, {})`. The adaptor is destroyed when the call
+settles, freeing the bus path immediately.
+
+The dialog is a layer-shell overlay (`PortalFileDialog`) hosting
+`AtmoFilePicker` (the shell's file picker — open mode unchanged for
+in-shell callers, save mode added here). In-shell consumers
+(Settings panels, setup wizard, etc.) go through the frontend
+`org.freedesktop.portal.FileChooser` like any app (`PortalFilePicker` +
+`FileChooserClient`), so the picker's only host is the portal dialog.
+
 ## Files
 
 | File | Purpose |
 | --- | --- |
 | `atmosphera.portal` | Backend registration file (installed to `/usr/share/xdg-desktop-portal/portals/`) |
+| `niri-portals.conf` | Backend preference for niri sessions (installed to `/usr/share/xdg-desktop-portal/`) |
 | `SettingsPortal.qml` | Settings interface backend (DBusAdaptor) |
+| `FileChooserPortal.qml` | FileChooser interface backend (DBusAdaptor, deferred replies, per-call Request objects) |
+| `PortalFileDialog.qml` | Layer-shell overlay hosting the picker (per-request modal) |
+| `PortalFilePicker.qml` | In-shell widget shim → `FileChooserClient` |
+| `FileChooserClient.qml` | Frontend `org.freedesktop.portal.FileChooser` client (watcher + callbacks) |
 | `README.md` | This file |
 
 ## Routing / precedence
 
-Backends are tried alphabetically by filename within each portal directory;
-`atmosphera.portal` sorts before `gnome.portal`/`gtk.portal`. To pin
-explicitly, use `~/.config/xdg-desktop-portal/portals.conf`:
+xdg-desktop-portal picks a backend per interface. With no config it falls
+back to directory-read order ("last-resort fallback") — **not**
+alphabetical — so with `xdg-desktop-portal-gtk` installed, gtk wins both
+interfaces and the shell's backend never gets called. The package
+therefore ships `niri-portals.conf`:
 
 ```ini
 [preferred]
-org.freedesktop.impl.portal.Settings=atmosphera
+default=atmosphera
 ```
 
-then `systemctl --user restart xdg-desktop-portal`.
+which pins the shell's backend for every interface it implements (other
+interfaces still fall through to whatever else is installed). To override
+per-user, use `~/.config/xdg-desktop-portal/portals.conf` and
+`systemctl --user restart xdg-desktop-portal`.
 
 ## Screencast (out of scope)
 
@@ -122,4 +164,6 @@ dependency.
 ## Dependencies
 
 - `xdg-desktop-portal` (must be running on the session bus)
-- `qt6-dbusqml` >= 0.4.0 (`DBusAdaptor` server-side support)
+- `qt6-dbusqml` >= 0.8.0 (`DBusAdaptor` server-side support: co-located
+  adaptors at one path, deferred replies, Properties marshal guards, and
+  per-call adaptor ownership preserved through dispatch)
