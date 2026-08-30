@@ -1,0 +1,4 @@
+[portal]
+DBusName=org.freedesktop.impl.portal.desktop.atmosphera
+Interfaces=org.freedesktop.impl.portal.Settings;org.freedesktop.impl.portal.FileChooser;
+UseIn=niri

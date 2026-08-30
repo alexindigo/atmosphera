@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import "../../../../../Helpers/QtObj2JS.js" as QtObj2JS
 import qs.Commons
+import qs.Portals
 import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
@@ -50,7 +51,7 @@ ColumnLayout {
     }
   }
 
-  NFilePicker {
+  PortalFilePicker {
     id: avatarPicker
     title: I18n.tr("panels.general.profile-select-avatar")
     selectionMode: "files"

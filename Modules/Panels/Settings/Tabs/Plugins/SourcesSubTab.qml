@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
+import qs.Portals
 import qs.Services.Plugins
 import qs.Services.UI
 import qs.Widgets
@@ -224,7 +225,7 @@ ColumnLayout {
         }
       }
 
-      NFilePicker {
+      PortalFilePicker {
         id: folderPicker
         title: I18n.tr("panels.plugins.sources-add-dialog-browse-title")
         selectionMode: "folders"

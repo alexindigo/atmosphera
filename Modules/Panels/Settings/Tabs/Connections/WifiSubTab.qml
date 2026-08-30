@@ -6,6 +6,7 @@ import Quickshell
 import Quickshell.Bluetooth
 
 import qs.Commons
+import qs.Portals
 import qs.Services.Networking
 import qs.Services.System
 import qs.Services.UI
@@ -1432,7 +1433,7 @@ Item {
     }
   }
 
-  NFilePicker {
+  PortalFilePicker {
     id: caCertPicker
     title: I18n.tr("wifi.enterprise.ca-cert")
     nameFilters: ["*.pem", "*.crt", "*.cer", "*.der", "*"]

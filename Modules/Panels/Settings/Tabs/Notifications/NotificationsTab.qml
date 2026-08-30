@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Portals
 import qs.Widgets
 
 ColumnLayout {
@@ -101,7 +102,7 @@ ColumnLayout {
   }
 
   // File Pickers for Sound Files
-  NFilePicker {
+  PortalFilePicker {
     id: unifiedSoundFilePicker
     title: I18n.tr("panels.notifications.sounds-files-unified-select-title")
     selectionMode: "files"
@@ -117,7 +118,7 @@ ColumnLayout {
     }
   }
 
-  NFilePicker {
+  PortalFilePicker {
     id: lowSoundFilePicker
     title: I18n.tr("panels.notifications.sounds-files-low-select-title")
     selectionMode: "files"
@@ -130,7 +131,7 @@ ColumnLayout {
     }
   }
 
-  NFilePicker {
+  PortalFilePicker {
     id: normalSoundFilePicker
     title: I18n.tr("panels.notifications.sounds-files-normal-select-title")
     selectionMode: "files"
@@ -143,7 +144,7 @@ ColumnLayout {
     }
   }
 
-  NFilePicker {
+  PortalFilePicker {
     id: criticalSoundFilePicker
     title: I18n.tr("panels.notifications.sounds-files-critical-select-title")
     selectionMode: "files"

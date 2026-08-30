@@ -29,6 +29,7 @@ import qs.Modules.OSD
 import qs.Modules.Panels.Launcher
 import qs.Modules.Panels.Settings
 import qs.Modules.Toast
+import qs.Portals
 import qs.Services.Control
 import qs.Services.Hardware
 import qs.Services.Keyboard
@@ -122,6 +123,8 @@ ShellRoot {
           PowerProfileService.init();
           HostService.init();
           NotificationRulesService.init();
+          SettingsPortal.init();
+          FileChooserPortal.init();
           Version.init();
           CustomButtonIPCService.init();
           IPCService.init(screenDetector);

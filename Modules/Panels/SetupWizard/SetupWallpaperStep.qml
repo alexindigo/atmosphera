@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Portals
 import qs.Services.UI
 import qs.Widgets
 
@@ -381,7 +382,7 @@ ColumnLayout {
     initialRefreshTimer.start();
   }
 
-  NFilePicker {
+  PortalFilePicker {
     id: directoryPicker
     selectionMode: "folders"
     title: I18n.tr("setup.wallpaper.dir-select-title")

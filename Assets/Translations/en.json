@@ -2386,13 +2386,20 @@
       "year-two-digit": "Year as two-digit number (00-99)"
     },
     "file-picker": {
+      "add-to-list": "Add to List",
+      "file-name": "File name",
       "item": "item",
       "items": "items",
+      "overwrite-description": "A file with this name already exists in this folder. Replace it?",
+      "replace": "Replace",
+      "save": "Save",
+      "save-all": "Save All",
       "search-placeholder": "Search files and folders...",
       "select-current": "Select Current",
       "select-file": "Select File",
       "select-folder": "Select Folder",
       "selected": "Selected:",
+      "target-list-overwrite": "replaces existing",
       "title": "File Picker"
     },
     "file-picker-title": "Select a file",
