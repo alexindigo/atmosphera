@@ -1,5 +1,139 @@
 # Changelog
 
+## [0.6.2] — 2026-08-30
+
+### 2026-08-30
+
+**Breaking**
+
+Plugin identity is now uniform: every installed plugin is keyed by a hash of
+its source's path or URL (`<source-hash>:<id>`), and the shell-shipped source
+is hashed by its folder path the same way — the constant `builtin:` identity
+is gone. Installed built-in plugins keep running until reinstalled, but their
+old `builtin:`-keyed copies no longer match: re-install them from the
+Available tab (one click; `defaultEnabled` plugins re-seed under the new key
+on a fresh profile). No migration by design — the stale keys are simply
+orphaned.
+
+- refactor(plugins): uniform source-hash identity — drop builtin source-id special case (`0871cc30f`)
+
+**Feature**
+
+Two long-running tracks landed on main. The shell now serves
+xdg-desktop-portal backends in-process: an appearance Settings backend
+(color-scheme + accent-color with live `SettingChanged`) and a FileChooser
+backend covering OpenFile/SaveFile/SaveFiles — deferred D-Bus replies hold
+each call until the user finishes the layer-shell picker dialog, per-call
+Request objects implement caller cancel, and the picker gained save mode
+(filename field, inline overwrite confirm) plus a multi-target save list.
+Backend routing is pinned by a shipped
+`/etc/xdg/xdg-desktop-portal/niri-portals.conf` (niri's own stock file prefers
+gnome/gtk). The shell can also run as a supervised systemd user service:
+`atmosphera setup <compositor>` probes whether the session is systemd-driven
+and wires `niri.service → atmosphera.service` (or the Hyprland session
+target), falling back to the compositor spawn line on non-systemd sessions.
+
+- Merge branch 'portal-filechooser' — in-shell xdg-desktop-portal backends (`4730ba719`)
+- Merge branch 'shell-systemd-unit' — supervised shell as a systemd user service (`ad36dbb9e`)
+
+**Fix**
+
+The portal routing preference moved out of `/usr/share` (owned by the niri
+package, which ships its own gnome/gtk preference) into `/etc/xdg`, where it
+actually wins. The startup-route probe no longer mispicks the systemd route
+on tty-spawned sessions — a merely-installed-but-inactive `niri.service` no
+longer counts as systemd-driven. Lock-screen plugin selection resolves
+correctly again: a bare plugin id in settings no longer silently falls back
+to the built-in lock screen, and with uniform plugin keys the lookup is
+strict.
+
+- fix(pkg): install niri-portals.conf into /etc/xdg/xdg-desktop-portal (`477c6dd99`)
+- fix(session): probe systemd route by active niri.service, not installed unit (`96ab9e48d`)
+- fix(lockscreen): resolve bare lock-screen plugin id to its composite key (`8c3a5a9e1`)
+- fix(lockscreen): strict plugin lookup (`5672b48c9`)
+
+**Docs**
+
+The Portals README documents the FileChooser backend (all three methods, the
+deferred-reply request lifecycle, per-call Request objects), the shipped
+routing configuration, and the correct dbusqml floor (>= 0.8.0).
+
+- docs(portals): README FileChooser section + shipped routing conf (`047b112be`)
+
+### 2026-08-26
+
+**Feature**
+
+The FileChooser backend itself: the shell serves
+`org.freedesktop.impl.portal.FileChooser` (OpenFile, SaveFile, SaveFiles)
+over deferred D-Bus replies, with a layer-shell picker dialog and per-call
+Request objects for caller cancellation.
+
+- feat(portals): FileChooser backend (`89b76eee3`)
+
+**Refactor**
+
+The file picker was renamed ahead of its save-mode revamp (house rule: no N*
+Noctalia names on changed components).
+
+- refactor(widgets): rename NFilePicker → AtmoFilePicker (`0bb9d944d`)
+
+### 2026-08-25
+
+**Feature**
+
+The shell serves `org.freedesktop.impl.portal.Settings` in-process:
+appearance queries (color-scheme, accent-color) answer with spec-shaped
+replies and live `SettingChanged` signals, and the package declares
+`xdg-desktop-portal-impl` and installs the backend manifest — no
+GNOME/GTK/KDE portal package required on niri.
+
+- feat(portals): Atmosphera Settings portal backend (`c87728e68`)
+- build(pkg): provide xdg-desktop-portal-impl + install portal manifest (`f173c1bc8`)
+
+### 2026-08-24
+
+**Feature**
+
+The shell can run as a supervised systemd user service: `atmosphera.service`
+starts with the graphical session and restarts the shell on failure, and
+`atmosphera setup <compositor>` wires it per compositor, probing
+automatically and falling back to the compositor spawn line on non-systemd
+sessions.
+
+- feat(session): systemd user unit + per-compositor setup scripts (`695d916ff`)
+- build(pkg): install systemd user units (`df20e1a51`)
+
+### 2026-08-23
+
+**Feature**
+
+Built-in plugins now upgrade in place: when a shell update ships a newer
+bundled manifest, the installed copy refreshes automatically (preserving the
+plugin's settings and enabled state) — the same freshness run-from-source
+gave, now that all plugins run from the user folder.
+
+- feat: upgrade refresh for built-in plugins + uniform run-from-user-copy (`f26df1bb4`)
+
+**Refactor**
+
+The plugin framework moved to Services/Plugins with the payload at
+builtin/plugins/, and GitHubService + UpdateService merged into
+Services/Version.qml; the dead TelemetryService is gone.
+
+- refactor: plugin payload Plugins/ → builtin/plugins/ + constant 'builtin' source id (`b1812d091`)
+- refactor: merge GitHubService + UpdateService into Services/Version.qml (`65379a935`)
+- refactor: move plugin framework to Services/Plugins (`1aef941b2`)
+- refactor: remove dead TelemetryService; rename vestigial checkTelemetryWizardOrChangelog (`9d9ed160e`)
+
+**Docs**
+
+The session meta-package docs note the portal backends they pull in (and a
+follow-up revert keeps the install lines in sync with the actual pkgrel).
+
+- docs: meta packages now pull portal backends (gnome+gtk for niri, gtk+wlr for mangowc) (`90561d0a1`)
+- revert portal backend mention in meta install lines (matches pkgrel 3 reverts) (`12bc2d119`)
+
 ## [0.6.1] — 2026-08-23
 
 ### 2026-08-23
