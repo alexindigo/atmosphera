@@ -122,6 +122,49 @@ in-shell callers, save mode added here). In-shell consumers
 `org.freedesktop.portal.FileChooser` like any app (`PortalFilePicker` +
 `FileChooserClient`), so the picker's only host is the portal dialog.
 
+## Served interface: Inhibit
+
+`org.freedesktop.impl.portal.Inhibit` (full v3 surface) at
+`/org/freedesktop/portal/desktop`:
+
+| Member | Signature | Notes |
+| --- | --- | --- |
+| `Inhibit` | `(ossua{sv}) -> ()` | grant + map onto `IdleInhibitorService`; held until the impl Request is `Close()`d |
+| `CreateMonitor` | `(ooss) -> (u)` | session for `StateChanged` snapshots; `0` granted |
+| `QueryEndResponse` | `(o) -> ()` | accepted no-op |
+| `StateChanged` (signal) | `(oa{sv})` | emitted on the impl interface; the daemon re-emits to the session owner |
+
+Policy: **grant + toast.** Every valid request is granted — the daemon
+already enforces the permission store before calling us. A toast notifies
+the user when an app starts holding idle (deduplicated per `appId`, on
+the 0→1 transition, since media players toggle inhibit on play/pause).
+The only error path is genuinely malformed state (duplicate monitor
+session).
+
+Flag mapping, honestly: the `Inhibit` flags (`1` logout, `2`
+user-switch, `4` suspend, `8` idle) are all accepted but map onto idle
+inhibition only — which transitively blocks idle-triggered lock and
+idle-triggered suspend, but never a manual `systemctl suspend` or
+logout. Rejecting suspend-bearing calls would break apps that pass
+`4|8`; upstream GNOME's fdo fallback accepts idle only for the same
+reason. There is no logind sleep-block integration.
+
+State sources for `StateChanged`:
+
+- `screensaver-active` — the shell's lock screen active state (the lock
+  screen is the screensaver equivalent; no separate screensaver exists).
+- `session-state` — always `1` (Running). Nothing on niri+logind emits
+  Query End/Ending (no session manager), so the backend never reports
+  `2`/`3` and `QueryEndResponse` is treated as an accepted no-op. This
+  is documented rather than faked.
+
+Teardown: an `Inhibit` is held until the daemon closes the impl
+`Request` — on app-initiated `Request.Close` or automatically when the
+app's bus name vanishes. A monitor session is torn down by `Close()` on
+the impl `Session` (the Request at `handle` may never see `Close`).
+Unknown handles on close are tolerated (shell restarted under a live
+daemon).
+
 ## Files
 
 | File | Purpose |
@@ -130,6 +173,7 @@ in-shell callers, save mode added here). In-shell consumers
 | `niri-portals.conf` | Backend preference for niri sessions (installed to `/usr/share/xdg-desktop-portal/`) |
 | `SettingsPortal.qml` | Settings interface backend (DBusAdaptor) |
 | `FileChooserPortal.qml` | FileChooser interface backend (DBusAdaptor, deferred replies, per-call Request objects) |
+| `InhibitPortal.qml` | Inhibit interface backend (DBusAdaptor, per-call Request/Session adaptors, StateChanged emission) |
 | `PortalFileDialog.qml` | Layer-shell overlay hosting the picker (per-request modal) |
 | `PortalFilePicker.qml` | In-shell widget shim → `FileChooserClient` |
 | `FileChooserClient.qml` | Frontend `org.freedesktop.portal.FileChooser` client (watcher + callbacks) |
