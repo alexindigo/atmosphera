@@ -2149,6 +2149,11 @@
       "enabled-desc": "You'll find these notifications in your history"
     },
     "donation-opened": "Donation page opened in your browser",
+    "inhibit": {
+      "description": "{app} is keeping the session awake",
+      "description-reason": "{app} is keeping the session awake: {reason}",
+      "unknown-app": "An application"
+    },
     "internet-limited": "Connected without internet",
     "keyboard-layout": {
       "changed": "Keyboard layout changed to {layout}",
