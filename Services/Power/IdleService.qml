@@ -131,6 +131,9 @@ Singleton {
   }
 
   function _isStageEnabled(stage) {
+    // KeepAwake / portal inhibit: idle actions are entirely suspended.
+    if (IdleInhibitorService.isInhibited)
+      return false;
     const idle = Settings.data.idle;
     if (stage === "screenOff")
       return idle.screenOffTimeout > 0;
@@ -139,6 +142,18 @@ Singleton {
     if (stage === "suspend")
       return idle.suspendTimeout > 0;
     return false;
+  }
+
+  function _resyncStageMonitors() {
+    var stages = ["screenOff", "lock", "suspend"];
+    for (var i = 0; i < stages.length; i++) {
+      var prop = "_" + stages[i] + "Monitor";
+      if (root[prop]) {
+        root[prop].destroy();
+        root[prop] = null;
+      }
+    }
+    _applyTimeouts(); // recreates (null path), heartbeat/customs re-synced too
   }
 
   function _runNextQueuedStage() {
@@ -186,6 +201,10 @@ Singleton {
   }
 
   function _executeAction(stage) {
+    if (IdleInhibitorService.isInhibited) {
+      Logger.i("IdleService", "Suppressed inhibited idle action:", stage);
+      return;
+    }
     Logger.i("IdleService", "Executing action:", stage);
     if (stage === "screenOff") {
       // screenOffCommand legacy path is now a handler in HooksService;
@@ -240,6 +259,20 @@ Singleton {
     }
   }
 
+  Connections {
+    target: IdleInhibitorService
+    function onIsInhibitedChanged() {
+      if (IdleInhibitorService.isInhibited) {
+        // Engaged (possibly mid-fade): abort any pending/queued idle action.
+        root.cancelFade();
+      } else {
+        // Released: recreate stage monitors so the compositor re-fires
+        // idled immediately when the user is still idle past timeout.
+        root._resyncStageMonitors();
+      }
+    }
+  }
+
   function _applyTimeouts() {
     const idle = Settings.data.idle;
     const globalEnabled = idle.enabled;
@@ -291,7 +324,7 @@ Singleton {
         const capturedResumeCmd = resumeCmd;
         monitor.isIdleChanged.connect(function () {
           if (monitor.isIdle) {
-            if (capturedCmd)
+            if (capturedCmd && !IdleInhibitorService.isInhibited)
               root._executeCustomCommand(capturedCmd);
           } else {
             if (capturedResumeCmd)
