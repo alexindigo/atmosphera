@@ -53,6 +53,8 @@ Singleton {
     }
 
     function createMonitor(handle, sessionHandle, appId, window) {
+      // Reply is shaped (u) by the bundled dbusqml Inhibit catalog
+      // (>= 0.9.0) — a plain number return is enough, no gadget.
       return root.beginMonitor(handle, sessionHandle, appId);
     }
 
@@ -140,7 +142,7 @@ Singleton {
   function beginMonitor(handle, sessionHandle, appId) {
     if (root.activeMonitors[sessionHandle]) {
       Logger.w("InhibitPortal", "Duplicate monitor session:", sessionHandle);
-      return new DBusQML.uint32(2);
+      return 2;
     }
 
     var request = requestFactory.createObject(root, {
@@ -171,7 +173,7 @@ Singleton {
       root.emitState(sessionHandle);
     });
 
-    return new DBusQML.uint32(0);
+    return 0;
   }
 
   function releaseMonitor(sessionHandle) {
@@ -189,8 +191,11 @@ Singleton {
 
   function emitState(sessionHandle) {
     // session-state is always 1 (Running): nothing on niri+logind
-    // emits Query End / Ending. Explicit u-typing — a plain JS number
-    // would marshal as i and the daemon would drop the key.
+    // emits Query End / Ending. Gadgets are required here even on
+    // 0.9.0 — the catalog shapes replies and introspection but NOT
+    // emitSignal args: a plain string handle would marshal as s (the
+    // daemon drops the signal), a plain JS number as i (the daemon
+    // drops the session-state key).
     adaptor.emitSignal("StateChanged", [new DBusQML.objectPath(sessionHandle), ({
                                                                                   "screensaver-active": root.screensaverActive,
                                                                                   "session-state": new DBusQML.variant(1, "u")

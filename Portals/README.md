@@ -208,6 +208,7 @@ dependency.
 ## Dependencies
 
 - `xdg-desktop-portal` (must be running on the session bus)
-- `qt6-dbusqml` >= 0.8.0 (`DBusAdaptor` server-side support: co-located
-  adaptors at one path, deferred replies, Properties marshal guards, and
-  per-call adaptor ownership preserved through dispatch)
+- `qt6-dbusqml` >= 0.9.0 (`DBusAdaptor` server-side support: co-located
+  adaptors at one path, deferred replies, Properties marshal guards,
+  per-call adaptor ownership preserved through dispatch, and the bundled
+  Inhibit catalog driving reply shapes and truthful served introspection)
