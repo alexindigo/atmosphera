@@ -35,13 +35,40 @@ Popup {
   signal accepted(var paths)
   signal cancelled
 
+  property bool _finished: false // single-settle guard for the portal reply
+
   function openFilePicker() {
+    root._finished = false; // Popup persists across opens — reset the guard
     if (!root.currentPath)
       root.currentPath = root.initialPath;
     shouldResetSelection = true;
     targetListModel.clear();
     root.pendingOverwrite = "";
     open();
+  }
+
+  function _accept(paths) {
+    if (root._finished)
+      return;
+    root._finished = true;
+    root.accepted(paths);
+    root.close();
+  }
+
+  function _cancel() {
+    if (root._finished)
+      return;
+    root._finished = true;
+    root.cancelled();
+    root.close();
+  }
+
+  onClosed: {
+    // CloseOnEscape self-close lands here — settle as cancel exactly once.
+    if (root._finished)
+      return;
+    root._finished = true;
+    root.cancelled();
   }
 
   function getFileIcon(fileName) {
@@ -102,8 +129,7 @@ Popup {
     if (filePickerPanel.currentSelection.length === 0)
       return;
     root.selectedPaths = filePickerPanel.currentSelection;
-    root.accepted(filePickerPanel.currentSelection);
-    root.close();
+    root._accept(filePickerPanel.currentSelection);
   }
 
   function saveTargetPath() {
@@ -146,8 +172,7 @@ Popup {
       fileNameInput.text = "";
     } else {
       root.selectedPaths = [path];
-      root.accepted([path]);
-      root.close();
+      root._accept([path]);
     }
   }
 
@@ -156,8 +181,7 @@ Popup {
     for (var i = 0; i < targetListModel.count; i++)
       paths.push(targetListModel.get(i).filePath);
     root.selectedPaths = paths;
-    root.accepted(paths);
-    root.close();
+    root._accept(paths);
   }
 
   function updateFilteredModel() {
@@ -333,8 +357,7 @@ Popup {
           icon: Icon.filepickerClose
           tooltipText: I18n.tr("common.close")
           onClicked: {
-            root.cancelled();
-            root.close();
+            root._cancel();
           }
         }
       }
@@ -952,8 +975,7 @@ Popup {
             text: I18n.tr("common.cancel")
             outlined: true
             onClicked: {
-              root.cancelled();
-              root.close();
+              root._cancel();
             }
           }
 
