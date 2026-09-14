@@ -63,13 +63,7 @@ Popup {
     root.close();
   }
 
-  onClosed: {
-    // CloseOnEscape self-close lands here — settle as cancel exactly once.
-    if (root._finished)
-      return;
-    root._finished = true;
-    root.cancelled();
-  }
+  onClosed: root._cancel() // every trigger routes to the channel; only it emits
 
   function getFileIcon(fileName) {
     const ext = fileName.split('.').pop().toLowerCase();
