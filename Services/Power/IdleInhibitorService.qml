@@ -1,4 +1,5 @@
 pragma Singleton
+import DBus 1.0
 
 import QtQuick
 import Quickshell
@@ -17,6 +18,70 @@ Singleton {
   // True when the native Wayland IdleInhibitor is handling inhibition
   // (set by the IdleInhibitor element in MainScreen via the nativeInhibitor property)
   property bool nativeInhibitorAvailable: false
+
+  // fdo ScreenSaver channel (capability-detected; niri serves the
+  // interface in-process and gates its idle notifier on it). Should the
+  // shell ever serve org.freedesktop.ScreenSaver itself, the owner
+  // detection here must not self-deal.
+  property bool _fdoAvailable: false
+  property var _fdoCookie: null   // null = not held
+
+  DBus {
+    id: screenSaver
+    service: "org.freedesktop.ScreenSaver"
+    path: "/org/freedesktop/ScreenSaver"
+    iface: "org.freedesktop.ScreenSaver"
+    connection: SessionBus
+    watchServiceStatus: true
+
+    onServiceAvailableChanged: {
+      root._fdoAvailable = serviceAvailable;
+      if (serviceAvailable) {
+        // Appeared while inhibited (late provider start) — take the cookie now.
+        if (root.isInhibited && root._fdoCookie === null)
+        root._fdoInhibit();
+      } else {
+        // Vanished while held: drop the cookie; the compositor cleans
+        // dead senders itself, and UnInhibit would fail anyway.
+        root._fdoCookie = null;
+      }
+    }
+  }
+
+  function _fdoInhibit() {
+    var reply = screenSaver.call("Inhibit", ["Atmosphera", reason]);
+    if (!reply)
+      return;
+    var done = function () {
+      if (reply.isError)
+        return;
+      var result = reply.values;
+      if (result && result.length > 0) {
+        root._fdoCookie = result[0];
+        Logger.i("IdleInhibitor", "fdo ScreenSaver inhibit held, cookie", root._fdoCookie);
+      }
+    };
+    reply.finished.connect(done);
+    if (reply.isFinished)
+      done();
+  }
+
+  function _fdoRelease() {
+    if (_fdoCookie === null)
+      return;
+    var cookie = _fdoCookie;
+    _fdoCookie = null;
+    var reply = screenSaver.call("UnInhibit", [cookie]);
+    if (!reply)
+      return;
+    var done = function () {
+      if (reply.isError)
+        Logger.w("IdleInhibitor", "fdo ScreenSaver UnInhibit failed");
+    };
+    reply.finished.connect(done);
+    if (reply.isFinished)
+      done();
+  }
 
   function init() {
     Logger.i("IdleInhibitor", "Service started");
@@ -77,6 +142,10 @@ Singleton {
     }
 
     isInhibited = true;
+
+    if (_fdoAvailable && _fdoCookie === null)
+      _fdoInhibit();
+
     Logger.i("IdleInhibitor", "Started inhibition:", reason);
   }
 
@@ -90,6 +159,9 @@ Singleton {
     }
 
     isInhibited = false;
+
+    _fdoRelease();
+
     Logger.i("IdleInhibitor", "Stopped inhibition");
   }
 
