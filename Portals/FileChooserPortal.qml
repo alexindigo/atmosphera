@@ -141,10 +141,24 @@ Singleton {
                                                 handle: handle
                                               });
 
+    // Store BEFORE any settle path so a later Close always finds the entry.
+    var entry = ({
+                   request: request,
+                   dialog: null,
+                   reply: reply,
+                   settled: false
+                 });
+    var map = root.activeRequests;
+    map[handle] = entry;
+    root.activeRequests = map;
+
     var screen = CompositorService.getFocusedScreen();
     if (!screen && Quickshell.screens.length > 0)
       screen = Quickshell.screens[0];
     if (!screen) {
+      // Entry stored and marked settled: a later Close no-ops cleanly
+      // (settles-once) instead of orphaning.
+      entry.settled = true;
       reply.send([2,
                   {}
                  ]);
@@ -158,15 +172,7 @@ Singleton {
                                               options: parsed
                                             });
 
-    var entry = ({
-                   request: request,
-                   dialog: dialog,
-                   reply: reply,
-                   settled: false
-                 });
-    var map = root.activeRequests;
-    map[handle] = entry;
-    root.activeRequests = map;
+    entry.dialog = dialog;
 
     dialog.accepted.connect(function (paths) {
       var entry = root.activeRequests[handle];
@@ -209,6 +215,13 @@ Singleton {
       return;
     if (entry.dialog)
       entry.dialog.destroy();
+    if (entry.settled) {
+      // early-settled path: drop the entry, no second send
+      var map = root.activeRequests;
+      delete map[handle];
+      root.activeRequests = map;
+      return;
+    }
     root.settleCancelled(handle);
   }
 
