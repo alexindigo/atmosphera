@@ -44,6 +44,7 @@ Singleton {
     id: adaptor
     service: "org.freedesktop.impl.portal.desktop.atmosphera"
     path: "/org/freedesktop/portal/desktop"
+    captureSubtree: true
     iface: "org.freedesktop.impl.portal.Inhibit"
     connection: SessionBus
 
