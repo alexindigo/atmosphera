@@ -76,7 +76,7 @@ Singleton {
     function read(ns, key) {
       var v = (ns === root.appearanceNamespace) ? root.appearanceVariant(key) : null;
       if (v === null)
-        return new DBusQML.variant("");
+        throw DBusQML.DBusUtils.error("org.freedesktop.portal.Error.NotFound", "unknown setting: " + ns + " " + key);
       return v;
     }
 
@@ -85,7 +85,7 @@ Singleton {
     function readOne(ns, key) {
       var v = (ns === root.appearanceNamespace) ? root.appearanceVariant(key) : null;
       if (v === null)
-        return new DBusQML.variant("");
+        throw DBusQML.DBusUtils.error("org.freedesktop.portal.Error.NotFound", "unknown setting: " + ns + " " + key);
       return v;
     }
 
