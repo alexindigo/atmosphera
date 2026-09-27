@@ -43,16 +43,16 @@ Singleton {
 
     onStatusChanged: {
       if (status === 2) {                                   // Ready
-        root.fcitx5Available = true;
         Logger.i("InputMethodService", "fcitx5 controller ready");
         refreshTimer.start();
       } else if (status === 3) {                            // Error
-        root.fcitx5Available = false;
         Logger.w("InputMethodService", "fcitx5 controller unreachable");
       }
     }
 
     onServiceAvailableChanged: {
+      // Sole writer of fcitx5Available. A name-owned-but-broken fcitx5
+      // degrades per call via reply.isError guards instead.
       if (!serviceAvailable) {
         root.fcitx5Available = false;
         Logger.w("InputMethodService", "fcitx5 service disappeared");
