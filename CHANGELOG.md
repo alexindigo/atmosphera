@@ -1,5 +1,61 @@
 # Changelog
 
+## [0.7.0] — 2026-09-27
+
+### 2026-09-27
+
+**Feature**
+
+The shell now serves the xdg-desktop-portal Inhibit backend in-process:
+applications hold idle-inhibit locks through the standard portal API, with
+per-session CreateMonitor subscriptions streaming `StateChanged`
+(screensaver-active, session-state) and crash containment that releases
+the lock when a caller dies. KeepAwake now genuinely blocks the shell's
+idle screen-off/lock/suspend on niri — idle stages gate on the inhibitor
+service, and an fdo ScreenSaver cookie is held while inhibited so
+ecosystem tools observe the hold too.
+
+- feat(portals): Inhibit backend (`987b402ae`)
+- feat(idle): hold fdo ScreenSaver cookie while inhibited (niri) (`7638d29ea`)
+- feat(portals): adopt dbusqml 0.9.0 (`9aebf321e`)
+
+**Fix**
+
+The FileChooser cancel chain is hardened end to end: request entries are
+stored before any early-settle path can fire, and Esc / popup self-close
+now routes through the cancel channel so the portal reply settles exactly
+once with no orphaned requests. The three portal adaptors capture their
+subtree, closing the cross-backend race where a request object could be
+answered by the wrong adaptor (the dbusqml 1.0.0 E1 fix's consumer half —
+`qt6-dbusqml >= 1.0.0` is now required). The Settings backend's wire shape
+is spec-correct: values are wrapped once with `u`-typed color-scheme
+payloads, so GTK4/libadwaita apps reliably follow the shell's scheme, and
+unknown namespaces or keys answer `org.freedesktop.portal.Error.NotFound`
+instead of an empty-variant success.
+
+- fix(idle): gate idle stages on IdleInhibitorService (`ce0f706ac`)
+- fix(portals): FileChooser store request entry before early-settle (`8888b8111`)
+- fix(filepicker): settle portal reply on Esc / popup self-close (`c3ea39ef7`)
+- fix(filepicker): route popup self-close through the cancel channel (`fab96b72e`)
+- Portals: set captureSubtree on the three desktop adaptors (`af01b7b02`)
+- fix(portals): Settings single-wrap, u-typed replies (`299f8fe2b`)
+- fix(portals): Settings unknown-key NotFound error replies (`2a8cde28d`)
+
+**Refactor**
+
+With dbusqml 1.0.0 two workarounds became unnecessary: the input-method
+service has a single service-availability path (the name watcher owns the
+flag), and the Inhibit portal drops its objectPath emission gadget — the
+bundled catalog's declared types win at emission.
+
+- refactor(inputmethod): single service-availability path (`708a7980f`)
+- refactor(portals): drop objectPath gadget in InhibitPortal (`f24cce150`)
+
+**Docs**
+
+- docs(portals): README Inhibit section (`c920ef12c`)
+- docs(portals): correct Settings wire-contract description (`b9af1224d`)
+
 ## [0.6.2] — 2026-08-30
 
 ### 2026-08-30
