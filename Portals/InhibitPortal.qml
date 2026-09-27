@@ -192,15 +192,14 @@ Singleton {
 
   function emitState(sessionHandle) {
     // session-state is always 1 (Running): nothing on niri+logind
-    // emits Query End / Ending. Gadgets are required here even on
-    // 0.9.0 — the catalog shapes replies and introspection but NOT
-    // emitSignal args: a plain string handle would marshal as s (the
-    // daemon drops the signal), a plain JS number as i (the daemon
-    // drops the session-state key).
-    adaptor.emitSignal("StateChanged", [new DBusQML.objectPath(sessionHandle), ({
-                                                                                  "screensaver-active": root.screensaverActive,
-                                                                                  "session-state": new DBusQML.variant(1, "u")
-                                                                                })]);
+    // emits Query End / Ending. The plain string handle is typed o at
+    // emission by the bundled Inhibit catalog's declared signal types
+    // (0.9.1 D4: the declaration wins over a mismatched gadget anyway).
+    // variant(1,"u") stays — vardict payloads type by content.
+    adaptor.emitSignal("StateChanged", [sessionHandle, ({
+                                                          "screensaver-active": root.screensaverActive,
+                                                          "session-state": new DBusQML.variant(1, "u")
+                                                        })]);
   }
 
   onScreensaverActiveChanged: {

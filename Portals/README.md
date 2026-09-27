@@ -72,16 +72,18 @@ App (Firefox)               xdg-desktop-portal            Our backend
 
 | Member | Signature | Notes |
 | --- | --- | --- |
-| `Read` | `(ss) -> v` | deprecated; value wrapped in **two** variant layers |
-| `ReadOne` | `(ss) -> v` | value wrapped in one variant layer |
+| `Read` | `(ss) -> v` | deprecated; the impl wraps **once** — the daemon adds the second variant layer itself for the deprecated frontend `Read` |
+| `ReadOne` | `(ss) -> v` | single variant layer, relayed verbatim by the daemon |
 | `ReadAll` | `(as) -> a{sa{sv}}` | all namespaces/keys |
-| `SettingChanged` (signal) | `(ssv)` | emitted live on theme changes |
+| `SettingChanged` (signal) | `(ssv)` | emitted live on theme changes (same single wrap) |
 
 Namespace `org.freedesktop.appearance`, keys:
 
 - `color-scheme` (`u`): `1` = prefer dark, `2` = prefer light. The shell
   always has a concrete scheme, so it never reports `0` (no preference).
-  Sourced from `Settings.data.colorSchemes.darkMode`.
+  Sourced from `Settings.data.colorSchemes.darkMode`. The payload is
+  `u`-typed exactly — strict clients (libadwaita) validate the type and
+  silently fall back on a mismatch.
 - `accent-color` (`(ddd)`): sRGB triple in `[0,1]`, sourced from
   `Color.mPrimary`.
 
@@ -89,6 +91,11 @@ Both keys are served spec-shaped in `Read`/`ReadOne`/`ReadAll` (the
 `a{sa{sv}}` reply shape comes from dbusqml's bundled
 `impl.portal.Settings` type catalog; the accent struct rides inside the
 variant payload), and `SettingChanged` is emitted live for both.
+
+Unknown namespaces or keys are answered with a backend
+`org.freedesktop.portal.Error.NotFound` error naming the setting; the
+daemon converts backend errors to the frontend `NotFound`, which strict
+clients treat as "unsupported key" and fall back from cleanly.
 
 ## Served interface: FileChooser
 

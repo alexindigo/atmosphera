@@ -6,8 +6,11 @@
 // GNOME/GTK/KDE portal package. Discovered via Portals/atmosphera.portal.
 //
 // Wire-format notes (freedesktop portal spec):
-//   - Read (deprecated) wraps the value in TWO variant layers, ReadOne in one
-//   - SettingChanged carries the new value as a variant
+//   - the impl wraps the value in ONE variant layer for every method;
+//     the daemon relays it verbatim into frontend ReadOne and adds the
+//     second layer itself for deprecated frontend Read
+//   - color-scheme payloads are u-typed (libadwaita validates exactly)
+//   - SettingChanged carries the new value as a variant (same single wrap)
 //   - accent-color is a (ddd) struct, sRGB components in [0,1]
 // Reply signatures come from the dbusqml bundled impl.portal.Settings
 // catalog; ReadAll marshals as nested string-keyed dicts of variants.
@@ -51,13 +54,13 @@ Singleton {
     return new DBusQML.struct_([Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b]);
   }
 
-  // undefined for unknown keys — callers wrap per-method.
-  function appearanceValue(key) {
+  // null for unknown keys — callers answer per-method.
+  function appearanceVariant(key) {
     if (key === "color-scheme")
-      return root.colorSchemeValue();
+      return new DBusQML.variant(root.colorSchemeValue(), "u");
     if (key === "accent-color")
-      return root.accentColorValue();
-    return undefined;
+      return new DBusQML.variant(root.accentColorValue()); // struct_ payload self-types
+    return null;
   }
 
   DBusAdaptor {
@@ -68,20 +71,22 @@ Singleton {
     iface: "org.freedesktop.impl.portal.Settings"
     connection: SessionBus
 
-    // Deprecated Read: variant-in-variant on the wire
+    // Deprecated Read: the impl wraps ONCE — the daemon adds the second
+    // variant layer itself for the deprecated frontend Read.
     function read(ns, key) {
-      var value = (ns === root.appearanceNamespace) ? root.appearanceValue(key) : undefined;
-      if (value === undefined)
-        return new DBusQML.variant(new DBusQML.variant(""));
-      return new DBusQML.variant(new DBusQML.variant(value));
+      var v = (ns === root.appearanceNamespace) ? root.appearanceVariant(key) : null;
+      if (v === null)
+        throw DBusQML.DBusUtils.error("org.freedesktop.portal.Error.NotFound", "unknown setting: " + ns + " " + key);
+      return v;
     }
 
-    // ReadOne: single variant on the wire
+    // ReadOne: single variant on the wire, relayed verbatim by the daemon.
+    // Served for interface completeness; the daemon never calls it.
     function readOne(ns, key) {
-      var value = (ns === root.appearanceNamespace) ? root.appearanceValue(key) : undefined;
-      if (value === undefined)
-        return new DBusQML.variant("");
-      return new DBusQML.variant(value);
+      var v = (ns === root.appearanceNamespace) ? root.appearanceVariant(key) : null;
+      if (v === null)
+        throw DBusQML.DBusUtils.error("org.freedesktop.portal.Error.NotFound", "unknown setting: " + ns + " " + key);
+      return v;
     }
 
     // ReadAll: nested string-keyed dicts of variants — the declared
@@ -89,8 +94,8 @@ Singleton {
     function readAll(namespaces) {
       var result = {};
       result[root.appearanceNamespace] = {
-        "color-scheme": new DBusQML.variant(root.colorSchemeValue()),
-        "accent-color": new DBusQML.variant(root.accentColorValue())
+        "color-scheme": root.appearanceVariant("color-scheme"),
+        "accent-color": root.appearanceVariant("accent-color")
       };
       return result;
     }
@@ -100,7 +105,7 @@ Singleton {
     target: Settings.data.colorSchemes
 
     function onDarkModeChanged() {
-      adaptor.emitSignal("SettingChanged", [root.appearanceNamespace, "color-scheme", new DBusQML.variant(root.colorSchemeValue())]);
+      adaptor.emitSignal("SettingChanged", [root.appearanceNamespace, "color-scheme", root.appearanceVariant("color-scheme")]);
     }
   }
 
@@ -108,7 +113,7 @@ Singleton {
     target: Color
 
     function onMPrimaryChanged() {
-      adaptor.emitSignal("SettingChanged", [root.appearanceNamespace, "accent-color", new DBusQML.variant(root.accentColorValue())]);
+      adaptor.emitSignal("SettingChanged", [root.appearanceNamespace, "accent-color", root.appearanceVariant("accent-color")]);
     }
   }
 }
