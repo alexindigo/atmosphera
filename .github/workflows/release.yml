@@ -18,6 +18,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # needed so git describe/git log can see full history and tags
+          fetch-tags: true # tag objects must be present for the tag-body release-notes path below
 
       - name: Create release archive
         run: |
