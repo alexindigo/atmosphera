@@ -237,6 +237,10 @@ Singleton {
       property string _sessionHandle: ""
       property var _onClosed: null
 
+      // Spec-declared interface version (Session has never evolved).
+      // The bundled catalog types it u at introspection and Get/GetAll.
+      readonly property int version: 1
+
       path: _sessionHandle
       iface: "org.freedesktop.impl.portal.Session"
       connection: SessionBus
