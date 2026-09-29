@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Services.Control
+import qs.Services.Locker
 import qs.Services.UI
 
 Singleton {
@@ -54,6 +55,25 @@ Singleton {
     });
 
     detectCompositor();
+
+    // Service-mode boot recovery: session still locked at shell start
+    // (both shell and locker died mid-lock) → spawn the locker for its
+    // contract A.1.3 re-engage. Delayed so LockerService's name watch
+    // resolves first (a live locker makes this a no-op).
+    Qt.callLater(() => {
+      if (Settings.data.general.lockScreenMode === "service")
+        lockedHintStartTimer.start();
+    });
+  }
+
+  Timer {
+    id: lockedHintStartTimer
+    interval: 2000
+    repeat: false
+    onTriggered: {
+      if (!LockerService.available)
+        lockedHintCheck.running = true;
+    }
   }
 
   Connections {
@@ -585,12 +605,146 @@ Singleton {
     return false;
   }
 
+  // --- Contract-locker engagement (lockScreenMode === "service") ---
+  // The locker is a per-lock standalone process (swaylock model): the
+  // shell spawns it detached on demand — a detached child survives the
+  // shell by construction. It serves app.atmosphera.Locker, re-engages
+  // on its own restart while the session is still locked (contract
+  // A.1.3), and exits after unlock. A systemd user service is a valid
+  // optional deployment but never required.
+  property bool _lockerSpawnPending: false
+  property bool _lockerWasLocked: false
+  property int _lockerRespawnAttempts: 0
+
+  // Spawn the locker so it survives the shell: detached AND outside the
+  // shell's cgroup — a systemd unit teardown of the shell (restart,
+  // crash-reap) kills plain detached children of the unit. On systemd
+  // the locker runs as its own transient user service; elsewhere plain
+  // detached spawn has no cgroup reaper to escape.
+  function _spawnLockerDetached(cmd) {
+    var quoted = "'" + cmd.replace(/'/g, "'\\''") + "'";
+    var probe = "if [ -S \"${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/systemd/private\" ] && command -v systemd-run >/dev/null 2>&1; then " + "exec systemd-run --user --collect --quiet -- sh -c " + quoted + "; " + "else exec sh -c " + quoted + "; fi";
+    Quickshell.execDetached(["sh", "-c", probe]);
+  }
+
+  // Engage the contract locker: D-Bus when already running, detached
+  // spawn + appear->Lock chain otherwise. Returns false only when no
+  // locker is running AND no externalLockCommand is configured.
+  function _engageContractLocker() {
+    if (LockerService.lock())
+      return true;
+    if (root._lockerSpawnPending)
+      return true; // spawn already in flight — engagement underway
+    var cmd = Settings.data.general.externalLockCommand;
+    if (cmd === "")
+      return false;
+    Logger.i("Compositor", "Spawning contract locker:", cmd);
+    root._lockerSpawnPending = true;
+    lockerSpawnTimer.restart();
+    root._spawnLockerDetached(cmd);
+    return true;
+  }
+
+  Connections {
+    target: LockerService
+    function onAvailableChanged() {
+      if (LockerService.available && root._lockerSpawnPending) {
+        // Spawned locker took its bus name — route the pending lock to it
+        root._lockerSpawnPending = false;
+        lockerSpawnTimer.stop();
+        LockerService.lock();
+      } else if (!LockerService.available && root._lockerWasLocked) {
+        root._respawnContractLocker();
+      }
+    }
+    function onLockedChanged() {
+      // Track the lock state of the LIVE locker only. When the locker
+      // vanishes, LockerService forces locked=false with available=false;
+      // _lockerWasLocked must keep the last live value so a death while
+      // locked is distinguishable from a clean unlock.
+      if (!LockerService.available)
+        return;
+      root._lockerWasLocked = LockerService.locked;
+      if (!LockerService.locked)
+        root._lockerRespawnAttempts = 0; // clean unlock — healthy cycle
+    }
+  }
+
+  // Spawned locker never appeared -> in-process fallback (plan B.6).
+  Timer {
+    id: lockerSpawnTimer
+    interval: 3000
+    repeat: false
+    onTriggered: {
+      if (!root._lockerSpawnPending)
+        return;
+      root._lockerSpawnPending = false;
+      Logger.w("Compositor", "Contract locker did not appear after spawn — falling back to in-process lock screen");
+      if (!lockAndSuspendTimer.running && PanelService && PanelService.lockScreen && !PanelService.lockScreen.active)
+        PanelService.lockScreen.active = true;
+    }
+  }
+
+  // Locker died while locked: the shell is the supervisor of last
+  // resort. Bounded respawn; the new instance re-engages via the
+  // contract's A.1.3 LockedHint check.
+  function _respawnContractLocker() {
+    if (Settings.data.general.lockScreenMode !== "service")
+      return;
+    var cmd = Settings.data.general.externalLockCommand;
+    if (cmd === "")
+      return;
+    if (root._lockerRespawnAttempts >= 3) {
+      Logger.e("Compositor", "Contract locker died while locked and respawn attempts are exhausted — the compositor locked-session background stays until the locker returns");
+      return;
+    }
+    root._lockerRespawnAttempts++;
+    Logger.w("Compositor", "Contract locker died while locked — respawning (attempt " + root._lockerRespawnAttempts + "/3)");
+    lockerRespawnTimer.restart();
+  }
+
+  Timer {
+    id: lockerRespawnTimer
+    interval: 1000
+    repeat: false
+    onTriggered: {
+      var cmd = Settings.data.general.externalLockCommand;
+      if (cmd !== "" && !LockerService.available)
+        root._spawnLockerDetached(cmd);
+    }
+  }
+
+  // Service-mode boot recovery: the session is still locked while
+  // neither locker nor a locked shell survived (e.g. full crash
+  // mid-lock). Spawn the locker so its A.1.3 re-engage runs. Bare
+  // "loginctl show-session" does not resolve the graphical session from
+  // a systemd user service, so resolve the seat0 session explicitly.
+  Process {
+    id: lockedHintCheck
+    command: ["sh", "-c", "s=$(loginctl list-sessions --no-legend | awk '$4==\"seat0\" {print $1; exit}'); [ -n \"$s\" ] && loginctl show-session \"$s\" -p LockedHint --value"]
+    stdout: StdioCollector {}
+    onExited: function (exitCode) {
+      if (exitCode === 0 && (stdout.text || "").trim() === "yes" && !LockerService.available) {
+        Logger.w("Compositor", "Session still locked at shell startup (LockedHint=yes) — spawning contract locker for re-engagement");
+        root._engageContractLocker();
+      }
+    }
+  }
+
   function lock() {
     Logger.i("Compositor", "LockScreen requested");
     HooksService.runHandler("lockAction", () => {
       if (executeSessionAction("lock"))
         return;
-      if (Settings.data.general.lockScreenPlugin === "external" && _spawnExternalLocker())
+      if (Settings.data.general.lockScreenMode === "service") {
+        // Contract locker owns the session lock; service mode takes
+        // precedence over lockScreenPlugin. No locker and no spawn
+        // command → warn and fall through to the in-process lock screen
+        // (plan B.6).
+        if (root._engageContractLocker())
+          return;
+        Logger.w("Compositor", "lockScreenMode=service but no locker running and externalLockCommand is empty — falling back to in-process lock screen");
+      } else if (Settings.data.general.lockScreenPlugin === "external" && _spawnExternalLocker())
         return;
       if (PanelService && PanelService.lockScreen) {
         PanelService.lockScreen.active = true;
@@ -624,8 +778,40 @@ Singleton {
       return;
     }
 
+    var serviceMode = Settings.data.general.lockScreenMode === "service";
+
+    // Contract locker mode (takes precedence over lockScreenPlugin):
+    // engage the locker (spawning it detached if absent), suspend once
+    // it confirms active. No locker and no spawn command → warn and fall
+    // through to the in-process path (plan B.6).
+    if (serviceMode) {
+      if (LockerService.locked) {
+        Logger.i("Compositor", "Screen already locked (locker), suspending");
+        suspend();
+        return;
+      }
+      if (LockerService.available) {
+        HooksService.runHandler("lockAction", () => {
+          LockerService.lock();
+        });
+        lockAndSuspendCheckCount = 0;
+
+        // Wait for the locker to confirm active before suspending
+        lockAndSuspendTimer.start();
+        return;
+      }
+      if (root._engageContractLocker()) {
+        // Spawn pending: the appear->Lock chain engages the locker and
+        // the timer below waits for its Active confirmation.
+        lockAndSuspendCheckCount = 0;
+        lockAndSuspendTimer.start();
+        return;
+      }
+      Logger.w("Compositor", "lockScreenMode=service but no locker running and externalLockCommand is empty — falling back to in-process lock screen");
+    }
+
     // External lock screen mode: spawn locker, then suspend immediately
-    if (Settings.data.general.lockScreenPlugin === "external" && _spawnExternalLocker()) {
+    if (!serviceMode && Settings.data.general.lockScreenPlugin === "external" && _spawnExternalLocker()) {
       suspend();
       return;
     }
@@ -665,6 +851,23 @@ Singleton {
 
     onTriggered: {
       lockAndSuspendCheckCount++;
+
+      // Service lock mode: the locker's Active signal is the confirmation
+      if (Settings.data.general.lockScreenMode === "service" && LockerService.available) {
+        if (LockerService.locked) {
+          Logger.i("Compositor", "Locker confirmed active, suspending");
+          stop();
+          lockAndSuspendCheckCount = 0;
+          suspend();
+        } else if (lockAndSuspendCheckCount > 30) {
+          // Max 3 seconds wait
+          Logger.w("Compositor", "Locker failed to activate, suspending anyway");
+          stop();
+          lockAndSuspendCheckCount = 0;
+          suspend();
+        }
+        return;
+      }
 
       // Check if lock screen is now active
       if (PanelService && PanelService.lockScreen && PanelService.lockScreen.active) {
