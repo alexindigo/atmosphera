@@ -33,6 +33,7 @@ import qs.Portals
 import qs.Services.Control
 import qs.Services.Hardware
 import qs.Services.Keyboard
+import qs.Services.Locker
 import qs.Services.Location
 import qs.Services.Networking
 import qs.Services
@@ -120,6 +121,7 @@ ShellRoot {
           IdleService.init();
           InputMethodService.init();
           LogindService.init();
+          LockerService.init();
           PowerProfileService.init();
           HostService.init();
           NotificationRulesService.init();

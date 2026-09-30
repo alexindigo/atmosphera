@@ -22,6 +22,7 @@ import DBus 1.0 as DBusQML
 import QtQuick
 import Quickshell
 import qs.Commons
+import qs.Services.Locker
 import qs.Services.Power
 import qs.Services.UI
 
@@ -33,8 +34,9 @@ Singleton {
   // session handle (o) -> { session, request, appId }
   property var activeMonitors: ({})
 
-  // The lock screen is the shell's screensaver equivalent.
-  readonly property bool screensaverActive: PanelService.lockScreen ? PanelService.lockScreen.active : false
+  // The lock screen is the shell's screensaver equivalent. In
+  // contract-locker mode the locker's Active state is the source.
+  readonly property bool screensaverActive: LockerService.available ? LockerService.locked : (PanelService.lockScreen ? PanelService.lockScreen.active : false)
 
   function init() {
     Logger.i("InhibitPortal", "Service started");
@@ -204,7 +206,7 @@ Singleton {
 
   onScreensaverActiveChanged: {
     for (var h in root.activeMonitors)
-    root.emitState(h);
+      root.emitState(h);
   }
 
   // --- Per-call object factories ---
@@ -257,6 +259,6 @@ Singleton {
   Component.onDestruction: {
     var map = activeInhibits;
     for (var h in map)
-    IdleInhibitorService.removeInhibitor(map[h].inhibitorId);
+      IdleInhibitorService.removeInhibitor(map[h].inhibitorId);
   }
 }

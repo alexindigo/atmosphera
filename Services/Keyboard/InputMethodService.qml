@@ -6,6 +6,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Services.Compositor
+import qs.Services.Locker
 import qs.Services.UI
 
 Singleton {
@@ -424,6 +425,24 @@ Singleton {
     "da": "🇩🇰",
     "fi": "🇫🇮",
     "it": "🇮🇹"
+  }
+
+  // ——— Contract-locker trigger (lockScreenMode = "service") ———
+  // The shell's own LockScreen never activates in service mode, so
+  // secure mode follows the locker's state instead. Gated on
+  // availability: a vanishing locker keeps the IME suppressed (the
+  // session may still be locked); the in-process LockScreen.active path
+  // in Modules/LockScreen stays for builtin mode and the B.6 fallback.
+  Connections {
+    target: LockerService
+    function onLockedChanged() {
+      if (!LockerService.available)
+        return;
+      if (LockerService.locked)
+        root.enterSecureMode();
+      else
+        root.exitSecureMode();
+    }
   }
 
   // ——— Composite operations (lock screen) ———
