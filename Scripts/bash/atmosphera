@@ -110,7 +110,7 @@ case "$SUBCMD" in
       for ((i=0; i<pad; i++)); do
         args+=("")
       done
-      output=$(qs -c atmosphera ipc call "${args[@]}" 2>&1) && exit 0
+      output=$(qs -c atmosphera ipc call "${args[@]}" 2>&1) && { echo "$output"; exit 0; }
       [[ "$output" == *"Too few arguments"* ]] || { echo "$output"; exit 1; }
     done
     echo "$output"
