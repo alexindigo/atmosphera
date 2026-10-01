@@ -136,6 +136,20 @@ Singleton {
         }
       }
 
+      // Self-heal: a Built-in source entry still carrying the pre-0.6
+      // payload path (…/Plugins) can never load — rewrite it to the
+      // current payload path. Plugin-state sourceUrls are NOT touched
+      // (the v3 migration intentionally keys off the legacy hash).
+      var legacyBuiltinUrl = "file://" + Quickshell.shellDir + "/Plugins";
+      for (var j = 0; j < root.pluginSources.length; j++) {
+        var bsrc = root.pluginSources[j];
+        if (bsrc.url === legacyBuiltinUrl) {
+          Logger.w("PluginRegistry", "Self-healing stale Built-in source path:", bsrc.url, "→", root.builtinSourceUrl);
+          bsrc.url = root.builtinSourceUrl;
+          needsSave = true;
+        }
+      }
+
       if (needsSave) {
         root.save();
       }
