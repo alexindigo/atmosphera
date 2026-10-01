@@ -44,9 +44,12 @@ Item {
       property string hoverLabel: ""
       spacing: Style.marginL
 
+      // Fixed-size icon slots: AtmoIcon's implicit width for svg glyphs
+      // doesn't cover the mask spread, so sizing wrappers from implicit
+      // metrics lets glyphs paint into their neighbors.
       Item {
-        width: networkRow.implicitWidth
-        height: networkRow.implicitHeight
+        implicitWidth: networkIconBox.implicitWidth
+        implicitHeight: networkIconBox.implicitHeight
 
         MouseArea {
           anchors.fill: parent
@@ -55,11 +58,13 @@ Item {
           onExited: topLeftRow.hoverLabel = ""
         }
 
-        RowLayout {
-          id: networkRow
-          spacing: Style.marginS
+        Item {
+          id: networkIconBox
+          implicitWidth: Math.round(Style.fontSizeL * Style.uiScaleRatio * 1.5)
+          implicitHeight: implicitWidth
 
           AtmoIcon {
+            anchors.centerIn: parent
             icon: root._networkIcon()
             pointSize: Style.fontSizeL
             color: "white"
@@ -68,8 +73,8 @@ Item {
       }
 
       Item {
-        width: batteryRow.implicitWidth
-        height: batteryRow.implicitHeight
+        implicitWidth: batteryIconBox.implicitWidth
+        implicitHeight: batteryIconBox.implicitHeight
         visible: BatteryService.batteryReady
 
         MouseArea {
@@ -79,11 +84,13 @@ Item {
           onExited: topLeftRow.hoverLabel = ""
         }
 
-        RowLayout {
-          id: batteryRow
-          spacing: Style.marginS
+        Item {
+          id: batteryIconBox
+          implicitWidth: Math.round(Style.fontSizeL * Style.uiScaleRatio * 1.5)
+          implicitHeight: implicitWidth
 
           AtmoIcon {
+            anchors.centerIn: parent
             icon: BatteryService.batteryIcon
             pointSize: Style.fontSizeL
             color: "white"
@@ -92,8 +99,8 @@ Item {
       }
 
       Item {
-        width: keyboardRow.implicitWidth
-        height: keyboardRow.implicitHeight
+        implicitWidth: keyboardText.implicitWidth
+        implicitHeight: keyboardText.implicitHeight
         visible: KeyboardLayoutService.currentLayout !== "Unknown" && KeyboardLayoutService.currentLayout !== ""
 
         MouseArea {
@@ -103,15 +110,11 @@ Item {
           onExited: topLeftRow.hoverLabel = ""
         }
 
-        RowLayout {
-          id: keyboardRow
-          spacing: Style.marginS
-
-          NText {
-            text: KeyboardLayoutService.currentLayout
-            color: "white"
-            pointSize: Style.fontSizeM
-          }
+        NText {
+          id: keyboardText
+          text: KeyboardLayoutService.currentLayout
+          color: "white"
+          pointSize: Style.fontSizeM
         }
       }
     }
@@ -141,25 +144,41 @@ Item {
     anchors.horizontalCenter: parent.horizontalCenter
     spacing: Style.marginM
 
+    // Date first (small, above the clock), clock below — the macOS
+    // lock-screen composition.
     Text {
-      id: clockText
       Layout.alignment: Qt.AlignHCenter
-      font.pointSize: (lockScreenApi && lockScreenApi.compactMode) ? Style.fontSizeXXL : Style.fontSizeXXXL * 2.5
-      font.weight: Style.fontWeightLight
-      color: "white"
+      font.pointSize: Style.fontSizeL
+      color: Qt.rgba(1, 1, 1, 0.7)
+      text: new Date().toLocaleDateString(Qt.locale(), "dddd, MMMM d")
+    }
+
+    Column {
+      Layout.alignment: Qt.AlignHCenter
+      spacing: 0
+
+      // One NText per line (the built-in clock's pattern): per-line
+      // centering, no multi-line alignment surprises.
+      Repeater {
+        id: clockRepeater
+        model: []
+        NText {
+          text: modelData
+          horizontalAlignment: Text.AlignHCenter
+          Layout.alignment: Qt.AlignHCenter
+          anchors.horizontalCenter: parent.horizontalCenter
+          pointSize: (lockScreenApi && lockScreenApi.compactMode) ? Style.fontSizeXXL : Style.fontSizeXXXL * 2.5
+          color: "white"
+        }
+      }
+
       Timer {
         interval: 1000
         running: true
         repeat: true
         onTriggered: root._updateClock()
       }
-    }
-
-    Text {
-      Layout.alignment: Qt.AlignHCenter
-      font.pointSize: Style.fontSizeL
-      color: Qt.rgba(1, 1, 1, 0.7)
-      text: new Date().toLocaleDateString(Qt.locale(), "dddd, MMMM d")
+      Component.onCompleted: root._updateClock()
     }
   }
 
@@ -423,7 +442,7 @@ Item {
 
   function _updateClock() {
     var fmt = (lockScreenApi && lockScreenApi.clockFormat) ? lockScreenApi.clockFormat : "HH:mm";
-    clockText.text = Qt.locale().toString(new Date(), fmt.replace(/\\n/g, "\n"));
+    clockRepeater.model = Qt.locale().toString(new Date(), fmt.replace(/\\n/g, "\n")).split("\n");
   }
 
   function _networkIcon() {
