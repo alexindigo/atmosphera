@@ -627,7 +627,14 @@ Singleton {
       var manifest = Registry.getPluginManifest(compositeKey);
       if (manifest && manifest.entryPoints && manifest.entryPoints.barWidget) {
         var widgetId = "plugin:" + compositeKey;
-        addWidgetToBar(widgetId, "right");
+        // Announce the auto-add so re-enabling doesn't surprise with a
+        // silently-changed bar layout (addWidgetToBar dedupes).
+        if (addWidgetToBar(widgetId, "right")) {
+          ToastService.showNotice(I18n.tr("toast.plugin-widget-added"), I18n.tr("toast.plugin-widget-added-desc", {
+                                                                                  "name": manifest.name || compositeKey,
+                                                                                  "section": "right"
+                                                                                }), "puzzle");
+        }
       }
     }
 
