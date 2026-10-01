@@ -115,6 +115,7 @@
     "passwordChars": false,
     "lockScreenMonitors": [],
     "lockScreenPlugin": "",
+    "lockScreenEnabled": true,
     "lockScreenBlur": 0,
     "lockScreenTint": 0,
     "externalLockCommand": "",

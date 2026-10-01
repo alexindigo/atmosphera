@@ -838,6 +838,10 @@ Singleton {
   function lock() {
     if (root._isLockerProcess)
       return;
+    if (!Settings.data.general.lockScreenEnabled) {
+      Logger.i("Compositor", "Lock requested but lockScreenEnabled is false — skipping");
+      return;
+    }
     Logger.i("Compositor", "LockScreen requested");
     HooksService.runHandler("lockAction", () => {
       if (executeSessionAction("lock"))
@@ -875,6 +879,11 @@ Singleton {
   function lockAndSuspend() {
     if (root._isLockerProcess)
       return;
+    if (!Settings.data.general.lockScreenEnabled) {
+      Logger.i("Compositor", "Lock and suspend requested but lockScreenEnabled is false — suspending without lock");
+      suspend();
+      return;
+    }
     Logger.i("Compositor", "Lock and suspend requested");
 
     // if a custom lock command exists, execute it and suspend without wait
