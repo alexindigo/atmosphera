@@ -34,7 +34,7 @@ Item {
 
   LockScreenBackground {
     id: backgroundComponent
-    screen: screen
+    screen: builtInLockScreen.screen
   }
 
   Item {

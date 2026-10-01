@@ -45,6 +45,16 @@ Item {
     }
   }
 
+  // The current-wallpaper map loads asynchronously from the cache file;
+  // fresh processes (e.g. the bundled locker) request before it's in.
+  Connections {
+    target: WallpaperService
+    function onIsInitializedChanged() {
+      if (WallpaperService.isInitialized && screen)
+        Qt.callLater(requestCachedWallpaper);
+    }
+  }
+
   Connections {
     target: CompositorService
     function onDisplayScalesChanged() {

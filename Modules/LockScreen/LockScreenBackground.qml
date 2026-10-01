@@ -16,23 +16,14 @@ Item {
 
   required property var screen
 
-  // Request preprocessed wallpaper when lock screen becomes active or dimensions change
-  Component.onCompleted: {
-    if (screen) {
+  // Request preprocessed wallpaper as soon as ALL prerequisites exist, in
+  // any arrival order (screen bind, surface size, wallpaper cache load) —
+  // the previous onCompleted/width/height event chain missed the locker's
+  // timing entirely on the gtk-free fork and the background stayed black.
+  readonly property string _prereqKey: (screen && width > 0 && height > 0 && WallpaperService.isInitialized) ? (screen.name + ":" + width + "x" + height) : ""
+  on_PrereqKeyChanged: {
+    if (_prereqKey !== "")
       Qt.callLater(requestCachedWallpaper);
-    }
-  }
-
-  onWidthChanged: {
-    if (screen && width > 0 && height > 0) {
-      Qt.callLater(requestCachedWallpaper);
-    }
-  }
-
-  onHeightChanged: {
-    if (screen && width > 0 && height > 0) {
-      Qt.callLater(requestCachedWallpaper);
-    }
   }
 
   // Listen for wallpaper changes
@@ -63,6 +54,10 @@ Item {
     // Check for solid color mode first
     if (Settings.data.wallpaper.useSolidColor) {
       resolvedWallpaperPath = "";
+      return;
+    }
+
+    if (!WallpaperService.isInitialized) {
       return;
     }
 
