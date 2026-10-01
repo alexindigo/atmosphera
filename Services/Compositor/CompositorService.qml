@@ -46,6 +46,11 @@ Singleton {
   // Backend service loader
   property var backend: null
 
+  // True inside the bundled locker process (its shell.qml sets the
+  // marker): the lock-supervision machinery must never recurse — the
+  // locker does not spawn lockers.
+  property bool _isLockerProcess: Quickshell.env("ATMOSPHERA_LOCKSCREEN") === "1"
+
   Component.onCompleted: {
     // Load display scales from ShellState
     Qt.callLater(() => {
@@ -59,7 +64,8 @@ Singleton {
     // Boot recovery: session still locked at shell start with no live
     // locker → spawn the configured locker for its A.1.3 re-engage.
     // Delayed so LockerService's LockedHint + name watches converge.
-    Qt.callLater(() => bootRecoveryTimer.start());
+    if (!root._isLockerProcess)
+      Qt.callLater(() => bootRecoveryTimer.start());
   }
 
   Timer {
@@ -609,6 +615,7 @@ Singleton {
   property bool _lockerSpawnPending: false
   property int _lockerRespawnAttempts: 0
   property int _lockerLivenessFails: 0
+  property bool _lockerRespawnInFlight: false
   property string _spawnedLockerCmd: ""
 
   function _bundledLockerCommand() {
@@ -677,6 +684,12 @@ Singleton {
         lockerLivenessTimer.stop();
       }
     }
+    // LockedHint convergence can land after the 2 s startup probe —
+    // retry boot recovery once the watch is live (idempotent).
+    function onLockedHintAvailableChanged() {
+      if (LockerService.lockedHintAvailable)
+        root._bootRecover();
+    }
   }
 
   // Invisible degraded path (B.6) — the only surviving use of the
@@ -726,7 +739,7 @@ Singleton {
   // (would) spawn; two consecutive misses (6 s) = died while locked →
   // bounded respawn (B.6). Class 3 is supervised by its own deployment.
   function _armLivenessWatch() {
-    if (LockerService.contractAvailable)
+    if (root._isLockerProcess || LockerService.contractAvailable)
       return;
     if (root._spawnedLockerCmd === "")
       root._spawnedLockerCmd = root._spawnedLockerCommand();
@@ -766,6 +779,8 @@ Singleton {
   }
 
   function _respawnSpawnedLocker() {
+    if (root._lockerRespawnInFlight)
+      return; // concurrent probes must not double-spawn
     if (root._lockerRespawnAttempts >= 3) {
       Logger.e("Compositor", "Spawned locker died while locked and respawn attempts are exhausted — the compositor locked-session background stays until a locker returns");
       lockerLivenessTimer.stop();
@@ -773,15 +788,30 @@ Singleton {
     }
     root._lockerRespawnAttempts++;
     root._lockerLivenessFails = 0;
-    Logger.w("Compositor", "Spawned locker died while locked — respawning (attempt " + root._lockerRespawnAttempts + "/3)");
+    root._lockerRespawnInFlight = true;
     Logger.w("Compositor", "Spawned locker died while locked — respawning (attempt " + root._lockerRespawnAttempts + "/3)");
     root._spawnLockerDetached(root._spawnedLockerCmd);
+    respawnGraceTimer.restart();
+  }
+
+  // Grace covers the respawned process's boot+engage; probes during it
+  // cannot count misses.
+  Timer {
+    id: respawnGraceTimer
+    interval: 5000
+    repeat: false
+    onTriggered: {
+      root._lockerRespawnInFlight = false;
+      root._lockerLivenessFails = 0;
+    }
   }
 
   // Boot recovery: shell start while the session is still locked and no
   // locker is alive (both died mid-lock) → spawn the configured locker;
   // it re-engages per A.1.3. A live class-3 service (name watch) or a
   // surviving spawned locker (liveness probe) makes this a no-op.
+  // Runs at startup and again when the LockedHint watch converges, and
+  // serves as the manual-recovery path for lock() while locked.
   function _bootRecover() {
     if (!LockerService.lockedHintAvailable || !LockerService.locked || LockerService.contractAvailable)
       return;
@@ -806,14 +836,21 @@ Singleton {
   }
 
   function lock() {
+    if (root._isLockerProcess)
+      return;
     Logger.i("Compositor", "LockScreen requested");
     HooksService.runHandler("lockAction", () => {
       if (executeSessionAction("lock"))
         return;
       if (Settings.data.general.lockScreenPlugin === "external" && _spawnExternalLocker())
         return; // legacy swaylock-mode
-      if (LockerService.locked)
-        return; // already locked — every class is idempotent from here
+      if (LockerService.locked) {
+        // Manual-recovery path: locked with no live locker (dead client,
+        // compositor background) → spawn for the takeover.
+        if (!LockerService.contractAvailable)
+          root._bootRecover();
+        return; // a live locker makes lock() idempotent
+      }
       root._engageOutOfProcessLocker();
     });
   }
@@ -836,6 +873,8 @@ Singleton {
   property int lockAndSuspendCheckCount: 0
 
   function lockAndSuspend() {
+    if (root._isLockerProcess)
+      return;
     Logger.i("Compositor", "Lock and suspend requested");
 
     // if a custom lock command exists, execute it and suspend without wait
