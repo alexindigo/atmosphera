@@ -1,5 +1,82 @@
 # Changelog
 
+## [0.7.1] — 2026-10-01
+
+### 2026-09-29
+
+**Feature**
+
+Lock-screen actuation began moving out of the shell process: a D-Bus
+contract locker integration let a standalone locker own the session lock
+with an independent lifetime, proving on the fork that a shell crash
+while locked no longer has to produce the niri locked-session background
+lockout.
+
+- feat(lockscreen): service-mode locker integration (`0718e8d75`)
+
+### 2026-09-30
+
+**Breaking**
+
+The lock screen is now always out-of-process — there is no in-process
+mode switch. Locking spawns the bundled per-lock locker by default (a
+standalone `qs -c atmosphera-lockscreen` config rendering the same UIs),
+an `externalLockCommand` when configured, or signals a running contract
+locker (aerial-lock class) when its name is on the bus; lock state for
+every class comes from niri's compositor-side `LockedHint`, and the
+shell respawns a dead locker while locked (bounded) and recovers at
+startup when the session is still locked. The in-process lock screen
+survives only as the spawn-failure fallback, so a shell crash while
+locked never locks the user out. The default clock format is now a
+single-line "HH:mm" (the vertical "hh\nmm" remains available to explicit
+setters), and existing stale `lockScreenPlugin` composite keys are
+re-linked by bare id instead of silently falling back.
+
+- feat(lockscreen): no-modes out-of-process routing with LockedHint state (`d29e0fdc8`)
+- feat(lockscreen): bundled locker config (out-of-process default) (`a49db1208`)
+- feat(lockscreen): lockScreenEnabled off switch (`0f0991c86`)
+- feat(settings): default clockFormat to "HH:mm" (single-line clock) (`4845f110c`)
+
+**Feature**
+
+Plugin bar widgets are more honest about their lifecycle: enabling a
+plugin that ships a bar widget announces the auto-add with a toast (no
+surprise layout changes on re-enable), and a widget whose plugin is
+installed but momentarily unloadable keeps its slot with a placeholder
+instead of being deleted.
+
+- feat(bar): announce auto-add of plugin widgets on enable (`fac4dfda3`)
+
+**Fix**
+
+Real-migration fallout and lock-screen rendering fixes from fork
+verification: `atmosphera ipc` prints successful output again; the
+lock-screen wallpaper resolves even when the lock surface's screen binds
+late or the wallpaper cache is still loading; the demo lockscreen's
+status row and clock layout no longer overlap or mis-space; stale
+built-in plugin source paths self-heal at startup; unloadable plugin
+widgets are marked and remembered rather than deleted. (Companion
+registry fix in atmosphera-plugins: dead `qs.Services.Noctalia` imports
+dropped across four plugins so they load at all.)
+
+- fix(ipc): print successful output on atmosphera ipc (`6fec31f56`)
+- fix(lockscreen): bare-id fallback + relink notice on legacy lockScreenPlugin (`6a2ca7d11`)
+- fix(plugins): self-heal stale built-in source path (`95d65ae1b`)
+- fix(bar): mark-and-remember widgets for unloadable plugins (`c678c32ca`)
+- fix(lockscreen): resolve wallpaper when the lock surface screen binds late (`29f7b65be`)
+- fix(lockscreen): demo lockscreen layout — icon slots and clock metrics (`2a367a02f`)
+
+### 2026-09-27
+
+**Fix**
+
+Portal Session objects serve the spec-declared `version` property, and
+the release workflow fetches tags so the tag-body release-notes path
+fires.
+
+- fix(portals): serve Session version property (`ee53b376c`)
+- ci(release): fetch tags so the tag-body notes path fires (`dbf2adfe0`)
+
 ## [0.7.0] — 2026-09-27
 
 ### 2026-09-27
