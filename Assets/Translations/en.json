@@ -2198,7 +2198,11 @@
       "incorrect-password": "Incorrect password",
       "network-not-found": "Network not found",
       "toggle-failed": "Failed to toggle Wi-Fi: {error}"
-    }
+    },
+    "lockscreen-plugin-relinked": "Lock screen plugin re-linked",
+    "lockscreen-plugin-relinked-desc": "The configured lock screen plugin was re-linked to {id}.",
+    "lockscreen-plugin-missing": "Lock screen plugin not installed",
+    "lockscreen-plugin-missing-desc": "The configured lock screen plugin ({id}) is not installed; using the built-in lock screen."
   },
   "tooltips": {
     "add-widget": "Add widget",
