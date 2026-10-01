@@ -600,7 +600,7 @@ Singleton {
       property bool autoStartAuth: false
       property bool allowPasswordWithFprintd: false
       property string clockStyle: "custom"
-      property string clockFormat: "hh\\nmm"
+      property string clockFormat: "HH:mm"
       property bool passwordChars: false
       property list<string> lockScreenMonitors: [] // holds lock screen visibility per monitor
       property string lockScreenPlugin: "" // plugin ID for custom lock screen UI, empty = default
