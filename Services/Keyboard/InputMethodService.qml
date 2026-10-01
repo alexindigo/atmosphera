@@ -427,17 +427,14 @@ Singleton {
     "it": "🇮🇹"
   }
 
-  // ——— Contract-locker trigger (lockScreenMode = "service") ———
-  // The shell's own LockScreen never activates in service mode, so
-  // secure mode follows the locker's state instead. Gated on
-  // availability: a vanishing locker keeps the IME suppressed (the
-  // session may still be locked); the in-process LockScreen.active path
-  // in Modules/LockScreen stays for builtin mode and the B.6 fallback.
+  // ——— Out-of-process lock trigger ———
+  // Secure mode follows the compositor-side LockedHint, which covers
+  // every locker class (bundled config, swaylock, contract service,
+  // in-process fallback alike). The in-process LockScreen.active path
+  // in Modules/LockScreen stays as a redundant trigger (idempotent).
   Connections {
     target: LockerService
     function onLockedChanged() {
-      if (!LockerService.available)
-        return;
       if (LockerService.locked)
         root.enterSecureMode();
       else

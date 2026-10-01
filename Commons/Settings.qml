@@ -604,7 +604,6 @@ Singleton {
       property bool passwordChars: false
       property list<string> lockScreenMonitors: [] // holds lock screen visibility per monitor
       property string lockScreenPlugin: "" // plugin ID for custom lock screen UI, empty = default
-      property string lockScreenMode: "builtin" // "builtin" = in-process lock UI, "service" = contract locker (app.atmosphera.Locker); service takes precedence over lockScreenPlugin
       property real lockScreenBlur: 0.0
       property real lockScreenTint: 0.0
       property string externalLockCommand: ""   // standalone locker command — spawned detached in "external" plugin mode (swaylock-style) and in "service" mode (contract locker binary, spawned on demand)

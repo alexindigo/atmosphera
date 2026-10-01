@@ -34,9 +34,11 @@ Singleton {
   // session handle (o) -> { session, request, appId }
   property var activeMonitors: ({})
 
-  // The lock screen is the shell's screensaver equivalent. In
-  // contract-locker mode the locker's Active state is the source.
-  readonly property bool screensaverActive: LockerService.available ? LockerService.locked : (PanelService.lockScreen ? PanelService.lockScreen.active : false)
+  // The lock screen is the shell's screensaver equivalent. Lock state
+  // is the compositor-side LockedHint (covers every locker class,
+  // swaylock included); the in-process flag is the degraded fallback
+  // while the logind watch has not converged.
+  readonly property bool screensaverActive: LockerService.lockedHintAvailable ? LockerService.locked : (PanelService.lockScreen ? PanelService.lockScreen.active : false)
 
   function init() {
     Logger.i("InhibitPortal", "Service started");
