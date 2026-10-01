@@ -1841,6 +1841,16 @@ Singleton {
       for (var i = widgets.length - 1; i >= 0; i--) {
         var widget = widgets[i];
         if (!BarWidgetRegistry.hasWidget(widget.id)) {
+          // Mark-and-remember: a plugin widget whose plugin is still
+          // installed but momentarily unloadable (load error, mid-startup)
+          // is KEPT — the bar renders a placeholder and the real widget
+          // returns when the plugin does. Only widgets whose plugin is
+          // genuinely gone are deleted.
+          var pluginKey = BarWidgetRegistry.isPluginWidget(widget.id) ? widget.id.substring(7) : "";
+          if (pluginKey !== "" && Registry.isPluginDownloaded(pluginKey)) {
+            Logger.i("Settings", "Keeping bar widget for installed but unloadable plugin:", widget.id);
+            continue;
+          }
           Logger.w(`Settings`, `!!! Deleted invalid bar widget ${widget.id} !!!`);
           widgets.splice(i, 1);
           removedWidget = true;

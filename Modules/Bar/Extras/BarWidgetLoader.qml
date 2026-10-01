@@ -3,6 +3,7 @@ import Quickshell
 import qs.Commons
 import qs.Services.Plugins
 import qs.Services.UI
+import qs.Widgets
 
 Item {
   id: root
@@ -52,22 +53,30 @@ Item {
     return root.widgetId !== "" && BarWidgetRegistry.hasWidget(root.widgetId);
   }
 
+  // A plugin widget whose plugin is still installed but momentarily
+  // unloadable keeps its slot: the placeholder renders until the real
+  // widget returns (mark-and-remember, no deletion from the layout).
+  readonly property bool _pluginUnavailable: {
+    if (!root._isPlugin || BarWidgetRegistry.hasWidget(root.widgetId))
+      return false;
+    return Registry.isPluginDownloaded(root.widgetId.substring(7));
+  }
+
   // Force reload counter - incremented when plugin widget registry changes
   property int reloadCounter: 0
 
-  // Listen for plugin widget registry changes to force reload
+  // Listen for plugin widget registry changes to force reload — in BOTH
+  // directions (real widget when the plugin returns, placeholder when its
+  // widget unregisters while the plugin stays installed).
   Connections {
     target: BarWidgetRegistry
     enabled: BarWidgetRegistry.isPluginWidget(root.widgetId)
 
     function onPluginWidgetRegistryUpdated() {
-      if (BarWidgetRegistry.hasWidget(root.widgetId)) {
-        root.reloadCounter++;
-        // Plugin widgets use setSource, so also trigger reload directly
-        if (root._isPlugin && loader.active)
-          root._loadWidget();
-        Logger.d("BarWidgetLoader", "Plugin widget registry updated, reloading:", root.widgetId);
-      }
+      root.reloadCounter++;
+      if (loader.active)
+        root._loadWidget();
+      Logger.d("BarWidgetLoader", "Plugin widget registry updated, reloading:", root.widgetId);
     }
   }
 
@@ -94,6 +103,10 @@ Item {
   readonly property string _barWidgetsDir: Quickshell.shellDir + "/Modules/Bar/Widgets/"
 
   function _loadWidget() {
+    if (root._pluginUnavailable) {
+      loader.sourceComponent = placeholderComponent;
+      return;
+    }
     if (!BarWidgetRegistry.hasWidget(root.widgetId))
       return;
 
@@ -113,11 +126,27 @@ Item {
     }
   }
 
+  // Placeholder for an installed-but-unloadable plugin's widget
+  Component {
+    id: placeholderComponent
+    Item {
+      implicitWidth: Math.round(root.barHeight * 0.5)
+      implicitHeight: implicitWidth
+      opacity: 0.5
+
+      AtmoIcon {
+        anchors.centerIn: parent
+        icon: "puzzle-off"
+        color: Color.mOnSurfaceVariant
+      }
+    }
+  }
+
   Loader {
     id: loader
     anchors.fill: parent
     asynchronous: true
-    active: root.checkWidgetExists() && (root.reloadCounter >= 0)
+    active: (root.checkWidgetExists() || root._pluginUnavailable) && (root.reloadCounter >= 0)
 
     // All widgets use setSource() so that screen and widget properties
     // are set as initial properties, available during Component.onCompleted.
@@ -184,7 +213,7 @@ Item {
 
   // Error handling
   Component.onCompleted: {
-    if (!BarWidgetRegistry.hasWidget(widgetId)) {
+    if (!BarWidgetRegistry.hasWidget(widgetId) && !root._pluginUnavailable) {
       Logger.w("BarWidgetLoader", "Widget not found in registry:", widgetId);
     }
   }

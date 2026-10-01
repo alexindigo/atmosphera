@@ -10,6 +10,7 @@ import qs.Modules.Notification
 import qs.Modules.Panels.Settings
 import qs.Services.Compositor
 import qs.Services.Media
+import qs.Services.Plugins
 import qs.Services.UI
 import qs.Widgets
 
@@ -21,12 +22,18 @@ Item {
   property ShellScreen screen: null
 
   // Filter widgets to only include those that exist in the registry
-  // This prevents errors when plugins are missing or widgets are being cleaned up
+  // This prevents errors when plugins are missing or widgets are being cleaned up.
+  // Installed-but-unloadable plugin widgets stay (a placeholder renders in
+  // their slot) — they are never treated as invalid.
   function filterValidWidgets(widgets: list<var>): list<var> {
     if (!widgets)
       return [];
     return widgets.filter(function (w) {
-      return w && w.id && BarWidgetRegistry.hasWidget(w.id);
+      if (!w || !w.id)
+        return false;
+      if (BarWidgetRegistry.hasWidget(w.id))
+        return true;
+      return BarWidgetRegistry.isPluginWidget(w.id) && Registry.isPluginDownloaded(w.id.substring(7));
     });
   }
 
@@ -136,6 +143,27 @@ Item {
     target: BarService
     function onWidgetsRevisionChanged() {
       Logger.d("Bar", "onWidgetsRevisionChanged, revision:", BarService.widgetsRevision, "screen:", root.screen?.name);
+      Qt.callLater(root._syncFromRevision);
+    }
+  }
+
+  // Plugin widgets register/unregister asynchronously (plugin scan lands
+  // after the bar builds). Re-sync so kept-but-unloadable widgets gain
+  // their placeholder when the plugin is found installed, and the real
+  // widget replaces the placeholder when it registers.
+  Connections {
+    target: BarWidgetRegistry
+    function onPluginWidgetRegistryUpdated() {
+      Qt.callLater(root._syncFromRevision);
+    }
+  }
+
+  // The installed-plugin set fills in over the first seconds of startup;
+  // a broken plugin's widget is only kept (placeholder) once the scan
+  // confirms the plugin is still installed. Re-sync when it completes.
+  Connections {
+    target: Service
+    function onAllPluginsLoaded() {
       Qt.callLater(root._syncFromRevision);
     }
   }
