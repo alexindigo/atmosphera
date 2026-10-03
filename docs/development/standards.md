@@ -24,6 +24,14 @@ Use the Logger singleton:
 
 ## Git Hooks
 
+### pre-commit (tracked, normal validation)
+
+The tracked hook at `.githooks/pre-commit` is the project's normal validation
+path: it formats and lints staged QML inside the dev container (rootless
+Podman or Docker) and rebuilds the settings search index when its inputs
+change. Enable once per clone with `git config core.hooksPath .githooks`.
+See DEVELOPMENT.md for engine selection and prerequisites.
+
 ### pre-push
 Rejects unsigned commits and tags. Enable signing:
 
@@ -34,9 +42,11 @@ git config gpg.format ssh
 git config user.signingkey "$(cat ~/.ssh/id_ed25519.pub)"
 ```
 
-### Lefthook (optional)
+### Lefthook (optional, historical)
 
-`lefthook.yml` adds pre-commit hooks for QML formatting and settings index rebuild. Install [lefthook](https://github.com/evilmartians/lefthook#install) and run `lefthook install` to enable.
+`lefthook.yml` predates the tracked hook and remains only as optional advice
+for contributors who prefer that tool. It adds pre-commit hooks for QML
+formatting and settings index rebuild. Install [lefthook](https://github.com/evilmartians/lefthook#install) and run `lefthook install` to enable. It is not a substitute for the tracked hook's containerized checks.
 
 ## Making Changes
 

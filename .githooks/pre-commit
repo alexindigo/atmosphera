@@ -7,35 +7,12 @@ cd "$REPO_ROOT"
 STAGED_QML=$(git diff --cached --name-only --diff-filter=ACM | grep '\.qml$' || true)
 
 if [ -n "$STAGED_QML" ]; then
-  if ! command -v docker &>/dev/null; then
-    echo "docker not found — required for pre-commit checks." >&2
-    echo "Install docker, or bypass with 'git commit --no-verify'." >&2
-    exit 1
-  fi
-
-  IMAGE="atmosphera-dev:local"
-  if ! docker image inspect "$IMAGE" &>/dev/null; then
-    echo "Building $IMAGE (first run only)..." >&2
-    docker build -t "$IMAGE" .devcontainer >&2
-  fi
-
   mapfile -t files <<< "$STAGED_QML"
 
   # Capture output into a variable rather than piping directly to git's
-  # stdout/stderr — a filled pipe buffer from docker's output can stall
-  # git's commit pipeline. Only print the output on failure.
-  hook_output=$(docker run --rm \
-    --user "$(id -u):$(id -g)" \
-    --cap-add SYS_ADMIN \
-    --tmpfs /tmp/overlay:size=256m,mode=1777 \
-    --memory=12g \
-    --memory-swap=12g \
-    --pids-limit=2048 \
-    --cpus=12 \
-    -v "$REPO_ROOT:/workspaces/atmosphera" \
-    -w /workspaces/atmosphera \
-    "$IMAGE" \
-    atmo-dev .devcontainer/precommit-check.sh "${files[@]}" 2>&1) && hook_ec=0 || hook_ec=$?
+  # stdout/stderr — a filled pipe buffer from the container's output can
+  # stall git's commit pipeline. Only print the output on failure.
+  hook_output=$("$REPO_ROOT/.devcontainer/container-run.sh" .devcontainer/precommit-check.sh "${files[@]}" 2>&1) && hook_ec=0 || hook_ec=$?
   if [ $hook_ec -ne 0 ]; then
     echo "$hook_output" >&2
     exit 1

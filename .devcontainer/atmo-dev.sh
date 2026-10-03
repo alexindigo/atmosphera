@@ -7,14 +7,26 @@
 # Usage:
 #   atmo-dev <command> [args...]
 #
-# Requires docker run flags:
+# Requires container run flags (supplied by container-run.sh and the
+# devcontainer profiles):
 #   --cap-add SYS_ADMIN
 #   --tmpfs /tmp/overlay:size=256m,mode=1777
+#
+# Environment:
+#   ATMOSPHERA_DEV_USERXATTR=0|1   # 1 appends the namespace-friendly
+#                                  # userxattr overlay option (rootless
+#                                  # Podman path); default 0 (Docker).
 
 set -euo pipefail
 
 REPO_MOUNT=/workspaces/atmosphera
 SHELL_DIR=/home/dev/atmosphera-shell
+
+USERXATTR="${ATMOSPHERA_DEV_USERXATTR:-0}"
+case "$USERXATTR" in
+    0|1) ;;
+    *) echo "atmo-dev: ATMOSPHERA_DEV_USERXATTR must be 0 or 1 (got '$USERXATTR')." >&2; exit 1 ;;
+esac
 
 # --- Locale ---
 export LC_ALL=C.UTF-8
@@ -32,11 +44,12 @@ export XDG_RUNTIME_DIR=/tmp/qs-runtime
 if ! mountpoint -q "$SHELL_DIR" 2>/dev/null; then
     sudo mkdir -p /tmp/overlay/upper /tmp/overlay/work "$SHELL_DIR"
     sudo chown -R "$(id -u):$(id -g)" /tmp/overlay "$SHELL_DIR"
-    if ! sudo mount -t overlay overlay \
-            -o lowerdir="$REPO_MOUNT",upperdir=/tmp/overlay/upper,workdir=/tmp/overlay/work \
-            "$SHELL_DIR" 2>/dev/null; then
-        echo "atmo-dev: overlay mount failed." >&2
-        echo "atmo-dev: docker run needs --cap-add SYS_ADMIN --tmpfs /tmp/overlay:size=256m,mode=1777" >&2
+    OVERLAY_OPTS="lowerdir=$REPO_MOUNT,upperdir=/tmp/overlay/upper,workdir=/tmp/overlay/work"
+    [ "$USERXATTR" = "1" ] && OVERLAY_OPTS="$OVERLAY_OPTS,userxattr"
+    if ! sudo mount -t overlay overlay -o "$OVERLAY_OPTS" "$SHELL_DIR"; then
+        echo "atmo-dev: overlay mount failed (kernel error above)." >&2
+        echo "atmo-dev: container needs --cap-add SYS_ADMIN --tmpfs /tmp/overlay:size=256m,mode=1777" >&2
+        echo "atmo-dev: rootless engines also need tmpfs user xattr support (Linux >= 6.6) and ATMOSPHERA_DEV_USERXATTR=1." >&2
         exit 1
     fi
 fi
