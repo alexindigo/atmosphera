@@ -128,7 +128,7 @@
       "icon-position-left": "Levé",
       "icon-position-right": "Vpravo",
       "icon-position-top": "Nahoře",
-      "ipc-identifier-description": "Jedinečný identifikátor pro příkazy IPC. Použijte tento identifikátor s 'qs -c atmosphera-shell ipc call cb [action] [identifier]' pro ovládání tlačítka přes IPC.",
+      "ipc-identifier-description": "Jedinečný identifikátor pro příkazy IPC. Použijte tento identifikátor s 'qs -c atmosphera ipc call cb [action] [identifier]' pro ovládání tlačítka přes IPC.",
       "ipc-identifier-label": "Identifikátor IPC",
       "left-click-description": "Příkaz spuštěný při kliknutí levým tlačítkem myši.",
       "left-click-label": "Levé kliknutí",

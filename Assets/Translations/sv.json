@@ -128,7 +128,7 @@
       "icon-position-left": "Vänster",
       "icon-position-right": "Höger",
       "icon-position-top": "Topp",
-      "ipc-identifier-description": "Unik identifierare för IPC-kommandon. Använd denna identifierare med 'qs -c atmosphera-shell ipc call cb [action] [identifier]' för att styra denna knapp via IPC.",
+      "ipc-identifier-description": "Unik identifierare för IPC-kommandon. Använd denna identifierare med 'qs -c atmosphera ipc call cb [action] [identifier]' för att styra denna knapp via IPC.",
       "ipc-identifier-label": "IPC-identifierare",
       "left-click-description": "Kommando som ska utföras när knappen vänsterklickas.",
       "left-click-label": "Vänsterklick",

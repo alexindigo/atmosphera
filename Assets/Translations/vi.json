@@ -128,7 +128,7 @@
       "icon-position-left": "Trái",
       "icon-position-right": "Phải",
       "icon-position-top": "Trên",
-      "ipc-identifier-description": "Mã định danh duy nhất cho các lệnh IPC. Sử dụng mã định danh này với 'qs -c atmosphera-shell ipc call cb [action] [identifier]' để điều khiển nút này qua IPC.",
+      "ipc-identifier-description": "Mã định danh duy nhất cho các lệnh IPC. Sử dụng mã định danh này với 'qs -c atmosphera ipc call cb [action] [identifier]' để điều khiển nút này qua IPC.",
       "ipc-identifier-label": "Mã định danh IPC",
       "left-click-description": "Lệnh thực thi khi nút được nhấp chuột trái.",
       "left-click-label": "Nhấp chuột trái",

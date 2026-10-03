@@ -128,7 +128,7 @@
       "icon-position-left": "Зліва",
       "icon-position-right": "Праворуч",
       "icon-position-top": "Зверху",
-      "ipc-identifier-description": "Унікальний ідентифікатор для команд IPC. Використовуйте цей ідентифікатор з 'qs -c atmosphera-shell ipc call cb [дія] [ідентифікатор]', щоб керувати цією кнопкою через IPC.",
+      "ipc-identifier-description": "Унікальний ідентифікатор для команд IPC. Використовуйте цей ідентифікатор з 'qs -c atmosphera ipc call cb [дія] [ідентифікатор]', щоб керувати цією кнопкою через IPC.",
       "ipc-identifier-label": "Ідентифікатор IPC",
       "left-click-description": "Команда для виконання при лівому кліку на кнопку.",
       "left-click-label": "Лівий клік",

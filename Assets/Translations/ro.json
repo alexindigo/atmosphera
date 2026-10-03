@@ -128,7 +128,7 @@
       "icon-position-left": "Stânga",
       "icon-position-right": "Dreapta",
       "icon-position-top": "Sus",
-      "ipc-identifier-description": "Identificator unic pentru comenzi IPC. Folosește acest identificator cu 'qs -c atmosphera-shell ipc call cb [action] [identifier]' pentru a controla acest buton prin IPC.",
+      "ipc-identifier-description": "Identificator unic pentru comenzi IPC. Folosește acest identificator cu 'qs -c atmosphera ipc call cb [action] [identifier]' pentru a controla acest buton prin IPC.",
       "ipc-identifier-label": "Identificator IPC",
       "left-click-description": "Comandă de executat când se face clic stânga pe buton.",
       "left-click-label": "Clic stânga",

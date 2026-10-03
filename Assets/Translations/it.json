@@ -128,7 +128,7 @@
       "icon-position-left": "Sinistra",
       "icon-position-right": "Destra",
       "icon-position-top": "Alto",
-      "ipc-identifier-description": "Identificatore univoco per i comandi IPC. Usa questo identificatore con 'qs -c atmosphera-shell ipc call cb [action] [identifier]' per controllare questo pulsante via IPC.",
+      "ipc-identifier-description": "Identificatore univoco per i comandi IPC. Usa questo identificatore con 'qs -c atmosphera ipc call cb [action] [identifier]' per controllare questo pulsante via IPC.",
       "ipc-identifier-label": "Identificatore IPC",
       "left-click-description": "Comando da eseguire al clic sinistro sul pulsante.",
       "left-click-label": "Clic sinistro",

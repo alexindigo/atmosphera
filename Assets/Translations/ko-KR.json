@@ -128,7 +128,7 @@
       "icon-position-left": "왼쪽",
       "icon-position-right": "오른쪽",
       "icon-position-top": "위",
-      "ipc-identifier-description": "IPC 명령을 위한 고유 식별자입니다. IPC를 통해 이 버튼을 제어하려면 'qs -c atmosphera-shell ipc call cb [action] [identifier]'와 함께 이 식별자를 사용하세요.",
+      "ipc-identifier-description": "IPC 명령을 위한 고유 식별자입니다. IPC를 통해 이 버튼을 제어하려면 'qs -c atmosphera ipc call cb [action] [identifier]'와 함께 이 식별자를 사용하세요.",
       "ipc-identifier-label": "IPC 식별자",
       "left-click-description": "버튼을 왼쪽 클릭했을 때 실행할 명령입니다.",
       "left-click-label": "왼쪽 클릭",

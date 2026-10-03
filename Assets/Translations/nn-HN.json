@@ -116,7 +116,7 @@
       "hide-mode-label": "Løyndarluna",
       "hide-mode-max-transparent": "Vidka heilt men klår",
       "icon-description": "Kjos fråmerke frå samningi.",
-      "ipc-identifier-description": "Sermerke for IPC-styrebod. Nytta dette merket med 'qs -c atmosphera-shell ipc call cb [gjerning] [merke]' for å styra knappen med IPC.",
+      "ipc-identifier-description": "Sermerke for IPC-styrebod. Nytta dette merket med 'qs -c atmosphera ipc call cb [gjerning] [merke]' for å styra knappen med IPC.",
       "ipc-identifier-label": "IPC-sermerke",
       "left-click-description": "Styrebod som køyrer ved vinstretrykk.",
       "left-click-label": "Vinstretrykk",

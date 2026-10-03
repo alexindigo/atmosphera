@@ -128,7 +128,7 @@
       "icon-position-left": "Links",
       "icon-position-right": "Rechts",
       "icon-position-top": "Oben",
-      "ipc-identifier-description": "Eindeutige Kennung für IPC-Befehle. Verwenden Sie diese Kennung mit 'qs -c atmosphera-shell ipc call cb [Aktion] [Kennung]', um diese Schaltfläche über IPC zu steuern.",
+      "ipc-identifier-description": "Eindeutige Kennung für IPC-Befehle. Verwenden Sie diese Kennung mit 'qs -c atmosphera ipc call cb [Aktion] [Kennung]', um diese Schaltfläche über IPC zu steuern.",
       "ipc-identifier-label": "IPC-Kennung",
       "left-click-description": "Befehl, der ausgeführt wird, wenn die Schaltfläche links angeklickt wird.",
       "left-click-label": "Linksklick",

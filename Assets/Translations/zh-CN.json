@@ -128,7 +128,7 @@
       "icon-position-left": "左",
       "icon-position-right": "右",
       "icon-position-top": "顶部",
-      "ipc-identifier-description": "IPC 命令的唯一标识符。使用此标识符以及“qs -c atmosphera-shell ipc call cb [操作] [标识符]”通过 IPC 控制此按钮。",
+      "ipc-identifier-description": "IPC 命令的唯一标识符。使用此标识符以及“qs -c atmosphera ipc call cb [操作] [标识符]”通过 IPC 控制此按钮。",
       "ipc-identifier-label": "IPC标识符",
       "left-click-description": "左键单击按钮时执行的命令。",
       "left-click-label": "左键单击",
