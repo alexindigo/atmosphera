@@ -128,7 +128,7 @@
       "icon-position-left": "Links",
       "icon-position-right": "Rechts",
       "icon-position-top": "Boven",
-      "ipc-identifier-description": "Unieke identificatie voor IPC-opdrachten. Gebruik deze identificatie met 'qs -c atmosphera-shell ipc call cb [actie] [identificatie]' om deze knop via IPC te bedienen.",
+      "ipc-identifier-description": "Unieke identificatie voor IPC-opdrachten. Gebruik deze identificatie met 'qs -c atmosphera ipc call cb [actie] [identificatie]' om deze knop via IPC te bedienen.",
       "ipc-identifier-label": "IPC-identificatie",
       "left-click-description": "Commando dat wordt uitgevoerd wanneer met de linkermuisknop op de knop wordt geklikt.",
       "left-click-label": "Linkermuisklik",

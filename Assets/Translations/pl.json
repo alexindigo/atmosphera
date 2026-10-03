@@ -128,7 +128,7 @@
       "icon-position-left": "Lewo",
       "icon-position-right": "Prawo",
       "icon-position-top": "Góra",
-      "ipc-identifier-description": "Unikalny identyfikator dla poleceń IPC. Użyj tego identyfikatora z 'qs -c atmosphera-shell ipc call cb [akcja] [identyfikator]', aby sterować tym przyciskiem za pomocą IPC.",
+      "ipc-identifier-description": "Unikalny identyfikator dla poleceń IPC. Użyj tego identyfikatora z 'qs -c atmosphera ipc call cb [akcja] [identyfikator]', aby sterować tym przyciskiem za pomocą IPC.",
       "ipc-identifier-label": "Identyfikator IPC",
       "left-click-description": "Polecenie do wykonania po kliknięciu lewym przyciskiem myszy.",
       "left-click-label": "Lewy przycisk",

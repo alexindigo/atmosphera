@@ -1,8 +1,8 @@
 {
-  "name": "Atmosphera Dev",
+  "name": "Atmosphera Dev (Podman)",
   "build": {
-    "dockerfile": "Dockerfile",
-    "context": "."
+    "dockerfile": "../Dockerfile",
+    "context": ".."
   },
   "runArgs": [
     "--cap-add=SYS_ADMIN",
@@ -10,12 +10,17 @@
     "--memory=12g",
     "--memory-swap=12g",
     "--pids-limit=2048",
-    "--cpus=12"
+    "--cpus=12",
+    "--userns=keep-id:uid=1000,gid=1000"
   ],
   "workspaceMount": "type=bind,source=${localWorkspaceFolder},target=/workspaces/atmosphera",
   "workspaceFolder": "/workspaces/atmosphera",
   "containerUser": "dev",
   "remoteUser": "dev",
+  "updateRemoteUserUID": false,
+  "containerEnv": {
+    "ATMOSPHERA_DEV_USERXATTR": "1"
+  },
   "customizations": {
     "vscode": {
       "extensions": [

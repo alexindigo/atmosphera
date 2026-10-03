@@ -108,7 +108,7 @@
       "hide-mode-label": "Awaya veşartinê",
       "hide-mode-max-transparent": "Pir berfirehkirî lê zelal",
       "icon-description": "Îkonekê ji pirtûkxaneyê hilbijêre.",
-      "ipc-identifier-description": "Nasnameya yekta ji bo fermanên IPC. Vê nasnameyê bi 'qs -c atmosphera-shell ipc call cb [çalakî] [nasname]' bikar bînin da ku vê bişkokê bi rêya IPC kontrol bikin.",
+      "ipc-identifier-description": "Nasnameya yekta ji bo fermanên IPC. Vê nasnameyê bi 'qs -c atmosphera ipc call cb [çalakî] [nasname]' bikar bînin da ku vê bişkokê bi rêya IPC kontrol bikin.",
       "ipc-identifier-label": "Nasnameya IPC",
       "left-click-description": "Fermana ku dema bişkok li ser çepê tê klîkkirin tê meşandin.",
       "left-click-label": "Klîka çepê",

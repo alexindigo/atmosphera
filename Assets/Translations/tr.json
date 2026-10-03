@@ -128,7 +128,7 @@
       "icon-position-left": "Sol",
       "icon-position-right": "Sağ",
       "icon-position-top": "Üst",
-      "ipc-identifier-description": "IPC komutları için benzersiz tanımlayıcı. Bu tanımlayıcıyı 'qs -c atmosphera-shell ipc call cb [eylem] [tanımlayıcı]' ile kullanarak bu düğmeyi IPC aracılığıyla kontrol edin.",
+      "ipc-identifier-description": "IPC komutları için benzersiz tanımlayıcı. Bu tanımlayıcıyı 'qs -c atmosphera ipc call cb [eylem] [tanımlayıcı]' ile kullanarak bu düğmeyi IPC aracılığıyla kontrol edin.",
       "ipc-identifier-label": "IPC Tanımlayıcısı",
       "left-click-description": "Düğmeye sol tıklandığında yürütülecek komut.",
       "left-click-label": "Sol tıklama",

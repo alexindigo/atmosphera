@@ -128,7 +128,7 @@
       "icon-position-left": "左",
       "icon-position-right": "右",
       "icon-position-top": "頂部",
-      "ipc-identifier-description": "IPC 指令的唯一識別碼, 在使用 'qs -c atmosphera-shell ipc call cb [動作] [識別碼]' 時利用此識別碼可透過 IPC 控制此按鈕。",
+      "ipc-identifier-description": "IPC 指令的唯一識別碼, 在使用 'qs -c atmosphera ipc call cb [動作] [識別碼]' 時利用此識別碼可透過 IPC 控制此按鈕。",
       "ipc-identifier-label": "IPC 識別碼",
       "left-click-description": "在點擊左鍵時要執行的指令",
       "left-click-label": "點擊左鍵",

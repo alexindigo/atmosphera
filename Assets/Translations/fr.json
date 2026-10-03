@@ -128,7 +128,7 @@
       "icon-position-left": "Gauche",
       "icon-position-right": "Droite",
       "icon-position-top": "Haut",
-      "ipc-identifier-description": "Identifiant unique pour les commandes IPC. Utilisez cet identifiant avec 'qs -c atmosphera-shell ipc call cb [action] [identifiant]' pour contrôler ce bouton via IPC.",
+      "ipc-identifier-description": "Identifiant unique pour les commandes IPC. Utilisez cet identifiant avec 'qs -c atmosphera ipc call cb [action] [identifiant]' pour contrôler ce bouton via IPC.",
       "ipc-identifier-label": "Identifiant IPC",
       "left-click-description": "Commande à exécuter quand le bouton est cliqué à gauche.",
       "left-click-label": "Clic gauche",

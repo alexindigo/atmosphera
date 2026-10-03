@@ -117,7 +117,7 @@
       "hide-mode-label": "Skjulemodus",
       "hide-mode-max-transparent": "Heilt utvida men gjennomsynleg",
       "icon-description": "Vel ikon frå biblioteket.",
-      "ipc-identifier-description": "Særskild identifikator for IPC kommandoar. Bruk denne identifikatoren med 'qs -c atmosphera-shell ipc call cb [handling] [identifikator]' for å styra denne knappen med IPC.",
+      "ipc-identifier-description": "Særskild identifikator for IPC kommandoar. Bruk denne identifikatoren med 'qs -c atmosphera ipc call cb [handling] [identifikator]' for å styra denne knappen med IPC.",
       "ipc-identifier-label": "IPC-identifikator",
       "left-click-description": "Kommando som køyrer når knappen er venstreklikka.",
       "left-click-label": "Venstreklikk",

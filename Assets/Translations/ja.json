@@ -128,7 +128,7 @@
       "icon-position-left": "左",
       "icon-position-right": "右",
       "icon-position-top": "上",
-      "ipc-identifier-description": "IPCコマンドの一意の識別子。この識別子を「qs -c atmosphera-shell ipc call cb [アクション] [識別子]」で使用して、IPC経由でこのボタンを制御します。",
+      "ipc-identifier-description": "IPCコマンドの一意の識別子。この識別子を「qs -c atmosphera ipc call cb [アクション] [識別子]」で使用して、IPC経由でこのボタンを制御します。",
       "ipc-identifier-label": "IPC識別子",
       "left-click-description": "ボタンを左クリックした際に実行するコマンド。",
       "left-click-label": "左クリック",

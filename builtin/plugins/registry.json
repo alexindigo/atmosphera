@@ -27,21 +27,8 @@
         "Built-in"
       ]
     },
-    {
-      "id": "noctalia-icons-legacy",
-      "name": "Noctalia Icons (Legacy)",
-      "version": "1.0.0",
-      "official": true,
-      "author": "Atmosphera",
-      "description": "Legacy Noctalia icon set kept for compatibility",
-      "license": "GPL-3.0",
-      "tags": [
-        "Icons",
-        "Built-in"
-      ]
-    },
-    {
-      "id": "demo-custom-lockscreen",
+  {
+   "id": "demo-custom-lockscreen",
       "name": "Example Custom Lock Screen",
       "version": "1.0.0",
       "official": true,

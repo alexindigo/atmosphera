@@ -52,11 +52,12 @@ binds {
     // ═══════════════════════════════════════════════════
     // App Launcher — macOS: Cmd+Space
     // ═══════════════════════════════════════════════════
-    // Super+Space (corner Ctrl+Space) — launches app launcher.
-    // Ctrl+Space (alt+Space) is reserved for input switching (xkb).
-    // TODO: replace fuzzel with a proper app launcher
+    // Super+Space (physical Alt+Space — the macOS Cmd position) toggles the
+    // native Atmosphera launcher via IPC.
+    // Ctrl+Space / Alt+Space are reserved for input-method switching (see
+    // RESERVED above).
     Super+Space hotkey-overlay-title="Application Launcher" {
-        spawn "fuzzel";
+        spawn "qs" "-c" "atmosphera" "ipc" "call" "launcher" "toggle";
     }
 
     // ═══════════════════════════════════════════════════
