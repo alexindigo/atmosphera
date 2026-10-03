@@ -53,15 +53,8 @@ keymap:
       Alt-Shift-Left: Ctrl-Shift-Left
       Alt-Shift-Right: Ctrl-Shift-Right
 
-  # macOS copy/paste: Cmd+C/V/X → Ctrl+Insert / Shift+Insert / Ctrl+X
-  - name: Mac copy-paste
-    application:
-      not: ["/zed/"]
-    remap:
-      Super-C: Ctrl_L-Insert
-      Super-V: Shift_L-Insert
-      Super-X: Ctrl_L-X
-
+  # Specific application maps come first: xremap applies the FIRST matching
+  # keymap, so terminal-scoped copy/paste must precede the generic Mac one.
   # Terminal copy/paste: Cmd+C/V/X → Ctrl+Shift+C/V/X (terminal convention).
   # Real Ctrl (corner key) passes through untouched (SIGINT/readline).
   - name: Terminal copy-paste
@@ -71,6 +64,15 @@ keymap:
       Super-c: Ctrl-Shift-c
       Super-v: Ctrl-Shift-v
       Super-x: Ctrl-Shift-x
+
+  # macOS copy/paste: Cmd+C/V/X → Ctrl+Insert / Shift+Insert / Ctrl+X
+  - name: Mac copy-paste
+    application:
+      not: ["/zed/"]
+    remap:
+      Super-C: Ctrl_L-Insert
+      Super-V: Shift_L-Insert
+      Super-X: Ctrl_L-X
 
   # GUI App Actions (non-terminal, non-Zed): Cmd+S/Z/A/G
   - name: GUI App Actions
