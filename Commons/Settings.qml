@@ -92,6 +92,10 @@ Singleton {
 
     // Sections = settingsAdapter root keys (minus the version marker)
     var plain = QtObj2JS.qtObjectToPlainObject(settingsAdapter);
+    // The same serialization is the adapter-derived settings structure used
+    // to recognize declared setting paths (own properties only — QObject
+    // bookkeeping and prototype names are not settings).
+    root._schemaTree = plain;
     var keys = [];
     for (var k in plain) {
       if (k !== "settingsVersion") {
@@ -107,8 +111,11 @@ Singleton {
     // files load after the legacy layer lands (they take precedence).
     directoriesCreated = true;
 
-    // Set the settingsAdapter to the settingsFileView to trigger the legacy load
-    settingsFileView.adapter = settingsAdapter;
+    // Attach the adapter only to the path-less update watch (save trigger).
+    // The legacy FileView stays text-mode: all file->adapter application
+    // flows through the manual layer-ordered path below, so the invariant
+    // section > legacy > schema holds identically at startup and on reload.
+    adapterUpdateWatch.adapter = settingsAdapter;
   }
 
   // Don't write settings to disk immediately
@@ -122,12 +129,21 @@ Singleton {
     }
   }
 
+  // Change-notification-only adapter attachment: forwards adapter updates
+  // to the save debounce. It has no path and never loads, so it applies
+  // nothing — the manual layer-ordered path is the single applicator.
+  FileView {
+    id: adapterUpdateWatch
+    printErrors: false
+    watchChanges: false
+    onAdapterUpdated: saveTimer.start()
+  }
+
   FileView {
     id: settingsFileView
     path: directoriesCreated ? settingsFile : undefined
     printErrors: false
     watchChanges: true
-    onAdapterUpdated: saveTimer.start()
 
     onFileChanged: scheduleExternalReload()
 
@@ -147,6 +163,14 @@ Singleton {
           rawJson = JSON.parse(settingsFileView.text());
         } catch (e) {
           Logger.w("Settings", "Could not parse raw JSON for migrations");
+        }
+
+        // Single applicator: the legacy layer applies through the same
+        // schema-aware manual path as the section files (unknown keys warn
+        // and are skipped). Section files load next and keep precedence —
+        // no precedence-blind native application runs ahead of the layering.
+        if (rawJson) {
+          deepApply(settingsAdapter, rawJson, "");
         }
 
         // Run versioned migrations immediately, don't move it in upgradeSettings
@@ -195,22 +219,26 @@ Singleton {
           if (rel === "" || getPathValue(sectionTree, rel) !== undefined) {
             continue;
           }
+          var appliedChange = false;
           if (xc.deleted) {
             var def = getDefaultValue(xc.path);
             if (def !== undefined) {
-              setPathValue(settingsAdapter, xc.path, def);
+              appliedChange = setPathValue(settingsAdapter, xc.path, def, "");
             }
           } else if (xc.value !== null && typeof xc.value === "object" && !Array.isArray(xc.value)) {
             var existing = getPathValue(settingsAdapter, xc.path);
             if (existing !== undefined && existing !== null && typeof existing === "object") {
-              deepApply(existing, xc.value);
+              appliedChange = deepApply(existing, xc.value, xc.path) > 0;
             } else {
-              setPathValue(settingsAdapter, xc.path, xc.value);
+              appliedChange = setPathValue(settingsAdapter, xc.path, xc.value, "");
             }
           } else {
-            setPathValue(settingsAdapter, xc.path, xc.value);
+            appliedChange = setPathValue(settingsAdapter, xc.path, xc.value, "");
           }
-          if (touchedSections.indexOf(sec) === -1) {
+          // Rejected (unknown) paths must not become touched runtime
+          // sections: re-baselining them would absorb pending debounced
+          // user changes into the snapshot.
+          if (appliedChange && touchedSections.indexOf(sec) === -1) {
             touchedSections.push(sec);
           }
         }
@@ -295,7 +323,7 @@ Singleton {
         if (!root.isLoaded) {
           root._overrides[section] = parsed || {};
           if (parsed) {
-            deepApply(settingsAdapter[section], parsed);
+            deepApply(settingsAdapter[section], parsed, section);
             root._sawAnyFile = true;
           }
           root.sectionSettled();
@@ -361,27 +389,32 @@ Singleton {
       return;
     }
     Logger.d("Settings", "Section " + section + " changed externally (" + changes.length + " paths)");
+    var applied = 0;
     for (var i = 0; i < changes.length; i++) {
       var c = changes[i];
       if (c.deleted) {
         var def = getDefaultValue(section + "." + c.path);
         if (def !== undefined) {
-          setPathValue(settingsAdapter[section], c.path, def);
+          applied += setPathValue(settingsAdapter[section], c.path, def, section) ? 1 : 0;
         }
       } else if (c.value !== null && typeof c.value === "object" && !Array.isArray(c.value)) {
         var existing = getPathValue(settingsAdapter[section], c.path);
         if (existing !== undefined && existing !== null && typeof existing === "object") {
-          deepApply(existing, c.value);
+          applied += deepApply(existing, c.value, section + "." + c.path);
         } else {
-          setPathValue(settingsAdapter[section], c.path, c.value);
+          applied += setPathValue(settingsAdapter[section], c.path, c.value, section) ? 1 : 0;
         }
       } else {
-        setPathValue(settingsAdapter[section], c.path, c.value);
+        applied += setPathValue(settingsAdapter[section], c.path, c.value, section) ? 1 : 0;
       }
     }
+    // Keep the raw externally supplied tree even when its unknown entries
+    // were not applied.
     root._overrides[section] = parsed;
-    // Re-baseline this section only (pending changes elsewhere stay tracked)
-    if (root._snapshot && settingsAdapter[section] !== undefined) {
+    // Re-baseline this section only when something was actually applied — an
+    // unknown-only edit must not absorb pending debounced user changes into
+    // the snapshot.
+    if (applied > 0 && root._snapshot && settingsAdapter[section] !== undefined) {
       root._snapshot[section] = QtObj2JS.qtObjectToPlainObject(settingsAdapter[section]);
     }
     root.settingsReloaded();
@@ -450,6 +483,9 @@ Singleton {
   property var _sectionViews: ({})
   property double _lastWriteTime: 0
   property bool _sawAnyFile: false
+  // Adapter-derived settings structure (built in Component.onCompleted);
+  // the whitelist unknown keys are checked against before manual assignment
+  property var _schemaTree: null
 
   // Load default settings when file is loaded
   Connections {
@@ -1613,17 +1649,58 @@ Singleton {
   }
 
   // -----------------------------------------------------
-  // Write a dotted path on a (possibly JsonObject-based) tree
-  function setPathValue(obj, path, value) {
+  // Adapter-derived schema lookup: is `path` (dotted, e.g.
+  // "general.keybinds.keyUp") a declared setting? Own-property membership
+  // only — an object's inherited names, QObject bookkeeping (objectName,
+  // signals/methods) and arbitrary source keys are not settings. Arrays and
+  // their records are opaque setting values: any path at or below an array
+  // node counts as declared. Never truthiness-tested: declared
+  // false/zero/empty-string values must still apply.
+  function isKnownSchemaPath(path) {
+    if (!root._schemaTree) {
+      return true; // schema not built yet — never block application
+    }
+    var parts = path.split(".");
+    var node = root._schemaTree;
+    for (var i = 0; i < parts.length; i++) {
+      if (node === null || node === undefined) {
+        return false;
+      }
+      if (Array.isArray(node)) {
+        return true; // opaque setting value
+      }
+      if (typeof node !== "object") {
+        return false; // primitive leaves declare no sub-paths
+      }
+      if (!Object.prototype.hasOwnProperty.call(node, parts[i])) {
+        return false;
+      }
+      node = node[parts[i]];
+    }
+    return true;
+  }
+
+  // -----------------------------------------------------
+  // Write a dotted path on a (possibly JsonObject-based) tree.
+  // `prefix` qualifies section-relative paths so the schema check and
+  // warnings use the full setting name (e.g. "general.lockScreenMode").
+  // Returns true when the value was applied.
+  function setPathValue(obj, path, value, prefix) {
+    var fullPath = prefix ? prefix + "." + path : path;
+    if (!isKnownSchemaPath(fullPath)) {
+      Logger.w("Settings", "Ignoring unknown setting: " + fullPath);
+      return false;
+    }
     var parts = path.split(".");
     var current = obj;
     for (var i = 0; i < parts.length - 1; i++) {
       current = current[parts[i]];
       if (current === undefined || current === null) {
-        return;
+        return false;
       }
     }
     current[parts[parts.length - 1]] = value;
+    return true;
   }
 
   // -----------------------------------------------------
@@ -1657,15 +1734,30 @@ Singleton {
   // -----------------------------------------------------
   // Deep-apply a plain-object tree onto a JsonObject subtree (used to
   // restore defaults for a section). Arrays replace; plain objects recurse.
-  function deepApply(target, source) {
+  // `prefix` is the dotted path of `target` within the settings tree; keys
+  // absent from the adapter-derived schema are warned about and skipped
+  // instead of throwing on assignment to a non-existent QObject property.
+  // Returns the number of leaf assignments actually applied.
+  function deepApply(target, source, prefix) {
+    var applied = 0;
     for (var key in source) {
+      if (!Object.prototype.hasOwnProperty.call(source, key)) {
+        continue;
+      }
+      var fullPath = prefix ? prefix + "." + key : key;
+      if (!isKnownSchemaPath(fullPath)) {
+        Logger.w("Settings", "Ignoring unknown setting: " + fullPath);
+        continue;
+      }
       var value = source[key];
       if (value !== null && typeof value === "object" && !Array.isArray(value) && target[key] !== undefined && target[key] !== null && typeof target[key] === "object") {
-        deepApply(target[key], value);
+        applied += deepApply(target[key], value, fullPath);
       } else {
         target[key] = value;
+        applied++;
       }
     }
+    return applied;
   }
 
   // -----------------------------------------------------
@@ -1679,7 +1771,7 @@ Singleton {
     var touched = mergePendingChanges();
     root._overrides[key] = {};
     if (root._defaultSettings && root._defaultSettings[key] !== undefined && settingsAdapter[key] !== undefined) {
-      deepApply(settingsAdapter[key], root._defaultSettings[key]);
+      deepApply(settingsAdapter[key], root._defaultSettings[key], key);
     }
     // The restored defaults are the new baseline for this section; the
     // emptied tree deletes the file.
@@ -1712,7 +1804,7 @@ Singleton {
     }
     var defaultValue = getDefaultValue(path);
     if (defaultValue !== undefined) {
-      setPathValue(settingsAdapter, path, defaultValue);
+      setPathValue(settingsAdapter, path, defaultValue, "");
     }
     root._snapshot = QtObj2JS.qtObjectToPlainObject(settingsAdapter);
     if (touched.indexOf(section) === -1) {
