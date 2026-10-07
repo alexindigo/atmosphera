@@ -18,12 +18,14 @@ settings readiness.
 """
 
 import argparse
+import importlib.util
 import glob
 import json
 import os
 import queue
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import threading
@@ -33,6 +35,10 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROBE_SRC = SCRIPT_DIR / "fixtures" / "settings-regression.qml"
 PROBE_NAME = "settings-regression-probe.qml"
+
+_spec = importlib.util.spec_from_file_location("settings_harness_mechanics", SCRIPT_DIR / "bindings-deployment-regression.py")
+HARNESS = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(HARNESS)
 
 UNKNOWN_WARN_RE = re.compile(r"Ignoring unknown setting: ([A-Za-z0-9_.\-]+)(\x1b\[[0-9;]*m)?\s*$")
 ERROR_PATTERNS = [
@@ -121,17 +127,19 @@ def parse_probe_line(line):
         return parts[1], None
 
 
-def run_probe_leg(case_dir, env, log_name, on_marker=None):
+def run_probe_leg(case_dir, env, log_name, on_marker=None, lifecycle=None, journal=None):
     """Launch the probe; stream output to a log; dispatch marker callbacks.
 
     The probe self-exits by design (Qt.exit). If it exceeds the deadline we
     terminate only our own child process — never a name-wide kill.
     """
     shell_dir = case_dir / "shell"
-    log_path = case_dir / log_name
+    log_path = (journal or case_dir) / log_name
     cmd = ["dbus-run-session", "--", "qs", "-p", str(shell_dir / PROBE_NAME)]
     proc = subprocess.Popen(cmd, env=env, stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT, text=True, bufsize=1)
+                             stderr=subprocess.STDOUT, text=True, bufsize=1, start_new_session=True)
+    if lifecycle:
+        lifecycle.track(proc)
     lines = []
     q = queue.Queue()
 
@@ -144,33 +152,46 @@ def run_probe_leg(case_dir, env, log_name, on_marker=None):
     t.start()
     deadline = time.time() + PROBE_DEADLINE_S
     timed_out = False
-    while True:
-        if time.time() > deadline:
-            timed_out = True
-            proc.terminate()  # our own child only
-            try:
-                proc.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                proc.kill()
-            break
-        try:
-            line = q.get(timeout=0.25)
-        except queue.Empty:
-            if proc.poll() is not None:
+    completion = []
+    try:
+        while True:
+            if time.time() > deadline:
+                timed_out = True
                 break
-            continue
-        if on_marker:
+            try:
+                line = q.get(timeout=0.25)
+            except queue.Empty:
+                if proc.poll() is not None:
+                    break
+                continue
             tag, payload = parse_probe_line(line)
-            if tag:
+            if tag in ("SAVED", "DONE"):
+                # Observation time is receipt of the producer marker, not a
+                # delayed grace-period poll. This does not claim zero pipe latency.
+                completion.append({"event": tag, "received_ns": time.time_ns(), "consumer": payload,
+                    "files": {str(p.relative_to(case_dir)): p.read_text(errors="replace")
+                              for p in sorted((case_dir / "config/settings").glob("*.json"))}})
+            if on_marker and tag:
                 on_marker(tag, payload)
-        if proc.poll() is not None and q.empty():
-            break
-    proc.wait(timeout=10)
-    log_path.write_text("".join(lines))
+            if proc.poll() is not None and q.empty():
+                break
+    finally:
+        # This termination is only for the explicitly permissioned owned fixture
+        # group. No escalation or name-wide qs operation is hidden here.
+        if proc.poll() is None:
+            os.killpg(proc.pid, signal.SIGTERM)
+        proc.wait(timeout=10)
+        t.join(timeout=5)
+        log_path.write_text("".join(lines))
+        HARNESS.atomic_json(log_path.with_suffix(".completion.json"), completion)
+        if t.is_alive():
+            raise HARNESS.HarnessBlocked("probe stdout descendant is still live")
+        if lifecycle:
+            lifecycle.assert_quiet()
     return log_path, proc.returncode, timed_out
 
 
-def run_shell_leg(case_dir, env, log_name):
+def run_shell_leg(case_dir, env, log_name, lifecycle=None, journal=None):
     """Cold-load leg: launch the actual shell.qml entry of the disposable copy.
 
     A clean load stays alive until `timeout` terminates our own child after
@@ -178,19 +199,21 @@ def run_shell_leg(case_dir, env, log_name):
     a load failure.
     """
     shell_dir = case_dir / "shell"
-    log_path = case_dir / log_name
-    inner = f'timeout --signal=TERM {SHELL_RUN_S} qs -p "{shell_dir}/shell.qml" 2>&1; echo "SHELL_QS_EXIT=$?"'
-    cmd = ["dbus-run-session", "--", "sh", "-c", inner]
+    log_path = (journal or case_dir) / log_name
+    cmd = ["dbus-run-session", "--", "timeout", "--signal=TERM", str(SHELL_RUN_S), "qs", "-p", str(shell_dir / "shell.qml")]
     proc = subprocess.Popen(cmd, env=env, stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT, text=True)
+                             stderr=subprocess.STDOUT, text=True, start_new_session=True)
+    if lifecycle:
+        lifecycle.track(proc)
     try:
         out, _ = proc.communicate(timeout=SHELL_DEADLINE_S)
     except subprocess.TimeoutExpired:
-        proc.terminate()
+        os.killpg(proc.pid, signal.SIGTERM)
         out, _ = proc.communicate(timeout=10)
     log_path.write_text(out)
-    m = re.search(r"SHELL_QS_EXIT=(\d+)", out)
-    return log_path, (int(m.group(1)) if m else None), out
+    if lifecycle:
+        lifecycle.assert_quiet()
+    return log_path, proc.returncode, out
 
 
 # ---------------------------------------------------------- assertions
@@ -278,7 +301,7 @@ def case_clean_start(runner, case_dir, case):
         "PROBE_CASE": "observe",
         "PROBE_VALUES": "bar.position",
     })
-    log, rc, to = run_probe_leg(case_dir, env, "run.log")
+    log, rc, to = runner.probe_leg(case_dir, env, "run.log")
     case.check(not to, "probe leg timed out")
     case.check(rc == 0, f"probe leg exit code {rc}")
     case.check_probe_done(log, {"bar.position": "top"})
@@ -286,7 +309,7 @@ def case_clean_start(runner, case_dir, case):
     case.check_no_errors(log)
 
     # Cold-load leg: the actual shell.qml entry of the disposable copy.
-    slog, qs_exit, _ = run_shell_leg(case_dir, runner.env_for(case_dir, {}), "shell-run.log")
+    slog, qs_exit, _ = runner.shell_leg(case_dir, runner.env_for(case_dir, {}), "shell-run.log")
     case.check(qs_exit == 124, f"shell.qml cold-load exit {qs_exit} (expected 124 = alive until timeout)")
     case.check_warnings(slog, none=True)
     case.check_no_errors(slog)
@@ -303,7 +326,7 @@ def _simple_seed_case(seed_section, seed_obj, values, expected, required_warning
     def fn(runner, case_dir, case):
         write_json_atomic(case_dir / "config" / "settings" / f"{seed_section}.json", seed_obj)
         env = runner.env_for(case_dir, {"PROBE_CASE": "observe", "PROBE_VALUES": ",".join(values)})
-        log, rc, to = run_probe_leg(case_dir, env, "run.log")
+        log, rc, to = runner.probe_leg(case_dir, env, "run.log")
         case.check(not to, "probe leg timed out")
         case.check(rc == 0, f"probe leg exit code {rc}")
         case.check_probe_done(log, expected)
@@ -325,7 +348,7 @@ def case_legacy_initial(runner, case_dir, case):
         "PROBE_CASE": "observe",
         "PROBE_VALUES": "general.avatarImage",
     })
-    log, rc, to = run_probe_leg(case_dir, env, "run.log")
+    log, rc, to = runner.probe_leg(case_dir, env, "run.log")
     case.check(not to, "probe leg timed out")
     case.check_probe_done(log, {"general.avatarImage": "/tmp/probe-legacy.png"})
     case.check_warnings(log, required=["general.lockScreenMode", "unknownLegacySection"])
@@ -345,7 +368,7 @@ def case_section_external_mixed(runner, case_dir, case):
         "PROBE_CASE": "external-edit",
         "PROBE_VALUES": "general.dimmerOpacity",
     })
-    log, rc, to = run_probe_leg(case_dir, env, "run.log", on_marker=on_marker)
+    log, rc, to = runner.probe_leg(case_dir, env, "run.log", on_marker=on_marker)
     case.check(not to, "probe leg timed out")
     events = case.check_probe_done(log, {"general.dimmerOpacity": 0.77}, allow_stages=("RELOADED",))
     case.check(any(t == "RELOADED" for t, _ in events), "settingsReloaded never observed")
@@ -370,7 +393,7 @@ def case_legacy_external_unknown(runner, case_dir, case):
         "PROBE_CASE": "external-edit",
         "PROBE_VALUES": "general.scaleRatio,bar.position",
     })
-    log, rc, to = run_probe_leg(case_dir, env, "run.log", on_marker=on_marker)
+    log, rc, to = runner.probe_leg(case_dir, env, "run.log", on_marker=on_marker)
     case.check(not to, "probe leg timed out")
     events = case.check_probe_done(log, {"general.scaleRatio": 1.5, "bar.position": "bottom"},
                                    allow_stages=("RELOADED",))
@@ -389,7 +412,7 @@ def case_section_byte_identical(runner, case_dir, case):
         "PROBE_CASE": "observe",
         "PROBE_VALUES": "ui.fontDefaultScale",
     })
-    log, rc, to = run_probe_leg(case_dir, env, "run.log")
+    log, rc, to = runner.probe_leg(case_dir, env, "run.log")
     case.check(not to, "probe leg timed out")
     case.check_probe_done(log, {"ui.fontDefaultScale": 1.25})
     case.check_warnings(log, none=True)
@@ -409,7 +432,7 @@ def case_save_restart(runner, case_dir, case):
         "PROBE_EDIT_VALUE": "0.66",
         "PROBE_VALUES": "general.dimmerOpacity",
     })
-    log, rc, to = run_probe_leg(case_dir, env, "run-save.log")
+    log, rc, to = runner.probe_leg(case_dir, env, "run-save.log")
     case.check(not to, "save leg timed out")
     events = case.check_probe_done(log, {"general.dimmerOpacity": 0.66}, allow_stages=("SAVED", "DONE"))
     case.check(any(t == "SAVED" for t, _ in events), "settingsSaved never observed")
@@ -427,7 +450,7 @@ def case_save_restart(runner, case_dir, case):
         "PROBE_CASE": "verify",
         "PROBE_VALUES": "general.dimmerOpacity",
     })
-    log2, rc2, to2 = run_probe_leg(case_dir, env2, "run-verify.log")
+    log2, rc2, to2 = runner.probe_leg(case_dir, env2, "run-verify.log")
     case.check(not to2, "verify leg timed out")
     case.check_probe_done(log2, {"general.dimmerOpacity": 0.66})
     case.check_no_errors(log2)
@@ -448,7 +471,7 @@ def case_unknown_only_reload_pending_edit(runner, case_dir, case):
         "PROBE_EDIT_VALUE": "1.61",
         "PROBE_VALUES": "ui.fontDefaultScale",
     })
-    log, rc, to = run_probe_leg(case_dir, env, "run.log", on_marker=on_marker)
+    log, rc, to = runner.probe_leg(case_dir, env, "run.log", on_marker=on_marker)
     case.check(not to, "probe leg timed out")
     events = case.check_probe_done(log, {"ui.fontDefaultScale": 1.61}, allow_stages=("SAVED", "DONE"))
     case.check(any(t == "SAVED" for t, _ in events), "settingsSaved never observed")
@@ -472,7 +495,7 @@ def case_explicit_reset(runner, case_dir, case):
         "PROBE_RESET_SECTION": "bar",
         "PROBE_VALUES": "bar.position,ui.fontDefaultScale",
     })
-    log, rc, to = run_probe_leg(case_dir, env, "run.log")
+    log, rc, to = runner.probe_leg(case_dir, env, "run.log")
     case.check(not to, "probe leg timed out")
     events = case.check_probe_done(log, {"bar.position": "top", "ui.fontDefaultScale": 1.3},
                                    allow_stages=("DONE",))
@@ -555,10 +578,12 @@ CASE_ORDER = list(CASES.keys())
 # ------------------------------------------------------------- runner
 
 class Runner:
-    def __init__(self, source, output):
-        self.source = Path(source)
-        self.output = Path(output)
+    def __init__(self, source, output, work_root):
+        self.workspace = HARNESS.Workspace(source, output, work_root)
+        self.source, self.output = self.workspace.source, self.workspace.output
         self.session = discover_session_env()
+        self.backup = HARNESS.Runner(self.workspace)
+        self.journals = {}
 
     def env_for(self, case_dir, extra):
         env = case_env(self.session, case_dir)
@@ -566,33 +591,62 @@ class Runner:
         return env
 
     def prepare_case_dir(self, name):
-        case_dir = self.output / name
-        if case_dir.exists():
-            shutil.rmtree(case_dir)
-        shell_dir = case_dir / "shell"
-        shell_dir.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copytree(self.source, shell_dir,
-                        ignore=shutil.ignore_patterns(".git"),
-                        ignore_dangling_symlinks=True)
+        self.backup.lifecycle.assert_quiet()
+        case_dir, journal, shell_dir = self.workspace.case(name, "shell")
+        self.journals[str(case_dir)] = journal
+        self.backup.case = journal
+        self.backup.lifecycle.add_root(case_dir)
+        self.backup.lifecycle.add_root(journal)
         shutil.copy(PROBE_SRC, shell_dir / PROBE_NAME)
         (case_dir / "config" / "settings").mkdir(parents=True, exist_ok=True)
         (case_dir / "cache").mkdir(parents=True, exist_ok=True)
         return case_dir
 
+    def probe_leg(self, case_dir, env, log_name, on_marker=None):
+        self.backup.live_started = True
+        return run_probe_leg(case_dir, env, log_name, on_marker,
+                             lifecycle=self.backup.lifecycle, journal=self.journals[str(case_dir)])
+
+    def shell_leg(self, case_dir, env, log_name):
+        self.backup.live_started = True
+        return run_shell_leg(case_dir, env, log_name, lifecycle=self.backup.lifecycle,
+                             journal=self.journals[str(case_dir)])
+
     def run_case(self, name):
         case = Case(name)
-        case_dir = self.prepare_case_dir(name)
+        case_dir, primary, cleanup, restored = None, None, [], None
+        status = "PASS"
         try:
+            case_dir = self.prepare_case_dir(name)
             CASES[name](self, case_dir, case)
+        except HARNESS.HarnessBlocked as e:
+            primary, status = repr(e), "BLOCKED"
         except Exception as e:
+            primary, status = repr(e), "FAIL"
             case.failures.append(f"runner exception: {e!r}")
+        finally:
+            try:
+                self.backup.lifecycle.assert_quiet()
+                restored = self.backup.restore()
+            except Exception as e:
+                cleanup.append(repr(e))
+                if status != "FAIL":
+                    status = "BLOCKED"
+        if case.failures:
+            status = "FAIL"
         result = {
             "case": name,
-            "ok": not case.failures,
+            "ok": status == "PASS",
+            "status": status,
+            "primary_error": primary,
+            "cleanup_errors": cleanup,
+            "restoration": restored,
             "failures": case.failures,
-            "dir": str(case_dir),
+            "dir": str(case_dir) if case_dir else None,
+            "journal": str(self.journals[str(case_dir)]) if case_dir else str(self.output),
+            "executed": case_dir is not None,
         }
-        (case_dir / "case.json").write_text(json.dumps(result, indent=2) + "\n")
+        HARNESS.atomic_json(self.output / (name + ".result.json"), result)
         return result
 
 
@@ -601,6 +655,7 @@ def main():
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--source", required=True, help="shell tree under test")
     ap.add_argument("--output", required=True, help="results directory")
+    ap.add_argument("--work-root", required=True, help="fresh complete-copy/config/cache root on recovered scratch")
     ap.add_argument("--case", default="all",
                     help="case name, comma-separated list, or 'all'")
     args = ap.parse_args()
@@ -618,34 +673,68 @@ def main():
         if unknown:
             raise SystemExit(f"FATAL: unknown case(s): {unknown} (known: {CASE_ORDER})")
 
-    runner = Runner(args.source, args.output)
-    runner.output.mkdir(parents=True, exist_ok=True)
+    # Existing results/cases are refused before any session/backups/live process.
+    output_existed = Path(args.output).exists()
+    try:
+        runner = Runner(args.source, args.output, args.work_root)
+    except Exception as error:
+        print("SETTINGS_REGRESSION: BLOCKED — preflight: " + repr(error), flush=True)
+        if not output_existed and (Path(args.output) / "ownership.json").is_file():
+            try:
+                HARNESS.atomic_json(Path(args.output) / "summary.json", {"status": "BLOCKED", "exit_code": 2,
+                    "selected_ids": selected, "executed_ids": [], "not_run_ids": selected, "primary_error": repr(error)})
+            except Exception as write_error:
+                print("SETTINGS_REGRESSION: FAIL — initialization journal: " + repr(write_error), file=sys.stderr, flush=True)
+                return 1
+        return 2
 
     results = []
-    for name in selected:
-        res = runner.run_case(name)
-        results.append(res)
-        status = "PASS" if res["ok"] else "FAIL"
-        print(f"[{status}] {name}", flush=True)
-        for f in res["failures"]:
-            print(f"    - {f}", flush=True)
+    halted = False
+    try:
+        for name in selected:
+            if halted:
+                res = {"case": name, "ok": False, "status": "NOT_RUN", "executed": False,
+                       "failures": [], "reason": "unsafe/capacity-blocked predecessor"}
+            else:
+                res = runner.run_case(name)
+            results.append(res)
+            halted = halted or res["status"] == "BLOCKED" or bool(res.get("cleanup_errors"))
+            HARNESS.atomic_json(runner.output / "progress.json", {"selected": selected, "cases": results})
+            print(f"[{res['status']}] {name}", flush=True)
+            for f in res["failures"]:
+                print(f"    - {f}", flush=True)
+    except Exception as error:
+        print("SETTINGS_REGRESSION: FAIL — retained result journal: " + repr(error), file=sys.stderr, flush=True)
+        print(json.dumps({"selected": selected, "retained_cases": results}), flush=True)
+        return 1
+    finally:
+        runner.backup.lifecycle.close()
 
-    failed = [r for r in results if not r["ok"]]
+    failed = [r for r in results if r["status"] == "FAIL"]
+    incomplete = [r for r in results if r["status"] in ("BLOCKED", "NOT_RUN")]
     summary = {
         "source": str(runner.source),
         "output": str(runner.output),
         "cases": results,
         "failed": len(failed),
         "total": len(results),
+        "selected_ids": selected,
+        "executed_ids": [r["case"] for r in results if r.get("executed")],
+        "blocked_ids": [r["case"] for r in results if r["status"] == "BLOCKED"],
+        "not_run_ids": [r["case"] for r in results if r["status"] == "NOT_RUN"],
+        "storage": runner.workspace.peak,
+        "status": "FAIL" if failed else ("BLOCKED" if incomplete else "PASS"),
+        "exit_code": 1 if failed else (2 if incomplete else 0),
     }
-    (runner.output / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
-
-    if failed:
-        print(f"SETTINGS_REGRESSION: FAIL ({len(failed)}/{len(results)} cases failed)")
-        sys.exit(1)
-    print("SETTINGS_REGRESSION: PASS")
-    sys.exit(0)
+    try:
+        HARNESS.atomic_json(runner.output / "summary.json", summary)
+    except Exception as error:
+        print("SETTINGS_REGRESSION: FAIL — terminal journal: " + repr(error), file=sys.stderr, flush=True)
+        print(json.dumps(summary), flush=True)
+        return 1
+    print("SETTINGS_REGRESSION: " + summary["status"], flush=True)
+    return summary["exit_code"]
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

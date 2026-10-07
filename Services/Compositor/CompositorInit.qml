@@ -8,9 +8,11 @@ import qs.Commons
 Singleton {
   id: root
 
-  function init() {
+  function init(environment, onComplete) {
     if (CompositorService.isNiri) {
-      NiriSessionInit.init();
+      NiriSessionInit.init(environment, onComplete);
+    } else if (typeof onComplete === "function") {
+      onComplete(true, "", false);
     }
     // Future: Hyprland session init, etc.
   }

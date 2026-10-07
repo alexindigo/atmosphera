@@ -50,6 +50,7 @@ import signal
 import subprocess
 import sys
 import time
+import base64
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -90,6 +91,8 @@ class Ctx:
         self.failures = []
         self.notes = []
         self._restore = []
+        self._processes = []
+        self.owned_register = None
         self.session = self._discover_session()
 
     def _discover_session(self):
@@ -121,12 +124,31 @@ class Ctx:
     def add_restore(self, fn):
         self._restore.append(fn)
 
+    def add_process(self, proc):
+        if proc.pid == 51508 or os.getpgid(proc.pid) == os.getpgrp():
+            raise Blocked("refusing desktop/runner process-group ownership")
+        self._processes.append(proc)
+        if self.owned_register:
+            self.owned_register(proc)
+        return proc
+
     def restore_all(self):
-        for fn in reversed(self._restore):
+        errors = []
+        callbacks, self._restore = self._restore, []
+        for fn in reversed(callbacks):
             try:
                 fn()
             except Exception as e:
-                self.note(f"restore step failed: {e!r}")
+                errors.append(f"restore step failed: {e!r}")
+        for proc in self._processes:
+            try:
+                proc.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                errors.append(f"owned probe did not exit: pid={proc.pid}")
+        self._processes = [p for p in self._processes if p.poll() is None]
+        self.failures.extend(errors)
+        if errors:
+            raise Blocked("; ".join(errors))
 
     # ---- staged host-side injection protocol ----
     def await_injection(self, stage, qmp_commands):
@@ -325,7 +347,8 @@ class EvtestCapture:
         self.log_path = ctx.output / log_name
         self.proc = subprocess.Popen(["evtest", node], stdout=open(self.log_path, "w"),
                                      stderr=subprocess.STDOUT, text=True,
-                                     start_new_session=True)
+                                      start_new_session=True)
+        ctx.add_process(self.proc)
 
     def stop(self):
         try:
@@ -391,6 +414,44 @@ def _start_xremap(ctx):
 
 
 def _set_sentinels(ctx):
+    if not getattr(ctx, "_clipboard_captured", False):
+        supported = {"text/plain", "text/plain;charset=utf-8", "TEXT", "STRING", "UTF8_STRING"}
+        original = []
+        for primary in (False, True):
+            extra = ["--primary"] if primary else []
+            types = sh(["wl-paste", *extra, "--list-types"], env=ctx.env(), timeout=10)
+            if types.returncode:
+                raise Blocked("clipboard baseline unavailable; do not replace an uncaptured selection")
+            names = types.stdout.splitlines()
+            if not names or not set(names) <= supported:
+                raise Blocked("clipboard baseline has unsupported MIME data; preserve it without overwriting")
+            values = {}
+            for mime in names:
+                p = subprocess.run(["wl-paste", *extra, "--no-newline", "--type", mime], env=ctx.env(), capture_output=True, timeout=10)
+                if p.returncode:
+                    raise Blocked("could not capture every offered clipboard MIME value")
+                values[mime] = base64.b64encode(p.stdout).decode()
+            original.append({"primary": primary, "types": names, "values": values})
+        backup = ctx.output / "clipboard-original.json"
+        backup.write_text(json.dumps(original, indent=2))
+        backup.chmod(0o600)
+        def restore_clipboard():
+            for record in original:
+                extra = ["--primary"] if record["primary"] else []
+                value = base64.b64decode(record["values"].get("text/plain;charset=utf-8", record["values"]["text/plain"]))
+                subprocess.run(["wl-copy", *extra, "--type", "text/plain;charset=utf-8"], input=value,
+                               env=ctx.env(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True, timeout=15)
+                read_types = sh(["wl-paste", *extra, "--list-types"], env=ctx.env(), timeout=10)
+                if read_types.returncode or set(read_types.stdout.splitlines()) != set(record["types"]):
+                    raise Blocked("clipboard restored bytes but offered MIME types do not match captured baseline")
+                for mime, encoded in record["values"].items():
+                    readback = subprocess.run(["wl-paste", *extra, "--no-newline", "--type", mime], env=ctx.env(), capture_output=True, timeout=10)
+                    if readback.returncode or readback.stdout != base64.b64decode(encoded):
+                        raise Blocked("clipboard MIME byte restoration did not match captured baseline")
+            (ctx.output / "clipboard-restoration.json").write_text(json.dumps({"captured_selections": 2, "all_offered_types_and_bytes_match": True,
+                "limits": "selection bytes/types only; original provider PID is not reproduced"}, indent=2))
+        ctx.add_restore(restore_clipboard)
+        ctx._clipboard_captured = True
     clip = f"CLIPBOARD-SENTINEL-{int(time.time())}"
     pri = f"PRIMARY-SELECTION-SENTINEL-{int(time.time())}"
     # wl-copy daemonizes to serve the selection; keep its pipes out of
@@ -432,10 +493,14 @@ def leg_k1_terminal(ctx, node):
     foot = subprocess.Popen(["foot", "sh", "-c", f"cat > {paste_target}"],
                             env=ctx.env(), stdout=foot_log, stderr=foot_log,
                             start_new_session=True)
+    ctx.add_process(foot)
     ctx.add_restore(lambda: foot.poll() is None and os.killpg(foot.pid, signal.SIGTERM))
     try:
         focus_with_launcher_recovery(ctx, foot, "foot")
     except Blocked:
+        if foot.poll() is None:
+            os.killpg(foot.pid, signal.SIGTERM)
+        foot.wait(timeout=5)
         foot_log.close()
         raise
     cap = EvtestCapture(ctx, node, "k1-evtest.log")
@@ -463,6 +528,7 @@ def leg_k1_terminal(ctx, node):
         cap.stop()
         if foot.poll() is None:
             os.killpg(foot.pid, signal.SIGTERM)
+        foot.wait(timeout=5)
         foot_log.close()
 
 
@@ -479,7 +545,8 @@ def leg_k2_gui(ctx, node):
     probe = subprocess.Popen([qml_bin, str(FIXTURES / "gui-key-probe.qml")],
                              env=ctx.env({"QT_FORCE_STDERR_LOGGING": "1"}),
                              stdout=logf, stderr=subprocess.STDOUT,
-                             text=True, start_new_session=True)
+                              text=True, start_new_session=True)
+    ctx.add_process(probe)
     ctx.add_restore(lambda: probe.poll() is None and os.killpg(probe.pid, signal.SIGTERM))
     focus_with_launcher_recovery(ctx, probe, "guiprobe")
     cap = EvtestCapture(ctx, node, "k2-evtest.log")
@@ -513,6 +580,7 @@ def leg_k3_real_ctrl(ctx, node):
     foot = subprocess.Popen(["foot", "sh", "-c", f"cat > {paste_target}"],
                             env=ctx.env(), stdout=foot_log, stderr=foot_log,
                             start_new_session=True)
+    ctx.add_process(foot)
     ctx.add_restore(lambda: foot.poll() is None and os.killpg(foot.pid, signal.SIGTERM))
     win_id = focus_with_launcher_recovery(ctx, foot, "foot")
     cap = EvtestCapture(ctx, node, "k3-evtest.log")
@@ -564,20 +632,62 @@ L1_PANEL_REGION = "390,115 500x120"
 
 
 def launcher_open_probe(ctx):
-    """True if the launcher (or another exclusive-grab panel) is open."""
+    """An ambiguous focus error is BLOCKED, never proof of native launcher UI."""
     foot = subprocess.Popen(["foot", "sh", "-c", "sleep 20"],
                             env=ctx.env(), stdin=subprocess.DEVNULL,
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                            start_new_session=True)
+                             start_new_session=True)
+    ctx.add_process(foot)
     try:
+        deadline = time.monotonic() + 5
+        while not any(w.get("pid") == foot.pid for w in _windows(ctx)):
+            if foot.poll() is not None or time.monotonic() >= deadline:
+                raise Blocked("launcher oracle: scoped Foot failed to launch/map")
+            time.sleep(.05)
         try:
             focus_launched(ctx, foot, "foot", timeout_s=8)
             return False  # window focus worked -> no exclusive grab
-        except Blocked:
-            return True
+        except Blocked as error:
+            identity = "launcher-review-" + str(time.time_ns())
+            image = _grim(ctx, identity + ".png", region=L1_PANEL_REGION)
+            (ctx.output / (identity + ".json")).write_text(json.dumps({
+                "status": "PENDING_VISUAL_REVIEW", "crop": str(image), "scoped_probe_pid": foot.pid,
+                "mapped": any(w.get("pid") == foot.pid for w in _windows(ctx)),
+                "observation": "Foot focus blocked; native launcher identity is not established", "error": str(error)}, indent=2))
+            # The recorded VM crop has a rounded search field above five mode
+            # chips. App-mode's first chip is light blue; the other four are
+            # dark. This signature was reviewed against an actual native UI
+            # capture, and is additional identity evidence, not a focus-error
+            # shortcut. Unexpected recipe/theme/geometry remains BLOCKED.
+            pixels = subprocess.check_output(["magick", str(image), "-depth", "8", "rgb:-"])
+            if native_launcher_app_signature(pixels):
+                (ctx.output / (identity + "-identified.json")).write_text(json.dumps({
+                    "native_launcher_rendered": True, "scoped_mapped_probe_pid": foot.pid,
+                    "grab_observation": "mapped live Foot cannot take focus", "crop": str(image),
+                    "signature": "rounded search field / app-selected first chip / four dark mode chips",
+                    "recipe": "reviewed 500x120 L1 crop on the owned 1280x800 niri session"}, indent=2))
+                return True
+            raise Blocked("native launcher requires identifiable rendered UI review; focus failure alone is ambiguous")
     finally:
         if foot.poll() is None:
             os.killpg(foot.pid, signal.SIGTERM)
+        foot.wait(timeout=5)
+
+
+def native_launcher_app_signature(pixels):
+    if len(pixels) != 500 * 120 * 3:
+        return False
+    def rgb(x, y):
+        start = (y * 500 + x) * 3
+        return tuple(pixels[start:start + 3])
+    primary = rgb(20, 78)
+    others = [rgb(x, 78) for x in (125, 230, 330, 430)]
+    # Search field border has two long horizontal grey strokes, with its
+    # inside darker than the border; mode chip pattern alone is insufficient.
+    border = sum(max(rgb(x, 11)) - min(rgb(x, 11)) < 70 and min(rgb(x, 11)) > 80 for x in range(20, 430))
+    return (primary[2] > 170 and primary[0] > 100 and primary[2] > primary[0] + 20
+            and all(max(c) < 90 for c in others) and border > 250
+            and max(rgb(400, 28)) < 90)
 
 
 def _niri_load(ctx, path):

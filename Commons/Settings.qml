@@ -3,7 +3,9 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../Helpers/OwnedProcess.js" as OwnedProcess
 import "../Helpers/QtObj2JS.js" as QtObj2JS
+import "../Helpers/SettingsModel.js" as SettingsModel
 import qs.Commons
 import qs.Commons.Migrations
 import qs.Modules.OSD
@@ -38,7 +40,230 @@ Singleton {
 
   signal settingsLoaded
   signal settingsSaved
+  signal settingsSaveFailed(string message)
   signal settingsReloaded
+  signal settingExternallyChanged(string path)
+  signal bindingsEnvironmentRequested(string environment)
+  signal effectiveSettingsChanged(string section)
+
+  // The typed QObject graph and transports live here. SettingsModel owns all
+  // acceptance/capture/attempt bookkeeping behind its transition entrance.
+  readonly property string _persistSession: Date.now() + "-" + Math.random().toString(16).substring(2)
+  readonly property string sectionIoHelper: Quickshell.shellDir + "/Scripts/python/src/settings/section-io.py"
+  readonly property var _model: SettingsModel.create({
+                                                       "settingsFile": root.settingsFile,
+                                                       "overridesDir": root.overridesDir,
+                                                       "cacheDir": root.cacheDir,
+                                                       "session": root._persistSession
+                                                     })
+  property int _modelRevision: 0
+  property int _bridgeDepth: 0
+  property int _callbackSerial: 0
+  property var _callbacks: ({})
+
+  function _queryModel(name, args) {
+    void root._modelRevision;
+    return root._model.query(name, args);
+  }
+
+  function _inspectModel() {
+    return root._model.inspect();
+  }
+
+  function _registerCallback(callback) {
+    if (typeof callback !== "function")
+      return null;
+    var token = "callback-" + (++root._callbackSerial);
+    root._callbacks[token] = callback;
+    return token;
+  }
+
+  function _takeCallback(token) {
+    var callback = root._callbacks[token];
+    delete root._callbacks[token];
+    return callback;
+  }
+
+  function _dispatchModel(event) {
+    // Every boundary observes the actual QObject, including synchronous
+    // listeners and opaque edits. The owner never holds an adapter reference.
+    event.current = QtObj2JS.qtObjectToPlainObject(settingsAdapter);
+    root._bridgeDepth++;
+    try {
+      var result = root._model.transition(event);
+      root._modelRevision++;
+      for (var i = 0; i < result.orderedEffects.length; i++)
+        root._executeModelEffect(result.orderedEffects[i]);
+      return result.returnValue;
+    } finally {
+      root._bridgeDepth--;
+      if (root._bridgeDepth === 0 && (event.type !== "pump" || root._queryModel("pumpReady")))
+        root._dispatchModel({
+                              "type": "pump"
+                            });
+    }
+  }
+
+  function _executeModelEffect(effect) {
+    if (effect.kind === "log") {
+      if (effect.level === "w")
+        Logger.w("Settings", effect.message, effect.path);
+      else
+        Logger.e("Settings", effect.message, effect.path);
+    } else if (effect.kind === "io") {
+      root._runModelIo(effect);
+    } else if (effect.kind === "reload") {
+      var view = effect.section === "legacy" ? settingsFileView : root._sectionViews[effect.section];
+      if (view)
+        view.reload();
+      else
+        root.finishObservedRead(effect.section);
+    } else if (effect.kind === "effective") {
+      try {
+        for (var si = 0; si < effect.sections.length; si++)
+          root.effectiveSettingsChanged(effect.sections[si]);
+      } finally {
+        root._dispatchModel({
+                              "type": "effectiveDelivered"
+                            });
+      }
+    } else if (effect.kind === "observed") {
+      try {
+        var notification;
+        while ((notification = root._dispatchModel({
+                                                     "type": "observedNext"
+                                                   })) !== null) {
+          if (notification.kind === "environment")
+            root.bindingsEnvironmentRequested(notification.value);
+          else if (notification.kind === "changed")
+            root.settingExternallyChanged(notification.value);
+          else
+            root.settingsReloaded();
+        }
+      } finally {
+        root._dispatchModel({
+                              "type": "observedDelivered"
+                            });
+      }
+    } else if (effect.kind === "observation") {
+      var paths = root._dispatchModel({
+                                        "type": "observationBegin",
+                                        "token": effect.token
+                                      });
+      try {
+        for (var pi = 0; pi < paths.length; pi++)
+          root._dispatchModel({
+                                "type": "observationLeaf",
+                                "token": effect.token,
+                                "path": paths[pi]
+                              });
+      } finally {
+        root._dispatchModel({
+                              "type": "observationEnd",
+                              "token": effect.token
+                            });
+      }
+    } else if (effect.kind === "applyValue") {
+      root.applyObservedValue(effect.path, effect.value);
+    } else if (effect.kind === "readNext") {
+      root._dispatchModel({
+                            "type": "readNext",
+                            "token": effect.token
+                          });
+    } else if (effect.kind === "readCallback") {
+      var callback = root._takeCallback(effect.callbackToken), failed = false;
+      try {
+        if (typeof callback === "function")
+          callback(effect.success, effect.state, effect.error);
+      } catch (exception) {
+        failed = true;
+      } finally {
+        root._dispatchModel({
+                              "type": "readNext",
+                              "token": effect.token,
+                              "callbackError": failed
+                            });
+      }
+    } else if (effect.kind === "saveDelivery") {
+      // Detach the old callback before signals can reenter an empty save.
+      var callback = root._takeCallback(effect.callbackToken);
+      var notification = root._dispatchModel({
+                                               "type": "saveDeliveryBegin",
+                                               "token": effect.token
+                                             });
+      try {
+        if (notification === "failed")
+          root.settingsSaveFailed(effect.error);
+        else if (notification === "saved")
+          root.settingsSaved();
+        if (typeof callback === "function") {
+          try {
+            callback(effect.success, effect.error);
+          } catch (exception) {
+            Logger.e("Settings", "Save completion callback failed");
+          }
+        }
+      } finally {
+        root._dispatchModel({
+                              "type": "saveDelivered",
+                              "token": effect.token
+                            });
+      }
+    } else if (effect.kind === "saveFailed") {
+      root.settingsSaveFailed(effect.error);
+    } else {
+      throw new Error("Unknown Settings effect: " + effect.kind);
+    }
+  }
+
+  function _runModelIo(effect) {
+    var token = effect.token;
+    var owner = effect.owner;
+    var command = ["python3", root.sectionIoHelper, root.filePathFor(effect.section)];
+    command.splice(2, 0, effect.mode);
+    if (effect.temporary)
+      command.push(effect.temporary);
+    OwnedProcess.run(root, command, effect.input === undefined ? null : JSON.stringify(effect.input), function (result) {
+      var payload = null;
+      try {
+        payload = JSON.parse(result.stdout);
+      } catch (ignored) {}
+      root._dispatchModel({
+                            "type": "ioCompleted",
+                            "token": token,
+                            "owner": owner,
+                            "success": result.success && payload && payload.ok === true,
+                            "payload": payload,
+                            "error": payload && payload.error ? payload.error : result.error
+                          });
+    });
+  }
+
+  function beginManagedBindings() {
+    root._dispatchModel({
+                          "type": "managed"
+                        });
+  }
+
+  function setBindingsUnresolved(unresolved) {
+    root._dispatchModel({
+                          "type": "unresolved",
+                          "value": unresolved
+                        });
+  }
+
+  // Runtime invalidation is independent of the capture/durable baselines.
+  function notifyEffectiveChanges() {
+    root._dispatchModel({
+                          "type": "effective"
+                        });
+  }
+
+  function finishCapture() {
+    root._dispatchModel({
+                          "type": "captureEnd"
+                        });
+  }
 
   // Debounce external reload requests (file watcher + directory watcher)
   // so atomic replacements only trigger one reload.
@@ -61,9 +286,8 @@ Singleton {
     }
     // Suppress feedback from our own override writes (tmp+mv shows up as a
     // file change); genuine external edits still reload after the window.
-    if (Date.now() - root._lastWriteTime < 1000) {
-      return;
-    }
+    // Owned writes are reconciled by confirmed content/identity. A watcher
+    // event is never dropped because it falls inside a timing window.
     externalReloadTimer.restart();
   }
 
@@ -95,7 +319,10 @@ Singleton {
     // The same serialization is the adapter-derived settings structure used
     // to recognize declared setting paths (own properties only — QObject
     // bookkeeping and prototype names are not settings).
-    root._schemaTree = plain;
+    root._dispatchModel({
+                          "type": "schema",
+                          "schema": plain
+                        });
     var keys = [];
     for (var k in plain) {
       if (k !== "settingsVersion") {
@@ -105,7 +332,6 @@ Singleton {
                              });
       }
     }
-    root._sections = keys;
 
     // Mark directories as created and trigger the legacy file load; section
     // files load after the legacy layer lands (they take precedence).
@@ -125,7 +351,7 @@ Singleton {
     running: false
     interval: 500
     onTriggered: {
-      root.saveImmediate();
+      root.saveImmediate(undefined, true);
     }
   }
 
@@ -136,7 +362,10 @@ Singleton {
     id: adapterUpdateWatch
     printErrors: false
     watchChanges: false
-    onAdapterUpdated: saveTimer.start()
+    onAdapterUpdated: {
+      root.notifyEffectiveChanges();
+      saveTimer.start();
+    }
   }
 
   FileView {
@@ -182,86 +411,43 @@ Singleton {
         // The legacy monolith is the bottom override layer: adopted as-is,
         // never rewritten. Section files (settings/<section>.json) load on
         // top of it next and take precedence.
-        root._legacyOverrides = rawJson || {};
-        root._sawAnyFile = true;
+        root._dispatchModel({
+                              "type": "initialFile",
+                              "section": "legacy",
+                              "raw": settingsFileView.text(),
+                              "exists": true,
+                              "data": rawJson || {},
+                              "sawFile": true
+                            });
 
         beginSectionLoads();
       } else {
-        // External edit of the legacy file: gate on an actual content diff
-        // vs the adopted legacy tree; section files keep precedence.
-        var externalJson = null;
-        try {
-          externalJson = JSON.parse(settingsFileView.text());
-        } catch (e) {
-          Logger.w("Settings", "Could not parse externally-modified settings file");
-        }
-        if (!externalJson) {
-          return;
-        }
-        var extChanges = [];
-        diffLeaves(root._legacyOverrides || {}, externalJson, "", extChanges);
-        if (extChanges.length === 0) {
-          Logger.d("Settings", "Spurious legacy reload (no content change) — ignoring");
-          return;
-        }
-        Logger.d("Settings", "Legacy settings changed externally (" + extChanges.length + " paths)");
-        var touchedSections = [];
-        for (var xi = 0; xi < extChanges.length; xi++) {
-          var xc = extChanges[xi];
-          var dot = xc.path.indexOf(".");
-          var sec = dot === -1 ? xc.path : xc.path.substring(0, dot);
-          var rel = dot === -1 ? "" : xc.path.substring(dot + 1);
-          if (sec === "settingsVersion") {
-            continue;
-          }
-          // Section file wins over the legacy layer for that path
-          var sectionTree = root._overrides[sec] || {};
-          if (rel === "" || getPathValue(sectionTree, rel) !== undefined) {
-            continue;
-          }
-          var appliedChange = false;
-          if (xc.deleted) {
-            var def = getDefaultValue(xc.path);
-            if (def !== undefined) {
-              appliedChange = setPathValue(settingsAdapter, xc.path, def, "");
-            }
-          } else if (xc.value !== null && typeof xc.value === "object" && !Array.isArray(xc.value)) {
-            var existing = getPathValue(settingsAdapter, xc.path);
-            if (existing !== undefined && existing !== null && typeof existing === "object") {
-              appliedChange = deepApply(existing, xc.value, xc.path) > 0;
-            } else {
-              appliedChange = setPathValue(settingsAdapter, xc.path, xc.value, "");
-            }
-          } else {
-            appliedChange = setPathValue(settingsAdapter, xc.path, xc.value, "");
-          }
-          // Rejected (unknown) paths must not become touched runtime
-          // sections: re-baselining them would absorb pending debounced
-          // user changes into the snapshot.
-          if (appliedChange && touchedSections.indexOf(sec) === -1) {
-            touchedSections.push(sec);
-          }
-        }
-        root._legacyOverrides = externalJson;
-        // Re-baseline only the sections whose values were actually applied
-        for (var ti = 0; ti < touchedSections.length; ti++) {
-          var ts = touchedSections[ti];
-          if (root._snapshot && settingsAdapter[ts] !== undefined) {
-            root._snapshot[ts] = QtObj2JS.qtObjectToPlainObject(settingsAdapter[ts]);
-          }
-        }
-        root.settingsReloaded();
+        // The helper supplies existence and full identity before acceptance;
+        // FileView text alone must not publish a partially settled choice.
+        root.finishObservedRead("legacy");
       }
     }
     onLoadFailed: function (error) {
       if (reloadSettings) {
         reloadSettings = false;
+        if (root.isLoaded)
+          root.finishObservedRead("legacy", error);
         return;
       }
       if (error.toString().includes("No such file") || error === 2) {
+        if (root.isLoaded) {
+          root.finishObservedRead("legacy", error);
+          return;
+        }
         // No legacy monolith — normal for fresh installs and post-split
         // setups. Section files load next; freshness is decided there.
-        root._legacyOverrides = {};
+        root._dispatchModel({
+                              "type": "initialFile",
+                              "section": "legacy",
+                              "raw": "",
+                              "exists": false,
+                              "data": {}
+                            });
         settingsAdapter.settingsVersion = settingsVersion;
         beginSectionLoads();
       }
@@ -306,9 +492,6 @@ Singleton {
       }
 
       onFileChanged: {
-        if (Date.now() - root._lastWriteTime < 1000) {
-          return; // our own tmp+mv write
-        }
         reload();
       }
 
@@ -321,24 +504,36 @@ Singleton {
         }
 
         if (!root.isLoaded) {
-          root._overrides[section] = parsed || {};
+          root._dispatchModel({
+                                "type": "initialFile",
+                                "section": section,
+                                "raw": sectionView.text(),
+                                "exists": true,
+                                "data": parsed || {},
+                                "sawFile": !!parsed
+                              });
           if (parsed) {
             deepApply(settingsAdapter[section], parsed, section);
-            root._sawAnyFile = true;
           }
           root.sectionSettled();
         } else {
-          // External edit of this section file (post-load): content-diff gate
-          if (parsed) {
-            root.applyExternalSectionEdit(section, parsed);
-          }
+          // Accept the helper's coherent raw/existence/identity observation.
+          root.finishObservedRead(section);
         }
       }
 
       onLoadFailed: function (error) {
         if (!root.isLoaded) {
-          root._overrides[section] = {};
+          root._dispatchModel({
+                                "type": "initialFile",
+                                "section": section,
+                                "raw": "",
+                                "exists": false,
+                                "data": {}
+                              });
           root.sectionSettled();
+        } else {
+          root.finishObservedRead(section, error);
         }
       }
     }
@@ -366,58 +561,45 @@ Singleton {
     if (root.isLoaded) {
       return;
     }
-    root._snapshot = QtObj2JS.qtObjectToPlainObject(settingsAdapter);
+    root._dispatchModel({
+                          "type": "loaded"
+                        });
     root.isLoaded = true;
     root.settingsLoaded();
     upgradeSettings();
 
-    if (!root._sawAnyFile) {
+    if (!root._queryModel("sawFile")) {
       // No legacy file, no section files: genuine first start
       root.isFreshInstall = true;
       root.shouldOpenSetupWizard = true;
     }
   }
 
-  // External edit of a section file: apply the real diff (section-scoped),
-  // never clobbering pending debounced changes in other sections.
-  function applyExternalSectionEdit(section, parsed) {
-    var currentTree = root._overrides[section] || {};
-    var changes = [];
-    diffLeaves(currentTree, parsed, "", changes);
-    if (changes.length === 0) {
-      Logger.d("Settings", "Spurious reload of section " + section + " — ignoring");
+  // Baseline the detached intended leaf at the assignment boundary. Synchronous
+  // property listeners may then capture a different local value, including a save.
+  function applyObservedValue(fullPath, value) {
+    var prepared = root._dispatchModel({
+                                         "type": "leafPrepare",
+                                         "path": fullPath,
+                                         "value": value
+                                       });
+    if (!prepared)
+      return;
+    if (prepared.children) {
+      for (var i = 0; i < prepared.children.length; i++)
+        root.applyObservedValue(prepared.children[i].path, prepared.children[i].value);
       return;
     }
-    Logger.d("Settings", "Section " + section + " changed externally (" + changes.length + " paths)");
-    var applied = 0;
-    for (var i = 0; i < changes.length; i++) {
-      var c = changes[i];
-      if (c.deleted) {
-        var def = getDefaultValue(section + "." + c.path);
-        if (def !== undefined) {
-          applied += setPathValue(settingsAdapter[section], c.path, def, section) ? 1 : 0;
-        }
-      } else if (c.value !== null && typeof c.value === "object" && !Array.isArray(c.value)) {
-        var existing = getPathValue(settingsAdapter[section], c.path);
-        if (existing !== undefined && existing !== null && typeof existing === "object") {
-          applied += deepApply(existing, c.value, section + "." + c.path);
-        } else {
-          applied += setPathValue(settingsAdapter[section], c.path, c.value, section) ? 1 : 0;
-        }
-      } else {
-        applied += setPathValue(settingsAdapter[section], c.path, c.value, section) ? 1 : 0;
-      }
+    var applied = false;
+    try {
+      applied = root.setPathValue(settingsAdapter, fullPath, prepared.value, "");
+    } finally {
+      root._dispatchModel({
+                            "type": "leafAssigned",
+                            "token": prepared.token,
+                            "applied": applied
+                          });
     }
-    // Keep the raw externally supplied tree even when its unknown entries
-    // were not applied.
-    root._overrides[section] = parsed;
-    // Re-baseline this section only when something was actually applied — an
-    // unknown-only edit must not absorb pending debounced user changes into
-    // the snapshot.
-    if (applied > 0 && root._snapshot && settingsAdapter[section] !== undefined) {
-      root._snapshot[section] = QtObj2JS.qtObjectToPlainObject(settingsAdapter[section]);
-    }
-    root.settingsReloaded();
   }
 
   // Watch parent config directory as a fallback for declarative setups where
@@ -438,9 +620,6 @@ Singleton {
     printErrors: false
     watchChanges: true
     onFileChanged: {
-      if (Date.now() - root._lastWriteTime < 1000) {
-        return;
-      }
       for (var i = 0; i < root._sections.length; i++) {
         var view = root._sectionViews[root._sections[i]];
         if (view && view.path !== undefined) {
@@ -458,9 +637,6 @@ Singleton {
     watchChanges: false
   }
 
-  // Cached default settings object
-  property var _defaultSettings: null
-
   // Per-panel (per-section) override layout:
   //   <configDir>/settings/<section>.json   — sparse user overrides per panel
   //   <configDir>/settings.json             — legacy monolith, bottom layer,
@@ -468,34 +644,27 @@ Singleton {
   // Precedence: section file > legacy file > schema defaults.
   readonly property string overridesDir: configDir + "settings/"
 
-  // _sections: settingsAdapter root keys (derived at startup, minus settingsVersion)
-  // _overrides: section -> sparse tree (mirrors settings/<section>.json)
-  // _legacyOverrides: legacy settings.json content (read-only after load)
-  // _snapshot: last persisted settingsAdapter state (baseline for tracked-set diff)
-  // _sectionViews: section -> FileView (for gated reloads)
-  // _lastWriteTime: timestamp of our last write (watcher feedback suppression)
-  property var _sections: []
+  // Detached topology projection and actual QObject view/lifecycle ownership.
+  readonly property var _sections: root._queryModel("sections")
   property bool sectionsReady: false
   property int _sectionsSettled: 0
-  property var _overrides: ({})
-  property var _legacyOverrides: ({})
-  property var _snapshot: null
   property var _sectionViews: ({})
-  property double _lastWriteTime: 0
-  property bool _sawAnyFile: false
-  // Adapter-derived settings structure (built in Component.onCompleted);
-  // the whitelist unknown keys are checked against before manual assignment
-  property var _schemaTree: null
 
   // Load default settings when file is loaded
   Connections {
     target: defaultSettingsFileView
     function onLoaded() {
       try {
-        root._defaultSettings = JSON.parse(defaultSettingsFileView.text());
+        root._dispatchModel({
+                              "type": "defaults",
+                              "value": JSON.parse(defaultSettingsFileView.text())
+                            });
       } catch (e) {
         Logger.w("Settings", "Failed to parse default settings file: " + e);
-        root._defaultSettings = null;
+        root._dispatchModel({
+                              "type": "defaults",
+                              "value": null
+                            });
       }
     }
   }
@@ -1254,21 +1423,9 @@ Singleton {
   // Get default value for a setting path (e.g., "general.scaleRatio" or "bar.position")
   // Returns undefined if not found
   function getDefaultValue(path) {
-    if (!root._defaultSettings) {
-      return undefined;
-    }
-
-    var parts = path.split(".");
-    var current = root._defaultSettings;
-
-    for (var i = 0; i < parts.length; i++) {
-      if (current === undefined || current === null) {
-        return undefined;
-      }
-      current = current[parts[i]];
-    }
-
-    return current;
+    return root._queryModel("default", {
+                              "path": path
+                            });
   }
 
   // -----------------------------------------------------
@@ -1501,56 +1658,78 @@ Singleton {
   // only the changed leaf paths into the per-section override trees, then
   // write those section files. A change to a value matching today's default
   // is STILL recorded — an explicit user choice always lands in the file.
-  function saveImmediate() {
-    var touched = mergePendingChanges();
-    if (touched.length > 0) {
-      persistSections(touched);
+  function saveImmediate(onComplete, automatic) {
+    var token = root._registerCallback(onComplete);
+    root._dispatchModel({
+                          "type": "captureBegin"
+                        });
+    try {
+      root._dispatchModel({
+                            "type": "save",
+                            "callbackToken": token,
+                            "automatic": automatic === true
+                          });
+    } finally {
+      root.finishCapture();
     }
-    root.settingsSaved(); // Emit signal after saving
+  }
+
+  // The retained identity owns its capture across retries. A stopped binding
+  // intent is never recaptured by an unrelated save or a later queue choice.
+  function saveBindingsEnvironment(environment, onComplete, identity) {
+    var token = root._registerCallback(onComplete);
+    var begin = root._dispatchModel({
+                                      "type": "bindingBegin",
+                                      "identity": identity
+                                    });
+    try {
+      if (!begin.captured)
+        settingsAdapter.bindings.environment = environment;
+      root._dispatchModel({
+                            "type": "bindingSubmit",
+                            "identity": begin.identity,
+                            "environment": environment,
+                            "callbackToken": token
+                          });
+    } finally {
+      root.finishCapture();
+    }
+    return begin.identity;
+  }
+
+  function saveSetupWork(work, onComplete, requestId) {
+    if (!requestId) {
+      onComplete(false, "Setup request identity is missing");
+      return;
+    }
+    var token = root._registerCallback(onComplete);
+    var captured = root._dispatchModel({
+                                         "type": "setupBegin",
+                                         "identity": requestId
+                                       });
+    try {
+      if (!captured) {
+        settingsAdapter.general.scaleRatio = work.scaleRatio;
+        settingsAdapter.bar.position = work.barPosition;
+        settingsAdapter.wallpaper.directory = work.wallpaperDirectory;
+      }
+      root._dispatchModel({
+                            "type": "setupSubmit",
+                            "identity": requestId,
+                            "callbackToken": token
+                          });
+    } finally {
+      root.finishCapture();
+    }
   }
 
   // -----------------------------------------------------
   // Merge settingsAdapter changes since the last snapshot into the per-section
   // override trees (no file write). Returns the list of touched sections.
   function mergePendingChanges() {
-    if (!root.isLoaded || !root._snapshot) {
-      return [];
-    }
-
-    var current = QtObj2JS.qtObjectToPlainObject(settingsAdapter);
-    var changes = [];
-    diffLeaves(root._snapshot, current, "", changes);
-    if (changes.length === 0) {
-      return [];
-    }
-
-    var touched = [];
-    for (var i = 0; i < changes.length; i++) {
-      var c = changes[i];
-      var dot = c.path.indexOf(".");
-      var section = dot === -1 ? c.path : c.path.substring(0, dot);
-      var rel = dot === -1 ? "" : c.path.substring(dot + 1);
-      if (section === "settingsVersion") {
-        continue; // version marker is never persisted to user files
-      }
-      if (root._overrides[section] === undefined) {
-        root._overrides[section] = {};
-      }
-      if (c.deleted) {
-        if (rel !== "") {
-          deepDelete(root._overrides[section], rel);
-        }
-      } else if (rel === "") {
-        root._overrides[section] = c.value;
-      } else {
-        deepSet(root._overrides[section], rel, c.value);
-      }
-      if (touched.indexOf(section) === -1) {
-        touched.push(section);
-      }
-    }
-    root._snapshot = current;
-    return touched;
+    return root._dispatchModel({
+                                 "type": "merge"
+                               });
   }
 
   // -----------------------------------------------------
@@ -1558,22 +1737,43 @@ Singleton {
   // An empty tree means no user choices remain for that panel: the file is
   // removed so "file exists" always means "user chose something here".
   // Writes are tmp+mv so a crash mid-write cannot truncate the file.
-  function persistSections(sections) {
-    for (var i = 0; i < sections.length; i++) {
-      var section = sections[i];
-      var tree = root._overrides[section] || {};
-      var filePath = root.overridesDir + section + ".json";
-      root._lastWriteTime = Date.now();
-      if (Object.keys(tree).length === 0) {
-        Quickshell.execDetached(["rm", "-f", filePath]);
-      } else {
-        var jsonData = JSON.stringify(tree, null, 2);
-        var tmpPath = filePath + ".tmp";
-        // Note: the && belongs on the command line — a line starting with &&
-        // after the heredoc terminator is a syntax error.
-        Quickshell.execDetached(["sh", "-c", `cat > "${tmpPath}" << 'ATMOSPHERA_EOF' && mv "${tmpPath}" "${filePath}"\n${jsonData}\nATMOSPHERA_EOF\n`]);
-      }
-    }
+  function persistSections(sections, onComplete, managed, fullSave, automatic) {
+    var token = root._registerCallback(onComplete);
+    root._dispatchModel({
+                          "type": "persist",
+                          "sections": sections,
+                          "callbackToken": token,
+                          "managed": managed,
+                          "fullSave": fullSave,
+                          "automatic": automatic
+                        });
+  }
+
+  function filePathFor(section) {
+    return root._queryModel("path", {
+                              "section": section
+                            });
+  }
+
+  function effectiveDiskEnvironment() {
+    return root._queryModel("environment");
+  }
+
+  function finishObservedRead(section, loadError) {
+    root._dispatchModel({
+                          "type": "readDispatch",
+                          "section": section
+                        });
+  }
+
+  function refreshAccepted(section, complete, job, settlement) {
+    var token = root._registerCallback(complete);
+    root._dispatchModel({
+                          "type": "readRequest",
+                          "section": section,
+                          "callbackToken": token,
+                          "settlement": settlement === true
+                        });
   }
 
   // -----------------------------------------------------
@@ -1581,57 +1781,13 @@ Singleton {
   // Arrays are treated as leaves (replaced wholesale). Objects present in
   // `before` but missing in `after` are reported as deletions.
   function diffLeaves(before, after, prefix, out) {
-    var key;
-    if (before === after) {
-      return;
-    }
-    var beforeIsObj = (before !== null && typeof before === "object" && !Array.isArray(before));
-    var afterIsObj = (after !== null && typeof after === "object" && !Array.isArray(after));
-    if (!beforeIsObj || !afterIsObj) {
-      if (JSON.stringify(before) !== JSON.stringify(after)) {
-        out.push({
-                   "path": prefix,
-                   "value": after,
-                   "deleted": after === undefined
-                 });
-      }
-      return;
-    }
-    for (key in before) {
-      var p = prefix ? prefix + "." + key : key;
-      if (!(key in after)) {
-        out.push({
-                   "path": p,
-                   "value": undefined,
-                   "deleted": true
-                 });
-      } else {
-        diffLeaves(before[key], after[key], p, out);
-      }
-    }
-    for (key in after) {
-      if (!(key in before)) {
-        out.push({
-                   "path": prefix ? prefix + "." + key : key,
-                   "value": after[key],
-                   "deleted": false
-                 });
-      }
-    }
+    SettingsModel.diffLeaves(before, after, prefix, out);
   }
 
   // -----------------------------------------------------
   // Set a dotted path (e.g. "bar.position") inside a plain object tree
   function deepSet(obj, path, value) {
-    var parts = path.split(".");
-    var current = obj;
-    for (var i = 0; i < parts.length - 1; i++) {
-      if (current[parts[i]] === undefined || current[parts[i]] === null || typeof current[parts[i]] !== "object") {
-        current[parts[i]] = {};
-      }
-      current = current[parts[i]];
-    }
-    current[parts[parts.length - 1]] = value;
+    SettingsModel.deepSet(obj, path, value);
   }
 
   // -----------------------------------------------------
@@ -1657,27 +1813,9 @@ Singleton {
   // node counts as declared. Never truthiness-tested: declared
   // false/zero/empty-string values must still apply.
   function isKnownSchemaPath(path) {
-    if (!root._schemaTree) {
-      return true; // schema not built yet — never block application
-    }
-    var parts = path.split(".");
-    var node = root._schemaTree;
-    for (var i = 0; i < parts.length; i++) {
-      if (node === null || node === undefined) {
-        return false;
-      }
-      if (Array.isArray(node)) {
-        return true; // opaque setting value
-      }
-      if (typeof node !== "object") {
-        return false; // primitive leaves declare no sub-paths
-      }
-      if (!Object.prototype.hasOwnProperty.call(node, parts[i])) {
-        return false;
-      }
-      node = node[parts[i]];
-    }
-    return true;
+    return root._queryModel("known", {
+                              "path": path
+                            });
   }
 
   // -----------------------------------------------------
@@ -1706,29 +1844,7 @@ Singleton {
   // -----------------------------------------------------
   // Delete a dotted path from a plain object tree (prunes empty parents)
   function deepDelete(obj, path) {
-    var parts = path.split(".");
-    var stack = [];
-    var current = obj;
-    for (var i = 0; i < parts.length - 1; i++) {
-      if (current[parts[i]] === undefined || current[parts[i]] === null || typeof current[parts[i]] !== "object") {
-        return;
-      }
-      stack.push({
-                   "obj": current,
-                   "key": parts[i]
-                 });
-      current = current[parts[i]];
-    }
-    delete current[parts[parts.length - 1]];
-    // Prune parents that became empty
-    for (var j = stack.length - 1; j >= 0; j--) {
-      var entry = stack[j];
-      if (Object.keys(entry.obj[entry.key]).length === 0) {
-        delete entry.obj[entry.key];
-      } else {
-        break;
-      }
-    }
+    SettingsModel.deepDelete(obj, path);
   }
 
   // -----------------------------------------------------
@@ -1738,7 +1854,7 @@ Singleton {
   // absent from the adapter-derived schema are warned about and skipped
   // instead of throwing on assignment to a non-existent QObject property.
   // Returns the number of leaf assignments actually applied.
-  function deepApply(target, source, prefix) {
+  function deepApply(target, source, prefix, appliedPaths) {
     var applied = 0;
     for (var key in source) {
       if (!Object.prototype.hasOwnProperty.call(source, key)) {
@@ -1751,10 +1867,12 @@ Singleton {
       }
       var value = source[key];
       if (value !== null && typeof value === "object" && !Array.isArray(value) && target[key] !== undefined && target[key] !== null && typeof target[key] === "object") {
-        applied += deepApply(target[key], value, fullPath);
+        applied += deepApply(target[key], value, fullPath, appliedPaths);
       } else {
         target[key] = value;
         applied++;
+        if (appliedPaths)
+          appliedPaths.push(fullPath);
       }
     }
     return applied;
@@ -1764,54 +1882,60 @@ Singleton {
   // Reset one section (panel root key, e.g. "bar") to shipped defaults:
   // drop the section's override tree, delete its file, re-apply defaults.
   function resetSection(key) {
-    if (!root._snapshot) {
+    if (key === "bindings" && root._queryModel("managed")) {
+      root.bindingsEnvironmentRequested(getDefaultValue("bindings.environment") || "none");
+      return;
+    }
+    if (!root._queryModel("hasSnapshot")) {
       return;
     }
     // Flush pending debounced changes first so they are not lost
     var touched = mergePendingChanges();
-    root._overrides[key] = {};
-    if (root._defaultSettings && root._defaultSettings[key] !== undefined && settingsAdapter[key] !== undefined) {
-      deepApply(settingsAdapter[key], root._defaultSettings[key], key);
+    touched = root._dispatchModel({
+                                    "type": "resetBegin",
+                                    "path": key,
+                                    "sectionReset": true,
+                                    "touched": touched
+                                  });
+    var defaults = getDefaultValue(key);
+    if (defaults !== undefined && settingsAdapter[key] !== undefined) {
+      deepApply(settingsAdapter[key], defaults, key);
     }
     // The restored defaults are the new baseline for this section; the
     // emptied tree deletes the file.
-    root._snapshot = QtObj2JS.qtObjectToPlainObject(settingsAdapter);
-    if (touched.indexOf(key) === -1) {
-      touched.push(key);
-    }
-    persistSections(touched);
-    root.settingsSaved();
+    root._dispatchModel({
+                          "type": "resetEnd",
+                          "sections": touched
+                        });
   }
 
   // -----------------------------------------------------
   // Reset a single setting path (e.g. "bar.position") to its shipped default:
   // drop that key from the section's override tree and re-apply the default.
   function resetValue(path) {
-    if (!root._snapshot) {
+    if (path === "bindings.environment" && root._queryModel("managed")) {
+      root.bindingsEnvironmentRequested(getDefaultValue(path) || "none");
+      return;
+    }
+    if (!root._queryModel("hasSnapshot")) {
       return;
     }
     // Flush pending debounced changes first so they are not lost
     var touched = mergePendingChanges();
-    var dot = path.indexOf(".");
-    var section = dot === -1 ? path : path.substring(0, dot);
-    var rel = dot === -1 ? "" : path.substring(dot + 1);
-    if (root._overrides[section] !== undefined) {
-      if (rel === "") {
-        root._overrides[section] = {};
-      } else {
-        deepDelete(root._overrides[section], rel);
-      }
-    }
+    touched = root._dispatchModel({
+                                    "type": "resetBegin",
+                                    "path": path,
+                                    "sectionReset": false,
+                                    "touched": touched
+                                  });
     var defaultValue = getDefaultValue(path);
     if (defaultValue !== undefined) {
       setPathValue(settingsAdapter, path, defaultValue, "");
     }
-    root._snapshot = QtObj2JS.qtObjectToPlainObject(settingsAdapter);
-    if (touched.indexOf(section) === -1) {
-      touched.push(section);
-    }
-    persistSections(touched);
-    root.settingsSaved();
+    root._dispatchModel({
+                          "type": "resetEnd",
+                          "sections": touched
+                        });
   }
 
   // -----------------------------------------------------
@@ -2004,10 +2128,11 @@ Singleton {
     // Housekeeping (widget pruning / metadata injection) stays in-memory
     // only: re-baseline the snapshot so it is never persisted to the
     // user's override files. User changes flushed above are written now.
-    root._snapshot = QtObj2JS.qtObjectToPlainObject(settingsAdapter);
+    root._dispatchModel({
+                          "type": "rebaseline"
+                        });
     if (userTouchedSections.length > 0) {
       persistSections(userTouchedSections);
-      root.settingsSaved();
     }
   }
 

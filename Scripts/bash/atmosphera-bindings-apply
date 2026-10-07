@@ -24,9 +24,10 @@ fi
 
 BINDINGS_DIR="$SHELL_DIR/Bindings"
 
-NIRI_DIR="$HOME/.config/niri"
-XREMAP_DIR="$HOME/.config/xremap"
-ZED_DIR="$HOME/.config/zed"
+CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+NIRI_DIR="$CONFIG_HOME/niri"
+XREMAP_DIR="$CONFIG_HOME/xremap"
+ZED_DIR="$CONFIG_HOME/zed"
 
 log() { printf '[bindings-apply] %s\n' "$*" >&2; }
 
@@ -35,8 +36,8 @@ read_environment() {
   # monolith (settings.json) is the fallback layer.
   local section_file="$(dirname "$SETTINGS_FILE")/settings/bindings.json"
   python3 -c "
-import json
-for path in ('$section_file', '$SETTINGS_FILE'):
+import json,sys
+for path in sys.argv[1:]:
     try:
         with open(path) as f:
             d = json.load(f)
@@ -48,7 +49,52 @@ for path in ('$section_file', '$SETTINGS_FILE'):
         continue
 else:
     print('none')
-"
+ " "$section_file" "$SETTINGS_FILE"
+}
+
+apply_xremap() {
+  local operation="$1" load active
+  if ! command -v systemctl >/dev/null 2>&1; then
+    log "not-applicable: systemd user manager tooling is absent"
+    return 0
+  fi
+  load="$(systemctl --user show xremap-atmosphera.service -p LoadState --value)" || return 1
+  if [ "$load" = "not-found" ]; then
+    log "not-applicable: xremap-atmosphera.service is absent"
+    return 0
+  fi
+  active="$(systemctl --user show xremap-atmosphera.service -p ActiveState --value)" || return 1
+  if [ "$operation" = "stop" ] && [ "$active" = "inactive" ]; then
+    log "not-applicable: xremap is already inactive"
+    return 0
+  fi
+  systemctl --user "$operation" xremap-atmosphera.service || return 1
+  active="$(systemctl --user show xremap-atmosphera.service -p ActiveState --value)" || return 1
+  if [ "$operation" = "restart" ] && [ "$active" != "active" ]; then
+    log "xremap start did not reach active state; check the user-manager XDG configuration path"
+    return 1
+  fi
+  if [ "$operation" = "stop" ] && [ "$active" != "inactive" ]; then
+    log "xremap stop did not reach inactive state"
+    return 1
+  fi
+}
+
+apply_keyd_layer() {
+  local source="$1"
+  if [ ! -e /etc/keyd/atmosphera ] && [ ! -L /etc/keyd/atmosphera ]; then
+    log "not-applicable: managed keyd layer is absent"
+    return 0
+  fi
+  [ -w /etc/keyd/atmosphera ] || { log "managed keyd layer is not writable"; return 1; }
+  awk '/^\[ids\]/{skip=1; next} /^\[/{skip=0} !skip' "$source" > /etc/keyd/atmosphera || return 1
+  if [ ! -e /var/run/keyd.socket ]; then
+    log "not-applicable: keyd daemon is inactive; managed file write completed"
+    return 0
+  fi
+  # systemctl waits for the existing polkit-authorized systemd job, unlike a
+  # StartUnit acknowledgement. Its failure is an application-stage failure.
+  systemctl start atmosphera-keyd-reload.service || return 1
 }
 
 backup_if_exists() {
@@ -80,11 +126,7 @@ apply_macos() {
   install -m 0644 "$env_dir/xremap/atmosphera-xremap.yml" \
     "$XREMAP_DIR/atmosphera-xremap.yml"
   log "deployed xremap: atmosphera-xremap.yml"
-  if command -v systemctl >/dev/null 2>&1; then
-    systemctl --user restart xremap-atmosphera.service 2>/dev/null \
-      && log "xremap-atmosphera restarted" \
-      || log "xremap service not started (start with: systemctl --user start xremap-atmosphera.service)"
-  fi
+  apply_xremap restart
 
   # zed
   mkdir -p "$ZED_DIR"
@@ -96,20 +138,7 @@ apply_macos() {
   # this in-process (KeydService writes + triggers reload via systemd D-Bus);
   # this CLI path covers the shell-not-running case. Reload goes through the
   # atmosphera-keyd-reload service (polkit rule allows it without sudo).
-  if [ -w /etc/keyd/atmosphera ] 2>/dev/null; then
-    # [ids] must be stripped: included files may not carry one (keyd
-    # include limitation) — it silently kills the mapping otherwise.
-    if awk '/^\[ids\]/{skip=1; next} /^\[/{skip=0} !skip' "$env_dir/keyd/default.conf" > /etc/keyd/atmosphera 2>/dev/null; then
-      log "updated /etc/keyd/atmosphera with macos rules"
-      busctl call --system org.freedesktop.systemd1 /org/freedesktop/systemd1 \
-        org.freedesktop.systemd1.Manager StartUnit ss atmosphera-keyd-reload.service replace \
-        >/dev/null 2>&1 || true
-    else
-      log "failed to write /etc/keyd/atmosphera"
-    fi
-  else
-    log "keyd layer /etc/keyd/atmosphera not user-writable — reinstall the package or run 'sudo atmosphera-bindings-apply-keyd macos'"
-  fi
+  apply_keyd_layer "$env_dir/keyd/default.conf"
 
 }
 
@@ -120,26 +149,24 @@ apply_none() {
 
   # keyd → revert to neutral stub (user-owned managed layer, no root needed)
   local stub="$BINDINGS_DIR/environments/macos/keyd/atmosphera.stub"
-  if [ -w /etc/keyd/atmosphera ] 2>/dev/null && [ -f "$stub" ]; then
-    if cat "$stub" > /etc/keyd/atmosphera 2>/dev/null; then
-      log "reverted /etc/keyd/atmosphera to neutral stub"
-      busctl call --system org.freedesktop.systemd1 /org/freedesktop/systemd1 \
-        org.freedesktop.systemd1.Manager StartUnit ss atmosphera-keyd-reload.service replace \
-        >/dev/null 2>&1 || true
-    fi
-  fi
+  apply_keyd_layer "$stub"
 
   # xremap: stop the user service (config left in place — inert without it);
   # zed keymap left in place (inert without the editor loading it).
-  if command -v systemctl >/dev/null 2>&1; then
-    systemctl --user stop xremap-atmosphera.service 2>/dev/null \
-      && log "xremap-atmosphera stopped" || true
-  fi
+  apply_xremap stop
 }
 
 main() {
   local env
-  env="$(read_environment)"
+  if [ "$#" -eq 0 ]; then
+    env="$(read_environment)"
+  elif [ "$#" -eq 2 ] && [ "$1" = "--environment" ]; then
+    env="$2"
+  else
+    log "usage: atmosphera bindings apply [--environment none|macos]"
+    return 2
+  fi
+  case "$CONFIG_HOME" in /*) ;; *) log "XDG_CONFIG_HOME must be absolute"; return 2 ;; esac
   log "environment: $env"
   case "$env" in
     macos) apply_macos ;;

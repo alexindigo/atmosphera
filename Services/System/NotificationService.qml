@@ -121,8 +121,8 @@ Singleton {
     function onSettingsLoaded() {
       updateNotificationServer();
     }
-    function onSettingsSaved() {
-      updateNotificationServer();
+    function onEffectiveSettingsChanged(section) {
+      if (section === "notifications") updateNotificationServer();
     }
   }
 

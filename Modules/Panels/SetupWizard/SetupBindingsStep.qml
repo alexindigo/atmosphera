@@ -5,6 +5,10 @@ import qs.Widgets
 
 // Setup wizard — Bindings step content (chrome comes from WizardPanel)
 ColumnLayout {
+  id: root
+  property string selection: "none"
+  property var select: null
+  property bool selectionEnabled: true
   spacing: Style.marginM
 
   Repeater {
@@ -24,14 +28,15 @@ ColumnLayout {
       Layout.fillWidth: true
       Layout.preferredHeight: 80
       radius: Style.radiusL
-      color: Settings.data.bindings.environment === modelData.value ? (Color.mPrimaryContainer || "transparent") : (Color.mSurfaceVariant || "transparent")
-      border.color: Settings.data.bindings.environment === modelData.value ? (Color.mPrimary || "transparent") : (Color.mOutline || "transparent")
-      border.width: Settings.data.bindings.environment === modelData.value ? 2 : 1
+      color: root.selection === modelData.value ? (Color.mPrimaryContainer || "transparent") : (Color.mSurfaceVariant || "transparent")
+      border.color: root.selection === modelData.value ? (Color.mPrimary || "transparent") : (Color.mOutline || "transparent")
+      border.width: root.selection === modelData.value ? 2 : 1
 
       MouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
-        onClicked: Settings.data.bindings.environment = modelData.value
+        enabled: root.selectionEnabled
+        onClicked: { if (typeof root.select === "function") root.select(modelData.value); }
       }
 
       RowLayout {
@@ -44,7 +49,7 @@ ColumnLayout {
           height: 20
           radius: width / 2
           color: "transparent"
-          border.color: Settings.data.bindings.environment === modelData.value ? Color.mPrimary : Color.mOutline
+          border.color: root.selection === modelData.value ? Color.mPrimary : Color.mOutline
           border.width: 2
 
           Rectangle {
@@ -53,7 +58,7 @@ ColumnLayout {
             height: 10
             radius: width / 2
             color: Color.mPrimary
-            visible: Settings.data.bindings.environment === modelData.value
+            visible: root.selection === modelData.value
           }
         }
 

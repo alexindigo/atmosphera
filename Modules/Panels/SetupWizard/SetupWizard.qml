@@ -6,6 +6,7 @@ import Quickshell.Wayland
 import qs.Commons
 import qs.Modules.MainScreen
 import qs.Services
+import qs.Services.Keyboard
 import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
@@ -23,104 +24,119 @@ SmartPanel {
 
   closeWithEscape: false
 
+  property string selectedBindingEnvironment: "none"
+  property string selectedWallpaperDirectory: Settings.defaultWallpapersDirectory
+  property string selectedWallpaper: ""
+  property real selectedScaleRatio: 1.0
+  property string selectedBarPosition: "top"
+  property string _submittedId: ""
+  property var _submittedWork: null
+  property int _seenAttempt: 0
+  readonly property string submissionContext: "setup-wizard:" + (root.screen ? root.screen.name : "default")
+  readonly property var submittedStatus: BindingsService.requestStatus(root._submittedId)
+  readonly property bool workOutstanding: root.submittedStatus && root.submittedStatus.status !== "Succeeded"
+
+  function restoreSelection() {
+    var existing = BindingsService.latestRequestForContext(root.submissionContext);
+    var status = existing ? BindingsService.requestStatus(existing) : null;
+    if (status && status.status !== "Succeeded") {
+      root._submittedId = existing;
+      root._submittedWork = status.work;
+      root.selectedBindingEnvironment = status.environment;
+      root.selectedWallpaperDirectory = status.work.wallpaperDirectory;
+      root.selectedWallpaper = status.work.wallpaper;
+      root.selectedScaleRatio = status.work.scaleRatio;
+      root.selectedBarPosition = status.work.barPosition;
+    } else {
+      root._submittedId = "";
+      root._submittedWork = null;
+      root._seenAttempt = 0;
+      root.selectedBindingEnvironment = Settings.data.bindings.environment || "none";
+      root.selectedScaleRatio = Settings.data.general.scaleRatio;
+      root.selectedBarPosition = Settings.data.bar.position;
+      root.selectedWallpaperDirectory = Settings.data.wallpaper.directory || Settings.defaultWallpapersDirectory;
+    }
+  }
+
+  function consumeResult(success, error, requestId, attemptId) {
+    if (!root._submittedId && root._submittedWork)
+      root._submittedId = requestId;
+    if (requestId !== root._submittedId || attemptId <= root._seenAttempt)
+      return;
+    root._seenAttempt = attemptId;
+    if (success) {
+      Logger.i("SetupWizard", "Captured setup saved/deployed; niri handoff accepted where applicable");
+      root.close();
+    } else {
+      Logger.e("SetupWizard", "Captured setup retained after stopped attempt", requestId, error);
+    }
+  }
+
+  function prepareCapturedSetup(work, complete, requestId) {
+    try {
+      if (work.wallpaperDirectory !== Settings.data.wallpaper.directory) {
+        Settings.data.wallpaper.directory = work.wallpaperDirectory;
+        if (typeof WallpaperService !== "undefined") WallpaperService.refreshWallpapersList();
+      }
+      if (work.wallpaper !== "" && typeof WallpaperService !== "undefined")
+        WallpaperService.changeWallpaper(work.wallpaper, undefined);
+      Settings.saveSetupWork(work, function (success, error) {
+        if (success) Version.markChangelogSeen(Version.currentVersion);
+        complete(success, error);
+      }, requestId);
+    } catch (error) {
+      complete(false, "Captured ordinary setup could not be saved");
+    }
+  }
+
+  function retryRetainedHead() {
+    if (BindingsService.state !== "Stopped")
+      return;
+    if (BindingsService.headRequestId === root._submittedId)
+      BindingsService.retryHead(root.consumeResult);
+    else
+      BindingsService.retryHead(); // another caller's completion cannot close us
+  }
+
+  function completeSetup() {
+    if (root.workOutstanding) {
+      root.retryRetainedHead();
+      return;
+    }
+    root._seenAttempt = 0;
+    root._submittedWork = { "scaleRatio": root.selectedScaleRatio, "barPosition": root.selectedBarPosition,
+      "wallpaperDirectory": root.selectedWallpaperDirectory, "wallpaper": root.selectedWallpaper };
+    root._submittedId = BindingsService.requestEnvironment(root.selectedBindingEnvironment, root.consumeResult,
+      { "context": root.submissionContext, "work": root._submittedWork, "prepare": root.prepareCapturedSetup });
+  }
+
+  function applyWallpaperSettings() {
+    if (root.workOutstanding) return;
+    if (root.selectedWallpaperDirectory !== Settings.data.wallpaper.directory) {
+      Settings.data.wallpaper.directory = root.selectedWallpaperDirectory;
+      if (typeof WallpaperService !== "undefined") WallpaperService.refreshWallpapersList();
+    }
+    if (root.selectedWallpaper !== "" && typeof WallpaperService !== "undefined")
+      WallpaperService.changeWallpaper(root.selectedWallpaper, undefined);
+  }
+
+  function applyUISettings() {
+    if (root.workOutstanding) return;
+    Settings.data.general.scaleRatio = root.selectedScaleRatio;
+    Settings.data.bar.position = root.selectedBarPosition;
+  }
+
+  Component.onCompleted: root.restoreSelection()
+  onOpened: root.restoreSelection()
+  Connections {
+    target: BindingsService
+    function onRequestFinished(requestId, attemptId, environment, success, error) {
+      if (requestId === root._submittedId) root.consumeResult(success, error, requestId, attemptId);
+    }
+  }
+
   panelContent: Item {
     id: panelContent
-
-    property bool isCompleting: false
-
-    property string selectedWallpaperDirectory: Settings.defaultWallpapersDirectory
-    property string selectedWallpaper: ""
-    property real selectedScaleRatio: 1.0
-    property string selectedBarPosition: "top"
-
-    Component.onCompleted: {
-      selectedScaleRatio = Settings.data.general.scaleRatio;
-      selectedBarPosition = Settings.data.bar.position;
-      selectedWallpaperDirectory = Settings.data.wallpaper.directory || Settings.defaultWallpapersDirectory;
-    }
-
-    Connections {
-      target: Settings
-      function onSettingsSaved() {
-        if (panelContent.isCompleting) {
-          Logger.i("SetupWizard", "Settings saved, closing panel");
-          panelContent.isCompleting = false;
-          root.close();
-        }
-      }
-    }
-
-    Timer {
-      id: closeTimer
-      interval: 2000
-      onTriggered: {
-        if (panelContent.isCompleting) {
-          Logger.w("SetupWizard", "Settings save timeout, closing panel anyway");
-          panelContent.isCompleting = false;
-          root.close();
-        }
-      }
-    }
-
-    function completeSetup() {
-      if (isCompleting) {
-        Logger.w("SetupWizard", "completeSetup() called while already completing, ignoring");
-        return;
-      }
-
-      try {
-        Logger.i("SetupWizard", "Completing setup with selected options");
-        isCompleting = true;
-
-        if (typeof WallpaperService !== "undefined" && WallpaperService.refreshWallpapersList) {
-          if (selectedWallpaperDirectory !== Settings.data.wallpaper.directory) {
-            Settings.data.wallpaper.directory = selectedWallpaperDirectory;
-            WallpaperService.refreshWallpapersList();
-          }
-
-          if (selectedWallpaper !== "") {
-            WallpaperService.changeWallpaper(selectedWallpaper, undefined);
-          }
-        }
-
-        Settings.data.general.scaleRatio = selectedScaleRatio;
-        Settings.data.bar.position = selectedBarPosition;
-
-        Version.markChangelogSeen(Version.currentVersion);
-
-        Settings.saveImmediate();
-        Logger.i("SetupWizard", "Setup completed successfully, waiting for settings save confirmation");
-
-        // Deploy bindings if the user picked a non-"none" environment.
-        if (Settings.data.bindings.environment && Settings.data.bindings.environment !== "none") {
-          Quickshell.execDetached(["atmosphera", "bindings", "apply"]);
-          Logger.i("SetupWizard", "Triggered atmosphera bindings apply for env:", Settings.data.bindings.environment);
-        }
-
-        closeTimer.start();
-      } catch (error) {
-        Logger.e("SetupWizard", "Error completing setup:", error);
-        isCompleting = false;
-      }
-    }
-
-    function applyWallpaperSettings() {
-      if (typeof WallpaperService !== "undefined" && WallpaperService.refreshWallpapersList) {
-        if (selectedWallpaperDirectory !== Settings.data.wallpaper.directory) {
-          Settings.data.wallpaper.directory = selectedWallpaperDirectory;
-          WallpaperService.refreshWallpapersList();
-        }
-
-        if (selectedWallpaper !== "") {
-          WallpaperService.changeWallpaper(selectedWallpaper, undefined);
-        }
-      }
-    }
-
-    function applyUISettings() {
-      Settings.data.general.scaleRatio = selectedScaleRatio;
-      Settings.data.bar.position = selectedBarPosition;
-    }
 
     ColumnLayout {
       id: wizardContent
@@ -132,6 +148,8 @@ SmartPanel {
         id: wizard
         Layout.fillWidth: true
         Layout.fillHeight: true
+        controlsLocked: root.workOutstanding
+        retryAvailable: root.workOutstanding && BindingsService.state === "Stopped"
 
         steps: [
           {
@@ -164,6 +182,7 @@ SmartPanel {
             "label": I18n.tr("setup.bindings.title"),
             "description": I18n.tr("setup.bindings.subtitle"),
             "resetKey": "bindings",
+            "reset": function () { if (!root.workOutstanding) root.selectedBindingEnvironment = "none"; },
             "content": bindingsContent
           },
           {
@@ -175,8 +194,14 @@ SmartPanel {
           }
         ]
 
-        onFinished: panelContent.completeSetup()
-        onSkipped: panelContent.completeSetup()
+        onFinished: root.completeSetup()
+        onSkipped: root.completeSetup()
+      }
+      NBindingsQueueStatus {
+        Layout.fillWidth: true
+        visible: root.workOutstanding
+        queueStatus: BindingsService.status
+        retry: root.retryRetainedHead
       }
     }
 
@@ -188,15 +213,15 @@ SmartPanel {
     Component {
       id: wallpaperContent
       SetupWallpaperStep {
-        selectedDirectory: panelContent.selectedWallpaperDirectory
-        selectedWallpaper: panelContent.selectedWallpaper
+        selectedDirectory: root.selectedWallpaperDirectory
+        selectedWallpaper: root.selectedWallpaper
         onDirectoryChanged: function (d) {
-          panelContent.selectedWallpaperDirectory = d;
-          panelContent.applyWallpaperSettings();
+          root.selectedWallpaperDirectory = d;
+          root.applyWallpaperSettings();
         }
         onWallpaperChanged: function (w) {
-          panelContent.selectedWallpaper = w;
-          panelContent.applyWallpaperSettings();
+          root.selectedWallpaper = w;
+          root.applyWallpaperSettings();
         }
       }
     }
@@ -209,22 +234,26 @@ SmartPanel {
     Component {
       id: customizeContent
       SetupCustomizeStep {
-        selectedScaleRatio: panelContent.selectedScaleRatio
-        selectedBarPosition: panelContent.selectedBarPosition
+        selectedScaleRatio: root.selectedScaleRatio
+        selectedBarPosition: root.selectedBarPosition
         onScaleRatioChanged: function (r) {
-          panelContent.selectedScaleRatio = r;
-          panelContent.applyUISettings();
+          root.selectedScaleRatio = r;
+          root.applyUISettings();
         }
         onBarPositionChanged: function (p) {
-          panelContent.selectedBarPosition = p;
-          panelContent.applyUISettings();
+          root.selectedBarPosition = p;
+          root.applyUISettings();
         }
       }
     }
 
     Component {
       id: bindingsContent
-      SetupBindingsStep {}
+      SetupBindingsStep {
+        selection: root.selectedBindingEnvironment
+        selectionEnabled: !root.workOutstanding
+        select: function (choice) { if (!root.workOutstanding) root.selectedBindingEnvironment = choice; }
+      }
     }
 
     Component {

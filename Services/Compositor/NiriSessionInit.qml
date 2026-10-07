@@ -2,75 +2,82 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import qs.Commons
 import qs.Services.UI
+import "../../Helpers/OwnedProcess.js" as OwnedProcess
 
-// Niri session init: composes ~/.config/niri/atmosphera-session.kdl
-// (user's base config + atmosphera layers) and switches the running niri
-// to it via niriqml's LoadConfigFile action. The user's own config.kdl
-// is never modified by this path.
-//
-// Base config detection: the /proc cmdline/environ of the niri process
-// hosting this session (frozen at exec time, so immune to self-inclusion
-// after a previous switch). PID resolution prefers niriqml's
-// NiriConnection.peerInfo.pid (SO_PEERCRED) and falls back to scanning
-// /proc/*/fd for the process holding $NIRI_SOCKET open.
 Singleton {
   id: root
-
-  readonly property string xdgConfigHome: {
-    var x = Quickshell.env("XDG_CONFIG_HOME");
-    return (x && x.length > 0) ? x : Quickshell.env("HOME") + "/.config";
-  }
-  readonly property string niriDir: xdgConfigHome + "/niri"
-  readonly property string sessionConfig: niriDir + "/atmosphera-session.kdl"
+  readonly property string xdgConfigHome: Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config"
+  readonly property string niriDir: root.xdgConfigHome + "/niri"
+  readonly property string sessionConfig: root.niriDir + "/atmosphera-session.kdl"
   readonly property string baselineSource: Quickshell.shellDir + "/Configs/niri/atmosphera.kdl"
   readonly property string i18nSource: Quickshell.shellDir + "/Configs/niri/atmosphera-i18n.kdl"
+  property bool _busy: false
+  property var _pendingLoader: null
+  property string _nonce: Date.now() + "-" + Math.random().toString(16).substring(2)
+  property int _serial: 0
 
-  function init() {
-    if (!Quickshell.env("NIRI_SOCKET")) {
-      Logger.d("NiriSessionInit", "NIRI_SOCKET unset — not hosted by niri, skipping");
-      return;
-    }
-    Logger.i("NiriSessionInit", "Composing niri session config");
-    ipcLoader.active = true;
-    _generate();
+  function init(environment, complete) {
+    root.regenerate(environment, complete);
   }
 
-  function _generate() {
-    var peerPid = "";
-    if (ipcLoader.item && ipcLoader.item.peerPid > 0)
-      peerPid = String(ipcLoader.item.peerPid);
-
-    var env = "none";
-    try {
-      env = Settings.data.bindings.environment || "none";
-    } catch (e) {}
-
-    // NOTE: no ${} expansions inside — this script is embedded in a JS
-    // template literal below, where ${ would be interpolated by JS.
-    var script = `set -e
-DIR="$1"; BASELINE_SRC="$2"; PEER_PID="$3"; ENVV="$4"; SESSION_FILE="$5"; I18N_SRC="$6"
+  function regenerate(environment, complete) {
+    if (!Quickshell.env("NIRI_SOCKET")) {
+      if (typeof complete === "function") complete(true, "", false);
+      return;
+    }
+    if (root._busy) {
+      if (typeof complete === "function") complete(false, "Concurrent niri generation rejected", true);
+      return;
+    }
+    root._busy = true;
+    var terminal = false;
+    function finish(success, error) {
+      if (terminal) return;
+      terminal = true;
+      root._busy = false;
+      root._pendingLoader = null;
+      if (typeof complete === "function") complete(success, error || "", true);
+    }
+    ipcLoader.active = true;
+    var temporary = root.sessionConfig + ".tmp-" + root._nonce + "-" + (++root._serial);
+    var io = Quickshell.shellDir + "/Scripts/python/src/settings/section-io.py";
+    function inspect(path, callback) {
+      OwnedProcess.run(root, ["python3", io, "inspect", path], null, function (result) {
+        var payload;
+        try { payload = JSON.parse(result.stdout); }
+        catch (error) { finish(false, "Could not read session file state"); return; }
+        if (!result.success || !payload.ok) { finish(false, "Session file read failed"); return; }
+        callback(payload.state);
+      });
+    }
+    function handoff() {
+      if (ipcLoader.item) {
+        ipcLoader.item.activate(root.sessionConfig, finish);
+      } else if (ipcLoader.status === Loader.Error) {
+        finish(false, "niriqml unavailable; configuration handoff failed");
+      } else {
+        root._pendingLoader = handoff;
+      }
+    }
+    var script = `set -eu
+umask 077
+DIR="$1"; BASELINE_SRC="$2"; PEER_PID="$3"; ENVV="$4"; TEMP="$5"; I18N_SRC="$6"
 mkdir -p "$DIR"
 [ -f "$DIR/atmosphera.kdl" ] || cp "$BASELINE_SRC" "$DIR/atmosphera.kdl"
 [ -f "$DIR/atmosphera-i18n.kdl" ] || cp "$I18N_SRC" "$DIR/atmosphera-i18n.kdl"
-
 PID="$PEER_PID"
 if [ -z "$PID" ]; then
-  # /proc/net/unix maps socket path → kernel socket inode (fs inode of the
-  # socket file is a DIFFERENT namespace — do not stat the file).
   INODE=$(awk -v p="$NIRI_SOCKET" '$NF == p {print $7; exit}' /proc/net/unix 2>/dev/null || true)
   if [ -n "$INODE" ]; then
     for fd_dir in /proc/[0-9]*/fd; do
-      if ls -l "$fd_dir" 2>/dev/null | grep -q "socket:\\\\[$INODE\\\\]"; then
-        PID=$(echo "$fd_dir" | cut -d/ -f3)
-        break
+      if ls -l "$fd_dir" 2>/dev/null | grep -q "socket:\\[$INODE\\]"; then
+        PID=$(echo "$fd_dir" | cut -d/ -f3); break
       fi
     done
   fi
 fi
-
 BASE=""
 if [ -n "$PID" ]; then
   BASE=$(tr '\\0' '\\n' < "/proc/$PID/cmdline" 2>/dev/null | awk '/^(-c|--config)$/{getline; print; exit} /^--config=/{sub(/^--config=/,""); print; exit}' || true)
@@ -79,82 +86,56 @@ if [ -n "$PID" ]; then
   fi
 fi
 [ -n "$BASE" ] || BASE="$DIR/config.kdl"
-
+set -C
 {
   echo "// Generated by Atmosphera. Do not edit — regenerated on shell start."
   echo "// Base config detected at niri boot: $BASE"
   if [ -f "$BASE" ]; then
-    if [ "$(dirname "$BASE")" = "$DIR" ]; then
-      echo "include \\"$(basename "$BASE")\\""
-    else
-      echo "include \\"$BASE\\""
-    fi
+    if [ "$(dirname "$BASE")" = "$DIR" ]; then echo "include \\\"$(basename "$BASE")\\\""
+    else echo "include \\\"$BASE\\\""; fi
   fi
   echo 'include "atmosphera.kdl"'
   echo 'include "atmosphera-i18n.kdl"'
   if [ "$ENVV" = "macos" ] && [ -f "$DIR/atmosphera-shortcuts-macos.kdl" ]; then
     echo 'include "atmosphera-shortcuts-macos.kdl"'
   fi
-} > "$SESSION_FILE"
+} > "$TEMP"
 `;
-
-    var proc = Qt.createQmlObject(`
-      import QtQuick
-      import Quickshell.Io
-      Process {
-        command: ["sh", "-c", ${JSON.stringify(script)}, "sh",
-                  "${root.niriDir}", "${root.baselineSource}", "${peerPid}", "${env}", "${root.sessionConfig}", "${root.i18nSource}"]
-        stderr: StdioCollector {}
-      }
-    `, root, "NiriSessionGenerate");
-
-    proc.exited.connect(function (exitCode) {
-      if (exitCode === 0) {
-        Logger.i("NiriSessionInit", "Session config written:", root.sessionConfig);
-        root._activate();
-      } else {
-        Logger.e("NiriSessionInit", "Session config generation failed:", String(proc.stderr.text || ""));
-      }
-      proc.destroy();
-    });
-    proc.running = true;
-  }
-
-  function _activate() {
-    if (ipcLoader.item) {
-      ipcLoader.item.activate(sessionConfig);
-    }
-    // No niriqml → no IPC path, and deliberately no CLI fallback: the shell
-    // relies on the QML library by design. The config file is still composed
-    // and will activate on a later start once qt6-niriqml is installed; the
-    // user was already notified from the Loader error path.
-  }
-
-  // Regenerate + reload when the bindings environment changes
-  Connections {
-    target: Settings.data.bindings
-    function onEnvironmentChanged() {
-      if (Quickshell.env("NIRI_SOCKET")) {
-        Logger.i("NiriSessionInit", "Bindings environment changed — regenerating session config");
-        root._generate();
-      }
+    try {
+      inspect(root.sessionConfig, function (base) {
+        var peer = ipcLoader.item && ipcLoader.item.peerPid > 0 ? String(ipcLoader.item.peerPid) : "";
+        OwnedProcess.run(root, ["sh", "-c", script, "sh", root.niriDir, root.baselineSource,
+          peer, environment, temporary, root.i18nSource], null, function (generated) {
+          if (!generated.success) { finish(false, "Session generation failed: " + generated.error); return; }
+          inspect(temporary, function (prepared) {
+            OwnedProcess.run(root, ["python3", io, "promote", root.sessionConfig, temporary],
+              JSON.stringify({ "base": base, "prepared_sha256": prepared.sha256, "delete": false,
+                "conflicts": Settings.cacheDir + "session-conflicts" }), function (published) {
+                var output;
+                try { output = JSON.parse(published.stdout); } catch (error) {}
+                if (!published.success || !output || !output.ok) {
+                  finish(false, "Session publication/readback failed at " + root.sessionConfig);
+                  return;
+                }
+                handoff();
+              });
+          });
+        });
+      });
+    } catch (error) {
+      finish(false, "Session preparation failed");
     }
   }
 
-  property bool _toastShown: false
-
-  // niriqml-backed IPC (optional dep); loaded only when present
   Loader {
     id: ipcLoader
     active: false
     source: "NiriSessionIpc.qml"
     onStatusChanged: {
-      if (status === Loader.Error) {
-        Logger.w("NiriSessionInit", "niriqml unavailable — niri session config will not activate");
-        if (!root._toastShown) {
-          root._toastShown = true;
-          ToastService.showWarning(I18n.tr("toast.niriqml-missing") || "Degraded niri experience", I18n.tr("toast.niriqml-missing-desc") || "Install qt6-niriqml to enable niri integration (workspaces, windows, keybinds, session config).", 8000);
-        }
+      if (root._pendingLoader && (status === Loader.Ready || status === Loader.Error)) {
+        var ready = root._pendingLoader;
+        root._pendingLoader = null;
+        ready();
       }
     }
   }
