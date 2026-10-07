@@ -13,13 +13,23 @@ Singleton {
 
   property bool _initialized: false
 
-  function init() {
-    if (_initialized)
+  function init(onComplete) {
+    if (_initialized) {
+      if (typeof onComplete === "function") BindingsService.observeStartup(onComplete);
       return;
+    }
     _initialized = true;
     Logger.d("InitService", "Session init");
-    KeydService.init();
-    XremapService.init();
-    CompositorInit.init();
+    // Install ownership/hold before any existing startup side effect. The
+    // owner retains this initialization operation if any stage fails.
+    BindingsService.init(function (environment, complete) {
+      KeydService.init(environment, function (keydOk, keydError) {
+        if (!keydOk) { complete(false, keydError); return; }
+        XremapService.init(environment, function (xremapOk, xremapError) {
+          if (!xremapOk) { complete(false, xremapError); return; }
+          CompositorInit.init(environment, complete);
+        });
+      });
+    }, onComplete);
   }
 }

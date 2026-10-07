@@ -153,8 +153,8 @@ SmartPanel {
     // Connections (lazy-loaded with panelContent)
     Connections {
       target: Settings
-      function onSettingsSaved() {
-        panelContent.settingsVersion++;
+      function onEffectiveSettingsChanged(section) {
+        if (section === "bar") panelContent.settingsVersion++;
       }
     }
 

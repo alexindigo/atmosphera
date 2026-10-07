@@ -4,8 +4,8 @@ set -euo pipefail
 SELF_DIR="$(dirname "$(readlink -f "$0")")"
 
 case "${1:-}" in
-  apply)       exec "$SELF_DIR/atmosphera-bindings-apply" ;;
-  apply-keyd)  exec "$SELF_DIR/atmosphera-bindings-apply-keyd" ;;
+  apply)       shift; exec "$SELF_DIR/atmosphera-bindings-apply" "$@" ;;
+  apply-keyd)  shift; exec "$SELF_DIR/atmosphera-bindings-apply-keyd" "$@" ;;
   status|help|"")
     # status: report current environment + deployed state (future)
     # no-arg: show help

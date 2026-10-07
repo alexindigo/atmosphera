@@ -23,6 +23,8 @@ ColumnLayout {
   property var steps: []
   property int currentStep: 0
   property bool showSkip: true
+  property bool controlsLocked: false
+  property bool retryAvailable: false
 
   signal finished()
   signal skipped()
@@ -144,6 +146,7 @@ ColumnLayout {
       id: stepStack
       anchors.fill: parent
       currentIndex: root.currentStep
+      enabled: !root.controlsLocked
 
       Repeater {
         model: root.steps
@@ -184,6 +187,7 @@ ColumnLayout {
       outlined: true
       Layout.preferredHeight: 44
       visible: root.showSkip
+      enabled: !root.controlsLocked
       onClicked: root.skipped()
     }
 
@@ -193,7 +197,11 @@ ColumnLayout {
       outlined: true
       Layout.preferredHeight: 44
       visible: (root.currentStepData.resetKey || "") !== ""
-      onClicked: Settings.resetSection(root.currentStepData.resetKey)
+      enabled: !root.controlsLocked
+      onClicked: {
+        if (typeof root.currentStepData.reset === "function") root.currentStepData.reset();
+        else Settings.resetSection(root.currentStepData.resetKey);
+      }
     }
 
     Item {
@@ -204,6 +212,7 @@ ColumnLayout {
       text: "← " + I18n.tr("common.back")
       outlined: true
       visible: root.currentStep > 0
+      enabled: !root.controlsLocked
       Layout.preferredHeight: 44
       onClicked: {
         if (root.currentStep > 0) {
@@ -213,10 +222,13 @@ ColumnLayout {
     }
 
     NButton {
-      text: root.currentStep === root.totalSteps - 1 ? I18n.tr("setup.all-done") : I18n.tr("common.continue") + " →"
+      text: root.retryAvailable ? "Retry retained head" : root.currentStep === root.totalSteps - 1 ? I18n.tr("setup.all-done") : I18n.tr("common.continue") + " →"
+      enabled: !root.controlsLocked || root.retryAvailable
       Layout.preferredHeight: 44
       onClicked: {
-        if (root.currentStep < root.totalSteps - 1) {
+        if (root.retryAvailable) {
+          root.finished();
+        } else if (root.currentStep < root.totalSteps - 1) {
           root.currentStep++;
         } else {
           root.finished();

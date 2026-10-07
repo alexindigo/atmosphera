@@ -276,8 +276,8 @@ Item {
 
   Connections {
     target: Settings
-    function onSettingsSaved() {
-      root.updateFilteredItems();
+    function onEffectiveSettingsChanged(section) {
+      if (section === "bar") root.updateFilteredItems();
     }
   }
 

@@ -1,87 +1,61 @@
 pragma Singleton
 import DBus 1.0
-
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import qs.Commons
+import "../../Helpers/OwnedProcess.js" as OwnedProcess
+import "../../Helpers/SystemdJob.js" as SystemdJob
 
-// KeydService — owns the user-managed keyd layer (/etc/keyd/atmosphera) and
-// triggers the root-side reload via systemd's D-Bus API. No CLI, no watcher:
-// the shell writes the layer (user-owned by the package install hook) and
-// starts atmosphera-keyd-reload.service in-process.
 Singleton {
   id: root
-
   readonly property string layerFile: "/etc/keyd/atmosphera"
 
-  function init() {
-    _apply();
-  }
-
-  function _apply() {
-    var env = "none";
+  function init(environment, onComplete) {
+    var terminal = false;
+    function finish(success, error, applicable) {
+      if (terminal) return;
+      terminal = true;
+      if (typeof onComplete === "function") onComplete(success, error || "", applicable);
+    }
+    if (environment !== "none" && environment !== "macos") {
+      finish(false, "Unsupported startup bindings environment", true);
+      return;
+    }
+    var source = Quickshell.shellDir + "/Bindings/environments/macos/keyd/" + (environment === "macos" ? "default.conf" : "atmosphera.stub");
     try {
-      env = Settings.data.bindings.environment || "none";
-    } catch (e) {}
-
-    var src = (env === "macos") ? Quickshell.shellDir + "/Bindings/environments/macos/keyd/default.conf" : Quickshell.shellDir + "/Bindings/environments/macos/keyd/atmosphera.stub";
-
-    // cat-truncate with [ids] stripped: included files must not carry an
-    // [ids] section (keyd include limitation — a stray [ids] mid-[main]
-    // silently kills the mapping), and direct key assignments no-op inside
-    // includes (layer() form required — both caught by the VM).
-    var proc = Qt.createQmlObject(`
-      import QtQuick
-      import Quickshell.Io
-      Process {
-        command: ["sh", "-c", "awk '/^\\\\[ids\\\\]/{skip=1; next} /^\\\\[/{skip=0} !skip' \\"$1\\" > \\"$2\\"", "sh", "${src}", "${root.layerFile}"]
-      }
-    `, root, "KeydLayerWrite");
-
-    proc.exited.connect(function (exitCode) {
-      if (exitCode === 0) {
-        Logger.d("KeydService", "Layer written:", root.layerFile, "env:", env);
-        root._reload();
-      } else {
-        Logger.w("KeydService", "Cannot write", root.layerFile, "(exit", exitCode + ")", "— repair with: sudo atmosphera bindings apply-keyd", env);
-      }
-      proc.destroy();
-    });
-    proc.running = true;
+      OwnedProcess.run(root, ["python3", "-c", "import os,json,sys; print(json.dumps({'present':os.path.lexists(sys.argv[1]),'writable':os.access(sys.argv[1],os.W_OK),'active':os.path.exists('/var/run/keyd.socket')}))", root.layerFile], null, function (probe) {
+        if (!probe.success) { finish(false, probe.error, true); return; }
+        var capability;
+        try { capability = JSON.parse(probe.stdout); }
+        catch (error) { finish(false, "Could not inspect managed keyd capability", true); return; }
+        if (!capability.present) {
+          Logger.i("KeydService", "Not applicable: managed keyd layer absent");
+          finish(true, "", false);
+          return;
+        }
+        if (!capability.writable) { finish(false, "Managed keyd layer is not writable", true); return; }
+        OwnedProcess.run(root, ["sh", "-c", "awk '/^\\[ids\\]/{skip=1; next} /^\\[/{skip=0} !skip' \"$1\" > \"$2\"", "sh", source, root.layerFile], null, function (written) {
+          if (!written.success) { finish(false, "Startup keyd write failed: " + written.error, true); return; }
+          if (!capability.active) {
+            Logger.i("KeydService", "Managed write settled; reload not applicable: keyd inactive");
+            finish(true, "", false);
+            return;
+          }
+          SystemdJob.run(root, systemdBus, "StartUnit", "atmosphera-keyd-reload.service", function (success, error) {
+            finish(success, error, true);
+          });
+        });
+      });
+    } catch (error) {
+      finish(false, "Startup keyd operation failed", true);
+    }
   }
 
-  // system bus handle to systemd's Manager
   DBus {
     id: systemdBus
     service: "org.freedesktop.systemd1"
     path: "/org/freedesktop/systemd1"
     iface: "org.freedesktop.systemd1.Manager"
     connection: SystemBus
-  }
-
-  function _reload() {
-    // StartUnit(name, mode) — polkit rule Scripts/polkit/atmosphera-keyd.rules
-    // lets active sessions / wheel start this one service without a prompt.
-    var reply = systemdBus.call("StartUnit", ["atmosphera-keyd-reload.service", "replace"]);
-    if (!reply) {
-      Logger.w("KeydService", "StartUnit call failed to build");
-      return;
-    }
-    reply.finished.connect(function () {
-      if (reply.isError)
-        Logger.w("KeydService", "keyd reload trigger failed:", reply.error.message);
-      else
-        Logger.i("KeydService", "keyd reload triggered via systemd");
-    });
-  }
-
-  // Re-apply on bindings environment change
-  Connections {
-    target: Settings.data.bindings
-    function onEnvironmentChanged() {
-      Logger.i("KeydService", "Bindings environment changed — rewriting keyd layer");
-      root._apply();
-    }
   }
 }

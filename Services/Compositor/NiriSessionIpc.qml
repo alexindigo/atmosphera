@@ -1,65 +1,56 @@
-import QtQuick
 import Niri 1.0
+import QtQuick
 import qs.Commons
 
-// niriqml-backed IPC helper for NiriSessionInit. Kept in a separate file
-// loaded via Loader so systems without qt6-niriqml installed degrade
-// gracefully (no IPC activation; user is notified) instead of the
-// singleton failing to load.
 Item {
   id: root
-
   property int peerPid: -1
 
-  function activate(path) {
-    if (NiriConnection.isConnected) {
-      _send(path);
-    } else {
-      _pendingPath = path;
+  // Successful action reply = accepted handoff, not independent observation
+  // that this exact configuration was applied. Never replay on reconnect.
+  function activate(path, onComplete) {
+    var terminal = false;
+    function finish(success, error) {
+      if (terminal) return;
+      terminal = true;
+      if (success) Logger.i("NiriSessionIpc", "niri accepted configuration handoff:", path);
+      else Logger.e("NiriSessionIpc", "niri handoff failed/unknown:", error);
+      if (typeof onComplete === "function") onComplete(success, error || "");
+    }
+    if (!NiriConnection.isConnected) {
+      finish(false, "niri connection unavailable; handoff not attempted");
+      return;
+    }
+    try {
+      var reply = NiriActions.sendAction({ "LoadConfigFile": { "path": path } });
+      if (!reply) { finish(false, "Could not construct niri handoff reply"); return; }
+      function completed() {
+        if (terminal) return;
+        finish(!reply.isError, reply.isError ? reply.error.message : "");
+      }
+      reply.finished.connect(completed);
+      if (reply.isError) completed(); // immediate errors can precede connection
+    } catch (error) {
+      finish(false, "niri handoff construction/transport failed");
     }
   }
 
-  property string _pendingPath: ""
-
-  function _readPeerPid() {
-    try {
-      var pi = NiriConnection.peerInfo;
-      if (pi && pi.pid > 0)
-        root.peerPid = pi.pid;
-    } catch (e) {}
+  function readPeerPid() {
+    var info = NiriConnection.peerInfo;
+    if (info && info.pid > 0) root.peerPid = info.pid;
   }
-
-  function _send(path) {
-    try {
-      var reply = NiriActions.sendAction({
-                                           LoadConfigFile: {
-                                             path: path
-                                           }
-                                         });
-      reply.finished.connect(function () {
-        if (reply.isError)
-          Logger.w("NiriSessionIpc", "load-config-file failed:", reply.error.message);
-        else
-          Logger.i("NiriSessionIpc", "niri session config activated:", path);
-      });
-    } catch (e) {
-      Logger.e("NiriSessionIpc", "sendAction failed:", e);
-    }
-  }
-
   Connections {
     target: NiriConnection
     function onConnectedChanged() {
-      if (NiriConnection.isConnected) {
-        root._readPeerPid();
-        if (root._pendingPath !== "") {
-          var p = root._pendingPath;
-          root._pendingPath = "";
-          root._send(p);
-        }
-      }
+      if (NiriConnection.isConnected) root.readPeerPid();
     }
   }
-
-  Component.onCompleted: root._readPeerPid()
+  Connections {
+    target: NiriEvents
+    function onConfigLoaded(failed) {
+      if (failed)
+        Logger.e("NiriReload", "niri reported a generic configuration reload failure; not correlated to a bindings request");
+    }
+  }
+  Component.onCompleted: root.readPeerPid()
 }

@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Services.Keyboard
 import qs.Widgets
 
 ColumnLayout {
@@ -33,19 +34,15 @@ ColumnLayout {
       Layout.fillWidth: true
       Layout.preferredHeight: 72
       radius: Style.radiusL
-      color: Settings.data.bindings.environment === modelData.value ? Color.mPrimaryContainer : Color.mSurfaceVariant
-      border.color: Settings.data.bindings.environment === modelData.value ? Color.mPrimary : Color.mOutline
-      border.width: Settings.data.bindings.environment === modelData.value ? 2 : 1
+      color: BindingsService.requestedEnvironment === modelData.value ? (Color.mPrimaryContainer || Color.mSurfaceVariant) : Color.mSurfaceVariant
+      border.color: BindingsService.requestedEnvironment === modelData.value ? Color.mPrimary : Color.mOutline
+      border.width: BindingsService.requestedEnvironment === modelData.value ? 2 : 1
 
       MouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-          if (Settings.data.bindings.environment === modelData.value)
-            return;
-          Settings.data.bindings.environment = modelData.value;
-          Settings.saveImmediate();
-          Quickshell.execDetached(["atmosphera", "bindings", "apply"]);
+          BindingsService.requestEnvironment(modelData.value);
         }
       }
 
@@ -59,7 +56,7 @@ ColumnLayout {
           height: 20
           radius: width / 2
           color: "transparent"
-          border.color: Settings.data.bindings.environment === modelData.value ? Color.mPrimary : Color.mOutline
+          border.color: BindingsService.requestedEnvironment === modelData.value ? Color.mPrimary : Color.mOutline
           border.width: 2
 
           Rectangle {
@@ -68,7 +65,7 @@ ColumnLayout {
             height: 10
             radius: width / 2
             color: Color.mPrimary
-            visible: Settings.data.bindings.environment === modelData.value
+            visible: BindingsService.requestedEnvironment === modelData.value
           }
         }
 
@@ -94,4 +91,11 @@ ColumnLayout {
       }
     }
   }
+
+  NBindingsQueueStatus {
+    Layout.fillWidth: true
+    queueStatus: BindingsService.status
+    retry: function () { BindingsService.retryHead(); }
+  }
+  Item { Layout.fillWidth: true; Layout.fillHeight: true }
 }
