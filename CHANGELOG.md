@@ -1,5 +1,51 @@
 # Changelog
 
+## [0.8.0] — 2026-10-10
+
+### 2026-10-10
+
+**Breaking**
+
+The palette singleton is now `AtmoColor`. Plugins and user QML must use
+`AtmoColor.<member>` (for example `AtmoColor.mPrimary` or
+`AtmoColor.smartAlpha(...)`); there is no `Color` alias, because on Qt 6.12+ a
+bare `Color` resolves to Qt's own utility singleton. The palette file moved
+unchanged from `Commons/Color.qml` to `Commons/AtmoColor.qml`, and all shell
+references, including both `Connections` targets, were renamed mechanically.
+
+- fix(commons): rename Color singleton to AtmoColor (`a3bc19fc7`)
+
+**Fix**
+
+Qt 6.12's QtQuick exports a C++ `Color` singleton, and Qt resolves imported
+modules' C++ types before QML singletons, so every bare `Color` reached it
+instead of Atmosphera's palette. Colors, palette helpers such as `smartAlpha`,
+`adaptiveOpacity` and `resolveColorKeyOptional`, and theme bindings resolve again
+across the bar, panels, settings, launcher, toasts, notifications, the setup
+wizard and the lock screen, on both Qt 6.11 and Qt 6.12.
+
+- fix(commons): rename Color singleton to AtmoColor (`a3bc19fc7`)
+
+**Feature**
+
+The shell and the bundled lock screen now verify at startup that `AtmoColor`
+resolves to the palette service and log an error naming any missing members
+if an imported module shadows it. Development gains a string-, comment-,
+template- and regex-aware QML identifier rename tool and a scanner that reports
+Atmosphera type names shadowed by imported Qt or Quickshell modules.
+
+- feat(shell): verify AtmoColor resolves to the palette service at startup (`1b19f3574`)
+- feat(dev): add string- and comment-aware QML identifier rename tool (`beaab2bf9`)
+- feat(dev): report Atmosphera type names shadowed by imported modules (`4f65266ec`)
+
+**Maintenance**
+
+Files in the rename set that were not yet `qmlformat`-clean were formatted in a
+separate commit, keeping the rename itself a pure identifier change. No
+user-visible change.
+
+- style(qml): apply qmlformat to files in the AtmoColor rename set (`f454f2db5`)
+
 ## [0.7.2] — 2026-10-09
 
 ### 2026-10-09
