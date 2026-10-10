@@ -1,5 +1,107 @@
 # Changelog
 
+## [0.7.2] — 2026-10-09
+
+### 2026-10-09
+
+**Fix**
+
+Filepicker entries now reserve measured space for both filename lines and fit
+icons and thumbnails inside their own regions, preventing content from overlapping
+neighboring entries. List and save-target rows grow with their contents, and
+thumbnail visibility remains declarative when grid delegates are reused after an
+image error.
+
+- fix(filepicker): contain entry text and icons (`f6b31db3f`)
+
+**Maintenance**
+
+The Nix dependency pins were refreshed again for nixpkgs and Quickshell. The
+lockfile records both updated revisions and their corresponding source hashes.
+
+- chore(flake): update flake.lock (`d72938255`)
+
+### 2026-10-07
+
+**Maintenance**
+
+The pinned nixpkgs revision was advanced for Nix-based development and packaging.
+Its source hash was updated together with the revision in the lockfile.
+
+- chore(flake): update flake.lock (`60b74b177`)
+
+### 2026-10-06
+
+**Fix**
+
+Settings persistence and bindings deployment now have serialized owners, so rapid
+environment choices and asynchronous completions retain their order. Pending
+local edits and observed conflicting disk content are retained, and persistence
+must finish before deployment and session-configuration handoff. The setup wizard
+and shortcuts panel expose queued or stopped work with explicit retry instead of
+advancing on an unconfirmed save.
+
+- fix(bindings): preserve ordered persistence and deployment (`bb732d886`)
+
+**Maintenance**
+
+Nix builds now use newer pinned nixpkgs and Quickshell revisions. Their source
+hashes were refreshed together with the revisions in the existing lockfile.
+
+- chore(flake): update flake.lock (`108488d30`)
+
+### 2026-10-05
+
+**Maintenance**
+
+The pinned nixpkgs revision was refreshed for Nix-based builds. Its source hash
+was updated alongside the revision to keep dependency resolution pinned.
+
+- chore(flake): update flake.lock (`e26d049c7`)
+
+### 2026-10-04
+
+**Maintenance**
+
+Nix's Quickshell input was advanced to a newer upstream revision. The lockfile
+records the corresponding source hash with that revision.
+
+- chore(flake): update flake.lock (`2a07d34e2`)
+
+### 2026-10-02
+
+**Fix**
+
+Settings startup and reload now ignore undeclared override keys while keeping
+section overrides ahead of legacy settings and preserving pending local edits.
+In macOS-style bindings, terminal copy/paste uses the terminal-specific mappings
+and Cmd+Space opens the native Atmosphera launcher. The built-in catalog no longer
+advertises the retired legacy icon set, and translated custom-button help names
+the actual Atmosphera IPC shell.
+
+- fix(settings): ignore unknown override keys (`af6986efb`)
+- fix(bindings): repair macOS paste and launcher defaults (`3d9e583dd`)
+- fix(plugins): drop retired icon set from built-in catalog (`42bafc189`)
+- fix(i18n): correct custom-button IPC shell name (`44d973a41`)
+
+**Development**
+
+Developer validation now supports rootless Podman and Docker through one container
+launcher, with engine checks, workspace ownership handling and resource limits.
+Formatting runs before the lint overlay is mounted, avoiding writes beneath an
+active overlay. A retained VM icon-startup diagnostic runner correlates icon
+registration, resolution and rendering with consumer captures in disposable copies.
+
+- chore(devcontainer): support Podman and Docker (`8e00a5653`)
+- test(icons): retain startup diagnostic runner (`b3eecda11`)
+
+**Maintenance**
+
+The nixpkgs input was refreshed for Nix-based development and packaging. The
+lockfile records its updated revision and source hash.
+
+- chore(flake): update flake.lock (`a3d240465`)
+
 ## [0.7.1] — 2026-10-01
 
 ### 2026-09-29
