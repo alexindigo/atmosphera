@@ -8,6 +8,14 @@ on:
       - '**'
   workflow_dispatch:
 
+# Every run force-pushes a full snapshot of all branches and tags. Overlapping
+# runs race at Codeberg (stale ref advertisements are rejected), and a run with
+# an older snapshot finishing last would roll refs back. One run at a time; a
+# queued run fetches the then-current state, so it supersedes earlier ones.
+concurrency:
+  group: codeberg-mirror
+  cancel-in-progress: false
+
 jobs:
   mirror:
     runs-on: ubuntu-latest
@@ -17,8 +25,41 @@ jobs:
         with:
           fetch-depth: 0
 
+      # On tag-triggered runs, actions/checkout rewrites the triggering tag as a
+      # lightweight tag pointing at the commit, dropping the annotated (signed)
+      # tag object. Re-sync every tag from GitHub so the snapshot is exact.
+      - name: Restore exact tag objects from GitHub
+        run: git fetch --no-recurse-submodules origin '+refs/tags/*:refs/tags/*'
+
+      # The snapshot (origin branches as heads, all tags with peeled commits)
+      # must equal GitHub's refs exactly before it is force-pushed.
+      - name: Verify snapshot matches GitHub
+        run: |
+          set -euo pipefail
+          {
+            git for-each-ref --format='%(objectname) refs/heads/%(refname:lstrip=3)' 'refs/remotes/origin/'
+            git for-each-ref --format='%(objectname) %(refname)' 'refs/tags/'
+            git for-each-ref --format='%(*objectname) %(refname)^{}' 'refs/tags/'
+          } | awk 'NF == 2 && $2 != "refs/heads/HEAD" {print $1 "\t" $2}' | sort -k2 > "$RUNNER_TEMP/snapshot.txt"
+          git ls-remote --heads --tags origin | sort -k2 > "$RUNNER_TEMP/github.txt"
+          if ! diff -u "$RUNNER_TEMP/github.txt" "$RUNNER_TEMP/snapshot.txt"; then
+            echo "::error::Mirror snapshot differs from GitHub refs"
+            exit 1
+          fi
+          echo "Snapshot matches GitHub: $(wc -l < "$RUNNER_TEMP/snapshot.txt") refs"
+
       - name: Mirror to Codeberg
         uses: pixta-dev/repository-mirroring-action@v1
         with:
           target_repo_url: git@codeberg.org:atmosphera/atmosphera.git
           ssh_private_key: ${{ secrets.CODEBERG_SSH_KEY }}
+
+      - name: Verify Codeberg matches the snapshot
+        run: |
+          set -euo pipefail
+          git ls-remote --heads --tags https://codeberg.org/atmosphera/atmosphera.git | sort -k2 > "$RUNNER_TEMP/codeberg.txt"
+          if ! diff -u "$RUNNER_TEMP/snapshot.txt" "$RUNNER_TEMP/codeberg.txt"; then
+            echo "::error::Codeberg refs differ from the mirrored GitHub snapshot"
+            exit 1
+          fi
+          echo "Codeberg matches: $(wc -l < "$RUNNER_TEMP/codeberg.txt") refs"
