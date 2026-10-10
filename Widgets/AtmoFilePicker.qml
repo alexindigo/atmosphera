@@ -37,6 +37,55 @@ Popup {
 
   property bool _finished: false // single-settle guard for the portal reply
 
+  // NText owns font/UI scaling. Reserve both weights before selection changes.
+  readonly property int filenameLineBudget: Math.ceil(Math.max(filenameRegularMetrics.height, filenameRegularMetrics.lineSpacing, filenameBoldMetrics.height, filenameBoldMetrics.lineSpacing))
+  readonly property int filenameHeight: 2 * filenameLineBudget
+
+  NText {
+    id: filenameRegularFont
+    visible: false
+    pointSize: Style.fontSizeS
+    font.weight: Style.fontWeightRegular
+  }
+
+  NText {
+    id: filenameBoldFont
+    visible: false
+    pointSize: Style.fontSizeS
+    font.weight: Style.fontWeightBold
+  }
+
+  FontMetrics {
+    id: filenameRegularMetrics
+    font: filenameRegularFont.font
+  }
+
+  FontMetrics {
+    id: filenameBoldMetrics
+    font: filenameBoldFont.font
+  }
+
+  component FittedIcon: Item {
+    id: iconBox
+    anchors.alignWhenCentered: false
+
+    property var icon
+    property real pointSize: Style.fontSizeL
+    property color color: Color.mOnSurface
+
+    AtmoIcon {
+      id: naturalIcon
+      anchors.centerIn: parent
+      anchors.alignWhenCentered: false
+      transformOrigin: Item.Center
+      icon: iconBox.icon
+      pointSize: iconBox.pointSize
+      color: iconBox.color
+      // Natural typography does not depend on the allocation, keeping fit cycle-free.
+      scale: implicitWidth > 0 && implicitHeight > 0 ? Math.max(0, Math.min(1, iconBox.width / implicitWidth, iconBox.height / implicitHeight)) : 0
+    }
+  }
+
   function openFilePicker() {
     root._finished = false; // Popup persists across opens — reset the guard
     if (!root.currentPath)
@@ -547,11 +596,13 @@ Popup {
           reuseItems: true
           gradientColor: Color.mSurface
 
-          property int columns: Math.max(1, Math.floor(availableWidth / 120))
-          property int itemSize: Math.floor((availableWidth - leftMargin - rightMargin - (columns * Style.marginS)) / columns)
+          readonly property real usableWidth: Math.max(0, availableWidth - leftMargin - rightMargin)
+          readonly property int columns: Math.max(1, Math.floor(usableWidth / 120))
+          readonly property int itemSize: Math.max(0, cellWidth - Style.marginS)
+          readonly property int iconLaneHeight: Math.round(itemSize * 0.67)
 
-          cellWidth: Math.floor((availableWidth - leftMargin - rightMargin) / columns)
-          cellHeight: Math.floor((itemSize * 0.8)) + Style.marginXS + Style.fontSizeS + Style.marginM
+          cellWidth: Math.max(1, Math.floor(usableWidth / columns))
+          cellHeight: Style.margin2S + iconLaneHeight + Style.marginXS + root.filenameHeight
 
           leftMargin: Style.marginS
           rightMargin: Style.marginS
@@ -600,14 +651,20 @@ Popup {
 
             ColumnLayout {
               anchors.fill: parent
-              anchors.margins: Style.marginS
+              anchors.margins: Math.min(Style.marginS, parent.width / 2, parent.height / 2)
               spacing: Style.marginXS
 
               Rectangle {
                 id: iconContainer
                 Layout.fillWidth: true
-                Layout.preferredHeight: Math.round(gridView.itemSize * 0.67)
+                Layout.minimumWidth: 0
+                Layout.minimumHeight: gridView.iconLaneHeight
+                Layout.preferredHeight: gridView.iconLaneHeight
+                Layout.maximumHeight: gridView.iconLaneHeight
                 color: "transparent"
+
+                readonly property real contentInset: Math.min(Style.marginXS, Math.max(0, width / 2), Math.max(0, height / 2))
+                readonly property real badgeInset: Math.min(Style.marginS, Math.max(0, width / 2), Math.max(0, height / 2))
 
                 property bool isImage: {
                   if (model.fileIsDir)
@@ -619,7 +676,7 @@ Popup {
                 Image {
                   id: thumbnail
                   anchors.fill: parent
-                  anchors.margins: Style.marginXS
+                  anchors.margins: iconContainer.contentInset
                   source: iconContainer.isImage ? "file://" + model.filePath : ""
                   fillMode: Image.PreserveAspectFit
                   visible: iconContainer.isImage && status === Image.Ready
@@ -628,26 +685,25 @@ Popup {
                   asynchronous: true
                   sourceSize.width: 120
                   sourceSize.height: 120
-                  onStatusChanged: {
-                    if (status === Image.Error)
-                      visible = false;
-                  }
+                }
 
-                  Rectangle {
+                Rectangle {
+                  anchors.fill: parent
+                  anchors.margins: iconContainer.contentInset
+                  color: Color.mSurfaceVariant
+                  radius: Style.iRadiusS
+                  visible: iconContainer.isImage && thumbnail.status === Image.Loading
+                  FittedIcon {
                     anchors.fill: parent
-                    color: Color.mSurfaceVariant
-                    radius: Style.iRadiusS
-                    visible: thumbnail.status === Image.Loading
-                    AtmoIcon {
-                      icon: Icon.filepickerPhoto
-                      pointSize: Style.fontSizeL
-                      color: Color.mOnSurfaceVariant
-                      anchors.centerIn: parent
-                    }
+                    icon: Icon.filepickerPhoto
+                    pointSize: Style.fontSizeL
+                    color: Color.mOnSurfaceVariant
                   }
                 }
 
-                AtmoIcon {
+                FittedIcon {
+                  anchors.fill: parent
+                  anchors.margins: iconContainer.contentInset
                   icon: model.fileIsDir ? "filepicker-folder" : root.getFileIcon(model.fileName)
                   pointSize: Style.fontSizeXXL * 2
                   color: {
@@ -658,26 +714,25 @@ Popup {
                     else
                       return model.fileIsDir ? Color.mPrimary : Color.mOnSurfaceVariant;
                   }
-                  anchors.centerIn: parent
-                  visible: !iconContainer.isImage || thumbnail.status !== Image.Ready
+                  visible: !iconContainer.isImage || (thumbnail.status !== Image.Ready && thumbnail.status !== Image.Loading)
                 }
 
                 Rectangle {
                   anchors.top: parent.top
                   anchors.right: parent.right
-                  anchors.margins: Style.marginS
-                  width: 24
-                  height: 24
+                  anchors.margins: iconContainer.badgeInset
+                  width: Math.max(0, Math.min(24, parent.width - 2 * iconContainer.badgeInset, parent.height - 2 * iconContainer.badgeInset))
+                  height: width
                   radius: Math.min(Style.iRadiusL, width / 2)
                   color: Color.mSecondary
                   border.color: Color.mOutline
                   border.width: Style.borderS
                   visible: isSelected
-                  AtmoIcon {
+                  FittedIcon {
+                    anchors.fill: parent
                     icon: Icon.filepickerCheck
                     pointSize: Style.fontSizeS
                     color: Color.mOnSecondary
-                    anchors.centerIn: parent
                   }
                 }
               }
@@ -695,6 +750,10 @@ Popup {
                 pointSize: Style.fontSizeS
                 font.weight: isSelected ? Style.fontWeightBold : Style.fontWeightRegular
                 Layout.fillWidth: true
+                Layout.minimumWidth: 0
+                Layout.minimumHeight: root.filenameHeight
+                Layout.preferredHeight: root.filenameHeight
+                Layout.maximumHeight: root.filenameHeight
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WrapAnywhere
                 elide: Text.ElideRight
@@ -755,8 +814,8 @@ Popup {
 
           delegate: Rectangle {
             id: listItem
-            width: listView.width
-            height: 40
+            width: listView.availableWidth
+            height: Math.ceil(listRow.implicitHeight + Style.margin2S)
             color: {
               if (filePickerPanel.currentSelection.includes(model.filePath))
                 return Color.mSecondary;
@@ -772,12 +831,16 @@ Popup {
             }
 
             RowLayout {
-              anchors.fill: parent
+              id: listRow
+              anchors.left: parent.left
+              anchors.right: parent.right
+              anchors.verticalCenter: parent.verticalCenter
               anchors.leftMargin: Style.marginM
               anchors.rightMargin: Style.marginM
               spacing: Style.marginM
 
               AtmoIcon {
+                Layout.alignment: Qt.AlignVCenter
                 icon: model.fileIsDir ? "filepicker-folder" : root.getFileIcon(model.fileName)
                 pointSize: Style.fontSizeL
                 color: model.fileIsDir ? (filePickerPanel.currentSelection.includes(model.filePath) ? Color.mOnSecondary : Color.mPrimary) : Color.mOnSurfaceVariant
@@ -789,10 +852,13 @@ Popup {
                 pointSize: Style.fontSizeM
                 font.weight: filePickerPanel.currentSelection.includes(model.filePath) ? Style.fontWeightBold : Style.fontWeightRegular
                 Layout.fillWidth: true
+                Layout.minimumWidth: 0
+                Layout.alignment: Qt.AlignVCenter
                 elide: Text.ElideRight
               }
 
               NText {
+                Layout.alignment: Qt.AlignVCenter
                 text: model.fileIsDir ? "" : root.formatFileSize(model.fileSize)
                 color: filePickerPanel.currentSelection.includes(model.filePath) ? Color.mOnSecondary : Color.mOnSurfaceVariant
                 pointSize: Style.fontSizeS
@@ -900,14 +966,18 @@ Popup {
 
             delegate: Rectangle {
               width: ListView.view.width
-              height: 28
+              height: Math.ceil(targetRow.implicitHeight + Style.margin2XS)
               color: "transparent"
 
               RowLayout {
-                anchors.fill: parent
+                id: targetRow
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
                 spacing: Style.marginS
 
                 AtmoIcon {
+                  Layout.alignment: Qt.AlignVCenter
                   icon: "filepicker-file"
                   pointSize: Style.fontSizeS
                   color: Color.mOnSurfaceVariant
@@ -917,9 +987,12 @@ Popup {
                   color: Color.mOnSurface
                   pointSize: Style.fontSizeS
                   Layout.fillWidth: true
+                  Layout.minimumWidth: 0
+                  Layout.alignment: Qt.AlignVCenter
                   elide: Text.ElideRight
                 }
                 NText {
+                  Layout.alignment: Qt.AlignVCenter
                   text: model.exists ? I18n.tr("widgets.file-picker.target-list-overwrite") : ""
                   color: Color.mSecondary
                   pointSize: Style.fontSizeS
