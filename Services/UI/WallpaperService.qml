@@ -102,7 +102,7 @@ Singleton {
     favoriteSchemeDebounceTimer.pendingPath = path;
     favoriteSchemeDebounceTimer.pendingSlot = slot;
     favoriteSchemeDebounceTimer.restart();
-    if (Color.isTransitioning) {
+    if (AtmoColor.isTransitioning) {
       root.pendingFavoriteSchemeRefresh = {
         "path": path,
         "slot": slot
@@ -1435,7 +1435,7 @@ Singleton {
                   ,
       "useWallpaperColors": Settings.data.colorSchemes.useWallpaperColors,
       "generationMethod": Settings.data.colorSchemes.generationMethod,
-      "paletteColors": [Color.mPrimary.toString(), Color.mSecondary.toString(), Color.mTertiary.toString(), Color.mError.toString()]
+      "paletteColors": [AtmoColor.mPrimary.toString(), AtmoColor.mSecondary.toString(), AtmoColor.mTertiary.toString(), AtmoColor.mError.toString()]
     };
   }
 
@@ -1636,9 +1636,9 @@ Singleton {
 
   // Auto-update favorite palette colors when theme colors finish transitioning
   Connections {
-    target: Color
+    target: AtmoColor
     function onIsTransitioningChanged() {
-      if (!Color.isTransitioning) {
+      if (!AtmoColor.isTransitioning) {
         _updateCurrentWallpaperFavorites();
       }
     }

@@ -17,8 +17,8 @@ DraggableDesktopWidget {
   readonly property string layout: (widgetData && widgetData.layout !== undefined) ? widgetData.layout : (widgetMetadata.layout !== undefined ? widgetMetadata.layout : "side")
 
   // Fixed colors
-  readonly property color color: Color.mPrimary
-  readonly property color color2: Color.mSecondary
+  readonly property color color: AtmoColor.mPrimary
+  readonly property color color2: AtmoColor.mSecondary
 
   // Legend items model - each item has: text, color, icon (optional), bold (optional), opacity (optional), elide (optional)
   readonly property var legendItems: {

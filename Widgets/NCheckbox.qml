@@ -11,8 +11,8 @@ RowLayout {
   property string description: ""
   property bool checked: false
   property bool hovering: false
-  property color activeColor: Color.mPrimary
-  property color activeOnColor: Color.mOnPrimary
+  property color activeColor: AtmoColor.mPrimary
+  property color activeOnColor: AtmoColor.mOnPrimary
   property int baseSize: root.defaultSize
   property real labelSize: Style.fontSizeL
 
@@ -44,8 +44,8 @@ RowLayout {
     implicitWidth: Style.toOdd(root.baseSize)
     implicitHeight: Style.toOdd(root.baseSize)
     radius: Style.iRadiusXS * (root.baseSize / root.defaultSize)
-    color: root.checked ? root.activeColor : Color.mSurface
-    border.color: Color.mOutline
+    color: root.checked ? root.activeColor : AtmoColor.mSurface
+    border.color: AtmoColor.mOutline
     border.width: Style.borderS
 
     Behavior on color {

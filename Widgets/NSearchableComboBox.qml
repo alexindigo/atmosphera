@@ -192,8 +192,8 @@ GridLayout {
     background: Rectangle {
       implicitWidth: Math.round(Style.baseWidgetSize * 3.75 * Style.uiScaleRatio)
       implicitHeight: Math.round(root.preferredHeight * Style.uiScaleRatio)
-      color: Color.mSurface
-      border.color: combo.activeFocus ? Color.mSecondary : Color.mOutline
+      color: AtmoColor.mSurface
+      border.color: combo.activeFocus ? AtmoColor.mSecondary : AtmoColor.mOutline
       border.width: Style.borderS
       radius: Style.iRadiusM
 
@@ -215,7 +215,7 @@ GridLayout {
       readonly property int sourceIndex: root.findIndexByKey(root.currentKey)
       readonly property bool hasSelection: root.model && sourceIndex >= 0 && sourceIndex < root.model.count
 
-      color: hasSelection ? Color.mOnSurface : Color.mOnSurfaceVariant
+      color: hasSelection ? AtmoColor.mOnSurface : AtmoColor.mOnSurfaceVariant
       text: hasSelection ? root.model.get(sourceIndex).name : root.placeholder
     }
 
@@ -335,7 +335,7 @@ GridLayout {
                 NText {
                   text: name
                   pointSize: Style.fontSizeM
-                  color: highlighted ? Color.mOnHover : Color.mOnSurface
+                  color: highlighted ? AtmoColor.mOnHover : AtmoColor.mOnSurface
                   verticalAlignment: Text.AlignVCenter
                   elide: Text.ElideRight
                   Layout.fillWidth: true
@@ -382,7 +382,7 @@ GridLayout {
                         else
                           return Style.fontSizeXS;
                       }
-                      color: highlighted ? Color.mOnHover : (badgeData && badgeData.color ? badgeData.color : Color.mOnSurface)
+                      color: highlighted ? AtmoColor.mOnHover : (badgeData && badgeData.color ? badgeData.color : AtmoColor.mOnSurface)
                       Layout.preferredWidth: Math.round(Style.baseWidgetSize * 0.6)
                       Layout.preferredHeight: Math.round(Style.baseWidgetSize * 0.6)
                       visible: badgeData && badgeData.icon !== undefined && badgeData.icon !== ""
@@ -392,7 +392,7 @@ GridLayout {
               }
               background: Rectangle {
                 anchors.fill: parent
-                color: highlighted ? Color.mHover : "transparent"
+                color: highlighted ? AtmoColor.mHover : "transparent"
                 radius: Style.iRadiusS
               }
             }
@@ -401,8 +401,8 @@ GridLayout {
       }
 
       background: Rectangle {
-        color: Color.mSurfaceVariant
-        border.color: Color.mOutline
+        color: AtmoColor.mSurfaceVariant
+        border.color: AtmoColor.mOutline
         border.width: Style.borderS
         radius: Style.iRadiusM
       }

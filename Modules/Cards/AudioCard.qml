@@ -153,17 +153,17 @@ NBox {
         AtmoIconButton {
           icon: AudioService.muted ? "volume-off" : "volume-high"
           baseSize: Style.baseWidgetSize * 0.5
-          colorFg: AudioService.muted ? Color.mError : Color.mOnSurface
+          colorFg: AudioService.muted ? AtmoColor.mError : AtmoColor.mOnSurface
           colorBg: "transparent"
-          colorBgHover: Color.mHover
-          colorFgHover: Color.mOnHover
+          colorBgHover: AtmoColor.mHover
+          colorFgHover: AtmoColor.mOnHover
           onClicked: AudioService.setOutputMuted(!AudioService.muted)
         }
 
         NText {
           text: AudioService.sink ? AudioService.sink.description : "No output device"
           pointSize: Style.fontSizeXS
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
           elide: Text.ElideRight
           Layout.fillWidth: true
           Layout.preferredWidth: 0
@@ -221,17 +221,17 @@ NBox {
         AtmoIconButton {
           icon: AudioService.inputMuted ? "microphone-off" : "microphone"
           baseSize: Style.baseWidgetSize * 0.5
-          colorFg: AudioService.inputMuted ? Color.mError : Color.mOnSurface
+          colorFg: AudioService.inputMuted ? AtmoColor.mError : AtmoColor.mOnSurface
           colorBg: "transparent"
-          colorBgHover: Color.mHover
-          colorFgHover: Color.mOnHover
+          colorBgHover: AtmoColor.mHover
+          colorFgHover: AtmoColor.mOnHover
           onClicked: AudioService.setInputMuted(!AudioService.inputMuted)
         }
 
         NText {
           text: AudioService.source ? AudioService.source.description : "No input device"
           pointSize: Style.fontSizeXS
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
           elide: Text.ElideRight
           Layout.fillWidth: true
           Layout.preferredWidth: 0

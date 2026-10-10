@@ -84,7 +84,7 @@ ColumnLayout {
       NText {
         text: nightSlider.value + "K"
         pointSize: Style.fontSizeM
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         Layout.alignment: Qt.AlignVCenter
       }
     }
@@ -137,7 +137,7 @@ ColumnLayout {
       NText {
         text: daySlider.value + "K"
         pointSize: Style.fontSizeM
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         Layout.alignment: Qt.AlignVCenter
       }
     }
@@ -168,7 +168,7 @@ ColumnLayout {
         NText {
           text: I18n.tr("panels.display.night-light-manual-schedule-sunrise")
           pointSize: Style.fontSizeM
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
           Layout.alignment: Qt.AlignVCenter
         }
 
@@ -188,7 +188,7 @@ ColumnLayout {
         NText {
           text: I18n.tr("panels.display.night-light-manual-schedule-sunset")
           pointSize: Style.fontSizeM
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
           Layout.alignment: Qt.AlignVCenter
         }
 

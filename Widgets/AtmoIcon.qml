@@ -18,7 +18,7 @@ Item {
   property var icon: Icon.close
   property real pointSize: Style.fontSizeL
   property bool applyUiScale: true
-  property color color: Color.mOnSurface
+  property color color: AtmoColor.mOnSurface
 
   // Text-compat forwarded properties (consumers used these when the root was a Text)
   property alias verticalAlignment: textItem.verticalAlignment

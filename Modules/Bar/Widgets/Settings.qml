@@ -31,7 +31,7 @@ AtmoIconButton {
 
   readonly property string valueIconColor: widgetSettings.iconColor !== undefined ? widgetSettings.iconColor : widgetMetadata.iconColor
 
-  readonly property color iconColor: Color.resolveColorKey(valueIconColor)
+  readonly property color iconColor: AtmoColor.resolveColorKey(valueIconColor)
 
   icon: Icon.settings
   tooltipText: {
@@ -47,8 +47,8 @@ AtmoIconButton {
   customRadius: Style.radiusL
   colorBg: Style.capsuleColor
   colorFg: iconColor
-  colorBgHover: Color.mHover
-  colorFgHover: Color.mOnHover
+  colorBgHover: AtmoColor.mHover
+  colorFgHover: AtmoColor.mOnHover
   colorBorder: Style.capsuleBorderColor
   colorBorderHover: Style.capsuleBorderColor
 

@@ -120,7 +120,7 @@ Item {
   property int lastFocusedWorkspaceId: -1
   property real masterProgress: 0.0
   property bool effectsActive: false
-  property color effectColor: Color.mPrimary
+  property color effectColor: AtmoColor.mPrimary
 
   property int horizontalPadding: Style.marginS
   property int spacingBetweenPills: Style.marginXS
@@ -399,7 +399,7 @@ Item {
   }
 
   function triggerUnifiedWave() {
-    effectColor = Color.mPrimary;
+    effectColor = AtmoColor.mPrimary;
     masterAnimation.restart();
   }
 
@@ -411,7 +411,7 @@ Item {
           root.triggerUnifiedWave();
         }
         root.lastFocusedWorkspaceId = ws.id;
-        root.workspaceChanged(ws.id, Color.mPrimary);
+        root.workspaceChanged(ws.id, AtmoColor.mPrimary);
         break;
       }
     }
@@ -722,7 +722,7 @@ Item {
       height: Style.toOdd((hasWindows ? groupedIconsFlow.implicitHeight : root.iconSize) + (root.isVertical ? Style.marginL : (root.baseItemSize - root.iconSize + Style.marginXS)))
       color: Style.capsuleColor
       radius: Style.radiusS
-      border.color: Settings.data.bar.showOutline ? Style.capsuleBorderColor : Qt.alpha((workspaceModel.isFocused ? Color.mPrimary : (groupHoverHandler.hovered ? Color.mHover : Color.mOutline)), root.groupedBorderOpacity)
+      border.color: Settings.data.bar.showOutline ? Style.capsuleBorderColor : Qt.alpha((workspaceModel.isFocused ? AtmoColor.mPrimary : (groupHoverHandler.hovered ? AtmoColor.mHover : AtmoColor.mOutline)), root.groupedBorderOpacity)
       border.width: Style.borderS
 
       Behavior on width {
@@ -803,12 +803,12 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: Style.toOdd(root.iconSize * 0.25)
                 height: 4
-                color: groupedTaskbarItem.isFocused ? Color.mPrimary : Color.mHover
+                color: groupedTaskbarItem.isFocused ? AtmoColor.mPrimary : AtmoColor.mHover
                 radius: Math.min(Style.radiusXXS, width / 2)
               }
 
               layer.effect: ShaderEffect {
-                property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
+                property color targetColor: Settings.data.colorSchemes.darkMode ? AtmoColor.mOnSurface : AtmoColor.mSurfaceVariant
                 property real colorizeMode: 0
                 fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
               }
@@ -872,13 +872,13 @@ Item {
 
           color: {
             if (groupedContainer.workspaceModel.isFocused)
-              return Color.resolveColorKey(root.focusedColor);
+              return AtmoColor.resolveColorKey(root.focusedColor);
             if (groupedContainer.workspaceModel.isUrgent)
-              return Color.mError;
+              return AtmoColor.mError;
             if (groupedContainer.hasWindows)
-              return Color.resolveColorKey(root.occupiedColor);
+              return AtmoColor.resolveColorKey(root.occupiedColor);
 
-            return Color.resolveColorKey(root.emptyColor);
+            return AtmoColor.resolveColorKey(root.emptyColor);
           }
 
           scale: groupedContainer.workspaceModel.isActive ? 1.0 : 0.8
@@ -891,7 +891,7 @@ Item {
           }
 
           Behavior on color {
-            enabled: !Color.isTransitioning
+            enabled: !AtmoColor.isTransitioning
             ColorAnimation {
               duration: Style.animationFast
               easing.type: Easing.InOutCubic
@@ -941,13 +941,13 @@ Item {
 
           color: {
             if (groupedContainer.workspaceModel.isFocused)
-              return Color.resolveOnColorKey(root.focusedColor);
+              return AtmoColor.resolveOnColorKey(root.focusedColor);
             if (groupedContainer.workspaceModel.isUrgent)
-              return Color.mOnError;
+              return AtmoColor.mOnError;
             if (groupedContainer.hasWindows)
-              return Color.resolveOnColorKey(root.occupiedColor);
+              return AtmoColor.resolveOnColorKey(root.occupiedColor);
 
-            return Color.resolveOnColorKey(root.emptyColor);
+            return AtmoColor.resolveOnColorKey(root.emptyColor);
           }
 
           Behavior on opacity {

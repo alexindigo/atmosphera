@@ -51,7 +51,7 @@ Singleton {
 
   // accent-color: (ddd) sRGB triple, each component in [0,1].
   function accentColorValue() {
-    return new DBusQML.struct_([Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b]);
+    return new DBusQML.struct_([AtmoColor.mPrimary.r, AtmoColor.mPrimary.g, AtmoColor.mPrimary.b]);
   }
 
   // null for unknown keys — callers answer per-method.
@@ -110,7 +110,7 @@ Singleton {
   }
 
   Connections {
-    target: Color
+    target: AtmoColor
 
     function onMPrimaryChanged() {
       adaptor.emitSignal("SettingChanged", [root.appearanceNamespace, "accent-color", root.appearanceVariant("accent-color")]);

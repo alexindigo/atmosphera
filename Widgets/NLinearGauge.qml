@@ -10,8 +10,8 @@ Rectangle {
   required property real ratio // 0..1
 
   radius: orientation === Qt.Vertical ? width / 2 : height / 2
-  color: Color.mOutline
-  property color fillColor: Color.mPrimary
+  color: AtmoColor.mOutline
+  property color fillColor: AtmoColor.mPrimary
 
   // Fill that grows from bottom if vertical and left if horizontal.
   // Snap to zero if the computed pixel length is sub-pixel (< 1px).

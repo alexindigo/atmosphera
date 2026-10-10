@@ -71,7 +71,7 @@ Popup {
 
     property var icon
     property real pointSize: Style.fontSizeL
-    property color color: Color.mOnSurface
+    property color color: AtmoColor.mOnSurface
 
     AtmoIcon {
       id: naturalIcon
@@ -264,9 +264,9 @@ Popup {
   anchors.centerIn: Overlay.overlay
 
   background: Rectangle {
-    color: Color.mSurfaceVariant
+    color: AtmoColor.mSurfaceVariant
     radius: Style.iRadiusL
-    border.color: Color.mOutline
+    border.color: AtmoColor.mOutline
     border.width: Style.borderS
   }
 
@@ -363,14 +363,14 @@ Popup {
 
         AtmoIcon {
           icon: Icon.filepickerFolder
-          color: Color.mPrimary
+          color: AtmoColor.mPrimary
           pointSize: Style.fontSizeXXL
         }
         NText {
           text: root.title
           pointSize: Style.fontSizeXL
           font.weight: Style.fontWeightBold
-          color: Color.mPrimary
+          color: AtmoColor.mPrimary
           Layout.fillWidth: true
         }
 
@@ -413,9 +413,9 @@ Popup {
       Rectangle {
         Layout.fillWidth: true
         Layout.preferredHeight: 45
-        color: Color.mSurfaceVariant
+        color: AtmoColor.mSurfaceVariant
         radius: Style.iRadiusS
-        border.color: Color.mOutline
+        border.color: AtmoColor.mOutline
         border.width: Style.borderS
 
         RowLayout {
@@ -540,9 +540,9 @@ Popup {
       Rectangle {
         Layout.fillWidth: true
         Layout.fillHeight: true
-        color: Color.mSurface
+        color: AtmoColor.mSurface
         radius: Style.iRadiusM
-        border.color: Color.mOutline
+        border.color: AtmoColor.mOutline
         border.width: Style.borderS
 
         FolderListModel {
@@ -594,7 +594,7 @@ Popup {
           model: filteredModel
           visible: filePickerPanel.viewMode
           reuseItems: true
-          gradientColor: Color.mSurface
+          gradientColor: AtmoColor.mSurface
 
           readonly property real usableWidth: Math.max(0, availableWidth - leftMargin - rightMargin)
           readonly property int columns: Math.max(1, Math.floor(usableWidth / 120))
@@ -622,7 +622,7 @@ Popup {
               anchors.fill: parent
               color: "transparent"
               radius: parent.radius
-              border.color: isSelected ? Color.mSecondary : Color.mSurface
+              border.color: isSelected ? AtmoColor.mSecondary : AtmoColor.mSurface
               border.width: Style.borderL
               Behavior on color {
                 ColorAnimation {
@@ -633,9 +633,9 @@ Popup {
 
             Rectangle {
               anchors.fill: parent
-              color: (gridMouseArea.containsMouse && !isSelected) ? Color.mHover : "transparent"
+              color: (gridMouseArea.containsMouse && !isSelected) ? AtmoColor.mHover : "transparent"
               radius: parent.radius
-              border.color: (gridMouseArea.containsMouse && !isSelected) ? Color.mHover : "transparent"
+              border.color: (gridMouseArea.containsMouse && !isSelected) ? AtmoColor.mHover : "transparent"
               border.width: Style.borderS
               Behavior on color {
                 ColorAnimation {
@@ -690,14 +690,14 @@ Popup {
                 Rectangle {
                   anchors.fill: parent
                   anchors.margins: iconContainer.contentInset
-                  color: Color.mSurfaceVariant
+                  color: AtmoColor.mSurfaceVariant
                   radius: Style.iRadiusS
                   visible: iconContainer.isImage && thumbnail.status === Image.Loading
                   FittedIcon {
                     anchors.fill: parent
                     icon: Icon.filepickerPhoto
                     pointSize: Style.fontSizeL
-                    color: Color.mOnSurfaceVariant
+                    color: AtmoColor.mOnSurfaceVariant
                   }
                 }
 
@@ -708,11 +708,11 @@ Popup {
                   pointSize: Style.fontSizeXXL * 2
                   color: {
                     if (isSelected)
-                      return Color.mSecondary;
+                      return AtmoColor.mSecondary;
                     else if (gridMouseArea.containsMouse)
-                      return Color.mOnHover;
+                      return AtmoColor.mOnHover;
                     else
-                      return model.fileIsDir ? Color.mPrimary : Color.mOnSurfaceVariant;
+                      return model.fileIsDir ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant;
                   }
                   visible: !iconContainer.isImage || (thumbnail.status !== Image.Ready && thumbnail.status !== Image.Loading)
                 }
@@ -724,15 +724,15 @@ Popup {
                   width: Math.max(0, Math.min(24, parent.width - 2 * iconContainer.badgeInset, parent.height - 2 * iconContainer.badgeInset))
                   height: width
                   radius: Math.min(Style.iRadiusL, width / 2)
-                  color: Color.mSecondary
-                  border.color: Color.mOutline
+                  color: AtmoColor.mSecondary
+                  border.color: AtmoColor.mOutline
                   border.width: Style.borderS
                   visible: isSelected
                   FittedIcon {
                     anchors.fill: parent
                     icon: Icon.filepickerCheck
                     pointSize: Style.fontSizeS
-                    color: Color.mOnSecondary
+                    color: AtmoColor.mOnSecondary
                   }
                 }
               }
@@ -741,11 +741,11 @@ Popup {
                 text: model.fileName
                 color: {
                   if (isSelected)
-                    return Color.mSecondary;
+                    return AtmoColor.mSecondary;
                   else if (gridMouseArea.containsMouse)
-                    return Color.mOnHover;
+                    return AtmoColor.mOnHover;
                   else
-                    return Color.mOnSurfaceVariant;
+                    return AtmoColor.mOnSurfaceVariant;
                 }
                 pointSize: Style.fontSizeS
                 font.weight: isSelected ? Style.fontWeightBold : Style.fontWeightRegular
@@ -810,7 +810,7 @@ Popup {
           anchors.margins: Style.marginS
           model: filteredModel
           visible: !filePickerPanel.viewMode
-          gradientColor: Color.mSurface
+          gradientColor: AtmoColor.mSurface
 
           delegate: Rectangle {
             id: listItem
@@ -818,9 +818,9 @@ Popup {
             height: Math.ceil(listRow.implicitHeight + Style.margin2S)
             color: {
               if (filePickerPanel.currentSelection.includes(model.filePath))
-                return Color.mSecondary;
+                return AtmoColor.mSecondary;
               if (listMouseArea.containsMouse)
-                return Color.mHover;
+                return AtmoColor.mHover;
               return "transparent";
             }
             radius: Style.iRadiusS
@@ -843,12 +843,12 @@ Popup {
                 Layout.alignment: Qt.AlignVCenter
                 icon: model.fileIsDir ? "filepicker-folder" : root.getFileIcon(model.fileName)
                 pointSize: Style.fontSizeL
-                color: model.fileIsDir ? (filePickerPanel.currentSelection.includes(model.filePath) ? Color.mOnSecondary : Color.mPrimary) : Color.mOnSurfaceVariant
+                color: model.fileIsDir ? (filePickerPanel.currentSelection.includes(model.filePath) ? AtmoColor.mOnSecondary : AtmoColor.mPrimary) : AtmoColor.mOnSurfaceVariant
               }
 
               NText {
                 text: model.fileName
-                color: filePickerPanel.currentSelection.includes(model.filePath) ? Color.mOnSecondary : Color.mOnSurface
+                color: filePickerPanel.currentSelection.includes(model.filePath) ? AtmoColor.mOnSecondary : AtmoColor.mOnSurface
                 pointSize: Style.fontSizeM
                 font.weight: filePickerPanel.currentSelection.includes(model.filePath) ? Style.fontWeightBold : Style.fontWeightRegular
                 Layout.fillWidth: true
@@ -860,7 +860,7 @@ Popup {
               NText {
                 Layout.alignment: Qt.AlignVCenter
                 text: model.fileIsDir ? "" : root.formatFileSize(model.fileSize)
-                color: filePickerPanel.currentSelection.includes(model.filePath) ? Color.mOnSecondary : Color.mOnSurfaceVariant
+                color: filePickerPanel.currentSelection.includes(model.filePath) ? AtmoColor.mOnSecondary : AtmoColor.mOnSurfaceVariant
                 pointSize: Style.fontSizeS
                 visible: !model.fileIsDir
                 Layout.preferredWidth: implicitWidth
@@ -919,9 +919,9 @@ Popup {
           visible: root.pendingOverwrite !== ""
           Layout.fillWidth: true
           Layout.preferredHeight: 45
-          color: Color.mSurfaceVariant
+          color: AtmoColor.mSurfaceVariant
           radius: Style.iRadiusS
-          border.color: Color.mOutline
+          border.color: AtmoColor.mOutline
           border.width: Style.borderS
 
           RowLayout {
@@ -932,7 +932,7 @@ Popup {
 
             NText {
               text: I18n.tr("widgets.file-picker.overwrite-description")
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
               pointSize: Style.fontSizeS
               Layout.fillWidth: true
               elide: Text.ElideRight
@@ -953,9 +953,9 @@ Popup {
           visible: root.multiTarget && targetListModel.count > 0
           Layout.fillWidth: true
           Layout.preferredHeight: 90
-          color: Color.mSurface
+          color: AtmoColor.mSurface
           radius: Style.iRadiusM
-          border.color: Color.mOutline
+          border.color: AtmoColor.mOutline
           border.width: Style.borderS
 
           ListView {
@@ -980,11 +980,11 @@ Popup {
                   Layout.alignment: Qt.AlignVCenter
                   icon: "filepicker-file"
                   pointSize: Style.fontSizeS
-                  color: Color.mOnSurfaceVariant
+                  color: AtmoColor.mOnSurfaceVariant
                 }
                 NText {
                   text: model.filePath
-                  color: Color.mOnSurface
+                  color: AtmoColor.mOnSurface
                   pointSize: Style.fontSizeS
                   Layout.fillWidth: true
                   Layout.minimumWidth: 0
@@ -994,7 +994,7 @@ Popup {
                 NText {
                   Layout.alignment: Qt.AlignVCenter
                   text: model.exists ? I18n.tr("widgets.file-picker.target-list-overwrite") : ""
-                  color: Color.mSecondary
+                  color: AtmoColor.mSecondary
                   pointSize: Style.fontSizeS
                 }
               }
@@ -1026,7 +1026,7 @@ Popup {
                 return filteredModel.count + " " + (filteredModel.count === 1 ? I18n.tr("widgets.file-picker.item") : I18n.tr("widgets.file-picker.items"));
               }
             }
-            color: filePickerPanel.searchText.length > 0 ? Color.mPrimary : Color.mOnSurfaceVariant
+            color: filePickerPanel.searchText.length > 0 ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant
             pointSize: Style.fontSizeS
             Layout.fillWidth: true
           }

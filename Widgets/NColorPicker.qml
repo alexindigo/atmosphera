@@ -17,8 +17,8 @@ Rectangle {
   implicitHeight: Math.round(Style.baseWidgetSize * 1.1)
 
   radius: Style.iRadiusM
-  color: Color.mSurface
-  border.color: Color.mOutline
+  color: AtmoColor.mSurface
+  border.color: AtmoColor.mOutline
   border.width: Style.borderS
 
   // Minimized Look
@@ -54,7 +54,7 @@ Rectangle {
         Layout.preferredHeight: root.height * 0.6
         radius: Math.min(Style.iRadiusL, Layout.preferredWidth / 2)
         color: root.selectedColor
-        border.color: Color.mOutline
+        border.color: AtmoColor.mOutline
         border.width: Style.borderS
       }
 
@@ -67,7 +67,7 @@ Rectangle {
 
       AtmoIcon {
         icon: Icon.colorPicker
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignVCenter
       }

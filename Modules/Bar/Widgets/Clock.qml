@@ -45,7 +45,7 @@ Item {
   readonly property string formatVertical: widgetSettings.formatVertical !== undefined ? widgetSettings.formatVertical : widgetMetadata.formatVertical
   readonly property string tooltipFormat: widgetSettings.tooltipFormat !== undefined ? widgetSettings.tooltipFormat : widgetMetadata.tooltipFormat
 
-  readonly property color textColor: Color.resolveColorKey(clockColor)
+  readonly property color textColor: AtmoColor.resolveColorKey(clockColor)
 
   // Content dimensions for implicit sizing
   readonly property real contentWidth: isBarVertical ? capsuleHeight : Math.round((isBarVertical ? verticalLoader.implicitWidth : horizontalLoader.implicitWidth) + Style.margin2M)

@@ -85,7 +85,7 @@ Namespace `org.freedesktop.appearance`, keys:
   `u`-typed exactly — strict clients (libadwaita) validate the type and
   silently fall back on a mismatch.
 - `accent-color` (`(ddd)`): sRGB triple in `[0,1]`, sourced from
-  `Color.mPrimary`.
+  `AtmoColor.mPrimary`.
 
 Both keys are served spec-shaped in `Read`/`ReadOne`/`ReadAll` (the
 `a{sa{sv}}` reply shape comes from dbusqml's bundled

@@ -12,7 +12,7 @@ DraggableDesktopWidget {
   readonly property var now: Time.now
   readonly property var widgetMetadata: DesktopWidgetRegistry.widgetMetadata["Clock"]
 
-  readonly property color clockTextColor: Color.resolveColorKey(clockColor)
+  readonly property color clockTextColor: AtmoColor.resolveColorKey(clockColor)
   readonly property real fontSize: Math.round(Style.fontSizeXXXL * 2.5 * widgetScale)
   readonly property real widgetOpacity: widgetData.opacity !== undefined ? widgetData.opacity : 1.0
   readonly property string clockStyle: widgetData.clockStyle !== undefined ? widgetData.clockStyle : widgetMetadata.clockStyle
@@ -34,7 +34,7 @@ DraggableDesktopWidget {
       clockStyle: root.clockStyle
       backgroundColor: "transparent"
       clockColor: clockTextColor
-      progressColor: Color.mPrimary
+      progressColor: AtmoColor.mPrimary
       opacity: root.widgetOpacity
       height: Math.round(fontSize * 1.9)
       width: height

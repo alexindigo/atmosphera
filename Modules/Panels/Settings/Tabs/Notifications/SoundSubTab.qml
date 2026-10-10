@@ -31,7 +31,7 @@ ColumnLayout {
 
       AtmoIcon {
         icon: Icon.warning
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         pointSize: Style.fontSizeXL
         Layout.alignment: Qt.AlignVCenter
       }

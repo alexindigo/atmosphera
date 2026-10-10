@@ -145,8 +145,8 @@ Item {
 
     screen: root.screen
     oppositeDirection: BarService.getPillDirection(root)
-    customIconColor: Color.resolveColorKeyOptional(root.iconColorKey)
-    customTextColor: Color.resolveColorKeyOptional(root.textColorKey)
+    customIconColor: AtmoColor.resolveColorKeyOptional(root.iconColorKey)
+    customTextColor: AtmoColor.resolveColorKeyOptional(root.textColorKey)
     icon: AudioService.getOutputIcon()
     autoHide: false // Important to be false so we can hover as long as we want
     text: {

@@ -13,8 +13,8 @@ Item {
   property var currentKeybinds: []
   property string defaultKeybind: ""
   property bool allowEmpty: false
-  property color labelColor: Color.mOnSurface
-  property color descriptionColor: Color.mOnSurfaceVariant
+  property color labelColor: AtmoColor.mOnSurface
+  property color descriptionColor: AtmoColor.mOnSurfaceVariant
   property string settingsPath: ""
 
   property int maxKeybinds: 2
@@ -130,8 +130,8 @@ Item {
             id: slotBg
             anchors.fill: parent
             radius: Style.iRadiusS
-            color: root.hasConflict && slotArea.isRecordingThis ? Color.mError : (slotArea.isRecordingThis ? Color.mSecondary : (slotArea.containsMouse ? Qt.alpha(Color.mSecondary, 0.15) : Color.mSurface))
-            border.color: root.hasConflict && slotArea.isRecordingThis ? Color.mError : (slotArea.isRecordingThis ? Color.mPrimary : (slotArea.containsMouse ? Color.mSecondary : Color.mOutline))
+            color: root.hasConflict && slotArea.isRecordingThis ? AtmoColor.mError : (slotArea.isRecordingThis ? AtmoColor.mSecondary : (slotArea.containsMouse ? Qt.alpha(AtmoColor.mSecondary, 0.15) : AtmoColor.mSurface))
+            border.color: root.hasConflict && slotArea.isRecordingThis ? AtmoColor.mError : (slotArea.isRecordingThis ? AtmoColor.mPrimary : (slotArea.containsMouse ? AtmoColor.mSecondary : AtmoColor.mOutline))
             border.width: Style.borderS
 
             Behavior on color {
@@ -153,7 +153,7 @@ Item {
 
               AtmoIcon {
                 icon: root.hasConflict && slotArea.isRecordingThis ? "alert-circle" : (slotArea.isRecordingThis ? "circle-dot" : "keyboard")
-                color: slotArea.isRecordingThis ? Color.mOnSecondary : (slotArea.isOccupied ? Color.mOnSurfaceVariant : Qt.alpha(Color.mOnSurfaceVariant, 0.4))
+                color: slotArea.isRecordingThis ? AtmoColor.mOnSecondary : (slotArea.isOccupied ? AtmoColor.mOnSurfaceVariant : Qt.alpha(AtmoColor.mOnSurfaceVariant, 0.4))
                 opacity: 0.8
                 visible: !slotArea.isRecordingThis || root.hasConflict
               }
@@ -161,7 +161,7 @@ Item {
               NText {
                 Layout.fillWidth: true
                 text: slotArea.keybindText
-                color: slotArea.isRecordingThis ? Color.mOnSecondary : (slotArea.isOccupied ? Color.mOnSurface : Color.mOnSurfaceVariant)
+                color: slotArea.isRecordingThis ? AtmoColor.mOnSecondary : (slotArea.isOccupied ? AtmoColor.mOnSurface : AtmoColor.mOnSurfaceVariant)
                 font.family: slotArea.isOccupied && !slotArea.isRecordingThis ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
                 font.pointSize: slotArea.isOccupied ? Style.fontSizeM : Style.fontSizeS
                 font.weight: slotArea.isOccupied ? Style.fontWeightBold : Style.fontWeightRegular
@@ -179,9 +179,9 @@ Item {
                   visible: root.recordingIndex === -1 && (root.currentKeybinds.length > 1 || root.allowEmpty)
                   icon: Icon.close
                   colorBg: "transparent"
-                  colorBgHover: Qt.alpha(Color.mError, 0.1)
-                  colorFg: Color.mOnSurfaceVariant
-                  colorFgHover: Color.mError
+                  colorBgHover: Qt.alpha(AtmoColor.mError, 0.1)
+                  colorFg: AtmoColor.mOnSurfaceVariant
+                  colorFgHover: AtmoColor.mError
                   border.width: 0
                   baseSize: Style.baseWidgetSize * 0.7
                   onClicked: {

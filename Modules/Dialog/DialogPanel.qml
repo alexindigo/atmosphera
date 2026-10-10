@@ -112,9 +112,9 @@ PanelWindow {
 
     Rectangle {
       anchors.fill: parent
-      color: Color.mSurface
+      color: AtmoColor.mSurface
       radius: Style.radiusS
-      border.color: Color.mOutline
+      border.color: AtmoColor.mOutline
       border.width: Style.borderS
 
       ColumnLayout {
@@ -126,7 +126,7 @@ PanelWindow {
           text: root.dialogQuestion
           wrapMode: Text.WordWrap
           Layout.fillWidth: true
-          color: Color.mOnSurface
+          color: AtmoColor.mOnSurface
           font.pointSize: Style.fontSizeL
         }
 
@@ -164,7 +164,7 @@ PanelWindow {
 
                 Text {
                   text: modelData.label || ""
-                  color: Color.mOnSurfaceVariant
+                  color: AtmoColor.mOnSurfaceVariant
                   font.pointSize: Style.fontSizeXS
                   font.weight: Style.fontWeightMedium
                 }

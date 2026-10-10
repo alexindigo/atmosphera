@@ -21,7 +21,7 @@ Loader {
       property string preprocessedWallpaper: "" // Pre-resized wallpaper from Background.qml
       property bool isSolidColor: Settings.data.wallpaper.useSolidColor
       property color solidColor: Settings.data.wallpaper.solidColor
-      property color tintColor: Settings.data.colorSchemes.darkMode ? Color.mSurface : Color.mOnSurface
+      property color tintColor: Settings.data.colorSchemes.darkMode ? AtmoColor.mSurface : AtmoColor.mOnSurface
 
       visible: wallpaper !== "" || isSolidColor
 

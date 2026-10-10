@@ -179,13 +179,13 @@ Item {
     const baseColor = (function () {
       switch (colorName) {
       case "primary":
-        return Color.mPrimary;
+        return AtmoColor.mPrimary;
       case "secondary":
-        return Color.mSecondary;
+        return AtmoColor.mSecondary;
       case "tertiary":
-        return Color.mTertiary;
+        return AtmoColor.mTertiary;
       case "error":
-        return Color.mError;
+        return AtmoColor.mError;
       default:
         return null;
       }
@@ -197,7 +197,7 @@ Item {
   function _resolveIconColor(dynamicColorName, staticColorName, isHover) {
     if (dynamicColorName && dynamicColorName !== "") {
       if (dynamicColorName === "none") {
-        return isHover ? Color.mOnHover : Color.mOnSurface;
+        return isHover ? AtmoColor.mOnHover : AtmoColor.mOnSurface;
       }
       const color = _getColorValue(dynamicColorName, isHover);
       if (color !== null)
@@ -210,7 +210,7 @@ Item {
         return color;
     }
 
-    return isHover ? Color.mOnHover : Color.mOnSurface;
+    return isHover ? AtmoColor.mOnHover : AtmoColor.mOnSurface;
   }
 
   readonly property color iconColor: _resolveIconColor(_dynamicIconColor || _dynamicColor, colorizeSystemIcon, false)

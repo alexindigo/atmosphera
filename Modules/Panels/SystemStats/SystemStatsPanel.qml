@@ -50,14 +50,14 @@ SmartPanel {
           AtmoIcon {
             icon: Icon.systemStats
             pointSize: Style.fontSizeXXL
-            color: Color.mPrimary
+            color: AtmoColor.mPrimary
           }
 
           NText {
             text: I18n.tr("system-monitor.title")
             pointSize: Style.fontSizeL
             font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
+            color: AtmoColor.mOnSurface
             Layout.fillWidth: true
           }
 
@@ -90,26 +90,26 @@ SmartPanel {
             AtmoIcon {
               icon: Icon.cpuUsage
               pointSize: Style.fontSizeXS
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
             }
 
             NText {
               text: `${Math.round(SystemStatService.cpuUsage)}% (${SystemStatService.cpuFreq.replace(/[^0-9.]/g, "")} GHz)`
               pointSize: Style.fontSizeXS
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
               font.family: Settings.data.ui.fontFixed
             }
 
             AtmoIcon {
               icon: Icon.cpuTemperature
               pointSize: Style.fontSizeXS
-              color: Color.mSecondary
+              color: AtmoColor.mSecondary
             }
 
             NText {
               text: `${Math.round(SystemStatService.cpuTemp)}°C`
               pointSize: Style.fontSizeXS
-              color: Color.mSecondary
+              color: AtmoColor.mSecondary
               font.family: Settings.data.ui.fontFixed
               Layout.rightMargin: Style.marginS
             }
@@ -121,7 +121,7 @@ SmartPanel {
             NText {
               text: I18n.tr("system-monitor.cpu-usage")
               pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
           }
 
@@ -134,8 +134,8 @@ SmartPanel {
             maxValue: 100
             minValue2: Math.max(SystemStatService.cpuTempHistoryMin - 5, 0)
             maxValue2: Math.max(SystemStatService.cpuTempHistoryMax + 5, 1)
-            color: Color.mPrimary
-            color2: Color.mSecondary
+            color: AtmoColor.mPrimary
+            color2: AtmoColor.mSecondary
             strokeWidth: Math.max(1, Style.uiScaleRatio)
             fill: true
             fillOpacity: 0.15
@@ -162,13 +162,13 @@ SmartPanel {
             AtmoIcon {
               icon: Icon.systemMemory
               pointSize: Style.fontSizeXS
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
             }
 
             NText {
               text: `${Math.round(SystemStatService.memPercent)}% (${(SystemStatService.memGb).toFixed(1)} GiB)`
               pointSize: Style.fontSizeXS
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
               font.family: Settings.data.ui.fontFixed
             }
 
@@ -179,7 +179,7 @@ SmartPanel {
             NText {
               text: I18n.tr("common.memory")
               pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
           }
 
@@ -189,7 +189,7 @@ SmartPanel {
             values: SystemStatService.memHistory
             minValue: 0
             maxValue: 100
-            color: Color.mPrimary
+            color: AtmoColor.mPrimary
             strokeWidth: Math.max(1, Style.uiScaleRatio)
             fill: true
             fillOpacity: 0.15
@@ -216,13 +216,13 @@ SmartPanel {
             AtmoIcon {
               icon: Icon.networkDownload
               pointSize: Style.fontSizeXS
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
             }
 
             NText {
               text: SystemStatService.formatSpeed(SystemStatService.rxSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2") + "/s"
               pointSize: Style.fontSizeXS
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
               font.family: Settings.data.ui.fontFixed
               Layout.rightMargin: Style.marginS
             }
@@ -230,13 +230,13 @@ SmartPanel {
             AtmoIcon {
               icon: Icon.networkUpload
               pointSize: Style.fontSizeXS
-              color: Color.mSecondary
+              color: AtmoColor.mSecondary
             }
 
             NText {
               text: SystemStatService.formatSpeed(SystemStatService.txSpeed).replace(/([0-9.]+)([A-Za-z]+)/, "$1 $2") + "/s"
               pointSize: Style.fontSizeXS
-              color: Color.mSecondary
+              color: AtmoColor.mSecondary
               font.family: Settings.data.ui.fontFixed
             }
 
@@ -247,7 +247,7 @@ SmartPanel {
             NText {
               text: I18n.tr("common.network")
               pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
           }
 
@@ -260,8 +260,8 @@ SmartPanel {
             maxValue: SystemStatService.rxMaxSpeed
             minValue2: 0
             maxValue2: SystemStatService.txMaxSpeed
-            color: Color.mPrimary
-            color2: Color.mSecondary
+            color: AtmoColor.mPrimary
+            color2: AtmoColor.mSecondary
             strokeWidth: Math.max(1, Style.uiScaleRatio)
             fill: true
             fillOpacity: 0.15
@@ -293,19 +293,19 @@ SmartPanel {
             AtmoIcon {
               icon: Icon.cpuUsage
               pointSize: Style.fontSizeM
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
             }
 
             NText {
               text: I18n.tr("system-monitor.load-average") + ":"
               pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             NText {
               text: `${SystemStatService.loadAvg1.toFixed(2)} • ${SystemStatService.loadAvg5.toFixed(2)} • ${SystemStatService.loadAvg15.toFixed(2)}`
               pointSize: Style.fontSizeXS
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               Layout.fillWidth: true
               horizontalAlignment: Text.AlignRight
             }
@@ -320,19 +320,19 @@ SmartPanel {
             AtmoIcon {
               icon: Icon.gpuTemperature
               pointSize: Style.fontSizeM
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
             }
 
             NText {
               text: I18n.tr("system-monitor.gpu-temp") + ":"
               pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             NText {
               text: `${Math.round(SystemStatService.gpuTemp)}°C`
               pointSize: Style.fontSizeXS
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               Layout.fillWidth: true
               horizontalAlignment: Text.AlignRight
             }
@@ -347,19 +347,19 @@ SmartPanel {
             AtmoIcon {
               icon: Icon.cpuTemperature
               pointSize: Style.fontSizeM
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
             }
 
             NText {
               text: I18n.tr("system-monitor.cpu-hottest-core") + ":"
               pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             NText {
               text: `${SystemStatService.hottestCoreTemp}°C`
               pointSize: Style.fontSizeXS
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               Layout.fillWidth: true
               horizontalAlignment: Text.AlignRight
             }
@@ -374,19 +374,19 @@ SmartPanel {
             AtmoIcon {
               icon: Icon.fan
               pointSize: Style.fontSizeM
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
             }
 
             NText {
               text: I18n.tr("system-monitor.fan-speed") + ":"
               pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             NText {
               text: `${SystemStatService.fanRpm} RPM`
               pointSize: Style.fontSizeXS
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               Layout.fillWidth: true
               horizontalAlignment: Text.AlignRight
             }
@@ -404,13 +404,13 @@ SmartPanel {
               AtmoIcon {
                 icon: Icon.cpuTemperature
                 pointSize: Style.fontSizeM
-                color: Color.mPrimary
+                color: AtmoColor.mPrimary
               }
 
               NText {
                 text: (modelData.label || modelData.chip) + ":"
                 pointSize: Style.fontSizeXS
-                color: Color.mOnSurfaceVariant
+                color: AtmoColor.mOnSurfaceVariant
                 Layout.fillWidth: true
                 elide: Text.ElideRight
               }
@@ -418,7 +418,7 @@ SmartPanel {
               NText {
                 text: `${modelData.temp}°C` + (modelData.crit > 0 ? ` / ${modelData.crit}°C` : "")
                 pointSize: Style.fontSizeXS
-                color: modelData.crit > 0 && modelData.temp >= modelData.crit - Settings.data.hardwareHealth.warnOffsetC ? Color.mError : Color.mOnSurface
+                color: modelData.crit > 0 && modelData.temp >= modelData.crit - Settings.data.hardwareHealth.warnOffsetC ? AtmoColor.mError : AtmoColor.mOnSurface
                 horizontalAlignment: Text.AlignRight
               }
             }
@@ -432,13 +432,13 @@ SmartPanel {
             AtmoIcon {
               icon: Icon.systemStorage
               pointSize: Style.fontSizeM
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
             }
 
             NText {
               text: I18n.tr("system-monitor.disk") + ":"
               pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             NText {
@@ -449,7 +449,7 @@ SmartPanel {
                 return `${percent}% (${usedGb.toFixed(1)} / ${sizeGb.toFixed(1)} GB)`;
               }
               pointSize: Style.fontSizeXS
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               Layout.fillWidth: true
               horizontalAlignment: Text.AlignRight
               elide: Text.ElideMiddle
@@ -465,19 +465,19 @@ SmartPanel {
             AtmoIcon {
               icon: Icon.systemSwap
               pointSize: Style.fontSizeM
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
             }
 
             NText {
               text: I18n.tr("bar.system-monitor.swap-usage-label") + ":"
               pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             NText {
               text: `${(SystemStatService.swapGb).toFixed(1)} / ${(SystemStatService.swapTotalGb).toFixed(1)} GiB`
               pointSize: Style.fontSizeXS
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               Layout.fillWidth: true
               horizontalAlignment: Text.AlignRight
             }

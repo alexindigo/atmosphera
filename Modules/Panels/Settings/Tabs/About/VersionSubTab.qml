@@ -423,7 +423,7 @@ ColumnLayout {
         // Installed Version (Shell)
         NText {
           text: "Atmosphera:"
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
           Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
         }
 
@@ -432,7 +432,7 @@ ColumnLayout {
 
           NText {
             text: root.displayVersion
-            color: Color.mOnSurface
+            color: AtmoColor.mOnSurface
             font.weight: Style.fontWeightBold
           }
 
@@ -441,7 +441,7 @@ ColumnLayout {
             id: commitText
             visible: root.isGitVersion
             text: "(" + (root.commitDisplay || I18n.tr("common.loading")) + ")"
-            color: commitMouseArea.containsMouse ? Color.mPrimary : Color.mOnSurfaceVariant
+            color: commitMouseArea.containsMouse ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant
             pointSize: Style.fontSizeXS
             font.underline: commitMouseArea.containsMouse && root.commitDisplay
 
@@ -470,7 +470,7 @@ ColumnLayout {
             visible: root.isUpToDate
             icon: Icon.success
             pointSize: Style.fontSizeM
-            color: Color.mPrimary
+            color: AtmoColor.mPrimary
 
             MouseArea {
               anchors.fill: parent
@@ -485,7 +485,7 @@ ColumnLayout {
             visible: root.updateAvailable
             icon: Icon.upload
             pointSize: Style.fontSizeS
-            color: Color.mPrimary
+            color: AtmoColor.mPrimary
 
             MouseArea {
               anchors.fill: parent
@@ -500,14 +500,14 @@ ColumnLayout {
         NText {
           visible: root.updateAvailable
           text: I18n.tr("panels.about.atmosphera-available")
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
           Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
         }
 
         NText {
           visible: root.updateAvailable
           text: root.latestVersion
-          color: Color.mOnSurface
+          color: AtmoColor.mOnSurface
           font.weight: Style.fontWeightBold
         }
 
@@ -522,7 +522,7 @@ ColumnLayout {
         NText {
           visible: root.qsVersion !== ""
           text: "Noctalia QS:"
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
           Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
         }
 
@@ -532,7 +532,7 @@ ColumnLayout {
 
           NText {
             text: root.qsVersion.startsWith("v") ? root.qsVersion : "v" + root.qsVersion
-            color: Color.mOnSurface
+            color: AtmoColor.mOnSurface
             font.weight: Style.fontWeightBold
           }
 
@@ -541,7 +541,7 @@ ColumnLayout {
             id: qsRevisionText
             visible: root.qsRevision !== ""
             text: "(" + root.qsRevision + ")"
-            color: qsRevisionMouseArea.containsMouse ? Color.mPrimary : Color.mOnSurfaceVariant
+            color: qsRevisionMouseArea.containsMouse ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant
             pointSize: Style.fontSizeXS
             font.underline: qsRevisionMouseArea.containsMouse
 
@@ -564,7 +564,7 @@ ColumnLayout {
             visible: root.qsIsUpToDate
             icon: Icon.success
             pointSize: Style.fontSizeM
-            color: Color.mPrimary
+            color: AtmoColor.mPrimary
 
             MouseArea {
               anchors.fill: parent
@@ -579,7 +579,7 @@ ColumnLayout {
             visible: root.qsUpdateAvailable
             icon: Icon.upload
             pointSize: Style.fontSizeS
-            color: Color.mPrimary
+            color: AtmoColor.mPrimary
 
             MouseArea {
               anchors.fill: parent
@@ -594,14 +594,14 @@ ColumnLayout {
         NText {
           visible: root.qsUpdateAvailable
           text: I18n.tr("panels.about.atmosphera-available")
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
           Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
         }
 
         NText {
           visible: root.qsUpdateAvailable
           text: Version.latestQSVersion
-          color: Color.mOnSurface
+          color: AtmoColor.mOnSurface
           font.weight: Style.fontWeightBold
         }
       }
@@ -655,12 +655,12 @@ ColumnLayout {
 
     NText {
       text: I18n.tr("panels.about.system-not-installed")
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
     }
 
     NText {
       text: I18n.tr("panels.about.system-install-hint")
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
       pointSize: Style.fontSizeXS
     }
   }
@@ -679,7 +679,7 @@ ColumnLayout {
     // OS
     NText {
       text: I18n.tr("panels.about.system-os")
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
       pointSize: sysInfo.textSize
     }
     NText {
@@ -687,7 +687,7 @@ ColumnLayout {
         const os = root.getModule("OS");
         return os?.result?.prettyName || "N/A";
       }
-      color: Color.mOnSurface
+      color: AtmoColor.mOnSurface
       pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
@@ -696,7 +696,7 @@ ColumnLayout {
     // Kernel
     NText {
       text: I18n.tr("panels.about.system-kernel")
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
       pointSize: sysInfo.textSize
     }
     NText {
@@ -704,7 +704,7 @@ ColumnLayout {
         const kernel = root.getModule("Kernel");
         return kernel?.result?.release || "N/A";
       }
-      color: Color.mOnSurface
+      color: AtmoColor.mOnSurface
       pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
@@ -713,7 +713,7 @@ ColumnLayout {
     // Host
     NText {
       text: I18n.tr("panels.about.system-host")
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
       pointSize: sysInfo.textSize
     }
     NText {
@@ -721,7 +721,7 @@ ColumnLayout {
         const title = root.getModule("Title");
         return title?.result?.hostName || "N/A";
       }
-      color: Color.mOnSurface
+      color: AtmoColor.mOnSurface
       pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
@@ -730,7 +730,7 @@ ColumnLayout {
     // Product name
     NText {
       text: I18n.tr("panels.about.system-product")
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
       pointSize: sysInfo.textSize
     }
     NText {
@@ -738,7 +738,7 @@ ColumnLayout {
         const title = root.getModule("Host");
         return title?.result?.name || "N/A";
       }
-      color: Color.mOnSurface
+      color: AtmoColor.mOnSurface
       pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
@@ -747,7 +747,7 @@ ColumnLayout {
     // Board name
     NText {
       text: I18n.tr("panels.about.system-board")
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
       pointSize: sysInfo.textSize
     }
     NText {
@@ -755,7 +755,7 @@ ColumnLayout {
         const title = root.getModule("Board");
         return title?.result?.name || "N/A";
       }
-      color: Color.mOnSurface
+      color: AtmoColor.mOnSurface
       pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
@@ -764,7 +764,7 @@ ColumnLayout {
     // Uptime
     NText {
       text: I18n.tr("panels.about.system-uptime")
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
       pointSize: sysInfo.textSize
     }
     NText {
@@ -772,7 +772,7 @@ ColumnLayout {
         const value = root.getModule("Uptime")?.result?.uptime;
         return value ? Time.formatVagueHumanReadableDuration(value / 1000) : "-";
       }
-      color: Color.mOnSurface
+      color: AtmoColor.mOnSurface
       pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
@@ -781,7 +781,7 @@ ColumnLayout {
     // CPU
     NText {
       text: I18n.tr("panels.about.system-cpu")
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
       pointSize: sysInfo.textSize
     }
     NText {
@@ -796,7 +796,7 @@ ColumnLayout {
         }
         return cpuText;
       }
-      color: Color.mOnSurface
+      color: AtmoColor.mOnSurface
       pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
@@ -805,7 +805,7 @@ ColumnLayout {
     // GPU
     NText {
       text: I18n.tr("panels.about.system-gpu")
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
       pointSize: sysInfo.textSize
     }
     NText {
@@ -815,7 +815,7 @@ ColumnLayout {
           return "N/A";
         return gpu.result.map(g => g.name || "Unknown").join(", ");
       }
-      color: Color.mOnSurface
+      color: AtmoColor.mOnSurface
       pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
@@ -824,7 +824,7 @@ ColumnLayout {
     // Memory
     NText {
       text: I18n.tr("panels.about.system-memory")
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
       pointSize: sysInfo.textSize
     }
     NText {
@@ -836,7 +836,7 @@ ColumnLayout {
         const total = (mem.result.total / root.gigaB).toFixed(1);
         return used + " GiB / " + total + " GiB";
       }
-      color: Color.mOnSurface
+      color: AtmoColor.mOnSurface
       pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
@@ -845,7 +845,7 @@ ColumnLayout {
     // Disk
     NText {
       text: I18n.tr("panels.about.system-disk")
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
       pointSize: sysInfo.textSize
     }
     NText {
@@ -860,7 +860,7 @@ ColumnLayout {
         const total = (rootDisk.bytes.total / root.gigaD).toFixed(1);
         return used + " GB / " + total + " GB" + " (" + rootDisk.filesystem + ")";
       }
-      color: Color.mOnSurface
+      color: AtmoColor.mOnSurface
       pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
@@ -869,7 +869,7 @@ ColumnLayout {
     // WM
     NText {
       text: I18n.tr("panels.about.system-wm")
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
       pointSize: sysInfo.textSize
     }
     NText {
@@ -883,7 +883,7 @@ ColumnLayout {
         }
         return wmText;
       }
-      color: Color.mOnSurface
+      color: AtmoColor.mOnSurface
       pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
@@ -892,7 +892,7 @@ ColumnLayout {
     // Packages
     NText {
       text: I18n.tr("panels.about.system-packages")
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
       pointSize: sysInfo.textSize
     }
     NText {
@@ -928,7 +928,7 @@ ColumnLayout {
         }
         return "N/A";
       }
-      color: Color.mOnSurface
+      color: AtmoColor.mOnSurface
       pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
@@ -952,7 +952,7 @@ ColumnLayout {
           const scaleValue = (typeof scaleData === "object" && scaleData !== null) ? (scaleData.scale || 1.0) : (scaleData || 1.0);
           return name + ": " + (screen?.width || 0) + "x" + (screen?.height || 0) + " @ " + scaleValue + "x";
         }
-        color: isLabel ? Color.mOnSurfaceVariant : Color.mOnSurface
+        color: isLabel ? AtmoColor.mOnSurfaceVariant : AtmoColor.mOnSurface
         pointSize: sysInfo.textSize
         Layout.fillWidth: !isLabel
         wrapMode: Text.Wrap
@@ -973,7 +973,7 @@ ColumnLayout {
   Rectangle {
     Layout.fillWidth: true
     Layout.preferredHeight: privacyText.implicitHeight + Style.margin2M
-    color: Color.mSurfaceVariant
+    color: AtmoColor.mSurfaceVariant
     radius: Style.radiusL
 
     NText {
@@ -982,7 +982,7 @@ ColumnLayout {
       width: parent.width - Style.margin2L
       text: I18n.tr("common.privacy-no-telemetry") + "\n" + I18n.tr("common.feedback-use-github")
       pointSize: Style.fontSizeM
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
       horizontalAlignment: Text.AlignHCenter
       wrapMode: Text.WordWrap
     }

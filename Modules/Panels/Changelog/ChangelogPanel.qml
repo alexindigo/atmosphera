@@ -18,9 +18,9 @@ SmartPanel {
 
   panelContent: Rectangle {
     id: panelContent
-    color: Color.mSurfaceVariant
+    color: AtmoColor.mSurfaceVariant
     radius: Style.radiusM
-    border.color: Color.mOutline
+    border.color: AtmoColor.mOutline
     border.width: Style.borderS
 
     ColumnLayout {

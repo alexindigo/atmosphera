@@ -12,7 +12,7 @@ Item {
   property var icon: ""
   property string suffix: "%"
   property real contentScale: 1.0
-  property color fillColor: Color.mPrimary
+  property color fillColor: AtmoColor.mPrimary
   property var tooltipText
   property string tooltipDirection: "top"
 
@@ -105,7 +105,7 @@ Item {
       ctx.lineCap = Settings.data.general.iRadiusRatio > 0 ? "round" : "butt";
 
       // Track uses outline for contrast against surfaceVariant backgrounds
-      ctx.strokeStyle = Color.mSurface;
+      ctx.strokeStyle = AtmoColor.mSurface;
       ctx.beginPath();
       ctx.arc(cx, cy, r, start, endBg);
       ctx.stroke();

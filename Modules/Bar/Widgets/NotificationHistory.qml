@@ -38,7 +38,7 @@ AtmoIconButton {
   readonly property string unreadBadgeColor: widgetSettings.unreadBadgeColor !== undefined ? widgetSettings.unreadBadgeColor : widgetMetadata.unreadBadgeColor
   readonly property string iconColorKey: widgetSettings.iconColor !== undefined ? widgetSettings.iconColor : widgetMetadata.iconColor
 
-  readonly property color badgeColor: Color.resolveColorKey(unreadBadgeColor)
+  readonly property color badgeColor: AtmoColor.resolveColorKey(unreadBadgeColor)
 
   function computeUnreadCount() {
     var since = NotificationService.lastSeenTs;
@@ -68,7 +68,7 @@ AtmoIconButton {
   }
   tooltipDirection: BarService.getTooltipDirection(screen?.name)
   colorBg: Style.capsuleColor
-  colorFg: Color.resolveColorKey(iconColorKey)
+  colorFg: AtmoColor.resolveColorKey(iconColorKey)
   border.color: Style.capsuleBorderColor
   border.width: Style.capsuleBorderWidth
   visible: !((hideWhenZero && NotificationService.historyModel.count === 0) || (hideWhenZeroUnread && count === 0))
@@ -128,8 +128,8 @@ AtmoIconButton {
       height: 7
       width: height
       radius: Style.radiusXS
-      color: root.hovering ? Color.mOnHover : (root.badgeColor || Color.mError)
-      border.color: Color.mSurface
+      color: root.hovering ? AtmoColor.mOnHover : (root.badgeColor || AtmoColor.mError)
+      border.color: AtmoColor.mSurface
       border.width: Style.borderS
       visible: count > 0
     }

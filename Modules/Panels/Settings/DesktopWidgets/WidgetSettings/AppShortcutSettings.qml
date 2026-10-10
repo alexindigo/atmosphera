@@ -291,7 +291,7 @@ ColumnLayout {
   NLabel {
     visible: root.isCreateMode && root.valueTerminalMode && TerminalRegistry.workingDirectoryArg(root.valueAppId)
     label: "Working directory"
-    labelColor: Color.mOnSurface
+    labelColor: AtmoColor.mOnSurface
     description: I18n.tr("panels.desktop-widgets.app-shortcut-working-directory-description")
   }
 
@@ -421,9 +421,9 @@ ColumnLayout {
     }
 
     background: Rectangle {
-      color: Color.mSurface
+      color: AtmoColor.mSurface
       radius: Style.iRadiusL
-      border.color: Color.mPrimary
+      border.color: AtmoColor.mPrimary
       border.width: Style.borderM
     }
 
@@ -437,7 +437,7 @@ ColumnLayout {
           text: I18n.tr("panels.desktop-widgets.app-shortcut-icon-icons-picker-title")
           pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
-          color: Color.mPrimary
+          color: AtmoColor.mPrimary
           Layout.fillWidth: true
         }
         AtmoIconButton {
@@ -469,14 +469,14 @@ ColumnLayout {
         cellHeight: iconsPicker._cellH
         model: iconsPicker._filteredIcons
         reserveScrollbarSpace: false
-        gradientColor: Color.mSurface
+        gradientColor: AtmoColor.mSurface
 
         delegate: Rectangle {
           width: grid.cellWidth
           height: grid.cellHeight
           radius: Style.iRadiusS
-          color: (iconsPicker._selectedPath === modelData.path) ? Qt.alpha(Color.mPrimary, 0.15) : "transparent"
-          border.color: (iconsPicker._selectedPath === modelData.path) ? Color.mPrimary : "transparent"
+          color: (iconsPicker._selectedPath === modelData.path) ? Qt.alpha(AtmoColor.mPrimary, 0.15) : "transparent"
+          border.color: (iconsPicker._selectedPath === modelData.path) ? AtmoColor.mPrimary : "transparent"
           border.width: (iconsPicker._selectedPath === modelData.path) ? Style.borderS : 0
 
           MouseArea {
@@ -513,7 +513,7 @@ ColumnLayout {
               wrapMode: Text.NoWrap
               maximumLineCount: 1
               horizontalAlignment: Text.AlignHCenter
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
               pointSize: Style.fontSizeXS
               text: modelData.name
             }

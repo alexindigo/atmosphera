@@ -24,9 +24,9 @@ ColumnLayout {
     id: headerContainer
     Layout.fillWidth: true
     Layout.preferredHeight: headerContent.implicitHeight + Style.margin2M
-    color: root.expanded ? Color.mSecondary : Color.mPrimary
+    color: root.expanded ? AtmoColor.mSecondary : AtmoColor.mPrimary
     radius: Style.iRadiusM
-    border.color: root.expanded ? Color.mOnSecondary : Color.mOutline
+    border.color: root.expanded ? AtmoColor.mOnSecondary : AtmoColor.mOutline
     border.width: Style.borderS
 
     // Smooth color transitions
@@ -61,7 +61,7 @@ ColumnLayout {
       // Hover effect overlay
       Rectangle {
         anchors.fill: parent
-        color: headerArea.containsMouse ? Color.mOnSurface : "transparent"
+        color: headerArea.containsMouse ? AtmoColor.mOnSurface : "transparent"
         opacity: headerArea.containsMouse ? 0.08 : 0
         radius: headerContainer.radius // Reference the container's radius directly
 
@@ -84,7 +84,7 @@ ColumnLayout {
         id: chevronIcon
         icon: Icon.chevronRight
         pointSize: Style.fontSizeL
-        color: root.expanded ? Color.mOnSecondary : Color.mOnPrimary
+        color: root.expanded ? AtmoColor.mOnSecondary : AtmoColor.mOnPrimary
         Layout.alignment: Qt.AlignVCenter
 
         rotation: root.expanded ? 90 : 0
@@ -114,7 +114,7 @@ ColumnLayout {
           text: root.label
           pointSize: Style.fontSizeL
           font.weight: Style.fontWeightSemiBold
-          color: root.expanded ? Color.mOnSecondary : Color.mOnPrimary
+          color: root.expanded ? AtmoColor.mOnSecondary : AtmoColor.mOnPrimary
           wrapMode: Text.WordWrap
 
           Behavior on color {
@@ -129,7 +129,7 @@ ColumnLayout {
           text: root.description
           pointSize: Style.fontSizeS
           font.weight: Style.fontWeightRegular
-          color: root.expanded ? Color.mOnSecondary : Color.mOnPrimary
+          color: root.expanded ? AtmoColor.mOnSecondary : AtmoColor.mOnPrimary
           Layout.fillWidth: true
           wrapMode: Text.WordWrap
           visible: root.description !== ""
@@ -153,9 +153,9 @@ ColumnLayout {
     Layout.topMargin: Style.marginS
 
     visible: root.expanded
-    color: Color.mSurface
+    color: AtmoColor.mSurface
     radius: Style.iRadiusL
-    border.color: Color.mOutline
+    border.color: AtmoColor.mOutline
     border.width: Style.borderS
 
     // Dynamic height based on content

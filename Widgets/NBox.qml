@@ -8,7 +8,7 @@ import qs.Commons
 Item {
   id: root
 
-  property color color: Color.mSurfaceVariant
+  property color color: AtmoColor.mSurfaceVariant
   property bool forceOpaque: false
   property alias radius: bg.radius
   property alias border: bg.border
@@ -24,7 +24,7 @@ Item {
         return root.color;
       }
 
-      return Color.smartAlpha(root.color);
+      return AtmoColor.smartAlpha(root.color);
     }
   }
 }

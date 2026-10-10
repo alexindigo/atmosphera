@@ -97,7 +97,7 @@ NBox {
     // Solid color background (always present as base layer)
     Rectangle {
       anchors.fill: parent
-      color: Settings.data.wallpaper.useSolidColor ? Settings.data.wallpaper.solidColor : Color.mSurface
+      color: Settings.data.wallpaper.useSolidColor ? Settings.data.wallpaper.solidColor : AtmoColor.mSurface
     }
 
     // Background image that covers everything
@@ -121,7 +121,7 @@ NBox {
     // Dark overlay for readability
     Rectangle {
       anchors.fill: parent
-      color: Color.mSurface
+      color: AtmoColor.mSurface
       opacity: 0.65
       radius: Style.radiusM
     }
@@ -158,7 +158,7 @@ NBox {
         NLinearSpectrum {
           anchors.fill: parent
           values: SpectrumService.values
-          fillColor: Color.mPrimary
+          fillColor: AtmoColor.mPrimary
           opacity: 0.8
           mirrored: Settings.data.audio.spectrumMirrored
         }
@@ -169,7 +169,7 @@ NBox {
         NMirroredSpectrum {
           anchors.fill: parent
           values: SpectrumService.values
-          fillColor: Color.mPrimary
+          fillColor: AtmoColor.mPrimary
           opacity: 0.8
           mirrored: Settings.data.audio.spectrumMirrored
         }
@@ -180,7 +180,7 @@ NBox {
         NWaveSpectrum {
           anchors.fill: parent
           values: SpectrumService.values
-          fillColor: Color.mPrimary
+          fillColor: AtmoColor.mPrimary
           opacity: 0.8
           mirrored: Settings.data.audio.spectrumMirrored
         }
@@ -211,13 +211,13 @@ NBox {
       AtmoIcon {
         icon: Icon.caretDown
         pointSize: Style.fontSizeXXL
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
       }
 
       NText {
         text: playerSelectorButton.currentPlayer ? playerSelectorButton.currentPlayer.identity : ""
         pointSize: Style.fontSizeXS
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         Layout.fillWidth: true
       }
     }
@@ -273,7 +273,7 @@ NBox {
       visible: !root.hasActivePlayer && SpectrumService.isIdle
       icon: "disc"
       pointSize: Style.fontSizeXXXL * 3
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
       opacity: 1.0
     }
 
@@ -330,7 +330,7 @@ NBox {
             NText {
               visible: MediaService.trackArtist !== ""
               text: MediaService.trackArtist
-              color: Color.mSecondary
+              color: AtmoColor.mSecondary
               pointSize: Style.fontSizeS
               elide: Text.ElideRight
               Layout.fillWidth: true
@@ -339,7 +339,7 @@ NBox {
             NText {
               visible: MediaService.trackAlbum !== ""
               text: MediaService.trackAlbum
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
               pointSize: Style.fontSizeM
               elide: Text.ElideRight
               Layout.fillWidth: true

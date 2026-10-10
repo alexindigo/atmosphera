@@ -10,7 +10,7 @@ Item {
 
   property var screen
   property string resolvedWallpaperPath: ""
-  property color fallbackColor: Color.mSurface
+  property color fallbackColor: AtmoColor.mSurface
 
   Component.onCompleted: {
     if (screen) {

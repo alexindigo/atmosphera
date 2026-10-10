@@ -48,7 +48,7 @@ Item {
   readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth || 0, screen ? screen.width * 0.06 : 0)
   readonly property bool useFixedWidth: (widgetSettings.useFixedWidth !== undefined) ? widgetSettings.useFixedWidth : (widgetMetadata.useFixedWidth || false)
   readonly property string textColorKey: (widgetSettings.textColor !== undefined) ? widgetSettings.textColor : widgetMetadata.textColor
-  readonly property color textColor: Color.resolveColorKey(textColorKey)
+  readonly property color textColor: AtmoColor.resolveColorKey(textColorKey)
 
   readonly property string barPosition: Settings.getBarPositionForScreen(screenName)
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
@@ -240,7 +240,7 @@ Item {
             // Apply dock shader to active window icon (always themed)
             layer.enabled: widgetSettings.colorizeIcons !== false
             layer.effect: ShaderEffect {
-              property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
+              property color targetColor: Settings.data.colorSchemes.darkMode ? AtmoColor.mOnSurface : AtmoColor.mSurfaceVariant
               property real colorizeMode: 0.0 // Dock mode (grayscale)
 
               fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
@@ -312,7 +312,7 @@ Item {
             // Apply dock shader to active window icon (always themed)
             layer.enabled: widgetSettings.colorizeIcons !== false
             layer.effect: ShaderEffect {
-              property color targetColor: Color.mOnSurface
+              property color targetColor: AtmoColor.mOnSurface
               property real colorizeMode: 0.0 // Dock mode (grayscale)
 
               fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")

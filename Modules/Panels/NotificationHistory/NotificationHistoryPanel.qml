@@ -395,14 +395,14 @@ SmartPanel {
             AtmoIcon {
               icon: Icon.bell
               pointSize: Style.fontSizeXXL
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
             }
 
             NText {
               text: I18n.tr("common.notifications")
               pointSize: Style.fontSizeL
               font.weight: Style.fontWeightBold
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               Layout.fillWidth: true
             }
 
@@ -498,7 +498,7 @@ SmartPanel {
           horizontalPolicy: ScrollBar.AlwaysOff
           verticalPolicy: ScrollBar.AsNeeded
           reserveScrollbarSpace: false
-          gradientColor: Color.mSurface
+          gradientColor: AtmoColor.mSurface
 
           // Track which notification is expanded
           property string expandedId: ""
@@ -526,14 +526,14 @@ SmartPanel {
                 AtmoIcon {
                   icon: Icon.bellOff
                   pointSize: (NotificationService.historyModel.count === 0) ? 48 : Style.baseWidgetSize
-                  color: Color.mOnSurfaceVariant
+                  color: AtmoColor.mOnSurfaceVariant
                   Layout.alignment: Qt.AlignHCenter
                 }
 
                 NText {
                   text: I18n.tr("notifications.panel.no-notifications")
                   pointSize: (NotificationService.historyModel.count === 0) ? Style.fontSizeL : Style.fontSizeM
-                  color: Color.mOnSurfaceVariant
+                  color: AtmoColor.mOnSurfaceVariant
                   Layout.alignment: Qt.AlignHCenter
                 }
 
@@ -541,7 +541,7 @@ SmartPanel {
                   visible: NotificationService.historyModel.count === 0
                   text: I18n.tr("notifications.panel.description")
                   pointSize: Style.fontSizeS
-                  color: Color.mOnSurfaceVariant
+                  color: AtmoColor.mOnSurfaceVariant
                   horizontalAlignment: Text.AlignHCenter
                   Layout.fillWidth: true
                   wrapMode: Text.WordWrap
@@ -700,12 +700,12 @@ SmartPanel {
                     Rectangle {
                       anchors.fill: parent
                       radius: Style.radiusM
-                      color: Color.mSurfaceVariant
+                      color: AtmoColor.mSurfaceVariant
                       border.color: {
                         if (notificationDelegate.isFocused)
-                          return Color.mPrimary;
+                          return AtmoColor.mPrimary;
                         if (Settings.data.ui.boxBorderEnabled)
-                          return Qt.alpha(Color.mOutline, Style.opacityHeavy);
+                          return Qt.alpha(AtmoColor.mOutline, Style.opacityHeavy);
                         return "transparent";
                       }
                       border.width: notificationDelegate.isFocused ? Style.borderM : Style.borderS
@@ -879,9 +879,9 @@ SmartPanel {
                               visible: model.urgency !== 1
                               color: {
                                 if (model.urgency === 2)
-                                  return Color.mError;
+                                  return AtmoColor.mError;
                                 else if (model.urgency === 0)
-                                  return Color.mOnSurfaceVariant;
+                                  return AtmoColor.mOnSurfaceVariant;
                                 else
                                   return "transparent";
                               }
@@ -891,14 +891,14 @@ SmartPanel {
                               text: model.appName || "Unknown App"
                               pointSize: Style.fontSizeXS
                               font.weight: Style.fontWeightBold
-                              color: Color.mSecondary
+                              color: AtmoColor.mSecondary
                             }
 
                             NText {
                               textFormat: Text.PlainText
                               text: " " + Time.formatRelativeTime(model.timestamp)
                               pointSize: Style.fontSizeXXS
-                              color: Color.mOnSurfaceVariant
+                              color: AtmoColor.mOnSurfaceVariant
                               anchors.bottom: parent.bottom
                             }
                           }
@@ -909,7 +909,7 @@ SmartPanel {
                             width: parent.width
                             text: (Settings.data.notifications.enableMarkdown && notificationDelegate.isExpanded) ? (model.summaryMarkdown || I18n.tr("common.no-summary")) : (model.summary || I18n.tr("common.no-summary"))
                             pointSize: Style.fontSizeM
-                            color: Color.mOnSurface
+                            color: AtmoColor.mOnSurface
                             textFormat: notificationDelegate.notificationTextFormat
                             wrapMode: Text.Wrap
                             maximumLineCount: notificationDelegate.isExpanded ? 999 : 2
@@ -922,7 +922,7 @@ SmartPanel {
                             width: parent.width
                             text: (Settings.data.notifications.enableMarkdown && notificationDelegate.isExpanded) ? (model.bodyMarkdown || "") : (model.body || "")
                             pointSize: Style.fontSizeS
-                            color: Color.mOnSurfaceVariant
+                            color: AtmoColor.mOnSurfaceVariant
                             textFormat: notificationDelegate.notificationTextFormat
                             wrapMode: Text.Wrap
                             maximumLineCount: notificationDelegate.isExpanded ? 999 : 3
@@ -946,8 +946,8 @@ SmartPanel {
                                 readonly property bool actionNavActive: notificationDelegate.isFocused && panelContent.actionIndex !== -1
                                 readonly property bool isSelected: actionNavActive && panelContent.actionIndex === index
 
-                                backgroundColor: isSelected ? Color.mSecondary : Color.mPrimary
-                                textColor: isSelected ? Color.mOnSecondary : Color.mOnPrimary
+                                backgroundColor: isSelected ? AtmoColor.mSecondary : AtmoColor.mPrimary
+                                textColor: isSelected ? AtmoColor.mOnSecondary : AtmoColor.mOnPrimary
 
                                 outlined: false
                                 implicitHeight: 24

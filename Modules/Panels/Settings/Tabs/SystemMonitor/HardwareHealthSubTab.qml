@@ -117,7 +117,7 @@ ColumnLayout {
     Layout.fillWidth: true
     visible: SystemStatService.sensors.length > 0 || SystemStatService.fans.length > 0
     implicitHeight: sensorsCol.implicitHeight + Style.margin2L
-    color: Color.mSurface
+    color: AtmoColor.mSurface
     clip: true
 
     ColumnLayout {
@@ -139,12 +139,12 @@ ColumnLayout {
           NText {
             Layout.fillWidth: true
             text: (modelData.label || modelData.chip)
-            color: Color.mOnSurface
+            color: AtmoColor.mOnSurface
             elide: Text.ElideRight
           }
           NText {
             text: modelData.temp + " °C" + (modelData.crit > 0 ? "  /  " + I18n.tr("panels.hardware-health.sensor-crit") + " " + modelData.crit + " °C" : "")
-            color: modelData.crit > 0 && modelData.temp >= modelData.crit - Settings.data.hardwareHealth.warnOffsetC ? Color.mError : Color.mOutline
+            color: modelData.crit > 0 && modelData.temp >= modelData.crit - Settings.data.hardwareHealth.warnOffsetC ? AtmoColor.mError : AtmoColor.mOutline
           }
         }
       }
@@ -157,12 +157,12 @@ ColumnLayout {
           NText {
             Layout.fillWidth: true
             text: modelData.label || modelData.chip
-            color: Color.mOnSurface
+            color: AtmoColor.mOnSurface
             elide: Text.ElideRight
           }
           NText {
             text: modelData.rpm + " RPM"
-            color: Color.mOutline
+            color: AtmoColor.mOutline
           }
         }
       }

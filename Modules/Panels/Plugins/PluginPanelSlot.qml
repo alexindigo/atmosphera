@@ -45,7 +45,7 @@ SmartPanel {
   blurEnabled: pluginInstance?.blurEnabled ?? true
 
   // Panel background color
-  panelBackgroundColor: pluginInstance?.panelBackgroundColor ?? Color.mSurface
+  panelBackgroundColor: pluginInstance?.panelBackgroundColor ?? AtmoColor.mSurface
 
   // Panel content is dynamically loaded
   panelContent: Component {

@@ -26,7 +26,7 @@ Item {
     // For vertical dock, swap width and height logic
     width: dockRoot.isVertical ? Math.round(dockRoot.iconSize * 1.5) : Math.min(dockLayout.implicitWidth + Style.marginXL, dockRoot.maxWidth)
     height: dockRoot.isVertical ? Math.min(dockLayout.implicitHeight + Style.marginXL, dockRoot.maxHeight) : Math.round(dockRoot.iconSize * 1.5)
-    color: Qt.alpha(Color.mSurface, (isAttachedMode ? 0 : Color.adaptiveOpacity(Settings.data.dock.backgroundOpacity)))
+    color: Qt.alpha(AtmoColor.mSurface, (isAttachedMode ? 0 : AtmoColor.adaptiveOpacity(Settings.data.dock.backgroundOpacity)))
 
     // Anchor based on padding to achieve centering shift
     anchors.horizontalCenter: extraLeft > 0 || extraRight > 0 ? undefined : parent.horizontalCenter
@@ -39,7 +39,7 @@ Item {
 
     radius: Style.radiusL
     border.width: Style.borderS
-    border.color: Qt.alpha(Color.mOutline, (isAttachedMode ? 0 : Color.adaptiveOpacity(Settings.data.dock.backgroundOpacity)))
+    border.color: Qt.alpha(AtmoColor.mOutline, (isAttachedMode ? 0 : AtmoColor.adaptiveOpacity(Settings.data.dock.backgroundOpacity)))
 
     MouseArea {
       id: dockMouseArea
@@ -282,7 +282,7 @@ Item {
                 anchors.centerIn: parent
                 icon: launcherButton.launcherIcon
                 pointSize: dockRoot.iconSize * 0.7
-                color: Color.resolveColorKey(launcherButton.launcherIconColorKey)
+                color: AtmoColor.resolveColorKey(launcherButton.launcherIconColorKey)
                 visible: !launcherButton.launcherUseDistroLogo
               }
 
@@ -296,7 +296,7 @@ Item {
                 asynchronous: true
                 layer.enabled: visible
                 layer.effect: ShaderEffect {
-                  property color targetColor: Color.resolveColorKey(launcherButton.launcherIconColorKey)
+                  property color targetColor: AtmoColor.resolveColorKey(launcherButton.launcherIconColorKey)
                   property real colorizeMode: 2.0
 
                   fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
@@ -582,7 +582,7 @@ Item {
                 layer.enabled: !appButton.isActive && Settings.data.dock.colorizeIcons
                 layer.smooth: true
                 layer.effect: ShaderEffect {
-                  property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
+                  property color targetColor: Settings.data.colorSchemes.darkMode ? AtmoColor.mOnSurface : AtmoColor.mSurfaceVariant
                   property real colorizeMode: 0.0 // Dock mode (grayscale)
 
                   fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
@@ -602,7 +602,7 @@ Item {
                 visible: !appIcon.visible
                 icon: Icon.questionMark
                 pointSize: dockRoot.iconSize * 0.7
-                color: appButton.isActive ? Color.mPrimary : Color.mOnSurfaceVariant
+                color: appButton.isActive ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant
                 opacity: appButton.isRunning ? 1.0 : 0.6
 
                 Behavior on opacity {
@@ -774,7 +774,7 @@ Item {
               visible: baseIndicatorVisible && !showGroupedIndicator
               width: dockRoot.isVertical ? indicatorMargin * 0.6 : dockRoot.iconSize * 0.2
               height: dockRoot.isVertical ? dockRoot.iconSize * 0.2 : indicatorMargin * 0.6
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
               radius: Style.radiusXS
 
               // Anchor to the edge facing the screen center
@@ -814,8 +814,8 @@ Item {
               id: groupNumberIndicatorComponent
               Rectangle {
                 radius: Style.radiusS
-                color: Qt.alpha(Color.mSurface, 0.9)
-                border.color: Qt.alpha(Color.mOutline, 0.7)
+                color: Qt.alpha(AtmoColor.mSurface, 0.9)
+                border.color: Qt.alpha(AtmoColor.mOutline, 0.7)
                 border.width: Style.borderS
                 width: Math.max(14, numberLabel.implicitWidth + Style.marginXS)
                 height: Math.max(10, numberLabel.implicitHeight + 2)
@@ -825,7 +825,7 @@ Item {
                   anchors.centerIn: parent
                   text: appButton.groupedIndicatorText
                   pointSize: Style.fontSizeXS
-                  color: appButton.focusedWindowIndex >= 0 ? Color.mPrimary : Color.mOnSurfaceVariant
+                  color: appButton.focusedWindowIndex >= 0 ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant
                 }
               }
             }
@@ -863,7 +863,7 @@ Item {
                     radius: width / 2
                     x: dockRoot.isVertical ? Math.round((parent.dotSize - width) / 2) : (index * parent.pitch + Math.round((parent.dotSize - width) / 2))
                     y: dockRoot.isVertical ? (index * parent.pitch + Math.round((parent.dotSize - width) / 2)) : Math.round((parent.dotSize - width) / 2)
-                    color: isFocusedDot ? Color.mPrimary : Qt.alpha(Color.mOutline, 0.9)
+                    color: isFocusedDot ? AtmoColor.mPrimary : Qt.alpha(AtmoColor.mOutline, 0.9)
                     opacity: isOverflowHint && !isFocusedDot ? 0.55 : 1.0
                   }
                 }

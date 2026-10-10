@@ -59,8 +59,8 @@ ColumnLayout {
         delegate: Rectangle {
           required property string modelData
           property real pad: Style.marginS
-          color: Qt.alpha(Color.mOnSurface, 0.125)
-          border.color: Qt.alpha(Color.mOnSurface, Style.opacityLight)
+          color: Qt.alpha(AtmoColor.mOnSurface, 0.125)
+          border.color: Qt.alpha(AtmoColor.mOnSurface, Style.opacityLight)
           border.width: Style.borderS
 
           RowLayout {
@@ -71,7 +71,7 @@ ColumnLayout {
 
             NText {
               text: modelData
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               pointSize: Style.fontSizeS
               Layout.alignment: Qt.AlignVCenter
               Layout.leftMargin: Style.marginS

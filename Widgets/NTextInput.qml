@@ -11,8 +11,8 @@ ColumnLayout {
   property string description: ""
   property string inputIconName: ""
   property bool readOnly: false
-  property color labelColor: Color.mOnSurface
-  property color descriptionColor: Color.mOnSurfaceVariant
+  property color labelColor: AtmoColor.mOnSurface
+  property color descriptionColor: AtmoColor.mOnSurfaceVariant
   property string fontFamily: Settings.data.ui.fontDefault
   property real fontSize: Style.fontSizeS
   property int fontWeight: Style.fontWeightRegular
@@ -67,8 +67,8 @@ ColumnLayout {
       id: frame
 
       radius: root.radius
-      color: Color.mSurface
-      border.color: input.activeFocus ? Color.mSecondary : Color.mOutline
+      color: AtmoColor.mSurface
+      border.color: input.activeFocus ? AtmoColor.mSecondary : AtmoColor.mOutline
       border.width: Style.borderS
 
       Behavior on border.color {
@@ -151,8 +151,8 @@ ColumnLayout {
 
             echoMode: TextInput.Normal
             readOnly: root.readOnly
-            placeholderTextColor: Qt.alpha(Color.mOnSurfaceVariant, 0.6)
-            color: enabled ? Color.mOnSurface : Qt.alpha(Color.mOnSurface, 0.4)
+            placeholderTextColor: Qt.alpha(AtmoColor.mOnSurfaceVariant, 0.6)
+            color: enabled ? AtmoColor.mOnSurface : Qt.alpha(AtmoColor.mOnSurface, 0.4)
 
             selectByMouse: true
 
@@ -220,8 +220,8 @@ ColumnLayout {
 
             colorBg: "transparent"
             colorBgHover: "transparent"
-            colorFg: Color.mOnSurface
-            colorFgHover: Color.mError
+            colorFg: AtmoColor.mOnSurface
+            colorFgHover: AtmoColor.mError
 
             visible: root.showClearButton && input.text.length > 0 && !root.readOnly
             enabled: input.text.length > 0 && !root.readOnly && root.enabled

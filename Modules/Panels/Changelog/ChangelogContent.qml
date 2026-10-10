@@ -18,7 +18,7 @@ ColumnLayout {
   function colorizeHeaders(text) {
     if (!text)
       return "";
-    const color = Color.mPrimary;
+    const color = AtmoColor.mPrimary;
     return text.replace(/^# (.*)$/gm, `<br/><h1 style="color:${color}">$1</h1><br/>`).replace(/^## (.*)$/gm, `<br/><h2 style="color:${color}">$1</h2><br/>`);
   }
 
@@ -32,7 +32,7 @@ ColumnLayout {
 
     AtmoIcon {
       icon: Icon.changelog
-      color: Color.mPrimary
+      color: AtmoColor.mPrimary
       pointSize: Style.fontSizeXXL
     }
 
@@ -46,13 +46,13 @@ ColumnLayout {
                       })
         pointSize: Style.fontSizeXL
         font.weight: Style.fontWeightBold
-        color: Color.mPrimary
+        color: AtmoColor.mPrimary
         wrapMode: Text.WordWrap
       }
 
       NText {
         text: subtitleText
-        color: Color.mOnSurface
+        color: AtmoColor.mOnSurface
         opacity: Style.opacityMedium
         wrapMode: Text.WordWrap
       }
@@ -62,9 +62,9 @@ ColumnLayout {
   Rectangle {
     clip: true
     Layout.fillWidth: true
-    color: Qt.alpha(Color.mPrimary, 0.08)
+    color: Qt.alpha(AtmoColor.mPrimary, 0.08)
     radius: Style.radiusS
-    border.color: Color.mPrimary
+    border.color: AtmoColor.mPrimary
     border.width: Style.borderS
 
     RowLayout {
@@ -75,18 +75,18 @@ ColumnLayout {
       NText {
         text: hasPreviousVersion ? previousVersion : I18n.tr("changelog.panel.version-new-user")
         font.weight: Style.fontWeightSemiBold
-        color: Color.mPrimary
+        color: AtmoColor.mPrimary
       }
 
       AtmoIcon {
         icon: Icon.uiArrowRight
-        color: Color.mPrimary
+        color: AtmoColor.mPrimary
       }
 
       NText {
         text: currentVersion || Version.currentVersion
         font.weight: Style.fontWeightSemiBold
-        color: Color.mPrimary
+        color: AtmoColor.mPrimary
       }
     }
   }
@@ -110,7 +110,7 @@ ColumnLayout {
       NText {
         visible: Version.fetchError !== ""
         text: Version.fetchError
-        color: Color.mError
+        color: AtmoColor.mError
         wrapMode: Text.WordWrap
       }
 
@@ -121,13 +121,13 @@ ColumnLayout {
         wrapMode: Text.WordWrap
         elide: Text.ElideNone
         textFormat: Text.MarkdownText
-        color: Color.mOnSurface
+        color: AtmoColor.mOnSurface
       }
 
       NText {
         visible: releaseContent.length === 0
         text: I18n.tr("changelog.panel.empty")
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         wrapMode: Text.WordWrap
       }
     }

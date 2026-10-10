@@ -176,7 +176,7 @@ ColumnLayout {
         Layout.leftMargin: Style.borderS
         Layout.rightMargin: Style.borderS
         implicitHeight: Math.round(contentColumn.implicitHeight + Style.margin2L)
-        color: Color.mSurface
+        color: AtmoColor.mSurface
 
         ColumnLayout {
           id: contentColumn
@@ -191,19 +191,19 @@ ColumnLayout {
             AtmoIcon {
               icon: Icon.plugin
               pointSize: Style.fontSizeL
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
             }
 
             NText {
               text: modelData.name
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
               elide: Text.ElideRight
             }
 
             // Official badge (Noctalia Team maintained)
             Rectangle {
               visible: modelData.official === true
-              color: Color.mSecondary
+              color: AtmoColor.mSecondary
               radius: Style.radiusXS
               implicitWidth: officialBadgeRow.implicitWidth + Style.margin2S
               implicitHeight: officialBadgeRow.implicitHeight + Style.margin2XS
@@ -216,14 +216,14 @@ ColumnLayout {
                 AtmoIcon {
                   icon: Icon.officialPlugin
                   pointSize: Style.fontSizeXXS
-                  color: Color.mOnSecondary
+                  color: AtmoColor.mOnSecondary
                 }
 
                 NText {
                   text: I18n.tr("common.official")
                   font.pointSize: Style.fontSizeXXS
                   font.weight: Style.fontWeightMedium
-                  color: Color.mOnSecondary
+                  color: AtmoColor.mOnSecondary
                 }
               }
             }
@@ -248,7 +248,7 @@ ColumnLayout {
             AtmoIcon {
               icon: Icon.success
               pointSize: Style.baseWidgetSize * 0.5
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
               visible: modelData.downloaded === true
             }
 
@@ -274,7 +274,7 @@ ColumnLayout {
             visible: modelData.description
             text: modelData.description || ""
             font.pointSize: Style.fontSizeXS
-            color: Color.mOnSurface
+            color: AtmoColor.mOnSurface
             wrapMode: Text.WordWrap
             maximumLineCount: 2
             elide: Text.ElideRight
@@ -289,45 +289,45 @@ ColumnLayout {
             NText {
               text: "v" + modelData.version
               font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             NText {
               text: "•"
               font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             NText {
               text: stripAuthorEmail(modelData.author)
               font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             NText {
               text: "•"
               font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             NText {
               text: modelData.source ? modelData.source.name : ""
               font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             NText {
               visible: !!modelData.lastUpdated
               text: "•"
               font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             NText {
               visible: !!modelData.lastUpdated
               text: modelData.lastUpdated ? Time.formatRelativeTime(new Date(modelData.lastUpdated)) : ""
               font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             Item {

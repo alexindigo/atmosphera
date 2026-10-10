@@ -28,9 +28,9 @@ Popup {
   }
 
   background: Rectangle {
-    color: Color.mSurface
+    color: AtmoColor.mSurface
     radius: Style.radiusL
-    border.color: Color.mOutline
+    border.color: AtmoColor.mOutline
     border.width: Style.borderM
   }
 
@@ -127,7 +127,7 @@ Popup {
             anchors.margins: 2
             width: 3 * Style.uiScaleRatio
             radius: 2
-            color: Color.mSecondary
+            color: AtmoColor.mSecondary
           }
 
           RowLayout {
@@ -143,12 +143,12 @@ Popup {
               radius: Style.radiusS
               color: root.getColor(colorKey) || "transparent"
               border.width: 1
-              border.color: Color.mOutline
+              border.color: AtmoColor.mOutline
             }
 
             NText {
               text: colorName
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               pointSize: Style.fontSizeM
               Layout.preferredWidth: 100 * Style.uiScaleRatio
               elide: Text.ElideRight
@@ -156,7 +156,7 @@ Popup {
 
             Text {
               text: colorKey
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
               font.pointSize: Style.fontSizeXS
               font.family: "monospace"
               Layout.preferredWidth: 100 * Style.uiScaleRatio
@@ -170,13 +170,13 @@ Popup {
               Layout.preferredHeight: 28 * Style.uiScaleRatio
               font.family: "monospace"
               font.pointSize: Style.fontSizeS
-              color: Color.mOnSurface
-              placeholderTextColor: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurface
+              placeholderTextColor: AtmoColor.mOnSurfaceVariant
               background: Rectangle {
-                color: Color.mSurfaceVariant
+                color: AtmoColor.mSurfaceVariant
                 radius: Style.radiusS
                 border.width: 1
-                border.color: Color.mOutline
+                border.color: AtmoColor.mOutline
               }
               onEditingFinished: {
                 var t = text.trim();
@@ -214,7 +214,7 @@ Popup {
             hoverEnabled: true
             acceptedButtons: Qt.NoButton
             propagateComposedEvents: true
-            onEntered: parent.color = Qt.alpha(Color.mHover, 0.1)
+            onEntered: parent.color = Qt.alpha(AtmoColor.mHover, 0.1)
             onExited: parent.color = "transparent"
           }
         }
@@ -253,7 +253,7 @@ Popup {
         text: I18n.tr("panels.color-scheme.customize-title")
         pointSize: Style.fontSizeXL
         font.weight: Style.fontWeightBold
-        color: Color.mOnSurface
+        color: AtmoColor.mOnSurface
         Layout.fillWidth: true
       }
 
@@ -267,7 +267,7 @@ Popup {
     Rectangle {
       Layout.fillWidth: true
       Layout.preferredHeight: 1
-      color: Color.mOutline
+      color: AtmoColor.mOutline
     }
 
     NToggle {
@@ -284,7 +284,7 @@ Popup {
       Layout.fillWidth: true
       Layout.fillHeight: true
       horizontalPolicy: ScrollBar.AlwaysOff
-      gradientColor: Color.mSurface
+      gradientColor: AtmoColor.mSurface
 
       Loader {
         id: colorListLoader
@@ -297,7 +297,7 @@ Popup {
     Rectangle {
       Layout.fillWidth: true
       Layout.preferredHeight: 1
-      color: Color.mOutline
+      color: AtmoColor.mOutline
     }
 
     RowLayout {

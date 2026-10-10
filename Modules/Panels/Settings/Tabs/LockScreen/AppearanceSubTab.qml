@@ -87,7 +87,7 @@ ColumnLayout {
     Text {
       Layout.fillWidth: true
       text: I18n.tr("panels.lock-screen.behavior-command-note")
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
       font.pointSize: Style.fontSizeXS
       wrapMode: Text.WordWrap
     }

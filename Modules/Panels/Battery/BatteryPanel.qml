@@ -90,7 +90,7 @@ SmartPanel {
 
           AtmoIcon {
             pointSize: Style.fontSizeXXL
-            color: (BatteryService.isCharging(primaryDevice) || BatteryService.isCharged(primaryDevice)) ? Color.mPrimary : (BatteryService.isCriticalBattery(primaryDevice) || BatteryService.isLowBattery(primaryDevice)) ? Color.mError : Color.mOnSurface
+            color: (BatteryService.isCharging(primaryDevice) || BatteryService.isCharged(primaryDevice)) ? AtmoColor.mPrimary : (BatteryService.isCriticalBattery(primaryDevice) || BatteryService.isLowBattery(primaryDevice)) ? AtmoColor.mError : AtmoColor.mOnSurface
             icon: BatteryService.getIcon(BatteryService.getPercentage(primaryDevice), BatteryService.isCharging(primaryDevice), BatteryService.isCharged(primaryDevice), BatteryService.isDeviceReady(primaryDevice))
           }
 
@@ -102,7 +102,7 @@ SmartPanel {
               text: I18n.tr("common.battery")
               pointSize: Style.fontSizeL
               font.weight: Style.fontWeightBold
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               Layout.fillWidth: true
               elide: Text.ElideRight
             }
@@ -156,13 +156,13 @@ SmartPanel {
 
                         AtmoIcon {
                           icon: BatteryService.getIcon(BatteryService.getPercentage(modelData), BatteryService.isCharging(modelData), BatteryService.isCharged(modelData), BatteryService.isDeviceReady(modelData))
-                          color: (BatteryService.isCharging(modelData) || BatteryService.isCharged(modelData)) ? Color.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? Color.mError : Color.mOnSurface
+                          color: (BatteryService.isCharging(modelData) || BatteryService.isCharged(modelData)) ? AtmoColor.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? AtmoColor.mError : AtmoColor.mOnSurface
                         }
 
                         NText {
                           readonly property string dName: BatteryService.getDeviceName(modelData)
                           text: dName ? dName : I18n.tr("common.battery")
-                          color: (BatteryService.isCharging(modelData) || BatteryService.isCharged(modelData)) ? Color.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? Color.mError : Color.mOnSurface
+                          color: (BatteryService.isCharging(modelData) || BatteryService.isCharged(modelData)) ? AtmoColor.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? AtmoColor.mError : AtmoColor.mOnSurface
                           pointSize: Style.fontSizeS
                         }
                       }
@@ -186,7 +186,7 @@ SmartPanel {
                     NText {
                       text: BatteryService.getTimeRemainingText(modelData)
                       pointSize: Style.fontSizeS
-                      color: Color.mOnSurfaceVariant
+                      color: AtmoColor.mOnSurfaceVariant
                     }
                   }
 
@@ -197,7 +197,7 @@ SmartPanel {
                       Layout.fillWidth: true
                       height: Math.round(8 * Style.uiScaleRatio)
                       radius: Math.min(Style.radiusL, height / 2)
-                      color: Color.mSurface
+                      color: AtmoColor.mSurface
 
                       Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
@@ -208,7 +208,7 @@ SmartPanel {
                           var ratio = Math.max(0, Math.min(1, p / 100));
                           return parent.width * ratio;
                         }
-                        color: Color.mPrimary
+                        color: AtmoColor.mPrimary
                       }
                     }
 
@@ -216,7 +216,7 @@ SmartPanel {
                       Layout.preferredWidth: 40 * Style.uiScaleRatio
                       horizontalAlignment: Text.AlignRight
                       text: `${BatteryService.getPercentage(modelData)}%`
-                      color: (BatteryService.isCharging(modelData) || BatteryService.isCharged(modelData)) ? Color.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? Color.mError : Color.mOnSurface
+                      color: (BatteryService.isCharging(modelData) || BatteryService.isCharged(modelData)) ? AtmoColor.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? AtmoColor.mError : AtmoColor.mOnSurface
                       pointSize: Style.fontSizeS
                       font.weight: Style.fontWeightBold
                     }
@@ -243,13 +243,13 @@ SmartPanel {
 
                 AtmoIcon {
                   icon: BluetoothService.getDeviceIcon(modelData)
-                  color: (BatteryService.isCharging(modelData) || BatteryService.isCharged(modelData)) ? Color.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? Color.mError : Color.mOnSurface
+                  color: (BatteryService.isCharging(modelData) || BatteryService.isCharged(modelData)) ? AtmoColor.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? AtmoColor.mError : AtmoColor.mOnSurface
                 }
 
                 NText {
                   readonly property string dName: BatteryService.getDeviceName(modelData)
                   text: dName ? dName : I18n.tr("common.bluetooth")
-                  color: (BatteryService.isCharging(modelData) || BatteryService.isCharged(modelData)) ? Color.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? Color.mError : Color.mOnSurface
+                  color: (BatteryService.isCharging(modelData) || BatteryService.isCharged(modelData)) ? AtmoColor.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? AtmoColor.mError : AtmoColor.mOnSurface
                   pointSize: Style.fontSizeS
                 }
               }
@@ -261,7 +261,7 @@ SmartPanel {
                   Layout.fillWidth: true
                   height: Math.round(8 * Style.uiScaleRatio)
                   radius: Math.min(Style.radiusL, height / 2)
-                  color: Color.mSurface
+                  color: AtmoColor.mSurface
 
                   Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
@@ -272,7 +272,7 @@ SmartPanel {
                       var ratio = Math.max(0, Math.min(1, p / 100));
                       return parent.width * ratio;
                     }
-                    color: Color.mPrimary
+                    color: AtmoColor.mPrimary
                   }
                 }
 
@@ -280,7 +280,7 @@ SmartPanel {
                   Layout.preferredWidth: 40 * Style.uiScaleRatio
                   horizontalAlignment: Text.AlignRight
                   text: `${BatteryService.getPercentage(modelData)}%`
-                  color: (BatteryService.isCharging(modelData) || BatteryService.isCharged(modelData)) ? Color.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? Color.mError : Color.mOnSurface
+                  color: (BatteryService.isCharging(modelData) || BatteryService.isCharged(modelData)) ? AtmoColor.mPrimary : (BatteryService.isCriticalBattery(modelData) || BatteryService.isLowBattery(modelData)) ? AtmoColor.mError : AtmoColor.mOnSurface
                   pointSize: Style.fontSizeS
                   font.weight: Style.fontWeightBold
                 }
@@ -311,13 +311,13 @@ SmartPanel {
               NText {
                 text: I18n.tr("battery.power-profile")
                 font.weight: Style.fontWeightBold
-                color: Color.mOnSurface
+                color: AtmoColor.mOnSurface
                 Layout.fillWidth: true
               }
 
               NText {
                 text: PowerProfileService.getName(profileIndex)
-                color: Color.mOnSurfaceVariant
+                color: AtmoColor.mOnSurfaceVariant
               }
             }
 
@@ -347,20 +347,20 @@ SmartPanel {
               AtmoIcon {
                 icon: Icon.powersaver
                 pointSize: Style.fontSizeS
-                color: PowerProfileService.getIcon() === "powersaver" ? Color.mPrimary : Color.mOnSurfaceVariant
+                color: PowerProfileService.getIcon() === "powersaver" ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant
               }
 
               AtmoIcon {
                 icon: Icon.balanced
                 pointSize: Style.fontSizeS
-                color: PowerProfileService.getIcon() === "balanced" ? Color.mPrimary : Color.mOnSurfaceVariant
+                color: PowerProfileService.getIcon() === "balanced" ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant
                 Layout.fillWidth: true
               }
 
               AtmoIcon {
                 icon: Icon.performance
                 pointSize: Style.fontSizeS
-                color: PowerProfileService.getIcon() === "performance" ? Color.mPrimary : Color.mOnSurfaceVariant
+                color: PowerProfileService.getIcon() === "performance" ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant
               }
             }
           }
@@ -379,14 +379,14 @@ SmartPanel {
               text: I18n.tr("toast.atmosphera-performance.label")
               pointSize: Style.fontSizeM
               font.weight: Style.fontWeightBold
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               Layout.fillWidth: true
             }
 
             AtmoIcon {
               icon: PowerProfileService.atmospheraPerformanceMode ? "rocket" : "rocket-off"
               pointSize: Style.fontSizeL
-              color: PowerProfileService.atmospheraPerformanceMode ? Color.mPrimary : Color.mOnSurfaceVariant
+              color: PowerProfileService.atmospheraPerformanceMode ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant
             }
 
             NToggle {

@@ -11,7 +11,7 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
-  readonly property color launcherPreviewColor: Color.resolveColorKey((Settings.data.dock.launcherIconColor !== undefined) ? Settings.data.dock.launcherIconColor : "none")
+  readonly property color launcherPreviewColor: AtmoColor.resolveColorKey((Settings.data.dock.launcherIconColor !== undefined) ? Settings.data.dock.launcherIconColor : "none")
 
   NToggle {
     Layout.fillWidth: true
@@ -389,8 +389,8 @@ ColumnLayout {
         width: Style.toOdd(Style.baseWidgetSize * Style.uiScaleRatio)
         height: width
         radius: Math.min(Style.iRadiusL, width / 2)
-        color: Color.smartAlpha(Color.mSurfaceVariant)
-        border.color: Color.mOutline
+        color: AtmoColor.smartAlpha(AtmoColor.mSurfaceVariant)
+        border.color: AtmoColor.mOutline
         border.width: Style.borderS
 
         Image {

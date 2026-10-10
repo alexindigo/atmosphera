@@ -17,14 +17,14 @@ Item {
   property bool showProgress: true
 
   // Color properties
-  property color backgroundColor: Color.mPrimary
-  property color clockColor: Color.mOnPrimary
+  property color backgroundColor: AtmoColor.mPrimary
+  property color clockColor: AtmoColor.mOnPrimary
 
   property color secondHandColor: {
-    var defaultColor = Color.mError;
+    var defaultColor = AtmoColor.mError;
     var bestContrast = 1.0; // 1.0 is "no contrast"
     var bestColor = defaultColor;
-    var candidates = [Color.mSecondary, Color.mTertiary, Color.mError];
+    var candidates = [AtmoColor.mSecondary, AtmoColor.mTertiary, AtmoColor.mError];
 
     const minContrast = 1.149;
 
@@ -132,9 +132,9 @@ Item {
   // Analog Clock Component
   component NClockAnalog: Item {
     property var now
-    property color backgroundColor: Color.mPrimary
-    property color clockColor: Color.mOnPrimary
-    property color secondHandColor: Color.mError
+    property color backgroundColor: AtmoColor.mPrimary
+    property color clockColor: AtmoColor.mOnPrimary
+    property color secondHandColor: AtmoColor.mError
     property real scaleRatio: Style.uiScaleRatio
     anchors.fill: parent
 
@@ -233,9 +233,9 @@ Item {
   // Digital Clock Component
   component NClockDigital: Item {
     property var now
-    property color backgroundColor: Color.mPrimary
-    property color clockColor: Color.mOnPrimary
-    property color progressColor: Color.mError
+    property color backgroundColor: AtmoColor.mPrimary
+    property color clockColor: AtmoColor.mOnPrimary
+    property color progressColor: AtmoColor.mError
     property real hoursFontSize: Style.fontSizeXS
     property real minutesFontSize: Style.fontSizeXXS
     property int hoursFontWeight: Style.fontWeightBold
@@ -316,7 +316,7 @@ Item {
   component NClockBinary: Item {
     property var now
     property color backgroundColor
-    property color clockColor: Color.mOnPrimary
+    property color clockColor: AtmoColor.mOnPrimary
 
     anchors.fill: parent
 

@@ -102,7 +102,7 @@ NBox {
         text: I18n.locale.monthName(root.calendarMonth, Locale.LongFormat).toUpperCase() + " " + root.calendarYear
         pointSize: Style.fontSizeM
         font.weight: Style.fontWeightBold
-        color: Color.mOnSurface
+        color: AtmoColor.mOnSurface
       }
 
       NDivider {
@@ -159,7 +159,7 @@ NBox {
                 const dayName = I18n.locale.dayName(dayIndex, Locale.ShortFormat);
                 return dayName.substring(0, 2).toUpperCase();
               }
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
               pointSize: Style.fontSizeS
               font.weight: Style.fontWeightBold
               horizontalAlignment: Text.AlignHCenter
@@ -210,11 +210,11 @@ NBox {
 
       function getEventColor(event, isToday) {
         if (isMultiDayEvent(event)) {
-          return isToday ? Color.mOnSecondary : Color.mTertiary;
+          return isToday ? AtmoColor.mOnSecondary : AtmoColor.mTertiary;
         } else if (root.isAllDayEvent(event)) {
-          return isToday ? Color.mOnSecondary : Color.mSecondary;
+          return isToday ? AtmoColor.mOnSecondary : AtmoColor.mSecondary;
         } else {
-          return isToday ? Color.mOnSecondary : Color.mPrimary;
+          return isToday ? AtmoColor.mOnSecondary : AtmoColor.mPrimary;
         }
       }
 
@@ -258,7 +258,7 @@ NBox {
 
             NText {
               anchors.centerIn: parent
-              color: Qt.alpha(Color.mPrimary, 0.7)
+              color: Qt.alpha(AtmoColor.mPrimary, 0.7)
               pointSize: Style.fontSizeXXS
               text: modelData
             }
@@ -342,17 +342,17 @@ NBox {
               height: Style.baseWidgetSize * 0.9
               anchors.centerIn: parent
               radius: Style.radiusM
-              color: modelData.today ? Color.mSecondary : "transparent"
+              color: modelData.today ? AtmoColor.mSecondary : "transparent"
 
               NText {
                 anchors.centerIn: parent
                 text: modelData.day
                 color: {
                   if (modelData.today)
-                    return Color.mOnSecondary;
+                    return AtmoColor.mOnSecondary;
                   if (modelData.currentMonth)
-                    return Color.mOnSurface;
-                  return Color.mOnSurfaceVariant;
+                    return AtmoColor.mOnSurface;
+                  return AtmoColor.mOnSurfaceVariant;
                 }
                 opacity: modelData.currentMonth ? 1.0 : 0.4
                 pointSize: Style.fontSizeM

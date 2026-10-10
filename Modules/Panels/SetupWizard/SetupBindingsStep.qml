@@ -28,8 +28,8 @@ ColumnLayout {
       Layout.fillWidth: true
       Layout.preferredHeight: 80
       radius: Style.radiusL
-      color: root.selection === modelData.value ? (Color.mPrimaryContainer || "transparent") : (Color.mSurfaceVariant || "transparent")
-      border.color: root.selection === modelData.value ? (Color.mPrimary || "transparent") : (Color.mOutline || "transparent")
+      color: root.selection === modelData.value ? (AtmoColor.mPrimaryContainer || "transparent") : (AtmoColor.mSurfaceVariant || "transparent")
+      border.color: root.selection === modelData.value ? (AtmoColor.mPrimary || "transparent") : (AtmoColor.mOutline || "transparent")
       border.width: root.selection === modelData.value ? 2 : 1
 
       MouseArea {
@@ -52,7 +52,7 @@ ColumnLayout {
           height: 20
           radius: width / 2
           color: "transparent"
-          border.color: root.selection === modelData.value ? Color.mPrimary : Color.mOutline
+          border.color: root.selection === modelData.value ? AtmoColor.mPrimary : AtmoColor.mOutline
           border.width: 2
 
           Rectangle {
@@ -60,7 +60,7 @@ ColumnLayout {
             width: 10
             height: 10
             radius: width / 2
-            color: Color.mPrimary
+            color: AtmoColor.mPrimary
             visible: root.selection === modelData.value
           }
         }
@@ -73,13 +73,13 @@ ColumnLayout {
             text: modelData.label
             pointSize: Style.fontSizeM
             font.weight: Style.fontWeightBold
-            color: Color.mPrimary
+            color: AtmoColor.mPrimary
           }
 
           NText {
             text: modelData.description
             pointSize: Style.fontSizeS
-            color: Color.mOnSurfaceVariant
+            color: AtmoColor.mOnSurfaceVariant
             wrapMode: Text.WordWrap
             Layout.fillWidth: true
           }

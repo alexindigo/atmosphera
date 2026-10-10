@@ -42,9 +42,9 @@ Popup {
   }
 
   background: Rectangle {
-    color: Color.mSurface
+    color: AtmoColor.mSurface
     radius: Style.radiusL
-    border.color: Color.mPrimary
+    border.color: AtmoColor.mPrimary
     border.width: Style.borderM
   }
 
@@ -66,7 +66,7 @@ Popup {
                       })
         pointSize: Style.fontSizeL
         font.weight: Style.fontWeightBold
-        color: Color.mPrimary
+        color: AtmoColor.mPrimary
         Layout.fillWidth: true
       }
 
@@ -82,7 +82,7 @@ Popup {
       id: separator
       Layout.fillWidth: true
       Layout.preferredHeight: 1
-      color: Color.mOutline
+      color: AtmoColor.mOutline
     }
 
     // Scrollable settings area
@@ -91,7 +91,7 @@ Popup {
       Layout.fillWidth: true
       Layout.fillHeight: true
       Layout.minimumHeight: 100
-      gradientColor: Color.mSurface
+      gradientColor: AtmoColor.mSurface
       reserveScrollbarSpace: false
 
       ColumnLayout {

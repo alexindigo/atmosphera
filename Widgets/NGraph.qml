@@ -8,11 +8,11 @@ Item {
 
   // Primary line
   property var values: []
-  property color color: Color.mPrimary
+  property color color: AtmoColor.mPrimary
 
   // Optional secondary line
   property var values2: []
-  property color color2: Color.mError
+  property color color2: AtmoColor.mError
 
   // Range settings for primary line
   property real minValue: 0

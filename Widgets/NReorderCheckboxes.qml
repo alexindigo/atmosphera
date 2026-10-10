@@ -9,9 +9,9 @@ Item {
   // Public API
   property var model: []
   property var disabledIds: []
-  property color activeColor: Color.mPrimary
-  property color activeOnColor: Color.mOnPrimary
-  property color dragHandleColor: Color.mOutline
+  property color activeColor: AtmoColor.mPrimary
+  property color activeOnColor: AtmoColor.mOnPrimary
+  property color dragHandleColor: AtmoColor.mOutline
   property int baseSize: Style.baseWidgetSize * 0.7
   property int spacing: Style.marginM
 
@@ -101,7 +101,7 @@ Item {
             Layout.preferredWidth: root.baseSize
             Layout.preferredHeight: root.baseSize
             radius: Style.iRadiusXS
-            color: dragHandleMouseArea.containsMouse ? Color.mSurfaceVariant : "transparent"
+            color: dragHandleMouseArea.containsMouse ? AtmoColor.mSurfaceVariant : "transparent"
 
             Behavior on color {
               ColorAnimation {
@@ -202,8 +202,8 @@ Item {
             Layout.preferredWidth: root.baseSize
             Layout.preferredHeight: root.baseSize
             radius: Style.iRadiusXS
-            color: delegateItem.itemEnabled ? root.activeColor : Color.mSurface
-            border.color: delegateItem.required ? root.activeColor : Color.mOutline
+            color: delegateItem.itemEnabled ? root.activeColor : AtmoColor.mSurface
+            border.color: delegateItem.required ? root.activeColor : AtmoColor.mOutline
             border.width: Style.borderS
             opacity: delegateItem.required ? 0.7 : 1.0
 
@@ -245,7 +245,7 @@ Item {
           NText {
             Layout.fillWidth: true
             text: delegateItem.text
-            color: Color.mOnSurface
+            color: AtmoColor.mOnSurface
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
           }
@@ -254,7 +254,7 @@ Item {
           NText {
             visible: delegateItem.required
             text: I18n.tr("common.required")
-            color: Color.mOnSurfaceVariant
+            color: AtmoColor.mOnSurfaceVariant
             verticalAlignment: Text.AlignVCenter
           }
         }

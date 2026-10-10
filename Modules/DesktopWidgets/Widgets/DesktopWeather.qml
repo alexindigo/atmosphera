@@ -66,7 +66,7 @@ DraggableDesktopWidget {
         anchors.centerIn: parent
         icon: weatherReady ? LocationService.weatherSymbolFromCode(currentWeatherCode) : (LocationService.locationConfigured ? "weather-cloud-off" : "map-pin-off")
         pointSize: Math.round(Style.fontSizeXXXL * 2 * widgetScale)
-        color: weatherReady ? Color.mPrimary : Color.mOnSurfaceVariant
+        color: weatherReady ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant
       }
       Loader {
         active: LocationService.taliaWeatherMascotActive && weatherReady
@@ -89,7 +89,7 @@ DraggableDesktopWidget {
       text: weatherReady ? `${currentTemp}°${tempUnit}` : "--"
       pointSize: Math.round(Style.fontSizeXXXL * widgetScale)
       font.weight: Style.fontWeightBold
-      color: Color.mOnSurface
+      color: AtmoColor.mOnSurface
     }
 
     ColumnLayout {
@@ -102,7 +102,7 @@ DraggableDesktopWidget {
         text: locationName || I18n.tr("common.weather-no-location")
         pointSize: Math.round(Style.fontSizeS * widgetScale)
         font.weight: Style.fontWeightRegular
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         elide: Text.ElideRight
         maximumLineCount: 1
         visible: !Settings.data.location.hideWeatherCityName
@@ -115,30 +115,30 @@ DraggableDesktopWidget {
         NText {
           text: "H:"
           pointSize: Math.round(Style.fontSizeXS * widgetScale)
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
         }
         NText {
           text: `${todayMax}°`
           pointSize: Math.round(Style.fontSizeXS * widgetScale)
-          color: Color.mOnSurface
+          color: AtmoColor.mOnSurface
         }
 
         NText {
           text: "•"
           pointSize: Math.round(Style.fontSizeXXS * widgetScale)
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
           opacity: 0.5
         }
 
         NText {
           text: "L:"
           pointSize: Math.round(Style.fontSizeXS * widgetScale)
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
         }
         NText {
           text: `${todayMin}°`
           pointSize: Math.round(Style.fontSizeXS * widgetScale)
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
         }
       }
     }

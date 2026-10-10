@@ -24,9 +24,9 @@ Popup {
   property bool showToastOnSave: false
 
   background: Rectangle {
-    color: Color.mSurface
+    color: AtmoColor.mSurface
     radius: Style.radiusL
-    border.color: Color.mPrimary
+    border.color: AtmoColor.mPrimary
     border.width: Style.borderM
   }
 
@@ -48,7 +48,7 @@ Popup {
                         })
           pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
-          color: Color.mPrimary
+          color: AtmoColor.mPrimary
           Layout.fillWidth: true
         }
 
@@ -63,7 +63,7 @@ Popup {
       Rectangle {
         Layout.fillWidth: true
         Layout.preferredHeight: 1
-        color: Color.mOutline
+        color: AtmoColor.mOutline
       }
 
       // Settings loader - pluginApi is passed via setSource() in openPluginSettings()
@@ -73,7 +73,7 @@ Popup {
         Layout.fillHeight: true
         Layout.minimumHeight: 100
         horizontalPolicy: ScrollBar.AlwaysOff
-        gradientColor: Color.mSurface
+        gradientColor: AtmoColor.mSurface
 
         Loader {
           id: settingsLoader

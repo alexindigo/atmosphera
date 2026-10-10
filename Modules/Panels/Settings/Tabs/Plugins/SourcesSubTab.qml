@@ -80,7 +80,7 @@ ColumnLayout {
       delegate: NBox {
         Layout.fillWidth: true
         implicitHeight: sourceRow.implicitHeight + Style.margin2L
-        color: Color.mSurface
+        color: AtmoColor.mSurface
 
         RowLayout {
           id: sourceRow
@@ -99,14 +99,14 @@ ColumnLayout {
 
             NText {
               text: modelData.name
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               Layout.fillWidth: true
             }
 
             NText {
               text: modelData.url
               font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
               Layout.fillWidth: true
               elide: Text.ElideRight
             }
@@ -179,9 +179,9 @@ ColumnLayout {
     }
 
     background: Rectangle {
-      color: Color.mSurface
+      color: AtmoColor.mSurface
       radius: Style.radiusS
-      border.color: Color.mPrimary
+      border.color: AtmoColor.mPrimary
       border.width: Style.borderM
     }
 
@@ -220,7 +220,7 @@ ColumnLayout {
           Layout.preferredHeight: Style.baseWidgetSize * 1.1 * Style.uiScaleRatio
           Layout.alignment: Qt.AlignBottom
           colorBg: "transparent"
-          colorBgHover: Qt.alpha(Color.mPrimary, 0.1)
+          colorBgHover: Qt.alpha(AtmoColor.mPrimary, 0.1)
           onClicked: folderPicker.openFilePicker()
         }
       }
@@ -256,8 +256,8 @@ ColumnLayout {
 
         NButton {
           text: sourceDialog.editingUrl ? I18n.tr("common.save") : I18n.tr("common.add")
-          backgroundColor: Color.mPrimary
-          textColor: Color.mOnPrimary
+          backgroundColor: AtmoColor.mPrimary
+          textColor: AtmoColor.mOnPrimary
           enabled: sourceNameInput.text.length > 0 && sourceUrlInput.text.length > 0
           onClicked: {
             var url = root.normalizeSourceUrl(sourceUrlInput.text);

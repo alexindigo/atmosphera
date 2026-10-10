@@ -43,8 +43,8 @@ ColumnLayout {
         Rectangle {
           anchors.fill: parent
           radius: Style.radiusM
-          color: delegateItem.dragging ? Color.mSurfaceVariant : "transparent"
-          border.color: delegateItem.dragging ? Color.mOutline : "transparent"
+          color: delegateItem.dragging ? AtmoColor.mSurfaceVariant : "transparent"
+          border.color: delegateItem.dragging ? AtmoColor.mOutline : "transparent"
           border.width: Style.borderS
 
           Behavior on color {
@@ -65,7 +65,7 @@ ColumnLayout {
             Layout.preferredHeight: Style.baseWidgetSize * 0.7
             Layout.alignment: Qt.AlignVCenter
             radius: Style.radiusXS
-            color: dragHandleMouseArea.containsMouse ? Color.mSurfaceVariant : "transparent"
+            color: dragHandleMouseArea.containsMouse ? AtmoColor.mSurfaceVariant : "transparent"
 
             Behavior on color {
               ColorAnimation {
@@ -83,7 +83,7 @@ ColumnLayout {
                   Layout.preferredWidth: Style.baseWidgetSize * 0.28
                   Layout.preferredHeight: 2
                   radius: 1
-                  color: Color.mOutline
+                  color: AtmoColor.mOutline
                 }
               }
             }
@@ -144,8 +144,8 @@ ColumnLayout {
             Layout.preferredHeight: Style.baseWidgetSize * 0.7
             Layout.alignment: Qt.AlignVCenter
             radius: Style.radiusXS
-            color: modelData.enabled ? Color.mPrimary : Color.mSurface
-            border.color: Color.mOutline
+            color: modelData.enabled ? AtmoColor.mPrimary : AtmoColor.mSurface
+            border.color: AtmoColor.mOutline
             border.width: Style.borderS
 
             Behavior on color {
@@ -159,7 +159,7 @@ ColumnLayout {
               anchors.centerIn: parent
               anchors.horizontalCenterOffset: -1
               icon: Icon.check
-              color: Color.mOnPrimary
+              color: AtmoColor.mOnPrimary
               pointSize: Math.max(Style.fontSizeXS, Style.baseWidgetSize * 0.35)
             }
 
@@ -178,7 +178,7 @@ ColumnLayout {
           NText {
             Layout.fillWidth: true
             text: modelData.text
-            color: Color.mOnSurface
+            color: AtmoColor.mOnSurface
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
           }

@@ -208,8 +208,8 @@ ColumnLayout {
     visible: Settings.data.bar.showCapsule
     label: I18n.tr("panels.bar.appearance-capsule-color-label")
     description: I18n.tr("panels.bar.appearance-capsule-color-description")
-    noneColor: Color.mSurfaceVariant
-    noneOnColor: Color.mOnSurfaceVariant
+    noneColor: AtmoColor.mSurfaceVariant
+    noneOnColor: AtmoColor.mOnSurfaceVariant
     currentKey: Settings.data.bar.capsuleColorKey
     onSelected: key => Settings.data.bar.capsuleColorKey = key
   }

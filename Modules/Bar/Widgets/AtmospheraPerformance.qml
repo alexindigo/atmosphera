@@ -37,8 +37,8 @@ AtmoIconButton {
   baseSize: Style.getCapsuleHeightForScreen(screen?.name)
   applyUiScale: false
   customRadius: Style.radiusL
-  colorBg: PowerProfileService.atmospheraPerformanceMode ? Color.mPrimary : Style.capsuleColor
-  colorFg: PowerProfileService.atmospheraPerformanceMode ? Color.mOnPrimary : Color.resolveColorKey(iconColorKey)
+  colorBg: PowerProfileService.atmospheraPerformanceMode ? AtmoColor.mPrimary : Style.capsuleColor
+  colorFg: PowerProfileService.atmospheraPerformanceMode ? AtmoColor.mOnPrimary : AtmoColor.resolveColorKey(iconColorKey)
   border.color: Style.capsuleBorderColor
   border.width: Style.capsuleBorderWidth
 

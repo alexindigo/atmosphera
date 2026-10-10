@@ -22,7 +22,7 @@ SmartPanel {
   blurEnabled: !largeButtonsStyle
 
   // Make panel background transparent for large buttons style
-  panelBackgroundColor: largeButtonsStyle ? "transparent" : Color.mSurface
+  panelBackgroundColor: largeButtonsStyle ? "transparent" : AtmoColor.mSurface
 
   preferredWidth: largeButtonsStyle ? 0 : Math.round(440 * Style.uiScaleRatio)
   preferredWidthRatio: largeButtonsStyle ? 1.0 : 0
@@ -604,8 +604,8 @@ SmartPanel {
       width: timerText.width + Style.margin2XL
       height: timerText.height + Style.margin2L
       radius: Style.radiusM
-      color: Color.mSurfaceVariant
-      border.color: Color.mOutline
+      color: AtmoColor.mSurfaceVariant
+      border.color: AtmoColor.mOutline
       border.width: Style.borderS
       z: 1000
 
@@ -618,7 +618,7 @@ SmartPanel {
                       })
         font.weight: Style.fontWeightBold
         pointSize: Style.fontSizeL
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
       }
     }
 
@@ -665,7 +665,7 @@ SmartPanel {
       visible: !largeButtonsStyle
       anchors.fill: parent
       anchors.margins: Style.marginL
-      color: Color.mSurfaceVariant
+      color: AtmoColor.mSurfaceVariant
 
       ColumnLayout {
         anchors.fill: parent
@@ -685,7 +685,7 @@ SmartPanel {
                                         }) : I18n.tr("session-menu.title")
             font.weight: Style.fontWeightBold
             pointSize: Style.fontSizeL
-            color: timerActive ? Color.mPrimary : Color.mOnSurface
+            color: timerActive ? AtmoColor.mPrimary : AtmoColor.mOnSurface
             Layout.alignment: Qt.AlignVCenter
             verticalAlignment: Text.AlignVCenter
           }
@@ -699,8 +699,8 @@ SmartPanel {
             tooltipText: timerActive ? I18n.tr("session-menu.cancel-timer") : I18n.tr("common.close")
             Layout.alignment: Qt.AlignVCenter
             baseSize: Style.baseWidgetSize * 0.7
-            colorBg: timerActive ? Qt.alpha(Color.mError, 0.08) : "transparent"
-            colorFg: timerActive ? Color.mError : Color.mOnSurface
+            colorBg: timerActive ? Qt.alpha(AtmoColor.mError, 0.08) : "transparent"
+            colorFg: timerActive ? AtmoColor.mError : AtmoColor.mOnSurface
             onClicked: {
               if (timerActive) {
                 cancelTimer();
@@ -785,16 +785,16 @@ SmartPanel {
     radius: Style.radiusS
     color: {
       if (pending) {
-        return Qt.alpha(Color.mPrimary, 0.08);
+        return Qt.alpha(AtmoColor.mPrimary, 0.08);
       }
       if (isSelected || effectiveHover) {
-        return Color.mHover;
+        return AtmoColor.mHover;
       }
       return "transparent";
     }
 
     border.width: pending ? Math.max(Style.borderM) : 0
-    border.color: pending ? Color.mPrimary : Color.mOutline
+    border.color: pending ? AtmoColor.mPrimary : AtmoColor.mOutline
 
     Behavior on color {
       ColorAnimation {
@@ -816,12 +816,12 @@ SmartPanel {
         icon: buttonRoot.icon
         color: {
           if (buttonRoot.pending)
-            return Color.mPrimary;
+            return AtmoColor.mPrimary;
           if (buttonRoot.isShutdown && !buttonRoot.isSelected && !buttonRoot.effectiveHover)
-            return Color.mError;
+            return AtmoColor.mError;
           if (buttonRoot.isSelected || buttonRoot.effectiveHover)
-            return Color.mOnHover;
-          return Color.mOnSurface;
+            return AtmoColor.mOnHover;
+          return AtmoColor.mOnSurface;
         }
         pointSize: Style.fontSizeXXL
         width: Style.baseWidgetSize * 0.5
@@ -853,7 +853,7 @@ SmartPanel {
           anchors.verticalCenter: parent.verticalCenter
           text: Math.ceil(timeRemaining / 1000)
           pointSize: Style.fontSizeS
-          color: Color.mPrimary
+          color: AtmoColor.mPrimary
           font.weight: Style.fontWeightBold
         }
 
@@ -866,9 +866,9 @@ SmartPanel {
           width: labelText.implicitWidth + Style.margin2M
           height: labelText.height + Style.margin2XS
           radius: Math.min(Style.radiusM, height / 2)
-          color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mOnPrimary : Color.mSurface
+          color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? AtmoColor.mOnPrimary : AtmoColor.mSurface
           border.width: Style.borderS
-          border.color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mOnPrimary : Color.mOutline
+          border.color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? AtmoColor.mOnPrimary : AtmoColor.mOutline
           visible: Settings.data.sessionMenu.showKeybinds && (buttonRoot.keybind !== "") && !buttonRoot.pending
 
           NText {
@@ -876,7 +876,7 @@ SmartPanel {
             anchors.centerIn: parent
             text: buttonRoot.keybind
             pointSize: Style.fontSizeXS
-            color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? Color.mPrimary : Color.mOnSurface
+            color: (buttonRoot.isSelected || buttonRoot.effectiveHover) ? AtmoColor.mPrimary : AtmoColor.mOnSurface
 
             Behavior on color {
               ColorAnimation {
@@ -903,12 +903,12 @@ SmartPanel {
           pointSize: Style.fontSizeM
           color: {
             if (buttonRoot.pending)
-              return Color.mPrimary;
+              return AtmoColor.mPrimary;
             if (buttonRoot.isShutdown && !buttonRoot.isSelected && !buttonRoot.effectiveHover)
-              return Color.mError;
+              return AtmoColor.mError;
             if (buttonRoot.isSelected || buttonRoot.effectiveHover)
-              return Color.mOnHover;
-            return Color.mOnSurface;
+              return AtmoColor.mOnHover;
+            return AtmoColor.mOnSurface;
           }
 
           Behavior on color {
@@ -967,16 +967,16 @@ SmartPanel {
     radius: Style.radiusL
     color: {
       if (pending) {
-        return Qt.alpha(Color.mPrimary, 1.0);
+        return Qt.alpha(AtmoColor.mPrimary, 1.0);
       }
       if (isSelected || effectiveHover) {
-        return Qt.alpha(Color.mPrimary, 1.0);
+        return Qt.alpha(AtmoColor.mPrimary, 1.0);
       }
-      return Qt.alpha(Color.mSurface, Style.effectiveSessionMenuOpacity);
+      return Qt.alpha(AtmoColor.mSurface, Style.effectiveSessionMenuOpacity);
     }
 
     border.width: Style.borderS
-    border.color: Color.mOutline
+    border.color: AtmoColor.mOutline
 
     // Always enable layer to fix nvidia bug, render at 2x size to avoid blur when scaling up
     layer.enabled: true
@@ -1025,12 +1025,12 @@ SmartPanel {
         icon: largeButtonRoot.icon
         color: {
           if (largeButtonRoot.pending)
-            return Color.mOnPrimary;
+            return AtmoColor.mOnPrimary;
           if (largeButtonRoot.isShutdown && !largeButtonRoot.isSelected && !largeButtonRoot.effectiveHover)
-            return Color.mError;
+            return AtmoColor.mError;
           if (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover)
-            return Color.mOnPrimary;
-          return Color.mOnSurface;
+            return AtmoColor.mOnPrimary;
+          return AtmoColor.mOnSurface;
         }
         pointSize: Style.fontSizeXXXL * 2.25
         width: 90 * Style.uiScaleRatio
@@ -1077,12 +1077,12 @@ SmartPanel {
         pointSize: Style.fontSizeL
         color: {
           if (largeButtonRoot.pending)
-            return Color.mOnPrimary;
+            return AtmoColor.mOnPrimary;
           if (largeButtonRoot.isShutdown && !largeButtonRoot.isSelected && !largeButtonRoot.effectiveHover)
-            return Color.mError;
+            return AtmoColor.mError;
           if (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover)
-            return Color.mOnPrimary;
-          return Color.mOnSurface;
+            return AtmoColor.mOnPrimary;
+          return AtmoColor.mOnSurface;
         }
 
         Behavior on color {
@@ -1102,9 +1102,9 @@ SmartPanel {
       width: largeNumberText.implicitWidth + Style.margin2M
       height: largeNumberText.implicitHeight + Style.margin2XS
       radius: Math.min(Style.radiusM, height / 2)
-      color: (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover) ? Color.mOnPrimary : Qt.alpha(Color.mSurfaceVariant, 0.7)
+      color: (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover) ? AtmoColor.mOnPrimary : Qt.alpha(AtmoColor.mSurfaceVariant, 0.7)
       border.width: Style.borderS
-      border.color: (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover) ? Color.mOnPrimary : Color.mOutline
+      border.color: (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover) ? AtmoColor.mOnPrimary : AtmoColor.mOutline
       visible: Settings.data.sessionMenu.showKeybinds && (largeButtonRoot.keybind !== "") && !largeButtonRoot.pending
       z: 10
 
@@ -1115,8 +1115,8 @@ SmartPanel {
         pointSize: Style.fontSizeS
         color: {
           if (largeButtonRoot.isSelected || largeButtonRoot.effectiveHover)
-            return Color.mPrimary;
-          return Color.mOnSurfaceVariant;
+            return AtmoColor.mPrimary;
+          return AtmoColor.mOnSurfaceVariant;
         }
 
         Behavior on color {

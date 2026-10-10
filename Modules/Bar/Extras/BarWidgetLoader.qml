@@ -137,7 +137,7 @@ Item {
       AtmoIcon {
         anchors.centerIn: parent
         icon: "puzzle-off"
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
       }
     }
   }

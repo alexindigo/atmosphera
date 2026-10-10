@@ -74,8 +74,8 @@ Item {
   readonly property real contentWidth: isVertical ? capsuleHeight : Math.round(mainGrid.implicitWidth + Style.margin2M)
   readonly property real contentHeight: isVertical ? Math.round(mainGrid.implicitHeight + Style.margin2M) : capsuleHeight
 
-  readonly property color iconColor: Color.resolveColorKey(iconColorKey)
-  readonly property color textColor: Color.resolveColorKey(textColorKey)
+  readonly property color iconColor: AtmoColor.resolveColorKey(iconColorKey)
+  readonly property color textColor: AtmoColor.resolveColorKey(textColorKey)
 
   // Size: use implicit width/height
   // BarWidgetLoader sets explicit width/height to extend click area
@@ -217,7 +217,7 @@ Item {
       NLinearGauge {
         ratio: 0
         orientation: Qt.Vertical
-        fillColor: Color.mPrimary
+        fillColor: AtmoColor.mPrimary
         width: miniGaugeWidth
         height: iconSize
       }

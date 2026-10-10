@@ -113,13 +113,13 @@ ColumnLayout {
     const badges = [];
     if (isPlugin) {
       badges.push({
-                    "color": Color.mSecondary
+                    "color": AtmoColor.mSecondary
                   });
     }
     locations.forEach(function (location) {
       badges.push({
                     "icon": location,
-                    "color": Color.mOnSurfaceVariant
+                    "color": AtmoColor.mOnSurfaceVariant
                   });
     });
     return badges;

@@ -105,19 +105,19 @@ Item {
         visible: !root.isVertical
 
         AtmoIcon {
-          color: LockKeysService.capsLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+          color: LockKeysService.capsLockOn ? AtmoColor.mTertiary : Qt.alpha(AtmoColor.mOnSurfaceVariant, 0.3)
           icon: root.capsIcon
           visible: root.showCaps && (!root.hideWhenOff || LockKeysService.capsLockOn)
         }
 
         AtmoIcon {
-          color: LockKeysService.numLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+          color: LockKeysService.numLockOn ? AtmoColor.mTertiary : Qt.alpha(AtmoColor.mOnSurfaceVariant, 0.3)
           icon: root.numIcon
           visible: root.showNum && (!root.hideWhenOff || LockKeysService.numLockOn)
         }
 
         AtmoIcon {
-          color: LockKeysService.scrollLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+          color: LockKeysService.scrollLockOn ? AtmoColor.mTertiary : Qt.alpha(AtmoColor.mOnSurfaceVariant, 0.3)
           icon: root.scrollIcon
           visible: root.showScroll && (!root.hideWhenOff || LockKeysService.scrollLockOn)
         }
@@ -130,19 +130,19 @@ Item {
         visible: root.isVertical
 
         AtmoIcon {
-          color: LockKeysService.capsLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+          color: LockKeysService.capsLockOn ? AtmoColor.mTertiary : Qt.alpha(AtmoColor.mOnSurfaceVariant, 0.3)
           icon: root.capsIcon
           visible: root.showCaps && (!root.hideWhenOff || LockKeysService.capsLockOn)
         }
 
         AtmoIcon {
-          color: LockKeysService.numLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+          color: LockKeysService.numLockOn ? AtmoColor.mTertiary : Qt.alpha(AtmoColor.mOnSurfaceVariant, 0.3)
           icon: root.numIcon
           visible: root.showNum && (!root.hideWhenOff || LockKeysService.numLockOn)
         }
 
         AtmoIcon {
-          color: LockKeysService.scrollLockOn ? Color.mTertiary : Qt.alpha(Color.mOnSurfaceVariant, 0.3)
+          color: LockKeysService.scrollLockOn ? AtmoColor.mTertiary : Qt.alpha(AtmoColor.mOnSurfaceVariant, 0.3)
           icon: root.scrollIcon
           visible: root.showScroll && (!root.hideWhenOff || LockKeysService.scrollLockOn)
         }

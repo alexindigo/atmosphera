@@ -39,8 +39,8 @@ AtmoIconButton {
 
   readonly property color iconColor: {
     if (!enableColorization)
-      return Color.mOnSurface;
-    return Color.resolveColorKey(colorizeSystemIcon);
+      return AtmoColor.mOnSurface;
+    return AtmoColor.resolveColorKey(colorizeSystemIcon);
   }
 
   // If we have a custom path or are using distro logo, don't show the theme icon.
@@ -52,8 +52,8 @@ AtmoIconButton {
   customRadius: Style.radiusL
   colorBg: Style.capsuleColor
   colorFg: iconColor
-  colorBgHover: Color.mHover
-  colorFgHover: Color.mOnHover
+  colorBgHover: AtmoColor.mHover
+  colorFgHover: AtmoColor.mOnHover
   colorBorder: Style.capsuleBorderColor
   colorBorderHover: Style.capsuleBorderColor
 
@@ -109,7 +109,7 @@ AtmoIconButton {
     asynchronous: true
     layer.enabled: (enableColorization) && (useDistroLogo || customIconPath !== "")
     layer.effect: ShaderEffect {
-      property color targetColor: !hovering ? iconColor : Color.mOnHover
+      property color targetColor: !hovering ? iconColor : AtmoColor.mOnHover
       property real colorizeMode: 2.0
 
       fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")

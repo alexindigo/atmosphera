@@ -71,8 +71,8 @@ ColumnLayout {
     icon: Icon.download
     visible: (updateCount > 0)
     enabled: !isUpdating
-    backgroundColor: Color.mPrimary
-    textColor: Color.mOnPrimary
+    backgroundColor: AtmoColor.mPrimary
+    textColor: AtmoColor.mOnPrimary
     Layout.fillWidth: true
     onClicked: {
       isUpdating = true;
@@ -156,7 +156,7 @@ ColumnLayout {
         Layout.leftMargin: Style.borderS
         Layout.rightMargin: Style.borderS
         implicitHeight: Math.round(contentColumn.implicitHeight + Style.margin2L)
-        color: Color.mSurface
+        color: AtmoColor.mSurface
 
         ColumnLayout {
           id: contentColumn
@@ -172,19 +172,19 @@ ColumnLayout {
             AtmoIcon {
               icon: Icon.plugin
               pointSize: Style.fontSizeL
-              color: Service.hasPluginError(modelData.compositeKey) ? Color.mError : Color.mPrimary
+              color: Service.hasPluginError(modelData.compositeKey) ? AtmoColor.mError : AtmoColor.mPrimary
             }
 
             NText {
               text: modelData.name
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
               elide: Text.ElideRight
             }
 
             // Official badge (Noctalia Team maintained)
             Rectangle {
               visible: modelData.official === true
-              color: Color.mSecondary
+              color: AtmoColor.mSecondary
               radius: Style.radiusXS
               implicitWidth: officialBadgeRow.implicitWidth + Style.margin2S
               implicitHeight: officialBadgeRow.implicitHeight + Style.margin2XS
@@ -197,14 +197,14 @@ ColumnLayout {
                 AtmoIcon {
                   icon: Icon.officialPlugin
                   pointSize: Style.fontSizeXXS
-                  color: Color.mOnSecondary
+                  color: AtmoColor.mOnSecondary
                 }
 
                 NText {
                   text: I18n.tr("common.official")
                   font.pointSize: Style.fontSizeXXS
                   font.weight: Style.fontWeightMedium
-                  color: Color.mOnSecondary
+                  color: AtmoColor.mOnSecondary
                 }
               }
             }
@@ -264,8 +264,8 @@ ColumnLayout {
               icon: isUpdating ? "" : "download"
               visible: modelData.updateInfo !== undefined
               enabled: !isUpdating
-              backgroundColor: Color.mPrimary
-              textColor: Color.mOnPrimary
+              backgroundColor: AtmoColor.mPrimary
+              textColor: AtmoColor.mOnPrimary
               fontSize: Style.fontSizeXXS
               fontWeight: Style.fontWeightMedium
               onClicked: {
@@ -315,7 +315,7 @@ ColumnLayout {
             visible: modelData.description
             text: modelData.description || ""
             font.pointSize: Style.fontSizeXS
-            color: Color.mOnSurface
+            color: AtmoColor.mOnSurface
             wrapMode: Text.WordWrap
             maximumLineCount: 2
             elide: Text.ElideRight
@@ -351,20 +351,20 @@ ColumnLayout {
                 return "v" + modelData.version;
               }
               font.pointSize: Style.fontSizeXS
-              color: modelData.updateInfo ? Color.mPrimary : (modelData.pendingUpdateInfo ? Color.mTertiary : Color.mOnSurfaceVariant)
+              color: modelData.updateInfo ? AtmoColor.mPrimary : (modelData.pendingUpdateInfo ? AtmoColor.mTertiary : AtmoColor.mOnSurfaceVariant)
               font.weight: (modelData.updateInfo || modelData.pendingUpdateInfo) ? Style.fontWeightMedium : Style.fontWeightRegular
             }
 
             NText {
               text: "•"
               font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             NText {
               text: stripAuthorEmail(modelData.author)
               font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             // Source indicator for plugins from non-official repos
@@ -372,28 +372,28 @@ ColumnLayout {
               visible: !modelData.isFromOfficialRepo
               text: "•"
               font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             NText {
               visible: !modelData.isFromOfficialRepo
               text: modelData.sourceName || I18n.tr("panels.plugins.source-custom")
               font.pointSize: Style.fontSizeXS
-              color: Color.mTertiary
+              color: AtmoColor.mTertiary
             }
 
             NText {
               visible: !!modelData.lastUpdated
               text: "•"
               font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             NText {
               visible: !!modelData.lastUpdated
               text: modelData.lastUpdated ? Time.formatRelativeTime(new Date(modelData.lastUpdated)) : ""
               font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
             }
 
             Item {
@@ -409,14 +409,14 @@ ColumnLayout {
             AtmoIcon {
               icon: "alert-triangle"
               pointSize: Style.fontSizeS
-              color: Color.mError
+              color: AtmoColor.mError
             }
 
             NText {
               property var errorInfo: Service.getPluginError(modelData.compositeKey)
               text: errorInfo ? errorInfo.error : ""
               font.pointSize: Style.fontSizeXXS
-              color: Color.mError
+              color: AtmoColor.mError
               wrapMode: Text.WordWrap
               Layout.fillWidth: true
               elide: Text.ElideRight
@@ -448,9 +448,9 @@ ColumnLayout {
     property var pluginToUninstall: null
 
     background: Rectangle {
-      color: Color.mSurface
+      color: AtmoColor.mSurface
       radius: Style.radiusS
-      border.color: Color.mPrimary
+      border.color: AtmoColor.mPrimary
       border.width: Style.borderM
     }
 
@@ -480,8 +480,8 @@ ColumnLayout {
 
         NButton {
           text: I18n.tr("common.uninstall")
-          backgroundColor: Color.mPrimary
-          textColor: Color.mOnPrimary
+          backgroundColor: AtmoColor.mPrimary
+          textColor: AtmoColor.mOnPrimary
           onClicked: {
             if (uninstallDialog.pluginToUninstall) {
               root.uninstallPlugin(uninstallDialog.pluginToUninstall.compositeKey);

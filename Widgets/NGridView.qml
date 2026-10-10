@@ -9,7 +9,7 @@ Item {
   // Signal for key press events when keyNavigationEnabled is true
   signal keyPressed(var event)
 
-  property color handleColor: Qt.alpha(Color.mHover, 0.8)
+  property color handleColor: Qt.alpha(AtmoColor.mHover, 0.8)
   property color handleHoverColor: handleColor
   property color handlePressedColor: handleColor
   property color trackColor: "transparent"
@@ -26,7 +26,7 @@ Item {
 
   // Gradient properties
   property bool showGradientMasks: true
-  property color gradientColor: Color.mSurfaceVariant
+  property color gradientColor: AtmoColor.mSurfaceVariant
   property int gradientHeight: 16
   property bool reserveScrollbarSpace: true
 

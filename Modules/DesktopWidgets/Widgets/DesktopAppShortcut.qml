@@ -66,7 +66,7 @@ DraggableDesktopWidget {
         layer.enabled: true
         layer.smooth: true
         layer.effect: AtmoIconColorizeEffect {
-          targetColor: Color.mPrimary
+          targetColor: AtmoColor.mPrimary
           blendStrength: root._blendStrength
           hueAdjustment: root._hueAdjustment
         }

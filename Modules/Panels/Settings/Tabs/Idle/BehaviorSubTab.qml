@@ -42,7 +42,7 @@ ColumnLayout {
       text: IdleService.idleSeconds > 0 ? I18n.trp("common.second", IdleService.idleSeconds) : I18n.tr("common.active")
       family: Settings.data.ui.fontFixed
       pointSize: Style.fontSizeM
-      color: IdleService.idleSeconds > 0 ? Color.mPrimary : Color.mOnSurfaceVariant
+      color: IdleService.idleSeconds > 0 ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant
     }
   }
 
@@ -67,9 +67,9 @@ ColumnLayout {
     property string actionTitle: ""
 
     background: Rectangle {
-      color: Color.mSurface
+      color: AtmoColor.mSurface
       radius: Style.radiusL
-      border.color: Color.mOutline
+      border.color: AtmoColor.mOutline
       border.width: Style.borderS
     }
 
@@ -111,8 +111,8 @@ ColumnLayout {
         NButton {
           text: I18n.tr("panels.idle.go-to-power-actions")
           icon: Icon.caretRight
-          backgroundColor: Color.mPrimary
-          textColor: Color.mOnPrimary
+          backgroundColor: AtmoColor.mPrimary
+          textColor: AtmoColor.mOnPrimary
           onClicked: {
             idleInfoPopup.close();
             var panel = PanelService.getPanel("settingsPanel");
@@ -180,7 +180,7 @@ ColumnLayout {
       Text {
         Layout.fillWidth: true
         text: I18n.tr("panels.idle.lock-external-mode-note")
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         font.pointSize: Style.fontSizeXS
         wrapMode: Text.WordWrap
       }

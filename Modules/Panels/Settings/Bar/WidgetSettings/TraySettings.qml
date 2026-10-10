@@ -133,7 +133,7 @@ ColumnLayout {
     Layout.fillWidth: true
     Layout.preferredHeight: 150
     Layout.topMargin: Style.marginL // Increased top margin
-    gradientColor: Color.mSurface
+    gradientColor: AtmoColor.mSurface
 
     model: blacklistModel
     delegate: Item {
@@ -145,7 +145,7 @@ ColumnLayout {
         anchors.fill: parent
         anchors.margins: Style.marginXS
         color: "transparent" // Make background transparent
-        border.color: Color.mOutline
+        border.color: AtmoColor.mOutline
         border.width: Style.borderS
         radius: Style.radiusS
         visible: model.rule !== undefined && model.rule !== "" // Only visible if rule exists
@@ -167,10 +167,10 @@ ColumnLayout {
           anchors.verticalCenter: parent.verticalCenter
           icon: Icon.close
           baseSize: 12 * Style.uiScaleRatio
-          colorBg: Color.mSurfaceVariant
-          colorFg: Color.mOnSurfaceVariant
-          colorBgHover: Color.mError
-          colorFgHover: Color.mOnError
+          colorBg: AtmoColor.mSurfaceVariant
+          colorFg: AtmoColor.mOnSurfaceVariant
+          colorBgHover: AtmoColor.mError
+          colorFgHover: AtmoColor.mOnError
           onClicked: {
             blacklistModel.remove(index);
             saveSettings();

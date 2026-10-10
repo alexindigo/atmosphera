@@ -40,7 +40,7 @@ ColumnLayout {
     Layout.fillWidth: true
     Layout.fillHeight: true
     Layout.minimumHeight: 180
-    color: Color.mSurfaceVariant
+    color: AtmoColor.mSurfaceVariant
     radius: Style.radiusL
 
     // Image with rounded corners
@@ -49,7 +49,7 @@ ColumnLayout {
       visible: previewCachedPath !== ""
       imagePath: previewCachedPath
       radius: Style.radiusL
-      borderColor: previewCachedPath !== "" ? Color.mPrimary : Color.mOutline
+      borderColor: previewCachedPath !== "" ? AtmoColor.mPrimary : AtmoColor.mOutline
       borderWidth: previewCachedPath !== "" ? 2 : 1
       imageFillMode: Image.PreserveAspectCrop
     }
@@ -64,12 +64,12 @@ ColumnLayout {
         width: 64
         height: 64
         radius: width / 2
-        color: Color.mPrimary
+        color: AtmoColor.mPrimary
 
         AtmoIcon {
           icon: Icon.featured
           pointSize: Style.fontSizeXXL
-          color: Color.mOnPrimary
+          color: AtmoColor.mOnPrimary
           anchors.centerIn: parent
         }
       }
@@ -77,7 +77,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("setup.wallpaper.select-prompt")
         pointSize: Style.fontSizeL
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         Layout.alignment: Qt.AlignHCenter
         font.weight: Style.fontWeightMedium
       }
@@ -159,7 +159,7 @@ ColumnLayout {
               anchors.fill: parent
               imagePath: thumbDelegate.cachedPath
               radius: thumbDelegate.thumbRadius
-              borderColor: selectedWallpaper === modelData ? Color.mPrimary : Color.mOutline
+              borderColor: selectedWallpaper === modelData ? AtmoColor.mPrimary : AtmoColor.mOutline
               borderWidth: selectedWallpaper === modelData ? 2 : 1
               imageFillMode: Image.PreserveAspectCrop
             }
@@ -167,14 +167,14 @@ ColumnLayout {
             // Loading/error state background
             Rectangle {
               anchors.fill: parent
-              color: Color.mSurfaceVariant
+              color: AtmoColor.mSurfaceVariant
               radius: thumbDelegate.thumbRadius
               visible: thumbImage.status === Image.Loading || thumbImage.status === Image.Error || thumbDelegate.cachedPath === ""
 
               AtmoIcon {
                 icon: Icon.image
                 pointSize: Style.fontSizeL
-                color: Color.mOnSurfaceVariant
+                color: AtmoColor.mOnSurfaceVariant
                 anchors.centerIn: parent
               }
             }
@@ -190,7 +190,7 @@ ColumnLayout {
             Rectangle {
               anchors.fill: parent
               radius: thumbDelegate.thumbRadius
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
               opacity: hoverHandler.hovered ? 0.1 : 0
               Behavior on opacity {
                 NumberAnimation {
@@ -208,12 +208,12 @@ ColumnLayout {
               width: 24
               height: 24
               radius: width / 2
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
 
               AtmoIcon {
                 icon: Icon.check
                 pointSize: Style.fontSizeS
-                color: Color.mOnPrimary
+                color: AtmoColor.mOnPrimary
                 anchors.centerIn: parent
               }
             }
@@ -238,7 +238,7 @@ ColumnLayout {
   Rectangle {
     Layout.fillWidth: true
     Layout.preferredHeight: 80
-    color: Color.mSurfaceVariant
+    color: AtmoColor.mSurfaceVariant
     radius: Style.radiusM
     opacity: 0.4
     visible: filteredWallpapers.length === 0
@@ -251,7 +251,7 @@ ColumnLayout {
       AtmoIcon {
         icon: Icon.folderOpen
         pointSize: Style.fontSizeL
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
       }
 
       ColumnLayout {
@@ -261,14 +261,14 @@ ColumnLayout {
           text: filteredWallpapers.length === 0 && selectedDirectory !== "" ? I18n.tr("setup.wallpaper.none-in-dir") : I18n.tr("setup.wallpaper.no-dir")
           pointSize: Style.fontSizeM
           font.weight: Style.fontWeightBold
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
         }
         NText {
           text: selectedDirectory !== "" ? I18n.tr("setup.wallpaper.no-valid", {
                                                      "dir": selectedDirectory
                                                    }) : I18n.tr("setup.wallpaper.choose-dir")
           pointSize: Style.fontSizeS
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
           wrapMode: Text.WordWrap
           Layout.fillWidth: true
           opacity: 0.8

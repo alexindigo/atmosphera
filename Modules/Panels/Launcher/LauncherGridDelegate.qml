@@ -30,7 +30,7 @@ Item {
     id: gridEntry
     anchors.fill: parent
     anchors.margins: Style.marginXXS
-    color: gridEntryContainer.isSelected ? Color.mHover : Color.mSurfaceVariant
+    color: gridEntryContainer.isSelected ? AtmoColor.mHover : AtmoColor.mSurfaceVariant
     forceOpaque: gridEntryContainer.isSelected
 
     Behavior on color {
@@ -57,7 +57,7 @@ Item {
         Rectangle {
           anchors.fill: parent
           radius: Style.radiusM
-          color: Color.mSurface
+          color: AtmoColor.mSurface
           visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage
         }
 
@@ -84,7 +84,7 @@ Item {
           Rectangle {
             anchors.fill: parent
             visible: parent.status === Image.Loading
-            color: Color.mSurfaceVariant
+            color: AtmoColor.mSurfaceVariant
 
             BusyIndicator {
               anchors.centerIn: parent
@@ -118,7 +118,7 @@ Item {
               icon: modelData.icon
               pointSize: Style.fontSizeXXXL
               visible: modelData.icon && !modelData.displayString
-              color: (gridEntryContainer.isSelected && !Settings.data.appLauncher.showIconBackground) ? Color.mOnHover : Color.mOnSurface
+              color: (gridEntryContainer.isSelected && !Settings.data.appLauncher.showIconBackground) ? AtmoColor.mOnHover : AtmoColor.mOnSurface
             }
           }
 
@@ -159,7 +159,7 @@ Item {
             return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
           }
           font.weight: Style.fontWeightBold
-          color: modelData.displayString ? Color.mOnSurface : Color.mOnPrimary
+          color: modelData.displayString ? AtmoColor.mOnSurface : AtmoColor.mOnPrimary
         }
 
         // Badge icon overlay (generic indicator for any provider)
@@ -170,13 +170,13 @@ Item {
           anchors.margins: 2
           width: height
           height: Style.fontSizeM + Style.marginXS
-          color: Color.mSurfaceVariant
+          color: AtmoColor.mSurfaceVariant
           radius: Style.radiusXXS
           AtmoIcon {
             anchors.centerIn: parent
             icon: modelData.badgeIcon || ""
             pointSize: Style.fontSizeS
-            color: Color.mOnSurfaceVariant
+            color: AtmoColor.mOnSurfaceVariant
           }
         }
       }
@@ -196,7 +196,7 @@ Item {
           return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
         }
         font.weight: Style.fontWeightSemiBold
-        color: gridEntryContainer.isSelected ? Color.mOnHover : Color.mOnSurface
+        color: gridEntryContainer.isSelected ? AtmoColor.mOnHover : AtmoColor.mOnSurface
         elide: Text.ElideRight
         Layout.fillWidth: true
         Layout.maximumWidth: gridEntry.width - 8

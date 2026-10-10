@@ -51,22 +51,22 @@ ColumnLayout {
           width: 24
           height: 24
           radius: width / 2
-          color: index <= root.currentStep ? Color.mPrimary : Color.mSurfaceVariant
-          border.color: index === root.currentStep ? Color.mPrimary : "transparent"
+          color: index <= root.currentStep ? AtmoColor.mPrimary : AtmoColor.mSurfaceVariant
+          border.color: index === root.currentStep ? AtmoColor.mPrimary : "transparent"
           border.width: index === root.currentStep ? 2 : 0
 
           AtmoIcon {
             anchors.centerIn: parent
             icon: modelData.icon || ""
             pointSize: Style.fontSizeS
-            color: index <= root.currentStep ? Color.mOnPrimary : Color.mOnSurfaceVariant
+            color: index <= root.currentStep ? AtmoColor.mOnPrimary : AtmoColor.mOnSurfaceVariant
           }
         }
 
         NText {
           text: modelData.label || ""
           pointSize: Style.fontSizeS
-          color: index <= root.currentStep ? Color.mPrimary : Color.mOnSurfaceVariant
+          color: index <= root.currentStep ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant
           font.weight: index === root.currentStep ? Style.fontWeightBold : Style.fontWeightRegular
         }
 
@@ -74,7 +74,7 @@ ColumnLayout {
           width: 40
           height: 2
           radius: 1
-          color: index < root.currentStep ? Color.mPrimary : Color.mSurfaceVariant
+          color: index < root.currentStep ? AtmoColor.mPrimary : AtmoColor.mSurfaceVariant
           visible: index < root.totalSteps - 1
         }
       }
@@ -85,7 +85,7 @@ ColumnLayout {
   Rectangle {
     Layout.fillWidth: true
     Layout.preferredHeight: 1
-    color: Color.mOutline
+    color: AtmoColor.mOutline
     opacity: 0.2
     visible: root.totalSteps > 1
   }
@@ -101,14 +101,14 @@ ColumnLayout {
       width: 40
       height: 40
       radius: Style.radiusL
-      color: Color.mSurfaceVariant
+      color: AtmoColor.mSurfaceVariant
       opacity: 0.6
       visible: (root.currentStepData.icon || "") !== ""
 
       AtmoIcon {
         icon: root.currentStepData.icon || ""
         pointSize: Style.fontSizeL
-        color: Color.mPrimary
+        color: AtmoColor.mPrimary
         anchors.centerIn: parent
       }
     }
@@ -121,13 +121,13 @@ ColumnLayout {
         text: root.currentStepData.label || ""
         pointSize: Style.fontSizeXL
         font.weight: Style.fontWeightBold
-        color: Color.mPrimary
+        color: AtmoColor.mPrimary
       }
 
       NText {
         text: root.currentStepData.description || ""
         pointSize: Style.fontSizeM
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         visible: (root.currentStepData.description || "") !== ""
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
@@ -172,7 +172,7 @@ ColumnLayout {
   Rectangle {
     Layout.fillWidth: true
     Layout.preferredHeight: 1
-    color: Color.mOutline
+    color: AtmoColor.mOutline
     opacity: 0.2
   }
 

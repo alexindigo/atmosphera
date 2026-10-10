@@ -21,7 +21,7 @@ DraggableDesktopWidget {
   readonly property bool hideWhenIdle: (widgetData && widgetData.hideWhenIdle !== undefined) ? widgetData.hideWhenIdle : (widgetMetadata?.hideWhenIdle ?? false)
   readonly property string colorName: (widgetData && widgetData.colorName !== undefined) ? widgetData.colorName : (widgetMetadata?.colorName ?? "primary")
 
-  readonly property color fillColor: Color.resolveColorKey(colorName)
+  readonly property color fillColor: AtmoColor.resolveColorKey(colorName)
 
   readonly property bool shouldShow: visualizerType !== "" && visualizerType !== "none" && (!hideWhenIdle || MediaService.isPlaying)
   readonly property bool isHidden: !shouldShow

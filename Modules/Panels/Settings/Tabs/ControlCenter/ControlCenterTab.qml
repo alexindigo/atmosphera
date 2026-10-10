@@ -69,7 +69,7 @@ ColumnLayout {
           displayName = pluginId;
         }
         badges.push({
-                      "color": Color.mSecondary
+                      "color": AtmoColor.mSecondary
                     });
       }
       availableWidgets.append({

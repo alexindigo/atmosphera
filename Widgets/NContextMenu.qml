@@ -62,8 +62,8 @@ Popup {
   padding: Style.marginS
 
   background: Rectangle {
-    color: Color.mSurfaceVariant
-    border.color: Color.mOutline
+    color: AtmoColor.mSurfaceVariant
+    border.color: AtmoColor.mOutline
     border.width: Style.borderS
     radius: Style.iRadiusM
   }
@@ -89,7 +89,7 @@ Popup {
       property var popup: root
 
       background: Rectangle {
-        color: menuItem.hovered && menuItem.enabled ? Color.mHover : "transparent"
+        color: menuItem.hovered && menuItem.enabled ? AtmoColor.mHover : "transparent"
         radius: Style.iRadiusS
 
         Behavior on color {
@@ -123,7 +123,7 @@ Popup {
             }
           }
           pointSize: Style.fontSizeM
-          color: menuItem.hovered && menuItem.enabled ? Color.mOnHover : Color.mOnSurface
+          color: menuItem.hovered && menuItem.enabled ? AtmoColor.mOnHover : AtmoColor.mOnSurface
           Layout.leftMargin: root.itemPadding
 
           Behavior on color {
@@ -136,7 +136,7 @@ Popup {
         NText {
           text: modelData.label || modelData.text || ""
           pointSize: Style.fontSizeM
-          color: menuItem.hovered && menuItem.enabled ? Color.mOnHover : Color.mOnSurface
+          color: menuItem.hovered && menuItem.enabled ? AtmoColor.mOnHover : AtmoColor.mOnSurface
           verticalAlignment: Text.AlignVCenter
           Layout.fillWidth: true
           Layout.leftMargin: modelData.icon === undefined ? root.itemPadding : 0

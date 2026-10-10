@@ -36,8 +36,8 @@ Rectangle {
   anchors.top: parent.top
   anchors.topMargin: 100
   radius: Style.radiusL
-  color: Color.mSurface
-  border.color: Qt.alpha(Color.mOutline, 0.2)
+  color: AtmoColor.mSurface
+  border.color: Qt.alpha(AtmoColor.mOutline, 0.2)
   border.width: Style.borderS
 
   RowLayout {
@@ -58,19 +58,19 @@ Rectangle {
         anchors.fill: parent
         radius: parent.radius
         color: "transparent"
-        border.color: Qt.alpha(Color.mPrimary, 0.8)
+        border.color: Qt.alpha(AtmoColor.mPrimary, 0.8)
         border.width: Style.borderM
 
         SequentialAnimation on border.color {
           loops: Animation.Infinite
           running: root.animationsEnabled
           ColorAnimation {
-            to: Qt.alpha(Color.mPrimary, 1.0)
+            to: Qt.alpha(AtmoColor.mPrimary, 1.0)
             duration: 2000
             easing.type: Easing.InOutQuad
           }
           ColorAnimation {
-            to: Qt.alpha(Color.mPrimary, 0.8)
+            to: Qt.alpha(AtmoColor.mPrimary, 0.8)
             duration: 2000
             easing.type: Easing.InOutQuad
           }
@@ -111,7 +111,7 @@ Rectangle {
       NText {
         text: I18n.tr("system.welcome-back") + " " + HostService.displayName + "!"
         pointSize: Style.fontSizeXXL
-        color: Color.mOnSurface
+        color: AtmoColor.mOnSurface
         horizontalAlignment: Text.AlignLeft
       }
 
@@ -122,7 +122,7 @@ Rectangle {
           return dateString.charAt(0).toUpperCase() + dateString.slice(1);
         }
         pointSize: Style.fontSizeXL
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         horizontalAlignment: Text.AlignLeft
       }
     }
@@ -147,8 +147,8 @@ Rectangle {
         now: root.currentTime
         clockStyle: "analog"
         backgroundColor: "transparent"
-        clockColor: Color.mOnSurface
-        secondHandColor: Color.mPrimary
+        clockColor: AtmoColor.mOnSurface
+        secondHandColor: AtmoColor.mPrimary
       }
 
       // Digital Clock (Standard)
@@ -160,9 +160,9 @@ Rectangle {
         now: root.currentTime
         clockStyle: "digital"
         showProgress: true
-        progressColor: Color.mPrimary
+        progressColor: AtmoColor.mPrimary
         backgroundColor: "transparent"
-        clockColor: Color.mOnSurface
+        clockColor: AtmoColor.mOnSurface
         hoursFontSize: Style.fontSizeL
         minutesFontSize: Style.fontSizeL
         hoursFontWeight: Style.fontWeightBold
@@ -182,7 +182,7 @@ Rectangle {
             text: modelData
             pointSize: Style.fontSizeL
             font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
+            color: AtmoColor.mOnSurface
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
             Layout.alignment: Qt.AlignHCenter

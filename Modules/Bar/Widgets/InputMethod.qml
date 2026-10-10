@@ -157,8 +157,8 @@ Item {
     anchors.verticalCenter: parent.verticalCenter
     screen: root.screen
     oppositeDirection: BarService.getPillDirection(root)
-    customIconColor: Color.resolveColorKeyOptional(root.iconColorKey)
-    customTextColor: Color.resolveColorKeyOptional(root.textColorKey)
+    customIconColor: AtmoColor.resolveColorKeyOptional(root.iconColorKey)
+    customTextColor: AtmoColor.resolveColorKeyOptional(root.textColorKey)
     icon: root.showIcon ? "keyboard" : ""
     autoHide: false
     text: {

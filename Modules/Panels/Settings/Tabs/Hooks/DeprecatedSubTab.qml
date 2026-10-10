@@ -38,7 +38,7 @@ ColumnLayout {
 
   Rectangle {
     Layout.fillWidth: true
-    color: Color.mSurfaceVariant
+    color: AtmoColor.mSurfaceVariant
     radius: Style.radiusM
     Layout.preferredHeight: noticeText.implicitHeight + Style.marginL * 2
 
@@ -75,7 +75,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.hooks.session-moved-to")
         pointSize: Style.fontSizeXS
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
       }
@@ -100,7 +100,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.hooks.wallpaper-changed-moved-to")
         pointSize: Style.fontSizeXS
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
       }
@@ -125,7 +125,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.hooks.theme-changed-moved-to")
         pointSize: Style.fontSizeXS
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
       }
@@ -150,7 +150,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.hooks.screen-lock-moved-to")
         pointSize: Style.fontSizeXS
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
       }
@@ -175,7 +175,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.hooks.screen-unlock-moved-to")
         pointSize: Style.fontSizeXS
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
       }
@@ -200,7 +200,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.hooks.performance-mode-enabled-moved-to")
         pointSize: Style.fontSizeXS
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
       }
@@ -225,7 +225,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.hooks.performance-mode-disabled-moved-to")
         pointSize: Style.fontSizeXS
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
       }
@@ -247,7 +247,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.hooks.atmosphera-started-moved-to")
         pointSize: Style.fontSizeXS
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
       }
@@ -272,7 +272,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.hooks.color-generation-moved-to")
         pointSize: Style.fontSizeXS
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
       }
@@ -297,7 +297,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.hooks.desktop-left-click-moved-to")
         pointSize: Style.fontSizeXS
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
       }
@@ -322,7 +322,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.hooks.desktop-right-click-moved-to")
         pointSize: Style.fontSizeXS
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
       }
@@ -347,7 +347,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.hooks.desktop-middle-click-moved-to")
         pointSize: Style.fontSizeXS
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
       }
@@ -372,7 +372,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.hooks.idle-screen-off-moved-to")
         pointSize: Style.fontSizeXS
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
       }
@@ -397,7 +397,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.hooks.idle-lock-moved-to")
         pointSize: Style.fontSizeXS
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
       }
@@ -422,7 +422,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.hooks.idle-suspend-moved-to")
         pointSize: Style.fontSizeXS
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
       }

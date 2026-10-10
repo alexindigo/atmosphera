@@ -126,46 +126,46 @@ Variants {
     function getProgressColor() {
       const isMutedState = (currentOSDType === OSD.Type.Volume && isMuted) || (currentOSDType === OSD.Type.InputVolume && isInputMuted);
       if (isMutedState) {
-        return Color.mError;
+        return AtmoColor.mError;
       }
       // When volumeOverdrive is enabled, show error color if volume is above 100%
       if ((currentOSDType === OSD.Type.Volume || currentOSDType === OSD.Type.InputVolume) && Settings.data.audio.volumeOverdrive) {
         const value = getCurrentValue();
         if (value > 1.0) {
-          return Color.mError;
+          return AtmoColor.mError;
         }
       }
       // For lock keys, use a different color to indicate the lock state
       if (currentOSDType === OSD.Type.LockKey) {
         // Check the specific lock key that was changed
         if (lastLockKeyChanged.startsWith("CAPS")) {
-          return LockKeysService.capsLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+          return LockKeysService.capsLockOn ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant;
         } else if (lastLockKeyChanged.startsWith("NUM")) {
-          return LockKeysService.numLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+          return LockKeysService.numLockOn ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant;
         } else if (lastLockKeyChanged.startsWith("SCROLL")) {
-          return LockKeysService.scrollLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+          return LockKeysService.scrollLockOn ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant;
         }
       }
-      return Color.mPrimary;
+      return AtmoColor.mPrimary;
     }
 
     function getIconColor() {
       const isMutedState = (currentOSDType === OSD.Type.Volume && isMuted) || (currentOSDType === OSD.Type.InputVolume && isInputMuted);
       if (isMutedState)
-        return Color.mError;
+        return AtmoColor.mError;
 
       if (currentOSDType === OSD.Type.LockKey) {
         // Check the specific lock key that was changed
         if (lastLockKeyChanged.startsWith("CAPS")) {
-          return LockKeysService.capsLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+          return LockKeysService.capsLockOn ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant;
         } else if (lastLockKeyChanged.startsWith("NUM")) {
-          return LockKeysService.numLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+          return LockKeysService.numLockOn ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant;
         } else if (lastLockKeyChanged.startsWith("SCROLL")) {
-          return LockKeysService.scrollLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+          return LockKeysService.scrollLockOn ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant;
         }
       }
 
-      return Color.mOnSurface;
+      return AtmoColor.mOnSurface;
     }
 
     // Brightness Handling
@@ -575,8 +575,8 @@ Variants {
           anchors.fill: parent
           anchors.margins: Style.marginM * 1.5
           radius: Style.radiusL
-          color: Qt.alpha(Color.mSurface, Color.adaptiveOpacity(Settings.data.osd.backgroundOpacity) || 1.0)
-          border.color: Qt.alpha(Color.mOutline, Color.adaptiveOpacity(Settings.data.osd.backgroundOpacity) || 1.0)
+          color: Qt.alpha(AtmoColor.mSurface, AtmoColor.adaptiveOpacity(Settings.data.osd.backgroundOpacity) || 1.0)
+          border.color: Qt.alpha(AtmoColor.mOutline, AtmoColor.adaptiveOpacity(Settings.data.osd.backgroundOpacity) || 1.0)
           border.width: {
             const bw = Math.max(2, Style.borderM);
             return bw % 2 === 0 ? bw : bw + 1;
@@ -646,7 +646,7 @@ Variants {
               Layout.alignment: Qt.AlignVCenter
               height: panel.barThickness
               radius: Math.min(Style.iRadiusL, panel.barThickness / 2)
-              color: Color.mSurfaceVariant
+              color: AtmoColor.mSurfaceVariant
 
               Rectangle {
                 anchors.left: parent.left
@@ -675,7 +675,7 @@ Variants {
             NText {
               visible: root.currentOSDType !== OSD.Type.LockKey
               text: root.getDisplayPercentage()
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               pointSize: Style.fontSizeS
               family: Settings.data.ui.fontFixed
               Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
@@ -756,7 +756,7 @@ Variants {
             NText {
               visible: root.currentOSDType !== OSD.Type.LockKey
               text: root.getDisplayPercentage()
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               pointSize: Style.fontSizeS
               family: Settings.data.ui.fontFixed
               Layout.fillWidth: true
@@ -777,7 +777,7 @@ Variants {
                 anchors.bottom: parent.bottom
                 width: panel.barThickness
                 radius: Math.min(Style.iRadiusL, panel.barThickness / 2)
-                color: Color.mSurfaceVariant
+                color: AtmoColor.mSurfaceVariant
 
                 Rectangle {
                   anchors.left: parent.left

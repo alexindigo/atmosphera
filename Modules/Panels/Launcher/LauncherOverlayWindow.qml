@@ -104,7 +104,7 @@ Variants {
       // Dimmer background (click to close)
       Rectangle {
         anchors.fill: parent
-        color: Qt.alpha(Color.mSurface, Settings.data.general.dimmerOpacity)
+        color: Qt.alpha(AtmoColor.mSurface, Settings.data.general.dimmerOpacity)
 
         MouseArea {
           anchors.fill: parent
@@ -260,7 +260,7 @@ Variants {
 
           ShapePath {
             strokeWidth: -1
-            fillColor: Qt.alpha(Color.mSurface, Color.adaptiveOpacity(Settings.data.ui.panelBackgroundOpacity))
+            fillColor: Qt.alpha(AtmoColor.mSurface, AtmoColor.adaptiveOpacity(Settings.data.ui.panelBackgroundOpacity))
 
             // Offset by radius to account for Shape's extended bounds
             startX: panelShape.radius + panelShape.radius * panelShape.tlMultX

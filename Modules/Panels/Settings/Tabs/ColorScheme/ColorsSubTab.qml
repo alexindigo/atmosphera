@@ -56,16 +56,16 @@ ColumnLayout {
     }
 
     if (colorKey === "mSurface")
-      return Color.mSurfaceVariant;
+      return AtmoColor.mSurfaceVariant;
     if (colorKey === "mPrimary")
-      return Color.mPrimary;
+      return AtmoColor.mPrimary;
     if (colorKey === "mSecondary")
-      return Color.mSecondary;
+      return AtmoColor.mSecondary;
     if (colorKey === "mTertiary")
-      return Color.mTertiary;
+      return AtmoColor.mTertiary;
     if (colorKey === "mError")
-      return Color.mError;
-    return Color.mOnSurfaceVariant;
+      return AtmoColor.mError;
+    return AtmoColor.mOnSurfaceVariant;
   }
 
   function schemeLoaded(schemeName, jsonData) {
@@ -174,7 +174,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.display.night-light-manual-schedule-sunrise")
         pointSize: Style.fontSizeM
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
       }
 
       NComboBox {
@@ -192,7 +192,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.display.night-light-manual-schedule-sunset")
         pointSize: Style.fontSizeM
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
       }
 
       NComboBox {
@@ -271,7 +271,7 @@ ColumnLayout {
     visible: Settings.data.colorSchemes.useWallpaperColors
     Layout.fillWidth: true
     implicitHeight: descriptionColumn.implicitHeight + Style.margin2L
-    color: Color.mSurface
+    color: AtmoColor.mSurface
 
     Column {
       id: descriptionColumn
@@ -286,7 +286,7 @@ ColumnLayout {
         wrapMode: Text.WordWrap
         text: I18n.tr("panels.color-scheme.method-description." + Settings.data.colorSchemes.generationMethod)
         pointSize: Style.fontSizeS
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
       }
 
       Row {
@@ -296,7 +296,7 @@ ColumnLayout {
         property int diameter: 16 * Style.uiScaleRatio
 
         Repeater {
-          model: [Color.mPrimary, Color.mSecondary, Color.mTertiary, Color.mError]
+          model: [AtmoColor.mPrimary, AtmoColor.mSecondary, AtmoColor.mTertiary, AtmoColor.mError]
 
           Rectangle {
             width: colorPreviewRow.diameter
@@ -348,12 +348,12 @@ ColumnLayout {
           border.width: Style.borderL
           border.color: {
             if ((Settings.data.colorSchemes.predefinedScheme === schemeName) && schemeItem.enabled) {
-              return Color.mSecondary;
+              return AtmoColor.mSecondary;
             }
             if (itemMouseArea.containsMouse) {
-              return Color.mHover;
+              return AtmoColor.mHover;
             }
-            return Color.mOutline;
+            return AtmoColor.mOutline;
           }
 
           RowLayout {
@@ -366,7 +366,7 @@ ColumnLayout {
               text: schemeItem.schemeName
               pointSize: Style.fontSizeS
               font.weight: schemeItem.schemeName === "Custom" ? Style.fontWeightBold : Style.fontWeightNormal
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               Layout.fillWidth: true
               elide: Text.ElideRight
               verticalAlignment: Text.AlignVCenter
@@ -429,14 +429,14 @@ ColumnLayout {
             width: 20
             height: 20
             radius: Math.min(Style.radiusL, width / 2)
-            color: Color.mSecondary
+            color: AtmoColor.mSecondary
             border.width: Style.borderS
-            border.color: Color.mOnSecondary
+            border.color: AtmoColor.mOnSecondary
 
             AtmoIcon {
               icon: Icon.check
               pointSize: Style.fontSizeXS
-              color: Color.mOnSecondary
+              color: AtmoColor.mOnSecondary
               anchors.centerIn: parent
             }
           }

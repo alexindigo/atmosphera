@@ -222,12 +222,12 @@ ColumnLayout {
         const badges = [];
         if (isPlugin) {
           badges.push({
-                        "color": Color.mSecondary
+                        "color": AtmoColor.mSecondary
                       });
         }
         if (DesktopWidgetRegistry.isCpuIntensive(widgetId)) {
           badges.push({
-                        "color": Color.mSecondary
+                        "color": AtmoColor.mSecondary
                       });
         }
 

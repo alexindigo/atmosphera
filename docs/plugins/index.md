@@ -78,7 +78,7 @@ Lock screen components receive additional properties from the shell:
 - **`pluginApi`** — The plugin API (only for non-default plugins)
 
 ### Services
-- **`qs.Commons`** — `Settings`, `I18n`, `Logger`, `Style`, `Color`
+- **`qs.Commons`** — `Settings`, `I18n`, `Logger`, `Style`, `AtmoColor`
 - **`qs.Services.UI`** — `ToastService`, `PanelService`, `LockScreenRegistry`
 - **`qs.Services.System`** — `AudioService`, `BatteryService`, `NetworkService`
 - **`qs.Widgets`** — `NButton`, `NIcon`, `NText`, `NTextInput`, etc.

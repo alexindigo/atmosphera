@@ -782,7 +782,7 @@ ShellRoot {
     implicitWidth: 1000
     implicitHeight: 680
     visible: false
-    color: Color.mSurface || "#202020"
+    color: AtmoColor.mSurface || "#202020"
     Loader {
       anchors.fill: parent
       anchors.margins: 24

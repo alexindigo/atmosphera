@@ -184,8 +184,8 @@ Singleton {
   readonly property real txRatio: txMaxSpeed > 0 ? Math.min(1, txSpeed / txMaxSpeed) : 0
 
   // Color resolution (respects useCustomColors setting)
-  readonly property color warningColor: Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.warningColor || Color.mTertiary) : Color.mTertiary
-  readonly property color criticalColor: Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.criticalColor || Color.mError) : Color.mError
+  readonly property color warningColor: Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.warningColor || AtmoColor.mTertiary) : AtmoColor.mTertiary
+  readonly property color criticalColor: Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.criticalColor || AtmoColor.mError) : AtmoColor.mError
 
   // Threshold values from settings
   readonly property int cpuWarningThreshold: Settings.data.systemMonitor.cpuWarningThreshold
@@ -225,22 +225,22 @@ Singleton {
   }
 
   // Ready-to-use stat colors (for gauges, panels, icons)
-  readonly property color cpuColor: cpuCritical ? criticalColor : (cpuWarning ? warningColor : Color.mPrimary)
-  readonly property color tempColor: tempCritical ? criticalColor : (tempWarning ? warningColor : Color.mPrimary)
-  readonly property color gpuColor: gpuCritical ? criticalColor : (gpuWarning ? warningColor : Color.mPrimary)
-  readonly property color memColor: memCritical ? criticalColor : (memWarning ? warningColor : Color.mPrimary)
-  readonly property color swapColor: swapCritical ? criticalColor : (swapWarning ? warningColor : Color.mPrimary)
+  readonly property color cpuColor: cpuCritical ? criticalColor : (cpuWarning ? warningColor : AtmoColor.mPrimary)
+  readonly property color tempColor: tempCritical ? criticalColor : (tempWarning ? warningColor : AtmoColor.mPrimary)
+  readonly property color gpuColor: gpuCritical ? criticalColor : (gpuWarning ? warningColor : AtmoColor.mPrimary)
+  readonly property color memColor: memCritical ? criticalColor : (memWarning ? warningColor : AtmoColor.mPrimary)
+  readonly property color swapColor: swapCritical ? criticalColor : (swapWarning ? warningColor : AtmoColor.mPrimary)
 
   function getCoreUsageColor(usage) {
     if (usage >= cpuCriticalThreshold)
       return criticalColor;
     if (usage >= cpuWarningThreshold)
       return warningColor;
-    return Color.mPrimary;
+    return AtmoColor.mPrimary;
   }
 
   function getDiskColor(diskPath, available = false) {
-    return isDiskCritical(diskPath, available) ? criticalColor : (isDiskWarning(diskPath, available) ? warningColor : Color.mPrimary);
+    return isDiskCritical(diskPath, available) ? criticalColor : (isDiskWarning(diskPath, available) ? warningColor : AtmoColor.mPrimary);
   }
 
   // Internal state for CPU calculation

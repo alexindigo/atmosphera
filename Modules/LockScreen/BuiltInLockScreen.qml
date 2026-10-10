@@ -62,7 +62,7 @@ Item {
       anchors.bottom: parent.bottom
       anchors.bottomMargin: (compactMode ? 280 : 360) * Style.uiScaleRatio
       radius: Style.radiusL
-      color: Color.mTertiary
+      color: AtmoColor.mTertiary
       visible: lockContext.showInfo && lockContext.infoMessage && !panelComponent.timerActive
       opacity: visible ? 1.0 : 0.0
 
@@ -74,12 +74,12 @@ Item {
         AtmoIcon {
           icon: Icon.credentials
           pointSize: Style.fontSizeXL
-          color: Color.mOnTertiary
+          color: AtmoColor.mOnTertiary
         }
 
         NText {
           text: lockContext.infoMessage
-          color: Color.mOnTertiary
+          color: AtmoColor.mOnTertiary
           pointSize: Style.fontSizeL
           horizontalAlignment: Text.AlignHCenter
         }
@@ -101,7 +101,7 @@ Item {
       anchors.bottom: parent.bottom
       anchors.bottomMargin: (compactMode ? 280 : 360) * Style.uiScaleRatio
       radius: Style.radiusL
-      color: Color.mError
+      color: AtmoColor.mError
       visible: lockContext.showFailure && lockContext.errorMessage && !panelComponent.timerActive
       opacity: visible ? 1.0 : 0.0
 
@@ -113,12 +113,12 @@ Item {
         AtmoIcon {
           icon: "alert-circle"
           pointSize: Style.fontSizeXL
-          color: Color.mOnError
+          color: AtmoColor.mOnError
         }
 
         NText {
           text: lockContext.errorMessage || "Authentication failed"
-          color: Color.mOnError
+          color: AtmoColor.mOnError
           pointSize: Style.fontSizeL
           horizontalAlignment: Text.AlignHCenter
         }
@@ -140,7 +140,7 @@ Item {
       anchors.bottom: parent.bottom
       anchors.bottomMargin: (compactMode ? 280 : 360) * Style.uiScaleRatio
       radius: Style.radiusL
-      color: Color.mSurface
+      color: AtmoColor.mSurface
       visible: panelComponent.timerActive
       opacity: visible ? 1.0 : 0.0
 
@@ -153,7 +153,7 @@ Item {
         AtmoIcon {
           icon: Icon.clock
           pointSize: Style.fontSizeXL
-          color: Color.mPrimary
+          color: AtmoColor.mPrimary
         }
 
         NText {
@@ -161,7 +161,7 @@ Item {
                           "action": I18n.tr("common." + panelComponent.pendingAction),
                           "seconds": Math.ceil(panelComponent.timeRemaining / 1000)
                         })
-          color: Color.mOnSurface
+          color: AtmoColor.mOnSurface
           pointSize: Style.fontSizeL
           horizontalAlignment: Text.AlignHCenter
           font.weight: Style.fontWeightBold
@@ -175,9 +175,9 @@ Item {
           icon: Icon.close
           tooltipText: I18n.tr("session-menu.cancel-timer")
           baseSize: 32
-          colorBg: Qt.alpha(Color.mPrimary, 0.1)
-          colorFg: Color.mPrimary
-          colorBgHover: Color.mPrimary
+          colorBg: Qt.alpha(AtmoColor.mPrimary, 0.1)
+          colorFg: AtmoColor.mPrimary
+          colorBgHover: AtmoColor.mPrimary
           onClicked: panelComponent.cancelTimer()
         }
       }

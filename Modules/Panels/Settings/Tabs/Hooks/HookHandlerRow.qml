@@ -26,7 +26,7 @@ RowLayout {
       NLabel {
         label: root.label
         description: root.description
-        labelColor: root.command ? Color.mPrimary : Color.mOnSurface
+        labelColor: root.command ? AtmoColor.mPrimary : AtmoColor.mOnSurface
       }
 
       AtmoIconButton {

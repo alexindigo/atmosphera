@@ -35,10 +35,10 @@ ColumnLayout {
         // If enabling custom colors and no custom color is saved, persist current theme colors
         if (checked) {
           if (!Settings.data.systemMonitor.warningColor || Settings.data.systemMonitor.warningColor === "") {
-            Settings.data.systemMonitor.warningColor = Color.mTertiary.toString();
+            Settings.data.systemMonitor.warningColor = AtmoColor.mTertiary.toString();
           }
           if (!Settings.data.systemMonitor.criticalColor || Settings.data.systemMonitor.criticalColor === "") {
-            Settings.data.systemMonitor.criticalColor = Color.mError.toString();
+            Settings.data.systemMonitor.criticalColor = AtmoColor.mError.toString();
           }
         }
         Settings.data.systemMonitor.useCustomColors = checked;
@@ -65,7 +65,7 @@ ColumnLayout {
         Layout.preferredWidth: Style.sliderWidth
         Layout.preferredHeight: Style.baseWidgetSize
         enabled: Settings.data.systemMonitor.useCustomColors
-        selectedColor: Settings.data.systemMonitor.warningColor || Color.mTertiary
+        selectedColor: Settings.data.systemMonitor.warningColor || AtmoColor.mTertiary
         onColorSelected: color => Settings.data.systemMonitor.warningColor = color
       }
     }
@@ -84,7 +84,7 @@ ColumnLayout {
         Layout.preferredWidth: Style.sliderWidth
         Layout.preferredHeight: Style.baseWidgetSize
         enabled: Settings.data.systemMonitor.useCustomColors
-        selectedColor: Settings.data.systemMonitor.criticalColor || Color.mError
+        selectedColor: Settings.data.systemMonitor.criticalColor || AtmoColor.mError
         onColorSelected: color => Settings.data.systemMonitor.criticalColor = color
       }
     }

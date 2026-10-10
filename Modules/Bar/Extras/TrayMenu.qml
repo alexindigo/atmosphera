@@ -214,8 +214,8 @@ PopupWindow {
 
   Rectangle {
     anchors.fill: parent
-    color: Color.mSurface
-    border.color: Color.mOutline
+    color: AtmoColor.mSurface
+    border.color: AtmoColor.mOutline
     border.width: Math.max(1, Style.borderS)
     radius: Style.radiusM
 
@@ -283,7 +283,7 @@ PopupWindow {
           Rectangle {
             id: innerRect
             anchors.fill: parent
-            color: mouseArea.containsMouse ? Color.mHover : "transparent"
+            color: mouseArea.containsMouse ? AtmoColor.mHover : "transparent"
             radius: Style.radiusS
             visible: !(modelData?.isSeparator ?? false)
 
@@ -307,9 +307,9 @@ PopupWindow {
                 readonly property bool isChecked: modelData?.checkState === Qt.Checked || (modelData?.checked ?? false)
 
                 // Color Logic
-                readonly property color activeColor: mouseArea.containsMouse ? Color.mOnHover : Color.mPrimary
-                readonly property color checkMarkColor: mouseArea.containsMouse ? Color.mHover : Color.mOnPrimary
-                readonly property color borderColor: isChecked ? activeColor : (mouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface)
+                readonly property color activeColor: mouseArea.containsMouse ? AtmoColor.mOnHover : AtmoColor.mPrimary
+                readonly property color checkMarkColor: mouseArea.containsMouse ? AtmoColor.mHover : AtmoColor.mOnPrimary
+                readonly property color borderColor: isChecked ? activeColor : (mouseArea.containsMouse ? AtmoColor.mOnHover : AtmoColor.mOnSurface)
 
                 // Checkbox Visuals
                 Rectangle {
@@ -375,7 +375,7 @@ PopupWindow {
               NText {
                 id: text
                 Layout.fillWidth: true
-                color: (modelData?.enabled ?? true) ? (mouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface) : Color.mOnSurfaceVariant
+                color: (modelData?.enabled ?? true) ? (mouseArea.containsMouse ? AtmoColor.mOnHover : AtmoColor.mOnSurface) : AtmoColor.mOnSurfaceVariant
                 text: modelData?.text !== "" ? modelData?.text.replace(/[\n\r]+/g, ' ') : "..."
                 pointSize: Style.fontSizeS
                 verticalAlignment: Text.AlignVCenter
@@ -396,7 +396,7 @@ PopupWindow {
                 applyUiScale: false
                 verticalAlignment: Text.AlignVCenter
                 visible: modelData?.hasChildren ?? false
-                color: (mouseArea.containsMouse ? Color.mOnTertiary : Color.mOnSurface)
+                color: (mouseArea.containsMouse ? AtmoColor.mOnTertiary : AtmoColor.mOnSurface)
               }
             }
 
@@ -501,9 +501,9 @@ PopupWindow {
         }
         Layout.preferredWidth: parent.width
         Layout.preferredHeight: 28
-        color: pinUnpinMouseArea.containsMouse ? Qt.alpha(Color.mPrimary, 0.2) : Qt.alpha(Color.mPrimary, 0.08)
+        color: pinUnpinMouseArea.containsMouse ? Qt.alpha(AtmoColor.mPrimary, 0.2) : Qt.alpha(AtmoColor.mPrimary, 0.08)
         radius: Style.radiusS
-        border.color: Qt.alpha(Color.mPrimary, pinUnpinMouseArea.containsMouse ? 0.4 : 0.2)
+        border.color: Qt.alpha(AtmoColor.mPrimary, pinUnpinMouseArea.containsMouse ? 0.4 : 0.2)
         border.width: Style.borderS
 
         RowLayout {
@@ -517,12 +517,12 @@ PopupWindow {
             pointSize: Style.fontSizeS
             applyUiScale: false
             verticalAlignment: Text.AlignVCenter
-            color: Color.mPrimary
+            color: AtmoColor.mPrimary
           }
 
           NText {
             Layout.fillWidth: true
-            color: Color.mPrimary
+            color: AtmoColor.mPrimary
             text: root.isPinned ? I18n.tr("panels.bar.tray-unpin-application") : I18n.tr("panels.bar.tray-pin-application")
             pointSize: Style.fontSizeS
             verticalAlignment: Text.AlignVCenter

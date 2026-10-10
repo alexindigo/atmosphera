@@ -34,8 +34,8 @@ ColumnLayout {
       Layout.fillWidth: true
       Layout.preferredHeight: 72
       radius: Style.radiusL
-      color: BindingsService.requestedEnvironment === modelData.value ? (Color.mPrimaryContainer || Color.mSurfaceVariant) : Color.mSurfaceVariant
-      border.color: BindingsService.requestedEnvironment === modelData.value ? Color.mPrimary : Color.mOutline
+      color: BindingsService.requestedEnvironment === modelData.value ? (AtmoColor.mPrimaryContainer || AtmoColor.mSurfaceVariant) : AtmoColor.mSurfaceVariant
+      border.color: BindingsService.requestedEnvironment === modelData.value ? AtmoColor.mPrimary : AtmoColor.mOutline
       border.width: BindingsService.requestedEnvironment === modelData.value ? 2 : 1
 
       MouseArea {
@@ -56,7 +56,7 @@ ColumnLayout {
           height: 20
           radius: width / 2
           color: "transparent"
-          border.color: BindingsService.requestedEnvironment === modelData.value ? Color.mPrimary : Color.mOutline
+          border.color: BindingsService.requestedEnvironment === modelData.value ? AtmoColor.mPrimary : AtmoColor.mOutline
           border.width: 2
 
           Rectangle {
@@ -64,7 +64,7 @@ ColumnLayout {
             width: 10
             height: 10
             radius: width / 2
-            color: Color.mPrimary
+            color: AtmoColor.mPrimary
             visible: BindingsService.requestedEnvironment === modelData.value
           }
         }
@@ -77,13 +77,13 @@ ColumnLayout {
             text: modelData.label
             pointSize: Style.fontSizeM
             font.weight: Style.fontWeightBold
-            color: Color.mPrimary
+            color: AtmoColor.mPrimary
           }
 
           NText {
             text: modelData.description
             pointSize: Style.fontSizeS
-            color: Color.mOnSurfaceVariant
+            color: AtmoColor.mOnSurfaceVariant
             wrapMode: Text.WordWrap
             Layout.fillWidth: true
           }

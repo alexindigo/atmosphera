@@ -797,7 +797,7 @@ Loader {
             id: indicatorRect
             anchors.fill: parent
             radius: indicatorThickness
-            color: Qt.alpha(Color.resolveColorKey(indicatorColorKey), indicatorOpacity)
+            color: Qt.alpha(AtmoColor.resolveColorKey(indicatorColorKey), indicatorOpacity)
             opacity: indicatorVisible ? 1 : 0
 
             Behavior on opacity {

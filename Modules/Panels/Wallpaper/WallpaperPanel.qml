@@ -271,7 +271,7 @@ SmartPanel {
       NBox {
         Layout.fillWidth: true
         Layout.preferredHeight: headerColumn.implicitHeight + Style.margin2L
-        color: Color.mSurfaceVariant
+        color: AtmoColor.mSurfaceVariant
 
         ColumnLayout {
           id: headerColumn
@@ -286,14 +286,14 @@ SmartPanel {
             AtmoIcon {
               icon: Icon.settingsWallpaperSelector
               pointSize: Style.fontSizeXXL
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
             }
 
             NText {
               text: I18n.tr("wallpaper.panel.title")
               pointSize: Style.fontSizeL
               font.weight: Style.fontWeightBold
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               Layout.fillWidth: true
             }
 
@@ -302,8 +302,8 @@ SmartPanel {
               icon: Icon.darkMode
               tooltipText: Settings.data.wallpaper.linkLightAndDarkWallpapers ? I18n.tr("wallpaper.panel.header-separate-light-dark-tooltip") : I18n.tr("wallpaper.panel.header-link-light-dark-tooltip")
               baseSize: Style.baseWidgetSize * 0.8
-              colorBg: !Settings.data.wallpaper.linkLightAndDarkWallpapers ? Color.mPrimary : Color.smartAlpha(Color.mSurfaceVariant)
-              colorFg: !Settings.data.wallpaper.linkLightAndDarkWallpapers ? Color.mOnPrimary : Color.mPrimary
+              colorBg: !Settings.data.wallpaper.linkLightAndDarkWallpapers ? AtmoColor.mPrimary : AtmoColor.smartAlpha(AtmoColor.mSurfaceVariant)
+              colorFg: !Settings.data.wallpaper.linkLightAndDarkWallpapers ? AtmoColor.mOnPrimary : AtmoColor.mPrimary
               onClicked: Settings.data.wallpaper.linkLightAndDarkWallpapers = !Settings.data.wallpaper.linkLightAndDarkWallpapers
             }
 
@@ -312,8 +312,8 @@ SmartPanel {
               icon: Icon.devices
               tooltipText: Settings.data.wallpaper.setWallpaperOnAllMonitors ? I18n.tr("wallpaper.panel.header-devices-apply-all-tooltip") : I18n.tr("wallpaper.panel.header-devices-per-monitor-tooltip")
               baseSize: Style.baseWidgetSize * 0.8
-              colorBg: !Settings.data.wallpaper.setWallpaperOnAllMonitors ? Color.mPrimary : Color.smartAlpha(Color.mSurfaceVariant)
-              colorFg: !Settings.data.wallpaper.setWallpaperOnAllMonitors ? Color.mOnPrimary : Color.mPrimary
+              colorBg: !Settings.data.wallpaper.setWallpaperOnAllMonitors ? AtmoColor.mPrimary : AtmoColor.smartAlpha(AtmoColor.mSurfaceVariant)
+              colorFg: !Settings.data.wallpaper.setWallpaperOnAllMonitors ? AtmoColor.mOnPrimary : AtmoColor.mPrimary
               onClicked: Settings.data.wallpaper.setWallpaperOnAllMonitors = !Settings.data.wallpaper.setWallpaperOnAllMonitors
             }
 
@@ -321,8 +321,8 @@ SmartPanel {
               icon: Icon.palette
               tooltipText: I18n.tr("wallpaper.panel.solid-color-tooltip")
               baseSize: Style.baseWidgetSize * 0.8
-              colorBg: Settings.data.wallpaper.useSolidColor ? Color.mPrimary : Color.mSurfaceVariant
-              colorFg: Settings.data.wallpaper.useSolidColor ? Color.mOnPrimary : Color.mPrimary
+              colorBg: Settings.data.wallpaper.useSolidColor ? AtmoColor.mPrimary : AtmoColor.mSurfaceVariant
+              colorFg: Settings.data.wallpaper.useSolidColor ? AtmoColor.mOnPrimary : AtmoColor.mPrimary
               onClicked: solidColorPicker.open()
             }
 
@@ -649,7 +649,7 @@ SmartPanel {
       NBox {
         Layout.fillWidth: true
         Layout.fillHeight: true
-        color: Color.mSurfaceVariant
+        color: AtmoColor.mSurfaceVariant
 
         StackLayout {
           id: contentStack
@@ -1004,7 +1004,7 @@ SmartPanel {
           NText {
             text: isBrowseMode ? currentBrowsePath : WallpaperService.getMonitorDirectory(targetScreen?.name ?? "")
             pointSize: Style.fontSizeS
-            color: Color.mOnSurfaceVariant
+            color: AtmoColor.mOnSurfaceVariant
           }
         }
 
@@ -1185,10 +1185,10 @@ SmartPanel {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 height: imageContainer.imageHeight
-                color: Color.mSurfaceVariant
+                color: AtmoColor.mSurfaceVariant
                 radius: Style.radiusM
                 visible: wallpaperItem.isDirectory
-                border.color: wallpaperGridView.currentIndex === index ? Color.mHover : Color.mSurface
+                border.color: wallpaperGridView.currentIndex === index ? AtmoColor.mHover : AtmoColor.mSurface
                 border.width: Math.max(1, Style.borderL * 1.5)
 
                 ColumnLayout {
@@ -1198,7 +1198,7 @@ SmartPanel {
                   AtmoIcon {
                     icon: Icon.folder
                     pointSize: Style.fontSizeXXXL
-                    color: Color.mPrimary
+                    color: AtmoColor.mPrimary
                     Layout.alignment: Qt.AlignHCenter
                   }
                 }
@@ -1216,12 +1216,12 @@ SmartPanel {
                 radius: Style.radiusM
                 borderColor: {
                   if (wallpaperItem.isSelected) {
-                    return Color.mSecondary;
+                    return AtmoColor.mSecondary;
                   }
                   if (wallpaperGridView.currentIndex === index) {
-                    return Color.mHover;
+                    return AtmoColor.mHover;
                   }
-                  return Color.mSurface;
+                  return AtmoColor.mSurface;
                 }
                 borderWidth: Math.max(1, Style.borderL * 1.5)
                 imageFillMode: Image.PreserveAspectCrop
@@ -1233,14 +1233,14 @@ SmartPanel {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 height: imageContainer.imageHeight
-                color: Color.mSurfaceVariant
+                color: AtmoColor.mSurfaceVariant
                 radius: Style.radiusM
                 visible: !wallpaperItem.isDirectory && (img.status === Image.Loading || img.status === Image.Error || wallpaperItem.cachedPath === "")
 
                 AtmoIcon {
                   icon: Icon.image
                   pointSize: Style.fontSizeL
-                  color: Color.mOnSurfaceVariant
+                  color: AtmoColor.mOnSurfaceVariant
                   anchors.centerIn: parent
                 }
               }
@@ -1261,15 +1261,15 @@ SmartPanel {
                 height: 28
                 radius: width / 2
                 z: 6
-                color: Color.mSecondary
-                border.color: Color.mOutline
+                color: AtmoColor.mSecondary
+                border.color: AtmoColor.mOutline
                 border.width: Style.borderS
                 visible: wallpaperItem.isSelected
 
                 AtmoIcon {
                   icon: Icon.check
                   pointSize: Style.fontSizeM
-                  color: Color.mOnSecondary
+                  color: AtmoColor.mOnSecondary
                   anchors.centerIn: parent
                 }
 
@@ -1290,8 +1290,8 @@ SmartPanel {
                 visible: !wallpaperItem.isDirectory && (wallpaperItem.isFavorited || hoverHandler.hovered || wallpaperGridView.currentIndex === index)
                 color: {
                   if (wallpaperItem.isFavorited)
-                    return starHoverHandler.hovered ? Color.mHover : Color.mPrimary;
-                  return starHoverHandler.hovered ? Color.mSurfaceVariant : Color.mSurface;
+                    return starHoverHandler.hovered ? AtmoColor.mHover : AtmoColor.mPrimary;
+                  return starHoverHandler.hovered ? AtmoColor.mSurfaceVariant : AtmoColor.mSurface;
                 }
                 opacity: wallpaperItem.isFavorited || starHoverHandler.hovered ? 1.0 : 0.7
                 z: 11
@@ -1312,8 +1312,8 @@ SmartPanel {
                   pointSize: Style.fontSizeM
                   color: {
                     if (wallpaperItem.isFavorited)
-                      return starHoverHandler.hovered ? Color.mOnHover : Color.mOnPrimary;
-                    return starHoverHandler.hovered ? Color.mOnSurface : Color.mOnSurfaceVariant;
+                      return starHoverHandler.hovered ? AtmoColor.mOnHover : AtmoColor.mOnPrimary;
+                    return starHoverHandler.hovered ? AtmoColor.mOnSurface : AtmoColor.mOnSurfaceVariant;
                   }
                   anchors.centerIn: parent
                 }
@@ -1383,14 +1383,14 @@ SmartPanel {
                     height: paletteRow.diameter
                     radius: width * 0.5
                     visible: Settings.data.wallpaper.linkLightAndDarkWallpapers
-                    color: Color.mSurface
-                    border.color: Color.mShadow
+                    color: AtmoColor.mSurface
+                    border.color: AtmoColor.mShadow
                     border.width: Style.borderS
 
                     AtmoIcon {
                       icon: paletteRow.isDark ? "dark-mode" : "sun"
                       pointSize: parent.width * 0.45
-                      color: Color.mOnSurface
+                      color: AtmoColor.mOnSurface
                       anchors.centerIn: parent
                     }
                   }
@@ -1403,7 +1403,7 @@ SmartPanel {
                       height: paletteRow.diameter
                       radius: width * 0.5
                       color: modelData
-                      border.color: Color.mShadow
+                      border.color: AtmoColor.mShadow
                       border.width: Style.borderS
                     }
                   }
@@ -1419,7 +1419,7 @@ SmartPanel {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 height: imageContainer.imageHeight
-                color: Color.mSurface
+                color: AtmoColor.mSurface
                 radius: Style.radiusM
                 opacity: (hoverHandler.hovered || wallpaperItem.isSelected || wallpaperGridView.currentIndex === index) ? 0 : 0.3
                 Behavior on opacity {
@@ -1445,7 +1445,7 @@ SmartPanel {
             NText {
               text: wallpaperItem.filename
               visible: !Settings.data.wallpaper.hideWallpaperFilenames
-              color: (hoverHandler.hovered || wallpaperItem.isSelected || wallpaperGridView.currentIndex === index) ? Color.mOnSurface : Color.mOnSurfaceVariant
+              color: (hoverHandler.hovered || wallpaperItem.isSelected || wallpaperGridView.currentIndex === index) ? AtmoColor.mOnSurface : AtmoColor.mOnSurfaceVariant
               pointSize: Style.fontSizeXS
               Layout.fillWidth: true
               Layout.leftMargin: Style.marginS
@@ -1460,9 +1460,9 @@ SmartPanel {
 
       // Empty / scanning state
       Rectangle {
-        color: Color.mSurface
+        color: AtmoColor.mSurface
         radius: Style.radiusM
-        border.color: Color.mOutline
+        border.color: AtmoColor.mOutline
         border.width: Style.borderS
         visible: (wallpaperModel.count === 0 && !WallpaperService.scanning) || WallpaperService.scanning
         Layout.fillWidth: true
@@ -1485,18 +1485,18 @@ SmartPanel {
           AtmoIcon {
             icon: Icon.folderOpen
             pointSize: Style.fontSizeXXL
-            color: Color.mOnSurface
+            color: AtmoColor.mOnSurface
             Layout.alignment: Qt.AlignHCenter
           }
           NText {
             text: (panelContent.filterText && panelContent.filterText.length > 0) ? I18n.tr("wallpaper.no-match") : (isBrowseMode ? I18n.tr("wallpaper.browse.empty-directory") : I18n.tr("wallpaper.no-wallpaper"))
-            color: Color.mOnSurface
+            color: AtmoColor.mOnSurface
             font.weight: Style.fontWeightBold
             Layout.alignment: Qt.AlignHCenter
           }
           NText {
             text: (panelContent.filterText && panelContent.filterText.length > 0) ? I18n.tr("wallpaper.try-different-search") : (isBrowseMode ? I18n.tr("wallpaper.browse.go-up-hint") : I18n.tr("wallpaper.configure-directory"))
-            color: Color.mOnSurfaceVariant
+            color: AtmoColor.mOnSurfaceVariant
             wrapMode: Text.WordWrap
             Layout.alignment: Qt.AlignHCenter
           }
@@ -1669,9 +1669,9 @@ SmartPanel {
                   radius: Style.radiusM
                   borderColor: {
                     if (wallhavenGridView.currentIndex === index) {
-                      return Color.mHover;
+                      return AtmoColor.mHover;
                     }
-                    return Color.mSurface;
+                    return AtmoColor.mSurface;
                   }
                   borderWidth: Math.max(1, Style.borderL * 1.5)
                   imageFillMode: Image.PreserveAspectCrop
@@ -1683,14 +1683,14 @@ SmartPanel {
                   anchors.right: parent.right
                   anchors.top: parent.top
                   height: imageContainer.imageHeight
-                  color: Color.mSurfaceVariant
+                  color: AtmoColor.mSurfaceVariant
                   radius: Style.radiusM
                   visible: img.status === Image.Loading || img.status === Image.Error || wallhavenItem.thumbnailUrl === ""
 
                   AtmoIcon {
                     icon: Icon.image
                     pointSize: Style.fontSizeL
-                    color: Color.mOnSurfaceVariant
+                    color: AtmoColor.mOnSurfaceVariant
                     anchors.centerIn: parent
                   }
                 }
@@ -1708,7 +1708,7 @@ SmartPanel {
                   anchors.right: parent.right
                   anchors.top: parent.top
                   height: imageContainer.imageHeight
-                  color: Color.mSurface
+                  color: AtmoColor.mSurface
                   radius: Style.radiusM
                   opacity: (hoverHandler.hovered || wallhavenGridView.currentIndex === index) ? 0 : 0.3
                   Behavior on opacity {
@@ -1734,7 +1734,7 @@ SmartPanel {
               NText {
                 text: wallhavenItem.wallpaperId || I18n.tr("common.unknown")
                 visible: !Settings.data.wallpaper.hideWallpaperFilenames
-                color: (hoverHandler.hovered || wallhavenGridView.currentIndex === index) ? Color.mOnSurface : Color.mOnSurfaceVariant
+                color: (hoverHandler.hovered || wallhavenGridView.currentIndex === index) ? AtmoColor.mOnSurface : AtmoColor.mOnSurfaceVariant
                 pointSize: Style.fontSizeXS
                 Layout.fillWidth: true
                 Layout.leftMargin: Style.marginS
@@ -1750,9 +1750,9 @@ SmartPanel {
         // Loading overlay - fills same space as GridView to prevent jumping
         Rectangle {
           anchors.fill: parent
-          color: Color.mSurface
+          color: AtmoColor.mSurface
           radius: Style.radiusM
-          border.color: Color.mOutline
+          border.color: AtmoColor.mOutline
           border.width: Style.borderS
           visible: loading || (typeof WallhavenService !== "undefined" && WallhavenService.fetching)
           z: 10
@@ -1768,13 +1768,13 @@ SmartPanel {
 
             NBusyIndicator {
               size: Style.baseWidgetSize * 1.5
-              color: Color.mPrimary
+              color: AtmoColor.mPrimary
               Layout.alignment: Qt.AlignHCenter
             }
 
             NText {
               text: I18n.tr("wallpaper.wallhaven.loading")
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
               pointSize: Style.fontSizeM
               Layout.alignment: Qt.AlignHCenter
             }
@@ -1788,9 +1788,9 @@ SmartPanel {
         // Error overlay
         Rectangle {
           anchors.fill: parent
-          color: Color.mSurface
+          color: AtmoColor.mSurface
           radius: Style.radiusM
-          border.color: Color.mOutline
+          border.color: AtmoColor.mOutline
           border.width: Style.borderS
           visible: errorMessage !== "" && !loading
           z: 10
@@ -1807,13 +1807,13 @@ SmartPanel {
             AtmoIcon {
               icon: "alert-circle"
               pointSize: Style.fontSizeXXL
-              color: Color.mError
+              color: AtmoColor.mError
               Layout.alignment: Qt.AlignHCenter
             }
 
             NText {
               text: errorMessage
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               wrapMode: Text.WordWrap
               Layout.alignment: Qt.AlignHCenter
               Layout.fillWidth: true
@@ -1829,9 +1829,9 @@ SmartPanel {
         // Empty state overlay
         Rectangle {
           anchors.fill: parent
-          color: Color.mSurface
+          color: AtmoColor.mSurface
           radius: Style.radiusM
-          border.color: Color.mOutline
+          border.color: AtmoColor.mOutline
           border.width: Style.borderS
           visible: (!wallpapers || wallpapers.length === 0) && !loading && errorMessage === ""
           z: 10
@@ -1848,13 +1848,13 @@ SmartPanel {
             AtmoIcon {
               icon: Icon.image
               pointSize: Style.fontSizeXXL
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
               Layout.alignment: Qt.AlignHCenter
             }
 
             NText {
               text: I18n.tr("wallpaper.wallhaven.no-results")
-              color: Color.mOnSurface
+              color: AtmoColor.mOnSurface
               wrapMode: Text.WordWrap
               Layout.alignment: Qt.AlignHCenter
               Layout.fillWidth: true
@@ -1889,7 +1889,7 @@ SmartPanel {
 
           NText {
             text: I18n.tr("wallpaper.wallhaven.page-prefix")
-            color: Color.mOnSurface
+            color: AtmoColor.mOnSurface
           }
 
           NTextInput {
@@ -1930,7 +1930,7 @@ SmartPanel {
 
           NText {
             text: I18n.tr("wallpaper.wallhaven.page-suffix").replace("{total}", WallhavenService.lastPage)
-            color: Color.mOnSurface
+            color: AtmoColor.mOnSurface
           }
         }
 

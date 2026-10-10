@@ -288,8 +288,8 @@ Item {
     id: decorationRect
     anchors.fill: parent
     anchors.margins: -outlineMargin
-    color: DesktopWidgetRegistry.editMode ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.1) : "transparent"
-    border.color: (DesktopWidgetRegistry.editMode || internal.isDragging) ? (internal.isDragging ? Color.mOutline : Color.mPrimary) : "transparent"
+    color: DesktopWidgetRegistry.editMode ? Qt.rgba(AtmoColor.mPrimary.r, AtmoColor.mPrimary.g, AtmoColor.mPrimary.b, 0.1) : "transparent"
+    border.color: (DesktopWidgetRegistry.editMode || internal.isDragging) ? (internal.isDragging ? AtmoColor.mOutline : AtmoColor.mPrimary) : "transparent"
     border.width: DesktopWidgetRegistry.editMode ? 3 : 0
     radius: Math.min(Math.round(Style.radiusL * root.widgetScale), Style.radiusL, width / 2, height / 2)
     z: -1
@@ -299,10 +299,10 @@ Item {
     id: container
     anchors.fill: parent
     radius: root.roundedCorners ? Math.min(Math.round(Style.radiusL * root.widgetScale), Style.radiusL, width / 2, height / 2) : 0
-    color: Qt.alpha(Color.mSurface, Style.effectivePanelOpacity)
+    color: Qt.alpha(AtmoColor.mSurface, Style.effectivePanelOpacity)
     border {
       width: 1
-      color: Qt.alpha(Color.mOutline, 0.12)
+      color: Qt.alpha(AtmoColor.mOutline, 0.12)
     }
     clip: true
     visible: root.showBackground
@@ -481,7 +481,7 @@ Item {
   // Corner handles for scaling - using Repeater to avoid code duplication
   readonly property real cornerHandleSize: 8 * widgetScale
   readonly property real outlineMargin: Style.marginS * widgetScale
-  readonly property color colorHandle: Color.mSecondary
+  readonly property color colorHandle: AtmoColor.mSecondary
 
   // Corner handle model: defines position, direction, cursor, and triangle points for each corner
   // xMult/yMult: multipliers for position (0 = left/top edge, 1 = right/bottom edge)

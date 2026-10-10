@@ -6,7 +6,7 @@ import qs.Commons
 Item {
   id: root
 
-  property color handleColor: Qt.alpha(Color.mHover, 0.8)
+  property color handleColor: Qt.alpha(AtmoColor.mHover, 0.8)
   property color handleHoverColor: handleColor
   property color handlePressedColor: handleColor
   property color trackColor: "transparent"
@@ -22,7 +22,7 @@ Item {
   readonly property bool contentOverflows: listView.contentHeight > listView.height
 
   property bool showGradientMasks: true
-  property color gradientColor: Color.mSurfaceVariant
+  property color gradientColor: AtmoColor.mSurfaceVariant
   property int gradientHeight: 16
   property bool reserveScrollbarSpace: true
 

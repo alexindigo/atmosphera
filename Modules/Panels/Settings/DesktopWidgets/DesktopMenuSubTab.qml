@@ -105,13 +105,13 @@ ColumnLayout {
         AtmoIcon {
           icon: modelData.icon
           pointSize: Style.fontSizeM
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
         }
 
         NText {
           text: I18n.tr(modelData.labelKey)
           pointSize: Style.fontSizeS
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
           Layout.fillWidth: true
         }
 

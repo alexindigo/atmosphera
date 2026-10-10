@@ -58,9 +58,9 @@ Popup {
   background: Rectangle {
     id: bgRect
 
-    color: Color.mSurface
+    color: AtmoColor.mSurface
     radius: Style.radiusL
-    border.color: Color.mPrimary
+    border.color: AtmoColor.mPrimary
     border.width: Style.borderM
   }
 
@@ -83,7 +83,7 @@ Popup {
                         })
           pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
-          color: Color.mPrimary
+          color: AtmoColor.mPrimary
           Layout.fillWidth: true
         }
 
@@ -101,7 +101,7 @@ Popup {
       Rectangle {
         Layout.fillWidth: true
         Layout.preferredHeight: 1
-        color: Color.mOutline
+        color: AtmoColor.mOutline
       }
 
       // Command input
@@ -130,8 +130,8 @@ Popup {
           Layout.fillWidth: true
           Layout.preferredHeight: defaultCommandText.implicitHeight + Style.margin2M
           radius: Style.radiusM
-          color: Color.mSurfaceVariant
-          border.color: Color.mOutline
+          color: AtmoColor.mSurfaceVariant
+          border.color: AtmoColor.mOutline
           border.width: Style.borderS
 
           RowLayout {
@@ -141,7 +141,7 @@ Popup {
 
             AtmoIcon {
               icon: Icon.info
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
               pointSize: Style.fontSizeM
             }
 
@@ -149,7 +149,7 @@ Popup {
               id: defaultCommandText
               Layout.fillWidth: true
               text: root.defaultCommand
-              color: Color.mOnSurfaceVariant
+              color: AtmoColor.mOnSurfaceVariant
               font.family: "monospace"
               font.pointSize: Style.fontSizeS
               wrapMode: Text.Wrap

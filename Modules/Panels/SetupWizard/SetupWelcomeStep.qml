@@ -22,7 +22,7 @@ ColumnLayout {
       width: 120
       height: 120
       radius: width / 2
-      color: Color.mPrimary
+      color: AtmoColor.mPrimary
       opacity: 0.08
       scale: 1.3
     }
@@ -37,16 +37,16 @@ ColumnLayout {
 
       Rectangle {
         anchors.fill: parent
-        color: Color.mSurfaceVariant
+        color: AtmoColor.mSurfaceVariant
         radius: width / 2
-        border.color: Color.mOutline
+        border.color: AtmoColor.mOutline
         border.width: Style.borderM
         visible: parent.status === Image.Error
 
         AtmoIcon {
           icon: Icon.featured
           pointSize: Style.fontSizeXXL * 1.5
-          color: Color.mPrimary
+          color: AtmoColor.mPrimary
           anchors.centerIn: parent
         }
       }
@@ -80,7 +80,7 @@ ColumnLayout {
       text: I18n.tr("setup.welcome-title")
       pointSize: Style.fontSizeXXL * 1.4
       font.weight: Style.fontWeightBold
-      color: Color.mOnSurface
+      color: AtmoColor.mOnSurface
       Layout.fillWidth: true
       horizontalAlignment: Text.AlignHCenter
     }
@@ -88,7 +88,7 @@ ColumnLayout {
     NText {
       text: I18n.tr("setup.welcome-subtitle")
       pointSize: Style.fontSizeL
-      color: Color.mOnSurfaceVariant
+      color: AtmoColor.mOnSurfaceVariant
       Layout.fillWidth: true
       horizontalAlignment: Text.AlignHCenter
       wrapMode: Text.WordWrap
@@ -98,7 +98,7 @@ ColumnLayout {
       Layout.fillWidth: true
       Layout.topMargin: Style.marginL
       Layout.preferredHeight: childrenRect.height + Style.margin2M
-      color: Color.mSurfaceVariant
+      color: AtmoColor.mSurfaceVariant
       radius: Style.radiusL
 
       NText {
@@ -106,7 +106,7 @@ ColumnLayout {
         width: parent.width - Style.margin2L
         text: I18n.tr("common.privacy-no-telemetry") + "\n" + I18n.tr("common.feedback-use-github")
         pointSize: Style.fontSizeM
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
       }

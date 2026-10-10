@@ -38,9 +38,9 @@ Popup {
   }
 
   background: Rectangle {
-    color: Color.mSurface
+    color: AtmoColor.mSurface
     radius: Style.iRadiusL
-    border.color: Color.mPrimary
+    border.color: AtmoColor.mPrimary
     border.width: Style.borderM
   }
 
@@ -55,7 +55,7 @@ Popup {
         text: I18n.tr("widgets.icon-picker.title")
         pointSize: Style.fontSizeL
         font.weight: Style.fontWeightBold
-        color: Color.mPrimary
+        color: AtmoColor.mPrimary
         Layout.fillWidth: true
       }
       AtmoIconButton {
@@ -92,15 +92,15 @@ Popup {
       cellHeight: root.cellH
       model: root.filteredIcons
       reserveScrollbarSpace: false
-      gradientColor: Color.mSurface
+      gradientColor: AtmoColor.mSurface
 
       delegate: Rectangle {
         width: grid.cellWidth
         height: grid.cellHeight
         radius: Style.iRadiusS
 
-        color: (root.selectedIcon === modelData) ? Qt.alpha(Color.mPrimary, 0.15) : "transparent"
-        border.color: (root.selectedIcon === modelData) ? Color.mPrimary : "transparent"
+        color: (root.selectedIcon === modelData) ? Qt.alpha(AtmoColor.mPrimary, 0.15) : "transparent"
+        border.color: (root.selectedIcon === modelData) ? AtmoColor.mPrimary : "transparent"
         border.width: (root.selectedIcon === modelData) ? Style.borderS : 0
 
         MouseArea {
@@ -134,7 +134,7 @@ Popup {
             wrapMode: Text.NoWrap
             maximumLineCount: 1
             horizontalAlignment: Text.AlignHCenter
-            color: Color.mOnSurfaceVariant
+            color: AtmoColor.mOnSurfaceVariant
             pointSize: Style.fontSizeXS
             text: modelData
           }

@@ -61,14 +61,14 @@ Popup {
 
     // Return visible defaults while loading
     var defaults = {
-      "mSurface": Color.mSurfaceVariant,
-      "mPrimary": Color.mPrimary,
-      "mSecondary": Color.mSecondary,
-      "mTertiary": Color.mTertiary,
-      "mError": Color.mError,
-      "mOnSurface": Color.mOnSurfaceVariant
+      "mSurface": AtmoColor.mSurfaceVariant,
+      "mPrimary": AtmoColor.mPrimary,
+      "mSecondary": AtmoColor.mSecondary,
+      "mTertiary": AtmoColor.mTertiary,
+      "mError": AtmoColor.mError,
+      "mOnSurface": AtmoColor.mOnSurfaceVariant
     };
-    return defaults[colorKey] || Color.mOnSurfaceVariant;
+    return defaults[colorKey] || AtmoColor.mOnSurfaceVariant;
   }
 
   // Colors are now provided directly in the registry, no need to fetch individual files
@@ -77,9 +77,9 @@ Popup {
   }
 
   background: Rectangle {
-    color: Color.mSurface
+    color: AtmoColor.mSurface
     radius: Style.radiusL
-    border.color: Color.mPrimary
+    border.color: AtmoColor.mPrimary
     border.width: Style.borderM
   }
 
@@ -758,7 +758,7 @@ Popup {
         text: I18n.tr("panels.color-scheme.download-title")
         pointSize: Style.fontSizeL
         font.weight: Style.fontWeightBold
-        color: Color.mPrimary
+        color: AtmoColor.mPrimary
         Layout.fillWidth: true
       }
 
@@ -790,7 +790,7 @@ Popup {
     Rectangle {
       Layout.fillWidth: true
       Layout.preferredHeight: 1
-      color: Color.mOutline
+      color: AtmoColor.mOutline
     }
 
     // Error message
@@ -798,7 +798,7 @@ Popup {
       Layout.fillWidth: true
       Layout.preferredHeight: errorText.implicitHeight + Style.marginM
       visible: downloadError !== ""
-      color: Color.mError
+      color: AtmoColor.mError
       radius: Style.radiusS
 
       NText {
@@ -807,7 +807,7 @@ Popup {
         anchors.margins: Style.marginM
         text: downloadError
         pointSize: Style.fontSizeS
-        color: Color.mOnError
+        color: AtmoColor.mOnError
         wrapMode: Text.WordWrap
       }
     }
@@ -826,7 +826,7 @@ Popup {
       NText {
         text: I18n.tr("panels.color-scheme.download-fetching")
         pointSize: Style.fontSizeM
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
       }
     }
 
@@ -838,7 +838,7 @@ Popup {
       visible: hasInitialData && availableSchemes.length > 0
       verticalPolicy: ScrollBar.AsNeeded
       horizontalPolicy: ScrollBar.AlwaysOff
-      gradientColor: Color.mSurface
+      gradientColor: AtmoColor.mSurface
 
       ColumnLayout {
         width: schemesScrollView.availableWidth
@@ -855,7 +855,7 @@ Popup {
             property string schemeName: modelData.name
             color: root.getSchemeColor(schemeName, "mSurface")
             border.width: Style.borderL
-            border.color: hoverHandler.hovered ? root.getSchemeColor(schemeName, "mPrimary") : Color.mOutline
+            border.color: hoverHandler.hovered ? root.getSchemeColor(schemeName, "mPrimary") : AtmoColor.mOutline
 
             HoverHandler {
               id: hoverHandler
@@ -897,7 +897,7 @@ Popup {
               NText {
                 text: schemeRow.schemeName
                 pointSize: Style.fontSizeS
-                color: Color.mOnSurface
+                color: AtmoColor.mOnSurface
                 Layout.fillWidth: true
                 elide: Text.ElideRight
                 Layout.alignment: Qt.AlignVCenter
@@ -958,14 +958,14 @@ Popup {
       AtmoIcon {
         icon: Icon.pkg
         pointSize: 48
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         Layout.alignment: Qt.AlignHCenter
       }
 
       NText {
         text: I18n.tr("panels.color-scheme.download-empty")
         pointSize: Style.fontSizeM
-        color: Color.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
         Layout.alignment: Qt.AlignHCenter
       }
     }

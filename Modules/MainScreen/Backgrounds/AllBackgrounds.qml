@@ -23,7 +23,7 @@ Item {
   // Reference to MainScreen (for panel access)
   required property var windowRoot
 
-  readonly property color panelBackgroundColor: Color.mSurface
+  readonly property color panelBackgroundColor: AtmoColor.mSurface
 
   anchors.fill: parent
 

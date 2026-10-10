@@ -91,16 +91,16 @@ NBox {
             return brightness <= 0.5 ? "brightness-low" : "brightness-high";
           }
           baseSize: Style.baseWidgetSize * 0.5
-          colorFg: Color.mOnSurface
+          colorFg: AtmoColor.mOnSurface
           colorBg: "transparent"
-          colorBgHover: Color.mHover
-          colorFgHover: Color.mOnHover
+          colorBgHover: AtmoColor.mHover
+          colorFgHover: AtmoColor.mOnHover
         }
 
         NText {
           text: brightnessMonitor ? I18n.tr("common.brightness") : "No display"
           pointSize: Style.fontSizeXS
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
           elide: Text.ElideRight
           Layout.fillWidth: true
           Layout.preferredWidth: 0
@@ -109,7 +109,7 @@ NBox {
         NText {
           text: brightnessMonitor ? Math.round(localBrightness * 100) + "%" : "N/A"
           pointSize: Style.fontSizeXS
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
           opacity: brightnessMonitor && brightnessMonitor.brightnessControlAvailable ? 1.0 : 0.5
         }
       }

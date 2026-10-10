@@ -31,12 +31,12 @@ ColumnLayout {
           width: 28
           height: 28
           radius: Style.radiusM
-          color: Color.mSurface
+          color: AtmoColor.mSurface
 
           AtmoIcon {
             icon: Icon.layout2
             pointSize: Style.fontSizeL
-            color: Color.mPrimary
+            color: AtmoColor.mPrimary
             anchors.centerIn: parent
           }
         }
@@ -49,13 +49,13 @@ ColumnLayout {
             text: I18n.tr("panels.bar.appearance-position-label")
             pointSize: Style.fontSizeL
             font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
+            color: AtmoColor.mOnSurface
           }
 
           NText {
             text: I18n.tr("panels.bar.appearance-position-description")
             pointSize: Style.fontSizeS
-            color: Color.mOnSurfaceVariant
+            color: AtmoColor.mOnSurfaceVariant
           }
         }
       }
@@ -95,15 +95,15 @@ ColumnLayout {
 
             property bool isActive: selectedBarPosition === modelData.key
 
-            color: (positionHoverHandler.hovered || isActive) ? Color.mPrimary : Color.mSurfaceVariant
-            border.color: (positionHoverHandler.hovered || isActive) ? Color.mPrimary : Color.mOutline
+            color: (positionHoverHandler.hovered || isActive) ? AtmoColor.mPrimary : AtmoColor.mSurfaceVariant
+            border.color: (positionHoverHandler.hovered || isActive) ? AtmoColor.mPrimary : AtmoColor.mOutline
             opacity: (positionHoverHandler.hovered || isActive) ? 1.0 : 0.8
 
             NText {
               text: modelData.name
               pointSize: Style.fontSizeM
               font.weight: (positionHoverHandler.hovered || parent.isActive) ? Style.fontWeightBold : Style.fontWeightMedium
-              color: (positionHoverHandler.hovered || parent.isActive) ? Color.mOnPrimary : Color.mOnSurface
+              color: (positionHoverHandler.hovered || parent.isActive) ? AtmoColor.mOnPrimary : AtmoColor.mOnSurface
               anchors.centerIn: parent
             }
 
@@ -143,7 +143,7 @@ ColumnLayout {
     Rectangle {
       Layout.fillWidth: true
       Layout.preferredHeight: 1
-      color: Color.mOutline
+      color: AtmoColor.mOutline
       opacity: 0.2
       Layout.topMargin: Style.marginS
       Layout.bottomMargin: Style.marginS
@@ -158,11 +158,11 @@ ColumnLayout {
         width: 32
         height: 32
         radius: Style.radiusM
-        color: Color.mSurface
+        color: AtmoColor.mSurface
         AtmoIcon {
           icon: Icon.minimize
           pointSize: Style.fontSizeL
-          color: Color.mPrimary
+          color: AtmoColor.mPrimary
           anchors.centerIn: parent
         }
       }
@@ -174,12 +174,12 @@ ColumnLayout {
           text: I18n.tr("panels.bar.appearance-density-label")
           pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
-          color: Color.mOnSurface
+          color: AtmoColor.mOnSurface
         }
         NText {
           text: I18n.tr("panels.bar.appearance-density-description")
           pointSize: Style.fontSizeS
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
           wrapMode: Text.WordWrap
           Layout.fillWidth: true
         }
@@ -218,8 +218,8 @@ ColumnLayout {
 
             property bool isActive: Settings.data.bar.density === modelData.key
 
-            color: (densityHoverHandler.hovered || isActive) ? Color.mPrimary : Color.mSurfaceVariant
-            border.color: (densityHoverHandler.hovered || isActive) ? Color.mPrimary : Color.mOutline
+            color: (densityHoverHandler.hovered || isActive) ? AtmoColor.mPrimary : AtmoColor.mSurfaceVariant
+            border.color: (densityHoverHandler.hovered || isActive) ? AtmoColor.mPrimary : AtmoColor.mOutline
             opacity: (densityHoverHandler.hovered || isActive) ? 1.0 : 0.8
 
             NText {
@@ -227,7 +227,7 @@ ColumnLayout {
               text: modelData.name
               pointSize: Style.fontSizeS
               font.weight: (densityHoverHandler.hovered || parent.isActive) ? Style.fontWeightBold : Style.fontWeightMedium
-              color: (densityHoverHandler.hovered || parent.isActive) ? Color.mOnPrimary : Color.mOnSurface
+              color: (densityHoverHandler.hovered || parent.isActive) ? AtmoColor.mOnPrimary : AtmoColor.mOnSurface
               anchors.centerIn: parent
             }
 
@@ -266,7 +266,7 @@ ColumnLayout {
     Rectangle {
       Layout.fillWidth: true
       Layout.preferredHeight: 1
-      color: Color.mOutline
+      color: AtmoColor.mOutline
       opacity: 0.2
       Layout.topMargin: Style.marginS
       Layout.bottomMargin: Style.marginS
@@ -284,11 +284,11 @@ ColumnLayout {
           width: 32
           height: 32
           radius: Style.radiusM
-          color: Color.mSurface
+          color: AtmoColor.mSurface
           AtmoIcon {
             icon: Icon.maximize
             pointSize: Style.fontSizeL
-            color: Color.mPrimary
+            color: AtmoColor.mPrimary
             anchors.centerIn: parent
           }
         }
@@ -299,12 +299,12 @@ ColumnLayout {
             text: I18n.tr("panels.user-interface.scaling-label")
             pointSize: Style.fontSizeL
             font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
+            color: AtmoColor.mOnSurface
           }
           NText {
             text: I18n.tr("panels.user-interface.scaling-description")
             pointSize: Style.fontSizeS
-            color: Color.mOnSurfaceVariant
+            color: AtmoColor.mOnSurfaceVariant
           }
         }
       }
@@ -327,7 +327,7 @@ ColumnLayout {
     Rectangle {
       Layout.fillWidth: true
       Layout.preferredHeight: 1
-      color: Color.mOutline
+      color: AtmoColor.mOutline
       opacity: 0.2
       Layout.topMargin: Style.marginS
       Layout.bottomMargin: Style.marginS
@@ -346,12 +346,12 @@ ColumnLayout {
           width: 28
           height: 28
           radius: Style.radiusM
-          color: Color.mSurface
+          color: AtmoColor.mSurface
 
           AtmoIcon {
             icon: Icon.layout2
             pointSize: Style.fontSizeL
-            color: Color.mPrimary
+            color: AtmoColor.mPrimary
             anchors.centerIn: parent
           }
         }
@@ -364,13 +364,13 @@ ColumnLayout {
             text: I18n.tr("panels.bar.appearance-type-label") ?? "Bar Type"
             pointSize: Style.fontSizeL
             font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
+            color: AtmoColor.mOnSurface
           }
 
           NText {
             text: I18n.tr("panels.bar.appearance-type-description") ?? "Choose the style of the bar: Simple, Floating or Framed"
             pointSize: Style.fontSizeS
-            color: Color.mOnSurfaceVariant
+            color: AtmoColor.mOnSurfaceVariant
           }
         }
       }
@@ -402,15 +402,15 @@ ColumnLayout {
 
             property bool isActive: Settings.data.bar.barType === modelData.key
 
-            color: (barTypeHoverHandler.hovered || isActive) ? Color.mPrimary : Color.mSurfaceVariant
-            border.color: (barTypeHoverHandler.hovered || isActive) ? Color.mPrimary : Color.mOutline
+            color: (barTypeHoverHandler.hovered || isActive) ? AtmoColor.mPrimary : AtmoColor.mSurfaceVariant
+            border.color: (barTypeHoverHandler.hovered || isActive) ? AtmoColor.mPrimary : AtmoColor.mOutline
             opacity: (barTypeHoverHandler.hovered || isActive) ? 1.0 : 0.8
 
             NText {
               text: modelData.name
               pointSize: Style.fontSizeM
               font.weight: (barTypeHoverHandler.hovered || parent.isActive) ? Style.fontWeightBold : Style.fontWeightMedium
-              color: (barTypeHoverHandler.hovered || parent.isActive) ? Color.mOnPrimary : Color.mOnSurface
+              color: (barTypeHoverHandler.hovered || parent.isActive) ? AtmoColor.mOnPrimary : AtmoColor.mOnSurface
               anchors.centerIn: parent
             }
 
@@ -449,7 +449,7 @@ ColumnLayout {
     Rectangle {
       Layout.fillWidth: true
       Layout.preferredHeight: 1
-      color: Color.mOutline
+      color: AtmoColor.mOutline
       opacity: 0.2
       Layout.topMargin: Style.marginS
       Layout.bottomMargin: Style.marginS
@@ -459,7 +459,7 @@ ColumnLayout {
     Rectangle {
       Layout.fillWidth: true
       Layout.preferredHeight: 1
-      color: Color.mOutline
+      color: AtmoColor.mOutline
       opacity: 0.2
       Layout.topMargin: Style.marginS
       Layout.bottomMargin: Style.marginS
@@ -473,11 +473,11 @@ ColumnLayout {
         width: 32
         height: 32
         radius: Style.radiusM
-        color: Color.mSurface
+        color: AtmoColor.mSurface
         AtmoIcon {
           icon: Icon.screenShare
           pointSize: Style.fontSizeL
-          color: Color.mPrimary
+          color: AtmoColor.mPrimary
           anchors.centerIn: parent
         }
       }
@@ -488,12 +488,12 @@ ColumnLayout {
           text: I18n.tr("panels.user-interface.dimmer-opacity-label")
           pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
-          color: Color.mOnSurface
+          color: AtmoColor.mOnSurface
         }
         NText {
           text: I18n.tr("panels.user-interface.dimmer-opacity-description")
           pointSize: Style.fontSizeS
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
           wrapMode: Text.WordWrap
           Layout.fillWidth: true
         }
@@ -514,7 +514,7 @@ ColumnLayout {
     Rectangle {
       Layout.fillWidth: true
       Layout.preferredHeight: 1
-      color: Color.mOutline
+      color: AtmoColor.mOutline
       opacity: 0.2
       Layout.topMargin: Style.marginS
       Layout.bottomMargin: Style.marginS
@@ -528,11 +528,11 @@ ColumnLayout {
         width: 32
         height: 32
         radius: Style.radiusM
-        color: Color.mSurface
+        color: AtmoColor.mSurface
         AtmoIcon {
           icon: Icon.uiShadow
           pointSize: Style.fontSizeL
-          color: Color.mPrimary
+          color: AtmoColor.mPrimary
           anchors.centerIn: parent
         }
       }
@@ -543,12 +543,12 @@ ColumnLayout {
           text: I18n.tr("panels.user-interface.shadows-label")
           pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
-          color: Color.mOnSurface
+          color: AtmoColor.mOnSurface
         }
         NText {
           text: I18n.tr("panels.user-interface.shadows-description")
           pointSize: Style.fontSizeS
-          color: Color.mOnSurfaceVariant
+          color: AtmoColor.mOnSurfaceVariant
           wrapMode: Text.WordWrap
           Layout.fillWidth: true
         }

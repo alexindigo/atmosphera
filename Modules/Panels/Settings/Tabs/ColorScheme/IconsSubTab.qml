@@ -123,7 +123,7 @@ ColumnLayout {
   NBox {
     Layout.fillWidth: true
     implicitHeight: setsColumn.implicitHeight + Style.margin2L
-    color: Color.mSurface
+    color: AtmoColor.mSurface
     clip: true
 
     ColumnLayout {
@@ -140,7 +140,7 @@ ColumnLayout {
       NText {
         text: I18n.tr("panels.icons.priority-hint")
         pointSize: Style.fontSizeXS
-        color: Color.mOutline
+        color: AtmoColor.mOutline
         visible: setsOrdered.length > 1
       }
 
@@ -173,8 +173,8 @@ ColumnLayout {
             Rectangle {
               anchors.fill: parent
               radius: Style.radiusM
-              color: setDelegate.dragging ? Color.mSurfaceVariant : "transparent"
-              border.color: setDelegate.dragging ? Color.mOutline : "transparent"
+              color: setDelegate.dragging ? AtmoColor.mSurfaceVariant : "transparent"
+              border.color: setDelegate.dragging ? AtmoColor.mOutline : "transparent"
               border.width: Style.borderS
 
               Behavior on color {
@@ -195,7 +195,7 @@ ColumnLayout {
                 Layout.preferredHeight: Style.baseWidgetSize * 0.7
                 Layout.alignment: Qt.AlignVCenter
                 radius: Style.radiusXS
-                color: dragHandleMa.containsMouse ? Color.mSurfaceVariant : "transparent"
+                color: dragHandleMa.containsMouse ? AtmoColor.mSurfaceVariant : "transparent"
 
                 Behavior on color {
                   ColorAnimation {
@@ -212,7 +212,7 @@ ColumnLayout {
                       Layout.preferredWidth: Style.baseWidgetSize * 0.28
                       Layout.preferredHeight: 2
                       radius: 1
-                      color: Color.mOutline
+                      color: AtmoColor.mOutline
                     }
                   }
                 }
@@ -307,14 +307,14 @@ ColumnLayout {
 
                   NText {
                     text: modelData.name + (modelData.version ? "  " + modelData.version : "")
-                    color: Color.mOnSurface
+                    color: AtmoColor.mOnSurface
                     elide: Text.ElideRight
                     Layout.fillWidth: true
                   }
 
                   NText {
                     text: modelData.enabled ? (modelData.iconCount + " icons") : I18n.tr("panels.icons.set-disabled")
-                    color: Color.mOutline
+                    color: AtmoColor.mOutline
                     pointSize: Style.fontSizeXS
                   }
                 }
@@ -396,10 +396,10 @@ ColumnLayout {
       visible: searchInput.text !== ""
       colorBg: "transparent"
       colorBorder: "transparent"
-      colorFg: Color.mOutline
-      colorBgHover: Color.mSurfaceVariant
+      colorFg: AtmoColor.mOutline
+      colorBgHover: AtmoColor.mSurfaceVariant
       colorBorderHover: "transparent"
-      colorFgHover: Color.mOnSurface
+      colorFgHover: AtmoColor.mOnSurface
       onClicked: {
         searchInput.text = "";
         root.query = "";
@@ -414,13 +414,13 @@ ColumnLayout {
 
     NText {
       text: I18n.tr("panels.icons.filter-by")
-      color: Color.mOutline
+      color: AtmoColor.mOutline
       pointSize: Style.fontSizeXS
     }
 
     Rectangle {
       radius: Style.radiusXS
-      color: Color.mPrimary
+      color: AtmoColor.mPrimary
       height: Style.baseWidgetSize * 0.55
       width: filterChipRow.implicitWidth + Style.marginS
       clip: true
@@ -432,13 +432,13 @@ ColumnLayout {
 
         NText {
           text: root._setName(root.activeSetFilter)
-          color: Color.mOnPrimary
+          color: AtmoColor.mOnPrimary
           pointSize: Style.fontSizeXS
         }
 
         NText {
           text: "×"
-          color: Color.mOnPrimary
+          color: AtmoColor.mOnPrimary
           pointSize: Style.fontSizeXS
           font.weight: Style.fontWeightBold
 
@@ -458,7 +458,7 @@ ColumnLayout {
                     "count": filteredIcons.length,
                     "total": activeSetFilter ? root._setIconCount(root.activeSetFilter) : Object.keys(Icons.icons).length
                   })
-    color: Color.mOutline
+    color: AtmoColor.mOutline
     pointSize: Style.fontSizeXS
   }
 
@@ -479,7 +479,7 @@ ColumnLayout {
       property string iconName: modelData
       width: iconGrid.cellWidth
       height: iconGrid.cellHeight
-      color: cellMouse.containsMouse ? Color.mSurfaceVariant : "transparent"
+      color: cellMouse.containsMouse ? AtmoColor.mSurfaceVariant : "transparent"
       radius: Style.radiusS
 
       Behavior on color {
@@ -507,7 +507,7 @@ ColumnLayout {
           Layout.alignment: Qt.AlignHCenter
           icon: cell.iconName
           pointSize: Math.max(Style.fontSizeXS, Math.round(iconGrid.cellWidth * 0.18))
-          color: Color.mOnSurface
+          color: AtmoColor.mOnSurface
         }
 
         NText {
@@ -515,7 +515,7 @@ ColumnLayout {
           Layout.fillWidth: true
           text: cell.iconName
           pointSize: Math.max(6, Style.fontSizeXS * 0.85)
-          color: Color.mOutline
+          color: AtmoColor.mOutline
           elide: Text.ElideRight
           horizontalAlignment: Text.AlignHCenter
           maximumLineCount: 1
@@ -538,7 +538,7 @@ ColumnLayout {
       id: emptyLabel
       anchors.centerIn: parent
       text: I18n.tr("panels.icons.empty")
-      color: Color.mOutline
+      color: AtmoColor.mOutline
     }
   }
 

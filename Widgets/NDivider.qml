@@ -16,11 +16,11 @@ Rectangle {
     }
     GradientStop {
       position: 0.1
-      color: Color.mOutline
+      color: AtmoColor.mOutline
     }
     GradientStop {
       position: 0.9
-      color: Color.mOutline
+      color: AtmoColor.mOutline
     }
     GradientStop {
       position: 1.0

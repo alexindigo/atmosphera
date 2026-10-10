@@ -12,7 +12,7 @@ ShaderEffect {
   readonly property int modeHueReplace: 3
 
   // Shader controls
-  property color targetColor: Color.mPrimary
+  property color targetColor: AtmoColor.mPrimary
   property real colorizeMode: root.modeHueReplace
   property real blendStrength: 1.0
   property real hueAdjustment: 0.0
