@@ -80,6 +80,7 @@ ShellRoot {
   }
 
   Component.onCompleted: {
+    AtmoSingletonCheck.verify("AtmoColor", AtmoColor, AtmoSingletonCheck.atmoColorContract);
     if (Settings.isLoaded)
       root._settingsReady = true;
     // I18n emits translationsLoaded even on the English fallback path

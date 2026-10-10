@@ -100,6 +100,7 @@ ShellRoot {
     sourceComponent: Item {
       Component.onCompleted: {
         Logger.i("Shell", "---------------------------");
+        AtmoSingletonCheck.verify("AtmoColor", AtmoColor, AtmoSingletonCheck.atmoColorContract);
 
         // Session init first: compositor integration (niri session config
         // switch) so atmosphera's layers are active before panels draw
