@@ -7,6 +7,13 @@
       strings, comments, template-literal text and regex literals is never
       touched. --check writes nothing and exits 1 if anything is pending.
 
+  shadowing [--qt-qml-dir DIR] [--root DIR] PATH...
+      Report Atmosphera type names (files reachable through a file's qs.*
+      imports or its own directory) that an unqualified non-qs import also
+      exports. Qt resolves imported modules' C++ types before QML composite
+      singletons, so such a name silently reaches the foreign type. Exits 1
+      if any code reference is shadowed.
+
 The lexer distinguishes code, // and /* */ comments, ' and " strings,
 template literals (text untouched; ${...} lexed as code, nesting allowed)
 and regex literals (a "/" at input start, after an operator or one of
@@ -290,6 +297,131 @@ def cmd_rename(args):
     return 1 if (args.check and total) else 0
 
 
+IMPORT_RE = re.compile(r"^\s*import\s+([A-Za-z_][\w.]*)(?:\s+[\d.]+)?(\s+as\s+\w+)?\s*;?\s*$")
+EXPORT_RE = re.compile(r'"([\w.]+)/(\w+)(?: [\d.]+)?"')
+
+
+def file_imports(src):
+    """Unqualified module imports declared in a QML file (comments ignored)."""
+    _tokens, spans = lex(src)
+    blanked = list(src)
+    for kind, start, end in spans:
+        if kind == "comment":
+            for i in range(start, end):
+                if blanked[i] != "\n":
+                    blanked[i] = " "
+    imports = []
+    for line in "".join(blanked).splitlines():
+        m = IMPORT_RE.match(line)
+        if m and not m.group(2):
+            imports.append(m.group(1))
+    return imports
+
+
+def atmosphera_names(root, directory, module):
+    """{Name: (kind, module)} for capitalized .qml files in a directory."""
+    names = {}
+    if not os.path.isdir(directory):
+        return names
+    for entry in sorted(os.listdir(directory)):
+        if entry.endswith(".qml") and entry[0].isupper():
+            path = os.path.join(directory, entry)
+            with open(path, encoding="utf-8", errors="replace") as fh:
+                singleton = re.search(r"^\s*pragma\s+Singleton\b", fh.read(), re.M) is not None
+            names[entry[:-4]] = ("singleton" if singleton else "type", module)
+    return names
+
+
+class ForeignModules:
+    """Exported names of installed QML modules (qmldir + *.qmltypes), with qmldir imports."""
+
+    def __init__(self, qml_dir):
+        self.qml_dir = qml_dir
+        self.cache = {}
+
+    def exports(self, module, seen=None):
+        if module in self.cache:
+            return self.cache[module]
+        seen = set() if seen is None else seen
+        if module in seen:
+            return {}
+        seen.add(module)
+        names = {}
+        directory = os.path.join(self.qml_dir, *module.split("."))
+        qmldir = os.path.join(directory, "qmldir")
+        if os.path.isfile(qmldir):
+            with open(qmldir, encoding="utf-8", errors="replace") as fh:
+                for line in fh:
+                    parts = line.split()
+                    if not parts or parts[0] in ("module", "plugin", "classname", "typeinfo", "depends",
+                                                 "designersupported", "prefer", "optional", "linktarget",
+                                                 "internal", "default", "static", "system"):
+                        continue
+                    if parts[0] == "import" and len(parts) > 1:
+                        for name in self.exports(parts[1], seen):
+                            names.setdefault(name, module)
+                        continue
+                    if parts[0] == "singleton" and len(parts) > 1:
+                        parts = parts[1:]
+                    if parts[0][:1].isupper():
+                        names[parts[0]] = module
+        if os.path.isdir(directory):
+            for entry in sorted(os.listdir(directory)):
+                if entry.endswith(".qmltypes"):
+                    with open(os.path.join(directory, entry), encoding="utf-8", errors="replace") as fh:
+                        for line in fh:
+                            if "exports:" in line:
+                                for mod, name in EXPORT_RE.findall(line):
+                                    if mod == module:
+                                        names[name] = module
+        self.cache[module] = names
+        return names
+
+
+def cmd_shadowing(args):
+    foreign = ForeignModules(args.qt_qml_dir)
+    root = os.path.abspath(args.root)
+    lines = []
+    total = 0
+    files = 0
+    for path in iter_files(args.paths):
+        if not path.endswith(".qml"):
+            continue
+        with open(path, encoding="utf-8", errors="replace") as fh:
+            src = fh.read()
+        imports = file_imports(src)
+        own_dir = os.path.dirname(os.path.abspath(path))
+        own_rel = os.path.relpath(own_dir, root)
+        own_module = "qs" if own_rel == "." else "qs." + own_rel.replace(os.sep, ".")
+        ours = dict(atmosphera_names(root, own_dir, own_module))
+        theirs = {}
+        for module in imports:
+            if module == "qs" or module.startswith("qs."):
+                directory = os.path.join(root, *module.split(".")[1:])
+                for name, info in atmosphera_names(root, directory, module).items():
+                    ours.setdefault(name, info)
+            else:
+                for name in foreign.exports(module):
+                    theirs.setdefault(name, module)
+        clashes = {name: theirs[name] for name in ours if name in theirs}
+        if not clashes:
+            continue
+        tokens, _spans = lex(src)
+        hit = False
+        for name in sorted(clashes):
+            refs = [t for t in tokens if t.text == name and (t.prev_char != "." or t.spread)]
+            if refs:
+                kind, via = ours[name]
+                lines.append(f"{path}:{line_of(src, refs[0].start)}: {name} (Atmosphera {kind} via {via}) "
+                             f"shadowed by {clashes[name]} ({len(refs)} refs)")
+                total += len(refs)
+                hit = True
+        files += hit
+    lines.append(f"shadowing: {total} reference(s) in {files} file(s)")
+    sys.stdout.write("\n".join(lines) + "\n")
+    return 1 if total else 0
+
+
 def build_parser():
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     sub = parser.add_subparsers(dest="command", required=True)
@@ -300,6 +432,11 @@ def build_parser():
     r.add_argument("--report")
     r.add_argument("paths", nargs="+", metavar="PATH")
     r.set_defaults(func=cmd_rename)
+    sh = sub.add_parser("shadowing", help="report Atmosphera names shadowed by imported modules")
+    sh.add_argument("--qt-qml-dir", default="/usr/lib/qt6/qml")
+    sh.add_argument("--root", default=".")
+    sh.add_argument("paths", nargs="+", metavar="PATH")
+    sh.set_defaults(func=cmd_shadowing)
     return parser
 
 
