@@ -37,7 +37,8 @@ SmartPanel {
   Connections {
     target: Settings
     function onEffectiveSettingsChanged(section) {
-      if (section === "bar") root.refreshMediaMiniSettings();
+      if (section === "bar")
+        root.refreshMediaMiniSettings();
     }
   }
 

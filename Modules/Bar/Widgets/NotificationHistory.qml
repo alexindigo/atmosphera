@@ -85,11 +85,11 @@ AtmoIconButton {
       },
       {
         "label": I18n.tr("actions.clear-history"),
-        "action": "clear-history",
+        "action": "clear-history"
       },
       {
         "label": I18n.tr("actions.widget-settings"),
-        "action": "widget-settings",
+        "action": "widget-settings"
       },
     ]
 

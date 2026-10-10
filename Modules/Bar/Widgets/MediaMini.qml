@@ -173,13 +173,13 @@ Item {
       if (hasPlayer && MediaService.canGoPrevious) {
         items.push({
                      "label": I18n.tr("common.previous"),
-                     "action": "previous",
+                     "action": "previous"
                    });
       }
       if (hasPlayer && MediaService.canGoNext) {
         items.push({
                      "label": I18n.tr("common.next"),
-                     "action": "next",
+                     "action": "next"
                    });
       }
 
@@ -200,7 +200,7 @@ Item {
 
       items.push({
                    "label": I18n.tr("actions.widget-settings"),
-                   "action": "widget-settings",
+                   "action": "widget-settings"
                  });
       return items;
     }

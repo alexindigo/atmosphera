@@ -36,7 +36,10 @@ ColumnLayout {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         enabled: root.selectionEnabled
-        onClicked: { if (typeof root.select === "function") root.select(modelData.value); }
+        onClicked: {
+          if (typeof root.select === "function")
+            root.select(modelData.value);
+        }
       }
 
       RowLayout {

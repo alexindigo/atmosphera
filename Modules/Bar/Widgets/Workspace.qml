@@ -462,7 +462,7 @@ Item {
         // Focus item
         items.push({
                      "label": I18n.tr("common.focus"),
-                     "action": "focus",
+                     "action": "focus"
                    });
 
         // Pin/Unpin item
@@ -476,7 +476,7 @@ Item {
         // Close item
         items.push({
                      "label": I18n.tr("common.close"),
-                     "action": "close",
+                     "action": "close"
                    });
 
         // Add desktop entry actions
@@ -495,7 +495,7 @@ Item {
       }
       items.push({
                    "label": I18n.tr("actions.widget-settings"),
-                   "action": "widget-settings",
+                   "action": "widget-settings"
                  });
       return items;
     }

@@ -754,7 +754,7 @@ Singleton {
         root.cpuFreq = avgFreq.toFixed(1) + "GHz";
         cpuMaxFreqFile.reload();
         if (avgFreq > root.cpuGlobalMaxFreq)
-        root.cpuGlobalMaxFreq = avgFreq;
+          root.cpuGlobalMaxFreq = avgFreq;
         if (root.cpuGlobalMaxFreq > 0) {
           root.cpuFreqRatio = Math.min(1.0, avgFreq / root.cpuGlobalMaxFreq);
         }
@@ -958,7 +958,7 @@ Singleton {
     onLoaded: {
       const temp = parseInt(text().trim()) / 1000.0;
       if (!isNaN(temp) && temp > 0)
-      collectedTemps.push(temp);
+        collectedTemps.push(temp);
       currentZoneIndex++;
       Qt.callLater(() => {
         readNextCpuThermalZone();
@@ -997,7 +997,7 @@ Singleton {
     onLoaded: {
       const temp = parseInt(text().trim()) / 1000.0;
       if (!isNaN(temp) && temp > 0)
-      collectedTemps.push(temp);
+        collectedTemps.push(temp);
 
       // If we have multiple GPU zones (no gpu-avg), iterate and take max
       if (root.gpuThermalZonePaths && root.gpuThermalZonePaths.length > 0) {

@@ -26,8 +26,8 @@ ColumnLayout {
   property bool controlsLocked: false
   property bool retryAvailable: false
 
-  signal finished()
-  signal skipped()
+  signal finished
+  signal skipped
 
   readonly property int totalSteps: steps.length
   readonly property var currentStepData: (currentStep >= 0 && currentStep < totalSteps) ? steps[currentStep] : ({})
@@ -199,8 +199,10 @@ ColumnLayout {
       visible: (root.currentStepData.resetKey || "") !== ""
       enabled: !root.controlsLocked
       onClicked: {
-        if (typeof root.currentStepData.reset === "function") root.currentStepData.reset();
-        else Settings.resetSection(root.currentStepData.resetKey);
+        if (typeof root.currentStepData.reset === "function")
+          root.currentStepData.reset();
+        else
+          Settings.resetSection(root.currentStepData.resetKey);
       }
     }
 

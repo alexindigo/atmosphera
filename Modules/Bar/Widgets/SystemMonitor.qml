@@ -174,11 +174,11 @@ Item {
     model: [
       {
         "label": I18n.tr("system-monitor.title"),
-        "action": "sysmon-settings",
+        "action": "sysmon-settings"
       },
       {
         "label": I18n.tr("actions.widget-settings"),
-        "action": "widget-settings",
+        "action": "widget-settings"
       },
     ]
 

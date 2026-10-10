@@ -152,9 +152,9 @@ ColumnLayout {
     description: I18n.tr("bar.custom-button.show-exec-tooltip-description")
     checked: _settings.showExecTooltip
     onToggled: checked => {
-                 _settings.showExecTooltip = checked;
-                 saveSettings();
-               }
+      _settings.showExecTooltip = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.showExecTooltip
   }
 
@@ -206,9 +206,9 @@ ColumnLayout {
     description: I18n.tr("panels.control-center.shortcuts-custom-button-enable-on-state-logic-description")
     checked: _settings.enableOnStateLogic
     onToggled: checked => {
-                 _settings.enableOnStateLogic = checked;
-                 saveSettings();
-               }
+      _settings.enableOnStateLogic = checked;
+      saveSettings();
+    }
     defaultValue: widgetMetadata.enableOnStateLogic
   }
 

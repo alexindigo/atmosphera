@@ -117,7 +117,7 @@ Item {
       },
       {
         "label": I18n.tr("actions.widget-settings"),
-        "action": "widget-settings",
+        "action": "widget-settings"
       },
     ]
 

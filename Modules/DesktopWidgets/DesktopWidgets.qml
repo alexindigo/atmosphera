@@ -6,9 +6,9 @@ import Quickshell.Wayland
 import qs.Commons
 import qs.Modules.Panels.Settings
 import qs.Services.Compositor
+import qs.Services.Control
 import qs.Services.Plugins
 import qs.Services.Power
-import qs.Services.Control
 import qs.Services.UI
 import qs.Widgets
 
@@ -22,7 +22,7 @@ Variants {
   // Force reload counter - incremented when plugin widget registry changes
   property int pluginReloadCounter: 0
 
-  Component.onCompleted: DesktopWidgetRegistry.pluginWidgetRegistryUpdated.connect(function() {
+  Component.onCompleted: DesktopWidgetRegistry.pluginWidgetRegistryUpdated.connect(function () {
     root.pluginReloadCounter++;
     Logger.d("DesktopWidgets", "Plugin widget registry updated, reload counter:", root.pluginReloadCounter);
   })

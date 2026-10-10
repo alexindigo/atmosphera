@@ -76,10 +76,7 @@ Singleton {
   readonly property real effectivePanelOpacity: PowerProfileService.atmospheraPerformanceMode ? 1.0 : Color.adaptiveOpacity(Settings.data.ui.panelBackgroundOpacity)
   readonly property real effectiveBarOpacity: PowerProfileService.atmospheraPerformanceMode ? 1.0 : Settings.data.bar.backgroundOpacity
 
-  readonly property real effectiveSessionMenuOpacity:
-    Settings.data.sessionMenu.useSharedOpacity
-        ? effectivePanelOpacity
-        : Settings.data.sessionMenu.backgroundOpacity
+  readonly property real effectiveSessionMenuOpacity: Settings.data.sessionMenu.useSharedOpacity ? effectivePanelOpacity : Settings.data.sessionMenu.backgroundOpacity
 
   // Shadows
   readonly property real shadowOpacity: 0.85
@@ -110,20 +107,20 @@ Singleton {
   readonly property real barHeight: {
     let h;
     switch (Settings.data.bar.density) {
-      case "mini":
+    case "mini":
       h = (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 23 : 21;
       break;
-      case "compact":
+    case "compact":
       h = (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 27 : 25;
       break;
-      case "comfortable":
+    case "comfortable":
       h = (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 39 : 37;
       break;
-      case "spacious":
+    case "spacious":
       h = (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 49 : 47;
       break;
-      default:
-      case "default":
+    default:
+    case "default":
       h = (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 33 : 31;
     }
     return toOdd(h);
@@ -135,19 +132,19 @@ Singleton {
   readonly property real capsuleHeight: {
     let h;
     switch (Settings.data.bar.density) {
-      case "mini":
+    case "mini":
       h = Math.round(barHeight * 0.90);
       break;
-      case "compact":
+    case "compact":
       h = Math.round(barHeight * 0.85);
       break;
-      case "comfortable":
+    case "comfortable":
       h = Math.round(barHeight * 0.75);
       break;
-      case "spacious":
+    case "spacious":
       h = Math.round(barHeight * 0.65);
       break;
-      default:
+    default:
       h = Math.round(barHeight * 0.82);
       break;
     }

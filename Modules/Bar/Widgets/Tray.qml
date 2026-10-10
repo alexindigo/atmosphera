@@ -277,7 +277,8 @@ Item {
   Connections {
     target: Settings
     function onEffectiveSettingsChanged(section) {
-      if (section === "bar") root.updateFilteredItems();
+      if (section === "bar")
+        root.updateFilteredItems();
     }
   }
 
@@ -320,7 +321,7 @@ Item {
     model: [
       {
         "label": I18n.tr("actions.widget-settings"),
-        "action": "widget-settings",
+        "action": "widget-settings"
       },
     ]
 

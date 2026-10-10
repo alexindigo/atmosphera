@@ -35,7 +35,6 @@ ColumnLayout {
 
   spacing: Style.marginL
 
-
   // Large preview area
   Rectangle {
     Layout.fillWidth: true

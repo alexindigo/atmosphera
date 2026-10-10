@@ -3,10 +3,10 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Modules.Panels.Settings.DesktopWidgets
 import qs.Services.Compositor
 import qs.Services.Plugins
 import qs.Services.UI
-import qs.Modules.Panels.Settings.DesktopWidgets
 import qs.Widgets
 
 ColumnLayout {

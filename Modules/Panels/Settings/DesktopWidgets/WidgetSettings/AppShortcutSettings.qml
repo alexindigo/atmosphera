@@ -49,7 +49,9 @@ ColumnLayout {
   property bool _iconsReady: false
 
   function _buildIconsFromFind() {
-    var lines = _iconFindProcess.stdout.text.trim().split('\n').filter(function (l) { return l; });
+    var lines = _iconFindProcess.stdout.text.trim().split('\n').filter(function (l) {
+      return l;
+    });
     var seen = {};
     for (var i = 0; i < lines.length; i++) {
       var p = lines[i].trim();
@@ -60,7 +62,12 @@ ColumnLayout {
         seen[name] = p;
     }
     var names = Object.keys(seen).sort();
-    _mergedIcons = names.map(function (n) { return { name: n, path: seen[n] }; });
+    _mergedIcons = names.map(function (n) {
+      return {
+        name: n,
+        path: seen[n]
+      };
+    });
     _iconsReady = true;
   }
 
@@ -70,7 +77,8 @@ ColumnLayout {
     stdout: StdioCollector {}
     stderr: StdioCollector {}
     onExited: function (exitCode) {
-      if (exitCode === 0) root._buildIconsFromFind();
+      if (exitCode === 0)
+        root._buildIconsFromFind();
     }
   }
 
@@ -139,18 +147,23 @@ ColumnLayout {
   }
 
   function tryAutoIconForCommand() {
-    if (!(root.isCreateMode && root.valueTerminalMode)) return;
-    if (valueIconType !== "auto") return;
-    if (!_iconsReady) return;
+    if (!(root.isCreateMode && root.valueTerminalMode))
+      return;
+    if (valueIconType !== "auto")
+      return;
+    if (!_iconsReady)
+      return;
 
     var cmd = "";
     for (var i = 0; i < paramsModel.count; i++) {
       var val = String(paramsModel.get(i).value || "").trim();
-      if (!val || val.startsWith("-") || val.includes("/")) continue;
+      if (!val || val.startsWith("-") || val.includes("/"))
+        continue;
       cmd = val;
       break;
     }
-    if (!cmd) return;
+    if (!cmd)
+      return;
 
     for (var j = 0; j < _mergedIcons.length; j++) {
       var iconName = _mergedIcons[j].name.replace(/\.svgz?$/i, "");
@@ -389,9 +402,12 @@ ColumnLayout {
     property string _searchQuery: ""
 
     readonly property var _filteredIcons: {
-      if (!_searchQuery) return root._mergedIcons;
+      if (!_searchQuery)
+        return root._mergedIcons;
       var q = _searchQuery.toLowerCase();
-      return root._mergedIcons.filter(function (e) { return e.name.toLowerCase().includes(q); });
+      return root._mergedIcons.filter(function (e) {
+        return e.name.toLowerCase().includes(q);
+      });
     }
 
     readonly property int _columns: 6
@@ -431,7 +447,9 @@ ColumnLayout {
         }
       }
 
-      NDivider { Layout.fillWidth: true }
+      NDivider {
+        Layout.fillWidth: true
+      }
 
       NTextInput {
         id: searchInput
@@ -506,7 +524,9 @@ ColumnLayout {
       RowLayout {
         Layout.fillWidth: true
         spacing: Style.marginM
-        Item { Layout.fillWidth: true }
+        Item {
+          Layout.fillWidth: true
+        }
         NButton {
           text: I18n.tr("common.cancel")
           outlined: true

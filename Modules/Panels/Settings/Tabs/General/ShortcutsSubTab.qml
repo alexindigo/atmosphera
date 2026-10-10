@@ -95,7 +95,12 @@ ColumnLayout {
   NBindingsQueueStatus {
     Layout.fillWidth: true
     queueStatus: BindingsService.status
-    retry: function () { BindingsService.retryHead(); }
+    retry: function () {
+      BindingsService.retryHead();
+    }
   }
-  Item { Layout.fillWidth: true; Layout.fillHeight: true }
+  Item {
+    Layout.fillWidth: true
+    Layout.fillHeight: true
+  }
 }

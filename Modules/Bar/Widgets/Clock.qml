@@ -148,11 +148,11 @@ Item {
     model: [
       {
         "label": I18n.tr("actions.open-calendar"),
-        "action": "open-calendar",
+        "action": "open-calendar"
       },
       {
         "label": I18n.tr("actions.widget-settings"),
-        "action": "widget-settings",
+        "action": "widget-settings"
       },
     ]
 

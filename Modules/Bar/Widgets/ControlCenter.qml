@@ -73,7 +73,7 @@ AtmoIconButton {
     model: [
       {
         "label": I18n.tr("actions.open-launcher"),
-        "action": "open-launcher",
+        "action": "open-launcher"
       },
       {
         "label": I18n.tr("actions.open-settings"),
@@ -82,7 +82,7 @@ AtmoIconButton {
       },
       {
         "label": I18n.tr("actions.widget-settings"),
-        "action": "widget-settings",
+        "action": "widget-settings"
       },
     ]
 

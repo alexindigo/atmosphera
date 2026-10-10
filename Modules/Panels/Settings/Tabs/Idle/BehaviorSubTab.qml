@@ -2,9 +2,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
+import qs.Modules.Panels.Settings
 import qs.Services.Power
 import qs.Services.UI
-import qs.Modules.Panels.Settings
 import qs.Widgets
 
 ColumnLayout {

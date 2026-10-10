@@ -345,12 +345,12 @@ Item {
     if (hasSettings) {
       items.push({
                    "label": I18n.tr("actions.widget-settings"),
-                   "action": "widget-settings",
+                   "action": "widget-settings"
                  });
     }
     items.push({
                  "label": I18n.tr("common.reset"),
-                 "action": "reset",
+                 "action": "reset"
                });
     items.push({
                  "label": I18n.tr("actions.raise-to-top"),
@@ -364,7 +364,7 @@ Item {
                });
     items.push({
                  "label": I18n.tr("common.delete"),
-                 "action": "delete",
+                 "action": "delete"
                });
     return items;
   }

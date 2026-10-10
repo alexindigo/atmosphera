@@ -4,8 +4,8 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import qs.Commons
-import qs.Services.Compositor
 import qs.Services
+import qs.Services.Compositor
 import qs.Services.System
 import qs.Services.UI
 import qs.Widgets

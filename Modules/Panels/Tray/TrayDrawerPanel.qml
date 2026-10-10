@@ -154,7 +154,8 @@ SmartPanel {
     Connections {
       target: Settings
       function onEffectiveSettingsChanged(section) {
-        if (section === "bar") panelContent.settingsVersion++;
+        if (section === "bar")
+          panelContent.settingsVersion++;
       }
     }
 
@@ -227,7 +228,8 @@ SmartPanel {
                     PanelService.openedPanel.close();
                   }
                 } else if (mouse.button === Qt.MiddleButton) {
-                  if (modelData.secondaryActivate) modelData.secondaryActivate();
+                  if (modelData.secondaryActivate)
+                    modelData.secondaryActivate();
                   if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
                     PanelService.openedPanel.close();
                   }

@@ -455,7 +455,7 @@ Item {
         // Focus item (for running apps)
         items.push({
                      "label": I18n.tr("common.focus"),
-                     "action": "focus",
+                     "action": "focus"
                    });
 
         // Pin/Unpin item (always available when right-clicking an app)
@@ -469,7 +469,7 @@ Item {
         // Close item (for running apps)
         items.push({
                      "label": I18n.tr("common.close"),
-                     "action": "close",
+                     "action": "close"
                    });
 
         // Add desktop entry actions (like "New Window", "Private Window", etc.)
@@ -488,7 +488,7 @@ Item {
       }
       items.push({
                    "label": I18n.tr("actions.widget-settings"),
-                   "action": "widget-settings",
+                   "action": "widget-settings"
                  });
       return items;
     }
@@ -972,7 +972,7 @@ Item {
       // Focus item (for running apps)
       items.push({
                    "label": I18n.tr("common.focus"),
-                   "action": "focus",
+                   "action": "focus"
                  });
 
       // Pin/Unpin item
@@ -986,7 +986,7 @@ Item {
       // Close item
       items.push({
                    "label": I18n.tr("common.close"),
-                   "action": "close",
+                   "action": "close"
                  });
 
       // Add desktop entry actions (like "New Window", "Private Window", etc.)
@@ -1005,7 +1005,7 @@ Item {
     }
     items.push({
                  "label": I18n.tr("actions.widget-settings"),
-                 "action": "widget-settings",
+                 "action": "widget-settings"
                });
 
     // Set the model directly
