@@ -14,9 +14,9 @@ Singleton {
   // ─────────────────────────────────────────────────────────────
   // Version detection (installed shell version)
   // currentVersion is detected at init (real installed version):
-  //   1. <shellDir>/VERSION — written by the package at build time (pkgver)
-  //   2. git describe of the shell dir — dev checkouts
-  //   3. the hardcoded fallback below — source builds / other distros
+  // VERSION is the tracked release/API identity (packages may add build suffixes).
+  // Git only appends HEAD identity in a checkout rooted at the shell directory.
+  // Legacy trees without VERSION retain the unknown display fallback below.
   readonly property string baseVersion: "0.1.0"
   readonly property string developmentSuffix: "-git"
   readonly property string fallbackVersion: `v${baseVersion + developmentSuffix}`
@@ -32,14 +32,14 @@ Singleton {
   readonly property int noctaliaCompatMajor: 4
 
   property string currentVersion: fallbackVersion
-  // True once versionDetectProcess produced a real version (VERSION file or git
-  // describe). While false, currentVersion is fallbackVersion, built from
+  readonly property string currentReleaseVersion: releaseVersion(currentVersion)
+  // True once versionDetectProcess read VERSION. While false, currentVersion is fallbackVersion, built from
   // baseVersion ("0.1.0") — NOT a real version. Compatibility gates must not
   // compare against it; that is precisely the original "every plugin is
   // incompatible" bug, where baseVersion was the operand too.
   property bool versionKnown: false
   property bool isGitVersion: true
-  // True when the version came from the packaged VERSION file (real installs).
+  // True for distributed VERSION-only trees, false for local Git checkouts.
   // The update check only makes sense for packaged installs — dev checkouts
   // manage their own git state and would false-positive when ahead of origin.
   property bool versionFromPackage: false
@@ -47,7 +47,7 @@ Singleton {
   // Classify a version string as a -git/dev build (drives the update-check
   // channel: commit-hash comparison for git builds, release tags otherwise)
   function classifyIsGitVersion(v) {
-    return /\.r\d+\.g[0-9a-f]+/.test(v) || /-\d+-g[0-9a-f]+/.test(v) || v.endsWith("-dirty") || v.endsWith(developmentSuffix);
+    return /\.r\d+\.g[0-9a-f]+/.test(v) || /-g[0-9a-f]+/.test(v) || v.endsWith("-dirty") || v.endsWith(developmentSuffix);
   }
 
   // Extract the commit hash from a -git style version (pkgver g<hash> or
@@ -59,25 +59,29 @@ Singleton {
 
   Process {
     id: versionDetectProcess
-    command: ["sh", "-c", `if [ -f "${Quickshell.shellDir}/VERSION" ]; then echo "pkg:$(cat "${Quickshell.shellDir}/VERSION")"; elif [ -d "${Quickshell.shellDir}/.git" ]; then echo "git:$(git -C "${Quickshell.shellDir}" describe --tags --always --dirty 2>/dev/null)"; fi`]
+    // Pass the directory as argv: quotes/spaces in worktree paths are data.
+    // .git can be a directory or a linked-worktree file. Never inherit a parent
+    // checkout's HEAD, and never discard VERSION because Git is unavailable.
+    command: ["sh", "-c", 'root=$(cd "$1" && pwd -P) || exit; [ -f "$root/VERSION" ] || exit; provenance=pkg; hash=; if [ -e "$root/.git" ]; then provenance=git; top=$(git -C "$root" rev-parse --show-toplevel 2>/dev/null); if [ "$top" = "$root" ]; then hash=$(git -C "$root" rev-parse --short=9 HEAD 2>/dev/null) || hash=; fi; fi; printf "%s\\n%s\\n%s\\n" "$provenance" "$(cat "$root/VERSION")" "$hash"', "version-detect", Quickshell.shellDir]
     running: false
 
     onExited: function (exitCode) {
-      var detected = stdout.text.trim();
-      var fromPackage = detected.startsWith("pkg:");
-      if (fromPackage || detected.startsWith("git:")) {
-        detected = detected.substring(4);
-      }
+      var lines = stdout.text.trim().split("\n");
+      var fromPackage = lines[0] === "pkg";
+      var detected = (lines[1] || "").trim();
       if (detected !== "") {
         // Strip pacman pkgrel suffix ("...-1") from packaged versions
         var stripped = detected.replace(/-\d+$/, "");
+        const hash = (lines[2] || "").trim();
+        if (/^[0-9a-f]{7,}$/.test(hash) && !root.classifyIsGitVersion(stripped))
+          stripped += "-g" + hash;
         root.currentVersion = stripped;
         root.versionKnown = true;
         root.isGitVersion = root.classifyIsGitVersion(stripped);
         root.versionFromPackage = fromPackage;
         Logger.i("Version", "Detected installed version:", stripped, "(git:", root.isGitVersion + ", packaged:", root.versionFromPackage + ")");
       } else {
-        Logger.i("Version", "No VERSION file or git describe — using fallback version:", root.currentVersion);
+        Logger.i("Version", "No VERSION file — using fallback version:", root.currentVersion);
       }
     }
 
@@ -497,8 +501,8 @@ Singleton {
   }
 
   function handleChangelogRequest() {
-    const fromVersion = changelogFromVersion || "";
-    const toVersion = changelogToVersion || "";
+    const fromVersion = ensureVersionPrefix(releaseVersion(changelogFromVersion));
+    const toVersion = ensureVersionPrefix(releaseVersion(changelogToVersion));
 
     if (Settings.shouldOpenSetupWizard) {
       // If you'll see the setup wizard then you don't need to see the changelog
@@ -529,12 +533,8 @@ Singleton {
 
   function fetchUpgradeLog(fromVersion, toVersion) {
     // Normalize and ensure "v" prefix for consistent URL format
-    let from = ensureVersionPrefix(fromVersion || changelogLastSeenVersion || "3.0.0");
-    let to = ensureVersionPrefix(toVersion);
-
-    // Strip -git suffix
-    from = from.replace(root.developmentSuffix, "");
-    to = to.replace(root.developmentSuffix, "");
+    let from = ensureVersionPrefix(releaseVersion(fromVersion || changelogLastSeenVersion || "3.0.0"));
+    let to = ensureVersionPrefix(releaseVersion(toVersion));
 
     // 'from' always needs to be before 'to' (use semantic comparison)
     if (compareVersions(from, to) >= 0) {
@@ -589,10 +589,18 @@ Singleton {
   }
 
   function parseVersionParts(version) {
-    const clean = normalizeVersion(version);
+    const clean = releaseVersion(version);
     if (!clean)
       return [];
-    return clean.split(/[^0-9]+/).filter(part => part.length > 0).map(part => parseInt(part));
+    return clean.split(".").map(part => parseInt(part));
+  }
+
+  // One release identity for API comparisons and changelog consumers. Build
+  // counts/hashes/pkgrel are never additional numeric version components.
+  // Major/minor-only requirements remain meaningful for the Noctalia banner.
+  function releaseVersion(version) {
+    const match = normalizeVersion(version).match(/^(\d+(?:\.\d+){0,2})(?=$|[.-])/);
+    return match ? match[1] : "";
   }
 
   function compareVersions(a, b) {
@@ -675,9 +683,8 @@ Singleton {
       return;
     }
 
-    // Normalize versions for comparison (strip -git, ensure v prefix)
-    const lastSeen = ensureVersionPrefix(changelogLastSeenVersion.replace(developmentSuffix, ""));
-    const target = ensureVersionPrefix(currentVersion.replace(developmentSuffix, ""));
+    const lastSeen = ensureVersionPrefix(releaseVersion(changelogLastSeenVersion));
+    const target = ensureVersionPrefix(currentReleaseVersion);
 
     if (lastSeen === target)
       return;
@@ -702,7 +709,7 @@ Singleton {
     if (!currentVersion)
       return;
 
-    const target = ensureVersionPrefix(currentVersion.replace(developmentSuffix, ""));
+    const target = ensureVersionPrefix(currentReleaseVersion);
     const fromVersion = "v3.8.2";
 
     previousVersion = fromVersion;
@@ -721,14 +728,14 @@ Singleton {
   function markChangelogSeen(version) {
     if (!version)
       return;
-    changelogLastSeenVersion = version;
+    changelogLastSeenVersion = ensureVersionPrefix(releaseVersion(version));
     debouncedSaveChangelogState();
   }
 
   function loadChangelogState() {
     try {
       const changelog = ShellState.getChangelogState();
-      changelogLastSeenVersion = changelog.lastSeenVersion || "";
+      changelogLastSeenVersion = ensureVersionPrefix(releaseVersion(changelog.lastSeenVersion || ""));
 
       // Migration is now handled in Settings.qml
       Logger.d("Version", "Loaded changelog state from ShellState");

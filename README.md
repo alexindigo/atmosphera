@@ -150,7 +150,6 @@ cd atmosphera
 sudo install -dm755 /etc/xdg/quickshell/atmosphera
 sudo cp -r ./* /etc/xdg/quickshell/atmosphera/
 sudo rm -rf /etc/xdg/quickshell/atmosphera/dev /etc/xdg/quickshell/atmosphera/tmp
-echo "0.1.0-dev" | sudo tee /etc/xdg/quickshell/atmosphera/VERSION
 
 # dispatcher + integration units
 sudo install -Dm755 Scripts/bash/atmosphera /usr/local/bin/atmosphera
@@ -164,6 +163,10 @@ sudo install -Dm644 Scripts/polkit/atmosphera-keyd.rules /usr/share/polkit-1/rul
 ```
 
 **5. Run it**
+
+Keep the supplied `VERSION` file when copying the shell: it identifies the
+release/API version even without Git metadata. Running directly from a Git
+checkout also displays its HEAD hash; that hash does not change API compatibility.
 
 ```bash
 # niri session

@@ -1,5 +1,20 @@
 # Atmosphera — Development
 
+## Release identity
+
+The tracked root `VERSION` is the authoritative release/API version. Update it
+alongside the release's changelog commit, **before** tagging, and tag that commit
+with the same version (for example, `VERSION` contains `0.8.0` and the tag is
+`v0.8.0`). Ordinary development commits retain that version and must remain
+API-compatible until it is explicitly changed.
+
+`Services/Version.qml` reads the supplied file in source archives and installed
+trees. A checkout rooted at the shell directory appends `-g<HEAD hash>` for
+display/diagnostics; Git tags and commit counts do not choose or increment the
+release version. Compatibility and changelog identities use only the release
+part. Package-written build identities such as `0.8.0.r12.gabc1234` (including
+pkgrel suffixes) remain supported; they are not bumped API versions.
+
 ## Devcontainer
 
 A devcontainer is provided at `.devcontainer/` for consistent development tooling.
