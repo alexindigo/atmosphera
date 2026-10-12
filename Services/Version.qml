@@ -62,7 +62,9 @@ Singleton {
     // Pass the directory as argv: quotes/spaces in worktree paths are data.
     // .git can be a directory or a linked-worktree file. Never inherit a parent
     // checkout's HEAD, and never discard VERSION because Git is unavailable.
-    command: ["sh", "-c", 'root=$(cd "$1" && pwd -P) || exit; [ -f "$root/VERSION" ] || exit; provenance=pkg; hash=; if [ -e "$root/.git" ]; then provenance=git; top=$(git -C "$root" rev-parse --show-toplevel 2>/dev/null); if [ "$top" = "$root" ]; then hash=$(git -C "$root" rev-parse --short=9 HEAD 2>/dev/null) || hash=; fi; fi; printf "%s\\n%s\\n%s\\n" "$provenance" "$(cat "$root/VERSION")" "$hash"', "version-detect", Quickshell.shellDir]
+    command: ["sh", "-c",
+      'root=$(cd "$1" && pwd -P) || exit; [ -f "$root/VERSION" ] || exit; provenance=pkg; hash=; if [ -e "$root/.git" ]; then provenance=git; top=$(git -C "$root" rev-parse --show-toplevel 2>/dev/null); if [ "$top" = "$root" ]; then hash=$(git -C "$root" rev-parse --short=9 HEAD 2>/dev/null) || hash=; fi; fi; printf "%s\\n%s\\n%s\\n" "$provenance" "$(cat "$root/VERSION")" "$hash"',
+      "version-detect", Quickshell.shellDir]
     running: false
 
     onExited: function (exitCode) {

@@ -43,7 +43,8 @@ def guest_env(case):
     env = dict(os.environ, XDG_RUNTIME_DIR="/run/user/1000", WAYLAND_DISPLAY="wayland-1", NIRI_SOCKET=socks[0],
                ATMOSPHERA_CONFIG_DIR=str(case / "config") + "/", ATMOSPHERA_CACHE_DIR=str(case / "cache") + "/",
                ATMOSPHERA_SETTINGS_FILE=str(case / "config/settings.json"), ATMOSPHERA_DEBUG="0",
-               TMPDIR="/home/tester/Projects/qt612-atmocolor/tmp", QT_FORCE_STDERR_LOGGING="1")
+               TMPDIR="/home/tester/Projects/qt612-atmocolor/tmp", QT_FORCE_STDERR_LOGGING="1",
+               ATMOSPHERA_UPGRADELOG_URL="http://127.0.0.1:9")
     return env
 
 
@@ -86,6 +87,12 @@ def main():
     assert not output.exists(), "Preserve earlier evidence; use a fresh output directory"
     # Identity checked before creating fixtures or running project workloads.
     guest_env(output)
+    # Source identity is input, not a fixture to rewrite at each release.
+    source_version_text = (source / "VERSION").read_text()
+    assert re.fullmatch(r"\d+\.\d+\.\d+\n", source_version_text), source_version_text
+    source_version = source_version_text.strip()
+    major, minor, patch = map(int, source_version.split("."))
+    source_requirements = [source_version, f"{major}.{minor}.{patch + 1}"]
     output.mkdir(parents=True)
     results = []
     # Run the actual release archive's rsync selection. Nix evidence is an
@@ -108,19 +115,26 @@ def main():
                            "nix_evaluated": False, "nix_built": False}
     (distribution / "result.json").write_text(json.dumps(distribution_result, indent=2) + "\n")
     dist_failures = []
-    if distribution_result["release_VERSION"] != "0.8.0\n" or not distribution_result["nix_VERSION_selected"]:
-        dist_failures.append("VERSION absent from distribution inputs")
+    if distribution_result["release_VERSION"] != source_version_text or not distribution_result["nix_VERSION_selected"]:
+        dist_failures.append("source VERSION absent or changed in distribution inputs")
     results.append({"case": "distribution", "failures": dist_failures, "consumer": distribution_result})
     print(f"[{'FAIL' if dist_failures else 'PASS'}] distribution: {dist_failures}", flush=True)
-    specs = [("archive", None, "0.8.0", True), ("checkout", "0.8.0", None, False),
-             ("next-commit", "0.8.0", None, False), ("worktree", "0.8.0", None, False),
-             ("parent-repo", "0.8.0", "0.8.0", True), ("git-failure", "0.8.0", "0.8.0", False),
-             ("package", "0.8.0.r12.gabc123456", "0.8.0.r12.gabc123456", True),
-             ("package-checkout", "0.8.0.r12.gabc123456", "0.8.0.r12.gabc123456", False),
-             ("pkgrel", "0.8.0.r12.gabc123456-2", "0.8.0.r12.gabc123456", True),
-             ("hash", "0.8.0-gabc123456", "0.8.0-gabc123456", True),
-             ("old-release", "0.7.2", "0.7.2", True), ("legacy-unknown", "", None, False)]
-    for name, version, expected, packaged in specs:
+    # None means preserve the supplied source VERSION. Deliberate build-format
+    # and compatibility vectors stay pinned independently of the current release.
+    specs = [("archive", None, source_version, True, source_version),
+             ("checkout", None, None, False, source_version),
+             ("next-commit", None, None, False, source_version),
+             ("worktree", None, None, False, source_version),
+             ("parent-repo", None, source_version, True, source_version),
+             ("git-failure", None, source_version, False, source_version),
+             ("release", "0.8.0", "0.8.0", True, "0.8.0"),
+             ("package", "0.8.0.r12.gabc123456", "0.8.0.r12.gabc123456", True, "0.8.0"),
+             ("package-checkout", "0.8.0.r12.gabc123456", "0.8.0.r12.gabc123456", False, "0.8.0"),
+             ("pkgrel", "0.8.0.r12.gabc123456-2", "0.8.0.r12.gabc123456", True, "0.8.0"),
+             ("hash", "0.8.0-gabc123456", "0.8.0-gabc123456", True, "0.8.0"),
+             ("old-release", "0.7.2", "0.7.2", True, "0.7.2"),
+             ("legacy-unknown", "", None, False, None)]
+    for name, version, expected, packaged, base in specs:
         case = output / name
         case.mkdir()
         shell = case / "shell"
@@ -136,6 +150,8 @@ def main():
         settings["general"]["showChangelogOnStartup"] = False
         (case / "config/settings.json").write_text(json.dumps(settings))
         env = guest_env(case)
+        requirements = source_requirements if version is None else ["0.8.0", "0.8.1"]
+        env["ATMOSPHERA_VERSION_PROBE_REQUIREMENTS"] = json.dumps(requirements)
         if name in ("checkout", "next-commit", "worktree", "git-failure", "package-checkout"):
             init_git(shell)
             if name == "next-commit":
@@ -147,14 +163,14 @@ def main():
                 checked(["git", "-C", shell, "worktree", "add", "--detach", linked, "HEAD"])
                 shell = linked
             if name != "package-checkout":
-                expected = "0.8.0-g" + checked(["git", "-C", shell, "rev-parse", "--short=9", "HEAD"])
+                expected = source_version + "-g" + checked(["git", "-C", shell, "rev-parse", "--short=9", "HEAD"])
             if name == "git-failure":
                 (case / "bin").mkdir()
                 git = case / "bin/git"
                 git.write_text("#!/bin/sh\nexit 1\n")
                 git.chmod(0o755)
                 env["PATH"] = str(case / "bin") + ":" + env["PATH"]
-                expected = "0.8.0"
+                expected = source_version
         if name == "parent-repo":
             init_git(case)
         failures = []
@@ -165,23 +181,31 @@ def main():
                 if not ok:
                     failures.append(message)
             known = name != "legacy-unknown"
-            base = "0.7.2" if name == "old-release" else "0.8.0"
             check(data["known"] == known, f"known={data['known']} expected {known}")
             if known:
                 check(data["current"] == expected, f"identity={data['current']} expected {expected}")
+                check(data["release"] == base, "authoritative release identity")
                 check(data["packaged"] == packaged, "checkout/package provenance")
                 check(data["parts"] == [int(v) for v in base.split(".")], "release parts include build tokens")
                 check(data["seen"] == "v" + base and persisted["lastSeenVersion"] == "v" + base, "stored last-seen identity")
+                disk_seen = json.loads((case / "cache/shell-state.json").read_text())["changelogState"]["lastSeenVersion"]
+                check(disk_seen == "v" + base, "persistent disk last-seen identity")
                 check(data["manualTarget"] == "v" + base, "manual changelog target")
                 check(not data["prompt"], "same-release changelog reopened")
-                check("/v3.0.0/v" + base in log, "changelog URL lacks release identity")
-                check(data["compatibility"][0]["result"]["compatible"] == (base == "0.8.0"), "0.8.0 consumer gate")
-                check(not data["compatibility"][1]["result"]["compatible"], "0.8.1 consumer gate")
+                raw = re.sub(r"\x1b\[[0-9;]*m", "", log)
+                urls = [line.split("Fetching upgrade log: ", 1)[1].strip() for line in raw.splitlines() if "Fetching upgrade log: " in line]
+                check(urls == [env["ATMOSPHERA_UPGRADELOG_URL"] + "/v3.0.0/v" + base], "exact changelog URL")
                 if name == "next-commit":
                     check(before["current"] != data["current"], "another commit did not change display identity")
                     check(before["compatibility"] == data["compatibility"] and before["manualTarget"] == data["manualTarget"] and before["seen"] == data["seen"], "commit changed API/changelog identity")
-            else:
-                check(all(c["result"]["compatible"] for c in data["compatibility"]), "legacy unknown behaviour changed")
+            expected_compatibility = []
+            for required in requirements:
+                compatible = not known or tuple(map(int, base.split("."))) >= tuple(map(int, required.split(".")))
+                expected_compatibility.append({"required": required, "result": {
+                    "compatible": compatible, "track": "" if compatible else "atmosphera",
+                    "requiredVersion": "" if compatible else required}})
+            check(data["compatibility"] == expected_compatibility, f"exact consumer gate for {requirements}")
+            check(("Shell version unknown" in log) == (not known), "unknown-version gate skip")
             for row in data["comparisons"]:
                 check(row["equal"] == 0 and row["next"] == -1, f"build comparison {row}")
                 if "gabc" in row["version"]:
@@ -193,14 +217,16 @@ def main():
                 coldlog = cold.stdout + cold.stderr
                 (case / "cold-load.log").write_text(coldlog)
                 check(cold.returncode == 124 and not ERRORS.search(coldlog), "cold-load parser/import/runtime gate")
-                check("Detected installed version: 0.8.0" in coldlog, "cold-load VERSION-only detection")
+                check(f"Detected installed version: {source_version} (git: false, packaged: true)" in coldlog, "cold-load VERSION-only detection")
         except Exception as error:
             failures.append(repr(error))
-        result = {"case": name, "failures": failures, "consumer": data, "persisted": persisted, "expected": expected}
+        result = {"case": name, "failures": failures, "consumer": data, "persisted": persisted, "expected": expected,
+                  "release": base, "requirements": requirements, "source_version_preserved": version is None}
         (case / "result.json").write_text(json.dumps(result, indent=2) + "\n")
         results.append(result)
         print(f"[{'FAIL' if failures else 'PASS'}] {name}: {failures}", flush=True)
-    summary = {"source": str(source), "cases": results, "failed": sum(bool(r["failures"]) for r in results), "at": time.time()}
+    summary = {"source": str(source), "source_version": source_version, "cases": results,
+               "failed": sum(bool(r["failures"]) for r in results), "at": time.time()}
     (output / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     print("VERSION_REGRESSION: " + ("FAIL" if summary["failed"] else "PASS"), flush=True)
     return int(bool(summary["failed"]))

@@ -35,7 +35,10 @@ Item {
         hash: Version.versionCommitHash(v),
         git: Version.classifyIsGitVersion(v)
       }));
-      const compatibility = ["0.8.0", "0.8.1"].map(v => ({
+      // Private runner metadata selects source-release requirements; build-format
+      // comparison vectors above deliberately remain fixed compatibility inputs.
+      const requirements = JSON.parse(Quickshell.env("ATMOSPHERA_VERSION_PROBE_REQUIREMENTS") || '["0.8.0", "0.8.1"]');
+      const compatibility = requirements.map(v => ({
         required: v,
         result: Plugins.Service.checkPluginCompatibility({
                                                            id: "version-probe",
@@ -44,6 +47,7 @@ Item {
       }));
       const identity = {
         current: Version.currentVersion,
+        release: Version.currentReleaseVersion,
         known: Version.versionKnown,
         packaged: Version.versionFromPackage,
         git: Version.isGitVersion,
