@@ -1,5 +1,44 @@
 # Changelog
 
+## [0.8.1] — 2026-10-11
+
+### 2026-10-11
+
+**Development**
+
+Version regression checks now read the current source's tracked release instead
+of assuming every source archive is 0.8.0. They observe actual compatibility
+decisions for that release and the next patch, exact changelog URLs and persisted
+release identity, while retaining fixed 0.8.0 and 0.7.2 compatibility vectors.
+This keeps verification valid across release bumps without changing runtime
+behavior.
+
+- test(version): keep regression fixtures release-independent (`f94dcb1c2`)
+
+**Maintenance**
+
+The pinned nixpkgs revision was refreshed for Nix-based development and packaging.
+The lockfile records the updated revision and its corresponding source hash;
+the Quickshell pin is unchanged.
+
+- chore(flake): update flake.lock (`439158c71`)
+
+### 2026-10-10
+
+**Fix**
+
+Source archives and copied installations now carry a tracked `VERSION`, giving
+plugin compatibility checks a known release identity without Git metadata.
+Checkouts append their own HEAD hash for display and diagnostics, while API
+comparisons, changelog URLs and last-seen state use only the release version;
+package-written build suffixes remain supported. The Codeberg mirror now restores
+exact annotated tag objects, serializes runs and verifies refs before and after
+mirroring, preserving signed-tag fidelity and preventing overlapping snapshots
+from racing.
+
+- fix(version): track release identity in source trees (`89e05fe26`)
+- fix(ci): mirror exact tag objects and serialize Codeberg mirror runs (`600fd0755`)
+
 ## [0.8.0] — 2026-10-10
 
 ### 2026-10-10
