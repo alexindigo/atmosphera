@@ -1,0 +1,9 @@
+module Quickshell.Services.Notifications
+linktarget quickshell-service-notificationsplugin
+optional plugin quickshell-service-notificationsplugin
+classname Quickshell_Services_NotificationsPlugin
+typeinfo quickshell-service-notifications.qmltypes
+prefer :/qt/qml/Quickshell/Services/Notifications/
+depends Quickshell
+depends QtQuick
+

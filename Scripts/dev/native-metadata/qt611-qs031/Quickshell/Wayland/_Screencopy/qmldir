@@ -1,0 +1,8 @@
+module Quickshell.Wayland._Screencopy
+linktarget quickshell-wayland-screencopyplugin
+optional plugin quickshell-wayland-screencopyplugin
+classname Quickshell_Wayland__ScreencopyPlugin
+typeinfo quickshell-wayland-screencopy.qmltypes
+depends QtQuick
+prefer :/qt/qml/Quickshell/Wayland/_Screencopy/
+

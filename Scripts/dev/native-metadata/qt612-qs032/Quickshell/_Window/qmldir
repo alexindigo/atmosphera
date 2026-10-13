@@ -1,0 +1,9 @@
+module Quickshell._Window
+linktarget quickshell-windowplugin
+optional plugin quickshell-windowplugin
+classname Quickshell__WindowPlugin
+typeinfo quickshell-window.qmltypes
+depends QtQuick
+prefer :/qt/qml/Quickshell/_Window/
+depends Quickshell
+

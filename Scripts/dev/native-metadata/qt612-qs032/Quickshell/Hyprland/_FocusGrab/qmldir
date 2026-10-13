@@ -1,0 +1,10 @@
+module Quickshell.Hyprland._FocusGrab
+linktarget quickshell-hyprland-focus-grabplugin
+optional plugin quickshell-hyprland-focus-grabplugin
+classname Quickshell_Hyprland__FocusGrabPlugin
+typeinfo quickshell-hyprland-focus-grab.qmltypes
+depends QtQml
+prefer :/qt/qml/Quickshell/Hyprland/_FocusGrab/
+depends Quickshell
+depends QtQuick
+

@@ -1,0 +1,44 @@
+{
+  "DBusMenuLayout": {
+    "header": "src/dbus/dbusmenu/dbus_menu_types.hpp",
+    "sha256": "49fcc30529ee170fbf6a4dea1f85a82e9cba541d5220611fb696c7f7d2f29250"
+  },
+  "DBusMenuIdList": {
+    "header": "src/dbus/dbusmenu/dbus_menu_types.hpp",
+    "sha256": "49fcc30529ee170fbf6a4dea1f85a82e9cba541d5220611fb696c7f7d2f29250"
+  },
+  "DBusMenuItemProperties": {
+    "header": "src/dbus/dbusmenu/dbus_menu_types.hpp",
+    "sha256": "49fcc30529ee170fbf6a4dea1f85a82e9cba541d5220611fb696c7f7d2f29250"
+  },
+  "DBusMenuItemPropertiesList": {
+    "header": "src/dbus/dbusmenu/dbus_menu_types.hpp",
+    "sha256": "49fcc30529ee170fbf6a4dea1f85a82e9cba541d5220611fb696c7f7d2f29250"
+  },
+  "DBusMenuItemPropertyNames": {
+    "header": "src/dbus/dbusmenu/dbus_menu_types.hpp",
+    "sha256": "49fcc30529ee170fbf6a4dea1f85a82e9cba541d5220611fb696c7f7d2f29250"
+  },
+  "DBusMenuItemPropertyNamesList": {
+    "header": "src/dbus/dbusmenu/dbus_menu_types.hpp",
+    "sha256": "49fcc30529ee170fbf6a4dea1f85a82e9cba541d5220611fb696c7f7d2f29250"
+  },
+  "qs::network::NMSettingsMap": {
+    "header": "src/network/nm/dbus_types.hpp",
+    "sha256": "da530e41d2055a608414ad0f2ca84e24bd0fde61e4c34fea109e598540c9e45e"
+  },
+  "qs::network::NMIPv6Address": {
+    "header": "src/network/nm/dbus_types.hpp",
+    "sha256": "da530e41d2055a608414ad0f2ca84e24bd0fde61e4c34fea109e598540c9e45e"
+  },
+  "qs::network::NMIPv6Route": {
+    "header": "src/network/nm/dbus_types.hpp",
+    "sha256": "da530e41d2055a608414ad0f2ca84e24bd0fde61e4c34fea109e598540c9e45e"
+  },
+  "QClipboard::Mode": {
+    "kind": "unreflected-sdk-enum",
+    "header": "include/qt6/QtGui/qclipboard.h",
+    "sha256": "92f0e07d1acc1629097ad7f7c94ad5d5e72f790c0eab2edddfdffefe68feee9a",
+    "probe_sha256": "bf231a527e61851ace196b47f4a456f7c14bb161cbdb840fc67abacf3686d018"
+  }
+}

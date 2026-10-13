@@ -1,0 +1,9 @@
+module Quickshell.Networking
+linktarget quickshell-networkplugin
+optional plugin quickshell-networkplugin
+classname Quickshell_NetworkingPlugin
+typeinfo quickshell-network.qmltypes
+depends QtQml
+prefer :/qt/qml/Quickshell/Networking/
+depends Quickshell
+

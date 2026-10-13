@@ -1,0 +1,11 @@
+module Quickshell.Wayland._ToplevelManagement
+linktarget quickshell-wayland-toplevel-managementplugin
+optional plugin quickshell-wayland-toplevel-managementplugin
+classname Quickshell_Wayland__ToplevelManagementPlugin
+typeinfo quickshell-wayland-toplevel-management.qmltypes
+depends QtQml
+prefer :/qt/qml/Quickshell/Wayland/_ToplevelManagement/
+depends Quickshell
+depends Quickshell.Wayland
+depends QtQuick
+

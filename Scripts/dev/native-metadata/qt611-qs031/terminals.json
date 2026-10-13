@@ -1,0 +1,50 @@
+{
+  "DBusMenuLayout": {
+    "header": "src/dbus/dbusmenu/dbus_menu_types.hpp",
+    "sha256": "49fcc30529ee170fbf6a4dea1f85a82e9cba541d5220611fb696c7f7d2f29250"
+  },
+  "DBusMenuIdList": {
+    "header": "src/dbus/dbusmenu/dbus_menu_types.hpp",
+    "sha256": "49fcc30529ee170fbf6a4dea1f85a82e9cba541d5220611fb696c7f7d2f29250"
+  },
+  "DBusMenuItemProperties": {
+    "header": "src/dbus/dbusmenu/dbus_menu_types.hpp",
+    "sha256": "49fcc30529ee170fbf6a4dea1f85a82e9cba541d5220611fb696c7f7d2f29250"
+  },
+  "DBusMenuItemPropertiesList": {
+    "header": "src/dbus/dbusmenu/dbus_menu_types.hpp",
+    "sha256": "49fcc30529ee170fbf6a4dea1f85a82e9cba541d5220611fb696c7f7d2f29250"
+  },
+  "DBusMenuItemPropertyNames": {
+    "header": "src/dbus/dbusmenu/dbus_menu_types.hpp",
+    "sha256": "49fcc30529ee170fbf6a4dea1f85a82e9cba541d5220611fb696c7f7d2f29250"
+  },
+  "DBusMenuItemPropertyNamesList": {
+    "header": "src/dbus/dbusmenu/dbus_menu_types.hpp",
+    "sha256": "49fcc30529ee170fbf6a4dea1f85a82e9cba541d5220611fb696c7f7d2f29250"
+  },
+  "qs::network::NMSettingsMap": {
+    "header": "src/network/nm/dbus_types.hpp",
+    "sha256": "da530e41d2055a608414ad0f2ca84e24bd0fde61e4c34fea109e598540c9e45e"
+  },
+  "qs::network::NMIPv6Address": {
+    "header": "src/network/nm/dbus_types.hpp",
+    "sha256": "da530e41d2055a608414ad0f2ca84e24bd0fde61e4c34fea109e598540c9e45e"
+  },
+  "qs::network::NMIPv6Route": {
+    "header": "src/network/nm/dbus_types.hpp",
+    "sha256": "da530e41d2055a608414ad0f2ca84e24bd0fde61e4c34fea109e598540c9e45e"
+  },
+  "QLocalSocket::LocalSocketError": {
+    "kind": "unreflected-sdk-enum",
+    "header": "include/qt6/QtNetwork/qlocalsocket.h",
+    "sha256": "07d7c0d24ad0fa3bc639a3c89d6cb065f00df1e47dcb4a78fb7f913596ec80b4",
+    "probe_sha256": "5d48ec6a8836de420126e287395f9e93dac206fa4cbf2d859d17043b091ada6c"
+  },
+  "QClipboard::Mode": {
+    "kind": "unreflected-sdk-enum",
+    "header": "include/qt6/QtGui/qclipboard.h",
+    "sha256": "cfd71265a51f052aa251b12937b7613f3a9631c1f254f3b73dae60abab6c7d06",
+    "probe_sha256": "6a9f6de809f24802fe3aabaed5862bfde7dd7a340b7d0fb282760fc743c73b0f"
+  }
+}

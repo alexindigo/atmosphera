@@ -1,0 +1,39 @@
+diff --git a/src/services/status_notifier/item.hpp b/src/services/status_notifier/item.hpp
+--- a/src/services/status_notifier/item.hpp
++++ b/src/services/status_notifier/item.hpp
+@@ -116,7 +116,7 @@
+ 	/// A handle to the menu associated with this tray item, if any.
+ 	///
+ 	/// Can be displayed with @@Quickshell.QsMenuAnchor or @@Quickshell.QsMenuOpener.
+-	Q_PROPERTY(qs::dbus::dbusmenu::DBusMenuHandle* menu READ menuHandle NOTIFY hasMenuChanged);
++	Q_PROPERTY(qs::menu::QsMenuHandle* menu READ menuHandle NOTIFY hasMenuChanged);
+ 	/// If this tray item only offers a menu and activation will do nothing.
+ 	Q_PROPERTY(bool onlyMenu READ default NOTIFY onlyMenuChanged BINDABLE bindableOnlyMenu);
+ 	// clang-format on
+diff --git a/src/network/network.hpp b/src/network/network.hpp
+--- a/src/network/network.hpp
++++ b/src/network/network.hpp
+@@ -34,1 +34,1 @@
+-	Q_PROPERTY(QList<NMSettings*> nmSettings READ default NOTIFY nmSettingsChanged BINDABLE bindableNmSettings);
++	Q_PROPERTY(QList<qs::network::NMSettings*> nmSettings READ default NOTIFY nmSettingsChanged BINDABLE bindableNmSettings);
+diff --git a/src/services/polkit/flow.hpp b/src/services/polkit/flow.hpp
+--- a/src/services/polkit/flow.hpp
++++ b/src/services/polkit/flow.hpp
+@@ -48,1 +48,1 @@
+-	Q_PROPERTY(QList<Identity*> identities READ identities CONSTANT);
++	Q_PROPERTY(QList<qs::service::polkit::Identity*> identities READ identities CONSTANT);
+diff --git a/src/windowmanager/windowmanager.hpp b/src/windowmanager/windowmanager.hpp
+--- a/src/windowmanager/windowmanager.hpp
++++ b/src/windowmanager/windowmanager.hpp
+@@ -67,1 +67,1 @@
+-	Q_PROPERTY(QList<Windowset*> windowsets READ default BINDABLE bindableWindowsets);
++	Q_PROPERTY(QList<qs::wm::Windowset*> windowsets READ default BINDABLE bindableWindowsets);
+@@ -70,1 +70,1 @@
+-	Q_PROPERTY(QList<WindowsetProjection*> windowsetProjections READ default BINDABLE bindableWindowsetProjections);
++	Q_PROPERTY(QList<qs::wm::WindowsetProjection*> windowsetProjections READ default BINDABLE bindableWindowsetProjections);
+diff --git a/src/windowmanager/windowset.hpp b/src/windowmanager/windowset.hpp
+--- a/src/windowmanager/windowset.hpp
++++ b/src/windowmanager/windowset.hpp
+@@ -137,1 +137,1 @@
+-	Q_PROPERTY(QList<Windowset*> windowsets READ default NOTIFY windowsetsChanged BINDABLE bindableWindowsets);
++	Q_PROPERTY(QList<qs::wm::Windowset*> windowsets READ default NOTIFY windowsetsChanged BINDABLE bindableWindowsets);

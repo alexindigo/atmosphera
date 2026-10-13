@@ -1,0 +1,9 @@
+module Quickshell.Services.Polkit
+linktarget quickshell-service-polkitplugin
+optional plugin quickshell-service-polkitplugin
+classname Quickshell_Services_PolkitPlugin
+typeinfo quickshell-service-polkit.qmltypes
+depends QtQml
+prefer :/qt/qml/Quickshell/Services/Polkit/
+depends QtQuick
+

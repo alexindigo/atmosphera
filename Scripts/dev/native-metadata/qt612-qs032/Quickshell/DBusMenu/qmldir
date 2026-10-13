@@ -1,0 +1,10 @@
+module Quickshell.DBusMenu
+linktarget quickshell-dbusmenuplugin
+optional plugin quickshell-dbusmenuplugin
+classname Quickshell_DBusMenuPlugin
+typeinfo quickshell-dbusmenu.qmltypes
+depends QtQml
+prefer :/qt/qml/Quickshell/DBusMenu/
+depends Quickshell
+depends QtQuick
+

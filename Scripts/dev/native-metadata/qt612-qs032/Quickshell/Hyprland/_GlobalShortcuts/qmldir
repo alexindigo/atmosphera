@@ -1,0 +1,9 @@
+module Quickshell.Hyprland._GlobalShortcuts
+linktarget quickshell-hyprland-global-shortcutsplugin
+optional plugin quickshell-hyprland-global-shortcutsplugin
+classname Quickshell_Hyprland__GlobalShortcutsPlugin
+typeinfo quickshell-hyprland-global-shortcuts.qmltypes
+depends QtQml
+prefer :/qt/qml/Quickshell/Hyprland/_GlobalShortcuts/
+depends QtQuick
+

@@ -1,0 +1,10 @@
+module Quickshell.Wayland._WlrLayerShell
+linktarget quickshell-wayland-layershellplugin
+optional plugin quickshell-wayland-layershellplugin
+classname Quickshell_Wayland__WlrLayerShellPlugin
+typeinfo quickshell-wayland-layershell.qmltypes
+depends QtQuick
+prefer :/qt/qml/Quickshell/Wayland/_WlrLayerShell/
+depends Quickshell
+depends Quickshell.Wayland
+

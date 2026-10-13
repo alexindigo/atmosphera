@@ -1,0 +1,10 @@
+module Quickshell.Services.Pipewire
+linktarget quickshell-service-pipewireplugin
+optional plugin quickshell-service-pipewireplugin
+classname Quickshell_Services_PipewirePlugin
+typeinfo quickshell-service-pipewire.qmltypes
+depends QtQml
+prefer :/qt/qml/Quickshell/Services/Pipewire/
+depends Quickshell
+depends QtQuick
+

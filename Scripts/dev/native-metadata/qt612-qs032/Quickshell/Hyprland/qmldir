@@ -1,0 +1,11 @@
+module Quickshell.Hyprland
+linktarget quickshell-hyprlandplugin
+optional plugin quickshell-hyprlandplugin
+classname Quickshell_HyprlandPlugin
+typeinfo quickshell-hyprland.qmltypes
+import Quickshell.Hyprland._Ipc
+import Quickshell.Hyprland._FocusGrab
+import Quickshell.Hyprland._GlobalShortcuts
+import Quickshell.Hyprland._SurfaceExtensions
+prefer :/qt/qml/Quickshell/Hyprland/
+

@@ -1,0 +1,8 @@
+module Quickshell.X11
+linktarget quickshell-x11plugin
+optional plugin quickshell-x11plugin
+classname Quickshell_X11Plugin
+typeinfo quickshell-x11.qmltypes
+depends QtQuick
+prefer :/qt/qml/Quickshell/X11/
+

@@ -1,0 +1,16 @@
+module Quickshell.Wayland
+linktarget quickshell-waylandplugin
+optional plugin quickshell-waylandplugin
+classname Quickshell_WaylandPlugin
+typeinfo quickshell-wayland.qmltypes
+import Quickshell.Wayland._WlrLayerShell
+import Quickshell.Wayland._ToplevelManagement
+import Quickshell.Wayland._Screencopy
+import Quickshell.Wayland._BackgroundEffect
+import Quickshell.Wayland._IdleInhibitor
+import Quickshell.Wayland._IdleNotify
+import Quickshell.Wayland._ShortcutsInhibitor
+depends QtQuick
+prefer :/qt/qml/Quickshell/Wayland/
+depends Quickshell
+

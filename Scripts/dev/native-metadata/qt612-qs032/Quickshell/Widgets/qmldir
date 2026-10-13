@@ -1,0 +1,15 @@
+module Quickshell.Widgets
+linktarget quickshell-widgetsplugin
+optional plugin quickshell-widgetsplugin
+classname Quickshell_WidgetsPlugin
+typeinfo quickshell-widgets.qmltypes
+prefer :/qt/qml/Quickshell/Widgets/
+IconImage 0.0 IconImage.qml
+ClippingRectangle 0.0 ClippingRectangle.qml
+WrapperItem 0.0 WrapperItem.qml
+WrapperMouseArea 0.0 WrapperMouseArea.qml
+WrapperRectangle 0.0 WrapperRectangle.qml
+ClippingWrapperRectangle 0.0 ClippingWrapperRectangle.qml
+ClippingWrapperRectangleInternal 0.0 ClippingWrapperRectangleInternal.qml
+depends QtQuick
+

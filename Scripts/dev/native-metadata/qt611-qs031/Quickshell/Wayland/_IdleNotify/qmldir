@@ -1,0 +1,9 @@
+module Quickshell.Wayland._IdleNotify
+linktarget quickshell-wayland-idle-notifyplugin
+optional plugin quickshell-wayland-idle-notifyplugin
+classname Quickshell_Wayland__IdleNotifyPlugin
+typeinfo quickshell-wayland-idle-notify.qmltypes
+depends QtQuick
+prefer :/qt/qml/Quickshell/Wayland/_IdleNotify/
+depends Quickshell
+

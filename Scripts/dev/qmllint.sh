@@ -35,7 +35,13 @@ if [[ ! "$QMLLINT_VERSION" =~ ^qmllint\ [6-9]\. ]]; then
 fi
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-IMPORT_OPTS=(-I "$REPO_ROOT" -I /usr/lib/qt6/qml/ -I /usr/lib/qt6/qml/Quickshell/)
+# One native metadata universe for both direct lint and the container hook.
+# --bare changes import selection only, never severities or diagnostic gates.
+NATIVE_TMP=$(mktemp -d "${TMPDIR:-/tmp}/atmosphera-qmllint.XXXXXXXX")
+trap 'rm -rf -- "$NATIVE_TMP"' EXIT
+python3 -B "$REPO_ROOT/Scripts/dev/qml-native-metadata.py" \
+    --output "$NATIVE_TMP/imports" --sources "$REPO_ROOT" "$@"
+IMPORT_OPTS=(--bare -I "$REPO_ROOT" -I "$NATIVE_TMP/imports" -I "$NATIVE_TMP/imports/Quickshell")
 
 if [ -n "${QS_VFS:-}" ] && [ -d "$QS_VFS" ]; then
     IMPORT_OPTS=(-I "$QS_VFS" "${IMPORT_OPTS[@]}")

@@ -1,0 +1,8 @@
+module Quickshell.I3
+linktarget quickshell-i3plugin
+optional plugin quickshell-i3plugin
+classname Quickshell_I3Plugin
+typeinfo quickshell-i3.qmltypes
+import Quickshell.I3._Ipc
+prefer :/qt/qml/Quickshell/I3/
+

@@ -1,0 +1,11 @@
+module Quickshell.Services.SystemTray
+linktarget quickshell-service-statusnotifierplugin
+optional plugin quickshell-service-statusnotifierplugin
+classname Quickshell_Services_SystemTrayPlugin
+typeinfo quickshell-service-statusnotifier.qmltypes
+depends QtQml
+prefer :/qt/qml/Quickshell/Services/SystemTray/
+depends Quickshell
+depends Quickshell.DBusMenu
+depends QtQuick
+

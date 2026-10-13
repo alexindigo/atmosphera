@@ -74,9 +74,10 @@ NBox {
           // Use provider's image revision for reactive updates
           readonly property int _rev: modelData.provider && modelData.provider.imageRevision ? modelData.provider.imageRevision : 0
 
-          // Get image URL from provider
-          imagePath: {
-            _rev;
+          // Passing the revision makes cache invalidation a binding input.
+          imagePath: imageUrlForRevision(_rev)
+
+          function imageUrlForRevision(revision) {
             var provider = modelData.provider;
             if (provider && provider.getImageUrl) {
               return provider.getImageUrl(modelData);

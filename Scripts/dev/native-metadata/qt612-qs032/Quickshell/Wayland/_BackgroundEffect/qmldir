@@ -1,0 +1,9 @@
+module Quickshell.Wayland._BackgroundEffect
+linktarget quickshell-wayland-background-effectplugin
+optional plugin quickshell-wayland-background-effectplugin
+classname Quickshell_Wayland__BackgroundEffectPlugin
+typeinfo quickshell-wayland-background-effect.qmltypes
+depends QtQml
+prefer :/qt/qml/Quickshell/Wayland/_BackgroundEffect/
+depends QtQuick
+

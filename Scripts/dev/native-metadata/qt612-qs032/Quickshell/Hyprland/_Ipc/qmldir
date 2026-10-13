@@ -1,0 +1,9 @@
+module Quickshell.Hyprland._Ipc
+linktarget quickshell-hyprland-ipcplugin
+optional plugin quickshell-hyprland-ipcplugin
+classname Quickshell_Hyprland__IpcPlugin
+typeinfo quickshell-hyprland-ipc.qmltypes
+depends QtQuick
+prefer :/qt/qml/Quickshell/Hyprland/_Ipc/
+depends Quickshell
+

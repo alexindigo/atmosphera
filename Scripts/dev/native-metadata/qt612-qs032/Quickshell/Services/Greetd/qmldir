@@ -1,0 +1,9 @@
+module Quickshell.Services.Greetd
+linktarget quickshell-service-greetdplugin
+optional plugin quickshell-service-greetdplugin
+classname Quickshell_Services_GreetdPlugin
+typeinfo quickshell-service-greetd.qmltypes
+depends QtQml
+prefer :/qt/qml/Quickshell/Services/Greetd/
+depends QtQuick
+

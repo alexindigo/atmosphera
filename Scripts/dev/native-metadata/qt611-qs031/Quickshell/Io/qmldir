@@ -1,0 +1,11 @@
+module Quickshell.Io
+linktarget quickshell-ioplugin
+optional plugin quickshell-ioplugin
+classname Quickshell_IoPlugin
+typeinfo quickshell-io.qmltypes
+depends QtQml
+prefer :/qt/qml/Quickshell/Io/
+FileView 0.0 FileView.qml
+depends Quickshell
+depends QtQuick
+

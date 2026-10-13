@@ -1,0 +1,9 @@
+module Quickshell.Wayland._ShortcutsInhibitor
+linktarget quickshell-wayland-shortcuts-inhibitplugin
+optional plugin quickshell-wayland-shortcuts-inhibitplugin
+classname Quickshell_Wayland__ShortcutsInhibitorPlugin
+typeinfo quickshell-wayland-shortcuts-inhibit.qmltypes
+depends QtQuick
+prefer :/qt/qml/Quickshell/Wayland/_ShortcutsInhibitor/
+depends Quickshell
+

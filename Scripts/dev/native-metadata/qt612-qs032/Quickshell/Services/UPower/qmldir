@@ -1,0 +1,9 @@
+module Quickshell.Services.UPower
+linktarget quickshell-service-upowerplugin
+optional plugin quickshell-service-upowerplugin
+classname Quickshell_Services_UPowerPlugin
+typeinfo quickshell-service-upower.qmltypes
+depends QtQml
+prefer :/qt/qml/Quickshell/Services/UPower/
+depends Quickshell
+

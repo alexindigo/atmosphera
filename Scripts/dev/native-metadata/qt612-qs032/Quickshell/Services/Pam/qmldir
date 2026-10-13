@@ -1,0 +1,9 @@
+module Quickshell.Services.Pam
+linktarget quickshell-service-pamplugin
+optional plugin quickshell-service-pamplugin
+classname Quickshell_Services_PamPlugin
+typeinfo quickshell-service-pam.qmltypes
+depends QtQml
+prefer :/qt/qml/Quickshell/Services/Pam/
+depends QtQuick
+

@@ -1,0 +1,9 @@
+module Quickshell.Wayland._IdleInhibitor
+linktarget quickshell-wayland-idle-inhibitplugin
+optional plugin quickshell-wayland-idle-inhibitplugin
+classname Quickshell_Wayland__IdleInhibitorPlugin
+typeinfo quickshell-wayland-idle-inhibit.qmltypes
+depends QtQuick
+prefer :/qt/qml/Quickshell/Wayland/_IdleInhibitor/
+depends Quickshell
+

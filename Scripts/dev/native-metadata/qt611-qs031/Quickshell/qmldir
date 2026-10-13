@@ -1,0 +1,10 @@
+module Quickshell
+linktarget quickshell-coreplugin
+optional plugin quickshell-coreplugin
+classname QuickshellPlugin
+typeinfo quickshell-core.qmltypes
+optional import Quickshell._Window
+default import Quickshell._Window
+depends QtQuick
+prefer :/qt/qml/Quickshell/
+

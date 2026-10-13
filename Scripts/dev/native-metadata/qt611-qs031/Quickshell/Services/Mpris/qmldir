@@ -1,0 +1,9 @@
+module Quickshell.Services.Mpris
+linktarget quickshell-service-mprisplugin
+optional plugin quickshell-service-mprisplugin
+classname Quickshell_Services_MprisPlugin
+typeinfo quickshell-service-mpris.qmltypes
+depends QtQml
+prefer :/qt/qml/Quickshell/Services/Mpris/
+depends Quickshell
+

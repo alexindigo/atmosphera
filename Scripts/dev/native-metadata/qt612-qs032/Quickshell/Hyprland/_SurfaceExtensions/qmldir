@@ -1,0 +1,9 @@
+module Quickshell.Hyprland._SurfaceExtensions
+linktarget quickshell-hyprland-surface-extensionsplugin
+optional plugin quickshell-hyprland-surface-extensionsplugin
+classname Quickshell_Hyprland__SurfaceExtensionsPlugin
+typeinfo quickshell-hyprland-surface-extensions.qmltypes
+depends QtQml
+prefer :/qt/qml/Quickshell/Hyprland/_SurfaceExtensions/
+depends QtQuick
+
