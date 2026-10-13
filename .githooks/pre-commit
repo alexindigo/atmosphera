@@ -21,6 +21,12 @@ if [ -n "$STAGED_QML" ]; then
   git update-index --again
 fi
 
+# Validate the final staged built-in snapshot, including formatter restaging.
+# Drain the path list so SIGPIPE cannot skip the gate under pipefail.
+if git diff --cached --name-only --diff-filter=ACDMRT | grep '^builtin/plugins/' >/dev/null; then
+  bash Scripts/dev/plugin-lint-staged.sh
+fi
+
 # -- Settings search index (unchanged, still runs on host) --
 if git diff --cached --name-only --diff-filter=ACM | grep -q 'Assets/Translations/.*\.json\|Commons/Settings\.qml'; then
   python3 Scripts/dev/build-settings-search-index.py

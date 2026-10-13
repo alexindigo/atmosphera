@@ -163,6 +163,29 @@ and qmllint on staged QML files inside the dev container (engine selected as
 above), blocking commits with errors, and rebuilds the settings search index
 when its inputs change.
 
+Staged `builtin/plugins/` changes also run the shell-owned plugin compatibility
+checker through the same container launcher. The host performs Git plumbing
+only: it archives index and `HEAD` plugin snapshots under the clone/worktree's
+Git directory. The launcher mounts those private snapshots read-only, including
+when a linked worktree's Git directory is outside its workspace. The checker
+runs after formatting/restaging, so it validates the final index that will be
+committed. Unmerged indexes and symlink/submodule plugin inputs are rejected.
+Code/assets/manifest changes need a higher plugin version; documentation-only
+changes do not. Catalog/manifest agreement is always checked. External plugin
+repositories call `Scripts/dev/plugin-lint-repo.sh <plugins-repo> [<base-rev>]`
+from a shell checkout at their pinned ref.
+
+For a full audit or regressions inside the assigned test VM:
+
+```
+python3 -B Scripts/dev/plugin-lint.py --root builtin/plugins --catalog builtin/plugins/registry.json
+python3 -B Scripts/dev/plugin-lint-selftest.py
+```
+
+`Scripts/dev/qmllint.sh` with no paths includes built-in QML. Its native import
+setup and the container hook share the source-backed metadata boundary described
+in `Scripts/dev/native-metadata/README.md`; no installed runtime module is edited.
+
 First container run builds the image (~2 minutes); later runs reuse the cached
 image until the Dockerfile or the `atmo-dev` wrapper changes.
 

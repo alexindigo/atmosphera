@@ -66,7 +66,7 @@ ENFORCED_CATEGORIES=(
 if [ $# -gt 0 ]; then
     mapfile -t all_files < <(find "$@" -name "*.qml" -type f | sort)
 else
-    mapfile -t all_files < <(find . -name "*.qml" -type f ! -path "./.git/*" ! -path "./builtin/plugins/*" | sort)
+    mapfile -t all_files < <(find . -name "*.qml" -type f ! -path "./.git/*" | sort)
 fi
 
 [ ${#all_files[@]} -eq 0 ] && { echo "No QML files found"; exit 0; }

@@ -117,6 +117,16 @@ RUN_ARGS=(
     -w /workspaces/atmosphera
 )
 
+# A worktree's Git directory is outside its workspace bind mount. The plugin
+# gate supplies only its private index/HEAD snapshots, mounted read-only.
+if [ -n "${ATMOSPHERA_PLUGIN_SNAPSHOT_DIR:-}" ]; then
+    SNAPSHOT_DIR="$(realpath -- "$ATMOSPHERA_PLUGIN_SNAPSHOT_DIR")"
+    GIT_DIR="$(git -C "$REPO_ROOT" rev-parse --absolute-git-dir)"
+    [[ -d "$SNAPSHOT_DIR" && "$SNAPSHOT_DIR" == "$GIT_DIR"/plugin-lint.* ]] \
+        || fail "plugin snapshot must be a private directory under this worktree's Git directory."
+    RUN_ARGS+=(-v "$SNAPSHOT_DIR:/atmosphera-plugin-snapshot:ro")
+fi
+
 if [ "$ENGINE_KIND" = podman ]; then
     # Rootless: map the caller to the image's dev account (1000:1000) and
     # tell atmo-dev the overlay needs the namespace-friendly userxattr mode.
