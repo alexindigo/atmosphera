@@ -4,7 +4,7 @@
     {
       "id": "atmosphera-icons",
       "name": "Atmosphera Icons",
-      "version": "1.0.0",
+      "version": "2.0.0",
       "official": true,
       "author": "Atmosphera",
       "description": "Built-in icon theme for Atmosphera",
@@ -27,10 +27,12 @@
         "Built-in"
       ]
     },
-  {
-   "id": "demo-custom-lockscreen",
+    {
+      "id": "demo-custom-lockscreen",
       "name": "Example Custom Lock Screen",
-      "version": "1.0.0",
+      "version": "1.0.1",
+      "minAtmospheraVersion": "0.8.0",
+      "minNoctaliaVersion": "0.0.0",
       "official": true,
       "author": "Atmosphera",
       "description": "A feature-rich example custom lock screen with status indicators, media controls, and session actions",

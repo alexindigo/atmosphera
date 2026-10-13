@@ -4,7 +4,8 @@
   "description": "A feature-rich example custom lock screen with status indicators, media controls, and session actions",
   "defaultEnabled": true,
   "author": "Atmosphera",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "minAtmospheraVersion": "0.8.0",
   "minNoctaliaVersion": "0.0.0",
   "entryPoints": {
     "lockScreen": "LockScreenView.qml",

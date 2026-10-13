@@ -1,0 +1,30 @@
+name: Built-in plugin compatibility
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    env:
+      PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      PUSH_BEFORE: ${{ github.event.before }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Resolve plugin lint base
+        run: |
+          zero=0000000000000000000000000000000000000000
+          base="${PR_BASE_SHA:-$PUSH_BEFORE}"
+          if [ -z "$base" ] || [ "$base" = "$zero" ]; then base=HEAD^; fi
+          echo "BASE_REF=$base" >> "$GITHUB_ENV"
+      - name: Checker regressions
+        run: ATMOSPHERA_CONTAINER_ENGINE=docker .devcontainer/container-run.sh python3 -B Scripts/dev/plugin-lint-selftest.py
+      - name: Changed built-in plugin compatibility and version bumps
+        run: PLUGIN_LINT_BASE="$BASE_REF" ATMOSPHERA_CONTAINER_ENGINE=docker Scripts/dev/plugin-lint-staged.sh
+      - name: Full built-in plugin audit
+        run: ATMOSPHERA_CONTAINER_ENGINE=docker .devcontainer/container-run.sh python3 -B Scripts/dev/plugin-lint.py --root builtin/plugins --catalog builtin/plugins/registry.json
