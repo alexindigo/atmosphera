@@ -1,6 +1,41 @@
 # Changelog
 
-## [0.8.1] — 2026-10-11
+## [0.8.1] — 2026-10-14
+
+### 2026-10-13
+
+**Development**
+
+QML lint now resolves complete, source-backed native type metadata for the
+supported Qt and Quickshell families, verifying artifact integrity without
+changing installed runtime modules or diagnostic severities. The shell owns a
+plugin compatibility checker for retired APIs, missing imports, palette members,
+manifest/catalog agreement and required version bumps. Commit-time and CI checks
+run in the development container; private index snapshots make the hooks check
+the final staged content, including external repositories using a pinned shell.
+
+- build(qmllint): resolve complete native type metadata (`c8554933c`)
+- feat(dev): add plugin compatibility checker to the shell (`d3929bce8`)
+- build(hooks): check staged built-in plugins at commit time (`582b7d8c2`)
+
+**Fix**
+
+The built-in plugin catalog now matches the shipped manifests, including the
+icon theme's version and the demo lock screen's minimum shell requirements.
+The demo lock screen is version 1.0.1, so older installed copies refresh with
+the corrected metadata; CI also audits the complete built-in catalog.
+
+- fix(builtin): align built-in plugin catalog and demo lock screen metadata (`ae341a86a`)
+
+### 2026-10-12
+
+**Maintenance**
+
+The pinned nixpkgs revision was refreshed for Nix-based development and packaging.
+The lockfile records the updated revision and its corresponding source hash;
+the Quickshell pin is unchanged.
+
+- chore(flake): update flake.lock (`b13f81e98`)
 
 ### 2026-10-11
 
