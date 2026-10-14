@@ -105,14 +105,19 @@ fi
 
 # --- Run ---------------------------------------------------------------------
 
+CPUS="$(nproc)"
+(( CPUS <= 12 )) || CPUS=12
+MEM="$(awk '/^MemTotal:/ {print int($2 * 3 / 4 / 1024)}' /proc/meminfo)"
+(( MEM <= 12288 )) || MEM=12288
+
 RUN_ARGS=(
     --rm
     --cap-add SYS_ADMIN
     --tmpfs /tmp/overlay:size=256m,mode=1777
-    --memory=12g
-    --memory-swap=12g
+    --memory="${MEM}m"
+    --memory-swap="${MEM}m"
     --pids-limit=2048
-    --cpus=12
+    --cpus="$CPUS"
     -v "$REPO_ROOT:/workspaces/atmosphera"
     -w /workspaces/atmosphera
 )
@@ -146,5 +151,5 @@ fi
 
 [ $# -gt 0 ] || fail "no command given. Usage: container-run.sh COMMAND [ARG...]"
 
-log "running with $ENGINE_KIND image $IMAGE"
+log "running with $ENGINE_KIND image $IMAGE (cpus=$CPUS memory=${MEM}m memory-swap=${MEM}m pids-limit=2048)"
 exec "$ENGINE_EXE" run "${RUN_ARGS[@]}" "$IMAGE" "$@"
