@@ -56,11 +56,10 @@ Item {
   // A plugin widget whose plugin is still installed but momentarily
   // unloadable keeps its slot: the placeholder renders until the real
   // widget returns (mark-and-remember, no deletion from the layout).
-  readonly property bool _pluginUnavailable: {
-    if (!root._isPlugin || BarWidgetRegistry.hasWidget(root.widgetId))
-      return false;
-    return Registry.isPluginDownloaded(root.widgetId.substring(7));
-  }
+  // The registry's widget map is not a reactive property, so this answer is
+  // re-evaluated on every plugin registry update (reloadCounter). Without that
+  // a delegate created before its widget registered kept the placeholder answer.
+  readonly property bool _pluginUnavailable: (root.reloadCounter >= 0) && root._isPlugin && !BarWidgetRegistry.hasWidget(root.widgetId) && Registry.isPluginDownloaded(root.widgetId.substring(7))
 
   // Force reload counter - incremented when plugin widget registry changes
   property int reloadCounter: 0
@@ -82,22 +81,32 @@ Item {
 
   readonly property bool _isPlugin: BarWidgetRegistry.isPluginWidget(widgetId)
 
-  // Build initial properties that must be available during Component.onCompleted.
-  // This prevents registration-key mismatches in widgets that build IDs from
-  // screen.name, section, or sectionWidgetIndex.
-  // All standard bar widget props are passed for both core and plugin widgets.
-  // Plugins that don't define some of these properties will get harmless warnings
-  // but still load correctly — and plugins that DO define them (e.g. for unique
-  // SpectrumService keys with multiple instances) get correct values from the start.
-  function _initialProps() {
+  // Values for the bar widget's context names (shared-loader design 3.1,
+  // barWidget). Core widgets get them as initial properties, so they are
+  // available during Component.onCompleted and registration keys built from
+  // screen.name / section / sectionWidgetIndex stay correct. Plugin widgets get
+  // them through PluginLoader, which hands over only the names they declare.
+  function _contextProps() {
+    var props = widgetProps || {};
     return {
       "screen": widgetScreen,
-      "widgetId": widgetProps.widgetId || "",
-      "section": widgetProps.section || "",
-      "sectionWidgetIndex": widgetProps.sectionWidgetIndex || 0,
-      "sectionWidgetsCount": widgetProps.sectionWidgetsCount || 0
+      "widgetId": props.widgetId || "",
+      "section": props.section || "",
+      "sectionWidgetIndex": props.sectionWidgetIndex || 0,
+      "sectionWidgetsCount": props.sectionWidgetsCount || 0
     };
   }
+
+  // A reactive snapshot owns delivery both during and after asynchronous load.
+  readonly property var _currentContext: _contextProps()
+  on_CurrentContextChanged: {
+    if (_isPlugin)
+      PluginLoader.applyLateContext(loader.item, "barWidget", _currentContext, {});
+  }
+
+  // Initial properties handed to the plugin widget currently being loaded
+  property var _pluginInitial: null
+  property string _pluginUrl: ""
 
   // Core widget URLs: file names match widget IDs exactly
   readonly property string _barWidgetsDir: Quickshell.shellDir + "/Modules/Bar/Widgets/"
@@ -110,35 +119,29 @@ Item {
     if (!BarWidgetRegistry.hasWidget(root.widgetId))
       return;
 
-    var props = _initialProps();
-
     if (_isPlugin) {
       var comp = BarWidgetRegistry.getWidget(root.widgetId);
       if (!comp)
         return;
-      var pluginId = root.widgetId.replace("plugin:", "");
-      var api = Service.getPluginAPI(pluginId);
-      if (api)
-        props.pluginApi = api;
-      loader.setSource(comp.url, props);
+      var pluginKey = root.widgetId.replace("plugin:", "");
+      _pluginUrl = String(comp.url);
+      if (!_pluginUrl) {
+        loader.sourceComponent = null;
+        PluginLoader.recordLoadFailure(pluginKey, "barWidget", comp, _pluginUrl);
+        return;
+      }
+      _pluginInitial = PluginLoader.initialProperties("barWidget", _pluginUrl, Service.getPluginAPI(pluginKey), _currentContext);
+      loader.setSource(_pluginUrl, _pluginInitial);
     } else {
-      loader.setSource(_barWidgetsDir + root.widgetId + ".qml", props);
+      loader.setSource(_barWidgetsDir + root.widgetId + ".qml", _contextProps());
     }
   }
 
   // Placeholder for an installed-but-unloadable plugin's widget
   Component {
     id: placeholderComponent
-    Item {
-      implicitWidth: Math.round(root.barHeight * 0.5)
-      implicitHeight: implicitWidth
-      opacity: 0.5
-
-      AtmoIcon {
-        anchors.centerIn: parent
-        icon: "puzzle-off"
-        color: AtmoColor.mOnSurfaceVariant
-      }
+    PluginPlaceholder {
+      size: Math.round(root.barHeight * 0.5)
     }
   }
 
@@ -164,6 +167,11 @@ Item {
       }
     }
 
+    onStatusChanged: {
+      if (status === Loader.Error && root._isPlugin)
+        PluginLoader.recordLoadFailure(root.widgetId.replace("plugin:", ""), "barWidget", sourceComponent, root._pluginUrl);
+    }
+
     onLoaded: {
       if (!item)
         return;
@@ -183,10 +191,15 @@ Item {
         });
       }
 
-      // Apply remaining widget properties (screen is already set as initial prop)
-      for (var prop in widgetProps) {
-        if (item.hasOwnProperty(prop)) {
-          item[prop] = widgetProps[prop];
+      if (root._isPlugin) {
+        // Synchronize values that changed during asynchronous creation too.
+        PluginLoader.applyLateContext(item, "barWidget", root._currentContext, root._pluginInitial);
+      } else {
+        // Apply remaining widget properties (screen is already set as initial prop)
+        for (var prop in widgetProps) {
+          if (item.hasOwnProperty(prop)) {
+            item[prop] = widgetProps[prop];
+          }
         }
       }
 

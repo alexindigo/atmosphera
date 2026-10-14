@@ -453,15 +453,34 @@ Variants {
             required property int index
             readonly property bool _isPlugin: DesktopWidgetRegistry.isPluginWidget(modelData.id)
 
-            // All widgets use setSource() so that screen, widgetData, and
-            // widgetIndex are set as initial properties, available during
-            // Component.onCompleted. This prevents registration-key
-            // mismatches in widgets that build IDs from screen.name.
+            // Widgets use setSource() so that their context values are set as
+            // initial properties, available during Component.onCompleted. This
+            // prevents registration-key mismatches in widgets that build IDs
+            // from screen.name.
             Component.onCompleted: _loadWidget()
 
             onActiveChanged: {
               if (active)
                 _loadWidget();
+            }
+
+            // Initial properties handed to the plugin widget currently being loaded
+            property var _pluginInitial: null
+            property string _pluginUrl: ""
+
+            // Context for a plugin widget (shared-loader design 3.1, desktopWidget)
+            function _pluginContext() {
+              return {
+                "screen": window.screen,
+                "widgetData": modelData,
+                "widgetIndex": index
+              };
+            }
+
+            readonly property var _currentContext: _pluginContext()
+            on_CurrentContextChanged: {
+              if (_isPlugin)
+                PluginLoader.applyLateContext(item, "desktopWidget", _currentContext, {});
             }
 
             function _loadWidget() {
@@ -470,29 +489,39 @@ Variants {
               if (!comp)
                 return;
 
-              var props = {
-                "screen": window.screen,
-                "widgetData": modelData,
-                "widgetIndex": index
-              };
-
               if (_isPlugin) {
-                var pluginId = widgetId.replace("plugin:", "");
-                var api = Service.getPluginAPI(pluginId);
-                if (api)
-                  props.pluginApi = api;
-                setSource(comp.url, props);
+                var pluginKey = widgetId.replace("plugin:", "");
+                _pluginUrl = String(comp.url);
+                if (!_pluginUrl) {
+                  sourceComponent = null;
+                  PluginLoader.recordLoadFailure(pluginKey, "desktopWidget", comp, _pluginUrl);
+                  return;
+                }
+                _pluginInitial = PluginLoader.initialProperties("desktopWidget", _pluginUrl, Service.getPluginAPI(pluginKey), _currentContext);
+                setSource(_pluginUrl, _pluginInitial);
               } else {
                 // Core widgets: use explicit URL (inline Component.url
                 // returns the registry file, not the widget file)
                 var url = DesktopWidgetRegistry.widgetUrls[widgetId];
                 if (url)
-                  setSource(url, props);
+                  setSource(url, {
+                              "screen": window.screen,
+                              "widgetData": modelData,
+                              "widgetIndex": index
+                            });
               }
+            }
+
+            onStatusChanged: {
+              if (status === Loader.Error && _isPlugin)
+                PluginLoader.recordLoadFailure(modelData.id.replace("plugin:", ""), "desktopWidget", sourceComponent, _pluginUrl);
             }
 
             onLoaded: {
               if (item) {
+                if (_isPlugin) {
+                  PluginLoader.applyLateContext(item, "desktopWidget", _currentContext, _pluginInitial);
+                }
                 item.parent = widgetsContainer;
               }
             }

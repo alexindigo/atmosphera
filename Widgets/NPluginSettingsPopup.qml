@@ -153,12 +153,11 @@ Popup {
 
     // Get plugin directory
     var pluginDir = Registry.getPluginDir(pluginId);
-    var settingsEntry = settingsEntryPoint ? pluginManifest.entryPoints[settingsEntryPoint] : pluginManifest.entryPoints.settings;
-    var settingsPath = pluginDir + "/" + settingsEntry;
+    var entryPoint = settingsEntryPoint || "settings";
+    var settingsEntry = pluginManifest.entryPoints[entryPoint];
+    var settingsUrl = "file://" + pluginDir + "/" + settingsEntry + "?v=" + (Registry.pluginLoadVersions[pluginId] || 0);
 
-    settingsLoader.setSource("file://" + settingsPath, {
-                               "pluginApi": currentPluginApi
-                             });
+    settingsLoader.setSource(settingsUrl, PluginLoader.initialProperties(entryPoint, settingsUrl, currentPluginApi, {}));
 
     var preferred = (settingsLoader.item && settingsLoader.item.preferredWidth !== undefined) ? settingsLoader.item.preferredWidth + padding * 2 : 0;
     width = Math.max(preferred, _minWidth);

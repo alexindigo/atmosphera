@@ -888,17 +888,13 @@ Singleton {
             return;
           }
 
-          // Instantiate Main.qml with pluginApi passed directly in createObject
-          var mainInstance = mainComponent.createObject(root.pluginContainer, {
-                                                          pluginApi: pluginApi
-                                                        });
+          // Instantiate Main.qml through the shared loader (records the error on failure)
+          var mainInstance = PluginLoader.createObject(pluginId, "main", mainComponent, root.pluginContainer, pluginApi, {});
 
           if (mainInstance) {
             root.loadedPlugins[pluginId].mainInstance = mainInstance;
             pluginApi.mainInstance = mainInstance;
             Logger.i("PluginService", "Loaded Main.qml for plugin:", pluginId);
-          } else {
-            root.recordPluginError(pluginId, "main", "Failed to instantiate Main.qml");
           }
         } else if (mainComponent.status === Component.Error) {
           root.recordPluginError(pluginId, "main", mainComponent.errorString());

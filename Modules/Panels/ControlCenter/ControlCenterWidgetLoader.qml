@@ -32,6 +32,28 @@ Item {
       root._loadPluginWidget();
   }
 
+  // Initial properties handed to the plugin widget currently being loaded
+  property var _pluginInitial: null
+  property string _pluginUrl: ""
+
+  // Context for a plugin widget: the placement's widgetProps plus the screen.
+  // PluginLoader hands over only the names the entry file declares.
+  function _pluginContext() {
+    var ctx = {
+      "screen": widgetScreen
+    };
+    var props = widgetProps || {};
+    for (var key in props)
+      ctx[key] = props[key];
+    return ctx;
+  }
+
+  readonly property var _currentContext: _pluginContext()
+  on_CurrentContextChanged: {
+    if (_isPlugin)
+      PluginLoader.applyLateContext(loader.item, "controlCenterWidget", _currentContext, {});
+  }
+
   function _loadPluginWidget() {
     var comp = root._registeredComponent;
     if (!comp) {
@@ -39,11 +61,15 @@ Item {
       loader.source = "";
       return;
     }
-    var pluginId = widgetId.substring(7); // Remove "plugin:" prefix
-    var api = Service.getPluginAPI(pluginId);
-    loader.setSource(comp.url, api ? {
-                                       "pluginApi": api
-                                     } : {});
+    var pluginKey = widgetId.substring(7); // Remove "plugin:" prefix
+    _pluginUrl = String(comp.url);
+    if (!_pluginUrl) {
+      loader.sourceComponent = null;
+      PluginLoader.recordLoadFailure(pluginKey, "controlCenterWidget", comp, _pluginUrl);
+      return;
+    }
+    _pluginInitial = PluginLoader.initialProperties("controlCenterWidget", _pluginUrl, Service.getPluginAPI(pluginKey), _currentContext);
+    loader.setSource(_pluginUrl, _pluginInitial);
   }
 
   Loader {
@@ -51,8 +77,8 @@ Item {
     anchors.fill: parent
     asynchronous: false
 
-    // Core widgets use sourceComponent; plugin widgets use setSource()
-    // so pluginApi is available from the first binding evaluation.
+    // Core widgets use sourceComponent; plugin widgets use setSource() so the
+    // context names the entry file declares are set from the first binding evaluation.
     Component.onCompleted: {
       if (root._isPlugin) {
         root._loadPluginWidget();
@@ -63,20 +89,29 @@ Item {
       }
     }
 
+    onStatusChanged: {
+      if (status === Loader.Error && root._isPlugin)
+        PluginLoader.recordLoadFailure(root.widgetId.substring(7), "controlCenterWidget", sourceComponent, root._pluginUrl);
+    }
+
     onLoaded: {
       if (!item)
         return;
 
-      // Apply properties to loaded widget
-      for (var prop in widgetProps) {
-        if (item.hasOwnProperty(prop)) {
-          item[prop] = widgetProps[prop];
+      if (root._isPlugin) {
+        PluginLoader.applyLateContext(item, "controlCenterWidget", root._currentContext, root._pluginInitial);
+      } else {
+        // Apply properties to loaded widget
+        for (var prop in widgetProps) {
+          if (item.hasOwnProperty(prop)) {
+            item[prop] = widgetProps[prop];
+          }
         }
-      }
 
-      // Set screen property
-      if (item.hasOwnProperty("screen")) {
-        item.screen = widgetScreen;
+        // Set screen property
+        if (item.hasOwnProperty("screen")) {
+          item.screen = widgetScreen;
+        }
       }
 
       // Call custom onLoaded if it exists

@@ -17,6 +17,10 @@ Popup {
   property string sectionId: "" // Not used for desktop widgets, but required by NSectionEditor
   property var screen: null
   property var settingsCache: ({})
+  // Plugin settings page currently loaded through PluginLoader (empty for core pages)
+  property string _pluginEntry: ""
+  property var _pluginContext: null
+  property var _pluginInitial: null
   // Optional anchor rect — if set, dialog positions itself beside this rect
   // (so it doesn't cover the widget being edited).
   property real anchorX: -1
@@ -184,6 +188,8 @@ Popup {
             }
             onLoaded: {
               if (item) {
+                if (root._pluginContext)
+                  PluginLoader.applyLateContext(item, root._pluginEntry, root._pluginContext, root._pluginInitial);
                 Qt.callLater(() => {
                   var firstInput = findFirstFocusable(item);
                   if (firstInput) {
@@ -288,6 +294,30 @@ Popup {
     root.close();
   }
 
+  // Build one editing object per load. Registry metadata refreshes must not
+  // replace the plugin page's data and discard its unsaved edits.
+  function _desktopSettingsContext() {
+    var widgetSettings = {};
+    widgetSettings.data = widgetData || {};
+    widgetSettings.metadata = DesktopWidgetRegistry.widgetMetadata[widgetId] || {};
+    widgetSettings.save = function () {
+      var newSettings = Object.assign({}, widgetSettings.data);
+      root.settingsCache = newSettings;
+      saveTimer.start();
+    };
+    return {
+      "widgetSettings": widgetSettings
+    };
+  }
+
+  // Retain the per-load editing context for initial and onLoaded delivery.
+  function loadPluginSettings(entryPoint, url, api, context) {
+    _pluginEntry = entryPoint;
+    _pluginContext = context;
+    _pluginInitial = PluginLoader.initialProperties(entryPoint, url, api, context);
+    settingsLoader.setSource(url, _pluginInitial);
+  }
+
   function loadWidgetSettings() {
     Logger.d("DesktopWidgetSettingsDialog", "loadWidgetSettings:", widgetId, "widgetIndex:", widgetIndex, "sectionId:", sectionId);
 
@@ -300,33 +330,16 @@ Popup {
       var loadVersion = Registry.pluginLoadVersions[pluginId] || 0;
       var api = Service.getPluginAPI(pluginId);
 
-      var settingsPath;
       if (manifest && manifest.entryPoints && manifest.entryPoints.desktopWidgetSettings) {
-        settingsPath = "file://" + pluginDir + "/" + manifest.entryPoints.desktopWidgetSettings;
+        var settingsUrl = "file://" + pluginDir + "/" + manifest.entryPoints.desktopWidgetSettings + "?v=" + loadVersion;
 
-        var widgetSettings = {};
-        widgetSettings.data = widgetData || {};
-        widgetSettings.metadata = DesktopWidgetRegistry.widgetMetadata[widgetId] || {};
-        widgetSettings.save = function () {
-          var newSettings = Object.assign({}, widgetSettings.data);
-          root.settingsCache = newSettings;
-          saveTimer.start();
-        };
-
-        settingsLoader.setSource(settingsPath + "?v=" + loadVersion, {
-                                   "pluginApi": api,
-                                   "widgetSettings": widgetSettings
-                                 });
+        loadPluginSettings("desktopWidgetSettings", settingsUrl, api, _desktopSettingsContext());
       } else {
         Logger.w("DesktopWidgetSettingsDialog", "Plugin does not have desktop widget settings:", pluginId);
 
         // Fallback to the plugin settings
         if (manifest && manifest.entryPoints && manifest.entryPoints.settings) {
-          settingsPath = "file://" + pluginDir + "/" + manifest.entryPoints.settings;
-
-          settingsLoader.setSource(settingsPath + "?v=" + loadVersion, {
-                                     "pluginApi": api
-                                   });
+          loadPluginSettings("settings", "file://" + pluginDir + "/" + manifest.entryPoints.settings + "?v=" + loadVersion, api, {});
         } else {
           Logger.w("DesktopWidgetSettingsDialog", "Plugin does not have settings:", pluginId);
         }
@@ -355,6 +368,8 @@ Popup {
       Logger.d("DesktopWidgetSettingsDialog", "foundWidget:", foundWidget, "monitorWidgets count:", monitorWidgets.length, "sectionId:", sectionId);
       var fullPath = Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/DesktopWidgets/" + source);
       Logger.d("DesktopWidgetSettingsDialog", "fullPath:", fullPath);
+      _pluginEntry = "";
+      _pluginContext = null;
       settingsLoader.setSource(fullPath, {
                                  "widgetData": currentWidgetData,
                                  "widgetMetadata": DesktopWidgetRegistry.widgetMetadata[widgetId]

@@ -23,6 +23,14 @@ SmartPanel {
   // Reference to the plugin content loader (set when panel content is created)
   property var contentLoader: null
 
+  readonly property var _pluginContext: ({
+                                         "screen": root.screen
+                                       })
+  on_PluginContextChanged: {
+    if (contentLoader)
+      PluginLoader.applyLateContext(contentLoader.item, "panel", _pluginContext, {});
+  }
+
   // Pass through anchor properties from plugin panel content.
   // If the plugin exposes a single `corner` position string, derive all
   // four anchors from it (same pattern as ControlCenter/Dock/Launcher —
@@ -95,6 +103,7 @@ SmartPanel {
           id: pluginContentLoader
           anchors.fill: parent
           active: false
+          onLoaded: PluginLoader.applyLateContext(item, "panel", root._pluginContext, {})
         }
       }
 
@@ -177,15 +186,15 @@ SmartPanel {
     // Get plugin API
     var api = Service.getPluginAPI(pluginId);
 
-    // Use setSource with initial properties so pluginApi and screen are
-    // available from the first binding evaluation (before onLoaded)
+    // The panel reads its opening screen from the api while its content is created
+    if (api)
+      api.panelOpenScreen = root.screen;
+
+    // The shared loader supplies the values: declared ones as initial properties
+    // (available from the first binding evaluation), inherited ones after creation
     root.contentLoader.active = true;
-    root.contentLoader.setSource(component.url, api ? {
-                                                        "pluginApi": api,
-                                                        "screen": root.screen
-                                                      } : {
-                                   "screen": root.screen
-                                 });
+    var initial = PluginLoader.initialProperties("panel", component.url, api, _pluginContext);
+    root.contentLoader.setSource(component.url, initial);
 
     if (root.contentLoader.item) {
       root.pluginInstance = root.contentLoader.item;
@@ -218,17 +227,8 @@ SmartPanel {
     PanelService.registerPanel(root);
   }
 
-  // Update plugin's panelOpenScreen when this panel opens/closes
-  onOpened: {
-    if (root.currentPluginId !== "") {
-      var api = Service.getPluginAPI(root.currentPluginId);
-      if (api) {
-        api.panelOpenScreen = root.screen;
-        Logger.d("PluginPanelSlot", "Set panelOpenScreen for", root.currentPluginId, "to", root.screen?.name);
-      }
-    }
-  }
-
+  // panelOpenScreen is set in finalizePluginLoad, before the content loads
+  // (the content is recreated on every open). Cleared here on close.
   onClosed: {
     if (root.currentPluginId !== "") {
       var api = Service.getPluginAPI(root.currentPluginId);

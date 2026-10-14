@@ -1,0 +1,25 @@
+{
+  "id": "fx-bare",
+  "name": "FX Bare",
+  "version": "1.0.0",
+  "minAtmospheraVersion": "0.8.0",
+  "author": "Atmosphera L01 fixture",
+  "official": false,
+  "license": "MIT",
+  "repository": "local-fixture",
+  "description": "Loader fixture: every entry point declares only pluginApi.",
+  "tags": ["Fixture"],
+  "entryPoints": {
+    "main": "Main.qml",
+    "barWidget": "BarWidget.qml",
+    "controlCenterWidget": "ControlCenterWidget.qml",
+    "desktopWidget": "DesktopWidget.qml",
+    "panel": "Panel.qml",
+    "settings": "Settings.qml",
+    "desktopWidgetSettings": "DesktopWidgetSettings.qml",
+    "launcherProvider": "LauncherProvider.qml"
+  },
+  "dependencies": {
+    "plugins": []
+  }
+}

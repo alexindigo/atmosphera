@@ -44,9 +44,7 @@ Singleton {
     // Instantiate immediately so data loading starts in the background
     var pluginApi = Service.getPluginAPI(pluginId);
     if (pluginApi) {
-      var instance = component.createObject(null, {
-                                              pluginApi: pluginApi
-                                            });
+      var instance = PluginLoader.createObject(pluginId, "launcherProvider", component, null, pluginApi, {});
       if (instance) {
         var nextProviderInstances = Object.assign({}, providerInstances);
         nextProviderInstances[providerId] = instance;

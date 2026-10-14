@@ -1,0 +1,20 @@
+{
+  "id": "fx-inherits",
+  "name": "FX Inherits",
+  "version": "1.0.0",
+  "minAtmospheraVersion": "0.8.0",
+  "author": "Atmosphera L01 fixture",
+  "official": false,
+  "license": "MIT",
+  "repository": "local-fixture",
+  "description": "Loader fixture: bar, desktop and panel roots inherit context names from a local base type.",
+  "tags": ["Fixture"],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml",
+    "desktopWidget": "DesktopWidget.qml",
+    "panel": "Panel.qml"
+  },
+  "dependencies": {
+    "plugins": []
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "plugins": [
+    {
+      "id": "fx-declares",
+      "name": "FX Declares",
+      "author": "Atmosphera L01 fixture",
+      "description": "Loader fixture: every entry point declares every context name it receives.",
+      "license": "MIT",
+      "version": "1.0.0",
+      "tags": ["Fixture"],
+      "repository": "local-fixture",
+      "official": false,
+      "lastUpdated": "2026-10-14",
+      "minAtmospheraVersion": "0.8.0"
+    },
+    {
+      "id": "fx-bare",
+      "name": "FX Bare",
+      "author": "Atmosphera L01 fixture",
+      "description": "Loader fixture: every entry point declares only pluginApi.",
+      "license": "MIT",
+      "version": "1.0.0",
+      "tags": ["Fixture"],
+      "repository": "local-fixture",
+      "official": false,
+      "lastUpdated": "2026-10-14",
+      "minAtmospheraVersion": "0.8.0"
+    },
+    {
+      "id": "fx-inherits",
+      "name": "FX Inherits",
+      "author": "Atmosphera L01 fixture",
+      "description": "Loader fixture: bar, desktop and panel roots inherit context names from a local base type.",
+      "license": "MIT",
+      "version": "1.0.0",
+      "tags": ["Fixture"],
+      "repository": "local-fixture",
+      "official": false,
+      "lastUpdated": "2026-10-14",
+      "minAtmospheraVersion": "0.8.0"
+    }
+  ]
+}

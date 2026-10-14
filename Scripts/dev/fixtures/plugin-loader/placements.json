@@ -1,0 +1,32 @@
+{
+  "bar": {
+    "widgets": {
+      "right": [
+        { "id": "plugin:@KEY:fx-declares@" },
+        { "id": "plugin:@KEY:fx-bare@" },
+        { "id": "plugin:@KEY:fx-inherits@" }
+      ]
+    }
+  },
+  "controlCenter": {
+    "shortcuts": {
+      "left": [
+        { "id": "plugin:@KEY:fx-declares@" },
+        { "id": "plugin:@KEY:fx-bare@" }
+      ]
+    }
+  },
+  "desktopWidgets": {
+    "enabled": true,
+    "monitorWidgets": [
+      {
+        "name": "Virtual-1",
+        "widgets": [
+          { "id": "plugin:@KEY:fx-declares@", "x": 100, "y": 100 },
+          { "id": "plugin:@KEY:fx-bare@", "x": 300, "y": 100 },
+          { "id": "plugin:@KEY:fx-inherits@", "x": 500, "y": 100 }
+        ]
+      }
+    ]
+  }
+}
