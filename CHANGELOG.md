@@ -2,6 +2,16 @@
 
 ## [0.8.1] — 2026-10-14
 
+### 2026-10-14
+
+**Fix**
+
+Development containers now size their CPU and memory caps to the host, so CI
+runners with fewer resources can run the checks while retaining mandatory
+resource limits.
+
+- fix(devcontainer): size container caps to the host (`dd48b23f5`)
+
 ### 2026-10-13
 
 **Development**
