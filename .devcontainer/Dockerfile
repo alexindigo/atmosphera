@@ -9,7 +9,7 @@ ARG DEV_GID=1000
 RUN pacman -Sy --noconfirm --needed \
     quickshell qt6-declarative qt6-tools \
     python python-pip \
-    shellcheck shfmt \
+    git shellcheck shfmt \
     tree-sitter \
     rustup \
     sudo
