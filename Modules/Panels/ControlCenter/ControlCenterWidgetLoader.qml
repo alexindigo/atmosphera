@@ -10,6 +10,9 @@ Item {
   required property string widgetId
   required property var widgetScreen
   required property var widgetProps
+  // Shortcut list the widget is placed in ("left" or "right"); the placement
+  // of a plugin instance (plugin-instances design, 4).
+  property string listSection: ""
 
   property string section: widgetProps && widgetProps.section || ""
   property int sectionIndex: widgetProps && widgetProps.sectionWidgetIndex || 0
@@ -50,9 +53,35 @@ Item {
 
   readonly property var _currentContext: _pluginContext()
   on_CurrentContextChanged: {
-    if (_isPlugin)
+    if (_isPlugin) {
       PluginLoader.applyLateContext(loader.item, "controlCenterWidget", _currentContext, {});
+      _repointInstanceApi();
+    }
   }
+
+  // The plugin instance this widget is placed as. A move changes the placement,
+  // so the loaded widget is handed the api of its new place.
+  function _instancePlacement() {
+    return {
+      "kind": "controlCenter",
+      "section": root.listSection,
+      "index": root.sectionIndex
+    };
+  }
+
+  function _instanceApi() {
+    return PluginInstances.apiFor(root.widgetId.substring(7), _instancePlacement());
+  }
+
+  function _repointInstanceApi() {
+    if (!loader.item || !("pluginApi" in loader.item))
+      return;
+    var api = _instanceApi();
+    if (api && loader.item.pluginApi !== api)
+      loader.item.pluginApi = api;
+  }
+
+  onListSectionChanged: _repointInstanceApi()
 
   function _loadPluginWidget() {
     var comp = root._registeredComponent;
@@ -68,7 +97,7 @@ Item {
       PluginLoader.recordLoadFailure(pluginKey, "controlCenterWidget", comp, _pluginUrl);
       return;
     }
-    _pluginInitial = PluginLoader.initialProperties("controlCenterWidget", _pluginUrl, Service.getPluginAPI(pluginKey), _currentContext);
+    _pluginInitial = PluginLoader.initialProperties("controlCenterWidget", _pluginUrl, _instanceApi(), _currentContext);
     loader.setSource(_pluginUrl, _pluginInitial);
   }
 

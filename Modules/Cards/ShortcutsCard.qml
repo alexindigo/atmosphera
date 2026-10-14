@@ -33,6 +33,7 @@ RowLayout {
           Layout.fillWidth: false
           widgetId: (modelData.id !== undefined ? modelData.id : "")
           widgetScreen: root.screen
+          listSection: "left"
           widgetProps: {
             "widgetId": modelData.id,
             "section": "quickSettings",
@@ -73,6 +74,7 @@ RowLayout {
           Layout.fillWidth: false
           widgetId: (modelData.id !== undefined ? modelData.id : "")
           widgetScreen: root.screen
+          listSection: "right"
           widgetProps: {
             "widgetId": modelData.id,
             "section": "quickSettings",

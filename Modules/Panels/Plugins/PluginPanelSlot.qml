@@ -17,6 +17,10 @@ SmartPanel {
   // Currently loaded plugin ID (empty if no plugin using this slot)
   property string currentPluginId: ""
 
+  // Plugin api the panel loads with: the plugin api, or the api of the plugin
+  // instance that opened it (null if no plugin uses this slot)
+  property var currentPluginApi: null
+
   // Plugin instance
   property var pluginInstance: null
 
@@ -143,6 +147,8 @@ SmartPanel {
       return false;
     }
 
+    var api = root.currentPluginApi || Service.getPluginAPI(pluginId);
+
     // Clear any stale pluginInstance before loading new content
     root.pluginInstance = null;
 
@@ -156,14 +162,14 @@ SmartPanel {
     var component = Qt.createComponent("file://" + panelPath + "?v=" + loadVersion);
 
     if (component.status === Component.Ready) {
-      finalizePluginLoad(pluginId, component);
+      finalizePluginLoad(pluginId, component, api);
       return true;
     } else if (component.status === Component.Loading) {
       // Handle async component loading - wait for it to be ready
       Logger.d("PluginPanelSlot", "Component loading asynchronously for:", pluginId);
       component.statusChanged.connect(function () {
         if (component.status === Component.Ready) {
-          finalizePluginLoad(pluginId, component);
+          finalizePluginLoad(pluginId, component, api);
           // Force SmartPanel to recalculate position now that content is ready
           if (root.isPanelVisible) {
             root.setPosition();
@@ -182,10 +188,7 @@ SmartPanel {
   }
 
   // Helper function to finalize plugin content loading
-  function finalizePluginLoad(pluginId, component) {
-    // Get plugin API
-    var api = Service.getPluginAPI(pluginId);
-
+  function finalizePluginLoad(pluginId, component, api) {
     // The panel reads its opening screen from the api while its content is created
     if (api)
       api.panelOpenScreen = root.screen;
@@ -220,6 +223,7 @@ SmartPanel {
     }
     root.pluginInstance = null;
     root.currentPluginId = "";
+    root.currentPluginApi = null;
   }
 
   // Register with PanelService
@@ -231,7 +235,7 @@ SmartPanel {
   // (the content is recreated on every open). Cleared here on close.
   onClosed: {
     if (root.currentPluginId !== "") {
-      var api = Service.getPluginAPI(root.currentPluginId);
+      var api = root.currentPluginApi || Service.getPluginAPI(root.currentPluginId);
       if (api) {
         api.panelOpenScreen = null;
         Logger.d("PluginPanelSlot", "Cleared panelOpenScreen for", root.currentPluginId);

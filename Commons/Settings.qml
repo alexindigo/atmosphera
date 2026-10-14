@@ -2145,9 +2145,10 @@ Singleton {
     // Get all existing custom settings keys
     const keys = Object.keys(BarWidgetRegistry.widgetMetadata[widget.id]);
 
-    // Delete deprecated user settings from the wiget
+    // Delete deprecated user settings from the wiget. `instanceSettings` holds
+    // a plugin instance's overrides (plugin-instances design), not a widget setting.
     for (const k of Object.keys(widget)) {
-      if (k === "id") {
+      if (k === "id" || k === "instanceSettings") {
         continue;
       }
       if (!keys.includes(k)) {

@@ -100,8 +100,34 @@ Item {
   // A reactive snapshot owns delivery both during and after asynchronous load.
   readonly property var _currentContext: _contextProps()
   on_CurrentContextChanged: {
-    if (_isPlugin)
+    if (_isPlugin) {
       PluginLoader.applyLateContext(loader.item, "barWidget", _currentContext, {});
+      _repointInstanceApi();
+    }
+  }
+
+  // The plugin instance this widget is placed as (plugin-instances design, 4).
+  // A move in the bar changes the placement, so the loaded widget is handed the
+  // api of its new place.
+  function _instancePlacement() {
+    return {
+      "kind": "bar",
+      "list": PluginInstances.barList(root.widgetScreen ? root.widgetScreen.name : ""),
+      "section": root.section,
+      "index": root.sectionIndex
+    };
+  }
+
+  function _instanceApi() {
+    return PluginInstances.apiFor(root.widgetId.replace("plugin:", ""), _instancePlacement());
+  }
+
+  function _repointInstanceApi() {
+    if (!loader.item || !("pluginApi" in loader.item))
+      return;
+    var api = _instanceApi();
+    if (api && loader.item.pluginApi !== api)
+      loader.item.pluginApi = api;
   }
 
   // Initial properties handed to the plugin widget currently being loaded
@@ -130,7 +156,7 @@ Item {
         PluginLoader.recordLoadFailure(pluginKey, "barWidget", comp, _pluginUrl);
         return;
       }
-      _pluginInitial = PluginLoader.initialProperties("barWidget", _pluginUrl, Service.getPluginAPI(pluginKey), _currentContext);
+      _pluginInitial = PluginLoader.initialProperties("barWidget", _pluginUrl, _instanceApi(), _currentContext);
       loader.setSource(_pluginUrl, _pluginInitial);
     } else {
       loader.setSource(_barWidgetsDir + root.widgetId + ".qml", _contextProps());

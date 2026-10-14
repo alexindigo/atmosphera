@@ -1,0 +1,25 @@
+{
+  "id": "fx-instance",
+  "name": "FX Instance",
+  "version": "1.0.0",
+  "minAtmospheraVersion": "0.8.0",
+  "author": "Atmosphera L07 fixture",
+  "official": false,
+  "license": "MIT",
+  "repository": "local-fixture",
+  "description": "Loader fixture: a bar widget, a panel and a settings page that read the label setting; the bar widget exercises per-instance saves.",
+  "tags": ["Fixture"],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml",
+    "panel": "Panel.qml",
+    "settings": "Settings.qml"
+  },
+  "metadata": {
+    "defaultSettings": {
+      "label": "D"
+    }
+  },
+  "dependencies": {
+    "plugins": []
+  }
+}

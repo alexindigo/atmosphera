@@ -108,6 +108,18 @@ NBox {
     }
   }
 
+  // Opens the settings of the plugin instance at a bar placement of this monitor.
+  // The list is the one the bar draws here (PluginInstances.barList).
+  function _openInstanceSettings(manifest, settingsEntryPoint, section, index) {
+    var placement = {
+      "kind": "bar",
+      "list": PluginInstances.barList(screenName),
+      "section": section,
+      "index": index
+    };
+    pluginSettingsDialog.openInstanceSettings(manifest, PluginInstances.apiFor(manifest.compositeKey || manifest.id, placement), settingsEntryPoint);
+  }
+
   // Available widgets ListModel
   function updateAvailableWidgetsModel() {
     availableWidgetsModel.clear();
@@ -187,7 +199,7 @@ NBox {
       onReorderWidget: (section, fromIndex, toIndex) => root._reorderWidgetInSection(section, fromIndex, toIndex)
       onUpdateWidgetSettings: (section, index, settings) => root._updateWidgetSettingsInSection(section, index, settings)
       onMoveWidget: (fromSection, index, toSection) => root._moveWidgetBetweenSections(fromSection, index, toSection)
-      onOpenPluginSettingsRequested: manifest => pluginSettingsDialog.openPluginSettings(manifest)
+      onOpenPluginSettingsRequested: (manifest, settingsEntryPoint, section, index) => root._openInstanceSettings(manifest, settingsEntryPoint, section, index)
     }
 
     // Center Section
@@ -205,7 +217,7 @@ NBox {
       onReorderWidget: (section, fromIndex, toIndex) => root._reorderWidgetInSection(section, fromIndex, toIndex)
       onUpdateWidgetSettings: (section, index, settings) => root._updateWidgetSettingsInSection(section, index, settings)
       onMoveWidget: (fromSection, index, toSection) => root._moveWidgetBetweenSections(fromSection, index, toSection)
-      onOpenPluginSettingsRequested: manifest => pluginSettingsDialog.openPluginSettings(manifest)
+      onOpenPluginSettingsRequested: (manifest, settingsEntryPoint, section, index) => root._openInstanceSettings(manifest, settingsEntryPoint, section, index)
     }
 
     // Right Section
@@ -223,7 +235,7 @@ NBox {
       onReorderWidget: (section, fromIndex, toIndex) => root._reorderWidgetInSection(section, fromIndex, toIndex)
       onUpdateWidgetSettings: (section, index, settings) => root._updateWidgetSettingsInSection(section, index, settings)
       onMoveWidget: (fromSection, index, toSection) => root._moveWidgetBetweenSections(fromSection, index, toSection)
-      onOpenPluginSettingsRequested: manifest => pluginSettingsDialog.openPluginSettings(manifest)
+      onOpenPluginSettingsRequested: (manifest, settingsEntryPoint, section, index) => root._openInstanceSettings(manifest, settingsEntryPoint, section, index)
     }
   }
 

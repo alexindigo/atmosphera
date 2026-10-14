@@ -479,8 +479,33 @@ Variants {
 
             readonly property var _currentContext: _pluginContext()
             on_CurrentContextChanged: {
-              if (_isPlugin)
+              if (_isPlugin) {
                 PluginLoader.applyLateContext(item, "desktopWidget", _currentContext, {});
+                _repointInstanceApi();
+              }
+            }
+
+            // The plugin instance this widget is placed as (plugin-instances
+            // design, 4). A move changes the placement, so the loaded widget is
+            // handed the api of its new place.
+            function _instancePlacement() {
+              return {
+                "kind": "desktop",
+                "screenName": window.screen ? window.screen.name : "",
+                "index": index
+              };
+            }
+
+            function _instanceApi() {
+              return PluginInstances.apiFor(modelData.id.replace("plugin:", ""), _instancePlacement());
+            }
+
+            function _repointInstanceApi() {
+              if (!item || !("pluginApi" in item))
+                return;
+              var api = _instanceApi();
+              if (api && item.pluginApi !== api)
+                item.pluginApi = api;
             }
 
             function _loadWidget() {
@@ -497,7 +522,7 @@ Variants {
                   PluginLoader.recordLoadFailure(pluginKey, "desktopWidget", comp, _pluginUrl);
                   return;
                 }
-                _pluginInitial = PluginLoader.initialProperties("desktopWidget", _pluginUrl, Service.getPluginAPI(pluginKey), _currentContext);
+                _pluginInitial = PluginLoader.initialProperties("desktopWidget", _pluginUrl, _instanceApi(), _currentContext);
                 setSource(_pluginUrl, _pluginInitial);
               } else {
                 // Core widgets: use explicit URL (inline Component.url

@@ -1879,8 +1879,25 @@ Singleton {
     return !!root.loadedPlugins[pluginId];
   }
 
-  // Open a plugin's panel (finds a free slot and loads the panel)
-  function openPluginPanel(pluginId, screen, buttonItem) {
+  // A slot shows a panel of `pluginId`. Without `api` (plugin level) any instance
+  // of the plugin counts; with `api` only the panel opened with that api does.
+  function _panelShows(panel, pluginId, api) {
+    if (panel.currentPluginId !== pluginId)
+      return false;
+    return !api || panel.currentPluginApi === api;
+  }
+
+  // Assigns a slot to a plugin panel and the api the panel loads with.
+  function _assignPanel(panel, pluginId, api) {
+    panel.currentPluginApi = api;
+    panel.currentPluginId = pluginId;
+  }
+
+  // Open a plugin's panel (finds a free slot and loads the panel).
+  // api: optional plugin api the panel loads with (a plugin instance's api);
+  // the plugin api when omitted. A slot already showing the plugin with another
+  // api is not reused for this one.
+  function openPluginPanel(pluginId, screen, buttonItem, api) {
     if (!isPluginLoaded(pluginId)) {
       Logger.w("PluginService", "Cannot open panel: plugin not loaded:", pluginId);
       return false;
@@ -1892,6 +1909,8 @@ Singleton {
       return false;
     }
 
+    var target = api || getPluginAPI(pluginId);
+
     // Try to find the plugin panel slot (pluginPanel1 or pluginPanel2)
     // Priority: 1) toggle same plugin, 2) empty slot, 3) closed slot, 4) replace open slot
     var closedSlot = null;
@@ -1902,14 +1921,14 @@ Singleton {
 
       if (panel) {
         // If this slot is already showing this plugin's panel, toggle it
-        if (panel.currentPluginId === pluginId) {
+        if (_panelShows(panel, pluginId, api)) {
           panel.toggle(buttonItem);
           return true;
         }
 
         // If this slot is empty, use it
         if (panel.currentPluginId === "") {
-          panel.currentPluginId = pluginId;
+          _assignPanel(panel, pluginId, target);
           panel.open(buttonItem);
           return true;
         }
@@ -1923,7 +1942,7 @@ Singleton {
 
     // Prefer reusing a closed slot over replacing an open one
     if (closedSlot) {
-      closedSlot.currentPluginId = pluginId;
+      _assignPanel(closedSlot, pluginId, target);
       closedSlot.open(buttonItem);
       return true;
     }
@@ -1933,7 +1952,7 @@ Singleton {
     if (panel1) {
       var wasAlreadyOpen = panel1.isPanelOpen;
       panel1.unloadPluginPanel();
-      panel1.currentPluginId = pluginId;
+      _assignPanel(panel1, pluginId, target);
 
       // If panel was already open, Component.onCompleted won't fire again
       // since panelContent is already loaded. We need to load the plugin manually.
@@ -1951,7 +1970,8 @@ Singleton {
 
   // Toggle a plugin's panel - close if open, open if closed
   // buttonItem: optional, if provided the panel will position near this button
-  function togglePluginPanel(pluginId, screen, buttonItem) {
+  // api: optional plugin api the panel loads with (see openPluginPanel)
+  function togglePluginPanel(pluginId, screen, buttonItem, api) {
     if (!isPluginLoaded(pluginId)) {
       Logger.w("PluginService", "Cannot toggle panel: plugin not loaded:", pluginId);
       return false;
@@ -1963,12 +1983,12 @@ Singleton {
       return false;
     }
 
-    // Check if this plugin's panel is already open in any slot
+    // Check if this plugin's panel (with this api, if given) is already open in any slot
     for (var slotNum = 1; slotNum <= 2; slotNum++) {
       var panelName = "pluginPanel" + slotNum;
       var panel = PanelService.getPanel(panelName, screen);
 
-      if (panel && panel.currentPluginId === pluginId) {
+      if (panel && _panelShows(panel, pluginId, api)) {
         // Panel is open for this plugin - toggle it (close)
         panel.toggle(buttonItem);
         return true;
@@ -1976,7 +1996,7 @@ Singleton {
     }
 
     // Panel is not open - open it using the existing logic
-    return openPluginPanel(pluginId, screen, buttonItem);
+    return openPluginPanel(pluginId, screen, buttonItem, api);
   }
 
   // ----- Error tracking functions -----

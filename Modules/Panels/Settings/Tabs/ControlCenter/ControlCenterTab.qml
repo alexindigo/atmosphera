@@ -180,7 +180,7 @@ ColumnLayout {
       onReorderWidgetInSection: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
       onUpdateWidgetSettingsInSection: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
       onMoveWidgetBetweenSections: (fromSection, index, toSection) => _moveWidgetBetweenSections(fromSection, index, toSection)
-      onOpenPluginSettingsRequested: manifest => pluginSettingsDialog.openPluginSettings(manifest)
+      onOpenPluginSettingsRequested: (manifest, settingsEntryPoint, section, index) => root._openInstanceSettings(manifest, settingsEntryPoint, section, index)
     }
   }
 
@@ -252,6 +252,16 @@ ColumnLayout {
   // Base list model for all combo boxes
   ListModel {
     id: availableWidgets
+  }
+
+  // Opens the settings of the plugin instance at a control-center placement.
+  function _openInstanceSettings(manifest, settingsEntryPoint, section, index) {
+    var placement = {
+      "kind": "controlCenter",
+      "section": section,
+      "index": index
+    };
+    pluginSettingsDialog.openInstanceSettings(manifest, PluginInstances.apiFor(manifest.compositeKey || manifest.id, placement), settingsEntryPoint);
   }
 
   // Shared Plugin Settings Popup

@@ -230,13 +230,24 @@ ColumnLayout {
       reorderWidgetInSection: root._reorderWidgetInSection
       updateWidgetSettingsInSection: root._updateWidgetSettingsInSection
       moveWidgetBetweenSections: root._moveWidgetBetweenSections
-      onOpenPluginSettings: manifest => pluginSettingsDialog.openPluginSettings(manifest)
+      onOpenPluginSettings: (manifest, settingsEntryPoint, section, index) => root._openInstanceSettings(manifest, settingsEntryPoint, section, index)
     }
     BehaviorSubTab {}
     MonitorsSubTab {
       addMonitor: root.addMonitor
       removeMonitor: root.removeMonitor
     }
+  }
+
+  // Opens the settings of the plugin instance at a global bar placement (plugin-instances design, 4).
+  function _openInstanceSettings(manifest, settingsEntryPoint, section, index) {
+    var placement = {
+      "kind": "bar",
+      "list": "global",
+      "section": section,
+      "index": index
+    };
+    pluginSettingsDialog.openInstanceSettings(manifest, PluginInstances.apiFor(manifest.compositeKey || manifest.id, placement), settingsEntryPoint);
   }
 
   NPluginSettingsPopup {

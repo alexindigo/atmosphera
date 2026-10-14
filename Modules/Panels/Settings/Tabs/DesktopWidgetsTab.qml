@@ -118,7 +118,7 @@ ColumnLayout {
         onMoveWidget: (fromSection, index, toSection) => _moveWidgetToMonitor(fromSection, index, toSection)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsForMonitor(modelData.name, index, settings)
         pluginSettingsEntryPoints: ["desktopWidgetSettings", "settings"]
-        onOpenPluginSettingsRequested: (manifest, entryPoint) => pluginSettingsDialog.openPluginSettings(manifest, entryPoint)
+        onOpenPluginSettingsRequested: (manifest, entryPoint, section, index) => root._openInstanceSettings(manifest, entryPoint, section, index)
       }
     }
   }
@@ -329,6 +329,16 @@ ColumnLayout {
       newArray[index] = Object.assign({}, newArray[index], settings);
       setWidgetsForMonitor(monitorName, newArray);
     }
+  }
+
+  // Opens the settings of the plugin instance at a desktop placement on `monitorName`.
+  function _openInstanceSettings(manifest, settingsEntryPoint, monitorName, index) {
+    var placement = {
+      "kind": "desktop",
+      "screenName": monitorName,
+      "index": index
+    };
+    pluginSettingsDialog.openInstanceSettings(manifest, PluginInstances.apiFor(manifest.compositeKey || manifest.id, placement), settingsEntryPoint);
   }
 
   function _moveWidgetToMonitor(fromMonitor, index, toMonitor) {

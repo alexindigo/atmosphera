@@ -118,7 +118,8 @@ NBox {
   signal moveWidget(string fromSection, int index, string toSection)
   signal dragPotentialStarted
   signal dragPotentialEnded
-  signal openPluginSettingsRequested(var pluginManifest, string settingsEntryPoint)
+  // The entry's section and index identify the placement whose instance settings open.
+  signal openPluginSettingsRequested(var pluginManifest, string settingsEntryPoint, string section, int index)
 
   color: AtmoColor.mSurface
   Layout.fillWidth: true
@@ -244,7 +245,7 @@ NBox {
       // (DesktopWidgetSettingsDialog) which passes widgetSettings/save properly.
       // Only generic "settings" goes through the plugin settings popup.
       if (settingsKey !== "desktopWidgetSettings") {
-        root.openPluginSettingsRequested(manifest, settingsKey);
+        root.openPluginSettingsRequested(manifest, settingsKey, root.sectionId, index);
         return;
       }
     }
