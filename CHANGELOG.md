@@ -8,9 +8,11 @@
 
 Development containers now size their CPU and memory caps to the host, so CI
 runners with fewer resources can run the checks while retaining mandatory
-resource limits.
+resource limits. The development image now includes git, which the plugin
+checker's tests need.
 
 - fix(devcontainer): size container caps to the host (`dd48b23f5`)
+- build(devcontainer): add git to the dev image (`8eebefff7`)
 
 ### 2026-10-13
 
