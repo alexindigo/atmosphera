@@ -1,0 +1,19 @@
+{
+  "id": "fx-state",
+  "name": "FX State",
+  "version": "1.0.0",
+  "minAtmospheraVersion": "0.8.0",
+  "author": "Atmosphera L09 fixture",
+  "official": false,
+  "license": "MIT",
+  "repository": "local-fixture",
+  "description": "Loader fixture: Main counts shell starts in the shared plugin state; two bar widget instances log it.",
+  "tags": ["Fixture"],
+  "entryPoints": {
+    "main": "Main.qml",
+    "barWidget": "BarWidget.qml"
+  },
+  "dependencies": {
+    "plugins": []
+  }
+}

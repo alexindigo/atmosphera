@@ -826,16 +826,19 @@ Singleton {
   function loadPluginData(pluginId, manifest, callback) {
     // Load settings first
     loadPluginSettings(pluginId, function (settings) {
-      // Then load translations
-      loadPluginTranslationsAsync(pluginId, manifest, I18n.langCode, function (translations) {
-        // Load English fallback for non-English languages
-        if (I18n.langCode !== "en") {
-          loadPluginTranslationsAsync(pluginId, manifest, "en", function (fallbackTranslations) {
-            callback(settings, translations, fallbackTranslations);
-          });
-        } else {
-          callback(settings, translations, {});
-        }
+      // Then the shared state
+      loadPluginState(pluginId, function (state) {
+        // Then load translations
+        loadPluginTranslationsAsync(pluginId, manifest, I18n.langCode, function (translations) {
+          // Load English fallback for non-English languages
+          if (I18n.langCode !== "en") {
+            loadPluginTranslationsAsync(pluginId, manifest, "en", function (fallbackTranslations) {
+              callback(settings, translations, fallbackTranslations, state);
+            });
+          } else {
+            callback(settings, translations, {}, state);
+          }
+        });
       });
     });
   }
@@ -858,9 +861,9 @@ Singleton {
     Logger.i("PluginService", "Loading plugin:", pluginId);
 
     // Load settings and translations FIRST, then create API and instantiate components
-    loadPluginData(pluginId, manifest, function (settings, translations, fallbackTranslations) {
+    loadPluginData(pluginId, manifest, function (settings, translations, fallbackTranslations, state) {
       // Create plugin API object with pre-loaded data
-      var pluginApi = createPluginAPI(pluginId, manifest, settings, translations, fallbackTranslations);
+      var pluginApi = createPluginAPI(pluginId, manifest, settings, translations, fallbackTranslations, state);
 
       // Initialize plugin entry with API and manifest
       root.loadedPlugins[pluginId] = {
@@ -1145,7 +1148,7 @@ Singleton {
   }
 
   // Create plugin API object with pre-loaded settings and translations
-  function createPluginAPI(pluginId, manifest, settings, translations, fallbackTranslations) {
+  function createPluginAPI(pluginId, manifest, settings, translations, fallbackTranslations, state) {
     var pluginDir = Registry.getPluginDir(pluginId);
 
     var api = Qt.createQmlObject(`
@@ -1157,6 +1160,10 @@ Singleton {
         readonly property string pluginDir: "${pluginDir}"
         property var pluginSettings: ({})
         property var manifest: ({})
+
+        // Shared state: one object per plugin, the same for every instance
+        property var state: ({})
+        property bool stateLoaded: false
 
         // Instance references (set after loading)
         property var mainInstance: null
@@ -1179,6 +1186,7 @@ Singleton {
 
         // Functions will be bound below
         property var saveSettings: null
+        property var saveState: null
         property var getConfig: null
         property var openPanel: null
         property var closePanel: null
@@ -1204,6 +1212,9 @@ Singleton {
     api.pluginSettings = Object.assign({}, defaults, settings || {});
     api.pluginTranslations = translations || {};
     api.pluginFallbackTranslations = fallbackTranslations || {};
+    // Loaded before any entry point is created (loadPluginData)
+    api.state = state || {};
+    api.stateLoaded = true;
 
     // ----------------------------------------
     // Helper function to get nested property by dot notation
@@ -1228,6 +1239,13 @@ Singleton {
       // Replace the entire pluginSettings object to trigger QML property bindings
       // Make a shallow copy so bindings detect the change
       api.pluginSettings = Object.assign({}, api.pluginSettings);
+    };
+
+    // Writes the shared state to disk and reassigns it, so bindings on
+    // `state` (instances forward it) re-evaluate.
+    api.saveState = function () {
+      savePluginState(pluginId, api.state);
+      api.state = Object.assign({}, api.state);
     };
 
     // ----------------------------------------
@@ -1507,6 +1525,77 @@ Singleton {
         callback(legacySettings);
       });
     });
+  }
+
+  // Load the plugin's shared state (<stateDir>plugins/<key>/state.json). A missing
+  // file is an empty state. A file that is not a JSON object is renamed to
+  // state.json.corrupt-<ms> (kept, not deleted) and the state starts empty. The
+  // rename finishes before the callback, so a save cannot race it.
+  function loadPluginState(pluginId, callback) {
+    var stateFile = Registry.getPluginStateFile(pluginId);
+    var readProcess = Qt.createQmlObject(`
+      import QtQuick
+      import Quickshell.Io
+      Process {
+        command: ["cat", "${stateFile}"]
+        stdout: StdioCollector {}
+      }
+    `, root, "ReadState_" + Math.random().toString(36).substr(2, 9));
+
+    readProcess.exited.connect(function (exitCode) {
+      var text = readProcess.stdout.text;
+      readProcess.destroy();
+      if (exitCode !== 0) {
+        // No state yet (first run)
+        callback({});
+        return;
+      }
+      var parsed = null;
+      try {
+        parsed = JSON.parse(text);
+      } catch (e) {
+        parsed = null;
+      }
+      if (parsed !== null && typeof parsed === "object" && !Array.isArray(parsed)) {
+        callback(parsed);
+        return;
+      }
+
+      var corruptFile = stateFile + ".corrupt-" + Date.now();
+      Logger.w("PluginService", "Plugin state file is corrupt, starting empty; kept as", corruptFile, "for", pluginId);
+      var moveProcess = Qt.createQmlObject(`
+        import QtQuick
+        import Quickshell.Io
+        Process {
+          command: ["mv", "${stateFile}", "${corruptFile}"]
+        }
+      `, root, "MoveState_" + Math.random().toString(36).substr(2, 9));
+      moveProcess.exited.connect(function () {
+        moveProcess.destroy();
+        callback({});
+      });
+      moveProcess.running = true;
+    });
+
+    readProcess.running = true;
+  }
+
+  // Save the plugin's shared state atomically: write a temp file, then rename it
+  // over state.json. The directory is created here, on first write.
+  function savePluginState(pluginId, state) {
+    var stateFile = Registry.getPluginStateFile(pluginId);
+    var stateDirPath = stateFile.substring(0, stateFile.lastIndexOf('/'));
+    var tempFile = stateFile + ".tmp-" + Math.random().toString(36).substr(2, 9);
+    var delimiter = "PLUGIN_STATE_EOF_" + Math.random().toString(36).substr(2, 9);
+    var quote = function (path) {
+      return "'" + path.replace(/'/g, "'\\''") + "'";
+    };
+
+    // The heredoc body follows the first line; the rename runs only if the write succeeded
+    var writeCmd = "mkdir -p " + quote(stateDirPath) + " && cat > " + quote(tempFile) + " << '" + delimiter + "' && mv -f " + quote(tempFile) + " " + quote(stateFile) + "\n" + JSON.stringify(state || {}, null, 2) + "\n" + delimiter + "\n";
+
+    Logger.d("PluginService", "Saving plugin state to:", stateFile);
+    Quickshell.execDetached(["sh", "-c", writeCmd]);
   }
 
   // Save plugin settings

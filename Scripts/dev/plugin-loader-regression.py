@@ -53,6 +53,21 @@
     Shell-wide WARN/ERROR lines (icons, wallpapers) are counted in
     instances.json (other_error_lines), not failed.
 
+--case state (guest only, fresh --output directory):
+  A disposable copy of --source runs the real shell with the fx-state fixture
+  (Main and a bar widget; two entries in the global right bar section) and a
+  private state directory (ATMOSPHERA_STATE_DIR). Run 1 and run 2 use the same
+  profile and state directory. Asserted:
+    * run 1: both bar instances and Main log starts 1; the file
+      <stateDir>plugins/<key>/state.json holds exactly {starts: 1};
+    * run 2: both bar instances log starts 2 and the file holds {starts: 2};
+    * run 3, after the file is replaced by unparseable text: the state starts
+      empty (both instances log starts 1), the bad file is kept as
+      state.json.corrupt-<ms> with its original bytes, a WARN line names it,
+      and the new state.json holds {starts: 1};
+    * no temp files are left behind; no non-existent-property, TypeError/
+      ReferenceError or plugin load error line names the fixture.
+
 --case sites (guest only, fresh --output directory):
   A disposable copy of --source gets the fixture plugins from this script's
   own tree (Scripts/dev/fixtures/plugin-loader/plugins, placements.json next to
@@ -180,6 +195,11 @@ SETTINGS_UI_EXPECT = {
     "PLUGIN_OPENED": {"instance": False, "label": "P", "resetVisible": False, "confirmationVisible": False},
     "PLUGIN_SAVED": {"page": "Q", "effective": "Q"},
 }
+
+# --case state: shared plugin state (L09). Two bar instances of one plugin.
+STATE_FIXTURE = "fx-state"
+STATE_WATCHDOG = 240
+STATE_CORRUPT_TEXT = "{not json"
 
 
 class Blocked(Exception):
@@ -930,11 +950,182 @@ def case_settings_ui(source, output, runtime, failures):
             "other_error_lines": len(other_lines)}
 
 
+def stage_state_profile(source, profile_dir, failures):
+    """Disposable shell copy with fx-state installed and enabled.
+
+    No plugin settings file (the manifest defaults apply). The bar right section
+    holds two entries of the plugin, both without overrides.
+    """
+    fixtures = SCRIPT_DIR / "fixtures" / "plugin-loader"
+    shell_dir = profile_dir / "shell"
+    shutil.copytree(source, shell_dir, ignore=shutil.ignore_patterns(".git"), ignore_dangling_symlinks=True)
+    plugins_src = shell_dir / FIXTURE_DIR / "plugins"
+    shutil.copytree(fixtures / "plugins", plugins_src, dirs_exist_ok=True)
+    shell_qml = shell_dir / "shell.qml"
+    if not shell_qml.is_file() or not (shell_dir / "Configs" / "defaults.json").is_file():
+        raise Blocked(f"not a shell source: {source}")
+    config = profile_dir / "config"
+    config.mkdir(parents=True)
+    (profile_dir / "cache").mkdir(parents=True)
+
+    hashes = {}
+    for src in sorted((fixtures / "plugins" / STATE_FIXTURE).rglob("*")):
+        if src.is_file():
+            rel = src.relative_to(fixtures / "plugins").as_posix()
+            hashes[rel] = {"source": sha256(src), "copy": sha256(plugins_src / rel)}
+            if hashes[rel]["source"] != hashes[rel]["copy"]:
+                failures.append(f"copied fixture differs from source: {rel}")
+
+    manifest = json.loads((plugins_src / STATE_FIXTURE / "manifest.json").read_text())
+    registry_path = plugins_src / "registry.json"
+    registry = json.loads(registry_path.read_text())
+    registry["plugins"].append(manifest)
+    registry_path.write_text(json.dumps(registry, indent=2) + "\n")
+
+    url = "file://" + str(plugins_src.resolve())
+    key = plugin_key(url, STATE_FIXTURE)
+    shutil.copytree(plugins_src / STATE_FIXTURE, config / "plugins" / key)
+    (config / "plugins.json").write_text(json.dumps({
+        "version": PLUGINS_JSON_VERSION,
+        "sources": [{"name": "Test", "url": url, "enabled": True}],
+        "states": {key: {"enabled": True, "sourceUrl": url}},
+    }, indent=2) + "\n")
+
+    widget = {"id": "plugin:" + key}
+    settings = json.loads((shell_dir / "Configs" / "defaults.json").read_text())
+    settings["general"]["showChangelogOnStartup"] = False
+    settings = deep_merge(settings, {"bar": {"widgets": {"right": [dict(widget), dict(widget)]}}})
+    (config / "settings.json").write_text(json.dumps(settings, indent=2) + "\n")
+
+    return {"shell_qml": shell_qml, "key": key, "hashes": hashes, "state_dir": profile_dir / "state"}
+
+
+def state_file_starts(state_file):
+    try:
+        return json.loads(state_file.read_text()).get("starts")
+    except (OSError, ValueError, AttributeError):
+        return None
+
+
+def state_bar_pairs(text):
+    return {(r.get("index"), r.get("starts")) for r in parse_fx(text)
+            if r.get("id") == STATE_FIXTURE and r.get("entry") == "barWidget" and r.get("phase") == "completed"}
+
+
+def state_main_starts(text):
+    return [r.get("starts") for r in parse_fx(text)
+            if r.get("id") == STATE_FIXTURE and r.get("entry") == "main" and r.get("phase") == "completed"]
+
+
+def run_state_shell(shell_qml, profile_dir, state_dir, niri_sock, log_path, ready):
+    """Start the shell with the case's state dir; stop it once ready(log) holds."""
+    env = qs_env(profile_dir, niri_sock)
+    env["ATMOSPHERA_STATE_DIR"] = str(state_dir) + "/"
+    logf = open(log_path, "wb")
+    proc = subprocess.Popen(
+        ["timeout", "--kill-after=10s", str(STATE_WATCHDOG), "dbus-run-session", "--", "qs", "-p", str(shell_qml)],
+        cwd=profile_dir, env=env, stdout=logf, stderr=subprocess.STDOUT, start_new_session=True)
+    reached = False
+    try:
+        end = time.time() + STATE_WATCHDOG - 30
+        while time.time() < end:
+            if ready(log_path.read_bytes().decode("utf-8", "replace")):
+                reached = True
+                break
+            if proc.poll() is not None:
+                break
+            time.sleep(1)
+        time.sleep(2)  # the last state write is a detached process; let it land
+    finally:
+        if proc.poll() is None:
+            os.killpg(proc.pid, signal.SIGTERM)
+            try:
+                proc.wait(20)
+            except subprocess.TimeoutExpired:
+                os.killpg(proc.pid, signal.SIGKILL)
+                proc.wait()
+        logf.close()
+    return {"reached": reached, "shell_exit": proc.returncode, "log": log_path.read_text(errors="replace")}
+
+
+def case_state(source, output, runtime, failures):
+    niri_sock = guest_checks()
+    case_dir = output / "state"
+    case_dir.mkdir()
+    profile_dir = runtime / "state"
+    info = stage_state_profile(source, profile_dir, failures)
+    shell_qml, key, hashes, state_dir = info["shell_qml"], info["key"], info["hashes"], info["state_dir"]
+    state_file = state_dir / "plugins" / key / "state.json"
+    corrupt_glob = str(state_file) + ".corrupt-*"
+    summary = {}
+
+    def expect_runs(name, n, run, corrupt=False):
+        log = run["log"]
+        pairs = state_bar_pairs(log)
+        if not run["reached"]:
+            failures.append(f"{name}: shell did not reach starts {n} with the state file on disk")
+        if pairs != {(0, n), (1, n)}:
+            failures.append(f"{name}: bar instances logged {sorted(pairs)}, expected starts {n} from index 0 and 1")
+        if state_main_starts(log) != [n]:
+            failures.append(f"{name}: Main logged starts {state_main_starts(log)}, expected [{n}]")
+        if state_file_starts(state_file) != n or json.loads(state_file.read_text()) != {"starts": n}:
+            failures.append(f"{name}: state file is not exactly {{'starts': {n}}}")
+        failing = []
+        for line in log.splitlines():
+            shell_script_error = re.search(r"TypeError|ReferenceError", line) and "/config/plugins/" not in line
+            if NON_EXISTENT.search(line) or shell_script_error or ("Plugin load error" in line and key in line):
+                failing.append(line)
+            if not corrupt and "corrupt" in line.lower() and "state" in line.lower():
+                failing.append(line)
+        if failing:
+            failures.append(f"{name}: error lines that must not occur ({len(failing)}): {failing[:10]}")
+        summary[name] = {"reached": run["reached"], "shell_exit": run["shell_exit"],
+                         "bar_pairs": sorted(pairs), "main_starts": state_main_starts(log)}
+
+    run1 = run_state_shell(shell_qml, profile_dir, state_dir, niri_sock, case_dir / "run1.log",
+                           lambda t: state_bar_pairs(t) == {(0, 1), (1, 1)} and state_file_starts(state_file) == 1)
+    expect_runs("run1", 1, run1)
+    run1_file = state_file.read_text() if state_file.exists() else None
+    if not state_file.is_file():
+        failures.append(f"state file missing at {state_file}")
+
+    run2 = run_state_shell(shell_qml, profile_dir, state_dir, niri_sock, case_dir / "run2.log",
+                           lambda t: state_bar_pairs(t) == {(0, 2), (1, 2)} and state_file_starts(state_file) == 2)
+    expect_runs("run2", 2, run2)
+
+    # Corrupt state: the shell must start empty, keep the bad bytes, and warn.
+    state_file.write_text(STATE_CORRUPT_TEXT)
+    run3 = run_state_shell(shell_qml, profile_dir, state_dir, niri_sock, case_dir / "run3.log",
+                           lambda t: state_bar_pairs(t) == {(0, 1), (1, 1)} and state_file_starts(state_file) == 1
+                           and bool(glob.glob(corrupt_glob)))
+    expect_runs("run3", 1, run3, corrupt=True)
+    kept = sorted(glob.glob(corrupt_glob))
+    if len(kept) != 1:
+        failures.append(f"expected exactly one kept corrupt file, found {kept}")
+    elif Path(kept[0]).read_text() != STATE_CORRUPT_TEXT:
+        failures.append(f"kept corrupt file does not hold the original bytes: {Path(kept[0]).read_text()!r}")
+    warned = [line for line in run3["log"].splitlines()
+              if "WARN" in line and "corrupt" in line and ".corrupt-" in line]
+    if not warned:
+        failures.append("no WARN line names the corrupt state file")
+    leftovers = glob.glob(str(state_file) + ".tmp-*")
+    if leftovers:
+        failures.append(f"temp files left behind: {leftovers}")
+
+    (case_dir / "state.json").write_text(json.dumps({
+        "key": key, "runs": summary, "run1_state_file": run1_file,
+        "final_state_file": state_file.read_text() if state_file.exists() else None,
+        "kept_corrupt_files": kept, "warn_lines": warned,
+    }, indent=2) + "\n")
+    (case_dir / "hashes.json").write_text(json.dumps(hashes, indent=2) + "\n")
+    return {"runs": summary, "kept_corrupt_files": len(kept)}
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--source", required=True)
     ap.add_argument("--output", required=True)
-    ap.add_argument("--case", required=True, choices=["core", "sites", "instances", "settings-ui"])
+    ap.add_argument("--case", required=True, choices=["core", "sites", "instances", "settings-ui", "state"])
     args = ap.parse_args()
 
     source = Path(args.source).resolve()
@@ -957,6 +1148,8 @@ def main():
             detail = case_instances(source, output, runtime, failures)
         elif args.case == "settings-ui":
             detail = case_settings_ui(source, output, runtime, failures)
+        elif args.case == "state":
+            detail = case_state(source, output, runtime, failures)
     except Blocked as b:
         blocked = str(b)
 

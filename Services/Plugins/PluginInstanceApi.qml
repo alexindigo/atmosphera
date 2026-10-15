@@ -33,6 +33,11 @@ QtObject {
   property string currentLanguage: base ? base.currentLanguage : ""
   property int translationVersion: base ? base.translationVersion : 0
 
+  // Shared plugin state: the same object for every instance of the plugin
+  property var state: base ? base.state : ({})
+  property bool stateLoaded: base ? base.stateLoaded : false
+  property var saveState: base ? base.saveState : null
+
   property var getConfig: base ? base.getConfig : null
   property var closePanel: base ? base.closePanel : null
   property var openLauncher: base ? base.openLauncher : null

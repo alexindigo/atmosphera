@@ -5,7 +5,9 @@ Run with --source TREE --output FRESH_DIRECTORY in the named Qt612 niri VM.
 The four files under test are copied into a private runtime tree inside the
 output directory, the fixture runs there with `qs -p`, and every printed case
 is compared with the expectations written below. Exit 0 only if every case is
-present exactly once and matches.
+present exactly once and matches. The docs cases compare the contract table in
+docs/plugins/index.md with the contextNames printed for every entry point, so
+drift between the docs and PluginContract.js fails the run.
 """
 import argparse
 import glob
@@ -28,6 +30,10 @@ FILES = [
 ]
 FIXTURE = "Scripts/dev/fixtures/plugin-contract.qml"
 SAMPLE = "Scripts/dev/fixtures/plugin-contract-sample.qml"
+DOCS = "docs/plugins/index.md"
+DOCS_HEADER = "| Entry point | Context names (besides `pluginApi`) |"
+DOCS_SEPARATOR = "|---|---|"
+DOCS_ROW = re.compile(r"^\| `(\w+)` \| (none|(?:`\w+`)(?:, `\w+`)*) \|$")
 PREFIX = "PLUGIN_CONTRACT|"
 DONE = "PLUGIN_CONTRACT_DONE"
 ERRORS = re.compile(r"ReferenceError|TypeError|Cannot assign to non-existent property|Component is not ready|is not a function|Failed to load|module .* is not installed|PLUGIN_CONTRACT_ERROR")
@@ -61,6 +67,50 @@ ROOT_EXPECTED = {
     "root:real-file": ["activateOnLeftClick", "active", "mainInstance", "pluginApi", "remainingText", "scope",
                        "screen", "section", "sectionWidgetIndex", "sectionWidgetsCount", "showText", "widgetId"],
 }
+
+
+def docs_table(text):
+    """{entry point: [context names]} from the one contract table in the plugin docs."""
+    lines = text.splitlines()
+    starts = [i for i, line in enumerate(lines) if line == DOCS_HEADER]
+    if len(starts) != 1:
+        raise ValueError(f"expected one contract table in {DOCS}, found {len(starts)}")
+    start = starts[0]
+    if lines[start + 1] != DOCS_SEPARATOR:
+        raise ValueError("contract table separator row is not |---|---|")
+    table = {}
+    for line in lines[start + 2:]:
+        if not line.startswith("|"):
+            break
+        match = DOCS_ROW.match(line)
+        if not match:
+            raise ValueError(f"unparsable contract row: {line!r}")
+        entry, names = match.group(1), match.group(2)
+        if entry in table:
+            raise ValueError(f"duplicate entry point in docs: {entry}")
+        table[entry] = [] if names == "none" else re.findall(r"`(\w+)`", names)
+    return table
+
+
+def docs_checks(cases, doc_text):
+    """Compare the docs table with PluginContract.contextNames, as the fixture printed it."""
+    def single(name):
+        got = [c["output"] for c in cases if c["case"] == name]
+        return got[0] if len(got) == 1 else None
+
+    try:
+        table = docs_table(doc_text)
+    except ValueError as error:
+        return [{"case": "docs:table", "expected": "one parsable contract table", "output": str(error), "ok": False}]
+    entries = single("entryPoints")
+    rows = [{"case": "docs:entryPoints", "expected": entries, "output": list(table),
+             "ok": entries is not None and list(table) == entries}]
+    for entry in entries or []:
+        want = single(f"contract:{entry}")
+        got = table.get(entry)
+        rows.append({"case": f"docs:{entry}", "expected": want, "output": got,
+                     "ok": want is not None and got == want})
+    return rows
 
 
 def expected_cases():
@@ -124,6 +174,7 @@ def main():
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source / rel, target)
         hashes[rel] = sha256(target)
+    hashes[DOCS] = sha256(source / DOCS)
 
     # Quickshell confines relative imports to its config root, so the fixture
     # stays at its repository path and is loaded through a root entry, as in
@@ -149,6 +200,11 @@ def main():
         if not ok:
             failures.append(name)
         print(f"[{'PASS' if ok else 'FAIL'}] {name}", flush=True)
+    for row in docs_checks(cases, (source / DOCS).read_text()):
+        rows.append(row)
+        if not row["ok"]:
+            failures.append(row["case"])
+        print(f"[{'PASS' if row['ok'] else 'FAIL'}] {row['case']}", flush=True)
     unexpected = sorted(set(seen) - set(expected))
     if unexpected:
         failures.append(f"unexpected cases: {unexpected}")

@@ -925,6 +925,11 @@ for key in sys.argv[3:]:
     return Settings.configDir + "settings/plugins/" + pluginId + ".json";
   }
 
+  // Plugin shared state file (plugin api `state`, see Service.saveState)
+  function getPluginStateFile(pluginId) {
+    return Settings.stateDir + "plugins/" + pluginId + "/state.json";
+  }
+
   // Legacy per-plugin settings location (inside the plugin dir); read-only
   // fallback for users upgrading from before the path move.
   function getLegacyPluginSettingsFile(pluginId) {

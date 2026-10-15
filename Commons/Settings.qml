@@ -32,6 +32,9 @@ Singleton {
   readonly property string shellName: "atmosphera"
   readonly property string configDir: ensureTrailingSlash(Quickshell.env("ATMOSPHERA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/")
   readonly property string cacheDir: ensureTrailingSlash(Quickshell.env("ATMOSPHERA_CACHE_DIR") || (Quickshell.env("XDG_CACHE_HOME") || Quickshell.env("HOME") + "/.cache") + "/" + shellName + "/")
+  // Persistent state that is not user configuration (plugin shared state).
+  // Created on first write, not at startup.
+  readonly property string stateDir: ensureTrailingSlash(Quickshell.env("ATMOSPHERA_STATE_DIR") || (Quickshell.env("XDG_STATE_HOME") || Quickshell.env("HOME") + "/.local/state") + "/" + shellName + "/")
 
   readonly property string settingsFile: Quickshell.env("ATMOSPHERA_SETTINGS_FILE") || (configDir + "settings.json")
   readonly property string defaultAvatar: Quickshell.env("HOME") + "/.face"
