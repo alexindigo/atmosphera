@@ -2409,6 +2409,8 @@
       "replace": "Replace",
       "save": "Save",
       "save-all": "Save All",
+      "save-check-failed": "Could not check this name. Try again.",
+      "save-is-directory": "A folder with this name already exists. Choose another name.",
       "search-placeholder": "Search files and folders...",
       "select-current": "Select Current",
       "select-file": "Select File",

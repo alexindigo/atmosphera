@@ -4,6 +4,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
+import "../Helpers/OwnedProcess.js" as OwnedProcess
 import "../Helpers/PortalPaths.js" as PortalPaths
 import qs.Commons
 import qs.Widgets
@@ -27,10 +28,17 @@ Popup {
   property string acceptLabel: ""
 
   property string pendingOverwrite: ""
+  property string saveCheckPath: "" // target of the existence check in flight, "" when none
+  property string saveError: "" // inline error for the current name and folder
 
   property var selectedPaths: []
   property string currentPath: initialPath
   property bool shouldResetSelection: false
+  // A name or folder change invalidates the feedback shown for the previous target.
+  onCurrentPathChanged: {
+    root.saveError = "";
+    root.pendingOverwrite = "";
+  }
 
   // Signals
   signal accepted(var paths)
@@ -128,6 +136,8 @@ Popup {
     shouldResetSelection = true;
     targetListModel.clear();
     root.pendingOverwrite = "";
+    root.saveCheckPath = "";
+    root.saveError = "";
     open();
   }
 
@@ -135,6 +145,7 @@ Popup {
     if (root._finished)
       return;
     root._finished = true;
+    root.saveCheckPath = "";
     root.accepted(paths);
     root.close();
   }
@@ -143,6 +154,7 @@ Popup {
     if (root._finished)
       return;
     root._finished = true;
+    root.saveCheckPath = "";
     root.cancelled();
     root.close();
   }
@@ -203,41 +215,68 @@ Popup {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
   }
 
+  // Open mode only. Save mode never accepts a selection; it goes through acceptSave.
   function confirmSelection() {
+    if (root.saveMode)
+      return;
     if (filePickerPanel.currentSelection.length === 0)
       return;
     root.selectedPaths = filePickerPanel.currentSelection;
     root._accept(filePickerPanel.currentSelection);
   }
 
-  function saveTargetPath() {
-    var name = fileNameInput.text.trim();
-    if (name === "")
+  // The target of a save: the native currentPath plus the typed name ("" when empty).
+  function saveTargetPath(name) {
+    var trimmed = name.trim();
+    if (trimmed === "")
       return "";
     var base = root.currentPath;
     while (base.endsWith("/"))
       base = base.slice(0, -1);
-    return base + "/" + name;
+    return base + "/" + trimmed;
   }
 
-  function targetExists(path) {
-    for (var i = 0; i < filteredModel.count; i++) {
-      var entry = filteredModel.get(i);
-      if (!entry.fileIsDir && entry.filePath === path)
-        return true;
-    }
-    return false;
-  }
-
-  function confirmSave() {
-    var path = saveTargetPath();
-    if (path === "")
+  // The one way to confirm a save: the Save and Add buttons, Enter in the name
+  // field, and double-click on a file. The existence check asks the filesystem
+  // (hidden and filtered entries count) and answers later; see applySaveCheck.
+  function acceptSave(name) {
+    if (root._finished)
       return;
-    if (targetExists(path)) {
+    const path = root.saveTargetPath(name);
+    if (path === "" || path === root.saveCheckPath)
+      return; // empty, or this target is already being checked
+    root.saveCheckPath = path;
+    root.saveError = "";
+    root.checkSavePath(path, function (state) {
+      root.applySaveCheck(path, state);
+    });
+  }
+
+  // "dir" when the path is a directory, "file" when anything else exists
+  // (including a dangling symlink), "missing" otherwise. An empty state means
+  // the check itself failed.
+  function checkSavePath(path, callback) {
+    OwnedProcess.run(root, ["sh", "-c", 'if [ -d "$1" ]; then echo dir; elif [ -e "$1" ] || [ -L "$1" ]; then echo file; else echo missing; fi', "sh", path], null, function (result) {
+      callback(result.success ? result.stdout.trim() : "");
+    });
+  }
+
+  function applySaveCheck(path, state) {
+    // Stale: cancelled, reopened, or superseded by a newer accept.
+    if (root._finished || root.saveCheckPath !== path)
+      return;
+    root.saveCheckPath = "";
+    // The name or folder changed while the check ran: its answer no longer applies.
+    if (root.saveTargetPath(fileNameInput.text) !== path)
+      return;
+    if (state === "dir")
+      root.saveError = I18n.tr("widgets.file-picker.save-is-directory");
+    else if (state === "file")
       root.pendingOverwrite = path;
-      return;
-    }
-    root.addOrAccept(path, false);
+    else if (state === "missing")
+      root.addOrAccept(path, false);
+    else
+      root.saveError = I18n.tr("widgets.file-picker.save-check-failed");
   }
 
   function addOrAccept(path, exists) {
@@ -812,8 +851,12 @@ Popup {
                     // Double-click on folder always navigates into it
                     root.navigateTo(model.filePath);
                   } else {
-                    // Double-click on file selects and confirms (only in file mode)
-                    if (root.selectionMode === "files") {
+                    // Double-click on file: save mode names the target after it and accepts
+                    // through the save path; open mode selects and confirms (file mode only).
+                    if (root.saveMode) {
+                      fileNameInput.text = model.fileName;
+                      root.acceptSave(model.fileName);
+                    } else if (root.selectionMode === "files") {
                       filePickerPanel.currentSelection = [model.filePath];
                       root.confirmSelection();
                     }
@@ -917,8 +960,12 @@ Popup {
                     // Double-click on folder always navigates into it
                     root.navigateTo(model.filePath);
                   } else {
-                    // Double-click on file selects and confirms (only in file mode)
-                    if (root.selectionMode === "files") {
+                    // Double-click on file: save mode names the target after it and accepts
+                    // through the save path; open mode selects and confirms (file mode only).
+                    if (root.saveMode) {
+                      fileNameInput.text = model.fileName;
+                      root.acceptSave(model.fileName);
+                    } else if (root.selectionMode === "files") {
                       filePickerPanel.currentSelection = [model.filePath];
                       root.confirmSelection();
                     }
@@ -1022,6 +1069,14 @@ Popup {
           }
         }
 
+        NText {
+          visible: root.saveError !== ""
+          text: root.saveError
+          color: AtmoColor.mError
+          pointSize: Style.fontSizeS
+          Layout.fillWidth: true
+        }
+
         RowLayout {
           Layout.fillWidth: true
           spacing: Style.marginM
@@ -1032,6 +1087,11 @@ Popup {
             placeholderText: I18n.tr("widgets.file-picker.file-name")
             text: root.currentName !== "" ? root.currentName : root.initialName
             Layout.fillWidth: true
+            onTextChanged: {
+              root.saveError = "";
+              root.pendingOverwrite = "";
+            }
+            onAccepted: root.acceptSave(text)
           }
 
           NText {
@@ -1055,7 +1115,7 @@ Popup {
             visible: root.multiTarget
             text: I18n.tr("widgets.file-picker.add-to-list")
             enabled: fileNameInput.text.trim() !== ""
-            onClicked: root.confirmSave()
+            onClicked: root.acceptSave(fileNameInput.text)
           }
 
           NButton {
@@ -1088,7 +1148,7 @@ Popup {
               else if (root.multiTarget)
                 root.saveAll();
               else
-                root.confirmSave();
+                root.acceptSave(fileNameInput.text);
             }
           }
         }
