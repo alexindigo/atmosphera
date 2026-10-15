@@ -246,11 +246,14 @@ Singleton {
     migrateProcess.running = true;
   }
 
-  // Upgrade refresh: when the shipped manifest of a built-in plugin is newer
-  // than the installed copy, re-copy it into the user dir. Keeps built-in
-  // installs fresh across shell updates now that all plugins run from the
-  // user folder (settings live outside the plugin dir and are preserved;
-  // a legacy in-dir settings.json is carried over).
+  // Upgrade refresh: when the installed copy of a built-in plugin no longer
+  // matches the shipped directory, re-copy it into the user dir. The comparison
+  // is by content (sha256 over sorted relative paths, file bytes and symlink
+  // targets; a top-level settings.json is excluded on both sides), so a
+  // same-version edit is picked up too. Identical copies are left untouched.
+  // Keeps built-in installs fresh across shell updates now that all plugins run
+  // from the user folder (settings live outside the plugin dir and are
+  // preserved; a legacy in-dir settings.json is carried over).
   function refreshBuiltinPlugins(done) {
     var toCheck = [];
     for (var key in root.pluginStates) {
@@ -266,32 +269,69 @@ Singleton {
     }
 
     var script = `
-import json, os, shutil, sys
+import hashlib, json, os, shutil, sys
 
 src_root, dst_root = sys.argv[1], sys.argv[2]
+NUL = chr(0).encode()
 
-def vp(v):
-    try:
-        return [int(x) for x in str(v).split('.') if x.strip().isdigit()]
-    except Exception:
-        return []
+def raise_error(err):
+    raise err
+
+def tree_digest(root):
+    entries = []
+    for dp, dns, fns in os.walk(root, onerror=raise_error):
+        for name in dns + fns:
+            full = os.path.join(dp, name)
+            rel = os.path.relpath(full, root)
+            if rel == 'settings.json':
+                continue
+            if os.path.islink(full):
+                kind = 'l'
+            elif os.path.isdir(full):
+                kind = 'd'
+            else:
+                kind = 'f'
+            entries.append((rel, kind, full))
+    entries.sort()
+    h = hashlib.sha256()
+    for rel, kind, full in entries:
+        h.update(kind.encode() + NUL + rel.encode('utf-8', 'surrogateescape') + NUL)
+        if kind == 'l':
+            h.update(os.readlink(full).encode('utf-8', 'surrogateescape') + NUL)
+        elif kind == 'f':
+            h.update(str(os.path.getsize(full)).encode() + NUL)
+            with open(full, 'rb') as fh:
+                for chunk in iter(lambda: fh.read(65536), b''):
+                    h.update(chunk)
+    return h.hexdigest()
 
 for key in sys.argv[3:]:
     name = key.split(':', 1)[1] if ':' in key else key
     src_dir = os.path.join(src_root, name)
     dst_dir = os.path.join(dst_root, key)
     try:
-        src_ver = json.load(open(os.path.join(src_dir, 'manifest.json'))).get('version', '0')
-        dst_ver = json.load(open(os.path.join(dst_dir, 'manifest.json'))).get('version', '0')
+        with open(os.path.join(src_dir, 'manifest.json')) as f:
+            json.load(f)
+        src_digest = tree_digest(src_dir)
     except Exception:
         continue
-    if vp(src_ver) > vp(dst_ver):
+    if not os.path.isdir(dst_dir):
+        continue
+    try:
+        dst_digest = tree_digest(dst_dir)
+    except Exception:
+        dst_digest = None
+    if src_digest != dst_digest:
         legacy_settings = os.path.join(dst_dir, 'settings.json')
         saved = None
-        if os.path.exists(legacy_settings):
-            saved = open(legacy_settings, 'rb').read()
+        try:
+            if os.path.exists(legacy_settings):
+                with open(legacy_settings, 'rb') as f:
+                    saved = f.read()
+        except Exception:
+            continue
         shutil.rmtree(dst_dir, ignore_errors=True)
-        shutil.copytree(src_dir, dst_dir)
+        shutil.copytree(src_dir, dst_dir, symlinks=True)
         if saved is not None:
             with open(legacy_settings, 'wb') as f:
                 f.write(saved)
