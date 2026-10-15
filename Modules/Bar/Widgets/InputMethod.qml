@@ -113,7 +113,7 @@ Item {
       if (action === "xkb-cycle") {
         CompositorService.cycleKeyboardLayout();
       } else if (action === "fctix5-select" && item) {
-        InputMethodService.setCurrentIM(item.uniqueName || "");
+        InputMethodService.switchTo(item.uniqueName || "");
       }
     }
 

@@ -10,6 +10,7 @@ import qs.Commons
 import qs.Modules.Panels.Settings
 import qs.Services.Compositor
 import qs.Services.Hardware
+import qs.Services.Keyboard
 import qs.Services.Location
 import qs.Services.Media
 import qs.Services.Networking
@@ -1095,29 +1096,54 @@ Singleton {
     }
   }
 
+  // "ok" or "error: <reason>" for the inputmethod target. A refused request is
+  // reported here; a switch that is dispatched but fails on D-Bus is logged by
+  // InputMethodService and is visible in state().
+  function _imResult(error) {
+    return error ? "error: " + error : "ok";
+  }
+
   IpcHandler {
     target: "inputmethod"
 
-    function toggle() {
+    function toggle(): string {
+      if (!InputMethodService.fcitx5Available)
+        return "error: unavailable";
       InputMethodService.toggle();
+      return "ok";
     }
-    function setIM(name: string) {
-      InputMethodService.setCurrentIM(name);
+    function setIM(name: string): string {
+      return root._imResult(InputMethodService.switchTo(name, null));
     }
-    function setGroup(name: string) {
-      InputMethodService.setGroup(name);
+    function setGroup(name: string): string {
+      return root._imResult(InputMethodService.setGroup(name, null));
     }
 
-    // Replicates the old fcitx5-input script's toggle semantics:
-    // first press → switch to the given IM (auto-switching group first);
-    // press again → back to English (keyboard-us passthrough).
-    function toggleIM(name: string, group: string) {
-      if (InputMethodService.currentIM === name)
-        InputMethodService.setCurrentIM("keyboard-us");
-      else {
-        InputMethodService.setGroup(group);
-        InputMethodService.setCurrentIM(name);
-      }
+    // The queried fcitx5 state, as JSON (refreshed while fcitx5 is up).
+    function state(): string {
+      return JSON.stringify({
+                              "available": InputMethodService.fcitx5Available,
+                              "active": InputMethodService.active,
+                              "group": InputMethodService.currentGroup,
+                              "im": InputMethodService.currentIM,
+                              "uniqueName": InputMethodService.currentIMUniqueName,
+                              "lang": InputMethodService.currentIMLanguage,
+                              "icon": InputMethodService.currentIMIcon
+                            });
+    }
+
+    // Next input method of the current group, wrapping around.
+    function next(): string {
+      return root._imResult(InputMethodService.next(null));
+    }
+
+    // First press switches to `name`; pressing it again returns to what was
+    // active before (InputMethodService.toggleTo). The group is a hint only:
+    // fcitx5 decides the group, and a hint that disagrees is logged once.
+    function toggleIM(name: string, group: string): string {
+      if (group)
+        InputMethodService.noteGroupHint(name, group);
+      return root._imResult(InputMethodService.toggleTo(name, null));
     }
   }
 

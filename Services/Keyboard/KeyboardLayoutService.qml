@@ -82,17 +82,48 @@ Singleton {
     const layoutChanged = isInitialized && currentLayout !== previousLayout && currentLayout !== I18n.tr("common.unknown") && previousLayout !== "" && previousLayout !== I18n.tr("common.unknown");
 
     if (layoutChanged) {
-      if (Settings.data.notifications.enableKeyboardLayoutToast) {
-        const message = I18n.tr("toast.keyboard-layout.changed", {
-                                  "layout": fullLayoutName
-                                });
-        ToastService.showNotice(I18n.tr("toast.keyboard-layout.title"), message, "", 2000);
-      }
+      root._showChangeToast(I18n.tr("toast.keyboard-layout.changed", {
+                                      "layout": fullLayoutName
+                                    }));
       Logger.d("KeyboardLayout", "Layout changed from", previousLayout, "to", currentLayout);
     }
 
     // Update previousLayout for next comparison
     previousLayout = currentLayout;
+  }
+
+  // Called by InputMethodService when the current IM changes (fcitx5). The IM
+  // service pushes rather than being observed here, so the bundled locker
+  // process, which uses this service, never instantiates it.
+  function inputMethodChanged(name) {
+    if (!isInitialized || !name)
+      return;
+    root._showChangeToast(I18n.tr("toast.keyboard-layout.changed", {
+                                    "layout": name
+                                  }));
+  }
+
+  // One toast per 300 ms: an xkb change and an IM change that arrive together
+  // show the first one only. Gated by enableKeyboardLayoutToast.
+  property bool _toastGate: false
+
+  Timer {
+    id: toastGateTimer
+    interval: 300
+    onTriggered: root._toastGate = false
+  }
+
+  function _showChangeToast(message) {
+    if (!Settings.data.notifications.enableKeyboardLayoutToast)
+      return;
+    if (root._toastGate) {
+      Logger.d("KeyboardLayout", "Toast suppressed (another layout or IM change within 300 ms):", message);
+      return;
+    }
+    root._toastGate = true;
+    toastGateTimer.restart();
+    Logger.i("KeyboardLayout", "Layout toast:", message);
+    ToastService.showNotice(I18n.tr("toast.keyboard-layout.title"), message, "", 2000);
   }
 
   Component.onCompleted: {
