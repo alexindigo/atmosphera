@@ -2,7 +2,8 @@
 """Plugin registry reactivity regression (M09). Guest only.
 
 A disposable copy of --source runs Scripts/dev/fixtures/plugin-registry-reactivity.qml
-as its qs entry in a niri session. The fixture binds each registry's public lookup
+as its qs entry (in a niri session, the same way plugin-loader-regression.py
+and the I1 launcher proof run). The fixture binds each registry's public lookup
 for the test id "plugin:test:x" and drives the real register/unregister functions
 through four phases: cold, registered, unregistered, registered again.
 
@@ -62,17 +63,11 @@ CC_STEPS = {
 }
 ERRORS = re.compile(r"TypeError|ReferenceError|Cannot assign to non-existent property|Binding loop detected")
 
-# Generated into the runtime copy only; never committed. It declares the
-# standard bar widget properties BarWidgetLoader passes at load time.
+# Generated into the runtime copy only; never committed.
 WIDGET_SRC = """import QtQuick
 
 Item {
   property var pluginApi: null
-  property var screen: null
-  property string widgetId: ""
-  property string section: ""
-  property int sectionWidgetIndex: 0
-  property int sectionWidgetsCount: 0
   objectName: "m09-real-widget"
   implicitWidth: 24
   implicitHeight: 24

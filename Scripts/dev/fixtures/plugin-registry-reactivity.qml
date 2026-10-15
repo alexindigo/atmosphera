@@ -60,6 +60,7 @@ Item {
                     "section": "left",
                     "sectionWidgetIndex": 0
                   })
+    listSection: "left"
   }
 
   // Control-center steps run after the four registry phases. Each step's row is
