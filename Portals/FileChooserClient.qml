@@ -4,6 +4,7 @@ import DBus 1.0 as DBusQML
 
 import QtQuick
 import Quickshell
+import "../Helpers/PortalPaths.js" as PortalPaths
 import qs.Commons
 
 Singleton {
@@ -13,18 +14,19 @@ Singleton {
     Logger.i("FileChooserClient", "Service started");
   }
 
-  function toBytes(text) {
-    var out = new Uint8Array(text.length);
-    for (var i = 0; i < text.length; i++)
-      out[i] = text.charCodeAt(i) & 0xff;
-    return out;
-  }
-
-  function uriToPath(uri) {
-    var s = String(uri);
-    if (s.startsWith("file://"))
-      return s.slice("file://".length);
-    return s;
+  // All or nothing: one unusable URI fails the whole response, so the caller
+  // never receives a partial or empty path list. Returns null on failure.
+  function urisToPaths(uris) {
+    var paths = [];
+    for (var i = 0; i < uris.length; i++) {
+      var converted = PortalPaths.uriToPath(uris[i]);
+      if (!converted.ok) {
+        Logger.w("FileChooserClient", "Portal returned an unusable URI: " + converted.error);
+        return null;
+      }
+      paths.push(converted.path);
+    }
+    return paths;
   }
 
   function openPicker(options, onAccepted, onCancelled) {
@@ -39,8 +41,13 @@ Singleton {
         filters.push([options.filters[i], [[0, options.filters[i]]]]);
       opts.filters = filters;
     }
-    if (options.initialPath)
-      opts.current_folder = new DBusQML.variant(root.toBytes(options.initialPath), "ay");
+    if (options.initialPath) {
+      var initial = PortalPaths.encodeBytePath(options.initialPath);
+      if (initial.ok)
+        opts.current_folder = new DBusQML.variant(new Uint8Array(initial.bytes), "ay");
+      else
+        Logger.w("FileChooserClient", "Leaving out initialPath: " + initial.error);
+    }
 
     var reply = frontend.call("OpenFile", ["", options.title || "", opts]);
     reply.finished.connect(function () {
@@ -92,11 +99,8 @@ Singleton {
             return;
           var response = args[0];
           var results = args[1];
-          if (response === 0 && results && results.uris) {
-            var uris = results.uris;
-            var paths = [];
-            for (var i = 0; i < uris.length; i++)
-              paths.push(FileChooserClient.uriToPath(uris[i]));
+          var paths = response === 0 && results && results.uris ? FileChooserClient.urisToPaths(results.uris) : null;
+          if (paths !== null && paths.length > 0) {
             if (watcher.onAccepted)
               watcher.onAccepted(paths);
           } else {

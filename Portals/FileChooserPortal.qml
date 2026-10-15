@@ -18,6 +18,7 @@ import DBus 1.0 as DBusQML
 
 import QtQuick
 import Quickshell
+import "../Helpers/PortalPaths.js" as PortalPaths
 import qs.Commons
 import qs.Services.Compositor
 
@@ -26,22 +27,29 @@ Singleton {
 
   property var activeRequests: ({})
 
+  // Thrown by parseOptions when a byte-path option does not decode. Distinct
+  // from a structurally malformed options dictionary, which is InvalidArgument.
+  function decodeFailure(option, error) {
+    return ({
+              "option": option,
+              "error": error,
+              "decodeFailure": true
+            });
+  }
+
   function init() {
     Logger.i("FileChooserPortal", "Service started");
   }
 
-  function decodeBytes(value) {
-    if (value === undefined || value === null)
-      return "";
-    if (typeof value === "string")
-      return value;
-    if (value.length !== undefined) {
-      var out = "";
-      for (var i = 0; i < value.length; i++)
-        out += String.fromCharCode(value[i]);
-      return out;
-    }
-    return String(value);
+  // Decodes an absolute path option. An empty result means the caller gave no
+  // folder (a lone NUL terminator), and the option is left out.
+  function decodeFolderOption(option, value) {
+    var decoded = PortalPaths.decodeBytePath(value);
+    if (!decoded.ok)
+      throw root.decodeFailure(option, decoded.error);
+    if (decoded.path !== "" && decoded.path.charAt(0) !== "/")
+      throw root.decodeFailure(option, "not an absolute path");
+    return decoded.path;
   }
 
   function splitPath(path) {
@@ -82,12 +90,12 @@ Singleton {
     if (options.current_name !== undefined)
       parsed.current_name = String(options.current_name);
     if (options.current_folder !== undefined) {
-      var folder = root.decodeBytes(options.current_folder);
+      var folder = root.decodeFolderOption("current_folder", options.current_folder);
       if (folder !== "")
         parsed.current_folder = folder;
     }
     if (options.current_file !== undefined) {
-      var file = root.decodeBytes(options.current_file);
+      var file = root.decodeFolderOption("current_file", options.current_file);
       if (file !== "") {
         var parts = root.splitPath(file);
         if (parts[0] !== "")
@@ -101,10 +109,6 @@ Singleton {
         parsed.filters = globs;
     }
     return parsed;
-  }
-
-  function pathToUri(path) {
-    return "file://" + path;
   }
 
   DBusAdaptor {
@@ -133,6 +137,13 @@ Singleton {
     try {
       parsed = root.parseOptions(options, title);
     } catch (e) {
+      if (e && e.decodeFailure === true) {
+        Logger.w("FileChooserPortal", "Cannot decode " + e.option + " for " + handle + ": " + e.error);
+        reply.send([2,
+                    {}
+                   ]);
+        return;
+      }
       Logger.w("FileChooserPortal", "Rejecting malformed options for " + handle);
       reply.sendError("org.freedesktop.portal.Error.InvalidArgument", "malformed options");
       return;
@@ -181,8 +192,19 @@ Singleton {
         return;
       entry.settled = true;
       var uris = [];
-      for (var i = 0; i < paths.length; i++)
-        uris.push(root.pathToUri(paths[i]));
+      for (var i = 0; i < paths.length; i++) {
+        var converted = PortalPaths.pathToUri(paths[i]);
+        if (!converted.ok) {
+          // All or nothing: a partial uri list would hide the failed path.
+          Logger.w("FileChooserPortal", "Cannot convert accepted path for " + handle + ": " + converted.error);
+          reply.send([2,
+                      {}
+                     ]);
+          root.cleanup(handle);
+          return;
+        }
+        uris.push(converted.uri);
+      }
       reply.send([0,
                   {
                     "uris": new DBusQML.variant(uris, "as")
