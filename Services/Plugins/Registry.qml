@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../../Helpers/PluginProfileMigration.js" as PluginProfileMigration
 import "../../Helpers/sha256.js" as Crypto
 import qs.Commons
 
@@ -12,7 +13,7 @@ Singleton {
   readonly property string pluginsDir: Settings.configDir + "plugins"
   readonly property string pluginsFile: Settings.configDir + "plugins.json"
 
-  readonly property int currentVersion: 4
+  readonly property int currentVersion: 5
 
   // The shell-shipped source's location (read-only distribution payload at
   // builtin/plugins/). Its identity is hashed from this path exactly like
@@ -22,6 +23,11 @@ Singleton {
   // Registry version as read from plugins.json at load (before any save
   // bumps it) — drives one-time content migrations
   property int _loadedVersion: 0
+
+  // True while plugins.json still has the pre-v5 layout (see migrateV5). save()
+  // then writes the loaded version, so an interrupted or failed migration is
+  // not stamped as done and runs again on the next start.
+  property bool _v5Pending: false
 
   Component.onCompleted: {
     ensurePluginsDirectory();
@@ -125,6 +131,7 @@ Singleton {
       root.pluginStates = adapter.states || {};
       root.pluginSources = adapter.sources || [];
       root._loadedVersion = adapter.version;
+      root._v5Pending = adapter.version < 5;
 
       var needsSave = false;
       for (var i = 0; i < root.pluginSources.length; i++) {
@@ -338,8 +345,246 @@ for key in sys.argv[3:]:
     }
 
     root.migrateIconSetsV3(function () {
-      root.refreshBuiltinPlugins(done);
+      root.migrateV5(function () {
+        root.refreshBuiltinPlugins(done);
+      });
     });
+  }
+
+  // v5 (planned by Helpers/PluginProfileMigration.js, planV5): built-in plugin
+  // keys move to the current source hash, retired built-ins are removed, and
+  // the placements and lock-screen reference that use them are rewritten.
+  // Order: list inputs, plan, backup, folder and settings-file moves, then
+  // plugins.json, then settings references. A failed step stops the migration
+  // with _v5Pending still set, so the next start runs it again.
+  function migrateV5(done) {
+    if (root._loadedVersion >= 5) {
+      done();
+      return;
+    }
+    var shellPlugins = Quickshell.shellDir + "/builtin/plugins";
+    root.runProcess("ListShippedPlugins", ["sh", "-c", 'find "$1" -mindepth 2 -maxdepth 2 -name manifest.json -type f 2>/dev/null; true', "sh", shellPlugins], function (exitCode, shippedText) {
+      var shippedIds = [];
+      var paths = shippedText.trim() ? shippedText.trim().split("\n") : [];
+      for (var i = 0; i < paths.length; i++)
+        shippedIds.push(paths[i].split("/").slice(-2)[0]);
+
+      root.runProcess("ListPluginSettings", ["sh", "-c", 'find "$1" -maxdepth 1 -type f -name "*.json" -printf "%f\\n" 2>/dev/null; true', "sh", Settings.configDir + "settings/plugins"], function (exitCode2, namesText) {
+        // Names without the .json extension, as the planner expects.
+        var files = [];
+        var names = namesText.trim() ? namesText.trim().split("\n") : [];
+        for (var j = 0; j < names.length; j++) {
+          if (names[j].endsWith(".json"))
+            files.push(names[j].slice(0, -5));
+        }
+        root._planV5Migration(shippedIds, files, done);
+      });
+    });
+  }
+
+  function _planV5Migration(shippedIds, settingsFiles, done) {
+    var currentHash = root.generateSourceHash(root.builtinSourceUrl);
+    var plan = PluginProfileMigration.planV5({
+                                               states: root.pluginStates,
+                                               sources: root.pluginSources,
+                                               shippedIds: shippedIds,
+                                               builtinSourceUrl: root.builtinSourceUrl,
+                                               currentHash: currentHash,
+                                               pluginSettingsFiles: settingsFiles
+                                             });
+    var sourcesChanged = JSON.stringify(plan.sources) !== JSON.stringify(root.pluginSources);
+    if (plan.rekeys.length === 0 && plan.removals.length === 0 && plan.dropped.length === 0 && plan.settingsFileMoves.length === 0 && !sourcesChanged) {
+      root._v5Pending = false;
+      done();
+      return;
+    }
+
+    for (var r = 0; r < plan.rekeys.length; r++)
+      Logger.i("PluginRegistry", "v5 migration: rekeyed", plan.rekeys[r].from, "->", plan.rekeys[r].to);
+    for (var m = 0; m < plan.removals.length; m++)
+      Logger.i("PluginRegistry", "v5 migration: removed retired built-in plugin", plan.removals[m]);
+    for (var d = 0; d < plan.dropped.length; d++)
+      Logger.i("PluginRegistry", "v5 migration: dropped", plan.dropped[d], "(its current key already exists)");
+    for (var u = 0; u < plan.unsourced.length; u++)
+      Logger.i("PluginRegistry", plan.unsourced[u] + " is a local plugin without a source; it won't receive updates");
+
+    var backupDir = Settings.configDir + "backups/plugins-v5-" + Qt.formatDateTime(new Date(), "yyyyMMdd-HHmmss");
+    root._backupV5(plan, backupDir, function (ok) {
+      if (!ok) {
+        Logger.e("PluginRegistry", "v5 migration: backup failed, profile left unchanged:", backupDir);
+        done();
+        return;
+      }
+      root._moveV5Files(plan, function (ok2) {
+        if (!ok2) {
+          Logger.e("PluginRegistry", "v5 migration: file moves failed; plugins.json left at its loaded version");
+          done();
+          return;
+        }
+        root.pluginStates = plan.states;
+        root.pluginSources = plan.sources;
+        root._v5Pending = false;
+        root.save();
+        root._whenSettingsLoaded(function () {
+          root._rewriteSettingsV5(plan, currentHash);
+          done();
+        });
+      });
+    });
+  }
+
+  // Copies every folder and settings file the plan touches into backupDir.
+  // Missing items are skipped; any copy error fails the backup.
+  function _backupV5(plan, backupDir, done) {
+    var pd = root.pluginsDir;
+    var sd = Settings.configDir + "settings/plugins";
+    var s = "set -e\n";
+    s += "mkdir -p " + root._shq(Settings.configDir + "backups") + "\n";
+    s += "mkdir " + root._shq(backupDir) + "\n";
+    s += "mkdir -p " + root._shq(backupDir + "/plugins") + " " + root._shq(backupDir + "/settings/plugins") + "\n";
+    s += "cp -a " + root._shq(root.pluginsFile) + " " + root._shq(backupDir + "/") + "\n";
+    var folders = [];
+    for (var r = 0; r < plan.rekeys.length; r++)
+      folders.push(plan.rekeys[r].from);
+    folders = folders.concat(plan.removals, plan.dropped);
+    for (var i = 0; i < folders.length; i++) {
+      var folder = root._shq(pd + "/" + folders[i]);
+      s += "if [ -e " + folder + " ]; then cp -a " + folder + " " + root._shq(backupDir + "/plugins/") + "; fi\n";
+    }
+    for (var f = 0; f < plan.settingsFileMoves.length; f++) {
+      var file = root._shq(sd + "/" + plan.settingsFileMoves[f].from);
+      s += "if [ -e " + file + " ]; then cp -a " + file + " " + root._shq(backupDir + "/settings/plugins/") + "; fi\n";
+    }
+    root.runProcess("BackupPluginsV5", ["sh", "-c", s], function (exitCode, out, err) {
+      if (exitCode !== 0)
+        Logger.e("PluginRegistry", "v5 backup script failed:", err.trim());
+      done(exitCode === 0);
+    });
+  }
+
+  // Applies the plan's folder and settings-file moves. Rekeyed folders get a
+  // fresh shipped copy (built in a temp dir, then renamed into place) before the
+  // old folder is removed. Every step is idempotent, so a repeat run is safe.
+  function _moveV5Files(plan, done) {
+    var pd = root.pluginsDir;
+    var sd = Settings.configDir + "settings/plugins";
+    var shipped = Quickshell.shellDir + "/builtin/plugins";
+    var s = "set -e\n";
+    for (var r = 0; r < plan.rekeys.length; r++) {
+      var rk = plan.rekeys[r];
+      var tmp = root._shq(pd + "/.migrating-" + rk.to);
+      var dest = root._shq(pd + "/" + rk.to);
+      s += "rm -rf " + tmp + "\n";
+      s += "mkdir " + tmp + "\n";
+      s += "cp -r " + root._shq(shipped + "/" + rk.id + "/.") + " " + tmp + "/\n";
+      // Legacy in-dir settings: still read when settings/plugins/<key>.json is
+      // missing (Service.qml getLegacyPluginSettingsFile fallback), so carry it over.
+      s += "if [ -f " + root._shq(pd + "/" + rk.from + "/settings.json") + " ]; then cp -a " + root._shq(pd + "/" + rk.from + "/settings.json") + " " + tmp + "/settings.json; fi\n";
+      s += "rm -rf " + dest + "\n";
+      s += "mv " + tmp + " " + dest + "\n";
+      s += "rm -rf " + root._shq(pd + "/" + rk.from) + "\n";
+    }
+    var gone = plan.removals.concat(plan.dropped);
+    for (var g = 0; g < gone.length; g++)
+      s += "rm -rf " + root._shq(pd + "/" + gone[g]) + "\n";
+    for (var f = 0; f < plan.settingsFileMoves.length; f++) {
+      var mv = plan.settingsFileMoves[f];
+      var from = root._shq(sd + "/" + mv.from);
+      var to = root._shq(sd + "/" + mv.to);
+      s += "if [ -e " + from + " ] && [ ! -e " + to + " ]; then mv " + from + " " + to + "; fi\n";
+    }
+    root.runProcess("MigrateV5Files", ["sh", "-c", s], function (exitCode, out, err) {
+      if (exitCode !== 0)
+        Logger.e("PluginRegistry", "v5 file move script failed:", err.trim());
+      done(exitCode === 0);
+    });
+  }
+
+  // Rewrites the placements and the lock-screen reference that name a rekeyed
+  // or dropped key. Only the id changes; instance settings are kept. Settings
+  // are written through Settings.data, and only groups that changed are assigned.
+  function _rewriteSettingsV5(plan, currentHash) {
+    var keyMap = PluginProfileMigration.keyMapFor(plan, currentHash);
+    if (Object.keys(keyMap).length === 0)
+      return;
+
+    var sections = ["left", "center", "right"];
+    var bar = Settings.data.bar.widgets;
+    var shortcuts = Settings.data.controlCenter.shortcuts;
+    var rw = PluginProfileMigration.rewriteSettingsReferences({
+                                                                barWidgets: {
+                                                                  left: bar.left,
+                                                                  center: bar.center,
+                                                                  right: bar.right
+                                                                },
+                                                                screenOverrides: Settings.data.bar.screenOverrides,
+                                                                controlCenterShortcuts: {
+                                                                  left: shortcuts.left,
+                                                                  right: shortcuts.right
+                                                                },
+                                                                monitorWidgets: Settings.data.desktopWidgets.monitorWidgets,
+                                                                lockScreenPlugin: Settings.data.general.lockScreenPlugin
+                                                              }, keyMap);
+
+    if (rw.touched.barWidgets) {
+      for (var i = 0; i < sections.length; i++)
+        Settings.data.bar.widgets[sections[i]] = rw.barWidgets[sections[i]];
+    }
+    if (rw.touched.screenOverrides)
+      Settings.data.bar.screenOverrides = rw.screenOverrides;
+    if (rw.touched.controlCenterShortcuts) {
+      Settings.data.controlCenter.shortcuts.left = rw.controlCenterShortcuts.left;
+      Settings.data.controlCenter.shortcuts.right = rw.controlCenterShortcuts.right;
+    }
+    if (rw.touched.monitorWidgets)
+      Settings.data.desktopWidgets.monitorWidgets = rw.monitorWidgets;
+    if (rw.touched.lockScreenPlugin)
+      Settings.data.general.lockScreenPlugin = rw.lockScreenPlugin;
+
+    if (rw.touched.barWidgets || rw.touched.screenOverrides || rw.touched.controlCenterShortcuts || rw.touched.monitorWidgets || rw.touched.lockScreenPlugin) {
+      Logger.i("PluginRegistry", "v5 migration: rewrote placement references to rekeyed plugins");
+      Settings.saveImmediate();
+    }
+  }
+
+  // Runs callback once Settings has loaded (immediately if it already has).
+  function _whenSettingsLoaded(callback) {
+    if (Settings.isLoaded) {
+      callback();
+      return;
+    }
+    var called = false;
+    Settings.settingsLoaded.connect(function () {
+      if (called)
+        return;
+      called = true;
+      callback();
+    });
+  }
+
+  // Runs a command in a Process and hands back its exit code and output.
+  function runProcess(name, command, done) {
+    var proc = Qt.createQmlObject(`
+      import QtQuick
+      import Quickshell.Io
+      Process {
+        stdout: StdioCollector {}
+        stderr: StdioCollector {}
+      }
+    `, root, name);
+    proc.command = command;
+    proc.exited.connect(function (exitCode) {
+      var out = String(proc.stdout.text || "");
+      var err = String(proc.stderr.text || "");
+      proc.destroy();
+      done(exitCode, out, err);
+    });
+    proc.running = true;
+  }
+
+  // Single-quotes a value for sh.
+  function _shq(text) {
+    return "'" + String(text).replace(/'/g, "'\\''") + "'";
   }
 
   // Ensure plugins directory exists
@@ -688,7 +933,7 @@ for key in sys.argv[3:]:
 
   // Save registry to disk (only states and sources)
   function save() {
-    adapter.version = root.currentVersion;
+    adapter.version = root._v5Pending ? root._loadedVersion : root.currentVersion;
     adapter.states = root.pluginStates;
     adapter.sources = root.pluginSources;
 
