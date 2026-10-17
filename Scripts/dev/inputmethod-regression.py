@@ -67,7 +67,24 @@ measured as on niri: from the shell's "settings changed; regenerating" line to t
 directory is backed up into WORK/compositor-backup before the run and restored in finally
 (the input files are rewritten header-only and the compositor reloaded).
 
-Exit: 0 when every case passes and cleanup is clean; 1 when a case or the cleanup
+Key presses (M29, --keys). The cases K1-K8 press real keys: the host driver
+(tools/im-keys.sh, QEMU send-key into the named VM) presses the combo the guest asks for. The
+guest writes OUTPUT/keys/ready-<step>.json and waits for OUTPUT/keys/sent-<step>.json; the
+driver writes sent after it sent the key, and the guest writes keys/finished when the run
+ends. The bind runs `atmosphera ipc`, which reaches only a shell named `atmosphera`: for a
+--keys run the test tree is linked as ~/.config/quickshell/atmosphera (refused if that exists)
+and removed in finally. The setup proves that `atmosphera ipc inputmethod state` answers
+from this shell before the first key. On niri the shipped atmosphera-i18n.kdl is moved
+aside for --keys runs (restored with the rest of ~/.config/niri). With --keys the run holds
+only the key cases of its profile: A K4; B K1 K2 K3 K5 K8; C K6; D K7a K7b (K7b restarts the
+shell with a PATH that has no fcitx5). Profile C is profile B's groups with keyboard-fr in no
+group. Any compositor runs --keys; without --keys the cases stay as above.
+
+K5 is an expected failure on mango 0.17.5, which repeats held binds and has no
+non-repeating bind flag. It still runs and records the dispatch count; an unexpected
+pass is reported but non-fatal. K5 remains strict on niri and Hyprland.
+
+Exit: 0 when every case passes (or is an accepted mango K5 outcome) and cleanup is clean; 1 when a case or the cleanup
 fails; 3 on a setup or precondition failure (the run is not evaluated).
 """
 import argparse
@@ -102,7 +119,12 @@ PROFILE_B = [
     (GROUP_RU, 'us', ['keyboard-us', 'keyboard-ru-mac']),
     (GROUP_JP, 'us', ['keyboard-us', 'mozc']),
 ]
-PROFILE_GROUPS = {'A': PROFILE_A, 'B': PROFILE_B}
+# C: B's groups; keyboard-fr is in no group (K6 switches to it).
+PROFILE_GROUPS = {'A': PROFILE_A, 'B': PROFILE_B, 'C': PROFILE_B}
+# The compositor's process name, for the no-restart check of K8.
+COMP_PROC = {'niri': 'niri', 'hyprland': 'Hyprland', 'mango': 'mango'}
+KEY_DRIVER_WAIT = 180  # seconds the guest waits for the host driver to send one key
+MODIFIERS = {'alt', 'ctrl', 'shift', 'super'}
 FIXTURE = Path(__file__).resolve().parent / 'fixtures' / 'input-method-secure-mode.qml'
 FIXTURE_NAME = FIXTURE.name
 LEGACY_FIXTURE = Path(__file__).resolve().parent / 'fixtures' / 'input-method-legacy-import.qml'
@@ -110,6 +132,7 @@ LEGACY_FIXTURE_NAME = LEGACY_FIXTURE.name
 # sha256 of the only shipped atmosphera-i18n.kdl (commit 95d03c3d5).
 SHIPPED_I18N_SHA256 = '1a6c4aeda09bc15264c7a4c2eb031659bbb100e79d686c9510dd50234a7fdb35'
 TOAST_MARK = 'Layout toast:'
+KEY_DISPATCH_MARK = 'IMREG_KEY_DISPATCH|toggleIM|'
 GDBUS = ['gdbus', 'call', '--session', '--dest', 'org.fcitx.Fcitx5', '--object-path', '/controller', '--method']
 NIRI_DIR = Path(HOME) / '.config/niri'
 NIRI_SESSION = 'atmosphera-session.kdl'
@@ -168,12 +191,16 @@ class Ctx:
     output: Path
     profile: str
     name: str
+    keys: bool = False
     shell_unit: str = ''
     fcitx_unit: str = ''
     focus_unit: str = ''
     fixture_unit: str = ''
     niri_backup: object = None
     wm_backup: object = None
+    path_override: str = ''  # PATH for the shell (K7b: a directory without fcitx5)
+    cli_link: object = None  # ~/.config/quickshell/atmosphera, while a --keys run holds it
+    cli_dir_made: bool = False
     units: list = field(default_factory=list)
     notes: list = field(default_factory=list)
 
@@ -185,6 +212,10 @@ class Ctx:
 
     @property
     def shell_qml(self):
+        # --keys: qs -c (the bind's route) matches instances by the path string, so the shell and every ipc
+        # call of the run use the user-level link path, not the work path (which qs does not match to it).
+        if self.cli_link is not None:
+            return Path(self.cli_link) / 'shell.qml'
         return self.work / 'shell' / 'shell.qml'
 
     @property
@@ -196,11 +227,11 @@ class Ctx:
             f.write(f'{time.strftime("%H:%M:%S")} {text}\n')
 
 
-def preflight(source, work, output, profile, cases):
-    if profile not in ('A', 'B', 'D'):
-        raise SetupError(f'profile {profile} not defined yet (M22 defines A, B and D)')
-    if COMP != 'niri' and (profile != 'B' or cases != ['10']):
-        raise SetupError(f'{COMP}: only profile B with --cases 10 is defined (the other cases check niri files)')
+def preflight(source, work, output, profile, cases, keys):
+    if profile not in PROFILES:
+        raise SetupError(f'profile {profile} not defined')
+    if COMP != 'niri' and not keys and (profile != 'B' or cases != ['10']):
+        raise SetupError(f'{COMP}: only profile B with --cases 10 is defined without --keys (the other cases check niri files)')
     if not (source / 'shell.qml').is_file() or not (source / 'Configs/defaults.json').is_file():
         raise SetupError(f'{source} is not a shell tree (shell.qml / Configs/defaults.json missing)')
     if work.exists():
@@ -224,12 +255,30 @@ def preflight(source, work, output, profile, cases):
 def setup_work(ctx):
     ctx.work.mkdir(parents=True)
     shutil.copytree(ctx.source, ctx.work / 'shell', symlinks=True)
+    if ctx.keys:
+        # Observe incoming switch calls in the disposable test copy, before any
+        # service queuing. Generated binds and product source stay untouched.
+        handler = ctx.work / 'shell/Services/Control/IPCService.qml'
+        text = handler.read_text()
+        # QML permits an omitted return annotation (the pre-I6b/M20 handler).
+        # Observe the same callable contract across source versions rather than
+        # making the negative-control baseline implement today's return type.
+        declaration = (r'(?m)^(?P<indent>[ \t]*)function[ \t]+toggleIM[ \t]*\('
+                       r'[ \t]*name[ \t]*:[ \t]*string[ \t]*,[ \t]*group[ \t]*:[ \t]*string[ \t]*\)'
+                       r'[ \t]*(?::[ \t]*\w+[ \t]*)?\{[ \t]*\n')
+        matches = list(re.finditer(declaration, text))
+        if len(matches) != 1:
+            raise SetupError('expected one toggleIM handler for key dispatch observation')
+        match = matches[0]
+        marker = f'{match.group("indent")}  console.log("{KEY_DISPATCH_MARK}" + name);\n'
+        handler.write_text(text[:match.end()] + marker + text[match.end():])
     for name in ('config', 'cache', 'state'):
         (ctx.profile_dir / name).mkdir(parents=True)
     settings = json.loads((ctx.source / 'Configs/defaults.json').read_text())
     settings['general']['showChangelogOnStartup'] = False
-    # B starts with the legacy check already done (cases 10-12 keep the shipped file); A starts unchecked (case 14).
-    settings['inputMethod']['legacyI18nChecked'] = ctx.profile == 'B'
+    # B and C start with the legacy check already done (cases 10-12 keep the shipped file); A starts unchecked
+    # (case 14). Key runs never convert the legacy file (the key cases move it aside on niri).
+    settings.setdefault('inputMethod', {})['legacyI18nChecked'] = ctx.profile in ('B', 'C') or ctx.keys
     (ctx.profile_dir / 'config' / 'settings.json').write_text(json.dumps(settings))
     (ctx.work / 'focus').mkdir()
     (ctx.work / 'focus' / 'probe.qml').write_text(FOCUS_QML)
@@ -363,10 +412,13 @@ def start_focus(ctx):
 
 def qs_env(ctx):
     p = ctx.profile_dir
-    return dict(base_env(), ATMOSPHERA_CONFIG_DIR=f'{p}/config/', ATMOSPHERA_CACHE_DIR=f'{p}/cache/',
-                ATMOSPHERA_STATE_DIR=f'{p}/state/', ATMOSPHERA_SETTINGS_FILE=f'{p}/config/settings.json',
-                ATMOSPHERA_DEBUG='0', ATMOSPHERA_UPGRADELOG_URL='http://127.0.0.1:9',
-                QT_FORCE_STDERR_LOGGING='1', **compositor_env())
+    env = dict(base_env(), ATMOSPHERA_CONFIG_DIR=f'{p}/config/', ATMOSPHERA_CACHE_DIR=f'{p}/cache/',
+               ATMOSPHERA_STATE_DIR=f'{p}/state/', ATMOSPHERA_SETTINGS_FILE=f'{p}/config/settings.json',
+               ATMOSPHERA_DEBUG='0', ATMOSPHERA_UPGRADELOG_URL='http://127.0.0.1:9',
+               QT_FORCE_STDERR_LOGGING='1', **compositor_env())
+    if ctx.path_override:
+        env['PATH'] = ctx.path_override
+    return env
 
 
 def start_shell(ctx):
@@ -1351,9 +1403,314 @@ def case14(ctx):
     return rec
 
 
+# ——— Key-press cases (M29, --keys) ———
+# A real key press goes keyboard -> compositor bind -> `atmosphera ipc` -> this shell -> fcitx5. The guest
+# only asks for a key (keys/ready-<step>.json) and waits for the host driver's ack (keys/sent-<step>.json);
+# everything it checks is read back from fcitx5, the shell, the generated file or the journal.
+
+def keys_case(cid):
+    def wrap(fn):
+        fn.cid = cid
+        return fn
+    return wrap
+
+
+def case_id(case):
+    return getattr(case, 'cid', None) or case.__name__.removeprefix('case')
+
+
+def key_step(ctx, step, combo, hold_ms=100):
+    """Asks the host driver to press combo, then waits for its ack. (sent, info): sent is True when the driver
+    reports it sent exactly this combo (the key was injected)."""
+    d = ctx.output / 'keys'
+    d.mkdir(exist_ok=True)
+    ready = d / f'ready-{step}.json'
+    tmp = ready.with_name(ready.name + '.tmp')
+    tmp.write_text(json.dumps({'step': step, 'combo': combo, 'hold_ms': hold_ms}))
+    os.replace(tmp, ready)
+    sent_file = d / f'sent-{step}.json'
+    ok, took = wait_for(sent_file.exists, KEY_DRIVER_WAIT, 0.1)
+    driver = {}
+    if ok:
+        try:
+            driver = json.loads(sent_file.read_text())
+        except (OSError, ValueError):
+            driver = {}
+    ctx.trace(f'key {step} {combo} hold {hold_ms} ms: driver {driver} after {took} s')
+    return bool(ok and driver.get('ok') is True and driver.get('combo') == combo), {'waited_s': took, 'driver': driver}
+
+
+def press(ctx, rec, name, combo, hold_ms=100):
+    sent, info = key_step(ctx, f'{rec["case"]}-{name}', combo, hold_ms)
+    rec['checks'][f'{name}_sent'] = sent
+    rec['observed'][f'{name}_sent'] = info
+    return sent
+
+
+def is_active(ctx):
+    return sh(['systemctl', '--user', 'is-active', '--quiet', ctx.shell_unit]).returncode == 0
+
+
+def generated_lines(ctx):
+    return niri_input_lines() if COMP == 'niri' else wm_lines(wm_input_path(wm_route(ctx)))
+
+
+def bound(ctx, combo, action):
+    """True when the generated file binds combo to action (action: the words of the spawned IPC call).
+    niri: the line starts with the combo. Hyprland and mangowc: the modifier set and key must match exactly."""
+    parts = combo.split('+')
+    key, mods = parts[-1].lower(), {p.lower() for p in parts[:-1]}
+    for line in stripped(generated_lines(ctx)):
+        if not line or line.startswith(('//', '#', '--')):
+            continue
+        if COMP == 'niri' and line.split()[:1] != [combo]:
+            continue
+        words = set(re.split(r'[^a-z0-9_-]+', line.lower()))
+        if COMP != 'niri' and ((words & MODIFIERS) != mods or key not in words):
+            continue
+        if all(w in words for w in action):
+            return True
+    return False
+
+
+def binds_in_file(ctx):
+    return [line for line in stripped(generated_lines(ctx)) if line and not line.startswith(('//', '#', '--'))]
+
+
+def set_switches(ctx, rec, switches, expect, next_keys=(), tag=''):
+    """Writes the inputMethod section unless it already holds these switches, then waits for the generated file
+    to bind every (combo, action) in expect. The shell regenerates on the change; the compositor reloads."""
+    section = section_json(ctx) or {}
+    if section.get('switches', []) != switches or section.get('nextKeys', []) != list(next_keys):
+        write_im_section(ctx, switches, next_keys)
+    ok, took = wait_for(lambda: all(bound(ctx, c, a) for c, a in expect), 30, 0.2)
+    rec['checks'][f'binds_generated{tag}'] = ok
+    rec['observed'][f'binds_generated{tag}_s'] = took
+    if ok:
+        rec['observed'][f'settled{tag}_s'] = wait_shell_settled(ctx)
+        time.sleep(1.0)  # the compositor's config reload after the file change
+    return ok
+
+
+KEY_B_EXPECT = [('Alt+Space', ('toggleim', 'mozc')), ('Ctrl+Space', ('toggleim', 'keyboard-ru-mac'))]
+
+
+def truth_then_shell(ctx, rec, label, group, im, fcitx_wait=3.0, shell_wait=1.0):
+    ok, took = wait_for(lambda: truth_is(ctx, group, im), fcitx_wait)
+    rec['checks'][f'{label}_fcitx5'] = ok
+    rec['observed'][f'{label}_fcitx5_s'] = took
+    ok, took = wait_for(lambda: shell_matches(ctx, group, im), shell_wait)
+    rec['checks'][f'{label}_state_follows_1s'] = ok
+    rec['observed'][f'{label}_state_s'] = took
+    return ok
+
+
+@keys_case('K1')
+def key_k1(ctx):
+    rec = new_record('K1', 'Alt+Space (real key) switches US+RU/keyboard-us to US+JP/mozc', 'B')
+    set_switches(ctx, rec, SHIPPED_SWITCHES, KEY_B_EXPECT)
+    reset_baseline(ctx, rec)
+    press(ctx, rec, 'press', 'Alt+Space')
+    truth_then_shell(ctx, rec, 'press', GROUP_JP, 'mozc')
+    check_state_fields(rec, shell_state(ctx), 'ja')
+    rec['observed']['truth'] = truth(ctx)
+    return rec
+
+
+@keys_case('K2')
+def key_k2(ctx):
+    rec = new_record('K2', 'Alt+Space again returns US+JP/mozc to US+RU/keyboard-us', 'B')
+    set_switches(ctx, rec, SHIPPED_SWITCHES, KEY_B_EXPECT)
+    reset_baseline(ctx, rec)
+    # The first press arms the shell's return target (toggleTo), so the second press is the real test.
+    press(ctx, rec, 'first', 'Alt+Space')
+    truth_then_shell(ctx, rec, 'first', GROUP_JP, 'mozc')
+    press(ctx, rec, 'again', 'Alt+Space')
+    truth_then_shell(ctx, rec, 'again', GROUP_RU, 'keyboard-us')
+    rec['observed']['truth'] = truth(ctx)
+    return rec
+
+
+@keys_case('K3')
+def key_k3(ctx):
+    rec = new_record('K3', 'Ctrl+Space (real key) switches to keyboard-ru-mac and back', 'B')
+    set_switches(ctx, rec, SHIPPED_SWITCHES, KEY_B_EXPECT)
+    reset_baseline(ctx, rec)
+    press(ctx, rec, 'first', 'Ctrl+Space')
+    truth_then_shell(ctx, rec, 'first', GROUP_RU, 'keyboard-ru-mac')
+    press(ctx, rec, 'again', 'Ctrl+Space')
+    truth_then_shell(ctx, rec, 'again', GROUP_RU, 'keyboard-us')
+    rec['observed']['truth'] = truth(ctx)
+    return rec
+
+
+@keys_case('K5')
+def key_k5(ctx):
+    rec = new_record('K5', 'Alt+Space held 1.5 s switches exactly once', 'B')
+    set_switches(ctx, rec, SHIPPED_SWITCHES, KEY_B_EXPECT)
+    reset_baseline(ctx, rec)
+    before = toast_count(ctx)
+    dispatch_before = journal(ctx).count(KEY_DISPATCH_MARK + 'mozc')
+    press(ctx, rec, 'held', 'Alt+Space', hold_ms=1500)
+    ok, took = wait_for(lambda: truth_is(ctx, GROUP_JP, 'mozc'), 3)
+    rec['checks']['held_fcitx5_US+JP_mozc'] = ok
+    time.sleep(2.5)
+    # A second toggle would return to US+RU; the final state and the toast count show exactly one switch.
+    rec['checks']['still_mozc_after_2_5s'] = truth_is(ctx, GROUP_JP, 'mozc')
+    toasts = toast_count(ctx) - before
+    rec['observed']['toast_lines'] = toasts
+    rec['checks']['one_layout_toast'] = toasts == 1
+    dispatches = journal(ctx).count(KEY_DISPATCH_MARK + 'mozc') - dispatch_before
+    rec['observed']['dispatch_count'] = dispatches
+    rec['checks']['one_dispatch'] = dispatches == 1
+    rec['observed']['truth'] = truth(ctx)
+    if COMP == 'mango':
+        # Only the held-key outcome is expected to fail. Setup, baseline and
+        # actual key delivery remain required checks, including a real dispatch.
+        held_checks = {name: rec['checks'].pop(name) for name in (
+            'held_fcitx5_US+JP_mozc', 'still_mozc_after_2_5s', 'one_layout_toast', 'one_dispatch')}
+        rec['checks']['held_dispatched'] = dispatches > 0
+        rec['expected_failure'] = {
+            'reason': 'mango 0.17.5 repeats held binds; no non-repeating bind flag',
+            'checks': held_checks,
+            'status': 'XPASS' if all(held_checks.values()) else 'XFAIL',
+        }
+    return rec
+
+
+@keys_case('K4')
+def key_k4(ctx):
+    rec = new_record('K4', 'Super+Space (next key) three times cycles us -> de -> ru -> us', 'A')
+    set_switches(ctx, rec, [], [('Super+Space', ('next',))], next_keys=['Super+Space'])
+    reset_baseline(ctx, rec, GROUP_DEFAULT, 'keyboard-us')
+    for i, expect in enumerate(['keyboard-de', 'keyboard-ru', 'keyboard-us'], start=1):
+        press(ctx, rec, f'next_{i}', 'Super+Space')
+        truth_then_shell(ctx, rec, f'next_{i}_is_{expect}', GROUP_DEFAULT, expect)
+    rec['observed']['truth'] = truth(ctx)
+    return rec
+
+
+@keys_case('K6')
+def key_k6(ctx):
+    rec = new_record('K6', 'Ctrl+Alt+F for keyboard-fr (in no group): nothing changes, refusal logged', 'C')
+    fr = [{'keys': ['Ctrl+Alt+F'], 'target': 'keyboard-fr', 'mode': 'toggle', 'label': ''}]
+    set_switches(ctx, rec, fr, [('Ctrl+Alt+F', ('toggleim', 'keyboard-fr'))])
+    reset_baseline(ctx, rec)
+    before = truth(ctx)
+    rec['observed']['before'] = before
+    press(ctx, rec, 'press', 'Ctrl+Alt+F')
+    time.sleep(1.5)
+    rec['checks']['fcitx5_unchanged'] = truth(ctx) == before and truth_is(ctx, GROUP_RU, 'keyboard-us')
+    rec['checks']['state_unchanged'] = shell_matches(ctx, GROUP_RU, 'keyboard-us')
+    logged, took = wait_for(lambda: any('keyboard-fr' in line and ('in no group' in line or 'unknown input method' in line)
+                                        for line in journal(ctx).splitlines()), 5, 0.5)
+    rec['checks']['refusal_logged'] = logged
+    rec['observed']['refusal_s'] = took
+    rec['checks']['shell_alive'] = is_active(ctx)
+    return rec
+
+
+def instance_ids(ctx):
+    inv = sh(['systemctl', '--user', 'show', '-p', 'InvocationID', '--value', ctx.shell_unit]).stdout.strip()
+    return {'shell_invocation': inv, 'compositor_pids': sh(['pgrep', '-x', COMP_PROC[COMP]]).stdout.split()}
+
+
+@keys_case('K8')
+def key_k8(ctx):
+    rec = new_record('K8', 'combo changed to Ctrl+Alt+Space: new combo works, old does nothing, no restart', 'B')
+    reset_baseline(ctx, rec)
+    before_text = wm_config_check(ctx)[1] if COMP != 'niri' else ''
+    new_switches = [dict(SHIPPED_SWITCHES[0], keys=['Ctrl+Alt+Space']), SHIPPED_SWITCHES[1]]
+    set_switches(ctx, rec, new_switches,
+                 [('Ctrl+Alt+Space', ('toggleim', 'mozc')), ('Ctrl+Space', ('toggleim', 'keyboard-ru-mac'))],
+                 tag='_changed')
+    rec['checks']['old_combo_not_bound'] = not bound(ctx, 'Alt+Space', ('toggleim', 'mozc'))
+    ids_before = instance_ids(ctx)
+    rec['observed']['ids_before'] = ids_before
+    press(ctx, rec, 'new', 'Ctrl+Alt+Space')
+    truth_then_shell(ctx, rec, 'new', GROUP_JP, 'mozc')
+    before_old = truth(ctx)
+    press(ctx, rec, 'old', 'Alt+Space')
+    time.sleep(2.0)
+    rec['checks']['old_does_nothing'] = truth(ctx) == before_old and truth_is(ctx, GROUP_JP, 'mozc')
+    rec['observed']['ids_after'] = instance_ids(ctx)
+    rec['checks']['no_shell_or_compositor_restart'] = rec['observed']['ids_after'] == ids_before
+    if COMP != 'niri':
+        after_ok, after_text = wm_config_check(ctx)
+        rec['observed']['config_check_before_change'] = before_text
+        rec['observed']['config_check_after_change'] = after_text
+        rec['checks']['no_new_config_error_after_reload'] = (
+            wm_reload_ok(wm_route(ctx), before_text, after_text) if COMP == 'hyprland' else after_ok)
+    rec['observed']['truth'] = truth(ctx)
+    return rec
+
+
+@keys_case('K7a')
+def key_k7a(ctx):
+    rec = new_record('K7a', 'profile D (fcitx5 installed, not running): Alt+Space bound, shell alive, refusal logged', 'D')
+    set_switches(ctx, rec, SHIPPED_SWITCHES[:1], [('Alt+Space', ('toggleim', 'mozc'))])
+    rec['checks']['fcitx5_not_running'] = not fcitx5_running()
+    rec['observed']['state_before'] = shell_state(ctx)
+    press(ctx, rec, 'press', 'Alt+Space')
+    time.sleep(1.5)
+    rec['checks']['fcitx5_still_not_running'] = not fcitx5_running()
+    rec['checks']['state_unavailable'] = (shell_state(ctx) or {}).get('available') is False
+    rec['observed']['state_after'] = shell_state(ctx)
+    logged, took = wait_for(lambda: any('mozc' in line and 'unavailable' in line for line in journal(ctx).splitlines()),
+                            5, 0.5)
+    rec['checks']['refusal_logged'] = logged
+    rec['observed']['refusal_s'] = took
+    rec['checks']['shell_alive'] = is_active(ctx)
+    rec['checks']['no_crash'] = not any('TypeError' in line or 'ReferenceError' in line
+                                        for line in journal(ctx).splitlines())
+    return rec
+
+
+def make_shadow_path(ctx):
+    """A PATH directory with a symlink to every /usr/bin and /usr/local/bin entry except fcitx5 (no package change)."""
+    shadow = ctx.work / 'shadow-bin'
+    shadow.mkdir()
+    for d in ('/usr/bin', '/usr/local/bin'):
+        for entry in os.scandir(d):
+            if entry.name == 'fcitx5' or os.path.lexists(shadow / entry.name):
+                continue
+            os.symlink(entry.path, shadow / entry.name)
+    if shutil.which('fcitx5', path=str(shadow)):
+        raise SetupError('the shadow PATH still finds fcitx5')
+    return str(shadow)
+
+
+@keys_case('K7b')
+def key_k7b(ctx):
+    rec = new_record('K7b', 'fcitx5 not installed (PATH without fcitx5): no binds, Alt+Space changes nothing, shell alive', 'D')
+    set_switches(ctx, rec, SHIPPED_SWITCHES[:1], [('Alt+Space', ('toggleim', 'mozc'))], tag='_installed')
+    ctx.path_override = make_shadow_path(ctx)
+    rec['observed']['fcitx5_running_before_restart'] = fcitx5_running()
+    restart_shell(ctx, 'k7b')
+    rec['observed']['settled_after_start_s'] = wait_shell_settled(ctx)
+    lines = generated_lines(ctx)
+    rec['observed']['input_file_k7b'] = lines
+    rec['checks']['header_only'] = bool(lines) and 'Generated by Atmosphera' in lines[0]
+    rec['checks']['no_binds_generated'] = binds_in_file(ctx) == []
+    state_before = shell_state(ctx)
+    fcitx_before = fcitx5_running()
+    rec['observed']['fcitx5_running_before_press'] = fcitx_before
+    press(ctx, rec, 'press', 'Alt+Space')
+    time.sleep(1.5)
+    rec['checks']['state_unchanged'] = shell_state(ctx) == state_before
+    rec['checks']['fcitx5_unchanged'] = fcitx5_running() == fcitx_before
+    rec['checks']['shell_alive'] = is_active(ctx)
+    rec['checks']['no_crash'] = not any('TypeError' in line or 'ReferenceError' in line
+                                        for line in journal(ctx).splitlines())
+    return rec
+
+
 CASES = {'A': [case7, case14],
          'B': [case1, case2, case3, case5, case6, case8, case9, case10, case11, case12, case13, case16, case15],
          'D': [case4]}
+# --keys: the key cases of each profile (C has no non-key cases).
+KEY_CASES = {'A': [key_k4], 'B': [key_k1, key_k2, key_k3, key_k5, key_k8], 'C': [key_k6],
+             'D': [key_k7a, key_k7b]}
 
 
 def stop_everything(ctx):
@@ -1385,28 +1742,102 @@ def detect_compositor():
     return running[0], (os.path.basename(instance) if running[0] == 'hyprland' else instance)
 
 
-def selected_cases(profile, wanted):
-    chosen = [c for c in CASES[profile] if not wanted or c.__name__.removeprefix('case') in wanted]
-    if wanted and len(chosen) != len(wanted):
+def selected_cases(profile, wanted, keys):
+    pool = KEY_CASES if keys else CASES
+    if not pool.get(profile):
+        raise SetupError(f'profile {profile} has no {"key" if keys else "non-key"} cases')
+    chosen = [c for c in pool[profile] if not wanted or case_id(c) in wanted]
+    if wanted and len(chosen) != len(set(wanted)):
         raise SetupError(f'unknown case id in {",".join(wanted)} for profile {profile}')
     return chosen
+
+
+def keys_setup(ctx):
+    """--keys: the test tree becomes the user-level `atmosphera` config, so the bind's `atmosphera ipc` (qs -c
+    atmosphera) reaches this shell. Refuses to replace an existing link or config; the link is removed in finally."""
+    link = Path(HOME) / '.config/quickshell/atmosphera'
+    if os.path.lexists(link):
+        raise SetupError(f'{link} exists; the key cases need it free')
+    ctx.cli_dir_made = not link.parent.exists()
+    link.parent.mkdir(parents=True, exist_ok=True)
+    os.symlink(ctx.work / 'shell', link)
+    ctx.cli_link = link
+
+
+def keys_teardown(ctx):
+    """Removes only the link this run made (and its directory when this run created it)."""
+    if ctx.cli_link is None:
+        return {'link_removed': True, 'dir_removed': None}
+    removed = False
+    if os.path.islink(ctx.cli_link):
+        os.unlink(ctx.cli_link)
+        removed = True
+    dir_removed = None
+    if ctx.cli_dir_made:
+        try:
+            ctx.cli_link.parent.rmdir()
+            dir_removed = True
+        except OSError:
+            dir_removed = False
+    return {'link_removed': removed and not os.path.lexists(ctx.cli_link), 'dir_removed': dir_removed}
+
+
+def aside_niri_i18n(ctx):
+    """--keys on niri: the shipped atmosphera-i18n.kdl would bind the same combos. It is moved aside (the niri
+    backup restores it afterwards) and the session regenerates without it."""
+    i18n = NIRI_DIR / NIRI_I18N
+    if i18n.exists():
+        (ctx.work / 'niri-aside').mkdir()
+        shutil.move(str(i18n), str(ctx.work / 'niri-aside' / NIRI_I18N))
+
+
+def cli_route(ctx):
+    """`atmosphera ipc inputmethod state` (the bind's route) must answer with this shell's group and IM, polled
+    until fcitx5's state has loaded in this shell. Only this shell runs, so an answer at all proves the link is
+    what qs -c resolved; the matching group and IM show it is this shell's state, not an empty early answer."""
+    seen = {}
+
+    def matches():
+        via_cli = sh(['atmosphera', 'ipc', 'inputmethod', 'state'], timeout=60)
+        direct = ipc(ctx, 'state')[1]
+        seen.update(rc=via_cli.returncode, cli=via_cli.stdout.strip(), direct=direct, err=via_cli.stderr.strip())
+        if via_cli.returncode != 0 or not seen['cli']:
+            return False
+        try:
+            a, b = json.loads(seen['cli']), json.loads(direct)
+        except ValueError:
+            # A shell without the state function (M20) answers with the same error text to both routes.
+            return seen['cli'] == direct
+        return a.get('group') == b.get('group') and a.get('im') == b.get('im') and a.get('available') == b.get('available')
+    ok, took = wait_for(matches, 30, 0.5)
+    seen['polled_s'] = took
+    return ok, seen
+
+
+def keys_session_ready(ctx):
+    """niri: the session includes the generated input file and not the moved-aside i18n file."""
+    if COMP != 'niri':
+        return None
+    ok, took = wait_for(lambda: 'include "atmosphera-input.kdl"' in session_text()
+                        and 'atmosphera-i18n.kdl' not in session_text(), 30, 0.2)
+    return {'ready': ok, 'after_s': took}
 
 
 def run(args):
     source = args.source.resolve()
     work = args.work.resolve()
     output = args.output.resolve()
-    ctx = Ctx(source, work, output, args.profile, output.name)
+    ctx = Ctx(source, work, output, args.profile, output.name, keys=args.keys)
     cases = []
     result = {'label': output.name, 'profile': args.profile, 'source': str(source), 'work': str(work),
-              'compositor': COMP, 'cases_requested': args.cases,
+              'compositor': COMP, 'keys': args.keys, 'cases_requested': args.cases,
               'units': {'shell': ctx.shell_unit, 'fcitx5': ctx.fcitx_unit, 'focus': ctx.focus_unit},
               'setup_error': None, 'cases': [], 'cleanup': {}, 'niri': None, 'compositor_restore': None,
-              'passed': False}
+              'cli_route': None, 'keys_link': None, 'keys_session': None, 'passed': False}
     started = False
     try:
-        preflight(source, work, output, args.profile, args.cases)
-        cases = selected_cases(args.profile, args.cases)
+        preflight(source, work, output, args.profile, args.cases, args.keys)
+        cases = selected_cases(args.profile, args.cases, args.keys)
         output.mkdir(parents=True)
         started = True
         setup_work(ctx)
@@ -1416,16 +1847,27 @@ def run(args):
             backup_niri(ctx)
         else:
             backup_wm(ctx)
+        if args.keys:
+            if COMP == 'niri':
+                aside_niri_i18n(ctx)
+            keys_setup(ctx)
+            (output / 'keys').mkdir()
         if args.profile in PROFILE_GROUPS:
             start_fcitx5(ctx, PROFILE_GROUPS[args.profile])
             start_focus(ctx)
         else:
             write_fcitx5_profile()
         start_shell(ctx)
+        if args.keys:
+            ok, route = cli_route(ctx)
+            result['cli_route'] = {'passed': ok, **route}
+            if not ok:
+                raise SetupError(f'atmosphera ipc does not reach this shell: {route}')
+            result['keys_session'] = keys_session_ready(ctx)
         if args.profile == 'D':
             detach_fcitx5(ctx)
         for case in cases:
-            cid = case.__name__.removeprefix('case')
+            cid = case_id(case)
             try:
                 rec = case(ctx)
             except Exception as e:  # a crashed case is a failed case; the run goes on
@@ -1434,7 +1876,8 @@ def run(args):
                 rec['notes'].append(f'case crashed: {type(e).__name__}: {e}')
             rec['passed'] = bool(rec['checks']) and all(rec['checks'].values())
             result['cases'].append(rec)
-            print(f"{rec['case']} {'PASS' if rec['passed'] else 'FAIL'}", flush=True)
+            status = rec.get('expected_failure', {}).get('status', 'PASS') if rec['passed'] else 'FAIL'
+            print(f"{rec['case']} {status}", flush=True)
     except SetupError as e:
         result['setup_error'] = str(e)
         print(f'setup failed: {e}', file=sys.stderr)
@@ -1443,6 +1886,10 @@ def run(args):
         print(f'setup failed: {result["setup_error"]}', file=sys.stderr)
     finally:
         if started:
+            if args.keys:
+                # The driver stops polling when the guest is finished.
+                (output / 'keys').mkdir(exist_ok=True)
+                (output / 'keys' / 'finished').write_text('done\n')
             for unit, name in ((ctx.shell_unit, 'shell-journal.txt'), (ctx.fcitx_unit, 'fcitx5-journal.txt')):
                 text = sh(['journalctl', '--user', '-u', unit, '--no-pager', '-o', 'cat'], timeout=120).stdout
                 (output / name).write_text(text)
@@ -1458,13 +1905,16 @@ def run(args):
                     result['compositor_restore'] = restore_wm(ctx)
                 except (OSError, subprocess.SubprocessError) as e:
                     result['compositor_restore'] = {'passed': False, 'error': f'{type(e).__name__}: {e}'}
+            if args.keys:
+                result['keys_link'] = keys_teardown(ctx)
             niri_ok = result['niri'] is None or result['niri'].get('passed') is True
             wm_ok = result['compositor_restore'] is None or result['compositor_restore'].get('passed') is True
             niri_ok = niri_ok and wm_ok
+            link_ok = result['keys_link'] is None or result['keys_link']['link_removed']
             result['passed'] = (result['setup_error'] is None and bool(result['cases'])
                                 and all(c['passed'] for c in result['cases'])
                                 and not result['cleanup']['qs_running_after_stop']
-                                and not result['cleanup']['fcitx5_running_after_stop'] and niri_ok)
+                                and not result['cleanup']['fcitx5_running_after_stop'] and niri_ok and link_ok)
             (output / 'result.json').write_text(json.dumps(result, indent=2, ensure_ascii=False) + '\n')
     if result['setup_error']:
         return 3
@@ -1478,6 +1928,8 @@ def main(argv=None):
     ap.add_argument('--output', type=Path, required=True)
     ap.add_argument('--profile', choices=PROFILES, required=True)
     ap.add_argument('--cases', default='', help='comma-separated case ids (default: every case of the profile)')
+    ap.add_argument('--keys', action='store_true',
+                    help='run the key-press cases (K1-K8) of the profile instead of the switch cases (M29)')
     args = ap.parse_args(argv)
     args.cases = [c.strip() for c in args.cases.split(',') if c.strip()]
     global COMP, COMP_INSTANCE
