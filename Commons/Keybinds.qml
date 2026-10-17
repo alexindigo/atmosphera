@@ -5,6 +5,8 @@ import QtQuick
 QtObject {
   function getKeybindString(event) {
     let keyStr = "";
+    if (event.modifiers & Qt.MetaModifier)
+      keyStr += "Super+";
     if (event.modifiers & Qt.ControlModifier)
       keyStr += "Ctrl+";
     if (event.modifiers & Qt.AltModifier)
@@ -19,7 +21,8 @@ QtObject {
       keyName = String.fromCharCode(event.key);
     } else if (event.key >= Qt.Key_F1 && event.key <= Qt.Key_F12) {
       keyName = "F" + (event.key - Qt.Key_F1 + 1);
-    } else if (rawText && rawText.length > 0 && rawText.charCodeAt(0) > 31 && rawText.charCodeAt(0) !== 127) {
+    } else if (rawText && rawText.length > 0 && rawText.charCodeAt(0) > 32 && rawText.charCodeAt(0) !== 127) {
+      // Space (32) is named below: as text it would store a bare blank ("Alt+ ").
       keyName = rawText.toUpperCase();
 
       if (event.modifiers & Qt.ShiftModifier) {

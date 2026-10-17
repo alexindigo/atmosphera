@@ -1304,6 +1304,38 @@
     "subTab": null
   },
   {
+    "labelKey": "panels.general.input-method-title",
+    "descriptionKey": "panels.general.input-method-description",
+    "widget": "NLabel",
+    "tab": 0,
+    "tabLabel": "common.general",
+    "subTab": null
+  },
+  {
+    "labelKey": "panels.general.input-method-target-label",
+    "descriptionKey": null,
+    "widget": "NComboBox",
+    "tab": 0,
+    "tabLabel": "common.general",
+    "subTab": null
+  },
+  {
+    "labelKey": "panels.general.input-method-mode-label",
+    "descriptionKey": null,
+    "widget": "NComboBox",
+    "tab": 0,
+    "tabLabel": "common.general",
+    "subTab": null
+  },
+  {
+    "labelKey": "panels.general.input-method-label-label",
+    "descriptionKey": null,
+    "widget": "NTextInput",
+    "tab": 0,
+    "tabLabel": "common.general",
+    "subTab": null
+  },
+  {
     "labelKey": "panels.hooks.session-label",
     "descriptionKey": "panels.hooks.session-description",
     "widget": "HookRow",

@@ -19,6 +19,12 @@ Item {
 
   property int maxKeybinds: 2
   property bool requireModifierForNormalKeys: true
+  // Super (Meta) counts as a modifier for the rule above. Off by default: only callers that
+  // bind Super combos (input-method switches) turn it on.
+  property bool superCountsAsModifier: false
+  // Caller's own refusal: function(keyStr) returning a message to show, or "" to accept.
+  // The recorder runs it after its own checks and knows nothing about what it refuses.
+  property var conflictCheck: null
   signal keybindsChanged(var newKeybinds)
 
   implicitHeight: contentLayout.implicitHeight
@@ -59,6 +65,15 @@ Item {
       ToastService.showWarning(I18n.tr("panels.general.keybinds-conflict-title"), I18n.tr("panels.general.keybinds-conflict-description", {
                                                                                             "action": conflict
                                                                                           }));
+      conflictTimer.restart();
+      return;
+    }
+
+    // 3. Caller's check (e.g. the owner's refusal of a combo)
+    const refusal = root.conflictCheck ? root.conflictCheck(keyStr) : "";
+    if (refusal) {
+      hasConflict = true;
+      ToastService.showWarning(I18n.tr("panels.general.keybinds-conflict-title"), refusal);
       conflictTimer.restart();
       return;
     }
@@ -230,7 +245,7 @@ Item {
                                                                                                                                                                                                                                                                                                       || event.key === Qt.Key_Enter || event.key === Qt.Key_Escape
                                                                                                                                                                                                                                                                                                       || event.key === Qt.Key_Space);
 
-          const hasModifier = (event.modifiers & Qt.ControlModifier) || (event.modifiers & Qt.AltModifier);
+          const hasModifier = (event.modifiers & Qt.ControlModifier) || (event.modifiers & Qt.AltModifier) || (root.superCountsAsModifier && (event.modifiers & Qt.MetaModifier));
 
           if (root.requireModifierForNormalKeys && !hasModifier && !isSpecialKey) {
             hasConflict = true;
