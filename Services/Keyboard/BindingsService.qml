@@ -234,6 +234,9 @@ Singleton {
         try {
           NiriSessionInit.regenerate(record.environment, function (success, error, applicable) {
             if (!root._current(record, attempt)) return;
+            // The deployed environment may add or remove an owned niri file that
+            // input-method binds must not collide with; regenerate after it lands.
+            if (success) InputMethodBinds.regenerate();
             record.handoff = success ? (applicable === false ? "NotApplicable" : "Accepted") : "Unknown";
             root._settle(record, attempt, success, error || "");
           });

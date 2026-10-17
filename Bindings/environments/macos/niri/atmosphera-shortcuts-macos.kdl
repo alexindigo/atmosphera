@@ -10,11 +10,7 @@
 //   Ctrl+  → App/terminal actions (Save, Find, SIGINT) — press corner Ctrl
 //   Alt+   → Option actions (typographic symbols) — press physical Win key
 //
-// RESERVED: Ctrl+Space and Alt+Space
-//   Input-method switchers, owned by the i18n layer (atmosphera-i18n.kdl):
-//   Ctrl+Space → toggle Russian (fcitx5 owns switching — single authority
-//   across all installed IMEs including Japanese Mozc and Russian).
-//   Alt+Space  → toggle Japanese (Mozc).
+// Input-method switches are generated into atmosphera-input.kdl from settings.
 //   Note: xkb layout toggle (grp:*_space_toggle) is intentionally disabled below.
 
 input {
@@ -54,8 +50,6 @@ binds {
     // ═══════════════════════════════════════════════════
     // Super+Space (physical Alt+Space — the macOS Cmd position) toggles the
     // native Atmosphera launcher via IPC.
-    // Ctrl+Space / Alt+Space are reserved for input-method switching (see
-    // RESERVED above).
     Super+Space hotkey-overlay-title="Application Launcher" {
         spawn "qs" "-c" "atmosphera" "ipc" "call" "launcher" "toggle";
     }

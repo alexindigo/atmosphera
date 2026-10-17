@@ -27,7 +27,7 @@ Singleton {
   - Default cache directory: ~/.cache/atmosphera
   */
   readonly property alias data: settingsAdapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 60
+  readonly property int settingsVersion: 61
   property bool isDebug: Quickshell.env("ATMOSPHERA_DEBUG") === "1"
   readonly property string shellName: "atmosphera"
   readonly property string configDir: ensureTrailingSlash(Quickshell.env("ATMOSPHERA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/")
@@ -834,6 +834,16 @@ Singleton {
       // Which shortcut environment to apply. "none" leaves the system untouched.
       // Values: "none" | "macos"  (future: "windows", "kde")
       property string environment: "none"
+    }
+
+    // inputMethod
+    property JsonObject inputMethod: JsonObject {
+      // Each switch: { keys: ["Alt+Space"], target: "<fcitx5 IM unique name>", mode: "toggle"|"set", label: "" }
+      property list<var> switches: []
+      property list<var> nextKeys: []        // combos for "next input method"; empty = none
+      property bool launchFcitx5: true       // spawn fcitx5 at session start (as the old i18n file did)
+      // Set once the one-time check of a legacy atmosphera-i18n.kdl has run (converted, kept or nothing to do).
+      property bool legacyI18nChecked: false
     }
 
     // ui

@@ -11,13 +11,32 @@ exist and receives result.json, trace.txt and the journals.
 Profiles. C is defined by a later milestone and exits 3 here.
   A  fcitx5 running with one group, Default (keyboard-us, keyboard-de,
      keyboard-ru). Case 7: next three times cycles us -> de -> ru -> us.
+     Case 14 (M24b): the guest's shipped atmosphera-i18n.kdl is still in
+     place and legacyI18nChecked is unset, so the first shell start converts
+     it. Neither mozc nor keyboard-ru-mac is in a group, so no switch is made,
+     one notice names both, and the file is retired (backed up, removed).
   B  fcitx5 running with the profile this script writes: group US+RU
      (keyboard-us, keyboard-ru-mac) first, then US+JP (keyboard-us, mozc).
      A small focus window (qml6) holds a focused input context, because
      fcitx5 reports an empty CurrentInputMethod while no context has focus.
-     Cases 1-3 and 5, 6, 8 with the shell running; case 9 last, with the shell
+     Cases 1-3 and 5, 6, 8 with the shell running; case 9 with the shell
      stopped, drives the secure-mode fixture (Scripts/dev/fixtures/
      input-method-secure-mode.qml) as the only shell-side client.
+     Cases 10 and 11 (M24) are niri checks on the guest's own ~/.config/niri.
+     Case 10: a fresh profile without atmosphera-i18n.kdl
+     gets atmosphera-input.kdl, the session does not include the i18n file, and
+     the file shows a combo change within 1 s of the shell applying it. Case 11: with the shipped i18n file
+     present, a switch on Alt+Space is skipped and logged, Super+Alt+J is not.
+     Case 12: on three shell starts, setIM mozc at the first available state,
+     before the startup metadata refresh, must dispatch and reach US+JP/mozc.
+     Cases 13-16 (M24b) cover the legacy i18n file. The profile starts with
+     legacyI18nChecked true, so cases 10-12 keep the shipped file as it is.
+     Case 13: the shipped file is put back with the flag unset, and the next
+     start converts it into two switches (backup, removal). Case 16: the start
+     after 13 changes nothing. Case 15: a hand-edited file is kept and
+     untouched, its Super+Space conflict is skipped, and importLegacyI18n()
+     (run by a fixture with the shell stopped) converts it once; an
+     unparseable file is refused without changes.
   D  fcitx5 not running. The shell's DBus proxy activates org.fcitx.Fcitx5 on
      its own (the service file in /usr/share/dbus-1/services), so D lets the
      shell attach to the activated fcitx5, stops it, and then runs case 4.
@@ -28,10 +47,25 @@ is read from the shell's journal ("Layout toast:" lines); the state file from
 $XDG_RUNTIME_DIR/fcitx-input-state.json.
 
 Transient user units, all named after the output basename: imreg-<name>-fcitx5,
-imreg-<name>-focus, imreg-<name>-shell, imreg-<name>-fixture. Each is stopped in
+imreg-<name>-focus, imreg-<name>-shell, imreg-<name>-fixture, and imreg-<name>-legacy-<tag>
+(the legacy import fixture, M24b). Each is stopped in
 a finally block, as is any qs or fcitx5 left running, including D-Bus-activated
 fcitx5 units (dbus-*org.fcitx.Fcitx5*). The fcitx5 profile is
 ~/.config/fcitx5/profile.
+
+Compositors (M27). The compositor is detected from its running instance (niri socket,
+Hyprland instance with a live .socket.sock, mangowc socket); exactly one must run. niri
+runs every profile and case. Every niri run backs up ~/.config/niri into WORK/niri-backup
+before starting a shell and restores it in finally (session and input files excepted;
+niri validate must pass afterwards), regardless of the profile or selected cases.
+Hyprland and mangowc run profile B with --cases 10 only:
+the generated input-method bind file (hyprlang, the Lua route when hyprland.lua exists,
+or mangowc's conf), the compositor's own config check, a combo change in the file with
+the reload, and Hyprland's bind table (hyprctl binds -j) after the change. Case 10 is
+measured as on niri: from the shell's "settings changed; regenerating" line to the file
+(<= 1 s). Both change only after the shell has settled from its startup. Their config
+directory is backed up into WORK/compositor-backup before the run and restored in finally
+(the input files are rewritten header-only and the compositor reloaded).
 
 Exit: 0 when every case passes and cleanup is clean; 1 when a case or the cleanup
 fails; 3 on a setup or precondition failure (the run is not evaluated).
@@ -40,12 +74,15 @@ import argparse
 import ast
 from dataclasses import dataclass, field
 import glob
+import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
+import threading
 import time
 
 HOME = '/home/tester'
@@ -68,8 +105,34 @@ PROFILE_B = [
 PROFILE_GROUPS = {'A': PROFILE_A, 'B': PROFILE_B}
 FIXTURE = Path(__file__).resolve().parent / 'fixtures' / 'input-method-secure-mode.qml'
 FIXTURE_NAME = FIXTURE.name
+LEGACY_FIXTURE = Path(__file__).resolve().parent / 'fixtures' / 'input-method-legacy-import.qml'
+LEGACY_FIXTURE_NAME = LEGACY_FIXTURE.name
+# sha256 of the only shipped atmosphera-i18n.kdl (commit 95d03c3d5).
+SHIPPED_I18N_SHA256 = '1a6c4aeda09bc15264c7a4c2eb031659bbb100e79d686c9510dd50234a7fdb35'
 TOAST_MARK = 'Layout toast:'
 GDBUS = ['gdbus', 'call', '--session', '--dest', 'org.fcitx.Fcitx5', '--object-path', '/controller', '--method']
+NIRI_DIR = Path(HOME) / '.config/niri'
+NIRI_SESSION = 'atmosphera-session.kdl'
+NIRI_INPUT = 'atmosphera-input.kdl'
+NIRI_I18N = 'atmosphera-i18n.kdl'
+# Every test shell regenerates the session and the input file, so the restore leaves them alone.
+NIRI_KEEP = (NIRI_SESSION, NIRI_INPUT)
+INPUT_HEADER = '// Generated by Atmosphera from Settings \u2192 Shortcuts. Do not edit.\n'
+GENERATED_TEXT = 'Generated by Atmosphera from Settings \u2192 Shortcuts. Do not edit.'
+COMPOSITORS = ('niri', 'hyprland', 'mango')
+# Wayland socket of each compositor's session (niri and Hyprland: wayland-1, mangowc: wayland-0).
+WAYLAND = {'niri': 'wayland-1', 'hyprland': 'wayland-1', 'mango': 'wayland-0'}
+WM_DIRS = {'hyprland': Path(HOME) / '.config/hypr', 'mango': Path(HOME) / '.config/mango'}
+# The file the generator always writes; Hyprland's Lua route also writes atmosphera-input.lua.
+WM_INPUT = 'atmosphera-input.conf'
+WM_INPUT_LUA = 'atmosphera-input.lua'
+# The compositor running the session (set by main from the running instance).
+COMP = 'niri'
+COMP_INSTANCE = ''
+SWITCH_JA = {'keys': ['Alt+Space'], 'target': 'mozc', 'mode': 'toggle', 'label': 'Japanese'}
+BIND_JA = ('Alt+Space repeat=false allow-when-locked=true hotkey-overlay-title="Input method: Japanese" '
+           '{ spawn "atmosphera" "ipc" "inputmethod" "toggleIM" "mozc"; }')
+BIND_CTRL_ALT_JA = BIND_JA.replace('Alt+Space', 'Ctrl+Alt+Space', 1)
 FOCUS_QML = '''import QtQuick
 import QtQuick.Controls
 ApplicationWindow {
@@ -109,6 +172,8 @@ class Ctx:
     fcitx_unit: str = ''
     focus_unit: str = ''
     fixture_unit: str = ''
+    niri_backup: object = None
+    wm_backup: object = None
     units: list = field(default_factory=list)
     notes: list = field(default_factory=list)
 
@@ -131,9 +196,11 @@ class Ctx:
             f.write(f'{time.strftime("%H:%M:%S")} {text}\n')
 
 
-def preflight(source, work, output, profile):
+def preflight(source, work, output, profile, cases):
     if profile not in ('A', 'B', 'D'):
         raise SetupError(f'profile {profile} not defined yet (M22 defines A, B and D)')
+    if COMP != 'niri' and (profile != 'B' or cases != ['10']):
+        raise SetupError(f'{COMP}: only profile B with --cases 10 is defined (the other cases check niri files)')
     if not (source / 'shell.qml').is_file() or not (source / 'Configs/defaults.json').is_file():
         raise SetupError(f'{source} is not a shell tree (shell.qml / Configs/defaults.json missing)')
     if work.exists():
@@ -161,10 +228,13 @@ def setup_work(ctx):
         (ctx.profile_dir / name).mkdir(parents=True)
     settings = json.loads((ctx.source / 'Configs/defaults.json').read_text())
     settings['general']['showChangelogOnStartup'] = False
+    # B starts with the legacy check already done (cases 10-12 keep the shipped file); A starts unchecked (case 14).
+    settings['inputMethod']['legacyI18nChecked'] = ctx.profile == 'B'
     (ctx.profile_dir / 'config' / 'settings.json').write_text(json.dumps(settings))
     (ctx.work / 'focus').mkdir()
     (ctx.work / 'focus' / 'probe.qml').write_text(FOCUS_QML)
     shutil.copyfile(FIXTURE, ctx.work / 'shell' / FIXTURE_NAME)
+    shutil.copyfile(LEGACY_FIXTURE, ctx.work / 'shell' / LEGACY_FIXTURE_NAME)
 
 
 def write_fcitx5_profile(groups=PROFILE_B):
@@ -183,8 +253,17 @@ def systemd_run(ctx, unit, argv, env):
 
 
 def base_env():
-    return {'XDG_RUNTIME_DIR': RUNTIME, 'WAYLAND_DISPLAY': 'wayland-1',
+    return {'XDG_RUNTIME_DIR': RUNTIME, 'WAYLAND_DISPLAY': WAYLAND[COMP],
             'DBUS_SESSION_BUS_ADDRESS': BUS}
+
+
+def compositor_env():
+    """Environment that makes a shell (and the reload commands) see the running compositor."""
+    if COMP == 'niri':
+        return {'NIRI_SOCKET': COMP_INSTANCE}
+    if COMP == 'hyprland':
+        return {'HYPRLAND_INSTANCE_SIGNATURE': COMP_INSTANCE}
+    return {'MANGO_INSTANCE_SIGNATURE': COMP_INSTANCE, 'XDG_CURRENT_DESKTOP': 'mango'}
 
 
 def gdbus(ctx, method, *args):
@@ -287,7 +366,7 @@ def qs_env(ctx):
     return dict(base_env(), ATMOSPHERA_CONFIG_DIR=f'{p}/config/', ATMOSPHERA_CACHE_DIR=f'{p}/cache/',
                 ATMOSPHERA_STATE_DIR=f'{p}/state/', ATMOSPHERA_SETTINGS_FILE=f'{p}/config/settings.json',
                 ATMOSPHERA_DEBUG='0', ATMOSPHERA_UPGRADELOG_URL='http://127.0.0.1:9',
-                QT_FORCE_STDERR_LOGGING='1', NIRI_SOCKET=glob.glob(f'{RUNTIME}/niri.*.sock')[0])
+                QT_FORCE_STDERR_LOGGING='1', **compositor_env())
 
 
 def start_shell(ctx):
@@ -538,7 +617,743 @@ def case9(ctx):
     return rec
 
 
-CASES = {'A': [case7], 'B': [case1, case2, case3, case5, case6, case8, case9], 'D': [case4]}
+def niri_input_lines():
+    try:
+        return (NIRI_DIR / NIRI_INPUT).read_text(encoding='utf-8').splitlines()
+    except OSError:
+        return []
+
+
+def stripped(lines):
+    return [line.strip() for line in lines]
+
+
+def bind_lines(lines, combo):
+    return [line for line in stripped(lines) if line.startswith(combo + ' ')]
+
+
+def write_im_section(ctx, switches, next_keys=(), legacy=True):
+    """The inputMethod section file of the test profile; the shell reloads it on change."""
+    path = ctx.profile_dir / 'config' / 'settings' / 'inputMethod.json'
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(path.name + '.tmp')
+    tmp.write_text(json.dumps({'switches': switches, 'nextKeys': list(next_keys), 'launchFcitx5': True,
+                               'legacyI18nChecked': legacy}))
+    os.replace(tmp, path)
+
+
+def niri_validate(path):
+    r = sh(['niri', 'validate', '-c', str(path)], timeout=60)
+    return r.returncode, (r.stdout + r.stderr).strip()
+
+
+def journal_line_after(ctx, needle, after_us, seconds=3.0):
+    """Realtime journal timestamp (µs) of the first line of this shell containing needle after after_us, or None."""
+    deadline = time.monotonic() + seconds
+    while True:
+        out = sh(['journalctl', '--user', '-u', ctx.shell_unit, '--no-pager', '-o', 'json'], timeout=120).stdout
+        for line in out.splitlines():
+            try:
+                entry = json.loads(line)
+            except ValueError:
+                continue
+            message = entry.get('MESSAGE')
+            # journalctl -o json writes MESSAGE as a byte list when the line holds control characters (ANSI colours).
+            if isinstance(message, list):
+                message = bytes(message).decode('utf-8', 'replace')
+            if isinstance(message, str) and needle in message:
+                ts = int(entry.get('__REALTIME_TIMESTAMP', 0))
+                if ts > after_us:
+                    return ts
+        if time.monotonic() >= deadline:
+            return None
+        time.sleep(0.1)
+
+
+def settings_applied_us(ctx, after_us, seconds=3.0):
+    """Realtime journal timestamp (µs) of the first 'settings changed; regenerating' line after after_us, or None."""
+    return journal_line_after(ctx, 'settings changed; regenerating', after_us, seconds)
+
+
+def restart_shell(ctx, tag):
+    """A new shell unit for the next case; the stopped unit's journal is kept beside the output."""
+    stop_shell(ctx)
+    (ctx.output / f'{ctx.shell_unit}-journal.txt').write_text(journal(ctx))
+    ctx.shell_unit = f'imreg-{ctx.name}-shell-{tag}'
+    start_shell(ctx)
+
+
+class NiriEvents:
+    """`niri msg --json event-stream`, read in the background with a receive time per event."""
+
+    def __init__(self):
+        sock = glob.glob(f'{RUNTIME}/niri.*.sock')[0]
+        self.proc = subprocess.Popen(['niri', 'msg', '--json', 'event-stream'], stdout=subprocess.PIPE,
+                                     stderr=subprocess.DEVNULL, text=True,
+                                     env=dict(os.environ, NIRI_SOCKET=sock))
+        self.events = []
+        self.reader = threading.Thread(target=self._read, daemon=True)
+        self.reader.start()
+
+    def _read(self):
+        for line in self.proc.stdout:
+            try:
+                event = json.loads(line)
+            except ValueError:
+                continue
+            self.events.append((time.monotonic(), event))
+
+    def config_loaded(self, lo, hi):
+        """ConfigLoaded events received within [lo, hi] as (time, failed) pairs."""
+        out = []
+        for t, event in list(self.events):
+            if lo <= t <= hi and 'ConfigLoaded' in event:
+                out.append((t, bool(event['ConfigLoaded'].get('failed'))))
+        return out
+
+    def close(self):
+        if self.proc.poll() is None:
+            self.proc.terminate()
+            try:
+                self.proc.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                self.proc.kill()
+
+
+def case10(ctx):
+    return case10_niri(ctx) if COMP == 'niri' else case10_wm(ctx)
+
+
+def wm_route(ctx):
+    """'lua' when Hyprland runs its Lua config (hyprland.lua present), else the compositor's own syntax."""
+    if COMP == 'hyprland' and (WM_DIRS[COMP] / 'hyprland.lua').exists():
+        return 'lua'
+    return 'hyprlang' if COMP == 'hyprland' else 'conf'
+
+
+def wm_input_path(route):
+    return WM_DIRS[COMP] / (WM_INPUT_LUA if route == 'lua' else WM_INPUT)
+
+
+def wm_bind(route, combo, title, mode):
+    """The bind line the generator writes for one combo, as the syntax of the running compositor spells it."""
+    parts = combo.split('+')
+    key, mods = parts[-1], [m.upper() for m in parts[:-1]]
+    spawn = 'atmosphera ipc inputmethod ' + ('setIM' if mode == 'set' else 'toggleIM') + ' mozc'
+    if COMP == 'hyprland' and route == 'lua':
+        return ('hl.bind("' + ' + '.join(mods + [key]) + '", hl.dsp.exec_cmd("' + spawn + '"), '
+                '{ locked = true, repeating = false, description = "' + title + '" })')
+    if COMP == 'hyprland':
+        return 'bindld = ' + ' '.join(mods) + ', ' + key + ', ' + title + ', exec, ' + spawn
+    return 'bindl=' + '+'.join(mods) + ',' + key + ',spawn,' + spawn
+
+
+# The two combos case 10 switches between, per compositor. mangowc's default config binds Alt+space
+# to rofi (the user's own bind, not an Atmosphera-owned file), so mangowc uses other keys.
+WM_COMBOS = {'hyprland': ('Alt+Space', 'Ctrl+Alt+Space'), 'mango': ('Super+Alt+J', 'Ctrl+Alt+J')}
+HYPR_MODMASK = {'SHIFT': 1, 'CTRL': 4, 'ALT': 8, 'SUPER': 64}
+SWITCH_TITLE = 'Input method: Japanese'
+SWITCH_SPAWN = 'atmosphera ipc inputmethod toggleIM mozc'
+
+
+def hypr_binds():
+    """`hyprctl binds -j` as a list, or None when it does not parse."""
+    r = sh(['hyprctl', 'binds', '-j'], timeout=30)
+    try:
+        return json.loads(r.stdout)
+    except ValueError:
+        return None
+
+
+def hypr_bind_loaded(binds, combo, lua):
+    """True when Hyprland has the switch bind for combo: locked, not repeating, titled, and running the IPC call.
+    On the Lua route the command is a Lua callback (dispatcher __lua) whose text binds does not show: the
+    generated file's exact line is checked instead."""
+    parts = combo.split('+')
+    key, mask = parts[-1], sum(HYPR_MODMASK[m.upper()] for m in parts[:-1])
+    return any(b.get('key') == key and b.get('modmask') == mask and b.get('locked') is True
+               and b.get('repeat') is False and b.get('description') == SWITCH_TITLE
+               and (b.get('dispatcher') == '__lua' if lua else b.get('arg') == SWITCH_SPAWN)
+               for b in (binds or []))
+
+
+def wait_shell_settled(ctx, quiet=1.5, cap=20.0):
+    """Waits until this shell has logged nothing for `quiet` seconds (its startup work is done), at most `cap`.
+    A change made during startup would be timed against the startup work on the shell's main thread.
+    Returns the seconds waited, or None when the cap passed first."""
+    start = time.monotonic()
+    while time.monotonic() - start < cap:
+        out = sh(['journalctl', '--user', '-u', ctx.shell_unit, '--no-pager', '-o', 'json'], timeout=120).stdout
+        last = 0
+        for line in out.splitlines():
+            try:
+                last = max(last, int(json.loads(line).get('__REALTIME_TIMESTAMP', 0)))
+            except ValueError:
+                continue
+        if last and time.time_ns() // 1000 - last >= quiet * 1_000_000:
+            return round(time.monotonic() - start, 2)
+        time.sleep(0.25)
+    return None
+
+
+def wm_lines(path):
+    try:
+        return path.read_text(encoding='utf-8').splitlines()
+    except OSError:
+        return []
+
+
+def wm_config_check(ctx):
+    """(ok, text): the compositor's own config check. Hyprland: configerrors (text empty = none).
+    mangowc: mango -p. Its exit status is 1 for an error in the file given, but 0 for one in a sourced
+    file (the error is printed as "[ERROR]"), so the output decides too."""
+    if COMP == 'hyprland':
+        r = sh(['hyprctl', 'configerrors'], timeout=30)
+        return r.returncode == 0 and not r.stdout.strip(), r.stdout.strip()
+    r = sh(['mango', '-c', str(WM_DIRS[COMP] / 'config.conf'), '-p'], timeout=60)
+    text = re.sub(r'\x1b\[[0-9;]*m', '', r.stdout + r.stderr).strip()
+    return r.returncode == 0 and 'ERROR' not in text, text
+
+
+def wm_reload_ok(route, before, after):
+    """Hyprland: no error after the reload that was not there before (and none naming the generated file);
+    the Lua route is strict. mangowc: the config still validates (checked by the caller)."""
+    if COMP != 'hyprland':
+        return True
+    if route == 'lua':
+        return after.strip() == ''
+    known = set(before.splitlines())
+    fresh = [line for line in after.splitlines() if line.strip() and line not in known]
+    return not fresh and WM_INPUT not in after
+
+
+def case10_wm(ctx):
+    route = wm_route(ctx)
+    label = COMP if COMP != 'hyprland' else f'hyprland-{route}'
+    rec = new_record('10', f'{label}: fresh profile: input file generated with the bind; combo change rewritten within 1 s of being applied and reloaded, no new config error', 'B')
+    cfg = WM_DIRS[COMP]
+    inp = wm_input_path(route)
+    # The state setup leaves: the file exists and is empty (the layer sources it, so it must not be missing).
+    inp.write_text('', encoding='utf-8')
+    rec['checks']['input_emptied'] = inp.stat().st_size == 0
+    if COMP == 'hyprland' and route == 'lua':
+        wiring = wm_lines(cfg / 'atmosphera.lua')
+        rec['checks']['wired'] = any(line.strip() == 'require("atmosphera-input")' for line in wiring)
+    elif COMP == 'hyprland':
+        wiring = wm_lines(cfg / 'atmosphera.conf')
+        rec['checks']['wired'] = any(line.strip() == 'source = ~/.config/hypr/atmosphera-input.conf' for line in wiring)
+    else:
+        wiring = wm_lines(cfg / 'atmosphera.conf')
+        rec['checks']['wired'] = 'source=./atmosphera-input.conf' in [line.strip() for line in wiring]
+    rec['observed']['wiring'] = [line for line in wiring if 'atmosphera-input' in line]
+    _, before_text = wm_config_check(ctx)
+    rec['observed']['config_check_before'] = before_text
+    combo_a, combo_b = WM_COMBOS[COMP]
+    write_im_section(ctx, [dict(SWITCH_JA, keys=[combo_a])])
+    restart_shell(ctx, '10')
+    expected = wm_bind(route, combo_a, SWITCH_TITLE, 'toggle')
+    ok, took = wait_for(lambda: expected in [line.strip() for line in wm_lines(inp)], 30, 0.2)
+    rec['checks']['input_file_written'] = ok
+    rec['observed']['input_file_written_s'] = took
+    rec['observed']['settled_before_change_s'] = wait_shell_settled(ctx)
+    lines = wm_lines(inp)
+    rec['observed']['input_file_10'] = lines
+    rec['checks']['input_bind_exact'] = expected in [line.strip() for line in lines]
+    rec['checks']['input_fcitx5'] = any('fcitx5' in line for line in lines)
+    rec['checks']['input_header'] = bool(lines) and 'Generated by Atmosphera' in lines[0]
+    rec['checks']['i18n_not_recreated'] = not (cfg / 'atmosphera-i18n.kdl').exists()
+    _, after_start_text = wm_config_check(ctx)
+    rec['observed']['config_check_after_first_start'] = after_start_text
+    write_us = time.time_ns() // 1000
+    write_im_section(ctx, [dict(SWITCH_JA, keys=[combo_b])])
+    new_expected = wm_bind(route, combo_b, SWITCH_TITLE, 'toggle')
+    ok, took = wait_for(lambda: new_expected in [line.strip() for line in wm_lines(inp)], 5.0, 0.02)
+    file_us = time.time_ns() // 1000
+    applied_us = settings_applied_us(ctx, write_us)
+    rec['checks']['settings_applied_logged'] = applied_us is not None
+    rec['observed']['write_to_file_s'] = round((file_us - write_us) / 1e6, 3) if ok else None
+    if applied_us is not None:
+        rec['observed']['write_to_applied_s'] = round((applied_us - write_us) / 1e6, 3)
+        rec['observed']['applied_to_file_s'] = round((file_us - applied_us) / 1e6, 3)
+    rec['checks']['combo_file_within_1s'] = ok and applied_us is not None and (file_us - applied_us) <= 1_000_000
+    lines = wm_lines(inp)
+    rec['observed']['input_file_10_changed'] = lines
+    rec['checks']['old_combo_gone'] = expected not in [line.strip() for line in lines]
+    rec['checks']['new_bind_exact'] = new_expected in [line.strip() for line in lines]
+    # The reload follows this change's write, which follows the applied line: the applied line is the lower bound.
+    reloaded = journal_line_after(ctx, f'reloaded {"mangowc" if COMP == "mango" else "Hyprland"} config',
+                                  applied_us if applied_us is not None else write_us, 3.0)
+    rec['checks']['reload_logged_after_change'] = reloaded is not None
+    rec['observed']['reload_logged_after_applied_s'] = round((reloaded - applied_us) / 1e6, 3) if reloaded and applied_us else None
+    after_ok, after_text = wm_config_check(ctx)
+    rec['observed']['config_check_after_change'] = after_text
+    if COMP == 'hyprland':
+        rec['checks']['no_new_config_error_after_reload'] = wm_reload_ok(route, before_text, after_text)
+        # Hyprland's own bind table: the reload loaded the new combo and dropped the old one.
+        lua = route == 'lua'
+        loaded, took = wait_for(lambda: hypr_bind_loaded(hypr_binds(), combo_b, lua), 3.0, 0.1)
+        rec['checks']['reload_loaded_new_bind'] = loaded
+        rec['observed']['reload_loaded_new_bind_s'] = took
+        rec['checks']['reload_dropped_old_bind'] = not hypr_bind_loaded(hypr_binds(), combo_a, lua)
+        rec['observed']['hypr_binds_after_change'] = hypr_binds()
+    else:
+        rec['checks']['mango_config_valid_after_reload'] = after_ok
+    (ctx.output / 'config-check.txt').write_text(json.dumps({'before': before_text, 'after': after_text}, indent=2) + '\n')
+    stop_shell(ctx)
+    (ctx.output / 'shell-10-journal.txt').write_text(journal(ctx))
+    return rec
+
+
+def case10_niri(ctx):
+    rec = new_record('10', 'fresh profile: input file generated, no i18n recreated, combo change shows in the file within 1 s of being applied', 'B')
+    i18n = NIRI_DIR / NIRI_I18N
+    aside = ctx.work / 'niri-aside'
+    aside.mkdir(exist_ok=True)
+    if i18n.exists():
+        shutil.move(str(i18n), str(aside / NIRI_I18N))
+    rec['checks']['i18n_set_aside'] = not i18n.exists()
+    write_im_section(ctx, [dict(SWITCH_JA)])
+    restart_shell(ctx, '10')
+    ok, took = wait_for(lambda: bind_lines(niri_input_lines(), 'Alt+Space'), 30, 0.2)
+    rec['checks']['input_file_written'] = ok
+    rec['observed']['input_file_written_s'] = took
+    # The session is regenerated by the startup chain (BindingsService, keyd, xremap, then NiriSessionInit),
+    # after the input file: wait for it, and for the shell to settle, before the checks and the change.
+    _, took = wait_for(lambda: 'atmosphera-i18n.kdl' not in session_text() and 'include "atmosphera-input.kdl"' in session_text(), 30, 0.2)
+    rec['observed']['session_regenerated_s'] = took
+    rec['observed']['settled_before_change_s'] = wait_shell_settled(ctx)
+    lines = niri_input_lines()
+    rec['observed']['input_file_10'] = lines
+    rec['checks']['i18n_not_recreated'] = not i18n.exists()
+    session = session_text()
+    rec['checks']['session_includes_input'] = 'include "atmosphera-input.kdl"' in session
+    rec['checks']['session_no_i18n'] = 'atmosphera-i18n.kdl' not in session
+    rec['checks']['input_header'] = bool(lines) and lines[0].startswith('// Generated by Atmosphera')
+    rec['checks']['input_fcitx5_spawn'] = 'spawn-at-startup "fcitx5"' in stripped(lines)
+    rec['checks']['input_bind_exact'] = BIND_JA in stripped(lines)
+    rc, out = niri_validate(NIRI_DIR / NIRI_SESSION)
+    rec['checks']['niri_validate_before_change'] = rc == 0
+    rec['observed']['niri_validate_before_change'] = out
+    events = NiriEvents()
+    try:
+        write_us = time.time_ns() // 1000
+        t_write = time.monotonic()
+        write_im_section(ctx, [dict(SWITCH_JA, keys=['Ctrl+Alt+Space'])])
+        ok, took = wait_for(lambda: bind_lines(niri_input_lines(), 'Ctrl+Alt+Space'), 5.0, 0.02)
+        t_seen = time.monotonic()
+        file_us = time.time_ns() // 1000
+        # The limit runs from the shell applying the settings change (its journal line), not from the write.
+        applied_us = settings_applied_us(ctx, write_us)
+        rec['checks']['settings_applied_logged'] = applied_us is not None
+        rec['observed']['write_to_file_s'] = round((file_us - write_us) / 1e6, 3) if ok else None
+        if applied_us is not None:
+            rec['observed']['write_to_applied_s'] = round((applied_us - write_us) / 1e6, 3)
+            rec['observed']['applied_to_file_s'] = round((file_us - applied_us) / 1e6, 3)
+        rec['checks']['combo_file_within_1s'] = (ok and applied_us is not None
+                                                 and (file_us - applied_us) <= 1_000_000)
+        lines = niri_input_lines()
+        rec['checks']['old_combo_gone'] = not bind_lines(lines, 'Alt+Space')
+        rec['checks']['new_bind_exact'] = BIND_CTRL_ALT_JA in stripped(lines)
+        ok, took = wait_for(lambda: any(not failed for _, failed in events.config_loaded(t_write, t_seen + 2.0)),
+                            2.0, 0.05)
+        loaded = events.config_loaded(t_write, t_seen + 2.0)
+        rec['checks']['niri_reloaded_ok_within_2s'] = ok
+        rec['observed']['niri_config_loaded_after_change'] = [
+            {'after_write_s': round(t - t_write, 3), 'failed': failed} for t, failed in loaded]
+    finally:
+        events.close()
+    rc, out = niri_validate(NIRI_DIR / NIRI_SESSION)
+    rec['checks']['niri_validate_after_change'] = rc == 0
+    rec['observed']['niri_validate_after_change'] = out
+    stop_shell(ctx)
+    (ctx.output / 'shell-10-journal.txt').write_text(journal(ctx))
+    return rec
+
+
+def case11(ctx):
+    rec = new_record('11', 'shipped i18n present: Alt+Space switch skipped and logged, Super+Alt+J generated', 'B')
+    i18n = NIRI_DIR / NIRI_I18N
+    aside = ctx.work / 'niri-aside' / NIRI_I18N
+    if aside.exists() and not i18n.exists():
+        shutil.move(str(aside), str(i18n))
+    rec['checks']['i18n_restored'] = i18n.exists() and i18n.read_bytes() == (ctx.work / 'niri-backup' / NIRI_I18N).read_bytes()
+    write_im_section(ctx, [dict(SWITCH_JA),
+                           {'keys': ['Super+Alt+J'], 'target': 'mozc', 'mode': 'set', 'label': ''}])
+    restart_shell(ctx, '11')
+    ok, took = wait_for(lambda: bind_lines(niri_input_lines(), 'Super+Alt+J'), 30, 0.2)
+    lines = niri_input_lines()
+    rec['observed']['input_file_11'] = lines
+    rec['checks']['super_alt_j_generated_setIM'] = ok and any('"setIM" "mozc"' in line
+                                                             for line in bind_lines(lines, 'Super+Alt+J'))
+    rec['checks']['alt_space_not_generated'] = not bind_lines(lines, 'Alt+Space')
+    # No label: the title falls back to the IM's name from fcitx5 (Mozc), which the shell learns after the first generation.
+    named, took = wait_for(lambda: any('"Input method: Mozc"' in line for line in bind_lines(niri_input_lines(), 'Super+Alt+J')), 5, 0.2)
+    rec['checks']['fallback_title_is_im_name'] = named
+    rec['observed']['fallback_title_s'] = took
+    session = (NIRI_DIR / NIRI_SESSION).read_text(encoding='utf-8') if (NIRI_DIR / NIRI_SESSION).exists() else ''
+    rec['checks']['session_includes_i18n'] = 'include "atmosphera-i18n.kdl"' in session
+    logged, took = wait_for(lambda: any('Alt+Space' in line and NIRI_I18N in line
+                                        for line in journal(ctx).splitlines()), 10, 0.5)
+    rec['checks']['skip_logged_naming_both'] = logged
+    rec['observed']['skip_logged_s'] = took
+    rc, out = niri_validate(NIRI_DIR / NIRI_SESSION)
+    rec['checks']['niri_validate'] = rc == 0
+    rec['observed']['niri_validate'] = out
+    stop_shell(ctx)
+    (ctx.output / 'shell-11-journal.txt').write_text(journal(ctx))
+    return rec
+
+
+def case12(ctx):
+    rec = new_record('12', 'setIM mozc as soon as fcitx5 is available on three shell starts', 'B')
+    attempts = []
+    for attempt in range(1, 4):
+        stop_shell(ctx)
+        (ctx.output / f'{ctx.shell_unit}-journal.txt').write_text(journal(ctx))
+        gdbus(ctx, 'SwitchInputMethodGroup', GROUP_RU)
+        gdbus(ctx, 'SetCurrentIM', 'keyboard-us')
+        baseline, _ = wait_for(lambda: truth_is(ctx, GROUP_RU, 'keyboard-us'), 3)
+        ctx.shell_unit = f'imreg-{ctx.name}-shell-12-{attempt}'
+        systemd_run(ctx, ctx.shell_unit, ['/usr/bin/qs', '-p', str(ctx.shell_qml)], qs_env(ctx))
+        # Do not use start_shell's slower IPC-discovery poll or query truth here:
+        # issue the request immediately on the first available state response.
+        available, startup_s = wait_for(lambda: (shell_state(ctx) or {}).get('available') is True, 90, 0.02)
+        t_available = time.monotonic()
+        t_call = time.monotonic()
+        rc, out = ipc(ctx, 'setIM', 'mozc')
+        delay_s = t_call - t_available
+        ctx.trace(f'case 12 attempt {attempt}: setIM sent {delay_s:.6f} s after available')
+        reached, truth_s = wait_for(lambda: truth_is(ctx, GROUP_JP, 'mozc'), 3)
+        followed, state_s = wait_for(lambda: shell_matches(ctx, GROUP_JP, 'mozc'), 1.0)
+        checks = {'baseline_fcitx5': baseline, 'available': available, 'setIM_ok': rc == 0 and out == 'ok',
+                  'fcitx5_US+JP_mozc_3s': reached, 'state_follows_1s': followed}
+        for name, passed in checks.items():
+            rec['checks'][f'attempt_{attempt}_{name}'] = passed
+        attempts.append({'attempt': attempt, 'available_after_start_s': startup_s,
+                         'call_after_available_s': delay_s, 'setIM': out, 'setIM_rc': rc,
+                         'fcitx5_s': truth_s, 'state_s': state_s, 'checks': checks,
+                         'truth': truth(ctx), 'state_final': shell_state(ctx)})
+        ctx.trace(f'case 12 attempt {attempt}: {"PASS" if all(checks.values()) else "FAIL"} {checks}')
+    rec['observed']['attempts'] = attempts
+    return rec
+
+
+SHIPPED_SWITCHES = [
+    {'keys': ['Alt+Space'], 'target': 'mozc', 'mode': 'toggle', 'label': 'Japanese (mozc)'},
+    {'keys': ['Ctrl+Space'], 'target': 'keyboard-ru-mac', 'mode': 'toggle', 'label': 'Russian'},
+]
+BIND_SHIPPED_JA = ('Alt+Space repeat=false allow-when-locked=true hotkey-overlay-title="Input method: Japanese (mozc)" '
+                   '{ spawn "atmosphera" "ipc" "inputmethod" "toggleIM" "mozc"; }')
+BIND_SHIPPED_RU = ('Ctrl+Space repeat=false allow-when-locked=true hotkey-overlay-title="Input method: Russian" '
+                   '{ spawn "atmosphera" "ipc" "inputmethod" "toggleIM" "keyboard-ru-mac"; }')
+BIND_EDITED_RU = ('Super+Space repeat=false allow-when-locked=true hotkey-overlay-title="Input method: Russian" '
+                  '{ spawn "atmosphera" "ipc" "inputmethod" "toggleIM" "keyboard-ru-mac"; }')
+# One convertible bind on Super+Space: the file differs from the shipped one.
+EDITED_I18N = ('// Hand-edited legacy file\n'
+               'spawn-at-startup "fcitx5"\n\n'
+               'binds {\n'
+               '    Super+Space  allow-when-locked=true hotkey-overlay-title="Input method: Russian" {\n'
+               '        spawn "atmosphera" "ipc" "inputmethod" "toggleIM" "keyboard-ru-mac" "US+RU";\n'
+               '    }\n'
+               '}\n').encode('utf-8')
+UNPARSEABLE_I18N = ('// Hand-edited legacy file without an input-method bind\n'
+                    'binds {\n'
+                    '    Super+Space { spawn "foo" "bar"; }\n'
+                    '}\n').encode('utf-8')
+CONFLICT_SWITCH = {'keys': ['Super+Space'], 'target': 'mozc', 'mode': 'toggle', 'label': ''}
+RUSSIAN_SWITCH = {'keys': ['Super+Space'], 'target': 'keyboard-ru-mac', 'mode': 'toggle', 'label': 'Russian'}
+
+
+def sha256_of(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def section_json(ctx):
+    try:
+        return json.loads((ctx.profile_dir / 'config' / 'settings' / 'inputMethod.json').read_text())
+    except (OSError, ValueError):
+        return None
+
+
+def backup_dir(ctx):
+    return ctx.profile_dir / 'config' / 'backups'
+
+
+def backup_names(ctx):
+    return sorted(p.name for p in backup_dir(ctx).iterdir()) if backup_dir(ctx).is_dir() else []
+
+
+def i18n_bytes():
+    p = NIRI_DIR / NIRI_I18N
+    return p.read_bytes() if p.exists() else None
+
+
+def session_text():
+    p = NIRI_DIR / NIRI_SESSION
+    return p.read_text(encoding='utf-8') if p.exists() else ''
+
+
+def restore_shipped_i18n(ctx):
+    shutil.copyfile(ctx.niri_backup / NIRI_I18N, NIRI_DIR / NIRI_I18N)
+
+
+def write_legacy_file(content):
+    tmp = NIRI_DIR / (NIRI_I18N + '.tmp')
+    tmp.write_bytes(content)
+    os.replace(tmp, NIRI_DIR / NIRI_I18N)
+
+
+def legacy_import(ctx, tag):
+    """Runs the import fixture with the shell stopped; (count, error) from its LEGACY_IMPORT row."""
+    unit = f'imreg-{ctx.name}-legacy-{tag}'
+    systemd_run(ctx, unit, ['/usr/bin/qs', '-p', str(ctx.work / 'shell' / LEGACY_FIXTURE_NAME)], qs_env(ctx))
+    wait_for(lambda: 'LEGACY_IMPORT|' in journal_of(ctx, unit), 90, 0.5)
+    wait_for(lambda: sh(['systemctl', '--user', 'is-active', '--quiet', unit]).returncode != 0, 30, 0.5)
+    rows = []
+    for line in journal_of(ctx, unit).splitlines():
+        i = line.find('LEGACY_IMPORT|')
+        if i >= 0:
+            rows.append(json.loads(line[i + len('LEGACY_IMPORT|'):]))
+    ctx.trace(f'legacy import {tag}: {rows}')
+    return rows[0] if rows else {}
+
+
+def case13(ctx):
+    rec = new_record('13', 'shipped i18n file converted: two switches, backup, file removed, session without the include, no failed niri reload', 'B')
+    restore_shipped_i18n(ctx)
+    write_im_section(ctx, [], legacy=False)
+    rec['checks']['setup_shipped_bytes'] = i18n_bytes() == (ctx.niri_backup / NIRI_I18N).read_bytes()
+    before = set(backup_names(ctx))
+    events = NiriEvents()
+    try:
+        t0 = time.monotonic()
+        restart_shell(ctx, '13')
+        gone, took = wait_for(lambda: not (NIRI_DIR / NIRI_I18N).exists(), 30, 0.2)
+        rec['checks']['file_removed'] = gone
+        rec['observed']['file_removed_s'] = took
+        wait_for(lambda: bool((section_json(ctx) or {}).get('legacyI18nChecked')), 10, 0.2)
+        wait_for(lambda: bind_lines(niri_input_lines(), 'Alt+Space') and bind_lines(niri_input_lines(), 'Ctrl+Space'), 10, 0.2)
+        t1 = time.monotonic()
+    finally:
+        events.close()
+    section = section_json(ctx) or {}
+    rec['checks']['switches_on_disk'] = section.get('switches') == SHIPPED_SWITCHES
+    rec['checks']['legacy_flag_on_disk'] = section.get('legacyI18nChecked') is True
+    new = [n for n in backup_names(ctx) if n not in before]
+    rec['observed']['new_backups'] = new
+    rec['checks']['one_backup_identical'] = (len(new) == 1
+                                             and (backup_dir(ctx) / new[0]).read_bytes() == (ctx.niri_backup / NIRI_I18N).read_bytes())
+    session = session_text()
+    rec['checks']['session_no_i18n'] = 'atmosphera-i18n.kdl' not in session
+    rec['checks']['session_includes_input'] = 'include "atmosphera-input.kdl"' in session
+    lines = niri_input_lines()
+    rec['observed']['input_file_13'] = lines
+    rec['checks']['input_binds_both'] = BIND_SHIPPED_JA in stripped(lines) and BIND_SHIPPED_RU in stripped(lines)
+    rc, out = niri_validate(NIRI_DIR / NIRI_SESSION)
+    rec['checks']['niri_validate'] = rc == 0
+    rec['observed']['niri_validate'] = out
+    rec['observed']['niri_config_loaded'] = [{'after_start_s': round(t - t0, 3), 'failed': failed}
+                                             for t, failed in events.config_loaded(t0, t1 + 2.0)]
+    rec['checks']['no_failed_niri_reload'] = not any(failed for _, failed in events.config_loaded(t0, t1 + 2.0))
+    logged = [line for line in journal(ctx).splitlines() if 'legacy i18n' in line]
+    rec['observed']['legacy_log'] = logged
+    rec['checks']['no_notice_when_all_converted'] = not any('notice shown' in line for line in logged)
+    return rec
+
+
+def case16(ctx):
+    rec = new_record('16', 'second start after the conversion: settings, files, backups and binds unchanged', 'B')
+
+    def snapshot():
+        data = i18n_bytes()
+        return {'section': section_json(ctx), 'backups': backup_names(ctx),
+                'i18n': None if data is None else hashlib.sha256(data).hexdigest(),
+                'input': niri_input_lines(), 'session': session_text()}
+    before = snapshot()
+    rec['observed']['before'] = {k: v for k, v in before.items() if k != 'input'}
+    restart_shell(ctx, '16')
+    wait_for(lambda: (shell_state(ctx) or {}).get('available') is True, 90, 0.2)
+    time.sleep(3.0)  # the startup checks and any regeneration
+    after = snapshot()
+    rec['checks']['section_unchanged'] = after['section'] == before['section']
+    rec['checks']['legacy_flag_still_true'] = bool((after['section'] or {}).get('legacyI18nChecked')) is True
+    rec['checks']['no_new_backup'] = after['backups'] == before['backups']
+    rec['checks']['i18n_still_absent'] = after['i18n'] is None
+    rec['checks']['input_unchanged'] = after['input'] == before['input']
+    rec['checks']['session_unchanged'] = after['session'] == before['session']
+    stop_shell(ctx)
+    (ctx.output / 'shell-16-journal.txt').write_text(journal(ctx))
+    return rec
+
+
+def case15(ctx):
+    rec = new_record('15', 'hand-edited i18n file kept untouched, conflict skipped, importLegacyI18n converts it once, bad file refused', 'B')
+    write_legacy_file(EDITED_I18N)
+    edited_sha = sha256_of(NIRI_DIR / NIRI_I18N)
+    write_im_section(ctx, [CONFLICT_SWITCH])
+    restart_shell(ctx, '15a')
+    conflict, took = wait_for(lambda: any('Super+Space' in line and NIRI_I18N in line
+                                          for line in journal(ctx).splitlines()), 30, 0.5)
+    rec['checks']['conflict_skipped_naming_file'] = conflict
+    rec['observed']['conflict_s'] = took
+    rec['checks']['file_untouched'] = sha256_of(NIRI_DIR / NIRI_I18N) == edited_sha
+    rec['checks']['file_still_included'] = 'include "atmosphera-i18n.kdl"' in session_text()
+    rec['checks']['super_space_not_generated'] = not bind_lines(niri_input_lines(), 'Super+Space')
+    rec['checks']['custom_file_kept_logged'] = any('legacy i18n file kept, not converted:' in line
+                                                   for line in journal(ctx).splitlines())
+    rec['checks']['flag_unchanged_true'] = bool((section_json(ctx) or {}).get('legacyI18nChecked')) is True
+    stop_shell(ctx)
+    (ctx.output / 'shell-15a-journal.txt').write_text(journal(ctx))
+    section_before = section_json(ctx)
+    backups_before = backup_names(ctx)
+    # Unparseable file: refused, nothing changes.
+    write_legacy_file(UNPARSEABLE_I18N)
+    bad_sha = sha256_of(NIRI_DIR / NIRI_I18N)
+    bad = legacy_import(ctx, 'bad')
+    rec['observed']['import_unparseable'] = bad
+    rec['checks']['unparseable_refused'] = bad.get('count') == 0 and bool(bad.get('error'))
+    rec['checks']['unparseable_file_untouched'] = sha256_of(NIRI_DIR / NIRI_I18N) == bad_sha
+    rec['checks']['unparseable_settings_untouched'] = section_json(ctx) == section_before
+    rec['checks']['unparseable_no_backup'] = backup_names(ctx) == backups_before
+    # Parseable: the conflict switch is removed first, so the import adds exactly one switch.
+    write_im_section(ctx, [])
+    write_legacy_file(EDITED_I18N)
+    good = legacy_import(ctx, 'good')
+    rec['observed']['import_edited'] = good
+    rec['checks']['import_returns_one'] = good.get('count') == 1 and good.get('error') == ''
+    section = section_json(ctx) or {}
+    rec['observed']['switches_after_import'] = section.get('switches')
+    rec['checks']['one_super_space_switch'] = section.get('switches') == [RUSSIAN_SWITCH]
+    rec['checks']['flag_true_after_import'] = section.get('legacyI18nChecked') is True
+    rec['checks']['file_removed_after_import'] = not (NIRI_DIR / NIRI_I18N).exists()
+    new = [n for n in backup_names(ctx) if n not in backups_before]
+    rec['checks']['one_backup_after_import'] = (len(new) == 1
+                                                and (backup_dir(ctx) / new[0]).read_bytes() == EDITED_I18N)
+    # The next start: the file and its include are gone, the switch is generated.
+    restart_shell(ctx, '15b')
+    gone, took = wait_for(lambda: bind_lines(niri_input_lines(), 'Super+Space'), 30, 0.2)
+    rec['checks']['switch_generated_after_restart'] = gone and BIND_EDITED_RU in stripped(niri_input_lines())
+    rec['checks']['session_no_i18n_after_restart'] = 'atmosphera-i18n.kdl' not in session_text()
+    rc, out = niri_validate(NIRI_DIR / NIRI_SESSION)
+    rec['checks']['niri_validate'] = rc == 0
+    rec['observed']['niri_validate'] = out
+    stop_shell(ctx)
+    (ctx.output / 'shell-15b-journal.txt').write_text(journal(ctx))
+    return rec
+
+
+def tree_digest(root, skip=()):
+    return {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(root.iterdir())
+            if p.is_file() and p.name not in skip}
+
+
+def backup_niri(ctx):
+    """Copy the guest's ~/.config/niri into WORK/niri-backup (files only: the directory has none else).
+
+    Profiles A and B need the shipped atmosphera-i18n.kdl in place: they test it, and it comes back afterwards.
+    """
+    if not NIRI_DIR.is_dir():
+        raise SetupError(f'{NIRI_DIR} does not exist in the guest')
+    if ctx.profile in ('A', 'B') and (not (NIRI_DIR / NIRI_I18N).is_file()
+                                     or sha256_of(NIRI_DIR / NIRI_I18N) != SHIPPED_I18N_SHA256):
+        raise SetupError(f'{NIRI_DIR / NIRI_I18N} is not the shipped file; restore it before the run')
+    dst = ctx.work / 'niri-backup'
+    dst.mkdir()
+    for p in NIRI_DIR.iterdir():
+        if p.is_file():
+            shutil.copy2(p, dst / p.name)
+    ctx.niri_backup = dst
+
+
+def restore_niri(ctx):
+    """Put ~/.config/niri back as backed up; the session and input files are not restored."""
+    backup = ctx.niri_backup
+    before = tree_digest(backup)
+    for name in before:
+        if name not in NIRI_KEEP:
+            shutil.copy2(backup / name, NIRI_DIR / name)
+    for p in NIRI_DIR.iterdir():
+        if p.is_file() and p.name not in before and p.name not in NIRI_KEEP:
+            p.unlink()
+    # The session includes the input file, so it must exist: header only, as the generator writes it when fcitx5 is absent.
+    (NIRI_DIR / NIRI_INPUT).write_text(INPUT_HEADER, encoding='utf-8')
+    expected = {k: v for k, v in before.items() if k not in NIRI_KEEP}
+    actual = tree_digest(NIRI_DIR, skip=NIRI_KEEP)
+    rc, out = niri_validate(NIRI_DIR / NIRI_SESSION)
+    return {'identical_except_kept': actual == expected, 'files': sorted(expected),
+            'final_validate_rc': rc, 'final_validate': out,
+            'passed': actual == expected and rc == 0}
+
+
+def backup_wm(ctx):
+    """Copy the compositor's config directory into WORK/compositor-backup (files only)."""
+    src = WM_DIRS[COMP]
+    if not src.is_dir():
+        raise SetupError(f'{src} does not exist in the guest')
+    dst = ctx.work / 'compositor-backup'
+    dst.mkdir()
+    for p in src.iterdir():
+        if p.is_file():
+            shutil.copy2(p, dst / p.name)
+    ctx.wm_backup = dst
+
+
+def restore_wm(ctx):
+    """Put the compositor's config directory back as backed up; the input files are rewritten header-only
+    and the compositor reloaded, so no test bind stays loaded."""
+    src = WM_DIRS[COMP]
+    keep = (WM_INPUT, WM_INPUT_LUA)
+    before = tree_digest(ctx.wm_backup)
+    for name in before:
+        if name not in keep:
+            shutil.copy2(ctx.wm_backup / name, src / name)
+    for p in src.iterdir():
+        if p.is_file() and p.name not in before and p.name not in keep:
+            p.unlink()
+    marker = '-- ' if COMP == 'hyprland' and (src / 'hyprland.lua').exists() else '# '
+    (src / WM_INPUT).write_text(marker + GENERATED_TEXT + '\n', encoding='utf-8')
+    expected = {k: v for k, v in before.items() if k not in keep}
+    actual = tree_digest(src, skip=keep)
+    if COMP == 'hyprland':
+        sh(['hyprctl', 'reload'], timeout=60)
+    else:
+        sh(['mmsg', 'dispatch', 'reload_config'], timeout=60)
+    ok, text = wm_config_check(ctx)
+    return {'identical_except_kept': actual == expected, 'files': sorted(expected), 'config_check_rc_ok': ok,
+            'config_check': text, 'passed': actual == expected}
+
+
+def case14(ctx):
+    rec = new_record('14', 'shipped i18n file, no group holds mozc or keyboard-ru-mac: no switch, one notice, file retired, niri valid', 'A')
+    removed, took = wait_for(lambda: not (NIRI_DIR / NIRI_I18N).exists(), 30, 0.2)
+    rec['checks']['file_removed'] = removed
+    rec['observed']['file_removed_s'] = took
+    wait_for(lambda: bool((section_json(ctx) or {}).get('legacyI18nChecked')), 10, 0.2)
+    section = section_json(ctx) or {}
+    # The section file is sparse: an empty list at its default is not written.
+    rec['checks']['no_switches'] = section.get('switches', []) == []
+    rec['checks']['legacy_flag_on_disk'] = section.get('legacyI18nChecked') is True
+    backups = backup_names(ctx)
+    rec['observed']['backups'] = backups
+    rec['checks']['backup_is_shipped_bytes'] = (len(backups) == 1 and (backup_dir(ctx) / backups[0]).read_bytes()
+                                                == (ctx.niri_backup / NIRI_I18N).read_bytes())
+    logged = [line for line in journal(ctx).splitlines() if 'legacy i18n' in line]
+    rec['observed']['legacy_log'] = logged
+    notices = [line for line in logged if 'notice shown' in line]
+    rec['checks']['one_notice_naming_both'] = (len(notices) == 1 and 'mozc' in notices[0]
+                                               and 'keyboard-ru-mac' in notices[0])
+    rec['checks']['both_refusals_logged'] = sum(1 for line in logged if 'bind not converted:' in line) == 2
+    rec['checks']['session_no_i18n'] = 'atmosphera-i18n.kdl' not in session_text()
+    rc, out = niri_validate(NIRI_DIR / NIRI_SESSION)
+    rec['checks']['niri_validate'] = rc == 0
+    rec['observed']['niri_validate'] = out
+    rec['checks']['shell_alive'] = sh(['systemctl', '--user', 'is-active', '--quiet', ctx.shell_unit]).returncode == 0
+    return rec
+
+
+CASES = {'A': [case7, case14],
+         'B': [case1, case2, case3, case5, case6, case8, case9, case10, case11, case12, case13, case16, case15],
+         'D': [case4]}
 
 
 def stop_everything(ctx):
@@ -553,20 +1368,54 @@ def stop_everything(ctx):
             'fcitx5_running_after_stop': fcitx5_running()}
 
 
+def detect_compositor():
+    """(name, instance) of the one compositor running in the guest session."""
+    found = {
+        'niri': glob.glob(f'{RUNTIME}/niri.*.sock'),
+        # A live instance has its .socket.sock; a dead one leaves its directory and log behind.
+        'hyprland': [p for p in glob.glob(f'{RUNTIME}/hypr/*') if os.path.exists(os.path.join(p, '.socket.sock'))],
+        'mango': glob.glob(f'{RUNTIME}/mango-*.sock'),
+    }
+    running = [name for name in COMPOSITORS if found[name]]
+    if len(running) != 1:
+        raise SetupError(f'expected exactly one running compositor, found {running or "none"}')
+    if len(found[running[0]]) != 1:
+        raise SetupError(f'{running[0]}: expected one instance, found {len(found[running[0]])}')
+    instance = found[running[0]][0]
+    return running[0], (os.path.basename(instance) if running[0] == 'hyprland' else instance)
+
+
+def selected_cases(profile, wanted):
+    chosen = [c for c in CASES[profile] if not wanted or c.__name__.removeprefix('case') in wanted]
+    if wanted and len(chosen) != len(wanted):
+        raise SetupError(f'unknown case id in {",".join(wanted)} for profile {profile}')
+    return chosen
+
+
 def run(args):
     source = args.source.resolve()
     work = args.work.resolve()
     output = args.output.resolve()
     ctx = Ctx(source, work, output, args.profile, output.name)
+    cases = []
     result = {'label': output.name, 'profile': args.profile, 'source': str(source), 'work': str(work),
+              'compositor': COMP, 'cases_requested': args.cases,
               'units': {'shell': ctx.shell_unit, 'fcitx5': ctx.fcitx_unit, 'focus': ctx.focus_unit},
-              'setup_error': None, 'cases': [], 'cleanup': {}, 'passed': False}
+              'setup_error': None, 'cases': [], 'cleanup': {}, 'niri': None, 'compositor_restore': None,
+              'passed': False}
     started = False
     try:
-        preflight(source, work, output, args.profile)
+        preflight(source, work, output, args.profile, args.cases)
+        cases = selected_cases(args.profile, args.cases)
         output.mkdir(parents=True)
         started = True
         setup_work(ctx)
+        # Every admitted run starts a shell, which can rewrite the compositor's config.
+        # Own the snapshot here, independently of the profile and selected cases.
+        if COMP == 'niri':
+            backup_niri(ctx)
+        else:
+            backup_wm(ctx)
         if args.profile in PROFILE_GROUPS:
             start_fcitx5(ctx, PROFILE_GROUPS[args.profile])
             start_focus(ctx)
@@ -575,7 +1424,7 @@ def run(args):
         start_shell(ctx)
         if args.profile == 'D':
             detach_fcitx5(ctx)
-        for case in CASES[args.profile]:
+        for case in cases:
             cid = case.__name__.removeprefix('case')
             try:
                 rec = case(ctx)
@@ -598,11 +1447,24 @@ def run(args):
                 text = sh(['journalctl', '--user', '-u', unit, '--no-pager', '-o', 'cat'], timeout=120).stdout
                 (output / name).write_text(text)
             result['cleanup'] = stop_everything(ctx)
+            if ctx.niri_backup is not None:
+                try:
+                    result['niri'] = restore_niri(ctx)
+                except (OSError, subprocess.SubprocessError) as e:
+                    result['niri'] = {'passed': False, 'error': f'{type(e).__name__}: {e}'}
             result['notes'] = ctx.notes
+            if ctx.wm_backup is not None:
+                try:
+                    result['compositor_restore'] = restore_wm(ctx)
+                except (OSError, subprocess.SubprocessError) as e:
+                    result['compositor_restore'] = {'passed': False, 'error': f'{type(e).__name__}: {e}'}
+            niri_ok = result['niri'] is None or result['niri'].get('passed') is True
+            wm_ok = result['compositor_restore'] is None or result['compositor_restore'].get('passed') is True
+            niri_ok = niri_ok and wm_ok
             result['passed'] = (result['setup_error'] is None and bool(result['cases'])
                                 and all(c['passed'] for c in result['cases'])
                                 and not result['cleanup']['qs_running_after_stop']
-                                and not result['cleanup']['fcitx5_running_after_stop'])
+                                and not result['cleanup']['fcitx5_running_after_stop'] and niri_ok)
             (output / 'result.json').write_text(json.dumps(result, indent=2, ensure_ascii=False) + '\n')
     if result['setup_error']:
         return 3
@@ -615,8 +1477,13 @@ def main(argv=None):
     ap.add_argument('--work', type=Path, required=True)
     ap.add_argument('--output', type=Path, required=True)
     ap.add_argument('--profile', choices=PROFILES, required=True)
+    ap.add_argument('--cases', default='', help='comma-separated case ids (default: every case of the profile)')
     args = ap.parse_args(argv)
-    os.environ.update(XDG_RUNTIME_DIR=RUNTIME, WAYLAND_DISPLAY='wayland-1', DBUS_SESSION_BUS_ADDRESS=BUS)
+    args.cases = [c.strip() for c in args.cases.split(',') if c.strip()]
+    global COMP, COMP_INSTANCE
+    COMP, COMP_INSTANCE = detect_compositor()
+    os.environ.update(XDG_RUNTIME_DIR=RUNTIME, WAYLAND_DISPLAY=WAYLAND[COMP], DBUS_SESSION_BUS_ADDRESS=BUS,
+                      **compositor_env())
     return run(args)
 
 

@@ -121,6 +121,7 @@ ShellRoot {
           IdleInhibitorService.init();
           IdleService.init();
           InputMethodService.init();
+          InputMethodBinds.init();
           LogindService.init();
           LockerService.init();
           PowerProfileService.init();

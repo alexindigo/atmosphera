@@ -2,9 +2,9 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import "../../Helpers/OwnedProcess.js" as OwnedProcess
 import qs.Commons
 import qs.Services.UI
-import "../../Helpers/OwnedProcess.js" as OwnedProcess
 
 Singleton {
   id: root
@@ -12,8 +12,11 @@ Singleton {
   readonly property string niriDir: root.xdgConfigHome + "/niri"
   readonly property string sessionConfig: root.niriDir + "/atmosphera-session.kdl"
   readonly property string baselineSource: Quickshell.shellDir + "/Configs/niri/atmosphera.kdl"
-  readonly property string i18nSource: Quickshell.shellDir + "/Configs/niri/atmosphera-i18n.kdl"
   property bool _busy: false
+  // Set by InputMethodBinds while it retires atmosphera-i18n.kdl: the session is
+  // generated without the include first, so niri never reloads a config that
+  // includes a file that is about to be removed.
+  property bool excludeI18n: false
   property var _pendingLoader: null
   property string _nonce: Date.now() + "-" + Math.random().toString(16).substring(2)
   property int _serial: 0
@@ -24,21 +27,25 @@ Singleton {
 
   function regenerate(environment, complete) {
     if (!Quickshell.env("NIRI_SOCKET")) {
-      if (typeof complete === "function") complete(true, "", false);
+      if (typeof complete === "function")
+        complete(true, "", false);
       return;
     }
     if (root._busy) {
-      if (typeof complete === "function") complete(false, "Concurrent niri generation rejected", true);
+      if (typeof complete === "function")
+        complete(false, "Concurrent niri generation rejected", true);
       return;
     }
     root._busy = true;
     var terminal = false;
     function finish(success, error) {
-      if (terminal) return;
+      if (terminal)
+        return;
       terminal = true;
       root._busy = false;
       root._pendingLoader = null;
-      if (typeof complete === "function") complete(success, error || "", true);
+      if (typeof complete === "function")
+        complete(success, error || "", true);
     }
     ipcLoader.active = true;
     var temporary = root.sessionConfig + ".tmp-" + root._nonce + "-" + (++root._serial);
@@ -46,9 +53,16 @@ Singleton {
     function inspect(path, callback) {
       OwnedProcess.run(root, ["python3", io, "inspect", path], null, function (result) {
         var payload;
-        try { payload = JSON.parse(result.stdout); }
-        catch (error) { finish(false, "Could not read session file state"); return; }
-        if (!result.success || !payload.ok) { finish(false, "Session file read failed"); return; }
+        try {
+          payload = JSON.parse(result.stdout);
+        } catch (error) {
+          finish(false, "Could not read session file state");
+          return;
+        }
+        if (!result.success || !payload.ok) {
+          finish(false, "Session file read failed");
+          return;
+        }
         callback(payload.state);
       });
     }
@@ -63,10 +77,10 @@ Singleton {
     }
     var script = `set -eu
 umask 077
-DIR="$1"; BASELINE_SRC="$2"; PEER_PID="$3"; ENVV="$4"; TEMP="$5"; I18N_SRC="$6"
+DIR="$1"; BASELINE_SRC="$2"; PEER_PID="$3"; ENVV="$4"; TEMP="$5"; EXCLUDE_I18N="$6"
 mkdir -p "$DIR"
 [ -f "$DIR/atmosphera.kdl" ] || cp "$BASELINE_SRC" "$DIR/atmosphera.kdl"
-[ -f "$DIR/atmosphera-i18n.kdl" ] || cp "$I18N_SRC" "$DIR/atmosphera-i18n.kdl"
+[ -f "$DIR/atmosphera-input.kdl" ] || : > "$DIR/atmosphera-input.kdl"
 PID="$PEER_PID"
 if [ -z "$PID" ]; then
   INODE=$(awk -v p="$NIRI_SOCKET" '$NF == p {print $7; exit}' /proc/net/unix 2>/dev/null || true)
@@ -95,30 +109,39 @@ set -C
     else echo "include \\\"$BASE\\\""; fi
   fi
   echo 'include "atmosphera.kdl"'
-  echo 'include "atmosphera-i18n.kdl"'
+  if [ "$EXCLUDE_I18N" != "1" ] && [ -f "$DIR/atmosphera-i18n.kdl" ]; then echo 'include "atmosphera-i18n.kdl"'; fi
+  echo 'include "atmosphera-input.kdl"'
   if [ "$ENVV" = "macos" ] && [ -f "$DIR/atmosphera-shortcuts-macos.kdl" ]; then
     echo 'include "atmosphera-shortcuts-macos.kdl"'
   fi
 } > "$TEMP"
 `;
+
     try {
       inspect(root.sessionConfig, function (base) {
         var peer = ipcLoader.item && ipcLoader.item.peerPid > 0 ? String(ipcLoader.item.peerPid) : "";
-        OwnedProcess.run(root, ["sh", "-c", script, "sh", root.niriDir, root.baselineSource,
-          peer, environment, temporary, root.i18nSource], null, function (generated) {
-          if (!generated.success) { finish(false, "Session generation failed: " + generated.error); return; }
+        OwnedProcess.run(root, ["sh", "-c", script, "sh", root.niriDir, root.baselineSource, peer, environment, temporary, root.excludeI18n ? "1" : "0"], null, function (generated) {
+          if (!generated.success) {
+            finish(false, "Session generation failed: " + generated.error);
+            return;
+          }
           inspect(temporary, function (prepared) {
-            OwnedProcess.run(root, ["python3", io, "promote", root.sessionConfig, temporary],
-              JSON.stringify({ "base": base, "prepared_sha256": prepared.sha256, "delete": false,
-                "conflicts": Settings.cacheDir + "session-conflicts" }), function (published) {
-                var output;
-                try { output = JSON.parse(published.stdout); } catch (error) {}
-                if (!published.success || !output || !output.ok) {
-                  finish(false, "Session publication/readback failed at " + root.sessionConfig);
-                  return;
-                }
-                handoff();
-              });
+            OwnedProcess.run(root, ["python3", io, "promote", root.sessionConfig, temporary], JSON.stringify({
+                                                                                                               "base": base,
+                                                                                                               "prepared_sha256": prepared.sha256,
+                                                                                                               "delete": false,
+                                                                                                               "conflicts": Settings.cacheDir + "session-conflicts"
+                                                                                                             }), function (published) {
+                                                                                                               var output;
+                                                                                                               try {
+                                                                                                                 output = JSON.parse(published.stdout);
+                                                                                                               } catch (error) {}
+                                                                                                               if (!published.success || !output || !output.ok) {
+                                                                                                                 finish(false, "Session publication/readback failed at " + root.sessionConfig);
+                                                                                                                 return;
+                                                                                                               }
+                                                                                                               handoff();
+                                                                                                             });
           });
         });
       });

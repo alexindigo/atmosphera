@@ -161,9 +161,9 @@ Singleton {
     calls.forEach(function (c, i) {
       root._call(c.method, c.args, function (error, values) {
         results[i] = {
-                       "error": error,
-                       "values": values
-                     };
+          "error": error,
+          "values": values
+        };
         remaining -= 1;
         if (remaining === 0)
           done(results);
@@ -213,52 +213,65 @@ Singleton {
     });
   }
 
+  // A cache is authoritative only after both lists (including every group's
+  // members) have arrived. Keep the synchronous IPC refusal when they are ready;
+  // otherwise dispatch and report any later refusal through the same finish.
+  function _request(method, target, callback, refusal, run) {
+    var report = function (error) {
+      if (error)
+        Logger.w("InputMethodService", method, target, error);
+      if (callback)
+        callback(error);
+    };
+    var refused = !root.fcitx5Available ? "unavailable" : root._listsReady ? refusal() : "";
+    if (refused) {
+      report(refused);
+      return refused;
+    }
+    root._serial(function (done) {
+      var finish = function (error) {
+        report(error);
+        done();
+      };
+      root._withSwitchState(function (error) {
+        if (error) {
+          finish(error);
+          return;
+        }
+        var reason = refusal();
+        if (reason)
+          finish(reason);
+        else
+          run(finish);
+      });
+    });
+    return "";
+  }
+
   // Switches to input method `target`: its group first when it is not the
   // current one, then the IM. Returns the reason when the request is refused
   // (unavailable, unknown, or in no group); "" when it was dispatched. callback
   // always runs once: at once with the refusal, or later with "" on success or
   // the error once the state has been re-read.
   function switchTo(target, callback) {
-    var refused = root._switchRefusal(target);
-    if (refused) {
-      Logger.w("InputMethodService", "switchTo", target, refused);
-      if (callback)
-        callback(refused);
-      return refused;
-    }
-    root._serial(function (done) {
-      root._switchNow(target, "", function (error) {
-        if (callback)
-          callback(error);
-        done();
-      });
+    return root._request("switchTo", target, callback, function () {
+      return root._switchRefusal(target);
+    }, function (finish) {
+      root._switchNow(target, "", finish);
     });
-    return "";
   }
 
   // Same contract as switchTo, for a group.
   function setGroup(name, callback) {
-    var refused = "";
-    if (!root.fcitx5Available)
-      refused = "unavailable";
-    else if (!name)
-      refused = "missing group";
-    else if (root.groups.indexOf(name) < 0)
-      refused = "unknown group " + name;
-    if (refused) {
-      Logger.w("InputMethodService", "setGroup", name, refused);
-      if (callback)
-        callback(refused);
-      return refused;
-    }
-    root._serial(function (done) {
-      root._setGroupNow(name, function (error) {
-        if (callback)
-          callback(error);
-        done();
-      });
+    return root._request("setGroup", name, callback, function () {
+      if (!root.fcitx5Available)
+        return "unavailable";
+      if (!name)
+        return "missing group";
+      return root.groups.indexOf(name) < 0 ? "unknown group " + name : "";
+    }, function (finish) {
+      root._setGroupNow(name, finish);
     });
-    return "";
   }
 
   // Toggle: pressing `target` switches to it and remembers the group and IM
@@ -269,82 +282,51 @@ Singleton {
   property var _toggleReturn: null
 
   function toggleTo(target, callback) {
-    var refused = root._switchRefusal(target);
-    if (refused) {
-      Logger.w("InputMethodService", "toggleTo", target, refused);
-      if (callback)
-        callback(refused);
-      return refused;
-    }
-    root._serial(function (done) {
-      root.queryState(function () {
-        var finish = function (error) {
-          if (error)
-            Logger.w("InputMethodService", "toggleTo", target, error);
-          if (callback)
-            callback(error);
-          done();
-        };
-        if (root.currentIM !== target) {
-          root._toggleReturn = root.currentIM ? {
-                                                  "group": root.currentGroup,
-                                                  "im": root.currentIM
-                                                } : null;
-          root._switchNow(target, "", finish);
-          return;
-        }
-        var back = root._toggleReturn;
-        root._toggleReturn = null;
-        if (back) {
-          root._switchNow(back.im, back.group, finish);
-          return;
-        }
-        var others = root._membersOf(root.currentGroup).filter(function (im) {
-          return im !== target;
-        });
-        if (others.length === 0) {
-          finish(target + " has no other input method to return to");
-          return;
-        }
-        root._switchNow(others[0], root.currentGroup, finish);
+    return root._request("toggleTo", target, callback, function () {
+      return root._switchRefusal(target);
+    }, function (finish) {
+      if (root.currentIM !== target) {
+        root._toggleReturn = root.currentIM ? {
+                                                "group": root.currentGroup,
+                                                "im": root.currentIM
+                                              } : null;
+        root._switchNow(target, "", finish);
+        return;
+      }
+      var back = root._toggleReturn;
+      root._toggleReturn = null;
+      if (back) {
+        root._switchNow(back.im, back.group, finish);
+        return;
+      }
+      var others = root._membersOf(root.currentGroup).filter(function (im) {
+        return im !== target;
       });
+      if (others.length === 0) {
+        finish(target + " has no other input method to return to");
+        return;
+      }
+      root._switchNow(others[0], root.currentGroup, finish);
     });
-    return "";
   }
 
   // Switches to the next input method of the current group, wrapping around.
   // Same contract as switchTo.
   function next(callback) {
-    var refused = "";
-    if (!root.fcitx5Available)
-      refused = "unavailable";
-    else if (root._membersOf(root.currentGroup).length === 0)
-      refused = "no input method in the current group";
-    if (refused) {
-      Logger.w("InputMethodService", "next", refused);
-      if (callback)
-        callback(refused);
-      return refused;
-    }
-    root._serial(function (done) {
-      root.queryState(function () {
-        var finish = function (error) {
-          if (error)
-            Logger.w("InputMethodService", "next", error);
-          if (callback)
-            callback(error);
-          done();
-        };
-        var members = root._membersOf(root.currentGroup);
-        if (members.length === 0) {
-          finish("no input method in the current group");
-          return;
-        }
-        var target = members[(members.indexOf(root.currentIM) + 1) % members.length];
-        root._switchNow(target, root.currentGroup, finish);
-      });
+    return root._request("next", "", callback, function () {
+      if (!root.fcitx5Available)
+        return "unavailable";
+      // The first state query may not have arrived yet even with loaded lists.
+      return root.currentGroup && root._membersOf(root.currentGroup).length === 0 ? "no input method in the current group" : "";
+    }, function (finish) {
+      var members = root._membersOf(root.currentGroup);
+      if (members.length === 0) {
+        finish("no input method in the current group");
+        return;
+      }
+      var target = members[(members.indexOf(root.currentIM) + 1) % members.length];
+      root._switchNow(target, root.currentGroup, finish);
     });
-    return "";
   }
 
   // Logs once when the group a caller names for an IM does not contain it.
@@ -352,18 +334,25 @@ Singleton {
   property bool _groupHintLogged: false
 
   function noteGroupHint(name, group) {
-    if (root._groupHintLogged || !group || root.groups.length === 0)
+    if (root._groupHintLogged || !group || !root.fcitx5Available)
       return;
-    if (root._groupsContaining(name).indexOf(group) >= 0)
-      return;
-    root._groupHintLogged = true;
-    Logger.w("InputMethodService", "group hint", group, "does not contain", name, "- ignored");
+    root._withLists(function (error) {
+      if (error || root._groupHintLogged || root._groupsContaining(name).indexOf(group) >= 0)
+        return;
+      root._groupHintLogged = true;
+      Logger.w("InputMethodService", "group hint", group, "does not contain", name, "- ignored");
+    });
   }
 
   // Runs after the state has been re-read: switch the group if needed, then the IM.
   // group: a preferred group (may be ""); cb(error) once done.
   function _switchNow(target, group, cb) {
-    root.queryState(function () {
+    // Also used by secure-mode restore, outside the public request dispatcher.
+    root._withSwitchState(function (error) {
+      if (error) {
+        cb(error);
+        return;
+      }
       var resolved = root._groupFor(target, group);
       if (!resolved) {
         cb(target + " is in no group");
@@ -418,23 +407,37 @@ Singleton {
       return;
     }
     var seq = ++root._querySeq;
-    root._callAll([{ "method": "CurrentInputMethodGroup", "args": [] },
-                   { "method": "CurrentInputMethod", "args": [] },
-                   { "method": "CurrentInputMethodInfo", "args": [] },
-                   { "method": "State", "args": [] }], function (results) {
-      var ok = results.every(function (r) {
-        return r.error === "";
-      });
-      if (seq > root._appliedSeq) {
-        root._appliedSeq = seq;
-        if (ok)
-          root._applyState(results);
-        else
-          root._resetCurrent();
-      }
-      if (callback)
-        callback(ok);
-    });
+    root._callAll([
+                    {
+                      "method": "CurrentInputMethodGroup",
+                      "args": []
+                    },
+                    {
+                      "method": "CurrentInputMethod",
+                      "args": []
+                    },
+                    {
+                      "method": "CurrentInputMethodInfo",
+                      "args": []
+                    },
+                    {
+                      "method": "State",
+                      "args": []
+                    }
+                  ], function (results) {
+                    var ok = results.every(function (r) {
+                      return r.error === "";
+                    });
+                    if (seq > root._appliedSeq) {
+                      root._appliedSeq = seq;
+                      if (ok)
+                        root._applyState(results);
+                      else
+                        root._resetCurrent();
+                    }
+                    if (callback)
+                      callback(ok);
+                  });
   }
 
   // Results of queryState's calls, in order: group, IM, IM info, State.
@@ -479,6 +482,11 @@ Singleton {
   // fcitx5 went away: forget everything it reported. A lock snapshot taken from
   // that process is dropped too; the next fcitx5 is held afresh while locked.
   function _resetState() {
+    root._availableIMsSeq += 1;
+    root._groupsSeq += 1;
+    root._availableIMsLoaded = false;
+    root._groupsLoaded = false;
+    root._finishListWaiters("unavailable");
     root._resetCurrent();
     root.groups = [];
     root.groupMembers = ({});
@@ -488,7 +496,7 @@ Singleton {
   }
 
   // Why a switch to `target` is refused, or "" when it can be dispatched.
-  // Uses the cached lists, which refresh() and InputMethodGroupsChanged keep current.
+  // Called only with loaded lists by _request.
   function _switchRefusal(target) {
     if (!root.fcitx5Available)
       return "unavailable";
@@ -527,6 +535,59 @@ Singleton {
 
   // ——— Metadata refresh ———
 
+  property bool _availableIMsLoaded: false
+  property bool _groupsLoaded: false
+  readonly property bool _listsReady: _availableIMsLoaded && _groupsLoaded
+  property int _availableIMsSeq: 0
+  property int _groupsSeq: 0
+  property var _listWaiters: []
+
+  // Bound the initial list wait before issuing state calls. A groups-changed
+  // signal can invalidate membership during that query, so check again before
+  // allowing the caller to make any list-dependent decision.
+  function _withSwitchState(done) {
+    root._withLists(function (error) {
+      if (error) {
+        done(error);
+        return;
+      }
+      root.queryState(function () {
+        root._withLists(done);
+      });
+    });
+  }
+
+  function _withLists(done) {
+    if (!root.fcitx5Available) {
+      done("unavailable");
+    } else if (root._listsReady) {
+      done("");
+    } else {
+      root._listWaiters.push(done);
+      if (!listWaitTimer.running) {
+        listWaitTimer.start();
+        root.refresh();
+      }
+    }
+  }
+
+  function _finishListWaiters(error) {
+    if (!error && !root._listsReady)
+      return;
+    listWaitTimer.stop();
+    var waiters = root._listWaiters;
+    root._listWaiters = [];
+    waiters.forEach(function (done) {
+      done(error);
+    });
+  }
+
+  Timer {
+    id: listWaitTimer
+    interval: 2000
+    onTriggered: root._finishListWaiters("input method lists timed out")
+  }
+
   Timer {
     id: refreshTimer
     interval: 500
@@ -545,6 +606,8 @@ Singleton {
   function refresh() {
     if (!root.fcitx5Available)
       return;
+    root._availableIMsLoaded = false;
+    root._groupsLoaded = false;
     _fetchAvailableIMs();
     _fetchGroups();
     root.queryState();
@@ -552,9 +615,15 @@ Singleton {
   }
 
   function _fetchAvailableIMs() {
+    var seq = ++root._availableIMsSeq;
+    root._availableIMsLoaded = false;
     root._call("AvailableInputMethods", [], function (error, result) {
-      if (error || !result || result.length === 0)
+      if (seq !== root._availableIMsSeq)
         return;
+      if (error || !result || result.length === 0) {
+        root._finishListWaiters(error || "invalid input method list reply");
+        return;
+      }
       var ims = [];
       var arr = result[0];
       if (arr && typeof arr.length === "number") {
@@ -577,14 +646,22 @@ Singleton {
         }
       }
       root.availableIMs = ims;
+      root._availableIMsLoaded = true;
+      root._finishListWaiters("");
     });
   }
 
   // Group names, then each group's members, applied together.
   function _fetchGroups() {
+    var seq = ++root._groupsSeq;
+    root._groupsLoaded = false;
     root._call("InputMethodGroups", [], function (error, result) {
-      if (error || !result || result.length === 0)
+      if (seq !== root._groupsSeq)
         return;
+      if (error || !result || result.length === 0) {
+        root._finishListWaiters(error || "invalid input method groups reply");
+        return;
+      }
       var names = [];
       var arr = result[0];
       if (arr && typeof arr.length === "number") {
@@ -592,9 +669,21 @@ Singleton {
           names.push(String(arr[i] || ""));
       }
       var calls = names.map(function (name) {
-        return { "method": "InputMethodGroupInfo", "args": [name] };
+        return {
+          "method": "InputMethodGroupInfo",
+          "args": [name]
+        };
       });
       root._callAll(calls, function (infos) {
+        if (seq !== root._groupsSeq)
+          return;
+        var failed = infos.find(function (info) {
+          return info.error !== "";
+        });
+        if (failed) {
+          root._finishListWaiters(failed.error);
+          return;
+        }
         var members = {};
         names.forEach(function (name, i) {
           var list = [];
@@ -607,8 +696,85 @@ Singleton {
         });
         root.groups = names;
         root.groupMembers = members;
+        root._groupsLoaded = true;
+        root._finishListWaiters("");
       });
     });
+  }
+
+  // ——— Switch settings validation ———
+  // Returns "" for a valid entry of Settings.data.inputMethod.switches, else a
+  // short English reason. A key combo is "+"-joined parts: every part but the
+  // last is one of Super, Ctrl, Alt, Shift (exact spelling, each at most once);
+  // the last part is a non-empty key name that is not a modifier. Zero
+  // modifiers is allowed ("Henkan").
+  function validateSwitch(sw) {
+    if (!sw || typeof sw !== "object" || Array.isArray(sw))
+      return "switch is not an object";
+    if (!root._isListLike(sw.keys))
+      return "keys must be a list";
+    if (sw.keys.length === 0)
+      return "keys is empty";
+    for (var i = 0; i < sw.keys.length; i++) {
+      var comboError = root._validateKeyCombo(sw.keys[i]);
+      if (comboError !== "")
+        return comboError;
+    }
+    if (typeof sw.target !== "string" || sw.target.trim() === "")
+      return "target is empty";
+    if (sw.mode !== "toggle" && sw.mode !== "set")
+      return "mode must be toggle or set";
+    return "";
+  }
+
+  // Returns "" for a valid key combo (the rules of validateSwitch's keys), else a reason.
+  function validateCombo(combo) {
+    return root._validateKeyCombo(combo);
+  }
+
+  // done(error) once fcitx5's IM and group lists are loaded ("" on success).
+  // Errors: "unavailable" without fcitx5, or a list timeout.
+  function whenListsReady(done) {
+    root._withLists(done);
+  }
+
+  // Why a switch to `target` would be refused, or "" when it would work.
+  // Only valid once whenListsReady reported success.
+  function switchRefusal(target) {
+    return root._listsReady ? root._switchRefusal(String(target)) : "lists not loaded";
+  }
+
+  // Values held in QML list<var> properties (and arrays nested in their entries)
+  // are array-like, not true JS arrays: Array.isArray is false for them. Read
+  // them by index and length. A string is not a list.
+  function _isListLike(value) {
+    return value !== null && typeof value === "object" && typeof value.length === "number" && value.length >= 0 && Math.floor(value.length) === value.length;
+  }
+
+  function _validateKeyCombo(combo) {
+    if (typeof combo !== "string")
+      return "key combo is not a string";
+    if (combo === "")
+      return "key combo is empty";
+    var modifiers = ["Super", "Ctrl", "Alt", "Shift"];
+    var parts = combo.split("+");
+    var key = parts.pop();
+    var seen = [];
+    for (var i = 0; i < parts.length; i++) {
+      var part = parts[i];
+      if (part === "")
+        return "key combo " + combo + " has an empty part";
+      if (modifiers.indexOf(part) < 0)
+        return "key combo " + combo + " has unknown modifier " + part;
+      if (seen.indexOf(part) >= 0)
+        return "key combo " + combo + " repeats modifier " + part;
+      seen.push(part);
+    }
+    if (key === "")
+      return "key combo " + combo + " has no key";
+    if (modifiers.indexOf(key) >= 0)
+      return "key combo " + combo + " ends in a modifier";
+    return "";
   }
 
   // ——— Flag emoji lookup ———

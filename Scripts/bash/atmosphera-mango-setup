@@ -28,6 +28,11 @@ install -m 0644 "$FRAG_SRC" "$DROPIN"
 printf '\n# Startup: exec-once only — mango re-runs plain exec= on every\n# config reload, which would respawn the shell each time.\nexec-once=qs -n -c atmosphera\n' >> "$DROPIN"
 echo "Installed: ${DROPIN}"
 
+# --- Generated input-method binds: the drop-in sources them, so they must exist ---
+# InputMethodBinds writes atmosphera-input.conf; an empty file until the shell's
+# first run keeps the source line from failing.
+[ -f "${MANGO_DIR}/atmosphera-input.conf" ] || : > "${MANGO_DIR}/atmosphera-input.conf"
+
 # --- Wire the marked source line into the user's config ---
 # mangowc reads ~/.config/mango/config.conf, falling back to the system
 # skeleton /etc/mango/config.conf. If no user config exists yet, create it

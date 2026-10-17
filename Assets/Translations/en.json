@@ -2146,6 +2146,10 @@
       "description": "Command failed: {command}\nExit code: {code}",
       "title": "Custom command failed"
     },
+    "legacy-i18n": {
+      "skipped": "Not converted. These input methods are not in an fcitx5 group, so their shortcuts cannot switch to them: {targets}",
+      "title": "Input method shortcuts"
+    },
     "do-not-disturb": {
       "disabled": "Do Not Disturb disabled",
       "disabled-desc": "Showing all notifications",

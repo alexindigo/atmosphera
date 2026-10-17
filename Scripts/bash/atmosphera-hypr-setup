@@ -70,6 +70,14 @@ else
 fi
 echo "Installed: ${DROPIN}"
 
+# --- Generated input-method binds: the layer sources them, so they must exist ---
+# InputMethodBinds writes atmosphera-input.conf (and .lua on the Lua route); an empty
+# file until the shell's first run keeps the source line from failing.
+[ -f "${HYPR_DIR}/atmosphera-input.conf" ] || : > "${HYPR_DIR}/atmosphera-input.conf"
+if [ "$LUA_MODE" = true ]; then
+  [ -f "${HYPR_DIR}/atmosphera-input.lua" ] || : > "${HYPR_DIR}/atmosphera-input.lua"
+fi
+
 # --- Wire the marked source line into the user's config ---
 strip_block() {
   local file="$1" begin="$2" end="$3"

@@ -149,6 +149,12 @@
   "bindings": {
     "environment": "none"
   },
+  "inputMethod": {
+    "switches": [],
+    "nextKeys": [],
+    "launchFcitx5": true,
+    "legacyI18nChecked": false
+  },
   "ui": {
     "fontDefault": "",
     "fontFixed": "",
