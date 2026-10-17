@@ -198,25 +198,26 @@ Singleton {
 
     var widgetId = "plugin:" + pluginId;
 
-    // Create new objects to trigger QML property change detection
-    var newPluginWidgets = Object.assign({}, pluginWidgets);
-    newPluginWidgets[widgetId] = component;
-    pluginWidgets = newPluginWidgets;
-
+    // Create new objects to trigger QML property change detection.
+    // Metadata is assigned before the component map.
     var newPluginMetadata = Object.assign({}, pluginWidgetMetadata);
     newPluginMetadata[widgetId] = metadata || {};
     pluginWidgetMetadata = newPluginMetadata;
-
-    // Also add to main widgets object for unified access - reassign to trigger change
-    var newWidgets = Object.assign({}, widgets);
-    newWidgets[widgetId] = component;
-    widgets = newWidgets;
 
     var newMetadata = Object.assign({}, widgetMetadata);
     newMetadata[widgetId] = Object.assign({}, {
                                             "showBackground": true
                                           }, metadata || {});
     widgetMetadata = newMetadata;
+
+    var newPluginWidgets = Object.assign({}, pluginWidgets);
+    newPluginWidgets[widgetId] = component;
+    pluginWidgets = newPluginWidgets;
+
+    // Also add to main widgets object for unified access - reassign to trigger change
+    var newWidgets = Object.assign({}, widgets);
+    newWidgets[widgetId] = component;
+    widgets = newWidgets;
 
     Logger.i("DesktopWidgetRegistry", "Registered plugin widget:", widgetId);
     root.pluginWidgetRegistryUpdated();
@@ -232,22 +233,23 @@ Singleton {
       return false;
     }
 
-    // Create new objects without the widget to trigger QML property change detection
-    var newPluginWidgets = Object.assign({}, pluginWidgets);
-    delete newPluginWidgets[widgetId];
-    pluginWidgets = newPluginWidgets;
-
+    // Create new objects without the widget to trigger QML property change detection.
+    // Metadata is assigned before the component map.
     var newPluginMetadata = Object.assign({}, pluginWidgetMetadata);
     delete newPluginMetadata[widgetId];
     pluginWidgetMetadata = newPluginMetadata;
 
-    var newWidgets = Object.assign({}, widgets);
-    delete newWidgets[widgetId];
-    widgets = newWidgets;
-
     var newMetadata = Object.assign({}, widgetMetadata);
     delete newMetadata[widgetId];
     widgetMetadata = newMetadata;
+
+    var newPluginWidgets = Object.assign({}, pluginWidgets);
+    delete newPluginWidgets[widgetId];
+    pluginWidgets = newPluginWidgets;
+
+    var newWidgets = Object.assign({}, widgets);
+    delete newWidgets[widgetId];
+    widgets = newWidgets;
 
     Logger.i("DesktopWidgetRegistry", "Unregistered plugin widget:", widgetId);
     root.pluginWidgetRegistryUpdated();

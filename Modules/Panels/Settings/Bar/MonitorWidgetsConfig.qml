@@ -143,6 +143,14 @@ NBox {
     }
   }
 
+  // Plugin bar widgets can register while this panel is open
+  Connections {
+    target: BarWidgetRegistry
+    function onPluginWidgetRegistryUpdated() {
+      root.updateAvailableWidgetsModel();
+    }
+  }
+
   Component.onCompleted: Qt.callLater(updateAvailableWidgetsModel)
 
   ListModel {

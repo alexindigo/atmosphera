@@ -33,7 +33,9 @@ Singleton {
       });
     }
 
-    root.iconSets[pluginId] = entry;
+    var nextIconSets = Object.assign({}, root.iconSets);
+    nextIconSets[pluginId] = entry;
+    root.iconSets = nextIconSets;
     root._rebuildOrder();
     root.rebuildResolved();
     Logger.i("IconRegistry", "Registered icon set:", pluginId);
@@ -45,7 +47,9 @@ Singleton {
     if (entry && entry._fontLoader) {
       entry._fontLoader.destroy();
     }
-    delete root.iconSets[pluginId];
+    var nextIconSets = Object.assign({}, root.iconSets);
+    delete nextIconSets[pluginId];
+    root.iconSets = nextIconSets;
     root._rebuildOrder();
     root.rebuildResolved();
     Logger.i("IconRegistry", "Unregistered icon set:", pluginId);

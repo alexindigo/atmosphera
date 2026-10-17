@@ -8,6 +8,9 @@ import qs.Modules.Panels.ControlCenter.Widgets
 Singleton {
   id: root
 
+  // Emitted after plugin widgets are registered/unregistered
+  signal pluginWidgetRegistryUpdated
+
   // Widget registry object mapping widget names to components
   property var widgets: ({
                            "AirplaneMode": airplaneModeComponent,
@@ -116,14 +119,27 @@ Singleton {
     // Add plugin: prefix to avoid conflicts with core widgets
     var widgetId = "plugin:" + pluginId;
 
-    pluginWidgets[widgetId] = component;
-    pluginWidgetMetadata[widgetId] = metadata || {};
+    // Publish new map objects so QML bindings on these maps re-evaluate.
+    // Metadata is assigned before the component map.
+    var nextPluginWidgetMetadata = Object.assign({}, pluginWidgetMetadata);
+    nextPluginWidgetMetadata[widgetId] = metadata || {};
+    pluginWidgetMetadata = nextPluginWidgetMetadata;
+
+    var nextWidgetMetadata = Object.assign({}, widgetMetadata);
+    nextWidgetMetadata[widgetId] = metadata || {};
+    widgetMetadata = nextWidgetMetadata;
+
+    var nextPluginWidgets = Object.assign({}, pluginWidgets);
+    nextPluginWidgets[widgetId] = component;
+    pluginWidgets = nextPluginWidgets;
 
     // Also add to main widgets object for unified access
-    widgets[widgetId] = component;
-    widgetMetadata[widgetId] = metadata || {};
+    var nextWidgets = Object.assign({}, widgets);
+    nextWidgets[widgetId] = component;
+    widgets = nextWidgets;
 
     Logger.i("ControlCenterWidgetRegistry", "Registered plugin widget:", widgetId);
+    root.pluginWidgetRegistryUpdated();
     return true;
   }
 
@@ -136,12 +152,26 @@ Singleton {
       return false;
     }
 
-    delete pluginWidgets[widgetId];
-    delete pluginWidgetMetadata[widgetId];
-    delete widgets[widgetId];
-    delete widgetMetadata[widgetId];
+    // Publish new map objects so QML bindings on these maps re-evaluate.
+    // Metadata is assigned before the component map.
+    var nextPluginWidgetMetadata = Object.assign({}, pluginWidgetMetadata);
+    delete nextPluginWidgetMetadata[widgetId];
+    pluginWidgetMetadata = nextPluginWidgetMetadata;
+
+    var nextWidgetMetadata = Object.assign({}, widgetMetadata);
+    delete nextWidgetMetadata[widgetId];
+    widgetMetadata = nextWidgetMetadata;
+
+    var nextPluginWidgets = Object.assign({}, pluginWidgets);
+    delete nextPluginWidgets[widgetId];
+    pluginWidgets = nextPluginWidgets;
+
+    var nextWidgets = Object.assign({}, widgets);
+    delete nextWidgets[widgetId];
+    widgets = nextWidgets;
 
     Logger.i("ControlCenterWidgetRegistry", "Unregistered plugin widget:", widgetId);
+    root.pluginWidgetRegistryUpdated();
     return true;
   }
 

@@ -52,8 +52,8 @@ ColumnLayout {
     }
   ]
 
-  Component.onCompleted: {
-    // Fill out availableWidgets ListModel
+  // Fill out availableWidgets ListModel from the registry
+  function updateAvailableWidgetsModel() {
     availableWidgets.clear();
     var sortedEntries = ControlCenterWidgetRegistry.getAvailableWidgets().slice().sort();
     sortedEntries.forEach(entry => {
@@ -78,6 +78,18 @@ ColumnLayout {
                                 "badges": badges
                               });
     });
+  }
+
+  // Plugin control-center widgets can register while this tab is open
+  Connections {
+    target: ControlCenterWidgetRegistry
+    function onPluginWidgetRegistryUpdated() {
+      root.updateAvailableWidgetsModel();
+    }
+  }
+
+  Component.onCompleted: {
+    updateAvailableWidgetsModel();
     // Starts empty
     cardsModel = [];
 

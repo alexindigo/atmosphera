@@ -31,8 +31,15 @@ Singleton {
 
     var providerId = "plugin:" + pluginId;
 
-    pluginProviders[providerId] = component;
-    pluginProviderMetadata[providerId] = metadata || {};
+    // Publish new map objects so QML bindings on these maps re-evaluate.
+    // Metadata is assigned before the component map.
+    var nextPluginProviderMetadata = Object.assign({}, pluginProviderMetadata);
+    nextPluginProviderMetadata[providerId] = metadata || {};
+    pluginProviderMetadata = nextPluginProviderMetadata;
+
+    var nextPluginProviders = Object.assign({}, pluginProviders);
+    nextPluginProviders[providerId] = component;
+    pluginProviders = nextPluginProviders;
 
     // Instantiate immediately so data loading starts in the background
     var pluginApi = Service.getPluginAPI(pluginId);
@@ -41,7 +48,9 @@ Singleton {
                                               pluginApi: pluginApi
                                             });
       if (instance) {
-        providerInstances[providerId] = instance;
+        var nextProviderInstances = Object.assign({}, providerInstances);
+        nextProviderInstances[providerId] = instance;
+        providerInstances = nextProviderInstances;
         if (instance.init)
           instance.init();
         Logger.i("LauncherProviderRegistry", "Registered and instantiated plugin provider:", providerId);
@@ -65,11 +74,20 @@ Singleton {
 
     if (providerInstances[providerId]) {
       providerInstances[providerId].destroy();
-      delete providerInstances[providerId];
+      var nextProviderInstances = Object.assign({}, providerInstances);
+      delete nextProviderInstances[providerId];
+      providerInstances = nextProviderInstances;
     }
 
-    delete pluginProviders[providerId];
-    delete pluginProviderMetadata[providerId];
+    // Publish new map objects so QML bindings on these maps re-evaluate.
+    // Metadata is assigned before the component map.
+    var nextPluginProviderMetadata = Object.assign({}, pluginProviderMetadata);
+    delete nextPluginProviderMetadata[providerId];
+    pluginProviderMetadata = nextPluginProviderMetadata;
+
+    var nextPluginProviders = Object.assign({}, pluginProviders);
+    delete nextPluginProviders[providerId];
+    pluginProviders = nextPluginProviders;
 
     Logger.i("LauncherProviderRegistry", "Unregistered plugin provider:", providerId);
     root.pluginProviderRegistryUpdated();

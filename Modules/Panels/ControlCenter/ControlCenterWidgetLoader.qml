@@ -24,10 +24,21 @@ Item {
 
   readonly property bool _isPlugin: ControlCenterWidgetRegistry.isPluginWidget(widgetId)
 
+  // The component registered under this id, re-evaluated whenever the registry
+  // publishes a change (plugin registered, re-registered or unregistered).
+  readonly property var _registeredComponent: ControlCenterWidgetRegistry.getWidget(widgetId)
+  on_RegisteredComponentChanged: {
+    if (root._isPlugin)
+      root._loadPluginWidget();
+  }
+
   function _loadPluginWidget() {
-    var comp = ControlCenterWidgetRegistry.getWidget(widgetId);
-    if (!comp)
+    var comp = root._registeredComponent;
+    if (!comp) {
+      // Unregistered: the widget must not stay loaded
+      loader.source = "";
       return;
+    }
     var pluginId = widgetId.substring(7); // Remove "plugin:" prefix
     var api = Service.getPluginAPI(pluginId);
     loader.setSource(comp.url, api ? {
@@ -82,33 +93,7 @@ Item {
 
   // Error handling
   Component.onCompleted: {
-    if (!ControlCenterWidgetRegistry.hasWidget(widgetId)) {
-      Logger.w("ControlCenterWidgetLoader", "Widget not found in registry:", widgetId);
-      // Retry briefly in case the registry initializes after this component
-      retryTimer.start();
-    }
-  }
-
-  // Retry mechanism to cope with early evaluation before registry is ready
-  Timer {
-    id: retryTimer
-    interval: 150
-    repeat: true
-    running: false
-    property int attempts: 0
-    onTriggered: {
-      attempts += 1;
-      if (ControlCenterWidgetRegistry.hasWidget(widgetId)) {
-        loader.sourceComponent = ControlCenterWidgetRegistry.getWidget(widgetId);
-        stop();
-        attempts = 0;
-        return;
-      }
-      if (attempts >= 20) { // ~3s max
-        stop();
-        attempts = 0;
-        Logger.w("ControlCenterWidgetLoader", "Giving up waiting for widget:", widgetId);
-      }
-    }
+    if (!ControlCenterWidgetRegistry.hasWidget(widgetId))
+      Logger.w("ControlCenterWidgetLoader", "Widget not found in registry (waiting for registration):", widgetId);
   }
 }
