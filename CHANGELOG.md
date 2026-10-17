@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.8.2] — 2026-10-16
+
+### 2026-10-16
+
+**Fix**
+
+Plugin widgets no longer stay stuck as placeholders after startup. The bar,
+control center, desktop, launcher and icon registries now publish each plugin
+registration as a new map, so widget slots built before a plugin finished
+loading pick up its widget when it registers. The control center also unloads
+a widget when its plugin unregisters, and the bar and control-center widget
+lists in settings update while open.
+
+- fix(plugins): publish registry changes so widget loaders re-evaluate (`02b5c079c`)
+
+**Development**
+
+A regression run, executed in the test VM, drives every plugin registry and the
+real bar and control-center widget loaders through register, unregister and
+register-again.
+
+- test(plugins): registry reactivity regression (`07fb98e09`)
+
+### 2026-10-15
+
+**Maintenance**
+
+The pinned nixpkgs revision was refreshed for Nix-based development and packaging.
+The lockfile records the updated revision and its corresponding source hash;
+the Quickshell pin is unchanged.
+
+- chore(flake): update flake.lock (`b45e36422`)
+
 ## [0.8.1] — 2026-10-14
 
 ### 2026-10-14
