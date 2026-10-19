@@ -9,6 +9,28 @@ RowLayout {
   required property var request
   readonly property bool editing: pathField.visible
   readonly property var pathParts: request.browser.currentPath === "/" ? ["/"] : request.browser.currentPath.split("/").filter(part => part !== "")
+  readonly property var breadcrumbItems: {
+    var items = [];
+    var segments = pathParts.slice(-3);
+    var leading = pathParts.length > 3;
+    if (leading)
+      items.push({
+                   kind: "ellipsis",
+                   text: "…"
+                 });
+    for (var i = 0; i < segments.length; ++i) {
+      if (leading || i > 0)
+        items.push({
+                     kind: "separator",
+                     text: "›"
+                   });
+      items.push({
+                   kind: "segment",
+                   text: segments[i]
+                 });
+    }
+    return items;
+  }
   signal listingFocusRequested
   spacing: Style.marginXS
 
@@ -25,14 +47,25 @@ RowLayout {
   }
   function breadcrumbGeometry() {
     var gaps = [];
-    var previous = ellipsis.visible ? ellipsis.mapToItem(root, ellipsis.width, 0).x : null;
+    var previous = null;
+    var separator = null;
     for (var i = 0; i < crumbParts.count; ++i) {
       var delegate = crumbParts.itemAt(i);
-      if (!delegate) continue;
+      if (!delegate || !delegate.visible)
+        continue;
       var part = delegate.geometry();
-      if (part.separatorVisible && previous !== null)
-        gaps.push({before: part.separatorLeft - previous, after: part.textLeft - part.separatorRight, clipped: part.textWidth + 0.5 < part.naturalWidth});
-      previous = part.textRight;
+      if (part.kind === "separator") {
+        separator = part;
+      } else {
+        if (part.kind === "segment" && separator && previous !== null)
+          gaps.push({
+                      before: separator.left - previous,
+                      after: part.left - separator.right,
+                      clipped: part.width + 0.5 < part.naturalWidth
+                    });
+        previous = part.right;
+        separator = null;
+      }
     }
     return gaps;
   }
@@ -80,26 +113,36 @@ RowLayout {
         anchors.fill: parent
         anchors.margins: Style.marginXS
         spacing: Style.marginXS
-        NText { id: ellipsis; visible: root.pathParts.length > 3; text: "…"; color: AtmoColor.mOnSurfaceVariant }
         Repeater {
           id: crumbParts
-          model: root.pathParts.slice(-3)
-          RowLayout {
-            required property string modelData
-            required property int index
-            Layout.fillWidth: breadcrumbLine.implicitWidth > breadcrumbLine.width
-            Layout.maximumWidth: implicitWidth
-            spacing: Style.marginXS
+          model: root.breadcrumbItems
+          NText {
+            required property var modelData
+            Layout.fillWidth: modelData.kind === "segment" && breadcrumbLine.implicitWidth > breadcrumbLine.width
+            text: modelData.text
+            color: modelData.kind === "segment" ? AtmoColor.mOnSurface : AtmoColor.mOnSurfaceVariant
+            pointSize: Style.fontSizeM
+            elide: Text.ElideMiddle
             function geometry() {
-              return {separatorVisible: separator.visible, separatorLeft: separator.mapToItem(root, 0, 0).x, separatorRight: separator.mapToItem(root, separator.width, 0).x, textLeft: segment.mapToItem(root, 0, 0).x, textRight: segment.mapToItem(root, segment.width, 0).x, textWidth: segment.width, naturalWidth: segment.implicitWidth};
+              return {
+                kind: modelData.kind,
+                left: mapToItem(root, 0, 0).x,
+                right: mapToItem(root, width, 0).x,
+                width: width,
+                naturalWidth: implicitWidth
+              };
             }
-            AtmoIcon { id: separator; visible: index > 0 || root.pathParts.length > 3; icon: Icon.chevronRight; color: AtmoColor.mOnSurfaceVariant; pointSize: Style.fontSizeS }
-            NText { id: segment; Layout.fillWidth: breadcrumbLine.implicitWidth > breadcrumbLine.width; Layout.maximumWidth: implicitWidth; text: modelData; elide: Text.ElideMiddle; pointSize: Style.fontSizeM; color: AtmoColor.mOnSurface }
           }
         }
-        Item { Layout.fillWidth: true }
+        Item {
+          Layout.fillWidth: true
+        }
       }
-      MouseArea { anchors.fill: parent; cursorShape: Qt.IBeamCursor; onClicked: root.editPath() }
+      MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.IBeamCursor
+        onClicked: root.editPath()
+      }
     }
     ChooserTextField {
       id: pathField
@@ -122,10 +165,22 @@ RowLayout {
     minimumWidth: 150
     accessibleName: I18n.tr("widgets.file-picker.sort-by")
     model: [
-      {key: "name", name: I18n.tr("widgets.file-picker.name")},
-      {key: "size", name: I18n.tr("widgets.file-picker.size")},
-      {key: "type", name: I18n.tr("widgets.file-picker.type")},
-      {key: "modified", name: I18n.tr("widgets.file-picker.modified")}
+      {
+        key: "name",
+        name: I18n.tr("widgets.file-picker.name")
+      },
+      {
+        key: "size",
+        name: I18n.tr("widgets.file-picker.size")
+      },
+      {
+        key: "type",
+        name: I18n.tr("widgets.file-picker.type")
+      },
+      {
+        key: "modified",
+        name: I18n.tr("widgets.file-picker.modified")
+      }
     ]
     currentKey: root.request.browser.sortKey
     onSelected: key => root.request.browser.sortKey = key
