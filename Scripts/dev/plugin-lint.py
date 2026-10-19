@@ -18,7 +18,7 @@ RETIRED = {
     "NIcon": "AtmoIcon", "NIconButton": "AtmoIconButton",
     "NIconButtonHot": "AtmoIconButtonHot", "NIconPicker": "AtmoIconPicker",
     "NAppIcon": "AtmoAppIcon", "NWallpaperBackground": "AtmoWallpaperBackground",
-    "NFilePicker": "AtmoFilePicker", "NWidgetAppearance": "AtmoWidgetAppearance",
+    "NFilePicker": "PortalFilePicker", "NWidgetAppearance": "AtmoWidgetAppearance",
 }
 
 
