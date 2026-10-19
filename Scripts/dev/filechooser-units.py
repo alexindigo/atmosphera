@@ -52,6 +52,21 @@ def main():
     (aux / "unreadable/selected.txt").chmod(0)
     (aux / "denied").chmod(0)
     (aux / "no-search").chmod(0o400)
+    previews = aux / "previews"
+    previews.mkdir()
+    for name, content in {
+        "small.txt": "Hello, 世界\n".encode(),
+        "large.txt": b"a" * 262_145,
+        "limit.txt": b"b" * 262_144,
+        "cut.txt": b"c" * 262_143 + "界".encode(),
+        "invalid.txt": b"hello\xffworld",
+        "nul.txt": b"hello\x00world",
+        "invalid-cut.txt": b"x\xff" + b"x" * 262_144,
+        "unreadable.txt": b"private",
+    }.items():
+        (previews / name).write_bytes(content)
+    (previews / "unreadable.txt").chmod(0)
+    os.mkfifo(previews / "stale.txt")
     profile = runtime / "profile"
     for directory in ("config", "cache", "state", "tmp", "data"):
         (profile / directory).mkdir(parents=True)
@@ -96,7 +111,9 @@ def main():
                 "request.success-once", "request.replace-confirmed", "request.saveFiles-order", "request.choices",
                 "request.current-filter", "request.cancel-inflight", "request.remembered-folder-drives-listing", "request.missing-app-folder-fallback",
                 "memory.per-app-a", "memory.shared-fallback", "memory.top-ten", "memory.newest-first-dedupe",
-                "memory.missing-hidden", "memory.reload-app", "memory.reload-preferences"}
+                 "memory.missing-hidden", "memory.reload-app", "memory.reload-preferences",
+                 "preview.small", "preview.large", "preview.exact-limit", "preview.multibyte-cut",
+                 "preview.invalid-utf8", "preview.missing", "preview.kind-switch", "preview.stale-reply", "preview.pdf-detection"}
     missing = sorted(required - {case["case"] for case in cases})
     files_untouched = all(not (fixtures / name).exists() for name in ("draft.txt", "new # résumé.txt", "brand-new.txt", "stale.txt", "folder/child.txt"))
     files_untouched = files_untouched and (fixtures / "item2.txt").read_bytes() == b"x" * 30 and (fixtures / "item10.png").read_bytes() == b"x" * 10

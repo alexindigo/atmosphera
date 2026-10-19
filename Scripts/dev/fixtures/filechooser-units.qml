@@ -16,6 +16,11 @@ ShellRoot {
   property var responses: []
   property string beforeMemory: ""
   property var beforeNames: []
+  property double staleStarted: 0
+
+  FilePreview {
+    id: preview
+  }
 
   FileBrowser {
     id: fileBrowser
@@ -111,6 +116,82 @@ ShellRoot {
   }
 
   function buildTests() {
+    step(() => I18n.isLoaded && preview.pdfDetectionDone, function () {
+      same("preview.idle", preview.status, "idle");
+      report("preview.pdf-detection", typeof preview.pdfAvailable === "boolean", preview.pdfAvailable);
+      preview.item = {
+        path: aux + "/previews/small.txt"
+      };
+    });
+    step(() => preview.status !== "loading", function () {
+      same("preview.small", [preview.kind, preview.status, preview.text, preview.truncated], ["text", "ready", "Hello, 世界\n", false]);
+      preview.item = {
+        path: aux + "/previews/large.txt"
+      };
+    });
+    step(() => preview.status !== "loading", function () {
+      same("preview.large", [preview.text.length, preview.truncated, preview.status], [262144, true, "ready"]);
+      preview.item = {
+        path: aux + "/previews/limit.txt"
+      };
+    });
+    step(() => preview.status !== "loading", function () {
+      same("preview.exact-limit", [preview.text.length, preview.truncated, preview.status], [262144, false, "ready"]);
+      preview.item = {
+        path: aux + "/previews/cut.txt"
+      };
+    });
+    step(() => preview.status !== "loading", function () {
+      same("preview.multibyte-cut", [preview.text.length, preview.truncated, preview.status, preview.text.endsWith("c")], [262143, true, "ready", true]);
+      preview.item = {
+        path: aux + "/previews/invalid.txt"
+      };
+    });
+    step(() => preview.status !== "loading", function () {
+      same("preview.invalid-utf8", [preview.status, preview.text, preview.errorText], ["error", "", I18n.tr("widgets.file-picker.preview-unavailable")]);
+      preview.item = {
+        path: aux + "/previews/nul.txt"
+      };
+    });
+    step(() => preview.status !== "loading", function () {
+      same("preview.binary-nul", preview.status, "error");
+      preview.item = {
+        path: aux + "/previews/invalid-cut.txt"
+      };
+    });
+    step(() => preview.status !== "loading", function () {
+      same("preview.invalid-before-cut", preview.status, "error");
+      preview.item = {
+        path: aux + "/previews/missing.txt"
+      };
+    });
+    step(() => preview.status !== "loading", function () {
+      same("preview.missing", [preview.status, preview.text], ["error", ""]);
+      preview.item = {
+        path: aux + "/previews/unreadable.txt"
+      };
+    });
+    step(() => preview.status !== "loading", function () {
+      same("preview.unreadable", preview.status, "error");
+      preview.item = {
+        path: aux + "/previews/stale.txt"
+      };
+      staleStarted = Date.now();
+    });
+    step(() => Date.now() - staleStarted > 200, function () {
+      preview.item = {
+        path: aux + "/image.png"
+      };
+      same("preview.kind-switch", [preview.kind, preview.status, preview.text, preview.truncated], ["image", "ready", "", false]);
+      mutate.command = ["timeout", "3", "python3", "-c", "import sys; open(sys.argv[1], 'w').write('outdated')", aux + "/previews/stale.txt"];
+      mutate.running = true;
+      staleStarted = Date.now();
+    });
+    step(() => !mutate.running && Date.now() - staleStarted > 300, function () {
+      same("preview.stale-reply", [preview.kind, preview.status, preview.text], ["image", "ready", ""]);
+      preview.item = null;
+      same("preview.clear", [preview.status, preview.text, preview.path], ["idle", "", ""]);
+    });
     step(() => FileChooserMemory.ready && I18n.isLoaded, function () {
       same("memory.initial-home", FileChooserMemory.folderFor("unknown"), FileChooserMemory.home);
       same("memory.initial-recent", FileChooserMemory.recentLocations, []);
