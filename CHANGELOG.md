@@ -1,5 +1,112 @@
 # Changelog
 
+## [Unreleased]
+
+### 2026-10-17
+
+**Fix**
+
+The command-line IPC wrapper now decides success from Quickshell's reply rather
+than its exit status alone. Short calls are padded to the handler's argument
+count, so compositor input-method shortcuts can reach the intended handler.
+
+- fix(cli): decide IPC success from quickshell's reply and pad short calls (`5e480d275`)
+
+**Feature**
+
+Settings → General → Shortcuts now edits input-method switches, their key
+combinations, target, toggle/set mode and label, plus the next-input-method
+shortcut. The recorder supports Super combinations and records Space by name;
+the editor reports conflicts with Atmosphera-owned binds and offers Import for
+a kept custom niri input-method file.
+
+- feat(settings): edit input-method switches in Shortcuts (`32e3da1ad`)
+
+**Development**
+
+Real-key regression cases follow compositor binds through the CLI to fcitx5 and
+check switching, toggle-back, refusal, unavailable fcitx5 and live bind changes.
+Known limitation: mango 0.17.5 repeats a held input-method switch key; its
+held-key case remains an accepted expected failure with the dispatch count
+recorded, while niri and Hyprland require one switch per held press.
+
+- test(inputmethod): key-press regression across compositors (`945505be2`)
+
+### 2026-10-15
+
+**Fix**
+
+Every save acceptance now passes through the same target and overwrite checks,
+including Enter and double-click. Existing files require explicit Replace,
+directories produce an inline error, and portal regression cases check saved
+paths and responses. Input-method switching now uses fcitx5's controller API,
+reads back actual group and method state, remembers the previous pair for
+toggle-back, and reconciles IME suppression and restoration with the lock state.
+External fcitx5 changes are polled and published for shell and file consumers.
+
+- fix(filepicker): route every save acceptance through overwrite checks (`b059a2b4e`)
+- fix(inputmethod): use fcitx5's controller API and track its real state (`42898b1f9`)
+
+**Feature**
+
+Input-method switches are stored as settings and generate compositor binds for
+niri, Hyprland's hyprlang and Lua routes, and mango. Changes regenerate binds
+without restarting the shell or compositor, and switching waits for fcitx5's
+method/group lists before deciding whether a target is usable. On niri the
+unchanged shipped legacy file is backed up and retired, with matching configured
+targets converted; a custom file is kept until explicitly imported.
+
+- feat(inputmethod): configurable input-method switches with generated compositor binds (`7bce0820c`)
+
+### 2026-10-14
+
+**Fix**
+
+Existing plugin profiles migrate to the current Built-in source and plugin
+keys, with backups before changed folders and settings are moved; placement
+references and per-instance overrides are carried across. Installed built-ins
+refresh when their content differs from the shipped copy, even at the same
+version or with an unreadable installed manifest, while retaining plugin
+settings. Portal byte paths and file URIs now share strict UTF-8/NUL handling
+and escaping, preserving filenames and navigation through spaces, non-ASCII
+characters, percent signs, hashes and question marks.
+
+- fix(plugins): migrate existing profiles to the current built-in plugin layout (`857a93c4b`)
+- fix(plugins): refresh built-in plugin copies when their content changes (`80634316b`)
+- fix(portal): own byte-path and file URI conversion in one helper (`3258c677a`)
+
+**Feature**
+
+Plugin entry points now use one shared loader and an explicit context contract,
+supplying only declared root properties and keeping context values current.
+Placements can have their own setting overrides and panels, with an editor and
+confirmation before resetting overrides. A shared plugin-state API persists
+state across instances and restarts, preserving malformed state files for
+inspection; the plugin documentation describes these contracts.
+
+- feat(plugins): create every plugin view through one shared loader (`38f4b76de`)
+- feat(plugins): plugin instances with per-instance setting overrides (`e8e18ffee`)
+- feat(plugins): shared plugin state API (`ee22f3bea`)
+
+**Development**
+
+The registry reactivity regression now exercises the shared control-center
+loader and checks that unrelated registry changes keep its widget instance.
+This extends the regression coverage for the registry fix already released in
+0.8.2.
+
+- test(plugins): run the registry reactivity regression through the shared loader (`ca363995e`)
+
+**Plugin follow-ups**
+
+Two unpublished companion-repository follow-ups correct Niri Outputs' bar-service
+import and context declarations, and let Digest Watcher's panel show entries
+while reporting a missing or failing index helper once until it succeeds.
+These are separate plugin updates, not additional shell-bundled plugins.
+
+- fix(niri-outputs): import the bar service (plugins `b8b14a6`)
+- fix(digest-watcher): show the entries and log a missing index helper (plugins `913d57f`)
+
 ## [0.8.2] — 2026-10-16
 
 ### 2026-10-16
