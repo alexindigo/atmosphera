@@ -12,10 +12,6 @@ set -euo pipefail
 #               drop-in's exec-once starts the target (DMS pattern).
 #   non-systemd drop-in's exec-once spawns the shell directly.
 
-HYPR_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/hypr"
-USER_CONF="${HYPR_DIR}/hyprland.conf"
-USER_LUA="${HYPR_DIR}/hyprland.lua"
-
 MARK_BEGIN_CONF="# >>> Atmosphera (managed by atmosphera-hypr-setup) >>>"
 MARK_END_CONF="# <<< Atmosphera (managed by atmosphera-hypr-setup) <<<"
 MARK_BEGIN_LUA="-- >>> Atmosphera (managed by atmosphera-hypr-setup) >>>"
@@ -27,6 +23,13 @@ SHELL_DIR="$(dirname "$(dirname "$(dirname "$SCRIPT_PATH")")")"
 FRAG_CONF_SRC="${SHELL_DIR}/Configs/hypr/atmosphera.conf"
 FRAG_LUA_SRC="${SHELL_DIR}/Configs/hypr/atmosphera.lua"
 
+source "${SHELL_DIR}/Scripts/bash/hypr-config-resolve.sh"
+hypr_config_resolve
+HYPR_DIR=$HYPR_CONFIG_DIR
+USER_CONF=$HYPR_CONFIG_FILE
+USER_LUA=$HYPR_CONFIG_FILE
+LUA_MODE=false
+[ "$HYPR_CONFIG_LANGUAGE" != lua ] || LUA_MODE=true
 mkdir -p "$HYPR_DIR"
 
 # --- Startup route probe: systemd user manager + session target + unit ---
@@ -36,14 +39,6 @@ if command -v systemctl >/dev/null 2>&1 && systemctl --user show-environment >/d
      && [ "$(systemctl --user show -p LoadState --value atmosphera.service 2>/dev/null)" != "not-found" ]; then
     SYSTEMD_ROUTE=true
   fi
-fi
-
-# --- Config syntax: Lua (Hyprland >= 0.55) vs hyprlang ---
-LUA_MODE=false
-if [ -f "$USER_LUA" ]; then
-  LUA_MODE=true
-elif [ ! -f "$USER_CONF" ]; then
-  echo "Note: no ${USER_LUA} or ${USER_CONF} found — assuming hyprlang." >&2
 fi
 
 if [ "$SYSTEMD_ROUTE" = true ]; then
@@ -60,11 +55,18 @@ fi
 if [ "$LUA_MODE" = true ]; then
   DROPIN="${HYPR_DIR}/atmosphera.lua"
   install -m 0644 "$FRAG_LUA_SRC" "$DROPIN"
+  # Explicit config roots need the same module search directory as discovered roots.
+  LUA_DIR=${HYPR_DIR//\\/\\\\}
+  LUA_DIR=${LUA_DIR//\"/\\\"}
   printf '\n-- Startup (route: %s)\n%s\n' \
     "$([ "$SYSTEMD_ROUTE" = true ] && echo systemd || echo spawn)" "$STARTUP_LUA" >> "$DROPIN"
 else
   DROPIN="${HYPR_DIR}/atmosphera.conf"
-  install -m 0644 "$FRAG_CONF_SRC" "$DROPIN"
+  # Expand only our path token, never the user's config or other fragment text.
+  while IFS= read -r line; do
+    printf '%s\n' "${line//@ATMOSPHERA_INPUT@/${HYPR_DIR}/atmosphera-input.conf}"
+  done < "$FRAG_CONF_SRC" > "$DROPIN"
+  chmod 0644 "$DROPIN"
   printf '\n# Startup (route: %s)\n%s\n' \
     "$([ "$SYSTEMD_ROUTE" = true ] && echo systemd || echo spawn)" "$STARTUP_CONF" >> "$DROPIN"
 fi
@@ -92,6 +94,7 @@ if [ "$LUA_MODE" = true ]; then
   strip_block "$USER_LUA" "$MARK_BEGIN_LUA" "$MARK_END_LUA"
   {
     echo "$MARK_BEGIN_LUA"
+    printf 'package.path = "%s/?.lua;" .. package.path\n' "$LUA_DIR"
     echo 'require("atmosphera")'
     echo "$MARK_END_LUA"
   } >> "$USER_LUA"

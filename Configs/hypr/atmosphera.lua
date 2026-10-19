@@ -1,6 +1,6 @@
--- Atmosphera Hyprland layer (Lua syntax, Hyprland >= 0.55)
--- Installed by atmosphera-hypr-setup to ~/.config/hypr/atmosphera.lua.
--- Startup lines (exec-once) are appended by the setup script per route.
+-- Atmosphera Lua layer: fresh Hyprland >= 0.55 uses Lua; fresh < 0.55 uses hyprlang.
+-- Existing configs keep their language. Hyprland < 0.53 is unsupported.
+-- Setup installs in the resolved config directory and appends startup lines.
 
 -- Blur Atmosphera's layer-shell surfaces (bars, panels, OSD).
 hl.layer_rule({ match = { namespace = "^atmosphera-.*$" }, blur = true })

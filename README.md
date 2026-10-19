@@ -226,16 +226,25 @@ order of support depth.
   ```bash
   atmosphera setup hypr
   ```
-  It installs a drop-in fragment (`~/.config/hypr/atmosphera.conf`, or
-  `atmosphera.lua` on Hyprland ≥ 0.55 Lua configs) with the shell's layer
-  rules and startup line, and adds exactly one marked `source =` line to
-  your config (reversible — re-run to refresh, delete the block to undo).
+  It installs `atmosphera.conf` or `atmosphera.lua` beside the resolved root,
+  with the shell's layer rules and startup line, and adds one marked `source`
+  or `require` block (re-run to refresh, delete the block to undo).
+  `HYPRLAND_CONFIG` selects an explicit `.conf`/`.lua` root; otherwise discovery
+  uses `${XDG_CONFIG_HOME:-$HOME/.config}/hypr`, preferring existing Lua over
+  hyprlang. Existing configs keep their language. Fresh Hyprland ≥ 0.55 uses
+  Lua; fresh 0.53–0.54 uses modern hyprlang grammar. **Hyprland < 0.53 is
+  unsupported.** Unknown versions without a config refuse setup rather than
+  guessing. Setup, theme includes and generated input binds share this resolver.
   Startup routes, probed automatically:
   - **systemd:** the drop-in starts `hyprland-session.target`, which wants
     `atmosphera.service` — supervised, crash-restarting shell.
   - **non-systemd:** the drop-in carries `exec-once = qs -n -c atmosphera`.
-- **Manual equivalent:** source `Configs/hypr/atmosphera.conf` from your
-  Hyprland config and add one of the startup lines above.
+- **Manual equivalent:** use the matching `Configs/hypr/atmosphera.lua` or
+  `.conf` fragment, create its `atmosphera-input` module/file, and wire the
+  startup route above. In hyprlang replace `@ATMOSPHERA_INPUT@` with the absolute
+  input-file path under your resolved config directory; in Lua add that
+  directory to `package.path` before `require("atmosphera")`. Setup does this
+  automatically, including custom XDG and explicit roots.
 
 ### MangoWC
 

@@ -83,6 +83,8 @@ Singleton {
     };
     try {
       var probeArgs = ["sh", "-c", root._probeScript, "sh", dialect.dir, dialect.route].concat(dialect.owned);
+      if (dialect.name === "Hyprland")
+        probeArgs = ["bash", "-c", 'set -eu\nsource "$1"\nhypr_config_resolve\nshift\nprintf "@@DIR %s\\n" "$HYPR_CONFIG_DIR"\nif [ "$HYPR_CONFIG_LANGUAGE" = lua ]; then echo "ROUTE yes"; fi\nset -- "$HYPR_CONFIG_DIR" "" "$@"\n' + root._probeScript, "bash", Quickshell.shellDir + "/Scripts/bash/hypr-config-resolve.sh"].concat(dialect.owned);
       OwnedProcess.run(root, probeArgs, null, function (probe) {
         if (!probe.success) {
           Logger.w("InputMethodBinds", "could not read", dialect.name, "files; input bindings not updated", probe.error);
@@ -90,6 +92,8 @@ Singleton {
           return;
         }
         var parsed = root._parseProbe(probe.stdout);
+        if (dialect.name === "Hyprland")
+          dialect.dir = parsed.dir;
         root._owners = root._ownersOf(parsed.files, dialect);
         var plan = root._plan(parsed.fcitx5, dialect.plain);
         var pending = [];
@@ -152,7 +156,7 @@ Singleton {
 
   // The running compositor's file layout and syntax, or null when it has no input-method binds.
   //   dir      config directory; owned: Atmosphera-owned files there that may bind a combo
-  //   route    file whose presence selects the Lua route (Hyprland), or ""
+  //   route    optional route-file probe; Hyprland resolves language/directory in its shared helper
   //   plain    the syntax cannot escape a comma or blank: such combos and targets are refused
   //   reload   argv run after a change, or null (niri watches its session include)
   //   combos   (name, text) -> canonical combos bound in an owned file
@@ -187,7 +191,7 @@ Singleton {
         "name": "Hyprland",
         "dir": root.hyprDir,
         "owned": ["atmosphera.conf", "atmosphera.lua"],
-        "route": "hyprland.lua",
+        "route": "",
         "plain": true,
         "reload": ["hyprctl", "reload"],
         "combos": function (name, text) {
@@ -431,12 +435,13 @@ Singleton {
 
   // ——— Owned niri files ———
 
-  // Output of _probeScript: "FCITX5 yes|no", "ROUTE yes" when the route file exists,
+  // Output of the probe: "FCITX5 yes|no", "ROUTE yes" for Lua, optional "@@DIR <path>",
   // then "@@FILE <name>" ... "@@END" blocks.
   function _parseProbe(stdout) {
     var result = {
       "fcitx5": false,
       "route": false,
+      "dir": "",
       "files": {}
     };
     var lines = String(stdout || "").split("\n");
@@ -448,6 +453,8 @@ Singleton {
           result.fcitx5 = true;
         else if (line === "ROUTE yes")
           result.route = true;
+        else if (line.indexOf("@@DIR ") === 0)
+          result.dir = line.substring(6);
         else if (line.indexOf("@@FILE ") === 0)
           current = {
             "name": line.substring(7),

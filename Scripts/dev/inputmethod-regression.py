@@ -418,6 +418,8 @@ def qs_env(ctx):
                QT_FORCE_STDERR_LOGGING='1', **compositor_env())
     if ctx.path_override:
         env['PATH'] = ctx.path_override
+    if COMP == 'hyprland' and os.environ.get('HYPRLAND_CONFIG'):
+        env['HYPRLAND_CONFIG'] = os.environ['HYPRLAND_CONFIG']
     return env
 
 
@@ -777,10 +779,15 @@ def case10(ctx):
 
 
 def wm_route(ctx):
-    """'lua' when Hyprland runs its Lua config (hyprland.lua present), else the compositor's own syntax."""
-    if COMP == 'hyprland' and (WM_DIRS[COMP] / 'hyprland.lua').exists():
-        return 'lua'
-    return 'hyprlang' if COMP == 'hyprland' else 'conf'
+    """Use the production resolver, including explicit/custom config roots."""
+    if COMP != 'hyprland':
+        return 'conf'
+    resolved = sh(['bash', str(ctx.source / 'Scripts/bash/hypr-config-resolve.sh')])
+    if resolved.returncode:
+        raise SetupError(f'Hyprland config resolution failed: {resolved.stderr}')
+    language, _, directory = resolved.stdout.splitlines()
+    WM_DIRS[COMP] = Path(directory)
+    return language
 
 
 def wm_input_path(route):
@@ -893,7 +900,7 @@ def case10_wm(ctx):
         rec['checks']['wired'] = any(line.strip() == 'require("atmosphera-input")' for line in wiring)
     elif COMP == 'hyprland':
         wiring = wm_lines(cfg / 'atmosphera.conf')
-        rec['checks']['wired'] = any(line.strip() == 'source = ~/.config/hypr/atmosphera-input.conf' for line in wiring)
+        rec['checks']['wired'] = any(line.strip() == f'source = {cfg / WM_INPUT}' for line in wiring)
     else:
         wiring = wm_lines(cfg / 'atmosphera.conf')
         rec['checks']['wired'] = 'source=./atmosphera-input.conf' in [line.strip() for line in wiring]
@@ -1362,7 +1369,7 @@ def restore_wm(ctx):
     for p in src.iterdir():
         if p.is_file() and p.name not in before and p.name not in keep:
             p.unlink()
-    marker = '-- ' if COMP == 'hyprland' and (src / 'hyprland.lua').exists() else '# '
+    marker = '-- ' if COMP == 'hyprland' and wm_route(ctx) == 'lua' else '# '
     (src / WM_INPUT).write_text(marker + GENERATED_TEXT + '\n', encoding='utf-8')
     expected = {k: v for k, v in before.items() if k not in keep}
     actual = tree_digest(src, skip=keep)
@@ -1846,6 +1853,7 @@ def run(args):
         if COMP == 'niri':
             backup_niri(ctx)
         else:
+            wm_route(ctx)  # Resolve the directory before snapshotting it, including explicit roots.
             backup_wm(ctx)
         if args.keys:
             if COMP == 'niri':

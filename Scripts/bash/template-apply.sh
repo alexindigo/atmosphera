@@ -334,20 +334,22 @@ niri)
 
 hyprland)
     echo "🎨 Applying 'noctalia' theme to Hyprland..."
-    CONFIG_DIR="$HOME/.config/hypr"
-
-    CONF_CONFIG_FILE="$CONFIG_DIR/hyprland.conf"
-    LUA_CONFIG_FILE="$CONFIG_DIR/hyprland.lua"
+    source "$(dirname "$(readlink -f "$0")")/hypr-config-resolve.sh"
+    hypr_config_resolve || exit 1
+    CONFIG_DIR=$HYPR_CONFIG_DIR
+    CONF_CONFIG_FILE=$HYPR_CONFIG_FILE
+    LUA_CONFIG_FILE=$HYPR_CONFIG_FILE
+    mkdir -p "$CONFIG_DIR"
 
     CONF_THEME_FILE="$CONFIG_DIR/noctalia/noctalia-colors.conf"
     LUA_THEME_FILE="$CONFIG_DIR/noctalia/noctalia-colors.lua"
 
     CONF_INCLUDE_LINE="source = $CONF_THEME_FILE"
-    LUA_INCLUDE_LINE="dofile(\"$LUA_THEME_FILE\")"
+    LUA_THEME_ESCAPED=${LUA_THEME_FILE//\\/\\\\}
+    LUA_THEME_ESCAPED=${LUA_THEME_ESCAPED//\"/\\\"}
+    LUA_INCLUDE_LINE="dofile(\"$LUA_THEME_ESCAPED\")"
 
-    # Prefer Lua config when present. .conf file is kept
-    # only for legacy compatibility
-    if [ -f "$LUA_CONFIG_FILE" ]; then
+    if [ "$HYPR_CONFIG_LANGUAGE" = lua ]; then
       if grep -qF 'noctalia-colors.lua' "$LUA_CONFIG_FILE"; then
         echo "Lua theme already included, skipping modification."
       else
