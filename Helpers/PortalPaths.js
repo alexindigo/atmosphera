@@ -9,6 +9,7 @@
 //   encodeBytePath(path)   -> {ok:true, bytes} | {ok:false, error}
 //   pathToUri(path)        -> {ok:true, uri}   | {ok:false, error}
 //   uriToPath(uri)         -> {ok:true, path}  | {ok:false, error}
+//   qmlUrlToPath(urlText)  -> {ok:true, path}  | {ok:false, error}
 //
 // Error strings are a fixed set: "unsupported input type", "invalid byte value",
 // "embedded NUL", "invalid UTF-8", "invalid UTF-16", "not an absolute path",
@@ -244,4 +245,14 @@ function uriToPath(uri) {
     if (path === null)
         return fail("invalid UTF-8");
     return { "ok": true, "path": path };
+}
+
+// QML url.toString() uses Qt's pretty-decoded form: spaces and Unicode may
+// appear literally, while URL delimiters and percent signs stay escaped.
+// Normalize its spaces here, then use the same strict file-URI decoder.
+// Portal input still goes through uriToPath, which rejects raw spaces.
+function qmlUrlToPath(urlText) {
+    if (typeof urlText !== "string")
+        return fail("unsupported input type");
+    return uriToPath(urlText.replace(/ /g, "%20"));
 }

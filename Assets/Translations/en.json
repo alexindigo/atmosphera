@@ -2458,6 +2458,7 @@
       "modified": "Modified",
       "name": "Name",
       "open-folder-error": "Can't open {path}: {reason}. Choose another folder.",
+      "unsupported-folder-name": "Can't open {path}: folder names with #, ? or % aren't supported yet.",
       "open": "Open",
       "overwrite-description": "A file with this name already exists in this folder. Replace it?",
       "parent-folder": "Parent folder",

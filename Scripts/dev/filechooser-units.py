@@ -47,6 +47,10 @@ def main():
     aux.mkdir()
     for name in ["documents", "bookmark", "removed", "vanish", "denied", "unreadable", "no-search"] + [f"memory{i}" for i in range(12)]:
         (aux / name).mkdir()
+    for name in ["With space", "hash#name", "percent%20literal", "question?mark", "résumé", "a b/c d"]:
+        folder = aux / "escaped" / name
+        folder.mkdir(parents=True)
+        (folder / "fixture.txt").write_text(name, encoding="utf-8")
     (aux / "vanish/selected.txt").write_text("selected")
     (aux / "unreadable/selected.txt").write_text("unreadable")
     (aux / "unreadable/selected.txt").chmod(0)
@@ -116,6 +120,11 @@ def main():
                  "preview.small", "preview.large", "preview.exact-limit", "preview.multibyte-cut",
                  "preview.invalid-utf8", "preview.missing", "preview.kind-switch", "preview.stale-reply", "preview.pdf-detection",
                  "types.bytes-small", "types.size-scaled", "types.size-german", "types.date-us", "types.date-british", "types.date-german", "types.date-system"}
+    for name in ["With space", "résumé", "a b/c d"]:
+        required.update(f"paths.{name}.{case}" for case in ("ready", "listing", "breadcrumbs", "request-ready", "request-result"))
+    for name in ["hash#name", "percent%20literal", "question?mark"]:
+        required.update(f"paths.{name}.{case}" for case in ("error", "keeps-folder", "keeps-listing", "not-loading", "recovers"))
+    required.update(f"paths.helper.{name}" for name in ("With space", "hash#name", "percent%20literal", "question?mark", "résumé", "a b/c d", "strict-portal-spaces", "invalid-urls"))
     missing = sorted(required - {case["case"] for case in cases})
     files_untouched = all(not (fixtures / name).exists() for name in ("draft.txt", "new # résumé.txt", "brand-new.txt", "stale.txt", "folder/child.txt"))
     files_untouched = files_untouched and (fixtures / "item2.txt").read_bytes() == b"x" * 30 and (fixtures / "item10.png").read_bytes() == b"x" * 10

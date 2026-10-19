@@ -43,6 +43,9 @@ Scope {
   readonly property string _checkCode: `
 import errno, json, os, sys
 p = os.path.abspath(os.path.expanduser(sys.argv[1]))
+if any(c in p for c in '#?%'):
+    print(json.dumps({'ok': False, 'reason': 'unsupported-name', 'path': p}))
+    sys.exit(0)
 try:
     with os.scandir(p) as entries:
         if not os.access(p, os.R_OK | os.X_OK):
@@ -109,7 +112,7 @@ except OSError as e:
       _validating = false;
       var path = (result.path || target).replace(/\/+$/, "") || "/";
       var folder = path.slice(path.lastIndexOf("/") + 1) || "/";
-      _errorText = I18n.tr("widgets.file-picker.open-folder-error", {path: folder, reason: I18n.tr("widgets.file-picker.folder-reason-" + result.reason)});
+      _errorText = result.reason === "unsupported-name" ? I18n.tr("widgets.file-picker.unsupported-folder-name", {path: folder}) : I18n.tr("widgets.file-picker.open-folder-error", {path: folder, reason: I18n.tr("widgets.file-picker.folder-reason-" + result.reason)});
       _status = "error";
       if (monitor && result.missing && result.parent !== target)
         _check(result.parent, -1, false);
@@ -133,7 +136,8 @@ except OSError as e:
   }
 
   function _publishReady() {
-    if (!_validating && _status !== "error" && currentPath && source.status === FolderListModel.Ready && source.folder.toString() === PortalPaths.pathToUri(currentPath).uri) {
+    var loaded = PortalPaths.qmlUrlToPath(source.folder.toString());
+    if (!_validating && _status !== "error" && currentPath && source.status === FolderListModel.Ready && loaded.ok && loaded.path === currentPath) {
       _status = "ready";
       listingChanged();
     }

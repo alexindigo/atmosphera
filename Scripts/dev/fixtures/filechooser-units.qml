@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Io
 import "../../../Helpers/PortalPaths.js" as PortalPaths
 import qs.Commons
+import qs.Modules.FileChooser
 import qs.Services.Files
 
 ShellRoot {
@@ -24,6 +25,14 @@ ShellRoot {
 
   FileBrowser {
     id: fileBrowser
+  }
+  FileChooserHeader {
+    id: breadcrumbs
+    width: 1200
+    request: ({
+                browser: fileBrowser,
+                viewMode: "grid"
+              })
   }
   FileSelection {
     id: selection
@@ -193,6 +202,15 @@ ShellRoot {
       same("preview.clear", [preview.status, preview.text, preview.path], ["idle", "", ""]);
     });
     step(() => FileChooserMemory.ready && I18n.isLoaded, function () {
+      for (var name of ["With space", "hash#name", "percent%20literal", "question?mark", "résumé", "a b/c d"]) {
+        var path = aux + "/escaped/" + name;
+        same("paths.helper." + name, PortalPaths.qmlUrlToPath(Qt.url(PortalPaths.pathToUri(path).uri).toString()), {
+               ok: true,
+               path: path
+             });
+      }
+      same("paths.helper.strict-portal-spaces", PortalPaths.uriToPath("file:///With space").ok, false);
+      same("paths.helper.invalid-urls", ["file:///bad%ZZ", "file://remote/folder", "file:///hash#name", "file:///question?mark"].map(url => PortalPaths.qmlUrlToPath(url).ok), [false, false, false, false]);
       same("types.bytes-zero", FileTypes.formatSize(0), "0 B");
       same("types.bytes-small", [3, 40, 648, 1023].map(bytes => FileTypes.formatSize(bytes)), ["3 B", "40 B", "648 B", "1023 B"]);
       same("types.size-scaled", [1024, 1536, 1048576].map(bytes => FileTypes.formatSize(bytes)), ["1.0 KiB", "1.5 KiB", "1.0 MiB"]);
@@ -616,13 +634,66 @@ ShellRoot {
              showHidden: true
            });
     });
+    for (let name of ["With space", "résumé", "a b/c d"]) {
+      let folder = aux + "/escaped/" + name;
+      let prefix = "paths." + name + ".";
+      step(() => true, function () {
+        fileBrowser.navigate(folder);
+        staleStarted = Date.now();
+      });
+      step(() => ready() || Date.now() - staleStarted > 1500, function () {
+        same(prefix + "ready", [fileBrowser.currentPath, fileBrowser.status], [folder, "ready"]);
+        same(prefix + "listing", names(), ["fixture.txt"]);
+        var segments = breadcrumbs.breadcrumbItems.filter(item => item.kind === "segment").map(item => item.text);
+        same(prefix + "breadcrumbs", segments.slice(-name.split("/").length), name.split("/"));
+        createRequest("open", {
+                        current_file: PortalPaths.encodeBytePath(folder + "/fixture.txt").bytes
+                      });
+        staleStarted = Date.now();
+      });
+      step(() => requestReady() || Date.now() - staleStarted > 1500, function () {
+        same(prefix + "request-ready", [request.browser.currentPath, request.browser.status, request.selection.selectedPaths], [folder, "ready", [folder + "/fixture.txt"]]);
+        if (requestReady())
+          request.accept();
+        else
+          request.cancel();
+      });
+      step(answered, function () {
+        var uris = responses[0].results.uris || [];
+        var expected = "file://" + (folder + "/fixture.txt").split("/").map(encodeURIComponent).join("/");
+        same(prefix + "request-result", [responses[0].response, uris, uris.map(uri => PortalPaths.uriToPath(uri).path)], [0, [expected], [folder + "/fixture.txt"]]);
+      });
+    }
+    for (let name of ["hash#name", "percent%20literal", "question?mark"]) {
+      let folder = aux + "/escaped/" + name;
+      let prefix = "paths." + name + ".";
+      step(() => true, function () {
+        fileBrowser.navigate(base);
+      });
+      step(ready, function () {
+        beforeNames = names();
+        fileBrowser.navigate(folder);
+        staleStarted = Date.now();
+      });
+      step(() => fileBrowser.status === "error" || Date.now() - staleStarted > 1500, function () {
+        same(prefix + "error", [fileBrowser.status, fileBrowser.errorText], ["error", "Can't open " + name + ": folder names with #, ? or % aren't supported yet."]);
+        same(prefix + "keeps-folder", fileBrowser.currentPath, base);
+        same(prefix + "keeps-listing", names(), beforeNames);
+        report(prefix + "not-loading", fileBrowser.status !== "loading", fileBrowser.status);
+        fileBrowser.navigate(base);
+      });
+      step(ready, function () {
+        same(prefix + "recovers", [fileBrowser.currentPath, names()], [base, beforeNames]);
+      });
+    }
   }
 
   Component.onCompleted: {
     if (Quickshell.env("FILECHOOSER_UNIT_RELOAD") === "1") {
       step(() => FileChooserMemory.ready, function () {
         same("memory.reload-app", FileChooserMemory.folderFor("app.a"), aux + "/memory0");
-        same("memory.reload-shared", FileChooserMemory.folderFor(""), aux + "/memory10");
+        // The escaped-path requests finish successfully after the memory tests.
+        same("memory.reload-shared", FileChooserMemory.folderFor(""), aux + "/escaped/a b/c d");
         same("memory.reload-preferences", FileChooserMemory.preferences.view, "list");
         report("memory.reload-missing-hidden", !FileChooserMemory.recentLocations.includes(aux + "/memory9"), FileChooserMemory.recentLocations);
       });
