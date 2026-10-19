@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Actual PortalFilePicker/settings consumer cases using F3's private bus."""
+"""Actual PortalFilePicker/settings consumer cases using a private bus."""
 
 import argparse
 import json

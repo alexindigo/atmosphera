@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exercise F2's dev harness with real evdev keys and retain full captures."""
+"""Exercise the dev harness with real evdev keys and retain full captures."""
 
 import argparse
 import json

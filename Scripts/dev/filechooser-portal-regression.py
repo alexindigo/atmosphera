@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """FileChooser frontend/wire regressions in the assigned filechooser VM.
 
-python3 -B Scripts/dev/filechooser-portal-regression.py --source sources/LABEL --label f4-portal-LABEL
-Uses F3's private bus and real xdg-desktop-portal, never another backend.
+python3 -B Scripts/dev/filechooser-portal-regression.py --source sources/LABEL --label portal-LABEL
+Uses a private bus and real xdg-desktop-portal, never another backend.
 """
 
 import argparse
@@ -28,7 +28,7 @@ def portal_call():
     a = p.parse_args()
     values = json.loads(a.options)
     conn = Gio.bus_get_sync(Gio.BusType.SESSION, None)
-    token = "f4_" + uuid.uuid4().hex
+    token = "filechooser_" + uuid.uuid4().hex
     predicted = "/org/freedesktop/portal/desktop/request/" + conn.get_unique_name()[1:].replace(".", "_") + "/" + token
     options = {"handle_token": GLib.Variant("s", token)}
     types = {"multiple": "b", "directory": "b", "modal": "b", "accept_label": "s", "current_name": "s",
@@ -43,7 +43,9 @@ def portal_call():
     loop = GLib.MainLoop()
     out = {"method": a.call, "predicted": predicted, "response": None, "results": None, "types": {}, "count": 0}
     def write():
-        a.out.write_text(json.dumps(out, indent=2))
+        pending = a.out.with_name(a.out.name + ".pending")
+        pending.write_text(json.dumps(out, indent=2))
+        pending.replace(a.out)
     def response(conn, sender, path, iface, signal, params):
         out["count"] += 1
         out["response"], out["results"] = params.unpack()
@@ -53,7 +55,7 @@ def portal_call():
         GLib.timeout_add(500, lambda: (loop.quit(), False)[1])
     conn.signal_subscribe("org.freedesktop.portal.Desktop", "org.freedesktop.portal.Request", "Response", predicted, None, Gio.DBusSignalFlags.NONE, response)
     reply = conn.call_sync("org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop", "org.freedesktop.portal.FileChooser", a.call,
-                           GLib.Variant("(ssa{sv})", (values.get("parent_window", ""), "F4 " + a.call, options)),
+                           GLib.Variant("(ssa{sv})", (values.get("parent_window", ""), "File chooser " + a.call, options)),
                            GLib.VariantType("(o)"), Gio.DBusCallFlags.NONE, 10000, None)
     out["handle"] = reply.unpack()[0]
     assert out["handle"] == predicted
@@ -77,14 +79,14 @@ def suite(r):
     filters = [["Text", [[0, "*.txt"]]], ["Images", [[1, "image/*"]]]]
     choices = [["quality", "Quality", [["full", "Full"], ["small", "Small"]], "small"], ["metadata", "Metadata", [], "true"]]
     proc, out = r.call("OpenFile", current_folder=folder, accept_label="Choose this", modal=False,
-                       parent_window="wayland:f4-best-effort", filters=filters, current_filter=filters[0], choices=choices)
+                       parent_window="wayland:test-parent", filters=filters, current_filter=filters[0], choices=choices)
     s = r.state()["requests"][0]
-    r.check("title-label-parent-modal", s["label"] == "Choose this" and s["parent"] == "wayland:f4-best-effort" and s["modal"] is False, s)
+    r.check("title-label-parent-modal", s["label"] == "Choose this" and s["parent"] == "wayland:test-parent" and s["modal"] is False, s)
     r.check("current-filter-preselected", s["filter"] == filters[0] and s["names"] == ["Chosen.txt"], s)
     r.check("choices-initial-values", s["choices"] == {"quality": "small", "metadata": "true"}, s)
     r.key(102); r.key(28)
     data = r.result(proc, out)
-    r.check("OpenFile-consumer-uri-and-read", data["response"] == 0 and data["results"]["uris"] == [(r.fixtures / "Chosen.txt").as_uri()] and (r.fixtures / "Chosen.txt").read_text() == "F4 consumer fixture\n", data)
+    r.check("OpenFile-consumer-uri-and-read", data["response"] == 0 and data["results"]["uris"] == [(r.fixtures / "Chosen.txt").as_uri()] and (r.fixtures / "Chosen.txt").read_text() == "File chooser consumer fixture\n", data)
     r.check("OpenFile-types-and-options", data["types"] == {"uris": "as", "choices": "a(ss)", "current_filter": "(sa(us))"} and data["results"]["choices"] == [["quality", "small"], ["metadata", "true"]] and data["results"]["current_filter"] == filters[0], data)
     # writable is consumed by the frontend. Assert the implementation wire, not
     # a frontend key which the FileChooser XML deliberately doesn't expose.
@@ -110,8 +112,8 @@ def suite(r):
         r.key(28); data = r.result(proc, out)
         target = r.fixtures / name
         r.check("SaveFile-uri-no-premature-write", data["response"] == 0 and data["results"]["uris"] == [target.as_uri()] and not target.exists(), data)
-        target.write_text("F4 saved by consumer\n")
-        r.check("SaveFile-consumer-write-read", target.read_text() == "F4 saved by consumer\n")
+        target.write_text("File chooser saved by consumer\n")
+        r.check("SaveFile-consumer-write-read", target.read_text() == "File chooser saved by consumer\n")
         target.unlink()
     proc, out = r.call("SaveFile", current_file=str(r.fixtures / "Chosen.txt"))
     s = r.wait(lambda s: s["requests"][0]["selected"] == [str(r.fixtures / "Chosen.txt")])["requests"][0]

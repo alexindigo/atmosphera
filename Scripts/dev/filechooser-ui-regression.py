@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Real-key chooser regressions; reuses the F2 harness and keyboard driver.
+"""Real-key chooser regressions; reuses the dev harness and keyboard driver.
 
-Runs the complete F2 keyboard/preview/save driver, then checks two independent
+Runs the complete keyboard/preview/save driver, then checks two independent
 app folders, cross-app recent locations, and actual places navigation.
 """
 
@@ -26,7 +26,7 @@ def main():
     guest()
     source = a.source.resolve()
     assert source.is_relative_to(ROOT / "sources") and source.is_dir()
-    assert re.fullmatch(r"f4-[a-z0-9.-]+", a.label)
+    assert re.fullmatch(r"[a-z0-9][a-z0-9.-]*", a.label)
     runtime, evidence = ROOT / "runtime" / a.label, ROOT / "evidence" / a.label
     assert not runtime.exists() and not evidence.exists()
     # filechooser-harness owns preparation, media fixtures and the qs child.
@@ -101,17 +101,17 @@ def main():
         first, second = base / "References", base / "Screens"
         (first / "Only app A.txt").write_text("app A\n")
         (second / "Only app B.txt").write_text("app B\n")
-        for app, folder, name in (("dev.f4.appA", first, "Save A.txt"), ("dev.f4.appB", second, "Save B.txt")):
+        for app, folder, name in (("dev.filechooser.appA", first, "Save A.txt"), ("dev.filechooser.appB", second, "Save B.txt")):
             open_request("save", app, str(folder), current_name=name)
             key(28)
             wait(lambda s: s["settled"])
             check(app + "-save-consumer", lambda s: s["replies"] == [{"response": 0, "results": {"uris": [(folder / name).as_uri()], "writable": True, "choices": []}}])
-        open_request("open", "dev.f4.appA")
+        open_request("open", "dev.filechooser.appA")
         check("app-A-remembered-folder-and-listing", lambda s: s["path"] == str(first) and s["names"] == ["Only app A.txt"])
-        open_request("open", "dev.f4.appB")
+        open_request("open", "dev.filechooser.appB")
         check("app-B-independent-folder-and-listing", lambda s: s["path"] == str(second) and s["names"] == ["Only app B.txt"])
         check("cross-app-recent-locations", lambda s: s["recentLocations"][:2] == [str(second), str(first)])
-        open_request("open", "dev.f4.appA", accept_label="Choose this")
+        open_request("open", "dev.filechooser.appA", accept_label="Choose this")
         ipc("focusListing"); command(["ydotool", "type", "Only"])
         wait(lambda s: s["selected"] == [str(first / "Only app A.txt")])
         focus("Choose this")
@@ -120,9 +120,9 @@ def main():
         check("custom-accept-control-consumer", lambda s: s["replies"][0]["response"] == 0 and s["replies"][0]["results"]["uris"] == [(first / "Only app A.txt").as_uri()])
         # Restore B as most recent, keeping the fallback assertion independent
         # of the preceding explicit app-A acceptance.
-        open_request("save", "dev.f4.appB", str(second), current_name="Save B again.txt")
+        open_request("save", "dev.filechooser.appB", str(second), current_name="Save B again.txt")
         key(28); wait(lambda s: s["settled"])
-        open_request("open", "dev.f4.thirdApp")
+        open_request("open", "dev.filechooser.thirdApp")
         check("new-app-shared-fallback", lambda s: s["path"] == str(second) and s["names"] == ["Only app B.txt"])
         # Both headings are in the actual places rail. Real Tab/Enter must take
         # its intent all the way to FileBrowser's visible listing.
@@ -145,7 +145,7 @@ def main():
         key(28)
         wait(lambda s: s["settled"])
         check("recent-file-consumer", lambda s: s["replies"][0]["response"] == 0 and s["replies"][0]["results"]["uris"] == [(base / "Field notes.md").as_uri()])
-        # Keep these outside Fieldwork so F2's existing exact listing/count
+        # Keep these outside Fieldwork so the existing exact listing/count
         # fixtures remain stable. Navigate with real listing keys; ASCII
         # type-ahead selects résumé without relying on ydotool Unicode typing.
         paths = runtime / "Escaped paths"
@@ -154,7 +154,7 @@ def main():
             (paths / name).mkdir()
             (paths / name / "Picked.txt").write_text("consumer in " + name + "\n")
         for case, name, prefix in (("space-folder", "With space", "With"), ("unicode-folder", "résumé", "r")):
-            open_request("open", "dev.f4.paths", str(paths))
+            open_request("open", "dev.filechooser.paths", str(paths))
             command(["ydotool", "type", prefix])
             wait(lambda s: s["name"] == name)
             key(28)
@@ -170,7 +170,7 @@ def main():
                 return (uris == [(paths / name / "Picked.txt").as_uri()]
                         and Path(unquote(urlsplit(uris[0]).path)).read_text() == "consumer in " + name + "\n")
             check(case + "-pick-consumer", consumed)
-        open_request("open", "dev.f4.paths", str(paths))
+        open_request("open", "dev.filechooser.paths", str(paths))
         before = state()
         command(["ydotool", "type", "hash"])
         wait(lambda s: s["name"] == "hash#name")

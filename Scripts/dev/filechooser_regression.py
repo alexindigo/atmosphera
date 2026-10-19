@@ -1,4 +1,4 @@
-"""Shared guest-only F4 transport, reusing F3's isolated-bus recipe.
+"""Shared guest-only file chooser transport with an isolated bus.
 
 The real frontend daemon must route to this exact Atmosphera process. Every
 suite owns a fresh disk-backed profile, private bus and bounded children.
@@ -25,7 +25,7 @@ def guest():
 class Run:
     def __init__(self, source, label):
         guest()
-        assert re.fullmatch(r"f4-[a-z0-9.-]+", label)
+        assert re.fullmatch(r"[a-z0-9][a-z0-9.-]*", label)
         self.source = Path(source).resolve()
         assert self.source.is_relative_to(ROOT / "sources") and self.source.is_dir()
         self.runtime, self.output = ROOT / "runtime" / label, ROOT / "evidence" / label
@@ -41,8 +41,8 @@ class Run:
         (self.profile / "config/settings.json").write_text(json.dumps(defaults))
         self.fixtures = self.runtime / "Chosen"
         self.fixtures.mkdir()
-        (self.fixtures / "Chosen.txt").write_text("F4 consumer fixture\n")
-        # The actual settings picker filters PNG/SVG. Reuse F3's valid 1px PNG.
+        (self.fixtures / "Chosen.txt").write_text("File chooser consumer fixture\n")
+        # The actual settings picker filters PNG/SVG. Use a valid 1px PNG.
         import struct
         import zlib
         def chunk(kind, data):
@@ -57,14 +57,14 @@ class Run:
                         ATMOSPHERA_CACHE_DIR=str(self.profile / "cache") + "/",
                         ATMOSPHERA_STATE_DIR=str(self.profile / "state") + "/",
                         ATMOSPHERA_SETTINGS_FILE=str(self.profile / "config/settings.json"),
-                        ATMOSPHERA_DEBUG="0", F4_FIXTURES=str(self.fixtures),
+                        ATMOSPHERA_DEBUG="0", FILECHOOSER_FIXTURES=str(self.fixtures),
                         YDOTOOL_SOCKET=str(self.runtime / "input.sock"),
                         DBUS_SESSION_BUS_ADDRESS="unix:path=" + str(self.runtime / "bus.sock"))
         self.processes, self.logs, self.cases, self.commands = [], [], [], []
         self.complete = False
         self.failure = ""
         self.qs = None
-        self.probe = self.shell / "f4-probe.qml"
+        self.probe = self.shell / "probe.qml"
 
     def launch(self, argv, log):
         f = (self.output / log).open("w")
@@ -79,7 +79,7 @@ class Run:
                               capture_output=True, text=True, check=True, timeout=18).stdout.strip()
 
     def ipc(self, member, *args):
-        return self.command(["qs", "-p", self.probe, "ipc", "call", "f4", member, *args])
+        return self.command(["qs", "-p", self.probe, "ipc", "call", "filechooserRegression", member, *args])
 
     def state(self):
         return json.loads(self.ipc("state"))
@@ -151,7 +151,7 @@ class Run:
                             "--options", json.dumps(options), "--out", out], out.stem + ".log")
         self.wait(lambda s: len(s["requests"]) == 1 and s["requests"][0]["status"] == "ready")
         s = self.state()["requests"][0]
-        self.check(method + "-routed-to-Atmosphera", s["title"] == "F4 " + method, s)
+        self.check(method + "-routed-to-Atmosphera", s["title"] == "File chooser " + method, s)
         return proc, out
 
     def result(self, proc, out):
@@ -185,7 +185,7 @@ class Run:
         for f in self.logs:
             f.close()
         (self.output / "recipe.json").write_text(json.dumps({"source": str(self.source), "runtime": str(self.runtime),
-            "commands": self.commands, "environment": {k: v for k, v in self.env.items() if k.startswith(("ATMOSPHERA_", "XDG_", "DBUS_", "F4_", "TMPDIR", "YDOTOOL_", "WAYLAND_", "NIRI_"))}}, indent=2))
+            "commands": self.commands, "environment": {k: v for k, v in self.env.items() if k.startswith(("ATMOSPHERA_", "XDG_", "DBUS_", "FILECHOOSER_", "TMPDIR", "YDOTOOL_", "WAYLAND_", "NIRI_"))}}, indent=2))
         (self.output / "probe.qml").write_text(self.probe.read_text() if self.probe.exists() else "")
         (self.output / "result.json").write_text(json.dumps({"complete": self.complete, "passed": self.complete and all(c["pass"] for c in self.cases),
             "cases": self.cases, "failure": self.failure, "qs_exit": self.qs.poll() if self.qs else None}, indent=2))
