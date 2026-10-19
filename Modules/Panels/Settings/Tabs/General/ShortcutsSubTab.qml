@@ -198,19 +198,14 @@ ColumnLayout {
         ];
   }
 
-  // The refusal of a recorded combo, or "": refused when it is malformed or an Atmosphera file binds it.
+  // The same effective-config diagnostic used by generation and saved rows.
   function _comboMessage(combo) {
     var refusal = InputMethodService.validateCombo(combo);
     if (refusal !== "")
       return I18n.tr("panels.general.input-method-invalid-combo", {
                        "reason": refusal
                      });
-    var owner = InputMethodBinds.conflictFor(combo);
-    if (owner !== "")
-      return I18n.tr("panels.general.input-method-bound-by", {
-                       "owner": owner
-                     });
-    return "";
+    return InputMethodBinds.conflictFor(combo);
   }
 
   function _importLegacy() {
@@ -328,6 +323,15 @@ ColumnLayout {
                                                  })
           }
 
+          NText {
+            Layout.fillWidth: true
+            text: InputMethodBinds.conflictsFor(switchCard.sw.keys)
+            visible: text !== ""
+            color: AtmoColor.mError
+            pointSize: Style.fontSizeS
+            wrapMode: Text.WrapAnywhere
+          }
+
           NTextInput {
             Layout.fillWidth: true
             label: I18n.tr("panels.general.input-method-label-label")
@@ -365,6 +369,15 @@ ColumnLayout {
       superCountsAsModifier: true
       conflictCheck: root._comboMessage
       onKeybindsChanged: newKeybinds => Settings.data.inputMethod.nextKeys = newKeybinds
+    }
+
+    NText {
+      Layout.fillWidth: true
+      text: InputMethodBinds.conflictsFor(Settings.data.inputMethod.nextKeys)
+      visible: text !== ""
+      color: AtmoColor.mError
+      pointSize: Style.fontSizeS
+      wrapMode: Text.WrapAnywhere
     }
   }
 

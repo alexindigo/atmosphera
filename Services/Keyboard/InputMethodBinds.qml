@@ -28,8 +28,12 @@ Singleton {
   // Settings-derived key: changes whenever the generated file would change.
   readonly property string settingsKey: root._settingsKey()
 
-  // combo (canonical) -> Atmosphera-owned niri file that already binds it.
+  // One effective inventory, shared by saved settings, recording and generation.
+  // Unknown coverage refuses every chord until a complete read is available.
   property var _owners: ({})
+  property string _coverage: "inventory not yet read"
+  property string _inventoryKey: ""
+  property bool _forceGeneration: true
   // path -> content last written for it (only ever set after a successful write).
   property var _written: ({})
   property bool _writing: false
@@ -49,8 +53,6 @@ Singleton {
   readonly property string _legacyBackupScript: 'set -eu\nmkdir -p "$2"\ncp -n -p "$1" "$2/$3"\n[ "$(sha256sum < "$1" | cut -d" " -f1)" = "$4" ]\n[ "$(sha256sum < "$2/$3" | cut -d" " -f1)" = "$4" ]\n'
   readonly property string _legacyRemoveScript: 'set -eu\n[ "$(sha256sum < "$1" | cut -d" " -f1)" = "$2" ]\nrm -f -- "$1"\n'
 
-  readonly property string _probeScript: 'DIR="$1"; ROUTE="$2"; shift 2\n' + 'if command -v fcitx5 >/dev/null 2>&1; then echo "FCITX5 yes"; else echo "FCITX5 no"; fi\n' + 'if [ -n "$ROUTE" ] && [ -f "$DIR/$ROUTE" ]; then echo "ROUTE yes"; fi\n' + 'for NAME in "$@"; do\n'
-                                         + '  if [ -f "$DIR/$NAME" ]; then echo "@@FILE $NAME"; cat "$DIR/$NAME"; printf "\\n@@END\\n"; fi\n' + 'done\n'
   // Arguments: the directory, then (path, temporary, content) per file: each content goes to its temporary
   // file, which is moved over its path. One process writes all files of a run (the timing rule is 1 s).
   readonly property string _writeScript: 'set -eu\numask 077\nDIR="$1"; shift\nmkdir -p "$DIR"\nwhile [ $# -ge 3 ]; do\n  printf \'%s\' "$3" > "$2"\n  mv -f "$2" "$1"\n  shift 3\ndone\n'
@@ -62,6 +64,7 @@ Singleton {
 
   // Debounced regeneration for settings and fcitx5 changes.
   function schedule() {
+    root._forceGeneration = true;
     debounce.restart();
   }
 
@@ -82,19 +85,35 @@ Singleton {
         root.regenerate();
     };
     try {
-      var probeArgs = ["sh", "-c", root._probeScript, "sh", dialect.dir, dialect.route].concat(dialect.owned);
-      if (dialect.name === "Hyprland")
-        probeArgs = ["bash", "-c", 'set -eu\nsource "$1"\nhypr_config_resolve\nshift\nprintf "@@DIR %s\\n" "$HYPR_CONFIG_DIR"\nif [ "$HYPR_CONFIG_LANGUAGE" = lua ]; then echo "ROUTE yes"; fi\nset -- "$HYPR_CONFIG_DIR" "" "$@"\n' + root._probeScript, "bash", Quickshell.shellDir + "/Scripts/bash/hypr-config-resolve.sh"].concat(dialect.owned);
+      var probeArgs = ["python3", "-B", Quickshell.shellDir + "/Scripts/python/src/inputmethod/effective-binds.py", "--dialect", dialect.inventory, "--directory", dialect.dir, "--environment", String(Settings.data.bindings.environment || "none")];
       OwnedProcess.run(root, probeArgs, null, function (probe) {
-        if (!probe.success) {
-          Logger.w("InputMethodBinds", "could not read", dialect.name, "files; input bindings not updated", probe.error);
+        var parsed;
+        try {
+          if (!probe.success)
+            throw new Error(probe.error);
+          parsed = JSON.parse(probe.stdout);
+        } catch (error) {
+          root._owners = ({});
+          root._coverage = "effective inventory could not be read";
+          Logger.w("InputMethodBinds", root._coverage, dialect.name);
           finish();
           return;
         }
-        var parsed = root._parseProbe(probe.stdout);
-        if (dialect.name === "Hyprland")
-          dialect.dir = parsed.dir;
-        root._owners = root._ownersOf(parsed.files, dialect);
+        var key = JSON.stringify(parsed);
+        if (key === root._inventoryKey && !root._forceGeneration) {
+          finish();
+          return;
+        }
+        root._inventoryKey = key;
+        root._forceGeneration = false;
+        root._owners = parsed.owners;
+        root._coverage = parsed.unknown;
+        if (!parsed.writable) {
+          Logger.w("InputMethodBinds", "coverage unknown:", root._coverage);
+          finish();
+          return;
+        }
+        dialect.dir = parsed.directory;
         var plan = root._plan(parsed.fcitx5, dialect.plain);
         var pending = [];
         dialect.outputs(plan, parsed.route).forEach(function (out) {
@@ -147,35 +166,38 @@ Singleton {
     });
   }
 
-  // Which Atmosphera-owned file binds `combo`, or "" when it is free.
+  // Full refusal diagnostic, or "" only when coverage establishes a free chord.
   function conflictFor(combo) {
-    return root._owners[root._canonical(String(combo))] || "";
+    var occupied = root._owners[root._canonical(String(combo))];
+    return occupied || (root._coverage ? String(combo) + " coverage unknown: " + root._coverage : "");
+  }
+
+  function conflictsFor(combos) {
+    var messages = [];
+    for (var i = 0; i < combos.length; i++) {
+      var message = root.conflictFor(String(combos[i]));
+      if (message)
+        messages.push(message);
+    }
+    return messages.join("\n");
   }
 
   // ——— Compositor dialects ———
 
   // The running compositor's file layout and syntax, or null when it has no input-method binds.
-  //   dir      config directory; owned: Atmosphera-owned files there that may bind a combo
-  //   route    optional route-file probe; Hyprland resolves language/directory in its shared helper
+  //   dir      initial config directory; inventory resolves the effective root
+  //   inventory read-only effective-config scanner dialect
   //   plain    the syntax cannot escape a comma or blank: such combos and targets are refused
   //   reload   argv run after a change, or null (niri watches its session include)
-  //   combos   (name, text) -> canonical combos bound in an owned file
   //   outputs  (plan, routed) -> [{name, content}] for the files this compositor reads
   function _dialect() {
     if (CompositorService.isNiri) {
-      var owned = ["atmosphera.kdl", "atmosphera-i18n.kdl"];
-      if (String(Settings.data.bindings.environment || "none") === "macos")
-        owned.push("atmosphera-shortcuts-macos.kdl");
       return {
         "name": "niri",
         "dir": root.niriDir,
-        "owned": owned,
-        "route": "",
+        "inventory": "niri",
         "plain": false,
         "reload": null,
-        "combos": function (name, text) {
-          return root._bindCombos(text);
-        },
         "outputs": function (plan) {
           return [
                 {
@@ -190,13 +212,9 @@ Singleton {
       return {
         "name": "Hyprland",
         "dir": root.hyprDir,
-        "owned": ["atmosphera.conf", "atmosphera.lua"],
-        "route": "",
+        "inventory": "hypr",
         "plain": true,
         "reload": ["hyprctl", "reload"],
-        "combos": function (name, text) {
-          return name.slice(-4) === ".lua" ? root._luaCombos(text) : root._hyprlangCombos(text);
-        },
         "outputs": function (plan, routed) {
           var files = [
                 {
@@ -217,13 +235,9 @@ Singleton {
       return {
         "name": "mangowc",
         "dir": root.mangoDir,
-        "owned": ["atmosphera.conf"],
-        "route": "",
+        "inventory": "mango",
         "plain": true,
         "reload": ["mmsg", "dispatch", "reload_config"],
-        "combos": function (name, text) {
-          return root._mangoCombos(text);
-        },
         "outputs": function (plan) {
           return [
                 {
@@ -288,9 +302,9 @@ Singleton {
     for (var j = 0; j < combos.length; j++) {
       var combo = String(combos[j]);
       var canonical = root._canonical(combo);
-      var owner = root._owners[canonical];
+      var owner = root.conflictFor(combo);
       if (owner) {
-        Logger.w("InputMethodBinds", "skipped", what, "- " + combo + " is already bound in " + owner);
+        Logger.w("InputMethodBinds", "skipped", what, "- " + owner);
         return;
       }
       if (claimed[canonical] || seen[canonical]) {
@@ -419,161 +433,29 @@ Singleton {
     return '"' + String(text).replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/[\r\n]/g, " ") + '"';
   }
 
-  // Modifiers in fixed order, then the key: "Alt+Super+K" and "Super+Alt+K" are one combo.
+  // Same inventory identity: aliases/case normalize without changing rendered settings.
   function _canonical(combo) {
-    var parts = combo.split("+");
-    var key = parts.pop();
-    var order = root._modifierOrder;
-    parts.sort(function (a, b) {
-      var ia = order.indexOf(a) < 0 ? order.length : order.indexOf(a);
-      var ib = order.indexOf(b) < 0 ? order.length : order.indexOf(b);
-      return ia - ib;
-    });
-    parts.push(key);
-    return parts.join("+");
-  }
-
-  // ——— Owned niri files ———
-
-  // Output of the probe: "FCITX5 yes|no", "ROUTE yes" for Lua, optional "@@DIR <path>",
-  // then "@@FILE <name>" ... "@@END" blocks.
-  function _parseProbe(stdout) {
-    var result = {
-      "fcitx5": false,
-      "route": false,
-      "dir": "",
-      "files": {}
-    };
-    var lines = String(stdout || "").split("\n");
-    var current = null;
-    for (var i = 0; i < lines.length; i++) {
-      var line = lines[i];
-      if (current === null) {
-        if (line === "FCITX5 yes")
-          result.fcitx5 = true;
-        else if (line === "ROUTE yes")
-          result.route = true;
-        else if (line.indexOf("@@DIR ") === 0)
-          result.dir = line.substring(6);
-        else if (line.indexOf("@@FILE ") === 0)
-          current = {
-            "name": line.substring(7),
-            "lines": []
-          };
-        continue;
-      }
-      if (line === "@@END") {
-        result.files[current.name] = current.lines.join("\n");
-        current = null;
-      } else {
-        current.lines.push(line);
-      }
-    }
-    return result;
-  }
-
-  function _ownersOf(files, dialect) {
-    var owners = {};
-    for (var name in files) {
-      var combos = dialect.combos(name, files[name]);
-      for (var i = 0; i < combos.length; i++) {
-        if (!owners[combos[i]])
-          owners[combos[i]] = name;
-      }
-    }
-    return owners;
-  }
-
-  // Canonical combo from modifier names as the compositors spell them (SUPER, CTRL, MOD1, ...)
-  // and a key. Unknown modifiers are kept as written; they match nothing.
-  function _comboOf(mods, key) {
+    var aliases = {"super": "Super", "mod": "Super", "mod4": "Super", "win": "Super", "logo": "Super", "ctrl": "Ctrl", "control": "Ctrl", "ctl": "Ctrl", "alt": "Alt", "mod1": "Alt", "shift": "Shift", "mod5": "Mod5"};
+    var keys = {"spacebar": "space", "esc": "escape", "enter": "return", "pgup": "prior", "page_up": "prior", "pageup": "prior", "pgdown": "next", "pgdn": "next", "page_down": "next", "pagedown": "next", "backtab": "iso_left_tab", "del": "delete"};
+    var parts = String(combo).split("+");
+    var key = parts.pop().trim().toLowerCase();
     var names = [];
-    for (var i = 0; i < mods.length; i++) {
-      var raw = String(mods[i]).trim();
-      var m = raw.toUpperCase();
-      if (m === "" || m === "NONE")
+    for (var i = 0; i < parts.length; i++) {
+      var raw = parts[i].trim();
+      if (!raw || raw.toLowerCase() === "none")
         continue;
-      if (m === "SUPER" || m === "MOD4" || m === "WIN" || m === "LOGO")
-        names.push("Super");
-      else if (m === "CTRL" || m === "CONTROL")
-        names.push("Ctrl");
-      else if (m === "ALT" || m === "MOD1")
-        names.push("Alt");
-      else if (m === "SHIFT")
-        names.push("Shift");
-      else
-        names.push(raw);
+      var name = aliases[raw.toLowerCase()] || raw;
+      if (names.indexOf(name) < 0)
+        names.push(name);
     }
-    names.push(String(key).trim());
-    return root._canonical(names.join("+"));
-  }
-
-  // hyprlang: "bind[flags] = MODS, KEY, ..." (MODS space-separated, possibly empty).
-  function _hyprlangCombos(text) {
-    var combos = [];
-    var lines = String(text).split("\n");
-    for (var i = 0; i < lines.length; i++) {
-      var m = /^\s*bind[a-z]*\s*=\s*([^,]*),\s*([^,]+?)\s*(,|$)/.exec(lines[i].replace(/#.*$/, ""));
-      if (m)
-        combos.push(root._comboOf(m[1].split(/[\s_+]+/), m[2]));
-    }
-    return combos;
-  }
-
-  // Lua: hl.bind("MODS + KEY", ...) in the first argument.
-  function _luaCombos(text) {
-    var combos = [];
-    var lines = String(text).split("\n");
-    for (var i = 0; i < lines.length; i++) {
-      var m = /hl\.bind\(\s*"([^"]+)"/.exec(lines[i].replace(/--.*$/, ""));
-      if (m) {
-        var parts = m[1].split("+");
-        var key = parts.pop();
-        combos.push(root._comboOf(parts, key));
-      }
-    }
-    return combos;
-  }
-
-  // mangowc: "bind[flags]=MODS,KEY,..." (MODS "+"-joined, "NONE" for none).
-  function _mangoCombos(text) {
-    var combos = [];
-    var lines = String(text).split("\n");
-    for (var i = 0; i < lines.length; i++) {
-      var m = /^\s*bind[a-z]*\s*=\s*([^,]*),\s*([^,]+?)\s*(,|$)/.exec(lines[i].replace(/#.*$/, ""));
-      if (m)
-        combos.push(root._comboOf(m[1].split("+"), m[2]));
-    }
-    return combos;
-  }
-
-  // Key combos of the top-level entries of every `binds { }` block in a KDL text.
-  // Brace depth is tracked line by line; a `//` comment ends a line's content.
-  function _bindCombos(text) {
-    var combos = [];
-    var depth = 0;
-    var inside = -1;
-    var lines = String(text).split("\n");
-    for (var i = 0; i < lines.length; i++) {
-      var line = lines[i].replace(/\/\/.*$/, "");
-      var opening = depth;
-      if (inside < 0 && opening === 0 && /^\s*binds\s*\{/.test(line))
-        inside = 1;
-      else if (inside >= 0 && opening === inside) {
-        var m = /^\s*([A-Za-z0-9_+]+)(?=\s|\{|;|$)/.exec(line);
-        if (m)
-          combos.push(root._canonical(m[1]));
-      }
-      for (var c = 0; c < line.length; c++) {
-        if (line[c] === "{")
-          depth++;
-        else if (line[c] === "}")
-          depth--;
-      }
-      if (inside >= 0 && depth < inside)
-        inside = -1;
-    }
-    return combos;
+    var order = root._modifierOrder.concat(["Mod5"]);
+    names.sort(function (a, b) {
+      var ia = order.indexOf(a) < 0 ? 99 : order.indexOf(a);
+      var ib = order.indexOf(b) < 0 ? 99 : order.indexOf(b);
+      return ia - ib || a.localeCompare(b);
+    });
+    names.push(keys[key] || key);
+    return names.join("+");
   }
 
   // ——— Legacy atmosphera-i18n.kdl ———
@@ -857,6 +739,16 @@ Singleton {
   Timer {
     id: debounce
     interval: 300
+    onTriggered: root.regenerate()
+  }
+
+  // Re-read the full graph, including missing paths and new glob matches. This
+  // also observes live-only Hyprland changes; unchanged inventories do not write
+  // or reload. The same serialized owner handles settings and external changes.
+  Timer {
+    interval: 1500
+    running: true
+    repeat: true
     onTriggered: root.regenerate()
   }
 
