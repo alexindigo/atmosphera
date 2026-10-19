@@ -7,6 +7,7 @@ RowLayout {
   id: root
   required property var request
   readonly property bool selectionCountVisible: selectionCount.visible
+  readonly property bool dropdownValuesFit: !filterMenu.visible || !filterMenu.valueElided
   Layout.fillHeight: false
   spacing: Style.marginM
 

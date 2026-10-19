@@ -50,6 +50,7 @@ PanelWindow {
   }
   function choiceGeometry() { return appOptions.choiceGeometry(); }
   function choiceValuesFit() { return appOptions.choiceValuesFit(); }
+  function dropdownValuesFit() { return header.dropdownValuesFit && footer.dropdownValuesFit && (!appOptions.visible || appOptions.choiceValuesFit()); }
   function breadcrumbGeometry() { return header.breadcrumbGeometry(); }
   function dismissLayer() {
     if (quickLook.opened) {

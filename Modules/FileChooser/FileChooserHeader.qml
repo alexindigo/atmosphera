@@ -34,6 +34,7 @@ RowLayout {
     return items;
   }
   signal listingFocusRequested
+  readonly property bool dropdownValuesFit: !sortMenu.valueElided
   spacing: Style.marginXS
 
   function controlGeometry() {
@@ -175,6 +176,7 @@ RowLayout {
     onClicked: root.request.browser.refresh()
   }
   ChooserComboBox {
+    id: sortMenu
     Layout.fillWidth: true
     Layout.minimumWidth: compactWidth
     Layout.maximumWidth: implicitWidth

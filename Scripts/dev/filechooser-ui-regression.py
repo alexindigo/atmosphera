@@ -158,6 +158,7 @@ def main():
                      and s["layoutGeometry"]["height"] == s["layoutGeometry"]["minimumHeight"])
                 check(tag + "-minimum-all-controls-contained", layout_fits)
                 check(tag + "-minimum-footer-row", footer_row)
+                check(tag + "-minimum-full-dropdown-labels", lambda s: s["dropdownsFit"])
                 capture(tag + "-minimum")
         open_request("open", "dev.filechooser.Fieldwork", str(runtime / "Fieldwork"))
         check("no-choices-no-band", lambda s: s["bottomGeometry"]["bandHeight"] == 0)
@@ -273,6 +274,7 @@ def main():
                 wait(lambda s: s["layoutGeometry"]["width"] == s["layoutGeometry"]["minimumWidth"]
                      and s["layoutGeometry"]["height"] == s["layoutGeometry"]["minimumHeight"])
                 check(prefix + "-minimum-layout-contained", layout_fits)
+                check(prefix + "-minimum-full-dropdown-labels", lambda s: s["dropdownsFit"])
                 check(prefix + "-refuses-subminimum-size", lambda s: s["layoutGeometry"]["minimumWidth"] > 0
                       and s["layoutGeometry"]["minimumHeight"] > 0)
                 command(["grim", evidence / ("layout-" + prefix + "-minimum.png")])
