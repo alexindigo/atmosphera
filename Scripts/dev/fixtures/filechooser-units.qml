@@ -483,6 +483,15 @@ ShellRoot {
     step(requestReady, function () {
       same("request.remembered-folder-drives-listing", [request.browser.currentPath, request.browser.count], [aux + "/memory0", 0]);
       request.cancel();
+      mutate.command = ["timeout", "5", "rmdir", aux + "/memory1"];
+      mutate.running = true;
+    });
+    step(() => !mutate.running, function () {
+      createRequest("open", {}, "app.b");
+    });
+    step(() => request.browser.status !== "loading", function () {
+      same("request.missing-app-folder-fallback", [request.browser.currentPath, request.browser.status], [aux + "/memory10", "ready"]);
+      request.cancel();
       fileBrowser.navigate(aux + "/removed");
     });
     step(ready, function () {

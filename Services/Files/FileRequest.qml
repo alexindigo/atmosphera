@@ -22,6 +22,7 @@ Scope {
   property string viewMode: "grid"
   property bool _settled: false
   property bool _initialized: false
+  property bool _waitingMemory: false
   property bool _checking: false
   property string _pendingReplace: ""
   property string _errorText: ""
@@ -91,7 +92,13 @@ Scope {
       for (var choice of options.choices || [])
         values[choice[0]] = choice[3] || (choice[2].length ? choice[2][0][0] : "false");
       choiceValues = values;
-      browser.navigate(folder || FileChooserMemory.folderFor(appId));
+      // Folder availability can change between requests in the same shell.
+      // Memory owns that read; wait for its validated snapshot before choosing
+      // an app/shared/home fallback, rather than navigating a stale cache hit.
+      _waitingMemory = !folder;
+      FileChooserMemory.refresh();
+      if (folder)
+        browser.navigate(folder);
     } catch (e) {
       _errorText = String(e.message);
       _finish(2, {});
@@ -102,6 +109,12 @@ Scope {
   Connections {
     target: FileChooserMemory
     function onReadyChanged() { Qt.callLater(root._initialize); }
+    function onRefreshed() {
+      if (root._waitingMemory && !root.settled) {
+        root._waitingMemory = false;
+        root.browser.navigate(FileChooserMemory.folderFor(root.appId));
+      }
+    }
   }
 
   function _invalidate() {

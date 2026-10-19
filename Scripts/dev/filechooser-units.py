@@ -94,7 +94,7 @@ def main():
                 "selection.range", "selection.type-ahead", "selection.filter-revalidation", "selection.sort-remaps-cursor",
                 "selection.all-files", "selection.all-folders", "request.no-disk-before-accept", "request.cancel-once",
                 "request.success-once", "request.replace-confirmed", "request.saveFiles-order", "request.choices",
-                "request.current-filter", "request.cancel-inflight", "request.remembered-folder-drives-listing",
+                "request.current-filter", "request.cancel-inflight", "request.remembered-folder-drives-listing", "request.missing-app-folder-fallback",
                 "memory.per-app-a", "memory.shared-fallback", "memory.top-ten", "memory.newest-first-dedupe",
                 "memory.missing-hidden", "memory.reload-app", "memory.reload-preferences"}
     missing = sorted(required - {case["case"] for case in cases})

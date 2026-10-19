@@ -16,6 +16,7 @@ Singleton {
   property var _recentLocations: []
   property var _validPaths: []
   property int _generation: 0
+  signal refreshed
 
   // Same FileView/JsonAdapter state transport as the other persistent services.
   // Merely opening a request never creates or rewrites this file.
@@ -60,6 +61,7 @@ print(json.dumps([p for p in paths if isinstance(p, str) and os.path.isabs(p) an
           root._validPaths = valid;
           root._recentLocations = store.recent.filter((p, i, paths) => valid.includes(p) && paths.indexOf(p) === i).slice(0, 10);
           root._ready = true;
+          root.refreshed();
         }
         destroy();
       }
