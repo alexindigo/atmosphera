@@ -76,7 +76,8 @@ ShellRoot {
                             sort: request ? request.browser.sortKey : "",
                             descending: request ? request.browser.sortDescending : false,
                             filter: request && request.currentFilter ? request.currentFilter[0] : "",
-                            choices: request ? request.choiceValues : {},
+                             choices: request ? request.choiceValues : {},
+                             layoutGeometry: window ? window.layoutGeometry() : {},
                             hidden: request ? request.browser.showHidden : false,
                             saveName: request ? request.saveName : "",
                             replace: request ? request.pendingReplace : "",
@@ -149,6 +150,12 @@ ShellRoot {
     }
     function focusListing(): void {
       windowLoader.item.focusListing();
+    }
+    function panelWidth(width: real): void {
+      windowLoader.item.preferredPanelWidth = width;
+    }
+    function panelHeight(height: real): void {
+      windowLoader.item.preferredPanelHeight = height;
     }
     function failFolder(): void {
       root.request.browser.navigate(root.base + "/Missing");

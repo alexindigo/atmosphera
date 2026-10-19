@@ -184,6 +184,39 @@ def main():
         wait(lambda s: s["ready"] and s["path"] == str(paths / "With space"))
         check("hash-folder-valid-navigation-recovers", lambda s: not s["error"] and s["names"] == ["Picked.txt"])
         key(1); wait(lambda s: s["settled"])
+        def layout_fits(s):
+            g = s["layoutGeometry"]
+            def inside(rect, width, height):
+                return (rect["width"] >= 0 and rect["height"] >= 0 and rect["x"] >= -.5 and rect["y"] >= -.5
+                        and rect["x"] + rect["width"] <= width + .5 and rect["y"] + rect["height"] <= height + .5)
+            controls = [*g["header"], g["listing"], g["rail"], *g["footer"], *g.get("band", [])]
+            viewport = g["entries"]["viewport"]
+            return (all(inside(rect, g["width"], g["height"]) for rect in controls)
+                    and inside(viewport, g["listing"]["width"], g["listing"]["height"])
+                    # Vertical clipping while scrolling is intentional. A tile
+                    # may never be horizontally clipped by its viewport.
+                    and all(t["x"] >= viewport["x"] - .5 and t["x"] + t["width"] <= viewport["x"] + viewport["width"] + .5
+                            for t in g["entries"]["tiles"]))
+        for method in ("open", "save"):
+            for view in ("grid", "list"):
+                open_request(method, "dev.filechooser.layout", str(base), current_name="New layout.txt",
+                             filters=[["All files", [[0, "*"]]]],
+                             choices=[["quality", "Quality", [["original", "Original"], ["compact", "Compact"]], "original"],
+                                      ["metadata", "Keep metadata", [], "true"]])
+                ipc(view)
+                wait(lambda s: s["view"] == view)
+                time.sleep(.2)
+                prefix = method + "-" + view
+                check(prefix + "-1100-layout-contained", layout_fits)
+                ipc("panelWidth", "0"); ipc("panelHeight", "0")
+                wait(lambda s: s["layoutGeometry"]["width"] == s["layoutGeometry"]["minimumWidth"]
+                     and s["layoutGeometry"]["height"] == s["layoutGeometry"]["minimumHeight"])
+                check(prefix + "-minimum-layout-contained", layout_fits)
+                check(prefix + "-refuses-subminimum-size", lambda s: s["layoutGeometry"]["minimumWidth"] > 0
+                      and s["layoutGeometry"]["minimumHeight"] > 0)
+                command(["grim", evidence / ("layout-" + prefix + "-minimum.png")])
+                (evidence / ("layout-" + prefix + "-minimum.json")).write_text(json.dumps(state(), indent=2))
+                key(1); wait(lambda s: s["settled"])
         ipc("quit"); harness.wait(timeout=15)
         log = (evidence / "harness.log").read_text()
         errors = [l for l in log.splitlines() if re.search(r"TypeError|ReferenceError|Cannot assign|Binding loop|Failed to load configuration|Unable to assign", l)]

@@ -7,12 +7,14 @@ import qs.Widgets
 RowLayout {
   id: root
   required property var request
+  readonly property bool compactPath: pathButton.width < pathMeasure.implicitWidth + Style.margin2XS
   readonly property bool editing: pathField.visible
   readonly property var pathParts: request.browser.currentPath === "/" ? ["/"] : request.browser.currentPath.split("/").filter(part => part !== "")
   readonly property var breadcrumbItems: {
     var items = [];
-    var segments = pathParts.slice(-3);
-    var leading = pathParts.length > 3;
+    var limit = compactPath ? 1 : 3;
+    var segments = pathParts.slice(-limit);
+    var leading = pathParts.length > limit;
     if (leading)
       items.push({
                    kind: "ellipsis",
@@ -33,6 +35,10 @@ RowLayout {
   }
   signal listingFocusRequested
   spacing: Style.marginXS
+
+  function controlGeometry() {
+    return Array.from(children).filter(item => item.visible).map(item => ({x: item.x, y: item.y, width: item.width, height: item.height}));
+  }
 
   function editPath(initial) {
     pathField.visible = true;
@@ -89,8 +95,14 @@ RowLayout {
   }
   Item {
     Layout.fillWidth: true
-    Layout.minimumWidth: 100 * Style.uiScaleRatio
+    Layout.minimumWidth: pathMeasure.font.pixelSize + Style.margin2XS
     implicitHeight: Style.baseWidgetSize * 1.1 * Style.uiScaleRatio
+    NText {
+      id: pathMeasure
+      visible: false
+      text: root.pathParts.slice(-3).join(" › ")
+      pointSize: Style.fontSizeM
+    }
 
     Rectangle {
       anchors.fill: parent
@@ -117,7 +129,8 @@ RowLayout {
           id: crumbParts
           model: root.breadcrumbItems
           NText {
-            required property var modelData
+             required property var modelData
+            Layout.minimumWidth: 0
             Layout.fillWidth: modelData.kind === "segment" && breadcrumbLine.implicitWidth > breadcrumbLine.width
             text: modelData.text
             color: modelData.kind === "segment" ? AtmoColor.mOnSurface : AtmoColor.mOnSurfaceVariant
@@ -162,6 +175,9 @@ RowLayout {
     onClicked: root.request.browser.refresh()
   }
   ChooserComboBox {
+    Layout.fillWidth: true
+    Layout.minimumWidth: compactWidth
+    Layout.maximumWidth: implicitWidth
     minimumWidth: 150
     accessibleName: I18n.tr("widgets.file-picker.sort-by")
     model: [

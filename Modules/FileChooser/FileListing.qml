@@ -8,8 +8,11 @@ import qs.Widgets
 FocusScope {
   id: root
   required property var request
+  readonly property real tileSize: 144 * Style.uiScaleRatio
+  Layout.minimumWidth: frame.Layout.minimumWidth + Style.margin2XS
+  Layout.minimumHeight: frame.Layout.minimumHeight + Style.margin2XS
   readonly property bool navigationFocused: !!root.Window.window && root.Window.window.activeFocusItem === root
-  readonly property int columns: Math.max(1, Math.floor(grid.width / (144 * Style.uiScaleRatio)))
+  readonly property int columns: Math.max(1, Math.floor(grid.width / tileSize))
   readonly property var cursorItem: {
     void request.browser.count;
     return request.browser.entry(request.selection.cursor);
@@ -18,6 +21,16 @@ FocusScope {
   signal quickLookRequested(rect tile)
   signal editPathRequested(string initial)
   activeFocusOnTab: true
+
+  function controlGeometry() {
+    var view = request.viewMode === "list" ? list : grid;
+    var bounds = view.mapToItem(root, 0, 0, view.width, view.height);
+    var tiles = Array.from(view.contentItem.children).filter(item => item.visible && typeof item.path === "string").map(item => {
+      var rect = item.mapToItem(root, 0, 0, item.width, item.height);
+      return {x: rect.x, y: rect.y, width: rect.width, height: rect.height};
+    });
+    return {viewport: {x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height}, tiles: tiles};
+  }
 
   function tileRect() {
     var view = request.viewMode === "list" ? list : grid;
@@ -57,6 +70,7 @@ FocusScope {
 
   Rectangle { anchors.fill: parent; color: "transparent"; border.width: root.navigationFocused ? Style.borderS : 0; border.color: AtmoColor.mOutline; radius: Style.iRadiusS }
   ColumnLayout {
+    id: frame
     anchors.fill: parent
     anchors.margins: Style.marginXS
     spacing: Style.marginXS
@@ -73,6 +87,8 @@ FocusScope {
     Item {
       Layout.fillWidth: true
       Layout.fillHeight: true
+      Layout.minimumWidth: Math.max(root.tileSize + Style.marginL, emptyState.visible ? emptyState.implicitWidth : 0)
+      Layout.minimumHeight: Math.max(root.tileSize, emptyState.visible ? emptyState.implicitHeight : 0)
       GridView {
         id: grid
         anchors.fill: parent
@@ -81,7 +97,7 @@ FocusScope {
         clip: true
         model: root.request.browser.model
         cellWidth: width / root.columns
-        cellHeight: 144 * Style.uiScaleRatio
+        cellHeight: root.tileSize
         currentIndex: root.request.selection.cursor
         keyNavigationEnabled: false
         highlightMoveDuration: 0
@@ -135,6 +151,7 @@ FocusScope {
         }
       }
       ColumnLayout {
+        id: emptyState
         anchors.centerIn: parent
         visible: root.request.browser.count === 0 && root.request.browser.status !== "loading"
         spacing: Style.marginL

@@ -10,14 +10,17 @@ ComboBox {
   property string currentKey: ""
   property string accessibleName: ""
   property real minimumWidth: 150
+  readonly property real compactWidth: indicator.implicitWidth + Style.margin2L
   signal selected(string key)
   implicitWidth: minimumWidth * Style.uiScaleRatio
   implicitHeight: Style.baseWidgetSize * 1.1 * Style.uiScaleRatio
   textRole: "name"
   currentIndex: model ? model.findIndex(item => item.key === currentKey) : -1
   Accessible.name: accessibleName
-  onActivated: if (model && currentIndex >= 0) selected(model[currentIndex].key)
+  onActivated: if (model && currentIndex >= 0)
+                 selected(model[currentIndex].key)
   contentItem: NText {
+    elide: Text.ElideRight
     text: root.currentText
     leftPadding: Style.marginL
     rightPadding: indicator.width + Style.marginL
@@ -42,8 +45,14 @@ ComboBox {
     required property int index
     width: root.width - Style.margin2M
     highlighted: root.highlightedIndex === index
-    contentItem: NText { text: modelData.name; pointSize: Style.fontSizeM }
-    background: Rectangle { radius: Style.iRadiusXS; color: parent.highlighted ? Qt.alpha(AtmoColor.mPrimary, 0.18) : "transparent" }
+    contentItem: NText {
+      text: modelData.name
+      pointSize: Style.fontSizeM
+    }
+    background: Rectangle {
+      radius: Style.iRadiusXS
+      color: parent.highlighted ? Qt.alpha(AtmoColor.mPrimary, 0.18) : "transparent"
+    }
   }
   popup: Popup {
     y: root.height
@@ -58,6 +67,11 @@ ComboBox {
       currentIndex: root.highlightedIndex
       ScrollIndicator.vertical: ScrollIndicator {}
     }
-    background: Rectangle { color: AtmoColor.mSurfaceVariant; radius: Style.iRadiusS; border.color: AtmoColor.mOutline; border.width: Style.borderS }
+    background: Rectangle {
+      color: AtmoColor.mSurfaceVariant
+      radius: Style.iRadiusS
+      border.color: AtmoColor.mOutline
+      border.width: Style.borderS
+    }
   }
 }

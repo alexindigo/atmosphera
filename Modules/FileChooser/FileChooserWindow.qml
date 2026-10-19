@@ -9,6 +9,9 @@ import qs.Widgets
 PanelWindow {
   id: root
   required property var request
+  property real preferredPanelWidth: 1100 * Style.uiScaleRatio
+  property real preferredPanelHeight: 740 * Style.uiScaleRatio
+  readonly property size minimumPanelSize: Qt.size(Math.ceil(contentLayout.Layout.minimumWidth), Math.ceil(contentLayout.Layout.minimumHeight))
   readonly property var preview: filePreview
   readonly property bool quickLookOpen: quickLook.opened
   readonly property bool pathEditing: header.editing
@@ -33,6 +36,17 @@ PanelWindow {
   }
 
   function focusListing() { listing.forceActiveFocus(); }
+  function layoutGeometry() {
+    function rect(item) {
+      var r = item.mapToItem(panel, 0, 0, item.width, item.height);
+      return {x: r.x, y: r.y, width: r.width, height: r.height};
+    }
+    function controls(item, entries) {
+      var origin = item.mapToItem(panel, 0, 0);
+      return entries.map(entry => ({x: entry.x + origin.x, y: entry.y + origin.y, width: entry.width, height: entry.height}));
+    }
+    return {minimumWidth: minimumPanelSize.width, minimumHeight: minimumPanelSize.height, width: panel.width, height: panel.height, header: controls(header, header.controlGeometry()), listing: rect(listing), entries: listing.controlGeometry(), footer: controls(footer, footer.controlGeometry()), rail: rect(rail)};
+  }
   function choiceGeometry() { return footer.choiceGeometry(); }
   function breadcrumbGeometry() { return header.breadcrumbGeometry(); }
   function dismissLayer() {
@@ -66,12 +80,13 @@ PanelWindow {
   Rectangle {
     id: panel
     anchors.centerIn: parent
-    width: Math.min(1100 * Style.uiScaleRatio, parent.width - Style.margin2XL)
-    height: Math.min(740 * Style.uiScaleRatio, parent.height - Style.margin2XL)
+    width: Math.max(root.minimumPanelSize.width, Math.min(root.preferredPanelWidth, parent.width - Style.margin2XL))
+    height: Math.max(root.minimumPanelSize.height, Math.min(root.preferredPanelHeight, parent.height - Style.margin2XL))
     color: AtmoColor.mSurface
     radius: Style.radiusL
     clip: true
     ColumnLayout {
+      id: contentLayout
       anchors.fill: parent
       spacing: 0
       enabled: root.request.pendingReplace === ""
@@ -81,7 +96,7 @@ PanelWindow {
         spacing: Style.marginM
         RowLayout {
           Layout.fillWidth: true
-          NText { Layout.fillWidth: true; text: root.request.options.title || I18n.tr("widgets.file-picker.title"); pointSize: Style.fontSizeL }
+          NText { Layout.fillWidth: true; Layout.minimumWidth: 0; text: root.request.options.title || I18n.tr("widgets.file-picker.title"); elide: Text.ElideRight; pointSize: Style.fontSizeL }
           ChooserButton { icon: Icon.close; tooltipText: I18n.tr("common.close"); onClicked: root.request.cancel() }
         }
         ChooserTextField {
@@ -100,10 +115,13 @@ PanelWindow {
         id: browserArea
         Layout.fillWidth: true
         Layout.fillHeight: true
+        Layout.minimumWidth: browserLayout.Layout.minimumWidth
+        Layout.minimumHeight: browserLayout.Layout.minimumHeight
         RowLayout {
+          id: browserLayout
           anchors.fill: parent
           spacing: 0
-          FilePlacesRail { Layout.preferredWidth: implicitWidth; Layout.fillHeight: true; browser: root.request.browser }
+          FilePlacesRail { id: rail; Layout.minimumWidth: implicitWidth; Layout.maximumWidth: implicitWidth; Layout.preferredWidth: implicitWidth; Layout.fillHeight: true; browser: root.request.browser }
           ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true

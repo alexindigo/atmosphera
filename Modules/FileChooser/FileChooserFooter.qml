@@ -9,6 +9,12 @@ ColumnLayout {
   required property var request
   readonly property real choiceRowHeight: Style.baseWidgetSize * 1.1 * Style.uiScaleRatio
   readonly property bool selectionCountVisible: selectionCount.visible
+  function controlGeometry() {
+    return Array.from(choiceFlow.children).concat(Array.from(actions.children)).filter(item => item.visible && item.width > 0 && item.height > 0).map(item => {
+      var rect = item.mapToItem(root, 0, 0, item.width, item.height);
+      return {x: rect.x, y: rect.y, width: rect.width, height: rect.height};
+    });
+  }
   function choiceGeometry() {
     var centers = [];
     for (var i = 0; i < choiceRepeater.count; ++i) {
@@ -20,7 +26,10 @@ ColumnLayout {
   }
   spacing: Style.marginM
   Flow {
+    id: choiceFlow
     Layout.fillWidth: true
+    Layout.minimumWidth: Math.max(0, ...Array.from(children).map(item => item.width))
+    Layout.minimumHeight: childrenRect.height
     Layout.preferredHeight: childrenRect.height
     spacing: Style.marginL
     Repeater {
@@ -84,6 +93,7 @@ ColumnLayout {
     }
   }
   RowLayout {
+    id: actions
     Layout.fillWidth: true
     spacing: Style.marginM
     ChooserComboBox {
