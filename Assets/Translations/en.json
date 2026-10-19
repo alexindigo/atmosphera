@@ -2426,10 +2426,22 @@
       "year-two-digit": "Year as two-digit number (00-99)"
     },
     "file-picker": {
+      "absolute-folder": "Choose an absolute folder path.",
       "add-to-list": "Add to List",
+      "cannot-replace": "Can't replace this file. Choose another name.",
+      "choose-file-first": "Choose a file first.",
       "file-name": "File name",
+      "file-unreadable": "You don't have permission to read this file. Choose another file.",
+      "folder-check-failed": "The folder check failed",
+      "folder-missing": "The folder no longer exists. Choose another folder.",
+      "folder-unreadable": "You don't have permission to open this folder. Choose another folder.",
+      "folder-unwritable": "You don't have permission to save in this folder. Choose another folder.",
+      "invalid-choice": "Choose a valid value for {name}.",
+      "invalid-name": "Enter a name that is not empty, . or .. and does not contain /.",
       "item": "item",
       "items": "items",
+      "open-folder-error": "Can't open {path}: {reason}. Choose another folder.",
+      "open": "Open",
       "overwrite-description": "A file with this name already exists in this folder. Replace it?",
       "replace": "Replace",
       "save": "Save",
@@ -2441,8 +2453,10 @@
       "select-file": "Select File",
       "select-folder": "Select Folder",
       "selected": "Selected:",
+      "selection-check-failed": "Can't check the selection. Choose again.",
       "target-list-overwrite": "replaces existing",
-      "title": "File Picker"
+      "title": "File Picker",
+      "wrong-kind": "The selection no longer exists or has the wrong kind. Choose again."
     },
     "file-picker-title": "Select a file",
     "icon-picker": {
