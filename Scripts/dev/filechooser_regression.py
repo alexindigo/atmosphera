@@ -22,6 +22,19 @@ def guest():
     assert Path(os.environ["TMPDIR"]).resolve().is_relative_to(ROOT)
 
 
+def desktop_fixture(data):
+    """A real desktop entry in this run's private XDG data, never installed."""
+    applications = data / "applications"
+    applications.mkdir()
+    icon = applications / "fieldwork.svg"
+    icon.write_text('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">'
+                    '<rect x="5" y="2" width="22" height="28" rx="3" fill="#5282a8"/>'
+                    '<path d="M10 10h12M10 16h12M10 22h8" stroke="#fff" stroke-width="2"/></svg>')
+    (applications / "dev.filechooser.Fieldwork.desktop").write_text(
+        f"[Desktop Entry]\nType=Application\nName=Fieldwork\nExec=true\nIcon={icon}\n")
+    return icon
+
+
 class Run:
     def __init__(self, source, label):
         guest()

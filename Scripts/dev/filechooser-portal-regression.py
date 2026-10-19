@@ -84,10 +84,16 @@ def suite(r):
     r.check("title-label-parent-modal", s["label"] == "Choose this" and s["parent"] == "wayland:test-parent" and s["modal"] is False, s)
     r.check("current-filter-preselected", s["filter"] == filters[0] and s["names"] == ["Chosen.txt"], s)
     r.check("choices-initial-values", s["choices"] == {"quality": "small", "metadata": "true"}, s)
-    r.key(102); r.key(28)
+    # Real keys: listing → dropdown → checkbox → filter → Cancel → accept.
+    # Assert the frontend consumer receives the UI edits, not IPC-injected values.
+    r.key(102); r.key(15); r.key(57); r.key(103); r.key(28)
+    r.wait(lambda s: s["requests"][0]["choices"]["quality"] == "full")
+    r.key(15); r.key(57)
+    r.wait(lambda s: s["requests"][0]["choices"]["metadata"] == "false")
+    r.key(15); r.key(15); r.key(15); r.key(28)
     data = r.result(proc, out)
     r.check("OpenFile-consumer-uri-and-read", data["response"] == 0 and data["results"]["uris"] == [(r.fixtures / "Chosen.txt").as_uri()] and (r.fixtures / "Chosen.txt").read_text() == "File chooser consumer fixture\n", data)
-    r.check("OpenFile-types-and-options", data["types"] == {"uris": "as", "choices": "a(ss)", "current_filter": "(sa(us))"} and data["results"]["choices"] == [["quality", "small"], ["metadata", "true"]] and data["results"]["current_filter"] == filters[0], data)
+    r.check("OpenFile-UI-choices-at-consumer", data["types"] == {"uris": "as", "choices": "a(ss)", "current_filter": "(sa(us))"} and data["results"]["choices"] == [["quality", "full"], ["metadata", "false"]] and data["results"]["current_filter"] == filters[0], data)
     # writable is consumed by the frontend. Assert the implementation wire, not
     # a frontend key which the FileChooser XML deliberately doesn't expose.
     wire = [json.loads(l) for l in (r.output / "wire.jsonl").read_text().splitlines() if l.startswith("{")]

@@ -9,6 +9,15 @@ Scope {
   property string method: "open"
   property string appId: ""
   property var options: ({})
+  readonly property var appEntry: {
+    // Re-resolve when the desktop-entry model finishes loading or changes.
+    void DesktopEntries.applications.values;
+    return appId ? DesktopEntries.byId(appId) : null;
+  }
+  readonly property string appName: appEntry ? appEntry.name : ""
+  readonly property string appIcon: appEntry ? appEntry.icon : ""
+  readonly property string appOptionsLabel: appEntry ? I18n.tr("widgets.file-picker.options-from", {name: appName}) : I18n.tr("widgets.file-picker.options-from-app")
+  readonly property var choices: options.choices || []
   readonly property FileBrowser browser: requestBrowser
   readonly property FileSelection selection: requestSelection
   property string saveName: ""
@@ -89,7 +98,7 @@ Scope {
       saveName = options.current_name !== undefined ? String(options.current_name) : (file ? file.slice(file.lastIndexOf("/") + 1) : "");
       currentFilter = options.current_filter || (options.filters && options.filters.length ? options.filters[0] : null);
       var values = {};
-      for (var choice of options.choices || [])
+      for (var choice of choices)
         values[choice[0]] = choice[3] || (choice[2].length ? choice[2][0][0] : "false");
       choiceValues = values;
       // Folder availability can change between requests in the same shell.
@@ -185,18 +194,18 @@ Scope {
       }
       paths = names.map(name => (folder === "/" ? "" : folder) + "/" + name);
     }
-    var choices = [];
-    for (var choice of options.choices || []) {
+    var selectedChoices = [];
+    for (var choice of choices) {
       var value = choiceValues[choice[0]];
       var allowed = choice[2].length ? choice[2].map(item => item[0]) : ["true", "false"];
       if (!allowed.includes(value)) {
         _errorText = I18n.tr("widgets.file-picker.invalid-choice", {name: choice[1]});
         return;
       }
-      choices.push([choice[0], value]);
+      selectedChoices.push([choice[0], value]);
     }
     _targets = paths;
-    _snapshot = {folder: folder, choices: choices, filter: currentFilter};
+    _snapshot = {folder: folder, choices: selectedChoices, filter: currentFilter};
     _validate();
   }
 

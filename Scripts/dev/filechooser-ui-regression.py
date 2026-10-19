@@ -18,6 +18,21 @@ from urllib.parse import unquote, urlsplit
 from filechooser_regression import ROOT, SCRIPTS, guest
 
 
+def layout_fits(s):
+    g = s["layoutGeometry"]
+    def inside(rect, width, height):
+        return (rect["width"] >= 0 and rect["height"] >= 0 and rect["x"] >= -.5 and rect["y"] >= -.5
+                and rect["x"] + rect["width"] <= width + .5 and rect["y"] + rect["height"] <= height + .5)
+    controls = [*g["header"], g["listing"], g["rail"], *g["footer"], *g.get("band", [])]
+    viewport = g["entries"]["viewport"]
+    return (all(inside(rect, g["width"], g["height"]) for rect in controls)
+            and inside(viewport, g["listing"]["width"], g["listing"]["height"])
+            # Vertical clipping while scrolling is intentional. A tile may
+            # never be horizontally clipped by its viewport.
+            and all(t["x"] >= viewport["x"] - .5 and t["x"] + t["width"] <= viewport["x"] + viewport["width"] + .5
+                    for t in g["entries"]["tiles"]))
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
@@ -90,6 +105,65 @@ def main():
         keyboard = json.loads((keyboard_output / "result.json").read_text())
         cases.extend(keyboard["cases"])
         assert keyboard["complete"] and keyboard["status"] == "green"
+        # F6: app identity, order, wrapping and the footer's independent row.
+        band_choices = [["quality", "Image quality", [["original", "Original"], ["compact", "Compact"]], "original"],
+                        ["metadata", "Keep original location and camera metadata", [], "true"]]
+        band_filters = [["All files", [[0, "*"]]]]
+        def footer_row(s):
+            g = s["bottomGeometry"]
+            controls = g["footer"]
+            return (len(controls) >= 3 and max(c["center"] for c in controls) - min(c["center"] for c in controls) < .5
+                    and all(c["x"] >= 0 and c["x"] + c["width"] <= g["width"] for c in controls)
+                    and all(a["x"] + a["width"] <= b["x"] + .5 for a, b in zip(controls, controls[1:])))
+        def capture(name):
+            command(["grim", evidence / ("F6-" + name + ".png")])
+            (evidence / ("F6-" + name + ".json")).write_text(json.dumps(state(), indent=2))
+        for method in ("open", "save"):
+            for app in ("dev.filechooser.Fieldwork", ""):
+                open_request(method, app, str(runtime / "Fieldwork"), current_name="New field notes.md",
+                             choices=band_choices, filters=band_filters)
+                tag = method + ("-app" if app else "-anonymous")
+                check(tag + "-identity", lambda s: s["appOptionsLabel"] == ("Options from Fieldwork" if app else "Options from the app")
+                      and bool(s["appIcon"]) == bool(app))
+                # Include the optional count in open-mode geometry.
+                ipc("focusListing")
+                if method == "open":
+                    command(["ydotool", "type", "Field"])
+                    wait(lambda s: len(s["selected"]) == 1)
+                key(15)
+                check(tag + "-Tab-listing-to-band", lambda s: s["focusedControl"] == "Image quality")
+                key(57); key(108); key(28)
+                check(tag + "-selected-value-not-elided", lambda s: s["choices"]["quality"] == "compact" and s["choicesFit"])
+                key(15)
+                check(tag + "-Tab-band-request-order", lambda s: s["focusedControl"] == "Keep original location and camera metadata")
+                key(15)
+                check(tag + "-Tab-band-to-footer", lambda s: s["focusedControl"] == "File type")
+                key(15)
+                check(tag + "-Tab-footer-cancel", lambda s: s["focusedControl"] == "Cancel")
+                key(15)
+                check(tag + "-Tab-footer-accept", lambda s: s["focusedControl"] == ("Open" if method == "open" else "Save"))
+                check(tag + "-default-footer-row", footer_row)
+                check(tag + "-default-all-controls-contained", layout_fits)
+                default = state()["bottomGeometry"]
+                capture(tag)
+                narrow = max(720, state()["layoutGeometry"]["minimumWidth"])
+                ipc("panelWidth", str(narrow))
+                wait(lambda s: s["bottomGeometry"]["width"] == narrow and s["bottomGeometry"]["bandHeight"] > default["bandHeight"])
+                check(tag + "-narrow-footer-row", footer_row)
+                check(tag + "-narrow-all-controls-contained", layout_fits)
+                check(tag + "-band-wraps", lambda s: max(s["choiceCenters"]) - min(s["choiceCenters"]) > .5)
+                capture(tag + "-narrow")
+                ipc("panelWidth", "0"); ipc("panelHeight", "0")
+                wait(lambda s: s["layoutGeometry"]["width"] == s["layoutGeometry"]["minimumWidth"]
+                     and s["layoutGeometry"]["height"] == s["layoutGeometry"]["minimumHeight"])
+                check(tag + "-minimum-all-controls-contained", layout_fits)
+                check(tag + "-minimum-footer-row", footer_row)
+                capture(tag + "-minimum")
+        open_request("open", "dev.filechooser.Fieldwork", str(runtime / "Fieldwork"))
+        check("no-choices-no-band", lambda s: s["bottomGeometry"]["bandHeight"] == 0)
+        ipc("focusListing"); key(15)
+        check("no-band-listing-to-footer", lambda s: s["focusedControl"] == "Cancel")
+        capture("no-choices")
         ipc("open", "open")
         wait(lambda s: s["ready"] and not s["settled"])
         command(["ydotool", "type", "Unknown"]); key(57)
@@ -184,19 +258,6 @@ def main():
         wait(lambda s: s["ready"] and s["path"] == str(paths / "With space"))
         check("hash-folder-valid-navigation-recovers", lambda s: not s["error"] and s["names"] == ["Picked.txt"])
         key(1); wait(lambda s: s["settled"])
-        def layout_fits(s):
-            g = s["layoutGeometry"]
-            def inside(rect, width, height):
-                return (rect["width"] >= 0 and rect["height"] >= 0 and rect["x"] >= -.5 and rect["y"] >= -.5
-                        and rect["x"] + rect["width"] <= width + .5 and rect["y"] + rect["height"] <= height + .5)
-            controls = [*g["header"], g["listing"], g["rail"], *g["footer"], *g.get("band", [])]
-            viewport = g["entries"]["viewport"]
-            return (all(inside(rect, g["width"], g["height"]) for rect in controls)
-                    and inside(viewport, g["listing"]["width"], g["listing"]["height"])
-                    # Vertical clipping while scrolling is intentional. A tile
-                    # may never be horizontally clipped by its viewport.
-                    and all(t["x"] >= viewport["x"] - .5 and t["x"] + t["width"] <= viewport["x"] + viewport["width"] + .5
-                            for t in g["entries"]["tiles"]))
         for method in ("open", "save"):
             for view in ("grid", "list"):
                 open_request(method, "dev.filechooser.layout", str(base), current_name="New layout.txt",

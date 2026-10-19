@@ -109,7 +109,7 @@ ShellRoot {
     responses = [];
     request = requestFactory.createObject(root, {
                                             method: method,
-                                            appId: appId || "unit.app",
+                                            appId: appId === undefined ? "unit.app" : appId,
                                             options: options || {
                                               current_folder: PortalPaths.encodeBytePath(base).bytes
                                             }
@@ -125,6 +125,23 @@ ShellRoot {
   }
 
   function buildTests() {
+    step(() => FileChooserMemory.ready && I18n.isLoaded, function () {
+      createRequest("open", undefined, "dev.filechooser.Fieldwork");
+    });
+    step(() => requestReady() && request.appEntry !== null, function () {
+      same("request.app-entry", [request.appName, request.appIcon, request.appOptionsLabel], ["Fieldwork", Quickshell.env("XDG_DATA_HOME") + "/applications/fieldwork.svg", "Options from Fieldwork"]);
+      request.cancel();
+      createRequest("open", undefined, "");
+    });
+    step(requestReady, function () {
+      same("request.app-empty", [request.appName, request.appIcon, request.appOptionsLabel], ["", "", "Options from the app"]);
+      request.cancel();
+      createRequest("open", undefined, "dev.filechooser.Unknown");
+    });
+    step(requestReady, function () {
+      same("request.app-unknown", [request.appName, request.appIcon, request.appOptionsLabel], ["", "", "Options from the app"]);
+      request.cancel();
+    });
     step(() => I18n.isLoaded && preview.pdfDetectionDone, function () {
       same("preview.idle", preview.status, "idle");
       report("preview.pdf-detection", typeof preview.pdfAvailable === "boolean", preview.pdfAvailable);
@@ -395,7 +412,7 @@ ShellRoot {
       same("request.failed-once", responses.length, 1);
       createRequest("open", {
                       current_file: PortalPaths.encodeBytePath(base + "/Alpha.txt").bytes,
-                      choices: [["quality", "Quality", [["low", "Low"], ["high", "High"]], "low"], ["enabled", "Enabled", [], "true"]],
+                       choices: [["quality", "Quality", [["low", "Low"], ["high", "High"]], "low"], ["enabled", "Enabled", [], "true"], ["fallback", "Fallback", [["first", "First"], ["next", "Next"]], ""], ["unchecked", "Unchecked", [], ""]],
                       filters: [["Text", [[0, "*.txt"]]]],
                       current_filter: ["Text", [[0, "*.txt"]]]
                     });
@@ -403,14 +420,17 @@ ShellRoot {
     step(requestReady, function () {
       same("request.current-file-folder", request.browser.currentPath, base);
       same("request.preselection", request.selection.selectedPaths, [base + "/Alpha.txt"]);
+      same("request.choices-order", request.choices.map(choice => choice[0]), ["quality", "enabled", "fallback", "unchecked"]);
+      same("request.choices-defaults", request.choiceValues, {quality: "low", enabled: "true", fallback: "first", unchecked: "false"});
       request.setChoice("quality", "high");
+      request.setChoice("enabled", "false");
       request.accept();
       request.accept();
     });
     step(answered, function () {
       same("request.open-success", responses[0].response, 0);
       same("request.open-uri", responses[0].results.uris, [PortalPaths.pathToUri(base + "/Alpha.txt").uri]);
-      same("request.choices", responses[0].results.choices, [["quality", "high"], ["enabled", "true"]]);
+      same("request.choices", responses[0].results.choices, [["quality", "high"], ["enabled", "false"], ["fallback", "first"], ["unchecked", "false"]]);
       same("request.current-filter", responses[0].results.current_filter, ["Text", [[0, "*.txt"]]]);
       same("request.writable", responses[0].results.writable, true);
       request.cancel();

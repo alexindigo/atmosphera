@@ -12,6 +12,7 @@ PanelWindow {
   property real preferredPanelWidth: 1100 * Style.uiScaleRatio
   property real preferredPanelHeight: 740 * Style.uiScaleRatio
   readonly property size minimumPanelSize: Qt.size(Math.ceil(contentLayout.Layout.minimumWidth), Math.ceil(contentLayout.Layout.minimumHeight))
+  readonly property var bottomGeometry: ({width: panel.width, bandHeight: appOptions.visible ? appOptions.height : 0, footer: footer.controlGeometry()})
   readonly property var preview: filePreview
   readonly property bool quickLookOpen: quickLook.opened
   readonly property bool pathEditing: header.editing
@@ -45,9 +46,10 @@ PanelWindow {
       var origin = item.mapToItem(panel, 0, 0);
       return entries.map(entry => ({x: entry.x + origin.x, y: entry.y + origin.y, width: entry.width, height: entry.height}));
     }
-    return {minimumWidth: minimumPanelSize.width, minimumHeight: minimumPanelSize.height, width: panel.width, height: panel.height, header: controls(header, header.controlGeometry()), listing: rect(listing), entries: listing.controlGeometry(), footer: controls(footer, footer.controlGeometry()), rail: rect(rail)};
+    return {minimumWidth: minimumPanelSize.width, minimumHeight: minimumPanelSize.height, width: panel.width, height: panel.height, header: controls(header, header.controlGeometry()), listing: rect(listing), entries: listing.controlGeometry(), footer: controls(footer, footer.controlGeometry()), band: appOptions.visible ? controls(appOptions, appOptions.controlGeometry()) : [], rail: rect(rail)};
   }
-  function choiceGeometry() { return footer.choiceGeometry(); }
+  function choiceGeometry() { return appOptions.choiceGeometry(); }
+  function choiceValuesFit() { return appOptions.choiceValuesFit(); }
   function breadcrumbGeometry() { return header.breadcrumbGeometry(); }
   function dismissLayer() {
     if (quickLook.opened) {
@@ -158,6 +160,7 @@ PanelWindow {
         }
       }
       Rectangle { Layout.fillWidth: true; implicitHeight: Style.borderS; color: AtmoColor.mOutline }
+      FileAppOptions { id: appOptions; Layout.fillWidth: true; visible: root.request.choices.length > 0; request: root.request; enabled: !root.quickLookOpen && !root.request.pendingReplace }
       FileChooserFooter { id: footer; Layout.fillWidth: true; Layout.margins: Style.marginL; request: root.request; enabled: !root.quickLookOpen && !root.request.pendingReplace }
     }
     Rectangle {

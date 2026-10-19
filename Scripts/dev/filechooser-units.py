@@ -10,6 +10,8 @@ import shutil
 import subprocess
 import sys
 
+from filechooser_regression import desktop_fixture
+
 ROOT = Path("/home/tester/Projects/atmosphera-filechooser")
 PREFIX = "FILECHOOSER_UNITS|"
 ERRORS = re.compile(r"TypeError|ReferenceError|Cannot assign|Binding loop|Failed to load configuration|is not a type|Unable to assign|Error:")
@@ -78,6 +80,7 @@ def main():
     (profile / "config/gtk-3.0").mkdir()
     (profile / "config/gtk-3.0/bookmarks").write_text(f'{(aux / "bookmark").as_uri()} Test bookmark\n')
     (profile / "data/recently-used.xbel").write_text(f'<xbel><bookmark href="{(fixtures / "Alpha.txt").as_uri()}" modified="2026-10-18T00:00:00Z"/></xbel>')
+    desktop_fixture(profile / "data")
     sockets = list(Path("/run/user/1000").glob("niri.*.sock"))
     if len(sockets) != 1 or not Path("/run/user/1000/wayland-1").exists():
         parser.error("expected the assigned guest's niri session")
@@ -114,7 +117,8 @@ def main():
                 "selection.range", "selection.type-ahead", "selection.filter-revalidation", "selection.sort-remaps-cursor",
                 "selection.all-files", "selection.all-folders", "request.no-disk-before-accept", "request.cancel-once",
                 "request.success-once", "request.replace-confirmed", "request.saveFiles-order", "request.choices",
-                "request.current-filter", "request.cancel-inflight", "request.remembered-folder-drives-listing", "request.missing-app-folder-fallback",
+                 "request.current-filter", "request.cancel-inflight", "request.remembered-folder-drives-listing", "request.missing-app-folder-fallback",
+                 "request.app-entry", "request.app-empty", "request.app-unknown", "request.choices-order", "request.choices-defaults",
                 "memory.per-app-a", "memory.shared-fallback", "memory.top-ten", "memory.newest-first-dedupe",
                  "memory.missing-hidden", "memory.reload-app", "memory.reload-preferences",
                  "preview.small", "preview.large", "preview.exact-limit", "preview.multibyte-cut",

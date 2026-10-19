@@ -11,15 +11,21 @@ ComboBox {
   property string accessibleName: ""
   property real minimumWidth: 150
   readonly property real compactWidth: indicator.implicitWidth + Style.margin2L
+  readonly property bool valueElided: valueLabel.truncated
   signal selected(string key)
-  implicitWidth: minimumWidth * Style.uiScaleRatio
+  implicitWidth: Math.max(minimumWidth * Style.uiScaleRatio, contentItem.implicitWidth)
   implicitHeight: Style.baseWidgetSize * 1.1 * Style.uiScaleRatio
+  // The custom label owns horizontal padding, including indicator clearance.
+  // Do not also inherit the platform style's indicator padding on the Control.
+  leftPadding: 0
+  rightPadding: 0
   textRole: "name"
   currentIndex: model ? model.findIndex(item => item.key === currentKey) : -1
   Accessible.name: accessibleName
   onActivated: if (model && currentIndex >= 0)
                  selected(model[currentIndex].key)
   contentItem: NText {
+    id: valueLabel
     elide: Text.ElideRight
     text: root.currentText
     leftPadding: Style.marginL

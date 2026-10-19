@@ -13,6 +13,8 @@ import shutil
 import subprocess
 import sys
 
+from filechooser_regression import desktop_fixture
+
 ROOT = Path("/home/tester/Projects/atmosphera-filechooser")
 
 
@@ -73,6 +75,7 @@ def main():
     (profile / "config/settings.json").write_text(json.dumps(defaults))
     (profile / "config/user-dirs.dirs").write_text(f'XDG_DOCUMENTS_DIR="{fixtures}/References"\nXDG_PICTURES_DIR="{fixtures}/Screens"\n')
     (profile / "data/recently-used.xbel").write_text(f'<xbel><bookmark href="{(fixtures / "Field notes.md").as_uri()}" modified="2026-10-18T12:00:00Z"/></xbel>')
+    desktop_fixture(profile / "data")
     cache = profile / "cache/atmosphera"
     cache.mkdir()
     (cache / "filechooser.json").write_text(json.dumps({"recent": [str(fixtures / "References"), str(fixtures / "Screens")], "sharedFolder": str(fixtures), "appFolders": {}, "preferences": {"view": "grid", "sortKey": "name", "showHidden": False, "sortDescending": False}}))
