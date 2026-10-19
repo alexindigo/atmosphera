@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+### 2026-10-19
+
+**Feature**
+
+The file chooser grid now shows video frames with a small play indicator,
+using the shared freedesktop thumbnail cache, including valid thumbnails made
+by other apps. Only visible tiles generate previews; scrolling and closing the
+chooser cancel unused work. Failed videos keep their file icon and are retried
+only after the file changes. Dropdowns retain their full labels at the
+chooser's minimum width.
+
 ### 2026-10-17
 
 **Fix**

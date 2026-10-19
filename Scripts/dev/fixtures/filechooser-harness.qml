@@ -84,6 +84,7 @@ ShellRoot {
                              bottomGeometry: window ? window.bottomGeometry : {},
                               choicesFit: window ? window.choiceValuesFit() : false,
                               dropdownsFit: window ? window.dropdownValuesFit() : false,
+                              thumbnails: window ? window.thumbnailState() : {},
                             hidden: request ? request.browser.showHidden : false,
                             saveName: request ? request.saveName : "",
                             replace: request ? request.pendingReplace : "",

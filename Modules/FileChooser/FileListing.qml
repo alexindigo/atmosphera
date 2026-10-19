@@ -8,6 +8,7 @@ import qs.Widgets
 FocusScope {
   id: root
   required property var request
+  required property var thumbnails
   readonly property real tileSize: 144 * Style.uiScaleRatio
   Layout.minimumWidth: frame.Layout.minimumWidth + Style.margin2XS
   Layout.minimumHeight: frame.Layout.minimumHeight + Style.margin2XS
@@ -20,6 +21,9 @@ FocusScope {
   readonly property var columnGeometry: ({header: listHeaders.geometry, row: list.itemAtIndex(0) ? list.itemAtIndex(0).columnGeometry : []})
   signal quickLookRequested(rect tile)
   signal editPathRequested(string initial)
+  function thumbnailState() {
+    return {statistics: thumbnails.statistics, tiles: Array.from(grid.contentItem.children).filter(item => typeof item.path === "string" && item.thumbnailActive).map(item => item.thumbnailState)};
+  }
   activeFocusOnTab: true
 
   function controlGeometry() {
@@ -116,6 +120,8 @@ FocusScope {
           selected: root.request.selection.selectedPaths.includes(filePath)
           cursor: root.request.selection.cursor === index
           listingFocused: root.navigationFocused
+          thumbnailProvider: root.thumbnails
+          thumbnailActive: grid.visible && y + height > grid.contentY && y < grid.contentY + grid.height
           onPressed: modifiers => { root.forceActiveFocus(); root.request.selection.click(index, modifiers); }
           onActivated: root.request.activate(index)
         }
