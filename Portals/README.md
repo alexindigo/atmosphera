@@ -105,7 +105,7 @@ clients treat as "unsupported key" and fall back from cleanly.
 | --- | --- | --- |
 | `OpenFile` | `(osssa{sv}) -> (u a{sv})` | open files or folders, optional multi-select |
 | `SaveFile` | `(osssa{sv}) -> (u a{sv})` | single save target: filename field + inline overwrite confirm |
-| `SaveFiles` | `(osssa{sv}) -> (u a{sv})` | multi-target save list (accumulate targets, Save All) |
+| `SaveFiles` | `(osssa{sv}) -> (u a{sv})` | destination folder; return the supplied names in order, confirming each replacement |
 
 Response codes: `0` ok (`results` carries `uris`), `1` cancelled, `2`
 error.
@@ -122,12 +122,42 @@ adaptor at the caller-supplied handle path; its `Close()` cancels the
 dialog and replies `(1, {})`. The adaptor is destroyed when the call
 settles, freeing the bus path immediately.
 
-The dialog is a layer-shell overlay (`PortalFileDialog`) hosting
-`AtmoFilePicker` (the shell's file picker — open mode unchanged for
-in-shell callers, save mode added here). In-shell consumers
-(Settings panels, setup wizard, etc.) go through the frontend
-`org.freedesktop.portal.FileChooser` like any app (`PortalFilePicker` +
-`FileChooserClient`), so the picker's only host is the portal dialog.
+`FileChooserPortal` creates a fresh `Services/Files/FileRequest` and a
+`Modules/FileChooser/FileChooserWindow` per handle. The service owns option
+decoding, validation, overwrite checks and exactly one result. Its `FileBrowser`
+owns the folder and listing; `FileSelection` owns selection. Views bind to those
+services and send intents. Successful requests remember their folder per app
+through `FileChooserMemory`; cancellation never changes that memory.
+
+Options retain their portal shapes: glob/MIME filters and `current_filter`,
+combo/boolean choices, `accept_label`, multiple/directory selection,
+`current_folder`, `current_file`, `current_name`, and SaveFiles `files`.
+Successful replies type `uris` as `as`, `choices` as `a(ss)`, `current_filter`
+as `(sa(us))` and `writable` as `b`. Saves only return destinations: the chooser
+does not create or overwrite files. Folder failures appear inline in plain
+language, naming the folder, while the current listing remains coherent.
+`writable` is an implementation result consumed by xdg-desktop-portal, not a
+frontend `Response` key; frontend clients receive URIs, choices and the filter.
+
+The layer-shell window opens focused and centred on the app's focused output
+and stays above the app. `parent_window` and `modal` are accepted best effort;
+true foreign-window parenting requires compositor `xdg-foreign` support.
+Frontend `Request.Close`, application exit (relayed by xdg-desktop-portal),
+portal-daemon loss and window cancellation all cancel the request once.
+
+Settings panels and setup callers use `PortalFilePicker` + `FileChooserClient`
+through **`org.freedesktop.portal.Desktop`**, just like external applications.
+Each operation supplies a unique handle token and installs its `Response`
+subscription on the predicted handle before calling `OpenFile`. A same-bus
+barrier orders the subscription before the call. The client obtains its
+connection's unique name by briefly claiming a private D-Bus name and asking
+`GetNameOwner`, then releases that claim. `close()` sends `Request.Close`;
+response, method error and service loss settle the operation only once.
+`PortalFilePicker` keeps its existing properties, `open()` / `openFilePicker()`,
+`close()`, `accepted(paths)` and `cancelled()` interface.
+
+Quick look supports WebP through required `qt6-imageformats`. Optional
+`qt6-webengine` supplies QtPdf for PDF preview; without it PDFs show file info.
 
 ## Served interface: Inhibit
 
@@ -181,9 +211,10 @@ daemon).
 | `SettingsPortal.qml` | Settings interface backend (DBusAdaptor) |
 | `FileChooserPortal.qml` | FileChooser interface backend (DBusAdaptor, deferred replies, per-call Request objects) |
 | `InhibitPortal.qml` | Inhibit interface backend (DBusAdaptor, per-call Request/Session adaptors, StateChanged emission) |
-| `PortalFileDialog.qml` | Layer-shell overlay hosting the picker (per-request modal) |
+| `../Services/Files/` | Browsing, selection, request validation, memory, places, file types and previews |
+| `../Modules/FileChooser/` | Per-request layer-shell window and presentation components |
 | `PortalFilePicker.qml` | In-shell widget shim → `FileChooserClient` |
-| `FileChooserClient.qml` | Frontend `org.freedesktop.portal.FileChooser` client (watcher + callbacks) |
+| `FileChooserClient.qml` | Frontend client with pre-call subscription and cancellable single-settle operations |
 | `README.md` | This file |
 
 ## Routing / precedence

@@ -7,7 +7,7 @@
 ### Arch Linux
 
 ```sh
-sudo pacman -S quickshell qt6-multimedia imagemagick brightnessctl ffmpeg python wlr-randr
+sudo pacman -S quickshell qt6-multimedia qt6-imageformats imagemagick brightnessctl ffmpeg python wlr-randr
 ```
 
 Optional runtime:
@@ -15,6 +15,11 @@ Optional runtime:
 ```sh
 sudo pacman -S cliphist wlsunset power-profiles-daemon ddcutil
 ```
+
+`qt6-imageformats` is required for WebP previews. Optional `qt6-webengine`
+provides PDF preview in the file chooser; without QtPdf, PDFs show file
+information. The Nix package includes `qt6.qtimageformats`; its
+`pdfPreviewSupport` option adds `qt6.qtwebengine` for PDF previews.
 
 ### Nix
 

@@ -104,6 +104,7 @@ def main():
     complete = sum(row.get("complete") is True for row in rows) == 2
     failures = [row for row in cases if not row["pass"]]
     required = {"browser.navigate", "browser.failure-keeps-folder", "browser.failure-keeps-listing", "browser.natural-name",
+                "browser.missing-copy", "browser.permission-copy", "browser.search-permission-copy", "browser.not-folder-copy",
                 "browser.descending-folders-first", "browser.size", "browser.type", "browser.modified", "browser.mime-filter",
                 "browser.glob-filter-keeps-folders", "browser.show-hidden", "browser.removed-parent-fallback",
                 "selection.range", "selection.type-ahead", "selection.filter-revalidation", "selection.sort-remaps-cursor",

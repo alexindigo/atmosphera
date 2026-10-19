@@ -20,12 +20,14 @@ depends=(
   'brightnessctl'
   'ffmpeg'
   'qt6-multimedia'
+  'qt6-imageformats'
   'python'
   'python-dbus'
   'python-gobject'
   'wlr-randr'
 )
 optdepends=(
+  'qt6-webengine: PDF preview in the file chooser'
   'cliphist: For clipboard history support'
   'wlsunset: For supporting NightLight'
   'power-profiles-daemon: For power profile management'

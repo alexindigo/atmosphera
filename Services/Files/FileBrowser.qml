@@ -41,7 +41,7 @@ Scope {
   // All filesystem reads are bounded, argument-vector calls. A failed target
   // never reaches FolderListModel, so it cannot disconnect folder from listing.
   readonly property string _checkCode: `
-import json, os, sys
+import errno, json, os, sys
 p = os.path.abspath(os.path.expanduser(sys.argv[1]))
 try:
     with os.scandir(p) as entries:
@@ -53,7 +53,8 @@ except OSError as e:
     parent = p
     while not os.path.isdir(parent) and parent != '/':
         parent = os.path.dirname(parent)
-    print(json.dumps({'ok': False, 'error': e.strerror, 'parent': parent, 'missing': not os.path.exists(p)}))
+    reason = {errno.ENOENT: 'missing', errno.EACCES: 'permission', errno.EPERM: 'permission', errno.ENOTDIR: 'not-folder', errno.ELOOP: 'link-loop', errno.ENAMETOOLONG: 'name-too-long'}.get(e.errno, 'unavailable')
+    print(json.dumps({'ok': False, 'reason': reason, 'path': p, 'parent': parent, 'missing': e.errno == errno.ENOENT}))
 `
 
   Component {
@@ -72,7 +73,7 @@ except OSError as e:
           try {
             result = JSON.parse(checkOutput.text);
           } catch (e) {
-            result = {ok: false, error: I18n.tr("widgets.file-picker.folder-check-failed")};
+            result = {ok: false, reason: "unavailable"};
           }
           root._checked(result, target, historyIndex, monitor);
         }
@@ -106,7 +107,9 @@ except OSError as e:
   function _checked(result, target, historyIndex, monitor) {
     if (!result.ok) {
       _validating = false;
-      _errorText = I18n.tr("widgets.file-picker.open-folder-error", {path: target, reason: result.error});
+      var path = (result.path || target).replace(/\/+$/, "") || "/";
+      var folder = path.slice(path.lastIndexOf("/") + 1) || "/";
+      _errorText = I18n.tr("widgets.file-picker.open-folder-error", {path: folder, reason: I18n.tr("widgets.file-picker.folder-reason-" + result.reason)});
       _status = "error";
       if (monitor && result.missing && result.parent !== target)
         _check(result.parent, -1, false);

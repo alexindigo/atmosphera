@@ -1,6 +1,8 @@
 {
   version ? "dirty",
   extraPackages ? [ ],
+  # Optional QtPdf renderer for PDF preview in the file chooser.
+  pdfPreviewSupport ? false,
   runtimeDeps ? [
     brightnessctl
     cliphist
@@ -81,7 +83,8 @@ stdenvNoCC.mkDerivation {
   buildInputs = [
     qt6.qtbase
     qt6.qtmultimedia
-  ];
+    qt6.qtimageformats
+  ] ++ lib.optional pdfPreviewSupport qt6.qtwebengine;
 
   installPhase = ''
     mkdir -p $out/share/atmosphera $out/bin

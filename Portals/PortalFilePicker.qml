@@ -11,18 +11,21 @@ Item {
   property string selectionMode: "files"
   property var nameFilters: ["*"]
   property bool allowMultiSelection: false
+  property var _operation: null
 
   signal accepted(var paths)
   signal cancelled
 
   function openFilePicker() {
-    FileChooserClient.openPicker({
+    if (_operation)
+      return;
+    _operation = FileChooserClient.openPicker({
                                    title: root.title,
                                    directory: root.selectionMode === "folders",
                                    multiple: root.allowMultiSelection,
                                    filters: root.nameFilters,
                                    initialPath: root.initialPath
-                                 }, paths => root.accepted(paths), () => root.cancelled());
+                                  }, paths => { root._operation = null; root.accepted(paths); }, () => { root._operation = null; root.cancelled(); });
   }
 
   function open() {
@@ -30,5 +33,12 @@ Item {
   }
 
   function close() {
+    if (_operation)
+      _operation.cancel();
+  }
+  Component.onDestruction: {
+    if (_operation) {
+      _operation.dispose();
+    }
   }
 }

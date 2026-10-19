@@ -368,9 +368,6 @@ ColumnLayout {
       icon: Icon.apps
       outlined: root.valueIconType !== "icons"
       onClicked: {
-        root.valueIconType = "icons";
-        root.valueIconSource = "";
-        save();
         Qt.callLater(() => iconsPicker.open());
       }
     }
@@ -380,9 +377,6 @@ ColumnLayout {
       icon: Icon.folderOpen
       outlined: root.valueIconType !== "file"
       onClicked: {
-        root.valueIconType = "file";
-        root.valueIconSource = "";
-        save();
         Qt.callLater(() => filePicker.open());
       }
     }

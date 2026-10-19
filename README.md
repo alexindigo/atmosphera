@@ -110,13 +110,18 @@ For installing the git `main` branch without an AUR helper.
 
 ```bash
 # from the official repos
-sudo pacman -S --needed quickshell qt6-base qt6-declarative qt6-multimedia \
+sudo pacman -S --needed quickshell qt6-base qt6-declarative qt6-multimedia qt6-imageformats \
   imagemagick brightnessctl ffmpeg python python-dbus python-gobject \
   wlr-randr cliphist wlsunset
 
 # QML helper libs from the AUR (or build from source)
 yay -S --needed qt6-dbusqml qt6-xdgiconqml-git qt6-niriqml qt6-mangowcqml
 ```
+
+`qt6-imageformats` supplies WebP file-chooser previews. Optionally install
+`qt6-webengine` for PDF preview in the file chooser; without it, PDFs show file
+information. Nix includes `qt6.qtimageformats`; enable `pdfPreviewSupport` in
+`nix/package.nix` to include `qt6.qtwebengine` for PDF previews.
 
 **2. Build and install the niri IPC module (niri sessions, from source)**
 

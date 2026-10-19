@@ -1,115 +1,19 @@
-// xdg-desktop-portal backend for org.freedesktop.impl.portal.FileChooser.
-//
-// Serves OpenFile, SaveFile and SaveFiles on the session bus under
-// org.freedesktop.impl.portal.desktop.atmosphera, discovered via
-// Portals/atmosphera.portal. Every method defers its reply with
-// holdReply and settles it once the user finishes the PortalFileDialog
-// for that request; a per-call org.freedesktop.impl.portal.Request
-// adaptor lets the caller cancel via Close. Requires qt6-dbusqml
-// >= 0.5.0 for deferred replies and typed variant payloads.
-//
-// NOTE: keep curly braces OUT of comments in this file — the quickshell
-// qmlscanner mishandles braces inside comments and silently breaks
-// singleton instantiation (quickshell bug; observed on quickshell 0.3.1).
-
+// One deferred backend call, FileRequest and window per portal handle.
 pragma Singleton
 import DBus 1.0
 import DBus 1.0 as DBusQML
-
 import QtQuick
 import Quickshell
-import "../Helpers/PortalPaths.js" as PortalPaths
 import qs.Commons
 import qs.Services.Compositor
+import qs.Services.Files
+import qs.Modules.FileChooser
 
 Singleton {
   id: root
-
   property var activeRequests: ({})
 
-  // Thrown by parseOptions when a byte-path option does not decode. Distinct
-  // from a structurally malformed options dictionary, which is InvalidArgument.
-  function decodeFailure(option, error) {
-    return ({
-              "option": option,
-              "error": error,
-              "decodeFailure": true
-            });
-  }
-
-  function init() {
-    Logger.i("FileChooserPortal", "Service started");
-  }
-
-  // Decodes an absolute path option. An empty result means the caller gave no
-  // folder (a lone NUL terminator), and the option is left out.
-  function decodeFolderOption(option, value) {
-    var decoded = PortalPaths.decodeBytePath(value);
-    if (!decoded.ok)
-      throw root.decodeFailure(option, decoded.error);
-    if (decoded.path !== "" && decoded.path.charAt(0) !== "/")
-      throw root.decodeFailure(option, "not an absolute path");
-    return decoded.path;
-  }
-
-  function splitPath(path) {
-    var idx = path.lastIndexOf("/");
-    if (idx <= 0)
-      return ["", path];
-    return [path.slice(0, idx), path.slice(idx + 1)];
-  }
-
-  function parseFilters(filters) {
-    var globs = [];
-    for (var i = 0; i < filters.length; i++) {
-      var entry = filters[i];
-      if (!entry || entry.length < 2)
-        throw new Error("malformed filter entry");
-      var patterns = entry[1];
-      for (var j = 0; j < patterns.length; j++) {
-        var pair = patterns[j];
-        if (!pair || pair.length < 2)
-          throw new Error("malformed filter pattern");
-        if (pair[0] === 0 && typeof pair[1] === "string" && pair[1] !== "")
-          globs.push(pair[1]);
-      }
-    }
-    return globs;
-  }
-
-  function parseOptions(options, title) {
-    var parsed = ({
-                    "title": title || ""
-                  });
-    if (!options)
-      return parsed;
-    parsed.multiple = options.multiple === true;
-    parsed.directory = options.directory === true;
-    if (options.accept_label !== undefined)
-      parsed.accept_label = String(options.accept_label);
-    if (options.current_name !== undefined)
-      parsed.current_name = String(options.current_name);
-    if (options.current_folder !== undefined) {
-      var folder = root.decodeFolderOption("current_folder", options.current_folder);
-      if (folder !== "")
-        parsed.current_folder = folder;
-    }
-    if (options.current_file !== undefined) {
-      var file = root.decodeFolderOption("current_file", options.current_file);
-      if (file !== "") {
-        var parts = root.splitPath(file);
-        if (parts[0] !== "")
-          parsed.current_folder = parts[0];
-        parsed.current_file_name = parts[1];
-      }
-    }
-    if (options.filters !== undefined) {
-      var globs = root.parseFilters(options.filters);
-      if (globs.length > 0)
-        parsed.filters = globs;
-    }
-    return parsed;
-  }
+  function init() { Logger.i("FileChooserPortal", "Service started"); }
 
   DBusAdaptor {
     id: adaptor
@@ -120,166 +24,105 @@ Singleton {
     connection: SessionBus
 
     function openFile(handle, appId, parentWindow, title, options) {
-      root.beginRequest(handle, title, options, "open", adaptor.holdReply());
+      root.beginRequest(handle, appId, parentWindow, title, options, "open", adaptor.holdReply());
     }
-
     function saveFile(handle, appId, parentWindow, title, options) {
-      root.beginRequest(handle, title, options, "save", adaptor.holdReply());
+      root.beginRequest(handle, appId, parentWindow, title, options, "save", adaptor.holdReply());
     }
-
     function saveFiles(handle, appId, parentWindow, title, options) {
-      root.beginRequest(handle, title, options, "saveMulti", adaptor.holdReply());
+      root.beginRequest(handle, appId, parentWindow, title, options, "saveFiles", adaptor.holdReply());
     }
+    onNameLost: root.cancelAll()
   }
 
-  function beginRequest(handle, title, options, mode, reply) {
-    var parsed;
-    try {
-      parsed = root.parseOptions(options, title);
-    } catch (e) {
-      if (e && e.decodeFailure === true) {
-        Logger.w("FileChooserPortal", "Cannot decode " + e.option + " for " + handle + ": " + e.error);
-        reply.send([2,
-                    {}
-                   ]);
-        return;
-      }
-      Logger.w("FileChooserPortal", "Rejecting malformed options for " + handle);
-      reply.sendError("org.freedesktop.portal.Error.InvalidArgument", "malformed options");
+  function beginRequest(handle, appId, parentWindow, title, options, method, reply) {
+    if (activeRequests[handle]) {
+      reply.sendError("org.freedesktop.portal.Error.InvalidArgument", "Request handle already exists");
       return;
     }
-
-    var request = requestFactory.createObject(root, {
-                                                handle: handle
-                                              });
-
-    // Store BEFORE any settle path so a later Close always finds the entry.
-    var entry = ({
-                   request: request,
-                   dialog: null,
-                   reply: reply,
-                   settled: false
-                 });
-    var map = root.activeRequests;
-    map[handle] = entry;
-    root.activeRequests = map;
-
-    var screen = CompositorService.getFocusedScreen();
-    if (!screen && Quickshell.screens.length > 0)
-      screen = Quickshell.screens[0];
-    if (!screen) {
-      // Entry stored and marked settled: a later Close no-ops cleanly
-      // (settles-once) instead of orphaning.
-      entry.settled = true;
-      reply.send([2,
-                  {}
-                 ]);
-      request.destroy();
-      return;
-    }
-
-    var dialog = dialogFactory.createObject(root, {
-                                              screen: screen,
-                                              mode: mode,
-                                              options: parsed
-                                            });
-
-    entry.dialog = dialog;
-
-    dialog.accepted.connect(function (paths) {
-      var entry = root.activeRequests[handle];
-      if (!entry || entry.settled)
-        return;
-      entry.settled = true;
-      var uris = [];
-      for (var i = 0; i < paths.length; i++) {
-        var converted = PortalPaths.pathToUri(paths[i]);
-        if (!converted.ok) {
-          // All or nothing: a partial uri list would hide the failed path.
-          Logger.w("FileChooserPortal", "Cannot convert accepted path for " + handle + ": " + converted.error);
-          reply.send([2,
-                      {}
-                     ]);
-          root.cleanup(handle);
-          return;
-        }
-        uris.push(converted.uri);
-      }
-      reply.send([0,
-                  {
-                    "uris": new DBusQML.variant(uris, "as")
-                  }
-                 ]);
-      root.cleanup(handle);
+    var screen = CompositorService.getFocusedScreen() || Quickshell.screens[0];
+    // Parent identifiers and modal are accepted. The overlay is focused, stays
+    // above the app and is centred on its focused output (best effort).
+    var entry = requestFactory.createObject(root, {
+      handle: handle, appId: appId, parentWindow: parentWindow, method: method,
+      options: Object.assign({}, options || {}, {title: title}), reply: reply,
+      caller: reply.callerService(), output: screen || null
     });
-
-    dialog.cancelled.connect(function () {
-      root.settleCancelled(handle);
-    });
-  }
-
-  // Single-settle cancel path: closeRequest destroys the dialog (whose
-  // destruction later re-fires cancelled) and settles the reply; the
-  // settled flag keeps that to exactly one send.
-  function settleCancelled(handle) {
-    var entry = root.activeRequests[handle];
-    if (!entry || entry.settled)
-      return;
-    entry.settled = true;
-    entry.reply.send([1,
-                      {}
-                     ]);
-    root.cleanup(handle);
-  }
-
-  function closeRequest(handle) {
-    var entry = root.activeRequests[handle];
-    if (!entry)
-      return;
-    if (entry.dialog)
-      entry.dialog.destroy();
-    if (entry.settled) {
-      // early-settled path: drop the entry, no second send
-      var map = root.activeRequests;
-      delete map[handle];
-      root.activeRequests = map;
+    if (!entry) {
+      reply.send([2, {}]);
       return;
     }
-    root.settleCancelled(handle);
+    activeRequests = Object.assign({}, activeRequests, {[handle]: entry});
+    if (!screen)
+      entry.request.fail("No output available");
   }
 
-  function cleanup(handle) {
-    var map = root.activeRequests;
-    var entry = map[handle];
-    if (!entry)
+  function finish(handle, response, results) {
+    var entry = activeRequests[handle];
+    if (!entry || entry.replied)
       return;
-    if (entry.dialog)
-      entry.dialog.destroy();
-    if (entry.request)
-      entry.request.destroy();
-    delete map[handle];
-    root.activeRequests = map;
+    entry.replied = true;
+    var payload = {};
+    if (response === 0) {
+      payload.uris = new DBusQML.variant(results.uris, "as");
+      payload.writable = new DBusQML.variant(results.writable, "b");
+      payload.choices = new DBusQML.variant(results.choices, "a(ss)");
+      if (results.current_filter)
+        payload.current_filter = new DBusQML.variant(results.current_filter, "(sa(us))");
+    }
+    entry.reply.send([response, payload]);
+    var remaining = Object.assign({}, activeRequests);
+    delete remaining[handle];
+    activeRequests = remaining;
+    // destroy() is deferred: FileRequest finishes its success/memory transition
+    // before its owner and the per-handle adaptor disappear.
+    entry.destroy();
+  }
+
+  function cancelAll() {
+    for (var handle of Object.keys(activeRequests))
+      activeRequests[handle].request.cancel();
   }
 
   Component {
     id: requestFactory
+    Scope {
+      id: entry
+      required property string handle
+      required property string appId
+      required property string parentWindow
+      required property string method
+      required property var options
+      required property var reply
+      required property string caller
+      required property var output
+      property bool replied: false
+      readonly property FileRequest request: fileRequest
 
-    DBusAdaptor {
-      property string handle: ""
-
-      path: handle
-      iface: "org.freedesktop.impl.portal.Request"
-      connection: SessionBus
-
-      function close() {
-        root.closeRequest(handle);
+      FileRequest {
+        id: fileRequest
+        method: entry.method
+        appId: entry.appId
+        options: entry.options
+        onFinished: (response, results) => root.finish(entry.handle, response, results)
       }
+      DBusAdaptor {
+        path: entry.handle
+        iface: "org.freedesktop.impl.portal.Request"
+        connection: SessionBus
+        allowedSender: entry.caller
+        function close() { fileRequest.cancel(); }
+      }
+      DBusServiceWatcher {
+        connection: SessionBus
+        service: entry.caller
+        onOwnerChanged: (oldOwner, newOwner) => { if (oldOwner && oldOwner !== newOwner) fileRequest.cancel(); }
+      }
+      Loader {
+        active: entry.output !== null
+        sourceComponent: FileChooserWindow { request: fileRequest; screen: entry.output }
+      }
+      Component.onDestruction: fileRequest.cancel()
     }
-  }
-
-  Component {
-    id: dialogFactory
-
-    PortalFileDialog {}
   }
 }

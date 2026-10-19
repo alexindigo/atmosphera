@@ -221,10 +221,16 @@ ShellRoot {
       same("browser.failure-keeps-folder", fileBrowser.currentPath, base);
       same("browser.failure-keeps-listing", names(), beforeNames);
       report("browser.failure-inline", fileBrowser.errorText.length > 0, fileBrowser.errorText);
+      same("browser.missing-copy", fileBrowser.errorText, "Can't open missing: the folder doesn't exist. Choose another folder.");
       fileBrowser.navigate(aux + "/no-search");
     });
     step(() => fileBrowser.status !== "loading", function () {
       same("browser.search-permission-keeps-folder", fileBrowser.currentPath, base);
+      same("browser.search-permission-copy", fileBrowser.errorText, "Can't open no-search: you don't have permission. Choose another folder.");
+      fileBrowser.navigate(base + "/Alpha.txt");
+    });
+    step(() => fileBrowser.status === "error", function () {
+      same("browser.not-folder-copy", fileBrowser.errorText, "Can't open Alpha.txt: it isn't a folder. Choose another folder.");
       fileBrowser.navigate(base + "/folder");
     });
     step(ready, function () {
@@ -533,6 +539,7 @@ ShellRoot {
     });
     step(() => fileBrowser.status === "error", function () {
       same("browser.permission-keeps-folder", fileBrowser.currentPath, base);
+      same("browser.permission-copy", fileBrowser.errorText, "Can't open denied: you don't have permission. Choose another folder.");
       fileBrowser.navigate(base);
     });
     step(ready, function () {
