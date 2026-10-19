@@ -143,14 +143,15 @@ Singleton {
     return false;
   }
 
-  function formatSize(bytes) {
-    if (bytes <= 0)
-      return "0 B";
-    var unit = Math.min(4, Math.floor(Math.log(bytes) / Math.log(1024)));
-    return Number((bytes / Math.pow(1024, unit)).toFixed(1)).toLocaleString(Qt.locale()) + " " + ["B", "KiB", "MiB", "GiB", "TiB"][unit];
+  function formatSize(bytes, locale) {
+    var size = Math.max(0, bytes);
+    var unit = size < 1024 ? 0 : Math.min(4, Math.floor(Math.log(size) / Math.log(1024)));
+    // QML's Number.toLocaleString defaults to two decimal places, unlike the
+    // browser API. Precision belongs here, not in a pre-rounded intermediate.
+    return (size / Math.pow(1024, unit)).toLocaleString(locale || Qt.locale(), "f", unit === 0 ? 0 : 1) + " " + ["B", "KiB", "MiB", "GiB", "TiB"][unit];
   }
 
-  function formatDate(value) {
-    return Qt.formatDateTime(new Date(value), Qt.locale().dateTimeFormat(Locale.ShortFormat));
+  function formatDate(value, locale) {
+    return new Date(value).toLocaleString(locale || Qt.locale(), Locale.ShortFormat);
   }
 }

@@ -15,6 +15,7 @@ PanelWindow {
   readonly property var previewRenderer: quickLook.renderer
   readonly property var columnGeometry: listing.columnGeometry
   readonly property var nameSelection: [nameField.inputItem.selectionStart, nameField.inputItem.selectionEnd]
+  readonly property bool selectionCountVisible: footer.selectionCountVisible
   readonly property var previewMotion: ({duration: Style.animationNormal, running: quickLook.expanding, geometry: quickLook.geometry})
   readonly property string focusedControl: panel.Window.window && panel.Window.window.activeFocusItem ? (panel.Window.window.activeFocusItem.Accessible.name || panel.Window.window.activeFocusItem.objectName || "unnamed") : ""
   readonly property string focusArea: nameField.inputItem.activeFocus ? "name" : header.editing ? "path" : listing.navigationFocused ? "listing" : quickLook.activeFocus ? "preview" : "control"
@@ -33,6 +34,7 @@ PanelWindow {
 
   function focusListing() { listing.forceActiveFocus(); }
   function choiceGeometry() { return footer.choiceGeometry(); }
+  function breadcrumbGeometry() { return header.breadcrumbGeometry(); }
   function dismissLayer() {
     if (quickLook.opened) {
       quickLook.opened = false;
@@ -151,7 +153,7 @@ PanelWindow {
         anchors.centerIn: parent
         width: Math.min(parent.width - Style.margin2XL, 480 * Style.uiScaleRatio)
         spacing: Style.marginL
-        AtmoIcon { Layout.alignment: Qt.AlignHCenter; icon: Icon.filepickerFile; pointSize: Style.fontSizeXXXL * 2; color: AtmoColor.mPrimary }
+        AtmoIcon { Layout.alignment: Qt.AlignHCenter; icon: Icon.filepickerFile; pointSize: Style.fontSizeXXXL * 2; color: AtmoColor.mOnSurfaceVariant }
         NText { Layout.fillWidth: true; text: root.request.pendingReplace.slice(root.request.pendingReplace.lastIndexOf("/") + 1); horizontalAlignment: Text.AlignHCenter; pointSize: Style.fontSizeL }
         NText { Layout.fillWidth: true; text: I18n.tr("widgets.file-picker.overwrite-description"); wrapMode: Text.Wrap; horizontalAlignment: Text.AlignHCenter }
         RowLayout {

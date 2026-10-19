@@ -193,6 +193,15 @@ ShellRoot {
       same("preview.clear", [preview.status, preview.text, preview.path], ["idle", "", ""]);
     });
     step(() => FileChooserMemory.ready && I18n.isLoaded, function () {
+      same("types.bytes-zero", FileTypes.formatSize(0), "0 B");
+      same("types.bytes-small", [3, 40, 648, 1023].map(bytes => FileTypes.formatSize(bytes)), ["3 B", "40 B", "648 B", "1023 B"]);
+      same("types.size-scaled", [1024, 1536, 1048576].map(bytes => FileTypes.formatSize(bytes)), ["1.0 KiB", "1.5 KiB", "1.0 MiB"]);
+      same("types.size-german", FileTypes.formatSize(1536, Qt.locale("de_DE")), "1,5 KiB");
+      var date = new Date(2026, 9, 18, 2, 0, 0);
+      same("types.date-us", FileTypes.formatDate(date, Qt.locale("en_US")), "10/18/26 2:00\u202fAM");
+      same("types.date-british", FileTypes.formatDate(date, Qt.locale("en_GB")), "18/10/2026 02:00");
+      same("types.date-german", FileTypes.formatDate(date, Qt.locale("de_DE")), "18.10.26 02:00");
+      same("types.date-system", FileTypes.formatDate(date), date.toLocaleString(Qt.locale(), Locale.ShortFormat));
       same("memory.initial-home", FileChooserMemory.folderFor("unknown"), FileChooserMemory.home);
       same("memory.initial-recent", FileChooserMemory.recentLocations, []);
       same("types.webp", FileTypes.previewKind("photo.webp"), "animatedImage");

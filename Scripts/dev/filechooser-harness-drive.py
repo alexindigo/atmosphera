@@ -25,7 +25,7 @@ def main():
     captures = runtime / "captures"
     captures.mkdir()
     assert args.input_socket.resolve().is_relative_to(ROOT / "runtime")
-    env = dict(os.environ, XDG_RUNTIME_DIR="/run/user/1000", WAYLAND_DISPLAY="wayland-1", LC_ALL="C.UTF-8", TMPDIR=str(runtime / "profile/tmp"), YDOTOOL_SOCKET=str(args.input_socket.resolve()))
+    env = dict(os.environ, XDG_RUNTIME_DIR="/run/user/1000", WAYLAND_DISPLAY="wayland-1", LC_ALL="en_US.UTF-8", TMPDIR=str(runtime / "profile/tmp"), YDOTOOL_SOCKET=str(args.input_socket.resolve()))
     probe = runtime / "shell/filechooser-harness.qml"
     cases = []
     images = []
@@ -94,6 +94,10 @@ def main():
     try:
         open_mode()
         check("initial-open-focus", lambda s: s["focus"] == "listing")
+        check("presentation-locale", lambda s: s["localeName"] == "en_US")
+        check("empty-selection-count-hidden", lambda s: not s["selectionCountVisible"])
+        check("breadcrumb-gaps", lambda s: len(s["breadcrumbGaps"]) == 3 and all(abs(g["before"]-g["after"]) < 0.5 and 0 < g["before"] < 5 for g in s["breadcrumbGaps"]))
+        check("breadcrumb-labels-fit", lambda s: all(not g["clipped"] for g in s["breadcrumbGaps"]))
         check("choice-centerline", lambda s: len(s["choiceCenters"]) == 2 and abs(s["choiceCenters"][0] - s["choiceCenters"][1]) < 0.5)
         key("Home")
         check("home-from-unset", lambda s: s["cursor"] == 0)
@@ -109,6 +113,7 @@ def main():
         check("up-down-grid", lambda s: up < s["cursor"])
         choose("co")
         check("type-ahead", lambda s: s["name"] == "Coast.png")
+        check("open-selection-count-shown", lambda s: s["selectionCountVisible"])
         key("Right", "shift")
         check("shift-extend", lambda s: len(s["selected"]) == 2)
         key("a", "ctrl")
@@ -212,7 +217,11 @@ def main():
         check("empty-show-hidden", lambda s: s["hidden"])
         open_mode("save")
         check("initial-save-focus", lambda s: s["focus"] == "name" and s["nameSelection"] == [0, 11])
+        check("save-count-hidden", lambda s: not s["selectionCountVisible"])
         capture("save")
+        choose("fi")
+        check("save-selected-count-hidden", lambda s: len(s["selected"]) == 1 and not s["selectionCountVisible"])
+        focus("File name")
         key("a", "ctrl")
         text("A h.txt")
         key("Left")

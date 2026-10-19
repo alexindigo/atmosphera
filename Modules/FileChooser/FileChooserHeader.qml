@@ -23,6 +23,19 @@ RowLayout {
     pathField.visible = false;
     listingFocusRequested();
   }
+  function breadcrumbGeometry() {
+    var gaps = [];
+    var previous = ellipsis.visible ? ellipsis.mapToItem(root, ellipsis.width, 0).x : null;
+    for (var i = 0; i < crumbParts.count; ++i) {
+      var delegate = crumbParts.itemAt(i);
+      if (!delegate) continue;
+      var part = delegate.geometry();
+      if (part.separatorVisible && previous !== null)
+        gaps.push({before: part.separatorLeft - previous, after: part.textLeft - part.separatorRight, clipped: part.textWidth + 0.5 < part.naturalWidth});
+      previous = part.textRight;
+    }
+    return gaps;
+  }
 
   ChooserButton {
     icon: Icon.chevronLeft
@@ -63,21 +76,28 @@ RowLayout {
       Keys.onReturnPressed: root.editPath()
       Keys.onSpacePressed: root.editPath()
       RowLayout {
+        id: breadcrumbLine
         anchors.fill: parent
         anchors.margins: Style.marginXS
         spacing: Style.marginXS
-        NText { visible: root.pathParts.length > 3; text: "…"; color: AtmoColor.mOnSurfaceVariant }
+        NText { id: ellipsis; visible: root.pathParts.length > 3; text: "…"; color: AtmoColor.mOnSurfaceVariant }
         Repeater {
+          id: crumbParts
           model: root.pathParts.slice(-3)
           RowLayout {
             required property string modelData
             required property int index
-            Layout.fillWidth: true
+            Layout.fillWidth: breadcrumbLine.implicitWidth > breadcrumbLine.width
+            Layout.maximumWidth: implicitWidth
             spacing: Style.marginXS
-            AtmoIcon { visible: index > 0 || root.pathParts.length > 3; icon: Icon.chevronRight; color: AtmoColor.mOnSurfaceVariant; pointSize: Style.fontSizeS }
-            NText { Layout.fillWidth: true; text: modelData; elide: Text.ElideMiddle; pointSize: Style.fontSizeM; color: AtmoColor.mOnSurface }
+            function geometry() {
+              return {separatorVisible: separator.visible, separatorLeft: separator.mapToItem(root, 0, 0).x, separatorRight: separator.mapToItem(root, separator.width, 0).x, textLeft: segment.mapToItem(root, 0, 0).x, textRight: segment.mapToItem(root, segment.width, 0).x, textWidth: segment.width, naturalWidth: segment.implicitWidth};
+            }
+            AtmoIcon { id: separator; visible: index > 0 || root.pathParts.length > 3; icon: Icon.chevronRight; color: AtmoColor.mOnSurfaceVariant; pointSize: Style.fontSizeS }
+            NText { id: segment; Layout.fillWidth: breadcrumbLine.implicitWidth > breadcrumbLine.width; Layout.maximumWidth: implicitWidth; text: modelData; elide: Text.ElideMiddle; pointSize: Style.fontSizeM; color: AtmoColor.mOnSurface }
           }
         }
+        Item { Layout.fillWidth: true }
       }
       MouseArea { anchors.fill: parent; cursorShape: Qt.IBeamCursor; onClicked: root.editPath() }
     }

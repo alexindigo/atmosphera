@@ -21,13 +21,12 @@ Rectangle {
       spacing: Style.marginXS
       Repeater {
         model: FilePlaces.places
-        ChooserButton {
+        FilePlaceButton {
           required property var modelData
           Layout.fillWidth: true
-          horizontalAlignment: Qt.AlignLeft
           text: modelData.name
           icon: modelData.kind === "home" ? Icon.filepickerHome : Icon.filepickerFolder
-          textColor: root.browser.currentPath === modelData.path ? AtmoColor.mPrimary : AtmoColor.mOnSurface
+          selected: root.browser.currentPath === modelData.path
           onClicked: root.browser.navigate(modelData.path)
         }
       }
@@ -35,25 +34,24 @@ Rectangle {
       NText { text: I18n.tr("widgets.file-picker.recent"); pointSize: Style.fontSizeS; color: AtmoColor.mOnSurfaceVariant; Layout.leftMargin: Style.marginM }
       Repeater {
         model: FilePlaces.recentFiles
-        ChooserButton {
+        FilePlaceButton {
           required property var modelData
           Layout.fillWidth: true
-          horizontalAlignment: Qt.AlignLeft
           text: modelData.name
-          tooltipText: modelData.path
           icon: FileTypes.icon(modelData.name, false)
+          tooltipText: modelData.path
           onClicked: root.browser.navigate(root.browser.parentPath(modelData.path))
         }
       }
       NText { text: I18n.tr("widgets.file-picker.recent-locations"); pointSize: Style.fontSizeS; color: AtmoColor.mOnSurfaceVariant; Layout.leftMargin: Style.marginM; Layout.topMargin: Style.marginL }
       Repeater {
         model: FileChooserMemory.recentLocations
-        ChooserButton {
+        FilePlaceButton {
           required property string modelData
           Layout.fillWidth: true
-          horizontalAlignment: Qt.AlignLeft
           text: modelData.slice(modelData.lastIndexOf("/") + 1) || "/"
           tooltipText: modelData
+          selected: root.browser.currentPath === modelData
           icon: Icon.filepickerFolder
           onClicked: root.browser.navigate(modelData)
         }
@@ -61,11 +59,11 @@ Rectangle {
       NText { visible: FilePlaces.removable.length > 0; text: I18n.tr("widgets.file-picker.removable"); pointSize: Style.fontSizeS; color: AtmoColor.mOnSurfaceVariant; Layout.leftMargin: Style.marginM; Layout.topMargin: Style.marginL }
       Repeater {
         model: FilePlaces.removable
-        ChooserButton {
+        FilePlaceButton {
           required property var modelData
           Layout.fillWidth: true
           text: modelData.name
-          horizontalAlignment: Qt.AlignLeft
+          selected: root.browser.currentPath === modelData.path
           icon: Icon.filepickerFolder
           onClicked: root.browser.navigate(modelData.path)
         }

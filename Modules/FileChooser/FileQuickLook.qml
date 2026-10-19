@@ -133,7 +133,7 @@ FocusScope {
       ColumnLayout {
         anchors.centerIn: parent
         spacing: Style.marginXL
-        AtmoIcon { Layout.alignment: Qt.AlignHCenter; icon: Icon.filepickerMusic; pointSize: Style.fontSizeXXXL * 3; color: AtmoColor.mPrimary }
+        AtmoIcon { Layout.alignment: Qt.AlignHCenter; icon: Icon.filepickerMusic; pointSize: Style.fontSizeXXXL * 3; color: AtmoColor.mOnSurfaceVariant }
         NText { text: player.error !== MediaPlayer.NoError ? I18n.tr("widgets.file-picker.preview-unavailable") : root.item ? root.item.name : "" }
         ChooserButton { Layout.alignment: Qt.AlignHCenter; text: player.playbackState === MediaPlayer.PlayingState ? I18n.tr("widgets.file-picker.pause") : I18n.tr("widgets.file-picker.play"); onClicked: player.playbackState === MediaPlayer.PlayingState ? player.pause() : player.play() }
       }

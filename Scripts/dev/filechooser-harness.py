@@ -76,12 +76,14 @@ def main():
     cache = profile / "cache/atmosphera"
     cache.mkdir()
     (cache / "filechooser.json").write_text(json.dumps({"recent": [str(fixtures / "References"), str(fixtures / "Screens")], "sharedFolder": str(fixtures), "appFolders": {}, "preferences": {"view": "grid", "sortKey": "name", "showHidden": False, "sortDescending": False}}))
-    env = dict(os.environ, TMPDIR=str(profile / "tmp"), XDG_RUNTIME_DIR="/run/user/1000", WAYLAND_DISPLAY="wayland-1",
+    # The VM's login defaults to C. Use its installed UTF-8 user locale for
+    # presentation fixtures; product formatting continues to use Qt.locale().
+    env = dict(os.environ, TMPDIR=str(profile / "tmp"), XDG_RUNTIME_DIR="/run/user/1000", WAYLAND_DISPLAY="wayland-1", LANG="en_US.UTF-8", LC_ALL="en_US.UTF-8",
                NIRI_SOCKET=str(next(Path("/run/user/1000").glob("niri.*.sock"))), FILECHOOSER_UI_ROOT=str(fixtures),
                XDG_CONFIG_HOME=str(profile / "config"), XDG_DATA_HOME=str(profile / "data"),
                ATMOSPHERA_CONFIG_DIR=str(profile / "config") + "/", ATMOSPHERA_CACHE_DIR=str(cache) + "/",
                ATMOSPHERA_STATE_DIR=str(profile / "state") + "/", ATMOSPHERA_SETTINGS_FILE=str(profile / "config/settings.json"), ATMOSPHERA_DEBUG="0")
-    (evidence / "recipe.json").write_text(json.dumps({"source": str(source), "runtime": str(runtime), "probe": str(probe), "fixtures": str(fixtures), "environment": {k: v for k, v in env.items() if k.startswith(("ATMOSPHERA_", "FILECHOOSER_", "XDG_", "WAYLAND_", "NIRI_", "TMPDIR"))}}, indent=2))
+    (evidence / "recipe.json").write_text(json.dumps({"source": str(source), "runtime": str(runtime), "probe": str(probe), "fixtures": str(fixtures), "environment": {k: v for k, v in env.items() if k.startswith(("ATMOSPHERA_", "FILECHOOSER_", "XDG_", "WAYLAND_", "NIRI_", "TMPDIR", "LANG", "LC_"))}}, indent=2))
     with (evidence / "harness.log").open("w") as log:
         result = subprocess.run(["timeout", "--kill-after=5s", "840", "qs", "-p", str(probe)], cwd=shell, env=env, stdout=log, stderr=subprocess.STDOUT, timeout=850)
     return result.returncode

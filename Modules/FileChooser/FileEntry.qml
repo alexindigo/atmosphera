@@ -53,7 +53,7 @@ Rectangle {
         visible: thumbnail.status !== Image.Ready
         icon: FileTypes.icon(root.name, root.directory)
         pointSize: root.listMode ? Style.fontSizeL : Style.fontSizeXXXL * 1.6
-        color: root.directory ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant
+        color: AtmoColor.mOnSurfaceVariant
       }
     }
     NText {
@@ -88,7 +88,7 @@ Rectangle {
     id: listColumns
     anchors.fill: parent
     visible: root.listMode
-    leading: Component { AtmoIcon { icon: FileTypes.icon(root.name, root.directory); pointSize: Style.fontSizeL; color: root.directory ? AtmoColor.mPrimary : AtmoColor.mOnSurfaceVariant } }
+    leading: Component { AtmoIcon { icon: FileTypes.icon(root.name, root.directory); pointSize: Style.fontSizeL; color: AtmoColor.mOnSurfaceVariant } }
     nameCell: Component { NText { text: root.name; pointSize: Style.fontSizeM } }
     sizeCell: Component { NText { text: root.directory ? "" : FileTypes.formatSize(root.bytes); horizontalAlignment: Text.AlignRight; pointSize: Style.fontSizeS; features: ({tnum: 1}); color: AtmoColor.mOnSurfaceVariant } }
     modifiedCell: Component { NText { text: FileTypes.formatDate(root.modified); pointSize: Style.fontSizeS; features: ({tnum: 1}); color: AtmoColor.mOnSurfaceVariant } }
