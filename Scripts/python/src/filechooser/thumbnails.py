@@ -16,6 +16,7 @@ import stat
 import struct
 import sys
 import tempfile
+from urllib.parse import quote_from_bytes
 import zlib
 
 PNG = b"\x89PNG\r\n\x1a\n"
@@ -28,9 +29,11 @@ def bucket(pixels):
 
 
 def canonical_uri(path):
-    # Normalize the absolute path, not the symlink target: other applications
-    # key the cache by the URI the user opened, too.
-    return Path(os.path.abspath(path)).as_uri()
+    # Safe set: GLib g_filename_to_uri's allowed path characters, guarded by
+    # the differential unit test. In particular, GLib escapes semicolon.
+    # Quote filesystem bytes (including surrogateescaped names), normalize the
+    # absolute path, and keep the opened symlink's identity, not its target.
+    return "file://" + quote_from_bytes(os.fsencode(os.path.abspath(path)), safe="/!$&'()*+,=:@~")
 
 
 def cache_name(uri):
@@ -139,7 +142,7 @@ class Cache:
                                    "-threads", "1", "-pix_fmt", "rgba", "-f", "image2pipe", "-c:v", "png", "pipe:1"])
 
     async def get(self, name, pixels):
-        path = Path(os.path.abspath(name))
+        path = Path(os.fsdecode(os.path.abspath(name)))
         # Resolve only for the containment check, so symlinks cannot recurse
         # into the cache. Reject FIFOs/devices before opening anything.
         if path.resolve().is_relative_to(self.root.resolve()):

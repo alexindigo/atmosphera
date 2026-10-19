@@ -2,6 +2,7 @@
 """Cache and cancellation contracts; execute only in the assigned guest."""
 import argparse
 import asyncio
+import ctypes
 import hashlib
 import importlib.util
 import json
@@ -9,10 +10,13 @@ import os
 from pathlib import Path
 import re
 import shutil
+import string
+import struct
 import subprocess
 import sys
 import unittest
 from unittest.mock import patch
+import zlib
 
 from filechooser_regression import ROOT, guest
 
@@ -32,6 +36,33 @@ spec.loader.exec_module(thumb)
 video = output / "A space résumé.mp4"
 subprocess.run(["timeout", "15", "ffmpeg", "-nostdin", "-v", "error", "-f", "lavfi", "-i",
                 "testsrc2=size=160x90:rate=8:duration=1", "-c:v", "libx264", "-threads", "1", str(video)], check=True, timeout=20)
+
+# Independent oracle/fixture writer: do not derive foreign keys or PNG chunks
+# from the implementation under test. GLib is already present in the guest.
+glib = ctypes.CDLL("libglib-2.0.so.0")
+glib.g_filename_to_uri.argtypes = [ctypes.c_char_p, ctypes.c_void_p, ctypes.c_void_p]
+glib.g_filename_to_uri.restype = ctypes.c_void_p
+glib.g_free.argtypes = [ctypes.c_void_p]
+glib.g_free.restype = None
+
+
+def glib_uri(path):
+    pointer = glib.g_filename_to_uri(os.fsencode(os.path.abspath(path)), None, None)
+    assert pointer, repr(path)
+    try:
+        return ctypes.string_at(pointer).decode("ascii")
+    finally:
+        glib.g_free(pointer)
+
+
+def foreign_png(uri, mtime):
+    def chunk(kind, data):
+        return struct.pack("!I", len(data)) + kind + data + struct.pack("!I", zlib.crc32(kind + data))
+    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack("!IIBBBBB", 1, 1, 8, 6, 0, 0, 0))
+            + chunk(b"tEXt", b"Thumb::URI\0" + uri.encode("ascii"))
+            + chunk(b"tEXt", b"Thumb::MTime\0" + str(int(mtime)).encode("ascii"))
+            + chunk(b"tEXt", b"Software\0Independent GLib URI fixture")
+            + chunk(b"IDAT", zlib.compress(b"\0\0\xff\0\xff")) + chunk(b"IEND", b""))
 
 
 class CacheTests(unittest.IsolatedAsyncioTestCase):
@@ -61,6 +92,18 @@ class CacheTests(unittest.IsolatedAsyncioTestCase):
         result = await self.cache.get(str(self.file), 144 * 2)
         self.assertIn("/x-large/", result["url"])
 
+    async def test_uri_differential_against_glib(self):
+        names = [f"A{char}B.mp4" for char in string.punctuation + " "]
+        names += ["A space résumé.mp4", "海岸映像.mp4", "A!$&'()*+,;=:@~B.mp4"]
+        paths = [self.folder / name for name in names]
+        raw = os.fsencode(self.folder) + b"/A\xffB\x80.mp4"
+        paths += [raw, os.fsdecode(raw)]
+        rows = [{"path": repr(path), "glib": glib_uri(path), "actual": thumb.canonical_uri(path)} for path in paths]
+        (self.folder / "differential.json").write_text(json.dumps(rows, indent=2))
+        for row in rows:
+            with self.subTest(path=row["path"]):
+                self.assertEqual(row["actual"], row["glib"])
+
     async def test_generated_then_cache_hit(self):
         result = await self.cache.get(str(self.file), 128)
         self.assertEqual(result["status"], "generated")
@@ -73,16 +116,39 @@ class CacheTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_other_app_fixture_used_as_is(self):
         self.target.parent.mkdir(parents=True)
-        # Independently authored, minimal standard fixture: no optional keys.
-        foreign = thumb.PNG + thumb.chunk(b"IHDR", thumb.struct.pack("!IIBBBBB", 1, 1, 8, 6, 0, 0, 0))
-        foreign += thumb.chunk(b"tEXt", b"Thumb::URI\0" + self.uri.encode("ascii"))
-        foreign += thumb.chunk(b"tEXt", b"Thumb::MTime\0" + str(int(self.file.stat().st_mtime)).encode())
-        foreign += thumb.chunk(b"tEXt", b"Software\0Another app")
-        foreign += thumb.chunk(b"IDAT", thumb.zlib.compress(b"\0\0\0\0\0")) + thumb.chunk(b"IEND", b"")
-        self.target.write_bytes(foreign)
-        self.assertEqual((await self.cache.get(str(self.file), 128))["status"], "hit")
-        self.assertEqual(self.target.read_bytes(), foreign)
+        names = ["A space résumé.mp4", "A+B.mp4", "A!B(C).mp4", "A!$&'()*+,;=:@~ #?%B.mp4", "A\udcffB\udc80.mp4"]
+        rows = []
+        for name in names:
+            with self.subTest(name=name):
+                path = self.folder / name
+                path.write_bytes(video.read_bytes())
+                uri = glib_uri(path)
+                target = self.target.parent / (hashlib.md5(uri.encode("ascii")).hexdigest() + ".png")
+                foreign = foreign_png(uri, path.stat().st_mtime)
+                target.write_bytes(foreign)
+                result = await self.cache.get(str(path), 128)
+                rows.append({"name": name, "foreign_uri": uri, "helper_uri": thumb.canonical_uri(path),
+                             "foreign_key": target.name, "result": result, "foreign_unchanged": target.read_bytes() == foreign})
+                self.assertEqual(result["status"], "hit")
+                self.assertEqual(self.target.parent / target.name, Path(result["url"].removeprefix("file://")))
+                self.assertEqual(target.read_bytes(), foreign)
+        (self.folder / "foreign-cache.json").write_text(json.dumps(rows, indent=2))
         self.assertEqual(self.events, [])
+
+    async def test_success_and_failure_writes_use_glib_identity(self):
+        for name, content, expected in [("Generated +!() résumé.mp4", video.read_bytes(), "generated"),
+                                        ("Failed +!() résumé.mp4", b"corrupt video", "failed")]:
+            with self.subTest(name=name):
+                path = self.folder / name
+                path.write_bytes(content)
+                uri = glib_uri(path)
+                key = hashlib.md5(uri.encode("ascii")).hexdigest() + ".png"
+                target = (self.cache.root / "normal" if expected == "generated" else self.cache.failure_dir) / key
+                self.assertEqual((await self.cache.get(str(path), 128))["status"], expected)
+                self.assertEqual(thumb.metadata(target.read_bytes())["Thumb::URI"], uri)
+                before = list(self.events)
+                self.assertEqual((await self.cache.get(str(path), 128))["status"], "hit" if expected == "generated" else "failure-hit")
+                self.assertEqual(self.events, before)
 
     async def test_stale_mtime_in_both_directions(self):
         await self.cache.get(str(self.file), 128)
