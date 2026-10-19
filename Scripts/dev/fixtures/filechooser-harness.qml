@@ -12,6 +12,28 @@ ShellRoot {
   readonly property string base: Quickshell.env("FILECHOOSER_UI_ROOT")
   property var request: null
   property var replies: []
+  property var imageDecodeSamples: []
+  Timer {
+    interval: 16
+    repeat: true
+    running: !!windowLoader.item && windowLoader.item.quickLookOpen && windowLoader.item.preview.kind === "image"
+    onRunningChanged: if (running)
+                        root.imageDecodeSamples = []
+    onTriggered: {
+      var window = windowLoader.item;
+      var renderer = window.previewRenderer;
+      if (renderer && renderer.decodeSize !== undefined)
+        root.imageDecodeSamples = root.imageDecodeSamples.concat([
+                                                                   {
+                                                                     width: renderer.decodeSize.width,
+                                                                     height: renderer.decodeSize.height,
+                                                                     sheetWidth: window.previewMotion.geometry.width,
+                                                                     sheetHeight: window.previewMotion.geometry.height,
+                                                                     growing: window.previewMotion.running
+                                                                   }
+                                                                 ]);
+    }
+  }
   Component {
     id: requests
     FileRequest {}
@@ -76,15 +98,15 @@ ShellRoot {
                             sort: request ? request.browser.sortKey : "",
                             descending: request ? request.browser.sortDescending : false,
                             filter: request && request.currentFilter ? request.currentFilter[0] : "",
-                             choices: request ? request.choiceValues : {},
-                             layoutGeometry: window ? window.layoutGeometry() : {},
-                             appName: request ? request.appName : "",
-                             appIcon: request ? request.appIcon : "",
-                             appOptionsLabel: request ? request.appOptionsLabel : "",
-                             bottomGeometry: window ? window.bottomGeometry : {},
-                              choicesFit: window ? window.choiceValuesFit() : false,
-                              dropdownsFit: window ? window.dropdownValuesFit() : false,
-                              thumbnails: window ? window.thumbnailState() : {},
+                            choices: request ? request.choiceValues : {},
+                            layoutGeometry: window ? window.layoutGeometry() : {},
+                            appName: request ? request.appName : "",
+                            appIcon: request ? request.appIcon : "",
+                            appOptionsLabel: request ? request.appOptionsLabel : "",
+                            bottomGeometry: window ? window.bottomGeometry : {},
+                            choicesFit: window ? window.choiceValuesFit() : false,
+                            dropdownsFit: window ? window.dropdownValuesFit() : false,
+                            thumbnails: window ? window.thumbnailState() : {},
                             hidden: request ? request.browser.showHidden : false,
                             saveName: request ? request.saveName : "",
                             replace: request ? request.pendingReplace : "",
@@ -106,6 +128,7 @@ ShellRoot {
                             previewText: window ? window.preview.text.slice(0, 100) : "",
                             pdfAvailable: window ? window.preview.pdfAvailable : false,
                             rendered: window && window.previewRenderer ? window.previewRenderer.previewState : "",
+                            imageDecodeSamples: root.imageDecodeSamples,
                             frame: window && window.previewRenderer && window.preview.kind === "animatedImage" ? window.previewRenderer.frame : -1,
                             frames: window && window.previewRenderer && window.preview.kind === "animatedImage" ? window.previewRenderer.frames : 0,
                             position: window && window.previewRenderer && ["video", "audio"].includes(window.preview.kind) ? window.previewRenderer.position : -1,

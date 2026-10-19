@@ -50,8 +50,8 @@ def main():
             time.sleep(0.1)
         raise AssertionError(f"Timed out: {state()}")
 
-    def check(name, predicate):
-        s = state()
+    def check(name, predicate, snapshot=None):
+        s = state() if snapshot is None else snapshot
         ok = bool(predicate(s))
         cases.append({"case": name, "pass": ok, "state": s})
         print(name, "PASS" if ok else "FAIL", flush=True)
@@ -59,11 +59,11 @@ def main():
             raise AssertionError(name)
         return s
 
-    def key(name, modifier=None):
+    def key(name, modifier=None, settle=.15):
         code = {"Home": 102, "End": 107, "Left": 105, "Right": 106, "Up": 103, "Down": 108, "Return": 28, "space": 57, "Escape": 1, "BackSpace": 14, "Tab": 15, "a": 30, "h": 35, "l": 38}[name]
         mod = {"shift": 42, "ctrl": 29, "alt": 56}.get(modifier)
         run(["ydotool", "key", *([f"{mod}:1"] if mod else []), f"{code}:1", f"{code}:0", *([f"{mod}:0"] if mod else [])])
-        time.sleep(0.15)
+        time.sleep(settle)
 
     def text(value):
         run(["ydotool", "type", "--", value])
@@ -128,9 +128,19 @@ def main():
         capture("open")
         for prefix, kind, scene in [("co", "image", "quick-look-image"), ("mo", "animatedImage", "quick-look-webp"), ("ti", "video", "quick-look-video"), ("fi", "text", "quick-look-text"), ("pl", "pdf", "quick-look-pdf"), ("wa", "audio", "quick-look-audio")]:
             choose(prefix)
-            key("space")
-            wait(lambda s: s["preview"] and s["kind"] == kind and s["rendered"] in ("ready", "info"))
-            check(scene, lambda s: s["rendered"] == "ready" or kind == "pdf" and not s["pdfAvailable"] and s["rendered"] == "info")
+            key("space", settle=0)
+            snapshot = wait(lambda s: s["preview"] and s["kind"] == kind and not s["motion"]["running"]
+                            and (s["rendered"] == "ready" or kind == "pdf" and not s["pdfAvailable"] and s["rendered"] == "info")
+                            and (kind != "image" or any(not sample["growing"] for sample in s["imageDecodeSamples"])))
+            check(scene, lambda s: s["rendered"] == "ready" or kind == "pdf" and not s["pdfAvailable"] and s["rendered"] == "info", snapshot)
+            if kind == "image":
+                def stable_decode(s):
+                    samples = s["imageDecodeSamples"]
+                    sizes = {(sample["width"], sample["height"]) for sample in samples}
+                    return (len(sizes) == 1 and all(w > 0 and h > 0 for w, h in sizes)
+                            and any(sample["growing"] for sample in samples) and any(not sample["growing"] for sample in samples)
+                            and max(sample["sheetWidth"] for sample in samples) - min(sample["sheetWidth"] for sample in samples) > .5)
+                check("quick-look-image-stable-decode-during-growth", stable_decode, snapshot)
             if kind == "animatedImage":
                 frames = set()
                 for _ in range(6):
@@ -147,7 +157,7 @@ def main():
             check(scene + "-escape", lambda s: not s["preview"] and not s["settled"] and s["focus"] == "listing")
         choose("co")
         key("space")
-        wait(lambda s: s["rendered"] == "ready")
+        wait(lambda s: s["rendered"] == "ready" and not s["motion"]["running"])
         key("Right")
         wait(lambda s: s["preview"] and s["name"] == "Field notes.md" and s["rendered"] == "ready")
         check("preview-arrows", lambda s: s["kind"] == "text")
@@ -274,8 +284,8 @@ def main():
         ipc("reducedMotion", "true")
         choose("co")
         key("space")
-        wait(lambda s: s["rendered"] == "ready")
-        check("reduced-motion", lambda s: s["motion"]["duration"] == 0 and not s["motion"]["running"] and s["motion"]["geometry"]["x"] == 18)
+        snapshot = wait(lambda s: s["rendered"] == "ready" and not s["motion"]["running"])
+        check("reduced-motion", lambda s: s["motion"]["duration"] == 0 and not s["motion"]["running"] and s["motion"]["geometry"]["x"] == 18, snapshot)
         key("Escape")
         ipc("reducedMotion", "false")
         key("Escape")
