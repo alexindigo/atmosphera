@@ -3,6 +3,7 @@
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -45,10 +46,11 @@ def instrument(shell, filename, handler):
 
 
 def main():
-    enter()
+    enter(memory_probe=True)
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--label", required=True)
+    p.add_argument("--diagnose", action="store_true", help="trace descriptor ownership by picker phase")
     a = p.parse_args()
     source = a.source.resolve()
     output, runtime = ROOT / "evidence" / a.label, ROOT / "runtime" / a.label
@@ -66,7 +68,43 @@ def main():
     try:
         # Fail old trees before executing their unsafe runner. This is the red
         # contract boundary: the old harness has no isolation entrance at all.
-        check("source-has-shared-isolation-boundary", (source / "Scripts/dev/filechooser_isolation.py").is_file())
+        # This driver itself is always in the new runner's disposable outer PID
+        # namespace. The candidate's boundary is tested inside it; an old tree
+        # can kill only our disposable companion, never a console process.
+        check("outer-pid-namespace", os.environ["FILECHOOSER_PID_NAMESPACE"] != os.environ["FILECHOOSER_PARENT_PID_NAMESPACE"])
+        candidate_helper = source / "Scripts/dev/filechooser_isolation.py"
+        prefix = lambda argv: list(map(str, argv))
+        if candidate_helper.exists():
+            spec = importlib.util.spec_from_file_location("candidate_isolation", candidate_helper)
+            candidate = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(candidate)
+            prefix = getattr(candidate, "namespace_command", prefix)
+        companion = subprocess.Popen([sys.executable, "-c", "import ctypes,time; ctypes.CDLL(None).prctl(15,b'wlsunset',0,0,0); time.sleep(40)"])
+        wait(lambda: Path(f"/proc/{companion.pid}/comm").read_text().strip() == "wlsunset")
+        pid_base = Path(os.environ["FILECHOOSER_ISOLATION"]) / "p"
+        pid_base.mkdir()
+        pid_output = output / "pid-case"
+        pid_output.mkdir()
+        pid_shell = runtime / "pid-shell"
+        shutil.copytree(source, pid_shell, symlinks=True)
+        pid_child = runtime / "pid-child.py"
+        pid_child.write_text("import json,os,subprocess\nfrom pathlib import Path\n"
+            "config=Path(os.environ['XDG_CONFIG_HOME'])/'atmosphera'\nconfig.mkdir()\n"
+            "data=json.loads(Path(" + repr(str(source / "Configs/defaults.json")) + ").read_text())\n"
+            "data['general']['showChangelogOnStartup']=False\n(config/'settings.json').write_text(json.dumps(data))\n"
+            "result=subprocess.run(['timeout','10','qs','-p'," + repr(str(pid_shell / "shell.qml")) + "],capture_output=True,text=True,timeout=18)\n"
+            "Path(" + repr(str(pid_output / "shell.log")) + ").write_text(result.stdout+result.stderr)\n"
+            "assert result.returncode==124 and 'SingletonCheck' in result.stdout+result.stderr\n")
+        helper = Path(__file__).resolve().parent / "filechooser_isolation.py"
+        try:
+            pid_run = command(prefix([sys.executable, "-B", helper, "--session", pid_base, pid_output, pid_child]), seconds=35, check=False)
+            (pid_output / "driver.log").write_text(pid_run.stdout + pid_run.stderr)
+            check("candidate-full-shell-started", pid_run.returncode == 0)
+            check("startup-cannot-kill-session-companion", companion.poll() is None)
+        finally:
+            if companion.poll() is None:
+                companion.terminate()
+            companion.wait(timeout=5)
         shell = runtime / "shell"
         shutil.copytree(source, shell, symlinks=True)
         env = profile_env(runtime / "profile")
@@ -97,7 +135,7 @@ def main():
 ''')
         # A second disposable session has its own compositor, HOME and bus.
         # The shared supervisor is reused, not another hand-written recipe.
-        session_base = ROOT / "runtime" / ("s" + str(os.getpid()))
+        session_base = Path(os.environ["FILECHOOSER_ISOLATION"]) / "s"
         session_base.mkdir()
         session_output = output / "session-like"
         session_output.mkdir()
@@ -117,7 +155,7 @@ ShellRoot {
 }
 ''')
         log = (output / "session-supervisor.log").open("w"); logs.append(log)
-        helper = source / "Scripts/dev/filechooser_isolation.py"
+        helper = Path(__file__).resolve().parent / "filechooser_isolation.py"
         # The supervisor takes a Python entry point, so a tiny owned driver
         # waits for this session's qs; no login session environment is inherited.
         child = runtime / "session-child.py"
@@ -137,7 +175,10 @@ ShellRoot {
         protected = {name: hashes(session_base / name) for name in ("home", "config", "cache", "state", "data")}
         check("session-and-dev-identities-disjoint", all(env[k] != session_env[k] for k in ("HOME", "XDG_RUNTIME_DIR", "DBUS_SESSION_BUS_ADDRESS", "XDG_CONFIG_HOME", "XDG_CACHE_HOME", "XDG_STATE_HOME", "XDG_DATA_HOME")))
         log = (output / "shell.log").open("w"); logs.append(log)
-        shell_proc = subprocess.Popen(["timeout", "600", "qs", "-p", str(shell / "shell.qml")], env=env, stdout=log, stderr=subprocess.STDOUT)
+        trace = (["strace", "-f", "-qq", "-yy", "-ttt", "-s", "512",
+                  "-e", "trace=openat,close,dup,dup2,dup3,clone,clone3,execve", "-o", str(output / "commands.trace")]
+                 if a.diagnose else [])
+        shell_proc = subprocess.Popen(["timeout", "600", *trace, "qs", "-p", str(shell / "shell.qml")], env=env, stdout=log, stderr=subprocess.STDOUT)
         def ipc(target, member):
             return command(["qs", "-p", shell / "shell.qml", "ipc", "call", target, member], env).stdout.strip()
         wait(lambda: ipc("f8Shell", "ready") == "true", 35)
@@ -149,7 +190,7 @@ ShellRoot {
                 parts = line.split()
                 if parts[0] in ("Rss:", "Pss:", "Private_Dirty:", "Anonymous:"):
                     values[parts[0][:-1] + "_kib"] = int(parts[1])
-            row = {"cycle": cycle, **values, "fds": len(list(Path(f"/proc/{pid}/fd").iterdir())),
+            row = {"cycle": cycle, "pid": pid, "time": time.time(), **values, "fds": len(list(Path(f"/proc/{pid}/fd").iterdir())),
                    "cgroup_bytes": int((cgroup() / "memory.current").read_text())}
             samples.append(row)
             descriptors = {}
@@ -187,6 +228,39 @@ ShellRoot {
             wait(lambda: state().get("ready"))
             return proc
         time.sleep(2); sample(0)
+        if a.diagnose:
+            folders = {}
+            for name in ("empty", "image", "text", "pdf"):
+                folders[name] = fixtures / name
+                folders[name].mkdir()
+            shutil.copy2(next(Path("/home/tester/Pictures").glob("*.png")), folders["image"] / "Sample.png")
+            (folders["text"] / "Sample.txt").write_text("Resource ownership fixture\n")
+            shutil.copy2("/home/tester/Documents/Weekend itinerary.pdf", folders["pdf"] / "Sample.pdf")
+            phases = [("empty", folders["empty"], ""), ("image", folders["image"], ""),
+                      ("thumbnails", videos, ""), ("browse", videos, ""),
+                      ("video", videos, "video"), ("audio", audio, "audio"),
+                      ("text", folders["text"], "text"), ("pdf", folders["pdf"], "pdf")]
+            for index, (name, folder, kind) in enumerate(phases):
+                sample(name + "-before")
+                proc = open_folder(folder, index)
+                time.sleep(.5); sample(name + "-open")
+                if name == "browse":
+                    for _ in range(12):
+                        keys("key", "108:1", "108:0")
+                if kind:
+                    keys("key", "102:1", "102:0")
+                    keys("key", "57:1", "57:0")
+                    wait(lambda: state()["preview"] and state()["kind"] == kind and state()["rendered"] in ("ready", "info"))
+                    time.sleep(.5); sample(name + "-preview")
+                    keys("key", "1:1", "1:0")
+                    wait(lambda: not state()["preview"])
+                    time.sleep(.5); sample(name + "-preview-closed")
+                keys("key", "1:1", "1:0")
+                proc.wait(timeout=8)
+                time.sleep(1); sample(name + "-closed")
+            ipc("f8Shell", "quit"); shell_proc.wait(timeout=12)
+            complete = True
+            return
         for cycle in range(1, 13):
             for folder, kind in ((videos, "video"), (audio, "audio")):
                 proc = open_folder(folder, cycle * 2 + (kind == "audio"))
@@ -212,78 +286,26 @@ ShellRoot {
                 check(f"cycle-{cycle}-{kind}-closed", proc.returncode == 0)
             time.sleep(1); sample(cycle)
         # Warm-up allocations are distinct from retained growth. Preserve all
-        # measurements even on failure; the final six-cycle range is reported.
-        tail = [s["Pss_kib"] for s in samples[-6:]]
-        check("post-warmup-memory-bounded", max(tail) - min(tail) < 64 * 1024, tail)
-        # Separate IPC polling from a dependency's child-process bookkeeping.
-        # This diagnostic imports no Atmosphera code and preserves its result;
-        # it cannot justify a product workaround for a native resource leak.
+        # measurements even on failure; ten post-warm-up samples must plateau.
+        tail = [s["Pss_kib"] for s in samples[-10:]]
+        check("post-warmup-memory-bounded", max(tail) - min(tail) < 16 * 1024, tail)
+        counts = [s["fds"] for s in samples[-10:]]
+        check("ten-post-warmup-descriptor-counts-flat", len(set(counts)) == 1, counts)
         ipc_fds_before = len(list(Path(f"/proc/{pid}/fd").iterdir()))
         for _ in range(25):
             ipc("f8Shell", "ready")
         ipc_fds_after = len(list(Path(f"/proc/{pid}/fd").iterdir()))
-        native_probe = runtime / "native-process.qml"
-        native_probe.write_text('''import QtQuick
-import Quickshell
-import Quickshell.Io
-ShellRoot {
-  id: root
-  property int completed: 0
-  Component {
-    id: factory
-    Process {
-      command: ["/usr/bin/true"]
-      stdout: StdioCollector {}
-      stderr: StdioCollector {}
-      onExited: { root.completed++; destroy(); }
-    }
-  }
-  IpcHandler {
-    target: "f8Native"
-    function run(): void { var process = factory.createObject(root); process.running = true; }
-    function state(): string { return JSON.stringify(root.completed); }
-    function quit(): void { Qt.quit(); }
-  }
-}
-''')
-        log = (output / "native-process.log").open("w"); logs.append(log)
-        native = subprocess.Popen(["qs", "-p", str(native_probe)], env=env, stdout=log, stderr=subprocess.STDOUT)
-        def native_ipc(member):
-            return command(["qs", "-p", native_probe, "ipc", "call", "f8Native", member], env).stdout.strip()
-        try:
-            wait(lambda: native_ipc("state") == "0")
-            def null_fds():
-                result = []
-                for fd in Path(f"/proc/{native.pid}/fd").iterdir():
-                    try:
-                        if os.readlink(fd) == "/dev/null":
-                            result.append(fd.name)
-                    except FileNotFoundError:
-                        pass
-                return result
-            before = null_fds()
-            for _ in range(25):
-                native_ipc("run")
-            wait(lambda: native_ipc("state") == "25")
-            time.sleep(.5)
-            after = null_fds()
-            (output / "native-fds.json").write_text(json.dumps({"ipc_only_before": ipc_fds_before, "ipc_only_after": ipc_fds_after,
-                "native_processes": 25, "native_null_fds_before": before, "native_null_fds_after": after}, indent=2))
-        finally:
-            native_ipc("quit"); native.wait(timeout=12)
-        # A small deliberately hungry sibling unit proves kernel cgroup OOM,
-        # without approaching global exhaustion or exercising the console.
-        admin = dict(os.environ, XDG_RUNTIME_DIR="/run/user/1000", DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/1000/bus")
-        unit = "filechooser-" + a.label + "-hungry"
-        hungry = command(["systemd-run", "--user", "--wait", "--pipe", "--unit=" + unit,
-                          "-p", "MemoryMax=64M", "-p", "MemoryHigh=infinity", "-p", "MemorySwapMax=0", "-p", "CPUQuota=25%",
-                          "-p", "RuntimeMaxSec=20", "-p", "OOMPolicy=stop", "--setenv=TMPDIR=" + str(ROOT / "tmp"),
-                          "/usr/bin/env", "-i", *[k + "=" + v for k, v in env.items()],
-                          sys.executable, "-c", "x=bytearray(128*1024*1024)"], admin, 30, False)
-        result = command(["systemctl", "--user", "show", unit, "-p", "Result", "-p", "MemoryMax", "-p", "MemoryPeak"], admin).stdout
-        (output / "hungry.log").write_text(hungry.stdout + hungry.stderr + result)
-        check("hungry-stopped-by-own-limit", hungry.returncode != 0 and "Result=oom-kill" in result, result)
-        command(["systemctl", "--user", "reset-failed", unit], admin)
+        check("ipc-polling-keeps-descriptors-flat", ipc_fds_before == ipc_fds_after)
+        # Only the outer launcher's control plane can contact the user manager.
+        # Request its fixed 64 MiB probe while this protected session stays live.
+        base = Path(os.environ["FILECHOOSER_ISOLATION"])
+        pending = base / "memory-probe.pending"
+        pending.write_text("64MiB\n")
+        pending.replace(base / "memory-probe.request")
+        probe_receipt = ROOT / "evidence" / (a.label + "-isolation") / "memory-probe.json"
+        wait(lambda: probe_receipt.exists(), 45)
+        result = json.loads(probe_receipt.read_text())
+        check("hungry-stopped-by-own-limit", result["passed"], result)
         check("session-still-responsive", session_proc.poll() is None and session_ipc("state") == "true")
         check("session-files-unchanged", protected == {name: hashes(session_base / name) for name in protected})
         ipc("f8Shell", "quit"); shell_proc.wait(timeout=12)

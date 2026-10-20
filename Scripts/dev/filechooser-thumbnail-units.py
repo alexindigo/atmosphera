@@ -306,7 +306,7 @@ for directory in ("config", "cache", "state", "tmp"):
     (profile / directory).mkdir(parents=True)
 env = dict(profile_env(profile), FILECHOOSER_THUMBNAIL_ROOT=str(fixtures),
            PATH=str(shim) + ":" + os.environ["PATH"])
-process = subprocess.run(["timeout", "35", "dbus-run-session", "--", "qs", "-p", str(probe)],
+process = subprocess.run(["timeout", "35", "qs", "-p", str(probe)],
                          cwd=shell, env=env, capture_output=True, text=True, timeout=40)
 log = process.stdout + process.stderr
 (output / "qml.log").write_text(log)

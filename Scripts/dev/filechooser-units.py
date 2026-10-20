@@ -86,7 +86,7 @@ def main():
                ATMOSPHERA_DEBUG="0")
     runs = []
     for mode in ("main", "reload"):
-        process = subprocess.run(["timeout", "--kill-after=5s", "90", "dbus-run-session", "--", "qs", "-p", str(probe)],
+        process = subprocess.run(["timeout", "--kill-after=5s", "90", "qs", "-p", str(probe)],
                                  cwd=shell, env=dict(env, FILECHOOSER_UNIT_RELOAD="1" if mode == "reload" else "0"),
                                  capture_output=True, text=True, timeout=100)
         text = process.stdout + process.stderr

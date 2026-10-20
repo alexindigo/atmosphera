@@ -63,8 +63,7 @@ class Run:
         (self.fixtures / "Icon.png").write_bytes(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack("!IIBBBBB", 1, 1, 8, 6, 0, 0, 0)) + chunk(b"IDAT", zlib.compress(b"\x00\x00\x80\xff\xff")) + chunk(b"IEND", b""))
         self.env = dict(profile_env(self.profile),
                         LANG="en_US.UTF-8", LC_ALL="en_US.UTF-8",
-                        ATMOSPHERA_DEBUG="0", FILECHOOSER_FIXTURES=str(self.fixtures),
-                        DBUS_SESSION_BUS_ADDRESS="unix:path=" + str(self.runtime / "bus.sock"))
+                        ATMOSPHERA_DEBUG="0", FILECHOOSER_FIXTURES=str(self.fixtures))
         self.processes, self.logs, self.cases, self.commands = [], [], [], []
         self.complete = False
         self.failure = ""
@@ -121,18 +120,8 @@ class Run:
 
     def start(self, frontend=True, qml=None):
         self.probe.write_text(qml if qml is not None else (SCRIPTS / "fixtures/filechooser-portal.qml").read_text())
-        # Same session policy as /usr/share/dbus-1/session.conf, without service
-        # activation directories. All services are explicit owned children;
-        # after daemon loss the missing-service case cannot autoactivate one.
-        config = self.runtime / "bus.conf"
-        config.write_text('<busconfig><type>session</type><listen>' + self.env["DBUS_SESSION_BUS_ADDRESS"] +
-                          '</listen><auth>EXTERNAL</auth><policy context="default">'
-                          '<allow send_destination="*" eavesdrop="true"/><allow eavesdrop="true"/>'
-                          '<allow own="*"/></policy></busconfig>')
-        self.launch(["timeout", "720", "dbus-daemon", "--nofork", "--config-file=" + str(config)], "bus.log")
-        deadline = time.monotonic() + 8
-        while not (self.runtime / "bus.sock").exists() and time.monotonic() < deadline:
-            time.sleep(.1)
+        # The shared runner owns the private bus, with no activation directories.
+        # Every frontend/backend below is an explicit child in that session.
         self.qs = self.launch(["timeout", "720", "qs", "-p", self.probe], "shell.log")
         self.wait(lambda s: not s["requests"])
         self.launch(["timeout", "720", "busctl", "--address=" + self.env["DBUS_SESSION_BUS_ADDRESS"],
