@@ -19,6 +19,9 @@ from unittest.mock import patch
 import zlib
 
 from filechooser_regression import ROOT, guest
+from filechooser_isolation import enter, profile_env
+
+enter()
 
 p = argparse.ArgumentParser(description=__doc__)
 p.add_argument("--source", type=Path, required=True)
@@ -301,10 +304,7 @@ marker = runtime / "hanging-pid"
 profile = runtime / "profile"
 for directory in ("config", "cache", "state", "tmp"):
     (profile / directory).mkdir(parents=True)
-env = dict(os.environ, TMPDIR=str(profile / "tmp"), XDG_RUNTIME_DIR="/run/user/1000", WAYLAND_DISPLAY="wayland-1",
-           XDG_CACHE_HOME=str(profile / "cache"), ATMOSPHERA_CACHE_DIR=str(profile / "cache") + "/",
-           ATMOSPHERA_CONFIG_DIR=str(profile / "config") + "/", ATMOSPHERA_STATE_DIR=str(profile / "state") + "/",
-           ATMOSPHERA_SETTINGS_FILE=str(profile / "config/settings.json"), FILECHOOSER_THUMBNAIL_ROOT=str(fixtures),
+env = dict(profile_env(profile), FILECHOOSER_THUMBNAIL_ROOT=str(fixtures),
            PATH=str(shim) + ":" + os.environ["PATH"])
 process = subprocess.run(["timeout", "35", "dbus-run-session", "--", "qs", "-p", str(probe)],
                          cwd=shell, env=env, capture_output=True, text=True, timeout=40)

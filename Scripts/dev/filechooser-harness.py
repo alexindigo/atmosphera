@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Prepare and run the dev-only chooser window in the assigned filechooser VM.
 
-The prepared shell exposes filechooserHarness IPC. Drive it with guest evdev
+The prepared shell exposes filechooserHarness IPC. Drive it with private Wayland
 keys and capture the guest output with grim; it never registers a portal.
 """
 
@@ -14,18 +14,18 @@ import subprocess
 import sys
 
 from filechooser_regression import desktop_fixture
+from filechooser_isolation import enter, guest, profile_env
 
 ROOT = Path("/home/tester/Projects/atmosphera-filechooser")
 
 
 def main():
+    enter()
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--label", required=True)
     a = p.parse_args()
-    if (os.getuid() != 1000 or Path.home() != Path("/home/tester")
-            or "52:54:00:50:b3:8b" not in [f.read_text().strip() for f in Path("/sys/class/net").glob("*/address")]):
-        p.error("requires assigned filechooser VM")
+    guest()
     source = a.source.resolve()
     runtime, evidence = ROOT / "runtime" / a.label, ROOT / "evidence" / a.label
     if not source.is_relative_to(ROOT / "sources") or runtime.exists() or evidence.exists():
@@ -81,11 +81,9 @@ def main():
     (cache / "filechooser.json").write_text(json.dumps({"recent": [str(fixtures / "References"), str(fixtures / "Screens")], "sharedFolder": str(fixtures), "appFolders": {}, "preferences": {"view": "grid", "sortKey": "name", "showHidden": False, "sortDescending": False}}))
     # The VM's login defaults to C. Use its installed UTF-8 user locale for
     # presentation fixtures; product formatting continues to use Qt.locale().
-    env = dict(os.environ, TMPDIR=str(profile / "tmp"), XDG_RUNTIME_DIR="/run/user/1000", WAYLAND_DISPLAY="wayland-1", LANG="en_US.UTF-8", LC_ALL="en_US.UTF-8",
-               NIRI_SOCKET=str(next(Path("/run/user/1000").glob("niri.*.sock"))), FILECHOOSER_UI_ROOT=str(fixtures),
-               XDG_CONFIG_HOME=str(profile / "config"), XDG_DATA_HOME=str(profile / "data"),
-               ATMOSPHERA_CONFIG_DIR=str(profile / "config") + "/", ATMOSPHERA_CACHE_DIR=str(cache) + "/",
-               ATMOSPHERA_STATE_DIR=str(profile / "state") + "/", ATMOSPHERA_SETTINGS_FILE=str(profile / "config/settings.json"), ATMOSPHERA_DEBUG="0")
+    env = dict(profile_env(profile), LANG="en_US.UTF-8", LC_ALL="en_US.UTF-8",
+               FILECHOOSER_UI_ROOT=str(fixtures),
+               ATMOSPHERA_CACHE_DIR=str(cache) + "/", ATMOSPHERA_DEBUG="0")
     (evidence / "recipe.json").write_text(json.dumps({"source": str(source), "runtime": str(runtime), "probe": str(probe), "fixtures": str(fixtures), "environment": {k: v for k, v in env.items() if k.startswith(("ATMOSPHERA_", "FILECHOOSER_", "XDG_", "WAYLAND_", "NIRI_", "TMPDIR", "LANG", "LC_"))}}, indent=2))
     with (evidence / "harness.log").open("w") as log:
         result = subprocess.run(["timeout", "--kill-after=5s", "840", "qs", "-p", str(probe)], cwd=shell, env=env, stdout=log, stderr=subprocess.STDOUT, timeout=850)

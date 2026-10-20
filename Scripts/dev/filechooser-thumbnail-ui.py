@@ -10,9 +10,11 @@ import sys
 import time
 
 from filechooser_regression import ROOT, guest
+from filechooser_isolation import enter, input_command
 
 
 def main():
+    enter()
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--label", required=True)
@@ -43,20 +45,16 @@ def main():
                                 f'with open({str(decoder_log)!r}, "a") as f: f.write(json.dumps({{"time":time.monotonic(),"pid":os.getpid(),"argv":sys.argv}})+"\\n")\n'
                                 'os.execv("/usr/bin/ffmpeg", ["ffmpeg", *sys.argv[1:]])\n')
     (shim / "ffmpeg").chmod(0o755)
-    cache = fixtures / "cache"
-    cache.mkdir()
-    env = dict(os.environ, TMPDIR=str(ROOT / "tmp"), XDG_RUNTIME_DIR="/run/user/1000", WAYLAND_DISPLAY="wayland-1",
-               XDG_CACHE_HOME=str(cache), PATH=str(shim) + ":" + os.environ["PATH"],
-               YDOTOOL_SOCKET=str(fixtures / "input.sock"))
-    input_log = (fixtures / "input.log").open("w")
-    inputd = subprocess.Popen(["sudo", "-n", "env", "TMPDIR=" + env["TMPDIR"], "timeout", "600", "ydotoold",
-                               "--socket-path=" + env["YDOTOOL_SOCKET"], "--socket-perm=0666"], env=env, stdout=input_log, stderr=subprocess.STDOUT)
+    cache = runtime / "profile/cache"
+    env = dict(os.environ, PATH=str(shim) + ":" + os.environ["PATH"])
     harness = subprocess.Popen(["timeout", "620", "python3", "-B", str(source / "Scripts/dev/filechooser-harness.py"),
                                "--source", str(source), "--label", a.label], env=env)
     probe = runtime / "shell/filechooser-harness.qml"
     cases, latencies = [], []
     complete, failure = False, ""
     def command(argv):
+        if argv[0] == "ydotool":
+            argv = input_command(argv)
         return subprocess.run(["timeout", "10", *map(str, argv)], env=env, capture_output=True, text=True, check=True, timeout=15).stdout.strip()
     def ipc(member, *args):
         return command(["qs", "-p", probe, "ipc", "call", "filechooserHarness", member, *args])
@@ -164,9 +162,6 @@ def main():
                 ipc("quit"); harness.wait(timeout=15)
             except Exception as error:
                 failure += " graceful quit: " + repr(error)
-        inputd.terminate()
-        inputd.wait(timeout=8)
-        input_log.close()
         if evidence.exists():
             (evidence / "result.json").write_text(json.dumps({"passed": complete and all(c["pass"] for c in cases), "complete": complete,
                 "cases": cases, "failure": failure, "latencies": latencies, "ffmpeg_launches": launches()}, indent=2))

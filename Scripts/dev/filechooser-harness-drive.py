@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exercise the dev harness with real evdev keys and retain full captures."""
+"""Exercise the dev harness with private Wayland keys and retain full captures."""
 
 import argparse
 import json
@@ -8,6 +8,8 @@ from pathlib import Path
 import subprocess
 import time
 
+from filechooser_isolation import checked, input_command
+
 ROOT = Path("/home/tester/Projects/atmosphera-filechooser")
 
 
@@ -15,17 +17,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--runtime", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--input-socket", type=Path, required=True)
     args = parser.parse_args()
     runtime, output = args.runtime.resolve(), args.output.resolve()
-    assert os.getuid() == 1000 and Path.home() == Path("/home/tester")
+    checked()
     assert "52:54:00:50:b3:8b" in [f.read_text().strip() for f in Path("/sys/class/net").glob("*/address")]
     assert runtime.is_relative_to(ROOT / "runtime") and output.is_relative_to(ROOT / "evidence") and not output.exists()
     output.mkdir()
     captures = runtime / "captures"
     captures.mkdir()
-    assert args.input_socket.resolve().is_relative_to(ROOT / "runtime")
-    env = dict(os.environ, XDG_RUNTIME_DIR="/run/user/1000", WAYLAND_DISPLAY="wayland-1", LC_ALL="en_US.UTF-8", TMPDIR=str(runtime / "profile/tmp"), YDOTOOL_SOCKET=str(args.input_socket.resolve()))
+    env = dict(os.environ, LC_ALL="en_US.UTF-8", TMPDIR=str(runtime / "profile/tmp"))
     probe = runtime / "shell/filechooser-harness.qml"
     cases = []
     images = []
@@ -33,6 +33,8 @@ def main():
     failure = ""
 
     def run(command):
+        if command[0] == "ydotool":
+            command = input_command(command)
         return subprocess.run(["timeout", "10", *map(str, command)], env=env, capture_output=True, text=True, check=True, timeout=15).stdout.strip()
 
     def ipc(method, *values):

@@ -16,6 +16,7 @@ import time
 from urllib.parse import unquote, urlsplit
 
 from filechooser_regression import ROOT, SCRIPTS, guest
+from filechooser_isolation import enter, input_command
 
 
 def layout_fits(s):
@@ -34,6 +35,7 @@ def layout_fits(s):
 
 
 def main():
+    enter()
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--label", required=True)
@@ -45,17 +47,15 @@ def main():
     runtime, evidence = ROOT / "runtime" / a.label, ROOT / "evidence" / a.label
     assert not runtime.exists() and not evidence.exists()
     # filechooser-harness owns preparation, media fixtures and the qs child.
-    env = dict(os.environ, TMPDIR=str(ROOT / "tmp"), XDG_RUNTIME_DIR="/run/user/1000", WAYLAND_DISPLAY="wayland-1",
-               YDOTOOL_SOCKET=str(ROOT / "runtime" / (a.label + ".input.sock")))
-    input_log = (ROOT / "evidence" / (a.label + "-input.log")).open("w")
-    inputd = subprocess.Popen(["sudo", "-n", "env", "TMPDIR=" + env["TMPDIR"], "timeout", "840", "ydotoold",
-                              "--socket-path=" + env["YDOTOOL_SOCKET"], "--socket-perm=0666"], env=env, stdout=input_log, stderr=subprocess.STDOUT)
+    env = dict(os.environ)
     harness = subprocess.Popen(["timeout", "860", "python3", "-B", str(SCRIPTS / "filechooser-harness.py"), "--source", str(source), "--label", a.label], env=env)
     probe = runtime / "shell/filechooser-harness.qml"
     cases = []
     complete = False
     failure = ""
     def command(argv):
+        if argv[0] == "ydotool":
+            argv = input_command(argv)
         return subprocess.run(["timeout", "12", *map(str, argv)], env=env, capture_output=True, text=True, check=True, timeout=18).stdout.strip()
     def ipc(member, *args):
         return command(["qs", "-p", probe, "ipc", "call", "filechooserHarness", member, *args])
@@ -101,7 +101,7 @@ def main():
         wait(lambda s: s["ready"], 30)
         keyboard_output = ROOT / "evidence" / (a.label + "-keyboard")
         subprocess.run(["timeout", "360", "python3", "-B", str(SCRIPTS / "filechooser-harness-drive.py"),
-                        "--runtime", str(runtime), "--output", str(keyboard_output), "--input-socket", env["YDOTOOL_SOCKET"]], env=env, check=True, timeout=370)
+                        "--runtime", str(runtime), "--output", str(keyboard_output)], env=env, check=True, timeout=370)
         keyboard = json.loads((keyboard_output / "result.json").read_text())
         cases.extend(keyboard["cases"])
         assert keyboard["complete"] and keyboard["status"] == "green"
@@ -295,9 +295,6 @@ def main():
                 ipc("quit"); harness.wait(timeout=15)
             except Exception as error:
                 failure += " graceful quit: " + repr(error)
-        inputd.terminate()
-        inputd.wait(timeout=8)
-        input_log.close()
         if evidence.exists():
             (evidence / "result.json").write_text(json.dumps({"passed": complete and all(c["pass"] for c in cases), "complete": complete, "cases": cases, "failure": failure, "harness_exit": harness.poll()}, indent=2))
     return 0

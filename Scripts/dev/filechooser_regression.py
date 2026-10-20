@@ -12,14 +12,10 @@ import shutil
 import subprocess
 import time
 
+from filechooser_isolation import enter, guest, input_command, profile_env
+
 ROOT = Path("/home/tester/Projects/atmosphera-filechooser")
 SCRIPTS = Path(__file__).resolve().parent
-
-
-def guest():
-    assert os.getuid() == 1000 and Path.home() == Path("/home/tester")
-    assert "52:54:00:50:b3:8b" in [p.read_text().strip() for p in Path("/sys/class/net").glob("*/address")]
-    assert Path(os.environ["TMPDIR"]).resolve().is_relative_to(ROOT)
 
 
 def desktop_fixture(data):
@@ -37,6 +33,7 @@ def desktop_fixture(data):
 
 class Run:
     def __init__(self, source, label):
+        enter()
         guest()
         assert re.fullmatch(r"[a-z0-9][a-z0-9.-]*", label)
         self.source = Path(source).resolve()
@@ -52,6 +49,9 @@ class Run:
         defaults = json.loads((self.source / "Configs/defaults.json").read_text())
         defaults["general"]["showChangelogOnStartup"] = False
         (self.profile / "config/settings.json").write_text(json.dumps(defaults))
+        portal_config = self.profile / "config/xdg-desktop-portal"
+        portal_config.mkdir()
+        (portal_config / "portals.conf").write_text("[preferred]\ndefault=atmosphera\n")
         self.fixtures = self.runtime / "Chosen"
         self.fixtures.mkdir()
         (self.fixtures / "Chosen.txt").write_text("File chooser consumer fixture\n")
@@ -61,17 +61,9 @@ class Run:
         def chunk(kind, data):
             return struct.pack("!I", len(data)) + kind + data + struct.pack("!I", zlib.crc32(kind + data))
         (self.fixtures / "Icon.png").write_bytes(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack("!IIBBBBB", 1, 1, 8, 6, 0, 0, 0)) + chunk(b"IDAT", zlib.compress(b"\x00\x00\x80\xff\xff")) + chunk(b"IEND", b""))
-        self.env = dict(os.environ, TMPDIR=str(self.profile / "tmp"),
-                        XDG_RUNTIME_DIR="/run/user/1000", WAYLAND_DISPLAY="wayland-1",
-                        NIRI_SOCKET=str(next(Path("/run/user/1000").glob("niri.*.sock"))),
-                        LANG="en_US.UTF-8", LC_ALL="en_US.UTF-8", XDG_CURRENT_DESKTOP="niri",
-                        XDG_CONFIG_HOME=str(self.profile / "config"), XDG_DATA_HOME=str(self.profile / "data"),
-                        ATMOSPHERA_CONFIG_DIR=str(self.profile / "config") + "/",
-                        ATMOSPHERA_CACHE_DIR=str(self.profile / "cache") + "/",
-                        ATMOSPHERA_STATE_DIR=str(self.profile / "state") + "/",
-                        ATMOSPHERA_SETTINGS_FILE=str(self.profile / "config/settings.json"),
+        self.env = dict(profile_env(self.profile),
+                        LANG="en_US.UTF-8", LC_ALL="en_US.UTF-8",
                         ATMOSPHERA_DEBUG="0", FILECHOOSER_FIXTURES=str(self.fixtures),
-                        YDOTOOL_SOCKET=str(self.runtime / "input.sock"),
                         DBUS_SESSION_BUS_ADDRESS="unix:path=" + str(self.runtime / "bus.sock"))
         self.processes, self.logs, self.cases, self.commands = [], [], [], []
         self.complete = False
@@ -88,6 +80,8 @@ class Run:
         return p
 
     def command(self, argv):
+        if argv[0] == "ydotool":
+            argv = input_command(argv)
         return subprocess.run(["timeout", "12", *map(str, argv)], env=self.env, cwd=self.shell,
                               capture_output=True, text=True, check=True, timeout=18).stdout.strip()
 
@@ -139,8 +133,6 @@ class Run:
         deadline = time.monotonic() + 8
         while not (self.runtime / "bus.sock").exists() and time.monotonic() < deadline:
             time.sleep(.1)
-        self.launch(["sudo", "-n", "env", "TMPDIR=" + self.env["TMPDIR"], "timeout", "720", "ydotoold",
-                     "--socket-path=" + self.env["YDOTOOL_SOCKET"], "--socket-perm=0666"], "input.log")
         self.qs = self.launch(["timeout", "720", "qs", "-p", self.probe], "shell.log")
         self.wait(lambda s: not s["requests"])
         self.launch(["timeout", "720", "busctl", "--address=" + self.env["DBUS_SESSION_BUS_ADDRESS"],

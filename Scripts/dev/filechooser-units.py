@@ -11,6 +11,7 @@ import subprocess
 import sys
 
 from filechooser_regression import desktop_fixture
+from filechooser_isolation import enter, guest, profile_env
 
 ROOT = Path("/home/tester/Projects/atmosphera-filechooser")
 PREFIX = "FILECHOOSER_UNITS|"
@@ -18,13 +19,12 @@ ERRORS = re.compile(r"TypeError|ReferenceError|Cannot assign|Binding loop|Failed
 
 
 def main():
+    enter()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
-    if (os.getuid() != 1000 or Path.home() != Path("/home/tester")
-            or "52:54:00:50:b3:8b" not in [p.read_text().strip() for p in Path("/sys/class/net").glob("*/address")]):
-        parser.error("guest only: expected the assigned filechooser fork and tester uid 1000")
+    guest()
     source, output = args.source.resolve(), args.output.resolve()
     runtime = ROOT / "runtime" / output.name
     if not source.is_relative_to(ROOT / "sources") or not output.is_relative_to(ROOT / "evidence"):
@@ -81,17 +81,8 @@ def main():
     (profile / "config/gtk-3.0/bookmarks").write_text(f'{(aux / "bookmark").as_uri()} Test bookmark\n')
     (profile / "data/recently-used.xbel").write_text(f'<xbel><bookmark href="{(fixtures / "Alpha.txt").as_uri()}" modified="2026-10-18T00:00:00Z"/></xbel>')
     desktop_fixture(profile / "data")
-    sockets = list(Path("/run/user/1000").glob("niri.*.sock"))
-    if len(sockets) != 1 or not Path("/run/user/1000/wayland-1").exists():
-        parser.error("expected the assigned guest's niri session")
-    env = dict(os.environ, TMPDIR=str(profile / "tmp"), QT_QPA_PLATFORM="wayland",
-               XDG_RUNTIME_DIR="/run/user/1000", WAYLAND_DISPLAY="wayland-1", NIRI_SOCKET=str(sockets[0]),
+    env = dict(profile_env(profile),
                QT_FORCE_STDERR_LOGGING="1", FILECHOOSER_UNIT_ROOT=str(fixtures), FILECHOOSER_UNIT_AUX=str(aux),
-               XDG_CONFIG_HOME=str(profile / "config"), XDG_DATA_HOME=str(profile / "data"),
-               ATMOSPHERA_CONFIG_DIR=str(profile / "config") + "/",
-               ATMOSPHERA_CACHE_DIR=str(profile / "cache") + "/",
-               ATMOSPHERA_STATE_DIR=str(profile / "state") + "/",
-               ATMOSPHERA_SETTINGS_FILE=str(profile / "config/settings.json"),
                ATMOSPHERA_DEBUG="0")
     runs = []
     for mode in ("main", "reload"):
