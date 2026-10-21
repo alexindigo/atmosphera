@@ -1,0 +1,6 @@
+<!-- Mark-only reference copied from approved round-3 svg/audio-grid.svg.
+     White is an alpha-mask test paint, not a product palette. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <ellipse cx="28" cy="45" rx="5.7" ry="3.9" fill="white" transform="rotate(-18 28 45)"/>
+  <path d="M32.8 43.5V25Q34.5 29 42 31" fill="none" stroke="white" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

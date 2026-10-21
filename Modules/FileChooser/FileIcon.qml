@@ -9,10 +9,12 @@ Item {
   property bool compact: false
   readonly property var paints: FileTypes.iconColors(descriptor)
   readonly property bool folder: descriptor.type === "folder"
-  readonly property string mark: Paths.mark(descriptor.type, descriptor.folder, compact)
+  readonly property var mark: Paths.glyph(descriptor.type, descriptor.folder, compact)
   implicitWidth: compact ? 20 : 96
   implicitHeight: implicitWidth
   opacity: descriptor.hidden ? .5 : 1
+  // Opacity belongs to the finished illustration, never its overlapping paints.
+  layer.enabled: true
 
   // Native optical canvases keep the list a drawing, not a miniature grid icon.
   Item {
@@ -77,18 +79,31 @@ Item {
         capStyle: ShapePath.RoundCap
         joinStyle: ShapePath.RoundJoin
         fillColor: "transparent"
-        PathSvg { path: root.mark }
+        PathSvg { path: root.mark.line }
       }
     }
     Shape {
       anchors.fill: parent
       ShapePath {
-        strokeColor: root.folder ? root.paints.emboss : root.paints.ink
-        strokeWidth: root.compact ? 1 : 2.6
+        strokeColor: root.paints[root.mark.paint]
+        strokeWidth: root.mark.strokeWidth
         capStyle: ShapePath.RoundCap
         joinStyle: ShapePath.RoundJoin
         fillColor: "transparent"
-        PathSvg { path: root.mark }
+        PathSvg { path: root.mark.line }
+      }
+    }
+    Shape {
+      anchors.fill: parent
+      transform: Rotation {
+        origin.x: root.mark.centerX
+        origin.y: root.mark.centerY
+        angle: root.mark.rotation
+      }
+      ShapePath {
+        strokeColor: "transparent"
+        fillColor: root.paints[root.mark.paint]
+        PathSvg { path: root.mark.fill }
       }
     }
     LinearGradient {

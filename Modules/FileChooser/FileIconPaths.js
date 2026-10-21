@@ -4,7 +4,7 @@ var grid = {
   text: "M18 29H46 M18 38H46 M18 47H37",
   markdown: "M16 47V29L24 39L32 29V47 M39 30V45 M34 40L39 46L44 40",
   pdf: "M15 46V29H19Q24.4 29 24.4 34Q24.4 39 19 39H15 M28 46V29H31Q38.4 29 38.4 37.5Q38.4 46 31 46Z M43 46V29H50 M43 37H48",
-  audio: "M33 43V25Q35 29 42 31 M33 43C33 49 21 51 22 45C22 40 33 39 33 43Z",
+  audio: "M32.8 43.5V25Q34.5 29 42 31",
   image: "M17 28H47V49H17Z M18 46L27 36L34 43L39 38L47 47 M38 32A2 2 0 1 0 42 32A2 2 0 1 0 38 32",
   video: "M16 28H48V49H16Z M22 28V49 M42 28V49 M16 35H22 M16 42H22 M42 35H48 M42 42H48 M29 33L37 38.5L29 44Z",
   document: "M17 39L22 28L27 39 M19 35H25 M33 29H46 M33 36H46 M17 45H46 M17 51H39",
@@ -32,7 +32,7 @@ var list = {
   text: "M5 9H14 M5 12H14 M5 15H11",
   markdown: "M5 15V9L7.5 12L10 9V15 M13.5 9V15 M12 13.5L13.5 15L15 13.5",
   pdf: "M7 15V9H10Q14 9 14 11.5Q14 14 10 14H7",
-  audio: "M10.5 13.5V8L14 10 M10.5 13.5C10.5 16.5 5.5 17 5.5 14.5C5.5 12.5 10.5 12 10.5 13.5Z",
+  audio: "M10 13.5V8.5Q10.8 10.6 13.6 11.1",
   image: "M5 9H15V16H5Z M5 15L8 11L11 14L13 12L15 15",
   video: "M4.5 9H15.5V16H4.5Z M7 9V16 M13 9V16 M9 11L11.5 12.5L9 14Z",
   document: "M5 12L7 8.5L9 12 M6 11H8 M11 9H14 M11 12H14 M5 15H14",
@@ -80,4 +80,19 @@ var compactFolders = {
 };
 function mark(type, folder, compact) {
   return type === "folder" ? ((compact ? compactFolders : folders)[folder] || "") : ((compact ? list : grid)[type] || (compact ? list : grid).unknown);
+}
+
+// A subject may have filled and stroked forms with its own optical weight.
+// The audio ellipse/rotation and stem are the approved round-3 masters.
+function glyph(type, folder, compact) {
+  var audio = type === "audio";
+  return {
+    line: mark(type, folder, compact),
+    fill: audio ? (compact ? "M6.3 14A2 1.4 0 1 0 10.3 14A2 1.4 0 1 0 6.3 14Z" : "M22.3 45A5.7 3.9 0 1 0 33.7 45A5.7 3.9 0 1 0 22.3 45Z") : "",
+    centerX: audio ? (compact ? 8.3 : 28) : 0,
+    centerY: audio ? (compact ? 14 : 45) : 0,
+    rotation: audio ? -18 : 0,
+    strokeWidth: audio ? (compact ? 1.3 : 2.8) : (compact ? 1 : 2.6),
+    paint: type === "folder" ? "emboss" : audio ? "highlight" : "ink"
+  };
 }

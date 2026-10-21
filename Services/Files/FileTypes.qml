@@ -24,7 +24,8 @@ Singleton {
   readonly property color textRole: AtmoColor.mSecondary
   readonly property color restRole: AtmoColor.mTertiary
   readonly property color archiveRole: AtmoColor.mError
-  readonly property var groups: ({media: ["image", "video", "audio"], text: ["text", "markdown", "pdf", "document", "spreadsheet", "presentation", "ebook", "web", "code", "data"], rest: ["executable", "disk", "font", "unknown"], archives: ["zip", "tar", "gzip", "xz", "bzip", "zstd", "sevenzip", "rar", "archive"]})
+  // The approved light audio mark needs the deeper end of the media tones.
+  readonly property var groups: ({media: ["audio", "video", "image"], text: ["text", "markdown", "pdf", "document", "spreadsheet", "presentation", "ebook", "web", "code", "data"], rest: ["executable", "disk", "font", "unknown"], archives: ["zip", "tar", "gzip", "xz", "bzip", "zstd", "sevenzip", "rar", "archive"]})
   readonly property var extensions: ({
     image: "png jpg jpeg gif webp bmp svg avif tif tiff ico heic jxl",
     video: "mp4 mkv webm mov avi m4v mpeg mpg",
