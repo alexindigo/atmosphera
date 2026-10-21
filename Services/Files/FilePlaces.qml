@@ -11,10 +11,12 @@ Singleton {
   readonly property var places: _places
   readonly property var removable: _removable
   readonly property var recentFiles: _recentFiles
+  readonly property var xdgFolders: _xdgFolders
   readonly property bool loading: scan.running
   property var _places: []
   property var _removable: []
   property var _recentFiles: []
+  property var _xdgFolders: ({})
 
   // Parse formats as data, never source/eval user-dirs.dirs or bookmarks.
   // XBEL uses an XML parser so escaped attributes and namespaces stay intact.
@@ -24,6 +26,7 @@ home = pathlib.Path.home()
 config = pathlib.Path(os.environ.get('XDG_CONFIG_HOME', str(home / '.config')))
 data = pathlib.Path(os.environ.get('XDG_DATA_HOME', str(home / '.local/share')))
 places = [{'name': 'Home', 'path': str(home), 'kind': 'home'}]
+xdg = {}
 seen = {str(home)}
 def add(path, name, kind):
     if path and path not in seen and os.path.isdir(path):
@@ -39,6 +42,8 @@ try:
             value = match[2].replace('$HOME', str(home))
             value = re.sub(r'\\\\([\\\\"$' + "\x60" + r'])', r'\\1', value)
             if value.startswith('/'):
+                if match[1] in ('DESKTOP', 'DOCUMENTS', 'DOWNLOAD', 'MUSIC', 'PICTURES', 'VIDEOS', 'TEMPLATES', 'PUBLICSHARE') and value != str(home):
+                    xdg[match[1]] = os.path.normpath(value)
                 add(value, match[1].replace('DOWNLOAD', 'Downloads').title(), 'standard')
 except OSError:
     pass
@@ -64,7 +69,7 @@ try:
     recent.sort(key=lambda p: p['modified'], reverse=True)
 except (OSError, ET.ParseError):
     pass
-print(json.dumps({'places': places, 'removable': removable, 'recent': recent}))
+print(json.dumps({'places': places, 'removable': removable, 'recent': recent, 'xdg': xdg}))
 `
 
   function refresh() {
@@ -88,6 +93,7 @@ print(json.dumps({'places': places, 'removable': removable, 'recent': recent}))
         root._places = data.places;
         root._removable = data.removable;
         root._recentFiles = data.recent;
+        root._xdgFolders = data.xdg;
       } catch (e) {
         Logger.w("FilePlaces", "Invalid places response");
       }

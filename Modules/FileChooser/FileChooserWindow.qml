@@ -56,6 +56,9 @@ PanelWindow {
   function focusListing() {
     listing.forceActiveFocus();
   }
+  function iconState() {
+    return listing.iconState();
+  }
   function layoutGeometry() {
     function rect(item) {
       var r = item.mapToItem(panel, 0, 0, item.width, item.height);

@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import "../../../Helpers/PortalPaths.js" as PortalPaths
+import "filechooser-icon-cases.js" as IconCases
 import qs.Commons
 import qs.Modules.FileChooser
 import qs.Services.Files
@@ -125,6 +126,9 @@ ShellRoot {
   }
 
   function buildTests() {
+    step(() => !FilePlaces.loading && Object.keys(FilePlaces.xdgFolders).length > 0, function () {
+      IconCases.run(FileTypes, FilePlaces, AtmoColor, JSON.parse(Quickshell.env("FILECHOOSER_ICON_SCHEMES")), report, same);
+    });
     step(() => FileChooserMemory.ready && I18n.isLoaded, function () {
       createRequest("open", undefined, "dev.filechooser.Fieldwork");
     });

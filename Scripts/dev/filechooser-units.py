@@ -23,6 +23,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--mascot-scheme", type=Path)
     args = parser.parse_args()
     guest()
     source, output = args.source.resolve(), args.output.resolve()
@@ -36,7 +37,7 @@ def main():
     shell = runtime / "shell"
     shutil.copytree(source, shell, symlinks=True)
     probe = shell / "filechooser-units.qml"
-    probe.write_text((source / "Scripts/dev/fixtures/filechooser-units.qml").read_text().replace('"../../../Helpers/', '"Helpers/'))
+    probe.write_text((source / "Scripts/dev/fixtures/filechooser-units.qml").read_text().replace('"../../../Helpers/', '"Helpers/').replace('"filechooser-icon-cases.js"', '"Scripts/dev/fixtures/filechooser-icon-cases.js"'))
     fixtures = runtime / "fixtures"
     fixtures.mkdir()
     (fixtures / "folder").mkdir()
@@ -81,7 +82,15 @@ def main():
     (profile / "config/gtk-3.0/bookmarks").write_text(f'{(aux / "bookmark").as_uri()} Test bookmark\n')
     (profile / "data/recently-used.xbel").write_text(f'<xbel><bookmark href="{(fixtures / "Alpha.txt").as_uri()}" modified="2026-10-18T00:00:00Z"/></xbel>')
     desktop_fixture(profile / "data")
-    env = dict(profile_env(profile),
+    schemes = []
+    for name in ("MacOS", "Catppuccin", "Gruvbox", "Ayu"):
+        for mode, colors in json.loads((source / f"Assets/ColorScheme/{name}/{name}.json").read_text()).items():
+            if mode in ("dark", "light"):
+                schemes.append({"name": name + "-" + mode, "colors": colors})
+    mascot = args.mascot_scheme or source / "Scripts/dev/fixtures/filechooser-mascot-scheme.json"
+    for mode, colors in json.loads(mascot.read_text())["schemes"].items():
+        schemes.append({"name": "mascot-" + mode, "colors": colors})
+    env = dict(profile_env(profile), FILECHOOSER_ICON_SCHEMES=json.dumps(schemes),
                QT_FORCE_STDERR_LOGGING="1", FILECHOOSER_UNIT_ROOT=str(fixtures), FILECHOOSER_UNIT_AUX=str(aux),
                ATMOSPHERA_DEBUG="0")
     runs = []
@@ -121,6 +130,10 @@ def main():
         required.update(f"paths.{name}.{case}" for case in ("error", "keeps-folder", "keeps-listing", "not-loading", "recovers"))
     required.update(f"paths.helper.{name}" for name in ("With space", "hash#name", "percent%20literal", "question?mark", "résumé", "a b/c d", "strict-portal-spaces", "invalid-urls"))
     missing = sorted(required - {case["case"] for case in cases})
+    required_icons = {"icons.network-mount", "icons.xdg-settings", "icons.hidden", "icons.directory-precedence"}
+    required_icons.update("icons.type." + t for t in ("image", "video", "audio", "text", "markdown", "pdf", "document", "spreadsheet", "presentation", "ebook", "web", "code", "data", "zip", "tar", "gzip", "xz", "bzip", "zstd", "sevenzip", "rar", "archive", "executable", "disk", "font", "unknown"))
+    required_icons.update("icons." + kind + "." + scheme["name"] + "." + group for kind in ("tones", "ink") for scheme in schemes for group in ("media", "text", "rest", "archives"))
+    missing += sorted(required_icons - {case["case"] for case in cases})
     files_untouched = all(not (fixtures / name).exists() for name in ("draft.txt", "new # résumé.txt", "brand-new.txt", "stale.txt", "folder/child.txt"))
     files_untouched = files_untouched and (fixtures / "item2.txt").read_bytes() == b"x" * 30 and (fixtures / "item10.png").read_bytes() == b"x" * 10
     cases.append(dict(case="request.no-target-file-writes", **{"pass": files_untouched}))

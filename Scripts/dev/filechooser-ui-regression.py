@@ -17,6 +17,7 @@ from urllib.parse import unquote, urlsplit
 
 from filechooser_regression import ROOT, SCRIPTS, guest
 from filechooser_isolation import enter, input_command
+from filechooser_icons import exercise as exercise_icons
 
 
 def layout_fits(s):
@@ -280,6 +281,7 @@ def main():
                 command(["grim", evidence / ("layout-" + prefix + "-minimum.png")])
                 (evidence / ("layout-" + prefix + "-minimum.json")).write_text(json.dumps(state(), indent=2))
                 key(1); wait(lambda s: s["settled"])
+        exercise_icons(source, runtime, evidence, command, ipc, state, wait, check, open_request)
         ipc("quit"); harness.wait(timeout=15)
         log = (evidence / "harness.log").read_text()
         errors = [l for l in log.splitlines() if re.search(r"TypeError|ReferenceError|Cannot assign|Binding loop|Failed to load configuration|Unable to assign", l)]

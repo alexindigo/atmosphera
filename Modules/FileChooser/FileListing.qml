@@ -9,11 +9,12 @@ FocusScope {
   id: root
   required property var request
   required property var thumbnails
-  readonly property real tileSize: 144 * Style.uiScaleRatio
+  readonly property real tileSize: 170 * Style.uiScaleRatio
+  readonly property real tileWidth: 200 * Style.uiScaleRatio
   Layout.minimumWidth: frame.Layout.minimumWidth + Style.margin2XS
   Layout.minimumHeight: frame.Layout.minimumHeight + Style.margin2XS
   readonly property bool navigationFocused: !!root.Window.window && root.Window.window.activeFocusItem === root
-  readonly property int columns: Math.max(1, Math.floor(grid.width / tileSize))
+  readonly property int columns: Math.max(1, Math.floor(grid.width / tileWidth))
   readonly property var cursorItem: {
     void request.browser.count;
     return request.browser.entry(request.selection.cursor);
@@ -34,6 +35,10 @@ FocusScope {
       return {x: rect.x, y: rect.y, width: rect.width, height: rect.height};
     });
     return {viewport: {x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height}, tiles: tiles};
+  }
+  function iconState() {
+    var view = request.viewMode === "list" ? list : grid;
+    return Array.from(view.contentItem.children).filter(item => item.visible && typeof item.path === "string").map(item => item.iconState);
   }
 
   function tileRect() {

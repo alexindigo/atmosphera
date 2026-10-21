@@ -18,6 +18,8 @@ Rectangle {
   property bool listingFocused: false
   property var thumbnailProvider: null
   property bool thumbnailActive: false
+  readonly property var iconDescriptor: FileTypes.artwork(name, directory, path)
+  readonly property var iconState: ({name: name, descriptor: iconDescriptor, artwork: listMode ? listColumns.leadingMetrics : {width: gridIcon.width, height: gridIcon.height, opacity: gridIcon.opacity, face: gridIcon.paints.face.toString()}, tileWidth: width, tileHeight: height, thumbnailWidth: thumbnail.width, thumbnailHeight: thumbnail.height})
   signal pressed(int modifiers)
   signal activated
   readonly property var columnGeometry: listColumns.geometry
@@ -52,10 +54,9 @@ Rectangle {
     columnSpacing: Style.marginM
     Item {
       id: artwork
-      Layout.preferredWidth: root.listMode ? 26 * Style.uiScaleRatio : -1
-      Layout.fillWidth: !root.listMode
-      Layout.fillHeight: !root.listMode
-      Layout.preferredHeight: root.listMode ? 26 * Style.uiScaleRatio : 80 * Style.uiScaleRatio
+      Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+      Layout.preferredWidth: 96 * Style.uiScaleRatio
+      Layout.preferredHeight: 96 * Style.uiScaleRatio
       Image {
         id: thumbnail
         anchors.fill: parent
@@ -64,7 +65,7 @@ Rectangle {
         sourceSize.height: Math.ceil(artwork.height * root.Screen.devicePixelRatio)
         asynchronous: true
         fillMode: Image.PreserveAspectFit
-        opacity: status === Image.Ready ? 1 : 0
+        opacity: status === Image.Ready ? (root.iconDescriptor.hidden ? .5 : 1) : 0
         Behavior on opacity {
           NumberAnimation {
             duration: Style.animationFast
@@ -82,12 +83,13 @@ Rectangle {
           stamp: String(root.modified)
         }
       }
-      AtmoIcon {
+      FileIcon {
+        id: gridIcon
         anchors.centerIn: parent
-        opacity: 1 - thumbnail.opacity
-        icon: FileTypes.icon(root.name, root.directory)
-        pointSize: root.listMode ? Style.fontSizeL : Style.fontSizeXXXL * 1.6
-        color: AtmoColor.mOnSurfaceVariant
+        width: artwork.width
+        height: artwork.height
+        visible: thumbnail.status !== Image.Ready
+        descriptor: root.iconDescriptor
       }
       Item {
         id: videoFrame
@@ -150,10 +152,16 @@ Rectangle {
     anchors.fill: parent
     visible: root.listMode
     leading: Component {
-      AtmoIcon {
-        icon: FileTypes.icon(root.name, root.directory)
-        pointSize: Style.fontSizeL
-        color: AtmoColor.mOnSurfaceVariant
+      Item {
+        readonly property var metrics: ({width: compactIcon.width, height: compactIcon.height, opacity: compactIcon.opacity, face: compactIcon.paints.face.toString()})
+        FileIcon {
+          id: compactIcon
+          anchors.centerIn: parent
+          width: 20 * Style.uiScaleRatio
+          height: width
+          compact: true
+          descriptor: root.iconDescriptor
+        }
       }
     }
     nameCell: Component {

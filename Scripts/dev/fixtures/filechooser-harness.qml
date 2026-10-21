@@ -13,6 +13,16 @@ ShellRoot {
   property var request: null
   property var replies: []
   property var imageDecodeSamples: []
+  property var iconMountFixture: null
+  Connections {
+    target: FileTypes
+    function on_MountsChanged() {
+      // The mixed-icon test substitutes mount data, not a real remote mount.
+      // Keep that input deterministic across the normal mount refresh timer.
+      if (root.iconMountFixture !== null && JSON.stringify(FileTypes._mounts) !== JSON.stringify(root.iconMountFixture))
+        FileTypes._mounts = root.iconMountFixture;
+    }
+  }
   Timer {
     interval: 16
     repeat: true
@@ -107,6 +117,8 @@ ShellRoot {
                             choicesFit: window ? window.choiceValuesFit() : false,
                             dropdownsFit: window ? window.dropdownValuesFit() : false,
                             thumbnails: window ? window.thumbnailState() : {},
+                            icons: window ? window.iconState() : [],
+                            palette: {primary: AtmoColor.mPrimary.toString(), surface: AtmoColor.mSurface.toString()},
                             hidden: request ? request.browser.showHidden : false,
                             saveName: request ? request.saveName : "",
                             replace: request ? request.pendingReplace : "",
@@ -192,6 +204,13 @@ ShellRoot {
     }
     function reducedMotion(value: bool): void {
       Settings.data.general.animationDisabled = value;
+    }
+    function iconMounts(text: string): void {
+      root.iconMountFixture = FileTypes.parseMounts(text);
+      FileTypes._mounts = root.iconMountFixture;
+    }
+    function refreshPlaces(): void {
+      FilePlaces.refresh();
     }
     function quit(): void {
       Qt.quit();

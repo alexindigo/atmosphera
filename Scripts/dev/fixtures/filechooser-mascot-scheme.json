@@ -1,0 +1,27 @@
+{
+  "image_sha256": "cca77231a36ffd6026b45e72b171b45779e016cc49383cb04cdf1bb0ec810302",
+  "source": "approved round-3 file-icons-mascot/reference.png",
+  "method": "product template-processor.py, tonal-spot; AtmoColor template role mapping",
+  "schemes": {
+    "dark": {
+      "mPrimary": "#59d5f8", "mOnPrimary": "#003642",
+      "mSecondary": "#b3cad3", "mOnSecondary": "#1d343b",
+      "mTertiary": "#c1c4eb", "mOnTertiary": "#2a2e4d",
+      "mError": "#ffb4ab", "mOnError": "#690005",
+      "mSurface": "#111415", "mOnSurface": "#e1e3e4",
+      "mSurfaceVariant": "#1d2021", "mOnSurfaceVariant": "#bfc8cc",
+      "mOutline": "#899296", "mShadow": "#000000",
+      "mHover": "#59d5f8", "mOnHover": "#003642"
+    },
+    "light": {
+      "mPrimary": "#00677d", "mOnPrimary": "#ffffff",
+      "mSecondary": "#4b626a", "mOnSecondary": "#ffffff",
+      "mTertiary": "#595c7e", "mOnTertiary": "#ffffff",
+      "mError": "#ba1a1a", "mOnError": "#ffffff",
+      "mSurface": "#f8f9fb", "mOnSurface": "#191c1d",
+      "mSurfaceVariant": "#eceeef", "mOnSurfaceVariant": "#40484b",
+      "mOutline": "#70787c", "mShadow": "#000000",
+      "mHover": "#00677d", "mOnHover": "#ffffff"
+    }
+  }
+}

@@ -3,6 +3,8 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.Commons
+import "FileIconColors.js" as IconColors
 
 Singleton {
   id: root
@@ -13,6 +15,85 @@ Singleton {
   property var _mimeAliases: ({})
   property var _mimeParents: ({})
   signal filtersChanged
+
+  // These are the only role assignments. Network and archive can move to
+  // mStandout independently of classification, drawing or tone generation.
+  readonly property color folderRole: AtmoColor.mPrimary
+  readonly property color networkRole: AtmoColor.mSecondary
+  readonly property color mediaRole: AtmoColor.mPrimary
+  readonly property color textRole: AtmoColor.mSecondary
+  readonly property color restRole: AtmoColor.mTertiary
+  readonly property color archiveRole: AtmoColor.mError
+  readonly property var groups: ({media: ["image", "video", "audio"], text: ["text", "markdown", "pdf", "document", "spreadsheet", "presentation", "ebook", "web", "code", "data"], rest: ["executable", "disk", "font", "unknown"], archives: ["zip", "tar", "gzip", "xz", "bzip", "zstd", "sevenzip", "rar", "archive"]})
+  readonly property var extensions: ({
+    image: "png jpg jpeg gif webp bmp svg avif tif tiff ico heic jxl",
+    video: "mp4 mkv webm mov avi m4v mpeg mpg",
+    audio: "mp3 flac wav ogg opus m4a aac aiff",
+    text: "txt log rst", markdown: "md markdown mdx", pdf: "pdf",
+    document: "odt doc docx pages rtf", spreadsheet: "csv tsv ods xls xlsx xlsm",
+    presentation: "odp ppt pptx key", ebook: "epub mobi azw azw3 cbz cbr",
+    web: "html htm css scss sass less",
+    code: "js ts jsx tsx qml py c cpp cc cxx h hpp rs go java kt kts swift rb php lua sql vue svelte",
+    data: "json jsonc yaml yml toml ini conf cfg xml env properties lock",
+    executable: "sh bash zsh fish exe appimage run bat cmd ps1 desktop",
+    disk: "iso img qcow2 vhd vhdx vdi dmg", font: "otf ttf woff woff2",
+    zip: "zip", tar: "tar", gzip: "gz tgz", xz: "xz txz", bzip: "bz2 tbz2", zstd: "zst", sevenzip: "7z", rar: "rar",
+    archive: "lz lzma lz4 br cab deb rpm"
+  })
+  property var _mounts: []
+  FileView {
+    id: mountInfo
+    path: "/proc/self/mountinfo"
+    printErrors: false
+    onLoaded: root._mounts = root.parseMounts(text())
+  }
+  Timer { interval: 10000; repeat: true; running: true; onTriggered: mountInfo.reload() }
+
+  function fileType(name) {
+    var lower = name.toLowerCase();
+    if ([".env", ".gitconfig", ".editorconfig"].includes(lower)) return "data";
+    if (["makefile", "dockerfile", "cmakelists.txt"].includes(lower)) return "code";
+    if (["readme", "license", "changelog"].includes(lower)) return "text";
+    var ext = extension(name);
+    for (var type of Object.keys(extensions))
+      if (extensions[type].split(" ").includes(ext)) return type;
+    return "unknown";
+  }
+  function group(type) {
+    for (var key of Object.keys(groups))
+      if (groups[key].includes(type)) return key;
+    return "rest";
+  }
+  function isHidden(name) { return name.startsWith("."); }
+  function parseMounts(text) {
+    return text.split("\n").filter(line => line.includes(" - ")).map(line => {
+      var halves = line.split(" - "), fields = halves[0].split(" ");
+      var path = fields[4].replace(/\\([0-7]{3})/g, (_, octal) => String.fromCharCode(parseInt(octal, 8)));
+      var fs = halves[1].split(" ")[0];
+      return {path: path, network: /^(cifs|smb3?|nfs4?|sshfs|sftp|davfs2?|webdav|fuse\.(sshfs|rclone|gvfsd-fuse))$/.test(fs)};
+    });
+  }
+  function folderKind(path, mounts, xdg) {
+    mounts = mounts === undefined ? _mounts : mounts;
+    xdg = xdg === undefined ? FilePlaces.xdgFolders : xdg;
+    path = path.length > 1 ? path.replace(/\/+$/, "") : path;
+    var covering = null;
+    for (var mount of mounts)
+      if ((path === mount.path || path.startsWith(mount.path === "/" ? "/" : mount.path + "/")) && (!covering || mount.path.length > covering.path.length)) covering = mount;
+    if (covering && covering.network) return "network";
+    for (var key of Object.keys(xdg))
+      if (path === xdg[key]) return key.toLowerCase();
+    return "ordinary";
+  }
+  function artwork(name, directory, path) {
+    var type = directory ? "folder" : fileType(name);
+    return {type: type, group: directory ? "folder" : group(type), folder: directory ? folderKind(path) : "", hidden: isHidden(name)};
+  }
+  function iconColors(descriptor) {
+    var role = descriptor.type === "folder" ? (descriptor.folder === "network" ? networkRole : folderRole) : ({media: mediaRole, text: textRole, rest: restRole, archives: archiveRole})[descriptor.group];
+    var types = groups[descriptor.group] || ["folder"];
+    return IconColors.palette(role, Math.max(0, types.indexOf(descriptor.type)), types.length);
+  }
 
   FileView {
     id: mimeView
