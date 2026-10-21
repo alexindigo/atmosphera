@@ -37,7 +37,7 @@ def admit(budget, available=None):
 
 
 def systemd_properties(unit, env):
-    names = ("OOMScoreAdjust", "MemoryMax", "MemoryHigh", "MemorySwapMax", "CPUQuotaPerSecUSec", "TasksMax", "ControlGroup", "MainPID")
+    names = ("OOMScoreAdjust", "MemoryMax", "MemoryHigh", "MemorySwapMax", "CPUQuotaPerSecUSec", "TasksMax", "ControlGroup", "MainPID", "RuntimeMaxUSec")
     result = subprocess.run(["timeout", "10", "systemctl", "--user", "show", unit,
                              *["--property=" + n for n in names]], env=env, capture_output=True,
                             text=True, check=True, timeout=15)
@@ -227,7 +227,7 @@ def _audit_probe(base, output, label, admin_env, main_properties):
 
 
 def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=False, gate_probe=False):
-    """Re-exec this entry point in a bounded disposable session, or validate it."""
+    """Give the workload its requested time after bounded session startup."""
     guest()
     if "FILECHOOSER_ISOLATION" in os.environ:
         checked()
@@ -242,7 +242,10 @@ def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=Fal
     assert re.fullmatch(r"[a-z0-9][a-z0-9.-]*", label)
     base = ROOT / "runtime" / ("i" + hashlib.sha256(label.encode()).hexdigest()[:8])
     output = ROOT / "evidence" / (label + "-isolation")
-    assert 60 <= runtime_seconds <= 7200
+    assert 60 <= runtime_seconds <= 7800
+    # Attestation/compositor/keyboard startup precedes the workload deadline.
+    # The unit watchdog also bounds that startup and subsequent teardown.
+    unit_seconds = runtime_seconds + 40
     assert not (memory_probe and audit_probe), "one fixed auxiliary probe per reservation"
     assert not (gate_probe and audit_probe), "gate and deliberate escape are separate reservations"
     assert not (detach and (memory_probe or audit_probe or gate_probe)), "probe requires its synchronous controller"
@@ -273,17 +276,17 @@ def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=Fal
         command = ["systemd-run", "--user", *([] if detach else ["--wait", "--pipe", "--collect"]),
                     "--unit=filechooser-" + label, "--service-type=exec",
                     "--setenv=TMPDIR=" + str(ROOT / "tmp"),
-                    "--setenv=FILECHOOSER_SESSION_SECONDS=" + str(runtime_seconds - 40),
+                    "--setenv=FILECHOOSER_SESSION_SECONDS=" + str(runtime_seconds),
                     "--setenv=FILECHOOSER_PARENT_PID_NAMESPACE=" + os.readlink("/proc/self/ns/pid"),
                     "-p", f"MemoryMax={maximum}", "-p", f"MemoryHigh={high}",
                     "-p", "MemorySwapMax=0", "-p", "CPUQuota=100%", "-p", "TasksMax=256",
-                    "-p", "OOMScoreAdjust=1000", "-p", f"RuntimeMaxSec={runtime_seconds}", "-p", "TimeoutStopSec=10", "-p", "OOMPolicy=stop",
+                    "-p", "OOMScoreAdjust=1000", "-p", f"RuntimeMaxSec={unit_seconds}", "-p", "TimeoutStopSec=10", "-p", "OOMPolicy=stop",
                     *(["-p", "StandardOutput=append:" + str(output / "service.log"), "-p", "StandardError=inherit"] if detach else []),
                    "--working-directory=" + str(ROOT), *namespace_command([
                        sys.executable, "-B", str(Path(__file__).resolve()),
                        "--session", str(base), str(output), str(Path(sys.argv[0]).resolve()), *args])]
         (output / "unit.json").write_text(json.dumps({"command": command, "ram": ram, "memory_max": maximum, "memory_high": high, "cpu_quota": "100%"}, indent=2))
-        process = subprocess.Popen(["timeout", str(runtime_seconds + 40), *command], env=env)
+        process = subprocess.Popen(["timeout", str(unit_seconds + 40), *command], env=env)
         deadline = time.monotonic() + 25
         while not (output / "supervisor-ready").exists():
             if (process.poll() is not None and (not detach or process.returncode != 0)) or time.monotonic() >= deadline:
@@ -331,7 +334,7 @@ def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=Fal
                     time.sleep(.05)
                 code = process.returncode
         else:
-            code = process.wait(timeout=runtime_seconds + 50)
+            code = process.wait(timeout=unit_seconds + 50)
     raise SystemExit(code)
 
 
