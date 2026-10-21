@@ -371,7 +371,9 @@ def session(base, output, argv):
             "FILECHOOSER_SESSION_SECONDS": os.environ.get("FILECHOOSER_SESSION_SECONDS", "800"),
            "QT_FORCE_STDERR_LOGGING": "1", "ATMOSPHERA_DEBUG": "0", "ATMOSPHERA_UPGRADELOG_URL": "http://127.0.0.1:9",
            "WLR_BACKENDS": "headless", "WLR_RENDERER": "pixman", "WLR_HEADLESS_OUTPUTS": "1",
-           "LIBGL_ALWAYS_SOFTWARE": "1", "QT_QUICK_BACKEND": "software"}
+           # Mesa's CPU OpenGL still supports the product's shader masks. The
+           # Qt Quick software scenegraph silently omits MultiEffect content.
+           "LIBGL_ALWAYS_SOFTWARE": "1", "QSG_RHI_BACKEND": "opengl"}
     config = base / "sway.conf"
     config.write_text("output HEADLESS-1 mode 1280x800\nseat seat0 fallback true\nxwayland disable\n")
     bus_config = base / "bus.conf"
