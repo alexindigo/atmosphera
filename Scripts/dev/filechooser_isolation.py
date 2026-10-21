@@ -226,7 +226,7 @@ def _audit_probe(base, output, label, admin_env, main_properties):
             os.close(fd)
 
 
-def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=False):
+def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=False, gate_probe=False):
     """Re-exec this entry point in a bounded disposable session, or validate it."""
     guest()
     if "FILECHOOSER_ISOLATION" in os.environ:
@@ -244,13 +244,16 @@ def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=Fal
     output = ROOT / "evidence" / (label + "-isolation")
     assert 60 <= runtime_seconds <= 7200
     assert not (memory_probe and audit_probe), "one fixed auxiliary probe per reservation"
-    assert not (detach and (memory_probe or audit_probe)), "probe requires its synchronous controller"
+    assert not (gate_probe and audit_probe), "gate and deliberate escape are separate reservations"
+    assert not (detach and (memory_probe or audit_probe or gate_probe)), "probe requires its synchronous controller"
     output.mkdir()
     # Serialize private workloads: multiple individually bounded services must
     # not collectively starve the login session. The lock is held until systemd
     # has reaped the entire service cgroup, including detached shell children.
     with (ROOT / "runtime/.filechooser-isolation.lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        with (ROOT / "runtime/.filechooser-gate.lock").open("a") as gate_lock:
+            fcntl.flock(gate_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         # A detached service retains this second lock after its SSH launcher
         # exits. Check it before admission/start, not only after starting a unit.
         with (ROOT / "runtime/.filechooser-service.lock").open("a") as service_lock:
@@ -294,11 +297,12 @@ def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=Fal
             code = process.wait(timeout=15)
             assert code == 0
             print(json.dumps({"unit": "filechooser-" + label, "output": str(output), "detached": True, "properties": values}), flush=True)
-        elif memory_probe or audit_probe:
+        elif memory_probe or audit_probe or gate_probe:
             # One fixed bounded probe can be requested while the protected
             # session-like app is alive. No arbitrary commands or unit names
             # cross this boundary; private workloads cannot reach the manager.
             requested = False
+            gate_requested = False
             with process:
                 while process.poll() is None:
                     request = base / ("audit-probe.request" if audit_probe else "memory-probe.request")
@@ -312,6 +316,18 @@ def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=Fal
                         pending = output / ("audit-probe.pending" if audit_probe else "memory-probe.pending")
                         pending.write_text(json.dumps(result, indent=2))
                         pending.replace(output / ("audit-probe.json" if audit_probe else "memory-probe.json"))
+                    gate_request = base / "gate-probe.request"
+                    if gate_probe and not gate_requested and gate_request.exists():
+                        gate_requested = True
+                        try:
+                            assert gate_request.read_text() == "independent-shell-gate\n"
+                            from filechooser_gate import run_gate
+                            result = run_gate(base, output, label, env, values)
+                        except Exception as error:
+                            result = {"passed": False, "error": repr(error)}
+                        pending = output / "gate-probe.pending"
+                        pending.write_text(json.dumps(result, indent=2))
+                        pending.replace(output / "gate-probe.json")
                     time.sleep(.05)
                 code = process.returncode
         else:
@@ -470,7 +486,7 @@ def session(base, output, argv):
             if child.poll() is None:
                 child.terminate()
             child.wait(timeout=8)
-        (output / "resources.json").write_text(json.dumps({**{n: (cgroup() / n).read_text() for n in ("memory.peak", "memory.events", "cpu.stat")},
+        (output / "resources.json").write_text(json.dumps({**{n: (cgroup() / n).read_text() for n in ("memory.peak", "memory.events", "memory.pressure", "cpu.stat")},
             "keyboard_exit": keyboard_process.returncode if keyboard_process else None}, indent=2))
         audit_stop.set(); auditor.join(timeout=5)
         assert not auditor.is_alive(), "process auditor failed to stop"
@@ -485,4 +501,7 @@ def session(base, output, argv):
 
 if __name__ == "__main__":
     assert sys.argv[1] == "--session"
+    if "FILECHOOSER_GATE_RESERVATION" in os.environ:
+        from filechooser_gate import reserved_session
+        raise SystemExit(reserved_session(Path(sys.argv[2]), Path(sys.argv[3]), sys.argv[4:]))
     raise SystemExit(session(Path(sys.argv[2]), Path(sys.argv[3]), sys.argv[4:]))
