@@ -130,7 +130,8 @@ ShellRoot {
                             nameSelection: window ? window.nameSelection : [],
                             columnGeometry: window ? window.columnGeometry : {},
                             choiceCenters: window ? window.choiceGeometry() : [],
-                            breadcrumbGaps: window ? window.breadcrumbGeometry() : [],
+                             breadcrumbGaps: window ? window.breadcrumbGeometry() : [],
+                             breadcrumbText: window ? window.breadcrumbText : [],
                             selectionCountVisible: window ? window.selectionCountVisible : false,
                             localeName: Qt.locale().name,
                             preview: window ? window.quickLookOpen : false,
@@ -179,6 +180,16 @@ ShellRoot {
     }
     function state(): string {
       return root.snapshot();
+    }
+    function visibleText(): string {
+      var texts = [];
+      function visit(node) {
+        if (!node.visible) return;
+        if (typeof node.text === "string" && node.text) texts.push(node.text);
+        for (var i = 0; i < node.children.length; ++i) visit(node.children[i]);
+      }
+      visit(windowLoader.item.contentItem);
+      return JSON.stringify(texts);
     }
     function list(): void {
       root.request.viewMode = "list";

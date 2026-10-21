@@ -30,8 +30,8 @@ Rectangle {
           onClicked: root.browser.navigate(modelData.path)
         }
       }
-      Rectangle { Layout.fillWidth: true; Layout.topMargin: Style.marginM; Layout.bottomMargin: Style.marginM; implicitHeight: Style.borderS; color: AtmoColor.mOutline }
-      NText { text: I18n.tr("widgets.file-picker.recent"); pointSize: Style.fontSizeS; color: AtmoColor.mOnSurfaceVariant; Layout.leftMargin: Style.marginM }
+      Rectangle { visible: FilePlaces.recentFiles.length > 0 || FileChooserMemory.recentLocations.length > 0 || FilePlaces.removable.length > 0; Layout.fillWidth: true; Layout.topMargin: Style.marginM; Layout.bottomMargin: Style.marginM; implicitHeight: Style.borderS; color: AtmoColor.mOutline }
+      NText { visible: FilePlaces.recentFiles.length > 0; text: I18n.tr("widgets.file-picker.recent"); pointSize: Style.fontSizeS; color: AtmoColor.mOnSurfaceVariant; Layout.leftMargin: Style.marginM }
       Repeater {
         model: FilePlaces.recentFiles
         FilePlaceButton {
@@ -43,7 +43,7 @@ Rectangle {
           onClicked: root.browser.navigate(root.browser.parentPath(modelData.path))
         }
       }
-      NText { text: I18n.tr("widgets.file-picker.recent-locations"); pointSize: Style.fontSizeS; color: AtmoColor.mOnSurfaceVariant; Layout.leftMargin: Style.marginM; Layout.topMargin: Style.marginL }
+      NText { visible: FileChooserMemory.recentLocations.length > 0; text: I18n.tr("widgets.file-picker.recent-locations"); pointSize: Style.fontSizeS; color: AtmoColor.mOnSurfaceVariant; Layout.leftMargin: Style.marginM; Layout.topMargin: Style.marginL }
       Repeater {
         model: FileChooserMemory.recentLocations
         FilePlaceButton {

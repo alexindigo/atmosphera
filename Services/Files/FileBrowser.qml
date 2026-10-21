@@ -24,6 +24,12 @@ Scope {
   readonly property bool canBack: _historyIndex > 0
   readonly property bool canForward: _historyIndex >= 0 && _historyIndex < _history.length - 1
   readonly property bool hasHidden: _hasHidden
+  readonly property var pathParts: breadcrumbParts(currentPath, FilePlaces.home)
+
+  function breadcrumbParts(path, home) {
+    var inside = path === home || path.startsWith(home === "/" ? "/" : home + "/");
+    return inside ? ["Home"].concat(path.slice(home.length).split("/").filter(part => part !== "")) : (path === "/" ? ["/"] : path.split("/").filter(part => part !== ""));
+  }
 
   property string _currentPath: ""
   property string _status: "loading"

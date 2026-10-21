@@ -20,6 +20,7 @@ PanelWindow {
   readonly property var preview: filePreview
   readonly property bool quickLookOpen: quickLook.opened
   readonly property bool pathEditing: header.editing
+  readonly property var breadcrumbText: header.breadcrumbItems.filter(part => part.kind === "segment").map(part => part.text)
   readonly property var previewRenderer: quickLook.renderer
   readonly property var columnGeometry: listing.columnGeometry
   readonly property var nameSelection: [nameField.inputItem.selectionStart, nameField.inputItem.selectionEnd]

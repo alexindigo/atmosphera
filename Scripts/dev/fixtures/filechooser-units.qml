@@ -126,6 +126,18 @@ ShellRoot {
   }
 
   function buildTests() {
+    step(() => true, function () {
+      var measure = text => Array.from(text).length;
+      same("labels.extension-attached", FileLabels.lines("Weekend itinerary.pdf", 14, measure), ["Weekend", "itinerary.pdf"]);
+      same("labels.dots", FileLabels.lines("release.v1 notes.md", 12, measure), ["release.v1", "notes.md"]);
+      same("labels.long-word", FileLabels.lines("Supercalifragilistic.txt", 8, measure), ["Supercalifragilistic.txt"]);
+      same("labels.cjk", FileLabels.lines("週末旅行計画書.pdf", 5, measure), ["週末旅行計画書.pdf"]);
+      same("labels.extension-only", FileLabels.lines(".extension", 5, measure), [".extension"]);
+      same("labels.two-lines-only", FileLabels.lines("one two three four.txt", 7, measure), ["one two", "three four.txt"]);
+      same("breadcrumbs.home", fileBrowser.breadcrumbParts("/home/tester/Documents", "/home/tester"), ["Home", "Documents"]);
+      same("breadcrumbs.outside", fileBrowser.breadcrumbParts("/var/log", "/home/tester"), ["var", "log"]);
+      same("breadcrumbs.component-boundary", fileBrowser.breadcrumbParts("/home/tester2/Documents", "/home/tester"), ["home", "tester2", "Documents"]);
+    });
     step(() => !FilePlaces.loading && Object.keys(FilePlaces.xdgFolders).length > 0, function () {
       IconCases.run(FileTypes, FilePlaces, AtmoColor, JSON.parse(Quickshell.env("FILECHOOSER_ICON_SCHEMES")), report, same);
     });

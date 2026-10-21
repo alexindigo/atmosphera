@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import "../../Helpers/PortalPaths.js" as PortalPaths
 import qs.Commons
@@ -19,6 +20,10 @@ Rectangle {
   property var thumbnailProvider: null
   property bool thumbnailActive: false
   readonly property var iconDescriptor: FileTypes.artwork(name, directory, path)
+  readonly property var labelLines: FileLabels.lines(name, labelLane.width, text => labelMetrics.advanceWidth(text))
+  readonly property var labelGeometry: ({top: labelLane.y + gridLayout.y, artworkBottom: artwork.y + artwork.height + gridLayout.y, lines: labelLines, height: labelLane.height})
+  FontMetrics { id: labelMetrics; font: labelTypography.font }
+  NText { id: labelTypography; visible: false; pointSize: Style.fontSizeM }
   readonly property var iconState: ({
                                       name: name,
                                       descriptor: iconDescriptor,
@@ -30,6 +35,7 @@ Rectangle {
                                                           },
                                       tileWidth: width,
                                       tileHeight: height,
+                                      label: labelGeometry,
                                       thumbnailWidth: thumbnail.width,
                                       thumbnailHeight: thumbnail.height
                                     })
@@ -65,13 +71,12 @@ Rectangle {
   Accessible.name: name
   Accessible.selected: selected
 
-  GridLayout {
+  ColumnLayout {
+    id: gridLayout
     anchors.fill: parent
     anchors.margins: Style.marginM
     visible: !root.listMode
-    columns: 1
-    rowSpacing: Style.marginXS
-    columnSpacing: Style.marginM
+    spacing: Style.marginXS
     Item {
       id: artwork
       Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
@@ -144,16 +149,25 @@ Rectangle {
         descriptor: root.iconDescriptor
       }
     }
-    NText {
+    Column {
+      id: labelLane
       Layout.fillWidth: true
-      Layout.preferredWidth: root.listMode ? 1 : -1
-      text: root.name
-      horizontalAlignment: root.listMode ? Text.AlignLeft : Text.AlignHCenter
-      pointSize: Style.fontSizeM
-      maximumLineCount: root.listMode ? 1 : 2
-      wrapMode: root.listMode ? Text.NoWrap : Text.WrapAnywhere
-      Layout.preferredHeight: root.listMode ? -1 : 38 * Style.uiScaleRatio
+      Layout.alignment: Qt.AlignTop
+      Layout.preferredHeight: labelTypography.implicitHeight * 2
+      Repeater {
+        model: root.labelLines
+        NText {
+          required property string modelData
+          width: labelLane.width
+          text: modelData
+          font: labelTypography.font
+          horizontalAlignment: Text.AlignHCenter
+          verticalAlignment: Text.AlignTop
+          elide: Text.ElideRight
+        }
+      }
     }
+    Item { Layout.fillHeight: true }
     NText {
       visible: root.listMode
       Layout.preferredWidth: 92 * Style.uiScaleRatio
@@ -233,4 +247,8 @@ Rectangle {
     onClicked: mouse => root.pressed(mouse.modifiers)
     onDoubleClicked: root.activated()
   }
+  // The complete filename remains available even when either fixed line elides.
+  ToolTip.visible: pointer.containsMouse
+  ToolTip.text: root.name
+  ToolTip.delay: 700
 }
