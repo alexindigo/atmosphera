@@ -13,9 +13,39 @@ import pwd
 import re
 import subprocess
 import sys
+import threading
 import time
 
 ROOT = Path("/home/tester/Projects/atmosphera-filechooser")
+MIB = 1024 * 1024
+SAFETY_MARGIN = 512 * MIB
+
+
+def memory_info():
+    return {line.split()[0].rstrip(":"): int(line.split()[1]) * 1024
+            for line in Path("/proc/meminfo").read_text().splitlines()
+            if line.startswith(("MemTotal:", "MemAvailable:"))}
+
+
+def admit(budget, available=None):
+    """Reserve RAM headroom, not swap or a percentage of installed RAM alone."""
+    available = memory_info()["MemAvailable"] if available is None else available
+    if budget <= 0 or budget + SAFETY_MARGIN > available:
+        raise RuntimeError(f"filechooser admission refused: budget={budget} bytes + "
+                           f"safety_margin={SAFETY_MARGIN} bytes exceeds MemAvailable={available} bytes")
+    return {"budget": budget, "available": available, "safety_margin": SAFETY_MARGIN}
+
+
+def systemd_properties(unit, env):
+    names = ("OOMScoreAdjust", "MemoryMax", "MemoryHigh", "MemorySwapMax", "CPUQuotaPerSecUSec", "TasksMax", "ControlGroup")
+    result = subprocess.run(["timeout", "10", "systemctl", "--user", "show", unit,
+                             *["--property=" + n for n in names]], env=env, capture_output=True,
+                            text=True, check=True, timeout=15)
+    values = dict(line.split("=", 1) for line in result.stdout.splitlines() if "=" in line)
+    assert values["OOMScoreAdjust"] == "1000", values
+    assert all(values[n] not in ("", "infinity", "0") for n in ("MemoryMax", "MemoryHigh", "CPUQuotaPerSecUSec", "TasksMax")), values
+    assert values["MemorySwapMax"] == "0", values
+    return values
 
 
 def guest():
@@ -48,6 +78,7 @@ def checked():
     assert os.environ["FILECHOOSER_PID_NAMESPACE"] != os.environ["FILECHOOSER_PARENT_PID_NAMESPACE"]
     assert (cgroup() / "memory.max").read_text().strip() != "max"
     assert (cgroup() / "cpu.max").read_text().split()[0] != "max"
+    assert Path("/proc/self/oom_score_adj").read_text().strip() == "1000"
     return base
 
 
@@ -63,21 +94,30 @@ def _memory_probe(base, output, label, admin_env):
            "DBUS_SESSION_BUS_ADDRESS": "unix:path=" + str(profile / "run/no-bus"),
            "DBUS_SYSTEM_BUS_ADDRESS": "unix:path=" + str(profile / "run/no-system-bus")}
     unit = "filechooser-" + label + "-hungry"
-    body = "import os; assert os.getpid()==1; print('private pid namespace',os.readlink('/proc/self/ns/pid'),flush=True); x=bytearray(128*1024*1024)"
+    body = "import os; from pathlib import Path; assert os.getpid()==1; assert Path('/proc/self/oom_score_adj').read_text().strip()=='1000'; print('private pid namespace',os.readlink('/proc/self/ns/pid'),flush=True); x=bytearray(128*1024*1024)"
     argv = ["systemd-run", "--user", "--wait", "--pipe", "--unit=" + unit,
-            "-p", "MemoryMax=64M", "-p", "MemoryHigh=infinity", "-p", "MemorySwapMax=0", "-p", "CPUQuota=25%",
-            "-p", "RuntimeMaxSec=20", "-p", "OOMPolicy=stop", "--working-directory=" + str(ROOT), "--setenv=TMPDIR=" + env["TMPDIR"],
+            "-p", "MemoryMax=64M", "-p", "MemoryHigh=64M", "-p", "MemorySwapMax=0", "-p", "CPUQuota=25%",
+            "-p", "TasksMax=32", "-p", "OOMScoreAdjust=1000", "-p", "RuntimeMaxSec=20", "-p", "TimeoutStopSec=5", "-p", "OOMPolicy=stop", "--working-directory=" + str(ROOT), "--setenv=TMPDIR=" + env["TMPDIR"],
             *namespace_command(["/usr/bin/env", "-i", *[k + "=" + v for k, v in env.items()], sys.executable, "-B", "-c", body])]
-    run = subprocess.run(["timeout", "30", *argv], env=admin_env, capture_output=True, text=True, timeout=35)
-    show = subprocess.run(["timeout", "10", "systemctl", "--user", "show", unit, "-p", "Result", "-p", "MemoryMax", "-p", "MemoryPeak"],
+    # This probes the hard limit, not reclaim throttling. A lower MemoryHigh
+    # can stall a faulting allocator until the watchdog wins over the OOM test.
+    try:
+        run = subprocess.run(["timeout", "30", *argv], env=admin_env, capture_output=True, text=True, timeout=35)
+    except subprocess.TimeoutExpired as error:
+        (output / "hungry.log").write_text(str(error))
+        # Reap this exact owned Python-only probe before releasing the reserved
+        # budget/serialization lock, including when the control client times out.
+        subprocess.run(["timeout", "15", "systemctl", "--user", "stop", unit], env=admin_env, check=True, timeout=20)
+        raise
+    show = subprocess.run(["timeout", "10", "systemctl", "--user", "show", unit, "-p", "Result", "-p", "MemoryMax", "-p", "MemoryHigh", "-p", "MemoryPeak", "-p", "OOMScoreAdjust", "-p", "MemorySwapMax", "-p", "TasksMax", "-p", "CPUQuotaPerSecUSec"],
                           env=admin_env, capture_output=True, text=True, check=True, timeout=15)
     (output / "hungry.log").write_text(run.stdout + run.stderr + show.stdout)
     subprocess.run(["timeout", "10", "systemctl", "--user", "reset-failed", unit], env=admin_env, check=True, timeout=15)
-    return {"passed": run.returncode != 0 and "Result=oom-kill" in show.stdout,
+    return {"passed": run.returncode != 0 and "Result=oom-kill" in show.stdout and "OOMScoreAdjust=1000" in show.stdout and "MemorySwapMax=0" in show.stdout,
             "exit": run.returncode, "unit": unit, "properties": show.stdout, "command": argv}
 
 
-def enter(memory_probe=False):
+def enter(memory_probe=False, runtime_seconds=840, detach=False):
     """Re-exec this entry point in a bounded disposable session, or validate it."""
     guest()
     if "FILECHOOSER_ISOLATION" in os.environ:
@@ -93,33 +133,63 @@ def enter(memory_probe=False):
     assert re.fullmatch(r"[a-z0-9][a-z0-9.-]*", label)
     base = ROOT / "runtime" / ("i" + hashlib.sha256(label.encode()).hexdigest()[:8])
     output = ROOT / "evidence" / (label + "-isolation")
-    base.mkdir(); output.mkdir()
+    assert 60 <= runtime_seconds <= 7200
+    assert not (detach and memory_probe), "memory probe requires its synchronous controller"
+    output.mkdir()
     # Serialize private workloads: multiple individually bounded services must
     # not collectively starve the login session. The lock is held until systemd
     # has reaped the entire service cgroup, including detached shell children.
     with (ROOT / "runtime/.filechooser-isolation.lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        ram = int(next(l.split()[1] for l in Path("/proc/meminfo").read_text().splitlines() if l.startswith("MemTotal:"))) * 1024
+        # A detached service retains this second lock after its SSH launcher
+        # exits. Check it before admission/start, not only after starting a unit.
+        with (ROOT / "runtime/.filechooser-service.lock").open("a") as service_lock:
+            try:
+                fcntl.flock(service_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                raise RuntimeError("filechooser admission refused: another private workload owns the guest budget")
+        ram = memory_info()["MemTotal"]
         maximum = ram // 4 // (1024 * 1024) * 1024 * 1024
         high = maximum * 3 // 4
+        # The fixed auxiliary probe is the only additional unit allowed while
+        # this lock is held; reserve its entire budget at the same admission.
+        admission = admit(maximum + (64 * MIB if memory_probe else 0))
+        (output / "admission.json").write_text(json.dumps(admission, indent=2))
+        base.mkdir()
         env = dict(os.environ, XDG_RUNTIME_DIR="/run/user/1000", DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/1000/bus")
-        command = ["systemd-run", "--user", "--wait", "--pipe", "--collect",
-                   "--unit=filechooser-" + label, "--service-type=exec",
-                   "--setenv=TMPDIR=" + str(ROOT / "tmp"),
-                   "--setenv=FILECHOOSER_PARENT_PID_NAMESPACE=" + os.readlink("/proc/self/ns/pid"),
-                   "-p", f"MemoryMax={maximum}", "-p", f"MemoryHigh={high}",
-                   "-p", "MemorySwapMax=0", "-p", "CPUQuota=100%", "-p", "TasksMax=256",
-                   "-p", "RuntimeMaxSec=840", "-p", "TimeoutStopSec=10", "-p", "OOMPolicy=stop",
+        command = ["systemd-run", "--user", *([] if detach else ["--wait", "--pipe", "--collect"]),
+                    "--unit=filechooser-" + label, "--service-type=exec",
+                    "--setenv=TMPDIR=" + str(ROOT / "tmp"),
+                    "--setenv=FILECHOOSER_SESSION_SECONDS=" + str(runtime_seconds - 40),
+                    "--setenv=FILECHOOSER_PARENT_PID_NAMESPACE=" + os.readlink("/proc/self/ns/pid"),
+                    "-p", f"MemoryMax={maximum}", "-p", f"MemoryHigh={high}",
+                    "-p", "MemorySwapMax=0", "-p", "CPUQuota=100%", "-p", "TasksMax=256",
+                    "-p", "OOMScoreAdjust=1000", "-p", f"RuntimeMaxSec={runtime_seconds}", "-p", "TimeoutStopSec=10", "-p", "OOMPolicy=stop",
+                    *(["-p", "StandardOutput=append:" + str(output / "service.log"), "-p", "StandardError=inherit"] if detach else []),
                    "--working-directory=" + str(ROOT), *namespace_command([
                        sys.executable, "-B", str(Path(__file__).resolve()),
                        "--session", str(base), str(output), str(Path(sys.argv[0]).resolve()), *args])]
         (output / "unit.json").write_text(json.dumps({"command": command, "ram": ram, "memory_max": maximum, "memory_high": high, "cpu_quota": "100%"}, indent=2))
-        if memory_probe:
+        process = subprocess.Popen(["timeout", str(runtime_seconds + 40), *command], env=env)
+        deadline = time.monotonic() + 25
+        while not (output / "supervisor-ready").exists():
+            if (process.poll() is not None and (not detach or process.returncode != 0)) or time.monotonic() >= deadline:
+                raise RuntimeError("isolated supervisor failed before resource attestation")
+            time.sleep(.05)
+        values = systemd_properties("filechooser-" + label, env)
+        assert int(values["MemoryMax"]) == maximum and int(values["MemoryHigh"]) == high and values["TasksMax"] == "256", values
+        (output / "systemd-properties.json").write_text(json.dumps(values, indent=2))
+        (output / "supervisor-admitted").touch()
+        if detach:
+            code = process.wait(timeout=15)
+            assert code == 0
+            print(json.dumps({"unit": "filechooser-" + label, "output": str(output), "detached": True, "properties": values}), flush=True)
+        elif memory_probe:
             # One fixed bounded probe can be requested while the protected
             # session-like app is alive. No arbitrary commands or unit names
             # cross this boundary; private workloads cannot reach the manager.
             requested = False
-            with subprocess.Popen(["timeout", "880", *command], env=env) as process:
+            with process:
                 while process.poll() is None:
                     request = base / "memory-probe.request"
                     if not requested and request.exists():
@@ -135,7 +205,7 @@ def enter(memory_probe=False):
                     time.sleep(.05)
                 code = process.returncode
         else:
-            code = subprocess.run(["timeout", "880", *command], env=env, timeout=890).returncode
+            code = process.wait(timeout=runtime_seconds + 50)
     raise SystemExit(code)
 
 
@@ -172,6 +242,11 @@ def session(base, output, argv):
     if "FILECHOOSER_ISOLATION" not in os.environ:
         guard = (ROOT / "runtime/.filechooser-service.lock").open("a")
         fcntl.flock(guard, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        (output / "supervisor-ready").touch()
+        deadline = time.monotonic() + 25
+        while not (output / "supervisor-admitted").exists():
+            assert time.monotonic() < deadline, "resource attestation timeout"
+            time.sleep(.05)
     for name in ("home", "run", "tmp", "config", "cache", "state", "data"):
         (base / name).mkdir(mode=0o700)
     env = {"PATH": "/usr/local/bin:/usr/bin", "USER": "tester", "LOGNAME": "tester", "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8",
@@ -182,7 +257,8 @@ def session(base, output, argv):
            "DBUS_SYSTEM_BUS_ADDRESS": "unix:path=" + str(base / "run/no-system-bus"),
            "FILECHOOSER_ISOLATION": str(base), "XDG_CURRENT_DESKTOP": "sway", "QT_QPA_PLATFORM": "wayland",
            "FILECHOOSER_PID_NAMESPACE": pid_namespace, "FILECHOOSER_PARENT_PID_NAMESPACE": parent_namespace,
-           "FILECHOOSER_INPUT_SOCKET": str(base / "run/input.sock"),
+            "FILECHOOSER_INPUT_SOCKET": str(base / "run/input.sock"),
+            "FILECHOOSER_SESSION_SECONDS": os.environ.get("FILECHOOSER_SESSION_SECONDS", "800"),
            "QT_FORCE_STDERR_LOGGING": "1", "ATMOSPHERA_DEBUG": "0", "ATMOSPHERA_UPGRADELOG_URL": "http://127.0.0.1:9",
            "WLR_BACKENDS": "headless", "WLR_RENDERER": "pixman", "WLR_HEADLESS_OUTPUTS": "1",
            "LIBGL_ALWAYS_SOFTWARE": "1", "QT_QUICK_BACKEND": "software"}
@@ -194,6 +270,29 @@ def session(base, output, argv):
                           '<allow eavesdrop="true"/><allow own="*"/></policy></busconfig>')
     children = []
     keyboard_process = None
+    audit_stop = threading.Event()
+    observed, violations = {}, []
+    def audit():
+        expected = str(cgroup())
+        while not audit_stop.is_set():
+            for proc in Path("/proc").iterdir():
+                if not proc.name.isdigit():
+                    continue
+                try:
+                    group = "/sys/fs/cgroup/" + (proc / "cgroup").read_text().strip().split("::", 1)[1].lstrip("/")
+                    score = (proc / "oom_score_adj").read_text().strip()
+                    cmd = (proc / "cmdline").read_bytes().replace(b"\0", b" ").decode(errors="replace")
+                    if not cmd:
+                        continue
+                    row = {"pid": int(proc.name), "command": cmd, "cgroup": group, "oom_score_adj": score}
+                    observed[(int(proc.name), cmd)] = row
+                    if group != expected or score != "1000":
+                        violations.append(row)
+                except (FileNotFoundError, ProcessLookupError):
+                    pass
+            audit_stop.wait(.02)
+    auditor = threading.Thread(target=audit, daemon=True)
+    auditor.start()
     try:
         for command, name in ((["dbus-daemon", "--nofork", "--config-file=" + str(bus_config)], "bus"),
                               (["sway", "--unsupported-gpu", "-c", str(config)], "compositor")):
@@ -241,7 +340,7 @@ def session(base, output, argv):
         (output / "environment.json").write_text(json.dumps(env, indent=2))
         group = cgroup()
         (output / "cgroup.json").write_text(json.dumps({"path": str(group), **{n: (group / n).read_text() for n in ("memory.max", "memory.high", "cpu.max", "pids.max")}}, indent=2))
-        return subprocess.run([sys.executable, "-B", *argv], env=env, timeout=800).returncode
+        return subprocess.run([sys.executable, "-B", *argv], env=env, timeout=int(env["FILECHOOSER_SESSION_SECONDS"])).returncode
     finally:
         if keyboard_process is not None and keyboard_process.poll() is None and Path(env["FILECHOOSER_INPUT_SOCKET"]).exists():
             subprocess.run(["timeout", "5", sys.executable, "-B", str(Path(__file__).with_name("filechooser_input.py")), "stop"],
@@ -255,6 +354,9 @@ def session(base, output, argv):
             child.wait(timeout=8)
         (output / "resources.json").write_text(json.dumps({**{n: (cgroup() / n).read_text() for n in ("memory.peak", "memory.events", "cpu.stat")},
             "keyboard_exit": keyboard_process.returncode if keyboard_process else None}, indent=2))
+        audit_stop.set(); auditor.join(timeout=5)
+        (output / "process-cgroups.json").write_text(json.dumps({"expected": str(cgroup()), "processes": list(observed.values()), "violations": violations}, indent=2))
+        assert not violations, "process escaped dev unit/OOM score contract"
         if guard is not None:
             guard.close()
 
