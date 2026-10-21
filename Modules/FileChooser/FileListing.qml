@@ -38,7 +38,7 @@ FocusScope {
   }
   function iconState() {
     var view = request.viewMode === "list" ? list : grid;
-    return Array.from(view.contentItem.children).filter(item => item.visible && typeof item.path === "string").map(item => item.iconState);
+    return Array.from(view.contentItem.children).filter(item => item.visible && typeof item.path === "string").map(item => item.iconState()).filter(item => item !== null);
   }
 
   function tileRect() {

@@ -20,25 +20,42 @@ Rectangle {
   property var thumbnailProvider: null
   property bool thumbnailActive: false
   readonly property var iconDescriptor: FileTypes.artwork(name, directory, path)
-  readonly property var labelLines: FileLabels.lines(name, labelLane.width, text => labelMetrics.advanceWidth(text))
-  readonly property var labelGeometry: ({top: labelLane.y + gridLayout.y, artworkBottom: artwork.y + artwork.height + gridLayout.y, lines: labelLines, height: labelLane.height})
-  FontMetrics { id: labelMetrics; font: labelTypography.font }
-  NText { id: labelTypography; visible: false; pointSize: Style.fontSizeM }
-  readonly property var iconState: ({
-                                      name: name,
-                                      descriptor: iconDescriptor,
-                                      artwork: listMode ? listColumns.leadingMetrics : {
-                                                            width: artwork.width,
-                                                            height: artwork.height,
-                                                            opacity: artwork.opacity,
-                                                            face: gridIcon.paints.face.toString()
-                                                          },
-                                      tileWidth: width,
-                                      tileHeight: height,
-                                      label: labelGeometry,
-                                      thumbnailWidth: thumbnail.width,
-                                      thumbnailHeight: thumbnail.height
-                                    })
+  readonly property var labelLines: labelLane && labelMetrics ? FileLabels.lines(name, labelLane.width, text => labelMetrics.advanceWidth(text)) : []
+  FontMetrics {
+    id: labelMetrics
+    font: labelTypography ? labelTypography.font : Qt.font({})
+  }
+  NText {
+    id: labelTypography
+    visible: false
+    pointSize: Style.fontSizeM
+  }
+  // Observation is on demand: a parent must not retain a reactive snapshot of
+  // delegate children while Qt is tearing their native objects down.
+  function iconState() {
+    if (!artwork || !gridIcon || !thumbnail || !labelLane || !gridLayout || !listColumns)
+      return null;
+    return ({
+              name: name,
+              descriptor: iconDescriptor,
+              artwork: listMode ? listColumns.leadingMetrics : {
+                                    width: artwork.width,
+                                    height: artwork.height,
+                                    opacity: artwork.opacity,
+                                    face: gridIcon.paints.face.toString()
+                                  },
+              tileWidth: width,
+              tileHeight: height,
+              label: {
+                top: labelLane.y + gridLayout.y,
+                artworkBottom: artwork.y + artwork.height + gridLayout.y,
+                lines: labelLines,
+                height: labelLane.height
+              },
+              thumbnailWidth: thumbnail.width,
+              thumbnailHeight: thumbnail.height
+            });
+  }
   function artworkGeometry() {
     return artwork.mapToItem(root, 0, 0, artwork.width, artwork.height);
   }
@@ -167,7 +184,9 @@ Rectangle {
         }
       }
     }
-    Item { Layout.fillHeight: true }
+    Item {
+      Layout.fillHeight: true
+    }
     NText {
       visible: root.listMode
       Layout.preferredWidth: 92 * Style.uiScaleRatio
