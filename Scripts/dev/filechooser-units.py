@@ -9,6 +9,7 @@ import re
 import shutil
 import subprocess
 import sys
+import wave
 
 from filechooser_regression import desktop_fixture
 from filechooser_isolation import enter, guest, profile_env
@@ -61,6 +62,9 @@ def main():
     (aux / "no-search").chmod(0o400)
     previews = aux / "previews"
     previews.mkdir()
+    with wave.open(str(previews / "unit.wav"), "wb") as audio:
+        audio.setnchannels(1); audio.setsampwidth(2); audio.setframerate(8000)
+        audio.writeframes(b"\0\0" * 8000 * 8)
     for name, content in {
         "small.txt": "Hello, 世界\n".encode(),
         "large.txt": b"a" * 262_145,
@@ -130,6 +134,9 @@ def main():
         required.update(f"paths.{name}.{case}" for case in ("error", "keeps-folder", "keeps-listing", "not-loading", "recovers"))
     required.update(f"paths.helper.{name}" for name in ("With space", "hash#name", "percent%20literal", "question?mark", "résumé", "a b/c d", "strict-portal-spaces", "invalid-urls"))
     missing = sorted(required - {case["case"] for case in cases})
+    required_media = {"playback." + name for name in ("initial", "inactive-intents", "volume-low", "volume-high", "volume-step", "invalid-volume", "times", "autoplay", "seek-low", "seek-high", "close-stops", "close-destroys-engine")}
+    required_labels = {"labels." + name for name in ("extension-attached", "dots", "long-word", "cjk", "extension-only", "two-lines-only")}
+    missing += sorted((required_media | required_labels) - {case["case"] for case in cases})
     required_icons = {"icons.network-mount", "icons.xdg-settings", "icons.hidden", "icons.directory-precedence"}
     required_icons.update("icons.type." + t for t in ("image", "video", "audio", "text", "markdown", "pdf", "document", "spreadsheet", "presentation", "ebook", "web", "code", "data", "zip", "tar", "gzip", "xz", "bzip", "zstd", "sevenzip", "rar", "archive", "executable", "disk", "font", "unknown"))
     required_icons.update("icons." + kind + "." + scheme["name"] + "." + group for kind in ("tones", "ink") for scheme in schemes for group in ("media", "text", "rest", "archives"))

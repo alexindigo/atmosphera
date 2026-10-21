@@ -23,6 +23,7 @@ ShellRoot {
   FilePreview {
     id: preview
   }
+  FilePlayback { id: playback }
 
   FileBrowser {
     id: fileBrowser
@@ -127,6 +128,14 @@ ShellRoot {
 
   function buildTests() {
     step(() => true, function () {
+      same("playback.initial", [playback.status, playback.playing, playback.seekable], ["idle", false, false]);
+      playback.toggle(); playback.seek(10000);
+      same("playback.inactive-intents", [playback.playing, playback.position], [false, 0]);
+      playback.setVolume(-1); same("playback.volume-low", playback.volume, 0);
+      playback.setVolume(3); same("playback.volume-high", playback.volume, 1);
+      playback.setVolume(0.5); playback.volumeBy(-0.05); report("playback.volume-step", Math.abs(playback.volume - 0.45) < 0.00001, playback.volume);
+      playback.setVolume(NaN); report("playback.invalid-volume", Math.abs(playback.volume - 0.45) < 0.00001, playback.volume);
+      same("playback.times", [playback.time(-1000), playback.time(65000), playback.time(3661000)], ["0:00", "1:05", "1:01:01"]);
       var measure = text => Array.from(text).length;
       same("labels.extension-attached", FileLabels.lines("Weekend itinerary.pdf", 14, measure), ["Weekend", "itinerary.pdf"]);
       same("labels.dots", FileLabels.lines("release.v1 notes.md", 12, measure), ["release.v1", "notes.md"]);
@@ -137,6 +146,26 @@ ShellRoot {
       same("breadcrumbs.home", fileBrowser.breadcrumbParts("/home/tester/Documents", "/home/tester"), ["Home", "Documents"]);
       same("breadcrumbs.outside", fileBrowser.breadcrumbParts("/var/log", "/home/tester"), ["var", "log"]);
       same("breadcrumbs.component-boundary", fileBrowser.breadcrumbParts("/home/tester2/Documents", "/home/tester"), ["home", "tester2", "Documents"]);
+    });
+    step(() => true, function () {
+      playback.source = PortalPaths.pathToUri(aux + "/previews/unit.wav").uri;
+      playback.active = true;
+    });
+    step(() => playback.status === "ready" && playback.playing && playback.duration > 0, function () {
+      report("playback.autoplay", playback.seekable && playback.duration === 8000, playback.snapshot);
+      playback.toggle(); playback.seek(-1000);
+    });
+    step(() => !playback.playing && playback.position === 0, function () {
+      same("playback.seek-low", playback.position, 0);
+      playback.seek(playback.duration + 1000);
+    });
+    step(() => playback.position === playback.duration, function () {
+      same("playback.seek-high", playback.position, 8000);
+      playback.active = false;
+    });
+    step(() => playback.status === "idle" && !playback.playing && playback.position === 0, function () {
+      same("playback.close-stops", playback.status, "idle");
+      same("playback.close-destroys-engine", playback.snapshot.engineActive, false);
     });
     step(() => !FilePlaces.loading && Object.keys(FilePlaces.xdgFolders).length > 0, function () {
       IconCases.run(FileTypes, FilePlaces, AtmoColor, JSON.parse(Quickshell.env("FILECHOOSER_ICON_SCHEMES")), report, same);

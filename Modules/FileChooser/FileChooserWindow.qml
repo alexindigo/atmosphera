@@ -22,6 +22,8 @@ PanelWindow {
   readonly property bool pathEditing: header.editing
   readonly property var breadcrumbText: header.breadcrumbItems.filter(part => part.kind === "segment").map(part => part.text)
   readonly property var previewRenderer: quickLook.renderer
+  readonly property var playbackState: quickLook.playbackState
+  function transportGeometry() { return quickLook.transportGeometry(); }
   readonly property var columnGeometry: listing.columnGeometry
   readonly property var nameSelection: [nameField.inputItem.selectionStart, nameField.inputItem.selectionEnd]
   readonly property bool selectionCountVisible: footer.selectionCountVisible

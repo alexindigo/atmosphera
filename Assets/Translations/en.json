@@ -2458,6 +2458,8 @@
       "parent-folder": "Parent folder",
       "pause": "Pause",
       "play": "Play",
+      "playback-position": "Playback position",
+      "volume": "Volume",
       "preview-truncated": "Showing the first 256 KiB",
       "preview-unavailable": "Can't preview this file",
       "recent": "Recent",

@@ -52,8 +52,8 @@ def main():
 
     ffmpeg(["-f", "lavfi", "-i", "color=c=0x5282a8:s=720x480,drawbox=x=0:y=300:w=720:h=180:color=0x233f4a:t=fill", "-frames:v", "1", str(fixtures / "Coast.png")])
     ffmpeg(["-f", "lavfi", "-i", "testsrc2=size=640x360:rate=6:duration=2", "-loop", "0", "-c:v", "libwebp_anim", str(fixtures / "Motion.webp")])
-    ffmpeg(["-f", "lavfi", "-i", "testsrc2=size=640x360:rate=24:duration=4", "-c:v", "libx264", "-pix_fmt", "yuv420p", str(fixtures / "Tide.mp4")])
-    ffmpeg(["-f", "lavfi", "-i", "sine=frequency=440:duration=6", str(fixtures / "Waves.wav")])
+    ffmpeg(["-f", "lavfi", "-i", "testsrc2=size=640x360:rate=24:duration=18", "-c:v", "libx264", "-pix_fmt", "yuv420p", str(fixtures / "Tide.mp4")])
+    ffmpeg(["-f", "lavfi", "-i", "sine=frequency=440:duration=18", "-metadata", "title=Coastal evening", "-metadata", "artist=Fieldwork", "-metadata", "album=Tide studies", str(fixtures / "Waves.wav")])
     # Minimal real PDF with a deterministic page; no external fixture dependency.
     stream = b"BT /F1 28 Tf 55 260 Td (Fieldwork reference) Tj 0 -42 Td /F1 14 Tf (Pacific coast - October 2026) Tj ET"
     objects = [b"<< /Type /Catalog /Pages 2 0 R >>", b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>", b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 480 340] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>", b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>", b"<< /Length " + str(len(stream)).encode() + b" >>\nstream\n" + stream + b"\nendstream"]
