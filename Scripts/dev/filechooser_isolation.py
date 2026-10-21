@@ -37,7 +37,7 @@ def admit(budget, available=None):
 
 
 def systemd_properties(unit, env):
-    names = ("OOMScoreAdjust", "MemoryMax", "MemoryHigh", "MemorySwapMax", "CPUQuotaPerSecUSec", "TasksMax", "ControlGroup")
+    names = ("OOMScoreAdjust", "MemoryMax", "MemoryHigh", "MemorySwapMax", "CPUQuotaPerSecUSec", "TasksMax", "ControlGroup", "MainPID")
     result = subprocess.run(["timeout", "10", "systemctl", "--user", "show", unit,
                              *["--property=" + n for n in names]], env=env, capture_output=True,
                             text=True, check=True, timeout=15)
@@ -56,6 +56,41 @@ def guest():
 
 def cgroup():
     return Path("/sys/fs/cgroup") / Path("/proc/self/cgroup").read_text().strip().split("::", 1)[1].lstrip("/")
+
+
+def process_stat(proc):
+    # comm may contain spaces and parentheses. Fields after its final ')' begin
+    # at field 3; starttime is field 22, not an argv-derived identity.
+    text = (proc / "stat").read_text(errors="replace")
+    fields = text.rsplit(")", 1)[1].split()
+    return {"pid": int(text.split(" ", 1)[0]), "state": fields[0],
+            "start_time": int(fields[19]), "flags": int(fields[6])}
+
+
+def sample_process(proc):
+    """Bracket one procfs observation with kernel process identity/liveness."""
+    row = {"proc": str(proc)}
+    try:
+        before = process_stat(proc)
+        row["stat_before"] = before
+        row["cgroup"] = str(Path("/sys/fs/cgroup") / (proc / "cgroup").read_text().strip().split("::", 1)[1].lstrip("/"))
+        row["oom_score_adj"] = (proc / "oom_score_adj").read_text().strip()
+        row["command"] = (proc / "cmdline").read_bytes().replace(b"\0", b" ").decode(errors="replace")
+        after = process_stat(proc)
+        row["stat_after"] = after
+    except (FileNotFoundError, ProcessLookupError):
+        return dict(row, disposition="vanished")
+    if (before["pid"], before["start_time"]) != (after["pid"], after["start_time"]):
+        return dict(row, disposition="identity_changed")
+    # Keep terminated observations as evidence rather than silently discarding
+    # them. Only an actual dead/zombie kernel state is non-live; no cgroup-root,
+    # empty-argv, timing, or repeated-read exemption applies to a live task.
+    return dict(row, pid=after["pid"], start_time=after["start_time"],
+                disposition="exited" if after["state"] in ("Z", "X", "x") else "live")
+
+
+def sample_violation(row, expected):
+    return row["disposition"] == "live" and (row["cgroup"] != expected or row["oom_score_adj"] != "1000")
 
 
 def namespace_command(argv):
@@ -117,7 +152,81 @@ def _memory_probe(base, output, label, admin_env):
             "exit": run.returncode, "unit": unit, "properties": show.stdout, "command": argv}
 
 
-def enter(memory_probe=False, runtime_seconds=840, detach=False):
+def _audit_probe(base, output, label, admin_env, main_properties):
+    """Fixed negative test: a capped sibling joins only our private namespaces.
+
+    nsenter does not change cgroup membership unless --join-cgroup is requested.
+    Namespace FDs pin this owned session, not a console PID or reusable name.
+    """
+    main_pid = int(main_properties["MainPID"])
+    children = Path(f"/proc/{main_pid}/task/{main_pid}/children").read_text().split()
+    candidates = []
+    for pid in children:
+        proc = Path("/proc") / pid
+        row = sample_process(proc)
+        if row["disposition"] == "live" and "--session" in row["command"] and str(base) in row["command"]:
+            assert row["cgroup"] == "/sys/fs/cgroup" + main_properties["ControlGroup"]
+            assert os.readlink(proc / "ns/pid") != os.readlink("/proc/self/ns/pid")
+            candidates.append(int(pid))
+    assert len(candidates) == 1, candidates
+    target = candidates[0]
+    fds = {name: os.open(f"/proc/{target}/ns/{name}", os.O_RDONLY) for name in ("user", "mnt", "pid")}
+    profile = base / "audit-profile"
+    for name in ("home", "tmp", "config", "cache", "state", "data", "run"):
+        (profile / name).mkdir(parents=True, mode=0o700)
+    live, release = base / "audit-probe-live.json", base / "audit-probe-release"
+    env = {"PATH": "/usr/bin", "USER": "tester", "LOGNAME": "tester", "HOME": str(profile / "home"),
+           "TMPDIR": str(profile / "tmp"), "XDG_RUNTIME_DIR": str(profile / "run"),
+           "XDG_CONFIG_HOME": str(profile / "config"), "XDG_CACHE_HOME": str(profile / "cache"),
+           "XDG_STATE_HOME": str(profile / "state"), "XDG_DATA_HOME": str(profile / "data"),
+           "DBUS_SESSION_BUS_ADDRESS": "unix:path=" + str(profile / "run/no-bus"),
+           "DBUS_SYSTEM_BUS_ADDRESS": "unix:path=" + str(profile / "run/no-system-bus")}
+    body = ("import json,os,time; from pathlib import Path; "
+            "assert os.getuid()==1000; assert Path('/proc/self/oom_score_adj').read_text().strip()=='1000'; "
+            f"pending=Path({str(live) + '.pending'!r}); pending.write_text(json.dumps({{'pid':os.getpid(),'namespace':os.readlink('/proc/self/ns/pid')}})); pending.replace({str(live)!r}); "
+            "deadline=time.monotonic()+15\n"
+            f"while not Path({str(release)!r}).exists():\n"
+            " assert time.monotonic()<deadline\n time.sleep(.02)\n")
+    unit = "filechooser-" + label + "-outside"
+    argv = ["systemd-run", "--user", "--wait", "--pipe", "--collect", "--unit=" + unit,
+            "-p", "MemoryMax=64M", "-p", "MemoryHigh=64M", "-p", "MemorySwapMax=0",
+            "-p", "CPUQuota=25%", "-p", "TasksMax=32", "-p", "OOMScoreAdjust=1000",
+            "-p", "RuntimeMaxSec=20", "-p", "TimeoutStopSec=5", "-p", "OOMPolicy=stop",
+            "--working-directory=" + str(ROOT),
+            "--setenv=TMPDIR=" + env["TMPDIR"], "nsenter",
+            "--user=" + f"/proc/{os.getpid()}/fd/{fds['user']}",
+            "--mount=" + f"/proc/{os.getpid()}/fd/{fds['mnt']}",
+            "--pid=" + f"/proc/{os.getpid()}/fd/{fds['pid']}", "--preserve-credentials",
+            "/usr/bin/env", "-i", *[k + "=" + v for k, v in env.items()], sys.executable, "-B", "-c", body]
+    process = None
+    completed = False
+    try:
+        with (output / "outside.log").open("w") as log:
+            process = subprocess.Popen(["timeout", "--kill-after=5", "30", *argv], env=admin_env, stdout=log, stderr=subprocess.STDOUT)
+            deadline = time.monotonic() + 12
+            while not live.exists():
+                assert process.poll() is None and time.monotonic() < deadline, "outside probe startup failed"
+                time.sleep(.02)
+            properties = systemd_properties(unit, admin_env)
+            assert properties["MemoryMax"] == str(64 * MIB) and properties["TasksMax"] == "32"
+            (output / "outside-properties.json").write_text(json.dumps(properties, indent=2))
+            (base / "audit-probe-attested").touch()
+            code = process.wait(timeout=22)
+            completed = True
+        return {"passed": code == 0, "exit": code, "unit": unit, "properties": properties, "command": argv}
+    finally:
+        if not completed:
+            stop = subprocess.run(["timeout", "15", "systemctl", "--user", "stop", unit], env=admin_env, capture_output=True, timeout=20)
+            if stop.returncode:
+                state = subprocess.run(["timeout", "5", "systemctl", "--user", "show", unit, "-p", "LoadState"], env=admin_env, capture_output=True, text=True, timeout=8)
+                assert "LoadState=not-found" in state.stdout, stop.stderr
+            if process is not None:
+                process.wait(timeout=15)
+        for fd in fds.values():
+            os.close(fd)
+
+
+def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=False):
     """Re-exec this entry point in a bounded disposable session, or validate it."""
     guest()
     if "FILECHOOSER_ISOLATION" in os.environ:
@@ -134,7 +243,8 @@ def enter(memory_probe=False, runtime_seconds=840, detach=False):
     base = ROOT / "runtime" / ("i" + hashlib.sha256(label.encode()).hexdigest()[:8])
     output = ROOT / "evidence" / (label + "-isolation")
     assert 60 <= runtime_seconds <= 7200
-    assert not (detach and memory_probe), "memory probe requires its synchronous controller"
+    assert not (memory_probe and audit_probe), "one fixed auxiliary probe per reservation"
+    assert not (detach and (memory_probe or audit_probe)), "probe requires its synchronous controller"
     output.mkdir()
     # Serialize private workloads: multiple individually bounded services must
     # not collectively starve the login session. The lock is held until systemd
@@ -153,7 +263,7 @@ def enter(memory_probe=False, runtime_seconds=840, detach=False):
         high = maximum * 3 // 4
         # The fixed auxiliary probe is the only additional unit allowed while
         # this lock is held; reserve its entire budget at the same admission.
-        admission = admit(maximum + (64 * MIB if memory_probe else 0))
+        admission = admit(maximum + (64 * MIB if memory_probe or audit_probe else 0))
         (output / "admission.json").write_text(json.dumps(admission, indent=2))
         base.mkdir()
         env = dict(os.environ, XDG_RUNTIME_DIR="/run/user/1000", DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/1000/bus")
@@ -184,24 +294,24 @@ def enter(memory_probe=False, runtime_seconds=840, detach=False):
             code = process.wait(timeout=15)
             assert code == 0
             print(json.dumps({"unit": "filechooser-" + label, "output": str(output), "detached": True, "properties": values}), flush=True)
-        elif memory_probe:
+        elif memory_probe or audit_probe:
             # One fixed bounded probe can be requested while the protected
             # session-like app is alive. No arbitrary commands or unit names
             # cross this boundary; private workloads cannot reach the manager.
             requested = False
             with process:
                 while process.poll() is None:
-                    request = base / "memory-probe.request"
+                    request = base / ("audit-probe.request" if audit_probe else "memory-probe.request")
                     if not requested and request.exists():
                         requested = True
                         try:
-                            assert request.read_text() == "64MiB\n"
-                            result = _memory_probe(base, output, label, env)
+                            assert request.read_text() == ("live-sibling\n" if audit_probe else "64MiB\n")
+                            result = _audit_probe(base, output, label, env, values) if audit_probe else _memory_probe(base, output, label, env)
                         except Exception as error:
                             result = {"passed": False, "error": repr(error)}
-                        pending = output / "memory-probe.pending"
+                        pending = output / ("audit-probe.pending" if audit_probe else "memory-probe.pending")
                         pending.write_text(json.dumps(result, indent=2))
-                        pending.replace(output / "memory-probe.json")
+                        pending.replace(output / ("audit-probe.json" if audit_probe else "memory-probe.json"))
                     time.sleep(.05)
                 code = process.returncode
         else:
@@ -271,7 +381,7 @@ def session(base, output, argv):
     children = []
     keyboard_process = None
     audit_stop = threading.Event()
-    observed, violations = {}, []
+    observed, exited, discarded, violations, audit_errors = {}, {}, [], [], []
     def audit():
         expected = str(cgroup())
         while not audit_stop.is_set():
@@ -279,17 +389,23 @@ def session(base, output, argv):
                 if not proc.name.isdigit():
                     continue
                 try:
-                    group = "/sys/fs/cgroup/" + (proc / "cgroup").read_text().strip().split("::", 1)[1].lstrip("/")
-                    score = (proc / "oom_score_adj").read_text().strip()
-                    cmd = (proc / "cmdline").read_bytes().replace(b"\0", b" ").decode(errors="replace")
-                    if not cmd:
+                    row = sample_process(proc)
+                    if row["disposition"] in ("vanished", "identity_changed"):
+                        discarded.append(row)
                         continue
-                    row = {"pid": int(proc.name), "command": cmd, "cgroup": group, "oom_score_adj": score}
-                    observed[(int(proc.name), cmd)] = row
-                    if group != expected or score != "1000":
+                    key = (row["pid"], row["start_time"], row["command"], row["cgroup"], row["oom_score_adj"])
+                    if row["disposition"] == "exited":
+                        exited[key] = row
+                        continue
+                    observed[key] = row
+                    if sample_violation(row, expected):
+                        if not violations:
+                            (output / "first-violation.json").write_text(json.dumps(row, indent=2))
                         violations.append(row)
-                except (FileNotFoundError, ProcessLookupError):
-                    pass
+                except Exception as error:
+                    # A failed sampler must fail the gate, not silently kill
+                    # the observer thread and leave a reassuring empty report.
+                    audit_errors.append({"proc": str(proc), "error": repr(error)})
             audit_stop.wait(.02)
     auditor = threading.Thread(target=audit, daemon=True)
     auditor.start()
@@ -355,8 +471,12 @@ def session(base, output, argv):
         (output / "resources.json").write_text(json.dumps({**{n: (cgroup() / n).read_text() for n in ("memory.peak", "memory.events", "cpu.stat")},
             "keyboard_exit": keyboard_process.returncode if keyboard_process else None}, indent=2))
         audit_stop.set(); auditor.join(timeout=5)
-        (output / "process-cgroups.json").write_text(json.dumps({"expected": str(cgroup()), "processes": list(observed.values()), "violations": violations}, indent=2))
-        assert not violations, "process escaped dev unit/OOM score contract"
+        assert not auditor.is_alive(), "process auditor failed to stop"
+        (output / "process-cgroups.json").write_text(json.dumps({"expected": str(cgroup()),
+            "processes": list(observed.values()), "exited_processes": list(exited.values()),
+            "discarded_samples": discarded, "errors": audit_errors, "violations": violations}, indent=2))
+        assert not audit_errors, "process audit could not read a stable sample"
+        assert not violations, "live process escaped dev unit/OOM score contract"
         if guard is not None:
             guard.close()
 
