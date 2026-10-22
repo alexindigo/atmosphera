@@ -57,6 +57,7 @@ ShellRoot {
     target: "f8Shell"
     function state(): string { return JSON.stringify({completed:root.completed,pending:root.pending,failures:root.failures,pid:Quickshell.processId}); }
     function batch(count: int): void { root.pending = count; root.next(); }
+    function leakCounts(): string { return JSON.stringify(F10LeakLedger.snapshot()); }
     function leakCheckpoint(token: string): string {
       Logger.i("F10Leak", "GC_BEGIN_" + token); gc(); Logger.i("F10Leak", "GC_END_" + token);
       return JSON.stringify(F10LeakLedger.snapshot());

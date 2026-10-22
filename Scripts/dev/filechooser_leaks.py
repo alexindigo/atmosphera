@@ -11,9 +11,44 @@ import socket
 import subprocess
 import time
 
-KINDS = ("portal_entries", "requests", "browsers", "selections", "previews",
+KINDS = ("held_replies", "portal_entries", "requests", "browsers", "selections", "previews",
          "playbacks", "windows", "entries", "thumbnail_providers", "thumbnails",
          "thumbnail_workers", "players", "outputs", "controls")
+
+
+def retention_acceptance(samples):
+    """One fixed30+20 acceptance contract, shared by execution and replay."""
+    assert len(samples) == 51 and [s["cycle"] for s in samples] == list(range(51)), "requires all50cycles plus baseline"
+    for row in samples:
+        assert row["forced_gc"] and row["pid"] == samples[0]["pid"] == row["native"]["pid"]
+        assert row["native"]["error"] == 0 and row["native"]["exec_env_cleared"]
+        assert row["THP_enabled"] == row["AnonHugePages_kib"] == 0
+        assert set(row["chooser_live"]) == set(KINDS), "missing lifetime observation"
+        assert row["js_live_bytes"] == row["js_regular_live_bytes"] + row["js_large_live_bytes"]
+    measured = samples[31:]
+    def slope(getter):
+        xm = sum(s["cycle"] for s in measured) / 20
+        ym = sum(getter(s) for s in measured) / 20
+        return sum((s["cycle"] - xm) * (getter(s) - ym) for s in measured) / sum((s["cycle"] - xm) ** 2 for s in measured) / 1024
+    js = slope(lambda s: s["js_live_bytes"])
+    native = slope(lambda s: s["native"]["allocated_bytes"])
+    pss = [s["Pss_kib"] for s in measured]
+    fds = [s["fds"] for s in measured]
+    idle = all(all(value == 0 for value in s["chooser_live"].values()) for s in samples)
+    balanced = all(all(s["chooser_totals"]["created"].get(kind, 0) == s["chooser_totals"]["destroyed"].get(kind, 0)
+                       for kind in KINDS) for s in samples)
+    checks = {"post-warmup-js-live-slope": js < 16,
+              "post-warmup-native-live-slope": native < 64,
+              "post-warmup-pss-coarse-span": max(pss) - min(pss) < 32 * 1024,
+              "twenty-post-warmup-descriptor-counts-flat": len(set(fds)) == 1,
+              "all-idle-chooser-objects-released": idle,
+              "all-idle-lifetime-totals-balanced": balanced}
+    return {"warmup_cycles": 30, "measured_cycles": [s["cycle"] for s in measured],
+            "js_live_slope_kib_per_cycle": js, "js_live_slope_limit_kib_per_cycle": 16,
+            "native_live_slope_kib_per_cycle": native, "native_live_slope_limit_kib_per_cycle": 64,
+            "span_kib": max(pss) - min(pss), "span_limit_kib": 32 * 1024,
+            "fd_counts": fds, "idle_objects_released": idle, "lifetime_totals_balanced": balanced,
+            "checks": checks}
 
 
 def build_probe(source, runtime, output):
@@ -90,6 +125,20 @@ Singleton {
         # Keep Singleton pragmas before imports in instrumented portal types.
         at = re.search(r"^import\s", text, re.MULTILINE).start()
         text = text[:at] + 'import qs.Services.Files as F10Observed\n' + text[at:]
+        if kind == "portal_entries":
+            needle = "  function beginRequest(handle, appId, parentWindow, title, options, method, reply) {"
+            assert text.count(needle) == 1
+            text = text.replace(needle, needle + "\n    _f10HeldReplyObserverFactory.createObject(reply);")
+            at = text.rfind("}")
+            factory = '''  Component {
+    id: _f10HeldReplyObserverFactory
+    QtObject {
+      Component.onCompleted: F10Observed.F10LeakLedger.change("held_replies", 1)
+      Component.onDestruction: F10Observed.F10LeakLedger.change("held_replies", -1)
+    }
+  }
+'''
+            text = text[:at] + factory + text[at:]
         if kind == "playbacks":
             needle = "sourceComponent: MediaPlayer {"
             assert text.count(needle) == 1
@@ -132,7 +181,7 @@ def add_checkpoint_handler(shell):
 def checkpoint(ipc, log_path, native_socket, output, cycle, expected_pid=None):
     token = str(cycle)
     offset = log_path.stat().st_size
-    counts = json.loads(ipc("f8Shell", "leakCheckpoint", token))
+    immediate_counts = json.loads(ipc("f8Shell", "leakCheckpoint", token))
     deadline = time.monotonic() + 10
     while True:
         with log_path.open("rb") as stream:
@@ -151,11 +200,15 @@ def checkpoint(ipc, log_path, native_socket, output, cycle, expected_pid=None):
         assert time.monotonic() < deadline, ("post-GC stats incomplete", cycle, text[-2000:])
         time.sleep(.05)
     (output / f"gc-{cycle}.log").write_bytes(raw)
+    # Read ownership on a separate GUI transaction after the GC call returns
+    # to the event loop, so queued QObject destruction is not mistaken for
+    # retention. Keep the immediate snapshot as evidence of that phase too.
+    counts = json.loads(ipc("f8Shell", "leakCounts"))
     native = native_query(native_socket)
     assert expected_pid is None or native["pid"] == expected_pid, ("native observer is not the subject", native, expected_pid)
     live = {kind: int(counts["live"].get(kind, 0)) for kind in KINDS}
     large_bytes = int(large[-1]) if large else 0
     return {"js_regular_live_bytes": int(regular[-1]), "js_large_live_bytes": large_bytes,
             "js_large_stat_emitted": bool(large), "js_live_bytes": int(regular[-1]) + large_bytes, "native": native,
-            "chooser_live": live, "chooser_totals": counts,
+            "chooser_live": live, "chooser_totals": counts, "chooser_immediate_after_gc": immediate_counts,
             "gc_log_start": offset, "gc_log_end": offset + len(raw), "forced_gc": True}
