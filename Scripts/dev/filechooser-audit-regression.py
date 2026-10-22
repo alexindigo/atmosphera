@@ -1,20 +1,22 @@
 #!/usr/bin/env python3
 """Stable live escape must fail; identity/exit races and quick children must not."""
 import argparse
+import copy
 import json
 import os
 from pathlib import Path
 import subprocess
 import time
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
+import filechooser_isolation as isolation
 from filechooser_isolation import ROOT, cgroup, enter, process_stat, sample_process, sample_violation
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--label", required=True)
-    parser.add_argument("--mode", choices=("stress", "escape"), required=True)
+    parser.add_argument("--mode", choices=("stress", "escape", "preexec"), required=True)
     a = parser.parse_args()
     enter(audit_probe=a.mode == "escape")
     output = ROOT / "evidence" / a.label
@@ -26,6 +28,8 @@ def main():
     def check(name, condition, detail=None):
         cases.append({"case": name, "pass": bool(condition), "detail": detail})
         print(name, "PASS" if condition else "FAIL", flush=True)
+        if not condition:
+            (output / "result.json").write_text(json.dumps({"passed": False, "cases": cases}, indent=2))
         assert condition, name
     def wait(fn, seconds=12):
         end = time.monotonic() + seconds
@@ -58,7 +62,43 @@ def main():
         child.wait(timeout=5)
     reaped = sample_process(proc)
     check("reaped-child-vanished", reaped["disposition"] == "vanished", reaped)
-    if a.mode == "stress":
+    if a.mode == "preexec":
+        fixture = json.loads((Path(__file__).parent / "fixtures/filechooser-preexec-observation.json").read_text())
+        initial, attached = fixture["initial"], fixture["attached"]
+        wanted = attached["cgroup"]
+        # Replay the actual rejected observation through the production audit
+        # path. Older trees use their original one-snapshot audit path: red is
+        # the wrong verdict, not an unavailable import or a signature error.
+        observe = getattr(isolation, "audit_process", lambda proc, expected, snapshot: snapshot(proc))
+        check("raw-preexec-root-still-a-violation", sample_violation(initial, wanted))
+        snapshots = Mock(side_effect=[copy.deepcopy(initial), copy.deepcopy(attached)])
+        confirmed = observe(Path(initial["proc"]), wanted, snapshots)
+        check("captured-preexec-identity-attested", not sample_violation(confirmed, wanted)
+              and confirmed.get("pre_exec_transition", {}).get("initial") == initial
+              and confirmed["pid"] == initial["pid"] and confirmed["start_time"] == initial["start_time"], confirmed)
+        variants = {}
+        reused = copy.deepcopy(attached)
+        reused["start_time"] += 1
+        for key in ("stat_before", "stat_after"): reused[key]["start_time"] += 1
+        variants["reused-pid-not-attested"] = reused
+        variants["vanished-not-attested"] = {"disposition": "vanished", "proc": initial["proc"]}
+        variants["wrong-unit-not-attested"] = dict(attached, cgroup=wanted + "-outside")
+        variants["wrong-oom-not-attested"] = dict(attached, oom_score_adj="0")
+        for name, following in variants.items():
+            snapshots = Mock(side_effect=[copy.deepcopy(initial), following])
+            row = observe(Path(initial["proc"]), wanted, snapshots)
+            check(name, sample_violation(row, wanted), row)
+        for name, first in (("already-execed-root-not-attested", copy.deepcopy(initial)),
+                            ("initial-wrong-oom-not-attested", dict(initial, oom_score_adj="0"))):
+            if name.startswith("already"):
+                for key in ("stat_before", "stat_after"): first[key]["flags"] &= ~0x40
+            snapshots = Mock(side_effect=[first, copy.deepcopy(attached)])
+            row = observe(Path(initial["proc"]), wanted, snapshots)
+            check(name, sample_violation(row, wanted) and snapshots.call_count == 1, row)
+        persistent = observe(Path(initial["proc"]), wanted, Mock(return_value=copy.deepcopy(initial)))
+        check("persistent-preexec-root-still-fails", sample_violation(persistent, wanted), persistent)
+        (output / "result.json").write_text(json.dumps({"passed": True, "expected_unit_exit": 0, "cases": cases}, indent=2))
+    elif a.mode == "stress":
         completed = 0
         # 4,000 quick processes (2,000 timeout wrappers plus their true children),
         # with a bounded fan-out well below the unit's TasksMax.

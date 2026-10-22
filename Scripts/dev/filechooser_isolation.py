@@ -93,6 +93,38 @@ def sample_violation(row, expected):
     return row["disposition"] == "live" and (row["cgroup"] != expected or row["oom_score_adj"] != "1000")
 
 
+def audit_process(proc, expected, snapshot=sample_process):
+    """Attest Linux's proc-visible fork construction by identity, never time.
+
+    Launchers already use services/ExecStart; descendants inherit that cgroup.
+    Linux cgroup_fork() nevertheless uses init_css_set until cgroup_post_fork(),
+    after attach_pid() makes the child visible but before wake_up_new_task().
+    Even CLONE_INTO_CGROUP uses that ordering. Preserve the raw root snapshot;
+    accept it only after this same pre-exec identity is observed attached.
+    """
+    first = snapshot(proc)
+    if (not sample_violation(first, expected) or first["cgroup"] != "/sys/fs/cgroup"
+            or first["oom_score_adj"] != "1000" or not first["stat_before"]["flags"] & 0x40):
+        return first
+    identity = (first["pid"], first["start_time"])
+    following = []
+    # This bounds confirmation work, not eligibility: exhaustion, disappearance
+    # and PID reuse all retain the original violation. Yield lets the forking
+    # parent finish cgroup_post_fork; elapsed time never grants acceptance.
+    for _ in range(32):
+        later = snapshot(proc)
+        following.append(later)
+        if (later["disposition"] != "live" or (later["pid"], later["start_time"]) != identity
+                or later["oom_score_adj"] != "1000"):
+            break
+        if later["cgroup"] == expected:
+            return dict(later, pre_exec_transition={"initial": first, "confirmations": following})
+        if later["cgroup"] != "/sys/fs/cgroup" or not later["stat_before"]["flags"] & 0x40:
+            break
+        time.sleep(0)
+    return dict(first, pre_exec_unconfirmed=following)
+
+
 def namespace_command(argv):
     """Keep broad process discovery/signals inside an unprivileged PID tree."""
     return ["unshare", "--user", "--map-current-user", "--pid", "--fork",
@@ -403,6 +435,7 @@ def session(base, output, argv):
     keyboard_process = None
     audit_stop = threading.Event()
     observed, exited, discarded, violations, audit_errors = {}, {}, [], [], []
+    pre_exec_transitions = []
     def audit():
         expected = str(cgroup())
         while not audit_stop.is_set():
@@ -410,7 +443,9 @@ def session(base, output, argv):
                 if not proc.name.isdigit():
                     continue
                 try:
-                    row = sample_process(proc)
+                    row = audit_process(proc, expected)
+                    if "pre_exec_transition" in row:
+                        pre_exec_transitions.append(row)
                     if row["disposition"] in ("vanished", "identity_changed"):
                         discarded.append(row)
                         continue
@@ -494,8 +529,9 @@ def session(base, output, argv):
         audit_stop.set(); auditor.join(timeout=5)
         assert not auditor.is_alive(), "process auditor failed to stop"
         (output / "process-cgroups.json").write_text(json.dumps({"expected": str(cgroup()),
-            "processes": list(observed.values()), "exited_processes": list(exited.values()),
-            "discarded_samples": discarded, "errors": audit_errors, "violations": violations}, indent=2))
+             "processes": list(observed.values()), "exited_processes": list(exited.values()),
+            "discarded_samples": discarded, "pre_exec_transitions": pre_exec_transitions,
+            "errors": audit_errors, "violations": violations}, indent=2))
         assert not audit_errors, "process audit could not read a stable sample"
         assert not violations, "live process escaped dev unit/OOM score contract"
         if guard is not None:

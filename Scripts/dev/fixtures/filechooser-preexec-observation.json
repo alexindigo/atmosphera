@@ -1,0 +1,25 @@
+{
+  "origin": "f10r11-fd-probe/pid-case/process-cgroups.json",
+  "initial": {
+    "proc": "/proc/28",
+    "stat_before": {"pid": 28, "state": "R", "start_time": 4076577, "flags": 4194368},
+    "cgroup": "/sys/fs/cgroup",
+    "oom_score_adj": "1000",
+    "command": "/usr/bin/python3 -B /home/tester/Projects/atmosphera-filechooser/runtime/f10r11-fd-probe/pid-child.py ",
+    "stat_after": {"pid": 28, "state": "R", "start_time": 4076577, "flags": 4194368},
+    "pid": 28,
+    "start_time": 4076577,
+    "disposition": "live"
+  },
+  "attached": {
+    "proc": "/proc/28",
+    "stat_before": {"pid": 28, "state": "S", "start_time": 4076577, "flags": 4194304},
+    "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/filechooser-f10r11-fd-probe.service",
+    "oom_score_adj": "1000",
+    "command": "timeout 10 qs -p /home/tester/Projects/atmosphera-filechooser/runtime/f10r11-fd-probe/pid-shell/shell.qml ",
+    "stat_after": {"pid": 28, "state": "S", "start_time": 4076577, "flags": 4194304},
+    "pid": 28,
+    "start_time": 4076577,
+    "disposition": "live"
+  }
+}
