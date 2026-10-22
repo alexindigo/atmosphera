@@ -1,7 +1,8 @@
 import QtQuick
 import Quickshell
-import qs.Commons
 import "../../Helpers/OwnedProcess.js" as OwnedProcess
+import "FilePdfProbe.js" as PdfProbe
+import qs.Commons
 
 Scope {
   id: root
@@ -40,7 +41,7 @@ Scope {
       return;
     }
     _status = "loading";
-    OwnedProcess.run(root, ["timeout", "5", "python3", "-B", Quickshell.shellDir + "/Scripts/python/src/filechooser/preview-text.py", nextPath], null, function(result) {
+    OwnedProcess.run(root, ["timeout", "5", "python3", "-B", Quickshell.shellDir + "/Scripts/python/src/filechooser/preview-text.py", nextPath], null, function (result) {
       if (generation !== root._generation)
         return;
       try {
@@ -61,7 +62,7 @@ Scope {
     // A dynamic import keeps QtPdf genuinely optional on a real installation.
     // Probe once for this picker; decoder failures still fall back in the view.
     try {
-      var document = Qt.createQmlObject("import QtQuick.Pdf\nPdfDocument {}", root, "OptionalPdfProbe");
+      var document = PdfProbe.create(root);
       _pdfAvailable = !!document;
       if (document)
         document.destroy();
