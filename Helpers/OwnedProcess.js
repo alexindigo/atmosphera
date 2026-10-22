@@ -1,5 +1,10 @@
 .pragma library
 
+// The factory belongs to this shared library, never to the first caller.
+// Recompiling inline QML per invocation retains native compilation state even
+// after the child is destroyed. Only the component is shared, not its children.
+var childComponent = null;
+
 // A fresh child/collectors per invocation. No queue, retries, caller state or
 // settings payload in command construction. The parent owns stage settlement.
 function run(parent, command, input, complete) {
@@ -27,7 +32,11 @@ function run(parent, command, input, complete) {
             finish(false, "Empty child command", null, null);
             return null;
         }
-        process = Qt.createQmlObject("import QtQuick\nimport Quickshell.Io\nProcess { stdout: StdioCollector {} stderr: StdioCollector {} }", parent, "OwnedChild");
+        if (childComponent === null)
+            childComponent = Qt.createComponent(Qt.resolvedUrl("OwnedProcessChild.qml"));
+        process = childComponent.createObject(parent);
+        if (!process)
+            throw new Error(childComponent.errorString());
         process.command = command;
         process.stdinEnabled = input !== undefined && input !== null;
         process.started.connect(function () {
