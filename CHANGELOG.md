@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+### 2026-10-21
+
+**Maintenance**
+
+qt6-dbusqml 1.1.0 is now required: it fixes retained D-Bus reply lifetimes and
+the input-method polling memory growth seen with fcitx5.
+
+**Feature**
+
+The file chooser has a one-line footer with a separate app-options band,
+themed file and folder icons, and media controls in quick look. Video
+thumbnails use the shared thumbnail cache as described below.
+
+**Fix**
+
+OwnedProcess compiles its child component once, preventing repeated process
+creation from retaining compiled components and growing shell memory.
+
 ### 2026-10-19
 
 **Feature**

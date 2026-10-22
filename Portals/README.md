@@ -61,7 +61,7 @@ App (Firefox)               xdg-desktop-portal            Our backend
   gnome/gtk/kde/cosmic use. (An earlier branch experiment split
   per-interface names; that modularity is not needed for v1.)
 - **In-shell adaptor, no separate daemon.** `SettingsPortal.qml` is a QML
-  singleton hosting a `DBusAdaptor` from `qt6-dbusqml` (>= 0.4.0). The shell
+  singleton hosting a `DBusAdaptor` from `qt6-dbusqml` (>= 1.1.0). The shell
   is a long-lived service that already owns D-Bus names, so owning one more
   is consistent with its architecture. The adaptor registers on the session
   bus when the singleton is created at shell startup.
@@ -246,7 +246,7 @@ dependency.
 ## Dependencies
 
 - `xdg-desktop-portal` (must be running on the session bus)
-- `qt6-dbusqml` >= 0.9.0 (`DBusAdaptor` server-side support: co-located
+- `qt6-dbusqml` >= 1.1.0 (reply lifetime fixes and `DBusAdaptor` server-side support: co-located
   adaptors at one path, deferred replies, Properties marshal guards,
   per-call adaptor ownership preserved through dispatch, and the bundled
   Inhibit catalog driving reply shapes and truthful served introspection)
