@@ -778,10 +778,23 @@ def extract_source_color(
     Returns:
         Source color in ARGB format
     """
+    return extract_image_colors(pixels, fallback_color)[0]
+
+
+def extract_image_colors(
+    pixels: List[Tuple[int, int, int]],
+    fallback_color: int = FALLBACK_COLOR_ARGB,
+) -> Tuple[int, Dict[int, int]]:
+    """Return the source and unfiltered detailed clusters from one extraction.
+
+    Populations are image evidence, before scoring/filtering/palette padding.
+    The caller retains len(pixels) as the full-image denominator, including
+    achromatic pixels and any pixels the quantizer does not return.
+    """
     from .hct import Cam16
 
     if not pixels:
-        return fallback_color
+        return fallback_color, {}
 
     # Quantize using Wu + WSMeans (QuantizerCelebi pipeline like matugen)
     wu_result = quantize_wu(pixels, max_colors=128)
@@ -807,7 +820,7 @@ def extract_source_color(
     # Score and rank colors
     ranked = score_colors(filtered, desired=4, fallback_color=fallback_color)
 
-    return ranked[0] if ranked else fallback_color
+    return (ranked[0] if ranked else fallback_color), color_to_count
 
 
 def source_color_to_rgb(argb: int) -> Tuple[int, int, int]:

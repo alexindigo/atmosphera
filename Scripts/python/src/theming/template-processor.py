@@ -56,6 +56,8 @@ from lib import (
     extract_source_color, source_color_to_rgb, Color,
 )
 from lib.scheme import inject_terminal_colors
+from lib.quantizer import extract_image_colors
+from lib.standout import image_candidates
 
 
 def parse_args() -> argparse.Namespace:
@@ -264,6 +266,12 @@ def main() -> int:
                 print(f"Unexpected error reading image: {e}", file=sys.stderr)
                 return 1
 
+            # Standout always sees tonal-spot's detailed Triangle extraction,
+            # independent of the existing source/palette path for this type.
+            detailed_pixels = pixels if resize_filter == "Triangle" else read_image(args.image, "Triangle")
+            detailed_source, clusters = extract_image_colors(detailed_pixels)
+            standout_candidates = image_candidates(clusters)
+
             # Extract palette based on scheme type:
             # - M3 schemes (tonal-spot, fruit-salad, rainbow, content): Use Wu quantizer + Score
             #   This matches matugen's color extraction exactly
@@ -288,7 +296,7 @@ def main() -> int:
                 palette = extract_palette(pixels, k=5, scoring="muted")
             else:
                 # Wu quantizer + Score algorithm (matches matugen)
-                source_argb = extract_source_color(pixels)
+                source_argb = detailed_source
                 r, g, b = source_color_to_rgb(source_argb)
                 palette = [Color(r, g, b)]
 
@@ -298,7 +306,9 @@ def main() -> int:
 
             # Generate theme for each mode
             for mode in modes:
-                result[mode] = generate_theme(palette, mode, scheme_type)
+                result[mode] = generate_theme(palette, mode, scheme_type,
+                                              standout_candidates=standout_candidates,
+                                              total_pixels=len(detailed_pixels))
 
     # Output JSON
     json_output = json.dumps(result, indent=2)
