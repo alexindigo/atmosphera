@@ -129,6 +129,10 @@ RowLayout {
   }
     Item {
     id: pathButton
+    NInputGuard {
+    target: pathButton
+    focusOwner: pathField.inputItem
+  }
     anchors.fill: parent
     visible: !root.editing
     activeFocusOnTab: true

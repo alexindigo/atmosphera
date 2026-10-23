@@ -23,7 +23,9 @@ PanelWindow {
   readonly property var breadcrumbText: header.breadcrumbItems.filter(part => part.kind === "segment").map(part => part.text)
   readonly property var previewRenderer: quickLook.renderer
   readonly property var playbackState: quickLook.playbackState
-  function transportGeometry() { return quickLook.transportGeometry(); }
+  function transportGeometry() {
+    return quickLook.transportGeometry();
+  }
   readonly property var columnGeometry: listing.columnGeometry
   readonly property var nameSelection: [nameField.inputItem.selectionStart, nameField.inputItem.selectionEnd]
   readonly property bool selectionCountVisible: footer.selectionCountVisible
@@ -112,7 +114,6 @@ PanelWindow {
       function dismissLayer() {
       if (quickLook.opened) {
       quickLook.opened = false;
-      listing.forceActiveFocus();
     } else if (header.editing)
       header.leavePathEditing();
       else
@@ -134,11 +135,13 @@ PanelWindow {
       root.initialFocus();
     }
     }
-      Shortcut {
+      NScopedShortcut {
+      scope: root.contentItem
       sequence: "Escape"
       onActivated: root.dismissLayer()
     }
-      Shortcut {
+      NScopedShortcut {
+      scope: root.contentItem
       sequence: "Ctrl+L"
       enabled: !root.quickLookOpen
       onActivated: header.editPath()
@@ -245,6 +248,7 @@ PanelWindow {
     }
       FileQuickLook {
       id: quickLook
+      keyFocusOwner: listing
       anchors.fill: parent
       preview: filePreview
       onCloseRequested: root.dismissLayer()

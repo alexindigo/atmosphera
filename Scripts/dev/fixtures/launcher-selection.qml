@@ -9,6 +9,9 @@ ShellRoot {
   id: root
   property int stage: 0
   property int failed: 0
+  property bool pointerPending: false
+  property point requestedPointer
+  property int pointerWaitTicks: 0
   function same(name, actual, expected) {
     const passed = JSON.stringify(actual) === JSON.stringify(expected);
     if (!passed)
@@ -75,6 +78,9 @@ ShellRoot {
       return;
     }
     const point = target.mapToItem(null, target.width / 2 + dx, target.height / 2);
+    requestedPointer = Qt.point(Math.round(point.x), Math.round(point.y));
+    pointerPending = true;
+    pointerWaitTicks = 0;
     pointer.command = ["swaymsg", "seat", "seat0", "cursor", "set", String(Math.round(point.x)), String(Math.round(point.y))];
     pointer.running = true;
   }
@@ -90,6 +96,19 @@ ShellRoot {
     repeat: true
     running: true
     onTriggered: {
+      // A successful compositor command is not an acknowledgement that Qt has
+      // consumed its motion. Wait for the core's observed coordinates before
+      // judging selection; keep the same selection/highlight assertions.
+      if (root.pointerPending) {
+        if (!pointer.running && Math.abs(core.globalLastMouseX - root.requestedPointer.x) < 2 && Math.abs(core.globalLastMouseY - root.requestedPointer.y) < 2) {
+          root.pointerPending = false;
+        } else if (++root.pointerWaitTicks < 12) {
+          return;
+        } else {
+          root.pointerPending = false;
+          root.same("pointer-delivery-" + root.stage, false, true);
+        }
+      }
       switch (root.stage++) {
       case 0:
         Settings.data.general.animationDisabled = true;
