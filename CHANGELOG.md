@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### 2026-10-23
+
+**Feature**
+
+Every colour scheme now has an editable standout accent and readable on-colour.
+It complements primary and tertiary and keeps the same vivid fill in light and
+dark mode; older and downloaded schemes receive it automatically when loaded.
+
 ### 2026-10-21
 
 **Maintenance**

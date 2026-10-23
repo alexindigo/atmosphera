@@ -7,6 +7,7 @@ import Quickshell.Io
 import qs.Commons
 import qs.Services.Theming
 import qs.Services.UI
+import "../../Helpers/OwnedProcess.js" as OwnedProcess
 
 Singleton {
   id: root
@@ -20,6 +21,55 @@ Singleton {
   // on wallpaper changes without re-running applyScheme (avoids rewriting colors.json when unchanged).
   property var lastPredefinedSchemeData: null
   readonly property string gtkRefreshScript: Quickshell.shellDir + "/Scripts/python/src/theming/gtk-refresh.py"
+  property var _normalizationQueue: []
+  property bool _normalizing: false
+  property var _normalizedCache: ({})
+  property var _cacheKeys: []
+  property int _applyVersion: 0
+  property var _customSaveQueue: []
+  property bool _savingCustom: false
+
+  // All scheme consumers share the generator's Python colour math. Serialize
+  // legacy derivation, cache by content, and hand out copies so editor changes
+  // cannot mutate a preview or another caller's canonical dark reference.
+  function normalizeScheme(data, complete) {
+    const key = JSON.stringify(data);
+    if (_normalizedCache[key]) {
+      complete(JSON.parse(JSON.stringify(_normalizedCache[key])));
+      return;
+    }
+    _normalizationQueue.push({key: key, complete: complete});
+    _normalizeNext();
+  }
+
+  function _normalizeNext() {
+    if (_normalizing || !_normalizationQueue.length)
+      return;
+    const request = _normalizationQueue.shift();
+    if (_normalizedCache[request.key]) {
+      request.complete(JSON.parse(JSON.stringify(_normalizedCache[request.key])));
+      Qt.callLater(_normalizeNext);
+      return;
+    }
+    _normalizing = true;
+    OwnedProcess.run(root, ["timeout", "10", "python3", "-B", Quickshell.shellDir + "/Scripts/python/src/theming/normalize-scheme.py"], request.key, function (result) {
+      var normalized = null;
+      try {
+        if (!result.success)
+          throw new Error(result.stderr || result.error);
+        normalized = JSON.parse(result.stdout);
+        _normalizedCache[request.key] = normalized;
+        _cacheKeys.push(request.key);
+        if (_cacheKeys.length > 64)
+          delete _normalizedCache[_cacheKeys.shift()];
+      } catch (error) {
+        Logger.e("ColorScheme", "Scheme normalization failed:", error);
+      }
+      _normalizing = false;
+      request.complete(normalized ? JSON.parse(JSON.stringify(normalized)) : null);
+      Qt.callLater(_normalizeNext);
+    });
+  }
 
   // prefer-light/prefer-dark only; GTK template post_hook still runs full gtk-refresh.
   function pushSystemColorScheme() {
@@ -119,6 +169,7 @@ Singleton {
   }
 
   function applyScheme(nameOrPath) {
+    _applyVersion++;
     // Force reload by bouncing the path
     var filePath = resolveSchemePath(nameOrPath);
     schemeReader.path = "";
@@ -200,23 +251,18 @@ Singleton {
     onLoaded: {
       try {
         var data = JSON.parse(text());
-        var variant = data;
-        // If scheme provides dark/light variants, pick based on settings
-        if (data && (data.dark || data.light)) {
-          if (Settings.data.colorSchemes.darkMode) {
-            variant = data.dark || data.light;
-          } else {
-            variant = data.light || data.dark;
-          }
-        }
-        writeColorsToDisk(variant);
-        lastPredefinedSchemeData = data;
-        Logger.i("ColorScheme", "Applying color scheme:", getBasename(path));
-
-        // Generate templates for predefined color schemes
-        if (hasEnabledTemplates() || Settings.data.templates.enableUserTheming) {
-          AppThemeService.generateFromPredefinedScheme(data);
-        }
+        const version = root._applyVersion;
+        const schemePath = path;
+        root.normalizeScheme(data, function (normalized) {
+          if (!normalized || version !== root._applyVersion)
+            return;
+          const mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
+          root._writeColorsToDisk(normalized[mode]);
+          root.lastPredefinedSchemeData = normalized;
+          Logger.i("ColorScheme", "Applying color scheme:", root.getBasename(schemePath));
+          if (root.hasEnabledTemplates() || Settings.data.templates.enableUserTheming)
+            AppThemeService.generateFromPredefinedScheme(normalized);
+        });
       } catch (e) {
         Logger.e("ColorScheme", "Failed to parse scheme JSON:", path, e);
       }
@@ -254,6 +300,8 @@ Singleton {
       property color mOnSecondary: "#000000"
       property color mTertiary: "#000000"
       property color mOnTertiary: "#000000"
+      property color mStandout: "#000000"
+      property color mOnStandout: "#000000"
       property color mError: "#000000"
       property color mOnError: "#000000"
       property color mSurface: "#000000"
@@ -268,6 +316,13 @@ Singleton {
   }
 
   function writeColorsToDisk(obj) {
+    normalizeScheme(obj, function (data) {
+      if (data)
+        root._writeColorsToDisk(data[Settings.data.colorSchemes.darkMode ? "dark" : "light"]);
+    });
+  }
+
+  function _writeColorsToDisk(obj) {
     function pick(o, a, b, fallback) {
       return (o && (o[a] || o[b])) || fallback;
     }
@@ -277,6 +332,8 @@ Singleton {
     out.mOnSecondary = pick(obj, "mOnSecondary", "onSecondary", out.mOnSecondary);
     out.mTertiary = pick(obj, "mTertiary", "tertiary", out.mTertiary);
     out.mOnTertiary = pick(obj, "mOnTertiary", "onTertiary", out.mOnTertiary);
+    out.mStandout = obj.mStandout;
+    out.mOnStandout = obj.mOnStandout;
     out.mError = pick(obj, "mError", "error", out.mError);
     out.mOnError = pick(obj, "mOnError", "onError", out.mOnError);
     out.mSurface = pick(obj, "mSurface", "surface", out.mSurface);
@@ -294,11 +351,40 @@ Singleton {
     colorsWriter.writeAdapter();
   }
 
-  function saveCustomScheme(schemeData) {
+  function saveCustomScheme(schemeData, complete) {
+    // Take ownership at submission, including cache hits, and serialize the
+    // whole normalize/write/ack transaction so completion order matches disk.
+    _customSaveQueue.push({data: JSON.parse(JSON.stringify(schemeData)), complete: complete});
+    _saveNextCustomScheme();
+  }
+
+  function _saveNextCustomScheme() {
+    if (_savingCustom || !_customSaveQueue.length)
+      return;
+    const request = _customSaveQueue.shift();
+    _savingCustom = true;
+    function finish(saved) {
+      root._savingCustom = false;
+      Qt.callLater(root._saveNextCustomScheme);
+      if (request.complete)
+        request.complete(saved);
+    }
+    normalizeScheme(request.data, function (data) {
+      if (data)
+        root._saveCustomScheme(data, finish);
+      else
+        finish(false);
+    });
+  }
+
+  function _saveCustomScheme(schemeData, complete) {
     var dir = Settings.configDir + "colorschemes/Custom";
     var path = dir + "/Custom.json";
-    var json = JSON.stringify(schemeData, null, "  ");
-    Quickshell.execDetached(["mkdir", "-p", dir]);
-    Quickshell.execDetached(["sh", "-c", "cat > '" + path.replace(/'/g, "'\\''") + "' << 'ATMOSPHERA_EOF'\n" + json + "\nATMOSPHERA_EOF"]);
+    OwnedProcess.run(root, ["timeout", "10", "python3", "-B", Quickshell.shellDir + "/Scripts/python/src/theming/normalize-scheme.py", "--save", path], JSON.stringify(schemeData), function (result) {
+      if (!result.success)
+        Logger.e("ColorScheme", "Failed to save custom scheme:", result.stderr || result.error);
+      if (complete)
+        complete(result.success);
+    });
   }
 }
