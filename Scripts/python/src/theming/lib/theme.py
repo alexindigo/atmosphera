@@ -21,7 +21,7 @@ from .color import Color, shift_hue, hue_distance, adjust_surface
 from .contrast import ensure_contrast
 from .material import SchemeTonalSpot, SchemeFruitSalad, SchemeRainbow, SchemeContent, SchemeMonochrome
 from .palette import find_error_color
-from .standout import MUTED_STANDOUT_CHROMA, standout_roles
+from .standout import standout_roles
 
 # Type aliases
 ThemeMode = Literal["dark", "light"]
@@ -844,14 +844,10 @@ def generate_muted_light(palette: list[Color]) -> dict[str, str]:
     }
 
 
-def generate_theme(
+def _generate_base_theme(
     palette: list[Color],
     mode: ThemeMode,
     scheme_type: str = "tonal-spot",
-    *,
-    standout_candidates=(),
-    total_pixels: int = 0,
-    muted_standout_chroma: float = MUTED_STANDOUT_CHROMA,
 ) -> dict[str, str]:
     """
     Generate theme for specified mode and scheme type.
@@ -884,7 +880,23 @@ def generate_theme(
         theme = generate_material_dark(palette, scheme_type)
     else:
         theme = generate_material_light(palette, scheme_type)
-    theme.update(standout_roles(theme, mode, standout_candidates, total_pixels,
+    return theme
+
+
+def generate_theme(
+    palette: list[Color],
+    mode: ThemeMode,
+    scheme_type: str = "tonal-spot",
+) -> dict[str, str]:
+    """Generate unchanged base roles plus D8's mode-independent standout.
+
+    Derive the reference from dark base roles even for a light-only request.
+    No shared cache or call-order dependency; the display mode chooses only
+    its own base roles and on_standout foreground.
+    """
+    dark = _generate_base_theme(palette, 'dark', scheme_type)
+    theme = dark if mode == 'dark' else _generate_base_theme(palette, mode, scheme_type)
+    theme.update(standout_roles(dark, mode,
                                source=palette[0] if palette else None, scheme_type=scheme_type,
-                               muted_chroma=muted_standout_chroma))
+                               surface=Color.from_hex(theme['surface'])))
     return theme
