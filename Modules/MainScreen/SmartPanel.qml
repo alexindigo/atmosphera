@@ -264,9 +264,6 @@ Item {
       root.buttonItem = null;
     }
 
-    // Set isPanelOpen to trigger content loading, but don't show yet
-    isPanelOpen = true;
-
     // Notify PanelService (only exclusive panels participate in single-slot state).
     // Non-exclusive panels register into a separate slot so MainScreen can still
     // render their background and blur without triggering mutual exclusion.
@@ -276,6 +273,10 @@ Item {
       PanelService.coexistingPanel = root;
       PanelService.assignToSlot(2, root);
     }
+
+    // Request native keyboard ownership before constructing content. Loading
+    // can populate many result delegates; it must not precede the focus request.
+    isPanelOpen = true;
 
     // Position and visibility will be set by Loader.onLoaded
     // This ensures no flicker from default size to content size

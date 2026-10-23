@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+### 2026-10-22
+
+**Fix**
+
+The launcher opens on all installed applications and uses one matching and
+ranking pipeline for names, executable names, keywords, descriptions and generic
+names. Match quality comes before pinning, usage and alphabetical ties. Hidden
+dialogs and settings windows no longer steal launcher keys; committed launches,
+commands, paste and navigation are owned outside the closing launcher. Mouse and
+keyboard share one highlighted selection, and background refreshes retain the
+selected application's identity. Panel focus is requested before content loads,
+and launcher result population waits for native keyboard focus. Keys delivered
+to another application before the launcher acquires focus cannot be recovered.
+
 ### 2026-10-21
 
 **Maintenance**

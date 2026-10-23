@@ -38,6 +38,7 @@ Rectangle {
   property var providers: []
   property var activeProvider: null
   property bool resultsReady: false
+  property bool openReady: false
   property var pluginProviderInstances: ({})
   property bool ignoreMouseHover: true // Transient flag, should always be true on init
 
@@ -169,6 +170,7 @@ Rectangle {
   }
 
   function onOpened() {
+    openReady = false;
     ignoreMouseHover = true;
     globalMouseInitialized = false;
     mouseTrackingReady = false;
@@ -178,17 +180,33 @@ Rectangle {
     resultsReady = true;
     focusSearchInput();
 
-    Qt.callLater(() => {
-      syncPluginProviders();
-      for (let provider of providers) {
-        if (provider.onOpened)
-          provider.onOpened();
-      }
-      updateResults(true);
-    });
+    Qt.callLater(root.prepareOpenResults);
+  }
+
+  // Input is ready before result/model/delegate work. Window activation is
+  // the native focus acknowledgement; a locally focused TextField alone is not.
+  Connections {
+    target: root.Window.window
+    function onActiveChanged() {
+      if (root.Window.active)
+        Qt.callLater(root.prepareOpenResults);
+    }
+  }
+
+  function prepareOpenResults() {
+    if (!isOpen || openReady || !root.Window.active)
+      return;
+    openReady = true;
+    syncPluginProviders();
+    for (let provider of providers) {
+      if (provider.onOpened)
+        provider.onOpened();
+    }
+    updateResults(true);
   }
 
   function onClosed() {
+    openReady = false;
     searchText = "";
     ignoreMouseHover = true;
     if (resultsSwapView)
@@ -293,6 +311,8 @@ Rectangle {
 
   // Search handling
   function updateResults(resetSelection) {
+    if (!isOpen || !openReady)
+      return;
     const previousItem = results[selectedIndex];
     const previousIndex = selectedIndex;
     let nextResults = [];
