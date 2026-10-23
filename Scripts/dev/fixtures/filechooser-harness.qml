@@ -118,7 +118,11 @@ ShellRoot {
                             dropdownsFit: window ? window.dropdownValuesFit() : false,
                             thumbnails: window ? window.thumbnailState() : {},
                             icons: window ? window.iconState() : [],
-                            palette: {primary: AtmoColor.mPrimary.toString(), surface: AtmoColor.mSurface.toString()},
+                            palette: {
+                              primary: AtmoColor.mPrimary.toString(),
+                              standout: AtmoColor.mStandout.toString(),
+                              surface: AtmoColor.mSurface.toString()
+                            },
                             hidden: request ? request.browser.showHidden : false,
                             saveName: request ? request.saveName : "",
                             replace: request ? request.pendingReplace : "",
@@ -130,13 +134,13 @@ ShellRoot {
                             nameSelection: window ? window.nameSelection : [],
                             columnGeometry: window ? window.columnGeometry : {},
                             choiceCenters: window ? window.choiceGeometry() : [],
-                             breadcrumbGaps: window ? window.breadcrumbGeometry() : [],
-                             breadcrumbText: window ? window.breadcrumbText : [],
+                            breadcrumbGaps: window ? window.breadcrumbGeometry() : [],
+                            breadcrumbText: window ? window.breadcrumbText : [],
                             selectionCountVisible: window ? window.selectionCountVisible : false,
                             localeName: Qt.locale().name,
-                             preview: window ? window.quickLookOpen : false,
-                             playback: window ? window.playbackState : {},
-                             transportGeometry: window ? window.transportGeometry() : [],
+                            preview: window ? window.quickLookOpen : false,
+                            playback: window ? window.playbackState : {},
+                            transportGeometry: window ? window.transportGeometry() : [],
                             pathEditing: window ? window.pathEditing : false,
                             kind: window ? window.preview.kind : "",
                             previewStatus: window ? window.preview.status : "",
@@ -186,9 +190,12 @@ ShellRoot {
     function visibleText(): string {
       var texts = [];
       function visit(node) {
-        if (!node.visible) return;
-        if (typeof node.text === "string" && node.text) texts.push(node.text);
-        for (var i = 0; i < node.children.length; ++i) visit(node.children[i]);
+        if (!node.visible)
+          return;
+        if (typeof node.text === "string" && node.text)
+          texts.push(node.text);
+        for (var i = 0; i < node.children.length; ++i)
+          visit(node.children[i]);
       }
       visit(windowLoader.item.contentItem);
       return JSON.stringify(texts);

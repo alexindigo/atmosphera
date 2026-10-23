@@ -20,7 +20,7 @@ function run(types, places, colors, schemes, report, same) {
     same("icons.xdg-not-basename." + key, types.folderKind("/elsewhere/" + key, [], xdg), "ordinary");
   }
   report("icons.xdg-settings", places.xdgFolders.DOCUMENTS && types.folderKind(places.xdgFolders.DOCUMENTS) === "documents", places.xdgFolders);
-  var before = {mPrimary: colors.mPrimary, mSecondary: colors.mSecondary, mTertiary: colors.mTertiary, mError: colors.mError};
+  var before = {mPrimary: colors.mPrimary, mSecondary: colors.mSecondary, mTertiary: colors.mTertiary, mStandout: colors.mStandout, mError: colors.mError};
   colors.skipTransition = true;
   function luminance(c) {
     function lin(v) { return v <= .04045 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); }
@@ -29,6 +29,8 @@ function run(types, places, colors, schemes, report, same) {
   function contrast(a, b) { var x = luminance(a), y = luminance(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); }
   for (var scheme of schemes) {
     for (var role of Object.keys(before)) colors[role] = scheme.colors[role];
+    same("icons.roles.network." + scheme.name, types.networkRole.toString(), colors.mStandout.toString());
+    same("icons.roles.archives." + scheme.name, types.archiveRole.toString(), colors.mStandout.toString());
     for (var group of Object.keys(types.groups)) {
       var faces = [], values = [], minimum = 100;
       for (var type of types.groups[group]) {

@@ -9,6 +9,8 @@
 Every colour scheme now has an editable standout accent and readable on-colour.
 It complements primary and tertiary and keeps the same vivid fill in light and
 dark mode; older and downloaded schemes receive it automatically when loaded.
+Network folders and archive files in the file chooser now use this standout
+colour, keeping their ink outlines in both modes.
 
 ### 2026-10-21
 

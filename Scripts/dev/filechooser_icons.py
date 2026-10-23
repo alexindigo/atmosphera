@@ -55,7 +55,7 @@ def exercise(source, runtime, evidence, command, ipc, state, wait, check, open_r
             scheme = {k: v for k, v in schemes[mode].items() if k.startswith("m")}
             pending = config / "colors.pending"
             pending.write_text(json.dumps(scheme)); pending.replace(config / "colors.json")
-            wait(lambda s: s["palette"]["primary"].lower() == scheme["mPrimary"].lower() and s["palette"]["surface"].lower() == scheme["mSurface"].lower())
+            wait(lambda s: s["palette"]["primary"].lower() == scheme["mPrimary"].lower() and s["palette"]["surface"].lower() == scheme["mSurface"].lower() and s["palette"]["standout"].lower() == scheme["mStandout"].lower())
             time.sleep(.8)
             for view in ("grid", "list"):
                 ipc(view)
@@ -91,7 +91,7 @@ def generate():
     output.mkdir()
     result = subprocess.run(["timeout", "120", "python3", "-B", str(args.source / "Scripts/python/src/theming/template-processor.py"), str(args.mascot_image), "--scheme-type", "tonal-spot"], capture_output=True, text=True, check=True, timeout=130)
     raw = json.loads(result.stdout)
-    mapping = {"mPrimary": "primary", "mOnPrimary": "on_primary", "mSecondary": "secondary", "mOnSecondary": "on_secondary", "mTertiary": "tertiary", "mOnTertiary": "on_tertiary", "mError": "error", "mOnError": "on_error", "mSurface": "surface", "mOnSurface": "on_surface", "mSurfaceVariant": "surface_container", "mOnSurfaceVariant": "on_surface_variant", "mOutline": "outline", "mShadow": "shadow", "mHover": "primary", "mOnHover": "on_primary"}
+    mapping = {"mPrimary": "primary", "mOnPrimary": "on_primary", "mSecondary": "secondary", "mOnSecondary": "on_secondary", "mTertiary": "tertiary", "mOnTertiary": "on_tertiary", "mStandout": "standout", "mOnStandout": "on_standout", "mError": "error", "mOnError": "on_error", "mSurface": "surface", "mOnSurface": "on_surface", "mSurfaceVariant": "surface_container", "mOnSurfaceVariant": "on_surface_variant", "mOutline": "outline", "mShadow": "shadow", "mHover": "primary", "mOnHover": "on_primary"}
     fixture = {"image_sha256": hashlib.sha256(args.mascot_image.read_bytes()).hexdigest(), "source": "approved round-3 file-icons-mascot/reference.png", "method": "product template-processor.py, tonal-spot; AtmoColor template role mapping", "schemes": {mode: {role: colors[key] for role, key in mapping.items()} for mode, colors in raw.items()}}
     (output / "mascot-scheme.json").write_text(json.dumps(fixture, indent=2) + "\n")
     print(json.dumps(fixture, indent=2))

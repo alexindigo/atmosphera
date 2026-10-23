@@ -16,14 +16,13 @@ Singleton {
   property var _mimeParents: ({})
   signal filtersChanged
 
-  // These are the only role assignments. Network and archive can move to
-  // mStandout independently of classification, drawing or tone generation.
+  // Role ownership is independent of classification, drawing and tone generation.
   readonly property color folderRole: AtmoColor.mPrimary
-  readonly property color networkRole: AtmoColor.mSecondary
+  readonly property color networkRole: AtmoColor.mStandout
   readonly property color mediaRole: AtmoColor.mPrimary
   readonly property color textRole: AtmoColor.mSecondary
   readonly property color restRole: AtmoColor.mTertiary
-  readonly property color archiveRole: AtmoColor.mError
+  readonly property color archiveRole: AtmoColor.mStandout
   // The approved light audio mark needs the deeper end of the media tones.
   readonly property var groups: ({media: ["audio", "video", "image"], text: ["text", "markdown", "pdf", "document", "spreadsheet", "presentation", "ebook", "web", "code", "data"], rest: ["executable", "disk", "font", "unknown"], archives: ["zip", "tar", "gzip", "xz", "bzip", "zstd", "sevenzip", "rar", "archive"]})
   readonly property var extensions: ({
