@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import "Helpers/LauncherNavigation.js" as LauncherNav
+import "Helpers/LauncherResults.js" as LauncherResults
 
 import "Providers"
 import qs.Commons
@@ -330,34 +331,23 @@ Rectangle {
     } else {
       // Regular search - let providers contribute results
       let allResults = [];
+      let appResults = [];
+      let otherResults = [];
       for (let provider of providers) {
         if (provider.handleSearch) {
           const providerResults = provider.getResults(searchText);
           allResults = allResults.concat(providerResults);
+          if (provider === defaultProvider)
+            appResults = providerResults;
+          else
+            otherResults = otherResults.concat(providerResults);
         }
       }
 
-      // Sort by _score (higher = better match), items without _score go first
+      // Apps arrive fully ranked. Merge by match bucket with the other
+      // providers' existing scores; never apply a second app/usage sort.
       if (searchText.trim() !== "") {
-        const boostByUsage = Settings.data.appLauncher.sortByMostUsed;
-
-        allResults.sort((a, b) => {
-          let sa = a._score !== undefined ? a._score : 0;
-          let sb = b._score !== undefined ? b._score : 0;
-
-          // Boost scores for frequently used items from tracked providers
-          // _score is normalized 0–1, so boost is scaled to nudge, not overwhelm
-          if (boostByUsage) {
-            if (a.provider && a.provider.trackUsage && a.usageKey) {
-              sa += 0.1 * Math.log2(1 + ShellState.getLauncherUsageCount(a.usageKey));
-            }
-            if (b.provider && b.provider.trackUsage && b.usageKey) {
-              sb += 0.1 * Math.log2(1 + ShellState.getLauncherUsageCount(b.usageKey));
-            }
-          }
-
-          return sb - sa;
-        });
+        allResults = LauncherResults.merge(appResults, otherResults, Settings.data.appLauncher.sortByMostUsed ? key => ShellState.getLauncherUsageCount(key) : null);
       }
       results = allResults;
     }
