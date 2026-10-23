@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Widgets
 import "Helpers/LauncherNavigation.js" as LauncherNav
 import "Helpers/LauncherResults.js" as LauncherResults
+import "Helpers/LauncherSelection.js" as LauncherSelection
 
 import "Providers"
 import qs.Commons
@@ -163,7 +164,7 @@ Rectangle {
 
   onSearchTextChanged: {
     if (isOpen) {
-      updateResults();
+      updateResults(true);
     }
   }
 
@@ -183,7 +184,7 @@ Rectangle {
         if (provider.onOpened)
           provider.onOpened();
       }
-      updateResults();
+      updateResults(true);
     });
   }
 
@@ -291,8 +292,10 @@ Rectangle {
   }
 
   // Search handling
-  function updateResults() {
-    results = [];
+  function updateResults(resetSelection) {
+    const previousItem = results[selectedIndex];
+    const previousIndex = selectedIndex;
+    let nextResults = [];
     var newActiveProvider = null;
 
     // Check for command mode
@@ -300,7 +303,7 @@ Rectangle {
       for (let provider of providers) {
         if (provider.handleCommand && provider.handleCommand(searchText)) {
           newActiveProvider = provider;
-          results = provider.getResults(searchText);
+          nextResults = provider.getResults(searchText);
           break;
         }
       }
@@ -313,7 +316,7 @@ Rectangle {
             allCommands = allCommands.concat(provider.commands());
         }
         if (searchText === ">") {
-          results = allCommands;
+          nextResults = allCommands;
         } else if (searchText.length > 1) {
           const query = searchText.substring(1);
           if (typeof FuzzySort !== 'undefined') {
@@ -321,10 +324,10 @@ Rectangle {
                                                 "keys": ["name"],
                                                 "limit": 50
                                               });
-            results = fuzzyResults.map(result => result.obj);
+            nextResults = fuzzyResults.map(result => result.obj);
           } else {
             const queryLower = query.toLowerCase();
-            results = allCommands.filter(cmd => (cmd.name || "").toLowerCase().includes(queryLower));
+            nextResults = allCommands.filter(cmd => (cmd.name || "").toLowerCase().includes(queryLower));
           }
         }
       }
@@ -349,12 +352,35 @@ Rectangle {
       if (searchText.trim() !== "") {
         allResults = LauncherResults.merge(appResults, otherResults, Settings.data.appLauncher.sortByMostUsed ? key => ShellState.getLauncherUsageCount(key) : null);
       }
-      results = allResults;
+      nextResults = allResults;
     }
 
     // Update activeProvider only after computing new state to avoid UI flicker
     activeProvider = newActiveProvider;
-    selectedIndex = 0;
+    results = nextResults;
+    selectedIndex = LauncherSelection.afterRefresh(nextResults, previousItem, previousIndex, !!resetSelection);
+  }
+
+  function selectFromPointer(index) {
+    if (!ignoreMouseHover && mouseTrackingReady && index >= 0 && index < results.length)
+      selectedIndex = index;
+  }
+
+  function trackPointer(index, point) {
+    if (!mouseTrackingReady)
+      return;
+    if (!globalMouseInitialized) {
+      globalLastMouseX = point.x;
+      globalLastMouseY = point.y;
+      globalMouseInitialized = true;
+      return;
+    }
+    if (Math.abs(point.x - globalLastMouseX) + Math.abs(point.y - globalLastMouseY) >= 5) {
+      ignoreMouseHover = false;
+      globalLastMouseX = point.x;
+      globalLastMouseY = point.y;
+      selectFromPointer(index);
+    }
   }
 
   // Navigation functions (delegated to LauncherNavigation.js)
@@ -425,6 +451,8 @@ Rectangle {
 
   // Keyboard handler
   function handleKeyPress(event) {
+    ignoreMouseHover = true;
+    globalMouseInitialized = false;
     if (checkKey(event, 'escape')) {
       close();
       event.accepted = true;
@@ -592,38 +620,27 @@ Rectangle {
 
   // ==================== UI Content ====================
 
+  // One movement owner across both views, including movement within a row
+  // already hovered when keyboard navigation took over. The view exposes its
+  // public content-coordinate hit test; delegates never own a second selection.
+  HoverHandler {
+    enabled: !Settings.data.appLauncher.ignoreMouseInput
+    onPointChanged: {
+      const view = root.resultsView;
+      if (!view || !view.indexAt)
+        return;
+      const local = root.mapToItem(view, point.position.x, point.position.y);
+      const index = local.x >= 0 && local.y >= 0 && local.x < view.width && local.y < view.height ? view.indexAt(local.x + view.contentX, local.y + view.contentY) : -1;
+      root.trackPointer(index, point.position);
+    }
+  }
+
   opacity: resultsReady ? 1.0 : 0.0
 
   Behavior on opacity {
     NumberAnimation {
       duration: Style.animationFast
       easing.type: Easing.OutCirc
-    }
-  }
-
-  HoverHandler {
-    id: globalHoverHandler
-    enabled: !Settings.data.appLauncher.ignoreMouseInput
-
-    onPointChanged: {
-      if (!root.mouseTrackingReady) {
-        return;
-      }
-
-      if (!root.globalMouseInitialized) {
-        root.globalLastMouseX = point.position.x;
-        root.globalLastMouseY = point.position.y;
-        root.globalMouseInitialized = true;
-        return;
-      }
-
-      const deltaX = Math.abs(point.position.x - root.globalLastMouseX);
-      const deltaY = Math.abs(point.position.y - root.globalLastMouseY);
-      if (deltaX + deltaY >= 5) {
-        root.ignoreMouseHover = false;
-        root.globalLastMouseX = point.position.x;
-        root.globalLastMouseY = point.position.y;
-      }
     }
   }
 
@@ -738,7 +755,11 @@ Rectangle {
             positionViewAtIndex(currentIndex, ListView.Contain);
           }
         }
-        onModelChanged: {}
+        onModelChanged: Qt.callLater(revealSelection)
+        function revealSelection() {
+          cancelFlick();
+          positionViewAtIndex(root.selectedIndex, ListView.Contain);
+        }
 
         delegate: LauncherListDelegate {
           launcher: root
@@ -835,6 +856,11 @@ Rectangle {
         bottomMargin: 0
         model: root.results
         cacheBuffer: resultsGrid.height * 2
+        onModelChanged: Qt.callLater(revealSelection)
+        function revealSelection() {
+          cancelFlick();
+          positionViewAtIndex(root.selectedIndex, GridView.Contain);
+        }
         keyNavigationEnabled: false
         focus: false
         interactive: !Settings.data.appLauncher.ignoreMouseInput

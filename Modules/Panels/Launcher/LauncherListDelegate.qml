@@ -13,7 +13,7 @@ NBox {
   required property int index
   required property var launcher
 
-  property bool isSelected: (!launcher.ignoreMouseHover && mouseArea.containsMouse) || (index === launcher.selectedIndex)
+  readonly property bool isSelected: index === launcher.selectedIndex
 
   width: ListView.view.width
   implicitHeight: launcher.entryHeight
@@ -277,11 +277,6 @@ NBox {
     hoverEnabled: true
     cursorShape: Qt.PointingHandCursor
     enabled: !Settings.data.appLauncher.ignoreMouseInput
-    onEntered: {
-      if (!launcher.ignoreMouseHover) {
-        launcher.selectedIndex = entry.index;
-      }
-    }
     onClicked: mouse => {
       if (mouse.button === Qt.LeftButton) {
         launcher.selectedIndex = entry.index;
