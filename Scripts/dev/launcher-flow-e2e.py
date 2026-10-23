@@ -58,6 +58,12 @@ PROBE = r'''
 '''
 
 
+class KnownTypeaheadLimit(AssertionError):
+    def __init__(self, details):
+        self.details = details
+        super().__init__('Known zero-delay shortcut-to-focus handoff limit')
+
+
 def command(argv, seconds=10, check=True):
     return subprocess.run(['timeout', '--kill-after=3', str(seconds), *map(str, argv)],
                           env=os.environ, capture_output=True, text=True,
@@ -210,13 +216,20 @@ def run(label):
     def selected(state):
         return state['results'][state['index']]['id']
 
-    def case(name, body):
+    def case(name, body, known_limit=False):
         try:
             details = body()
-            status = 'PASS'
+            status = 'XPASS' if known_limit else 'PASS'
+        except KnownTypeaheadLimit as error:
+            if not known_limit:
+                raise
+            details = {**error.details, 'reason': str(error)}
+            status = 'XFAIL'
         except (AssertionError, subprocess.SubprocessError) as error:
             details = {'error': str(error)}
             status = 'FAIL'
+        if known_limit:
+            details['expected_known_limit'] = 'Zero-delay input may reach the previously focused window'
         details['final'] = evidence(name)
         record['cases'].append({'name': name, 'status': status, **details})
         (output / 'result.json').write_text(json.dumps(record, indent=2))
@@ -229,17 +242,39 @@ def run(label):
         assert selected(state) == APP, state
         return {'observed': state}
 
-    def typeahead():
+    def typeahead(delay_ms=0):
         closed()
-        # Single uinput invocation, zero inter-key delay, no IPC readiness wait:
-        # Super+Space release immediately followed by the evdev "alpha" keys.
         codes = [30, 38, 25, 35, 30]
-        keys(*SHORTCUT, *[s for c in codes for s in (f'{c}:1', f'{c}:0')])
+        text_keys = [s for c in codes for s in (f'{c}:1', f'{c}:0')]
+        actual_delay_ms = None
+        if delay_ms:
+            keys(*SHORTCUT)
+            shortcut_completed = time.monotonic_ns()
+            # No IPC/readiness wait between the shortcut and required input.
+            time.sleep(delay_ms / 1000)
+            actual_delay_ms = (time.monotonic_ns() - shortcut_completed) / 1e6
+            keys(*text_keys)
+        else:
+            # Preserve the original single zero-delay uinput invocation.
+            keys(*SHORTCUT, *text_keys)
         wait(lambda: snapshot()['open'])
         time.sleep(.25)
         state = snapshot()
-        assert state['query'] == 'alpha', state
-        return {'observed': state, 'injected': 'alpha', 'inter_key_delay_ms': 0}
+        assert state['focused'] and state['focused']['activeFocus'], state
+        assert state['focused']['text'] == state['query'], state
+        details = {'observed': state, 'injected': 'alpha', 'inter_key_delay_ms': 0,
+                   'requested_post_shortcut_delay_ms': delay_ms,
+                   'measured_post_shortcut_delay_ms': actual_delay_ms}
+        if state['query'] != 'alpha':
+            # User-approved contract: ~/Documents/atmosphera/plans/launcher-keyboard/design.md §5.2
+            # (2026-10-22), with follow-up in
+            # ~/Documents/sputnik/todos/launcher-zero-delay-typeahead.md.
+            # Only zero-delay text loss is expected; opening/focus/IPC failures
+            # above and any loss in the required 40 ms case remain failures.
+            if delay_ms == 0:
+                raise KnownTypeaheadLimit(details)
+            raise AssertionError(details)
+        return details
 
     def launch(filtered):
         state = opened()
@@ -293,7 +328,8 @@ def run(label):
         return {'before': before, 'after': after}
 
     case('shortcut-focus-top', initial)
-    case('immediate-typeahead', typeahead)
+    case('immediate-typeahead', typeahead, known_limit=True)
+    case('typeahead-after-40ms', lambda: typeahead(40))
     case('shortcut-enter-window', lambda: launch(False))
     case('filter-enter-window', lambda: launch(True))
     case('up-down-wrap', navigation)
@@ -301,7 +337,7 @@ def run(label):
     case('background-refresh-identity', refresh)
     closed()
     desktop('alpha')
-    record['passed'] = all(c['status'] == 'PASS' for c in record['cases'])
+    record['passed'] = all(c['status'] in ('PASS', 'XFAIL', 'XPASS') for c in record['cases'])
     (output / 'result.json').write_text(json.dumps(record, indent=2))
     print(json.dumps({c['name']: c['status'] for c in record['cases']}, indent=2))
     return 0 if record['passed'] else 1
