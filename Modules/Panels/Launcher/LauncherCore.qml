@@ -409,10 +409,8 @@ Rectangle {
       if (Settings.data.appLauncher.autoPasteClipboard && provider && provider.supportsAutoPaste && item.autoPasteText) {
         if (item.onAutoPaste)
           item.onAutoPaste();
+        LauncherActionService.pasteText(item.autoPasteText);
         closeImmediately();
-        Qt.callLater(() => {
-          ClipboardService.pasteText(item.autoPasteText);
-        });
         return;
       }
 

@@ -150,12 +150,9 @@ Item {
 
   function createActivateHandler(entry) {
     return function () {
+      LauncherActionService.openSettings(entry, launcher ? launcher.screen : null);
       if (launcher)
         launcher.close();
-
-      Qt.callLater(() => {
-        SettingsPanelService.openToEntry(entry, launcher.screen);
-      });
     };
   }
 }

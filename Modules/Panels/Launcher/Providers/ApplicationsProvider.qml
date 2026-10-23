@@ -4,6 +4,7 @@ import "../Helpers/ApplicationRanking.js" as ApplicationRanking
 import qs.Commons
 import qs.Services.Compositor
 import qs.Services.System
+import qs.Services.UI
 
 Item {
   id: root
@@ -420,66 +421,8 @@ Item {
       "_score": (score !== undefined ? score : 0),
       "provider": root,
       "onActivate": function () {
-        // Close the launcher/SmartPanel immediately without any animations.
-        // Ensures we are not preventing the future focusing of the app
+        LauncherActionService.launchApplication(app);
         launcher.closeImmediately();
-
-        // Defer execution to next event loop iteration to ensure panel is fully closed
-        Qt.callLater(() => {
-          Logger.d("ApplicationsProvider", `Launching: ${app.name} (App ID: ${app.id || "unknown"})`);
-
-          const execString = (app.exec !== undefined && app.exec !== null) ? String(app.exec) : "";
-          const commandArgs = Array.isArray(app.command) ? app.command : (app.command && app.command.length !== undefined) ? Array.from(app.command) : [];
-          let hasQuotedArgs = execString.includes("\"") || execString.includes("'");
-          let hasSpaceArgs = false;
-          if (!hasQuotedArgs) {
-            hasQuotedArgs = commandArgs.some(arg => {
-              const text = String(arg);
-              return text.includes("\"") || text.includes("'");
-            });
-          }
-          if (!hasSpaceArgs) {
-            hasSpaceArgs = commandArgs.some(arg => String(arg).includes(" "));
-          }
-          if (app.execute && (hasQuotedArgs || hasSpaceArgs)) {
-            Logger.d("ApplicationsProvider", `Detected quoted/space arguments in Exec for ${app.name}, using app.execute()`);
-            app.execute();
-            return;
-          }
-
-          if (Settings.data.appLauncher.customLaunchPrefixEnabled && Settings.data.appLauncher.customLaunchPrefix.trim() !== "") {
-            // Use custom launch prefix
-            const prefix = Settings.data.appLauncher.customLaunchPrefix.trim().split(" ");
-            Logger.d("ApplicationsProvider", `Using custom launch prefix: ${Settings.data.appLauncher.customLaunchPrefix.trim()}`);
-
-            if (app.runInTerminal && Settings.data.appLauncher.terminalCommand.trim() !== "") {
-              const terminal = Settings.data.appLauncher.terminalCommand.trim().split(" ");
-              const command = prefix.concat(terminal.concat(app.command));
-              Logger.d("ApplicationsProvider", `Executing command (with prefix and terminal): ${command.join(" ")}`);
-              Quickshell.execDetached(command);
-            } else {
-              const command = prefix.concat(app.command);
-              Logger.d("ApplicationsProvider", `Executing command (with prefix): ${command.join(" ")}`);
-              Quickshell.execDetached(command);
-            }
-          } else {
-            if (app.runInTerminal && Settings.data.appLauncher.terminalCommand.trim() !== "") {
-              Logger.d("ApplicationsProvider", "Executing terminal app manually: " + app.name);
-              const terminal = Settings.data.appLauncher.terminalCommand.trim().split(" ");
-              const command = terminal.concat(app.command);
-              Logger.d("ApplicationsProvider", "Executing command (manual terminal): " + command.join(" "));
-              CompositorService.spawn(command);
-            } else if (app.command && app.command.length > 0) {
-              Logger.d("ApplicationsProvider", "Executing command: " + app.command.join(" "));
-              CompositorService.spawn(app.command);
-            } else if (app.execute) {
-              Logger.d("ApplicationsProvider", "Calling app.execute() for: " + app.name);
-              app.execute();
-            } else {
-              Logger.w("ApplicationsProvider", `Could not launch: ${app.name}. No valid launch method.`);
-            }
-          }
-        });
       }
     };
   }
