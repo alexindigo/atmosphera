@@ -310,6 +310,9 @@ Item {
 
   GridView {
     id: gridView
+    NInputGuard {
+      target: gridView
+    }
     anchors.fill: parent
     anchors.rightMargin: root.reserveScrollbarSpace ? root.handleWidth + Style.marginXS : 0
 

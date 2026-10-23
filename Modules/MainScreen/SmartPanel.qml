@@ -118,6 +118,9 @@ Item {
 
   property bool exclusiveKeyboard: true
 
+  // Closing and coexisting panels must not retain focus-based key handlers.
+  readonly property bool keyboardActive: isPanelOpen && !isClosing && (exclusiveOpen ? PanelService.openedPanel === root : PanelService.coexistingPanel === root)
+
   // Keyboard event handler
   // These are called from MainScreen's centralized shortcuts
   // override these in specific panels to handle shortcuts
@@ -1368,6 +1371,7 @@ Item {
     Loader {
       id: contentLoader
       active: isPanelOpen
+      enabled: root.keyboardActive
       x: panelBackground.x
       y: panelBackground.y
       width: panelBackground.width

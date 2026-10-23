@@ -81,12 +81,14 @@ PanelWindow {
     }
   }
 
-  Shortcut {
+  NScopedShortcut {
+    scope: root.contentItem
     sequence: "Return"
     onActivated: okBtn.clicked()
   }
 
-  Shortcut {
+  NScopedShortcut {
+    scope: root.contentItem
     sequence: "Escape"
     onActivated: root.visible = false
   }

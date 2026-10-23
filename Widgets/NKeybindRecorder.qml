@@ -215,6 +215,10 @@ Item {
     // Hidden Item to capture keys
     Item {
       id: keybindInput
+      NInputGuard {
+        target: keybindInput
+        active: root.recordingIndex !== -1 && !root.hasConflict
+      }
       width: 0
       height: 0
       focus: true

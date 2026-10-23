@@ -200,6 +200,10 @@ PopupWindow {
   }
 
   Item {
+    id: escapeScope
+    NInputGuard {
+      target: escapeScope
+    }
     anchors.fill: parent
     focus: true
     Keys.onEscapePressed: root.close()

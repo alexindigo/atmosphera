@@ -643,6 +643,10 @@ Rectangle {
 
       NTextInput {
         id: searchInput
+        NInputGuard {
+          target: searchInput.inputItem
+          focusOnActivation: true
+        }
         Layout.fillWidth: true
         radius: Style.iRadiusM
         text: root.searchText
