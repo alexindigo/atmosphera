@@ -208,9 +208,13 @@ Item {
         }
       }
 
+      // Rows and focus first, then notify (CompositorService contract)
+      const focusChanged = focused !== backend.focusedWindowId;
       backend.windows = windows;
+      backend.focusedWindowId = focused;
       backend.windowListChanged();
-      internal.setFocus(focused);
+      if (focusChanged)
+        backend.activeWindowChanged();
     }
 
     function getWindowId(client) {

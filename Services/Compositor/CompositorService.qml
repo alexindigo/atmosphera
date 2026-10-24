@@ -31,8 +31,25 @@ Singleton {
   // maintained from its own focus events. Every focus view below — the row's
   // isFocused, focusedWindowIndex, getFocusedWindow() — is derived from that
   // one id here, never kept as separate state that could disagree.
-  property var focusedWindowId: null
-  property int focusedWindowIndex: -1
+  //
+  // Publication contract: a backend assigns a new `windows` array for every
+  // list change and its `focusedWindowId` before emitting windowListChanged
+  // or activeWindowChanged, in either order. On any of them the facade
+  // reconciles the whole snapshot — rows, row flags, then one focus snapshot
+  // the getters read — and only then notifies. A focus the window list does
+  // not contain yet is published as none until the list catches up.
+  readonly property int focusedWindowIndex: _focus.index
+  // Declared after the index and bound to it as well: Qt notifies dependents
+  // in connection order, so a changed index updates this id before any
+  // consumer handler of either property runs; neither is ever seen stale.
+  readonly property var focusedWindowId: focusIdAt(focusedWindowIndex)
+  property var _focus: ({
+                          "id": null,
+                          "index": -1,
+                          "window": null,
+                          "title": ""
+                        })
+  property var _publishedWindows: null
 
   // Display scale data
   property var displayScales: ({})
@@ -247,16 +264,9 @@ Singleton {
       workspaceChanged();
     });
 
-    backend.activeWindowChanged.connect(() => {
-      // Only sync focus state, not entire window list
-      syncFocusedWindow();
-      // Forward the signal
-      activeWindowChanged();
-    });
-
-    backend.windowListChanged.connect(() => {
-      syncWindows();
-    });
+    // Either notification may arrive first; each reconciles the full snapshot.
+    backend.activeWindowChanged.connect(() => reconcileWindows());
+    backend.windowListChanged.connect(() => reconcileWindows());
 
     // Overview state (Niri-specific)
     if (backend.overviewActiveChanged) {
@@ -267,7 +277,7 @@ Singleton {
 
     // Initial sync
     syncWorkspaces();
-    syncWindows();
+    reconcileWindows();
     if (backend.overviewActive !== undefined) {
       overviewActive = backend.overviewActive;
     }
@@ -286,50 +296,66 @@ Singleton {
     workspacesChanged();
   }
 
-  function syncWindows() {
-    const focusedId = backendFocusedWindowId();
-    windows.clear();
-    const ws = backend.windows;
-    for (var i = 0; i < ws.length; i++) {
-      windows.append(Object.assign({}, ws[i], {
-                                     "isFocused": ws[i].id === focusedId
-                                   }));
-    }
-    publishFocus(focusedId);
-    // Emit signal to notify listeners that window list has been updated
-    windowListChanged();
-  }
-
-  // Sync only the focused window state, not the entire window list
-  function syncFocusedWindow() {
-    const focusedId = backendFocusedWindowId();
-    for (var i = 0; i < windows.count; i++) {
-      const focused = windows.get(i).id === focusedId;
-      if (windows.get(i).isFocused !== focused) {
-        windows.setProperty(i, "isFocused", focused);
-      }
-    }
-    publishFocus(focusedId);
-  }
-
-  function backendFocusedWindowId() {
-    const id = backend ? backend.focusedWindowId : null;
-    return id === undefined || id === "" ? null : id;
-  }
-
-  // The index is a view of the id over the current list, located by id.
-  function publishFocus(focusedId) {
+  function reconcileWindows() {
+    if (!backend)
+      return;
+    const rows = backend.windows || [];
+    const reported = backendFocusedWindowId();
     let index = -1;
-    if (focusedId !== null) {
-      for (var i = 0; i < windows.count; i++) {
-        if (windows.get(i).id === focusedId) {
+    if (reported !== null) {
+      for (var i = 0; i < rows.length; i++) {
+        if (rows[i].id === reported) {
           index = i;
           break;
         }
       }
     }
-    focusedWindowId = focusedId;
-    focusedWindowIndex = index;
+    const id = index >= 0 ? reported : null;
+
+    const listChanged = rows !== _publishedWindows;
+    if (listChanged) {
+      _publishedWindows = rows;
+      windows.clear();
+      if (rows.length > 0)
+        windows.append(rows.map(row => Object.assign({}, row, {
+                                                       "isFocused": row.id === id
+                                                     })));
+    } else {
+      for (var j = 0; j < windows.count; j++) {
+        const focused = j === index;
+        if (windows.get(j).isFocused !== focused)
+          windows.setProperty(j, "isFocused", focused);
+      }
+    }
+
+    const window = index >= 0 ? Object.assign({}, rows[index], {
+                                                "isFocused": true
+                                              }) : null;
+    const title = window && window.title !== undefined && window.title !== null ? String(window.title).replace(/(\r\n|\n|\r)/g, "") : "";
+    const focusChanged = id !== _focus.id || index !== _focus.index || title !== _focus.title || (window ? window.appId : undefined) !== (_focus.window ? _focus.window.appId : undefined);
+    if (listChanged || focusChanged) {
+      _focus = {
+        "id": id,
+        "index": index,
+        "window": window,
+        "title": title
+      };
+    }
+
+    // Notify only once every view above describes the same state.
+    if (listChanged)
+      windowListChanged();
+    if (focusChanged)
+      activeWindowChanged();
+  }
+
+  function focusIdAt(index) {
+    return _focus.index === index ? _focus.id : null;
+  }
+
+  function backendFocusedWindowId() {
+    const id = backend ? backend.focusedWindowId : null;
+    return id === undefined || id === "" ? null : id;
   }
 
   // Update display scales from backend
@@ -375,15 +401,9 @@ Singleton {
     return displayScales[displayName];
   }
 
-  // Get focused window: only ever the row of focusedWindowId, also while
-  // the list is being rebuilt.
+  // Focused window record from the published focus snapshot, or null
   function getFocusedWindow() {
-    if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.count) {
-      const window = windows.get(focusedWindowIndex);
-      if (window.id === focusedWindowId)
-        return window;
-    }
-    return null;
+    return _focus.window;
   }
 
   // Get focused screen from compositor
@@ -396,15 +416,7 @@ Singleton {
 
   // Get focused window title
   function getFocusedWindowTitle() {
-    const window = getFocusedWindow();
-    if (window) {
-      var title = window.title;
-      if (title !== undefined) {
-        title = title.replace(/(\r\n|\n|\r)/g, "");
-      }
-      return title || "";
-    }
-    return "";
+    return _focus.title;
   }
 
   // Get clean app name from appId

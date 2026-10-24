@@ -5,6 +5,11 @@ Runs on the assigned launcher VM console with the guest-only probe. Every step
 compares niri's own focused window with each shell view that consumers read:
 CompositorService.focusedWindowId, getFocusedWindow(), the focused title and
 each window row's isFocused flag (exactly one row, the native one).
+
+The probe also records every facade notification synchronously inside its
+callback (windowListChanged, activeWindowChanged, focus property changes, a
+title binding): each record must be coherent, and a newly opened (focused)
+window must never be published as present but unfocused.
 """
 import argparse
 import importlib.util
@@ -67,6 +72,10 @@ def main():
         flow.command(['niri', 'msg', 'action', 'focus-window', '--id', str(window['id'])])
         flow.wait(lambda: native()[window['id']]['is_focused'] and state(name)['active'], 10)
 
+    def workspace(direction, focused):
+        flow.command(['niri', 'msg', 'action', 'focus-workspace-' + direction])
+        flow.wait(lambda: any(w['is_focused'] for w in native().values()) == focused, 10)
+
     def agreement():
         windows = native()
         focused = [w for w in windows.values() if w['is_focused']]
@@ -85,9 +94,10 @@ def main():
         return dict(native_focused=expected and dict(id=expected['id'], title=expected['title']),
                     shell=shell, checks=checks, agrees=all(checks.values()))
 
-    def step(name, action):
+    def step(name, action, opened=None):
         row = dict(name=name)
         try:
+            keys.ipc('takeFocusNotifications')
             action()
             latest = None
             def agrees():
@@ -98,26 +108,36 @@ def main():
                 flow.wait(agrees, 5)
             except AssertionError:
                 pass
-            row.update(latest, passed=latest['agrees'])
+            notifications = json.loads(keys.ipc('takeFocusNotifications'))
+            incoherent = [n for n in notifications if not n['coherent']]
+            title = 'Focus ' + opened if opened else None
+            unfocused_new = [n for n in notifications if title and any(r['title'] == title and not r['isFocused'] for r in n['rows'])]
+            row.update(latest, notifications=notifications, incoherent_notifications=len(incoherent),
+                       opened_published_unfocused=len(unfocused_new),
+                       passed=latest['agrees'] and not incoherent and not unfocused_new)
         except Exception as error:
             row.update(passed=False, error=repr(error), traceback=traceback.format_exc())
         cases.append(row)
         (output / 'result.json').write_text(json.dumps(dict(complete=False, cases=cases), indent=2, ensure_ascii=False))
-        print(name, 'PASS' if row['passed'] else 'FAIL', json.dumps(row.get('checks', row.get('error'))), flush=True)
+        print(name, 'PASS' if row['passed'] else 'FAIL', json.dumps(row.get('checks', row.get('error'))),
+              'incoherent', row.get('incoherent_notifications'), 'opened-unfocused', row.get('opened_published_unfocused'),
+              sorted({n['signal'] for n in row.get('notifications', []) if not n['coherent']}), flush=True)
 
     try:
         assert not flow.windows(), 'Preserve unexpected windows; run on an empty console desktop'
         keys.closed()
         step('initial-no-window', lambda: None)
-        step('open-a', lambda: open_window('A'))
-        step('open-b-while-a-focused', lambda: open_window('B'))
-        step('open-c-while-b-focused', lambda: open_window('C'))
+        step('open-a', lambda: open_window('A'), 'A')
+        step('open-b-while-a-focused', lambda: open_window('B'), 'B')
+        step('open-c-while-b-focused', lambda: open_window('C'), 'C')
         step('focus-a', lambda: focus_window('A'))
         step('focus-already-focused-a', lambda: focus_window('A'))
         step('close-other-b', lambda: close_window('B'))
         step('focus-c', lambda: focus_window('C'))
+        step('focus-none-empty-workspace', lambda: workspace('down', False))
+        step('return-to-workspace', lambda: workspace('up', True))
         step('close-other-a', lambda: close_window('A'))
-        step('open-d-while-c-focused', lambda: open_window('D'))
+        step('open-d-while-c-focused', lambda: open_window('D'), 'D')
         step('close-focused-d', lambda: close_window('D'))
         step('close-last-c', lambda: close_window('C'))
     finally:
@@ -128,7 +148,7 @@ def main():
         for log in logs:
             log.close()
     owner = all('focused_window_id' in c.get('checks', {}) for c in cases)
-    result = dict(passed=len(cases) == 12 and owner and all(c['passed'] for c in cases), complete=len(cases) == 12,
+    result = dict(passed=len(cases) == 14 and owner and all(c['passed'] for c in cases), complete=len(cases) == 14,
                   focused_window_id_published=owner, cases=cases)
     (output / 'result.json').write_text(json.dumps(result, indent=2, ensure_ascii=False))
     return 0 if result['passed'] else 1

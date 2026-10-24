@@ -12,8 +12,10 @@ as focused, so the bar title, taskbar highlight and launcher paste destination
 follow the new window. All compositor backends report focus as a stable window
 id; labwc and generic ext-workspace window ids no longer shift when another
 window closes, sway windows gain ids, and mangowc window and focus updates are
-no longer frozen at startup. A launcher paste whose destination closed is only
-copied, never pasted into another window.
+no longer frozen at startup. Window list, focused window and bar title are
+published together, so no update shows one without the other. A launcher
+paste whose destination closed is only copied, never pasted into another
+window.
 
 ### 2026-10-23
 

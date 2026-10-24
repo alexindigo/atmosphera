@@ -42,6 +42,49 @@ Item {
   }
   property var pasteEvents: []
 
+  // Every facade focus notification, recorded synchronously inside its own
+  // callback: what any consumer could read at that moment.
+  property var focusNotifications: []
+  readonly property string boundFocusTitle: CompositorService.getFocusedWindowTitle()
+  function focusView(signalName) {
+    const focused = CompositorService.getFocusedWindow();
+    const rows = [];
+    for (let i = 0; i < CompositorService.windows.count; i++) {
+      const row = CompositorService.windows.get(i);
+      rows.push({id: row.id, title: row.title, isFocused: row.isFocused, nativeId: row.handle && row.handle.id !== undefined ? row.handle.id : row.id});
+    }
+    const id = CompositorService.focusedWindowId === undefined ? "absent" : CompositorService.focusedWindowId;
+    const index = CompositorService.focusedWindowIndex;
+    const atIndex = index >= 0 && index < rows.length ? rows[index] : null;
+    const title = CompositorService.getFocusedWindowTitle();
+    const flagged = rows.filter(row => row.isFocused).map(row => row.id);
+    const expected = atIndex ? atIndex.id : null;
+    const checks = {
+      index_names_id: id === "absent" || id === expected,
+      getter: (focused ? focused.id : null) === expected,
+      getter_title: !focused || String(focused.title).replace(/(\r\n|\n|\r)/g, "") === title,
+      title: title === (atIndex ? String(atIndex.title).replace(/(\r\n|\n|\r)/g, "") : ""),
+      // A consumer binding is current once the facade signals; inside a
+      // property-change handler other bindings may still be pending.
+      bound_title: (signalName !== "windowListChanged" && signalName !== "activeWindowChanged") || boundFocusTitle === title,
+      one_flagged_row: JSON.stringify(flagged) === JSON.stringify(expected === null ? [] : [expected])
+    };
+    return {signal: signalName, at: Date.now(), focusedWindowId: id, focusedWindowIndex: index,
+      focused: focused ? {id: focused.id, title: focused.title} : null, title: title, boundTitle: boundFocusTitle,
+      rows: rows, checks: checks, coherent: Object.keys(checks).every(key => checks[key])};
+  }
+  function recordFocus(signalName) {
+    focusNotifications.push(focusView(signalName));
+  }
+  onBoundFocusTitleChanged: recordFocus("boundTitle")
+  Connections {
+    target: CompositorService
+    function onWindowListChanged() { probe.recordFocus("windowListChanged"); }
+    function onActiveWindowChanged() { probe.recordFocus("activeWindowChanged"); }
+    function onFocusedWindowIdChanged() { probe.recordFocus("focusedWindowIdChanged"); }
+    function onFocusedWindowIndexChanged() { probe.recordFocus("focusedWindowIndexChanged"); }
+  }
+
   Connections {
     target: probe.liveCore ? probe.liveCore.Window.window : null
     function onActiveChanged() {
@@ -309,6 +352,16 @@ Item {
                               applicationState: Qt.application.state,
                               overlayCoreAlive: !!PanelService.overlayLauncherCore
                             });
+    }
+    // The same view as a notification record, read now.
+    function focusNow(): string {
+      return JSON.stringify(probe.focusView("now"));
+    }
+    // Notifications since the previous call, then cleared.
+    function takeFocusNotifications(): string {
+      const records = probe.focusNotifications;
+      probe.focusNotifications = [];
+      return JSON.stringify(records);
     }
     // Every shell view of the focused window, as its consumers read it.
     function focusIdentity(): string {

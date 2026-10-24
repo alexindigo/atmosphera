@@ -157,11 +157,11 @@ Item {
       }
     }
 
-    for (let i = 0; i < windows.length; i++) {
-      if (activeId) {
-        windows[i].workspaceId = activeId;
-      }
-    }
+    // A new array: CompositorService republishes the list on a new identity
+    if (activeId)
+      windows = windows.map(window => Object.assign({}, window, {
+                                                      "workspaceId": activeId
+                                                    }));
     windowListChanged();
   }
 
