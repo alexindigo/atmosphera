@@ -20,7 +20,7 @@ Item {
 
   // Category support
   property string selectedCategory: "all"
-  property bool showsCategories: true // Default to showing categories
+  readonly property bool showsCategories: true
   property var categories: ["all", "Pinned", "AudioVideo", "Chat", "Development", "Education", "Game", "Graphics", "Network", "Office", "System", "Misc", "WebBrowser"]
   property var availableCategories: ["all"] // Reactive property for available categories
 
@@ -70,8 +70,6 @@ Item {
     // Just update available categories in case pinned apps changed
     updateAvailableCategories();
     selectedCategory = "all";
-    // Set category mode initially (will be updated when getResults is called)
-    showsCategories = true;
   }
 
   // A scan may update existing DesktopEntry objects without changing model
@@ -387,10 +385,6 @@ Item {
   function getResults(query) {
     if (!entries || entries.length === 0)
       return [];
-
-    // Set category mode based on whether there's a query
-    const isSearching = !!(query && query.trim() !== "");
-    showsCategories = !isSearching;
 
     // Keep the installed objects intact. Search records carry derived fields;
     // activation and category membership retain the canonical desktop entry.

@@ -87,6 +87,8 @@ Item {
       clipboardId: current && current.results[current.selectedIndex] ? (current.results[current.selectedIndex].clipboardId || null) : null,
       category: current && current.currentProvider.selectedCategory !== undefined ? current.currentProvider.selectedCategory : null,
       categories: current ? current.providerCategories : [],
+      resultNames: current ? current.results.map(item => item.name) : [],
+      categoryBar: categoryBar(current),
       showCategories: current ? current.showProviderCategories : false,
       columns: current ? current.gridColumns : null,
       wrap: current ? current.allowWrapNavigation : null,
@@ -112,6 +114,23 @@ Item {
       deliveredKeys: deliveredKeys.slice(-20),
       keySerial: keySerial
     };
+  }
+  function categoryBar(item) {
+    if (!item)
+      return null;
+    if (item.computedCurrentIndex !== undefined)
+      return {
+        visible: item.visible,
+        enabled: item.enabled,
+        opacity: item.opacity,
+        index: item.currentIndex
+      };
+    for (const child of item.children || []) {
+      const found = categoryBar(child);
+      if (found)
+        return found;
+    }
+    return null;
   }
 
   Item {
