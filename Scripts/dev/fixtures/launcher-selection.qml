@@ -55,6 +55,9 @@ ShellRoot {
     id: pointer
   }
   Process {
+    id: keyboard
+  }
+  Process {
     id: fullscreen
     command: ["swaymsg", "[title=\"Launcher Selection Test\"]", "fullscreen", "enable"]
   }
@@ -85,11 +88,8 @@ ShellRoot {
     pointer.running = true;
   }
   function keyUp() {
-    core.handleKeyPress({
-                          key: Qt.Key_Up,
-                          modifiers: Qt.NoModifier,
-                          accepted: false
-                        });
+    keyboard.command = ["python3", "-B", Quickshell.env("LAUNCHER_INPUT_HELPER"), "key", "103:1", "103:0"];
+    keyboard.running = true;
   }
   Timer {
     interval: 350
@@ -179,9 +179,16 @@ ShellRoot {
         break;
       case 4:
         root.same("list-pointer-selects", core.selectedIndex, 2);
-        root.keyUp();
+        keyboard.command = ["python3", "-B", Quickshell.env("LAUNCHER_INPUT_HELPER"), "type", "q"];
+        keyboard.running = true;
         break;
       case 5:
+        root.same("typed-query-resets-selection", [core.searchText, core.selectedIndex], ["q", 0]);
+        root.same("query-suppresses-stationary-hover", core.ignoreMouseHover, true);
+        core.selectedIndex = 2;
+        root.keyUp();
+        break;
+      case 6:
         root.same("list-one-highlight-after-key", root.rows().filter(item => item.isSelected).map(item => item.index), [1]);
         root.same("keyboard-suppresses-stationary-hover", core.ignoreMouseHover, true);
         const selected = root.rows().find(item => item.isSelected);
@@ -190,21 +197,19 @@ ShellRoot {
         Settings.data.appLauncher.viewMode = "grid";
         core.selectedIndex = 0;
         break;
-      case 6:
+      case 7:
         root.moveTo(1, 0);
         break;
-      case 7:
+      case 8:
         root.moveTo(2, 0);
         break;
-      case 8:
-        root.same("grid-pointer-selects", core.selectedIndex, 2);
-        core.handleKeyPress({
-                              key: Qt.Key_Left,
-                              modifiers: Qt.NoModifier,
-                              accepted: false
-                            });
-        break;
       case 9:
+        root.same("grid-pointer-selects", core.selectedIndex, 2);
+        // The agreed grid-sideways command is Shift+Tab; Left edits search.
+        keyboard.command = ["python3", "-B", Quickshell.env("LAUNCHER_INPUT_HELPER"), "key", "42:1", "15:1", "15:0", "42:0"];
+        keyboard.running = true;
+        break;
+      case 10:
         root.same("grid-one-highlight", root.rows().filter(item => item.isSelected).map(item => item.index), [1]);
         console.log("LAUNCHER_SELECTION_DONE");
         Qt.exit(root.failed ? 1 : 0);

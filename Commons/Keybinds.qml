@@ -63,6 +63,11 @@ QtObject {
       case Qt.Key_Tab:
         keyName = "Tab";
         break;
+      case Qt.Key_Backtab:
+        keyName = "Tab";
+        if (!(event.modifiers & Qt.ShiftModifier))
+          keyStr += "Shift+";
+        break;
       case Qt.Key_Backspace:
         keyName = "Backspace";
         break;

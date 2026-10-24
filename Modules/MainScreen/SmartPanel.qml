@@ -117,6 +117,8 @@ Item {
   property bool closeWithEscape: true
 
   property bool exclusiveKeyboard: true
+  // Surfaces with their own key owner never delegate commands to host shortcuts.
+  property bool handlesOwnKeys: false
 
   // Closing and coexisting panels must not retain focus-based key handlers.
   readonly property bool keyboardActive: isPanelOpen && !isClosing && (exclusiveOpen ? PanelService.openedPanel === root : PanelService.coexistingPanel === root)

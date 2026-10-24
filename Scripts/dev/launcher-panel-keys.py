@@ -7,11 +7,12 @@ Only observations and opening a test dialog use IPC; all tested keys are uinput.
 import argparse
 import importlib.util
 import json
+import os
 from pathlib import Path
 import time
 
-ROOT = Path('/home/tester/Projects/atmosphera-launcher')
-spec = importlib.util.spec_from_file_location('flow', ROOT / 'tools/launcher-flow-e2e.py')
+ROOT = Path(os.environ.get('ATMOSPHERA_LAUNCHER_WORKSPACE', '/home/tester/Projects/atmosphera-launcher'))
+spec = importlib.util.spec_from_file_location('flow', Path(__file__).with_name('launcher-flow-e2e.py'))
 flow = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(flow)
 

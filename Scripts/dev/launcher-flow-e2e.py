@@ -18,7 +18,7 @@ import subprocess
 import time
 
 
-ROOT = Path('/home/tester/Projects/atmosphera-launcher')
+ROOT = Path(os.environ.get('ATMOSPHERA_LAUNCHER_WORKSPACE', '/home/tester/Projects/atmosphera-launcher'))
 CONFIG = Path('/etc/xdg/quickshell/atmosphera')
 SOCKET = ROOT / 'runtime/input.sock'
 APP = 'launcher-flow-alpha'
@@ -49,7 +49,7 @@ PROBE = r'''
         open: open, query: core ? core.searchText : null,
         index: core ? core.selectedIndex : null,
         results: core ? core.results.map(function(r) { return {id: r.appId || r.usageKey || r.name, name: r.name}; }) : [],
-        focused: focused(core),
+        focused: focused(core), nativeActive: core ? core.Window.active : false,
         desktop: entries.filter(function(e) { return e.id.indexOf("launcher-flow-") === 0; }).map(function(e) { return {id: e.id, name: e.name}; })
       });
     }
@@ -182,7 +182,7 @@ def prepare():
     print(json.dumps({'prepared': True, 'shell_pid': pid, 'state': snapshot()}, indent=2))
 
 
-def run(label):
+def run(label, extra_observer=None, native_handoff=False):
     output = ROOT / 'evidence' / label
     assert not output.exists(), 'labels are single-use'
     output.mkdir()
@@ -192,8 +192,10 @@ def run(label):
 
     def evidence(name):
         data = {'state': snapshot(), 'windows': windows(),
-                'processes': command(['ps', '-u', 'tester', '-o', 'pid,lstart,args']).stdout,
-                'monotonic': time.monotonic()}
+                 'processes': command(['ps', '-u', 'tester', '-o', 'pid,lstart,args']).stdout,
+                 'monotonic': time.monotonic()}
+        if extra_observer:
+            data['extra'] = extra_observer()
         (output / (name + '.json')).write_text(json.dumps(data, indent=2))
         command(['grim', output / (name + '.png')])
         return data
@@ -247,12 +249,20 @@ def run(label):
         codes = [30, 38, 25, 35, 30]
         text_keys = [s for c in codes for s in (f'{c}:1', f'{c}:0')]
         actual_delay_ms = None
+        injection_wall_ms = None
         if delay_ms:
             keys(*SHORTCUT)
             shortcut_completed = time.monotonic_ns()
+            if native_handoff:
+                # The added overlay-host extension measures the plan's
+                # after-keyboard-ownership contract. Its new layer window may
+                # not exist at absolute shortcut+40ms. The original panel test
+                # keeps its original absolute-40ms injection unchanged.
+                wait(lambda: snapshot()['nativeActive'])
             # No IPC/readiness wait between the shortcut and required input.
             time.sleep(delay_ms / 1000)
             actual_delay_ms = (time.monotonic_ns() - shortcut_completed) / 1e6
+            injection_wall_ms = time.time_ns() / 1e6
             keys(*text_keys)
         else:
             # Preserve the original single zero-delay uinput invocation.
@@ -263,8 +273,10 @@ def run(label):
         assert state['focused'] and state['focused']['activeFocus'], state
         assert state['focused']['text'] == state['query'], state
         details = {'observed': state, 'injected': 'alpha', 'inter_key_delay_ms': 0,
-                   'requested_post_shortcut_delay_ms': delay_ms,
-                   'measured_post_shortcut_delay_ms': actual_delay_ms}
+                    'requested_post_shortcut_delay_ms': delay_ms,
+                    'measured_post_shortcut_delay_ms': actual_delay_ms,
+                    'injection_wall_ms': injection_wall_ms}
+        details['native_handoff_precondition'] = native_handoff and delay_ms > 0
         if state['query'] != 'alpha':
             # User-approved contract: ~/Documents/atmosphera/plans/launcher-keyboard/design.md §5.2
             # (2026-10-22), with follow-up in

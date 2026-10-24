@@ -81,7 +81,7 @@ PanelWindow {
   property real dimmerOpacity: Settings.data.general.dimmerOpacity ?? 0.8
   property bool isPanelOpen: (PanelService.openedPanel !== null) && (PanelService.openedPanel.screen === screen)
   property bool isPanelClosing: (PanelService.openedPanel !== null) && PanelService.openedPanel.isClosing
-  readonly property bool panelKeysActive: root.isPanelOpen && !root.isPanelClosing
+  readonly property bool panelKeysActive: root.isPanelOpen && !root.isPanelClosing && !PanelService.openedPanel.handlesOwnKeys
   property bool isAnyPanelOpen: PanelService.openedPanel !== null
 
   color: {

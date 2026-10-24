@@ -9,6 +9,8 @@ import qs.Widgets
 
 SmartPanel {
   id: root
+  handlesOwnKeys: true
+  closeWithEscape: false
 
   // Disable when overlay mode is enabled (LauncherOverlayWindow handles it)
   enabled: !Settings.data.appLauncher.overviewLayer
@@ -163,7 +165,7 @@ SmartPanel {
       id: launcherCore
       anchors.fill: parent
       screen: root.screen
-      isOpen: root.isPanelOpen
+      isOpen: root.keyboardActive
       onRequestClose: root.close()
       // Defer so the signal emission completes before SmartPanel
       // sets isPanelOpen=false and the contentLoader destroys us.

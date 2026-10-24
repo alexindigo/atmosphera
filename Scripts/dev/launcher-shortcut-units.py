@@ -8,7 +8,7 @@ import shutil
 import subprocess
 import sys
 
-ROOT = Path('/home/tester/Projects/atmosphera-launcher')
+from launcher_workspace import ROOT
 sys.path.insert(0, str(ROOT / 'tools'))
 from filechooser_isolation import enter, guest, profile_env
 

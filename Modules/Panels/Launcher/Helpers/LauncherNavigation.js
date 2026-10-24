@@ -36,17 +36,17 @@ function selectLast(resultsLength) {
   return resultsLength > 0 ? resultsLength - 1 : 0;
 }
 
-function selectNextPage(selectedIndex, resultsLength, entryHeight) {
+function selectNextPage(selectedIndex, resultsLength, pageSize) {
   if (resultsLength > 0) {
-    var page = Math.max(1, Math.floor(600 / entryHeight));
+    var page = Math.max(1, pageSize);
     return Math.min(selectedIndex + page, resultsLength - 1);
   }
   return selectedIndex;
 }
 
-function selectPreviousPage(selectedIndex, resultsLength, entryHeight) {
+function selectPreviousPage(selectedIndex, resultsLength, pageSize) {
   if (resultsLength > 0) {
-    var page = Math.max(1, Math.floor(600 / entryHeight));
+    var page = Math.max(1, pageSize);
     return Math.max(selectedIndex - page, 0);
   }
   return selectedIndex;

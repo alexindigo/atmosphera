@@ -8,7 +8,7 @@ import shutil
 import subprocess
 import sys
 
-ROOT = Path('/home/tester/Projects/atmosphera-launcher')
+from launcher_workspace import ROOT
 sys.path.insert(0, str(ROOT / 'tools'))
 from filechooser_isolation import enter, guest, profile_env
 
@@ -30,7 +30,7 @@ def main():
     (tree / 'shell.qml').write_text((source / 'Scripts/dev/fixtures/launcher-selection.qml').read_text().replace('"../../../Modules/', '"Modules/'))
     build = runtime / 'pointer-build'
     build.mkdir()
-    env = profile_env(profile)
+    env = dict(profile_env(profile), LAUNCHER_INPUT_HELPER=str(ROOT / 'tools/filechooser_input.py'))
     protocol = source / 'Scripts/dev/wlr-virtual-pointer-unstable-v1.xml'
     for mode, name in [('client-header', 'virtual-pointer-client.h'), ('private-code', 'virtual-pointer-protocol.c')]:
         subprocess.run(['timeout', '15', 'wayland-scanner', mode, protocol, build / name], check=True, timeout=20, env=env)
@@ -51,7 +51,7 @@ def main():
     (out / 'run.log').write_text(log)
     cases = [json.loads(line.split('LAUNCHER_SELECTION|', 1)[1]) for line in log.splitlines() if 'LAUNCHER_SELECTION|' in line]
     errors = [line for line in log.splitlines() if re.search(r'ReferenceError|TypeError|Cannot assign|Failed to load configuration|is not a type', line)]
-    result = dict(passed=proc.returncode == 0 and len(cases) == 14 and all(c['pass'] for c in cases) and not errors and 'LAUNCHER_SELECTION_DONE' in log,
+    result = dict(passed=proc.returncode == 0 and len(cases) == 16 and all(c['pass'] for c in cases) and not errors and 'LAUNCHER_SELECTION_DONE' in log,
                   exit=proc.returncode, cases=cases, errors=errors)
     (out / 'result.json').write_text(json.dumps(result, indent=2))
     print(json.dumps(result, indent=2))

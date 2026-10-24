@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+### 2026-10-23
+
+**Fix**
+
+The launcher owns its keyboard in both panel and overlay mode. Commands take
+precedence over native search editing, shell shortcuts cannot intercept them,
+and pointer interaction keeps the search focused. Input-method composition
+keeps its Enter and Escape. Left/Right, Home/End and Delete now edit the search;
+Tab/Shift+Tab move between results (sideways in grids), Ctrl+Tab/Ctrl+Shift+Tab
+switch categories, Ctrl+Home/End select the first/last result, and Page Up/Down
+move one visible page. Remove defaults to Shift+Delete; the old default is
+upgraded while custom bindings are retained.
+
 ### 2026-10-22
 
 **Fix**
