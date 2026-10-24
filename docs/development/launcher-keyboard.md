@@ -39,3 +39,7 @@ deferred but never gates typing or command handling.
 
 Keys delivered to another application before the compositor transfers keyboard
 focus (the known approximately 40 ms shortcut handoff) cannot be recovered.
+
+With `QT_IM_MODULE=fcitx`, an upstream fcitx5-qt race can also reorder fast
+typing after focus is acquired. See the [README known issue](../../README.md#fcitx5-qt-can-reorder-fast-typing)
+for shell launch workarounds and the verified compositor scope.
