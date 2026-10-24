@@ -140,6 +140,9 @@ onTertiary = "{{colors.on_tertiary.default.hex}}"
 tertiaryContainer = "{{colors.tertiary_container.default.hex}}"
 onTertiaryContainer = "{{colors.on_tertiary_container.default.hex}}"
 
+standout = "{{colors.standout.default.hex}}"
+onStandout = "{{colors.on_standout.default.hex}}"
+
 error = "{{colors.error.default.hex}}"
 onError = "{{colors.on_error.default.hex}}"
 errorContainer = "{{colors.error_container.default.hex}}"

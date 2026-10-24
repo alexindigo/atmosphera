@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Services.Power
+import qs.Services.Theming
 
 /*
 Atmosphera is not strictly a Material Design project, it supports both some predefined
@@ -63,6 +64,8 @@ Singleton {
   property color mOnSecondary: defaultColors.mOnSecondary
   property color mTertiary: defaultColors.mTertiary
   property color mOnTertiary: defaultColors.mOnTertiary
+  property color mStandout: defaultColors.mStandout
+  property color mOnStandout: defaultColors.mOnStandout
 
   // --- Utility Colors: These colors serve specific, universal purposes like indicating errors
   property color mError: defaultColors.mError
@@ -118,6 +121,20 @@ Singleton {
     }
   }
   Behavior on mOnTertiary {
+    enabled: !root.skipTransition
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+  Behavior on mStandout {
+    enabled: !root.skipTransition
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+  Behavior on mOnStandout {
     enabled: !root.skipTransition
     ColorAnimation {
       duration: Style.animationSlowest
@@ -240,6 +257,16 @@ Singleton {
       }
       root.mOnTertiary = customColorsData.mOnTertiary;
     }
+    function onMStandoutChanged() {
+      if (!root.skipTransition)
+        startTransition();
+      root.mStandout = customColorsData.mStandout;
+    }
+    function onMOnStandoutChanged() {
+      if (!root.skipTransition)
+        startTransition();
+      root.mOnStandout = customColorsData.mOnStandout;
+    }
     function onMErrorChanged() {
       if (!root.skipTransition) {
         startTransition();
@@ -310,6 +337,8 @@ Singleton {
       return root.mSecondary;
     case "tertiary":
       return root.mTertiary;
+    case "standout":
+      return root.mStandout;
     case "error":
       return root.mError;
     default:
@@ -325,6 +354,8 @@ Singleton {
       return root.mOnSecondary;
     case "tertiary":
       return root.mOnTertiary;
+    case "standout":
+      return root.mOnStandout;
     case "error":
       return root.mOnError;
     default:
@@ -340,6 +371,8 @@ Singleton {
       return root.mSecondary;
     case "tertiary":
       return root.mTertiary;
+    case "standout":
+      return root.mStandout;
     case "error":
       return root.mError;
     default:
@@ -386,6 +419,10 @@ Singleton {
       "name": I18n.tr("common.tertiary")
     },
     {
+      "key": "standout",
+      "name": I18n.tr("common.standout")
+    },
+    {
       "key": "error",
       "name": I18n.tr("common.error")
     }
@@ -401,6 +438,8 @@ Singleton {
     readonly property color mOnSecondary: "#FFFFFF"
     readonly property color mTertiary: "#30D158"
     readonly property color mOnTertiary: "#FFFFFF"
+    readonly property color mStandout: "#f88349"
+    readonly property color mOnStandout: "#571f00"
     readonly property color mError: "#FF453A"
     readonly property color mOnError: "#FFFFFF"
     readonly property color mSurface: "#1E1E1E"
@@ -415,22 +454,37 @@ Singleton {
 
   // ----------------------------------------------------------------
   // FileView to load custom colors data from colors.json
+  property int _loadVersion: 0
+  readonly property var roleKeys: ["mPrimary", "mOnPrimary", "mSecondary", "mOnSecondary", "mTertiary", "mOnTertiary", "mStandout", "mOnStandout", "mError", "mOnError", "mSurface", "mOnSurface", "mSurfaceVariant", "mOnSurfaceVariant", "mOutline", "mShadow", "mHover", "mOnHover"]
+
+  function loadColors(data) {
+    const version = ++_loadVersion;
+    ColorSchemeService.normalizeScheme(data, function (normalized) {
+      if (!normalized || version !== root._loadVersion)
+        return;
+      const variant = normalized[Settings.data.colorSchemes.darkMode ? "dark" : "light"];
+      for (const key of root.roleKeys) {
+        if (variant[key] !== undefined)
+          customColorsData[key] = variant[key];
+      }
+      if (root.skipTransition)
+        Qt.callLater(function () {
+          root.skipTransition = false;
+        });
+    });
+  }
+
   FileView {
     id: customColorsFile
     path: Settings.directoriesCreated ? (Settings.configDir + "colors.json") : undefined
     printErrors: false
     watchChanges: true
     onFileChanged: scheduleExternalColorReload()
-    onAdapterUpdated: {
-      Logger.d("Color", "Writing colors to disk");
-      writeAdapter();
-    }
-
     onLoaded: {
-      if (root.skipTransition) {
-        Qt.callLater(function () {
-          root.skipTransition = false;
-        });
+      try {
+        root.loadColors(JSON.parse(text()));
+      } catch (error) {
+        Logger.e("Color", "Failed to load colors:", error);
       }
     }
 
@@ -455,36 +509,42 @@ Singleton {
       // Error code 2 = ENOENT (No such file or directory)
       if (error === 2 || error.toString().includes("No such file")) {
         // File doesn't exist, create it with default values
-        writeAdapter();
+        var defaults = {};
+        for (const key of root.roleKeys)
+          defaults[key] = String(defaultColors[key]);
+        setText(JSON.stringify(defaults));
       }
     }
-    JsonAdapter {
-      id: customColorsData
+  }
 
-      property color mPrimary: defaultColors.mPrimary
-      property color mOnPrimary: defaultColors.mOnPrimary
+  QtObject {
+    id: customColorsData
 
-      property color mSecondary: defaultColors.mSecondary
-      property color mOnSecondary: defaultColors.mOnSecondary
+    property color mPrimary: defaultColors.mPrimary
+    property color mOnPrimary: defaultColors.mOnPrimary
 
-      property color mTertiary: defaultColors.mTertiary
-      property color mOnTertiary: defaultColors.mOnTertiary
+    property color mSecondary: defaultColors.mSecondary
+    property color mOnSecondary: defaultColors.mOnSecondary
 
-      property color mError: defaultColors.mError
-      property color mOnError: defaultColors.mOnError
+    property color mTertiary: defaultColors.mTertiary
+    property color mOnTertiary: defaultColors.mOnTertiary
+    property color mStandout: defaultColors.mStandout
+    property color mOnStandout: defaultColors.mOnStandout
 
-      property color mSurface: defaultColors.mSurface
-      property color mOnSurface: defaultColors.mOnSurface
+    property color mError: defaultColors.mError
+    property color mOnError: defaultColors.mOnError
 
-      property color mSurfaceVariant: defaultColors.mSurfaceVariant
-      property color mOnSurfaceVariant: defaultColors.mOnSurfaceVariant
+    property color mSurface: defaultColors.mSurface
+    property color mOnSurface: defaultColors.mOnSurface
 
-      property color mOutline: defaultColors.mOutline
-      property color mShadow: defaultColors.mShadow
+    property color mSurfaceVariant: defaultColors.mSurfaceVariant
+    property color mOnSurfaceVariant: defaultColors.mOnSurfaceVariant
 
-      property color mHover: defaultColors.mHover
-      property color mOnHover: defaultColors.mOnHover
-    }
+    property color mOutline: defaultColors.mOutline
+    property color mShadow: defaultColors.mShadow
+
+    property color mHover: defaultColors.mHover
+    property color mOnHover: defaultColors.mOnHover
   }
 
   // Watch parent config directory as a fallback for declarative setups where

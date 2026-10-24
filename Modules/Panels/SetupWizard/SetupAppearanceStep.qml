@@ -32,10 +32,14 @@ ColumnLayout {
 
   // Match ColorSchemeTab helpers
   function schemeLoaded(schemeName, jsonData) {
-    var value = jsonData || {};
-    schemeColorsCache[schemeName] = value;
-    cacheVersion++;
-    Logger.i("SetupAppearanceStep", `Loaded scheme ${schemeName}`);
+    if (!jsonData)
+      return;
+    ColorSchemeService.normalizeScheme(jsonData, function (value) {
+      if (value) {
+        root.schemeColorsCache[schemeName] = value;
+        root.cacheVersion++;
+      }
+    });
   }
 
   Connections {
@@ -286,6 +290,16 @@ ColumnLayout {
                   var cached = root.schemeColorsCache[schemeItem.schemeName];
                   return (cached && cached[mode] && cached[mode].mTertiary) || root.getSchemeColor(schemeItem.schemeName, "mTertiary");
                 })() : AtmoColor.mTertiary
+              }
+              Rectangle {
+                width: 14
+                height: 14
+                radius: width * 0.5
+                color: root.cacheVersion >= 0 ? (function () {
+                  var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
+                  var cached = root.schemeColorsCache[schemeItem.schemeName];
+                  return (cached && cached[mode] && cached[mode].mStandout) || root.getSchemeColor(schemeItem.schemeName, "mStandout");
+                })() : AtmoColor.mStandout
               }
               Rectangle {
                 width: 14

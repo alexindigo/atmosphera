@@ -51,6 +51,8 @@
       (surface-variant "{{colors.surface_variant.default.hex}}")
       (tertiary "{{colors.tertiary.default.hex}}")
       (tertiary-container "{{colors.tertiary_container.default.hex}}")
+      (standout "{{colors.standout.default.hex}}")
+      (on-standout "{{colors.on_standout.default.hex}}")
       ;; Map success colors to tertiary (as used in other templates)
       (success "{{colors.tertiary.default.hex}}")
       (on-success "{{colors.on_tertiary.default.hex}}")
@@ -358,4 +360,3 @@
 
 (provide-theme 'noctalia)
 ;;; noctalia-theme.el ends here
-

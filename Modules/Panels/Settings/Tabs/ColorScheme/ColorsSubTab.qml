@@ -63,15 +63,22 @@ ColumnLayout {
       return AtmoColor.mSecondary;
     if (colorKey === "mTertiary")
       return AtmoColor.mTertiary;
+    if (colorKey === "mStandout")
+      return AtmoColor.mStandout;
     if (colorKey === "mError")
       return AtmoColor.mError;
     return AtmoColor.mOnSurfaceVariant;
   }
 
   function schemeLoaded(schemeName, jsonData) {
-    var value = jsonData || {};
-    schemeColorsCache[schemeName] = value;
-    cacheVersion++;
+    if (!jsonData)
+      return;
+    ColorSchemeService.normalizeScheme(jsonData, function (value) {
+      if (value) {
+        root.schemeColorsCache[schemeName] = value;
+        root.cacheVersion++;
+      }
+    });
   }
 
   Connections {
@@ -296,7 +303,7 @@ ColumnLayout {
         property int diameter: 16 * Style.uiScaleRatio
 
         Repeater {
-          model: [AtmoColor.mPrimary, AtmoColor.mSecondary, AtmoColor.mTertiary, AtmoColor.mError]
+          model: [AtmoColor.mPrimary, AtmoColor.mSecondary, AtmoColor.mTertiary, AtmoColor.mStandout, AtmoColor.mError]
 
           Rectangle {
             width: colorPreviewRow.diameter
@@ -395,6 +402,13 @@ ColumnLayout {
               height: scheme.diameter
               radius: scheme.diameter * 0.5
               color: root.getSchemeColor(schemeItem.schemeName, "mTertiary")
+            }
+
+            Rectangle {
+              width: scheme.diameter
+              height: scheme.diameter
+              radius: scheme.diameter * 0.5
+              color: root.getSchemeColor(schemeItem.schemeName, "mStandout")
             }
 
             Rectangle {

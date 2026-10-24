@@ -1,6 +1,11 @@
 # macOS Color Scheme Reference
 
 Sources:
+The Atmosphera-only `mStandout` / `mOnStandout` pair is `#f88349` / `#571f00`
+in both modes, matching the shell defaults. It is the reviewed 2:1
+primary–tertiary RYB complement from the dark reference, with maximum in-gamut
+chroma over T60–T75 and a readable foreground; it is not an Apple semantic colour.
+
 - [expo-apple-colors/spec.json](https://github.com/EvanBacon/expo-apple-colors/blob/main/spec.json)
 - [macOS Output System Colors Gist](https://gist.github.com/andrejilderda/8677c565cddc969e6aae7df48622d47c)
 - [react-native-uikit-colors](https://github.com/Innei/react-native-uikit-colors)

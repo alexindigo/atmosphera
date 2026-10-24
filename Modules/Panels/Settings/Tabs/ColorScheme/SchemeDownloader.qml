@@ -65,6 +65,7 @@ Popup {
       "mPrimary": AtmoColor.mPrimary,
       "mSecondary": AtmoColor.mSecondary,
       "mTertiary": AtmoColor.mTertiary,
+      "mStandout": AtmoColor.mStandout,
       "mError": AtmoColor.mError,
       "mOnSurface": AtmoColor.mOnSurfaceVariant
     };
@@ -72,6 +73,17 @@ Popup {
   }
 
   // Colors are now provided directly in the registry, no need to fetch individual files
+  function cacheSchemeColors(scheme) {
+    if (!scheme.dark && !scheme.light)
+      return;
+    ColorSchemeService.normalizeScheme({dark: scheme.dark, light: scheme.light}, function (data) {
+      if (data) {
+        root.schemeColorsCache[scheme.name] = data;
+        root.cacheVersion++;
+      }
+    });
+  }
+
   function fetchSchemeColors(scheme) {
     return;
   }
@@ -121,10 +133,7 @@ Popup {
         for (var i = 0; i < cachedSchemes.length; i++) {
           var cachedScheme = cachedSchemes[i];
           if (cachedScheme.dark || cachedScheme.light) {
-            schemeColorsCache[cachedScheme.name] = {
-              "dark": cachedScheme.dark || null,
-              "light": cachedScheme.light || null
-            };
+            cacheSchemeColors(cachedScheme);
           }
         }
         hasInitialData = true;
@@ -210,10 +219,7 @@ Popup {
                                "dark": theme.dark || null,
                                "light": theme.light || null
                              });
-                schemeColorsCache[theme.name] = {
-                  "dark": theme.dark || null,
-                  "light": theme.light || null
-                };
+                cacheSchemeColors(theme);
               }
               availableSchemes = schemes;
               hasInitialData = true;
@@ -244,10 +250,7 @@ Popup {
               for (var j = 0; j < cachedSchemes.length; j++) {
                 var cachedScheme = cachedSchemes[j];
                 if (cachedScheme.dark || cachedScheme.light) {
-                  schemeColorsCache[cachedScheme.name] = {
-                    "dark": cachedScheme.dark || null,
-                    "light": cachedScheme.light || null
-                  };
+                  cacheSchemeColors(cachedScheme);
                 }
               }
               hasInitialData = true;
@@ -892,7 +895,7 @@ Popup {
 
               property string schemeName: modelData.name
               property int diameter: 16 * Style.uiScaleRatio
-              property var colorKeys: ["mPrimary", "mSecondary", "mTertiary", "mError"]
+              property var colorKeys: ["mPrimary", "mSecondary", "mTertiary", "mStandout", "mError"]
 
               NText {
                 text: schemeRow.schemeName

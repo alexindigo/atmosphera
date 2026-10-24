@@ -16,8 +16,55 @@ from typing import Literal
 
 from .color import Color
 from .contrast import ensure_contrast
+from .standout import standout_roles, on_standout_color
 
 ThemeMode = Literal["dark", "light"]
+
+
+def normalize_scheme(data: dict, mode: ThemeMode = 'dark') -> dict:
+    """One compatibility boundary for shell, previews, editor and templates.
+
+    D6/D8: derive absent fills from the actual dark reference (or the sole
+    supplied variant), never the previously loaded scheme. Keep each authored
+    field independently; an authored fill gets its own readable foreground.
+    Flat palettes have one reference; expose both modes for the editor too.
+    Unknown fields and terminal palettes survive normalization unchanged.
+    """
+    if not isinstance(data, dict) or mode not in ('dark', 'light'):
+        raise ValueError('expected a scheme object and dark/light mode')
+    from copy import deepcopy
+    result = deepcopy(data)
+    variants = {key: deepcopy(data.get(key)) for key in ('dark', 'light')}
+    if not any(variants.values()):
+        variants = {key: deepcopy(data) for key in ('dark', 'light')}
+        result = {}
+    for key in ('dark', 'light'):
+        if not variants[key]:
+            variants[key] = deepcopy(variants['light' if key == 'dark' else 'dark'])
+        if not isinstance(variants[key], dict):
+            raise ValueError('scheme variants must be objects')
+        # Accept the same aliases as ColorSchemeService's historical writer.
+        for role in ('Primary', 'OnPrimary', 'Secondary', 'OnSecondary', 'Tertiary', 'OnTertiary',
+                     'Standout', 'OnStandout', 'Error', 'OnError', 'Surface', 'OnSurface',
+                     'SurfaceVariant', 'OnSurfaceVariant', 'Outline', 'Shadow', 'Hover', 'OnHover'):
+            alias = role[0].lower() + role[1:]
+            if 'm' + role not in variants[key] and alias in variants[key]:
+                variants[key]['m' + role] = variants[key][alias]
+            snake = ''.join(('_' + c.lower()) if c.isupper() else c for c in alias)
+            if 'm' + role not in variants[key] and snake in variants[key]:
+                variants[key]['m' + role] = variants[key][snake]
+    reference = variants['dark']
+    derived = None
+    for key, variant in variants.items():
+        if not variant.get('mStandout'):
+            if derived is None:
+                dark = {role: reference['m' + role.title()] for role in ('primary', 'tertiary', 'surface')}
+                derived = standout_roles(dark, 'dark')['standout']
+            variant['mStandout'] = derived
+        if not variant.get('mOnStandout'):
+            variant['mOnStandout'] = on_standout_color(Color.from_hex(variant['mStandout']), key)
+        result[key] = variant
+    return result
 
 
 def _hex_to_color(hex_str: str) -> Color:
@@ -77,6 +124,9 @@ def expand_predefined_scheme(scheme_data: dict[str, str], mode: ThemeMode) -> di
         Dictionary with all 48 color names mapped to hex values.
     """
     is_dark = mode == "dark"
+
+    if not scheme_data.get('mStandout') or not scheme_data.get('mOnStandout'):
+        scheme_data = normalize_scheme(scheme_data)[mode]
 
     # Parse input colors
     primary = _hex_to_color(scheme_data["mPrimary"])
@@ -278,6 +328,8 @@ def expand_predefined_scheme(scheme_data: dict[str, str], mode: ThemeMode) -> di
         "on_tertiary_fixed": on_tertiary_fixed.to_hex(),
         "on_tertiary_fixed_variant": on_tertiary_fixed_variant.to_hex(),
         # Error
+        "standout": scheme_data["mStandout"],
+        "on_standout": scheme_data["mOnStandout"],
         "error": error.to_hex(),
         "on_error": on_error.to_hex(),
         "error_container": error_container.to_hex(),
