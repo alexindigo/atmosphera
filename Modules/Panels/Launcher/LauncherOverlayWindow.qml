@@ -20,11 +20,12 @@ Variants {
 
     required property ShellScreen modelData
 
-    active: PanelService.overlayLauncherOpen && PanelService.overlayLauncherScreen === modelData
+    active: (PanelService.overlayLauncherOpen && PanelService.overlayLauncherScreen === modelData) || LauncherActionService.retainsScreen(modelData)
 
     sourceComponent: PanelWindow {
       id: launcherWindow
       screen: windowLoader.modelData
+      readonly property bool launcherOpen: PanelService.overlayLauncherOpen && PanelService.overlayLauncherScreen === windowLoader.modelData
 
       anchors {
         top: true
@@ -36,9 +37,13 @@ Variants {
       color: "transparent"
 
       WlrLayershell.namespace: "atmosphera-launcher-overlay-" + (screen?.name || "unknown")
-      WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+      WlrLayershell.keyboardFocus: launcherOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
       WlrLayershell.layer: WlrLayer.Overlay
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
+      mask: Region {
+        width: launcherWindow.launcherOpen ? launcherWindow.width : 0
+        height: launcherWindow.launcherOpen ? launcherWindow.height : 0
+      }
 
       // qmllint disable missing-type
       // BackgroundEffect.blurRegion is typed as PendingRegion in Quickshell's
@@ -104,6 +109,7 @@ Variants {
       // Dimmer background (click to close)
       Rectangle {
         anchors.fill: parent
+        visible: launcherWindow.launcherOpen
         color: Qt.alpha(AtmoColor.mSurface, Settings.data.general.dimmerOpacity)
 
         MouseArea {
@@ -122,6 +128,7 @@ Variants {
       // Launcher panel with position-based anchoring
       Item {
         id: launcherPanel
+        visible: launcherWindow.launcherOpen
         width: Math.round(Math.max(parent.width * 0.25, launcherWindow.listPanelWidth + Style.margin2L * 2))
         height: Math.round(Math.max(parent.height * 0.5, 600 * Style.uiScaleRatio))
         clip: false
@@ -335,7 +342,7 @@ Variants {
           id: launcherCore
           anchors.fill: parent
           screen: windowLoader.modelData
-          isOpen: true
+          isOpen: launcherWindow.launcherOpen
           onRequestClose: PanelService.closeOverlayLauncher()
           onRequestCloseImmediately: PanelService.closeOverlayLauncherImmediately()
 
@@ -355,7 +362,7 @@ Variants {
 
       NBox {
         id: previewBox
-        visible: launcherWindow.previewActive
+        visible: launcherWindow.launcherOpen && launcherWindow.previewActive
         width: launcherWindow.previewPanelWidth
         height: Math.round(400 * Style.uiScaleRatio)
         forceOpaque: true

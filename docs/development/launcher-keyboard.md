@@ -43,3 +43,17 @@ focus (the known approximately 40 ms shortcut handoff) cannot be recovered.
 With `QT_IM_MODULE=fcitx`, an upstream fcitx5-qt race can also reorder fast
 typing after focus is acquired. See the [README known issue](../../README.md#fcitx5-qt-can-reorder-fast-typing)
 for shell launch workarounds and the verified compositor scope.
+
+## Committed paste handoff
+
+Providers submit paste intents through the launcher's `pasteText` or
+`pasteClipboard` interface; they do not manage native focus or the paste queue.
+`LauncherActionService` owns the destination/session and committed payload.
+Logical close and object destruction are not native keyboard-release signals:
+the overlay keeps its native window mapped, with keyboard focus disabled,
+until the compositor acknowledges loss of activation. Both paste kinds wait
+for that acknowledgement, no active shell window, and the captured destination
+to be focused. The clipboard process is serialized by the same durable owner.
+This handoff has no fixed delay and does not depend on provider/UI lifetime.
+If the destination is absent or has closed, the intent still copies its
+payload to the clipboard, without injecting a key into another surface.

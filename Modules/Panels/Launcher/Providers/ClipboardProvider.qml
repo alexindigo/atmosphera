@@ -224,8 +224,7 @@ Item {
       // Add activation handler
       entry.onActivate = function () {
         if (Settings.data.appLauncher.autoPasteClipboard) {
-          LauncherActionService.pasteClipboard(item.id, item.mime);
-          launcher.closeImmediately();
+          launcher.pasteClipboard(item.id, item.mime);
         } else {
           ClipboardService.copyToClipboard(item.id);
           launcher.close();

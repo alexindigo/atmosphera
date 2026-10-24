@@ -34,6 +34,8 @@ def main():
     try:
         for prior in (['Return', 'Enter'], ['Ctrl+Return']):
             with keys.temporary_bindings({'keyEnter': prior}):
+                baseline = keys.prepare_input_baseline()
+                (output / ('input-baseline-' + str(len(rows)) + '.json')).write_text(json.dumps(baseline, indent=2))
                 for stage in ('armActivation', 'chord', 'assertion'):
                     keys.opened('panel', 'apps-list')
                     def injected_ipc(method, *values):

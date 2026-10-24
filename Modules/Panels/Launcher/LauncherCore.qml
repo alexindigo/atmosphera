@@ -21,12 +21,26 @@ Rectangle {
   // External interface - set by parent
   property var screen: null
   property bool isOpen: false
+  property var actionSession: null
   enabled: isOpen && visible
   signal requestClose
   signal requestCloseImmediately
 
   function closeImmediately() {
+    LauncherActionService.finishSession(actionSession);
     requestCloseImmediately();
+  }
+  function pasteText(text) {
+    LauncherActionService.pasteText(text, pasteContext());
+    closeImmediately();
+  }
+  function pasteClipboard(id, mime) {
+    LauncherActionService.pasteClipboard(id, mime, pasteContext());
+    closeImmediately();
+  }
+  function pasteContext() {
+    LauncherActionService.attachWindow(actionSession, root.Window.window, screen);
+    return actionSession;
   }
 
   // Expose for preview panel positioning
@@ -102,7 +116,10 @@ Rectangle {
     if (isOpen && openReady)
       Qt.callLater(root.updateResults);
   }
-  Component.onDestruction: releaseProviderOwners()
+  Component.onDestruction: {
+    releaseProviderOwners();
+    LauncherActionService.finishSession(actionSession);
+  }
   function releaseProviderOwners() {
     openReady = false;
     for (const id in pluginProviderInstances) {
@@ -245,6 +262,9 @@ Rectangle {
   }
 
   function onOpened() {
+    LauncherActionService.finishSession(actionSession);
+    actionSession = LauncherActionService.beginSession(screen);
+    pasteContext();
     openReady = false;
     ignoreMouseHover = true;
     globalMouseInitialized = false;
@@ -262,6 +282,7 @@ Rectangle {
     target: root.Window.window
     function onActiveChanged() {
       if (root.Window.active) {
+        root.pasteContext();
         Qt.callLater(root.prepareOpenResults);
       }
     }
@@ -271,6 +292,7 @@ Rectangle {
     if (!isOpen || openReady || !root.Window.active)
       return;
     openReady = true;
+    pasteContext();
     syncPluginProviders();
     for (let provider of providers) {
       if (provider.onOpened)
@@ -280,6 +302,7 @@ Rectangle {
   }
 
   function onClosed() {
+    LauncherActionService.finishSession(actionSession);
     openReady = false;
     searchText = "";
     ignoreMouseHover = true;
@@ -292,6 +315,7 @@ Rectangle {
   }
 
   function close() {
+    LauncherActionService.finishSession(actionSession);
     requestClose();
   }
 
@@ -530,8 +554,7 @@ Rectangle {
       if (Settings.data.appLauncher.autoPasteClipboard && provider && provider.supportsAutoPaste && item.autoPasteText) {
         if (item.onAutoPaste)
           item.onAutoPaste();
-        LauncherActionService.pasteText(item.autoPasteText);
-        closeImmediately();
+        pasteText(item.autoPasteText);
         return;
       }
 

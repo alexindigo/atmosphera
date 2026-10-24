@@ -6,6 +6,7 @@ import Quickshell.Io
 import qs.Commons
 import qs.Services.Keyboard
 import qs.Services.UI
+import qs.Services.Compositor
 
 Item {
   id: probe
@@ -16,11 +17,28 @@ Item {
   property int closes: 0
   property int activations: 0
   property string activatedName: ""
+  property bool activationArmed: false
   property var liveCore: core()
   property var liveField: editor(liveCore)
   property var nativeEdges: []
   property var deliveredKeys: []
   property int keySerial: 0
+  Connections {
+    target: probe.liveCore
+    function onResultsChanged() { probe.installActivationSpy(); }
+  }
+  function installActivationSpy() {
+    const current = core();
+    if (!activationArmed || !current)
+      return;
+    for (const item of current.results) {
+      item.onActivate = () => {
+        probe.activations++;
+        probe.activatedName = item.name;
+      };
+    }
+  }
+  property var pasteEvents: []
 
   Connections {
     target: probe.liveCore ? probe.liveCore.Window.window : null
@@ -85,6 +103,7 @@ Item {
       count: current ? current.results.length : 0,
       selected: current && current.results[current.selectedIndex] ? current.results[current.selectedIndex].name : null,
       clipboardId: current && current.results[current.selectedIndex] ? (current.results[current.selectedIndex].clipboardId || null) : null,
+      autoPasteText: current && current.results[current.selectedIndex] ? (current.results[current.selectedIndex].autoPasteText || "") : "",
       category: current && current.currentProvider.selectedCategory !== undefined ? current.currentProvider.selectedCategory : null,
       categories: current ? current.providerCategories : [],
       resultNames: current ? current.results.map(item => item.name) : [],
@@ -224,6 +243,8 @@ Item {
       probe.closes = 0;
       probe.activations = 0;
       probe.activatedName = "";
+      probe.activationArmed = false;
+      probe.pasteEvents = [];
       LauncherProviderRegistry.pluginProviders = Object.assign({}, LauncherProviderRegistry.pluginProviders, {
                                                                  "plugin:k1-single": singleProvider
                                                                });
@@ -241,13 +262,10 @@ Item {
       return JSON.stringify(probe.snapshot());
     }
     function armActivation(): void {
-      const current = probe.core();
-      const item = current.results[current.selectedIndex];
-      item.onActivate = () => {
-        probe.activations++;
-        probe.activatedName = item.name;
-      };
+      probe.activationArmed = true;
+      probe.installActivationSpy();
     }
+    function reprojectResults(): void { probe.core().updateResults(); }
     function bindings(options: string): void {
       const values = JSON.parse(options);
       for (const name in values)
@@ -259,6 +277,19 @@ Item {
       for (const name of JSON.parse(options).names)
         values[name] = bindings[name].slice();
       return JSON.stringify(values);
+    }
+    function autoPaste(enabled: bool): void { Settings.data.appLauncher.autoPasteClipboard = enabled; }
+    function observePasteSession(): string {
+      const session = probe.core().actionSession;
+      session.keyboardReleased.connect(sourceWasVisible => probe.pasteEvents.push({at: Date.now(), targetId: session.targetId,
+        sourceActive: session.nativeActive, sourceVisible: sourceWasVisible}));
+      return JSON.stringify({targetId: session.targetId, hadKeyboard: session.hadKeyboard, sourceActive: session.nativeActive});
+    }
+    function pasteObservations(): string {
+      const target = CompositorService.getFocusedWindow();
+      return JSON.stringify({events: probe.pasteEvents, pending: LauncherActionService.pending.length,
+        sessions: LauncherActionService.pasteSessions.length, focusedId: target ? target.id : null,
+        applicationState: Qt.application.state, overlayCoreAlive: !!PanelService.overlayLauncherCore});
     }
     function hide(hidden: string): void {
       probe.core().visible = hidden !== "true";

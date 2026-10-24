@@ -112,6 +112,27 @@ def require(condition, details):
     assert condition, json.dumps(details, ensure_ascii=False)
 
 
+def prepare_input_baseline():
+    """Establish ASCII input on the focused consumer, not a stale remote IC."""
+    try:
+        opened('panel', 'apps-list')
+        before = dict(method=flow.command(['fcitx5-remote', '-n']).stdout.strip(),
+                      state=flow.command(['fcitx5-remote']).stdout.strip())
+        flow.command(['fcitx5-remote', '-s', 'keyboard-us'])
+        flow.command(['fcitx5-remote', '-c'])
+        flow.wait(lambda: flow.command(['fcitx5-remote', '-n']).stdout.strip() == 'keyboard-us'
+                  and flow.command(['fcitx5-remote']).stdout.strip() == '1')
+        expect(lambda s: not s['field']['preedit'] and not s['field']['composing'])
+        type_text('baseline')
+        consumer = expect(lambda s: s['query'] == s['field']['text'] == 'baseline')
+        chord(30, 29)
+        chord(14)
+        expect(lambda s: s['query'] == '')
+        return dict(before=before, method='keyboard-us', state='1', consumer=consumer)
+    finally:
+        closed()
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--label', required=True)
@@ -127,6 +148,7 @@ def main():
     output = ROOT / 'evidence' / args.label
     output.mkdir()
     cases = []
+    baseline = None
 
     def case(name, body):
         try:
@@ -140,10 +162,13 @@ def main():
         snapshot = state()
         row = dict(name=name, passed=passed, error=error, final=snapshot, details=details)
         cases.append(row)
-        (output / 'result.json').write_text(json.dumps(dict(passed=all(c['passed'] for c in cases), cases=cases), indent=2))
+        (output / 'result.json').write_text(json.dumps(dict(passed=all(c['passed'] for c in cases), baseline=baseline, cases=cases), indent=2))
         print(name, 'PASS' if passed else 'FAIL', error or '', flush=True)
 
     try:
+        if not args.red:
+            baseline = prepare_input_baseline()
+            (output / 'input-baseline.json').write_text(json.dumps(baseline, indent=2))
         for host in ('panel', 'overlay'):
             for mode in (('apps-grid',) if args.red else ('apps-list', 'apps-grid', 'emoji', 'clipboard', 'settings', 'session', 'single')):
                 def editing():
@@ -293,8 +318,10 @@ def main():
                     require(stolen['field']['focused'], stolen)
                     ipc('observe', 'true')
                     ipc('armActivation')
+                    ipc('reprojectResults')
                     chord(28)
                     expect(lambda s: s['activations'] == 1 and s['shortcutHits'] == 0)
+                    ipc('reprojectResults')
                     chord(96)
                     expect(lambda s: s['activations'] == 2 and s['shortcutHits'] == 0)
                     chord(1)
@@ -399,7 +426,7 @@ def main():
                 case(host + '/original-eight-consumer-cases', lambda: require(rc == 0, dict(exit=rc)))
     finally:
         closed()
-    result = dict(passed=all(c['passed'] for c in cases), cases=cases)
+    result = dict(passed=all(c['passed'] for c in cases), baseline=baseline, cases=cases)
     (output / 'result.json').write_text(json.dumps(result, indent=2))
     return 0 if result['passed'] else 1
 

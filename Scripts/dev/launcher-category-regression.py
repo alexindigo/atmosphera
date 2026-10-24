@@ -27,6 +27,8 @@ def main():
             assert not path.exists(), path
             path.write_text('[Desktop Entry]\nType=Application\nName=' + name + '\nExec=/usr/bin/true\nCategories=' + category + ';\n')
             entries.append(path)
+        baseline = keys.prepare_input_baseline()
+        (out / 'input-baseline.json').write_text(json.dumps(baseline, indent=2))
         for host in ('panel', 'overlay'):
             for mode in ('apps-list', 'apps-grid'):
                 observations = []
