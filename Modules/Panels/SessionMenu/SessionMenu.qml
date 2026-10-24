@@ -506,6 +506,10 @@ SmartPanel {
   panelContent: Rectangle {
     id: panelContent
     color: "transparent"
+    NInputGuard {
+      target: panelContent
+      focusOnActivation: true
+    }
     focus: true
 
     // For large buttons style, use full screen dimensions

@@ -1,8 +1,10 @@
 import QtQuick
 import Quickshell
+import "../Helpers/ApplicationRanking.js" as ApplicationRanking
 import qs.Commons
 import qs.Services.Compositor
 import qs.Services.System
+import qs.Services.UI
 
 Item {
   id: root
@@ -67,20 +69,16 @@ Item {
   function onOpened() {
     // Just update available categories in case pinned apps changed
     updateAvailableCategories();
-    // Default to Pinned if there are pinned apps, otherwise all
-    if (availableCategories.includes("Pinned")) {
-      selectedCategory = "Pinned";
-    } else {
-      selectedCategory = "all";
-    }
+    selectedCategory = "all";
     // Set category mode initially (will be updated when getResults is called)
     showsCategories = true;
   }
 
-  // Reload applications when desktop entries change on disk
+  // A scan may update existing DesktopEntry objects without changing model
+  // membership. The singleton's scan-complete signal covers both kinds.
   Connections {
-    target: typeof DesktopEntries !== 'undefined' ? DesktopEntries.applications : null
-    function onValuesChanged() {
+    target: DesktopEntries
+    function onApplicationsChanged() {
       Logger.d("ApplicationsProvider", "Desktop entries changed, reloading applications");
       loadApplications();
     }
@@ -324,43 +322,14 @@ Item {
       return;
     }
 
-    const allApps = DesktopEntries.applications.values || [];
-    const seen = new Map(); // Map of appId -> exec command
-
-    entries = allApps.filter(app => {
-      if (!app || app.noDisplay || app.hidden)
-        return false;
-
-      const appId = app.id || app.name;
-      const execCmd = getExecutableName(app);
-
-      // Check if we've seen this app ID before
-      if (seen.has(appId)) {
-        const previousExec = seen.get(appId);
-
-        // If exec is different, it's a legitimate different entry - keep it
-        if (previousExec !== execCmd) {
-          Logger.d("ApplicationsProvider", `Keeping variant of ${appId}: ${execCmd} (differs from ${previousExec})`);
-          // Add with modified ID to make it unique
-          app.id = `${appId}_${execCmd}`;
-          seen.set(app.id, execCmd);
-          return true;
-        }
-
-        // Same appId AND same exec = true duplicate, skip it
-        Logger.d("ApplicationsProvider", `Skipping duplicate: ${appId}`);
-        return false;
-      }
-
-      seen.set(appId, execCmd);
-      return true;
-    }).map(app => {
-      app.executableName = getExecutableName(app);
-      return app;
-    });
+    // DesktopEntries already resolves IDs/overrides and Hidden/NoDisplay.
+    // Do not mutate canonical entries or maintain a second identity policy.
+    entries = Array.from(DesktopEntries.applications.values || []);
 
     Logger.d("ApplicationsProvider", `Loaded ${entries.length} applications`);
     updateAvailableCategories();
+    if (launcher && launcher.isOpen)
+      launcher.updateResults();
   }
 
   function updateAvailableCategories() {
@@ -378,11 +347,8 @@ Item {
         selectedCategory = "all";
       }
 
-      // Update results if we're currently viewing the Pinned category
-      if (selectedCategory === "Pinned" && launcher) {
-        launcher.updateResults();
-      } else if (wasViewingPinned && selectedCategory === "all" && launcher) {
-        // Also update results when switching to "all"
+      // Pinning affects rank in every view, not just Pinned membership.
+      if (launcher && launcher.isOpen) {
         launcher.updateResults();
       }
     }
@@ -393,8 +359,9 @@ Item {
       return "";
 
     // Try to get executable name from command array
-    if (app.command && Array.isArray(app.command) && app.command.length > 0) {
-      const cmd = app.command[0];
+    // DesktopEntry.command is a Qt string sequence, not necessarily a JS Array.
+    if (app.command && app.command.length > 0) {
+      const cmd = String(app.command[0]);
       // Extract just the executable name from the full path
       const parts = cmd.split('/');
       const executable = parts[parts.length - 1];
@@ -425,94 +392,22 @@ Item {
     const isSearching = !!(query && query.trim() !== "");
     showsCategories = !isSearching;
 
-    // Filter by category only when NOT searching
-    let filteredEntries = entries;
-    if (!isSearching && selectedCategory && selectedCategory !== "all") {
-      filteredEntries = entries.filter(app => appMatchesCategory(app, selectedCategory));
-    }
-
-    if (!query || query.trim() === "") {
-      // Return filtered apps, optionally sorted by usage
-      let sorted;
-      if (Settings.data.appLauncher.sortByMostUsed) {
-        sorted = filteredEntries.slice().sort((a, b) => {
-          // Pinned first
-          const aPinned = isAppPinned(a);
-          const bPinned = isAppPinned(b);
-          if (aPinned !== bPinned)
-            return aPinned ? -1 : 1;
-
-          const ua = getUsageCount(a);
-          const ub = getUsageCount(b);
-          if (ub !== ua)
-            return ub - ua;
-          return (a.name || "").toLowerCase().localeCompare((b.name || "").toLowerCase());
-        });
-      } else {
-        sorted = filteredEntries.slice().sort((a, b) => {
-          const aPinned = isAppPinned(a);
-          const bPinned = isAppPinned(b);
-          if (aPinned !== bPinned)
-            return aPinned ? -1 : 1;
-          return (a.name || "").toLowerCase().localeCompare((b.name || "").toLowerCase());
-        });
-      }
-      return sorted.map(app => createResultEntry(app));
-    }
-
-    // Use fuzzy search if available, fallback to simple search
-    if (typeof FuzzySort !== 'undefined') {
-      const fuzzyResults = FuzzySort.go(query, filteredEntries, {
-                                          "keys": ["name", "comment", "genericName", "executableName"],
-                                          "limit": 20
-                                        });
-
-      // Sort pinned first within fuzzy results while preserving fuzzysort order otherwise
-      const pinned = [];
-      const nonPinned = [];
-      for (const r of fuzzyResults) {
-        const app = r.obj;
-        if (isAppPinned(app))
-          pinned.push(r);
-        else
-          nonPinned.push(r);
-      }
-      return pinned.concat(nonPinned).map(result => createResultEntry(result.obj, result.score));
-    } else {
-      // Fallback to simple search
-      const searchTerm = query.toLowerCase();
-      return filteredEntries.filter(app => {
-        const name = (app.name || "").toLowerCase();
-        const comment = (app.comment || "").toLowerCase();
-        const generic = (app.genericName || "").toLowerCase();
-        const executable = getExecutableName(app).toLowerCase();
-        return name.includes(searchTerm) || comment.includes(searchTerm) || generic.includes(searchTerm) || executable.includes(searchTerm);
-      }).sort((a, b) => {
-        // Prioritize name matches, then executable matches
-        const aName = a.name.toLowerCase();
-        const bName = b.name.toLowerCase();
-        const aExecutable = getExecutableName(a).toLowerCase();
-        const bExecutable = getExecutableName(b).toLowerCase();
-        const aStarts = aName.startsWith(searchTerm);
-        const bStarts = bName.startsWith(searchTerm);
-        const aExecStarts = aExecutable.startsWith(searchTerm);
-        const bExecStarts = bExecutable.startsWith(searchTerm);
-
-        // Prioritize name matches first
-        if (aStarts && !bStarts)
-          return -1;
-        if (!aStarts && bStarts)
-          return 1;
-
-        // Then prioritize executable matches
-        if (aExecStarts && !bExecStarts)
-          return -1;
-        if (!aExecStarts && bExecStarts)
-          return 1;
-
-        return aName.localeCompare(bName);
-      }).slice(0, 20).map(app => createResultEntry(app));
-    }
+    // Keep the installed objects intact. Search records carry derived fields;
+    // activation and category membership retain the canonical desktop entry.
+    const records = entries.map(app => ({
+      desktop: app,
+      name: app.name,
+      executableName: getExecutableName(app),
+      keywords: app.keywords,
+      comment: app.comment,
+      genericName: app.genericName
+    }));
+    return ApplicationRanking.rank(records, query, {
+                                     accept: record => !selectedCategory || appMatchesCategory(record.desktop, selectedCategory),
+                                     pinned: record => isAppPinned(record.desktop),
+                                     usage: record => Settings.data.appLauncher.sortByMostUsed ? getUsageCount(record.desktop) : 0,
+                                     id: record => getAppKey(record.desktop)
+                                   }).map(row => createResultEntry(row.app.desktop, row.score));
   }
 
   function createResultEntry(app, score) {
@@ -526,66 +421,8 @@ Item {
       "_score": (score !== undefined ? score : 0),
       "provider": root,
       "onActivate": function () {
-        // Close the launcher/SmartPanel immediately without any animations.
-        // Ensures we are not preventing the future focusing of the app
+        LauncherActionService.launchApplication(app);
         launcher.closeImmediately();
-
-        // Defer execution to next event loop iteration to ensure panel is fully closed
-        Qt.callLater(() => {
-          Logger.d("ApplicationsProvider", `Launching: ${app.name} (App ID: ${app.id || "unknown"})`);
-
-          const execString = (app.exec !== undefined && app.exec !== null) ? String(app.exec) : "";
-          const commandArgs = Array.isArray(app.command) ? app.command : (app.command && app.command.length !== undefined) ? Array.from(app.command) : [];
-          let hasQuotedArgs = execString.includes("\"") || execString.includes("'");
-          let hasSpaceArgs = false;
-          if (!hasQuotedArgs) {
-            hasQuotedArgs = commandArgs.some(arg => {
-              const text = String(arg);
-              return text.includes("\"") || text.includes("'");
-            });
-          }
-          if (!hasSpaceArgs) {
-            hasSpaceArgs = commandArgs.some(arg => String(arg).includes(" "));
-          }
-          if (app.execute && (hasQuotedArgs || hasSpaceArgs)) {
-            Logger.d("ApplicationsProvider", `Detected quoted/space arguments in Exec for ${app.name}, using app.execute()`);
-            app.execute();
-            return;
-          }
-
-          if (Settings.data.appLauncher.customLaunchPrefixEnabled && Settings.data.appLauncher.customLaunchPrefix.trim() !== "") {
-            // Use custom launch prefix
-            const prefix = Settings.data.appLauncher.customLaunchPrefix.trim().split(" ");
-            Logger.d("ApplicationsProvider", `Using custom launch prefix: ${Settings.data.appLauncher.customLaunchPrefix.trim()}`);
-
-            if (app.runInTerminal && Settings.data.appLauncher.terminalCommand.trim() !== "") {
-              const terminal = Settings.data.appLauncher.terminalCommand.trim().split(" ");
-              const command = prefix.concat(terminal.concat(app.command));
-              Logger.d("ApplicationsProvider", `Executing command (with prefix and terminal): ${command.join(" ")}`);
-              Quickshell.execDetached(command);
-            } else {
-              const command = prefix.concat(app.command);
-              Logger.d("ApplicationsProvider", `Executing command (with prefix): ${command.join(" ")}`);
-              Quickshell.execDetached(command);
-            }
-          } else {
-            if (app.runInTerminal && Settings.data.appLauncher.terminalCommand.trim() !== "") {
-              Logger.d("ApplicationsProvider", "Executing terminal app manually: " + app.name);
-              const terminal = Settings.data.appLauncher.terminalCommand.trim().split(" ");
-              const command = terminal.concat(app.command);
-              Logger.d("ApplicationsProvider", "Executing command (manual terminal): " + command.join(" "));
-              CompositorService.spawn(command);
-            } else if (app.command && app.command.length > 0) {
-              Logger.d("ApplicationsProvider", "Executing command: " + app.command.join(" "));
-              CompositorService.spawn(app.command);
-            } else if (app.execute) {
-              Logger.d("ApplicationsProvider", "Calling app.execute() for: " + app.name);
-              app.execute();
-            } else {
-              Logger.w("ApplicationsProvider", `Could not launch: ${app.name}. No valid launch method.`);
-            }
-          }
-        });
       }
     };
   }

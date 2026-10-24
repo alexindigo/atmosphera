@@ -2,6 +2,33 @@
 
 ## [Unreleased]
 
+### 2026-10-23
+
+**Fix**
+
+The launcher owns its keyboard in both panel and overlay mode. Commands take
+precedence over native search editing, shell shortcuts cannot intercept them,
+and pointer interaction keeps the search focused. Input-method composition
+keeps its Enter and Escape. Left/Right, Home/End and Delete now edit the search;
+Tab/Shift+Tab move between results (sideways in grids), Ctrl+Tab/Ctrl+Shift+Tab
+switch categories, Ctrl+Home/End select the first/last result, and Page Up/Down
+move one visible page. Remove defaults to Shift+Delete; the old default is
+upgraded while custom bindings are retained.
+
+### 2026-10-22
+
+**Fix**
+
+The launcher opens on all installed applications and uses one matching and
+ranking pipeline for names, executable names, keywords, descriptions and generic
+names. Match quality comes before pinning, usage and alphabetical ties. Hidden
+dialogs and settings windows no longer steal launcher keys; committed launches,
+commands, paste and navigation are owned outside the closing launcher. Mouse and
+keyboard share one highlighted selection, and background refreshes retain the
+selected application's identity. Panel focus is requested before content loads,
+and launcher result population waits for native keyboard focus. Keys delivered
+to another application before the launcher acquires focus cannot be recovered.
+
 ### 2026-10-21
 
 **Maintenance**

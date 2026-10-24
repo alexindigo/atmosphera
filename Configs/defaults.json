@@ -140,7 +140,7 @@
         "Esc"
       ],
       "keyRemove": [
-        "Del"
+        "Shift+Del"
       ]
     },
     "reverseScroll": false,

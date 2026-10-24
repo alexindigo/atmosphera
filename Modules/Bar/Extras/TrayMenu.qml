@@ -203,6 +203,10 @@ PopupWindow {
   }
 
   Item {
+    id: escapeScope
+    NInputGuard {
+      target: escapeScope
+    }
     anchors.fill: parent
     Keys.onEscapePressed: root.hideMenu()
   }

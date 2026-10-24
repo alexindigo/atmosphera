@@ -69,19 +69,22 @@ FloatingWindow {
   }
 
   // Keyboard shortcuts
-  Shortcut {
+  NScopedShortcut {
+    scope: root.contentItem
     sequence: "Escape"
     enabled: !PanelService.isKeybindRecording
     onActivated: SettingsPanelService.closeWindow()
   }
 
-  Shortcut {
+  NScopedShortcut {
+    scope: root.contentItem
     sequence: "Tab"
     enabled: !PanelService.isKeybindRecording
     onActivated: settingsContent.selectNextTab()
   }
 
-  Shortcut {
+  NScopedShortcut {
+    scope: root.contentItem
     sequence: "Backtab"
     enabled: !PanelService.isKeybindRecording
     onActivated: settingsContent.selectPreviousTab()
@@ -89,7 +92,9 @@ FloatingWindow {
 
   Instantiator {
     model: Settings.data.general.keybinds.keyUp || []
-    Shortcut {
+    NScopedShortcut {
+      required property string modelData
+      scope: root.contentItem
       sequence: modelData
       enabled: !PanelService.isKeybindRecording
       onActivated: {
@@ -103,7 +108,9 @@ FloatingWindow {
 
   Instantiator {
     model: Settings.data.general.keybinds.keyDown || []
-    Shortcut {
+    NScopedShortcut {
+      required property string modelData
+      scope: root.contentItem
       sequence: modelData
       enabled: !PanelService.isKeybindRecording
       onActivated: {

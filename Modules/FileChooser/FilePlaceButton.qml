@@ -8,6 +8,9 @@ import qs.Widgets
 // it never recolors the folder glyph through a shared button content color.
 Item {
   id: root
+  NInputGuard {
+    target: root
+  }
   property string text: ""
   property var icon: Icon.filepickerFolder
   property bool selected: false
@@ -34,18 +37,30 @@ Item {
     anchors.leftMargin: Style.marginM
     anchors.rightMargin: Style.marginM
     spacing: Style.marginS
-    AtmoIcon { icon: root.icon; pointSize: Style.fontSizeM; color: AtmoColor.mOnSurfaceVariant }
-    NText { Layout.fillWidth: true; text: root.text; pointSize: Style.fontSizeM; color: AtmoColor.mOnSurface }
+    AtmoIcon {
+      icon: root.icon
+      pointSize: Style.fontSizeM
+      color: AtmoColor.mOnSurfaceVariant
+    }
+    NText {
+      Layout.fillWidth: true
+      text: root.text
+      pointSize: Style.fontSizeM
+      color: AtmoColor.mOnSurface
+    }
   }
   MouseArea {
     id: pointer
     anchors.fill: parent
     hoverEnabled: true
     cursorShape: Qt.PointingHandCursor
-    onEntered: if (root.tooltipText) TooltipService.show(root, root.tooltipText)
-    onExited: if (root.tooltipText) TooltipService.hide()
+    onEntered: if (root.tooltipText)
+                 TooltipService.show(root, root.tooltipText)
+    onExited: if (root.tooltipText)
+                TooltipService.hide()
     onClicked: {
-      if (root.tooltipText) TooltipService.hide();
+      if (root.tooltipText)
+        TooltipService.hide();
       root.forceActiveFocus();
       root.clicked();
     }

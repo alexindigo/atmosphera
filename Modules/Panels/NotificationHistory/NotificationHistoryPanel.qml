@@ -25,6 +25,10 @@ SmartPanel {
   panelContent: Rectangle {
     id: panelContent
     color: "transparent"
+    NInputGuard {
+      target: panelContent
+      focusOnActivation: true
+    }
     focus: true
 
     // Force focus when opened

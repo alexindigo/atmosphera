@@ -33,6 +33,7 @@ import qs.Modules.Panels.Wallpaper
 import qs.Services.Compositor
 import qs.Services.Power
 import qs.Services.UI
+import qs.Widgets
 
 /**
 * MainScreen - Single PanelWindow per screen that manages all panels and the bar
@@ -80,6 +81,7 @@ PanelWindow {
   property real dimmerOpacity: Settings.data.general.dimmerOpacity ?? 0.8
   property bool isPanelOpen: (PanelService.openedPanel !== null) && (PanelService.openedPanel.screen === screen)
   property bool isPanelClosing: (PanelService.openedPanel !== null) && PanelService.openedPanel.isClosing
+  readonly property bool panelKeysActive: root.isPanelOpen && !root.isPanelClosing && !PanelService.openedPanel.handlesOwnKeys
   property bool isAnyPanelOpen: PanelService.openedPanel !== null
 
   color: {
@@ -662,91 +664,109 @@ PanelWindow {
   // onUpPressed, onDownPressed, onReturnPressed, etc...
   Instantiator {
     model: Settings.data.general.keybinds.keyEscape || []
-    Shortcut {
+    NScopedShortcut {
+      required property string modelData
+      scope: root.contentItem
       sequence: modelData
-      enabled: root.isPanelOpen && (PanelService.openedPanel.onEscapePressed !== undefined) && !PanelService.isKeybindRecording
+      enabled: root.panelKeysActive && (PanelService.openedPanel.onEscapePressed !== undefined) && !PanelService.isKeybindRecording
       onActivated: PanelService.openedPanel.onEscapePressed()
     }
   }
 
-  Shortcut {
+  NScopedShortcut {
+    scope: root.contentItem
     sequence: "Tab"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onTabPressed !== undefined)
+    enabled: root.panelKeysActive && (PanelService.openedPanel.onTabPressed !== undefined)
     onActivated: PanelService.openedPanel.onTabPressed()
   }
 
-  Shortcut {
+  NScopedShortcut {
+    scope: root.contentItem
     sequence: "Backtab"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onBackTabPressed !== undefined)
+    enabled: root.panelKeysActive && (PanelService.openedPanel.onBackTabPressed !== undefined)
     onActivated: PanelService.openedPanel.onBackTabPressed()
   }
 
   Instantiator {
     model: Settings.data.general.keybinds.keyUp || []
-    Shortcut {
+    NScopedShortcut {
+      required property string modelData
+      scope: root.contentItem
       sequence: modelData
-      enabled: root.isPanelOpen && (PanelService.openedPanel.onUpPressed !== undefined) && !PanelService.isKeybindRecording
+      enabled: root.panelKeysActive && (PanelService.openedPanel.onUpPressed !== undefined) && !PanelService.isKeybindRecording
       onActivated: PanelService.openedPanel.onUpPressed()
     }
   }
 
   Instantiator {
     model: Settings.data.general.keybinds.keyDown || []
-    Shortcut {
+    NScopedShortcut {
+      required property string modelData
+      scope: root.contentItem
       sequence: modelData
-      enabled: root.isPanelOpen && (PanelService.openedPanel.onDownPressed !== undefined) && !PanelService.isKeybindRecording
+      enabled: root.panelKeysActive && (PanelService.openedPanel.onDownPressed !== undefined) && !PanelService.isKeybindRecording
       onActivated: PanelService.openedPanel.onDownPressed()
     }
   }
 
   Instantiator {
     model: Settings.data.general.keybinds.keyEnter || []
-    Shortcut {
+    NScopedShortcut {
+      required property string modelData
+      scope: root.contentItem
       sequence: modelData
-      enabled: root.isPanelOpen && (PanelService.openedPanel.onEnterPressed !== undefined) && !PanelService.isKeybindRecording
+      enabled: root.panelKeysActive && (PanelService.openedPanel.onEnterPressed !== undefined) && !PanelService.isKeybindRecording
       onActivated: PanelService.openedPanel.onEnterPressed()
     }
   }
 
   Instantiator {
     model: Settings.data.general.keybinds.keyLeft || []
-    Shortcut {
+    NScopedShortcut {
+      required property string modelData
+      scope: root.contentItem
       sequence: modelData
-      enabled: root.isPanelOpen && (PanelService.openedPanel.onLeftPressed !== undefined) && !PanelService.isKeybindRecording
+      enabled: root.panelKeysActive && (PanelService.openedPanel.onLeftPressed !== undefined) && !PanelService.isKeybindRecording
       onActivated: PanelService.openedPanel.onLeftPressed()
     }
   }
 
   Instantiator {
     model: Settings.data.general.keybinds.keyRight || []
-    Shortcut {
+    NScopedShortcut {
+      required property string modelData
+      scope: root.contentItem
       sequence: modelData
-      enabled: root.isPanelOpen && (PanelService.openedPanel.onRightPressed !== undefined) && !PanelService.isKeybindRecording
+      enabled: root.panelKeysActive && (PanelService.openedPanel.onRightPressed !== undefined) && !PanelService.isKeybindRecording
       onActivated: PanelService.openedPanel.onRightPressed()
     }
   }
 
-  Shortcut {
+  NScopedShortcut {
+    scope: root.contentItem
     sequence: "Home"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onHomePressed !== undefined)
+    enabled: root.panelKeysActive && (PanelService.openedPanel.onHomePressed !== undefined)
     onActivated: PanelService.openedPanel.onHomePressed()
   }
 
-  Shortcut {
+  NScopedShortcut {
+    scope: root.contentItem
     sequence: "End"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onEndPressed !== undefined)
+    enabled: root.panelKeysActive && (PanelService.openedPanel.onEndPressed !== undefined)
     onActivated: PanelService.openedPanel.onEndPressed()
   }
 
-  Shortcut {
+  NScopedShortcut {
+    scope: root.contentItem
     sequence: "PgUp"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onPageUpPressed !== undefined)
+    enabled: root.panelKeysActive && (PanelService.openedPanel.onPageUpPressed !== undefined)
     onActivated: PanelService.openedPanel.onPageUpPressed()
   }
 
-  Shortcut {
+  NScopedShortcut {
+    scope: root.contentItem
     sequence: "PgDown"
-    enabled: root.isPanelOpen && (PanelService.openedPanel.onPageDownPressed !== undefined)
+    enabled: root.panelKeysActive && (PanelService.openedPanel.onPageDownPressed !== undefined)
     onActivated: PanelService.openedPanel.onPageDownPressed()
   }
 }

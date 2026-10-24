@@ -12,7 +12,7 @@ ColumnLayout {
   // Keybinds section
   NLabel {
     label: I18n.tr("panels.general.keybinds-title")
-    description: I18n.tr("panels.general.keybinds-description")
+    description: I18n.tr("panels.general.keybinds-description") + "\n" + I18n.tr("panels.general.launcher-keys-description")
     Layout.fillWidth: true
   }
 
@@ -74,7 +74,7 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("panels.general.keybinds-remove")
     currentKeybinds: Settings.data.general.keybinds.keyRemove
-    defaultKeybind: "Del"
+    defaultKeybind: "Shift+Del"
     settingsPath: "general.keybinds.keyRemove"
     onKeybindsChanged: newKeybinds => Settings.data.general.keybinds.keyRemove = newKeybinds
   }

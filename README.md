@@ -289,6 +289,53 @@ workspaces and window management.
 
 ---
 
+## Known issues
+
+### fcitx5-qt can reorder fast typing
+
+With `QT_IM_MODULE=fcitx`, fast typing in launcher search or other shell fields
+can occasionally arrive out of order. This is an upstream fcitx5-qt async
+key-forwarding race ([upstream issue](<upstream issue>)).
+
+Workaround: unset `QT_IM_MODULE` **for the shell process only**, so the shell uses
+Wayland's input-method protocol with fcitx5. Real composition is verified on
+niri; native IME composition on Hyprland and MangoWC has not been verified here.
+
+This suits compositor-managed (xkb) layouts. On niri, the common fcitx5 setup
+(one group, default layout `us`, methods `keyboard-us` and `keyboard-ru`) also
+supports Russian typing and method switching on native Wayland, async Qt fcitx
+and sync Qt fcitx; plain Qt/GTK Wayland fields also passed. Per-group default
+layouts are different: fcitx5 can only push them to KDE/GNOME, not niri; this
+limitation also reproduced outside the shell. Hyprland/MangoWC layout behavior
+is unverified here.
+
+Prefix the existing shell launch command with `env -u QT_IM_MODULE`:
+
+```sh
+env -u QT_IM_MODULE qs -n -c atmosphera
+```
+
+For niri's non-systemd startup line, use
+`spawn-at-startup "env" "-u" "QT_IM_MODULE" "qs" "-n" "-c" "atmosphera"`.
+Use the same command prefix in Hyprland/MangoWC's `exec-once` line, or on
+Hyprland's Lua route `hl.exec_cmd("env -u QT_IM_MODULE qs -n -c atmosphera")`.
+For the systemd route,
+add this to an `atmosphera.service` user override instead:
+
+```ini
+[Service]
+UnsetEnvironment=QT_IM_MODULE
+```
+
+Alternatively, keep the fcitx Qt module and set `FCITX_QT_USE_SYNC=1` for the
+shell, for example `env QT_IM_MODULE=fcitx FCITX_QT_USE_SYNC=1 qs -n -c atmosphera`.
+Each key then waits for fcitx5; a stuck fcitx5 can freeze the shell until the
+request times out.
+In synchronous mode, method switching did not take effect in 3 of 30 test
+attempts; unsetting `QT_IM_MODULE` is the recommended route.
+
+---
+
 ## Scope
 
 Atmosphera is a **desktop shell**, not a full desktop environment. It provides the visual layer that sits on top of your Wayland compositor (bars, panels, notifications, a dock, and widgets) but it intentionally stays within that boundary. Understanding this helps set the right expectations for feature requests.

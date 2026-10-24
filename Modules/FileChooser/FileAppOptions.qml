@@ -105,6 +105,10 @@ Rectangle {
         Component {
           id: booleanChoice
           FocusScope {
+            id: booleanControl
+            NInputGuard {
+              target: booleanControl
+            }
             readonly property bool valueElided: false
             function controlCenter() {
               return check.mapToItem(root, 0, check.height / 2).y;

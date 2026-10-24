@@ -4,6 +4,8 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import "Helpers/LauncherNavigation.js" as LauncherNav
+import "Helpers/LauncherResults.js" as LauncherResults
+import "Helpers/LauncherSelection.js" as LauncherSelection
 
 import "Providers"
 import qs.Commons
@@ -19,6 +21,7 @@ Rectangle {
   // External interface - set by parent
   property var screen: null
   property bool isOpen: false
+  enabled: isOpen && visible
   signal requestClose
   signal requestCloseImmediately
 
@@ -36,6 +39,7 @@ Rectangle {
   property var providers: []
   property var activeProvider: null
   property bool resultsReady: false
+  property bool openReady: false
   property var pluginProviderInstances: ({})
   property bool ignoreMouseHover: true // Transient flag, should always be true on init
 
@@ -162,11 +166,16 @@ Rectangle {
 
   onSearchTextChanged: {
     if (isOpen) {
-      updateResults();
+      // Query changes (including IME commits) take selection back from a
+      // stationary pointer, independently of how native editing delivered text.
+      ignoreMouseHover = true;
+      globalMouseInitialized = false;
+      updateResults(true);
     }
   }
 
   function onOpened() {
+    openReady = false;
     ignoreMouseHover = true;
     globalMouseInitialized = false;
     mouseTrackingReady = false;
@@ -174,19 +183,33 @@ Rectangle {
 
     // Show launcher immediately, results will populate asynchronously
     resultsReady = true;
-    focusSearchInput();
+    Qt.callLater(root.prepareOpenResults);
+  }
 
-    Qt.callLater(() => {
-      syncPluginProviders();
-      for (let provider of providers) {
-        if (provider.onOpened)
-          provider.onOpened();
-      }
-      updateResults();
-    });
+  // Input is ready before result/model/delegate work. Window activation is
+  // the native focus acknowledgement; a locally focused TextField alone is not.
+  Connections {
+    target: root.Window.window
+    function onActiveChanged() {
+      if (root.Window.active)
+        Qt.callLater(root.prepareOpenResults);
+    }
+  }
+
+  function prepareOpenResults() {
+    if (!isOpen || openReady || !root.Window.active)
+      return;
+    openReady = true;
+    syncPluginProviders();
+    for (let provider of providers) {
+      if (provider.onOpened)
+        provider.onOpened();
+    }
+    updateResults(true);
   }
 
   function onClosed() {
+    openReady = false;
     searchText = "";
     ignoreMouseHover = true;
     if (resultsSwapView)
@@ -238,12 +261,6 @@ Rectangle {
     searchText = text;
   }
 
-  function focusSearchInput() {
-    if (searchInput.inputItem) {
-      searchInput.inputItem.forceActiveFocus();
-    }
-  }
-
   // Provider registration
   function registerProvider(provider) {
     providers.push(provider);
@@ -290,8 +307,12 @@ Rectangle {
   }
 
   // Search handling
-  function updateResults() {
-    results = [];
+  function updateResults(resetSelection) {
+    if (!isOpen || !openReady)
+      return;
+    const previousItem = results[selectedIndex];
+    const previousIndex = selectedIndex;
+    let nextResults = [];
     var newActiveProvider = null;
 
     // Check for command mode
@@ -299,7 +320,7 @@ Rectangle {
       for (let provider of providers) {
         if (provider.handleCommand && provider.handleCommand(searchText)) {
           newActiveProvider = provider;
-          results = provider.getResults(searchText);
+          nextResults = provider.getResults(searchText);
           break;
         }
       }
@@ -312,7 +333,7 @@ Rectangle {
             allCommands = allCommands.concat(provider.commands());
         }
         if (searchText === ">") {
-          results = allCommands;
+          nextResults = allCommands;
         } else if (searchText.length > 1) {
           const query = searchText.substring(1);
           if (typeof FuzzySort !== 'undefined') {
@@ -320,51 +341,63 @@ Rectangle {
                                                 "keys": ["name"],
                                                 "limit": 50
                                               });
-            results = fuzzyResults.map(result => result.obj);
+            nextResults = fuzzyResults.map(result => result.obj);
           } else {
             const queryLower = query.toLowerCase();
-            results = allCommands.filter(cmd => (cmd.name || "").toLowerCase().includes(queryLower));
+            nextResults = allCommands.filter(cmd => (cmd.name || "").toLowerCase().includes(queryLower));
           }
         }
       }
     } else {
       // Regular search - let providers contribute results
       let allResults = [];
+      let appResults = [];
+      let otherResults = [];
       for (let provider of providers) {
         if (provider.handleSearch) {
           const providerResults = provider.getResults(searchText);
           allResults = allResults.concat(providerResults);
+          if (provider === defaultProvider)
+            appResults = providerResults;
+          else
+            otherResults = otherResults.concat(providerResults);
         }
       }
 
-      // Sort by _score (higher = better match), items without _score go first
+      // Apps arrive fully ranked. Merge by match bucket with the other
+      // providers' existing scores; never apply a second app/usage sort.
       if (searchText.trim() !== "") {
-        const boostByUsage = Settings.data.appLauncher.sortByMostUsed;
-
-        allResults.sort((a, b) => {
-          let sa = a._score !== undefined ? a._score : 0;
-          let sb = b._score !== undefined ? b._score : 0;
-
-          // Boost scores for frequently used items from tracked providers
-          // _score is normalized 0–1, so boost is scaled to nudge, not overwhelm
-          if (boostByUsage) {
-            if (a.provider && a.provider.trackUsage && a.usageKey) {
-              sa += 0.1 * Math.log2(1 + ShellState.getLauncherUsageCount(a.usageKey));
-            }
-            if (b.provider && b.provider.trackUsage && b.usageKey) {
-              sb += 0.1 * Math.log2(1 + ShellState.getLauncherUsageCount(b.usageKey));
-            }
-          }
-
-          return sb - sa;
-        });
+        allResults = LauncherResults.merge(appResults, otherResults, Settings.data.appLauncher.sortByMostUsed ? key => ShellState.getLauncherUsageCount(key) : null);
       }
-      results = allResults;
+      nextResults = allResults;
     }
 
     // Update activeProvider only after computing new state to avoid UI flicker
     activeProvider = newActiveProvider;
-    selectedIndex = 0;
+    results = nextResults;
+    selectedIndex = LauncherSelection.afterRefresh(nextResults, previousItem, previousIndex, !!resetSelection);
+  }
+
+  function selectFromPointer(index) {
+    if (!ignoreMouseHover && mouseTrackingReady && index >= 0 && index < results.length)
+      selectedIndex = index;
+  }
+
+  function trackPointer(index, point) {
+    if (!mouseTrackingReady)
+      return;
+    if (!globalMouseInitialized) {
+      globalLastMouseX = point.x;
+      globalLastMouseY = point.y;
+      globalMouseInitialized = true;
+      return;
+    }
+    if (Math.abs(point.x - globalLastMouseX) + Math.abs(point.y - globalLastMouseY) >= 5) {
+      ignoreMouseHover = false;
+      globalLastMouseX = point.x;
+      globalLastMouseY = point.y;
+      selectFromPointer(index);
+    }
   }
 
   // Navigation functions (delegated to LauncherNavigation.js)
@@ -386,11 +419,18 @@ Rectangle {
   function selectLast() {
     selectedIndex = LauncherNav.selectLast(results.length);
   }
+  readonly property int visiblePageSize: {
+    const view = resultsView;
+    if (!view || isSingleView)
+      return 1;
+    const rowHeight = isGridView ? view.cellHeight : entryHeight + view.spacing;
+    return Math.max(1, Math.floor(view.height / Math.max(1, rowHeight))) * (isGridView ? gridColumns : 1);
+  }
   function selectNextPage() {
-    selectedIndex = LauncherNav.selectNextPage(selectedIndex, results.length, entryHeight);
+    selectedIndex = LauncherNav.selectNextPage(selectedIndex, results.length, visiblePageSize);
   }
   function selectPreviousPage() {
-    selectedIndex = LauncherNav.selectPreviousPage(selectedIndex, results.length, entryHeight);
+    selectedIndex = LauncherNav.selectPreviousPage(selectedIndex, results.length, visiblePageSize);
   }
   function selectPreviousRow() {
     selectedIndex = LauncherNav.selectPreviousRow(selectedIndex, results.length, gridColumns);
@@ -419,10 +459,8 @@ Rectangle {
       if (Settings.data.appLauncher.autoPasteClipboard && provider && provider.supportsAutoPaste && item.autoPasteText) {
         if (item.onAutoPaste)
           item.onAutoPaste();
+        LauncherActionService.pasteText(item.autoPasteText);
         closeImmediately();
-        Qt.callLater(() => {
-          ClipboardService.pasteText(item.autoPasteText);
-        });
         return;
       }
 
@@ -431,106 +469,69 @@ Rectangle {
     }
   }
 
-  function checkKey(event, settingName) {
-    return Keybinds.checkKey(event, settingName, Settings);
+  function keyboardSelection(action) {
+    ignoreMouseHover = true;
+    globalMouseInitialized = false;
+    action();
   }
 
-  // Keyboard handler
-  function handleKeyPress(event) {
-    if (checkKey(event, 'escape')) {
-      close();
-      event.accepted = true;
+  function selectCategoryBy(direction) {
+    if (!showProviderCategories)
       return;
-    }
+    const cats = providerCategories;
+    const index = cats.indexOf(currentProvider.selectedCategory);
+    selectCategoryWithSlide((index + direction + cats.length) % cats.length);
+  }
 
-    if (checkKey(event, 'enter')) {
-      activate();
-      event.accepted = true;
-      return;
-    }
+  function removeSelectedItem() {
+    const item = results[selectedIndex];
+    const provider = item ? (item.provider || currentProvider) : null;
+    if (provider && provider.canDeleteItem && provider.canDeleteItem(item))
+      provider.deleteItem(item);
+  }
 
-    if (checkKey(event, 'up')) {
-      if (!isSingleView) {
-        isGridView ? selectPreviousRow() : selectPreviousWrapped();
-      }
-      event.accepted = true;
-      return;
-    }
+  // All hosts, providers and layouts share this complete key table.
+  // Configurable commands take precedence over the fixed editing meanings.
+  // Editing entries fall through to Qt. Unbound non-editing keys are consumed
+  // as no-op commands so they cannot trigger another surface's Shortcut.
+  readonly property var keyTable: [
+    {kind: "command", keys: Settings.data.general.keybinds.keyEscape, run: () => root.close()},
+    {kind: "command", keys: Settings.data.general.keybinds.keyEnter, run: () => root.activate()},
+    {kind: "command", keys: Settings.data.general.keybinds.keyUp, run: () => root.keyboardSelection(() => {
+      if (!root.isSingleView) root.isGridView ? root.selectPreviousRow() : root.selectPreviousWrapped();
+    })},
+    {kind: "command", keys: Settings.data.general.keybinds.keyDown, run: () => root.keyboardSelection(() => {
+      if (!root.isSingleView) root.isGridView ? root.selectNextRow() : root.selectNextWrapped();
+    })},
+    {kind: "command", keys: Settings.data.general.keybinds.keyRemove, run: () => root.removeSelectedItem()},
+    {kind: "command", keys: ["PgUp"], run: () => root.keyboardSelection(root.selectPreviousPage)},
+    {kind: "command", keys: ["PgDn"], run: () => root.keyboardSelection(root.selectNextPage)},
+    {kind: "command", keys: ["Ctrl+Home"], run: () => root.keyboardSelection(root.selectFirst)},
+    {kind: "command", keys: ["Ctrl+End"], run: () => root.keyboardSelection(root.selectLast)},
+    {kind: "command", keys: ["Tab"], run: () => root.keyboardSelection(root.selectNextWrapped)},
+    {kind: "command", keys: ["Shift+Tab"], run: () => root.keyboardSelection(root.selectPreviousWrapped)},
+    {kind: "command", keys: ["Ctrl+Tab"], run: () => root.selectCategoryBy(1)},
+    {kind: "command", keys: ["Ctrl+Shift+Tab"], run: () => root.selectCategoryBy(-1)},
+    {kind: "editing", keys: ["Backspace", "Del", "Left", "Right", "Home", "End",
+      "Shift+Backspace", "Shift+Del", "Shift+Left", "Shift+Right", "Shift+Home", "Shift+End",
+      "Ctrl+Left", "Ctrl+Right", "Ctrl+Backspace", "Ctrl+Del",
+      "Ctrl+Shift+Left", "Ctrl+Shift+Right", "Ctrl+Shift+Backspace", "Ctrl+Shift+Del",
+      "Ctrl+A", "Ctrl+C", "Ctrl+X", "Ctrl+V", "Ctrl+Z", "Ctrl+Y", "Ctrl+Shift+Z", "Ctrl+Ins", "Shift+Ins"]},
+    {kind: "editing", matches: event => {
+      const textModifiers = !(event.modifiers & (Qt.ControlModifier | Qt.AltModifier | Qt.MetaModifier)) || (event.modifiers & Qt.GroupSwitchModifier);
+      const printable = event.text && event.text.length > 0 && event.text.charCodeAt(0) >= 32 && event.text.charCodeAt(0) !== 127;
+      const deadKey = event.key >= Qt.Key_Dead_Grave && event.key <= Qt.Key_Dead_Longsolidusoverlay;
+      return textModifiers && (printable || deadKey);
+    }},
+    {kind: "command", matches: () => true, run: () => {}}
+  ]
 
-    if (checkKey(event, 'down')) {
-      if (!isSingleView) {
-        isGridView ? selectNextRow() : selectNextWrapped();
-      }
-      event.accepted = true;
-      return;
-    }
-
-    if (checkKey(event, 'left')) {
-      if (isGridView) {
-        selectPreviousColumn();
-        event.accepted = true;
-        return;
-      }
-    }
-
-    if (checkKey(event, 'right')) {
-      if (isGridView) {
-        selectNextColumn();
-        event.accepted = true;
-        return;
-      }
-    }
-
-    // Static bindings
-    switch (event.key) {
-    case Qt.Key_Tab:
-      if (showProviderCategories) {
-        var cats = providerCategories;
-        var idx = cats.indexOf(currentProvider.selectedCategory);
-        var nextIdx = (idx + 1) % cats.length;
-        selectCategoryWithSlide(nextIdx);
-      } else {
-        selectNextWrapped();
-      }
-      event.accepted = true;
-      break;
-    case Qt.Key_Backtab:
-      if (showProviderCategories) {
-        var cats2 = providerCategories;
-        var idx2 = cats2.indexOf(currentProvider.selectedCategory);
-        var prevIdx = ((idx2 - 1) % cats2.length + cats2.length) % cats2.length;
-        selectCategoryWithSlide(prevIdx);
-      } else {
-        selectPreviousWrapped();
-      }
-      event.accepted = true;
-      break;
-    case Qt.Key_Home:
-      selectFirst();
-      event.accepted = true;
-      break;
-    case Qt.Key_End:
-      selectLast();
-      event.accepted = true;
-      break;
-    case Qt.Key_PageUp:
-      selectPreviousPage();
-      event.accepted = true;
-      break;
-    case Qt.Key_PageDown:
-      selectNextPage();
-      event.accepted = true;
-      break;
-    case Qt.Key_Delete:
-      if (selectedIndex >= 0 && results && results[selectedIndex]) {
-        var item = results[selectedIndex];
-        var provider = item.provider || currentProvider;
-        if (provider && provider.canDeleteItem && provider.canDeleteItem(item))
-          provider.deleteItem(item);
-      }
-      event.accepted = true;
-      break;
-    }
+  NKeyOwner {
+    scope: root
+    input: searchInput.inputItem
+    active: root.isOpen
+    keyTable: root.keyTable
+    keyString: event => Keybinds.getKeybindString(event)
   }
 
   // -----------------------
@@ -604,38 +605,27 @@ Rectangle {
 
   // ==================== UI Content ====================
 
+  // One movement owner across both views, including movement within a row
+  // already hovered when keyboard navigation took over. The view exposes its
+  // public content-coordinate hit test; delegates never own a second selection.
+  HoverHandler {
+    enabled: !Settings.data.appLauncher.ignoreMouseInput
+    onPointChanged: {
+      const view = root.resultsView;
+      if (!view || !view.indexAt)
+        return;
+      const local = root.mapToItem(view, point.position.x, point.position.y);
+      const index = local.x >= 0 && local.y >= 0 && local.x < view.width && local.y < view.height ? view.indexAt(local.x + view.contentX, local.y + view.contentY) : -1;
+      root.trackPointer(index, point.position);
+    }
+  }
+
   opacity: resultsReady ? 1.0 : 0.0
 
   Behavior on opacity {
     NumberAnimation {
       duration: Style.animationFast
       easing.type: Easing.OutCirc
-    }
-  }
-
-  HoverHandler {
-    id: globalHoverHandler
-    enabled: !Settings.data.appLauncher.ignoreMouseInput
-
-    onPointChanged: {
-      if (!root.mouseTrackingReady) {
-        return;
-      }
-
-      if (!root.globalMouseInitialized) {
-        root.globalLastMouseX = point.position.x;
-        root.globalLastMouseY = point.position.y;
-        root.globalMouseInitialized = true;
-        return;
-      }
-
-      const deltaX = Math.abs(point.position.x - root.globalLastMouseX);
-      const deltaY = Math.abs(point.position.y - root.globalLastMouseY);
-      if (deltaX + deltaY >= 5) {
-        root.ignoreMouseHover = false;
-        root.globalLastMouseX = point.position.x;
-        root.globalLastMouseY = point.position.y;
-      }
     }
   }
 
@@ -660,14 +650,6 @@ Rectangle {
         fontSize: Style.fontSizeM
         onTextChanged: root.searchText = text
 
-        Component.onCompleted: {
-          if (searchInput.inputItem) {
-            searchInput.inputItem.forceActiveFocus();
-            searchInput.inputItem.Keys.onPressed.connect(function (event) {
-              root.handleKeyPress(event);
-            });
-          }
-        }
       }
 
       AtmoIconButton {
@@ -726,6 +708,8 @@ Rectangle {
       id: listViewComponent
       NListView {
         id: resultsList
+        focus: false
+        activeFocusOnTab: false
 
         horizontalPolicy: ScrollBar.AlwaysOff
         verticalPolicy: ScrollBar.AlwaysOff
@@ -746,7 +730,11 @@ Rectangle {
             positionViewAtIndex(currentIndex, ListView.Contain);
           }
         }
-        onModelChanged: {}
+        onModelChanged: Qt.callLater(revealSelection)
+        function revealSelection() {
+          cancelFlick();
+          positionViewAtIndex(root.selectedIndex, ListView.Contain);
+        }
 
         delegate: LauncherListDelegate {
           launcher: root
@@ -843,8 +831,14 @@ Rectangle {
         bottomMargin: 0
         model: root.results
         cacheBuffer: resultsGrid.height * 2
+        onModelChanged: Qt.callLater(revealSelection)
+        function revealSelection() {
+          cancelFlick();
+          positionViewAtIndex(root.selectedIndex, GridView.Contain);
+        }
         keyNavigationEnabled: false
         focus: false
+        activeFocusOnTab: false
         interactive: !Settings.data.appLauncher.ignoreMouseInput
 
         // Completely disable GridView key handling

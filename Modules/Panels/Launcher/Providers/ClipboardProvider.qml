@@ -1,8 +1,9 @@
 import QtQuick
 import Quickshell
 import qs.Commons
-import qs.Services.Keyboard
 import qs.Services
+import qs.Services.Keyboard
+import qs.Services.UI
 
 Item {
   id: root
@@ -261,10 +262,8 @@ Item {
       // Add activation handler
       entry.onActivate = function () {
         if (Settings.data.appLauncher.autoPasteClipboard) {
+          LauncherActionService.pasteClipboard(item.id, item.mime);
           launcher.closeImmediately();
-          Qt.callLater(() => {
-            ClipboardService.pasteFromClipboard(item.id, item.mime);
-          });
         } else {
           ClipboardService.copyToClipboard(item.id);
           launcher.close();
