@@ -18,6 +18,8 @@ ColumnLayout {
   property var timeOptions
   property var schemeColorsCache: ({})
   property int cacheVersion: 0
+  property int _schemeReadVersion: 0
+  property var _pendingReads: ({})
 
   signal openDownloadPopup
 
@@ -73,8 +75,10 @@ ColumnLayout {
   function schemeLoaded(schemeName, jsonData) {
     if (!jsonData)
       return;
+    const version = ++_schemeReadVersion;
+    _pendingReads[schemeName] = version;
     ColorSchemeService.normalizeScheme(jsonData, function (value) {
-      if (value) {
+      if (value && root._pendingReads[schemeName] === version) {
         root.schemeColorsCache[schemeName] = value;
         root.cacheVersion++;
       }
@@ -85,6 +89,7 @@ ColumnLayout {
     target: ColorSchemeService
     function onSchemesChanged() {
       root.schemeColorsCache = {};
+      root._pendingReads = {};
       root.cacheVersion++;
     }
   }

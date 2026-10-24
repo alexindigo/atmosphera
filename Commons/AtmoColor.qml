@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../Services/Theming/SchemeSnapshot.js" as SchemeSnapshot
 import qs.Commons
 import qs.Services.Power
 import qs.Services.Theming
@@ -41,6 +42,7 @@ Singleton {
     if (!Settings.directoriesCreated || customColorsFile.path === undefined) {
       return;
     }
+    _loadVersion++;
     externalColorReloadTimer.restart();
   }
 
@@ -455,22 +457,32 @@ Singleton {
   // ----------------------------------------------------------------
   // FileView to load custom colors data from colors.json
   property int _loadVersion: 0
-  readonly property var roleKeys: ["mPrimary", "mOnPrimary", "mSecondary", "mOnSecondary", "mTertiary", "mOnTertiary", "mStandout", "mOnStandout", "mError", "mOnError", "mSurface", "mOnSurface", "mSurfaceVariant", "mOnSurfaceVariant", "mOutline", "mShadow", "mHover", "mOnHover"]
+  readonly property var roleKeys: SchemeSnapshot.roleKeys
+
+  function settleColorLoad(version, normalized, failure) {
+    if (version !== _loadVersion)
+      return;
+    if (normalized) {
+      const variant = normalized[Settings.data.colorSchemes.darkMode ? "dark" : "light"];
+      for (const key of root.roleKeys)
+        customColorsData[key] = variant[key];
+    } else {
+      Logger.w("Color", "Colour load rejected; keeping last good colours:", failure || "normalization failed");
+    }
+    Qt.callLater(function () {
+      if (version === root._loadVersion)
+        root.skipTransition = false;
+    });
+  }
+
+  function rejectColorLoad(reason) {
+    settleColorLoad(++_loadVersion, null, reason);
+  }
 
   function loadColors(data) {
     const version = ++_loadVersion;
-    ColorSchemeService.normalizeScheme(data, function (normalized) {
-      if (!normalized || version !== root._loadVersion)
-        return;
-      const variant = normalized[Settings.data.colorSchemes.darkMode ? "dark" : "light"];
-      for (const key of root.roleKeys) {
-        if (variant[key] !== undefined)
-          customColorsData[key] = variant[key];
-      }
-      if (root.skipTransition)
-        Qt.callLater(function () {
-          root.skipTransition = false;
-        });
+    ColorSchemeService.normalizeScheme(data, function (normalized, failure) {
+      root.settleColorLoad(version, normalized, failure);
     });
   }
 
@@ -484,34 +496,31 @@ Singleton {
       try {
         root.loadColors(JSON.parse(text()));
       } catch (error) {
-        Logger.e("Color", "Failed to load colors:", error);
+        root.rejectColorLoad("Invalid colours JSON: " + error);
       }
     }
 
     // Trigger initial load when path changes from empty to actual path
     onPathChanged: {
       if (path !== undefined) {
+        root._loadVersion++;
         reload();
       }
     }
     onLoadFailed: function (error) {
+      root.rejectColorLoad("Cannot read colours file: " + error);
       if (reloadColors) {
         reloadColors = false;
         return;
       }
 
-      if (root.skipTransition) {
-        Qt.callLater(function () {
-          root.skipTransition = false;
-        });
-      }
-
       // Error code 2 = ENOENT (No such file or directory)
       if (error === 2 || error.toString().includes("No such file")) {
-        // File doesn't exist, create it with default values
+        // Recreate from the accepted target (defaults before any good load),
+        // never from intermediate animated colours or a rejected raw payload.
         var defaults = {};
         for (const key of root.roleKeys)
-          defaults[key] = String(defaultColors[key]);
+          defaults[key] = String(customColorsData[key]);
         setText(JSON.stringify(defaults));
       }
     }

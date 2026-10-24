@@ -8,6 +8,7 @@ import qs.Commons
 import qs.Services.Theming
 import qs.Services.UI
 import "../../Helpers/OwnedProcess.js" as OwnedProcess
+import "SchemeSnapshot.js" as SchemeSnapshot
 
 Singleton {
   id: root
@@ -26,6 +27,8 @@ Singleton {
   property var _normalizedCache: ({})
   property var _cacheKeys: []
   property int _applyVersion: 0
+  property int _writeVersion: 0
+  property int _schemeWriteVersion: 0
   property var _customSaveQueue: []
   property bool _savingCustom: false
 
@@ -33,7 +36,24 @@ Singleton {
   // legacy derivation, cache by content, and hand out copies so editor changes
   // cannot mutate a preview or another caller's canonical dark reference.
   function normalizeScheme(data, complete) {
-    const key = JSON.stringify(data);
+    var prepared;
+    try {
+      prepared = SchemeSnapshot.prepare(data);
+    } catch (error) {
+      prepared = {error: String(error)};
+    }
+    if (prepared.error) {
+      Logger.w("ColorScheme", "Scheme rejected:", prepared.error);
+      complete(null, prepared.error);
+      return;
+    }
+    // Fully authored snapshots are structurally validated, not transported
+    // through optional colour math. No unvalidated raw-JSON fallback exists.
+    if (prepared.complete) {
+      complete(prepared.data);
+      return;
+    }
+    const key = JSON.stringify(prepared.data);
     if (_normalizedCache[key]) {
       complete(JSON.parse(JSON.stringify(_normalizedCache[key])));
       return;
@@ -47,27 +67,39 @@ Singleton {
       return;
     const request = _normalizationQueue.shift();
     if (_normalizedCache[request.key]) {
-      request.complete(JSON.parse(JSON.stringify(_normalizedCache[request.key])));
       Qt.callLater(_normalizeNext);
+      request.complete(JSON.parse(JSON.stringify(_normalizedCache[request.key])));
       return;
     }
     _normalizing = true;
     OwnedProcess.run(root, ["timeout", "10", "python3", "-B", Quickshell.shellDir + "/Scripts/python/src/theming/normalize-scheme.py"], request.key, function (result) {
       var normalized = null;
+      var failure = "";
       try {
         if (!result.success)
           throw new Error(result.stderr || result.error);
-        normalized = JSON.parse(result.stdout);
+        const prepared = SchemeSnapshot.prepare(JSON.parse(result.stdout));
+        if (prepared.error || !prepared.complete)
+          throw new Error(prepared.error || "Normalizer returned an incomplete snapshot");
+        const submitted = JSON.parse(request.key);
+        for (const mode of ["dark", "light"]) {
+          for (const key of SchemeSnapshot.roleKeys) {
+            if (submitted[mode][key] !== undefined && submitted[mode][key] !== prepared.data[mode][key])
+              throw new Error("Normalizer changed authored colour " + mode + "." + key);
+          }
+        }
+        normalized = prepared.data;
         _normalizedCache[request.key] = normalized;
         _cacheKeys.push(request.key);
         if (_cacheKeys.length > 64)
           delete _normalizedCache[_cacheKeys.shift()];
       } catch (error) {
-        Logger.e("ColorScheme", "Scheme normalization failed:", error);
+        failure = String(error);
+        Logger.w("ColorScheme", "Scheme normalization failed:", failure);
       }
       _normalizing = false;
-      request.complete(normalized ? JSON.parse(JSON.stringify(normalized)) : null);
       Qt.callLater(_normalizeNext);
+      request.complete(normalized ? JSON.parse(JSON.stringify(normalized)) : null, failure);
     });
   }
 
@@ -170,6 +202,7 @@ Singleton {
 
   function applyScheme(nameOrPath) {
     _applyVersion++;
+    _schemeWriteVersion = ++_writeVersion;
     // Force reload by bouncing the path
     var filePath = resolveSchemePath(nameOrPath);
     schemeReader.path = "";
@@ -252,9 +285,10 @@ Singleton {
       try {
         var data = JSON.parse(text());
         const version = root._applyVersion;
+        const writeVersion = root._schemeWriteVersion;
         const schemePath = path;
         root.normalizeScheme(data, function (normalized) {
-          if (!normalized || version !== root._applyVersion)
+          if (!normalized || version !== root._applyVersion || writeVersion !== root._writeVersion)
             return;
           const mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
           root._writeColorsToDisk(normalized[mode]);
@@ -316,8 +350,9 @@ Singleton {
   }
 
   function writeColorsToDisk(obj) {
+    const version = ++_writeVersion;
     normalizeScheme(obj, function (data) {
-      if (data)
+      if (data && version === root._writeVersion)
         root._writeColorsToDisk(data[Settings.data.colorSchemes.darkMode ? "dark" : "light"]);
     });
   }

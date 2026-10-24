@@ -19,6 +19,8 @@ ColumnLayout {
   // Cache for scheme colors (mirrors ColorSchemeTab approach)
   property var schemeColorsCache: ({})
   property int cacheVersion: 0
+  property int _schemeReadVersion: 0
+  property var _pendingReads: ({})
 
   function getSchemeColor(schemeName, key) {
     try {
@@ -34,8 +36,10 @@ ColumnLayout {
   function schemeLoaded(schemeName, jsonData) {
     if (!jsonData)
       return;
+    const version = ++_schemeReadVersion;
+    _pendingReads[schemeName] = version;
     ColorSchemeService.normalizeScheme(jsonData, function (value) {
-      if (value) {
+      if (value && root._pendingReads[schemeName] === version) {
         root.schemeColorsCache[schemeName] = value;
         root.cacheVersion++;
       }
@@ -47,6 +51,7 @@ ColumnLayout {
     function onSchemesChanged() {
       Logger.i("SetupAppearanceStep", `Color schemes changed: ${ColorSchemeService.schemes.length}`);
       schemeColorsCache = {};
+      root._pendingReads = {};
       cacheVersion++;
     }
   }

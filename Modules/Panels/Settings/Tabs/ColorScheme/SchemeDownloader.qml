@@ -25,6 +25,8 @@ Popup {
   // Cache for remote scheme colors
   property var schemeColorsCache: ({})
   property int cacheVersion: 0
+  property int _schemeReadVersion: 0
+  property var _pendingReads: ({})
 
   // Cache for available schemes list (uses ShellState singleton)
   property int schemesCacheUpdateFrequency: 2 * 60 * 60 // 2 hours in seconds
@@ -76,8 +78,10 @@ Popup {
   function cacheSchemeColors(scheme) {
     if (!scheme.dark && !scheme.light)
       return;
+    const version = ++_schemeReadVersion;
+    _pendingReads[scheme.name] = version;
     ColorSchemeService.normalizeScheme({dark: scheme.dark, light: scheme.light}, function (data) {
-      if (data) {
+      if (data && root._pendingReads[scheme.name] === version) {
         root.schemeColorsCache[scheme.name] = data;
         root.cacheVersion++;
       }
