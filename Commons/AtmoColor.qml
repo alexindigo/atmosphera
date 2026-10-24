@@ -449,9 +449,9 @@ Singleton {
     readonly property color mSurfaceVariant: "#2C2C2E"
     readonly property color mOnSurfaceVariant: "#98989D"
     readonly property color mOutline: "#3A3A3C"
-    readonly property color mShadow: "#000000"
+    readonly property color mShadow: SchemeSnapshot.legacyDefaults.mShadow
     readonly property color mHover: "#0A84FF"
-    readonly property color mOnHover: "#FFFFFF"
+    readonly property color mOnHover: SchemeSnapshot.legacyDefaults.mOnHover
   }
 
   // ----------------------------------------------------------------

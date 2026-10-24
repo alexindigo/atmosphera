@@ -18,6 +18,7 @@ ShellRoot {
   property bool fence: false
   property bool transitioned: false
   property bool intermediate: false
+  property bool legacyTested: false
   property double changedAt: 0
   property var cases: []
   function copy(value) { return JSON.parse(JSON.stringify(value)); }
@@ -95,7 +96,24 @@ ShellRoot {
         root.phase++;
       } else if (root.phase === 1 && root.coherent(root.palettes.b) && !AtmoColor.skipTransition) {
         root.goodFace = String(icon.paints.face);
+        if (!root.legacyTested) {
+          root.legacyTested = true;
+          var fourteen = root.legacy(root.palettes.a, "", "fourteen-core");
+          for (const mode of ["dark", "light"]) {
+            delete fourteen[mode].mShadow;
+            delete fourteen[mode].mOnHover;
+          }
+          AtmoColor.loadColors(fourteen);
+          root.fenceQueue("fourteen-core-fence");
+          root.phase = 11;
+          return;
+        }
         root.phase++;
+      } else if (root.phase === 11 && root.fence) {
+        root.check("fourteen-core-legacy-keeps-historical-defaults", root.coherent(root.palettes.a) && String(widget.color).toLowerCase() === root.palettes.a.dark.mPrimary.toLowerCase() && String(icon.paints.face) !== root.goodFace,
+                   {shadow: String(AtmoColor.mShadow), onHover: String(AtmoColor.mOnHover), widget: String(widget.color), icon: String(icon.paints.face)});
+        AtmoColor.loadColors(root.palettes.b);
+        root.phase = 1;
       } else if (root.phase === 2) {
         if (root.faultIndex === root.faults.length) {
           corrupt.command = ["python3", "-c", "from pathlib import Path; import sys; Path(sys.argv[1]).write_text('{broken')", Settings.configDir + "colors.json"];

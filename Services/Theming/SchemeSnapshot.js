@@ -3,6 +3,9 @@
 // Structural shell-snapshot contract, shared by all QML consumers. This does
 // not derive colours: missing standout fields still belong to Python's rule.
 var roleKeys = ["mPrimary", "mOnPrimary", "mSecondary", "mOnSecondary", "mTertiary", "mOnTertiary", "mStandout", "mOnStandout", "mError", "mOnError", "mSurface", "mOnSurface", "mSurfaceVariant", "mOnSurfaceVariant", "mOutline", "mShadow", "mHover", "mOnHover"];
+// These two roles were optional in the14-core format. Match the historical
+// shell defaults explicitly, rather than inheriting another scheme's values.
+var legacyDefaults = {mShadow: "#000000", mOnHover: "#ffffff"};
 
 function object(value) {
     return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -25,6 +28,8 @@ function prepare(data) {
             var snake = alias.replace(/[A-Z]/g, c => "_" + c.toLowerCase());
             if (variant[key] === undefined)
                 variant[key] = variant[alias] !== undefined ? variant[alias] : variant[snake];
+            if (variant[key] === undefined && key in legacyDefaults)
+                variant[key] = legacyDefaults[key];
             if (variant[key] === undefined) {
                 if (key === "mStandout" || key === "mOnStandout") {
                     complete = false;

@@ -79,7 +79,7 @@ runpy.run_path(str(Path(__file__).with_name('.normalize-original.py')),run_name=
         no_authored_worker = not any(row['tag'] == 'complete-without-worker' for row in workers)
         save_failed = any(row['save'] and row['fault'] == 'save-fail' for row in workers) and not (profile / 'config/colorschemes/Custom/Custom.json').exists()
         warnings_visible = log.count('Colour load rejected; keeping last good colours:') >= 8 and 'Invalid colours JSON' in log
-        passed = result.returncode == 0 and 'THEME_LOAD_COMPLETE|' in log and len(cases) >= 15 and all(row['pass'] for row in cases) and not errors and no_authored_worker and save_failed and warnings_visible
+        passed = result.returncode == 0 and 'THEME_LOAD_COMPLETE|' in log and len(cases) >= 16 and all(row['pass'] for row in cases) and not errors and no_authored_worker and save_failed and warnings_visible
         receipt = dict(passed=passed, exit=result.returncode, cases=cases, file_reads=reads, errors=errors, no_authored_worker=no_authored_worker, failed_save_not_written=save_failed, warnings_visible=warnings_visible)
         (output / 'result.json').write_text(json.dumps(receipt, indent=2))
         print(json.dumps(receipt, indent=2))
