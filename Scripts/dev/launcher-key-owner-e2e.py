@@ -7,6 +7,7 @@ activation spy replaces the selected callback for key-routing checks only;
 launcher-flow-e2e.py separately proves actual application/window consumers.
 """
 import argparse
+from contextlib import contextmanager
 import importlib.util
 import json
 import os
@@ -24,6 +25,26 @@ flow.SOCKET = ROOT / 'runtime/input.sock'
 
 def ipc(method, *args):
     return flow.command(['qs', '-c', 'atmosphera', 'ipc', 'call', 'launcherKeys', method, *args]).stdout.strip()
+
+
+class BindingRestorationError(RuntimeError):
+    """The settings state is unknown; dependent cases must not continue."""
+
+
+@contextmanager
+def temporary_bindings(overrides):
+    previous = json.loads(ipc('getBindings', json.dumps({'names': list(overrides)})))
+    try:
+        ipc('bindings', json.dumps(overrides))
+        yield
+    finally:
+        try:
+            ipc('bindings', json.dumps(previous))
+            actual = json.loads(ipc('getBindings', json.dumps({'names': list(previous)})))
+            if actual != previous:
+                raise RuntimeError(f'expected {previous!r}, observed {actual!r}')
+        except Exception as error:
+            raise BindingRestorationError('Temporary key binding restoration failed') from error
 
 
 def state():
@@ -111,6 +132,8 @@ def main():
         try:
             details = body()
             passed, error = True, None
+        except BindingRestorationError:
+            raise
         except (AssertionError, RuntimeError, subprocess.SubprocessError) as exc:
             details = None
             passed, error = False, str(exc)
@@ -324,11 +347,10 @@ def main():
 
                 def custom_binding():
                     before, _ = opened(host, 'apps-list')
-                    ipc('bindings', json.dumps({'keyEnter': ['Ctrl+A']}))
-                    ipc('armActivation')
-                    chord(30, 29)
-                    expect(lambda s: s['activations'] == 1 and not s['field']['selected'])
-                    ipc('bindings', json.dumps({'keyEnter': ['Return', 'Enter']}))
+                    with temporary_bindings({'keyEnter': ['Ctrl+A']}):
+                        ipc('armActivation')
+                        chord(30, 29)
+                        expect(lambda s: s['activations'] == 1 and not s['field']['selected'])
                 case(f'{host}/custom-command-beats-editing', custom_binding)
 
                 def unbound_and_printable_shortcuts():

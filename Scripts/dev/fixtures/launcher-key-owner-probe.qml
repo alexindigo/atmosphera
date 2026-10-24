@@ -25,7 +25,10 @@ Item {
   Connections {
     target: probe.liveCore ? probe.liveCore.Window.window : null
     function onActiveChanged() {
-      probe.nativeEdges.push({at: Date.now(), active: probe.liveCore ? probe.liveCore.Window.active : false});
+      probe.nativeEdges.push({
+                               at: Date.now(),
+                               active: probe.liveCore ? probe.liveCore.Window.active : false
+                             });
     }
   }
   Connections {
@@ -33,7 +36,11 @@ Item {
     function onPressed(event) {
       if ([Qt.Key_Control, Qt.Key_Shift, Qt.Key_Alt, Qt.Key_Meta, Qt.Key_AltGr].indexOf(event.key) === -1)
         probe.keySerial++;
-      probe.deliveredKeys.push({at: Date.now(), key: event.key, text: event.text});
+      probe.deliveredKeys.push({
+                                 at: Date.now(),
+                                 key: event.key,
+                                 text: event.text
+                               });
     }
   }
 
@@ -86,11 +93,24 @@ Item {
       single: current ? current.isSingleView : null,
       viewHeight: view ? view.height : null,
       rowHeight: view && current ? (current.isGridView ? view.cellHeight : current.entryHeight + view.spacing) : null,
-      field: field ? {text: field.text, cursor: field.cursorPosition, start: field.selectionStart, end: field.selectionEnd,
-                      selected: field.selectedText, preedit: field.preeditText, composing: field.inputMethodComposing,
-                      focused: field.activeFocus} : null,
-      shortcutHits: shortcutHits, closes: closes, activations: activations, activatedName: activatedName
-      , nativeActive: current ? current.Window.active : false, nativeEdges: nativeEdges.slice(-12), deliveredKeys: deliveredKeys.slice(-20), keySerial: keySerial
+      field: field ? {
+                       text: field.text,
+                       cursor: field.cursorPosition,
+                       start: field.selectionStart,
+                       end: field.selectionEnd,
+                       selected: field.selectedText,
+                       preedit: field.preeditText,
+                       composing: field.inputMethodComposing,
+                       focused: field.activeFocus
+                     } : null,
+      shortcutHits: shortcutHits,
+      closes: closes,
+      activations: activations,
+      activatedName: activatedName,
+      nativeActive: current ? current.Window.active : false,
+      nativeEdges: nativeEdges.slice(-12),
+      deliveredKeys: deliveredKeys.slice(-20),
+      keySerial: keySerial
     };
   }
 
@@ -100,22 +120,57 @@ Item {
     property string name: "K1 single-view plugin"
     property string supportedLayouts: "single"
     property bool handleSearch: false
-    function handleCommand(text) { return text.startsWith(">keyfixture"); }
+    function handleCommand(text) {
+      return text.startsWith(">keyfixture");
+    }
     function getResults(text) {
-      return [{name: "K1 single result", description: "Third-party provider contract fixture", provider: singleProvider,
-               onActivate: () => { probe.activations++; probe.activatedName = "K1 single result"; }}];
+      return [
+            {
+              name: "K1 single result",
+              description: "Third-party provider contract fixture",
+              provider: singleProvider,
+              onActivate: () => {
+                probe.activations++;
+                probe.activatedName = "K1 single result";
+              }
+            }
+          ];
     }
   }
 
   Component {
     id: competition
     Item {
-      Shortcut { sequence: "Esc"; enabled: probe.compete; onActivated: probe.shortcutHits++ }
-      Shortcut { sequence: "Return"; enabled: probe.compete; onActivated: probe.shortcutHits++ }
-      Shortcut { sequence: "Enter"; enabled: probe.compete; onActivated: probe.shortcutHits++ }
-      Shortcut { sequence: "Ctrl+V"; enabled: probe.compete; onActivated: probe.shortcutHits++ }
-      Shortcut { sequence: "A"; enabled: probe.compete; onActivated: probe.shortcutHits++ }
-      Shortcut { sequence: "F1"; enabled: probe.compete; onActivated: probe.shortcutHits++ }
+      Shortcut {
+        sequence: "Esc"
+        enabled: probe.compete
+        onActivated: probe.shortcutHits++
+      }
+      Shortcut {
+        sequence: "Return"
+        enabled: probe.compete
+        onActivated: probe.shortcutHits++
+      }
+      Shortcut {
+        sequence: "Enter"
+        enabled: probe.compete
+        onActivated: probe.shortcutHits++
+      }
+      Shortcut {
+        sequence: "Ctrl+V"
+        enabled: probe.compete
+        onActivated: probe.shortcutHits++
+      }
+      Shortcut {
+        sequence: "A"
+        enabled: probe.compete
+        onActivated: probe.shortcutHits++
+      }
+      Shortcut {
+        sequence: "F1"
+        enabled: probe.compete
+        onActivated: probe.shortcutHits++
+      }
       Button {
         id: focusThief
         text: "K1 focus challenger"
@@ -123,13 +178,17 @@ Item {
         height: 30
         focusPolicy: Qt.StrongFocus
       }
-      function steal() { focusThief.forceActiveFocus(); }
+      function steal() {
+        focusThief.forceActiveFocus();
+      }
     }
   }
 
   IpcHandler {
     target: "launcherKeys"
-    function state(): string { return JSON.stringify(probe.snapshot()); }
+    function state(): string {
+      return JSON.stringify(probe.snapshot());
+    }
     function configure(options: string): void {
       const opts = JSON.parse(options);
       Settings.data.appLauncher.overviewLayer = opts.host === "overlay";
@@ -146,8 +205,12 @@ Item {
       probe.closes = 0;
       probe.activations = 0;
       probe.activatedName = "";
-      LauncherProviderRegistry.pluginProviders = Object.assign({}, LauncherProviderRegistry.pluginProviders, {"plugin:k1-single": singleProvider});
-      LauncherProviderRegistry.providerInstances = Object.assign({}, LauncherProviderRegistry.providerInstances, {"plugin:k1-single": singleProvider});
+      LauncherProviderRegistry.pluginProviders = Object.assign({}, LauncherProviderRegistry.pluginProviders, {
+                                                                 "plugin:k1-single": singleProvider
+                                                               });
+      LauncherProviderRegistry.providerInstances = Object.assign({}, LauncherProviderRegistry.providerInstances, {
+                                                                   "plugin:k1-single": singleProvider
+                                                                 });
     }
     function observe(competing: string): void {
       probe.attach();
@@ -161,28 +224,60 @@ Item {
     function armActivation(): void {
       const current = probe.core();
       const item = current.results[current.selectedIndex];
-      item.onActivate = () => { probe.activations++; probe.activatedName = item.name; };
+      item.onActivate = () => {
+        probe.activations++;
+        probe.activatedName = item.name;
+      };
     }
     function bindings(options: string): void {
       const values = JSON.parse(options);
       for (const name in values)
         Settings.data.general.keybinds[name] = values[name];
     }
-    function hide(hidden: string): void { probe.core().visible = hidden !== "true"; }
+    function getBindings(options: string): string {
+      const values = {};
+      const bindings = ShellState.buildStateSnapshot().settings.general.keybinds;
+      for (const name of JSON.parse(options).names)
+        values[name] = bindings[name].slice();
+      return JSON.stringify(values);
+    }
+    function hide(hidden: string): void {
+      probe.core().visible = hidden !== "true";
+    }
     function migrationCases(): string {
       const component = Qt.createComponent(Quickshell.shellDir + "/Commons/Migrations/Migration62.qml");
       const migration = component.createObject(probe);
       const rows = [];
       for (const value of [["Del"], ["Ctrl+D"], [], ["Del", "Ctrl+D"], ["Shift+Del"]]) {
-        const adapter = {general: {keybinds: {keyRemove: value.slice()}}};
+        const adapter = {
+          general: {
+            keybinds: {
+              keyRemove: value.slice()
+            }
+          }
+        };
         const expected = value.length === 1 && value[0] === "Del" ? ["Shift+Del"] : value;
-        migration.migrate(adapter, Logger, {general: {keybinds: {keyRemove: value}}});
+        migration.migrate(adapter, Logger, {
+                            general: {
+                              keybinds: {
+                                keyRemove: value
+                              }
+                            }
+                          });
         const once = adapter.general.keybinds.keyRemove;
         migration.migrate(adapter, Logger, adapter);
-        rows.push({before: value, after: once, pass: JSON.stringify(once) === JSON.stringify(expected) && JSON.stringify(once) === JSON.stringify(adapter.general.keybinds.keyRemove)});
+        rows.push({
+                    before: value,
+                    after: once,
+                    pass: JSON.stringify(once) === JSON.stringify(expected) && JSON.stringify(once) === JSON.stringify(adapter.general.keybinds.keyRemove)
+                  });
       }
       migration.destroy();
-      return JSON.stringify({rows: rows, version: Settings.data.settingsVersion, remove: Settings.data.general.keybinds.keyRemove});
+      return JSON.stringify({
+                              rows: rows,
+                              version: Settings.data.settingsVersion,
+                              remove: Settings.data.general.keybinds.keyRemove
+                            });
     }
   }
 }
