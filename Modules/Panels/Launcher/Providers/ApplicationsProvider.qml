@@ -10,6 +10,7 @@ Item {
   id: root
 
   property var launcher: null
+  signal resultsChanged
   property string name: I18n.tr("launcher.providers.applications")
   property bool handleSearch: true
   property var entries: []
@@ -326,8 +327,7 @@ Item {
 
     Logger.d("ApplicationsProvider", `Loaded ${entries.length} applications`);
     updateAvailableCategories();
-    if (launcher && launcher.isOpen)
-      launcher.updateResults();
+    root.resultsChanged();
   }
 
   function updateAvailableCategories() {
@@ -346,9 +346,7 @@ Item {
       }
 
       // Pinning affects rank in every view, not just Pinned membership.
-      if (launcher && launcher.isOpen) {
-        launcher.updateResults();
-      }
+      root.resultsChanged();
     }
   }
 

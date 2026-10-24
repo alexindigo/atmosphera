@@ -149,6 +149,21 @@ Lock screen components receive additional properties from the shell:
 - **`qs.Services.System`** — `AudioService`, `BatteryService`, `NetworkService`
 - **`qs.Widgets`** — `NButton`, `NIcon`, `NText`, `NTextInput`, etc.
 
+### Data-driven launcher providers
+
+An asynchronous `launcherProvider` can publish `signal resultsChanged` when
+its data or readiness changes. The launcher observes this signal through the
+same registration path as built-in providers and reprojects the current query,
+preserving the selected result by identity. Publish completion even when the
+query is unchanged. `getResults(query)` reads current data; it does not start
+loads or freeze a completed query. Show a loading placeholder only while no
+usable records exist; cached results remain usable during a background refresh.
+
+Provider instances persist across launcher opens, while the live launcher and
+its signal subscriptions do not. A provider can finish loading with no launcher
+attached; its cached data is used on the next open. Existing providers that
+call `launcher.updateResults()` remain supported.
+
 ## Instances
 
 - A **plugin** is the code plus its plugin-level settings and shared state. It is

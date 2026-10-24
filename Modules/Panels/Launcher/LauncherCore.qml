@@ -37,10 +37,80 @@ Rectangle {
   property int selectedIndex: 0
   property var results: []
   property var providers: []
+  onProvidersChanged: syncProviderObservers()
   property var activeProvider: null
   property bool resultsReady: false
   property bool openReady: false
   property var pluginProviderInstances: ({})
+  ListModel {
+    id: providerObservers
+  }
+  Instantiator {
+    // Incremental rows preserve existing observers during registration. A JS
+    // array replacement resets the entire model on every provider append.
+    model: providerObservers
+    delegate: Connections {
+      required property var providerObject
+      target: providerObject
+      // Synchronous and legacy plugin providers need not publish this signal.
+      ignoreUnknownSignals: true
+      function onResultsChanged() {
+        root.providerDataChanged();
+      }
+    }
+  }
+  function syncProviderObservers() {
+    // providers remains the registry's public source of truth. Reconcile its
+    // observer projection by identity, never reset surviving Connections.
+    for (let index = providerObservers.count - 1; index >= 0; index--) {
+      if (providers.indexOf(providerObservers.get(index).providerObject) === -1)
+        providerObservers.remove(index);
+    }
+    for (const provider of providers) {
+      let observed = false;
+      for (let index = 0; index < providerObservers.count; index++) {
+        if (providerObservers.get(index).providerObject === provider) {
+          observed = true;
+          break;
+        }
+      }
+      if (!observed)
+        providerObservers.append({
+                                   providerObject: provider
+                                 });
+    }
+  }
+  Connections {
+    target: Settings
+    function onEffectiveSettingsChanged() {
+      root.providerDataChanged();
+    }
+  }
+  Connections {
+    target: I18n
+    function onTranslationsLoaded() {
+      root.providerDataChanged();
+    }
+  }
+  Connections {
+    target: Quickshell
+    function onScreensChanged() {
+      root.providerDataChanged();
+    }
+  }
+  function providerDataChanged() {
+    if (isOpen && openReady)
+      Qt.callLater(root.updateResults);
+  }
+  Component.onDestruction: releaseProviderOwners()
+  function releaseProviderOwners() {
+    openReady = false;
+    for (const id in pluginProviderInstances) {
+      const instance = pluginProviderInstances[id];
+      if (instance && instance.launcher === root)
+        instance.launcher = null;
+    }
+  }
   property bool ignoreMouseHover: true // Transient flag, should always be true on init
 
   // Global mouse tracking for movement detection across delegates
@@ -191,8 +261,9 @@ Rectangle {
   Connections {
     target: root.Window.window
     function onActiveChanged() {
-      if (root.Window.active)
+      if (root.Window.active) {
         Qt.callLater(root.prepareOpenResults);
+      }
     }
   }
 
@@ -263,7 +334,7 @@ Rectangle {
 
   // Provider registration
   function registerProvider(provider) {
-    providers.push(provider);
+    providers = providers.concat([provider]);
     provider.launcher = root;
     if (provider.init)
       provider.init();
@@ -278,7 +349,7 @@ Rectangle {
       if (registeredIds.indexOf(existingId) === -1) {
         var idx = providers.indexOf(pluginProviderInstances[existingId]);
         if (idx >= 0)
-          providers.splice(idx, 1);
+          providers = providers.filter((provider, index) => index !== idx);
         delete pluginProviderInstances[existingId];
         Logger.d("Launcher", "Removed plugin provider:", existingId);
         changed = true;
@@ -292,7 +363,7 @@ Rectangle {
         var instance = LauncherProviderRegistry.getProviderInstance(providerId);
         if (instance) {
           pluginProviderInstances[providerId] = instance;
-          providers.push(instance);
+          providers = providers.concat([instance]);
           instance.launcher = root;
           Logger.d("Launcher", "Adopted plugin provider:", providerId);
           changed = true;
@@ -495,35 +566,96 @@ Rectangle {
   // Editing entries fall through to Qt. Unbound non-editing keys are consumed
   // as no-op commands so they cannot trigger another surface's Shortcut.
   readonly property var keyTable: [
-    {kind: "command", keys: Settings.data.general.keybinds.keyEscape, run: () => root.close()},
-    {kind: "command", keys: Settings.data.general.keybinds.keyEnter, run: () => root.activate()},
-    {kind: "command", keys: Settings.data.general.keybinds.keyUp, run: () => root.keyboardSelection(() => {
-      if (!root.isSingleView) root.isGridView ? root.selectPreviousRow() : root.selectPreviousWrapped();
-    })},
-    {kind: "command", keys: Settings.data.general.keybinds.keyDown, run: () => root.keyboardSelection(() => {
-      if (!root.isSingleView) root.isGridView ? root.selectNextRow() : root.selectNextWrapped();
-    })},
-    {kind: "command", keys: Settings.data.general.keybinds.keyRemove, run: () => root.removeSelectedItem()},
-    {kind: "command", keys: ["PgUp"], run: () => root.keyboardSelection(root.selectPreviousPage)},
-    {kind: "command", keys: ["PgDn"], run: () => root.keyboardSelection(root.selectNextPage)},
-    {kind: "command", keys: ["Ctrl+Home"], run: () => root.keyboardSelection(root.selectFirst)},
-    {kind: "command", keys: ["Ctrl+End"], run: () => root.keyboardSelection(root.selectLast)},
-    {kind: "command", keys: ["Tab"], run: () => root.keyboardSelection(root.selectNextWrapped)},
-    {kind: "command", keys: ["Shift+Tab"], run: () => root.keyboardSelection(root.selectPreviousWrapped)},
-    {kind: "command", keys: ["Ctrl+Tab"], run: () => root.selectCategoryBy(1)},
-    {kind: "command", keys: ["Ctrl+Shift+Tab"], run: () => root.selectCategoryBy(-1)},
-    {kind: "editing", keys: ["Backspace", "Del", "Left", "Right", "Home", "End",
-      "Shift+Backspace", "Shift+Del", "Shift+Left", "Shift+Right", "Shift+Home", "Shift+End",
-      "Ctrl+Left", "Ctrl+Right", "Ctrl+Backspace", "Ctrl+Del",
-      "Ctrl+Shift+Left", "Ctrl+Shift+Right", "Ctrl+Shift+Backspace", "Ctrl+Shift+Del",
-      "Ctrl+A", "Ctrl+C", "Ctrl+X", "Ctrl+V", "Ctrl+Z", "Ctrl+Y", "Ctrl+Shift+Z", "Ctrl+Ins", "Shift+Ins"]},
-    {kind: "editing", matches: event => {
-      const textModifiers = !(event.modifiers & (Qt.ControlModifier | Qt.AltModifier | Qt.MetaModifier)) || (event.modifiers & Qt.GroupSwitchModifier);
-      const printable = event.text && event.text.length > 0 && event.text.charCodeAt(0) >= 32 && event.text.charCodeAt(0) !== 127;
-      const deadKey = event.key >= Qt.Key_Dead_Grave && event.key <= Qt.Key_Dead_Longsolidusoverlay;
-      return textModifiers && (printable || deadKey);
-    }},
-    {kind: "command", matches: () => true, run: () => {}}
+    {
+      kind: "command",
+      keys: Settings.data.general.keybinds.keyEscape,
+      run: () => root.close()
+    },
+    {
+      kind: "command",
+      keys: Settings.data.general.keybinds.keyEnter,
+      run: () => root.activate()
+    },
+    {
+      kind: "command",
+      keys: Settings.data.general.keybinds.keyUp,
+      run: () => root.keyboardSelection(() => {
+        if (!root.isSingleView)
+          root.isGridView ? root.selectPreviousRow() : root.selectPreviousWrapped();
+      })
+    },
+    {
+      kind: "command",
+      keys: Settings.data.general.keybinds.keyDown,
+      run: () => root.keyboardSelection(() => {
+        if (!root.isSingleView)
+          root.isGridView ? root.selectNextRow() : root.selectNextWrapped();
+      })
+    },
+    {
+      kind: "command",
+      keys: Settings.data.general.keybinds.keyRemove,
+      run: () => root.removeSelectedItem()
+    },
+    {
+      kind: "command",
+      keys: ["PgUp"],
+      run: () => root.keyboardSelection(root.selectPreviousPage)
+    },
+    {
+      kind: "command",
+      keys: ["PgDn"],
+      run: () => root.keyboardSelection(root.selectNextPage)
+    },
+    {
+      kind: "command",
+      keys: ["Ctrl+Home"],
+      run: () => root.keyboardSelection(root.selectFirst)
+    },
+    {
+      kind: "command",
+      keys: ["Ctrl+End"],
+      run: () => root.keyboardSelection(root.selectLast)
+    },
+    {
+      kind: "command",
+      keys: ["Tab"],
+      run: () => root.keyboardSelection(root.selectNextWrapped)
+    },
+    {
+      kind: "command",
+      keys: ["Shift+Tab"],
+      run: () => root.keyboardSelection(root.selectPreviousWrapped)
+    },
+    {
+      kind: "command",
+      keys: ["Ctrl+Tab"],
+      run: () => root.selectCategoryBy(1)
+    },
+    {
+      kind: "command",
+      keys: ["Ctrl+Shift+Tab"],
+      run: () => root.selectCategoryBy(-1)
+    },
+    {
+      kind: "editing",
+      keys: ["Backspace", "Del", "Left", "Right", "Home", "End", "Shift+Backspace", "Shift+Del", "Shift+Left", "Shift+Right", "Shift+Home", "Shift+End", "Ctrl+Left", "Ctrl+Right", "Ctrl+Backspace", "Ctrl+Del", "Ctrl+Shift+Left", "Ctrl+Shift+Right", "Ctrl+Shift+Backspace", "Ctrl+Shift+Del", "Ctrl+A", "Ctrl+C", "Ctrl+X", "Ctrl+V", "Ctrl+Z", "Ctrl+Y", "Ctrl+Shift+Z",
+        "Ctrl+Ins", "Shift+Ins"]
+    },
+    {
+      kind: "editing",
+      matches: event => {
+        const textModifiers = !(event.modifiers & (Qt.ControlModifier | Qt.AltModifier | Qt.MetaModifier)) || (event.modifiers & Qt.GroupSwitchModifier);
+        const printable = event.text && event.text.length > 0 && event.text.charCodeAt(0) >= 32 && event.text.charCodeAt(0) !== 127;
+        const deadKey = event.key >= Qt.Key_Dead_Grave && event.key <= Qt.Key_Dead_Longsolidusoverlay;
+        return textModifiers && (printable || deadKey);
+      }
+    },
+    {
+      kind: "command",
+      matches: () => true,
+      run: () => {}
+    }
   ]
 
   NKeyOwner {
@@ -548,10 +680,8 @@ Rectangle {
   ClipboardProvider {
     id: clipProvider
     Component.onCompleted: {
-      if (Settings.data.appLauncher.enableClipboardHistory) {
-        registerProvider(this);
-        Logger.d("Launcher", "Registered: ClipboardProvider");
-      }
+      registerProvider(this);
+      Logger.d("Launcher", "Registered: ClipboardProvider");
     }
   }
 
@@ -649,7 +779,6 @@ Rectangle {
         placeholderText: I18n.tr("placeholders.search-launcher")
         fontSize: Style.fontSizeM
         onTextChanged: root.searchText = text
-
       }
 
       AtmoIconButton {

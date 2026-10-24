@@ -9,6 +9,12 @@ Item {
 
   property string name: I18n.tr("common.windows")
   property var launcher: null
+  signal resultsChanged
+  Connections {
+    target: CompositorService
+    function onWindowListChanged() { root.resultsChanged(); }
+    function onActiveWindowChanged() { root.resultsChanged(); }
+  }
   property bool handleSearch: Settings.data.appLauncher.enableWindowsSearch
   property string supportedLayouts: "list"
   property string iconMode: Settings.data.appLauncher.iconMode

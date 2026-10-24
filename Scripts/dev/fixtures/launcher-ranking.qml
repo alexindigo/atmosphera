@@ -28,6 +28,13 @@ ShellRoot {
     id: apps
     launcher: consumer
   }
+  Connections {
+    target: apps
+    function onResultsChanged() {
+      if (consumer.isOpen)
+        consumer.updateResults();
+    }
+  }
   Process {
     id: mutate
     command: ["python3", Quickshell.env("LAUNCHER_UNIT_MUTATOR")]

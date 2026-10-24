@@ -11,6 +11,7 @@ Item {
   // Provider metadata
   property string name: I18n.tr("launcher.providers.clipboard")
   property var launcher: null
+  signal resultsChanged
   property string iconMode: Settings.data.appLauncher.iconMode
   property string supportedLayouts: "list" // List view for clipboard content
   property bool wrapNavigation: false // Don't wrap at end of list
@@ -47,37 +48,19 @@ Item {
     "Colors": iconMode === "tabler" ? "palette" : "color-picker"
   }
 
-  // Internal state
-  property bool isWaitingForData: false
-  property bool gotResults: false
-  property string lastSearchText: ""
-
-  // Listen for clipboard data updates
+  // The service owns data/loading state; projection never starts a request.
   Connections {
     target: ClipboardService
     function onListCompleted() {
-      if (gotResults && (lastSearchText === searchText)) {
-        // Do not update results after the first fetch.
-        // This will avoid the list resetting every 2seconds when the service updates.
-        return;
-      }
-      // Refresh results if we're waiting for data or if clipboard plugin is active
-      if (isWaitingForData || (launcher && launcher.searchText.startsWith(">clip"))) {
-        isWaitingForData = false;
-        gotResults = true;
-        if (launcher) {
-          launcher.updateResults();
-        }
-      }
+      root.resultsChanged();
     }
     function onActiveChanged() {
-      // When active state changes (e.g. dependency check completes), refresh results
-      if (ClipboardService.active && launcher && launcher.searchText.startsWith(">clip")) {
-        isWaitingForData = true;
-        gotResults = false;
+      if (ClipboardService.active)
         ClipboardService.list(100);
-      }
+      root.resultsChanged();
     }
+    function onLoadingChanged() { root.resultsChanged(); }
+    function onDependencyCheckedChanged() { root.resultsChanged(); }
   }
 
   // Initialize provider
@@ -91,10 +74,6 @@ Item {
 
   // Called when launcher opens
   function onOpened() {
-    isWaitingForData = true;
-    gotResults = false;
-    lastSearchText = "";
-
     // Refresh clipboard history when launcher opens
     if (ClipboardService.active) {
       ClipboardService.list(100);
@@ -103,11 +82,13 @@ Item {
 
   // Check if this provider handles the command
   function handleCommand(searchText) {
-    return searchText.startsWith(">clip");
+    return Settings.data.appLauncher.enableClipboardHistory && searchText.startsWith(">clip");
   }
 
   // Return available commands when user types ">"
   function commands() {
+    if (!Settings.data.appLauncher.enableClipboardHistory)
+      return [];
     return [
           {
             "name": ">clip",
@@ -139,7 +120,6 @@ Item {
       return [];
     }
 
-    lastSearchText = searchText;
     const results = [];
     const query = searchText.slice(5).trim();
 
@@ -187,27 +167,9 @@ Item {
           ];
     }
 
-    // Show loading state if data is being loaded
-    if (ClipboardService.loading || isWaitingForData) {
-      return [
-            {
-              "name": I18n.tr("launcher.providers.clipboard-loading"),
-              "description": I18n.tr("launcher.providers.emoji-loading-description"),
-              "icon": iconMode === "tabler" ? "refresh" : "view-refresh",
-              "isTablerIcon": true,
-              "isImage": false,
-              "onActivate": function () {}
-            }
-          ];
-    }
-
-    // Get clipboard items
     const items = ClipboardService.items || [];
-
-    // If no items and we haven't tried loading yet, trigger a load
-    if (items.count === 0 && !ClipboardService.loading) {
-      isWaitingForData = true;
-      ClipboardService.list(100);
+    // Cached records remain usable during a background refresh.
+    if (ClipboardService.loading && items.length === 0) {
       return [
             {
               "name": I18n.tr("launcher.providers.clipboard-loading"),
@@ -414,11 +376,6 @@ Item {
   function deleteItem(item) {
     if (!item || !item.clipboardId)
       return;
-
-    // Set provider state before deletion so refresh works
-    gotResults = false;
-    isWaitingForData = true;
-    lastSearchText = launcher ? launcher.searchText : "";
 
     // Delete the item
     ClipboardService.deleteById(String(item.clipboardId));
