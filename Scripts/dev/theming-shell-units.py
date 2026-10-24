@@ -11,6 +11,12 @@ from filechooser_isolation import ROOT, enter, guest, profile_env
 
 
 def main():
+    """Run real editor/file/AtmoColor assertions in a fresh private guest profile.
+
+    Inputs must name an owned source delivery and unused label. Retains the
+    actual QML observations/errors before deleting only its copied runtime;
+    success requires completed consumer assertions, not merely shell startup.
+    """
     enter()
     guest()
     parser = argparse.ArgumentParser(description=__doc__)

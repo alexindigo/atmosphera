@@ -55,7 +55,9 @@ def enrich_template_palette(palette: dict[str, str]) -> dict[str, dict[str, str]
     canonical = _canonical_variant(palette)
     result = {mode: dict(palette) for mode in ('dark', 'light')}
     if canonical.get('mStandout') or all(key in canonical for key in ('mPrimary', 'mTertiary', 'mSurface')):
-        normalized = normalize_scheme(palette)
+        # These are named values, even when a name is literally "dark" or
+        # "light". Only this adapter constructs the actual variant envelope.
+        normalized = normalize_scheme({'dark': canonical, 'light': canonical})
         for mode in result:
             result[mode]['standout'] = normalized[mode]['mStandout']
             result[mode]['on_standout'] = normalized[mode]['mOnStandout']
@@ -73,6 +75,14 @@ def normalize_scheme(data: dict, mode: ThemeMode = 'dark') -> dict:
     field independently; an authored fill gets its own readable foreground.
     Flat palettes have one reference; expose both modes for the editor too.
     Unknown fields and terminal palettes survive normalization unchanged.
+    data is a JSON-like flat role object or dark/light variant object; aliases
+    are adapted on copies. mode accepts dark/light for compatibility, while
+    the result always contains both modes. Missing fill requires canonical
+    primary/tertiary/surface; missing on-role requires a parseable actual fill.
+    Shape, missing derivation inputs and invalid derived-colour inputs raise.
+    Authored fields are never altered, even when independently mode-specific.
+    Consumer adapters still validate their required complete-shell role set;
+    generic positional template palettes use enrich_template_palette instead.
     """
     if not isinstance(data, dict) or mode not in ('dark', 'light'):
         raise ValueError('expected a scheme object and dark/light mode')

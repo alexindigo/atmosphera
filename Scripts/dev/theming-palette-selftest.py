@@ -49,6 +49,21 @@ class PaletteTests(unittest.TestCase):
         self.assertEqual(rendered, b'#abcdef #123456')
         self.assertEqual(colors, {'dark': data, 'light': data})
 
+    def test_mode_named_values_remain_generic(self):
+        data = {'primary': '#0A84FF', 'tertiary': '#30D158', 'surface': '#1E1E1E',
+                'dark': '#112233', 'light': 'unused metadata'}
+        template = '{{colors.dark.default.hex}}'
+        old, before, old_colors = self.render(BASE, data, template)
+        result, after, colors = self.render(ROOT, data, template)
+        self.assertEqual(old.returncode, 0, old.stderr)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(before, after)
+        self.assertEqual(after, b'#112233')
+        for mode in ('dark', 'light'):
+            for key, value in data.items():
+                self.assertEqual(colors[mode][key], old_colors[mode][key])
+            self.assertEqual(colors[mode]['standout'], '#f88349')
+
     def test_authored_fill_can_derive_only_its_foreground(self):
         result, rendered, colors = self.render(ROOT, {'standout': '#757575'}, '{{colors.standout.default.hex}}')
         self.assertEqual(result.returncode, 0, result.stderr)

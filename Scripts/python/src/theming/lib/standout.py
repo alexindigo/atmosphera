@@ -1,8 +1,12 @@
-"""Shared standout derivation from the dark reference accents (D5/D6/D8).
+"""Pure standout derivation from canonical dark-reference sRGB accents.
 
-Wallpaper evidence enters only through the scheme's existing accents. Muted
-and monochrome retain D4's source-complement exception. Perceptual distance
-is a review/validation flag, never a hue-selection or colour-moving input.
+Hue selection uses the fixed artist RYB↔HCT mapping and a 2:1 primary/tertiary
+shorter-arc midpoint (D5/D6). Fill synthesis maximizes in-gamut HCT chroma over
+T60..75, independently of display mode/surface; foreground is mode-specific
+and readable at >=4.5:1 (D2/D8). Monochrome/muted use the source complement
+at fixed C24 (D4/D9). Inputs are valid 8-bit sRGB Color values or hex theme
+roles. No input palette is mutated. Perceptual CAM16-UCS distance and surface
+contrast are observations, never fallback selection or colour-moving inputs.
 """
 
 from dataclasses import dataclass
@@ -37,6 +41,10 @@ MIN_DISTINCT_DELTA_E = 12.0
 
 
 def _interpolate(value, anchors):
+    """Linearly interpolate an unwrapped scalar between monotone hue anchors.
+
+    The caller owns circular wrapping; values outside the table raise.
+    """
     for (x0, y0), (x1, y1) in zip(anchors, anchors[1:]):
         if x0 <= value <= x1:
             return y0 + (value - x0) * (y1 - y0) / (x1 - x0)
@@ -44,15 +52,24 @@ def _interpolate(value, anchors):
 
 
 def ryb_to_hct(hue: float) -> float:
+    """Map artist-wheel degrees to HCT hue degrees using the fixed anchor table.
+
+    Input/output wrap at 360; this is hue mapping, not RGB pigment mixing.
+    """
     return _interpolate(hue % 360, RYB_HCT_HUES) % 360
 
 
 def hct_to_ryb(hue: float) -> float:
+    """Invert the fixed hue mapping, unwrapping HCT across the red anchor."""
     unwrapped = (hue - 25) % 360 + 25
     return _interpolate(unwrapped, tuple((h, r) for r, h in RYB_HCT_HUES)) % 360
 
 
 def ryb_complement(hue: float) -> float:
+    """Return the artist-wheel complement of an HCT hue, expressed in HCT.
+
+    The 180-degree rotation occurs on RYB, not directly on the HCT/RGB wheel.
+    """
     return ryb_to_hct(hct_to_ryb(hue) + 180)
 
 
@@ -61,6 +78,7 @@ def ryb_midpoint(primary: float, tertiary: float, primary_weight: float = 2.0) -
 
     Exactly antipodal inputs have no unique shorter arc: preserve the review
     prototype's explicit error rather than silently inventing a direction.
+    Inputs are finite RYB degrees and a finite positive primary weight.
     """
     if not all(math.isfinite(value) for value in (primary, tertiary, primary_weight)) or primary_weight <= 0:
         raise ValueError('RYB midpoint requires finite hues and a positive weight')
@@ -72,12 +90,20 @@ def ryb_midpoint(primary: float, tertiary: float, primary_weight: float = 2.0) -
 
 @dataclass(frozen=True)
 class Selection:
+    """Chosen HCT hue in degrees and its diagnostic derivation-rule label."""
     hue: float
     rule: str
 
 
 def select_hue(primary: Color, tertiary: Color, *, source: Color | None = None,
                scheme_type: str = '') -> Selection:
+    """Select from actual dark accents, without inspecting wallpaper clusters.
+
+    Ordinary schemes complement the 2:1 shorter RYB midpoint of primary and
+    tertiary. Monochrome/muted instead require the extracted source Color and
+    complement its HCT hue through the same mapping. Undefined antipodal
+    midpoint input or missing required source raises ValueError.
+    """
     if scheme_type in ('monochrome', 'muted'):
         if source is None:
             raise ValueError('monochrome/muted standout requires the source colour')
@@ -88,18 +114,31 @@ def select_hue(primary: Color, tertiary: Color, *, source: Color | None = None,
 
 
 def perceptual_difference(first: Color, second: Color) -> float:
-    """Raw Euclidean CAM16-UCS Delta E, including lightness and colourfulness."""
+    """Return Euclidean distance in CAM16-UCS J*/a*/b* for two sRGB colours.
+
+    Uses hct.py's standard viewing conditions, not the Material Utilities
+    1.41*d**0.63 remapping; this includes tone/chroma as well as hue.
+    """
     a, b = (Cam16.from_rgb(*color.to_rgb()) for color in (first, second))
     return math.dist((a.jstar, a.astar, a.bstar), (b.jstar, b.astar, b.bstar))
 
 
 def accent_differences(standout: Color, theme: dict[str, str]) -> dict[str, float]:
-    """Review all three accents without changing the selected or final colour."""
+    """Measure raw CAM16-UCS distance to primary/secondary/tertiary hex roles.
+
+    All three keys must exist. Returned diagnostics never mutate the theme or
+    select/adjust standout; missing roles and invalid colours remain errors.
+    """
     return {role: perceptual_difference(standout, Color.from_hex(theme[role]))
             for role in ('primary', 'secondary', 'tertiary')}
 
 
 def indistinct_accents(differences: dict[str, float]) -> tuple[str, ...]:
+    """Flag role names below the diagnostic raw-Delta-E 12 margin, without edits.
+
+    Distances must use perceptual_difference's metric. The margin is a review
+    flag, not a universal visibility guarantee or a colour-selection rule.
+    """
     return tuple(role for role, distance in differences.items() if distance < MIN_DISTINCT_DELTA_E)
 
 
@@ -119,6 +158,13 @@ def clashes(hue_a: float, chroma_a: float, hue_b: float, chroma_b: float) -> boo
 
 
 def matched_chroma(primary: Color, hue: float, muted_chroma: float | None = None) -> float:
+    """Choose requested HCT chroma from the dark primary, before gamut mapping.
+
+    Ordinary chroma is moderately primary-relative and bounded 32..56; a finite
+    nonnegative override supports low-level synthesis (public muted policy is
+    fixed C24). Red/blue vibration moderation caps it at40. This does not change
+    primary or hue; invalid override values raise ValueError.
+    """
     hct = primary.to_hct()
     chroma = (max(32.0, min(56.0, hct.chroma * 1.15 + 8.0))
               if muted_chroma is None else muted_chroma)
@@ -129,6 +175,7 @@ def matched_chroma(primary: Color, hue: float, muted_chroma: float | None = None
 
 @dataclass(frozen=True)
 class Synthesis:
+    """Final fill/on hexes, selected HCT tone and observational surface contrast."""
     standout: str
     on_standout: str
     selected_tone: int
@@ -136,7 +183,12 @@ class Synthesis:
 
 
 def on_standout_color(standout: Color, mode: str) -> str:
-    """Choose a readable foreground independently for each display mode."""
+    """Choose an actual-palette foreground with >=4.5:1 sRGB contrast.
+
+    Dark mode prefers T20 down to 0 then white; light prefers white then T20
+    down to 0. Only foreground preference depends on mode. Invalid mode or no
+    readable candidate raises ValueError; the supplied fill is never changed.
+    """
     if mode not in ('dark', 'light'):
         raise ValueError('standout mode must be dark or light')
     palette = TonalPalette.from_rgb(*standout.to_rgb())
@@ -176,6 +228,11 @@ def synthesis_details(primary: Color, surface: Color, mode: str, selection: Sele
 
 def synthesize(primary: Color, surface: Color, mode: str, selection: Selection,
                *, muted_chroma: float | None = None) -> dict[str, str]:
+    """Return only standout/on_standout hex roles from synthesis_details.
+
+    Primary and selected hue must use the same canonical dark reference in
+    both modes; surface is measured only. Propagates invalid synthesis inputs.
+    """
     result = synthesis_details(primary, surface, mode, selection, muted_chroma=muted_chroma)
     return {'standout': result.standout, 'on_standout': result.on_standout}
 
@@ -187,6 +244,10 @@ def standout_roles(dark_theme: dict[str, str], mode: str, *, source: Color | Non
 
     The optional display surface is measured only; it cannot change the colour.
     A caller generating light alone must still supply the actual dark accents.
+    dark_theme supplies primary/tertiary/surface hex roles. source is required
+    only for monochrome/muted, whose chroma is fixed C24. Returns a new two-key
+    role dict without changing any existing theme field; invalid inputs and
+    unsupported mode propagate as errors rather than a fabricated fallback.
     """
     primary = Color.from_hex(dark_theme['primary'])
     selection = select_hue(primary, Color.from_hex(dark_theme['tertiary']), source=source, scheme_type=scheme_type)

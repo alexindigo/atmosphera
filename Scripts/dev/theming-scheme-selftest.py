@@ -27,10 +27,12 @@ EXPECTED = {
 
 
 def bundled(name):
+    """Read a named bundled JSON fixture from this exact source tree."""
     return json.loads((ROOT / f'Assets/ColorScheme/{name}/{name}.json').read_text())
 
 
 def legacy(data):
+    """Copy both modes and remove only the optional standout pair for derivation."""
     data = deepcopy(data)
     for mode in ('dark', 'light'):
         data[mode].pop('mStandout', None)
@@ -39,6 +41,7 @@ def legacy(data):
 
 
 class SchemeTests(unittest.TestCase):
+    """Verify authored/legacy role contracts at loader, CLI and persistence edges."""
     def test_all_bundled_authored_and_legacy_values(self):
         self.assertEqual(len(list((ROOT / 'Assets/ColorScheme').glob('*/*.json'))), 11)
         for name, (fill, ink) in EXPECTED.items():
