@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+### 2026-10-24
+
+**Fix**
+
+The shell's focused window is always the one the compositor has focused. On
+niri, opening a window no longer leaves the previously focused window marked
+as focused, so the bar title, taskbar highlight and launcher paste destination
+follow the new window. All compositor backends report focus as a stable window
+id; labwc and generic ext-workspace window ids no longer shift when another
+window closes, sway windows gain ids, and mangowc window and focus updates are
+no longer frozen at startup. A launcher paste whose destination closed is only
+copied, never pasted into another window.
+
 ### 2026-10-23
 
 **Fix**

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Real clipboard text/image and generic emoji auto-paste in both hosts."""
+"""Real clipboard text/image and generic emoji auto-paste in both hosts, including a
+bystander window and a destination that closes before the paste."""
 import argparse
 import hashlib
 import importlib.util
@@ -112,9 +113,92 @@ def main():
             keys.closed()
             (target / 'exit-request').write_text('exit')
             process.wait(timeout=10)
+    # The destination is the window niri has focused when the launcher opens,
+    # also when it opened after a bystander (no explicit focus action). If
+    # that window closes before the paste, the payload is only copied.
+    if len(rows) == 6 and all(r['passed'] for r in rows):
+        for host in ('panel', 'overlay'):
+            folders = {name: output / (host + '-' + name) for name in ('bystander', 'target', 'second-target')}
+            processes, logs = {}, []
+            def window_state(name):
+                try:
+                    return json.loads((folders[name] / 'state.json').read_text())
+                except (FileNotFoundError, json.JSONDecodeError):
+                    return None
+            def start(name, title):
+                folders[name].mkdir()
+                log = (folders[name] / 'run.log').open('x')
+                logs.append(log)
+                processes[name] = subprocess.Popen(['timeout', '--kill-after=5', '180', 'python3', '-u', '-B',
+                                                    str(Path(__file__).parent / 'fixtures/launcher-paste-target.py'), str(folders[name]), title],
+                                                   env=env, stdout=log, stderr=subprocess.STDOUT)
+                keys.flow.wait(lambda: window_state(name) and window_state(name)['active'] and window_state(name)['focused'], 10)
+                return keys.flow.wait(lambda: next((w for w in keys.flow.windows() if w['title'] == title and w['is_focused']), None), 10)
+            def paste_case(name, target, close_target):
+                checks = {}
+                # Real native focus only; the shell's view is what is under test.
+                keys.flow.wait(lambda: any(w['id'] == target['id'] and w['is_focused'] for w in keys.flow.windows()), 10)
+                subprocess.run(['timeout', '10', 'wl-copy', '--', 'K4 focus sentinel ' + host], env=os.environ, check=True, timeout=15)
+                keys.opened(host, 'emoji')
+                payload = keys.state()['autoPasteText']
+                assert payload
+                keys.ipc('autoPaste', 'true')
+                session = json.loads(keys.ipc('observePasteSession'))
+                checks['captured_focused_window'] = session['targetId'] == target['id']
+                before = {n: len(window_state(n)['records']) for n in processes}
+                if close_target:
+                    keys.flow.command(['niri', 'msg', 'action', 'close-window', '--id', str(target['id'])])
+                    keys.flow.wait(lambda: all(w['id'] != target['id'] for w in keys.flow.windows()), 10)
+                    processes.pop('target').wait(timeout=10)
+                keys.chord(28)
+                keys.expect(lambda s: not s['open'])
+                try:
+                    keys.flow.wait(lambda: observations()['pending'] == 0 and observations()['sessions'] == 0, 10)
+                except AssertionError:
+                    pass
+                time.sleep(.3)  # An absence assertion needs an observation interval.
+                owner = observations()
+                checks['queue_retired'] = owner['pending'] == 0 and owner['sessions'] == 0
+                copied = keys.flow.command(['wl-paste', '--no-newline'], check=False).stdout
+                checks['clipboard_payload'] = copied == payload
+                received = {n: window_state(n)['records'][before[n]:] for n in processes}
+                if close_target:
+                    checks['nobody_received'] = all(not r for r in received.values())
+                else:
+                    delivered = received.pop('second-target')
+                    checks['target_received_once'] = (len(delivered) == 1 and delivered[0]['text'] == delivered[0]['consumer_text'] == payload
+                                                      and delivered[0]['active_at_key'] and delivered[0]['focused_at_key'])
+                    checks['bystander_received_nothing'] = all(not r for r in received.values())
+                rows.append(dict(name='bystander/' + host + '/' + name, passed=all(checks.values()), checks=checks, session=session,
+                                 target_id=target['id'], bystander_id=bystander['id'], received=received, payload=payload,
+                                 clipboard=copied, owner=owner))
+            try:
+                try:
+                    keys.closed()
+                    bystander = start('bystander', 'Launcher Paste Bystander')
+                    target = start('target', 'Launcher Paste Target')
+                    paste_case('closed-target-copies-only', target, True)
+                    second = start('second-target', 'Launcher Paste Second Target')
+                    paste_case('opened-after-bystander-receives', second, False)
+                except Exception as error:
+                    rows.append(dict(name='bystander/' + host, passed=False, error=repr(error), traceback=traceback.format_exc(),
+                                     launcher=keys.state(), owner=observations()))
+            finally:
+                keys.ipc('autoPaste', 'true' if prior else 'false')
+                keys.closed()
+                for name in processes:
+                    (folders[name] / 'exit-request').write_text('exit')
+                for process in processes.values():
+                    process.wait(timeout=10)
+                for log in logs:
+                    log.close()
+            (output / 'result.json').write_text(json.dumps(dict(complete=False, cases=rows), indent=2, ensure_ascii=False))
+            for row in rows[-2:]:
+                print(row['name'], row['passed'], row.get('checks', row.get('error', '')), flush=True)
+
     # An empty desktop has no paste destination. Preserve the copy operation
     # rather than leaving a committed job permanently waiting for a null ID.
-    if len(rows) == 6 and all(r['passed'] for r in rows):
+    if len(rows) >= 6 and all(r['passed'] for r in rows[:6]):
         try:
             keys.flow.wait(lambda: not keys.flow.windows() and observations()['focusedId'] is None)
             aborted = False
@@ -161,7 +245,7 @@ def main():
         finally:
             keys.ipc('autoPaste', 'true' if prior else 'false')
             keys.closed()
-    result = dict(passed=len(rows) == 12 and all(r['passed'] for r in rows), complete=len(rows) == 12, cases=rows)
+    result = dict(passed=len(rows) == 16 and all(r['passed'] for r in rows), complete=len(rows) == 16, cases=rows)
     (output / 'result.json').write_text(json.dumps(result, indent=2, ensure_ascii=False))
     return 0 if result['passed'] else 1
 

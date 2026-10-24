@@ -14,8 +14,8 @@ Item {
   property ListModel workspaces: ListModel {}
   // Window data (clients from mangowc)
   property var windows: []
-  // Focused window index into windows
-  property int focusedWindowIndex: -1
+  // Focused window id, or null (see CompositorService)
+  property var focusedWindowId: null
   // Active monitor name
   property string selectedMonitor: ""
   // Current layout symbol on the active monitor
@@ -172,7 +172,7 @@ Item {
 
     function rebuildWindows(clients) {
       const windows = [];
-      let newFocusedIdx = -1;
+      let focused = null;
 
       for (let i = 0; i < clients.length; i++) {
         const client = clients[i];
@@ -194,7 +194,6 @@ Item {
           title: client.title || "",
           output: outputName,
           workspaceId: workspaceId,
-          isFocused: client.is_focused,
           isFloating: client.is_floating,
           isFullscreen: client.is_fullscreen,
           isUrgent: client.is_urgent,
@@ -205,16 +204,13 @@ Item {
         windows.push(record);
 
         if (client.is_focused) {
-          newFocusedIdx = windows.length - 1;
+          focused = windowId;
         }
       }
 
       backend.windows = windows;
-      if (newFocusedIdx !== backend.focusedWindowIndex) {
-        backend.focusedWindowIndex = newFocusedIdx;
-        backend.activeWindowChanged();
-      }
       backend.windowListChanged();
+      internal.setFocus(focused);
     }
 
     function getWindowId(client) {
@@ -277,21 +273,14 @@ Item {
     }
 
     function updateFocus(client) {
-      // Update focused window in the windows list
-      const windowId = internal.getWindowId(client);
-      let newFocusedIdx = -1;
+      // An empty focusing_client payload means nothing is focused
+      const known = client && client.id !== undefined && client.id !== null;
+      internal.setFocus(known ? internal.getWindowId(client) : null);
+    }
 
-      for (let i = 0; i < backend.windows.length; i++) {
-        if (backend.windows[i].id === windowId) {
-          newFocusedIdx = i;
-          backend.windows[i].isFocused = true;
-        } else {
-          backend.windows[i].isFocused = false;
-        }
-      }
-
-      if (newFocusedIdx !== backend.focusedWindowIndex) {
-        backend.focusedWindowIndex = newFocusedIdx;
+    function setFocus(windowId) {
+      if (windowId !== backend.focusedWindowId) {
+        backend.focusedWindowId = windowId;
         backend.activeWindowChanged();
       }
     }

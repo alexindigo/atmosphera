@@ -15,7 +15,12 @@ Item {
   // Properties that match the facade interface
   property ListModel workspaces: ListModel {}
   property var windows: []
-  property int focusedWindowIndex: -1
+  // Id of ToplevelManager's active toplevel, or null (see CompositorService)
+  property var focusedWindowId: null
+
+  ToplevelIds {
+    id: toplevelIds
+  }
 
   // Signals that match the facade interface
   signal workspaceChanged
@@ -328,13 +333,14 @@ Item {
 
       if (!ToplevelManager.toplevels || !ToplevelManager.toplevels.values) {
         windows = [];
-        focusedWindowIndex = -1;
+        focusedWindowId = null;
         windowListChanged();
         return;
       }
 
       const hlToplevels = ToplevelManager.toplevels.values;
-      let newFocusedIndex = -1;
+      const active = ToplevelManager.activeToplevel;
+      let focused = null;
 
       for (var i = 0; i < hlToplevels.length; i++) {
         const toplevel = hlToplevels[i];
@@ -344,16 +350,17 @@ Item {
         if (windowData) {
           windowsList.push(windowData);
 
-          if (windowData.isFocused) {
-            newFocusedIndex = windowsList.length - 1;
+          if (toplevel === active) {
+            focused = windowData.id;
           }
         }
       }
 
+      toplevelIds.retain(hlToplevels);
       windows = windowsList;
 
-      if (newFocusedIndex !== focusedWindowIndex) {
-        focusedWindowIndex = newFocusedIndex;
+      if (focused !== focusedWindowId) {
+        focusedWindowId = focused;
         activeWindowChanged();
       }
 
@@ -372,7 +379,6 @@ Item {
       // Safely extract properties
       const appId = getAppId(toplevel);
       const title = safeGetProperty(toplevel, "title", "");
-      const focused = toplevel.activated === true;
 
       // Try to find workspace ID from our cached map by trying all workspaces
       let workspaceId = -1;
@@ -414,9 +420,9 @@ Item {
       }
 
       return {
+        "id": toplevelIds.idFor(toplevel),
         "title": title,
         "appId": appId,
-        "isFocused": focused,
         "workspaceId": workspaceId,
         "handle": toplevel
       };

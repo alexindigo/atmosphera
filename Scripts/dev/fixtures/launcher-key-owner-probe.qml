@@ -4,9 +4,9 @@ import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Services.Compositor
 import qs.Services.Keyboard
 import qs.Services.UI
-import qs.Services.Compositor
 
 Item {
   id: probe
@@ -25,7 +25,9 @@ Item {
   property int keySerial: 0
   Connections {
     target: probe.liveCore
-    function onResultsChanged() { probe.installActivationSpy(); }
+    function onResultsChanged() {
+      probe.installActivationSpy();
+    }
   }
   function installActivationSpy() {
     const current = core();
@@ -265,7 +267,9 @@ Item {
       probe.activationArmed = true;
       probe.installActivationSpy();
     }
-    function reprojectResults(): void { probe.core().updateResults(); }
+    function reprojectResults(): void {
+      probe.core().updateResults();
+    }
     function bindings(options: string): void {
       const values = JSON.parse(options);
       for (const name in values)
@@ -278,18 +282,56 @@ Item {
         values[name] = bindings[name].slice();
       return JSON.stringify(values);
     }
-    function autoPaste(enabled: bool): void { Settings.data.appLauncher.autoPasteClipboard = enabled; }
+    function autoPaste(enabled: bool): void {
+      Settings.data.appLauncher.autoPasteClipboard = enabled;
+    }
     function observePasteSession(): string {
       const session = probe.core().actionSession;
-      session.keyboardReleased.connect(sourceWasVisible => probe.pasteEvents.push({at: Date.now(), targetId: session.targetId,
-        sourceActive: session.nativeActive, sourceVisible: sourceWasVisible}));
-      return JSON.stringify({targetId: session.targetId, hadKeyboard: session.hadKeyboard, sourceActive: session.nativeActive});
+      session.keyboardReleased.connect(sourceWasVisible => probe.pasteEvents.push({
+                                                                                    at: Date.now(),
+                                                                                    targetId: session.targetId,
+                                                                                    sourceActive: session.nativeActive,
+                                                                                    sourceVisible: sourceWasVisible
+                                                                                  }));
+      return JSON.stringify({
+                              targetId: session.targetId,
+                              hadKeyboard: session.hadKeyboard,
+                              sourceActive: session.nativeActive
+                            });
     }
     function pasteObservations(): string {
       const target = CompositorService.getFocusedWindow();
-      return JSON.stringify({events: probe.pasteEvents, pending: LauncherActionService.pending.length,
-        sessions: LauncherActionService.pasteSessions.length, focusedId: target ? target.id : null,
-        applicationState: Qt.application.state, overlayCoreAlive: !!PanelService.overlayLauncherCore});
+      return JSON.stringify({
+                              events: probe.pasteEvents,
+                              pending: LauncherActionService.pending.length,
+                              sessions: LauncherActionService.pasteSessions.length,
+                              focusedId: target ? target.id : null,
+                              applicationState: Qt.application.state,
+                              overlayCoreAlive: !!PanelService.overlayLauncherCore
+                            });
+    }
+    // Every shell view of the focused window, as its consumers read it.
+    function focusIdentity(): string {
+      const focused = CompositorService.getFocusedWindow();
+      const rows = [];
+      for (let i = 0; i < CompositorService.windows.count; i++) {
+        const row = CompositorService.windows.get(i);
+        rows.push({
+                    id: row.id,
+                    title: row.title,
+                    isFocused: row.isFocused
+                  });
+      }
+      return JSON.stringify({
+                              focusedWindowId: CompositorService.focusedWindowId === undefined ? "absent" : CompositorService.focusedWindowId,
+                              focusedWindowIndex: CompositorService.focusedWindowIndex,
+                              focused: focused ? {
+                                                   id: focused.id,
+                                                   title: focused.title
+                                                 } : null,
+                              title: CompositorService.getFocusedWindowTitle(),
+                              rows: rows
+                            });
     }
     function hide(hidden: string): void {
       probe.core().visible = hidden !== "true";

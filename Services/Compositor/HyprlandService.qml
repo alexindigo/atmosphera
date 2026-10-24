@@ -11,7 +11,8 @@ Item {
   // Properties that match the facade interface
   property ListModel workspaces: ListModel {}
   property var windows: []
-  property int focusedWindowIndex: -1
+  // Address of Hyprland's active toplevel, or null (see CompositorService)
+  property var focusedWindowId: null
 
   // Signals that match the facade interface
   signal workspaceChanged
@@ -315,12 +316,12 @@ Item {
 
       if (!Hyprland.toplevels || !Hyprland.toplevels.values) {
         windows = [];
-        focusedWindowIndex = -1;
+        focusedWindowId = null;
         return;
       }
 
       const hlToplevels = Hyprland.toplevels.values;
-      let focusedWindowId = null;
+      let focused = null;
 
       // Get active workspaces to filter focus
       const activeWorkspaceIds = {};
@@ -339,20 +340,12 @@ Item {
           continue;
         const windowData = extractWindowData(toplevel);
         if (windowData) {
-          // If the window claims to be focused, verify it's on an active workspace
-          if (windowData.isFocused) {
-            if (!activeWorkspaceIds[windowData.workspaceId]) {
-              windowData.isFocused = false;
-            }
-          }
-
           // Normalize to a plain, backend-independent window object
           const normalized = {
             "id": windowData.id ? String(windowData.id) : "",
             "title": windowData.title ? String(windowData.title) : "",
             "appId": windowData.appId ? String(windowData.appId) : "",
             "workspaceId": (typeof windowData.workspaceId === "number" && !isNaN(windowData.workspaceId)) ? windowData.workspaceId : -1,
-            "isFocused": windowData.isFocused === true,
             "output": windowData.output ? String(windowData.output) : "",
             "x": (typeof windowData.x === "number" && !isNaN(windowData.x)) ? windowData.x : 0,
             "y": (typeof windowData.y === "number" && !isNaN(windowData.y)) ? windowData.y : 0
@@ -361,27 +354,17 @@ Item {
           windowsList.push(normalized);
           windowCache[normalized.id] = normalized;
 
-          if (normalized.isFocused) {
-            focusedWindowId = normalized.id;
+          // The active toplevel counts as focused only on an active workspace
+          if (windowData.isFocused && activeWorkspaceIds[windowData.workspaceId] && normalized.id) {
+            focused = normalized.id;
           }
         }
       }
 
       windows = toSortedWindowList(windowsList);
 
-      // Resolve focused index from sorted list (order changes after sort)
-      let newFocusedIndex = -1;
-      if (focusedWindowId) {
-        for (let k = 0; k < windows.length; k++) {
-          if (windows[k].id === focusedWindowId) {
-            newFocusedIndex = k;
-            break;
-          }
-        }
-      }
-
-      if (newFocusedIndex !== focusedWindowIndex) {
-        focusedWindowIndex = newFocusedIndex;
+      if (focused !== focusedWindowId) {
+        focusedWindowId = focused;
         activeWindowChanged();
       }
     } catch (e) {

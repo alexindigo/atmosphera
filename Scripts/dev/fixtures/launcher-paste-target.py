@@ -11,7 +11,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GLib, GdkPixbuf
 
 output = Path(sys.argv[1])
-window = Gtk.Window(title='Launcher Paste Target')
+window = Gtk.Window(title=sys.argv[2] if len(sys.argv) > 2 else 'Launcher Paste Target')
 window.set_default_size(500, 300)
 column = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 entry = Gtk.Entry()

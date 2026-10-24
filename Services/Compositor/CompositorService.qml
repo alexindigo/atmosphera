@@ -25,6 +25,13 @@ Singleton {
   // Generic workspace and window data
   property ListModel workspaces: ListModel {}
   property ListModel windows: ListModel {}
+
+  // Focused-window identity. Backends publish window records with a stable
+  // per-window `id` and the compositor's `focusedWindowId` (null: none),
+  // maintained from its own focus events. Every focus view below — the row's
+  // isFocused, focusedWindowIndex, getFocusedWindow() — is derived from that
+  // one id here, never kept as separate state that could disagree.
+  property var focusedWindowId: null
   property int focusedWindowIndex: -1
 
   // Display scale data
@@ -251,11 +258,6 @@ Singleton {
       syncWindows();
     });
 
-    // Property bindings - use automatic property change signal
-    backend.focusedWindowIndexChanged.connect(() => {
-      focusedWindowIndex = backend.focusedWindowIndex;
-    });
-
     // Overview state (Niri-specific)
     if (backend.overviewActiveChanged) {
       backend.overviewActiveChanged.connect(() => {
@@ -266,7 +268,6 @@ Singleton {
     // Initial sync
     syncWorkspaces();
     syncWindows();
-    focusedWindowIndex = backend.focusedWindowIndex;
     if (backend.overviewActive !== undefined) {
       overviewActive = backend.overviewActive;
     }
@@ -286,28 +287,49 @@ Singleton {
   }
 
   function syncWindows() {
+    const focusedId = backendFocusedWindowId();
     windows.clear();
     const ws = backend.windows;
     for (var i = 0; i < ws.length; i++) {
-      windows.append(ws[i]);
+      windows.append(Object.assign({}, ws[i], {
+                                     "isFocused": ws[i].id === focusedId
+                                   }));
     }
+    publishFocus(focusedId);
     // Emit signal to notify listeners that window list has been updated
     windowListChanged();
   }
 
   // Sync only the focused window state, not the entire window list
   function syncFocusedWindow() {
-    const newIndex = backend.focusedWindowIndex;
-
-    // Update isFocused flags by syncing from backend
-    for (var i = 0; i < windows.count && i < backend.windows.length; i++) {
-      const backendFocused = backend.windows[i].isFocused;
-      if (windows.get(i).isFocused !== backendFocused) {
-        windows.setProperty(i, "isFocused", backendFocused);
+    const focusedId = backendFocusedWindowId();
+    for (var i = 0; i < windows.count; i++) {
+      const focused = windows.get(i).id === focusedId;
+      if (windows.get(i).isFocused !== focused) {
+        windows.setProperty(i, "isFocused", focused);
       }
     }
+    publishFocus(focusedId);
+  }
 
-    focusedWindowIndex = newIndex;
+  function backendFocusedWindowId() {
+    const id = backend ? backend.focusedWindowId : null;
+    return id === undefined || id === "" ? null : id;
+  }
+
+  // The index is a view of the id over the current list, located by id.
+  function publishFocus(focusedId) {
+    let index = -1;
+    if (focusedId !== null) {
+      for (var i = 0; i < windows.count; i++) {
+        if (windows.get(i).id === focusedId) {
+          index = i;
+          break;
+        }
+      }
+    }
+    focusedWindowId = focusedId;
+    focusedWindowIndex = index;
   }
 
   // Update display scales from backend
@@ -353,10 +375,13 @@ Singleton {
     return displayScales[displayName];
   }
 
-  // Get focused window
+  // Get focused window: only ever the row of focusedWindowId, also while
+  // the list is being rebuilt.
   function getFocusedWindow() {
     if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.count) {
-      return windows.get(focusedWindowIndex);
+      const window = windows.get(focusedWindowIndex);
+      if (window.id === focusedWindowId)
+        return window;
     }
     return null;
   }
@@ -371,8 +396,9 @@ Singleton {
 
   // Get focused window title
   function getFocusedWindowTitle() {
-    if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.count) {
-      var title = windows.get(focusedWindowIndex).title;
+    const window = getFocusedWindow();
+    if (window) {
+      var title = window.title;
       if (title !== undefined) {
         title = title.replace(/(\r\n|\n|\r)/g, "");
       }
