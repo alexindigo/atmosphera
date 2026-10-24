@@ -1,8 +1,8 @@
 import QtQuick
 
 // One ownership predicate for focus-based Keys and window-scoped Shortcuts.
-// Suppression temporarily overrides enabled, then restores its caller-owned
-// binding/value. Eligibility must not depend on the enabled value we suppress.
+// Logical hiding temporarily overrides enabled, restoring the caller's binding.
+// Native inactivity affects only keyboard eligibility, never pointer/style state.
 QtObject {
   id: root
   required property Item target
@@ -11,15 +11,20 @@ QtObject {
   property Item focusOwner: null
   property Item focusTarget: target
   property bool focusOnActivation: false
-  readonly property bool ownsKeys: active && target.visible && !!target.Window.window && target.Window.window.visible && target.Window.active
+  readonly property bool surfaceAvailable: active && target.visible && !!target.Window.window && target.Window.window.visible
+  readonly property bool ownsKeys: keyboardEligible()
   readonly property bool acceptsKeys: ownsKeys && target.enabled
   property Item _focusedItem: null
   property Item _resumeItem: null
   property bool _returnPending: false
   property bool _suppress: false
 
+  function keyboardEligible() {
+    return surfaceAvailable && target.Window.active;
+  }
+
   function updateSuppression() {
-    if (!manageEnabled || ownsKeys) {
+    if (!manageEnabled || surfaceAvailable) {
       _suppress = false;
     } else if (target.enabled) {
       // An already-disabled ancestor provides the protection. Do not capture
@@ -29,7 +34,7 @@ QtObject {
   }
 
   function rememberFocus() {
-    if (!manageEnabled || !ownsKeys)
+    if (!keyboardEligible())
       return;
     const window = target.Window.window;
     const focused = window ? window.activeFocusItem : null;
@@ -40,8 +45,6 @@ QtObject {
   }
 
   function settleFocus() {
-    if (!manageEnabled)
-      return;
     if (_returnPending) {
       _returnPending = false;
       if (focusOwner && focusOwner.visible && focusOwner.enabled && focusOwner.Window.active)
@@ -56,18 +59,23 @@ QtObject {
     }
   }
 
-  onOwnsKeysChanged: {
-    updateSuppression();
-    if (!ownsKeys) {
-      if (!active || !target.visible) {
-        _returnPending = !!_focusedItem;
+  function updateOwnership() {
+    // Capture the return intent before enabled suppression can clear focus.
+    // Either native/logical notification may arrive first; pending return is
+    // latched until settleFocus consumes it, never overwritten by the second.
+    if (!keyboardEligible()) {
+      if (!surfaceAvailable) {
+        _returnPending = _returnPending || !!_focusedItem;
         _resumeItem = null;
       } else {
         _resumeItem = _focusedItem;
       }
     }
+    updateSuppression();
     Qt.callLater(root.settleFocus);
   }
+  onOwnsKeysChanged: updateOwnership()
+  onSurfaceAvailableChanged: updateOwnership()
   onManageEnabledChanged: updateSuppression()
   // The surface can activate before an owning Loader/ancestor enables its
   // content. Focus requests must settle at effective readiness, not just at

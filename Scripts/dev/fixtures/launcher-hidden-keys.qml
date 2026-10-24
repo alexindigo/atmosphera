@@ -155,8 +155,8 @@ ShellRoot {
         root.otherVisible = true;
         break;
       case 11:
-        root.same("inactive-disabled", subject.item.enabled, false);
-        root.same("inactive-drops-focus", subject.item.activeFocus, false);
+        root.same("inactive-preserves-enabled", subject.item.enabled, true);
+        root.same("inactive-window-has-no-keyboard", subject.item.Window.active, false);
         root.press();
         break;
       case 12:
