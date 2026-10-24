@@ -17,9 +17,13 @@ ShellRoot {
     cases.push(row);
     Logger.i("StandoutTest", "STANDOUT_UNIT|" + JSON.stringify(row));
   }
-  FileView { id: source; path: Quickshell.shellDir + "/Assets/ColorScheme/MacOS/MacOS.json" }
-  FileView { id: saved; path: Settings.configDir + "colorschemes/Custom/Custom.json"; printErrors: false }
-  FileView { id: initial; path: Settings.configDir + "colors.json"; printErrors: false }
+  function finishTest() {
+    Logger.i("StandoutTest", "STANDOUT_COMPLETE|" + JSON.stringify({cases: root.cases.length, passed: root.cases.every(row => row.pass)}));
+    Qt.exit(root.cases.every(row => row.pass) ? 0 : 1);
+  }
+  ThemingFileOracle { id: source; path: Quickshell.shellDir + "/Assets/ColorScheme/MacOS/MacOS.json" }
+  ThemingFileOracle { id: saved; path: Settings.configDir + "colorschemes/Custom/Custom.json" }
+  ThemingFileOracle { id: initial; path: Settings.configDir + "colors.json" }
   PanelWindow {
     implicitWidth: 900
     implicitHeight: 850
@@ -37,7 +41,12 @@ ShellRoot {
       if (!Settings.isLoaded)
         return;
       if (root.phase === 0) {
-        initial.reload();
+        if (!initial.ready && !initial.running)
+          initial.reload();
+        if (!source.ready && !source.running)
+          source.reload();
+        if (!initial.ready || !source.ready)
+          return;
         var initialColors;
         try { initialColors = JSON.parse(initial.text()); } catch (error) { return; }
         root.check("bootstrap.only-role-keys", Object.keys(initialColors).length === AtmoColor.roleKeys.length && Object.keys(initialColors).every(key => AtmoColor.roleKeys.includes(key)), initialColors);
@@ -73,7 +82,7 @@ ShellRoot {
       } else if (root.phase === 3 && Settings.data.colorSchemes.predefinedScheme === "Custom") {
         saved.reload();
         root.phase++;
-      } else if (root.phase === 4 && String(AtmoColor.mStandout) === "#abcdef" && ColorSchemeService.lastPredefinedSchemeData && ColorSchemeService.lastPredefinedSchemeData.dark.mStandout === "#abcdef") {
+      } else if (root.phase === 4 && saved.ready && String(AtmoColor.mStandout) === "#abcdef" && ColorSchemeService.lastPredefinedSchemeData && ColorSchemeService.lastPredefinedSchemeData.dark.mStandout === "#abcdef") {
         var data = JSON.parse(saved.text());
         root.check("editor.saved-fill", data.dark.mStandout === "#abcdef", data.dark.mStandout);
         root.check("editor.saved-ink", data.dark.mOnStandout === "#123456", data.dark.mOnStandout);
@@ -87,13 +96,17 @@ ShellRoot {
       } else if (root.phase === 5 && String(AtmoColor.mStandout) === "#fedcba" && !editor.isDirty("mStandout")) {
         saved.reload();
         root.phase++;
-      } else if (root.phase === 6) {
+      } else if (root.phase === 6 && saved.ready) {
         var data = JSON.parse(saved.text());
         root.check("editor.second-apply-persists-later-edits", data.dark.mStandout === "#fedcba" && data.dark.mOnStandout === "#654321" && data.dark.mPrimary === "#aabbcc", data.dark);
         editor.close();
         editor.open();
         root.check("editor.reopen", editor.getColor("mStandout") === "#fedcba" && !editor.isDirty("mStandout"), editor.editColors.dark);
         root.check("consumer.reload", String(AtmoColor.mOnStandout) === "#654321", String(AtmoColor.mOnStandout));
+        if (Quickshell.env("THEMING_SECOND_APPLY_ONLY") === "1") {
+          root.finishTest();
+          return;
+        }
         var first = JSON.parse(JSON.stringify(ColorSchemeService.lastPredefinedSchemeData));
         first.dark.mStandout = "#112233";
         ColorSchemeService.saveCustomScheme(first, function (success) { root.saveCompletions.push({name: "first", success: success}); });
@@ -106,7 +119,7 @@ ShellRoot {
       } else if (root.phase === 7 && root.saveCompletions.length === 2) {
         saved.reload();
         root.phase++;
-      } else if (root.phase === 8) {
+      } else if (root.phase === 8 && saved.ready) {
         var data = JSON.parse(saved.text());
         root.check("service.save-order", root.saveCompletions.every(row => row.success) && root.saveCompletions.map(row => row.name).join(",") === "first,second", root.saveCompletions);
         root.check("service.owns-submitted-snapshots", data.dark.mStandout === "#445566", data.dark.mStandout);
@@ -114,8 +127,7 @@ ShellRoot {
         root.phase++;
       } else if (root.phase === 9 && String(AtmoColor.mStandout) === "#445566") {
         root.check("service.saved-snapshot-at-consumer", ColorSchemeService.lastPredefinedSchemeData.dark.mStandout === "#445566", String(AtmoColor.mStandout));
-        Logger.i("StandoutTest", "STANDOUT_COMPLETE|" + JSON.stringify({cases: root.cases.length, passed: root.cases.every(row => row.pass)}));
-        Qt.exit(root.cases.every(row => row.pass) ? 0 : 1);
+        root.finishTest();
       }
     }
   }

@@ -8,6 +8,7 @@ import shutil
 import subprocess
 
 from filechooser_isolation import ROOT, enter, guest, profile_env
+from theming_oracle import install_file_oracle
 
 
 def main():
@@ -22,6 +23,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, required=True)
     parser.add_argument('--label', required=True)
+    parser.add_argument('--second-apply-only', action='store_true', help='Run the approved second-Apply scenario, stopping before the independent service cases')
     args = parser.parse_args()
     source = args.source.resolve()
     assert source.is_relative_to(ROOT / 'sources')
@@ -35,21 +37,25 @@ def main():
         shutil.copytree(source, shell, symlinks=True)
         probe = shell / 'standout-test.qml'
         probe.write_text((source / 'Scripts/dev/fixtures/theming-standout.qml').read_text())
+        install_file_oracle(source, shell)
         for name in ('config', 'cache', 'state', 'data', 'tmp'):
             (profile / name).mkdir(parents=True)
         defaults = json.loads((source / 'Configs/defaults.json').read_text())
         defaults['general']['showChangelogOnStartup'] = False
         (profile / 'config/settings.json').write_text(json.dumps(defaults))
+        env = dict(profile_env(profile), THEMING_SECOND_APPLY_ONLY='1' if args.second_apply_only else '0')
         result = subprocess.run(['timeout', '--kill-after=5', '50', 'qs', '-p', str(probe)],
-                                cwd=shell, env=profile_env(profile), capture_output=True, text=True, timeout=60)
+                                cwd=shell, env=env, capture_output=True, text=True, timeout=60)
         log = result.stdout + result.stderr
         (evidence / 'run.log').write_text(log)
         rows = [json.loads(line.split('STANDOUT_UNIT|', 1)[1]) for line in log.splitlines() if 'STANDOUT_UNIT|' in line]
+        reads = [json.loads(line.split('THEMING_FILE_READ|', 1)[1]) for line in log.splitlines() if 'THEMING_FILE_READ|' in line]
         errors = [line for line in log.splitlines() if re.search(r'TypeError|ReferenceError|Cannot assign|Binding loop|Failed to load configuration|is not a type|Unable to assign', line)]
         complete = 'STANDOUT_COMPLETE|' in log
         receipt = dict(exit=result.returncode, cases=rows, errors=errors, complete=complete,
+                       file_reads=reads, second_apply_only=args.second_apply_only,
                        passed=result.returncode == 0 and complete and len(rows) >= 11 and all(row['pass'] for row in rows) and not errors)
-        saved = profile / 'config/atmosphera/colorschemes/Custom/Custom.json'
+        saved = profile / 'config/colorschemes/Custom/Custom.json'
         if saved.exists():
             shutil.copy2(saved, evidence / 'Custom.json')
         (evidence / 'result.json').write_text(json.dumps(receipt, indent=2))

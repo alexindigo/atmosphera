@@ -55,7 +55,7 @@ ShellRoot {
     ColorCustomizer { id: editor }
   }
   property string goodFace: ""
-  FileView { id: saved; path: Settings.configDir + "colors.json"; printErrors: false }
+  ThemingFileOracle { id: saved; path: Settings.configDir + "colors.json" }
   Process { id: corrupt; stdout: StdioCollector {} }
   Connections {
     target: AtmoColor
@@ -148,11 +148,10 @@ ShellRoot {
         ColorSchemeService.writeColorsToDisk(root.palettes.b.dark);
         root.fenceQueue("fence-write");
         root.phase++;
-      } else if (root.phase === 8 && root.fence) {
+      } else if (root.phase === 8 && root.fence && root.coherent(root.palettes.b)) {
         saved.reload();
-        root.changedAt = Date.now();
         root.phase++;
-      } else if (root.phase === 9 && Date.now() - root.changedAt > 500 && root.coherent(root.palettes.b)) {
+      } else if (root.phase === 9 && saved.ready && root.coherent(root.palettes.b)) {
         root.check("older-write-cannot-win", JSON.parse(saved.text()).mStandout === root.palettes.b.dark.mStandout, String(icon.paints.face));
         ColorSchemeService.lastPredefinedSchemeData = root.copy(root.palettes.b);
         ColorSchemeService.lastPredefinedSchemeData.dark._fault = "save-fail";

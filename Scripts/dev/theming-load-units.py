@@ -9,6 +9,7 @@ import shutil
 import subprocess
 
 from filechooser_isolation import ROOT, enter, guest, profile_env
+from theming_oracle import install_file_oracle
 
 
 def main():
@@ -29,6 +30,7 @@ def main():
         shutil.copytree(source, shell, symlinks=True)
         probe = shell / 'load-test.qml'
         probe.write_text((source / 'Scripts/dev/fixtures/theming-load-failures.qml').read_text())
+        install_file_oracle(source, shell)
         # Fault instrumentation belongs only to this disposable runtime. No
         # production command, Python fallback or acceptance predicate is changed.
         service = shell / 'Services/Theming/ColorSchemeService.qml'
@@ -71,13 +73,14 @@ runpy.run_path(str(Path(__file__).with_name('.normalize-original.py')),run_name=
         log = result.stdout + result.stderr
         (output / 'run.log').write_text(log)
         cases = [json.loads(line.split('THEME_LOAD_CASE|', 1)[1]) for line in log.splitlines() if 'THEME_LOAD_CASE|' in line]
+        reads = [json.loads(line.split('THEMING_FILE_READ|', 1)[1]) for line in log.splitlines() if 'THEMING_FILE_READ|' in line]
         errors = [line for line in log.splitlines() if re.search(r'TypeError|ReferenceError|Cannot assign|Binding loop|Failed to load configuration|is not a type|Unable to assign', line)]
         workers = [json.loads(line) for line in worker_log.read_text().splitlines()] if worker_log.exists() else []
         no_authored_worker = not any(row['tag'] == 'complete-without-worker' for row in workers)
         save_failed = any(row['save'] and row['fault'] == 'save-fail' for row in workers) and not (profile / 'config/colorschemes/Custom/Custom.json').exists()
         warnings_visible = log.count('Colour load rejected; keeping last good colours:') >= 8 and 'Invalid colours JSON' in log
         passed = result.returncode == 0 and 'THEME_LOAD_COMPLETE|' in log and len(cases) >= 15 and all(row['pass'] for row in cases) and not errors and no_authored_worker and save_failed and warnings_visible
-        receipt = dict(passed=passed, exit=result.returncode, cases=cases, errors=errors, no_authored_worker=no_authored_worker, failed_save_not_written=save_failed, warnings_visible=warnings_visible)
+        receipt = dict(passed=passed, exit=result.returncode, cases=cases, file_reads=reads, errors=errors, no_authored_worker=no_authored_worker, failed_save_not_written=save_failed, warnings_visible=warnings_visible)
         (output / 'result.json').write_text(json.dumps(receipt, indent=2))
         print(json.dumps(receipt, indent=2))
         return 0 if passed else 1
