@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
 import qs.Commons
+import qs.Widgets
 
 /**
 * ScreenCorners - Shape component for rendering screen corners
@@ -20,11 +21,10 @@ Item {
     // Cache the Shape to a texture to prevent continuous re-tessellation
     layer.enabled: true
 
-    Shape {
+    NShape {
       id: cornersShape
 
       anchors.fill: parent
-      preferredRendererType: Shape.CurveRenderer
       asynchronous: true
       enabled: false // Disable mouse input
       visible: cornersPath.cornerRadius > 0 && width > 0 && height > 0

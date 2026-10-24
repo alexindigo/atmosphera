@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Fixed
+
+File chooser icons and layered launcher outlines now have smooth vector edges
+at normal and high-DPI scales. Hidden icons still fade as a finished picture.
+All shell shapes share the same antialiased renderer.
+
 ### 2026-10-23
 
 **Feature**

@@ -40,10 +40,9 @@ Slider {
     readonly property real fillWidth: root.visualPosition * width
 
     // Background track
-    Shape {
+    NShape {
       anchors.fill: parent
       visible: bgContainer.width > 0 && bgContainer.height > 0
-      preferredRendererType: Shape.CurveRenderer
       asynchronous: true
 
       ShapePath {
@@ -119,11 +118,10 @@ Slider {
     }
 
     // Active/filled track
-    Shape {
+    NShape {
       width: bgContainer.fillWidth
       height: bgContainer.height
       visible: bgContainer.fillWidth > 0 && bgContainer.height > 0
-      preferredRendererType: Shape.CurveRenderer
       asynchronous: true
       clip: true
 
