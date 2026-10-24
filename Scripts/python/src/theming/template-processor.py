@@ -238,11 +238,10 @@ def main() -> int:
                         flat_colors[k] = str(v)
 
                 # Assign to requested modes
-                from lib.scheme import normalize_scheme
-                normalized = normalize_scheme(flat_colors)
+                from lib.scheme import enrich_template_palette
+                enriched = enrich_template_palette(flat_colors)
                 for mode in modes:
-                    result[mode] = dict(flat_colors, standout=normalized[mode]['mStandout'],
-                                        on_standout=normalized[mode]['mOnStandout'])
+                    result[mode] = enriched[mode]
 
             except Exception as e:
                 print(f"Error reading JSON palette: {e}", file=sys.stderr)
