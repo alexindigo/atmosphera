@@ -57,3 +57,15 @@ to be focused. The clipboard process is serialized by the same durable owner.
 This handoff has no fixed delay and does not depend on provider/UI lifetime.
 If the destination is absent or has closed, the intent still copies its
 payload to the clipboard, without injecting a key into another surface.
+A committed paste never fires late: each job has a deadline two seconds after
+the launcher's native keyboard release (or after its enqueue, if later). If
+the destination has not regained the keyboard by then, or a new launcher
+session starts first, the job only copies its payload. Expiry is checked
+whenever the queue runs, so no key is sent after the deadline; one timer armed
+for the earliest outstanding deadline runs the queue even without a focus
+event (QML timers can fire a few hundred milliseconds late).
+A launcher session retires through one rule only: when it is closed, has no
+queued job and owes no native keyboard release. However its jobs end (paste,
+copy-only, deadline, new session, closed destination) and however often its
+producer finishes it, a source that committed a paste stays mapped until the
+compositor acknowledges the release.

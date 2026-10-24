@@ -41,6 +41,7 @@ Item {
     }
   }
   property var pasteEvents: []
+  property var lastPasteSession: null
 
   // Every facade focus notification, recorded synchronously inside its own
   // callback: what any consumer could read at that moment.
@@ -51,7 +52,12 @@ Item {
     const rows = [];
     for (let i = 0; i < CompositorService.windows.count; i++) {
       const row = CompositorService.windows.get(i);
-      rows.push({id: row.id, title: row.title, isFocused: row.isFocused, nativeId: row.handle && row.handle.id !== undefined ? row.handle.id : row.id});
+      rows.push({
+                  id: row.id,
+                  title: row.title,
+                  isFocused: row.isFocused,
+                  nativeId: row.handle && row.handle.id !== undefined ? row.handle.id : row.id
+                });
     }
     const id = CompositorService.focusedWindowId === undefined ? "absent" : CompositorService.focusedWindowId;
     const index = CompositorService.focusedWindowIndex;
@@ -69,9 +75,21 @@ Item {
       bound_title: (signalName !== "windowListChanged" && signalName !== "activeWindowChanged") || boundFocusTitle === title,
       one_flagged_row: JSON.stringify(flagged) === JSON.stringify(expected === null ? [] : [expected])
     };
-    return {signal: signalName, at: Date.now(), focusedWindowId: id, focusedWindowIndex: index,
-      focused: focused ? {id: focused.id, title: focused.title} : null, title: title, boundTitle: boundFocusTitle,
-      rows: rows, checks: checks, coherent: Object.keys(checks).every(key => checks[key])};
+    return {
+      signal: signalName,
+      at: Date.now(),
+      focusedWindowId: id,
+      focusedWindowIndex: index,
+      focused: focused ? {
+                           id: focused.id,
+                           title: focused.title
+                         } : null,
+      title: title,
+      boundTitle: boundFocusTitle,
+      rows: rows,
+      checks: checks,
+      coherent: Object.keys(checks).every(key => checks[key])
+    };
   }
   function recordFocus(signalName) {
     focusNotifications.push(focusView(signalName));
@@ -79,10 +97,18 @@ Item {
   onBoundFocusTitleChanged: recordFocus("boundTitle")
   Connections {
     target: CompositorService
-    function onWindowListChanged() { probe.recordFocus("windowListChanged"); }
-    function onActiveWindowChanged() { probe.recordFocus("activeWindowChanged"); }
-    function onFocusedWindowIdChanged() { probe.recordFocus("focusedWindowIdChanged"); }
-    function onFocusedWindowIndexChanged() { probe.recordFocus("focusedWindowIndexChanged"); }
+    function onWindowListChanged() {
+      probe.recordFocus("windowListChanged");
+    }
+    function onActiveWindowChanged() {
+      probe.recordFocus("activeWindowChanged");
+    }
+    function onFocusedWindowIdChanged() {
+      probe.recordFocus("focusedWindowIdChanged");
+    }
+    function onFocusedWindowIndexChanged() {
+      probe.recordFocus("focusedWindowIndexChanged");
+    }
   }
 
   Connections {
@@ -330,6 +356,7 @@ Item {
     }
     function observePasteSession(): string {
       const session = probe.core().actionSession;
+      probe.lastPasteSession = session;
       session.keyboardReleased.connect(sourceWasVisible => probe.pasteEvents.push({
                                                                                     at: Date.now(),
                                                                                     targetId: session.targetId,
@@ -340,6 +367,14 @@ Item {
                               targetId: session.targetId,
                               hadKeyboard: session.hadKeyboard,
                               sourceActive: session.nativeActive
+                            });
+    }
+    // A further committed job on the last observed session, enqueued now.
+    function queuePasteText(text: string): string {
+      LauncherActionService.pasteText(text, probe.lastPasteSession);
+      return JSON.stringify({
+                              at: Date.now(),
+                              pending: LauncherActionService.pending.length
                             });
     }
     function pasteObservations(): string {

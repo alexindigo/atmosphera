@@ -15,7 +15,9 @@ window closes, sway windows gain ids, and mangowc window and focus updates are
 no longer frozen at startup. Window list, focused window and bar title are
 published together, so no update shows one without the other. A launcher
 paste whose destination closed is only copied, never pasted into another
-window.
+window; one whose destination does not get the keyboard back within two
+seconds, or that is followed by a new launcher session, is only copied too,
+never pasted late.
 
 ### 2026-10-23
 

@@ -12,6 +12,16 @@ Singleton {
   property var pending: []
   property var pasteSessions: []
   property var releasingSessions: []
+  // A committed paste never fires late: a job whose destination has not
+  // regained the keyboard within this time after the launcher released it
+  // (or when a new launcher session starts) only copies its payload.
+  readonly property int pasteDeadlineMs: 2000
+
+  Timer {
+    id: deadlineTimer
+    repeat: false
+    onTriggered: root.drain()
+  }
 
   Component {
     id: pasteSession
@@ -19,12 +29,23 @@ Singleton {
       id: lease
       onKeyboardReleased: {
         root.releaseRetention(lease);
+        root.settle(lease);
         Qt.callLater(root.drain);
       }
     }
   }
 
   function beginSession(screen) {
+    // A new launcher session ends every earlier committed paste copy-only.
+    let superseded = false;
+    for (const action of pending) {
+      if (action.session && !action.expired) {
+        action.expired = true;
+        superseded = true;
+      }
+    }
+    if (superseded)
+      Qt.callLater(root.drain);
     const target = CompositorService.getFocusedWindow();
     const session = pasteSession.createObject(root, {screen: screen, targetId: target ? target.id : null});
     pasteSessions = pasteSessions.concat([session]);
@@ -37,22 +58,52 @@ Singleton {
       session.sourceWindow = window;
     }
   }
-  function retireSession(session) {
-    if (!session || session.retired)
-      return;
-    session.retired = true;
-    releaseRetention(session);
-    pasteSessions = pasteSessions.filter(item => item !== session);
-    session.destroy();
-  }
+  // Close, queue completion (paste, copy-only, deadline, cancellation,
+  // closed destination) and native release all end here; nothing else
+  // retires a session.
   function finishSession(session) {
     if (!session || session.retired)
       return;
     session.closeRequested = true;
-    if (session.queued === 0)
-      retireSession(session);
-    else
-      session.checkRelease();
+    session.checkRelease();
+    settle(session);
+  }
+  // The one retirement rule: a closed session retires only when it has no
+  // queued job and owes no native release. A source that committed a paste
+  // keeps its window (retainsScreen) until the compositor acknowledges the
+  // keyboard release, however its jobs ended and however often it is finished.
+  function settle(session) {
+    if (!session || session.retired || !session.closeRequested || session.queued !== 0 || owesRelease(session))
+      return;
+    session.retired = true;
+    pasteSessions = pasteSessions.filter(item => item !== session);
+    session.destroy();
+  }
+  function owesRelease(session) {
+    return releasingSessions.indexOf(session) !== -1;
+  }
+  function deadlineOf(action) {
+    const session = action.session;
+    return session && session.released ? Math.max(session.releasedAt, action.enqueuedAt) + pasteDeadlineMs : Infinity;
+  }
+  function expireDue(now) {
+    for (const action of pending) {
+      if (action.session && !action.expired && now >= deadlineOf(action))
+        action.expired = true;
+    }
+  }
+  // One timer, armed for the earliest outstanding deadline.
+  function scheduleDeadline() {
+    let next = Infinity;
+    for (const action of pending) {
+      if (action.session && !action.expired)
+        next = Math.min(next, deadlineOf(action));
+    }
+    deadlineTimer.stop();
+    if (next !== Infinity) {
+      deadlineTimer.interval = Math.max(1, next - Date.now());
+      deadlineTimer.start();
+    }
   }
   function retainsScreen(screen) {
     return releasingSessions.some(session => session.screen === screen);
@@ -125,6 +176,8 @@ Singleton {
     if (!session.released && releasingSessions.indexOf(session) === -1)
       releasingSessions = releasingSessions.concat([session]);
     action.session = session;
+    action.enqueuedAt = Date.now();
+    action.expired = false;
     enqueue(action);
   }
   function openSettings(entry, screen) {
@@ -138,15 +191,17 @@ Singleton {
   }
 
   function drain() {
+    expireDue(Date.now());
     const actions = pending;
     pending = [];
     for (const action of actions) {
       const paste = action.kind === "text" || action.kind === "clipboard";
-      if (paste && !pasteReady(action)) {
+      // An expired job only copies; it still waits for the clipboard process.
+      if (paste && (action.expired ? ClipboardService.pasting : !pasteReady(action))) {
         pending = pending.concat([action]);
         continue;
       }
-      const copyOnly = paste && !destinationExists(action.session);
+      const copyOnly = paste && (action.expired || !destinationExists(action.session));
       switch (action.kind) {
       case "application":
         executeApplication(action);
@@ -184,10 +239,10 @@ Singleton {
       }
       if (paste) {
         action.session.queued--;
-        if (action.session.queued === 0 && action.session.closeRequested)
-          retireSession(action.session);
+        settle(action.session);
       }
     }
+    scheduleDeadline();
   }
 
   function executeApplication(action) {
