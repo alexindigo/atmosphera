@@ -21,7 +21,7 @@ Singleton {
 
   // Searches emojis based on query
   function search(query) {
-    if (!loaded) {
+    if (!loaded && emojis.length === 0) {
       return [];
     }
 
@@ -78,7 +78,7 @@ Singleton {
   }
 
   function getCategoriesWithCounts() {
-    if (!loaded) {
+    if (!loaded && emojis.length === 0) {
       return [];
     }
 
@@ -105,7 +105,7 @@ Singleton {
   }
 
   function getEmojisByCategory(category) {
-    if (!loaded) {
+    if (!loaded && emojis.length === 0) {
       return [];
     }
 
@@ -125,10 +125,12 @@ Singleton {
         count: 0,
         lastUsed: 0
       };
-      usageCounts[emojiChar] = {
+      const nextUsage = Object.assign({}, usageCounts);
+      nextUsage[emojiChar] = {
         count: currentData.count + 1,
         lastUsed: Date.now()
       };
+      usageCounts = nextUsage;
       _saveUsageData();
     }
   }

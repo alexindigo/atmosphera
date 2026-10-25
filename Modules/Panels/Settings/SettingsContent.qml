@@ -697,6 +697,9 @@ Item {
   }
 
   // Handle typing when sidebar is collapsed
+  NInputGuard {
+    target: root
+  }
   focus: true
   Keys.onPressed: event => {
     if (!sidebarExpanded && event.text.length > 0 && event.text.trim() !== "") {

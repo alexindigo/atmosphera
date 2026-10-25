@@ -17,7 +17,7 @@ Item {
 
   readonly property var workspaces: available ? loader.item.workspaces : _emptyModel
   readonly property var windows: available ? loader.item.windows : []
-  readonly property int focusedWindowIndex: available ? loader.item.focusedWindowIndex : -1
+  readonly property var focusedWindowId: available ? loader.item.focusedWindowId : null
 
   readonly property bool overviewActive: available ? loader.item.overviewActive : false
   readonly property var keyboardLayouts: available ? loader.item.keyboardLayouts : []
@@ -89,11 +89,6 @@ Item {
   function safeUpdateWindows() {
     if (available)
       loader.item.safeUpdateWindows();
-  }
-
-  function safeUpdateFocusedWindow() {
-    if (available)
-      loader.item.safeUpdateFocusedWindow();
   }
 
   function queryDisplayScales() {

@@ -134,6 +134,9 @@ RowLayout {
 
   ComboBox {
     id: combo
+    NInputGuard {
+      target: combo
+    }
 
     opacity: enabled ? 1.0 : 0.6
     Layout.margins: Style.borderS

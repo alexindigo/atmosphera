@@ -11,10 +11,15 @@ Item {
 
   // ===== PUBLIC INTERFACE (CompositorService compatibility) =====
 
-  property ListModel workspaces: ListModel {}
-  property var windows: []
-  property int focusedWindowIndex: -1
+  // Forwarded from the loaded backend, never copied: a copy would keep
+  // the state of the moment it was taken.
+  readonly property var _backend: backendLoader.status === Loader.Ready ? backendLoader.item : null
+  readonly property ListModel workspaces: _backend ? _backend.workspaces : _emptyWorkspaces
+  readonly property var windows: _backend ? _backend.windows : []
+  readonly property var focusedWindowId: _backend ? _backend.focusedWindowId : null
   property bool initialized: false
+
+  property ListModel _emptyWorkspaces: ListModel {}
 
   signal workspaceChanged
   signal activeWindowChanged
@@ -23,8 +28,8 @@ Item {
 
   // ===== MANGOSERVICE-SPECIFIC PROPERTIES =====
 
-  property string selectedMonitor: ""
-  property string currentLayoutSymbol: ""
+  readonly property string selectedMonitor: _backend ? _backend.selectedMonitor : ""
+  readonly property string currentLayoutSymbol: _backend ? _backend.currentLayoutSymbol : ""
 
   // ===== BACKEND LOADER =====
 
@@ -42,13 +47,6 @@ Item {
           ToastService.showWarning(I18n.tr("toast.mangowcqml-missing") || "Degraded mangowc experience", I18n.tr("toast.mangowcqml-missing-desc") || "Install qt6-mangowcqml to enable mangowc integration (workspaces, windows, session config).", 8000);
         }
       } else if (status === Loader.Ready) {
-        // Wire backend properties to root
-        root.workspaces = backendLoader.item.workspaces;
-        root.windows = backendLoader.item.windows;
-        root.focusedWindowIndex = backendLoader.item.focusedWindowIndex;
-        root.selectedMonitor = backendLoader.item.selectedMonitor;
-        root.currentLayoutSymbol = backendLoader.item.currentLayoutSymbol;
-
         // Forward signals
         backendLoader.item.workspaceChanged.connect(root.workspaceChanged);
         backendLoader.item.activeWindowChanged.connect(root.activeWindowChanged);

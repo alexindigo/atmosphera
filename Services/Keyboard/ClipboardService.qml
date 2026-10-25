@@ -227,6 +227,7 @@ Singleton {
     id: pasteProc
     stdout: StdioCollector {}
   }
+  readonly property bool pasting: pasteProc.running || copyProc.running
 
   Process {
     id: deleteProc
@@ -457,11 +458,16 @@ Singleton {
     decodeB64Proc.running = true;
   }
 
-  function copyToClipboard(id) {
+  function copyToClipboard(id, mime) {
     if (!root.cliphistAvailable) {
       return;
     }
-    copyProc.command = ["sh", "-c", `cliphist decode ${id} | wl-copy`];
+    const typeArg = mime && mime.startsWith("image/") ? ` --type ${mime}` : "";
+    copyProc.command = ["sh", "-c", `cliphist decode ${id} | wl-copy${typeArg}`];
+    copyProc.running = true;
+  }
+  function copyText(text) {
+    copyProc.command = ["wl-copy", "--", String(text)];
     copyProc.running = true;
   }
 

@@ -16,7 +16,7 @@ Item {
   width: GridView.view.cellWidth
   height: GridView.view.cellHeight
 
-  property bool isSelected: (!launcher.ignoreMouseHover && mouseArea.containsMouse) || (index === launcher.selectedIndex)
+  readonly property bool isSelected: index === launcher.selectedIndex
 
   // Prepare item when it becomes visible (e.g., decode images)
   Component.onCompleted: {
@@ -255,11 +255,6 @@ Item {
     cursorShape: Qt.PointingHandCursor
     enabled: !Settings.data.appLauncher.ignoreMouseInput
 
-    onEntered: {
-      if (!launcher.ignoreMouseHover) {
-        launcher.selectedIndex = gridEntryContainer.index;
-      }
-    }
     onClicked: mouse => {
       if (mouse.button === Qt.LeftButton) {
         launcher.selectedIndex = gridEntryContainer.index;

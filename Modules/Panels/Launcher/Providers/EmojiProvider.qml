@@ -9,6 +9,7 @@ Item {
   // Provider metadata
   property string name: I18n.tr("launcher.providers.emoji")
   property var launcher: null
+  signal resultsChanged
   property string iconMode: Settings.data.appLauncher.iconMode
   property bool handleSearch: false
   property string supportedLayouts: "grid" // Only grid layout for emoji
@@ -56,14 +57,11 @@ Item {
     return names[category] || category;
   }
 
-  // Force update results when emoji service loads
   Connections {
     target: EmojiService
-    function onLoadedChanged() {
-      if (EmojiService.loaded && root.launcher) {
-        root.launcher.updateResults();
-      }
-    }
+    function onLoadedChanged() { root.resultsChanged(); }
+    function onEmojisChanged() { root.resultsChanged(); }
+    function onUsageCountsChanged() { root.resultsChanged(); }
   }
 
   // Initialize provider
@@ -110,7 +108,7 @@ Item {
       return [];
     }
 
-    if (!EmojiService.loaded) {
+    if (!EmojiService.loaded && EmojiService.emojis.length === 0) {
       return [
             {
               "name": I18n.tr("launcher.providers.emoji-loading"),

@@ -238,6 +238,13 @@ GridLayout {
         // Search input
         NTextInput {
           id: searchInput
+          NInputGuard {
+            target: searchInput
+            active: combo.popup.visible
+            focusOwner: combo
+            focusTarget: searchInput.inputItem
+            focusOnActivation: true
+          }
           inputIconName: "search"
           Layout.fillWidth: true
           placeholderText: root.searchPlaceholder

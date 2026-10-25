@@ -2,12 +2,19 @@ import QtQuick
 import Quickshell
 import qs.Commons
 import qs.Services.Compositor
+import qs.Services.UI
 
 Item {
   id: root
 
   property string name: I18n.tr("common.windows")
   property var launcher: null
+  signal resultsChanged
+  Connections {
+    target: CompositorService
+    function onWindowListChanged() { root.resultsChanged(); }
+    function onActiveWindowChanged() { root.resultsChanged(); }
+  }
   property bool handleSearch: Settings.data.appLauncher.enableWindowsSearch
   property string supportedLayouts: "list"
   property string iconMode: Settings.data.appLauncher.iconMode
@@ -141,19 +148,9 @@ Item {
 
   function createActivateHandler(windowEntry) {
     return function () {
+      LauncherActionService.focusWindow(windowEntry.id);
       if (launcher)
         launcher.close();
-
-      Qt.callLater(() => {
-        // Find the actual window object to pass to focusWindow
-        for (var i = 0; i < CompositorService.windows.count; i++) {
-          var win = CompositorService.windows.get(i);
-          if (win.id === windowEntry.id) {
-            CompositorService.focusWindow(win);
-            break;
-          }
-        }
-      });
     };
   }
 }

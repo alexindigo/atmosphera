@@ -150,43 +150,9 @@ Item {
 
   function createActivateHandler(action, command) {
     return function () {
+      LauncherActionService.sessionAction(action);
       if (launcher)
         launcher.close();
-
-      // Execute via Qt.callLater, but reference only singletons
-      // (root may be destroyed after launcher.close() unloads the panel)
-      Qt.callLater(() => {
-        switch (action) {
-        case "lock":
-          CompositorService.lock();
-          break;
-        case "suspend":
-          if (Settings.data.general.lockOnSuspend) {
-            CompositorService.lockAndSuspend();
-          } else {
-            CompositorService.suspend();
-          }
-          break;
-        case "hibernate":
-          CompositorService.hibernate();
-          break;
-        case "reboot":
-          CompositorService.reboot();
-          break;
-        case "rebootToUefi":
-          CompositorService.rebootToUefi();
-          break;
-        case "userspaceReboot":
-          CompositorService.userspaceReboot();
-          break;
-        case "logout":
-          CompositorService.logout();
-          break;
-        case "shutdown":
-          CompositorService.shutdown();
-          break;
-        }
-      });
     };
   }
 }

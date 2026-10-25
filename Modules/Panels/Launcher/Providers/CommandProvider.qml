@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import qs.Commons
+import qs.Services.UI
 
 Item {
   property var launcher: null
@@ -39,11 +40,8 @@ Item {
             "isTablerIcon": true,
             "isImage": false,
             "onActivate": function () {
+              LauncherActionService.runCommand(expression);
               launcher.closeImmediately();
-              Qt.callLater(() => {
-                Logger.d("CommandProvider", "Executing shell command: " + expression);
-                Quickshell.execDetached(["sh", "-c", expression]);
-              });
             }
           }
         ];

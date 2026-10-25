@@ -27,7 +27,7 @@ Singleton {
   - Default cache directory: ~/.cache/atmosphera
   */
   readonly property alias data: settingsAdapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 61
+  readonly property int settingsVersion: 62
   property bool isDebug: Quickshell.env("ATMOSPHERA_DEBUG") === "1"
   readonly property string shellName: "atmosphera"
   readonly property string configDir: ensureTrailingSlash(Quickshell.env("ATMOSPHERA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/")
@@ -823,7 +823,7 @@ Singleton {
         property list<string> keyRight: ["Right"]
         property list<string> keyEnter: ["Return", "Enter"]
         property list<string> keyEscape: ["Esc"]
-        property list<string> keyRemove: ["Del"]
+        property list<string> keyRemove: ["Shift+Del"]
       }
       property bool reverseScroll: false
       property bool smoothScrollEnabled: true

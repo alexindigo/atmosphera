@@ -5,6 +5,9 @@ import qs.Widgets
 // The existing NButton, with keyboard and focus presentation for this window.
 NButton {
   id: root
+  NInputGuard {
+    target: root
+  }
   property bool primary: false
   activeFocusOnTab: true
   backgroundColor: primary ? AtmoColor.mPrimary : "transparent"

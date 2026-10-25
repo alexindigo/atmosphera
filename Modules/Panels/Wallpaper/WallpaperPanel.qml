@@ -464,6 +464,10 @@ SmartPanel {
                 }
               }
 
+              NInputGuard {
+                target: searchInput
+                focusTarget: searchInput.inputItem
+              }
               Keys.onPressed: event => {
                 if (Keybinds.checkKey(event, 'down', Settings)) {
                   if (Settings.data.wallpaper.useWallhaven) {

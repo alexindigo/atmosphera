@@ -253,6 +253,9 @@ RowLayout {
         // Editable number input
         TextInput {
           id: valueInput
+          NInputGuard {
+            target: valueInput
+          }
           text: valueInput.focus ? valueInput.text : root.value.toString()
           font.family: Settings.data.ui.fontFixed
           font.pointSize: Style.fontSizeM

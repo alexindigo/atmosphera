@@ -10,8 +10,13 @@ Item {
 
   property ListModel workspaces: ListModel {}
   property var windows: []
-  property int focusedWindowIndex: -1
+  // Id of ToplevelManager's active toplevel, or null (see CompositorService)
+  property var focusedWindowId: null
   property var trackedToplevels: new Set()
+
+  ToplevelIds {
+    id: toplevelIds
+  }
 
   // LabWC typically has global workspaces (shared across all outputs)
   property bool globalWorkspaces: true
@@ -152,11 +157,11 @@ Item {
       }
     }
 
-    for (let i = 0; i < windows.length; i++) {
-      if (activeId) {
-        windows[i].workspaceId = activeId;
-      }
-    }
+    // A new array: CompositorService republishes the list on a new identity
+    if (activeId)
+      windows = windows.map(window => Object.assign({}, window, {
+                                                      "workspaceId": activeId
+                                                    }));
     windowListChanged();
   }
 
@@ -188,9 +193,8 @@ Item {
   function updateWindows() {
     const newWindows = [];
     const toplevels = ToplevelManager.toplevels?.values || [];
-
-    let focusedIdx = -1;
-    let idx = 0;
+    const active = ToplevelManager.activeToplevel;
+    let focused = null;
 
     // Find active workspace id
     let activeId = "";
@@ -214,8 +218,7 @@ Item {
       // Get output name from toplevel's screen list
       const output = (toplevel.screens && toplevel.screens.length > 0) ? (toplevel.screens[0].name || "") : "";
 
-      // Use appId + title as a stable id since Toplevel has no address property
-      const windowId = (toplevel.appId || "") + ":" + idx;
+      const windowId = toplevelIds.idFor(toplevel);
 
       newWindows.push({
                         "id": windowId,
@@ -223,17 +226,16 @@ Item {
                         "title": toplevel.title || "",
                         "output": output,
                         "workspaceId": activeId || "1",
-                        "isFocused": toplevel.activated || false,
                         "toplevel": toplevel
                       });
 
-      if (toplevel.activated) {
-        focusedIdx = idx;
+      if (toplevel === active) {
+        focused = windowId;
       }
-      idx++;
     }
+    toplevelIds.retain(toplevels);
     windows = newWindows;
-    focusedWindowIndex = focusedIdx;
+    focusedWindowId = focused;
 
     windowListChanged();
   }

@@ -10,7 +10,9 @@ Item {
 
   property ListModel workspaces: ListModel {}
   property var windows: []
-  property int focusedWindowIndex: -1
+  // niri's focused window id, or null. Window records carry no focus flag:
+  // CompositorService derives every focus view from this one identity.
+  property var focusedWindowId: null
 
   property bool overviewActive: false
 
@@ -36,7 +38,6 @@ Item {
       title: String(win.title || ""),
       appId: String(win.appId || ""),
       workspaceId: win.workspaceId || 0,
-      isFocused: win.isFocused,
       isFloating: win.isFloating || false,
       isUrgent: win.isUrgent || false,
       pid: win.pid || 0,
@@ -102,13 +103,16 @@ Item {
 
   function rebuildWindows(windowList) {
     var windowsList = [];
+    var focused = null;
     for (var i = 0; i < windowList.length; i++) {
       var w = extractWindow(windowList[i]);
       resolveWindowOutput(w);
       windowsList.push(w);
+      if (windowList[i].isFocused)
+        focused = w.id;
     }
     windows = toSortedWindowList(windowsList);
-    safeUpdateFocusedWindow();
+    focusedWindowId = focused;
     windowListChanged();
     activeWindowChanged();
   }
@@ -121,13 +125,18 @@ Item {
   function upsertWindow(winData) {
     var w = extractWindow(winData);
     resolveWindowOutput(w);
+    // niri IPC: "If the window is focused, all other windows are no longer
+    // focused." A newly opened focused window gets no WindowFocusChanged.
+    if (winData.isFocused)
+      focusedWindowId = w.id;
+    else if (focusedWindowId === w.id)
+      focusedWindowId = null;
     for (var i = 0; i < windows.length; i++) {
       if (windows[i].id === w.id) {
         windows[i] = w;
         // New array identity: self-assignment of the same var array does
         // NOT emit the change notification, so bindings would never update
         windows = windows.slice();
-        safeUpdateFocusedWindow();
         windowListChanged();
         activeWindowChanged();
         return;
@@ -135,7 +144,6 @@ Item {
     }
     windows.push(w);
     windows = toSortedWindowList(windows);
-    safeUpdateFocusedWindow();
     windowListChanged();
     activeWindowChanged();
   }
@@ -146,7 +154,8 @@ Item {
         windows.splice(i, 1);
         // New array identity so property bindings re-evaluate (see upsertWindow)
         windows = windows.slice();
-        safeUpdateFocusedWindow();
+        if (focusedWindowId === id)
+          focusedWindowId = null;
         windowListChanged();
         activeWindowChanged();
         return;
@@ -186,16 +195,6 @@ Item {
     }).map(function (info) {
       return info.window;
     });
-  }
-
-  function safeUpdateFocusedWindow() {
-    focusedWindowIndex = -1;
-    for (var i = 0; i < windows.length; i++) {
-      if (windows[i].isFocused) {
-        focusedWindowIndex = i;
-        break;
-      }
-    }
   }
 
   // ── Keyboard layout helpers ──
@@ -337,12 +336,8 @@ Item {
     }
 
     function onWindowFocusChanged(id) {
-      for (var i = 0; i < windows.length; i++) {
-        windows[i].isFocused = (windows[i].id === id);
-      }
-      // New array identity so property bindings re-evaluate (see upsertWindow)
-      windows = windows.slice();
-      safeUpdateFocusedWindow();
+      // niriqml reports niri's "no focused window" (null id) as 0
+      focusedWindowId = id ? id : null;
       activeWindowChanged();
     }
 

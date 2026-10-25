@@ -1,6 +1,9 @@
 import QtQuick
 import qs.Commons
 import qs.Services.UI
+import qs.Services.Compositor
+import qs.Services.Power
+import qs.Services.System
 
 Item {
   id: root
@@ -8,6 +11,23 @@ Item {
   // Provider metadata
   property string name: I18n.tr("common.settings")
   property var launcher: null
+  signal resultsChanged
+  Connections {
+    target: SettingsSearchService
+    function onSearchIndexChanged() { root.resultsChanged(); }
+  }
+  Connections {
+    target: IdleService
+    function onNativeIdleMonitorAvailableChanged() { root.resultsChanged(); }
+  }
+  Connections {
+    target: SoundService
+    function onMultimediaAvailableChanged() { root.resultsChanged(); }
+  }
+  Connections {
+    target: CompositorService
+    function onIsNiriChanged() { root.resultsChanged(); }
+  }
   property bool handleSearch: Settings.data.appLauncher.enableSettingsSearch
   property string supportedLayouts: "list"
   property string iconMode: Settings.data.appLauncher.iconMode
@@ -150,12 +170,9 @@ Item {
 
   function createActivateHandler(entry) {
     return function () {
+      LauncherActionService.openSettings(entry, launcher ? launcher.screen : null);
       if (launcher)
         launcher.close();
-
-      Qt.callLater(() => {
-        SettingsPanelService.openToEntry(entry, launcher.screen);
-      });
     };
   }
 }
