@@ -59,6 +59,25 @@ also applies to queued runs. A VM lint/test validates the configuration and
 publisher, not GitHub's live scheduler. Historical workflow definitions remain
 historical; these protections apply to runs using the updated workflow.
 
+Publication uses separate privilege domains. Root owns the AUR transport key
+and protected Git clones; `--push` requires an explicit keyless `--build-user`
+and that account's disk-backed `--worker-root`. All tag-derived recipe evaluation,
+checksum updates, metadata generation and build/archive checks run under that
+UID with a scrubbed environment, cleared capabilities/groups and no-new-privileges.
+Only bounded contents of the three recipe files cross back over JSON; the
+publisher never adopts a builder's Git configuration, hooks or file paths.
+Both preparations/builds complete before publisher commits, and both commits
+complete before authenticated pushes. Initial workflow reads use public HTTPS.
+The workflow removes its root-owned mode-600 key when the publication step exits.
+
+Every publisher subprocess has a finite deadline: local/metadata commands 30 s,
+network/checksum commands 180 s, builds 600 s, and pushes 180 s by default.
+Workers have an enclosing finite budget derived from those limits. The positive
+finite CLI timeout options allow explicit task-specific sizing; `--push-timeout`
+can bound a stalled receive independently of build time. Timeout tears down only
+the invocation's owned process group and reports through the normal summary;
+a timed-out push remains remote-state-unconfirmed, never presumed unpublished.
+
 For preparation without commits or pushes, run inside an Arch test VM with
 `pacman-contrib` and `base-devel`, using **clean scratch clones** of both AUR repos:
 

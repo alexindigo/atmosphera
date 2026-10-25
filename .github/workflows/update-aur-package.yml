@@ -23,13 +23,14 @@ jobs:
   aur-sync:
     name: Publish repo-owned AUR recipes
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     container:
       image: archlinux:latest
     defaults:
       run:
         shell: bash
     env:
-      GIT_SSH_COMMAND: ssh -i /home/builduser/.ssh/id_aur -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=4
+      GIT_SSH_COMMAND: ssh -F /dev/null -i /root/.ssh/id_aur -o IdentityAgent=none -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4
       TAG_NAME: ${{ inputs.tag || github.ref_name }}
 
     steps:
@@ -64,42 +65,46 @@ jobs:
           AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
         run: |
           set -euo pipefail
-          mkdir -p /home/builduser/.ssh
-          chmod 700 /home/builduser/.ssh
-          printf '%s\n' "$AUR_SSH_PRIVATE_KEY" > /home/builduser/.ssh/id_aur
-          chmod 600 /home/builduser/.ssh/id_aur
-          ssh-keyscan aur.archlinux.org >> /home/builduser/.ssh/known_hosts
-          chmod 600 /home/builduser/.ssh/known_hosts
-          chown -R builduser:builduser /home/builduser/.ssh
+          install -d -m700 /root/.ssh
+          printf '%s\n' "$AUR_SSH_PRIVATE_KEY" > /root/.ssh/id_aur
+          chmod 600 /root/.ssh/id_aur
+          timeout 30 ssh-keyscan aur.archlinux.org >> /root/.ssh/known_hosts
+          chmod 600 /root/.ssh/known_hosts
 
       - name: Prepare both AUR repositories
         run: |
           set -euo pipefail
-          mkdir -p /home/builduser/aur-sync/tmp
-          cp -r "$GITHUB_WORKSPACE/source/packaging/aur" /home/builduser/aur-sync/recipes
-          chown -R builduser:builduser /home/builduser/aur-sync
-          runuser -u builduser -- git clone ssh://aur@aur.archlinux.org/atmosphera.git /home/builduser/aur-sync/atmosphera
-          runuser -u builduser -- git clone ssh://aur@aur.archlinux.org/atmosphera-git.git /home/builduser/aur-sync/atmosphera-git
+          install -d -m700 /root/aur-sync /root/aur-sync/tmp /root/aur-sync/policy
+          install -m600 "$GITHUB_WORKSPACE/publisher/packaging/aur/sync.py" /root/aur-sync/policy/sync.py
+          install -d -o builduser -g builduser -m700 /home/builduser/aur-sync /home/builduser/aur-sync/tmp
+          # Public reads require no key. Authenticated transport happens only
+          # after both keyless preparations/builds and both publisher commits.
+          for package in atmosphera atmosphera-git; do
+            timeout 180 git clone "https://aur.archlinux.org/$package.git" "/root/aur-sync/$package"
+            git -C "/root/aur-sync/$package" config remote.origin.pushurl "ssh://aur@aur.archlinux.org/$package.git"
+          done
 
       - name: Prepare, commit and publish recipes
         run: |
           set -euo pipefail
+          trap 'rm -f /root/.ssh/id_aur' EXIT
           for package in atmosphera atmosphera-git; do
-            runuser -u builduser -- git -C "/home/builduser/aur-sync/$package" config user.name 'github-actions[bot]'
-            runuser -u builduser -- git -C "/home/builduser/aur-sync/$package" config user.email 'github-actions[bot]@users.noreply.github.com'
+            git -C "/root/aur-sync/$package" config user.name 'github-actions[bot]'
+            git -C "/root/aur-sync/$package" config user.email 'github-actions[bot]@users.noreply.github.com'
           done
-          export TMPDIR=/home/builduser/aur-sync/tmp
-          runuser -u builduser -- python "$GITHUB_WORKSPACE/publisher/packaging/aur/sync.py" "$TAG_NAME" \
-            /home/builduser/aur-sync/atmosphera /home/builduser/aur-sync/atmosphera-git --push \
-            --recipes /home/builduser/aur-sync/recipes \
-            --summary /home/builduser/aur-sync/summary.md
+          export TMPDIR=/root/aur-sync/tmp
+          python -I /root/aur-sync/policy/sync.py "$TAG_NAME" \
+            /root/aur-sync/atmosphera /root/aur-sync/atmosphera-git --push \
+            --recipes "$GITHUB_WORKSPACE/source/packaging/aur" \
+            --build-user builduser --worker-root /home/builduser/aur-sync/tmp \
+            --summary /root/aur-sync/summary.md
 
       - name: Summarize update
         if: always()
         run: |
           set -euo pipefail
-          if [[ -f /home/builduser/aur-sync/summary.md ]]; then
-            cat /home/builduser/aur-sync/summary.md >> "$GITHUB_STEP_SUMMARY"
+          if [[ -f /root/aur-sync/summary.md ]]; then
+            cat /root/aur-sync/summary.md >> "$GITHUB_STEP_SUMMARY"
           else
             echo 'AUR sync did not reach publication; inspect the failed preparation step.' >> "$GITHUB_STEP_SUMMARY"
           fi

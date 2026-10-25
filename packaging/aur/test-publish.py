@@ -7,17 +7,28 @@ No AUR remote is configured or written by these tests.
 import json
 import os
 from pathlib import Path
+import pwd
 import re
+import shlex
 import shutil
 import subprocess
 import sys
+import time
 
 RECIPES = Path(__file__).resolve().parent
 STABLE, GIT, WORK = (Path(p).resolve() for p in sys.argv[1:])
 WORK.mkdir()
+PRIVATE = Path(os.environ['AUR_TEST_PUBLISH_ROOT']).resolve()
+PRIVATE.mkdir()
+BUILD_USER = os.environ['AUR_TEST_BUILD_USER']
+WORKER_ROOT = Path(os.environ['AUR_TEST_WORKER_ROOT']).resolve()
+assert os.geteuid() == 0 and PRIVATE.stat().st_uid == 0
+PRIVATE.chmod(0o700)
+(PRIVATE / 'summaries').mkdir()
+(PRIVATE / 'tmp').mkdir()
 for name in ('tmp', 'remotes', 'clones'):
     (WORK / name).mkdir()
-os.environ['TMPDIR'] = str(WORK / 'tmp')
+os.environ['TMPDIR'] = str(PRIVATE / 'tmp')
 
 def run(*args, cwd=WORK, success=True):
     result = subprocess.run(list(map(str, args)), cwd=cwd, text=True, capture_output=True, timeout=600)
@@ -34,7 +45,7 @@ def identity(directory):
 def clones(label, remotes):
     result = []
     for name, remote in zip(('atmosphera', 'atmosphera-git'), remotes):
-        directory = WORK / 'clones' / (label + '-' + name)
+        directory = PRIVATE / (label + '-' + name)
         assert remote.resolve().is_relative_to(WORK)
         run('git', 'clone', remote, directory)
         identity(directory)
@@ -58,16 +69,18 @@ def seed(label):
 def heads(remotes):
     return [run('git', 'rev-parse', 'refs/heads/master', cwd=remote).strip() for remote in remotes]
 
-def publish(recipes, directories, label, success=True, tag='v0.9.0'):
-    summary = WORK / (label + '-summary.md')
+def publish(recipes, directories, label, success=True, tag='v0.9.0', extra=()):
+    summary = PRIVATE / 'summaries' / (label + '-summary.md')
     # Match the workflow: maintained publisher, separately selected recipe data.
     result = subprocess.run([sys.executable, str(RECIPES / 'sync.py'), tag,
                              *(str(p) for p in directories), '--push', '--summary', str(summary),
-                             '--recipes', str(recipes)],
+                             '--recipes', str(recipes), '--build-user', BUILD_USER,
+                             '--worker-root', str(WORKER_ROOT), *extra],
                              text=True, capture_output=True, timeout=600)
     (WORK / (label + '.log')).write_text(result.stdout + result.stderr)
     assert (result.returncode == 0) == success, (label, result.returncode, result.stdout, result.stderr)
     assert summary.exists(), label
+    (WORK / (label + '-summary.md')).write_text(summary.read_text())
     return result.stdout, summary.read_text()
 
 recipes = WORK / 'recipes'
@@ -221,4 +234,79 @@ publish(recipes, equal, 'equal-tag')
 assert heads(remotes) == after
 assert 'pkgrel=13\n' in run('git', 'show', 'master:PKGBUILD', cwd=remotes[1])
 print('PASS: equal release after newer publication is a no-op; no second pkgrel bump', flush=True)
+
+# Recipe evaluation and package() both try the publisher's dummy credential and
+# Git config. They record only access booleans, never credential contents.
+key = PRIVATE / 'id_aur'
+key.write_text('non-secret credential-boundary canary\n')
+key.chmod(0o600)
+assert key.stat().st_uid == 0 and key.stat().st_mode & 0o777 == 0o600
+marker = WORKER_ROOT / (WORK.name + '-key-probe.jsonl')
+assert not marker.exists()
+remotes, directories = seed('key-isolation')
+probe_recipes = WORK / 'key-probe-recipes'
+shutil.copytree(recipes, probe_recipes)
+
+def probe(stage):
+    program = ('import json,os\nfrom pathlib import Path\n' +
+        f'key=Path({str(key)!r}); config=Path({str(directories[0] / ".git/config")!r})\n' +
+        'try:\n key.read_bytes(); readable=True\nexcept PermissionError:\n readable=False\n' +
+        'try:\n with config.open("a") as f: f.write("\\n# keyless write probe\\n")\n writable=True\nexcept PermissionError:\n writable=False\n' +
+        'status=Path("/proc/self/status").read_text()\n' +
+        'uid=int(next(line for line in status.splitlines() if line.startswith("Uid:")).split()[2])\n' +
+        f'row=dict(stage={stage!r},uid=uid,reported_uid=os.geteuid(),key_readable=readable,git_config_writable=writable,' +
+        'no_new_privs="NoNewPrivs:\\t1" in status,' +
+        'cap_eff=next(line.split()[1] for line in status.splitlines() if line.startswith("CapEff:")),' +
+        'credential_environment=any(k in os.environ for k in ["GIT_SSH_COMMAND","SSH_AUTH_SOCK","AUR_SSH_PRIVATE_KEY","GITHUB_ENV"]))\n' +
+        f'with Path({str(marker)!r}).open("a") as f: f.write(json.dumps(row)+"\\n")\n')
+    return 'python -c ' + shlex.quote(program) + '\n'
+
+for name in ('atmosphera', 'atmosphera-git'):
+    path = probe_recipes / name / 'PKGBUILD'
+    path.write_text(path.read_text() + '\n' + probe('metadata'))
+path = probe_recipes / 'package.sh'
+text = path.read_text()
+assert text.count('package() {') == 1
+path.write_text(text.replace('package() {', '_package_payload() {') +
+                '\npackage() {\n' + probe('package') + '  _package_payload\n}\n')
+saved = {k: os.environ.get(k) for k in ('GIT_SSH_COMMAND', 'AUR_SSH_PRIVATE_KEY', 'GITHUB_ENV')}
+os.environ.update(GIT_SSH_COMMAND='false', AUR_SSH_PRIVATE_KEY='environment sentinel', GITHUB_ENV='file-command sentinel')
+try:
+    publish(probe_recipes, directories, 'key-isolation')
+finally:
+    for k, value in saved.items():
+        if value is None:
+            os.environ.pop(k, None)
+        else:
+            os.environ[k] = value
+rows = [json.loads(line) for line in marker.read_text().splitlines()]
+assert {r['stage'] for r in rows} == {'metadata', 'package'}
+assert all(r['uid'] == pwd.getpwnam(BUILD_USER).pw_uid and not r['key_readable'] and
+           not r['git_config_writable'] and not r['credential_environment'] and r['no_new_privs'] and
+           int(r['cap_eff'], 16) == 0 for r in rows)
+(WORK / 'key-isolation.json').write_text(json.dumps(dict(passed=True, key_uid=key.stat().st_uid,
+    key_mode=oct(key.stat().st_mode & 0o777), observations=rows), indent=2))
+print('PASS: actual metadata/build code cannot read publisher key/config or credential environment; normal publication succeeds', flush=True)
+
+# A real receive hook stalls after both preparations/builds/commits. The owned
+# Git process group must time out while publication status remains unconfirmed.
+remotes, directories = seed('push-timeout')
+before = heads(remotes)
+pidfile = PRIVATE / 'stalled-receive.pid'
+hook = remotes[0] / 'hooks/pre-receive'
+hook.write_text('#!/bin/sh\nprintf "%s\\n" "$$" > ' + shlex.quote(str(pidfile)) + '\nexec sleep 30\n')
+hook.chmod(0o755)
+started = time.monotonic()
+_, summary = publish(recipes, directories, 'push-timeout', success=False, extra=('--push-timeout', '2'))
+elapsed = time.monotonic() - started
+assert pidfile.exists() and time.time() - pidfile.stat().st_mtime < 8
+assert 'remote state unconfirmed' in summary and heads(remotes) == before
+assert 'timed out after 2.0 seconds' in (WORK / 'push-timeout.log').read_text()
+pid = pidfile.read_text().strip()
+cmdline = Path('/proc') / pid / 'cmdline'
+assert not cmdline.exists() or not cmdline.read_bytes()
+(WORK / 'push-timeout.json').write_text(json.dumps(dict(passed=True, total_seconds=elapsed,
+    push_timeout_seconds=2, failure_after_receive_seconds=time.time()-pidfile.stat().st_mtime,
+    remote_heads_unchanged=True, summary=summary), indent=2))
+print('PASS: stalled scratch receive fails within push deadline; unconfirmed summary and no surviving hook', flush=True)
 print('ALL PUBLICATION CONTRACT CHECKS PASSED', flush=True)
