@@ -5,16 +5,22 @@ import argparse
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
+import tarfile
+import tempfile
 
 
 ROOT = Path(__file__).resolve().parent
 
 
 def run(*args, cwd, env=None):
-    return subprocess.run(args, cwd=cwd, check=True, text=True,
-                          stdout=subprocess.PIPE, env=env).stdout
+    result = subprocess.run(args, cwd=cwd, text=True, stdout=subprocess.PIPE, env=env)
+    if result.returncode:
+        print(result.stdout, file=sys.stderr)
+        result.check_returncode()
+    return result.stdout
 
 
 def field(text, name):
@@ -77,12 +83,81 @@ def prepare(name, destination, version):
     return changed
 
 
+def build_check(name, directory):
+    # VCS makepkg rewrites pkgver/pkgrel. Build a private copy so generated build
+    # identities never alter the AUR publication counters or retry comparison.
+    sources = directory.parent / "sources"
+    sources.mkdir(exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=f"aur-check-{name}-") as temporary:
+        build = Path(temporary)
+        for filename in ("PKGBUILD", ".SRCINFO", f"{name}.install"):
+            shutil.copy2(directory / filename, build / filename)
+        # This is a QML/data packaging check, not an AUR dependency bootstrap.
+        env = {**os.environ, "SRCDEST": str(sources), "PKGDEST": str(build), "BUILDDIR": str(build)}
+        run("makepkg", "--nodeps", "--cleanbuild", "--noconfirm", cwd=build, env=env)
+        archives = [Path(path) for path in run("makepkg", "--packagelist", cwd=build, env=env).splitlines()
+                    if Path(path).is_file()]
+        if not archives:
+            raise ValueError(f"{name}: build produced no package archive")
+        for archive in archives:
+            with tarfile.open(archive) as package:
+                names = package.getnames()
+                if "etc/xdg/quickshell/atmosphera/shell.qml" not in names:
+                    raise ValueError(f"{name}: shell missing from package")
+                if any("/atmosphera/Scripts/dev/" in path or "/atmosphera/dev/" in path or
+                       "/atmosphera/tmp/" in path for path in names):
+                    raise ValueError(f"{name}: development files in package")
+        print(f"{name}: build checked", flush=True)
+
+
+def pending_push(directory):
+    upstream = run("git", "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}", cwd=directory).strip()
+    # Refuse a conflicting remote before pushing either repository.
+    run("git", "merge-base", "--is-ancestor", upstream, "HEAD", cwd=directory)
+    return run("git", "rev-parse", "HEAD", cwd=directory) != run("git", "rev-parse", upstream, cwd=directory)
+
+
+def publish(args, destinations, states):
+    changed = []
+    for name, directory in destinations:
+        states[name][0] = "preparing"
+        if prepare(name, directory, args.tag[1:]):
+            changed.append((name, directory))
+        states[name][0] = "prepared"
+    if not args.push:
+        print("Preparation only: no commits or pushes.")
+        return
+    # BOTH actual builds and BOTH local commits must succeed before any push.
+    for name, directory in destinations:
+        states[name][0] = "building"
+        build_check(name, directory)
+        states[name][0] = "build checked"
+    for name, directory in changed:
+        states[name][0] = "committing"
+        run("git", "add", "PKGBUILD", ".SRCINFO", f"{name}.install", cwd=directory)
+        run("git", "commit", "-m", f"chore(package): sync {name} for {args.tag}", cwd=directory)
+        states[name][0] = "built and committed"
+    pending = []
+    for name, directory in destinations:
+        if pending_push(directory):
+            pending.append((name, directory))
+        else:
+            states[name][1] = "already current (no-op)"
+    for name, directory in pending:
+        states[name][1] = "push failed or interrupted; remote state unconfirmed"
+        print(f"Publishing {name}...", flush=True)
+        run("git", "push", "origin", "HEAD", cwd=directory)
+        states[name][1] = "published"
+        print(f"Published {name}.", flush=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("tag", help="release tag, e.g. v0.9.0")
     parser.add_argument("stable", type=Path, help="clean stable AUR clone")
     parser.add_argument("git", type=Path, help="clean -git AUR clone")
     parser.add_argument("--push", action="store_true", help="commit and publish both prepared clones")
+    parser.add_argument("--summary", type=Path, help="write per-repository progress even on failure")
     args = parser.parse_args()
     if not re.fullmatch(r"v[0-9]+\.[0-9]+\.[0-9]+", args.tag):
         parser.error("expected a release tag vMAJOR.MINOR.PATCH")
@@ -95,19 +170,18 @@ def main():
             raise ValueError(f"{name}: expected a repository root")
         if run("git", "status", "--porcelain", cwd=directory):
             raise ValueError(f"{name}: clone must be clean")
-    # Complete checksums and metadata for BOTH packages before any remote write.
-    changed = [(name, directory) for name, directory in destinations
-               if prepare(name, directory, args.tag[1:])]
-    if not args.push:
-        print("Preparation only: no commits or pushes.")
-        return
-    for name, directory in changed:
-        run("git", "add", "PKGBUILD", ".SRCINFO", f"{name}.install", cwd=directory)
-        run("git", "commit", "-m", f"chore(package): sync {name} for {args.tag}", cwd=directory)
-    for name, directory in changed:
-        print(f"Publishing {name}...", flush=True)
-        run("git", "push", "origin", "HEAD", cwd=directory)
-        print(f"Published {name}.", flush=True)
+    states = {name: ["not started", "not attempted"] for name, _ in destinations}
+    try:
+        if args.push:
+            for name, directory in destinations:
+                run("git", "fetch", "origin", cwd=directory)
+        publish(args, destinations, states)
+    finally:
+        summary = f"## AUR recipe sync — {args.tag}\n\n| Package | Local gate | Publication |\n|---|---|---|\n"
+        summary += "".join(f"| {name} | {local} | {remote} |\n" for name, (local, remote) in states.items())
+        print(summary, flush=True)
+        if args.summary:
+            args.summary.write_text(summary)
 
 
 if __name__ == "__main__":

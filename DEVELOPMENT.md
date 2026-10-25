@@ -30,9 +30,16 @@ recipes, fills the stable version/pkgrel (1), refreshes its archive checksum and
 recipe retains AUR's current pkgver/pkgrel when comparing; recipe or install-hook
 changes bump its pkgrel once, while unchanged recipes are skipped. Manual runs
 require an explicit release tag. Both recipes are prepared before either is
-pushed. A remote failure fails the job and logs which package was published;
-AUR has no cross-repository atomic push, so inspect both repositories before
-retrying a failed publication.
+pushed. Publication mode builds both recipes in private directories and commits
+all changed recipes before pushing either. Build checks use `makepkg --nodeps`
+because this QML/data package needs no dependency bootstrap to validate its
+archive; generated VCS build versions never rewrite publication counters.
+A remote failure fails the job, and an always-run summary records each repo's
+local gate and publication status. AUR has no cross-repository atomic push.
+Rerunning the same release against fresh clones skips an already-published
+stable recipe and publishes only missing changes; identical -git recipes do not
+bump pkgrel again. Reusing clean clones with an unpublished local commit is also
+supported: that commit is pushed rather than regenerated.
 
 For preparation without commits or pushes, run inside an Arch test VM with
 `pacman-contrib` and `base-devel`, using **clean scratch clones** of both AUR repos:

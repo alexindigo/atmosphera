@@ -80,14 +80,15 @@ jobs:
           done
           export TMPDIR=/home/builduser/aur-sync/tmp
           runuser -u builduser -- python /home/builduser/aur-sync/recipes/sync.py "$TAG_NAME" \
-            /home/builduser/aur-sync/atmosphera /home/builduser/aur-sync/atmosphera-git --push
+            /home/builduser/aur-sync/atmosphera /home/builduser/aur-sync/atmosphera-git --push \
+            --summary /home/builduser/aur-sync/summary.md
 
       - name: Summarize update
+        if: always()
         run: |
           set -euo pipefail
-          {
-            echo '## AUR recipe sync'
-            echo "Release: $TAG_NAME"
-            echo 'Stable: https://aur.archlinux.org/packages/atmosphera'
-            echo 'Development: https://aur.archlinux.org/packages/atmosphera-git (only changed recipes are published)'
-          } >> "$GITHUB_STEP_SUMMARY"
+          if [[ -f /home/builduser/aur-sync/summary.md ]]; then
+            cat /home/builduser/aur-sync/summary.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'AUR sync did not reach publication; inspect the failed preparation step.' >> "$GITHUB_STEP_SUMMARY"
+          fi
