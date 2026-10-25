@@ -237,10 +237,16 @@ Variants {
       if (root.item) {
         root.item.showOSD();
       } else {
-        Qt.callLater(() => {
-          if (root.item)
-            root.item.showOSD();
-        });
+        contentShowTimer.restart();
+      }
+    }
+
+    Timer {
+      id: contentShowTimer
+      interval: 0
+      onTriggered: {
+        if (root.item)
+          root.item.showOSD();
       }
     }
 
@@ -250,6 +256,13 @@ Variants {
       } else if (root.active) {
         root.active = false;
       }
+    }
+
+    Timer {
+      id: deviceRefreshTimer
+      interval: 0
+      property int osdType: OSD.Type.Volume
+      onTriggered: root.showOSD(osdType)
     }
 
     // AudioService monitoring
@@ -297,18 +310,16 @@ Variants {
         inputSuppressionTimer.restart();
         // If volume OSD is currently showing, refresh it to show new device's volume
         if (root.currentOSDType === OSD.Type.Volume) {
-          Qt.callLater(() => {
-            showOSD(OSD.Type.Volume);
-          });
+          deviceRefreshTimer.osdType = OSD.Type.Volume;
+          deviceRefreshTimer.restart();
         }
       }
 
       function onSourceChanged() {
         // If input volume OSD is currently showing, refresh it to show new device's volume
         if (root.currentOSDType === OSD.Type.InputVolume) {
-          Qt.callLater(() => {
-            showOSD(OSD.Type.InputVolume);
-          });
+          deviceRefreshTimer.osdType = OSD.Type.InputVolume;
+          deviceRefreshTimer.restart();
         }
       }
     }

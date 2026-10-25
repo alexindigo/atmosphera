@@ -55,7 +55,7 @@ PopupWindow {
   }
 
   onModelChanged: {
-    Qt.callLater(calculateWidth);
+    widthTimer.restart();
   }
 
   function calculateWidth() {
@@ -196,7 +196,7 @@ PopupWindow {
   }
 
   Component.onCompleted: {
-    Qt.callLater(calculateWidth);
+    widthTimer.restart();
   }
 
   Item {
@@ -396,9 +396,26 @@ PopupWindow {
     visible = true;
 
     // Force anchor recalculation after showing
-    Qt.callLater(() => {
-      anchor.updateAnchor();
-    });
+    root.updateAnchor();
+  }
+
+  function updateAnchor() {
+    anchorTimer.restart();
+  }
+
+  Timer {
+    id: widthTimer
+    interval: 0
+    onTriggered: root.calculateWidth()
+  }
+
+  Timer {
+    id: anchorTimer
+    interval: 0
+    onTriggered: {
+      if (root.visible && root.anchorItem)
+        root.anchor.updateAnchor();
+    }
   }
 
   function close() {

@@ -34,37 +34,37 @@ SmartPanel {
 
   onAttachToBarChanged: {
     if (isPanelOpen) {
-      Qt.callLater(root.setPosition);
+      root._repositionIfOpen();
     }
   }
 
   onBarPositionChanged: {
     if (isPanelOpen) {
-      Qt.callLater(root.setPosition);
+      root._repositionIfOpen();
     }
   }
 
   onBarDensityChanged: {
     if (isPanelOpen) {
-      Qt.callLater(root.setPosition);
+      root._repositionIfOpen();
     }
   }
 
   onBarFloatingChanged: {
     if (isPanelOpen) {
-      Qt.callLater(root.setPosition);
+      root._repositionIfOpen();
     }
   }
 
   onBarMarginHChanged: {
     if (isPanelOpen) {
-      Qt.callLater(root.setPosition);
+      root._repositionIfOpen();
     }
   }
 
   onBarMarginVChanged: {
     if (isPanelOpen) {
-      Qt.callLater(root.setPosition);
+      root._repositionIfOpen();
     }
   }
 
@@ -175,7 +175,8 @@ SmartPanel {
         _settingsContent.initialize();
         const entry = requestedEntry;
         requestedEntry = null;
-        Qt.callLater(() => _settingsContent.navigateToResult(entry));
+        navigationTimer.entry = entry;
+        navigationTimer.restart();
       } else {
         _settingsContent.requestedTab = requestedTab;
         if (requestedSubTab >= 0) {
@@ -185,6 +186,18 @@ SmartPanel {
         _settingsContent.initialize();
       }
     }
+  }
+
+  function _navigateToEntry(entry) {
+    if (root.isPanelOpen && root._settingsContent)
+      root._settingsContent.navigateToResult(entry);
+  }
+
+  Timer {
+    id: navigationTimer
+    interval: 0
+    property var entry: null
+    onTriggered: root._navigateToEntry(entry)
   }
 
   // Scroll functions - delegate to content

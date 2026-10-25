@@ -37,13 +37,13 @@ Item {
   property bool panelAnchorRight: false
 
   // Re-position live when anchors change while the panel is open (e.g. a
-  // plugin changing its corner setting). Deferred via Qt.callLater so ALL
+  // plugin changing its corner setting). Deferred so ALL
   // anchor bindings settle first — firing setPosition against the stale
   // intermediate state (e.g. top+bottom both true mid-transition) computes
   // the wrong corner.
   function _repositionIfOpen() {
     if (isPanelOpen)
-      Qt.callLater(setPosition);
+      positionTimer.restart();
   }
   onPanelAnchorHorizontalCenterChanged: _repositionIfOpen()
   onPanelAnchorVerticalCenterChanged: _repositionIfOpen()
@@ -287,6 +287,7 @@ Item {
   function close() {
     // Reset immediate close flag to ensure animations work properly
     PanelService.closedImmediately = false;
+    openCompletionTimer.stop();
 
     // Start close sequence: fade opacity first
     isClosing = true;
@@ -317,6 +318,9 @@ Item {
   function closeImmediately() {
     // Close without any animation, useful for app launches to avoid focus issues
     opacityTrigger.stop();
+    openCompletionTimer.stop();
+    positionTimer.stop();
+    closeCompletionTimer.stop();
     openWatchdogActive = false;
     openWatchdogTimer.stop();
     closeWatchdogActive = false;
@@ -361,6 +365,8 @@ Item {
 
     // Complete the close sequence after animations finish
     root.closeFinalized = true;
+    openCompletionTimer.stop();
+    positionTimer.stop();
     root.closeWatchdogActive = false;
     closeWatchdogTimer.stop();
 
@@ -395,7 +401,7 @@ Item {
     if (!root.width || !root.height) {
       Logger.d("SmartPanel", "Skipping setPosition - dimensions not ready:", root.width, "x", root.height);
       // Retry on next frame when dimensions should be available
-      Qt.callLater(setPosition);
+      positionTimer.restart();
       return;
     }
 
@@ -738,6 +744,58 @@ Item {
     // Logger.d("SmartPanel", "  Parent size:", root.width, "x", root.height);
   }
 
+  // Timers are children of this panel: destroying the host cancels queued work.
+  // A JS callback in Qt.callLater can outlive its inherited QML method context.
+  Timer {
+    id: positionTimer
+    interval: 0
+    onTriggered: {
+      if (root.isPanelOpen && !root.isClosing)
+        root.setPosition();
+    }
+  }
+
+  Timer {
+    id: openCompletionTimer
+    interval: 0
+    onTriggered: root._completeOpen()
+  }
+
+  Timer {
+    id: closeCompletionTimer
+    interval: 0
+    onTriggered: root.finalizeClose()
+  }
+
+  // The panel owns its deferred transition, not the nested Loader's callback
+  // scope. Closing or unloading content before the next turn cancels opening.
+  function _completeOpen() {
+    if (!root.isPanelOpen || root.isClosing || !contentLoader.item)
+      return;
+
+    root.setPosition();
+    panelBackground.dimensionsInitialized = true;
+
+    // Lock animation direction before making the panel visible.
+    root.cachedAnimateFromTop = panelBackground.animateFromTop;
+    root.cachedAnimateFromBottom = panelBackground.animateFromBottom;
+    root.cachedAnimateFromLeft = panelBackground.animateFromLeft;
+    root.cachedAnimateFromRight = panelBackground.animateFromRight;
+    root.cachedShouldAnimateWidth = panelBackground.shouldAnimateWidth;
+    root.cachedShouldAnimateHeight = panelBackground.shouldAnimateHeight;
+    root.isPanelVisible = true;
+
+    if (root.animationsDisabled) {
+      root.sizeAnimationComplete = true;
+    } else {
+      opacityTrigger.start();
+      root.openWatchdogActive = true;
+      openWatchdogTimer.start();
+    }
+
+    root.opened();
+  }
+
   // Watch for changes in content-driven sizes and update position
   Connections {
     target: contentLoader.item
@@ -782,7 +840,7 @@ Item {
             var shouldFinalizeNow = panelContent.geometryPlaceholder && !panelContent.geometryPlaceholder.shouldAnimateWidth && !panelContent.geometryPlaceholder.shouldAnimateHeight;
             if (shouldFinalizeNow) {
               // Logger.d("SmartPanel", "Zero-duration opacity + no size animation - finalizing", root.objectName);
-              Qt.callLater(root.finalizeClose);
+              closeCompletionTimer.restart();
             }
           } else if (root.isPanelVisible && root.opacity === 1.0) {
             // Open completed with zero duration
@@ -800,7 +858,7 @@ Item {
           var shouldFinalizeNow = panelContent.geometryPlaceholder && !panelContent.geometryPlaceholder.shouldAnimateWidth && !panelContent.geometryPlaceholder.shouldAnimateHeight;
           if (shouldFinalizeNow) {
             //Logger.d("SmartPanel", "No animation - finalizing immediately", root.objectName);
-            Qt.callLater(root.finalizeClose);
+            closeCompletionTimer.restart();
           } else {
             //Logger.d("SmartPanel", "Animation will run - waiting for size animation", root.objectName, "shouldAnimateHeight:", panelContent.geometryPlaceholder.shouldAnimateHeight, "shouldAnimateWidth:", panelContent.geometryPlaceholder.shouldAnimateWidth);
           }
@@ -852,7 +910,7 @@ Item {
       if (root.closeWatchdogActive && !root.closeFinalized) {
         Logger.w("SmartPanel", "Close watchdog timeout - forcing panel close", root.objectName);
         // Force finalization
-        Qt.callLater(root.finalizeClose);
+        closeCompletionTimer.restart();
       }
     }
   }
@@ -1176,14 +1234,14 @@ Item {
             if (!running && duration === 0) {
               if (root.isClosing && panelBackground.width === 0 && panelBackground.shouldAnimateWidth) {
                 Logger.d("SmartPanel", "Zero-duration width animation - finalizing", root.objectName);
-                Qt.callLater(root.finalizeClose);
+                closeCompletionTimer.restart();
               }
               return;
             }
 
             // When width shrink completes during close, finalize
             if (!running && root.isClosing && panelBackground.width === 0 && panelBackground.shouldAnimateWidth) {
-              Qt.callLater(root.finalizeClose);
+              closeCompletionTimer.restart();
             }
           }
         }
@@ -1206,14 +1264,14 @@ Item {
             if (!running && duration === 0) {
               if (root.isClosing && panelBackground.height === 0 && panelBackground.shouldAnimateHeight) {
                 Logger.d("SmartPanel", "Zero-duration height animation - finalizing", root.objectName);
-                Qt.callLater(root.finalizeClose);
+                closeCompletionTimer.restart();
               }
               return;
             }
 
             // When height shrink completes during close, finalize
             if (!running && root.isClosing && panelBackground.height === 0 && panelBackground.shouldAnimateHeight) {
-              Qt.callLater(root.finalizeClose);
+              closeCompletionTimer.restart();
             }
           }
         }
@@ -1383,40 +1441,7 @@ Item {
 
       onLoaded: {
         // Wait for contentPreferredWidth/Height to be available before making visible
-        Qt.callLater(function () {
-          // Calculate position with stable contentPreferredWidth/Height values
-          setPosition();
-
-          // Mark dimensions as initialized to enable animations
-          panelBackground.dimensionsInitialized = true;
-
-          // Cache animation direction BEFORE isPanelVisible becomes true
-          // This locks in the direction for the entire open/close cycle
-          root.cachedAnimateFromTop = panelBackground.animateFromTop;
-          root.cachedAnimateFromBottom = panelBackground.animateFromBottom;
-          root.cachedAnimateFromLeft = panelBackground.animateFromLeft;
-          root.cachedAnimateFromRight = panelBackground.animateFromRight;
-          root.cachedShouldAnimateWidth = panelBackground.shouldAnimateWidth;
-          root.cachedShouldAnimateHeight = panelBackground.shouldAnimateHeight;
-
-          // Make panel visible, now only the intended dimension will animate
-          root.isPanelVisible = true;
-
-          if (root.animationsDisabled) {
-            // Skip delay when animations are disabled
-            root.sizeAnimationComplete = true;
-          } else {
-            opacityTrigger.start();
-          }
-
-          // Start open watchdog timer (skip when animations disabled - everything completes synchronously)
-          if (!root.animationsDisabled) {
-            root.openWatchdogActive = true;
-            openWatchdogTimer.start();
-          }
-
-          opened();
-        });
+        openCompletionTimer.restart();
       }
     }
   }

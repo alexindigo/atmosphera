@@ -57,15 +57,25 @@ PanelWindow {
     }
 
     visible = true;
-    Qt.callLater(function () {
-      if (dialogType === 2 && inputField && inputField.inputItem)
-        inputField.inputItem.forceActiveFocus();
-      else if (dialogType === 3) {
-        var firstKey = Object.keys(root._surveyInputs)[0];
-        if (firstKey && root._surveyInputs[firstKey] && root._surveyInputs[firstKey].inputItem)
-          root._surveyInputs[firstKey].inputItem.forceActiveFocus();
-      }
-    });
+    focusTimer.restart();
+  }
+
+  Timer {
+    id: focusTimer
+    interval: 0
+    onTriggered: root._focusInput()
+  }
+
+  function _focusInput() {
+    if (!root.visible)
+      return;
+    if (root.dialogType === 2 && inputField && inputField.inputItem)
+      inputField.inputItem.forceActiveFocus();
+    else if (root.dialogType === 3) {
+      var firstKey = Object.keys(root._surveyInputs)[0];
+      if (firstKey && root._surveyInputs[firstKey] && root._surveyInputs[firstKey].inputItem)
+        root._surveyInputs[firstKey].inputItem.forceActiveFocus();
+    }
   }
 
   function writeReply(text) {

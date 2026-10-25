@@ -49,12 +49,24 @@ FloatingWindow {
   // Works whether the window is already visible or just becoming visible.
   function navigateToEntry(entry) {
     if (isInitialized) {
-      Qt.callLater(() => settingsContent.navigateToResult(entry));
+      navigationTimer.entry = entry;
+      navigationTimer.restart();
     } else {
       settingsContent.requestedTab = entry.tab;
       settingsContent.initialize();
-      Qt.callLater(() => settingsContent.navigateToResult(entry));
+      navigationTimer.entry = entry;
+      navigationTimer.restart();
       isInitialized = true;
+    }
+  }
+
+  Timer {
+    id: navigationTimer
+    interval: 0
+    property var entry: null
+    onTriggered: {
+      if (root.visible)
+        settingsContent.navigateToResult(entry);
     }
   }
 

@@ -51,9 +51,7 @@ PopupWindow {
   // When implicitHeight changes (menu content loads), force anchor recalculation
   onImplicitHeightChanged: {
     if (visible && anchorItem) {
-      Qt.callLater(() => {
-        anchor.updateAnchor();
-      });
+      root.updateAnchor();
     }
   }
 
@@ -171,7 +169,10 @@ PopupWindow {
 
     if (!opener.children || opener.children.values.length === 0) {
       //Logger.w("TrayMenu", "Menu not ready, delaying show")
-      Qt.callLater(() => showAt(item, x, y));
+      showTimer.item = item;
+      showTimer.menuX = x;
+      showTimer.menuY = y;
+      showTimer.restart();
       return;
     }
 
@@ -183,12 +184,34 @@ PopupWindow {
     forceActiveFocus();
 
     // Force update after showing.
-    Qt.callLater(() => {
-      root.anchor.updateAnchor();
-    });
+    root.updateAnchor();
+  }
+
+  function updateAnchor() {
+    anchorTimer.restart();
+  }
+
+  Timer {
+    id: showTimer
+    interval: 0
+    property var item: null
+    property real menuX: 0
+    property real menuY: 0
+    onTriggered: root.showAt(item, menuX, menuY)
+  }
+
+  Timer {
+    id: anchorTimer
+    interval: 0
+    onTriggered: {
+      if (root.visible && root.anchorItem)
+        root.anchor.updateAnchor();
+    }
   }
 
   function hideMenu() {
+    showTimer.stop();
+    anchorTimer.stop();
     visible = false;
 
     // Clean up all submenus recursively
@@ -458,9 +481,7 @@ PopupWindow {
                         entry.subMenu.anchorY = 0;
                         entry.subMenu.visible = true;
                         // Force anchor update with new position
-                        Qt.callLater(() => {
-                          entry.subMenu.anchor.updateAnchor();
-                        });
+                        entry.subMenu.updateAnchor();
                       }
                     }
                   } else {

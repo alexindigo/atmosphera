@@ -500,7 +500,13 @@ PopupWindow {
     if (appId) {
       root.toggleAppPin(appId);
     }
-    Qt.callLater(() => closeAndReset());
+    pinCloseTimer.restart();
+  }
+
+  Timer {
+    id: pinCloseTimer
+    interval: 0
+    onTriggered: root.closeAndReset()
   }
 
   function handleClose(targetToplevel) {

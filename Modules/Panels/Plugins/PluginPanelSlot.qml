@@ -28,8 +28,8 @@ SmartPanel {
   property var contentLoader: null
 
   readonly property var _pluginContext: ({
-                                         "screen": root.screen
-                                       })
+                                           "screen": root.screen
+                                         })
   on_PluginContextChanged: {
     if (contentLoader)
       PluginLoader.applyLateContext(contentLoader.item, "panel", _pluginContext, {});
@@ -159,7 +159,7 @@ SmartPanel {
 
     // Load the panel component with cache-busting version parameter
     var loadVersion = Registry.pluginLoadVersions[pluginId] || 0;
-    var component = Qt.createComponent("file://" + panelPath + "?v=" + loadVersion);
+    var component = Qt.createComponent("file://" + panelPath + "?v=" + loadVersion, Component.PreferSynchronous, root);
 
     if (component.status === Component.Ready) {
       finalizePluginLoad(pluginId, component, api);
@@ -169,7 +169,7 @@ SmartPanel {
       Logger.d("PluginPanelSlot", "Component loading asynchronously for:", pluginId);
       component.statusChanged.connect(function () {
         if (component.status === Component.Ready) {
-          finalizePluginLoad(pluginId, component, api);
+          root.finalizePluginLoad(pluginId, component, api);
           // Force SmartPanel to recalculate position now that content is ready
           if (root.isPanelVisible) {
             root.setPosition();
