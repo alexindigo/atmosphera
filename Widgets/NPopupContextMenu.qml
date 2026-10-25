@@ -22,8 +22,16 @@ PopupWindow {
   property real calculatedWidth: 180
   property int presentationGeneration: 0
   property int widthGeneration: 0
-  onVisibleChanged: presentationGeneration++
-  onAnchorItemChanged: presentationGeneration++
+  onVisibleChanged: {
+    presentationGeneration++;
+    if (visible)
+      root.updateAnchor();
+  }
+  onAnchorItemChanged: {
+    presentationGeneration++;
+    if (visible)
+      root.updateAnchor();
+  }
 
   // Explicit offset for centering on target item (computed from targetItem in openAtItem)
   property real targetOffsetX: 0

@@ -242,6 +242,10 @@ Singleton {
 
   // Helper to keep only one panel open at any time
   function willOpenPanel(panel) {
+    if (closingPanel === panel) {
+      closingPanel = null;
+      assignToSlot(1, null);
+    }
     // Close overlay launcher if open
     if (overlayLauncherOpen) {
       overlayLauncherOpen = false;

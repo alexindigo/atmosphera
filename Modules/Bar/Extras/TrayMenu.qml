@@ -17,16 +17,28 @@ PopupWindow {
   property real anchorY
   property bool isSubMenu: false
   property int presentationGeneration: 0
+  property bool _showRequested: false
+  function _queueRequestedShow() {
+    if (root._showRequested && showTimer.item)
+      showTimer.restart();
+  }
   onVisibleChanged: {
-    if (!visible)
+    if (!visible) {
+      root._showRequested = false;
       presentationGeneration++;
+      showTimer.stop();
+      anchorTimer.stop();
+    }
   }
   property string widgetSection: ""
   property int widgetIndex: -1
 
   // Derive menu from trayItem (only used for non-submenus)
   readonly property QsMenuHandle menu: isSubMenu ? null : (trayItem ? trayItem.menu : null)
-  onMenuChanged: presentationGeneration++
+  onMenuChanged: {
+    presentationGeneration++;
+    root._queueRequestedShow();
+  }
 
   // Compute if current tray item is pinned
   readonly property bool isPinned: {
@@ -171,6 +183,10 @@ PopupWindow {
     presentationGeneration++;
     showTimer.stop();
     anchorTimer.stop();
+    root._showRequested = true;
+    showTimer.item = item;
+    showTimer.menuX = x;
+    showTimer.menuY = y;
     _showAt(item, x, y);
   }
 
@@ -194,7 +210,8 @@ PopupWindow {
     anchorY = y;
 
     visible = true;
-    forceActiveFocus();
+    // NInputGuard owns focus within this popup; do not resolve an Item method
+    // through the caller's context (PopupWindow has no forceActiveFocus()).
 
     // Force update after showing.
     root.updateAnchor();
@@ -216,7 +233,7 @@ PopupWindow {
         generation = root.presentationGeneration;
     }
     onTriggered: {
-      if (generation === root.presentationGeneration && item)
+      if (generation === root.presentationGeneration && root._showRequested && item)
         root._showAt(item, menuX, menuY);
     }
   }
@@ -236,6 +253,7 @@ PopupWindow {
   }
 
   function hideMenu() {
+    root._showRequested = false;
     presentationGeneration++;
     showTimer.stop();
     anchorTimer.stop();

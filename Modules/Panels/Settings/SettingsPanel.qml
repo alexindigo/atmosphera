@@ -128,8 +128,7 @@ SmartPanel {
       return;
     }
 
-    // Panel mode: replicate SmartPanel.open() logic
-    root.presentationGeneration++;
+    // Prepare the settings-specific anchor inputs, then use the shared owner.
     if (!buttonItem && buttonName) {
       if (typeof buttonName === "object" && buttonName.x !== undefined && buttonName.y !== undefined) {
         root.buttonItem = null;
@@ -154,8 +153,7 @@ SmartPanel {
       root.useButtonPosition = false;
     }
 
-    isPanelOpen = true;
-    PanelService.willOpenPanel(root);
+    root.openPresentation();
   }
 
   // Open to a specific tab and optionally a subtab
@@ -164,7 +162,7 @@ SmartPanel {
     navigationTimer.stop();
     requestedTab = tab !== undefined ? tab : SettingsPanel.Tab.General;
     requestedSubTab = subTab !== undefined ? subTab : -1;
-    if (isPanelOpen && _settingsContent) {
+    if (isPanelOpen && !isClosing && root._requestedOpen && _settingsContent) {
       _settingsContent.navigateToTab(requestedTab, requestedSubTab);
     } else {
       open(buttonItem, buttonName);
