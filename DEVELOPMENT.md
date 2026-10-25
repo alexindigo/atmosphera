@@ -15,6 +15,39 @@ release version. Compatibility and changelog identities use only the release
 part. Package-written build identities such as `0.8.0.r12.gabc1234` (including
 pkgrel suffixes) remain supported; they are not bumped API versions.
 
+## AUR packaging
+
+Edit AUR recipes in **this repository**, under `packaging/aur/`, rather than in
+the AUR clones. `metadata.sh` owns dependencies/optional dependencies/provides;
+`package.sh` owns the installed file set for stable, -git and the VM dev package.
+The two `PKGBUILD` entry points own only variant-specific metadata and sources.
+Install hooks live alongside them. The publisher inlines the shared fragments
+so AUR receives standalone PKGBUILDs with no dependency on the repo layout.
+
+On a `vMAJOR.MINOR.PATCH` tag, `update-aur-package.yml` checks out that tag's
+recipes, fills the stable version/pkgrel (1), refreshes its archive checksum and
+`.SRCINFO`, and publishes both AUR packages with the existing AUR key. The -git
+recipe retains AUR's current pkgver/pkgrel when comparing; recipe or install-hook
+changes bump its pkgrel once, while unchanged recipes are skipped. Manual runs
+require an explicit release tag. Both recipes are prepared before either is
+pushed. A remote failure fails the job and logs which package was published;
+AUR has no cross-repository atomic push, so inspect both repositories before
+retrying a failed publication.
+
+For preparation without commits or pushes, run inside an Arch test VM with
+`pacman-contrib` and `base-devel`, using **clean scratch clones** of both AUR repos:
+
+```sh
+python packaging/aur/sync.py v0.9.0 /path/to/scratch/atmosphera /path/to/scratch/atmosphera-git
+```
+
+The VM adapter `dev/vm/aur/PKGBUILD` sources the same -git recipe and overrides
+only the source URL. `ATMOSPHERA_CHECKOUT` defaults to `/mnt/hostshare`;
+`ATMOSPHERA_REF` defaults to `main`. It builds committed state from that local
+checkout. Its install hook is a symlink to the canonical hook. Keep the repo
+layout intact and run `makepkg` in `dev/vm/aur/`; use `BUILDDIR` and `PKGDEST`
+to put build outputs elsewhere on the guest's disk. Do not copy the adapter alone.
+
 ## Devcontainer
 
 A devcontainer is provided at `.devcontainer/` for consistent development tooling.
