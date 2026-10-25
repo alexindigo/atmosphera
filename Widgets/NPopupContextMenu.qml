@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Widgets
 
 // Simple context menu PopupWindow (similar to TrayMenu)
 // Designed to be rendered inside a PopupMenuWindow for click-outside-to-close
@@ -20,6 +21,23 @@ PopupWindow {
   property ShellScreen shellScreen: null
   property real minWidth: 120
   property real calculatedWidth: 180
+  property int presentationGeneration: 0
+  property int widthGeneration: 0
+  onVisibleChanged: {
+    presentationGeneration++;
+    if (visible) {
+      if (!requestAnchor.armed)
+        requestAnchor.request(root.anchorItem);
+      root.updateAnchor();
+    } else {
+      requestAnchor.cancel();
+    }
+  }
+  onAnchorItemChanged: {
+    presentationGeneration++;
+    if (visible)
+      root.updateAnchor();
+  }
 
   // Explicit offset for centering on target item (computed from targetItem in openAtItem)
   property real targetOffsetX: 0
@@ -31,6 +49,15 @@ PopupWindow {
   readonly property real barHeight: Style.getBarHeightForScreen(shellScreen?.name)
 
   signal triggered(string action, var item)
+  signal presentationInvalidated
+  signal presentationClosed
+  NPresentationAnchor {
+    id: requestAnchor
+    onInvalidated: {
+      root.close();
+      root.presentationInvalidated();
+    }
+  }
 
   implicitWidth: calculatedWidth
   implicitHeight: Math.min(600, flickable.contentHeight + Style.margin2S)
@@ -55,7 +82,8 @@ PopupWindow {
   }
 
   onModelChanged: {
-    Qt.callLater(calculateWidth);
+    widthGeneration++;
+    widthTimer.restart();
   }
 
   function calculateWidth() {
@@ -196,7 +224,7 @@ PopupWindow {
   }
 
   Component.onCompleted: {
-    Qt.callLater(calculateWidth);
+    widthTimer.restart();
   }
 
   Item {
@@ -367,6 +395,10 @@ PopupWindow {
   // Position is calculated automatically based on bar position and shellScreen boundaries
   // Optional centerOnItem: if provided, menu will be horizontally centered on this item instead of anchorItem
   function openAtItem(item, itemScreen, centerOnItem) {
+    presentationGeneration++;
+    requestAnchor.request(centerOnItem || item, undefined, item);
+    if (!requestAnchor.valid)
+      return;
     if (!item) {
       Logger.w("NPopupContextMenu", "anchorItem is undefined, won't show menu.");
       return;
@@ -396,13 +428,45 @@ PopupWindow {
     visible = true;
 
     // Force anchor recalculation after showing
-    Qt.callLater(() => {
-      anchor.updateAnchor();
-    });
+    root.updateAnchor();
+  }
+
+  function updateAnchor() {
+    anchorTimer.restart();
+  }
+
+  Timer {
+    id: widthTimer
+    interval: 0
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.widthGeneration;
+    }
+    onTriggered: {
+      if (generation === root.widthGeneration)
+        root.calculateWidth();
+    }
+  }
+
+  Timer {
+    id: anchorTimer
+    interval: 0
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
+    onTriggered: {
+      if (generation === root.presentationGeneration && root.visible && root.anchorItem)
+        root.anchor.updateAnchor();
+    }
   }
 
   function close() {
+    requestAnchor.cancel();
     visible = false;
+    presentationClosed();
   }
 
   function closeMenu() {

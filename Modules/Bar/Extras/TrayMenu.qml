@@ -16,11 +16,47 @@ PopupWindow {
   property real anchorX
   property real anchorY
   property bool isSubMenu: false
+  property int presentationGeneration: 0
+  property bool _showRequested: false
+  signal presentationInvalidated
+  signal presentationClosed
+  NPresentationAnchor {
+    id: requestAnchor
+    onInvalidated: {
+      root.hideMenu();
+      root.presentationInvalidated();
+    }
+  }
+  onTrayItemChanged: {
+    if (root._showRequested && !root.isSubMenu && root.trayItem !== requestAnchor.identity) {
+      root.hideMenu();
+      root.presentationInvalidated();
+    }
+  }
+  function _queueRequestedShow() {
+    if (root._showRequested && showTimer.item)
+      showTimer.restart();
+  }
+  onVisibleChanged: {
+    if (!visible) {
+      requestAnchor.cancel();
+      root._showRequested = false;
+      presentationGeneration++;
+      showTimer.stop();
+      anchorTimer.stop();
+    } else if (root.isSubMenu && !requestAnchor.armed) {
+      requestAnchor.request(root.anchorItem);
+    }
+  }
   property string widgetSection: ""
   property int widgetIndex: -1
 
   // Derive menu from trayItem (only used for non-submenus)
   readonly property QsMenuHandle menu: isSubMenu ? null : (trayItem ? trayItem.menu : null)
+  onMenuChanged: {
+    presentationGeneration++;
+    root._queueRequestedShow();
+  }
 
   // Compute if current tray item is pinned
   readonly property bool isPinned: {
@@ -51,9 +87,7 @@ PopupWindow {
   // When implicitHeight changes (menu content loads), force anchor recalculation
   onImplicitHeightChanged: {
     if (visible && anchorItem) {
-      Qt.callLater(() => {
-        anchor.updateAnchor();
-      });
+      root.updateAnchor();
     }
   }
 
@@ -164,14 +198,30 @@ PopupWindow {
   }
 
   function showAt(item, x, y) {
-    if (!item) {
-      Logger.w("TrayMenu", "anchorItem is undefined, won't show menu.");
+    presentationGeneration++;
+    showTimer.stop();
+    anchorTimer.stop();
+    root._showRequested = true;
+    requestAnchor.request(item, root.isSubMenu ? undefined : root.trayItem);
+    if (!requestAnchor.valid)
+      return;
+    showTimer.item = item;
+    showTimer.menuX = x;
+    showTimer.menuY = y;
+    _showAt(item, x, y);
+  }
+
+  function _showAt(item, x, y) {
+    if (!requestAnchor.valid || item !== requestAnchor.anchorItem) {
       return;
     }
 
     if (!opener.children || opener.children.values.length === 0) {
       //Logger.w("TrayMenu", "Menu not ready, delaying show")
-      Qt.callLater(() => showAt(item, x, y));
+      showTimer.item = item;
+      showTimer.menuX = x;
+      showTimer.menuY = y;
+      showTimer.restart();
       return;
     }
 
@@ -180,15 +230,54 @@ PopupWindow {
     anchorY = y;
 
     visible = true;
-    forceActiveFocus();
+    // NInputGuard owns focus within this popup; do not resolve an Item method
+    // through the caller's context (PopupWindow has no forceActiveFocus()).
 
     // Force update after showing.
-    Qt.callLater(() => {
-      root.anchor.updateAnchor();
-    });
+    root.updateAnchor();
+  }
+
+  function updateAnchor() {
+    anchorTimer.restart();
+  }
+
+  Timer {
+    id: showTimer
+    interval: 0
+    property var item: null
+    property real menuX: 0
+    property real menuY: 0
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
+    onTriggered: {
+      if (generation === root.presentationGeneration && root._showRequested && requestAnchor.valid && item === requestAnchor.anchorItem)
+        root._showAt(item, menuX, menuY);
+    }
+  }
+
+  Timer {
+    id: anchorTimer
+    interval: 0
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
+    onTriggered: {
+      if (generation === root.presentationGeneration && root.visible && requestAnchor.valid && root.anchorItem)
+        root.anchor.updateAnchor();
+    }
   }
 
   function hideMenu() {
+    requestAnchor.cancel();
+    root._showRequested = false;
+    presentationGeneration++;
+    showTimer.stop();
+    anchorTimer.stop();
     visible = false;
 
     // Clean up all submenus recursively
@@ -200,6 +289,7 @@ PopupWindow {
         child.subMenu = null;
       }
     }
+    presentationClosed();
   }
 
   Item {
@@ -262,6 +352,7 @@ PopupWindow {
 
         delegate: Rectangle {
           id: entry
+          readonly property var presentationIdentity: modelData
           required property var modelData
 
           Layout.preferredWidth: parent.width
@@ -458,9 +549,7 @@ PopupWindow {
                         entry.subMenu.anchorY = 0;
                         entry.subMenu.visible = true;
                         // Force anchor update with new position
-                        Qt.callLater(() => {
-                          entry.subMenu.anchor.updateAnchor();
-                        });
+                        entry.subMenu.updateAnchor();
                       }
                     }
                   } else {

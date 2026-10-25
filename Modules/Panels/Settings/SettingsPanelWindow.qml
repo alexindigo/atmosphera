@@ -24,10 +24,13 @@ FloatingWindow {
   }
 
   property bool isInitialized: false
+  property int navigationGeneration: 0
 
   // Navigate to a specific tab and optional subtab.
   // Works whether the window is already visible or just becoming visible.
   function navigateTo(tab, subTab) {
+    navigationGeneration++;
+    navigationTimer.stop();
     const tabId = tab !== undefined ? tab : 0;
     const subTabId = (subTab !== undefined && subTab !== null && subTab >= 0) ? subTab : -1;
     if (isInitialized) {
@@ -48,13 +51,31 @@ FloatingWindow {
   // Navigate to a search result entry.
   // Works whether the window is already visible or just becoming visible.
   function navigateToEntry(entry) {
+    navigationGeneration++;
     if (isInitialized) {
-      Qt.callLater(() => settingsContent.navigateToResult(entry));
+      navigationTimer.entry = entry;
+      navigationTimer.restart();
     } else {
       settingsContent.requestedTab = entry.tab;
       settingsContent.initialize();
-      Qt.callLater(() => settingsContent.navigateToResult(entry));
+      navigationTimer.entry = entry;
+      navigationTimer.restart();
       isInitialized = true;
+    }
+  }
+
+  Timer {
+    id: navigationTimer
+    interval: 0
+    property var entry: null
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.navigationGeneration;
+    }
+    onTriggered: {
+      if (generation === root.navigationGeneration && root.visible)
+        settingsContent.navigateToResult(entry);
     }
   }
 
@@ -63,6 +84,8 @@ FloatingWindow {
     if (visible) {
       SettingsPanelService.isWindowOpen = true;
     } else {
+      navigationGeneration++;
+      navigationTimer.stop();
       isInitialized = false;
       SettingsPanelService.isWindowOpen = false;
     }

@@ -23,13 +23,14 @@ SmartPanel {
 
   // Plugin instance
   property var pluginInstance: null
+  property int _loadGeneration: 0
 
   // Reference to the plugin content loader (set when panel content is created)
   property var contentLoader: null
 
   readonly property var _pluginContext: ({
-                                         "screen": root.screen
-                                       })
+                                           "screen": root.screen
+                                         })
   on_PluginContextChanged: {
     if (contentLoader)
       PluginLoader.applyLateContext(contentLoader.item, "panel", _pluginContext, {});
@@ -125,6 +126,7 @@ SmartPanel {
 
   // Load a plugin's panel content
   function loadPluginPanel(pluginId) {
+    const generation = ++root._loadGeneration;
     if (!Service.isPluginLoaded(pluginId)) {
       Logger.w("PluginPanelSlot", "Plugin not loaded:", pluginId);
       return false;
@@ -159,7 +161,7 @@ SmartPanel {
 
     // Load the panel component with cache-busting version parameter
     var loadVersion = Registry.pluginLoadVersions[pluginId] || 0;
-    var component = Qt.createComponent("file://" + panelPath + "?v=" + loadVersion);
+    var component = Qt.createComponent("file://" + panelPath + "?v=" + loadVersion, Component.PreferSynchronous, root);
 
     if (component.status === Component.Ready) {
       finalizePluginLoad(pluginId, component, api);
@@ -168,8 +170,10 @@ SmartPanel {
       // Handle async component loading - wait for it to be ready
       Logger.d("PluginPanelSlot", "Component loading asynchronously for:", pluginId);
       component.statusChanged.connect(function () {
+        if (generation !== root._loadGeneration || !root.isPanelOpen || root.isClosing)
+          return;
         if (component.status === Component.Ready) {
-          finalizePluginLoad(pluginId, component, api);
+          root.finalizePluginLoad(pluginId, component, api);
           // Force SmartPanel to recalculate position now that content is ready
           if (root.isPanelVisible) {
             root.setPosition();
@@ -211,6 +215,7 @@ SmartPanel {
 
   // Unload current plugin panel
   function unloadPluginPanel() {
+    root._loadGeneration++;
     if (root.currentPluginId === "") {
       return;
     }
@@ -234,6 +239,7 @@ SmartPanel {
   // panelOpenScreen is set in finalizePluginLoad, before the content loads
   // (the content is recreated on every open). Cleared here on close.
   onClosed: {
+    root._loadGeneration++;
     if (root.currentPluginId !== "") {
       var api = root.currentPluginApi || Service.getPluginAPI(root.currentPluginId);
       if (api) {

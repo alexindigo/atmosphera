@@ -32,6 +32,7 @@ Variants {
     // synchronously during ListModel.insert() (which would cause nested
     // incubation with the inner Repeater).
     property bool shouldBeActive: false
+    property int activationGeneration: 0
     active: shouldBeActive || delayTimer.running
 
     // Keep loader active briefly after last notification to allow animations to complete
@@ -42,19 +43,40 @@ Variants {
     }
 
     function activate() {
-      shouldBeActive = true;
+      if (notificationModel.count > 0) {
+        shouldBeActive = true;
+        delayTimer.stop();
+      }
+    }
+
+    Timer {
+      id: activationTimer
+      interval: 0
+      property int generation: -1
+      onRunningChanged: {
+        if (running)
+          generation = root.activationGeneration;
+      }
+      onTriggered: {
+        if (generation === root.activationGeneration && root.notificationModel.count > 0)
+          root.activate();
+      }
     }
 
     Connections {
       target: notificationModel
       function onCountChanged() {
+        root.activationGeneration++;
         if (notificationModel.count > 0) {
           if (!root.shouldBeActive) {
-            Qt.callLater(root.activate);
+            activationTimer.restart();
           }
-        } else if (root.shouldBeActive) {
-          root.shouldBeActive = false;
-          delayTimer.restart();
+        } else {
+          activationTimer.stop();
+          if (root.shouldBeActive) {
+            delayTimer.restart();
+            root.shouldBeActive = false;
+          }
         }
       }
     }

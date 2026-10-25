@@ -34,37 +34,37 @@ SmartPanel {
 
   onAttachToBarChanged: {
     if (isPanelOpen) {
-      Qt.callLater(root.setPosition);
+      root._repositionIfOpen();
     }
   }
 
   onBarPositionChanged: {
     if (isPanelOpen) {
-      Qt.callLater(root.setPosition);
+      root._repositionIfOpen();
     }
   }
 
   onBarDensityChanged: {
     if (isPanelOpen) {
-      Qt.callLater(root.setPosition);
+      root._repositionIfOpen();
     }
   }
 
   onBarFloatingChanged: {
     if (isPanelOpen) {
-      Qt.callLater(root.setPosition);
+      root._repositionIfOpen();
     }
   }
 
   onBarMarginHChanged: {
     if (isPanelOpen) {
-      Qt.callLater(root.setPosition);
+      root._repositionIfOpen();
     }
   }
 
   onBarMarginVChanged: {
     if (isPanelOpen) {
-      Qt.callLater(root.setPosition);
+      root._repositionIfOpen();
     }
   }
 
@@ -105,6 +105,7 @@ SmartPanel {
 
   // Internal reference to the content (set when panel content loads)
   property var _settingsContent: null
+  property int navigationGeneration: 0
 
   // Override toggle to handle window mode
   function toggle(buttonItem, buttonName) {
@@ -127,7 +128,7 @@ SmartPanel {
       return;
     }
 
-    // Panel mode: replicate SmartPanel.open() logic
+    // Prepare the settings-specific anchor inputs, then use the shared owner.
     if (!buttonItem && buttonName) {
       if (typeof buttonName === "object" && buttonName.x !== undefined && buttonName.y !== undefined) {
         root.buttonItem = null;
@@ -152,15 +153,16 @@ SmartPanel {
       root.useButtonPosition = false;
     }
 
-    isPanelOpen = true;
-    PanelService.willOpenPanel(root);
+    root.openPresentation();
   }
 
   // Open to a specific tab and optionally a subtab
   function openToTab(tab, subTab, buttonItem, buttonName) {
+    root.navigationGeneration++;
+    navigationTimer.stop();
     requestedTab = tab !== undefined ? tab : SettingsPanel.Tab.General;
     requestedSubTab = subTab !== undefined ? subTab : -1;
-    if (isPanelOpen && _settingsContent) {
+    if (isPanelOpen && !isClosing && root._requestedOpen && _settingsContent) {
       _settingsContent.navigateToTab(requestedTab, requestedSubTab);
     } else {
       open(buttonItem, buttonName);
@@ -175,7 +177,9 @@ SmartPanel {
         _settingsContent.initialize();
         const entry = requestedEntry;
         requestedEntry = null;
-        Qt.callLater(() => _settingsContent.navigateToResult(entry));
+        root.navigationGeneration++;
+        navigationTimer.entry = entry;
+        navigationTimer.restart();
       } else {
         _settingsContent.requestedTab = requestedTab;
         if (requestedSubTab >= 0) {
@@ -184,6 +188,31 @@ SmartPanel {
         }
         _settingsContent.initialize();
       }
+    }
+  }
+
+  function _navigateToEntry(entry) {
+    if (root.isPanelOpen && !root.isClosing && root._settingsContent)
+      root._settingsContent.navigateToResult(entry);
+  }
+
+  Timer {
+    id: navigationTimer
+    interval: 0
+    property var entry: null
+    property int generation: -1
+    property int requestGeneration: -1
+    property var content: null
+    onRunningChanged: {
+      if (running) {
+        generation = root.presentationGeneration;
+        requestGeneration = root.navigationGeneration;
+        content = root._settingsContent;
+      }
+    }
+    onTriggered: {
+      if (generation === root.presentationGeneration && requestGeneration === root.navigationGeneration && content === root._settingsContent)
+        root._navigateToEntry(entry);
     }
   }
 

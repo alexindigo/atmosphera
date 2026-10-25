@@ -15,9 +15,44 @@ PanelWindow {
 
   required property ShellScreen shellScreen
   property string windowType: "popupmenu"  // Used for namespace and registration
+  property int presentationGeneration: 0
+  property bool _closing: false
+  onVisibleChanged: {
+    presentationGeneration++;
+    if (!visible && !_closing)
+      close();
+  }
+  onClosed: close()
+  function requestPresentation() {
+    return ++presentationGeneration;
+  }
 
-  // Content item to display (set by the popup that uses this window)
-  property var popupContentItem: null
+  // The host observes whichever menu/dialog it currently presents. A typed
+  // reference also becomes null when externally owned content is destroyed.
+  property QtObject popupContentItem: null
+  onPopupContentItemChanged: {
+    if (!popupContentItem && visible && !_closing)
+      close();
+  }
+
+  Connections {
+    target: root.popupContentItem
+    enabled: !root._closing
+    ignoreUnknownSignals: true
+    function onVisibleChanged() {
+      if (root.popupContentItem && !root.popupContentItem.visible)
+        root.close();
+    }
+    function onClosed() {
+      root.close();
+    }
+    function onPresentationClosed() {
+      root.close();
+    }
+    function onPresentationInvalidated() {
+      root.close();
+    }
+  }
 
   // Expose the trayMenu Loader directly (for backward compatibility)
   readonly property alias trayMenuLoader: trayMenuLoader
@@ -60,8 +95,6 @@ PanelWindow {
     onLoaded: {
       if (item) {
         item.shellScreen = root.shellScreen;
-        // Set the loaded item as default content
-        root.popupContentItem = item;
       }
     }
   }
@@ -88,21 +121,34 @@ PanelWindow {
   }
 
   function open() {
+    if (!popupContentItem)
+      popupContentItem = trayMenuLoader.item;
     visible = true;
     BarService.popupOpen = true;
   }
 
-  // Show a context menu (temporarily replaces TrayMenu as content)
+  // Adopt the actual menu, including caller-supplied tray/context menus.
   function showContextMenu(menu) {
     if (menu) {
+      close();
       popupContentItem = menu;
       open();
     }
   }
 
+  // Dialog callers prepare/open their content; this window owns its lifetime
+  // as a presentation and observes closure just as it does for hosted menus.
+  function showDialog(dialog) {
+    close();
+    popupContentItem = dialog;
+    hasDialog = true;
+    open();
+  }
+
   // Show a dynamic context menu with model and callback at shellScreen coordinates
   // Used for items in other window layers (e.g., desktop widgets in bottom layer)
   function showDynamicContextMenu(model, screenX, screenY, callback) {
+    close();
     dynamicMenu.model = model;
     dynamicMenuCallback = callback;
 
@@ -123,29 +169,34 @@ PanelWindow {
     height: 1
   }
 
-  // Hide just the dynamic menu without closing the popup window
-  // Used when transitioning from context menu to a dialog
+  // End the menu presentation; a dialog handoff explicitly adopts its content.
   function hideDynamicMenu() {
-    dynamicMenu.visible = false;
+    dynamicMenu.close();
   }
 
   function close() {
+    if (_closing)
+      return;
+    _closing = true;
+    presentationGeneration++;
     visible = false;
     BarService.popupOpen = false;
-    // Call close/hide method on current content
-    if (popupContentItem) {
-      if (typeof popupContentItem.hideMenu === "function") {
-        popupContentItem.hideMenu();
-      } else if (typeof popupContentItem.close === "function") {
-        popupContentItem.close();
-      }
-    }
-    // Hide dynamic menu
-    dynamicMenu.visible = false;
+    // Detach before asking the child to close: its signals cannot reenter
+    // this transition or accidentally close a replacement presentation.
+    const content = popupContentItem;
+    popupContentItem = null;
+    hasDialog = false;
     dynamicMenuCallback = null;
-    // Restore TrayMenu as default content
-    if (trayMenuLoader.item) {
-      popupContentItem = trayMenuLoader.item;
+    if (dynamicMenu !== content)
+      dynamicMenu.close();
+    _closing = false;
+    // All owner state is released before child callbacks can open new content.
+    if (content) {
+      if (typeof content.hideMenu === "function") {
+        content.hideMenu();
+      } else if (typeof content.close === "function") {
+        content.close();
+      }
     }
   }
 

@@ -187,6 +187,7 @@ SmartPanel {
 
           IconImage {
             id: trayIcon
+            readonly property var presentationIdentity: modelData
             anchors.fill: parent
             asynchronous: true
             backer.fillMode: Image.PreserveAspectFit

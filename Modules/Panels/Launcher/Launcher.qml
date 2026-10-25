@@ -75,6 +75,20 @@ SmartPanel {
   panelAnchorBottom: !root.useButtonPosition && panelPosition.startsWith("bottom_")
   panelAnchorTop: !root.useButtonPosition && panelPosition.startsWith("top_")
 
+  Timer {
+    id: immediateCloseTimer
+    interval: 0
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
+    onTriggered: {
+      if (generation === root.presentationGeneration && root.isPanelOpen && !root.isClosing)
+        root.closeImmediately();
+    }
+  }
+
   panelContent: Rectangle {
     id: ui
     color: "transparent"
@@ -169,7 +183,7 @@ SmartPanel {
       onRequestClose: root.close()
       // Defer so the signal emission completes before SmartPanel
       // sets isPanelOpen=false and the contentLoader destroys us.
-      onRequestCloseImmediately: Qt.callLater(root.closeImmediately)
+      onRequestCloseImmediately: immediateCloseTimer.restart()
     }
 
     // Update preview when selection changes

@@ -37,13 +37,13 @@ Item {
   property bool panelAnchorRight: false
 
   // Re-position live when anchors change while the panel is open (e.g. a
-  // plugin changing its corner setting). Deferred via Qt.callLater so ALL
+  // plugin changing its corner setting). Deferred so ALL
   // anchor bindings settle first — firing setPosition against the stale
   // intermediate state (e.g. top+bottom both true mid-transition) computes
   // the wrong corner.
   function _repositionIfOpen() {
     if (isPanelOpen)
-      Qt.callLater(setPosition);
+      positionTimer.restart();
   }
   onPanelAnchorHorizontalCenterChanged: _repositionIfOpen()
   onPanelAnchorVerticalCenterChanged: _repositionIfOpen()
@@ -63,6 +63,36 @@ Item {
 
   // Track whether panel is open
   property bool isPanelOpen: false
+  property bool _requestedOpen: false
+  property int presentationGeneration: 0
+  onIsPanelOpenChanged: presentationGeneration++
+  onIsClosingChanged: presentationGeneration++
+  onPanelContentChanged: presentationGeneration++
+  onPresentationGenerationChanged: _reconcilePresentation()
+
+  function _reconcilePresentation() {
+    // Invalidation must also carry the latest valid intent forward, even when
+    // the logical-open boolean or the content Loader did not change.
+    if (root._requestedOpen && root.isPanelOpen && !root.isClosing)
+      openCompletionTimer.restart();
+    else if (!root._requestedOpen && root.isPanelOpen && root.isClosing && !root.closeFinalized) {
+      closeWatchdogActive = true;
+      closeWatchdogTimer.restart();
+      if (!root.isPanelVisible || closeCompletionTimer.running)
+        closeCompletionTimer.restart();
+    }
+  }
+
+  function _cancelPresentationWork() {
+    openCompletionTimer.stop();
+    closeCompletionTimer.stop();
+    positionTimer.stop();
+    opacityTrigger.stop();
+    openWatchdogTimer.stop();
+    closeWatchdogTimer.stop();
+    root.openWatchdogActive = false;
+    root.closeWatchdogActive = false;
+  }
 
   // Track actual visibility (delayed until content is loaded and sized)
   property bool isPanelVisible: false
@@ -266,25 +296,44 @@ Item {
       root.buttonItem = null;
     }
 
+    root.openPresentation();
+  }
+
+  // Shared by the normal open path and hosts that prepare their own inputs.
+  // A replacement request cancels closing and always schedules its completion.
+  function openPresentation() {
+    root._cancelPresentationWork();
+    root._requestedOpen = true;
+    root.presentationGeneration++;
+    root.isClosing = false;
+    root.opacityFadeComplete = false;
+    root.closeFinalized = false;
+    PanelService.closedImmediately = false;
+
     // Notify PanelService (only exclusive panels participate in single-slot state).
     // Non-exclusive panels register into a separate slot so MainScreen can still
     // render their background and blur without triggering mutual exclusion.
-    if (root.exclusiveOpen) {
-      PanelService.willOpenPanel(root);
-    } else {
-      PanelService.coexistingPanel = root;
-      PanelService.assignToSlot(2, root);
-    }
+    const generation = root.presentationGeneration;
+    PanelService.willOpenPanel(root);
 
     // Request native keyboard ownership before constructing content. Loading
     // can populate many result delegates; it must not precede the focus request.
-    isPanelOpen = true;
-
-    // Position and visibility will be set by Loader.onLoaded
-    // This ensures no flicker from default size to content size
+    if (generation !== root.presentationGeneration || !root._requestedOpen)
+      return;
+    root.isPanelOpen = true;
+    root._reconcilePresentation();
   }
 
   function close() {
+    root._cancelPresentationWork();
+    root._requestedOpen = false;
+    root.presentationGeneration++;
+    if (!root.isPanelOpen) {
+      // A willOpen listener may cancel before content construction begins.
+      if (PanelService.openedPanel === root || PanelService.coexistingPanel === root)
+        root.closeImmediately();
+      return;
+    }
     // Reset immediate close flag to ensure animations work properly
     PanelService.closedImmediately = false;
 
@@ -292,11 +341,6 @@ Item {
     isClosing = true;
     sizeAnimationComplete = false;
     closeFinalized = false;
-
-    // Stop the open animation timer if it's still running
-    opacityTrigger.stop();
-    openWatchdogActive = false;
-    openWatchdogTimer.stop();
 
     // Start close watchdog timer
     closeWatchdogActive = true;
@@ -309,19 +353,17 @@ Item {
     } else {
       opacityFadeComplete = false;
     }
+    root._reconcilePresentation();
 
     // Opacity will fade out, then size will shrink, then finalizeClose() will complete
     Logger.d("SmartPanel", "Closing panel", objectName);
   }
 
   function closeImmediately() {
-    // Close without any animation, useful for app launches to avoid focus issues
-    opacityTrigger.stop();
-    openWatchdogActive = false;
-    openWatchdogTimer.stop();
-    closeWatchdogActive = false;
-    closeWatchdogTimer.stop();
-
+    root._cancelPresentationWork();
+    root._requestedOpen = false;
+    root.closeFinalized = true;
+    root.presentationGeneration++;
     // Don't set opacity directly as it breaks the binding
     root.isPanelVisible = false;
     root.sizeAnimationComplete = false;
@@ -333,13 +375,15 @@ Item {
 
     // Signal immediate close so MainScreen can skip dimmer animation
     PanelService.closedImmediately = true;
+    const generation = root.presentationGeneration;
     if (root.exclusiveOpen) {
       PanelService.closedPanel(root);
     } else if (PanelService.coexistingPanel === root) {
       PanelService.coexistingPanel = null;
       PanelService.assignToSlot(2, null);
     }
-    closed();
+    if (generation === root.presentationGeneration && !root._requestedOpen)
+      closed();
 
     // Flush pending double-buffered Wayland state (blur regions) that won't
     // be committed otherwise — after an app launch the compositor may stop
@@ -354,13 +398,15 @@ Item {
 
   function finalizeClose() {
     // Prevent double-finalization
-    if (root.closeFinalized) {
+    if (root._requestedOpen || root.closeFinalized) {
       Logger.w("SmartPanel", "finalizeClose called but already finalized - ignoring", objectName);
       return;
     }
 
     // Complete the close sequence after animations finish
     root.closeFinalized = true;
+    openCompletionTimer.stop();
+    positionTimer.stop();
     root.closeWatchdogActive = false;
     closeWatchdogTimer.stop();
 
@@ -372,13 +418,15 @@ Item {
     // Reset dimensionsInitialized for next opening
     panelBackground.dimensionsInitialized = false;
 
+    const generation = root.presentationGeneration;
     if (root.exclusiveOpen) {
       PanelService.closedPanel(root);
     } else if (PanelService.coexistingPanel === root) {
       PanelService.coexistingPanel = null;
       PanelService.assignToSlot(2, null);
     }
-    closed();
+    if (generation === root.presentationGeneration && !root._requestedOpen)
+      closed();
 
     // Flush pending double-buffered Wayland state (blur regions).
     // flushWaylandState() is a noctalia-qs extension; upstream removed it.
@@ -395,7 +443,7 @@ Item {
     if (!root.width || !root.height) {
       Logger.d("SmartPanel", "Skipping setPosition - dimensions not ready:", root.width, "x", root.height);
       // Retry on next frame when dimensions should be available
-      Qt.callLater(setPosition);
+      positionTimer.restart();
       return;
     }
 
@@ -738,6 +786,79 @@ Item {
     // Logger.d("SmartPanel", "  Parent size:", root.width, "x", root.height);
   }
 
+  // Timers are children of this panel: destroying the host cancels queued work.
+  // A JS callback in Qt.callLater can outlive its inherited QML method context.
+  Timer {
+    id: positionTimer
+    interval: 0
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
+    onTriggered: {
+      if (generation === root.presentationGeneration && root._requestedOpen && root.isPanelOpen && !root.isClosing)
+        root.setPosition();
+    }
+  }
+
+  Timer {
+    id: openCompletionTimer
+    interval: 0
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
+    onTriggered: {
+      if (generation === root.presentationGeneration)
+        root._completeOpen();
+    }
+  }
+
+  Timer {
+    id: closeCompletionTimer
+    interval: 0
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
+    onTriggered: {
+      if (generation === root.presentationGeneration && !root._requestedOpen && root.isClosing && root.isPanelOpen)
+        root.finalizeClose();
+    }
+  }
+
+  // The panel owns its deferred transition, not the nested Loader's callback
+  // scope. Closing or unloading content before the next turn cancels opening.
+  function _completeOpen() {
+    if (!root._requestedOpen || !root.isPanelOpen || root.isClosing || !contentLoader.item)
+      return;
+
+    root.setPosition();
+    panelBackground.dimensionsInitialized = true;
+
+    // Lock animation direction before making the panel visible.
+    root.cachedAnimateFromTop = panelBackground.animateFromTop;
+    root.cachedAnimateFromBottom = panelBackground.animateFromBottom;
+    root.cachedAnimateFromLeft = panelBackground.animateFromLeft;
+    root.cachedAnimateFromRight = panelBackground.animateFromRight;
+    root.cachedShouldAnimateWidth = panelBackground.shouldAnimateWidth;
+    root.cachedShouldAnimateHeight = panelBackground.shouldAnimateHeight;
+    root.isPanelVisible = true;
+
+    if (root.animationsDisabled) {
+      root.sizeAnimationComplete = true;
+    } else {
+      opacityTrigger.start();
+      root.openWatchdogActive = true;
+      openWatchdogTimer.start();
+    }
+
+    root.opened();
+  }
+
   // Watch for changes in content-driven sizes and update position
   Connections {
     target: contentLoader.item
@@ -782,7 +903,7 @@ Item {
             var shouldFinalizeNow = panelContent.geometryPlaceholder && !panelContent.geometryPlaceholder.shouldAnimateWidth && !panelContent.geometryPlaceholder.shouldAnimateHeight;
             if (shouldFinalizeNow) {
               // Logger.d("SmartPanel", "Zero-duration opacity + no size animation - finalizing", root.objectName);
-              Qt.callLater(root.finalizeClose);
+              closeCompletionTimer.restart();
             }
           } else if (root.isPanelVisible && root.opacity === 1.0) {
             // Open completed with zero duration
@@ -800,7 +921,7 @@ Item {
           var shouldFinalizeNow = panelContent.geometryPlaceholder && !panelContent.geometryPlaceholder.shouldAnimateWidth && !panelContent.geometryPlaceholder.shouldAnimateHeight;
           if (shouldFinalizeNow) {
             //Logger.d("SmartPanel", "No animation - finalizing immediately", root.objectName);
-            Qt.callLater(root.finalizeClose);
+            closeCompletionTimer.restart();
           } else {
             //Logger.d("SmartPanel", "Animation will run - waiting for size animation", root.objectName, "shouldAnimateHeight:", panelContent.geometryPlaceholder.shouldAnimateHeight, "shouldAnimateWidth:", panelContent.geometryPlaceholder.shouldAnimateWidth);
           }
@@ -818,8 +939,13 @@ Item {
     id: opacityTrigger
     interval: Style.animationNormal * 0.5
     repeat: false
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
     onTriggered: {
-      if (root.isPanelVisible) {
+      if (generation === root.presentationGeneration && root.isPanelOpen && !root.isClosing && root.isPanelVisible) {
         root.sizeAnimationComplete = true;
       }
     }
@@ -830,8 +956,13 @@ Item {
     id: openWatchdogTimer
     interval: Style.animationNormal * 3 // 3x normal animation time
     repeat: false
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
     onTriggered: {
-      if (root.openWatchdogActive) {
+      if (generation === root.presentationGeneration && root.isPanelOpen && !root.isClosing && root.openWatchdogActive) {
         Logger.w("SmartPanel", "Open watchdog timeout - forcing panel visible state", root.objectName);
         root.openWatchdogActive = false;
         // Force completion of open sequence
@@ -848,11 +979,16 @@ Item {
     id: closeWatchdogTimer
     interval: Style.animationFast * 3 // 3x fast animation time
     repeat: false
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
     onTriggered: {
-      if (root.closeWatchdogActive && !root.closeFinalized) {
+      if (generation === root.presentationGeneration && root.isPanelOpen && root.isClosing && root.closeWatchdogActive && !root.closeFinalized) {
         Logger.w("SmartPanel", "Close watchdog timeout - forcing panel close", root.objectName);
         // Force finalization
-        Qt.callLater(root.finalizeClose);
+        closeCompletionTimer.restart();
       }
     }
   }
@@ -1176,14 +1312,14 @@ Item {
             if (!running && duration === 0) {
               if (root.isClosing && panelBackground.width === 0 && panelBackground.shouldAnimateWidth) {
                 Logger.d("SmartPanel", "Zero-duration width animation - finalizing", root.objectName);
-                Qt.callLater(root.finalizeClose);
+                closeCompletionTimer.restart();
               }
               return;
             }
 
             // When width shrink completes during close, finalize
             if (!running && root.isClosing && panelBackground.width === 0 && panelBackground.shouldAnimateWidth) {
-              Qt.callLater(root.finalizeClose);
+              closeCompletionTimer.restart();
             }
           }
         }
@@ -1206,14 +1342,14 @@ Item {
             if (!running && duration === 0) {
               if (root.isClosing && panelBackground.height === 0 && panelBackground.shouldAnimateHeight) {
                 Logger.d("SmartPanel", "Zero-duration height animation - finalizing", root.objectName);
-                Qt.callLater(root.finalizeClose);
+                closeCompletionTimer.restart();
               }
               return;
             }
 
             // When height shrink completes during close, finalize
             if (!running && root.isClosing && panelBackground.height === 0 && panelBackground.shouldAnimateHeight) {
-              Qt.callLater(root.finalizeClose);
+              closeCompletionTimer.restart();
             }
           }
         }
@@ -1383,40 +1519,7 @@ Item {
 
       onLoaded: {
         // Wait for contentPreferredWidth/Height to be available before making visible
-        Qt.callLater(function () {
-          // Calculate position with stable contentPreferredWidth/Height values
-          setPosition();
-
-          // Mark dimensions as initialized to enable animations
-          panelBackground.dimensionsInitialized = true;
-
-          // Cache animation direction BEFORE isPanelVisible becomes true
-          // This locks in the direction for the entire open/close cycle
-          root.cachedAnimateFromTop = panelBackground.animateFromTop;
-          root.cachedAnimateFromBottom = panelBackground.animateFromBottom;
-          root.cachedAnimateFromLeft = panelBackground.animateFromLeft;
-          root.cachedAnimateFromRight = panelBackground.animateFromRight;
-          root.cachedShouldAnimateWidth = panelBackground.shouldAnimateWidth;
-          root.cachedShouldAnimateHeight = panelBackground.shouldAnimateHeight;
-
-          // Make panel visible, now only the intended dimension will animate
-          root.isPanelVisible = true;
-
-          if (root.animationsDisabled) {
-            // Skip delay when animations are disabled
-            root.sizeAnimationComplete = true;
-          } else {
-            opacityTrigger.start();
-          }
-
-          // Start open watchdog timer (skip when animations disabled - everything completes synchronously)
-          if (!root.animationsDisabled) {
-            root.openWatchdogActive = true;
-            openWatchdogTimer.start();
-          }
-
-          opened();
-        });
+        root._reconcilePresentation();
       }
     }
   }

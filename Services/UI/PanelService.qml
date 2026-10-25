@@ -105,7 +105,7 @@ Singleton {
   // Close any open context menu or popup menu window
   function closeContextMenu(screen) {
     var popupMenuWindow = getPopupMenuWindow(screen);
-    if (popupMenuWindow && popupMenuWindow.visible) {
+    if (popupMenuWindow) {
       popupMenuWindow.close();
     }
   }
@@ -125,7 +125,7 @@ Singleton {
 
     var popupMenuWindow = getPopupMenuWindow(screen);
     if (popupMenuWindow) {
-      popupMenuWindow.open();
+      popupMenuWindow.showContextMenu(trayMenu);
       trayMenu.showAt(anchorItem, menuX, menuY);
     } else {
       return false;
@@ -242,6 +242,18 @@ Singleton {
 
   // Helper to keep only one panel open at any time
   function willOpenPanel(panel) {
+    // The per-screen boundary arbitrates pending popup leases as well as
+    // already-visible menus. Later intentional panel-item menus remain valid.
+    closeContextMenu(panel.screen);
+    if (panel.exclusiveOpen === false) {
+      coexistingPanel = panel;
+      assignToSlot(2, panel);
+      return;
+    }
+    if (closingPanel === panel) {
+      closingPanel = null;
+      assignToSlot(1, null);
+    }
     // Close overlay launcher if open
     if (overlayLauncherOpen) {
       overlayLauncherOpen = false;

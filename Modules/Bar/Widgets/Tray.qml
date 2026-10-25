@@ -246,10 +246,8 @@ Item {
   function toggleDrawer(button) {
     TooltipService.hideImmediately();
 
-    // Close the popup menu if it's open
-    if (popupMenuWindow && popupMenuWindow.visible) {
-      popupMenuWindow.close();
-    }
+    // Cancel pending intent too: the popup need not be visible yet.
+    PanelService.closeContextMenu(root.screen);
 
     const panel = PanelService.getPanel("trayDrawerPanel", root.screen);
     if (panel) {
@@ -394,10 +392,65 @@ Item {
         height: isVertical ? capsuleHeight : barHeight
         visible: modelData
         readonly property bool isHovered: root.hoveredItemIndex === index
+        property int menuRequestGeneration: 0
+        onModelDataChanged: menuRequestGeneration++
+        onVisibleChanged: menuRequestGeneration++
+
+        function requestMenu() {
+          menuRequestGeneration++;
+          if (!modelData)
+            return;
+          TooltipService.hideImmediately();
+          if (popupMenuWindow && popupMenuWindow.visible) {
+            PanelService.closeContextMenu(root.screen);
+            return;
+          }
+          if (PanelService.openedPanel && !PanelService.openedPanel.isClosing)
+            PanelService.openedPanel.close();
+          if (modelData.hasMenu && modelData.menu && trayMenu && trayMenu.item) {
+            const calculateAndShow = () => {
+              let menuX, menuY;
+              if (root.barPosition === "left") {
+                menuX = tooltipAnchor.width + Style.marginL;
+                menuY = 0;
+              } else if (root.barPosition === "right") {
+                menuX = -trayMenu.item.implicitWidth - Style.marginL;
+                menuY = 0;
+              } else {
+                menuX = tooltipAnchor.width / 2 - trayMenu.item.implicitWidth / 2;
+                menuY = tooltipAnchor.height + Style.marginS;
+              }
+              PanelService.showTrayMenu(root.screen, modelData, trayMenu.item, tooltipAnchor, menuX, menuY, root.section, root.sectionWidgetIndex);
+            };
+            menuShowTimer.generation = menuRequestGeneration;
+            menuShowTimer.popupGeneration = popupMenuWindow ? popupMenuWindow.requestPresentation() : -1;
+            menuShowTimer.trayItem = modelData;
+            menuShowTimer.menuHandle = modelData.menu;
+            menuShowTimer.request = calculateAndShow;
+            menuShowTimer.restart();
+          } else {
+            Logger.d("Tray", "No menu available for", modelData.id, "or trayMenu not set");
+          }
+        }
+
+        Timer {
+          id: menuShowTimer
+          interval: 0
+          property int generation: -1
+          property int popupGeneration: -1
+          property var trayItem: null
+          property var menuHandle: null
+          property var request: null
+          onTriggered: {
+            if (generation === trayDelegate.menuRequestGeneration && trayDelegate.visible && root.visible && trayItem === trayDelegate.modelData && trayItem && trayItem.menu === menuHandle && popupMenuWindow && popupGeneration === popupMenuWindow.presentationGeneration && !popupMenuWindow.visible && request)
+              request();
+          }
+        }
 
         // Tooltip anchor representing the visual area (for proper tooltip positioning)
         Item {
           id: tooltipAnchor
+          readonly property var presentationIdentity: trayDelegate.modelData
           width: capsuleHeight
           height: capsuleHeight
           x: Style.pixelAlignCenter(parent.width, width)
@@ -477,6 +530,7 @@ Item {
             }
           }
           onClicked: mouse => {
+            trayDelegate.menuRequestGeneration++;
             if (!modelData) {
               return;
             }
@@ -499,47 +553,7 @@ Item {
               if (modelData.secondaryActivate)
                 modelData.secondaryActivate();
             } else if (mouse.button === Qt.RightButton) {
-              TooltipService.hideImmediately();
-
-              // Close the menu if it was visible
-              if (popupMenuWindow && popupMenuWindow.visible) {
-                popupMenuWindow.close();
-                return;
-              }
-
-              // Close any opened panel
-              if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
-                PanelService.openedPanel.close();
-              }
-
-              if (modelData.hasMenu && modelData.menu && trayMenu && trayMenu.item) {
-                // Calculate menu position after ensuring menu is loaded
-                const calculateAndShow = () => {
-                  // Position menu based on bar position, using tooltipAnchor for proper positioning
-                  // Increased spacing for better alignment with other context menus
-                  let menuX, menuY;
-                  if (barPosition === "left") {
-                    // For left bar: position menu to the right of the visual area
-                    menuX = tooltipAnchor.width + Style.marginL;
-                    menuY = 0;
-                  } else if (barPosition === "right") {
-                    // For right bar: position menu to the left of the visual area
-                    menuX = -trayMenu.item.implicitWidth - Style.marginL;
-                    menuY = 0;
-                  } else {
-                    // For horizontal bars: center horizontally and position below visual area
-                    menuX = (tooltipAnchor.width / 2) - (trayMenu.item.implicitWidth / 2);
-                    menuY = tooltipAnchor.height + Style.marginS;
-                  }
-
-                  PanelService.showTrayMenu(root.screen, modelData, trayMenu.item, tooltipAnchor, menuX, menuY, root.section, root.sectionWidgetIndex);
-                };
-
-                // Use Qt.callLater to ensure menu dimensions are calculated
-                Qt.callLater(calculateAndShow);
-              } else {
-                Logger.d("Tray", "No menu available for", modelData.id, "or trayMenu not set");
-              }
+              trayDelegate.requestMenu();
             }
           }
         }

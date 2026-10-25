@@ -341,10 +341,7 @@ Singleton {
         dialog.updateWidgetSettings.connect((sec, idx, settings) => {
           root.updateWidgetData(sec, idx, settings);
         });
-        popupMenuWindow.hasDialog = true;
         dialog.closed.connect(() => {
-          popupMenuWindow.hasDialog = false;
-          popupMenuWindow.close();
           if (root.currentSettingsDialog === dialog) {
             root.currentSettingsDialog = null;
           }
@@ -355,6 +352,7 @@ Singleton {
             onCloseCallback(screen, widgetIndex, widgetId);
           }
         });
+        popupMenuWindow.showDialog(dialog);
         dialog.open();
       } else {
         Logger.e("DesktopWidgetRegistry", "Failed to create widget settings dialog");
