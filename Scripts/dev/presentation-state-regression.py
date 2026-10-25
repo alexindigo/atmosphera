@@ -13,6 +13,13 @@ PROBE = r'''
   property var _stateNotifications: null
   property int _statePhase: 0
   property int _stateClosed: 0
+  property var _stateNotificationItem: null
+  function _stateNotificationData(id) {
+    return {id: id, summary: "Presentation probe", summaryMarkdown: "Presentation probe",
+      body: "", bodyMarkdown: "", appName: "Probe", urgency: 1, expireTimeout: 60000,
+      timestamp: new Date(), progress: 1.0, originalImage: "", cachedImage: "",
+      originalId: 0, actionsJson: "[]"};
+  }
   function _stateVisible(o) {
     if (!o || !o.item) return false;
     const children = o.item.contentItem.children;
@@ -78,6 +85,15 @@ PROBE = r'''
       } else if (shellRoot._statePhase === 5) {
         console.log("STATE_RESULT " + JSON.stringify({case: "fade-hide",
           osdVisible: shellRoot._stateVisible(o), osdActive: o.active}));
+        NotificationService.popupModel.append(shellRoot._stateNotificationData("continuity-first"));
+      } else if (shellRoot._statePhase === 6) {
+        shellRoot._stateNotificationItem = shellRoot._stateNotifications.instances[0].item;
+        NotificationService.popupModel.clear();
+        NotificationService.popupModel.append(shellRoot._stateNotificationData("continuity-second"));
+      } else if (shellRoot._statePhase === 7) {
+        const notifications = shellRoot._stateNotifications.instances[0];
+        console.log("STATE_RESULT " + JSON.stringify({case: "notification-continuity",
+          active: notifications.shouldBeActive, sameItem: notifications.item === shellRoot._stateNotificationItem}));
         Qt.quit();
       }
       shellRoot._statePhase++;
@@ -116,12 +132,13 @@ def main():
     (work / 'shell.log').write_text(log)
     rows = [json.loads(line.split('STATE_RESULT ', 1)[1]) for line in log.splitlines() if 'STATE_RESULT ' in line]
     errors = [line for line in log.splitlines() if re.search(r'Failed to load configuration|TypeError:|ReferenceError:|SyntaxError:', line)]
-    passed = (result.returncode == 0 and not errors and len(rows) == 4
+    passed = (result.returncode == 0 and not errors and len(rows) == 5
               and rows[0] == dict(case='hide-replace', osdVisible=False, osdActive=False,
                                   dockVisible=True, dockApp='second', dockClosed=0, notificationsActive=False)
               and rows[1] == dict(case='new-show', osdVisible=True, osdType=2)
               and rows[2] == dict(case='ordinary-close', dockVisible=False, dockClosed=1)
-              and rows[3] == dict(case='fade-hide', osdVisible=False, osdActive=False))
+              and rows[3] == dict(case='fade-hide', osdVisible=False, osdActive=False)
+              and rows[4] == dict(case='notification-continuity', active=True, sameItem=True))
     receipt = dict(passed=passed, exit_code=result.returncode, cases=rows, qml_errors=errors)
     (work / 'result.json').write_text(json.dumps(receipt, indent=2) + '\n')
     print(json.dumps(receipt, indent=2))

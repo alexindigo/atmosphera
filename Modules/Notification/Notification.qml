@@ -44,8 +44,8 @@ Variants {
 
     function activate() {
       if (notificationModel.count > 0) {
-        delayTimer.stop();
         shouldBeActive = true;
+        delayTimer.stop();
       }
     }
 
@@ -74,8 +74,8 @@ Variants {
         } else {
           activationTimer.stop();
           if (root.shouldBeActive) {
-            root.shouldBeActive = false;
             delayTimer.restart();
+            root.shouldBeActive = false;
           }
         }
       }
