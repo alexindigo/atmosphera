@@ -17,7 +17,7 @@ alone. In the assigned VM, keep outputs in a separate disk-backed build director
 : "${CHECKOUT:?guest checkout required}" "${BUILD:?guest build directory required}"
 mkdir -p "$BUILD/tmp"
 export TMPDIR="$BUILD/tmp"
-export ATMOSPHERA_CHECKOUT="$CHECKOUT" ATMOSPHERA_REF=main
+export ATMOSPHERA_CHECKOUT="$CHECKOUT" ATMOSPHERA_REF="${ATMOSPHERA_REF:-main}"
 export BUILDDIR="$BUILD" PKGDEST="$BUILD" SRCDEST="$BUILD"
 cd "$CHECKOUT/dev/vm/aur"
 makepkg -s --noconfirm

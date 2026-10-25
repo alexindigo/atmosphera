@@ -41,6 +41,24 @@ stable recipe and publishes only missing changes; identical -git recipes do not
 bump pkgrel again. Reusing clean clones with an unpublished local commit is also
 supported: that commit is pushed rather than regenerated.
 
+Publication policy is loaded from the repository's maintained default branch;
+only recipe data comes from the selected tag. Replaying a tag does not execute
+its older publisher. Before either recipe is modified, pacman's `vercmp` checks
+the requested stable identity (`tag version`, pkgrel 1) against both the clean
+local commit and, in publication mode, fetched upstream `.SRCINFO`. An older
+version, epoch or same-version higher published pkgrel is rejected for both
+repositories. Equal full identities keep the idempotent retry behavior above.
+Generated -git versions are preserved, not compared as stable release versions.
+
+All release runs share one serialized concurrency group with `queue: max`:
+GitHub retains up to 100 pending runs instead of replacing the pending release.
+The platform cancels additional runs when that queue is full; inspect canceled
+runs and replay the intended tag via workflow dispatch after capacity returns.
+Waiting order is not guaranteed to match version order, so the version guard
+also applies to queued runs. A VM lint/test validates the configuration and
+publisher, not GitHub's live scheduler. Historical workflow definitions remain
+historical; these protections apply to runs using the updated workflow.
+
 For preparation without commits or pushes, run inside an Arch test VM with
 `pacman-contrib` and `base-devel`, using **clean scratch clones** of both AUR repos:
 

@@ -36,19 +36,46 @@ def replace(text, name, value):
                   flags=re.MULTILINE)
 
 
-def render(name):
-    text = (ROOT / name / "PKGBUILD").read_text()
+def render(name, recipes=ROOT):
+    text = (recipes / name / "PKGBUILD").read_text()
     for fragment in ("metadata.sh", "package.sh"):
         include = 'source "$(dirname "${BASH_SOURCE[0]}")/../' + fragment + '"\n'
         if text.count(include) != 1:
             raise ValueError(f"{name}: expected one include for {fragment}")
-        text = text.replace(include, (ROOT / fragment).read_text())
+        text = text.replace(include, (recipes / fragment).read_text())
     return text
 
 
-def prepare(name, destination, version):
+def stable_identity(metadata):
+    """Read pacman's full package identity without executing the old recipe."""
+    values = {}
+    for name in ("epoch", "pkgver", "pkgrel"):
+        matches = re.findall(rf"^\s*{name} = (\S+)$", metadata, re.MULTILINE)
+        if not matches and name == "epoch":
+            values[name] = "0"
+        elif len(matches) != 1:
+            raise ValueError(f"published stable .SRCINFO: expected one {name} field")
+        else:
+            values[name] = matches[0]
+    return f"{values['epoch']}:{values['pkgver']}-{values['pkgrel']}"
+
+
+def validate_version(version, destination, published):
+    """Reject a stable downgrade before either package's preparation can write."""
+    candidate = f"0:{version}-1"
+    refs = ["HEAD"]
+    if published:
+        refs.append("@{upstream}")
+    for ref in refs:
+        current = stable_identity(run("git", "show", f"{ref}:.SRCINFO", cwd=destination))
+        if int(run("vercmp", candidate, current, cwd=destination).strip()) < 0:
+            raise ValueError(f"refusing downgrade: atmosphera {candidate} < {current} ({ref}); neither recipe prepared")
+    print(f"atmosphera: version {candidate} is not older than local/published metadata", flush=True)
+
+
+def prepare(name, destination, version, recipes=ROOT):
     hook = f"{name}.install"
-    text = render(name)
+    text = render(name, recipes)
     if name == "atmosphera":
         text = replace(replace(text, "pkgver", version), "pkgrel", "1")
     else:
@@ -56,7 +83,7 @@ def prepare(name, destination, version):
         # AUR owns these generated counters, not the template's seed values.
         text = replace(text, "pkgver", field(old, "pkgver"))
         text = replace(text, "pkgrel", field(old, "pkgrel"))
-        if text == old and (destination / hook).read_bytes() == (ROOT / name / hook).read_bytes():
+        if text == old and (destination / hook).read_bytes() == (recipes / name / hook).read_bytes():
             print(f"{name}: no change", flush=True)
             return False
         release = field(old, "pkgrel")
@@ -65,7 +92,7 @@ def prepare(name, destination, version):
         text = replace(text, "pkgrel", str(int(release) + 1))
 
     (destination / "PKGBUILD").write_text(text)
-    (destination / hook).write_bytes((ROOT / name / hook).read_bytes())
+    (destination / hook).write_bytes((recipes / name / hook).read_bytes())
     if name == "atmosphera":
         # Keep fetched archives outside the clone so reruns see only recipe
         # changes, not untracked build/cache files.
@@ -118,10 +145,12 @@ def pending_push(directory):
 
 
 def publish(args, destinations, states):
+    states["atmosphera"][0] = "checking version"
+    validate_version(args.tag[1:], destinations[0][1], args.push)
     changed = []
     for name, directory in destinations:
         states[name][0] = "preparing"
-        if prepare(name, directory, args.tag[1:]):
+        if prepare(name, directory, args.tag[1:], args.recipes):
             changed.append((name, directory))
         states[name][0] = "prepared"
     if not args.push:
@@ -158,7 +187,10 @@ def main():
     parser.add_argument("git", type=Path, help="clean -git AUR clone")
     parser.add_argument("--push", action="store_true", help="commit and publish both prepared clones")
     parser.add_argument("--summary", type=Path, help="write per-repository progress even on failure")
+    parser.add_argument("--recipes", type=Path, default=ROOT,
+                        help="selected release recipes; publisher policy remains in this script")
     args = parser.parse_args()
+    args.recipes = args.recipes.resolve()
     if not re.fullmatch(r"v[0-9]+\.[0-9]+\.[0-9]+", args.tag):
         parser.error("expected a release tag vMAJOR.MINOR.PATCH")
     destinations = [("atmosphera", args.stable.resolve()),

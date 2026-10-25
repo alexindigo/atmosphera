@@ -7,6 +7,7 @@ Run in the assigned VM:
 
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -81,13 +82,48 @@ assert "atmosphera-git: no change" in out
 assert "pkgrel=13\n" in (changed[1] / "PKGBUILD").read_text()
 print("PASS: shared dependency reaches both PKGBUILDs/.SRCINFO; bump once; retry no-op")
 
-# Published VCS pkgver is generated and must not trigger a packaging bump.
-vcs = fixtures("vcs-version")
-recipe = vcs[1] / "PKGBUILD"
-recipe.write_text(recipe.read_text().replace("pkgver=0.6.0.r0.g0000000", "pkgver=0.9.0.r7.g1234567"))
-commit(vcs[1])
-assert "atmosphera-git: no change" in sync(RECIPES, vcs)
-print("PASS: generated VCS version does not trigger a recipe publication")
+def mutate_pkgver(text, version):
+    changed, count = re.subn(r"^pkgver=.*$", lambda _: f"pkgver={version}", text, flags=re.MULTILINE)
+    if count != 1:
+        raise ValueError(f"expected exactly one pkgver assignment, got {count}")
+    if changed == text:
+        raise ValueError("pkgver fixture mutation must change its value")
+    return changed
+
+
+# Seeded and already-generated AUR versions must both exercise a real mutation.
+for label in ("seed", "generated"):
+    vcs = fixtures(f"vcs-version-{label}")
+    recipe = vcs[1] / "PKGBUILD"
+    text = recipe.read_text()
+    if label == "generated":
+        version = re.search(r"^pkgver=(.+)$", text, re.MULTILINE)[1]
+        if version != "0.9.0.r7.g1234567":
+            text = mutate_pkgver(text, "0.9.0.r7.g1234567")
+            recipe.write_text(text)
+            commit(vcs[1])
+    version = re.search(r"^pkgver=(.+)$", text, re.MULTILINE)[1] + ".fixture"
+    release = re.search(r"^pkgrel=(.+)$", text, re.MULTILINE)[1]
+    recipe.write_text(mutate_pkgver(text, version))
+    commit(vcs[1])
+    before = run("git", "rev-parse", "HEAD", cwd=vcs[1])
+    assert "atmosphera-git: no change" in sync(RECIPES, vcs)
+    assert f"pkgver={version}\n" in recipe.read_text()
+    assert f"pkgrel={release}\n" in recipe.read_text()
+    assert run("git", "rev-parse", "HEAD", cwd=vcs[1]) == before
+    assert not run("git", "status", "--porcelain", cwd=vcs[1])
+    print(f"PASS: {label} VCS version changed structurally; preserved with no bump or publication")
+
+for text, version, message in (("pkgrel=1\n", "2", "got 0"),
+                               ("pkgver=1\npkgver=2\n", "3", "got 2"),
+                               ("pkgver=1\n", "1", "must change")):
+    try:
+        mutate_pkgver(text, version)
+    except ValueError as error:
+        assert message in str(error)
+    else:
+        raise AssertionError(f"invalid fixture mutation accepted: {text!r}")
+print("PASS: missing, duplicate and unchanged pkgver mutations fail clearly")
 
 hook_recipes = WORK / "hook-recipes"
 shutil.copytree(RECIPES, hook_recipes)

@@ -16,6 +16,7 @@ permissions:
 
 concurrency:
   group: aur-sync
+  queue: max
   cancel-in-progress: false
 
 jobs:
@@ -36,6 +37,15 @@ jobs:
         run: |
           set -euo pipefail
           pacman -Syu --noconfirm git base-devel pacman-contrib openssh python
+
+      # Publication policy comes from the maintained branch, not the selected
+      # tag: replaying an older recipe must not replay its older publisher.
+      - name: Check out publisher
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: publisher
+          persist-credentials: false
 
       - name: Check out release recipes
         uses: actions/checkout@v4
@@ -79,8 +89,9 @@ jobs:
             runuser -u builduser -- git -C "/home/builduser/aur-sync/$package" config user.email 'github-actions[bot]@users.noreply.github.com'
           done
           export TMPDIR=/home/builduser/aur-sync/tmp
-          runuser -u builduser -- python /home/builduser/aur-sync/recipes/sync.py "$TAG_NAME" \
+          runuser -u builduser -- python "$GITHUB_WORKSPACE/publisher/packaging/aur/sync.py" "$TAG_NAME" \
             /home/builduser/aur-sync/atmosphera /home/builduser/aur-sync/atmosphera-git --push \
+            --recipes /home/builduser/aur-sync/recipes \
             --summary /home/builduser/aur-sync/summary.md
 
       - name: Summarize update

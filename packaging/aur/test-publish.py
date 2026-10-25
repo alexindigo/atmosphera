@@ -7,6 +7,7 @@ No AUR remote is configured or written by these tests.
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -57,11 +58,13 @@ def seed(label):
 def heads(remotes):
     return [run('git', 'rev-parse', 'refs/heads/master', cwd=remote).strip() for remote in remotes]
 
-def publish(recipes, directories, label, success=True):
+def publish(recipes, directories, label, success=True, tag='v0.9.0'):
     summary = WORK / (label + '-summary.md')
-    result = subprocess.run([sys.executable, str(recipes / 'sync.py'), 'v0.9.0',
-                             *(str(p) for p in directories), '--push', '--summary', str(summary)],
-                            text=True, capture_output=True, timeout=600)
+    # Match the workflow: maintained publisher, separately selected recipe data.
+    result = subprocess.run([sys.executable, str(RECIPES / 'sync.py'), tag,
+                             *(str(p) for p in directories), '--push', '--summary', str(summary),
+                             '--recipes', str(recipes)],
+                             text=True, capture_output=True, timeout=600)
     (WORK / (label + '.log')).write_text(result.stdout + result.stderr)
     assert (result.returncode == 0) == success, (label, result.returncode, result.stdout, result.stderr)
     assert summary.exists(), label
@@ -152,4 +155,70 @@ out, summary = publish(recipes, again, 'again')
 assert heads(remotes) == retried and 'Publishing ' not in out
 assert summary.count('already current (no-op)') == 2
 print('PASS: identical subsequent workflow run commits/pushes nothing and bumps no counters', flush=True)
+
+# A stable release's full pacman identity gates both destinations before any
+# preparation, including when a fetched remote is newer than stale local HEAD.
+def published_stable(directory, version, release='1', epoch=None):
+    recipe = directory / 'PKGBUILD'
+    text, count = re.subn(r'^pkgver=.*$', f'pkgver={version}', recipe.read_text(), flags=re.MULTILINE)
+    assert count == 1
+    text, count = re.subn(r'^pkgrel=.*$', f'pkgrel={release}', text, flags=re.MULTILINE)
+    assert count == 1
+    if epoch:
+        text += f'\nepoch={epoch}\n'
+    recipe.write_text(text)
+    metadata = directory / '.SRCINFO'
+    text, count = re.subn(r'^\s*pkgver = .*$', f'\tpkgver = {version}', metadata.read_text(), flags=re.MULTILINE)
+    assert count == 1
+    text, count = re.subn(r'^\s*pkgrel = .*$', f'\tpkgrel = {release}', text, flags=re.MULTILINE)
+    assert count == 1
+    if epoch:
+        text = text.replace(f'\tpkgver = {version}\n', f'\tpkgver = {version}\n\tepoch = {epoch}\n')
+    metadata.write_text(text)
+    run('git', 'add', '.', cwd=directory)
+    run('git', 'commit', '-m', 'published version fixture', cwd=directory)
+    run('git', 'push', 'origin', 'HEAD', cwd=directory)
+
+
+def refused(recipes, remotes, directories, label, tag):
+    before = heads(remotes)
+    local = [run('git', 'rev-parse', 'HEAD', cwd=d) for d in directories]
+    trees = [run('git', 'diff', 'HEAD', cwd=d) for d in directories]
+    out, summary = publish(recipes, directories, label, success=False, tag=tag)
+    assert 'refusing downgrade' in (WORK / (label + '.log')).read_text()
+    assert heads(remotes) == before
+    assert [run('git', 'rev-parse', 'HEAD', cwd=d) for d in directories] == local
+    assert [run('git', 'diff', 'HEAD', cwd=d) for d in directories] == trees == ['', '']
+    assert all(not run('git', 'status', '--porcelain', cwd=d) for d in directories)
+    assert 'prepared' not in summary and 'not attempted' in summary
+    print(f'PASS: {label} refuses before either recipe changes; both remotes unchanged', flush=True)
+
+
+for label, version, release, epoch in (('older-tag', '0.9.0', '1', None),
+                                        ('higher-pkgrel', '0.9.0', '2', None),
+                                        ('numeric-version', '0.10.0', '1', None),
+                                        ('published-epoch', '0.9.0', '1', '1')):
+    remotes, directories = seed(label)
+    if label != 'older-tag':
+        published_stable(directories[0], version, release, epoch)
+    refused(recipes, remotes, directories, label, 'v0.8.0' if label == 'older-tag' else 'v0.9.0')
+
+remotes, directories = seed('serialized-versions')
+published_stable(directories[0], '0.8.0')
+stale = clones('stale-before-newer', remotes)
+before = heads(remotes)
+# A tag-owned sync.py must not override the maintained publisher's policy.
+(recipes / 'sync.py').write_text('raise RuntimeError("tag publisher must never execute")\n')
+publish(recipes, directories, 'newer-tag', tag='v0.9.0')
+after = heads(remotes)
+assert all(a != b for a, b in zip(before, after))
+assert '\tpkgver = 0.9.0\n' in run('git', 'show', 'master:.SRCINFO', cwd=remotes[0])
+assert 'pkgrel=13\n' in run('git', 'show', 'master:PKGBUILD', cwd=remotes[1])
+print('PASS: newer release publishes serially through maintained publisher, not tag-owned code', flush=True)
+refused(recipes, remotes, stale, 'stale-clone-after-newer', 'v0.8.0')
+equal = clones('equal-after-newer', remotes)
+publish(recipes, equal, 'equal-tag')
+assert heads(remotes) == after
+assert 'pkgrel=13\n' in run('git', 'show', 'master:PKGBUILD', cwd=remotes[1])
+print('PASS: equal release after newer publication is a no-op; no second pkgrel bump', flush=True)
 print('ALL PUBLICATION CONTRACT CHECKS PASSED', flush=True)
