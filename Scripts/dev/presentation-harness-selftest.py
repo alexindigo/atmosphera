@@ -16,7 +16,14 @@ args = parser.parse_args()
 work = args.workspace.resolve()
 assert not str(work).startswith('/tmp/')
 work.mkdir()
-console_before = subprocess.check_output(['ps', '-C', 'qs', '-o', 'pid=,args='], text=True, timeout=10)
+
+
+def console_qs():
+    # ps exits 1 when no qs runs; an empty listing is a valid observation.
+    return subprocess.run(['ps', '-C', 'qs', '-o', 'pid=,args='], capture_output=True, text=True, timeout=10).stdout
+
+
+console_before = console_qs()
 body = '''import os,signal,subprocess,sys,time
 child = subprocess.Popen([sys.executable, '-u', '-c', 'import signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); print("DETACHED_READY",flush=True); time.sleep(3600)'], start_new_session=True)
 print('STALL_READY', child.pid, os.readlink('/proc/self/ns/pid'), flush=True)
@@ -46,7 +53,7 @@ assert not thread.is_alive() and not failures, failures
 execution = result[0]
 receipt = json.loads((work / 'result.json').read_text())
 log = (work / 'shell.log').read_text()
-console_after = subprocess.check_output(['ps', '-C', 'qs', '-o', 'pid=,args='], text=True, timeout=10)
+console_after = console_qs()
 assert incremental and 'STALL_READY' in log and 'HARNESS_TIMEOUT' in log
 assert receipt['passed'] is False and execution['timed_out'] and execution['exit_code'] != 0
 assert execution['cleanup_complete'] and execution['remaining_pids'] == []
