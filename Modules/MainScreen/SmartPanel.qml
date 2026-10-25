@@ -314,12 +314,7 @@ Item {
     // Non-exclusive panels register into a separate slot so MainScreen can still
     // render their background and blur without triggering mutual exclusion.
     const generation = root.presentationGeneration;
-    if (root.exclusiveOpen) {
-      PanelService.willOpenPanel(root);
-    } else {
-      PanelService.coexistingPanel = root;
-      PanelService.assignToSlot(2, root);
-    }
+    PanelService.willOpenPanel(root);
 
     // Request native keyboard ownership before constructing content. Loading
     // can populate many result delegates; it must not precede the focus request.

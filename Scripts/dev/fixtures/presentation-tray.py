@@ -65,5 +65,5 @@ def register():
 
 loop = GLib.MainLoop()
 GLib.timeout_add(100, register)
-GLib.timeout_add_seconds(100, lambda: (loop.quit(), False)[1])
+# The harness/private bus owns this process. No unrelated fixture deadline.
 loop.run()

@@ -11,13 +11,12 @@ import os
 from pathlib import Path
 import re
 import shutil
-import subprocess
 import sys
+from presentation_harness import add_execution_arguments, run_harness, write_receipt
 
 
 PROBE = r'''
   property int _probeStep: 0
-  property int _probeTicks: 0
   property int _probeOpened: 0
   property var _probePanel: null
   readonly property var _probeNames: ["setupWizardPanel", "setupWizardPanel", "clockPanel", "controlCenterPanel"]
@@ -53,15 +52,6 @@ PROBE = r'''
     running: true
     repeat: true
     onTriggered: {
-      shellRoot._probeTicks++;
-      if (shellRoot._probeTicks > 80) {
-        console.log("PANEL_TIMEOUT " + JSON.stringify({step: shellRoot._probeStep,
-          panel: shellRoot._probePanel ? shellRoot._probePanel.objectName : "unregistered",
-          open: shellRoot._probePanel ? shellRoot._probePanel.isPanelOpen : false,
-          visible: shellRoot._probePanel ? shellRoot._probePanel.isPanelVisible : false}));
-        Qt.quit();
-        return;
-      }
       if (!shellRoot._probePanel) {
         const screen = Quickshell.screens[0];
         if (!screen)
@@ -92,7 +82,6 @@ PROBE = r'''
       panel.closeImmediately();
       shellRoot._probePanel = null;
       shellRoot._probeStep++;
-      shellRoot._probeTicks = 0;
       if (shellRoot._probeStep === shellRoot._probeNames.length) {
         // Cancel while Loader.onLoaded's deferred completion is still pending.
         // This must not resurrect content or emit opened for a closed panel.
@@ -114,6 +103,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument("--workspace", type=Path, required=True, help="fresh disk-backed guest directory")
+    add_execution_arguments(parser)
     args = parser.parse_args()
     source = args.source.resolve()
     work = args.workspace.resolve()
@@ -137,17 +127,15 @@ def main():
         directory = work / leaf
         directory.mkdir()
         env[key] = str(directory)
-    result = subprocess.run(["dbus-run-session", "--", "qs", "-p", str(shell), "--no-color"],
-                            cwd=work, env=env, capture_output=True, text=True, timeout=45)
-    text = result.stdout + result.stderr
-    (work / "shell.log").write_text(text)
+    execution = run_harness(["dbus-run-session", "--", "qs", "-p", str(shell), "--no-color"], work, env, args.budget)
+    text = (work / 'shell.log').read_text(errors='replace')
     rows = [json.loads(line.split("PANEL_RESULT ", 1)[1]) for line in text.splitlines()
             if "PANEL_RESULT " in line]
     cancellations = [json.loads(line.split("PANEL_CANCEL ", 1)[1]) for line in text.splitlines()
                      if "PANEL_CANCEL " in line]
     errors = [line for line in text.splitlines() if re.search(
         r"Failed to load configuration|TypeError:|ReferenceError:|SyntaxError:|is not a type|is unavailable", line)]
-    passed = (result.returncode == 0 and "Configuration Loaded" in text and not errors
+    passed = (execution['exit_code'] == 0 and "Configuration Loaded" in text and not errors
               and len(rows) == 4 and all(row["opened"] > 0 for row in rows[1:])
               and cancellations == [{"open": False, "visible": False, "opened": 0}]
               and "PANEL_LIFETIME complete" in text)
@@ -159,11 +147,11 @@ def main():
         passed = (geometry["x"] > 0 and geometry["y"] > 0
                   and geometry["x"] + geometry["width"] <= available["width"]
                   and geometry["y"] + geometry["height"] <= available["height"])
-    receipt = dict(passed=passed, exit_code=result.returncode, panels=rows,
+    receipt = dict(passed=passed, exit_code=execution['exit_code'], panels=rows,
                    cancellations=cancellations, qml_errors=errors)
-    (work / "result.json").write_text(json.dumps(receipt, indent=2) + "\n")
+    write_receipt(work, receipt, execution)
     print(json.dumps(receipt, indent=2))
-    return 0 if passed else 1
+    return 0 if receipt['passed'] else 1
 
 
 if __name__ == "__main__":

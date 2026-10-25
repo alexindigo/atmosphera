@@ -8,6 +8,7 @@ import re
 import shutil
 import subprocess
 import sys
+from presentation_harness import add_execution_arguments, remaining_budget, run_harness, write_receipt
 
 PROBE = r'''
   property var _sequenceOsd: null
@@ -21,6 +22,77 @@ PROBE = r'''
   property bool _sequenceReentrantStarted: false
   property bool _sequenceReentrantRecorded: false
   property var _sequenceExceptions: []
+  property double _sequenceTrayResume: 0
+  property double _sequenceFixtureStarted: 0
+  property int _competitionCase: 0
+  property int _competitionPhase: 0
+  property int _competitionTicks: 0
+  function _competitionDelegate(item) {
+    if (!item) return null;
+    if (typeof item.requestMenu === "function" && item.modelData) return item;
+    const children = item.children || [];
+    for (let i = 0; i < children.length; i++) { const found = _competitionDelegate(children[i]); if (found) return found; }
+    return null;
+  }
+  function _competitionAnchor(item) {
+    if (!item) return null;
+    if (item.source !== undefined && String(item.source).includes("applications-system")) return item;
+    const children = item.children || [];
+    for (let i = 0; i < children.length; i++) { const found = _competitionAnchor(children[i]); if (found) return found; }
+    return null;
+  }
+  function _competitionTick() {
+    const screen = Quickshell.screens[0];
+    const widget = BarService.lookupWidget("Tray", screen.name);
+    const delegate = _competitionDelegate(widget);
+    const popup = PanelService.getPopupMenuWindow(screen);
+    const names = ["trayDrawerPanel", "clockPanel", "controlCenterPanel"];
+    if (!delegate || !popup || !popup.trayMenuLoader.item) return;
+    if (_competitionCase < 3) {
+      const panel = PanelService.getPanel(names[_competitionCase], screen, false);
+      if (_competitionPhase === 0) {
+        popup.close();
+        if (PanelService.openedPanel) PanelService.openedPanel.closeImmediately();
+        delegate.requestMenu();
+        if (_competitionCase === 0) widget.toggleDrawer(widget); else panel.open();
+        _competitionPhase = 1;
+        _competitionTicks = 0;
+        return;
+      }
+      if (++_competitionTicks < 8) return;
+      console.log("COMPETITION_RESULT " + JSON.stringify({panel: names[_competitionCase],
+        panelVisible: panel.isPanelOpen && panel.isPanelVisible && panel.sizeAnimationComplete,
+        popupVisible: popup.visible, menuVisible: popup.trayMenuLoader.item.visible}));
+      panel.closeImmediately();
+      popup.close();
+      _competitionCase++;
+      _competitionPhase = 0;
+      return;
+    }
+    const drawer = PanelService.getPanel("trayDrawerPanel", screen, false);
+    if (_competitionPhase === 0) {
+      widget.toggleDrawer(widget);
+      _competitionPhase = 1;
+      return;
+    }
+    if (_competitionPhase === 1) {
+      if (!drawer.isPanelVisible || !drawer.sizeAnimationComplete) return;
+      const anchor = _competitionAnchor(drawer);
+      if (!anchor) return;
+      PanelService.showTrayMenu(screen, SystemTray.items.values[0], popup.trayMenuLoader.item,
+        anchor, 0, anchor.height, drawer.widgetSection, drawer.widgetIndex);
+      _competitionPhase = 2;
+      _competitionTicks = 0;
+      return;
+    }
+    if (++_competitionTicks < 8) return;
+    console.log("COMPETITION_RESULT " + JSON.stringify({panel: "intentional-drawer-item",
+      panelVisible: drawer.isPanelOpen && drawer.isPanelVisible, popupVisible: popup.visible,
+      menuVisible: popup.trayMenuLoader.item.visible,
+      textVisible: _sequenceText(popup.trayMenuLoader.item.contentItem, "Sequence Action")}));
+    sequenceTrayFixture.running = false;
+    Qt.quit();
+  }
   readonly property var _sequenceHosts: ["clockPanel", "settingsPanel", "launcherPanel", "controlCenterPanel", "pluginPanel1",
     "dialog", "settings-window", "osd", "dock", "popup", "tray", "notifications", "settings-tab"]
   readonly property var _sequenceNames: ["open-open", "open-close-open", "close-open", "open-close"]
@@ -136,6 +208,11 @@ PROBE = r'''
   Timer {
     interval: 100; running: true; repeat: true
     onTriggered: {
+      if (shellRoot._sequenceCase === 40 && Number(Quickshell.env("SEQUENCE_TRAY_DELAY")) > 0) {
+        if (shellRoot._sequenceTrayResume === 0)
+          shellRoot._sequenceTrayResume = Date.now() + Number(Quickshell.env("SEQUENCE_TRAY_DELAY")) * 1000;
+        if (Date.now() < shellRoot._sequenceTrayResume) return;
+      }
       if (shellRoot._sequenceCase === shellRoot._sequenceHosts.length * 4) {
         if (!shellRoot._sequenceReentrantStarted) {
           shellRoot._sequenceReentrantStarted = true;
@@ -163,12 +240,19 @@ PROBE = r'''
       shellRoot._sequenceTicks++;
       if (shellRoot._sequenceStage === -1) {
         const items = SystemTray.items.values;
-        if (!sequenceTrayFixture.running) sequenceTrayFixture.running = true;
+        if (!sequenceTrayFixture.running) {
+          shellRoot._sequenceFixtureStarted = Date.now();
+          sequenceTrayFixture.running = true;
+        }
         if (!shellRoot.settingsLoaded || !shellRoot.i18nLoaded || delayedInitTimer.running || !PanelService.getPanel("clockPanel", Quickshell.screens[0], false) || !items.length || shellRoot._sequenceTicks < 25) return;
         sequenceTray.trayItem = items[0];
         if (Quickshell.env("SEQUENCE_LINT_FILES") !== "[]") sequenceLintWorker.running = true;
         if (PanelService.openedPanel) PanelService.openedPanel.closeImmediately();
         shellRoot._sequenceStage = 0;
+      }
+      if (Quickshell.env("SEQUENCE_COMPETITION_ONLY") === "1") {
+        shellRoot._competitionTick();
+        return;
       }
       if (shellRoot._sequenceStage === 0) {
         shellRoot._sequenceClose(true);
@@ -204,6 +288,7 @@ PROBE = r'''
       const wantOpen = shellRoot._sequenceCase % 4 !== 3;
       console.log("SEQUENCE_RESULT " + JSON.stringify({host: shellRoot._sequenceHost(),
         sequence: shellRoot._sequenceNames[shellRoot._sequenceCase % 4], wantOpen: wantOpen, state: state,
+        fixtureAgeSeconds: (Date.now() - shellRoot._sequenceFixtureStarted) / 1000,
         exceptions: shellRoot._sequenceExceptions}));
       shellRoot._sequenceClose(true);
       if (shellRoot._sequenceIsPanel()) shellRoot._sequencePanel().opened.disconnect(shellRoot._sequenceOnOpened);
@@ -215,7 +300,6 @@ PROBE = r'''
       }
     }
   }
-  Timer { interval: 360000; running: true; onTriggered: { sequenceTrayFixture.running = false; Qt.quit(); } }
 '''
 
 def lint_worker(shell):
@@ -228,7 +312,7 @@ def lint_worker(shell):
     results = {}
     for name, command in commands:
         with (shell.parent / (name + '.log')).open('x') as log:
-            result = subprocess.run(command, cwd=shell, env=env, stdout=log, stderr=subprocess.STDOUT, timeout=300)
+            result = subprocess.run(command, cwd=shell, env=env, stdout=log, stderr=subprocess.STDOUT, timeout=remaining_budget())
         results[name] = result.returncode
         (shell.parent / 'shell-gate.json').write_text(json.dumps(results, indent=2))
         if result.returncode:
@@ -240,17 +324,24 @@ def main():
     parser.add_argument('--source', type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument('--workspace', type=Path, required=True)
     parser.add_argument('--lint', nargs='+', default=[])
+    parser.add_argument('--tray-delay', type=float, default=0, help='delay tray progression within the same harness budget')
+    parser.add_argument('--competition-only', action='store_true')
+    parser.add_argument('--producer-source', type=Path, help='use the equivalent extracted inline producer when testing an older boundary')
+    add_execution_arguments(parser)
     args = parser.parse_args()
     work = args.workspace.resolve()
     assert not str(work).startswith('/tmp/') and 'TMPDIR' in os.environ
     work.mkdir()
     shell = work / 'shell'
     shutil.copytree(args.source, shell, ignore=shutil.ignore_patterns('.git', '__pycache__', '*.bak'))
+    if args.producer_source:
+        shutil.copy2(args.producer_source / 'Modules/Bar/Widgets/Tray.qml', shell / 'Modules/Bar/Widgets/Tray.qml')
     # The tested revision may predate these test-only helpers.
     fixtures = shell / 'Scripts/dev/fixtures'
     fixtures.mkdir(parents=True, exist_ok=True)
     shutil.copy2(Path(__file__).parent / 'fixtures/presentation-tray.py', fixtures / 'presentation-tray.py')
     shutil.copy2(__file__, shell / 'Scripts/dev/presentation-sequence-regression.py')
+    shutil.copy2(Path(__file__).parent / 'presentation_harness.py', shell / 'Scripts/dev/presentation_harness.py')
     main_qml = shell / 'shell.qml'
     text = main_qml.read_text().replace('import Quickshell\n', 'import Quickshell\nimport Quickshell.Io\nimport Quickshell.Wayland\nimport Quickshell.Services.SystemTray\nimport qs.Modules.Dock\nimport qs.Modules.Bar.Extras\n')
     text = text.replace('      OSD {}', '      OSD { Component.onCompleted: shellRoot._sequenceOsd = this }')
@@ -261,6 +352,8 @@ def main():
     env = dict(os.environ, QT_QPA_PLATFORM='wayland', QT_QUICK_BACKEND='software', XDG_CURRENT_DESKTOP='',
                NIRI_SOCKET='', HYPRLAND_INSTANCE_SIGNATURE='', SWAYSOCK='', LABWC_PID='', DISPLAY='')
     env['SEQUENCE_LINT_FILES'] = json.dumps(args.lint)
+    env['SEQUENCE_TRAY_DELAY'] = str(args.tray_delay)
+    env['SEQUENCE_COMPETITION_ONLY'] = '1' if args.competition_only else '0'
     for key, leaf in [('HOME', 'home'), ('XDG_CONFIG_HOME', 'config'), ('XDG_DATA_HOME', 'data'),
                       ('XDG_CACHE_HOME', 'cache'), ('XDG_STATE_HOME', 'state')]:
         directory = work / leaf
@@ -270,13 +363,13 @@ def main():
     settings['settingsVersion'] = 62
     settings['general']['showChangelogOnStartup'] = False
     settings['inputMethod']['launchFcitx5'] = False
+    if args.competition_only:
+        next(widget for widget in settings['bar']['widgets']['right'] if widget['id'] == 'Tray')['drawerEnabled'] = False
     config = work / 'config/atmosphera'
     config.mkdir()
     (config / 'settings.json').write_text(json.dumps(settings))
-    result = subprocess.run(['dbus-run-session', '--', 'qs', '-p', str(shell), '--no-color'],
-                            env=env, capture_output=True, text=True, timeout=375)
-    log = result.stdout + result.stderr
-    (work / 'shell.log').write_text(log)
+    execution = run_harness(['dbus-run-session', '--', 'qs', '-p', str(shell), '--no-color'], work, env, args.budget)
+    log = (work / 'shell.log').read_text(errors='replace')
     rows = [json.loads(line.split('SEQUENCE_RESULT ', 1)[1]) for line in log.splitlines() if 'SEQUENCE_RESULT ' in line]
     errors = [line for line in log.splitlines() if re.search(r'Failed to load configuration|TypeError:|ReferenceError:|SyntaxError:', line)]
     reentrant = [json.loads(line.split('SEQUENCE_REENTRANT_RESULT ', 1)[1]) for line in log.splitlines() if 'SEQUENCE_REENTRANT_RESULT ' in line]
@@ -288,17 +381,24 @@ def main():
             row['passed'] = row['passed'] and state['completed'] == 1 and state['width'] > 0 and state['height'] > 0 and state['ownsSlot']
         if not row['wantOpen'] and 'ownsSlot' in state:
             row['passed'] = row['passed'] and not state['ownsSlot']
-    receipt = dict(passed=result.returncode == 0 and not errors and len(rows) == 52 and all(row['passed'] for row in rows)
+    receipt = dict(passed=execution['exit_code'] == 0 and not errors and len(rows) == 52 and all(row['passed'] for row in rows)
                    and reentrant == [dict(open=False, visible=False, ownsSlot=False)],
-                   exit_code=result.returncode, cases=rows, reentrant=reentrant, qml_errors=errors)
+                   exit_code=execution['exit_code'], tray_delay_seconds=args.tray_delay,
+                   cases=rows, reentrant=reentrant, qml_errors=errors)
+    if args.competition_only:
+        competition = [json.loads(line.split('COMPETITION_RESULT ', 1)[1]) for line in log.splitlines() if 'COMPETITION_RESULT ' in line]
+        receipt['competition'] = competition
+        receipt['passed'] = (execution['exit_code'] == 0 and not errors and len(competition) == 4
+                             and all(row['panelVisible'] and not row['popupVisible'] and not row['menuVisible'] for row in competition[:3])
+                             and all(competition[3][key] for key in ('panelVisible', 'popupVisible', 'menuVisible', 'textVisible')))
     if args.lint:
         gates = work / 'shell-gate.json'
         receipt['shell_gate'] = json.loads(gates.read_text()) if gates.exists() else {}
         receipt['passed'] = receipt['passed'] and receipt['shell_gate'] == {'qmllint': 0, 'plugin-selftest': 0, 'plugin-audit': 0}
-    (work / 'result.json').write_text(json.dumps(receipt, indent=2) + '\n')
-    print(json.dumps(dict(passed=receipt['passed'], exit_code=result.returncode, cases=len(rows),
+    write_receipt(work, receipt, execution)
+    print(json.dumps(dict(passed=receipt['passed'], exit_code=execution['exit_code'], execution=execution, cases=len(rows),
                           failed=[row for row in rows if not row['passed']], qml_errors=sorted(set(errors)),
-                          reentrant=reentrant, shell_gate=receipt.get('shell_gate')), indent=2))
+                          competition=receipt.get('competition'), reentrant=reentrant, shell_gate=receipt.get('shell_gate')), indent=2))
     return 0 if receipt['passed'] else 1
 
 if __name__ == '__main__':

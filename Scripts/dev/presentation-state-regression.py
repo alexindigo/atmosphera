@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 import re
 import shutil
-import subprocess
+from presentation_harness import add_execution_arguments, run_harness, write_receipt
 
 PROBE = r'''
   property var _stateOsd: null
@@ -71,6 +71,9 @@ PROBE = r'''
         AudioService.sinkChanged();
         o.showOSD(2);
       } else if (shellRoot._statePhase === 2) {
+        // Startup/layout may take more than one observation tick. Observe the
+        // real positive consumer outcome; the shared deadline bounds waiting.
+        if (o.currentOSDType === 2 && !shellRoot._stateVisible(o)) return;
         console.log("STATE_RESULT " + JSON.stringify({case: "new-show",
           osdVisible: shellRoot._stateVisible(o), osdType: o.currentOSDType}));
         stateDock.handlePin("");
@@ -99,13 +102,13 @@ PROBE = r'''
       shellRoot._statePhase++;
     }
   }
-  Timer { interval: 10000; running: true; onTriggered: Qt.quit() }
 '''
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument('--workspace', type=Path, required=True)
+    add_execution_arguments(parser)
     args = parser.parse_args()
     work = args.workspace.resolve()
     assert not str(work).startswith('/tmp/') and 'TMPDIR' in os.environ
@@ -126,23 +129,21 @@ def main():
         directory = work / leaf
         directory.mkdir()
         env[key] = str(directory)
-    result = subprocess.run(['dbus-run-session', '--', 'qs', '-p', str(shell), '--no-color'],
-                            env=env, capture_output=True, text=True, timeout=40)
-    log = result.stdout + result.stderr
-    (work / 'shell.log').write_text(log)
+    execution = run_harness(['dbus-run-session', '--', 'qs', '-p', str(shell), '--no-color'], work, env, args.budget)
+    log = (work / 'shell.log').read_text(errors='replace')
     rows = [json.loads(line.split('STATE_RESULT ', 1)[1]) for line in log.splitlines() if 'STATE_RESULT ' in line]
     errors = [line for line in log.splitlines() if re.search(r'Failed to load configuration|TypeError:|ReferenceError:|SyntaxError:', line)]
-    passed = (result.returncode == 0 and not errors and len(rows) == 5
+    passed = (execution['exit_code'] == 0 and not errors and len(rows) == 5
               and rows[0] == dict(case='hide-replace', osdVisible=False, osdActive=False,
                                   dockVisible=True, dockApp='second', dockClosed=0, notificationsActive=False)
               and rows[1] == dict(case='new-show', osdVisible=True, osdType=2)
               and rows[2] == dict(case='ordinary-close', dockVisible=False, dockClosed=1)
               and rows[3] == dict(case='fade-hide', osdVisible=False, osdActive=False)
               and rows[4] == dict(case='notification-continuity', active=True, sameItem=True))
-    receipt = dict(passed=passed, exit_code=result.returncode, cases=rows, qml_errors=errors)
-    (work / 'result.json').write_text(json.dumps(receipt, indent=2) + '\n')
+    receipt = dict(passed=passed, exit_code=execution['exit_code'], cases=rows, qml_errors=errors)
+    write_receipt(work, receipt, execution)
     print(json.dumps(receipt, indent=2))
-    return 0 if passed else 1
+    return 0 if receipt['passed'] else 1
 
 if __name__ == '__main__':
     raise SystemExit(main())
