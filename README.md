@@ -295,7 +295,7 @@ workspaces and window management.
 
 With `QT_IM_MODULE=fcitx`, fast typing in launcher search or other shell fields
 can occasionally arrive out of order. This is an upstream fcitx5-qt async
-key-forwarding race ([upstream issue](<upstream issue>)).
+key-forwarding race (upstream report pending).
 
 Workaround: unset `QT_IM_MODULE` **for the shell process only**, so the shell uses
 Wayland's input-method protocol with fcitx5. Real composition is verified on
