@@ -50,6 +50,7 @@ PopupWindow {
 
   signal triggered(string action, var item)
   signal presentationInvalidated
+  signal presentationClosed
   NPresentationAnchor {
     id: requestAnchor
     onInvalidated: {
@@ -465,6 +466,7 @@ PopupWindow {
   function close() {
     requestAnchor.cancel();
     visible = false;
+    presentationClosed();
   }
 
   function closeMenu() {

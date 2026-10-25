@@ -510,17 +510,8 @@ Singleton {
 
   // Helper to close any existing dialogs in a popup menu window
   function closeExistingDialogs(popupMenuWindow) {
-    if (!popupMenuWindow || !popupMenuWindow.dialogParent)
-      return;
-
-    var dialogParent = popupMenuWindow.dialogParent;
-    for (var i = dialogParent.children.length - 1; i >= 0; i--) {
-      var child = dialogParent.children[i];
-      if (child && typeof child.close === "function") {
-        child.close();
-      }
-    }
-    popupMenuWindow.hasDialog = false;
+    if (popupMenuWindow && popupMenuWindow.hasDialog)
+      popupMenuWindow.close();
   }
 
   // Open widget settings dialog for a bar widget
@@ -575,16 +566,8 @@ Singleton {
             }
           }
         });
-        // Enable keyboard focus for the popup menu window when dialog is open
-        popupMenuWindow.hasDialog = true;
-        // Close the popup menu window when dialog closes
-        dialog.closed.connect(() => {
-          popupMenuWindow.hasDialog = false;
-          popupMenuWindow.close();
-          dialog.destroy();
-        });
-        // Show the popup menu window and open the dialog
-        popupMenuWindow.open();
+        dialog.closed.connect(() => dialog.destroy());
+        popupMenuWindow.showDialog(dialog);
         dialog.open();
       } else {
         Logger.e("BarService", "Failed to create widget settings dialog");
@@ -635,16 +618,8 @@ Singleton {
                                           });
 
       if (dialog) {
-        // Enable keyboard focus for the popup menu window when dialog is open
-        popupMenuWindow.hasDialog = true;
-        // Close the popup menu window when dialog closes
-        dialog.closed.connect(() => {
-          popupMenuWindow.hasDialog = false;
-          popupMenuWindow.close();
-          dialog.destroy();
-        });
-        // Show the popup menu window and open the dialog
-        popupMenuWindow.open();
+        dialog.closed.connect(() => dialog.destroy());
+        popupMenuWindow.showDialog(dialog);
         dialog.openPluginSettings(pluginManifest);
       } else {
         Logger.e("BarService", "Failed to create plugin settings dialog");

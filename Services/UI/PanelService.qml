@@ -125,7 +125,7 @@ Singleton {
 
     var popupMenuWindow = getPopupMenuWindow(screen);
     if (popupMenuWindow) {
-      popupMenuWindow.open();
+      popupMenuWindow.showContextMenu(trayMenu);
       trayMenu.showAt(anchorItem, menuX, menuY);
     } else {
       return false;

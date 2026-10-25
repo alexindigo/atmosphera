@@ -19,6 +19,7 @@ PopupWindow {
   property int presentationGeneration: 0
   property bool _showRequested: false
   signal presentationInvalidated
+  signal presentationClosed
   NPresentationAnchor {
     id: requestAnchor
     onInvalidated: {
@@ -288,6 +289,7 @@ PopupWindow {
         child.subMenu = null;
       }
     }
+    presentationClosed();
   }
 
   Item {
