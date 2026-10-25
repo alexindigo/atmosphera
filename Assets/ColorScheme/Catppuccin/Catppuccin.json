@@ -1,5 +1,7 @@
 {
   "dark": {
+    "mStandout": "#f29f1a",
+    "mOnStandout": "#462a00",
     "mPrimary": "#cba6f7",
     "mOnPrimary": "#11111b",
     "mSecondary": "#fab387",
@@ -46,6 +48,8 @@
     }
   },
   "light": {
+    "mStandout": "#f29f1a",
+    "mOnStandout": "#462a00",
     "mPrimary": "#8839ef",
     "mOnPrimary": "#eff1f5",
     "mSecondary": "#fe640b",

@@ -21,6 +21,7 @@ Popup {
   property int cacheVersion: 0
   property var editColors: ({})
   property var originalColors: ({})
+  property int _editSession: 0
 
   Component {
     id: pickerComponent
@@ -65,6 +66,14 @@ Popup {
           {
             key: "mOnTertiary",
             name: "On Tertiary"
+          },
+          {
+            key: "mStandout",
+            name: I18n.tr("common.standout")
+          },
+          {
+            key: "mOnStandout",
+            name: "On Standout"
           },
           {
             key: "mError",
@@ -223,12 +232,14 @@ Popup {
   }
 
   onOpened: {
+    _editSession++;
     var source = JSON.parse(JSON.stringify(ColorSchemeService.lastPredefinedSchemeData || {}));
     editColors = source;
     originalColors = JSON.parse(JSON.stringify(source));
   }
 
   onClosed: {
+    _editSession++;
     editColors = ({});
   }
 
@@ -338,6 +349,7 @@ Popup {
   }
 
   function getColor(key) {
+    var _ = cacheVersion;
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
     if (!editColors || !editColors[mode])
       return null;
@@ -353,20 +365,28 @@ Popup {
   }
 
   function applyColors() {
+    // Persistence and its acknowledgement own this submission, never the live
+    // edit model. Later edits stay dirty against the exact snapshot on disk.
+    const session = _editSession;
+    const fullData = JSON.parse(JSON.stringify({
+                                                 dark: (editColors && editColors["dark"]) || (ColorSchemeService.lastPredefinedSchemeData && ColorSchemeService.lastPredefinedSchemeData["dark"]) || {},
+                                                 light: (editColors && editColors["light"]) || (ColorSchemeService.lastPredefinedSchemeData && ColorSchemeService.lastPredefinedSchemeData["light"]) || {}
+                                               }));
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
-    if (editColors && editColors[mode]) {
-      ColorSchemeService.writeColorsToDisk(editColors[mode]);
-      ColorSchemeService.lastPredefinedSchemeData[mode] = JSON.parse(JSON.stringify(editColors[mode]));
+    if (fullData[mode]) {
+      ColorSchemeService.writeColorsToDisk(fullData[mode]);
+      ColorSchemeService.lastPredefinedSchemeData = JSON.parse(JSON.stringify(fullData));
     }
-    var fullData = {
-      dark: (editColors && editColors["dark"]) || (ColorSchemeService.lastPredefinedSchemeData && ColorSchemeService.lastPredefinedSchemeData["dark"]) || {},
-      light: (editColors && editColors["light"]) || (ColorSchemeService.lastPredefinedSchemeData && ColorSchemeService.lastPredefinedSchemeData["light"]) || {}
-    };
-    ColorSchemeService.saveCustomScheme(fullData);
-    Settings.data.colorSchemes.predefinedScheme = "Custom";
-    originalColors = JSON.parse(JSON.stringify(editColors));
-    cacheVersion++;
-    ColorSchemeService.loadColorSchemes();
+    ColorSchemeService.saveCustomScheme(fullData, function (saved) {
+      if (!saved)
+        return;
+      Settings.data.colorSchemes.predefinedScheme = "Custom";
+      if (session === root._editSession) {
+        root.originalColors = JSON.parse(JSON.stringify(fullData));
+        root.cacheVersion++;
+      }
+      ColorSchemeService.loadColorSchemes();
+    });
   }
 
   function resetColors() {

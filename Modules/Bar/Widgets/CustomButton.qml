@@ -184,6 +184,8 @@ Item {
         return AtmoColor.mSecondary;
       case "tertiary":
         return AtmoColor.mTertiary;
+      case "standout":
+        return AtmoColor.mStandout;
       case "error":
         return AtmoColor.mError;
       default:
@@ -451,7 +453,7 @@ Item {
         const iconColorKey = parsed.iconColor || "";
         const textColorKey = parsed.textColor || "";
 
-        const validColors = ["primary", "secondary", "tertiary", "error", "none"];
+        const validColors = ["primary", "secondary", "tertiary", "standout", "error", "none"];
 
         // Helper to resolve color: legacy > specific > none
         function resolveColor(legacy, specific) {

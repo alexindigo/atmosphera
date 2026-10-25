@@ -40,10 +40,9 @@ Item {
       layer.enabled: true
       opacity: Style.effectivePanelOpacity
 
-      Shape {
+      NShape {
         id: unifiedBackgroundsShape
         anchors.fill: parent
-        preferredRendererType: Shape.CurveRenderer
         asynchronous: true
         enabled: false
 
@@ -119,10 +118,9 @@ Item {
         layer.enabled: true
         opacity: Style.effectivePanelOpacity
 
-        Shape {
+        NShape {
           id: panelBackgroundsShape
           anchors.fill: parent
-          preferredRendererType: Shape.CurveRenderer
           asynchronous: true
           enabled: false
 
@@ -179,10 +177,9 @@ Item {
         layer.enabled: true
         opacity: Style.effectiveBarOpacity
 
-        Shape {
+        NShape {
           id: barBackgroundShape
           anchors.fill: parent
-          preferredRendererType: Shape.CurveRenderer
           asynchronous: true
           enabled: false
 

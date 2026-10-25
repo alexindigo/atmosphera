@@ -648,6 +648,10 @@ Popup {
                   color: AtmoColor.mTertiary
                 },
                 {
+                  name: "mStandout",
+                  color: AtmoColor.mStandout
+                },
+                {
                   name: "mError",
                   color: AtmoColor.mError
                 },

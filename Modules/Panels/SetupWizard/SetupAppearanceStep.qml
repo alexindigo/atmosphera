@@ -19,6 +19,8 @@ ColumnLayout {
   // Cache for scheme colors (mirrors ColorSchemeTab approach)
   property var schemeColorsCache: ({})
   property int cacheVersion: 0
+  property int _schemeReadVersion: 0
+  property var _pendingReads: ({})
 
   function getSchemeColor(schemeName, key) {
     try {
@@ -32,10 +34,16 @@ ColumnLayout {
 
   // Match ColorSchemeTab helpers
   function schemeLoaded(schemeName, jsonData) {
-    var value = jsonData || {};
-    schemeColorsCache[schemeName] = value;
-    cacheVersion++;
-    Logger.i("SetupAppearanceStep", `Loaded scheme ${schemeName}`);
+    if (!jsonData)
+      return;
+    const version = ++_schemeReadVersion;
+    _pendingReads[schemeName] = version;
+    ColorSchemeService.normalizeScheme(jsonData, function (value) {
+      if (value && root._pendingReads[schemeName] === version) {
+        root.schemeColorsCache[schemeName] = value;
+        root.cacheVersion++;
+      }
+    });
   }
 
   Connections {
@@ -43,6 +51,7 @@ ColumnLayout {
     function onSchemesChanged() {
       Logger.i("SetupAppearanceStep", `Color schemes changed: ${ColorSchemeService.schemes.length}`);
       schemeColorsCache = {};
+      root._pendingReads = {};
       cacheVersion++;
     }
   }
@@ -286,6 +295,16 @@ ColumnLayout {
                   var cached = root.schemeColorsCache[schemeItem.schemeName];
                   return (cached && cached[mode] && cached[mode].mTertiary) || root.getSchemeColor(schemeItem.schemeName, "mTertiary");
                 })() : AtmoColor.mTertiary
+              }
+              Rectangle {
+                width: 14
+                height: 14
+                radius: width * 0.5
+                color: root.cacheVersion >= 0 ? (function () {
+                  var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
+                  var cached = root.schemeColorsCache[schemeItem.schemeName];
+                  return (cached && cached[mode] && cached[mode].mStandout) || root.getSchemeColor(schemeItem.schemeName, "mStandout");
+                })() : AtmoColor.mStandout
               }
               Rectangle {
                 width: 14

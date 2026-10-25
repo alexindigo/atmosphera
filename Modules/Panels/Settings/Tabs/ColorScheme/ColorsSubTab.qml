@@ -18,6 +18,8 @@ ColumnLayout {
   property var timeOptions
   property var schemeColorsCache: ({})
   property int cacheVersion: 0
+  property int _schemeReadVersion: 0
+  property var _pendingReads: ({})
 
   signal openDownloadPopup
 
@@ -63,21 +65,31 @@ ColumnLayout {
       return AtmoColor.mSecondary;
     if (colorKey === "mTertiary")
       return AtmoColor.mTertiary;
+    if (colorKey === "mStandout")
+      return AtmoColor.mStandout;
     if (colorKey === "mError")
       return AtmoColor.mError;
     return AtmoColor.mOnSurfaceVariant;
   }
 
   function schemeLoaded(schemeName, jsonData) {
-    var value = jsonData || {};
-    schemeColorsCache[schemeName] = value;
-    cacheVersion++;
+    if (!jsonData)
+      return;
+    const version = ++_schemeReadVersion;
+    _pendingReads[schemeName] = version;
+    ColorSchemeService.normalizeScheme(jsonData, function (value) {
+      if (value && root._pendingReads[schemeName] === version) {
+        root.schemeColorsCache[schemeName] = value;
+        root.cacheVersion++;
+      }
+    });
   }
 
   Connections {
     target: ColorSchemeService
     function onSchemesChanged() {
       root.schemeColorsCache = {};
+      root._pendingReads = {};
       root.cacheVersion++;
     }
   }
@@ -296,7 +308,7 @@ ColumnLayout {
         property int diameter: 16 * Style.uiScaleRatio
 
         Repeater {
-          model: [AtmoColor.mPrimary, AtmoColor.mSecondary, AtmoColor.mTertiary, AtmoColor.mError]
+          model: [AtmoColor.mPrimary, AtmoColor.mSecondary, AtmoColor.mTertiary, AtmoColor.mStandout, AtmoColor.mError]
 
           Rectangle {
             width: colorPreviewRow.diameter
@@ -395,6 +407,13 @@ ColumnLayout {
               height: scheme.diameter
               radius: scheme.diameter * 0.5
               color: root.getSchemeColor(schemeItem.schemeName, "mTertiary")
+            }
+
+            Rectangle {
+              width: scheme.diameter
+              height: scheme.diameter
+              radius: scheme.diameter * 0.5
+              color: root.getSchemeColor(schemeItem.schemeName, "mStandout")
             }
 
             Rectangle {

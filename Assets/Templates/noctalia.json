@@ -7,6 +7,8 @@
 
   "mTertiary": "{{colors.tertiary.default.hex}}",
   "mOnTertiary": "{{colors.on_tertiary.default.hex}}",
+  "mStandout": "{{colors.standout.default.hex}}",
+  "mOnStandout": "{{colors.on_standout.default.hex}}",
 
   "mError": "{{colors.error.default.hex}}",
   "mOnError": "{{colors.on_error.default.hex}}",
@@ -22,4 +24,4 @@
 
   "mHover": "{{colors.tertiary.default.hex}}",
   "mOnHover": "{{colors.on_tertiary.default.hex}}"
-} 
+}

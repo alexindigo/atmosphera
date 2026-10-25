@@ -176,6 +176,9 @@ def main() -> int:
             with open(args.scheme, 'r') as f:
                 scheme_data = json.load(f)
 
+            from lib.scheme import normalize_scheme
+            scheme_data = normalize_scheme(scheme_data)
+
             # Scheme format: {"dark": {"mPrimary": "#...", ...}, "light": {...}}
             # or single mode: {"mPrimary": "#...", ...}
             for mode in modes:
@@ -235,8 +238,10 @@ def main() -> int:
                         flat_colors[k] = str(v)
 
                 # Assign to requested modes
+                from lib.scheme import enrich_template_palette
+                enriched = enrich_template_palette(flat_colors)
                 for mode in modes:
-                    result[mode] = flat_colors
+                    result[mode] = enriched[mode]
 
             except Exception as e:
                 print(f"Error reading JSON palette: {e}", file=sys.stderr)

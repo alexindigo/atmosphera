@@ -21,7 +21,19 @@ never pasted late.
 
 ### 2026-10-23
 
+**Feature**
+
+Every colour scheme now has an editable standout accent and readable on-colour.
+It complements primary and tertiary and keeps the same vivid fill in light and
+dark mode; older and downloaded schemes receive it automatically when loaded.
+Network folders and archive files in the file chooser now use this standout
+colour, keeping their ink outlines in both modes.
+
 **Fix**
+
+File chooser icons and layered launcher outlines now have smooth vector edges
+at normal and high-DPI scales. Hidden icons still fade as a finished picture.
+All shell shapes share the same antialiased renderer.
 
 The launcher owns its keyboard in both panel and overlay mode. Commands take
 precedence over native search editing, shell shortcuts cannot intercept them,
@@ -45,7 +57,6 @@ keyboard share one highlighted selection, and background refreshes retain the
 selected application's identity. Panel focus is requested before content loads,
 and launcher result population waits for native keyboard focus. Keys delivered
 to another application before the launcher acquires focus cannot be recovered.
-
 ### 2026-10-21
 
 **Maintenance**

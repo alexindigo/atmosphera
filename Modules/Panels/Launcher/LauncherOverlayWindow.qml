@@ -228,7 +228,7 @@ Variants {
         }
 
         // Background with inverted corners - extends beyond panel for inverted corners
-        Shape {
+        NShape {
           id: panelShape
           // Extend shape to allow inverted corners to render outside panel bounds
           x: -radius

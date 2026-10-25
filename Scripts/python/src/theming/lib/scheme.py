@@ -16,8 +16,100 @@ from typing import Literal
 
 from .color import Color
 from .contrast import ensure_contrast
+from .standout import standout_roles, on_standout_color
 
 ThemeMode = Literal["dark", "light"]
+
+
+def _canonical_variant(data: dict) -> dict:
+    """Copy a flat palette and recognize shell/camel/snake role aliases.
+
+    Authored m-prefixed fields win; unrelated template values are untouched.
+    This is schema adaptation only, with no colour-space conversion.
+    """
+    from copy import deepcopy
+    result = deepcopy(data)
+    for role in ('Primary', 'OnPrimary', 'Secondary', 'OnSecondary', 'Tertiary', 'OnTertiary',
+                 'Standout', 'OnStandout', 'Error', 'OnError', 'Surface', 'OnSurface',
+                 'SurfaceVariant', 'OnSurfaceVariant', 'Outline', 'Shadow', 'Hover', 'OnHover'):
+        alias = role[0].lower() + role[1:]
+        if 'm' + role not in result and alias in result:
+            result['m' + role] = result[alias]
+        snake = ''.join(('_' + c.lower()) if c.isupper() else c for c in alias)
+        if 'm' + role not in result and snake in result:
+            result['m' + role] = result[snake]
+    return result
+
+
+def enrich_template_palette(palette: dict[str, str]) -> dict[str, dict[str, str]]:
+    """Expose available standout roles without requiring a shell schema.
+
+    Input is the CLI's flattened, generic named-value palette. Existing fields
+    remain unchanged in both output modes. Authored standout/on values remain
+    independently available. Missing roles are enriched only with a fill or
+    all three canonical dark-reference inputs (primary, tertiary, surface).
+    Eligible inputs delegate to normalize_scheme's sole Python RYB/HCT rule;
+    malformed eligible colours still raise, rather than masquerading as a
+    valid scheme. Ineligible roles stay absent for the renderer to diagnose.
+    """
+    canonical = _canonical_variant(palette)
+    result = {mode: dict(palette) for mode in ('dark', 'light')}
+    if canonical.get('mStandout') or all(key in canonical for key in ('mPrimary', 'mTertiary', 'mSurface')):
+        # These are named values, even when a name is literally "dark" or
+        # "light". Only this adapter constructs the actual variant envelope.
+        normalized = normalize_scheme({'dark': canonical, 'light': canonical})
+        for mode in result:
+            result[mode]['standout'] = normalized[mode]['mStandout']
+            result[mode]['on_standout'] = normalized[mode]['mOnStandout']
+    elif 'mOnStandout' in canonical:
+        for variant in result.values():
+            variant['on_standout'] = canonical['mOnStandout']
+    return result
+
+
+def normalize_scheme(data: dict, mode: ThemeMode = 'dark') -> dict:
+    """One compatibility boundary for shell, previews, editor and templates.
+
+    D6/D8: derive absent fills from the actual dark reference (or the sole
+    supplied variant), never the previously loaded scheme. Keep each authored
+    field independently; an authored fill gets its own readable foreground.
+    Flat palettes have one reference; expose both modes for the editor too.
+    Unknown fields and terminal palettes survive normalization unchanged.
+    data is a JSON-like flat role object or dark/light variant object; aliases
+    are adapted on copies. mode accepts dark/light for compatibility, while
+    the result always contains both modes. Missing fill requires canonical
+    primary/tertiary/surface; missing on-role requires a parseable actual fill.
+    Shape, missing derivation inputs and invalid derived-colour inputs raise.
+    Authored fields are never altered, even when independently mode-specific.
+    Consumer adapters still validate their required complete-shell role set;
+    generic positional template palettes use enrich_template_palette instead.
+    """
+    if not isinstance(data, dict) or mode not in ('dark', 'light'):
+        raise ValueError('expected a scheme object and dark/light mode')
+    from copy import deepcopy
+    result = deepcopy(data)
+    variants = {key: deepcopy(data.get(key)) for key in ('dark', 'light')}
+    if not any(variants.values()):
+        variants = {key: deepcopy(data) for key in ('dark', 'light')}
+        result = {}
+    for key in ('dark', 'light'):
+        if not variants[key]:
+            variants[key] = deepcopy(variants['light' if key == 'dark' else 'dark'])
+        if not isinstance(variants[key], dict):
+            raise ValueError('scheme variants must be objects')
+        variants[key] = _canonical_variant(variants[key])
+    reference = variants['dark']
+    derived = None
+    for key, variant in variants.items():
+        if not variant.get('mStandout'):
+            if derived is None:
+                dark = {role: reference['m' + role.title()] for role in ('primary', 'tertiary', 'surface')}
+                derived = standout_roles(dark, 'dark')['standout']
+            variant['mStandout'] = derived
+        if not variant.get('mOnStandout'):
+            variant['mOnStandout'] = on_standout_color(Color.from_hex(variant['mStandout']), key)
+        result[key] = variant
+    return result
 
 
 def _hex_to_color(hex_str: str) -> Color:
@@ -77,6 +169,9 @@ def expand_predefined_scheme(scheme_data: dict[str, str], mode: ThemeMode) -> di
         Dictionary with all 48 color names mapped to hex values.
     """
     is_dark = mode == "dark"
+
+    if not scheme_data.get('mStandout') or not scheme_data.get('mOnStandout'):
+        scheme_data = normalize_scheme(scheme_data)[mode]
 
     # Parse input colors
     primary = _hex_to_color(scheme_data["mPrimary"])
@@ -278,6 +373,8 @@ def expand_predefined_scheme(scheme_data: dict[str, str], mode: ThemeMode) -> di
         "on_tertiary_fixed": on_tertiary_fixed.to_hex(),
         "on_tertiary_fixed_variant": on_tertiary_fixed_variant.to_hex(),
         # Error
+        "standout": scheme_data["mStandout"],
+        "on_standout": scheme_data["mOnStandout"],
         "error": error.to_hex(),
         "on_error": on_error.to_hex(),
         "error_container": error_container.to_hex(),

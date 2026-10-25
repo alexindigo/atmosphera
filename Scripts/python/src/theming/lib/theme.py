@@ -21,10 +21,11 @@ from .color import Color, shift_hue, hue_distance, adjust_surface
 from .contrast import ensure_contrast
 from .material import SchemeTonalSpot, SchemeFruitSalad, SchemeRainbow, SchemeContent, SchemeMonochrome
 from .palette import find_error_color
+from .standout import standout_roles
 
 # Type aliases
 ThemeMode = Literal["dark", "light"]
-SchemeType = Literal["tonal-spot", "fruit-salad", "rainbow", "content", "monochrome", "vibrant", "faithful", "muted"]
+SchemeType = Literal["tonal-spot", "fruit-salad", "rainbow", "content", "monochrome", "vibrant", "faithful", "dysfunctional", "muted"]
 
 # Map scheme type strings to classes
 SCHEME_CLASSES = {
@@ -843,10 +844,10 @@ def generate_muted_light(palette: list[Color]) -> dict[str, str]:
     }
 
 
-def generate_theme(
+def _generate_base_theme(
     palette: list[Color],
     mode: ThemeMode,
-    scheme_type: str = "tonal-spot"
+    scheme_type: str = "tonal-spot",
 ) -> dict[str, str]:
     """
     Generate theme for specified mode and scheme type.
@@ -863,16 +864,39 @@ def generate_theme(
     # All three use same theme generation, but different color extraction (handled in palette.py)
     if scheme_type in ("vibrant", "faithful", "dysfunctional"):
         if mode == "dark":
-            return generate_normal_dark(palette)
-        return generate_normal_light(palette)
+            theme = generate_normal_dark(palette)
+        else:
+            theme = generate_normal_light(palette)
 
     # Handle muted mode (low saturation, monochrome wallpapers)
-    if scheme_type == "muted":
+    elif scheme_type == "muted":
         if mode == "dark":
-            return generate_muted_dark(palette)
-        return generate_muted_light(palette)
+            theme = generate_muted_dark(palette)
+        else:
+            theme = generate_muted_light(palette)
 
     # All other schemes use Material Design 3 generation
-    if mode == "dark":
-        return generate_material_dark(palette, scheme_type)
-    return generate_material_light(palette, scheme_type)
+    elif mode == "dark":
+        theme = generate_material_dark(palette, scheme_type)
+    else:
+        theme = generate_material_light(palette, scheme_type)
+    return theme
+
+
+def generate_theme(
+    palette: list[Color],
+    mode: ThemeMode,
+    scheme_type: str = "tonal-spot",
+) -> dict[str, str]:
+    """Generate unchanged base roles plus D8's mode-independent standout.
+
+    Derive the reference from dark base roles even for a light-only request.
+    No shared cache or call-order dependency; the display mode chooses only
+    its own base roles and on_standout foreground.
+    """
+    dark = _generate_base_theme(palette, 'dark', scheme_type)
+    theme = dark if mode == 'dark' else _generate_base_theme(palette, mode, scheme_type)
+    theme.update(standout_roles(dark, mode,
+                               source=palette[0] if palette else None, scheme_type=scheme_type,
+                               surface=Color.from_hex(theme['surface'])))
+    return theme

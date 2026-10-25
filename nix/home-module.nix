@@ -86,6 +86,8 @@ in
            mSurface = "#111111";
            mSurfaceVariant = "#191919";
            mTertiary = "#cccccc";
+           mStandout = "#c0b27e";
+           mOnStandout = "#34300c";
         }
       '';
       description = ''
