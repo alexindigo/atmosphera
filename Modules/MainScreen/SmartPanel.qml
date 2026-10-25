@@ -63,6 +63,18 @@ Item {
 
   // Track whether panel is open
   property bool isPanelOpen: false
+  property int presentationGeneration: 0
+  onIsPanelOpenChanged: {
+    presentationGeneration++;
+    if (isPanelOpen)
+      openCompletionTimer.restart();
+  }
+  onIsClosingChanged: presentationGeneration++
+  onPanelContentChanged: {
+    presentationGeneration++;
+    if (isPanelOpen)
+      openCompletionTimer.restart();
+  }
 
   // Track actual visibility (delayed until content is loaded and sized)
   property bool isPanelVisible: false
@@ -196,6 +208,7 @@ Item {
   }
 
   function open(buttonItem, buttonName) {
+    presentationGeneration++;
     // Reset immediate close flag to ensure animations work properly
     PanelService.closedImmediately = false;
     // Reset to default - fixes panel being stuck in one position
@@ -749,8 +762,13 @@ Item {
   Timer {
     id: positionTimer
     interval: 0
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
     onTriggered: {
-      if (root.isPanelOpen && !root.isClosing)
+      if (generation === root.presentationGeneration && root.isPanelOpen && !root.isClosing)
         root.setPosition();
     }
   }
@@ -758,13 +776,29 @@ Item {
   Timer {
     id: openCompletionTimer
     interval: 0
-    onTriggered: root._completeOpen()
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
+    onTriggered: {
+      if (generation === root.presentationGeneration)
+        root._completeOpen();
+    }
   }
 
   Timer {
     id: closeCompletionTimer
     interval: 0
-    onTriggered: root.finalizeClose()
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
+    onTriggered: {
+      if (generation === root.presentationGeneration && root.isClosing && root.isPanelOpen)
+        root.finalizeClose();
+    }
   }
 
   // The panel owns its deferred transition, not the nested Loader's callback
@@ -876,8 +910,13 @@ Item {
     id: opacityTrigger
     interval: Style.animationNormal * 0.5
     repeat: false
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
     onTriggered: {
-      if (root.isPanelVisible) {
+      if (generation === root.presentationGeneration && root.isPanelOpen && !root.isClosing && root.isPanelVisible) {
         root.sizeAnimationComplete = true;
       }
     }
@@ -888,8 +927,13 @@ Item {
     id: openWatchdogTimer
     interval: Style.animationNormal * 3 // 3x normal animation time
     repeat: false
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
     onTriggered: {
-      if (root.openWatchdogActive) {
+      if (generation === root.presentationGeneration && root.isPanelOpen && !root.isClosing && root.openWatchdogActive) {
         Logger.w("SmartPanel", "Open watchdog timeout - forcing panel visible state", root.objectName);
         root.openWatchdogActive = false;
         // Force completion of open sequence
@@ -906,8 +950,13 @@ Item {
     id: closeWatchdogTimer
     interval: Style.animationFast * 3 // 3x fast animation time
     repeat: false
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
     onTriggered: {
-      if (root.closeWatchdogActive && !root.closeFinalized) {
+      if (generation === root.presentationGeneration && root.isPanelOpen && root.isClosing && root.closeWatchdogActive && !root.closeFinalized) {
         Logger.w("SmartPanel", "Close watchdog timeout - forcing panel close", root.objectName);
         // Force finalization
         closeCompletionTimer.restart();

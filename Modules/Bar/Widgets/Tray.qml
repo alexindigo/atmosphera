@@ -394,6 +394,23 @@ Item {
         height: isVertical ? capsuleHeight : barHeight
         visible: modelData
         readonly property bool isHovered: root.hoveredItemIndex === index
+        property int menuRequestGeneration: 0
+        onModelDataChanged: menuRequestGeneration++
+        onVisibleChanged: menuRequestGeneration++
+
+        Timer {
+          id: menuShowTimer
+          interval: 0
+          property int generation: -1
+          property int popupGeneration: -1
+          property var trayItem: null
+          property var menuHandle: null
+          property var request: null
+          onTriggered: {
+            if (generation === trayDelegate.menuRequestGeneration && trayDelegate.visible && root.visible && trayItem === trayDelegate.modelData && trayItem && trayItem.menu === menuHandle && popupMenuWindow && popupGeneration === popupMenuWindow.presentationGeneration && !popupMenuWindow.visible && request)
+              request();
+          }
+        }
 
         // Tooltip anchor representing the visual area (for proper tooltip positioning)
         Item {
@@ -477,6 +494,7 @@ Item {
             }
           }
           onClicked: mouse => {
+            trayDelegate.menuRequestGeneration++;
             if (!modelData) {
               return;
             }
@@ -536,7 +554,12 @@ Item {
                 };
 
                 // Use Qt.callLater to ensure menu dimensions are calculated
-                Qt.callLater(calculateAndShow);
+                menuShowTimer.generation = trayDelegate.menuRequestGeneration;
+                menuShowTimer.popupGeneration = popupMenuWindow ? popupMenuWindow.requestPresentation() : -1;
+                menuShowTimer.trayItem = modelData;
+                menuShowTimer.menuHandle = modelData.menu;
+                menuShowTimer.request = calculateAndShow;
+                menuShowTimer.restart();
               } else {
                 Logger.d("Tray", "No menu available for", modelData.id, "or trayMenu not set");
               }

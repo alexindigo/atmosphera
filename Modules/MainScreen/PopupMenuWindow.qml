@@ -15,6 +15,11 @@ PanelWindow {
 
   required property ShellScreen shellScreen
   property string windowType: "popupmenu"  // Used for namespace and registration
+  property int presentationGeneration: 0
+  onVisibleChanged: presentationGeneration++
+  function requestPresentation() {
+    return ++presentationGeneration;
+  }
 
   // Content item to display (set by the popup that uses this window)
   property var popupContentItem: null
@@ -130,6 +135,7 @@ PanelWindow {
   }
 
   function close() {
+    presentationGeneration++;
     visible = false;
     BarService.popupOpen = false;
     // Call close/hide method on current content

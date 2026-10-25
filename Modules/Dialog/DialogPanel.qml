@@ -14,6 +14,7 @@ PanelWindow {
   property string dialogQuestion: ""
   property string dialogDefault: ""
   property bool responded: false
+  property int presentationGeneration: 0
   property string replyPath: ""
   property var _surveyFields: []
   property var _surveyInputs: ({})
@@ -34,6 +35,7 @@ PanelWindow {
   }
 
   function showFor(type, question, defaultText, path) {
+    presentationGeneration++;
     dialogType = type;
     dialogQuestion = question;
     dialogDefault = defaultText || "";
@@ -63,7 +65,15 @@ PanelWindow {
   Timer {
     id: focusTimer
     interval: 0
-    onTriggered: root._focusInput()
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
+    onTriggered: {
+      if (generation === root.presentationGeneration)
+        root._focusInput();
+    }
   }
 
   function _focusInput() {
@@ -86,6 +96,7 @@ PanelWindow {
   }
 
   onVisibleChanged: {
+    presentationGeneration++;
     if (!visible && !responded && replyPath) {
       writeReply("");
     }

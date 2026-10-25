@@ -36,6 +36,14 @@ Variants {
     property bool startupComplete: false
     property real currentBrightness: 0
     property bool suppressInputOSD: false
+    property int presentationGeneration: 0
+    onActiveChanged: {
+      if (!active) {
+        presentationGeneration++;
+        contentShowTimer.stop();
+        deviceRefreshTimer.stop();
+      }
+    }
 
     // Lock Key States
     property string lastLockKeyChanged: ""  // "caps", "num", "scroll", or ""
@@ -228,6 +236,9 @@ Variants {
         }
       }
 
+      presentationGeneration++;
+      contentShowTimer.stop();
+      deviceRefreshTimer.stop();
       currentOSDType = type;
 
       if (!root.active) {
@@ -244,25 +255,38 @@ Variants {
     Timer {
       id: contentShowTimer
       interval: 0
+      property int generation: -1
+      onRunningChanged: {
+        if (running)
+          generation = root.presentationGeneration;
+      }
       onTriggered: {
-        if (root.item)
+        if (generation === root.presentationGeneration && root.active && root.currentOSDType >= 0 && root.item)
           root.item.showOSD();
       }
     }
 
     function hideOSD() {
-      if (root.item?.osdItem) {
-        root.item.osdItem.hideImmediately();
-      } else if (root.active) {
-        root.active = false;
-      }
+      presentationGeneration++;
+      contentShowTimer.stop();
+      deviceRefreshTimer.stop();
+      currentOSDType = -1;
+      root.active = false;
     }
 
     Timer {
       id: deviceRefreshTimer
       interval: 0
       property int osdType: OSD.Type.Volume
-      onTriggered: root.showOSD(osdType)
+      property int generation: -1
+      onRunningChanged: {
+        if (running)
+          generation = root.presentationGeneration;
+      }
+      onTriggered: {
+        if (generation === root.presentationGeneration && root.active && root.currentOSDType === osdType)
+          root.showOSD(osdType);
+      }
     }
 
     // AudioService monitoring
@@ -567,13 +591,28 @@ Variants {
         Timer {
           id: hideTimer
           interval: Settings.data.osd.autoHideMs
-          onTriggered: osdItem.hide()
+          property int generation: -1
+          onRunningChanged: {
+            if (running)
+              generation = root.presentationGeneration;
+          }
+          onTriggered: {
+            if (generation === root.presentationGeneration && root.active && osdItem.visible)
+              osdItem.hide();
+          }
         }
 
         Timer {
           id: visibilityTimer
           interval: Style.animationNormal + 50
+          property int generation: -1
+          onRunningChanged: {
+            if (running)
+              generation = root.presentationGeneration;
+          }
           onTriggered: {
+            if (generation !== root.presentationGeneration || !root.active)
+              return;
             osdItem.visible = false;
             root.currentOSDType = -1;
             root.lastLockKeyChanged = "";
@@ -838,7 +877,14 @@ Variants {
         Timer {
           id: showDelayTimer
           interval: 30
+          property int generation: -1
+          onRunningChanged: {
+            if (running)
+              generation = root.presentationGeneration;
+          }
           onTriggered: {
+            if (generation !== root.presentationGeneration || !root.active || root.currentOSDType < 0)
+              return;
             osdItem.visible = true;
             osdItem.opacity = 1;
             osdItem.scale = 1.0;
@@ -849,10 +895,14 @@ Variants {
         function show() {
           hideTimer.stop();
           visibilityTimer.stop();
-          showDelayTimer.start();
+          showDelayTimer.restart();
         }
 
         function hide() {
+          root.presentationGeneration++;
+          contentShowTimer.stop();
+          deviceRefreshTimer.stop();
+          showDelayTimer.stop();
           hideTimer.stop();
           visibilityTimer.stop();
           osdItem.opacity = 0;
@@ -861,6 +911,8 @@ Variants {
         }
 
         function hideImmediately() {
+          showDelayTimer.stop();
+          root.presentationGeneration++;
           hideTimer.stop();
           visibilityTimer.stop();
           osdItem.opacity = 0;

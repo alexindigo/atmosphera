@@ -20,6 +20,10 @@ PopupWindow {
   property ShellScreen shellScreen: null
   property real minWidth: 120
   property real calculatedWidth: 180
+  property int presentationGeneration: 0
+  property int widthGeneration: 0
+  onVisibleChanged: presentationGeneration++
+  onAnchorItemChanged: presentationGeneration++
 
   // Explicit offset for centering on target item (computed from targetItem in openAtItem)
   property real targetOffsetX: 0
@@ -55,6 +59,7 @@ PopupWindow {
   }
 
   onModelChanged: {
+    widthGeneration++;
     widthTimer.restart();
   }
 
@@ -367,6 +372,7 @@ PopupWindow {
   // Position is calculated automatically based on bar position and shellScreen boundaries
   // Optional centerOnItem: if provided, menu will be horizontally centered on this item instead of anchorItem
   function openAtItem(item, itemScreen, centerOnItem) {
+    presentationGeneration++;
     if (!item) {
       Logger.w("NPopupContextMenu", "anchorItem is undefined, won't show menu.");
       return;
@@ -406,14 +412,27 @@ PopupWindow {
   Timer {
     id: widthTimer
     interval: 0
-    onTriggered: root.calculateWidth()
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.widthGeneration;
+    }
+    onTriggered: {
+      if (generation === root.widthGeneration)
+        root.calculateWidth();
+    }
   }
 
   Timer {
     id: anchorTimer
     interval: 0
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
     onTriggered: {
-      if (root.visible && root.anchorItem)
+      if (generation === root.presentationGeneration && root.visible && root.anchorItem)
         root.anchor.updateAnchor();
     }
   }

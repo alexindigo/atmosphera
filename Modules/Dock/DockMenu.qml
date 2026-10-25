@@ -25,6 +25,17 @@ PopupWindow {
   property bool hovered: menuHoverHandler.hovered
   property var onAppClosed: null // Callback function for when an app is closed
   property bool canAutoClose: false
+  property int presentationGeneration: 0
+  function cancelPendingPresentation() {
+    presentationGeneration++;
+    pinCloseTimer.stop();
+    closeTimer.stop();
+    gracePeriodTimer.stop();
+  }
+  onVisibleChanged: {
+    if (!visible)
+      cancelPendingPresentation();
+  }
 
   // Track which menu item is hovered
   property int hoveredItem: -1 // -1: none, otherwise the index of the item in `items`
@@ -389,6 +400,7 @@ PopupWindow {
       return;
     }
 
+    cancelPendingPresentation();
     // First hide completely
     visible = false;
 
@@ -476,11 +488,13 @@ PopupWindow {
   }
 
   function hide() {
+    cancelPendingPresentation();
     visible = false;
     resetMenuState();
   }
 
   function hideWithoutReset() {
+    cancelPendingPresentation();
     visible = false;
   }
 
@@ -506,7 +520,15 @@ PopupWindow {
   Timer {
     id: pinCloseTimer
     interval: 0
-    onTriggered: root.closeAndReset()
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
+    onTriggered: {
+      if (generation === root.presentationGeneration && root.visible)
+        root.closeAndReset();
+    }
   }
 
   function handleClose(targetToplevel) {
@@ -563,7 +585,14 @@ PopupWindow {
     id: gracePeriodTimer
     interval: 1500
     repeat: false
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
     onTriggered: {
+      if (generation !== root.presentationGeneration || !root.visible)
+        return;
       root.canAutoClose = true;
       if (!menuHoverHandler.hovered) {
         closeTimer.start();
@@ -576,8 +605,14 @@ PopupWindow {
     interval: 500
     repeat: false
     running: false
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
     onTriggered: {
-      root.hideWithoutReset();
+      if (generation === root.presentationGeneration && root.visible && root.canAutoClose && !menuHoverHandler.hovered)
+        root.hideWithoutReset();
     }
   }
 

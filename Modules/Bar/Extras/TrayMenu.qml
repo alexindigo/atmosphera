@@ -16,11 +16,17 @@ PopupWindow {
   property real anchorX
   property real anchorY
   property bool isSubMenu: false
+  property int presentationGeneration: 0
+  onVisibleChanged: {
+    if (!visible)
+      presentationGeneration++;
+  }
   property string widgetSection: ""
   property int widgetIndex: -1
 
   // Derive menu from trayItem (only used for non-submenus)
   readonly property QsMenuHandle menu: isSubMenu ? null : (trayItem ? trayItem.menu : null)
+  onMenuChanged: presentationGeneration++
 
   // Compute if current tray item is pinned
   readonly property bool isPinned: {
@@ -162,6 +168,13 @@ PopupWindow {
   }
 
   function showAt(item, x, y) {
+    presentationGeneration++;
+    showTimer.stop();
+    anchorTimer.stop();
+    _showAt(item, x, y);
+  }
+
+  function _showAt(item, x, y) {
     if (!item) {
       Logger.w("TrayMenu", "anchorItem is undefined, won't show menu.");
       return;
@@ -197,19 +210,33 @@ PopupWindow {
     property var item: null
     property real menuX: 0
     property real menuY: 0
-    onTriggered: root.showAt(item, menuX, menuY)
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
+    onTriggered: {
+      if (generation === root.presentationGeneration && item)
+        root._showAt(item, menuX, menuY);
+    }
   }
 
   Timer {
     id: anchorTimer
     interval: 0
+    property int generation: -1
+    onRunningChanged: {
+      if (running)
+        generation = root.presentationGeneration;
+    }
     onTriggered: {
-      if (root.visible && root.anchorItem)
+      if (generation === root.presentationGeneration && root.visible && root.anchorItem)
         root.anchor.updateAnchor();
     }
   }
 
   function hideMenu() {
+    presentationGeneration++;
     showTimer.stop();
     anchorTimer.stop();
     visible = false;

@@ -105,6 +105,7 @@ SmartPanel {
 
   // Internal reference to the content (set when panel content loads)
   property var _settingsContent: null
+  property int navigationGeneration: 0
 
   // Override toggle to handle window mode
   function toggle(buttonItem, buttonName) {
@@ -128,6 +129,7 @@ SmartPanel {
     }
 
     // Panel mode: replicate SmartPanel.open() logic
+    root.presentationGeneration++;
     if (!buttonItem && buttonName) {
       if (typeof buttonName === "object" && buttonName.x !== undefined && buttonName.y !== undefined) {
         root.buttonItem = null;
@@ -158,6 +160,8 @@ SmartPanel {
 
   // Open to a specific tab and optionally a subtab
   function openToTab(tab, subTab, buttonItem, buttonName) {
+    root.navigationGeneration++;
+    navigationTimer.stop();
     requestedTab = tab !== undefined ? tab : SettingsPanel.Tab.General;
     requestedSubTab = subTab !== undefined ? subTab : -1;
     if (isPanelOpen && _settingsContent) {
@@ -175,6 +179,7 @@ SmartPanel {
         _settingsContent.initialize();
         const entry = requestedEntry;
         requestedEntry = null;
+        root.navigationGeneration++;
         navigationTimer.entry = entry;
         navigationTimer.restart();
       } else {
@@ -189,7 +194,7 @@ SmartPanel {
   }
 
   function _navigateToEntry(entry) {
-    if (root.isPanelOpen && root._settingsContent)
+    if (root.isPanelOpen && !root.isClosing && root._settingsContent)
       root._settingsContent.navigateToResult(entry);
   }
 
@@ -197,7 +202,20 @@ SmartPanel {
     id: navigationTimer
     interval: 0
     property var entry: null
-    onTriggered: root._navigateToEntry(entry)
+    property int generation: -1
+    property int requestGeneration: -1
+    property var content: null
+    onRunningChanged: {
+      if (running) {
+        generation = root.presentationGeneration;
+        requestGeneration = root.navigationGeneration;
+        content = root._settingsContent;
+      }
+    }
+    onTriggered: {
+      if (generation === root.presentationGeneration && requestGeneration === root.navigationGeneration && content === root._settingsContent)
+        root._navigateToEntry(entry);
+    }
   }
 
   // Scroll functions - delegate to content
