@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Widgets
 
 // Simple context menu PopupWindow (similar to TrayMenu)
 // Designed to be rendered inside a PopupMenuWindow for click-outside-to-close
@@ -24,8 +25,13 @@ PopupWindow {
   property int widthGeneration: 0
   onVisibleChanged: {
     presentationGeneration++;
-    if (visible)
+    if (visible) {
+      if (!requestAnchor.armed)
+        requestAnchor.request(root.anchorItem);
       root.updateAnchor();
+    } else {
+      requestAnchor.cancel();
+    }
   }
   onAnchorItemChanged: {
     presentationGeneration++;
@@ -43,6 +49,14 @@ PopupWindow {
   readonly property real barHeight: Style.getBarHeightForScreen(shellScreen?.name)
 
   signal triggered(string action, var item)
+  signal presentationInvalidated
+  NPresentationAnchor {
+    id: requestAnchor
+    onInvalidated: {
+      root.close();
+      root.presentationInvalidated();
+    }
+  }
 
   implicitWidth: calculatedWidth
   implicitHeight: Math.min(600, flickable.contentHeight + Style.margin2S)
@@ -381,6 +395,9 @@ PopupWindow {
   // Optional centerOnItem: if provided, menu will be horizontally centered on this item instead of anchorItem
   function openAtItem(item, itemScreen, centerOnItem) {
     presentationGeneration++;
+    requestAnchor.request(centerOnItem || item, undefined, item);
+    if (!requestAnchor.valid)
+      return;
     if (!item) {
       Logger.w("NPopupContextMenu", "anchorItem is undefined, won't show menu.");
       return;
@@ -446,6 +463,7 @@ PopupWindow {
   }
 
   function close() {
+    requestAnchor.cancel();
     visible = false;
   }
 

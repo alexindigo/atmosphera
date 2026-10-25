@@ -71,6 +71,13 @@ PanelWindow {
     }
   }
 
+  Connections {
+    target: trayMenuLoader.item
+    function onPresentationInvalidated() {
+      root.close();
+    }
+  }
+
   // Dynamic context menu - created as child of this window (Top layer) so input works correctly
   // Used for items in other windows like desktop widgets (bottom layer)
   NPopupContextMenu {
@@ -78,6 +85,7 @@ PanelWindow {
     visible: false
     shellScreen: root.shellScreen
     minWidth: 180
+    onPresentationInvalidated: root.close()
 
     onTriggered: (action, item) => {
       if (root.dynamicMenuCallback) {

@@ -18,16 +18,33 @@ PopupWindow {
   property bool isSubMenu: false
   property int presentationGeneration: 0
   property bool _showRequested: false
+  signal presentationInvalidated
+  NPresentationAnchor {
+    id: requestAnchor
+    onInvalidated: {
+      root.hideMenu();
+      root.presentationInvalidated();
+    }
+  }
+  onTrayItemChanged: {
+    if (root._showRequested && !root.isSubMenu && root.trayItem !== requestAnchor.identity) {
+      root.hideMenu();
+      root.presentationInvalidated();
+    }
+  }
   function _queueRequestedShow() {
     if (root._showRequested && showTimer.item)
       showTimer.restart();
   }
   onVisibleChanged: {
     if (!visible) {
+      requestAnchor.cancel();
       root._showRequested = false;
       presentationGeneration++;
       showTimer.stop();
       anchorTimer.stop();
+    } else if (root.isSubMenu && !requestAnchor.armed) {
+      requestAnchor.request(root.anchorItem);
     }
   }
   property string widgetSection: ""
@@ -184,6 +201,9 @@ PopupWindow {
     showTimer.stop();
     anchorTimer.stop();
     root._showRequested = true;
+    requestAnchor.request(item, root.isSubMenu ? undefined : root.trayItem);
+    if (!requestAnchor.valid)
+      return;
     showTimer.item = item;
     showTimer.menuX = x;
     showTimer.menuY = y;
@@ -191,8 +211,7 @@ PopupWindow {
   }
 
   function _showAt(item, x, y) {
-    if (!item) {
-      Logger.w("TrayMenu", "anchorItem is undefined, won't show menu.");
+    if (!requestAnchor.valid || item !== requestAnchor.anchorItem) {
       return;
     }
 
@@ -233,7 +252,7 @@ PopupWindow {
         generation = root.presentationGeneration;
     }
     onTriggered: {
-      if (generation === root.presentationGeneration && root._showRequested && item)
+      if (generation === root.presentationGeneration && root._showRequested && requestAnchor.valid && item === requestAnchor.anchorItem)
         root._showAt(item, menuX, menuY);
     }
   }
@@ -247,12 +266,13 @@ PopupWindow {
         generation = root.presentationGeneration;
     }
     onTriggered: {
-      if (generation === root.presentationGeneration && root.visible && root.anchorItem)
+      if (generation === root.presentationGeneration && root.visible && requestAnchor.valid && root.anchorItem)
         root.anchor.updateAnchor();
     }
   }
 
   function hideMenu() {
+    requestAnchor.cancel();
     root._showRequested = false;
     presentationGeneration++;
     showTimer.stop();
@@ -330,6 +350,7 @@ PopupWindow {
 
         delegate: Rectangle {
           id: entry
+          readonly property var presentationIdentity: modelData
           required property var modelData
 
           Layout.preferredWidth: parent.width

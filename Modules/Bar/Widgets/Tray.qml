@@ -450,6 +450,7 @@ Item {
         // Tooltip anchor representing the visual area (for proper tooltip positioning)
         Item {
           id: tooltipAnchor
+          readonly property var presentationIdentity: trayDelegate.modelData
           width: capsuleHeight
           height: capsuleHeight
           x: Style.pixelAlignCenter(parent.width, width)

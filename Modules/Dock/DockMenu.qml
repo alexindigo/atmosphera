@@ -26,6 +26,10 @@ PopupWindow {
   property var onAppClosed: null // Callback function for when an app is closed
   property bool canAutoClose: false
   property int presentationGeneration: 0
+  NPresentationAnchor {
+    id: requestAnchor
+    onInvalidated: root.hide()
+  }
   function cancelPendingPresentation() {
     presentationGeneration++;
     pinCloseTimer.stop();
@@ -403,6 +407,9 @@ PopupWindow {
     cancelPendingPresentation();
     // First hide completely
     visible = false;
+    requestAnchor.request(item, toplevelData && toplevelData.appId !== undefined ? toplevelData.appId : undefined);
+    if (!requestAnchor.valid)
+      return;
 
     // Then set up new data
     anchorItem = item;
@@ -488,12 +495,14 @@ PopupWindow {
   }
 
   function hide() {
+    requestAnchor.cancel();
     cancelPendingPresentation();
     visible = false;
     resetMenuState();
   }
 
   function hideWithoutReset() {
+    requestAnchor.cancel();
     cancelPendingPresentation();
     visible = false;
   }
