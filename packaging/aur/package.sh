@@ -1,0 +1,56 @@
+package() {
+  cd "$srcdir/$_gitname"
+
+  install -dm755 "$pkgdir/etc/xdg/quickshell/atmosphera"
+  cp -r ./* "$pkgdir/etc/xdg/quickshell/atmosphera/"
+  # Bake the real package version into the installed tree (About panel reads it)
+  echo "$pkgver" > "$pkgdir/etc/xdg/quickshell/atmosphera/VERSION"
+  # Exclude dev tooling and temp files from the installed tree
+  rm -rf "$pkgdir/etc/xdg/quickshell/atmosphera/dev" "$pkgdir/etc/xdg/quickshell/atmosphera/Scripts/dev"
+
+  # Bundled per-process lock screen (the shell spawns it as
+  # `qs -c atmosphera-lockscreen`): sibling config whose symlinks into the
+  # main tree let the shared lock UIs render with fresh per-process
+  # singletons.
+  install -dm755 "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen"
+  install -Dm644 Quickshell/atmosphera-lockscreen/shell.qml "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/shell.qml"
+  for d in Assets Bindings Commons Configs Helpers Modules Services Widgets builtin; do
+    ln -sfn "../atmosphera/$d" "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/$d"
+  done
+  rm -rf "$pkgdir/etc/xdg/quickshell/atmosphera/tmp"
+
+  # Install dispatcher to PATH (handlers resolved via SELF_DIR auto-detect)
+  install -Dm755 Scripts/bash/atmosphera "$pkgdir/usr/local/bin/atmosphera"
+  # Multi-call symlinks: invoke as atmoshera-session etc. for backward compat
+  ln -sf atmosphera "$pkgdir/usr/local/bin/atmosphera-session"
+  ln -sf atmosphera "$pkgdir/usr/local/bin/atmosphera-settings"
+  ln -sf atmosphera "$pkgdir/usr/local/bin/atmosphera-lock"
+
+  # xdg-desktop-portal backend manifest + niri backend preference. The
+  # preference lives in /etc/xdg so it wins over niri's own
+  # /usr/share/xdg-desktop-portal/niri-portals.conf (default=gnome;gtk;)
+  # without owning the same path.
+  install -Dm644 Portals/atmosphera.portal "$pkgdir/usr/share/xdg-desktop-portal/portals/atmosphera.portal"
+  install -Dm644 Portals/niri-portals.conf "$pkgdir/etc/xdg/xdg-desktop-portal/niri-portals.conf"
+
+  # keyd reload service (triggered via systemd D-Bus StartUnit by the shell)
+  install -Dm644 Scripts/systemd/atmosphera-keyd-reload.service "$pkgdir/usr/lib/systemd/system/atmosphera-keyd-reload.service"
+  # xremap user unit (env-gated by the shell via the user manager)
+  install -Dm644 Scripts/systemd/xremap-atmosphera.service "$pkgdir/usr/lib/systemd/user/xremap-atmosphera.service"
+  # uinput access for the input group (xremap's virtual keyboard output)
+  install -Dm644 Scripts/udev/80-atmosphera-uinput.rules "$pkgdir/usr/lib/udev/rules.d/80-atmosphera-uinput.rules"
+  # polkit: allow active sessions/wheel to start that one service, no prompt
+  install -Dm644 Scripts/polkit/atmosphera-keyd.rules "$pkgdir/usr/share/polkit-1/rules.d/atmosphera-keyd.rules"
+
+  # app.atmosphera.HwController — D-Bus-faced privileged helper (turbo toggle)
+  install -Dm755 Scripts/python/hw-controller.py "$pkgdir/usr/lib/atmosphera/hw-controller"
+  install -Dm644 Scripts/systemd/app.atmosphera.HwController.service "$pkgdir/usr/lib/systemd/system/app.atmosphera.HwController.service"
+  install -Dm644 Scripts/dbus/app.atmosphera.HwController.service "$pkgdir/usr/share/dbus-1/system-services/app.atmosphera.HwController.service"
+  install -Dm644 Scripts/dbus/app.atmosphera.HwController.conf "$pkgdir/etc/dbus-1/system.d/app.atmosphera.HwController.conf"
+  install -Dm644 Scripts/polkit/app.atmosphera.hwcontroller.policy "$pkgdir/usr/share/polkit-1/actions/app.atmosphera.hwcontroller.policy"
+
+  # Supervised shell as a systemd user service (DMS pattern); activated per
+  # compositor via `atmosphera setup <wm>` (add-wants), never force-enabled.
+  install -Dm644 Scripts/systemd/atmosphera.service "$pkgdir/usr/lib/systemd/user/atmosphera.service"
+  install -Dm644 Scripts/systemd/hyprland-session.target "$pkgdir/usr/lib/systemd/user/hyprland-session.target"
+}

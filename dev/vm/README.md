@@ -1,55 +1,30 @@
-# Dev VM loop
+# Dev VM package
 
-## Setup (one-time)
+Load the VM access skill and use the task's assigned VM and disk-backed
+workspace. Keep all builds, installation checks and runtime tests in that guest.
 
-Requires `arch-niri-vm-dev` skill loaded. The VM must be patched for
-virtio-fs once (see skill). SSH key `~/.ssh/id_vm-agent` must be deployed.
+`aur/PKGBUILD` is a local-checkout adapter for the repo-owned AUR recipe. It
+sources `packaging/aur/atmosphera-git/PKGBUILD`, including its shared dependencies,
+package function and version calculation. Its install hook links to the same
+canonical hook. There is no second dependency list or installed file list to
+keep in sync. See [AUR packaging](../../DEVELOPMENT.md#aur-packaging).
 
-## Full cycle
-
-From host:
-
-```bash
-# Revert, boot, wait-ssh
-virsh -c qemu:///system snapshot-revert arch-niri --snapshotname niri-base
-virsh -c qemu:///system start arch-niri
-# ... wait for SSH ...
-
-# In-VM: mount, build, install
-ssh tester@$IP '
-  sudo pacman -Syu --noconfirm
-  sudo modprobe virtiofs
-  sudo mkdir -p /mnt/hostshare
-  sudo mount -t virtiofs hostshare /mnt/hostshare
-  mkdir -p ~/build
-'
-scp dev/vm/aur/PKGBUILD tester@$IP:~/build/PKGBUILD
-ssh tester@$IP '
-  cd ~/build
-  makepkg -s --noconfirm
-  sudo pacman -U --noconfirm atmosphera-git-*.pkg.tar.zst
-'
-```
-
-## Quick iterate (no revert)
-
-Skip snapshot revert. Remount if needed. Rebuild, reinstall:
+Deliver the repository layout to the guest, rather than copying the adapter
+alone. In the assigned VM, keep outputs in a separate disk-backed build directory:
 
 ```bash
-ssh tester@$IP 'cd ~/build && makepkg -f --noconfirm && sudo pacman -U --noconfirm atmosphera-git-*.pkg.tar.zst'
+# Set these to the task's guest checkout and disk-backed build directory first.
+: "${CHECKOUT:?guest checkout required}" "${BUILD:?guest build directory required}"
+mkdir -p "$BUILD/tmp"
+export TMPDIR="$BUILD/tmp"
+export ATMOSPHERA_CHECKOUT="$CHECKOUT" ATMOSPHERA_REF="${ATMOSPHERA_REF:-main}"
+export BUILDDIR="$BUILD" PKGDEST="$BUILD" SRCDEST="$BUILD"
+cd "$CHECKOUT/dev/vm/aur"
+makepkg -s --noconfirm
 ```
 
-## Drift guard
-
-```bash
-diff \
-  <(grep -v '^source=\|^sha256sums=\|^_ref=' dev/vm/aur/PKGBUILD) \
-  <(grep -v '^source=\|^sha256sums=' ~/Projects/aur-atmosphera-git/PKGBUILD)
-# Must produce no output.
-```
-
-## Teardown
-
-```bash
-virsh -c qemu:///system destroy arch-niri
-```
+`ATMOSPHERA_CHECKOUT` defaults to `/mnt/hostshare`; `ATMOSPHERA_REF` defaults to
+`main`. Git sources build **committed state**. Use the task branch as the ref
+when testing unpublished commits. Install the resulting package with `pacman -U`
+in the assigned guest when the task calls for an install test; follow that VM's
+shell lifecycle procedure for runtime checks.

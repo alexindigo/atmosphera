@@ -15,6 +15,98 @@ release version. Compatibility and changelog identities use only the release
 part. Package-written build identities such as `0.8.0.r12.gabc1234` (including
 pkgrel suffixes) remain supported; they are not bumped API versions.
 
+## AUR packaging
+
+Edit AUR recipes in **this repository**, under `packaging/aur/`, rather than in
+the AUR clones. `metadata.sh` owns dependencies/optional dependencies/provides;
+`package.sh` owns the installed file set for stable, -git and the VM dev package.
+The two `PKGBUILD` entry points own only variant-specific metadata and sources.
+Install hooks live alongside them. The publisher inlines the shared fragments
+so AUR receives standalone PKGBUILDs with no dependency on the repo layout.
+
+On a `vMAJOR.MINOR.PATCH` tag, `update-aur-package.yml` checks out that tag's
+recipes, fills the stable version/pkgrel (1), refreshes its archive checksum and
+`.SRCINFO`, and publishes both AUR packages with the existing AUR key. The -git
+recipe retains AUR's current pkgver/pkgrel when comparing; recipe or install-hook
+changes bump its pkgrel once, while unchanged recipes are skipped. Manual runs
+require an explicit release tag. Both recipes are prepared before either is
+pushed. Publication mode builds both recipes in private directories and commits
+all changed recipes before pushing either. Build checks use `makepkg --nodeps`
+because this QML/data package needs no dependency bootstrap to validate its
+archive; generated VCS build versions never rewrite publication counters.
+A remote failure fails the job, and an always-run summary records each repo's
+local gate and publication status. AUR has no cross-repository atomic push.
+Rerunning the same release against fresh clones skips an already-published
+stable recipe and publishes only missing changes; identical -git recipes do not
+bump pkgrel again. Reusing clean clones with an unpublished local commit is also
+supported: that commit is pushed rather than regenerated.
+
+Publication policy is loaded from the repository's maintained default branch;
+only recipe data comes from the selected tag. Replaying a tag does not execute
+its older publisher. Before either recipe is modified, pacman's `vercmp` checks
+the requested stable identity (`tag version`, pkgrel 1) against both the clean
+local commit and, in publication mode, fetched upstream `.SRCINFO`. An older
+version, epoch or same-version higher published pkgrel is rejected for both
+repositories. Equal full identities keep the idempotent retry behavior above.
+Generated -git versions are preserved, not compared as stable release versions.
+
+All release runs share one serialized concurrency group with `queue: max`:
+GitHub retains up to 100 pending runs instead of replacing the pending release.
+The platform cancels additional runs when that queue is full; inspect canceled
+runs and replay the intended tag via workflow dispatch after capacity returns.
+Waiting order is not guaranteed to match version order, so the version guard
+also applies to queued runs. A VM lint/test validates the configuration and
+publisher, not GitHub's live scheduler. Historical workflow definitions remain
+historical; these protections apply to runs using the updated workflow.
+
+Publication uses separate privilege domains. Root owns the AUR transport key
+and protected Git clones; `--push` requires an explicit keyless `--build-user`
+and that account's disk-backed `--worker-root`. All tag-derived recipe evaluation,
+checksum updates, metadata generation and build/archive checks run under that
+UID with a scrubbed environment, cleared capabilities/groups and no-new-privileges.
+Only bounded contents of the three recipe files cross back over JSON; the
+publisher never adopts a builder's Git configuration, hooks or file paths.
+Both preparations/builds complete before publisher commits, and both commits
+complete before authenticated pushes. Initial workflow reads use public HTTPS.
+The workflow removes its root-owned mode-600 key when the publication step exits.
+
+Every publisher subprocess has a finite deadline: local/metadata commands 30 s,
+network/checksum commands 180 s, builds 600 s, and pushes 180 s by default.
+Workers have an enclosing finite budget derived from those limits. The positive
+finite CLI timeout options allow explicit task-specific sizing; `--push-timeout`
+can bound a stalled receive independently of build time. Timeout tears down only
+the invocation's owned process group and reports through the normal summary;
+a timed-out push remains remote-state-unconfirmed, never presumed unpublished.
+
+The maintained `packaging/aur/aur-known-hosts` file pins AUR's Ed25519 server
+identity against the fingerprints published at https://aur.archlinux.org/;
+its comment records the source URL and UTC check date. The workflow installs
+that trust file, never unchecked ssh-keyscan output, and forces strict checking
+against only that file/algorithm. Publication validates `--known-hosts` against
+the maintained pin before fetch/preparation/push; mismatches explain the failed
+job summary. Review a fingerprint rotation against AUR's official page before
+changing the committed trust entry.
+
+Subprocess errors identify the step and exit status or deadline with a bounded
+stderr tail (ordinary commands: 12 lines / 1 KiB; outer workers: 16 lines / 2 KiB
+to retain nested failure reasons). Full argv, stdout protocol data and embedded
+worker source are never formatted into those errors. The same bounded reason
+is included in the per-repository job summary; push uncertainty is preserved.
+
+For preparation without commits or pushes, run inside an Arch test VM with
+`pacman-contrib` and `base-devel`, using **clean scratch clones** of both AUR repos:
+
+```sh
+python packaging/aur/sync.py v0.9.0 /path/to/scratch/atmosphera /path/to/scratch/atmosphera-git
+```
+
+The VM adapter `dev/vm/aur/PKGBUILD` sources the same -git recipe and overrides
+only the source URL. `ATMOSPHERA_CHECKOUT` defaults to `/mnt/hostshare`;
+`ATMOSPHERA_REF` defaults to `main`. It builds committed state from that local
+checkout. Its install hook is a symlink to the canonical hook. Keep the repo
+layout intact and run `makepkg` in `dev/vm/aur/`; use `BUILDDIR` and `PKGDEST`
+to put build outputs elsewhere on the guest's disk. Do not copy the adapter alone.
+
 ## Devcontainer
 
 A devcontainer is provided at `.devcontainer/` for consistent development tooling.
