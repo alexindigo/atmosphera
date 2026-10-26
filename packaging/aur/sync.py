@@ -4,6 +4,7 @@
 import argparse
 import base64
 import contextlib
+import hashlib
 import json
 import math
 import os
@@ -23,7 +24,34 @@ ROOT = Path(__file__).resolve().parent
 TIMEOUTS = {"local": 30.0, "network": 180.0, "build": 600.0}
 
 
-def run(*args, cwd, env=None, timeout=None, input=None):
+class CommandError(RuntimeError):
+    """A bounded diagnostic, deliberately containing no command argv."""
+
+    def __init__(self, step, *, status=None, timeout=None, tail=""):
+        reason = f"timed out after {timeout} seconds" if timeout is not None else f"exited with status {status}"
+        super().__init__(f"{step} {reason}\nstderr tail:\n{tail or '(no stderr output)'}")
+
+
+def command_step(args):
+    command = Path(args[0]).name
+    if command == "git" and len(args) > 1 and args[1] in (
+            "init", "add", "commit", "fetch", "push", "show", "status", "rev-parse", "merge-base"):
+        return f"git {args[1]}"
+    if command == "makepkg":
+        return "makepkg metadata" if "--printsrcinfo" in args else "makepkg package list" if "--packagelist" in args else "makepkg build"
+    return command
+
+
+def stderr_tail(log, lines=12, size=1024):
+    log.seek(0, os.SEEK_END)
+    log.seek(max(0, log.tell() - 8192))
+    text = log.read().decode("utf-8", errors="replace")
+    text = re.sub(r"\x1b\[[0-9;]*[A-Za-z]", "", text)
+    return "\n".join(text.splitlines()[-lines:])[-size:]
+
+
+def run(*args, cwd, env=None, timeout=None, input=None, step=None, tail_lines=12, tail_bytes=1024):
+    step = step or command_step(args)
     if timeout is None:
         category = "local"
         if args[0] == "updpkgsums" or (args[0] == "git" and args[1] in ("clone", "fetch", "push")):
@@ -31,34 +59,64 @@ def run(*args, cwd, env=None, timeout=None, input=None):
         elif args[0] == "makepkg" and "--printsrcinfo" not in args and "--packagelist" not in args:
             category = "build"
         timeout = TIMEOUTS[category]
-    process = subprocess.Popen(args, cwd=cwd, text=True, stdout=subprocess.PIPE,
-                               stdin=subprocess.PIPE if input is not None else subprocess.DEVNULL,
-                               env=env, start_new_session=True)
-    try:
-        output, _ = process.communicate(input=input, timeout=timeout)
-    except subprocess.TimeoutExpired:
-        # Only the invocation's own group, including Git's SSH/receive children.
-        for sig in (signal.SIGTERM, signal.SIGKILL):
-            try:
-                os.killpg(process.pid, sig)
-            except ProcessLookupError:
-                pass
-            try:
-                output, _ = process.communicate(timeout=3)
-                break
-            except subprocess.TimeoutExpired:
-                continue
-        else:
-            process.stdout.close()
-            if process.stdin:
-                process.stdin.close()
-            raise subprocess.TimeoutExpired(args, timeout)
-        print(output, file=sys.stderr, flush=True)
-        raise subprocess.TimeoutExpired(args, timeout, output=output)
-    if process.returncode:
-        print(output, file=sys.stderr)
-        raise subprocess.CalledProcessError(process.returncode, args, output=output)
-    return output
+    # Stderr remains disk-backed. Failures expose only its bounded tail, never
+    # stdout protocol data or Python's raw argv-bearing subprocess exceptions.
+    with tempfile.TemporaryFile(mode="w+b") as errors:
+        try:
+            process = subprocess.Popen(args, cwd=cwd, text=True, stdout=subprocess.PIPE, stderr=errors,
+                                       stdin=subprocess.PIPE if input is not None else subprocess.DEVNULL,
+                                       env=env, start_new_session=True)
+        except OSError as error:
+            raise CommandError(step, status="not started", tail=error.strerror) from None
+        try:
+            output, _ = process.communicate(input=input, timeout=timeout)
+        except subprocess.TimeoutExpired:
+            # Only the invocation's own group, including Git's SSH/receive children.
+            for sig in (signal.SIGTERM, signal.SIGKILL):
+                try:
+                    os.killpg(process.pid, sig)
+                except ProcessLookupError:
+                    pass
+                try:
+                    process.communicate(timeout=3)
+                    break
+                except subprocess.TimeoutExpired:
+                    continue
+            else:
+                process.stdout.close()
+                if process.stdin:
+                    process.stdin.close()
+            raise CommandError(step, timeout=timeout, tail=stderr_tail(errors, tail_lines, tail_bytes)) from None
+        if process.returncode:
+            raise CommandError(step, status=process.returncode, tail=stderr_tail(errors, tail_lines, tail_bytes))
+        errors.seek(0)
+        # Preserve successful progress logs without buffering them in memory.
+        with contextlib.redirect_stdout(sys.stderr):
+            for line in errors:
+                print(line.decode("utf-8", errors="replace"), end="")
+        return output
+
+
+def host_key(path):
+    with os.fdopen(os.open(path, os.O_RDONLY | os.O_NOFOLLOW), "rb") as source:
+        if not stat.S_ISREG(os.fstat(source.fileno()).st_mode):
+            raise ValueError("AUR known_hosts must be a regular file")
+        text = source.read(8193).decode("utf-8")
+    entries = [line.split() for line in text.splitlines() if line.strip() and not line.lstrip().startswith("#")]
+    if len(text) > 8192 or len(entries) != 1 or len(entries[0]) != 3 or entries[0][:2] != ["aur.archlinux.org", "ssh-ed25519"]:
+        raise ValueError("AUR known_hosts must contain exactly the pinned aur.archlinux.org Ed25519 entry")
+    return base64.b64decode(entries[0][2], validate=True)
+
+
+def verify_host_keys(path, account):
+    pinned = ROOT / "aur-known-hosts"
+    protected_path(pinned, account)
+    protected_path(path.absolute(), account)
+    expected, observed = host_key(pinned), host_key(path)
+    fingerprint = lambda key: "SHA256:" + base64.b64encode(hashlib.sha256(key).digest()).decode().rstrip("=")
+    if observed != expected:
+        raise ValueError(f"AUR host key mismatch: expected {fingerprint(expected)}; got {fingerprint(observed)}; publication not attempted")
+    print(f"AUR host key verified: {fingerprint(expected)}", flush=True)
 
 
 def field(text, name):
@@ -266,6 +324,8 @@ def worker(action, name, data, args, account):
                  "--clear-groups", "--no-new-privs", "--inh-caps=-all", "--ambient-caps=-all",
                  "--bounding-set=-all", sys.executable, "-I", "-c", program, "--worker",
                  cwd=Path("/"), env=env, input=json.dumps(request),
+                 step=f"{name}: {action} worker",
+                 tail_lines=16, tail_bytes=2048,
                  timeout=TIMEOUTS["build"] + 2 * TIMEOUTS["network"] + 10 * TIMEOUTS["local"])
     return json.loads(output)
 
@@ -378,6 +438,8 @@ def main():
                         help="selected release recipes; publisher policy remains in this script")
     parser.add_argument("--build-user", help="keyless account used for all tag-derived commands")
     parser.add_argument("--worker-root", type=Path, help="disk-backed scratch owned by the keyless account")
+    parser.add_argument("--known-hosts", type=Path, default=ROOT / "aur-known-hosts",
+                        help="publisher SSH trust file, checked against maintained AUR pins before publication")
     parser.add_argument("--local-timeout", type=float, default=30)
     parser.add_argument("--network-timeout", type=float, default=180)
     parser.add_argument("--build-timeout", type=float, default=600)
@@ -400,10 +462,12 @@ def main():
         parser.error("AUR clones must be different directories")
     states = {name: ["not started", "not attempted"] for name, _ in destinations}
     summary_safe = not args.push and os.geteuid() != 0
+    failure = None
     try:
         if args.push:
             args.account = build_account(args, destinations)
             summary_safe = True
+            verify_host_keys(args.known_hosts, args.account)
         elif os.geteuid() == 0:
             raise ValueError("recipe preparation must run as an unprivileged account")
         for name, directory in destinations:
@@ -415,9 +479,14 @@ def main():
             for name, directory in destinations:
                 run("git", "fetch", "origin", cwd=directory)
         publish(args, destinations, states)
+    except (OSError, ValueError, KeyError, CommandError) as error:
+        failure = str(error)
+        raise
     finally:
         summary = f"## AUR recipe sync — {args.tag}\n\n| Package | Local gate | Publication |\n|---|---|---|\n"
         summary += "".join(f"| {name} | {local} | {remote} |\n" for name, (local, remote) in states.items())
+        if failure:
+            summary += f"\nFailure:\n\n````text\n{failure}\n````\n"
         print(summary, flush=True)
         if args.summary and summary_safe:
             args.summary.write_text(summary)
@@ -426,5 +495,5 @@ def main():
 if __name__ == "__main__":
     try:
         main()
-    except (OSError, ValueError, KeyError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
+    except (OSError, ValueError, KeyError, CommandError) as error:
         sys.exit(f"AUR sync FAILED: {error}. Check the log for any packages already published.")

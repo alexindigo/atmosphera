@@ -79,6 +79,8 @@ def publish(recipes, directories, label, success=True, tag='v0.9.0', extra=()):
                              text=True, capture_output=True, timeout=600)
     (WORK / (label + '.log')).write_text(result.stdout + result.stderr)
     assert (result.returncode == 0) == success, (label, result.returncode, result.stdout, result.stderr)
+    if success:
+        assert 'AUR host key verified: SHA256:RFzBCUItH9LZS0cKB5UE6ceAYhBD5C8GeOBip8Z11+4' in result.stdout
     assert summary.exists(), label
     (WORK / (label + '-summary.md')).write_text(summary.read_text())
     return result.stdout, summary.read_text()
@@ -203,7 +205,8 @@ def refused(recipes, remotes, directories, label, tag):
     assert [run('git', 'rev-parse', 'HEAD', cwd=d) for d in directories] == local
     assert [run('git', 'diff', 'HEAD', cwd=d) for d in directories] == trees == ['', '']
     assert all(not run('git', 'status', '--porcelain', cwd=d) for d in directories)
-    assert 'prepared' not in summary and 'not attempted' in summary
+    state_table = summary.split('\nFailure:', 1)[0]
+    assert 'prepared' not in state_table and 'not attempted' in state_table
     print(f'PASS: {label} refuses before either recipe changes; both remotes unchanged', flush=True)
 
 
@@ -309,4 +312,54 @@ assert not cmdline.exists() or not cmdline.read_bytes()
     push_timeout_seconds=2, failure_after_receive_seconds=time.time()-pidfile.stat().st_mtime,
     remote_heads_unchanged=True, summary=summary), indent=2))
 print('PASS: stalled scratch receive fails within push deadline; unconfirmed summary and no surviving hook', flush=True)
+
+# The matching committed trust entry gates all successful publications above.
+# A different real SSH public key must fail before preparation or receive.
+remotes, directories = seed('host-key-mismatch')
+before = heads(remotes)
+received = PRIVATE / 'unexpected-host-key-receive'
+for remote in remotes:
+    hook = remote / 'hooks/pre-receive'
+    hook.write_text('#!/bin/sh\nprintf attempted > ' + shlex.quote(str(received)) + '\n')
+    hook.chmod(0o755)
+substitute = PRIVATE / 'substitute-host'
+run('ssh-keygen', '-q', '-t', 'ed25519', '-N', '', '-f', substitute)
+key_type, key_blob = (PRIVATE / 'substitute-host.pub').read_text().split()[:2]
+known_hosts = PRIVATE / 'substitute-known-hosts'
+known_hosts.write_text(f'aur.archlinux.org {key_type} {key_blob}\n')
+out, summary = publish(recipes, directories, 'host-key-mismatch', success=False,
+                       extra=('--known-hosts', str(known_hosts)))
+assert 'AUR host key mismatch' in summary and 'expected SHA256:RFzBCUItH9LZS0cKB5UE6ceAYhBD5C8GeOBip8Z11+4' in summary
+assert 'Publishing ' not in out and not received.exists() and heads(remotes) == before
+assert all(not run('git', 'status', '--porcelain', cwd=d) for d in directories)
+assert summary.split('\nFailure:', 1)[0].count('not attempted') == 2
+print('PASS: pinned AUR key permits publication; substituted host key refuses before any push and explains summary', flush=True)
+
+def diagnostic_case(label, commands, options, expected):
+    candidate = WORK / (label + '-recipes')
+    shutil.copytree(recipes, candidate)
+    recipe = candidate / 'atmosphera-git/PKGBUILD'
+    recipe.write_text(recipe.read_text() + '\n' + commands)
+    remotes, directories = seed(label)
+    before = heads(remotes)
+    _, summary = publish(candidate, directories, label, success=False, extra=options)
+    text = (WORK / (label + '.log')).read_text()
+    assert 'atmosphera-git: prepare worker exited with status 1' in text
+    assert 'stderr tail:' in text and expected in text and expected in summary
+    assert len(text) < 12000 and len(summary) < 6000, (len(text), len(summary))
+    for embedded in ('def worker_main()', 'program = f"__file__', '--bounding-set=-all', "Command '("):
+        assert embedded not in text, embedded
+    assert heads(remotes) == before and summary.split('\nFailure:', 1)[0].count('not attempted') == 2
+    (WORK / (label + '.json')).write_text(json.dumps(dict(passed=True, log_characters=len(text),
+        summary_characters=len(summary), expected=expected, no_embedded_program=True), indent=2))
+
+diagnostic_case('worker-failure',
+    'for n in $(seq 1 40); do printf "worker detail %s\\n" "$n" >&2; done\n'
+    'printf "worker-failure-sentinel\\n" >&2\nexit 23\n', (), 'worker-failure-sentinel')
+assert 'worker detail 1\n' not in (WORK / 'worker-failure.log').read_text()
+print('PASS: failing worker reports step/status and bounded stderr tail, never argv/program', flush=True)
+diagnostic_case('worker-timeout', 'printf "worker-stall-sentinel\\n" >&2\nexec sleep 30\n',
+                ('--local-timeout', '1'), 'makepkg metadata timed out after 1.0 seconds')
+assert 'worker-stall-sentinel' in (WORK / 'worker-timeout.log').read_text()
+print('PASS: timed-out worker reports step/timeout and stderr tail, never argv/program', flush=True)
 print('ALL PUBLICATION CONTRACT CHECKS PASSED', flush=True)

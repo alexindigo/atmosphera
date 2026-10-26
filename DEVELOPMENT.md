@@ -78,6 +78,21 @@ can bound a stalled receive independently of build time. Timeout tears down only
 the invocation's owned process group and reports through the normal summary;
 a timed-out push remains remote-state-unconfirmed, never presumed unpublished.
 
+The maintained `packaging/aur/aur-known-hosts` file pins AUR's Ed25519 server
+identity against the fingerprints published at https://aur.archlinux.org/;
+its comment records the source URL and UTC check date. The workflow installs
+that trust file, never unchecked ssh-keyscan output, and forces strict checking
+against only that file/algorithm. Publication validates `--known-hosts` against
+the maintained pin before fetch/preparation/push; mismatches explain the failed
+job summary. Review a fingerprint rotation against AUR's official page before
+changing the committed trust entry.
+
+Subprocess errors identify the step and exit status or deadline with a bounded
+stderr tail (ordinary commands: 12 lines / 1 KiB; outer workers: 16 lines / 2 KiB
+to retain nested failure reasons). Full argv, stdout protocol data and embedded
+worker source are never formatted into those errors. The same bounded reason
+is included in the per-repository job summary; push uncertainty is preserved.
+
 For preparation without commits or pushes, run inside an Arch test VM with
 `pacman-contrib` and `base-devel`, using **clean scratch clones** of both AUR repos:
 

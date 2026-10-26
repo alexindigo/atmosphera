@@ -30,7 +30,7 @@ jobs:
       run:
         shell: bash
     env:
-      GIT_SSH_COMMAND: ssh -F /dev/null -i /root/.ssh/id_aur -o IdentityAgent=none -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4
+      GIT_SSH_COMMAND: ssh -F /dev/null -i /root/.ssh/id_aur -o IdentityAgent=none -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/root/.ssh/known_hosts -o GlobalKnownHostsFile=/dev/null -o HostKeyAlgorithms=ssh-ed25519 -o UpdateHostKeys=no -o IdentitiesOnly=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4
       TAG_NAME: ${{ inputs.tag || github.ref_name }}
 
     steps:
@@ -68,14 +68,14 @@ jobs:
           install -d -m700 /root/.ssh
           printf '%s\n' "$AUR_SSH_PRIVATE_KEY" > /root/.ssh/id_aur
           chmod 600 /root/.ssh/id_aur
-          timeout 30 ssh-keyscan aur.archlinux.org >> /root/.ssh/known_hosts
-          chmod 600 /root/.ssh/known_hosts
+          install -m600 "$GITHUB_WORKSPACE/publisher/packaging/aur/aur-known-hosts" /root/.ssh/known_hosts
 
       - name: Prepare both AUR repositories
         run: |
           set -euo pipefail
           install -d -m700 /root/aur-sync /root/aur-sync/tmp /root/aur-sync/policy
           install -m600 "$GITHUB_WORKSPACE/publisher/packaging/aur/sync.py" /root/aur-sync/policy/sync.py
+          install -m600 "$GITHUB_WORKSPACE/publisher/packaging/aur/aur-known-hosts" /root/aur-sync/policy/aur-known-hosts
           install -d -o builduser -g builduser -m700 /home/builduser/aur-sync /home/builduser/aur-sync/tmp
           # Public reads require no key. Authenticated transport happens only
           # after both keyless preparations/builds and both publisher commits.
@@ -97,6 +97,7 @@ jobs:
             /root/aur-sync/atmosphera /root/aur-sync/atmosphera-git --push \
             --recipes "$GITHUB_WORKSPACE/source/packaging/aur" \
             --build-user builduser --worker-root /home/builduser/aur-sync/tmp \
+            --known-hosts /root/.ssh/known_hosts \
             --summary /root/aur-sync/summary.md
 
       - name: Summarize update
