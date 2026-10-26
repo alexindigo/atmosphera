@@ -159,6 +159,17 @@ query is unchanged. `getResults(query)` reads current data; it does not start
 loads or freeze a completed query. Show a loading placeholder only while no
 usable records exist; cached results remain usable during a background refresh.
 
+A refresh keeps the result row of every item whose identity is unchanged and
+only adds, moves and removes the others. The identity is the provider plus the
+first of `windowId`, `clipboardId`, `appId`, `usageKey`, `id` or `name` (the
+same rule that preserves the selection), so give rows a stable `id`. Rank or
+score never takes part. `prepareItem(item)` runs once while an item is shown.
+To reload one item's image from `getImageUrl(item)`, emit
+`signal itemImageChanged(var identity)` with that item's identity value; only
+its rows react. A provider-wide `imageRevision` property still re-reads every
+row. `getResults(query)` runs on every keystroke: derive anything costly from
+your data when the data changes, not per query.
+
 Provider instances persist across launcher opens, while the live launcher and
 its signal subscriptions do not. A provider can finish loading with no launcher
 attached; its cached data is used on the next open. Existing providers that
