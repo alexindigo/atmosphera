@@ -51,13 +51,37 @@ Rectangle {
   property int selectedIndex: 0
   property var results: []
   property var providers: []
-  // The views' model, derived from results and owned here. Rows are keyed by
-  // item identity, so a refresh keeps the delegates of surviving rows instead
-  // of rebuilding the view. results stays the source for selection/activation.
+  // The views' model, derived from results and owned here (projectRows). Rows
+  // are keyed by item identity. results stays the source for selection and
+  // activation; the model only decides which delegates the views keep.
   ScriptModel {
-    id: resultsModel
+    id: rowsA
     objectProp: "key"
-    values: LauncherSelection.keyedRows(root.results, root.providers)
+  }
+  ScriptModel {
+    id: rowsB
+    objectProp: "key"
+  }
+  property var resultsModel: rowsA
+  property var shownKeys: []
+  function projectRows(items) {
+    const rows = LauncherSelection.keyedRows(items, providers);
+    const current = resultsModel;
+    // A view applies an incremental change row by row and creates every row it
+    // moves or inserts synchronously, its cache buffer included. A reset
+    // creates only the rows it shows and incubates the rest. Apply the refresh
+    // incrementally while it touches no more rows than the view shows (small
+    // refreshes keep their delegates); otherwise reset the view by moving it to
+    // the other keyed model.
+    if (LauncherSelection.changedRows(shownKeys, rows) <= visiblePageSize) {
+      current.values = rows;
+    } else {
+      const next = current === rowsA ? rowsB : rowsA;
+      next.values = rows;
+      resultsModel = next;
+      current.values = [];
+    }
+    shownKeys = rows.map(row => row.key);
   }
   onProvidersChanged: syncProviderObservers()
   property var activeProvider: null
@@ -477,6 +501,7 @@ Rectangle {
 
     // Update activeProvider only after computing new state to avoid UI flicker
     activeProvider = newActiveProvider;
+    projectRows(nextResults);
     results = nextResults;
     selectedIndex = LauncherSelection.afterRefresh(nextResults, previousItem, previousIndex, !!resetSelection);
   }
@@ -880,7 +905,7 @@ Rectangle {
         width: parent.width
         height: parent.height
         spacing: Style.marginS
-        model: resultsModel
+        model: root.resultsModel
         currentIndex: root.selectedIndex
         cacheBuffer: resultsList.height * 2
         interactive: !Settings.data.appLauncher.ignoreMouseInput
@@ -999,7 +1024,7 @@ Rectangle {
         rightMargin: 0
         topMargin: 0
         bottomMargin: 0
-        model: resultsModel
+        model: root.resultsModel
         cacheBuffer: resultsGrid.height * 2
         onModelChanged: Qt.callLater(revealSelection)
         function revealSelection() {
