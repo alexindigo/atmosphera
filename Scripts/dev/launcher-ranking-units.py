@@ -74,7 +74,8 @@ def main():
     required = {f'matrix.{field}.{quality}' for field in range(5) for quality in range(5)}
     required.update({'source.opens-all', 'source.keyword-only', 'source.disk-visible-name', 'source.disk-keywords',
                      'source.disk-executable', 'source.disk-comment', 'source.disk-generic', 'source.disk-category',
-                     'query-ties', 'empty-ties', 'beyond-twenty', 'pins-not-membership', 'merge-providers'})
+                     'query-ties', 'empty-ties', 'beyond-twenty', 'pins-not-membership', 'merge-providers',
+                     'prepared-equals-raw'})
     failures = [row for row in cases if not row['pass']]
     missing = sorted(required - {row['test'] for row in cases})
     errors = [line for line in log.splitlines() if ERRORS.search(line)]

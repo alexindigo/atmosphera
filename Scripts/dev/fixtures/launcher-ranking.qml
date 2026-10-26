@@ -189,6 +189,14 @@ ShellRoot {
                                          ], "red fox")), ["keyword", "description"]);
     const qualityBeatsPin = [entry("pinned", "Catalog", true, 999999), entry("exact", "Cat")];
     same("quality-before-pin-usage", ids(rank(qualityBeatsPin, "cat")), ["exact", "pinned"]);
+    // Records prepared once (the provider's index) rank exactly like raw records.
+    const raw = [entry("a", "Café Red Fox"), entry("b", "Catalog", true, 3), entry("c", "my-cat"), entry("d", "Vela"), entry("e", "écat", false, 7)];
+    raw[3].keywords = "www;Browser;web";
+    raw[4].comment = "red fox";
+    raw[1].genericName = "Browser";
+    const preparedRecords = raw.map(app => Ranking.prepare(Object.assign({}, app)));
+    const queries = ["cat", "CAFE", "red fox", "fox red", "browser", "br", "", "missing"];
+    same("prepared-equals-raw", queries.map(q => ids(rank(preparedRecords, q))), queries.map(q => ids(rank(raw, q))));
 
     const stream = [
             {

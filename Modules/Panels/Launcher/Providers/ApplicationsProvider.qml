@@ -14,6 +14,9 @@ Item {
   property string name: I18n.tr("launcher.providers.applications")
   property bool handleSearch: true
   property var entries: []
+  // Search index: one record per entry with its search fields normalized.
+  // Rebuilt only when the entries change; a query only runs the matcher.
+  property var records: []
   property string supportedLayouts: "both"
   property bool isDefaultProvider: true // This provider handles empty search
   property bool ignoreDensity: false // Apps should scale with launcher density
@@ -324,6 +327,16 @@ Item {
     // DesktopEntries already resolves IDs/overrides and Hidden/NoDisplay.
     // Do not mutate canonical entries or maintain a second identity policy.
     entries = Array.from(DesktopEntries.applications.values || []);
+    // Keep the installed objects intact. Search records carry derived fields;
+    // activation and category membership retain the canonical desktop entry.
+    records = entries.map(app => ApplicationRanking.prepare({
+                                                              desktop: app,
+                                                              name: app.name,
+                                                              executableName: getExecutableName(app),
+                                                              keywords: app.keywords,
+                                                              comment: app.comment,
+                                                              genericName: app.genericName
+                                                            }));
 
     Logger.d("ApplicationsProvider", `Loaded ${entries.length} applications`);
     updateAvailableCategories();
@@ -384,19 +397,11 @@ Item {
     if (!entries || entries.length === 0)
       return [];
 
-    // Keep the installed objects intact. Search records carry derived fields;
-    // activation and category membership retain the canonical desktop entry.
-    const records = entries.map(app => ({
-      desktop: app,
-      name: app.name,
-      executableName: getExecutableName(app),
-      keywords: app.keywords,
-      comment: app.comment,
-      genericName: app.genericName
-    }));
+    // Pins are read once per query, by the same normalized-id rule as isAppPinned.
+    const pinned = new Set((Settings.data.appLauncher.pinnedApps || []).map(normalizeAppId));
     return ApplicationRanking.rank(records, query, {
                                      accept: record => !selectedCategory || appMatchesCategory(record.desktop, selectedCategory),
-                                     pinned: record => isAppPinned(record.desktop),
+                                     pinned: record => pinned.has(normalizeAppId(getAppKey(record.desktop))),
                                      usage: record => Settings.data.appLauncher.sortByMostUsed ? getUsageCount(record.desktop) : 0,
                                      id: record => getAppKey(record.desktop)
                                    }).map(row => createResultEntry(row.app.desktop, row.score));

@@ -7,8 +7,8 @@ function normalize(value) {
   return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
 }
 
-function quality(query, value) {
-  const text = normalize(value);
+// text is already normalized.
+function quality(query, text) {
   if (!text)
     return -1;
   if (text === query)
@@ -37,20 +37,43 @@ function quality(query, value) {
   return -1;
 }
 
-function bestQuality(query, values) {
+function bestQuality(query, texts) {
   let best = -1;
-  for (const value of values) {
-    const match = quality(query, value);
+  for (const text of texts) {
+    const match = quality(query, text);
     if (match >= 0 && (best < 0 || match < best))
       best = match;
   }
   return best;
 }
 
-function match(query, app) {
+// The normalized search fields of a record, in field order. Records prepared
+// by prepare() carry them; others are derived on the fly by the same rule.
+function searchable(app) {
+  if (app.searchFields)
+    return {fields: app.searchFields, name: app.searchName};
   const keywords = typeof app.keywords === "string" ? app.keywords.split(";") : Array.from(app.keywords || []);
-  const fields = [[app.name], [app.executableName], keywords, [app.comment], [app.genericName]];
-  const words = normalize(query).split(" ");
+  return {fields: [[app.name], [app.executableName], keywords, [app.comment], [app.genericName]].map(values => values.map(normalize)),
+          name: normalize(app.name)};
+}
+
+// Normalize a record's search fields once, when its data changes; a query then
+// only runs the matcher. Returns the record.
+function prepare(app) {
+  delete app.searchFields;
+  const prepared = searchable(app);
+  app.searchFields = prepared.fields;
+  app.searchName = prepared.name;
+  return app;
+}
+
+function match(query, app) {
+  const normalized = normalize(query);
+  return matchFields(normalized.split(" "), normalized, searchable(app).fields);
+}
+
+// words and phrase are normalized; fields are normalized search fields.
+function matchFields(words, phrase, fields) {
   let field = 0;
   let weakest = 0;
   // Every word must match. Its best field wins first, then quality. For a
@@ -71,13 +94,13 @@ function match(query, app) {
   }
   // A phrase contained in one eligible field retains whole/prefix quality.
   // Split/reordered words are at best word-start matches, never whole fields.
-  let phrase = -1;
+  let best = -1;
   for (let i = 0; i <= field; i++) {
-    const q = bestQuality(normalize(query), fields[i]);
-    if (q >= 0 && (phrase < 0 || q < phrase))
-      phrase = q;
+    const q = bestQuality(phrase, fields[i]);
+    if (q >= 0 && (best < 0 || q < best))
+      best = q;
   }
-  return {field: field, quality: phrase >= 0 ? phrase : Math.max(2, weakest)};
+  return {field: field, quality: best >= 0 ? best : Math.max(2, weakest)};
 }
 
 function compareText(a, b) {
@@ -85,17 +108,20 @@ function compareText(a, b) {
 }
 
 function rank(entries, query, options) {
-  const searching = normalize(query) !== "";
+  const phrase = normalize(query);
+  const searching = phrase !== "";
+  const words = phrase.split(" ");
   const matches = [];
   for (const app of entries) {
     if (options.accept && !options.accept(app))
       continue;
-    const key = searching ? match(query, app) : {field: 0, quality: 0};
+    const prepared = searchable(app);
+    const key = searching ? matchFields(words, phrase, prepared.fields) : {field: 0, quality: 0};
     if (!key)
       continue;
     matches.push({app: app, field: key.field, quality: key.quality,
       pinned: options.pinned(app), usage: options.usage(app),
-      name: normalize(app.name), id: String(options.id(app))});
+      name: prepared.name, id: String(options.id(app))});
   }
   matches.sort((a, b) => a.field - b.field || a.quality - b.quality || Number(b.pinned) - Number(a.pinned) || b.usage - a.usage || compareText(a.name, b.name) || compareText(String(a.app.name), String(b.app.name)) || compareText(a.id, b.id));
   return matches.map(row => ({app: row.app,
