@@ -23,7 +23,8 @@ Singleton {
   property bool autoWatch: true
   property bool watchersStarted: false
 
-  // Expose decoded thumbnails by id and a revision to notify bindings
+  // Decoded thumbnails by id. imageDecoded(id) announces each one, so a
+  // decode only touches the rows of that item.
   property var imageDataById: ({})
   property var _imageDataInsertOrder: [] // insertion-order IDs for LRU eviction
   readonly property int _imageDataMaxEntries: 20 // max decoded images held in RAM at once
@@ -45,12 +46,13 @@ Singleton {
   property int _decodeRequestId: 0
 
   // Queue for base64 decodes
-  property var _b64Queue: []
-  property var _b64CurrentCb: null
+  property var _b64Queue: [] // [{id, mime, cbs}], at most one job per id
+  property var _b64CurrentCbs: []
   property string _b64CurrentMime: ""
   property string _b64CurrentId: ""
 
   signal listCompleted
+  signal imageDecoded(string id)
 
   // Check if cliphist is available
   Component.onCompleted: {
@@ -244,26 +246,31 @@ Singleton {
     stdout: StdioCollector {}
     onExited: (exitCode) => {
       const b64 = String(stdout.text).trim();
-      if (root._b64CurrentCb) {
-        const url = `data:${root._b64CurrentMime};base64,${b64}`;
+      const url = `data:${root._b64CurrentMime};base64,${b64}`;
+      for (const cb of root._b64CurrentCbs) {
         try {
-          root._b64CurrentCb(url);
+          cb(url);
         } catch (e) {}
       }
-      if (root._b64CurrentId !== "") {
-        const entryId = root._b64CurrentId;
-        root.imageDataById[entryId] = `data:${root._b64CurrentMime};base64,${b64}`;
-        // Track insertion order and evict oldest entries beyond the cap
+      const entryId = root._b64CurrentId;
+      if (entryId !== "") {
+        root.imageDataById[entryId] = url;
+        // Track insertion order (one slot per id) and evict the oldest beyond
+        // the cap. Eviction drops only this cache; shown images stay loaded.
+        const previous = root._imageDataInsertOrder.indexOf(entryId);
+        if (previous !== -1)
+          root._imageDataInsertOrder.splice(previous, 1);
         root._imageDataInsertOrder.push(entryId);
         while (root._imageDataInsertOrder.length > root._imageDataMaxEntries) {
           const evicted = root._imageDataInsertOrder.shift();
           delete root.imageDataById[evicted];
         }
-        root.revision += 1;
       }
-      root._b64CurrentCb = null;
+      root._b64CurrentCbs = [];
       root._b64CurrentMime = "";
       root._b64CurrentId = "";
+      if (entryId !== "")
+        root.imageDecoded(entryId);
       Qt.callLater(root._startNextB64);
     }
   }
@@ -429,15 +436,21 @@ Singleton {
         cb(root.imageDataById[id]);
       return;
     }
-    // Queue request; ensures single process handles sequentially
-    root._b64Queue.push({
-                          "id": id,
-                          "mime": mime || "image/*",
-                          "cb": cb
-                        });
-    if (!decodeB64Proc.running && root._b64CurrentCb === null) {
-      _startNextB64();
+    // One job per id: a request for an id already decoding or queued only
+    // adds its callback. A single process handles jobs sequentially.
+    const key = String(id);
+    const pending = key === root._b64CurrentId ? root._b64CurrentCbs : (root._b64Queue.find(job => job.id === key) || {}).cbs;
+    if (pending) {
+      if (cb)
+        pending.push(cb);
+      return;
     }
+    root._b64Queue.push({
+                          "id": key,
+                          "mime": mime || "image/*",
+                          "cbs": cb ? [cb] : []
+                        });
+    _startNextB64();
   }
 
   function getImageData(id) {
@@ -448,10 +461,10 @@ Singleton {
   }
 
   function _startNextB64() {
-    if (root._b64Queue.length === 0 || !root.cliphistAvailable)
+    if (root._b64Queue.length === 0 || !root.cliphistAvailable || decodeB64Proc.running || root._b64CurrentId !== "")
       return;
     const job = root._b64Queue.shift();
-    root._b64CurrentCb = job.cb;
+    root._b64CurrentCbs = job.cbs;
     root._b64CurrentMime = job.mime;
     root._b64CurrentId = job.id;
     decodeB64Proc.command = ["sh", "-c", `cliphist decode ${job.id} | base64 -w 0`];

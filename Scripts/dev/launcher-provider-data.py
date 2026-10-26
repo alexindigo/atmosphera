@@ -12,6 +12,7 @@ import time
 from launcher_workspace import ROOT
 sys.path.insert(0, str(ROOT / 'tools'))
 from filechooser_isolation import enter, guest, profile_env
+from launcher_paste_support import png
 
 
 def main():
@@ -71,6 +72,14 @@ def main():
             ipc('step', 'clip-refresh')
             prove('clipboard-same-query-completion-selection', lambda s: len(s['rows']) == 3 and s['query'] == '>clip Data '
                   and s['selected'] == s['originalClipboardSelection'])
+            # The image row stays hidden, so no row decodes it before the probe.
+            ipc('query', '>clip no-such-entry')
+            wait(lambda s: s['query'] == '>clip no-such-entry' and not any(r['id'].isdigit() for r in s['rows']))
+            subprocess.run(['timeout', '10', 'cliphist', 'store'], input=png((40, 90, 160)), env=env, check=True, timeout=15)
+            ipc('step', 'clip-refresh')
+            wait(lambda s: s['clipboardItems'] == 4)
+            ipc('step', 'image-decode')
+            prove('clipboard-image-one-decode-per-item', lambda s: s['imageJobs'] == 1 and s['imageDecoded'] == 1 and s['imageCallbacks'] == 2)
             ipc('query', '>emoji cache-marker')
             ipc('step', 'emoji-data')
             prove('emoji-republish-after-loaded', lambda s: len(s['rows']) == 2 and s['query'] == '>emoji cache-marker')

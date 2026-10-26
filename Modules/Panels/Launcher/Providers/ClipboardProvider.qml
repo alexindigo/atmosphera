@@ -23,8 +23,15 @@ Item {
   property bool hasPreview: Settings.data.appLauncher.enableClipPreview
   property string previewComponentPath: "./ClipboardPreview.qml"
 
-  // Image handling - expose revision for reactive updates in delegates
-  readonly property int imageRevision: ClipboardService.revision
+  // Image handling: announce each decoded image by its rows' identity
+  // (clipboardId), so only the rows of that item reload their image.
+  signal itemImageChanged(var identity)
+  Connections {
+    target: ClipboardService
+    function onImageDecoded(id) {
+      root.itemImageChanged(id);
+    }
+  }
 
   // Categories
   property var availableCategories: Settings.data.appLauncher.enableClipboardChips ? ["All", "Images", "Links", "Files", "Code", "Colors"] : []

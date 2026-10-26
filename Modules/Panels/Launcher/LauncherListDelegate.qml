@@ -82,6 +82,7 @@ NBox {
           anchors.fill: parent
           active: !!row.isImage
           sourceComponent: NImageRounded {
+          id: rowImage
           // A failed image falls back to the icon, declaratively: a kept delegate
           // follows its row instead of a state written once at creation.
           visible: !row.displayString && status !== Image.Error
@@ -90,13 +91,23 @@ NBox {
           borderWidth: Style.borderM
           imageFillMode: Image.PreserveAspectCrop
 
-          // Use provider's image revision for reactive updates
+          // A provider-wide imageRevision, or itemImageChanged(identity) for
+          // this row's item alone, makes its image a binding input again.
           readonly property int _rev: row.provider && row.provider.imageRevision ? row.provider.imageRevision : 0
+          property int itemRevision: 0
+          Connections {
+            target: row.provider || null
+            ignoreUnknownSignals: true
+            function onItemImageChanged(identity) {
+              const own = LauncherSelection.identity(row);
+              if (own && String(own.value) === String(identity))
+                rowImage.itemRevision++;
+            }
+          }
 
-          // Passing the revision makes cache invalidation a binding input.
-          imagePath: imageUrlForRevision(_rev)
+          imagePath: imageUrlForRevision(_rev, itemRevision)
 
-          function imageUrlForRevision(revision) {
+          function imageUrlForRevision(revision, itemRevision) {
             var provider = row.provider;
             if (provider && provider.getImageUrl) {
               return provider.getImageUrl(row);
