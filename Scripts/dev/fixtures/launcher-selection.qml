@@ -37,8 +37,12 @@ ShellRoot {
     property bool handleSearch: true
     property string supportedLayouts: "both"
     property var rows: []
+    property int prepared: 0
     function getResults(query) {
       return rows;
+    }
+    function prepareItem(item) {
+      prepared++;
     }
   }
   FloatingWindow {
@@ -73,6 +77,10 @@ ShellRoot {
     const found = [];
     delegates(core.resultsView, found);
     return found;
+  }
+  // Live delegates in row order (released ones have index -1).
+  function shown() {
+    return root.rows().filter(item => item.index >= 0 && item.visible).sort((a, b) => a.index - b.index);
   }
   function moveTo(index, dx) {
     const target = rows().find(item => item.index === index);
@@ -120,6 +128,23 @@ ShellRoot {
         break;
       case 1:
         root.same("open-top", core.selectedIndex, 0);
+        // A refresh producing the same items (new objects, as every query and
+        // async re-projection does) keeps every delegate and prepares nothing.
+        const kept = root.shown();
+        const preparedBefore = provider.prepared;
+        provider.rows = [root.row("alpha"), root.row("beta"), root.row("gamma")];
+        core.updateResults();
+        const again = root.shown();
+        root.same("identical-refresh-keeps-delegates", again.length === 3 && again.every((item, i) => item === kept[i]), true);
+        root.same("identical-refresh-prepares-nothing", provider.prepared - preparedBefore, 0);
+        // A narrowing refresh only removes rows: survivors keep their delegates.
+        provider.rows = [root.row("beta"), root.row("gamma")];
+        core.updateResults();
+        const narrowed = root.shown();
+        root.same("narrowing-keeps-survivors", narrowed.length === 2 && narrowed[0] === kept[1] && narrowed[1] === kept[2], true);
+        provider.rows = [root.row("alpha"), root.row("beta"), root.row("gamma")];
+        core.updateResults();
+        core.selectedIndex = 0;
         core.selectedIndex = 2;
         provider.rows = [root.row("beta"), root.row("gamma"), root.row("zeta")];
         core.updateResults();

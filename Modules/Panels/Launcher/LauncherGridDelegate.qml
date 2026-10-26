@@ -3,28 +3,39 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell.Widgets
 
+import "Helpers/LauncherSelection.js" as LauncherSelection
 import qs.Commons
 import qs.Widgets
 
 Item {
   id: gridEntryContainer
 
+  // Keyed view row {key, row}; the delegate lives as long as its key does.
   required property var modelData
   required property int index
   required property var launcher
+  // The launcher's result object for this row (refreshed in place by a keyed update).
+  readonly property var row: modelData && modelData.row ? modelData.row : ({})
 
   width: GridView.view.cellWidth
   height: GridView.view.cellHeight
 
   readonly property bool isSelected: index === launcher.selectedIndex
 
-  // Prepare item when it becomes visible (e.g., decode images)
-  Component.onCompleted: {
-    var provider = modelData.provider;
+  // Prepare each item once while it is shown (e.g., decode images). A kept
+  // delegate prepares again only if its row now stands for another item.
+  property var preparedRow: null
+  function prepare() {
+    if (preparedRow && LauncherSelection.sameIdentity(preparedRow, row))
+      return;
+    preparedRow = row;
+    var provider = row.provider;
     if (provider && provider.prepareItem) {
-      provider.prepareItem(modelData);
+      provider.prepareItem(row);
     }
   }
+  Component.onCompleted: prepare()
+  onRowChanged: prepare()
 
   NBox {
     id: gridEntry
@@ -58,26 +69,28 @@ Item {
           anchors.fill: parent
           radius: Style.radiusM
           color: AtmoColor.mSurface
-          visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage
+          visible: Settings.data.appLauncher.showIconBackground && !row.isImage
         }
 
         // Image preview - uses provider's getImageUrl if available
         NImageRounded {
           id: gridImagePreview
           anchors.fill: parent
-          visible: !!modelData.isImage && !modelData.displayString
+          // A failed image falls back to the icon, declaratively: a kept delegate
+          // follows its row instead of a state written once at creation.
+          visible: !!row.isImage && !row.displayString && status !== Image.Error
           radius: Style.radiusM
 
           // Use provider's image revision for reactive updates
-          readonly property int _rev: modelData.provider && modelData.provider.imageRevision ? modelData.provider.imageRevision : 0
+          readonly property int _rev: row.provider && row.provider.imageRevision ? row.provider.imageRevision : 0
 
           // Passing the revision makes cache invalidation a binding input.
           imagePath: imageUrlForRevision(_rev)
 
           function imageUrlForRevision(revision) {
-            var provider = modelData.provider;
+            var provider = row.provider;
             if (provider && provider.getImageUrl) {
-              return provider.getImageUrl(modelData);
+              return provider.getImageUrl(row);
             }
             return "";
           }
@@ -95,12 +108,6 @@ Item {
             }
           }
 
-          onStatusChanged: {
-            if (status === Image.Error) {
-              gridIconLoader.visible = true;
-              gridImagePreview.visible = false;
-            }
-          }
         }
 
         Loader {
@@ -108,17 +115,17 @@ Item {
           anchors.fill: parent
           anchors.margins: Style.marginXS
 
-          visible: (!modelData.isImage && !modelData.displayString) || (!!modelData.isImage && gridImagePreview.status === Image.Error)
+          visible: (!row.isImage && !row.displayString) || (!!row.isImage && gridImagePreview.status === Image.Error)
           active: visible
 
-          sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? gridTablerIconComponent : gridSystemIconComponent
+          sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && row.isTablerIcon ? gridTablerIconComponent : gridSystemIconComponent
 
           Component {
             id: gridTablerIconComponent
             AtmoIcon {
-              icon: modelData.icon
+              icon: row.icon
               pointSize: Style.fontSizeXXXL
-              visible: modelData.icon && !modelData.displayString
+              visible: row.icon && !row.displayString
               color: (gridEntryContainer.isSelected && !Settings.data.appLauncher.showIconBackground) ? AtmoColor.mOnHover : AtmoColor.mOnSurface
             }
           }
@@ -127,8 +134,8 @@ Item {
             id: gridSystemIconComponent
             AtmoAppIcon {
               anchors.fill: parent
-              name: modelData.icon || ""
-              visible: modelData.icon && !modelData.displayString
+              name: row.icon || ""
+              visible: row.icon && !row.displayString
             }
           }
         }
@@ -137,13 +144,13 @@ Item {
         NText {
           id: gridStringDisplay
           anchors.centerIn: parent
-          visible: !!modelData.displayString || (!gridImagePreview.visible && !gridIconLoader.visible)
-          text: modelData.displayString ? modelData.displayString : (modelData.name ? modelData.name.charAt(0).toUpperCase() : "?")
+          visible: !!row.displayString || (!gridImagePreview.visible && !gridIconLoader.visible)
+          text: row.displayString ? row.displayString : (row.name ? row.name.charAt(0).toUpperCase() : "?")
           pointSize: {
-            if (modelData.displayString) {
+            if (row.displayString) {
               // Use custom size if provided, otherwise default scaling
-              if (modelData.displayStringSize) {
-                return modelData.displayStringSize * Style.uiScaleRatio;
+              if (row.displayStringSize) {
+                return row.displayStringSize * Style.uiScaleRatio;
               }
               if (launcher.providerHasDisplayString) {
                 // Scale with cell width but cap at reasonable maximum
@@ -160,12 +167,12 @@ Item {
             return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
           }
           font.weight: Style.fontWeightBold
-          color: modelData.displayString ? AtmoColor.mOnSurface : AtmoColor.mOnPrimary
+          color: row.displayString ? AtmoColor.mOnSurface : AtmoColor.mOnPrimary
         }
 
         // Badge icon overlay (generic indicator for any provider)
         Rectangle {
-          visible: !!modelData.badgeIcon
+          visible: !!row.badgeIcon
           anchors.bottom: parent.bottom
           anchors.right: parent.right
           anchors.margins: 2
@@ -175,7 +182,7 @@ Item {
           radius: Style.radiusXXS
           AtmoIcon {
             anchors.centerIn: parent
-            icon: modelData.badgeIcon || ""
+            icon: row.badgeIcon || ""
             pointSize: Style.fontSizeS
             color: AtmoColor.mOnSurfaceVariant
           }
@@ -184,10 +191,10 @@ Item {
 
       // Text content (hidden when hideLabel is true)
       NText {
-        visible: !modelData.hideLabel
-        text: modelData.name || "Unknown"
+        visible: !row.hideLabel
+        text: row.name || "Unknown"
         pointSize: {
-          if (launcher.providerHasDisplayString && modelData.displayString) {
+          if (launcher.providerHasDisplayString && row.displayString) {
             return Style.fontSizeS * Style.uiScaleRatio;
           }
           // Scale font size relative to cell width for low res, but cap at maximum
@@ -201,8 +208,8 @@ Item {
         elide: Text.ElideRight
         Layout.fillWidth: true
         Layout.maximumWidth: gridEntry.width - 8
-        Layout.leftMargin: (launcher.providerHasDisplayString && modelData.displayString) ? Style.marginS : 0
-        Layout.rightMargin: (launcher.providerHasDisplayString && modelData.displayString) ? Style.marginS : 0
+        Layout.leftMargin: (launcher.providerHasDisplayString && row.displayString) ? Style.marginS : 0
+        Layout.rightMargin: (launcher.providerHasDisplayString && row.displayString) ? Style.marginS : 0
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.NoWrap
         maximumLineCount: 1
@@ -221,9 +228,9 @@ Item {
       property var gridItemActions: {
         if (!gridEntryContainer.isSelected)
           return [];
-        var provider = modelData.provider || launcher.currentProvider;
+        var provider = row.provider || launcher.currentProvider;
         if (provider && provider.getItemActions) {
-          return provider.getItemActions(modelData);
+          return provider.getItemActions(row);
         }
         return [];
       }

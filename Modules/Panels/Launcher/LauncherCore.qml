@@ -51,6 +51,14 @@ Rectangle {
   property int selectedIndex: 0
   property var results: []
   property var providers: []
+  // The views' model, derived from results and owned here. Rows are keyed by
+  // item identity, so a refresh keeps the delegates of surviving rows instead
+  // of rebuilding the view. results stays the source for selection/activation.
+  ScriptModel {
+    id: resultsModel
+    objectProp: "key"
+    values: LauncherSelection.keyedRows(root.results, root.providers)
+  }
   onProvidersChanged: syncProviderObservers()
   property var activeProvider: null
   property bool resultsReady: false
@@ -872,7 +880,7 @@ Rectangle {
         width: parent.width
         height: parent.height
         spacing: Style.marginS
-        model: root.results
+        model: resultsModel
         currentIndex: root.selectedIndex
         cacheBuffer: resultsList.height * 2
         interactive: !Settings.data.appLauncher.ignoreMouseInput
@@ -885,7 +893,17 @@ Rectangle {
         onModelChanged: Qt.callLater(revealSelection)
         function revealSelection() {
           cancelFlick();
+          // Row moves inside the model can shift the view's own current index;
+          // the selection stays authoritative.
+          if (currentIndex !== root.selectedIndex)
+            currentIndex = Qt.binding(() => root.selectedIndex);
           positionViewAtIndex(root.selectedIndex, ListView.Contain);
+        }
+        Connections {
+          target: root
+          function onResultsChanged() {
+            Qt.callLater(resultsList.revealSelection);
+          }
         }
 
         delegate: LauncherListDelegate {
@@ -981,12 +999,18 @@ Rectangle {
         rightMargin: 0
         topMargin: 0
         bottomMargin: 0
-        model: root.results
+        model: resultsModel
         cacheBuffer: resultsGrid.height * 2
         onModelChanged: Qt.callLater(revealSelection)
         function revealSelection() {
           cancelFlick();
           positionViewAtIndex(root.selectedIndex, GridView.Contain);
+        }
+        Connections {
+          target: root
+          function onResultsChanged() {
+            Qt.callLater(resultsGrid.revealSelection);
+          }
         }
         keyNavigationEnabled: false
         focus: false
