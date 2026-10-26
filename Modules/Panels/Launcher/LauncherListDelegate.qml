@@ -60,7 +60,11 @@ NBox {
 
       // Icon badge or Image preview or Emoji
       Item {
+        id: badge
         visible: !row.hideIcon
+        // Image parts exist only for image rows; their state is read from here.
+        readonly property int imageStatus: imageLoader.item ? imageLoader.item.status : Image.Null
+        readonly property bool imageShown: imageLoader.item ? imageLoader.item.visible : false
         Layout.preferredWidth: row.hideIcon ? 0 : launcher.badgeSize
         Layout.preferredHeight: row.hideIcon ? 0 : launcher.badgeSize
 
@@ -73,12 +77,14 @@ NBox {
         }
 
         // Image preview - uses provider's getImageUrl if available
-        NImageRounded {
-          id: imagePreview
+        Loader {
+          id: imageLoader
           anchors.fill: parent
+          active: !!row.isImage
+          sourceComponent: NImageRounded {
           // A failed image falls back to the icon, declaratively: a kept delegate
           // follows its row instead of a state written once at creation.
-          visible: !!row.isImage && !row.displayString && status !== Image.Error
+          visible: !row.displayString && status !== Image.Error
           radius: Style.radiusXS
           borderColor: AtmoColor.mOnSurface
           borderWidth: Style.borderM
@@ -110,6 +116,7 @@ NBox {
               height: width
             }
           }
+          }
         }
 
         // Color swatch - shown for clipboard color entries
@@ -127,7 +134,7 @@ NBox {
           anchors.fill: parent
           anchors.margins: Style.marginXS
 
-          visible: (!row.isImage && !row.displayString && !row.colorHex) || (!!row.isImage && imagePreview.status === Image.Error)
+          visible: (!row.isImage && !row.displayString && !row.colorHex) || (!!row.isImage && badge.imageStatus === Image.Error)
           active: visible
 
           sourceComponent: Component {
@@ -161,7 +168,7 @@ NBox {
         NText {
           id: stringDisplay
           anchors.centerIn: parent
-          visible: !!row.displayString || (!imagePreview.visible && !iconLoader.visible)
+          visible: !!row.displayString || (!badge.imageShown && !iconLoader.visible)
           text: row.displayString ? row.displayString : (row.name ? row.name.charAt(0).toUpperCase() : "?")
           pointSize: row.displayString ? (row.displayStringSize || Style.fontSizeXXXL) : Style.fontSizeXXL
           font.weight: Style.fontWeightBold
@@ -169,11 +176,12 @@ NBox {
         }
 
         // Image type indicator overlay
-        Rectangle {
-          visible: !!row.isImage && imagePreview.visible
+        Loader {
+          active: !!row.isImage && badge.imageShown
           anchors.bottom: parent.bottom
           anchors.right: parent.right
           anchors.margins: 2
+          sourceComponent: Rectangle {
           width: formatLabel.width + Style.marginXS
           height: formatLabel.height + Style.marginXXS
           color: AtmoColor.mSurfaceVariant
@@ -191,14 +199,16 @@ NBox {
             pointSize: Style.fontSizeXXS
             color: AtmoColor.mOnSurfaceVariant
           }
+          }
         }
 
         // Badge icon overlay (generic indicator for any provider)
-        Rectangle {
-          visible: !!row.badgeIcon
+        Loader {
+          active: !!row.badgeIcon
           anchors.bottom: parent.bottom
           anchors.right: parent.right
           anchors.margins: 2
+          sourceComponent: Rectangle {
           width: height
           height: Style.fontSizeM + Style.marginXS
           color: AtmoColor.mSurfaceVariant
@@ -208,6 +218,7 @@ NBox {
             icon: row.badgeIcon || ""
             pointSize: Style.fontSizeS
             color: AtmoColor.mOnSurfaceVariant
+          }
           }
         }
       }

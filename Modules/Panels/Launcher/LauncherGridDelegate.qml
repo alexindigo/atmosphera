@@ -59,10 +59,14 @@ Item {
 
       // Icon badge or Image preview or Emoji
       Item {
+        id: gridBadge
         // Size image at 65% of cell dimensions.
         Layout.preferredWidth: Math.round(gridEntry.width * 0.65)
         Layout.preferredHeight: Math.round(gridEntry.height * 0.65)
         Layout.alignment: Qt.AlignHCenter
+        // Image parts exist only for image rows; their state is read from here.
+        readonly property int imageStatus: gridImageLoader.item ? gridImageLoader.item.status : Image.Null
+        readonly property bool imageShown: gridImageLoader.item ? gridImageLoader.item.visible : false
 
         // Icon background
         Rectangle {
@@ -73,41 +77,43 @@ Item {
         }
 
         // Image preview - uses provider's getImageUrl if available
-        NImageRounded {
-          id: gridImagePreview
+        Loader {
+          id: gridImageLoader
           anchors.fill: parent
-          // A failed image falls back to the icon, declaratively: a kept delegate
-          // follows its row instead of a state written once at creation.
-          visible: !!row.isImage && !row.displayString && status !== Image.Error
-          radius: Style.radiusM
+          active: !!row.isImage
+          sourceComponent: NImageRounded {
+            // A failed image falls back to the icon, declaratively: a kept delegate
+            // follows its row instead of a state written once at creation.
+            visible: !row.displayString && status !== Image.Error
+            radius: Style.radiusM
 
-          // Use provider's image revision for reactive updates
-          readonly property int _rev: row.provider && row.provider.imageRevision ? row.provider.imageRevision : 0
+            // Use provider's image revision for reactive updates
+            readonly property int _rev: row.provider && row.provider.imageRevision ? row.provider.imageRevision : 0
 
-          // Passing the revision makes cache invalidation a binding input.
-          imagePath: imageUrlForRevision(_rev)
+            // Passing the revision makes cache invalidation a binding input.
+            imagePath: imageUrlForRevision(_rev)
 
-          function imageUrlForRevision(revision) {
-            var provider = row.provider;
-            if (provider && provider.getImageUrl) {
-              return provider.getImageUrl(row);
+            function imageUrlForRevision(revision) {
+              var provider = row.provider;
+              if (provider && provider.getImageUrl) {
+                return provider.getImageUrl(row);
+              }
+              return "";
             }
-            return "";
-          }
 
-          Rectangle {
-            anchors.fill: parent
-            visible: parent.status === Image.Loading
-            color: AtmoColor.mSurfaceVariant
+            Rectangle {
+              anchors.fill: parent
+              visible: parent.status === Image.Loading
+              color: AtmoColor.mSurfaceVariant
 
-            BusyIndicator {
-              anchors.centerIn: parent
-              running: true
-              width: Style.baseWidgetSize * 0.5
-              height: width
+              BusyIndicator {
+                anchors.centerIn: parent
+                running: true
+                width: Style.baseWidgetSize * 0.5
+                height: width
+              }
             }
           }
-
         }
 
         Loader {
@@ -115,7 +121,7 @@ Item {
           anchors.fill: parent
           anchors.margins: Style.marginXS
 
-          visible: (!row.isImage && !row.displayString) || (!!row.isImage && gridImagePreview.status === Image.Error)
+          visible: (!row.isImage && !row.displayString) || (!!row.isImage && gridBadge.imageStatus === Image.Error)
           active: visible
 
           sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && row.isTablerIcon ? gridTablerIconComponent : gridSystemIconComponent
@@ -144,7 +150,7 @@ Item {
         NText {
           id: gridStringDisplay
           anchors.centerIn: parent
-          visible: !!row.displayString || (!gridImagePreview.visible && !gridIconLoader.visible)
+          visible: !!row.displayString || (!gridBadge.imageShown && !gridIconLoader.visible)
           text: row.displayString ? row.displayString : (row.name ? row.name.charAt(0).toUpperCase() : "?")
           pointSize: {
             if (row.displayString) {
@@ -171,20 +177,22 @@ Item {
         }
 
         // Badge icon overlay (generic indicator for any provider)
-        Rectangle {
-          visible: !!row.badgeIcon
+        Loader {
+          active: !!row.badgeIcon
           anchors.bottom: parent.bottom
           anchors.right: parent.right
           anchors.margins: 2
-          width: height
-          height: Style.fontSizeM + Style.marginXS
-          color: AtmoColor.mSurfaceVariant
-          radius: Style.radiusXXS
-          AtmoIcon {
-            anchors.centerIn: parent
-            icon: row.badgeIcon || ""
-            pointSize: Style.fontSizeS
-            color: AtmoColor.mOnSurfaceVariant
+          sourceComponent: Rectangle {
+            width: height
+            height: Style.fontSizeM + Style.marginXS
+            color: AtmoColor.mSurfaceVariant
+            radius: Style.radiusXXS
+            AtmoIcon {
+              anchors.centerIn: parent
+              icon: row.badgeIcon || ""
+              pointSize: Style.fontSizeS
+              color: AtmoColor.mOnSurfaceVariant
+            }
           }
         }
       }
