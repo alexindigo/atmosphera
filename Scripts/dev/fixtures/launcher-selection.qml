@@ -12,6 +12,7 @@ ShellRoot {
   property bool pointerPending: false
   property point requestedPointer
   property int pointerWaitTicks: 0
+  property int keyboardWaitTicks: 0
   function same(name, actual, expected) {
     const passed = JSON.stringify(actual) === JSON.stringify(expected);
     if (!passed)
@@ -135,6 +136,15 @@ ShellRoot {
           root.same("pointer-delivery-" + root.stage, false, true);
         }
       }
+      // Likewise a launched key command is judged only after the private
+      // keyboard owner acknowledged it (the helper exits on its OK), never on
+      // a fixed tick that a slow helper start can outrun.
+      if (keyboard.running) {
+        if (++root.keyboardWaitTicks < 20)
+          return;
+        root.same("keyboard-delivery-" + root.stage, false, true);
+      }
+      root.keyboardWaitTicks = 0;
       switch (root.stage++) {
       case 0:
         Settings.data.general.animationDisabled = true;
