@@ -63,6 +63,10 @@ Rectangle {
     objectProp: "key"
   }
   property var resultsModel: rowsA
+  // Whether a change of the selected row animates its highlight. Only the
+  // user's navigation (keys, pointer) does; a refresh or an open moves the
+  // highlight at once, so a retained row never fades out a stale selection.
+  property bool selectionAnimated: false
   property var shownKeys: []
   function projectRows(items) {
     const rows = LauncherSelection.keyedRows(items, providers);
@@ -294,6 +298,7 @@ Rectangle {
   }
 
   function onOpened() {
+    selectionAnimated = false;
     LauncherActionService.finishSession(actionSession);
     actionSession = LauncherActionService.beginSession(screen);
     pasteContext();
@@ -437,6 +442,7 @@ Rectangle {
   function updateResults(resetSelection) {
     if (!isOpen || !openReady)
       return;
+    selectionAnimated = false;
     const previousItem = results[selectedIndex];
     const previousIndex = selectedIndex;
     let nextResults = [];
@@ -504,11 +510,17 @@ Rectangle {
     projectRows(nextResults);
     results = nextResults;
     selectedIndex = LauncherSelection.afterRefresh(nextResults, previousItem, previousIndex, !!resetSelection);
+    // The view applies the refresh's row moves now, not at its next polish, so
+    // every highlight change the refresh causes happens here, unanimated.
+    if (resultsView && resultsView.revealSelection)
+      resultsView.revealSelection();
   }
 
   function selectFromPointer(index) {
-    if (!ignoreMouseHover && mouseTrackingReady && index >= 0 && index < results.length)
+    if (!ignoreMouseHover && mouseTrackingReady && index >= 0 && index < results.length) {
+      selectionAnimated = true;
       selectedIndex = index;
+    }
   }
 
   function trackPointer(index, point) {
@@ -599,6 +611,7 @@ Rectangle {
   function keyboardSelection(action) {
     ignoreMouseHover = true;
     globalMouseInitialized = false;
+    selectionAnimated = true;
     action();
   }
 
@@ -924,12 +937,6 @@ Rectangle {
             currentIndex = Qt.binding(() => root.selectedIndex);
           positionViewAtIndex(root.selectedIndex, ListView.Contain);
         }
-        Connections {
-          target: root
-          function onResultsChanged() {
-            Qt.callLater(resultsList.revealSelection);
-          }
-        }
 
         delegate: LauncherListDelegate {
           launcher: root
@@ -1030,12 +1037,6 @@ Rectangle {
         function revealSelection() {
           cancelFlick();
           positionViewAtIndex(root.selectedIndex, GridView.Contain);
-        }
-        Connections {
-          target: root
-          function onResultsChanged() {
-            Qt.callLater(resultsGrid.revealSelection);
-          }
         }
         keyNavigationEnabled: false
         focus: false

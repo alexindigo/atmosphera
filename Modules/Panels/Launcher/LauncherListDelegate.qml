@@ -40,7 +40,9 @@ NBox {
   Component.onCompleted: prepare()
   onRowChanged: prepare()
 
+  // Only user navigation animates the highlight (LauncherCore.selectionAnimated).
   Behavior on color {
+    enabled: launcher.selectionAnimated
     ColorAnimation {
       duration: Style.animationFast
       easing.type: Easing.OutCirc

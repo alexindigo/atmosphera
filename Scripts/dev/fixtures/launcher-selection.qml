@@ -194,6 +194,27 @@ ShellRoot {
         core.searchText = "first query";
         root.same("large-insert-selects-top", [core.selectedIndex, core.results[core.selectedIndex].appId], [0, "e0"]);
         root.same("large-insert-creates-only-shown-rows", root.createdOutsideView(before), 0);
+        // A refresh that moves the selection off a retained row moves the
+        // highlight at once; only navigation animates it (as on main, whose
+        // refreshes rebuilt every row).
+        Settings.data.general.animationDisabled = false;
+        provider.rows = [root.row("alpha"), root.row("beta"), root.row("gamma")];
+        core.searchText = "";
+        core.updateResults();
+        core.selectedIndex = 0;
+        // Apply the view's pending changes (as its next polish would) before reading rows.
+        const delegateOf = id => {
+          core.resultsView.positionViewAtIndex(0, ListView.Beginning);
+          return root.shown().find(item => item.row.appId === id);
+        };
+        const alphaRow = delegateOf("alpha");
+        provider.rows = [root.row("beta"), root.row("alpha"), root.row("gamma")];
+        core.searchText = "query moves the selection";
+        root.same("refresh-highlight-snaps", [delegateOf("alpha") === alphaRow, Qt.colorEqual(alphaRow.color, AtmoColor.mSurfaceVariant),
+                                             Qt.colorEqual(delegateOf("beta").color, AtmoColor.mHover)], [true, true, true]);
+        core.keyboardSelection(core.selectNextWrapped);
+        root.same("navigation-highlight-animates", [core.results[core.selectedIndex].appId, Qt.colorEqual(alphaRow.color, AtmoColor.mHover)], ["alpha", false]);
+        Settings.data.general.animationDisabled = true;
         provider.rows = [root.row("alpha"), root.row("beta"), root.row("gamma")];
         core.searchText = "";
         core.updateResults();
