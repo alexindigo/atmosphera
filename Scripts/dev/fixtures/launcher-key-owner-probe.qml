@@ -339,6 +339,36 @@ Item {
     function reprojectResults(): void {
       probe.core().updateResults();
     }
+    // The persisted settings and watcher state configure() changes. The
+    // console shell outlives every consumer, so consumers read these before
+    // configuring and write them back afterwards (configured_settings()).
+    function getLauncherSettings(): string {
+      const launcher = Settings.data.appLauncher;
+      return JSON.stringify({
+                              overviewLayer: launcher.overviewLayer,
+                              viewMode: launcher.viewMode,
+                              showCategories: launcher.showCategories,
+                              enableClipboardHistory: launcher.enableClipboardHistory,
+                              enableSessionSearch: launcher.enableSessionSearch,
+                              autoPasteClipboard: launcher.autoPasteClipboard,
+                              animationDisabled: Settings.data.general.animationDisabled,
+                              clipboardAutoWatch: ClipboardService.autoWatch
+                            });
+    }
+    function setLauncherSettings(options: string): void {
+      const values = JSON.parse(options);
+      const launcher = Settings.data.appLauncher;
+      launcher.overviewLayer = values.overviewLayer;
+      launcher.viewMode = values.viewMode;
+      launcher.showCategories = values.showCategories;
+      launcher.enableClipboardHistory = values.enableClipboardHistory;
+      launcher.enableSessionSearch = values.enableSessionSearch;
+      launcher.autoPasteClipboard = values.autoPasteClipboard;
+      Settings.data.general.animationDisabled = values.animationDisabled;
+      ClipboardService.autoWatch = values.clipboardAutoWatch;
+      if (values.clipboardAutoWatch)
+        ClipboardService.startWatchers();
+    }
     function bindings(options: string): void {
       const values = JSON.parse(options);
       for (const name in values)
