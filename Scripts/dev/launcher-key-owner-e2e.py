@@ -23,8 +23,19 @@ flow.ROOT = ROOT
 flow.SOCKET = ROOT / 'runtime/input.sock'
 
 
-def ipc(method, *args):
+# launcherKeys methods that change probe or console state. They run only inside
+# probe_session(), which restores that state when the consumer exits.
+STATEFUL = frozenset({'configure', 'observe', 'stealFocus', 'armActivation', 'reprojectResults', 'setLauncherSettings',
+                      'bindings', 'autoPaste', 'observePasteSession', 'queuePasteText', 'takeFocusNotifications', 'hide'})
+
+
+def _call(method, *args):
     return flow.command(['qs', '-c', 'atmosphera', 'ipc', 'call', 'launcherKeys', method, *args]).stdout.strip()
+
+
+def ipc(method, *args):
+    assert method not in STATEFUL or _session_settings is not None, method + '() only inside probe_session()'
+    return _call(method, *args)
 
 
 class BindingRestorationError(RuntimeError):
@@ -47,41 +58,57 @@ def temporary_bindings(overrides):
             raise BindingRestorationError('Temporary key binding restoration failed') from error
 
 
-class SettingsRestorationError(RuntimeError):
-    """The console launcher settings are unknown; later suites must not run."""
+class ProbeRestorationError(RuntimeError):
+    """The console settings or probe state are unknown; later suites must not run."""
 
 
-_configured_from = None
+# The probe's baseline: nothing armed, recorded, hidden or registered.
+PROBE_BASELINE = {'activationArmed': False, 'compete': False, 'challenger': False, 'hidden': False,
+                  'fixtureProvider': False, 'shortcutHits': 0, 'closes': 0, 'activations': 0,
+                  'activatedName': '', 'pasteEvents': 0, 'pasteSession': False, 'focusNotifications': 0,
+                  'deliveredKeys': 0, 'nativeEdges': 0, 'keySerial': 0}
+_session_settings = None
+
+
+def _reset_probe():
+    report = json.loads(_call('reset'))
+    if report != PROBE_BASELINE:
+        raise RuntimeError(f'probe reset left {report!r}')
 
 
 @contextmanager
-def configured_settings():
-    """Own the console shell's launcher settings for one consumer.
+def probe_session():
+    """Own the console shell's launcher settings and the probe for one consumer.
 
-    configure() persists host, layout, animation and clipboard settings in the
-    console shell, which outlives the consumer. Restore them on exit so the
-    next suite starts from the settings it prepared, not this one's last case.
+    configure(), the activation spy, the focus challenger, hide() and the
+    probe's recordings all live in the console shell, which outlives the
+    consumer. The scope starts from the probe's baseline and, on any exit
+    (failure included), resets the probe, closes the launcher and restores the
+    settings, so the next suite starts from what it prepared.
     """
-    global _configured_from
-    assert _configured_from is None, 'configured_settings() does not nest'
-    previous = json.loads(ipc('getLauncherSettings'))
-    _configured_from = previous
+    global _session_settings
+    assert _session_settings is None, 'probe_session() does not nest'
+    previous = json.loads(_call('getLauncherSettings'))
+    _reset_probe()
+    _session_settings = previous
     try:
         yield
     finally:
-        _configured_from = None
+        _session_settings = None
         try:
+            # Disarm first: closing must not run a spied activation.
+            _reset_probe()
             closed()
-            ipc('setLauncherSettings', json.dumps(previous))
-            actual = json.loads(ipc('getLauncherSettings'))
+            _reset_probe()
+            _call('setLauncherSettings', json.dumps(previous))
+            actual = json.loads(_call('getLauncherSettings'))
             if actual != previous:
                 raise RuntimeError(f'expected {previous!r}, observed {actual!r}')
         except Exception as error:
-            raise SettingsRestorationError('Console launcher settings restoration failed') from error
+            raise ProbeRestorationError('Console settings/probe restoration failed') from error
 
 
 def configure(host, mode):
-    assert _configured_from is not None, 'configure() only inside configured_settings()'
     ipc('configure', json.dumps(dict(host=host, mode=mode)))
 
 
@@ -178,7 +205,7 @@ def main():
     p.add_argument('--with-original', action='store_true', help='Also execute the original eight consumer cases in both hosts')
     args = p.parse_args()
     flow.boundary()
-    with configured_settings():
+    with probe_session():
         os.environ['CLIPHIST_DB_PATH'] = str(ROOT / 'runtime/keytable-clipboard.db')
         if not args.red:
             for i in range(8):

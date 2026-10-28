@@ -17,7 +17,7 @@ def main():
     keys = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(keys)
     keys.flow.boundary()
-    with keys.configured_settings():
+    with keys.probe_session():
         out = ROOT / 'evidence' / args.label
         out.mkdir()
         entries = []

@@ -33,7 +33,7 @@ def main():
     spec.loader.exec_module(keys)
     flow = keys.flow
     flow.boundary()
-    with keys.configured_settings():
+    with keys.probe_session():
         output = ROOT / 'evidence' / args.label
         output.mkdir()
         prior = json.loads(flow.command(['qs', '-c', 'atmosphera', 'ipc', 'call', 'state', 'all']).stdout)['settings']['appLauncher']['autoPasteClipboard']

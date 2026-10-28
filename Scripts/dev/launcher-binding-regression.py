@@ -17,7 +17,7 @@ def main():
     keys = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(keys)
     keys.flow.boundary()
-    with keys.configured_settings():
+    with keys.probe_session():
         output = ROOT / 'evidence' / args.label
         output.mkdir()
         original_ipc, original_chord, original_expect = keys.ipc, keys.chord, keys.expect

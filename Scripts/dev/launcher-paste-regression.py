@@ -23,7 +23,7 @@ def main():
     keys = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(keys)
     keys.flow.boundary()
-    with keys.configured_settings():
+    with keys.probe_session():
         os.environ['CLIPHIST_DB_PATH'] = str(ROOT / 'runtime/keytable-clipboard.db')
         output = ROOT / 'evidence' / args.label
         output.mkdir()
