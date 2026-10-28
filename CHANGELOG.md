@@ -1,5 +1,138 @@
 # Changelog
 
+## [0.9.1] — 2026-10-27
+
+### 2026-10-27
+
+**Development**
+
+Launcher regression consumers now reset their shared probe on entry and exit,
+including failures, so an activation spy or focus challenger cannot leak into
+the next test. Passing and failing consumer checks also observe a real application
+launch afterwards. The launcher typing improvements and their regression coverage
+are integrated for this release.
+
+- test(launcher): reset the key-owner probe when a consumer exits (`325cb9182`)
+- Merge pull request #10: Launcher: no stalls while typing (`4ac3cdc54`)
+
+### 2026-10-26
+
+**Fix**
+
+A refreshed launcher's selection highlight now moves immediately with its item,
+instead of fading between the old and new row. Keyboard and pointer navigation
+still animate; opening and background refreshes do not leave a stale highlight.
+
+- fix(launcher): move a refreshed selection's highlight at once (`da9ed0976`)
+
+**Performance**
+
+Large result refreshes now switch to a fresh keyed view model when the incremental
+update would touch more rows than one visible page. The view creates the rows it
+shows and incubates the rest, avoiding synchronous work for a large re-rank or
+first query. Small refreshes keep their existing delegates, and selection still
+follows the same item.
+
+- perf(launcher): reset the result view for refreshes larger than it shows (`305f9174a`)
+
+**Development**
+
+Selection tests wait for the key's acknowledgement before judging the highlight,
+so they observe the completed interaction. Key-owner regression consumers also
+restore saved launcher settings when they finish, keeping later tests independent
+of their host, layout, animation and clipboard choices.
+
+- test(launcher): judge selection keys after their acknowledgement (`79a521020`)
+- test(launcher): restore console settings after key-owner consumers (`df60c6b03`)
+
+### 2026-10-25
+
+**Fix**
+
+Pending tray menus are cancelled when another panel takes their place, even before
+the menu becomes visible. Dock, tray and context menus track their anchor's
+logical identity, so a surviving delegate reused for another item cannot keep an
+old menu attached. Popup hosts now own content closure and release their state
+before child callbacks run, preventing stale closures from affecting a replacement
+menu or dialog.
+
+- fix(presentations): cancel stale menus and own test lifetimes (`606713074`)
+- fix(presentations): bind anchored menus to logical identity (`9fc7c7beb`)
+- fix(popups): let hosts own content closure (`fcd9685b3`)
+
+**Performance**
+
+Launcher searches keep surviving result delegates, cache normalized application
+fields and translated settings entries until their inputs change, and create
+image and badge components only for rows that use them. This reduces the work
+repeated on each keystroke without changing application ranking. Clipboard image
+requests share one decode per item and notify only that item's rows, instead of
+refreshing every preview when one thumbnail completes.
+
+- perf(launcher): keep result delegates across refreshes (`e7a8bcd37`)
+- perf(launcher): build provider search indexes when data changes (`54958bf44`)
+- perf(launcher): create delegate parts only for rows that use them (`eae61f82d`)
+- perf(clipboard): decode each image once and notify only its rows (`c3f413449`)
+
+**Documentation**
+
+The plugin guide describes stable launcher row identities, preparation while an
+item is shown, and per-item image notifications. It also explains that providers
+should derive expensive search data when their inputs change rather than on
+every query.
+
+- docs(plugins): describe launcher row identity and per-item images (`2986492ea`)
+
+**Maintenance**
+
+AUR release jobs retain queued releases and reject stable version downgrades
+before preparing either package. Tag-derived recipe work runs in keyless workers
+with scrubbed environments and bounded subprocesses, while authenticated publication
+uses a pinned AUR host identity and concise failure summaries. The nixpkgs lockfile
+was also refreshed for Nix-based development and packaging.
+
+- fix(aur): retain queued releases and reject downgrades (`5b87654ea`)
+- fix(aur): isolate recipe workers and bound subprocesses (`773b66940`)
+- fix(aur): pin host identity and keep worker errors concise (`2337520e3`)
+- chore(flake): update flake.lock (`6236e0045`)
+
+**Development**
+
+The presentation harness selftest now accepts an empty console without treating
+the absence of a running shell as a command failure. The deferred-panel fixes
+and repository-owned AUR publication changes were merged into the release base.
+
+- test(panels): tolerate no console qs in the harness selftest (`50e82d5ef`)
+- Merge pull request #8: Fix deferred panel work surviving its host (`6d37985aa`)
+- Merge pull request #9: Publish AUR recipes from the repository (`caf6efad6`)
+
+### 2026-10-24
+
+**Fix**
+
+Panels, menus, settings navigation and OSDs now own their deferred work for the
+lifetime of the presenting host. Closing, replacing or unloading a presentation
+cancels stale callbacks while carrying the latest valid open or close request
+through to completion. Notifications retain their live window when new content
+arrives during the close delay, avoiding a needless teardown and recreation.
+
+- fix(panels): own deferred work for the host lifetime (`ee7c8d911`)
+- fix(panels): invalidate stale presentation requests (`09ff1e03b`)
+- fix(notifications): preserve the live window across reactivation (`840d13a00`)
+- fix(panels): complete the latest presentation request (`ec7c096ea`)
+
+**Maintenance**
+
+Stable and development AUR packages now share repository-owned metadata and
+installation recipes, including the dependency floor and exclusion of developer
+tools. Release publication validates and builds both recipes and commits all
+changed recipes before pushing either, with per-package summaries and resumable
+partial publication. Unchanged development recipes keep their generated version
+and do not receive an unnecessary pkgrel bump.
+
+- ci(aur): publish recipes from the repository (`93b6ac7e0`)
+- fix(aur): validate and resume recipe publication (`94d11ab9e`)
+
 ## [0.9.0] — 2026-10-24
 
 ### 2026-10-24
