@@ -31,7 +31,10 @@ Item {
     if (typeof icon === "string") {
       var entry = IconRegistry.resolved[icon];
       if (entry === undefined) {
-        Logger.w("AtmoIcon", "\"" + icon + "\" not found in icons, falling back to \"" + Icons.defaultIcon + "\"");
+        // An empty name is an unset icon, not a missing one: same fallback,
+        // no warning (it was logged once per instance, e.g. per launcher row).
+        if (icon !== "")
+          Logger.w("AtmoIcon", "\"" + icon + "\" not found in icons, falling back to \"" + Icons.defaultIcon + "\"");
         return IconRegistry.resolved[Icons.defaultIcon];
       }
       return entry;

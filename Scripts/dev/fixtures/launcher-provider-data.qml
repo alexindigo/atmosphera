@@ -12,6 +12,20 @@ ShellRoot {
   property var cachedDuring: []
   property int projections: 0
   property string originalClipboardSelection: ""
+  // One image decode per item: jobs for the id right after two requests,
+  // per-item notifications and callbacks served.
+  property string imageId: ""
+  property int imageJobs: -1
+  property int imageDecoded: 0
+  property int imageCallbacks: 0
+  Connections {
+    target: ClipboardService
+    ignoreUnknownSignals: true
+    function onImageDecoded(id) {
+      if (String(id) === root.imageId)
+        root.imageDecoded++;
+    }
+  }
   function rows() {
     return subject.item ? subject.item.results.map(item => ({name: item.name,
       id: String(item.clipboardId || item.id || item.windowId || item.autoPasteText || item.name)})) : [];
@@ -79,6 +93,14 @@ ShellRoot {
         root.cachedDuring = root.rows();
         break;
       case "clip-refresh": ClipboardService.list(100); break;
+      case "image-decode": {
+        const image = ClipboardService.items.find(item => item.isImage);
+        root.imageId = String(image.id);
+        ClipboardService.decodeToDataUrl(image.id, image.mime, () => root.imageCallbacks++);
+        ClipboardService.decodeToDataUrl(image.id, image.mime, () => root.imageCallbacks++);
+        root.imageJobs = (String(ClipboardService._b64CurrentId) === root.imageId ? 1 : 0) + ClipboardService._b64Queue.filter(job => String(job.id) === root.imageId).length;
+        break;
+      }
       case "emoji-data":
         EmojiService.emojis = [{emoji: "😀", name: "cache-marker first", keywords: [], category: "people"},
                                {emoji: "😃", name: "cache-marker second", keywords: [], category: "people"}];
@@ -118,6 +140,7 @@ ShellRoot {
         rows: root.rows(), selected: core && core.results[core.selectedIndex] ?
         String(core.results[core.selectedIndex].clipboardId || core.results[core.selectedIndex].id || core.results[core.selectedIndex].name) : null,
         cachedDuring: root.cachedDuring, originalClipboardSelection: root.originalClipboardSelection,
+        imageJobs: root.imageJobs, imageDecoded: root.imageDecoded, imageCallbacks: root.imageCallbacks,
         clipboardReady: ClipboardService.active, clipboardLoading: ClipboardService.loading, clipboardItems: ClipboardService.items.length,
         emojiReady: EmojiService.loaded, settingsReady: SettingsSearchService.searchIndex.length > 0,
         projections: root.projections, pluginAttached: !!core && plugin.launcher === core, pluginDetached: plugin.launcher === null});

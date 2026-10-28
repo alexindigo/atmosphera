@@ -51,6 +51,42 @@ Rectangle {
   property int selectedIndex: 0
   property var results: []
   property var providers: []
+  // The views' model, derived from results and owned here (projectRows). Rows
+  // are keyed by item identity. results stays the source for selection and
+  // activation; the model only decides which delegates the views keep.
+  ScriptModel {
+    id: rowsA
+    objectProp: "key"
+  }
+  ScriptModel {
+    id: rowsB
+    objectProp: "key"
+  }
+  property var resultsModel: rowsA
+  // Whether a change of the selected row animates its highlight. Only the
+  // user's navigation (keys, pointer) does; a refresh or an open moves the
+  // highlight at once, so a retained row never fades out a stale selection.
+  property bool selectionAnimated: false
+  property var shownKeys: []
+  function projectRows(items) {
+    const rows = LauncherSelection.keyedRows(items, providers);
+    const current = resultsModel;
+    // A view applies an incremental change row by row and creates every row it
+    // moves or inserts synchronously, its cache buffer included. A reset
+    // creates only the rows it shows and incubates the rest. Apply the refresh
+    // incrementally while it touches no more rows than the view shows (small
+    // refreshes keep their delegates); otherwise reset the view by moving it to
+    // the other keyed model.
+    if (LauncherSelection.changedRows(shownKeys, rows) <= visiblePageSize) {
+      current.values = rows;
+    } else {
+      const next = current === rowsA ? rowsB : rowsA;
+      next.values = rows;
+      resultsModel = next;
+      current.values = [];
+    }
+    shownKeys = rows.map(row => row.key);
+  }
   onProvidersChanged: syncProviderObservers()
   property var activeProvider: null
   property bool resultsReady: false
@@ -262,6 +298,7 @@ Rectangle {
   }
 
   function onOpened() {
+    selectionAnimated = false;
     LauncherActionService.finishSession(actionSession);
     actionSession = LauncherActionService.beginSession(screen);
     pasteContext();
@@ -405,6 +442,7 @@ Rectangle {
   function updateResults(resetSelection) {
     if (!isOpen || !openReady)
       return;
+    selectionAnimated = false;
     const previousItem = results[selectedIndex];
     const previousIndex = selectedIndex;
     let nextResults = [];
@@ -469,13 +507,20 @@ Rectangle {
 
     // Update activeProvider only after computing new state to avoid UI flicker
     activeProvider = newActiveProvider;
+    projectRows(nextResults);
     results = nextResults;
     selectedIndex = LauncherSelection.afterRefresh(nextResults, previousItem, previousIndex, !!resetSelection);
+    // The view applies the refresh's row moves now, not at its next polish, so
+    // every highlight change the refresh causes happens here, unanimated.
+    if (resultsView && resultsView.revealSelection)
+      resultsView.revealSelection();
   }
 
   function selectFromPointer(index) {
-    if (!ignoreMouseHover && mouseTrackingReady && index >= 0 && index < results.length)
+    if (!ignoreMouseHover && mouseTrackingReady && index >= 0 && index < results.length) {
+      selectionAnimated = true;
       selectedIndex = index;
+    }
   }
 
   function trackPointer(index, point) {
@@ -566,6 +611,7 @@ Rectangle {
   function keyboardSelection(action) {
     ignoreMouseHover = true;
     globalMouseInitialized = false;
+    selectionAnimated = true;
     action();
   }
 
@@ -872,7 +918,7 @@ Rectangle {
         width: parent.width
         height: parent.height
         spacing: Style.marginS
-        model: root.results
+        model: root.resultsModel
         currentIndex: root.selectedIndex
         cacheBuffer: resultsList.height * 2
         interactive: !Settings.data.appLauncher.ignoreMouseInput
@@ -885,6 +931,10 @@ Rectangle {
         onModelChanged: Qt.callLater(revealSelection)
         function revealSelection() {
           cancelFlick();
+          // Row moves inside the model can shift the view's own current index;
+          // the selection stays authoritative.
+          if (currentIndex !== root.selectedIndex)
+            currentIndex = Qt.binding(() => root.selectedIndex);
           positionViewAtIndex(root.selectedIndex, ListView.Contain);
         }
 
@@ -981,7 +1031,7 @@ Rectangle {
         rightMargin: 0
         topMargin: 0
         bottomMargin: 0
-        model: root.results
+        model: root.resultsModel
         cacheBuffer: resultsGrid.height * 2
         onModelChanged: Qt.callLater(revealSelection)
         function revealSelection() {

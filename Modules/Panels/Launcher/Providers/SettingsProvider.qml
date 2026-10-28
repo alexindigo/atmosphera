@@ -14,7 +14,41 @@ Item {
   signal resultsChanged
   Connections {
     target: SettingsSearchService
-    function onSearchIndexChanged() { root.resultsChanged(); }
+    function onSearchIndexChanged() {
+      root.corpus = null;
+      root.resultsChanged();
+    }
+  }
+  // Search corpus: each index entry with its translated texts. Built on first
+  // use after the index or any translation input changes; a query only filters
+  // visibility (evaluated live, as before) and runs the matcher.
+  property var corpus: null
+  Connections {
+    target: I18n
+    function onTranslationsChanged() { root.corpus = null; }
+    function onFallbackTranslationsChanged() { root.corpus = null; }
+    function onIsLoadedChanged() { root.corpus = null; }
+    function onLangCodeChanged() { root.corpus = null; }
+  }
+  function searchCorpus() {
+    if (corpus === null) {
+      corpus = SettingsSearchService.searchIndex.map(entry => ({
+                                                              "entry": entry,
+                                                              "item": {
+                                                                "labelKey": entry.labelKey,
+                                                                "descriptionKey": entry.descriptionKey,
+                                                                "widget": entry.widget,
+                                                                "tab": entry.tab,
+                                                                "tabLabel": entry.tabLabel,
+                                                                "subTab": entry.subTab,
+                                                                "subTabLabel": entry.subTabLabel || null,
+                                                                "label": I18n.tr(entry.labelKey),
+                                                                "description": entry.descriptionKey ? I18n.tr(entry.descriptionKey) : "",
+                                                                "subTabName": entry.subTabLabel ? I18n.tr(entry.subTabLabel) : ""
+                                                              }
+                                                            }));
+    }
+    return corpus;
   }
   Connections {
     target: IdleService
@@ -79,24 +113,11 @@ Item {
         return [];
     }
 
-    // Build searchable items with resolved translations, filtering out invisible entries
+    // Translated corpus, filtered by visibility now
     let items = [];
-    for (let j = 0; j < SettingsSearchService.searchIndex.length; j++) {
-      const entry = SettingsSearchService.searchIndex[j];
-      if (!SettingsSearchService.isEntryVisible(entry))
-        continue;
-      items.push({
-                   "labelKey": entry.labelKey,
-                   "descriptionKey": entry.descriptionKey,
-                   "widget": entry.widget,
-                   "tab": entry.tab,
-                   "tabLabel": entry.tabLabel,
-                   "subTab": entry.subTab,
-                   "subTabLabel": entry.subTabLabel || null,
-                   "label": I18n.tr(entry.labelKey),
-                   "description": entry.descriptionKey ? I18n.tr(entry.descriptionKey) : "",
-                   "subTabName": entry.subTabLabel ? I18n.tr(entry.subTabLabel) : ""
-                 });
+    for (const indexed of searchCorpus()) {
+      if (SettingsSearchService.isEntryVisible(indexed.entry))
+        items.push(indexed.item);
     }
 
     const results = FuzzySort.go(trimmed, items, {

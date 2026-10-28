@@ -12,6 +12,7 @@ ShellRoot {
   property bool pointerPending: false
   property point requestedPointer
   property int pointerWaitTicks: 0
+  property int keyboardWaitTicks: 0
   function same(name, actual, expected) {
     const passed = JSON.stringify(actual) === JSON.stringify(expected);
     if (!passed)
@@ -37,8 +38,12 @@ ShellRoot {
     property bool handleSearch: true
     property string supportedLayouts: "both"
     property var rows: []
+    property int prepared: 0
     function getResults(query) {
       return rows;
+    }
+    function prepareItem(item) {
+      prepared++;
     }
   }
   FloatingWindow {
@@ -73,6 +78,28 @@ ShellRoot {
     const found = [];
     delegates(core.resultsView, found);
     return found;
+  }
+  function many(prefix, count, reversed) {
+    const out = [];
+    for (let i = 0; i < count; i++)
+      out.push(root.row(prefix + (reversed ? count - 1 - i : i)));
+    return out;
+  }
+  // Delegates the view created synchronously for the last refresh outside its
+  // area. Positioning at the top (where both refreshes leave the view) applies
+  // its pending changes now, as its next polish would, without scrolling;
+  // asynchronously incubated rows are not created yet.
+  function createdOutsideView(before) {
+    const view = core.resultsView;
+    view.positionViewAtIndex(0, ListView.Beginning);
+    return root.rows().filter(item => item.index >= 0 && before.indexOf(item) === -1).filter(item => {
+      const y = item.mapToItem(view, 0, 0).y;
+      return y + item.height <= 0 || y >= view.height;
+    }).length;
+  }
+  // Live delegates in row order (released ones have index -1).
+  function shown() {
+    return root.rows().filter(item => item.index >= 0 && item.visible).sort((a, b) => a.index - b.index);
   }
   function moveTo(index, dx) {
     const target = rows().find(item => item.index === index);
@@ -109,6 +136,15 @@ ShellRoot {
           root.same("pointer-delivery-" + root.stage, false, true);
         }
       }
+      // Likewise a launched key command is judged only after the private
+      // keyboard owner acknowledged it (the helper exits on its OK), never on
+      // a fixed tick that a slow helper start can outrun.
+      if (keyboard.running) {
+        if (++root.keyboardWaitTicks < 20)
+          return;
+        root.same("keyboard-delivery-" + root.stage, false, true);
+      }
+      root.keyboardWaitTicks = 0;
       switch (root.stage++) {
       case 0:
         Settings.data.general.animationDisabled = true;
@@ -120,6 +156,69 @@ ShellRoot {
         break;
       case 1:
         root.same("open-top", core.selectedIndex, 0);
+        // A refresh producing the same items (new objects, as every query and
+        // async re-projection does) keeps every delegate and prepares nothing.
+        const kept = root.shown();
+        const preparedBefore = provider.prepared;
+        provider.rows = [root.row("alpha"), root.row("beta"), root.row("gamma")];
+        core.updateResults();
+        const again = root.shown();
+        root.same("identical-refresh-keeps-delegates", again.length === 3 && again.every((item, i) => item === kept[i]), true);
+        root.same("identical-refresh-prepares-nothing", provider.prepared - preparedBefore, 0);
+        // A narrowing refresh only removes rows: survivors keep their delegates.
+        provider.rows = [root.row("beta"), root.row("gamma")];
+        core.updateResults();
+        const narrowed = root.shown();
+        root.same("narrowing-keeps-survivors", narrowed.length === 2 && narrowed[0] === kept[1] && narrowed[1] === kept[2], true);
+        // Large refreshes reset the view: the selection follows its item (or
+        // the top after a query) and only shown rows are created synchronously.
+        provider.rows = root.many("r", 60, false);
+        core.updateResults();
+        // The preserved item stays on screen (index 0 -> 3), so the view does not
+        // scroll to follow the selection and only the refresh creates rows.
+        core.selectedIndex = 0;
+        let before = root.rows();
+        // A re-rank as a narrowing keystroke produces it: a few new rows on top,
+        // the survivors in a different order.
+        const reranked = [root.row("n0"), root.row("n1"), root.row("n2")];
+        for (let i = 0; i < 60; i++)
+          reranked.push(root.row("r" + ((i * 7) % 60)));
+        provider.rows = reranked;
+        core.updateResults();
+        root.same("large-rerank-keeps-selection", [core.selectedIndex, core.results[core.selectedIndex].appId], [3, "r0"]);
+        root.same("large-rerank-creates-only-shown-rows", root.createdOutsideView(before), 0);
+        provider.rows = [root.row("x0")];
+        core.updateResults();
+        before = root.rows();
+        provider.rows = root.many("e", 80, false);
+        core.searchText = "first query";
+        root.same("large-insert-selects-top", [core.selectedIndex, core.results[core.selectedIndex].appId], [0, "e0"]);
+        root.same("large-insert-creates-only-shown-rows", root.createdOutsideView(before), 0);
+        // A refresh that moves the selection off a retained row moves the
+        // highlight at once; only navigation animates it (as on main, whose
+        // refreshes rebuilt every row).
+        Settings.data.general.animationDisabled = false;
+        provider.rows = [root.row("alpha"), root.row("beta"), root.row("gamma")];
+        core.searchText = "";
+        core.updateResults();
+        core.selectedIndex = 0;
+        // Apply the view's pending changes (as its next polish would) before reading rows.
+        const delegateOf = id => {
+          core.resultsView.positionViewAtIndex(0, ListView.Beginning);
+          return root.shown().find(item => item.row.appId === id);
+        };
+        const alphaRow = delegateOf("alpha");
+        provider.rows = [root.row("beta"), root.row("alpha"), root.row("gamma")];
+        core.searchText = "query moves the selection";
+        root.same("refresh-highlight-snaps", [delegateOf("alpha") === alphaRow, Qt.colorEqual(alphaRow.color, AtmoColor.mSurfaceVariant),
+                                             Qt.colorEqual(delegateOf("beta").color, AtmoColor.mHover)], [true, true, true]);
+        core.keyboardSelection(core.selectNextWrapped);
+        root.same("navigation-highlight-animates", [core.results[core.selectedIndex].appId, Qt.colorEqual(alphaRow.color, AtmoColor.mHover)], ["alpha", false]);
+        Settings.data.general.animationDisabled = true;
+        provider.rows = [root.row("alpha"), root.row("beta"), root.row("gamma")];
+        core.searchText = "";
+        core.updateResults();
+        core.selectedIndex = 0;
         core.selectedIndex = 2;
         provider.rows = [root.row("beta"), root.row("gamma"), root.row("zeta")];
         core.updateResults();

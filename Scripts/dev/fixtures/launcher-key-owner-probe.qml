@@ -156,11 +156,72 @@ Item {
   }
   function attach() {
     const current = core();
-    if (!current || attachedCore === current)
+    if (!current)
       return;
-    attachedCore = current;
-    current.requestClose.connect(() => probe.closes++);
-    challenger = competition.createObject(current);
+    if (attachedCore !== current) {
+      attachedCore = current;
+      current.requestClose.connect(() => probe.closes++);
+    }
+    if (!challenger)
+      challenger = competition.createObject(current);
+  }
+  // The one reset of every consumer-visible probe state: the activation spy,
+  // the competing shortcuts/focus challenger, a hidden core, the fixture
+  // provider registration and all recordings. The console shell outlives each
+  // consumer; the consumers' shared scope calls this on entry and exit.
+  function resetState() {
+    const current = core();
+    const wasArmed = activationArmed;
+    activationArmed = false;
+    compete = false;
+    if (challenger) {
+      challenger.destroy();
+      challenger = null;
+    }
+    if (current) {
+      current.visible = true;
+      // Replace result objects whose onActivate the spy overwrote.
+      if (wasArmed)
+        current.updateResults();
+    }
+    const plugins = Object.assign({}, LauncherProviderRegistry.pluginProviders);
+    const instances = Object.assign({}, LauncherProviderRegistry.providerInstances);
+    if (plugins["plugin:k1-single"] !== undefined || instances["plugin:k1-single"] !== undefined) {
+      delete plugins["plugin:k1-single"];
+      delete instances["plugin:k1-single"];
+      LauncherProviderRegistry.pluginProviders = plugins;
+      LauncherProviderRegistry.providerInstances = instances;
+    }
+    shortcutHits = 0;
+    closes = 0;
+    activations = 0;
+    activatedName = "";
+    pasteEvents = [];
+    lastPasteSession = null;
+    focusNotifications = [];
+    deliveredKeys = [];
+    nativeEdges = [];
+    keySerial = 0;
+  }
+  function stateReport() {
+    const current = core();
+    return {
+      activationArmed: activationArmed,
+      compete: compete,
+      challenger: !!challenger,
+      hidden: !!current && !current.visible,
+      fixtureProvider: LauncherProviderRegistry.pluginProviders["plugin:k1-single"] !== undefined || LauncherProviderRegistry.providerInstances["plugin:k1-single"] !== undefined,
+      shortcutHits: shortcutHits,
+      closes: closes,
+      activations: activations,
+      activatedName: activatedName,
+      pasteEvents: pasteEvents.length,
+      pasteSession: !!lastPasteSession,
+      focusNotifications: focusNotifications.length,
+      deliveredKeys: deliveredKeys.length,
+      nativeEdges: nativeEdges.length,
+      keySerial: keySerial
+    };
   }
   function snapshot() {
     const current = core();
@@ -332,12 +393,49 @@ Item {
       // Read immediately in the same JS call: no focus-settling wait allowed.
       return JSON.stringify(probe.snapshot());
     }
+    function reset(): string {
+      probe.resetState();
+      return JSON.stringify(probe.stateReport());
+    }
+    function probeState(): string {
+      return JSON.stringify(probe.stateReport());
+    }
     function armActivation(): void {
       probe.activationArmed = true;
       probe.installActivationSpy();
     }
     function reprojectResults(): void {
       probe.core().updateResults();
+    }
+    // The persisted settings and watcher state configure() changes. The
+    // console shell outlives every consumer, so consumers read these before
+    // configuring and write them back afterwards (probe_session()).
+    function getLauncherSettings(): string {
+      const launcher = Settings.data.appLauncher;
+      return JSON.stringify({
+                              overviewLayer: launcher.overviewLayer,
+                              viewMode: launcher.viewMode,
+                              showCategories: launcher.showCategories,
+                              enableClipboardHistory: launcher.enableClipboardHistory,
+                              enableSessionSearch: launcher.enableSessionSearch,
+                              autoPasteClipboard: launcher.autoPasteClipboard,
+                              animationDisabled: Settings.data.general.animationDisabled,
+                              clipboardAutoWatch: ClipboardService.autoWatch
+                            });
+    }
+    function setLauncherSettings(options: string): void {
+      const values = JSON.parse(options);
+      const launcher = Settings.data.appLauncher;
+      launcher.overviewLayer = values.overviewLayer;
+      launcher.viewMode = values.viewMode;
+      launcher.showCategories = values.showCategories;
+      launcher.enableClipboardHistory = values.enableClipboardHistory;
+      launcher.enableSessionSearch = values.enableSessionSearch;
+      launcher.autoPasteClipboard = values.autoPasteClipboard;
+      Settings.data.general.animationDisabled = values.animationDisabled;
+      ClipboardService.autoWatch = values.clipboardAutoWatch;
+      if (values.clipboardAutoWatch)
+        ClipboardService.startWatchers();
     }
     function bindings(options: string): void {
       const values = JSON.parse(options);

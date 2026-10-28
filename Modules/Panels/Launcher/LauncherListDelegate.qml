@@ -3,15 +3,19 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell.Widgets
 
+import "Helpers/LauncherSelection.js" as LauncherSelection
 import qs.Commons
 import qs.Widgets
 
 NBox {
   id: entry
 
+  // Keyed view row {key, row}; the delegate lives as long as its key does.
   required property var modelData
   required property int index
   required property var launcher
+  // The launcher's result object for this row (refreshed in place by a keyed update).
+  readonly property var row: modelData && modelData.row ? modelData.row : ({})
 
   readonly property bool isSelected: index === launcher.selectedIndex
 
@@ -21,15 +25,24 @@ NBox {
   color: entry.isSelected ? AtmoColor.mHover : AtmoColor.mSurfaceVariant
   forceOpaque: entry.isSelected
 
-  // Prepare item when it becomes visible (e.g., decode images)
-  Component.onCompleted: {
-    var provider = modelData.provider;
+  // Prepare each item once while it is shown (e.g., decode images). A kept
+  // delegate prepares again only if its row now stands for another item.
+  property var preparedRow: null
+  function prepare() {
+    if (preparedRow && LauncherSelection.sameIdentity(preparedRow, row))
+      return;
+    preparedRow = row;
+    var provider = row.provider;
     if (provider && provider.prepareItem) {
-      provider.prepareItem(modelData);
+      provider.prepareItem(row);
     }
   }
+  Component.onCompleted: prepare()
+  onRowChanged: prepare()
 
+  // Only user navigation animates the highlight (LauncherCore.selectionAnimated).
   Behavior on color {
+    enabled: launcher.selectionAnimated
     ColorAnimation {
       duration: Style.animationFast
       easing.type: Easing.OutCirc
@@ -49,38 +62,57 @@ NBox {
 
       // Icon badge or Image preview or Emoji
       Item {
-        visible: !modelData.hideIcon
-        Layout.preferredWidth: modelData.hideIcon ? 0 : launcher.badgeSize
-        Layout.preferredHeight: modelData.hideIcon ? 0 : launcher.badgeSize
+        id: badge
+        visible: !row.hideIcon
+        // Image parts exist only for image rows; their state is read from here.
+        readonly property int imageStatus: imageLoader.item ? imageLoader.item.status : Image.Null
+        readonly property bool imageShown: imageLoader.item ? imageLoader.item.visible : false
+        Layout.preferredWidth: row.hideIcon ? 0 : launcher.badgeSize
+        Layout.preferredHeight: row.hideIcon ? 0 : launcher.badgeSize
 
         // Icon background
         Rectangle {
           anchors.fill: parent
           radius: Style.radiusXS
           color: AtmoColor.mSurface
-          visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage
+          visible: Settings.data.appLauncher.showIconBackground && !row.isImage
         }
 
         // Image preview - uses provider's getImageUrl if available
-        NImageRounded {
-          id: imagePreview
+        Loader {
+          id: imageLoader
           anchors.fill: parent
-          visible: !!modelData.isImage && !modelData.displayString
+          active: !!row.isImage
+          sourceComponent: NImageRounded {
+          id: rowImage
+          // A failed image falls back to the icon, declaratively: a kept delegate
+          // follows its row instead of a state written once at creation.
+          visible: !row.displayString && status !== Image.Error
           radius: Style.radiusXS
           borderColor: AtmoColor.mOnSurface
           borderWidth: Style.borderM
           imageFillMode: Image.PreserveAspectCrop
 
-          // Use provider's image revision for reactive updates
-          readonly property int _rev: modelData.provider && modelData.provider.imageRevision ? modelData.provider.imageRevision : 0
+          // A provider-wide imageRevision, or itemImageChanged(identity) for
+          // this row's item alone, makes its image a binding input again.
+          readonly property int _rev: row.provider && row.provider.imageRevision ? row.provider.imageRevision : 0
+          property int itemRevision: 0
+          Connections {
+            target: row.provider || null
+            ignoreUnknownSignals: true
+            function onItemImageChanged(identity) {
+              const own = LauncherSelection.identity(row);
+              if (own && String(own.value) === String(identity))
+                rowImage.itemRevision++;
+            }
+          }
 
-          // Passing the revision makes cache invalidation a binding input.
-          imagePath: imageUrlForRevision(_rev)
+          imagePath: imageUrlForRevision(_rev, itemRevision)
 
-          function imageUrlForRevision(revision) {
-            var provider = modelData.provider;
+          function imageUrlForRevision(revision, itemRevision) {
+            var provider = row.provider;
             if (provider && provider.getImageUrl) {
-              return provider.getImageUrl(modelData);
+              return provider.getImageUrl(row);
             }
             return "";
           }
@@ -97,12 +129,6 @@ NBox {
               height: width
             }
           }
-
-          onStatusChanged: {
-            if (status === Image.Error) {
-              iconLoader.visible = true;
-              imagePreview.visible = false;
-            }
           }
         }
 
@@ -110,8 +136,8 @@ NBox {
         Rectangle {
           anchors.fill: parent
           radius: Style.radiusXS
-          color: modelData.colorHex || "transparent"
-          visible: !!modelData.colorHex
+          color: row.colorHex || "transparent"
+          visible: !!row.colorHex
           border.color: AtmoColor.mOnSurface
           border.width: Style.borderM
         }
@@ -121,22 +147,22 @@ NBox {
           anchors.fill: parent
           anchors.margins: Style.marginXS
 
-          visible: (!modelData.isImage && !modelData.displayString && !modelData.colorHex) || (!!modelData.isImage && imagePreview.status === Image.Error)
+          visible: (!row.isImage && !row.displayString && !row.colorHex) || (!!row.isImage && badge.imageStatus === Image.Error)
           active: visible
 
           sourceComponent: Component {
             Loader {
               anchors.fill: parent
-              sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? tablerIconComponent : systemIconComponent
+              sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && row.isTablerIcon ? tablerIconComponent : systemIconComponent
             }
           }
 
           Component {
             id: tablerIconComponent
             AtmoIcon {
-              icon: modelData.icon
+              icon: row.icon
               pointSize: Style.fontSizeXXXL
-              visible: modelData.icon && !modelData.displayString
+              visible: row.icon && !row.displayString
               color: (entry.isSelected && !Settings.data.appLauncher.showIconBackground) ? AtmoColor.mOnHover : AtmoColor.mOnSurface
             }
           }
@@ -145,8 +171,8 @@ NBox {
             id: systemIconComponent
             AtmoAppIcon {
               anchors.fill: parent
-              name: modelData.icon || ""
-              visible: modelData.icon && !modelData.displayString
+              name: row.icon || ""
+              visible: row.icon && !row.displayString
             }
           }
         }
@@ -155,19 +181,20 @@ NBox {
         NText {
           id: stringDisplay
           anchors.centerIn: parent
-          visible: !!modelData.displayString || (!imagePreview.visible && !iconLoader.visible)
-          text: modelData.displayString ? modelData.displayString : (modelData.name ? modelData.name.charAt(0).toUpperCase() : "?")
-          pointSize: modelData.displayString ? (modelData.displayStringSize || Style.fontSizeXXXL) : Style.fontSizeXXL
+          visible: !!row.displayString || (!badge.imageShown && !iconLoader.visible)
+          text: row.displayString ? row.displayString : (row.name ? row.name.charAt(0).toUpperCase() : "?")
+          pointSize: row.displayString ? (row.displayStringSize || Style.fontSizeXXXL) : Style.fontSizeXXL
           font.weight: Style.fontWeightBold
-          color: modelData.displayString ? AtmoColor.mOnSurface : AtmoColor.mOnPrimary
+          color: row.displayString ? AtmoColor.mOnSurface : AtmoColor.mOnPrimary
         }
 
         // Image type indicator overlay
-        Rectangle {
-          visible: !!modelData.isImage && imagePreview.visible
+        Loader {
+          active: !!row.isImage && badge.imageShown
           anchors.bottom: parent.bottom
           anchors.right: parent.right
           anchors.margins: 2
+          sourceComponent: Rectangle {
           width: formatLabel.width + Style.marginXS
           height: formatLabel.height + Style.marginXXS
           color: AtmoColor.mSurfaceVariant
@@ -176,32 +203,35 @@ NBox {
             id: formatLabel
             anchors.centerIn: parent
             text: {
-              if (!modelData.isImage)
+              if (!row.isImage)
                 return "";
-              const desc = modelData.description || "";
+              const desc = row.description || "";
               const parts = desc.split(" \u2022 ");
               return parts[0] || "IMG";
             }
             pointSize: Style.fontSizeXXS
             color: AtmoColor.mOnSurfaceVariant
           }
+          }
         }
 
         // Badge icon overlay (generic indicator for any provider)
-        Rectangle {
-          visible: !!modelData.badgeIcon
+        Loader {
+          active: !!row.badgeIcon
           anchors.bottom: parent.bottom
           anchors.right: parent.right
           anchors.margins: 2
+          sourceComponent: Rectangle {
           width: height
           height: Style.fontSizeM + Style.marginXS
           color: AtmoColor.mSurfaceVariant
           radius: Style.radiusXXS
           AtmoIcon {
             anchors.centerIn: parent
-            icon: modelData.badgeIcon || ""
+            icon: row.badgeIcon || ""
             pointSize: Style.fontSizeS
             color: AtmoColor.mOnSurfaceVariant
+          }
           }
         }
       }
@@ -212,7 +242,7 @@ NBox {
         spacing: 0
 
         NText {
-          text: modelData.name || "Unknown"
+          text: row.name || "Unknown"
           pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
           color: entry.isSelected ? AtmoColor.mOnHover : AtmoColor.mOnSurface
@@ -224,7 +254,7 @@ NBox {
         }
 
         NText {
-          text: modelData.description || ""
+          text: row.description || ""
           pointSize: Style.fontSizeS
           color: entry.isSelected ? AtmoColor.mOnHover : AtmoColor.mOnSurfaceVariant
           elide: Text.ElideRight
@@ -243,9 +273,9 @@ NBox {
         property var itemActions: {
           if (!entry.isSelected)
             return [];
-          var provider = modelData.provider || launcher.currentProvider;
+          var provider = row.provider || launcher.currentProvider;
           if (provider && provider.getItemActions) {
-            return provider.getItemActions(modelData);
+            return provider.getItemActions(row);
           }
           return [];
         }
