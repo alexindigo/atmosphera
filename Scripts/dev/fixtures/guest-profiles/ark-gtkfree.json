@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "name": "arch-atmosphera-gtkfree",
+  "uuid": "2c790f00-3a2f-4042-962d-fede17fec400",
+  "mac": "52:54:00:cd:ea:a0",
+  "sshHostKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMyzdj0juWTupZ/gAZV4X7ahlxZy4wWnzsVPFR1N8hh2",
+  "uid": 1000,
+  "home": "/home/tester",
+  "workspace": "/home/tester/post-071/bindings-fifo-handoff",
+  "workBase": "/home/tester/post-071/bindings-fifo-handoff/scratch",
+  "journalBase": "/home/tester/post-071/bindings-fifo-handoff/recovery-journals",
+  "runtimeBase": "/home/tester/post-071/bindings-fifo-handoff/runtime",
+  "sessionRuntime": "/run/user/1000",
+  "waylandDisplay": "wayland-1",
+  "consoleConfig": "atmosphera",
+  "qmpCommand": ["virsh", "-c", "qemu+ssh://ark-dom/system", "qemu-monitor-command", "arch-atmosphera-gtkfree", "{event}"]
+}
