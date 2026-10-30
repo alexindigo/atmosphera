@@ -9,6 +9,7 @@ import qs.Widgets
 Popup {
   id: root
   modal: true
+  closePolicy: Popup.NoAutoClose
   dim: false
   anchors.centerIn: parent
   property var screen: null
@@ -25,9 +26,23 @@ Popup {
   property var currentInstanceApi: null
   readonly property bool isInstance: currentInstanceApi !== null
   property bool showToastOnSave: false
+  readonly property bool busy: _busy
+  readonly property bool saveFailed: _failed
+  readonly property bool discardPending: discardDialog.visible
+  readonly property bool dirty: _failed || (_pageApi && _pageApi.staged) || (settingsPage && (typeof settingsPage.settingsDirty !== "boolean" || settingsPage.settingsDirty))
+  property bool _busy: false
+  property bool _failed: false
+  property var _editor: null
+  property var _pageApi: null
+  signal settingsCompleted(var result)
+
+  Component {
+    id: pageApiFactory
+    PluginSettingsPageApi {}
+  }
 
   // The loaded settings page (its saveSettings() is what Apply calls).
-  readonly property var settingsPage: settingsLoader.item
+  readonly property var settingsPage: loadedPage()
   readonly property var resetButton: resetInstanceButton
   readonly property var resetConfirmation: resetInstanceDialog
 
@@ -43,6 +58,10 @@ Popup {
 
   contentItem: FocusScope {
     focus: true
+    Keys.onEscapePressed: event => {
+      root.requestClose();
+      event.accepted = true;
+    }
 
     ColumnLayout {
       id: settingsContent
@@ -66,7 +85,8 @@ Popup {
         AtmoIconButton {
           icon: Icon.close
           tooltipText: I18n.tr("common.close")
-          onClicked: root.close()
+          enabled: !root.busy
+          onClicked: root.requestClose()
         }
       }
 
@@ -97,8 +117,16 @@ Popup {
 
         Loader {
           id: settingsLoader
+          enabled: !root.busy
           width: settingsScrollView.availableWidth
         }
+      }
+
+      NText {
+        visible: root.saveFailed
+        text: I18n.tr("common.editor-save-failed")
+        wrapMode: Text.WordWrap
+        Layout.fillWidth: true
       }
 
       // Action buttons
@@ -108,13 +136,14 @@ Popup {
         spacing: Style.marginM
 
         Repeater {
-          model: settingsLoader.item?.auxButtons || []
+          model: root.settingsPage?.auxButtons || []
 
           delegate: NButton {
             required property var modelData
             text: modelData.text || ""
             icon: modelData.icon || ""
             outlined: true
+            enabled: !root.busy
             onClicked: {
               if (modelData.clicked)
                 modelData.clicked();
@@ -125,6 +154,7 @@ Popup {
         NButton {
           id: resetInstanceButton
           visible: root.isInstance
+          enabled: !root.busy
           text: I18n.tr("panels.plugins.reset-to-plugin-settings")
           outlined: true
           onClicked: {
@@ -140,20 +170,15 @@ Popup {
         NButton {
           text: I18n.tr("common.close")
           outlined: true
-          onClicked: root.close()
+          enabled: !root.busy
+          onClicked: root.requestClose()
         }
 
         NButton {
           text: I18n.tr("common.apply")
           icon: Icon.check
-          onClicked: {
-            if (settingsLoader.item && settingsLoader.item.saveSettings) {
-              settingsLoader.item.saveSettings();
-              if (root.showToastOnSave) {
-                ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.settings-saved"));
-              }
-            }
-          }
+          enabled: !root.busy && root.settingsPage !== null && root._editor !== null
+          onClicked: root.applySettings()
         }
       }
     }
@@ -163,6 +188,7 @@ Popup {
     id: resetInstanceDialog
     parent: root.contentItem
     modal: true
+    closePolicy: Popup.NoAutoClose
     dim: false
     anchors.centerIn: parent
     width: 400 * Style.uiScaleRatio
@@ -193,6 +219,7 @@ Popup {
 
         NButton {
           text: I18n.tr("common.cancel")
+          enabled: !root.busy
           onClicked: resetInstanceDialog.close()
         }
 
@@ -200,20 +227,35 @@ Popup {
           text: I18n.tr("common.reset")
           backgroundColor: AtmoColor.mPrimary
           textColor: AtmoColor.mOnPrimary
+          enabled: !root.busy
           onClicked: {
             root.resetInstanceSettings();
-            resetInstanceDialog.close();
           }
         }
       }
     }
   }
 
+  NSettingsDiscardDialog {
+    id: discardDialog
+    parent: root.contentItem
+    onDiscard: root.confirmDiscard()
+    onKeepEditing: root.keepEditing()
+  }
+
   onClosed: {
     resetInstanceDialog.close();
+    discardDialog.close();
     // Clear both source and sourceComponent to ensure full cleanup
     settingsLoader.sourceComponent = null;
     settingsLoader.source = "";
+    if (_editor)
+      _editor.discard();
+    _editor = null;
+    if (_pageApi)
+      _pageApi.destroy();
+    _pageApi = null;
+    _failed = false;
     currentPlugin = null;
     currentPluginApi = null;
     currentInstanceApi = null;
@@ -240,6 +282,9 @@ Popup {
   }
 
   function _open(pluginManifest, settingsEntryPoint, instanceApi) {
+    // A second open must never replace an existing dirty/busy page implicitly.
+    if (visible || _busy)
+      return false;
     resetInstanceDialog.close();
     currentPlugin = pluginManifest;
 
@@ -256,6 +301,15 @@ Popup {
       return;
     }
 
+    _editor = currentPluginApi.createSettingsEditor();
+    if (!_editor)
+      return false;
+    _pageApi = pageApiFactory.createObject(root, {
+                                           base: currentPluginApi,
+                                           pluginSettings: JSON.parse(JSON.stringify(_editor.initialValue))
+                                         });
+    _failed = false;
+
     // Get plugin directory
     var pluginDir = Registry.getPluginDir(pluginId);
     _settingsEntryPoint = settingsEntryPoint || "settings";
@@ -264,23 +318,97 @@ Popup {
 
     _loadPage();
 
-    var preferred = (settingsLoader.item && settingsLoader.item.preferredWidth !== undefined) ? settingsLoader.item.preferredWidth + padding * 2 : 0;
+    var preferred = (settingsPage && settingsPage.preferredWidth !== undefined) ? settingsPage.preferredWidth + padding * 2 : 0;
     width = Math.max(preferred, _minWidth);
     open();
+    return true;
   }
 
   function _loadPage() {
-    settingsLoader.setSource(_settingsUrl, PluginLoader.initialProperties(_settingsEntryPoint, _settingsUrl, currentPluginApi, {}));
+    settingsLoader.setSource(_settingsUrl, PluginLoader.initialProperties(_settingsEntryPoint, _settingsUrl, _pageApi, {}));
+  }
+
+  function loadedPage(): var {
+    return settingsLoader.item;
   }
 
   // Drops the instance overrides, then reloads the page: the page keeps its own
   // copy of the values it was opened with and must read the plugin settings again.
   function resetInstanceSettings() {
-    if (!currentInstanceApi)
+    if (!currentInstanceApi || !_editor || _busy)
       return;
-    currentInstanceApi.resetSettings();
-    settingsLoader.sourceComponent = null;
-    settingsLoader.source = "";
-    _loadPage();
+    _submit(true);
+  }
+
+  function applySettings() {
+    if (!_editor || !settingsPage || _busy)
+      return;
+    // Page saveSettings is synchronous staging, never a recursive owner Apply.
+    _busy = true;
+    try {
+      if (typeof settingsPage.saveSettings === "function")
+        settingsPage.saveSettings();
+      _submit(false);
+    } catch (error) {
+      _finish({status: "failed", refreshState: "not_refreshed", error: {code: "editor-input"}}, false);
+    }
+  }
+
+  function _submit(reset) {
+    _busy = true;
+    _pageApi.busy = true;
+    _failed = false;
+    try {
+      var completed = function (result) { root._finish(result, reset); };
+      if (reset)
+        _editor.resetOverrides(completed);
+      else
+        _editor.apply(JSON.parse(JSON.stringify(_pageApi.pluginSettings)), completed);
+    } catch (error) {
+      _finish({status: "failed", refreshState: "not_refreshed", error: {code: "editor-input"}}, reset);
+    }
+  }
+
+  function _finish(result, reset) {
+    var accepted = result && (result.status === "saved" || result.status === "nothing_to_save") && result.refreshState === "current";
+    _failed = !accepted;
+    if (accepted)
+      _pageApi.pluginSettings = JSON.parse(JSON.stringify(_editor.initialValue));
+    // Keep competing page actions disabled throughout receipt delivery.
+    settingsCompleted(result);
+    _pageApi.complete(result);
+    _pageApi.busy = false;
+    _busy = false;
+    if (!accepted)
+      return;
+    if (reset) {
+      resetInstanceDialog.close();
+      settingsLoader.sourceComponent = null;
+      settingsLoader.source = "";
+      _loadPage();
+    }
+    if (showToastOnSave)
+      ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.settings-saved"));
+  }
+
+  function requestClose() {
+    if (_busy)
+      return;
+    if (dirty)
+      discardDialog.open();
+    else
+      confirmDiscard();
+  }
+
+  function keepEditing() {
+    discardDialog.close();
+  }
+
+  function confirmDiscard() {
+    if (_busy || (_editor && _editor.discard() === false))
+      return;
+    _editor = null;
+    discardDialog.close();
+    close();
   }
 }

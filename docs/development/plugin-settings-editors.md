@@ -34,6 +34,39 @@ ordinary routes can already be confirmed even when that full receipt fails, so a
 subsequent retry may truthfully be `nothing_to_save`. It is not an injected
 instance-file IO/partial-publication witness.
 
-Popup page-API staging, dirty-close discovery for locally buffered pages and
-receipt-driven popup feedback are still a separate required I4 boundary. The
-runtime popup has not switched to these factories in this preparation commit.
+## Popup and page staging
+
+`NPluginSettingsPopup` creates a selected editor and passes an editor-only
+`PluginSettingsPageApi` through PluginLoader's existing initial-properties
+boundary. Its `pluginSettings` belongs to that page, not the live runtime API.
+The page's synchronous `saveSettings()` gathers local controls into this value.
+`pluginApi.saveSettings(callback)` stages input only; multiple calls do not apply
+or write disk. The popup owns exactly one Apply after page staging returns.
+Callbacks receive the actual owner result, after the popup's `settingsCompleted`
+signal. Pages must use the callback/signal for saved feedback rather than claiming
+success when staging returns. Explicit state/config/application actions retain
+their existing owners and are not part of the preference transaction.
+
+Pages may expose reactive `readonly property bool settingsDirty` covering all
+locally buffered input. This must not call Save or otherwise publish changes.
+Without that contract the popup conservatively confirms Close even when its API
+has no staged input: local control state cannot safely be inferred from draft
+dirtiness. Failed/stale Apply always retains the page and requires explicit
+discard. Busy blocks Apply, Reset, Close, page input and auxiliary buttons.
+Close buttons and Escape share the confirmation flow; outside auto-close is
+disabled. A second Open refuses to replace an existing editor.
+
+Only `saved`/`nothing_to_save` **and** `refreshState: current` allow saved feedback.
+Reset has its own explicit confirmation and uses the captured editor's
+`resetOverrides(callback)`. It reloads the page only after that same accepted
+receipt; failures retain the page/confirmation. Page initialization and confirmed
+Cancel never invoke the live owner's preference writer. Destruction still follows
+the existing owner lifetime: already admitted failed input is not rolled back.
+
+The inert `plugin-settings-popup.qml` witness hosts the actual popup and page in
+a real Wayland window. It covers buffered dirty-close/keep/discard, no load/Cancel
+write, staging twice with one Apply, held actual receipts, busy competition,
+failed destination retention, truthful saved-but-stale handling, shared/instance
+consumers, acknowledged instance reset, unknown owner fields, legacy-page Close
+confirmation, independent disk readback and separate cold restart. This remains
+old-owner preparation, not a revision/ABA, partial-shard or I6 timing claim.
