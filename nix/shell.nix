@@ -1,5 +1,6 @@
 {
   quickshell,
+  configqml,
   nixfmt,
   statix,
   deadnix,
@@ -14,6 +15,7 @@ mkShellNoCC {
   #it's faster than mkDerivation / mkShell
   packages = [
     quickshell
+    configqml
 
     # nix
     nixfmt # formatter
@@ -31,4 +33,5 @@ mkShellNoCC {
     lefthook # githooks
     kdePackages.qtdeclarative # qmlfmt, qmllint, qmlls and etc; Qt6
   ];
+  QML_IMPORT_PATH = "${configqml}/${kdePackages.qtbase.qtQmlPrefix}";
 }

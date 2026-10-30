@@ -20,6 +20,7 @@
   # build
   qt6,
   quickshell,
+  configqml,
   # runtime deps
   brightnessctl,
   cliphist,
@@ -81,6 +82,7 @@ stdenvNoCC.mkDerivation {
   ];
 
   buildInputs = [
+    configqml
     qt6.qtbase
     qt6.qtmultimedia
     qt6.qtimageformats
@@ -110,6 +112,7 @@ stdenvNoCC.mkDerivation {
       --prefix PATH : ${lib.makeBinPath (runtimeDeps ++ extraPackages)}
       --prefix XDG_DATA_DIRS : ${wayland-scanner}/share
       --set-default QS_CONFIG_PATH "$out/share/atmosphera"
+      --prefix QML_IMPORT_PATH : ${configqml}/${qt6.qtbase.qtQmlPrefix}
       ${lib.optionalString calendarSupport "--prefix GI_TYPELIB_PATH : ${giTypelibPath}"}
     )
   '';

@@ -8,6 +8,14 @@ universe for ordinary `qmllint.sh`. Other installed modules remain unchanged.
 An unknown family, missing reference, conflicting owner or altered artifact is
 an error; diagnostic categories and severities are unchanged.
 
+`dependencies/configqml-020` contains the **unmodified installed** ConfigQml
+0.2.0 qmldir/qmltypes, built from c4605fa inside agora VM 804 with Qt 6.12.0.
+When the tooling image lacks that module, the materializer copies these real
+registrar outputs into its private import universe, checking artifact hashes
+and the selected family's Qt version. An installed module takes precedence.
+No runtime plugin or fabricated type declarations are installed by this path.
+Rebuild this inventory together with configqml and Quickshell on Qt upgrades.
+
 | # | Family | Source commit | Qt toolchain |
 |---|---|---|---|
 | 1 | `qt611-qs031` | `1a4716cde794a59928d9d9fc15f2afc7a95de360` (Quickshell 0.3.1) | 6.11.2 |
