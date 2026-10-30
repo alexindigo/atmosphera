@@ -35,8 +35,22 @@ local functions/variables and receiver aliases participate in lookup. `root.save
 `this.save`, literal bracket receivers and unqualified same-owner wrappers can
 resolve; an unresolved/differently-owned call receives owner review rather than
 borrowing a same-spelled setter from another object. Only pure getter returns and
-one unconditional setter assignment qualify as summaries; effectful getter return
-expressions and complex wrappers remain unproven.
+one unconditional setter assignment qualify as summaries. Pure local aliases/copies
+before a getter return are allowed; actual call arguments are substituted through
+those helpers. Effectful getter expressions and complex wrappers remain unproven.
+
+Computed primitive local keys retain their captured identity (and simple aliases)
+between a read and its assignment-back. Assignment, update, augmented assignment,
+lexical shadowing and lossy joins cannot borrow the previous identity. Unknown
+expressions, calls used as keys and live QML key properties remain owner review.
+Distinct keys never compare equal merely because both are dynamic. Schema-kind
+lookup generalizes a captured key; publication still compares its exact identity.
+
+The existing `Settings.getScreenOverrideEntry(screen)` value boundary and
+`Settings.setScreenOverride(screen, literalField, value)` command are recognized
+for the same captured screen/field, including simple wrappers selected by their
+actual receiver. Mixed effective `getBarWidgetsForScreen` results remain unknown
+owners; no screen/global branch is guessed. Opaque loops remain advisory.
 
 Equivalent ownership states coalesce. Argument/object-field sequences join
 primitive results only when their proof states, references and ownership members

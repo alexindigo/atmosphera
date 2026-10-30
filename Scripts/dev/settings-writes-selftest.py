@@ -23,7 +23,8 @@ for case in cases:
     count=min(1,len(errors)) if case['name']=='parse failure closed' else len(errors)
     codes={issue['code'] for issue in checker.issues}
     if (count!=case['errors'] or ('advisory' in case and case['advisory'] != advisory)
-            or not set(case.get('codes',[])).issubset(codes)):
+            or not set(case.get('codes',[])).issubset(codes)
+            or any(checker.counts[key] < minimum for key, minimum in case.get('counts',{}).items())):
         failed.append({'name':case['name'],'expected':case['errors'],'actual':count,'issues':checker.issues})
 if failed:
     print(json.dumps(failed,indent=2)); raise SystemExit(1)

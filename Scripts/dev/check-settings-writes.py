@@ -42,6 +42,18 @@ def child(node, name):
     return node.child_by_field_name(name) if node else None
 
 
+class OwnerKey(str):
+    """A captured local key identity, never equal to a literal schema segment."""
+    def __eq__(self, other):
+        return isinstance(other, OwnerKey) and str.__eq__(self, other)
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __hash__(self):
+        return hash((OwnerKey, str(self)))
+
+
 @dataclass(frozen=True)
 class Ref:
     path: tuple
@@ -130,6 +142,7 @@ class Checker:
 
     @lru_cache(maxsize=None)
     def kind(self, path):
+        path = tuple('*' if isinstance(key, OwnerKey) else key for key in path)
         for size in range(len(path), 0, -1):
             candidates = {self.kinds[path[:size]]} if path[:size] in self.kinds else set()
             if '*' in path[:size]:
@@ -223,11 +236,12 @@ class Checker:
             return Ref(base.path, 'attached')
         if base.mode not in DATA or key == 'length' or key in MUTATORS | COPIERS | CALLBACKS:
             return None
-        path = base.path + (str(key) if key is not None else '*',)
+        path = base.path + (key if isinstance(key, str) else str(key) if key is not None else '*',)
         if key is None and self.kind(base.path) == 'Group' and self.kind(path) is None:
             return Ref(path, 'unknown', base.token, base.lineage)
         if (base.mode == 'attached' and self.kind(base.path) == 'Group' and key is not None
-                and path not in self.kinds and ('*' not in path or self.kind(path) is None)):
+                and path not in self.kinds and
+                (not any(k == '*' or isinstance(k, OwnerKey) for k in path) or self.kind(path) is None)):
             self.report(node, 'unknown-setting-read', 'advisory')
             return Ref(path, 'undeclared')
         return Ref(path, base.mode, base.token, base.lineage)
@@ -238,6 +252,20 @@ class Checker:
             if all(isinstance(value, str) for value in values):
                 return tuple(values)
         return None
+
+    def owner_key(self, node, state):
+        literal = self.literal(node)
+        if literal is not None:
+            return literal
+        node = self.unwrap(node)
+        if node and node.type == 'identifier':
+            ref = self.identifier(self.text(node), state)
+            if ref and ref.mode == 'key':
+                return ref.path[0]
+        return None
+
+    def parameter_key(self, node, name):
+        return Ref((OwnerKey(str(node.id) + ':' + name),), 'key')
 
     def ref(self, node, state):
         """Side-effect-free provenance for declarations/summaries, never publication."""
@@ -251,7 +279,7 @@ class Checker:
         if node.type in ('function_expression', 'arrow_function'):
             return Ref((), 'callable', node.id)
         if node.type in ('member_expression', 'subscript_expression'):
-            key = self.text(child(node, 'property')) if node.type == 'member_expression' else self.literal(child(node, 'index'))
+            key = self.text(child(node, 'property')) if node.type == 'member_expression' else self.owner_key(child(node, 'index'), state)
             return self.member(self.ref(child(node, 'object'), state), key, state, node)
         if node.type in ('ternary_expression', 'binary_expression'):
             if node.type == 'binary_expression' and self.text(child(node, 'operator')) not in ('||', '??'):
@@ -291,7 +319,7 @@ class Checker:
         root = name.split('.')[0]
         return self.text(fn) == name and root not in state.env and root not in state.locals
 
-    def summary(self, callable_, state):
+    def summary(self, callable_, state, args=()):
         if not callable_ or callable_.mode != 'callable' or callable_.token not in self.definitions:
             return None
         definition = self.definitions[callable_.token]
@@ -305,22 +333,41 @@ class Checker:
             params = self.parameters(definition.node)
             if any(name.startswith('@argument') for name in params):
                 return None  # Destructured/default binding semantics are not a setter proof.
-            for name in params:
-                context.env[name] = None; context.locals.add(name)
+            for index, name in enumerate(params):
+                context.env[name] = args[index].value if index < len(args) else self.parameter_key(definition.node, name)
+                context.locals.add(name)
             body = child(definition.node, 'body')
             statements = [n for n in body.named_children if n.type != 'comment'] if body else []
-            if len(statements) != 1:
+            if not statements:
                 return None
-            statement = statements[0]
+            # Only side-effect-free local aliases/copies before a final return
+            # qualify. No branch, nested effect or mutation can become a getter.
+            for statement in statements[:-1]:
+                if statement.type not in ('lexical_declaration', 'variable_declaration'):
+                    return None
+                for declaration in statement.named_children:
+                    name, value = child(declaration, 'name'), child(declaration, 'value')
+                    if not name or name.type != 'identifier' or not value or not self.pure_getter(value, context):
+                        return None
+                    context.env[self.text(name)] = self.ref(value, context)
+                    context.locals.add(self.text(name))
+            statement = statements[-1]
             expression = self.unwrap(statement)
-            if expression.type == 'assignment_expression':
+            if len(statements) == 1 and expression.type == 'assignment_expression':
                 destination = self.ref(child(expression, 'left'), context)
                 value = child(expression, 'right')
                 if destination and destination.mode == 'attached' and value.type == 'identifier' and self.text(value) in params:
                     return ('setter', (params.index(self.text(value)), destination))
+            if len(statements) == 1 and expression.type == 'call_expression':
+                fn = child(expression, 'function'); arguments = child(expression, 'arguments').named_children
+                receiver = self.ref(child(fn, 'object'), context)
+                destination = self.screen_destination(receiver, self.method_name(fn), arguments, context)
+                value = arguments[2] if len(arguments) == 3 else None
+                if destination and value.type == 'identifier' and self.text(value) in params:
+                    return ('setter', (params.index(self.text(value)), destination))
             if statement.type == 'return_statement' and statement.named_children:
                 value = statement.named_children[0]
-                if not self.pure_getter(value):
+                if not self.pure_getter(value, context):
                     return None
                 if value.type == 'identifier' and self.text(value) in params:
                     return ('argument', params.index(self.text(value)))
@@ -329,19 +376,34 @@ class Checker:
         finally:
             self.summary_stack.remove(callable_.token)
 
-    def pure_getter(self, node):
+    def pure_getter(self, node, state):
         for nested in walk(node):
             if nested.type in ('assignment_expression', 'augmented_assignment_expression', 'update_expression'):
                 return False
             if nested.type == 'unary_expression' and self.text(child(nested, 'operator')) == 'delete':
                 return False
             if nested.type == 'call_expression':
-                method = self.method_name(child(nested, 'function'))
-                if method not in {'slice', 'concat', 'toSorted', 'toReversed', 'toSpliced', 'with'}:
+                fn = child(nested, 'function'); method = self.method_name(fn)
+                receiver = self.ref(child(fn, 'object'), state)
+                copy = receiver and receiver.mode in DATA and method in {'slice', 'concat', 'toSorted', 'toReversed', 'toSpliced', 'with'}
+                screen = receiver and receiver.mode == 'settings' and method == 'getScreenOverrideEntry'
+                if not (copy or screen):
                     return False
                 if any(n.type in FUNCTIONS for n in walk(child(nested, 'arguments'))):
                     return False
         return True
+
+    def screen_destination(self, receiver, method, arguments, state, values=None):
+        if not (receiver and receiver.mode == 'settings' and method == 'setScreenOverride' and len(arguments) == 3):
+            return None
+        screen = self.owner_key(arguments[0], state)
+        if values is not None and self.literal(arguments[0]) is None:
+            captured = values[0].value
+            screen = captured.path[0] if captured and captured.mode == 'key' else None
+        field = self.literal(arguments[1])
+        if screen is None or field is None:
+            return None
+        return Ref(('bar', 'screenOverrides', screen, field), 'attached')
 
     def call_value(self, node, state, callable_, receiver, method, args):
         fn = child(node, 'function')
@@ -352,6 +414,11 @@ class Checker:
             return self.copy_value(node, receiver, 'owned')
         if receiver and receiver.mode == 'settings':
             if method in ('getScreenOverrideEntry', 'getScreenOverridesForScreen'):
+                arguments = child(node, 'arguments').named_children
+                if method == 'getScreenOverrideEntry' and len(arguments) == 1:
+                    screen = self.owner_key(arguments[0], state)
+                    if screen is not None:
+                        return self.copy_value(node, Ref(('bar', 'screenOverrides', screen), 'attached'))
                 return self.copy_value(node, Ref(('bar', 'screenOverrides'), 'attached'))
             if method == 'getBarWidgetsForScreen':
                 return Ref(('bar', 'widgets'), 'unknown')
@@ -364,7 +431,7 @@ class Checker:
             return self.copy_value(node, args[0].value, 'owned')
         if self.builtin(fn, state, 'JSON.stringify') and args:
             return args[0].value  # Provenance only; parse() can reconstruct this copy.
-        summary = self.summary(callable_, state)
+        summary = self.summary(callable_, state, args)
         if summary and summary[0] == 'getter':
             return self.copy_value(node, summary[1])
         if summary and summary[0] == 'argument' and summary[1] < len(args):
@@ -526,7 +593,7 @@ class Checker:
             for base in self.expression(child(node, 'object'), [state]):
                 indices = self.expression(child(node, 'index'), [base.state]) if kind == 'subscript_expression' else [self.evaluation(base.state)]
                 for index in indices:
-                    key = self.text(child(node, 'property')) if kind == 'member_expression' else self.literal(child(node, 'index'))
+                    key = self.text(child(node, 'property')) if kind == 'member_expression' else self.owner_key(child(node, 'index'), index.state)
                     rows.append(self.evaluation(index.state, self.member(base.value, key, index.state, node)))
             return rows
         if kind in ('assignment_expression', 'augmented_assignment_expression'):
@@ -545,6 +612,8 @@ class Checker:
                 for value in self.expression(right, [destination.state]):
                     if kind == 'augmented_assignment_expression':
                         self.mutate(node, destination.value, value.state)
+                        if left.type == 'identifier':
+                            value.state.env[self.text(left)] = None
                         self.review_transfer(node, value.state, value.state.dirty, 'unsupported-assignment-effect')
                         rows.append(self.evaluation(value.state))
                     else:
@@ -556,6 +625,9 @@ class Checker:
                 operator = self.text(child(node, 'operator'))
                 if kind == 'update_expression' or operator == 'delete':
                     self.mutate(node, value.value, value.state)
+                    argument = self.unwrap(child(node, 'argument'))
+                    if argument.type == 'identifier':
+                        value.state.env[self.text(argument)] = None
                 rows.append(self.evaluation(value.state,
                     truth=(not value.truth) if operator == '!' and value.truth is not None else None,
                     nullish=False))
@@ -607,6 +679,9 @@ class Checker:
                 property_owner, name = receiver.token, key
         if left.type == 'identifier' or property_owner:
             ref = value.value
+            literal = self.literal(child(node, 'right'))
+            if ref is None and literal is not None and not property_owner:
+                ref = Ref((literal,), 'key')
             if property_owner:
                 ref = self.new(ref) if ref and ref.mode in DATA and self.compound(ref.path) else ref
                 state.env[self.property_key(property_owner, name)] = ref
@@ -657,8 +732,11 @@ class Checker:
                 for current, args in self.sequence(child(node, 'arguments').named_children, [callee_state.state]):
                     base = receiver.value
                     collection = base and base.mode in DATA and (base.mode == 'unknown' or self.compound(base.path))
-                    summary = self.summary(callable_, current)
+                    summary = self.summary(callable_, current, args)
                     published = set()
+                    destination = self.screen_destination(base, method, child(node, 'arguments').named_children, current, args)
+                    if destination and self.publish(destination, args[2].value, current):
+                        published.add(2)
                     if summary and summary[0] == 'setter':
                         index, destination = summary[1]
                         if index < len(args) and self.publish(destination, args[index].value, current):
@@ -810,7 +888,8 @@ class Checker:
                 for result in self.expression(value, rows):
                     key = self.text(name)
                     if value is not None or key not in result.state.env:
-                        result.state.env[key] = result.value
+                        literal = self.literal(value)
+                        result.state.env[key] = result.value or (Ref((literal,), 'key') if literal is not None else None)
                         result.state.scalars[key] = (result.truth, result.nullish)
                     result.state.locals.add(key); updated.append(result.state)
                 rows = updated
@@ -860,6 +939,8 @@ class Checker:
                 state.env.setdefault(name, None)
         for name in self.local_names(child(node, 'body')) | set(self.parameters(node)):
             state.env[name] = None; state.locals.add(name)
+        for name in self.parameters(node):
+            state.env[name] = self.parameter_key(node, name)
         self.finish(self.statement(child(node, 'body'), [state]))
 
     def finish(self, results):
