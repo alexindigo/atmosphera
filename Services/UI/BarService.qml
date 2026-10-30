@@ -515,6 +515,27 @@ Singleton {
   }
 
   // Open widget settings dialog for a bar widget
+  // Live editors submit a replacement/patch to the owning service, not a retained
+  // row from a getter. The owner publishes a complete copied leaf once.
+  function updateWidgetSettings(screenName, section, index, settings) {
+    if (Settings.hasScreenOverride(screenName, "widgets")) {
+      var currentWidgets = Settings.getBarWidgetsForScreen(screenName);
+      if (!currentWidgets || !currentWidgets[section] || index < 0 || index >= currentWidgets[section].length)
+        return;
+      var overrideWidgets = Object.assign({}, currentWidgets);
+      overrideWidgets[section] = currentWidgets[section].slice();
+      overrideWidgets[section][index] = Object.assign({}, currentWidgets[section][index], settings);
+      Settings.setScreenOverride(screenName, "widgets", overrideWidgets);
+    } else {
+      var widgets = Settings.data.bar.widgets[section]?.slice();
+      if (!widgets || index < 0 || index >= widgets.length)
+        return;
+      widgets[index] = Object.assign({}, widgets[index], settings);
+      Settings.data.bar.widgets[section] = widgets;
+      Settings.saveImmediate();
+    }
+  }
+
   // Parameters:
   //   screen: The screen to show the dialog on
   //   section: Section id ("left", "center", "right")
@@ -550,21 +571,7 @@ Singleton {
 
       if (dialog) {
         dialog.updateWidgetSettings.connect((sec, idx, settings) => {
-          var screenName = screen?.name || "";
-          if (Settings.hasScreenOverride(screenName, "widgets")) {
-            var overrideWidgets = Settings.getBarWidgetsForScreen(screenName);
-            if (overrideWidgets && overrideWidgets[sec] && idx < overrideWidgets[sec].length) {
-              overrideWidgets[sec][idx] = Object.assign({}, overrideWidgets[sec][idx], settings);
-              Settings.setScreenOverride(screenName, "widgets", overrideWidgets);
-            }
-          } else {
-            var widgets = Settings.data.bar.widgets[sec];
-            if (widgets && idx < widgets.length) {
-              widgets[idx] = Object.assign({}, widgets[idx], settings);
-              Settings.data.bar.widgets[sec] = widgets;
-              Settings.saveImmediate();
-            }
-          }
+          root.updateWidgetSettings(screen?.name || "", sec, idx, settings);
         });
         dialog.closed.connect(() => dialog.destroy());
         popupMenuWindow.showDialog(dialog);

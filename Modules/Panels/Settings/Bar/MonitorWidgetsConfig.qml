@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import "../../../../Helpers/QtObj2JS.js" as QtObj2JS
 import qs.Commons
 import qs.Services.Plugins
 import qs.Services.UI
@@ -22,15 +21,14 @@ NBox {
   Layout.fillWidth: true
   implicitHeight: content.implicitHeight + Style.margin2L
 
-  // Helper to get widgets for this screen (ensures override exists)
+  // Owned editing copy. Reading or rejecting an edit must not create an override.
   function _getWidgetsContainer() {
-    if (!Settings.hasScreenOverride(screenName, "widgets")) {
-      var currentWidgets = Settings.getBarWidgetsForScreen(screenName);
-      var widgetsCopy = QtObj2JS.qtObjectToPlainObject(currentWidgets);
-      Settings.setScreenOverride(screenName, "widgets", widgetsCopy);
-    }
-    var entry = Settings.getScreenOverrideEntry(screenName);
-    return entry ? entry.widgets : Settings.data.bar.widgets;
+    var currentWidgets = Settings.getBarWidgetsForScreen(screenName);
+    return Object.assign({}, currentWidgets, {
+                           "left": currentWidgets.left.slice(),
+                           "center": currentWidgets.center.slice(),
+                           "right": currentWidgets.right.slice()
+                         });
   }
 
   // Persist widget changes by reassigning the override (triggers change detection)
@@ -89,8 +87,10 @@ NBox {
   // because it only changes settings, not widget structure
   function _updateWidgetSettingsInSection(section, index, settings) {
     var widgets = _getWidgetsContainer();
-    widgets[section][index] = settings;
-    _saveWidgets(widgets);
+    if (index >= 0 && index < widgets[section].length) {
+      widgets[section][index] = Object.assign({}, settings);
+      _saveWidgets(widgets);
+    }
   }
 
   function _moveWidgetBetweenSections(fromSection, index, toSection) {

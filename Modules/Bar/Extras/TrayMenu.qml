@@ -651,11 +651,12 @@ PopupWindow {
       return;
     }
     var screenName = root.shellScreen?.name || "";
-    var widgets = Settings.getBarWidgetsForScreen(screenName)[widgetSection];
-    if (!widgets || widgetIndex >= widgets.length) {
+    var currentWidgets = Settings.getBarWidgetsForScreen(screenName)[widgetSection];
+    if (!currentWidgets || widgetIndex >= currentWidgets.length) {
       Logger.w("TrayMenu", "Cannot pin: invalid widget index");
       return;
     }
+    var widgets = currentWidgets.slice();
     var widgetSettings = widgets[widgetIndex];
     if (!widgetSettings || widgetSettings.id !== "Tray") {
       Logger.w("TrayMenu", "Cannot pin: widget is not a Tray widget");
@@ -670,7 +671,7 @@ PopupWindow {
 
     // Write to the correct location: shellScreen override or global
     if (Settings.hasScreenOverride(screenName, "widgets")) {
-      var overrideWidgets = Settings.getBarWidgetsForScreen(screenName);
+      var overrideWidgets = Object.assign({}, Settings.getBarWidgetsForScreen(screenName));
       overrideWidgets[widgetSection] = widgets;
       Settings.setScreenOverride(screenName, "widgets", overrideWidgets);
     } else {
@@ -697,11 +698,12 @@ PopupWindow {
       return;
     }
     var screenName = root.shellScreen?.name || "";
-    var widgets = Settings.getBarWidgetsForScreen(screenName)[widgetSection];
-    if (!widgets || widgetIndex >= widgets.length) {
+    var currentWidgets = Settings.getBarWidgetsForScreen(screenName)[widgetSection];
+    if (!currentWidgets || widgetIndex >= currentWidgets.length) {
       Logger.w("TrayMenu", "Cannot unpin: invalid widget index");
       return;
     }
+    var widgets = currentWidgets.slice();
     var widgetSettings = widgets[widgetIndex];
     if (!widgetSettings || widgetSettings.id !== "Tray") {
       Logger.w("TrayMenu", "Cannot unpin: widget is not a Tray widget");
@@ -720,7 +722,7 @@ PopupWindow {
 
     // Write to the correct location: shellScreen override or global
     if (Settings.hasScreenOverride(screenName, "widgets")) {
-      var overrideWidgets = Settings.getBarWidgetsForScreen(screenName);
+      var overrideWidgets = Object.assign({}, Settings.getBarWidgetsForScreen(screenName));
       overrideWidgets[widgetSection] = widgets;
       Settings.setScreenOverride(screenName, "widgets", overrideWidgets);
     } else {

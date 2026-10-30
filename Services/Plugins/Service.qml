@@ -665,7 +665,7 @@ Singleton {
     }
 
     // Add to global
-    var globalWidgets = Settings.data.bar.widgets[section] || [];
+    var globalWidgets = (Settings.data.bar.widgets[section] || []).slice();
     globalWidgets.push({
                          id: widgetId
                        });
@@ -675,8 +675,8 @@ Singleton {
     var overrides = Settings.data.bar.screenOverrides || [];
     for (var o = 0; o < overrides.length; o++) {
       if (overrides[o] && overrides[o].widgets) {
-        var overrideWidgets = overrides[o].widgets;
-        var sectionWidgets = overrideWidgets[section] || [];
+        var overrideWidgets = Object.assign({}, overrides[o].widgets);
+        var sectionWidgets = (overrideWidgets[section] || []).slice();
         // Check if widget already exists in this override
         var alreadyExists = false;
         for (var j = 0; j < sections.length; j++) {
@@ -756,7 +756,7 @@ Singleton {
     var overrides = Settings.data.bar.screenOverrides || [];
     for (var o = 0; o < overrides.length; o++) {
       if (overrides[o] && overrides[o].widgets) {
-        var overrideWidgets = overrides[o].widgets;
+        var overrideWidgets = Object.assign({}, overrides[o].widgets);
         var overrideChanged = false;
         for (var s2 = 0; s2 < sections.length; s2++) {
           var sec = sections[s2];
@@ -792,7 +792,7 @@ Singleton {
   // Remove plugin desktop widgets from all monitors' saved settings
   function removePluginDesktopWidgetsFromSettings(pluginId) {
     var widgetId = "plugin:" + pluginId;
-    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
+    var monitorWidgets = (Settings.data.desktopWidgets.monitorWidgets || []).slice();
     var changed = false;
 
     for (var m = 0; m < monitorWidgets.length; m++) {
@@ -810,7 +810,9 @@ Singleton {
       }
 
       if (newWidgets.length !== widgets.length) {
-        monitorWidgets[m].widgets = newWidgets;
+        monitorWidgets[m] = Object.assign({}, monitor, {
+                                            "widgets": newWidgets
+                                          });
       }
     }
 
