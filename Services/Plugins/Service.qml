@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../../Helpers/OwnedProcess.js" as OwnedProcess
 import qs.Commons
 import qs.Modules.Panels.Settings
 import qs.Services
@@ -19,6 +20,12 @@ Singleton {
   signal pluginReloaded(string pluginId)
   signal availablePluginsUpdated
   signal allPluginsLoaded
+  signal pluginSettingsCompleted(string pluginId, var result)
+
+  // The old plugin owner keeps one captured FIFO until I5 replaces its I/O with
+  // configqml stores. Never acknowledge a timer fire or a detached child start.
+  property var _settingsSaves: []
+  property bool _settingsSaveBusy: false
 
   // When available plugins are updated, check if we should perform update check
   onAvailablePluginsUpdated: {
@@ -1235,8 +1242,8 @@ Singleton {
     // ----------------------------------------
     // Bind functions
     // ----------------------------------------
-    api.saveSettings = function () {
-      savePluginSettings(pluginId, api.pluginSettings);
+    api.saveSettings = function (callback) {
+      savePluginSettings(pluginId, api.pluginSettings, callback);
 
       // Replace the entire pluginSettings object to trigger QML property bindings
       // Make a shallow copy so bindings detect the change
@@ -1600,27 +1607,53 @@ Singleton {
     Quickshell.execDetached(["sh", "-c", writeCmd]);
   }
 
-  // Save plugin settings
-  function savePluginSettings(pluginId, settings) {
-    var settingsFile = Registry.getPluginSettingsFile(pluginId);
-    var settingsJson = JSON.stringify(settings, null, 2);
+  // Snapshot at submission, not when this request reaches the head. Callback is
+  // additive for existing plugins and receives an explicit three-status result.
+  function savePluginSettings(pluginId, settings, callback) {
+    var body = null;
+    try {
+      if (settings === null || typeof settings !== "object" || Array.isArray(settings))
+        throw new Error("settings object required");
+      body = JSON.stringify(settings);
+    } catch (error) {}
+    root._settingsSaves.push({pluginId: pluginId, body: body, callback: callback});
+    Qt.callLater(root._nextSettingsSave);
+  }
 
-    // Use heredoc delimiter pattern to avoid all escaping issues
-    var delimiter = "PLUGIN_SETTINGS_EOF_" + Math.random().toString(36).substr(2, 9);
-    var fileEsc = settingsFile.replace(/'/g, "'\\''");
+  function _nextSettingsSave() {
+    if (root._settingsSaveBusy || root._settingsSaves.length === 0)
+      return;
+    root._settingsSaveBusy = true;
+    var request = root._settingsSaves[0];
+    if (typeof request.body !== "string" || typeof request.pluginId !== "string" || !request.pluginId || request.pluginId === "." || request.pluginId === ".." || /[\/\\\x00]/.test(request.pluginId)) {
+      root._finishSettingsSave({status: "failed", error: {code: "plugin-settings-input"}});
+      return;
+    }
+    OwnedProcess.run(root, ["python3", Quickshell.shellDir + "/Scripts/python/src/settings/plugin-settings-save.py", Registry.getPluginSettingsFile(request.pluginId), Settings.cacheDir + "plugin-settings-conflicts"], request.body, function (child) {
+      var result = null;
+      try { result = JSON.parse(child.stdout); } catch (error) {}
+      if (!result || (result.status !== "saved" && result.status !== "nothing_to_save") || !child.success)
+        result = {status: "failed", error: {code: "plugin-settings-save"}};
+      root._finishSettingsSave(result);
+    });
+  }
 
-    // Get parent directory and ensure it exists
-    var settingsDir = settingsFile.substring(0, settingsFile.lastIndexOf('/'));
-    var dirEsc = settingsDir.replace(/'/g, "'\\''");
-
-    // Build the shell command with heredoc (create dir first)
-    var writeCmd = "mkdir -p '" + dirEsc + "' && cat > '" + fileEsc + "' << '" + delimiter + "'\n" + settingsJson + "\n" + delimiter + "\n";
-
-    Logger.d("PluginService", "Saving settings to:", settingsFile);
-
-    // Use Quickshell.execDetached to execute the command (use array syntax)
-    var pid = Quickshell.execDetached(["sh", "-c", writeCmd]);
-    Logger.d("PluginService", "Write process started, PID:", pid);
+  function _finishSettingsSave(result) {
+    // Detach before either observer can reenter; keep busy through delivery so
+    // the next request cannot overtake this signal/callback pair.
+    var request = root._settingsSaves.shift();
+    var callback = request.callback;
+    request.callback = null;
+    try {
+      root.pluginSettingsCompleted(request.pluginId, result);
+      if (typeof callback === "function")
+        callback(result);
+    } catch (error) {
+      Logger.e("PluginService", "Plugin settings completion observer failed");
+    } finally {
+      root._settingsSaveBusy = false;
+      Qt.callLater(root._nextSettingsSave);
+    }
   }
 
   // Load manifest from file
