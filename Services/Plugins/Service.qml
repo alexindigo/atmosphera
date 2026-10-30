@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import "../../Helpers/OwnedProcess.js" as OwnedProcess
+import "../../Helpers/PluginSettingsEditor.js" as PluginSettingsEditor
 import qs.Commons
 import qs.Modules.Panels.Settings
 import qs.Services
@@ -1195,6 +1196,7 @@ Singleton {
 
         // Functions will be bound below
         property var saveSettings: null
+        property var createSettingsEditor: null
         property var saveState: null
         property var getConfig: null
         property var openPanel: null
@@ -1248,6 +1250,10 @@ Singleton {
       // Replace the entire pluginSettings object to trigger QML property bindings
       // Make a shallow copy so bindings detect the change
       api.pluginSettings = Object.assign({}, api.pluginSettings);
+    };
+
+    api.createSettingsEditor = function () {
+      return root.createPluginSettingsEditor(pluginId, api);
     };
 
     // Writes the shared state to disk and reassigns it, so bindings on
@@ -1605,6 +1611,27 @@ Singleton {
 
     Logger.d("PluginService", "Saving plugin state to:", stateFile);
     Quickshell.execDetached(["sh", "-c", writeCmd]);
+  }
+
+  // Selected plugin-level editor. No runtime API or file changes until Apply;
+  // loading/unloading a different API invalidates the original capture.
+  function createPluginSettingsEditor(pluginId, api) {
+    return PluginSettingsEditor.create({
+      stamp: function () {
+        return root.getPluginAPI(pluginId) === api ? JSON.stringify(api.pluginSettings) : null;
+      },
+      value: function () { return api.pluginSettings; },
+      later: function (callback) { Qt.callLater(callback); },
+      commit: function (value, reset, callback) {
+        if (reset || value === null || typeof value !== "object" || Array.isArray(value)) {
+          Qt.callLater(function () { callback({status: "failed", error: {code: "editor-input"}}); });
+          return false;
+        }
+        api.pluginSettings = value;
+        api.saveSettings(callback);
+        return true;
+      }
+    });
   }
 
   // Snapshot at submission, not when this request reaches the head. Callback is

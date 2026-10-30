@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import "../../Helpers/PluginSettingsEditor.js" as PluginSettingsEditor
 import qs.Commons
 import qs.Services.Plugins
 
@@ -132,13 +133,63 @@ Singleton {
     return target;
   }
 
+  // Editors capture the complete owning atomic leaf, not just a repeated type
+  // ID at an index. I5 maps this factory to the declared worker overlay editor.
+  function _owningValue(placement) {
+    if (placement.kind === "bar")
+      return placement.list === "global" ? Settings.data.bar.widgets[placement.section] : Settings.data.bar.screenOverrides;
+    if (placement.kind === "controlCenter")
+      return Settings.data.controlCenter.shortcuts[placement.section];
+    if (placement.kind === "desktop")
+      return Settings.data.desktopWidgets.monitorWidgets;
+    return undefined;
+  }
+
+  function createSettingsEditor(pluginKey, placement, base) {
+    if (!base || !placement)
+      return null;
+    var address = _clone(placement);
+    return PluginSettingsEditor.create({
+      stamp: function () {
+        var entry = root.entryFor(address);
+        var owner = root._owningValue(address);
+        if (Service.getPluginAPI(pluginKey) !== base || owner === undefined || !entry || entry.id !== "plugin:" + pluginKey)
+          return null;
+        return JSON.stringify([base.pluginSettings, owner]);
+      },
+      value: function () { return root.effectiveSettings(base.pluginSettings, address, root.revision); },
+      later: function (callback) { Qt.callLater(callback); },
+      commit: function (value, reset, callback) {
+        if (!reset && (value === null || typeof value !== "object" || Array.isArray(value))) {
+          Qt.callLater(function () { callback({status: "failed", error: {code: "editor-input"}}); });
+          return false;
+        }
+        // Keep the old owner's existing sparse policy here, not in the reusable
+        // popup. The worker owns this merge/difference operation after I5.
+        var changed = {};
+        if (!reset) {
+          var shared = base.pluginSettings || {};
+          for (var key in value) {
+            if (JSON.stringify(value[key]) !== JSON.stringify(shared[key]))
+              changed[key] = root._clone(value[key]);
+          }
+        }
+        return root.writeSettings(pluginKey, address, Object.keys(changed).length ? changed : null, callback);
+      }
+    });
+  }
+
   // Writes the placement's instanceSettings (null removes the key) through the
   // write path of the list the placement lives in. Refuses when the entry there
   // no longer belongs to the plugin.
-  function writeSettings(pluginKey, placement, value) {
+  function writeSettings(pluginKey, placement, value, callback) {
     var entry = entryFor(placement);
     if (!entry || entry.id !== "plugin:" + pluginKey) {
       Logger.w("PluginInstances", "Placement no longer holds this plugin; instance settings not saved:", pluginKey);
+      Qt.callLater(function () {
+        if (typeof callback === "function")
+          callback({status: "failed", error: {code: "plugin-placement"}});
+      });
       return false;
     }
     var next = Object.assign({}, entry);
@@ -179,9 +230,13 @@ Singleton {
       }
       Settings.data.desktopWidgets.monitorWidgets = monitors;
     } else {
+      Qt.callLater(function () {
+        if (typeof callback === "function")
+          callback({status: "failed", error: {code: "plugin-placement"}});
+      });
       return false;
     }
-    Settings.saveImmediate();
+    Settings.saveResult(callback);
     root.revision++;
     return true;
   }
