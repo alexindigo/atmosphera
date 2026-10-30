@@ -6,6 +6,7 @@ import Quickshell
 import Quickshell.Io
 import "../Helpers/OwnedProcess.js" as OwnedProcess
 import "../Helpers/QtObj2JS.js" as QtObj2JS
+import "../Helpers/SettingsEditor.js" as SettingsEditor
 import "../Helpers/SettingsModel.js" as SettingsModel
 import qs.Commons
 import qs.Commons.Migrations
@@ -210,7 +211,7 @@ Singleton {
           root.settingsSaved();
         if (typeof callback === "function") {
           try {
-            callback(effect.success, effect.error);
+            callback(effect.success, effect.error, effect.result);
           } catch (exception) {
             Logger.e("Settings", "Save completion callback failed");
           }
@@ -1688,6 +1689,31 @@ Singleton {
   // only the changed leaf paths into the per-section override trees, then
   // write those section files. A change to a value matching today's default
   // is STILL recorded — an explicit user choice always lands in the file.
+  // Additive receipt boundary; existing Boolean callers retain their contract.
+  function saveResult(onComplete) {
+    saveImmediate(function (success, error, result) {
+      Qt.callLater(function () {
+        if (typeof onComplete === "function")
+          onComplete(result);
+      });
+    });
+  }
+
+  // Only selected scalar preferences use this transitional adapter. No draft
+  // over a normalized placement list; those require owner command boundaries.
+  function createEditor(path) {
+    return SettingsEditor.create(function () {
+      return root.getPathValue(root.data, path);
+    }, function (value) {
+      if (!root.setPathValue(root.data, path, value))
+        throw new Error("Unknown editor setting");
+    }, function (callback) {
+      root.saveResult(callback);
+    }, function (callback) {
+      Qt.callLater(callback);
+    });
+  }
+
   function saveImmediate(onComplete, automatic) {
     var token = root._registerCallback(onComplete);
     root._dispatchModel({
@@ -1729,8 +1755,9 @@ Singleton {
 
   function saveSetupWork(work, onComplete, requestId) {
     if (!requestId) {
-      onComplete(false, "Setup request identity is missing");
-      return;
+      if (typeof onComplete === "function")
+        onComplete(false, "Setup request identity is missing");
+      return false;
     }
     var token = root._registerCallback(onComplete);
     var captured = root._dispatchModel({

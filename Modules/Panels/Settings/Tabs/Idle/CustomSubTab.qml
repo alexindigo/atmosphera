@@ -73,37 +73,46 @@ ColumnLayout {
     parent: Overlay.overlay
   }
 
-  function openEdit(index, nameVal, timeoutVal, cmdVal, resumeCmdVal) {
-    editPopup.editIndex = index;
-    editPopup.nameValue = nameVal;
-    editPopup.timeoutValue = timeoutVal;
-    editPopup.commandValue = cmdVal;
-    editPopup.resumeCommandValue = resumeCmdVal;
-    editPopup.showName = true;
-
+  function createEntryEditor(index) {
+    var leaf = Settings.createEditor("idle.customCommands");
+    var entries;
     try {
-      editPopup.saved.disconnect(editPopup._savedSlot);
-    } catch (e) {}
-
-    editPopup._savedSlot = function (timeout, cmd, resumeCmd, name) {
-      if (index >= 0 && index < entriesModel.count) {
-        entriesModel.setProperty(index, "name", name);
-        entriesModel.setProperty(index, "timeout", timeout);
-        entriesModel.setProperty(index, "command", cmd);
-        entriesModel.setProperty(index, "resumeCommand", resumeCmd);
-      } else {
-        entriesModel.append({
-                              "name": name,
-                              "timeout": timeout,
-                              "command": cmd,
-                              "resumeCommand": resumeCmd
-                            });
-      }
-      root._saveFromModel();
+      entries = JSON.parse(leaf.initialValue);
+    } catch (error) {
+      leaf.discard();
+      return null;
+    }
+    if (!Array.isArray(entries) || index < -1 || index >= entries.length) {
+      leaf.discard();
+      return null;
+    }
+    var initial = index === -1 ? {name: "", timeout: 60, command: "", resumeCommand: ""} : entries[index];
+    return {
+      initialValue: {name: initial.name || "", timeout: initial.timeout === undefined ? 60 : initial.timeout, command: initial.command || "", resumeCommand: initial.resumeCommand || ""},
+      apply: function (value, callback) {
+        // Start from the captured owning leaf, never the view's possibly newer
+        // index/model. The leaf adapter rejects any intervening list change.
+        var changed = JSON.parse(leaf.initialValue);
+        if (index === -1)
+          changed.push(value);
+        else
+          changed[index] = Object.assign({}, changed[index], value);
+        leaf.apply(JSON.stringify(changed), callback);
+      },
+      discard: function () { return leaf.discard(); }
     };
+  }
 
-    editPopup.saved.connect(editPopup._savedSlot);
-    editPopup.open();
+  function openEdit(index) {
+    if (editPopup.visible || editPopup.busy)
+      return;
+    var editor = createEntryEditor(index);
+    if (!editor) {
+      Logger.e("CustomSubTab", "Cannot edit invalid or stale custom command");
+      return;
+    }
+    editPopup.showName = true;
+    editPopup.openEditor(editor, editor.initialValue, index);
   }
 
   NLabel {
@@ -141,7 +150,7 @@ ColumnLayout {
       AtmoIconButton {
         icon: Icon.settings
         tooltipText: I18n.tr("common.edit")
-        onClicked: root.openEdit(entryDelegate.index, entryDelegate.name, entryDelegate.timeout, entryDelegate.command, entryDelegate.resumeCommand)
+        onClicked: root.openEdit(entryDelegate.index)
       }
 
       AtmoIconButton {
@@ -157,7 +166,7 @@ ColumnLayout {
     icon: Icon.add
     enabled: Settings.data.idle.enabled
     onClicked: {
-      root.openEdit(-1, "", 60, "", "");
+      root.openEdit(-1);
     }
   }
 }

@@ -771,7 +771,9 @@ function create(configuration) {
             var finished = ready[ri], token = ++operationSerial;
             saveDeliveries[token] = {error: finished.error};
             effect("saveDelivery", {token: token, callbackToken: finished.waiter.callbackToken,
-                success: !finished.error, error: finished.error});
+                success: !finished.error, error: finished.error,
+                result: {status: finished.error ? "failed" : finished.waiter.covered.length ? "saved" : "nothing_to_save",
+                    error: finished.error ? {code: "legacy-save-failed"} : null}});
         }
     }
     function captureOwned(id) {
