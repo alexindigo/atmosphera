@@ -6,6 +6,7 @@ import Quickshell
 import Quickshell.Io
 import "../Helpers/OwnedProcess.js" as OwnedProcess
 import "../Helpers/QtObj2JS.js" as QtObj2JS
+import "../Helpers/RecordListEditor.js" as RecordListEditor
 import "../Helpers/SettingsEditor.js" as SettingsEditor
 import "../Helpers/SettingsModel.js" as SettingsModel
 import qs.Commons
@@ -1697,6 +1698,88 @@ Singleton {
           onComplete(result);
       });
     });
+  }
+
+  // Old-owner notification generations plus a complete selected-leaf value fence.
+  // I5 replaces this command factory with worker-owned normalized row mappings.
+  property var _recordListGenerations: ({})
+
+  function _advanceRecordList(path) {
+    var key = JSON.stringify(path);
+    var generations = Object.assign({}, root._recordListGenerations);
+    generations[key] = RecordListEditor.nextGeneration(generations[key] || "0");
+    root._recordListGenerations = generations;
+  }
+
+  Connections {
+    target: root.data.bar.widgets
+    function onLeftChanged() {
+      root._advanceRecordList(["bar", "widgets", "left"]);
+    }
+    function onCenterChanged() {
+      root._advanceRecordList(["bar", "widgets", "center"]);
+    }
+    function onRightChanged() {
+      root._advanceRecordList(["bar", "widgets", "right"]);
+    }
+  }
+
+  Connections {
+    target: root.data.bar
+    function onScreenOverridesChanged() {
+      root._advanceRecordList(["bar", "screenOverrides"]);
+    }
+  }
+
+  Connections {
+    target: root.data.controlCenter.shortcuts
+    function onLeftChanged() {
+      root._advanceRecordList(["controlCenter", "shortcuts", "left"]);
+    }
+    function onRightChanged() {
+      root._advanceRecordList(["controlCenter", "shortcuts", "right"]);
+    }
+  }
+
+  Connections {
+    target: root.data.desktopWidgets
+    function onMonitorWidgetsChanged() {
+      root._advanceRecordList(["desktopWidgets", "monitorWidgets"]);
+    }
+  }
+
+  // Paths select owning atomic leaves; ValuePath addresses select concrete lists
+  // inside them. No invented namespace/scope for a widget array row.
+  function createRecordListEditor(path, listAddress) {
+    var selectedPath = path.slice();
+    var key = JSON.stringify(selectedPath);
+    var supported = [["bar", "widgets", "left"], ["bar", "widgets", "center"], ["bar", "widgets", "right"], ["controlCenter", "shortcuts", "left"], ["controlCenter", "shortcuts", "right"], ["bar", "screenOverrides"], ["desktopWidgets", "monitorWidgets"]];
+    if (!supported.some(function (candidate) {
+      return JSON.stringify(candidate) === key;
+    }))
+      return null;
+    function owner() {
+      var node = root.data;
+      for (var i = 0; i < selectedPath.length - 1; ++i)
+        node = node[selectedPath[i]];
+      return node;
+    }
+    var leaf = selectedPath[selectedPath.length - 1];
+    return RecordListEditor.create({
+                                     listAddress: listAddress,
+                                     read: function () {
+                                       return owner()[leaf];
+                                     },
+                                     generation: function () {
+                                       return root._recordListGenerations[key] || "0";
+                                     },
+                                     write: function (value) {
+                                       owner()[leaf] = value;
+                                     },
+                                     later: function (callback) {
+                                       Qt.callLater(callback);
+                                     }
+                                   });
   }
 
   // Only selected scalar preferences use this transitional adapter. No draft
