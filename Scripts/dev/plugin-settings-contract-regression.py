@@ -54,6 +54,9 @@ def controls(overlays):
     old = {'version':1, 'plugins':{'control':{'1':manifest['metadata']['settingsSchema']}}}
     bad = copy.deepcopy(manifest); bad['metadata']['settingsSchema'] = {'version':9, 'fields':{}}
     refuses('authored-no-fallback', lambda: compiler.compile_schema(bad, old))
+    bad = copy.deepcopy(manifest); bad['metadata']['settingsSourceProjection'] = None
+    previous = {'version':1, 'plugins':{}, 'sourceProjections':{'control':{'1':projection}}}
+    refuses('authored-null-projection-no-fallback', lambda: compiler.compile_projection(bad, previous, []))
     return rejected
 
 

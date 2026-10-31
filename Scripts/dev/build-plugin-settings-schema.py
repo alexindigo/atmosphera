@@ -149,7 +149,7 @@ def compile_schema(manifest, overlays, namespace='settings', config_defaults=Non
 
 def compile_projection(manifest, overlays, source_ids):
     descriptor, origin = selected(manifest, overlays, 'settingsSourceProjection', 'sourceProjections')
-    if descriptor is None:
+    if origin is None:
         if source_ids:
             raise ValueError('source IDs supplied without a projection descriptor')
         return None, None
