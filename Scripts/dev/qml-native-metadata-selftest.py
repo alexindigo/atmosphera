@@ -171,7 +171,42 @@ Property { name: "state"; type: "QtOwner::State" } }''')
         for file, owner in [('used', 'QtOwner'), ('linked', 'OtherQtOwner'), ('optional', 'UnrelatedQtOwner')]:
             (qt / (file + '_metatypes.json')).write_text(json.dumps([{'classes': [{'qualifiedClassName': owner}]}]))
         self.assertEqual(set(metadata.qt_contract_inputs(self.root, supplemental, qt)),
-                         {'used_metatypes.json', 'linked_metatypes.json'})
+                          {'used_metatypes.json', 'linked_metatypes.json'})
+
+    def test_configqml_fallback_exposes_the_required_installed_contract(self):
+        sdk = Path('/usr/lib/qt6')
+        private = Path(self.temp.name)/'sdk'
+        qml = private/'qml'
+        qml.mkdir(parents=True)
+        (private/'metatypes').symlink_to(sdk/'metatypes', target_is_directory=True)
+        for entry in (sdk/'qml').iterdir():
+            if entry.name != 'ConfigQml':
+                (qml/entry.name).symlink_to(entry, target_is_directory=entry.is_dir())
+        imports = Path(self.temp.name)/'imports'
+        metadata.materialize(qml, imports, requested=set())
+        fallback = imports/'ConfigQml'
+        self.assertFalse(fallback.is_symlink())
+        # The fallback is required precisely when the optional SDK module is
+        # absent. Its checked-in registrar receipt remains the byte contract.
+        receipt = json.loads((fallback/'manifest.json').read_text())
+        for name, digest in receipt['artifacts'].items():
+            self.assertEqual(hashlib.sha256((fallback/name).read_bytes()).hexdigest(), digest)
+        installed = sdk/'qml/ConfigQml/configqml.qmltypes'
+        if installed.is_file():
+            self.assertEqual((fallback/'configqml.qmltypes').read_bytes(), installed.read_bytes())
+        for field, status in [('profileMaxBytes', 0), ('profileMaxByte', 255)]:
+            fixture = Path(self.temp.name)/(field+'.qml')
+            fixture.write_text('import ConfigQml 1.0\nConfigStore { '+field+': 1024 }\n')
+            result = subprocess.run(['timeout','30s',str(sdk/'bin/qmllint'),'--bare','--missing-property','error','-I',str(imports),str(fixture)],
+                                    capture_output=True,text=True,timeout=40)
+            text = result.stdout+result.stderr
+            if status == 0:
+                self.assertEqual(result.returncode, 0, text)
+                self.assertNotIn('Could not find property', text)
+            else:
+                self.assertNotEqual(result.returncode, 0, text)
+                self.assertIn('Could not find property "profileMaxByte"', text)
+            self.assertNotIn('[unresolved-type]', text)
 
 
 if __name__ == '__main__':
