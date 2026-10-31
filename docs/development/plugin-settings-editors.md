@@ -18,8 +18,9 @@ Sparse merge/difference stays with the existing PluginInstances owner. Reset
 explicitly removes all overrides, without writing the shared plugin file. Both
 legacy instance save/reset methods also accept additive structured callbacks.
 
-These are **value fences**, not revision fences: the legacy owner does not expose
-equal-intent/ABA generations. I5 replaces these factories with real configqml
+Shared-base fences compare values; list commands additionally capture old-owner
+notification generations. Notification-suppressed equal/nested ABA remains
+undetectable: these are not configqml intent revisions. I5 replaces the factories with real configqml
 selected drafts and two-owner overlay editors, worker merge/difference and
 normalized-list generation mapping. Do not carry the transitional JS value-stamp
 adapter into the new production owner. There is no per-row ConfigScope or claimed
@@ -69,4 +70,20 @@ write, staging twice with one Apply, held actual receipts, busy competition,
 failed destination retention, truthful saved-but-stale handling, shared/instance
 consumers, acknowledged instance reset, unknown owner fields, legacy-page Close
 confirmation, independent disk readback and separate cold restart. This remains
-old-owner preparation, not a revision/ABA, partial-shard or I6 timing claim.
+old-owner preparation, not an intent-revision, partial-shard or I6 timing claim.
+
+## Captured placement commands
+
+The old-owner instance editor captures its `Settings.createRecordListEditor`
+session before opening. All four placement addresses (global bar, screen bar,
+control-center and desktop) submit `set`/`unset` for `instanceSettings` only.
+They do not replace an entire normalized display row. Runtime instance views
+capture at their immediate save/reset command boundary; delayed editors retain
+the original generation/address, including across failed-save retry.
+
+Command admission and its current refresh must complete before requesting a
+save receipt. An intervening list publication, including notified ABA with the
+same final value, fails rather than recapturing the current row. Whole-leaf and
+shared-base value fences remain additive under the old owner. Notification-
+suppressed equal/nested ABA is still its documented limitation; I5 replaces this
+factory with the actual normalized worker command/overlay contract.

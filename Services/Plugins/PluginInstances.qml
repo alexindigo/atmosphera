@@ -145,10 +145,41 @@ Singleton {
     return undefined;
   }
 
+  // Resolve one concrete list inside its owning atomic leaf. Capture this before
+  // an editor opens; later callbacks must not select a newer row at the address.
+  function _captureListEditor(placement) {
+    if (placement.kind === "bar" && placement.list === "global")
+      return Settings.createRecordListEditor(["bar", "widgets", placement.section], []);
+    if (placement.kind === "controlCenter")
+      return Settings.createRecordListEditor(["controlCenter", "shortcuts", placement.section], []);
+    var monitors;
+    var name;
+    if (placement.kind === "bar") {
+      monitors = Settings.data.bar.screenOverrides;
+      name = placement.list;
+    } else if (placement.kind === "desktop") {
+      monitors = Settings.data.desktopWidgets.monitorWidgets;
+      name = placement.screenName;
+    } else {
+      return null;
+    }
+    for (var i = 0; i < monitors.length; ++i) {
+      if (monitors[i].name !== name)
+        continue;
+      if (placement.kind === "bar")
+        return Settings.createRecordListEditor(["bar", "screenOverrides"], [{index: i}, {key: "widgets"}, {key: placement.section}]);
+      return Settings.createRecordListEditor(["desktopWidgets", "monitorWidgets"], [{index: i}, {key: "widgets"}]);
+    }
+    return null;
+  }
+
   function createSettingsEditor(pluginKey, placement, base) {
     if (!base || !placement)
       return null;
     var address = _clone(placement);
+    var commands = root._captureListEditor(address);
+    if (!commands)
+      return null;
     return PluginSettingsEditor.create({
       stamp: function () {
         var entry = root.entryFor(address);
@@ -174,7 +205,7 @@ Singleton {
               changed[key] = root._clone(value[key]);
           }
         }
-        return root.writeSettings(pluginKey, address, Object.keys(changed).length ? changed : null, callback);
+        return root.writeSettings(pluginKey, address, Object.keys(changed).length ? changed : null, callback, commands);
       }
     });
   }
@@ -182,7 +213,7 @@ Singleton {
   // Writes the placement's instanceSettings (null removes the key) through the
   // write path of the list the placement lives in. Refuses when the entry there
   // no longer belongs to the plugin.
-  function writeSettings(pluginKey, placement, value, callback) {
+  function writeSettings(pluginKey, placement, value, callback, capturedCommands) {
     var entry = entryFor(placement);
     if (!entry || entry.id !== "plugin:" + pluginKey) {
       Logger.w("PluginInstances", "Placement no longer holds this plugin; instance settings not saved:", pluginKey);
@@ -192,52 +223,30 @@ Singleton {
       });
       return false;
     }
-    var next = Object.assign({}, entry);
-    if (value)
-      next.instanceSettings = value;
-    else
-      delete next.instanceSettings;
-
-    if (placement.kind === "bar") {
-      if (placement.list === "global") {
-        // Same write as BarService.openWidgetSettings for the global list
-        var row = Settings.data.bar.widgets[placement.section].slice();
-        row[placement.index] = next;
-        Settings.data.bar.widgets[placement.section] = row;
-      } else {
-        // Same write as BarService.openWidgetSettings for a screen's own list
-        var overrideWidgets = _clone(Settings.getBarWidgetsForScreen(placement.list));
-        overrideWidgets[placement.section][placement.index] = next;
-        Settings.setScreenOverride(placement.list, "widgets", overrideWidgets);
-      }
-    } else if (placement.kind === "controlCenter") {
-      // Same write as ControlCenterTab._updateWidgetSettingsInSection
-      var shortcuts = Settings.data.controlCenter.shortcuts[placement.section].slice();
-      shortcuts[placement.index] = next;
-      Settings.data.controlCenter.shortcuts[placement.section] = shortcuts;
-    } else if (placement.kind === "desktop") {
-      // Same write as DesktopWidgetRegistry.updateWidgetData, with the key removable
-      var monitors = (Settings.data.desktopWidgets.monitorWidgets || []).slice();
-      for (var i = 0; i < monitors.length; i++) {
-        if (monitors[i].name === placement.screenName) {
-          var widgets = (monitors[i].widgets || []).slice();
-          widgets[placement.index] = next;
-          monitors[i] = Object.assign({}, monitors[i], {
-                                        "widgets": widgets
-                                      });
-          break;
-        }
-      }
-      Settings.data.desktopWidgets.monitorWidgets = monitors;
-    } else {
+    // Runtime views capture at the immediate command boundary; delayed editors
+    // pass the original session. Every placement route submits only the explicit
+    // instanceSettings field intent, never a normalized display-row replacement.
+    var commands = capturedCommands || root._captureListEditor(placement);
+    if (!commands) {
       Qt.callLater(function () {
         if (typeof callback === "function")
           callback({status: "failed", error: {code: "plugin-placement"}});
       });
       return false;
     }
-    Settings.saveResult(callback);
-    root.revision++;
-    return true;
+    var edit = {op: value === null ? "unset" : "set", index: placement.index, field: "instanceSettings"};
+    if (value !== null)
+      edit.value = value;
+    var accepted = commands.submit([edit], function (result) {
+      if (result.status !== "admitted" || result.refreshState !== "current") {
+        if (typeof callback === "function")
+          callback({status: "failed", error: result.error || {code: "list-edit-conflict"}});
+        return;
+      }
+      Settings.saveResult(callback);
+    });
+    if (accepted)
+      root.revision++;
+    return accepted;
   }
 }

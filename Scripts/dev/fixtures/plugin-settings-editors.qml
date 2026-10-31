@@ -116,8 +116,49 @@ Scope {
       Settings.saveResult(function (result) {
         root.guard(function () {
           root.check(result.status === "saved", "baseline save");
-          root.cancelAndShared();
+          root.placementABA(0);
         });
+      });
+    });
+  }
+  function ownerValue(index) {
+    if (index === 0)
+      return Settings.data.bar.widgets.left;
+    if (index === 1)
+      return Settings.data.bar.screenOverrides;
+    if (index === 2)
+      return Settings.data.controlCenter.shortcuts.left;
+    return Settings.data.desktopWidgets.monitorWidgets;
+  }
+  function setOwnerValue(index, value) {
+    if (index === 0)
+      Settings.data.bar.widgets.left = value;
+    else if (index === 1)
+      Settings.data.bar.screenOverrides = value;
+    else if (index === 2)
+      Settings.data.controlCenter.shortcuts.left = value;
+    else
+      Settings.data.desktopWidgets.monitorWidgets = value;
+  }
+  function placementABA(index) {
+    if (index === placements.length) {
+      cancelAndShared();
+      return;
+    }
+    var editor = PluginInstances.createSettingsEditor(key, placements[index], api);
+    check(editor !== null, "ABA factory " + index);
+    var before = JSON.parse(JSON.stringify(ownerValue(index)));
+    var foreign = JSON.parse(JSON.stringify(before));
+    foreign[0].abaWitness = true;
+    setOwnerValue(index, foreign);
+    setOwnerValue(index, before);
+    var submitted = editor.initialValue;
+    submitted.label = "must-not-recapture-after-ABA";
+    editor.apply(submitted, function (result) {
+      root.guard(function () {
+        root.check(result.status === "failed" && result.error.code === "list-edit-conflict", "captured generation rejects notified ABA " + index);
+        root.check(JSON.stringify(root.ownerValue(index)) === JSON.stringify(before), "ABA callback retains actual original owner " + index);
+        root.placementABA(index + 1);
       });
     });
   }
