@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "plugins": {
+    "hello-world": {
+      "1.2.5": {
+        "version": 1,
+        "fields": {
+          "iconColor": {"type": "String"},
+          "message": {"type": "String"}
+        }
+      }
+    }
+  }
+}
