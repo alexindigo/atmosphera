@@ -514,26 +514,108 @@ Singleton {
       popupMenuWindow.close();
   }
 
-  // Open widget settings dialog for a bar widget
-  // Live editors submit a replacement/patch to the owning service, not a retained
-  // row from a getter. The owner publishes a complete copied leaf once.
-  function updateWidgetSettings(screenName, section, index, settings) {
-    if (Settings.hasScreenOverride(screenName, "widgets")) {
-      var currentWidgets = Settings.getBarWidgetsForScreen(screenName);
-      if (!currentWidgets || !currentWidgets[section] || index < 0 || index >= currentWidgets[section].length)
-        return;
-      var overrideWidgets = Object.assign({}, currentWidgets);
-      overrideWidgets[section] = currentWidgets[section].slice();
-      overrideWidgets[section][index] = Object.assign({}, currentWidgets[section][index], settings);
-      Settings.setScreenOverride(screenName, "widgets", overrideWidgets);
-    } else {
-      var widgets = Settings.data.bar.widgets[section]?.slice();
-      if (!widgets || index < 0 || index >= widgets.length)
-        return;
-      widgets[index] = Object.assign({}, widgets[index], settings);
-      Settings.data.bar.widgets[section] = widgets;
-      Settings.saveImmediate();
+  // Capture the displayed owner before asynchronous component creation. A widget
+  // type is repeatable, so its id alone cannot fence a retained row index.
+  function createWidgetSettingsEditor(screenName, section, index) {
+    function route() {
+      return Settings.getBarWidgetsForScreen(screenName) === Settings.data.bar.widgets ? "global" : screenName;
     }
+    var capturedRoute = route();
+    var commands = null;
+    if (capturedRoute === "global") {
+      commands = Settings.createRecordListEditor(["bar", "widgets", section], []);
+    } else {
+      var monitors = Settings.data.bar.screenOverrides;
+      for (var i = 0; i < monitors.length; ++i) {
+        if (monitors[i].name === capturedRoute) {
+          commands = Settings.createRecordListEditor(["bar", "screenOverrides"], [
+                                                       {
+                                                         index: i
+                                                       },
+                                                       {
+                                                         key: "widgets"
+                                                       },
+                                                       {
+                                                         key: section
+                                                       }
+                                                     ]);
+          break;
+        }
+      }
+    }
+    if (!commands || !Number.isSafeInteger(index) || index < 0 || index >= commands.initialValue.length)
+      return null;
+    var initial = commands.initialValue[index];
+    function fail(code, callback) {
+      Qt.callLater(function () {
+        if (typeof callback === "function")
+          callback({
+                     status: "failed",
+                     error: {
+                       code: code
+                     }
+                   });
+      });
+      return false;
+    }
+    return {
+      initialValue: initial,
+      submit: function (fields, callback) {
+        if (route() !== capturedRoute)
+          return fail("list-edit-conflict", callback);
+        if (!fields || typeof fields !== "object" || Array.isArray(fields))
+          return fail("list-edit-input", callback);
+        // This interface accepts field intent, not a replacement display row.
+        // Legacy widget pages still include their unchanged id in the signal.
+        var edits = Object.keys(fields).filter(function (key) {
+          return key !== "id";
+        }).map(function (key) {
+          return {
+            op: "set",
+            index: index,
+            field: key,
+            value: fields[key]
+          };
+        });
+        if (!edits.length)
+          return fail("list-edit-operation", callback);
+        return commands.submit(edits, function (result) {
+          if (result.status !== "admitted" || result.refreshState !== "current") {
+            if (typeof callback === "function")
+              callback({
+                         status: "failed",
+                         error: result.error || {
+                           code: "list-edit-conflict"
+                         }
+                       });
+            return;
+          }
+          Settings.saveResult(callback);
+        });
+      },
+      detach: function () {
+        commands.detach();
+      }
+    };
+  }
+
+  // Immediate callers capture at submission. Dialog callbacks pass the original
+  // editor, including on a failed-save retry; never recapture a newer generation.
+  function updateWidgetSettings(screenName, section, index, fields, callback, capturedEditor) {
+    var editor = capturedEditor || root.createWidgetSettingsEditor(screenName, section, index);
+    if (!editor) {
+      Qt.callLater(function () {
+        if (typeof callback === "function")
+          callback({
+                     status: "failed",
+                     error: {
+                       code: "list-edit-conflict"
+                     }
+                   });
+      });
+      return false;
+    }
+    return editor.submit(fields, callback);
   }
 
   // Parameters:
@@ -557,26 +639,33 @@ Singleton {
       PanelService.openedPanel.close();
     }
 
+    var screenName = screen?.name || "";
+    var editor = root.createWidgetSettingsEditor(screenName, section, index);
+    if (!editor)
+      return;
+
     var component = Qt.createComponent(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml");
 
     function instantiateAndOpen() {
       // Use dialogParent (Item) instead of window directly for proper Popup anchoring
       var dialog = component.createObject(popupMenuWindow.dialogParent, {
                                             "widgetIndex": index,
-                                            "widgetData": widgetData,
+                                            "widgetData": editor.initialValue,
+                                            "settingsEditor": editor,
                                             "widgetId": widgetId,
                                             "sectionId": section,
                                             "screen": screen
                                           });
 
       if (dialog) {
-        dialog.updateWidgetSettings.connect((sec, idx, settings) => {
-          root.updateWidgetSettings(screen?.name || "", sec, idx, settings);
+        dialog.closed.connect(() => {
+          editor.detach();
+          dialog.destroy();
         });
-        dialog.closed.connect(() => dialog.destroy());
         popupMenuWindow.showDialog(dialog);
         dialog.open();
       } else {
+        editor.detach();
         Logger.e("BarService", "Failed to create widget settings dialog");
       }
     }
@@ -584,12 +673,14 @@ Singleton {
     if (component.status === Component.Ready) {
       instantiateAndOpen();
     } else if (component.status === Component.Error) {
+      editor.detach();
       Logger.e("BarService", "Error loading widget settings dialog:", component.errorString());
     } else {
       component.statusChanged.connect(function () {
         if (component.status === Component.Ready) {
           instantiateAndOpen();
         } else if (component.status === Component.Error) {
+          editor.detach();
           Logger.e("BarService", "Error loading widget settings dialog:", component.errorString());
         }
       });

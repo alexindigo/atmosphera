@@ -69,3 +69,26 @@ reports XFAIL with its reason, and an unexpected pass fails loudly. All live
 adapter checks and the `constructor`/`prototype` checks stay hard assertions.
 I5 must run the configqml mode with all three members surviving edit, save and
 cold restart; there is no expected-failure allowance on that owner.
+
+The runtime BarService settings launcher captures its field-command editor before
+component loading, including the displayed global/screen route and original row
+data. Component callbacks retain that editor, rather than using their later
+section/index to select a newer placement. The service submits field commands,
+then requests save only after current admission; a failed aggregate save retains
+admitted input for same-session retry. Disabled overrides follow the displayed
+global owner. Closing detaches the session without undoing live input.
+`bar-settings-commands.qml` covers both routes, repeatable IDs, notified ABA,
+route changes, competing commands, owned submitted fields, failed-save retry and
+separate cold restart. Core pages' legacy whole-row signal payloads still need
+their explicit user-field port; excluding their unchanged id at this boundary is
+compatibility preparation, not proof that default-valued fields are intentional.
+
+The live bar dialog receives that session directly, keeps the captured row as
+its initial input, and uses `NLiveSettingsEditSession` for debouncing and owned
+queued fields. Close waits for a nonfailed current persistence receipt. Failed
+or stale input remains in the open dialog for explicit Retry or confirmed local
+discard; canceling that confirmation retains it. Discard never rolls back live
+settings already admitted. New input during an outstanding save is queued, not
+silently swallowed. The real-dialog fixture also covers failed Close, retry,
+stale refusal and both branches of discard confirmation. Existing immediate
+controls remain immediate/debounced, without a new Apply/Cancel workflow.
