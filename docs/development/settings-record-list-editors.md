@@ -48,6 +48,20 @@ notification ABA, async/busy/detach and actual save/cold-restart endpoints. Prod
 placement callers are ported separately; this foundation alone does not complete
 normalized-list callback preparation.
 
+Tray pin/unpin captures its command session, screen/global routing, placement
+and tray identity at menu presentation, before menu-loading delays. It sets only
+the `pinned` field through that retained session. Repeated-ID replacement,
+notified ABA and routing changes refuse the command without editing either owner.
+Immediate non-menu callers may capture at submission; successive commands wait
+for the prior receipt. A failed aggregate save retains admitted input and the
+session for explicit retry; drawer resizing follows current admission and is
+independent of persistence feedback. `tray-pin-commands.qml` covers both owning
+routes, these refusals, same-session retry and save/separate cold restart.
+Disabled screen overrides follow the displayed global route. When monitor editing
+first copies that global namespace, only the three declared list leaves enter
+the new record; Qt signals are never enumerated into preference data. Existing
+plain screen records retain their unknown members.
+
 The VM driver must set `I4_SETTINGS_OWNER=legacy` or `configqml` explicitly.
 Per coordinator `I4-answer-3`, only the old-owner cold-restart `__proto__` check
 is an expected failure: the original assertion runs for each of the seven lists,

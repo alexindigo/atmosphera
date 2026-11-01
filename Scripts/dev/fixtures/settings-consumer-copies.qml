@@ -68,6 +68,7 @@ Item {
       Settings.data.desktopWidgets.monitorWidgets = [{"name": "offline", "opaque": "monitor", "widgets": [{"id": "plugin:i4-keep", "opaque": "widget"}, {"id": "plugin:i4-remove"}]}];
 
       var copy = monitor._getWidgetsContainer();
+      check(Object.keys(copy).sort().join(",") === "center,left,right", "namespace copy contains only declared data leaves");
       copy.right.push({"id": "unpublished"});
       check(!Settings.hasScreenOverride(testScreen.name, "widgets"), "copy getter creates no choice");
       check(Settings.data.bar.widgets.right.length === 0, "copy getter does not alias global");
@@ -82,9 +83,23 @@ Item {
       monitor._removeWidgetFromSection("right", 0);
       BarService.updateWidgetSettings("", "left", 0, {"compact": true});
       BarService.updateWidgetSettings(testScreen.name, "left", 0, {"compact": true});
-      tray.addToPinned();
-      check(screenWidgets().left[0].pinned[0] === "I4 synthetic tray", "tray pin owner");
-      tray.removeFromPinned();
+      tray.addToPinned(function(pin) {
+        try {
+          check(pin.status !== "failed", "tray pin receipt");
+          check(screenWidgets().left[0].pinned[0] === "I4 synthetic tray", "tray pin owner");
+          tray.removeFromPinned(function(unpin) {
+            try {
+              check(unpin.status !== "failed", "tray unpin receipt");
+              root.finishOtherWriters();
+            } catch (error) { root.fail(error); }
+          });
+        } catch (error) { root.fail(error); }
+      });
+    } catch (error) { fail(error); }
+  }
+
+  function finishOtherWriters() {
+    try {
       media.removeBlacklistedPlayer("beta");
       check(Service.addWidgetToBar("plugin:i4-added", "right"), "plugin add command");
       check(Settings.data.bar.widgets.right[0].id === "plugin:i4-added" && screenWidgets().right[0].id === "plugin:i4-added", "plugin global and screen add");

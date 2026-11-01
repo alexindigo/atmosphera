@@ -24,7 +24,11 @@ NBox {
   // Owned editing copy. Reading or rejecting an edit must not create an override.
   function _getWidgetsContainer() {
     var currentWidgets = Settings.getBarWidgetsForScreen(screenName);
-    return Object.assign({}, currentWidgets, {
+    // Global widgets is a QObject namespace, not a dictionary. Snapshot its
+    // three declared leaves; enumerating it also copies Qt signals as settings.
+    // An existing screen record is plain data and keeps its unknown members.
+    var record = currentWidgets === Settings.data.bar.widgets ? {} : currentWidgets;
+    return Object.assign({}, record, {
                            "left": currentWidgets.left.slice(),
                            "center": currentWidgets.center.slice(),
                            "right": currentWidgets.right.slice()
