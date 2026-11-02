@@ -16,16 +16,17 @@ function capture(options, section, index) {
         var target = sections[i];
         if (target.id === section)
             continue;
-        var editor = options.createEditor(primary.path, primary.listAddress, [
-            {path: target.path, listAddress: target.listAddress}
-        ]);
+        var selected = {path: target.path, listAddress: target.listAddress};
+        if (target.ensure !== undefined)
+            selected.ensure = target.ensure;
+        var editor = options.createEditor(primary.path, primary.listAddress, [selected]);
         if (!editor) {
             local.detach();
             transfers.forEach(function (entry) { entry.editor.detach(); });
             return null;
         }
         transfers.push({id: target.id, editor: editor, command: {
-            op: "transfer", from: editor.endpoint(index), to: editor.endpoint(target.length, 1)
+            op: "transfer", from: editor.endpoint(index, 0, false), to: editor.endpoint(target.length, 1)
         }});
     }
     var initial = Lists.copy(local.initialValue[index]);
