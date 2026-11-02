@@ -109,7 +109,7 @@ Variants {
       }
 
       // Add a new widget to the current screen
-      function addWidgetToCurrentScreen(widgetId, x, y) {
+      function addWidgetToCurrentScreen(widgetId, x, y, onAdded) {
         var monitorName = window.screen.name;
         var newWidget = {
           "id": widgetId
@@ -163,34 +163,10 @@ Variants {
         newWidget.y = newY;
         newWidget.scale = 1.0;
 
-        // Get current widgets and add new one
-        var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
-        var newMonitorWidgets = monitorWidgets.slice();
-        var found = false;
-
-        for (var i = 0; i < newMonitorWidgets.length; i++) {
-          if (newMonitorWidgets[i].name === monitorName) {
-            var widgets = (newMonitorWidgets[i].widgets || []).slice();
-            widgets.push(newWidget);
-            newMonitorWidgets[i] = {
-              "name": monitorName,
-              "widgets": widgets
-            };
-            found = true;
-            break;
-          }
-        }
-
-        if (!found) {
-          newMonitorWidgets.push({
-                                   "name": monitorName,
-                                   "widgets": [newWidget]
-                                 });
-        }
-
-        Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
-        Logger.i("DesktopWidgets", "Added widget", widgetId, "to", monitorName);
-        return newWidget;
+        return DesktopWidgetRegistry.addWidget(monitorName, newWidget, function (result, index) {
+          if (result.status === "admitted" && result.refreshState === "current" && typeof onAdded === "function")
+            onAdded(newWidget, index);
+        });
       }
 
       function buildDesktopContextMenuModel() {
@@ -227,39 +203,11 @@ Variants {
         Logger.d("DesktopWidgets", "handleDesktopContextMenuAction:", action, x, y);
         switch (action) {
         case "add-app-shortcut":
-          var widgetData = addWidgetToCurrentScreen("AppShortcut", x, y);
-          if (widgetData) {
-            var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
-            for (var i = 0; i < monitorWidgets.length; i++) {
-              if (monitorWidgets[i].name === window.screen.name) {
-                var widgets = monitorWidgets[i].widgets || [];
-                var idx = widgets.length - 1;
-                DesktopWidgetRegistry.openWidgetSettings(window.screen, idx, "AppShortcut", widgetData, function (scrn, wi, wid) {
-                  // Auto-delete the widget if no app was assigned
-                  if (wid !== "AppShortcut")
-                    return;
-                  var monitors = Settings.data.desktopWidgets.monitorWidgets || [];
-                  for (var m = 0; m < monitors.length; m++) {
-                    if (monitors[m].name === scrn.name) {
-                      var wList = monitors[m].widgets || [];
-                      if (wi >= 0 && wi < wList.length && (!wList[wi].appId || wList[wi].appId === "")) {
-                        var newList = wList.slice();
-                        newList.splice(wi, 1);
-                        var newMonitors = monitors.slice();
-                        newMonitors[m] = {
-                          "name": scrn.name,
-                          "widgets": newList
-                        };
-                        Settings.data.desktopWidgets.monitorWidgets = newMonitors;
-                      }
-                      break;
-                    }
-                  }
-                }, widgetData.x, widgetData.y, 80, 108);
-                break;
-              }
-            }
-          }
+          addWidgetToCurrentScreen("AppShortcut", x, y, function (widgetData, index) {
+            DesktopWidgetRegistry.openWidgetSettings(window.screen, index, "AppShortcut", widgetData, function (scrn, wi, wid, editor) {
+              editor.removeIfUnassigned();
+            }, widgetData.x, widgetData.y, 80, 108);
+          });
           return true;
         case "change-wallpaper":
           SettingsPanelService.openToTab(SettingsPanel.Tab.Wallpaper, -1, window.screen);

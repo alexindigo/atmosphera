@@ -107,6 +107,7 @@ Item {
     property real lastScale: 1.0
     // Locks operation type to prevent switching between drag/scale mid-operation
     property string operationType: ""  // "drag" or "scale" or ""
+    property var operationEditor: null
   }
 
   function snapToGrid(coord) {
@@ -145,82 +146,14 @@ Item {
     return Math.max(minScale, Math.min(maxScale, snappedScale));
   }
 
-  function updateWidgetData(properties) {
+  function updateWidgetData(properties, capturedEditor) {
     if (widgetIndex < 0 || !screen || !screen.name) {
-      return;
+      return false;
     }
-    DesktopWidgetRegistry.updateWidgetData(screen.name, widgetIndex, properties);
-  }
-
-  function removeWidget() {
-    if (widgetIndex < 0 || !screen || !screen.name) {
-      return;
-    }
-
-    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
-    var newMonitorWidgets = monitorWidgets.slice();
-
-    for (var i = 0; i < newMonitorWidgets.length; i++) {
-      if (newMonitorWidgets[i].name === screen.name) {
-        var widgets = (newMonitorWidgets[i].widgets || []).slice();
-        if (widgetIndex >= 0 && widgetIndex < widgets.length) {
-          widgets.splice(widgetIndex, 1);
-          newMonitorWidgets[i] = Object.assign({}, newMonitorWidgets[i], {
-                                                 "widgets": widgets
-                                               });
-          Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
-        }
-        break;
-      }
-    }
-  }
-
-  function raiseToTop() {
-    if (widgetIndex < 0 || !screen || !screen.name) {
-      return;
-    }
-
-    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
-    var newMonitorWidgets = monitorWidgets.slice();
-
-    for (var i = 0; i < newMonitorWidgets.length; i++) {
-      if (newMonitorWidgets[i].name === screen.name) {
-        var widgets = (newMonitorWidgets[i].widgets || []).slice();
-        if (widgetIndex < widgets.length && widgetIndex < widgets.length - 1) {
-          var widget = widgets.splice(widgetIndex, 1)[0];
-          widgets.push(widget);
-          newMonitorWidgets[i] = Object.assign({}, newMonitorWidgets[i], {
-                                                 "widgets": widgets
-                                               });
-          Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
-        }
-        break;
-      }
-    }
-  }
-
-  function lowerToBottom() {
-    if (widgetIndex < 0 || !screen || !screen.name) {
-      return;
-    }
-
-    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
-    var newMonitorWidgets = monitorWidgets.slice();
-
-    for (var i = 0; i < newMonitorWidgets.length; i++) {
-      if (newMonitorWidgets[i].name === screen.name) {
-        var widgets = (newMonitorWidgets[i].widgets || []).slice();
-        if (widgetIndex < widgets.length && widgetIndex > 0) {
-          var widget = widgets.splice(widgetIndex, 1)[0];
-          widgets.unshift(widget);
-          newMonitorWidgets[i] = Object.assign({}, newMonitorWidgets[i], {
-                                                 "widgets": widgets
-                                               });
-          Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
-        }
-        break;
-      }
-    }
+    return DesktopWidgetRegistry.updateWidgetData(screen.name, widgetIndex, properties, function () {
+      if (capturedEditor)
+        capturedEditor.detach();
+    }, capturedEditor);
   }
 
   function openWidgetSettings() {
@@ -229,32 +162,53 @@ Item {
   }
 
   function handleContextMenuAction(action) {
-    if (action === "widget-settings") {
-      // Don't close - openWidgetSettings will use the popup window for the dialog
-      root.openWidgetSettings();
-      return true; // Signal that we're handling close ourselves
-    } else if (action === "reset") {
-      // Reset scale and position to defaults
-      root.widgetScale = 1.0;
-      internal.baseX = root.defaultX;
-      internal.baseY = root.defaultY;
-      root.updateWidgetData({
-                              "scale": 1.0,
-                              "x": Math.round(root.defaultX),
-                              "y": Math.round(root.defaultY)
-                            });
+    return root.captureContextMenuAction()(action);
+  }
+
+  function removeWidget() { return root.handleContextMenuAction("delete"); }
+  function raiseToTop() { return root.handleContextMenuAction("raise-to-top"); }
+  function lowerToBottom() { return root.handleContextMenuAction("lower-to-bottom"); }
+
+  // The popup callback survives delegate replacement without looking up a new row.
+  function captureContextMenuAction() {
+    var capturedScreen = root.screen;
+    var index = root.widgetIndex;
+    var editor = capturedScreen ? DesktopWidgetRegistry.createWidgetSettingsEditor(capturedScreen.name, index) : null;
+    var interaction = capturedScreen ? DesktopWidgetRegistry.captureWidgetInteraction(capturedScreen.name, index) : null;
+    var last = capturedScreen ? DesktopWidgetRegistry.getWidgetsForMonitor(capturedScreen.name).length - 1 : -1;
+    var anchor = {x: root.x, y: root.y, width: root.width, height: root.height};
+    var reset = {scale: 1.0, x: Math.round(root.defaultX), y: Math.round(root.defaultY)};
+    return function (action) {
+      if (!editor || !interaction) {
+        if (editor) editor.detach();
+        if (interaction) interaction.detach();
+        return false;
+      }
+      if (action === "widget-settings") {
+        interaction.detach();
+        DesktopWidgetRegistry.openWidgetSettings(capturedScreen, index, editor.initialValue.id, editor.initialValue,
+          undefined, anchor.x, anchor.y, anchor.width, anchor.height, editor);
+        return true;
+      }
+      if (action === "reset") {
+        interaction.detach();
+        editor.submit(reset, function () { editor.detach(); });
+      } else {
+        editor.detach();
+        var kind = action === "delete" ? "remove" : "reorder";
+        var destination = action === "raise-to-top" ? last : 0;
+        if (["delete", "raise-to-top", "lower-to-bottom"].indexOf(action) !== -1)
+          interaction.submit(kind, destination, function () { interaction.detach(); });
+        else
+          interaction.detach();
+      }
       return false;
-    } else if (action === "raise-to-top") {
-      root.raiseToTop();
-      return false;
-    } else if (action === "lower-to-bottom") {
-      root.lowerToBottom();
-      return false;
-    } else if (action === "delete") {
-      root.removeWidget();
-      return false; // Let caller close the popup
-    }
-    return false;
+    };
+  }
+
+  Component.onDestruction: {
+    if (internal.operationEditor)
+      internal.operationEditor.detach();
   }
 
   x: Math.round(internal.isDragging ? internal.dragOffsetX : internal.baseX)
@@ -388,6 +342,11 @@ Item {
       }
 
       pressPos = Qt.point(mouse.x, mouse.y);
+      internal.operationEditor = screen ? DesktopWidgetRegistry.createWidgetSettingsEditor(screen.name, widgetIndex) : null;
+      if (!internal.operationEditor) {
+        mouse.accepted = false;
+        return;
+      }
       internal.operationType = "drag";
       internal.dragOffsetX = root.x;
       internal.dragOffsetY = root.y;
@@ -437,19 +396,24 @@ Item {
       if (internal.isDragging && internal.operationType === "drag" && widgetIndex >= 0 && screen && screen.name) {
         var roundedX = Math.round(internal.dragOffsetX);
         var roundedY = Math.round(internal.dragOffsetY);
-        root.updateWidgetData({
+        var editor = internal.operationEditor;
+        internal.operationEditor = null;
+        var accepted = root.updateWidgetData({
                                 "x": roundedX,
                                 "y": roundedY
-                              });
+                              }, editor);
 
-        internal.baseX = roundedX;
-        internal.baseY = roundedY;
+        internal.baseX = accepted ? roundedX : (root.widgetData?.x ?? root.defaultX);
+        internal.baseY = accepted ? roundedY : (root.widgetData?.y ?? root.defaultY);
         internal.isDragging = false;
         internal.operationType = "";
       }
     }
 
     onCanceled: {
+      if (internal.operationEditor)
+        internal.operationEditor.detach();
+      internal.operationEditor = null;
       internal.isDragging = false;
       internal.operationType = "";
     }
@@ -472,7 +436,7 @@ Item {
           var globalPos = root.mapToItem(null, mouse.x, mouse.y);
           // Use dynamic context menu (created in PopupMenuWindow's Top layer)
           // This ensures input events work correctly for desktop widgets (Bottom layer)
-          popupMenuWindow.showDynamicContextMenu(root.contextMenuModel, globalPos.x, globalPos.y, root.handleContextMenuAction);
+          popupMenuWindow.showDynamicContextMenu(root.contextMenuModel, globalPos.x, globalPos.y, root.captureContextMenuAction());
         }
       }
     }
@@ -579,6 +543,11 @@ Item {
             return;
           }
           pressPos = mapToItem(root.parent, mouse.x, mouse.y);
+          internal.operationEditor = screen ? DesktopWidgetRegistry.createWidgetSettingsEditor(screen.name, widgetIndex) : null;
+          if (!internal.operationEditor) {
+            mouse.accepted = false;
+            return;
+          }
           internal.operationType = "scale";
           internal.isScaling = true;
           internal.initialScale = root.widgetScale;
@@ -613,17 +582,22 @@ Item {
 
         onReleased: mouse => {
           if (internal.isScaling && internal.operationType === "scale") {
-            root.updateWidgetData({
+            var editor = internal.operationEditor;
+            internal.operationEditor = null;
+            var accepted = root.updateWidgetData({
                                     "scale": root.widgetScale
-                                  });
+                                  }, editor);
             internal.isScaling = false;
             internal.operationType = "";
-            root.widgetScale = root.snapScaleToGrid(root.widgetScale);
+            root.widgetScale = accepted ? root.snapScaleToGrid(root.widgetScale) : (root.widgetData?.scale ?? 1.0);
             internal.lastScale = root.widgetScale;
           }
         }
 
         onCanceled: {
+          if (internal.operationEditor)
+            internal.operationEditor.detach();
+          internal.operationEditor = null;
           internal.isScaling = false;
           internal.operationType = "";
           internal.lastScale = root.widgetScale;

@@ -16,6 +16,12 @@ Popup {
   property string widgetId: ""
   property string sectionId: "" // Not used for desktop widgets, but required by NSectionEditor
   property var screen: null
+  property bool barIsVertical: false
+  property var settingsEditor: null
+  readonly property bool saveBusy: liveEdits.busy
+  readonly property bool saveFailed: liveEdits.failed
+  readonly property bool settingsDirty: liveEdits.dirty
+  readonly property bool discardPending: discardDialog.visible
   property var settingsCache: ({})
   // Plugin settings page currently loaded through PluginLoader (empty for core pages)
   property string _pluginEntry: ""
@@ -31,6 +37,7 @@ Popup {
   readonly property real maxHeight: (screen ? screen.height : (parent ? parent.height : 800)) * 0.8
 
   signal updateWidgetSettings(string section, int index, var settings)
+  signal settingsSaveCompleted(var result)
 
   width: Math.max(content.implicitWidth + padding * 2, 500)
   height: Math.min(content.implicitHeight + padding * 2, maxHeight)
@@ -152,6 +159,7 @@ Popup {
         AtmoIconButton {
           icon: Icon.close
           tooltipText: I18n.tr("common.close")
+          visible: !root.saveBusy
           onClicked: saveAndClose()
         }
       }
@@ -161,6 +169,22 @@ Popup {
         Layout.fillWidth: true
         Layout.preferredHeight: 1
         color: AtmoColor.mOutline
+      }
+
+      RowLayout {
+        visible: root.saveFailed
+        Layout.fillWidth: true
+        NText {
+          text: I18n.tr("common.editor-save-failed")
+          color: AtmoColor.mError
+          wrapMode: Text.WordWrap
+          Layout.fillWidth: true
+        }
+        NButton {
+          text: I18n.tr("common.discard")
+          visible: !root.saveBusy
+          onClicked: root.requestDiscard()
+        }
       }
 
       // Scrollable settings area
@@ -258,40 +282,71 @@ Popup {
     }
   }
 
-  Timer {
-    id: saveTimer
-    running: false
-    interval: 150
-    onTriggered: {
-      root.updateWidgetSettings(root.sectionId, root.widgetIndex, root.settingsCache);
-    }
+  NLiveSettingsEditSession {
+    id: liveEdits
+    // The caller owns the captured session through post-close cleanup. This
+    // component receives submission only; its owner detaches after closed.
+    editor: ({
+      submit: function (fields, callback) {
+        if (root.settingsEditor)
+          return root.settingsEditor.submit(fields, callback);
+        root.updateWidgetSettings(root.sectionId, root.widgetIndex, fields);
+        Settings.saveResult(callback);
+      }
+    })
+    onCompleted: result => root.settingsSaveCompleted(result)
+    onCloseRequested: root.close()
+  }
+
+  NSettingsDiscardDialog {
+    id: discardDialog
+    parent: root.parent
+    onDiscard: root.confirmDiscard()
+    onKeepEditing: root.keepEditing()
+  }
+
+  function requestDiscard() {
+    if (!saveBusy && settingsDirty)
+      discardDialog.open();
+  }
+
+  function keepEditing() {
+    discardDialog.close();
+  }
+
+  function confirmDiscard() {
+    if (saveBusy || !discardDialog.visible)
+      return false;
+    discardDialog.close();
+    return liveEdits.confirmDiscard();
+  }
+
+  function queueSettings(fields) {
+    return liveEdits.queue(fields);
   }
 
   Connections {
     target: settingsLoader.item
     ignoreUnknownSignals: true
     function onSettingsChanged(newSettings) {
-      if (newSettings) {
-        root.settingsCache = newSettings;
-        saveTimer.start();
-      }
+      root.queueSettings(newSettings);
     }
 
     function onSettingsSaved(newSettings) {
-      if (newSettings) {
-        root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
-      }
+      root.queueSettings(newSettings);
     }
   }
 
   function saveAndClose() {
+    if (saveBusy)
+      return;
     if (settingsLoader.item && typeof settingsLoader.item.saveSettings === 'function') {
       var newSettings = settingsLoader.item.saveSettings();
       if (newSettings) {
-        root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
+        root.queueSettings(newSettings);
       }
     }
-    root.close();
+    liveEdits.saveAndClose();
   }
 
   // Build one editing object per load. Registry metadata refreshes must not
@@ -302,8 +357,7 @@ Popup {
     widgetSettings.metadata = DesktopWidgetRegistry.widgetMetadata[widgetId] || {};
     widgetSettings.save = function () {
       var newSettings = Object.assign({}, widgetSettings.data);
-      root.settingsCache = newSettings;
-      saveTimer.start();
+      root.queueSettings(newSettings);
     };
     return {
       "widgetSettings": widgetSettings
@@ -352,26 +406,12 @@ Popup {
     const source = DesktopWidgetRegistry.widgetSettingsMap[widgetId];
     Logger.d("DesktopWidgetSettingsDialog", "core widget source:", source);
     if (source) {
-      var currentWidgetData = widgetData;
-      var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
-      var foundWidget = false;
-      for (var i = 0; i < monitorWidgets.length; i++) {
-        if (monitorWidgets[i].name === sectionId) {
-          var widgets = monitorWidgets[i].widgets || [];
-          if (widgetIndex >= 0 && widgetIndex < widgets.length) {
-            currentWidgetData = widgets[widgetIndex];
-            foundWidget = true;
-          }
-          break;
-        }
-      }
-      Logger.d("DesktopWidgetSettingsDialog", "foundWidget:", foundWidget, "monitorWidgets count:", monitorWidgets.length, "sectionId:", sectionId);
       var fullPath = Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/DesktopWidgets/" + source);
       Logger.d("DesktopWidgetSettingsDialog", "fullPath:", fullPath);
       _pluginEntry = "";
       _pluginContext = null;
       settingsLoader.setSource(fullPath, {
-                                 "widgetData": currentWidgetData,
+                                 "widgetData": widgetData,
                                  "widgetMetadata": DesktopWidgetRegistry.widgetMetadata[widgetId]
                                });
     } else {

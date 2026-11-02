@@ -25,9 +25,14 @@ function capture(options, section, index) {
             transfers.forEach(function (entry) { entry.editor.detach(); });
             return null;
         }
-        transfers.push({id: target.id, editor: editor, command: {
+        var edits = [{
             op: "transfer", from: editor.endpoint(index, 0, false), to: editor.endpoint(target.length, 1)
-        }});
+        }];
+        var fields = Lists.copy(options.transferFields || {});
+        Object.keys(fields).forEach(function (key) {
+            edits.push({op: "set", index: target.length, field: key, value: fields[key], at: editor.target(1)});
+        });
+        transfers.push({id: target.id, editor: editor, edits: edits});
     }
     var initial = Lists.copy(local.initialValue[index]);
     var busy = false;
@@ -58,7 +63,7 @@ function capture(options, section, index) {
                 if (!target)
                     return fail("list-edit-operation", callback);
                 editor = target.editor;
-                edits = [target.command];
+                edits = target.edits;
             } else {
                 return fail("list-edit-operation", callback);
             }

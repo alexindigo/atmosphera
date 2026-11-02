@@ -14,6 +14,9 @@ ColumnLayout {
 
   spacing: Style.marginL
 
+  // The containing panel exposes closeRequested; it is not a QQuickItem member.
+  function _panelAncestor(): var { return root.parent; }
+
   // Available widgets model - declared early so Repeater delegates can access it
   property alias availableWidgetsModel: availableWidgets
   ListModel {
@@ -70,7 +73,7 @@ ColumnLayout {
       onClicked: {
         DesktopWidgetRegistry.editMode = !DesktopWidgetRegistry.editMode;
         if (DesktopWidgetRegistry.editMode && Settings.data.ui.settingsPanelMode !== "window") {
-          var item = root.parent;
+          var item = root._panelAncestor();
           while (item) {
             if (item.closeRequested !== undefined) {
               item.closeRequested();
@@ -102,6 +105,8 @@ ColumnLayout {
         }
 
         sectionId: modelData.name
+        captureWidgetInteraction: root.captureWidgetInteraction
+        captureWidgetSettings: DesktopWidgetRegistry.createWidgetSettingsEditor
         screen: modelData
         settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml")
         widgetRegistry: DesktopWidgetRegistry
@@ -245,37 +250,11 @@ ColumnLayout {
 
   // Get widgets for a specific monitor
   function getWidgetsForMonitor(monitorName) {
-    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
-    for (var i = 0; i < monitorWidgets.length; i++) {
-      if (monitorWidgets[i].name === monitorName) {
-        return monitorWidgets[i].widgets || [];
-      }
-    }
-    return [];
+    return DesktopWidgetRegistry.getWidgetsForMonitor(monitorName);
   }
 
-  // Set widgets for a specific monitor
-  function setWidgetsForMonitor(monitorName, widgets) {
-    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
-    var newMonitorWidgets = monitorWidgets.slice();
-    var found = false;
-    for (var i = 0; i < newMonitorWidgets.length; i++) {
-      if (newMonitorWidgets[i].name === monitorName) {
-        newMonitorWidgets[i] = {
-          "name": monitorName,
-          "widgets": widgets
-        };
-        found = true;
-        break;
-      }
-    }
-    if (!found) {
-      newMonitorWidgets.push({
-                               "name": monitorName,
-                               "widgets": widgets
-                             });
-    }
-    Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
+  function captureWidgetInteraction(monitorName, index) {
+    return DesktopWidgetRegistry.captureWidgetInteraction(monitorName, index, root.getScreenNames());
   }
 
   function _addWidgetToMonitor(monitorName, widgetId) {
@@ -308,27 +287,16 @@ ColumnLayout {
       newWidget.x = 150;
       newWidget.y = 150;
     }
-    var widgets = getWidgetsForMonitor(monitorName).slice();
-    widgets.push(newWidget);
-    setWidgetsForMonitor(monitorName, widgets);
+    return DesktopWidgetRegistry.addWidget(monitorName, newWidget);
   }
 
   function _removeWidgetFromMonitor(monitorName, index) {
-    var widgets = getWidgetsForMonitor(monitorName);
-    if (index >= 0 && index < widgets.length) {
-      var newArray = widgets.slice();
-      newArray.splice(index, 1);
-      setWidgetsForMonitor(monitorName, newArray);
-    }
+    var interaction = root.captureWidgetInteraction(monitorName, index);
+    return interaction ? interaction.submit("remove", null, function () { interaction.detach(); }) : false;
   }
 
   function _updateWidgetSettingsForMonitor(monitorName, index, settings) {
-    var widgets = getWidgetsForMonitor(monitorName);
-    if (index >= 0 && index < widgets.length) {
-      var newArray = widgets.slice();
-      newArray[index] = Object.assign({}, newArray[index], settings);
-      setWidgetsForMonitor(monitorName, newArray);
-    }
+    return DesktopWidgetRegistry.updateWidgetData(monitorName, index, settings);
   }
 
   // Opens the settings of the plugin instance at a desktop placement on `monitorName`.
@@ -342,29 +310,8 @@ ColumnLayout {
   }
 
   function _moveWidgetToMonitor(fromMonitor, index, toMonitor) {
-    Logger.i("DesktopWidgetsTab", "Moving widget from", fromMonitor, "index", index, "to", toMonitor);
-    var sourceWidgets = getWidgetsForMonitor(fromMonitor);
-    if (index < 0 || index >= sourceWidgets.length) {
-      Logger.e("DesktopWidgetsTab", "Invalid index", index, "for monitor", fromMonitor);
-      return;
-    }
-
-    // Get the widget to move
-    var newSourceWidgets = sourceWidgets.slice();
-    var widget = Object.assign({}, newSourceWidgets.splice(index, 1)[0]);
-
-    // Reset position and scale to ensure widget is accessible on new screen
-    widget.x = 100;
-    widget.y = 100;
-    widget.scale = 1.0;
-
-    // Add to destination monitor
-    var destWidgets = getWidgetsForMonitor(toMonitor).slice();
-    destWidgets.push(widget);
-
-    // Update both monitors
-    setWidgetsForMonitor(fromMonitor, newSourceWidgets);
-    setWidgetsForMonitor(toMonitor, destWidgets);
+    var interaction = DesktopWidgetRegistry.captureWidgetInteraction(fromMonitor, index, [toMonitor]);
+    return interaction ? interaction.submit("move", toMonitor, function () { interaction.detach(); }) : false;
   }
 
   function _createAndEditAppShortcut() {
@@ -394,65 +341,12 @@ ColumnLayout {
     newWidget.showBackground = true;
     newWidget.roundedCorners = true;
 
-    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
-    var newMonitorWidgets = monitorWidgets.slice();
-    var found = false;
-
-    for (var i = 0; i < newMonitorWidgets.length; i++) {
-      if (newMonitorWidgets[i].name === monitorName) {
-        var widgets = (newMonitorWidgets[i].widgets || []).slice();
-        widgets.push(newWidget);
-        newMonitorWidgets[i] = {
-          "name": monitorName,
-          "widgets": widgets
-        };
-        found = true;
-        break;
+    return DesktopWidgetRegistry.addWidget(monitorName, newWidget, function (result, index) {
+      if (result.status === "admitted" && result.refreshState === "current") {
+        DesktopWidgetRegistry.openWidgetSettings(firstScreen, index, "AppShortcut", newWidget, function (scrn, wi, wid, editor) {
+          editor.removeIfUnassigned();
+        });
       }
-    }
-
-    if (!found) {
-      newMonitorWidgets.push({
-                               "name": monitorName,
-                               "widgets": [newWidget]
-                             });
-    }
-
-    Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
-    Logger.i("DesktopWidgetsTab", "Created AppShortcut on", monitorName);
-
-    // Open settings dialog for the new widget
-    if (firstScreen) {
-      DesktopWidgetRegistry.openWidgetSettings(firstScreen, newWidgetsCount(monitorName, newMonitorWidgets), "AppShortcut", newWidget, function (scrn, wi, wid) {
-        if (wid !== "AppShortcut")
-          return;
-        var monitors = Settings.data.desktopWidgets.monitorWidgets || [];
-        for (var m = 0; m < monitors.length; m++) {
-          if (monitors[m].name === scrn.name) {
-            var wList = monitors[m].widgets || [];
-            if (wi >= 0 && wi < wList.length && (!wList[wi].appId || wList[wi].appId === "")) {
-              var newList = wList.slice();
-              newList.splice(wi, 1);
-              var newMonitors = monitors.slice();
-              newMonitors[m] = {
-                "name": scrn.name,
-                "widgets": newList
-              };
-              Settings.data.desktopWidgets.monitorWidgets = newMonitors;
-            }
-            break;
-          }
-        }
-      });
-    }
-  }
-
-  function newWidgetsCount(monitorName, monitors) {
-    for (var i = 0; i < monitors.length; i++) {
-      if (monitors[i].name === monitorName) {
-        return (monitors[i].widgets || []).length - 1;
-      }
-    }
-    return 0;
+    });
   }
 }
