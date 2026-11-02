@@ -8,7 +8,7 @@ invents per-row Settings namespaces or unique placement IDs.
 
 The returned session exposes an owned `initialValue`, a captured `generation`,
 `submit(edits, callback)` and `detach()`. Edits use configqml's record-list command
-shapes: `set`, `unset`, `remove`, `insert`, `move`. Only explicitly submitted fields
+shapes: `set`, `unset`, `remove`, `insert`, `move`, `transfer`. Only explicitly submitted fields
 change existing rows. New records are explicit user input. A batch validates
 completely before one owning-leaf assignment; indices apply sequentially. Capture
 the session when a dialog, menu or drag starts, rather than at its later callback.
@@ -38,8 +38,45 @@ I5 replaces the factory/old adapter and notification counters with captured
 listAddress, edits}, callback)`. The worker resolves display-to-raw rows and preserves
 hidden/deprecated data without materializing injected defaults. Preserve field intent,
 captured generation, busy/conflict handling and existing immediate/debounced UX at
-callers. Cross-section moves between distinct owning leaves require their own owner
-coordination; they are not a single library list command or filesystem transaction.
+callers. Configqml 0.3.0 supports a raw-preserving transfer in that same library
+command, including distinct leaves in one store. Save remains separate; this is
+not a filesystem transaction.
+
+## Captured transfers
+
+`Settings.createRecordListEditor(path, address, additionalLists)` accepts optional
+`[{path, listAddress}, ...]` selections. Capture all possible destinations when
+the menu/drag opens, not at drop/activation. `session.endpoint(index, targetIndex)`
+returns an owned `{policyId, listAddress, generation, index}` endpoint; targetIndex
+defaults to the primary selection (0). Treat policyId as opaque. The old factory
+identifies the selected policy shape (array indices generalized to Each) separately
+from its atomic owner, so screen sections have different policy IDs but share one
+leaf generation/value fence. I5 supplies the declared worker policy identities.
+
+Submit `{op:"transfer", from:session.endpoint(sourceIndex),
+to:session.endpoint(destinationIndex, targetIndex)}`. No moved row body enters the
+command. Every supplied endpoint must belong to the captured selection set and
+match its original generation. All operations are checked against private selected
+leaves before any setter; indices then apply sequentially, including same-list
+destination slots **after removal**. Unknown/cyclic/malformed bodies, stale sources
+or destinations and late invalid operations refuse without half-applying a batch.
+The same atomic owner is copied/fenced/assigned once, even across monitor sections
+or desktop monitor addresses. Subsequent callbacks retain both endpoint fences.
+
+The old owner has no worker raw mapping or multi-leaf transaction: transfers move
+its owned effective row, and distinct leaves still use its ordinary synchronous
+setters. This adapter does not claim worker notification coherence, masked-route
+admission or hidden-raw-row preservation on that backend. I5 replaces these
+internals with the single published worker transaction (both leaves or neither),
+retaining the exact injected transfer shape. Existing old-owner equal/nested ABA
+limits above still apply. No shell raw mirror, diff or rollback owner is added.
+
+`settings-list-transfers.qml` checks all four placement families, shared-leaf
+assignment counts, repeated IDs, captured address/command ownership, both endpoint
+fences, invalid batches, busy/detach, failed save/retry and independent cold restart.
+`settings-native-transfer.qml` separately exercises installed configqml 0.3.0:
+actual model consumers, coherent leaf generations, hidden sibling/raw-row retention,
+no injected-default materialization, acknowledged save and cold restart.
 
 The inert `Scripts/dev/fixtures/settings-record-list-editors.qml` exercises the real
 old Settings factory, all seven owning leaves, sequential operations, opaque keys,

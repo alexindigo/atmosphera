@@ -1750,7 +1750,7 @@ Singleton {
 
   // Paths select owning atomic leaves; ValuePath addresses select concrete lists
   // inside them. No invented namespace/scope for a widget array row.
-  function createRecordListEditor(path, listAddress) {
+  function _recordListTarget(path, listAddress) {
     var selectedPath = path.slice();
     var key = JSON.stringify(selectedPath);
     var supported = [["bar", "widgets", "left"], ["bar", "widgets", "center"], ["bar", "widgets", "right"], ["controlCenter", "shortcuts", "left"], ["controlCenter", "shortcuts", "right"], ["bar", "screenOverrides"], ["desktopWidgets", "monitorWidgets"]];
@@ -1765,17 +1765,45 @@ Singleton {
       return node;
     }
     var leaf = selectedPath[selectedPath.length - 1];
+    return {
+      ownerId: key,
+      // Opaque identity for the selected policy shape, never a disk ID.
+      policyId: JSON.stringify([selectedPath, listAddress.map(function (segment) {
+        return Object.prototype.hasOwnProperty.call(segment, "index") ? {
+                                                                          each: true
+                                                                        } : segment;
+      })]),
+      listAddress: listAddress,
+      read: function () {
+        return owner()[leaf];
+      },
+      generation: function () {
+        return root._recordListGenerations[key] || "0";
+      },
+      write: function (value) {
+        owner()[leaf] = value;
+      }
+    };
+  }
+
+  // Capture all possible transfer targets before the delayed interaction. Shared
+  // atomic owners are copied/fenced once even when several lists are selected.
+  function createRecordListEditor(path, listAddress, additionalLists) {
+    var selected = [
+          {
+            path: path,
+            listAddress: listAddress
+          }
+        ].concat(additionalLists || []);
+    var targets = [];
+    for (var i = 0; i < selected.length; ++i) {
+      var target = root._recordListTarget(selected[i].path, selected[i].listAddress);
+      if (!target)
+        return null;
+      targets.push(target);
+    }
     return RecordListEditor.create({
-                                     listAddress: listAddress,
-                                     read: function () {
-                                       return owner()[leaf];
-                                     },
-                                     generation: function () {
-                                       return root._recordListGenerations[key] || "0";
-                                     },
-                                     write: function (value) {
-                                       owner()[leaf] = value;
-                                     },
+                                     targets: targets,
                                      later: function (callback) {
                                        Qt.callLater(callback);
                                      }
