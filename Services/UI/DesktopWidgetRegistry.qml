@@ -5,6 +5,7 @@ import Quickshell
 import qs.Commons
 import qs.Modules.DesktopWidgets.Widgets
 import qs.Services.Plugins
+import qs.Services.UI
 
 Singleton {
   id: root
