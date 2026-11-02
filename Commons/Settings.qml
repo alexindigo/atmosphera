@@ -1615,14 +1615,12 @@ Singleton {
   // -----------------------------------------------------
   // Set a per-screen override
   function setScreenOverride(screenName, property, value) {
-    if (!screenName)
-      return;
-
-    var overrides = JSON.parse(JSON.stringify(data.bar.screenOverrides || []));
-    if (overrides.length === undefined) {
-      overrides = [];
-    }
-
+    if (!screenName || typeof property !== "string" || !property)
+      return false;
+    var editor = root.createRecordListEditor(["bar", "screenOverrides"], []);
+    if (!editor)
+      return false;
+    var overrides = editor.initialValue;
     var index = -1;
     for (var i = 0; i < overrides.length; i++) {
       if (overrides[i] && overrides[i].name === screenName) {
@@ -1631,18 +1629,32 @@ Singleton {
       }
     }
 
+    var edit;
     if (index === -1) {
-      // Create new entry
-      var newEntry = {
-        "name": screenName
+      var entry = Object.create(null);
+      entry.name = screenName;
+      Object.defineProperty(entry, property, {
+                              value: value,
+                              enumerable: true,
+                              configurable: true,
+                              writable: true
+                            });
+      edit = {
+        op: "insert",
+        index: overrides.length,
+        value: entry
       };
-      newEntry[property] = value;
-      overrides.push(newEntry);
     } else {
-      // Update existing entry
-      overrides[index][property] = value;
+      edit = {
+        op: "set",
+        index: index,
+        field: property,
+        value: value
+      };
     }
-    data.bar.screenOverrides = overrides;
+    return editor.submit([edit], function () {
+      editor.detach();
+    });
   }
 
   // -----------------------------------------------------
@@ -1650,15 +1662,11 @@ Singleton {
   // If property is null, clears all overrides for that screen
   function clearScreenOverride(screenName, property) {
     if (!screenName)
-      return;
-
-    var overrides = data.bar.screenOverrides;
-    if (!overrides || overrides.length === undefined) {
-      return;
-    }
-
-    overrides = JSON.parse(JSON.stringify(overrides));
-
+      return false;
+    var editor = root.createRecordListEditor(["bar", "screenOverrides"], []);
+    if (!editor)
+      return false;
+    var overrides = editor.initialValue;
     var index = -1;
     for (var i = 0; i < overrides.length; i++) {
       if (overrides[i] && overrides[i].name === screenName) {
@@ -1668,20 +1676,24 @@ Singleton {
     }
 
     if (index === -1) {
-      return;
+      return false;
     }
-
-    if (property) {
-      delete overrides[index][property];
-      // Remove screen entry if only "name" remains
-      var keys = Object.keys(overrides[index]);
-      if (keys.length <= 1 && (keys.length === 0 || keys[0] === "name")) {
-        overrides.splice(index, 1);
-      }
-    } else {
-      overrides.splice(index, 1);
-    }
-    data.bar.screenOverrides = overrides;
+    // The identity ancestor exposes the fenced raw member key set. Unknown
+    // members count; nested normalized rows never enter the command body.
+    var remaining = Object.keys(overrides[index]).filter(function (key) {
+      return key !== property;
+    });
+    var prune = !property || remaining.length === 0 || (remaining.length === 1 && remaining[0] === "name");
+    return editor.submit([prune ? {
+                                    op: "remove",
+                                    index: index
+                                  } : {
+                            op: "unset",
+                            index: index,
+                            field: property
+                          }], function () {
+                            editor.detach();
+                          });
   }
 
   // -----------------------------------------------------
@@ -1750,7 +1762,9 @@ Singleton {
 
   // Paths select owning atomic leaves; ValuePath addresses select concrete lists
   // inside them. No invented namespace/scope for a widget array row.
-  function _recordListTarget(path, listAddress) {
+  function _recordListTarget(path, listAddress, captureOptions) {
+    if (!Array.isArray(path) || !Array.isArray(listAddress) || (captureOptions !== undefined && captureOptions !== null && (typeof captureOptions !== "object" || Array.isArray(captureOptions) || typeof captureOptions.ensure !== "boolean" || Object.keys(captureOptions).join(",") !== "ensure")))
+      return null;
     var selectedPath = path.slice();
     var key = JSON.stringify(selectedPath);
     var supported = [["bar", "widgets", "left"], ["bar", "widgets", "center"], ["bar", "widgets", "right"], ["controlCenter", "shortcuts", "left"], ["controlCenter", "shortcuts", "right"], ["bar", "screenOverrides"], ["desktopWidgets", "monitorWidgets"]];
@@ -1758,6 +1772,21 @@ Singleton {
       return JSON.stringify(candidate) === key;
     }))
       return null;
+    // The selected policies are the declared widget/monitor lists. Match's name
+    // field is a required String at the only Each ancestor in these schemas.
+    if (listAddress.length) {
+      var screen = key === JSON.stringify(["bar", "screenOverrides"]);
+      var desktop = key === JSON.stringify(["desktopWidgets", "monitorWidgets"]);
+      if ((!screen && !desktop) || listAddress.length !== (screen ? 3 : 2))
+        return null;
+      try {
+        var kind = RecordListEditor.selector(listAddress[0]);
+        if ((kind !== "index" && kind !== "match") || (kind === "match" && listAddress[0].field !== "name") || RecordListEditor.selector(listAddress[1]) !== "key" || listAddress[1].key !== "widgets" || (screen && (RecordListEditor.selector(listAddress[2]) !== "key" || ["left", "center", "right"].indexOf(listAddress[2].key) === -1)))
+          return null;
+      } catch (error) {
+        return null;
+      }
+    }
     function owner() {
       var node = root.data;
       for (var i = 0; i < selectedPath.length - 1; ++i)
@@ -1769,11 +1798,12 @@ Singleton {
       ownerId: key,
       // Opaque identity for the selected policy shape, never a disk ID.
       policyId: JSON.stringify([selectedPath, listAddress.map(function (segment) {
-        return Object.prototype.hasOwnProperty.call(segment, "index") ? {
-                                                                          each: true
-                                                                        } : segment;
+        return Object.prototype.hasOwnProperty.call(segment, "index") || Object.prototype.hasOwnProperty.call(segment, "field") ? {
+                                                                                                                                    each: true
+                                                                                                                                  } : segment;
       })]),
       listAddress: listAddress,
+      ensure: captureOptions?.ensure === true,
       read: function () {
         return owner()[leaf];
       },
@@ -1788,7 +1818,9 @@ Singleton {
 
   // Capture all possible transfer targets before the delayed interaction. Shared
   // atomic owners are copied/fenced once even when several lists are selected.
-  function createRecordListEditor(path, listAddress, additionalLists) {
+  function createRecordListEditor(path, listAddress, additionalLists, captureOptions) {
+    if (additionalLists !== undefined && !Array.isArray(additionalLists))
+      return null;
     var selected = [
           {
             path: path,
@@ -1797,7 +1829,12 @@ Singleton {
         ].concat(additionalLists || []);
     var targets = [];
     for (var i = 0; i < selected.length; ++i) {
-      var target = root._recordListTarget(selected[i].path, selected[i].listAddress);
+      if (!selected[i] || typeof selected[i] !== "object" || Array.isArray(selected[i]))
+        return null;
+      var options = i === 0 ? captureOptions : (selected[i].ensure !== undefined ? {
+                                                                                     ensure: selected[i].ensure
+                                                                                   } : null);
+      var target = root._recordListTarget(selected[i].path, selected[i].listAddress, options);
       if (!target)
         return null;
       targets.push(target);

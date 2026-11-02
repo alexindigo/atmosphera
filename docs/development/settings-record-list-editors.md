@@ -1,5 +1,58 @@
 # Captured record-list command preparation
 
+## Approved C2 container commands (old-owner preparation)
+
+The additional `Match` / `ensure` / `copy` / `at` shapes follow integration answer9
+and its approved contract. They are implemented by the injected **old owner** in
+I4; installed configqml0.3.0 is not asked to execute them. I5 maps them unchanged
+to the separately implemented/published configqml0.4.0. No library code or version
+floor changes are part of this preparation.
+
+`createRecordListEditor(path, address, additionalLists, {ensure:true})` captures an
+absent primary list as `initialValue: []` without creating a preference. Additional
+selections may likewise carry `ensure:true`. Omit the fourth argument for existing
+0.3.0 behavior. `session.target(targetIndex, ensureOverride)` returns the native
+target/copy-endpoint shape (no index); `session.endpoint(index,targetIndex,
+ensureOverride)` adds an index. An omitted override carries the captured ensure;
+explicit `false` strips it for sources, where an ensure member is forbidden.
+Indices are checked sequentially on submit, including after earlier copy ops.
+
+Addresses accept first-match `{field:"name",equals:<opaque string>}` only at the
+declared monitor-array Each ancestor. Later duplicate names are retained. The
+factory validates the known policy shapes/required String match field; index
+addresses never create. Resolution refuses present null/wrong-type containers.
+Missing keys are created only with ensure (except the absent final list created
+by copy), using the approved structural container-kind inference for these paths.
+Reading/opening/canceling never submits; ensured empty batches refuse.
+
+`copy` has exact `{op,from,to}` members, no index or row body. Its source must exist
+and cannot carry ensure. The destination must be absent, even an existing `[]`
+refuses. Only the destination is touched; both owners are fenced. The old owner
+has identity projection, so the display-equivalence guard is trivially true and
+its copied rows are effective legacy rows. C2 supplies native raw/numeric-atom
+preservation, actual projection comparison and native route/mask/schema checks.
+No GUI raw mirror or normalization engine is added here.
+
+Local operations optionally carry `at:{policyId,listAddress,generation,ensure?}`.
+All targets/endpoints are checked against initial captured generations before the
+batch, then resolved per operation. All edits/creation happen in private candidates
+before any setter; each touched owning leaf is assigned once. Existing old-owner
+multi-leaf notification/ABA limits below still apply.
+
+`setScreenOverride` and `clearScreenOverride` use the identity ancestor's captured
+row commands. First property set inserts one record; existing property set/unset
+changes only that member. Prune-on-empty counts the fenced record's own unknown
+keys; only a remaining name/empty record is removed. Widget editing callers use
+the child commands, not a replacement normalized `widgets` payload.
+
+`settings-list-containers.qml` adds real old-owner absent-record/section capture,
+three-source copy, first-match/unknown-key prune, null/type/index/source-ensure
+refusals, stale absence/source fences, late-failure noncreation, same-leaf and
+cross-leaf `at`, ensured transfer+placement, source-fence-only assignment counts,
+actual persistence and separate cold restart. Existing transfer/selected-editor
+and strict consumer lanes remain required. These fixture commands are also the
+I5 facade obligation; native C2 implementation/tests are owned separately.
+
 `Settings.createRecordListEditor(ownerPath, listAddress)` prepares the injected
 command boundary for live placement editors. It returns `null` for unsupported
 owners or missing lists. `ownerPath` is a segment-array atomic leaf; `listAddress`
