@@ -33,15 +33,9 @@ ColumnLayout {
 
   readonly property var now: Time.now
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.clockColor = valueClockColor;
-    settings.useCustomFont = valueUseCustomFont;
-    settings.customFont = valueCustomFont;
-    settings.formatHorizontal = valueFormatHorizontal.trim();
-    settings.formatVertical = valueFormatVertical.trim();
-    settings.tooltipFormat = valueTooltipFormat.trim();
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   // Function to insert token at cursor position in the focused input
@@ -62,6 +56,12 @@ ColumnLayout {
       // Insert token at cursor position
       var newText = currentText.substring(0, cursorPos) + token + currentText.substring(cursorPos);
       input.text = newText + " ";
+      if (focusedInput === inputHoriz)
+        saveSettings({formatHorizontal: input.text.trim()});
+      else if (focusedInput === inputVert)
+        saveSettings({formatVertical: input.text.trim()});
+      else if (focusedInput === inputTooltip)
+        saveSettings({tooltipFormat: input.text.trim()});
 
       // Move cursor after the inserted token
       input.cursorPosition = cursorPos + token.length + 1;
@@ -75,7 +75,7 @@ ColumnLayout {
     currentKey: valueClockColor
     onSelected: key => {
       valueClockColor = key;
-      saveSettings();
+      saveSettings({clockColor: valueClockColor});
     }
     defaultValue: widgetMetadata.clockColor
   }
@@ -87,7 +87,7 @@ ColumnLayout {
     checked: valueUseCustomFont
     onToggled: checked => {
       valueUseCustomFont = checked;
-      saveSettings();
+      saveSettings({useCustomFont: valueUseCustomFont});
     }
     defaultValue: widgetMetadata.useCustomFont
   }
@@ -105,7 +105,7 @@ ColumnLayout {
     minimumWidth: 300
     onSelected: function (key) {
       valueCustomFont = key;
-      saveSettings();
+      saveSettings({customFont: valueCustomFont});
     }
     defaultValue: Settings.data.ui.fontDefault
   }
@@ -142,11 +142,11 @@ ColumnLayout {
         text: valueFormatHorizontal
         onTextChanged: {
           valueFormatHorizontal = text;
-          saveSettings();
         }
+        onTextEdited: saveSettings({formatHorizontal: valueFormatHorizontal.trim()})
         Component.onCompleted: {
           if (inputItem) {
-            inputItem.onActiveFocusChanged.connect(function () {
+            inputItem.activeFocusChanged.connect(function () {
               if (inputItem.activeFocus) {
                 root.focusedInput = inputHoriz;
               }
@@ -170,11 +170,11 @@ ColumnLayout {
         text: valueFormatVertical
         onTextChanged: {
           valueFormatVertical = text;
-          saveSettings();
         }
+        onTextEdited: saveSettings({formatVertical: valueFormatVertical.trim()})
         Component.onCompleted: {
           if (inputItem) {
-            inputItem.onActiveFocusChanged.connect(function () {
+            inputItem.activeFocusChanged.connect(function () {
               if (inputItem.activeFocus) {
                 root.focusedInput = inputVert;
               }
@@ -193,11 +193,11 @@ ColumnLayout {
         text: valueTooltipFormat
         onTextChanged: {
           valueTooltipFormat = text;
-          saveSettings();
         }
+        onTextEdited: saveSettings({tooltipFormat: valueTooltipFormat.trim()})
         Component.onCompleted: {
           if (inputItem) {
-            inputItem.onActiveFocusChanged.connect(function () {
+            inputItem.activeFocusChanged.connect(function () {
               if (inputItem.activeFocus) {
                 root.focusedInput = inputTooltip;
               }

@@ -26,16 +26,9 @@ ColumnLayout {
 
   property bool valueHideWhenOff: widgetData.hideWhenOff !== undefined ? widgetData.hideWhenOff : (widgetMetadata.hideWhenOff !== undefined ? widgetMetadata.hideWhenOff : false)
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.showCapsLock = valueShowCapsLock;
-    settings.showNumLock = valueShowNumLock;
-    settings.showScrollLock = valueShowScrollLock;
-    settings.capsLockIcon = capsIcon;
-    settings.numLockIcon = numIcon;
-    settings.scrollLockIcon = scrollIcon;
-    settings.hideWhenOff = valueHideWhenOff;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   RowLayout {
@@ -47,7 +40,7 @@ ColumnLayout {
       checked: valueShowCapsLock
       onToggled: checked => {
         valueShowCapsLock = checked;
-        saveSettings();
+        saveSettings({showCapsLock: valueShowCapsLock});
       }
       defaultValue: widgetMetadata.showCapsLock
     }
@@ -72,7 +65,7 @@ ColumnLayout {
     query: "letter-c"
     onIconSelected: function (iconName) {
       capsIcon = iconName;
-      saveSettings();
+      saveSettings({capsLockIcon: capsIcon});
     }
   }
 
@@ -85,7 +78,7 @@ ColumnLayout {
       checked: valueShowNumLock
       onToggled: checked => {
         valueShowNumLock = checked;
-        saveSettings();
+        saveSettings({showNumLock: valueShowNumLock});
       }
       defaultValue: widgetMetadata.showNumLock
     }
@@ -110,7 +103,7 @@ ColumnLayout {
     query: "letter-n"
     onIconSelected: function (iconName) {
       numIcon = iconName;
-      saveSettings();
+      saveSettings({numLockIcon: numIcon});
     }
   }
 
@@ -123,7 +116,7 @@ ColumnLayout {
       checked: valueShowScrollLock
       onToggled: checked => {
         valueShowScrollLock = checked;
-        saveSettings();
+        saveSettings({showScrollLock: valueShowScrollLock});
       }
       defaultValue: widgetMetadata.showScrollLock
     }
@@ -148,7 +141,7 @@ ColumnLayout {
     query: "letter-s"
     onIconSelected: function (iconName) {
       scrollIcon = iconName;
-      saveSettings();
+      saveSettings({scrollLockIcon: scrollIcon});
     }
   }
 
@@ -163,7 +156,7 @@ ColumnLayout {
     checked: valueHideWhenOff
     onToggled: checked => {
       valueHideWhenOff = checked;
-      saveSettings();
+      saveSettings({hideWhenOff: valueHideWhenOff});
     }
     defaultValue: widgetMetadata.hideWhenOff
   }

@@ -46,7 +46,7 @@ ColumnLayout {
     checked: root.valueDrawerEnabled
     onToggled: checked => {
       root.valueDrawerEnabled = checked;
-      saveSettings();
+      saveSettings({drawerEnabled: root.valueDrawerEnabled});
     }
     defaultValue: widgetMetadata.drawerEnabled
   }
@@ -57,7 +57,7 @@ ColumnLayout {
     currentKey: root.valueChevronColor
     onSelected: key => {
       root.valueChevronColor = key;
-      saveSettings();
+      saveSettings({chevronColor: root.valueChevronColor});
     }
     visible: root.valueDrawerEnabled
     defaultValue: widgetMetadata.chevronColor
@@ -70,7 +70,7 @@ ColumnLayout {
     checked: root.valueColorizeIcons
     onToggled: checked => {
       root.valueColorizeIcons = checked;
-      saveSettings();
+      saveSettings({colorizeIcons: root.valueColorizeIcons});
     }
     defaultValue: widgetMetadata.colorizeIcons
   }
@@ -82,7 +82,7 @@ ColumnLayout {
     checked: root.valueHidePassive
     onToggled: checked => {
       root.valueHidePassive = checked;
-      saveSettings();
+      saveSettings({hidePassive: root.valueHidePassive});
     }
     defaultValue: widgetMetadata.hidePassive
   }
@@ -120,7 +120,7 @@ ColumnLayout {
                                       "rule": newRule
                                     });
               newRuleInput.text = "";
-              saveSettings();
+              saveBlacklist();
             }
           }
         }
@@ -137,7 +137,7 @@ ColumnLayout {
 
     model: blacklistModel
     delegate: Item {
-      width: ListView.width
+      width: ListView.view ? ListView.view.width : 0
       height: 40
 
       Rectangle {
@@ -173,27 +173,24 @@ ColumnLayout {
           colorFgHover: AtmoColor.mOnError
           onClicked: {
             blacklistModel.remove(index);
-            saveSettings();
+            saveBlacklist();
           }
         }
       }
     }
   }
 
-  // This function will be called by the dialog to get the new settings
-  function saveSettings() {
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
+  }
+
+  function saveBlacklist() {
     var newBlacklist = [];
     for (var i = 0; i < blacklistModel.count; i++) {
       newBlacklist.push(blacklistModel.get(i).rule);
     }
 
-    // Return the updated settings for this widget instance
-    var settings = Object.assign({}, widgetData || {});
-    settings.blacklist = newBlacklist;
-    settings.colorizeIcons = root.valueColorizeIcons;
-    settings.chevronColor = root.valueChevronColor;
-    settings.drawerEnabled = root.valueDrawerEnabled;
-    settings.hidePassive = root.valueHidePassive;
-    settingsChanged(settings);
+    saveSettings({blacklist: newBlacklist});
   }
 }

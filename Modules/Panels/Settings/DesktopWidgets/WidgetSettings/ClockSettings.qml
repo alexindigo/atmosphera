@@ -29,16 +29,9 @@ ColumnLayout {
   readonly property bool isMinimalMode: valueClockStyle === "minimal"
   readonly property var now: Time.now
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.showBackground = valueShowBackground;
-    settings.roundedCorners = valueRoundedCorners;
-    settings.clockStyle = valueClockStyle;
-    settings.clockColor = valueClockColor;
-    settings.useCustomFont = valueUseCustomFont;
-    settings.customFont = valueCustomFont;
-    settings.format = valueFormat.trim();
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   // Function to insert token at cursor position in the focused input
@@ -65,7 +58,7 @@ ColumnLayout {
 
       // Ensure the input keeps focus
       input.focus = true;
-      saveSettings();
+      saveSettings({format: valueFormat.trim()});
     }
   }
 
@@ -95,7 +88,7 @@ ColumnLayout {
     ]
     onSelected: key => {
       valueClockStyle = key;
-      saveSettings();
+      saveSettings({clockStyle: valueClockStyle});
     }
     defaultValue: widgetMetadata.clockStyle
   }
@@ -106,7 +99,7 @@ ColumnLayout {
     currentKey: valueClockColor
     onSelected: key => {
       valueClockColor = key;
-      saveSettings();
+      saveSettings({clockColor: valueClockColor});
     }
     defaultValue: widgetMetadata.clockColor
   }
@@ -118,7 +111,7 @@ ColumnLayout {
     checked: valueUseCustomFont
     onToggled: checked => {
       valueUseCustomFont = checked;
-      saveSettings();
+      saveSettings({useCustomFont: valueUseCustomFont});
     }
     defaultValue: widgetMetadata.useCustomFont
   }
@@ -136,7 +129,7 @@ ColumnLayout {
     minimumWidth: 300
     onSelected: function (key) {
       valueCustomFont = key;
-      saveSettings();
+      saveSettings({customFont: valueCustomFont});
     }
     enabled: valueClockStyle === "minimal"
     defaultValue: Settings.data.ui.fontDefault
@@ -176,11 +169,11 @@ ColumnLayout {
         text: valueFormat
         onTextChanged: {
           valueFormat = text;
-          settingsChanged(saveSettings());
         }
+        onTextEdited: saveSettings({format: valueFormat.trim()})
         Component.onCompleted: {
           if (inputItem) {
-            inputItem.onActiveFocusChanged.connect(function () {
+              inputItem.activeFocusChanged.connect(function () {
               if (inputItem.activeFocus) {
                 root.focusedInput = formatInput;
               }
@@ -273,7 +266,7 @@ ColumnLayout {
     checked: valueShowBackground
     onToggled: checked => {
       valueShowBackground = checked;
-      saveSettings();
+      saveSettings({showBackground: valueShowBackground});
     }
     defaultValue: widgetMetadata.showBackground
   }
@@ -286,7 +279,7 @@ ColumnLayout {
     checked: valueRoundedCorners
     onToggled: checked => {
       valueRoundedCorners = checked;
-      saveSettings();
+      saveSettings({roundedCorners: valueRoundedCorners});
     }
     defaultValue: widgetMetadata.roundedCorners
   }
