@@ -64,7 +64,7 @@ Singleton {
                                      "Microphone": "WidgetSettings/MicrophoneSettings.qml",
                                      "Network": "WidgetSettings/NetworkSettings.qml",
                                      "NightLight": "WidgetSettings/NightLightSettings.qml",
-                                     "AtmospheraPerformance": "WidgetSettings/AtmospheraPerformanceSettings.qml",
+                                     "AtmospheraPerformance": "WidgetSettings/NoctaliaPerformanceSettings.qml",
                                      "NotificationHistory": "WidgetSettings/NotificationHistorySettings.qml",
                                      "PowerProfile": "WidgetSettings/PowerProfileSettings.qml",
                                      "SessionMenu": "WidgetSettings/SessionMenuSettings.qml",
