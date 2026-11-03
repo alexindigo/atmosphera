@@ -212,7 +212,7 @@ ShellRoot {
       Version.versionKnown = true;
       Version.currentVersion = "0.9.1";
       for (var i = 0; i < cases.length; i++)
-        check(!Service.checkPluginCompatibility(cases[i].manifest).compatible, "published old shell refuses receipt-dependent page");
+        check(Service.checkPluginCompatibility(cases[i].manifest).compatible === (cases[i].olderCompatible === true), "old-shell capability floor matches actual dependency");
       Version.currentVersion = "0.10.0";
       for (var j = 0; j < cases.length; j++)
         check(Service.checkPluginCompatibility(cases[j].manifest).compatible, "selected release admits page");
@@ -271,6 +271,12 @@ ShellRoot {
       phase = "apply";
     } else if (phase === "apply" && popup.opened && p) {
       p[item.field] = item.finalValue;
+      if (manifest.id === "launcher-pass") {
+        p.editTypeDelay = "not-a-number";
+        p.editWtypeDelay = "-2";
+      } else if (manifest.id === "monitor-layout") {
+        p.editGridSize = "-4";
+      }
       if (manifest.id === "git-companion") {
         var input = numericInput(p);
         input.forceActiveFocus();
@@ -290,6 +296,10 @@ ShellRoot {
       check(!popup.busy && !popup.dirty && !popup.saveFailed && api.pluginSettings[item.key] === item.finalValue, "accepted current refresh");
       if (manifest.id === "git-companion")
         check(api.pluginSettings.refreshInterval === 61, "actual page gathered committed numeric input");
+      if (manifest.id === "launcher-pass")
+        check(p.editTypeDelay === "500" && p.editWtypeDelay === "12" && api.pluginSettings.typeDelay === 500 && api.pluginSettings.wtypeDelay === 12, "existing delay fallback reflected in displayed and saved values");
+      if (manifest.id === "monitor-layout")
+        check(p.editGridSize === "1" && api.pluginSettings.gridSize === 1, "existing grid clamp reflected in displayed and saved values");
       console.log("I4_CATALOG_PENDING", manifest.id);
       popup.applySettings();
       phase = "noop";
