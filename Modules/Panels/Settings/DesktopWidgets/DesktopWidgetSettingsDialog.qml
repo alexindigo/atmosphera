@@ -284,6 +284,7 @@ Popup {
 
   NLiveSettingsEditSession {
     id: liveEdits
+    inputGuard: inputEdits
     // The caller owns the captured session through post-close cleanup. This
     // component receives submission only; its owner detaches after closed.
     editor: ({
@@ -303,6 +304,12 @@ Popup {
     parent: root.parent
     onDiscard: root.confirmDiscard()
     onKeepEditing: root.keepEditing()
+  }
+
+  NSettingsInputGuard {
+    id: inputEdits
+    target: settingsLoader
+    active: root.visible && !root.saveBusy
   }
 
   function requestDiscard() {
@@ -340,6 +347,7 @@ Popup {
   function saveAndClose() {
     if (saveBusy)
       return;
+    inputEdits.commit();
     if (settingsLoader.item && typeof settingsLoader.item.saveSettings === 'function') {
       var newSettings = settingsLoader.item.saveSettings();
       if (newSettings) {

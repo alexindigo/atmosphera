@@ -16,6 +16,15 @@ Slider {
   property string tooltipDirection: "auto"
   property bool hovering: false
 
+  // Complete a user gesture before an editor gathers deferred release values.
+  function commitEdit() {
+    if (!pressed)
+      return;
+    if (!live)
+      value = valueAt(position);
+    pressed = false;
+  }
+
   readonly property color effectiveFillColor: enabled ? fillColor : AtmoColor.mOutline
 
   readonly property real knobDiameter: Math.round((Style.baseWidgetSize * heightRatio * Style.uiScaleRatio) / 2) * 2

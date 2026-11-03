@@ -29,12 +29,19 @@ Popup {
   readonly property bool busy: _busy
   readonly property bool saveFailed: _failed
   readonly property bool discardPending: discardDialog.visible
-  readonly property bool dirty: _failed || (_pageApi && _pageApi.staged) || (settingsPage && (typeof settingsPage.settingsDirty !== "boolean" || settingsPage.settingsDirty))
+  readonly property bool dirty: _failed || inputEdits.dirty || (_pageApi && _pageApi.staged) || (settingsPage && (typeof settingsPage.settingsDirty !== "boolean" || settingsPage.settingsDirty))
   property bool _busy: false
   property bool _failed: false
   property var _editor: null
   property var _pageApi: null
+  property int _inputFence: 0
   signal settingsCompleted(var result)
+
+  NSettingsInputGuard {
+    id: inputEdits
+    target: settingsLoader
+    active: root.visible && !root.busy
+  }
 
   Component {
     id: pageApiFactory
@@ -257,6 +264,7 @@ Popup {
     _pageApi = null;
     _failed = false;
     currentPlugin = null;
+    inputEdits.reset();
     currentPluginApi = null;
     currentInstanceApi = null;
   }
@@ -311,6 +319,7 @@ Popup {
     _failed = false;
 
     // Get plugin directory
+    inputEdits.reset();
     var pluginDir = Registry.getPluginDir(pluginId);
     _settingsEntryPoint = settingsEntryPoint || "settings";
     var settingsEntry = pluginManifest.entryPoints[_settingsEntryPoint];
@@ -343,6 +352,7 @@ Popup {
   function applySettings() {
     if (!_editor || !settingsPage || _busy)
       return;
+    inputEdits.commit();
     // Page saveSettings is synchronous staging, never a recursive owner Apply.
     _busy = true;
     try {
@@ -355,6 +365,7 @@ Popup {
   }
 
   function _submit(reset) {
+    _inputFence = inputEdits.capture();
     _busy = true;
     _pageApi.busy = true;
     _failed = false;
@@ -374,6 +385,8 @@ Popup {
     _failed = !accepted;
     if (accepted)
       _pageApi.pluginSettings = JSON.parse(JSON.stringify(_editor.initialValue));
+    if (accepted)
+      inputEdits.acknowledge(_inputFence);
     // Keep competing page actions disabled throughout receipt delivery.
     settingsCompleted(result);
     _pageApi.complete(result);
@@ -394,6 +407,7 @@ Popup {
   function requestClose() {
     if (_busy)
       return;
+    inputEdits.commit();
     if (dirty)
       discardDialog.open();
     else

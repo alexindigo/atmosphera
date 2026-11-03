@@ -6,12 +6,13 @@ import "../Helpers/RecordListEditor.js" as RecordListEditor
 QtObject {
   id: root
   property var editor: null
+  property var inputGuard: null
   property var pending: null
   property bool busy: false
   property bool failed: false
   property bool closePending: false
   property int _sequence: 0
-  readonly property bool dirty: pending !== null
+  readonly property bool dirty: pending !== null || (inputGuard && inputGuard.dirty)
   signal completed(var result)
   signal closeRequested
   property Timer _timer: Timer {
@@ -48,6 +49,8 @@ QtObject {
   function flush() {
     if (busy)
       return;
+    if (inputGuard)
+      inputGuard.commit();
     if (pending === null) {
       if (closePending) {
         closePending = false;
@@ -56,6 +59,7 @@ QtObject {
       return;
     }
     var submitted = RecordListEditor.copy(pending);
+    var inputFence = inputGuard ? inputGuard.capture() : 0;
     var sequence = _sequence;
     var delivered = false;
     busy = true;
@@ -74,6 +78,8 @@ QtObject {
       }
       if (sequence === root._sequence)
         root.pending = null;
+      if (root.inputGuard)
+        root.inputGuard.acknowledge(inputFence);
       root.completed(result);
       if (root.pending !== null) {
         if (root.closePending)

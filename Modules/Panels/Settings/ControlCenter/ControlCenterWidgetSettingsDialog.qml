@@ -141,6 +141,7 @@ Popup {
 
   NLiveSettingsEditSession {
     id: liveEdits
+    inputGuard: inputEdits
     editor: root.settingsEditor || {
               submit: function (fields, callback) {
                 root.updateWidgetSettings(root.sectionId, root.widgetIndex, fields);
@@ -156,6 +157,12 @@ Popup {
     parent: root.parent
     onDiscard: root.confirmDiscard()
     onKeepEditing: root.keepEditing()
+  }
+
+  NSettingsInputGuard {
+    id: inputEdits
+    target: settingsLoader
+    active: root.visible && !root.saveBusy
   }
 
   function requestDiscard() {
@@ -189,6 +196,7 @@ Popup {
   function saveAndClose() {
     if (saveBusy)
       return;
+    inputEdits.commit();
     var page = root._settingsPage();
     if (page && typeof page.saveSettings === 'function') {
       var newSettings = page.saveSettings();

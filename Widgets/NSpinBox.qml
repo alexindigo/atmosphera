@@ -36,6 +36,7 @@ RowLayout {
   signal entered
   signal exited
   signal valueModified(int value)
+  readonly property bool editPending: valueInput.userEdited
 
   Layout.fillWidth: true
 
@@ -61,6 +62,7 @@ RowLayout {
   }
 
   function changeValue(direction, step) {
+    root.commitEdit();
     var currentStep = step || root.stepSize;
 
     if (direction === 1 && root.value < root.to) {
@@ -257,10 +259,11 @@ RowLayout {
         TextInput {
           id: valueInput
           property bool userEdited: false
+          property string editText: ""
           NInputGuard {
             target: valueInput
           }
-          text: valueInput.focus ? valueInput.text : root.value.toString()
+          text: valueInput.userEdited ? valueInput.editText : root.value.toString()
           font.family: Settings.data.ui.fontFixed
           font.pointSize: Style.fontSizeM
           font.weight: Style.fontWeightMedium
@@ -287,26 +290,35 @@ RowLayout {
             focus = false;
           }
 
-          onFocusChanged: {
-            if (focus) {
+          onActiveFocusChanged: {
+            if (activeFocus) {
               selectAll();
             } else {
               applyValue();
             }
           }
 
-          onTextEdited: userEdited = true
+          onTextEdited: {
+            editText = text;
+            userEdited = true;
+          }
+
+          function commitEdit() {
+            applyValue();
+          }
 
           function applyValue() {
             if (!userEdited)
               return;
-            userEdited = false;
-            let newValue = parseInt(text);
+            let newValue = parseInt(editText);
             if (!isNaN(newValue)) {
               // Don't manually set text here - let the binding handle it
               newValue = Math.max(root.from, Math.min(root.to, newValue));
               root.value = newValue;
+              userEdited = false;
               root.valueModified(newValue);
+            } else {
+              userEdited = false;
             }
           }
         }
