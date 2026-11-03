@@ -6,6 +6,7 @@ import Quickshell.Io
 import qs.Commons
 import qs.Services
 import qs.Services.Plugins
+import qs.Services.System
 import qs.Widgets
 
 ShellRoot {
@@ -27,6 +28,13 @@ ShellRoot {
                                     })
   property string phase: "start"
   readonly property bool verifyOnly: Quickshell.env("I4_VERIFY") === "1"
+  readonly property bool mainOnly: Quickshell.env("I4_MAIN_SCOPE_ONLY") === "1"
+  readonly property var mainPlacement: ({
+                                          kind: "bar",
+                                          list: "global",
+                                          section: "left",
+                                          index: 1
+                                        })
 
   FileView {
     id: inputs
@@ -68,6 +76,8 @@ ShellRoot {
       api: api
     };
     Service.loadedPlugins = plugins;
+    if (manifest.id === "catwalk")
+      createMain(api);
     var original = api.createSettingsEditor;
     api.createSettingsEditor = function () {
       var editor = original();
@@ -95,6 +105,44 @@ ShellRoot {
     };
   }
 
+  function createMain(base) {
+    var component = Qt.createComponent("file://" + Registry.getPluginDir("catwalk") + "/Main.qml");
+    check(component.status === Component.Ready, "actual Catwalk Main component");
+    var main = component.createObject(root, {
+                                        pluginApi: base
+                                      });
+    check(main !== null, "actual Catwalk Main created");
+    base.mainInstance = main;
+  }
+
+  function openMainInstance() {
+    var item = cases.filter(function (value) {
+      return value.manifest.id === "catwalk";
+    })[0];
+    check(item !== undefined, "Main-derived family declared");
+    manifest = item.manifest;
+    api = Service.getPluginAPI("catwalk");
+    if (!api)
+      register(item);
+    var rows = mainOnly ? [] : Settings.data.bar.widgets.left.slice();
+    if (rows.length === 0)
+      rows.push({
+                  id: "Volume"
+                });
+    check(rows.length === 1, "selected-instance fixture owns exactly one preceding row");
+    rows.push({
+                id: "plugin:catwalk",
+                opaque: "main-placement",
+                instanceSettings: {
+                  minimumThreshold: 17,
+                  hideBackground: false
+                }
+              });
+    Settings.data.bar.widgets.left = rows;
+    popup.openInstanceSettings(manifest, PluginInstances.apiFor("catwalk", mainPlacement), "settings");
+    phase = "main-instance";
+  }
+
   function deliver() {
     console.log("I4_CATALOG_RELEASE", manifest.id, held.status, held.refreshState);
     var callback = release;
@@ -113,6 +161,16 @@ ShellRoot {
           var instance = PluginInstances.apiFor("hello-world", root.placement);
           root.check(instance.pluginSettings.message === "catalog-instance", "restarted actual instance consumer");
           root.check(Settings.data.bar.widgets.left[0].opaque === "placement", "restarted unknown placement field");
+          if (cases.some(function (item) {
+            return item.manifest.id === "catwalk";
+          })) {
+            var cat = Service.getPluginAPI("catwalk");
+            root.createMain(cat);
+            var selected = PluginInstances.apiFor("catwalk", root.mainPlacement);
+            root.check(cat.mainInstance.minimumThreshold === 10 && cat.mainInstance.hideBackground, "restarted shared Main consumer");
+            root.check(selected.pluginSettings.minimumThreshold === 18 && selected.pluginSettings.hideBackground === false, "restarted selected instance consumer");
+            root.check(Settings.data.bar.widgets.left[1].opaque === "main-placement", "restarted selected row unknown data");
+          }
           console.log("I4_CATALOG: RESTART_PASS");
           Qt.exit(0);
         } catch (error) {
@@ -164,6 +222,10 @@ ShellRoot {
     }
     if (verifyOnly) {
       verifyNext();
+      return;
+    }
+    if (mainOnly) {
+      openMainInstance();
       return;
     }
     register(cases[index]);
@@ -334,6 +396,27 @@ ShellRoot {
       console.log("I4_CATALOG_INSTANCE_COMPLETE");
       check(!popup.saveFailed && PluginInstances.entryFor(placement).instanceSettings.message === "catalog-instance", "actual catalog instance persistence receipt");
       check(api.pluginSettings.message === cases[0].finalValue, "instance never replaces shared value");
+      popup.requestClose();
+      phase = cases.some(function (value) {
+        return value.manifest.id === "catwalk";
+      }) ? "main-open" : "finish";
+    } else if (phase === "main-open" && !popup.visible && !popup.currentPlugin) {
+      openMainInstance();
+    } else if (phase === "main-instance" && popup.opened && p) {
+      check(api.mainInstance.minimumThreshold === 10, "shared Main still has base threshold");
+      check(p.valueMinimumThreshold === 17 && p.valueHideBackground === false, "selected instance inputs prefer page API to shared Main");
+      if (mainOnly) {
+        console.log("I4_MAIN_SCOPE: INPUT_PASS");
+        Qt.exit(0);
+        return;
+      }
+      p.valueMinimumThreshold = 18;
+      console.log("I4_CATALOG_PENDING", "instance:catwalk");
+      popup.applySettings();
+      phase = "main-instance-wait";
+    } else if (phase === "main-instance-wait" && !popup.busy) {
+      check(!popup.saveFailed && PluginInstances.entryFor(mainPlacement).instanceSettings.minimumThreshold === 18, "selected threshold persistence receipt");
+      check(api.mainInstance.minimumThreshold === 10 && api.mainInstance.hideBackground, "selected edit never changes shared Main");
       popup.requestClose();
       phase = "finish";
     } else if (phase === "finish" && !popup.visible && !popup.currentPlugin) {
