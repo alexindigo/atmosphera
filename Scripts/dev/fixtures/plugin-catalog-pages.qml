@@ -244,9 +244,19 @@ ShellRoot {
       for (var i = 0; i < item.buffers.length; i++) {
         var field = item.buffers[i];
         var before = p[field];
-        p[field] = typeof before === "boolean" ? !before : typeof before === "number" ? before + 1 : before + "-dirty";
+        var restore = before;
+        if (item.bufferTypes && item.bufferTypes[field] === "color")
+          restore = before.valid ? Qt.rgba(before.r, before.g, before.b, before.a) : null;
+        if (item.bufferTypes && item.bufferTypes[field] === "numeric-string")
+          p[field] = String((Number(before) || 0) + 1);
+        else if (item.bufferTypes && item.bufferTypes[field] === "color")
+          p[field] = Qt.rgba(before.r < 0.5 ? 1 : 0, before.g, before.b, before.a);
+        else if (Array.isArray(before))
+          p[field] = before.concat(before.length ? [before[0]] : ["i4-dirty"]);
+        else
+          p[field] = typeof before === "boolean" ? !before : typeof before === "number" ? before + 1 : before + "-dirty";
         check(p.settingsDirty && popup.dirty, "all local buffers tracked: " + field);
-        p[field] = before;
+        p[field] = restore;
         check(!p.settingsDirty, "local revert clean: " + field);
       }
       if (manifest.id === "git-companion") {

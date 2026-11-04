@@ -1,4 +1,5 @@
 import QtQuick
+import "../Helpers/SettingsValues.js" as SettingsValues
 
 QtObject {
   id: root
@@ -11,7 +12,7 @@ QtObject {
   property bool busy: false
   property bool failed: false
   property bool discardPending: false
-  readonly property bool dirty: failed || (inputGuard && inputGuard.dirty) || JSON.stringify(value) !== JSON.stringify(_initialValue)
+  readonly property bool dirty: failed || (inputGuard && inputGuard.dirty) || !SettingsValues.equal(value, _initialValue)
   signal accepted(var value)
   signal closeRequested
 
