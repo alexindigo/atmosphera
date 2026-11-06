@@ -87,6 +87,15 @@ ShellRoot {
     return null;
   }
 
+  function toggles(item) {
+    var result = [];
+    if (typeof item.toggled === "function" && typeof item.checked === "boolean")
+      result.push(item);
+    for (var child of item.children || [])
+      result = result.concat(toggles(child));
+    return result;
+  }
+
   function register(item) {
     manifest = item.manifest;
     api = Service.createPluginAPI(manifest.id, manifest, Object.assign({}, item.scenario?.seed || {}, {
@@ -312,6 +321,20 @@ ShellRoot {
     } else if (phase === "apply" && popup.opened && p) {
       p[item.field] = item.finalValue;
       applyEdits(p, item.scenario?.edits);
+      if (manifest.id === "saved-desktop-widgets") {
+        p.loadWidgets = true;
+        var controls = toggles(p);
+        check(controls.length === 2, "actual independent Save and Load toggles");
+        controls[1].toggled(false);
+        check(p.loadWidgets === false && p.saveWidgets === true && p.settingsDirty, "Load input never edits Save");
+      }
+      if (manifest.id === "rss-feed") {
+        p.removeFeed(1);
+        p.newFeedName = "  Added feed  ";
+        p.newFeedUrl = "  https://example.test/feed  ";
+        p.addFeed();
+        check(p.feeds.length === 2 && api.pluginSettings.feeds[1].opaque.keep, "local collection commands preserve live/unknown rows until Apply");
+      }
       if (manifest.id === "world-clock") {
         var toggle = timezoneToggle(p);
         check(toggle !== null, "actual timezone toggle exists");

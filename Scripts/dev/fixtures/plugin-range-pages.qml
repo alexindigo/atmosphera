@@ -58,7 +58,8 @@ ShellRoot {
   function move(page, descriptor, value) {
     var input = control(page, descriptor.field);
     input.value = value;
-    if (descriptor.type === "NValueSlider") input.moved(input.value);
+    if (descriptor.type === "NSpinBox") input.valueModified(input.value);
+    else if (descriptor.type === "NValueSlider") input.moved(input.value);
     else input.moved();
   }
   function alternate(page, descriptor) {

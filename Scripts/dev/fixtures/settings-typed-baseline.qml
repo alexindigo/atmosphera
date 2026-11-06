@@ -8,6 +8,8 @@ Item {
   id: root
   property var source: ({color:null, opacity:null, count:1.5, text:null, enabled:null, rows:[{name:"one",address:"127.0.0.1"}]})
   property var rangeSource: 0
+  property list<var> nativeRows: []
+  property list<string> nativeStrings: ["one", "two"]
   NSettingsBaseline {
     id: baseline
     readonly property color paint: root.source.color
@@ -17,6 +19,8 @@ Item {
     readonly property bool enabled: root.source.enabled
     readonly property var rows: root.source.rows
     readonly property int boundedCount: root.rangeSource
+    readonly property var sequence: root.nativeRows
+    readonly property var strings: root.nativeStrings
     ranges: [NSettingsRange { field: "boundedCount"; from: rangeControl.from; to: rangeControl.to }]
   }
   property int projectedCount: baseline.project("boundedCount")
@@ -65,6 +69,16 @@ Item {
       var rejected=false;try{baseline.differs({undeclared:true});}catch(error){rejected=true;}check(rejected,"undeclared display field refuses");
       session.value={second:2,first:1};session.begin(null,{first:1,second:2});check(!session.dirty,"shared edit session ignores record key order");
       session.value={first:1,second:3};check(session.dirty,"shared edit session observes changed value");
+      check(!baseline.differs({sequence:[]}),"empty native sequence equals its editable JS copy");
+      check(baseline.differs({sequence:{}}),"an empty record is not a native sequence");
+      nativeRows=[{name:"one",nested:{keep:true}},{name:"two"}];
+      check(!baseline.differs({sequence:[{nested:{keep:true},name:"one"},{name:"two"}]}),"native sequence nested values and key order");
+      check(baseline.differs({sequence:[{name:"two"},{name:"one",nested:{keep:true}}]}),"native sequence order matters");
+      check(baseline.differs({sequence:[{name:"one",nested:{keep:false}},{name:"two"}]}),"native sequence nested edit matters");
+      check(baseline.differs({sequence:[{name:"one",nested:{keep:true}}]}),"native sequence length matters");
+      check(baseline.differs({sequence:{0:{name:"one",nested:{keep:true}},1:{name:"two"},length:2}}),"JSON record with indexed keys stays a record");
+      check(!baseline.differs({strings:["one","two"]})&&baseline.differs({strings:["two","one"]}),"native string sequence equality/order");
+      session.value=[{name:"one",nested:{keep:true}},{name:"two"}];session.begin(null,nativeRows);check(!session.dirty,"editor native sequence copy is clean");
       console.log("I4_TYPED_BASELINE: PASS");Qt.exit(0);
     }catch(error){console.error(String(error));Qt.exit(2);}
   })
