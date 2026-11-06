@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
+import "../../../Helpers/SettingsValues.js" as SettingsValues
 import qs.Commons
 import qs.Services
 import qs.Services.Plugins
@@ -64,13 +65,35 @@ ShellRoot {
     return null;
   }
 
+  function checkValues(actual, expected, label) {
+    for (var key in expected || {})
+    check(SettingsValues.equal(actual[key], expected[key]), label + ": " + key);
+  }
+
+  function applyEdits(item, values) {
+    for (var key in values || {})
+    item[key] = values[key];
+  }
+
+  function timezoneToggle(item): var {
+    if (typeof item.toggled === "function" && typeof item.checked === "boolean")
+      return item;
+    var nested = item.children || [];
+    for (var i = 0; i < nested.length; i++) {
+      var control = timezoneToggle(nested[i]);
+      if (control)
+        return control;
+    }
+    return null;
+  }
+
   function register(item) {
     manifest = item.manifest;
-    api = Service.createPluginAPI(manifest.id, manifest, {
-                                    opaque: {
-                                      keep: true
-                                    }
-                                  }, {}, {}, {});
+    api = Service.createPluginAPI(manifest.id, manifest, Object.assign({}, item.scenario?.seed || {}, {
+                                                                         opaque: {
+                                                                           keep: true
+                                                                         }
+                                                                       }), {}, {}, {});
     var plugins = Object.assign({}, Service.loadedPlugins);
     plugins[manifest.id] = {
       api: api
@@ -186,6 +209,7 @@ ShellRoot {
         var restarted = Service.createPluginAPI(item.manifest.id, item.manifest, value, {}, {}, {});
         root.check(restarted.pluginSettings[item.key] === item.finalValue, "restarted actual API consumer " + item.manifest.id);
         root.check(restarted.pluginSettings.opaque.keep, "restarted unknown preference " + item.manifest.id);
+        root.checkValues(restarted.pluginSettings, item.scenario?.secondExpected || item.scenario?.expected, "restarted compound consumer " + item.manifest.id);
         var plugins = Object.assign({}, Service.loadedPlugins);
         plugins[item.manifest.id] = {
           api: restarted
@@ -241,6 +265,8 @@ ShellRoot {
     if (phase === "pristine" && popup.opened && p) {
       check(typeof p.settingsDirty === "boolean", "actual page declares buffered dirtiness");
       check(!popup.dirty && applies === index * 2, "constructor does not stage preferences");
+      checkValues(p, item.scenario?.initialDisplay, "existing constructor display policy");
+      checkValues(api.pluginSettings, item.scenario?.seed, "constructor leaves admitted preferences unchanged");
       for (var i = 0; i < item.buffers.length; i++) {
         var field = item.buffers[i];
         var before = p[field];
@@ -249,12 +275,16 @@ ShellRoot {
           restore = before.valid ? Qt.rgba(before.r, before.g, before.b, before.a) : null;
         if (item.bufferTypes && item.bufferTypes[field] === "numeric-string")
           p[field] = String((Number(before) || 0) + 1);
+        else if (item.bufferTypes && item.bufferTypes[field] === "color-string")
+          p[field] = before === "#ff0000" ? "#00ff00" : "#ff0000";
         else if (item.bufferTypes && item.bufferTypes[field] === "color")
           p[field] = Qt.rgba(before.r < 0.5 ? 1 : 0, before.g, before.b, before.a);
         else if (Array.isArray(before))
           p[field] = before.concat(before.length ? [before[0]] : ["i4-dirty"]);
         else
           p[field] = typeof before === "boolean" ? !before : typeof before === "number" ? before + 1 : before + "-dirty";
+        if (typeof before === "number" && p[field] === before)
+          p[field] = before - 1;
         check(p.settingsDirty && popup.dirty, "all local buffers tracked: " + field);
         p[field] = restore;
         check(!p.settingsDirty, "local revert clean: " + field);
@@ -281,18 +311,29 @@ ShellRoot {
       phase = "apply";
     } else if (phase === "apply" && popup.opened && p) {
       p[item.field] = item.finalValue;
+      applyEdits(p, item.scenario?.edits);
+      if (manifest.id === "world-clock") {
+        var toggle = timezoneToggle(p);
+        check(toggle !== null, "actual timezone toggle exists");
+        toggle.toggled(false);
+        check(api.pluginSettings.timezones[0].enabled && api.pluginSettings.timezones[0].opaque.keep, "local row edit leaves live record unchanged");
+      }
+      if (manifest.id === "network-indicator")
+        p.updateSlot(0, "none");
       if (manifest.id === "launcher-pass") {
         p.editTypeDelay = "not-a-number";
         p.editWtypeDelay = "-2";
       } else if (manifest.id === "monitor-layout") {
         p.editGridSize = "-4";
       }
-      if (manifest.id === "git-companion") {
+      if (manifest.id === "git-companion" || manifest.id === "nvibrant") {
+        if (manifest.id === "nvibrant")
+          p.editVibranceValue = 640;
         var input = numericInput(p);
         input.forceActiveFocus();
         input.text = "";
-        input.insert(0, "61");
-        check(p.valueRefreshInterval === 60 && popup.dirty, "Apply sees active numeric buffer before blur");
+        input.insert(0, manifest.id === "nvibrant" ? "641" : "61");
+        check((manifest.id === "nvibrant" ? p.editVibranceValue === 640 : p.valueRefreshInterval === 60) && popup.dirty, "Apply sees active numeric buffer before blur");
       }
       console.log("I4_CATALOG_PENDING", manifest.id);
       popup.applySettings();
@@ -303,7 +344,9 @@ ShellRoot {
     } else if (phase === "held" && release) {
       check(popup.busy && held.status === "saved", "actual saved receipt held");
       deliver();
-      check(!popup.busy && !popup.dirty && !popup.saveFailed && api.pluginSettings[item.key] === item.finalValue, "accepted current refresh");
+      check(!popup.busy && !popup.dirty && !popup.saveFailed && api.pluginSettings[item.key] === (manifest.id === "nvibrant" ? 641 : item.finalValue), "accepted current refresh");
+      checkValues(api.pluginSettings, item.scenario?.expected, "accepted compound settings");
+      checkValues(p, item.scenario?.display, "display matches submitted normalization");
       if (manifest.id === "git-companion")
         check(api.pluginSettings.refreshInterval === 61, "actual page gathered committed numeric input");
       if (manifest.id === "launcher-pass")
@@ -311,11 +354,23 @@ ShellRoot {
       if (manifest.id === "monitor-layout")
         check(p.editGridSize === "1" && api.pluginSettings.gridSize === 1, "existing grid clamp reflected in displayed and saved values");
       console.log("I4_CATALOG_PENDING", manifest.id);
+      applyEdits(p, item.scenario?.secondEdits);
       popup.applySettings();
       phase = "noop";
     } else if (phase === "noop" && release) {
-      check(held.status === "nothing_to_save", "ordered real no-op");
+      check(held.status === (manifest.id === "mullvad" ? "saved" : "nothing_to_save"), "ordered real second receipt");
       deliver();
+      checkValues(api.pluginSettings, item.scenario?.secondExpected || item.scenario?.expected, "second receipt compound consumer");
+      if (item.scenario?.retained) {
+        check(popup.dirty, "unadmitted local input stays dirty after current no-op");
+        checkValues(p, item.scenario.retained, "invalid input retained");
+        popup.requestClose();
+        check(popup.discardPending, "invalid input Close requires confirmation");
+        popup.keepEditing();
+        checkValues(p, item.scenario.retained, "Keep Editing retains invalid input");
+        applyEdits(p, item.scenario.correction);
+        check(!popup.dirty, "explicit correction returns to admitted value");
+      }
       popup.requestClose();
       check(!popup.discardPending, "clean acknowledged close");
       phase = "next";

@@ -1,11 +1,13 @@
 // Native QML coercion and selected-value equality, not raw preferences.
 import QtQuick
+import QtQuick.Controls as Controls
 import Quickshell
 import qs.Widgets
 
 Item {
   id: root
   property var source: ({color:null, opacity:null, count:1.5, text:null, enabled:null, rows:[{name:"one",address:"127.0.0.1"}]})
+  property var rangeSource: 0
   NSettingsBaseline {
     id: baseline
     readonly property color paint: root.source.color
@@ -14,6 +16,23 @@ Item {
     readonly property string text: root.source.text
     readonly property bool enabled: root.source.enabled
     readonly property var rows: root.source.rows
+    readonly property int boundedCount: root.rangeSource
+    ranges: [NSettingsRange { field: "boundedCount"; from: rangeControl.from; to: rangeControl.to }]
+  }
+  property int projectedCount: baseline.project("boundedCount")
+  property int movedCount: 0
+  Controls.Slider {
+    id: rangeControl
+    from: 60
+    to: 3600
+    value: root.projectedCount
+    onMoved: { root.movedCount++; root.projectedCount=value; }
+  }
+  NValueSlider {
+    id: wrappedRange
+    from: 60
+    to: 3600
+    value: 0
   }
   property color paint: baseline.paint
   property real editedOpacity: baseline.opacity
@@ -28,6 +47,15 @@ Item {
     try {
       check(!baseline.differs(values()),"coerced null/fraction initial state is clean");
       check(String(paint)==="#000000"&&editedOpacity===0&&count===1,"actual Qt conversion preserved");
+      check(rangeSource===0&&projectedCount===60&&rangeControl.value===60&&!baseline.differs({boundedCount:projectedCount})&&movedCount===0,"native lower clamp is clean and does not change admitted input");
+      rangeSource=5000;check(projectedCount===3600&&rangeControl.value===3600&&!baseline.differs({boundedCount:projectedCount})&&movedCount===0,"native upper clamp and programmatic refresh are clean");
+      rangeSource=100.9;check(projectedCount===100&&rangeControl.value===100,"native integer coercion precedes range projection");
+      projectedCount=200;check(baseline.differs({boundedCount:projectedCount}),"bounded edit dirty");
+      rangeSource=0;check(projectedCount===200&&baseline.differs({boundedCount:projectedCount}),"newer local bounded edit retained across source publication");
+      projectedCount=baseline.project("boundedCount");check(projectedCount===60&&!baseline.differs({boundedCount:projectedCount}),"bounded revert uses the same projection");
+      rangeControl.from=3600;rangeControl.to=60;rangeControl.value=rangeSource;check(baseline.project("boundedCount")===rangeControl.value&&rangeControl.value===60,"reversed native bounds");
+      check(wrappedRange.value===60,"wrapper exposes the native clamped value, not a second raw owner");
+      wrappedRange.value=5000;check(wrappedRange.value===3600,"wrapper upper range agrees with its actual control");
       paint="#abcdef";check(baseline.differs(values()),"native color edit dirty");paint=baseline.paint;check(!baseline.differs(values()),"native invalid-color revert clean");
       editedOpacity=.75;check(baseline.differs(values()),"real edit dirty");editedOpacity=baseline.opacity;check(!baseline.differs(values()),"real revert clean");
       count=2;check(baseline.differs(values()),"int edit dirty");count=baseline.count;check(!baseline.differs(values()),"fraction-to-int revert clean");
