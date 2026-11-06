@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
+import "../../../Helpers/SettingsValues.js" as SettingsValues
 import qs.Commons
 import qs.Services.Plugins
 import qs.Widgets
@@ -69,6 +70,8 @@ ShellRoot {
     return input.value === low ? high : low;
   }
   function register(item, settings) {
+    var component = Qt.createComponent("file://" + Registry.getPluginDir(item.id) + "/" + item.manifest.entryPoints.settings.split("?", 1)[0]);
+    check(component.status === Component.Ready, "actual page component ready: " + component.errorString());
     api = Service.createPluginAPI(item.id, item.manifest, settings, {}, {}, {});
     var loaded = Object.assign({}, Service.loadedPlugins);
     loaded[item.id] = {api: api};
@@ -134,7 +137,7 @@ ShellRoot {
         return;
       }
       for (var key in item.seed) {
-        if (key !== "opaque") check(api.pluginSettings[key] === item.seed[key], "constructor preserves admitted " + key);
+        if (key !== "opaque") check(SettingsValues.equal(api.pluginSettings[key], item.seed[key]), "constructor preserves admitted " + key);
       }
       for (var descriptor of item.controls) move(page, descriptor, alternate(page, descriptor));
       snapshot(page);

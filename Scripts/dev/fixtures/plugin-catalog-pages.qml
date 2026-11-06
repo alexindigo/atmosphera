@@ -96,8 +96,100 @@ ShellRoot {
     return result;
   }
 
+  function named(item, name) {
+    if (item.objectName === name)
+      return item;
+    for (var child of item.children || []) {
+      var found = named(child, name);
+      if (found)
+        return found;
+    }
+    return null;
+  }
+
+  function collectionWitness(p) {
+    if (manifest.id === "caffeinate") {
+      var presets = p.presetExpressions();
+      check(presets.length === 2, "native preset source remains visible");
+      p.setPreset(0, "15m");
+      check(p.settingsDirty, "ListModel role edit is dirty at unchanged count");
+      p.setPreset(0, presets[0]);
+      check(!p.settingsDirty, "ListModel role revert is clean");
+      p.movePreset(0, 1);
+      check(p.settingsDirty, "ListModel move is dirty");
+      p.movePreset(1, 0);
+      check(!p.settingsDirty, "ListModel move revert is clean");
+      p.addPreset("20m");
+      check(p.settingsDirty, "ListModel append is dirty");
+      p.removePreset(2);
+      check(!p.settingsDirty, "ListModel remove/revert is clean");
+      check(SettingsValues.equal(api.pluginSettings.presets, presets), "model commands never change the live owner");
+      var alias = p.editAlias;
+      var before = applies;
+      p.editAlias = "!invalid";
+      popup.applySettings();
+      check(applies === before && popup.saveFailed && p.editAlias === "!invalid" && popup.dirty, "invalid alias refuses before writer and retains input");
+      p.editAlias = alias;
+      p.setPreset(0, "not-a-duration");
+      popup.applySettings();
+      check(applies === before && popup.saveFailed && p.presetExpressions()[0] === "not-a-duration", "invalid preset refuses before writer and retains model");
+      p.replacePresets(presets);
+    } else if (manifest.id === "custom-commands") {
+      var rows = p.commands;
+      check(rows.length === 2 && rows[0].opaque.keep, "actual command rows preserve unknown members");
+      for (var key of ["name", "command", "icon"]) {
+        p.setCommandField(0, key, rows[0][key] + "-edited");
+        check(p.settingsDirty && p.commands[0].opaque.keep, "command field dirty and unknown retained: " + key);
+        p.setCommandField(0, key, rows[0][key]);
+        check(!p.settingsDirty, "command field revert: " + key);
+      }
+      p.moveCommand(0, 1);
+      check(p.settingsDirty, "command reorder dirty");
+      p.moveCommand(1, 0);
+      check(!p.settingsDirty, "command reorder revert");
+      p.addCommand();
+      check(p.settingsDirty, "blank command input retained");
+      p.setCommandField(2, "icon", "star");
+      p.saveSettings();
+      check(p.commands.length === 3 && p.commands[2].icon === "star" && p.settingsDirty, "staging retains an unadmitted blank command row");
+      p.removeCommand(2);
+      check(!p.settingsDirty, "command append/remove revert");
+      check(SettingsValues.equal(api.pluginSettings.commands, rows), "command edits stay local");
+    } else if (manifest.id === "special-workspaces") {
+      var rows = p.workspaces;
+      check(rows.length === 1 && rows[0].opaque.keep && rows[0].size === 0.3 && rows[0].borderRadius === 1, "nested row display projection and unknown data");
+      for (var key of ["name", "icon", "symbolColor", "showPill", "pillColor", "focusColor"]) {
+        p.setWorkspaceField(0, key, typeof rows[0][key] === "boolean" ? !rows[0][key] : rows[0][key] + "-edited");
+        check(p.settingsDirty && p.workspaces[0].opaque.keep, "workspace field dirty: " + key);
+        p.setWorkspaceField(0, key, rows[0][key]);
+        check(!p.settingsDirty, "workspace field revert: " + key);
+      }
+      for (var pair of [["workspace-size-0", "size"], ["workspace-radius-0", "borderRadius"]]) {
+        var slider = named(p, pair[0]);
+        check(slider !== null, "actual nested row slider");
+        check(slider.value === rows[0][pair[1]], "nested display equals gathered row");
+        slider.value = rows[0][pair[1]] === slider.from ? slider.to : slider.from;
+        slider.moved();
+        check(p.settingsDirty && p.workspaces[0][pair[1]] === slider.value, "nested native edit updates local row");
+        slider.value = rows[0][pair[1]];
+        slider.moved();
+        check(!p.settingsDirty, "nested native revert clean");
+      }
+      p.addWorkspace();
+      check(p.settingsDirty, "workspace append is dirty");
+      p.setWorkspaceField(1, "symbolColor", "secondary");
+      p.saveSettings();
+      check(p.workspaces.length === 2 && p.workspaces[1].symbolColor === "secondary" && p.settingsDirty, "staging retains an unadmitted unnamed workspace row");
+      p.removeWorkspace(1);
+      check(!p.settingsDirty, "workspace remove/revert clean");
+      check(api.pluginSettings.workspaces[0].size === 0 && api.pluginSettings.workspaces[0].borderRadius === 100, "row display never rewrites admitted values during construction/edit");
+    }
+  }
+
   function register(item) {
     manifest = item.manifest;
+    var component = Qt.createComponent("file://" + Registry.getPluginDir(manifest.id) + "/" + manifest.entryPoints.settings.split("?", 1)[0]);
+    check(component.status === Component.Ready, "actual page component ready: " + component.errorString());
     api = Service.createPluginAPI(manifest.id, manifest, Object.assign({}, item.scenario?.seed || {}, {
                                                                          opaque: {
                                                                            keep: true
@@ -216,7 +308,7 @@ ShellRoot {
     Service.loadPluginSettings(item.manifest.id, function (value) {
       try {
         var restarted = Service.createPluginAPI(item.manifest.id, item.manifest, value, {}, {}, {});
-        root.check(restarted.pluginSettings[item.key] === item.finalValue, "restarted actual API consumer " + item.manifest.id);
+        root.check(SettingsValues.equal(restarted.pluginSettings[item.key], item.finalValue), "restarted actual API consumer " + item.manifest.id);
         root.check(restarted.pluginSettings.opaque.keep, "restarted unknown preference " + item.manifest.id);
         root.checkValues(restarted.pluginSettings, item.scenario?.secondExpected || item.scenario?.expected, "restarted compound consumer " + item.manifest.id);
         var plugins = Object.assign({}, Service.loadedPlugins);
@@ -282,7 +374,9 @@ ShellRoot {
         var restore = before;
         if (item.bufferTypes && item.bufferTypes[field] === "color")
           restore = before.valid ? Qt.rgba(before.r, before.g, before.b, before.a) : null;
-        if (item.bufferTypes && item.bufferTypes[field] === "numeric-string")
+        if (item.bufferTypes && item.bufferTypes[field] === "nullable-number")
+          p[field] = before === null ? 18 : before + 1;
+        else if (item.bufferTypes && item.bufferTypes[field] === "numeric-string")
           p[field] = String((Number(before) || 0) + 1);
         else if (item.bufferTypes && item.bufferTypes[field] === "color-string")
           p[field] = before === "#ff0000" ? "#00ff00" : "#ff0000";
@@ -298,6 +392,7 @@ ShellRoot {
         p[field] = restore;
         check(!p.settingsDirty, "local revert clean: " + field);
       }
+      collectionWitness(p);
       if (manifest.id === "git-companion") {
         var input = numericInput(p);
         check(input !== null, "actual Git Companion numeric input");
@@ -308,9 +403,9 @@ ShellRoot {
       }
       p[item.field] = item.finalValue;
       popup.requestClose();
-      check(popup.discardPending && api.pluginSettings[item.key] !== item.finalValue, "buffered Close confirms without Save");
+      check(popup.discardPending && !SettingsValues.equal(api.pluginSettings[item.key], item.finalValue), "buffered Close confirms without Save");
       popup.keepEditing();
-      check(popup.visible && p[item.field] === item.finalValue, "keep buffer");
+      check(popup.visible && SettingsValues.equal(p[item.field], item.finalValue), "keep buffer");
       popup.requestClose();
       popup.confirmDiscard();
       phase = "reopen";
@@ -321,6 +416,18 @@ ShellRoot {
     } else if (phase === "apply" && popup.opened && p) {
       p[item.field] = item.finalValue;
       applyEdits(p, item.scenario?.edits);
+      if (manifest.id === "assistant-panel") {
+        p.selectProvider("openai_compatible");
+        p.selectProvider("google");
+        var model = named(p, "assistant-model"), keyInput = named(p, "assistant-api-key");
+        check(model !== null && keyInput !== null, "actual provider controls");
+        model.inputItem.clear();
+        model.inputItem.insert(0, "fixture-model");
+        keyInput.inputItem.clear();
+        keyInput.inputItem.insert(0, "fixture-token");
+        check(p.editModels.openai_compatible === "retained-model" && p.editApiKeys.openai_compatible === "retained-token", "provider switch preserves the other provider's buffers");
+        check(p.editModel === "fixture-model" && p.editApiKey === "fixture-token", "native current-provider fields gathered without child lookup");
+      }
       if (manifest.id === "saved-desktop-widgets") {
         p.loadWidgets = true;
         var controls = toggles(p);
@@ -367,7 +474,7 @@ ShellRoot {
     } else if (phase === "held" && release) {
       check(popup.busy && held.status === "saved", "actual saved receipt held");
       deliver();
-      check(!popup.busy && !popup.dirty && !popup.saveFailed && api.pluginSettings[item.key] === (manifest.id === "nvibrant" ? 641 : item.finalValue), "accepted current refresh");
+      check(!popup.busy && !popup.dirty && !popup.saveFailed && SettingsValues.equal(api.pluginSettings[item.key], (manifest.id === "nvibrant" ? 641 : item.finalValue)), "accepted current refresh");
       checkValues(api.pluginSettings, item.scenario?.expected, "accepted compound settings");
       checkValues(p, item.scenario?.display, "display matches submitted normalization");
       if (manifest.id === "git-companion")

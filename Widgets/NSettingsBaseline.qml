@@ -21,7 +21,7 @@ QtObject {
     }
     if (!range)
       return value;
-    return Math.max(Math.min(range.from, range.to), Math.min(Math.max(range.from, range.to), value));
+    return range.project(value);
   }
 
   function differs(currentValues) {

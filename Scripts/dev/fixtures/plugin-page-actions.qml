@@ -36,6 +36,14 @@ ShellRoot {
     property var service: collaborator
     property var batteries: []
     property bool isAvailable: false
+    readonly property var state: root.actualMain?.state ?? null
+    readonly property bool enabled: root.actualMain?.enabled ?? false
+    readonly property var availableFolders: root.actualMain?.availableFolders ?? []
+    readonly property string resolvedUrl: root.actualMain?.resolvedUrl ?? ""
+    readonly property string apiKeySource: root.actualMain?.apiKeySource ?? "none"
+    readonly property bool syncInProgress: root.actualMain?.syncInProgress ?? false
+    readonly property bool lastSyncOk: root.actualMain?.lastSyncOk ?? false
+    readonly property string lastSyncMessage: root.actualMain?.lastSyncMessage ?? ""
     property int settingsVersion: 0
     onSettingsVersionChanged: {
       root.record();
@@ -64,6 +72,17 @@ ShellRoot {
       root.record();
       if (root.actualMain) root.actualMain.restartDaemon();
     }
+    function setPinnedPanelRequested(value) { root.record(); root.actualMain.setPinnedPanelRequested(value); }
+    function setModel(provider, model, persist) { root.record(); root.actualMain.setModel(provider, model, persist); }
+    function refreshWallpaperCache(force, toast) { root.record(); root.actualMain.refreshWallpaperCache(force, toast); }
+    function hasAnyConfiguredWallpaper() { return root.actualMain.hasAnyConfiguredWallpaper(); }
+    function reload() { root.record(); root.actualMain.reload(); }
+    function manualSync() { root.record(); root.actualMain.manualSync(); }
+    function requestPoll(force) { root.record(); root.actualMain.requestPoll(force); }
+    function stateLabel(code) { return root.actualMain.stateLabel(code); }
+    function sourceLabel(code) { return root.actualMain.sourceLabel(code); }
+    function statusSummary() { return root.actualMain.statusSummary(); }
+    function statusColor(code) { return root.actualMain.statusColor(code); }
   }
   function check(ok, label) {
     if (!ok)
@@ -79,6 +98,7 @@ ShellRoot {
     consumed = JSON.parse(JSON.stringify(api.pluginSettings));
   }
   function other(value) {
+    if (cases[index].retryValue !== undefined) return cases[index].retryValue;
     if (cases[index].plugin === "update-count") return "printf 9";
     return typeof value === "boolean" ? !value : typeof value === "number" ? value + 1 : value === "#ff0000" ? "#00ff00" : value + "-newer";
   }
@@ -97,9 +117,19 @@ ShellRoot {
                                       keep: true
                                     }
                                   };
+    seed = Object.assign(seed, row.seed || {});
     if (row.plugin === "air-quality") { seed.useNoctaliaLocation = false; seed.customLongitude = ""; }
     if (row.plugin === "battery-threshold") seed.batteryDevice = "/sys/class/power_supply/BAT0";
     if (row.plugin === "niri-auto-tile") seed.enabled = false;
+    if (row.plugin === "hermes-agent") {
+      seed.hermesHome = Quickshell.env("ATMOSPHERA_CONFIG_DIR") + "/hermes";
+      seed.stateFile = Quickshell.env("ATMOSPHERA_CONFIG_DIR") + "/hermes-state.json";
+    }
+    if (row.plugin === "linux-wallpaperengine-controller") {
+      check(Quickshell.screens.length > 0, "actual wallpaper screen available");
+      seed.screens = {};
+      for (var screen of Quickshell.screens) seed.screens[screen.name] = {path: "/fixture/wallpaper"};
+    }
     api = Service.createPluginAPI(row.plugin, row.manifest, seed, {}, {}, {});
     if (row.plugin !== "weather-indicator") {
       var component = Qt.createComponent("file://" + Registry.getPluginDir(row.plugin) + "/Main.qml");
@@ -109,7 +139,7 @@ ShellRoot {
     }
     api.mainInstance = collaborator;
     api.withCurrentScreen = function (callback) {
-      callback(root.selectedScreen);
+      callback(row.plugin === "hermes-agent" ? null : root.selectedScreen);
     };
     api.closePanel = function (screen) {
       root.check(screen === root.selectedScreen, "selected screen forwarded");
@@ -179,7 +209,13 @@ ShellRoot {
     });
   }
   function stage() {
-    if (cases[index].plugin === "niri-auto-tile")
+    if (cases[index].plugin === "hermes-agent")
+      popup.settingsPage.applyModel();
+    else if (cases[index].plugin === "sticky-notes")
+      popup.settingsPage.requestSync();
+    else if (cases[index].plugin === "syncthing-status")
+      popup.settingsPage.requestRefresh();
+    else if (cases[index].plugin === "niri-auto-tile")
       popup.settingsPage.saveSettings(true);
     else
       popup.settingsPage.saveSettings();
@@ -191,7 +227,7 @@ ShellRoot {
     callback();
   }
   function expectedCalls(step) {
-    return cases[index].action === "closePanel" ? 0 : step;
+    return cases[index].action === "closePanel" ? 0 : step * (cases[index].actionCount || 1);
   }
   function expectedCloses(step) {
     return ["weather-indicator", "update-count"].indexOf(cases[index].plugin) >= 0 ? step : 0;
@@ -199,6 +235,11 @@ ShellRoot {
 
   function settled(value) {
     var name = cases[index].plugin;
+    if (name === "arch-updater") return !actualMain.refreshing && actualMain.updates.length === 1 && actualMain.updates[0].name === (value === cases[index].retryValue ? "retryPkg" : "currentPkg");
+    if (name === "hermes-agent") return actualMain.state.summary.model.name === String(value).trim() && actualMain.state.summary.model.provider === "fixture-provider" && actualMain.pinnedPanelRequested === api.pluginSettings.panelPinned;
+    if (name === "linux-wallpaperengine-controller") return actualMain.defaultFps === value && actualMain.cachedWallpaperItems.length === 0 && !actualMain.wallpapersFolderAccessible;
+    if (name === "sticky-notes") return actualMain.lastSyncOk && actualMain.lastSyncMessage === "fixture:" + value && !actualMain.syncInProgress;
+    if (name === "syncthing-status") return !actualMain.busy && actualMain.resolvedUrl === value && actualMain.configuredDevices === 2 && actualMain.monitoredFolders === 1;
     if (name === "air-quality") return actualMain.cfg.customLatitude === value && !actualMain.loading && actualMain.errorMessage === "";
     if (name === "amd-gpu-monitor") return actualMain.available && actualMain.deviceIndex === value && actualMain.gpuUse === value * 10 + 7;
     if (name === "battery-threshold") return actualMain.service.thresholdFile === value + "/charge_control_end_threshold";
