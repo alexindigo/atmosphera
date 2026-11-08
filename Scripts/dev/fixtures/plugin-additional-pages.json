@@ -55,5 +55,42 @@
     "buffers": ["editWallpaperDirectory", "editCarouselMode", "editExpandSelected", "editEnableHoldExpand", "editOverlayOpacity", "editBorderWidth", "editCornerRadius", "editItemWidth", "editItemHeight", "editSelectedScale", "editExpandMultiplier", "editHoldExpandRatio", "editHoldDelay"],
     "minimum": "0.10.0", "olderCompatible": false, "savedFeedback": false,
     "ranges": [{"field": "editOverlayOpacity", "type": "Slider", "inverse": ""}, {"field": "editBorderWidth", "type": "Slider", "inverse": ""}, {"field": "editCornerRadius", "type": "Slider", "inverse": ""}, {"field": "editItemWidth", "type": "Slider", "inverse": ""}, {"field": "editItemHeight", "type": "Slider", "inverse": ""}, {"field": "editSelectedScale", "type": "Slider", "inverse": ""}, {"field": "editExpandMultiplier", "type": "Slider", "inverse": ""}, {"field": "editHoldExpandRatio", "type": "Slider", "inverse": ""}, {"field": "editHoldDelay", "type": "Slider", "inverse": ""}]
+  },
+  {
+    "plugin": "mpvpaper", "field": "active", "key": "active", "finalValue": true,
+    "buffers": ["active", "isPlaying", "isMuted", "wallpapersFolder", "currentWallpaper", "volume", "automation", "automationMode", "automationTime", "hardwareAcceleration", "mpvSocket", "profile", "fillMode"],
+    "minimum": "0.10.0", "olderCompatible": false, "savedFeedback": true,
+    "ranges": [{"field": "volume", "type": "NValueSlider", "inverse": ""}]
+  },
+  {
+    "plugin": "music-search", "field": "editDensity", "key": "panelDensity", "finalValue": "compact",
+    "buffers": ["editPreferences", "editDensity", "editDownloadDirectory", "editDownloadCacheMaxMb"],
+    "minimum": "0.10.0", "olderCompatible": false, "savedFeedback": false
+  },
+  {
+    "plugin": "noctalia-supergfxctl", "field": "editDebug", "key": "debug", "finalValue": true,
+    "buffers": ["editDebug", "editListen", "editPatchPending", "editPolling", "editPollingInterval"],
+    "minimum": "0.10.0", "olderCompatible": false, "savedFeedback": false,
+    "ranges": [{"field": "editPollingInterval", "type": "NValueSlider", "inverse": ""}]
+  },
+  {
+    "plugin": "spotify-player", "field": "editPlayerId", "key": "playerId", "finalValue": "fixture-device",
+    "buffers": ["editClientId", "editClientSecret", "editPlayerId", "editCallbackPort", "editAccessToken", "editRefreshToken", "editTokenExpiresAt"],
+    "minimum": "0.10.0", "olderCompatible": false, "savedFeedback": true,
+    "ranges": [{"field": "editCallbackPort", "type": "NSpinBox", "inverse": ""}]
+  },
+  {
+    "plugin": "todo", "field": "valueShowCompleted", "key": "showCompleted", "finalValue": false,
+    "buffers": ["valueShowCompleted", "valueShowBackground", "valueUseCustomColors", "valueHighPriorityColor", "valueMediumPriorityColor", "valueLowPriorityColor", "valueExportPath", "valueExportFormat", "valueExportEmptySections", "editPages", "editTodos", "editCurrentPage", "pendingNames", "newPageName"],
+    "bufferTypes": {"valueHighPriorityColor": "color", "valueMediumPriorityColor": "color", "valueLowPriorityColor": "color"},
+    "minimum": "0.10.0", "olderCompatible": false, "savedFeedback": true
+  },
+  {
+    "plugin": "video-wallpaper", "field": "wallpapersFolder", "key": "wallpapersFolder", "finalValue": "fixture-videos",
+    "buffers": ["activeBackend", "valueEnabled", "monitorSpecific", "wallpapersFolder", "editScreenSettings", "currentWallpaper", "volume", "automationEnabled", "automationMode", "automationTime", "automationCustomTime", "customTimeText", "fillMode", "orientation", "hardwareAcceleration", "profile", "mpvSocket"],
+    "minimum": "0.10.0", "olderCompatible": false, "savedFeedback": false,
+    "bufferTypes": {"automationCustomTime": "integer-list"},
+    "scenario": {"seed": {"offline.keep": {"volume": 0.25, "opaque": {"keep": true}}}},
+    "ranges": [{"field": "volume", "type": "NValueSlider", "inverse": ""}, {"field": "orientation", "type": "NValueSlider", "inverse": ""}]
   }
 ]

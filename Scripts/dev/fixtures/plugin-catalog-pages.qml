@@ -108,7 +108,52 @@ ShellRoot {
   }
 
   function collectionWitness(p) {
-    if (manifest.id === "battery-wireless-devices") {
+    if (manifest.id === "mpvpaper") {
+      var tools = named(p, "mpv-settings-tools");
+      check(tools !== null, "actual MPV settings tool row");
+      tools.togglePlaying();
+      tools.toggleMute();
+      check(p.settingsDirty && p.isPlaying && p.isMuted && !api.pluginSettings.isPlaying && !api.pluginSettings.isMuted, "play/mute preferences target the selected editor");
+      tools.togglePlaying();
+      tools.toggleMute();
+      check(!p.settingsDirty, "MPV tool revert is clean");
+    } else if (manifest.id === "music-search") {
+      var preferences = p.editPreferences;
+      for (var key of Object.keys(manifest.metadata.defaultSettings)) {
+        if (typeof manifest.metadata.defaultSettings[key] !== "boolean")
+          continue;
+        p.saveSetting(key, !preferences[key]);
+        check(p.settingsDirty && p.editPreferences[key] !== preferences[key] && api.pluginSettings[key] === preferences[key], "Music presentation preference remains local: " + key);
+        p.editPreferences = preferences;
+        check(!p.settingsDirty, "Music preference revert: " + key);
+      }
+    } else if (manifest.id === "video-wallpaper") {
+      var settings = p.editScreenSettings;
+      p.saveMonitorProperty("isMuted", true);
+      check(p.settingsDirty && p.editScreenSettings[Quickshell.screens[0].name].isMuted && !api.pluginSettings[Quickshell.screens[0].name], "video monitor input stages without creating live screen keys");
+      check(p.editScreenSettings["offline.keep"].opaque.keep, "offline unknown record preserved");
+      p.editScreenSettings = settings;
+      check(!p.settingsDirty, "video staged screen revert clean");
+      p.customTimeText = "invalid";
+      var before = applies;
+      popup.applySettings();
+      check(popup.saveFailed && applies === before && p.customTimeText === "invalid", "invalid custom time retains input and refuses before owner");
+      p.customTimeText = "";
+    } else if (manifest.id === "todo") {
+      var pages = p.editPages, todos = p.editTodos, current = p.editCurrentPage, pending = p.pendingNames;
+      p.newPageName = " Added page ";
+      p.addPage();
+      check(p.settingsDirty && p.editPages.length === pages.length + 1 && api.pluginSettings.pages.length === pages.length, "Todo page creation remains selected/local");
+      var id = p.editPages[p.editPages.length - 1].id;
+      check(p.renamePage(id, "Renamed page"), "local page rename");
+      p.performPageDeletion(p.editPages.length - 1);
+      check(p.editPages.length === pages.length, "local page delete");
+      p.editPages = pages;
+      p.editTodos = todos;
+      p.editCurrentPage = current;
+      p.pendingNames = pending;
+      check(!p.settingsDirty, "Todo command sequence restores clean baseline");
+    } else if (manifest.id === "battery-wireless-devices") {
       var devices = p.editDevices;
       var list = p.deviceList;
       p.set("fixture:one", "enabled", true);
@@ -428,6 +473,8 @@ ShellRoot {
         var field = item.buffers[i];
         var before = p[field];
         var restore = before;
+        if (item.bufferTypes && item.bufferTypes[field] === "integer-list")
+          restore = Array.from(before);
         if (item.bufferTypes && item.bufferTypes[field] === "color")
           restore = before.valid ? Qt.rgba(before.r, before.g, before.b, before.a) : null;
         if (item.bufferTypes && item.bufferTypes[field] === "nullable-number")
@@ -438,6 +485,8 @@ ShellRoot {
           p[field] = before === "#ff0000" ? "#00ff00" : "#ff0000";
         else if (item.bufferTypes && item.bufferTypes[field] === "color")
           p[field] = Qt.rgba(before.r < 0.5 ? 1 : 0, before.g, before.b, before.a);
+        else if (item.bufferTypes && item.bufferTypes[field] === "integer-list")
+          p[field] = Array.from(before).concat([1]);
         else if (Array.isArray(before))
           p[field] = before.concat(before.length ? [before[0]] : ["i4-dirty"]);
         else
