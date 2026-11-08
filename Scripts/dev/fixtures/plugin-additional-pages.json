@@ -13,5 +13,18 @@
       {"field": "valuePanelHeight", "type": "NSpinBox", "inverse": ""},
       {"field": "valueAutoPasteDelay", "type": "NValueSlider", "inverse": ""}
     ]
+  },
+  {
+    "plugin": "keybind-cheatsheet",
+    "field": "editWindowWidth",
+    "key": "windowWidth",
+    "finalValue": 1000,
+    "buffers": ["editWindowWidth", "editWindowHeight", "editAutoHeight", "editColumnCount", "editModKeyVariable", "editHyprlandConfigPath", "editHyprlandLuaConfigPath", "editHyprlandParserMode", "editNiriConfigPath", "editMangoConfigPath", "editMergeSequentialBinds", "editShowUndescribedBinds", "editSplitLargeWorkspaceCategory", "editWorkspaceSplitThreshold", "editBindOverrides", "editCheatsheetData", "valueKeyColorSuper", "valueKeyColorCtrl", "valueKeyColorShift", "valueKeyColorAlt", "valueKeyColorXF86", "valueKeyColorPrint", "valueKeyColorNumeric", "valueKeyColorMouse", "valueKeyColorDefault", "valueKeyTextSuper", "valueKeyTextCtrl", "valueKeyTextShift", "valueKeyTextAlt", "valueKeyTextXF86", "valueKeyTextPrint", "valueKeyTextNumeric", "valueKeyTextMouse", "valueKeyTextDefault", "valueKeyLabelColor", "valueKeyColorMod2", "valueKeyColorMod3", "valueKeyColorMod5", "valueKeyTextMod2", "valueKeyTextMod3", "valueKeyTextMod5", "valueKeyLabelMod2", "valueKeyLabelMod3", "valueKeyLabelMod5", "valueDescriptionTextColor"],
+    "minimum": "0.10.0",
+    "olderCompatible": false,
+    "savedFeedback": false,
+    "ranges": [
+      {"field": "editWorkspaceSplitThreshold", "type": "NSpinBox", "inverse": ""}
+    ]
   }
 ]
