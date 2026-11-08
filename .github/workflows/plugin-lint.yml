@@ -9,6 +9,8 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     env:
       PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
       PUSH_BEFORE: ${{ github.event.before }}
@@ -16,6 +18,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Resolve plugin lint base
         run: |
           zero=0000000000000000000000000000000000000000

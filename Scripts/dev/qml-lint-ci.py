@@ -32,7 +32,7 @@ def qs_imports(paths):
         code = list(text)
         for _kind, start, end in spans:
             code[start:end] = ['\n' if char == '\n' else ' ' for char in text[start:end]]
-        modules.update(re.findall(r'^\s*import\s+(qs(?:\.[A-Za-z_]\w*)+)\b', ''.join(code), re.M))
+        modules.update(re.findall(r'(?:^|;)\s*import\s+(qs(?:\.[A-Za-z_]\w*)+)\b', ''.join(code), re.M))
     return sorted(modules)
 
 
@@ -46,7 +46,7 @@ def run_step(name, command, cwd, env, logs, expected=0, diagnostic=None):
         except subprocess.TimeoutExpired:
             # This script is the disposable container's PID 1. Returning from
             # main tears down only its private descendants, including the child.
-            raise GateError(f'{name}: exceeded 180 seconds')
+            raise GateError(f'{name}: exceeded 180 seconds') from None
     output = path.read_text(errors='replace')
     if status != expected or (diagnostic and diagnostic not in output):
         print(output, file=sys.stderr)
@@ -66,7 +66,18 @@ def main():
         parser.error('run as the command of a disposable container (PID 1)')
     source = args.source.resolve()
     work = args.workspace.resolve()
-    if work.is_relative_to(source) or any(work == p or p in work.parents for p in (Path('/tmp'), Path('/dev/shm'))):
+    temporary_roots = (Path('/tmp'), Path('/dev/shm'), Path('/run'), Path('/var/run'))
+    if work.is_relative_to(source) or any(work == p or p in work.parents for p in temporary_roots):
+        parser.error('workspace must be disk-backed and outside the source tree')
+    parent = work.parent
+    while not parent.exists():
+        parent = parent.parent
+    try:
+        filesystem = subprocess.check_output(['findmnt', '-n', '-o', 'FSTYPE', '-T', str(parent)],
+                                             text=True, timeout=5).strip()
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
+        raise GateError('could not determine the workspace filesystem') from error
+    if filesystem in ('tmpfs', 'ramfs', 'devtmpfs', 'hugetlbfs'):
         parser.error('workspace must be disk-backed and outside the source tree')
     work.mkdir()  # Refuse to overwrite an earlier run.
     shell = work / 'source'

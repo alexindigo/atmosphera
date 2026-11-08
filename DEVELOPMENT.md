@@ -288,6 +288,10 @@ their actual plugin libraries and registrar-generated type descriptions are
 installed together. Update the pins in `.devcontainer/install-qml-deps.sh` when
 the shell requires a newer dependency API. Unknown Quickshell/Qt metadata
 families still fail closed through the ordinary native metadata checker.
+The pins follow the maintained AUR recipes, with XdgIcon's release archive hash
+recorded for this change. They detect later byte changes but do not independently
+authenticate the initial inputs. GitHub can regenerate tarballs; review a
+checksum mismatch before updating a pin, even when the release contents match.
 
 CI uses the launcher's `--plain` mode, which omits the overlay mount capability
 and tmpfs. Its `qml-lint-ci.py` entry point runs as the disposable container's
