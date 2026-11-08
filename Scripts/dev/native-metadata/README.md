@@ -8,10 +8,11 @@ universe for ordinary `qmllint.sh`. Other installed modules remain unchanged.
 An unknown family, missing reference, conflicting owner or altered artifact is
 an error; diagnostic categories and severities are unchanged.
 
-`dependencies/configqml-030` contains the **unmodified installed** ConfigQml
-0.3.0 qmldir/qmltypes from AUR `qt6-configqml 0.3.0-1`, installed inside the
+`dependencies/configqml-050` contains the **unmodified installed** ConfigQml
+0.5.0 qmldir/qmltypes from a pinned pre-release `qt6-configqml 0.5.0-1`, built
+with the in-repository AUR recipe and installed inside the
 `atmosphera-configqml-settings` VM on ark with Qt6.12.0 (release source
-`78e9d1d779fdec8f3001cc974717db7aeb98d653`).
+`d1b438998126923eb6d3a4e59f52671e24a807bb`).
 When the tooling image lacks that module, the materializer copies these real
 registrar outputs into its private import universe, checking artifact hashes
 and the selected family's Qt version. An installed module takes precedence.
