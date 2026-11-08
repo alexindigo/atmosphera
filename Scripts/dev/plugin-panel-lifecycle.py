@@ -11,7 +11,7 @@ from pathlib import Path
 import re
 import shutil
 
-from presentation_harness import add_execution_arguments, run_harness, write_receipt
+from presentation_harness import add_execution_arguments, require_disk_backed_paths, run_harness, write_receipt
 
 
 PANEL = '''import QtQuick
@@ -153,6 +153,7 @@ PROBE = r'''
 
 
 def main():
+    """Run isolated plugin lifecycle scenarios and record consumer assertions."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument('--workspace', type=Path, required=True)
@@ -160,7 +161,9 @@ def main():
     args = parser.parse_args()
     work = args.workspace.resolve()
     temp = Path(os.environ['TMPDIR']).resolve()
-    if any(str(p).startswith(('/tmp/', '/dev/shm/')) for p in (work, temp)):
+    try:
+        require_disk_backed_paths(work, temp)
+    except ValueError:
         parser.error('use disk-backed workspace and TMPDIR inside the assigned VM')
     work.mkdir()
     shell = work / 'shell'

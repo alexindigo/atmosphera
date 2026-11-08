@@ -17,6 +17,15 @@ DEFAULT_BUDGET = 375.0
 TEARDOWN_GRACE = 3.0
 
 
+def require_disk_backed_paths(*paths):
+    """Reject memory-backed roots, descendants and resolved symlink aliases."""
+    memory_backed = (Path('/tmp'), Path('/dev/shm'))
+    for path in paths:
+        resolved = Path(path).resolve()
+        if any(resolved == root or root in resolved.parents for root in memory_backed):
+            raise ValueError('use disk-backed workspace and TMPDIR')
+
+
 def add_execution_arguments(parser):
     parser.add_argument('--budget', type=float, default=DEFAULT_BUDGET,
                         help='single execution budget in seconds, including fixtures and lint')
@@ -48,8 +57,7 @@ def run_harness(argv, work, env, budget):
         raise ValueError('execution budget must be finite and positive')
     work = Path(work).resolve()
     temp = Path(env['TMPDIR']).resolve()
-    if any(str(p).startswith(('/tmp/', '/dev/shm/')) for p in (work, temp)):
-        raise ValueError('use disk-backed workspace and TMPDIR')
+    require_disk_backed_paths(work, temp)
     started = time.monotonic()
     deadline = started + budget
     parent_namespace = os.readlink('/proc/self/ns/pid')
