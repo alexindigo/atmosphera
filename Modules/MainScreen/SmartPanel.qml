@@ -15,6 +15,17 @@ Item {
   // Panel content: Text, icons, etc...
   property Component panelContent: null
 
+  // Dynamic hosts construct content before its modality is known. They must
+  // supply the final behavior before claiming input or excluding other panels.
+  property bool panelBehaviorReady: true
+  onPanelBehaviorReadyChanged: {
+    if (!panelBehaviorReady && root._requestedOpen && root.isPanelOpen && !root.isClosing) {
+      root.isPanelVisible = false;
+      PanelService.closedPanel(root);
+    }
+    root._reconcilePresentation();
+  }
+
   // PanelID for binding panels to widgets of the same type
   property var panelID: null
 
@@ -314,7 +325,8 @@ Item {
     // Non-exclusive panels register into a separate slot so MainScreen can still
     // render their background and blur without triggering mutual exclusion.
     const generation = root.presentationGeneration;
-    PanelService.willOpenPanel(root);
+    if (root.panelBehaviorReady)
+      PanelService.willOpenPanel(root);
 
     // Request native keyboard ownership before constructing content. Loading
     // can populate many result delegates; it must not precede the focus request.
@@ -376,12 +388,7 @@ Item {
     // Signal immediate close so MainScreen can skip dimmer animation
     PanelService.closedImmediately = true;
     const generation = root.presentationGeneration;
-    if (root.exclusiveOpen) {
-      PanelService.closedPanel(root);
-    } else if (PanelService.coexistingPanel === root) {
-      PanelService.coexistingPanel = null;
-      PanelService.assignToSlot(2, null);
-    }
+    PanelService.closedPanel(root);
     if (generation === root.presentationGeneration && !root._requestedOpen)
       closed();
 
@@ -419,12 +426,7 @@ Item {
     panelBackground.dimensionsInitialized = false;
 
     const generation = root.presentationGeneration;
-    if (root.exclusiveOpen) {
-      PanelService.closedPanel(root);
-    } else if (PanelService.coexistingPanel === root) {
-      PanelService.coexistingPanel = null;
-      PanelService.assignToSlot(2, null);
-    }
+    PanelService.closedPanel(root);
     if (generation === root.presentationGeneration && !root._requestedOpen)
       closed();
 
@@ -833,7 +835,16 @@ Item {
   // The panel owns its deferred transition, not the nested Loader's callback
   // scope. Closing or unloading content before the next turn cancels opening.
   function _completeOpen() {
-    if (!root._requestedOpen || !root.isPanelOpen || root.isClosing || !contentLoader.item)
+    if (!root._requestedOpen || !root.isPanelOpen || root.isClosing || !contentLoader.item || !root.panelBehaviorReady)
+      return;
+
+    // Core panels claim ownership before constructing content. Plugin panels
+    // can only claim it now, after their behavior bindings have settled.
+    const generation = root.presentationGeneration;
+    const owner = root.exclusiveOpen ? PanelService.openedPanel : PanelService.coexistingPanel;
+    if (owner !== root)
+      PanelService.willOpenPanel(root);
+    if (generation !== root.presentationGeneration || !root._requestedOpen || root.isClosing)
       return;
 
     root.setPosition();
