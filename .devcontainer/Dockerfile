@@ -7,12 +7,18 @@ ARG DEV_UID=1000
 ARG DEV_GID=1000
 
 RUN pacman -Sy --noconfirm --needed \
-    quickshell qt6-declarative qt6-tools \
+    quickshell qt6-declarative qt6-tools qt6-multimedia \
+    cmake ninja pkgconf libpipewire \
     python python-pip \
     git shellcheck shfmt \
     tree-sitter \
     rustup \
     sudo
+
+# Build the real QML plugins so their runtime modules and registrar-generated
+# type descriptions agree. No hand-written lint substitutes.
+COPY install-qml-deps.sh /usr/local/bin/install-qml-deps
+RUN bash /usr/local/bin/install-qml-deps
 
 RUN groupadd -g "$DEV_GID" dev \
   && useradd -m -u "$DEV_UID" -g "$DEV_GID" -G wheel -s /bin/bash dev \

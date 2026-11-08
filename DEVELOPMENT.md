@@ -136,8 +136,9 @@ launcher never silently retries with the other engine. Selection diagnostics
 ### Images
 
 The launcher builds a local image tagged `localhost/atmosphera-dev:<fingerprint>`,
-where the fingerprint covers the Dockerfile, the copied `atmo-dev` wrapper, and
-the image's dev-account IDs. Editing those inputs yields a new tag on the next
+where the fingerprint covers the Dockerfile, the copied `atmo-dev` wrapper,
+the QML dependency installer, and the image's dev-account IDs. Editing those
+inputs yields a new tag on the next
 run; old images are left alone. Build and run always use the same selected
 engine.
 
@@ -278,8 +279,43 @@ python3 -B Scripts/dev/plugin-lint-selftest.py
 setup and the container hook share the source-backed metadata boundary described
 in `Scripts/dev/native-metadata/README.md`; no installed runtime module is edited.
 
-First container run builds the image (~2 minutes); later runs reuse the cached
-image until the Dockerfile or the `atmo-dev` wrapper changes.
+### GitHub QML lint
+
+The QML workflow runs the project container's Qt/Quickshell toolchain, rather
+than Ubuntu's Qt-only packages. The image also builds DBus, XdgIcon,
+PipewireSpectrum, Niri and Mango from released, checksum-pinned source archives;
+their actual plugin libraries and registrar-generated type descriptions are
+installed together. Update the pins in `.devcontainer/install-qml-deps.sh` when
+the shell requires a newer dependency API. Unknown Quickshell/Qt metadata
+families still fail closed through the ordinary native metadata checker.
+
+CI uses the launcher's `--plain` mode, which omits the overlay mount capability
+and tmpfs. Its `qml-lint-ci.py` entry point runs as the disposable container's
+PID 1, owns finite child deadlines, and retains logs in a private, disk-backed
+workspace. Container exit reaps only that invocation's descendants.
+
+The entry point copies the checkout and asks Quickshell's scanner to generate
+`qs.*` module descriptions through a self-terminating import probe. It does not
+instantiate the desktop shell. Every requested module's generated `qmldir` must
+exist before checking. The gate then runs native metadata regressions, verifies
+that a real composite property is accepted and a typo is rejected, and lints
+every original QML input, including built-ins. Empty input, missing metadata,
+timeouts, canary mismatches and lint errors fail the job; there is no version
+condition that silently skips lint.
+
+To reproduce in the assigned project test VM:
+
+```sh
+ATMOSPHERA_CONTAINER_ENGINE=docker .devcontainer/container-run.sh --plain \
+  python3 -B Scripts/dev/qml-lint-ci.py --workspace /home/dev/atmosphera-lint
+```
+
+The source checkout is not changed. The private workspace disappears with the
+disposable container; standard pre-commit formatting and overlay behavior are
+unchanged.
+
+The first container run builds the image and pinned QML dependencies; later runs
+reuse the cached image until its fingerprint inputs change.
 
 To activate it on your clone (one-time setup):
 
