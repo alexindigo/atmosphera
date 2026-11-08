@@ -5,7 +5,8 @@
 # changed, and runs the given command inside the repo workspace.
 #
 # Usage:
-#   container-run.sh COMMAND [ARG...]
+#   container-run.sh [--plain] COMMAND [ARG...]
+# --plain omits the capabilities and tmpfs used by the atmo-dev overlay.
 #
 # Environment:
 #   ATMOSPHERA_CONTAINER_ENGINE=podman|docker   # optional explicit override
@@ -21,6 +22,12 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DEVCONTAINER_DIR="$REPO_ROOT/.devcontainer"
+
+USE_OVERLAY=1
+if [ "${1:-}" = --plain ]; then
+    USE_OVERLAY=0
+    shift
+fi
 
 log() { echo "container-run: $*" >&2; }
 fail() { log "$@"; exit 1; }
@@ -87,6 +94,7 @@ fi
 
 FINGERPRINT="$({ sha256sum < "$DEVCONTAINER_DIR/Dockerfile"
                   sha256sum < "$DEVCONTAINER_DIR/atmo-dev.sh"
+                  sha256sum < "$DEVCONTAINER_DIR/install-qml-deps.sh"
                   echo "dev uid=$IMG_UID gid=$IMG_GID"; } | sha256sum | cut -c1-16)"
 IMAGE="localhost/atmosphera-dev:$FINGERPRINT"
 
@@ -112,8 +120,6 @@ MEM="$(awk '/^MemTotal:/ {print int($2 * 3 / 4 / 1024)}' /proc/meminfo)"
 
 RUN_ARGS=(
     --rm
-    --cap-add SYS_ADMIN
-    --tmpfs /tmp/overlay:size=256m,mode=1777
     --memory="${MEM}m"
     --memory-swap="${MEM}m"
     --pids-limit=2048
@@ -121,6 +127,10 @@ RUN_ARGS=(
     -v "$REPO_ROOT:/workspaces/atmosphera"
     -w /workspaces/atmosphera
 )
+
+if [ "$USE_OVERLAY" = 1 ]; then
+    RUN_ARGS+=(--cap-add SYS_ADMIN --tmpfs "/tmp/overlay:size=256m,mode=1777")
+fi
 
 # A worktree's Git directory is outside its workspace bind mount. The plugin
 # gate supplies only its private index/HEAD snapshots, mounted read-only.
@@ -136,7 +146,7 @@ if [ "$ENGINE_KIND" = podman ]; then
     # Rootless: map the caller to the image's dev account (1000:1000) and
     # tell atmo-dev the overlay needs the namespace-friendly userxattr mode.
     RUN_ARGS+=(
-        --userns=keep-id:uid=1000,gid=1000
+        "--userns=keep-id:uid=1000,gid=1000"
         --user dev
         --env ATMOSPHERA_DEV_USERXATTR=1
     )
@@ -149,7 +159,7 @@ else
     )
 fi
 
-[ $# -gt 0 ] || fail "no command given. Usage: container-run.sh COMMAND [ARG...]"
+[ $# -gt 0 ] || fail "no command given. Usage: container-run.sh [--plain] COMMAND [ARG...]"
 
 log "running with $ENGINE_KIND image $IMAGE (cpus=$CPUS memory=${MEM}m memory-swap=${MEM}m pids-limit=2048)"
 exec "$ENGINE_EXE" run "${RUN_ARGS[@]}" "$IMAGE" "$@"
