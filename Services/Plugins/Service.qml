@@ -1131,6 +1131,11 @@ Singleton {
   }
 
   // Create plugin API object with pre-loaded settings and translations
+  Component {
+    id: settingsPreviewFactory
+    PluginSettingsPreview {}
+  }
+
   function createPluginAPI(pluginId, manifest, settings, translations, fallbackTranslations, state) {
     var pluginDir = Registry.getPluginDir(pluginId);
 
@@ -1142,6 +1147,8 @@ Singleton {
         readonly property string pluginId: "${pluginId}"
         readonly property string pluginDir: "${pluginDir}"
         property var pluginSettings: ({})
+        property var settingsPreviewOwner: null
+        readonly property var settingsView: settingsPreviewOwner ? settingsPreviewOwner.values : pluginSettings
         property var manifest: ({})
 
         // Shared state: one object per plugin, the same for every instance
@@ -1170,6 +1177,7 @@ Singleton {
         // Functions will be bound below
         property var saveSettings: null
         property var createSettingsEditor: null
+        property var createSettingsPreview: null
         property var saveState: null
         property var getConfig: null
         property var openPanel: null
@@ -1228,6 +1236,11 @@ Singleton {
     api.createSettingsEditor = function () {
       return root.createPluginSettingsEditor(pluginId, api);
     };
+    api.settingsPreviewOwner = settingsPreviewFactory.createObject(api, {
+      sourceValue: Qt.binding(function () { return api.pluginSettings; }),
+      currentOwner: function () { return root.getPluginAPI(pluginId) === api ? api : null; }
+    });
+    api.createSettingsPreview = function () { return api.settingsPreviewOwner.open(); };
 
     // Writes the shared state to disk and reassigns it, so bindings on
     // `state` (instances forward it) re-evaluate.

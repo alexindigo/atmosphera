@@ -173,6 +173,44 @@ Singleton {
     return null;
   }
 
+  // Old-owner binding identity ignores instance overrides but includes the owning
+  // list structure. Foreign preference edits retain preview; ambiguous placement
+  // replacement/reorder cannot project a patch onto another row. I5 uses native
+  // normalized owner identity instead of this conservative structural fence.
+  function previewBindingStamp(base, placement, rev) {
+    if (!base || !placement || Service.getPluginAPI(base.pluginId) !== base)
+      return null;
+    var entry = entryFor(placement);
+    var owner = _owningValue(placement);
+    if (!entry || entry.id !== "plugin:" + base.pluginId || owner === undefined)
+      return null;
+    function rows(list) {
+      return Array.prototype.map.call(list || [], function (row) {
+        var value = Object.assign(Object.create(null), row);
+        delete value.instanceSettings;
+        return value;
+      });
+    }
+    var shape;
+    if (placement.kind === "controlCenter" || (placement.kind === "bar" && placement.list === "global")) {
+      shape = rows(owner);
+    } else {
+      shape = Array.prototype.map.call(owner, function (monitor) {
+        var value = Object.assign(Object.create(null), monitor);
+        if (placement.kind === "desktop") {
+          if (monitor.widgets) value.widgets = rows(monitor.widgets);
+        } else if (monitor.widgets) {
+          var sections = Object.assign(Object.create(null), monitor.widgets);
+          for (var section of ["left", "center", "right"])
+            if (monitor.widgets[section]) sections[section] = rows(monitor.widgets[section]);
+          value.widgets = sections;
+        }
+        return value;
+      });
+    }
+    return JSON.stringify([placement, shape]);
+  }
+
   function createSettingsEditor(pluginKey, placement, base) {
     if (!base || !placement)
       return null;

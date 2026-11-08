@@ -35,6 +35,7 @@ Popup {
   property var _editor: null
   property var _pageApi: null
   property int _inputFence: 0
+  property var _previewFence: null
   signal settingsCompleted(var result)
 
   NSettingsInputGuard {
@@ -314,6 +315,7 @@ Popup {
       return false;
     _pageApi = pageApiFactory.createObject(root, {
                                            base: currentPluginApi,
+                                           initialSettings: JSON.parse(JSON.stringify(_editor.initialValue)),
                                            pluginSettings: JSON.parse(JSON.stringify(_editor.initialValue))
                                          });
     _failed = false;
@@ -366,6 +368,7 @@ Popup {
 
   function _submit(reset) {
     _inputFence = inputEdits.capture();
+    _previewFence = _pageApi.capturePreview();
     _busy = true;
     _pageApi.busy = true;
     _failed = false;
@@ -384,7 +387,7 @@ Popup {
     var accepted = result && (result.status === "saved" || result.status === "nothing_to_save") && result.refreshState === "current";
     _failed = !accepted;
     if (accepted)
-      _pageApi.pluginSettings = JSON.parse(JSON.stringify(_editor.initialValue));
+      _pageApi.refresh(_editor.initialValue, _previewFence);
     if (accepted)
       inputEdits.acknowledge(_inputFence);
     // Keep competing page actions disabled throughout receipt delivery.

@@ -6,6 +6,9 @@ QtObject {
   id: root
   required property var base
   property var pluginSettings: ({})
+  property var initialSettings: ({})
+  property var _preview: null
+  readonly property bool previewDirty: _preview ? _preview.pending() : false
   property bool staged: false
   property bool busy: false
   property var _callbacks: []
@@ -41,6 +44,30 @@ QtObject {
   readonly property var trp: base ? base.trp : null
   readonly property var hasTranslation: base ? base.hasTranslation : null
 
+  function previewSettings(patch) {
+    if (!_preview && base && typeof base.createSettingsPreview === "function")
+      _preview = base.createSettingsPreview();
+    if (!_preview || !_preview.update(patch)) return false;
+    pluginSettings = Object.assign(Object.create(null), pluginSettings, JSON.parse(JSON.stringify(patch)));
+    staged = true;
+    return true;
+  }
+
+  function capturePreview() { return _preview ? _preview.capture() : null; }
+
+  function refresh(value, captured) {
+    initialSettings = JSON.parse(JSON.stringify(value));
+    if (_preview) _preview.acknowledge(captured);
+    pluginSettings = JSON.parse(JSON.stringify(_preview && _preview.pending() ? _preview.values() : value));
+  }
+
+  function releasePreview() {
+    if (_preview) _preview.close();
+    _preview = null;
+  }
+
+  Component.onDestruction: releasePreview()
+
   function saveSettings(callback) {
     if (busy)
       return false;
@@ -54,7 +81,7 @@ QtObject {
     var callbacks = _callbacks;
     _callbacks = [];
     if (result && (result.status === "saved" || result.status === "nothing_to_save") && result.refreshState === "current")
-      staged = false;
+      staged = previewDirty;
     settingsCompleted(result);
     for (var i = 0; i < callbacks.length; i++) {
       try {
