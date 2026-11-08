@@ -26,5 +26,34 @@
     "ranges": [
       {"field": "editWorkspaceSplitThreshold", "type": "NSpinBox", "inverse": ""}
     ]
+  },
+  {
+    "plugin": "battery-wireless-devices", "field": "editRefreshInterval", "key": "refreshInterval", "finalValue": 120,
+    "buffers": ["editDevices", "deviceList", "showPercentageEdit", "showChargingEdit", "editRefreshInterval"],
+    "minimum": "0.10.0", "olderCompatible": false, "savedFeedback": false,
+    "ranges": [{"field": "editRefreshInterval", "type": "NSpinBox", "inverse": ""}],
+    "scenario": {"seed": {"devices": {"fixture:one": {"name": "One", "opaque": {"keep": true}}, "fixture:two": {"name": "Two"}}, "deviceOrder": ["fixture:one", "fixture:two"]}}
+  },
+  {
+    "plugin": "claude-code-panel", "field": "editPanelWidth", "key": "panelWidth", "finalValue": 800,
+    "buffers": ["editClaude", "editAdditionalDirsText", "editAllowedToolsText", "editDisallowedToolsText", "editAppendSystemPrompt", "editMaxTurns", "editPanelPosition", "editPanelDetached", "editPanelWidth", "editPanelHeightPercent"],
+    "minimum": "0.10.0", "olderCompatible": false, "savedFeedback": false,
+    "ranges": [{"field": "editMaxTurns", "type": "NSpinBox", "inverse": ""}, {"field": "editPanelWidth", "type": "NSpinBox", "inverse": ""}, {"field": "editPanelHeightPercent", "type": "NSpinBox", "inverse": ""}]
+  },
+  {
+    "plugin": "hot-corners", "field": "editCorners", "key": "corners", "finalValue": {"TopLeft": "fixture-command", "opaque": {"keep": true}},
+    "buffers": ["editCorners"], "minimum": "0.10.0", "olderCompatible": false, "savedFeedback": false
+  },
+  {
+    "plugin": "model-usage", "field": "editCycleInterval", "key": "barCycleIntervalSec", "finalValue": 10,
+    "buffers": ["editSettings", "editCycleInterval", "editRefreshInterval"],
+    "minimum": "0.10.0", "olderCompatible": false, "savedFeedback": false,
+    "ranges": [{"field": "editCycleInterval", "type": "NSpinBox", "inverse": ""}, {"field": "editRefreshInterval", "type": "NSpinBox", "inverse": ""}]
+  },
+  {
+    "plugin": "wallpaper-carousel", "field": "editWallpaperDirectory", "key": "wallpaperDirectory", "finalValue": "fixture-wallpapers",
+    "buffers": ["editWallpaperDirectory", "editCarouselMode", "editExpandSelected", "editEnableHoldExpand", "editOverlayOpacity", "editBorderWidth", "editCornerRadius", "editItemWidth", "editItemHeight", "editSelectedScale", "editExpandMultiplier", "editHoldExpandRatio", "editHoldDelay"],
+    "minimum": "0.10.0", "olderCompatible": false, "savedFeedback": false,
+    "ranges": [{"field": "editOverlayOpacity", "type": "Slider", "inverse": ""}, {"field": "editBorderWidth", "type": "Slider", "inverse": ""}, {"field": "editCornerRadius", "type": "Slider", "inverse": ""}, {"field": "editItemWidth", "type": "Slider", "inverse": ""}, {"field": "editItemHeight", "type": "Slider", "inverse": ""}, {"field": "editSelectedScale", "type": "Slider", "inverse": ""}, {"field": "editExpandMultiplier", "type": "Slider", "inverse": ""}, {"field": "editHoldExpandRatio", "type": "Slider", "inverse": ""}, {"field": "editHoldDelay", "type": "Slider", "inverse": ""}]
   }
 ]

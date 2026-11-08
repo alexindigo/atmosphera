@@ -108,7 +108,63 @@ ShellRoot {
   }
 
   function collectionWitness(p) {
-    if (manifest.id === "caffeinate") {
+    if (manifest.id === "battery-wireless-devices") {
+      var devices = p.editDevices;
+      var list = p.deviceList;
+      p.set("fixture:one", "enabled", true);
+      check(p.settingsDirty && p.editDevices["fixture:one"].enabled && p.editDevices["fixture:one"].opaque.keep, "device copy/replace notifies and retains unknown fields");
+      p.editDevices = devices;
+      check(!p.settingsDirty, "device field revert clean");
+      p.moveDevice(0, 1);
+      check(p.settingsDirty && p.deviceList[1].id === "fixture:one", "device reorder dirty");
+      p.moveDevice(1, 0);
+      check(!p.settingsDirty, "device reorder revert clean");
+      p.removeDevice("fixture:one");
+      check(p.settingsDirty && !p.editDevices["fixture:one"], "device removal stays local");
+      p.editDevices = devices;
+      p.deviceList = list;
+      check(!p.settingsDirty && api.pluginSettings.devices["fixture:one"].opaque.keep, "device commands never publish or lose foreign data");
+    } else if (manifest.id === "claude-code-panel") {
+      var claude = p.editClaude;
+      for (var key of ["binary", "workingDir", "model", "fallbackModel", "mcpConfigPath", "permissionMode", "autoResume", "includePartialMessages", "injectNoctaliaContext", "strictMcpConfig", "dangerouslySkipPermissions", "requireConfirmBypass"]) {
+        p.set(key, typeof claude[key] === "boolean" ? !claude[key] : claude[key] + "-fixture");
+        check(p.settingsDirty && !p._saveBlinking, "Claude record edit is local with no saved indicator: " + key);
+        p.editClaude = claude;
+        check(!p.settingsDirty, "Claude record revert clean: " + key);
+      }
+      p.pluginApi.settingsCompleted({
+                                      status: "failed",
+                                      refreshState: "not_refreshed"
+                                    });
+      p.pluginApi.settingsCompleted({
+                                      status: "saved",
+                                      refreshState: "stale"
+                                    });
+      check(!p._saveBlinking, "Claude failure/stale receipt never flashes saved");
+    } else if (manifest.id === "hot-corners") {
+      var corners = p.editCorners;
+      for (var key of ["TopLeft", "TopRight", "BottomLeft", "BottomRight"]) {
+        p.updateCornerSetting(key, "fixture-command");
+        check(p.settingsDirty && p.editCorners[key] === "fixture-command", "corner command copy/replace is dirty: " + key);
+        p.editCorners = corners;
+        check(!p.settingsDirty, "corner revert clean: " + key);
+      }
+      check(!api.pluginSettings.corners || !api.pluginSettings.corners.TopLeft, "corner command remains local");
+    } else if (manifest.id === "model-usage") {
+      var settings = p.editSettings;
+      for (var provider of ["claude", "codex", "copilot", "gemini", "openrouter", "zen"]) {
+        var enabled = settings.providers[provider].enabled;
+        p.setProvider(provider, "enabled", !enabled);
+        check(p.settingsDirty && p.editSettings.providers[provider].enabled !== enabled && api.pluginSettings.providers[provider].enabled === enabled, "provider local copy/replace: " + provider);
+        p.editSettings = settings;
+        check(!p.settingsDirty, "provider revert: " + provider);
+      }
+      for (var provider of ["openrouter", "zen"]) {
+        p.setProvider(provider, "apiKey", "inert-fixture");
+        check(p.settingsDirty && p.editSettings.providers[provider].apiKey === "inert-fixture", "provider key buffer tracked");
+        p.editSettings = settings;
+      }
+    } else if (manifest.id === "caffeinate") {
       var presets = p.presetExpressions();
       check(presets.length === 2, "native preset source remains visible");
       p.setPreset(0, "15m");
