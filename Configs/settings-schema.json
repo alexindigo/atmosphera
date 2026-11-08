@@ -2,7 +2,7 @@
   "format": 1,
   "inputs": {
     "Configs/defaults.json": "fb940a326872df6351c243d35b665af137e9783459164a1fc5ffdbd25bd70435",
-    "Configs/settings-schema-overlay.json": "4978cb129988eda7ae82e8088f4dad64f94e2aa3dafbf61c294cd90e51019269"
+    "Configs/settings-schema-overlay.json": "f2fd471b3c2b389f15192afca929063a0fd790f8c8c5e174526678f959a845b9"
   },
   "paths": [
     {
@@ -508,6 +508,18 @@
     {
       "element": {
         "fields": {
+          "density": {
+            "optional": true,
+            "type": "String"
+          },
+          "displayMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "enabled": {
+            "optional": true,
+            "type": "Boolean"
+          },
           "name": {
             "type": "String"
           },
@@ -520,6 +532,232 @@
               "center": {
                 "element": {
                   "fields": {
+                    "appId": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "applyToAllMonitors": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "blacklist": {
+                      "element": {
+                        "type": "String"
+                      },
+                      "optional": true,
+                      "type": "List"
+                    },
+                    "blendStrength": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "capsLockIcon": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "characterCount": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "chevronColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "clockColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "clockStyle": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "colorName": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "colorizeDistroLogo": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "colorizeIcons": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "colorizeSystemIcon": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "colorizeSystemText": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "compactMode": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "contentPadding": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "customFont": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "customIconPath": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "customLabel": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "deviceNativePath": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "diskPath": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "displayMode": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "drawerEnabled": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "emptyColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "enableColorization": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "enableOnStateLogic": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "enableScrollWheel": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "environmentVars": {
+                      "element": {
+                        "fields": {
+                          "key": {
+                            "type": "String"
+                          },
+                          "value": {
+                            "type": "String"
+                          }
+                        },
+                        "type": "Record"
+                      },
+                      "optional": true,
+                      "type": "List"
+                    },
+                    "focusedColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "followFocusedScreen": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "fontWeight": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "format": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "formatHorizontal": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "formatVertical": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "generalTooltipText": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "groupedBorderOpacity": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "height": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "hideIfIdle": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideIfNotDetected": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideMode": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "hidePassive": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideUnoccupied": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideWhenIdle": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideWhenOff": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideWhenZero": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideWhenZeroUnread": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hueAdjustment": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "icon": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "iconColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "iconPosition": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "iconScale": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "iconSource": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "iconType": {
+                      "optional": true,
+                      "type": "String"
+                    },
                     "id": {
                       "type": "String"
                     },
@@ -527,6 +765,402 @@
                       "fields": {},
                       "optional": true,
                       "type": "Record"
+                    },
+                    "ipcIdentifier": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "labelMode": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "layout": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "leftClickExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "leftClickUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "maxTaskbarWidth": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "maxTextLength": {
+                      "fields": {
+                        "horizontal": {
+                          "optional": true,
+                          "type": "Real"
+                        },
+                        "vertical": {
+                          "optional": true,
+                          "type": "Real"
+                        }
+                      },
+                      "optional": true,
+                      "type": "Record"
+                    },
+                    "maxWidth": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "middleClickCommand": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "middleClickExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "middleClickUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "numLockIcon": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "occupiedColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "onClicked": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "onMiddleClicked": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "onRightClicked": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "onlyActiveWorkspaces": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "onlySameOutput": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "panelShowAlbumArt": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "params": {
+                      "element": {
+                        "type": "String"
+                      },
+                      "optional": true,
+                      "type": "List"
+                    },
+                    "parseJson": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "pillSize": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "pinned": {
+                      "element": {
+                        "type": "String"
+                      },
+                      "optional": true,
+                      "type": "List"
+                    },
+                    "rightClickExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "rightClickUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "roundedCorners": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "scale": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "scrollLockIcon": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "scrollingMode": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "showAlbumArt": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showApplications": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showApplicationsHover": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showArtistFirst": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showAtmospheraPerformance": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showBackground": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showBadge": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showButtons": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showCapsLock": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showCpuCores": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showCpuFreq": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showCpuTemp": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showCpuUsage": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showDiskAvailable": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showDiskUsage": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showDiskUsageAsPercent": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showExecTooltip": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showGpuTemp": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showIcon": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showLabel": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showLabelsOnlyWhenOccupied": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showLoadAverage": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showMemoryAsPercent": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showMemoryUsage": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showNetworkStats": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showNumLock": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showPinnedApps": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showPowerProfiles": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showProgressRing": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showScrollLock": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showSwapUsage": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showTextTooltip": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showTitle": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showUnreadBadge": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showVisualizer": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "singleClick": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "smartWidth": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "statType": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "stateChecksJson": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "textCollapse": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "textColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "textCommand": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "textIntervalMs": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "textStream": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "titleWidth": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "tooltipFormat": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "unfocusedIconsOpacity": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "unreadBadgeColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "useCustomFont": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "useDistroLogo": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "useFixedWidth": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "useMonospaceFont": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "usePadding": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "visualizerType": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "wheelDownExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "wheelDownUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "wheelExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "wheelMode": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "wheelUpExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "wheelUpUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "wheelUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "widgetId": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "width": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "x": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "y": {
+                      "optional": true,
+                      "type": "Real"
                     }
                   },
                   "type": "Record"
@@ -537,6 +1171,232 @@
               "left": {
                 "element": {
                   "fields": {
+                    "appId": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "applyToAllMonitors": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "blacklist": {
+                      "element": {
+                        "type": "String"
+                      },
+                      "optional": true,
+                      "type": "List"
+                    },
+                    "blendStrength": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "capsLockIcon": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "characterCount": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "chevronColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "clockColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "clockStyle": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "colorName": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "colorizeDistroLogo": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "colorizeIcons": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "colorizeSystemIcon": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "colorizeSystemText": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "compactMode": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "contentPadding": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "customFont": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "customIconPath": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "customLabel": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "deviceNativePath": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "diskPath": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "displayMode": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "drawerEnabled": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "emptyColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "enableColorization": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "enableOnStateLogic": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "enableScrollWheel": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "environmentVars": {
+                      "element": {
+                        "fields": {
+                          "key": {
+                            "type": "String"
+                          },
+                          "value": {
+                            "type": "String"
+                          }
+                        },
+                        "type": "Record"
+                      },
+                      "optional": true,
+                      "type": "List"
+                    },
+                    "focusedColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "followFocusedScreen": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "fontWeight": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "format": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "formatHorizontal": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "formatVertical": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "generalTooltipText": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "groupedBorderOpacity": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "height": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "hideIfIdle": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideIfNotDetected": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideMode": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "hidePassive": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideUnoccupied": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideWhenIdle": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideWhenOff": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideWhenZero": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideWhenZeroUnread": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hueAdjustment": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "icon": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "iconColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "iconPosition": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "iconScale": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "iconSource": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "iconType": {
+                      "optional": true,
+                      "type": "String"
+                    },
                     "id": {
                       "type": "String"
                     },
@@ -544,6 +1404,402 @@
                       "fields": {},
                       "optional": true,
                       "type": "Record"
+                    },
+                    "ipcIdentifier": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "labelMode": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "layout": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "leftClickExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "leftClickUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "maxTaskbarWidth": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "maxTextLength": {
+                      "fields": {
+                        "horizontal": {
+                          "optional": true,
+                          "type": "Real"
+                        },
+                        "vertical": {
+                          "optional": true,
+                          "type": "Real"
+                        }
+                      },
+                      "optional": true,
+                      "type": "Record"
+                    },
+                    "maxWidth": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "middleClickCommand": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "middleClickExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "middleClickUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "numLockIcon": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "occupiedColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "onClicked": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "onMiddleClicked": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "onRightClicked": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "onlyActiveWorkspaces": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "onlySameOutput": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "panelShowAlbumArt": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "params": {
+                      "element": {
+                        "type": "String"
+                      },
+                      "optional": true,
+                      "type": "List"
+                    },
+                    "parseJson": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "pillSize": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "pinned": {
+                      "element": {
+                        "type": "String"
+                      },
+                      "optional": true,
+                      "type": "List"
+                    },
+                    "rightClickExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "rightClickUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "roundedCorners": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "scale": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "scrollLockIcon": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "scrollingMode": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "showAlbumArt": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showApplications": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showApplicationsHover": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showArtistFirst": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showAtmospheraPerformance": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showBackground": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showBadge": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showButtons": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showCapsLock": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showCpuCores": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showCpuFreq": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showCpuTemp": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showCpuUsage": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showDiskAvailable": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showDiskUsage": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showDiskUsageAsPercent": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showExecTooltip": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showGpuTemp": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showIcon": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showLabel": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showLabelsOnlyWhenOccupied": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showLoadAverage": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showMemoryAsPercent": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showMemoryUsage": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showNetworkStats": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showNumLock": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showPinnedApps": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showPowerProfiles": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showProgressRing": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showScrollLock": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showSwapUsage": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showTextTooltip": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showTitle": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showUnreadBadge": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showVisualizer": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "singleClick": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "smartWidth": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "statType": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "stateChecksJson": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "textCollapse": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "textColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "textCommand": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "textIntervalMs": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "textStream": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "titleWidth": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "tooltipFormat": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "unfocusedIconsOpacity": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "unreadBadgeColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "useCustomFont": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "useDistroLogo": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "useFixedWidth": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "useMonospaceFont": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "usePadding": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "visualizerType": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "wheelDownExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "wheelDownUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "wheelExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "wheelMode": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "wheelUpExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "wheelUpUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "wheelUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "widgetId": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "width": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "x": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "y": {
+                      "optional": true,
+                      "type": "Real"
                     }
                   },
                   "type": "Record"
@@ -554,6 +1810,232 @@
               "right": {
                 "element": {
                   "fields": {
+                    "appId": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "applyToAllMonitors": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "blacklist": {
+                      "element": {
+                        "type": "String"
+                      },
+                      "optional": true,
+                      "type": "List"
+                    },
+                    "blendStrength": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "capsLockIcon": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "characterCount": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "chevronColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "clockColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "clockStyle": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "colorName": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "colorizeDistroLogo": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "colorizeIcons": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "colorizeSystemIcon": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "colorizeSystemText": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "compactMode": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "contentPadding": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "customFont": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "customIconPath": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "customLabel": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "deviceNativePath": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "diskPath": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "displayMode": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "drawerEnabled": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "emptyColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "enableColorization": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "enableOnStateLogic": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "enableScrollWheel": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "environmentVars": {
+                      "element": {
+                        "fields": {
+                          "key": {
+                            "type": "String"
+                          },
+                          "value": {
+                            "type": "String"
+                          }
+                        },
+                        "type": "Record"
+                      },
+                      "optional": true,
+                      "type": "List"
+                    },
+                    "focusedColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "followFocusedScreen": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "fontWeight": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "format": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "formatHorizontal": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "formatVertical": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "generalTooltipText": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "groupedBorderOpacity": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "height": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "hideIfIdle": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideIfNotDetected": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideMode": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "hidePassive": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideUnoccupied": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideWhenIdle": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideWhenOff": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideWhenZero": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hideWhenZeroUnread": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "hueAdjustment": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "icon": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "iconColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "iconPosition": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "iconScale": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "iconSource": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "iconType": {
+                      "optional": true,
+                      "type": "String"
+                    },
                     "id": {
                       "type": "String"
                     },
@@ -561,6 +2043,402 @@
                       "fields": {},
                       "optional": true,
                       "type": "Record"
+                    },
+                    "ipcIdentifier": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "labelMode": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "layout": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "leftClickExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "leftClickUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "maxTaskbarWidth": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "maxTextLength": {
+                      "fields": {
+                        "horizontal": {
+                          "optional": true,
+                          "type": "Real"
+                        },
+                        "vertical": {
+                          "optional": true,
+                          "type": "Real"
+                        }
+                      },
+                      "optional": true,
+                      "type": "Record"
+                    },
+                    "maxWidth": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "middleClickCommand": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "middleClickExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "middleClickUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "numLockIcon": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "occupiedColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "onClicked": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "onMiddleClicked": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "onRightClicked": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "onlyActiveWorkspaces": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "onlySameOutput": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "panelShowAlbumArt": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "params": {
+                      "element": {
+                        "type": "String"
+                      },
+                      "optional": true,
+                      "type": "List"
+                    },
+                    "parseJson": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "pillSize": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "pinned": {
+                      "element": {
+                        "type": "String"
+                      },
+                      "optional": true,
+                      "type": "List"
+                    },
+                    "rightClickExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "rightClickUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "roundedCorners": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "scale": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "scrollLockIcon": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "scrollingMode": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "showAlbumArt": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showApplications": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showApplicationsHover": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showArtistFirst": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showAtmospheraPerformance": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showBackground": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showBadge": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showButtons": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showCapsLock": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showCpuCores": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showCpuFreq": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showCpuTemp": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showCpuUsage": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showDiskAvailable": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showDiskUsage": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showDiskUsageAsPercent": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showExecTooltip": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showGpuTemp": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showIcon": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showLabel": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showLabelsOnlyWhenOccupied": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showLoadAverage": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showMemoryAsPercent": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showMemoryUsage": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showNetworkStats": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showNumLock": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showPinnedApps": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showPowerProfiles": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showProgressRing": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showScrollLock": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showSwapUsage": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showTextTooltip": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showTitle": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showUnreadBadge": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "showVisualizer": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "singleClick": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "smartWidth": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "statType": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "stateChecksJson": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "textCollapse": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "textColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "textCommand": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "textIntervalMs": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "textStream": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "titleWidth": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "tooltipFormat": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "unfocusedIconsOpacity": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "unreadBadgeColor": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "useCustomFont": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "useDistroLogo": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "useFixedWidth": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "useMonospaceFont": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "usePadding": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "visualizerType": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "wheelDownExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "wheelDownUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "wheelExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "wheelMode": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "wheelUpExec": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "wheelUpUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "wheelUpdateText": {
+                      "optional": true,
+                      "type": "Boolean"
+                    },
+                    "widgetId": {
+                      "optional": true,
+                      "type": "String"
+                    },
+                    "width": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "x": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "y": {
+                      "optional": true,
+                      "type": "Real"
                     }
                   },
                   "type": "Record"
@@ -629,6 +2507,232 @@
     {
       "element": {
         "fields": {
+          "appId": {
+            "optional": true,
+            "type": "String"
+          },
+          "applyToAllMonitors": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "blacklist": {
+            "element": {
+              "type": "String"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "blendStrength": {
+            "optional": true,
+            "type": "Real"
+          },
+          "capsLockIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "characterCount": {
+            "optional": true,
+            "type": "Real"
+          },
+          "chevronColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "clockColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "clockStyle": {
+            "optional": true,
+            "type": "String"
+          },
+          "colorName": {
+            "optional": true,
+            "type": "String"
+          },
+          "colorizeDistroLogo": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "colorizeIcons": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "colorizeSystemIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "colorizeSystemText": {
+            "optional": true,
+            "type": "String"
+          },
+          "compactMode": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "contentPadding": {
+            "optional": true,
+            "type": "Real"
+          },
+          "customFont": {
+            "optional": true,
+            "type": "String"
+          },
+          "customIconPath": {
+            "optional": true,
+            "type": "String"
+          },
+          "customLabel": {
+            "optional": true,
+            "type": "String"
+          },
+          "deviceNativePath": {
+            "optional": true,
+            "type": "String"
+          },
+          "diskPath": {
+            "optional": true,
+            "type": "String"
+          },
+          "displayMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "drawerEnabled": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "emptyColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "enableColorization": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "enableOnStateLogic": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "enableScrollWheel": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "environmentVars": {
+            "element": {
+              "fields": {
+                "key": {
+                  "type": "String"
+                },
+                "value": {
+                  "type": "String"
+                }
+              },
+              "type": "Record"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "focusedColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "followFocusedScreen": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "fontWeight": {
+            "optional": true,
+            "type": "String"
+          },
+          "format": {
+            "optional": true,
+            "type": "String"
+          },
+          "formatHorizontal": {
+            "optional": true,
+            "type": "String"
+          },
+          "formatVertical": {
+            "optional": true,
+            "type": "String"
+          },
+          "generalTooltipText": {
+            "optional": true,
+            "type": "String"
+          },
+          "groupedBorderOpacity": {
+            "optional": true,
+            "type": "Real"
+          },
+          "height": {
+            "optional": true,
+            "type": "Real"
+          },
+          "hideIfIdle": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideIfNotDetected": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "hidePassive": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideUnoccupied": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenIdle": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenOff": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenZero": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenZeroUnread": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hueAdjustment": {
+            "optional": true,
+            "type": "Real"
+          },
+          "icon": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconPosition": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconScale": {
+            "optional": true,
+            "type": "Real"
+          },
+          "iconSource": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconType": {
+            "optional": true,
+            "type": "String"
+          },
           "id": {
             "type": "String"
           },
@@ -636,6 +2740,402 @@
             "fields": {},
             "optional": true,
             "type": "Record"
+          },
+          "ipcIdentifier": {
+            "optional": true,
+            "type": "String"
+          },
+          "labelMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "layout": {
+            "optional": true,
+            "type": "String"
+          },
+          "leftClickExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "leftClickUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "maxTaskbarWidth": {
+            "optional": true,
+            "type": "Real"
+          },
+          "maxTextLength": {
+            "fields": {
+              "horizontal": {
+                "optional": true,
+                "type": "Real"
+              },
+              "vertical": {
+                "optional": true,
+                "type": "Real"
+              }
+            },
+            "optional": true,
+            "type": "Record"
+          },
+          "maxWidth": {
+            "optional": true,
+            "type": "Real"
+          },
+          "middleClickCommand": {
+            "optional": true,
+            "type": "String"
+          },
+          "middleClickExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "middleClickUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "numLockIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "occupiedColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "onClicked": {
+            "optional": true,
+            "type": "String"
+          },
+          "onMiddleClicked": {
+            "optional": true,
+            "type": "String"
+          },
+          "onRightClicked": {
+            "optional": true,
+            "type": "String"
+          },
+          "onlyActiveWorkspaces": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "onlySameOutput": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "panelShowAlbumArt": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "params": {
+            "element": {
+              "type": "String"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "parseJson": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "pillSize": {
+            "optional": true,
+            "type": "Real"
+          },
+          "pinned": {
+            "element": {
+              "type": "String"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "rightClickExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "rightClickUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "roundedCorners": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "scale": {
+            "optional": true,
+            "type": "Real"
+          },
+          "scrollLockIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "scrollingMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "showAlbumArt": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showApplications": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showApplicationsHover": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showArtistFirst": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showAtmospheraPerformance": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showBackground": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showBadge": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showButtons": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCapsLock": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuCores": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuFreq": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuTemp": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showDiskAvailable": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showDiskUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showDiskUsageAsPercent": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showExecTooltip": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showGpuTemp": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showIcon": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showLabel": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showLabelsOnlyWhenOccupied": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showLoadAverage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showMemoryAsPercent": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showMemoryUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showNetworkStats": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showNumLock": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showPinnedApps": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showPowerProfiles": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showProgressRing": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showScrollLock": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showSwapUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showTextTooltip": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showTitle": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showUnreadBadge": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showVisualizer": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "singleClick": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "smartWidth": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "statType": {
+            "optional": true,
+            "type": "String"
+          },
+          "stateChecksJson": {
+            "optional": true,
+            "type": "String"
+          },
+          "textCollapse": {
+            "optional": true,
+            "type": "String"
+          },
+          "textColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "textCommand": {
+            "optional": true,
+            "type": "String"
+          },
+          "textIntervalMs": {
+            "optional": true,
+            "type": "Real"
+          },
+          "textStream": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "titleWidth": {
+            "optional": true,
+            "type": "Real"
+          },
+          "tooltipFormat": {
+            "optional": true,
+            "type": "String"
+          },
+          "unfocusedIconsOpacity": {
+            "optional": true,
+            "type": "Real"
+          },
+          "unreadBadgeColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "useCustomFont": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "useDistroLogo": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "useFixedWidth": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "useMonospaceFont": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "usePadding": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "visualizerType": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelDownExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelDownUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "wheelExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelUpExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelUpUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "wheelUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "widgetId": {
+            "optional": true,
+            "type": "String"
+          },
+          "width": {
+            "optional": true,
+            "type": "Real"
+          },
+          "x": {
+            "optional": true,
+            "type": "Real"
+          },
+          "y": {
+            "optional": true,
+            "type": "Real"
           }
         },
         "type": "Record"
@@ -650,6 +3150,232 @@
     {
       "element": {
         "fields": {
+          "appId": {
+            "optional": true,
+            "type": "String"
+          },
+          "applyToAllMonitors": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "blacklist": {
+            "element": {
+              "type": "String"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "blendStrength": {
+            "optional": true,
+            "type": "Real"
+          },
+          "capsLockIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "characterCount": {
+            "optional": true,
+            "type": "Real"
+          },
+          "chevronColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "clockColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "clockStyle": {
+            "optional": true,
+            "type": "String"
+          },
+          "colorName": {
+            "optional": true,
+            "type": "String"
+          },
+          "colorizeDistroLogo": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "colorizeIcons": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "colorizeSystemIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "colorizeSystemText": {
+            "optional": true,
+            "type": "String"
+          },
+          "compactMode": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "contentPadding": {
+            "optional": true,
+            "type": "Real"
+          },
+          "customFont": {
+            "optional": true,
+            "type": "String"
+          },
+          "customIconPath": {
+            "optional": true,
+            "type": "String"
+          },
+          "customLabel": {
+            "optional": true,
+            "type": "String"
+          },
+          "deviceNativePath": {
+            "optional": true,
+            "type": "String"
+          },
+          "diskPath": {
+            "optional": true,
+            "type": "String"
+          },
+          "displayMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "drawerEnabled": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "emptyColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "enableColorization": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "enableOnStateLogic": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "enableScrollWheel": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "environmentVars": {
+            "element": {
+              "fields": {
+                "key": {
+                  "type": "String"
+                },
+                "value": {
+                  "type": "String"
+                }
+              },
+              "type": "Record"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "focusedColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "followFocusedScreen": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "fontWeight": {
+            "optional": true,
+            "type": "String"
+          },
+          "format": {
+            "optional": true,
+            "type": "String"
+          },
+          "formatHorizontal": {
+            "optional": true,
+            "type": "String"
+          },
+          "formatVertical": {
+            "optional": true,
+            "type": "String"
+          },
+          "generalTooltipText": {
+            "optional": true,
+            "type": "String"
+          },
+          "groupedBorderOpacity": {
+            "optional": true,
+            "type": "Real"
+          },
+          "height": {
+            "optional": true,
+            "type": "Real"
+          },
+          "hideIfIdle": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideIfNotDetected": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "hidePassive": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideUnoccupied": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenIdle": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenOff": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenZero": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenZeroUnread": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hueAdjustment": {
+            "optional": true,
+            "type": "Real"
+          },
+          "icon": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconPosition": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconScale": {
+            "optional": true,
+            "type": "Real"
+          },
+          "iconSource": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconType": {
+            "optional": true,
+            "type": "String"
+          },
           "id": {
             "type": "String"
           },
@@ -657,6 +3383,402 @@
             "fields": {},
             "optional": true,
             "type": "Record"
+          },
+          "ipcIdentifier": {
+            "optional": true,
+            "type": "String"
+          },
+          "labelMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "layout": {
+            "optional": true,
+            "type": "String"
+          },
+          "leftClickExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "leftClickUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "maxTaskbarWidth": {
+            "optional": true,
+            "type": "Real"
+          },
+          "maxTextLength": {
+            "fields": {
+              "horizontal": {
+                "optional": true,
+                "type": "Real"
+              },
+              "vertical": {
+                "optional": true,
+                "type": "Real"
+              }
+            },
+            "optional": true,
+            "type": "Record"
+          },
+          "maxWidth": {
+            "optional": true,
+            "type": "Real"
+          },
+          "middleClickCommand": {
+            "optional": true,
+            "type": "String"
+          },
+          "middleClickExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "middleClickUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "numLockIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "occupiedColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "onClicked": {
+            "optional": true,
+            "type": "String"
+          },
+          "onMiddleClicked": {
+            "optional": true,
+            "type": "String"
+          },
+          "onRightClicked": {
+            "optional": true,
+            "type": "String"
+          },
+          "onlyActiveWorkspaces": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "onlySameOutput": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "panelShowAlbumArt": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "params": {
+            "element": {
+              "type": "String"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "parseJson": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "pillSize": {
+            "optional": true,
+            "type": "Real"
+          },
+          "pinned": {
+            "element": {
+              "type": "String"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "rightClickExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "rightClickUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "roundedCorners": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "scale": {
+            "optional": true,
+            "type": "Real"
+          },
+          "scrollLockIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "scrollingMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "showAlbumArt": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showApplications": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showApplicationsHover": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showArtistFirst": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showAtmospheraPerformance": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showBackground": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showBadge": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showButtons": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCapsLock": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuCores": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuFreq": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuTemp": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showDiskAvailable": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showDiskUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showDiskUsageAsPercent": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showExecTooltip": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showGpuTemp": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showIcon": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showLabel": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showLabelsOnlyWhenOccupied": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showLoadAverage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showMemoryAsPercent": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showMemoryUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showNetworkStats": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showNumLock": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showPinnedApps": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showPowerProfiles": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showProgressRing": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showScrollLock": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showSwapUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showTextTooltip": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showTitle": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showUnreadBadge": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showVisualizer": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "singleClick": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "smartWidth": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "statType": {
+            "optional": true,
+            "type": "String"
+          },
+          "stateChecksJson": {
+            "optional": true,
+            "type": "String"
+          },
+          "textCollapse": {
+            "optional": true,
+            "type": "String"
+          },
+          "textColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "textCommand": {
+            "optional": true,
+            "type": "String"
+          },
+          "textIntervalMs": {
+            "optional": true,
+            "type": "Real"
+          },
+          "textStream": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "titleWidth": {
+            "optional": true,
+            "type": "Real"
+          },
+          "tooltipFormat": {
+            "optional": true,
+            "type": "String"
+          },
+          "unfocusedIconsOpacity": {
+            "optional": true,
+            "type": "Real"
+          },
+          "unreadBadgeColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "useCustomFont": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "useDistroLogo": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "useFixedWidth": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "useMonospaceFont": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "usePadding": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "visualizerType": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelDownExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelDownUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "wheelExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelUpExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelUpUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "wheelUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "widgetId": {
+            "optional": true,
+            "type": "String"
+          },
+          "width": {
+            "optional": true,
+            "type": "Real"
+          },
+          "x": {
+            "optional": true,
+            "type": "Real"
+          },
+          "y": {
+            "optional": true,
+            "type": "Real"
           }
         },
         "type": "Record"
@@ -671,6 +3793,232 @@
     {
       "element": {
         "fields": {
+          "appId": {
+            "optional": true,
+            "type": "String"
+          },
+          "applyToAllMonitors": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "blacklist": {
+            "element": {
+              "type": "String"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "blendStrength": {
+            "optional": true,
+            "type": "Real"
+          },
+          "capsLockIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "characterCount": {
+            "optional": true,
+            "type": "Real"
+          },
+          "chevronColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "clockColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "clockStyle": {
+            "optional": true,
+            "type": "String"
+          },
+          "colorName": {
+            "optional": true,
+            "type": "String"
+          },
+          "colorizeDistroLogo": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "colorizeIcons": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "colorizeSystemIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "colorizeSystemText": {
+            "optional": true,
+            "type": "String"
+          },
+          "compactMode": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "contentPadding": {
+            "optional": true,
+            "type": "Real"
+          },
+          "customFont": {
+            "optional": true,
+            "type": "String"
+          },
+          "customIconPath": {
+            "optional": true,
+            "type": "String"
+          },
+          "customLabel": {
+            "optional": true,
+            "type": "String"
+          },
+          "deviceNativePath": {
+            "optional": true,
+            "type": "String"
+          },
+          "diskPath": {
+            "optional": true,
+            "type": "String"
+          },
+          "displayMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "drawerEnabled": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "emptyColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "enableColorization": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "enableOnStateLogic": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "enableScrollWheel": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "environmentVars": {
+            "element": {
+              "fields": {
+                "key": {
+                  "type": "String"
+                },
+                "value": {
+                  "type": "String"
+                }
+              },
+              "type": "Record"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "focusedColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "followFocusedScreen": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "fontWeight": {
+            "optional": true,
+            "type": "String"
+          },
+          "format": {
+            "optional": true,
+            "type": "String"
+          },
+          "formatHorizontal": {
+            "optional": true,
+            "type": "String"
+          },
+          "formatVertical": {
+            "optional": true,
+            "type": "String"
+          },
+          "generalTooltipText": {
+            "optional": true,
+            "type": "String"
+          },
+          "groupedBorderOpacity": {
+            "optional": true,
+            "type": "Real"
+          },
+          "height": {
+            "optional": true,
+            "type": "Real"
+          },
+          "hideIfIdle": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideIfNotDetected": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "hidePassive": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideUnoccupied": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenIdle": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenOff": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenZero": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenZeroUnread": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hueAdjustment": {
+            "optional": true,
+            "type": "Real"
+          },
+          "icon": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconPosition": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconScale": {
+            "optional": true,
+            "type": "Real"
+          },
+          "iconSource": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconType": {
+            "optional": true,
+            "type": "String"
+          },
           "id": {
             "type": "String"
           },
@@ -678,6 +4026,402 @@
             "fields": {},
             "optional": true,
             "type": "Record"
+          },
+          "ipcIdentifier": {
+            "optional": true,
+            "type": "String"
+          },
+          "labelMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "layout": {
+            "optional": true,
+            "type": "String"
+          },
+          "leftClickExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "leftClickUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "maxTaskbarWidth": {
+            "optional": true,
+            "type": "Real"
+          },
+          "maxTextLength": {
+            "fields": {
+              "horizontal": {
+                "optional": true,
+                "type": "Real"
+              },
+              "vertical": {
+                "optional": true,
+                "type": "Real"
+              }
+            },
+            "optional": true,
+            "type": "Record"
+          },
+          "maxWidth": {
+            "optional": true,
+            "type": "Real"
+          },
+          "middleClickCommand": {
+            "optional": true,
+            "type": "String"
+          },
+          "middleClickExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "middleClickUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "numLockIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "occupiedColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "onClicked": {
+            "optional": true,
+            "type": "String"
+          },
+          "onMiddleClicked": {
+            "optional": true,
+            "type": "String"
+          },
+          "onRightClicked": {
+            "optional": true,
+            "type": "String"
+          },
+          "onlyActiveWorkspaces": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "onlySameOutput": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "panelShowAlbumArt": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "params": {
+            "element": {
+              "type": "String"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "parseJson": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "pillSize": {
+            "optional": true,
+            "type": "Real"
+          },
+          "pinned": {
+            "element": {
+              "type": "String"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "rightClickExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "rightClickUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "roundedCorners": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "scale": {
+            "optional": true,
+            "type": "Real"
+          },
+          "scrollLockIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "scrollingMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "showAlbumArt": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showApplications": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showApplicationsHover": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showArtistFirst": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showAtmospheraPerformance": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showBackground": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showBadge": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showButtons": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCapsLock": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuCores": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuFreq": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuTemp": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showDiskAvailable": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showDiskUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showDiskUsageAsPercent": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showExecTooltip": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showGpuTemp": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showIcon": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showLabel": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showLabelsOnlyWhenOccupied": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showLoadAverage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showMemoryAsPercent": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showMemoryUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showNetworkStats": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showNumLock": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showPinnedApps": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showPowerProfiles": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showProgressRing": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showScrollLock": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showSwapUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showTextTooltip": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showTitle": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showUnreadBadge": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showVisualizer": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "singleClick": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "smartWidth": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "statType": {
+            "optional": true,
+            "type": "String"
+          },
+          "stateChecksJson": {
+            "optional": true,
+            "type": "String"
+          },
+          "textCollapse": {
+            "optional": true,
+            "type": "String"
+          },
+          "textColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "textCommand": {
+            "optional": true,
+            "type": "String"
+          },
+          "textIntervalMs": {
+            "optional": true,
+            "type": "Real"
+          },
+          "textStream": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "titleWidth": {
+            "optional": true,
+            "type": "Real"
+          },
+          "tooltipFormat": {
+            "optional": true,
+            "type": "String"
+          },
+          "unfocusedIconsOpacity": {
+            "optional": true,
+            "type": "Real"
+          },
+          "unreadBadgeColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "useCustomFont": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "useDistroLogo": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "useFixedWidth": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "useMonospaceFont": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "usePadding": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "visualizerType": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelDownExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelDownUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "wheelExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelUpExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelUpUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "wheelUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "widgetId": {
+            "optional": true,
+            "type": "String"
+          },
+          "width": {
+            "optional": true,
+            "type": "Real"
+          },
+          "x": {
+            "optional": true,
+            "type": "Real"
+          },
+          "y": {
+            "optional": true,
+            "type": "Real"
           }
         },
         "type": "Record"
@@ -896,6 +4640,232 @@
     {
       "element": {
         "fields": {
+          "appId": {
+            "optional": true,
+            "type": "String"
+          },
+          "applyToAllMonitors": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "blacklist": {
+            "element": {
+              "type": "String"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "blendStrength": {
+            "optional": true,
+            "type": "Real"
+          },
+          "capsLockIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "characterCount": {
+            "optional": true,
+            "type": "Real"
+          },
+          "chevronColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "clockColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "clockStyle": {
+            "optional": true,
+            "type": "String"
+          },
+          "colorName": {
+            "optional": true,
+            "type": "String"
+          },
+          "colorizeDistroLogo": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "colorizeIcons": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "colorizeSystemIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "colorizeSystemText": {
+            "optional": true,
+            "type": "String"
+          },
+          "compactMode": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "contentPadding": {
+            "optional": true,
+            "type": "Real"
+          },
+          "customFont": {
+            "optional": true,
+            "type": "String"
+          },
+          "customIconPath": {
+            "optional": true,
+            "type": "String"
+          },
+          "customLabel": {
+            "optional": true,
+            "type": "String"
+          },
+          "deviceNativePath": {
+            "optional": true,
+            "type": "String"
+          },
+          "diskPath": {
+            "optional": true,
+            "type": "String"
+          },
+          "displayMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "drawerEnabled": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "emptyColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "enableColorization": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "enableOnStateLogic": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "enableScrollWheel": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "environmentVars": {
+            "element": {
+              "fields": {
+                "key": {
+                  "type": "String"
+                },
+                "value": {
+                  "type": "String"
+                }
+              },
+              "type": "Record"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "focusedColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "followFocusedScreen": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "fontWeight": {
+            "optional": true,
+            "type": "String"
+          },
+          "format": {
+            "optional": true,
+            "type": "String"
+          },
+          "formatHorizontal": {
+            "optional": true,
+            "type": "String"
+          },
+          "formatVertical": {
+            "optional": true,
+            "type": "String"
+          },
+          "generalTooltipText": {
+            "optional": true,
+            "type": "String"
+          },
+          "groupedBorderOpacity": {
+            "optional": true,
+            "type": "Real"
+          },
+          "height": {
+            "optional": true,
+            "type": "Real"
+          },
+          "hideIfIdle": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideIfNotDetected": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "hidePassive": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideUnoccupied": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenIdle": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenOff": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenZero": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenZeroUnread": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hueAdjustment": {
+            "optional": true,
+            "type": "Real"
+          },
+          "icon": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconPosition": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconScale": {
+            "optional": true,
+            "type": "Real"
+          },
+          "iconSource": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconType": {
+            "optional": true,
+            "type": "String"
+          },
           "id": {
             "type": "String"
           },
@@ -903,6 +4873,402 @@
             "fields": {},
             "optional": true,
             "type": "Record"
+          },
+          "ipcIdentifier": {
+            "optional": true,
+            "type": "String"
+          },
+          "labelMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "layout": {
+            "optional": true,
+            "type": "String"
+          },
+          "leftClickExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "leftClickUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "maxTaskbarWidth": {
+            "optional": true,
+            "type": "Real"
+          },
+          "maxTextLength": {
+            "fields": {
+              "horizontal": {
+                "optional": true,
+                "type": "Real"
+              },
+              "vertical": {
+                "optional": true,
+                "type": "Real"
+              }
+            },
+            "optional": true,
+            "type": "Record"
+          },
+          "maxWidth": {
+            "optional": true,
+            "type": "Real"
+          },
+          "middleClickCommand": {
+            "optional": true,
+            "type": "String"
+          },
+          "middleClickExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "middleClickUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "numLockIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "occupiedColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "onClicked": {
+            "optional": true,
+            "type": "String"
+          },
+          "onMiddleClicked": {
+            "optional": true,
+            "type": "String"
+          },
+          "onRightClicked": {
+            "optional": true,
+            "type": "String"
+          },
+          "onlyActiveWorkspaces": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "onlySameOutput": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "panelShowAlbumArt": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "params": {
+            "element": {
+              "type": "String"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "parseJson": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "pillSize": {
+            "optional": true,
+            "type": "Real"
+          },
+          "pinned": {
+            "element": {
+              "type": "String"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "rightClickExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "rightClickUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "roundedCorners": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "scale": {
+            "optional": true,
+            "type": "Real"
+          },
+          "scrollLockIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "scrollingMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "showAlbumArt": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showApplications": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showApplicationsHover": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showArtistFirst": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showAtmospheraPerformance": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showBackground": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showBadge": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showButtons": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCapsLock": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuCores": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuFreq": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuTemp": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showDiskAvailable": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showDiskUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showDiskUsageAsPercent": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showExecTooltip": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showGpuTemp": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showIcon": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showLabel": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showLabelsOnlyWhenOccupied": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showLoadAverage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showMemoryAsPercent": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showMemoryUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showNetworkStats": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showNumLock": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showPinnedApps": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showPowerProfiles": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showProgressRing": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showScrollLock": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showSwapUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showTextTooltip": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showTitle": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showUnreadBadge": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showVisualizer": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "singleClick": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "smartWidth": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "statType": {
+            "optional": true,
+            "type": "String"
+          },
+          "stateChecksJson": {
+            "optional": true,
+            "type": "String"
+          },
+          "textCollapse": {
+            "optional": true,
+            "type": "String"
+          },
+          "textColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "textCommand": {
+            "optional": true,
+            "type": "String"
+          },
+          "textIntervalMs": {
+            "optional": true,
+            "type": "Real"
+          },
+          "textStream": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "titleWidth": {
+            "optional": true,
+            "type": "Real"
+          },
+          "tooltipFormat": {
+            "optional": true,
+            "type": "String"
+          },
+          "unfocusedIconsOpacity": {
+            "optional": true,
+            "type": "Real"
+          },
+          "unreadBadgeColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "useCustomFont": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "useDistroLogo": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "useFixedWidth": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "useMonospaceFont": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "usePadding": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "visualizerType": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelDownExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelDownUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "wheelExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelUpExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelUpUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "wheelUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "widgetId": {
+            "optional": true,
+            "type": "String"
+          },
+          "width": {
+            "optional": true,
+            "type": "Real"
+          },
+          "x": {
+            "optional": true,
+            "type": "Real"
+          },
+          "y": {
+            "optional": true,
+            "type": "Real"
           }
         },
         "type": "Record"
@@ -917,6 +5283,232 @@
     {
       "element": {
         "fields": {
+          "appId": {
+            "optional": true,
+            "type": "String"
+          },
+          "applyToAllMonitors": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "blacklist": {
+            "element": {
+              "type": "String"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "blendStrength": {
+            "optional": true,
+            "type": "Real"
+          },
+          "capsLockIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "characterCount": {
+            "optional": true,
+            "type": "Real"
+          },
+          "chevronColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "clockColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "clockStyle": {
+            "optional": true,
+            "type": "String"
+          },
+          "colorName": {
+            "optional": true,
+            "type": "String"
+          },
+          "colorizeDistroLogo": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "colorizeIcons": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "colorizeSystemIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "colorizeSystemText": {
+            "optional": true,
+            "type": "String"
+          },
+          "compactMode": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "contentPadding": {
+            "optional": true,
+            "type": "Real"
+          },
+          "customFont": {
+            "optional": true,
+            "type": "String"
+          },
+          "customIconPath": {
+            "optional": true,
+            "type": "String"
+          },
+          "customLabel": {
+            "optional": true,
+            "type": "String"
+          },
+          "deviceNativePath": {
+            "optional": true,
+            "type": "String"
+          },
+          "diskPath": {
+            "optional": true,
+            "type": "String"
+          },
+          "displayMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "drawerEnabled": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "emptyColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "enableColorization": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "enableOnStateLogic": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "enableScrollWheel": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "environmentVars": {
+            "element": {
+              "fields": {
+                "key": {
+                  "type": "String"
+                },
+                "value": {
+                  "type": "String"
+                }
+              },
+              "type": "Record"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "focusedColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "followFocusedScreen": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "fontWeight": {
+            "optional": true,
+            "type": "String"
+          },
+          "format": {
+            "optional": true,
+            "type": "String"
+          },
+          "formatHorizontal": {
+            "optional": true,
+            "type": "String"
+          },
+          "formatVertical": {
+            "optional": true,
+            "type": "String"
+          },
+          "generalTooltipText": {
+            "optional": true,
+            "type": "String"
+          },
+          "groupedBorderOpacity": {
+            "optional": true,
+            "type": "Real"
+          },
+          "height": {
+            "optional": true,
+            "type": "Real"
+          },
+          "hideIfIdle": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideIfNotDetected": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "hidePassive": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideUnoccupied": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenIdle": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenOff": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenZero": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hideWhenZeroUnread": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "hueAdjustment": {
+            "optional": true,
+            "type": "Real"
+          },
+          "icon": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconPosition": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconScale": {
+            "optional": true,
+            "type": "Real"
+          },
+          "iconSource": {
+            "optional": true,
+            "type": "String"
+          },
+          "iconType": {
+            "optional": true,
+            "type": "String"
+          },
           "id": {
             "type": "String"
           },
@@ -924,6 +5516,402 @@
             "fields": {},
             "optional": true,
             "type": "Record"
+          },
+          "ipcIdentifier": {
+            "optional": true,
+            "type": "String"
+          },
+          "labelMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "layout": {
+            "optional": true,
+            "type": "String"
+          },
+          "leftClickExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "leftClickUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "maxTaskbarWidth": {
+            "optional": true,
+            "type": "Real"
+          },
+          "maxTextLength": {
+            "fields": {
+              "horizontal": {
+                "optional": true,
+                "type": "Real"
+              },
+              "vertical": {
+                "optional": true,
+                "type": "Real"
+              }
+            },
+            "optional": true,
+            "type": "Record"
+          },
+          "maxWidth": {
+            "optional": true,
+            "type": "Real"
+          },
+          "middleClickCommand": {
+            "optional": true,
+            "type": "String"
+          },
+          "middleClickExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "middleClickUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "numLockIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "occupiedColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "onClicked": {
+            "optional": true,
+            "type": "String"
+          },
+          "onMiddleClicked": {
+            "optional": true,
+            "type": "String"
+          },
+          "onRightClicked": {
+            "optional": true,
+            "type": "String"
+          },
+          "onlyActiveWorkspaces": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "onlySameOutput": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "panelShowAlbumArt": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "params": {
+            "element": {
+              "type": "String"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "parseJson": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "pillSize": {
+            "optional": true,
+            "type": "Real"
+          },
+          "pinned": {
+            "element": {
+              "type": "String"
+            },
+            "optional": true,
+            "type": "List"
+          },
+          "rightClickExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "rightClickUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "roundedCorners": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "scale": {
+            "optional": true,
+            "type": "Real"
+          },
+          "scrollLockIcon": {
+            "optional": true,
+            "type": "String"
+          },
+          "scrollingMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "showAlbumArt": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showApplications": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showApplicationsHover": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showArtistFirst": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showAtmospheraPerformance": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showBackground": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showBadge": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showButtons": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCapsLock": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuCores": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuFreq": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuTemp": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showCpuUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showDiskAvailable": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showDiskUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showDiskUsageAsPercent": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showExecTooltip": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showGpuTemp": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showIcon": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showLabel": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showLabelsOnlyWhenOccupied": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showLoadAverage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showMemoryAsPercent": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showMemoryUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showNetworkStats": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showNumLock": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showPinnedApps": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showPowerProfiles": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showProgressRing": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showScrollLock": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showSwapUsage": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showTextTooltip": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showTitle": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showUnreadBadge": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "showVisualizer": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "singleClick": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "smartWidth": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "statType": {
+            "optional": true,
+            "type": "String"
+          },
+          "stateChecksJson": {
+            "optional": true,
+            "type": "String"
+          },
+          "textCollapse": {
+            "optional": true,
+            "type": "String"
+          },
+          "textColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "textCommand": {
+            "optional": true,
+            "type": "String"
+          },
+          "textIntervalMs": {
+            "optional": true,
+            "type": "Real"
+          },
+          "textStream": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "titleWidth": {
+            "optional": true,
+            "type": "Real"
+          },
+          "tooltipFormat": {
+            "optional": true,
+            "type": "String"
+          },
+          "unfocusedIconsOpacity": {
+            "optional": true,
+            "type": "Real"
+          },
+          "unreadBadgeColor": {
+            "optional": true,
+            "type": "String"
+          },
+          "useCustomFont": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "useDistroLogo": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "useFixedWidth": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "useMonospaceFont": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "usePadding": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "visualizerType": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelDownExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelDownUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "wheelExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelMode": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelUpExec": {
+            "optional": true,
+            "type": "String"
+          },
+          "wheelUpUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "wheelUpdateText": {
+            "optional": true,
+            "type": "Boolean"
+          },
+          "widgetId": {
+            "optional": true,
+            "type": "String"
+          },
+          "width": {
+            "optional": true,
+            "type": "Real"
+          },
+          "x": {
+            "optional": true,
+            "type": "Real"
+          },
+          "y": {
+            "optional": true,
+            "type": "Real"
           }
         },
         "type": "Record"
@@ -1013,6 +6001,232 @@
           "widgets": {
             "element": {
               "fields": {
+                "appId": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "applyToAllMonitors": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "blacklist": {
+                  "element": {
+                    "type": "String"
+                  },
+                  "optional": true,
+                  "type": "List"
+                },
+                "blendStrength": {
+                  "optional": true,
+                  "type": "Real"
+                },
+                "capsLockIcon": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "characterCount": {
+                  "optional": true,
+                  "type": "Real"
+                },
+                "chevronColor": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "clockColor": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "clockStyle": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "colorName": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "colorizeDistroLogo": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "colorizeIcons": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "colorizeSystemIcon": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "colorizeSystemText": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "compactMode": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "contentPadding": {
+                  "optional": true,
+                  "type": "Real"
+                },
+                "customFont": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "customIconPath": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "customLabel": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "deviceNativePath": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "diskPath": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "displayMode": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "drawerEnabled": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "emptyColor": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "enableColorization": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "enableOnStateLogic": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "enableScrollWheel": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "environmentVars": {
+                  "element": {
+                    "fields": {
+                      "key": {
+                        "type": "String"
+                      },
+                      "value": {
+                        "type": "String"
+                      }
+                    },
+                    "type": "Record"
+                  },
+                  "optional": true,
+                  "type": "List"
+                },
+                "focusedColor": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "followFocusedScreen": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "fontWeight": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "format": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "formatHorizontal": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "formatVertical": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "generalTooltipText": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "groupedBorderOpacity": {
+                  "optional": true,
+                  "type": "Real"
+                },
+                "height": {
+                  "optional": true,
+                  "type": "Real"
+                },
+                "hideIfIdle": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "hideIfNotDetected": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "hideMode": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "hidePassive": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "hideUnoccupied": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "hideWhenIdle": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "hideWhenOff": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "hideWhenZero": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "hideWhenZeroUnread": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "hueAdjustment": {
+                  "optional": true,
+                  "type": "Real"
+                },
+                "icon": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "iconColor": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "iconPosition": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "iconScale": {
+                  "optional": true,
+                  "type": "Real"
+                },
+                "iconSource": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "iconType": {
+                  "optional": true,
+                  "type": "String"
+                },
                 "id": {
                   "type": "String"
                 },
@@ -1020,10 +6234,407 @@
                   "fields": {},
                   "optional": true,
                   "type": "Record"
+                },
+                "ipcIdentifier": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "labelMode": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "layout": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "leftClickExec": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "leftClickUpdateText": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "maxTaskbarWidth": {
+                  "optional": true,
+                  "type": "Real"
+                },
+                "maxTextLength": {
+                  "fields": {
+                    "horizontal": {
+                      "optional": true,
+                      "type": "Real"
+                    },
+                    "vertical": {
+                      "optional": true,
+                      "type": "Real"
+                    }
+                  },
+                  "optional": true,
+                  "type": "Record"
+                },
+                "maxWidth": {
+                  "optional": true,
+                  "type": "Real"
+                },
+                "middleClickCommand": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "middleClickExec": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "middleClickUpdateText": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "numLockIcon": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "occupiedColor": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "onClicked": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "onMiddleClicked": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "onRightClicked": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "onlyActiveWorkspaces": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "onlySameOutput": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "panelShowAlbumArt": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "params": {
+                  "element": {
+                    "type": "String"
+                  },
+                  "optional": true,
+                  "type": "List"
+                },
+                "parseJson": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "pillSize": {
+                  "optional": true,
+                  "type": "Real"
+                },
+                "pinned": {
+                  "element": {
+                    "type": "String"
+                  },
+                  "optional": true,
+                  "type": "List"
+                },
+                "rightClickExec": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "rightClickUpdateText": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "roundedCorners": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "scale": {
+                  "optional": true,
+                  "type": "Real"
+                },
+                "scrollLockIcon": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "scrollingMode": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "showAlbumArt": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showApplications": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showApplicationsHover": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showArtistFirst": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showAtmospheraPerformance": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showBackground": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showBadge": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showButtons": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showCapsLock": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showCpuCores": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showCpuFreq": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showCpuTemp": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showCpuUsage": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showDiskAvailable": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showDiskUsage": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showDiskUsageAsPercent": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showExecTooltip": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showGpuTemp": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showIcon": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showLabel": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showLabelsOnlyWhenOccupied": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showLoadAverage": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showMemoryAsPercent": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showMemoryUsage": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showNetworkStats": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showNumLock": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showPinnedApps": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showPowerProfiles": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showProgressRing": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showScrollLock": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showSwapUsage": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showText": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showTextTooltip": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showTitle": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showUnreadBadge": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "showVisualizer": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "singleClick": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "smartWidth": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "statType": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "stateChecksJson": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "textCollapse": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "textColor": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "textCommand": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "textIntervalMs": {
+                  "optional": true,
+                  "type": "Real"
+                },
+                "textStream": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "titleWidth": {
+                  "optional": true,
+                  "type": "Real"
+                },
+                "tooltipFormat": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "unfocusedIconsOpacity": {
+                  "optional": true,
+                  "type": "Real"
+                },
+                "unreadBadgeColor": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "useCustomFont": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "useDistroLogo": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "useFixedWidth": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "useMonospaceFont": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "usePadding": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "visualizerType": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "wheelDownExec": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "wheelDownUpdateText": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "wheelExec": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "wheelMode": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "wheelUpExec": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "wheelUpUpdateText": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "wheelUpdateText": {
+                  "optional": true,
+                  "type": "Boolean"
+                },
+                "widgetId": {
+                  "optional": true,
+                  "type": "String"
+                },
+                "width": {
+                  "optional": true,
+                  "type": "Real"
+                },
+                "x": {
+                  "optional": true,
+                  "type": "Real"
+                },
+                "y": {
+                  "optional": true,
+                  "type": "Real"
                 }
               },
               "type": "Record"
             },
+            "optional": true,
             "type": "List"
           }
         },
@@ -2913,6 +8524,14 @@
           "action": {
             "type": "String"
           },
+          "command": {
+            "optional": true,
+            "type": "String"
+          },
+          "countdownEnabled": {
+            "optional": true,
+            "type": "Boolean"
+          },
           "enabled": {
             "type": "Boolean"
           },
@@ -3376,6 +8995,10 @@
             "type": "String"
           },
           "name": {
+            "type": "String"
+          },
+          "wallpaper": {
+            "optional": true,
             "type": "String"
           }
         },

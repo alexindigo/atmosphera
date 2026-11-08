@@ -378,6 +378,21 @@ ConfigSchema {
       ConfigValue {
         valueType: ConfigValue.Record
         ConfigValue {
+          key: "density"
+          valueType: ConfigValue.String
+          optional: true
+        }
+        ConfigValue {
+          key: "displayMode"
+          valueType: ConfigValue.String
+          optional: true
+        }
+        ConfigValue {
+          key: "enabled"
+          valueType: ConfigValue.Boolean
+          optional: true
+        }
+        ConfigValue {
           key: "name"
           valueType: ConfigValue.String
         }
@@ -397,12 +412,782 @@ ConfigSchema {
             ConfigValue {
               valueType: ConfigValue.Record
               ConfigValue {
+                key: "appId"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "applyToAllMonitors"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "blacklist"
+                valueType: ConfigValue.List
+                optional: true
+                ConfigValue {
+                  valueType: ConfigValue.String
+                }
+              }
+              ConfigValue {
+                key: "blendStrength"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "capsLockIcon"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "characterCount"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "chevronColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "clockColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "clockStyle"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "colorName"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "colorizeDistroLogo"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "colorizeIcons"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "colorizeSystemIcon"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "colorizeSystemText"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "compactMode"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "contentPadding"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "customFont"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "customIconPath"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "customLabel"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "deviceNativePath"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "diskPath"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "displayMode"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "drawerEnabled"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "emptyColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "enableColorization"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "enableOnStateLogic"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "enableScrollWheel"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "environmentVars"
+                valueType: ConfigValue.List
+                optional: true
+                ConfigValue {
+                  valueType: ConfigValue.Record
+                  ConfigValue {
+                    key: "key"
+                    valueType: ConfigValue.String
+                  }
+                  ConfigValue {
+                    key: "value"
+                    valueType: ConfigValue.String
+                  }
+                }
+              }
+              ConfigValue {
+                key: "focusedColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "followFocusedScreen"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "fontWeight"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "format"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "formatHorizontal"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "formatVertical"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "generalTooltipText"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "groupedBorderOpacity"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "height"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "hideIfIdle"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideIfNotDetected"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideMode"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "hidePassive"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideUnoccupied"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideWhenIdle"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideWhenOff"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideWhenZero"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideWhenZeroUnread"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hueAdjustment"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "icon"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "iconColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "iconPosition"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "iconScale"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "iconSource"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "iconType"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
                 key: "id"
                 valueType: ConfigValue.String
               }
               ConfigValue {
                 key: "instanceSettings"
                 valueType: ConfigValue.Record
+                optional: true
+              }
+              ConfigValue {
+                key: "ipcIdentifier"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "labelMode"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "layout"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "leftClickExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "leftClickUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "maxTaskbarWidth"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "maxTextLength"
+                valueType: ConfigValue.Record
+                optional: true
+                ConfigValue {
+                  key: "horizontal"
+                  valueType: ConfigValue.Real
+                  optional: true
+                }
+                ConfigValue {
+                  key: "vertical"
+                  valueType: ConfigValue.Real
+                  optional: true
+                }
+              }
+              ConfigValue {
+                key: "maxWidth"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "middleClickCommand"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "middleClickExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "middleClickUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "numLockIcon"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "occupiedColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "onClicked"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "onMiddleClicked"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "onRightClicked"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "onlyActiveWorkspaces"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "onlySameOutput"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "panelShowAlbumArt"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "params"
+                valueType: ConfigValue.List
+                optional: true
+                ConfigValue {
+                  valueType: ConfigValue.String
+                }
+              }
+              ConfigValue {
+                key: "parseJson"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "pillSize"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "pinned"
+                valueType: ConfigValue.List
+                optional: true
+                ConfigValue {
+                  valueType: ConfigValue.String
+                }
+              }
+              ConfigValue {
+                key: "rightClickExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "rightClickUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "roundedCorners"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "scale"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "scrollLockIcon"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "scrollingMode"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "showAlbumArt"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showApplications"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showApplicationsHover"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showArtistFirst"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showAtmospheraPerformance"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showBackground"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showBadge"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showButtons"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showCapsLock"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showCpuCores"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showCpuFreq"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showCpuTemp"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showCpuUsage"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showDiskAvailable"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showDiskUsage"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showDiskUsageAsPercent"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showExecTooltip"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showGpuTemp"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showIcon"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showLabel"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showLabelsOnlyWhenOccupied"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showLoadAverage"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showMemoryAsPercent"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showMemoryUsage"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showNetworkStats"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showNumLock"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showPinnedApps"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showPowerProfiles"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showProgressRing"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showScrollLock"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showSwapUsage"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showTextTooltip"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showTitle"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showUnreadBadge"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showVisualizer"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "singleClick"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "smartWidth"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "statType"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "stateChecksJson"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "textCollapse"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "textColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "textCommand"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "textIntervalMs"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "textStream"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "titleWidth"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "tooltipFormat"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "unfocusedIconsOpacity"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "unreadBadgeColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "useCustomFont"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "useDistroLogo"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "useFixedWidth"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "useMonospaceFont"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "usePadding"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "visualizerType"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelDownExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelDownUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelMode"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelUpExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelUpUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "widgetId"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "width"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "x"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "y"
+                valueType: ConfigValue.Real
                 optional: true
               }
             }
@@ -414,12 +1199,782 @@ ConfigSchema {
             ConfigValue {
               valueType: ConfigValue.Record
               ConfigValue {
+                key: "appId"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "applyToAllMonitors"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "blacklist"
+                valueType: ConfigValue.List
+                optional: true
+                ConfigValue {
+                  valueType: ConfigValue.String
+                }
+              }
+              ConfigValue {
+                key: "blendStrength"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "capsLockIcon"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "characterCount"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "chevronColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "clockColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "clockStyle"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "colorName"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "colorizeDistroLogo"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "colorizeIcons"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "colorizeSystemIcon"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "colorizeSystemText"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "compactMode"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "contentPadding"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "customFont"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "customIconPath"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "customLabel"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "deviceNativePath"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "diskPath"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "displayMode"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "drawerEnabled"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "emptyColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "enableColorization"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "enableOnStateLogic"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "enableScrollWheel"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "environmentVars"
+                valueType: ConfigValue.List
+                optional: true
+                ConfigValue {
+                  valueType: ConfigValue.Record
+                  ConfigValue {
+                    key: "key"
+                    valueType: ConfigValue.String
+                  }
+                  ConfigValue {
+                    key: "value"
+                    valueType: ConfigValue.String
+                  }
+                }
+              }
+              ConfigValue {
+                key: "focusedColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "followFocusedScreen"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "fontWeight"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "format"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "formatHorizontal"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "formatVertical"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "generalTooltipText"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "groupedBorderOpacity"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "height"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "hideIfIdle"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideIfNotDetected"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideMode"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "hidePassive"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideUnoccupied"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideWhenIdle"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideWhenOff"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideWhenZero"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideWhenZeroUnread"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hueAdjustment"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "icon"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "iconColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "iconPosition"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "iconScale"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "iconSource"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "iconType"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
                 key: "id"
                 valueType: ConfigValue.String
               }
               ConfigValue {
                 key: "instanceSettings"
                 valueType: ConfigValue.Record
+                optional: true
+              }
+              ConfigValue {
+                key: "ipcIdentifier"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "labelMode"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "layout"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "leftClickExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "leftClickUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "maxTaskbarWidth"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "maxTextLength"
+                valueType: ConfigValue.Record
+                optional: true
+                ConfigValue {
+                  key: "horizontal"
+                  valueType: ConfigValue.Real
+                  optional: true
+                }
+                ConfigValue {
+                  key: "vertical"
+                  valueType: ConfigValue.Real
+                  optional: true
+                }
+              }
+              ConfigValue {
+                key: "maxWidth"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "middleClickCommand"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "middleClickExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "middleClickUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "numLockIcon"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "occupiedColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "onClicked"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "onMiddleClicked"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "onRightClicked"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "onlyActiveWorkspaces"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "onlySameOutput"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "panelShowAlbumArt"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "params"
+                valueType: ConfigValue.List
+                optional: true
+                ConfigValue {
+                  valueType: ConfigValue.String
+                }
+              }
+              ConfigValue {
+                key: "parseJson"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "pillSize"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "pinned"
+                valueType: ConfigValue.List
+                optional: true
+                ConfigValue {
+                  valueType: ConfigValue.String
+                }
+              }
+              ConfigValue {
+                key: "rightClickExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "rightClickUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "roundedCorners"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "scale"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "scrollLockIcon"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "scrollingMode"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "showAlbumArt"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showApplications"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showApplicationsHover"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showArtistFirst"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showAtmospheraPerformance"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showBackground"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showBadge"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showButtons"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showCapsLock"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showCpuCores"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showCpuFreq"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showCpuTemp"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showCpuUsage"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showDiskAvailable"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showDiskUsage"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showDiskUsageAsPercent"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showExecTooltip"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showGpuTemp"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showIcon"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showLabel"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showLabelsOnlyWhenOccupied"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showLoadAverage"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showMemoryAsPercent"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showMemoryUsage"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showNetworkStats"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showNumLock"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showPinnedApps"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showPowerProfiles"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showProgressRing"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showScrollLock"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showSwapUsage"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showTextTooltip"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showTitle"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showUnreadBadge"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showVisualizer"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "singleClick"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "smartWidth"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "statType"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "stateChecksJson"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "textCollapse"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "textColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "textCommand"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "textIntervalMs"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "textStream"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "titleWidth"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "tooltipFormat"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "unfocusedIconsOpacity"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "unreadBadgeColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "useCustomFont"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "useDistroLogo"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "useFixedWidth"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "useMonospaceFont"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "usePadding"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "visualizerType"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelDownExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelDownUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelMode"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelUpExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelUpUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "widgetId"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "width"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "x"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "y"
+                valueType: ConfigValue.Real
                 optional: true
               }
             }
@@ -431,12 +1986,782 @@ ConfigSchema {
             ConfigValue {
               valueType: ConfigValue.Record
               ConfigValue {
+                key: "appId"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "applyToAllMonitors"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "blacklist"
+                valueType: ConfigValue.List
+                optional: true
+                ConfigValue {
+                  valueType: ConfigValue.String
+                }
+              }
+              ConfigValue {
+                key: "blendStrength"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "capsLockIcon"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "characterCount"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "chevronColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "clockColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "clockStyle"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "colorName"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "colorizeDistroLogo"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "colorizeIcons"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "colorizeSystemIcon"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "colorizeSystemText"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "compactMode"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "contentPadding"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "customFont"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "customIconPath"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "customLabel"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "deviceNativePath"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "diskPath"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "displayMode"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "drawerEnabled"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "emptyColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "enableColorization"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "enableOnStateLogic"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "enableScrollWheel"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "environmentVars"
+                valueType: ConfigValue.List
+                optional: true
+                ConfigValue {
+                  valueType: ConfigValue.Record
+                  ConfigValue {
+                    key: "key"
+                    valueType: ConfigValue.String
+                  }
+                  ConfigValue {
+                    key: "value"
+                    valueType: ConfigValue.String
+                  }
+                }
+              }
+              ConfigValue {
+                key: "focusedColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "followFocusedScreen"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "fontWeight"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "format"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "formatHorizontal"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "formatVertical"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "generalTooltipText"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "groupedBorderOpacity"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "height"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "hideIfIdle"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideIfNotDetected"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideMode"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "hidePassive"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideUnoccupied"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideWhenIdle"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideWhenOff"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideWhenZero"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hideWhenZeroUnread"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "hueAdjustment"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "icon"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "iconColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "iconPosition"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "iconScale"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "iconSource"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "iconType"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
                 key: "id"
                 valueType: ConfigValue.String
               }
               ConfigValue {
                 key: "instanceSettings"
                 valueType: ConfigValue.Record
+                optional: true
+              }
+              ConfigValue {
+                key: "ipcIdentifier"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "labelMode"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "layout"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "leftClickExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "leftClickUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "maxTaskbarWidth"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "maxTextLength"
+                valueType: ConfigValue.Record
+                optional: true
+                ConfigValue {
+                  key: "horizontal"
+                  valueType: ConfigValue.Real
+                  optional: true
+                }
+                ConfigValue {
+                  key: "vertical"
+                  valueType: ConfigValue.Real
+                  optional: true
+                }
+              }
+              ConfigValue {
+                key: "maxWidth"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "middleClickCommand"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "middleClickExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "middleClickUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "numLockIcon"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "occupiedColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "onClicked"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "onMiddleClicked"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "onRightClicked"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "onlyActiveWorkspaces"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "onlySameOutput"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "panelShowAlbumArt"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "params"
+                valueType: ConfigValue.List
+                optional: true
+                ConfigValue {
+                  valueType: ConfigValue.String
+                }
+              }
+              ConfigValue {
+                key: "parseJson"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "pillSize"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "pinned"
+                valueType: ConfigValue.List
+                optional: true
+                ConfigValue {
+                  valueType: ConfigValue.String
+                }
+              }
+              ConfigValue {
+                key: "rightClickExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "rightClickUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "roundedCorners"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "scale"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "scrollLockIcon"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "scrollingMode"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "showAlbumArt"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showApplications"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showApplicationsHover"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showArtistFirst"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showAtmospheraPerformance"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showBackground"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showBadge"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showButtons"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showCapsLock"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showCpuCores"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showCpuFreq"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showCpuTemp"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showCpuUsage"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showDiskAvailable"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showDiskUsage"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showDiskUsageAsPercent"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showExecTooltip"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showGpuTemp"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showIcon"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showLabel"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showLabelsOnlyWhenOccupied"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showLoadAverage"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showMemoryAsPercent"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showMemoryUsage"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showNetworkStats"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showNumLock"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showPinnedApps"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showPowerProfiles"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showProgressRing"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showScrollLock"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showSwapUsage"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showTextTooltip"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showTitle"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showUnreadBadge"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "showVisualizer"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "singleClick"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "smartWidth"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "statType"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "stateChecksJson"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "textCollapse"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "textColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "textCommand"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "textIntervalMs"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "textStream"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "titleWidth"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "tooltipFormat"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "unfocusedIconsOpacity"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "unreadBadgeColor"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "useCustomFont"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "useDistroLogo"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "useFixedWidth"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "useMonospaceFont"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "usePadding"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "visualizerType"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelDownExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelDownUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelMode"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelUpExec"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelUpUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "wheelUpdateText"
+                valueType: ConfigValue.Boolean
+                optional: true
+              }
+              ConfigValue {
+                key: "widgetId"
+                valueType: ConfigValue.String
+                optional: true
+              }
+              ConfigValue {
+                key: "width"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "x"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "y"
+                valueType: ConfigValue.Real
                 optional: true
               }
             }
@@ -484,12 +2809,782 @@ ConfigSchema {
         ConfigValue {
           valueType: ConfigValue.Record
           ConfigValue {
+            key: "appId"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "applyToAllMonitors"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "blacklist"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.String
+            }
+          }
+          ConfigValue {
+            key: "blendStrength"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "capsLockIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "characterCount"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "chevronColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "clockColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "clockStyle"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "colorName"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeDistroLogo"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeIcons"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeSystemIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeSystemText"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "compactMode"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "contentPadding"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "customFont"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "customIconPath"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "customLabel"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "deviceNativePath"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "diskPath"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "displayMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "drawerEnabled"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "emptyColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "enableColorization"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "enableOnStateLogic"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "enableScrollWheel"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "environmentVars"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.Record
+              ConfigValue {
+                key: "key"
+                valueType: ConfigValue.String
+              }
+              ConfigValue {
+                key: "value"
+                valueType: ConfigValue.String
+              }
+            }
+          }
+          ConfigValue {
+            key: "focusedColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "followFocusedScreen"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "fontWeight"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "format"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "formatHorizontal"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "formatVertical"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "generalTooltipText"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "groupedBorderOpacity"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "height"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "hideIfIdle"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideIfNotDetected"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "hidePassive"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideUnoccupied"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenIdle"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenOff"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenZero"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenZeroUnread"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hueAdjustment"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "icon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconPosition"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconScale"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "iconSource"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconType"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
             key: "id"
             valueType: ConfigValue.String
           }
           ConfigValue {
             key: "instanceSettings"
             valueType: ConfigValue.Record
+            optional: true
+          }
+          ConfigValue {
+            key: "ipcIdentifier"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "labelMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "layout"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "leftClickExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "leftClickUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "maxTaskbarWidth"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "maxTextLength"
+            valueType: ConfigValue.Record
+            optional: true
+            ConfigValue {
+              key: "horizontal"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "vertical"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+          }
+          ConfigValue {
+            key: "maxWidth"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "middleClickCommand"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "middleClickExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "middleClickUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "numLockIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "occupiedColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onClicked"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onMiddleClicked"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onRightClicked"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onlyActiveWorkspaces"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "onlySameOutput"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "panelShowAlbumArt"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "params"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.String
+            }
+          }
+          ConfigValue {
+            key: "parseJson"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "pillSize"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "pinned"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.String
+            }
+          }
+          ConfigValue {
+            key: "rightClickExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "rightClickUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "roundedCorners"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "scale"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "scrollLockIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "scrollingMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "showAlbumArt"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showApplications"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showApplicationsHover"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showArtistFirst"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showAtmospheraPerformance"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showBackground"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showBadge"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showButtons"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCapsLock"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuCores"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuFreq"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuTemp"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showDiskAvailable"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showDiskUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showDiskUsageAsPercent"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showExecTooltip"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showGpuTemp"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showIcon"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showLabel"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showLabelsOnlyWhenOccupied"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showLoadAverage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showMemoryAsPercent"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showMemoryUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showNetworkStats"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showNumLock"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showPinnedApps"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showPowerProfiles"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showProgressRing"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showScrollLock"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showSwapUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showTextTooltip"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showTitle"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showUnreadBadge"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showVisualizer"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "singleClick"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "smartWidth"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "statType"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "stateChecksJson"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textCollapse"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textCommand"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textIntervalMs"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "textStream"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "titleWidth"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "tooltipFormat"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "unfocusedIconsOpacity"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "unreadBadgeColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "useCustomFont"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "useDistroLogo"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "useFixedWidth"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "useMonospaceFont"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "usePadding"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "visualizerType"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelDownExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelDownUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelUpExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelUpUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "widgetId"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "width"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "x"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "y"
+            valueType: ConfigValue.Real
             optional: true
           }
         }
@@ -517,12 +3612,782 @@ ConfigSchema {
         ConfigValue {
           valueType: ConfigValue.Record
           ConfigValue {
+            key: "appId"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "applyToAllMonitors"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "blacklist"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.String
+            }
+          }
+          ConfigValue {
+            key: "blendStrength"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "capsLockIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "characterCount"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "chevronColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "clockColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "clockStyle"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "colorName"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeDistroLogo"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeIcons"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeSystemIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeSystemText"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "compactMode"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "contentPadding"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "customFont"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "customIconPath"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "customLabel"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "deviceNativePath"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "diskPath"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "displayMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "drawerEnabled"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "emptyColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "enableColorization"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "enableOnStateLogic"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "enableScrollWheel"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "environmentVars"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.Record
+              ConfigValue {
+                key: "key"
+                valueType: ConfigValue.String
+              }
+              ConfigValue {
+                key: "value"
+                valueType: ConfigValue.String
+              }
+            }
+          }
+          ConfigValue {
+            key: "focusedColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "followFocusedScreen"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "fontWeight"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "format"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "formatHorizontal"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "formatVertical"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "generalTooltipText"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "groupedBorderOpacity"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "height"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "hideIfIdle"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideIfNotDetected"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "hidePassive"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideUnoccupied"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenIdle"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenOff"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenZero"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenZeroUnread"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hueAdjustment"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "icon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconPosition"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconScale"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "iconSource"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconType"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
             key: "id"
             valueType: ConfigValue.String
           }
           ConfigValue {
             key: "instanceSettings"
             valueType: ConfigValue.Record
+            optional: true
+          }
+          ConfigValue {
+            key: "ipcIdentifier"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "labelMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "layout"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "leftClickExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "leftClickUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "maxTaskbarWidth"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "maxTextLength"
+            valueType: ConfigValue.Record
+            optional: true
+            ConfigValue {
+              key: "horizontal"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "vertical"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+          }
+          ConfigValue {
+            key: "maxWidth"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "middleClickCommand"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "middleClickExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "middleClickUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "numLockIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "occupiedColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onClicked"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onMiddleClicked"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onRightClicked"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onlyActiveWorkspaces"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "onlySameOutput"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "panelShowAlbumArt"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "params"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.String
+            }
+          }
+          ConfigValue {
+            key: "parseJson"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "pillSize"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "pinned"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.String
+            }
+          }
+          ConfigValue {
+            key: "rightClickExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "rightClickUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "roundedCorners"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "scale"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "scrollLockIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "scrollingMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "showAlbumArt"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showApplications"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showApplicationsHover"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showArtistFirst"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showAtmospheraPerformance"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showBackground"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showBadge"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showButtons"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCapsLock"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuCores"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuFreq"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuTemp"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showDiskAvailable"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showDiskUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showDiskUsageAsPercent"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showExecTooltip"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showGpuTemp"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showIcon"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showLabel"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showLabelsOnlyWhenOccupied"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showLoadAverage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showMemoryAsPercent"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showMemoryUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showNetworkStats"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showNumLock"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showPinnedApps"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showPowerProfiles"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showProgressRing"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showScrollLock"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showSwapUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showTextTooltip"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showTitle"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showUnreadBadge"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showVisualizer"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "singleClick"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "smartWidth"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "statType"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "stateChecksJson"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textCollapse"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textCommand"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textIntervalMs"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "textStream"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "titleWidth"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "tooltipFormat"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "unfocusedIconsOpacity"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "unreadBadgeColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "useCustomFont"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "useDistroLogo"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "useFixedWidth"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "useMonospaceFont"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "usePadding"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "visualizerType"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelDownExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelDownUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelUpExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelUpUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "widgetId"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "width"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "x"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "y"
+            valueType: ConfigValue.Real
             optional: true
           }
         }
@@ -553,12 +4418,782 @@ ConfigSchema {
         ConfigValue {
           valueType: ConfigValue.Record
           ConfigValue {
+            key: "appId"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "applyToAllMonitors"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "blacklist"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.String
+            }
+          }
+          ConfigValue {
+            key: "blendStrength"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "capsLockIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "characterCount"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "chevronColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "clockColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "clockStyle"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "colorName"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeDistroLogo"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeIcons"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeSystemIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeSystemText"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "compactMode"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "contentPadding"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "customFont"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "customIconPath"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "customLabel"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "deviceNativePath"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "diskPath"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "displayMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "drawerEnabled"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "emptyColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "enableColorization"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "enableOnStateLogic"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "enableScrollWheel"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "environmentVars"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.Record
+              ConfigValue {
+                key: "key"
+                valueType: ConfigValue.String
+              }
+              ConfigValue {
+                key: "value"
+                valueType: ConfigValue.String
+              }
+            }
+          }
+          ConfigValue {
+            key: "focusedColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "followFocusedScreen"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "fontWeight"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "format"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "formatHorizontal"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "formatVertical"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "generalTooltipText"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "groupedBorderOpacity"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "height"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "hideIfIdle"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideIfNotDetected"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "hidePassive"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideUnoccupied"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenIdle"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenOff"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenZero"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenZeroUnread"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hueAdjustment"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "icon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconPosition"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconScale"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "iconSource"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconType"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
             key: "id"
             valueType: ConfigValue.String
           }
           ConfigValue {
             key: "instanceSettings"
             valueType: ConfigValue.Record
+            optional: true
+          }
+          ConfigValue {
+            key: "ipcIdentifier"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "labelMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "layout"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "leftClickExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "leftClickUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "maxTaskbarWidth"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "maxTextLength"
+            valueType: ConfigValue.Record
+            optional: true
+            ConfigValue {
+              key: "horizontal"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "vertical"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+          }
+          ConfigValue {
+            key: "maxWidth"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "middleClickCommand"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "middleClickExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "middleClickUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "numLockIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "occupiedColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onClicked"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onMiddleClicked"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onRightClicked"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onlyActiveWorkspaces"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "onlySameOutput"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "panelShowAlbumArt"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "params"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.String
+            }
+          }
+          ConfigValue {
+            key: "parseJson"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "pillSize"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "pinned"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.String
+            }
+          }
+          ConfigValue {
+            key: "rightClickExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "rightClickUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "roundedCorners"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "scale"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "scrollLockIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "scrollingMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "showAlbumArt"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showApplications"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showApplicationsHover"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showArtistFirst"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showAtmospheraPerformance"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showBackground"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showBadge"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showButtons"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCapsLock"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuCores"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuFreq"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuTemp"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showDiskAvailable"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showDiskUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showDiskUsageAsPercent"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showExecTooltip"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showGpuTemp"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showIcon"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showLabel"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showLabelsOnlyWhenOccupied"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showLoadAverage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showMemoryAsPercent"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showMemoryUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showNetworkStats"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showNumLock"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showPinnedApps"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showPowerProfiles"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showProgressRing"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showScrollLock"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showSwapUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showTextTooltip"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showTitle"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showUnreadBadge"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showVisualizer"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "singleClick"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "smartWidth"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "statType"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "stateChecksJson"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textCollapse"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textCommand"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textIntervalMs"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "textStream"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "titleWidth"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "tooltipFormat"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "unfocusedIconsOpacity"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "unreadBadgeColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "useCustomFont"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "useDistroLogo"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "useFixedWidth"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "useMonospaceFont"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "usePadding"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "visualizerType"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelDownExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelDownUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelUpExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelUpUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "widgetId"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "width"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "x"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "y"
+            valueType: ConfigValue.Real
             optional: true
           }
         }
@@ -772,12 +5407,782 @@ ConfigSchema {
         ConfigValue {
           valueType: ConfigValue.Record
           ConfigValue {
+            key: "appId"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "applyToAllMonitors"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "blacklist"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.String
+            }
+          }
+          ConfigValue {
+            key: "blendStrength"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "capsLockIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "characterCount"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "chevronColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "clockColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "clockStyle"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "colorName"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeDistroLogo"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeIcons"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeSystemIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeSystemText"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "compactMode"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "contentPadding"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "customFont"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "customIconPath"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "customLabel"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "deviceNativePath"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "diskPath"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "displayMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "drawerEnabled"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "emptyColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "enableColorization"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "enableOnStateLogic"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "enableScrollWheel"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "environmentVars"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.Record
+              ConfigValue {
+                key: "key"
+                valueType: ConfigValue.String
+              }
+              ConfigValue {
+                key: "value"
+                valueType: ConfigValue.String
+              }
+            }
+          }
+          ConfigValue {
+            key: "focusedColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "followFocusedScreen"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "fontWeight"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "format"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "formatHorizontal"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "formatVertical"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "generalTooltipText"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "groupedBorderOpacity"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "height"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "hideIfIdle"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideIfNotDetected"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "hidePassive"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideUnoccupied"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenIdle"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenOff"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenZero"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenZeroUnread"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hueAdjustment"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "icon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconPosition"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconScale"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "iconSource"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconType"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
             key: "id"
             valueType: ConfigValue.String
           }
           ConfigValue {
             key: "instanceSettings"
             valueType: ConfigValue.Record
+            optional: true
+          }
+          ConfigValue {
+            key: "ipcIdentifier"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "labelMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "layout"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "leftClickExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "leftClickUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "maxTaskbarWidth"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "maxTextLength"
+            valueType: ConfigValue.Record
+            optional: true
+            ConfigValue {
+              key: "horizontal"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "vertical"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+          }
+          ConfigValue {
+            key: "maxWidth"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "middleClickCommand"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "middleClickExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "middleClickUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "numLockIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "occupiedColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onClicked"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onMiddleClicked"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onRightClicked"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onlyActiveWorkspaces"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "onlySameOutput"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "panelShowAlbumArt"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "params"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.String
+            }
+          }
+          ConfigValue {
+            key: "parseJson"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "pillSize"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "pinned"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.String
+            }
+          }
+          ConfigValue {
+            key: "rightClickExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "rightClickUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "roundedCorners"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "scale"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "scrollLockIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "scrollingMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "showAlbumArt"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showApplications"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showApplicationsHover"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showArtistFirst"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showAtmospheraPerformance"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showBackground"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showBadge"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showButtons"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCapsLock"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuCores"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuFreq"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuTemp"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showDiskAvailable"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showDiskUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showDiskUsageAsPercent"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showExecTooltip"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showGpuTemp"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showIcon"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showLabel"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showLabelsOnlyWhenOccupied"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showLoadAverage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showMemoryAsPercent"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showMemoryUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showNetworkStats"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showNumLock"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showPinnedApps"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showPowerProfiles"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showProgressRing"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showScrollLock"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showSwapUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showTextTooltip"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showTitle"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showUnreadBadge"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showVisualizer"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "singleClick"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "smartWidth"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "statType"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "stateChecksJson"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textCollapse"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textCommand"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textIntervalMs"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "textStream"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "titleWidth"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "tooltipFormat"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "unfocusedIconsOpacity"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "unreadBadgeColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "useCustomFont"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "useDistroLogo"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "useFixedWidth"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "useMonospaceFont"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "usePadding"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "visualizerType"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelDownExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelDownUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelUpExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelUpUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "widgetId"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "width"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "x"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "y"
+            valueType: ConfigValue.Real
             optional: true
           }
         }
@@ -802,12 +6207,782 @@ ConfigSchema {
         ConfigValue {
           valueType: ConfigValue.Record
           ConfigValue {
+            key: "appId"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "applyToAllMonitors"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "blacklist"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.String
+            }
+          }
+          ConfigValue {
+            key: "blendStrength"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "capsLockIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "characterCount"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "chevronColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "clockColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "clockStyle"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "colorName"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeDistroLogo"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeIcons"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeSystemIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "colorizeSystemText"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "compactMode"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "contentPadding"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "customFont"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "customIconPath"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "customLabel"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "deviceNativePath"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "diskPath"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "displayMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "drawerEnabled"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "emptyColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "enableColorization"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "enableOnStateLogic"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "enableScrollWheel"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "environmentVars"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.Record
+              ConfigValue {
+                key: "key"
+                valueType: ConfigValue.String
+              }
+              ConfigValue {
+                key: "value"
+                valueType: ConfigValue.String
+              }
+            }
+          }
+          ConfigValue {
+            key: "focusedColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "followFocusedScreen"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "fontWeight"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "format"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "formatHorizontal"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "formatVertical"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "generalTooltipText"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "groupedBorderOpacity"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "height"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "hideIfIdle"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideIfNotDetected"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "hidePassive"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideUnoccupied"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenIdle"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenOff"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenZero"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hideWhenZeroUnread"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "hueAdjustment"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "icon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconPosition"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconScale"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "iconSource"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "iconType"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
             key: "id"
             valueType: ConfigValue.String
           }
           ConfigValue {
             key: "instanceSettings"
             valueType: ConfigValue.Record
+            optional: true
+          }
+          ConfigValue {
+            key: "ipcIdentifier"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "labelMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "layout"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "leftClickExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "leftClickUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "maxTaskbarWidth"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "maxTextLength"
+            valueType: ConfigValue.Record
+            optional: true
+            ConfigValue {
+              key: "horizontal"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "vertical"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+          }
+          ConfigValue {
+            key: "maxWidth"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "middleClickCommand"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "middleClickExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "middleClickUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "numLockIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "occupiedColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onClicked"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onMiddleClicked"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onRightClicked"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "onlyActiveWorkspaces"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "onlySameOutput"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "panelShowAlbumArt"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "params"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.String
+            }
+          }
+          ConfigValue {
+            key: "parseJson"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "pillSize"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "pinned"
+            valueType: ConfigValue.List
+            optional: true
+            ConfigValue {
+              valueType: ConfigValue.String
+            }
+          }
+          ConfigValue {
+            key: "rightClickExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "rightClickUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "roundedCorners"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "scale"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "scrollLockIcon"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "scrollingMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "showAlbumArt"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showApplications"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showApplicationsHover"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showArtistFirst"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showAtmospheraPerformance"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showBackground"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showBadge"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showButtons"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCapsLock"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuCores"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuFreq"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuTemp"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showCpuUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showDiskAvailable"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showDiskUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showDiskUsageAsPercent"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showExecTooltip"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showGpuTemp"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showIcon"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showLabel"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showLabelsOnlyWhenOccupied"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showLoadAverage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showMemoryAsPercent"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showMemoryUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showNetworkStats"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showNumLock"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showPinnedApps"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showPowerProfiles"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showProgressRing"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showScrollLock"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showSwapUsage"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showTextTooltip"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showTitle"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showUnreadBadge"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "showVisualizer"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "singleClick"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "smartWidth"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "statType"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "stateChecksJson"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textCollapse"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textCommand"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "textIntervalMs"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "textStream"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "titleWidth"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "tooltipFormat"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "unfocusedIconsOpacity"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "unreadBadgeColor"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "useCustomFont"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "useDistroLogo"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "useFixedWidth"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "useMonospaceFont"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "usePadding"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "visualizerType"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelDownExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelDownUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelMode"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelUpExec"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelUpUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "wheelUpdateText"
+            valueType: ConfigValue.Boolean
+            optional: true
+          }
+          ConfigValue {
+            key: "widgetId"
+            valueType: ConfigValue.String
+            optional: true
+          }
+          ConfigValue {
+            key: "width"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "x"
+            valueType: ConfigValue.Real
+            optional: true
+          }
+          ConfigValue {
+            key: "y"
+            valueType: ConfigValue.Real
             optional: true
           }
         }
@@ -893,8 +7068,288 @@ ConfigSchema {
         ConfigValue {
           key: "widgets"
           valueType: ConfigValue.List
+          optional: true
           ConfigValue {
             valueType: ConfigValue.Record
+            ConfigValue {
+              key: "appId"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "applyToAllMonitors"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "blacklist"
+              valueType: ConfigValue.List
+              optional: true
+              ConfigValue {
+                valueType: ConfigValue.String
+              }
+            }
+            ConfigValue {
+              key: "blendStrength"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "capsLockIcon"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "characterCount"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "chevronColor"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "clockColor"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "clockStyle"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "colorName"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "colorizeDistroLogo"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "colorizeIcons"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "colorizeSystemIcon"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "colorizeSystemText"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "compactMode"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "contentPadding"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "customFont"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "customIconPath"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "customLabel"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "deviceNativePath"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "diskPath"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "displayMode"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "drawerEnabled"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "emptyColor"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "enableColorization"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "enableOnStateLogic"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "enableScrollWheel"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "environmentVars"
+              valueType: ConfigValue.List
+              optional: true
+              ConfigValue {
+                valueType: ConfigValue.Record
+                ConfigValue {
+                  key: "key"
+                  valueType: ConfigValue.String
+                }
+                ConfigValue {
+                  key: "value"
+                  valueType: ConfigValue.String
+                }
+              }
+            }
+            ConfigValue {
+              key: "focusedColor"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "followFocusedScreen"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "fontWeight"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "format"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "formatHorizontal"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "formatVertical"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "generalTooltipText"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "groupedBorderOpacity"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "height"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "hideIfIdle"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "hideIfNotDetected"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "hideMode"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "hidePassive"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "hideUnoccupied"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "hideWhenIdle"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "hideWhenOff"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "hideWhenZero"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "hideWhenZeroUnread"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "hueAdjustment"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "icon"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "iconColor"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "iconPosition"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "iconScale"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "iconSource"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "iconType"
+              valueType: ConfigValue.String
+              optional: true
+            }
             ConfigValue {
               key: "id"
               valueType: ConfigValue.String
@@ -902,6 +7357,497 @@ ConfigSchema {
             ConfigValue {
               key: "instanceSettings"
               valueType: ConfigValue.Record
+              optional: true
+            }
+            ConfigValue {
+              key: "ipcIdentifier"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "labelMode"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "layout"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "leftClickExec"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "leftClickUpdateText"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "maxTaskbarWidth"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "maxTextLength"
+              valueType: ConfigValue.Record
+              optional: true
+              ConfigValue {
+                key: "horizontal"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+              ConfigValue {
+                key: "vertical"
+                valueType: ConfigValue.Real
+                optional: true
+              }
+            }
+            ConfigValue {
+              key: "maxWidth"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "middleClickCommand"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "middleClickExec"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "middleClickUpdateText"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "numLockIcon"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "occupiedColor"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "onClicked"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "onMiddleClicked"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "onRightClicked"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "onlyActiveWorkspaces"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "onlySameOutput"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "panelShowAlbumArt"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "params"
+              valueType: ConfigValue.List
+              optional: true
+              ConfigValue {
+                valueType: ConfigValue.String
+              }
+            }
+            ConfigValue {
+              key: "parseJson"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "pillSize"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "pinned"
+              valueType: ConfigValue.List
+              optional: true
+              ConfigValue {
+                valueType: ConfigValue.String
+              }
+            }
+            ConfigValue {
+              key: "rightClickExec"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "rightClickUpdateText"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "roundedCorners"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "scale"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "scrollLockIcon"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "scrollingMode"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "showAlbumArt"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showApplications"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showApplicationsHover"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showArtistFirst"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showAtmospheraPerformance"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showBackground"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showBadge"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showButtons"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showCapsLock"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showCpuCores"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showCpuFreq"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showCpuTemp"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showCpuUsage"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showDiskAvailable"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showDiskUsage"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showDiskUsageAsPercent"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showExecTooltip"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showGpuTemp"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showIcon"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showLabel"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showLabelsOnlyWhenOccupied"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showLoadAverage"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showMemoryAsPercent"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showMemoryUsage"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showNetworkStats"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showNumLock"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showPinnedApps"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showPowerProfiles"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showProgressRing"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showScrollLock"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showSwapUsage"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showText"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showTextTooltip"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showTitle"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showUnreadBadge"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "showVisualizer"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "singleClick"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "smartWidth"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "statType"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "stateChecksJson"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "textCollapse"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "textColor"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "textCommand"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "textIntervalMs"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "textStream"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "titleWidth"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "tooltipFormat"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "unfocusedIconsOpacity"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "unreadBadgeColor"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "useCustomFont"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "useDistroLogo"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "useFixedWidth"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "useMonospaceFont"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "usePadding"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "visualizerType"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "wheelDownExec"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "wheelDownUpdateText"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "wheelExec"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "wheelMode"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "wheelUpExec"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "wheelUpUpdateText"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "wheelUpdateText"
+              valueType: ConfigValue.Boolean
+              optional: true
+            }
+            ConfigValue {
+              key: "widgetId"
+              valueType: ConfigValue.String
+              optional: true
+            }
+            ConfigValue {
+              key: "width"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "x"
+              valueType: ConfigValue.Real
+              optional: true
+            }
+            ConfigValue {
+              key: "y"
+              valueType: ConfigValue.Real
               optional: true
             }
           }
@@ -2229,6 +9175,16 @@ ConfigSchema {
           valueType: ConfigValue.String
         }
         ConfigValue {
+          key: "command"
+          valueType: ConfigValue.String
+          optional: true
+        }
+        ConfigValue {
+          key: "countdownEnabled"
+          valueType: ConfigValue.Boolean
+          optional: true
+        }
+        ConfigValue {
           key: "enabled"
           valueType: ConfigValue.Boolean
         }
@@ -2597,6 +9553,11 @@ ConfigSchema {
         ConfigValue {
           key: "name"
           valueType: ConfigValue.String
+        }
+        ConfigValue {
+          key: "wallpaper"
+          valueType: ConfigValue.String
+          optional: true
         }
       }
     }
