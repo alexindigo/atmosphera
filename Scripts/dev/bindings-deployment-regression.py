@@ -2448,15 +2448,15 @@ class Runner:
         settings = self.tree / "Commons/Settings.qml"
         model = self.tree / "Helpers/SettingsModel.js"
         text, bridge = model.read_text(), settings.read_text()
-        signature = "    function runSectionIo(mode, section, temporary, input, complete) {"
-        transport = '        effect("io", {token: token, owner: owner, mode: mode, section: section, temporary: temporary, input: input});'
+        signature = "    function runSectionIo(mode, section, temporary, input, complete, path) {"
+        transport = '        effect("io", {token: token, owner: owner, mode: mode, section: section, temporary: temporary, input: input, path: path});'
         command = '    command.splice(2, 0, effect.mode);'
         ending = '            delivered(stale ? false : success, state, stale ? "Stale Settings observation" : error, stale);\n        });'
         if any(text.count(anchor) != 1 for anchor in (signature, transport, ending)) or bridge.count(command) != 1:
             raise HarnessBlocked("inspection context anchors are not unique")
-        text = text.replace(signature, signature.replace("complete)", "complete, diagnosticContext)"))
-        text = text.replace(transport, transport.replace('input: input}', 'input: input, diagnosticContext: diagnosticContext}'))
-        text = text.replace(ending, ending.rsplit('});', 1)[0] + '}, { "serial": observation.serial, "generation": observation.generation, "authority": observation.authority, "publication": observation.publication, "writer": observation.writer ? observation.writer.revision : 0, "stage": observation.writerStage });')
+        text = text.replace(signature, signature.replace("path)", "path, diagnosticContext)"))
+        text = text.replace(transport, transport.replace('path: path}', 'path: path, diagnosticContext: diagnosticContext}'))
+        text = text.replace(ending, ending.rsplit('});', 1)[0] + '}, undefined, { "serial": observation.serial, "generation": observation.generation, "authority": observation.authority, "publication": observation.publication, "writer": observation.writer ? observation.writer.revision : 0, "stage": observation.writerStage });')
         bridge = bridge.replace(command, command + '\n    if (effect.diagnosticContext)\n      command = ["env", "INSPECTION_GATE_CONTEXT=" + JSON.stringify(effect.diagnosticContext)].concat(command);')
         model.write_text(text)
         settings.write_text(bridge)
