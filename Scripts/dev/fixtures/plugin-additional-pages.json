@@ -1,0 +1,17 @@
+[
+  {
+    "plugin": "clipper",
+    "field": "valuePanelWidth",
+    "key": "panelWidth",
+    "finalValue": 1000,
+    "buffers": ["valueTodoIntegration", "valuePincardsEnabled", "valueNotecardsEnabled", "valueShowCloseButton", "valueFullscreenMode", "valueHidePanelBackground", "valueAutoPaste", "valueAutoPasteOnRightClick", "valueAutoPasteDelay", "valuePanelWidth", "valuePanelHeight", "pendingCardColors", "pendingCustomColors", "cardColors", "customColors"],
+    "minimum": "0.10.0",
+    "olderCompatible": false,
+    "savedFeedback": false,
+    "ranges": [
+      {"field": "valuePanelWidth", "type": "NSpinBox", "inverse": ""},
+      {"field": "valuePanelHeight", "type": "NSpinBox", "inverse": ""},
+      {"field": "valueAutoPasteDelay", "type": "NValueSlider", "inverse": ""}
+    ]
+  }
+]
