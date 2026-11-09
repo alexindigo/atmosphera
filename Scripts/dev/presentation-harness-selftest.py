@@ -9,7 +9,7 @@ import sys
 import threading
 import time
 from unittest.mock import patch
-import presentation_harness
+import workspace_guard
 from presentation_harness import check_execution_paths, run_harness
 
 parser = argparse.ArgumentParser(description=__doc__)
@@ -56,7 +56,7 @@ def check_disk_guard():
     real_root.mkdir()
     linked_root = work / 'memory-root-link'
     linked_root.symlink_to(real_root, target_is_directory=True)
-    with patch.object(presentation_harness, 'MEMORY_BACKED_ROOTS', (str(linked_root),)):
+    with patch.object(workspace_guard, 'MEMORY_BACKED_ROOTS', (str(linked_root),)):
         for invalid in (real_root, real_root / 'child', linked_root / 'child'):
             with patch.object(Path, 'write_text', side_effect=AssertionError('write before validation')), \
                     patch('presentation_harness.subprocess.Popen', side_effect=AssertionError('spawn before validation')):
@@ -67,7 +67,50 @@ def check_disk_guard():
                 else:
                     raise AssertionError(f'accepted path under symlinked root: {invalid}')
             rejected.append(dict(location='symlinked-root', path=str(invalid)))
+    # An empty TMPDIR is not "unset": Path('') is the current directory while
+    # tempfile ignores it and may fall back to /tmp.
+    with patch.object(Path, 'write_text', side_effect=AssertionError('write before validation')), \
+            patch('presentation_harness.subprocess.Popen', side_effect=AssertionError('spawn before validation')):
+        try:
+            run_harness(['unused'], work, dict(os.environ, TMPDIR=''), 1.0)
+        except ValueError as error:
+            assert str(error) == 'use disk-backed workspace and TMPDIR'
+        else:
+            raise AssertionError('accepted an empty TMPDIR')
+    rejected.append(dict(location='TMPDIR', path=''))
+    rejected.extend(check_memory_filesystem())
     return rejected
+
+
+def check_memory_filesystem():
+    """Reject memory-backed storage by filesystem type, not by its path name."""
+    # A private user+mount namespace mounts tmpfs at an ordinary disk-backed
+    # path. Nothing is written into it; the mount ends with the namespace.
+    mount = work / 'tmpfs-mount'
+    mount.mkdir()
+    probe = '\n'.join([
+        'import sys',
+        'sys.path.insert(0, sys.argv[1])',
+        'import presentation_harness as h',
+        'from pathlib import Path',
+        'for p in (Path(sys.argv[2]), Path(sys.argv[2]) / "child" / "leaf"):',
+        '    try:',
+        '        h.require_disk_backed_paths(p)',
+        '    except ValueError:',
+        '        print("REJECTED", p)',
+        '    else:',
+        '        print("ACCEPTED", p)',
+    ])
+    result = subprocess.run(['unshare', '--user', '--map-root-user', '--mount', 'bash', '-c',
+                             'mount -t tmpfs -o size=1m none "$2" && exec "$1" -B -c "$3" "$4" "$2"',
+                             '_', sys.executable, str(mount), probe, str(Path(__file__).resolve().parent)],
+                            capture_output=True, text=True, timeout=30)
+    lines = result.stdout.splitlines()
+    rejected = [line.split(' ', 1)[1] for line in lines if line.startswith('REJECTED ')]
+    accepted = [line.split(' ', 1)[1] for line in lines if line.startswith('ACCEPTED ')]
+    assert result.returncode == 0 and len(rejected) == 2 and not accepted, (result.returncode, result.stdout, result.stderr)
+    assert not any(mount.iterdir())  # The probe never wrote through to the disk directory.
+    return [dict(location='tmpfs-mount', path=path) for path in rejected]
 
 
 disk_guard = check_disk_guard()

@@ -13,30 +13,11 @@ import subprocess
 import sys
 import time
 
+# Re-exported: entry points import the guard from the harness.
+from workspace_guard import check_execution_paths, require_disk_backed_paths  # noqa: F401
+
 DEFAULT_BUDGET = 375.0
 TEARDOWN_GRACE = 3.0
-# Memory-backed roots. Compared after resolving, like the checked paths.
-MEMORY_BACKED_ROOTS = ('/tmp', '/dev/shm')
-
-
-def require_disk_backed_paths(*paths):
-    """Reject memory-backed roots, descendants and resolved symlink aliases."""
-    # A root may itself be a symlink (e.g. /tmp -> /private/tmp); keep both forms.
-    memory_backed = {form for root in MEMORY_BACKED_ROOTS for form in (Path(root), Path(root).resolve())}
-    for path in paths:
-        resolved = Path(path).resolve()
-        if any(resolved == root or root in resolved.parents for root in memory_backed):
-            raise ValueError('use disk-backed workspace and TMPDIR')
-
-
-def check_execution_paths(parser, workspace):
-    """Validate an entry point's workspace and TMPDIR before it creates either."""
-    if 'TMPDIR' not in os.environ:
-        parser.error('set TMPDIR to a disk-backed directory inside the assigned VM')
-    try:
-        require_disk_backed_paths(workspace, os.environ['TMPDIR'])
-    except ValueError:
-        parser.error('use disk-backed workspace and TMPDIR inside the assigned VM')
 
 
 def add_execution_arguments(parser):
@@ -69,8 +50,7 @@ def run_harness(argv, work, env, budget):
     if not math.isfinite(budget) or budget <= 0:
         raise ValueError('execution budget must be finite and positive')
     work = Path(work).resolve()
-    temp = Path(env['TMPDIR']).resolve()
-    require_disk_backed_paths(work, temp)
+    require_disk_backed_paths(work, env.get('TMPDIR', ''))
     started = time.monotonic()
     deadline = started + budget
     parent_namespace = os.readlink('/proc/self/ns/pid')

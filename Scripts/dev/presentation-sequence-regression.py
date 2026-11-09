@@ -342,6 +342,7 @@ def main():
     shutil.copy2(Path(__file__).parent / 'fixtures/presentation-tray.py', fixtures / 'presentation-tray.py')
     shutil.copy2(__file__, shell / 'Scripts/dev/presentation-sequence-regression.py')
     shutil.copy2(Path(__file__).parent / 'presentation_harness.py', shell / 'Scripts/dev/presentation_harness.py')
+    shutil.copy2(Path(__file__).parent / 'workspace_guard.py', shell / 'Scripts/dev/workspace_guard.py')
     main_qml = shell / 'shell.qml'
     text = main_qml.read_text().replace('import Quickshell\n', 'import Quickshell\nimport Quickshell.Io\nimport Quickshell.Wayland\nimport Quickshell.Services.SystemTray\nimport qs.Modules.Dock\nimport qs.Modules.Bar.Extras\n')
     text = text.replace('      OSD {}', '      OSD { Component.onCompleted: shellRoot._sequenceOsd = this }')
