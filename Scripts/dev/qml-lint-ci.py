@@ -15,6 +15,8 @@ import shutil
 import subprocess
 import sys
 
+from workspace_guard import require_disk_backed_paths
+
 
 class GateError(Exception):
     """A tooling prerequisite or lint contract failed."""
@@ -66,18 +68,11 @@ def main():
         parser.error('run as the command of a disposable container (PID 1)')
     source = args.source.resolve()
     work = args.workspace.resolve()
-    temporary_roots = (Path('/tmp'), Path('/dev/shm'), Path('/run'), Path('/var/run'))
-    if work.is_relative_to(source) or any(work == p or p in work.parents for p in temporary_roots):
+    if work.is_relative_to(source):
         parser.error('workspace must be disk-backed and outside the source tree')
-    parent = work.parent
-    while not parent.exists():
-        parent = parent.parent
     try:
-        filesystem = subprocess.check_output(['findmnt', '-n', '-o', 'FSTYPE', '-T', str(parent)],
-                                             text=True, timeout=5).strip()
-    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
-        raise GateError('could not determine the workspace filesystem') from error
-    if filesystem in ('tmpfs', 'ramfs', 'devtmpfs', 'hugetlbfs'):
+        require_disk_backed_paths(work)
+    except ValueError:
         parser.error('workspace must be disk-backed and outside the source tree')
     work.mkdir()  # Refuse to overwrite an earlier run.
     shell = work / 'source'
