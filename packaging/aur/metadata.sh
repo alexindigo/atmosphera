@@ -11,6 +11,8 @@ depends=(
   'python-dbus'
   'python-gobject'
   'wlr-randr'
+  'wl-clipboard'
+  'git'
 )
 optdepends=(
   'cliphist: For clipboard history support'
@@ -24,5 +26,10 @@ optdepends=(
   'qt6-5compat: required by some registry plugins (e.g. cookie-clock)'
   'qt6-websockets: required by some registry plugins (e.g. hassio)'
   'xdg-desktop-portal-gnome: screencast / screen-sharing support (niri cannot use -wlr)'
+  'fcitx5: input method framework (launched at session start by default)'
+  'bluez-utils: Bluetooth pairing with PIN entry and signal-strength polling'
+  'evolution-data-server: calendar events in the clock panel'
+  'python-dateutil: recurring monthly/yearly calendar events'
+  'qt6-webengine: PDF previews in the file chooser'
 )
 provides=('atmosphera' 'xdg-desktop-portal-impl')
