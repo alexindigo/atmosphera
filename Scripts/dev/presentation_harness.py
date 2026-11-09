@@ -13,6 +13,9 @@ import subprocess
 import sys
 import time
 
+# Re-exported: entry points import the guard from the harness.
+from workspace_guard import check_execution_paths, require_disk_backed_paths  # noqa: F401
+
 DEFAULT_BUDGET = 375.0
 TEARDOWN_GRACE = 3.0
 
@@ -47,9 +50,7 @@ def run_harness(argv, work, env, budget):
     if not math.isfinite(budget) or budget <= 0:
         raise ValueError('execution budget must be finite and positive')
     work = Path(work).resolve()
-    temp = Path(env['TMPDIR']).resolve()
-    if any(str(p).startswith(('/tmp/', '/dev/shm/')) for p in (work, temp)):
-        raise ValueError('use disk-backed workspace and TMPDIR')
+    require_disk_backed_paths(work, env.get('TMPDIR', ''))
     started = time.monotonic()
     deadline = started + budget
     parent_namespace = os.readlink('/proc/self/ns/pid')

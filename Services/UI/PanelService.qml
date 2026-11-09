@@ -406,6 +406,14 @@ Singleton {
   }
 
   function closedPanel(panel) {
+    // Content destruction can reset a plugin's behavior declarations before
+    // close completes. Release by registered identity, never current flags.
+    const wasExclusive = openedPanel === panel || closingPanel === panel;
+    if (coexistingPanel === panel) {
+      coexistingPanel = null;
+      assignToSlot(2, null);
+    }
+
     if (openedPanel && openedPanel === panel) {
       openedPanel = null;
       assignToSlot(0, null);
@@ -415,6 +423,10 @@ Singleton {
       closingPanel = null;
       assignToSlot(1, null);
     }
+
+    // Closing an overlay must not disturb the ordinary panel's keyboard lease.
+    if (!wasExclusive)
+      return;
 
     // Reset keyboard init state
     isInitializingKeyboard = false;

@@ -24,6 +24,7 @@ SmartPanel {
   // Plugin instance
   property var pluginInstance: null
   property int _loadGeneration: 0
+  panelBehaviorReady: currentPluginId === "" || pluginInstance !== null
 
   // Reference to the plugin content loader (set when panel content is created)
   property var contentLoader: null
