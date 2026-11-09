@@ -8,7 +8,7 @@ import re
 import shutil
 import subprocess
 import sys
-from presentation_harness import add_execution_arguments, remaining_budget, run_harness, write_receipt
+from presentation_harness import add_execution_arguments, check_execution_paths, remaining_budget, run_harness, write_receipt
 
 PROBE = r'''
   property var _sequenceOsd: null
@@ -330,7 +330,7 @@ def main():
     add_execution_arguments(parser)
     args = parser.parse_args()
     work = args.workspace.resolve()
-    assert not str(work).startswith('/tmp/') and 'TMPDIR' in os.environ
+    check_execution_paths(parser, work)
     work.mkdir()
     shell = work / 'shell'
     shutil.copytree(args.source, shell, ignore=shutil.ignore_patterns('.git', '__pycache__', '*.bak'))

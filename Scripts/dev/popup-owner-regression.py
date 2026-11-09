@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 import re
 import shutil
-from presentation_harness import add_execution_arguments, run_harness, write_receipt
+from presentation_harness import add_execution_arguments, check_execution_paths, run_harness, write_receipt
 
 PROBE = r'''
   property int _ownerCase: 0
@@ -161,7 +161,7 @@ def main():
     add_execution_arguments(parser)
     args = parser.parse_args()
     work = args.workspace.resolve()
-    assert not str(work).startswith('/tmp/') and 'TMPDIR' in os.environ
+    check_execution_paths(parser, work)
     work.mkdir()
     shell = work / 'shell'
     shutil.copytree(args.source, shell, ignore=shutil.ignore_patterns('.git', '__pycache__', '*.bak'))

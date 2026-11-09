@@ -9,13 +9,14 @@ import sys
 import threading
 import time
 from unittest.mock import patch
-from presentation_harness import run_harness
+import presentation_harness
+from presentation_harness import check_execution_paths, run_harness
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--workspace', type=Path, required=True)
 args = parser.parse_args()
 work = args.workspace.resolve()
-assert not str(work).startswith('/tmp/')
+check_execution_paths(parser, work)
 work.mkdir()
 
 
@@ -49,6 +50,23 @@ def check_disk_guard():
                 else:
                     raise AssertionError(f'accepted {location}={invalid}')
             rejected.append(dict(location=location, path=invalid))
+    # A memory-backed root may itself be a symlink. Its real target and
+    # descendants must stay rejected, so model one inside the workspace.
+    real_root = work / 'memory-root-target'
+    real_root.mkdir()
+    linked_root = work / 'memory-root-link'
+    linked_root.symlink_to(real_root, target_is_directory=True)
+    with patch.object(presentation_harness, 'MEMORY_BACKED_ROOTS', (str(linked_root),)):
+        for invalid in (real_root, real_root / 'child', linked_root / 'child'):
+            with patch.object(Path, 'write_text', side_effect=AssertionError('write before validation')), \
+                    patch('presentation_harness.subprocess.Popen', side_effect=AssertionError('spawn before validation')):
+                try:
+                    run_harness(['unused'], invalid, dict(os.environ), 1.0)
+                except ValueError as error:
+                    assert str(error) == 'use disk-backed workspace and TMPDIR'
+                else:
+                    raise AssertionError(f'accepted path under symlinked root: {invalid}')
+            rejected.append(dict(location='symlinked-root', path=str(invalid)))
     return rejected
 
 

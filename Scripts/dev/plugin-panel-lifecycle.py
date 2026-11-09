@@ -11,7 +11,7 @@ from pathlib import Path
 import re
 import shutil
 
-from presentation_harness import add_execution_arguments, require_disk_backed_paths, run_harness, write_receipt
+from presentation_harness import add_execution_arguments, check_execution_paths, run_harness, write_receipt
 
 
 PANEL = '''import QtQuick
@@ -160,11 +160,7 @@ def main():
     add_execution_arguments(parser)
     args = parser.parse_args()
     work = args.workspace.resolve()
-    temp = Path(os.environ['TMPDIR']).resolve()
-    try:
-        require_disk_backed_paths(work, temp)
-    except ValueError:
-        parser.error('use disk-backed workspace and TMPDIR inside the assigned VM')
+    check_execution_paths(parser, work)
     work.mkdir()
     shell = work / 'shell'
     shutil.copytree(args.source, shell, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '*.bak'))

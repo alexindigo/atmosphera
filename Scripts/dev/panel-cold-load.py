@@ -12,7 +12,7 @@ from pathlib import Path
 import re
 import shutil
 import sys
-from presentation_harness import add_execution_arguments, run_harness, write_receipt
+from presentation_harness import add_execution_arguments, check_execution_paths, run_harness, write_receipt
 
 
 PROBE = r'''
@@ -107,9 +107,7 @@ def main():
     args = parser.parse_args()
     source = args.source.resolve()
     work = args.workspace.resolve()
-    temp = Path(os.environ["TMPDIR"]).resolve()
-    if str(work).startswith("/tmp/") or str(temp).startswith("/tmp/"):
-        parser.error("use the assigned VM's disk-backed workspace and TMPDIR")
+    check_execution_paths(parser, work)
     work.mkdir()  # Preserve earlier runs instead of replacing their evidence.
     shell = work / "shell"
     shutil.copytree(source, shell, ignore=shutil.ignore_patterns(".git", "__pycache__", "*.bak"))
