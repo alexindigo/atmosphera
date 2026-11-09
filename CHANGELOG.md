@@ -1,5 +1,73 @@
 # Changelog
 
+## [0.9.2] - 2026-11-09
+
+### 2026-11-09
+
+**Fix**
+
+The AUR packages now declare everything the shell runs. `wl-clipboard` is
+required for copy actions (network details, calculator, emoji, clipboard history)
+and `git` for the plugin catalog and plugin installs. New optional dependencies
+name the packages behind optional features: fcitx5 input, Bluetooth PIN pairing,
+calendar events and their recurrence, and PDF previews in the file chooser.
+The windows map fix from 2026-11-08 lands through PR #11.
+
+- build(aur): declare wl-clipboard and git, add optional feature packages (`dbf77e2fb`)
+- Merge pull request #11: Fix map panel input and unexpected dismissal (`033135582`)
+
+**Development**
+
+Test harnesses and the CI lint gate share one workspace check. It rejects
+RAM-backed filesystems by the filesystem that actually backs a path, reserved
+runtime directories and an empty `TMPDIR`, before creating anything.
+
+- fix(tests): reject memory-backed workspaces by backing filesystem (`9c484b46b`)
+- refactor(ci): use the shared workspace guard in QML lint (`7aac7079b`)
+
+### 2026-11-08
+
+**Fix**
+
+Plugin panels that declare themselves non-exclusive, such as the niri windows
+map, now take ownership only after their behavior is known. The map again reacts
+to clicks, stays open next to other panels, and is no longer closed when another
+panel opens.
+
+- fix(panels): wait for plugin behavior before claiming ownership (`ea0021768`)
+
+**Development**
+
+GitHub's QML check now lints the whole tree with the project's Quickshell and Qt
+toolchain and the real native QML modules. Earlier runs skipped linting on older
+runner images. The check proves that a real property is accepted and a typo is
+rejected before linting every file, and the read-only lint jobs keep no checkout
+credentials. Harness workspace and `TMPDIR` checks run before any setup.
+
+- ci(qml): run full-tree lint with complete native imports (`2d1363f7a`)
+- ci(lint): tighten checkout and workspace boundaries (`69d2b78d6`)
+- Merge pull request #12: Make QML CI run real full-tree lint (`37064877d`)
+- fix(tests): reject memory-backed roots before harness setup (`98d26c406`)
+- fix(tests): resolve memory-backed roots and validate paths before setup (`ea17782c9`)
+
+**Maintenance**
+
+The pinned nixpkgs revision was refreshed for Nix-based development and packaging.
+
+- chore(flake): update flake.lock (`f83760597`)
+
+### 2026-10-27 - 2026-11-07
+
+**Maintenance**
+
+Scheduled nixpkgs lockfile refreshes for Nix-based development and packaging.
+
+- chore(flake): update flake.lock (`434addd51`)
+- chore(flake): update flake.lock (`b96eac436`)
+- chore(flake): update flake.lock (`d562c66c2`)
+- chore(flake): update flake.lock (`fd715c6b6`)
+- chore(flake): update flake.lock (`5e043d24a`)
+
 ## [0.9.1] — 2026-10-27
 
 ### 2026-10-27
