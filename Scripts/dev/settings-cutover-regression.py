@@ -27,6 +27,11 @@ def main():
                     '--source', str(args.source), '--installed', str(args.installed),
                     '--output', str(args.output/'migrations'),
                     '--work-root', str(args.work_root/'migrations')], check=True, timeout=185)
+    subprocess.run(['timeout', '160', 'python3', '-B',
+                    str(args.source/'Scripts/dev/settings-native-lists-regression.py'),
+                    '--source', str(args.source), '--installed', str(args.installed),
+                    '--output', str(args.output/'native-lists'),
+                    '--work-root', str(args.work_root/'native-lists')], check=True, timeout=165)
     sources = args.installed/'Commons/SettingsSources.qml'
     original_sources = sources.read_bytes()
     assert original_sources == (args.source/'Commons/SettingsSources.qml').read_bytes()
