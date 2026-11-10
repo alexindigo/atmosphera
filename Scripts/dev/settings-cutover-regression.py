@@ -22,6 +22,11 @@ def main():
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     args.work_root.mkdir(parents=True, exist_ok=False)
+    subprocess.run(['timeout', '180', 'python3', '-B',
+                    str(args.source/'Scripts/dev/settings-migrations-regression.py'),
+                    '--source', str(args.source), '--installed', str(args.installed),
+                    '--output', str(args.output/'migrations'),
+                    '--work-root', str(args.work_root/'migrations')], check=True, timeout=185)
     sources = args.installed/'Commons/SettingsSources.qml'
     original_sources = sources.read_bytes()
     assert original_sources == (args.source/'Commons/SettingsSources.qml').read_bytes()
