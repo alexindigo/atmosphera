@@ -34,6 +34,7 @@ function create(configuration) {
     var assignments = {};
     var captures = {};
     var saveDeliveries = {};
+    var directoryProbes = {};
 
     function effect(kind, detail) {
         detail.kind = kind;
@@ -381,11 +382,29 @@ function create(configuration) {
         checkPersistWaiters();
     }
 
-    function runSectionIo(mode, section, temporary, input, complete) {
+    function runSectionIo(mode, section, temporary, input, complete, path) {
         var token = ++operationSerial;
         var owner = root._activePersist && root._activePersist.section === section ? root._activePersist.revision : 0;
         operations[token] = {mode: mode, section: section, owner: owner, complete: complete};
-        effect("io", {token: token, owner: owner, mode: mode, section: section, temporary: temporary, input: input});
+        effect("io", {token: token, owner: owner, mode: mode, section: section, temporary: temporary, input: input, path: path});
+    }
+    function directoryChanged(directory) {
+        if (directory !== "config" && directory !== "overrides") throw new Error("Unknown watched directory");
+        var probe = directoryProbes[directory] || (directoryProbes[directory] = {running: false, pending: false, identity: null});
+        if (probe.running) { probe.pending = true; return; }
+        probe.running = true;
+        runSectionIo("directory", directory, null, undefined, function (success, payload) {
+            probe.running = false;
+            var identity = success ? payload.identity : null;
+            var changed = !success || (probe.identity === null ? root.isLoaded : probe.identity !== identity);
+            probe.identity = identity;
+            if (changed) {
+                effect("rewatch", {directory: directory});
+                if (directory === "config") effect("reload", {section: "legacy"});
+                for (var i = 0; i < root._sections.length; i++) effect("reload", {section: root._sections[i]});
+            }
+            if (probe.pending) { probe.pending = false; directoryChanged(directory); }
+        }, directory === "config" ? config.configDir : config.overridesDir);
     }
     function refreshAccepted(section, complete, job, settlement, callbackToken) {
         if (!root._readWaiters[section]) root._readWaiters[section] = [];
@@ -813,6 +832,7 @@ function create(configuration) {
             case "setupBegin": root._captureDepth++; value = !!root._setupBundles[event.identity]; break;
             case "setupSubmit": setupSubmit(event.identity, event.callbackToken); break;
             case "readRequest": refreshAccepted(event.section, null, null, event.settlement, event.callbackToken); break;
+            case "directoryChanged": directoryChanged(event.directory); break;
             case "readDispatch": finishObservedRead(event.section); break;
             case "ioCompleted":
                 var operation = operations[event.token];

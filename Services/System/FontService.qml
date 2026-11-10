@@ -1,6 +1,7 @@
 pragma Singleton
 
 import QtQuick
+import QtQuick as Quick
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
@@ -91,7 +92,7 @@ Singleton {
     monospaceFonts.clear();
 
     availableFonts.append({
-                            "key": Qt.application.font.family,
+                            "key": Quick.Application.font.family,
                             "name": I18n.tr("panels.indicator.system-default")
                           });
     monospaceFonts.append({

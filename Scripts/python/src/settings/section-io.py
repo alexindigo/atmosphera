@@ -28,6 +28,25 @@ def checksum(value):
     return hashlib.sha256(value).hexdigest()
 
 
+def directory_identity(path):
+    try:
+        link = path.lstat()
+    except FileNotFoundError:
+        return {"identity": "missing"}
+    target = os.readlink(path) if stat.S_ISLNK(link.st_mode) else None
+    try:
+        referent = path.stat()
+    except FileNotFoundError:
+        referent = None
+    # Child creation/rename changes directory times, not the watched directory.
+    identity = [link.st_dev, link.st_ino, link.st_mode, link.st_uid, link.st_gid, target,
+                [referent.st_dev, referent.st_ino, referent.st_mode,
+                 referent.st_uid, referent.st_gid] if referent else None]
+    if referent and not stat.S_ISDIR(referent.st_mode):
+        raise ValueError("Watched path is not a directory")
+    return {"identity": checksum(json.dumps(identity).encode())}
+
+
 def inspect(path):
     try:
         link = path.lstat()
@@ -77,6 +96,10 @@ def main():
     path = Path(name)
     _result_context.update(path=str(path), phase="inspect" if mode == "inspect" else "input",
                            publication={"attempted": False, "completed": False, "uncertain": False})
+    if mode == "directory":
+        _result_context["phase"] = "directory"
+        print(json.dumps({"ok": True, **directory_identity(path)}))
+        return 0
     if mode == "inspect":
         print(json.dumps({"ok": True, "state": inspect(path)}))
         return 0
