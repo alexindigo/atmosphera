@@ -2,7 +2,7 @@
   "format": 1,
   "inputs": {
     "Configs/defaults.json": "fb940a326872df6351c243d35b665af137e9783459164a1fc5ffdbd25bd70435",
-    "Configs/settings-schema-overlay.json": "f2fd471b3c2b389f15192afca929063a0fd790f8c8c5e174526678f959a845b9"
+    "Configs/settings-schema-overlay.json": "c8689dd8043059820332e416b923436426f11ff5987e7b89a36d79e449af81aa"
   },
   "paths": [
     {
@@ -763,6 +763,7 @@
                     },
                     "instanceSettings": {
                       "fields": {},
+                      "open": true,
                       "optional": true,
                       "type": "Record"
                     },
@@ -1163,6 +1164,7 @@
                       "type": "Real"
                     }
                   },
+                  "open": true,
                   "type": "Record"
                 },
                 "optional": true,
@@ -1402,6 +1404,7 @@
                     },
                     "instanceSettings": {
                       "fields": {},
+                      "open": true,
                       "optional": true,
                       "type": "Record"
                     },
@@ -1802,6 +1805,7 @@
                       "type": "Real"
                     }
                   },
+                  "open": true,
                   "type": "Record"
                 },
                 "optional": true,
@@ -2041,6 +2045,7 @@
                     },
                     "instanceSettings": {
                       "fields": {},
+                      "open": true,
                       "optional": true,
                       "type": "Record"
                     },
@@ -2441,6 +2446,7 @@
                       "type": "Real"
                     }
                   },
+                  "open": true,
                   "type": "Record"
                 },
                 "optional": true,
@@ -2738,6 +2744,7 @@
           },
           "instanceSettings": {
             "fields": {},
+            "open": true,
             "optional": true,
             "type": "Record"
           },
@@ -3138,6 +3145,7 @@
             "type": "Real"
           }
         },
+        "open": true,
         "type": "Record"
       },
       "path": [
@@ -3381,6 +3389,7 @@
           },
           "instanceSettings": {
             "fields": {},
+            "open": true,
             "optional": true,
             "type": "Record"
           },
@@ -3781,6 +3790,7 @@
             "type": "Real"
           }
         },
+        "open": true,
         "type": "Record"
       },
       "path": [
@@ -4024,6 +4034,7 @@
           },
           "instanceSettings": {
             "fields": {},
+            "open": true,
             "optional": true,
             "type": "Record"
           },
@@ -4424,6 +4435,7 @@
             "type": "Real"
           }
         },
+        "open": true,
         "type": "Record"
       },
       "path": [
@@ -4871,6 +4883,7 @@
           },
           "instanceSettings": {
             "fields": {},
+            "open": true,
             "optional": true,
             "type": "Record"
           },
@@ -5271,6 +5284,7 @@
             "type": "Real"
           }
         },
+        "open": true,
         "type": "Record"
       },
       "path": [
@@ -5514,6 +5528,7 @@
           },
           "instanceSettings": {
             "fields": {},
+            "open": true,
             "optional": true,
             "type": "Record"
           },
@@ -5914,6 +5929,7 @@
             "type": "Real"
           }
         },
+        "open": true,
         "type": "Record"
       },
       "path": [
@@ -6232,6 +6248,7 @@
                 },
                 "instanceSettings": {
                   "fields": {},
+                  "open": true,
                   "optional": true,
                   "type": "Record"
                 },
@@ -6632,6 +6649,7 @@
                   "type": "Real"
                 }
               },
+              "open": true,
               "type": "Record"
             },
             "optional": true,

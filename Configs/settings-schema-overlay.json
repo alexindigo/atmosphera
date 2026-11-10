@@ -3,9 +3,9 @@
   "definitions": {
     "color": {"type": "String", "format": "QColor"},
     "strings": {"type": "List", "element": {"type": "String"}},
-    "widget": {"type": "Record", "fields": {
+    "widget": {"type": "Record", "open": true, "fields": {
       "id": {"type": "String"},
-      "instanceSettings": {"type": "Record", "optional": true, "fields": {}},
+      "instanceSettings": {"type": "Record", "open": true, "optional": true, "fields": {}},
       "appId": {"type": "String", "optional": true},
       "applyToAllMonitors": {"type": "Boolean", "optional": true},
       "blacklist": {"ref": "strings", "optional": true},

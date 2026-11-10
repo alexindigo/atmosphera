@@ -15,6 +15,7 @@ QtObject {
       writable: false
       optional: true
       watchMode: JsonFileSource.Live
+      unknownData: JsonFileSource.Preserve
       conflictPolicy: JsonFileSource.StrictSourcePreimage
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
     },
@@ -26,7 +27,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -38,7 +40,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -50,7 +53,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -62,7 +66,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -74,7 +79,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -86,7 +92,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -98,7 +105,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -110,7 +118,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -122,7 +131,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -134,7 +144,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -146,7 +157,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -158,7 +170,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -170,7 +183,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -182,7 +196,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -194,7 +209,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -206,7 +222,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -218,7 +235,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -230,7 +248,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -242,7 +261,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -254,7 +274,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -266,7 +287,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -278,7 +300,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -290,7 +313,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -302,7 +326,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -314,7 +339,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -326,7 +352,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -338,7 +365,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -350,7 +378,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     },
@@ -362,7 +391,8 @@ QtObject {
       writable: true
       optional: true
       watchMode: JsonFileSource.Live
-      conflictPolicy: JsonFileSource.StrictSourcePreimage
+      unknownData: JsonFileSource.Preserve
+      conflictPolicy: JsonFileSource.StrictPendingRebase
       startupErrorPolicy: JsonFileSource.SkipProjectionRetainError
       deleteWhenEmpty: true
     }

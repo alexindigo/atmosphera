@@ -21,7 +21,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[2]
 TYPES = {'Boolean', 'Integer', 'Real', 'String', 'List', 'Record', 'Map', 'Group'}
 FIELDS = {'type', 'element', 'fields', 'optional', 'nullable', 'sensitive',
-          'machineLocal', 'choices', 'minimum', 'maximum', 'idField', 'stringPattern'}
+          'machineLocal', 'choices', 'minimum', 'maximum', 'idField', 'stringPattern', 'open'}
 ENV = {('general', 'avatarImage'): 'root.homeDirectory + "/.face"',
        ('wallpaper', 'directory'): 'root.homeDirectory + "/Pictures/Wallpapers"',
        ('ui', 'fontDefault'): 'root.defaultFont', ('ui', 'fontFixed'): 'root.fixedFont',
@@ -163,9 +163,11 @@ def resolve(descriptor, definitions, seen=()):
         raise ValueError('fields on non-record')
     if descriptor.get('idField'):
         raise ValueError('initial schema lists deliberately have no unique row identity')
-    for flag in ('optional', 'nullable', 'sensitive', 'machineLocal'):
+    for flag in ('optional', 'nullable', 'sensitive', 'machineLocal', 'open'):
         if flag in descriptor and type(descriptor[flag]) is not bool:
             raise ValueError(f'{flag} must be Boolean')
+    if 'open' in descriptor and kind != 'Record':
+        raise ValueError('open is valid only on Record descriptors')
     return descriptor
 
 
@@ -284,7 +286,7 @@ def declarations(node, key=None, default=None, path=(), depth=1, has_default=Tru
             if isinstance(default,dict):
                 value = '('+value+')'
             lines.append(pad+'  defaultValue: '+value)
-    for flag in ('optional','nullable','sensitive','machineLocal','choices','minimum','maximum','idField','stringPattern'):
+    for flag in ('optional','nullable','sensitive','machineLocal','choices','minimum','maximum','idField','stringPattern','open'):
         if flag in node:
             lines.append(pad+'  '+flag+': '+literal(node[flag]))
     if node['type'] in ('List','Map'):
@@ -311,7 +313,8 @@ def outputs(root):
         sources += '    JsonFileSource {\n'
         for key,value in [('layerId',literal(layer)),('sourceId',literal(source)),('prefix',literal(prefix)),
                           ('path',file),('writable',literal(writable)),('optional','true'),
-                          ('watchMode','JsonFileSource.Live'),('conflictPolicy','JsonFileSource.StrictSourcePreimage'),
+                          ('watchMode','JsonFileSource.Live'),('unknownData','JsonFileSource.Preserve'),
+                          ('conflictPolicy','JsonFileSource.StrictPendingRebase' if writable else 'JsonFileSource.StrictSourcePreimage'),
                           ('startupErrorPolicy','JsonFileSource.SkipProjectionRetainError')]+([('deleteWhenEmpty','true')] if writable else []):
             sources += f'      {key}: {value}\n'
         sources += '    }'+(',' if i<len(records)-1 else '')+'\n'

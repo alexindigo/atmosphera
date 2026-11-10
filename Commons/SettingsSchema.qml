@@ -411,6 +411,7 @@ ConfigSchema {
             optional: true
             ConfigValue {
               valueType: ConfigValue.Record
+              open: true
               ConfigValue {
                 key: "appId"
                 valueType: ConfigValue.String
@@ -698,6 +699,7 @@ ConfigSchema {
                 key: "instanceSettings"
                 valueType: ConfigValue.Record
                 optional: true
+                open: true
               }
               ConfigValue {
                 key: "ipcIdentifier"
@@ -1198,6 +1200,7 @@ ConfigSchema {
             optional: true
             ConfigValue {
               valueType: ConfigValue.Record
+              open: true
               ConfigValue {
                 key: "appId"
                 valueType: ConfigValue.String
@@ -1485,6 +1488,7 @@ ConfigSchema {
                 key: "instanceSettings"
                 valueType: ConfigValue.Record
                 optional: true
+                open: true
               }
               ConfigValue {
                 key: "ipcIdentifier"
@@ -1985,6 +1989,7 @@ ConfigSchema {
             optional: true
             ConfigValue {
               valueType: ConfigValue.Record
+              open: true
               ConfigValue {
                 key: "appId"
                 valueType: ConfigValue.String
@@ -2272,6 +2277,7 @@ ConfigSchema {
                 key: "instanceSettings"
                 valueType: ConfigValue.Record
                 optional: true
+                open: true
               }
               ConfigValue {
                 key: "ipcIdentifier"
@@ -2808,6 +2814,7 @@ ConfigSchema {
         ]
         ConfigValue {
           valueType: ConfigValue.Record
+          open: true
           ConfigValue {
             key: "appId"
             valueType: ConfigValue.String
@@ -3095,6 +3102,7 @@ ConfigSchema {
             key: "instanceSettings"
             valueType: ConfigValue.Record
             optional: true
+            open: true
           }
           ConfigValue {
             key: "ipcIdentifier"
@@ -3611,6 +3619,7 @@ ConfigSchema {
         ]
         ConfigValue {
           valueType: ConfigValue.Record
+          open: true
           ConfigValue {
             key: "appId"
             valueType: ConfigValue.String
@@ -3898,6 +3907,7 @@ ConfigSchema {
             key: "instanceSettings"
             valueType: ConfigValue.Record
             optional: true
+            open: true
           }
           ConfigValue {
             key: "ipcIdentifier"
@@ -4417,6 +4427,7 @@ ConfigSchema {
         ]
         ConfigValue {
           valueType: ConfigValue.Record
+          open: true
           ConfigValue {
             key: "appId"
             valueType: ConfigValue.String
@@ -4704,6 +4715,7 @@ ConfigSchema {
             key: "instanceSettings"
             valueType: ConfigValue.Record
             optional: true
+            open: true
           }
           ConfigValue {
             key: "ipcIdentifier"
@@ -5406,6 +5418,7 @@ ConfigSchema {
         ]
         ConfigValue {
           valueType: ConfigValue.Record
+          open: true
           ConfigValue {
             key: "appId"
             valueType: ConfigValue.String
@@ -5693,6 +5706,7 @@ ConfigSchema {
             key: "instanceSettings"
             valueType: ConfigValue.Record
             optional: true
+            open: true
           }
           ConfigValue {
             key: "ipcIdentifier"
@@ -6206,6 +6220,7 @@ ConfigSchema {
         ]
         ConfigValue {
           valueType: ConfigValue.Record
+          open: true
           ConfigValue {
             key: "appId"
             valueType: ConfigValue.String
@@ -6493,6 +6508,7 @@ ConfigSchema {
             key: "instanceSettings"
             valueType: ConfigValue.Record
             optional: true
+            open: true
           }
           ConfigValue {
             key: "ipcIdentifier"
@@ -7071,6 +7087,7 @@ ConfigSchema {
           optional: true
           ConfigValue {
             valueType: ConfigValue.Record
+            open: true
             ConfigValue {
               key: "appId"
               valueType: ConfigValue.String
@@ -7358,6 +7375,7 @@ ConfigSchema {
               key: "instanceSettings"
               valueType: ConfigValue.Record
               optional: true
+              open: true
             }
             ConfigValue {
               key: "ipcIdentifier"
