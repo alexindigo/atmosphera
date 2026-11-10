@@ -781,7 +781,6 @@ Item {
     // Apply calculated positions (set targets for animation)
     panelBackground.targetX = calculatedX;
     panelBackground.targetY = calculatedY;
-    Logger.w("SmartPanel", "DBG setPosition anchors T:" + panelAnchorTop + " B:" + panelAnchorBottom + " L:" + panelAnchorLeft + " R:" + panelAnchorRight + " useBtn:" + useButtonPosition + " -> x=" + calculatedX + " y=" + calculatedY + " w=" + panelWidth + " h=" + panelHeight, objectName);
 
     // Logger.d("SmartPanel", "Position calculated:", calculatedX, calculatedY);
     // Logger.d("SmartPanel", "  Panel size:", panelWidth, "x", panelHeight);
