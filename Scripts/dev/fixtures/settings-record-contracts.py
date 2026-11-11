@@ -23,9 +23,22 @@ def walk(node):
 
 
 def literal_object(path, name):
-    text = schema.uncomment(path.read_text())
-    tail = text.split("property var " + name + ": (", 1)[1]
-    return json.JSONDecoder().raw_decode(tail)[0]
+    source = path.read_bytes()
+    tree = parser.parse(source)
+    assert not tree.root_node.has_error, path
+    declarations = [node for node in walk(tree.root_node) if node.type == "ui_property"
+        and source[node.child_by_field_name("name").start_byte:node.child_by_field_name("name").end_byte].decode() == name]
+    assert len(declarations) == 1, (path, name, "ambiguous authored metadata")
+    value = declarations[0].child_by_field_name("value")
+    while value.type in ("expression_statement", "parenthesized_expression"):
+        value = next(node for node in value.named_children if node.type != "comment")
+    assert value.type == "object", (path, name, "metadata is not a literal object")
+    literal = bytearray(source[value.start_byte:value.end_byte])
+    for node in walk(value):
+        if node.type == "comment":
+            start, end = node.start_byte - value.start_byte, node.end_byte - value.start_byte
+            literal[start:end] = b" " * (end - start)
+    return json.loads(literal)
 
 
 metadata = {}
