@@ -2,6 +2,7 @@
 import QtQuick
 import QtQuick.Controls
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 import qs.Services.Plugins
 import qs.Widgets
@@ -20,12 +21,17 @@ ShellRoot {
   property int receipts: 0
   property int ownerSaves: 0
   property bool stale: false
+  property var afterFault: null
+  property bool faultBlocked: false
+  property bool exitAfterRepair: false
   property bool verifyOnly: Quickshell.env("I4_VERIFY") === "1"
 
   function check(ok, label) {
     if (!ok)
       throw new Error("I4_PLUGIN_POPUP_ASSERT: " + label);
   }
+  function fail(error){console.error(String(error));if(faultBlocked&&!faultProcess.running){exitAfterRepair=true;fault("repair",function(){});return;}Qt.exit(2);}
+  function openOwner(id,callback){Service._openSettingsOwner(id,function(owner){try{root.check(owner!==null,"native owner "+id);callback(owner);}catch(error){root.fail(error);}});}
   function register(value) {
     api = Service.createPluginAPI("i4-popup", manifest, value, {}, {}, {});
     var plugins = Object.assign({}, Service.loadedPlugins);
@@ -35,6 +41,8 @@ ShellRoot {
     api.createSettingsEditor = function () {
       var editor = originalFactory();
       var wrapper = {
+        get ready(){return editor.ready;},get busy(){return editor.busy;},get dirty(){return editor.dirty;},get closed(){return editor.closed;},get error(){return editor.error;},
+        get values(){return editor.values;},get previewValues(){return editor.previewValues;},fields:editor.fields,whenReady:editor.whenReady,previewScope:editor.previewScope,copyValue:editor.copyValue,rebased:editor.rebased,destroy:function(){editor.destroy();},
         initialValue: editor.initialValue,
         discard: editor.discard,
         apply: function (value, callback) {
@@ -48,7 +56,7 @@ ShellRoot {
             };
           });
           if (root.stale)
-            root.api.pluginSettings = {label: "newer-live", nested: {keep: true}};
+            root.api.pluginSettings.label = "newer-live";
         }
       };
       return wrapper;
@@ -59,22 +67,20 @@ ShellRoot {
       return;
     started = true;
     if (verifyOnly) {
-      Service.loadPluginSettings("i4-popup", function (value) {
+      openOwner("i4-popup", function (value) {
         try {
           root.register(value);
           root.check(root.api.pluginSettings.label === "shared-final", "restarted shared consumer");
           root.check(PluginInstances.entryFor(root.placement).instanceSettings === undefined, "restarted instance reset");
-          root.check(PluginInstances.effectiveSettings(root.api.pluginSettings, root.placement, PluginInstances.revision).label === "shared-final", "restarted instance consumer");
-          console.log("I4_PLUGIN_POPUP: RESTART_PASS");
-          Qt.exit(0);
+           PluginInstances.openRuntime(root.api,root.placement,function(result){try{root.check(result.status==="opened"&&result.editor.values.label==="shared-final","restarted native instance consumer");result.editor.detach();console.log("I4_PLUGIN_POPUP: RESTART_PASS");Qt.exit(0);}catch(error){root.fail(error);}});
         } catch (error) { console.error(String(error)); Qt.exit(2); }
       });
       return;
     }
-    register({label: "shared", nested: {keep: true}});
+    openOwner("i4-popup",function(owner){register(owner);
     Settings.data.bar.widgets.left = [{id: "plugin:i4-popup", tag: "keep", instanceSettings: {label: "instance"}}];
-    popup.openPluginSettings(manifest, "settings");
-    phase = "cancel";
+    Settings.saveResult(function(saved){try{root.check(saved.status==="saved","placement seed saved");popup.openPluginSettings(manifest,"settings");phase="cancel";}catch(error){root.fail(error);}});
+    });
   }
   function deliver() {
     var callback = release;
@@ -112,35 +118,39 @@ ShellRoot {
       check(receipts === 0 && page.completions === 0 && popup.busy && held.status === "saved", "real IO receipt held before feedback");
       deliver();
       check(!popup.busy && !popup.saveFailed && page.completions === 2 && receipts === 1 && ownerSaves === 1 && !popup.dirty, "receipt-driven page callbacks and current refresh");
-      popup.applySettings();
-      phase = "noop";
+      page.stageOnSave=false;popup.applySettings();phase="noop";
     } else if (phase === "noop" && release) {
       check(held.status === "nothing_to_save" && page.completions === 2, "real ordered no-op receipt");
       deliver();
+      page.stageOnSave=true;
       check(!popup.saveFailed && page.completions === 4 && applies === 2, "no-op accepted once");
       // Fail at the actual publication destination, not a fabricated result.
       popup.requestClose();
       phase = "failure-open";
     } else if (phase === "failure-open" && !popup.visible && !popup.currentPlugin) {
       // Gate creates this plugin's destination as a directory with a sentinel.
-      var original = api;
-      api = Service.createPluginAPI("i4-popup-fail", manifest, {label: "failure-base"}, {}, {}, {});
+      phase="opening-failure-owner";
+      openOwner("i4-popup-fail-quarantine",function(quarantined){
+      var scope=quarantined.settingsScope,refused=false;try{scope.values.label="must-not-replace-directory";}catch(error){refused=String(error).indexOf("source-quarantined")!==-1;}
+      check(refused,"native startup directory quarantine retains sentinel");
+      openOwner("i4-popup-fail",function(owner){
+      api = Service.createPluginAPI("i4-popup-fail", manifest, owner, {}, {}, {});
       var plugins = Object.assign({}, Service.loadedPlugins);
       plugins["i4-popup-fail"] = {api: api};
       Service.loadedPlugins = plugins;
       manifest = {id: "i4-popup-fail", name: "failure", entryPoints: {settings: "Page.qml"}, metadata: {}};
       popup.openPluginSettings(manifest, "settings");
       phase = "failure-apply";
+      });});
     } else if (phase === "failure-apply" && popup.opened && page) {
-      page.setLabel("failed-local");
-      popup.applySettings();
-      phase = "failure-wait";
+      phase="failure-blocking";fault("block",function(){page.setLabel("failed-local");popup.applySettings();phase="failure-wait";});
     } else if (phase === "failure-wait" && !popup.busy) {
       check(popup.saveFailed && popup.dirty && popup.visible && page.labelText === "failed-local" && page.lastStatus === "failed", "IO failure retains editor and has failed callback");
-      popup.requestClose();
+      phase="failure-repairing";fault("repair",function(){popup.requestClose();
       check(popup.discardPending, "failed close confirms");
       popup.confirmDiscard();
       phase = "stale-open";
+      });
     } else if (phase === "stale-open" && !popup.visible && !popup.currentPlugin) {
       manifest = {id: "i4-popup", name: "stale", entryPoints: {settings: "Page.qml"}, metadata: {}};
       api = Service.getPluginAPI("i4-popup");
@@ -181,6 +191,8 @@ ShellRoot {
       popup.applySettings();
       phase = "instance-wait";
     } else if (phase === "instance-wait" && !popup.busy) {
+      check(!popup.saveFailed,"instance receipt succeeds");
+      if(instance.pluginSettings.label!=="instance-saved")return;
       check(!popup.saveFailed && instance.pluginSettings.label === "instance-saved", "instance applied consumer");
       page.setLabel("discard-on-reset");
       popup.resetButton.clicked();
@@ -231,12 +243,14 @@ ShellRoot {
     repeat: true
     running: true
     onTriggered: {
-      try { root.drive(); } catch (error) { console.error(String(error)); Qt.exit(2); }
+      try { root.drive(); } catch (error) { root.fail(error); }
     }
   }
   Timer {
-    interval: 240000
+    interval: 90000
     running: true
-    onTriggered: { console.error("I4_PLUGIN_POPUP_ASSERT: watchdog " + root.phase); Qt.exit(2); }
+    onTriggered: root.fail("I4_PLUGIN_POPUP_ASSERT: watchdog " + root.phase)
   }
+  function fault(mode,callback){afterFault=callback;faultProcess.command=["python3","-B",Quickshell.env("I5_DESKTOP_FAULT"),Quickshell.env("ATMOSPHERA_CONFIG_DIR"),mode,"plugins"];faultProcess.running=true;}
+  Process {id:faultProcess;onExited:code=>{try{root.check(code===0,"guarded plugin IO fault");root.faultBlocked=command[command.length-2]==="block";if(root.exitAfterRepair){Qt.exit(2);return;}var callback=root.afterFault;root.afterFault=null;callback();}catch(error){root.fail(error);}}}
 }

@@ -56,6 +56,8 @@ Singleton {
       "context": options && options.context ? String(options.context) : "",
       "work": options && options.work ? JSON.parse(JSON.stringify(options.work)) : null,
       "prepare": options && typeof options.prepare === "function" ? options.prepare : null,
+      "captureToken": options && options.captureToken ? String(options.captureToken) : "",
+      "setupReceipt": null, "settingsReceipt": null,
       "attemptId": 0, "status": "Waiting", "error": "", "callback": callback,
       "attemptEnded": false, "handoff": "" };
     root._records[id] = record;
@@ -174,16 +176,19 @@ Singleton {
       root._settle(record, attempt, false, "Unsupported bindings environment");
       return;
     }
-    if (record.prepare) {
+    if (record.prepare && !record.setupReceipt) {
       root._stage(record, attempt, "setup-save");
       var prepared = false;
       try {
-        record.prepare(record.work, function (success, error) {
+        record.prepare(record.work, function (result) {
           if (prepared || !root._current(record, attempt))
             return;
           prepared = true;
-          if (success) root._save(record, attempt);
-          else root._settle(record, attempt, false, error || "Captured setup save failed");
+          if (result.status === "saved" || result.status === "nothing_to_save") {
+            record.setupReceipt = result;
+            root._save(record, attempt);
+          }
+          else root._settle(record, attempt, false, result.error?.code || "Captured setup save failed");
         }, record.id);
       } catch (exception) {
         root._settle(record, attempt, false, "Captured setup preparation failed");
@@ -208,12 +213,21 @@ Singleton {
     if (!root._current(record, attempt))
       return;
     root._stage(record, attempt, "save");
+    // Persistence already succeeded on an earlier deployment attempt. Retry
+    // continues that exact receipt, not a second save of a succeeded capture.
+    if (record.settingsReceipt) {
+      root._deploy(record, attempt);
+      return;
+    }
     try {
-      Settings.saveBindingsEnvironment(record.environment, function (success, error) {
+      Settings.saveBindingsEnvironment(record.environment, function (result) {
         if (!root._current(record, attempt)) return;
-        if (!success) root._settle(record, attempt, false, error);
-        else root._deploy(record, attempt);
-      }, record.id);
+        if (result.status !== "saved" && result.status !== "nothing_to_save") root._settle(record, attempt, false, result.error?.code || "Managed bindings save failed");
+        else {
+          record.settingsReceipt = result;
+          root._deploy(record, attempt);
+        }
+      }, record.id, record.captureToken);
     } catch (exception) {
       root._settle(record, attempt, false, "Managed bindings save failed");
     }
@@ -266,6 +280,7 @@ Singleton {
     record.error = terminal.error;
     record.status = success ? "Succeeded" : "Stopped";
     if (success) {
+      if (record.kind !== "startup") Settings.releaseManagedRequest(record.id);
       root._queue.shift();
       root._state = "Idle";
       root._error = "";
@@ -292,8 +307,8 @@ Singleton {
 
   Connections {
     target: Settings
-    function onBindingsEnvironmentRequested(environment) {
-      root.requestEnvironment(environment);
+    function onBindingsEnvironmentRequested(environment, captureToken) {
+      root.requestEnvironment(environment, null, {captureToken: captureToken});
     }
   }
 }

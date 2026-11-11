@@ -67,7 +67,7 @@ ShellRoot {
     check(Settings.data.bar.widgets.left.length === 2 && Settings.data.bar.screenOverrides[1].widgets.left[0].tag === "duplicate", "global source and later duplicate untouched");
   }
   function begin() {
-    if (ready || !iconsReady || !Settings.isLoaded)
+    if (ready || !iconsReady || !Settings.isLoaded || !monitor)
       return;
     if (Quickshell.env("I4_VERIFY") === "1") {
       finalChecks();
@@ -182,12 +182,18 @@ ShellRoot {
       parent: window.contentItem
       blocking: false
     }
-    Bar.MonitorWidgetsConfig {
-      id: monitor
+    Loader {
+      id: monitorLoader
       anchors.fill: parent
-      screen: Quickshell.screens[0]
+      active: Settings.isLoaded
+      onLoaded: Qt.callLater(root.begin)
+      sourceComponent: Bar.MonitorWidgetsConfig {
+        anchors.fill: parent
+        screen: Quickshell.screens[0]
+      }
     }
   }
+  readonly property var monitor: monitorLoader.item
   IpcHandler {
     target: "monitorPointer"
     function snapshot(): string {

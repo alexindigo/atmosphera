@@ -104,6 +104,21 @@ Singleton {
 
   // Signals
   signal pluginsChanged
+  property var _reloadCallback: null
+
+  function reloadFromDisk(callback) {
+    if (_reloadCallback || !pluginsFileView.path) {
+      Qt.callLater(function () { callback({status: "failed", error: {code: "registry-not-ready"}}); });
+      return;
+    }
+    _reloadCallback = callback;
+    pluginsFileView.reload();
+  }
+  function _completeReload(success) {
+    var callback = _reloadCallback;
+    _reloadCallback = null;
+    if (callback) callback({status: success ? "reloaded" : "failed", error: {code: success ? "" : "registry-load"}});
+  }
 
   // In-memory plugin cache (populated by scanning disk)
   property var installedPlugins: ({}) // { pluginId: manifest }
@@ -120,7 +135,7 @@ Singleton {
     path: ""
 
     adapter: JsonAdapter {
-      id: adapter
+      id: pluginStateAdapter
       property int version: root.currentVersion
       property var states: ({})
       property list<var> sources: []
@@ -128,10 +143,10 @@ Singleton {
 
     onLoaded: {
       Logger.i("PluginRegistry", "Loaded plugin states from:", path);
-      root.pluginStates = adapter.states || {};
-      root.pluginSources = adapter.sources || [];
-      root._loadedVersion = adapter.version;
-      root._v5Pending = adapter.version < 5;
+      root.pluginStates = pluginStateAdapter.states || {};
+      root.pluginSources = pluginStateAdapter.sources || [];
+      root._loadedVersion = pluginStateAdapter.version;
+      root._v5Pending = pluginStateAdapter.version < 5;
 
       var needsSave = false;
       for (var i = 0; i < root.pluginSources.length; i++) {
@@ -162,11 +177,15 @@ Singleton {
       }
 
       root.migratePluginData(function () {
-        scanPluginFolder();
+        scanPluginFolder(function (success) { root._completeReload(success); });
       });
     }
 
     onLoadFailed: function (error) {
+      if (root._reloadCallback) {
+        root._completeReload(false);
+        return;
+      }
       Logger.w("PluginRegistry", "Failed to load plugins.json, will create it:", error);
       root.pluginStates = {};
       root.pluginSources = [];
@@ -856,7 +875,7 @@ for key in sys.argv[3:]:
   }
 
   // Scan plugin folder to discover installed plugins (single process reads all manifests)
-  function scanPluginFolder() {
+  function scanPluginFolder(callback) {
     Logger.i("PluginRegistry", "Scanning plugin folder:", root.pluginsDir);
 
     var scanProcess = Qt.createQmlObject(`
@@ -912,6 +931,7 @@ for key in sys.argv[3:]:
       Logger.i("PluginRegistry", "All plugin manifests loaded. Total plugins:", loadedCount);
       root.pluginsChanged();
       scanProcess.destroy();
+      if (callback) callback(exitCode === 0);
     });
   }
 
@@ -973,9 +993,9 @@ for key in sys.argv[3:]:
 
   // Save registry to disk (only states and sources)
   function save() {
-    adapter.version = root._v5Pending ? root._loadedVersion : root.currentVersion;
-    adapter.states = root.pluginStates;
-    adapter.sources = root.pluginSources;
+    pluginStateAdapter.version = root._v5Pending ? root._loadedVersion : root.currentVersion;
+    pluginStateAdapter.states = root.pluginStates;
+    pluginStateAdapter.sources = root.pluginSources;
 
     Qt.callLater(() => {
       pluginsFileView.writeAdapter();

@@ -12,6 +12,7 @@ import stat
 import subprocess
 import tempfile
 import time
+import tarfile
 from guest_profile import ProfileBlocked, activate_profile, profile_argument, protect_owned_process
 
 CASES = (
@@ -23,8 +24,16 @@ CASES = (
     "bridge-revision-backed-default-query", "bridge-failed-assignment-baseline-restoration",
 )
 SOURCE_INPUTS = (
-    "Scripts/dev/fixtures/settings-model-invariants.qml", "Helpers/SettingsModel.js",
-    "Helpers/sha256.js", "Helpers/QtObj2JS.js", "Scripts/dev/settings-model-regression.py",
+    "Scripts/dev/fixtures/settings-native-model-invariants.qml",
+    "Scripts/dev/fixtures/native-settings-model/CMakeLists.txt",
+    "Scripts/dev/fixtures/native-settings-model/owner.h",
+    "Scripts/dev/fixtures/native-settings-model/owner.cpp",
+    "Scripts/dev/fixtures/native-settings-model/access.h",
+    "Scripts/dev/fixtures/native-settings-model/probe.h",
+    "Scripts/dev/fixtures/native-settings-model/probe.cpp",
+    "Scripts/dev/fixtures/native-settings-model/native-io.cpp",
+    "Scripts/dev/native-metadata/dependencies/configqml-050/manifest.json",
+    "Scripts/dev/settings-model-regression.py",
     "Scripts/dev/guest_profile.py",
 )
 ERRORS = re.compile(r"ReferenceError|TypeError|SyntaxError|Error loading configuration|Failed to load configuration|"
@@ -121,7 +130,7 @@ def main():
     if copies != hashes:
         raise RuntimeError("inert input copy differs from candidate")
     entry = out / "inert" / "shell.qml"
-    entry.write_text('import QtQuick\nQtObject { property QtObject tests: Loader { source: "Scripts/dev/fixtures/settings-model-invariants.qml" } }\n')
+    entry.write_text('import QtQuick\nQtObject { property QtObject tests: Loader { source: "Scripts/dev/fixtures/settings-native-model-invariants.qml" } }\n')
     # Quickshell's VFS confines relative imports to its config root. Keep the
     # original fixture/model layout inside a small inert input tree, not a full
     # desktop tree or a stripped/rewritten JavaScript module.
@@ -131,6 +140,37 @@ def main():
     env.update(QT_QPA_PLATFORM="offscreen", QT_FORCE_STDERR_LOGGING="1", ATMOSPHERA_DEBUG="0",
                XDG_CACHE_HOME=str(out / "cache"), XDG_CONFIG_HOME=str(out / "config"),
                XDG_DATA_HOME=str(out / "data"), XDG_RUNTIME_DIR=str(runtime_dir))
+    # The test friend is compiled against headers verified against the exact
+    # installed library's git archive, not an arbitrary development checkout.
+    metadata = json.loads((source / "Scripts/dev/native-metadata/dependencies/configqml-050/manifest.json").read_text())
+    pin = metadata["sourceCommit"]
+    for name, expected in metadata["artifacts"].items():
+        if digest(Path("/usr/lib/qt6/qml/ConfigQml") / name) != expected:
+            raise RuntimeError("installed native metadata differs from candidate library pin")
+    workspace = Path(env["TMPDIR"]).parent
+    libraries = []
+    for candidate in workspace.glob("*/configqml-0.5.0"):
+        archive = candidate.parent / "source.tar"
+        if not archive.is_file():
+            continue
+        with tarfile.open(archive) as contents:
+            if contents.pax_headers.get("comment") != pin:
+                continue
+            for header in candidate.glob("*.h"):
+                member = contents.extractfile("configqml-0.5.0/" + header.name)
+                if member is None or member.read() != header.read_bytes():
+                    raise RuntimeError("native control header differs from exact library archive")
+        libraries.append(candidate)
+    if len(libraries) != 1:
+        raise RuntimeError("exact native control library source missing or ambiguous")
+    native_build = out / "native-build"
+    with (out / "native-build.log").open("x") as build_log:
+        subprocess.run(["timeout", "30", "cmake", "-S", str(out / "inert/Scripts/dev/fixtures/native-settings-model"),
+                        "-B", str(native_build), "-G", "Ninja", "-DCONFIGQML_TEST_SOURCE=" + str(libraries[0])],
+                       stdout=build_log, stderr=subprocess.STDOUT, check=True, timeout=35)
+        subprocess.run(["timeout", "60", "cmake", "--build", str(native_build), "--parallel", "4"],
+                       stdout=build_log, stderr=subprocess.STDOUT, check=True, timeout=65)
+    env.update(QML_IMPORT_PATH=str(native_build), MODEL_NATIVE_ROOT=str(out / "native-work"))
     command = [executable, "-p", str(entry)]
     errors, quiet, timed_out = [], False, False
     with (out / "engine.log").open("xb") as log:
@@ -193,7 +233,8 @@ def main():
     status = "BLOCKED" if not quiet else "FAIL" if errors else "PASS"
     result = {"status": status, "cases": traces, "errors": errors, "engine_exit": proc.returncode,
               "timed_out": timed_out, "owned_child_group_gone": quiet, "source_hashes": hashes,
-              "scope": "actual JS model and test bridge only; controlled effects, no production Settings/default/callback/native filesystem proof"}
+              "scope": "installed native core and real ConfigFacade QObjects; controlled native scheduling and real file IO, not full-shell acceptance",
+              "native_library_commit": pin, "native_library_source": str(libraries[0])}
     (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result, indent=2), flush=True)
     print("SETTINGS_MODEL_REGRESSION: " + status, flush=True)

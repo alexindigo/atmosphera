@@ -67,7 +67,7 @@ ShellRoot {
     versions.forEach(function (version) {
       if (effects[version])
         return;
-      var component = Qt.createComponent("./Commons/Migrations/Migration" + version + ".qml");
+      var component = Qt.createComponent("./i5-migration-oracle/Migration" + version + ".qml");
       check(component.status === Component.Ready, "historical oracle component " + version + ": " + component.errorString());
       components[version] = component.createObject(root);
     });
@@ -77,6 +77,18 @@ ShellRoot {
       w: function () {},
       e: function () {}
     };
+    var wrapperComponent = Qt.createComponent("./Commons/Migrations/Migration62.qml");
+    check(wrapperComponent.status === Component.Ready, "shared-source Migration62 wrapper component");
+    var wrapper = wrapperComponent.createObject(root);
+    [["Del"], ["F9"], []].forEach(function (remove) {
+      var raw = {general: {keybinds: {keyRemove: remove}}};
+      var expected = copy(raw);
+      var actual = copy(raw);
+      check(components[62].migrate(expected, logger, raw), "independent original Migration62 oracle");
+      check(wrapper.migrate(actual, logger, raw), "shared-source Migration62 wrapper result");
+      check(canonical(actual) === canonical(expected), "shared-source Migration62 preserves default/custom/empty behavior");
+    });
+    wrapper.destroy();
     spec.cases.forEach(function (test) {
       var original = copy(test.raw);
       var raw = copy(original);

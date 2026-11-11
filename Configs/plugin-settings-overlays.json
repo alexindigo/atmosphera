@@ -1,6 +1,15 @@
 {
   "version": 1,
   "plugins": {
+    "atmosphera-icons": {
+      "2.0.0": { "version": 1, "fields": {} }
+    },
+    "atmosphera-wallpapers": {
+      "1.0.0": { "version": 1, "fields": {} }
+    },
+    "demo-custom-lockscreen": {
+      "1.0.1": { "version": 1, "fields": {} }
+    },
     "2-in-1-tools": {
       "1.2.3": {
         "version": 1,
@@ -5361,7 +5370,10 @@
     },
     "shell-profiles": {
       "1.0.3": "runtime-port-coupled-to-configqml-owner",
-      "1.0.4": "runtime-port-coupled-to-configqml-owner"
+      "1.0.4": "runtime-port-coupled-to-configqml-owner",
+      "1.0.5": "runtime-port-coupled-to-configqml-owner",
+      "1.0.6": "runtime-port-coupled-to-configqml-owner",
+      "1.0.7": "runtime-port-coupled-to-configqml-owner"
     }
   }
 }

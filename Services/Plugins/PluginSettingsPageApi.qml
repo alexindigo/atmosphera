@@ -1,10 +1,12 @@
 import QtQuick
+import qs.Commons
 
 // Editor-only API: preferences are local; saveSettings stages page input.
 // The popup alone invokes the selected editor's Apply and completes callbacks.
 QtObject {
   id: root
   required property var base
+  required property var editor
   property var pluginSettings: ({})
   property var initialSettings: ({})
   property var _preview: null
@@ -44,11 +46,12 @@ QtObject {
   readonly property var trp: base ? base.trp : null
   readonly property var hasTranslation: base ? base.hasTranslation : null
 
+  function copyValue(value) { return editor.copyValue(value); }
+
   function previewSettings(patch) {
     if (!_preview && base && typeof base.createSettingsPreview === "function")
-      _preview = base.createSettingsPreview();
+      _preview = base.createSettingsPreview(editor);
     if (!_preview || !_preview.update(patch)) return false;
-    pluginSettings = Object.assign(Object.create(null), pluginSettings, JSON.parse(JSON.stringify(patch)));
     staged = true;
     return true;
   }
@@ -56,9 +59,8 @@ QtObject {
   function capturePreview() { return _preview ? _preview.capture() : null; }
 
   function refresh(value, captured) {
-    initialSettings = JSON.parse(JSON.stringify(value));
+    initialSettings = Settings.store.copyValue(value);
     if (_preview) _preview.acknowledge(captured);
-    pluginSettings = JSON.parse(JSON.stringify(_preview && _preview.pending() ? _preview.values() : value));
   }
 
   function releasePreview() {

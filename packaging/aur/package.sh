@@ -14,7 +14,8 @@ package() {
   # singletons.
   install -dm755 "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen"
   install -Dm644 Quickshell/atmosphera-lockscreen/shell.qml "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/shell.qml"
-  for d in Assets Bindings Commons Configs Helpers Modules Services Widgets builtin; do
+  install -Dm644 Quickshell/atmosphera-lockscreen/LockSession.qml "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/LockSession.qml"
+  for d in Assets Bindings Commons Configs Helpers Modules Scripts Services Widgets builtin; do
     ln -sfn "../atmosphera/$d" "$pkgdir/etc/xdg/quickshell/atmosphera-lockscreen/$d"
   done
   rm -rf "$pkgdir/etc/xdg/quickshell/atmosphera/tmp"

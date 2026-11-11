@@ -36,6 +36,11 @@ import QtQuick
 import Quickshell
 import qs.Commons
 
+ShellRoot {
+  SettingsBootstrap { id: bootstrap }
+  Loader {
+    active: bootstrap.ready
+    sourceComponent: Component {
 Item {
   id: probe
 
@@ -214,5 +219,8 @@ Item {
       graceTimer.start();
     else
       done();
+  }
+}
+    }
   }
 }

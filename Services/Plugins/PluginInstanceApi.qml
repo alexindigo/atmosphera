@@ -48,40 +48,96 @@ QtObject {
   property var trp: base ? base.trp : null
   property var hasTranslation: base ? base.hasTranslation : null
 
-  // Plugin settings with this placement's instanceSettings on top. Reactive to
-  // plugin-level saves (base) and to instance saves (PluginInstances.revision).
-  property var pluginSettings: PluginInstances.effectiveSettings(base ? base.pluginSettings : null, placement, PluginInstances.revision)
+  property var runtime: null
+  property string _openError: ""
+  property var _lifetime: ({alive: true})
+  property var _cancelOpen: null
+  property var _cancelPreviewOpen: null
+  property var _inheritedPreview: null
+  property var _previewGeneration: null
+  property bool _constructed: false
+  readonly property var _sharedPreviewBase: base && base.settingsPreviewOwner ? base.settingsPreviewOwner.baseScope : null
+  readonly property bool settingsReady: runtime !== null && runtime.ready
+  readonly property string settingsError: _openError || (runtime ? runtime.error : "")
+  readonly property var pluginSettings: runtime ? runtime.values : null
   readonly property var settingsView: settingsPreviewOwner.values
-  property QtObject settingsPreviewOwner: PluginSettingsPreview {
-    sourceValue: PluginInstances.effectiveSettings(root.base ? root.base.settingsView : null, root.placement, PluginInstances.revision)
-    currentOwner: function () { return PluginInstances.previewBindingStamp(root.base, root.placement, PluginInstances.revision); }
+  property PluginSettingsPreview settingsPreviewOwner: PluginSettingsPreview {
+    draftFactory: function () { return root.createSettingsEditor(); }
+    sourceValue: root._inheritedPreview && root._inheritedPreview.ready ? root._inheritedPreview.values : root.pluginSettings
+    currentOwner: function () { return root.settingsReady ? root.runtime.placementToken : null; }
   }
 
-  function createSettingsPreview() { return settingsPreviewOwner.open(); }
+  function createSettingsPreview(editor) { return settingsPreviewOwner.open(editor); }
+
+  function _refreshPreviewView() {
+    if (!_constructed) return;
+    var token = {};
+    var lifetime = _lifetime;
+    _previewGeneration = token;
+    if (_cancelPreviewOpen) { _cancelPreviewOpen(); _cancelPreviewOpen = null; }
+    if (_inheritedPreview) { _inheritedPreview.detach(); _inheritedPreview = null; }
+    if (!_sharedPreviewBase) return;
+    _cancelPreviewOpen = PluginInstances.openPreviewView(base, placement, _sharedPreviewBase, function (result) {
+      if (!lifetime.alive || root._previewGeneration !== token) { if (result.editor) result.editor.detach(); return; }
+      if (result.status === "opened") root._inheritedPreview = result.editor;
+    });
+  }
+  on_SharedPreviewBaseChanged: _refreshPreviewView()
+
+  Component.onCompleted: {
+    _constructed = true;
+    var lifetime = _lifetime;
+    _cancelOpen = PluginInstances.openRuntime(base, placement, function (result) {
+      if (!lifetime.alive) { if (result.editor) result.editor.detach(); return; }
+      if (result.status === "opened") root.runtime = result.editor;
+      else root._openError = result.error?.code || "overlay-open";
+    });
+    _refreshPreviewView();
+  }
+  Component.onDestruction: {
+    _lifetime.alive = false;
+    if (_cancelOpen) _cancelOpen();
+    if (_cancelPreviewOpen) _cancelPreviewOpen();
+    if (_inheritedPreview) _inheritedPreview.detach();
+    if (runtime) runtime.detach();
+  }
 
   // Stores only the values that differ from the plugin settings, in this
   // placement's entry. The plugin settings file is never written.
   function saveSettings(callback) {
-    if (!base) {
+    if (!runtime || !runtime.ready) {
       Qt.callLater(function () {
         if (typeof callback === "function")
           callback({status: "failed", error: {code: "plugin-owner"}});
       });
       return false;
     }
-    var changed = {};
-    var local = root.pluginSettings || {};
-    var shared = base.pluginSettings || {};
-    for (var key in local) {
-      if (JSON.stringify(local[key]) !== JSON.stringify(shared[key]))
-        changed[key] = JSON.parse(JSON.stringify(local[key]));
-    }
-    return PluginInstances.writeSettings(pluginId, placement, Object.keys(changed).length > 0 ? changed : null, callback);
+    return typeof callback === "function" ? runtime.save(callback) : runtime.save();
   }
 
   // Drops every instance override of this placement.
   function resetSettings(callback) {
-    return PluginInstances.writeSettings(pluginId, placement, null, callback);
+    var editor = createSettingsEditor();
+    if (!editor) {
+      var lifetime = _lifetime;
+      Qt.callLater(function () {
+        if (lifetime.alive && typeof callback === "function") callback({status: "failed", refreshState: "not_refreshed", error: {code: "overlay-owner"}});
+      });
+      return false;
+    }
+    editor.whenReady(function (opened) {
+      if (opened.status !== "opened") {
+        if (typeof callback === "function") callback(opened);
+        return;
+      }
+      editor.resetOverrides(function (result) {
+        // Only current acknowledged success closes this one-shot editor.
+        // Failed/stale work stays owned by the returned editor for retry.
+        if (result.status !== "failed" && result.refreshState === "current") editor.discard();
+        if (typeof callback === "function") callback(result);
+      });
+    });
+    return editor;
   }
 
   function createSettingsEditor() {

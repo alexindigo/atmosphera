@@ -9,6 +9,7 @@ import io
 import json
 import os
 from pathlib import Path
+import stat
 import subprocess
 import sys
 import time
@@ -507,24 +508,30 @@ def main():
         assert summary["cases"][0]["restoration"] == {"live_mutation": False}
 
     def inspection_context(root):
-        # Exercise the real candidate anchors even when physical input is absent.
-        # The optional directory path must keep its position before diagnostics.
-        tree = root / "tree"
-        for name in ("Helpers/SettingsModel.js", "Commons/Settings.qml"):
-            target = tree / name
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes((a.source / name).read_bytes())
+        # The native owner carries the exact path and unchanged backend result;
+        # there is no Python argument position or GUI model diagnostic context.
+        # Exercise the actual rule producer, including non-default directories.
         runner = h.Runner.__new__(h.Runner)
-        runner.tree, runner.source, runner.case = tree, a.source, root
-        runner.instrument_inspection_trace()
-        runner.instrument_inspection_context()
-        text = (tree / "Helpers/SettingsModel.js").read_text()
-        assert "complete, path, diagnosticContext)" in text
-        assert "input: input, path: path, diagnosticContext: diagnosticContext}" in text
-        assert '}, undefined, { "serial": observation.serial' in text
-        directory_call = '}, directory === "config" ? config.configDir : config.overridesDir);'
-        assert directory_call in text and directory_call in (a.source / "Helpers/SettingsModel.js").read_text()
-        assert '"INSPECTION_GATE_CONTEXT=" + JSON.stringify(effect.diagnosticContext)' in (tree / "Commons/Settings.qml").read_text()
+        runner.case, runner.config = root, root / "non-default-config"
+        runner.native_schedule, runner.native_rules, runner.gates = root / "schedule.json", [], []
+        evidence = root / "private-cache/settings-conflicts"
+        marker, fifo = runner.native_gate("actual-directory", "read-after", "ui", sourceId="ui", sha256="authored-digest")
+        retaining, release = runner.native_gate("actual-evidence", "retain-before", "ui", file=evidence,
+                                               sourceId="ui", observationPhase="preflight", role="foreign")
+        rows = json.loads(runner.native_schedule.read_text())["rules"]
+        assert rows[0] == dict(phase="read-after", file=str(runner.config / "settings/ui.json"),
+                              marker=str(marker), gate=str(fifo), sourceId="ui", sha256="authored-digest")
+        assert rows[1]["file"] == str(evidence) and rows[1]["sourceId"] == "ui"
+        assert rows[1]["observationPhase"] == "preflight" and rows[1]["role"] == "foreign"
+        assert fifo.is_fifo() and release.is_fifo() and not marker.exists() and not retaining.exists()
+        assert stat.S_IMODE(fifo.stat().st_mode) == stat.S_IMODE(release.stat().st_mode) == 0o600
+        text = (a.source / "Scripts/dev/fixtures/native-settings-model/native-io.cpp").read_text()
+        assert 'auto result = forward(this, id, expectedTarget);' in text
+        assert 'return forward(root, observation);' in text
+        assert '{"revision", QString::fromLatin1(observation.revision.token)}' in text
+        assert '{"bytesBase64", QString::fromLatin1(observation.bytes.toBase64())}' in text
+        assert 'rule["phase"].toString() != phase || rule["file"].toString() != target' in text
+        assert '::getpid() != subject' in text and 'ReadOwner | QFileDevice::WriteOwner' in text
 
     for name, body in (("registry", registry), ("side-effect-free-discovery", discovery), ("aggregation", aggregation),
                        ("copies-refusal-complete-tree", copies), ("byte-inode-reserves", reserve),

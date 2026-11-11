@@ -83,6 +83,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--work", required=True, type=Path)
     ap.add_argument("--source", type=Path, default=Path(__file__).resolve().parents[2])
+    ap.add_argument("--guest-profile", type=Path)
     ap.add_argument("--inside", action="store_true")
     ap.add_argument("--chooser", nargs=2)
     ap.add_argument("--hold-portal", action="store_true")
@@ -101,7 +102,12 @@ def main():
         chooser(*args.chooser)
         return
     assert Path("/sys/class/dmi/id/sys_vendor").read_text().strip() == "QEMU", "VM only"
-    assert str(args.work.resolve()).startswith("/home/tester/Projects/shell-recovery/"), "assigned disk-backed workspace required"
+    if args.guest_profile:
+        from guest_profile import activate_profile
+        profile = activate_profile(args.guest_profile, require_console=False)
+        assert args.work.resolve().is_relative_to(profile.workspace), "assigned disk-backed workspace required"
+    else:
+        assert str(args.work.resolve()).startswith("/home/tester/Projects/shell-recovery/"), "assigned disk-backed workspace required"
     if not args.inside:
         args.work.mkdir(parents=True, exist_ok=False)
         (args.work / "tmp").mkdir()
@@ -111,11 +117,12 @@ def main():
     root = args.work.resolve()
     shell = root / "shell"
     shutil.copytree(args.source, shell, ignore=shutil.ignore_patterns(".git"))
+    session_entry = "shell.qml" if args.case == "fixture" else ("ShellSession.qml" if (shell / "ShellSession.qml").exists() else "shell.qml")
     if args.case == "fixture":
         (shell / "shell.qml").write_text((shell / "Scripts/dev/fixtures/filechooser-portal.qml").read_text())
     else:
-        text = (shell / "shell.qml").read_text().replace("import QtQuick\n", "import QtQuick\nimport Quickshell.Io\n", 1)
-        (shell / "shell.qml").write_text(inject_probe(text, OBSERVER))
+        text = (shell / session_entry).read_text().replace("import QtQuick\n", "import QtQuick\nimport Quickshell.Io\n", 1)
+        (shell / session_entry).write_text(inject_probe(text, OBSERVER))
         registration = shell / "Services/Session/ShellRegistration.qml"
         if registration.exists():  # Older discovery/contention baselines predate election.
             text = registration.read_text().replace("import QtQuick\n", "import QtQuick\nimport Quickshell.Io\nimport qs.Services.Control\n", 1)
@@ -268,7 +275,7 @@ def main():
         restarted = wait(lambda: (s := state())["instance"] != initial["instance"] and s["initialized"] and s, 35)
         check("quickshell-auto-restarted", restarted["pid"] == initial["pid"] and restarted["instance"] != initial["instance"])
         flows("after-crash")
-        qml = shell / "shell.qml"
+        qml = shell / session_entry
         qml.write_text(qml.read_text().replace("recovery-generation-1", "recovery-generation-2"))
         wait(lambda: (s := state())["generation"] == "recovery-generation-2" and s["initialized"] and s)
         check("supported-live-reload-completed", True)

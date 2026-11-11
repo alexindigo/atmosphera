@@ -157,8 +157,9 @@ ShellRoot {
     input.waitForJob();
     manifest = JSON.parse(input.text());
     if (verifyOnly) {
-      Service.loadPluginSettings("clipper", function (value) {
+      Service._openSettingsOwner("clipper", function (value) {
         try {
+          check(value!==null,"cold native owner opens");
           root.register(value);
           root.phase = "restart";
         } catch (error) {
@@ -185,33 +186,12 @@ ShellRoot {
             }
           }
         ];
-    register({
-               panelWidth: 1200,
-               showCloseButton: false,
-               opaque: {
-                 keep: true
-               },
-               cardColors: {
-                 Text: {
-                   bg: "custom",
-                   opaque: "keep"
-                 }
-               },
-               customColors: {
-                 Text: {
-                   bg: "#654321",
-                   opaque: "keep"
-                 }
-               }
-             });
-    api.saveSettings(function (result) {
-      if (result.status !== "saved")
-        Qt.exit(2);
-      else {
+    Service._openSettingsOwner("clipper",function(owner){try{check(owner!==null,"native owner opens");register(owner);
+    Settings.saveResult(function(result){try{check(result.status==="saved","placement seed saved");
         popup.openInstanceSettings(root.manifest, root.instance, "settings");
         root.phase = "preview";
-      }
-    });
+    }catch(error){console.error(String(error));Qt.exit(2);}});
+    }catch(error){console.error(String(error));Qt.exit(2);}});
   }
   function drive() {
     if (phase === "preview" && popup.opened && popup.settingsPage) {
@@ -222,7 +202,7 @@ ShellRoot {
       consumers();
       for (var row of edits)
         check(instance.settingsView[row[1]] === row[3], "every existing preview flag retained: " + row[1]);
-      check(api.pluginSettings.panelWidth === 1200 && instance.pluginSettings.panelWidth === 1100 && !api.pluginSettings.autoPaste && !main.showCloseButton, "preview does not mutate live preferences or shared Main");
+      check(api.pluginSettings.panelWidth === 1200 && api.pluginSettings.autoPasteDelay === 300 && instance.pluginSettings.panelWidth === 1100 && !api.pluginSettings.autoPaste && !main.showCloseButton, "preview does not mutate live preferences or shared Main");
       var rows = JSON.parse(JSON.stringify(Settings.data.bar.widgets.left));
       rows[0].instanceSettings.panelWidth = 1250;
       Settings.data.bar.widgets.left = rows;
@@ -234,6 +214,7 @@ ShellRoot {
       popup.confirmDiscard();
       phase = "cancel";
     } else if (phase === "cancel" && !popup.visible && !popup.currentPlugin) {
+      if(instance.pluginSettings.panelWidth!==1250)return;
       check(panel.contentPreferredWidth === 1250 * Style.uiScaleRatio && api.pluginSettings.panelWidth === 1200, "cancel reveals current foreign value, no opening snapshot restore");
       popup.openInstanceSettings(manifest, instance, "settings");
       phase = "apply";
@@ -243,6 +224,7 @@ ShellRoot {
       phase = "wait";
     } else if (phase === "wait" && !popup.busy) {
       check(!popup.saveFailed && !popup.dirty, "current receipt clears accepted local work");
+      if(instance.pluginSettings.panelWidth!==1000)return;
       consumers();
       check(String(consumers().accentColor) === "#123456", "saved color reaches the actual card");
       check(instance.pluginSettings.panelWidth === 1000 && instance.pluginSettings.autoPasteDelay === 700 && api.pluginSettings.panelWidth === 1200, "only selected placement persisted");
@@ -266,12 +248,19 @@ ShellRoot {
       console.log("I4_CLIPPER_PREVIEW: SAVED_PASS");
       Qt.exit(0);
     } else if (phase === "restart") {
+      if(!instance.settingsReady||!sibling.settingsReady)return;
       consumers();
-      check(instance.pluginSettings.autoPasteDelay === 700 && api.pluginSettings.opaque.keep, "saved selected consumer after cold restart");
+      rawPreference.reload();rawPreference.waitForJob();
+      check(instance.pluginSettings.autoPasteDelay === 700 && JSON.parse(rawPreference.text()).opaque.keep, "saved selected consumer and raw unknown after cold restart");
       check(String(consumers().accentColor) === "#123456", "saved card color after cold restart");
       console.log("I4_CLIPPER_PREVIEW: RESTART_PASS");
       Qt.exit(0);
     }
+  }
+  FileView {
+    id:rawPreference
+    path:Settings.configDir+"settings/plugins/clipper.json"
+    printErrors:false
   }
   FileView {
     id: pasteResult

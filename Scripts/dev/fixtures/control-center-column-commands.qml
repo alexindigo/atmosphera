@@ -16,14 +16,18 @@ PanelWindow {
   property bool iconsReady:false
   property int stage:0
   property int captures:0
+  property var continuation:null
+  property bool faultBlocked:false
+  property bool exitAfterRepair:false
   readonly property bool verifyOnly:Quickshell.env("I4_VERIFY")==="1"
-  CC.ControlCenterTab { id:owner; visible:false }
+  readonly property var owner:ownerLoader.item
+  Loader { id:ownerLoader;active:Settings.isLoaded;visible:false;sourceComponent:CC.ControlCenterTab {} }
   ListModel { id:available; ListElement {key:"CustomButton";name:"CustomButton"} }
   ColumnLayout {
     anchors.fill:parent; anchors.margins:20
     NSectionEditor {
       id:left; sectionName:"Left"; sectionId:"left"; availableSections:["left","right"]
-      availableWidgets:available; widgetRegistry:ControlCenterWidgetRegistry; widgetModel:Settings.data.controlCenter.shortcuts.left
+      availableWidgets:available; widgetRegistry:ControlCenterWidgetRegistry; widgetModel:Settings.isLoaded?Settings.data.controlCenter.shortcuts.left:[]
       captureWidgetInteraction:function(section,index){return typeof owner.captureWidgetInteraction==="function"?owner.captureWidgetInteraction(section,index):null;}
       captureWidgetSettings:function(section,index){root.captures++;return owner.captureWidgetSettings(section,index);}
       settingsDialogComponent:Quickshell.shellDir+"/i4-control-column-dialog.qml"
@@ -33,7 +37,7 @@ PanelWindow {
     }
     NSectionEditor {
       id:right; sectionName:"Right"; sectionId:"right"; availableSections:["left","right"]
-      availableWidgets:available; widgetRegistry:ControlCenterWidgetRegistry; widgetModel:Settings.data.controlCenter.shortcuts.right
+      availableWidgets:available; widgetRegistry:ControlCenterWidgetRegistry; widgetModel:Settings.isLoaded?Settings.data.controlCenter.shortcuts.right:[]
       captureWidgetInteraction:function(section,index){return owner.captureWidgetInteraction(section,index);}
       captureWidgetSettings:function(section,index){return owner.captureWidgetSettings(section,index);}
       settingsDialogComponent:Quickshell.shellDir+"/i4-control-column-dialog.qml"
@@ -45,8 +49,21 @@ PanelWindow {
     onLoaded:{IconRegistry.register("fixture:atmosphera-icons",JSON.parse(text()),Quickshell.env("I4_ICON_DIR"));root.iconsReady=true;root.begin();}
   }
   function check(ok,label){if(!ok)throw new Error("I4_CC_COLUMN_ASSERT: "+label);}
-  function fail(error){console.error(String(error));Qt.exit(2);}
-  function later(next){Qt.callLater(function(){try{next();}catch(error){fail(error);}});}
+  function fail(error){console.error(String(error));if(faultBlocked&&!faultProcess.running){exitAfterRepair=true;fault("repair");return;}Qt.exit(2);}
+  function later(next){check(continuation===null,"one scheduled fixture continuation");continuation=next;readyWait.start();}
+  Timer {
+    id:readyWait;interval:20;repeat:true
+    onTriggered:{
+      try {
+        if(!root.owner)return;
+        var editors=["left","right"].map(function(section){return Settings.createRecordListEditor(["controlCenter","shortcuts",section],[]);});
+        var ready=editors.every(function(editor){return !!editor;});
+        editors.forEach(function(editor){if(editor)editor.detach();});
+        if(!ready)return;
+        stop();var next=root.continuation;root.continuation=null;next();
+      }catch(error){stop();root.fail(error);}
+    }
+  }
   function rows(){return [{id:"CustomButton",tag:"first",opaque:{keep:true}},{id:"CustomButton",tag:"second",opaque:{keep:true}}];}
   function seed(){Settings.data.controlCenter.shortcuts.left=rows();Settings.data.controlCenter.shortcuts.right=[{id:"DarkMode",tag:"destination"}];}
   function begin(){
@@ -54,6 +71,7 @@ PanelWindow {
     try{
       if(verifyOnly){finalChecks();console.log("I4_CC_COLUMNS: RESTART_PASS");Qt.exit(0);return;}
       seed();
+      later(function(){
       if(Quickshell.env("I4_PARENT")==="1"){
         var command=typeof owner.captureWidgetInteraction==="function"?owner.captureWidgetInteraction("left",0):null;
         var original=rows();Settings.data.controlCenter.shortcuts.left=[original[1],original[0]];
@@ -61,6 +79,7 @@ PanelWindow {
         check(Settings.data.controlCenter.shortcuts.right.length===1,"stale column moved a newer row");Qt.exit(3);return;
       }
       optionalActor();
+      });
     }catch(error){fail(error);}
   }
   function optionalActor(){
@@ -89,7 +108,7 @@ PanelWindow {
       }else if(stage===5){
         check(result.status==="admitted" && Settings.data.controlCenter.shortcuts.right.length===1,"removed intended right row");
         check(owner._addWidgetToSection("DarkMode","right"),"explicit new row insert");
-        later(function(){stage=6;Settings.setBindingsUnresolved(true);left.openWidgetSettings(0,Settings.data.controlCenter.shortcuts.left[0]);check(captures===1,"settings capture before component loading");});
+        later(function(){stage=6;fault("block");});
       }
     }catch(error){fail(error);}
   }
@@ -100,7 +119,7 @@ PanelWindow {
         check(Settings.data.controlCenter.shortcuts.left[0].i4Explicit===true,"failed save retains admitted field");
         left.openWidgetSettings(0,Settings.data.controlCenter.shortcuts.left[0]);check(captures===1,"competing open retains same Popup");
         left.requestWidgetSettingsDiscard();check(left.widgetSettingsDiscardPending,"discard confirmation");left.keepWidgetSettings();check(left.widgetSettingsDirty && !left.widgetSettingsDiscardPending,"canceled discard retains input");
-        Settings.setBindingsUnresolved(false);stage=7;left.saveWidgetSettings();
+        stage=7;fault("repair");
       }else if(stage===7){
         check(result.status!=="failed" && !left.widgetSettingsDirty,"actual same-session retry receipt");
       }else if(stage===8){
@@ -124,6 +143,17 @@ PanelWindow {
     check(r.length===2 && r[0].tag==="first" && r[0].opaque.keep && r[1].id==="DarkMode","final transferred and inserted consumers");
   }
   function saveFinal(){finalChecks();Settings.saveResult(function(result){try{check(result.status!=="failed","final save receipt");finalChecks();console.log("I4_CC_COLUMNS: SAVED_PASS");Qt.exit(0);}catch(error){fail(error);}});}
+  function fault(mode){faultProcess.command=["python3","-B",Quickshell.env("I5_DESKTOP_FAULT"),Quickshell.env("ATMOSPHERA_CONFIG_DIR"),mode];faultProcess.running=true;}
+  Process {
+    id:faultProcess
+    onExited:code=>{
+      try {
+        root.check(code===0,"private real-IO fault prerequisite");
+        if(root.stage===6){root.faultBlocked=true;left.openWidgetSettings(0,Settings.data.controlCenter.shortcuts.left[0]);root.check(root.captures===1,"settings capture before component loading");}
+        else{root.faultBlocked=false;if(root.exitAfterRepair){Qt.exit(2);return;}left.saveWidgetSettings();}
+      }catch(error){root.fail(error);}
+    }
+  }
   Connections{target:Settings;function onSettingsLoaded(){root.begin();}}
   Component.onCompleted:begin()
   Timer{interval:90000;running:true;onTriggered:root.fail("control-center watchdog");}

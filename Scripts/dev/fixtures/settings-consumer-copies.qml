@@ -8,12 +8,45 @@ import qs.Modules.Panels.Settings.Bar as BarSettings
 import qs.Modules.Panels.Settings.Tabs.Audio as AudioSettings
 import qs.Services.Plugins
 import qs.Services.UI
+import "../../../Helpers/SettingsListCommands.js" as NativeLists
 
 Item {
   id: root
   readonly property var testScreen: Quickshell.screens[0]
   property bool started: false
   property bool verifyOnly: Quickshell.env("I4_VERIFY") === "1"
+  property var waiters: []
+  readonly property var commandPaths: [["bar", "widgets", "left"], ["bar", "widgets", "center"],
+    ["bar", "widgets", "right"], ["bar", "screenOverrides"], ["desktopWidgets", "monitorWidgets"]]
+
+  function waitFor(predicate) {
+    return new Promise(function (resolve) {
+      root.waiters = root.waiters.concat([{predicate: predicate, resolve: resolve}]);
+    });
+  }
+  function settled() {
+    return commandPaths.every(function (path) { return NativeLists.settled(Settings.store.info(path)); });
+  }
+  function action(name, submit, observed) {
+    return waitFor(settled).then(function () {
+      console.log("I5_CONSUMER_ACTION|" + name + "|submit|" + JSON.stringify(commandPaths.map(function (path) { return Settings.store.info(path); })));
+      check(submit() === true, name + " admitted for worker processing");
+      return waitFor(function () { return settled() && observed(); });
+    }).then(function () {
+      console.log("I5_CONSUMER_ACTION|" + name + "|observed");
+      // A writer may still be saving after its live value appears. An action
+      // ends at publication, so every following capture sees its settled source.
+      return save();
+    });
+  }
+  function save() {
+    return new Promise(function (resolve, reject) {
+      Settings.saveImmediate(function (result) {
+        if (result.status === "failed") reject(new Error("I4_CONSUMER_ASSERT: save " + JSON.stringify(result)));
+        else resolve(result);
+      });
+    });
+  }
 
   BarSettings.MonitorWidgetsConfig {
     id: monitor
@@ -98,6 +131,15 @@ Item {
             }
           ];
 
+      // Establish the seeded source preimage before capturing commands. A
+      // concurrent startup autosave legitimately changes native provenance.
+      save().then(function () { return waitFor(settled); }).then(runMonitorWriters).catch(fail);
+    } catch (error) {
+      fail(error);
+    }
+  }
+
+  function runMonitorWriters() {
       var copy = monitor._getWidgetsContainer();
       check(Object.keys(copy).sort().join(",") === "center,left,right", "namespace copy contains only declared data leaves");
       copy.right.push({
@@ -105,31 +147,43 @@ Item {
                       });
       check(!Settings.hasScreenOverride(testScreen.name, "widgets"), "copy getter creates no choice");
       check(Settings.data.bar.widgets.right.length === 0, "copy getter does not alias global");
-      monitor._addWidgetToSection("I4-A", "right");
-      monitor._addWidgetToSection("I4-B", "right");
-      monitor._reorderWidgetInSection("right", 0, 1);
-      check(screenWidgets().right[0].id === "I4-B", "monitor reorder");
-      monitor._updateWidgetSettingsInSection("right", 0, {
+      return action("monitor add A", function () { return monitor._addWidgetToSection("I4-A", "right"); },
+        function () { return screenWidgets().right.length === 1; })
+      .then(function () { return action("monitor add B", function () { return monitor._addWidgetToSection("I4-B", "right"); },
+        function () { return screenWidgets().right.length === 2; }); })
+      .then(function () { return action("monitor reorder", function () { return monitor._reorderWidgetInSection("right", 0, 1); },
+        function () { return screenWidgets().right[0].id === "I4-B"; }); })
+      .then(function () { return action("monitor update", function () { return monitor._updateWidgetSettingsInSection("right", 0, {
                                                "id": "I4-B",
                                                "opaque": "updated"
-                                             });
-      monitor._moveWidgetBetweenSections("right", 0, "center");
+                                              }); }, function () { return screenWidgets().right[0].opaque === "updated"; }); })
+      .then(function () { return action("monitor atomic move", function () { return monitor._moveWidgetBetweenSections("right", 0, "center"); },
+        function () { return screenWidgets().center.length === 1 && screenWidgets().right.length === 1; }); })
+      .then(function () {
       check(screenWidgets().center[0].opaque === "updated" && screenWidgets().right[0].id === "I4-A", "monitor atomic move");
-      monitor._removeWidgetFromSection("center", 0);
-      monitor._removeWidgetFromSection("right", 0);
-      BarService.updateWidgetSettings("", "left", 0, {
+      return action("monitor remove center", function () { return monitor._removeWidgetFromSection("center", 0); },
+        function () { return screenWidgets().center.length === 0; }); })
+      .then(function () { return action("monitor remove right", function () { return monitor._removeWidgetFromSection("right", 0); },
+        function () { return screenWidgets().right.length === 0; }); })
+      .then(function () { return action("global dialog patch", function () { return BarService.updateWidgetSettings("", "left", 0, {
                                         "compact": true
-                                      });
-      BarService.updateWidgetSettings(testScreen.name, "left", 0, {
+                                      }); }, function () { return Settings.data.bar.widgets.left[0].compact === true; }); })
+      .then(function () { return action("screen dialog patch", function () { return BarService.updateWidgetSettings(testScreen.name, "left", 0, {
                                         "compact": true
-                                      });
+                                      }); }, function () { return screenWidgets().left[0].compact === true; }); })
+      .then(pinAndUnpin);
+  }
+
+  function pinAndUnpin() {
       tray.addToPinned(function (pin) {
         try {
           check(pin.status !== "failed", "tray pin receipt");
+          check(tray._pinEditor === null, "successful immediate pin releases its action editor before callback");
           check(screenWidgets().left[0].pinned[0] === "I4 synthetic tray", "tray pin owner");
           tray.removeFromPinned(function (unpin) {
             try {
               check(unpin.status !== "failed", "tray unpin receipt");
+              check(tray._pinEditor === null, "successful immediate unpin releases its action editor before callback");
               root.finishOtherWriters();
             } catch (error) {
               root.fail(error);
@@ -139,37 +193,29 @@ Item {
           root.fail(error);
         }
       });
-    } catch (error) {
-      fail(error);
-    }
   }
 
   function finishOtherWriters() {
     try {
       media.removeBlacklistedPlayer("beta");
-      check(Service.addWidgetToBar("plugin:i4-added", "right"), "plugin add command");
+      action("plugin add command", function () { return Service.addWidgetToBar("plugin:i4-added", "right"); },
+        function () { return Settings.data.bar.widgets.right.length === 1 && screenWidgets().right.length === 1; })
+      .then(function () {
       check(Settings.data.bar.widgets.right[0].id === "plugin:i4-added" && screenWidgets().right[0].id === "plugin:i4-added", "plugin global and screen add");
-      Settings.saveImmediate(function (result) {
-        try {
-          // I4 deliberately exercises the active old owner's Boolean callback.
-          // I5 must port this witness with the facade's structured receipt API.
-          check(result === true, "add receipt");
-          check(Service.removeWidgetFromBar("plugin:i4-added"), "plugin remove command");
-          check(Service.removePluginDesktopWidgetsFromSettings("i4-remove"), "desktop remove command");
-          Settings.saveImmediate(function (finalResult) {
-            try {
-              check(finalResult === true, "final receipt");
+        return save();
+      }).then(function (result) {
+          check(result.status === "saved" || result.status === "nothing_to_save", "add receipt");
+          return action("plugin remove command", function () { return Service.removeWidgetFromBar("plugin:i4-added"); },
+            function () { return Settings.data.bar.widgets.right.length === 0 && screenWidgets().right.length === 0; });
+      }).then(function () {
+          return action("desktop remove command", function () { return Service.removePluginDesktopWidgetsFromSettings("i4-remove"); },
+            function () { return Settings.data.desktopWidgets.monitorWidgets[0].widgets.length === 1; });
+      }).then(save).then(function (finalResult) {
+              check(finalResult.status === "saved" || finalResult.status === "nothing_to_save", "final receipt");
               finalChecks();
               console.log("I4_CONSUMER_COPIES: SAVED_PASS");
               root.finishProcess(0);
-            } catch (error) {
-              root.fail(error);
-            }
-          });
-        } catch (error) {
-          root.fail(error);
-        }
-      });
+      }).catch(fail);
     } catch (error) {
       fail(error);
     }
@@ -186,7 +232,30 @@ Item {
       root.begin();
     }
   }
+  Connections {
+    target: Settings.store
+    function onCompleted(result) {
+      console.log("I5_CONSUMER_RECEIPT|" + JSON.stringify(result));
+      if (result.operation === "editRecordList") console.log("I5_CONSUMER_STATE|" + JSON.stringify(commandPaths.map(function (path) { return Settings.store.info(path); })) + "|" + JSON.stringify(Settings.store.copyValue(Settings.data.bar.screenOverrides)));
+      if (result.operation === "editRecordList" && result.status === "failed") root.fail(JSON.stringify(result));
+    }
+  }
   Component.onCompleted: begin()
+  Timer {
+    interval: 10
+    running: true
+    repeat: true
+    onTriggered: {
+      var current = root.waiters;
+      root.waiters = [];
+      current.forEach(function (entry) {
+        try {
+          if (entry.predicate()) entry.resolve();
+          else root.waiters = root.waiters.concat([entry]);
+        } catch (error) { root.fail(error); }
+      });
+    }
+  }
   Timer {
     // Several real controls enqueue full old-owner saves before our fence. This
     // is a functional witness, not I6's separate GUI-thread timing gate.

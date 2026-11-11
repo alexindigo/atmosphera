@@ -106,7 +106,7 @@ NBox {
       return null;
     var copied = false;
     var handle = {
-      initialValue: inherited ? Lists.copy(displayed[section]) : commands.initialValue,
+      initialValue: inherited ? Settings.store.copyValue(displayed[section]) : commands.initialValue,
       endpoint: function (index, selection, ensure) {
         return commands.endpoint(index, selection, ensure);
       },
@@ -139,7 +139,7 @@ NBox {
         return commands.submit(prefix.concat(edits), function (result) {
           if (result.status === "admitted" && result.refreshState === "current") {
             copied = inherited || copied;
-            handle.initialValue = Lists.copy(commands.initialValue);
+            handle.initialValue = Settings.store.copyValue(commands.initialValue);
           }
           if (typeof callback === "function")
             callback(result);
@@ -199,7 +199,7 @@ NBox {
     if (!commands || !Number.isSafeInteger(index) || index < 0 || index >= commands.initialValue.length)
       return null;
     return {
-      initialValue: Lists.copy(commands.initialValue[index]),
+      initialValue: Settings.store.copyValue(commands.initialValue[index]),
       submit: function (fields, callback) {
         var edits = fields && typeof fields === "object" && !Array.isArray(fields) ? Object.keys(fields).filter(function (key) {
           return key !== "id";
@@ -274,8 +274,8 @@ NBox {
                                index: commands.initialValue.length,
                                value: newWidget
                              }
-                           ], function (result) {
-                             if (result.status === "admitted" && result.refreshState === "current")
+                            ], function (result) {
+                              if (result.status === "admitted" && result.refreshState === "current")
                                BarService.widgetsRevision++;
                              commands.detach();
                            });

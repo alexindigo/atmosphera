@@ -29,13 +29,14 @@ SmartPanel {
 
       // All clock panel cards
       Repeater {
-        model: Settings.data.calendar.cards
+        model: Settings.store.listModel(["calendar", "cards"])
         Loader {
-          active: modelData.enabled && (modelData.id !== "weather-card" || Settings.data.location.weatherEnabled)
+          required property var model
+          active: model.enabled && (model.id !== "weather-card" || Settings.data.location.weatherEnabled)
           visible: active
           Layout.fillWidth: true
           sourceComponent: {
-            switch (modelData.id) {
+            switch (model.id) {
             case "calendar-header-card":
               return calendarHeaderCard;
             case "calendar-month-card":

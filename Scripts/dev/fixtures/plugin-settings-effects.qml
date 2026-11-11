@@ -6,6 +6,7 @@ import Quickshell.Io
 import qs.Commons
 import qs.Services.Plugins
 import qs.Widgets
+import "plugin-editor-probe.js" as EditorProbe
 
 ShellRoot {
   id: root
@@ -15,6 +16,7 @@ ShellRoot {
   property var main: null
   property var held: null
   property var release: null
+  property var selectedEditor: null
   property bool started: false
   property bool makeStale: false
   property int baseline: 0
@@ -25,6 +27,13 @@ ShellRoot {
     path: Quickshell.env("I4_EFFECT_INPUTS")
     blockLoading: true
     printErrors: false
+  }
+  FileView { id: rawPreferences; blockLoading: true; printErrors: false }
+  function rawUnknown() {
+    rawPreferences.path = Quickshell.env("ATMOSPHERA_CONFIG_DIR") + "/settings/plugins/" + cases[index].manifest.id + ".json";
+    rawPreferences.reload();
+    rawPreferences.waitForJob();
+    check(JSON.parse(rawPreferences.text()).opaque.keep, "raw unknown preference retained");
   }
   function check(ok, label) {
     if (!ok)
@@ -42,10 +51,12 @@ ShellRoot {
       return;
     }
     var item = cases[index];
-    Service.loadPluginSettings(item.manifest.id, function (value) {
+    Service._openSettingsOwner(item.manifest.id, function (owner) {
       try {
-        var consumer = Service.createPluginAPI(item.manifest.id, item.manifest, value, {}, {}, {});
-        root.check(consumer.pluginSettings[item.key] === item.staleValue && consumer.pluginSettings.opaque.keep, "restart consumer and unknown data");
+        root.check(owner !== null, "native restart owner opened");
+        var consumer = Service.createPluginAPI(item.manifest.id, item.manifest, owner, {}, {}, {});
+        root.check(consumer.pluginSettings[item.key] === item.staleValue, "restart consumer");
+        root.rawUnknown();
         root.index++;
         root.verifyNext();
       } catch (error) {
@@ -61,11 +72,14 @@ ShellRoot {
       return;
     }
     var item = cases[index];
-    api = Service.createPluginAPI(item.manifest.id, item.manifest, Object.assign({
-                                                                                   opaque: {
-                                                                                     keep: true
-                                                                                   }
-                                                                                 }, item.initial), {}, {}, {});
+    phase = "waiting-owner";
+    Service._openSettingsOwner(item.manifest.id, function (owner) {
+      try { root.check(owner !== null, "native preference owner opened"); root.register(item, owner); }
+      catch (error) { console.error(String(error)); root.finish(2); }
+    });
+  }
+  function register(item, owner) {
+    api = Service.createPluginAPI(item.manifest.id, item.manifest, owner, {}, {}, {});
     var loaded = Object.assign({}, Service.loadedPlugins);
     loaded[item.manifest.id] = {
       api: api
@@ -81,29 +95,17 @@ ShellRoot {
     var factory = api.createSettingsEditor;
     api.createSettingsEditor = function () {
       var editor = factory();
-      var wrapper = {
-        initialValue: editor.initialValue,
-        discard: editor.discard,
-        apply: function (value, callback) {
-          editor.apply(value, function (result) {
-            root.held = result;
-            root.release = function () {
-              if (result.refreshState === "current")
-                wrapper.initialValue = editor.initialValue;
-              callback(result);
-            };
-          });
-          if (root.makeStale) {
-            var foreign = Object.assign({}, root.api.pluginSettings);
-            foreign.opaque = {
-              keep: true,
-              foreign: true
-            };
-            root.api.pluginSettings = foreign;
-          }
+      root.selectedEditor = editor;
+      return EditorProbe.observe(editor, function () {}, function (result, callback) {
+        console.log("I4_EFFECT_RECEIPT", item.manifest.id, root.phase, JSON.stringify(result));
+        root.held = result;
+        root.release = function () { callback(result); };
+      }, function () {
+        if (root.makeStale) {
+          // A newer real input, not replacement of the readonly namespace.
+          root.api.pluginSettings[item.key] = item.staleValue;
         }
-      };
-      return wrapper;
+      });
     };
     phase = "main-ready";
   }
@@ -141,7 +143,7 @@ ShellRoot {
     return main.enabled === value;
   }
   function fault(mode) {
-    action.command = ["python3", Quickshell.env("I4_EFFECT_FAULT"), Quickshell.env("ATMOSPHERA_CONFIG_DIR"), mode];
+    action.command = ["python3", Quickshell.env("I4_EFFECT_FAULT"), Quickshell.env("ATMOSPHERA_CONFIG_DIR"), mode, cases[index].manifest.id];
     action.running = true;
   }
   function drive() {
@@ -199,9 +201,15 @@ ShellRoot {
       popup.applySettings();
       phase = "noop-held";
     } else if (phase === "noop-held" && release) {
-      check(held.status === "nothing_to_save" && main._i4EffectCount === baseline + 1, "held no-op");
+      check(held.status === "saved" && held.refreshState === "current" && main._i4EffectCount === baseline + 1, "held equal-choice publication");
       deliver();
-      phase = "noop-consumer";
+      phase = "clean-noop";
+      selectedEditor.apply(selectedEditor.values, function (result) {
+        try {
+          root.check(result.status === "nothing_to_save" && result.refreshState === "current", "actual clean native no-op");
+          root.phase = "noop-consumer";
+        } catch (error) { console.error(String(error)); root.finish(2); }
+      });
     } else if (phase === "noop-consumer" && consumed(item.savedValue)) {
       check(main._i4EffectCount === baseline + 2, "one no-op action");
       phase = "blocking";
@@ -239,6 +247,9 @@ ShellRoot {
       page[item.field] = item.staleValue;
       page.saveSettings();
       page.saveSettings();
+      phase = "foreign";
+      fault("foreign");
+    } else if (phase === "stale-submit") {
       popup.applySettings();
       phase = "stale-held";
     } else if (phase === "stale-held" && release) {
@@ -266,7 +277,7 @@ ShellRoot {
         console.error("I4_EFFECT_ASSERT: fault helper");
         root.finish(2);
       } else
-        root.phase = root.phase === "blocking" ? "blocked" : "retry";
+        root.phase = root.phase === "blocking" ? "blocked" : root.phase === "foreign" ? "stale-submit" : "retry";
     }
   }
   FloatingWindow {

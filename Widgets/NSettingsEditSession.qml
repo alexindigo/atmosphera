@@ -1,5 +1,6 @@
 import QtQuick
 import "../Helpers/SettingsValues.js" as SettingsValues
+import "../Helpers/SettingsReceipts.js" as SettingsReceipts
 
 QtObject {
   id: root
@@ -43,7 +44,7 @@ QtObject {
     try {
       editor.apply(submitted, function (result) {
         root.busy = false;
-        if (!result || (result.status !== "saved" && result.status !== "nothing_to_save") || (result.refreshState !== undefined && result.refreshState !== "current")) {
+        if (!SettingsReceipts.acknowledged(result)) {
           root.failed = true;
           return;
         }

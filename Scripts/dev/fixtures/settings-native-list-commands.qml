@@ -88,7 +88,12 @@ ShellRoot {
   function invalidBatch() {
     var session = editor(1);
     var before = JSON.stringify(session.initialValue);
-    check(session.submit([{op: "remove", index: 0}, {op: "remove", index: 99}], function (result) {
+    // Bypass only the UI facade's synchronous shape/range preflight here: this
+    // case still exercises the native worker's original invalid batch schedule
+    // and hard refusal/atomicity assertions. The facade is checked separately.
+    var target = session.target();
+    check(store.editRecordList(target.policyId, {generation: session.generation, listAddress: target.listAddress,
+      edits: [{op: "remove", index: 0}, {op: "remove", index: 99}]}, function (result) {
       try {
         receipt(result, "worker-invalid-batch");
         check(result.status === "failed" && result.error.code === "list-edit-operation", "worker semantic refusal");
@@ -173,6 +178,12 @@ ShellRoot {
   }
   function containers() {
     var address = [{field: "name", equals: "offline.屏/__proto__"}, {key: "widgets"}, {key: "right"}];
+    var reordered = [{equals: address[0].equals, field: "name"}, {key: "widgets"}, {key: "right"}];
+    check(Commands.addressIdentity(address) === Commands.addressIdentity(reordered), "selector key order is not identity");
+    check(Commands.addressIdentity(address) === Commands.addressIdentity(store.copyValue(address)), "native copy preserves selector identity");
+    reordered[0].equals = "different";
+    check(Commands.addressIdentity(address) !== Commands.addressIdentity(reordered), "different matched row remains distinct");
+    check(Commands.addressIdentity(address) !== Commands.addressIdentity([{field: "name", equals: address[0].equals, unknown: true}]), "invalid selector is not an endpoint");
     var session = editor(2, [{path: paths[5], listAddress: address, ensure: true}]);
     check(session !== null, "absent matched container capture");
     var source = session.target(0, false);

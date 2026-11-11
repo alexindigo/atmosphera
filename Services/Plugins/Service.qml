@@ -4,7 +4,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import "../../Helpers/OwnedProcess.js" as OwnedProcess
-import "../../Helpers/PluginSettingsEditor.js" as PluginSettingsEditor
 import qs.Commons
 import qs.Modules.Panels.Settings
 import qs.Services
@@ -23,10 +22,93 @@ Singleton {
   signal allPluginsLoaded
   signal pluginSettingsCompleted(string pluginId, var result)
 
-  // The old plugin owner keeps one captured FIFO until I5 replaces its I/O with
-  // configqml stores. Never acknowledge a timer fire or a detached child start.
-  property var _settingsSaves: []
-  property bool _settingsSaveBusy: false
+  property var _settingsOwners: Object.create(null)
+
+  Component { id: preferenceOwnerFactory; PluginPreferenceOwner {} }
+  Component { id: preferenceEditorFactory; PluginPreferenceEditor {} }
+
+  // External profile IO must settle the actual owners, not serialize their
+  // GUI values. Captured owner identities also fence plugin load/unload.
+  function synchronizePreferences(operation, callback) {
+    var owners = Object.keys(_settingsOwners).sort().map(function (key) {
+      return {key: key, owner: root._settingsOwners[key]};
+    });
+    function unchanged() {
+      return Object.keys(root._settingsOwners).length === owners.length && owners.every(function (entry) {
+        return root._settingsOwners[entry.key] === entry.owner && !entry.owner.closed && entry.owner.status === "Ready";
+      });
+    }
+    function failed(code) {
+      callback({status: "failed", refreshState: "not_refreshed", error: {code: code}});
+    }
+    var fences = [];
+    function current() {
+      return unchanged() && fences.every(function (fence) {
+        return fence.paths.every(function (path, index) { return fence.store.info(path).latestInput === fence.inputs[index]; });
+      });
+    }
+    function greater(a, b) { return a.length > b.length || (a.length === b.length && a > b); }
+    function next(index) {
+      if (!unchanged()) { failed("profile-owner-changed"); return; }
+      if (index > owners.length) {
+        if (!current()) { failed("profile-concurrent-edit"); return; }
+        callback({status: "current", refreshState: "current", isCurrent: current}); return;
+      }
+      var store = index === 0 ? Settings.store : owners[index - 1].owner.store;
+      var paths = index === 0 ? store.inputPaths : store.settingsKeys.map(function (key) { return ["settings", key]; });
+      store[operation](function (result) {
+        // Plain store save/reload receipts do not carry editor refreshState.
+        // Their settled owner and unresolved-group facts fence this workflow.
+        if (["saved", "nothing_to_save", "reloaded"].indexOf(result.status) === -1 ||
+            (result.unresolvedGroups && result.unresolvedGroups.length)) {
+          callback(result); return;
+        }
+        var inputs = paths.map(function (path) { return store.info(path).latestInput; });
+        if (inputs.some(function (input) { return greater(input, result.inputPrefix); })) {
+          failed("profile-concurrent-edit"); return;
+        }
+        fences.push({store: store, paths: paths, inputs: inputs});
+        next(index + 1);
+      });
+    }
+    Qt.callLater(function () {
+      if (["save", "reload"].indexOf(operation) === -1) { failed("profile-operation"); return; }
+      next(0);
+    });
+  }
+
+  function _openSettingsOwner(pluginId, callback) {
+    var owner = _settingsOwners[pluginId];
+    if (!owner) {
+      owner = preferenceOwnerFactory.createObject(root, {
+        pluginId: pluginId, pluginDirectory: Registry.getPluginDir(pluginId),
+        userFile: Registry.getPluginSettingsFile(pluginId),
+        configFile: Settings.configDir + "settings/plugins/" + pluginId + ".config.json",
+        cacheDirectory: Settings.cacheDir + "plugin-schemas",
+        evidenceDirectory: Settings.cacheDir + "plugin-settings-conflicts"
+      });
+      _settingsOwners[pluginId] = owner;
+      owner.completed.connect(function (result) {
+        if (["save", "apply", "flush", "close"].indexOf(result.operation) !== -1)
+          root.pluginSettingsCompleted(pluginId, result);
+      });
+    }
+    function settled() {
+      if (owner.status === "Loading") return;
+      owner.settled.disconnect(settled);
+      callback(owner.status === "Ready" ? owner : null);
+    }
+    owner.settled.connect(settled);
+    Qt.callLater(settled);
+  }
+
+  // Keep the callback-shaped reader on the same native owner as runtime APIs.
+  // This returns its namespace, never a second mutable preferences snapshot.
+  function loadPluginSettings(pluginId, callback) {
+    root._openSettingsOwner(pluginId, function (owner) {
+      if (typeof callback === "function") callback(owner ? owner.settingsScope.values : null);
+    });
+  }
 
   // When available plugins are updated, check if we should perform update check
   onAvailablePluginsUpdated: {
@@ -793,7 +875,12 @@ Singleton {
   // This ensures pluginApi is fully populated before being passed to createObject()
   function loadPluginData(pluginId, manifest, callback) {
     // Load settings first
-    loadPluginSettings(pluginId, function (settings) {
+    _openSettingsOwner(pluginId, function (settings) {
+      if (!settings) {
+        root.recordPluginError(pluginId, "settings", "Plugin settings schema or store could not be loaded; files retained");
+        root._onPluginLoadComplete();
+        return;
+      }
       // Then the shared state
       loadPluginState(pluginId, function (state) {
         // Then load translations
@@ -1070,6 +1157,12 @@ Singleton {
   // Unload a plugin
   // preserveSettings: if true, don't remove desktop widget settings (used for hot reload)
   function unloadPlugin(pluginId, preserveSettings) {
+    var preferences = _settingsOwners[pluginId];
+    if (preferences) {
+      delete _settingsOwners[pluginId];
+      preferences.detach();
+      preferences.destroy();
+    }
     var plugin = root.loadedPlugins[pluginId];
     if (!plugin) {
       Logger.w("PluginService", "Plugin not loaded:", pluginId);
@@ -1146,7 +1239,10 @@ Singleton {
         // Plugin-specific
         readonly property string pluginId: "${pluginId}"
         readonly property string pluginDir: "${pluginDir}"
-        property var pluginSettings: ({})
+        property var settingsOwner: null
+        readonly property var settingsHandle: settingsOwner ? settingsOwner.settingsScope : null
+        readonly property var pluginSettings: settingsHandle ? settingsHandle.values : null
+        readonly property bool settingsReady: settingsOwner !== null && settingsOwner.status === "Ready"
         property var settingsPreviewOwner: null
         readonly property var settingsView: settingsPreviewOwner ? settingsPreviewOwner.values : pluginSettings
         property var manifest: ({})
@@ -1199,9 +1295,7 @@ Singleton {
     // Set current language (can't use binding in Qt.createQmlObject string)
     api.currentLanguage = I18n.langCode;
 
-    // Merge manifest defaults with loaded settings (user settings take priority)
-    var defaults = (manifest.metadata && manifest.metadata.defaultSettings) || {};
-    api.pluginSettings = Object.assign({}, defaults, settings || {});
+    api.settingsOwner = settings;
     api.pluginTranslations = translations || {};
     api.pluginFallbackTranslations = fallbackTranslations || {};
     // Loaded before any entry point is created (loadPluginData)
@@ -1226,11 +1320,7 @@ Singleton {
     // Bind functions
     // ----------------------------------------
     api.saveSettings = function (callback) {
-      savePluginSettings(pluginId, api.pluginSettings, callback);
-
-      // Replace the entire pluginSettings object to trigger QML property bindings
-      // Make a shallow copy so bindings detect the change
-      api.pluginSettings = Object.assign({}, api.pluginSettings);
+      return typeof callback === "function" ? api.settingsHandle.save(callback) : api.settingsHandle.save();
     };
 
     api.createSettingsEditor = function () {
@@ -1238,9 +1328,10 @@ Singleton {
     };
     api.settingsPreviewOwner = settingsPreviewFactory.createObject(api, {
       sourceValue: Qt.binding(function () { return api.pluginSettings; }),
+      draftFactory: function () { return root.createPluginSettingsEditor(pluginId, api); },
       currentOwner: function () { return root.getPluginAPI(pluginId) === api ? api : null; }
     });
-    api.createSettingsPreview = function () { return api.settingsPreviewOwner.open(); };
+    api.createSettingsPreview = function (editor) { return api.settingsPreviewOwner.open(editor); };
 
     // Writes the shared state to disk and reassigns it, so bindings on
     // `state` (instances forward it) re-evaluate.
@@ -1254,7 +1345,7 @@ Singleton {
     // the user's sparse override at ~/.config/atmosphera/plugins/<id>/config.json
     // (user wins). Read-only for the shipped file; async via callback.
     api.getConfig = function (callback) {
-      loadPluginConfig(pluginId, callback);
+      return api.settingsOwner.snapshotConfig(callback);
     };
 
     // ----------------------------------------
@@ -1454,80 +1545,6 @@ Singleton {
     readProcess.running = true;
   }
 
-  // Read a JSON file via cat Process; callback({}) when missing/unparseable
-  function readJsonFile(filePath, callback) {
-    var readProcess = Qt.createQmlObject(`
-      import QtQuick
-      import Quickshell.Io
-      Process {
-        command: ["cat", "${filePath}"]
-        stdout: StdioCollector {}
-      }
-    `, root, "ReadJson_" + Math.random().toString(36).substr(2, 9));
-
-    readProcess.exited.connect(function (exitCode) {
-      var result = {};
-      if (exitCode === 0) {
-        try {
-          result = JSON.parse(readProcess.stdout.text);
-        } catch (e) {
-          Logger.w("PluginService", "Failed to parse JSON file:", filePath);
-        }
-      }
-      callback(result);
-      readProcess.destroy();
-    });
-
-    readProcess.running = true;
-  }
-
-  // Deep-merge two plain objects; user wins on conflicts (objects recurse,
-  // everything else including arrays is replaced by the user value)
-  function deepMergeObjects(defaults, user) {
-    var result = Object.assign({}, defaults);
-    for (var key in user) {
-      var u = user[key];
-      var d = result[key];
-      if (u !== null && d !== null && typeof u === "object" && typeof d === "object" && !Array.isArray(u) && !Array.isArray(d)) {
-        result[key] = deepMergeObjects(d, u);
-      } else {
-        result[key] = u;
-      }
-    }
-    return result;
-  }
-
-  // Load plugin config: plugin-shipped config.default.json merged with the
-  // user's sparse override at settings/plugins/<id>.config.json (user-owned
-  // area, survives plugin uninstall/reinstall)
-  function loadPluginConfig(pluginId, callback) {
-    var defaultFile = Registry.getPluginDir(pluginId) + "/config.default.json";
-    var userFile = Settings.configDir + "settings/plugins/" + pluginId + ".config.json";
-
-    readJsonFile(defaultFile, function (defaults) {
-      readJsonFile(userFile, function (user) {
-        callback(deepMergeObjects(defaults, user));
-      });
-    });
-  }
-
-  // Load plugin settings (new user-owned path, with read-only fallback to
-  // the legacy in-plugin-dir location for upgrades)
-  function loadPluginSettings(pluginId, callback) {
-    var settingsFile = Registry.getPluginSettingsFile(pluginId);
-
-    readJsonFile(settingsFile, function (settings) {
-      if (Object.keys(settings).length > 0) {
-        callback(settings);
-        return;
-      }
-      // Fallback: legacy location inside the plugin dir (pre-path-move)
-      readJsonFile(Registry.getLegacyPluginSettingsFile(pluginId), function (legacySettings) {
-        callback(legacySettings);
-      });
-    });
-  }
-
   // Load the plugin's shared state (<stateDir>plugins/<key>/state.json). A missing
   // file is an empty state. A file that is not a JSON object is renamed to
   // state.json.corrupt-<ms> (kept, not deleted) and the state starts empty. The
@@ -1602,71 +1619,16 @@ Singleton {
   // Selected plugin-level editor. No runtime API or file changes until Apply;
   // loading/unloading a different API invalidates the original capture.
   function createPluginSettingsEditor(pluginId, api) {
-    return PluginSettingsEditor.create({
-      stamp: function () {
-        return root.getPluginAPI(pluginId) === api ? JSON.stringify(api.pluginSettings) : null;
-      },
-      value: function () { return api.pluginSettings; },
-      later: function (callback) { Qt.callLater(callback); },
-      commit: function (value, reset, callback) {
-        if (reset || value === null || typeof value !== "object" || Array.isArray(value)) {
-          Qt.callLater(function () { callback({status: "failed", error: {code: "editor-input"}}); });
-          return false;
-        }
-        api.pluginSettings = value;
-        api.saveSettings(callback);
-        return true;
-      }
-    });
-  }
-
-  // Snapshot at submission, not when this request reaches the head. Callback is
-  // additive for existing plugins and receives an explicit three-status result.
-  function savePluginSettings(pluginId, settings, callback) {
-    var body = null;
-    try {
-      if (settings === null || typeof settings !== "object" || Array.isArray(settings))
-        throw new Error("settings object required");
-      body = JSON.stringify(settings);
-    } catch (error) {}
-    root._settingsSaves.push({pluginId: pluginId, body: body, callback: callback});
-    Qt.callLater(root._nextSettingsSave);
-  }
-
-  function _nextSettingsSave() {
-    if (root._settingsSaveBusy || root._settingsSaves.length === 0)
-      return;
-    root._settingsSaveBusy = true;
-    var request = root._settingsSaves[0];
-    if (typeof request.body !== "string" || typeof request.pluginId !== "string" || !request.pluginId || request.pluginId === "." || request.pluginId === ".." || /[\/\\\x00]/.test(request.pluginId)) {
-      root._finishSettingsSave({status: "failed", error: {code: "plugin-settings-input"}});
-      return;
-    }
-    OwnedProcess.run(root, ["python3", Quickshell.shellDir + "/Scripts/python/src/settings/plugin-settings-save.py", Registry.getPluginSettingsFile(request.pluginId), Settings.cacheDir + "plugin-settings-conflicts"], request.body, function (child) {
-      var result = null;
-      try { result = JSON.parse(child.stdout); } catch (error) {}
-      if (!result || (result.status !== "saved" && result.status !== "nothing_to_save") || !child.success)
-        result = {status: "failed", error: {code: "plugin-settings-save"}};
-      root._finishSettingsSave(result);
-    });
-  }
-
-  function _finishSettingsSave(result) {
-    // Detach before either observer can reenter; keep busy through delivery so
-    // the next request cannot overtake this signal/callback pair.
-    var request = root._settingsSaves.shift();
-    var callback = request.callback;
-    request.callback = null;
-    try {
-      root.pluginSettingsCompleted(request.pluginId, result);
-      if (typeof callback === "function")
-        callback(result);
-    } catch (error) {
-      Logger.e("PluginService", "Plugin settings completion observer failed");
-    } finally {
-      root._settingsSaveBusy = false;
-      Qt.callLater(root._nextSettingsSave);
-    }
+    if (!api || !api.settingsHandle || root.getPluginAPI(pluginId) !== api) return null;
+    var fields = api.settingsOwner.store.settingsKeys;
+    var writable = fields.length !== 0;
+    var handle;
+    // Informational pages own a native read-only view, not an empty draft.
+    try { handle = writable ? api.settingsHandle.draft() : api.settingsHandle.scope([], false); } catch (error) { return null; }
+    if (!handle) return null;
+    var editor = preferenceEditorFactory.createObject(root, {fields: fields, writable: writable, inputScope: api.settingsHandle});
+    editor.attach(handle);
+    return editor;
   }
 
   // Load manifest from file

@@ -12,7 +12,7 @@ an error; diagnostic categories and severities are unchanged.
 0.5.0 qmldir/qmltypes from a pinned pre-release `qt6-configqml 0.5.0-1`, built
 with the in-repository AUR recipe and installed inside the
 `atmosphera-configqml-settings` VM on ark with Qt6.12.0 (release source
-`06cecc3a0ed70c6997482db45208727449cbc322`).
+`1d576600071c2d2bf2a16e4eb8c28d29f68ed4bf`).
 When the tooling image lacks that module, the materializer copies these real
 registrar outputs into its private import universe, checking artifact hashes
 and the selected family's Qt version. An installed module takes precedence.

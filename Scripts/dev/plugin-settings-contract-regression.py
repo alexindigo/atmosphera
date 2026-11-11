@@ -147,8 +147,11 @@ def main():
         assert not any(t in text for t in ('PLUGIN_CONTRACT_ASSERT','ReferenceError','TypeError','Failed to load configuration'))
         results.append({'id':label,'status':'PASS'})
     catalog_count = 0
+    catalog_names = set()
     for path in sorted(args.plugins.glob('*/manifest.json')):
         manifest = compiler.shared.load(path); name = manifest['id']
+        assert name not in catalog_names
+        catalog_names.add(name)
         qml, origin = compiler.compile_schema(manifest, overlays); assert origin == 'manifest'
         versions = [('manifest', qml, manifest)]
         old = compiler.shared.load(args.frozen_plugins/name/'manifest.json')
@@ -184,7 +187,16 @@ Scope {
 '''.replace('CONSUMERS',consumers))
             run('catalog-'+name+'-'+kind, directory, {'CATALOG_EXPECTED':expected}, 'CATALOG_BINDINGS_PASS')
         catalog_count += 1
-    assert catalog_count == 161 and len(overlays['plugins']) == 159
+    # The frozen catalog still has exactly 159 compatibility entries. Builtin
+    # owners are shipped by the shell, outside that catalog, and also need their
+    # authored descriptors; do not count them as extra frozen user plugins.
+    old_overlay_names = catalog_names & overlays['plugins'].keys()
+    assert catalog_count == 161 and len(old_overlay_names) == 159
+    builtin_manifests = {compiler.shared.load(path)['id']: path for path in (ROOT/'builtin/plugins').glob('*/manifest.json')}
+    extra_overlay_names = overlays['plugins'].keys() - catalog_names
+    assert extra_overlay_names <= builtin_manifests.keys()
+    for name in sorted(extra_overlay_names):
+        compiler.compile_schema(compiler.shared.load(builtin_manifests[name]), overlays)
     for subject in ('screen-toolkit','video-wallpaper','config'):
         if subject == 'config':
             manifest = {'id':'config-contract','version':'1','metadata':{'configSchema':{'version':1,'fields':{
@@ -231,7 +243,8 @@ Scope {
                     if subject=='config':assert saved=={**raw,'network':{'address':'user','port':17}}
                     elif subject=='screen-toolkit':assert saved=={**(raw or {}),'paletteColors':['#123456']}
                     else:assert saved=={**(raw or {}),'monitors':{'offline.雪':{'volume':0.75,'opaque':False}}}
-    summary={'status':'INERT_METADATA_PASS','catalogManifests':catalog_count,'exactOldOverlays':159,
+    summary={'status':'INERT_METADATA_PASS','catalogManifests':catalog_count,'exactOldOverlays':len(old_overlay_names),
+        'builtinOverlays':len(extra_overlay_names),
         'catalogConfigNamespaces':0,'cases':results,'rejectingControls':rejected,
         'legacyIdentityUnchanged':True,'noStartupWrite':True,'separateColdRestart':True,
         'scope':'Compiler/installed library only; production owner and plugin runtime ports unchanged'}

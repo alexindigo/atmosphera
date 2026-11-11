@@ -140,8 +140,9 @@ ShellRoot {
     input.waitForJob();
     manifest = JSON.parse(input.text());
     if (verifyOnly) {
-      Service.loadPluginSettings("keybind-cheatsheet", function (value) {
+      Service._openSettingsOwner("keybind-cheatsheet", function (value) {
         try {
+          check(value!==null,"cold native owner opens");
           root.register(value);
           root.phase = "restart";
         } catch (error) {
@@ -168,26 +169,12 @@ ShellRoot {
             }
           }
         ];
-    register({
-               niriConfigPath: Quickshell.env("I4_KEYBIND_CONFIG"),
-               bindOverrides: {
-                 fixture: {
-                   desc: "Keep description",
-                   hidden: true,
-                   opaque: {
-                     keep: true
-                   }
-                 }
-               }
-             });
-    api.saveSettings(function (result) {
-      if (result.status !== "saved")
-        Qt.exit(2);
-      else {
+    Service._openSettingsOwner("keybind-cheatsheet",function(owner){try{check(owner!==null,"native owner opens");register(owner);
+    Settings.saveResult(function(result){try{check(result.status==="saved","placement seed saved");
         popup.openInstanceSettings(root.manifest, root.instance, "settings");
         root.phase = "preview";
-      }
-    });
+    }catch(error){console.error(String(error));Qt.exit(2);}});
+    }catch(error){console.error(String(error));Qt.exit(2);}});
   }
   function drive() {
     if (phase === "preview" && popup.opened && popup.settingsPage) {
@@ -210,6 +197,7 @@ ShellRoot {
       popup.confirmDiscard();
       phase = "cancel";
     } else if (phase === "cancel" && !popup.visible && !popup.currentPlugin) {
+      if(instance.pluginSettings.keyColorAlt!=="#456789")return;
       check(String(panel.keyColorAlt) === "#456789" && main.cheatsheetDataVersion === parserVersion, "cancel reveals foreign edit without rollback or refresh");
       popup.openInstanceSettings(manifest, instance, "settings");
       phase = "apply";
@@ -228,6 +216,7 @@ ShellRoot {
       phase = "wait";
     } else if (phase === "wait" && !popup.busy) {
       check(!popup.saveFailed && !popup.dirty, "current receipt clears accepted work: " + JSON.stringify(lastResult) + " dirty=" + popup.dirty + " fields=" + JSON.stringify(dirtyFields(popup.settingsPage)));
+      if(instance.pluginSettings.keyColorAlt!=="#123456")return;
       check(savedNotices === 1, "one actual saved toast after current receipt");
       consumers();
       check(instance.pluginSettings.bindOverrides.fixture.opaque.keep && !instance.pluginSettings.bindOverrides.fixture.hidden, "selected override edit persisted");
@@ -242,6 +231,7 @@ ShellRoot {
       });
       phase = "saving-cache";
     } else if (phase === "restart") {
+      if(!instance.settingsReady||!sibling.settingsReady)return;
       consumers();
       check(api.pluginSettings.bindOverrides.fixture.hidden && api.pluginSettings.bindOverrides.fixture.opaque.keep, "shared overrides unaffected after restart");
       check(instance.pluginSettings.bindOverrides.fixture.opaque.keep && !instance.pluginSettings.bindOverrides.fixture.hidden, "selected map after restart");

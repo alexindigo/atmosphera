@@ -22,6 +22,10 @@ PanelWindow {
   property var expected: ({})
   property string expectedKey: ""
   property int emissions: 0
+  property int ownerIndex: 0
+  property var sharedBytes: ({})
+  property bool faultBlocked: false
+  property bool exitAfterRepair: false
   readonly property var screenObject: Quickshell.screens[0]
   readonly property bool verifyOnly: Quickshell.env("I4_VERIFY") === "1"
   Item {
@@ -46,6 +50,15 @@ PanelWindow {
     path: Quickshell.env("I4_LIVE_INPUTS")
     blockLoading: true
   }
+  FileView { id: sharedFile; blockLoading: true; printErrors: false }
+  function checkShared(name) {
+    sharedFile.path = Quickshell.env("ATMOSPHERA_CONFIG_DIR") + "/settings/plugins/" + name + ".json";
+    sharedFile.reload(); sharedFile.waitForJob();
+    var text = sharedFile.text();
+    check(JSON.parse(text).sharedSentinel === true, "raw shared sentinel retained");
+    if (sharedBytes[name] === undefined) sharedBytes[name] = text;
+    check(text === sharedBytes[name], "selected edit leaves shared preference bytes unchanged");
+  }
   FileView {
     path: Quickshell.env("I4_ICON_DATA")
     onLoaded: {
@@ -60,6 +73,11 @@ PanelWindow {
   }
   function fail(error) {
     console.error(String(error));
+    if (faultBlocked && !faultProcess.running) {
+      exitAfterRepair = true;
+      fault("repair");
+      return;
+    }
     Qt.callLater(function () {
       Qt.exit(2);
     });
@@ -135,27 +153,43 @@ PanelWindow {
         Version.currentVersion = version;
         Version.versionKnown = known;
       }
-      var loaded = Object.assign({}, Service.loadedPlugins);
-      cases.forEach(function (item) {
-        var api = Service.createPluginAPI(item.manifest.id, item.manifest, Object.assign({}, item.manifest.metadata?.defaultSettings || {}, {
-                                                                                           sharedSentinel: true
-                                                                                         }), {}, {}, {});
-        loaded[item.manifest.id] = {
-          api: api
-        };
-        check(DesktopWidgetRegistry.registerPluginWidget(item.manifest.id, inertWidget, item.manifest.metadata?.defaultSettings || {}), "register actual placement metadata");
-      });
-      Service.loadedPlugins = loaded;
-      PanelService.registerPopupMenuWindow(screenObject, popupHost);
-      if (verifyOnly) {
-        finalChecks();
-        console.log("I4_DESKTOP_FIELDS: RESTART_PASS");
-        Qt.callLater(function () {
-          Qt.exit(0);
-        });
-        return;
-      }
-      Settings.data.desktopWidgets.monitorWidgets = [
+      phase = "owners";
+      openNextOwner();
+    } catch (error) {
+      fail(error);
+    }
+  }
+  function openNextOwner() {
+    if (ownerIndex === cases.length) { ownersReady(); return; }
+    var item = cases[ownerIndex];
+    if (verifyOnly) { openOwner(item); return; }
+    seedWriter.command = ["python3", "-B", Quickshell.env("I5_PLUGIN_SEED"), Quickshell.env("ATMOSPHERA_CONFIG_DIR"), item.manifest.id, JSON.stringify({sharedSentinel: true})];
+    seedWriter.running = true;
+  }
+  function openOwner(item) {
+    Service._openSettingsOwner(item.manifest.id, function (owner) {
+      try {
+        root.check(owner !== null, "actual shared owner opened");
+        var api = Service.createPluginAPI(item.manifest.id, item.manifest, owner, {}, {}, {});
+        var loaded = Object.assign({}, Service.loadedPlugins);
+        loaded[item.manifest.id] = {api: api};
+        Service.loadedPlugins = loaded;
+        root.check(DesktopWidgetRegistry.registerPluginWidget(item.manifest.id, inertWidget, item.manifest.metadata?.defaultSettings || {}), "register actual placement metadata");
+        root.checkShared(item.manifest.id);
+        root.ownerIndex++;
+        root.openNextOwner();
+      } catch (error) { root.fail(error); }
+    });
+  }
+  function ownersReady() {
+    PanelService.registerPopupMenuWindow(screenObject, popupHost);
+    if (verifyOnly) {
+      finalChecks();
+      console.log("I4_DESKTOP_FIELDS: RESTART_PASS");
+      Qt.callLater(function () { Qt.exit(0); });
+      return;
+    }
+    Settings.data.desktopWidgets.monitorWidgets = [
             {
               name: screenObject.name,
               opaque: "monitor",
@@ -172,10 +206,7 @@ PanelWindow {
               ]
             }
           ];
-      next();
-    } catch (error) {
-      fail(error);
-    }
+    next();
   }
   function next() {
     index++;
@@ -183,12 +214,11 @@ PanelWindow {
     dialog = null;
     fields = {};
     emissions = 0;
-    phase = "opening";
+    phase = "waiting-placement";
     if (index === cases.length) {
       finish();
       return;
     }
-    DesktopWidgetRegistry.openWidgetSettings(screenObject, index, "plugin:" + cases[index].manifest.id, rows()[index]);
   }
   Timer {
     interval: 20
@@ -203,7 +233,13 @@ PanelWindow {
     }
   }
   function drive() {
-    if (phase === "opening" && dialog && dialog.visible) {
+    if (phase === "waiting-placement") {
+      var editor = DesktopWidgetRegistry.createWidgetSettingsEditor(screenObject.name, index);
+      if (!editor) return;
+      phase = "opening";
+      DesktopWidgetRegistry.openWidgetSettings(screenObject, index, "plugin:" + cases[index].manifest.id,
+        rows()[index], undefined, undefined, undefined, undefined, undefined, editor);
+    } else if (phase === "opening" && dialog && dialog.visible) {
       page = find(dialog.contentItem, function (item) {
         return item.widgetSettings !== undefined && typeof item.saveSettings === "function";
       });
@@ -257,10 +293,12 @@ PanelWindow {
       input.text = "";
       check(emissions === 0, "programmatic text does not submit");
     }
-    Settings.setBindingsUnresolved(true);
-    phase = "action";
-    action();
-    check(emissions === 1, "one native control signal / one field intent");
+    phase = "blocking";
+    fault("block");
+  }
+  function fault(mode) {
+    faultProcess.command = ["python3", "-B", Quickshell.env("I5_DESKTOP_FAULT"), Quickshell.env("ATMOSPHERA_CONFIG_DIR"), mode];
+    faultProcess.running = true;
   }
   function action() {
     var item = cases[index];
@@ -281,18 +319,15 @@ PanelWindow {
   }
   function receipt(result) {
     try {
+      console.log("I4_DESKTOP_RECEIPT", cases[index].manifest.id, phase, JSON.stringify(result));
       if (phase === "action") {
         check(result.status === "failed" && dialog.visible && dialog.settingsDirty, "failed live input retained");
         dialog.requestDiscard();
         check(dialog.discardPending, "failed discard asks");
         dialog.keepEditing();
         check(!dialog.discardPending && dialog.settingsDirty, "keep editing retains failed input");
-        phase = "retry";
-        if (cases[index].kind === "NTextInput")
-          control("NTextInput", "").text = "";
-        action();
-        Settings.setBindingsUnresolved(false);
-        dialog.saveAndClose();
+        phase = "repairing";
+        fault("repair");
       } else if (phase === "retry") {
         check(result.status !== "failed", "actual current Retry receipt");
         expected[cases[index].manifest.id] = Object.assign({}, fields);
@@ -308,13 +343,14 @@ PanelWindow {
     Object.keys(want).forEach(function (key) {
       check(JSON.stringify(row[key]) === JSON.stringify(want[key]), "unknown placement preserved / explicit field " + key);
     });
-    check(Service.getPluginAPI(cases[index].manifest.id).pluginSettings.sharedSentinel, "selected edit leaves shared preferences owned separately");
+    checkShared(cases[index].manifest.id);
   }
   function finalChecks() {
     var monitors = Settings.data.desktopWidgets.monitorWidgets;
     check(monitors.length === 2 && monitors[0].opaque === "monitor" && monitors[1].opaque === "duplicate" && monitors[1].widgets[0].tag === "duplicate", "ancestry and duplicate monitors retained");
     check(rows().length === cases.length, "all eight live rows");
     cases.forEach(function (item, n) {
+      checkShared(item.manifest.id);
       var row = rows()[n];
       check(row.tag === item.manifest.id && row.opaque.keep && row.x === 7 && row.y === 9 && row.scale === 2, "placement fields unchanged");
       check(row[item.key] === (item.kind === "NTextInput" ? "desktop-newer" : item.value), "restarted actual placement consumer " + item.manifest.id);
@@ -348,6 +384,36 @@ PanelWindow {
     target: Registry
     function onPluginsChanged() {
       root.begin();
+    }
+  }
+  Process {
+    id: faultProcess
+    onExited: code => {
+      try {
+        root.check(code === 0, "private directory permission prerequisite");
+        if (root.phase === "blocking") {
+          root.faultBlocked = true;
+          root.phase = "action";
+          root.action();
+          root.check(root.emissions === 1, "one native control signal / one field intent");
+        } else {
+          root.faultBlocked = false;
+          if (root.exitAfterRepair) { Qt.exit(2); return; }
+          root.phase = "retry";
+          if (root.cases[root.index].kind === "NTextInput") root.control("NTextInput", "").text = "";
+          root.action();
+          root.dialog.saveAndClose();
+        }
+      } catch (error) { root.fail(error); }
+    }
+  }
+  Process {
+    id: seedWriter
+    onExited: code => {
+      try {
+        root.check(code === 0, "private original shared preference seed");
+        root.openOwner(root.cases[root.ownerIndex]);
+      } catch (error) { root.fail(error); }
     }
   }
   Component.onCompleted: begin()

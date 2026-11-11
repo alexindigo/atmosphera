@@ -65,7 +65,7 @@ ColumnLayout {
       spacing: Style.marginS
 
       Repeater {
-        model: Settings.data.audio.mprisBlacklist
+        model: Settings.store.listModel(["audio", "mprisBlacklist"])
         delegate: Rectangle {
           required property string modelData
           property real pad: Style.marginS
