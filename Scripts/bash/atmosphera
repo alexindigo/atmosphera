@@ -26,11 +26,24 @@ if [ ! -f "$SELF_DIR/atmosphera-bindings" ] && [ -d "/etc/xdg/quickshell/atmosph
   SELF_DIR="/etc/xdg/quickshell/atmosphera/Scripts/bash"
 fi
 
+# The registration is shared by IPC, launch and the session switcher.
+source "$SELF_DIR/shell-owner.sh"
+
 # Determine invocation name for multi-call detection
 INVOKED_NAME="${0##*/}"
 
 # --- helper: forward to Quickshell as the atmosphera shell ---
 run_shell() {
+  local pid
+  if pid=$(shell_owner_pid); then
+    echo "Atmosphera is already running (PID $pid)."
+    exit 0
+  fi
+  for arg in "$@"; do
+    case "$arg" in
+      -p|--path|-c|--config|--path=*|--config=*) exec qs -n "$@" ;;
+    esac
+  done
   exec qs -n -c atmosphera "$@"
 }
 
@@ -102,6 +115,7 @@ case "$SUBCMD" in
 
   # --- ipc + shortcuts (ipc is the real module; fire/custom/plugin route through it) ---
   ipc)
+    pid=$(shell_owner_require) || exit 1
     # quickshell 0.3.2 exits 0 even for rejected IPC calls. Its ipccomm.cpp
     # diagnostics, as well as the process status, define the reply contract.
     # Pad a short call to the reported arity and retry once; never replay a
@@ -110,7 +124,7 @@ case "$SUBCMD" in
     short_reply='^Too few arguments provided \(([0-9]+) required but ([0-9]+) were provided\.\)'
     for attempt in 0 1; do
       status=0
-      output=$(qs -c atmosphera ipc call "${args[@]}" 2>&1) || status=$?
+      output=$(timeout 5 qs ipc --pid "$pid" call "${args[@]}" 2>&1) || status=$?
       case "$output" in
         "Too few arguments provided ("*)
           if ((attempt == 0)) && [[ "$output" =~ $short_reply ]]; then

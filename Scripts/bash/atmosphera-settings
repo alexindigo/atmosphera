@@ -3,11 +3,7 @@ set -euo pipefail
 
 QS_BIN="qs"
 
-find_config() {
-  [ -n "${ATMOSPHERA_CONFIG:-}" ] && { echo "$ATMOSPHERA_CONFIG"; return 0; }
-  [ -d "$HOME/Projects/atmosphera" ] && { echo "$HOME/Projects/atmosphera"; return 0; }
-  echo "/etc/xdg/quickshell/atmosphera"
-}
+source "$(dirname "$(readlink -f "$0")")/shell-owner.sh"
 
 # Default action
 ACTION="open"
@@ -36,10 +32,11 @@ case "${1:-}" in
   *) TAB="${1}" ;; # treat first arg as tab name for open
 esac
 
+PID=$(shell_owner_require)
 if [ "$ACTION" = "toggle" ]; then
-  exec "$QS_BIN" -p "$(find_config)" ipc call settings toggle
+  exec timeout 5 "$QS_BIN" ipc --pid "$PID" call settings toggle
 elif [ -n "$TAB" ]; then
-  exec "$QS_BIN" -p "$(find_config)" ipc call settings openTab "$TAB"
+  exec timeout 5 "$QS_BIN" ipc --pid "$PID" call settings openTab "$TAB"
 else
-  exec "$QS_BIN" -p "$(find_config)" ipc call settings open
+  exec timeout 5 "$QS_BIN" ipc --pid "$PID" call settings open
 fi

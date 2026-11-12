@@ -15,6 +15,57 @@ release version. Compatibility and changelog identities use only the release
 part. Package-written build identities such as `0.8.0.r12.gabc1234` (including
 pkgrel suffixes) remain supported; they are not bumped API versions.
 
+## Shell identity and recovery
+
+`ShellRegistration` elects one shell per session bus under `app.atmosphera.Shell`.
+The queued claim never replaces another live owner. Only the elected shell
+initializes the session/UI and claims the shared portal backend name. Portal
+interfaces export on that connection without separately claiming the name.
+Startup readiness reads current dependency state, not one-shot load signals.
+
+The dispatcher, session switcher and shell helper scripts resolve that unique
+bus owner to a PID before addressing Quickshell. There is no process-command-line
+or installed-path guess: Quickshell's crash recovery replaces its command line.
+Discovery and IPC have finite deadlines. With no ready registered owner, IPC
+returns a clear error; an older running shell must be restarted after upgrading.
+`atmosphera run` starts the installed shell when no owner exists, or reuses the
+current owner. A development-tree switch carrying the same `ShellId` stays
+inside Atmosphera and does not restore niri's base config. The switcher waits
+for the departing process as well as name release before starting its successor.
+
+Read-only diagnostics:
+
+```sh
+busctl --user get-property app.atmosphera.Shell /app/atmosphera/Shell app.atmosphera.Shell1 Status
+busctl --user get-property app.atmosphera.Shell /app/atmosphera/Shell app.atmosphera.Shell1 ConfigPath
+busctl --user get-property app.atmosphera.Shell /app/atmosphera/Shell app.atmosphera.Shell1 PortalReady
+```
+
+`waiting`, `acquired`, `lost` and `ready` describe ownership/readiness; a usable
+IPC endpoint is reported separately by `IpcReady`. A busy portal name does not
+make unrelated IPC unavailable. Interface construction alone is not readiness.
+
+The guest-only `Scripts/dev/shell-recovery-regression.py` exercises busy-name
+handoff, a queued second shell, SIGSEGV/Quickshell auto-restart, live reload and
+development-tree switching. It checks real launcher/input shortcuts, fcitx5
+readback, frontend Settings/FileChooser responses and the idle-inhibitor consumer.
+Use the named project VM with its real niri session, current runtime dependencies,
+the CLI on the compositor's PATH and `ydotoold` access to its test uinput device.
+Set `TMPDIR` inside the assigned disk-backed workspace. The runner owns its
+children and restores the guest niri base. Example for the assigned recovery VM:
+
+```sh
+# Inside atmosphera-shell-recovery on ark.home, never on the physical host:
+cd /home/tester/Projects/shell-recovery/source
+export TMPDIR=/home/tester/Projects/shell-recovery/tmp
+timeout 210 python3 -B Scripts/dev/shell-recovery-regression.py --work /home/tester/Projects/shell-recovery/run-1
+```
+
+Quickshell 0.3.2 has an independent recovered-exit quirk: after the recovered
+event loop returns, `src/launch/main.cpp` falls through to default CLI config
+selection. The regression distinguishes that known diagnostic/255 from a new
+crash and separately requires a normal cold load to exit zero (`--case smoke`).
+
 ## AUR packaging
 
 Edit AUR recipes in **this repository**, under `packaging/aur/`, rather than in

@@ -23,29 +23,25 @@ json="${json}]"
 
 QS="${ATMOSPHERA_QS:-qs}"
 
-find_config() {
-  [ -n "${ATMOSPHERA_CONFIG:-}" ] && { echo "$ATMOSPHERA_CONFIG"; return 0; }
-  [ -d "$HOME/Projects/atmosphera" ] && { echo "$HOME/Projects/atmosphera"; return 0; }
-  echo "/etc/xdg/quickshell/atmosphera"
-}
-CONFIG="$(find_config)"
+source "$(dirname "$(readlink -f "$0")")/shell-owner.sh"
+PID=$(shell_owner_require)
 
 tmpdir=$(mktemp -d "${XDG_RUNTIME_DIR:-/dev/shm}/atmosphera-dialog-XXXXXX")
 fifo="$tmpdir/reply"
 mkfifo "$fifo"
 
 cleanup() {
-  $QS ipc -p "$CONFIG" call dialog cancel &>/dev/null || true
+  timeout 5 "$QS" ipc --pid "$PID" call dialog cancel &>/dev/null || true
   rm -rf "$tmpdir"
 }
 trap cleanup EXIT INT TERM
 
 b64=$(printf '%s' "$json" | base64 -w0)
-$QS ipc -p "$CONFIG" call dialog survey "$title" "$b64" "$fifo" &>/dev/null &
+timeout 5 "$QS" ipc --pid "$PID" call dialog survey "$title" "$b64" "$fifo" &>/dev/null &
 
 TIMEOUT="${ATMOSPHERA_DIALOG_TIMEOUT:-30}"
 read -t "$TIMEOUT" result < "$fifo" 2>/dev/null || {
-  $QS ipc -p "$CONFIG" call dialog cancel &>/dev/null || true
+  timeout 5 "$QS" ipc --pid "$PID" call dialog cancel &>/dev/null || true
   echo ""
   exit 0
 }
