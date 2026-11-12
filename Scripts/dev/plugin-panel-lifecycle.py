@@ -12,6 +12,7 @@ import re
 import shutil
 
 from presentation_harness import add_execution_arguments, check_execution_paths, run_harness, write_receipt
+from qml_probe import inject_probe
 
 
 PANEL = '''import QtQuick
@@ -166,9 +167,7 @@ def main():
     shutil.copytree(args.source, shell, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '*.bak'))
     entry = shell / 'shell.qml'
     original = entry.read_text()
-    position = original.rfind('}')
-    assert position > 0 and 'id: shellRoot' in original
-    entry.write_text(original[:position] + PROBE + original[position:])
+    entry.write_text(inject_probe(original, PROBE))
     env = dict(os.environ, QT_QPA_PLATFORM='wayland', QT_QUICK_BACKEND='software')
     for key, leaf in (('HOME', 'home'), ('XDG_CONFIG_HOME', 'config'),
                       ('XDG_DATA_HOME', 'data'), ('XDG_CACHE_HOME', 'cache'),

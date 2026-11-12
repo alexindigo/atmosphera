@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 import shutil
 from presentation_harness import add_execution_arguments, check_execution_paths, run_harness, write_receipt
+from qml_probe import inject_probe
 
 PROBE = r'''
   property int _ownerCase: 0
@@ -168,8 +169,7 @@ def main():
     shutil.copy2(Path(__file__).parent / 'fixtures/presentation-tray.py', shell / 'Scripts/dev/fixtures/presentation-tray.py')
     main_qml = shell / 'shell.qml'
     text = main_qml.read_text().replace('import Quickshell\n', 'import Quickshell\nimport QtQuick.Controls as Controls\nimport Quickshell.Io\nimport Quickshell.Wayland\nimport Quickshell.Services.SystemTray\nimport qs.Modules.Bar.Extras\nimport qs.Widgets\n')
-    pos = text.rfind('}')
-    main_qml.write_text(text[:pos] + PROBE + text[pos:])
+    main_qml.write_text(inject_probe(text, PROBE))
     env = dict(os.environ, QT_QPA_PLATFORM='wayland', QT_QUICK_BACKEND='software', XDG_CURRENT_DESKTOP='',
                NIRI_SOCKET='', HYPRLAND_INSTANCE_SIGNATURE='', SWAYSOCK='', LABWC_PID='', DISPLAY='',
                PRESENTATION_TRAY_GATE_FILE=str(work / 'menu-ready'))

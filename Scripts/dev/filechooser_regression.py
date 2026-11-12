@@ -123,7 +123,7 @@ class Run:
         # The shared runner owns the private bus, with no activation directories.
         # Every frontend/backend below is an explicit child in that session.
         self.qs = self.launch(["timeout", "720", "qs", "-p", self.probe], "shell.log")
-        self.wait(lambda s: not s["requests"])
+        self.wait(lambda s: not s["requests"] and s["portalReady"])
         self.launch(["timeout", "720", "busctl", "--address=" + self.env["DBUS_SESSION_BUS_ADDRESS"],
                      "--json=short", "monitor"], "wire.jsonl")
         pid = int(self.bus("GetConnectionUnixProcessID", "s", "org.freedesktop.impl.portal.desktop.atmosphera").split()[1])

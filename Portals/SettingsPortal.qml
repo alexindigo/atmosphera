@@ -40,7 +40,7 @@ Singleton {
   function init() {
     // does nothing but ensure the singleton (and its DBusAdaptor) is created
     // do not remove
-    Logger.i("SettingsPortal", "Service started");
+    Logger.i("SettingsPortal", "Interface exported");
   }
 
   // color-scheme: 0 = no preference, 1 = prefer dark, 2 = prefer light.
@@ -65,7 +65,6 @@ Singleton {
 
   DBusAdaptor {
     id: adaptor
-    service: "org.freedesktop.impl.portal.desktop.atmosphera"
     path: "/org/freedesktop/portal/desktop"
     captureSubtree: true
     iface: "org.freedesktop.impl.portal.Settings"

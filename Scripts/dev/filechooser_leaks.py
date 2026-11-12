@@ -11,6 +11,7 @@ import socket
 import subprocess
 import time
 
+from qml_probe import inject_probe
 KINDS = ("held_replies", "portal_entries", "requests", "browsers", "selections", "previews",
          "playbacks", "windows", "entries", "thumbnail_providers", "thumbnails",
          "thumbnail_workers", "players", "outputs", "controls")
@@ -129,7 +130,6 @@ Singleton {
             needle = "  function beginRequest(handle, appId, parentWindow, title, options, method, reply) {"
             assert text.count(needle) == 1
             text = text.replace(needle, needle + "\n    _f10HeldReplyObserverFactory.createObject(reply);")
-            at = text.rfind("}")
             factory = '''  Component {
     id: _f10HeldReplyObserverFactory
     QtObject {
@@ -138,7 +138,7 @@ Singleton {
     }
   }
 '''
-            text = text[:at] + factory + text[at:]
+            text = inject_probe(text, factory, root_id="root")
         if kind == "playbacks":
             needle = "sourceComponent: MediaPlayer {"
             assert text.count(needle) == 1

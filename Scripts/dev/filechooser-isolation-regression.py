@@ -15,6 +15,7 @@ import time
 
 from filechooser_isolation import ROOT, cgroup, enter, input_command, profile_env
 from filechooser_gate import request_gate
+from qml_probe import inject_probe
 
 
 def command(argv, env=None, seconds=15, check=True):
@@ -47,11 +48,10 @@ def wait(fn, seconds=20):
     raise AssertionError("readiness timeout")
 
 
-def instrument(shell, filename, handler, imports=""):
+def instrument(shell, filename, handler, imports="", *, root_id="shellRoot"):
     path = shell / filename
     text = path.read_text()
-    index = text.rfind("}")
-    path.write_text(imports + "import Quickshell.Io\n" + text[:index] + handler + text[index:])
+    path.write_text(imports + "import Quickshell.Io\n" + inject_probe(text, handler, root_id=root_id))
 
 
 def main():
@@ -257,7 +257,7 @@ def main():
       tiles: root.thumbnailState().tiles
     }); }
   }
-''')
+''', root_id="root")
         # A second disposable session has its own compositor, HOME and bus.
         # The shared supervisor is reused, not another hand-written recipe.
         session_base = Path(os.environ["FILECHOOSER_ISOLATION"]) / "s"
