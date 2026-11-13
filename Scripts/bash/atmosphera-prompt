@@ -10,21 +10,9 @@ QS="${ATMOSPHERA_QS:-qs}"
 source "$(dirname "$(readlink -f "$0")")/shell-owner.sh"
 PID=$(shell_owner_require)
 
-tmpdir=$(mktemp -d "${XDG_RUNTIME_DIR:-/dev/shm}/atmosphera-dialog-XXXXXX")
-fifo="$tmpdir/reply"
-mkfifo "$fifo"
-
-cleanup() {
-  timeout 5 "$QS" ipc --pid "$PID" call dialog cancel &>/dev/null || true
-  rm -rf "$tmpdir"
-}
-trap cleanup EXIT INT TERM
-
-timeout 5 "$QS" ipc --pid "$PID" call dialog prompt "$question" "$fifo" "$default" &>/dev/null &
-
-TIMEOUT="${ATMOSPHERA_DIALOG_TIMEOUT:-30}"
-read -t "$TIMEOUT" result < "$fifo" 2>/dev/null || {
-  timeout 5 "$QS" ipc --pid "$PID" call dialog cancel &>/dev/null || true
+source "$(dirname "$(readlink -f "$0")")/dialog-reply.sh"
+dialog_request prompt "$question" "$default"
+dialog_read || {
   echo ""
   exit 0
 }

@@ -32,6 +32,11 @@ returns a clear error; an older running shell must be restarted after upgrading.
 current owner. A development-tree switch carrying the same `ShellId` stays
 inside Atmosphera and does not restore niri's base config. The switcher waits
 for the departing process as well as name release before starting its successor.
+If a queued shell acquires the election during that wait, switching fails with
+an explicit handoff error instead of reporting that the requested tree started.
+Installed dispatchers resolve their sibling handler tree for both Nix's shared
+prefix and the system installation. Dialog helpers share one bounded FIFO
+reader and check delivery before waiting; reply payloads need no final newline.
 
 Read-only diagnostics:
 
@@ -58,8 +63,16 @@ children and restores the guest niri base. Example for the assigned recovery VM:
 # Inside atmosphera-shell-recovery on ark.home, never on the physical host:
 cd /home/tester/Projects/shell-recovery/source
 export TMPDIR=/home/tester/Projects/shell-recovery/tmp
-timeout 210 python3 -B Scripts/dev/shell-recovery-regression.py --work /home/tester/Projects/shell-recovery/run-1
+timeout 270 python3 -B Scripts/dev/shell-recovery-regression.py --work /home/tester/Projects/shell-recovery/run-1
 ```
+
+The runner's work deadline remains 200 seconds. SIGTERM enters teardown, with
+up to 60 seconds reserved for independently bounded restoration and child
+reaping. Cleanup failures are recorded in `result.json` and fail the run.
+`shell-recovery-cleanup-selftest.py --work NEW_DIRECTORY` injects termination
+and a stalled restoration command; `shell-controls-review-regression.py
+--work NEW_DIRECTORY` checks installed dispatch, contested handoff and dialog
+delivery/response failure. Run both only inside the assigned VM.
 
 Quickshell 0.3.2 has an independent recovered-exit quirk: after the recovered
 event loop returns, `src/launch/main.cpp` falls through to default CLI config

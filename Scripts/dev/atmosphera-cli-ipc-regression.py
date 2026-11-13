@@ -45,7 +45,10 @@ elif 'get-property' in sys.argv:
 else:
     sys.exit(98)
 '''
-PREFIX = ['ipc', '--pid', '4242', 'call']
+# Outside the kernel PID namespace's allocatable range: never aliases a real
+# process when the switcher checks the simulated departing owner's liveness.
+OWNER_PID = str(int(Path('/proc/sys/kernel/pid_max').read_text()) + 1)
+PREFIX = ['ipc', '--pid', OWNER_PID, 'call']
 SHORT = ('Too few arguments provided (2 required but 1 were provided.)\n'
          'Function definition: function toggleIM(name: string, group: string): string\n')
 ERRORS = [
@@ -72,7 +75,7 @@ def main():
     stub.write_text(STUB)
     stub.chmod(0o755)
     bus_stub = args.work / 'busctl'
-    bus_stub.write_text(BUS_STUB)
+    bus_stub.write_text(BUS_STUB.replace('4242', OWNER_PID))
     bus_stub.chmod(0o755)
     env = dict(os.environ, PATH=f'{args.work.resolve()}:{os.environ["PATH"]}', S10_STUB=str(args.work.resolve()))
     failures = []
@@ -136,7 +139,7 @@ def main():
         ('lock-preview', ['lock', 'preview'], ['lockScreen', 'preview']),
     ):
         check(name + '-registered-owner', command, [(target, 'ok\n', 0)], 'ok\n')
-    check('run-reuses-owner', ['run'], [], 'Atmosphera is already running (PID 4242).\n')
+    check('run-reuses-owner', ['run'], [], f'Atmosphera is already running (PID {OWNER_PID}).\n')
     target = args.work.resolve() / 'development-tree'
     target.mkdir()
     (target / 'shell.qml').write_text('//@ pragma ShellId app.atmosphera.Shell\n')
@@ -150,7 +153,7 @@ def main():
     niri.chmod(0o755)
     env.update(NIRI_SOCKET='/fixture/niri', XDG_CONFIG_HOME=str(config.parent))
     check('switch-dev-tree-uses-owner', ['session', 'launch', str(target)],
-          [(['kill', '--pid', '4242'], '', 0), (['-n', '-p', str(target), '-d'], 'started\n', 0)],
+          [(['kill', '--pid', OWNER_PID], '', 0), (['-n', '-p', str(target), '-d'], 'started\n', 0)],
           f'Launching: {target}\nstarted\n', prefix=[])
     count += 1
     reset = (args.work / 'niri-reset').exists()
@@ -172,7 +175,7 @@ if method != 'cancel':
     reply = {'alert': 'ok', 'confirm': 'true', 'prompt': 'typed', 'survey': '["typed"]'}[method]
     with open(fifo, 'w') as f:
         f.write(reply + '\\n')
-''')
+'''.replace('4242', OWNER_PID))
     env['XDG_RUNTIME_DIR'] = str(args.work.resolve())
     for name, command, output in (
         ('alert', ['alert', 'message'], ''),

@@ -106,7 +106,7 @@ def main():
         args.work.mkdir(parents=True, exist_ok=False)
         (args.work / "tmp").mkdir()
         env = dict(os.environ, TMPDIR=str(args.work / "tmp"))
-        subprocess.run(["timeout", "200", sys.executable, "-B", __file__, *sys.argv[1:], "--inside"], env=env, check=True, timeout=210)
+        subprocess.run(["timeout", "--kill-after=60", "200", sys.executable, "-B", __file__, *sys.argv[1:], "--inside"], env=env, check=True, timeout=265)
         return
     root = args.work.resolve()
     shell = root / "shell"
@@ -137,7 +137,7 @@ def main():
                XDG_CURRENT_DESKTOP="niri", PATH=str(cli.parent) + ":" + os.environ["PATH"], QT_IM_MODULE="fcitx", ATMOSPHERA_DEBUG="0", TMPDIR=str(root / "tmp"), YDOTOOL_SOCKET=str(root / "ydotool.sock"))
     children, logs, cases = [], [], []
     def command(argv, check=True):
-        return subprocess.run(["timeout", "12", *map(str, argv)], env=env, capture_output=True, text=True, timeout=15, check=check)
+        return subprocess.run(["timeout", "--kill-after=2", "12", *map(str, argv)], env=env, capture_output=True, text=True, timeout=15, check=check)
     def launch(argv, name):
         log = (root / (name + ".log")).open("w")
         logs.append(log)
@@ -196,6 +196,9 @@ def main():
         check(label + "-chooser-consumer-uri", p.returncode == 0 and json.loads(out.read_text())["results"]["uris"] == [fixture.as_uri()])
     failure = None
     switched = False
+    def deadline(_signum, _frame):
+        raise TimeoutError("recovery deadline reached")
+    signal.signal(signal.SIGTERM, deadline)
     try:
         launch(["ydotoold", "--socket-path=" + env["YDOTOOL_SOCKET"]], "input")
         wait(lambda: Path(env["YDOTOOL_SOCKET"]).exists())
@@ -291,23 +294,46 @@ def main():
         failure = repr(error)
         raise
     finally:
+        # A second termination must not interrupt restoration or receipt writing.
+        signal.signal(signal.SIGTERM, signal.SIG_IGN)
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+        cleanup_errors = []
+        def cleanup_command(name, argv):
+            try:
+                reply = command(argv, False)
+                if reply.returncode != 0:
+                    cleanup_errors.append(f"{name}: exit {reply.returncode}: {reply.stderr[-512:]}")
+            except Exception as error:
+                cleanup_errors.append(f"{name}: {error!r}")
         if switched:
-            command([cli, "session", "stop"], False)
-        command(["niri", "msg", "action", "load-config-file", "--path", "/home/tester/.config/niri/config.kdl"], False)
+            cleanup_command("session stop", [cli, "session", "stop"])
+        cleanup_command("restore niri", ["niri", "msg", "action", "load-config-file", "--path", "/home/tester/.config/niri/config.kdl"])
         for child in reversed(children):
             try:
                 os.killpg(child.pid, signal.SIGTERM)
             except ProcessLookupError:
                 pass
-            if child.poll() is None:
+            except OSError as error:
+                cleanup_errors.append(f"terminate child {child.pid}: {error!r}")
+        end = time.monotonic() + 8
+        for child in reversed(children):
+            try:
+                child.wait(timeout=max(.1, end - time.monotonic()))
+            except subprocess.TimeoutExpired:
                 try:
-                    child.wait(timeout=8)
-                except subprocess.TimeoutExpired:
                     os.killpg(child.pid, signal.SIGKILL)
                     child.wait(timeout=5)
+                except (OSError, subprocess.SubprocessError) as error:
+                    cleanup_errors.append(f"reap child {child.pid}: {error!r}")
         for log in logs:
-            log.close()
-        (root / "result.json").write_text(json.dumps({"cases": cases, "failure": failure}, indent=2))
+            try:
+                log.close()
+            except OSError as error:
+                cleanup_errors.append(f"close log: {error!r}")
+        (root / "result.json").write_text(json.dumps({"cases": cases, "failure": failure,
+                                                    "cleanup_errors": cleanup_errors}, indent=2))
+        if cleanup_errors and failure is None:
+            raise RuntimeError("recovery cleanup failed: " + "; ".join(cleanup_errors))
 
 
 if __name__ == "__main__":

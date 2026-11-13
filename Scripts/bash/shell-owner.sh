@@ -39,7 +39,11 @@ shell_owner_stop() {
     current=$(shell_owner_pid) || current=""
     # Name release precedes Quickshell's instance-lock teardown. Starting
     # with -n in that window would silently keep the departing instance.
-    if [ "$current" != "$pid" ] && ! kill -0 "$pid" 2>/dev/null; then
+    if [ -n "$current" ] && [ "$current" != "$pid" ]; then
+      echo 'atmosphera: another shell acquired the election during handoff; requested shell was not launched' >&2
+      return 1
+    fi
+    if [ -z "$current" ] && ! kill -0 "$pid" 2>/dev/null; then
       return 0
     fi
     sleep 0.1
