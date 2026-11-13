@@ -11,8 +11,8 @@ or restart. Launcher and input-method shortcuts find the active shell even when
 it runs from a development tree or has restarted. One shell instance is elected
 to own the session and portals; a second instance waits instead of taking over.
 
-- fix: elect one shell owner for portal recovery (`e90c79761`)
-- fix: route shell controls through the elected owner (`50dba6aa9`)
+- fix: elect one shell owner for portal recovery (`07dbf9b3f`)
+- fix: route shell controls through the elected owner (`9e1b95957`)
 
 ### 2026-11-11
 
