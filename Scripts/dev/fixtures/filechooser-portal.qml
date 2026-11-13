@@ -6,6 +6,7 @@ import qs.Commons
 import qs.Modules.Panels.Settings.DesktopWidgets.WidgetSettings
 import qs.Portals
 import qs.Services.Files
+import qs.Services.Session
 import qs.Services.UI
 
 ShellRoot {
@@ -69,8 +70,7 @@ ShellRoot {
     onLoaded: IconRegistry.register("dev:filechooser-icons", JSON.parse(text()), Quickshell.shellDir + "/builtin/plugins/atmosphera-icons")
   }
   Component.onCompleted: {
-    FileChooserPortal.init();
-    SettingsPortal.init();
+    ShellRegistration.startPortals();
   }
   IpcHandler {
     target: "filechooserRegression"
@@ -96,6 +96,7 @@ ShellRoot {
                           }, (_, i) => entry.request.browser.entry(i).name)
       }));
       return JSON.stringify({
+                              portalReady: ShellRegistration.portalReady,
                               requests: entries,
                               accepts: root.accepts,
                               cancels: root.cancels,

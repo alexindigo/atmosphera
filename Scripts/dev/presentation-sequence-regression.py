@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import sys
 from presentation_harness import add_execution_arguments, check_execution_paths, remaining_budget, run_harness, write_receipt
+from qml_probe import inject_probe
 
 PROBE = r'''
   property var _sequenceOsd: null
@@ -343,12 +344,13 @@ def main():
     shutil.copy2(__file__, shell / 'Scripts/dev/presentation-sequence-regression.py')
     shutil.copy2(Path(__file__).parent / 'presentation_harness.py', shell / 'Scripts/dev/presentation_harness.py')
     shutil.copy2(Path(__file__).parent / 'workspace_guard.py', shell / 'Scripts/dev/workspace_guard.py')
+    shutil.copy2(Path(__file__).parent / 'qml_probe.py', shell / 'Scripts/dev/qml_probe.py')
+    shutil.copy2(Path(__file__).parent / 'qml-identifiers.py', shell / 'Scripts/dev/qml-identifiers.py')
     main_qml = shell / 'shell.qml'
     text = main_qml.read_text().replace('import Quickshell\n', 'import Quickshell\nimport Quickshell.Io\nimport Quickshell.Wayland\nimport Quickshell.Services.SystemTray\nimport qs.Modules.Dock\nimport qs.Modules.Bar.Extras\n')
     text = text.replace('      OSD {}', '      OSD { Component.onCompleted: shellRoot._sequenceOsd = this }')
     text = text.replace('      Notification {}', '      Notification { Component.onCompleted: shellRoot._sequenceNotifications = this }')
-    pos = text.rfind('}')
-    main_qml.write_text(text[:pos] + PROBE + text[pos:])
+    main_qml.write_text(inject_probe(text, PROBE))
     (shell / '.qmlls.ini').touch()
     env = dict(os.environ, QT_QPA_PLATFORM='wayland', QT_QUICK_BACKEND='software', XDG_CURRENT_DESKTOP='',
                NIRI_SOCKET='', HYPRLAND_INSTANCE_SIGNATURE='', SWAYSOCK='', LABWC_PID='', DISPLAY='')

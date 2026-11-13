@@ -41,12 +41,11 @@ Singleton {
   readonly property bool screensaverActive: LockerService.lockedHintAvailable ? LockerService.locked : (PanelService.lockScreen ? PanelService.lockScreen.active : false)
 
   function init() {
-    Logger.i("InhibitPortal", "Service started");
+    Logger.i("InhibitPortal", "Interface exported");
   }
 
   DBusAdaptor {
     id: adaptor
-    service: "org.freedesktop.impl.portal.desktop.atmosphera"
     path: "/org/freedesktop/portal/desktop"
     captureSubtree: true
     iface: "org.freedesktop.impl.portal.Inhibit"
@@ -192,6 +191,13 @@ Singleton {
     entry.request.destroy();
     delete map[sessionHandle];
     root.activeMonitors = map;
+  }
+
+  function releaseAll() {
+    for (var handle of Object.keys(root.activeInhibits))
+      root.releaseInhibit(handle);
+    for (var session of Object.keys(root.activeMonitors))
+      root.releaseMonitor(session);
   }
 
   function emitState(sessionHandle) {

@@ -17,6 +17,7 @@ import re
 import subprocess
 import time
 
+from qml_probe import inject_probe
 
 ROOT = Path(os.environ.get('ATMOSPHERA_LAUNCHER_WORKSPACE', '/home/tester/Projects/atmosphera-launcher'))
 CONFIG = Path('/etc/xdg/quickshell/atmosphera')
@@ -125,12 +126,11 @@ def install_probe():
     qml = CONFIG / 'shell.qml'
     original = qml.read_text()
     assert 'launcher-flow passive observer' not in original, 'probe already installed'
-    assert original.count('ShellRoot {') == 1
     backup = ROOT / 'runtime' / ('shell-before-observer-' + hashlib.sha256(original.encode()).hexdigest() + '.qml')
     if not backup.exists():
         backup.write_text(original)
     observed = original.replace('import Quickshell\n', 'import Quickshell\nimport Quickshell.Io\n', 1)
-    observed = observed.replace('ShellRoot {', 'ShellRoot {' + PROBE, 1)
+    observed = inject_probe(observed, PROBE)
     staged = ROOT / 'runtime/shell-with-observer.qml'
     staged.write_text(observed)
     command(['sudo', '-n', 'cp', staged, qml])

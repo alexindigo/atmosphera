@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.9.3] - 2026-11-12
+
+### 2026-11-12
+
+**Fix**
+
+The file chooser, settings and idle-inhibit portals recover after a shell crash
+or restart. Launcher and input-method shortcuts find the active shell even when
+it runs from a development tree or has restarted. One shell instance is elected
+to own the session and portals; a second instance waits instead of taking over.
+Dialog delivery and response waits are bounded, including failed IPC and replies
+without a final newline. Installed Nix dispatchers find their shared helpers,
+and switching reports a competing shell takeover instead of false success.
+
+- fix: elect one shell owner for portal recovery (`07dbf9b3f`)
+- fix: route shell controls through the elected owner (`9e1b95957`)
+- fix: bound shell control delivery and recovery teardown (`ae7bcf8f8`)
+
+**Development**
+
+The recovery runner restores configuration and reaps its children after a
+deadline or a cleanup-command failure, recording restoration errors in its
+receipt. Fault-injection checks cover those failure paths, installed CLI
+dispatch, contested handoff and dialog delivery. CLI fixtures use a PID outside
+the kernel's allocatable range instead of potentially aliasing a real process.
+
+- fix: bound shell control delivery and recovery teardown (`ae7bcf8f8`)
+
+### 2026-11-11
+
+**Maintenance**
+
+The pinned nixpkgs revision was refreshed for Nix-based development and packaging.
+
+- chore(flake): update flake.lock (`9a3a0cd62`)
+
 ## [0.9.2] - 2026-11-09
 
 ### 2026-11-09

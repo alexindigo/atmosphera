@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 import shutil
 from presentation_harness import add_execution_arguments, check_execution_paths, run_harness, write_receipt
+from qml_probe import inject_probe
 
 PROBE = r'''
   property var _stateOsd: null
@@ -120,8 +121,7 @@ def main():
     assert '      OSD {}' in text and '      Notification {}' in text
     text = text.replace('      OSD {}', '      OSD { Component.onCompleted: shellRoot._stateOsd = this }')
     text = text.replace('      Notification {}', '      Notification { Component.onCompleted: shellRoot._stateNotifications = this }')
-    pos = text.rfind('}')
-    main_qml.write_text(text[:pos] + PROBE + text[pos:])
+    main_qml.write_text(inject_probe(text, PROBE))
     env = dict(os.environ, QT_QPA_PLATFORM='wayland', QT_QUICK_BACKEND='software',
                XDG_CURRENT_DESKTOP='', NIRI_SOCKET='', HYPRLAND_INSTANCE_SIGNATURE='', SWAYSOCK='', LABWC_PID='', DISPLAY='')
     for key, leaf in [('HOME', 'home'), ('XDG_CONFIG_HOME', 'config'), ('XDG_DATA_HOME', 'data'),

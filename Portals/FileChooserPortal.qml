@@ -5,19 +5,20 @@ import DBus 1.0 as DBusQML
 import QtQuick
 import Quickshell
 import qs.Commons
+import qs.Modules.FileChooser
 import qs.Services.Compositor
 import qs.Services.Files
-import qs.Modules.FileChooser
 
 Singleton {
   id: root
   property var activeRequests: ({})
 
-  function init() { Logger.i("FileChooserPortal", "Service started"); }
+  function init() {
+    Logger.i("FileChooserPortal", "Interface exported");
+  }
 
   DBusAdaptor {
     id: adaptor
-    service: "org.freedesktop.impl.portal.desktop.atmosphera"
     path: "/org/freedesktop/portal/desktop"
     captureSubtree: true
     iface: "org.freedesktop.impl.portal.FileChooser"
@@ -32,7 +33,6 @@ Singleton {
     function saveFiles(handle, appId, parentWindow, title, options) {
       root.beginRequest(handle, appId, parentWindow, title, options, "saveFiles", adaptor.holdReply());
     }
-    onNameLost: root.cancelAll()
   }
 
   function beginRequest(handle, appId, parentWindow, title, options, method, reply) {
@@ -44,15 +44,26 @@ Singleton {
     // Parent identifiers and modal are accepted. The overlay is focused, stays
     // above the app and is centred on its focused output (best effort).
     var entry = requestFactory.createObject(root, {
-      handle: handle, appId: appId, parentWindow: parentWindow, method: method,
-      options: Object.assign({}, options || {}, {title: title}), reply: reply,
-      caller: reply.callerService(), output: screen || null
-    });
+                                              handle: handle,
+                                              appId: appId,
+                                              parentWindow: parentWindow,
+                                              method: method,
+                                              options: Object.assign({}, options || {}, {
+                                                                       title: title
+                                                                     }),
+                                              reply: reply,
+                                              caller: reply.callerService(),
+                                              output: screen || null
+                                            });
     if (!entry) {
-      reply.send([2, {}]);
+      reply.send([2,
+                  {}
+                 ]);
       return;
     }
-    activeRequests = Object.assign({}, activeRequests, {[handle]: entry});
+    activeRequests = Object.assign({}, activeRequests, {
+                                     [handle]: entry
+                                   });
     if (!screen)
       entry.request.fail("No output available");
   }
@@ -111,16 +122,24 @@ Singleton {
         iface: "org.freedesktop.impl.portal.Request"
         connection: SessionBus
         allowedSender: entry.caller
-        function close() { fileRequest.cancel(); }
+        function close() {
+          fileRequest.cancel();
+        }
       }
       DBusServiceWatcher {
         connection: SessionBus
         service: entry.caller
-        onOwnerChanged: (oldOwner, newOwner) => { if (oldOwner && oldOwner !== newOwner) fileRequest.cancel(); }
+        onOwnerChanged: (oldOwner, newOwner) => {
+          if (oldOwner && oldOwner !== newOwner)
+            fileRequest.cancel();
+        }
       }
       Loader {
         active: entry.output !== null
-        sourceComponent: FileChooserWindow { request: fileRequest; screen: entry.output }
+        sourceComponent: FileChooserWindow {
+          request: fileRequest
+          screen: entry.output
+        }
       }
       Component.onDestruction: fileRequest.cancel()
     }

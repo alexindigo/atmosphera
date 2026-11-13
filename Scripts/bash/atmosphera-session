@@ -5,6 +5,8 @@ set -euo pipefail
 # Kills current shell and launches a different one — windows stay open.
 
 QS_BIN="qs"
+SELF_DIR="$(dirname "$(readlink -f "$0")")"
+source "$SELF_DIR/shell-owner.sh"
 
 declare -A SHELLS
 SHELLS["atmosphera"]="/etc/xdg/quickshell/atmosphera"
@@ -32,7 +34,7 @@ launch() {
   fi
 
   # Leaving atmosphera → restore niri's boot-time base config
-  if [ "${SHELLS[atmosphera]}" != "$target" ] && [ -n "${NIRI_SOCKET:-}" ]; then
+  if [ "${SHELLS[atmosphera]}" != "$target" ] && ! grep -q '^//@ pragma ShellId app\.atmosphera\.Shell$' "$target/shell.qml" && [ -n "${NIRI_SOCKET:-}" ]; then
     local session_file="${XDG_CONFIG_HOME:-$HOME/.config}/niri/atmosphera-session.kdl"
     if [ -f "$session_file" ]; then
       local marker base=""
@@ -46,19 +48,19 @@ launch() {
   fi
 
   echo "Launching: $target"
-  "$QS_BIN" kill -p "$target" 2>/dev/null || true
-  sleep 0.3
-  exec "$QS_BIN" -p "$target" -d
+  if shell_owner_pid >/dev/null; then
+    shell_owner_stop
+  fi
+  exec "$QS_BIN" -n -p "$target" -d
 }
 
 stop() {
-  local killed=false
-  for path in "${SHELLS[@]}"; do
-    if "$QS_BIN" kill -p "$path" 2>/dev/null; then
-      killed=true
-    fi
-  done
-  $killed && echo "Shell stopped." || echo "No shell running (known locations)."
+  if shell_owner_pid >/dev/null; then
+    shell_owner_stop
+    echo "Shell stopped."
+  else
+    echo "No registered Atmosphera shell running."
+  fi
 }
 
 case "${1:-}" in
