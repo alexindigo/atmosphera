@@ -9,10 +9,10 @@ An unknown family, missing reference, conflicting owner or altered artifact is
 an error; diagnostic categories and severities are unchanged.
 
 `dependencies/configqml-050` contains the **unmodified installed** ConfigQml
-0.5.0 qmldir/qmltypes from a pinned pre-release `qt6-configqml 0.5.0-1`, built
-with the in-repository AUR recipe and installed inside the
-`atmosphera-configqml-settings` VM on ark with Qt6.12.0 (release source
-`1d576600071c2d2bf2a16e4eb8c28d29f68ed4bf`).
+0.5.0 qmldir/qmltypes from published AUR `qt6-configqml 0.5.0-1`, recipe
+`d95eace61593e42afc1d4fecc56d18f72074292f`, built and installed inside the
+`atmosphera-configqml-settings` VM on ark with Qt6.12.0. Published `v0.5.0`
+resolves to `0b2920109fd63be8f71f48be60d0cac1fff7849d`.
 When the tooling image lacks that module, the materializer copies these real
 registrar outputs into its private import universe, checking artifact hashes
 and the selected family's Qt version. An installed module takes precedence.

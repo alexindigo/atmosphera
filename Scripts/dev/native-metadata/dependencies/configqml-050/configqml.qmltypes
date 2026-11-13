@@ -986,22 +986,22 @@ Module {
         Signal {
             name: "completed"
             lineNumber: 120
-            Parameter { name: "result"; type: "QVariantMap" }
+            Parameter { name: "result"; type: "QJSValue" }
         }
         Signal {
             name: "autoSaved"
             lineNumber: 121
-            Parameter { name: "result"; type: "QVariantMap" }
+            Parameter { name: "result"; type: "QJSValue" }
         }
         Signal {
             name: "sourceError"
             lineNumber: 122
-            Parameter { name: "error"; type: "QVariantMap" }
+            Parameter { name: "error"; type: "QJSValue" }
         }
         Signal {
             name: "sourceWarning"
             lineNumber: 123
-            Parameter { name: "warning"; type: "QVariantMap" }
+            Parameter { name: "warning"; type: "QJSValue" }
         }
         Signal {
             name: "inputRejected"
@@ -1018,18 +1018,18 @@ Module {
         Signal {
             name: "migrationCompleted"
             lineNumber: 127
-            Parameter { name: "result"; type: "QVariantMap" }
+            Parameter { name: "result"; type: "QJSValue" }
         }
         Signal { name: "sourceStatesChanged"; lineNumber: 128 }
         Signal {
             name: "sourceAccepted"
             lineNumber: 129
-            Parameter { name: "event"; type: "QVariantMap" }
+            Parameter { name: "event"; type: "QJSValue" }
         }
         Signal {
             name: "projectionEffects"
             lineNumber: 130
-            Parameter { name: "event"; type: "QVariantMap" }
+            Parameter { name: "event"; type: "QJSValue" }
         }
         Method {
             name: "setUser"

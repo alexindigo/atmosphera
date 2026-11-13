@@ -12,7 +12,9 @@ QtObject {
   property bool closed: false
   property string openError: ""
   property var _initial: ({})
-  property var _lifetime: ({alive: true})
+  property var _lifetime: ({
+                             alive: true
+                           })
   property var cancelOpen: null
   readonly property string error: openError || (handle ? handle.error || "" : "")
   readonly property bool ready: !closed && !!handle && handle.ready === true
@@ -23,7 +25,9 @@ QtObject {
   readonly property var initialValue: _initial
   signal rebased(var result)
 
-  function copyValue(value) { return Settings.store.copyValue(value); }
+  function copyValue(value) {
+    return Settings.store.copyValue(value);
+  }
 
   function previewScope() {
     return handle && typeof handle.previewScope === "function" ? handle.previewScope([]) : null;
@@ -34,12 +38,16 @@ QtObject {
     var result = Object.create(null);
     for (var key of fields) {
       var value = input[key];
-      if (value !== undefined) result[key] = Settings.store.copyValue(value);
+      if (value !== undefined)
+        result[key] = Settings.store.copyValue(value);
     }
     return result;
   }
   function attach(nativeHandle) {
-    if (closed) { nativeHandle.detach(); return; }
+    if (closed) {
+      nativeHandle.detach();
+      return;
+    }
     _initial = snapshot(nativeHandle.values);
     handle = nativeHandle;
   }
@@ -48,38 +56,65 @@ QtObject {
   function whenReady(callback) {
     var active = true;
     var lifetime = _lifetime;
-    function changed() { Qt.callLater(attempt); }
+    function changed() {
+      Qt.callLater(attempt);
+    }
     function disconnect() {
       root.readyChanged.disconnect(changed);
       root.errorChanged.disconnect(changed);
       root.closedChanged.disconnect(changed);
     }
     function attempt() {
-      if (!active || !lifetime.alive) return;
-      if (!root.ready && !root.error && !root.closed) return;
+      if (!active || !lifetime.alive)
+        return;
+      if (!root.ready && !root.error && !root.closed)
+        return;
       active = false;
       disconnect();
-      callback(root.ready ? {status: "opened"} : {status: "failed", refreshState: "not_refreshed", error: {code: root.error || "editor-closed"}});
+      callback(root.ready ? {
+                              status: "opened"
+                            } : {
+                 status: "failed",
+                 refreshState: "not_refreshed",
+                 error: {
+                   code: root.error || "editor-closed"
+                 }
+               });
     }
     readyChanged.connect(changed);
     errorChanged.connect(changed);
     closedChanged.connect(changed);
     Qt.callLater(attempt);
-    return function () { if (active && lifetime.alive) { active = false; disconnect(); } };
+    return function () {
+      if (active && lifetime.alive) {
+        active = false;
+        disconnect();
+      }
+    };
   }
   function refuse(callback, code) {
     var lifetime = _lifetime;
     Qt.callLater(function () {
-      if (lifetime.alive && typeof callback === "function") callback({status: "failed", refreshState: "not_refreshed", error: {code: code}});
+      if (lifetime.alive && typeof callback === "function")
+        callback({
+                   status: "failed",
+                   refreshState: "not_refreshed",
+                   error: {
+                     code: code
+                   }
+                 });
     });
     return false;
   }
   function apply(value, callback) {
-    if (!writable) return refuse(callback, "editor-read-only");
-    if (closed || !ready || busy || value !== values) return refuse(callback, "editor-state");
+    if (!writable)
+      return refuse(callback, "editor-read-only");
+    if (closed || !ready || busy || value !== values)
+      return refuse(callback, "editor-state");
     var lifetime = _lifetime;
     return handle.apply(function (result) {
-      if (!lifetime.alive || root.closed) return;
+      if (!lifetime.alive || root.closed)
+        return;
       var success = result.status === "saved" || result.status === "nothing_to_save";
       var refresh = result.refreshState;
       if (!refresh) {
@@ -91,32 +126,50 @@ QtObject {
         refresh = success ? (current ? "current" : "stale") : "not_refreshed";
       }
       if (success) {
-        if (refresh === "current") root._initial = root.snapshot();
-        root.rebased({refreshState: refresh});
+        if (refresh === "current")
+          root._initial = root.snapshot();
+        root.rebased({
+                       refreshState: refresh
+                     });
       }
-      if (typeof callback === "function") callback(Object.assign({}, result, {refreshState: refresh}));
+      // The native callback owns a fresh snapshot; keep its other fields lazy.
+      result.refreshState = refresh;
+      if (typeof callback === "function")
+        callback(result);
     });
   }
   function resetOverrides(callback) {
-    if (!writable) return refuse(callback, "editor-read-only");
-    if (!ready || busy) return refuse(callback, "editor-state");
+    if (!writable)
+      return refuse(callback, "editor-read-only");
+    if (!ready || busy)
+      return refuse(callback, "editor-state");
     var lifetime = _lifetime;
     return handle.resetOverrides(function (result) {
-      if (!lifetime.alive || root.closed) return;
-      if (result.refreshState === "current" && result.status !== "failed") root._initial = root.snapshot();
-      if (typeof callback === "function") callback(result);
+      if (!lifetime.alive || root.closed)
+        return;
+      if (result.refreshState === "current" && result.status !== "failed")
+        root._initial = root.snapshot();
+      if (typeof callback === "function")
+        callback(result);
     });
   }
   function discard() {
-    if (busy) return false;
-    if (cancelOpen) { cancelOpen(); cancelOpen = null; }
-    if (handle) handle.detach();
+    if (busy)
+      return false;
+    if (cancelOpen) {
+      cancelOpen();
+      cancelOpen = null;
+    }
+    if (handle)
+      handle.detach();
     closed = true;
     return true;
   }
   Component.onDestruction: {
     _lifetime.alive = false;
-    if (cancelOpen) cancelOpen();
-    if (handle && !closed) handle.detach();
+    if (cancelOpen)
+      cancelOpen();
+    if (handle && !closed)
+      handle.detach();
   }
 }
