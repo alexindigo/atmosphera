@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.9.3] - 2026-11-12
+
+### 2026-11-12
+
+**Fix**
+
+The file chooser, settings and idle-inhibit portals recover after a shell crash
+or restart. Launcher and input-method shortcuts find the active shell even when
+it runs from a development tree or has restarted. One shell instance is elected
+to own the session and portals; a second instance waits instead of taking over.
+
+- fix: elect one shell owner for portal recovery (`e90c79761`)
+- fix: route shell controls through the elected owner (`50dba6aa9`)
+
+### 2026-11-11
+
+**Maintenance**
+
+The pinned nixpkgs revision was refreshed for Nix-based development and packaging.
+
+- chore(flake): update flake.lock (`9a3a0cd62`)
+
 ## [0.9.2] - 2026-11-09
 
 ### 2026-11-09
