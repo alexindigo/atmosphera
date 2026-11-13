@@ -1,6 +1,7 @@
 pragma Singleton
 
 import QtQuick
+import QtQuick as Quick
 import Quickshell
 import Quickshell.Io
 import "../Helpers/OwnedProcess.js" as OwnedProcess
@@ -55,6 +56,7 @@ Singleton {
   readonly property string sectionIoHelper: Quickshell.shellDir + "/Scripts/python/src/settings/section-io.py"
   readonly property var _model: SettingsModel.create({
                                                        "settingsFile": root.settingsFile,
+                                                       "configDir": root.configDir,
                                                        "overridesDir": root.overridesDir,
                                                        "cacheDir": root.cacheDir,
                                                        "session": root._persistSession
@@ -115,6 +117,13 @@ Singleton {
         Logger.e("Settings", effect.message, effect.path);
     } else if (effect.kind === "io") {
       root._runModelIo(effect);
+    } else if (effect.kind === "rewatch") {
+      var directory = effect.directory;
+      Qt.callLater(function () {
+        if (directory === "config")
+          settingsDirWatcher.reload();
+        overridesDirWatcher.reload();
+      });
     } else if (effect.kind === "reload") {
       var view = effect.section === "legacy" ? settingsFileView : root._sectionViews[effect.section];
       if (view)
@@ -222,7 +231,7 @@ Singleton {
   function _runModelIo(effect) {
     var token = effect.token;
     var owner = effect.owner;
-    var command = ["python3", root.sectionIoHelper, root.filePathFor(effect.section)];
+    var command = ["python3", root.sectionIoHelper, effect.path || root.filePathFor(effect.section)];
     command.splice(2, 0, effect.mode);
     if (effect.temporary)
       command.push(effect.temporary);
@@ -314,7 +323,7 @@ Singleton {
     // Patch-in the local default, resolved to user's home
     settingsAdapter.general.avatarImage = defaultAvatar;
     settingsAdapter.wallpaper.directory = defaultWallpapersDirectory;
-    settingsAdapter.ui.fontDefault = Qt.application.font.family;
+    settingsAdapter.ui.fontDefault = Quick.Application.font.family;
     settingsAdapter.ui.fontFixed = "monospace";
 
     // Sections = settingsAdapter root keys (minus the version marker)
@@ -339,6 +348,14 @@ Singleton {
     // Mark directories as created and trigger the legacy file load; section
     // files load after the legacy layer lands (they take precedence).
     directoriesCreated = true;
+    root._dispatchModel({
+                          type: "directoryChanged",
+                          directory: "config"
+                        });
+    root._dispatchModel({
+                          type: "directoryChanged",
+                          directory: "overrides"
+                        });
 
     // Attach the adapter only to the path-less update watch (save trigger).
     // The legacy FileView stays text-mode: all file->adapter application
@@ -609,27 +626,27 @@ Singleton {
   // settings.json may be replaced atomically (e.g., symlink/store-path swap).
   FileView {
     id: settingsDirWatcher
-    path: directoriesCreated ? configDir : undefined
+    path: directoriesCreated ? configDir.slice(0, -1) : undefined
     printErrors: false
     watchChanges: true
-    onFileChanged: scheduleExternalReload()
+    onFileChanged: root._dispatchModel({
+                                         type: "directoryChanged",
+                                         directory: "config"
+                                       })
   }
 
   // Watch the settings/ directory for the same reason (section files swapped
-  // atomically). Section reloads are content-gated, so noise is harmless.
+  // atomically). Child-file noise is handled by the individual file watchers;
+  // the fallback observes replacement of the directory itself.
   FileView {
     id: overridesDirWatcher
-    path: directoriesCreated ? overridesDir : undefined
+    path: directoriesCreated ? overridesDir.slice(0, -1) : undefined
     printErrors: false
     watchChanges: true
-    onFileChanged: {
-      for (var i = 0; i < root._sections.length; i++) {
-        var view = root._sectionViews[root._sections[i]];
-        if (view && view.path !== undefined) {
-          view.reload();
-        }
-      }
-    }
+    onFileChanged: root._dispatchModel({
+                                         type: "directoryChanged",
+                                         directory: "overrides"
+                                       })
   }
 
   // FileView to load default settings for comparison
