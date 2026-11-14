@@ -16,11 +16,9 @@ ColumnLayout {
   property bool valueShowBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : widgetMetadata.showBackground
   property bool valueRoundedCorners: widgetData.roundedCorners !== undefined ? widgetData.roundedCorners : widgetMetadata.roundedCorners
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.showBackground = valueShowBackground;
-    settings.roundedCorners = valueRoundedCorners;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   NToggle {
@@ -30,7 +28,7 @@ ColumnLayout {
     checked: valueShowBackground
     onToggled: checked => {
       valueShowBackground = checked;
-      saveSettings();
+      saveSettings({showBackground: valueShowBackground});
     }
     defaultValue: widgetMetadata.showBackground
   }
@@ -43,7 +41,7 @@ ColumnLayout {
     checked: valueRoundedCorners
     onToggled: checked => {
       valueRoundedCorners = checked;
-      saveSettings();
+      saveSettings({roundedCorners: valueRoundedCorners});
     }
     defaultValue: widgetMetadata.roundedCorners
   }

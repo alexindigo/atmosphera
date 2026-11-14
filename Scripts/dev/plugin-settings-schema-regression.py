@@ -136,7 +136,9 @@ def main():
     manifest = compiler.shared.load(args.manifest)
     old = compiler.shared.load(args.old_manifest)
     assert manifest['id'] == old['id'] == 'hello-world'
-    assert manifest['version'] == '1.2.6' and old['version'] == '1.2.5'
+    # The authored descriptor remains identical across the later editor/API
+    # preparation bumps; selftest below compares the actual compiled contracts.
+    assert manifest['version'] != old['version'] and old['version'] == '1.2.5'
     overlays = compiler.shared.load(ROOT/'Configs/plugin-settings-overlays.json')
     controls = selftest(manifest, old, overlays)
     results = []

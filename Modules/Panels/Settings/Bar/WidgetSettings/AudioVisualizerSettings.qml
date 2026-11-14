@@ -19,12 +19,9 @@ ColumnLayout {
   property bool valueHideWhenIdle: widgetData.hideWhenIdle !== undefined ? widgetData.hideWhenIdle : widgetMetadata.hideWhenIdle
   property string valueColorName: widgetData.colorName !== undefined ? widgetData.colorName : widgetMetadata.colorName
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.width = parseInt(widthInput.text) || widgetMetadata.width;
-    settings.hideWhenIdle = valueHideWhenIdle;
-    settings.colorName = valueColorName;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   NTextInput {
@@ -34,7 +31,7 @@ ColumnLayout {
     description: I18n.tr("bar.audio-visualizer.width-description")
     text: widgetData.width || widgetMetadata.width
     placeholderText: I18n.tr("placeholders.enter-width-pixels")
-    onTextChanged: saveSettings()
+    onTextEdited: saveSettings({width: parseInt(text) || widgetMetadata.width})
     defaultValue: String(widgetMetadata.width)
   }
 
@@ -45,7 +42,7 @@ ColumnLayout {
     currentKey: root.valueColorName
     onSelected: key => {
       root.valueColorName = key;
-      saveSettings();
+      saveSettings({colorName: root.valueColorName});
     }
     defaultValue: widgetMetadata.colorName
   }
@@ -56,7 +53,7 @@ ColumnLayout {
     checked: valueHideWhenIdle
     onToggled: checked => {
       valueHideWhenIdle = checked;
-      saveSettings();
+      saveSettings({hideWhenIdle: valueHideWhenIdle});
     }
     defaultValue: widgetMetadata.hideWhenIdle
   }

@@ -30,6 +30,18 @@ ColumnLayout {
 
   signal editingFinished
   signal accepted
+  // User edits are distinct from alias/binding/initialization text changes.
+  signal textEdited
+  signal editCommitted
+  property bool _userEdited: false
+
+  function commitEdit() {
+    if (!root._userEdited)
+      return false;
+    root._userEdited = false;
+    root.editCommitted();
+    return true;
+  }
 
   opacity: enabled ? 1.0 : 0.3
   spacing: Style.marginS
@@ -167,8 +179,15 @@ ColumnLayout {
             font.pointSize: root.fontSize * Style.uiScaleRatio
             font.weight: root.fontWeight
 
-            onEditingFinished: root.editingFinished()
+            onEditingFinished: {
+              root.commitEdit();
+              root.editingFinished();
+            }
             onAccepted: root.accepted()
+            onTextEdited: {
+              root._userEdited = true;
+              root.textEdited();
+            }
 
             // Override mouse handling to prevent propagation
             MouseArea {
@@ -228,6 +247,9 @@ ColumnLayout {
 
             onClicked: {
               input.clear();
+              // Native clear() preserves undo but does not emit textEdited.
+              root._userEdited = true;
+              root.textEdited();
               input.forceActiveFocus();
             }
           }

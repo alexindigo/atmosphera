@@ -31,17 +31,9 @@ ColumnLayout {
     }
   }
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.hideMode = valueHideMode;
-    settings.showIcon = valueShowIcon;
-    settings.showText = valueShowText;
-    settings.scrollingMode = valueScrollingMode;
-    settings.maxWidth = parseInt(widthInput.text) || widgetMetadata.maxWidth;
-    settings.useFixedWidth = valueUseFixedWidth;
-    settings.colorizeIcons = valueColorizeIcons;
-    settings.textColor = valueTextColor;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   NComboBox {
@@ -65,7 +57,9 @@ ColumnLayout {
     currentKey: root.valueHideMode
     onSelected: key => {
       root.valueHideMode = key;
-      saveSettings();
+      saveSettings({
+                     hideMode: root.valueHideMode
+                   });
     }
     defaultValue: widgetMetadata.hideMode
   }
@@ -75,7 +69,9 @@ ColumnLayout {
     currentKey: valueTextColor
     onSelected: key => {
       valueTextColor = key;
-      saveSettings();
+      saveSettings({
+                     textColor: valueTextColor
+                   });
     }
     defaultValue: widgetMetadata.textColor
   }
@@ -87,7 +83,9 @@ ColumnLayout {
     checked: root.valueShowText
     onToggled: checked => {
       root.valueShowText = checked;
-      saveSettings();
+      saveSettings({
+                     showText: root.valueShowText
+                   });
     }
     defaultValue: widgetMetadata.showText
   }
@@ -99,7 +97,9 @@ ColumnLayout {
     checked: root.valueShowIcon
     onToggled: checked => {
       root.valueShowIcon = checked;
-      saveSettings();
+      saveSettings({
+                     showIcon: root.valueShowIcon
+                   });
     }
     defaultValue: widgetMetadata.showIcon
   }
@@ -111,7 +111,9 @@ ColumnLayout {
     checked: root.valueColorizeIcons
     onToggled: checked => {
       root.valueColorizeIcons = checked;
-      saveSettings();
+      saveSettings({
+                     colorizeIcons: root.valueColorizeIcons
+                   });
     }
     visible: root.valueShowIcon
     defaultValue: widgetMetadata.colorizeIcons
@@ -124,7 +126,9 @@ ColumnLayout {
     description: I18n.tr("bar.media-mini.max-width-description")
     placeholderText: widgetMetadata.maxWidth
     text: valueMaxWidth
-    onTextChanged: saveSettings()
+    onTextEdited: saveSettings({
+                                 maxWidth: parseInt(text) || widgetMetadata.maxWidth
+                               })
     defaultValue: String(widgetMetadata.maxWidth)
   }
 
@@ -135,7 +139,9 @@ ColumnLayout {
     checked: valueUseFixedWidth
     onToggled: checked => {
       valueUseFixedWidth = checked;
-      saveSettings();
+      saveSettings({
+                     useFixedWidth: valueUseFixedWidth
+                   });
     }
     defaultValue: widgetMetadata.useFixedWidth
   }
@@ -161,7 +167,9 @@ ColumnLayout {
     defaultValue: widgetMetadata.scrollingMode
     onSelected: key => {
       valueScrollingMode = key;
-      saveSettings();
+      saveSettings({
+                     scrollingMode: valueScrollingMode
+                   });
     }
     minimumWidth: 200
   }

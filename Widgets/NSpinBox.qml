@@ -35,6 +35,8 @@ RowLayout {
 
   signal entered
   signal exited
+  signal valueModified(int value)
+  readonly property bool editPending: valueInput.userEdited
 
   Layout.fillWidth: true
 
@@ -60,6 +62,7 @@ RowLayout {
   }
 
   function changeValue(direction, step) {
+    root.commitEdit();
     var currentStep = step || root.stepSize;
 
     if (direction === 1 && root.value < root.to) {
@@ -73,12 +76,17 @@ RowLayout {
     if (root.value === root.to || root.value === root.from) {
       stopRepeat();
     }
+    root.valueModified(root.value);
   }
 
   function stopRepeat() {
     root._repeatDirection = 0;
     repeatTimer.stop();
     repeatTimer.interval = root.initialRepeatDelay;
+  }
+
+  function commitEdit() {
+    valueInput.applyValue();
   }
 
   NLabel {
@@ -121,13 +129,10 @@ RowLayout {
         root.exited();
       }
       onWheel: wheel => {
-        if (wheel.angleDelta.y > 0 && root.value < root.to) {
-          let newValue = Math.min(root.to, root.value + root.stepSize);
-          root.value = newValue;
-        } else if (wheel.angleDelta.y < 0 && root.value > root.from) {
-          let newValue = Math.max(root.from, root.value - root.stepSize);
-          root.value = newValue;
-        }
+        if (wheel.angleDelta.y > 0)
+          root.changeValue(1, root.stepSize);
+        else if (wheel.angleDelta.y < 0)
+          root.changeValue(-1, root.stepSize);
       }
     }
 
@@ -253,10 +258,12 @@ RowLayout {
         // Editable number input
         TextInput {
           id: valueInput
+          property bool userEdited: false
+          property string editText: ""
           NInputGuard {
             target: valueInput
           }
-          text: valueInput.focus ? valueInput.text : root.value.toString()
+          text: valueInput.userEdited ? valueInput.editText : root.value.toString()
           font.family: Settings.data.ui.fontFixed
           font.pointSize: Style.fontSizeM
           font.weight: Style.fontWeightMedium
@@ -278,24 +285,40 @@ RowLayout {
           }
 
           Keys.onEscapePressed: {
+            userEdited = false;
             text = root.value.toString();
             focus = false;
           }
 
-          onFocusChanged: {
-            if (focus) {
+          onActiveFocusChanged: {
+            if (activeFocus) {
               selectAll();
             } else {
               applyValue();
             }
           }
 
+          onTextEdited: {
+            editText = text;
+            userEdited = true;
+          }
+
+          function commitEdit() {
+            applyValue();
+          }
+
           function applyValue() {
-            let newValue = parseInt(text);
+            if (!userEdited)
+              return;
+            let newValue = parseInt(editText);
             if (!isNaN(newValue)) {
               // Don't manually set text here - let the binding handle it
               newValue = Math.max(root.from, Math.min(root.to, newValue));
               root.value = newValue;
+              userEdited = false;
+              root.valueModified(newValue);
+            } else {
+              userEdited = false;
             }
           }
         }

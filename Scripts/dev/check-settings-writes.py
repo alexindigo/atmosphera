@@ -29,7 +29,7 @@ MUTATORS = {'push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse', 'fil
 COPIERS = {'slice', 'concat', 'filter', 'map', 'toSorted', 'toReversed', 'toSpliced', 'with'}
 CALLBACKS = {'forEach', 'map', 'filter', 'some', 'every', 'find'}
 FUNCTIONS = {'function_declaration', 'function_expression', 'arrow_function', 'generator_function_declaration'}
-DATA = {'attached', 'detached', 'owned', 'unknown', 'undeclared', 'handle'}
+DATA = {'attached', 'detached', 'owned', 'unknown', 'undeclared', 'handle', 'outside-store'}
 
 
 def walk(node):
@@ -52,6 +52,18 @@ class OwnerKey(str):
 
     def __hash__(self):
         return hash((OwnerKey, str(self)))
+
+
+class SchemaKey(str):
+    """An owner namespace, distinct from every literal settings segment."""
+    def __eq__(self, other):
+        return isinstance(other, SchemaKey) and str.__eq__(self, other)
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __hash__(self):
+        return hash((SchemaKey, str(self)))
 
 
 @dataclass(frozen=True)
@@ -113,7 +125,8 @@ class Definition:
 
 class Checker:
     def __init__(self, metadata):
-        self.kinds = {tuple(p['path']): p['type'] for p in metadata['paths']}
+        self.main_kinds = {tuple(p['path']): p['type'] for p in metadata['paths']}
+        self.kinds = self.main_kinds.copy()
         self.issues = []
         self.serial = 0
         self.counts = {'attached': 0, 'detached': 0, 'assignedBack': 0}
@@ -156,9 +169,78 @@ class Checker:
     def compound(self, path):
         return self.kind(path) in ('List', 'Map', 'Record')
 
+    def binding(self, scope, name):
+        for member in child(scope.node, 'initializer').named_children:
+            if member.type in ('ui_binding', 'ui_property') and self.text(child(member, 'name')) == name:
+                return self.unwrap(child(member, 'value'))
+        return None
+
+    def schema_paths(self, node, active=()):
+        """Resolve declared local shapes, never infer a schema from a store ID."""
+        if not node or node.id in active:
+            return None
+        if node.type == 'identifier':
+            scope = self.schema_context
+            identity = self.ids.get((scope.component, self.text(node)))
+            return self.schema_paths(self.scopes[identity].node, active + (node.id,)) if identity else None
+        if node.type != 'ui_object_definition':
+            return None
+        scope = self.scopes[node.id]
+        kind = scope.kind.split('.')[-1]
+        if kind == 'SettingsSchema':
+            return self.main_kinds.copy()
+        if kind not in ('ConfigSchema', 'ConfigGroup'):
+            return None
+        paths = {(): 'Group'}
+        for descriptor in child(node, 'initializer').named_children:
+            if descriptor.type == 'ui_binding' and self.text(child(descriptor, 'name')) == 'children':
+                return None  # A computed declaration list is not a known empty schema.
+            if descriptor.type != 'ui_object_definition':
+                continue
+            declaration = self.scopes[descriptor.id]
+            key = self.literal(self.binding(declaration, 'key'))
+            if not isinstance(key, str) or not key:
+                return None
+            type_name = declaration.kind.split('.')[-1]
+            if type_name == 'ConfigGroup':
+                nested = self.schema_paths(descriptor, active + (node.id,))
+                if nested is None:
+                    return None
+                paths.update({(key,) + path: value for path, value in nested.items()})
+            elif type_name == 'ConfigValue':
+                value = self.text(self.binding(declaration, 'valueType')).split('.')[-1] or 'String'
+                if value not in ('Boolean', 'Integer', 'Int64', 'UInt64', 'Real', 'String', 'Url', 'List', 'StringList', 'Map', 'Record', 'SecretRef'):
+                    return None
+                paths[(key,)] = 'List' if value == 'StringList' else value
+            else:
+                return None
+        return paths
+
+    def store_schema_roots(self):
+        self.store_roots = {}
+        self.unknown_schemas = set()
+        for owner, scope in self.scopes.items():
+            kind = scope.kind.split('.')[-1]
+            if kind not in ('ConfigStore', 'SettingsStore'):
+                continue
+            root = (SchemaKey(self.file + ':' + str(owner)),)
+            self.schema_context = scope
+            paths = self.main_kinds.copy() if kind == 'SettingsStore' else self.schema_paths(self.binding(scope, 'schema'))
+            self.store_roots[owner] = root
+            if paths is None:
+                self.unknown_schemas.add(root[0])
+            else:
+                self.kinds[root] = 'Group'
+                self.kinds.update({root + path: value for path, value in paths.items()})
+
+    def store_value(self, path):
+        return Ref(path, 'outside-store' if path and path[0] in self.unknown_schemas else 'attached')
+
     def new(self, ref, mode='detached'):
         if not ref or ref.mode not in DATA:
             return ref
+        if ref.mode == 'outside-store':
+            return Ref(ref.path, 'outside-store')
         if ref.mode == 'unknown':
             return Ref(ref.path, 'unknown')
         if not self.compound(ref.path):
@@ -221,19 +303,23 @@ class Checker:
         if not base:
             return None
         if base.mode == 'settings':
-            return Ref((), 'attached') if key == 'data' else None
+            return Ref((), 'attached') if key == 'data' else Ref((), 'store') if key == 'store' else None
+        if base.mode == 'store':
+            return Ref((), 'attached') if key == 'values' else None
         if base.mode == 'object':
             if key is None:
                 return None  # A computed receiver member is not a resolved declaration.
             scope = self.scopes[base.token]
-            if scope.kind == 'ConfigStore' and key == 'values':
-                return Ref((), 'attached')
+            if base.token in self.store_roots and key == 'values':
+                return self.store_value(self.store_roots[base.token])
             if key in scope.methods:
                 return Ref((), 'callable', scope.methods[key])
             return state.env.get(self.property_key(base.token, key),
                                  self.environments.get(base.token, {}).get(key))
         if base.mode == 'handle' and key == 'values':
-            return Ref(base.path, 'attached')
+            return self.store_value(base.path)
+        if base.mode == 'outside-store':
+            return Ref(base.path + (key if key is not None else '*',), 'outside-store')
         if base.mode not in DATA or key == 'length' or key in MUTATORS | COPIERS | CALLBACKS:
             return None
         path = base.path + (key if isinstance(key, str) else str(key) if key is not None else '*',)
@@ -407,9 +493,12 @@ class Checker:
 
     def call_value(self, node, state, callable_, receiver, method, args):
         fn = child(node, 'function')
-        if receiver and receiver.mode == 'object' and self.scopes[receiver.token].kind == 'ConfigStore' and method == 'scope' and args:
+        if receiver and (receiver.mode == 'store' or receiver.mode == 'object' and receiver.token in self.store_roots) and method == 'scope' and args:
             path = self.array_path(child(node, 'arguments').named_children[0])
-            return Ref(path, 'handle') if path is not None else None
+            root = () if receiver.mode == 'store' else self.store_roots[receiver.token]
+            if path is None and root and root[0] in self.unknown_schemas:
+                self.report(node, 'store-schema-out-of-scope', 'advisory')
+            return Ref(root + path, 'handle') if path is not None else None
         if receiver and receiver.mode in DATA and method in COPIERS:
             return self.copy_value(node, receiver, 'owned')
         if receiver and receiver.mode == 'settings':
@@ -468,6 +557,8 @@ class Checker:
             self.report(node, 'unknown-copy-flow', 'advisory')
         elif ref.mode == 'undeclared':
             self.report(node, 'unknown-setting-path')
+        elif ref.mode == 'outside-store':
+            self.report(node, 'store-schema-out-of-scope', 'advisory')
 
     def review_transfer(self, node, state, tokens, code):
         relevant = set(tokens) & set(state.dirty)
@@ -731,7 +822,7 @@ class Checker:
                              if fn.type in ('member_expression', 'subscript_expression') else self.ref(fn, callee_state.state))
                 for current, args in self.sequence(child(node, 'arguments').named_children, [callee_state.state]):
                     base = receiver.value
-                    collection = base and base.mode in DATA and (base.mode == 'unknown' or self.compound(base.path))
+                    collection = base and base.mode in DATA and (base.mode in ('unknown', 'outside-store') or self.compound(base.path))
                     summary = self.summary(callable_, current, args)
                     published = set()
                     destination = self.screen_destination(base, method, child(node, 'arguments').named_children, current, args)
@@ -956,6 +1047,8 @@ class Checker:
 
     def check(self, path, text):
         self.file = str(path); self.original = text; self.offset = 0
+        self.kinds = self.main_kinds.copy()
+        self.kind.cache_clear()
         self.effects = []
         if str(path).endswith('.js'):
             text = re.sub(r'^\s*\.(?:pragma|import)\b[^\n]*', lambda m: ' ' * len(m[0]), text, flags=re.M)
@@ -988,6 +1081,7 @@ class Checker:
             if identity:
                 key = (component, identity)
                 self.ids[key] = node.id if key not in self.ids else None
+        self.store_schema_roots()
         for node in walk(tree.root_node):
             if node.type not in FUNCTIONS: continue
             parent = node.parent; lexical = 0

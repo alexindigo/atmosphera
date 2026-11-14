@@ -24,13 +24,9 @@ ColumnLayout {
 
   readonly property bool hasMultipleMonitors: (Quickshell.screens || []).length > 1
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.displayMode = valueDisplayMode;
-    settings.iconColor = valueIconColor;
-    settings.textColor = valueTextColor;
-    settings.applyToAllMonitors = valueApplyToAllMonitors;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   NComboBox {
@@ -54,7 +50,7 @@ ColumnLayout {
     currentKey: valueDisplayMode
     onSelected: key => {
       valueDisplayMode = key;
-      saveSettings();
+      saveSettings({displayMode: valueDisplayMode});
     }
     defaultValue: widgetMetadata.displayMode
   }
@@ -64,7 +60,7 @@ ColumnLayout {
     currentKey: valueIconColor
     onSelected: key => {
       valueIconColor = key;
-      saveSettings();
+      saveSettings({iconColor: valueIconColor});
     }
     defaultValue: widgetMetadata.iconColor
   }
@@ -73,7 +69,7 @@ ColumnLayout {
     currentKey: valueTextColor
     onSelected: key => {
       valueTextColor = key;
-      saveSettings();
+      saveSettings({textColor: valueTextColor});
     }
     defaultValue: widgetMetadata.textColor
   }
@@ -86,7 +82,7 @@ ColumnLayout {
     checked: valueApplyToAllMonitors
     onToggled: checked => {
       valueApplyToAllMonitors = checked;
-      saveSettings();
+      saveSettings({applyToAllMonitors: valueApplyToAllMonitors});
     }
     defaultValue: widgetMetadata.applyToAllMonitors
   }

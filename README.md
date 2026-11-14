@@ -115,7 +115,7 @@ sudo pacman -S --needed quickshell qt6-base qt6-declarative qt6-multimedia qt6-i
   wlr-randr cliphist wlsunset
 
 # QML helper libs from the AUR (or build from source)
-yay -S --needed qt6-dbusqml 'qt6-configqml>=0.3.0' qt6-xdgiconqml-git qt6-niriqml qt6-mangowcqml
+yay -S --needed qt6-dbusqml 'qt6-configqml>=0.5.0' qt6-xdgiconqml-git qt6-niriqml qt6-mangowcqml
 ```
 
 `qt6-imageformats` supplies WebP file-chooser previews. Optionally install

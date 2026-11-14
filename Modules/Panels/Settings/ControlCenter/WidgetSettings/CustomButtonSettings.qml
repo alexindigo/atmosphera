@@ -57,29 +57,20 @@ ColumnLayout {
       Qt.callLater(populateStateChecks);
     }
 
-    function saveSettings() {
+    function saveStateChecks() {
       var savedStateChecksArray = [];
       for (var i = 0; i < _settings._stateChecksListModel.count; i++) {
         savedStateChecksArray.push(_settings._stateChecksListModel.get(i));
       }
       _settings.stateChecksJson = JSON.stringify(savedStateChecksArray);
 
-      return {
-        "id": widgetData.id,
-        "icon": _settings.icon,
-        "onClicked": _settings.onClicked,
-        "onRightClicked": _settings.onRightClicked,
-        "onMiddleClicked": _settings.onMiddleClicked,
-        "stateChecksJson": _settings.stateChecksJson,
-        "generalTooltipText": _settings.generalTooltipText,
-        "enableOnStateLogic": _settings.enableOnStateLogic,
-        "showExecTooltip": _settings.showExecTooltip
-      };
+      root.saveSettings({stateChecksJson: _settings.stateChecksJson});
     }
   }
 
-  function saveSettings() {
-    return _settings.saveSettings();
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   function updateStateCheck(index, command, icon) {
@@ -87,12 +78,12 @@ ColumnLayout {
                                           "command": command,
                                           "icon": icon
                                         });
-    _settings.saveSettings();
+    _settings.saveStateChecks();
   }
 
   function removeStateCheck(index) {
     _settings._stateChecksListModel.remove(index);
-    _settings.saveSettings();
+    _settings.saveStateChecks();
   }
 
   function addStateCheck() {
@@ -100,7 +91,7 @@ ColumnLayout {
                                              "command": "",
                                              "icon": ""
                                            });
-    _settings.saveSettings();
+    _settings.saveStateChecks();
   }
 
   RowLayout {
@@ -129,7 +120,7 @@ ColumnLayout {
     initialIcon: _settings.icon
     onIconSelected: function (iconName) {
       _settings.icon = iconName;
-      saveSettings();
+      saveSettings({icon: _settings.icon});
     }
   }
 
@@ -139,9 +130,9 @@ ColumnLayout {
     description: I18n.tr("bar.custom-button.general-tooltip-text-description")
     placeholderText: I18n.tr("placeholders.enter-tooltip")
     text: _settings.generalTooltipText
-    onTextChanged: {
+    onTextEdited: {
       _settings.generalTooltipText = text;
-      saveSettings();
+      saveSettings({generalTooltipText: _settings.generalTooltipText});
     }
     defaultValue: widgetMetadata.generalTooltipText
   }
@@ -153,7 +144,7 @@ ColumnLayout {
     checked: _settings.showExecTooltip
     onToggled: checked => {
       _settings.showExecTooltip = checked;
-      saveSettings();
+      saveSettings({showExecTooltip: _settings.showExecTooltip});
     }
     defaultValue: widgetMetadata.showExecTooltip
   }
@@ -164,9 +155,9 @@ ColumnLayout {
     description: I18n.tr("bar.custom-button.left-click-description")
     placeholderText: I18n.tr("placeholders.enter-command")
     text: _settings.onClicked
-    onTextChanged: {
+    onTextEdited: {
       _settings.onClicked = text;
-      saveSettings();
+      saveSettings({onClicked: _settings.onClicked});
     }
     defaultValue: widgetMetadata.onClicked
   }
@@ -177,9 +168,9 @@ ColumnLayout {
     description: I18n.tr("bar.custom-button.right-click-description")
     placeholderText: I18n.tr("placeholders.enter-command")
     text: _settings.onRightClicked
-    onTextChanged: {
+    onTextEdited: {
       _settings.onRightClicked = text;
-      saveSettings();
+      saveSettings({onRightClicked: _settings.onRightClicked});
     }
     defaultValue: widgetMetadata.onRightClicked
   }
@@ -190,9 +181,9 @@ ColumnLayout {
     description: I18n.tr("bar.custom-button.middle-click-description")
     placeholderText: I18n.tr("placeholders.enter-command")
     text: _settings.onMiddleClicked
-    onTextChanged: {
+    onTextEdited: {
       _settings.onMiddleClicked = text;
-      saveSettings();
+      saveSettings({onMiddleClicked: _settings.onMiddleClicked});
     }
     defaultValue: widgetMetadata.onMiddleClicked
   }
@@ -207,7 +198,7 @@ ColumnLayout {
     checked: _settings.enableOnStateLogic
     onToggled: checked => {
       _settings.enableOnStateLogic = checked;
-      saveSettings();
+      saveSettings({enableOnStateLogic: _settings.enableOnStateLogic});
     }
     defaultValue: widgetMetadata.enableOnStateLogic
   }
@@ -238,7 +229,7 @@ ColumnLayout {
             Layout.fillWidth: true
             placeholderText: I18n.tr("panels.control-center.shortcuts-custom-button-state-checks-command")
             text: model.command
-            onTextChanged: {
+            onTextEdited: {
               updateStateCheck(currentIndex, text, model.icon);
             }
           }
@@ -256,14 +247,14 @@ ColumnLayout {
             AtmoIconButton {
               icon: Icon.folder
               tooltipText: I18n.tr("common.browse")
-              baseSize: Style?.buttonSizeS ?? 24
+              baseSize: 24
               onClicked: iconPickerDelegate.open()
             }
 
             AtmoIconButton {
               icon: Icon.close
               tooltipText: I18n.tr("panels.control-center.shortcuts-custom-button-state-checks-remove")
-              baseSize: Style?.buttonSizeS ?? 24
+              baseSize: 24
               colorBorder: Qt.alpha(AtmoColor.mOutline, Style.opacityLight)
               colorBg: AtmoColor.mError
               colorFg: AtmoColor.mOnError

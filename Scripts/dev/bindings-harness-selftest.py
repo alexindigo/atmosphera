@@ -506,6 +506,26 @@ def main():
         assert summary["status"] == "BLOCKED" and summary["executed_ids"] == []
         assert summary["cases"][0]["restoration"] == {"live_mutation": False}
 
+    def inspection_context(root):
+        # Exercise the real candidate anchors even when physical input is absent.
+        # The optional directory path must keep its position before diagnostics.
+        tree = root / "tree"
+        for name in ("Helpers/SettingsModel.js", "Commons/Settings.qml"):
+            target = tree / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((a.source / name).read_bytes())
+        runner = h.Runner.__new__(h.Runner)
+        runner.tree, runner.source, runner.case = tree, a.source, root
+        runner.instrument_inspection_trace()
+        runner.instrument_inspection_context()
+        text = (tree / "Helpers/SettingsModel.js").read_text()
+        assert "complete, path, diagnosticContext)" in text
+        assert "input: input, path: path, diagnosticContext: diagnosticContext}" in text
+        assert '}, undefined, { "serial": observation.serial' in text
+        directory_call = '}, directory === "config" ? config.configDir : config.overridesDir);'
+        assert directory_call in text and directory_call in (a.source / "Helpers/SettingsModel.js").read_text()
+        assert '"INSPECTION_GATE_CONTEXT=" + JSON.stringify(effect.diagnosticContext)' in (tree / "Commons/Settings.qml").read_text()
+
     for name, body in (("registry", registry), ("side-effect-free-discovery", discovery), ("aggregation", aggregation),
                        ("copies-refusal-complete-tree", copies), ("byte-inode-reserves", reserve),
                        ("ENOSPC-terminal-summary", enospc), ("orphan-writer-refusal", descendants),
@@ -516,7 +536,8 @@ def main():
                        ("corrective-json-type-equality", json_types), ("corrective-capture-tuple", capture_identity),
                        ("corrective-terminal-delivery", terminal_oracle), ("corrective-complete-retention", retention_oracle),
                        ("verified-disposable-archive", archive_completed), ("archive-refuses-live-or-corrupt", archive_refusal),
-                       ("unavailable-input-refuses-before-live-case", unavailable_input)):
+                       ("unavailable-input-refuses-before-live-case", unavailable_input),
+                       ("inspection-context-preserves-directory-path", inspection_context)):
         test(name, body)
     failures = [r for r in results if r["status"] == "FAIL"]
     summary = {"status": "FAIL" if failures else "PASS", "cases": results,

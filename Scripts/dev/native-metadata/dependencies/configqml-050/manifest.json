@@ -1,14 +1,14 @@
 {
-  "version": "0.3.0",
-  "sourceCommit": "78e9d1d779fdec8f3001cc974717db7aeb98d653",
-  "package": "qt6-configqml 0.3.0-1",
+  "version": "0.5.0",
+  "sourceCommit": "06cecc3a0ed70c6997482db45208727449cbc322",
+  "package": "qt6-configqml 0.5.0-1 (local pre-release)",
   "qtVersion": "6.12.0",
   "qtMetatypes": {
     "qt6core_metatypes.json": "aebd1927fd1fe4812a301b1d3c0460d39bf750825b228a49dbecb29b72a36d3f",
     "qt6qml_metatypes.json": "0b6f9ca0f4c5096fd17fdd3310d8fa2cb5e9334bba5797e9c8ecfebd37395ec3"
   },
   "artifacts": {
-    "configqml.qmltypes": "5b4b992615ab3ac02654aa6854eb2fca05cce53b1f2f2018e1347459180b05d7",
+    "configqml.qmltypes": "334f6629af965d209eeefb0ee853df18b5694eaa4a70f551a8cae167a7d123d8",
     "qmldir": "823e57764a4e96f5fe954381d2f88ea08a893fc7207d2707ec6e00b1dd1dcd36"
   }
 }

@@ -22,14 +22,9 @@ ColumnLayout {
   property string valueUnreadBadgeColor: widgetData.unreadBadgeColor !== undefined ? widgetData.unreadBadgeColor : widgetMetadata.unreadBadgeColor
   property string valueIconColor: widgetData.iconColor !== undefined ? widgetData.iconColor : widgetMetadata.iconColor
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.showUnreadBadge = valueShowUnreadBadge;
-    settings.hideWhenZero = valueHideWhenZero;
-    settings.hideWhenZeroUnread = valueHideWhenZeroUnread;
-    settings.unreadBadgeColor = valueUnreadBadgeColor;
-    settings.iconColor = valueIconColor;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   NToggle {
@@ -38,7 +33,7 @@ ColumnLayout {
     checked: valueShowUnreadBadge
     onToggled: checked => {
       valueShowUnreadBadge = checked;
-      saveSettings();
+      saveSettings({showUnreadBadge: valueShowUnreadBadge});
     }
     defaultValue: widgetMetadata.showUnreadBadge
   }
@@ -48,7 +43,7 @@ ColumnLayout {
     currentKey: valueIconColor
     onSelected: key => {
       valueIconColor = key;
-      saveSettings();
+      saveSettings({iconColor: valueIconColor});
     }
     defaultValue: widgetMetadata.iconColor
   }
@@ -59,7 +54,7 @@ ColumnLayout {
     currentKey: valueUnreadBadgeColor
     onSelected: key => {
       valueUnreadBadgeColor = key;
-      saveSettings();
+      saveSettings({unreadBadgeColor: valueUnreadBadgeColor});
     }
     visible: valueShowUnreadBadge
     defaultValue: widgetMetadata.unreadBadgeColor
@@ -71,7 +66,7 @@ ColumnLayout {
     checked: valueHideWhenZero
     onToggled: checked => {
       valueHideWhenZero = checked;
-      saveSettings();
+      saveSettings({hideWhenZero: valueHideWhenZero});
     }
     enabled: !valueHideWhenZeroUnread
     defaultValue: widgetMetadata.hideWhenZero
@@ -83,7 +78,7 @@ ColumnLayout {
     checked: valueHideWhenZeroUnread
     onToggled: checked => {
       valueHideWhenZeroUnread = checked;
-      saveSettings();
+      saveSettings({hideWhenZeroUnread: valueHideWhenZeroUnread});
     }
     defaultValue: widgetMetadata.hideWhenZeroUnread
   }

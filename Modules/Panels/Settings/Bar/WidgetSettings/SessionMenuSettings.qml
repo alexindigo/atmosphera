@@ -20,10 +20,9 @@ ColumnLayout {
   // Local state
   property string valueIconColor: widgetData.iconColor !== undefined ? widgetData.iconColor : widgetMetadata.iconColor
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    settings.iconColor = valueIconColor;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   NColorChoice {
@@ -31,7 +30,7 @@ ColumnLayout {
     currentKey: root.valueIconColor
     onSelected: key => {
       root.valueIconColor = key;
-      saveSettings();
+      saveSettings({iconColor: root.valueIconColor});
     }
     defaultValue: widgetMetadata.iconColor
   }

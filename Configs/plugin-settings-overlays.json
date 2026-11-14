@@ -5356,7 +5356,8 @@
     },
     "video-wallpaper": {
       "2.0.11": "dynamic-settings-runtime-requires-owner-port",
-      "2.0.12": "runtime-port-coupled-to-configqml-owner"
+      "2.0.12": "runtime-port-coupled-to-configqml-owner",
+      "2.0.13": "runtime-port-coupled-to-configqml-owner"
     },
     "shell-profiles": {
       "1.0.3": "runtime-port-coupled-to-configqml-owner",

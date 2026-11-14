@@ -65,6 +65,7 @@ Popup {
 
   NSettingsEditSession {
     id: session
+    inputGuard: inputEdits
     value: commandInput.text
     onAccepted: value => {
       root.saved(value);
@@ -78,6 +79,12 @@ Popup {
     visible: session.discardPending
     onDiscard: root.confirmDiscard()
     onKeepEditing: root.keepEditing()
+  }
+
+  NSettingsInputGuard {
+    id: inputEdits
+    target: root.contentItem
+    active: root.visible && !root.busy
   }
 
   background: Rectangle {

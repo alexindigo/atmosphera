@@ -24,18 +24,9 @@ ColumnLayout {
   property bool valueHideIfNotDetected: widgetData.hideIfNotDetected !== undefined ? widgetData.hideIfNotDetected : widgetMetadata.hideIfNotDetected
   property bool valueHideIfIdle: widgetData.hideIfIdle !== undefined ? widgetData.hideIfIdle : widgetMetadata.hideIfIdle
 
-  function saveSettings() {
-    var settings = Object.assign({}, widgetData || {});
-    if (widgetData && widgetData.id) {
-      settings.id = widgetData.id;
-    }
-    settings.displayMode = valueDisplayMode;
-    settings.showPowerProfiles = valueShowPowerProfiles;
-    settings.showAtmospheraPerformance = valueShowAtmospheraPerformance;
-    settings.hideIfNotDetected = valueHideIfNotDetected;
-    settings.hideIfIdle = valueHideIfIdle;
-    settings.deviceNativePath = valueDeviceNativePath;
-    settingsChanged(settings);
+  function saveSettings(fields) {
+    if (fields)
+      settingsChanged(fields);
   }
 
   NComboBox {
@@ -48,7 +39,7 @@ ColumnLayout {
     currentKey: root.valueDeviceNativePath
     onSelected: key => {
       root.valueDeviceNativePath = key;
-      saveSettings();
+      saveSettings({deviceNativePath: root.valueDeviceNativePath});
     }
     defaultValue: widgetMetadata.deviceNativePath
   }
@@ -83,7 +74,7 @@ ColumnLayout {
     currentKey: root.valueDisplayMode
     onSelected: key => {
       root.valueDisplayMode = key;
-      saveSettings();
+      saveSettings({displayMode: root.valueDisplayMode});
     }
     defaultValue: widgetMetadata.displayMode
   }
@@ -94,7 +85,7 @@ ColumnLayout {
     checked: valueHideIfNotDetected
     onToggled: checked => {
       valueHideIfNotDetected = checked;
-      saveSettings();
+      saveSettings({hideIfNotDetected: valueHideIfNotDetected});
     }
     defaultValue: widgetMetadata.hideIfNotDetected
   }
@@ -105,7 +96,7 @@ ColumnLayout {
     checked: valueHideIfIdle
     onToggled: checked => {
       valueHideIfIdle = checked;
-      saveSettings();
+      saveSettings({hideIfIdle: valueHideIfIdle});
     }
     defaultValue: widgetMetadata.hideIfIdle
   }
@@ -120,7 +111,7 @@ ColumnLayout {
     checked: valueShowPowerProfiles
     onToggled: checked => {
       valueShowPowerProfiles = checked;
-      saveSettings();
+      saveSettings({showPowerProfiles: valueShowPowerProfiles});
     }
     defaultValue: widgetMetadata.showPowerProfiles
   }
@@ -131,7 +122,7 @@ ColumnLayout {
     checked: valueShowAtmospheraPerformance
     onToggled: checked => {
       valueShowAtmospheraPerformance = checked;
-      saveSettings();
+      saveSettings({showAtmospheraPerformance: valueShowAtmospheraPerformance});
     }
     defaultValue: widgetMetadata.showAtmospheraPerformance
   }

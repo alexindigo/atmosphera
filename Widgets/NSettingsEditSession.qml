@@ -1,4 +1,5 @@
 import QtQuick
+import "../Helpers/SettingsValues.js" as SettingsValues
 
 QtObject {
   id: root
@@ -6,11 +7,12 @@ QtObject {
   // editor.apply(value, callback), editor.discard(). No consumer/Settings import.
   property var editor: null
   property var value: null
+  property var inputGuard: null
   property var _initialValue: null
   property bool busy: false
   property bool failed: false
   property bool discardPending: false
-  readonly property bool dirty: failed || JSON.stringify(value) !== JSON.stringify(_initialValue)
+  readonly property bool dirty: failed || (inputGuard && inputGuard.dirty) || !SettingsValues.equal(value, _initialValue)
   signal accepted(var value)
   signal closeRequested
 
@@ -21,6 +23,8 @@ QtObject {
       editor.discard();
     editor = handle;
     _initialValue = initialValue;
+    if (inputGuard)
+      inputGuard.reset();
     failed = false;
     discardPending = false;
     return true;
@@ -29,8 +33,11 @@ QtObject {
   function apply() {
     if (busy || !editor)
       return;
+    if (inputGuard)
+      inputGuard.commit();
     // Own the submission across queued completion and later caller mutations.
     var submitted = JSON.parse(JSON.stringify(value));
+    var inputFence = inputGuard ? inputGuard.capture() : 0;
     busy = true;
     failed = false;
     try {
@@ -41,6 +48,8 @@ QtObject {
           return;
         }
         root._initialValue = submitted;
+        if (root.inputGuard)
+          root.inputGuard.acknowledge(inputFence);
         root.accepted(submitted);
       });
     } catch (error) {
@@ -53,6 +62,8 @@ QtObject {
   function requestClose() {
     if (busy)
       return;
+    if (inputGuard)
+      inputGuard.commit();
     if (dirty) {
       discardPending = true;
     } else {

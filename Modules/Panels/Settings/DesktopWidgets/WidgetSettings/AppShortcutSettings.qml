@@ -170,7 +170,7 @@ ColumnLayout {
       if (iconName === cmd) {
         root.valueIconSource = _mergedIcons[j].path;
         root.valueIconType = "icons";
-        save();
+        save({iconSource: root.valueIconSource, iconType: root.valueIconType});
         return;
       }
     }
@@ -218,8 +218,8 @@ ColumnLayout {
         if (root.valueParams.length === 0 || root.valueParams[root.valueParams.length - 1] !== "")
           root.valueParams.push("");
         rebuildParamsModel();
+        save({appId: root.valueAppId, params: paramsValue()});
       }
-      save();
     }
   }
 
@@ -243,7 +243,7 @@ ColumnLayout {
       root.valueAppId = k;
       root.valueParams = TerminalRegistry.defaultRunArgs(k);
       rebuildParamsModel();
-      save();
+      save({appId: root.valueAppId, params: paramsValue()});
     }
   }
 
@@ -276,7 +276,7 @@ ColumnLayout {
       if (root.valueParams.length === 0 || root.valueParams[root.valueParams.length - 1] !== "")
         root.valueParams.push("");
       rebuildParamsModel();
-      save();
+      save({appId: root.valueAppId, params: paramsValue()});
     }
   }
 
@@ -312,9 +312,9 @@ ColumnLayout {
         Layout.fillWidth: true
         placeholderText: I18n.tr("panels.desktop-widgets.app-shortcut-params-placeholder")
         text: model.value
-        onTextChanged: {
+        onTextEdited: {
           paramsModel.setProperty(index, "value", text);
-          save();
+          save({params: paramsValue()});
           root.tryAutoIconForCommand();
         }
       }
@@ -324,7 +324,7 @@ ColumnLayout {
         tooltipText: I18n.tr("common.remove")
         onClicked: {
           paramsModel.remove(index);
-          save();
+          save({params: paramsValue()});
         }
       }
     }
@@ -359,7 +359,7 @@ ColumnLayout {
       onClicked: {
         root.valueIconType = "auto";
         root.valueIconSource = "";
-        save();
+        save({iconType: root.valueIconType, iconSource: root.valueIconSource});
       }
     }
 
@@ -480,7 +480,7 @@ ColumnLayout {
             onDoubleClicked: {
               root.valueIconSource = modelData.path;
               root.valueIconType = "icons";
-              root.save();
+              root.save({iconSource: root.valueIconSource, iconType: root.valueIconType});
               iconsPicker.close();
             }
           }
@@ -534,7 +534,7 @@ ColumnLayout {
             if (iconsPicker._selectedPath) {
               root.valueIconSource = iconsPicker._selectedPath;
               root.valueIconType = "icons";
-              root.save();
+              root.save({iconSource: root.valueIconSource, iconType: root.valueIconType});
             }
             iconsPicker.close();
           }
@@ -552,7 +552,7 @@ ColumnLayout {
       if (paths && paths.length > 0) {
         root.valueIconSource = paths[0];
         root.valueIconType = "file";
-        save();
+        save({iconSource: root.valueIconSource, iconType: root.valueIconType});
       }
     }
   }
@@ -564,9 +564,9 @@ ColumnLayout {
     label: I18n.tr("panels.desktop-widgets.app-shortcut-custom-label")
     description: I18n.tr("panels.desktop-widgets.app-shortcut-custom-label-description")
     text: root.valueCustomLabel
-    onTextChanged: {
+    onTextEdited: {
       root.valueCustomLabel = text;
-      save();
+      save({customLabel: root.valueCustomLabel});
     }
   }
 
@@ -578,7 +578,7 @@ ColumnLayout {
     checked: root.valueShowLabel
     onToggled: c => {
       root.valueShowLabel = c;
-      save();
+      save({showLabel: root.valueShowLabel});
     }
   }
 
@@ -588,7 +588,7 @@ ColumnLayout {
     checked: root.valueSingleClick
     onToggled: c => {
       root.valueSingleClick = c;
-      save();
+      save({singleClick: root.valueSingleClick});
     }
   }
 
@@ -598,7 +598,7 @@ ColumnLayout {
     checked: root.valueShowBg
     onToggled: c => {
       root.valueShowBg = c;
-      save();
+      save({showBackground: root.valueShowBg});
     }
   }
 
@@ -608,7 +608,7 @@ ColumnLayout {
     checked: root.valueRounded
     onToggled: c => {
       root.valueRounded = c;
-      save();
+      save({roundedCorners: root.valueRounded});
     }
   }
 
@@ -635,9 +635,9 @@ ColumnLayout {
         Layout.fillWidth: true
         placeholderText: I18n.tr("panels.desktop-widgets.app-shortcut-env-var-key-placeholder")
         text: model.key
-        onTextChanged: {
+        onTextEdited: {
           envVarsModel.setProperty(index, "key", text);
-          save();
+          save({environmentVars: envVarsValue()});
         }
       }
 
@@ -645,9 +645,9 @@ ColumnLayout {
         Layout.fillWidth: true
         placeholderText: I18n.tr("panels.desktop-widgets.app-shortcut-env-var-value-placeholder")
         text: model.value
-        onTextChanged: {
+        onTextEdited: {
           envVarsModel.setProperty(index, "value", text);
-          save();
+          save({environmentVars: envVarsValue()});
         }
       }
 
@@ -656,7 +656,7 @@ ColumnLayout {
         tooltipText: I18n.tr("common.remove")
         onClicked: {
           envVarsModel.remove(index);
-          save();
+          save({environmentVars: envVarsValue()});
         }
       }
     }
@@ -680,27 +680,32 @@ ColumnLayout {
     blendStrengthDefault: Settings.data.desktopWidgets.iconBlendStrength
     onBlendStrengthEdited: v => {
       root.valueBlendStrength = v;
-      save();
+      save({blendStrength: root.valueBlendStrength});
     }
 
     hueAdjustment: root.valueHueAdjustment
     hueAdjustmentDefault: Settings.data.desktopWidgets.iconHueAdjustment
     onHueAdjustmentEdited: v => {
       root.valueHueAdjustment = v;
-      save();
+      save({hueAdjustment: root.valueHueAdjustment});
     }
 
     contentPadding: root.valueContentPadding
     contentPaddingDefault: Settings.data.desktopWidgets.widgetContentPadding
     onContentPaddingEdited: v => {
       root.valueContentPadding = v;
-      save();
+      save({contentPadding: root.valueContentPadding});
     }
   }
 
   // ==================== SAVE ====================
 
-  function save() {
+  function save(fields) {
+    if (fields)
+      settingsChanged(fields);
+  }
+
+  function paramsValue() {
     // Serialize params model to array
     var params = [];
     for (var i = 0; i < paramsModel.count; i++) {
@@ -710,7 +715,10 @@ ColumnLayout {
       }
     }
 
-    // Serialize env vars model to array
+    return params;
+  }
+
+  function envVarsValue() {
     var envVars = [];
     for (var i = 0; i < envVarsModel.count; i++) {
       var item = envVarsModel.get(i);
@@ -722,20 +730,6 @@ ColumnLayout {
       }
     }
 
-    settingsChanged({
-                      appId: valueAppId,
-                      customLabel: valueCustomLabel,
-                      params: params,
-                      iconSource: valueIconSource,
-                      iconType: valueIconType,
-                      showLabel: valueShowLabel,
-                      singleClick: valueSingleClick,
-                      showBackground: valueShowBg,
-                      roundedCorners: valueRounded,
-                      environmentVars: envVars,
-                      blendStrength: valueBlendStrength,
-                      hueAdjustment: valueHueAdjustment,
-                      contentPadding: valueContentPadding
-                    });
+    return envVars;
   }
 }

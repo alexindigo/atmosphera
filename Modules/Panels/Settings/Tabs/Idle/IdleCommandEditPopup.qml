@@ -71,6 +71,7 @@ Popup {
 
   NSettingsEditSession {
     id: session
+    inputGuard: inputEdits
     value: ({name: nameInput.text, timeout: timeoutSpinBox.value, command: commandInput.text, resumeCommand: resumeCommandInput.text})
     onAccepted: value => {
       root.saved(value.timeout, value.command, value.resumeCommand, value.name);
@@ -84,6 +85,12 @@ Popup {
     visible: session.discardPending
     onDiscard: root.confirmDiscard()
     onKeepEditing: root.keepEditing()
+  }
+
+  NSettingsInputGuard {
+    id: inputEdits
+    target: root.contentItem
+    active: root.visible && !root.busy
   }
 
   background: Rectangle {
