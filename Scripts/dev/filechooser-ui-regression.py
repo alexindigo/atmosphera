@@ -23,6 +23,7 @@ from filechooser_selection import exercise as exercise_selection
 from filechooser_overwrite import exercise as exercise_overwrite
 from filechooser_extensions import exercise as exercise_extensions
 from filechooser_navigation import exercise as exercise_navigation
+from filechooser_paths import exercise as exercise_paths
 
 
 def layout_fits(s):
@@ -45,6 +46,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--label", required=True)
+    p.add_argument("--path-only", action="store_true", help="Run the path-entry partition; default runs every area")
     profile_argument(p)
     a = p.parse_args()
     guest()
@@ -126,8 +128,19 @@ def main():
         y = int((800 - g["height"]) / 2 + button["y"] + button["height"] / 2)
         command(["ydotool", "click", x, y, 272, 0])
         command(["ydotool", "move", 5, 5])
+    def finish():
+        ipc("quit"); harness.wait(timeout=15)
+        log = (evidence / "harness.log").read_text()
+        errors = [l for l in log.splitlines() if re.search(r"TypeError|ReferenceError|Cannot assign|Binding loop|Failed to load configuration|Unable to assign", l)]
+        cases.append({"case": "UI-runtime-errors", "pass": harness.returncode == 0 and not errors, "errors": errors})
+        assert cases[-1]["pass"]
     try:
         wait(lambda s: s["ready"], 30)
+        exercise_paths(runtime, evidence, command, ipc, state, wait, check, open_request, key, focus)
+        if a.path_only:
+            finish()
+            complete = True
+            return 0
         command(["grim", evidence / "header.png"])
         check("compact-toolbar-above-browser", lambda s: all(
             c["y"] + c["height"] <= s["layoutGeometry"]["rail"]["y"] + .5
@@ -252,8 +265,9 @@ def main():
         cases.extend(keyboard["cases"])
         assert keyboard["complete"] and keyboard["status"] == "green"
         # F6: app identity, order, wrapping and the footer's independent row.
+        metadata_label = "Keep original location, camera metadata and color profiles"
         band_choices = [["quality", "Image quality", [["original", "Original"], ["compact", "Compact"]], "original"],
-                        ["metadata", "Keep original location and camera metadata", [], "true"]]
+                        ["metadata", metadata_label, [], "true"]]
         band_filters = [["All files", [[0, "*"]]]]
         def footer_row(s):
             g = s["bottomGeometry"]
@@ -281,7 +295,7 @@ def main():
                 key(57); key(108); key(28)
                 check(tag + "-selected-value-not-elided", lambda s: s["choices"]["quality"] == "compact" and s["choicesFit"])
                 key(15)
-                check(tag + "-Tab-band-request-order", lambda s: s["focusedControl"] == "Keep original location and camera metadata")
+                check(tag + "-Tab-band-request-order", lambda s: s["focusedControl"] == metadata_label)
                 key(15)
                 check(tag + "-Tab-band-to-footer", lambda s: s["focusedControl"] == "File type")
                 key(15)
@@ -371,10 +385,10 @@ def main():
         # type-ahead selects résumé without relying on ydotool Unicode typing.
         paths = runtime / "Escaped paths"
         paths.mkdir()
-        for name in ("With space", "résumé", "hash#name"):
+        for name in ("With space", "résumé", "hash#name", "percent%20literal", "question?mark"):
             (paths / name).mkdir()
             (paths / name / "Picked.txt").write_text("consumer in " + name + "\n")
-        for case, name, prefix in (("space-folder", "With space", "With"), ("unicode-folder", "résumé", "r")):
+        for case, name, prefix in (("space-folder", "With space", "With"), ("unicode-folder", "résumé", "r"), ("hash-folder", "hash#name", "hash"), ("percent-folder", "percent%20literal", "percent"), ("question-folder", "question?mark", "question")):
             open_request("open", "dev.filechooser.paths", str(paths))
             choose(prefix)
             wait(lambda s: s["name"] == name)
@@ -391,20 +405,6 @@ def main():
                 return (uris == [(paths / name / "Picked.txt").as_uri()]
                         and Path(unquote(urlsplit(uris[0]).path)).read_text() == "consumer in " + name + "\n")
             check(case + "-pick-consumer", consumed)
-        open_request("open", "dev.filechooser.paths", str(paths))
-        before = state()
-        choose("hash")
-        wait(lambda s: s["name"] == "hash#name")
-        key(28)
-        wait(lambda s: s["status"] == "error")
-        check("hash-folder-exact-limitation-error", lambda s: s["error"] == "Can't open hash#name: folder names with #, ? or % aren't supported yet.")
-        check("hash-folder-keeps-path-and-listing", lambda s: s["path"] == before["path"] and s["names"] == before["names"])
-        check("hash-folder-no-stuck-load-or-settlement", lambda s: s["status"] == "error" and not s["settled"] and s["replies"] == [])
-        key(38, 29)
-        command(["ydotool", "type", str(paths / "With space")]); key(28)
-        wait(lambda s: s["ready"] and s["path"] == str(paths / "With space"))
-        check("hash-folder-valid-navigation-recovers", lambda s: not s["error"] and s["names"] == ["Picked.txt"])
-        key(1); wait(lambda s: s["settled"])
         for method in ("open", "save"):
             for view in ("grid", "list"):
                 open_request(method, "dev.filechooser.layout", str(base), current_name="New layout.txt",
@@ -427,11 +427,7 @@ def main():
                 (evidence / ("layout-" + prefix + "-minimum.json")).write_text(json.dumps(state(), indent=2))
                 key(1); wait(lambda s: s["settled"])
         exercise_icons(source, runtime, evidence, command, ipc, state, wait, check, open_request)
-        ipc("quit"); harness.wait(timeout=15)
-        log = (evidence / "harness.log").read_text()
-        errors = [l for l in log.splitlines() if re.search(r"TypeError|ReferenceError|Cannot assign|Binding loop|Failed to load configuration|Unable to assign", l)]
-        cases.append({"case": "UI-runtime-errors", "pass": harness.returncode == 0 and not errors, "errors": errors})
-        assert cases[-1]["pass"]
+        finish()
         complete = True
     except Exception as error:
         failure = repr(error)

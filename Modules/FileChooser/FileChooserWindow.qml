@@ -20,6 +20,7 @@ PanelWindow {
   readonly property var preview: filePreview
   readonly property bool quickLookOpen: quickLook.opened
   readonly property bool pathEditing: header.editing
+  function pathEntryState() { return {location: header.pathState(), name: {text: nameField.text, suggestions: nameField.suggestions, completionOpen: nameField.completionOpen, completionRows: nameField.completionGeometry(root.contentItem)}}; }
   readonly property bool textEntryFocused: nameField.inputItem.activeFocus || header.editingText || request.browser.creatingFolder
   readonly property var breadcrumbText: header.breadcrumbItems.filter(part => part.kind === "segment").map(part => part.text)
   readonly property var previewRenderer: quickLook.renderer
@@ -91,7 +92,9 @@ PanelWindow {
         y: entry.y + origin.y,
         width: entry.width,
         height: entry.height,
-        iconOnly: entry.iconOnly === true,
+         iconOnly: entry.iconOnly === true,
+         kind: entry.kind || "",
+         path: entry.path || "",
         name: entry.name || ""
       }));
     }
@@ -124,7 +127,10 @@ PanelWindow {
       return header.breadcrumbGeometry();
     }
       function dismissLayer() {
-      if (request.pendingReplace) {
+       if (header.transientOpen || nameField.completionOpen) {
+       header.dismissTransient();
+       nameField.dismissCompletion();
+     } else if (request.pendingReplace) {
       editAfterReplace();
     } else if (quickLook.opened) {
       quickLook.opened = false;
@@ -152,7 +158,11 @@ PanelWindow {
     } else
       listing.focusNavigation();
     }
-      Component.onCompleted: Qt.callLater(initialFocus)
+       Component.onCompleted: Qt.callLater(initialFocus)
+       Connections {
+       target: root.request
+       function onPathNavigation() { header.leavePathEditing(); }
+     }
       Connections {
       target: root.request.browser
       function onStatusChanged() {
@@ -253,22 +263,28 @@ PanelWindow {
     }
     }
       RowLayout {
-      visible: root.request.method === "save"
+       visible: root.request.method === "save" || root.request.method === "open"
       Layout.fillWidth: true
-      ChooserTextField {
+       ChooserPathField {
       id: nameField
       Layout.fillWidth: true
       label: I18n.tr("widgets.file-picker.file-name")
-      text: root.request.saveName
+       text: root.request.method === "save" ? root.request.saveName : root.request.openDisplayName
+       basePath: root.request.browser.currentPath
+       nameFilter: root.request.currentFilter
+       directoriesOnly: root.request.options.directory === true
+       showHidden: root.request.browser.showHidden
       fontSize: Style.fontSizeL
-      onTextEdited: root.request.editSaveName(text)
-      onAccepted: root.request.accept()
+       onTextEdited: root.request.method === "save" ? root.request.editSaveName(text) : root.request.editOpenName(text)
+       onEditingStarted: root.request.beginNameEdit()
+       onAccepted: { dismissCompletion(); root.request.accept(); }
     }
       ChooserButton {
       Layout.alignment: Qt.AlignBottom
       Layout.preferredWidth: nameField.inputItem.implicitHeight
       Layout.preferredHeight: nameField.inputItem.implicitHeight
-      icon: Icon.filter
+       icon: Icon.filter
+       visible: root.request.method === "save"
       tooltipText: I18n.tr("widgets.file-picker.filter-by-name")
       Accessible.checkable: true
       Accessible.checked: root.request.saveFilterEnabled

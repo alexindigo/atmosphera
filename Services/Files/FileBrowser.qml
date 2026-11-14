@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import "../../Helpers/PortalPaths.js" as PortalPaths
+import "FilePaths.js" as Paths
 
 Scope {
   id: root
@@ -28,6 +29,7 @@ Scope {
   readonly property bool canForward: _historyIndex >= 0 && _historyIndex < _history.length - 1
   readonly property bool hasHidden: _hasHidden
   readonly property var pathParts: breadcrumbParts(currentPath, FilePlaces.home)
+  readonly property var breadcrumbs: Paths.breadcrumbs(currentPath, FilePlaces.home)
   readonly property bool creatingFolder: _creatingFolder
   readonly property bool createFolderBusy: _createFolderBusy
   readonly property string createFolderError: _createFolderError
@@ -38,6 +40,7 @@ Scope {
   property string _createdPath: ""
   property int _createGeneration: 0
   signal folderCreated(string path)
+  signal navigationRequested(string path)
 
   function breadcrumbParts(path, home) {
     var inside = path === home || path.startsWith(home === "/" ? "/" : home + "/");
@@ -55,6 +58,8 @@ Scope {
   property int _pathIndexRevision: -1
   property var _pathIndices: ({})
   property bool _validating: false
+  property var _folderSource: null
+  property var _loadingSource: null
 
   signal listingChanged
   onListingChanged: {
@@ -150,9 +155,6 @@ except OSError as error:
   readonly property string _checkCode: `
 import errno, json, os, sys
 p = os.path.abspath(os.path.expanduser(sys.argv[1]))
-if any(c in p for c in '#?%'):
-    print(json.dumps({'ok': False, 'reason': 'unsupported-name', 'path': p}))
-    sys.exit(0)
 try:
     with os.scandir(p) as entries:
         if not os.access(p, os.R_OK | os.X_OK):
@@ -202,6 +204,7 @@ except OSError as e:
   }
 
   function navigate(path) {
+    navigationRequested(path);
     if (typeof path !== "string" || path.indexOf("\u0000") >= 0 || !(path[0] === "/" || path === "~" || path.startsWith("~/"))) {
       ++_serial;
       _validating = false;
@@ -219,7 +222,7 @@ except OSError as e:
       _validating = false;
       var path = (result.path || target).replace(/\/+$/, "") || "/";
       var folder = path.slice(path.lastIndexOf("/") + 1) || "/";
-      _errorText = result.reason === "unsupported-name" ? I18n.tr("widgets.file-picker.unsupported-folder-name", {path: folder}) : I18n.tr("widgets.file-picker.open-folder-error", {path: folder, reason: I18n.tr("widgets.file-picker.folder-reason-" + result.reason)});
+      _errorText = I18n.tr("widgets.file-picker.open-folder-error", {path: folder, reason: I18n.tr("widgets.file-picker.folder-reason-" + result.reason)});
       _status = "error";
       if (monitor && result.missing && result.parent !== target)
         _check(result.parent, -1, false);
@@ -237,15 +240,17 @@ except OSError as e:
     if (result.path !== currentPath)
       filterText = "";
     _currentPath = result.path;
-    var uri = PortalPaths.pathToUri(currentPath).uri;
-    // Clearing forces a refresh even when navigating to the same folder.
-    source.folder = "";
-    source.folder = uri;
+    // The labs model also removes watches through its once-decoded URL. Retire
+    // the complete per-folder model, so encoded names cannot retain old watches.
+    if (_loadingSource) _loadingSource.destroy();
+    _loadingSource = sourceFactory.createObject(root, {targetPath: currentPath});
     _validating = false;
   }
 
   function _publishReady() {
-    var loaded = PortalPaths.qmlUrlToPath(source.folder.toString());
+    var source = _folderSource;
+    if (!source) return;
+    var loaded = PortalPaths.folderModelPath(source.folder.toString());
     if (!_validating && _status !== "error" && currentPath && source.status === FolderListModel.Ready && loaded.ok && loaded.path === currentPath) {
       _status = "ready";
       listingChanged();
@@ -254,6 +259,7 @@ except OSError as e:
 
   function back() {
     if (canBack) {
+      navigationRequested(_history[_historyIndex - 1]);
       _status = "loading";
       _check(_history[_historyIndex - 1], _historyIndex - 1, false);
     }
@@ -261,6 +267,7 @@ except OSError as e:
 
   function forward() {
     if (canForward) {
+      navigationRequested(_history[_historyIndex + 1]);
       _status = "loading";
       _check(_history[_historyIndex + 1], _historyIndex + 1, false);
     }
@@ -279,6 +286,7 @@ except OSError as e:
     if (index < 0 || index >= listing.rowCount())
       return null;
     var row = listing.mapToSource(listing.index(index, 0)).row;
+    var source = _folderSource;
     return {name: source.get(row, "fileName"), path: source.get(row, "filePath"), directory: source.isFolder(row), size: source.get(row, "fileSize"), modified: source.get(row, "fileModified")};
   }
 
@@ -308,21 +316,42 @@ except OSError as e:
     function onFiltersChanged() { listing.invalidate(); }
   }
 
-  FolderListModel {
-    id: source
-    folder: ""
-    showHidden: true
-    showDotAndDotDot: false
-    sortField: FolderListModel.Unsorted
-    onStatusChanged: {
-      if (status === FolderListModel.Ready)
-        Qt.callLater(root._publishReady);
+  Component {
+    id: sourceFactory
+    FolderListModel {
+      id: folderModel
+      required property string targetPath
+      property bool primed: false
+      // componentComplete() has a separate, once-decoded existence check. Prime
+      // on root before assigning the adapted target, and never expose that
+      // priming listing. Its Ready edge also drains the initial worker scan.
+      folder: "file:///"
+      showHidden: true
+      showDotAndDotDot: false
+      sortField: FolderListModel.Unsorted
+      onStatusChanged: {
+        if (status !== FolderListModel.Ready) return;
+        if (!primed) {
+          primed = true;
+          folder = "";
+          folder = PortalPaths.folderModelUri(targetPath).uri;
+        } else if (root._loadingSource === folderModel && targetPath === root.currentPath) {
+          var old = root._folderSource;
+          root._folderSource = folderModel;
+          root._loadingSource = null;
+          if (old) old.destroy();
+          Qt.callLater(root._publishReady);
+        } else if (root._folderSource === folderModel) Qt.callLater(root._publishReady);
+      }
     }
   }
 
+  // Qt's technology-preview proxy requires a non-null source even before the
+  // first folder is ready; item views may query rowCount during construction.
+  ListModel { id: emptySource }
   SortFilterProxyModel {
     id: listing
-    model: source
+    model: root._folderSource || emptySource
     filters: FunctionFilter {
       function filter(fileName: string, fileIsDir: bool): bool {
         var name = fileName.toLowerCase();

@@ -38,7 +38,10 @@ def main():
     shell = runtime / "shell"
     shutil.copytree(source, shell, symlinks=True)
     probe = shell / "filechooser-units.qml"
-    probe.write_text((source / "Scripts/dev/fixtures/filechooser-units.qml").read_text().replace('"../../../Helpers/', '"Helpers/').replace('"filechooser-icon-cases.js"', '"Scripts/dev/fixtures/filechooser-icon-cases.js"').replace('"filechooser-extensions.js"', '"Scripts/dev/fixtures/filechooser-extensions.js"').replace('"filechooser-navigation.js"', '"Scripts/dev/fixtures/filechooser-navigation.js"'))
+    probe_text = (source / "Scripts/dev/fixtures/filechooser-units.qml").read_text().replace('"../../../Helpers/', '"Helpers/')
+    for name in ("filechooser-icon-cases.js", "filechooser-extensions.js", "filechooser-navigation.js", "filechooser-paths.js"):
+        probe_text = probe_text.replace('"' + name + '"', '"Scripts/dev/fixtures/' + name + '"')
+    probe.write_text(probe_text)
     fixtures = runtime / "fixtures"
     fixtures.mkdir()
     (fixtures / "folder").mkdir()
@@ -78,6 +81,7 @@ def main():
         folder = aux / "escaped" / name
         folder.mkdir(parents=True)
         (folder / "fixture.txt").write_text(name, encoding="utf-8")
+    for i in range(6): (aux / ("model%watch" + str(i))).mkdir()
     (aux / "vanish/selected.txt").write_text("selected")
     (aux / "unreadable/selected.txt").write_text("unreadable")
     (aux / "unreadable/selected.txt").chmod(0)
@@ -122,9 +126,15 @@ def main():
                ATMOSPHERA_DEBUG="0")
     runs = []
     for mode in ("main", "reload"):
-        process = subprocess.run(["timeout", "--kill-after=5s", "90", "qs", "-p", str(probe)],
-                                 cwd=shell, env=dict(env, FILECHOOSER_UNIT_RELOAD="1" if mode == "reload" else "0"),
-                                 capture_output=True, text=True, timeout=100)
+        try:
+            process = subprocess.run(["timeout", "--kill-after=5s", "90", "qs", "-p", str(probe)],
+                                     cwd=shell, env=dict(env, FILECHOOSER_UNIT_RELOAD="1" if mode == "reload" else "0"),
+                                     capture_output=True, text=True, timeout=100)
+        except subprocess.TimeoutExpired as error:
+            def decoded(value):
+                return value.decode(errors="replace") if isinstance(value, bytes) else value or ""
+            (output / f"{mode}.log").write_text(decoded(error.stdout) + decoded(error.stderr))
+            raise
         text = process.stdout + process.stderr
         (output / f"{mode}.log").write_text(text)
         runs.append(dict(mode=mode, exit=process.returncode, log=text))
@@ -151,10 +161,8 @@ def main():
                  "preview.small", "preview.large", "preview.exact-limit", "preview.multibyte-cut",
                  "preview.invalid-utf8", "preview.missing", "preview.kind-switch", "preview.stale-reply", "preview.pdf-detection",
                  "types.bytes-small", "types.size-scaled", "types.size-german", "types.date-us", "types.date-british", "types.date-german", "types.date-system"}
-    for name in ["With space", "résumé", "a b/c d"]:
+    for name in ["With space", "résumé", "a b/c d", "hash#name", "percent%20literal", "question?mark"]:
         required.update(f"paths.{name}.{case}" for case in ("ready", "listing", "breadcrumbs", "request-ready", "request-result"))
-    for name in ["hash#name", "percent%20literal", "question?mark"]:
-        required.update(f"paths.{name}.{case}" for case in ("error", "keeps-folder", "keeps-listing", "not-loading", "recovers"))
     required.update(f"paths.helper.{name}" for name in ("With space", "hash#name", "percent%20literal", "question?mark", "résumé", "a b/c d", "strict-portal-spaces", "invalid-urls"))
     required.update("filter." + name for name in ("substring-case", "type-intersection", "folders", "hidden-respected", "hidden-opt-in", "combined-substrings", "navigation-clears", "save-prefill", "save-name-revalidation", "save-toggle"))
     required.update("create." + name for name in ("success-model", "exists-directory", "exists-file", "permission", "readonly", "folder-selection", "save-stays-in-folder"))
@@ -172,6 +180,8 @@ def main():
     required.update("navigation." + name for name in ("cursor-only-keeps-selection", "cursor-only-keeps-anchor", "keyboard-toggle-adds",
         "keyboard-toggle-removes", "single-Ctrl-deselects", "single-Ctrl-keeps-one", "band-symmetric", "band-idempotent", "band-retract-restores", "band-additive",
         "modified-background-keeps", "background-clears", "single-band-ignored"))
+    required.update("path-entry." + name for name in ("relative-open", "location-navigates", "history-invalidates-typed-intent", "history-does-not-accept", "literal-local-name", "quoted-multiple", "local-uri", "navigation-keeps-save-name", "typed-folder-keeps-save-leaf", "save-path-extension", "type-change-only-leaf", "missing-save-parent-keeps-input", "missing-keeps-dialog", "folder-watches-bounded"))
+    required.update("completion." + name for name in ("case-prefix", "directories", "explicit-hidden", "type-filter", "literal-folder", "quoted-last-name", "inactive-invalidates"))
     missing = sorted(required - {case["case"] for case in cases})
     required_media = {"playback." + name for name in ("initial", "inactive-intents", "volume-low", "volume-high", "volume-step", "invalid-volume", "times", "autoplay", "seek-low", "seek-high", "close-stops", "close-destroys-engine")}
     required_labels = {"labels." + name for name in ("extension-attached", "dots", "long-word", "cjk", "extension-only", "two-lines-only")}

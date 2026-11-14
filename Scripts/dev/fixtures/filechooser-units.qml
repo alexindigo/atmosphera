@@ -9,6 +9,7 @@ import qs.Services.Files
 import qs.Services.UI
 import "filechooser-extensions.js" as ExtensionCases
 import "filechooser-navigation.js" as NavigationCases
+import "filechooser-paths.js" as PathCases
 
 ShellRoot {
   id: root
@@ -39,6 +40,7 @@ ShellRoot {
   FileBrowser {
     id: fileBrowser
   }
+  FileCompletion { id: pathCompletion; basePath: root.base }
   FileChooserHeader {
     id: breadcrumbs
     width: 1200
@@ -78,8 +80,25 @@ ShellRoot {
   }
   Process {
     id: mutate
-    stdout: StdioCollector {}
+    stdout: StdioCollector { id: mutateOutput }
   }
+  function sampleWatchers() {
+    mutate.command = ["timeout", "3", "python3", "-c", `
+import os, pathlib
+parent = pathlib.Path('/proc') / str(os.getppid())
+pid = int((parent / 'stat').read_text().rsplit(')', 1)[1].split()[1])
+proc = pathlib.Path('/proc') / str(pid)
+assert (proc / 'exe').resolve().name in ('qs', 'quickshell')
+count = 0
+for info in (proc / 'fdinfo').iterdir():
+    try: count += sum(line.startswith('inotify wd:') for line in info.read_text().splitlines())
+    except FileNotFoundError: pass
+print(count)
+`];
+    mutate.running = true;
+  }
+  function watcherSampleReady() { return !mutate.running; }
+  function watcherCount() { return Number(mutateOutput.text.trim()); }
 
   function report(name, passed, actual) {
     Logger.i("FileChooserUnits", "FILECHOOSER_UNITS|" + JSON.stringify({
@@ -707,7 +726,7 @@ ShellRoot {
                     });
     });
     step(requestReady, function () {
-      for (var name of ["", ".", "..", "bad/name", "bad\u0000name"]) {
+      for (var name of ["", ".", "..", "bad\u0000name"]) {
         request.saveName = name;
         request.accept();
         report("request.invalid-name-" + JSON.stringify(name), request.errorText !== "" && !request.settled, request.errorText);
@@ -850,7 +869,7 @@ ShellRoot {
              showHidden: true
            });
     });
-    for (let name of ["With space", "résumé", "a b/c d"]) {
+    for (let name of ["With space", "hash#name", "percent%20literal", "question?mark", "résumé", "a b/c d"]) {
       let folder = aux + "/escaped/" + name;
       let prefix = "paths." + name + ".";
       step(() => true, function () {
@@ -880,28 +899,7 @@ ShellRoot {
         same(prefix + "request-result", [responses[0].response, uris, uris.map(uri => PortalPaths.uriToPath(uri).path)], [0, [expected], [folder + "/fixture.txt"]]);
       });
     }
-    for (let name of ["hash#name", "percent%20literal", "question?mark"]) {
-      let folder = aux + "/escaped/" + name;
-      let prefix = "paths." + name + ".";
-      step(() => true, function () {
-        fileBrowser.navigate(base);
-      });
-      step(ready, function () {
-        beforeNames = names();
-        fileBrowser.navigate(folder);
-        staleStarted = Date.now();
-      });
-      step(() => fileBrowser.status === "error" || Date.now() - staleStarted > 1500, function () {
-        same(prefix + "error", [fileBrowser.status, fileBrowser.errorText], ["error", "Can't open " + name + ": folder names with #, ? or % aren't supported yet."]);
-        same(prefix + "keeps-folder", fileBrowser.currentPath, base);
-        same(prefix + "keeps-listing", names(), beforeNames);
-        report(prefix + "not-loading", fileBrowser.status !== "loading", fileBrowser.status);
-        fileBrowser.navigate(base);
-      });
-      step(ready, function () {
-        same(prefix + "recovers", [fileBrowser.currentPath, names()], [base, beforeNames]);
-      });
-    }
+    step(() => true, function() { fileBrowser.navigate(base); });
     step(ready, function () {
       fileBrowser.nameFilter = null;
       fileBrowser.showHidden = false;
@@ -1063,6 +1061,7 @@ ET.ElementTree(root).write(target, encoding='unicode')
     });
     ExtensionCases.build(root, PortalPaths, FileTypes, FileChooserMemory);
     NavigationCases.build(root, fileBrowser, selection);
+    PathCases.build(root, PortalPaths, FileChooserMemory, pathCompletion, fileBrowser);
   }
 
   Component.onCompleted: {

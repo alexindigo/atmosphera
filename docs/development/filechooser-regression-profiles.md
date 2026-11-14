@@ -22,7 +22,7 @@ guest, from `/home/tester/Projects/filechooser-usability/source`:
 ```sh
 export TMPDIR=/home/tester/Projects/filechooser-usability/tmp
 profile=$PWD/Scripts/dev/fixtures/guest-profiles/atmosphera-mov-filter.json
-timeout 900 python3 -B Scripts/dev/filechooser-units.py --guest-profile "$profile" --source "$PWD" --output ../evidence/units-LABEL
+timeout 900 python3 -B Scripts/dev/filechooser-units.py --guest-profile "$profile" --source "$PWD" --output "$PWD/../evidence/units-LABEL"
 timeout 900 python3 -B Scripts/dev/filechooser-portal-regression.py --guest-profile "$profile" --source "$PWD" --label portal-LABEL
 timeout 900 python3 -B Scripts/dev/filechooser-ui-regression.py --guest-profile "$profile" --source "$PWD" --label ui-LABEL
 ```
@@ -31,6 +31,11 @@ Each label must be fresh. `filechooser_regression.py` is their shared library,
 not a CLI. These commands preserve complete extracted working trees and evidence;
 they create no workspace capsules. The profile must be explicitly updated when
 the authorized guest changes. Do not spoof a MAC or weaken a failing check.
+
+The UI runner also accepts `--path-only` for a short path-entry partition during
+iteration. It retains its runtime-error and isolation gates. Omit that flag for
+the full pre-commit proof; it does not replace the complete UI walk. Unit output
+paths must be absolute because the private supervisor changes working directory.
 
 The private supervisor also owns a PipeWire server and policy-only WirePlumber
 with one null sink. It loads no hardware monitors and cannot connect to a login

@@ -256,3 +256,16 @@ function qmlUrlToPath(urlText) {
         return fail("unsupported input type");
     return uriToPath(urlText.replace(/ /g, "%20"));
 }
+
+// Qt.labs FolderListModel's resolvePath() parses the decoded local filename as
+// a second QUrl (Qt 6.11/6.12). Encode that inner path at this adapter boundary,
+// not in currentPath, entries, portal replies or other file-URL consumers.
+function folderModelUri(path) {
+    var inner = pathToUri(path);
+    return inner.ok ? pathToUri(inner.uri.slice(7)) : inner;
+}
+
+function folderModelPath(urlText) {
+    var outer = qmlUrlToPath(urlText);
+    return outer.ok ? uriToPath("file://" + outer.path) : outer;
+}

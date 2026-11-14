@@ -2423,6 +2423,12 @@
       "year-two-digit": "Year as two-digit number (00-99)"
     },
     "file-picker": {
+      "ancestor-folders": "Ancestor folders",
+      "edit-location": "Edit location",
+      "folders": "Folders",
+      "subfolders-of": "Subfolders of {name}",
+      "path-matches": "Matching paths",
+      "local-path-only": "Enter a local path or file URL.",
       "absolute-folder": "Choose an absolute folder path.",
       "back": "Back",
       "cannot-replace": "Can't replace this file. Choose another name.",

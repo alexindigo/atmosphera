@@ -107,7 +107,8 @@ def main():
         check("initial-open-focus", lambda s: s["focus"] == "listing")
         check("presentation-locale", lambda s: s["localeName"] == "en_US")
         check("empty-selection-count-hidden", lambda s: not s["selectionCountVisible"])
-        check("breadcrumb-gaps", lambda s: len(s["breadcrumbGaps"]) == 3 and all(abs(g["before"]-g["after"]) < 0.5 and 0 < g["before"] < 5 for g in s["breadcrumbGaps"]))
+        check("breadcrumb-gaps", lambda s: len(s["breadcrumbGaps"]) == sum(c.get("kind") == "segment" for c in s["layoutGeometry"]["header"]) - 1
+              and len(s["breadcrumbGaps"]) > 0 and all(abs(g["before"]-g["after"]) < 0.5 and 0 < g["before"] < 5 for g in s["breadcrumbGaps"]))
         check("breadcrumb-labels-fit", lambda s: all(not g["clipped"] for g in s["breadcrumbGaps"]))
         check("choice-centerline", lambda s: len(s["choiceCenters"]) == 2 and abs(s["choiceCenters"][0] - s["choiceCenters"][1]) < 0.5)
         key("Home")

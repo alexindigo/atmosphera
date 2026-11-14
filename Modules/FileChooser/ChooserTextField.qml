@@ -18,6 +18,8 @@ ColumnLayout {
   property var icon: ""
   signal accepted
   signal textEdited
+  signal keyPressed(var event)
+  signal editingStarted
   spacing: Style.marginS
   NText {
     visible: root.label !== ""
@@ -43,6 +45,8 @@ ColumnLayout {
     Accessible.name: root.accessibleName
     onAccepted: root.accepted()
     onTextEdited: root.textEdited()
+    onActiveFocusChanged: if (activeFocus) root.editingStarted()
+    Keys.onPressed: event => { event.accepted = false; root.keyPressed(event); }
     AtmoIcon {
       visible: root.icon !== ""
       anchors.left: parent.left

@@ -179,6 +179,21 @@ button.onclick=event=>{record({kind:'save-start',trusted:event.isTrusted});const
         received = next(e for e in events if e.get("kind") == "upload" and e.get("seq") == seq)
         run.check(args.browser + "-upload-consumer-bytes", received["name"] == "Upload.txt" and received["text"] == upload, received)
 
+        seq = visit("open"); opened("open"); navigate(run.fixtures)
+        focus("File name"); run.key(30, 29); run.command(["ydotool", "type", "Upl"])
+        wait_for(lambda: request().get("pathEntry", {}).get("name", {}).get("completionOpen"))
+        run.key(108); run.key(15); run.key(28)
+        run.wait(lambda s: not s["requests"])
+        wait_for(lambda: any(e.get("kind") == "upload" and e.get("seq") == seq for e in events))
+        received = next(e for e in events if e.get("kind") == "upload" and e.get("seq") == seq)
+        run.check(args.browser + "-typed-completed-name-consumer-bytes", received["name"] == "Upload.txt" and received["text"] == upload, received)
+
+        visit("save"); opened("save"); edit_name(str(destination / "typed-path")); run.key(28)
+        run.wait(lambda s: not s["requests"])
+        typed = destination / "typed-path.txt"
+        wait_for(lambda: typed.is_file() and typed.read_text() == payload, 35)
+        run.check(args.browser + "-typed-save-path-consumer-bytes", typed.read_text() == payload)
+
         visit("save"); opened("save"); navigate(destination); edit_name("protected"); run.key(28)
         wait_for(lambda: request().get("replace") == str(protected) and request().get("focusedControl") == "Change name")
         run.check(args.browser + "-extension-final-name-visible", request()["saveName"] == "protected.txt" and request()["autoExtension"])
