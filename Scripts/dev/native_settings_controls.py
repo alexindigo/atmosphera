@@ -18,10 +18,11 @@ def prepare(source):
     assert subprocess.check_output(['sudo', '-n', 'cat', '/sys/class/dmi/id/product_uuid'], text=True).strip() == '12f17a02-25e9-474c-9dae-fea092c2d2be'
     metadata = json.loads((source/'Scripts/dev/native-metadata/dependencies/configqml-050/manifest.json').read_text())
     pin = metadata['sourceCommit']
+    version = metadata['version']
     for name, expected in metadata['artifacts'].items():
         assert digest(Path('/usr/lib/qt6/qml/ConfigQml')/name) == expected, 'installed native metadata mismatch'
     candidates = []
-    for candidate in workspace.glob('*/configqml-0.5.0'):
+    for candidate in workspace.glob('*/configqml-'+version):
         archive = candidate.parent/'source.tar'
         if not archive.is_file():
             continue
@@ -29,7 +30,7 @@ def prepare(source):
             if contents.pax_headers.get('comment') != pin:
                 continue
             for header in candidate.glob('*.h'):
-                member = contents.extractfile('configqml-0.5.0/'+header.name)
+                member = contents.extractfile('configqml-'+version+'/'+header.name)
                 assert member is not None and member.read() == header.read_bytes(), 'exact native header mismatch'
         candidates.append(candidate)
     assert len(candidates) == 1, 'exact native test archive missing or ambiguous'

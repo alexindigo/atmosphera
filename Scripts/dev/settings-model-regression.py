@@ -144,12 +144,13 @@ def main():
     # installed library's git archive, not an arbitrary development checkout.
     metadata = json.loads((source / "Scripts/dev/native-metadata/dependencies/configqml-050/manifest.json").read_text())
     pin = metadata["sourceCommit"]
+    version = metadata["version"]
     for name, expected in metadata["artifacts"].items():
         if digest(Path("/usr/lib/qt6/qml/ConfigQml") / name) != expected:
             raise RuntimeError("installed native metadata differs from candidate library pin")
     workspace = Path(env["TMPDIR"]).parent
     libraries = []
-    for candidate in workspace.glob("*/configqml-0.5.0"):
+    for candidate in workspace.glob("*/configqml-" + version):
         archive = candidate.parent / "source.tar"
         if not archive.is_file():
             continue
@@ -157,7 +158,7 @@ def main():
             if contents.pax_headers.get("comment") != pin:
                 continue
             for header in candidate.glob("*.h"):
-                member = contents.extractfile("configqml-0.5.0/" + header.name)
+                member = contents.extractfile("configqml-" + version + "/" + header.name)
                 if member is None or member.read() != header.read_bytes():
                     raise RuntimeError("native control header differs from exact library archive")
         libraries.append(candidate)

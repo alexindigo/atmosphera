@@ -642,17 +642,15 @@ def launcher_open_probe(ctx):
                 "status": "PENDING_VISUAL_REVIEW", "crop": str(image), "scoped_probe_pid": foot.pid,
                 "mapped": any(w.get("pid") == foot.pid for w in _windows(ctx)),
                 "observation": "Foot focus blocked; native launcher identity is not established", "error": str(error)}, indent=2))
-            # The recorded VM crop has a rounded search field above five mode
-            # chips. App-mode's first chip is light blue; the other four are
-            # dark. This signature was reviewed against an actual native UI
-            # capture, and is additional identity evidence, not a focus-error
-            # shortcut. Unexpected recipe/theme/geometry remains BLOCKED.
+            # Reviewed native recipes have a rounded search field and aligned
+            # chip row. Keep rendered identity independent of Foot's blocked
+            # focus: neither that error nor a mapped surface alone is proof.
             pixels = subprocess.check_output(["magick", str(image), "-depth", "8", "rgb:-"])
             if native_launcher_app_signature(pixels):
                 (ctx.output / (identity + "-identified.json")).write_text(json.dumps({
                     "native_launcher_rendered": True, "scoped_mapped_probe_pid": foot.pid,
                     "grab_observation": "mapped live Foot cannot take focus", "crop": str(image),
-                    "signature": "rounded search field / app-selected first chip / four dark mode chips",
+                    "signature": "reviewed native rounded search field / aligned mode or provider-category row",
                     "recipe": "reviewed 500x120 L1 crop on the owned 1280x800 niri session"}, indent=2))
                 return True
             raise Blocked("native launcher requires identifiable rendered UI review; focus failure alone is ambiguous")
@@ -673,9 +671,44 @@ def native_launcher_app_signature(pixels):
     # Search field border has two long horizontal grey strokes, with its
     # inside darker than the border; mode chip pattern alone is insufficient.
     border = sum(max(rgb(x, 11)) - min(rgb(x, 11)) < 70 and min(rgb(x, 11)) > 80 for x in range(20, 430))
-    return (primary[2] > 170 and primary[0] > 100 and primary[2] > primary[0] + 20
-            and all(max(c) < 90 for c in others) and border > 250
-            and max(rgb(400, 28)) < 90)
+    legacy = (primary[2] > 170 and primary[0] > 100 and primary[2] > primary[0] + 20
+              and all(max(c) < 90 for c in others) and border > 250
+              and max(rgb(400, 28)) < 90)
+
+    # Current reviewed 1280x800 MacOS recipe: focused purple search outline,
+    # adjacent circular layout control (apps) or full-width field (clipboard),
+    # and six provider-category cells. Apps
+    # and clipboard are both native launcher modes; category position is not
+    # mode identity. The physical mode-switch consumer below still proves the
+    # visible change. Do not generalize this to arbitrary colors or geometry.
+    def focus_stroke(c):
+        r, g, b = c
+        return r > 80 and b > 100 and r - g > 30 and b - r > 15 and b - g > 60
+    def selected(c):
+        return c[0] < 40 and 110 < c[1] < 150 and c[2] > 230
+    def runs(y):
+        spans = []
+        for x in range(500):
+            if selected(rgb(x, y)):
+                if spans and spans[-1][1] == x - 1:
+                    spans[-1][1] = x
+                else:
+                    spans.append([x, x])
+        return spans
+    middle = runs(78)
+    aligned = all(len(edge) == len(middle) and all(abs(a - c) <= 3 and abs(b - d) <= 3
+                  for (a, b), (c, d) in zip(edge, middle)) for edge in (runs(70), runs(86)))
+    separators = sum(45 < min(rgb(x, 78)) < 75 and max(rgb(x, 78)) - min(rgb(x, 78)) < 8
+                     for x in range(500))
+    apps_chrome = (max(rgb(440, 28)) < 60 and 35 < min(rgb(480, 28)) < 60
+                   and max(rgb(464, 12)) < 35 and min(rgb(464, 28)) > 45)
+    clipboard_chrome = (all(sum(focus_stroke(rgb(x, y)) for x in range(455, 481)) > 15 for y in (11, 46))
+                        and max(rgb(480, 28)) < 60)
+    current = (all(sum(focus_stroke(rgb(x, y)) for x in range(20, 431)) > 350 for y in (11, 46))
+               and (apps_chrome or clipboard_chrome)
+               and 1 <= len(middle) <= 2 and all(45 <= right - left + 1 <= 100 for left, right in middle)
+               and aligned and 8 <= separators <= 14)
+    return legacy or current
 
 
 def _niri_load(ctx, path):

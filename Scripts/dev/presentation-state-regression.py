@@ -7,7 +7,7 @@ from pathlib import Path
 import re
 import shutil
 from presentation_harness import add_execution_arguments, check_execution_paths, run_harness, write_receipt
-from qml_probe import inject_probe
+from qml_probe import inject_probe, probe_owner_path
 
 PROBE = r'''
   property var _stateOsd: null
@@ -116,7 +116,7 @@ def main():
     work.mkdir()
     shell = work / 'shell'
     shutil.copytree(args.source, shell, ignore=shutil.ignore_patterns('.git', '__pycache__', '*.bak'))
-    main_qml = shell / 'shell.qml'
+    main_qml = probe_owner_path(shell)
     text = main_qml.read_text().replace('import Quickshell\n', 'import Quickshell\nimport Quickshell.Wayland\nimport qs.Modules.Dock\nimport qs.Services.Media\n')
     assert '      OSD {}' in text and '      Notification {}' in text
     text = text.replace('      OSD {}', '      OSD { Component.onCompleted: shellRoot._stateOsd = this }')

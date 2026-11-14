@@ -1,9 +1,9 @@
 { lib, stdenv, cmake, ninja, qt6, fetchFromGitHub, configqmlSrc ? fetchFromGitHub {
     owner = "alexindigo";
     repo = "configqml";
-    # Pre-release pin; replace with the published v0.5.0 archive at acceptance.
-    rev = "a3240f2dbc9adae2ea51e89b3fa5ca5f53b23055";
-    hash = "sha256-mI5VAMR8hnXAASKn4P54NDX7nblhSTCweVF7nmU2OEA=";
+    # Published tag: 0b2920109fd63be8f71f48be60d0cac1fff7849d.
+    rev = "v0.5.0";
+    hash = "sha256-ng2eJ58eKn/EsYe4EVfSGPjZDmXM65TxLq5P8pJth9s=";
   }
 }:
 stdenv.mkDerivation {
