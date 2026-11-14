@@ -24,6 +24,7 @@ from filechooser_overwrite import exercise as exercise_overwrite
 from filechooser_extensions import exercise as exercise_extensions
 from filechooser_navigation import exercise as exercise_navigation
 from filechooser_paths import exercise as exercise_paths
+from filechooser_operations import exercise as exercise_operations
 
 
 def layout_fits(s):
@@ -47,6 +48,7 @@ def main():
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--label", required=True)
     p.add_argument("--path-only", action="store_true", help="Run the path-entry partition; default runs every area")
+    p.add_argument("--operations-only", action="store_true", help="Run the file-operation partition; default runs every area")
     profile_argument(p)
     a = p.parse_args()
     guest()
@@ -136,6 +138,11 @@ def main():
         assert cases[-1]["pass"]
     try:
         wait(lambda s: s["ready"], 30)
+        exercise_operations(runtime, evidence, command, ipc, state, wait, check, open_request, key, focus)
+        if a.operations_only:
+            finish()
+            complete = True
+            return 0
         exercise_paths(runtime, evidence, command, ipc, state, wait, check, open_request, key, focus)
         if a.path_only:
             finish()

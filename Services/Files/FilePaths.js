@@ -50,6 +50,7 @@ function quote(values) {
 
 function parent(path) { return path.slice(0, path.lastIndexOf("/")) || "/"; }
 function leaf(path) { return path.slice(path.lastIndexOf("/") + 1); }
+function join(folder, name) { return (folder === "/" ? "" : folder) + "/" + name; }
 
 function breadcrumbs(path, home) {
     if (!path) return [];

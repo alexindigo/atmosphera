@@ -10,6 +10,7 @@ import qs.Services.UI
 import "filechooser-extensions.js" as ExtensionCases
 import "filechooser-navigation.js" as NavigationCases
 import "filechooser-paths.js" as PathCases
+import "filechooser-operations.js" as OperationCases
 
 ShellRoot {
   id: root
@@ -1062,6 +1063,7 @@ ET.ElementTree(root).write(target, encoding='unicode')
     ExtensionCases.build(root, PortalPaths, FileTypes, FileChooserMemory);
     NavigationCases.build(root, fileBrowser, selection);
     PathCases.build(root, PortalPaths, FileChooserMemory, pathCompletion, fileBrowser);
+    OperationCases.build(root, PortalPaths);
   }
 
   Component.onCompleted: {

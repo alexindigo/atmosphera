@@ -9,6 +9,14 @@ import qs.Widgets
 PanelWindow {
   id: root
   required property var request
+  readonly property var operations: request.browser.operations
+  readonly property bool deleteConfirmOpen: operations.pendingDelete.length > 0
+  function operationState() {
+    var focused = root.contentItem.Window.activeFocusItem;
+    return {busy: operations.busy, renaming: operations.renaming, renamePath: operations.renamePath, renameName: operations.renameName, renameError: operations.renameError,
+      renameSelection: operations.renaming && focused && focused.selectionStart !== undefined ? [focused.selectionStart, focused.selectionEnd] : [],
+      error: operations.errorText, pendingDelete: operations.pendingDelete, deleteButtons: deleteOverlay.controlGeometry(root.contentItem), menu: listing.contextState(root.contentItem)};
+  }
   property real preferredPanelWidth: 1100 * Style.uiScaleRatio
   property real preferredPanelHeight: 740 * Style.uiScaleRatio
   readonly property size minimumPanelSize: Qt.size(Math.ceil(contentLayout.Layout.minimumWidth), Math.ceil(contentLayout.Layout.minimumHeight))
@@ -21,8 +29,8 @@ PanelWindow {
   readonly property bool quickLookOpen: quickLook.opened
   readonly property bool pathEditing: header.editing
   function pathEntryState() { return {location: header.pathState(), name: {text: nameField.text, suggestions: nameField.suggestions, completionOpen: nameField.completionOpen, completionRows: nameField.completionGeometry(root.contentItem)}}; }
-  readonly property bool textEntryFocused: nameField.inputItem.activeFocus || header.editingText || request.browser.creatingFolder
-  readonly property string announcementError: request.errorText || request.browser.errorText || request.browser.createFolderError
+  readonly property bool textEntryFocused: nameField.inputItem.activeFocus || header.editingText || request.browser.creatingFolder || operations.renaming
+  readonly property string announcementError: request.errorText || request.browser.errorText || request.browser.createFolderError || operations.renameError || operations.errorText
   onAnnouncementErrorChanged: if (visible && announcementError) panel.Accessible.announce(announcementError, Accessible.Assertive)
   Timer {
     id: countAnnouncement
@@ -142,8 +150,15 @@ PanelWindow {
       function breadcrumbGeometry() {
       return header.breadcrumbGeometry();
     }
-      function dismissLayer() {
-       if (header.transientOpen || nameField.completionOpen) {
+       function dismissLayer() {
+        if (listing.contextOpen) {
+          listing.dismissContext();
+        } else if (deleteConfirmOpen) {
+          operations.declineDelete();
+        } else if (operations.renaming) {
+          operations.cancelRename();
+          listing.focusNavigation();
+        } else if (header.transientOpen || nameField.completionOpen) {
        header.dismissTransient();
        nameField.dismissCompletion();
      } else if (request.pendingReplace) {
@@ -194,49 +209,49 @@ PanelWindow {
       NScopedShortcut {
       scope: root.contentItem
       sequence: "Ctrl+L"
-      enabled: !root.quickLookOpen && !root.request.pendingReplace
+       enabled: !root.quickLookOpen && !root.request.pendingReplace && !root.deleteConfirmOpen
       onActivated: header.editPath()
     }
       NScopedShortcut {
       scope: root.contentItem
       sequence: "Ctrl+F"
-      enabled: !root.quickLookOpen && !root.request.pendingReplace
+       enabled: !root.quickLookOpen && !root.request.pendingReplace && !root.deleteConfirmOpen
       onActivated: header.focusFilter()
     }
       NScopedShortcut {
       scope: root.contentItem
       sequence: "Ctrl+Shift+N"
-      enabled: !root.quickLookOpen && !root.request.pendingReplace && !root.request.browser.createFolderBusy
+       enabled: !root.quickLookOpen && !root.request.pendingReplace && !root.deleteConfirmOpen && !root.operations.busy
       onActivated: root.request.beginCreateFolder()
     }
       NScopedShortcut {
       scope: root.contentItem
       sequence: "Alt+Left"
-      enabled: !root.quickLookOpen && !root.request.pendingReplace
+       enabled: !root.quickLookOpen && !root.request.pendingReplace && !root.deleteConfirmOpen
       onActivated: root.request.browser.back()
     }
       NScopedShortcut {
       scope: root.contentItem
       sequence: "Alt+Right"
-      enabled: !root.quickLookOpen && !root.request.pendingReplace
+       enabled: !root.quickLookOpen && !root.request.pendingReplace && !root.deleteConfirmOpen
       onActivated: root.request.browser.forward()
     }
       NScopedShortcut {
       scope: root.contentItem
       sequence: "Alt+Up"
-      enabled: !root.quickLookOpen && !root.request.pendingReplace
+       enabled: !root.quickLookOpen && !root.request.pendingReplace && !root.deleteConfirmOpen
       onActivated: root.request.browser.up()
     }
       NScopedShortcut {
       scope: root.contentItem
       sequence: "F5"
-      enabled: !root.quickLookOpen && !root.request.pendingReplace
+       enabled: !root.quickLookOpen && !root.request.pendingReplace && !root.deleteConfirmOpen
       onActivated: root.request.browser.refresh()
     }
       NScopedShortcut {
       scope: root.contentItem
       sequence: "Ctrl+H"
-      enabled: !root.quickLookOpen && !root.request.pendingReplace && !root.textEntryFocused
+       enabled: !root.quickLookOpen && !root.request.pendingReplace && !root.deleteConfirmOpen && !root.textEntryFocused
       onActivated: root.request.browser.showHidden = !root.request.browser.showHidden
     }
 
@@ -254,7 +269,7 @@ PanelWindow {
       id: contentLayout
       anchors.fill: parent
       spacing: 0
-      enabled: root.request.pendingReplace === ""
+       enabled: root.request.pendingReplace === "" && !root.deleteConfirmOpen
       ColumnLayout {
       Layout.fillWidth: true
       Layout.margins: Style.marginM
@@ -342,7 +357,7 @@ PanelWindow {
       NText {
       Layout.fillWidth: true
       visible: text !== ""
-      text: root.request.errorText || root.request.browser.errorText
+       text: root.request.errorText || root.request.browser.errorText || root.operations.renameError || root.operations.errorText
       color: AtmoColor.mError
       wrapMode: Text.Wrap
       pointSize: Style.fontSizeS
@@ -383,7 +398,7 @@ PanelWindow {
       request: root.request
       enabled: !root.quickLookOpen && !root.request.pendingReplace
     }
-      FileChooserFooter {
+       FileChooserFooter {
       id: footer
       Layout.fillWidth: true
       Layout.margins: Style.marginL
@@ -391,7 +406,8 @@ PanelWindow {
       enabled: !root.quickLookOpen && !root.request.pendingReplace
     }
     }
-      ChooserFocusScope {
+      FileDeleteConfirmation { id: deleteOverlay; anchors.fill: parent; operations: root.operations; returnFocus: listing }
+       ChooserFocusScope {
       id: replaceOverlay
       anchors.fill: parent
       visible: root.request.pendingReplace !== ""

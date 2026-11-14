@@ -14,6 +14,7 @@ Item {
   required property var descriptor
   property var thumbnailProvider: null
   property bool thumbnailActive: false
+  property Component nameEditor: null
   readonly property var labelLines: FileLabels.lines(name, labelLane.width, text => labelMetrics.advanceWidth(text))
   readonly property var thumbnailState: ({
     path: path, active: thumbnailActive,
@@ -108,6 +109,7 @@ Item {
     }
     Column {
       id: labelLane
+      visible: root.nameEditor === null
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignTop
       Layout.preferredHeight: labelTypography.implicitHeight * 2
@@ -124,6 +126,7 @@ Item {
         }
       }
     }
+    Loader { Layout.fillWidth: true; visible: root.nameEditor !== null; sourceComponent: root.nameEditor }
     Item { Layout.fillHeight: true }
   }
 }

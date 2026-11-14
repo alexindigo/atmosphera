@@ -45,7 +45,7 @@ Scope {
   readonly property string pendingReplace: _pendingReplace
   readonly property string errorText: _errorText
   readonly property bool settled: _settled
-  readonly property bool busy: _checking || _nameChecking || typedPaths.busy || browser.status === "loading"
+  readonly property bool busy: _checking || _nameChecking || typedPaths.busy || browser.status === "loading" || browser.operations.busy || browser.operations.renaming || browser.operations.pendingDelete.length > 0
   readonly property string acceptLabel: options.accept_label || I18n.tr(method === "open" ? "widgets.file-picker.open" : "widgets.file-picker.save")
   property string viewMode: "grid"
   property bool _settled: false
@@ -142,6 +142,18 @@ Scope {
     browser: requestBrowser
     selectable: root.method === "saveFiles" || root.options.directory === true ? "folders" : "files"
     multiple: root.method === "open" && root.options.multiple === true
+  }
+  Binding { target: requestBrowser.operations; property: "selection"; value: requestSelection }
+  Connections {
+    target: requestBrowser.operations
+    function onRenameApplied(previous, path) {
+      root._saveNameEdited = false;
+      if (root.method === "save" && root.saveName === Paths.leaf(previous)) root.saveName = Paths.leaf(path);
+      if (root.method === "open") root._openNameEdited = false;
+    }
+    function onRenamed(previous, path) {
+      requestSelection.click(requestBrowser.indexOfPath(path), Qt.NoModifier);
+    }
   }
 
   function _decode(value, absolute) {

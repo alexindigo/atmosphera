@@ -14,8 +14,9 @@ RowLayout {
   // Geometry is exposed by the component, without consumers reaching inside.
   function controlGeometry() {
     return [filterMenu, autoExtension, selectionCount, cancelButton, acceptButton].filter(control => control.visible).map(control => {
-      var rect = control.mapToItem(root, 0, 0, control.width, control.height);
-      return {name: control.Accessible.name || "selection", x: rect.x, y: rect.y, width: rect.width, height: rect.height, center: rect.y + rect.height / 2};
+      // These are direct RowLayout children. Read their properties so a bound
+      // geometry projection follows position changes as actions appear/disappear.
+      return {name: control.Accessible.name || "selection", x: control.x, y: control.y, width: control.width, height: control.height, center: control.y + control.height / 2};
     });
   }
 
@@ -61,7 +62,7 @@ RowLayout {
     Layout.fillHeight: true
     text: root.request.acceptLabel
     primary: true
-    enabled: !root.request.busy
+    visible: !root.request.busy
     onClicked: root.request.accept()
   }
 }

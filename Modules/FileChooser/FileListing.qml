@@ -17,7 +17,17 @@ FocusScope {
   readonly property real rowHeight: 48 * Style.uiScaleRatio
   Layout.minimumWidth: frame.Layout.minimumWidth + Style.margin2XS
   Layout.minimumHeight: frame.Layout.minimumHeight + Style.margin2XS
-  readonly property bool navigationFocused: viewportScope.activeFocus
+  readonly property bool navigationFocused: viewportScope.activeFocus && !request.browser.operations.renaming
+  readonly property bool contextOpen: contextMenu.visible
+  function contextState(target) { return contextMenu.state(target); }
+  function dismissContext() { contextMenu.backOrClose(); }
+  function openContext(index, position) {
+    request.browser.operations.context(index);
+    contextMenu.backgroundMenu = index < 0;
+    contextMenu.anchorPosition = position;
+    contextMenu.open();
+  }
+  FileActionsMenu { id: contextMenu; parent: root; request: root.request; returnFocus: viewportScope }
   readonly property int columns: Math.max(1, Math.floor(grid.width / tileWidth))
   property int _preferredColumn: -1
   property bool _movingCursor: false
@@ -86,6 +96,11 @@ FocusScope {
         Qt.callLater(function() { newFolderField.inputItem.forceActiveFocus(); newFolderField.inputItem.selectAll(); });
     }
     function onFolderCreated(path) { root.focusNavigation(); root.revealCursor(); }
+  }
+  Connections {
+    target: root.request.browser.operations
+    function onCompleted() { root.focusNavigation(); root.revealCursor(); }
+    function onRenamingChanged() { if (!root.request.browser.operations.renaming) Qt.callLater(root.focusNavigation); }
   }
 
   function controlGeometry() {
@@ -182,6 +197,16 @@ FocusScope {
     var focusOnly = ctrl && !shift;
     if (event.key === Qt.Key_Backspace)
       request.browser.back();
+    else if (event.key === Qt.Key_F2)
+      request.browser.operations.beginRename();
+    else if (event.key === Qt.Key_Delete) {
+      if (shift) request.browser.operations.requestDelete();
+      else request.browser.operations.trash();
+    }
+    else if (event.key === Qt.Key_Menu || (shift && event.key === Qt.Key_F10)) {
+      var tile = tileRect();
+      openContext(request.selection.cursor, Qt.point(tile.x, tile.y + tile.height));
+    }
     else if (ctrl && event.key === Qt.Key_A)
       request.selection.selectAll();
     else if (event.key === Qt.Key_Left)
@@ -353,6 +378,7 @@ FocusScope {
           cursor: root.request.selection.cursor === index
           listingFocused: root.navigationFocused
           thumbnailProvider: root.thumbnails
+          operations: root.request.browser.operations
           thumbnailActive: !inPool && visible && grid.visible && y + height > grid.contentY && y < grid.contentY + grid.height
           onPressed: modifiers => {
             root.focusNavigation();
@@ -393,6 +419,7 @@ FocusScope {
           bytes: fileSize
           modified: fileModified
           listMode: true
+          operations: root.request.browser.operations
           selected: root.request.selection.selectedPaths.includes(filePath)
           selectable: directory === (root.request.selection.selectable === "folders")
           cursor: root.request.selection.cursor === index
@@ -410,10 +437,16 @@ FocusScope {
         anchors.rightMargin: Style.marginL
         viewport: root.request.viewMode === "list" ? list : grid
         selection: root.request.selection
+        enabled: !root.request.browser.operations.renaming
         indexAt: point => root.activeView.indexAt(point.x + root.activeView.contentX, point.y + root.activeView.contentY)
         intersectingIndices: rect => root.intersectingIndices(rect)
         onFocusRequested: root.focusNavigation()
         onActivated: index => root.request.activate(index)
+        onContextRequested: (index, position) => {
+          root.focusNavigation();
+          var p = listingInput.mapToItem(root, position.x, position.y);
+          root.openContext(index, p);
+        }
       }
       ColumnLayout {
         id: emptyState

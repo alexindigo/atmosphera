@@ -17,12 +17,14 @@ Rectangle {
   property bool listingFocused: false
   property var thumbnailProvider: null
   property bool thumbnailActive: false
+  property var operations: null
+  readonly property bool renaming: !!operations && operations.renamePath === path
   readonly property var iconDescriptor: FileTypes.artwork(name, directory, path)
   readonly property var columnGeometry: listMode && visual.item ? visual.item.geometry : []
   readonly property var thumbnailState: !listMode && visual.item ? visual.item.thumbnailState : ({})
   signal pressed(int modifiers)
   signal activated
-  function focusEntry() { forceActiveFocus(Qt.OtherFocusReason); }
+  function focusEntry() { if (!renaming) forceActiveFocus(Qt.OtherFocusReason); }
 
   function iconState() {
     return visual.item ? Object.assign({
@@ -69,6 +71,7 @@ Rectangle {
       descriptor: root.iconDescriptor
       thumbnailProvider: root.thumbnailProvider
       thumbnailActive: root.thumbnailActive
+      nameEditor: root.renaming ? renameEditor : null
     }
   }
   Component {
@@ -79,6 +82,22 @@ Rectangle {
       bytes: root.bytes
       modified: root.modified
       descriptor: root.iconDescriptor
+      nameEditor: root.renaming ? renameEditor : null
+    }
+  }
+  Component {
+    id: renameEditor
+    ChooserTextField {
+      accessibleName: I18n.tr("widgets.file-picker.rename-name")
+      text: root.operations.renameName
+      readOnly: root.operations.busy
+      onTextEdited: root.operations.renameName = text
+      onAccepted: root.operations.rename(text)
+      Component.onCompleted: Qt.callLater(function() {
+        inputItem.forceActiveFocus();
+        var dot = root.directory ? -1 : text.lastIndexOf(".");
+        inputItem.select(0, dot > 0 ? dot : text.length);
+      })
     }
   }
   MouseArea {

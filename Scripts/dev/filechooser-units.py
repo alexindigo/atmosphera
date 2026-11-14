@@ -39,7 +39,7 @@ def main():
     shutil.copytree(source, shell, symlinks=True)
     probe = shell / "filechooser-units.qml"
     probe_text = (source / "Scripts/dev/fixtures/filechooser-units.qml").read_text().replace('"../../../Helpers/', '"Helpers/')
-    for name in ("filechooser-icon-cases.js", "filechooser-extensions.js", "filechooser-navigation.js", "filechooser-paths.js"):
+    for name in ("filechooser-icon-cases.js", "filechooser-extensions.js", "filechooser-navigation.js", "filechooser-paths.js", "filechooser-operations.js"):
         probe_text = probe_text.replace('"' + name + '"', '"Scripts/dev/fixtures/' + name + '"')
     probe.write_text(probe_text)
     fixtures = runtime / "fixtures"
@@ -56,6 +56,11 @@ def main():
         (aux / name).mkdir()
     (aux / "creation/Taken").mkdir()
     (aux / "creation/Existing.txt").write_text("existing fixture\n")
+    operations = aux / "operations"
+    (operations / "directory").mkdir(parents=True)
+    (operations / "directory/child.txt").write_text("recursive delete fixture\n")
+    (operations / "first.txt").write_text("rename then trash bytes\n")
+    (operations / "taken.txt").write_text("never overwritten\n")
     overwrite = aux / "overwrite"
     overwrite.mkdir(); (overwrite / "child").mkdir(); (overwrite / "directory").mkdir()
     extensions = aux / "extensions"
@@ -124,6 +129,9 @@ def main():
     env = dict(profile_env(profile), FILECHOOSER_ICON_SCHEMES=json.dumps(schemes),
                QT_FORCE_STDERR_LOGGING="1", FILECHOOSER_UNIT_ROOT=str(fixtures), FILECHOOSER_UNIT_AUX=str(aux),
                ATMOSPHERA_DEBUG="0")
+    operation_tests = subprocess.run([sys.executable, "-B", str(source / "Scripts/dev/filechooser-operations-test.py"), str(runtime / "operation-files")],
+                                    env=env, capture_output=True, text=True, timeout=90)
+    (output / "operations-filesystem.log").write_text(operation_tests.stdout + operation_tests.stderr)
     runs = []
     for mode in ("main", "reload"):
         try:
@@ -145,6 +153,7 @@ def main():
     rows = [json.loads(line.split(PREFIX, 1)[1]) for line in log.splitlines() if PREFIX in line]
     errors = [line for line in log.splitlines() if ERRORS.search(line)]
     cases = [row for row in rows if "case" in row]
+    cases += json.loads(operation_tests.stdout) if operation_tests.returncode == 0 else [dict(case="operations.filesystem", **{"pass": False})]
     complete = sum(row.get("complete") is True for row in rows) == 2
     failures = [row for row in cases if not row["pass"]]
     required = {"browser.navigate", "browser.failure-keeps-folder", "browser.failure-keeps-listing", "browser.natural-name",
@@ -182,6 +191,8 @@ def main():
         "modified-background-keeps", "background-clears", "single-band-ignored"))
     required.update("path-entry." + name for name in ("relative-open", "location-navigates", "history-invalidates-typed-intent", "history-does-not-accept", "literal-local-name", "quoted-multiple", "local-uri", "navigation-keeps-save-name", "typed-folder-keeps-save-leaf", "save-path-extension", "type-change-only-leaf", "missing-save-parent-keeps-input", "missing-keeps-dialog", "folder-watches-bounded"))
     required.update("completion." + name for name in ("case-prefix", "directories", "explicit-hidden", "type-filter", "literal-folder", "quoted-last-name", "inactive-invalidates"))
+    required.update("operations." + name for name in ("single-owner", "rename-model-selection-name", "rename-no-overwrite", "rename-invalid", "trash-reconciles", "delete-awaits-confirmation", "delete-decline-retains", "delete-reconciles", "create-shares-owner", "navigation-retires-intents"))
+    required.add("operations.rename-filtered-out-finishes")
     missing = sorted(required - {case["case"] for case in cases})
     required_media = {"playback." + name for name in ("initial", "inactive-intents", "volume-low", "volume-high", "volume-step", "invalid-volume", "times", "autoplay", "seek-low", "seek-high", "close-stops", "close-destroys-engine")}
     required_labels = {"labels." + name for name in ("extension-attached", "dots", "long-word", "cjk", "extension-only", "two-lines-only")}

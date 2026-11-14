@@ -12,6 +12,7 @@ Item {
   required property var intersectingIndices
   signal focusRequested
   signal activated(int index)
+  signal contextRequested(int index, point position)
   readonly property bool dragging: drag.active
   property point _start: Qt.point(0, 0)
   property point _pointer: Qt.point(0, 0)
@@ -24,6 +25,10 @@ Item {
   function updateBand() {
     if (dragging)
       selection.updateBand(intersectingIndices(bandRect));
+  }
+  TapHandler {
+    acceptedButtons: Qt.RightButton
+    onTapped: root.contextRequested(root.indexAt(point.position), point.position)
   }
   TapHandler {
     id: tap

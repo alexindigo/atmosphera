@@ -10,6 +10,7 @@ FileListColumns {
   required property double bytes
   required property var modified
   required property var descriptor
+  property Component nameEditor: null
   function iconState() { return {artwork: leadingMetrics}; }
   leading: Component {
     Item {
@@ -25,7 +26,8 @@ FileListColumns {
       }
     }
   }
-  nameCell: Component { NText { text: root.name; pointSize: Style.fontSizeM } }
+  nameCell: root.nameEditor || normalName
+  Component { id: normalName; NText { text: root.name; pointSize: Style.fontSizeM } }
   sizeCell: Component {
     NText {
       text: root.directory ? "" : FileTypes.formatSize(root.bytes)

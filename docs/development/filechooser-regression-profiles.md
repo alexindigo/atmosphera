@@ -111,3 +111,14 @@ sink. No login-session settings, accessibility stack or audio endpoints change.
 The sibling runtime directory `<label>-a11y` holds stack logs and the result;
 the normal evidence directory holds tree dumps and the harness log. `--inspect`
 captures only the initial tree for diagnosis and is not a full verification.
+
+## File operations
+
+The guest needs `wl-clipboard` and GLib's `gio` command, matching the runtime
+package dependencies. The unit runner also exercises the JSON mutation worker
+against real files, Trash metadata/collisions, permission errors, no-clobber
+rename, identity-checked permanent deletion and symlink-safe recursive deletion.
+The UI runner includes native keyboard/mouse file operations. For iteration only,
+`--operations-only` runs that partition with the same isolation/runtime gates;
+omit it for the full pre-commit proof. Native AT-SPI coverage includes action
+menus/submenus, inline rename, error announcements and safe delete confirmation.

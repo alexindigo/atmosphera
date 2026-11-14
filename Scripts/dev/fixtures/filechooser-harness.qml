@@ -130,6 +130,7 @@ ShellRoot {
                              creatingFolder: request ? request.browser.creatingFolder === true : false,
                              createFolderError: request ? request.browser.createFolderError || "" : "",
                              folderEditor: window && window.folderEditorState ? window.folderEditorState() : {},
+                             operations: window && window.operationState ? window.operationState() : {},
                             choices: request ? request.choiceValues : {},
                             layoutGeometry: window ? window.layoutGeometry() : {},
                             appName: request ? request.appName : "",
