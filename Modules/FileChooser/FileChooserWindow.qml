@@ -61,8 +61,15 @@ PanelWindow {
   function focusListing() {
     listing.focusNavigation();
   }
-  function scrollState() { return listing.scrollState(); }
-  function folderEditorState() { return listing.folderEditorState(); }
+  function scrollState() {
+    return listing.scrollState();
+  }
+  function folderEditorState() {
+    return listing.folderEditorState();
+  }
+  function recentRows() {
+    return rail.recentRows();
+  }
   function iconState() {
     return listing.iconState();
   }
@@ -123,8 +130,7 @@ PanelWindow {
       else if (request.browser.creatingFolder) {
       request.browser.cancelCreateFolder();
       listing.focusNavigation();
-    }
-      else if (request.browser.filtering)
+    } else if (request.browser.filtering)
       request.clearFilters();
       else
       request.cancel();

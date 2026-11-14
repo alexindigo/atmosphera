@@ -21,6 +21,7 @@ ShellRoot {
   property var beforeNames: []
   property double staleStarted: 0
   property var tooltipOwner: null
+  property var expectedRecentFolders: []
   Component { id: tooltipOwnerFactory; Item {} }
 
   FilePreview {
@@ -871,6 +872,29 @@ ShellRoot {
     });
     step(() => !TooltipService.pendingTooltip && !TooltipService.activeTooltip, function () {
       report("tooltip.owner-lifetime", true, null);
+      var recent = FileChooserMemory.recentEntries;
+      root.expectedRecentFolders = [recent[0].path].concat([0, 6, 5, 4, 3, 2, 1].map(i => aux + "/recent" + i), recent.slice(1, 3).map(entry => entry.path));
+      mutate.command = ["timeout", "3", "python3", "-c", `
+import json, pathlib, sys, xml.etree.ElementTree as ET
+target, aux, memory = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]), json.loads(sys.argv[3])
+root = ET.Element('xbel')
+for i in range(7):
+    ET.SubElement(root, 'bookmark', href=(aux / ('recent' + str(i)) / 'removed.txt').as_uri(), modified=f'2099-01-{i + 1:02d}T00:00:00Z')
+ET.SubElement(root, 'bookmark', href=(aux / 'recent0/another-removed.txt').as_uri(), modified='2099-01-08T00:00:00Z')
+ET.SubElement(root, 'bookmark', href=(pathlib.Path(memory[0]['path']) / 'removed.txt').as_uri(), modified='2100-01-01T00:00:00Z')
+ET.SubElement(root, 'bookmark', href=(aux / 'missing-recent/file.txt').as_uri(), modified='2200-01-01T00:00:00Z')
+ET.ElementTree(root).write(target, encoding='unicode')
+`, Quickshell.env("XDG_DATA_HOME") + "/recently-used.xbel", aux, JSON.stringify(recent)];
+      mutate.running = true;
+    });
+    step(() => !mutate.running, function () { FilePlaces.refresh(); });
+    step(() => !FilePlaces.loading && FilePlaces.recentFolders.some(entry => entry.path === aux + "/recent0"), function () {
+      var paths = FilePlaces.recentFolders.map(entry => entry.path);
+      same("places.recent-folders-merge-order", paths, root.expectedRecentFolders);
+      report("places.recent-folders-dedup", paths.filter((path, i) => paths.indexOf(path) === i).length === paths.length, paths);
+      report("places.recent-folders-missing", !paths.includes(aux + "/missing-recent"), paths);
+      same("places.recent-folders-limit", paths.length, 10);
+      report("places.recent-folders-directories", FilePlaces.recentFolders.every(entry => entry.directory === true), FilePlaces.recentFolders);
     });
   }
 

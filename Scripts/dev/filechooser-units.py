@@ -54,6 +54,8 @@ def main():
     (aux / "creation/Taken").mkdir()
     (aux / "creation/Existing.txt").write_text("existing fixture\n")
     (aux / "write-denied").chmod(0o555)
+    for i in range(7):
+        (aux / f"recent{i}").mkdir()
     readonly = current_profile().workspace / "fixtures/read-only"
     assert readonly.is_dir() and os.statvfs(readonly).f_flag & os.ST_RDONLY, "provision the owned guest's read-only fixture first"
     (aux / "readonly").symlink_to(readonly, target_is_directory=True)
@@ -143,6 +145,7 @@ def main():
     required.update("create." + name for name in ("success-model", "exists-directory", "exists-file", "permission", "readonly", "folder-selection", "save-stays-in-folder"))
     required.update("create.invalid-" + str(i) for i in range(5))
     required.add("tooltip.owner-lifetime")
+    required.update("places.recent-folders-" + name for name in ("merge-order", "dedup", "missing", "limit", "directories"))
     missing = sorted(required - {case["case"] for case in cases})
     required_media = {"playback." + name for name in ("initial", "inactive-intents", "volume-low", "volume-high", "volume-step", "invalid-volume", "times", "autoplay", "seek-low", "seek-high", "close-stops", "close-destroys-engine")}
     required_labels = {"labels." + name for name in ("extension-attached", "dots", "long-word", "cjk", "extension-only", "two-lines-only")}

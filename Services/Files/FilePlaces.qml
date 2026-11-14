@@ -11,17 +11,20 @@ Singleton {
   readonly property var places: _places
   readonly property var removable: _removable
   readonly property var recentFiles: _recentFiles
+  readonly property var recentFolders: _recentFolders
   readonly property var xdgFolders: _xdgFolders
-  readonly property bool loading: scan.running
+  readonly property bool loading: scan.running || _refreshPending
   property var _places: []
   property var _removable: []
   property var _recentFiles: []
+  property var _recentFolders: []
+  property bool _refreshPending: false
   property var _xdgFolders: ({})
 
   // Parse formats as data, never source/eval user-dirs.dirs or bookmarks.
   // XBEL uses an XML parser so escaped attributes and namespaces stay intact.
   readonly property string _scanCode: `
-import json, os, pathlib, re, urllib.parse, xml.etree.ElementTree as ET
+import datetime, json, os, pathlib, re, sys, urllib.parse, xml.etree.ElementTree as ET
 home = pathlib.Path.home()
 config = pathlib.Path(os.environ.get('XDG_CONFIG_HOME', str(home / '.config')))
 data = pathlib.Path(os.environ.get('XDG_DATA_HOME', str(home / '.local/share')))
@@ -61,41 +64,74 @@ try:
 except OSError:
     pass
 recent = []
+folders = {}
+def recent_folder(path, stamp):
+    if not path or not os.path.isabs(path):
+        return
+    path = os.path.normpath(path)
+    if os.path.isdir(path):
+        folders[path] = max(folders.get(path, 0), stamp)
+for entry in json.loads(sys.argv[1]):
+    # Older chooser state records order but no timestamp. Zero means unknown;
+    # stable sorting preserves that order without fabricating historical dates.
+    recent_folder(entry['path'], float(entry.get('lastUsed') or 0))
 try:
     for bookmark in ET.parse(data / 'recently-used.xbel').getroot().findall('bookmark'):
         path = local_uri(bookmark.get('href', ''))
+        modified = bookmark.get('modified', '')
+        try:
+            date = datetime.datetime.fromisoformat(modified.replace('Z', '+00:00'))
+            if date.tzinfo is None:
+                date = date.replace(tzinfo=datetime.timezone.utc)
+            stamp = date.timestamp() * 1000
+        except (ValueError, OverflowError):
+            stamp = 0
+        if path:
+            recent_folder(path if os.path.isdir(path) else os.path.dirname(path), stamp)
         if path and os.path.isfile(path):
-            recent.append({'name': os.path.basename(path), 'path': path, 'modified': bookmark.get('modified', ''), 'kind': 'recent'})
+            recent.append({'name': os.path.basename(path), 'path': path, 'modified': modified, 'kind': 'recent'})
     recent.sort(key=lambda p: p['modified'], reverse=True)
 except (OSError, ET.ParseError):
     pass
-print(json.dumps({'places': places, 'removable': removable, 'recent': recent, 'xdg': xdg}))
+recent_folders = [{'name': os.path.basename(path) or '/', 'path': path, 'lastUsed': stamp, 'kind': 'recent', 'directory': True}
+                  for path, stamp in sorted(folders.items(), key=lambda item: item[1], reverse=True)[:10]]
+print(json.dumps({'places': places, 'removable': removable, 'recent': recent, 'recentFolders': recent_folders, 'xdg': xdg}))
 `
 
   function refresh() {
     if (!scan.running)
       scan.running = true;
+    else
+      _refreshPending = true;
   }
 
   Component.onCompleted: refresh()
+  Connections {
+    target: FileChooserMemory
+    function onRefreshed() { root.refresh(); }
+  }
 
   Process {
     id: scan
-    command: ["timeout", "5", "python3", "-c", root._scanCode]
+    command: ["timeout", "5", "python3", "-c", root._scanCode, JSON.stringify(FileChooserMemory.recentEntries)]
     stdout: StdioCollector { id: output }
     onExited: function(code) {
-      if (code !== 0) {
-        Logger.w("FilePlaces", "Could not read file chooser places");
-        return;
-      }
       try {
+        if (code !== 0)
+          throw new Error("places scan failed");
         var data = JSON.parse(output.text);
         root._places = data.places;
         root._removable = data.removable;
         root._recentFiles = data.recent;
+        root._recentFolders = data.recentFolders;
         root._xdgFolders = data.xdg;
       } catch (e) {
         Logger.w("FilePlaces", "Invalid places response");
+      } finally {
+        if (root._refreshPending) {
+          root._refreshPending = false;
+          Qt.callLater(root.refresh);
+        }
       }
     }
   }
