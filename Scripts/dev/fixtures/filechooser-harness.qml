@@ -14,6 +14,14 @@ ShellRoot {
   property var replies: []
   property var imageDecodeSamples: []
   property var iconMountFixture: null
+  property bool tracingScroll: false
+  property var scrollFrames: []
+  property var scrollClock: null
+  FrameAnimation {
+    running: root.tracingScroll
+    onTriggered: root.scrollFrames.push({time: root.scrollClock.wallMs(), cpuMs: root.scrollClock.cpuMs(), frameMs: frameTime * 1000,
+      view: windowLoader.item.scrollState()})
+  }
   Connections {
     target: FileTypes
     function on_MountsChanged() {
@@ -104,7 +112,8 @@ ShellRoot {
                             cursor: selected ? selected.cursor : -1,
                             name: entry ? entry.name : "",
                             selected: selected ? selected.selectedPaths : [],
-                            view: request ? request.viewMode : "",
+                             view: request ? request.viewMode : "",
+                             scroll: window ? window.scrollState() : {},
                             sort: request ? request.browser.sortKey : "",
                             descending: request ? request.browser.sortDescending : false,
                             filter: request && request.currentFilter ? request.currentFilter[0] : "",
@@ -187,6 +196,19 @@ ShellRoot {
     function state(): string {
       return root.snapshot();
     }
+    function startScrollTrace(): void {
+      if (!root.scrollClock)
+        root.scrollClock = Qt.createQmlObject('import FileChooserTest 1.0; FrameClock {}', root, "scroll-frame-clock");
+      Logger.i("ScrollTrace", "BEGIN " + root.request.viewMode);
+      root.scrollFrames = [];
+      root.tracingScroll = true;
+    }
+    function scrollTrace(): string {
+      root.tracingScroll = false;
+      Logger.i("ScrollTrace", "END " + root.request.viewMode);
+      return JSON.stringify(root.scrollFrames);
+    }
+    function scrollState(): string { return JSON.stringify(windowLoader.item.scrollState()); }
     function visibleText(): string {
       var texts = [];
       function visit(node) {

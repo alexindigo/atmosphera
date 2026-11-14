@@ -32,7 +32,9 @@ def main():
     shutil.copytree(source, shell, symlinks=True)
     # Baseline adaptation adds observations only, never changes its painting or
     # timings. The new fixture can therefore exercise the old exact renderer.
-    entry = shell / "Modules/FileChooser/FileEntry.qml"
+    entry = shell / "Modules/FileChooser/FileEntryGrid.qml"
+    if not entry.exists():
+        entry = shell / "Modules/FileChooser/FileEntry.qml"
     text = entry.read_text()
     if "function artworkGeometry()" not in text:
         needle = "  readonly property var iconDescriptor: FileTypes.artwork(name, directory, path)"
@@ -43,7 +45,7 @@ def main():
         assert text.count(needle) == 1
         text = text.replace(needle, needle + "\n imageReady: thumbnail.status === Image.Ready,\n reveal: thumbnail.opacity / (root.iconDescriptor.hidden ? .5 : 1),\n fallbackOpacity: gridIcon.visible ? gridIcon.opacity : 0,\n artworkOpacity: root.iconDescriptor.hidden ? .5 : 1,")
     entry.write_text(text)
-    (out / "observed-FileEntry.qml").write_text(text)
+    (out / ("observed-" + entry.name)).write_text(text)
     probe = shell / "render-probe.qml"
     probe.write_text((HERE / "fixtures/filechooser-render.qml").read_text())
     (shell / ".qmlls.ini").touch()

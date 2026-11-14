@@ -14,6 +14,7 @@ FocusScope {
   required property var thumbnails
   readonly property real tileSize: 170 * Style.uiScaleRatio
   readonly property real tileWidth: 200 * Style.uiScaleRatio
+  readonly property real rowHeight: 48 * Style.uiScaleRatio
   Layout.minimumWidth: frame.Layout.minimumWidth + Style.margin2XS
   Layout.minimumHeight: frame.Layout.minimumHeight + Style.margin2XS
   readonly property bool navigationFocused: !!root.Window.window && root.Window.window.activeFocusItem === root
@@ -28,18 +29,33 @@ FocusScope {
                                          })
   signal quickLookRequested(rect tile)
   signal editPathRequested(string initial)
+  function activeEntries(view) {
+    // Reuse pools retain native items whose visible property can still be true.
+    // Only the view's indexed items belong to its current presentation.
+    return Array.from(view.contentItem.children).filter(item => typeof item.index === "number" && view.itemAtIndex(item.index) === item);
+  }
   function thumbnailState() {
     return {
       statistics: thumbnails.statistics,
-      tiles: Array.from(grid.contentItem.children).filter(item => typeof item.path === "string" && item.thumbnailActive).map(item => item.thumbnailState)
+      tiles: activeEntries(grid).filter(item => item.thumbnailActive).map(item => item.thumbnailState)
     };
   }
   activeFocusOnTab: true
 
+  function scrollState() {
+    var view = request.viewMode === "list" ? list : grid;
+    var hiddenView = request.viewMode === "list" ? grid : list;
+    return {y: view.contentY, height: view.height, contentHeight: view.contentHeight,
+      moving: view.moving, flicking: view.flicking, reused: view.reuseItems,
+      delegates: view.contentItem.children.length, hiddenCount: hiddenView.count,
+      wheelStep: wheelTypography.implicitHeight * Qt.styleHints.wheelScrollLines};
+  }
+  NText { id: wheelTypography; visible: false; pointSize: Style.fontSizeM }
+
   function controlGeometry() {
     var view = request.viewMode === "list" ? list : grid;
     var bounds = view.mapToItem(root, 0, 0, view.width, view.height);
-    var tiles = Array.from(view.contentItem.children).filter(item => item.visible && typeof item.path === "string").map(item => {
+    var tiles = activeEntries(view).filter(item => item.visible).map(item => {
       var rect = item.mapToItem(root, 0, 0, item.width, item.height);
       return {
         x: rect.x,
@@ -60,7 +76,7 @@ FocusScope {
   }
   function iconState() {
     var view = request.viewMode === "list" ? list : grid;
-    return Array.from(view.contentItem.children).filter(item => item.visible && typeof item.path === "string").map(item => item.iconState()).filter(item => item !== null);
+    return activeEntries(view).filter(item => item.visible).map(item => item.iconState()).filter(item => item !== null);
   }
 
   function tileRect() {
@@ -167,7 +183,9 @@ FocusScope {
         anchors.rightMargin: Style.marginL
         visible: root.request.viewMode !== "list"
         clip: true
-        model: root.request.browser.model
+        model: visible ? root.request.browser.model : null
+        reuseItems: true
+        cacheBuffer: cellHeight
         cellWidth: width / root.columns
         cellHeight: root.tileSize
         currentIndex: root.request.selection.cursor
@@ -175,7 +193,11 @@ FocusScope {
         highlightMoveDuration: 0
         onCurrentIndexChanged: positionViewAtIndex(currentIndex, GridView.Contain)
         ScrollBar.vertical: ScrollBar {}
+        ChooserScrollHandler { viewport: grid; lineHeight: wheelTypography.implicitHeight }
         delegate: FileEntry {
+          property bool inPool: false
+          GridView.onPooled: inPool = true
+          GridView.onReused: inPool = false
           required property int index
           required property string fileName
           required property string filePath
@@ -193,7 +215,7 @@ FocusScope {
           cursor: root.request.selection.cursor === index
           listingFocused: root.navigationFocused
           thumbnailProvider: root.thumbnails
-          thumbnailActive: grid.visible && y + height > grid.contentY && y < grid.contentY + grid.height
+          thumbnailActive: !inPool && visible && grid.visible && y + height > grid.contentY && y < grid.contentY + grid.height
           onPressed: modifiers => {
             root.forceActiveFocus();
             root.request.selection.click(index, modifiers);
@@ -207,12 +229,15 @@ FocusScope {
         anchors.rightMargin: Style.marginL
         visible: root.request.viewMode === "list"
         clip: true
-        model: root.request.browser.model
+        model: visible ? root.request.browser.model : null
+        reuseItems: true
+        cacheBuffer: root.rowHeight
         currentIndex: root.request.selection.cursor
         keyNavigationEnabled: false
         highlightMoveDuration: 0
         onCurrentIndexChanged: positionViewAtIndex(currentIndex, ListView.Contain)
         ScrollBar.vertical: ScrollBar {}
+        ChooserScrollHandler { viewport: list; lineHeight: wheelTypography.implicitHeight }
         delegate: FileEntry {
           required property int index
           required property string fileName
@@ -221,7 +246,7 @@ FocusScope {
           required property double fileSize
           required property var fileModified
           width: list.width
-          height: 48 * Style.uiScaleRatio
+          height: root.rowHeight
           name: fileName
           path: filePath
           directory: fileIsDir

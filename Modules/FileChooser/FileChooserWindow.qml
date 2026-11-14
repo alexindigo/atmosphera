@@ -61,6 +61,7 @@ PanelWindow {
   function focusListing() {
     listing.forceActiveFocus();
   }
+  function scrollState() { return listing.scrollState(); }
   function iconState() {
     return listing.iconState();
   }

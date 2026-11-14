@@ -315,6 +315,7 @@ def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=Fal
                     "--setenv=TMPDIR=" + str(workspace() / "tmp"),
                     "--setenv=FILECHOOSER_GUEST_PROFILE=" + str(current_profile().path),
                     "--setenv=FILECHOOSER_PROFILE_SHA256=" + current_profile().sha256,
+                    "--setenv=FILECHOOSER_RENDER_TIMING=" + os.environ.get("FILECHOOSER_RENDER_TIMING", "0"),
                     "--setenv=FILECHOOSER_SESSION_SECONDS=" + str(runtime_seconds),
                     "--setenv=FILECHOOSER_PARENT_PID_NAMESPACE=" + os.readlink("/proc/self/ns/pid"),
                     "-p", f"MemoryMax={maximum}", "-p", f"MemoryHigh={high}",
@@ -395,7 +396,7 @@ def input_command(argv):
     """Send the existing driver's vocabulary to its one private keyboard."""
     checked()
     assert argv[0] == "ydotool"
-    assert argv[1] in ("type", "key")
+    assert argv[1] in ("type", "key", "move", "click", "scroll", "scroll-stop")
     return [sys.executable, "-B", str(Path(__file__).with_name("filechooser_input.py")), *argv[1:]]
 
 
@@ -431,6 +432,8 @@ def session(base, output, argv):
             "FILECHOOSER_SESSION_SECONDS": os.environ.get("FILECHOOSER_SESSION_SECONDS", "800"),
             "PIPEWIRE_RUNTIME_DIR": str(base / "run"), "PIPEWIRE_REMOTE": "pipewire-0",
             "PULSE_SERVER": "unix:" + str(base / "run/no-pulse"),
+            "QSG_RENDER_TIMING": os.environ.get("FILECHOOSER_RENDER_TIMING", "0"),
+            "QT_LOGGING_RULES": "qt.scenegraph.time.renderer=false;qt.scenegraph.time.texture=false;qt.scenegraph.time.glyph=false",
            "QT_FORCE_STDERR_LOGGING": "1", "ATMOSPHERA_DEBUG": "0", "ATMOSPHERA_UPGRADELOG_URL": "http://127.0.0.1:9",
            "WLR_BACKENDS": "headless", "WLR_RENDERER": "pixman", "WLR_HEADLESS_OUTPUTS": "1",
            # Mesa's CPU OpenGL still supports the product's shader masks. The
@@ -525,15 +528,16 @@ def session(base, output, argv):
         build = base / "input-build"
         build.mkdir()
         scripts = Path(__file__).resolve().parent
-        protocol = scripts / "virtual-keyboard-unstable-v1.xml"
         with (output / "input-build.log").open("w") as build_log:
-            for mode, filename in (("client-header", "virtual-keyboard-client.h"), ("private-code", "virtual-keyboard-protocol.c")):
-                subprocess.run(["timeout", "15", "wayland-scanner", mode, str(protocol), str(build / filename)],
-                               env=env, stdout=build_log, stderr=subprocess.STDOUT, check=True, timeout=20)
+            for protocol_name, prefix in (("virtual-keyboard-unstable-v1.xml", "virtual-keyboard"),
+                                          ("wlr-virtual-pointer-unstable-v1.xml", "virtual-pointer")):
+                for mode, suffix in (("client-header", "client.h"), ("private-code", "protocol.c")):
+                    subprocess.run(["timeout", "15", "wayland-scanner", mode, str(scripts / protocol_name), str(build / (prefix + "-" + suffix))],
+                                   env=env, stdout=build_log, stderr=subprocess.STDOUT, check=True, timeout=20)
             flags = subprocess.run(["timeout", "5", "pkg-config", "--cflags", "--libs", "wayland-client", "xkbcommon"],
                                    env=env, capture_output=True, text=True, check=True, timeout=8).stdout.split()
             subprocess.run(["timeout", "30", "cc", "-std=c11", "-O2", "-Wall", "-Wextra", "-Werror", "-I", str(build),
-                            str(scripts / "filechooser-input.c"), str(build / "virtual-keyboard-protocol.c"), *flags,
+                            str(scripts / "filechooser-input.c"), str(build / "virtual-keyboard-protocol.c"), str(build / "virtual-pointer-protocol.c"), *flags,
                             "-o", str(build / "keyboard")], env=env, stdout=build_log, stderr=subprocess.STDOUT, check=True, timeout=35)
         with (output / "keyboard.log").open("w") as log:
             keyboard_process = subprocess.Popen([str(build / "keyboard"), env["FILECHOOSER_INPUT_SOCKET"]], env=env, stdout=log, stderr=subprocess.STDOUT)
