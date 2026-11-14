@@ -121,6 +121,24 @@ static bool keys(char *input) {
     return true;
 }
 
+static bool base_text(xkb_keysym_t symbol) {
+    for (xkb_keycode_t code = xkb_keymap_min_keycode(base_map);
+         code <= xkb_keymap_max_keycode(base_map) && code < 256; code++) {
+        xkb_level_index_t levels = xkb_keymap_num_levels_for_key(base_map, code, 0);
+        for (xkb_level_index_t level = 0; level < levels && level < 2; level++) {
+            const xkb_keysym_t *symbols = NULL;
+            if (xkb_keymap_key_get_syms_by_level(base_map, code, 0, level, &symbols) != 1 || symbols[0] != symbol)
+                continue;
+            set_map(base_map);
+            if (level) key(42, 1);
+            key(code - 8, 1); key(code - 8, 0);
+            if (level) key(42, 0);
+            return true;
+        }
+    }
+    return false;
+}
+
 static bool text(char *input) {
     char *saved = NULL;
     for (char *token = strtok_r(input, " \n", &saved); token; token = strtok_r(NULL, " \n", &saved)) {
@@ -132,6 +150,10 @@ static bool text(char *input) {
         if (unicode == '\t') symbol = XKB_KEY_Tab;
         if (unicode == '\b') symbol = XKB_KEY_BackSpace;
         if (symbol == XKB_KEY_NoSymbol) return false;
+        /* Physical and logical keys must agree for browser accelerators. A
+         * Unicode-only map on evdev Escape works in Qt text fields but makes
+         * Chromium dismiss its address bar instead of typing the character. */
+        if (base_text(symbol)) continue;
         char *definition = NULL;
         if (asprintf(&definition, "xkb_keymap { xkb_keycodes { minimum=8; maximum=9; <TXT>=9; }; "
                      "xkb_types { type \"ONE_LEVEL\" { modifiers=None; level_name[Level1]=\"Any\"; }; }; "

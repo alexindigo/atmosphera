@@ -260,7 +260,7 @@ def _audit_probe(base, output, label, admin_env, main_properties):
             os.close(fd)
 
 
-def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=False, gate_probe=False):
+def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=False, gate_probe=False, oom_floor=False, browser_resources=False, resource_subject=False):
     """Give the workload its requested time after bounded session startup."""
     guest()
     if "FILECHOOSER_ISOLATION" in os.environ:
@@ -317,6 +317,9 @@ def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=Fal
                     "--setenv=FILECHOOSER_PROFILE_SHA256=" + current_profile().sha256,
                     "--setenv=FILECHOOSER_RENDER_TIMING=" + os.environ.get("FILECHOOSER_RENDER_TIMING", "0"),
                     "--setenv=FILECHOOSER_SESSION_SECONDS=" + str(runtime_seconds),
+                    "--setenv=FILECHOOSER_OOM_FLOOR=" + ("1" if oom_floor else "0"),
+                    "--setenv=FILECHOOSER_BROWSER_RESOURCES=" + ("1" if browser_resources else "0"),
+                    "--setenv=FILECHOOSER_RESOURCE_SUBJECT=" + ("1" if resource_subject else "0"),
                     "--setenv=FILECHOOSER_PARENT_PID_NAMESPACE=" + os.readlink("/proc/self/ns/pid"),
                     "-p", f"MemoryMax={maximum}", "-p", f"MemoryHigh={high}",
                     "-p", "MemorySwapMax=0", "-p", "CPUQuota=100%", "-p", "TasksMax=256",
@@ -335,6 +338,9 @@ def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=Fal
         values = systemd_properties("filechooser-" + label, env)
         assert int(values["MemoryMax"]) == maximum and int(values["MemoryHigh"]) == high and values["TasksMax"] == "256", values
         (output / "systemd-properties.json").write_text(json.dumps(values, indent=2))
+        if oom_floor:
+            from filechooser_oom_floor import seal_supervisor
+            seal_supervisor(values, base, output, current_profile(), env)
         (output / "supervisor-admitted").touch()
         if detach:
             code = process.wait(timeout=15)
@@ -416,6 +422,9 @@ def session(base, output, argv):
         while not (output / "supervisor-admitted").exists():
             assert time.monotonic() < deadline, "resource attestation timeout"
             time.sleep(.05)
+    if os.environ.get("FILECHOOSER_OOM_FLOOR") == "1":
+        from filechooser_oom_floor import verify_inherited_floor
+        verify_inherited_floor(output)
     for name in ("home", "run", "tmp", "config", "cache", "state", "data"):
         (base / name).mkdir(mode=0o700)
     env = {"PATH": "/usr/local/bin:/usr/bin", "USER": "tester", "LOGNAME": "tester", "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8",
@@ -437,7 +446,11 @@ def session(base, output, argv):
            "WLR_BACKENDS": "headless", "WLR_RENDERER": "pixman", "WLR_HEADLESS_OUTPUTS": "1",
            # Mesa's CPU OpenGL still supports the product's shader masks. The
            # Qt Quick software scenegraph silently omits MultiEffect content.
-            "LIBGL_ALWAYS_SOFTWARE": "1", "QSG_RHI_BACKEND": "opengl"}
+             "LIBGL_ALWAYS_SOFTWARE": "1", "QSG_RHI_BACKEND": "opengl"}
+    if os.environ.get("FILECHOOSER_BROWSER_RESOURCES") == "1":
+        # Only browser walks share the task budget with a full browser tree.
+        # Keep their renderer pools bounded without changing other benchmarks.
+        env.update(LP_NUM_THREADS="1", RAYON_NUM_THREADS="1")
     if os.environ.get("FILECHOOSER_RENDER_TIMING") == "1":
         env["QSG_RENDER_TIMING"] = "1"
     config = base / "sway.conf"
@@ -555,7 +568,13 @@ def session(base, output, argv):
         (output / "environment.json").write_text(json.dumps(env, indent=2))
         group = cgroup()
         (output / "cgroup.json").write_text(json.dumps({"path": str(group), **{n: (group / n).read_text() for n in ("memory.max", "memory.high", "cpu.max", "pids.max")}}, indent=2))
-        return subprocess.run([sys.executable, "-B", *argv], env=env, timeout=int(env["FILECHOOSER_SESSION_SECONDS"])).returncode
+        workload = [sys.executable, "-B", *argv]
+        if os.environ.get("FILECHOOSER_RESOURCE_SUBJECT") == "1":
+            # Reuse the existing resource-test launcher. This changes only the
+            # browser subject and its children, never guest/host kernel policy.
+            workload = [sys.executable, "-B", str(scripts / "filechooser-no-thp.py"), *workload]
+            env = dict(env, MALLOC_CONF="dirty_decay_ms:0,muzzy_decay_ms:0")
+        return subprocess.run(workload, env=env, timeout=int(env["FILECHOOSER_SESSION_SECONDS"])).returncode
     finally:
         if keyboard_process is not None and keyboard_process.poll() is None and Path(env["FILECHOOSER_INPUT_SOCKET"]).exists():
             subprocess.run(["timeout", "5", sys.executable, "-B", str(Path(__file__).with_name("filechooser_input.py")), "stop"],

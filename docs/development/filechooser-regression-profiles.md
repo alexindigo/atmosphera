@@ -53,3 +53,28 @@ timeout 10 sudo mount -o remount,bind,ro /home/tester/Projects/filechooser-usabi
 The private unprivileged test namespace inherits this mount read-only. The suite
 checks ST_RDONLY, rather than substituting chmod for a filesystem error. Guest
 shutdown removes the temporary mount; provision it again after a reboot.
+
+Real-browser runs additionally seal the exact waiting private supervisor's OOM
+minimum at 1000 before admitting any workload children. The outer controller
+uses a fixed, short-lived guest-root helper, validating DMI UUID, UID, process
+start time, command, namespace and cgroup through a pinned proc directory. The
+helper only writes 1000 and launches no child workload. A fresh unprivileged
+child must observe 1000 and a denied attempt to lower it; receipts are retained.
+No capability is granted to the browser. Caps, sandboxing and all original audit
+checks are unchanged; there is no score-repair loop or browser exception.
+Only browser walks set LP_NUM_THREADS=1 and RAYON_NUM_THREADS=1 for their private
+session's renderer pools, matching the existing one-CPU quota and task cap.
+Other runners, especially the matched-idle scroll measurement, retain their
+original environment. Firefox's disposable profile disables unused new-tab
+preloading to avoid an extra privileged-content process within that same cap.
+Browser and full-UI subjects reuse `filechooser-no-thp.py` and the existing media
+resource-test allocator profile (`dirty_decay_ms:0,muzzy_decay_ms:0`), avoiding
+huge-page/free-page retention under MemoryHigh. Both are process-only; no kernel
+policy or accounting limit changes. Browser profile receipts record these inputs;
+the UI uses the same profile to avoid retained software-renderer pages across
+its many dialog/media cycles. Scroll benchmarks keep their original profile.
+
+```sh
+timeout 900 python3 -B Scripts/dev/filechooser-browser-regression.py --guest-profile "$profile" --source "$PWD" --label browser-LABEL --browser chromium
+timeout 900 python3 -B Scripts/dev/filechooser-browser-regression.py --guest-profile "$profile" --source "$PWD" --label browser-LABEL2 --browser firefox
+```
