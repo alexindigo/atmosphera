@@ -17,6 +17,9 @@ Scope {
   property bool sortDescending: false
   property bool showHidden: false
   property var nameFilter: null
+  property string filterText: ""
+  property string saveFilterText: ""
+  readonly property bool filtering: filterText !== "" || saveFilterText !== ""
   readonly property int count: {
     void _listingRevision;
     return listing.rowCount();
@@ -133,6 +136,8 @@ except OSError as e:
       _history = _history.slice(0, _historyIndex + 1).concat([result.path]);
       _historyIndex = _history.length - 1;
     }
+    if (result.path !== currentPath)
+      filterText = "";
     _currentPath = result.path;
     var uri = PortalPaths.pathToUri(currentPath).uri;
     // Clearing forces a refresh even when navigating to the same folder.
@@ -191,6 +196,8 @@ except OSError as e:
   onSortDescendingChanged: listing.invalidateSorter()
   onShowHiddenChanged: listing.invalidate()
   onNameFilterChanged: listing.invalidate()
+  onFilterTextChanged: listing.invalidate()
+  onSaveFilterTextChanged: listing.invalidate()
 
   Connections {
     target: FileTypes
@@ -214,7 +221,10 @@ except OSError as e:
     model: source
     filters: FunctionFilter {
       function filter(fileName: string, fileIsDir: bool): bool {
-        return (root.showHidden || !fileName.startsWith(".")) && (fileIsDir || FileTypes.matchesFilter(fileName, root.nameFilter));
+        var name = fileName.toLowerCase();
+        return (root.showHidden || !fileName.startsWith("."))
+          && (fileIsDir || FileTypes.matchesFilter(fileName, root.nameFilter))
+          && name.includes(root.filterText.toLowerCase()) && name.includes(root.saveFilterText.toLowerCase());
       }
     }
     sorters: [

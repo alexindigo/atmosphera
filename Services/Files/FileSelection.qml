@@ -15,6 +15,7 @@ Scope {
   property string _anchorPath: ""
   property string _prefix: ""
   property double _typedAt: 0
+  signal chosen(string path)
 
   function _selectable(entry) {
     return entry && entry.directory === (selectable === "folders");
@@ -54,6 +55,7 @@ Scope {
       } else
         _selectedPaths = [item.path];
     }
+    chosen(item.path);
   }
 
   function move(delta, extend) {

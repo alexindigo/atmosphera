@@ -768,6 +768,57 @@ ShellRoot {
         same(prefix + "recovers", [fileBrowser.currentPath, names()], [base, beforeNames]);
       });
     }
+    step(ready, function () {
+      fileBrowser.nameFilter = null;
+      fileBrowser.showHidden = false;
+      fileBrowser.filterText = "ALP";
+    });
+    step(() => fileBrowser.count === 1, function () {
+      same("filter.substring-case", names(), ["Alpha.txt"]);
+      fileBrowser.nameFilter = ["PNG", [[0, "*.png"]]];
+    });
+    step(() => fileBrowser.count === 0, function () {
+      same("filter.type-intersection", names(), []);
+      fileBrowser.nameFilter = null;
+      fileBrowser.filterText = "FOLD";
+    });
+    step(() => fileBrowser.count === 1, function () {
+      same("filter.folders", names(), ["folder"]);
+      fileBrowser.filterText = "hidden";
+    });
+    step(() => fileBrowser.count === 0, function () {
+      same("filter.hidden-respected", names(), []);
+      fileBrowser.showHidden = true;
+    });
+    step(() => fileBrowser.count === 1, function () {
+      same("filter.hidden-opt-in", names(), [".hidden.txt"]);
+      fileBrowser.filterText = "item";
+      fileBrowser.saveFilterText = "10";
+    });
+    step(() => fileBrowser.count === 1, function () {
+      same("filter.combined-substrings", names(), ["item10.png"]);
+      fileBrowser.saveFilterText = "";
+      fileBrowser.navigate(aux + "/documents");
+    });
+    step(ready, function () {
+      same("filter.navigation-clears", fileBrowser.filterText, "");
+      createRequest("save", {current_folder: PortalPaths.encodeBytePath(base).bytes, current_name: "prefilled.md"});
+    });
+    step(requestReady, function () {
+      same("filter.save-prefill", request.browser.saveFilterText, "");
+      request.selection.click(request.browser.indexOfPath(base + "/Alpha.txt"), Qt.NoModifier);
+      request.editSaveName("A draft.txt");
+    });
+    step(() => request.browser.count === 0, function () {
+      request.browser.listingChanged();
+      same("filter.save-name-revalidation", [request.saveName, request.browser.saveFilterText], ["A draft.txt", "A draft"]);
+      request.saveFilterEnabled = false;
+      request.editSaveName("Another draft.txt");
+    });
+    step(() => request.browser.indexOfPath(base + "/Alpha.txt") >= 0, function () {
+      same("filter.save-toggle", [request.saveName, request.browser.saveFilterText], ["Another draft.txt", ""]);
+      request.cancel();
+    });
   }
 
   Component.onCompleted: {

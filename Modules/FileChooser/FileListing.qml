@@ -29,6 +29,7 @@ FocusScope {
                                          })
   signal quickLookRequested(rect tile)
   signal editPathRequested(string initial)
+  signal filterRequested(string initial)
   function activeEntries(view) {
     // Reuse pools retain native items whose visible property can still be true.
     // Only the view's indexed items belong to its current presentation.
@@ -126,7 +127,7 @@ FocusScope {
     else if (event.text === "/" || event.text === "~")
       editPathRequested(event.text);
     else if (!ctrl && !alt && event.text.length && event.text >= " ")
-      request.selection.typeAhead(event.text);
+      filterRequested(event.text);
     else
       event.accepted = false;
   }
@@ -175,7 +176,7 @@ FocusScope {
     Item {
       Layout.fillWidth: true
       Layout.fillHeight: true
-      Layout.minimumWidth: Math.max(root.tileSize + Style.marginL, emptyState.visible ? emptyState.implicitWidth : 0)
+      Layout.minimumWidth: Math.max(root.tileSize + Style.marginL, emptyState.visible && !root.request.browser.filtering ? emptyState.implicitWidth : 0)
       Layout.minimumHeight: Math.max(root.tileSize, emptyState.visible ? emptyState.implicitHeight : 0)
       GridView {
         id: grid
@@ -266,6 +267,7 @@ FocusScope {
       ColumnLayout {
         id: emptyState
         anchors.centerIn: parent
+        width: Math.max(0, parent.width - Style.margin2XL)
         visible: root.request.browser.count === 0 && root.request.browser.status !== "loading"
         spacing: Style.marginL
         AtmoIcon {
@@ -276,12 +278,16 @@ FocusScope {
         }
         NText {
           Layout.alignment: Qt.AlignHCenter
-          text: I18n.tr("widgets.file-picker.empty-folder")
+          Layout.fillWidth: true
+          Layout.minimumWidth: 0
+          horizontalAlignment: Text.AlignHCenter
+          elide: Text.ElideRight
+          text: root.request.browser.filtering ? I18n.tr("widgets.file-picker.no-matches", {text: [root.request.browser.filterText, root.request.browser.saveFilterText].filter(value => value !== "").join(" / ")}) : I18n.tr("widgets.file-picker.empty-folder")
           pointSize: Style.fontSizeL
         }
         ChooserButton {
           Layout.alignment: Qt.AlignHCenter
-          visible: root.request.browser.hasHidden && !root.request.browser.showHidden
+          visible: !root.request.browser.filtering && root.request.browser.hasHidden && !root.request.browser.showHidden
           text: I18n.tr("widgets.file-picker.show-hidden")
           onClicked: root.request.browser.showHidden = true
         }

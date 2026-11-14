@@ -13,6 +13,8 @@ ColumnLayout {
   property real fontSize: Style.fontSizeM
   property alias text: field.text
   property alias inputItem: field
+  property alias placeholderText: field.placeholderText
+  property var icon: ""
   signal accepted
   signal textEdited
   spacing: Style.marginS
@@ -23,13 +25,24 @@ ColumnLayout {
     Layout.fillWidth: true
     implicitHeight: Style.baseWidgetSize * 1.25 * Style.uiScaleRatio
     color: AtmoColor.mOnSurface
+    placeholderTextColor: AtmoColor.mOnSurfaceVariant
     font: typography.font
-    leftPadding: Style.marginL
+    leftPadding: root.icon !== "" ? height : Style.marginL
     rightPadding: Style.marginL
     selectByMouse: true
     Accessible.name: root.accessibleName
     onAccepted: root.accepted()
     onTextEdited: root.textEdited()
+    AtmoIcon {
+      visible: root.icon !== ""
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      width: parent.height
+      height: width
+      icon: root.icon
+      pointSize: Style.fontSizeM
+      color: AtmoColor.mOnSurfaceVariant
+    }
     background: Rectangle {
       color: AtmoColor.mSurface
       radius: Style.iRadiusS

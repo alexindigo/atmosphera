@@ -53,8 +53,13 @@ RowLayout {
       y: item.y,
       width: item.width,
       height: item.height,
-      iconOnly: item.icon !== undefined && item.text === ""
+      iconOnly: item.iconOnly === true
     }));
+  }
+  function focusFilter(initial) {
+    if (initial !== undefined)
+      request.browser.filterText += initial;
+    filterField.inputItem.forceActiveFocus();
   }
 
     function editPath(initial) {
@@ -190,6 +195,19 @@ RowLayout {
     root.leavePathEditing();
   }
   }
+  }
+    ChooserTextField {
+    id: filterField
+    Layout.fillWidth: true
+    Layout.minimumWidth: 110 * Style.uiScaleRatio
+    Layout.preferredWidth: 180 * Style.uiScaleRatio
+    Layout.maximumWidth: 220 * Style.uiScaleRatio
+    icon: Icon.search
+    accessibleName: I18n.tr("widgets.file-picker.filter-names")
+    placeholderText: accessibleName
+    text: root.request.browser.filterText
+    onTextEdited: root.request.browser.filterText = text
+    onAccepted: root.listingFocusRequested()
   }
     ChooserButton {
     icon: Icon.filepickerRefresh

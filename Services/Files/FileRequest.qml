@@ -21,6 +21,12 @@ Scope {
   readonly property FileBrowser browser: requestBrowser
   readonly property FileSelection selection: requestSelection
   property string saveName: ""
+  property bool saveFilterEnabled: true
+  property bool _saveNameEdited: false
+  readonly property string saveFilterStem: {
+    var dot = saveName.lastIndexOf(".");
+    return dot >= 0 ? saveName.slice(0, dot) : saveName;
+  }
   property var choiceValues: ({})
   property var currentFilter: null
   readonly property string pendingReplace: _pendingReplace
@@ -48,7 +54,11 @@ Scope {
   FileBrowser {
     id: requestBrowser
     nameFilter: root.currentFilter
-    onCurrentPathChanged: root._invalidate()
+    saveFilterText: root.method === "save" && root.saveFilterEnabled && root._saveNameEdited ? root.saveFilterStem : ""
+    onCurrentPathChanged: {
+      root._saveNameEdited = false;
+      root._invalidate();
+    }
     onStatusChanged: {
       if (status === "loading")
         root._invalidate();
@@ -87,6 +97,7 @@ Scope {
       browser.sortDescending = prefs.sortDescending === true;
       browser.showHidden = prefs.showHidden === true;
       viewMode = prefs.view || "grid";
+      saveFilterEnabled = prefs.saveFilter !== false;
       if (method === "saveFiles")
         _saveFilesNames = (options.files || []).map(value => _decode(value, false));
       var folder = options.current_folder !== undefined ? _decode(options.current_folder, true) : "";
@@ -136,14 +147,24 @@ Scope {
   }
 
   onSaveNameChanged: _invalidate()
+  function editSaveName(value) {
+    saveName = value;
+    _saveNameEdited = true;
+  }
+  function clearFilters() {
+    browser.filterText = "";
+    _saveNameEdited = false;
+  }
   onCurrentFilterChanged: _invalidate()
   onChoiceValuesChanged: _invalidate()
   Connections {
     target: requestSelection
     function onSelectedPathsChanged() {
       root._invalidate();
-      if (root.method === "save" && requestSelection.selectedPaths.length === 1) {
-        var path = requestSelection.selectedPaths[0];
+    }
+    function onChosen(path) {
+      if (root.method === "save" && requestSelection.selectedPaths.length === 1 && requestSelection.selectedPaths[0] === path) {
+        root._saveNameEdited = false;
         root.saveName = path.slice(path.lastIndexOf("/") + 1);
       }
     }
@@ -295,7 +316,7 @@ except (ValueError, OSError) as e:
     if (_snapshot.filter)
       results.current_filter = _snapshot.filter;
     var folder = _snapshot.folder;
-    var prefs = {view: viewMode, sortKey: browser.sortKey, sortDescending: browser.sortDescending, showHidden: browser.showHidden};
+    var prefs = {view: viewMode, sortKey: browser.sortKey, sortDescending: browser.sortDescending, showHidden: browser.showHidden, saveFilter: saveFilterEnabled};
     _finish(0, results);
     FileChooserMemory.remember(appId, folder, prefs);
   }

@@ -133,6 +133,7 @@ def main():
     for name in ["hash#name", "percent%20literal", "question?mark"]:
         required.update(f"paths.{name}.{case}" for case in ("error", "keeps-folder", "keeps-listing", "not-loading", "recovers"))
     required.update(f"paths.helper.{name}" for name in ("With space", "hash#name", "percent%20literal", "question?mark", "résumé", "a b/c d", "strict-portal-spaces", "invalid-urls"))
+    required.update("filter." + name for name in ("substring-case", "type-intersection", "folders", "hidden-respected", "hidden-opt-in", "combined-substrings", "navigation-clears", "save-prefill", "save-name-revalidation", "save-toggle"))
     missing = sorted(required - {case["case"] for case in cases})
     required_media = {"playback." + name for name in ("initial", "inactive-intents", "volume-low", "volume-high", "volume-step", "invalid-volume", "times", "autoplay", "seek-low", "seek-high", "close-stops", "close-destroys-engine")}
     required_labels = {"labels." + name for name in ("extension-attached", "dots", "long-word", "cjk", "extension-only", "two-lines-only")}

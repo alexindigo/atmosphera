@@ -10,6 +10,7 @@ NButton {
     target: root
   }
   property bool primary: false
+  readonly property bool iconOnly: text === ""
   // An icon-only action has one square slot, centred by NButton's content row.
   Layout.preferredWidth: text === "" ? implicitHeight : -1
   width: text === "" ? implicitHeight : implicitWidth

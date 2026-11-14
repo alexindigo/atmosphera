@@ -82,9 +82,18 @@ def main():
         return wait(lambda s: s["ready"] and not s["settled"])
 
     def choose(prefix):
+        if state()["filterText"] or state()["saveFilterText"]:
+            key("Escape")
         ipc("focusListing")
-        time.sleep(1.05)  # type-ahead prefix timeout is part of FileSelection.
         text(prefix)
+        filtered = wait(lambda s: s["filterText"].lower() == prefix.lower() and s["count"] > 0)
+        target = next(i for i, name in enumerate(filtered["names"]) if name.lower().startswith(prefix.lower()))
+        ipc("focusListing")
+        key("Home")
+        for _ in range(target):
+            key("Right")
+        key("Escape")
+        wait(lambda s: not s["filterText"])
 
     def focus(name):
         for _ in range(45):

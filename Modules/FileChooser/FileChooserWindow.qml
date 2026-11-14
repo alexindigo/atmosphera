@@ -118,6 +118,8 @@ PanelWindow {
       quickLook.opened = false;
     } else if (header.editing)
       header.leavePathEditing();
+      else if (request.browser.filtering)
+      request.clearFilters();
       else
       request.cancel();
     }
@@ -147,6 +149,12 @@ PanelWindow {
       sequence: "Ctrl+L"
       enabled: !root.quickLookOpen
       onActivated: header.editPath()
+    }
+      NScopedShortcut {
+      scope: root.contentItem
+      sequence: "Ctrl+F"
+      enabled: !root.quickLookOpen && !root.request.pendingReplace
+      onActivated: header.focusFilter()
     }
 
       Rectangle {
@@ -187,15 +195,29 @@ PanelWindow {
       onClicked: root.request.cancel()
     }
     }
+      RowLayout {
+      visible: root.request.method === "save"
+      Layout.fillWidth: true
       ChooserTextField {
       id: nameField
-      visible: root.request.method === "save"
       Layout.fillWidth: true
       label: I18n.tr("widgets.file-picker.file-name")
       text: root.request.saveName
       fontSize: Style.fontSizeL
-      onTextEdited: root.request.saveName = text
+      onTextEdited: root.request.editSaveName(text)
       onAccepted: root.request.accept()
+    }
+      ChooserButton {
+      Layout.alignment: Qt.AlignBottom
+      Layout.preferredWidth: nameField.inputItem.implicitHeight
+      Layout.preferredHeight: nameField.inputItem.implicitHeight
+      icon: Icon.filter
+      tooltipText: I18n.tr("widgets.file-picker.filter-by-name")
+      Accessible.checkable: true
+      Accessible.checked: root.request.saveFilterEnabled
+      textColor: root.request.saveFilterEnabled ? AtmoColor.mPrimary : AtmoColor.mOnSurface
+      onClicked: root.request.saveFilterEnabled = !root.request.saveFilterEnabled
+    }
     }
     }
       Rectangle {
@@ -241,6 +263,7 @@ PanelWindow {
       request: root.request
       thumbnails: thumbnails
       onEditPathRequested: initial => header.editPath(initial)
+      onFilterRequested: initial => header.focusFilter(initial)
       onQuickLookRequested: tile => {
       var mapped = listing.mapToItem(browserArea, tile.x, tile.y, tile.width, tile.height);
       quickLook.openFrom(mapped);
