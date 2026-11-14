@@ -30,12 +30,17 @@ Singleton {
   // External profile IO must settle the actual owners, not serialize their
   // GUI values. Captured owner identities also fence plugin load/unload.
   function synchronizePreferences(operation, callback) {
-    var owners = Object.keys(_settingsOwners).sort().map(function (key) {
-      return {key: key, owner: root._settingsOwners[key]};
-    });
+    function readyOwners() {
+      return Object.keys(root._settingsOwners).sort().filter(function (key) {
+        var owner = root._settingsOwners[key];
+        return owner && !owner.closed && owner.status === "Ready";
+      }).map(function (key) { return {key: key, owner: root._settingsOwners[key]}; });
+    }
+    var owners = readyOwners();
     function unchanged() {
-      return Object.keys(root._settingsOwners).length === owners.length && owners.every(function (entry) {
-        return root._settingsOwners[entry.key] === entry.owner && !entry.owner.closed && entry.owner.status === "Ready";
+      var currentOwners = readyOwners();
+      return currentOwners.length === owners.length && owners.every(function (entry, index) {
+        return currentOwners[index].key === entry.key && currentOwners[index].owner === entry.owner;
       });
     }
     function failed(code) {
@@ -93,10 +98,18 @@ Singleton {
           root.pluginSettingsCompleted(pluginId, result);
       });
     }
+    var delivered = false;
     function settled() {
-      if (owner.status === "Loading") return;
+      if (delivered || owner.status === "Loading") return;
+      delivered = true;
       owner.settled.disconnect(settled);
-      callback(owner.status === "Ready" ? owner : null);
+      var ready = !owner.closed && owner.status === "Ready";
+      if (!ready && root._settingsOwners[pluginId] === owner) {
+        delete root._settingsOwners[pluginId];
+        if (!owner.closed) owner.detach();
+        owner.destroy();
+      }
+      callback(ready ? owner : null);
     }
     owner.settled.connect(settled);
     Qt.callLater(settled);
@@ -1345,7 +1358,9 @@ Singleton {
     // the user's sparse override at ~/.config/atmosphera/plugins/<id>/config.json
     // (user wins). Read-only for the shipped file; async via callback.
     api.getConfig = function (callback) {
-      return api.settingsOwner.snapshotConfig(callback);
+      if (api.settingsOwner) return api.settingsOwner.snapshotConfig(callback);
+      Qt.callLater(function () { if (typeof callback === "function") callback(null); });
+      return false;
     };
 
     // ----------------------------------------

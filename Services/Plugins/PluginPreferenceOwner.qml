@@ -67,7 +67,10 @@ QtObject {
     });
   }
   function snapshotConfig(callback) {
-    if (closed || status !== "Ready") return false;
+    if (closed || status !== "Ready") {
+      Qt.callLater(function () { if (typeof callback === "function") callback(null); });
+      return false;
+    }
     // An explicit API read, not a persistence baseline or raw-layer mirror.
     // Enumerate the declared leaves, never QObject machinery or user-file keys.
     var output = Object.create(null);
@@ -82,7 +85,7 @@ QtObject {
       }
       parent[path[path.length - 1]] = store.copyValue(value);
     }
-    Qt.callLater(function () { if (!root.closed && typeof callback === "function") callback(output); });
+    Qt.callLater(function () { if (typeof callback === "function") callback(root.closed ? null : output); });
     return true;
   }
   function detach() {
