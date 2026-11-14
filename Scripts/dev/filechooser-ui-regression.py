@@ -15,7 +15,8 @@ import sys
 import time
 from urllib.parse import unquote, urlsplit
 
-from filechooser_regression import ROOT, SCRIPTS, guest
+from filechooser_regression import SCRIPTS, guest
+from filechooser_profile import current_profile, exact_source, profile_argument
 from filechooser_isolation import enter, input_command
 from filechooser_icons import exercise as exercise_icons
 
@@ -40,12 +41,13 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--label", required=True)
+    profile_argument(p)
     a = p.parse_args()
     guest()
     source = a.source.resolve()
-    assert source.is_relative_to(ROOT / "sources") and source.is_dir()
+    assert exact_source(source) and source.is_dir()
     assert re.fullmatch(r"[a-z0-9][a-z0-9.-]*", a.label)
-    runtime, evidence = ROOT / "runtime" / a.label, ROOT / "evidence" / a.label
+    runtime, evidence = current_profile().runtime / a.label, current_profile().evidence / a.label
     assert not runtime.exists() and not evidence.exists()
     # filechooser-harness owns preparation, media fixtures and the qs child.
     env = dict(os.environ)
@@ -100,7 +102,7 @@ def main():
         raise AssertionError("Unreachable place: " + label)
     try:
         wait(lambda s: s["ready"], 30)
-        keyboard_output = ROOT / "evidence" / (a.label + "-keyboard")
+        keyboard_output = current_profile().evidence / (a.label + "-keyboard")
         subprocess.run(["timeout", "360", "python3", "-B", str(SCRIPTS / "filechooser-harness-drive.py"),
                         "--runtime", str(runtime), "--output", str(keyboard_output)], env=env, check=True, timeout=370)
         keyboard = json.loads((keyboard_output / "result.json").read_text())

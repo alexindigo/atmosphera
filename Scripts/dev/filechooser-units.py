@@ -13,8 +13,7 @@ import wave
 
 from filechooser_regression import desktop_fixture
 from filechooser_isolation import enter, guest, profile_env
-
-ROOT = Path("/home/tester/Projects/atmosphera-filechooser")
+from filechooser_profile import current_profile, workspace, exact_source, profile_argument
 PREFIX = "FILECHOOSER_UNITS|"
 ERRORS = re.compile(r"TypeError|ReferenceError|Cannot assign|Binding loop|Failed to load configuration|is not a type|Unable to assign|Error:")
 
@@ -25,11 +24,12 @@ def main():
     parser.add_argument("--source", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--mascot-scheme", type=Path)
+    profile_argument(parser)
     args = parser.parse_args()
     guest()
     source, output = args.source.resolve(), args.output.resolve()
-    runtime = ROOT / "runtime" / output.name
-    if not source.is_relative_to(ROOT / "sources") or not output.is_relative_to(ROOT / "evidence"):
+    runtime = current_profile().runtime / output.name
+    if not exact_source(source) or not output.is_relative_to(current_profile().evidence):
         parser.error("source/output must be inside the assigned guest workspace")
     if output.exists() or runtime.exists():
         parser.error("new output/runtime label required")

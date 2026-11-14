@@ -9,7 +9,8 @@ import shutil
 import subprocess
 import time
 
-from filechooser_isolation import ROOT, enter, profile_env
+from filechooser_isolation import enter, profile_env
+from filechooser_profile import current_profile, exact_source, profile_argument
 
 
 def main():
@@ -17,16 +18,17 @@ def main():
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--label", required=True)
     parser.add_argument("--diagnose-only", action="store_true")
+    profile_argument(parser)
     args = parser.parse_args()
     source = args.source.resolve()
-    assert source.is_relative_to(ROOT / "sources")
+    assert exact_source(source)
     # Exercise the candidate runner as well as its product tree. The same fixed
     # pixel check can therefore prove the historical runner red without editing it.
     spec = importlib.util.spec_from_file_location("candidate_isolation", source / "Scripts/dev/filechooser_isolation.py")
     candidate = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(candidate)
     candidate.enter()
-    runtime, output = ROOT / "runtime" / args.label, ROOT / "evidence" / args.label
+    runtime, output = current_profile().runtime / args.label, current_profile().evidence / args.label
     runtime.mkdir(); output.mkdir()
     shell = runtime / "shell"
     shutil.copytree(source, shell, symlinks=True)

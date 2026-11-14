@@ -9,19 +9,19 @@ import subprocess
 import time
 
 from filechooser_isolation import checked, input_command
-
-ROOT = Path("/home/tester/Projects/atmosphera-filechooser")
+from filechooser_profile import workspace, current_profile, profile_argument
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--runtime", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    profile_argument(parser)
     args = parser.parse_args()
     runtime, output = args.runtime.resolve(), args.output.resolve()
     checked()
-    assert "52:54:00:50:b3:8b" in [f.read_text().strip() for f in Path("/sys/class/net").glob("*/address")]
-    assert runtime.is_relative_to(ROOT / "runtime") and output.is_relative_to(ROOT / "evidence") and not output.exists()
+    current_profile().verify(private=True)
+    assert runtime.is_relative_to(current_profile().runtime) and output.is_relative_to(current_profile().evidence) and not output.exists()
     output.mkdir()
     captures = runtime / "captures"
     captures.mkdir()

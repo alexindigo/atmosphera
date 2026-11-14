@@ -11,7 +11,8 @@ import subprocess
 import time
 import xml.etree.ElementTree as ET
 
-from filechooser_isolation import ROOT, enter, profile_env
+from filechooser_isolation import enter, profile_env
+from filechooser_profile import current_profile, exact_source, profile_argument
 
 HERE = Path(__file__).resolve().parent
 
@@ -21,10 +22,11 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--label", required=True)
+    profile_argument(p)
     a = p.parse_args()
     source = a.source.resolve()
-    assert source.is_relative_to(ROOT / "sources") and re.fullmatch(r"[a-z0-9][a-z0-9.-]*", a.label)
-    runtime, out = ROOT / "runtime" / a.label, ROOT / "evidence" / a.label
+    assert exact_source(source) and re.fullmatch(r"[a-z0-9][a-z0-9.-]*", a.label)
+    runtime, out = current_profile().runtime / a.label, current_profile().evidence / a.label
     runtime.mkdir(); out.mkdir()
     shell = runtime / "shell"
     shutil.copytree(source, shell, symlinks=True)

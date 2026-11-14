@@ -13,8 +13,8 @@ import subprocess
 import time
 
 from filechooser_isolation import enter, guest, input_command, profile_env
+from filechooser_profile import current_profile, workspace, exact_source, profile_argument
 
-ROOT = Path("/home/tester/Projects/atmosphera-filechooser")
 SCRIPTS = Path(__file__).resolve().parent
 
 
@@ -37,8 +37,8 @@ class Run:
         guest()
         assert re.fullmatch(r"[a-z0-9][a-z0-9.-]*", label)
         self.source = Path(source).resolve()
-        assert self.source.is_relative_to(ROOT / "sources") and self.source.is_dir()
-        self.runtime, self.output = ROOT / "runtime" / label, ROOT / "evidence" / label
+        assert exact_source(self.source) and self.source.is_dir()
+        self.runtime, self.output = current_profile().runtime / label, current_profile().evidence / label
         assert not self.runtime.exists() and not self.output.exists()
         self.runtime.mkdir(); self.output.mkdir()
         self.shell = self.runtime / "shell"

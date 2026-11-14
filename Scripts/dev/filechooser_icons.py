@@ -14,7 +14,8 @@ import subprocess
 import sys
 import time
 
-from filechooser_isolation import enter, ROOT
+from filechooser_isolation import enter
+from filechooser_profile import current_profile, profile_argument
 
 
 def exercise(source, runtime, evidence, command, ipc, state, wait, check, open_request):
@@ -86,8 +87,9 @@ def generate():
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--label", required=True)
     parser.add_argument("--mascot-image", type=Path, required=True)
+    profile_argument(parser)
     args = parser.parse_args()
-    output = ROOT / "evidence" / args.label
+    output = current_profile().evidence / args.label
     output.mkdir()
     result = subprocess.run(["timeout", "120", "python3", "-B", str(args.source / "Scripts/python/src/theming/template-processor.py"), str(args.mascot_image), "--scheme-type", "tonal-spot"], capture_output=True, text=True, check=True, timeout=130)
     raw = json.loads(result.stdout)

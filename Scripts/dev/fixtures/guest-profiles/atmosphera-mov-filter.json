@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "name": "atmosphera-mov-filter",
+  "uuid": "1f45d183-42a7-4962-9609-ce1fb7968a47",
+  "mac": "52:54:00:72:73:d4",
+  "sshHostKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILotd1lFMED1emJ2IIZ3Q+mYYEuCaSNXKuIxgTw369TK",
+  "uid": 1000,
+  "home": "/home/tester",
+  "workspace": "/home/tester/Projects/filechooser-usability",
+  "source": "/home/tester/Projects/filechooser-usability/source",
+  "evidence": "/home/tester/Projects/filechooser-usability/evidence",
+  "runtime": "/home/tester/Projects/filechooser-usability/runtime"
+}

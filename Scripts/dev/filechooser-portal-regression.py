@@ -14,6 +14,7 @@ import time
 import uuid
 
 from filechooser_regression import Run, guest
+from filechooser_profile import profile_argument
 
 
 def portal_call():
@@ -25,6 +26,7 @@ def portal_call():
     p.add_argument("--call", choices=["OpenFile", "SaveFile", "SaveFiles"], required=True)
     p.add_argument("--options", required=True)
     p.add_argument("--out", type=Path, required=True)
+    profile_argument(p)
     a = p.parse_args()
     values = json.loads(a.options)
     conn = Gio.bus_get_sync(Gio.BusType.SESSION, None)
@@ -176,6 +178,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--label", required=True)
+    profile_argument(p)
     a = p.parse_args()
     r = Run(a.source, a.label)
     try:

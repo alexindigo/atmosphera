@@ -9,7 +9,8 @@ import subprocess
 import sys
 import time
 
-from filechooser_regression import ROOT, guest
+from filechooser_regression import guest
+from filechooser_profile import current_profile, exact_source, profile_argument
 from filechooser_isolation import enter, input_command
 
 
@@ -18,16 +19,17 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--label", required=True)
+    profile_argument(p)
     a = p.parse_args()
     guest()
     source = a.source.resolve()
-    assert source.is_relative_to(ROOT / "sources")
+    assert exact_source(source)
     assert re.fullmatch(r"[a-z0-9][a-z0-9.-]*", a.label)
-    runtime, evidence = ROOT / "runtime" / a.label, ROOT / "evidence" / a.label
+    runtime, evidence = current_profile().runtime / a.label, current_profile().evidence / a.label
     assert not runtime.exists() and not evidence.exists()
     # The regular harness owns its runtime and qs lifetime. An adjacent private
     # fixture directory keeps existing keyboard fixtures/counts unchanged.
-    fixtures = ROOT / "runtime" / (a.label + "-videos")
+    fixtures = current_profile().runtime / (a.label + "-videos")
     fixtures.mkdir()
     videos = fixtures / "Coast surveys"
     videos.mkdir()

@@ -15,8 +15,7 @@ import sys
 
 from filechooser_regression import desktop_fixture
 from filechooser_isolation import enter, guest, profile_env
-
-ROOT = Path("/home/tester/Projects/atmosphera-filechooser")
+from filechooser_profile import current_profile, workspace, exact_source, profile_argument
 
 
 def main():
@@ -24,11 +23,12 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--label", required=True)
+    profile_argument(p)
     a = p.parse_args()
     guest()
     source = a.source.resolve()
-    runtime, evidence = ROOT / "runtime" / a.label, ROOT / "evidence" / a.label
-    if not source.is_relative_to(ROOT / "sources") or runtime.exists() or evidence.exists():
+    runtime, evidence = current_profile().runtime / a.label, current_profile().evidence / a.label
+    if not exact_source(source) or runtime.exists() or evidence.exists():
         p.error("requires exact source and fresh label")
     runtime.mkdir()
     evidence.mkdir()

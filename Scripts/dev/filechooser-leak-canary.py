@@ -9,7 +9,8 @@ import subprocess
 import sys
 import time
 
-from filechooser_isolation import ROOT, enter, profile_env
+from filechooser_isolation import enter, profile_env
+from filechooser_profile import current_profile, exact_source, profile_argument
 from filechooser_leaks import build_probe, checkpoint, instrument_choosers, native_query, observer
 
 
@@ -18,10 +19,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--label", required=True)
+    profile_argument(parser)
     args = parser.parse_args()
     source = args.source.resolve()
-    assert source.is_relative_to(ROOT / "sources")
-    runtime, output = ROOT / "runtime" / args.label, ROOT / "evidence" / args.label
+    assert exact_source(source)
+    runtime, output = current_profile().runtime / args.label, current_profile().evidence / args.label
     runtime.mkdir(); output.mkdir()
     shell = runtime / "shell"
     shutil.copytree(source, shell, symlinks=True)

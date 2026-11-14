@@ -23,7 +23,9 @@ ShellRoot {
   FilePreview {
     id: preview
   }
-  FilePlayback { id: playback }
+  FilePlayback {
+    id: playback
+  }
 
   FileBrowser {
     id: fileBrowser
@@ -129,12 +131,18 @@ ShellRoot {
   function buildTests() {
     step(() => true, function () {
       same("playback.initial", [playback.status, playback.playing, playback.seekable], ["idle", false, false]);
-      playback.toggle(); playback.seek(10000);
+      playback.toggle();
+      playback.seek(10000);
       same("playback.inactive-intents", [playback.playing, playback.position], [false, 0]);
-      playback.setVolume(-1); same("playback.volume-low", playback.volume, 0);
-      playback.setVolume(3); same("playback.volume-high", playback.volume, 1);
-      playback.setVolume(0.5); playback.volumeBy(-0.05); report("playback.volume-step", Math.abs(playback.volume - 0.45) < 0.00001, playback.volume);
-      playback.setVolume(NaN); report("playback.invalid-volume", Math.abs(playback.volume - 0.45) < 0.00001, playback.volume);
+      playback.setVolume(-1);
+      same("playback.volume-low", playback.volume, 0);
+      playback.setVolume(3);
+      same("playback.volume-high", playback.volume, 1);
+      playback.setVolume(0.5);
+      playback.volumeBy(-0.05);
+      report("playback.volume-step", Math.abs(playback.volume - 0.45) < 0.00001, playback.volume);
+      playback.setVolume(NaN);
+      report("playback.invalid-volume", Math.abs(playback.volume - 0.45) < 0.00001, playback.volume);
       same("playback.times", [playback.time(-1000), playback.time(65000), playback.time(3661000)], ["0:00", "1:05", "1:01:01"]);
       var measure = text => Array.from(text).length;
       same("labels.extension-attached", FileLabels.lines("Weekend itinerary.pdf", 14, measure), ["Weekend", "itinerary.pdf"]);
@@ -151,9 +159,13 @@ ShellRoot {
       playback.source = PortalPaths.pathToUri(aux + "/previews/unit.wav").uri;
       playback.active = true;
     });
-    step(() => playback.status === "ready" && playback.playing && playback.duration > 0, function () {
+    // PlayingState precedes asynchronous output initialization. Observe the
+    // actual clock before exercising pause/seek against that initialized output.
+    step(() => playback.status === "ready" && playback.playing && playback.duration > 0 && playback.position > 0, function () {
+      report("playback.clock-running", playback.position > 0, playback.position);
       report("playback.autoplay", playback.seekable && playback.duration === 8000, playback.snapshot);
-      playback.toggle(); playback.seek(-1000);
+      playback.toggle();
+      playback.seek(-1000);
     });
     step(() => !playback.playing && playback.position === 0, function () {
       same("playback.seek-low", playback.position, 0);
@@ -457,7 +469,7 @@ ShellRoot {
       same("request.failed-once", responses.length, 1);
       createRequest("open", {
                       current_file: PortalPaths.encodeBytePath(base + "/Alpha.txt").bytes,
-                       choices: [["quality", "Quality", [["low", "Low"], ["high", "High"]], "low"], ["enabled", "Enabled", [], "true"], ["fallback", "Fallback", [["first", "First"], ["next", "Next"]], ""], ["unchecked", "Unchecked", [], ""]],
+                      choices: [["quality", "Quality", [["low", "Low"], ["high", "High"]], "low"], ["enabled", "Enabled", [], "true"], ["fallback", "Fallback", [["first", "First"], ["next", "Next"]], ""], ["unchecked", "Unchecked", [], ""]],
                       filters: [["Text", [[0, "*.txt"]]]],
                       current_filter: ["Text", [[0, "*.txt"]]]
                     });
@@ -466,7 +478,12 @@ ShellRoot {
       same("request.current-file-folder", request.browser.currentPath, base);
       same("request.preselection", request.selection.selectedPaths, [base + "/Alpha.txt"]);
       same("request.choices-order", request.choices.map(choice => choice[0]), ["quality", "enabled", "fallback", "unchecked"]);
-      same("request.choices-defaults", request.choiceValues, {quality: "low", enabled: "true", fallback: "first", unchecked: "false"});
+      same("request.choices-defaults", request.choiceValues, {
+             quality: "low",
+             enabled: "true",
+             fallback: "first",
+             unchecked: "false"
+           });
       request.setChoice("quality", "high");
       request.setChoice("enabled", "false");
       request.accept();
