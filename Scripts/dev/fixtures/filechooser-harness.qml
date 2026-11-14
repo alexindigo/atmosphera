@@ -1,4 +1,5 @@
 import QtQuick
+import QtTest
 import Quickshell
 import Quickshell.Io
 import "../../../Helpers/PortalPaths.js" as PortalPaths
@@ -9,6 +10,8 @@ import qs.Services.UI
 
 ShellRoot {
   id: root
+  property var touchSequence: null
+  TestEvent { id: nativeTouch }
   readonly property string base: Quickshell.env("FILECHOOSER_UI_ROOT")
   property var request: null
   property var replies: []
@@ -205,6 +208,17 @@ ShellRoot {
     }
     function state(): string {
       return root.snapshot();
+    }
+    function touchStart(x: real, y: real): void {
+      root.touchSequence = nativeTouch.touchEvent(windowLoader.item.contentItem);
+      root.touchSequence.press(0, windowLoader.item.contentItem, x, y).commit();
+    }
+    function touchMove(x: real, y: real): void {
+      root.touchSequence.move(0, windowLoader.item.contentItem, x, y).commit();
+    }
+    function touchEnd(x: real, y: real): void {
+      root.touchSequence.release(0, windowLoader.item.contentItem, x, y).commit();
+      root.touchSequence = null;
     }
     function startScrollTrace(): void {
       if (!root.scrollClock)

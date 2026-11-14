@@ -15,6 +15,7 @@ Scope {
   property string _anchorPath: ""
   property string _prefix: ""
   property double _typedAt: 0
+  property var _band: null
   signal chosen(string path)
   function _setPaths(paths) {
     if (paths.length === _selectedPaths.length && paths.every((path, index) => path === _selectedPaths[index]))
@@ -27,6 +28,7 @@ Scope {
   }
 
   function clear() {
+    _band = null;
     _setPaths([]);
     cursor = -1;
     _anchor = -1;
@@ -55,20 +57,59 @@ Scope {
       if (!_selectable(item)) {
         if (!(multiple && (modifiers & Qt.ControlModifier)))
           _setPaths([]);
-      } else if (multiple && (modifiers & Qt.ControlModifier)) {
-        _setPaths(_selectedPaths.includes(item.path) ? _selectedPaths.filter(p => p !== item.path) : _selectedPaths.concat([item.path]));
+      } else if (modifiers & Qt.ControlModifier) {
+        _setPaths(_selectedPaths.includes(item.path) ? _selectedPaths.filter(p => p !== item.path) : multiple ? _selectedPaths.concat([item.path]) : [item.path]);
       } else
         _setPaths([item.path]);
     }
     chosen(item.path);
   }
 
-  function moveTo(index, extend) {
-    if (browser.count)
-      click(Math.max(0, Math.min(browser.count - 1, index)), extend ? Qt.ShiftModifier : Qt.NoModifier);
+  function moveTo(index, extend, focusOnly) {
+    if (!browser.count)
+      return;
+    index = Math.max(0, Math.min(browser.count - 1, index));
+    if (focusOnly) {
+      cursor = index;
+      _cursorPath = browser.entry(index).path;
+    } else click(index, extend ? Qt.ShiftModifier : Qt.NoModifier);
   }
-  function move(delta, extend) {
-    moveTo(cursor < 0 ? (delta < 0 ? browser.count - 1 : 0) : cursor + delta, extend);
+  function move(delta, extend, focusOnly) {
+    moveTo(cursor < 0 ? (delta < 0 ? browser.count - 1 : 0) : cursor + delta, extend, focusOnly);
+  }
+  function toggleCurrent() {
+    if (cursor >= 0)
+      click(cursor, Qt.ControlModifier);
+  }
+  function background(modifiers) {
+    if (!(modifiers & (Qt.ControlModifier | Qt.ShiftModifier)))
+      clear();
+  }
+  function beginBand(modifiers, startIndex) {
+    _band = multiple ? {base: _selectedPaths.slice(), modifiers: modifiers, anchor: startIndex, indices: []} : null;
+  }
+  function updateBand(indices) {
+    if (!_band || !multiple)
+      return;
+    var paths = indices.map(i => browser.entry(i)).filter(item => _selectable(item)).map(item => item.path);
+    _band.indices = indices;
+    if (_band.modifiers & Qt.ShiftModifier)
+      paths = _band.base.concat(paths.filter(path => !_band.base.includes(path)));
+    else if (_band.modifiers & Qt.ControlModifier)
+      paths = _band.base.filter(path => !paths.includes(path)).concat(paths.filter(path => !_band.base.includes(path)));
+    _setPaths(paths);
+  }
+  function endBand(index) {
+    if (!_band)
+      return;
+    var indices = _band.indices;
+    if (indices.length) {
+      cursor = index >= 0 ? index : indices[indices.length - 1];
+      _anchor = _band.anchor >= 0 ? _band.anchor : indices[0];
+      var entry = browser.entry(_anchor);
+      _anchorPath = entry ? entry.path : "";
+    }
+    _band = null;
   }
 
   function selectAll() {
@@ -100,6 +141,7 @@ Scope {
   function _revalidate() {
     if (!browser || browser.status === "loading")
       return;
+    _band = null;
     var paths = _selectedPaths.filter(function(path) {
       var index = browser.indexOfPath(path);
       return index >= 0 && root._selectable(browser.entry(index));

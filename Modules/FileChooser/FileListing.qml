@@ -19,6 +19,9 @@ FocusScope {
   Layout.minimumHeight: frame.Layout.minimumHeight + Style.margin2XS
   readonly property bool navigationFocused: !!root.Window.window && root.Window.window.activeFocusItem === root
   readonly property int columns: Math.max(1, Math.floor(grid.width / tileWidth))
+  property int _preferredColumn: -1
+  property bool _movingCursor: false
+  readonly property var activeView: request.viewMode === "list" ? list : grid
   readonly property int pageStep: Math.max(1, Math.floor((request.viewMode === "list" ? list.height : grid.height) / (request.viewMode === "list" ? rowHeight : tileSize))) * (request.viewMode === "list" ? 1 : columns)
   readonly property var cursorItem: {
     void request.browser.count;
@@ -50,7 +53,8 @@ FocusScope {
     return {y: view.contentY, height: view.height, contentHeight: view.contentHeight,
       moving: view.moving, flicking: view.flicking, reused: view.reuseItems,
       delegates: view.contentItem.children.length, hiddenCount: hiddenView.count,
-      wheelStep: wheelTypography.implicitHeight * Qt.styleHints.wheelScrollLines, pageStep: pageStep};
+      wheelStep: wheelTypography.implicitHeight * Qt.styleHints.wheelScrollLines, pageStep: pageStep,
+      bandActive: listingInput.dragging};
   }
   NText { id: wheelTypography; visible: false; pointSize: Style.fontSizeM }
   function folderEditorState() {
@@ -118,6 +122,38 @@ FocusScope {
     request.browser.sortDescending = request.browser.sortKey === key ? !request.browser.sortDescending : false;
     request.browser.sortKey = key;
   }
+  function intersectingIndices(rect) {
+    var cellWidth = request.viewMode === "list" ? list.width : grid.cellWidth;
+    var cellHeight = request.viewMode === "list" ? rowHeight : grid.cellHeight;
+    var count = request.viewMode === "list" ? 1 : columns;
+    var indices = [];
+    for (var i = 0; i < request.browser.count; i++) {
+      var x = i % count * cellWidth;
+      var y = activeView.originY + Math.floor(i / count) * cellHeight;
+      var inset = request.viewMode === "list" ? 0 : Style.marginXS;
+      if (x < rect.x + rect.width && x + cellWidth - inset > rect.x && y < rect.y + rect.height && y + cellHeight - inset > rect.y)
+        indices.push(i);
+    }
+    return indices;
+  }
+  function moveCursor(delta, extend, focusOnly, vertical) {
+    _movingCursor = true;
+    var current = request.selection.cursor;
+    if (vertical && request.viewMode !== "list" && current >= 0) {
+      if (_preferredColumn < 0)
+        _preferredColumn = current % columns;
+      var row = Math.max(0, Math.min(Math.floor((request.browser.count - 1) / columns), Math.floor(current / columns) + delta / columns));
+      request.selection.moveTo(Math.min(request.browser.count - 1, row * columns + _preferredColumn), extend, focusOnly);
+    } else {
+      request.selection.move(delta, extend, focusOnly);
+      _preferredColumn = -1;
+    }
+    _movingCursor = false;
+  }
+  Connections {
+    target: root.request.selection
+    function onCursorChanged() { if (!root._movingCursor) root._preferredColumn = -1; }
+  }
   Keys.onPressed: event => {
     if (!navigationFocused) {
       event.accepted = false;
@@ -127,34 +163,36 @@ FocusScope {
     var alt = !!(event.modifiers & Qt.AltModifier);
     var ctrl = !!(event.modifiers & Qt.ControlModifier);
     event.accepted = true;
-    if (alt && event.key === Qt.Key_Left)
+    var focusOnly = ctrl && !shift;
+    if (event.key === Qt.Key_Backspace)
       request.browser.back();
-    else if (alt && event.key === Qt.Key_Right)
-      request.browser.forward();
-    else if (event.key === Qt.Key_Backspace || (alt && event.key === Qt.Key_Up))
-      request.browser.up();
     else if (ctrl && event.key === Qt.Key_A)
       request.selection.selectAll();
-    else if (ctrl && event.key === Qt.Key_H)
-      request.browser.showHidden = !request.browser.showHidden;
     else if (event.key === Qt.Key_Left)
-      request.selection.move(-1, shift);
+      moveCursor(-1, shift, focusOnly, false);
     else if (event.key === Qt.Key_Right)
-      request.selection.move(1, shift);
+      moveCursor(1, shift, focusOnly, false);
     else if (event.key === Qt.Key_Up)
-      request.selection.move(request.viewMode === "grid" ? -columns : -1, shift);
+      moveCursor(request.viewMode === "grid" ? -columns : -1, shift, focusOnly, true);
     else if (event.key === Qt.Key_Down)
-      request.selection.move(request.viewMode === "grid" ? columns : 1, shift);
+      moveCursor(request.viewMode === "grid" ? columns : 1, shift, focusOnly, true);
     else if (event.key === Qt.Key_PageUp)
-      request.selection.move(-pageStep, shift);
+      moveCursor(-pageStep, shift, focusOnly, true);
     else if (event.key === Qt.Key_PageDown)
-      request.selection.move(pageStep, shift);
+      moveCursor(pageStep, shift, focusOnly, true);
     else if (event.key === Qt.Key_Home)
-      request.selection.moveTo(0, shift);
+      request.selection.moveTo(0, shift, focusOnly);
     else if (event.key === Qt.Key_End)
-      request.selection.moveTo(request.browser.count - 1, shift);
-    else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter)
-      request.activate(request.selection.cursor);
+      request.selection.moveTo(request.browser.count - 1, shift, focusOnly);
+    else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+      if (event.modifiers === Qt.NoModifier) {
+        if (request.selection.cursor >= 0)
+          request.activate(request.selection.cursor);
+        else request.accept();
+      }
+    }
+    else if (ctrl && event.key === Qt.Key_Space)
+      request.selection.toggleCurrent();
     else if (event.key === Qt.Key_Space && cursorItem)
       quickLookRequested(tileRect());
     else if (event.text === "/" || event.text === "~")
@@ -265,6 +303,7 @@ FocusScope {
         cellHeight: root.tileSize
         currentIndex: root.request.selection.cursor
         keyNavigationEnabled: false
+        interactive: !listingInput.dragging
         highlightMoveDuration: 0
         onCurrentIndexChanged: positionViewAtIndex(currentIndex, GridView.Contain)
         ScrollBar.vertical: ScrollBar {}
@@ -309,6 +348,7 @@ FocusScope {
         cacheBuffer: root.rowHeight
         currentIndex: root.request.selection.cursor
         keyNavigationEnabled: false
+        interactive: !listingInput.dragging
         highlightMoveDuration: 0
         onCurrentIndexChanged: positionViewAtIndex(currentIndex, ListView.Contain)
         ScrollBar.vertical: ScrollBar {}
@@ -337,6 +377,17 @@ FocusScope {
           }
           onActivated: root.request.activate(index)
         }
+      }
+      FileListingInput {
+        id: listingInput
+        anchors.fill: parent
+        anchors.rightMargin: Style.marginL
+        viewport: root.request.viewMode === "list" ? list : grid
+        selection: root.request.selection
+        indexAt: point => root.activeView.indexAt(point.x + root.activeView.contentX, point.y + root.activeView.contentY)
+        intersectingIndices: rect => root.intersectingIndices(rect)
+        onFocusRequested: root.focusNavigation()
+        onActivated: index => root.request.activate(index)
       }
       ColumnLayout {
         id: emptyState

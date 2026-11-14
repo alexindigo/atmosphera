@@ -402,7 +402,7 @@ def input_command(argv):
     """Send the existing driver's vocabulary to its one private keyboard."""
     checked()
     assert argv[0] == "ydotool"
-    assert argv[1] in ("type", "key", "move", "click", "scroll", "scroll-stop")
+    assert argv[1] in ("type", "key", "move", "click", "drag", "scroll", "scroll-stop")
     return [sys.executable, "-B", str(Path(__file__).with_name("filechooser_input.py")), *argv[1:]]
 
 

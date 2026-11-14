@@ -7,6 +7,7 @@ import qs.Widgets
 RowLayout {
   id: root
   required property var request
+  readonly property bool editingText: pathField.inputItem.activeFocus || filterField.inputItem.activeFocus
   readonly property bool compactPath: pathButton.width < pathMeasure.implicitWidth + Style.margin2XS
   readonly property bool editing: pathField.visible
   readonly property var pathParts: request.browser.pathParts
@@ -57,9 +58,9 @@ RowLayout {
       name: item.Accessible.name || ""
     }));
   }
-  function focusFilter(initial) {
+    function focusFilter(initial) {
     if (initial !== undefined)
-      request.browser.filterText += initial;
+    request.browser.filterText += initial;
     filterField.inputItem.forceActiveFocus();
   }
 
@@ -211,7 +212,10 @@ RowLayout {
     onAccepted: root.listingFocusRequested()
   }
     ChooserButton {
-    icon: ({type: "svg", source: Qt.resolvedUrl("folder-plus.svg")})
+    icon: ({
+    type: "svg",
+    source: Qt.resolvedUrl("folder-plus.svg")
+  })
     tooltipText: I18n.tr("widgets.file-picker.new-folder")
     onClicked: root.request.beginCreateFolder()
   }

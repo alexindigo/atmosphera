@@ -20,6 +20,7 @@ PanelWindow {
   readonly property var preview: filePreview
   readonly property bool quickLookOpen: quickLook.opened
   readonly property bool pathEditing: header.editing
+  readonly property bool textEntryFocused: nameField.inputItem.activeFocus || header.editingText || request.browser.creatingFolder
   readonly property var breadcrumbText: header.breadcrumbItems.filter(part => part.kind === "segment").map(part => part.text)
   readonly property var previewRenderer: quickLook.renderer
   readonly property var playbackState: quickLook.playbackState
@@ -181,6 +182,36 @@ PanelWindow {
       sequence: "Ctrl+Shift+N"
       enabled: !root.quickLookOpen && !root.request.pendingReplace && !root.request.browser.createFolderBusy
       onActivated: root.request.beginCreateFolder()
+    }
+      NScopedShortcut {
+      scope: root.contentItem
+      sequence: "Alt+Left"
+      enabled: !root.quickLookOpen && !root.request.pendingReplace
+      onActivated: root.request.browser.back()
+    }
+      NScopedShortcut {
+      scope: root.contentItem
+      sequence: "Alt+Right"
+      enabled: !root.quickLookOpen && !root.request.pendingReplace
+      onActivated: root.request.browser.forward()
+    }
+      NScopedShortcut {
+      scope: root.contentItem
+      sequence: "Alt+Up"
+      enabled: !root.quickLookOpen && !root.request.pendingReplace
+      onActivated: root.request.browser.up()
+    }
+      NScopedShortcut {
+      scope: root.contentItem
+      sequence: "F5"
+      enabled: !root.quickLookOpen && !root.request.pendingReplace
+      onActivated: root.request.browser.refresh()
+    }
+      NScopedShortcut {
+      scope: root.contentItem
+      sequence: "Ctrl+H"
+      enabled: !root.quickLookOpen && !root.request.pendingReplace && !root.textEntryFocused
+      onActivated: root.request.browser.showHidden = !root.request.browser.showHidden
     }
 
       Rectangle {

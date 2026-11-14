@@ -170,7 +170,7 @@ static bool text(char *input) {
 }
 
 static bool pointer_command(char *input) {
-    unsigned x, y, button, modifiers;
+    unsigned x, y, end_x, end_y, button, modifiers;
     double delta;
     char source[16], extra;
     if (sscanf(input, "move %u %u %c", &x, &y, &extra) == 2 && x < 1280 && y < 800) {
@@ -185,6 +185,29 @@ static bool pointer_command(char *input) {
         zwlr_virtual_pointer_v1_button(pointer, milliseconds(), button, 1);
         zwlr_virtual_pointer_v1_frame(pointer);
         zwlr_virtual_pointer_v1_button(pointer, milliseconds(), button, 0);
+        zwlr_virtual_pointer_v1_frame(pointer);
+        if (modifiers & 1) key(42, 0);
+        if (modifiers & 2) key(29, 0);
+    } else if (sscanf(input, "drag %u %u %u %u %u %c", &x, &y, &end_x, &end_y, &modifiers, &extra) == 5 &&
+               x < 1280 && y < 800 && end_x < 1280 && end_y < 800 && modifiers <= 3) {
+        set_map(base_map);
+        if (modifiers & 1) key(42, 1);
+        if (modifiers & 2) key(29, 1);
+        zwlr_virtual_pointer_v1_motion_absolute(pointer, milliseconds(), x, y, 1280, 800);
+        zwlr_virtual_pointer_v1_frame(pointer);
+        zwlr_virtual_pointer_v1_button(pointer, milliseconds(), 272, 1);
+        zwlr_virtual_pointer_v1_frame(pointer);
+        for (int sample = 1; sample <= 24; sample++) {
+            unsigned px = (unsigned)((int)x + ((int)end_x - (int)x) * sample / 24);
+            unsigned py = (unsigned)((int)y + ((int)end_y - (int)y) * sample / 24);
+            zwlr_virtual_pointer_v1_motion_absolute(pointer, milliseconds(), px, py, 1280, 800);
+            zwlr_virtual_pointer_v1_frame(pointer);
+            if (wl_display_roundtrip(display) < 0) fail("drag private display");
+            usleep(16000);
+        }
+        /* Keep a real held pointer at the edge for the native view's autoscroll. */
+        usleep(600000);
+        zwlr_virtual_pointer_v1_button(pointer, milliseconds(), 272, 0);
         zwlr_virtual_pointer_v1_frame(pointer);
         if (modifiers & 1) key(42, 0);
         if (modifiers & 2) key(29, 0);

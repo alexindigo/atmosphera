@@ -78,11 +78,7 @@ Rectangle {
     id: pointer
     anchors.fill: parent
     hoverEnabled: true
-    onPressed: mouse => root.pressed(mouse.modifiers)
-    onDoubleClicked: mouse => {
-      if (mouse.modifiers === Qt.NoModifier)
-        root.activated();
-    }
+    acceptedButtons: Qt.NoButton
   }
   ToolTip.visible: pointer.containsMouse
   ToolTip.text: root.name

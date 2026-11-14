@@ -38,7 +38,7 @@ def main():
     shell = runtime / "shell"
     shutil.copytree(source, shell, symlinks=True)
     probe = shell / "filechooser-units.qml"
-    probe.write_text((source / "Scripts/dev/fixtures/filechooser-units.qml").read_text().replace('"../../../Helpers/', '"Helpers/').replace('"filechooser-icon-cases.js"', '"Scripts/dev/fixtures/filechooser-icon-cases.js"').replace('"filechooser-extensions.js"', '"Scripts/dev/fixtures/filechooser-extensions.js"'))
+    probe.write_text((source / "Scripts/dev/fixtures/filechooser-units.qml").read_text().replace('"../../../Helpers/', '"Helpers/').replace('"filechooser-icon-cases.js"', '"Scripts/dev/fixtures/filechooser-icon-cases.js"').replace('"filechooser-extensions.js"', '"Scripts/dev/fixtures/filechooser-extensions.js"').replace('"filechooser-navigation.js"', '"Scripts/dev/fixtures/filechooser-navigation.js"'))
     fixtures = runtime / "fixtures"
     fixtures.mkdir()
     (fixtures / "folder").mkdir()
@@ -169,6 +169,9 @@ def main():
     required.update("extensions." + name for name in ("default-on", "append-and-display", "dotfile", "compound", "suppression",
         "existing-raw-confirm", "existing-raw", "no-guess", "allowed-alternative", "type-change-compound", "type-change-result", "type-change-selected",
         "final-target-confirm", "directory-not-retargeted", "opt-out", "opt-out-remembered", "bracket-glob", "no-wildcard-invention", "mime-suffix"))
+    required.update("navigation." + name for name in ("cursor-only-keeps-selection", "cursor-only-keeps-anchor", "keyboard-toggle-adds",
+        "keyboard-toggle-removes", "single-Ctrl-deselects", "single-Ctrl-keeps-one", "band-symmetric", "band-idempotent", "band-retract-restores", "band-additive",
+        "modified-background-keeps", "background-clears", "single-band-ignored"))
     missing = sorted(required - {case["case"] for case in cases})
     required_media = {"playback." + name for name in ("initial", "inactive-intents", "volume-low", "volume-high", "volume-step", "invalid-volume", "times", "autoplay", "seek-low", "seek-high", "close-stops", "close-destroys-engine")}
     required_labels = {"labels." + name for name in ("extension-attached", "dots", "long-word", "cjk", "extension-only", "two-lines-only")}
