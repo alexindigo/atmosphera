@@ -11,7 +11,7 @@ import threading
 import time
 import urllib.parse
 
-from filechooser_isolation import enter
+from filechooser_isolation import cgroup, enter
 from filechooser_profile import current_profile, profile_argument
 from filechooser_regression import Run
 from qml_probe import inject_probe
@@ -67,6 +67,36 @@ button.onclick=event=>{record({kind:'save-start',trusted:event.isTrusted});const
     thread.start()
     url = "http://127.0.0.1:" + str(server.server_port) + "/"
     browser = None
+    resource_stop = threading.Event()
+    resource_samples = []
+    def sample_tasks():
+        peak = 0
+        while not resource_stop.wait(.1):
+            current = int((cgroup() / "pids.current").read_text())
+            if current <= peak:
+                continue
+            peak = current
+            rows = []
+            for proc in Path("/proc").iterdir():
+                if not proc.name.isdigit():
+                    continue
+                try:
+                    status = dict(line.split(":", 1) for line in (proc / "status").read_text().splitlines() if ":" in line)
+                    rows.append({"pid": proc.name, "name": status["Name"].strip(), "threads": int(status["Threads"]),
+                                 "command": (proc / "cmdline").read_bytes().replace(b"\0", b" ").decode(errors="replace")})
+                    if int(status["Threads"]) > 16:
+                        names = []
+                        for task in (proc / "task").iterdir():
+                            try:
+                                names.append((task / "comm").read_text().strip())
+                            except (FileNotFoundError, ProcessLookupError):
+                                pass
+                        rows[-1]["threadNames"] = names
+                except (FileNotFoundError, ProcessLookupError):
+                    pass
+            resource_samples.append({"tasks": current, "processes": rows})
+    resource_thread = threading.Thread(target=sample_tasks, daemon=True)
+    resource_thread.start()
     sequence = 0
     return_focus_after = 0
     def wait_for(predicate, seconds=25):
@@ -146,15 +176,30 @@ button.onclick=event=>{record({kind:'save-start',trusted:event.isTrusted});const
                     "--no-default-browser-check", "--password-store=basic", "--disable-background-networking",
                     "--disable-component-update", "--disable-default-apps", "--disable-sync", "--renderer-process-limit=1", url]
             preferences = json.loads((profile / "Default/Preferences").read_text())
+        # Match the private session's one-CPU quota when the browser sizes its
+        # own pools. A four-vCPU guest otherwise admits multi-CPU startup pools
+        # that compete with the shell/input/controller under the same task cap.
+        # Affinity changes no sandbox, cgroup, OOM floor or consumer assertion.
+        browser_cpu = min(os.sched_getaffinity(0))
         (run.output / "browser-profile.json").write_text(json.dumps({"preferences": preferences,
+            "browserCpu": browser_cpu,
             "rasterThreads": "1", "rayonThreads": "1", "allocator": run.env["MALLOC_CONF"],
             "THP_enabled": next(line.split()[1] for line in Path('/proc/self/status').read_text().splitlines() if line.startswith('THP_enabled:'))}, indent=2))
         original_env = run.env
         run.env = dict(run.env, TMPDIR=str(current_profile().workspace / "tmp"), MOZ_TMPDIR=str(current_profile().workspace / "tmp"),
                        GTK_USE_PORTAL="1", MOZ_ENABLE_WAYLAND="1", LP_NUM_THREADS="1", RAYON_NUM_THREADS="1")
-        browser = run.launch(["timeout", "600", *argv], args.browser + ".log")
+        browser = run.launch(["timeout", "600", "taskset", "-c", str(browser_cpu), *argv], args.browser + ".log")
         run.env = original_env
         wait_for(lambda: any(e.get("kind") == "ready" and e.get("focused") for e in events), 40)
+        owned_children = Path(f"/proc/{browser.pid}/task/{browser.pid}/children").read_text().split()
+        assert len(owned_children) == 1, owned_children
+        browser_status = dict(line.split(":", 1) for line in Path(f"/proc/{owned_children[0]}/status").read_text().splitlines() if ":" in line)
+        observed_cpu = browser_status["Cpus_allowed_list"].strip()
+        receipt_path = run.output / "browser-profile.json"
+        receipt = json.loads(receipt_path.read_text())
+        receipt.update(observedBrowserCpu=observed_cpu, browserPid=int(owned_children[0]))
+        receipt_path.write_text(json.dumps(receipt, indent=2))
+        run.check(args.browser + "-browser-affinity-observed", observed_cpu == str(browser_cpu))
 
         visit("open"); opened("open"); navigate(run.fixtures)
         run.key(33, 29); run.command(["ydotool", "type", "UPLOAD"])
@@ -229,6 +274,9 @@ button.onclick=event=>{record({kind:'save-start',trusted:event.isTrusted});const
             (run.output / "failed-command.log").write_text(str(error.stdout) + str(error.stderr))
         raise
     finally:
+        resource_stop.set(); resource_thread.join(timeout=5)
+        assert not resource_thread.is_alive()
+        (run.output / "browser-task-samples.json").write_text(json.dumps(resource_samples, indent=2))
         server.shutdown(); server.server_close(); thread.join(timeout=5)
         (run.output / "browser-events.json").write_text(json.dumps(events, indent=2))
         run.close()

@@ -17,6 +17,10 @@ ChooserTextField {
   readonly property bool completionOpen: matches.visible
   property bool _offered: false
   property int _current: -1
+  on_CurrentChanged: {
+    if (_current >= 0 && suggestions[_current])
+      inputItem.Accessible.announce(suggestions[_current].name);
+  }
   onTextEdited: { _offered = true; _current = -1; }
   function dismissCompletion() { _offered = false; matches.close(); }
   function completionGeometry(relativeTo) {
@@ -96,7 +100,9 @@ ChooserTextField {
         width: rows.width
         focusPolicy: Qt.NoFocus
         highlighted: root._current === index
+        Accessible.role: Accessible.ListItem
         Accessible.name: modelData.name
+        Accessible.selected: root._current === index
         contentItem: NText { text: completionRow.modelData.name + (completionRow.modelData.directory ? "/" : ""); elide: Text.ElideMiddle; pointSize: Style.fontSizeM }
         background: Rectangle { radius: Style.iRadiusXS; color: completionRow.highlighted ? Qt.alpha(AtmoColor.mPrimary, 0.18) : "transparent" }
         onClicked: root.chooseCompletion(index)

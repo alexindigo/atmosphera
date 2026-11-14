@@ -17,7 +17,7 @@ FocusScope {
   readonly property real rowHeight: 48 * Style.uiScaleRatio
   Layout.minimumWidth: frame.Layout.minimumWidth + Style.margin2XS
   Layout.minimumHeight: frame.Layout.minimumHeight + Style.margin2XS
-  readonly property bool navigationFocused: !!root.Window.window && root.Window.window.activeFocusItem === root
+  readonly property bool navigationFocused: viewportScope.activeFocus
   readonly property int columns: Math.max(1, Math.floor(grid.width / tileWidth))
   property int _preferredColumn: -1
   property bool _movingCursor: false
@@ -45,7 +45,6 @@ FocusScope {
       tiles: activeEntries(grid).filter(item => item.thumbnailActive).map(item => item.thumbnailState)
     };
   }
-  activeFocusOnTab: true
 
   function scrollState() {
     var view = request.viewMode === "list" ? list : grid;
@@ -64,8 +63,22 @@ FocusScope {
   }
   function focusNavigation() {
     newFolderField.inputItem.focus = false;
-    root.forceActiveFocus();
+    viewportScope.forceActiveFocus();
+    Qt.callLater(focusCurrent);
   }
+  function focusCurrent() {
+    if (!navigationFocused) return;
+    var item = activeView.itemAtIndex(request.selection.cursor);
+    if (item) item.focusEntry();
+    else {
+      // FocusScope.forceActiveFocus restores its last child. Retiring the
+      // cursor must release each native view's subfocus before focusing Files.
+      grid.focus = false;
+      list.focus = false;
+      viewportScope.forceActiveFocus();
+    }
+  }
+  onNavigationFocusedChanged: if (navigationFocused) Qt.callLater(focusCurrent)
   Connections {
     target: root.request.browser
     function onCreatingFolderChanged() {
@@ -152,7 +165,10 @@ FocusScope {
   }
   Connections {
     target: root.request.selection
-    function onCursorChanged() { if (!root._movingCursor) root._preferredColumn = -1; }
+    function onCursorChanged() {
+      if (!root._movingCursor) root._preferredColumn = -1;
+      Qt.callLater(root.focusCurrent);
+    }
   }
   Keys.onPressed: event => {
     if (!navigationFocused) {
@@ -285,7 +301,13 @@ FocusScope {
         }
       }
     }
-    Item {
+    FocusScope {
+      id: viewportScope
+      activeFocusOnTab: true
+      Accessible.role: Accessible.List
+      Accessible.name: I18n.tr("widgets.file-picker.files")
+      Accessible.description: root.request.browser.currentPath
+      Accessible.focusable: true
       Layout.fillWidth: true
       Layout.fillHeight: true
       Layout.minimumWidth: Math.max(root.tileSize + Style.marginL, emptyState.visible && !root.request.browser.filtering ? emptyState.implicitWidth : 0)
@@ -306,7 +328,8 @@ FocusScope {
         interactive: !listingInput.dragging
         highlightMoveDuration: 0
         onCurrentIndexChanged: positionViewAtIndex(currentIndex, GridView.Contain)
-        ScrollBar.vertical: ScrollBar {}
+        onCurrentItemChanged: Qt.callLater(root.focusCurrent)
+        ScrollBar.vertical: ScrollBar { Accessible.name: I18n.tr("widgets.file-picker.scroll-files") }
         ChooserScrollHandler { viewport: grid; lineHeight: wheelTypography.implicitHeight }
         delegate: FileEntry {
           property bool inPool: false
@@ -326,6 +349,7 @@ FocusScope {
           bytes: fileSize
           modified: fileModified
           selected: root.request.selection.selectedPaths.includes(filePath)
+          selectable: directory === (root.request.selection.selectable === "folders")
           cursor: root.request.selection.cursor === index
           listingFocused: root.navigationFocused
           thumbnailProvider: root.thumbnails
@@ -351,7 +375,8 @@ FocusScope {
         interactive: !listingInput.dragging
         highlightMoveDuration: 0
         onCurrentIndexChanged: positionViewAtIndex(currentIndex, ListView.Contain)
-        ScrollBar.vertical: ScrollBar {}
+        onCurrentItemChanged: Qt.callLater(root.focusCurrent)
+        ScrollBar.vertical: ScrollBar { Accessible.name: I18n.tr("widgets.file-picker.scroll-files") }
         ChooserScrollHandler { viewport: list; lineHeight: wheelTypography.implicitHeight }
         delegate: FileEntry {
           required property int index
@@ -369,6 +394,7 @@ FocusScope {
           modified: fileModified
           listMode: true
           selected: root.request.selection.selectedPaths.includes(filePath)
+          selectable: directory === (root.request.selection.selectable === "folders")
           cursor: root.request.selection.cursor === index
           listingFocused: root.navigationFocused
           onPressed: modifiers => {

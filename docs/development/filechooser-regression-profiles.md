@@ -72,6 +72,10 @@ session's renderer pools, matching the existing one-CPU quota and task cap.
 Other runners, especially the matched-idle scroll measurement, retain their
 original environment. Firefox's disposable profile disables unused new-tab
 preloading to avoid an extra privileged-content process within that same cap.
+The disposable browser also inherits one allowed CPU through `taskset`, so its
+CPU-derived startup pools match the session's one-CPU quota. The selected CPU is
+recorded in its browser profile receipt. All sandbox and task/memory/OOM checks
+remain; the shell, other runners and scroll measurements are not affinity-pinned.
 Browser and full-UI subjects reuse `filechooser-no-thp.py` and the existing media
 resource-test allocator profile (`dirty_decay_ms:0,muzzy_decay_ms:0`), avoiding
 huge-page/free-page retention under MemoryHigh. Both are process-only; no kernel
@@ -83,3 +87,27 @@ its many dialog/media cycles. Scroll benchmarks keep their original profile.
 timeout 900 python3 -B Scripts/dev/filechooser-browser-regression.py --guest-profile "$profile" --source "$PWD" --label browser-LABEL --browser chromium
 timeout 900 python3 -B Scripts/dev/filechooser-browser-regression.py --guest-profile "$profile" --source "$PWD" --label browser-LABEL2 --browser firefox
 ```
+
+## Assistive technology
+
+Install `python-atspi`, `orca`, `espeak-ng` and `speech-dispatcher` inside the
+assigned guest. Run from the same guest source/workspace with the same profile:
+
+```sh
+timeout 900 python3 -B Scripts/dev/filechooser-a11y-regression.py --guest-profile "$profile" --source "$PWD" --label a11y-LABEL
+```
+
+This runner preserves native AT-SPI trees, focus and announcement events, a
+reversible keyboard focus walk and Orca's generated speech. It launches the
+native accessibility bus/registry and speech dispatcher inside the existing
+private compositor's audited/capped PID namespace. The a11y launcher uses
+`ATSPI_DBUS_IMPLEMENTATION=dbus-daemon` so service activation does not address
+an external user manager; the explicit registry is a private child. Its socket
+path is checked against the launcher's path-length limit, avoiding its temporary
+directory fallback. Orca's enablement uses the private bus with an in-memory
+GSettings backend. espeak-ng outputs only to the existing private PipeWire null
+sink. No login-session settings, accessibility stack or audio endpoints change.
+
+The sibling runtime directory `<label>-a11y` holds stack logs and the result;
+the normal evidence directory holds tree dumps and the harness log. `--inspect`
+captures only the initial tree for diagnosis and is not a full verification.

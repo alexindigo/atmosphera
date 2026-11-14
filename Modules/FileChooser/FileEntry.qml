@@ -12,6 +12,7 @@ Rectangle {
   required property var modified
   property bool listMode: false
   property bool selected: false
+  property bool selectable: true
   property bool cursor: false
   property bool listingFocused: false
   property var thumbnailProvider: null
@@ -21,6 +22,7 @@ Rectangle {
   readonly property var thumbnailState: !listMode && visual.item ? visual.item.thumbnailState : ({})
   signal pressed(int modifiers)
   signal activated
+  function focusEntry() { forceActiveFocus(Qt.OtherFocusReason); }
 
   function iconState() {
     return visual.item ? Object.assign({
@@ -42,7 +44,12 @@ Rectangle {
   border.color: AtmoColor.mPrimary
   Accessible.role: Accessible.ListItem
   Accessible.name: name
+  Accessible.description: directory ? I18n.tr("widgets.file-picker.folder") : FileTypes.formatSize(bytes)
+  Accessible.focusable: true
+  Accessible.selectable: selectable
   Accessible.selected: selected
+  Accessible.onPressAction: pressed(Qt.NoModifier)
+  Accessible.onToggleAction: pressed(Qt.ControlModifier)
 
   // A pooled row owns exactly one presentation graph, never hidden shapes,
   // image loaders, labels or column bindings for the other view.

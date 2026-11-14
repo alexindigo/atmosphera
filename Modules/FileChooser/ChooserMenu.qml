@@ -19,7 +19,12 @@ Popup {
   closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
   onOpened: {
     rows.currentIndex = 0;
-    body.forceActiveFocus();
+    focusCurrent();
+  }
+  function focusCurrent() {
+    if (!visible) return;
+    if (rows.currentItem) rows.currentItem.forceActiveFocus();
+    else body.forceActiveFocus();
   }
   onClosed: if (returnFocus && returnFocus.visible && returnFocus.enabled)
               returnFocus.forceActiveFocus()
@@ -87,8 +92,11 @@ Popup {
       implicitHeight: Math.min(contentHeight, 240 * Style.uiScaleRatio)
       clip: true
       model: root.entries
-      onCurrentIndexChanged: if (currentIndex >= 0)
-                               positionViewAtIndex(currentIndex, ListView.Contain)
+      onCurrentIndexChanged: {
+        if (currentIndex >= 0) positionViewAtIndex(currentIndex, ListView.Contain);
+        Qt.callLater(root.focusCurrent);
+      }
+      onCurrentItemChanged: Qt.callLater(root.focusCurrent)
       ScrollIndicator.vertical: ScrollIndicator {}
       delegate: ItemDelegate {
         id: menuEntry
@@ -96,6 +104,7 @@ Popup {
         required property int index
         width: rows.width
         highlighted: rows.currentIndex === index
+        activeFocusOnTab: false
         Accessible.role: Accessible.MenuItem
         Accessible.name: modelData.name
         contentItem: NText {

@@ -25,6 +25,8 @@ Rectangle {
     anchors.margins: Style.marginM
     contentWidth: availableWidth
     clip: true
+    ScrollBar.vertical: ScrollBar { Accessible.name: I18n.tr("widgets.file-picker.scroll-places") }
+    ScrollBar.horizontal: ScrollBar { Accessible.name: I18n.tr("widgets.file-picker.scroll-places") }
     ColumnLayout {
       width: parent.width
       spacing: Style.marginXS

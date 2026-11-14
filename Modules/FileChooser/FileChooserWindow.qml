@@ -22,6 +22,22 @@ PanelWindow {
   readonly property bool pathEditing: header.editing
   function pathEntryState() { return {location: header.pathState(), name: {text: nameField.text, suggestions: nameField.suggestions, completionOpen: nameField.completionOpen, completionRows: nameField.completionGeometry(root.contentItem)}}; }
   readonly property bool textEntryFocused: nameField.inputItem.activeFocus || header.editingText || request.browser.creatingFolder
+  readonly property string announcementError: request.errorText || request.browser.errorText || request.browser.createFolderError
+  onAnnouncementErrorChanged: if (visible && announcementError) panel.Accessible.announce(announcementError, Accessible.Assertive)
+  Timer {
+    id: countAnnouncement
+    interval: 300
+    onTriggered: if (root.visible && root.request.browser.status === "ready")
+      panel.Accessible.announce(I18n.tr("widgets.file-picker.item-count", {count: root.request.browser.count}))
+  }
+  Connections {
+    target: root.request.browser
+    function onCountChanged() { countAnnouncement.restart(); }
+    function onStatusChanged() {
+      if (root.request.browser.status === "loading") panel.Accessible.announce(I18n.tr("common.loading"));
+      else countAnnouncement.restart();
+    }
+  }
   readonly property var breadcrumbText: header.breadcrumbItems.filter(part => part.kind === "segment").map(part => part.text)
   readonly property var previewRenderer: quickLook.renderer
   readonly property var playbackState: quickLook.playbackState
@@ -226,6 +242,8 @@ PanelWindow {
 
       Rectangle {
       id: panel
+      Accessible.role: Accessible.Dialog
+      Accessible.name: root.request.options.title || I18n.tr("widgets.file-picker.title")
       anchors.centerIn: parent
       width: Math.max(root.minimumPanelSize.width, Math.min(root.preferredPanelWidth, parent.width - Style.margin2XL))
       height: Math.max(root.minimumPanelSize.height, Math.min(root.preferredPanelHeight, parent.height - Style.margin2XL))
@@ -373,12 +391,13 @@ PanelWindow {
       enabled: !root.quickLookOpen && !root.request.pendingReplace
     }
     }
-      FocusScope {
+      ChooserFocusScope {
       id: replaceOverlay
       anchors.fill: parent
       visible: root.request.pendingReplace !== ""
       Accessible.role: Accessible.Dialog
       Accessible.name: I18n.tr("widgets.file-picker.overwrite-title")
+      Accessible.description: root.request.pendingReplace
       NInputGuard {
       target: replaceOverlay
       focusTarget: changeNameButton
