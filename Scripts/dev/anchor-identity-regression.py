@@ -7,7 +7,7 @@ from pathlib import Path
 import re
 import shutil
 from presentation_harness import add_execution_arguments, check_execution_paths, run_harness, write_receipt
-from qml_probe import inject_probe
+from qml_probe import inject_probe, probe_owner_path
 
 PROBE = r'''
   property int _identityPhase: 0
@@ -132,7 +132,7 @@ def main():
     shell = work / 'shell'
     shutil.copytree(args.source, shell, ignore=shutil.ignore_patterns('.git', '__pycache__', '*.bak'))
     shutil.copy2(Path(__file__).parent / 'fixtures/presentation-tray.py', shell / 'Scripts/dev/fixtures/presentation-tray.py')
-    main_qml = shell / 'shell.qml'
+    main_qml = probe_owner_path(shell)
     text = main_qml.read_text().replace('import Quickshell\n', 'import Quickshell\nimport Quickshell.Io\nimport Quickshell.Wayland\nimport Quickshell.Services.SystemTray\nimport qs.Modules.Dock\nimport qs.Widgets\n')
     main_qml.write_text(inject_probe(text, PROBE))
     env = dict(os.environ, QT_QPA_PLATFORM='wayland', QT_QUICK_BACKEND='software', XDG_CURRENT_DESKTOP='',

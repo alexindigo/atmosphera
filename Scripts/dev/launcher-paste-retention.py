@@ -19,7 +19,8 @@ import time
 import zlib
 
 from launcher_workspace import ROOT
-from launcher_paste_support import profile_environment
+from qml_probe import bootstrap_fixture
+from launcher_paste_support import profile_environment, wait_for_ipc_target
 
 PAYLOAD = 'K5 cancellation retention payload'
 
@@ -38,7 +39,7 @@ def main():
     tree = runtime / 'tree'
     shutil.copytree(args.source, tree, symlinks=True)
     shell = tree / 'shell.qml'
-    shell.write_text((Path(__file__).parent / 'fixtures/launcher-paste-retention.qml').read_text())
+    shell.write_text(bootstrap_fixture((Path(__file__).parent / 'fixtures/launcher-paste-retention.qml').read_text()))
     env = profile_environment(runtime / 'profile', tree)
     # Quickshell's per-instance logs go to the runtime dir: keep them on the
     # task disk, not in the session's RAM-backed /run/user. A short path keeps
@@ -67,7 +68,8 @@ def main():
             process = subprocess.Popen(['timeout', '--kill-after=5', '60', 'qs', '-p', str(shell), '--no-color'],
                                        cwd=tree, env=env, stdout=log, stderr=subprocess.STDOUT)
             try:
-                flow.wait(lambda: ipc('state', False).returncode == 0, 15)
+                wait_for_ipc_target(lambda: subprocess.run(['timeout', '10', 'qs', '-p', str(shell), 'ipc', 'show'],
+                    env=env, capture_output=True, text=True, check=False, timeout=15), 'pasteRetention', flow.wait, 15)
                 steps['owner'] = flow.wait(lambda: (s if s['active'] and s['hadKeyboard'] else None) if (s := state()) else None, 10)
                 ipc('commit')
                 steps['committed_held'] = flow.wait(lambda: (s if s['pending'] == 1 and s['retained'] else None) if (s := state()) else None)

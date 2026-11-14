@@ -13,6 +13,7 @@ import time
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--work', required=True, type=Path)
+    ap.add_argument('--guest-profile', type=Path)
     args = ap.parse_args()
     assert Path('/sys/class/dmi/id/sys_vendor').read_text().strip() == 'QEMU', 'VM only'
     args.work.mkdir(parents=True, exist_ok=False)
@@ -46,7 +47,8 @@ if os.environ['CLEANUP_TEST_MODE']=='timeout':
                    CLEANUP_TEST_ROOT=str(root), CLEANUP_TEST_MODE=mode, TMPDIR=str(root / 'tmp'))
         with (root / 'runner.log').open('w') as log:
             runner = subprocess.Popen([sys.executable, '-B', str(source / 'Scripts/dev/shell-recovery-regression.py'),
-                                       '--work', str(root), '--inside', '--case', 'core-smoke'],
+                                       '--work', str(root), '--inside', '--case', 'core-smoke',
+                                       *(['--guest-profile', str(args.guest_profile)] if args.guest_profile else [])],
                                       env=env, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
             groups = {runner.pid}
             try:

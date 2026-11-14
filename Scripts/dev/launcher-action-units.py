@@ -10,6 +10,7 @@ import subprocess
 import sys
 
 from launcher_workspace import ROOT
+from qml_probe import bootstrap_fixture
 sys.path.insert(0, str(ROOT / 'tools'))
 from filechooser_isolation import enter, guest, profile_env
 
@@ -33,7 +34,7 @@ def main():
         tree = runtime / kind / 'tree'
         profile = runtime / kind / 'profile'
         shutil.copytree(source, tree, symlinks=True)
-        (tree / 'shell.qml').write_text(fixture.read_text().replace('"../../../Modules/', '"Modules/'))
+        (tree / 'shell.qml').write_text(bootstrap_fixture(fixture.read_text().replace('"../../../Modules/', '"Modules/')))
         result = out / (kind + '.consumer')
         executable = out / (kind + '.sh')
         expression = "printf '%s' 'survived-" + kind + "' > '" + str(result) + "'"

@@ -1138,13 +1138,11 @@ class Runner:
         elif name in ("wizard-local-reset", "wizard-local-skip"):
             image = self.output / (name + "-before.png")
             pixels = subprocess.check_output(["magick", str(image), "-depth", "8", "rgb:-"])
-            _, y = self.wizard_primary_geometry(pixels, left, right)
-            # Positions are the two observed left footer controls in this
-            # recorded/maximized VM recipe; the row center comes from its
-            # rendered primary sibling, including changing status-lane height.
-            x = left + (185 if name == "wizard-local-reset" else 100)
+            controls = self.wizard_local_geometry(pixels, left, right)
+            x, y = controls["reset" if name == "wizard-local-reset" else "skip"]
             atomic_json(self.output / (name + "-geometry.json"), {"image": str(image), "target": [x, y],
-                        "observed_focus_bounds": [left, right], "selector": "left footer Reset/Skip; shared rendered row"})
+                        "controls": controls, "observed_focus_bounds": [left, right],
+                        "selector": "two rendered left footer outlines in the primary control row"})
         if not left < x < right:
             raise RuntimeError(f"requested click is outside the observed window: {x}, {left}, {right}")
         (self.output / (name + "-target.json")).write_text(
@@ -1234,6 +1232,38 @@ class Runner:
         if not 70 <= x1 - x0 <= 350:
             raise HarnessBlocked("wizard primary shape width is not a button")
         return (x0 + x1) / 2, (observed[0][0] + observed[-1][0]) / 2
+
+    @staticmethod
+    def wizard_local_geometry(pixels, left, right):
+        """Locate footer outlines, including an icon-only Reset, from pixels."""
+        _, row_center = Runner.wizard_primary_geometry(pixels, left, right)
+        x0, x1 = left + 24, (left + right) // 2
+        y0, y1 = max(500, int(row_center) - 45), min(750, int(row_center) + 46)
+        blue = set()
+        for y in range(y0, y1):
+            for x in range(x0, x1):
+                start = (y * 1280 + x) * 3
+                r, g, b = pixels[start:start + 3]
+                if r < 80 and g > 60 and b > 120:
+                    blue.add((x, y))
+        outlines = []
+        while blue:
+            pending = [blue.pop()]
+            xs, ys = [], []
+            while pending:
+                x, y = pending.pop(); xs.append(x); ys.append(y)
+                for adjacent in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+                    if adjacent in blue:
+                        blue.remove(adjacent); pending.append(adjacent)
+            bounds = (min(xs), min(ys), max(xs), max(ys))
+            width, height = bounds[2] - bounds[0], bounds[3] - bounds[1]
+            if 12 <= width <= 300 and 25 <= height <= 70 and abs((bounds[1] + bounds[3]) / 2 - row_center) <= 3:
+                outlines.append(bounds)
+        outlines.sort()
+        if len(outlines) != 2 or outlines[0][2] >= outlines[1][0]:
+            raise HarnessBlocked("ambiguous rendered Skip/Reset outlines: " + repr(outlines))
+        return {name: [(box[0] + box[2]) / 2, (box[1] + box[3]) / 2]
+                for name, box in zip(("skip", "reset"), outlines)}
 
     def observation(self, label):
         p = self.config / "settings/bindings.json"

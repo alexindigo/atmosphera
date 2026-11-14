@@ -13,7 +13,7 @@ import re
 import shutil
 import sys
 from presentation_harness import add_execution_arguments, check_execution_paths, run_harness, write_receipt
-from qml_probe import inject_probe
+from qml_probe import inject_probe, probe_owner_path
 
 
 PROBE = r'''
@@ -112,7 +112,7 @@ def main():
     work.mkdir()  # Preserve earlier runs instead of replacing their evidence.
     shell = work / "shell"
     shutil.copytree(source, shell, ignore=shutil.ignore_patterns(".git", "__pycache__", "*.bak"))
-    main_qml = shell / "shell.qml"
+    main_qml = probe_owner_path(shell)
     original = main_qml.read_text()
     main_qml.write_text(inject_probe(original, PROBE))
     env = dict(os.environ, QT_QPA_PLATFORM="wayland", QT_QUICK_BACKEND="software",

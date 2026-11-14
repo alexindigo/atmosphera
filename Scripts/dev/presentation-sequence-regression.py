@@ -9,7 +9,7 @@ import shutil
 import subprocess
 import sys
 from presentation_harness import add_execution_arguments, check_execution_paths, remaining_budget, run_harness, write_receipt
-from qml_probe import inject_probe
+from qml_probe import inject_probe, probe_owner_path
 
 PROBE = r'''
   property var _sequenceOsd: null
@@ -346,7 +346,7 @@ def main():
     shutil.copy2(Path(__file__).parent / 'workspace_guard.py', shell / 'Scripts/dev/workspace_guard.py')
     shutil.copy2(Path(__file__).parent / 'qml_probe.py', shell / 'Scripts/dev/qml_probe.py')
     shutil.copy2(Path(__file__).parent / 'qml-identifiers.py', shell / 'Scripts/dev/qml-identifiers.py')
-    main_qml = shell / 'shell.qml'
+    main_qml = probe_owner_path(shell)
     text = main_qml.read_text().replace('import Quickshell\n', 'import Quickshell\nimport Quickshell.Io\nimport Quickshell.Wayland\nimport Quickshell.Services.SystemTray\nimport qs.Modules.Dock\nimport qs.Modules.Bar.Extras\n')
     text = text.replace('      OSD {}', '      OSD { Component.onCompleted: shellRoot._sequenceOsd = this }')
     text = text.replace('      Notification {}', '      Notification { Component.onCompleted: shellRoot._sequenceNotifications = this }')

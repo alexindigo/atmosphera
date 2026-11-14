@@ -24,6 +24,7 @@ import traceback
 
 from guest_profile import activate_profile, profile_argument
 from gui_timing_capture import ConsoleCapture
+from qml_probe import inject_probe, probe_owner_path
 from workspace_guard import require_disk_backed_paths
 
 HERE = Path(__file__).resolve().parent
@@ -219,11 +220,10 @@ def main():
     # Fixtures are always from this runner's version, including old-owner legs.
     for name in ('settings-gui-timing.qml', 'launcher-key-owner-probe.qml'):
         shutil.copy2(HERE / 'fixtures' / name, shell / 'Scripts/dev/fixtures' / name)
-    body = shell / ('ShellSession.qml' if (shell / 'ShellSession.qml').is_file() else 'shell.qml')
+    body = probe_owner_path(shell)
     text = body.read_text()
-    assert text.count('id: shellRoot') == 1
     injected = '\n      property var _guiTiming: Qt.createComponent(Quickshell.shellDir + "/Scripts/dev/fixtures/settings-gui-timing.qml").createObject(shellRoot)\n'
-    body.write_text(text.replace('id: shellRoot', 'id: shellRoot' + injected))
+    body.write_text(inject_probe(text, injected))
     result['sourceFiles'] = inventory(source)
     result['instrumentedFiles'] = {str(body.relative_to(shell)): hashlib.sha256(body.read_bytes()).hexdigest()}
     config = work / 'c'

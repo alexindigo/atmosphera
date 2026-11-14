@@ -6,11 +6,20 @@ lives, and inserts the payload inside it. In an election-gated shell, the probe
 shares the elected component's scope and lifetime instead of running in the
 outer `ShellRoot` while the session is waiting.
 
+Resolve full-shell input with `probe_owner_path(shell)` first. It checks the
+bootstrap `shell.qml` and split `ShellSession.qml` for one declaring owner using
+the same lexer. Bootstrap wrapper depth and file placement do not change scope.
+Component-specific probes still address their own file and explicit ID.
+
 The helper reuses `qml-identifiers.py`'s lexer for comments, strings, templates
 and regular expressions. Missing/ambiguous IDs or unbalanced braces fail before
 the caller writes a source copy. Non-session component observers specify their
 own owner, for example `root_id="root"`. Imports and disposable-copy ownership
 remain with the runner. Production QML has no test-only injection marker.
+
+Inert fixtures use `bootstrap_fixture(source)` to retain their complete original
+object behind directory preparation and Settings readiness. Their IDs, timers,
+input schedule and consumer assertions keep their original relative lifetime.
 
 The recovery runner separately injects its queued-shell diagnostic in the
 registration singleton. That owner exists before election, so the test can

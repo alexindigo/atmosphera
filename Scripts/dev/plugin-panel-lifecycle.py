@@ -12,7 +12,7 @@ import re
 import shutil
 
 from presentation_harness import add_execution_arguments, check_execution_paths, run_harness, write_receipt
-from qml_probe import inject_probe
+from qml_probe import inject_probe, probe_owner_path
 
 
 PANEL = '''import QtQuick
@@ -165,7 +165,7 @@ def main():
     work.mkdir()
     shell = work / 'shell'
     shutil.copytree(args.source, shell, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '*.bak'))
-    entry = shell / 'shell.qml'
+    entry = probe_owner_path(shell)
     original = entry.read_text()
     entry.write_text(inject_probe(original, PROBE))
     env = dict(os.environ, QT_QPA_PLATFORM='wayland', QT_QUICK_BACKEND='software')

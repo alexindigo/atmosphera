@@ -10,6 +10,7 @@ import sys
 import time
 
 from launcher_workspace import ROOT
+from qml_probe import bootstrap_fixture
 sys.path.insert(0, str(ROOT / 'tools'))
 from filechooser_isolation import enter, guest, profile_env
 from launcher_paste_support import png
@@ -27,7 +28,7 @@ def main():
     output.mkdir()
     tree, profile = runtime / 'tree', runtime / 'profile'
     shutil.copytree(source, tree, symlinks=True)
-    (tree / 'shell.qml').write_text((source / 'Scripts/dev/fixtures/launcher-provider-data.qml').read_text())
+    (tree / 'shell.qml').write_text(bootstrap_fixture((source / 'Scripts/dev/fixtures/launcher-provider-data.qml').read_text()))
     env = profile_env(profile)
     settings = json.loads((source / 'Configs/defaults.json').read_text())
     settings['settingsVersion'] = 62

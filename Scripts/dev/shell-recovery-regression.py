@@ -14,7 +14,7 @@ import subprocess
 import sys
 import time
 
-from qml_probe import inject_probe
+from qml_probe import inject_probe, probe_owner_path
 BACKEND = "org.freedesktop.impl.portal.desktop.atmosphera"
 OBSERVER = '''
   FloatingWindow {
@@ -117,7 +117,7 @@ def main():
     root = args.work.resolve()
     shell = root / "shell"
     shutil.copytree(args.source, shell, ignore=shutil.ignore_patterns(".git"))
-    session_entry = "shell.qml" if args.case == "fixture" else ("ShellSession.qml" if (shell / "ShellSession.qml").exists() else "shell.qml")
+    session_entry = "shell.qml" if args.case == "fixture" else probe_owner_path(shell).name
     if args.case == "fixture":
         (shell / "shell.qml").write_text((shell / "Scripts/dev/fixtures/filechooser-portal.qml").read_text())
     else:
