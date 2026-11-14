@@ -84,6 +84,11 @@ class IdentityTests(unittest.TestCase):
 
 
 class OwnershipLookupTests(unittest.TestCase):
+    def setUp(self):
+        pause = patch.object(owner.time, "sleep", return_value=None)
+        pause.start()
+        self.addCleanup(pause.stop)
+
     def test_only_explicit_absence_returns_none(self):
         with patch.object(owner, "call", return_value="b false"):
             self.assertIsNone(owner.owner())
@@ -94,12 +99,13 @@ class OwnershipLookupTests(unittest.TestCase):
                 owner.owner()
 
     def test_failed_unique_lookup_is_not_absence(self):
-        with patch.object(owner, "call", side_effect=["b true", ""]):
+        with patch.object(owner, "call", side_effect=lambda method, *args: "b true" if method == "NameHasOwner" else ""):
             with self.assertRaises(RuntimeError):
                 owner.owner()
 
     def test_failed_pid_lookup_is_not_absence(self):
-        with patch.object(owner, "call", side_effect=["b true", 's ":1.42"', ""]):
+        replies = {"NameHasOwner": "b true", "GetNameOwner": 's ":1.42"'}
+        with patch.object(owner, "call", side_effect=lambda method, *args: replies.get(method, "")):
             with self.assertRaises(RuntimeError):
                 owner.owner()
 
@@ -146,6 +152,48 @@ class OwnershipLookupTests(unittest.TestCase):
     def test_confirmed_absence_has_no_queued_connection(self):
         with patch.object(owner, "call", return_value="b false"):
             self.assertEqual(owner.queued_connection(42), "")
+
+    def test_departing_owner_discovery_restarts_from_presence(self):
+        with patch.object(owner, "call", side_effect=["b true", 's ":1.41"', "",
+                "b true", 's ":1.42"', "u 42"]) as call:
+            self.assertEqual(owner.owner(), (":1.42", 42))
+            self.assertEqual([entry.args[0] for entry in call.call_args_list],
+                ["NameHasOwner", "GetNameOwner", "GetConnectionUnixProcessID"] * 2)
+
+    def test_discovery_race_can_end_in_confirmed_absence(self):
+        with patch.object(owner, "call", side_effect=["b true", 's ":1.41"', "", "b false"]):
+            self.assertIsNone(owner.owner())
+
+    def test_persistent_unknown_discovery_has_bounded_retries(self):
+        with patch.object(owner, "call", return_value="") as call, \
+             patch.object(owner.time, "sleep") as pause, \
+             patch.object(owner.Process, "stop") as stop:
+            with self.assertRaises(RuntimeError):
+                owner.owner()
+            self.assertEqual(call.call_count, 3)
+            self.assertEqual(pause.call_count, 2)
+            stop.assert_not_called()
+
+    def test_watch_survives_owner_departure_during_discovery(self):
+        pids = iter(["", "u 42"])
+        def call(method, *args):
+            if method == "NameHasOwner":
+                return "b false" if args[-1] == "org.freedesktop.Notifications" else "b true"
+            if method == "GetNameOwner":
+                return 's ":1.42"'
+            return next(pids)
+        with patch.object(owner.sys, "argv", ["shell-owner.py", "watch", "--pid", "42"]), \
+             patch.object(owner, "call", side_effect=call), \
+             patch.object(owner, "record") as record, \
+             patch.object(owner, "retire_departed") as retire:
+            self.assertEqual(owner.main(), 0)
+            self.assertEqual(record.call_args.args, (42, "", ":1.42"))
+            retire.assert_called_once_with(42)
+
+    def test_queue_discovery_retries_after_a_connection_disappears(self):
+        with patch.object(owner, "call", side_effect=["b true", 'as 1 ":1.41"', "",
+                "b true", 'as 1 ":1.42"', "u 42"]):
+            self.assertEqual(owner.queued_connection(42), ":1.42")
 
 
 if __name__ == "__main__":

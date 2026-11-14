@@ -34,6 +34,23 @@ def call(method, *args):
                "org.freedesktop.DBus", method, *args)
 
 
+class OwnerLookupError(RuntimeError):
+    pass
+
+
+def retry_lookup(discover, *args):
+    # Connections can disappear between bus calls during a normal handoff.
+    # Repeat the complete observation, never reuse a partial identity or retire
+    # a process while discovery is unknown. Persistent bus errors still fail.
+    for attempt in range(3):
+        try:
+            return discover(*args)
+        except OwnerLookupError:
+            if attempt == 2:
+                raise
+            time.sleep(.1)
+
+
 def name_has_owner(name=NAME):
     # A failed lookup is not evidence that the election is vacant. Establish
     # absence through a successful bus reply; all other lookup failures abort
@@ -42,42 +59,50 @@ def name_has_owner(name=NAME):
     if presence == "b false":
         return False
     if presence != "b true":
-        raise RuntimeError("shell ownership lookup failed (NameHasOwner)")
+        raise OwnerLookupError("shell ownership lookup failed (NameHasOwner)")
     return True
 
 
-def owner(name=NAME):
+def discover_owner(name):
     if not name_has_owner(name):
         return None
     reply = call("GetNameOwner", "s", name).split()
     if len(reply) != 2 or reply[0] != "s":
-        raise RuntimeError("shell ownership lookup failed (GetNameOwner)")
+        raise OwnerLookupError("shell ownership lookup failed (GetNameOwner)")
     unique = json.loads(reply[1])
     reply = call("GetConnectionUnixProcessID", "s", unique).split()
     if len(reply) != 2 or reply[0] != "u":
-        raise RuntimeError("shell ownership lookup failed (GetConnectionUnixProcessID)")
+        raise OwnerLookupError("shell ownership lookup failed (GetConnectionUnixProcessID)")
     return unique, int(reply[1])
+
+
+def owner(name=NAME):
+    return retry_lookup(discover_owner, name)
 
 
 def ping(unique):
     return bus("call", unique, PATH, IFACE, "ping").startswith('s "')
 
 
-def queued_connection(pid):
+def discover_queued_connection(pid):
     # An unowned name has no queue. ListQueuedOwners reports NameHasNoOwner
     # in that case, so confirm absence before treating other failures as unknown.
     if not name_has_owner():
         return ""
     reply = shlex.split(call("ListQueuedOwners", "s", NAME))
     if len(reply) < 2 or reply[0] != "as" or len(reply) != int(reply[1]) + 2:
-        raise RuntimeError("shell ownership lookup failed (ListQueuedOwners)")
+        raise OwnerLookupError("shell ownership lookup failed (ListQueuedOwners)")
     for unique in reply[2:]:
         identity = call("GetConnectionUnixProcessID", "s", unique).split()
         if len(identity) != 2 or identity[0] != "u":
-            raise RuntimeError("queued shell ownership lookup failed (GetConnectionUnixProcessID)")
+            raise OwnerLookupError("queued shell ownership lookup failed (GetConnectionUnixProcessID)")
         if int(identity[1]) == pid:
             return unique
     return ""
+
+
+def queued_connection(pid):
+    return retry_lookup(discover_queued_connection, pid)
 
 
 def start_time(pid):
