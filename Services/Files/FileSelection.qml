@@ -16,13 +16,18 @@ Scope {
   property string _prefix: ""
   property double _typedAt: 0
   signal chosen(string path)
+  function _setPaths(paths) {
+    if (paths.length === _selectedPaths.length && paths.every((path, index) => path === _selectedPaths[index]))
+      return;
+    _selectedPaths = paths;
+  }
 
   function _selectable(entry) {
     return entry && entry.directory === (selectable === "folders");
   }
 
   function clear() {
-    _selectedPaths = [];
+    _setPaths([]);
     cursor = -1;
     _anchor = -1;
     _cursorPath = "";
@@ -43,24 +48,27 @@ Scope {
         if (_selectable(entry))
           paths.push(entry.path);
       }
-      _selectedPaths = paths;
+      _setPaths(paths);
     } else {
       _anchor = index;
       _anchorPath = item.path;
       if (!_selectable(item)) {
         if (!(multiple && (modifiers & Qt.ControlModifier)))
-          _selectedPaths = [];
+          _setPaths([]);
       } else if (multiple && (modifiers & Qt.ControlModifier)) {
-        _selectedPaths = _selectedPaths.includes(item.path) ? _selectedPaths.filter(p => p !== item.path) : _selectedPaths.concat([item.path]);
+        _setPaths(_selectedPaths.includes(item.path) ? _selectedPaths.filter(p => p !== item.path) : _selectedPaths.concat([item.path]));
       } else
-        _selectedPaths = [item.path];
+        _setPaths([item.path]);
     }
     chosen(item.path);
   }
 
-  function move(delta, extend) {
+  function moveTo(index, extend) {
     if (browser.count)
-      click(Math.max(0, Math.min(browser.count - 1, cursor < 0 ? (delta < 0 ? browser.count - 1 : 0) : cursor + delta)), extend ? Qt.ShiftModifier : Qt.NoModifier);
+      click(Math.max(0, Math.min(browser.count - 1, index)), extend ? Qt.ShiftModifier : Qt.NoModifier);
+  }
+  function move(delta, extend) {
+    moveTo(cursor < 0 ? (delta < 0 ? browser.count - 1 : 0) : cursor + delta, extend);
   }
 
   function selectAll() {
@@ -72,7 +80,7 @@ Scope {
       if (_selectable(item))
         paths.push(item.path);
     }
-    _selectedPaths = paths;
+    _setPaths(paths);
   }
 
   function typeAhead(text) {
@@ -92,12 +100,13 @@ Scope {
   function _revalidate() {
     if (!browser || browser.status === "loading")
       return;
-    _selectedPaths = _selectedPaths.filter(function(path) {
+    var paths = _selectedPaths.filter(function(path) {
       var index = browser.indexOfPath(path);
       return index >= 0 && root._selectable(browser.entry(index));
     });
-    if (!multiple && _selectedPaths.length > 1)
-      _selectedPaths = _selectedPaths.slice(0, 1);
+    if (!multiple && paths.length > 1)
+      paths = paths.slice(0, 1);
+    _setPaths(paths);
     cursor = browser.indexOfPath(_cursorPath);
     _anchor = browser.indexOfPath(_anchorPath);
   }

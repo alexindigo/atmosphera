@@ -146,6 +146,9 @@ def main():
     required.update("create.invalid-" + str(i) for i in range(5))
     required.add("tooltip.owner-lifetime")
     required.update("places.recent-folders-" + name for name in ("merge-order", "dedup", "missing", "limit", "directories"))
+    required.update("selection." + name for name in ("ctrl-toggle-removes", "ctrl-toggle-adds", "anchor-stable-range", "range-shrinks-from-anchor", "folder-range-kinds", "single-range-keeps-one"))
+    required.add("browser.path-index-no-prototype-keys")
+    required.add("selection.revalidation-noop")
     missing = sorted(required - {case["case"] for case in cases})
     required_media = {"playback." + name for name in ("initial", "inactive-intents", "volume-low", "volume-high", "volume-step", "invalid-volume", "times", "autoplay", "seek-low", "seek-high", "close-stops", "close-destroys-engine")}
     required_labels = {"labels." + name for name in ("extension-attached", "dots", "long-word", "cjk", "extension-only", "two-lines-only")}

@@ -23,7 +23,12 @@ Rectangle {
   signal activated
 
   function iconState() {
-    return visual.item ? Object.assign({name: name, descriptor: iconDescriptor, tileWidth: width, tileHeight: height}, visual.item.iconState()) : null;
+    return visual.item ? Object.assign({
+                                         name: name,
+                                         descriptor: iconDescriptor,
+                                         tileWidth: width,
+                                         tileHeight: height
+                                       }, visual.item.iconState()) : null;
   }
   function artworkGeometry() {
     if (!visual.item || listMode)
@@ -73,8 +78,11 @@ Rectangle {
     id: pointer
     anchors.fill: parent
     hoverEnabled: true
-    onClicked: mouse => root.pressed(mouse.modifiers)
-    onDoubleClicked: root.activated()
+    onPressed: mouse => root.pressed(mouse.modifiers)
+    onDoubleClicked: mouse => {
+      if (mouse.modifiers === Qt.NoModifier)
+        root.activated();
+    }
   }
   ToolTip.visible: pointer.containsMouse
   ToolTip.text: root.name

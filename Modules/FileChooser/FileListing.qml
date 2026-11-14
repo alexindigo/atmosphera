@@ -19,6 +19,7 @@ FocusScope {
   Layout.minimumHeight: frame.Layout.minimumHeight + Style.margin2XS
   readonly property bool navigationFocused: !!root.Window.window && root.Window.window.activeFocusItem === root
   readonly property int columns: Math.max(1, Math.floor(grid.width / tileWidth))
+  readonly property int pageStep: Math.max(1, Math.floor((request.viewMode === "list" ? list.height : grid.height) / (request.viewMode === "list" ? rowHeight : tileSize))) * (request.viewMode === "list" ? 1 : columns)
   readonly property var cursorItem: {
     void request.browser.count;
     return request.browser.entry(request.selection.cursor);
@@ -49,7 +50,7 @@ FocusScope {
     return {y: view.contentY, height: view.height, contentHeight: view.contentHeight,
       moving: view.moving, flicking: view.flicking, reused: view.reuseItems,
       delegates: view.contentItem.children.length, hiddenCount: hiddenView.count,
-      wheelStep: wheelTypography.implicitHeight * Qt.styleHints.wheelScrollLines};
+      wheelStep: wheelTypography.implicitHeight * Qt.styleHints.wheelScrollLines, pageStep: pageStep};
   }
   NText { id: wheelTypography; visible: false; pointSize: Style.fontSizeM }
   function folderEditorState() {
@@ -67,7 +68,7 @@ FocusScope {
       if (root.request.browser.creatingFolder)
         Qt.callLater(function() { newFolderField.inputItem.forceActiveFocus(); newFolderField.inputItem.selectAll(); });
     }
-    function onFolderCreated(path) { root.focusNavigation(); }
+    function onFolderCreated(path) { root.focusNavigation(); root.revealCursor(); }
   }
 
   function controlGeometry() {
@@ -79,7 +80,9 @@ FocusScope {
         x: rect.x,
         y: rect.y,
         width: rect.width,
-        height: rect.height
+        height: rect.height,
+        path: item.path,
+        index: item.index
       };
     });
     return {
@@ -102,6 +105,14 @@ FocusScope {
     var view = request.viewMode === "list" ? list : grid;
     var tile = view.itemAtIndex(request.selection.cursor);
     return tile ? tile.mapToItem(root, 0, 0, tile.width, tile.height) : Qt.rect(0, 0, root.width, root.height);
+  }
+  function revealCursor() {
+    if (request.selection.cursor < 0)
+      return;
+    if (request.viewMode === "list")
+      list.positionViewAtIndex(request.selection.cursor, ListView.Contain);
+    else
+      grid.positionViewAtIndex(request.selection.cursor, GridView.Contain);
   }
   function sort(key) {
     request.browser.sortDescending = request.browser.sortKey === key ? !request.browser.sortDescending : false;
@@ -134,10 +145,14 @@ FocusScope {
       request.selection.move(request.viewMode === "grid" ? -columns : -1, shift);
     else if (event.key === Qt.Key_Down)
       request.selection.move(request.viewMode === "grid" ? columns : 1, shift);
+    else if (event.key === Qt.Key_PageUp)
+      request.selection.move(-pageStep, shift);
+    else if (event.key === Qt.Key_PageDown)
+      request.selection.move(pageStep, shift);
     else if (event.key === Qt.Key_Home)
-      request.selection.click(0, shift ? Qt.ShiftModifier : Qt.NoModifier);
+      request.selection.moveTo(0, shift);
     else if (event.key === Qt.Key_End)
-      request.selection.click(request.browser.count - 1, shift ? Qt.ShiftModifier : Qt.NoModifier);
+      request.selection.moveTo(request.browser.count - 1, shift);
     else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter)
       request.activate(request.selection.cursor);
     else if (event.key === Qt.Key_Space && cursorItem)
@@ -148,6 +163,8 @@ FocusScope {
       filterRequested(event.text);
     else
       event.accepted = false;
+    if ([Qt.Key_Left, Qt.Key_Right, Qt.Key_Up, Qt.Key_Down, Qt.Key_Home, Qt.Key_End, Qt.Key_PageUp, Qt.Key_PageDown].includes(event.key))
+      revealCursor();
   }
 
   Rectangle {

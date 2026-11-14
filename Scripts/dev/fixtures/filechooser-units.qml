@@ -22,6 +22,7 @@ ShellRoot {
   property double staleStarted: 0
   property var tooltipOwner: null
   property var expectedRecentFolders: []
+  property int selectionChanges: 0
   Component { id: tooltipOwnerFactory; Item {} }
 
   FilePreview {
@@ -45,6 +46,7 @@ ShellRoot {
   FileSelection {
     id: selection
     browser: fileBrowser
+    onSelectedPathsChanged: root.selectionChanges++
   }
   Component {
     id: requestFactory
@@ -895,6 +897,41 @@ ET.ElementTree(root).write(target, encoding='unicode')
       report("places.recent-folders-missing", !paths.includes(aux + "/missing-recent"), paths);
       same("places.recent-folders-limit", paths.length, 10);
       report("places.recent-folders-directories", FilePlaces.recentFolders.every(entry => entry.directory === true), FilePlaces.recentFolders);
+      fileBrowser.sortKey = "name";
+      fileBrowser.sortDescending = false;
+      fileBrowser.showHidden = false;
+      fileBrowser.navigate(base);
+    });
+    step(ready, function () {
+      selection.selectable = "files";
+      selection.multiple = true;
+      var alpha = fileBrowser.indexOfPath(base + "/Alpha.txt");
+      var second = fileBrowser.indexOfPath(base + "/item2.txt");
+      selection.click(alpha, Qt.NoModifier);
+      selection.click(second, Qt.ControlModifier);
+      selection.click(alpha, Qt.ControlModifier);
+      same("selection.ctrl-toggle-removes", selection.selectedPaths, [base + "/item2.txt"]);
+      selection.click(alpha, Qt.ControlModifier);
+      report("selection.ctrl-toggle-adds", selection.selectedPaths.length === 2 && selection.selectedPaths.includes(base + "/Alpha.txt"), selection.selectedPaths);
+      selection.moveTo(fileBrowser.count - 1, false);
+      selection.moveTo(alpha, true);
+      same("selection.anchor-stable-range", selection.selectedPaths, ["Alpha.txt", "item2.txt", "item10.png"].map(name => base + "/" + name));
+      selection.moveTo(fileBrowser.count - 2, true);
+      same("selection.range-shrinks-from-anchor", selection.selectedPaths, [base + "/item2.txt", base + "/item10.png"]);
+      selection.selectable = "folders";
+      selection.moveTo(0, false);
+      selection.moveTo(fileBrowser.count - 1, true);
+      same("selection.folder-range-kinds", selection.selectedPaths, [base + "/empty", base + "/folder"]);
+      selection.multiple = false;
+      selection.selectable = "files";
+      selection.moveTo(alpha, false);
+      selection.moveTo(fileBrowser.count - 1, true);
+      selection.selectAll();
+      same("selection.single-range-keeps-one", selection.selectedPaths, [base + "/item10.png"]);
+      same("browser.path-index-no-prototype-keys", fileBrowser.indexOfPath("constructor"), -1);
+      var changed = root.selectionChanges;
+      fileBrowser.listingChanged();
+      same("selection.revalidation-noop", root.selectionChanges, changed);
     });
   }
 

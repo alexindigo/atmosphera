@@ -163,6 +163,7 @@ static bool pointer_command(char *input) {
         zwlr_virtual_pointer_v1_button(pointer, milliseconds(), button, 1);
         zwlr_virtual_pointer_v1_frame(pointer);
         zwlr_virtual_pointer_v1_button(pointer, milliseconds(), button, 0);
+        zwlr_virtual_pointer_v1_frame(pointer);
         if (modifiers & 1) key(42, 0);
         if (modifiers & 2) key(29, 0);
     } else if (sscanf(input, "scroll %15s %lf %c", source, &delta, &extra) == 2 &&

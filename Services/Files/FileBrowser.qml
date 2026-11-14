@@ -52,6 +52,8 @@ Scope {
   property int _serial: 0
   property bool _hasHidden: false
   property int _listingRevision: 0
+  property int _pathIndexRevision: -1
+  property var _pathIndices: ({})
   property bool _validating: false
 
   signal listingChanged
@@ -281,11 +283,17 @@ except OSError as e:
   }
 
   function indexOfPath(path) {
-    for (var i = 0; i < listing.rowCount(); i++) {
-      if (entry(i).path === path)
-        return i;
+    // Selection may resolve every selected path during a range/filter update.
+    // One derived index per model revision avoids quadratic model traversals.
+    if (_pathIndexRevision !== _listingRevision) {
+      var indices = Object.create(null);
+      for (var i = 0; i < listing.rowCount(); i++)
+        indices[entry(i).path] = i;
+      _pathIndices = indices;
+      _pathIndexRevision = _listingRevision;
     }
-    return -1;
+    var index = _pathIndices[path];
+    return index === undefined ? -1 : index;
   }
 
   onSortKeyChanged: listing.invalidateSorter()

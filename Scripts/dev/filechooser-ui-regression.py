@@ -19,6 +19,7 @@ from filechooser_regression import SCRIPTS, guest
 from filechooser_profile import current_profile, exact_source, profile_argument
 from filechooser_isolation import enter, input_command
 from filechooser_icons import exercise as exercise_icons
+from filechooser_selection import exercise as exercise_selection
 
 
 def layout_fits(s):
@@ -137,6 +138,10 @@ def main():
         check("recent-rail-merged-deduplicated", lambda s: len({row["path"] for row in s["recentRows"]}) == len(s["recentRows"])
               and {str(runtime / "Fieldwork"), str(runtime / "Fieldwork/References"), str(runtime / "Fieldwork/Screens")} <= {row["path"] for row in s["recentRows"]})
         command(["grim", evidence / "recent-folders.png"])
+        ipc("focusListing"); key(102); key(109, 42)
+        check("Shift-PageDown-extends-selection", lambda s: len(s["selected"]) > 1)
+        ipc("open", "open"); wait(lambda s: s["ready"] and s["focus"] == "listing")
+        exercise_selection(runtime, evidence, command, ipc, state, wait, check, open_request, key)
         command(["ydotool", "key", "29:1", "42:1", "49:1", "49:0", "42:0", "29:0"])
         wait(lambda s: s["creatingFolder"])
         check("new-folder-shortcut-focus", lambda s: s["focusedControl"] == "Folder name")
