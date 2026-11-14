@@ -2,15 +2,16 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import "../../../Helpers/PortalPaths.js" as PortalPaths
+import "filechooser-extensions.js" as ExtensionCases
 import "filechooser-icon-cases.js" as IconCases
+import "filechooser-navigation.js" as NavigationCases
+import "filechooser-operations.js" as OperationCases
+import "filechooser-paths.js" as PathCases
+import "filechooser-views.js" as ViewCases
 import qs.Commons
 import qs.Modules.FileChooser
 import qs.Services.Files
 import qs.Services.UI
-import "filechooser-extensions.js" as ExtensionCases
-import "filechooser-navigation.js" as NavigationCases
-import "filechooser-paths.js" as PathCases
-import "filechooser-operations.js" as OperationCases
 
 ShellRoot {
   id: root
@@ -29,7 +30,10 @@ ShellRoot {
   property int selectionChanges: 0
   property bool appearingArmed: false
   property bool appearedAfterCheck: false
-  Component { id: tooltipOwnerFactory; Item {} }
+  Component {
+    id: tooltipOwnerFactory
+    Item {}
+  }
 
   FilePreview {
     id: preview
@@ -41,7 +45,10 @@ ShellRoot {
   FileBrowser {
     id: fileBrowser
   }
-  FileCompletion { id: pathCompletion; basePath: root.base }
+  FileCompletion {
+    id: pathCompletion
+    basePath: root.base
+  }
   FileChooserHeader {
     id: breadcrumbs
     width: 1200
@@ -81,7 +88,9 @@ ShellRoot {
   }
   Process {
     id: mutate
-    stdout: StdioCollector { id: mutateOutput }
+    stdout: StdioCollector {
+      id: mutateOutput
+    }
   }
   function sampleWatchers() {
     mutate.command = ["timeout", "3", "python3", "-c", `
@@ -98,8 +107,12 @@ print(count)
 `];
     mutate.running = true;
   }
-  function watcherSampleReady() { return !mutate.running; }
-  function watcherCount() { return Number(mutateOutput.text.trim()); }
+  function watcherSampleReady() {
+    return !mutate.running;
+  }
+  function watcherCount() {
+    return Number(mutateOutput.text.trim());
+  }
 
   function report(name, passed, actual) {
     Logger.i("FileChooserUnits", "FILECHOOSER_UNITS|" + JSON.stringify({
@@ -176,22 +189,39 @@ print(count)
   function buildOverwriteTests() {
     var folder = aux + "/overwrite";
     function save(name, app) {
-      createRequest("save", {current_folder: PortalPaths.encodeBytePath(folder).bytes, current_name: name}, app || "unit.safety");
+      createRequest("save", {
+                      current_folder: PortalPaths.encodeBytePath(folder).bytes,
+                      current_name: name
+                    }, app || "unit.safety");
     }
     function batch() {
-      createRequest("saveFiles", {current_folder: PortalPaths.encodeBytePath(folder).bytes,
-        files: ["protected.txt", "other.txt"].map(name => PortalPaths.encodeBytePath(name).bytes)}, "unit.safety");
+      createRequest("saveFiles", {
+                      current_folder: PortalPaths.encodeBytePath(folder).bytes,
+                      files: ["protected.txt", "other.txt"].map(name => PortalPaths.encodeBytePath(name).bytes)
+                    }, "unit.safety");
     }
-    function pending() { return request.pendingReplace !== ""; }
-    step(() => true, function () { save("appeared.txt", "unit.appearing"); });
-    step(requestReady, function () { root.appearingArmed = true; request.accept(); });
+    function pending() {
+      return request.pendingReplace !== "";
+    }
+    step(() => true, function () {
+      save("appeared.txt", "unit.appearing");
+    });
+    step(requestReady, function () {
+      root.appearingArmed = true;
+      request.accept();
+    });
     step(() => pending() || answered(), function () {
-      report("overwrite.appears-before-return", root.appearedAfterCheck && request.pendingReplace === folder + "/appeared.txt" && responses.length === 0, {pending: request.pendingReplace, responses: responses});
+      report("overwrite.appears-before-return", root.appearedAfterCheck && request.pendingReplace === folder + "/appeared.txt" && responses.length === 0, {
+               pending: request.pendingReplace,
+               responses: responses
+             });
       root.appearingArmed = false;
       request.cancel();
       save("protected.txt");
     });
-    step(requestReady, function () { request.accept(); });
+    step(requestReady, function () {
+      request.accept();
+    });
     step(pending, function () {
       request.declineReplace();
       same("overwrite.decline-keeps-request", [request.settled, request.pendingReplace, responses], [false, "", []]);
@@ -213,20 +243,30 @@ print(count)
       same("overwrite.changed-name-result", responses[0].results.uris, [PortalPaths.pathToUri(folder + "/new target.txt").uri]);
       save("A.txt");
     });
-    step(requestReady, function () { request.accept(); });
+    step(requestReady, function () {
+      request.accept();
+    });
     step(answered, function () {
       same("overwrite.case-sensitive", [responses[0].response, request.pendingReplace], [0, ""]);
     });
     for (let name of ["directory", "unwritable.txt", "fifo", "dangling", "directory-link"]) {
-      step(() => true, function () { save(name); });
-      step(requestReady, function () { request.accept(); });
+      step(() => true, function () {
+        save(name);
+      });
+      step(requestReady, function () {
+        request.accept();
+      });
       step(() => !request.busy && request.errorText !== "", function () {
         report("overwrite.refuse-" + name, !request.settled && !request.pendingReplace && responses.length === 0, request.errorText);
         request.cancel();
       });
     }
-    step(() => true, function () { save("regular-link"); });
-    step(requestReady, function () { request.accept(); });
+    step(() => true, function () {
+      save("regular-link");
+    });
+    step(requestReady, function () {
+      request.accept();
+    });
     step(pending, function () {
       same("overwrite.regular-link", request.pendingReplace, folder + "/regular-link");
       request.confirmReplace();
@@ -235,14 +275,20 @@ print(count)
       same("overwrite.regular-link-result", responses[0].results.uris, [PortalPaths.pathToUri(folder + "/regular-link").uri]);
       save("protected.txt");
     });
-    step(requestReady, function () { request.accept(); });
+    step(requestReady, function () {
+      request.accept();
+    });
     step(pending, function () {
       same("overwrite.request-scope", responses, []);
       request.cancel();
       batch();
     });
-    step(requestReady, function () { request.accept(); });
-    step(pending, function () { request.confirmReplace(); });
+    step(requestReady, function () {
+      request.accept();
+    });
+    step(pending, function () {
+      request.confirmReplace();
+    });
     step(pending, function () {
       same("overwrite.batch-no-partial", [request.pendingReplace, responses], [folder + "/other.txt", []]);
       request.declineReplace();
@@ -252,13 +298,19 @@ print(count)
       same("overwrite.batch-decline-clears-all", request.pendingReplace, folder + "/protected.txt");
       request.confirmReplace();
     });
-    step(pending, function () { request.confirmReplace(); });
+    step(pending, function () {
+      request.confirmReplace();
+    });
     step(answered, function () {
       same("overwrite.batch-all-approved", responses[0].results.uris, ["protected.txt", "other.txt"].map(name => PortalPaths.pathToUri(folder + "/" + name).uri));
       batch();
     });
-    step(requestReady, function () { request.accept(); });
-    step(pending, function () { request.confirmReplace(); });
+    step(requestReady, function () {
+      request.accept();
+    });
+    step(pending, function () {
+      request.confirmReplace();
+    });
     step(pending, function () {
       request.currentFilter = ["Text", [[0, "*.txt"]]];
       request.accept();
@@ -268,11 +320,21 @@ print(count)
       request.cancel();
       batch();
     });
-    step(requestReady, function () { request.accept(); });
-    step(pending, function () { request.confirmReplace(); });
-    step(pending, function () { request.browser.navigate(folder + "/child"); });
-    step(requestReady, function () { request.browser.navigate(folder); });
-    step(requestReady, function () { request.accept(); });
+    step(requestReady, function () {
+      request.accept();
+    });
+    step(pending, function () {
+      request.confirmReplace();
+    });
+    step(pending, function () {
+      request.browser.navigate(folder + "/child");
+    });
+    step(requestReady, function () {
+      request.browser.navigate(folder);
+    });
+    step(requestReady, function () {
+      request.accept();
+    });
     step(pending, function () {
       same("overwrite.folder-clears-approval", request.pendingReplace, folder + "/protected.txt");
       request.cancel();
@@ -900,7 +962,9 @@ print(count)
         same(prefix + "request-result", [responses[0].response, uris, uris.map(uri => PortalPaths.uriToPath(uri).path)], [0, [expected], [folder + "/fixture.txt"]]);
       });
     }
-    step(() => true, function() { fileBrowser.navigate(base); });
+    step(() => true, function () {
+      fileBrowser.navigate(base);
+    });
     step(ready, function () {
       fileBrowser.nameFilter = null;
       fileBrowser.showHidden = false;
@@ -935,7 +999,10 @@ print(count)
     });
     step(ready, function () {
       same("filter.navigation-clears", fileBrowser.filterText, "");
-      createRequest("save", {current_folder: PortalPaths.encodeBytePath(base).bytes, current_name: "prefilled.md"});
+      createRequest("save", {
+                      current_folder: PortalPaths.encodeBytePath(base).bytes,
+                      current_name: "prefilled.md"
+                    });
     });
     step(requestReady, function () {
       same("filter.save-prefill", request.browser.saveFilterText, "");
@@ -974,23 +1041,39 @@ print(count)
       same("create.exists-file", fileBrowser.createFolderError, I18n.tr("widgets.file-picker.create-folder-exists"));
       fileBrowser.navigate(aux + "/write-denied");
     });
-    step(ready, function () { fileBrowser.createFolder("Denied"); });
+    step(ready, function () {
+      fileBrowser.createFolder("Denied");
+    });
     step(() => !fileBrowser.createFolderBusy && fileBrowser.createFolderError !== "", function () {
       same("create.permission", fileBrowser.createFolderError, I18n.tr("widgets.file-picker.create-folder-permission"));
       fileBrowser.navigate(aux + "/readonly");
     });
-    step(ready, function () { fileBrowser.createFolder("Read only"); });
+    step(ready, function () {
+      fileBrowser.createFolder("Read only");
+    });
     step(() => !fileBrowser.createFolderBusy && fileBrowser.createFolderError !== "", function () {
       same("create.readonly", fileBrowser.createFolderError, I18n.tr("widgets.file-picker.create-folder-readonly"));
-      createRequest("open", {current_folder: PortalPaths.encodeBytePath(aux + "/creation").bytes, directory: true});
+      createRequest("open", {
+                      current_folder: PortalPaths.encodeBytePath(aux + "/creation").bytes,
+                      directory: true
+                    });
     });
-    step(requestReady, function () { request.beginCreateFolder(); request.browser.createFolder("Folder selection"); });
+    step(requestReady, function () {
+      request.beginCreateFolder();
+      request.browser.createFolder("Folder selection");
+    });
     step(() => requestReady() && !request.browser.creatingFolder, function () {
       same("create.folder-selection", request.selection.selectedPaths, [aux + "/creation/Folder selection"]);
       request.cancel();
-      createRequest("save", {current_folder: PortalPaths.encodeBytePath(aux + "/creation").bytes, current_name: "draft.txt"});
+      createRequest("save", {
+                      current_folder: PortalPaths.encodeBytePath(aux + "/creation").bytes,
+                      current_name: "draft.txt"
+                    });
     });
-    step(requestReady, function () { request.beginCreateFolder(); request.browser.createFolder("Save folder"); });
+    step(requestReady, function () {
+      request.beginCreateFolder();
+      request.browser.createFolder("Save folder");
+    });
     step(() => requestReady() && !request.browser.creatingFolder, function () {
       same("create.save-stays-in-folder", [request.browser.currentPath, request.saveName, request.selection.cursor >= 0], [aux + "/creation", "draft.txt", true]);
       request.cancel();
@@ -1016,7 +1099,9 @@ ET.ElementTree(root).write(target, encoding='unicode')
 `, Quickshell.env("XDG_DATA_HOME") + "/recently-used.xbel", aux, JSON.stringify(recent)];
       mutate.running = true;
     });
-    step(() => !mutate.running, function () { FilePlaces.refresh(); });
+    step(() => !mutate.running, function () {
+      FilePlaces.refresh();
+    });
     step(() => !FilePlaces.loading && FilePlaces.recentFolders.some(entry => entry.path === aux + "/recent0"), function () {
       var paths = FilePlaces.recentFolders.map(entry => entry.path);
       same("places.recent-folders-merge-order", paths, root.expectedRecentFolders);
@@ -1064,6 +1149,7 @@ ET.ElementTree(root).write(target, encoding='unicode')
     NavigationCases.build(root, fileBrowser, selection);
     PathCases.build(root, PortalPaths, FileChooserMemory, pathCompletion, fileBrowser);
     OperationCases.build(root, PortalPaths);
+    ViewCases.build(root, PortalPaths, FileChooserMemory);
   }
 
   Component.onCompleted: {
@@ -1074,6 +1160,21 @@ ET.ElementTree(root).write(target, encoding='unicode')
         same("memory.reload-shared", FileChooserMemory.folderFor(""), aux + "/escaped/a b/c d");
         same("memory.reload-preferences", FileChooserMemory.preferences.view, "list");
         report("memory.reload-missing-hidden", !FileChooserMemory.recentLocations.includes(aux + "/memory9"), FileChooserMemory.recentLocations);
+        createRequest("open", {
+                        current_folder: PortalPaths.encodeBytePath(base).bytes
+                      }, "unit.views.reload");
+      });
+      step(() => requestReady(), function () {
+        var v = request.viewSettings;
+        same("views.reload-process-consumer", v ? [v.mode, v.zooms, v.thumbnails, v.dialogWidth, v.dialogHeight] : null, ["list",
+                                                                                                                          {
+                                                                                                                            grid: 4,
+                                                                                                                            compact: 2,
+                                                                                                                            list: 3
+                                                                                                                          },
+                                                                                                                          false, 1180, 720]);
+        same("views.reload-process-columns", v ? v.columnShares : null, FileChooserMemory.preferences.views ? FileChooserMemory.preferences.views.columns : []);
+        request.cancel();
       });
     } else
       buildTests();

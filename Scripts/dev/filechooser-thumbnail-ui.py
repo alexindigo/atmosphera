@@ -82,7 +82,10 @@ def main():
         command(["ydotool", "key", f"{code}:1", f"{code}:0"])
     def open_videos():
         ipc("openRequest", "open", "dev.filechooser.video", json.dumps({"current_folder": list(os.fsencode(videos) + b"\0"), "multiple": True, "title": "Choose a coast survey"}))
-        return wait(lambda s: s["ready"] and s["nativeActive"] and s["focus"] == "listing")
+        # Model readiness precedes the async presentation Loader. Observe its
+        # concrete thumbnail state before asserting about decoding or pixels.
+        return wait(lambda s: s["ready"] and s["nativeActive"] and s["focus"] == "listing"
+                    and bool(s["thumbnails"]["tiles"]) and all("ready" in t for t in s["thumbnails"]["tiles"]))
     def visible_ready(s):
         tiles = s["thumbnails"]["tiles"]
         return bool(tiles) and all(tile["ready"] and tile["opacity"] == 1 if not tile["path"].endswith("00 Corrupt.mp4") else not tile["ready"] for tile in tiles)
@@ -140,9 +143,13 @@ def main():
         wait(visible_ready)
         check("second-open-zero-ffmpeg-launches", len(launches()) == before_reopen, launches()[before_reopen:])
         check("second-open-consumer-cache-hits", state()["thumbnails"]["statistics"]["hit"] >= 30 and state()["thumbnails"]["statistics"]["ffmpeg"] == 0)
+        # All presentations now support thumbnails. The no-interest contract
+        # remains: explicitly switching them off must retire every subscription.
+        ipc("thumbnails", "false")
         ipc("list")
         wait(lambda s: s["view"] == "list")
         check("list-view-no-thumbnail-interests", not state()["thumbnails"]["tiles"])
+        ipc("thumbnails", "true")
         ipc("reducedMotion", "true")
         ipc("grid")
         key(102)

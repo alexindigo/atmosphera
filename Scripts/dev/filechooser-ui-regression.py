@@ -25,6 +25,7 @@ from filechooser_extensions import exercise as exercise_extensions
 from filechooser_navigation import exercise as exercise_navigation
 from filechooser_paths import exercise as exercise_paths
 from filechooser_operations import exercise as exercise_operations
+from filechooser_views import exercise as exercise_views
 
 
 def layout_fits(s):
@@ -32,7 +33,7 @@ def layout_fits(s):
     def inside(rect, width, height):
         return (rect["width"] >= 0 and rect["height"] >= 0 and rect["x"] >= -.5 and rect["y"] >= -.5
                 and rect["x"] + rect["width"] <= width + .5 and rect["y"] + rect["height"] <= height + .5)
-    controls = [*g["header"], g["listing"], g["rail"], *g["footer"], *g.get("band", [])]
+    controls = [*g["header"], g["listing"], g["rail"], *g["footer"], *g.get("viewControls", []), *g.get("band", [])]
     viewport = g["entries"]["viewport"]
     return (all(inside(rect, g["width"], g["height"]) for rect in controls)
             and inside(viewport, g["listing"]["width"], g["listing"]["height"])
@@ -49,6 +50,7 @@ def main():
     p.add_argument("--label", required=True)
     p.add_argument("--path-only", action="store_true", help="Run the path-entry partition; default runs every area")
     p.add_argument("--operations-only", action="store_true", help="Run the file-operation partition; default runs every area")
+    p.add_argument("--views-only", action="store_true", help="Run the view-control partition; default runs every area")
     profile_argument(p)
     a = p.parse_args()
     guest()
@@ -138,6 +140,11 @@ def main():
         assert cases[-1]["pass"]
     try:
         wait(lambda s: s["ready"], 30)
+        exercise_views(runtime, evidence, command, ipc, state, wait, check, open_request, key, focus)
+        if a.views_only:
+            finish()
+            complete = True
+            return 0
         exercise_operations(runtime, evidence, command, ipc, state, wait, check, open_request, key, focus)
         if a.operations_only:
             finish()

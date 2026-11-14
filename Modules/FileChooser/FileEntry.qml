@@ -11,6 +11,9 @@ Rectangle {
   required property double bytes
   required property var modified
   property bool listMode: false
+  property bool compactMode: false
+  property real iconSize: (listMode || compactMode ? 20 : 96) * Style.uiScaleRatio
+  property var columnWidths: []
   property bool selected: false
   property bool selectable: true
   property bool cursor: false
@@ -21,10 +24,13 @@ Rectangle {
   readonly property bool renaming: !!operations && operations.renamePath === path
   readonly property var iconDescriptor: FileTypes.artwork(name, directory, path)
   readonly property var columnGeometry: listMode && visual.item ? visual.item.geometry : []
-  readonly property var thumbnailState: !listMode && visual.item ? visual.item.thumbnailState : ({})
+  readonly property var thumbnailState: visual.item ? visual.item.thumbnailState : ({})
   signal pressed(int modifiers)
   signal activated
-  function focusEntry() { if (!renaming) forceActiveFocus(Qt.OtherFocusReason); }
+  function focusEntry() {
+    if (!renaming)
+      forceActiveFocus(Qt.OtherFocusReason);
+  }
 
   function iconState() {
     return visual.item ? Object.assign({
@@ -59,7 +65,7 @@ Rectangle {
     id: visual
     anchors.fill: parent
     asynchronous: true
-    sourceComponent: root.listMode ? listVisual : gridVisual
+    sourceComponent: root.listMode ? listVisual : root.compactMode ? compactVisual : gridVisual
   }
   Component {
     id: gridVisual
@@ -69,6 +75,7 @@ Rectangle {
       directory: root.directory
       modified: root.modified
       descriptor: root.iconDescriptor
+      iconSize: root.iconSize
       thumbnailProvider: root.thumbnailProvider
       thumbnailActive: root.thumbnailActive
       nameEditor: root.renaming ? renameEditor : null
@@ -78,10 +85,29 @@ Rectangle {
     id: listVisual
     FileEntryList {
       name: root.name
+      path: root.path
       directory: root.directory
       bytes: root.bytes
       modified: root.modified
       descriptor: root.iconDescriptor
+      iconSize: root.iconSize
+      widths: root.columnWidths
+      thumbnailProvider: root.thumbnailProvider
+      thumbnailActive: root.thumbnailActive
+      nameEditor: root.renaming ? renameEditor : null
+    }
+  }
+  Component {
+    id: compactVisual
+    FileEntryCompact {
+      name: root.name
+      path: root.path
+      directory: root.directory
+      modified: root.modified
+      descriptor: root.iconDescriptor
+      iconSize: root.iconSize
+      thumbnailProvider: root.thumbnailProvider
+      thumbnailActive: root.thumbnailActive
       nameEditor: root.renaming ? renameEditor : null
     }
   }
@@ -93,7 +119,7 @@ Rectangle {
       readOnly: root.operations.busy
       onTextEdited: root.operations.renameName = text
       onAccepted: root.operations.rename(text)
-      Component.onCompleted: Qt.callLater(function() {
+      Component.onCompleted: Qt.callLater(function () {
         inputItem.forceActiveFocus();
         var dot = root.directory ? -1 : text.lastIndexOf(".");
         inputItem.select(0, dot > 0 ? dot : text.length);

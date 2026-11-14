@@ -170,7 +170,7 @@ static bool text(char *input) {
 }
 
 static bool pointer_command(char *input) {
-    unsigned x, y, end_x, end_y, button, modifiers;
+    unsigned x, y, end_x, end_y, button, modifiers = 0;
     double delta;
     char source[16], extra;
     if (sscanf(input, "move %u %u %c", &x, &y, &extra) == 2 && x < 1280 && y < 800) {
@@ -211,8 +211,12 @@ static bool pointer_command(char *input) {
         zwlr_virtual_pointer_v1_frame(pointer);
         if (modifiers & 1) key(42, 0);
         if (modifiers & 2) key(29, 0);
-    } else if (sscanf(input, "scroll %15s %lf %c", source, &delta, &extra) == 2 &&
+    } else if (((sscanf(input, "scroll-modified %15s %lf %u %c", source, &delta, &modifiers, &extra) == 3 && modifiers <= 3) ||
+                sscanf(input, "scroll %15s %lf %c", source, &delta, &extra) == 2) &&
                delta >= -1000 && delta <= 1000 && (!strcmp(source, "wheel") || !strcmp(source, "finger"))) {
+        if (modifiers) set_map(base_map);
+        if (modifiers & 1) key(42, 1);
+        if (modifiers & 2) key(29, 1);
         bool wheel = !strcmp(source, "wheel");
         zwlr_virtual_pointer_v1_axis_source(pointer, wheel ? WL_POINTER_AXIS_SOURCE_WHEEL : WL_POINTER_AXIS_SOURCE_FINGER);
         if (wheel)
@@ -220,6 +224,12 @@ static bool pointer_command(char *input) {
                                                 wl_fixed_from_double(delta), delta > 0 ? 1 : -1);
         else
             zwlr_virtual_pointer_v1_axis(pointer, milliseconds(), WL_POINTER_AXIS_VERTICAL_SCROLL, wl_fixed_from_double(delta));
+        if (modifiers) {
+            zwlr_virtual_pointer_v1_frame(pointer);
+            if (wl_display_roundtrip(display) < 0) fail("scroll private display");
+        }
+        if (modifiers & 1) key(42, 0);
+        if (modifiers & 2) key(29, 0);
     } else if (!strcmp(input, "scroll-stop\n")) {
         zwlr_virtual_pointer_v1_axis_stop(pointer, milliseconds(), WL_POINTER_AXIS_VERTICAL_SCROLL);
     } else return false;

@@ -38,7 +38,7 @@ def main():
         listing = shell / "Modules/FileChooser/FileListing.qml"
         text = listing.read_text()
         import re
-        text, removed = re.subn(r"\s*ChooserScrollHandler\s*\{\s*viewport:\s*(?:grid|list)\s*;?\s*lineHeight:\s*wheelTypography\.implicitHeight\s*\}", "", text)
+        text, removed = re.subn(r"\s*ChooserScrollHandler\s*\{\s*viewport:\s*(?:grid|list)\s*;?\s*lineHeight:\s*wheelTypography\.implicitHeight\s*(?:;\s*horizontal:\s*root\.compact\s*)?\}", "", text)
         assert removed == 2
         assert text.count("reuseItems: true") == text.count("model: visible ? root.request.browser.model : null") == 2
         text = text.replace("reuseItems: true", "reuseItems: false").replace("model: visible ? root.request.browser.model : null", "model: root.request.browser.model")

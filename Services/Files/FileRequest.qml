@@ -1,10 +1,10 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import qs.Commons
 import "../../Helpers/PortalPaths.js" as PortalPaths
-import "FileSaveNames.js" as SaveNames
 import "FilePaths.js" as Paths
+import "FileSaveNames.js" as SaveNames
+import qs.Commons
 
 Scope {
   id: root
@@ -18,7 +18,9 @@ Scope {
   }
   readonly property string appName: appEntry ? appEntry.name : ""
   readonly property string appIcon: appEntry ? appEntry.icon : ""
-  readonly property string appOptionsLabel: appEntry ? I18n.tr("widgets.file-picker.options-from", {name: appName}) : I18n.tr("widgets.file-picker.options-from-app")
+  readonly property string appOptionsLabel: appEntry ? I18n.tr("widgets.file-picker.options-from", {
+                                                                 name: appName
+                                                               }) : I18n.tr("widgets.file-picker.options-from-app")
   readonly property var choices: options.choices || []
   readonly property FileBrowser browser: requestBrowser
   readonly property FileSelection selection: requestSelection
@@ -47,7 +49,10 @@ Scope {
   readonly property bool settled: _settled
   readonly property bool busy: _checking || _nameChecking || typedPaths.busy || browser.status === "loading" || browser.operations.busy || browser.operations.renaming || browser.operations.pendingDelete.length > 0
   readonly property string acceptLabel: options.accept_label || I18n.tr(method === "open" ? "widgets.file-picker.open" : "widgets.file-picker.save")
-  property string viewMode: "grid"
+  property alias viewMode: viewSettings.mode
+  readonly property FileViewSettings viewSettings: FileViewSettings {
+    id: viewSettings
+  }
   property bool _settled: false
   property bool _initialized: false
   property bool _waitingMemory: false
@@ -103,12 +108,15 @@ Scope {
     directoryMode: root.options.directory === true
     multiple: root.method === "open" && root.options.multiple === true
     onFailed: reason => root._errorText = I18n.tr("widgets.file-picker." + reason)
-    onResolved: function(result) {
-      if (root.settled) return;
+    onResolved: function (result) {
+      if (root.settled)
+        return;
       if (result.action === "navigate") {
         requestBrowser.navigate(result.paths[0]);
-        if (root.method === "open") root._openNameEdited = false;
-        else if (root.method === "save") root.saveName = root._nameBeforeEdit;
+        if (root.method === "open")
+          root._openNameEdited = false;
+        else if (root.method === "save")
+          root.saveName = root._nameBeforeEdit;
         root.pathNavigation();
       } else if (result.action === "save") {
         var path = result.paths[0], folder = Paths.parent(path), name = Paths.leaf(path);
@@ -119,14 +127,19 @@ Scope {
           root.accept();
         } else {
           requestBrowser.navigate(folder);
-          root._pendingSavePath = {folder: folder, name: name};
+          root._pendingSavePath = {
+            folder: folder,
+            name: name
+          };
         }
-      } else if (result.action === "open") root._acceptResolved(result.paths, Paths.parent(result.paths[0]));
+      } else if (result.action === "open")
+        root._acceptResolved(result.paths, Paths.parent(result.paths[0]));
     }
   }
-  signal pathNavigation()
+  signal pathNavigation
   function submitPath(text, source) {
-    if (_settled || _checking || _pendingReplace) return;
+    if (_settled || _checking || _pendingReplace)
+      return;
     _invalidate();
     typedPaths.resolve(text, source || "name");
   }
@@ -143,13 +156,19 @@ Scope {
     selectable: root.method === "saveFiles" || root.options.directory === true ? "folders" : "files"
     multiple: root.method === "open" && root.options.multiple === true
   }
-  Binding { target: requestBrowser.operations; property: "selection"; value: requestSelection }
+  Binding {
+    target: requestBrowser.operations
+    property: "selection"
+    value: requestSelection
+  }
   Connections {
     target: requestBrowser.operations
     function onRenameApplied(previous, path) {
       root._saveNameEdited = false;
-      if (root.method === "save" && root.saveName === Paths.leaf(previous)) root.saveName = Paths.leaf(path);
-      if (root.method === "open") root._openNameEdited = false;
+      if (root.method === "save" && root.saveName === Paths.leaf(previous))
+        root.saveName = Paths.leaf(path);
+      if (root.method === "open")
+        root._openNameEdited = false;
     }
     function onRenamed(previous, path) {
       requestSelection.click(requestBrowser.indexOfPath(path), Qt.NoModifier);
@@ -174,7 +193,9 @@ Scope {
       browser.sortKey = prefs.sortKey || "name";
       browser.sortDescending = prefs.sortDescending === true;
       browser.showHidden = prefs.showHidden === true;
-      viewMode = prefs.view || "grid";
+      viewSettings.restore(prefs.views || {
+                             mode: prefs.view
+                           });
       saveFilterEnabled = prefs.saveFilter !== false;
       autoExtension = prefs.autoExtension !== false;
       if (method === "saveFiles")
@@ -209,7 +230,9 @@ Scope {
   Component.onCompleted: Qt.callLater(_initialize)
   Connections {
     target: FileChooserMemory
-    function onReadyChanged() { Qt.callLater(root._initialize); }
+    function onReadyChanged() {
+      Qt.callLater(root._initialize);
+    }
     function onRefreshed() {
       if (root._waitingMemory && !root.settled) {
         root._waitingMemory = false;
@@ -242,7 +265,8 @@ Scope {
     _saveNameEdited = true;
   }
   function beginNameEdit() {
-    if (_validName(saveName)) _nameBeforeEdit = saveName;
+    if (_validName(saveName))
+      _nameBeforeEdit = saveName;
   }
   function clearFilters() {
     browser.filterText = "";
@@ -279,7 +303,8 @@ Scope {
     function onChosen(path) {
       typedPaths.invalidate();
       root._pendingSavePath = null;
-      if (root.method === "open") root._openNameEdited = false;
+      if (root.method === "open")
+        root._openNameEdited = false;
       if (root.method === "save" && requestSelection.selectedPaths.length === 1 && requestSelection.selectedPaths[0] === path) {
         root._saveNameEdited = false;
         root.saveName = path.slice(path.lastIndexOf("/") + 1);
@@ -336,10 +361,18 @@ Scope {
   // never get turned into a different, apparently valid filename.
   function _prepareName(proposed, accepting) {
     var target = Paths.local(saveName, browser.currentPath, FilePlaces.home);
-    if (!target.ok) { _errorText = I18n.tr("widgets.file-picker." + target.error); return; }
+    if (!target.ok) {
+      _errorText = I18n.tr("widgets.file-picker." + target.error);
+      return;
+    }
     _nameChecking = true;
-    var job = nameFactory.createObject(root, {generation: ++_nameGeneration, original: saveName,
-      proposed: proposed, accepting: accepting, target: target.path});
+    var job = nameFactory.createObject(root, {
+                                         generation: ++_nameGeneration,
+                                         original: saveName,
+                                         proposed: proposed,
+                                         accepting: accepting,
+                                         target: target.path
+                                       });
     job.running = true;
   }
   Component {
@@ -356,18 +389,24 @@ path, original, proposed, accepting = json.loads(sys.argv[1])
 preserve = os.path.lexists(path) if accepting else os.path.isdir(path)
 print(json.dumps({'name': original if preserve else proposed}))
 `, JSON.stringify([target, original, proposed, accepting])]
-      stdout: StdioCollector { id: nameOutput }
-      onExited: function(code) {
+      stdout: StdioCollector {
+        id: nameOutput
+      }
+      onExited: function (code) {
         if (!root.settled && generation === root._nameGeneration) {
           root._nameChecking = false;
           var result;
-          try { result = JSON.parse(nameOutput.text); }
-          catch (error) { result = null; }
+          try {
+            result = JSON.parse(nameOutput.text);
+          } catch (error) {
+            result = null;
+          }
           if (code === 0 && result && typeof result.name === "string") {
             root.saveName = result.name;
             if (accepting)
               root._acceptResolved();
-          } else root._errorText = I18n.tr("widgets.file-picker.selection-check-failed");
+          } else
+            root._errorText = I18n.tr("widgets.file-picker.selection-check-failed");
         }
         destroy();
       }
@@ -401,7 +440,9 @@ print(json.dumps({'name': original if preserve else proposed}))
       var value = choiceValues[choice[0]];
       var allowed = choice[2].length ? choice[2].map(item => item[0]) : ["true", "false"];
       if (!allowed.includes(value)) {
-        _errorText = I18n.tr("widgets.file-picker.invalid-choice", {name: choice[1]});
+        _errorText = I18n.tr("widgets.file-picker.invalid-choice", {
+                               name: choice[1]
+                             });
         return;
       }
       selectedChoices.push([choice[0], value]);
@@ -418,7 +459,15 @@ print(json.dumps({'name': original if preserve else proposed}))
     }
     // One immutable-by-ownership input snapshot drives checks and the reply.
     // URI/name preparation happens before the final filesystem check, not after.
-    _snapshot = {folder: folder, paths: paths, uris: uris, method: method, directory: options.directory === true, choices: selectedChoices, filter: currentFilter};
+    _snapshot = {
+      folder: folder,
+      paths: paths,
+      uris: uris,
+      method: method,
+      directory: options.directory === true,
+      choices: selectedChoices,
+      filter: currentFilter
+    };
     _validate();
   }
 
@@ -462,15 +511,20 @@ except (ValueError, OSError) as e:
       property var input
       property bool finalCheck: false
       command: ["timeout", "5", "python3", "-c", root._validateCode, JSON.stringify(input)]
-      stdout: StdioCollector { id: validationOutput }
-      onExited: function(code) {
+      stdout: StdioCollector {
+        id: validationOutput
+      }
+      onExited: function (code) {
         if (!root.settled && generation === root._generation) {
           root._checking = false;
           var result;
           try {
             result = JSON.parse(validationOutput.text);
           } catch (e) {
-            result = {ok: false, error: "selection-check-failed"};
+            result = {
+              ok: false,
+              error: "selection-check-failed"
+            };
           }
           root._validated(result, finalCheck);
         }
@@ -483,7 +537,11 @@ except (ValueError, OSError) as e:
     if (_settled || !_snapshot)
       return;
     _checking = true;
-    var check = validationFactory.createObject(root, {generation: ++_generation, finalCheck: finalCheck === true, input: [_snapshot.method, _snapshot.directory, _snapshot.folder, _snapshot.paths]});
+    var check = validationFactory.createObject(root, {
+                                                 generation: ++_generation,
+                                                 finalCheck: finalCheck === true,
+                                                 input: [_snapshot.method, _snapshot.directory, _snapshot.folder, _snapshot.paths]
+                                               });
     check.running = true;
   }
 
@@ -508,11 +566,23 @@ except (ValueError, OSError) as e:
       _validate(true);
       return;
     }
-    var results = {uris: _snapshot.uris, writable: result.writable, choices: _snapshot.choices};
+    var results = {
+      uris: _snapshot.uris,
+      writable: result.writable,
+      choices: _snapshot.choices
+    };
     if (_snapshot.filter)
       results.current_filter = _snapshot.filter;
     var folder = _snapshot.folder;
-    var prefs = {view: viewMode, sortKey: browser.sortKey, sortDescending: browser.sortDescending, showHidden: browser.showHidden, saveFilter: saveFilterEnabled, autoExtension: autoExtension};
+    var prefs = {
+      view: viewMode,
+      views: viewSettings.snapshot(),
+      sortKey: browser.sortKey,
+      sortDescending: browser.sortDescending,
+      showHidden: browser.showHidden,
+      saveFilter: saveFilterEnabled,
+      autoExtension: autoExtension
+    };
     _finish(0, results);
     FileChooserMemory.remember(appId, folder, prefs);
   }
@@ -544,7 +614,9 @@ except (ValueError, OSError) as e:
     finished(response, results);
   }
 
-  function cancel() { _finish(1, {}); }
+  function cancel() {
+    _finish(1, {});
+  }
   function fail(message) {
     _errorText = message;
     _finish(2, {});

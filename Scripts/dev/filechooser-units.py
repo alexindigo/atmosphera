@@ -39,7 +39,7 @@ def main():
     shutil.copytree(source, shell, symlinks=True)
     probe = shell / "filechooser-units.qml"
     probe_text = (source / "Scripts/dev/fixtures/filechooser-units.qml").read_text().replace('"../../../Helpers/', '"Helpers/')
-    for name in ("filechooser-icon-cases.js", "filechooser-extensions.js", "filechooser-navigation.js", "filechooser-paths.js", "filechooser-operations.js"):
+    for name in ("filechooser-icon-cases.js", "filechooser-extensions.js", "filechooser-navigation.js", "filechooser-paths.js", "filechooser-operations.js", "filechooser-views.js"):
         probe_text = probe_text.replace('"' + name + '"', '"Scripts/dev/fixtures/' + name + '"')
     probe.write_text(probe_text)
     fixtures = runtime / "fixtures"
@@ -193,6 +193,9 @@ def main():
     required.update("completion." + name for name in ("case-prefix", "directories", "explicit-hidden", "type-filter", "literal-folder", "quoted-last-name", "inactive-invalidates"))
     required.update("operations." + name for name in ("single-owner", "rename-model-selection-name", "rename-no-overwrite", "rename-invalid", "trash-reconciles", "delete-awaits-confirmation", "delete-decline-retains", "delete-reconciles", "create-shares-owner", "navigation-retires-intents"))
     required.add("operations.rename-filtered-out-finishes")
+    required.update("views." + name for name in ("owner", "defaults", "per-mode-zoom", "zoom-upper-bound", "zoom-lower-bound", "partial-wheel", "accumulated-wheel", "pixel-wheel", "column-adjacent-resize", "column-minima", "no-write-before-success", "persist-success", "next-request", "cancel-no-write", "sanitize"))
+    required.update(("views.reload-process-consumer", "views.reload-process-columns"))
+    required.add("views.no-arbitrary-dialog-cap")
     missing = sorted(required - {case["case"] for case in cases})
     required_media = {"playback." + name for name in ("initial", "inactive-intents", "volume-low", "volume-high", "volume-step", "invalid-volume", "times", "autoplay", "seek-low", "seek-high", "close-stops", "close-destroys-engine")}
     required_labels = {"labels." + name for name in ("extension-attached", "dots", "long-word", "cjk", "extension-only", "two-lines-only")}

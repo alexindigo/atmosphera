@@ -122,3 +122,13 @@ The UI runner includes native keyboard/mouse file operations. For iteration only
 `--operations-only` runs that partition with the same isolation/runtime gates;
 omit it for the full pre-commit proof. Native AT-SPI coverage includes action
 menus/submenus, inline rename, error announcements and safe delete confirmation.
+
+## Views
+
+The full UI walk also covers zoom keys, modified wheel input and slider, genuine
+column-flow compact navigation/selection/direct scrolling, both column resize
+handles, thumbnail source teardown in all views, and pointer/keyboard dialog
+sizing. It reads the persisted JSON and reopens a new request to observe restored
+size, column geometry and independent per-view zoom. `--views-only` is an iteration
+partition with unchanged isolation/runtime gates, not the full pre-commit proof.
+The native AT-SPI walk includes slider values and keyboard resize controls.

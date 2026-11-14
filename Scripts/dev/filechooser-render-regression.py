@@ -40,6 +40,14 @@ def main():
         needle = "  readonly property var iconDescriptor: FileTypes.artwork(name, directory, path)"
         assert text.count(needle) == 1
         text = text.replace(needle, needle + "\n  function artworkGeometry() { return artwork.mapToItem(root, 0, 0, artwork.width, artwork.height); }")
+    entry.write_text(text)
+    (out / ("observed-" + entry.name)).write_text(text)
+    # Geometry stays with the presentation; crossfade observations follow the
+    # shared artwork owner when grid, compact and details use that same graph.
+    artwork = shell / "Modules/FileChooser/FileEntryArtwork.qml"
+    if artwork.exists():
+        entry = artwork
+        text = entry.read_text()
     if "reveal: thumbnailArtwork.opacity" not in text:
         needle = "opacity: thumbnail.opacity,"
         assert text.count(needle) == 1
