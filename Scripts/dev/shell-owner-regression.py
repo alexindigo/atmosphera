@@ -143,6 +143,10 @@ class OwnershipLookupTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 owner.queued_connection(42)
 
+    def test_confirmed_absence_has_no_queued_connection(self):
+        with patch.object(owner, "call", return_value="b false"):
+            self.assertEqual(owner.queued_connection(42), "")
+
 
 if __name__ == "__main__":
     assert Path("/sys/class/dmi/id/sys_vendor").read_text().strip() == "QEMU", "VM only"

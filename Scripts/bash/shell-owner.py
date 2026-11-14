@@ -34,15 +34,21 @@ def call(method, *args):
                "org.freedesktop.DBus", method, *args)
 
 
-def owner(name=NAME):
+def name_has_owner(name=NAME):
     # A failed lookup is not evidence that the election is vacant. Establish
     # absence through a successful bus reply; all other lookup failures abort
     # recovery without granting permission to retire any recorded process.
     presence = call("NameHasOwner", "s", name)
     if presence == "b false":
-        return None
+        return False
     if presence != "b true":
         raise RuntimeError("shell ownership lookup failed (NameHasOwner)")
+    return True
+
+
+def owner(name=NAME):
+    if not name_has_owner(name):
+        return None
     reply = call("GetNameOwner", "s", name).split()
     if len(reply) != 2 or reply[0] != "s":
         raise RuntimeError("shell ownership lookup failed (GetNameOwner)")
@@ -58,6 +64,10 @@ def ping(unique):
 
 
 def queued_connection(pid):
+    # An unowned name has no queue. ListQueuedOwners reports NameHasNoOwner
+    # in that case, so confirm absence before treating other failures as unknown.
+    if not name_has_owner():
+        return ""
     reply = shlex.split(call("ListQueuedOwners", "s", NAME))
     if len(reply) < 2 or reply[0] != "as" or len(reply) != int(reply[1]) + 2:
         raise RuntimeError("shell ownership lookup failed (ListQueuedOwners)")
