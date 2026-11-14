@@ -22,13 +22,16 @@ def staged_snapshot(root,destination):
 
 
 def check(root):
+    root = root.resolve()
     for script,args in [
         ('build-settings-schema.py',['--check']),
         ('check-settings-writes.py',['--check']),
         ('build-settings-search-index.py',['--check']),
         ('settings-schema-selftest.py',[]),
+        ('settings-formatter-selftest.py',[]),
         ('settings-writes-selftest.py',[]),
         ('settings-staged-selftest.py',[]),
+        ('settings-runner-paths-selftest.py',[]),
     ]:
         result=subprocess.run([sys.executable,'-B',str(root/'Scripts/dev'/script),*args],cwd=root,timeout=120)
         if result.returncode:
@@ -42,6 +45,7 @@ def main():
     parser.add_argument('--staged',action='store_true')
     parser.add_argument('--root',type=Path,default=ROOT)
     args=parser.parse_args()
+    args.root = args.root.resolve()
     if args.staged:
         with tempfile.TemporaryDirectory(prefix='settings-index-') as name:
             snapshot=Path(name)
