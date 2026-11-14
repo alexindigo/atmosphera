@@ -50,6 +50,63 @@ PopupWindow {
   }
   property string widgetSection: ""
   property int widgetIndex: -1
+  property var _pinEditor: null
+  property bool _pinBusy: false
+
+  // The menu retains a concrete command session, not a later interpretation of
+  // its displayed row index. Runtime callers can also capture explicitly.
+  function capturePinEditor() {
+    if (_pinBusy)
+      return false;
+    if (_pinEditor)
+      _pinEditor.commands.detach();
+    _pinEditor = null;
+    var screenName = root.shellScreen?.name || "";
+    var section = root.widgetSection;
+    var index = root.widgetIndex;
+    var item = root.trayItem;
+    var itemName = item ? (item.tooltipTitle || item.name || item.id || "") : "";
+    if (!itemName || index < 0 || !["left", "center", "right"].includes(section))
+      return false;
+    var screenOverride = Settings.getBarWidgetsForScreen(screenName) !== Settings.data.bar.widgets;
+    var commands = null;
+    if (screenOverride) {
+      var monitors = Settings.data.bar.screenOverrides;
+      for (var i = 0; i < monitors.length; ++i) {
+        if (monitors[i].name === screenName) {
+          commands = Settings.createRecordListEditor(["bar", "screenOverrides"], [
+                                                       {
+                                                         index: i
+                                                       },
+                                                       {
+                                                         key: "widgets"
+                                                       },
+                                                       {
+                                                         key: section
+                                                       }
+                                                     ]);
+          break;
+        }
+      }
+    } else {
+      commands = Settings.createRecordListEditor(["bar", "widgets", section], []);
+    }
+    if (!commands || commands.initialValue[index]?.id !== "Tray") {
+      if (commands)
+        commands.detach();
+      return false;
+    }
+    _pinEditor = {
+      commands: commands,
+      screenName: screenName,
+      screenOverride: screenOverride,
+      section: section,
+      index: index,
+      item: item,
+      itemName: itemName
+    };
+    return true;
+  }
 
   // Derive menu from trayItem (only used for non-submenus)
   readonly property QsMenuHandle menu: isSubMenu ? null : (trayItem ? trayItem.menu : null)
@@ -198,6 +255,7 @@ PopupWindow {
   }
 
   function showAt(item, x, y) {
+    root.capturePinEditor();
     presentationGeneration++;
     showTimer.stop();
     anchorTimer.stop();
@@ -627,6 +685,7 @@ PopupWindow {
           id: pinUnpinMouseArea
           anchors.fill: parent
           hoverEnabled: true
+          enabled: !root._pinBusy
 
           onClicked: {
             if (root.isPinned) {
@@ -640,92 +699,77 @@ PopupWindow {
     }
   }
 
-  function addToPinned() {
-    if (!trayItem || widgetSection === "" || widgetIndex < 0) {
-      Logger.w("TrayMenu", "Cannot pin: missing tray item or widget info");
-      return;
-    }
-    const itemName = trayItem.tooltipTitle || trayItem.name || trayItem.id || "";
-    if (!itemName) {
-      Logger.w("TrayMenu", "Cannot pin: tray item has no name");
-      return;
-    }
-    var screenName = root.shellScreen?.name || "";
-    var widgets = Settings.getBarWidgetsForScreen(screenName)[widgetSection];
-    if (!widgets || widgetIndex >= widgets.length) {
-      Logger.w("TrayMenu", "Cannot pin: invalid widget index");
-      return;
-    }
-    var widgetSettings = widgets[widgetIndex];
-    if (!widgetSettings || widgetSettings.id !== "Tray") {
-      Logger.w("TrayMenu", "Cannot pin: widget is not a Tray widget");
-      return;
-    }
-    var pinnedList = widgetSettings.pinned || [];
-    var newPinned = pinnedList.slice();
-    newPinned.push(itemName);
-    var newSettings = Object.assign({}, widgetSettings);
-    newSettings.pinned = newPinned;
-    widgets[widgetIndex] = newSettings;
-
-    // Write to the correct location: shellScreen override or global
-    if (Settings.hasScreenOverride(screenName, "widgets")) {
-      var overrideWidgets = Settings.getBarWidgetsForScreen(screenName);
-      overrideWidgets[widgetSection] = widgets;
-      Settings.setScreenOverride(screenName, "widgets", overrideWidgets);
-    } else {
-      Settings.data.bar.widgets[widgetSection] = widgets;
-    }
-    Settings.saveImmediate();
-
-    // Close drawer when pinning (drawer needs to resize)
-    if (shellScreen) {
-      const panel = PanelService.getPanel("trayDrawerPanel", shellScreen);
-      if (panel)
-        panel.close();
-    }
+  function addToPinned(callback) {
+    return root._setPinned(true, callback);
   }
 
-  function removeFromPinned() {
-    if (!trayItem || widgetSection === "" || widgetIndex < 0) {
-      Logger.w("TrayMenu", "Cannot unpin: missing tray item or widget info");
-      return;
-    }
-    const itemName = trayItem.tooltipTitle || trayItem.name || trayItem.id || "";
-    if (!itemName) {
-      Logger.w("TrayMenu", "Cannot unpin: tray item has no name");
-      return;
-    }
-    var screenName = root.shellScreen?.name || "";
-    var widgets = Settings.getBarWidgetsForScreen(screenName)[widgetSection];
-    if (!widgets || widgetIndex >= widgets.length) {
-      Logger.w("TrayMenu", "Cannot unpin: invalid widget index");
-      return;
-    }
-    var widgetSettings = widgets[widgetIndex];
-    if (!widgetSettings || widgetSettings.id !== "Tray") {
-      Logger.w("TrayMenu", "Cannot unpin: widget is not a Tray widget");
-      return;
-    }
-    var pinnedList = widgetSettings.pinned || [];
-    var newPinned = [];
-    for (var i = 0; i < pinnedList.length; i++) {
-      if (pinnedList[i] !== itemName) {
-        newPinned.push(pinnedList[i]);
-      }
-    }
-    var newSettings = Object.assign({}, widgetSettings);
-    newSettings.pinned = newPinned;
-    widgets[widgetIndex] = newSettings;
+  function removeFromPinned(callback) {
+    return root._setPinned(false, callback);
+  }
 
-    // Write to the correct location: shellScreen override or global
-    if (Settings.hasScreenOverride(screenName, "widgets")) {
-      var overrideWidgets = Settings.getBarWidgetsForScreen(screenName);
-      overrideWidgets[widgetSection] = widgets;
-      Settings.setScreenOverride(screenName, "widgets", overrideWidgets);
-    } else {
-      Settings.data.bar.widgets[widgetSection] = widgets;
+  function _setPinned(pinned, callback) {
+    function complete(result) {
+      if (result.status === "failed")
+        Logger.w("TrayMenu", "Pin command failed:", result.error?.code || "settings-save-failed");
+      if (typeof callback === "function")
+        callback(result);
     }
-    Settings.saveImmediate();
+    function refuse(code) {
+      Qt.callLater(function () {
+        complete({
+                   status: "failed",
+                   error: {
+                     code: code
+                   }
+                 });
+      });
+      return false;
+    }
+    if (_pinBusy)
+      return refuse("list-editor-busy");
+    // Immediate, non-menu callers capture at submission. Delayed menu callbacks
+    // must keep the session captured by showAt, including after a refusal.
+    if (!_pinEditor && !visible && !_showRequested)
+      root.capturePinEditor();
+    var editor = _pinEditor;
+    if (!editor || editor.item !== root.trayItem || editor.screenName !== (root.shellScreen?.name || "") || editor.section !== root.widgetSection || editor.index !== root.widgetIndex || editor.screenOverride !== (Settings.getBarWidgetsForScreen(editor.screenName) !== Settings.data.bar.widgets))
+      return refuse("list-edit-conflict");
+    var row = editor.commands.initialValue[editor.index];
+    var names = (row.pinned || []).filter(function (name) {
+      return name !== editor.itemName;
+    });
+    if (pinned)
+      names.push(editor.itemName);
+    _pinBusy = true;
+    var accepted = editor.commands.submit([
+                                            {
+                                              op: "set",
+                                              index: editor.index,
+                                              field: "pinned",
+                                              value: names
+                                            }
+                                          ], function (admission) {
+                                            if (admission.status !== "admitted" || admission.refreshState !== "current") {
+                                              root._pinBusy = false;
+                                              complete({
+                                                         status: "failed",
+                                                         error: admission.error || {
+                                                           code: "list-edit-conflict"
+                                                         }
+                                                       });
+                                              return;
+                                            }
+                                            // Preserve live drawer resizing after admission. This is not saved feedback.
+                                            if (pinned && root.shellScreen) {
+                                              const panel = PanelService.getPanel("trayDrawerPanel", root.shellScreen);
+                                              if (panel)
+                                                panel.close();
+                                            }
+                                            Settings.saveResult(function (result) {
+                                              root._pinBusy = false;
+                                              complete(result);
+                                            });
+                                          });
+    return accepted;
   }
 }

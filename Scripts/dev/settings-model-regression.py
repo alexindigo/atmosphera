@@ -12,6 +12,7 @@ import stat
 import subprocess
 import tempfile
 import time
+from guest_profile import ProfileBlocked, activate_profile, profile_argument, protect_owned_process
 
 CASES = (
     "instance-and-alias-isolation", "frozen-capture-and-ABA",
@@ -24,8 +25,8 @@ CASES = (
 SOURCE_INPUTS = (
     "Scripts/dev/fixtures/settings-model-invariants.qml", "Helpers/SettingsModel.js",
     "Helpers/sha256.js", "Helpers/QtObj2JS.js", "Scripts/dev/settings-model-regression.py",
+    "Scripts/dev/guest_profile.py",
 )
-JOURNALS = Path("/home/tester/post-071/bindings-fifo-handoff/recovery-journals/settings-model-ownership")
 ERRORS = re.compile(r"ReferenceError|TypeError|SyntaxError|Error loading configuration|Failed to load configuration|"
                     r"is not installed|Component is not ready|Cannot assign|Cannot read property|"
                     r"Expected token|Unexpected token|Binding loop detected|SETTINGS_MODEL_WATCHDOG")
@@ -82,19 +83,25 @@ def main():
     ap.add_argument("--source", type=Path, required=True)
     ap.add_argument("--output", type=Path, required=True)
     ap.add_argument("--case", choices=("all",), required=True)
+    profile_argument(ap)
     a = ap.parse_args()
-    macs = {p.read_text().strip() for p in Path("/sys/class/net").glob("*/address")}
-    if os.getuid() != 1000 or Path.home() != Path("/home/tester") or "52:54:00:cd:ea:a0" not in macs:
-        raise SystemExit("SETTINGS_MODEL_REGRESSION: BLOCKED — exact owned tester VM required")
+    try:
+        profile = activate_profile(a.guest_profile)
+    except (ProfileBlocked, OSError) as error:
+        print("SETTINGS_MODEL_REGRESSION: BLOCKED — " + str(error), flush=True)
+        return 2
+    journals = profile.journal_base / "settings-model-ownership"
     source, out = a.source.absolute(), a.output.absolute()
     if source != source.resolve() or out != out.resolve() or not source.is_dir() or out.exists():
         raise SystemExit("SETTINGS_MODEL_REGRESSION: BLOCKED — fresh non-symlink source/output required")
-    if source == out or source in out.parents or out in source.parents or JOURNALS not in out.parents:
+    if source == out or source in out.parents or out in source.parents or journals not in out.parents:
         raise SystemExit("SETTINGS_MODEL_REGRESSION: BLOCKED — disjoint named journal root required")
-    fs = os.statvfs(out.parent if out.parent.exists() else JOURNALS.parent)
+    profile.prepare_roots()
+    journals.mkdir(mode=0o700, exist_ok=True)
+    fs = os.statvfs(out.parent if out.parent.exists() else journals)
     if fs.f_bavail * fs.f_frsize < (1024 + 64) * 1024 * 1024 or fs.f_favail < 55000:
         raise SystemExit("SETTINGS_MODEL_REGRESSION: BLOCKED — root recovery reserve unavailable")
-    runtime = os.statvfs("/run/user/1000")
+    runtime = os.statvfs(profile.session_runtime)
     if runtime.f_bavail * runtime.f_frsize < 64 * 1024 * 1024 or runtime.f_favail < 5000:
         raise SystemExit("SETTINGS_MODEL_REGRESSION: BLOCKED — original runtime reserve unavailable")
     executable = shutil.which("qs")
@@ -118,9 +125,9 @@ def main():
     # Quickshell's VFS confines relative imports to its config root. Keep the
     # original fixture/model layout inside a small inert input tree, not a full
     # desktop tree or a stripped/rewritten JavaScript module.
-    runtime_dir = Path(tempfile.mkdtemp(prefix="sm-", dir="/run/user/1000"))
+    runtime_dir = Path(tempfile.mkdtemp(prefix="sm-", dir=profile.runtime_base))
     (out / "source-hashes.json").write_text(json.dumps(hashes, indent=2) + "\n")
-    env = {key: os.environ[key] for key in ("PATH", "HOME", "USER", "LOGNAME", "LANG") if key in os.environ}
+    env = {key: os.environ[key] for key in ("PATH", "HOME", "USER", "LOGNAME", "LANG", "TMPDIR") if key in os.environ}
     env.update(QT_QPA_PLATFORM="offscreen", QT_FORCE_STDERR_LOGGING="1", ATMOSPHERA_DEBUG="0",
                XDG_CACHE_HOME=str(out / "cache"), XDG_CONFIG_HOME=str(out / "config"),
                XDG_DATA_HOME=str(out / "data"), XDG_RUNTIME_DIR=str(runtime_dir))
@@ -129,7 +136,7 @@ def main():
     with (out / "engine.log").open("xb") as log:
         proc = subprocess.Popen(command, cwd=source, env=env, stdout=log,
                                 stderr=subprocess.STDOUT, start_new_session=True)
-        (out / "ownership.json").write_text(json.dumps({"guest": "arch-atmosphera-gtkfree",
+        (out / "ownership.json").write_text(json.dumps({"guest_profile": profile.record(),
             "source": str(source), "output": str(out), "pid": proc.pid, "uid": os.getuid(),
             "live_desktop_fixture": False, "command": command, "timeout_seconds": 25,
             "runtime_root": str(runtime_dir), "copied_input_hashes": copies,
@@ -139,8 +146,7 @@ def main():
             if time.monotonic() > deadline or log.tell() > 1024 * 1024 or (out / "engine.log").stat().st_size > 1024 * 1024:
                 timed_out = True
                 errors.append("inert engine deadline/log bound exceeded")
-                if proc.pid == 51508 or os.getpgid(proc.pid) != proc.pid:
-                    raise RuntimeError("inert child ownership changed; refusing termination")
+                protect_owned_process(proc)
                 os.killpg(proc.pid, signal.SIGTERM)
                 break
             time.sleep(.02)
@@ -180,6 +186,10 @@ def main():
         errors.append("source changed during inert run")
     if not quiet:
         errors.append("owned inert process group remains live; no continuation")
+    try:
+        profile.verify()
+    except (ProfileBlocked, OSError) as error:
+        errors.append("guest/console identity changed: " + str(error))
     status = "BLOCKED" if not quiet else "FAIL" if errors else "PASS"
     result = {"status": status, "cases": traces, "errors": errors, "engine_exit": proc.returncode,
               "timed_out": timed_out, "owned_child_group_gone": quiet, "source_hashes": hashes,

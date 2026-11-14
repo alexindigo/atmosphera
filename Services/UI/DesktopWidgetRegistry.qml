@@ -2,9 +2,12 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import "../../Helpers/RecordListEditor.js" as Lists
+import "../../Helpers/SectionWidgetCommands.js" as SectionCommands
 import qs.Commons
 import qs.Modules.DesktopWidgets.Widgets
 import qs.Services.Plugins
+import qs.Services.UI
 
 Singleton {
   id: root
@@ -256,40 +259,106 @@ Singleton {
     return true;
   }
 
-  function updateWidgetData(monitorName, widgetIndex, properties) {
-    if (widgetIndex < 0 || !monitorName) {
-      return;
+  function getWidgetsForMonitor(monitorName) {
+    var monitors = Settings.data.desktopWidgets.monitorWidgets;
+    for (var i = 0; i < monitors.length; ++i) {
+      if (monitors[i].name === monitorName)
+        return monitors[i].widgets || [];
     }
+    return [];
+  }
 
-    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
-    var newMonitorWidgets = monitorWidgets.slice();
+  function _widgetAddress(monitorName) {
+    return [{field: "name", equals: monitorName}, {key: "widgets"}];
+  }
 
-    for (var i = 0; i < newMonitorWidgets.length; i++) {
-      if (newMonitorWidgets[i].name === monitorName) {
-        var widgets = (newMonitorWidgets[i].widgets || []).slice();
-        if (widgetIndex < widgets.length) {
-          widgets[widgetIndex] = Object.assign({}, widgets[widgetIndex], properties);
-          newMonitorWidgets[i] = Object.assign({}, newMonitorWidgets[i], {
-                                                 "widgets": widgets
-                                               });
-          Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
-        }
-        break;
-      }
+  function _createListEditor(path, address, additionalLists) {
+    return Settings.createRecordListEditor(path, address, additionalLists, {ensure: true});
+  }
+
+  // New rows are explicit input. Existing rows only cross field/transfer commands.
+  function addWidget(monitorName, widgetData, callback) {
+    var commands = root._createListEditor(["desktopWidgets", "monitorWidgets"], root._widgetAddress(monitorName));
+    if (!commands)
+      return false;
+    var index = commands.initialValue.length;
+    return commands.submit([{op: "insert", index: index, value: widgetData}], function (result) {
+      commands.detach();
+      if (typeof callback === "function")
+        callback(result, index);
+    });
+  }
+
+  function captureWidgetInteraction(monitorName, index, monitorNames) {
+    var names = [monitorName].concat(monitorNames || []).filter(function (name, i, all) { return all.indexOf(name) === i; });
+    var sections = names.map(function (name) {
+      return {id: name, path: ["desktopWidgets", "monitorWidgets"], listAddress: root._widgetAddress(name), ensure: true,
+        length: root.getWidgetsForMonitor(name).length};
+    });
+    return SectionCommands.capture({sections: sections, createEditor: root._createListEditor,
+      transferFields: {x: 100, y: 100, scale: 1.0},
+      later: function (callback) { Qt.callLater(callback); }, onChanged: function () {}}, monitorName, index);
+  }
+
+  // Retain this editor through component loading, saves, Retry and close cleanup.
+  function createWidgetSettingsEditor(monitorName, index) {
+    var commands = Settings.createRecordListEditor(["desktopWidgets", "monitorWidgets"], root._widgetAddress(monitorName));
+    if (!commands || !Number.isSafeInteger(index) || index < 0 || index >= commands.initialValue.length) {
+      if (commands)
+        commands.detach();
+      return null;
     }
+    return {
+      initialValue: Lists.copy(commands.initialValue[index]),
+      submit: function (fields, callback) {
+        var edits = fields && typeof fields === "object" && !Array.isArray(fields) ? Object.keys(fields).filter(function (key) {
+          return key !== "id";
+        }).map(function (key) { return {op: "set", index: index, field: key, value: fields[key]}; }) : [];
+        return commands.submit(edits, function (result) {
+          if (result.status === "admitted" && result.refreshState === "current") {
+            Settings.saveResult(callback);
+          } else if (typeof callback === "function") {
+            callback({status: "failed", error: result.error || {code: "list-edit-conflict"}});
+          }
+        });
+      },
+      removeIfUnassigned: function (callback) {
+        var row = commands.initialValue[index];
+        if (!row || row.id !== "AppShortcut" || row.appId)
+          return false;
+        // The command fence, not a later row lookup, decides whether cleanup is safe.
+        return commands.submit([{op: "remove", index: index}], callback);
+      },
+      detach: function () { commands.detach(); }
+    };
+  }
+
+  function updateWidgetData(monitorName, widgetIndex, properties, callback, capturedEditor) {
+    var editor = capturedEditor || root.createWidgetSettingsEditor(monitorName, widgetIndex);
+    if (!editor)
+      return false;
+    return editor.submit(properties, function (result) {
+      if (!capturedEditor)
+        editor.detach();
+      if (typeof callback === "function")
+        callback(result);
+    });
   }
 
   property var currentSettingsDialog: null
+  property bool _settingsOpening: false
 
-  function openWidgetSettings(screen, widgetIndex, widgetId, widgetData, onCloseCallback, anchorX, anchorY, anchorW, anchorH) {
+  function openWidgetSettings(screen, widgetIndex, widgetId, widgetData, onCloseCallback, anchorX, anchorY, anchorW, anchorH, capturedEditor) {
     if (!widgetId || !screen) {
       return;
     }
 
-    if (root.currentSettingsDialog) {
-      root.currentSettingsDialog.close();
-      root.currentSettingsDialog.destroy();
-      root.currentSettingsDialog = null;
+    if (root.currentSettingsDialog || root._settingsOpening) {
+      if (root.currentSettingsDialog)
+        root.currentSettingsDialog.forceActiveFocus();
+      if (capturedEditor)
+        capturedEditor.detach();
+      return;
     }
 
     var hasSettings = false;
@@ -318,12 +387,17 @@ Singleton {
       popupMenuWindow.hideDynamicMenu();
     }
 
+    var editor = capturedEditor || root.createWidgetSettingsEditor(screen.name, widgetIndex);
+    if (!editor)
+      return;
+    root._settingsOpening = true;
     var component = Qt.createComponent(Quickshell.shellDir + "/Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml");
 
     function instantiateAndOpen() {
       var dialogProps = {
         "widgetIndex": widgetIndex,
-        "widgetData": widgetData,
+        "widgetData": editor.initialValue,
+        "settingsEditor": editor,
         "widgetId": widgetId,
         "sectionId": screen.name,
         "screen": screen
@@ -335,12 +409,10 @@ Singleton {
         dialogProps.anchorH = anchorH !== undefined ? anchorH : 0;
       }
       var dialog = component.createObject(popupMenuWindow.dialogParent, dialogProps);
+      root._settingsOpening = false;
 
       if (dialog) {
         root.currentSettingsDialog = dialog;
-        dialog.updateWidgetSettings.connect((sec, idx, settings) => {
-          root.updateWidgetData(sec, idx, settings);
-        });
         dialog.closed.connect(() => {
           if (root.currentSettingsDialog === dialog) {
             root.currentSettingsDialog = null;
@@ -349,12 +421,14 @@ Singleton {
 
           // Optional close callback — used for post-dismiss cleanup (e.g. delete empty widget)
           if (typeof onCloseCallback === "function") {
-            onCloseCallback(screen, widgetIndex, widgetId);
+            onCloseCallback(screen, widgetIndex, widgetId, editor);
           }
+          editor.detach();
         });
         popupMenuWindow.showDialog(dialog);
         dialog.open();
       } else {
+        editor.detach();
         Logger.e("DesktopWidgetRegistry", "Failed to create widget settings dialog");
       }
     }
@@ -362,12 +436,16 @@ Singleton {
     if (component.status === Component.Ready) {
       instantiateAndOpen();
     } else if (component.status === Component.Error) {
+      root._settingsOpening = false;
+      editor.detach();
       Logger.e("DesktopWidgetRegistry", "Error loading settings dialog component:", component.errorString());
     } else {
       component.statusChanged.connect(() => {
         if (component.status === Component.Ready) {
           instantiateAndOpen();
         } else if (component.status === Component.Error) {
+          root._settingsOpening = false;
+          editor.detach();
           Logger.e("DesktopWidgetRegistry", "Error loading settings dialog component:", component.errorString());
         }
       });

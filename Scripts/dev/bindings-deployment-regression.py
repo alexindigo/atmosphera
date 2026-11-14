@@ -25,6 +25,9 @@ import base64
 from collections import Counter
 import socket
 import select
+import tarfile
+from guest_profile import (ProfileBlocked as HarnessBlocked, activate_profile,
+                           current_profile, profile_argument, protect_owned_process)
 
 HERE = Path(__file__).resolve().parent
 FILES = [".config/niri/config.kdl", ".config/niri/atmosphera.kdl",
@@ -33,19 +36,13 @@ FILES = [".config/niri/config.kdl", ".config/niri/atmosphera.kdl",
          ".config/xremap/atmosphera-xremap.yml", ".config/zed/keymap.json",
           ".config/zed/keymap.json.pre-atmosphera", "/etc/keyd/atmosphera"]
 
-WORK_BASE = Path("/home/tester/post-071/bindings-fifo-handoff/scratch")
-JOURNAL_BASE = WORK_BASE.parent / "recovery-journals"
 MIB = 1024 * 1024
 RESET_CHECKPOINT = "bindings-fifo-recovery-continuation/reset-semantics-checkpoint-20261004.md"
 
 
-class HarnessBlocked(RuntimeError):
-    """An unmet prerequisite or unsafe continuation, never a passing case."""
-
-
 def case_record(identity, groups, method=None, args=(), needs=(), status="RUNNABLE", reason=""):
     return {"id": identity, "groups": list(groups), "callable": method, "args": list(args),
-            "prerequisites": ["owned-ark-VM", "scoped-live-permission", *needs],
+            "prerequisites": ["identity-profile-VM", "scoped-live-permission", *needs],
             "input_needs": "physical-QMP" if "physical-input" in needs else "none",
             "coverage_status": status, "reason": reason}
 
@@ -233,23 +230,14 @@ def validate_layout(source, output, work_root, live=True):
         raise HarnessBlocked("source directory missing")
     if paths[1].exists() or paths[2].exists():
         raise HarnessBlocked("refusing existing output/work root; retain the old run")
-    if live and (WORK_BASE not in paths[2].parents or JOURNAL_BASE not in paths[1].parents):
+    if live and (current_profile().work_base not in paths[2].parents
+                 or current_profile().journal_base not in paths[1].parents):
         raise HarnessBlocked("work must be a fresh scratch child and output a fresh recovery-journals child")
     return paths
 
 
 def require_guest_identity():
-    if os.getuid() != 1000 or Path.home() != Path("/home/tester"):
-        raise HarnessBlocked("live harness requires the owned tester guest")
-    macs = {p.read_text().strip() for p in Path("/sys/class/net").glob("*/address")}
-    if "52:54:00:cd:ea:a0" not in macs:
-        raise HarnessBlocked("wrong guest MAC")
-    socks = list(Path("/run/user/1000").glob("niri.*.sock"))
-    if len(socks) != 1 or not Path("/run/user/1000/wayland-1").exists():
-        raise HarnessBlocked("wrong/unavailable niri session")
-    cmd = Path("/proc/51508/cmdline")
-    if not cmd.exists() or cmd.read_bytes().split(b"\0")[:4] != [b"/usr/bin/qs", b"-n", b"-c", b"atmosphera"]:
-        raise HarnessBlocked("recorded original desktop identity changed")
+    current_profile().verify(require_console=True)
 
 
 def retained_complete_copies(journal_base, source, work_base):
@@ -277,32 +265,39 @@ def retained_complete_copies(journal_base, source, work_base):
 
 class Workspace:
     """Measured two-copy ceiling. Never reclaim a historical/new case tree."""
-    def __init__(self, source, output, work_root, live=True, disk_usage=shutil.disk_usage, statvfs=os.statvfs):
+    def __init__(self, source, output, work_root, live=True, disk_usage=shutil.disk_usage, statvfs=os.statvfs,
+                 archive_completed=False):
+        self.archive_completed = archive_completed
+        self.profile = current_profile() if live else None
+        if live:
+            require_guest_identity()
         self.source, self.output, self.work_root = validate_layout(source, output, work_root, live)
         self.live, self.disk_usage, self.statvfs = live, disk_usage, statvfs
         self.budget = source_budget(self.source)
-        self.copies = retained_complete_copies(JOURNAL_BASE, self.source, WORK_BASE) if live else []
+        self.copies = retained_complete_copies(self.profile.journal_base, self.source, self.profile.work_base) if live else []
         self.peak = {"copy_count": 0, "candidate": self.budget}
         if live:
-            require_guest_identity()
+            self.profile.prepare_roots()
             self.preflight(initial=True)
         self.output.mkdir(mode=0o700, parents=True)
         self.work_root.mkdir(mode=0o700, parents=True)
         atomic_json(self.output / "ownership.json", {"source": str(self.source), "work_root": str(self.work_root),
-                    "output": str(self.output), "uid": os.getuid(), "pid": os.getpid(), "live": live})
+                    "output": str(self.output), "uid": os.getuid(), "pid": os.getpid(), "live": live,
+                    "guest_profile": self.profile.record() if live else None})
 
     def preflight(self, initial=False):
         if self.live:
+            self.profile.verify(require_console=True)
             self.copies = list(dict.fromkeys([p for p in self.copies if p.exists()]
-                + retained_complete_copies(JOURNAL_BASE, self.source, WORK_BASE)))
+                + retained_complete_copies(self.profile.journal_base, self.source, self.profile.work_base)))
         if len(self.copies) >= 2:
             raise HarnessBlocked("two retained complete case copies reached; new exact-path reclamation approval required")
         if not self.live:
             return
-        work = self.work_root if self.work_root.exists() else WORK_BASE
-        journal = self.output if self.output.exists() else WORK_BASE.parent
+        work = self.work_root if self.work_root.exists() else self.profile.work_base
+        journal = self.output if self.output.exists() else self.profile.journal_base
         wf, jf = self.statvfs(work), self.statvfs(journal)
-        runtime = self.statvfs("/run/user/1000")
+        runtime = self.statvfs(self.profile.session_runtime)
         if runtime.f_bavail * runtime.f_frsize < 64 * MIB or runtime.f_favail < 5000:
             raise HarnessBlocked("guest runtime byte/inode reserve unavailable; preserve stopped task logs before reclaim")
         required = max(640 * MIB if initial else 0, self.budget["copy_bytes"] + 128 * MIB + 256 * MIB)
@@ -334,6 +329,97 @@ class Workspace:
         atomic_json(journal / "paths.json", {"work": str(work), "tree": str(tree), "journal": str(journal)})
         return work, journal, tree
 
+    def archive_case_tree(self, case_dir, lifecycle):
+        """Opt-in lossless retention of this run's quiesced disposable copy.
+
+        Unverified/live/foreign/older trees are never reclaimed. The two-copy
+        ceiling still applies before every allocation, including failed archives.
+        """
+        lifecycle.assert_quiet()
+        case_dir = Path(case_dir)
+        journal = self.output / case_dir.name
+        record = json.loads((journal / "paths.json").read_text())
+        tree = Path(record["tree"])
+        if (case_dir.parent != self.work_root or case_dir != case_dir.resolve() or tree.parent != case_dir
+                or tree.is_symlink() or tree != tree.resolve() or not case_dir.is_dir()):
+            raise HarnessBlocked("archive is not this run's exact owned disposable tree")
+        if tree.exists():
+            if tree not in self.copies or not tree.is_dir():
+                raise HarnessBlocked("source tree is not a registered disposable copy")
+        else:
+            # Older completed runs may already have packed the source tree but
+            # still retain their generated config/cache replicas. Preserve that
+            # verified capsule inside the complete workspace capsule as well.
+            earlier = json.loads((journal / "archived-tree.json").read_text())
+            earlier_path = Path(earlier["archive"])
+            if (earlier.get("tree") != str(tree) or not earlier.get("verified_before_reclamation")
+                    or earlier_path.parent != case_dir or earlier_path.is_symlink()
+                    or earlier_path != earlier_path.resolve() or sha(earlier_path) != earlier["sha256"]):
+                raise HarnessBlocked("earlier disposable source archive is not verified")
+        archive = case_dir.with_name(case_dir.name + ".tar.gz")
+        temporary = archive.with_suffix(archive.suffix + ".incomplete")
+        if archive.exists() or temporary.exists():
+            raise HarnessBlocked("refusing an existing disposable-tree archive")
+
+        def inventory():
+            result = {}
+            for path in [case_dir, *sorted(case_dir.rglob("*"))]:
+                st = path.lstat()
+                kind = "link" if path.is_symlink() else "file" if path.is_file() else "directory" if path.is_dir() else None
+                if kind is None:
+                    raise HarnessBlocked("unsupported disposable-tree archive entry")
+                result[str(path.relative_to(case_dir.parent))] = {
+                    "kind": kind, "uid": st.st_uid, "gid": st.st_gid, "mode": stat.S_IMODE(st.st_mode),
+                    "mtime_ns": st.st_mtime_ns,
+                    "xattrs": {key: base64.b64encode(os.getxattr(path, key, follow_symlinks=False)).decode()
+                               for key in os.listxattr(path, follow_symlinks=False)},
+                    "content": os.readlink(path) if kind == "link" else sha(path) if kind == "file" else None}
+            return result
+
+        captured = inventory()
+        with temporary.open("xb") as raw:
+            with tarfile.open(fileobj=raw, mode="w:gz", format=tarfile.PAX_FORMAT) as tar:
+                for name, meta in captured.items():
+                    path = case_dir.parent / name
+                    info = tar.gettarinfo(str(path), arcname=name)
+                    ns = meta["mtime_ns"]
+                    info.pax_headers["mtime"] = f"{ns // 1000000000}.{ns % 1000000000:09d}"
+                    info.pax_headers["atmosphera.xattrs"] = json.dumps(meta["xattrs"], sort_keys=True)
+                    if meta["kind"] == "file":
+                        with path.open("rb") as content:
+                            tar.addfile(info, content)
+                    else:
+                        tar.addfile(info)
+            raw.flush()
+            os.fsync(raw.fileno())
+        with tarfile.open(temporary, "r:gz") as tar:
+            members = tar.getmembers()
+            if len(members) != len(captured) or {m.name for m in members} != set(captured):
+                raise HarnessBlocked("disposable archive membership verification failed")
+            for member in members:
+                meta = captured[member.name]
+                ns = meta["mtime_ns"]
+                if ((member.uid, member.gid, member.mode) != (meta["uid"], meta["gid"], meta["mode"])
+                        or member.pax_headers["mtime"] != f"{ns // 1000000000}.{ns % 1000000000:09d}"
+                        or json.loads(member.pax_headers["atmosphera.xattrs"]) != meta["xattrs"]):
+                    raise HarnessBlocked("disposable archive metadata verification failed")
+                if meta["kind"] == "file":
+                    if not member.isfile() or hashlib.sha256(tar.extractfile(member).read()).hexdigest() != meta["content"]:
+                        raise HarnessBlocked("disposable archive byte verification failed")
+                elif meta["kind"] == "link":
+                    if not member.issym() or member.linkname != meta["content"]:
+                        raise HarnessBlocked("disposable archive link verification failed")
+                elif not member.isdir():
+                    raise HarnessBlocked("disposable archive type verification failed")
+        lifecycle.assert_quiet()
+        if inventory() != captured:
+            raise HarnessBlocked("disposable tree changed during archive; retaining both")
+        temporary.replace(archive)
+        atomic_json(journal / "archived-workspace.json", {"archive": str(archive), "sha256": sha(archive),
+                    "workspace": str(case_dir), "tree": str(tree), "entries": captured, "verified_before_reclamation": True})
+        shutil.rmtree(case_dir)  # Only after full byte/metadata verification and quiescence.
+        self.copies = [p for p in self.copies if p.exists()]
+
 
 def process_table():
     rows = {}
@@ -350,6 +436,8 @@ def process_table():
 class OwnedLifecycle:
     """Track stable process identities/descendants, without any termination policy."""
     def __init__(self):
+        self.profile = current_profile()
+        self.console = self.profile.console
         self.owned = {}
         self.groups = set()
         self.roots = set()
@@ -362,7 +450,7 @@ class OwnedLifecycle:
         rows = process_table()
         item = rows.get(proc.pid)
         if item:
-            if proc.pid == 51508 or item["pgid"] == os.getpgrp():
+            if proc.pid in self.console.pids or item["pgid"] in self.console.groups or item["pgid"] == os.getpgrp():
                 raise HarnessBlocked("refusing desktop/runner process-group ownership")
             with self.lock:
                 self.owned[proc.pid] = item
@@ -375,7 +463,7 @@ class OwnedLifecycle:
             # A fresh case's exact path is also an ownership boundary; the
             # original named desktop never has that path in its command.
             for pid, row in rows.items():
-                if pid == 51508 or not self.roots:
+                if pid in self.console.pids or not self.roots:
                     continue
                 try:
                     command = Path(f"/proc/{pid}/cmdline").read_bytes().decode(errors="replace")
@@ -391,7 +479,7 @@ class OwnedLifecycle:
                 if not found:
                     break
                 for pid in found:
-                    if pid == 51508:
+                    if pid in self.console.pids or rows[pid]["pgid"] in self.console.groups:
                         raise HarnessBlocked("desktop unexpectedly intersects owned descendants")
                     self.owned[pid] = rows[pid]
                 ancestors.update(found)
@@ -411,6 +499,7 @@ class OwnedLifecycle:
                 return
 
     def assert_quiet(self):
+        self.profile.verify()
         if getattr(self, "watch_error", None):
             raise HarnessBlocked("owned process observation failed: " + self.watch_error)
         live = self.sample()
@@ -611,7 +700,7 @@ def run(args, **kwargs):
             out, err = proc.communicate(timeout=timeout)
         except subprocess.TimeoutExpired as error:
             if proc.poll() is None:
-                assert proc.pid != 51508 and os.getpgid(proc.pid) == proc.pid
+                protect_owned_process(proc)
                 os.killpg(proc.pid, signal.SIGTERM)
             try:
                 out, err = proc.communicate(timeout=5)
@@ -715,13 +804,10 @@ class Runner:
         self.stop_failed = False
         self.case = None
         self.finished_cases = []
-        for path in Path("/proc").glob("[0-9]*/cmdline"):
-            try:
-                command = path.read_bytes()
-                if command.split(b"\0")[:4] == [b"/usr/bin/qs", b"-n", b"-c", b"atmosphera"]:
-                    self.desktop[str(path)] = command.hex()
-            except OSError:
-                continue
+        workspace.profile.console.verify(required=True)
+        for identity in workspace.profile.console.records:
+            path = Path("/proc") / str(identity.pid) / "cmdline"
+            self.desktop[str(path)] = path.read_bytes().hex()
         if not self.desktop:
             raise RuntimeError("original named Atmosphera desktop instance missing")
         (output / "desktop.json").write_text(json.dumps(self.desktop, indent=2))
@@ -801,6 +887,7 @@ class Runner:
             "ATMOSPHERA_DEBUG": "0", "DEPLOYMENT_CASE": mode, "QT_FORCE_STDERR_LOGGING": "1",
             "PATH": str(self.tree / "Scripts/bash") + ":" + os.environ["PATH"],
         })
+        self.env.update(self.workspace.profile.child_environment("bd-"))
         self.logpath = self.case / "qs.log"
         self.event_log_paths = [self.logpath]
         if before_launch:
@@ -1017,8 +1104,7 @@ class Runner:
         ]}}
         up = {"execute": "input-send-event", "arguments": {"events": [
             {"type": "btn", "data": {"button": "left", "down": False}}]}}
-        cmds = ["virsh -c qemu+ssh://ark-dom/system qemu-monitor-command arch-atmosphera-gtkfree '" + json.dumps(e) + "'"
-                for e in (event, up)]
+        cmds = [current_profile().qmp_command(e) for e in (event, up)]
         self.ctx.await_injection(name, cmds)
 
     @staticmethod
@@ -1229,6 +1315,7 @@ class Runner:
         assert all(self.snapshot.matches(r) for r in self.snapshot.records), "post-handoff baseline drift"
         for path, command in self.desktop.items():
             assert Path(path).read_bytes().hex() == command, "original desktop process changed"
+        self.workspace.profile.console.verify(required=True)
         restored.update(services=self.states, desktop=self.desktop, typed_original_config_handoff="Accepted",
                         limits="No whole-desktop/clipboard/independent activation claim")
         atomic_json(self.case / "restoration.json", restored)
@@ -3031,7 +3118,7 @@ os.execv(REAL,[REAL,*args])
         relay = None
         def prepare():
             nonlocal relay
-            path = Path("/run/user/1000") / ("bindings-harness-" + uuid.uuid4().hex[:12] + ".sock")
+            path = current_profile().session_runtime / ("bindings-harness-" + uuid.uuid4().hex[:12] + ".sock")
             relay = OwnedSocketRelay(path, self.ctx.session["NIRI_SOCKET"])
             self.env["NIRI_SOCKET"] = str(relay.path)
         try:
@@ -3358,6 +3445,9 @@ def execute_selected(selected, runner, output):
         start_failures = len(runner.failures)
         result = {"id": identity, "status": "PASS", "executed": True, "primary_errors": [], "cleanup_errors": []}
         try:
+            if "physical-input" in record["prerequisites"] and not current_profile().qmp_prefix:
+                result["executed"] = False
+                raise HarnessBlocked("profile has no verified hardware QMP injection command")
             getattr(runner, record["callable"])(*record["args"])
         except (HarnessBlocked, runner.bindings.Blocked) as error:
             result["status"] = "BLOCKED"
@@ -3384,6 +3474,8 @@ def execute_selected(selected, runner, output):
                     result["primary_errors"].append("end observation: " + repr(error))
                 try:
                     result["restoration"] = runner.restore()
+                    if getattr(getattr(runner, "workspace", None), "archive_completed", False) and runner.case:
+                        runner.workspace.archive_case_tree(runner.work_case, runner.lifecycle)
                 except Exception as error:
                     result["cleanup_errors"].append("restoration: " + repr(error))
                     halted = True
@@ -3413,19 +3505,25 @@ def main(argv=None):
     ap.add_argument("--output", type=Path)
     ap.add_argument("--work-root", type=Path)
     ap.add_argument("--case", default="all", help="stable case ID or group(s); all includes deferred required coverage")
+    profile_argument(ap, required=False)
+    ap.add_argument("--archive-completed-copies", action="store_true",
+                    help="retain verified quiesced disposable trees as lossless archives on scratch")
     a = ap.parse_args(argv)
     if a.list_cases:
         print(json.dumps({"cases": CASE_REGISTRY, "all_ids": [c["id"] for c in select_cases("all")]}, indent=2))
         return 0
     if not all((a.source, a.output, a.work_root)):
         ap.error("--source, --output and --work-root are required for execution")
+    if a.guest_profile is None:
+        ap.error("--guest-profile is required for execution")
     try:
         selected = select_cases(a.case)
     except ValueError as error:
         ap.error(str(error))
     workspace, runner = None, None
     try:
-        workspace = Workspace(a.source, a.output, a.work_root)
+        activate_profile(a.guest_profile, require_console=True)
+        workspace = Workspace(a.source, a.output, a.work_root, archive_completed=a.archive_completed_copies)
         if any(c["coverage_status"] == "RUNNABLE" for c in selected):
             runner = Runner(workspace)
             summary = execute_selected(selected, runner, workspace.output)

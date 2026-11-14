@@ -52,6 +52,8 @@ import sys
 import time
 import base64
 from pathlib import Path
+from guest_profile import (ProfileBlocked as Blocked, activate_profile, current_profile,
+                           profile_argument, protect_owned_process)
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 FIXTURES = SCRIPT_DIR / "fixtures"
@@ -80,10 +82,6 @@ def sh(args, env=None, capture=True, timeout=60):
     return subprocess.run(args, capture_output=capture, text=True, env=env, timeout=timeout)
 
 
-class Blocked(Exception):
-    pass
-
-
 class Ctx:
     def __init__(self, source, output):
         self.source = Path(source)
@@ -96,15 +94,7 @@ class Ctx:
         self.session = self._discover_session()
 
     def _discover_session(self):
-        socks = sorted(glob.glob("/run/user/1000/niri.*.sock"))
-        if len(socks) != 1:
-            raise Blocked(f"expected exactly one niri socket, found {socks}")
-        return {
-            "XDG_RUNTIME_DIR": "/run/user/1000",
-            "WAYLAND_DISPLAY": "wayland-1",
-            "NIRI_SOCKET": socks[0],
-            "DBUS_SESSION_BUS_ADDRESS": "unix:path=/run/user/1000/bus",
-        }
+        return current_profile().session_environment()
 
     def env(self, extra=None):
         e = dict(os.environ)
@@ -125,8 +115,7 @@ class Ctx:
         self._restore.append(fn)
 
     def add_process(self, proc):
-        if proc.pid == 51508 or os.getpgid(proc.pid) == os.getpgrp():
-            raise Blocked("refusing desktop/runner process-group ownership")
+        protect_owned_process(proc)
         self._processes.append(proc)
         if self.owned_register:
             self.owned_register(proc)
@@ -230,9 +219,8 @@ def case_source(ctx):
 # ---------------------------------------------------------------- vm case
 
 def _qmp(qcode_list, hold_ms=150):
-    keys = ",".join('{"type":"qcode","data":"%s"}' % q for q in qcode_list)
-    return ('virsh -c qemu+ssh://ark-dom/system qemu-monitor-command arch-atmosphera-gtkfree '
-            '\'{"execute":"send-key","arguments":{"keys":[%s],"hold-time":%d}}\'' % (keys, hold_ms))
+    return current_profile().qmp_command({"execute": "send-key", "arguments": {
+        "keys": [{"type": "qcode", "data": code} for code in qcode_list], "hold-time": hold_ms}})
 
 
 def _systemctl_user(ctx, *args):
@@ -404,7 +392,7 @@ def _start_xremap(ctx):
     ctx.note(f"xremap virtual device: {node}")
     # The uinput device node is (re)created at every service start with
     # default perms — re-apply the provisioned runtime ACL for this run.
-    sh(["sudo", "-n", "setfacl", "-m", "u:tester:rw", node], timeout=15)
+    sh(["sudo", "-n", "setfacl", "-m", "u:" + str(current_profile().uid) + ":rw", node], timeout=15)
     # This fork's boot raced udev seat tagging (keyboards carried no seat0
     # tag, so niri never opened them until re-triggered). Nudge the input
     # subsystem so the fresh virtual device is seat-tagged and picked up.
@@ -780,6 +768,7 @@ def _window_present(ctx, fragment):
 
 
 def case_vm(ctx):
+    current_profile().qmp_command({})  # Refuse missing physical transport before any live mutation.
     for tool in ("xremap", "wl-copy", "evtest", "foot", "grim", "qs", "dbus-run-session"):
         if shutil.which(tool) is None:
             raise Blocked(f"required tool missing on the guest: {tool}")
@@ -811,8 +800,14 @@ def main():
     ap.add_argument("--source", required=True)
     ap.add_argument("--output", required=True)
     ap.add_argument("--case", required=True, choices=["source", "vm", "all"])
+    profile_argument(ap)
     args = ap.parse_args()
 
+    try:
+        activate_profile(args.guest_profile, require_console=args.case != "source")
+    except (Blocked, OSError) as error:
+        print("BINDINGS_REGRESSION: BLOCKED — " + str(error), flush=True)
+        return 2
     ctx = Ctx(args.source, args.output)
     ctx.output.mkdir(parents=True, exist_ok=True)
     blocked = None
@@ -848,4 +843,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "name": "dev-niri-atmosphera-typing-stall",
+  "uuid": "e7457a03-7b5b-4bdd-ad7f-34490960e049",
+  "mac": "bc:24:11:f5:66:84",
+  "sshHostKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMyzdj0juWTupZ/gAZV4X7ahlxZy4wWnzsVPFR1N8hh2",
+  "uid": 1000,
+  "home": "/home/tester",
+  "workspace": "/home/tester/Projects/atcq",
+  "workBase": "/home/tester/Projects/atcq/work/runners",
+  "journalBase": "/home/tester/Projects/atcq/artifacts/runners",
+  "runtimeBase": "/home/tester/Projects/atcq/r",
+  "sessionRuntime": "/run/user/1000",
+  "waylandDisplay": "wayland-1",
+  "consoleConfig": "atmosphera",
+  "qmpCommand": null
+}

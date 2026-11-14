@@ -20,12 +20,65 @@ Popup {
   property string hookDescription: ""
   property string hookPlaceholder: ""
   property string initialValue: ""
+  readonly property bool busy: session.busy
+  readonly property bool saveFailed: session.failed
+  readonly property bool discardPending: session.discardPending
 
   signal saved(string newValue)
   signal test(string value)
 
-  property var _savedSlot: null
   property var _testSlot: null
+
+  function openEditor(handle, value) {
+    if (visible || session.busy)
+      return false;
+    initialValue = value;
+    session.begin(handle, value);
+    commandInput.text = value;
+    open();
+    return true;
+  }
+
+  function setValue(value) {
+    if (!session.busy)
+      commandInput.text = value;
+  }
+
+  function submit(value) {
+    if (session.busy)
+      return;
+    setValue(value);
+    session.apply();
+  }
+
+  function requestClose() {
+    session.requestClose();
+  }
+
+  function confirmDiscard() {
+    session.confirmDiscard();
+  }
+
+  function keepEditing() {
+    session.discardPending = false;
+  }
+
+  NSettingsEditSession {
+    id: session
+    value: commandInput.text
+    onAccepted: value => {
+      root.saved(value);
+      root.close();
+    }
+    onCloseRequested: root.close()
+  }
+
+  NSettingsDiscardDialog {
+    parent: root.contentItem
+    visible: session.discardPending
+    onDiscard: root.confirmDiscard()
+    onKeepEditing: root.keepEditing()
+  }
 
   background: Rectangle {
     color: AtmoColor.mSurface
@@ -35,7 +88,6 @@ Popup {
   }
 
   onOpened: {
-    commandInput.text = initialValue;
     commandInput.forceActiveFocus();
   }
 
@@ -54,7 +106,8 @@ Popup {
       }
       AtmoIconButton {
         icon: Icon.close
-        onClicked: root.close()
+        enabled: !session.busy
+        onClicked: root.requestClose()
       }
     }
 
@@ -73,11 +126,19 @@ Popup {
 
       NTextInput {
         id: commandInput
+        enabled: !session.busy
         Layout.fillWidth: true
         placeholderText: root.hookPlaceholder
         // Allow multiline? Hooks are usually oneline commands but can be scripts.
         // NTextInput is likely single line. Let's assume single line for now as per previous implementation.
       }
+    }
+
+    NText {
+      visible: session.failed
+      text: I18n.tr("common.editor-save-failed")
+      wrapMode: Text.WordWrap
+      Layout.fillWidth: true
     }
 
     // Action Buttons
@@ -90,7 +151,7 @@ Popup {
         icon: Icon.caretRight
         onClicked: root.test(commandInput.text)
         // Disable test if empty? Or maybe allow testing defined script.
-        enabled: commandInput.text !== ""
+        enabled: !session.busy && commandInput.text !== ""
       }
 
       Item {
@@ -100,7 +161,8 @@ Popup {
       NButton {
         text: I18n.tr("common.cancel")
         outlined: true
-        onClicked: root.close()
+        enabled: !session.busy
+        onClicked: root.requestClose()
       }
 
       NButton {
@@ -108,10 +170,8 @@ Popup {
         icon: Icon.check
         backgroundColor: AtmoColor.mPrimary
         textColor: AtmoColor.mOnPrimary
-        onClicked: {
-          root.saved(commandInput.text);
-          root.close();
-        }
+        enabled: !session.busy
+        onClicked: root.submit(commandInput.text)
       }
     }
   }

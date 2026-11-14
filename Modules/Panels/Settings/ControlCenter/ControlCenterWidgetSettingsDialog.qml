@@ -15,20 +15,31 @@ Popup {
   property string sectionId: ""
   property var screen: null
   property var settingsCache: ({})
+  property bool barIsVertical: false
+  property var settingsEditor: null
+  readonly property bool saveBusy: liveEdits.busy
+  readonly property bool saveFailed: liveEdits.failed
+  readonly property bool settingsDirty: liveEdits.dirty
+  readonly property bool discardPending: discardDialog.visible
 
   signal updateWidgetSettings(string section, int index, var settings)
+  signal settingsSaveCompleted(var result)
 
   readonly property real maxHeight: (screen ? screen.height : (parent ? parent.height : 800)) * 0.8
   readonly property real defaultContentWidth: Math.round(600 * Style.uiScaleRatio)
+  function _settingsPage(): var {
+    return settingsLoader.item;
+  }
   readonly property real settingsContentWidth: {
-    if (settingsLoader.item && settingsLoader.item.implicitWidth > 0) {
-      return settingsLoader.item.implicitWidth;
+    var page = root._settingsPage();
+    if (page && page.implicitWidth > 0) {
+      return page.implicitWidth;
     }
     return defaultContentWidth;
   }
 
   readonly property real dialogPadding: Style.marginXL
-  width: Math.max(settingsContentWidth + dialogPadding * 2, 500)
+  width: Math.max(settingsContentWidth + scrollView.leftPadding + scrollView.rightPadding + dialogPadding * 2, 500)
   height: Math.min(content.implicitHeight + dialogPadding * 2, maxHeight)
   padding: 0
   modal: true
@@ -70,10 +81,17 @@ Popup {
         Layout.fillWidth: true
       }
 
-      AtmoIconButton {
-        icon: Icon.close
-        tooltipText: I18n.tr("common.close")
-        onClicked: saveAndClose()
+      Item {
+        Layout.preferredWidth: closeButton.implicitWidth
+        Layout.preferredHeight: closeButton.implicitHeight
+        AtmoIconButton {
+          id: closeButton
+          anchors.fill: parent
+          icon: Icon.close
+          tooltipText: I18n.tr("common.close")
+          visible: !root.saveBusy
+          onClicked: saveAndClose()
+        }
       }
     }
 
@@ -85,6 +103,22 @@ Popup {
       color: AtmoColor.mOutline
     }
 
+    RowLayout {
+      visible: root.saveFailed
+      Layout.fillWidth: true
+      NText {
+        text: I18n.tr("common.editor-save-failed")
+        color: AtmoColor.mError
+        wrapMode: Text.WordWrap
+        Layout.fillWidth: true
+      }
+      NButton {
+        text: I18n.tr("common.discard")
+        visible: !root.saveBusy
+        onClicked: root.requestDiscard()
+      }
+    }
+
     // Scrollable settings area
     NScrollView {
       id: scrollView
@@ -92,7 +126,6 @@ Popup {
       Layout.fillHeight: true
       Layout.minimumHeight: 100
       gradientColor: AtmoColor.mSurface
-      reserveScrollbarSpace: false
 
       ColumnLayout {
         width: scrollView.availableWidth
@@ -101,47 +134,69 @@ Popup {
         Loader {
           id: settingsLoader
           Layout.fillWidth: true
-          onItemChanged: {
-            if (item) {
-              // Force width recalculation when content loads
-              Qt.callLater(() => {
-                root.width = Math.max(root.settingsContentWidth + root.dialogPadding * 2, 500);
-              });
-            }
-          }
         }
       }
     }
   }
 
-  Timer {
-    id: saveTimer
-    running: false
-    interval: 150
-    onTriggered: {
-      root.updateWidgetSettings(root.sectionId, root.widgetIndex, root.settingsCache);
-    }
+  NLiveSettingsEditSession {
+    id: liveEdits
+    editor: root.settingsEditor || {
+              submit: function (fields, callback) {
+                root.updateWidgetSettings(root.sectionId, root.widgetIndex, fields);
+                Settings.saveResult(callback);
+              }
+            }
+    onCompleted: result => root.settingsSaveCompleted(result)
+    onCloseRequested: root.close()
+  }
+
+  NSettingsDiscardDialog {
+    id: discardDialog
+    parent: root.parent
+    onDiscard: root.confirmDiscard()
+    onKeepEditing: root.keepEditing()
+  }
+
+  function requestDiscard() {
+    if (!saveBusy && settingsDirty)
+      discardDialog.open();
+  }
+
+  function keepEditing() {
+    discardDialog.close();
+  }
+
+  function confirmDiscard() {
+    if (saveBusy || !discardDialog.visible)
+      return false;
+    discardDialog.close();
+    return liveEdits.confirmDiscard();
+  }
+
+  function queueSettings(fields) {
+    return liveEdits.queue(fields);
   }
 
   Connections {
     target: settingsLoader.item
     ignoreUnknownSignals: true
     function onSettingsChanged(newSettings) {
-      if (newSettings) {
-        root.settingsCache = newSettings;
-        saveTimer.start();
-      }
+      root.queueSettings(newSettings);
     }
   }
 
   function saveAndClose() {
-    if (settingsLoader.item && typeof settingsLoader.item.saveSettings === 'function') {
-      var newSettings = settingsLoader.item.saveSettings();
+    if (saveBusy)
+      return;
+    var page = root._settingsPage();
+    if (page && typeof page.saveSettings === 'function') {
+      var newSettings = page.saveSettings();
       if (newSettings) {
-        root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
+        root.queueSettings(newSettings);
       }
     }
-    root.close();
+    liveEdits.saveAndClose();
   }
 
   function loadWidgetSettings() {

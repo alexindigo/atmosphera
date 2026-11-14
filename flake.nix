@@ -46,6 +46,7 @@
         default = nixpkgs.lib.composeManyExtensions [
           quickshell.overlays.default
           (final: prev: {
+            configqml = final.callPackage ./nix/configqml.nix { };
             atmosphera = final.callPackage ./nix/package.nix {
               inherit version;
             };

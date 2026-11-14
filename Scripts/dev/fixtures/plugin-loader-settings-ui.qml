@@ -149,11 +149,15 @@ ShellRoot {
       break;
     case "save-instance":
       page.labelText = "U";
-      page.saveSettings();
+      popup.applySettings();
       probe.setPhase("settle-instance-save");
       break;
     case "settle-instance-save":
-      if (probe.elapsed() >= 1500) {
+      if (!popup.busy) {
+        if (popup.saveFailed) {
+          probe.fail("instance Apply failed");
+          return;
+        }
         probe.emit("SAVED", {
                      "page": page.labelText,
                      "effective": probe.effectiveLabel()
@@ -222,7 +226,11 @@ ShellRoot {
       }
       break;
     case "settle-reset":
-      if (probe.elapsed() >= 1500) {
+      if (!popup.busy) {
+        if (popup.saveFailed) {
+          probe.fail("instance Reset failed");
+          return;
+        }
         probe.emit("RESET", {
                      "page": popup.settingsPage.labelText,
                      "effective": probe.effectiveLabel(),
@@ -233,7 +241,9 @@ ShellRoot {
       }
       break;
     case "close-instance":
-      popup.close();
+      popup.requestClose();
+      if (popup.discardPending)
+        popup.confirmDiscard();
       probe.setPhase("settle-close");
       break;
     case "settle-close":
@@ -263,11 +273,15 @@ ShellRoot {
       break;
     case "save-plugin":
       page.labelText = "Q";
-      page.saveSettings();
+      popup.applySettings();
       probe.setPhase("settle-plugin-save");
       break;
     case "settle-plugin-save":
-      if (probe.elapsed() >= 1500) {
+      if (!popup.busy) {
+        if (popup.saveFailed) {
+          probe.fail("plugin Apply failed");
+          return;
+        }
         probe.emit("PLUGIN_SAVED", {
                      "page": page.labelText,
                      "effective": probe.effectiveLabel()

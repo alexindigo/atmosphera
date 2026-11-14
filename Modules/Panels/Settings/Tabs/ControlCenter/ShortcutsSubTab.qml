@@ -14,6 +14,8 @@ ColumnLayout {
   Layout.fillHeight: true
 
   required property var availableWidgets
+  property var captureWidgetInteraction: null
+  property var captureWidgetSettings: null
 
   signal addWidgetToSection(string widgetId, string section)
   signal removeWidgetFromSection(string section, int index)
@@ -45,6 +47,8 @@ ColumnLayout {
       NSectionEditor {
         sectionName: I18n.tr("positions.left")
         sectionId: "left"
+        captureWidgetInteraction: root.captureWidgetInteraction
+        captureWidgetSettings: root.captureWidgetSettings
         settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/ControlCenter/ControlCenterWidgetSettingsDialog.qml")
         maxWidgets: Settings.data.controlCenter.shortcuts["right"].length > 5 ? 0 : (Settings.data.controlCenter.shortcuts["right"].length > 0 ? 5 : 10)
         widgetRegistry: ControlCenterWidgetRegistry
@@ -64,6 +68,8 @@ ColumnLayout {
       NSectionEditor {
         sectionName: I18n.tr("positions.right")
         sectionId: "right"
+        captureWidgetInteraction: root.captureWidgetInteraction
+        captureWidgetSettings: root.captureWidgetSettings
         settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/ControlCenter/ControlCenterWidgetSettingsDialog.qml")
         maxWidgets: Settings.data.controlCenter.shortcuts["left"].length > 5 ? 0 : (Settings.data.controlCenter.shortcuts["left"].length > 0 ? 5 : 10)
         widgetRegistry: ControlCenterWidgetRegistry

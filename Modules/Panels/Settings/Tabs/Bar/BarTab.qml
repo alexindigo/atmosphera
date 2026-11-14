@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
+import "../../../../../Helpers/SectionWidgetCommands.js" as SectionCommands
 import qs.Commons
 import qs.Services.Plugins
 import qs.Services.UI
@@ -39,55 +40,91 @@ ColumnLayout {
         });
       }
     }
-    Settings.data.bar.widgets[section].push(newWidget);
-    BarService.widgetsRevision++;
+    var editor = Settings.createRecordListEditor(["bar", "widgets", section], []);
+    if (!editor)
+      return false;
+    return editor.submit([
+                           {
+                             op: "insert",
+                             index: editor.initialValue.length,
+                             value: newWidget
+                           }
+                         ], function (result) {
+                           if (result.status === "admitted" && result.refreshState === "current")
+                             BarService.widgetsRevision++;
+                           editor.detach();
+                         });
+  }
+
+  // Capture this before a menu/drag delay; the three global lists are explicit
+  // owning leaves, independent of per-monitor display routing.
+  function captureWidgetInteraction(section, index) {
+    var sections = [
+          {
+            id: "left",
+            path: ["bar", "widgets", "left"],
+            listAddress: [],
+            length: Settings.data.bar.widgets.left.length
+          },
+          {
+            id: "center",
+            path: ["bar", "widgets", "center"],
+            listAddress: [],
+            length: Settings.data.bar.widgets.center.length
+          },
+          {
+            id: "right",
+            path: ["bar", "widgets", "right"],
+            listAddress: [],
+            length: Settings.data.bar.widgets.right.length
+          }
+        ];
+    return SectionCommands.capture({
+                                     sections: sections,
+                                     createEditor: function (path, address, targets) {
+                                       return Settings.createRecordListEditor(path, address, targets);
+                                     },
+                                     later: function (callback) {
+                                       Qt.callLater(callback);
+                                     },
+                                     onChanged: function (action, initial) {
+                                       BarService.widgetsRevision++;
+                                       if (action === "remove" && initial.id === "ControlCenter" && BarService.lookupWidget("ControlCenter") === undefined)
+                                         ToastService.showWarning(I18n.tr("toast.missing-control-center.label"), I18n.tr("toast.missing-control-center.description"), 6000);
+                                     }
+                                   }, section, index);
+  }
+
+  function _submitWidgetInteraction(section, index, action, destination) {
+    var interaction = root.captureWidgetInteraction(section, index);
+    if (!interaction)
+      return false;
+    return interaction.submit(action, destination, function (result) {
+      if (result.status !== "admitted" || result.refreshState !== "current")
+        Logger.w("BarTab", "Widget command refused", result.error?.code || "list-edit-conflict");
+      interaction.detach();
+    });
   }
 
   function _removeWidgetFromSection(section, index) {
-    var widgets = Settings.data.bar.widgets;
-    if (index >= 0 && index < widgets[section].length) {
-      var newArray = widgets[section].slice();
-      var removedWidgets = newArray.splice(index, 1);
-      widgets[section] = newArray;
-      BarService.widgetsRevision++;
-
-      if (removedWidgets[0].id === "ControlCenter" && BarService.lookupWidget("ControlCenter") === undefined) {
-        ToastService.showWarning(I18n.tr("toast.missing-control-center.label"), I18n.tr("toast.missing-control-center.description"), 6000);
-      }
-    }
+    return root._submitWidgetInteraction(section, index, "remove", null);
   }
 
   function _reorderWidgetInSection(section, fromIndex, toIndex) {
-    var widgets = Settings.data.bar.widgets;
-    if (fromIndex >= 0 && fromIndex < widgets[section].length && toIndex >= 0 && toIndex < widgets[section].length) {
-      var newArray = widgets[section].slice();
-      var item = newArray[fromIndex];
-      newArray.splice(fromIndex, 1);
-      newArray.splice(toIndex, 0, item);
-      widgets[section] = newArray;
-      BarService.widgetsRevision++;
-    }
+    return root._submitWidgetInteraction(section, fromIndex, "reorder", toIndex);
   }
 
   // Note: _updateWidgetSettingsInSection does NOT increment revision
   // because it only changes settings, not widget structure
   function _updateWidgetSettingsInSection(section, index, settings) {
-    Settings.data.bar.widgets[section][index] = settings;
+    return BarService.updateWidgetSettings("", section, index, settings, function (result) {
+      if (result.status === "failed")
+        Logger.w("BarTab", "Widget settings save failed", result.error?.code || "save-failed");
+    });
   }
 
   function _moveWidgetBetweenSections(fromSection, index, toSection) {
-    var widgets = Settings.data.bar.widgets;
-    if (index >= 0 && index < widgets[fromSection].length) {
-      var widget = widgets[fromSection][index];
-      var sourceArray = widgets[fromSection].slice();
-      sourceArray.splice(index, 1);
-      widgets[fromSection] = sourceArray;
-      var targetArray = widgets[toSection].slice();
-      targetArray.push(widget);
-      widgets[toSection] = targetArray;
-      BarService.widgetsRevision++;
-      Logger.d("BarTab", "_moveWidgetBetweenSections: revision now", BarService.widgetsRevision);
-    }
+    return root._submitWidgetInteraction(fromSection, index, "move", toSection);
   }
 
   function getWidgetLocations(widgetId) {
@@ -225,6 +262,10 @@ ColumnLayout {
     AppearanceSubTab {}
     WidgetsSubTab {
       availableWidgets: availableWidgets
+      captureWidgetInteraction: root.captureWidgetInteraction
+      captureWidgetSettings: function (section, index) {
+        return BarService.createWidgetSettingsEditor("", section, index);
+      }
       addWidgetToSection: root._addWidgetToSection
       removeWidgetFromSection: root._removeWidgetFromSection
       reorderWidgetInSection: root._reorderWidgetInSection

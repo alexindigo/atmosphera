@@ -54,9 +54,14 @@ QtObject {
 
   // Stores only the values that differ from the plugin settings, in this
   // placement's entry. The plugin settings file is never written.
-  function saveSettings() {
-    if (!base)
-      return;
+  function saveSettings(callback) {
+    if (!base) {
+      Qt.callLater(function () {
+        if (typeof callback === "function")
+          callback({status: "failed", error: {code: "plugin-owner"}});
+      });
+      return false;
+    }
     var changed = {};
     var local = root.pluginSettings || {};
     var shared = base.pluginSettings || {};
@@ -64,12 +69,16 @@ QtObject {
       if (JSON.stringify(local[key]) !== JSON.stringify(shared[key]))
         changed[key] = JSON.parse(JSON.stringify(local[key]));
     }
-    PluginInstances.writeSettings(pluginId, placement, Object.keys(changed).length > 0 ? changed : null);
+    return PluginInstances.writeSettings(pluginId, placement, Object.keys(changed).length > 0 ? changed : null, callback);
   }
 
   // Drops every instance override of this placement.
-  function resetSettings() {
-    PluginInstances.writeSettings(pluginId, placement, null);
+  function resetSettings(callback) {
+    return PluginInstances.writeSettings(pluginId, placement, null, callback);
+  }
+
+  function createSettingsEditor() {
+    return PluginInstances.createSettingsEditor(pluginId, placement, base);
   }
 
   function openPanel(screen, buttonItem) {

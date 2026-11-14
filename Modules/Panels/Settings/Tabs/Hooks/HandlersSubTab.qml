@@ -17,22 +17,19 @@ ColumnLayout {
     parent: Overlay.overlay
   }
 
-  function openEdit(label, description, placeholder, value, onSave, onTest) {
+  function openEdit(label, description, placeholder, name, onTest) {
+    if (editPopup.visible || editPopup.busy)
+      return;
     editPopup.hookLabel = label;
     editPopup.hookDescription = description;
     editPopup.hookPlaceholder = placeholder;
-    editPopup.initialValue = value;
-    try {
-      editPopup.saved.disconnect(editPopup._savedSlot);
-    } catch (e) {}
     try {
       editPopup.test.disconnect(editPopup._testSlot);
     } catch (e) {}
-    editPopup._savedSlot = onSave;
     editPopup._testSlot = onTest;
-    editPopup.saved.connect(editPopup._savedSlot);
     editPopup.test.connect(editPopup._testSlot);
-    editPopup.open();
+    var editor = Settings.createEditor("hooks.handlers." + name + ".command");
+    editPopup.openEditor(editor, editor.initialValue);
   }
 
   function getHandler(name) {
@@ -50,28 +47,20 @@ ColumnLayout {
   }
 
   function renderHandlerRow(parent, name, label, description, placeholder) {
-    var h = getHandler(name);
     var row = handlerRowComp.createObject(parent, {
                                             label: label,
                                             description: description,
-                                            command: h.command || "",
-                                            exclusive: h.exclusive || false
-                                          });
+                                            command: Qt.binding(function () { return root.getHandler(name).command || ""; }),
+                                            exclusive: Qt.binding(function () { return root.getHandler(name).exclusive || false; })
+                                          }) as HookHandlerRow;
     row.editClicked.connect(() => {
-      var current = getHandler(name);
-      openEdit(label, description, placeholder, current.command || "", newValue => {
-        var handler = getHandler(name);
-        handler.command = newValue;
-        Settings.saveImmediate();
-        row.command = newValue;
-      }, val => {
+      openEdit(label, description, placeholder, name, val => {
         if (val)
           Quickshell.execDetached(["sh", "-lc", val]);
       });
     });
     row.exclusiveToggled.connect(checked => {
-      var handler = getHandler(name);
-      handler.exclusive = checked;
+      Settings.setPathValue(Settings.data, "hooks.handlers." + name + ".exclusive", checked);
       Settings.saveImmediate();
     });
   }

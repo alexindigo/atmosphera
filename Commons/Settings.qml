@@ -6,6 +6,8 @@ import Quickshell
 import Quickshell.Io
 import "../Helpers/OwnedProcess.js" as OwnedProcess
 import "../Helpers/QtObj2JS.js" as QtObj2JS
+import "../Helpers/RecordListEditor.js" as RecordListEditor
+import "../Helpers/SettingsEditor.js" as SettingsEditor
 import "../Helpers/SettingsModel.js" as SettingsModel
 import qs.Commons
 import qs.Commons.Migrations
@@ -210,7 +212,7 @@ Singleton {
           root.settingsSaved();
         if (typeof callback === "function") {
           try {
-            callback(effect.success, effect.error);
+            callback(effect.success, effect.error, effect.result);
           } catch (exception) {
             Logger.e("Settings", "Save completion callback failed");
           }
@@ -1613,14 +1615,12 @@ Singleton {
   // -----------------------------------------------------
   // Set a per-screen override
   function setScreenOverride(screenName, property, value) {
-    if (!screenName)
-      return;
-
-    var overrides = JSON.parse(JSON.stringify(data.bar.screenOverrides || []));
-    if (overrides.length === undefined) {
-      overrides = [];
-    }
-
+    if (!screenName || typeof property !== "string" || !property)
+      return false;
+    var editor = root.createRecordListEditor(["bar", "screenOverrides"], []);
+    if (!editor)
+      return false;
+    var overrides = editor.initialValue;
     var index = -1;
     for (var i = 0; i < overrides.length; i++) {
       if (overrides[i] && overrides[i].name === screenName) {
@@ -1629,18 +1629,32 @@ Singleton {
       }
     }
 
+    var edit;
     if (index === -1) {
-      // Create new entry
-      var newEntry = {
-        "name": screenName
+      var entry = Object.create(null);
+      entry.name = screenName;
+      Object.defineProperty(entry, property, {
+                              value: value,
+                              enumerable: true,
+                              configurable: true,
+                              writable: true
+                            });
+      edit = {
+        op: "insert",
+        index: overrides.length,
+        value: entry
       };
-      newEntry[property] = value;
-      overrides.push(newEntry);
     } else {
-      // Update existing entry
-      overrides[index][property] = value;
+      edit = {
+        op: "set",
+        index: index,
+        field: property,
+        value: value
+      };
     }
-    data.bar.screenOverrides = overrides;
+    return editor.submit([edit], function () {
+      editor.detach();
+    });
   }
 
   // -----------------------------------------------------
@@ -1648,15 +1662,11 @@ Singleton {
   // If property is null, clears all overrides for that screen
   function clearScreenOverride(screenName, property) {
     if (!screenName)
-      return;
-
-    var overrides = data.bar.screenOverrides;
-    if (!overrides || overrides.length === undefined) {
-      return;
-    }
-
-    overrides = JSON.parse(JSON.stringify(overrides));
-
+      return false;
+    var editor = root.createRecordListEditor(["bar", "screenOverrides"], []);
+    if (!editor)
+      return false;
+    var overrides = editor.initialValue;
     var index = -1;
     for (var i = 0; i < overrides.length; i++) {
       if (overrides[i] && overrides[i].name === screenName) {
@@ -1666,20 +1676,24 @@ Singleton {
     }
 
     if (index === -1) {
-      return;
+      return false;
     }
-
-    if (property) {
-      delete overrides[index][property];
-      // Remove screen entry if only "name" remains
-      var keys = Object.keys(overrides[index]);
-      if (keys.length <= 1 && (keys.length === 0 || keys[0] === "name")) {
-        overrides.splice(index, 1);
-      }
-    } else {
-      overrides.splice(index, 1);
-    }
-    data.bar.screenOverrides = overrides;
+    // The identity ancestor exposes the fenced raw member key set. Unknown
+    // members count; nested normalized rows never enter the command body.
+    var remaining = Object.keys(overrides[index]).filter(function (key) {
+      return key !== property;
+    });
+    var prune = !property || remaining.length === 0 || (remaining.length === 1 && remaining[0] === "name");
+    return editor.submit([prune ? {
+                                    op: "remove",
+                                    index: index
+                                  } : {
+                            op: "unset",
+                            index: index,
+                            field: property
+                          }], function () {
+                            editor.detach();
+                          });
   }
 
   // -----------------------------------------------------
@@ -1688,6 +1702,166 @@ Singleton {
   // only the changed leaf paths into the per-section override trees, then
   // write those section files. A change to a value matching today's default
   // is STILL recorded — an explicit user choice always lands in the file.
+  // Additive receipt boundary; existing Boolean callers retain their contract.
+  function saveResult(onComplete) {
+    saveImmediate(function (success, error, result) {
+      Qt.callLater(function () {
+        if (typeof onComplete === "function")
+          onComplete(result);
+      });
+    });
+  }
+
+  // Old-owner notification generations plus a complete selected-leaf value fence.
+  // I5 replaces this command factory with worker-owned normalized row mappings.
+  property var _recordListGenerations: ({})
+
+  function _advanceRecordList(path) {
+    var key = JSON.stringify(path);
+    var generations = Object.assign({}, root._recordListGenerations);
+    generations[key] = RecordListEditor.nextGeneration(generations[key] || "0");
+    root._recordListGenerations = generations;
+  }
+
+  Connections {
+    target: root.data.bar.widgets
+    function onLeftChanged() {
+      root._advanceRecordList(["bar", "widgets", "left"]);
+    }
+    function onCenterChanged() {
+      root._advanceRecordList(["bar", "widgets", "center"]);
+    }
+    function onRightChanged() {
+      root._advanceRecordList(["bar", "widgets", "right"]);
+    }
+  }
+
+  Connections {
+    target: root.data.bar
+    function onScreenOverridesChanged() {
+      root._advanceRecordList(["bar", "screenOverrides"]);
+    }
+  }
+
+  Connections {
+    target: root.data.controlCenter.shortcuts
+    function onLeftChanged() {
+      root._advanceRecordList(["controlCenter", "shortcuts", "left"]);
+    }
+    function onRightChanged() {
+      root._advanceRecordList(["controlCenter", "shortcuts", "right"]);
+    }
+  }
+
+  Connections {
+    target: root.data.desktopWidgets
+    function onMonitorWidgetsChanged() {
+      root._advanceRecordList(["desktopWidgets", "monitorWidgets"]);
+    }
+  }
+
+  // Paths select owning atomic leaves; ValuePath addresses select concrete lists
+  // inside them. No invented namespace/scope for a widget array row.
+  function _recordListTarget(path, listAddress, captureOptions) {
+    if (!Array.isArray(path) || !Array.isArray(listAddress) || (captureOptions !== undefined && captureOptions !== null && (typeof captureOptions !== "object" || Array.isArray(captureOptions) || typeof captureOptions.ensure !== "boolean" || Object.keys(captureOptions).join(",") !== "ensure")))
+      return null;
+    var selectedPath = path.slice();
+    var key = JSON.stringify(selectedPath);
+    var supported = [["bar", "widgets", "left"], ["bar", "widgets", "center"], ["bar", "widgets", "right"], ["controlCenter", "shortcuts", "left"], ["controlCenter", "shortcuts", "right"], ["bar", "screenOverrides"], ["desktopWidgets", "monitorWidgets"]];
+    if (!supported.some(function (candidate) {
+      return JSON.stringify(candidate) === key;
+    }))
+      return null;
+    // The selected policies are the declared widget/monitor lists. Match's name
+    // field is a required String at the only Each ancestor in these schemas.
+    if (listAddress.length) {
+      var screen = key === JSON.stringify(["bar", "screenOverrides"]);
+      var desktop = key === JSON.stringify(["desktopWidgets", "monitorWidgets"]);
+      if ((!screen && !desktop) || listAddress.length !== (screen ? 3 : 2))
+        return null;
+      try {
+        var kind = RecordListEditor.selector(listAddress[0]);
+        if ((kind !== "index" && kind !== "match") || (kind === "match" && listAddress[0].field !== "name") || RecordListEditor.selector(listAddress[1]) !== "key" || listAddress[1].key !== "widgets" || (screen && (RecordListEditor.selector(listAddress[2]) !== "key" || ["left", "center", "right"].indexOf(listAddress[2].key) === -1)))
+          return null;
+      } catch (error) {
+        return null;
+      }
+    }
+    function owner() {
+      var node = root.data;
+      for (var i = 0; i < selectedPath.length - 1; ++i)
+        node = node[selectedPath[i]];
+      return node;
+    }
+    var leaf = selectedPath[selectedPath.length - 1];
+    return {
+      ownerId: key,
+      // Opaque identity for the selected policy shape, never a disk ID.
+      policyId: JSON.stringify([selectedPath, listAddress.map(function (segment) {
+        return Object.prototype.hasOwnProperty.call(segment, "index") || Object.prototype.hasOwnProperty.call(segment, "field") ? {
+                                                                                                                                    each: true
+                                                                                                                                  } : segment;
+      })]),
+      listAddress: listAddress,
+      ensure: captureOptions?.ensure === true,
+      read: function () {
+        return owner()[leaf];
+      },
+      generation: function () {
+        return root._recordListGenerations[key] || "0";
+      },
+      write: function (value) {
+        owner()[leaf] = value;
+      }
+    };
+  }
+
+  // Capture all possible transfer targets before the delayed interaction. Shared
+  // atomic owners are copied/fenced once even when several lists are selected.
+  function createRecordListEditor(path, listAddress, additionalLists, captureOptions) {
+    if (additionalLists !== undefined && !Array.isArray(additionalLists))
+      return null;
+    var selected = [
+          {
+            path: path,
+            listAddress: listAddress
+          }
+        ].concat(additionalLists || []);
+    var targets = [];
+    for (var i = 0; i < selected.length; ++i) {
+      if (!selected[i] || typeof selected[i] !== "object" || Array.isArray(selected[i]))
+        return null;
+      var options = i === 0 ? captureOptions : (selected[i].ensure !== undefined ? {
+                                                                                     ensure: selected[i].ensure
+                                                                                   } : null);
+      var target = root._recordListTarget(selected[i].path, selected[i].listAddress, options);
+      if (!target)
+        return null;
+      targets.push(target);
+    }
+    return RecordListEditor.create({
+                                     targets: targets,
+                                     later: function (callback) {
+                                       Qt.callLater(callback);
+                                     }
+                                   });
+  }
+
+  // Only selected scalar preferences use this transitional adapter. No draft
+  // over a normalized placement list; those require owner command boundaries.
+  function createEditor(path) {
+    return SettingsEditor.create(function () {
+      return root.getPathValue(root.data, path);
+    }, function (value) {
+      if (!root.setPathValue(root.data, path, value))
+        throw new Error("Unknown editor setting");
+    }, function (callback) {
+      root.saveResult(callback);
+    }, function (callback) {
+      Qt.callLater(callback);
+    });
+  }
+
   function saveImmediate(onComplete, automatic) {
     var token = root._registerCallback(onComplete);
     root._dispatchModel({
@@ -1729,8 +1903,9 @@ Singleton {
 
   function saveSetupWork(work, onComplete, requestId) {
     if (!requestId) {
-      onComplete(false, "Setup request identity is missing");
-      return;
+      if (typeof onComplete === "function")
+        onComplete(false, "Setup request identity is missing");
+      return false;
     }
     var token = root._registerCallback(onComplete);
     var captured = root._dispatchModel({

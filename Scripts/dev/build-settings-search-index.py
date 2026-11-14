@@ -12,6 +12,7 @@ Usage:
 """
 
 import json
+import argparse
 import re
 import sys
 from pathlib import Path
@@ -394,6 +395,9 @@ def extract_entries(
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--check', action='store_true', help='fail on stale output without writing')
+    args = parser.parse_args()
     if not TABS_DIR.exists():
         print(f"Error: Tabs directory not found: {TABS_DIR}", file=sys.stderr)
         sys.exit(1)
@@ -425,9 +429,13 @@ def main():
                 all_entries.append(entry)
 
     # Write output
-    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUTPUT, "w") as f:
-        json.dump(all_entries, f, indent=2)
+    generated = json.dumps(all_entries, indent=2)
+    if args.check:
+        if not OUTPUT.exists() or OUTPUT.read_bytes() != generated.encode():
+            parser.exit(1, 'Stale settings search index: regenerate and stage Assets/settings-search-index.json\n')
+    else:
+        OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+        OUTPUT.write_text(generated)
 
     print(f"Generated {len(all_entries)} entries -> {OUTPUT.relative_to(ROOT)}")
 

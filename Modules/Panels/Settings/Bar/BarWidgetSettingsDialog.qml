@@ -16,7 +16,13 @@ Popup {
   property string sectionId: ""
   property var screen: null
   property bool barIsVertical: false
-  property var settingsCache: ({})
+  property var settingsEditor: null
+  readonly property bool saveBusy: liveEdits.busy
+  readonly property bool saveFailed: liveEdits.failed
+  readonly property bool settingsDirty: liveEdits.dirty
+  readonly property bool discardPending: discardDialog.visible
+
+  signal settingsSaveCompleted(var result)
 
   readonly property real maxHeight: (screen ? screen.height : (parent ? parent.height : 800)) * 0.8
 
@@ -76,6 +82,7 @@ Popup {
         AtmoIconButton {
           icon: Icon.close
           tooltipText: I18n.tr("common.close")
+          enabled: !root.saveBusy
           onClicked: saveAndClose()
         }
       }
@@ -86,6 +93,22 @@ Popup {
         Layout.fillWidth: true
         Layout.preferredHeight: 1
         color: AtmoColor.mOutline
+      }
+
+      RowLayout {
+        visible: root.saveFailed
+        Layout.fillWidth: true
+        NText {
+          text: I18n.tr("common.editor-save-failed")
+          color: AtmoColor.mError
+          wrapMode: Text.WordWrap
+          Layout.fillWidth: true
+        }
+        NButton {
+          text: I18n.tr("common.discard")
+          enabled: !root.saveBusy
+          onClicked: root.requestDiscard()
+        }
       }
 
       // Scrollable settings area
@@ -144,49 +167,70 @@ Popup {
     }
   }
 
-  Timer {
-    id: saveTimer
-    running: false
-    interval: 150
-    onTriggered: {
-      root.updateWidgetSettings(root.sectionId, root.widgetIndex, root.settingsCache);
-    }
+  NLiveSettingsEditSession {
+    id: liveEdits
+    editor: root.settingsEditor || {
+              submit: function (fields, callback) {
+                root.updateWidgetSettings(root.sectionId, root.widgetIndex, fields);
+                Settings.saveResult(callback);
+              }
+            }
+    onCompleted: result => root.settingsSaveCompleted(result)
+    onCloseRequested: root.close()
+  }
+
+  NSettingsDiscardDialog {
+    id: discardDialog
+    parent: root.parent
+    onDiscard: root.confirmDiscard()
+    onKeepEditing: root.keepEditing()
+  }
+
+  function requestDiscard() {
+    if (!saveBusy && settingsDirty)
+      discardDialog.open();
+  }
+
+  function keepEditing() {
+    discardDialog.close();
+  }
+
+  function confirmDiscard() {
+    if (saveBusy || !discardDialog.visible)
+      return false;
+    discardDialog.close();
+    return liveEdits.confirmDiscard();
+  }
+
+  function queueSettings(fields) {
+    return liveEdits.queue(fields);
   }
 
   Connections {
     target: settingsLoader.item
     ignoreUnknownSignals: true
-    function onSettingsChanged(newSettings) {
-      if (newSettings) {
-        root.settingsCache = newSettings;
-        saveTimer.start();
-      }
+    function onSettingsChanged(fields) {
+      root.queueSettings(fields);
     }
   }
 
   function saveAndClose() {
-    if (settingsLoader.item && typeof settingsLoader.item.saveSettings === 'function') {
-      var newSettings = settingsLoader.item.saveSettings();
-      if (newSettings) {
-        root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
-      }
+    if (saveBusy)
+      return;
+    if (settingsLoader.item && typeof settingsLoader.item.saveSettings === "function") {
+      var fields = settingsLoader.item.saveSettings();
+      if (fields)
+        root.queueSettings(fields);
     }
-    root.close();
+    liveEdits.saveAndClose();
   }
 
   function loadWidgetSettings() {
     const source = BarWidgetRegistry.widgetSettingsMap[widgetId];
     if (source) {
-      var currentWidgetData = widgetData;
-      if (sectionId && widgetIndex >= 0) {
-        var widgets = Settings.getBarWidgetsForScreen(screen?.name || "")[sectionId];
-        if (widgets && widgetIndex < widgets.length) {
-          currentWidgetData = widgets[widgetIndex];
-        }
-      }
       settingsLoader.setSource(source, {
                                  "screen": screen,
-                                 "widgetData": currentWidgetData,
+                                 "widgetData": widgetData,
                                  "widgetMetadata": BarWidgetRegistry.widgetMetadata[widgetId]
                                });
     }

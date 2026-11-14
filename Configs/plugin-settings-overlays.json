@@ -1,0 +1,5366 @@
+{
+  "version": 1,
+  "plugins": {
+    "2-in-1-tools": {
+      "1.2.3": {
+        "version": 1,
+        "fields": {
+          "autoRotateInTabletMode": {
+            "type": "Boolean"
+          },
+          "autoRotateOutsideTabletMode": {
+            "type": "Boolean"
+          },
+          "autoTabletBarDensity": {
+            "type": "Boolean"
+          },
+          "buttonBehavior": {
+            "type": "String"
+          },
+          "exclusiveDockInTabletMode": {
+            "type": "Boolean"
+          },
+          "flipVerticalSensorOrientation": {
+            "type": "Boolean"
+          },
+          "iconName": {
+            "type": "String"
+          },
+          "lastNonTabletBarDensity": {
+            "type": "String",
+            "machineLocal": true
+          },
+          "lastNonTabletDockEnabled": {
+            "type": "Boolean",
+            "machineLocal": true
+          },
+          "lastNonTabletDockType": {
+            "type": "String",
+            "machineLocal": true
+          },
+          "showSuccessToast": {
+            "type": "Boolean"
+          },
+          "showTransformInTooltip": {
+            "type": "Boolean"
+          },
+          "syncHyprTouchTransform": {
+            "type": "Boolean"
+          },
+          "tabletBarDensity": {
+            "type": "String"
+          },
+          "tabletModeStateFile": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "activate-linux": {
+      "1.1.0": {
+        "version": 1,
+        "fields": {
+          "customizeText": {
+            "type": "Boolean"
+          },
+          "firstLine": {
+            "type": "String"
+          },
+          "secondLine": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "agent-session-status": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "bindAddress": {
+            "type": "String"
+          },
+          "hideWhenEmpty": {
+            "type": "Boolean"
+          },
+          "pollIntervalSec": {
+            "type": "Real"
+          },
+          "port": {
+            "type": "Real"
+          },
+          "token": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "air-quality": {
+      "1.1.3": {
+        "version": 1,
+        "fields": {
+          "aqiScale": {
+            "type": "String"
+          },
+          "aqicnToken": {
+            "type": "String"
+          },
+          "boldText": {
+            "type": "Boolean"
+          },
+          "customLatitude": {
+            "type": "String"
+          },
+          "customLongitude": {
+            "type": "String"
+          },
+          "dataSource": {
+            "type": "String"
+          },
+          "refreshInterval": {
+            "type": "Real"
+          },
+          "useNoctaliaLocation": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "amd-gpu-monitor": {
+      "1.0.2": {
+        "version": 1,
+        "fields": {
+          "compactMode": {
+            "type": "Boolean"
+          },
+          "deviceIndex": {
+            "type": "Real"
+          },
+          "iconColor": {
+            "type": "String"
+          },
+          "showDcefclk": {
+            "type": "Boolean"
+          },
+          "showFanSpeed": {
+            "type": "Boolean"
+          },
+          "showFclk": {
+            "type": "Boolean"
+          },
+          "showGpuUse": {
+            "type": "Boolean"
+          },
+          "showMclk": {
+            "type": "Boolean"
+          },
+          "showPower": {
+            "type": "Boolean"
+          },
+          "showSclk": {
+            "type": "Boolean"
+          },
+          "showSocclk": {
+            "type": "Boolean"
+          },
+          "showTempEdge": {
+            "type": "Boolean"
+          },
+          "showTempJunction": {
+            "type": "Boolean"
+          },
+          "showTempMemory": {
+            "type": "Boolean"
+          },
+          "showVram": {
+            "type": "Boolean"
+          },
+          "showVramActivity": {
+            "type": "Boolean"
+          },
+          "textColor": {
+            "type": "String"
+          },
+          "useMonospaceFont": {
+            "type": "Boolean"
+          },
+          "usePadding": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "arch-updater": {
+      "2.1.12": {
+        "version": 1,
+        "fields": {
+          "aurCmd": {
+            "type": "String"
+          },
+          "aurHomepageCmd": {
+            "type": "String"
+          },
+          "boldText": {
+            "type": "Boolean"
+          },
+          "boldVer": {
+            "type": "Boolean"
+          },
+          "boldVerDesktop": {
+            "type": "Boolean"
+          },
+          "boldVerPanel": {
+            "type": "Boolean"
+          },
+          "closeButton": {
+            "type": "Boolean"
+          },
+          "closeOnSettings": {
+            "type": "Boolean"
+          },
+          "customIconPath": {
+            "type": "String"
+          },
+          "desktopTip": {
+            "type": "Boolean"
+          },
+          "enableColorization": {
+            "type": "Boolean"
+          },
+          "flatpak": {
+            "type": "Boolean"
+          },
+          "hideOnEmpty": {
+            "type": "Boolean"
+          },
+          "hoverTip": {
+            "type": "Boolean"
+          },
+          "iconColor": {
+            "type": "String"
+          },
+          "iconName": {
+            "type": "String"
+          },
+          "noctalia": {
+            "type": "Boolean"
+          },
+          "panelContext": {
+            "type": "Boolean"
+          },
+          "panelTooltip": {
+            "type": "Boolean"
+          },
+          "refreshInterval": {
+            "type": "Real"
+          },
+          "refreshTimer": {
+            "type": "Boolean"
+          },
+          "systemCmd": {
+            "type": "String"
+          },
+          "toast": {
+            "type": "Boolean"
+          },
+          "tooltip": {
+            "type": "Boolean"
+          },
+          "updateCmd": {
+            "type": "String"
+          },
+          "useDistroLogo": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "assistant-panel": {
+      "2.1.7": {
+        "version": 1,
+        "fields": {
+          "ai": {
+            "type": "Record",
+            "machineLocal": true,
+            "fields": {
+              "provider": {
+                "type": "String",
+                "optional": true
+              },
+              "model": {
+                "type": "String",
+                "optional": true
+              },
+              "models": {
+                "type": "Map",
+                "element": {
+                  "type": "String"
+                },
+                "optional": true
+              },
+              "apiKeys": {
+                "type": "Map",
+                "machineLocal": true,
+                "element": {
+                  "type": "String",
+                  "sensitive": true,
+                  "machineLocal": true
+                },
+                "sensitive": true,
+                "optional": true
+              },
+              "temperature": {
+                "type": "Real",
+                "optional": true
+              },
+              "systemPrompt": {
+                "type": "String",
+                "optional": true
+              },
+              "maxHistoryLength": {
+                "type": "Real",
+                "optional": true
+              },
+              "openaiLocal": {
+                "type": "Boolean",
+                "optional": true
+              },
+              "openaiBaseUrl": {
+                "type": "String",
+                "optional": true
+              }
+            }
+          },
+          "attachmentStyle": {
+            "type": "String",
+            "optional": true
+          },
+          "maxHistoryLength": {
+            "type": "Real"
+          },
+          "panelDetached": {
+            "type": "Boolean"
+          },
+          "panelHeightRatio": {
+            "type": "Real"
+          },
+          "panelPosition": {
+            "type": "String"
+          },
+          "panelWidth": {
+            "type": "Real"
+          },
+          "scale": {
+            "type": "Real"
+          },
+          "translator": {
+            "type": "Record",
+            "machineLocal": true,
+            "fields": {
+              "backend": {
+                "type": "String",
+                "optional": true
+              },
+              "sourceLanguage": {
+                "type": "String",
+                "optional": true
+              },
+              "targetLanguage": {
+                "type": "String",
+                "optional": true
+              },
+              "realTimeTranslation": {
+                "type": "Boolean",
+                "optional": true
+              },
+              "deeplApiKey": {
+                "type": "String",
+                "sensitive": true,
+                "machineLocal": true,
+                "optional": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "asus-um5606-fan-state": {
+      "1.1.8": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "auto-cpufreq": {
+      "2.6.1": {
+        "version": 1,
+        "fields": {
+          "compactMode": {
+            "type": "Boolean"
+          },
+          "refreshInterval": {
+            "type": "Real"
+          },
+          "showGovernor": {
+            "type": "Boolean"
+          },
+          "showTurbo": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "battery-actions": {
+      "1.0.3": {
+        "version": 1,
+        "fields": {
+          "onBatteryScript": {
+            "type": "String",
+            "optional": true
+          },
+          "pluggedInScript": {
+            "type": "String",
+            "optional": true
+          }
+        }
+      }
+    },
+    "battery-and-power-management": {
+      "1.1.2": {
+        "version": 1,
+        "fields": {
+          "batteryDevice": {
+            "type": "String",
+            "optional": true
+          },
+          "colorPerformance": {
+            "type": "String",
+            "nullable": true
+          },
+          "colorPowerSaver": {
+            "type": "String",
+            "nullable": true
+          },
+          "colorizeByProfile": {
+            "type": "Boolean"
+          },
+          "showBalancedIcon": {
+            "type": "Boolean"
+          },
+          "showProfile": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "battery-monitor-plus": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "deviceNativePath": {
+            "type": "String"
+          },
+          "displayMode": {
+            "type": "String"
+          },
+          "hideIfIdle": {
+            "type": "Boolean"
+          },
+          "hideIfNotDetected": {
+            "type": "Boolean"
+          },
+          "refreshIntervalSeconds": {
+            "type": "Real"
+          },
+          "showNoctaliaPerformance": {
+            "type": "Boolean"
+          },
+          "showPowerInBar": {
+            "type": "Boolean"
+          },
+          "showPowerProfiles": {
+            "type": "Boolean"
+          },
+          "showTimeInBar": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "battery-threshold": {
+      "1.2.6": {
+        "version": 1,
+        "fields": {
+          "batteryDevice": {
+            "type": "String"
+          },
+          "chargeThreshold": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "battery-wireless-devices": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "deviceOrder": {
+            "type": "List",
+            "element": {
+              "type": "String"
+            }
+          },
+          "devices": {
+            "type": "Map",
+            "element": {
+              "type": "Record",
+              "fields": {
+                "enabled": {
+                  "type": "Boolean",
+                  "optional": true
+                },
+                "icon": {
+                  "type": "String",
+                  "optional": true
+                },
+                "iconColor": {
+                  "type": "String",
+                  "optional": true
+                },
+                "ringColor": {
+                  "type": "String",
+                  "optional": true
+                },
+                "launchCmd": {
+                  "type": "String",
+                  "optional": true
+                },
+                "name": {
+                  "type": "String",
+                  "optional": true
+                },
+                "type": {
+                  "type": "String",
+                  "optional": true
+                }
+              }
+            }
+          },
+          "refreshInterval": {
+            "type": "Real"
+          },
+          "showCharging": {
+            "type": "Boolean"
+          },
+          "showPercentage": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "caffeinate": {
+      "1.1.3": {
+        "version": 1,
+        "fields": {
+          "alias": {
+            "type": "String"
+          },
+          "hideInactiveWidget": {
+            "type": "Boolean"
+          },
+          "includeIndefinitePreset": {
+            "type": "Boolean"
+          },
+          "presets": {
+            "type": "List",
+            "element": {
+              "type": "String"
+            }
+          }
+        }
+      }
+    },
+    "calendar-widget": {
+      "1.0.11": {
+        "version": 1,
+        "fields": {
+          "roundedCorners": {
+            "type": "Boolean"
+          },
+          "showBackground": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "calibre-provider": {
+      "1.3.3": {
+        "version": 1,
+        "fields": {
+          "forceGrid": {
+            "type": "Boolean"
+          },
+          "launcher": {
+            "type": "String"
+          },
+          "recentlyOpenedFiles": {
+            "type": "List",
+            "machineLocal": true,
+            "element": {
+              "type": "Real"
+            }
+          },
+          "recentlyOpenedMax": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "catwalk": {
+      "1.1.8": {
+        "version": 1,
+        "fields": {
+          "hideBackground": {
+            "type": "Boolean"
+          },
+          "minimumThreshold": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "clamshell": {
+      "0.1.1": {
+        "version": 1,
+        "fields": {
+          "alwaysShowBarWidget": {
+            "type": "Boolean"
+          },
+          "enabled": {
+            "type": "Boolean"
+          },
+          "inhibitorWho": {
+            "type": "String"
+          },
+          "internalConnectorRegex": {
+            "type": "String"
+          },
+          "notify": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "claude-code-panel": {
+      "0.2.1": {
+        "version": 1,
+        "fields": {
+          "attachmentStyle": {
+            "type": "String"
+          },
+          "claude": {
+            "type": "Record",
+            "fields": {
+              "binary": {
+                "type": "String",
+                "optional": true
+              },
+              "workingDir": {
+                "type": "String",
+                "optional": true
+              },
+              "model": {
+                "type": "String",
+                "optional": true
+              },
+              "fallbackModel": {
+                "type": "String",
+                "optional": true
+              },
+              "permissionMode": {
+                "type": "String",
+                "optional": true
+              },
+              "mcpConfigPath": {
+                "type": "String",
+                "optional": true
+              },
+              "appendSystemPrompt": {
+                "type": "String",
+                "optional": true
+              },
+              "sessionId": {
+                "type": "String",
+                "optional": true
+              },
+              "injectNoctaliaContext": {
+                "type": "Boolean",
+                "optional": true
+              },
+              "includePartialMessages": {
+                "type": "Boolean",
+                "optional": true
+              },
+              "dangerouslySkipPermissions": {
+                "type": "Boolean",
+                "optional": true
+              },
+              "autoResume": {
+                "type": "Boolean",
+                "optional": true
+              },
+              "strictMcpConfig": {
+                "type": "Boolean",
+                "optional": true
+              },
+              "requireConfirmBypass": {
+                "type": "Boolean",
+                "optional": true
+              },
+              "allowedTools": {
+                "type": "List",
+                "element": {
+                  "type": "String"
+                },
+                "optional": true
+              },
+              "disallowedTools": {
+                "type": "List",
+                "element": {
+                  "type": "String"
+                },
+                "optional": true
+              },
+              "additionalDirs": {
+                "type": "List",
+                "element": {
+                  "type": "String"
+                },
+                "optional": true
+              },
+              "maxTurns": {
+                "type": "Real",
+                "optional": true
+              }
+            }
+          },
+          "maxHistoryLength": {
+            "type": "Real"
+          },
+          "panelDetached": {
+            "type": "Boolean"
+          },
+          "panelHeightRatio": {
+            "type": "Real"
+          },
+          "panelPosition": {
+            "type": "String"
+          },
+          "panelWidth": {
+            "type": "Real"
+          },
+          "scale": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "clipboard": {
+      "1.0.5": {
+        "version": 1,
+        "fields": {
+          "density": {
+            "type": "String"
+          },
+          "maxHistorySize": {
+            "type": "Real"
+          },
+          "showImagePreviews": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "clipmask": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "maskChar": {
+            "type": "String"
+          },
+          "maskLength": {
+            "type": "Real"
+          },
+          "masked": {
+            "type": "Boolean"
+          },
+          "showInBar": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "clipper": {
+      "2.4.5": {
+        "version": 1,
+        "fields": {
+          "autoPaste": {
+            "type": "Boolean"
+          },
+          "autoPasteDelay": {
+            "type": "Real"
+          },
+          "autoPasteOnRightClick": {
+            "type": "Boolean"
+          },
+          "cardColors": {
+            "type": "Map",
+            "element": {
+              "type": "Record",
+              "fields": {
+                "bg": {
+                  "type": "String",
+                  "optional": true
+                },
+                "separator": {
+                  "type": "String",
+                  "optional": true
+                },
+                "fg": {
+                  "type": "String",
+                  "optional": true
+                }
+              }
+            }
+          },
+          "customColors": {
+            "type": "Map",
+            "element": {
+              "type": "Record",
+              "fields": {
+                "bg": {
+                  "type": "String",
+                  "optional": true
+                },
+                "separator": {
+                  "type": "String",
+                  "optional": true
+                },
+                "fg": {
+                  "type": "String",
+                  "optional": true
+                }
+              }
+            }
+          },
+          "enableTodoIntegration": {
+            "type": "Boolean"
+          },
+          "fullscreenMode": {
+            "type": "Boolean"
+          },
+          "hidePanelBackground": {
+            "type": "Boolean"
+          },
+          "notecardsEnabled": {
+            "type": "Boolean"
+          },
+          "panelHeight": {
+            "type": "Real"
+          },
+          "panelWidth": {
+            "type": "Real"
+          },
+          "pincardsEnabled": {
+            "type": "Boolean"
+          },
+          "showCloseButton": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "cloudflare-warp": {
+      "1.0.2": {
+        "version": 1,
+        "fields": {
+          "connectedColor": {
+            "type": "String"
+          },
+          "disconnectedColor": {
+            "type": "String"
+          },
+          "refreshInterval": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "coin-flip": {
+      "1.2.3": {
+        "version": 1,
+        "fields": {
+          "delay": {
+            "type": "Real"
+          },
+          "iconColor": {
+            "type": "String"
+          },
+          "lastResult": {
+            "type": "String",
+            "optional": true,
+            "machineLocal": true
+          }
+        }
+      }
+    },
+    "color-scheme-creator": {
+      "1.0.6": {
+        "version": 1,
+        "definitions": {
+          "colorVariant": {
+            "type": "Record",
+            "fields": {
+              "mPrimary": {
+                "type": "String",
+                "optional": true
+              },
+              "mOnPrimary": {
+                "type": "String",
+                "optional": true
+              },
+              "mSecondary": {
+                "type": "String",
+                "optional": true
+              },
+              "mOnSecondary": {
+                "type": "String",
+                "optional": true
+              },
+              "mTertiary": {
+                "type": "String",
+                "optional": true
+              },
+              "mOnTertiary": {
+                "type": "String",
+                "optional": true
+              },
+              "mError": {
+                "type": "String",
+                "optional": true
+              },
+              "mOnError": {
+                "type": "String",
+                "optional": true
+              },
+              "mSurface": {
+                "type": "String",
+                "optional": true
+              },
+              "mOnSurface": {
+                "type": "String",
+                "optional": true
+              },
+              "mSurfaceVariant": {
+                "type": "String",
+                "optional": true
+              },
+              "mOnSurfaceVariant": {
+                "type": "String",
+                "optional": true
+              },
+              "mOutline": {
+                "type": "String",
+                "optional": true
+              },
+              "mShadow": {
+                "type": "String",
+                "optional": true
+              },
+              "mHover": {
+                "type": "String",
+                "optional": true
+              },
+              "mOnHover": {
+                "type": "String",
+                "optional": true
+              },
+              "terminal": {
+                "type": "Record",
+                "fields": {
+                  "normal": {
+                    "type": "Map",
+                    "element": {
+                      "type": "String"
+                    },
+                    "optional": true
+                  },
+                  "bright": {
+                    "type": "Map",
+                    "element": {
+                      "type": "String"
+                    },
+                    "optional": true
+                  },
+                  "foreground": {
+                    "type": "String",
+                    "optional": true
+                  },
+                  "background": {
+                    "type": "String",
+                    "optional": true
+                  },
+                  "selectionFg": {
+                    "type": "String",
+                    "optional": true
+                  },
+                  "selectionBg": {
+                    "type": "String",
+                    "optional": true
+                  },
+                  "cursor": {
+                    "type": "String",
+                    "optional": true
+                  },
+                  "cursorText": {
+                    "type": "String",
+                    "optional": true
+                  }
+                },
+                "optional": true
+              }
+            }
+          }
+        },
+        "fields": {
+          "iconColor": {
+            "type": "String"
+          },
+          "wip": {
+            "type": "Record",
+            "machineLocal": true,
+            "fields": {
+              "name": {
+                "type": "String",
+                "optional": true
+              },
+              "dark": {
+                "ref": "colorVariant",
+                "optional": true
+              },
+              "light": {
+                "ref": "colorVariant",
+                "optional": true
+              }
+            },
+            "optional": true,
+            "nullable": true
+          }
+        }
+      }
+    },
+    "cookie-clock": {
+      "1.0.2": {
+        "version": 1,
+        "fields": {
+          "backgroundOpacity": {
+            "type": "Real"
+          },
+          "dateStyle": {
+            "type": "String"
+          },
+          "dialStyle": {
+            "type": "String"
+          },
+          "hourHandStyle": {
+            "type": "String"
+          },
+          "minuteHandStyle": {
+            "type": "String"
+          },
+          "secondHandStyle": {
+            "type": "String"
+          },
+          "showHourMarks": {
+            "type": "Boolean"
+          },
+          "showSeconds": {
+            "type": "Boolean"
+          },
+          "sides": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "currency-exchange": {
+      "1.0.5": {
+        "version": 1,
+        "fields": {
+          "refreshInterval": {
+            "type": "Real"
+          },
+          "sourceCurrency": {
+            "type": "String"
+          },
+          "targetCurrency": {
+            "type": "String"
+          },
+          "widgetDisplayMode": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "custom-battery": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "deviceNativePath": {
+            "type": "String",
+            "optional": true
+          },
+          "displayMode": {
+            "type": "String",
+            "optional": true
+          },
+          "hideIfIdle": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "hideIfNotDetected": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "iconScale": {
+            "type": "Real",
+            "optional": true
+          }
+        }
+      }
+    },
+    "custom-commands": {
+      "1.0.6": {
+        "version": 1,
+        "fields": {
+          "commands": {
+            "type": "List",
+            "element": {
+              "type": "Record",
+              "fields": {
+                "name": {
+                  "type": "String",
+                  "optional": true
+                },
+                "command": {
+                  "type": "String",
+                  "optional": true
+                },
+                "icon": {
+                  "type": "String",
+                  "optional": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "custom-sticker": {
+      "1.0.4": {
+        "version": 1,
+        "fields": {
+          "image": {
+            "type": "String",
+            "optional": true
+          },
+          "mirror": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "opacity": {
+            "type": "Real",
+            "optional": true
+          },
+          "roundedCorners": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "showBackground": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "verticalMirror": {
+            "type": "Boolean",
+            "optional": true
+          }
+        }
+      }
+    },
+    "daily-quote": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "authorFont": {
+            "type": "String"
+          },
+          "gradientDirection": {
+            "type": "String"
+          },
+          "quoteColor": {
+            "type": "String"
+          },
+          "quoteFont": {
+            "type": "String"
+          },
+          "showBackground": {
+            "type": "Boolean"
+          },
+          "showGradientOverlay": {
+            "type": "Boolean"
+          },
+          "textAlign": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "daily-wallpaper": {
+      "1.0.3": {
+        "version": 1,
+        "fields": {
+          "locale": {
+            "type": "String"
+          },
+          "source": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "deskvis": {
+      "2.0.3": {
+        "version": 1,
+        "fields": {
+          "barCount": {
+            "type": "Real"
+          },
+          "customHeight": {
+            "type": "Real"
+          },
+          "customPrimaryColor": {
+            "type": "String"
+          },
+          "customSecondaryColor": {
+            "type": "String"
+          },
+          "customWidth": {
+            "type": "Real"
+          },
+          "direction": {
+            "type": "String"
+          },
+          "fadeWhenIdle": {
+            "type": "Boolean"
+          },
+          "fps": {
+            "type": "Real"
+          },
+          "mode": {
+            "type": "String"
+          },
+          "sensitivity": {
+            "type": "Real"
+          },
+          "smoothing": {
+            "type": "Real"
+          },
+          "useCustomColors": {
+            "type": "Boolean"
+          },
+          "useGradient": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "digest-watcher": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "seenMtime": {
+            "type": "Real",
+            "machineLocal": true
+          }
+        }
+      }
+    },
+    "display-settings": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "iconColor": {
+            "type": "String"
+          },
+          "niriConfigPath": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "dmenu": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "customInputPrefix": {
+            "type": "String",
+            "optional": true
+          },
+          "maxResults": {
+            "type": "Real"
+          },
+          "panelPosition": {
+            "type": "String"
+          },
+          "resultFile": {
+            "type": "String"
+          },
+          "showFooter": {
+            "type": "Boolean"
+          },
+          "showMatchCount": {
+            "type": "Boolean"
+          },
+          "showToastOnSelect": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "dns-switcher": {
+      "1.2.2": {
+        "version": 1,
+        "fields": {
+          "savedServers": {
+            "type": "String",
+            "optional": true
+          }
+        }
+      }
+    },
+    "ds4-colors": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "color": {
+            "type": "String"
+          },
+          "colorIcon": {
+            "type": "Boolean"
+          },
+          "hideOnEmpty": {
+            "type": "Boolean"
+          },
+          "recentColors": {
+            "type": "List",
+            "machineLocal": true,
+            "element": {
+              "type": "String"
+            }
+          }
+        }
+      }
+    },
+    "fancy-audiovisualizer": {
+      "1.1.3": {
+        "version": 1,
+        "fields": {
+          "barWidth": {
+            "type": "Real"
+          },
+          "bloomIntensity": {
+            "type": "Real"
+          },
+          "customPrimaryColor": {
+            "type": "String"
+          },
+          "customSecondaryColor": {
+            "type": "String"
+          },
+          "fadeWhenIdle": {
+            "type": "Boolean"
+          },
+          "innerDiameter": {
+            "type": "Real"
+          },
+          "ringOpacity": {
+            "type": "Real"
+          },
+          "rotationSpeed": {
+            "type": "Real"
+          },
+          "sensitivity": {
+            "type": "Real"
+          },
+          "useCustomColors": {
+            "type": "Boolean"
+          },
+          "visualizationMode": {
+            "type": "Real"
+          },
+          "waveThickness": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "file-search": {
+      "1.0.5": {
+        "version": 1,
+        "fields": {
+          "fdCommand": {
+            "type": "String"
+          },
+          "fileOpener": {
+            "type": "String"
+          },
+          "maxResults": {
+            "type": "Real"
+          },
+          "searchDirectory": {
+            "type": "String"
+          },
+          "showHidden": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "giphy-search": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "api_key": {
+            "type": "String"
+          },
+          "rating": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "git-companion": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "group": {
+            "type": "String"
+          },
+          "platform": {
+            "type": "String"
+          },
+          "refreshInterval": {
+            "type": "Real"
+          },
+          "repo": {
+            "type": "String"
+          },
+          "selectedRepo": {
+            "type": "String",
+            "optional": true,
+            "machineLocal": true
+          }
+        }
+      }
+    },
+    "github-contributions": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "layout": {
+            "type": "String"
+          },
+          "refreshInterval": {
+            "type": "Real"
+          },
+          "showLabels": {
+            "type": "Boolean"
+          },
+          "showTotal": {
+            "type": "Boolean"
+          },
+          "token": {
+            "type": "String"
+          },
+          "username": {
+            "type": "String"
+          },
+          "weeksShown": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "github-feed": {
+      "1.3.2": {
+        "version": 1,
+        "fields": {
+          "colorizationBadge": {
+            "type": "String"
+          },
+          "colorizationBadgeText": {
+            "type": "String"
+          },
+          "colorizationEnabled": {
+            "type": "Boolean"
+          },
+          "colorizationIcon": {
+            "type": "String"
+          },
+          "defaultTab": {
+            "type": "Real"
+          },
+          "enableSystemNotifications": {
+            "type": "Boolean"
+          },
+          "githubUrl": {
+            "type": "String"
+          },
+          "maxEvents": {
+            "type": "Real"
+          },
+          "notifyForks": {
+            "type": "Boolean"
+          },
+          "notifyGitHubNotifications": {
+            "type": "Boolean"
+          },
+          "notifyMyRepoForks": {
+            "type": "Boolean"
+          },
+          "notifyMyRepoStars": {
+            "type": "Boolean"
+          },
+          "notifyPRs": {
+            "type": "Boolean"
+          },
+          "notifyRepoCreations": {
+            "type": "Boolean"
+          },
+          "notifyStars": {
+            "type": "Boolean"
+          },
+          "openInBrowser": {
+            "type": "Boolean"
+          },
+          "refreshInterval": {
+            "type": "Real"
+          },
+          "showForks": {
+            "type": "Boolean"
+          },
+          "showMyRepoForks": {
+            "type": "Boolean"
+          },
+          "showMyRepoStars": {
+            "type": "Boolean"
+          },
+          "showNotificationBadge": {
+            "type": "Boolean"
+          },
+          "showPRs": {
+            "type": "Boolean"
+          },
+          "showRepoCreations": {
+            "type": "Boolean"
+          },
+          "showStars": {
+            "type": "Boolean"
+          },
+          "token": {
+            "type": "String"
+          },
+          "username": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "habitica": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "_habiticaCache": {
+            "type": "String"
+          },
+          "colorizationBadge": {
+            "type": "String"
+          },
+          "colorizationBadgeText": {
+            "type": "String"
+          },
+          "colorizationEnabled": {
+            "type": "Boolean"
+          },
+          "colorizationIcon": {
+            "type": "String"
+          },
+          "enableTagFilter": {
+            "type": "Boolean"
+          },
+          "habiticaApiToken": {
+            "type": "String"
+          },
+          "habiticaUserId": {
+            "type": "String"
+          },
+          "maxDailies": {
+            "type": "Real"
+          },
+          "maxHabits": {
+            "type": "Real"
+          },
+          "maxTodos": {
+            "type": "Real"
+          },
+          "refreshInterval": {
+            "type": "Real"
+          },
+          "selectedTagId": {
+            "type": "String"
+          },
+          "showChecklistItems": {
+            "type": "Boolean"
+          },
+          "showHabits": {
+            "type": "Boolean"
+          },
+          "showNotificationBadge": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "hassio": {
+      "1.1.2": {
+        "version": 1,
+        "fields": {
+          "entities": {
+            "type": "List",
+            "element": {
+              "type": "String"
+            }
+          },
+          "haToken": {
+            "type": "String",
+            "sensitive": true,
+            "machineLocal": true
+          },
+          "haUrl": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "hello-world": {
+      "1.2.5": {
+        "version": 1,
+        "fields": {
+          "iconColor": {
+            "type": "String"
+          },
+          "message": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "hermes-agent": {
+      "1.1.1": {
+        "version": 1,
+        "fields": {
+          "autoStartBridge": {
+            "type": "Boolean"
+          },
+          "autoStartGateway": {
+            "type": "Boolean"
+          },
+          "bridgeHost": {
+            "type": "String"
+          },
+          "bridgePort": {
+            "type": "Real"
+          },
+          "bridgeTokenManual": {
+            "type": "String"
+          },
+          "clientOnlyMode": {
+            "type": "Boolean"
+          },
+          "configured": {
+            "type": "Boolean"
+          },
+          "defaultModel": {
+            "type": "String"
+          },
+          "defaultProvider": {
+            "type": "String"
+          },
+          "hermesCommand": {
+            "type": "String"
+          },
+          "hermesHome": {
+            "type": "String"
+          },
+          "hideWhenIdle": {
+            "type": "Boolean"
+          },
+          "launcherPrefix": {
+            "type": "String"
+          },
+          "panelPinned": {
+            "type": "Boolean"
+          },
+          "showToolActivity": {
+            "type": "Boolean"
+          },
+          "stateFile": {
+            "type": "String"
+          },
+          "statusPollIntervalSec": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "hermes-ssh-chat": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "autoConnectOnStartup": {
+            "type": "Boolean"
+          },
+          "host": {
+            "type": "String",
+            "machineLocal": true
+          },
+          "panelHeight": {
+            "type": "Real"
+          },
+          "panelWidth": {
+            "type": "Real"
+          },
+          "port": {
+            "type": "Real",
+            "machineLocal": true
+          },
+          "rememberLastTarget": {
+            "type": "Boolean"
+          },
+          "showBarText": {
+            "type": "Boolean"
+          },
+          "terminalCols": {
+            "type": "Real"
+          },
+          "terminalFontSize": {
+            "type": "Real"
+          },
+          "terminalRows": {
+            "type": "Real"
+          },
+          "toggleShortcutName": {
+            "type": "String"
+          },
+          "user": {
+            "type": "String",
+            "machineLocal": true
+          }
+        }
+      }
+    },
+    "hot-corners": {
+      "0.0.4": {
+        "version": 1,
+        "fields": {
+          "corners": {
+            "type": "Record",
+            "optional": true,
+            "fields": {
+              "BottomLeft": {
+                "type": "String",
+                "optional": true
+              },
+              "BottomRight": {
+                "type": "String",
+                "optional": true
+              },
+              "TopLeft": {
+                "type": "String",
+                "optional": true
+              },
+              "TopRight": {
+                "type": "String",
+                "optional": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "hyprland-steam-overlay": {
+      "2.2.1": {
+        "version": 1,
+        "fields": {
+          "autoLaunchSteam": {
+            "type": "Boolean"
+          },
+          "chatWidth": {
+            "type": "Real",
+            "optional": true
+          },
+          "chatWidthPercent": {
+            "type": "Real"
+          },
+          "enableChatNotifications": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "friendsWidth": {
+            "type": "Real",
+            "optional": true
+          },
+          "friendsWidthPercent": {
+            "type": "Real"
+          },
+          "gapSize": {
+            "type": "Real"
+          },
+          "mainWidth": {
+            "type": "Real",
+            "optional": true
+          },
+          "mainWidthPercent": {
+            "type": "Real"
+          },
+          "topMarginPercent": {
+            "type": "Real"
+          },
+          "useCustomLayout": {
+            "type": "Boolean"
+          },
+          "windowHeightPercent": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "hyprland-visual-editor": {
+      "1.0.5": {
+        "version": 1,
+        "fields": {
+          "activeAnimFile": {
+            "type": "String"
+          },
+          "activeBorderFile": {
+            "type": "String"
+          },
+          "activeShaderFile": {
+            "type": "String"
+          },
+          "autoApply": {
+            "type": "Boolean"
+          },
+          "borderSize": {
+            "type": "Real"
+          },
+          "icon": {
+            "type": "String",
+            "optional": true
+          },
+          "iconColor": {
+            "type": "String",
+            "optional": true
+          },
+          "isSystemActive": {
+            "type": "Boolean"
+          },
+          "overlayPath": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "ideapad-battery-health": {
+      "1.0.2": {
+        "version": 1,
+        "fields": {
+          "iconColor": {
+            "type": "String",
+            "optional": true
+          },
+          "preservationMode": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "ip-monitor": {
+      "0.1.3": {
+        "version": 1,
+        "fields": {
+          "errorIcon": {
+            "type": "String"
+          },
+          "iconColor": {
+            "type": "String"
+          },
+          "loadingIcon": {
+            "type": "String"
+          },
+          "refreshInterval": {
+            "type": "Real"
+          },
+          "successIcon": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "kagi-quick-search": {
+      "1.0.3": {
+        "version": 1,
+        "fields": {
+          "debounceMs": {
+            "type": "Real"
+          },
+          "kagiSessionToken": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "kaomoji-provider": {
+      "1.0.3": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "kde-connect": {
+      "1.2.3": {
+        "version": 1,
+        "fields": {
+          "hideIfNoDeviceConnected": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "mainDeviceId": {
+            "type": "String",
+            "optional": true
+          }
+        }
+      }
+    },
+    "keep-awake-plus": {
+      "0.3.1": {
+        "version": 1,
+        "fields": {
+          "activateOnLeftClick": {
+            "type": "Boolean"
+          },
+          "defaultScope": {
+            "type": "String"
+          },
+          "durations": {
+            "type": "List",
+            "element": {
+              "type": "Real"
+            }
+          },
+          "includeUnlimited": {
+            "type": "Boolean"
+          },
+          "quickExtendMinutes": {
+            "type": "Real"
+          },
+          "showRemainingText": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "keybind-cheatsheet": {
+      "3.7.5": {
+        "version": 1,
+        "fields": {
+          "autoHeight": {
+            "type": "Boolean"
+          },
+          "bindOverrides": {
+            "type": "Map",
+            "element": {
+              "type": "Record",
+              "fields": {
+                "desc": {
+                  "type": "String",
+                  "optional": true
+                },
+                "hidden": {
+                  "type": "Boolean",
+                  "optional": true
+                }
+              }
+            }
+          },
+          "cheatsheetData": {
+            "type": "List",
+            "machineLocal": true,
+            "element": {
+              "type": "Record",
+              "fields": {
+                "title": {
+                  "type": "String",
+                  "optional": true
+                },
+                "binds": {
+                  "type": "List",
+                  "element": {
+                    "type": "Record",
+                    "fields": {
+                      "keys": {
+                        "type": "String",
+                        "optional": true
+                      },
+                      "desc": {
+                        "type": "String",
+                        "optional": true
+                      },
+                      "bindId": {
+                        "type": "String",
+                        "optional": true
+                      },
+                      "undescribed": {
+                        "type": "Boolean",
+                        "optional": true
+                      },
+                      "_verb": {
+                        "type": "String",
+                        "optional": true
+                      },
+                      "_param": {
+                        "type": "String",
+                        "optional": true
+                      },
+                      "_mods": {
+                        "type": "String",
+                        "optional": true
+                      },
+                      "_mainKey": {
+                        "type": "String",
+                        "optional": true
+                      },
+                      "_merged": {
+                        "type": "Boolean",
+                        "optional": true
+                      }
+                    }
+                  },
+                  "optional": true
+                }
+              }
+            }
+          },
+          "columnCount": {
+            "type": "Real"
+          },
+          "descriptionTextColor": {
+            "type": "String"
+          },
+          "detectedCompositor": {
+            "type": "String",
+            "machineLocal": true
+          },
+          "hyprlandConfigPath": {
+            "type": "String"
+          },
+          "hyprlandLuaConfigPath": {
+            "type": "String"
+          },
+          "hyprlandParserMode": {
+            "type": "String"
+          },
+          "keyColorAlt": {
+            "type": "String"
+          },
+          "keyColorCtrl": {
+            "type": "String"
+          },
+          "keyColorDefault": {
+            "type": "String"
+          },
+          "keyColorMod2": {
+            "type": "String"
+          },
+          "keyColorMod3": {
+            "type": "String"
+          },
+          "keyColorMod5": {
+            "type": "String"
+          },
+          "keyColorMouse": {
+            "type": "String"
+          },
+          "keyColorNumeric": {
+            "type": "String"
+          },
+          "keyColorPrint": {
+            "type": "String"
+          },
+          "keyColorShift": {
+            "type": "String"
+          },
+          "keyColorSuper": {
+            "type": "String"
+          },
+          "keyColorXF86": {
+            "type": "String"
+          },
+          "keyLabelColor": {
+            "type": "String"
+          },
+          "keyLabelMod2": {
+            "type": "String"
+          },
+          "keyLabelMod3": {
+            "type": "String"
+          },
+          "keyLabelMod5": {
+            "type": "String"
+          },
+          "keyTextAlt": {
+            "type": "String"
+          },
+          "keyTextCtrl": {
+            "type": "String"
+          },
+          "keyTextDefault": {
+            "type": "String"
+          },
+          "keyTextMod2": {
+            "type": "String"
+          },
+          "keyTextMod3": {
+            "type": "String"
+          },
+          "keyTextMod5": {
+            "type": "String"
+          },
+          "keyTextMouse": {
+            "type": "String"
+          },
+          "keyTextNumeric": {
+            "type": "String"
+          },
+          "keyTextPrint": {
+            "type": "String"
+          },
+          "keyTextShift": {
+            "type": "String"
+          },
+          "keyTextSuper": {
+            "type": "String"
+          },
+          "keyTextXF86": {
+            "type": "String"
+          },
+          "mangoConfigPath": {
+            "type": "String"
+          },
+          "mergeSequentialBinds": {
+            "type": "Boolean"
+          },
+          "modKeyVariable": {
+            "type": "String"
+          },
+          "niriConfigPath": {
+            "type": "String"
+          },
+          "showUndescribedBinds": {
+            "type": "Boolean"
+          },
+          "splitLargeWorkspaceCategory": {
+            "type": "Boolean"
+          },
+          "windowHeight": {
+            "type": "Real"
+          },
+          "windowWidth": {
+            "type": "Real"
+          },
+          "workspaceSplitThreshold": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "khal-agenda-widget": {
+      "1.0.4": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "kubectl-ctx": {
+      "1.0.6": {
+        "version": 1,
+        "fields": {
+          "iconColor": {
+            "type": "String"
+          },
+          "kubeconfigPath": {
+            "type": "String"
+          },
+          "panelHeight": {
+            "type": "Real"
+          },
+          "panelWidth": {
+            "type": "Real"
+          },
+          "pollInterval": {
+            "type": "Real"
+          },
+          "showErrorBadge": {
+            "type": "Boolean"
+          },
+          "terminal": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "latency-monitor": {
+      "1.0.3": {
+        "version": 1,
+        "fields": {
+          "animations": {
+            "type": "Boolean"
+          },
+          "barHost": {
+            "type": "String"
+          },
+          "colorCritical": {
+            "type": "String"
+          },
+          "colorGood": {
+            "type": "String"
+          },
+          "colorWarning": {
+            "type": "String"
+          },
+          "hosts": {
+            "type": "List",
+            "element": {
+              "type": "Record",
+              "fields": {
+                "name": {
+                  "type": "String",
+                  "optional": true
+                },
+                "address": {
+                  "type": "String",
+                  "optional": true
+                }
+              }
+            }
+          },
+          "intervalSeconds": {
+            "type": "Real"
+          },
+          "showHostName": {
+            "type": "Boolean"
+          },
+          "thresholdGood": {
+            "type": "Real"
+          },
+          "thresholdWarning": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "launcher-pass": {
+      "1.0.0": {
+        "version": 1,
+        "fields": {
+          "clipTimeout": {
+            "type": "String"
+          },
+          "storePath": {
+            "type": "String"
+          },
+          "typeDelay": {
+            "type": "Real"
+          },
+          "wtypeDelay": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "linux-wallpaperengine-controller": {
+      "1.3.2": {
+        "version": 1,
+        "fields": {
+          "applyWallpaperColorsOnApply": {
+            "type": "Boolean"
+          },
+          "autoApplyOnStartup": {
+            "type": "Boolean"
+          },
+          "badgeEnabled": {
+            "type": "Map",
+            "element": {
+              "type": "Boolean"
+            }
+          },
+          "badgeOrder": {
+            "type": "List",
+            "element": {
+              "type": "String"
+            }
+          },
+          "defaultAudioReactiveEffects": {
+            "type": "Boolean"
+          },
+          "defaultClamp": {
+            "type": "String"
+          },
+          "defaultDisableMouse": {
+            "type": "Boolean"
+          },
+          "defaultDisableParallax": {
+            "type": "Boolean"
+          },
+          "defaultFps": {
+            "type": "Real"
+          },
+          "defaultFullscreenPauseOnlyActive": {
+            "type": "Boolean"
+          },
+          "defaultMuted": {
+            "type": "Boolean"
+          },
+          "defaultNoAutomute": {
+            "type": "Boolean"
+          },
+          "defaultNoFullscreenPause": {
+            "type": "Boolean"
+          },
+          "defaultScaling": {
+            "type": "String"
+          },
+          "defaultVolume": {
+            "type": "Real"
+          },
+          "enableExtraPropertiesEditor": {
+            "type": "Boolean"
+          },
+          "iconColor": {
+            "type": "String"
+          },
+          "lastKnownGoodScreens": {
+            "type": "Map",
+            "machineLocal": true,
+            "element": {
+              "type": "Record",
+              "fields": {
+                "path": {
+                  "type": "String",
+                  "optional": true
+                },
+                "scaling": {
+                  "type": "String",
+                  "optional": true
+                },
+                "clamp": {
+                  "type": "String",
+                  "optional": true
+                },
+                "volume": {
+                  "type": "Real",
+                  "optional": true
+                },
+                "muted": {
+                  "type": "Boolean",
+                  "optional": true
+                },
+                "audioReactiveEffects": {
+                  "type": "Boolean",
+                  "optional": true
+                },
+                "noAutomute": {
+                  "type": "Boolean",
+                  "optional": true
+                },
+                "disableMouse": {
+                  "type": "Boolean",
+                  "optional": true
+                },
+                "disableParallax": {
+                  "type": "Boolean",
+                  "optional": true
+                }
+              }
+            }
+          },
+          "panelLastSelectedPath": {
+            "type": "String",
+            "machineLocal": true
+          },
+          "panelPageSize": {
+            "type": "Real"
+          },
+          "runtimeRecoveryPending": {
+            "type": "Boolean",
+            "machineLocal": true
+          },
+          "screens": {
+            "type": "Map",
+            "element": {
+              "type": "Record",
+              "fields": {
+                "path": {
+                  "type": "String",
+                  "optional": true
+                },
+                "scaling": {
+                  "type": "String",
+                  "optional": true
+                },
+                "clamp": {
+                  "type": "String",
+                  "optional": true
+                },
+                "volume": {
+                  "type": "Real",
+                  "optional": true
+                },
+                "muted": {
+                  "type": "Boolean",
+                  "optional": true
+                },
+                "audioReactiveEffects": {
+                  "type": "Boolean",
+                  "optional": true
+                },
+                "noAutomute": {
+                  "type": "Boolean",
+                  "optional": true
+                },
+                "disableMouse": {
+                  "type": "Boolean",
+                  "optional": true
+                },
+                "disableParallax": {
+                  "type": "Boolean",
+                  "optional": true
+                }
+              }
+            }
+          },
+          "showSidebarDescription": {
+            "type": "Boolean"
+          },
+          "wallpaperColorScreenshots": {
+            "type": "Map",
+            "machineLocal": true,
+            "element": {
+              "type": "Record",
+              "fields": {
+                "path": {
+                  "type": "String",
+                  "optional": true
+                },
+                "wallpaperPath": {
+                  "type": "String",
+                  "optional": true
+                },
+                "scaling": {
+                  "type": "String",
+                  "optional": true
+                },
+                "updatedAt": {
+                  "type": "Real",
+                  "optional": true
+                }
+              }
+            }
+          },
+          "wallpaperProperties": {
+            "type": "Map",
+            "element": {
+              "type": "Map",
+              "element": {
+                "type": "String"
+              }
+            }
+          },
+          "wallpaperScanCacheMinutes": {
+            "type": "Real"
+          },
+          "wallpapersFolder": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "lyrics-fetch": {
+      "1.1.2": {
+        "version": 1,
+        "fields": {
+          "adaptScrollSpeed": {
+            "type": "Boolean"
+          },
+          "fontFamily": {
+            "type": "String",
+            "optional": true
+          },
+          "fontSize": {
+            "type": "Real"
+          },
+          "hideWhenEmpty": {
+            "type": "Boolean"
+          },
+          "hideWhenPaused": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "scrollMode": {
+            "type": "String"
+          },
+          "scrollSpeed": {
+            "type": "Real"
+          },
+          "verticalRotationDirection": {
+            "type": "String"
+          },
+          "widgetWidth": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "mangowc-layout-switcher": {
+      "3.1.1": {
+        "version": 1,
+        "fields": {
+          "monitorOrder": {
+            "type": "List",
+            "element": {
+              "type": "String"
+            }
+          }
+        }
+      }
+    },
+    "mimeapp-gui": {
+      "1.0.5": {
+        "version": 1,
+        "fields": {
+          "iconColor": {
+            "type": "String"
+          },
+          "showOnlyConflicts": {
+            "type": "Boolean",
+            "optional": true
+          }
+        }
+      }
+    },
+    "mini-docker": {
+      "2.2.1": {
+        "version": 1,
+        "fields": {
+          "activeColor": {
+            "type": "String"
+          },
+          "iconColor": {
+            "type": "String"
+          },
+          "inactiveColor": {
+            "type": "String"
+          },
+          "refreshInterval": {
+            "type": "Real"
+          },
+          "statusState": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "mirror-mirror": {
+      "0.1.5": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "model-usage": {
+      "0.3.2": {
+        "version": 1,
+        "fields": {
+          "barCycleIntervalSec": {
+            "type": "Real"
+          },
+          "barDisplayMode": {
+            "type": "String"
+          },
+          "barMetric": {
+            "type": "String"
+          },
+          "providers": {
+            "type": "Record",
+            "machineLocal": true,
+            "fields": {
+              "claude": {
+                "type": "Record",
+                "fields": {
+                  "enabled": {
+                    "type": "Boolean",
+                    "optional": true
+                  },
+                  "statsPath": {
+                    "type": "String",
+                    "optional": true
+                  },
+                  "credentialsPath": {
+                    "type": "String",
+                    "optional": true
+                  }
+                },
+                "optional": true
+              },
+              "codex": {
+                "type": "Record",
+                "fields": {
+                  "enabled": {
+                    "type": "Boolean",
+                    "optional": true
+                  }
+                },
+                "optional": true
+              },
+              "copilot": {
+                "type": "Record",
+                "fields": {
+                  "enabled": {
+                    "type": "Boolean",
+                    "optional": true
+                  }
+                },
+                "optional": true
+              },
+              "gemini": {
+                "type": "Record",
+                "fields": {
+                  "enabled": {
+                    "type": "Boolean",
+                    "optional": true
+                  }
+                },
+                "optional": true
+              },
+              "openrouter": {
+                "type": "Record",
+                "fields": {
+                  "enabled": {
+                    "type": "Boolean",
+                    "optional": true
+                  },
+                  "apiKey": {
+                    "type": "String",
+                    "sensitive": true,
+                    "machineLocal": true,
+                    "optional": true
+                  }
+                },
+                "optional": true
+              },
+              "zen": {
+                "type": "Record",
+                "fields": {
+                  "enabled": {
+                    "type": "Boolean",
+                    "optional": true
+                  },
+                  "apiKey": {
+                    "type": "String",
+                    "sensitive": true,
+                    "machineLocal": true,
+                    "optional": true
+                  },
+                  "apiBaseUrl": {
+                    "type": "String",
+                    "optional": true
+                  }
+                },
+                "optional": true
+              }
+            }
+          },
+          "refreshIntervalSec": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "modern-clock": {
+      "1.0.2": {
+        "version": 1,
+        "fields": {
+          "colourChoice": {
+            "type": "Boolean"
+          },
+          "customDateFont": {
+            "type": "String"
+          },
+          "customDayFont": {
+            "type": "String"
+          },
+          "customTimeFont": {
+            "type": "String"
+          },
+          "dateColourChoice": {
+            "type": "String"
+          },
+          "dateColourPicker": {
+            "type": "String"
+          },
+          "dateFontSize": {
+            "type": "Real",
+            "optional": true
+          },
+          "dayColourChoice": {
+            "type": "String"
+          },
+          "dayColourPicker": {
+            "type": "String"
+          },
+          "dayFontSize": {
+            "type": "Real",
+            "optional": true
+          },
+          "textOpacity": {
+            "type": "Real"
+          },
+          "timeColourChoice": {
+            "type": "String"
+          },
+          "timeColourPicker": {
+            "type": "String"
+          },
+          "timeFontSize": {
+            "type": "Real",
+            "optional": true
+          }
+        }
+      }
+    },
+    "monique": {
+      "1.1.1": {
+        "version": 1,
+        "fields": {
+          "activeColor": {
+            "type": "String"
+          },
+          "refreshInterval": {
+            "type": "Real"
+          },
+          "showProfileLabel": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "monitor-layout": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "backend": {
+            "type": "String"
+          },
+          "gridSize": {
+            "type": "Real"
+          },
+          "hyprctlCommand": {
+            "type": "String"
+          },
+          "iconColor": {
+            "type": "String"
+          },
+          "snapToGrid": {
+            "type": "Boolean"
+          },
+          "swayCommand": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "mpd": {
+      "1.1.2": {
+        "version": 1,
+        "fields": {
+          "leftButton": {
+            "type": "String"
+          },
+          "middleButton": {
+            "type": "String"
+          },
+          "rightButton": {
+            "type": "String"
+          },
+          "shuffleStopsPlayback": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "mpris-lyric": {
+      "1.0.5": {
+        "version": 1,
+        "fields": {
+          "hideWhenInactive": {
+            "type": "Boolean"
+          },
+          "playerName": {
+            "type": "String"
+          },
+          "updateInterval": {
+            "type": "Real"
+          },
+          "width": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "mpvpaper": {
+      "1.6.6": {
+        "version": 1,
+        "fields": {
+          "active": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "automation": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "automationMode": {
+            "type": "String",
+            "optional": true
+          },
+          "automationTime": {
+            "type": "Real",
+            "optional": true
+          },
+          "currentWallpaper": {
+            "type": "String",
+            "optional": true
+          },
+          "fillMode": {
+            "type": "String"
+          },
+          "hardwareAcceleration": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "isMuted": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "isPlaying": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "mpvSocket": {
+            "type": "String"
+          },
+          "oldWallpapers": {
+            "type": "Map",
+            "optional": true,
+            "machineLocal": true,
+            "element": {
+              "type": "String"
+            }
+          },
+          "profile": {
+            "type": "String"
+          },
+          "thumbCacheReady": {
+            "type": "Boolean",
+            "optional": true,
+            "machineLocal": true
+          },
+          "volume": {
+            "type": "Real",
+            "optional": true
+          },
+          "wallpapersFolder": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "mullvad": {
+      "0.1.1": {
+        "version": 1,
+        "fields": {
+          "clickAction": {
+            "type": "String"
+          },
+          "compactMode": {
+            "type": "Boolean"
+          },
+          "confirmDisconnectInLockdown": {
+            "type": "Boolean"
+          },
+          "expiryWarningDays": {
+            "type": "Real"
+          },
+          "favoriteCountries": {
+            "type": "List",
+            "element": {
+              "type": "String"
+            }
+          },
+          "refreshInterval": {
+            "type": "Real"
+          },
+          "relayClickConnects": {
+            "type": "Boolean"
+          },
+          "showCityName": {
+            "type": "Boolean"
+          },
+          "showCountryFlag": {
+            "type": "Boolean"
+          },
+          "showIp": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "music-search": {
+      "1.2.4": {
+        "version": 1,
+        "fields": {
+          "autoSaveMp3AfterPlayback": {
+            "type": "Boolean"
+          },
+          "defaultPanelLibrarySection": {
+            "type": "String"
+          },
+          "defaultPanelTab": {
+            "type": "String"
+          },
+          "panelDensity": {
+            "type": "String"
+          },
+          "previewMetadataMode": {
+            "type": "String"
+          },
+          "previewPaneWidth": {
+            "type": "Real"
+          },
+          "previewThumbnailSize": {
+            "type": "String"
+          },
+          "showAlbumMetadata": {
+            "type": "Boolean"
+          },
+          "showBarHoverTrackTitle": {
+            "type": "Boolean"
+          },
+          "showDurationMetadata": {
+            "type": "Boolean"
+          },
+          "showHomeArtists": {
+            "type": "Boolean"
+          },
+          "showHomePlaylists": {
+            "type": "Boolean"
+          },
+          "showHomeRecent": {
+            "type": "Boolean"
+          },
+          "showHomeTags": {
+            "type": "Boolean"
+          },
+          "showHomeTop": {
+            "type": "Boolean"
+          },
+          "showPanelHeader": {
+            "type": "Boolean"
+          },
+          "showPanelNowPlaying": {
+            "type": "Boolean"
+          },
+          "showPanelPlaybackProgress": {
+            "type": "Boolean"
+          },
+          "showPanelPreview": {
+            "type": "Boolean"
+          },
+          "showPanelProviderChips": {
+            "type": "Boolean"
+          },
+          "showPanelQueueControls": {
+            "type": "Boolean"
+          },
+          "showPanelRecentTracks": {
+            "type": "Boolean"
+          },
+          "showPanelSearchHelper": {
+            "type": "Boolean"
+          },
+          "showPanelSpeedControls": {
+            "type": "Boolean"
+          },
+          "showPanelStatusBanner": {
+            "type": "Boolean"
+          },
+          "showPanelUrlActions": {
+            "type": "Boolean"
+          },
+          "showPlayStatsMetadata": {
+            "type": "Boolean"
+          },
+          "showPreviewChips": {
+            "type": "Boolean"
+          },
+          "showRatingMetadata": {
+            "type": "Boolean"
+          },
+          "showStatusMetadata": {
+            "type": "Boolean"
+          },
+          "showTagMetadata": {
+            "type": "Boolean"
+          },
+          "showUploaderMetadata": {
+            "type": "Boolean"
+          },
+          "ytPlayerClient": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "netbird": {
+      "1.1.2": {
+        "version": 1,
+        "fields": {
+          "compactMode": {
+            "type": "Boolean"
+          },
+          "defaultPeerAction": {
+            "type": "String"
+          },
+          "hideDisconnected": {
+            "type": "Boolean"
+          },
+          "managementUrl": {
+            "type": "String"
+          },
+          "pingCount": {
+            "type": "Real"
+          },
+          "refreshInterval": {
+            "type": "Real"
+          },
+          "showIpAddress": {
+            "type": "Boolean"
+          },
+          "showPing": {
+            "type": "Boolean"
+          },
+          "terminalCommand": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "network-indicator": {
+      "2.0.1": {
+        "version": 1,
+        "fields": {
+          "byteThresholdActive": {
+            "type": "Real"
+          },
+          "colorRx": {
+            "type": "String",
+            "optional": true
+          },
+          "colorSilent": {
+            "type": "String",
+            "optional": true
+          },
+          "colorText": {
+            "type": "String",
+            "optional": true
+          },
+          "colorTx": {
+            "type": "String",
+            "optional": true
+          },
+          "columnSpacing": {
+            "type": "Real"
+          },
+          "customFontBold": {
+            "type": "Boolean"
+          },
+          "customFontFamily": {
+            "type": "String",
+            "optional": true
+          },
+          "customFontItalic": {
+            "type": "Boolean"
+          },
+          "fontSizeModifier": {
+            "type": "Real"
+          },
+          "iconSizeModifier": {
+            "type": "Real"
+          },
+          "iconType": {
+            "type": "String"
+          },
+          "layout": {
+            "type": "String"
+          },
+          "paddingLeft": {
+            "type": "Real"
+          },
+          "paddingRight": {
+            "type": "Real"
+          },
+          "rowSpacing": {
+            "type": "Real"
+          },
+          "slots": {
+            "type": "List",
+            "element": {
+              "type": "String"
+            }
+          },
+          "useCustomColors": {
+            "type": "Boolean"
+          },
+          "useCustomFont": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "network-manager-vpn": {
+      "1.3.1": {
+        "version": 1,
+        "fields": {
+          "connectedColor": {
+            "type": "String"
+          },
+          "disableToastNotifications": {
+            "type": "Boolean"
+          },
+          "disconnectedColor": {
+            "type": "String"
+          },
+          "displayMode": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "news": {
+      "1.2.7": {
+        "version": 1,
+        "fields": {
+          "apiKey": {
+            "type": "String"
+          },
+          "category": {
+            "type": "String"
+          },
+          "country": {
+            "type": "String"
+          },
+          "language": {
+            "type": "String"
+          },
+          "maxHeadlines": {
+            "type": "Real"
+          },
+          "refreshInterval": {
+            "type": "Real"
+          },
+          "rollingSpeed": {
+            "type": "Real"
+          },
+          "widgetWidth": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "niri-animation-picker": {
+      "1.1.5": {
+        "version": 1,
+        "fields": {
+          "animationsFolder": {
+            "type": "String"
+          },
+          "iconColor": {
+            "type": "String"
+          },
+          "targetFile": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "niri-auto-tile": {
+      "1.4.3": {
+        "version": 1,
+        "fields": {
+          "debounceMs": {
+            "type": "Real"
+          },
+          "enabled": {
+            "type": "Boolean"
+          },
+          "language": {
+            "type": "String"
+          },
+          "maxEventsPerSecond": {
+            "type": "Real"
+          },
+          "maxVisible": {
+            "type": "Real"
+          },
+          "onlyAtMax": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "perWorkspace": {
+            "type": "Boolean"
+          },
+          "workspaceMaxVisible": {
+            "type": "Map",
+            "element": {
+              "type": "Real"
+            }
+          }
+        }
+      }
+    },
+    "niri-outputs": {
+      "1.1.3": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "niri-overview-launcher": {
+      "1.0.0": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "niri-ribbon": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "niri-screensaver": {
+      "0.8.2": {
+        "version": 1,
+        "fields": {
+          "batteryMinPercent": {
+            "type": "Real"
+          },
+          "clockDuration": {
+            "type": "Real"
+          },
+          "clockFont": {
+            "type": "String"
+          },
+          "clockFormat": {
+            "type": "String"
+          },
+          "cursorHide": {
+            "type": "Boolean"
+          },
+          "cursorWarp": {
+            "type": "Boolean"
+          },
+          "dismissOnKey": {
+            "type": "Boolean"
+          },
+          "enabled": {
+            "type": "Boolean"
+          },
+          "excludeEffects": {
+            "type": "String"
+          },
+          "fadeInEffect": {
+            "type": "String"
+          },
+          "fadeOutEffect": {
+            "type": "String"
+          },
+          "frameRate": {
+            "type": "Real"
+          },
+          "idleSeconds": {
+            "type": "Real"
+          },
+          "includeEffects": {
+            "type": "String"
+          },
+          "killCommand": {
+            "type": "String"
+          },
+          "launcherCommand": {
+            "type": "String"
+          },
+          "logoDir": {
+            "type": "String"
+          },
+          "logoPath": {
+            "type": "String"
+          },
+          "multiMonitorMode": {
+            "type": "String"
+          },
+          "nowPlayingDuration": {
+            "type": "Real"
+          },
+          "randomLogo": {
+            "type": "Boolean"
+          },
+          "showClock": {
+            "type": "Boolean"
+          },
+          "showNowPlaying": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "niri-urgent-on-notification": {
+      "1.0.0": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "niri-windows-map": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "audioIndicators": {
+            "type": "Boolean"
+          },
+          "browserIcons": {
+            "type": "Boolean"
+          },
+          "corner": {
+            "type": "String"
+          },
+          "hideIcons": {
+            "type": "Boolean"
+          },
+          "hideOnClick": {
+            "type": "Boolean"
+          },
+          "hoverInfo": {
+            "type": "Boolean"
+          },
+          "panelSize": {
+            "type": "String"
+          },
+          "terminalIcons": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "niri-workspaces": {
+      "1.0.0": {
+        "version": 1,
+        "fields": {
+          "launcherPrefix": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "noctalia-calculator": {
+      "1.1.2": {
+        "version": 1,
+        "fields": {
+          "precision": {
+            "type": "Real"
+          },
+          "showBarValue": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "noctalia-supergfxctl": {
+      "0.0.4": {
+        "version": 1,
+        "fields": {
+          "debug": {
+            "type": "Boolean"
+          },
+          "rogcc": {
+            "type": "Record",
+            "fields": {
+              "listenToNotifications": {
+                "type": "Boolean",
+                "optional": true
+              }
+            }
+          },
+          "supergfxctl": {
+            "type": "Record",
+            "fields": {
+              "patchPending": {
+                "type": "Boolean",
+                "optional": true
+              },
+              "polling": {
+                "type": "Boolean",
+                "optional": true
+              },
+              "pollingInterval": {
+                "type": "Real",
+                "optional": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "noctalia-vantage": {
+      "0.1.2": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "noctalia-vpn": {
+      "0.1.1": {
+        "version": 1,
+        "fields": {
+          "autoStart": {
+            "type": "Boolean"
+          },
+          "lastActiveServerId": {
+            "type": "String"
+          },
+          "lastMode": {
+            "type": "String"
+          },
+          "lastProxyMode": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "not-just-text": {
+      "1.0.2": {
+        "version": 1,
+        "fields": {
+          "fortuneCategory": {
+            "type": "String"
+          },
+          "fortuneEnabled": {
+            "type": "Boolean"
+          },
+          "fortuneEqual": {
+            "type": "Boolean"
+          },
+          "fortuneMaxLength": {
+            "type": "Real"
+          },
+          "fortuneOffensive": {
+            "type": "Boolean"
+          },
+          "listEnabled": {
+            "type": "Boolean"
+          },
+          "refreshOnWallpaper": {
+            "type": "Boolean"
+          },
+          "text": {
+            "type": "String"
+          },
+          "textFile": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "notes-scratchpad": {
+      "1.1.8": {
+        "version": 1,
+        "fields": {
+          "scratchpadContent": {
+            "type": "String",
+            "machineLocal": true
+          },
+          "cursorPosition": {
+            "type": "Real",
+            "machineLocal": true
+          },
+          "scrollPositionX": {
+            "type": "Real",
+            "machineLocal": true
+          },
+          "scrollPositionY": {
+            "type": "Real",
+            "machineLocal": true
+          },
+          "filePath": {
+            "type": "String"
+          },
+          "fontSize": {
+            "type": "Real"
+          },
+          "panelHeight": {
+            "type": "Real"
+          },
+          "panelWidth": {
+            "type": "Real"
+          },
+          "useMonospace": {
+            "type": "Boolean",
+            "optional": true
+          }
+        }
+      }
+    },
+    "ntfy-notifications": {
+      "1.0.2": {
+        "version": 1,
+        "fields": {
+          "authMethod": {
+            "type": "String"
+          },
+          "authPassword": {
+            "type": "String",
+            "machineLocal": true,
+            "sensitive": true
+          },
+          "authToken": {
+            "type": "String",
+            "machineLocal": true,
+            "sensitive": true
+          },
+          "authUsername": {
+            "type": "String",
+            "machineLocal": true,
+            "sensitive": true
+          },
+          "enableToasts": {
+            "type": "Boolean"
+          },
+          "maxMessages": {
+            "type": "Real"
+          },
+          "pollInterval": {
+            "type": "Real"
+          },
+          "readMessageIds": {
+            "type": "List",
+            "machineLocal": true,
+            "element": {
+              "type": "String"
+            }
+          },
+          "serverUrl": {
+            "type": "String"
+          },
+          "topics": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "nvibrant": {
+      "1.0.2": {
+        "version": 1,
+        "fields": {
+          "displayIndex": {
+            "type": "Real"
+          },
+          "enabled": {
+            "type": "Boolean"
+          },
+          "vibranceValue": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "nvidia-optimus": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "nvim-session-provider": {
+      "1.0.3": {
+        "version": 1,
+        "fields": {
+          "includeInSearch": {
+            "type": "Boolean"
+          },
+          "nvim": {
+            "type": "String"
+          },
+          "runInTerminal": {
+            "type": "Boolean"
+          },
+          "sessionDir": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "obs-control": {
+      "0.1.3": {
+        "version": 1,
+        "fields": {
+          "autoCloseManagedObs": {
+            "type": "Boolean"
+          },
+          "barLabelMode": {
+            "type": "String"
+          },
+          "launchBehavior": {
+            "type": "String"
+          },
+          "leftClickAction": {
+            "type": "String"
+          },
+          "openVideosAfterStop": {
+            "type": "Boolean"
+          },
+          "pollIntervalMs": {
+            "type": "Real"
+          },
+          "showBarWhenReady": {
+            "type": "Boolean"
+          },
+          "showBarWhenRecording": {
+            "type": "Boolean"
+          },
+          "showBarWhenReplay": {
+            "type": "Boolean"
+          },
+          "showBarWhenStreaming": {
+            "type": "Boolean"
+          },
+          "showControlCenterWhenReady": {
+            "type": "Boolean"
+          },
+          "showControlCenterWhenRecording": {
+            "type": "Boolean"
+          },
+          "showControlCenterWhenReplay": {
+            "type": "Boolean"
+          },
+          "showControlCenterWhenStreaming": {
+            "type": "Boolean"
+          },
+          "showElapsedInBar": {
+            "type": "Boolean"
+          },
+          "videosOpener": {
+            "type": "String"
+          },
+          "videosPath": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "obsidian-provider": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "includeInSearch": {
+            "type": "Boolean"
+          },
+          "obsidianConfigPath": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "openhue": {
+      "1.0.4": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "openvpn3": {
+      "1.0.2": {
+        "version": 1,
+        "fields": {
+          "connectedColor": {
+            "type": "String"
+          },
+          "defaultPersistent": {
+            "type": "Boolean"
+          },
+          "disconnectedColor": {
+            "type": "String"
+          },
+          "displayMode": {
+            "type": "String"
+          },
+          "hideWhenInactive": {
+            "type": "Boolean"
+          },
+          "pollInterval": {
+            "type": "Real"
+          },
+          "showNotifications": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "osk-toggle": {
+      "1.0.3": {
+        "version": 1,
+        "fields": {
+          "backend": {
+            "type": "String"
+          },
+          "disableHoverIcon": {
+            "type": "Boolean"
+          },
+          "hideWhenUnavailable": {
+            "type": "Boolean"
+          },
+          "wvkbdBin": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "parallax-wallpaper": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "autoZoom": {
+            "type": "Boolean"
+          },
+          "hParallaxAmount": {
+            "type": "Real"
+          },
+          "hParallaxDuration": {
+            "type": "Real"
+          },
+          "invertDirection": {
+            "type": "Boolean"
+          },
+          "parallaxDirection": {
+            "type": "String"
+          },
+          "parallaxEasing": {
+            "type": "String"
+          },
+          "vParallaxAmount": {
+            "type": "Real"
+          },
+          "vParallaxDuration": {
+            "type": "Real"
+          },
+          "zoomAmount": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "password-store": {
+      "1.0.0": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "plugin-manager": {
+      "1.0.2": {
+        "version": 1,
+        "fields": {
+          "iconColor": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "polkit-agent": {
+      "1.0.7": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "pomodoro": {
+      "1.2.1": {
+        "version": 1,
+        "fields": {
+          "autoStartBreaks": {
+            "type": "Boolean"
+          },
+          "autoStartWork": {
+            "type": "Boolean"
+          },
+          "compactMode": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "longBreakDuration": {
+            "type": "Real"
+          },
+          "playSound": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "sessionsBeforeLongBreak": {
+            "type": "Real"
+          },
+          "shortBreakDuration": {
+            "type": "Real"
+          },
+          "workDuration": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "port-monitor": {
+      "1.0.2": {
+        "version": 1,
+        "fields": {
+          "hideSystemPorts": {
+            "type": "Boolean"
+          },
+          "hideWhenEmpty": {
+            "type": "Boolean"
+          },
+          "refreshInterval": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "privacy-indicator": {
+      "1.2.14": {
+        "version": 1,
+        "fields": {
+          "activeColor": {
+            "type": "String"
+          },
+          "camFilterRegex": {
+            "type": "String"
+          },
+          "enableToast": {
+            "type": "Boolean"
+          },
+          "hideInactive": {
+            "type": "Boolean"
+          },
+          "iconSpacing": {
+            "type": "Real"
+          },
+          "inactiveColor": {
+            "type": "String"
+          },
+          "micFilterRegex": {
+            "type": "String"
+          },
+          "removeMargins": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "protonvpn": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "connectedColor": {
+            "type": "String"
+          },
+          "disconnectedColor": {
+            "type": "String"
+          },
+          "displayMode": {
+            "type": "String"
+          },
+          "pollInterval": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "quickemu": {
+      "1.0.2": {
+        "version": 1,
+        "fields": {
+          "vmDirectory": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "ramadan-iftar": {
+      "1.0.4": {
+        "version": 1,
+        "fields": {
+          "city": {
+            "type": "String"
+          },
+          "country": {
+            "type": "String"
+          },
+          "method": {
+            "type": "Real"
+          },
+          "showAlways": {
+            "type": "Boolean"
+          },
+          "showCountdown": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "rss-feed": {
+      "1.0.6": {
+        "version": 1,
+        "fields": {
+          "feeds": {
+            "type": "List",
+            "element": {
+              "type": "Record",
+              "fields": {
+                "name": {
+                  "type": "String"
+                },
+                "url": {
+                  "type": "String"
+                }
+              }
+            }
+          },
+          "markAsReadOnClick": {
+            "type": "Boolean"
+          },
+          "maxItemsPerFeed": {
+            "type": "Real"
+          },
+          "readItems": {
+            "type": "List",
+            "machineLocal": true,
+            "element": {
+              "type": "String"
+            }
+          },
+          "showOnlyUnread": {
+            "type": "Boolean"
+          },
+          "updateInterval": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "ru-menu": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "iconColor": {
+            "type": "String",
+            "optional": true
+          }
+        }
+      }
+    },
+    "saved-desktop-widgets": {
+      "1.0.2": {
+        "version": 1,
+        "definitions": {
+          "widget": {
+            "type": "Record",
+            "fields": {
+              "id": {
+                "type": "String"
+              },
+              "instanceSettings": {
+                "type": "Record",
+                "optional": true,
+                "fields": {}
+              }
+            }
+          },
+          "monitor": {
+            "type": "Record",
+            "fields": {
+              "name": {
+                "type": "String"
+              },
+              "widgets": {
+                "type": "List",
+                "element": {
+                  "ref": "widget"
+                }
+              }
+            }
+          }
+        },
+        "fields": {
+          "loadWidgets": {
+            "type": "Boolean"
+          },
+          "monitorWidgets": {
+            "type": "Map",
+            "optional": true,
+            "machineLocal": true,
+            "element": {
+              "type": "List",
+              "element": {
+                "ref": "monitor"
+              }
+            }
+          },
+          "saveWidgets": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "screen-recorder": {
+      "1.3.9": {
+        "version": 1,
+        "fields": {
+          "audioCodec": {
+            "type": "String"
+          },
+          "audioSource": {
+            "type": "String"
+          },
+          "colorRange": {
+            "type": "String"
+          },
+          "copyToClipboard": {
+            "type": "Boolean"
+          },
+          "customFrameRate": {
+            "type": "String",
+            "optional": true
+          },
+          "customReplayDuration": {
+            "type": "String"
+          },
+          "directory": {
+            "type": "String"
+          },
+          "filenamePattern": {
+            "type": "String"
+          },
+          "frameRate": {
+            "type": "String"
+          },
+          "hideInactive": {
+            "type": "Boolean"
+          },
+          "iconColor": {
+            "type": "String"
+          },
+          "quality": {
+            "type": "String"
+          },
+          "replayDuration": {
+            "type": "String"
+          },
+          "replayEnabled": {
+            "type": "Boolean"
+          },
+          "replayStorage": {
+            "type": "String"
+          },
+          "resolution": {
+            "type": "String"
+          },
+          "restorePortalSession": {
+            "type": "Boolean"
+          },
+          "showCursor": {
+            "type": "Boolean"
+          },
+          "videoCodec": {
+            "type": "String"
+          },
+          "videoSource": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "screen-shot-and-record": {
+      "1.0.7": {
+        "version": 1,
+        "fields": {
+          "enableCross": {
+            "type": "Boolean"
+          },
+          "enableWindowsSelection": {
+            "type": "Boolean"
+          },
+          "keepSourceScreenshot": {
+            "type": "Boolean"
+          },
+          "recordingNotifications": {
+            "type": "Boolean"
+          },
+          "recordingSavePath": {
+            "type": "String"
+          },
+          "savePath": {
+            "type": "String"
+          },
+          "screenshotEditor": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "screen-toolkit": {
+      "1.3.5": {
+        "version": 1,
+        "fields": {
+          "colorHistory": {
+            "type": "List",
+            "machineLocal": true,
+            "element": {
+              "type": "String"
+            }
+          },
+          "paletteColors": {
+            "type": "List",
+            "machineLocal": true,
+            "element": {
+              "type": "String"
+            }
+          },
+          "installedLangs": {
+            "type": "List",
+            "machineLocal": true,
+            "element": {
+              "type": "String"
+            }
+          },
+          "transAvailable": {
+            "type": "Boolean",
+            "machineLocal": true
+          },
+          "detectedRecorder": {
+            "type": "String",
+            "machineLocal": true
+          },
+          "resultHex": {
+            "type": "String",
+            "optional": true,
+            "machineLocal": true
+          },
+          "resultRgb": {
+            "type": "String",
+            "optional": true,
+            "machineLocal": true
+          },
+          "resultHsv": {
+            "type": "String",
+            "optional": true,
+            "machineLocal": true
+          },
+          "resultHsl": {
+            "type": "String",
+            "optional": true,
+            "machineLocal": true
+          },
+          "colorCapturePath": {
+            "type": "String",
+            "optional": true,
+            "machineLocal": true
+          },
+          "colorCacheBust": {
+            "type": "Real",
+            "optional": true,
+            "machineLocal": true
+          },
+          "ocrResult": {
+            "type": "String",
+            "optional": true,
+            "machineLocal": true
+          },
+          "ocrCapturePath": {
+            "type": "String",
+            "optional": true,
+            "machineLocal": true
+          },
+          "qrResult": {
+            "type": "String",
+            "optional": true,
+            "machineLocal": true
+          },
+          "qrCapturePath": {
+            "type": "String",
+            "optional": true,
+            "machineLocal": true
+          },
+          "translateResult": {
+            "type": "String",
+            "optional": true,
+            "machineLocal": true
+          },
+          "filenameFormat": {
+            "type": "String"
+          },
+          "gifMaxSeconds": {
+            "type": "Real"
+          },
+          "recordCopyToClipboard": {
+            "type": "Boolean"
+          },
+          "recordSkipConfirmation": {
+            "type": "Boolean"
+          },
+          "screenshotPath": {
+            "type": "String"
+          },
+          "searchEngineUrl": {
+            "type": "String",
+            "optional": true
+          },
+          "selectedOcrLang": {
+            "type": "String"
+          },
+          "shareSkipPopover": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "videoPath": {
+            "type": "String"
+          },
+          "x02ApiKey": {
+            "type": "String",
+            "optional": true,
+            "sensitive": true,
+            "machineLocal": true
+          },
+          "x02Expiry": {
+            "type": "String",
+            "optional": true
+          }
+        }
+      }
+    },
+    "screencast-gif": {
+      "0.1.1": {
+        "version": 1,
+        "fields": {
+          "fps": {
+            "type": "Real"
+          },
+          "maxRecordingSeconds": {
+            "type": "Real"
+          },
+          "outputDir": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "screenshot": {
+      "1.2.2": {
+        "version": 1,
+        "fields": {
+          "mode": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "shell-profiles": {
+      "1.0.3": {
+        "version": 1,
+        "fields": {
+          "profilesDir": {
+            "type": "String",
+            "machineLocal": true
+          },
+          "icon": {
+            "type": "String"
+          },
+          "iconColor": {
+            "type": "String"
+          },
+          "includeWallpapers": {
+            "type": "Boolean"
+          },
+          "lastAppliedProfile": {
+            "type": "String",
+            "machineLocal": true
+          },
+          "backupEnabled": {
+            "type": "Boolean"
+          },
+          "backupCount": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "show-keys": {
+      "1.0.3": {
+        "version": 1,
+        "fields": {
+          "captureEnabled": {
+            "type": "Boolean"
+          },
+          "disabledScreens": {
+            "type": "List",
+            "element": {
+              "type": "String"
+            }
+          },
+          "evtestDevice": {
+            "type": "String"
+          },
+          "hideDelaySec": {
+            "type": "Real"
+          },
+          "marginPx": {
+            "type": "Real"
+          },
+          "pillBg": {
+            "type": "String",
+            "optional": true
+          },
+          "pillColor": {
+            "type": "String",
+            "optional": true
+          },
+          "position": {
+            "type": "String"
+          },
+          "useCustomColors": {
+            "type": "Boolean",
+            "optional": true
+          }
+        }
+      }
+    },
+    "simple-notes": {
+      "1.0.6": {
+        "version": 1,
+        "fields": {
+          "count": {
+            "type": "Real",
+            "optional": true,
+            "machineLocal": true
+          },
+          "notes": {
+            "type": "List",
+            "machineLocal": true,
+            "element": {
+              "type": "Record",
+              "fields": {
+                "id": {
+                  "type": "String",
+                  "optional": true
+                },
+                "title": {
+                  "type": "String",
+                  "optional": true
+                },
+                "content": {
+                  "type": "String",
+                  "optional": true
+                },
+                "modifiedAt": {
+                  "type": "String",
+                  "optional": true
+                }
+              }
+            }
+          },
+          "showCountInBar": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "slowbongo": {
+      "0.8.1": {
+        "version": 1,
+        "fields": {
+          "catColor": {
+            "type": "String"
+          },
+          "catOffsetY": {
+            "type": "Real"
+          },
+          "catSize": {
+            "type": "Real"
+          },
+          "idleTimeout": {
+            "type": "Real"
+          },
+          "inputDevice": {
+            "type": "String",
+            "optional": true
+          },
+          "inputDevices": {
+            "type": "List",
+            "optional": true,
+            "element": {
+              "type": "String"
+            }
+          },
+          "raveMode": {
+            "type": "Boolean"
+          },
+          "tappyMode": {
+            "type": "Boolean"
+          },
+          "useMprisFilter": {
+            "type": "Boolean"
+          },
+          "waitingTimeout": {
+            "type": "Real"
+          },
+          "widthPadding": {
+            "type": "Real",
+            "optional": true
+          }
+        }
+      }
+    },
+    "somnus": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "animationsEnabled": {
+            "type": "Boolean"
+          },
+          "buttonHeight": {
+            "type": "Real"
+          },
+          "buttonOpacity": {
+            "type": "Real"
+          },
+          "buttonSpacing": {
+            "type": "Real"
+          },
+          "buttonWidth": {
+            "type": "Real"
+          },
+          "hoverColor": {
+            "type": "String"
+          },
+          "hoverDesaturation": {
+            "type": "Real"
+          },
+          "iconColor": {
+            "type": "String"
+          },
+          "lockOnSuspend": {
+            "type": "Boolean"
+          },
+          "overlayBlur": {
+            "type": "Real"
+          },
+          "overlayTint": {
+            "type": "Real"
+          },
+          "panelTint": {
+            "type": "Real"
+          },
+          "useOverlay": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "special-workspaces": {
+      "1.1.2": {
+        "version": 1,
+        "fields": {
+          "drawer": {
+            "type": "Boolean"
+          },
+          "expandDirection": {
+            "type": "String"
+          },
+          "hideEmptyWorkspaces": {
+            "type": "Boolean"
+          },
+          "mainIcon": {
+            "type": "String"
+          },
+          "panelBackgroundColor": {
+            "type": "String"
+          },
+          "panelBackgroundEnabled": {
+            "type": "Boolean"
+          },
+          "primaryBorderRadius": {
+            "type": "Real"
+          },
+          "primaryFocusColor": {
+            "type": "String"
+          },
+          "primaryPillColor": {
+            "type": "String"
+          },
+          "primaryShowPill": {
+            "type": "Boolean"
+          },
+          "primarySize": {
+            "type": "Real"
+          },
+          "primarySymbolColor": {
+            "type": "String"
+          },
+          "workspaces": {
+            "type": "List",
+            "element": {
+              "type": "Record",
+              "fields": {
+                "name": {
+                  "type": "String"
+                },
+                "icon": {
+                  "type": "String",
+                  "optional": true
+                },
+                "symbolColor": {
+                  "type": "String",
+                  "optional": true
+                },
+                "showPill": {
+                  "type": "Boolean",
+                  "optional": true
+                },
+                "pillColor": {
+                  "type": "String",
+                  "optional": true
+                },
+                "size": {
+                  "type": "Real",
+                  "optional": true
+                },
+                "borderRadius": {
+                  "type": "Real",
+                  "optional": true
+                },
+                "focusColor": {
+                  "type": "String",
+                  "optional": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "spotify-player": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {
+          "accessToken": {
+            "type": "String",
+            "machineLocal": true,
+            "sensitive": true
+          },
+          "callbackPort": {
+            "type": "Real"
+          },
+          "clientId": {
+            "type": "String"
+          },
+          "clientSecret": {
+            "type": "String",
+            "machineLocal": true,
+            "sensitive": true
+          },
+          "message": {
+            "type": "String",
+            "optional": true
+          },
+          "playerId": {
+            "type": "String"
+          },
+          "refreshToken": {
+            "type": "String",
+            "machineLocal": true,
+            "sensitive": true
+          },
+          "tokenExpiresAt": {
+            "type": "Real",
+            "machineLocal": true
+          }
+        }
+      }
+    },
+    "squeekboard-toggle": {
+      "1.1.1": {
+        "version": 1,
+        "fields": {
+          "disableHoverIcon": {
+            "type": "Boolean"
+          },
+          "hideWhenUnavailable": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "ssh-sessions": {
+      "1.1.3": {
+        "version": 1,
+        "fields": {
+          "pollInterval": {
+            "type": "Real"
+          },
+          "showInactiveHosts": {
+            "type": "Boolean"
+          },
+          "terminalCommand": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "sticky-notes": {
+      "0.0.7": {
+        "version": 1,
+        "fields": {
+          "githubGistId": {
+            "type": "String"
+          },
+          "githubToken": {
+            "type": "String"
+          },
+          "notes": {
+            "type": "String"
+          },
+          "syncEnabled": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "syncthing-status": {
+      "1.0.2": {
+        "version": 1,
+        "fields": {
+          "apiKey": {
+            "type": "String",
+            "sensitive": true,
+            "machineLocal": true
+          },
+          "apiUrl": {
+            "type": "String"
+          },
+          "configPath": {
+            "type": "String"
+          },
+          "enabled": {
+            "type": "Boolean"
+          },
+          "folderIds": {
+            "type": "List",
+            "element": {
+              "type": "String"
+            }
+          },
+          "pollIntervalMs": {
+            "type": "Real"
+          },
+          "verifyTls": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "sys-info-widget": {
+      "1.0.9": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "tailscale": {
+      "1.5.4": {
+        "version": 1,
+        "fields": {
+          "compactMode": {
+            "type": "Boolean"
+          },
+          "defaultPeerAction": {
+            "type": "String"
+          },
+          "hideDisconnected": {
+            "type": "Boolean"
+          },
+          "hideMullvadExitNodes": {
+            "type": "Boolean"
+          },
+          "loginServer": {
+            "type": "String"
+          },
+          "pingCount": {
+            "type": "Real"
+          },
+          "refreshInterval": {
+            "type": "Real"
+          },
+          "showIpAddress": {
+            "type": "Boolean"
+          },
+          "showPeerCount": {
+            "type": "Boolean"
+          },
+          "showSearchBar": {
+            "type": "Boolean"
+          },
+          "sshUsername": {
+            "type": "String"
+          },
+          "taildropDownloadDir": {
+            "type": "String"
+          },
+          "taildropEnabled": {
+            "type": "Boolean"
+          },
+          "taildropReceiveMode": {
+            "type": "String"
+          },
+          "terminalCommand": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "tamagotchi": {
+      "1.1.4": {
+        "version": 1,
+        "fields": {
+          "hunger": {
+            "type": "Real",
+            "machineLocal": true
+          },
+          "happiness": {
+            "type": "Real",
+            "machineLocal": true
+          },
+          "cleanliness": {
+            "type": "Real",
+            "machineLocal": true
+          },
+          "energy": {
+            "type": "Real",
+            "machineLocal": true
+          },
+          "difficulty": {
+            "type": "Real"
+          },
+          "showDebug": {
+            "type": "Boolean"
+          },
+          "showPercentage": {
+            "type": "Boolean"
+          },
+          "volume": {
+            "type": "Real"
+          }
+        }
+      }
+    },
+    "thinkpad-fan": {
+      "1.1.1": {
+        "version": 1,
+        "fields": {
+          "allowPopupOpening": {
+            "type": "Boolean"
+          },
+          "colorActive": {
+            "type": "String",
+            "nullable": true
+          },
+          "colorAuto": {
+            "type": "String",
+            "nullable": true
+          },
+          "colorLevel0": {
+            "type": "String",
+            "nullable": true
+          },
+          "colorizeByStatus": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "timer": {
+      "1.1.5": {
+        "version": 1,
+        "fields": {
+          "compactMode": {
+            "type": "Boolean"
+          },
+          "defaultDuration": {
+            "type": "Real"
+          },
+          "iconColor": {
+            "type": "String"
+          },
+          "textColor": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "todo": {
+      "1.10.2": {
+        "version": 1,
+        "fields": {
+          "todos": {
+            "type": "List",
+            "machineLocal": true,
+            "element": {
+              "type": "Record",
+              "fields": {
+                "id": {
+                  "type": "Real",
+                  "optional": true
+                },
+                "text": {
+                  "type": "String",
+                  "optional": true
+                },
+                "completed": {
+                  "type": "Boolean",
+                  "optional": true
+                },
+                "createdAt": {
+                  "type": "String",
+                  "optional": true
+                },
+                "pageId": {
+                  "type": "Real",
+                  "optional": true
+                },
+                "priority": {
+                  "type": "String",
+                  "optional": true
+                },
+                "details": {
+                  "type": "String",
+                  "optional": true
+                }
+              }
+            }
+          },
+          "pages": {
+            "type": "List",
+            "machineLocal": true,
+            "element": {
+              "type": "Record",
+              "fields": {
+                "id": {
+                  "type": "Real"
+                },
+                "name": {
+                  "type": "String"
+                }
+              }
+            }
+          },
+          "current_page_id": {
+            "type": "Real",
+            "machineLocal": true
+          },
+          "count": {
+            "type": "Real",
+            "machineLocal": true
+          },
+          "completedCount": {
+            "type": "Real",
+            "machineLocal": true
+          },
+          "exportEmptySections": {
+            "type": "Boolean"
+          },
+          "exportFormat": {
+            "type": "String"
+          },
+          "exportPath": {
+            "type": "String"
+          },
+          "isExpanded": {
+            "type": "Boolean"
+          },
+          "priorityColors": {
+            "type": "Record",
+            "fields": {
+              "high": {
+                "type": "String",
+                "optional": true
+              },
+              "medium": {
+                "type": "String",
+                "optional": true
+              },
+              "low": {
+                "type": "String",
+                "optional": true
+              }
+            }
+          },
+          "showBackground": {
+            "type": "Boolean"
+          },
+          "showCompleted": {
+            "type": "Boolean"
+          },
+          "useCustomColors": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "touchpad-incident": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "translator": {
+      "1.2.7": {
+        "version": 1,
+        "fields": {
+          "backend": {
+            "type": "String"
+          },
+          "deeplApiKey": {
+            "type": "String",
+            "optional": true,
+            "sensitive": true,
+            "machineLocal": true
+          },
+          "realTime": {
+            "type": "Boolean"
+          },
+          "realTimeTranslation": {
+            "type": "Boolean",
+            "optional": true
+          },
+          "showPreview": {
+            "type": "Boolean",
+            "optional": true
+          }
+        }
+      }
+    },
+    "unicode-picker": {
+      "1.0.2": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "update-count": {
+      "1.0.15": {
+        "version": 1,
+        "fields": {
+          "currentIconName": {
+            "type": "String"
+          },
+          "customCmdDoSystemUpdate": {
+            "type": "String",
+            "optional": true
+          },
+          "customCmdGetNumUpdates": {
+            "type": "String",
+            "optional": true
+          },
+          "hideOnZero": {
+            "type": "Boolean"
+          },
+          "updateIntervalMinutes": {
+            "type": "Real"
+          },
+          "updateTerminalCommand": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "usb-drive-manager": {
+      "1.4.2": {
+        "version": 1,
+        "fields": {
+          "autoMount": {
+            "type": "Boolean"
+          },
+          "fileBrowser": {
+            "type": "String"
+          },
+          "hideWhenEmpty": {
+            "type": "Boolean"
+          },
+          "iconColor": {
+            "type": "String"
+          },
+          "showBadge": {
+            "type": "Boolean"
+          },
+          "showNotifications": {
+            "type": "Boolean"
+          },
+          "terminalCommand": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "valent-connect": {
+      "1.2.4": {
+        "version": 1,
+        "fields": {
+          "mainDeviceId": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "vinyl-launcher": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "vscode-provider": {
+      "1.0.2": {
+        "version": 1,
+        "fields": {
+          "command": {
+            "type": "String"
+          },
+          "configName": {
+            "type": "String"
+          },
+          "includeInSearch": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "wallcards": {
+      "0.1.3": {
+        "version": 1,
+        "fields": {
+          "animate_window": {
+            "type": "Boolean"
+          },
+          "animation_cards_duration": {
+            "type": "Real"
+          },
+          "animation_duration": {
+            "type": "Real",
+            "optional": true
+          },
+          "animation_window_duration": {
+            "type": "Real"
+          },
+          "background_color": {
+            "type": "String",
+            "nullable": true
+          },
+          "background_opacity": {
+            "type": "Real",
+            "nullable": true
+          },
+          "card_height": {
+            "type": "Real"
+          },
+          "card_spacing": {
+            "type": "Real"
+          },
+          "card_strip_width": {
+            "type": "Real"
+          },
+          "cards_shown": {
+            "type": "Real"
+          },
+          "center_width_ratio": {
+            "type": "Real"
+          },
+          "hide_help": {
+            "type": "Boolean"
+          },
+          "hide_top_bar": {
+            "type": "Boolean"
+          },
+          "iconColor": {
+            "type": "String",
+            "optional": true
+          },
+          "icon_color": {
+            "type": "String",
+            "optional": true
+          },
+          "image_filter": {
+            "type": "List",
+            "element": {
+              "type": "String"
+            }
+          },
+          "live_preview": {
+            "type": "Boolean"
+          },
+          "selected_filter": {
+            "type": "String"
+          },
+          "shear_factor": {
+            "type": "Real"
+          },
+          "top_bar_height": {
+            "type": "Real"
+          },
+          "video_filter": {
+            "type": "List",
+            "element": {
+              "type": "String"
+            }
+          }
+        }
+      }
+    },
+    "wallpaper-carousel": {
+      "0.8.1": {
+        "version": 1,
+        "fields": {
+          "borderWidth": {
+            "type": "Real"
+          },
+          "carouselMode": {
+            "type": "String"
+          },
+          "cornerRadius": {
+            "type": "Real"
+          },
+          "enableHoldExpand": {
+            "type": "String"
+          },
+          "expandMultiplier": {
+            "type": "Real"
+          },
+          "expandSelected": {
+            "type": "String"
+          },
+          "holdDelay": {
+            "type": "Real"
+          },
+          "holdExpandRatio": {
+            "type": "Real"
+          },
+          "itemHeight": {
+            "type": "Real"
+          },
+          "itemWidth": {
+            "type": "Real"
+          },
+          "overlayOpacity": {
+            "type": "Real"
+          },
+          "selectedScale": {
+            "type": "Real"
+          },
+          "wallpaperDirectory": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "weather-indicator": {
+      "1.1.8": {
+        "version": 1,
+        "fields": {
+          "customColor": {
+            "type": "String"
+          },
+          "showConditionIcon": {
+            "type": "Boolean"
+          },
+          "showTempUnit": {
+            "type": "Boolean"
+          },
+          "showTempValue": {
+            "type": "Boolean"
+          },
+          "tooltipOption": {
+            "type": "String"
+          }
+        }
+      }
+    },
+    "web-search": {
+      "1.1.4": {
+        "version": 1,
+        "fields": {
+          "direct_url": {
+            "type": "Boolean"
+          },
+          "max_results": {
+            "type": "Real"
+          },
+          "search_engine": {
+            "type": "String"
+          },
+          "show_suggestions": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    "weekly-calendar": {
+      "1.1.1": {
+        "version": 1,
+        "fields": {
+          "dayLineOpacity": {
+            "type": "Real",
+            "optional": true
+          },
+          "hourLineOpacity": {
+            "type": "Real",
+            "optional": true
+          },
+          "lineColorType": {
+            "type": "String",
+            "optional": true
+          },
+          "panelMode": {
+            "type": "String",
+            "optional": true
+          },
+          "timeFormat": {
+            "type": "String",
+            "optional": true
+          },
+          "weekStart": {
+            "type": "String",
+            "optional": true
+          }
+        }
+      }
+    },
+    "wifi-qr": {
+      "1.0.1": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "workspace-overview": {
+      "1.0.5": {
+        "version": 1,
+        "fields": {}
+      }
+    },
+    "world-clock": {
+      "1.0.6": {
+        "version": 1,
+        "fields": {
+          "rotationInterval": {
+            "type": "Real"
+          },
+          "showDate": {
+            "type": "Boolean"
+          },
+          "timeFormat": {
+            "type": "String"
+          },
+          "timezones": {
+            "type": "List",
+            "element": {
+              "type": "Record",
+              "fields": {
+                "name": {
+                  "type": "String"
+                },
+                "timezone": {
+                  "type": "String"
+                },
+                "enabled": {
+                  "type": "Boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "zed-provider": {
+      "1.0.5": {
+        "version": 1,
+        "fields": {
+          "openCounts": {
+            "type": "Map",
+            "machineLocal": true,
+            "element": {
+              "type": "Real"
+            }
+          }
+        }
+      }
+    }
+  },
+  "sourceProjections": {
+    "screen-toolkit": {
+      "1.3.5": {
+        "version": 1,
+        "projectionId": "screen-toolkit-palette-list",
+        "transform": "function(input) { var values = input.values; if (Object.prototype.hasOwnProperty.call(input.raw, 'paletteColors') && input.raw.paletteColors === '') values.paletteColors = []; return {values: values, compatibilityRaw: input.compatibilityRaw, effects: [], diagnostics: []}; }"
+      }
+    }
+  },
+  "incompatible": {
+    "mawaqit": {
+      "1.3.8": "dynamic-settings-runtime-requires-owner-port"
+    },
+    "video-wallpaper": {
+      "2.0.11": "dynamic-settings-runtime-requires-owner-port",
+      "2.0.12": "runtime-port-coupled-to-configqml-owner"
+    },
+    "shell-profiles": {
+      "1.0.3": "runtime-port-coupled-to-configqml-owner",
+      "1.0.4": "runtime-port-coupled-to-configqml-owner"
+    }
+  }
+}
