@@ -6,6 +6,7 @@ Run in the project VM: python3 Scripts/dev/atmosphera-cli-ipc-regression.py
 The stub mirrors quickshell 0.3.2: IPC diagnostics on stdout with exit 0.
 """
 import argparse
+import atexit
 import json
 import os
 from pathlib import Path
@@ -26,6 +27,9 @@ if len(calls) >= len(spec) or args != spec[len(calls)]['args']:
     print('unexpected invocation: ' + repr(args), file=sys.stderr)
     sys.exit(97)
 reply = spec[len(calls)]
+if args[:2] == ['kill', '--id']:
+    import signal
+    os.kill(int(os.environ['S10_PID']), signal.SIGTERM)
 sys.stdout.write(reply['output'])
 sys.exit(reply['rc'])
 '''
@@ -34,7 +38,7 @@ import os, pathlib, sys
 if os.environ.get('S10_OWNER_MODE') == 'absent':
     sys.exit(1)
 log = pathlib.Path(os.environ['S10_STUB']) / 'calls.jsonl'
-if log.exists() and '["kill", "--pid", "4242"]' in log.read_text():
+if log.exists() and '["kill", "--id", "cli-fixture"]' in log.read_text():
     sys.exit(1)
 if 'GetNameOwner' in sys.argv:
     print('s ":1.42"')
@@ -42,6 +46,8 @@ elif 'GetConnectionUnixProcessID' in sys.argv:
     print('u 4242')
 elif 'get-property' in sys.argv:
     print('b false' if os.environ.get('S10_OWNER_MODE') == 'waiting' else 'b true')
+elif 'ping' in sys.argv:
+    print('s "ready"')
 else:
     sys.exit(98)
 '''
@@ -66,10 +72,16 @@ ERRORS = [
 
 
 def main():
+    global OWNER_PID, PREFIX
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--work', required=True, type=Path)
     ap.add_argument('--cli', type=Path, default=Path(__file__).resolve().parents[1] / 'bash/atmosphera')
     args = ap.parse_args()
+    # Lifecycle checks need a real process identity, not an impossible PID.
+    sleeper = subprocess.Popen(['sleep', '300'])
+    atexit.register(lambda: (sleeper.terminate() if sleeper.poll() is None else None, sleeper.wait(timeout=5)))
+    OWNER_PID = str(sleeper.pid)
+    PREFIX = ['ipc', '--pid', OWNER_PID, 'call']
     args.work.mkdir(parents=True, exist_ok=False)
     stub = args.work / 'qs'
     stub.write_text(STUB)
@@ -77,20 +89,20 @@ def main():
     bus_stub = args.work / 'busctl'
     bus_stub.write_text(BUS_STUB.replace('4242', OWNER_PID))
     bus_stub.chmod(0o755)
-    env = dict(os.environ, PATH=f'{args.work.resolve()}:{os.environ["PATH"]}', S10_STUB=str(args.work.resolve()))
+    env = dict(os.environ, PATH=f'{args.work.resolve()}:{os.environ["PATH"]}', S10_STUB=str(args.work.resolve()), S10_PID=OWNER_PID, XDG_RUNTIME_DIR=str(args.work.resolve()))
     failures = []
     count = 0
 
-    def check(name, command, calls, output, success=True, prefix=PREFIX):
+    def check(name, command, calls, output, success=True, prefix=None, stderr=''):
         nonlocal count
         count += 1
-        spec = [{'args': prefix + params, 'output': text, 'rc': rc} for params, text, rc in calls]
+        spec = [{'args': (PREFIX if prefix is None else prefix) + params, 'output': text, 'rc': rc} for params, text, rc in calls]
         (args.work / 'spec.json').write_text(json.dumps(spec))
         log = args.work / 'calls.jsonl'
         log.unlink(missing_ok=True)
         p = subprocess.run(['bash', str(args.cli), *command], capture_output=True, text=True, env=env, timeout=15)
         seen = [json.loads(line) for line in log.read_text().splitlines()] if log.exists() else []
-        passed = ((p.returncode == 0) == success and p.stdout == output and not p.stderr
+        passed = ((p.returncode == 0) == success and p.stdout == output and p.stderr == stderr
                   and seen == [row['args'] for row in spec])
         print(f'{name}: {"PASS" if passed else "FAIL"}', flush=True)
         if not passed:
@@ -153,8 +165,10 @@ def main():
     niri.chmod(0o755)
     env.update(NIRI_SOCKET='/fixture/niri', XDG_CONFIG_HOME=str(config.parent))
     check('switch-dev-tree-uses-owner', ['session', 'launch', str(target)],
-          [(['kill', '--pid', OWNER_PID], '', 0), (['-n', '-p', str(target), '-d'], 'started\n', 0)],
-          f'Launching: {target}\nstarted\n', prefix=[])
+          [(['list', '--all', '--json'], json.dumps([{'id': 'cli-fixture', 'pid': sleeper.pid}]), 0),
+           (['kill', '--id', 'cli-fixture'], '', 0), (['-n', '-p', str(target), '-d'], 'started\n', 0)],
+          f'Launching: {target}\nstarted\n', prefix=[],
+          stderr=f'atmosphera: PID {OWNER_PID}: graceful qs kill (session stop/replace)\n')
     count += 1
     reset = (args.work / 'niri-reset').exists()
     print(f'dev-switch-keeps-niri-session: {"FAIL" if reset else "PASS"}', flush=True)

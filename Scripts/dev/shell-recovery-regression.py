@@ -52,6 +52,11 @@ ELECTION_OBSERVER = '''
         initialized: IPCService.screenDetector !== null});
     }
     function quit(): void { Qt.quit(); }
+    function releaseElection(): void {
+      root._elected = false;
+      SessionBus.asyncCall({service: "org.freedesktop.DBus", path: "/org/freedesktop/DBus",
+        iface: "org.freedesktop.DBus", member: "ReleaseName", arguments: ["app.atmosphera.Shell"], signature: "s", timeout: 1000});
+    }
   }
 '''
 
@@ -86,7 +91,7 @@ def main():
     ap.add_argument("--inside", action="store_true")
     ap.add_argument("--chooser", nargs=2)
     ap.add_argument("--hold-portal", action="store_true")
-    ap.add_argument("--case", choices=("discovery", "smoke", "core-smoke", "fixture", "contention", "recovery"), default="recovery")
+    ap.add_argument("--case", choices=("discovery", "smoke", "core-smoke", "fixture", "contention", "recovery", "exit-hang"), default="recovery")
     args = ap.parse_args()
     if args.hold_portal:
         import gi
@@ -101,7 +106,8 @@ def main():
         chooser(*args.chooser)
         return
     assert Path("/sys/class/dmi/id/sys_vendor").read_text().strip() == "QEMU", "VM only"
-    assert str(args.work.resolve()).startswith("/home/tester/Projects/shell-recovery/"), "assigned disk-backed workspace required"
+    assert any(str(args.work.resolve()).startswith(p) for p in ("/home/tester/Projects/shell-recovery/", "/home/tester/Projects/shell-exit/")), "assigned disk-backed workspace required"
+    assert not args.work.resolve().is_relative_to(args.source.resolve()), "work must be outside source to avoid recursive copies"
     if not args.inside:
         args.work.mkdir(parents=True, exist_ok=False)
         (args.work / "tmp").mkdir()
@@ -135,9 +141,9 @@ def main():
     fixture.write_text("Recovery consumer fixture\n")
     env = dict(os.environ, XDG_CONFIG_HOME=str(root / "config"), XDG_CACHE_HOME=str(root / "cache"), XDG_DATA_HOME=str(root / "data"), XDG_STATE_HOME=str(root / "state"),
                XDG_CURRENT_DESKTOP="niri", PATH=str(cli.parent) + ":" + os.environ["PATH"], QT_IM_MODULE="fcitx", ATMOSPHERA_DEBUG="0", TMPDIR=str(root / "tmp"), YDOTOOL_SOCKET=str(root / "ydotool.sock"))
-    children, logs, cases = [], [], []
-    def command(argv, check=True):
-        return subprocess.run(["timeout", "--kill-after=2", "12", *map(str, argv)], env=env, capture_output=True, text=True, timeout=15, check=check)
+    children, logs, cases, shell_fds = [], [], [], {}
+    def command(argv, check=True, seconds=12):
+        return subprocess.run(["timeout", "--kill-after=2", str(seconds), *map(str, argv)], env=env, capture_output=True, text=True, timeout=seconds + 3, check=check)
     def launch(argv, name):
         log = (root / (name + ".log")).open("w")
         logs.append(log)
@@ -156,7 +162,11 @@ def main():
             time.sleep(.2)
         raise AssertionError("timed out: " + repr(last))
     def state():
-        return json.loads(command(["qs", "-p", shell, "ipc", "call", "filechooserRegression" if args.case == "fixture" else "recoveryTest", "state"]).stdout)
+        value = json.loads(command(["qs", "-p", shell, "ipc", "call", "filechooserRegression" if args.case == "fixture" else "recoveryTest", "state"]).stdout)
+        pid = value.get("pid")
+        if pid and pid not in shell_fds:
+            shell_fds[pid] = os.pidfd_open(pid)
+        return value
     def check(name, condition):
         cases.append({"case": name, "pass": bool(condition)})
         print(name, "PASS" if condition else "FAIL", flush=True)
@@ -194,6 +204,10 @@ def main():
         command(["qs", "-p", shell, "ipc", "call", "recoveryTest", "choose", fixture])
         p.wait(timeout=18)
         check(label + "-chooser-consumer-uri", p.returncode == 0 and json.loads(out.read_text())["results"]["uris"] == [fixture.as_uri()])
+        owner_pid = bus("call", "org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "GetConnectionUnixProcessID", "s", "org.freedesktop.Notifications").stdout
+        check(label + "-notifications-owner", owner_pid.strip() == "u " + str(state()["pid"]))
+        reply = bus("call", "org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications", "Notify", "susssasa{sv}i", "Recovery", "0", "", label, "body", "0", "0", "1000")
+        check(label + "-notifications-consumer", reply.stdout.startswith("u "))
     failure = None
     switched = False
     def deadline(_signum, _frame):
@@ -226,6 +240,91 @@ def main():
             return
         initial = wait(lambda: (s := state())["initialized"] and s)
         check("cold-load", process.poll() is None)
+        if args.case == "exit-hang":
+            wait(lambda: bus("get-property", "app.atmosphera.Shell", "/app/atmosphera/Shell", "app.atmosphera.Shell1", "PortalReady").stdout.strip() == "b true")
+            wait(lambda: state()["im"])
+            launch(["/usr/lib/xdg-desktop-portal", "--replace", "--verbose"], "portal")
+            contender = root / "contender"
+            shutil.copytree(shell, contender)
+            handoff = launch(["qs", "-p", contender], "normal-handoff")
+            time.sleep(.5)
+            command(["qs", "ipc", "--pid", str(initial["pid"]), "call", "recoveryElection", "quit"])
+            shell = contender
+            wait(lambda: (s := state())["pid"] != initial["pid"] and s["initialized"] and s)
+            check("queued-shell-survives-normal-handoff", handoff.poll() is None)
+            check("normal-handoff-no-term-kill", "SIGTERM" not in (root / "normal-handoff.log").read_text() and "SIGKILL" not in (root / "normal-handoff.log").read_text())
+            normal = command([cli, "session", "launch", contender], seconds=30)
+            (root / "normal-switch.log").write_text(normal.stdout + normal.stderr)
+            switched = True
+            shell = contender
+            replacement = wait(lambda: (s := state())["pid"] != initial["pid"] and s["initialized"] and s)
+            check("normal-exit-no-term-kill", "SIGTERM" not in normal.stderr and "SIGKILL" not in normal.stderr)
+            flows("normal")
+            # SIGSTOP leaves the process, sockets and all bus names alive. Its
+            # graceful IPC request cannot finish; TERM also cannot be handled.
+            os.kill(replacement["pid"], signal.SIGSTOP)
+            stuck = command([cli, "session", "launch", contender], seconds=35)
+            (root / "stopped-switch.log").write_text(stuck.stdout + stuck.stderr)
+            check("switcher-escalates-pinned-owner", all(x in stuck.stderr for x in ("PID " + str(replacement["pid"]), "SIGTERM", "SIGKILL")))
+            replacement = wait(lambda: (s := state())["pid"] != replacement["pid"] and s["initialized"] and s)
+            flows("after-stuck-switch")
+            os.kill(replacement["pid"], signal.SIGSTOP)
+            other = root / "raw"
+            shutil.copytree(shell, other)
+            raw = launch(["qs", "-p", other], "stopped-raw")
+            shell = other
+            recovered = wait(lambda: (s := state())["pid"] != replacement["pid"] and s["initialized"] and s, 45)
+            check("raw-spawn-elected", recovered["pid"] != replacement["pid"] and raw.poll() is None)
+            text = (root / "stopped-raw.log").read_text()
+            check("raw-spawn-escalates-pinned-owner", all(x in text for x in ("PID " + str(replacement["pid"]), "SIGTERM", "SIGKILL")))
+            flows("after-stuck-raw")
+            os.kill(recovered["pid"], signal.SIGSTOP)
+            reuse = command([cli, "run", "-p", other, "-d"], seconds=40)
+            (root / "stopped-cli.log").write_text(reuse.stdout + reuse.stderr)
+            check("cli-does-not-reuse-unresponsive-owner", "already running" not in reuse.stdout and "SIGKILL" in reuse.stderr)
+            recovered = wait(lambda: (s := state())["pid"] != recovered["pid"] and s["initialized"] and s)
+            flows("after-stuck-cli")
+            duplicate = launch(["qs", "-p", contender], "responsive-duplicate")
+            duplicate.wait(timeout=8)
+            check("responsive-duplicate-exits", duplicate.returncode == 0)
+            check("responsive-owner-not-killed", state()["pid"] == recovered["pid"])
+            check("responsive-duplicate-diagnosed", "another shell is running (pid " + str(recovered["pid"]) + ")" in (root / "responsive-duplicate.log").read_text())
+            check("responsive-duplicate-no-signals", "SIGTERM" not in (root / "responsive-duplicate.log").read_text() and "SIGKILL" not in (root / "responsive-duplicate.log").read_text())
+            # Model Qt's later teardown stage: Shell election released, but
+            # Notifications and the same-path Quickshell instance lock remain.
+            command(["qs", "ipc", "--pid", str(recovered["pid"]), "call", "recoveryElection", "releaseElection"])
+            wait(lambda: command(["busctl", "--user", "--timeout=1", "call", "org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "GetNameOwner", "s", "app.atmosphera.Shell"], False).returncode != 0)
+            os.kill(recovered["pid"], signal.SIGSTOP)
+            check("departed-shell-retains-notifications", bus("call", "org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "GetConnectionUnixProcessID", "s", "org.freedesktop.Notifications").stdout.strip() == "u " + str(recovered["pid"]))
+            departed = command([cli, "run", "-p", other, "-d"], seconds=35)
+            (root / "departed-cli.log").write_text(departed.stdout + departed.stderr)
+            check("cli-reaps-departed-same-path-instance", all(x in departed.stderr for x in ("PID " + str(recovered["pid"]), "SIGTERM", "SIGKILL", "retained resources")))
+            recovered = wait(lambda: (s := state())["pid"] != recovered["pid"] and s["initialized"] and s)
+            flows("after-departed-cli")
+            command(["qs", "ipc", "--pid", str(recovered["pid"]), "call", "recoveryElection", "releaseElection"])
+            wait(lambda: command(["busctl", "--user", "--timeout=1", "call", "org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "GetNameOwner", "s", "app.atmosphera.Shell"], False).returncode != 0)
+            os.kill(recovered["pid"], signal.SIGSTOP)
+            no_name = root / "raw-departed"
+            shutil.copytree(shell, no_name)
+            launch(["qs", "-p", no_name], "departed-raw")
+            shell = no_name
+            newer = wait(lambda: (s := state())["pid"] != recovered["pid"] and s["initialized"] and s, 35)
+            check("raw-reaps-departed-owner-before-session-init", "SIGKILL" in (root / "departed-raw.log").read_text())
+            recovered = newer
+            flows("after-departed-raw")
+            final_stop = command([cli, "session", "stop"], seconds=30)
+            (root / "final-stop.log").write_text(final_stop.stdout + final_stop.stderr)
+            switched = False
+            check("final-successor-no-term-kill", "SIGTERM" not in final_stop.stderr and "SIGKILL" not in final_stop.stderr)
+            stop_only = launch(["qs", "-p", shell], "stop-only-shell")
+            last = wait(lambda: (s := state())["pid"] != recovered["pid"] and s["initialized"] and s)
+            os.kill(last["pid"], signal.SIGSTOP)
+            stopped = command([cli, "session", "stop"], seconds=35)
+            (root / "stopped-stop.log").write_text(stopped.stdout + stopped.stderr)
+            stop_only.wait(timeout=8)
+            check("stop-only-escalates-pinned-owner", all(x in stopped.stderr for x in ("PID " + str(last["pid"]), "SIGTERM", "SIGKILL")))
+            check("stop-only-releases-election", command(["busctl", "--user", "--timeout=1", "call", "org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "GetNameOwner", "s", "app.atmosphera.Shell"], False).returncode != 0)
+            return
         if args.case in ("discovery", "smoke", "core-smoke"):
             if args.case != "core-smoke":
                 result = command([cli, "ipc", "inputmethod", "state"], False)
@@ -308,6 +407,21 @@ def main():
         if switched:
             cleanup_command("session stop", [cli, "session", "stop"])
         cleanup_command("restore niri", ["niri", "msg", "action", "load-config-file", "--path", "/home/tester/.config/niri/config.kdl"])
+        # Switcher children are daemonized, outside launch()'s process groups.
+        # pidfds retain their exact identity even after process exit/PID reuse.
+        import select
+        for pid, fd in shell_fds.items():
+            try:
+                if not select.select([fd], [], [], 0)[0]:
+                    signal.pidfd_send_signal(fd, signal.SIGTERM)
+                    if not select.select([fd], [], [], 2)[0]:
+                        signal.pidfd_send_signal(fd, signal.SIGKILL)
+                        if not select.select([fd], [], [], 5)[0]:
+                            cleanup_errors.append(f"shell {pid} did not exit")
+            except ProcessLookupError:
+                pass
+            finally:
+                os.close(fd)
         for child in reversed(children):
             try:
                 os.killpg(child.pid, signal.SIGTERM)
