@@ -5,6 +5,7 @@ Column {
   id: root
   required property var pluginApi
   property string labelText: pluginApi.pluginSettings.label
+  property bool stageOnSave: true
   readonly property bool settingsDirty: labelText !== pluginApi.initialSettings.label
   function change(value) {
     labelText = value;
@@ -14,7 +15,7 @@ Column {
       throw new Error("preview refused");
   }
   function saveSettings() {
-    pluginApi.pluginSettings.label = labelText;
+    if(stageOnSave)pluginApi.pluginSettings.label = labelText;
     pluginApi.saveSettings();
   }
   NTextInput {

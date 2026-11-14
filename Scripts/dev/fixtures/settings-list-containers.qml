@@ -11,10 +11,21 @@ Item {
   property int screenWrites: 0
   property int desktopWrites: 0
   property int globalWrites: 0
+  property var continuation: null
   readonly property string screenName: "new.屏/__proto__"
   readonly property bool verifyOnly: Quickshell.env("I4_VERIFY") === "1"
   function check(ok, name) { if (!ok) throw new Error("I4_CONTAINER_ASSERT: " + name); }
   function fail(error) { console.error(String(error)); Qt.exit(2); }
+  function later(next) {check(continuation===null,"one fixture continuation");continuation=next;readyWait.start();}
+  Timer {
+    id:readyWait;interval:20;repeat:true
+    onTriggered:{try{
+      var paths=[["bar","widgets","left"],["bar","widgets","center"],["bar","widgets","right"],["bar","screenOverrides"],["desktopWidgets","monitorWidgets"]];
+      var probes=paths.map(function(path){return Settings.createRecordListEditor(path,[]);});
+      var ready=probes.every(function(probe){return !!probe;});probes.forEach(function(probe){if(probe)probe.detach();});
+      if(!ready)return;stop();var next=root.continuation;root.continuation=null;next();
+    }catch(error){stop();root.fail(error);}}
+  }
   function address(name, section) { return [{field: "name", equals: name}, {key: "widgets"}, {key: section}]; }
   function desktop(name) { return [{field: "name", equals: name}, {key: "widgets"}]; }
   function screens() { return Lists.copy(Settings.data.bar.screenOverrides); }
@@ -36,16 +47,17 @@ Item {
       {op: "copy", from: editor.target(5, false), to: editor.target(2)}
     ];
   }
-  function reject(editor, edits, code, next) {
+  function reject(editor, edits, code, next, workerValidation) {
     var before = stamp();
     var sync = true;
-    check(!editor.submit(edits, function (result) {
+    var queued = editor.submit(edits, function (result) {
       try {
-        check(!sync && result.status === "failed" && result.error.code === code, code);
+        check(!sync && result.status === "failed" && result.error.code === code, code + " observed " + result.status + "/" + result.error.code);
         check(stamp() === before, "refused batch leaves every owner unchanged");
-        next();
+        later(next);
       } catch (error) { fail(error); }
-    }), "synchronous refusal");
+    });
+    check(workerValidation ? queued : !queued, "refusal ingress contract " + code);
     check(stamp() === before, "no intermediate creation/admission");
     sync = false;
   }
@@ -83,8 +95,8 @@ Item {
                         staleAbsence();
                       } catch (error) { fail(error); }
                     }), "local edit after global change");
-                  });
-                });
+                  }, true);
+                }, true);
               } catch (error) { fail(error); }
             }), "complete copy batch admitted");
             edits[0].to.listAddress[0].equals = "caller-mutated";
@@ -104,14 +116,20 @@ Item {
   }
   function identity() {
     check(Settings.setScreenOverride("dup", "position", "left"), "first-match property edit");
+    later(function () {
     var duplicate = screens().filter(function (row) { return row.name === "dup"; });
     check(duplicate[0].position === "left" && duplicate[1].opaque === "later" && duplicate[1].position === undefined, "later duplicate is untouched");
     check(Settings.clearScreenOverride("dup", "position"), "unset property");
+    later(function () {
     check(screens().filter(function (row) { return row.name === "dup"; })[0].opaque === "first", "unknown member prevents prune");
-    check(Settings.setScreenOverride("prune", "density", "compact") && Settings.clearScreenOverride("prune", "density"), "prune last known property");
+    check(Settings.setScreenOverride("prune", "density", "compact"), "set last known property");
+    later(function () {
+    check(Settings.clearScreenOverride("prune", "density"), "prune last known property");
+    later(function () {
     check(!screens().some(function (row) { return row.name === "prune"; }), "name-only record pruned");
     check(Settings.clearScreenOverride("created-after-capture"), "clear all first match");
-    multiTarget();
+    later(multiTarget);
+    }); }); }); });
   }
   function multiTarget() {
     var editor = Settings.createRecordListEditor(["bar", "screenOverrides"], address(screenName, "left"), [
@@ -193,17 +211,21 @@ Item {
       Settings.data.bar.widgets.left = [{id: "Volume", opaque: {keep: true}}];
       Settings.data.bar.widgets.center = [{id: "Clock", unknown: "global-center"}];
       Settings.data.bar.widgets.right = [];
-      Settings.data.bar.screenOverrides = [
+      var valid = [
         {name: "existing", position: "top", opaque: "keep", widgets: {left: [{id: "Volume", unknown: "existing-row"}]}},
-        {name: "dup", opaque: "first"}, {name: "dup", opaque: "later"},
-        {name: "null-widgets", widgets: null}, {name: "wrong-list", widgets: {left: "not a list"}}
+        {name: "dup", opaque: "first"}, {name: "dup", opaque: "later"}
       ];
+      Settings.data.bar.screenOverrides = valid;
+      [{name:"null-widgets",widgets:null},{name:"wrong-list",widgets:{left:"not a list"}}].forEach(function(invalid){
+        var before=JSON.stringify(Settings.data.bar.screenOverrides),refused=false;
+        try{Settings.data.bar.screenOverrides=valid.concat([invalid]);}catch(error){refused=String(error).indexOf("configqml:")!==-1;}
+        check(refused&&JSON.stringify(Settings.data.bar.screenOverrides)===before,"invalid container atomically refused at typed ingress "+invalid.name);
+      });
       Settings.data.desktopWidgets.monitorWidgets = [{name: "source", opaque: "source", widgets: [{id: "Clock", payload: {keep: true}, x: 5, y: 9, scale: 2}]}];
+      later(function () {
       check(Settings.createRecordListEditor(["bar", "screenOverrides"], address("missing", "left")) === null, "unensured absence refuses");
       check(Settings.createRecordListEditor(["bar", "screenOverrides"], [{field: "opaque", equals: "keep"}, {key: "widgets"}, {key: "left"}], [], {ensure: true}) === null, "undeclared/optional match field refuses");
       check(Settings.createRecordListEditor(["bar", "screenOverrides"], [{index: 99}, {key: "widgets"}, {key: "left"}], [], {ensure: true}) === null, "index never creates");
-      check(Settings.createRecordListEditor(["bar", "screenOverrides"], address("null-widgets", "left"), [], {ensure: true}) === null, "present null is never replaced");
-      check(Settings.createRecordListEditor(["bar", "screenOverrides"], address("wrong-list", "left"), [], {ensure: true}) === null, "present wrong-type list is never replaced");
       var staleSource = captureScreen();
       check(staleSource !== null, "absent capture creates no preference");
       var original = Lists.copy(Settings.data.bar.widgets.left);
@@ -213,6 +235,7 @@ Item {
         staleSource.detach();
         Settings.data.audio.mprisBlacklist = ["unrelated path does not invalidate selected leaves"];
         firstCopies();
+      });
       });
     } catch (error) { fail(error); }
   }

@@ -24,9 +24,12 @@ PanelWindow {
   property var liveDialog: null
   property int barStage: 0
   property int volumeIndex: 0
+  property bool faultBlocked: false
+  property bool exitAfterRepair: false
   property bool verifyOnly: Quickshell.env("I4_VERIFY") === "1"
   readonly property var screenObject: Quickshell.screens[0]
-  CC.ControlCenterTab { id: ccOwner; visible: false }
+  readonly property var ccOwner: ccLoader.item
+  Loader { id: ccLoader; active: Settings.isLoaded; visible: false; sourceComponent: CC.ControlCenterTab {} }
   Item { id: scene; anchors.fill: parent }
   QtObject { id: popupHost; readonly property var dialogParent: scene; function hideDynamicMenu() {} function showDialog(dialog) {root.liveDialog=dialog;} }
   FileView { path: Quickshell.env("I4_ICON_DATA"); onLoaded: { IconRegistry.register("fixture:atmosphera-icons",JSON.parse(text()),Quickshell.env("I4_ICON_DIR"));root.iconsReady=true;root.begin(); } }
@@ -112,7 +115,11 @@ PanelWindow {
   Component { id: cccustom; C.CustomButtonSettings { onSettingsChanged: root.record(settings) } }
 
   function check(ok,label) { if(!ok)throw new Error("I4_CORE_FIELD_ASSERT: "+label); }
-  function fail(error) { console.error(String(error));Qt.exit(2); }
+  function fail(error) {
+    console.error(String(error));
+    if (faultBlocked && !faultProcess.running) { exitAfterRepair=true;fault("repair");return; }
+    Qt.exit(2);
+  }
   function later(next) { Qt.callLater(function(){try{next();}catch(error){fail(error);}}); }
   function kind(item,name) { return String(item).indexOf(name+"_QMLTYPE")===0; }
   function find(item,predicate) { if(predicate(item))return item;var children=item.children||[];for(var i=0;i<children.length;i++){var found=find(children[i],predicate);if(found)return found;}return null; }
@@ -145,13 +152,20 @@ PanelWindow {
     if(page){page.destroy();page=null;}if(editor){editor.detach();editor=null;}
     index++;
     if(index===cases.length){specialNumericClose();return;}
-    var c=cases[index],n=ownerIndex(c);phase="construct";fields={};signals=0;
+    phase="waiting-editor";fields={};signals=0;captureWait.start();
+  }
+  function constructPage() {
+    var c=cases[index],n=ownerIndex(c);
+    if(c.group==="cc"&&!ccOwner)return;
     editor=c.group==="desktop"?DesktopWidgetRegistry.createWidgetSettingsEditor(screenObject.name,n):c.group==="cc"?ccOwner.captureWidgetSettings("left",n):BarService.createWidgetSettingsEditor("","left",n);
+    if(!editor)return;
+    captureWait.stop();phase="construct";
     check(editor!==null,"actual selected editor");
     var props={widgetData:editor.initialValue,widgetMetadata:metadata(c)};if(!c.group)props.screen=screenObject;
     page=c.c.createObject(scene,props);check(page!==null,"actual page constructor "+c.id);
     settle.restart();
   }
+  Timer { id:captureWait;interval:20;repeat:true;onTriggered:{try{root.constructPage();}catch(error){stop();root.fail(error);}} }
   Timer { id:settle;interval:100;onTriggered:{try{root.untouched();}catch(error){root.fail(error);}} }
   function untouched() {
     var c=cases[index];phase="untouched-close";
@@ -250,7 +264,10 @@ PanelWindow {
   }catch(error){root.fail(error);}} }
   Timer { id:closedWait;interval:50;repeat:true;onTriggered:{try{if(DesktopWidgetRegistry.currentSettingsDialog===null){stop();root.specialBarFailure();}}catch(error){stop();root.fail(error);}} }
   function specialBarFailure() {
-    phase="bar-popup";barStage=1;Settings.setBindingsUnresolved(true);
+    phase="bar-blocking";barStage=1;fault("block");
+  }
+  function openBarFailure() {
+    phase="bar-popup";
     volumeIndex=cases.filter(function(c){return !c.group;}).findIndex(function(c){return c.id==="Volume";});
     BarService.openWidgetSettings(screenObject,"left",volumeIndex,"Volume",Settings.data.bar.widgets.left[volumeIndex]);barOpen.start();
   }
@@ -263,7 +280,7 @@ PanelWindow {
       try {
         if(root.barStage===1){
           root.check(result.status==="failed"&&root.liveDialog.settingsDirty&&Settings.data.bar.widgets.left[root.volumeIndex].middleClickCommand==="first","producer-to-Popup failed input retained");
-          root.barStage=2;var input=root.commandInput();input.text="";input.inputItem.insert(0,"newer");Settings.setBindingsUnresolved(false);root.liveDialog.saveAndClose();
+          root.barStage=2;root.phase="bar-repairing";root.fault("repair");
         }else if(root.barStage===2){
           root.check(result.status!=="failed"&&Settings.data.bar.widgets.left[root.volumeIndex].middleClickCommand==="newer","newer producer input survives failed-save Retry");root.barStage=3;barClosed.start();
         }
@@ -271,6 +288,24 @@ PanelWindow {
     }
   }
   Timer { id:barClosed;interval:50;repeat:true;onTriggered:{try{if(!root.liveDialog||!root.liveDialog.visible){stop();root.finish();}}catch(error){stop();root.fail(error);}} }
+  function fault(mode) {
+    faultProcess.command=["python3","-B",Quickshell.env("I5_DESKTOP_FAULT"),Quickshell.env("ATMOSPHERA_CONFIG_DIR"),mode];
+    faultProcess.running=true;
+  }
+  Process {
+    id:faultProcess
+    onExited:code=>{
+      try {
+        root.check(code===0,"private real-IO fault prerequisite");
+        if(root.phase==="bar-blocking") {root.faultBlocked=true;root.openBarFailure();}
+        else {
+          root.faultBlocked=false;
+          if(root.exitAfterRepair){Qt.exit(2);return;}
+          var input=root.commandInput();input.text="";input.inputItem.insert(0,"newer");root.liveDialog.saveAndClose();
+        }
+      }catch(error){root.fail(error);}
+    }
+  }
   function finalChecks() {
     var bar=Settings.data.bar.widgets.left,desktop=Settings.data.desktopWidgets.monitorWidgets[0].widgets;
     check(bar.length===31&&desktop.length===6,"actual complete core map counts");

@@ -2,6 +2,7 @@
 import QtQuick
 import Quickshell
 import "../../../Helpers/RecordListEditor.js" as RecordListEditor
+import "../../../Helpers/SettingsListCommands.js" as NativeLists
 import qs.Commons
 
 Item {
@@ -71,6 +72,21 @@ Item {
   function failed(result, code) {
     check(result.status === "failed" && result.error.code === code, code);
     failedCallbacks++;
+  }
+  // Native captures select worker-published generations. Wait only before a
+  // capture; the original post-capture reorder/ABA/newer-input schedules below
+  // remain unchanged and all original refusal/consumer assertions stay hard.
+  function afterSettled(paths, callback) {
+    if (ownerMode !== "configqml") { callback(); return; }
+    var active = true;
+    function attempt() {
+      if (!active || !paths.every(function (path) { return NativeLists.settled(Settings.store.info(path)); })) return;
+      active = false;
+      Settings.store.completed.disconnect(attempt);
+      callback();
+    }
+    Settings.store.completed.connect(attempt);
+    Qt.callLater(attempt);
   }
 
   function nextCase() {
@@ -234,9 +250,10 @@ Item {
                           }
                         ], function (result) {
                           try {
-                            failed(result, "list-edit-conflict");
-                            Settings.data.bar.widgets.left = rows;
-                            var aba = Settings.createRecordListEditor(path, []);
+                             failed(result, "list-edit-conflict");
+                             Settings.data.bar.widgets.left = rows;
+                             afterSettled([path], function () {
+                             var aba = Settings.createRecordListEditor(path, []);
                             Settings.data.bar.widgets.left = [
                                   {
                                     id: "intervening"
@@ -250,8 +267,9 @@ Item {
                                                 }
                                               ], function (abaResult) {
                                                 try {
-                                                  failed(abaResult, "list-edit-conflict");
-                                                  var late = Settings.createRecordListEditor(path, []);
+                                                   failed(abaResult, "list-edit-conflict");
+                                                   afterSettled([path], function () {
+                                                   var late = Settings.createRecordListEditor(path, []);
                                                   check(late.submit([
                                                                       {
                                                                         op: "set",
@@ -279,11 +297,13 @@ Item {
                                                                         fail(error);
                                                                       }
                                                                     }), "held callback command");
-                                                  Settings.data.bar.widgets.left = rows;
+                                                   Settings.data.bar.widgets.left = rows;
+                                                   });
                                                 } catch (error) {
                                                   fail(error);
                                                 }
-                                              }), "notification ABA refusal");
+                                               }), "notification ABA refusal");
+                             });
                           } catch (error) {
                             fail(error);
                           }
@@ -410,7 +430,7 @@ Item {
                                                 key: "widgets"
                                               }
                                             ]) === null, "missing list");
-      nextCase();
+      afterSettled(cases.map(function (entry) { return entry.path; }), nextCase);
     } catch (error) {
       fail(error);
     }

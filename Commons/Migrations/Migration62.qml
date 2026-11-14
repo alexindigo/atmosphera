@@ -1,12 +1,16 @@
 import QtQuick
+import "SettingsMigrationSource.js" as MigrationSource
 
+// Launcher regression compatibility wrapper, not a production migration owner.
+// Execute the shared resource in test context with only the final step selected.
 QtObject {
-  // Move only the old default. Explicit custom bindings (including an empty
-  // list) retain their meaning and take precedence over launcher text editing.
   function migrate(adapter, logger, rawJson) {
-    const remove = rawJson?.general?.keybinds?.keyRemove;
-    if (Array.isArray(remove) && remove.length === 1 && remove[0] === "Del") {
-      adapter.general.keybinds.keyRemove = ["Shift+Del"];
+    var transform = eval("(" + MigrationSource.transform + ")");
+    var result = transform({raw: {settingsVersion: 61, general: rawJson?.general},
+      values: {}, compatibilityRaw: {}, lowerValues: {}, source: {presence: "present"}});
+    var remove = result.values.general?.keybinds?.keyRemove;
+    if (remove !== undefined) {
+      adapter.general.keybinds.keyRemove = remove;
       logger.i("Settings", "Moved default Remove binding to Shift+Delete");
     }
     return true;

@@ -6,6 +6,7 @@ import Quickshell.Io
 import qs.Commons
 import qs.Services.Plugins
 import qs.Widgets
+import "plugin-editor-probe.js" as EditorProbe
 
 ShellRoot {
   id: root
@@ -21,6 +22,7 @@ ShellRoot {
   property bool started: false
   property bool stale: false
   property var actualMain: null
+  property var selectedEditor: null
   readonly property var selectedScreen: ({
                                            name: "i4-selected-screen"
                                          })
@@ -30,6 +32,21 @@ ShellRoot {
     path: Quickshell.env("I4_ACTION_INPUTS")
     blockLoading: true
     printErrors: false
+  }
+  FileView { id: rawPreferences; blockLoading: true; printErrors: false }
+  function rawUnknown() {
+    rawPreferences.path = Quickshell.env("ATMOSPHERA_CONFIG_DIR") + "/settings/plugins/" + cases[index].plugin + ".json";
+    rawPreferences.reload(); rawPreferences.waitForJob();
+    var value = JSON.parse(rawPreferences.text());
+    check(value.opaque.keep && (!verifyOnly || value.foreign === true), "actual raw unknown data retained");
+  }
+  function preferenceSnapshot() {
+    var result = Object.create(null);
+    for (var key of api.settingsOwner.store.settingsKeys) {
+      var value = api.pluginSettings[key];
+      if (value !== undefined) result[key] = Settings.store.copyValue(value);
+    }
+    return result;
   }
   QtObject {
     id: collaborator
@@ -95,7 +112,7 @@ ShellRoot {
   }
   function record() {
     calls++;
-    consumed = JSON.parse(JSON.stringify(api.pluginSettings));
+    consumed = preferenceSnapshot();
   }
   function other(value) {
     if (cases[index].retryValue !== undefined) return cases[index].retryValue;
@@ -130,7 +147,12 @@ ShellRoot {
       seed.screens = {};
       for (var screen of Quickshell.screens) seed.screens[screen.name] = {path: "/fixture/wallpaper"};
     }
-    api = Service.createPluginAPI(row.plugin, row.manifest, seed, {}, {}, {});
+    phase = "seeding";
+    seedWriter.command = ["python3", "-B", Quickshell.env("I5_PLUGIN_SEED"), Quickshell.env("ATMOSPHERA_CONFIG_DIR"), row.plugin, JSON.stringify(seed)];
+    seedWriter.running = true;
+  }
+  function register(row, owner) {
+    api = Service.createPluginAPI(row.plugin, row.manifest, owner, {}, {}, {});
     if (row.plugin !== "weather-indicator") {
       var component = Qt.createComponent("file://" + Registry.getPluginDir(row.plugin) + "/Main.qml");
       check(component.status === Component.Ready, "actual Main ready: " + component.errorString());
@@ -144,7 +166,7 @@ ShellRoot {
     api.closePanel = function (screen) {
       root.check(screen === root.selectedScreen, "selected screen forwarded");
       root.closes++;
-      root.consumed = JSON.parse(JSON.stringify(root.api.pluginSettings));
+      root.consumed = root.preferenceSnapshot();
     };
     var loaded = Object.assign({}, Service.loadedPlugins);
     loaded[row.plugin] = {
@@ -154,26 +176,13 @@ ShellRoot {
     var factory = api.createSettingsEditor;
     api.createSettingsEditor = function () {
       var editor = factory();
-      var wrapper = {
-        initialValue: editor.initialValue,
-        discard: editor.discard,
-        apply: function (value, callback) {
-          editor.apply(value, function (result) {
-            root.held = result;
-            root.release = function () {
-              if (result.refreshState === "current")
-                wrapper.initialValue = editor.initialValue;
-              callback(result);
-            };
-          });
-          if (root.stale) {
-            var newer = Object.assign({}, root.api.pluginSettings);
-            newer.foreign = true;
-            root.api.pluginSettings = newer;
-          }
-        }
-      };
-      return wrapper;
+      root.selectedEditor = editor;
+      return EditorProbe.observe(editor, function () {}, function (result, callback) {
+        root.held = result;
+        root.release = function () { callback(result); };
+      }, function () {
+        if (root.stale) root.api.pluginSettings[row.key] = row.finalValue;
+      });
     };
     popup.openPluginSettings(row.manifest, "settings");
     phase = "cancel";
@@ -196,10 +205,12 @@ ShellRoot {
       return;
     }
     var row = cases[index];
-    Service.loadPluginSettings(row.plugin, function (value) {
+    Service._openSettingsOwner(row.plugin, function (owner) {
       try {
-        var reader = Service.createPluginAPI(row.plugin, row.manifest, value, {}, {}, {});
-        root.check(reader.pluginSettings[row.key] === row.finalValue && reader.pluginSettings.opaque.keep, "separate restart reads accepted input");
+        root.check(owner !== null, "actual native restart owner opened");
+        var reader = Service.createPluginAPI(row.plugin, row.manifest, owner, {}, {}, {});
+        root.check(reader.pluginSettings[row.key] === row.finalValue, "separate restart reads accepted input");
+        root.rawUnknown();
         root.index++;
         root.verifyNext();
       } catch (error) {
@@ -253,7 +264,7 @@ ShellRoot {
     return closes > 0 && consumed[cases[index].key] === value;
   }
   function fault(mode) {
-    action.command = ["python3", Quickshell.env("I4_ACTION_FAULT"), Quickshell.env("ATMOSPHERA_CONFIG_DIR"), mode];
+    action.command = ["python3", Quickshell.env("I4_ACTION_FAULT"), Quickshell.env("ATMOSPHERA_CONFIG_DIR"), mode, cases[index].plugin];
     action.running = true;
   }
   function drive() {
@@ -290,11 +301,17 @@ ShellRoot {
     } else if (phase === "saved-consumer" && settled(row.finalValue)) {
       page[row.field] = row.finalValue; stage(); stage(); popup.applySettings(); phase = "noop";
     } else if (phase === "noop" && release) {
-      check(held.status === "nothing_to_save", "real no-op receipt");
+      check(held.status === "saved" && held.refreshState === "current", "real equal-choice receipt");
       deliver();
       var step = row.plugin === "air-quality" ? 1 : 2;
       check(calls === expectedCalls(step) && closes === expectedCloses(2), "existing conditional/no-op action policy");
-      phase = "noop-consumer";
+      phase = "clean-noop";
+      selectedEditor.apply(selectedEditor.values, function (result) {
+        try {
+          root.check(result.status === "nothing_to_save" && result.refreshState === "current", "real clean native no-op receipt");
+          root.phase = "noop-consumer";
+        } catch (error) { console.error(String(error)); root.finish(2); }
+      });
     } else if (phase === "noop-consumer" && settled(row.finalValue)) {
       phase = "blocking"; fault("block");
     } else if (phase === "blocked") {
@@ -320,7 +337,9 @@ ShellRoot {
       check(calls === before + expectedCalls(1) && closes === beforeClose + expectedCloses(1) && consumed[row.key] === other(row.finalValue), "one retained action sees Retry input");
       phase = "retry-consumer";
     } else if (phase === "retry-consumer" && settled(other(row.finalValue))) {
-      stale = true; page[row.field] = row.finalValue; stage(); stage(); popup.applySettings(); phase = "stale";
+      stale = true; page[row.field] = row.finalValue; stage(); stage(); phase = "foreign"; fault("foreign-root");
+    } else if (phase === "stale-submit") {
+      popup.applySettings(); phase = "stale";
     } else if (phase === "stale" && release) {
       check(held.status === "saved" && held.refreshState === "stale", "real stale completion");
       var before = calls, beforeClose = closes;
@@ -345,7 +364,21 @@ ShellRoot {
         console.error("I4_ACTION_ASSERT: fault helper");
         root.finish(2);
       } else
-        root.phase = root.phase === "blocking" ? "blocked" : "retry";
+        root.phase = root.phase === "blocking" ? "blocked" : root.phase === "foreign" ? "stale-submit" : "retry";
+    }
+  }
+  Process {
+    id: seedWriter
+    onExited: code => {
+      try {
+        root.check(code === 0, "actual initial preference file seeded");
+        root.phase = "waiting-owner";
+        var row = root.cases[root.index];
+        Service._openSettingsOwner(row.plugin, function (owner) {
+          try { root.check(owner !== null, "actual native preference owner opened"); root.register(row, owner); }
+          catch (error) { console.error(String(error)); root.finish(2); }
+        });
+      } catch (error) { console.error(String(error)); root.finish(2); }
     }
   }
   FloatingWindow {

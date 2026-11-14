@@ -21,6 +21,7 @@ ShellRoot {
   FileView { id: announced; path: Quickshell.env("I4_AUTH_WORK") + "/announced.json"; printErrors: false }
   Process { id: releaseProcess }
   function check(ok, label) { if (!ok) throw new Error("I4_FINAL_PAGES_ASSERT: " + phase + " " + label); }
+  function openOwner(name,callback){Service._openSettingsOwner(name,function(owner){try{root.check(owner!==null,"native owner "+name);root.register(name,owner);callback();}catch(error){console.error(String(error));Qt.exit(2);}});}
   function register(name, value) {
     var api = Service.createPluginAPI(name, manifests[name], value, {}, {}, {});
     var loaded = Object.assign({}, Service.loadedPlugins); loaded[name] = {api: api}; Service.loadedPlugins = loaded;
@@ -46,15 +47,13 @@ ShellRoot {
     if (started || !Settings.isLoaded) return;
     started = true; input.waitForJob(); manifests = JSON.parse(input.text());
     if (verifyOnly) {
-      Service.loadPluginSettings("spotify-player", function(value) {
-        root.register("spotify-player", value);
-        Service.loadPluginSettings("todo", function(value) { root.register("todo", value); root.phase = "restart"; });
+      openOwner("spotify-player", function() {
+        openOwner("todo", function() { root.phase = "restart"; });
       });
       return;
     }
-    register("spotify-player", {clientId: "fixture-client", clientSecret: "fixture-secret", refreshToken: "fixture-refresh-0"});
-    spotify.saveSettings(function(result) {
-      check(result.status === "saved", "initial inert preferences");
+    openOwner("spotify-player",function(){
+      check(spotify.pluginSettings.clientId==="fixture-client"&&spotify.pluginSettings.refreshToken==="fixture-refresh-0","initial inert preferences");
       popup.openPluginSettings(manifests["spotify-player"], "settings"); phase = "auth";
     });
   }
@@ -97,8 +96,7 @@ ShellRoot {
     } else if (phase === "runtime-current-result" && tokenConsumer === "fixture-token-5") {
       spotify.saveSettings(function(result) {
         check(result.status === "saved" || result.status === "nothing_to_save", "actual runtime token save completed");
-        root.register("todo", {pages: [{id: 0, name: "General"}, {id: 1, name: "Work", opaque: {keep: true}}], todos: [{id: 1, text: "Retained", pageId: 1, priority: "medium", details: "", completed: false, opaque: {keep: true}}], current_page_id: 1});
-        todo.saveSettings(function(result) { check(result.status === "saved" || result.status === "nothing_to_save", "Todo initial owner"); popup.openPluginSettings(manifests.todo, "settings"); phase = "todo"; });
+        openOwner("todo",function(){check(todo.pluginSettings.current_page_id===1,"Todo initial native owner");popup.openPluginSettings(manifests.todo,"settings");phase="todo";});
       });
       phase = "runtime-saving";
     } else if (phase === "todo" && popup.opened && page) {

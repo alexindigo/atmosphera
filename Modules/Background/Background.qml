@@ -57,7 +57,8 @@ Variants {
 
       // Fillmode default is "crop"
       property real fillMode: WallpaperService.getFillModeUniform()
-      property vector4d fillColor: Qt.vector4d(Settings.data.wallpaper.fillColor.r, Settings.data.wallpaper.fillColor.g, Settings.data.wallpaper.fillColor.b, 1.0)
+      property color _fillColor: Settings.data.wallpaper.fillColor
+      property vector4d fillColor: Qt.vector4d(_fillColor.r, _fillColor.g, _fillColor.b, 1.0)
 
       // Solid color mode - track whether current/next are solid colors
       property bool isSolid1: false

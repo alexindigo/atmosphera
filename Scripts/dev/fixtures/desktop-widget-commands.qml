@@ -20,7 +20,11 @@ PanelWindow {
   property var nextWait: null
   property int polls: 0
   property int popupStage: 0
-  Tabs.DesktopWidgetsTab { id: owner; visible: false }
+  property bool faultBlocked: false
+  property bool exitAfterRepair: false
+  property var afterFault: null
+  readonly property var owner: ownerLoader.item
+  Loader { id: ownerLoader; active: Settings.isLoaded; visible: false; sourceComponent: Tabs.DesktopWidgetsTab {} }
   Item { id: scene; anchors.fill: parent }
   QtObject {
     id: popupHost
@@ -28,10 +32,11 @@ PanelWindow {
     function hideDynamicMenu() {}
     function showDialog(dialog) {}
   }
-  Desktop.DraggableDesktopWidget {
-    id: runtimeWidget; screen: root.testScreen; widgetIndex: 0; width: 100; height: 80
+  readonly property var runtimeWidget: runtimeLoader.item
+  Loader { id: runtimeLoader; active: Settings.isLoaded; sourceComponent: Desktop.DraggableDesktopWidget {
+    screen: root.testScreen; widgetIndex: 0; width: 100; height: 80
     widgetData: DesktopWidgetRegistry.getWidgetsForMonitor(root.monitorName)[0] || ({id: "Clock"})
-  }
+  } }
   FileView {
     path: Quickshell.env("I4_ICON_DATA")
     onLoaded: {
@@ -40,8 +45,15 @@ PanelWindow {
     }
   }
   function check(ok, message) { if (!ok) throw new Error("I4_DESKTOP_ASSERT: " + message); }
-  function fail(error) { console.error(String(error)); Qt.exit(2); }
-  function later(callback) { Qt.callLater(function () { try { callback(); } catch (error) { fail(error); } }); }
+  function fail(error) { console.error(String(error)); if(faultBlocked&&!faultProcess.running){exitAfterRepair=true;fault("repair",function(){});return;} Qt.exit(2); }
+  function later(callback) {
+    waitFor(function () {
+      if(!owner||!runtimeWidget)return false;
+      var editor=Settings.createRecordListEditor(["desktopWidgets","monitorWidgets"],[]);
+      if(!editor)return false;
+      editor.detach();return true;
+    },callback);
+  }
   function receipt(callback) {
     Settings.saveResult(function (result) { try { check(result.status !== "failed", "save receipt"); callback(); } catch (error) { fail(error); } });
   }
@@ -77,23 +89,33 @@ PanelWindow {
         Qt.exit(3); return;
       }
       Settings.data.desktopWidgets.monitorWidgets=[];
+      later(function () {
       check(owner._addWidgetToMonitor(monitorName,"Clock"),"first actual tab insertion");
+      later(function () {
       check(list(monitorName)[0].id==="Clock","created record consumer");
       receipt(function () {
         Settings.data.desktopWidgets.monitorWidgets=[{name:"i4-missing",opaque:"missing"}];
+        later(function () {
         check(owner._addWidgetToMonitor("i4-missing","Clock"),"missing list insertion");
+        later(function () {
         check(Settings.data.desktopWidgets.monitorWidgets[0].opaque==="missing","insertion preserves monitor unknowns");
         receipt(moveFirst);
+        });
+        });
+      });
+      });
       });
     } catch (error) { fail(error); }
   }
   function moveFirst() {
     seedMoves(); var original=JSON.stringify(Settings.data.desktopWidgets.monitorWidgets);
+    later(function () {
     check(DesktopWidgetRegistry.captureWidgetInteraction(monitorName,99,["i4-created"])===null,"invalid source capture");
     var canceled=DesktopWidgetRegistry.captureWidgetInteraction(monitorName,0,["i4-created"]); canceled.detach();
     check(JSON.stringify(Settings.data.desktopWidgets.monitorWidgets)===original,"read/cancel creates nothing");
     var before=writes;
     check(owner._moveWidgetToMonitor(monitorName,0,"i4-missing"),"actual tab move");
+    later(function () {
     check(writes===before+1,"move is one owner admission");
     check(list(monitorName)[0].tag==="second" && list("i4-missing")[0].tag==="first","moved original row");
     var moved=list("i4-missing")[0];
@@ -102,8 +124,12 @@ PanelWindow {
     receipt(function () {
       var count=writes;
       check(owner._moveWidgetToMonitor("i4-missing",0,"i4-created"),"absent destination transfer");
+      later(function () {
       check(writes===count+1 && list("i4-missing").length===0 && list("i4-created")[0].tag==="first","one admission and empty source retained");
       receipt(staleActors);
+      });
+    });
+    });
     });
   }
   function staleActors() {
@@ -134,7 +160,7 @@ PanelWindow {
       check(!editor.submit({mustNotLand:true},function (result) {
         try {
           check(result.status==="failed" && list(monitorName)[0].mustNotLand===undefined,"captured gesture fields refuse stale owner"); editor.detach();
-          shortcutCleanup();
+          later(shortcutCleanup);
         } catch (error) { fail(error); }
       }),"stale field admission false");
     });
@@ -181,18 +207,20 @@ PanelWindow {
   }
   function actualShortcutDiscard() {
     var count=list(monitorName).length;
-    Settings.setBindingsUnresolved(true);
     check(owner._createAndEditAppShortcut(),"shortcut creation before failed discard");
     waitFor(function () { return DesktopWidgetRegistry.currentSettingsDialog?.visible; },function () {
       var dialog=DesktopWidgetRegistry.currentSettingsDialog;
+      fault("block",function () {
       dialog.queueSettings({customLabel:"unassigned failed input"});
       waitFor(function () { return dialog.saveFailed && !dialog.saveBusy; },function () {
         check(dialog.settingsDirty,"failed shortcut input retained");
+        fault("repair",function () {
         dialog.requestDiscard(); check(dialog.confirmDiscard(),"explicit shortcut discard confirmed");
         waitFor(function () { return DesktopWidgetRegistry.currentSettingsDialog===null; },function () {
-          Settings.setBindingsUnresolved(false);
           receipt(function () { check(list(monitorName).length===count,"confirmed discard keeps cleanup session alive through closed"); staleShortcutDiscard(); });
         });
+        });
+      });
       });
     });
   }
@@ -222,11 +250,13 @@ PanelWindow {
     });
   }
   function popupFailure() {
-    Settings.setBindingsUnresolved(true); popupStage=1;
+    popupStage=1;
+    later(function () { fault("block",function () {
     DesktopWidgetRegistry.openWidgetSettings(testScreen,0,"Clock",list(monitorName)[0]);
     waitFor(function () { return DesktopWidgetRegistry.currentSettingsDialog?.visible; },function () {
       DesktopWidgetRegistry.currentSettingsDialog.queueSettings({i4Explicit:true});
     });
+    }); });
   }
   Connections {
     target: DesktopWidgetRegistry.currentSettingsDialog
@@ -242,7 +272,7 @@ PanelWindow {
         check(DesktopWidgetRegistry.currentSettingsDialog===dialog,"competing open retains failed Popup");
         dialog.requestDiscard(); check(dialog.discardPending,"discard asks"); dialog.keepEditing();
         check(dialog.settingsDirty && !dialog.discardPending,"canceled discard retains input");
-        Settings.setBindingsUnresolved(false); popupStage=2; dialog.saveAndClose();
+        fault("repair",function () {popupStage=2;dialog.saveAndClose();});
       } else if (popupStage===2) {
         check(result.status!=="failed" && !dialog.settingsDirty,"same editor retry receipt"); popupStage=3;
         waitFor(function () { return DesktopWidgetRegistry.currentSettingsDialog===null; },saveFinal);
@@ -257,6 +287,18 @@ PanelWindow {
     check(list("i4-empty").length===0 && list("i4-assigned")[0].appId==="i4.app","final shortcut cleanup/preservation");
   }
   function saveFinal() { receipt(function () { finalChecks(); console.log("I4_DESKTOP_COMMANDS: SAVED_PASS"); Qt.exit(0); }); }
+  function fault(mode,callback){afterFault=callback;faultProcess.command=["python3","-B",Quickshell.env("I5_DESKTOP_FAULT"),Quickshell.env("ATMOSPHERA_CONFIG_DIR"),mode];faultProcess.running=true;}
+  Process {
+    id:faultProcess
+    onExited:code=>{
+      try {
+        root.check(code===0,"private real-IO fault prerequisite");
+        root.faultBlocked=command[command.length-1]==="block";
+        if(root.exitAfterRepair){Qt.exit(2);return;}
+        var callback=root.afterFault;root.afterFault=null;callback();
+      }catch(error){root.fail(error);}
+    }
+  }
   Connections { target: Settings.data.desktopWidgets; function onMonitorWidgetsChanged() { root.writes++; } }
   Connections { target: Settings; function onSettingsLoaded() { root.begin(); } }
   Component.onCompleted: begin()

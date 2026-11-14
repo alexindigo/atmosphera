@@ -708,7 +708,16 @@ PopupWindow {
   }
 
   function _setPinned(pinned, callback) {
+    var immediateEditor = false;
+    var editor;
     function complete(result) {
+      // A hidden direct call is one interaction, unlike an explicitly captured
+      // menu session. Release its successful editor before callback reentry;
+      // failed work and delayed menu captures keep their original fences.
+      if (immediateEditor && result.status !== "failed" && root._pinEditor === editor) {
+        editor.commands.detach();
+        root._pinEditor = null;
+      }
       if (result.status === "failed")
         Logger.w("TrayMenu", "Pin command failed:", result.error?.code || "settings-save-failed");
       if (typeof callback === "function")
@@ -730,8 +739,8 @@ PopupWindow {
     // Immediate, non-menu callers capture at submission. Delayed menu callbacks
     // must keep the session captured by showAt, including after a refusal.
     if (!_pinEditor && !visible && !_showRequested)
-      root.capturePinEditor();
-    var editor = _pinEditor;
+      immediateEditor = root.capturePinEditor();
+    editor = _pinEditor;
     if (!editor || editor.item !== root.trayItem || editor.screenName !== (root.shellScreen?.name || "") || editor.section !== root.widgetSection || editor.index !== root.widgetIndex || editor.screenOverride !== (Settings.getBarWidgetsForScreen(editor.screenName) !== Settings.data.bar.widgets))
       return refuse("list-edit-conflict");
     var row = editor.commands.initialValue[editor.index];

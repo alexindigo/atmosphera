@@ -7,6 +7,7 @@ import "../../../Helpers/SettingsValues.js" as SettingsValues
 import qs.Commons
 import qs.Services.Plugins
 import qs.Widgets
+import "plugin-editor-probe.js" as EditorProbe
 
 ShellRoot {
   id: root
@@ -27,6 +28,12 @@ ShellRoot {
     path: Quickshell.env("I4_RANGE_INPUTS")
     blockLoading: true
     printErrors: false
+  }
+  FileView { id: rawPreferences; blockLoading: true; printErrors: false }
+  function rawUnknown() {
+    rawPreferences.path = Quickshell.env("ATMOSPHERA_CONFIG_DIR") + "/settings/plugins/" + cases[index].id + ".json";
+    rawPreferences.reload(); rawPreferences.waitForJob();
+    check(JSON.parse(rawPreferences.text()).opaque.keep, "raw unknown preference retained");
   }
   function check(ok, label) {
     if (!ok) throw new Error("I4_RANGE_ASSERT: " + cases[index]?.id + ": " + label);
@@ -69,31 +76,20 @@ ShellRoot {
     var high = Math.max(input.from, input.to);
     return input.value === low ? high : low;
   }
-  function register(item, settings) {
+  function register(item, owner) {
     var component = Qt.createComponent("file://" + Registry.getPluginDir(item.id) + "/" + item.manifest.entryPoints.settings.split("?", 1)[0]);
     check(component.status === Component.Ready, "actual page component ready: " + component.errorString());
-    api = Service.createPluginAPI(item.id, item.manifest, settings, {}, {}, {});
+    api = Service.createPluginAPI(item.id, item.manifest, owner, {}, {}, {});
     var loaded = Object.assign({}, Service.loadedPlugins);
     loaded[item.id] = {api: api};
     Service.loadedPlugins = loaded;
     var original = api.createSettingsEditor;
     api.createSettingsEditor = function () {
       var editor = original();
-      var wrapper = {
-        initialValue: editor.initialValue,
-        discard: editor.discard,
-        apply: function (value, callback) {
-          root.applies++;
-          editor.apply(value, function (result) {
-            root.held = result;
-            root.release = function () {
-              if (result.refreshState === "current") wrapper.initialValue = editor.initialValue;
-              callback(result);
-            };
-          });
-        }
-      };
-      return wrapper;
+      return EditorProbe.observe(editor, function () { root.applies++; }, function (result, callback) {
+        root.held = result;
+        root.release = function () { callback(result); };
+      });
     };
     popup.openPluginSettings(item.manifest, "settings");
     phase = "pristine";
@@ -108,14 +104,14 @@ ShellRoot {
     applies = 0;
     newer = false;
     completion = null;
-    if (verifyOnly) {
-      Service.loadPluginSettings(item.id, function (settings) {
+    phase = "waiting-owner";
+    Service._openSettingsOwner(item.id, function (owner) {
         try {
-          root.check(settings.opaque.keep, "unknown data survives restart");
-          root.register(item, settings);
+          root.check(owner !== null, "actual native preference owner opened");
+          root.rawUnknown();
+          root.register(item, owner);
         } catch (error) { console.error(String(error)); Qt.exit(2); }
-      });
-    } else register(item, item.seed);
+    });
   }
   function start() {
     if (started || !Settings.isLoaded) return;
@@ -167,7 +163,7 @@ ShellRoot {
       check(!popup.busy && !popup.saveFailed && !popup.dirty && !page.settingsDirty, "accepted range display is clean");
       var accepted = snapshot(page);
       console.log("I4_RANGE_EXPECTED|" + JSON.stringify({id: item.id, expected: accepted}));
-      check(api.pluginSettings.opaque.keep, "unknown preference retained");
+      rawUnknown();
       popup.requestClose();
       check(!popup.discardPending, "acknowledged Close is clean");
       phase = "closed";

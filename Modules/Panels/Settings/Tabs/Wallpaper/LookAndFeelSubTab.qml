@@ -32,7 +32,7 @@ ColumnLayout {
     NColorPicker {
       screen: root.screen
       selectedColor: Settings.data.wallpaper.fillColor
-      onColorSelected: color => Settings.data.wallpaper.fillColor = color
+      onColorSelected: color => Settings.data.wallpaper.fillColor = String(color)
     }
   }
 

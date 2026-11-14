@@ -22,6 +22,26 @@ Singleton {
   id: root
 
   property bool reloadColors: false
+  property var _reloadCallbacks: []
+
+  function reloadFromDisk(callback) {
+    if (!Settings.directoriesCreated || customColorsFile.path === undefined) {
+      Qt.callLater(function () {
+        callback({
+                   status: "failed",
+                   error: {
+                     code: "colors-not-ready"
+                   }
+                 });
+      });
+      return;
+    }
+    _reloadCallbacks.push(callback);
+    externalColorReloadTimer.stop();
+    _loadVersion++;
+    reloadColors = true;
+    customColorsFile.reload();
+  }
 
   // Debounce external reload requests (file watcher + directory watcher)
   // so atomic replacements only trigger one reload.
@@ -469,6 +489,15 @@ Singleton {
     } else {
       Logger.w("Color", "Colour load rejected; keeping last good colours:", failure || "normalization failed");
     }
+    var callbacks = _reloadCallbacks;
+    _reloadCallbacks = [];
+    for (var callback of callbacks)
+      callback({
+                 status: normalized ? "reloaded" : "failed",
+                 error: {
+                   code: normalized ? "" : "colors-load"
+                 }
+               });
     Qt.callLater(function () {
       if (version === root._loadVersion)
         root.skipTransition = false;

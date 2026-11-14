@@ -1,5 +1,6 @@
 import QtQuick
 import "../Helpers/RecordListEditor.js" as RecordListEditor
+import "../Helpers/SettingsReceipts.js" as SettingsReceipts
 
 // Immediate/debounced field edits, not an Apply/Cancel draft. The injected
 // editor submits owned fields and completes with an actual persistence receipt.
@@ -69,7 +70,7 @@ QtObject {
         return;
       delivered = true;
       root.busy = false;
-      if (!result || (result.status !== "saved" && result.status !== "nothing_to_save") || (result.refreshState !== undefined && result.refreshState !== "current")) {
+      if (!SettingsReceipts.acknowledged(result)) {
         root.failed = true;
         root.closePending = false;
         root._timer.stop();

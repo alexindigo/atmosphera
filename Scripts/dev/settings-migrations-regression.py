@@ -8,6 +8,7 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
 from pathlib import Path
 import subprocess
 
@@ -96,6 +97,8 @@ def main():
         stream.write(fixture.replace(b'../../../Commons/Migrations/SettingsMigrationSource.js',
                                     b'./Commons/Migrations/SettingsMigrationSource.js'))
     rows = []
+    oracle = args.installed/'i5-migration-oracle'
+    shutil.copytree(args.source/'Scripts/dev/fixtures/settings-migration-oracle', oracle)
 
     def run(name, spec, negative=None):
         env = dict(os.environ, I5_MIGRATION_SPEC=json.dumps(spec), QML_DISABLE_DISK_CACHE='1')
@@ -190,6 +193,7 @@ def main():
     finally:
         resource.write_bytes(original_resource)
         probe.unlink()
+        shutil.rmtree(oracle)
 
 
 if __name__ == '__main__':

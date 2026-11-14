@@ -30,11 +30,12 @@ def main():
     assert paths[('bar','widgets','left')]['element']['open']
     assert paths[('bar','widgets','left')]['element']['fields']['instanceSettings']['open']
     assert 'stringPattern' in paths[('wallpaper','fillColor')]
+    expected_resources = module.outputs(ROOT)
     checked = 0
     with tempfile.TemporaryDirectory(prefix='schema-contract-') as name:
         root = Path(name)
         for relative in ('Configs/defaults.json', 'Configs/settings-schema-overlay.json',
-                         'Commons/Settings.qml','Modules/OSD/OSD.qml'):
+                         'Modules/OSD/OSD.qml'):
             dest = root/relative
             dest.parent.mkdir(parents=True,exist_ok=True)
             shutil.copyfile(ROOT/relative,dest)
@@ -44,7 +45,12 @@ def main():
                 shutil.copyfile(ROOT/relative,root/relative)
             mutate(root)
             try:
-                module.outputs(root)
+                generated = module.outputs(root)
+                # The production --check gate compares all generated resources.
+                # After adapter retirement, a valid-but-unregenerated type or
+                # validation edit must fail freshness, not a duplicate schema.
+                if generated != expected_resources:
+                    raise ValueError('stale generated resources')
             except ValueError:
                 checked += 1
             else:
@@ -72,7 +78,17 @@ def main():
             path = root/'Configs/defaults.json'
             data = json.loads(path.read_text()); data['bar']['widgetSpacing'] += 1
             path.write_text(json.dumps(data))
-        negative('adapter value drift', changed_default)
+        # Defaults are now authored once. A valid edit must change generated
+        # resources, not fail against a retired runtime adapter's duplicate.
+        for relative in ('Configs/defaults.json','Configs/settings-schema-overlay.json'):
+            shutil.copyfile(ROOT/relative,root/relative)
+        before = module.outputs(root)
+        changed_default(root)
+        after = module.outputs(root)
+        assert before != after, 'default edit failed to invalidate generated resources'
+        assert before['Commons/SettingsSchema.qml'] != after['Commons/SettingsSchema.qml']
+        assert before['Helpers/SettingsDefaults.js'] != after['Helpers/SettingsDefaults.js']
+        checked += 1
     for name,text in module.outputs(ROOT).items():
         assert (ROOT/name).read_bytes()==text.encode(), 'stale: '+name
     print(f'SETTINGS_SCHEMA_SELFTEST: PASS ({checked} rejecting controls; 36 lists, 29 shards)')

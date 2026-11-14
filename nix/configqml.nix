@@ -2,8 +2,8 @@
     owner = "alexindigo";
     repo = "configqml";
     # Pre-release pin; replace with the published v0.5.0 archive at acceptance.
-    rev = "06cecc3a0ed70c6997482db45208727449cbc322";
-    hash = "sha256-83ONqLxf9qb5kxkALSeoz7/KKGVmhSO/Nq3bf7X4Q8o=";
+    rev = "a3240f2dbc9adae2ea51e89b3fa5ca5f53b23055";
+    hash = "sha256-mI5VAMR8hnXAASKn4P54NDX7nblhSTCweVF7nmU2OEA=";
   }
 }:
 stdenv.mkDerivation {

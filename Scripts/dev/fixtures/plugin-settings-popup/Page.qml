@@ -9,6 +9,7 @@ ColumnLayout {
   property string labelText: pluginApi.pluginSettings.label || ""
   readonly property bool settingsDirty: labelText !== pluginApi.pluginSettings.label
   property int saves: 0
+  property bool stageOnSave: true
   property int completions: 0
   property string lastStatus: ""
 
@@ -21,7 +22,7 @@ ColumnLayout {
   function setLabel(value) { labelText = value; }
   function saveSettings() {
     saves++;
-    pluginApi.pluginSettings.label = labelText;
+    if(stageOnSave)pluginApi.pluginSettings.label = labelText;
     pluginApi.saveSettings(function (result) {
       root.completions++;
       root.lastStatus = result.status;
