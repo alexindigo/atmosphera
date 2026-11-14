@@ -8,7 +8,8 @@ import re
 import shutil
 import subprocess
 
-from filechooser_isolation import ROOT, enter, guest, profile_env
+from filechooser_isolation import enter, guest, profile_env
+from filechooser_profile import current_profile, exact_source, profile_argument
 from theming_oracle import install_file_oracle
 
 
@@ -19,10 +20,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, required=True)
     parser.add_argument('--label', required=True)
+    profile_argument(parser)
     args = parser.parse_args()
     source = args.source.resolve()
-    assert source.is_relative_to(ROOT / 'sources')
-    runtime, output = ROOT / 'runtime' / args.label, ROOT / 'evidence' / args.label
+    assert exact_source(source)
+    runtime, output = current_profile().runtime / args.label, current_profile().evidence / args.label
     assert not runtime.exists() and not output.exists()
     output.mkdir(); runtime.mkdir()
     try:

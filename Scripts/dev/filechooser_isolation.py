@@ -4,6 +4,7 @@ Every entry point calls enter() before doing work. Nested drivers inherit the
 same checked environment and cgroup; they never discover a login compositor.
 """
 
+from contextlib import contextmanager
 import fcntl
 import hashlib
 import json
@@ -216,7 +217,7 @@ def _audit_probe(base, output, label, admin_env, main_properties):
            "DBUS_SESSION_BUS_ADDRESS": "unix:path=" + str(profile / "run/no-bus"),
            "DBUS_SYSTEM_BUS_ADDRESS": "unix:path=" + str(profile / "run/no-system-bus")}
     body = ("import json,os,time; from pathlib import Path; "
-            "assert os.getuid()==1000; assert Path('/proc/self/oom_score_adj').read_text().strip()=='1000'; "
+            f"assert os.getuid()=={current_profile().uid}; assert Path('/proc/self/oom_score_adj').read_text().strip()=='1000'; "
             f"pending=Path({str(live) + '.pending'!r}); pending.write_text(json.dumps({{'pid':os.getpid(),'namespace':os.readlink('/proc/self/ns/pid')}})); pending.replace({str(live)!r}); "
             "deadline=time.monotonic()+15\n"
             f"while not Path({str(release)!r}).exists():\n"
@@ -260,6 +261,33 @@ def _audit_probe(base, output, label, admin_env, main_properties):
             os.close(fd)
 
 
+def service_guard():
+    """Retain serialization in the service even if its controller disconnects."""
+    guard = (current_profile().runtime / ".filechooser-service.lock").open("a")
+    try:
+        fcntl.flock(guard, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BaseException:
+        guard.close()
+        raise
+    return guard
+
+
+@contextmanager
+def reservation(budget):
+    """Shared admission boundary, including system-bus/mount-aware workloads."""
+    current_profile().prepare_roots()
+    with (current_profile().runtime / ".filechooser-isolation.lock").open("a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        with (current_profile().runtime / ".filechooser-gate.lock").open("a") as gate_lock:
+            fcntl.flock(gate_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        try:
+            with service_guard():
+                pass
+        except BlockingIOError:
+            raise RuntimeError("filechooser admission refused: another private workload owns the guest budget") from None
+        yield admit(budget)
+
+
 def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=False, gate_probe=False, oom_floor=False, browser_resources=False, resource_subject=False):
     """Give the workload its requested time after bounded session startup."""
     guest()
@@ -290,26 +318,16 @@ def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=Fal
     # Serialize private workloads: multiple individually bounded services must
     # not collectively starve the login session. The lock is held until systemd
     # has reaped the entire service cgroup, including detached shell children.
-    with (current_profile().runtime / ".filechooser-isolation.lock").open("a") as lock:
-        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        with (current_profile().runtime / ".filechooser-gate.lock").open("a") as gate_lock:
-            fcntl.flock(gate_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        # A detached service retains this second lock after its SSH launcher
-        # exits. Check it before admission/start, not only after starting a unit.
-        with (current_profile().runtime / ".filechooser-service.lock").open("a") as service_lock:
-            try:
-                fcntl.flock(service_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            except BlockingIOError:
-                raise RuntimeError("filechooser admission refused: another private workload owns the guest budget")
-        ram = memory_info()["MemTotal"]
-        maximum = ram // 4 // (1024 * 1024) * 1024 * 1024
-        high = maximum * 3 // 4
-        # The fixed auxiliary probe is the only additional unit allowed while
-        # this lock is held; reserve its entire budget at the same admission.
-        admission = admit(maximum + (64 * MIB if memory_probe or audit_probe else 0))
+    ram = memory_info()["MemTotal"]
+    maximum = ram // 4 // MIB * MIB
+    high = maximum * 3 // 4
+    # The fixed auxiliary probe is the only additional unit allowed while
+    # this lock is held; reserve its entire budget at the same admission.
+    with reservation(maximum + (64 * MIB if memory_probe or audit_probe else 0)) as admission:
         (output / "admission.json").write_text(json.dumps(admission, indent=2))
         base.mkdir()
-        env = dict(os.environ, XDG_RUNTIME_DIR="/run/user/1000", DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/1000/bus")
+        user_runtime = f"/run/user/{current_profile().uid}"
+        env = dict(os.environ, XDG_RUNTIME_DIR=user_runtime, DBUS_SESSION_BUS_ADDRESS=f"unix:path={user_runtime}/bus")
         command = ["systemd-run", "--user", *([] if detach else ["--wait", "--pipe", "--collect"]),
                     "--unit=filechooser-" + label, "--service-type=exec",
                     "--setenv=TMPDIR=" + str(workspace() / "tmp"),
@@ -415,8 +433,7 @@ def session(base, output, argv):
     # interrupted SSH/systemd-run client must not release the workload lock.
     guard = None
     if "FILECHOOSER_ISOLATION" not in os.environ:
-        guard = (current_profile().runtime / ".filechooser-service.lock").open("a")
-        fcntl.flock(guard, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        guard = service_guard()
         (output / "supervisor-ready").touch()
         deadline = time.monotonic() + 25
         while not (output / "supervisor-admitted").exists():

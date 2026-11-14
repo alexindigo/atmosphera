@@ -17,6 +17,7 @@ import re
 import time
 
 from filechooser_profile import current_profile, exact_source, profile_argument
+from filechooser_isolation import MIB, reservation, service_guard
 
 
 def main():
@@ -32,11 +33,29 @@ def main():
     assert re.fullmatch(r"[a-z0-9][a-z0-9-]+", args.label)
     if not args.private:
         env = dict(os.environ, XDG_RUNTIME_DIR=f"/run/user/{os.getuid()}", DBUS_SESSION_BUS_ADDRESS=f"unix:path=/run/user/{os.getuid()}/bus")
-        return subprocess.run(["timeout", "100", "systemd-run", "--user", "--pipe", "--wait", "--collect", "--unit=filechooser-" + args.label,
-                               "--setenv=TMPDIR=" + os.environ["TMPDIR"],
-                               "-p", "MemoryMax=768M", "-p", "MemorySwapMax=0", "-p", "TasksMax=128", "-p", "CPUQuota=100%",
-                               "dbus-run-session", "--", sys.executable, "-B", str(Path(__file__).resolve()), *sys.argv[1:], "--private", "--guest-profile", str(current_profile().path)],
-                              env=env, timeout=110).returncode
+        unit = "filechooser-" + args.label
+        with reservation(768 * MIB) as admission:
+            (current_profile().evidence / (args.label + "-admission.json")).write_text(json.dumps(admission, indent=2))
+            try:
+                return subprocess.run(["timeout", "100", "systemd-run", "--user", "--pipe", "--wait", "--collect", "--unit=" + unit,
+                                       "--setenv=TMPDIR=" + os.environ["TMPDIR"],
+                                       "-p", "MemoryMax=768M", "-p", "MemorySwapMax=0", "-p", "TasksMax=128", "-p", "CPUQuota=100%",
+                                       "-p", "RuntimeMaxSec=90", "-p", "TimeoutStopSec=10",
+                                       "dbus-run-session", "--", sys.executable, "-B", str(Path(__file__).resolve()), *sys.argv[1:], "--private", "--guest-profile", str(current_profile().path)],
+                                      env=env, timeout=110).returncode
+            finally:
+                # Keep admission until the whole owned unit has stopped, also
+                # after an interrupted/timed-out systemd-run control connection.
+                subprocess.run(["timeout", "15", "systemctl", "--user", "stop", unit], env=env,
+                               capture_output=True, timeout=20)
+                state = subprocess.run(["timeout", "10", "systemctl", "--user", "show", unit, "-p", "ActiveState"],
+                                       env=env, capture_output=True, text=True, check=True, timeout=15)
+                assert state.stdout.strip() in ("ActiveState=inactive", "ActiveState=failed"), state.stdout
+    with service_guard():
+        return run(args, source)
+
+
+def run(args, source):
     runtime, output = current_profile().runtime / args.label, current_profile().evidence / args.label
     assert not runtime.exists() and not output.exists()
     runtime.mkdir(); output.mkdir()
