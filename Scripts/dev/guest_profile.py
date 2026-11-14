@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 import re
 import shlex
+import signal
 import subprocess
 import tempfile
 import uuid
@@ -240,11 +241,42 @@ def activate_profile(path, require_console=False):
     return profile
 
 
+class OwnedProcessGuard:
+    """A child's launch identity is independent of protected-console health."""
+    def __init__(self, proc):
+        self.process = proc
+        self.identity = None
+        console = current_profile().console
+        if proc.pid in console.pids:
+            raise ProfileBlocked("refusing captured console/runner process-group ownership")
+        try:
+            observed = ProcessIdentity.read(proc.pid)
+        except (FileNotFoundError, ProcessLookupError):
+            if proc.poll() is not None:
+                return
+            raise
+        if observed.uid != os.getuid() or observed.pgid in console.groups or observed.pgid == os.getpgrp():
+            raise ProfileBlocked("refusing captured console/runner process-group ownership")
+        if observed.pgid != proc.pid:
+            raise ProfileBlocked("owned child is not its recorded session/group leader")
+        self.identity = observed
+
+    def terminate(self):
+        if self.process.poll() is not None:
+            return
+        observed = ProcessIdentity.read(self.process.pid)
+        expected = self.identity
+        # argv is diagnostic: an owned child may legitimately exec. Kernel
+        # start time, UID and the captured session/group establish ownership.
+        if expected is None or (observed.pid, observed.start, observed.uid, observed.pgid) != (
+                expected.pid, expected.start, expected.uid, expected.pgid):
+            raise ProfileBlocked("owned child identity changed before scoped termination")
+        try:
+            os.killpg(expected.pgid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+
+
 def protect_owned_process(proc):
-    """Validate a newly spawned owned session before any scoped termination."""
-    console = current_profile().console
-    console.verify()
-    if proc.pid in console.pids or os.getpgid(proc.pid) in console.groups or os.getpgid(proc.pid) == os.getpgrp():
-        raise ProfileBlocked("refusing captured console/runner process-group ownership")
-    if os.getpgid(proc.pid) != proc.pid:
-        raise ProfileBlocked("owned child is not its recorded session/group leader")
+    """Capture a newly spawned session; health is reported by profile.verify()."""
+    return OwnedProcessGuard(proc)

@@ -7,7 +7,6 @@ import os
 from pathlib import Path
 import re
 import shutil
-import signal
 import stat
 import subprocess
 import tempfile
@@ -136,24 +135,36 @@ def main():
     with (out / "engine.log").open("xb") as log:
         proc = subprocess.Popen(command, cwd=source, env=env, stdout=log,
                                 stderr=subprocess.STDOUT, start_new_session=True)
-        (out / "ownership.json").write_text(json.dumps({"guest_profile": profile.record(),
-            "source": str(source), "output": str(out), "pid": proc.pid, "uid": os.getuid(),
-            "live_desktop_fixture": False, "command": command, "timeout_seconds": 25,
-            "runtime_root": str(runtime_dir), "copied_input_hashes": copies,
-            "entry_sha256": digest(entry)}, indent=2) + "\n")
-        deadline = time.monotonic() + 25
-        while proc.poll() is None:
-            if time.monotonic() > deadline or log.tell() > 1024 * 1024 or (out / "engine.log").stat().st_size > 1024 * 1024:
-                timed_out = True
-                errors.append("inert engine deadline/log bound exceeded")
-                protect_owned_process(proc)
-                os.killpg(proc.pid, signal.SIGTERM)
-                break
-            time.sleep(.02)
+        owned = None
         try:
-            proc.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            errors.append("owned inert child did not quiesce after scoped TERM")
+            owned = protect_owned_process(proc)
+            (out / "ownership.json").write_text(json.dumps({"guest_profile": profile.record(),
+                "source": str(source), "output": str(out), "pid": proc.pid, "uid": os.getuid(),
+                "owned_identity": owned.identity.record() if owned.identity else None,
+                "live_desktop_fixture": False, "command": command, "timeout_seconds": 25,
+                "runtime_root": str(runtime_dir), "copied_input_hashes": copies,
+                "entry_sha256": digest(entry)}, indent=2) + "\n")
+            deadline = time.monotonic() + 25
+            while proc.poll() is None:
+                if time.monotonic() > deadline or log.tell() > 1024 * 1024 or (out / "engine.log").stat().st_size > 1024 * 1024:
+                    timed_out = True
+                    errors.append("inert engine deadline/log bound exceeded")
+                    break
+                time.sleep(.02)
+        except BaseException as error:
+            errors.append("inert engine supervision failed: " + repr(error))
+        finally:
+            if proc.poll() is None:
+                try:
+                    if owned is None:
+                        owned = protect_owned_process(proc)
+                    owned.terminate()
+                except (OSError, ProfileBlocked) as error:
+                    errors.append("owned inert child termination refused: " + repr(error))
+            try:
+                proc.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                errors.append("owned inert child did not quiesce after scoped TERM")
     try:
         os.killpg(proc.pid, 0)
     except ProcessLookupError:

@@ -696,12 +696,12 @@ def run(args, **kwargs):
         check = kwargs.pop("check", False)
         proc = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                 text=True, start_new_session=True, **kwargs)
+        owned = protect_owned_process(proc)
         try:
             out, err = proc.communicate(timeout=timeout)
         except subprocess.TimeoutExpired as error:
             if proc.poll() is None:
-                protect_owned_process(proc)
-                os.killpg(proc.pid, signal.SIGTERM)
+                owned.terminate()
             try:
                 out, err = proc.communicate(timeout=5)
             except subprocess.TimeoutExpired:
