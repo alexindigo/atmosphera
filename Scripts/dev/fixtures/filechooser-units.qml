@@ -6,6 +6,7 @@ import "filechooser-icon-cases.js" as IconCases
 import qs.Commons
 import qs.Modules.FileChooser
 import qs.Services.Files
+import qs.Services.UI
 
 ShellRoot {
   id: root
@@ -19,6 +20,8 @@ ShellRoot {
   property string beforeMemory: ""
   property var beforeNames: []
   property double staleStarted: 0
+  property var tooltipOwner: null
+  Component { id: tooltipOwnerFactory; Item {} }
 
   FilePreview {
     id: preview
@@ -818,6 +821,56 @@ ShellRoot {
     step(() => request.browser.indexOfPath(base + "/Alpha.txt") >= 0, function () {
       same("filter.save-toggle", [request.saveName, request.browser.saveFilterText], ["Another draft.txt", ""]);
       request.cancel();
+      fileBrowser.navigate(aux + "/creation");
+    });
+    step(ready, function () {
+      fileBrowser.showHidden = false;
+      for (var i = 0, invalid = ["", ".", "..", "child/name", "bad\u0000name"]; i < invalid.length; i++) {
+        fileBrowser.createFolder(invalid[i]);
+        report("create.invalid-" + i, fileBrowser.creatingFolder && fileBrowser.createFolderError !== "", fileBrowser.createFolderError);
+        fileBrowser.cancelCreateFolder();
+      }
+      fileBrowser.createFolder("Created");
+    });
+    step(() => ready() && !fileBrowser.creatingFolder, function () {
+      report("create.success-model", fileBrowser.indexOfPath(aux + "/creation/Created") >= 0, names());
+      fileBrowser.createFolder("Taken");
+    });
+    step(() => !fileBrowser.createFolderBusy && fileBrowser.createFolderError !== "", function () {
+      same("create.exists-directory", fileBrowser.createFolderError, I18n.tr("widgets.file-picker.create-folder-exists"));
+      fileBrowser.createFolder("Existing.txt");
+    });
+    step(() => !fileBrowser.createFolderBusy && fileBrowser.createFolderError !== "", function () {
+      same("create.exists-file", fileBrowser.createFolderError, I18n.tr("widgets.file-picker.create-folder-exists"));
+      fileBrowser.navigate(aux + "/write-denied");
+    });
+    step(ready, function () { fileBrowser.createFolder("Denied"); });
+    step(() => !fileBrowser.createFolderBusy && fileBrowser.createFolderError !== "", function () {
+      same("create.permission", fileBrowser.createFolderError, I18n.tr("widgets.file-picker.create-folder-permission"));
+      fileBrowser.navigate(aux + "/readonly");
+    });
+    step(ready, function () { fileBrowser.createFolder("Read only"); });
+    step(() => !fileBrowser.createFolderBusy && fileBrowser.createFolderError !== "", function () {
+      same("create.readonly", fileBrowser.createFolderError, I18n.tr("widgets.file-picker.create-folder-readonly"));
+      createRequest("open", {current_folder: PortalPaths.encodeBytePath(aux + "/creation").bytes, directory: true});
+    });
+    step(requestReady, function () { request.beginCreateFolder(); request.browser.createFolder("Folder selection"); });
+    step(() => requestReady() && !request.browser.creatingFolder, function () {
+      same("create.folder-selection", request.selection.selectedPaths, [aux + "/creation/Folder selection"]);
+      request.cancel();
+      createRequest("save", {current_folder: PortalPaths.encodeBytePath(aux + "/creation").bytes, current_name: "draft.txt"});
+    });
+    step(requestReady, function () { request.beginCreateFolder(); request.browser.createFolder("Save folder"); });
+    step(() => requestReady() && !request.browser.creatingFolder, function () {
+      same("create.save-stays-in-folder", [request.browser.currentPath, request.saveName, request.selection.cursor >= 0], [aux + "/creation", "draft.txt", true]);
+      request.cancel();
+      tooltipOwner = tooltipOwnerFactory.createObject(root);
+      TooltipService.show(tooltipOwner, "Folder action", "auto", 5000);
+      tooltipOwner.destroy();
+      tooltipOwner = null;
+    });
+    step(() => !TooltipService.pendingTooltip && !TooltipService.activeTooltip, function () {
+      report("tooltip.owner-lifetime", true, null);
     });
   }
 

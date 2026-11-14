@@ -112,6 +112,16 @@ def main():
             key(106)
         key(1)
         wait(lambda s: not s["filterText"])
+    def new_folder():
+        command(["ydotool", "key", "29:1", "42:1", "49:1", "49:0", "42:0", "29:0"])
+        return wait(lambda s: s["creatingFolder"] and s["focusedControl"] == "Folder name")
+    def click_header(label):
+        s = state(); g = s["layoutGeometry"]
+        button = next(c for c in g["header"] if c.get("name") == label)
+        x = int((1280 - g["width"]) / 2 + button["x"] + button["width"] / 2)
+        y = int((800 - g["height"]) / 2 + button["y"] + button["height"] / 2)
+        command(["ydotool", "click", x, y, 272, 0])
+        command(["ydotool", "move", 5, 5])
     try:
         wait(lambda s: s["ready"], 30)
         command(["grim", evidence / "header.png"])
@@ -120,6 +130,59 @@ def main():
             for c in s["layoutGeometry"]["header"]))
         check("toolbar-icon-slots-square", lambda s: all(not c.get("iconOnly") or abs(c["width"] - c["height"]) < .5
               for c in s["layoutGeometry"]["header"]))
+        command(["ydotool", "key", "29:1", "42:1", "49:1", "49:0", "42:0", "29:0"])
+        wait(lambda s: s["creatingFolder"])
+        check("new-folder-shortcut-focus", lambda s: s["focusedControl"] == "Folder name")
+        key(1)
+        check("new-folder-Escape-cancels-only-editor", lambda s: not s["creatingFolder"] and not s["settled"])
+        creation = runtime / "Creation"
+        creation.mkdir(); (creation / "Taken").mkdir()
+        for tag, method, options in (("open", "open", {}), ("multiple", "open", {"multiple": True}),
+                                      ("folder", "open", {"directory": True}), ("save", "save", {"current_name": "draft.txt"})):
+            open_request(method, "dev.filechooser.creation", str(creation), **options)
+            if tag == "open":
+                click_header("New folder")
+                wait(lambda s: s["creatingFolder"] and s["focusedControl"] == "Folder name")
+            else:
+                new_folder()
+            check(tag + "-new-folder-prefilled-selected", lambda s: s["folderEditor"]["name"] == "New folder" and s["folderEditor"]["selection"] == [0, 10])
+            name = "Created " + tag
+            command(["ydotool", "type", name]); key(28)
+            wait(lambda s: s["ready"] and not s["creatingFolder"] and s["name"] == name)
+            check(tag + "-new-folder-filesystem-and-cursor", lambda s: (creation / name).is_dir() and s["path"] == str(creation) and not s["settled"])
+            check(tag + "-new-folder-listing-focus", lambda s: s["focus"] == "listing")
+            if tag == "folder":
+                check("new-folder-is-folder-selection", lambda s: s["selected"] == [str(creation / name)])
+            if tag == "save":
+                check("new-folder-keeps-save-name-and-does-not-enter", lambda s: s["saveName"] == "draft.txt" and s["path"] == str(creation))
+        open_request("open", "dev.filechooser.creation", str(creation))
+        for name, fragment in ((".", "Enter a name"), ("child/name", "Enter a name"), ("Taken", "already exists")):
+            new_folder(); command(["ydotool", "type", name]); key(28)
+            wait(lambda s: s["createFolderError"] != "")
+            check("new-folder-error-" + name.replace("/", "-"), lambda s: fragment in s["createFolderError"] and s["creatingFolder"] and s["focusedControl"] == "Folder name")
+            check("new-folder-error-controls-aligned-" + name.replace("/", "-"), lambda s: max(s["folderEditor"]["centers"]) - min(s["folderEditor"]["centers"]) < .5)
+            command(["grim", evidence / ("new-folder-error-" + name.replace("/", "-") + ".png")])
+            key(1)
+        for i in range(80):
+            (creation / f"Existing directory {i:02d}").mkdir()
+        wait(lambda s: s["count"] == 85)
+        new_folder(); command(["ydotool", "type", "Final folder"])
+        command(["grim", evidence / "new-folder-editor.png"])
+        key(28); wait(lambda s: s["ready"] and s["name"] == "Final folder" and not s["creatingFolder"])
+        def cursor_contained(s):
+            g = s["layoutGeometry"]["entries"]; c, v = g["cursor"], g["viewport"]
+            return c["y"] >= v["y"] - .5 and c["y"] + c["height"] <= v["y"] + v["height"] + .5
+        wait(cursor_contained)
+        check("created-folder-scrolled-into-view", lambda s: cursor_contained(s) and s["scroll"]["y"] > 0 and s["focus"] == "listing")
+        command(["grim", evidence / "new-folder-created.png"])
+        denied = creation / "Read only permissions"
+        denied.mkdir(); denied.chmod(0o555)
+        open_request("open", "dev.filechooser.creation", str(denied))
+        new_folder(); command(["ydotool", "type", "Denied"]); key(28)
+        wait(lambda s: "permission" in s["createFolderError"])
+        check("new-folder-permission-error-inline", lambda s: s["creatingFolder"] and not (denied / "Denied").exists() and not s["settled"])
+        key(1)
+        ipc("open", "open"); wait(lambda s: s["ready"] and s["focus"] == "listing")
         ipc("focusListing")
         command(["ydotool", "type", "nOtEs"])
         wait(lambda s: s["filterText"] == "nOtEs" and s["names"] == ["Field notes.md"])

@@ -52,6 +52,23 @@ FocusScope {
       wheelStep: wheelTypography.implicitHeight * Qt.styleHints.wheelScrollLines};
   }
   NText { id: wheelTypography; visible: false; pointSize: Style.fontSizeM }
+  function folderEditorState() {
+    function center(item) { return item.mapToItem(root, 0, item.height / 2).y; }
+    return {name: newFolderField.text, selection: [newFolderField.inputItem.selectionStart, newFolderField.inputItem.selectionEnd],
+      centers: [center(newFolderIcon), center(newFolderField), center(createFolderButton)]};
+  }
+  function focusNavigation() {
+    newFolderField.inputItem.focus = false;
+    root.forceActiveFocus();
+  }
+  Connections {
+    target: root.request.browser
+    function onCreatingFolderChanged() {
+      if (root.request.browser.creatingFolder)
+        Qt.callLater(function() { newFolderField.inputItem.forceActiveFocus(); newFolderField.inputItem.selectAll(); });
+    }
+    function onFolderCreated(path) { root.focusNavigation(); }
+  }
 
   function controlGeometry() {
     var view = request.viewMode === "list" ? list : grid;
@@ -72,7 +89,8 @@ FocusScope {
         width: bounds.width,
         height: bounds.height
       },
-      tiles: tiles
+      tiles: tiles,
+      cursor: tileRect()
     };
   }
   function iconState() {
@@ -144,6 +162,45 @@ FocusScope {
     anchors.fill: parent
     anchors.margins: Style.marginXS
     spacing: Style.marginXS
+    GridLayout {
+      visible: root.request.browser.creatingFolder
+      Layout.fillWidth: true
+      columns: 3
+      columnSpacing: Style.marginM
+      rowSpacing: Style.marginXS
+      AtmoIcon { id: newFolderIcon; Layout.row: 0; Layout.column: 0; icon: Icon.filepickerFolder; pointSize: Style.fontSizeXXL }
+      ChooserTextField {
+        id: newFolderField
+        Layout.row: 0
+        Layout.column: 1
+        Layout.fillWidth: true
+        accessibleName: I18n.tr("widgets.file-picker.folder-name")
+        text: root.request.browser.newFolderName
+        readOnly: root.request.browser.createFolderBusy
+        onTextEdited: root.request.browser.newFolderName = text
+        onAccepted: root.request.browser.createFolder(text)
+      }
+      ChooserButton {
+        id: createFolderButton
+        Layout.row: 0
+        Layout.column: 2
+        visible: !root.request.browser.createFolderBusy
+        text: I18n.tr("widgets.file-picker.create-folder")
+        onClicked: root.request.browser.createFolder(newFolderField.text)
+      }
+      BusyIndicator { Layout.row: 0; Layout.column: 2; visible: root.request.browser.createFolderBusy; running: visible }
+      NText {
+        Layout.row: 1
+        Layout.column: 1
+        Layout.columnSpan: 2
+        visible: text !== ""
+        Layout.fillWidth: true
+        text: root.request.browser.createFolderError
+        color: AtmoColor.mError
+        pointSize: Style.fontSizeS
+        wrapMode: Text.Wrap
+      }
+    }
     FileListColumns {
       id: listHeaders
       visible: root.request.viewMode === "list"
@@ -218,7 +275,7 @@ FocusScope {
           thumbnailProvider: root.thumbnails
           thumbnailActive: !inPool && visible && grid.visible && y + height > grid.contentY && y < grid.contentY + grid.height
           onPressed: modifiers => {
-            root.forceActiveFocus();
+            root.focusNavigation();
             root.request.selection.click(index, modifiers);
           }
           onActivated: root.request.activate(index)
@@ -258,7 +315,7 @@ FocusScope {
           cursor: root.request.selection.cursor === index
           listingFocused: root.navigationFocused
           onPressed: modifiers => {
-            root.forceActiveFocus();
+            root.focusNavigation();
             root.request.selection.click(index, modifiers);
           }
           onActivated: root.request.activate(index)

@@ -59,9 +59,10 @@ PanelWindow {
   }
 
   function focusListing() {
-    listing.forceActiveFocus();
+    listing.focusNavigation();
   }
   function scrollState() { return listing.scrollState(); }
+  function folderEditorState() { return listing.folderEditorState(); }
   function iconState() {
     return listing.iconState();
   }
@@ -82,7 +83,8 @@ PanelWindow {
         y: entry.y + origin.y,
         width: entry.width,
         height: entry.height,
-        iconOnly: entry.iconOnly === true
+        iconOnly: entry.iconOnly === true,
+        name: entry.name || ""
       }));
     }
       return {
@@ -118,6 +120,10 @@ PanelWindow {
       quickLook.opened = false;
     } else if (header.editing)
       header.leavePathEditing();
+      else if (request.browser.creatingFolder) {
+      request.browser.cancelCreateFolder();
+      listing.focusNavigation();
+    }
       else if (request.browser.filtering)
       request.clearFilters();
       else
@@ -129,7 +135,7 @@ PanelWindow {
       var dot = request.saveName.lastIndexOf(".");
       nameField.inputItem.select(0, dot > 0 ? dot : request.saveName.length);
     } else
-      listing.forceActiveFocus();
+      listing.focusNavigation();
     }
       Component.onCompleted: Qt.callLater(initialFocus)
       Connections {
@@ -155,6 +161,12 @@ PanelWindow {
       sequence: "Ctrl+F"
       enabled: !root.quickLookOpen && !root.request.pendingReplace
       onActivated: header.focusFilter()
+    }
+      NScopedShortcut {
+      scope: root.contentItem
+      sequence: "Ctrl+Shift+N"
+      enabled: !root.quickLookOpen && !root.request.pendingReplace && !root.request.browser.createFolderBusy
+      onActivated: root.request.beginCreateFolder()
     }
 
       Rectangle {
@@ -187,7 +199,7 @@ PanelWindow {
       id: header
       Layout.fillWidth: true
       request: root.request
-      onListingFocusRequested: listing.forceActiveFocus()
+      onListingFocusRequested: listing.focusNavigation()
     }
       ChooserButton {
       icon: Icon.close

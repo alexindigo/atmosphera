@@ -155,6 +155,16 @@ Scope {
     browser.filterText = "";
     _saveNameEdited = false;
   }
+  function beginCreateFolder() {
+    clearFilters();
+    browser.beginCreateFolder();
+  }
+  Connections {
+    target: requestBrowser
+    function onFolderCreated(path) {
+      requestSelection.click(requestBrowser.indexOfPath(path), Qt.NoModifier);
+    }
+  }
   onCurrentFilterChanged: _invalidate()
   onChoiceValuesChanged: _invalidate()
   Connections {

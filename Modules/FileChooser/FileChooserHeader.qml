@@ -53,7 +53,8 @@ RowLayout {
       y: item.y,
       width: item.width,
       height: item.height,
-      iconOnly: item.iconOnly === true
+      iconOnly: item.iconOnly === true,
+      name: item.Accessible.name || ""
     }));
   }
   function focusFilter(initial) {
@@ -208,6 +209,11 @@ RowLayout {
     text: root.request.browser.filterText
     onTextEdited: root.request.browser.filterText = text
     onAccepted: root.listingFocusRequested()
+  }
+    ChooserButton {
+    icon: ({type: "svg", source: Qt.resolvedUrl("folder-plus.svg")})
+    tooltipText: I18n.tr("widgets.file-picker.new-folder")
+    onClicked: root.request.beginCreateFolder()
   }
     ChooserButton {
     icon: Icon.filepickerRefresh

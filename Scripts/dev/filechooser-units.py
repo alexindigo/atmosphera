@@ -49,8 +49,14 @@ def main():
         os.utime(path, (stamp, stamp))
     aux = runtime / "aux"
     aux.mkdir()
-    for name in ["documents", "bookmark", "removed", "vanish", "denied", "unreadable", "no-search"] + [f"memory{i}" for i in range(12)]:
+    for name in ["documents", "bookmark", "removed", "vanish", "denied", "unreadable", "no-search", "creation", "write-denied"] + [f"memory{i}" for i in range(12)]:
         (aux / name).mkdir()
+    (aux / "creation/Taken").mkdir()
+    (aux / "creation/Existing.txt").write_text("existing fixture\n")
+    (aux / "write-denied").chmod(0o555)
+    readonly = current_profile().workspace / "fixtures/read-only"
+    assert readonly.is_dir() and os.statvfs(readonly).f_flag & os.ST_RDONLY, "provision the owned guest's read-only fixture first"
+    (aux / "readonly").symlink_to(readonly, target_is_directory=True)
     for name in ["With space", "hash#name", "percent%20literal", "question?mark", "résumé", "a b/c d"]:
         folder = aux / "escaped" / name
         folder.mkdir(parents=True)
@@ -134,6 +140,9 @@ def main():
         required.update(f"paths.{name}.{case}" for case in ("error", "keeps-folder", "keeps-listing", "not-loading", "recovers"))
     required.update(f"paths.helper.{name}" for name in ("With space", "hash#name", "percent%20literal", "question?mark", "résumé", "a b/c d", "strict-portal-spaces", "invalid-urls"))
     required.update("filter." + name for name in ("substring-case", "type-intersection", "folders", "hidden-respected", "hidden-opt-in", "combined-substrings", "navigation-clears", "save-prefill", "save-name-revalidation", "save-toggle"))
+    required.update("create." + name for name in ("success-model", "exists-directory", "exists-file", "permission", "readonly", "folder-selection", "save-stays-in-folder"))
+    required.update("create.invalid-" + str(i) for i in range(5))
+    required.add("tooltip.owner-lifetime")
     missing = sorted(required - {case["case"] for case in cases})
     required_media = {"playback." + name for name in ("initial", "inactive-intents", "volume-low", "volume-high", "volume-step", "invalid-volume", "times", "autoplay", "seek-low", "seek-high", "close-stops", "close-destroys-engine")}
     required_labels = {"labels." + name for name in ("extension-attached", "dots", "long-word", "cjk", "extension-only", "two-lines-only")}

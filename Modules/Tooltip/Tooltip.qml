@@ -45,11 +45,13 @@ PopupWindow {
   }
 
   // Internal properties
-  property var targetItem: null
+  property Item targetItem: null
+  onTargetItemChanged: if (!targetItem) hideImmediately()
   property real anchorX: 0
   property real anchorY: 0
   property bool isPositioned: false
   property bool animatingOut: true
+  property bool retiring: false
   property int screenWidth: 1920
   property int screenHeight: 1080
   property int screenX: 0
@@ -462,6 +464,15 @@ PopupWindow {
     hideAnimation.stop();
     animatingOut = false;
     completeHide();
+  }
+  function retire() {
+    if (retiring)
+      return;
+    retiring = true;
+    hideImmediately();
+    // QML's destroy() queues deletion itself; no closure may retain this object
+    // until an unrelated future event after its anchor has destroyed it.
+    destroy();
   }
 
   // Update content function (supports both text and rows)

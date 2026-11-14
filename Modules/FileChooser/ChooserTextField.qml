@@ -14,12 +14,22 @@ ColumnLayout {
   property alias text: field.text
   property alias inputItem: field
   property alias placeholderText: field.placeholderText
+  property alias readOnly: field.readOnly
   property var icon: ""
   signal accepted
   signal textEdited
   spacing: Style.marginS
-  NText { visible: root.label !== ""; text: root.label; pointSize: Style.fontSizeS; color: AtmoColor.mOnSurfaceVariant }
-  NText { id: typography; visible: false; pointSize: root.fontSize }
+  NText {
+    visible: root.label !== ""
+    text: root.label
+    pointSize: Style.fontSizeS
+    color: AtmoColor.mOnSurfaceVariant
+  }
+  NText {
+    id: typography
+    visible: false
+    pointSize: root.fontSize
+  }
   TextField {
     id: field
     Layout.fillWidth: true

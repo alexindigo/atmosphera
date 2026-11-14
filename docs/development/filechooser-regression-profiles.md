@@ -38,3 +38,18 @@ or host audio endpoint. The initial graph is recorded as `audio-graph.json`;
 all audio processes retain the same namespace, cgroup and process audit as the
 compositor and keyboard. Install `pipewire` and `wireplumber` inside the assigned
 guest alongside the existing Sway, media/image/PDF and compiler prerequisites.
+
+The unit suite's real EROFS case uses an explicitly provisioned read-only bind
+mount inside the assigned guest workspace. It changes no host or shared mount.
+Before units, run inside `atmosphera-mov-filter` on `ark.home`:
+
+```sh
+export TMPDIR=/home/tester/Projects/filechooser-usability/tmp
+timeout 10 mkdir -p /home/tester/Projects/filechooser-usability/fixtures/read-only-source /home/tester/Projects/filechooser-usability/fixtures/read-only
+timeout 10 sudo mount --bind /home/tester/Projects/filechooser-usability/fixtures/read-only-source /home/tester/Projects/filechooser-usability/fixtures/read-only
+timeout 10 sudo mount -o remount,bind,ro /home/tester/Projects/filechooser-usability/fixtures/read-only
+```
+
+The private unprivileged test namespace inherits this mount read-only. The suite
+checks ST_RDONLY, rather than substituting chmod for a filesystem error. Guest
+shutdown removes the temporary mount; provision it again after a reboot.

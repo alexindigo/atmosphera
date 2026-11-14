@@ -28,6 +28,16 @@ Scope {
   readonly property bool canForward: _historyIndex >= 0 && _historyIndex < _history.length - 1
   readonly property bool hasHidden: _hasHidden
   readonly property var pathParts: breadcrumbParts(currentPath, FilePlaces.home)
+  readonly property bool creatingFolder: _creatingFolder
+  readonly property bool createFolderBusy: _createFolderBusy
+  readonly property string createFolderError: _createFolderError
+  property string newFolderName: ""
+  property bool _creatingFolder: false
+  property bool _createFolderBusy: false
+  property string _createFolderError: ""
+  property string _createdPath: ""
+  property int _createGeneration: 0
+  signal folderCreated(string path)
 
   function breadcrumbParts(path, home) {
     var inside = path === home || path.startsWith(home === "/" ? "/" : home + "/");
@@ -45,7 +55,93 @@ Scope {
   property bool _validating: false
 
   signal listingChanged
-  onListingChanged: _listingRevision++
+  onListingChanged: {
+    _listingRevision++;
+    if (_createdPath && status === "ready" && indexOfPath(_createdPath) >= 0) {
+      var created = _createdPath;
+      _createdPath = "";
+      _creatingFolder = false;
+      folderCreated(created);
+    }
+  }
+  onNewFolderNameChanged: _createFolderError = ""
+  onCurrentPathChanged: cancelCreateFolder()
+
+  function beginCreateFolder() {
+    if (_createFolderBusy || !currentPath)
+      return;
+    filterText = "";
+    newFolderName = I18n.tr("widgets.file-picker.new-folder");
+    _createFolderError = "";
+    _creatingFolder = true;
+  }
+  function cancelCreateFolder() {
+    ++_createGeneration;
+    _createdPath = "";
+    _creatingFolder = false;
+    _createFolderError = "";
+  }
+  function createFolder(name) {
+    if (_createFolderBusy || !currentPath)
+      return;
+    newFolderName = String(name);
+    _creatingFolder = true;
+    if (typeof name !== "string" || !name || [".", ".."].includes(name) || name.includes("/") || name.includes("\u0000")) {
+      _createFolderError = I18n.tr("widgets.file-picker.create-folder-invalid");
+      return;
+    }
+    _createFolderError = "";
+    _createFolderBusy = true;
+    var process = createFolderFactory.createObject(root, {generation: ++_createGeneration, folder: currentPath, folderName: name});
+    process.running = true;
+  }
+  readonly property string _createFolderCode: `
+import errno, json, os, stat, sys
+folder, name = sys.argv[1:]
+try:
+    if not name or name in ('.', '..') or '/' in name or chr(0) in name:
+        raise ValueError('invalid')
+    fd = os.open(folder, os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        os.mkdir(name, dir_fd=fd)
+        if not stat.S_ISDIR(os.stat(name, dir_fd=fd, follow_symlinks=False).st_mode):
+            raise OSError('created target changed')
+    finally:
+        os.close(fd)
+    print(json.dumps({'ok': True}))
+except ValueError:
+    print(json.dumps({'ok': False, 'reason': 'invalid'}))
+except OSError as error:
+    reason = {errno.EEXIST: 'exists', errno.EACCES: 'permission', errno.EPERM: 'permission', errno.EROFS: 'readonly', errno.ENAMETOOLONG: 'long'}.get(error.errno, 'unavailable')
+    print(json.dumps({'ok': False, 'reason': reason}))
+`
+  Component {
+    id: createFolderFactory
+    Process {
+      property int generation
+      property string folder
+      property string folderName
+      command: ["timeout", "5", "python3", "-c", root._createFolderCode, folder, folderName]
+      stdout: StdioCollector { id: createOutput }
+      onExited: function(code) {
+        root._createFolderBusy = false;
+        if (generation === root._createGeneration && folder === root.currentPath) {
+          var result;
+          try { result = JSON.parse(createOutput.text); }
+          catch (error) { result = {ok: false, reason: "unavailable"}; }
+          if (code === 0 && result.ok) {
+            if (folderName.startsWith("."))
+              root.showHidden = true;
+            root._createdPath = (folder === "/" ? "" : folder) + "/" + folderName;
+            root.refresh();
+          } else {
+            root._createFolderError = I18n.tr("widgets.file-picker.create-folder-" + (result.reason || "unavailable"));
+          }
+        }
+        destroy();
+      }
+    }
+  }
 
   // All filesystem reads are bounded, argument-vector calls. A failed target
   // never reaches FolderListModel, so it cannot disconnect folder from listing.
