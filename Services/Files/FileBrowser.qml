@@ -37,6 +37,15 @@ Scope {
   property alias newFolderName: fileOperations.newFolderName
   signal folderCreated(string path)
   signal navigationRequested(string path)
+  signal historyLeaving()
+  signal historyRestored(var state)
+  property var _restoreHistory: null
+  function rememberHistory(key, value) {
+    if (_historyIndex < 0) return;
+    var history = _history.slice(), entry = history[_historyIndex];
+    history[_historyIndex] = {path: entry.path, state: Object.assign({}, entry.state, {[key]: value})};
+    _history = history;
+  }
 
   function breadcrumbParts(path, home) {
     var inside = path === home || path.startsWith(home === "/" ? "/" : home + "/");
@@ -150,10 +159,14 @@ except OSError as e:
     _hasHidden = result.hidden;
     if (monitor)
       return;
-    if (historyIndex >= 0)
+    if (_folderSource && _folderSource.targetPath === currentPath) historyLeaving();
+    if (historyIndex >= 0) {
       _historyIndex = historyIndex;
+      _restoreHistory = _history[historyIndex].state;
+    }
     else if (result.path !== currentPath) {
-      _history = _history.slice(0, _historyIndex + 1).concat([result.path]);
+      _restoreHistory = null;
+      _history = _history.slice(0, _historyIndex + 1).concat([{path: result.path, state: {}}]);
       _historyIndex = _history.length - 1;
     }
     if (result.path !== currentPath)
@@ -173,22 +186,27 @@ except OSError as e:
     if (!_validating && _status !== "error" && currentPath && source.status === FolderListModel.Ready && loaded.ok && loaded.path === currentPath) {
       _status = "ready";
       listingChanged();
+      if (_restoreHistory !== null) {
+        var state = _restoreHistory;
+        _restoreHistory = null;
+        historyRestored(state);
+      }
     }
   }
 
   function back() {
     if (canBack) {
-      navigationRequested(_history[_historyIndex - 1]);
+      navigationRequested(_history[_historyIndex - 1].path);
       _status = "loading";
-      _check(_history[_historyIndex - 1], _historyIndex - 1, false);
+      _check(_history[_historyIndex - 1].path, _historyIndex - 1, false);
     }
   }
 
   function forward() {
     if (canForward) {
-      navigationRequested(_history[_historyIndex + 1]);
+      navigationRequested(_history[_historyIndex + 1].path);
       _status = "loading";
-      _check(_history[_historyIndex + 1], _historyIndex + 1, false);
+      _check(_history[_historyIndex + 1].path, _historyIndex + 1, false);
     }
   }
 

@@ -74,6 +74,8 @@ FocusScope {
       rows: compactRows,
       flow: compact ? "columns" : request.viewMode,
       x: activeView.contentX,
+      originX: activeView.originX,
+      originY: activeView.originY,
       cells: listHeaders.cellBounds.map(cell => ({
         x: listHeaders.mapToItem(target, cell.x, 0).x,
         width: cell.width
@@ -165,6 +167,20 @@ FocusScope {
   }
     Connections {
     target: root.request.browser
+    function onHistoryLeaving() {
+      root.request.browser.rememberHistory("viewport", {mode: root.request.viewMode, x: root.activeView.contentX - root.activeView.originX, y: root.activeView.contentY - root.activeView.originY});
+    }
+    function onHistoryRestored(state) {
+      var saved = state.viewport;
+      if (!saved) return;
+      root.request.viewMode = saved.mode;
+      Qt.callLater(function() {
+        root.activeView.forceLayout();
+        root.activeView.contentX = root.activeView.originX + saved.x;
+        root.activeView.contentY = root.activeView.originY + saved.y;
+        root.focusCurrent();
+      });
+    }
     function onCreatingFolderChanged() {
     if (root.request.browser.creatingFolder)
     Qt.callLater(function () {

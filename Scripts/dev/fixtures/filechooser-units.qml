@@ -8,6 +8,7 @@ import "filechooser-navigation.js" as NavigationCases
 import "filechooser-operations.js" as OperationCases
 import "filechooser-paths.js" as PathCases
 import "filechooser-views.js" as ViewCases
+import "filechooser-places.js" as PlaceCases
 import qs.Commons
 import qs.Modules.FileChooser
 import qs.Services.Files
@@ -342,6 +343,7 @@ print(count)
   }
 
   function buildTests() {
+    PlaceCases.build(root, PortalPaths, FilePlaces);
     step(() => true, function () {
       same("playback.initial", [playback.status, playback.playing, playback.seekable], ["idle", false, false]);
       playback.toggle();

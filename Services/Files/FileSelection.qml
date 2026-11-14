@@ -37,6 +37,15 @@ Scope {
     _prefix = "";
   }
 
+  function snapshot() { return {paths: selectedPaths.slice(), cursor: _cursorPath, anchor: _anchorPath}; }
+  function restore(state) {
+    if (!state) return;
+    _setPaths(state.paths || []);
+    _cursorPath = state.cursor || "";
+    _anchorPath = state.anchor || "";
+    _revalidate();
+  }
+
   function click(index, modifiers) {
     var item = browser.entry(index);
     if (!item)
@@ -162,6 +171,8 @@ Scope {
   Connections {
     target: root.browser
     function onCurrentPathChanged() { root.clear(); }
+    function onHistoryLeaving() { root.browser.rememberHistory("selection", root.snapshot()); }
+    function onHistoryRestored(state) { root.restore(state.selection); }
     function onListingChanged() { root._revalidate(); }
     function onStatusChanged() { root._revalidate(); }
   }

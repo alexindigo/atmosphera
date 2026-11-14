@@ -26,6 +26,8 @@ from filechooser_navigation import exercise as exercise_navigation
 from filechooser_paths import exercise as exercise_paths
 from filechooser_operations import exercise as exercise_operations
 from filechooser_views import exercise as exercise_views
+from filechooser_places import exercise as exercise_places
+from filechooser_places import exercise_drop
 
 
 def layout_fits(s):
@@ -51,6 +53,8 @@ def main():
     p.add_argument("--path-only", action="store_true", help="Run the path-entry partition; default runs every area")
     p.add_argument("--operations-only", action="store_true", help="Run the file-operation partition; default runs every area")
     p.add_argument("--views-only", action="store_true", help="Run the view-control partition; default runs every area")
+    p.add_argument("--places-only", action="store_true", help="Run the places partition; default runs every area")
+    p.add_argument("--drop-only", action="store_true", help="Run the external drop partition")
     profile_argument(p)
     a = p.parse_args()
     guest()
@@ -140,6 +144,16 @@ def main():
         assert cases[-1]["pass"]
     try:
         wait(lambda s: s["ready"], 30)
+        if a.drop_only:
+            exercise_drop(runtime, evidence, command, ipc, state, wait, check, key)
+            finish()
+            complete = True
+            return 0
+        exercise_places(runtime, evidence, command, ipc, state, wait, check, open_request, key, focus)
+        if a.places_only:
+            finish()
+            complete = True
+            return 0
         exercise_views(runtime, evidence, command, ipc, state, wait, check, open_request, key, focus)
         if a.views_only:
             finish()

@@ -39,7 +39,7 @@ def main():
     shutil.copytree(source, shell, symlinks=True)
     probe = shell / "filechooser-units.qml"
     probe_text = (source / "Scripts/dev/fixtures/filechooser-units.qml").read_text().replace('"../../../Helpers/', '"Helpers/')
-    for name in ("filechooser-icon-cases.js", "filechooser-extensions.js", "filechooser-navigation.js", "filechooser-paths.js", "filechooser-operations.js", "filechooser-views.js"):
+    for name in ("filechooser-icon-cases.js", "filechooser-extensions.js", "filechooser-navigation.js", "filechooser-paths.js", "filechooser-operations.js", "filechooser-views.js", "filechooser-places.js"):
         probe_text = probe_text.replace('"' + name + '"', '"Scripts/dev/fixtures/' + name + '"')
     probe.write_text(probe_text)
     fixtures = runtime / "fixtures"
@@ -132,6 +132,9 @@ def main():
     operation_tests = subprocess.run([sys.executable, "-B", str(source / "Scripts/dev/filechooser-operations-test.py"), str(runtime / "operation-files")],
                                     env=env, capture_output=True, text=True, timeout=90)
     (output / "operations-filesystem.log").write_text(operation_tests.stdout + operation_tests.stderr)
+    bookmark_tests = subprocess.run([sys.executable, "-B", str(source / "Scripts/dev/filechooser-bookmarks-test.py"), str(runtime / "bookmark-files")],
+                                    env=env, capture_output=True, text=True, timeout=90)
+    (output / "bookmarks-filesystem.log").write_text(bookmark_tests.stdout + bookmark_tests.stderr)
     runs = []
     for mode in ("main", "reload"):
         try:
@@ -154,6 +157,7 @@ def main():
     errors = [line for line in log.splitlines() if ERRORS.search(line)]
     cases = [row for row in rows if "case" in row]
     cases += json.loads(operation_tests.stdout) if operation_tests.returncode == 0 else [dict(case="operations.filesystem", **{"pass": False})]
+    cases += json.loads(bookmark_tests.stdout) if bookmark_tests.returncode == 0 else [dict(case="bookmarks.filesystem", **{"pass": False})]
     complete = sum(row.get("complete") is True for row in rows) == 2
     failures = [row for row in cases if not row["pass"]]
     required = {"browser.navigate", "browser.failure-keeps-folder", "browser.failure-keeps-listing", "browser.natural-name",
@@ -196,6 +200,10 @@ def main():
     required.update("views." + name for name in ("owner", "defaults", "per-mode-zoom", "zoom-upper-bound", "zoom-lower-bound", "partial-wheel", "accumulated-wheel", "pixel-wheel", "column-adjacent-resize", "column-minima", "no-write-before-success", "persist-success", "next-request", "cancel-no-write", "sanitize"))
     required.update(("views.reload-process-consumer", "views.reload-process-columns"))
     required.add("views.no-arbitrary-dialog-cap")
+    required.update("places." + name for name in ("editable-owner", "favorite-add", "favorite-reorder", "favorite-remove", "history-selection", "history-cursor", "drop-owner", "drop-locates-file", "drop-does-not-accept", "drop-rejects-network", "drop-rejects-many", "drop-invalid-keeps-path"))
+    required.update(("places.drop-pretty-QUrl", "places.drop-pretty-consumer"))
+    required.add("places.favorite-edit-completes-at-consumer")
+    required.update("bookmarks." + name for name in ("add", "dedup", "reorder", "preserve-foreign-labels", "remove", "external-edits", "invalid-no-write", "permission-no-write", "symlink-preserved"))
     missing = sorted(required - {case["case"] for case in cases})
     required_media = {"playback." + name for name in ("initial", "inactive-intents", "volume-low", "volume-high", "volume-step", "invalid-volume", "times", "autoplay", "seek-low", "seek-high", "close-stops", "close-destroys-engine")}
     required_labels = {"labels." + name for name in ("extension-attached", "dots", "long-word", "cjk", "extension-only", "two-lines-only")}

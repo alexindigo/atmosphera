@@ -149,6 +149,7 @@ Singleton {
   readonly property var atmosphera: IconRegistry.resolved["atmosphera"]
   readonly property var hyprland: IconRegistry.resolved["hyprland"]
   readonly property var filepickerFolder: IconRegistry.resolved["filepicker-folder"]
+  readonly property var filepickerEject: IconRegistry.resolved["player-eject"]
   readonly property var filepickerRefresh: IconRegistry.resolved["filepicker-refresh"]
   readonly property var filepickerClose: IconRegistry.resolved["filepicker-close"]
   readonly property var filepickerArrowLeft: IconRegistry.resolved["filepicker-arrow-left"]

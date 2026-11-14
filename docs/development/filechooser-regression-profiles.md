@@ -132,3 +132,32 @@ sizing. It reads the persisted JSON and reopens a new request to observe restore
 size, column geometry and independent per-view zoom. `--views-only` is an iteration
 partition with unchanged isolation/runtime gates, not the full pre-commit proof.
 The native AT-SPI walk includes slider values and keyboard resize controls.
+
+## Places
+
+The complete UI walk includes favorite add/remove/reorder with GTK-bookmark
+readback, exact visible-file geometry and selection restoration in all views,
+and an external GTK Wayland URI drag into the dialog. The sender needs
+`gtk-layer-shell` and `python-gobject` inside the assigned guest. `--places-only`
+is an iteration partition, not a substitute for the complete walk.
+
+The dedicated volume runner needs `udisks2`. It verifies the same explicit guest
+identity but uses its own capped private bus/compositor without a private mount
+namespace: real UDisks mounts would be invisible in the normal suite's private
+mount namespace. Existing UI, portal and browser system-bus isolation is unchanged.
+Provision a tester-owned UDisks loop device `/dev/loop0` backed by
+`/home/tester/Projects/filechooser-usability/fixtures/p7-volume.img`, with an ext4
+filesystem labelled `ChooserVolume` and `Volume.txt` containing
+`real UDisks mount bytes` followed by a newline. Leave it unmounted. The guest
+needs polkit authorization for tester's loop setup/delete and filesystem
+mount/unmount actions (an SSH login need not be an active polkit session).
+The runner checks both the backing path and setup UID before acting. It mounts,
+reads actual bytes, unmounts, remounts and ejects/detaches that exact loop.
+
+```sh
+timeout 120 python3 -B Scripts/dev/filechooser-volumes-regression.py --guest-profile "$profile" --source "$PWD" --label volumes-LABEL
+```
+
+Every invocation needs a fresh label and a freshly attached, unmounted fixture.
+The volume probe runs in a foreground, bounded user service. No workload remains
+after return, and no service/polkit setup is made by the application itself.

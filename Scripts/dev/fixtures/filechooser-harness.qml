@@ -116,6 +116,8 @@ ShellRoot {
                                                         }, (_, i) => request.browser.entry(i).name) : [],
                             recentLocations: FileChooserMemory.recentLocations,
                             places: FilePlaces.places,
+                            placesLoading: FilePlaces.loading,
+                            placesState: window && window.placesState ? window.placesState() : {},
                             recentFiles: FilePlaces.recentFiles,
                             recentFolders: FilePlaces.recentFolders,
                             recentRows: window ? window.recentRows() : [],

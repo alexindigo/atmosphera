@@ -47,7 +47,7 @@ Scope {
   readonly property string pendingReplace: _pendingReplace
   readonly property string errorText: _errorText
   readonly property bool settled: _settled
-  readonly property bool busy: _checking || _nameChecking || typedPaths.busy || browser.status === "loading" || browser.operations.busy || browser.operations.renaming || browser.operations.pendingDelete.length > 0
+  readonly property bool busy: _checking || _nameChecking || typedPaths.busy || droppedPath.busy || browser.status === "loading" || browser.operations.busy || browser.operations.renaming || browser.operations.pendingDelete.length > 0
   readonly property string acceptLabel: options.accept_label || I18n.tr(method === "open" ? "widgets.file-picker.open" : "widgets.file-picker.save")
   property alias viewMode: viewSettings.mode
   readonly property FileViewSettings viewSettings: FileViewSettings {
@@ -77,6 +77,7 @@ Scope {
     onNavigationRequested: {
       root._pendingSavePath = null;
       typedPaths.invalidate();
+      droppedPath.invalidate();
     }
     onCurrentPathChanged: {
       root._saveNameEdited = false;
@@ -137,6 +138,36 @@ Scope {
     }
   }
   signal pathNavigation
+  // Drop is a locate intent, never an accept intent (including Save requests).
+  function canLocateDrop(urls) {
+    return !_settled && !_pendingReplace && !browser.operations.busy && !browser.operations.pendingDelete.length
+      && urls.length === 1 && PortalPaths.qmlUrlToPath(String(urls[0])).ok;
+  }
+  function locateDrop(urls) {
+    if (!canLocateDrop(urls)) return false;
+    var path = PortalPaths.qmlUrlToPath(String(urls[0])).path;
+    clearFilters();
+    _openNameEdited = false;
+    _initialFile = "";
+    droppedPath.resolve(PortalPaths.pathToUri(path).uri, "drop");
+    return true;
+  }
+  FilePathResolver {
+    id: droppedPath
+    basePath: requestBrowser.currentPath
+    mode: "open"
+    onFailed: reason => root._errorText = I18n.tr("widgets.file-picker." + reason)
+    onResolved: result => {
+      if (root.settled) return;
+      var path = result.paths[0];
+      requestBrowser.navigate(result.action === "navigate" ? path : Paths.parent(path));
+      if (result.action !== "navigate") {
+        root._initialFile = path;
+        if (Paths.leaf(path).startsWith(".")) requestBrowser.showHidden = true;
+      }
+      root.pathNavigation();
+    }
+  }
   function submitPath(text, source) {
     if (_settled || _checking || _pendingReplace)
       return;

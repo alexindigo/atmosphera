@@ -4,22 +4,30 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import "../../Helpers/PortalPaths.js" as PortalPaths
 
 Singleton {
   id: root
   readonly property string home: Quickshell.env("HOME") || "/"
   readonly property var places: _places
-  readonly property var removable: _removable
+  readonly property var removable: FileVolumes.volumes
+  readonly property var favorites: _favorites
+  readonly property bool editing: bookmarkEdit.running || _editing
+  property string errorText: ""
   readonly property var recentFiles: _recentFiles
   readonly property var recentFolders: _recentFolders
   readonly property var xdgFolders: _xdgFolders
-  readonly property bool loading: scan.running || _refreshPending
+  readonly property bool loading: _scanning || scan.running || _refreshPending || editing
   property var _places: []
-  property var _removable: []
+  property var _favorites: []
   property var _recentFiles: []
   property var _recentFolders: []
   property bool _refreshPending: false
+  property bool _scanning: false
+  property bool _editing: false
+  property int _editRevision: 0
   property var _xdgFolders: ({})
+  signal refreshed()
 
   // Parse formats as data, never source/eval user-dirs.dirs or bookmarks.
   // XBEL uses an XML parser so escaped attributes and namespaces stay intact.
@@ -50,17 +58,13 @@ try:
                 add(value, match[1].replace('DOWNLOAD', 'Downloads').title(), 'standard')
 except OSError:
     pass
+favorites = []
 try:
     for line in (config / 'gtk-3.0/bookmarks').read_text().splitlines():
         uri, _, label = line.partition(' ')
         path = local_uri(uri)
-        add(path, label or os.path.basename(path), 'bookmark')
-except OSError:
-    pass
-removable = []
-media = pathlib.Path('/run/media') / os.environ.get('USER', home.name)
-try:
-    removable = [{'name': p.name, 'path': str(p), 'kind': 'removable'} for p in sorted(media.iterdir()) if p.is_dir()]
+        if path and os.path.isdir(path) and not any(p['path'] == path for p in favorites):
+            favorites.append({'name': label or os.path.basename(path) or '/', 'path': path, 'kind': 'bookmark'})
 except OSError:
     pass
 recent = []
@@ -95,14 +99,43 @@ except (OSError, ET.ParseError):
     pass
 recent_folders = [{'name': os.path.basename(path) or '/', 'path': path, 'lastUsed': stamp, 'kind': 'recent', 'directory': True}
                   for path, stamp in sorted(folders.items(), key=lambda item: item[1], reverse=True)[:10]]
-print(json.dumps({'places': places, 'removable': removable, 'recent': recent, 'recentFolders': recent_folders, 'xdg': xdg}))
+print(json.dumps({'places': places + favorites, 'favorites': favorites, 'recent': recent, 'recentFolders': recent_folders, 'xdg': xdg}))
 `
 
   function refresh() {
-    if (!scan.running)
+    if (!_scanning && !scan.running) {
+      _scanning = true;
+      scan.editRevision = _editRevision;
       scan.running = true;
-    else
+    } else
       _refreshPending = true;
+  }
+
+  function isFavorite(path) { return favorites.some(entry => entry.path === path); }
+  function addFavorite(path) { _edit("add", path, 0); }
+  function removeFavorite(path) { _edit("remove", path, 0); }
+  function moveFavorite(path, direction) { _edit("move", path, direction); }
+  function _edit(kind, path, direction) {
+    if (editing) return;
+    errorText = "";
+    _editing = true;
+    bookmarkEdit.running = true;
+    bookmarkEdit.write(JSON.stringify({kind: kind, path: path, direction: direction}));
+    bookmarkEdit.stdinEnabled = false;
+  }
+  Process {
+    id: bookmarkEdit
+    command: ["timeout", "5", "python3", PortalPaths.uriToPath(Qt.resolvedUrl("../../Scripts/python/file-bookmarks.py").toString()).path]
+    stdinEnabled: true
+    onRunningChanged: if (!running) stdinEnabled = true
+    stdout: StdioCollector { id: editOutput }
+    onExited: code => {
+      var result;
+      try { result = JSON.parse(editOutput.text); } catch (error) { result = {ok: false}; }
+      if (code !== 0 || !result.ok) root.errorText = I18n.tr("widgets.file-picker.bookmark-error") + (result.error ? " " + result.error : "");
+      root._editRevision++;
+      root.refresh();
+    }
   }
 
   Component.onCompleted: refresh()
@@ -113,6 +146,7 @@ print(json.dumps({'places': places, 'removable': removable, 'recent': recent, 'r
 
   Process {
     id: scan
+    property int editRevision: 0
     command: ["timeout", "5", "python3", "-c", root._scanCode, JSON.stringify(FileChooserMemory.recentEntries)]
     stdout: StdioCollector { id: output }
     onExited: function(code) {
@@ -121,17 +155,23 @@ print(json.dumps({'places': places, 'removable': removable, 'recent': recent, 'r
           throw new Error("places scan failed");
         var data = JSON.parse(output.text);
         root._places = data.places;
-        root._removable = data.removable;
+        root._favorites = data.favorites;
         root._recentFiles = data.recent;
         root._recentFolders = data.recentFolders;
         root._xdgFolders = data.xdg;
       } catch (e) {
         Logger.w("FilePlaces", "Invalid places response");
+        if (root._editing) root.errorText = I18n.tr("widgets.file-picker.bookmark-error");
       } finally {
+        // Completion belongs to the published filesystem snapshot, not the
+        // worker's running edge. An older in-flight scan cannot finish an edit.
+        if (editRevision === root._editRevision && !bookmarkEdit.running) root._editing = false;
+        root._scanning = false;
         if (root._refreshPending) {
           root._refreshPending = false;
           Qt.callLater(root.refresh);
         }
+        root.refreshed();
       }
     }
   }

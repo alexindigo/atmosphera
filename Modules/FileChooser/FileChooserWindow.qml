@@ -76,7 +76,7 @@ PanelWindow {
     };
   }
   readonly property bool textEntryFocused: nameField.inputItem.activeFocus || header.editingText || request.browser.creatingFolder || operations.renaming
-  readonly property string announcementError: request.errorText || request.browser.errorText || request.browser.createFolderError || operations.renameError || operations.errorText
+  readonly property string announcementError: request.errorText || request.browser.errorText || request.browser.createFolderError || operations.renameError || operations.errorText || FilePlaces.errorText || FileVolumes.errorText
   onAnnouncementErrorChanged: if (visible && announcementError)
                                 panel.Accessible.announce(announcementError, Accessible.Assertive)
   Timer {
@@ -149,6 +149,9 @@ PanelWindow {
   function recentRows() {
     return rail.recentRows();
   }
+  function placesState() {
+    return rail.state(panel);
+  }
   function iconState() {
     return listing.iconState();
   }
@@ -205,7 +208,9 @@ PanelWindow {
       return header.breadcrumbGeometry();
     }
       function dismissLayer() {
-      if (listing.contextOpen) {
+      if (rail.menuOpen) {
+      rail.dismissMenu();
+    } else if (listing.contextOpen) {
       listing.dismissContext();
     } else if (deleteConfirmOpen) {
       operations.declineDelete();
@@ -339,6 +344,21 @@ PanelWindow {
       color: AtmoColor.mSurface
       radius: Style.radiusL
       clip: true
+      DropArea {
+      anchors.fill: parent
+      enabled: !root.quickLookOpen && !root.request.pendingReplace && !root.deleteConfirmOpen
+      // Native offers transfer their payload on drop, not on enter. Inspect
+      // the advertised MIME here; the request validates URLs before acting.
+      onEntered: drag => {
+      drag.accepted = drag.source === null && drag.hasUrls;
+    }
+      onDropped: drop => {
+      if (drop.source === null && root.request.locateDrop(drop.urls)) {
+      drop.acceptProposedAction();
+      root.focusListing();
+    }
+    }
+    }
       ColumnLayout {
       id: contentLayout
       anchors.fill: parent
@@ -425,6 +445,7 @@ PanelWindow {
       Layout.preferredWidth: implicitWidth
       Layout.fillHeight: true
       browser: root.request.browser
+      onListingFocusRequested: listing.focusNavigation()
     }
       ColumnLayout {
       Layout.fillWidth: true

@@ -58,7 +58,7 @@ except (ValueError, OSError):
           else if (requiresFolder && !result.directories.every(value => value)) root.failed("wrong-kind");
           else {
             var folder = paths.length === 1 && result.directories[0];
-            var navigate = folder && (source === "location" || (root.mode === "open" && !root.directoryMode) || (root.mode === "save" && explicitFolder));
+            var navigate = folder && (source === "drop" || source === "location" || (root.mode === "open" && !root.directoryMode) || (root.mode === "save" && explicitFolder));
             root.resolved({action: navigate ? "navigate" : root.mode, paths: paths});
           }
         }
