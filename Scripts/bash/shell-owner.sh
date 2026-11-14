@@ -29,25 +29,9 @@ shell_owner_require() {
 }
 
 shell_owner_stop() {
-  local pid
-  pid=$(shell_owner_pid) || return 1
-  timeout 5 qs kill --pid "$pid"
-  # Wait for the registered process to release the election, not an arbitrary
-  # delay. Do not kill a new owner that takes over during this handoff.
-  local current deadline=$((SECONDS + 5))
-  while ((SECONDS < deadline)); do
-    current=$(shell_owner_pid) || current=""
-    # Name release precedes Quickshell's instance-lock teardown. Starting
-    # with -n in that window would silently keep the departing instance.
-    if [ -n "$current" ] && [ "$current" != "$pid" ]; then
-      echo 'atmosphera: another shell acquired the election during handoff; requested shell was not launched' >&2
-      return 1
-    fi
-    if [ -z "$current" ] && ! kill -0 "$pid" 2>/dev/null; then
-      return 0
-    fi
-    sleep 0.1
-  done
-  echo 'atmosphera: registered shell did not stop' >&2
-  return 1
+  python3 -B "$(dirname "${BASH_SOURCE[0]}")/shell-owner.py" stop
+}
+
+shell_owner_prepare() {
+  python3 -B "$(dirname "${BASH_SOURCE[0]}")/shell-owner.py" prepare
 }

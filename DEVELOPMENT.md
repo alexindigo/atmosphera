@@ -18,9 +18,13 @@ pkgrel suffixes) remain supported; they are not bumped API versions.
 ## Shell identity and recovery
 
 `ShellRegistration` elects one shell per session bus under `app.atmosphera.Shell`.
-The queued claim never replaces another live owner. Only the elected shell
-initializes the session/UI and claims the shared portal backend name. Portal
-interfaces export on that connection without separately claiming the name.
+The queued claim never replaces another responsive owner. A shared Python
+supervisor pings the unique bus owner with a one-second call deadline. A
+responsive duplicate exits after a two-second handoff grace; ten consecutive
+seconds of failed pings trigger retirement of the pinned, unresponsive owner.
+Only the elected shell initializes the session/UI and claims the shared portal
+backend name. Portal interfaces export on that connection without separately
+claiming the name.
 Startup readiness reads current dependency state, not one-shot load signals.
 
 The dispatcher, session switcher and shell helper scripts resolve that unique
@@ -28,12 +32,26 @@ bus owner to a PID before addressing Quickshell. There is no process-command-lin
 or installed-path guess: Quickshell's crash recovery replaces its command line.
 Discovery and IPC have finite deadlines. With no ready registered owner, IPC
 returns a clear error; an older running shell must be restarted after upgrading.
-`atmosphera run` starts the installed shell when no owner exists, or reuses the
-current owner. A development-tree switch carrying the same `ShellId` stays
+`atmosphera run` starts the installed shell when no owner exists, or reuses a
+responsive owner; an unresponsive owner goes through the same retirement.
+A development-tree switch carrying the same `ShellId` stays
 inside Atmosphera and does not restore niri's base config. The switcher waits
 for the departing process as well as name release before starting its successor.
 If a queued shell acquires the election during that wait, switching fails with
 an explicit handoff error instead of reporting that the requested tree started.
+Retirement pins PID, Linux process start time and a pidfd before graceful IPC.
+`qs kill` selects the exact Quickshell instance; after its five-second deadline
+and five-second process-exit wait, the same pidfd receives TERM, then KILL
+after two seconds if necessary. Each step logs the PID and reason. No process
+name or command-line match is used. Normal exit sends no Unix signal.
+
+Per-session-bus identities under `$XDG_RUNTIME_DIR/atmosphera-shells` also
+identify departed shells that released the election but retain Notifications
+or their same-path instance lock. The CLI clears those before launching; a
+raw shell clears them before initializing elected content. A responsive
+queued process is not retired. An unrecognized Notifications owner is logged
+as degraded, never killed. There is no Qt-version condition.
+
 Installed dispatchers resolve their sibling handler tree for both Nix's shared
 prefix and the system installation. Dialog helpers share one bounded FIFO
 reader and check delivery before waiting; reply payloads need no final newline.
@@ -78,6 +96,20 @@ Quickshell 0.3.2 has an independent recovered-exit quirk: after the recovered
 event loop returns, `src/launch/main.cpp` falls through to default CLI config
 selection. The regression distinguishes that known diagnostic/255 from a new
 crash and separately requires a normal cold load to exit zero (`--case smoke`).
+
+The `--case exit-hang` recovery case SIGSTOPs the old shell for switcher, raw
+spawn and CLI startup, then checks election and real portal, notification,
+launcher and input-method consumers. It also checks responsive duplicates,
+normal exits without TERM/KILL and a released election with retained
+Notifications/same-path instance lock. Example inside `atmosphera-shell-exit`
+on `ark.home`, with source separate from the runner's generated work:
+
+```sh
+cd /home/tester/Projects/shell-exit/source
+export TMPDIR=/home/tester/Projects/shell-exit/tmp
+timeout 270 python3 -B Scripts/dev/shell-recovery-regression.py --case exit-hang --work /home/tester/Projects/shell-exit/exit-hang-run
+timeout 30 python3 -B Scripts/dev/shell-owner-regression.py
+```
 
 ## AUR packaging
 

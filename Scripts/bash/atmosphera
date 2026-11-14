@@ -39,7 +39,8 @@ INVOKED_NAME="${0##*/}"
 # --- helper: forward to Quickshell as the atmosphera shell ---
 run_shell() {
   local pid
-  if pid=$(shell_owner_pid); then
+  pid=$(shell_owner_prepare) || exit 1
+  if [ -n "$pid" ]; then
     echo "Atmosphera is already running (PID $pid)."
     exit 0
   fi
