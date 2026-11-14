@@ -329,8 +329,13 @@ def outputs(root):
     # Keep generated declarations byte-identical to the normal project formatter.
     formatter = shutil.which('qmlformat') or next((str(p) for p in
         [Path('/usr/lib/qt6/bin/qmlformat'),Path('/usr/lib64/qt6/bin/qmlformat')] if p.is_file()), None)
+    required_version = '6.12.0'
     if not formatter:
-        raise ValueError('Qt 6.12 qmlformat required for reproducible declarations')
+        raise ValueError('qmlformat '+required_version+' required for reproducible declarations')
+    version = subprocess.run([formatter, '--version'], capture_output=True, text=True, timeout=20)
+    reported = (version.stdout + version.stderr).strip()
+    if version.returncode or reported != 'qmlformat '+required_version:
+        raise ValueError('qmlformat '+required_version+' required for reproducible declarations; found '+repr(reported))
     def formatted(text):
         with tempfile.TemporaryDirectory(prefix='settings-schema-') as directory:
             path = Path(directory)/'Generated.qml'
