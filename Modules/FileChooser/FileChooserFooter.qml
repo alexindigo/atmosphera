@@ -13,7 +13,7 @@ RowLayout {
 
   // Geometry is exposed by the component, without consumers reaching inside.
   function controlGeometry() {
-    return [filterMenu, selectionCount, cancelButton, acceptButton].filter(control => control.visible).map(control => {
+    return [filterMenu, autoExtension, selectionCount, cancelButton, acceptButton].filter(control => control.visible).map(control => {
       var rect = control.mapToItem(root, 0, 0, control.width, control.height);
       return {name: control.Accessible.name || "selection", x: rect.x, y: rect.y, width: rect.width, height: rect.height, center: rect.y + rect.height / 2};
     });
@@ -31,6 +31,14 @@ RowLayout {
     model: (root.request.options.filters || []).map((filter, index) => ({key: String(index), name: filter[0]}))
     currentKey: String((root.request.options.filters || []).findIndex(filter => JSON.stringify(filter) === JSON.stringify(root.request.currentFilter)))
     onSelected: key => root.request.currentFilter = root.request.options.filters[Number(key)]
+  }
+  ChooserCheckBox {
+    id: autoExtension
+    visible: root.request.method === "save" && root.request.preferredSuffix !== ""
+    accessibleName: I18n.tr("widgets.file-picker.auto-extension")
+    label: accessibleName + " (." + root.request.preferredSuffix + ")"
+    checked: root.request.autoExtension
+    onToggled: value => root.request.autoExtension = value
   }
   Item { Layout.fillWidth: true }
   NText {

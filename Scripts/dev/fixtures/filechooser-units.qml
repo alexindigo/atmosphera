@@ -7,6 +7,7 @@ import qs.Commons
 import qs.Modules.FileChooser
 import qs.Services.Files
 import qs.Services.UI
+import "filechooser-extensions.js" as ExtensionCases
 
 ShellRoot {
   id: root
@@ -1059,6 +1060,7 @@ ET.ElementTree(root).write(target, encoding='unicode')
       fileBrowser.listingChanged();
       same("selection.revalidation-noop", root.selectionChanges, changed);
     });
+    ExtensionCases.build(root, PortalPaths, FileTypes, FileChooserMemory);
   }
 
   Component.onCompleted: {

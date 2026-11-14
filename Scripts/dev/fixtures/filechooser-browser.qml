@@ -25,6 +25,7 @@ ShellRoot {
             status: request.browser.status, path: request.browser.currentPath,
             error: request.errorText || request.browser.errorText,
             filterText: request.browser.filterText, saveName: request.saveName,
+            autoExtension: request.autoExtension,
             replace: request.pendingReplace, creatingFolder: request.browser.creatingFolder,
             createError: request.browser.createFolderError, name: current ? current.name : "",
             names: Array.from({length: request.browser.count}, (_, i) => request.browser.entry(i).name),

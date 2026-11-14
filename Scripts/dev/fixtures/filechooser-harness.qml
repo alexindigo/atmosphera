@@ -122,6 +122,8 @@ ShellRoot {
                              filterText: request ? request.browser.filterText || "" : "",
                              saveFilterText: request ? request.browser.saveFilterText || "" : "",
                              saveFilterEnabled: request ? request.saveFilterEnabled === true : false,
+                             autoExtension: request ? request.autoExtension === true : false,
+                             preferredSuffix: request ? request.preferredSuffix || "" : "",
                              creatingFolder: request ? request.browser.creatingFolder === true : false,
                              createFolderError: request ? request.browser.createFolderError || "" : "",
                              folderEditor: window && window.folderEditorState ? window.folderEditorState() : {},

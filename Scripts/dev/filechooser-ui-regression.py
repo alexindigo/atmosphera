@@ -21,6 +21,7 @@ from filechooser_isolation import enter, input_command
 from filechooser_icons import exercise as exercise_icons
 from filechooser_selection import exercise as exercise_selection
 from filechooser_overwrite import exercise as exercise_overwrite
+from filechooser_extensions import exercise as exercise_extensions
 
 
 def layout_fits(s):
@@ -143,6 +144,7 @@ def main():
         check("Shift-PageDown-extends-selection", lambda s: len(s["selected"]) > 1)
         ipc("open", "open"); wait(lambda s: s["ready"] and s["focus"] == "listing")
         exercise_overwrite(runtime, evidence, command, ipc, state, wait, check, open_request, key, focus)
+        exercise_extensions(runtime, evidence, command, ipc, state, wait, check, open_request, key, focus)
         exercise_selection(runtime, evidence, command, ipc, state, wait, check, open_request, key)
         command(["ydotool", "key", "29:1", "42:1", "49:1", "49:0", "42:0", "29:0"])
         wait(lambda s: s["creatingFolder"])

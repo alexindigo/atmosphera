@@ -51,8 +51,8 @@ def main():
 const seq=SEQ, action=ACTION, payload=PAYLOAD;
 const record=data=>fetch('/event',{method:'POST',body:JSON.stringify({...data,seq})});
 const input=document.querySelector('#upload'), button=document.querySelector('#save');
-const ready=()=>{const target=action==='open'?input:button;target.focus();record({kind:'ready',action,focused:document.hasFocus()&&document.activeElement===target});};
-window.addEventListener('load',()=>{ready();requestAnimationFrame(ready);});window.addEventListener('focus',ready);
+const ready=reason=>{const target=action==='open'?input:button;target.focus();record({kind:'ready',reason,action,focused:document.hasFocus()&&document.activeElement===target});};
+window.addEventListener('load',()=>{ready('load');requestAnimationFrame(()=>ready('frame'));});window.addEventListener('focus',()=>ready('focus'));
 input.onchange=async()=>{try{const file=input.files[0];if(file)await record({kind:'upload',name:file.name,text:await file.text()});}catch(error){record({kind:'upload-error',error:String(error)});}};
 button.onclick=event=>{record({kind:'save-start',trusted:event.isTrusted});const link=document.createElement('a');link.href=URL.createObjectURL(new Blob([payload],{type:'text/plain'}));link.download='protected.txt';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),30000);};
 </script>'''.replace("SEQ", json.dumps(seq)).replace("ACTION", json.dumps(action)).replace("PAYLOAD", json.dumps(payload))
@@ -68,6 +68,7 @@ button.onclick=event=>{record({kind:'save-start',trusted:event.isTrusted});const
     url = "http://127.0.0.1:" + str(server.server_port) + "/"
     browser = None
     sequence = 0
+    return_focus_after = 0
     def wait_for(predicate, seconds=25):
         end = time.monotonic() + seconds
         while time.monotonic() < end:
@@ -95,12 +96,17 @@ button.onclick=event=>{record({kind:'save-start',trusted:event.isTrusted});const
         focus("File name"); run.key(30, 29); run.command(["ydotool", "type", name])
         wait_for(lambda: request().get("saveName") == name)
     def visit(action):
-        nonlocal sequence
+        nonlocal sequence, return_focus_after
+        if sequence:
+            previous = args.browser + "-" + str(sequence)
+            wait_for(lambda: any(e.get("kind") == "ready" and e.get("seq") == previous
+                     and e.get("reason") == "focus" and e.get("focused") for e in events[return_focus_after:]), 35)
         sequence += 1
         seq = args.browser + "-" + str(sequence)
         target = url + "?" + urllib.parse.urlencode({"seq": seq, "action": action})
         run.key(38, 29); run.command(["ydotool", "type", target]); run.key(28)
         wait_for(lambda: any(e.get("kind") == "ready" and e.get("seq") == seq and e.get("focused") for e in events), 35)
+        return_focus_after = len(events)
         run.key(28)
         if action == "save":
             wait_for(lambda: any(e.get("kind") == "save-start" and e.get("seq") == seq and e.get("trusted") for e in events))
@@ -173,8 +179,9 @@ button.onclick=event=>{record({kind:'save-start',trusted:event.isTrusted});const
         received = next(e for e in events if e.get("kind") == "upload" and e.get("seq") == seq)
         run.check(args.browser + "-upload-consumer-bytes", received["name"] == "Upload.txt" and received["text"] == upload, received)
 
-        visit("save"); opened("save"); navigate(destination); edit_name("protected.txt"); run.key(28)
+        visit("save"); opened("save"); navigate(destination); edit_name("protected"); run.key(28)
         wait_for(lambda: request().get("replace") == str(protected) and request().get("focusedControl") == "Change name")
+        run.check(args.browser + "-extension-final-name-visible", request()["saveName"] == "protected.txt" and request()["autoExtension"])
         run.check(args.browser + "-save-confirmation-before-write", protected.read_text() == "ORIGINAL browser target\n")
         run.command(["grim", run.output / "browser-overwrite-safe-default.png"])
         run.key(28)
@@ -184,7 +191,7 @@ button.onclick=event=>{record({kind:'save-start',trusted:event.isTrusted});const
         run.key(28)
         wait_for(lambda: not request().get("replace") and request().get("focus") == "name")
         run.check(args.browser + "-repeated-Enter-keeps-bytes", protected.read_text() == "ORIGINAL browser target\n" and len(run.state()["requests"]) == 1)
-        edit_name("renamed.txt"); run.key(28); run.wait(lambda s: not s["requests"])
+        edit_name("renamed"); run.key(28); run.wait(lambda s: not s["requests"])
         renamed = destination / "renamed.txt"
         wait_for(lambda: renamed.is_file() and renamed.read_text() == payload, 35)
         run.check(args.browser + "-save-into-created-folder-consumer", renamed.read_text() == payload and protected.read_text() == "ORIGINAL browser target\n")

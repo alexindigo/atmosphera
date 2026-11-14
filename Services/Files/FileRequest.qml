@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import "../../Helpers/PortalPaths.js" as PortalPaths
+import "FileSaveNames.js" as SaveNames
 
 Scope {
   id: root
@@ -22,6 +23,11 @@ Scope {
   readonly property FileSelection selection: requestSelection
   property string saveName: ""
   property bool saveFilterEnabled: true
+  property bool autoExtension: true
+  readonly property var saveSuffixes: FileTypes.saveSuffixes(currentFilter)
+  readonly property string preferredSuffix: saveSuffixes.length ? saveSuffixes[0] : ""
+  property bool _namePolicyReady: false
+  property var _previousNameFilter: null
   property bool _saveNameEdited: false
   readonly property string saveFilterStem: {
     var dot = saveName.lastIndexOf(".");
@@ -32,13 +38,15 @@ Scope {
   readonly property string pendingReplace: _pendingReplace
   readonly property string errorText: _errorText
   readonly property bool settled: _settled
-  readonly property bool busy: _checking || browser.status === "loading"
+  readonly property bool busy: _checking || _nameChecking || browser.status === "loading"
   readonly property string acceptLabel: options.accept_label || I18n.tr(method === "open" ? "widgets.file-picker.open" : "widgets.file-picker.save")
   property string viewMode: "grid"
   property bool _settled: false
   property bool _initialized: false
   property bool _waitingMemory: false
   property bool _checking: false
+  property bool _nameChecking: false
+  property int _nameGeneration: 0
   property string _pendingReplace: ""
   property string _errorText: ""
   property string _initialFile: ""
@@ -56,11 +64,11 @@ Scope {
     saveFilterText: root.method === "save" && root.saveFilterEnabled && root._saveNameEdited ? root.saveFilterStem : ""
     onCurrentPathChanged: {
       root._saveNameEdited = false;
-      root._invalidate();
+      root._invalidateName();
     }
     onStatusChanged: {
       if (status === "loading")
-        root._invalidate();
+        root._invalidateName();
       else if (status === "ready" && root._initialFile) {
         var index = indexOfPath(root._initialFile);
         if (index >= 0)
@@ -97,6 +105,7 @@ Scope {
       browser.showHidden = prefs.showHidden === true;
       viewMode = prefs.view || "grid";
       saveFilterEnabled = prefs.saveFilter !== false;
+      autoExtension = prefs.autoExtension !== false;
       if (method === "saveFiles")
         _saveFilesNames = (options.files || []).map(value => _decode(value, false));
       var folder = options.current_folder !== undefined ? _decode(options.current_folder, true) : "";
@@ -118,6 +127,7 @@ Scope {
       FileChooserMemory.refresh();
       if (folder)
         browser.navigate(folder);
+      _namePolicyReady = true;
     } catch (e) {
       _errorText = String(e.message);
       _finish(2, {});
@@ -145,7 +155,12 @@ Scope {
     _snapshot = null;
   }
 
-  onSaveNameChanged: _invalidate()
+  function _invalidateName() {
+    ++_nameGeneration;
+    _nameChecking = false;
+    _invalidate();
+  }
+  onSaveNameChanged: _invalidateName()
   function editSaveName(value) {
     saveName = value;
     _saveNameEdited = true;
@@ -164,8 +179,18 @@ Scope {
       requestSelection.click(requestBrowser.indexOfPath(path), Qt.NoModifier);
     }
   }
-  onCurrentFilterChanged: _invalidate()
-  onChoiceValuesChanged: _invalidate()
+  onCurrentFilterChanged: {
+    var previous = FileTypes.saveSuffixes(_previousNameFilter);
+    _previousNameFilter = currentFilter;
+    _invalidateName();
+    if (_namePolicyReady && method === "save" && autoExtension && _validName(saveName)) {
+      var changed = SaveNames.changeType(saveName, previous, FileTypes.saveSuffixes(currentFilter));
+      if (changed !== saveName)
+        _prepareName(changed, false);
+    }
+  }
+  onAutoExtensionChanged: _invalidateName()
+  onChoiceValuesChanged: _invalidateName()
   Connections {
     target: requestSelection
     function onSelectedPathsChanged() {
@@ -203,6 +228,61 @@ Scope {
   }
 
   function accept() {
+    if (_settled || busy || _pendingReplace)
+      return;
+    if (method === "save" && autoExtension && saveSuffixes.length && _validName(saveName)) {
+      var prepared = SaveNames.append(saveName, saveSuffixes);
+      if (prepared !== saveName) {
+        _prepareName(prepared, true);
+        return;
+      }
+    }
+    _acceptResolved();
+  }
+
+  // Existence is checked outside the GUI thread, including targets hidden by
+  // the listing's filters. Existing files retain their exact name; directories
+  // never get turned into a different, apparently valid filename.
+  function _prepareName(proposed, accepting) {
+    _nameChecking = true;
+    var job = nameFactory.createObject(root, {generation: ++_nameGeneration, original: saveName,
+      proposed: proposed, accepting: accepting, folder: browser.currentPath});
+    job.running = true;
+  }
+  Component {
+    id: nameFactory
+    Process {
+      property int generation
+      property string original
+      property string proposed
+      property bool accepting
+      property string folder
+      command: ["timeout", "5", "python3", "-c", `
+import json, os, sys
+folder, original, proposed, accepting = json.loads(sys.argv[1])
+path = os.path.join(folder, original)
+preserve = os.path.lexists(path) if accepting else os.path.isdir(path)
+print(json.dumps({'name': original if preserve else proposed}))
+`, JSON.stringify([folder, original, proposed, accepting])]
+      stdout: StdioCollector { id: nameOutput }
+      onExited: function(code) {
+        if (!root.settled && generation === root._nameGeneration) {
+          root._nameChecking = false;
+          var result;
+          try { result = JSON.parse(nameOutput.text); }
+          catch (error) { result = null; }
+          if (code === 0 && result && typeof result.name === "string") {
+            root.saveName = result.name;
+            if (accepting)
+              root._acceptResolved();
+          } else root._errorText = I18n.tr("widgets.file-picker.selection-check-failed");
+        }
+        destroy();
+      }
+    }
+  }
+
+  function _acceptResolved() {
     if (_settled || busy || _pendingReplace)
       return;
     _errorText = "";
@@ -340,7 +420,7 @@ except (ValueError, OSError) as e:
     if (_snapshot.filter)
       results.current_filter = _snapshot.filter;
     var folder = _snapshot.folder;
-    var prefs = {view: viewMode, sortKey: browser.sortKey, sortDescending: browser.sortDescending, showHidden: browser.showHidden, saveFilter: saveFilterEnabled};
+    var prefs = {view: viewMode, sortKey: browser.sortKey, sortDescending: browser.sortDescending, showHidden: browser.showHidden, saveFilter: saveFilterEnabled, autoExtension: autoExtension};
     _finish(0, results);
     FileChooserMemory.remember(appId, folder, prefs);
   }
@@ -363,6 +443,8 @@ except (ValueError, OSError) as e:
       return;
     _settled = true;
     _checking = false;
+    _nameChecking = false;
+    ++_nameGeneration;
     _pendingReplace = "";
     ++_generation;
     finished(response, results);

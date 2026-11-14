@@ -2471,6 +2471,7 @@
       "overwrite-description": "A file with this name already exists in this folder. Replace it?",
       "overwrite-title": "Replace existing file",
       "change-name": "Change name",
+      "auto-extension": "Automatically add extension",
       "parent-folder": "Parent folder",
       "pause": "Pause",
       "play": "Play",
