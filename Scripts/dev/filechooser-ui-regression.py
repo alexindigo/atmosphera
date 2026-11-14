@@ -20,6 +20,7 @@ from filechooser_profile import current_profile, exact_source, profile_argument
 from filechooser_isolation import enter, input_command
 from filechooser_icons import exercise as exercise_icons
 from filechooser_selection import exercise as exercise_selection
+from filechooser_overwrite import exercise as exercise_overwrite
 
 
 def layout_fits(s):
@@ -38,7 +39,7 @@ def layout_fits(s):
 
 
 def main():
-    enter()
+    enter(resource_subject=True)
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--label", required=True)
@@ -141,6 +142,7 @@ def main():
         ipc("focusListing"); key(102); key(109, 42)
         check("Shift-PageDown-extends-selection", lambda s: len(s["selected"]) > 1)
         ipc("open", "open"); wait(lambda s: s["ready"] and s["focus"] == "listing")
+        exercise_overwrite(runtime, evidence, command, ipc, state, wait, check, open_request, key, focus)
         exercise_selection(runtime, evidence, command, ipc, state, wait, check, open_request, key)
         command(["ydotool", "key", "29:1", "42:1", "49:1", "49:0", "42:0", "29:0"])
         wait(lambda s: s["creatingFolder"])

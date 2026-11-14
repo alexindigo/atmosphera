@@ -43,7 +43,6 @@ Scope {
   property string _errorText: ""
   property string _initialFile: ""
   property var _saveFilesNames: []
-  property var _targets: []
   property var _replacements: []
   property var _approved: []
   property var _snapshot: null
@@ -235,8 +234,19 @@ Scope {
       }
       selectedChoices.push([choice[0], value]);
     }
-    _targets = paths;
-    _snapshot = {folder: folder, choices: selectedChoices, filter: currentFilter};
+    var uris = [];
+    for (var path of paths) {
+      var converted = PortalPaths.pathToUri(path);
+      if (!converted.ok) {
+        _errorText = converted.error;
+        _finish(2, {});
+        return;
+      }
+      uris.push(converted.uri);
+    }
+    // One immutable-by-ownership input snapshot drives checks and the reply.
+    // URI/name preparation happens before the final filesystem check, not after.
+    _snapshot = {folder: folder, paths: paths, uris: uris, method: method, directory: options.directory === true, choices: selectedChoices, filter: currentFilter};
     _validate();
   }
 
@@ -278,6 +288,7 @@ except (ValueError, OSError) as e:
       id: validation
       property int generation
       property var input
+      property bool finalCheck: false
       command: ["timeout", "5", "python3", "-c", root._validateCode, JSON.stringify(input)]
       stdout: StdioCollector { id: validationOutput }
       onExited: function(code) {
@@ -289,40 +300,43 @@ except (ValueError, OSError) as e:
           } catch (e) {
             result = {ok: false, error: "selection-check-failed"};
           }
-          root._validated(result);
+          root._validated(result, finalCheck);
         }
         destroy();
       }
     }
   }
 
-  function _validate() {
+  function _validate(finalCheck) {
+    if (_settled || !_snapshot)
+      return;
     _checking = true;
-    var check = validationFactory.createObject(root, {generation: ++_generation, input: [method, options.directory === true, _snapshot.folder, _targets]});
+    var check = validationFactory.createObject(root, {generation: ++_generation, finalCheck: finalCheck === true, input: [_snapshot.method, _snapshot.directory, _snapshot.folder, _snapshot.paths]});
     check.running = true;
   }
 
-  function _validated(result) {
+  function _validated(result, finalCheck) {
+    if (_settled || !_snapshot)
+      return;
     if (!result.ok) {
       _errorText = I18n.tr("widgets.file-picker." + result.error);
       return;
     }
-    _replacements = result.replacements.filter(path => !_approved.includes(path));
+    var approved = Object.create(null);
+    for (var path of _approved)
+      approved[path] = true;
+    _replacements = result.replacements.filter(path => !approved[path]);
     if (_replacements.length) {
       _pendingReplace = _replacements[0];
       return;
     }
-    var uris = [];
-    for (var path of _targets) {
-      var converted = PortalPaths.pathToUri(path);
-      if (!converted.ok) {
-        _errorText = converted.error;
-        _finish(2, {});
-        return;
-      }
-      uris.push(converted.uri);
+    // A destination can appear after the initial check or while another target
+    // awaits approval. Re-read every final path immediately before the reply.
+    if (!finalCheck) {
+      _validate(true);
+      return;
     }
-    var results = {uris: uris, writable: result.writable, choices: _snapshot.choices};
+    var results = {uris: _snapshot.uris, writable: result.writable, choices: _snapshot.choices};
     if (_snapshot.filter)
       results.current_filter = _snapshot.filter;
     var folder = _snapshot.folder;
@@ -337,6 +351,11 @@ except (ValueError, OSError) as e:
     _approved = _approved.concat([_pendingReplace]);
     _pendingReplace = "";
     _validate();
+  }
+  function declineReplace() {
+    if (_settled || !_pendingReplace)
+      return;
+    _invalidate();
   }
 
   function _finish(response, results) {

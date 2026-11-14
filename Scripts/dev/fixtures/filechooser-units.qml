@@ -23,6 +23,8 @@ ShellRoot {
   property var tooltipOwner: null
   property var expectedRecentFolders: []
   property int selectionChanges: 0
+  property bool appearingArmed: false
+  property bool appearedAfterCheck: false
   Component { id: tooltipOwnerFactory; Item {} }
 
   FilePreview {
@@ -56,6 +58,21 @@ ShellRoot {
     id: memoryView
     path: Settings.cacheDir + "filechooser.json"
     printErrors: false
+  }
+  FileView {
+    id: appearingTarget
+    path: root.aux + "/overwrite/appeared.txt"
+    blockWrites: true
+    printErrors: false
+  }
+  Connections {
+    target: root.request
+    function onBusyChanged() {
+      if (root.request && root.request.appId === "unit.appearing" && root.appearingArmed && !root.appearedAfterCheck && !root.request.busy && !root.request.settled) {
+        root.appearedAfterCheck = true;
+        appearingTarget.setText("arrived before return\n");
+      }
+    }
   }
   Process {
     id: mutate
@@ -131,6 +148,112 @@ ShellRoot {
                                                  results: results
                                                }
                                              ]);
+    });
+  }
+
+  function buildOverwriteTests() {
+    var folder = aux + "/overwrite";
+    function save(name, app) {
+      createRequest("save", {current_folder: PortalPaths.encodeBytePath(folder).bytes, current_name: name}, app || "unit.safety");
+    }
+    function batch() {
+      createRequest("saveFiles", {current_folder: PortalPaths.encodeBytePath(folder).bytes,
+        files: ["protected.txt", "other.txt"].map(name => PortalPaths.encodeBytePath(name).bytes)}, "unit.safety");
+    }
+    function pending() { return request.pendingReplace !== ""; }
+    step(() => true, function () { save("appeared.txt", "unit.appearing"); });
+    step(requestReady, function () { root.appearingArmed = true; request.accept(); });
+    step(() => pending() || answered(), function () {
+      report("overwrite.appears-before-return", root.appearedAfterCheck && request.pendingReplace === folder + "/appeared.txt" && responses.length === 0, {pending: request.pendingReplace, responses: responses});
+      root.appearingArmed = false;
+      request.cancel();
+      save("protected.txt");
+    });
+    step(requestReady, function () { request.accept(); });
+    step(pending, function () {
+      request.declineReplace();
+      same("overwrite.decline-keeps-request", [request.settled, request.pendingReplace, responses], [false, "", []]);
+      same("overwrite.decline-keeps-name", request.saveName, "protected.txt");
+      request.accept();
+    });
+    step(pending, function () {
+      request.saveName = "other.txt";
+      same("overwrite.name-invalidates", request.pendingReplace, "");
+      request.accept();
+    });
+    step(pending, function () {
+      same("overwrite.final-target", request.pendingReplace, folder + "/other.txt");
+      request.declineReplace();
+      request.saveName = "new target.txt";
+      request.accept();
+    });
+    step(answered, function () {
+      same("overwrite.changed-name-result", responses[0].results.uris, [PortalPaths.pathToUri(folder + "/new target.txt").uri]);
+      save("A.txt");
+    });
+    step(requestReady, function () { request.accept(); });
+    step(answered, function () {
+      same("overwrite.case-sensitive", [responses[0].response, request.pendingReplace], [0, ""]);
+    });
+    for (let name of ["directory", "unwritable.txt", "fifo", "dangling", "directory-link"]) {
+      step(() => true, function () { save(name); });
+      step(requestReady, function () { request.accept(); });
+      step(() => !request.busy && request.errorText !== "", function () {
+        report("overwrite.refuse-" + name, !request.settled && !request.pendingReplace && responses.length === 0, request.errorText);
+        request.cancel();
+      });
+    }
+    step(() => true, function () { save("regular-link"); });
+    step(requestReady, function () { request.accept(); });
+    step(pending, function () {
+      same("overwrite.regular-link", request.pendingReplace, folder + "/regular-link");
+      request.confirmReplace();
+    });
+    step(answered, function () {
+      same("overwrite.regular-link-result", responses[0].results.uris, [PortalPaths.pathToUri(folder + "/regular-link").uri]);
+      save("protected.txt");
+    });
+    step(requestReady, function () { request.accept(); });
+    step(pending, function () {
+      same("overwrite.request-scope", responses, []);
+      request.cancel();
+      batch();
+    });
+    step(requestReady, function () { request.accept(); });
+    step(pending, function () { request.confirmReplace(); });
+    step(pending, function () {
+      same("overwrite.batch-no-partial", [request.pendingReplace, responses], [folder + "/other.txt", []]);
+      request.declineReplace();
+      request.accept();
+    });
+    step(pending, function () {
+      same("overwrite.batch-decline-clears-all", request.pendingReplace, folder + "/protected.txt");
+      request.confirmReplace();
+    });
+    step(pending, function () { request.confirmReplace(); });
+    step(answered, function () {
+      same("overwrite.batch-all-approved", responses[0].results.uris, ["protected.txt", "other.txt"].map(name => PortalPaths.pathToUri(folder + "/" + name).uri));
+      batch();
+    });
+    step(requestReady, function () { request.accept(); });
+    step(pending, function () { request.confirmReplace(); });
+    step(pending, function () {
+      request.currentFilter = ["Text", [[0, "*.txt"]]];
+      request.accept();
+    });
+    step(pending, function () {
+      same("overwrite.filter-clears-approval", request.pendingReplace, folder + "/protected.txt");
+      request.cancel();
+      batch();
+    });
+    step(requestReady, function () { request.accept(); });
+    step(pending, function () { request.confirmReplace(); });
+    step(pending, function () { request.browser.navigate(folder + "/child"); });
+    step(requestReady, function () { request.browser.navigate(folder); });
+    step(requestReady, function () { request.accept(); });
+    step(pending, function () {
+      same("overwrite.folder-clears-approval", request.pendingReplace, folder + "/protected.txt");
+      request.cancel();
     });
   }
 
@@ -641,6 +764,9 @@ ShellRoot {
     step(() => !request.busy && request.errorText !== "", function () {
       report("request.unreadable-file-inline", !request.settled && responses.length === 0, request.errorText);
       request.cancel();
+    });
+    buildOverwriteTests();
+    step(() => true, function () {
       fileBrowser.navigate(aux + "/denied");
     });
     step(() => fileBrowser.status === "error", function () {

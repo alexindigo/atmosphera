@@ -53,6 +53,17 @@ def main():
         (aux / name).mkdir()
     (aux / "creation/Taken").mkdir()
     (aux / "creation/Existing.txt").write_text("existing fixture\n")
+    overwrite = aux / "overwrite"
+    overwrite.mkdir(); (overwrite / "child").mkdir(); (overwrite / "directory").mkdir()
+    (overwrite / "protected.txt").write_text("ORIGINAL protected\n")
+    (overwrite / "other.txt").write_text("ORIGINAL other\n")
+    (overwrite / "a.txt").write_text("case-sensitive\n")
+    (overwrite / "unwritable.txt").write_text("read only\n")
+    (overwrite / "unwritable.txt").chmod(0o444)
+    os.mkfifo(overwrite / "fifo")
+    (overwrite / "regular-link").symlink_to(overwrite / "protected.txt")
+    (overwrite / "directory-link").symlink_to(overwrite / "directory", target_is_directory=True)
+    (overwrite / "dangling").symlink_to(overwrite / "missing")
     (aux / "write-denied").chmod(0o555)
     for i in range(7):
         (aux / f"recent{i}").mkdir()
@@ -149,6 +160,8 @@ def main():
     required.update("selection." + name for name in ("ctrl-toggle-removes", "ctrl-toggle-adds", "anchor-stable-range", "range-shrinks-from-anchor", "folder-range-kinds", "single-range-keeps-one"))
     required.add("browser.path-index-no-prototype-keys")
     required.add("selection.revalidation-noop")
+    required.update("overwrite." + name for name in ("appears-before-return", "decline-keeps-request", "decline-keeps-name", "name-invalidates", "final-target", "case-sensitive", "regular-link", "request-scope", "batch-no-partial", "batch-decline-clears-all", "batch-all-approved", "filter-clears-approval", "folder-clears-approval"))
+    required.update("overwrite.refuse-" + name for name in ("directory", "unwritable.txt", "fifo", "dangling", "directory-link"))
     missing = sorted(required - {case["case"] for case in cases})
     required_media = {"playback." + name for name in ("initial", "inactive-intents", "volume-low", "volume-high", "volume-step", "invalid-volume", "times", "autoplay", "seek-low", "seek-high", "close-stops", "close-destroys-engine")}
     required_labels = {"labels." + name for name in ("extension-attached", "dots", "long-word", "cjk", "extension-only", "two-lines-only")}
@@ -159,6 +172,8 @@ def main():
     missing += sorted(required_icons - {case["case"] for case in cases})
     files_untouched = all(not (fixtures / name).exists() for name in ("draft.txt", "new # résumé.txt", "brand-new.txt", "stale.txt", "folder/child.txt"))
     files_untouched = files_untouched and (fixtures / "item2.txt").read_bytes() == b"x" * 30 and (fixtures / "item10.png").read_bytes() == b"x" * 10
+    files_untouched = files_untouched and (overwrite / "protected.txt").read_text() == "ORIGINAL protected\n" and (overwrite / "other.txt").read_text() == "ORIGINAL other\n"
+    files_untouched = files_untouched and not (overwrite / "new target.txt").exists() and not (overwrite / "A.txt").exists()
     cases.append(dict(case="request.no-target-file-writes", **{"pass": files_untouched}))
     if not files_untouched:
         failures.append(cases[-1])

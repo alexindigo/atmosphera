@@ -252,6 +252,8 @@ def main():
         text("Field notes.md")
         key("Return")
         wait(lambda s: bool(s["replace"]))
+        check("replace-default-is-safe", lambda s: s["focusedControl"] == "Change name")
+        key("Tab")
         check("replace-focus", lambda s: s["focusedControl"] == "Replace")
         capture("save-replace")
         key("Return")

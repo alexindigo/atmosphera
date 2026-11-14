@@ -123,7 +123,9 @@ PanelWindow {
       return header.breadcrumbGeometry();
     }
       function dismissLayer() {
-      if (quickLook.opened) {
+      if (request.pendingReplace) {
+      editAfterReplace();
+    } else if (quickLook.opened) {
       quickLook.opened = false;
     } else if (header.editing)
       header.leavePathEditing();
@@ -135,7 +137,13 @@ PanelWindow {
       else
       request.cancel();
     }
+      function editAfterReplace() {
+      request.declineReplace();
+      Qt.callLater(root.initialFocus);
+    }
       function initialFocus() {
+      if (!visible || request.settled)
+      return;
       if (request.method === "save") {
       nameField.inputItem.forceActiveFocus();
       var dot = request.saveName.lastIndexOf(".");
@@ -159,7 +167,7 @@ PanelWindow {
       NScopedShortcut {
       scope: root.contentItem
       sequence: "Ctrl+L"
-      enabled: !root.quickLookOpen
+      enabled: !root.quickLookOpen && !root.request.pendingReplace
       onActivated: header.editPath()
     }
       NScopedShortcut {
@@ -318,13 +326,23 @@ PanelWindow {
       enabled: !root.quickLookOpen && !root.request.pendingReplace
     }
     }
-      Rectangle {
+      FocusScope {
+      id: replaceOverlay
       anchors.fill: parent
       visible: root.request.pendingReplace !== ""
+      Accessible.role: Accessible.Dialog
+      Accessible.name: I18n.tr("widgets.file-picker.overwrite-title")
+      NInputGuard {
+      target: replaceOverlay
+      focusTarget: changeNameButton
+      focusOwner: root.request.method === "save" ? nameField.inputItem : listing
+      focusOnActivation: true
+    }
+      Rectangle {
+      anchors.fill: parent
       radius: panel.radius
-      onVisibleChanged: if (visible)
-      Qt.callLater(() => replaceButton.forceActiveFocus())
       color: Qt.alpha(AtmoColor.mSurface, 0.95)
+    }
       MouseArea {
       anchors.fill: parent
     }
@@ -337,6 +355,12 @@ PanelWindow {
       icon: Icon.filepickerFile
       pointSize: Style.fontSizeXXXL * 2
       color: AtmoColor.mOnSurfaceVariant
+    }
+      NText {
+      Layout.fillWidth: true
+      text: I18n.tr("widgets.file-picker.overwrite-title")
+      horizontalAlignment: Text.AlignHCenter
+      pointSize: Style.fontSizeL
     }
       NText {
       Layout.fillWidth: true
@@ -354,14 +378,16 @@ PanelWindow {
       Layout.alignment: Qt.AlignHCenter
       spacing: Style.marginM
       ChooserButton {
-      text: I18n.tr("common.cancel")
-      onClicked: root.request.cancel()
+      id: changeNameButton
+      focus: replaceOverlay.visible
+      text: I18n.tr(root.request.method === "saveFiles" ? "widgets.file-picker.back" : "widgets.file-picker.change-name")
+      primary: true
+      onClicked: root.editAfterReplace()
     }
       ChooserButton {
       id: replaceButton
       text: I18n.tr("widgets.file-picker.replace")
-      primary: true
-      enabled: !root.request.busy
+      visible: !root.request.busy
       onClicked: root.request.confirmReplace()
     }
     }

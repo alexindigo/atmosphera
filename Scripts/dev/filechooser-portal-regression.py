@@ -129,6 +129,12 @@ def suite(r):
     r.key(28)
     r.wait(lambda s: s["requests"][0]["replace"] == str(r.fixtures / "Chosen.txt"))
     r.check("SaveFile-awaits-Replace", json.loads(out.read_text())["count"] == 0 and proc.poll() is None)
+    r.key(28)
+    r.wait(lambda s: not s["requests"][0]["replace"])
+    r.check("SaveFile-Enter-keeps-request", json.loads(out.read_text())["count"] == 0 and proc.poll() is None)
+    r.key(28)
+    r.wait(lambda s: s["requests"][0]["replace"] == str(r.fixtures / "Chosen.txt"))
+    r.key(15)
     r.key(28); data = r.result(proc, out)
     r.check("SaveFile-current-file-replaced", data["response"] == 0 and data["results"]["uris"] == [(r.fixtures / "Chosen.txt").as_uri()], data)
     names = ["second #.txt", "first.txt", "日本語.txt"]

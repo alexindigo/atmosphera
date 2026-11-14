@@ -2469,6 +2469,8 @@
       "options-from": "Options from {name}",
       "options-from-app": "Options from the app",
       "overwrite-description": "A file with this name already exists in this folder. Replace it?",
+      "overwrite-title": "Replace existing file",
+      "change-name": "Change name",
       "parent-folder": "Parent folder",
       "pause": "Pause",
       "play": "Play",
