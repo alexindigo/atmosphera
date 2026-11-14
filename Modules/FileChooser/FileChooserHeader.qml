@@ -52,7 +52,8 @@ RowLayout {
       x: item.x,
       y: item.y,
       width: item.width,
-      height: item.height
+      height: item.height,
+      iconOnly: item.icon !== undefined && item.text === ""
     }));
   }
 
@@ -95,18 +96,19 @@ RowLayout {
     ChooserButton {
     icon: Icon.chevronLeft
     tooltipText: I18n.tr("widgets.file-picker.back")
-    enabled: root.request.browser.canBack
+    visible: root.request.browser.canBack
     onClicked: root.request.browser.back()
   }
     ChooserButton {
     icon: Icon.chevronRight
     tooltipText: I18n.tr("widgets.file-picker.forward")
-    enabled: root.request.browser.canForward
+    visible: root.request.browser.canForward
     onClicked: root.request.browser.forward()
   }
     ChooserButton {
     icon: Icon.filepickerArrowUp
     tooltipText: I18n.tr("widgets.file-picker.parent-folder")
+    visible: root.request.browser.currentPath !== "" && root.request.browser.currentPath !== "/"
     onClicked: root.request.browser.up()
   }
     Item {

@@ -102,6 +102,12 @@ def main():
         raise AssertionError("Unreachable place: " + label)
     try:
         wait(lambda s: s["ready"], 30)
+        command(["grim", evidence / "header.png"])
+        check("compact-toolbar-above-browser", lambda s: all(
+            c["y"] + c["height"] <= s["layoutGeometry"]["rail"]["y"] + .5
+            for c in s["layoutGeometry"]["header"]))
+        check("toolbar-icon-slots-square", lambda s: all(not c.get("iconOnly") or abs(c["width"] - c["height"]) < .5
+              for c in s["layoutGeometry"]["header"]))
         keyboard_output = current_profile().evidence / (a.label + "-keyboard")
         subprocess.run(["timeout", "360", "python3", "-B", str(SCRIPTS / "filechooser-harness-drive.py"),
                         "--runtime", str(runtime), "--output", str(keyboard_output)], env=env, check=True, timeout=370)

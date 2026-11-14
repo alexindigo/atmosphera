@@ -80,7 +80,8 @@ PanelWindow {
         x: entry.x + origin.x,
         y: entry.y + origin.y,
         width: entry.width,
-        height: entry.height
+        height: entry.height,
+        iconOnly: entry.iconOnly === true
       }));
     }
       return {
@@ -162,16 +163,22 @@ PanelWindow {
       enabled: root.request.pendingReplace === ""
       ColumnLayout {
       Layout.fillWidth: true
-      Layout.margins: Style.marginL
-      spacing: Style.marginM
+      Layout.margins: Style.marginM
+      spacing: Style.marginS
       RowLayout {
       Layout.fillWidth: true
       NText {
-      Layout.fillWidth: true
       Layout.minimumWidth: 0
+      Layout.maximumWidth: 180 * Style.uiScaleRatio
       text: root.request.options.title || I18n.tr("widgets.file-picker.title")
       elide: Text.ElideRight
-      pointSize: Style.fontSizeL
+      pointSize: Style.fontSizeM
+    }
+      FileChooserHeader {
+      id: header
+      Layout.fillWidth: true
+      request: root.request
+      onListingFocusRequested: listing.forceActiveFocus()
     }
       ChooserButton {
       icon: Icon.close
@@ -218,12 +225,6 @@ PanelWindow {
       Layout.fillHeight: true
       Layout.margins: Style.marginM
       spacing: Style.marginM
-      FileChooserHeader {
-      id: header
-      Layout.fillWidth: true
-      request: root.request
-      onListingFocusRequested: listing.forceActiveFocus()
-    }
       NText {
       Layout.fillWidth: true
       visible: text !== ""
