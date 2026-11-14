@@ -26,8 +26,11 @@ def main():
     stub = args.work.resolve() / 'stub'
     stub.mkdir()
     (stub / 'busctl').write_text('''#!/bin/bash
-if [ "$REVIEW_MODE" = absent ]; then exit 1; fi
-if [[ "$*" == *GetNameOwner* ]]; then
+if [[ "$*" == *NameHasOwner* ]]; then
+  if [ "$REVIEW_MODE" = absent ] || { [ -f "$REVIEW_WORK/stopped" ] && [ "$REVIEW_MODE" != successor ]; }; then
+    echo 'b false'; else echo 'b true'; fi
+elif [ "$REVIEW_MODE" = absent ]; then exit 1
+elif [[ "$*" == *GetNameOwner* ]]; then
   if [ -f "$REVIEW_WORK/stopped" ]; then
     if [ "$REVIEW_MODE" = successor ]; then echo 's ":1.99"'; else exit 1; fi
   else echo 's ":1.42"'; fi

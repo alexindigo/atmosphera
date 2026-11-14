@@ -250,14 +250,14 @@ def main():
             time.sleep(.5)
             command(["qs", "ipc", "--pid", str(initial["pid"]), "call", "recoveryElection", "quit"])
             shell = contender
-            wait(lambda: (s := state())["pid"] != initial["pid"] and s["initialized"] and s)
+            handoff_state = wait(lambda: (s := state())["pid"] != initial["pid"] and s["initialized"] and s)
             check("queued-shell-survives-normal-handoff", handoff.poll() is None)
             check("normal-handoff-no-term-kill", "SIGTERM" not in (root / "normal-handoff.log").read_text() and "SIGKILL" not in (root / "normal-handoff.log").read_text())
             normal = command([cli, "session", "launch", contender], seconds=30)
             (root / "normal-switch.log").write_text(normal.stdout + normal.stderr)
             switched = True
             shell = contender
-            replacement = wait(lambda: (s := state())["pid"] != initial["pid"] and s["initialized"] and s)
+            replacement = wait(lambda: (s := state())["pid"] != handoff_state["pid"] and s["initialized"] and s)
             check("normal-exit-no-term-kill", "SIGTERM" not in normal.stderr and "SIGKILL" not in normal.stderr)
             flows("normal")
             # SIGSTOP leaves the process, sockets and all bus names alive. Its

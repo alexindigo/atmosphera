@@ -83,6 +83,67 @@ class IdentityTests(unittest.TestCase):
         process.stop.assert_called_once_with("owner ping failed for 10 seconds")
 
 
+class OwnershipLookupTests(unittest.TestCase):
+    def test_only_explicit_absence_returns_none(self):
+        with patch.object(owner, "call", return_value="b false"):
+            self.assertIsNone(owner.owner())
+
+    def test_failed_presence_lookup_is_not_absence(self):
+        with patch.object(owner, "call", return_value=""):
+            with self.assertRaises(RuntimeError):
+                owner.owner()
+
+    def test_failed_unique_lookup_is_not_absence(self):
+        with patch.object(owner, "call", side_effect=["b true", ""]):
+            with self.assertRaises(RuntimeError):
+                owner.owner()
+
+    def test_failed_pid_lookup_is_not_absence(self):
+        with patch.object(owner, "call", side_effect=["b true", 's ":1.42"', ""]):
+            with self.assertRaises(RuntimeError):
+                owner.owner()
+
+    def test_confirmed_owner_has_unique_name_and_pid(self):
+        with patch.object(owner, "call", side_effect=["b true", 's ":1.42"', "u 42"]):
+            self.assertEqual(owner.owner(), (":1.42", 42))
+
+    def test_prepare_lookup_failure_never_retires(self):
+        with patch.object(owner.sys, "argv", ["shell-owner.py", "prepare"]), \
+             patch.object(owner, "call", return_value=""), \
+             patch.object(owner, "retire_departed") as retire:
+            with self.assertRaises(RuntimeError):
+                owner.main()
+            retire.assert_not_called()
+
+    def test_departure_lookup_failure_never_stops(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "42").write_text(json.dumps(dict(pid=42, start="test-start",
+                phase="elected", bus="test-bus", unique=":1.42")))
+            process = Mock(pid=42)
+            with patch.object(owner, "records", return_value=root), \
+                 patch.object(owner, "Process", return_value=process), \
+                 patch.object(owner, "call", side_effect=lambda method, *args: "test-bus" if method == "GetId" else ""), \
+                 patch.object(owner, "ping", return_value=False):
+                with self.assertRaises(RuntimeError):
+                    owner.retire_departed()
+                process.stop.assert_not_called()
+                process.close.assert_called_once()
+
+    def test_pin_lookup_failure_closes_pidfd(self):
+        process = Mock()
+        with patch.object(owner, "Process", return_value=process), \
+             patch.object(owner, "owner", side_effect=RuntimeError("lookup unavailable")):
+            with self.assertRaises(RuntimeError):
+                owner.pin_owner((":1.42", 42))
+            process.close.assert_called_once()
+
+    def test_queue_lookup_failure_is_not_departure(self):
+        with patch.object(owner, "call", return_value=""):
+            with self.assertRaises(RuntimeError):
+                owner.queued_connection(42)
+
+
 if __name__ == "__main__":
     assert Path("/sys/class/dmi/id/sys_vendor").read_text().strip() == "QEMU", "VM only"
     unittest.main()

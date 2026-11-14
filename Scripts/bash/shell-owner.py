@@ -35,13 +35,21 @@ def call(method, *args):
 
 
 def owner(name=NAME):
+    # A failed lookup is not evidence that the election is vacant. Establish
+    # absence through a successful bus reply; all other lookup failures abort
+    # recovery without granting permission to retire any recorded process.
+    presence = call("NameHasOwner", "s", name)
+    if presence == "b false":
+        return None
+    if presence != "b true":
+        raise RuntimeError("shell ownership lookup failed (NameHasOwner)")
     reply = call("GetNameOwner", "s", name).split()
     if len(reply) != 2 or reply[0] != "s":
-        return None
+        raise RuntimeError("shell ownership lookup failed (GetNameOwner)")
     unique = json.loads(reply[1])
     reply = call("GetConnectionUnixProcessID", "s", unique).split()
     if len(reply) != 2 or reply[0] != "u":
-        return None
+        raise RuntimeError("shell ownership lookup failed (GetConnectionUnixProcessID)")
     return unique, int(reply[1])
 
 
@@ -51,8 +59,13 @@ def ping(unique):
 
 def queued_connection(pid):
     reply = shlex.split(call("ListQueuedOwners", "s", NAME))
+    if len(reply) < 2 or reply[0] != "as" or len(reply) != int(reply[1]) + 2:
+        raise RuntimeError("shell ownership lookup failed (ListQueuedOwners)")
     for unique in reply[2:]:
-        if call("GetConnectionUnixProcessID", "s", unique) == f"u {pid}":
+        identity = call("GetConnectionUnixProcessID", "s", unique).split()
+        if len(identity) != 2 or identity[0] != "u":
+            raise RuntimeError("queued shell ownership lookup failed (GetConnectionUnixProcessID)")
+        if int(identity[1]) == pid:
             return unique
     return ""
 
@@ -121,9 +134,12 @@ class Process:
 def pin_owner(identity):
     process = Process(identity[1])
     # Bind the pidfd/start time to the bus connection, not merely its old PID.
-    if owner() != identity:
+    try:
+        if owner() != identity:
+            raise ProcessLookupError("shell election changed")
+    except BaseException:
         process.close()
-        raise ProcessLookupError("shell election changed")
+        raise
     return process
 
 

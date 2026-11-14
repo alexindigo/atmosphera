@@ -35,10 +35,12 @@ sys.exit(reply['rc'])
 '''
 BUS_STUB = '''#!/usr/bin/env python3
 import os, pathlib, sys
-if os.environ.get('S10_OWNER_MODE') == 'absent':
-    sys.exit(1)
 log = pathlib.Path(os.environ['S10_STUB']) / 'calls.jsonl'
-if log.exists() and '["kill", "--id", "cli-fixture"]' in log.read_text():
+absent = os.environ.get('S10_OWNER_MODE') == 'absent' or (log.exists() and '["kill", "--id", "cli-fixture"]' in log.read_text())
+if 'NameHasOwner' in sys.argv:
+    print('b false' if absent else 'b true')
+    sys.exit(0)
+if absent:
     sys.exit(1)
 if 'GetNameOwner' in sys.argv:
     print('s ":1.42"')
