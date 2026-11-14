@@ -28,6 +28,7 @@ def check(root):
         ('check-settings-writes.py',['--check']),
         ('build-settings-search-index.py',['--check']),
         ('settings-schema-selftest.py',[]),
+        ('settings-formatter-selftest.py',[]),
         ('settings-writes-selftest.py',[]),
         ('settings-staged-selftest.py',[]),
         ('settings-runner-paths-selftest.py',[]),
