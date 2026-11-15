@@ -12,8 +12,20 @@ ShellRoot {
   id: root
   property var api: null
   property var instance: null
-  property var manifest: ({id: "i4-popup", name: "I4 popup", entryPoints: {settings: "Page.qml"}, metadata: {}})
-  property var placement: ({kind: "bar", list: "global", section: "left", index: 0})
+  property var manifest: ({
+                            id: "i4-popup",
+                            name: "I4 popup",
+                            entryPoints: {
+                              settings: "Page.qml"
+                            },
+                            metadata: {}
+                          })
+  property var placement: ({
+                             kind: "bar",
+                             list: "global",
+                             section: "left",
+                             index: 0
+                           })
   property bool started: false
   property string phase: "start"
   property var held: null
@@ -28,10 +40,18 @@ ShellRoot {
     if (!ok)
       throw new Error("I4_PLUGIN_POPUP_ASSERT: " + label);
   }
+  function showSettings(instanceApi) {
+    // Match production ordering: establish the native host before Popup.open.
+    if (popupHost.popupContentItem !== popup && !popupHost.showDialog(popup))
+      return false;
+    return instanceApi ? popup.openInstanceSettings(manifest, instanceApi, "settings") : popup.openPluginSettings(manifest, "settings");
+  }
   function register(value) {
     api = Service.createPluginAPI("i4-popup", manifest, value, {}, {}, {});
     var plugins = Object.assign({}, Service.loadedPlugins);
-    plugins["i4-popup"] = {api: api};
+    plugins["i4-popup"] = {
+      api: api
+    };
     Service.loadedPlugins = plugins;
     var originalFactory = api.createSettingsEditor;
     api.createSettingsEditor = function () {
@@ -50,7 +70,12 @@ ShellRoot {
             };
           });
           if (root.stale)
-            root.api.pluginSettings = {label: "newer-live", nested: {keep: true}};
+            root.api.pluginSettings = {
+              label: "newer-live",
+              nested: {
+                keep: true
+              }
+            };
         }
       };
       return wrapper;
@@ -69,13 +94,29 @@ ShellRoot {
           root.check(PluginInstances.effectiveSettings(root.api.pluginSettings, root.placement, PluginInstances.revision).label === "shared-final", "restarted instance consumer");
           console.log("I4_PLUGIN_POPUP: RESTART_PASS");
           Qt.exit(0);
-        } catch (error) { console.error(String(error)); Qt.exit(2); }
+        } catch (error) {
+          console.error(String(error));
+          Qt.exit(2);
+        }
       });
       return;
     }
-    register({label: "shared", nested: {keep: true}});
-    Settings.data.bar.widgets.left = [{id: "plugin:i4-popup", tag: "keep", instanceSettings: {label: "instance"}}];
-    popup.openPluginSettings(manifest, "settings");
+    register({
+               label: "shared",
+               nested: {
+                 keep: true
+               }
+             });
+    Settings.data.bar.widgets.left = [
+          {
+            id: "plugin:i4-popup",
+            tag: "keep",
+            instanceSettings: {
+              label: "instance"
+            }
+          }
+        ];
+    showSettings();
     phase = "cancel";
   }
   function deliver() {
@@ -99,7 +140,7 @@ ShellRoot {
       phase = "reopen";
     } else if (phase === "reopen" && !popup.visible && !popup.currentPlugin) {
       check(api.pluginSettings.label === "shared" && ownerSaves === 0, "discard has no settings write");
-      popup.openPluginSettings(manifest, "settings");
+      showSettings();
       phase = "apply";
     } else if (phase === "apply" && popup.opened && page) {
       page.setLabel("shared-first");
@@ -108,7 +149,7 @@ ShellRoot {
       check(popupHost.close() === false && popupHost.popupContentItem === popup, "host refuses held Apply close");
       popup.requestClose();
       popup.confirmDiscard();
-      popup.openPluginSettings(manifest, "settings");
+      showSettings();
       check(applies === 1 && popup.busy && popup.visible && !popup.discardPending && page.saves === 1 && page.completions === 0, "single Apply and busy competition");
       popupHost.visible = false;
       phase = "held";
@@ -129,12 +170,23 @@ ShellRoot {
     } else if (phase === "failure-open" && !popup.visible && !popup.currentPlugin) {
       // Gate creates this plugin's destination as a directory with a sentinel.
       var original = api;
-      api = Service.createPluginAPI("i4-popup-fail", manifest, {label: "failure-base"}, {}, {}, {});
+      api = Service.createPluginAPI("i4-popup-fail", manifest, {
+                                      label: "failure-base"
+                                    }, {}, {}, {});
       var plugins = Object.assign({}, Service.loadedPlugins);
-      plugins["i4-popup-fail"] = {api: api};
+      plugins["i4-popup-fail"] = {
+        api: api
+      };
       Service.loadedPlugins = plugins;
-      manifest = {id: "i4-popup-fail", name: "failure", entryPoints: {settings: "Page.qml"}, metadata: {}};
-      popup.openPluginSettings(manifest, "settings");
+      manifest = {
+        id: "i4-popup-fail",
+        name: "failure",
+        entryPoints: {
+          settings: "Page.qml"
+        },
+        metadata: {}
+      };
+      showSettings();
       phase = "failure-apply";
     } else if (phase === "failure-apply" && popup.opened && page) {
       page.setLabel("failed-local");
@@ -147,10 +199,17 @@ ShellRoot {
       popup.confirmDiscard();
       phase = "stale-open";
     } else if (phase === "stale-open" && !popup.visible && !popup.currentPlugin) {
-      manifest = {id: "i4-popup", name: "stale", entryPoints: {settings: "Page.qml"}, metadata: {}};
+      manifest = {
+        id: "i4-popup",
+        name: "stale",
+        entryPoints: {
+          settings: "Page.qml"
+        },
+        metadata: {}
+      };
       api = Service.getPluginAPI("i4-popup");
       stale = true;
-      popup.openPluginSettings(manifest, "settings");
+      showSettings();
       phase = "stale-apply";
     } else if (phase === "stale-apply" && popup.opened && page) {
       page.setLabel("saved-stale");
@@ -165,7 +224,7 @@ ShellRoot {
       stale = false;
       phase = "final-open";
     } else if (phase === "final-open" && !popup.visible && !popup.currentPlugin) {
-      popup.openPluginSettings(manifest, "settings");
+      showSettings();
       phase = "final-apply";
     } else if (phase === "final-apply" && popup.opened && page) {
       page.setLabel("shared-final");
@@ -178,7 +237,7 @@ ShellRoot {
       phase = "instance-open";
     } else if (phase === "instance-open" && !popup.visible && !popup.currentPlugin) {
       instance = PluginInstances.apiFor("i4-popup", placement);
-      popup.openInstanceSettings(manifest, instance, "settings");
+      showSettings(instance);
       phase = "instance-apply";
     } else if (phase === "instance-apply" && popup.opened && page) {
       check(page.labelText === "instance", "instance opening consumer");
@@ -199,8 +258,15 @@ ShellRoot {
       popup.requestClose();
       phase = "legacy-open";
     } else if (phase === "legacy-open" && !popup.visible && !popup.currentPlugin) {
-      manifest = {id: "i4-popup", name: "legacy", entryPoints: {settings: "Legacy.qml"}, metadata: {}};
-      popup.openPluginSettings(manifest, "settings");
+      manifest = {
+        id: "i4-popup",
+        name: "legacy",
+        entryPoints: {
+          settings: "Legacy.qml"
+        },
+        metadata: {}
+      };
+      showSettings();
       phase = "legacy-close";
     } else if (phase === "legacy-close" && popup.opened && page) {
       popup.requestClose();
@@ -212,12 +278,15 @@ ShellRoot {
   }
   Connections {
     target: Settings
-    function onSettingsLoaded() { root.start(); }
+    function onSettingsLoaded() {
+      root.start();
+    }
   }
   Connections {
     target: Service
     function onPluginSettingsCompleted(pluginId, result) {
-      if (pluginId === "i4-popup") root.ownerSaves++;
+      if (pluginId === "i4-popup")
+        root.ownerSaves++;
     }
   }
   PopupMenuWindow {
@@ -226,11 +295,9 @@ ShellRoot {
     NPluginSettingsPopup {
       id: popup
       parent: popupHost.dialogParent
-      onAboutToShow: {
-        if (popupHost.popupContentItem !== popup)
-          popupHost.showDialog(popup);
+      onSettingsCompleted: result => {
+        root.receipts++;
       }
-      onSettingsCompleted: result => { root.receipts++; }
     }
   }
   Component.onCompleted: start()
@@ -239,12 +306,20 @@ ShellRoot {
     repeat: true
     running: true
     onTriggered: {
-      try { root.drive(); } catch (error) { console.error(String(error)); Qt.exit(2); }
+      try {
+        root.drive();
+      } catch (error) {
+        console.error(String(error));
+        Qt.exit(2);
+      }
     }
   }
   Timer {
     interval: 240000
     running: true
-    onTriggered: { console.error("I4_PLUGIN_POPUP_ASSERT: watchdog " + root.phase); Qt.exit(2); }
+    onTriggered: {
+      console.error("I4_PLUGIN_POPUP_ASSERT: watchdog " + root.phase);
+      Qt.exit(2);
+    }
   }
 }
