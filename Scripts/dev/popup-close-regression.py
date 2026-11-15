@@ -19,6 +19,7 @@ def main():
         setattr(args, name, getattr(args, name).resolve())
     sys.path.insert(0, str(args.source / 'Scripts/dev'))
     from guest_profile import activate_profile
+    from probe_files import ProbeFiles
     profile = activate_profile(args.guest_profile)
     assert profile.uuid == '12f17a02-25e9-474c-9dae-fea092c2d2be'
     assert not profile.console.records
@@ -33,14 +34,11 @@ def main():
                TMPDIR=str(args.work_root / 'tmp'), ATMOSPHERA_CONFIG_DIR=str(config),
                ATMOSPHERA_CACHE_DIR=str(args.work_root / 'cache'), ATMOSPHERA_STATE_DIR=str(args.work_root / 'state'))
     Path(env['TMPDIR']).mkdir()
-    probe = args.source / 'popup-close-proof.qml'
-    probe.write_bytes((args.source / 'Scripts/dev/fixtures/popup-close-contract.qml').read_bytes())
-    qmlls = args.source / '.qmlls.ini'
-    created_qmlls = not qmlls.exists()
-    if created_qmlls:
-        qmlls.write_text('')
+    files_owner = None
     errors = []
     try:
+        files_owner = ProbeFiles(args.source, args.source / 'Scripts/dev/fixtures/popup-close-contract.qml')
+        probe = files_owner.probe
         result = subprocess.run(['timeout', '25', 'dbus-run-session', '--', 'qs', '-p', str(probe), '--no-color'],
                                 env=env, cwd=args.source, capture_output=True, text=True, timeout=30)
         text = result.stdout + result.stderr
@@ -64,7 +62,7 @@ def main():
     except BaseException as error:
         errors.append(repr(error))
     finally:
-        for operation in (probe.unlink, lambda: qmlls.unlink() if created_qmlls else None,
+        for operation in (lambda: files_owner.close() if files_owner else None,
                           lambda: shutil.rmtree(Path(runtime['XDG_RUNTIME_DIR']))):
             try:
                 operation()
