@@ -257,6 +257,11 @@ ShellRoot {
             height.inputItem.textEdited();
             height.commitEdit();
           }
+          function resume(): void {
+            var width = root.field(I18n.tr("common.width"));
+            width.inputItem.forceActiveFocus();
+            width.inputItem.cursorPosition = width.text.length;
+          }
           function release(): void {
             var next = root.held.shift();
             if (next)
