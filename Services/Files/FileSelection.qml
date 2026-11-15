@@ -15,18 +15,38 @@ Scope {
   property string _anchorPath: ""
   property string _prefix: ""
   property double _typedAt: 0
+  property var _band: null
+  signal chosen(string path)
+  // User intent is distinct from model reconciliation/history restoration and
+  // can replace a typed Name even when the selected path set is unchanged.
+  signal selectionEdited()
+  function _setPaths(paths) {
+    if (paths.length === _selectedPaths.length && paths.every((path, index) => path === _selectedPaths[index]))
+      return;
+    _selectedPaths = paths;
+  }
 
   function _selectable(entry) {
     return entry && entry.directory === (selectable === "folders");
   }
 
   function clear() {
-    _selectedPaths = [];
+    _band = null;
+    _setPaths([]);
     cursor = -1;
     _anchor = -1;
     _cursorPath = "";
     _anchorPath = "";
     _prefix = "";
+  }
+
+  function snapshot() { return {paths: selectedPaths.slice(), cursor: _cursorPath, anchor: _anchorPath}; }
+  function restore(state) {
+    if (!state) return;
+    _setPaths(state.paths || []);
+    _cursorPath = state.cursor || "";
+    _anchorPath = state.anchor || "";
+    _revalidate();
   }
 
   function click(index, modifiers) {
@@ -42,23 +62,70 @@ Scope {
         if (_selectable(entry))
           paths.push(entry.path);
       }
-      _selectedPaths = paths;
+      _setPaths(paths);
     } else {
       _anchor = index;
       _anchorPath = item.path;
       if (!_selectable(item)) {
         if (!(multiple && (modifiers & Qt.ControlModifier)))
-          _selectedPaths = [];
-      } else if (multiple && (modifiers & Qt.ControlModifier)) {
-        _selectedPaths = _selectedPaths.includes(item.path) ? _selectedPaths.filter(p => p !== item.path) : _selectedPaths.concat([item.path]);
+          _setPaths([]);
+      } else if (modifiers & Qt.ControlModifier) {
+        _setPaths(_selectedPaths.includes(item.path) ? _selectedPaths.filter(p => p !== item.path) : multiple ? _selectedPaths.concat([item.path]) : [item.path]);
       } else
-        _selectedPaths = [item.path];
+        _setPaths([item.path]);
     }
+    selectionEdited();
+    chosen(item.path);
   }
 
-  function move(delta, extend) {
-    if (browser.count)
-      click(Math.max(0, Math.min(browser.count - 1, cursor < 0 ? (delta < 0 ? browser.count - 1 : 0) : cursor + delta)), extend ? Qt.ShiftModifier : Qt.NoModifier);
+  function moveTo(index, extend, focusOnly) {
+    if (!browser.count)
+      return;
+    index = Math.max(0, Math.min(browser.count - 1, index));
+    if (focusOnly) {
+      cursor = index;
+      _cursorPath = browser.entry(index).path;
+    } else click(index, extend ? Qt.ShiftModifier : Qt.NoModifier);
+  }
+  function move(delta, extend, focusOnly) {
+    moveTo(cursor < 0 ? (delta < 0 ? browser.count - 1 : 0) : cursor + delta, extend, focusOnly);
+  }
+  function toggleCurrent() {
+    if (cursor >= 0)
+      click(cursor, Qt.ControlModifier);
+  }
+  function background(modifiers) {
+    if (!(modifiers & (Qt.ControlModifier | Qt.ShiftModifier))) {
+      clear();
+      selectionEdited();
+    }
+  }
+  function beginBand(modifiers, startIndex) {
+    _band = multiple ? {base: _selectedPaths.slice(), modifiers: modifiers, anchor: startIndex, indices: []} : null;
+  }
+  function updateBand(indices) {
+    if (!_band || !multiple)
+      return;
+    var paths = indices.map(i => browser.entry(i)).filter(item => _selectable(item)).map(item => item.path);
+    _band.indices = indices;
+    if (_band.modifiers & Qt.ShiftModifier)
+      paths = _band.base.concat(paths.filter(path => !_band.base.includes(path)));
+    else if (_band.modifiers & Qt.ControlModifier)
+      paths = _band.base.filter(path => !paths.includes(path)).concat(paths.filter(path => !_band.base.includes(path)));
+    _setPaths(paths);
+    selectionEdited();
+  }
+  function endBand(index) {
+    if (!_band)
+      return;
+    var indices = _band.indices;
+    if (indices.length) {
+      cursor = index >= 0 ? index : indices[indices.length - 1];
+      _anchor = _band.anchor >= 0 ? _band.anchor : indices[0];
+      var entry = browser.entry(_anchor);
+      _anchorPath = entry ? entry.path : "";
+    }
+    _band = null;
   }
 
   function selectAll() {
@@ -70,7 +137,8 @@ Scope {
       if (_selectable(item))
         paths.push(item.path);
     }
-    _selectedPaths = paths;
+    _setPaths(paths);
+    selectionEdited();
   }
 
   function typeAhead(text) {
@@ -90,12 +158,14 @@ Scope {
   function _revalidate() {
     if (!browser || browser.status === "loading")
       return;
-    _selectedPaths = _selectedPaths.filter(function(path) {
+    _band = null;
+    var paths = _selectedPaths.filter(function(path) {
       var index = browser.indexOfPath(path);
       return index >= 0 && root._selectable(browser.entry(index));
     });
-    if (!multiple && _selectedPaths.length > 1)
-      _selectedPaths = _selectedPaths.slice(0, 1);
+    if (!multiple && paths.length > 1)
+      paths = paths.slice(0, 1);
+    _setPaths(paths);
     cursor = browser.indexOfPath(_cursorPath);
     _anchor = browser.indexOfPath(_anchorPath);
   }
@@ -109,6 +179,8 @@ Scope {
   Connections {
     target: root.browser
     function onCurrentPathChanged() { root.clear(); }
+    function onHistoryLeaving() { root.browser.rememberHistory("selection", root.snapshot()); }
+    function onHistoryRestored(state) { root.restore(state.selection); }
     function onListingChanged() { root._revalidate(); }
     function onStatusChanged() { root._revalidate(); }
   }

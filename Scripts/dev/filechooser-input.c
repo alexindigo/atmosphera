@@ -19,11 +19,14 @@
 #include <xkbcommon/xkbcommon.h>
 #include <xkbcommon/xkbcommon-keysyms.h>
 #include "virtual-keyboard-client.h"
+#include "virtual-pointer-client.h"
 
 static struct wl_display *display;
 static struct wl_seat *seat;
 static struct zwp_virtual_keyboard_manager_v1 *manager;
 static struct zwp_virtual_keyboard_v1 *keyboard;
+static struct zwlr_virtual_pointer_manager_v1 *pointer_manager;
+static struct zwlr_virtual_pointer_v1 *pointer;
 static struct xkb_context *context;
 static struct xkb_keymap *base_map, *active_map;
 static struct xkb_state *state;
@@ -40,6 +43,8 @@ static void global(void *data, struct wl_registry *registry, uint32_t name,
         seat = wl_registry_bind(registry, name, &wl_seat_interface, 1);
     else if (!strcmp(interface, "zwp_virtual_keyboard_manager_v1"))
         manager = wl_registry_bind(registry, name, &zwp_virtual_keyboard_manager_v1_interface, 1);
+    else if (!strcmp(interface, "zwlr_virtual_pointer_manager_v1"))
+        pointer_manager = wl_registry_bind(registry, name, &zwlr_virtual_pointer_manager_v1_interface, 1);
 }
 
 static void removed(void *data, struct wl_registry *registry, uint32_t name) {
@@ -116,6 +121,24 @@ static bool keys(char *input) {
     return true;
 }
 
+static bool base_text(xkb_keysym_t symbol) {
+    for (xkb_keycode_t code = xkb_keymap_min_keycode(base_map);
+         code <= xkb_keymap_max_keycode(base_map) && code < 256; code++) {
+        xkb_level_index_t levels = xkb_keymap_num_levels_for_key(base_map, code, 0);
+        for (xkb_level_index_t level = 0; level < levels && level < 2; level++) {
+            const xkb_keysym_t *symbols = NULL;
+            if (xkb_keymap_key_get_syms_by_level(base_map, code, 0, level, &symbols) != 1 || symbols[0] != symbol)
+                continue;
+            set_map(base_map);
+            if (level) key(42, 1);
+            key(code - 8, 1); key(code - 8, 0);
+            if (level) key(42, 0);
+            return true;
+        }
+    }
+    return false;
+}
+
 static bool text(char *input) {
     char *saved = NULL;
     for (char *token = strtok_r(input, " \n", &saved); token; token = strtok_r(NULL, " \n", &saved)) {
@@ -127,6 +150,10 @@ static bool text(char *input) {
         if (unicode == '\t') symbol = XKB_KEY_Tab;
         if (unicode == '\b') symbol = XKB_KEY_BackSpace;
         if (symbol == XKB_KEY_NoSymbol) return false;
+        /* Physical and logical keys must agree for browser accelerators. A
+         * Unicode-only map on evdev Escape works in Qt text fields but makes
+         * Chromium dismiss its address bar instead of typing the character. */
+        if (base_text(symbol)) continue;
         char *definition = NULL;
         if (asprintf(&definition, "xkb_keymap { xkb_keycodes { minimum=8; maximum=9; <TXT>=9; }; "
                      "xkb_types { type \"ONE_LEVEL\" { modifiers=None; level_name[Level1]=\"Any\"; }; }; "
@@ -139,6 +166,74 @@ static bool text(char *input) {
         xkb_keymap_unref(map);
         key(1, 1); key(1, 0);
     }
+    return true;
+}
+
+static bool pointer_command(char *input) {
+    unsigned x, y, end_x, end_y, button, modifiers = 0;
+    double delta;
+    char source[16], extra;
+    if (sscanf(input, "move %u %u %c", &x, &y, &extra) == 2 && x < 1280 && y < 800) {
+        zwlr_virtual_pointer_v1_motion_absolute(pointer, milliseconds(), x, y, 1280, 800);
+    } else if (sscanf(input, "click %u %u %u %u %c", &x, &y, &button, &modifiers, &extra) == 4 &&
+               x < 1280 && y < 800 && button >= 272 && button <= 274 && modifiers <= 3) {
+        set_map(base_map);
+        if (modifiers & 1) key(42, 1);
+        if (modifiers & 2) key(29, 1);
+        zwlr_virtual_pointer_v1_motion_absolute(pointer, milliseconds(), x, y, 1280, 800);
+        zwlr_virtual_pointer_v1_frame(pointer);
+        zwlr_virtual_pointer_v1_button(pointer, milliseconds(), button, 1);
+        zwlr_virtual_pointer_v1_frame(pointer);
+        zwlr_virtual_pointer_v1_button(pointer, milliseconds(), button, 0);
+        zwlr_virtual_pointer_v1_frame(pointer);
+        if (modifiers & 1) key(42, 0);
+        if (modifiers & 2) key(29, 0);
+    } else if (sscanf(input, "drag %u %u %u %u %u %c", &x, &y, &end_x, &end_y, &modifiers, &extra) == 5 &&
+               x < 1280 && y < 800 && end_x < 1280 && end_y < 800 && modifiers <= 3) {
+        set_map(base_map);
+        if (modifiers & 1) key(42, 1);
+        if (modifiers & 2) key(29, 1);
+        zwlr_virtual_pointer_v1_motion_absolute(pointer, milliseconds(), x, y, 1280, 800);
+        zwlr_virtual_pointer_v1_frame(pointer);
+        zwlr_virtual_pointer_v1_button(pointer, milliseconds(), 272, 1);
+        zwlr_virtual_pointer_v1_frame(pointer);
+        for (int sample = 1; sample <= 24; sample++) {
+            unsigned px = (unsigned)((int)x + ((int)end_x - (int)x) * sample / 24);
+            unsigned py = (unsigned)((int)y + ((int)end_y - (int)y) * sample / 24);
+            zwlr_virtual_pointer_v1_motion_absolute(pointer, milliseconds(), px, py, 1280, 800);
+            zwlr_virtual_pointer_v1_frame(pointer);
+            if (wl_display_roundtrip(display) < 0) fail("drag private display");
+            usleep(16000);
+        }
+        /* Keep a real held pointer at the edge for the native view's autoscroll. */
+        usleep(600000);
+        zwlr_virtual_pointer_v1_button(pointer, milliseconds(), 272, 0);
+        zwlr_virtual_pointer_v1_frame(pointer);
+        if (modifiers & 1) key(42, 0);
+        if (modifiers & 2) key(29, 0);
+    } else if (((sscanf(input, "scroll-modified %15s %lf %u %c", source, &delta, &modifiers, &extra) == 3 && modifiers <= 3) ||
+                sscanf(input, "scroll %15s %lf %c", source, &delta, &extra) == 2) &&
+               delta >= -1000 && delta <= 1000 && (!strcmp(source, "wheel") || !strcmp(source, "finger"))) {
+        if (modifiers) set_map(base_map);
+        if (modifiers & 1) key(42, 1);
+        if (modifiers & 2) key(29, 1);
+        bool wheel = !strcmp(source, "wheel");
+        zwlr_virtual_pointer_v1_axis_source(pointer, wheel ? WL_POINTER_AXIS_SOURCE_WHEEL : WL_POINTER_AXIS_SOURCE_FINGER);
+        if (wheel)
+            zwlr_virtual_pointer_v1_axis_discrete(pointer, milliseconds(), WL_POINTER_AXIS_VERTICAL_SCROLL,
+                                                wl_fixed_from_double(delta), delta > 0 ? 1 : -1);
+        else
+            zwlr_virtual_pointer_v1_axis(pointer, milliseconds(), WL_POINTER_AXIS_VERTICAL_SCROLL, wl_fixed_from_double(delta));
+        if (modifiers) {
+            zwlr_virtual_pointer_v1_frame(pointer);
+            if (wl_display_roundtrip(display) < 0) fail("scroll private display");
+        }
+        if (modifiers & 1) key(42, 0);
+        if (modifiers & 2) key(29, 0);
+    } else if (!strcmp(input, "scroll-stop\n")) {
+        zwlr_virtual_pointer_v1_axis_stop(pointer, milliseconds(), WL_POINTER_AXIS_VERTICAL_SCROLL);
+    } else return false;
+    zwlr_virtual_pointer_v1_frame(pointer);
     return true;
 }
 
@@ -166,8 +261,9 @@ int main(int argc, char **argv) {
     struct wl_registry *registry = wl_display_get_registry(display);
     const struct wl_registry_listener listener = {global, removed};
     wl_registry_add_listener(registry, &listener, NULL);
-    if (wl_display_roundtrip(display) < 0 || !seat || !manager) fail("private keyboard protocol unavailable");
+    if (wl_display_roundtrip(display) < 0 || !seat || !manager || !pointer_manager) fail("private input protocols unavailable");
     keyboard = zwp_virtual_keyboard_manager_v1_create_virtual_keyboard(manager, seat);
+    pointer = zwlr_virtual_pointer_manager_v1_create_virtual_pointer(pointer_manager, seat);
     context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
     if (!context) fail("create XKB context");
     const struct xkb_rule_names names = {.layout = "us"};
@@ -203,6 +299,7 @@ int main(int argc, char **argv) {
             else if (!strcmp(line, "stop\n")) ok = stopping = true;
             else if (!strncmp(line, "key ", 4)) ok = keys(line + 4);
             else if (!strncmp(line, "text ", 5)) ok = text(line + 5);
+            else if (!strncmp(line, "pointer ", 8)) ok = pointer_command(line + 8);
         }
         if (wl_display_roundtrip(display) < 0) fail("dispatch input command");
         if (dprintf(client, "%s\n", ok ? "OK" : "ERROR invalid input command") < 0) fail("command response");
@@ -210,6 +307,8 @@ int main(int argc, char **argv) {
     }
     close(server); unlink(argv[1]);
     zwp_virtual_keyboard_v1_destroy(keyboard);
+    zwlr_virtual_pointer_v1_destroy(pointer);
+    zwlr_virtual_pointer_manager_v1_destroy(pointer_manager);
     wl_display_roundtrip(display);
     xkb_state_unref(state); xkb_keymap_unref(active_map); xkb_keymap_unref(base_map); xkb_context_unref(context);
     wl_proxy_destroy((struct wl_proxy *)manager); wl_seat_destroy(seat); wl_registry_destroy(registry);

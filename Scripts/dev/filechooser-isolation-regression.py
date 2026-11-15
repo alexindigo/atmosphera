@@ -13,7 +13,8 @@ import subprocess
 import sys
 import time
 
-from filechooser_isolation import ROOT, cgroup, enter, input_command, profile_env
+from filechooser_isolation import cgroup, enter, input_command, profile_env
+from filechooser_profile import current_profile, exact_source, profile_argument
 from filechooser_gate import request_gate
 from qml_probe import inject_probe
 
@@ -70,6 +71,7 @@ def main():
     p.add_argument("--jemalloc-probe", action="store_true", help="diagnostic-only immediate jemalloc page decay comparison")
     p.add_argument("--lifetime-probe", action="store_true", help="positive active/native lifetime controls for one media cycle")
     p.add_argument("--leak-diagnostic", action="store_true", help="one120-cycle post-GC JS/native/object diagnostic, no acceptance verdict")
+    profile_argument(p)
     a = p.parse_args()
     assert 12 <= a.cycles <= 50
     if a.lifetime_probe:
@@ -83,11 +85,11 @@ def main():
     if not diagnostic and a.cycles != 50:
         p.error("resource acceptance requires30 warm-up +20 measured cycles")
     source = a.source.resolve()
-    output, runtime = ROOT / "evidence" / a.label, ROOT / "runtime" / a.label
-    assert source.is_relative_to(ROOT / "sources")
+    output, runtime = current_profile().evidence / a.label, current_profile().runtime / a.label
+    assert exact_source(source)
     output.mkdir(); runtime.mkdir()
     if a.analyze:
-        assert a.analyze.resolve().is_relative_to(ROOT / "evidence")
+        assert a.analyze.resolve().is_relative_to(current_profile().evidence)
         samples = json.loads(a.analyze.read_text())
         if any(str(s["cycle"]).startswith("pre-gc-") for s in samples):
             samples = [s for s in samples if s["cycle"] != 0]
@@ -557,7 +559,7 @@ ShellRoot {
         pending = base / "memory-probe.pending"
         pending.write_text("64MiB\n")
         pending.replace(base / "memory-probe.request")
-        probe_receipt = ROOT / "evidence" / (a.label + "-isolation") / "memory-probe.json"
+        probe_receipt = current_profile().evidence / (a.label + "-isolation") / "memory-probe.json"
         wait(lambda: probe_receipt.exists(), 45)
         result = json.loads(probe_receipt.read_text())
         check("hungry-stopped-by-own-limit", result["passed"], result)
@@ -571,7 +573,7 @@ ShellRoot {
         log = (output / "harness-driver.log").open("w"); logs.append(log)
         harness = subprocess.Popen([sys.executable, "-B", str(source / "Scripts/dev/filechooser-harness.py"),
                                    "--source", str(source), "--label", harness_label], stdout=log, stderr=subprocess.STDOUT)
-        harness_probe = ROOT / "runtime" / harness_label / "shell/filechooser-harness.qml"
+        harness_probe = current_profile().runtime / harness_label / "shell/filechooser-harness.qml"
         wait(lambda: json.loads(command(["qs", "-p", harness_probe, "ipc", "call", "filechooserHarness", "state"]).stdout)["ready"])
         check("harness-next-to-session", session_ipc("state") == "true")
         command(["qs", "-p", harness_probe, "ipc", "call", "filechooserHarness", "quit"])
@@ -580,7 +582,7 @@ ShellRoot {
         # The companion must stay alive, but the gate must not share its
         # memory.high/CPU quota. The media subject/harness are already stopped.
         # Only the outer trusted controller can launch this fixed sibling slot.
-        gate = request_gate(ROOT / "evidence" / (a.label + "-isolation"))
+        gate = request_gate(current_profile().evidence / (a.label + "-isolation"))
         (output / "independent-gate.json").write_text(json.dumps(gate, indent=2))
         check("contained-shell-gate-next-to-session", gate["passed"] and gate["exit"] == 0, gate)
         gate_output = Path(gate["output"])

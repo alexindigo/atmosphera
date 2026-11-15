@@ -16,6 +16,7 @@ Item {
   property bool selected: false
   property string tooltipText: ""
   signal clicked
+  signal contextRequested()
   implicitHeight: Style.baseWidgetSize * 1.1 * Style.uiScaleRatio
   activeFocusOnTab: true
   Accessible.role: Accessible.Button
@@ -25,6 +26,11 @@ Item {
   Keys.onReturnPressed: clicked()
   Keys.onEnterPressed: clicked()
   Keys.onSpacePressed: clicked()
+  Keys.onPressed: event => {
+    if (event.key === Qt.Key_Menu || (event.key === Qt.Key_F10 && (event.modifiers & Qt.ShiftModifier))) {
+      contextRequested(); event.accepted = true;
+    }
+  }
   Rectangle {
     anchors.fill: parent
     radius: Style.iRadiusS
@@ -45,6 +51,8 @@ Item {
     NText {
       Layout.fillWidth: true
       text: root.text
+      elide: Text.ElideRight
+      wrapMode: Text.NoWrap
       pointSize: Style.fontSizeM
       color: AtmoColor.mOnSurface
     }
@@ -53,16 +61,18 @@ Item {
     id: pointer
     anchors.fill: parent
     hoverEnabled: true
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
     cursorShape: Qt.PointingHandCursor
     onEntered: if (root.tooltipText)
                  TooltipService.show(root, root.tooltipText)
     onExited: if (root.tooltipText)
                 TooltipService.hide()
-    onClicked: {
+    onClicked: mouse => {
       if (root.tooltipText)
         TooltipService.hide();
       root.forceActiveFocus();
-      root.clicked();
+      if (mouse.button === Qt.RightButton) root.contextRequested();
+      else root.clicked();
     }
   }
 }

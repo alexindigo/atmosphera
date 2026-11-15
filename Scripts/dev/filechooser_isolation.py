@@ -4,6 +4,7 @@ Every entry point calls enter() before doing work. Nested drivers inherit the
 same checked environment and cgroup; they never discover a login compositor.
 """
 
+from contextlib import contextmanager
 import fcntl
 import hashlib
 import json
@@ -11,12 +12,14 @@ import os
 from pathlib import Path
 import pwd
 import re
+import shutil
 import subprocess
 import sys
 import threading
 import time
 
-ROOT = Path("/home/tester/Projects/atmosphera-filechooser")
+from filechooser_profile import current_profile, workspace, exact_source
+
 MIB = 1024 * 1024
 SAFETY_MARGIN = 512 * MIB
 
@@ -49,9 +52,9 @@ def systemd_properties(unit, env):
 
 
 def guest():
-    assert os.getuid() == 1000 and pwd.getpwuid(os.getuid()).pw_dir == "/home/tester"
-    assert "52:54:00:50:b3:8b" in [p.read_text().strip() for p in Path("/sys/class/net").glob("*/address")]
-    assert Path(os.environ["TMPDIR"]).resolve().is_relative_to(ROOT)
+    parent = os.environ.get("FILECHOOSER_PARENT_PID_NAMESPACE")
+    private = parent is not None and parent != os.readlink("/proc/self/ns/pid")
+    current_profile().verify(private=private)
 
 
 def cgroup():
@@ -134,7 +137,7 @@ def namespace_command(argv):
 def checked():
     guest()
     base = Path(os.environ["FILECHOOSER_ISOLATION"])
-    assert base.resolve().is_relative_to(ROOT / "runtime")
+    assert base.resolve().is_relative_to(current_profile().runtime)
     assert Path.home() == base / "home"
     assert Path(os.environ["XDG_RUNTIME_DIR"]) == base / "run"
     assert os.environ["WAYLAND_DISPLAY"] == "wayland-1"
@@ -164,7 +167,7 @@ def _memory_probe(base, output, label, admin_env):
     body = "import os; from pathlib import Path; assert os.getpid()==1; assert Path('/proc/self/oom_score_adj').read_text().strip()=='1000'; print('private pid namespace',os.readlink('/proc/self/ns/pid'),flush=True); x=bytearray(128*1024*1024)"
     argv = ["systemd-run", "--user", "--wait", "--pipe", "--unit=" + unit,
             "-p", "MemoryMax=64M", "-p", "MemoryHigh=64M", "-p", "MemorySwapMax=0", "-p", "CPUQuota=25%",
-            "-p", "TasksMax=32", "-p", "OOMScoreAdjust=1000", "-p", "RuntimeMaxSec=20", "-p", "TimeoutStopSec=5", "-p", "OOMPolicy=stop", "--working-directory=" + str(ROOT), "--setenv=TMPDIR=" + env["TMPDIR"],
+            "-p", "TasksMax=32", "-p", "OOMScoreAdjust=1000", "-p", "RuntimeMaxSec=20", "-p", "TimeoutStopSec=5", "-p", "OOMPolicy=stop", "--working-directory=" + str(workspace()), "--setenv=TMPDIR=" + env["TMPDIR"],
             *namespace_command(["/usr/bin/env", "-i", *[k + "=" + v for k, v in env.items()], sys.executable, "-B", "-c", body])]
     # This probes the hard limit, not reclaim throttling. A lower MemoryHigh
     # can stall a faulting allocator until the watchdog wins over the OOM test.
@@ -214,7 +217,7 @@ def _audit_probe(base, output, label, admin_env, main_properties):
            "DBUS_SESSION_BUS_ADDRESS": "unix:path=" + str(profile / "run/no-bus"),
            "DBUS_SYSTEM_BUS_ADDRESS": "unix:path=" + str(profile / "run/no-system-bus")}
     body = ("import json,os,time; from pathlib import Path; "
-            "assert os.getuid()==1000; assert Path('/proc/self/oom_score_adj').read_text().strip()=='1000'; "
+            f"assert os.getuid()=={current_profile().uid}; assert Path('/proc/self/oom_score_adj').read_text().strip()=='1000'; "
             f"pending=Path({str(live) + '.pending'!r}); pending.write_text(json.dumps({{'pid':os.getpid(),'namespace':os.readlink('/proc/self/ns/pid')}})); pending.replace({str(live)!r}); "
             "deadline=time.monotonic()+15\n"
             f"while not Path({str(release)!r}).exists():\n"
@@ -224,7 +227,7 @@ def _audit_probe(base, output, label, admin_env, main_properties):
             "-p", "MemoryMax=64M", "-p", "MemoryHigh=64M", "-p", "MemorySwapMax=0",
             "-p", "CPUQuota=25%", "-p", "TasksMax=32", "-p", "OOMScoreAdjust=1000",
             "-p", "RuntimeMaxSec=20", "-p", "TimeoutStopSec=5", "-p", "OOMPolicy=stop",
-            "--working-directory=" + str(ROOT),
+            "--working-directory=" + str(workspace()),
             "--setenv=TMPDIR=" + env["TMPDIR"], "nsenter",
             "--user=" + f"/proc/{os.getpid()}/fd/{fds['user']}",
             "--mount=" + f"/proc/{os.getpid()}/fd/{fds['mnt']}",
@@ -258,13 +261,43 @@ def _audit_probe(base, output, label, admin_env, main_properties):
             os.close(fd)
 
 
-def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=False, gate_probe=False):
+def service_guard():
+    """Retain serialization in the service even if its controller disconnects."""
+    guard = (current_profile().runtime / ".filechooser-service.lock").open("a")
+    try:
+        fcntl.flock(guard, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BaseException:
+        guard.close()
+        raise
+    return guard
+
+
+@contextmanager
+def reservation(budget):
+    """Shared admission boundary, including system-bus/mount-aware workloads."""
+    current_profile().prepare_roots()
+    with (current_profile().runtime / ".filechooser-isolation.lock").open("a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        with (current_profile().runtime / ".filechooser-gate.lock").open("a") as gate_lock:
+            fcntl.flock(gate_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        try:
+            with service_guard():
+                pass
+        except BlockingIOError:
+            raise RuntimeError("filechooser admission refused: another private workload owns the guest budget") from None
+        yield admit(budget)
+
+
+def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=False, gate_probe=False, oom_floor=False, browser_resources=False, resource_subject=False):
     """Give the workload its requested time after bounded session startup."""
     guest()
     if "FILECHOOSER_ISOLATION" in os.environ:
         checked()
         return
+    current_profile().prepare_roots()
     args = sys.argv[1:]
+    if "--guest-profile" in args:
+        args[args.index("--guest-profile") + 1] = str(current_profile().path)
     if "--label" in args:
         label = args[args.index("--label") + 1]
     elif "--output" in args:
@@ -272,8 +305,8 @@ def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=Fal
     else:
         raise ValueError("isolated entry point requires --label or --output")
     assert re.fullmatch(r"[a-z0-9][a-z0-9.-]*", label)
-    base = ROOT / "runtime" / ("i" + hashlib.sha256(label.encode()).hexdigest()[:8])
-    output = ROOT / "evidence" / (label + "-isolation")
+    base = current_profile().runtime / ("i" + hashlib.sha256(label.encode()).hexdigest()[:8])
+    output = current_profile().evidence / (label + "-isolation")
     assert 60 <= runtime_seconds <= 7800
     # Attestation/compositor/keyboard startup precedes the workload deadline.
     # The unit watchdog also bounds that startup and subsequent teardown.
@@ -285,36 +318,32 @@ def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=Fal
     # Serialize private workloads: multiple individually bounded services must
     # not collectively starve the login session. The lock is held until systemd
     # has reaped the entire service cgroup, including detached shell children.
-    with (ROOT / "runtime/.filechooser-isolation.lock").open("a") as lock:
-        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        with (ROOT / "runtime/.filechooser-gate.lock").open("a") as gate_lock:
-            fcntl.flock(gate_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        # A detached service retains this second lock after its SSH launcher
-        # exits. Check it before admission/start, not only after starting a unit.
-        with (ROOT / "runtime/.filechooser-service.lock").open("a") as service_lock:
-            try:
-                fcntl.flock(service_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            except BlockingIOError:
-                raise RuntimeError("filechooser admission refused: another private workload owns the guest budget")
-        ram = memory_info()["MemTotal"]
-        maximum = ram // 4 // (1024 * 1024) * 1024 * 1024
-        high = maximum * 3 // 4
-        # The fixed auxiliary probe is the only additional unit allowed while
-        # this lock is held; reserve its entire budget at the same admission.
-        admission = admit(maximum + (64 * MIB if memory_probe or audit_probe else 0))
+    ram = memory_info()["MemTotal"]
+    maximum = ram // 4 // MIB * MIB
+    high = maximum * 3 // 4
+    # The fixed auxiliary probe is the only additional unit allowed while
+    # this lock is held; reserve its entire budget at the same admission.
+    with reservation(maximum + (64 * MIB if memory_probe or audit_probe else 0)) as admission:
         (output / "admission.json").write_text(json.dumps(admission, indent=2))
         base.mkdir()
-        env = dict(os.environ, XDG_RUNTIME_DIR="/run/user/1000", DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/1000/bus")
+        user_runtime = f"/run/user/{current_profile().uid}"
+        env = dict(os.environ, XDG_RUNTIME_DIR=user_runtime, DBUS_SESSION_BUS_ADDRESS=f"unix:path={user_runtime}/bus")
         command = ["systemd-run", "--user", *([] if detach else ["--wait", "--pipe", "--collect"]),
                     "--unit=filechooser-" + label, "--service-type=exec",
-                    "--setenv=TMPDIR=" + str(ROOT / "tmp"),
+                    "--setenv=TMPDIR=" + str(workspace() / "tmp"),
+                    "--setenv=FILECHOOSER_GUEST_PROFILE=" + str(current_profile().path),
+                    "--setenv=FILECHOOSER_PROFILE_SHA256=" + current_profile().sha256,
+                    "--setenv=FILECHOOSER_RENDER_TIMING=" + os.environ.get("FILECHOOSER_RENDER_TIMING", "0"),
                     "--setenv=FILECHOOSER_SESSION_SECONDS=" + str(runtime_seconds),
+                    "--setenv=FILECHOOSER_OOM_FLOOR=" + ("1" if oom_floor else "0"),
+                    "--setenv=FILECHOOSER_BROWSER_RESOURCES=" + ("1" if browser_resources else "0"),
+                    "--setenv=FILECHOOSER_RESOURCE_SUBJECT=" + ("1" if resource_subject else "0"),
                     "--setenv=FILECHOOSER_PARENT_PID_NAMESPACE=" + os.readlink("/proc/self/ns/pid"),
                     "-p", f"MemoryMax={maximum}", "-p", f"MemoryHigh={high}",
                     "-p", "MemorySwapMax=0", "-p", "CPUQuota=100%", "-p", "TasksMax=256",
                     "-p", "OOMScoreAdjust=1000", "-p", f"RuntimeMaxSec={unit_seconds}", "-p", "TimeoutStopSec=10", "-p", "OOMPolicy=stop",
                     *(["-p", "StandardOutput=append:" + str(output / "service.log"), "-p", "StandardError=inherit"] if detach else []),
-                   "--working-directory=" + str(ROOT), *namespace_command([
+                   "--working-directory=" + str(workspace()), *namespace_command([
                        sys.executable, "-B", str(Path(__file__).resolve()),
                        "--session", str(base), str(output), str(Path(sys.argv[0]).resolve()), *args])]
         (output / "unit.json").write_text(json.dumps({"command": command, "ram": ram, "memory_max": maximum, "memory_high": high, "cpu_quota": "100%"}, indent=2))
@@ -327,6 +356,9 @@ def enter(memory_probe=False, runtime_seconds=840, detach=False, audit_probe=Fal
         values = systemd_properties("filechooser-" + label, env)
         assert int(values["MemoryMax"]) == maximum and int(values["MemoryHigh"]) == high and values["TasksMax"] == "256", values
         (output / "systemd-properties.json").write_text(json.dumps(values, indent=2))
+        if oom_floor:
+            from filechooser_oom_floor import seal_supervisor
+            seal_supervisor(values, base, output, current_profile(), env)
         (output / "supervisor-admitted").touch()
         if detach:
             code = process.wait(timeout=15)
@@ -388,7 +420,7 @@ def input_command(argv):
     """Send the existing driver's vocabulary to its one private keyboard."""
     checked()
     assert argv[0] == "ydotool"
-    assert argv[1] in ("type", "key")
+    assert argv[1] in ("type", "key", "move", "click", "drag", "scroll", "scroll-modified", "scroll-stop")
     return [sys.executable, "-B", str(Path(__file__).with_name("filechooser_input.py")), *argv[1:]]
 
 
@@ -401,13 +433,15 @@ def session(base, output, argv):
     # interrupted SSH/systemd-run client must not release the workload lock.
     guard = None
     if "FILECHOOSER_ISOLATION" not in os.environ:
-        guard = (ROOT / "runtime/.filechooser-service.lock").open("a")
-        fcntl.flock(guard, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        guard = service_guard()
         (output / "supervisor-ready").touch()
         deadline = time.monotonic() + 25
         while not (output / "supervisor-admitted").exists():
             assert time.monotonic() < deadline, "resource attestation timeout"
             time.sleep(.05)
+    if os.environ.get("FILECHOOSER_OOM_FLOOR") == "1":
+        from filechooser_oom_floor import verify_inherited_floor
+        verify_inherited_floor(output)
     for name in ("home", "run", "tmp", "config", "cache", "state", "data"):
         (base / name).mkdir(mode=0o700)
     env = {"PATH": "/usr/local/bin:/usr/bin", "USER": "tester", "LOGNAME": "tester", "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8",
@@ -415,16 +449,27 @@ def session(base, output, argv):
            "XDG_CONFIG_HOME": str(base / "config"), "XDG_CACHE_HOME": str(base / "cache"),
            "XDG_STATE_HOME": str(base / "state"), "XDG_DATA_HOME": str(base / "data"),
            "DBUS_SESSION_BUS_ADDRESS": "unix:path=" + str(base / "run/bus"),
-           "DBUS_SYSTEM_BUS_ADDRESS": "unix:path=" + str(base / "run/no-system-bus"),
+            "DBUS_SYSTEM_BUS_ADDRESS": "unix:path=" + str(base / "run/no-system-bus"),
+            "FILECHOOSER_GUEST_PROFILE": str(current_profile().path),
+            "FILECHOOSER_PROFILE_SHA256": current_profile().sha256,
            "FILECHOOSER_ISOLATION": str(base), "XDG_CURRENT_DESKTOP": "sway", "QT_QPA_PLATFORM": "wayland",
            "FILECHOOSER_PID_NAMESPACE": pid_namespace, "FILECHOOSER_PARENT_PID_NAMESPACE": parent_namespace,
             "FILECHOOSER_INPUT_SOCKET": str(base / "run/input.sock"),
             "FILECHOOSER_SESSION_SECONDS": os.environ.get("FILECHOOSER_SESSION_SECONDS", "800"),
+            "PIPEWIRE_RUNTIME_DIR": str(base / "run"), "PIPEWIRE_REMOTE": "pipewire-0",
+            "PULSE_SERVER": "unix:" + str(base / "run/no-pulse"),
+            "QT_LOGGING_RULES": "qt.scenegraph.time.renderer=false;qt.scenegraph.time.texture=false;qt.scenegraph.time.glyph=false",
            "QT_FORCE_STDERR_LOGGING": "1", "ATMOSPHERA_DEBUG": "0", "ATMOSPHERA_UPGRADELOG_URL": "http://127.0.0.1:9",
            "WLR_BACKENDS": "headless", "WLR_RENDERER": "pixman", "WLR_HEADLESS_OUTPUTS": "1",
            # Mesa's CPU OpenGL still supports the product's shader masks. The
            # Qt Quick software scenegraph silently omits MultiEffect content.
-           "LIBGL_ALWAYS_SOFTWARE": "1", "QSG_RHI_BACKEND": "opengl"}
+             "LIBGL_ALWAYS_SOFTWARE": "1", "QSG_RHI_BACKEND": "opengl"}
+    if os.environ.get("FILECHOOSER_BROWSER_RESOURCES") == "1":
+        # Only browser walks share the task budget with a full browser tree.
+        # Keep their renderer pools bounded without changing other benchmarks.
+        env.update(LP_NUM_THREADS="1", RAYON_NUM_THREADS="1")
+    if os.environ.get("FILECHOOSER_RENDER_TIMING") == "1":
+        env["QSG_RENDER_TIMING"] = "1"
     config = base / "sway.conf"
     config.write_text("output HEADLESS-1 mode 1280x800\nseat seat0 fallback true\nxwayland disable\n")
     bus_config = base / "bus.conf"
@@ -482,20 +527,48 @@ def session(base, output, argv):
         assert len(sockets) == len(displays) == 1
         env.update(SWAYSOCK=str(sockets[0]), WAYLAND_DISPLAY=displays[0].name)
         assert env["WAYLAND_DISPLAY"] == "wayland-1"
+        # The real media consumer needs a clock even without sound hardware.
+        # Both audio children belong to this same namespace/capped audited unit.
+        # The policy-only profile cannot enumerate ALSA/Bluetooth/video devices.
+        audio_config = base / "pipewire.conf"
+        shutil.copyfile(Path(__file__).parent / "fixtures/filechooser-pipewire.conf", audio_config)
+        with (output / "pipewire.log").open("w") as log:
+            children.append(subprocess.Popen(["pipewire", "-c", str(audio_config)], env=env,
+                                             stdout=log, stderr=subprocess.STDOUT))
+        end = time.monotonic() + 10
+        while not (base / "run/pipewire-0").exists():
+            assert children[-1].poll() is None and time.monotonic() < end, "private PipeWire startup failed"
+            time.sleep(.05)
+        with (output / "wireplumber.log").open("w") as log:
+            children.append(subprocess.Popen(["wireplumber", "--profile=policy"], env=env,
+                                             stdout=log, stderr=subprocess.STDOUT))
+        end = time.monotonic() + 10
+        while True:
+            graph = subprocess.run(["timeout", "3", "pw-dump"], env=env, capture_output=True,
+                                   text=True, check=True, timeout=5)
+            objects = json.loads(graph.stdout)
+            sinks = [o for o in objects if o.get("info", {}).get("props", {}).get("media.class") == "Audio/Sink"]
+            if sinks:
+                assert [o["info"]["props"]["node.name"] for o in sinks] == ["filechooser-null"]
+                (output / "audio-graph.json").write_text(graph.stdout)
+                break
+            assert children[-1].poll() is None and time.monotonic() < end, "private null sink unavailable"
+            time.sleep(.05)
         # Build and run one keyboard owner. Command clients never connect a
         # second Wayland keyboard or remove the seat's active keymap.
         build = base / "input-build"
         build.mkdir()
         scripts = Path(__file__).resolve().parent
-        protocol = scripts / "virtual-keyboard-unstable-v1.xml"
         with (output / "input-build.log").open("w") as build_log:
-            for mode, filename in (("client-header", "virtual-keyboard-client.h"), ("private-code", "virtual-keyboard-protocol.c")):
-                subprocess.run(["timeout", "15", "wayland-scanner", mode, str(protocol), str(build / filename)],
-                               env=env, stdout=build_log, stderr=subprocess.STDOUT, check=True, timeout=20)
+            for protocol_name, prefix in (("virtual-keyboard-unstable-v1.xml", "virtual-keyboard"),
+                                          ("wlr-virtual-pointer-unstable-v1.xml", "virtual-pointer")):
+                for mode, suffix in (("client-header", "client.h"), ("private-code", "protocol.c")):
+                    subprocess.run(["timeout", "15", "wayland-scanner", mode, str(scripts / protocol_name), str(build / (prefix + "-" + suffix))],
+                                   env=env, stdout=build_log, stderr=subprocess.STDOUT, check=True, timeout=20)
             flags = subprocess.run(["timeout", "5", "pkg-config", "--cflags", "--libs", "wayland-client", "xkbcommon"],
                                    env=env, capture_output=True, text=True, check=True, timeout=8).stdout.split()
             subprocess.run(["timeout", "30", "cc", "-std=c11", "-O2", "-Wall", "-Wextra", "-Werror", "-I", str(build),
-                            str(scripts / "filechooser-input.c"), str(build / "virtual-keyboard-protocol.c"), *flags,
+                            str(scripts / "filechooser-input.c"), str(build / "virtual-keyboard-protocol.c"), str(build / "virtual-pointer-protocol.c"), *flags,
                             "-o", str(build / "keyboard")], env=env, stdout=build_log, stderr=subprocess.STDOUT, check=True, timeout=35)
         with (output / "keyboard.log").open("w") as log:
             keyboard_process = subprocess.Popen([str(build / "keyboard"), env["FILECHOOSER_INPUT_SOCKET"]], env=env, stdout=log, stderr=subprocess.STDOUT)
@@ -512,7 +585,13 @@ def session(base, output, argv):
         (output / "environment.json").write_text(json.dumps(env, indent=2))
         group = cgroup()
         (output / "cgroup.json").write_text(json.dumps({"path": str(group), **{n: (group / n).read_text() for n in ("memory.max", "memory.high", "cpu.max", "pids.max")}}, indent=2))
-        return subprocess.run([sys.executable, "-B", *argv], env=env, timeout=int(env["FILECHOOSER_SESSION_SECONDS"])).returncode
+        workload = [sys.executable, "-B", *argv]
+        if os.environ.get("FILECHOOSER_RESOURCE_SUBJECT") == "1":
+            # Reuse the existing resource-test launcher. This changes only the
+            # browser subject and its children, never guest/host kernel policy.
+            workload = [sys.executable, "-B", str(scripts / "filechooser-no-thp.py"), *workload]
+            env = dict(env, MALLOC_CONF="dirty_decay_ms:0,muzzy_decay_ms:0")
+        return subprocess.run(workload, env=env, timeout=int(env["FILECHOOSER_SESSION_SECONDS"])).returncode
     finally:
         if keyboard_process is not None and keyboard_process.poll() is None and Path(env["FILECHOOSER_INPUT_SOCKET"]).exists():
             subprocess.run(["timeout", "5", sys.executable, "-B", str(Path(__file__).with_name("filechooser_input.py")), "stop"],

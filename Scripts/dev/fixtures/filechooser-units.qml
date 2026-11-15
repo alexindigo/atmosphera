@@ -2,10 +2,17 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import "../../../Helpers/PortalPaths.js" as PortalPaths
+import "filechooser-extensions.js" as ExtensionCases
 import "filechooser-icon-cases.js" as IconCases
+import "filechooser-navigation.js" as NavigationCases
+import "filechooser-operations.js" as OperationCases
+import "filechooser-paths.js" as PathCases
+import "filechooser-views.js" as ViewCases
+import "filechooser-places.js" as PlaceCases
 import qs.Commons
 import qs.Modules.FileChooser
 import qs.Services.Files
+import qs.Services.UI
 
 ShellRoot {
   id: root
@@ -19,14 +26,29 @@ ShellRoot {
   property string beforeMemory: ""
   property var beforeNames: []
   property double staleStarted: 0
+  property var tooltipOwner: null
+  property var expectedRecentFolders: []
+  property int selectionChanges: 0
+  property bool appearingArmed: false
+  property bool appearedAfterCheck: false
+  Component {
+    id: tooltipOwnerFactory
+    Item {}
+  }
 
   FilePreview {
     id: preview
   }
-  FilePlayback { id: playback }
+  FilePlayback {
+    id: playback
+  }
 
   FileBrowser {
     id: fileBrowser
+  }
+  FileCompletion {
+    id: pathCompletion
+    basePath: root.base
   }
   FileChooserHeader {
     id: breadcrumbs
@@ -39,6 +61,7 @@ ShellRoot {
   FileSelection {
     id: selection
     browser: fileBrowser
+    onSelectedPathsChanged: root.selectionChanges++
   }
   Component {
     id: requestFactory
@@ -49,9 +72,51 @@ ShellRoot {
     path: Settings.cacheDir + "filechooser.json"
     printErrors: false
   }
+  FileView {
+    id: appearingTarget
+    path: root.aux + "/overwrite/appeared.txt"
+    blockWrites: true
+    printErrors: false
+  }
+  Connections {
+    target: root.request
+    function onBusyChanged() {
+      if (root.request && root.request.appId === "unit.appearing" && root.appearingArmed && !root.appearedAfterCheck && !root.request.busy && !root.request.settled) {
+        root.appearedAfterCheck = true;
+        appearingTarget.setText("arrived before return\n");
+      }
+    }
+  }
   Process {
     id: mutate
-    stdout: StdioCollector {}
+    property bool succeeded: false
+    onRunningChanged: if (running) succeeded = false
+    onExited: (code, status) => succeeded = code === 0 && status === 0
+    stdout: StdioCollector {
+      id: mutateOutput
+    }
+  }
+  function sampleWatchers() {
+    mutate.command = ["timeout", "3", "python3", "-c", `
+import os, pathlib
+parent = pathlib.Path('/proc') / str(os.getppid())
+pid = int((parent / 'stat').read_text().rsplit(')', 1)[1].split()[1])
+proc = pathlib.Path('/proc') / str(pid)
+assert (proc / 'exe').resolve().name in ('qs', 'quickshell')
+count = 0
+for info in (proc / 'fdinfo').iterdir():
+    try: count += sum(line.startswith('inotify wd:') for line in info.read_text().splitlines())
+    except FileNotFoundError: pass
+print(count)
+`];
+    mutate.running = true;
+  }
+  function watcherSampleReady() {
+    return !mutate.running && mutate.succeeded && Number.isSafeInteger(watcherCount());
+  }
+  function watcherCount() {
+    var text = mutateOutput.text.trim();
+    return mutate.succeeded && /^\d+$/.test(text) ? Number(text) : NaN;
   }
 
   function report(name, passed, actual) {
@@ -126,15 +191,177 @@ ShellRoot {
     });
   }
 
+  function buildOverwriteTests() {
+    var folder = aux + "/overwrite";
+    function save(name, app) {
+      createRequest("save", {
+                      current_folder: PortalPaths.encodeBytePath(folder).bytes,
+                      current_name: name
+                    }, app || "unit.safety");
+    }
+    function batch() {
+      createRequest("saveFiles", {
+                      current_folder: PortalPaths.encodeBytePath(folder).bytes,
+                      files: ["protected.txt", "other.txt"].map(name => PortalPaths.encodeBytePath(name).bytes)
+                    }, "unit.safety");
+    }
+    function pending() {
+      return request.pendingReplace !== "";
+    }
+    step(() => true, function () {
+      save("appeared.txt", "unit.appearing");
+    });
+    step(requestReady, function () {
+      root.appearingArmed = true;
+      request.accept();
+    });
+    step(() => pending() || answered(), function () {
+      report("overwrite.appears-before-return", root.appearedAfterCheck && request.pendingReplace === folder + "/appeared.txt" && responses.length === 0, {
+               pending: request.pendingReplace,
+               responses: responses
+             });
+      root.appearingArmed = false;
+      request.cancel();
+      save("protected.txt");
+    });
+    step(requestReady, function () {
+      request.accept();
+    });
+    step(pending, function () {
+      request.declineReplace();
+      same("overwrite.decline-keeps-request", [request.settled, request.pendingReplace, responses], [false, "", []]);
+      same("overwrite.decline-keeps-name", request.saveName, "protected.txt");
+      request.accept();
+    });
+    step(pending, function () {
+      request.saveName = "other.txt";
+      same("overwrite.name-invalidates", request.pendingReplace, "");
+      request.accept();
+    });
+    step(pending, function () {
+      same("overwrite.final-target", request.pendingReplace, folder + "/other.txt");
+      request.declineReplace();
+      request.saveName = "new target.txt";
+      request.accept();
+    });
+    step(answered, function () {
+      same("overwrite.changed-name-result", responses[0].results.uris, [PortalPaths.pathToUri(folder + "/new target.txt").uri]);
+      save("A.txt");
+    });
+    step(requestReady, function () {
+      request.accept();
+    });
+    step(answered, function () {
+      same("overwrite.case-sensitive", [responses[0].response, request.pendingReplace], [0, ""]);
+    });
+    for (let name of ["directory", "unwritable.txt", "fifo", "dangling", "directory-link"]) {
+      step(() => true, function () {
+        save(name);
+      });
+      step(requestReady, function () {
+        request.accept();
+      });
+      step(() => !request.busy && request.errorText !== "", function () {
+        report("overwrite.refuse-" + name, !request.settled && !request.pendingReplace && responses.length === 0, request.errorText);
+        request.cancel();
+      });
+    }
+    step(() => true, function () {
+      save("regular-link");
+    });
+    step(requestReady, function () {
+      request.accept();
+    });
+    step(pending, function () {
+      same("overwrite.regular-link", request.pendingReplace, folder + "/regular-link");
+      request.confirmReplace();
+    });
+    step(answered, function () {
+      same("overwrite.regular-link-result", responses[0].results.uris, [PortalPaths.pathToUri(folder + "/regular-link").uri]);
+      save("protected.txt");
+    });
+    step(requestReady, function () {
+      request.accept();
+    });
+    step(pending, function () {
+      same("overwrite.request-scope", responses, []);
+      request.cancel();
+      batch();
+    });
+    step(requestReady, function () {
+      request.accept();
+    });
+    step(pending, function () {
+      request.confirmReplace();
+    });
+    step(pending, function () {
+      same("overwrite.batch-no-partial", [request.pendingReplace, responses], [folder + "/other.txt", []]);
+      request.declineReplace();
+      request.accept();
+    });
+    step(pending, function () {
+      same("overwrite.batch-decline-clears-all", request.pendingReplace, folder + "/protected.txt");
+      request.confirmReplace();
+    });
+    step(pending, function () {
+      request.confirmReplace();
+    });
+    step(answered, function () {
+      same("overwrite.batch-all-approved", responses[0].results.uris, ["protected.txt", "other.txt"].map(name => PortalPaths.pathToUri(folder + "/" + name).uri));
+      batch();
+    });
+    step(requestReady, function () {
+      request.accept();
+    });
+    step(pending, function () {
+      request.confirmReplace();
+    });
+    step(pending, function () {
+      request.currentFilter = ["Text", [[0, "*.txt"]]];
+      request.accept();
+    });
+    step(pending, function () {
+      same("overwrite.filter-clears-approval", request.pendingReplace, folder + "/protected.txt");
+      request.cancel();
+      batch();
+    });
+    step(requestReady, function () {
+      request.accept();
+    });
+    step(pending, function () {
+      request.confirmReplace();
+    });
+    step(pending, function () {
+      request.browser.navigate(folder + "/child");
+    });
+    step(requestReady, function () {
+      request.browser.navigate(folder);
+    });
+    step(requestReady, function () {
+      request.accept();
+    });
+    step(pending, function () {
+      same("overwrite.folder-clears-approval", request.pendingReplace, folder + "/protected.txt");
+      request.cancel();
+    });
+  }
+
   function buildTests() {
+    PlaceCases.build(root, PortalPaths, FilePlaces);
     step(() => true, function () {
       same("playback.initial", [playback.status, playback.playing, playback.seekable], ["idle", false, false]);
-      playback.toggle(); playback.seek(10000);
+      playback.toggle();
+      playback.seek(10000);
       same("playback.inactive-intents", [playback.playing, playback.position], [false, 0]);
-      playback.setVolume(-1); same("playback.volume-low", playback.volume, 0);
-      playback.setVolume(3); same("playback.volume-high", playback.volume, 1);
-      playback.setVolume(0.5); playback.volumeBy(-0.05); report("playback.volume-step", Math.abs(playback.volume - 0.45) < 0.00001, playback.volume);
-      playback.setVolume(NaN); report("playback.invalid-volume", Math.abs(playback.volume - 0.45) < 0.00001, playback.volume);
+      playback.setVolume(-1);
+      same("playback.volume-low", playback.volume, 0);
+      playback.setVolume(3);
+      same("playback.volume-high", playback.volume, 1);
+      playback.setVolume(0.5);
+      playback.volumeBy(-0.05);
+      report("playback.volume-step", Math.abs(playback.volume - 0.45) < 0.00001, playback.volume);
+      playback.setVolume(NaN);
+      report("playback.invalid-volume", Math.abs(playback.volume - 0.45) < 0.00001, playback.volume);
       same("playback.times", [playback.time(-1000), playback.time(65000), playback.time(3661000)], ["0:00", "1:05", "1:01:01"]);
       var measure = text => Array.from(text).length;
       same("labels.extension-attached", FileLabels.lines("Weekend itinerary.pdf", 14, measure), ["Weekend", "itinerary.pdf"]);
@@ -151,9 +378,13 @@ ShellRoot {
       playback.source = PortalPaths.pathToUri(aux + "/previews/unit.wav").uri;
       playback.active = true;
     });
-    step(() => playback.status === "ready" && playback.playing && playback.duration > 0, function () {
+    // PlayingState precedes asynchronous output initialization. Observe the
+    // actual clock before exercising pause/seek against that initialized output.
+    step(() => playback.status === "ready" && playback.playing && playback.duration > 0 && playback.position > 0, function () {
+      report("playback.clock-running", playback.position > 0, playback.position);
       report("playback.autoplay", playback.seekable && playback.duration === 8000, playback.snapshot);
-      playback.toggle(); playback.seek(-1000);
+      playback.toggle();
+      playback.seek(-1000);
     });
     step(() => !playback.playing && playback.position === 0, function () {
       same("playback.seek-low", playback.position, 0);
@@ -457,7 +688,7 @@ ShellRoot {
       same("request.failed-once", responses.length, 1);
       createRequest("open", {
                       current_file: PortalPaths.encodeBytePath(base + "/Alpha.txt").bytes,
-                       choices: [["quality", "Quality", [["low", "Low"], ["high", "High"]], "low"], ["enabled", "Enabled", [], "true"], ["fallback", "Fallback", [["first", "First"], ["next", "Next"]], ""], ["unchecked", "Unchecked", [], ""]],
+                      choices: [["quality", "Quality", [["low", "Low"], ["high", "High"]], "low"], ["enabled", "Enabled", [], "true"], ["fallback", "Fallback", [["first", "First"], ["next", "Next"]], ""], ["unchecked", "Unchecked", [], ""]],
                       filters: [["Text", [[0, "*.txt"]]]],
                       current_filter: ["Text", [[0, "*.txt"]]]
                     });
@@ -466,7 +697,12 @@ ShellRoot {
       same("request.current-file-folder", request.browser.currentPath, base);
       same("request.preselection", request.selection.selectedPaths, [base + "/Alpha.txt"]);
       same("request.choices-order", request.choices.map(choice => choice[0]), ["quality", "enabled", "fallback", "unchecked"]);
-      same("request.choices-defaults", request.choiceValues, {quality: "low", enabled: "true", fallback: "first", unchecked: "false"});
+      same("request.choices-defaults", request.choiceValues, {
+             quality: "low",
+             enabled: "true",
+             fallback: "first",
+             unchecked: "false"
+           });
       request.setChoice("quality", "high");
       request.setChoice("enabled", "false");
       request.accept();
@@ -559,7 +795,7 @@ ShellRoot {
                     });
     });
     step(requestReady, function () {
-      for (var name of ["", ".", "..", "bad/name", "bad\u0000name"]) {
+      for (var name of ["", ".", "..", "bad\u0000name"]) {
         request.saveName = name;
         request.accept();
         report("request.invalid-name-" + JSON.stringify(name), request.errorText !== "" && !request.settled, request.errorText);
@@ -618,6 +854,9 @@ ShellRoot {
     step(() => !request.busy && request.errorText !== "", function () {
       report("request.unreadable-file-inline", !request.settled && responses.length === 0, request.errorText);
       request.cancel();
+    });
+    buildOverwriteTests();
+    step(() => true, function () {
       fileBrowser.navigate(aux + "/denied");
     });
     step(() => fileBrowser.status === "error", function () {
@@ -699,7 +938,7 @@ ShellRoot {
              showHidden: true
            });
     });
-    for (let name of ["With space", "résumé", "a b/c d"]) {
+    for (let name of ["With space", "hash#name", "percent%20literal", "question?mark", "résumé", "a b/c d"]) {
       let folder = aux + "/escaped/" + name;
       let prefix = "paths." + name + ".";
       step(() => true, function () {
@@ -729,28 +968,195 @@ ShellRoot {
         same(prefix + "request-result", [responses[0].response, uris, uris.map(uri => PortalPaths.uriToPath(uri).path)], [0, [expected], [folder + "/fixture.txt"]]);
       });
     }
-    for (let name of ["hash#name", "percent%20literal", "question?mark"]) {
-      let folder = aux + "/escaped/" + name;
-      let prefix = "paths." + name + ".";
-      step(() => true, function () {
-        fileBrowser.navigate(base);
-      });
-      step(ready, function () {
-        beforeNames = names();
-        fileBrowser.navigate(folder);
-        staleStarted = Date.now();
-      });
-      step(() => fileBrowser.status === "error" || Date.now() - staleStarted > 1500, function () {
-        same(prefix + "error", [fileBrowser.status, fileBrowser.errorText], ["error", "Can't open " + name + ": folder names with #, ? or % aren't supported yet."]);
-        same(prefix + "keeps-folder", fileBrowser.currentPath, base);
-        same(prefix + "keeps-listing", names(), beforeNames);
-        report(prefix + "not-loading", fileBrowser.status !== "loading", fileBrowser.status);
-        fileBrowser.navigate(base);
-      });
-      step(ready, function () {
-        same(prefix + "recovers", [fileBrowser.currentPath, names()], [base, beforeNames]);
-      });
-    }
+    step(() => true, function () {
+      fileBrowser.navigate(base);
+    });
+    step(ready, function () {
+      fileBrowser.nameFilter = null;
+      fileBrowser.showHidden = false;
+      fileBrowser.filterText = "ALP";
+    });
+    step(() => fileBrowser.count === 1, function () {
+      same("filter.substring-case", names(), ["Alpha.txt"]);
+      fileBrowser.nameFilter = ["PNG", [[0, "*.png"]]];
+    });
+    step(() => fileBrowser.count === 0, function () {
+      same("filter.type-intersection", names(), []);
+      fileBrowser.nameFilter = null;
+      fileBrowser.filterText = "FOLD";
+    });
+    step(() => fileBrowser.count === 1, function () {
+      same("filter.folders", names(), ["folder"]);
+      fileBrowser.filterText = "hidden";
+    });
+    step(() => fileBrowser.count === 0, function () {
+      same("filter.hidden-respected", names(), []);
+      fileBrowser.showHidden = true;
+    });
+    step(() => fileBrowser.count === 1, function () {
+      same("filter.hidden-opt-in", names(), [".hidden.txt"]);
+      fileBrowser.filterText = "item";
+      fileBrowser.saveFilterText = "10";
+    });
+    step(() => fileBrowser.count === 1, function () {
+      same("filter.combined-substrings", names(), ["item10.png"]);
+      fileBrowser.saveFilterText = "";
+      fileBrowser.navigate(aux + "/documents");
+    });
+    step(ready, function () {
+      same("filter.navigation-clears", fileBrowser.filterText, "");
+      createRequest("save", {
+                      current_folder: PortalPaths.encodeBytePath(base).bytes,
+                      current_name: "prefilled.md"
+                    });
+    });
+    step(requestReady, function () {
+      same("filter.save-prefill", request.browser.saveFilterText, "");
+      request.selection.click(request.browser.indexOfPath(base + "/Alpha.txt"), Qt.NoModifier);
+      request.editSaveName("A draft.txt");
+    });
+    step(() => request.browser.count === 0, function () {
+      request.browser.listingChanged();
+      same("filter.save-name-revalidation", [request.saveName, request.browser.saveFilterText], ["A draft.txt", "A draft"]);
+      request.saveFilterEnabled = false;
+      request.editSaveName("Another draft.txt");
+    });
+    step(() => request.browser.indexOfPath(base + "/Alpha.txt") >= 0, function () {
+      same("filter.save-toggle", [request.saveName, request.browser.saveFilterText], ["Another draft.txt", ""]);
+      request.cancel();
+      fileBrowser.navigate(aux + "/creation");
+    });
+    step(ready, function () {
+      fileBrowser.showHidden = false;
+      for (var i = 0, invalid = ["", ".", "..", "child/name", "bad\u0000name"]; i < invalid.length; i++) {
+        fileBrowser.createFolder(invalid[i]);
+        report("create.invalid-" + i, fileBrowser.creatingFolder && fileBrowser.createFolderError !== "", fileBrowser.createFolderError);
+        fileBrowser.cancelCreateFolder();
+      }
+      fileBrowser.createFolder("Created");
+    });
+    step(() => ready() && !fileBrowser.creatingFolder, function () {
+      report("create.success-model", fileBrowser.indexOfPath(aux + "/creation/Created") >= 0, names());
+      fileBrowser.createFolder("Taken");
+    });
+    step(() => !fileBrowser.createFolderBusy && fileBrowser.createFolderError !== "", function () {
+      same("create.exists-directory", fileBrowser.createFolderError, I18n.tr("widgets.file-picker.create-folder-exists"));
+      report("create.error-completes-at-ready", fileBrowser.status === "ready" && !fileBrowser.operations.busy, {status: fileBrowser.status, busy: fileBrowser.operations.busy});
+      fileBrowser.createFolder("Existing.txt");
+    });
+    step(() => !fileBrowser.createFolderBusy && fileBrowser.createFolderError !== "", function () {
+      same("create.exists-file", fileBrowser.createFolderError, I18n.tr("widgets.file-picker.create-folder-exists"));
+      fileBrowser.navigate(aux + "/write-denied");
+    });
+    step(ready, function () {
+      fileBrowser.createFolder("Denied");
+    });
+    step(() => !fileBrowser.createFolderBusy && fileBrowser.createFolderError !== "", function () {
+      same("create.permission", fileBrowser.createFolderError, I18n.tr("widgets.file-picker.create-folder-permission"));
+      fileBrowser.navigate(aux + "/readonly");
+    });
+    step(ready, function () {
+      fileBrowser.createFolder("Read only");
+    });
+    step(() => !fileBrowser.createFolderBusy && fileBrowser.createFolderError !== "", function () {
+      same("create.readonly", fileBrowser.createFolderError, I18n.tr("widgets.file-picker.create-folder-readonly"));
+      createRequest("open", {
+                      current_folder: PortalPaths.encodeBytePath(aux + "/creation").bytes,
+                      directory: true
+                    });
+    });
+    step(requestReady, function () {
+      request.beginCreateFolder();
+      request.browser.createFolder("Folder selection");
+    });
+    step(() => requestReady() && !request.browser.creatingFolder, function () {
+      same("create.folder-selection", request.selection.selectedPaths, [aux + "/creation/Folder selection"]);
+      request.cancel();
+      createRequest("save", {
+                      current_folder: PortalPaths.encodeBytePath(aux + "/creation").bytes,
+                      current_name: "draft.txt"
+                    });
+    });
+    step(requestReady, function () {
+      request.beginCreateFolder();
+      request.browser.createFolder("Save folder");
+    });
+    step(() => requestReady() && !request.browser.creatingFolder, function () {
+      same("create.save-stays-in-folder", [request.browser.currentPath, request.saveName, request.selection.cursor >= 0], [aux + "/creation", "draft.txt", true]);
+      request.cancel();
+      tooltipOwner = tooltipOwnerFactory.createObject(root);
+      TooltipService.show(tooltipOwner, "Folder action", "auto", 5000);
+      tooltipOwner.destroy();
+      tooltipOwner = null;
+    });
+    step(() => !TooltipService.pendingTooltip && !TooltipService.activeTooltip, function () {
+      report("tooltip.owner-lifetime", true, null);
+      var recent = FileChooserMemory.recentEntries;
+      root.expectedRecentFolders = [recent[0].path].concat([0, 6, 5, 4, 3, 2, 1].map(i => aux + "/recent" + i), recent.slice(1, 3).map(entry => entry.path));
+      mutate.command = ["timeout", "3", "python3", "-c", `
+import json, pathlib, sys, xml.etree.ElementTree as ET
+target, aux, memory = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]), json.loads(sys.argv[3])
+root = ET.Element('xbel')
+for i in range(7):
+    ET.SubElement(root, 'bookmark', href=(aux / ('recent' + str(i)) / 'removed.txt').as_uri(), modified=f'2099-01-{i + 1:02d}T00:00:00Z')
+ET.SubElement(root, 'bookmark', href=(aux / 'recent0/another-removed.txt').as_uri(), modified='2099-01-08T00:00:00Z')
+ET.SubElement(root, 'bookmark', href=(pathlib.Path(memory[0]['path']) / 'removed.txt').as_uri(), modified='2100-01-01T00:00:00Z')
+ET.SubElement(root, 'bookmark', href=(aux / 'missing-recent/file.txt').as_uri(), modified='2200-01-01T00:00:00Z')
+ET.ElementTree(root).write(target, encoding='unicode')
+`, Quickshell.env("XDG_DATA_HOME") + "/recently-used.xbel", aux, JSON.stringify(recent)];
+      mutate.running = true;
+    });
+    step(() => !mutate.running, function () {
+      FilePlaces.refresh();
+    });
+    step(() => !FilePlaces.loading && FilePlaces.recentFolders.some(entry => entry.path === aux + "/recent0"), function () {
+      var paths = FilePlaces.recentFolders.map(entry => entry.path);
+      same("places.recent-folders-merge-order", paths, root.expectedRecentFolders);
+      report("places.recent-folders-dedup", paths.filter((path, i) => paths.indexOf(path) === i).length === paths.length, paths);
+      report("places.recent-folders-missing", !paths.includes(aux + "/missing-recent"), paths);
+      same("places.recent-folders-limit", paths.length, 10);
+      report("places.recent-folders-directories", FilePlaces.recentFolders.every(entry => entry.directory === true), FilePlaces.recentFolders);
+      fileBrowser.sortKey = "name";
+      fileBrowser.sortDescending = false;
+      fileBrowser.showHidden = false;
+      fileBrowser.navigate(base);
+    });
+    step(ready, function () {
+      selection.selectable = "files";
+      selection.multiple = true;
+      var alpha = fileBrowser.indexOfPath(base + "/Alpha.txt");
+      var second = fileBrowser.indexOfPath(base + "/item2.txt");
+      selection.click(alpha, Qt.NoModifier);
+      selection.click(second, Qt.ControlModifier);
+      selection.click(alpha, Qt.ControlModifier);
+      same("selection.ctrl-toggle-removes", selection.selectedPaths, [base + "/item2.txt"]);
+      selection.click(alpha, Qt.ControlModifier);
+      report("selection.ctrl-toggle-adds", selection.selectedPaths.length === 2 && selection.selectedPaths.includes(base + "/Alpha.txt"), selection.selectedPaths);
+      selection.moveTo(fileBrowser.count - 1, false);
+      selection.moveTo(alpha, true);
+      same("selection.anchor-stable-range", selection.selectedPaths, ["Alpha.txt", "item2.txt", "item10.png"].map(name => base + "/" + name));
+      selection.moveTo(fileBrowser.count - 2, true);
+      same("selection.range-shrinks-from-anchor", selection.selectedPaths, [base + "/item2.txt", base + "/item10.png"]);
+      selection.selectable = "folders";
+      selection.moveTo(0, false);
+      selection.moveTo(fileBrowser.count - 1, true);
+      same("selection.folder-range-kinds", selection.selectedPaths, [base + "/empty", base + "/folder"]);
+      selection.multiple = false;
+      selection.selectable = "files";
+      selection.moveTo(alpha, false);
+      selection.moveTo(fileBrowser.count - 1, true);
+      selection.selectAll();
+      same("selection.single-range-keeps-one", selection.selectedPaths, [base + "/item10.png"]);
+      same("browser.path-index-no-prototype-keys", fileBrowser.indexOfPath("constructor"), -1);
+      var changed = root.selectionChanges;
+      fileBrowser.listingChanged();
+      same("selection.revalidation-noop", root.selectionChanges, changed);
+    });
+    ExtensionCases.build(root, PortalPaths, FileTypes, FileChooserMemory);
+    NavigationCases.build(root, fileBrowser, selection);
+    PathCases.build(root, PortalPaths, FileChooserMemory, pathCompletion, fileBrowser);
+    OperationCases.build(root, PortalPaths);
+    ViewCases.build(root, PortalPaths, FileChooserMemory);
   }
 
   Component.onCompleted: {
@@ -761,6 +1167,21 @@ ShellRoot {
         same("memory.reload-shared", FileChooserMemory.folderFor(""), aux + "/escaped/a b/c d");
         same("memory.reload-preferences", FileChooserMemory.preferences.view, "list");
         report("memory.reload-missing-hidden", !FileChooserMemory.recentLocations.includes(aux + "/memory9"), FileChooserMemory.recentLocations);
+        createRequest("open", {
+                        current_folder: PortalPaths.encodeBytePath(base).bytes
+                      }, "unit.views.reload");
+      });
+      step(() => requestReady(), function () {
+        var v = request.viewSettings;
+        same("views.reload-process-consumer", v ? [v.mode, v.zooms, v.thumbnails, v.dialogWidth, v.dialogHeight] : null, ["list",
+                                                                                                                          {
+                                                                                                                            grid: 4,
+                                                                                                                            compact: 2,
+                                                                                                                            list: 3
+                                                                                                                          },
+                                                                                                                          false, 1180, 720]);
+        same("views.reload-process-columns", v ? v.columnShares : null, FileChooserMemory.preferences.views ? FileChooserMemory.preferences.views.columns : []);
+        request.cancel();
       });
     } else
       buildTests();

@@ -14,6 +14,13 @@ Singleton {
   property Component tooltipComponent: Component {
     Tooltip {}
   }
+  function retire(tooltip) {
+    if (pendingTooltip === tooltip)
+      pendingTooltip = null;
+    if (activeTooltip === tooltip)
+      activeTooltip = null;
+    tooltip.retire();
+  }
 
   function show(target, content, direction, delay, fontFamily) {
     if (!Settings.data.ui.tooltipsEnabled) {
@@ -28,16 +35,12 @@ Singleton {
 
     // Cancel any pending tooltip (same or different target)
     if (pendingTooltip) {
-      pendingTooltip.hideImmediately();
-      pendingTooltip.destroy();
-      pendingTooltip = null;
+      retire(pendingTooltip);
     }
 
     // If we have an active tooltip for a different target, hide it
     if (activeTooltip && activeTooltip.targetItem !== target) {
-      activeTooltip.hideImmediately();
-      // Don't destroy immediately - let it clean itself up
-      activeTooltip = null;
+      retire(activeTooltip);
     }
 
     // If we already have a tooltip for this target, just update it
@@ -47,7 +50,7 @@ Singleton {
     }
 
     // Create new tooltip instance
-    const newTooltip = tooltipComponent.createObject(null);
+    const newTooltip = tooltipComponent.createObject(target);
 
     if (newTooltip) {
       // Track as pending until it's visible
@@ -56,18 +59,7 @@ Singleton {
       // Connect cleanup when tooltip hides
       newTooltip.visibleChanged.connect(() => {
         if (!newTooltip.visible) {
-          // Clean up after a delay to avoid interfering with new tooltips
-          Qt.callLater(() => {
-            if (newTooltip && !newTooltip.visible) {
-              if (activeTooltip === newTooltip) {
-                activeTooltip = null;
-              }
-              if (pendingTooltip === newTooltip) {
-                pendingTooltip = null;
-              }
-              newTooltip.destroy();
-            }
-          });
+          root.retire(newTooltip);
         } else {
           // Tooltip is now visible, move from pending to active
           if (pendingTooltip === newTooltip) {
@@ -92,14 +84,14 @@ Singleton {
     // If target is provided, only hide if tooltip belongs to that target
     if (target) {
       if (pendingTooltip && pendingTooltip.targetItem === target) {
-        pendingTooltip.hide();
+        retire(pendingTooltip);
       }
       if (activeTooltip && activeTooltip.targetItem === target) {
         activeTooltip.hide();
       }
     } else {
       if (pendingTooltip) {
-        pendingTooltip.hide();
+        retire(pendingTooltip);
       }
       if (activeTooltip) {
         activeTooltip.hide();
@@ -109,14 +101,10 @@ Singleton {
 
   function hideImmediately() {
     if (pendingTooltip) {
-      pendingTooltip.hideImmediately();
-      pendingTooltip.destroy();
-      pendingTooltip = null;
+      retire(pendingTooltip);
     }
     if (activeTooltip) {
-      activeTooltip.hideImmediately();
-      activeTooltip.destroy();
-      activeTooltip = null;
+      retire(activeTooltip);
     }
   }
 

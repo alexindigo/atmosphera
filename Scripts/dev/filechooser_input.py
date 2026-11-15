@@ -20,6 +20,9 @@ def main():
             code, down = map(int, value.split(":"))
             assert 0 <= code <= 247 and down in (0, 1)
         line = "key " + " ".join(values)
+    elif mode in ("move", "click", "drag", "scroll", "scroll-modified", "scroll-stop"):
+        assert all("\n" not in value and " " not in value for value in values)
+        line = "pointer " + " ".join([mode, *values])
     else:
         assert mode in ("ping", "stop") and not values
         line = mode
