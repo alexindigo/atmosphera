@@ -16,7 +16,9 @@ from probe_files import ProbeFiles
 
 
 CASES = ('destruction', 'closed-api', 'panel-slot', 'placement', 'reload-held',
-         'placement-held', 'manual-unsaved', 'failed-save')
+         'placement-held', 'manual-unsaved', 'failed-save', 'editor-discard',
+         'editor-unload', 'editor-apply-held', 'editor-instance-discard', 'editor-instance-reset',
+         'editor-preview-lifetime')
 
 
 def main():
@@ -49,7 +51,7 @@ def main():
                    ATMOSPHERA_CONFIG_DIR=str(config), ATMOSPHERA_SETTINGS_FILE=str(config / 'settings.json'),
                    ATMOSPHERA_CACHE_DIR=str(work / 'cache'), ATMOSPHERA_STATE_DIR=str(work / 'state'),
                    PLUGIN_UNLOAD_MANIFEST=(plugin / 'manifest.json').read_text(), PLUGIN_UNLOAD_CASE=case)
-        held = case in ('reload-held', 'placement-held')
+        held = case in ('reload-held', 'placement-held', 'editor-apply-held')
         marker, gate = work / 'held.json', work / 'release'
         if held or case == 'failed-save':
             if case == 'placement-held':
@@ -92,7 +94,7 @@ def main():
                         while not marker.exists() or 'PLUGIN_UNLOAD: HELD_PASS' not in (work / 'engine.log').read_text():
                             assert process.poll() is None and time.monotonic() < deadline, 'real IO/consumer hold not reached'
                             time.sleep(.02)
-                        if case == 'reload-held':
+                        if case in ('reload-held', 'editor-apply-held'):
                             assert json.loads(target.read_text())['scratchpadContent'] == 'original'
                         release()
                     assert process.wait(timeout=30) == 0
@@ -117,6 +119,8 @@ def main():
                     assert len(vfs) == 1
                     files = ('Services/Plugins/Service.qml', 'Services/Plugins/PluginLoader.qml',
                              'Services/Plugins/PluginInstances.qml', 'Services/Plugins/PluginInstanceApi.qml',
+                             'Services/Plugins/PluginPreferenceEditor.qml',
+                             'Services/Plugins/PluginSettingsPreview.qml',
                              'Modules/Panels/Plugins/PluginPanelSlot.qml', 'Scripts/dev/fixtures/settings-plugin-unload-review.qml')
                     lint = subprocess.run(['bash', str(source / 'Scripts/dev/qmllint.sh'), *files], cwd=source,
                                           env=dict(env, QS_VFS=str(vfs[0])), capture_output=True, text=True, timeout=60)

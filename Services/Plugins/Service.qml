@@ -30,7 +30,9 @@ Singleton {
   // preference APIs until the actual QObject destruction stacks have unwound.
   function retainPluginEntry(item) {
     if (!item || !("pluginApi" in item) || !item.pluginApi) return;
-    var api = item.pluginApi;
+    root.retainPluginConsumer(item, item.pluginApi);
+  }
+  function retainPluginConsumer(item, api) {
     while (api && "base" in api) api = api.base;
     if (!api || !("settingsOwner" in api) || !api.settingsOwner || api.settingsOwner.closed) return;
     var key = api.pluginId;
@@ -53,7 +55,9 @@ Singleton {
   // One requested-save lifetime for shared and placement APIs. Waiting here
   // never flushes manual edits that the plugin did not ask to publish.
   function savePluginSettings(api, handle, callback) {
-    if (!handle || !api.settingsReady) {
+    var base = api;
+    while (base && "base" in base) base = base.base;
+    if (!handle || !api.settingsReady || !base || !base.settingsOwner || base.settingsOwner.closed || base.settingsOwner.status !== "Ready") {
       Qt.callLater(function () {
         if (typeof callback === "function") callback({status: "failed", error: {code: "plugin-owner"}});
       });
@@ -80,6 +84,16 @@ Singleton {
   function waitForPluginSaves(api, callback) {
     api._settingsSaveWaiters.push(callback);
     Qt.callLater(function () { root._completePluginSaves(api); });
+  }
+  function retainPluginEditor(editor, api) {
+    root.retainPluginConsumer(editor, api);
+    var base = api;
+    while (base && "base" in base) base = base.base;
+    var key = base.pluginId;
+    editor.ownerCurrent = function () { return base !== null && root.getPluginAPI(key) === base; };
+    // Factory-created editors close on discard; declarative test consumers
+    // keep their ordinary parent-owned lifetime.
+    editor.closedChanged.connect(function () { if (editor.closed) editor.destroy(); });
   }
 
   function _settlePluginUnload(pluginId) {
@@ -1367,7 +1381,7 @@ Singleton {
         property var _settingsSaveWaiters: []
         readonly property var settingsHandle: settingsOwner ? settingsOwner.settingsScope : null
         readonly property var pluginSettings: settingsHandle ? settingsHandle.values : null
-        readonly property bool settingsReady: settingsOwner !== null && settingsOwner.status === "Ready"
+        readonly property bool settingsReady: settingsOwner !== null && !settingsOwner.closed && settingsOwner.status === "Ready"
         property var settingsPreviewOwner: null
         readonly property var settingsView: settingsPreviewOwner ? settingsPreviewOwner.values : pluginSettings
         property var manifest: ({})
@@ -1754,6 +1768,7 @@ Singleton {
     try { handle = writable ? api.settingsHandle.draft() : api.settingsHandle.scope([], false); } catch (error) { return null; }
     if (!handle) return null;
     var editor = preferenceEditorFactory.createObject(root, {fields: fields, writable: writable, inputScope: api.settingsHandle});
+    root.retainPluginEditor(editor, api);
     editor.attach(handle);
     return editor;
   }

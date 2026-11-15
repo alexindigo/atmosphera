@@ -7,6 +7,7 @@ QtObject {
   id: root
   property var handle: null
   property var inputScope: null
+  property var ownerCurrent: null
   required property var fields
   property bool writable: true
   property bool closed: false
@@ -59,7 +60,8 @@ QtObject {
       if (!root.ready && !root.error && !root.closed) return;
       active = false;
       disconnect();
-      callback(root.ready ? {status: "opened"} : {status: "failed", refreshState: "not_refreshed", error: {code: root.error || "editor-closed"}});
+      var available = root.ready && (!root.ownerCurrent || root.ownerCurrent());
+      callback(available ? {status: "opened"} : {status: "failed", refreshState: "not_refreshed", error: {code: root.error || (root.ready ? "editor-owner" : "editor-closed")}});
     }
     readyChanged.connect(changed);
     errorChanged.connect(changed);
@@ -75,6 +77,7 @@ QtObject {
     return false;
   }
   function apply(value, callback) {
+    if (ownerCurrent && !ownerCurrent()) return refuse(callback, "editor-owner");
     if (!writable) return refuse(callback, "editor-read-only");
     if (closed || !ready || busy || value !== values) return refuse(callback, "editor-state");
     var lifetime = _lifetime;
@@ -98,6 +101,7 @@ QtObject {
     });
   }
   function resetOverrides(callback) {
+    if (ownerCurrent && !ownerCurrent()) return refuse(callback, "editor-owner");
     if (!writable) return refuse(callback, "editor-read-only");
     if (!ready || busy) return refuse(callback, "editor-state");
     var lifetime = _lifetime;
