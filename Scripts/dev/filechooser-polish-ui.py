@@ -7,7 +7,8 @@ from pathlib import Path
 import subprocess
 import time
 
-from filechooser_isolation import ROOT, enter, input_command
+from filechooser_isolation import enter, input_command
+from filechooser_profile import current_profile, profile_argument
 
 
 def main():
@@ -16,9 +17,10 @@ def main():
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--label", required=True)
     parser.add_argument("--media", action="store_true")
+    profile_argument(parser)
     args = parser.parse_args()
     source = args.source.resolve()
-    runtime, output = ROOT / "runtime" / args.label, ROOT / "evidence" / args.label
+    runtime, output = current_profile().runtime / args.label, current_profile().evidence / args.label
     probe = runtime / "shell/filechooser-harness.qml"
     scripts = Path(__file__).resolve().parent
     harness = subprocess.Popen(["timeout", "180", "python3", "-B", str(scripts / "filechooser-harness.py"),

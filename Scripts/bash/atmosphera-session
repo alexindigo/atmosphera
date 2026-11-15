@@ -48,19 +48,13 @@ launch() {
   fi
 
   echo "Launching: $target"
-  if shell_owner_pid >/dev/null; then
-    shell_owner_stop
-  fi
+  shell_owner_stop
   exec "$QS_BIN" -n -p "$target" -d
 }
 
 stop() {
-  if shell_owner_pid >/dev/null; then
-    shell_owner_stop
-    echo "Shell stopped."
-  else
-    echo "No registered Atmosphera shell running."
-  fi
+  shell_owner_stop
+  echo "Shell stopped."
 }
 
 case "${1:-}" in

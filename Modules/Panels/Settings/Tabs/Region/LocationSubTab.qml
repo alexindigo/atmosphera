@@ -12,6 +12,7 @@ ColumnLayout {
 
   // Language
   NComboBox {
+    objectName: "languageSelector"
     Layout.fillWidth: true
     label: I18n.tr("panels.general.language-select-label")
     description: I18n.tr("panels.general.language-select-description")
@@ -33,11 +34,7 @@ ColumnLayout {
       // Need to change language on next frame using "callLater" or it will pull the rug below our feet: the NComboBox would be rebuilt immediately before it can close properly.
       Qt.callLater(() => {
         Settings.data.general.language = key;
-        if (key === "") {
-          I18n.detectLanguage(); // Re-detect system language if "Automatic" is selected
-        } else {
-          I18n.setLanguage(key); // Set specific language
-        }
+        // I18n owns preference changes, including the automatic/system value.
       });
     }
   }

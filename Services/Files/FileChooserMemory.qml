@@ -10,6 +10,7 @@ Singleton {
 
   readonly property bool ready: _ready
   readonly property var recentLocations: _recentLocations
+  readonly property var recentEntries: _recentLocations.map(path => ({path: path, lastUsed: Number((store.recentTimes || {})[path]) || 0}))
   readonly property var preferences: store.preferences
   readonly property string home: Quickshell.env("HOME") || "/"
   property bool _ready: false
@@ -29,6 +30,7 @@ Singleton {
       property var appFolders: ({})
       property string sharedFolder: ""
       property var recent: []
+      property var recentTimes: ({})
       property var preferences: ({view: "grid", sortKey: "name", sortDescending: false, showHidden: false})
     }
     onLoaded: root.refresh()
@@ -92,6 +94,10 @@ print(json.dumps([p for p in paths if isinstance(p, str) and os.path.isabs(p) an
     store.appFolders = apps;
     store.sharedFolder = folder;
     store.recent = [folder].concat(store.recent.filter(p => p !== folder && _validPaths.includes(p))).slice(0, 10);
+    var times = {};
+    for (var path of store.recent)
+      times[path] = path === folder ? Date.now() : (Number((store.recentTimes || {})[path]) || 0);
+    store.recentTimes = times;
     if (prefs)
       store.preferences = Object.assign({}, prefs);
     _validPaths = _validPaths.concat([folder]);

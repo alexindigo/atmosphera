@@ -33,7 +33,7 @@ Rectangle {
     for (var i = 0; i < choices.count; ++i) {
       var delegate = choices.itemAt(i);
       if (delegate && delegate.item)
-        centers.push(delegate.item.controlCenter());
+        centers.push(delegate.item.controlCenter(root));
     }
     return centers;
   }
@@ -82,8 +82,8 @@ Rectangle {
           id: menuChoice
           RowLayout {
             readonly property bool valueElided: menuControl.valueElided
-            function controlCenter() {
-              return menuControl.mapToItem(root, 0, menuControl.height / 2).y;
+            function controlCenter(relativeTo) {
+              return menuControl.mapToItem(relativeTo, 0, menuControl.height / 2).y;
             }
             spacing: Style.marginM
             NText {
@@ -104,37 +104,10 @@ Rectangle {
         }
         Component {
           id: booleanChoice
-          FocusScope {
-            id: booleanControl
-            NInputGuard {
-              target: booleanControl
-            }
-            readonly property bool valueElided: false
-            function controlCenter() {
-              return check.mapToItem(root, 0, check.height / 2).y;
-            }
-            implicitWidth: check.implicitWidth
-            implicitHeight: check.implicitHeight
-            activeFocusOnTab: true
-            Accessible.role: Accessible.CheckBox
-            Accessible.name: choice.modelData[1]
-            Accessible.checked: root.request.choiceValues[choice.modelData[0]] === "true"
-            Keys.onSpacePressed: root.request.setChoice(choice.modelData[0], root.request.choiceValues[choice.modelData[0]] === "true" ? "false" : "true")
-            NCheckbox {
-              id: check
-              anchors.fill: parent
-              label: choice.modelData[1]
-              labelSize: Style.fontSizeM
-              checked: root.request.choiceValues[choice.modelData[0]] === "true"
-              onToggled: checked => root.request.setChoice(choice.modelData[0], checked ? "true" : "false")
-            }
-            Rectangle {
-              anchors.fill: parent
-              color: "transparent"
-              radius: Style.iRadiusS
-              border.width: parent.activeFocus ? Style.borderM : 0
-              border.color: AtmoColor.mPrimary
-            }
+          ChooserCheckBox {
+            label: choice.modelData[1]
+            checked: root.request.choiceValues[choice.modelData[0]] === "true"
+            onToggled: value => root.request.setChoice(choice.modelData[0], value ? "true" : "false")
           }
         }
       }

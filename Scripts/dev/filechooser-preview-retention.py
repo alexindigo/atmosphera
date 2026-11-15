@@ -9,7 +9,8 @@ import subprocess
 import sys
 import time
 
-from filechooser_isolation import ROOT, enter, profile_env
+from filechooser_isolation import enter, profile_env
+from filechooser_profile import current_profile, exact_source, profile_argument
 from filechooser_leaks import build_probe, checkpoint, instrument_choosers
 
 
@@ -19,10 +20,11 @@ def main():
     p.add_argument('--source', type=Path, required=True)
     p.add_argument('--label', required=True)
     p.add_argument('--pdf-unavailable', action='store_true', help='exercise actual optional-import failure in a disposable copy')
+    profile_argument(p)
     a = p.parse_args()
     source = a.source.resolve()
-    assert source.is_relative_to(ROOT / 'sources')
-    runtime, output = ROOT / 'runtime' / a.label, ROOT / 'evidence' / a.label
+    assert exact_source(source)
+    runtime, output = current_profile().runtime / a.label, current_profile().evidence / a.label
     runtime.mkdir(); output.mkdir()
     shell = runtime / 'shell'
     shutil.copytree(source, shell, symlinks=True)

@@ -14,6 +14,7 @@ import time
 import uuid
 
 from filechooser_regression import Run, guest
+from filechooser_profile import profile_argument
 
 
 def portal_call():
@@ -25,6 +26,7 @@ def portal_call():
     p.add_argument("--call", choices=["OpenFile", "SaveFile", "SaveFiles"], required=True)
     p.add_argument("--options", required=True)
     p.add_argument("--out", type=Path, required=True)
+    profile_argument(p)
     a = p.parse_args()
     values = json.loads(a.options)
     conn = Gio.bus_get_sync(Gio.BusType.SESSION, None)
@@ -127,6 +129,12 @@ def suite(r):
     r.key(28)
     r.wait(lambda s: s["requests"][0]["replace"] == str(r.fixtures / "Chosen.txt"))
     r.check("SaveFile-awaits-Replace", json.loads(out.read_text())["count"] == 0 and proc.poll() is None)
+    r.key(28)
+    r.wait(lambda s: not s["requests"][0]["replace"])
+    r.check("SaveFile-Enter-keeps-request", json.loads(out.read_text())["count"] == 0 and proc.poll() is None)
+    r.key(28)
+    r.wait(lambda s: s["requests"][0]["replace"] == str(r.fixtures / "Chosen.txt"))
+    r.key(15)
     r.key(28); data = r.result(proc, out)
     r.check("SaveFile-current-file-replaced", data["response"] == 0 and data["results"]["uris"] == [(r.fixtures / "Chosen.txt").as_uri()], data)
     names = ["second #.txt", "first.txt", "日本語.txt"]
@@ -176,6 +184,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--label", required=True)
+    profile_argument(p)
     a = p.parse_args()
     r = Run(a.source, a.label)
     try:
