@@ -185,6 +185,25 @@ ShellRoot {
                 if split:
                     self.assertEqual((root / "shell.qml").read_text(), bootstrap)
 
+    def test_external_command_page_probe_resolves_both_shell_shapes(self):
+        tree = ast.parse((HERE / "external-command-regression.py").read_text())
+        main = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == "main")
+        page = next(i for i, node in enumerate(main.body) if isinstance(node, ast.Assign)
+                    and any(isinstance(target, ast.Name) and target.id == "page_work" for target in node.targets))
+        code = compile(ast.Module(body=main.body[page-2:page], type_ignores=[]), "external-command-page", "exec")
+        for split in (False, True):
+            with self.subTest(split=split), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                bootstrap = "ShellRoot { Loader { sourceComponent: ShellSession {} } }"
+                session = "ShellRoot { Loader { sourceComponent: Item { id: shellRoot; } } }"
+                (root / "shell.qml").write_text(bootstrap if split else session)
+                if split:
+                    (root / "ShellSession.qml").write_text(session)
+                exec(code, dict(shell=root, PAGE=PROBE, inject_probe=inject_probe, probe_owner_path=probe_owner_path))
+                self.assertEqual(probe_owner_path(root).read_text(), "import Quickshell.Io\n" + inject_probe(session, PROBE))
+                if split:
+                    self.assertEqual((root / "shell.qml").read_text(), bootstrap)
+
     def test_chooser_followup_probes_keep_the_resolved_owner(self):
         from filechooser_leaks import add_checkpoint_handler
         tree = ast.parse((HERE / "filechooser-isolation-regression.py").read_text())
