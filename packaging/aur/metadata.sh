@@ -12,6 +12,8 @@ depends=(
   'python-gobject'
   'wlr-randr'
   'wl-clipboard'
+  'glib2'
+  'udisks2'
   'git'
 )
 optdepends=(

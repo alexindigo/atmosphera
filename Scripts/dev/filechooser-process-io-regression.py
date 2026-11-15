@@ -9,7 +9,8 @@ import shutil
 import subprocess
 import time
 
-from filechooser_isolation import ROOT, enter, input_command, profile_env
+from filechooser_isolation import enter, input_command, profile_env
+from filechooser_profile import current_profile, profile_argument
 
 
 def main():
@@ -18,8 +19,9 @@ def main():
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--label", required=True)
     parser.add_argument("--legacy-keyboard", action="store_true", help="reproduce transient-keyboard FD retention")
+    profile_argument(parser)
     args = parser.parse_args()
-    runtime, output = ROOT / "runtime" / args.label, ROOT / "evidence" / args.label
+    runtime, output = current_profile().runtime / args.label, current_profile().evidence / args.label
     runtime.mkdir(); output.mkdir()
     shell = runtime / "shell"
     shutil.copytree(args.source.resolve(), shell, symlinks=True)

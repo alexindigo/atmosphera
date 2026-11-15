@@ -9,7 +9,8 @@ import subprocess
 import sys
 import time
 
-from filechooser_regression import ROOT, guest
+from filechooser_regression import guest
+from filechooser_profile import current_profile, exact_source, profile_argument
 from filechooser_isolation import enter, input_command
 
 
@@ -18,16 +19,17 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--label", required=True)
+    profile_argument(p)
     a = p.parse_args()
     guest()
     source = a.source.resolve()
-    assert source.is_relative_to(ROOT / "sources")
+    assert exact_source(source)
     assert re.fullmatch(r"[a-z0-9][a-z0-9.-]*", a.label)
-    runtime, evidence = ROOT / "runtime" / a.label, ROOT / "evidence" / a.label
+    runtime, evidence = current_profile().runtime / a.label, current_profile().evidence / a.label
     assert not runtime.exists() and not evidence.exists()
     # The regular harness owns its runtime and qs lifetime. An adjacent private
     # fixture directory keeps existing keyboard fixtures/counts unchanged.
-    fixtures = ROOT / "runtime" / (a.label + "-videos")
+    fixtures = current_profile().runtime / (a.label + "-videos")
     fixtures.mkdir()
     videos = fixtures / "Coast surveys"
     videos.mkdir()
@@ -80,7 +82,10 @@ def main():
         command(["ydotool", "key", f"{code}:1", f"{code}:0"])
     def open_videos():
         ipc("openRequest", "open", "dev.filechooser.video", json.dumps({"current_folder": list(os.fsencode(videos) + b"\0"), "multiple": True, "title": "Choose a coast survey"}))
-        return wait(lambda s: s["ready"] and s["nativeActive"] and s["focus"] == "listing")
+        # Model readiness precedes the async presentation Loader. Observe its
+        # concrete thumbnail state before asserting about decoding or pixels.
+        return wait(lambda s: s["ready"] and s["nativeActive"] and s["focus"] == "listing"
+                    and bool(s["thumbnails"]["tiles"]) and all("ready" in t for t in s["thumbnails"]["tiles"]))
     def visible_ready(s):
         tiles = s["thumbnails"]["tiles"]
         return bool(tiles) and all(tile["ready"] and tile["opacity"] == 1 if not tile["path"].endswith("00 Corrupt.mp4") else not tile["ready"] for tile in tiles)
@@ -138,9 +143,13 @@ def main():
         wait(visible_ready)
         check("second-open-zero-ffmpeg-launches", len(launches()) == before_reopen, launches()[before_reopen:])
         check("second-open-consumer-cache-hits", state()["thumbnails"]["statistics"]["hit"] >= 30 and state()["thumbnails"]["statistics"]["ffmpeg"] == 0)
+        # All presentations now support thumbnails. The no-interest contract
+        # remains: explicitly switching them off must retire every subscription.
+        ipc("thumbnails", "false")
         ipc("list")
         wait(lambda s: s["view"] == "list")
         check("list-view-no-thumbnail-interests", not state()["thumbnails"]["tiles"])
+        ipc("thumbnails", "true")
         ipc("reducedMotion", "true")
         ipc("grid")
         key(102)

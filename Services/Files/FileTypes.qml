@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import "FileIconColors.js" as IconColors
+import "FileSaveNames.js" as SaveNames
 
 Singleton {
   id: root
@@ -222,6 +223,10 @@ Singleton {
       }
     }
     return false;
+  }
+
+  function saveSuffixes(filter) {
+    return SaveNames.suffixes(filter, _mimeGlobs, _mimeAliases);
   }
 
   function formatSize(bytes, locale) {

@@ -4,16 +4,18 @@ import argparse
 import copy
 import json
 
-from filechooser_isolation import ROOT, enter
+from filechooser_isolation import enter
+from filechooser_profile import current_profile, profile_argument
 from filechooser_leaks import KINDS, retention_acceptance
 
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--label', required=True)
+    profile_argument(p)
     a = p.parse_args()
     enter(runtime_seconds=180)
-    output = ROOT / 'evidence' / a.label
+    output = current_profile().evidence / a.label
     output.mkdir()
     base = [{'cycle': i, 'pid': 123, 'forced_gc': True, 'THP_enabled': 0, 'AnonHugePages_kib': 0,
              'js_live_bytes': 11000000, 'js_regular_live_bytes': 11000000, 'js_large_live_bytes': 0,

@@ -1,10 +1,7 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
-import "../../Helpers/PortalPaths.js" as PortalPaths
 import qs.Commons
 import qs.Services.Files
-import qs.Widgets
 
 Rectangle {
   id: root
@@ -14,259 +11,127 @@ Rectangle {
   required property double bytes
   required property var modified
   property bool listMode: false
+  property bool compactMode: false
+  property real iconSize: (listMode || compactMode ? 20 : 96) * Style.uiScaleRatio
+  property var columnWidths: []
   property bool selected: false
+  property bool selectable: true
   property bool cursor: false
   property bool listingFocused: false
   property var thumbnailProvider: null
   property bool thumbnailActive: false
+  property var operations: null
+  readonly property bool renaming: !!operations && operations.renamePath === path
   readonly property var iconDescriptor: FileTypes.artwork(name, directory, path)
-  readonly property var labelLines: labelLane && labelMetrics ? FileLabels.lines(name, labelLane.width, text => labelMetrics.advanceWidth(text)) : []
-  FontMetrics {
-    id: labelMetrics
-    font: labelTypography ? labelTypography.font : Qt.font({})
-  }
-  NText {
-    id: labelTypography
-    visible: false
-    pointSize: Style.fontSizeM
-  }
-  // Observation is on demand: a parent must not retain a reactive snapshot of
-  // delegate children while Qt is tearing their native objects down.
-  function iconState() {
-    if (!artwork || !gridIcon || !thumbnail || !labelLane || !gridLayout || !listColumns)
-      return null;
-    return ({
-              name: name,
-              descriptor: iconDescriptor,
-              artwork: listMode ? listColumns.leadingMetrics : {
-                                    width: artwork.width,
-                                    height: artwork.height,
-                                    opacity: artwork.opacity,
-                                    face: gridIcon.paints.face.toString()
-                                  },
-              tileWidth: width,
-              tileHeight: height,
-              label: {
-                top: labelLane.y + gridLayout.y,
-                artworkBottom: artwork.y + artwork.height + gridLayout.y,
-                lines: labelLines,
-                height: labelLane.height
-              },
-              thumbnailWidth: thumbnail.width,
-              thumbnailHeight: thumbnail.height
-            });
-  }
-  function artworkGeometry() {
-    return artwork.mapToItem(root, 0, 0, artwork.width, artwork.height);
-  }
+  readonly property var columnGeometry: listMode && visual.item ? visual.item.geometry : []
+  readonly property var thumbnailState: visual.item ? visual.item.thumbnailState : ({})
   signal pressed(int modifiers)
   signal activated
-  readonly property var columnGeometry: listColumns.geometry
-  readonly property var thumbnailState: ({
-                                           path: path,
-                                           active: thumbnailActive,
-                                           ready: videoThumbnail.active && thumbnail.status === Image.Ready,
-                                           imageReady: thumbnail.status === Image.Ready,
-                                           source: String(thumbnail.source),
-                                           opacity: artwork.opacity * thumbnailArtwork.opacity,
-                                           reveal: thumbnailArtwork.opacity,
-                                           fallbackOpacity: artwork.opacity * gridIcon.opacity,
-                                           artworkOpacity: artwork.opacity,
-                                           duration: Style.animationFast,
-                                           playGeometry: {
-                                             frameWidth: videoFrame.width,
-                                             frameHeight: videoFrame.height,
-                                             right: playBadge.x + playBadge.width,
-                                             bottom: playBadge.y + playBadge.height
-                                           }
-                                         })
+  function focusEntry() {
+    if (!renaming)
+      forceActiveFocus(Qt.OtherFocusReason);
+  }
+
+  function iconState() {
+    return visual.item ? Object.assign({
+                                         name: name,
+                                         descriptor: iconDescriptor,
+                                         tileWidth: width,
+                                         tileHeight: height
+                                       }, visual.item.iconState()) : null;
+  }
+  function artworkGeometry() {
+    if (!visual.item || listMode)
+      return Qt.rect(0, 0, width, height);
+    var r = visual.item.artworkGeometry();
+    return visual.item.mapToItem(root, r.x, r.y, r.width, r.height);
+  }
   color: selected ? Qt.alpha(AtmoColor.mPrimary, 0.18) : (pointer.containsMouse ? Qt.alpha(AtmoColor.mOnSurface, 0.05) : "transparent")
   radius: Style.iRadiusS
   border.width: cursor && listingFocused ? Style.borderM : 0
   border.color: AtmoColor.mPrimary
   Accessible.role: Accessible.ListItem
   Accessible.name: name
+  Accessible.description: directory ? I18n.tr("widgets.file-picker.folder") : FileTypes.formatSize(bytes)
+  Accessible.focusable: true
+  Accessible.selectable: selectable
   Accessible.selected: selected
+  Accessible.onPressAction: pressed(Qt.NoModifier)
+  Accessible.onToggleAction: pressed(Qt.ControlModifier)
 
-  ColumnLayout {
-    id: gridLayout
+  // A pooled row owns exactly one presentation graph, never hidden shapes,
+  // image loaders, labels or column bindings for the other view.
+  Loader {
+    id: visual
     anchors.fill: parent
-    anchors.margins: Style.marginM
-    visible: !root.listMode
-    spacing: Style.marginXS
-    Item {
-      id: artwork
-      Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-      Layout.preferredWidth: 96 * Style.uiScaleRatio
-      Layout.preferredHeight: 96 * Style.uiScaleRatio
-      // Hidden alpha is applied after the complete icon/thumbnail handoff.
-      layer.enabled: true
-      opacity: root.iconDescriptor.hidden ? .5 : 1
-      Item {
-        id: thumbnailArtwork
-        anchors.fill: parent
-        // One reveal animates the finished image plus its play badge. The
-        // fallback binds to the same value's complement, including hidden tiles.
-        layer.enabled: true
-        opacity: thumbnail.status === Image.Ready ? 1 : 0
-        Behavior on opacity {
-          NumberAnimation {
-            duration: Style.animationFast
-          }
-        }
-        Image {
-          id: thumbnail
-          anchors.fill: parent
-          source: videoThumbnail.item ? videoThumbnail.item.url : (!root.directory && !root.listMode && ["image", "animatedImage"].includes(FileTypes.previewKind(root.name)) ? PortalPaths.pathToUri(root.path).uri : "")
-          sourceSize.width: Math.ceil(artwork.width * root.Screen.devicePixelRatio)
-          sourceSize.height: Math.ceil(artwork.height * root.Screen.devicePixelRatio)
-          asynchronous: true
-          fillMode: Image.PreserveAspectFit
-        }
-        Item {
-          id: videoFrame
-          anchors.centerIn: thumbnail
-          width: thumbnail.paintedWidth
-          height: thumbnail.paintedHeight
-          visible: videoThumbnail.active && thumbnail.status === Image.Ready
-          Rectangle {
-            id: playBadge
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            width: Style.baseWidgetSize * .55
-            height: width
-            radius: width / 2
-            color: AtmoColor.mSurface
-            AtmoIcon {
-              anchors.centerIn: parent
-              icon: Icon.mediaPlay
-              pointSize: Style.fontSizeS
-              color: AtmoColor.mOnSurface
-            }
-          }
-        }
-      }
-      Loader {
-        id: videoThumbnail
-        active: !!root.thumbnailProvider && !root.directory && !root.listMode && FileTypes.previewKind(root.name) === "video"
-        sourceComponent: FileThumbnail {
-          provider: root.thumbnailProvider
-          path: root.path
-          active: root.thumbnailActive
-          pixels: Math.max(root.width, root.height) * root.Screen.devicePixelRatio
-          stamp: String(root.modified)
-        }
-      }
-      FileIcon {
-        id: gridIcon
-        anchors.centerIn: parent
-        width: artwork.width
-        height: artwork.height
-        opacity: 1 - thumbnailArtwork.opacity
-        descriptor: root.iconDescriptor
-      }
-    }
-    Column {
-      id: labelLane
-      Layout.fillWidth: true
-      Layout.alignment: Qt.AlignTop
-      Layout.preferredHeight: labelTypography.implicitHeight * 2
-      Repeater {
-        model: root.labelLines
-        NText {
-          required property string modelData
-          width: labelLane.width
-          text: modelData
-          font: labelTypography.font
-          horizontalAlignment: Text.AlignHCenter
-          verticalAlignment: Text.AlignTop
-          elide: Text.ElideRight
-        }
-      }
-    }
-    Item {
-      Layout.fillHeight: true
-    }
-    NText {
-      visible: root.listMode
-      Layout.preferredWidth: 92 * Style.uiScaleRatio
-      horizontalAlignment: Text.AlignRight
-      text: root.directory ? "" : FileTypes.formatSize(root.bytes)
-      pointSize: Style.fontSizeS
-      features: ({
-                   tnum: 1
-                 })
-      color: AtmoColor.mOnSurfaceVariant
-    }
-    NText {
-      visible: root.listMode
-      Layout.preferredWidth: 164 * Style.uiScaleRatio
-      text: FileTypes.formatDate(root.modified)
-      pointSize: Style.fontSizeS
-      features: ({
-                   tnum: 1
-                 })
-      color: AtmoColor.mOnSurfaceVariant
+    asynchronous: true
+    sourceComponent: root.listMode ? listVisual : root.compactMode ? compactVisual : gridVisual
+  }
+  Component {
+    id: gridVisual
+    FileEntryGrid {
+      name: root.name
+      path: root.path
+      directory: root.directory
+      modified: root.modified
+      descriptor: root.iconDescriptor
+      iconSize: root.iconSize
+      thumbnailProvider: root.thumbnailProvider
+      thumbnailActive: root.thumbnailActive
+      nameEditor: root.renaming ? renameEditor : null
     }
   }
-  FileListColumns {
-    id: listColumns
-    anchors.fill: parent
-    visible: root.listMode
-    leading: Component {
-      Item {
-        readonly property var metrics: ({
-                                          width: compactIcon.width,
-                                          height: compactIcon.height,
-                                          opacity: compactIcon.opacity,
-                                          face: compactIcon.paints.face.toString()
-                                        })
-        FileIcon {
-          id: compactIcon
-          anchors.centerIn: parent
-          width: 20 * Style.uiScaleRatio
-          height: width
-          compact: true
-          descriptor: root.iconDescriptor
-        }
-      }
+  Component {
+    id: listVisual
+    FileEntryList {
+      name: root.name
+      path: root.path
+      directory: root.directory
+      bytes: root.bytes
+      modified: root.modified
+      descriptor: root.iconDescriptor
+      iconSize: root.iconSize
+      widths: root.columnWidths
+      thumbnailProvider: root.thumbnailProvider
+      thumbnailActive: root.thumbnailActive
+      nameEditor: root.renaming ? renameEditor : null
     }
-    nameCell: Component {
-      NText {
-        text: root.name
-        pointSize: Style.fontSizeM
-      }
+  }
+  Component {
+    id: compactVisual
+    FileEntryCompact {
+      name: root.name
+      path: root.path
+      directory: root.directory
+      modified: root.modified
+      descriptor: root.iconDescriptor
+      iconSize: root.iconSize
+      thumbnailProvider: root.thumbnailProvider
+      thumbnailActive: root.thumbnailActive
+      nameEditor: root.renaming ? renameEditor : null
     }
-    sizeCell: Component {
-      NText {
-        text: root.directory ? "" : FileTypes.formatSize(root.bytes)
-        horizontalAlignment: Text.AlignRight
-        pointSize: Style.fontSizeS
-        features: ({
-                     tnum: 1
-                   })
-        color: AtmoColor.mOnSurfaceVariant
-      }
-    }
-    modifiedCell: Component {
-      NText {
-        text: FileTypes.formatDate(root.modified)
-        pointSize: Style.fontSizeS
-        features: ({
-                     tnum: 1
-                   })
-        color: AtmoColor.mOnSurfaceVariant
-      }
+  }
+  Component {
+    id: renameEditor
+    ChooserTextField {
+      accessibleName: I18n.tr("widgets.file-picker.rename-name")
+      text: root.operations.renameName
+      readOnly: root.operations.busy
+      onTextEdited: root.operations.renameName = text
+      onAccepted: root.operations.rename(text)
+      Component.onCompleted: Qt.callLater(function () {
+        inputItem.forceActiveFocus();
+        var dot = root.directory ? -1 : text.lastIndexOf(".");
+        inputItem.select(0, dot > 0 ? dot : text.length);
+      })
     }
   }
   MouseArea {
     id: pointer
     anchors.fill: parent
     hoverEnabled: true
-    onClicked: mouse => root.pressed(mouse.modifiers)
-    onDoubleClicked: root.activated()
+    acceptedButtons: Qt.NoButton
   }
-  // The complete filename remains available even when either fixed line elides.
   ToolTip.visible: pointer.containsMouse
   ToolTip.text: root.name
   ToolTip.delay: 700
