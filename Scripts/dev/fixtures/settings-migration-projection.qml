@@ -77,7 +77,7 @@ ShellRoot {
       w: function () {},
       e: function () {}
     };
-    var wrapperComponent = Qt.createComponent("./Commons/Migrations/Migration62.qml");
+    var wrapperComponent = Qt.createComponent("./i5-migration62.qml");
     check(wrapperComponent.status === Component.Ready, "shared-source Migration62 wrapper component");
     var wrapper = wrapperComponent.createObject(root);
     [["Del"], ["F9"], []].forEach(function (remove) {

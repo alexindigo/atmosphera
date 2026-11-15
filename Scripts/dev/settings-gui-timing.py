@@ -231,7 +231,7 @@ def main():
     shell = work / 's'
     shutil.copytree(source, shell, ignore=shutil.ignore_patterns('.git', '__pycache__', '*.bak'))
     # Fixtures are always from this runner's version, including old-owner legs.
-    for name in ('settings-gui-timing.qml', 'launcher-key-owner-probe.qml'):
+    for name in ('settings-gui-timing.qml', 'launcher-key-owner-probe.qml', 'Migration62.qml'):
         shutil.copy2(HERE / 'fixtures' / name, shell / 'Scripts/dev/fixtures' / name)
     body = probe_owner_path(shell)
     text = body.read_text()

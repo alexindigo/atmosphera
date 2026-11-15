@@ -1,5 +1,5 @@
 import QtQuick
-import "SettingsMigrationSource.js" as MigrationSource
+import "../../../Commons/Migrations/SettingsMigrationSource.js" as MigrationSource
 
 // Launcher regression compatibility wrapper, not a production migration owner.
 // Execute the shared resource in test context with only the final step selected.
