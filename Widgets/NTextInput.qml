@@ -246,11 +246,11 @@ ColumnLayout {
             enabled: input.text.length > 0 && !root.readOnly && root.enabled
 
             onClicked: {
+              input.forceActiveFocus();
               input.clear();
               // Native clear() preserves undo but does not emit textEdited.
-              root._userEdited = true;
-              root.textEdited();
-              input.forceActiveFocus();
+              // Use the focused input's intent signal for guards and consumers.
+              input.textEdited();
             }
           }
         }
