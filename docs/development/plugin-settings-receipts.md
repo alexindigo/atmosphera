@@ -24,4 +24,13 @@ owned. I5 removes this transitional transport with the old plugin persistence pa
 asynchronous receipts, signal-before-callback, failure/FIFO/reentry, submitted-alias
 isolation, linked publication and a cold restarted API consumer. The VM-only driver
 also inspects final target bytes, link identity and failed destination contents.
+
+## Native cutover witness
+
+The current owner uses `Scripts/dev/fixtures/settings-plugin-receipts-native.qml`.
+It retains asynchronous ordered receipts, signal-before-callback delivery,
+reentry, rejected input, owned submitted values, real IO failure, linked-file
+publication and a separate cold consumer. Independent native owners are sequenced
+at the caller boundary rather than through the removed shared serializer. The
+old-owner fixture remains in historical pre-cutover trees, not the current tree.
 This prerequisite does not complete plugin popup/instance editing or catalog work.
