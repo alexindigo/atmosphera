@@ -1,0 +1,7 @@
+module ConfigQml
+linktarget configqmlplugin
+optional plugin configqmlplugin
+classname ConfigQmlPlugin
+typeinfo configqml.qmltypes
+prefer :/qt/qml/ConfigQml/
+

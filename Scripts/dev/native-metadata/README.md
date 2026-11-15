@@ -23,6 +23,28 @@ it through real qmllint with ConfigQml absent from a private SDK view, including
 a missing-property negative control. The installed module is never hidden or
 changed in the system SDK.
 
+Each dependency's `qt611-qs031/` variant is generated from the same immutable
+source with Qt 6.11.2 moc and qmltyperegistrar. Selection requires one exact SDK
+metatype match; unknown SDKs, ambiguous matches and changed artifacts fail.
+Only that variant's two descriptions and receipt enter the private import tree.
+This is tooling metadata, not a ConfigQml runtime build or a private-ABI claim.
+`configqml-metadata-generate.py` regenerates these outputs without changing source
+or installing libraries. In the assigned VM, with disk-backed TMPDIR:
+
+```sh
+python3 -B Scripts/dev/configqml-metadata-generate.py \
+  --source "$IMMUTABLE_CONFIGQML_SOURCE" --qt "$SDK/usr/lib/qt6" \
+  --reference Scripts/dev/native-metadata/dependencies/configqml-050 \
+  --output "$WORKSPACE/generated-configqml"
+LD_LIBRARY_PATH="$SDK/usr/lib" python3 -B Scripts/dev/qml-native-metadata-selftest.py \
+  --sdk "$SDK/usr/lib/qt6" -k configqml_fallback
+```
+
+First run the generator with the reference Qt 6.12 SDK and compare its qmltypes
+byte-for-byte with the installed reference. Preserve `generation.json`, source
+archives, SDK package signatures and hashes outside the repository; copy only
+`configqml.qmltypes`, `qmldir` and `manifest.json` into the variant directory.
+
 | # | Family | Source commit | Qt toolchain |
 |---|---|---|---|
 | 1 | `qt611-qs031` | `1a4716cde794a59928d9d9fc15f2afc7a95de360` (Quickshell 0.3.1) | 6.11.2 |
