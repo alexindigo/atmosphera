@@ -349,16 +349,21 @@ Singleton {
   property bool _settingsOpening: false
 
   function openWidgetSettings(screen, widgetIndex, widgetId, widgetData, onCloseCallback, anchorX, anchorY, anchorW, anchorH, capturedEditor) {
+    function refused(editor) {
+      if (typeof onCloseCallback === "function")
+        onCloseCallback(screen, widgetIndex, widgetId, editor);
+      if (editor)
+        editor.detach();
+      return false;
+    }
     if (!widgetId || !screen) {
-      return;
+      return refused(capturedEditor);
     }
 
     if (root.currentSettingsDialog || root._settingsOpening) {
       if (root.currentSettingsDialog)
         root.currentSettingsDialog.forceActiveFocus();
-      if (capturedEditor)
-        capturedEditor.detach();
-      return;
+      return refused(capturedEditor);
     }
 
     var hasSettings = false;
@@ -374,18 +379,18 @@ Singleton {
 
     if (!hasSettings) {
       Logger.w("DesktopWidgetRegistry", "Widget does not have settings:", widgetId);
-      return;
+      return refused(capturedEditor);
     }
 
     var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
     if (!popupMenuWindow) {
       Logger.e("DesktopWidgetRegistry", "No popup menu window found for screen");
-      return;
+      return refused(capturedEditor);
     }
 
-    if (popupMenuWindow.hideDynamicMenu) {
-      popupMenuWindow.hideDynamicMenu();
-    }
+    if (popupMenuWindow.close() === false)
+      return refused(capturedEditor);
+    var generation = popupMenuWindow.requestPresentation();
 
     var editor = capturedEditor || root.createWidgetSettingsEditor(screen.name, widgetIndex);
     if (!editor)
@@ -412,6 +417,11 @@ Singleton {
       root._settingsOpening = false;
 
       if (dialog) {
+        if (popupMenuWindow.showDialog(dialog, generation) === false) {
+          dialog.destroy();
+          refused(editor);
+          return;
+        }
         root.currentSettingsDialog = dialog;
         dialog.closed.connect(() => {
           if (root.currentSettingsDialog === dialog) {
@@ -425,10 +435,9 @@ Singleton {
           }
           editor.detach();
         });
-        popupMenuWindow.showDialog(dialog);
         dialog.open();
       } else {
-        editor.detach();
+        refused(editor);
         Logger.e("DesktopWidgetRegistry", "Failed to create widget settings dialog");
       }
     }
@@ -437,7 +446,7 @@ Singleton {
       instantiateAndOpen();
     } else if (component.status === Component.Error) {
       root._settingsOpening = false;
-      editor.detach();
+      refused(editor);
       Logger.e("DesktopWidgetRegistry", "Error loading settings dialog component:", component.errorString());
     } else {
       component.statusChanged.connect(() => {
@@ -445,7 +454,7 @@ Singleton {
           instantiateAndOpen();
         } else if (component.status === Component.Error) {
           root._settingsOpening = false;
-          editor.detach();
+          refused(editor);
           Logger.e("DesktopWidgetRegistry", "Error loading settings dialog component:", component.errorString());
         }
       });

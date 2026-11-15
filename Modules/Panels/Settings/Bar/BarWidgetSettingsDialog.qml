@@ -225,6 +225,13 @@ Popup {
     liveEdits.saveAndClose();
   }
 
+  function requestClose() {
+    if (!visible && !saveBusy && !settingsDirty && !saveFailed)
+      return true;
+    saveAndClose();
+    return !visible && !saveBusy && !settingsDirty && !saveFailed;
+  }
+
   function loadWidgetSettings() {
     const source = BarWidgetRegistry.widgetSettingsMap[widgetId];
     if (source) {
