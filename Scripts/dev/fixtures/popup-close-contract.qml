@@ -243,13 +243,29 @@ ShellRoot {
           root.stage = 7;
         } else if (root.stage === 7 && ++root.liveTicks > 3) {
           root.check(host.visible && root.liveDialog.visible && host.popupContentItem === root.liveDialog && root.liveDialog.saveBusy, "live native hide keeps retained submit callback");
+          root.liveDialog.requestDiscard();
+          root.check(!root.liveDialog.discardPending, "busy live dialog refuses Discard");
           var complete = root.pending;
           root.pending = null;
           complete({
                      status: "saved"
                    });
           root.check(!root.liveDialog.saveBusy && !root.liveDialog.settingsDirty, "live held submission acknowledged");
-          root.check(host.close() === true && !host.visible && !root.liveDialog.visible, "live settled close accepted");
+          root.liveDialog.requestDiscard();
+          root.check(!root.liveDialog.discardPending, "clean live dialog has no discarded work");
+          root.check(root.liveDialog.queueSettings({ invalid: Infinity }) === false,
+            "actual non-finite input refused by live session");
+          root.check(root.liveDialog.saveFailed && !root.liveDialog.settingsDirty,
+            "failed input has no pending admitted fields");
+          root.liveDialog.requestDiscard();
+          root.check(root.liveDialog.discardPending, "failed-without-dirty input opens Discard confirmation");
+          root.liveDialog.keepEditing();
+          root.check(!root.liveDialog.discardPending && root.liveDialog.saveFailed && root.liveDialog.visible,
+            "Keep Editing preserves failed input and dialog");
+          root.liveDialog.requestDiscard();
+          root.check(root.liveDialog.confirmDiscard() && !root.liveDialog.saveFailed,
+            "confirmed Discard clears failed input");
+          root.check(!host.visible && !root.liveDialog.visible, "confirmed live discard closes host");
           root.liveDialog.destroy();
           root.liveDialog = null;
           root.liveIndex++;
