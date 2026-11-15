@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Real runner file ownership controls, executed only in the project VM."""
 import importlib.util
+import errno
+import os
 from pathlib import Path
 import sys
 import tempfile
@@ -18,6 +20,33 @@ RUNNERS = (
 
 
 class ProbeFileTests(unittest.TestCase):
+    def test_stream_conversion_failure_closes_descriptor_and_removes_probe(self):
+        from probe_files import ProbeFiles
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory)
+            fixture = source / 'fixture.qml'
+            fixture.write_text('Item {}')
+            descriptors = []
+            def conversion_failure(fd, mode):
+                descriptors.append(fd)
+                raise OSError('injected stream conversion failure')
+            try:
+                with patch('probe_files.os.fdopen', conversion_failure), self.assertRaisesRegex(OSError, 'stream conversion'):
+                    ProbeFiles(source, fixture)
+                with self.subTest(resource='probe'):
+                    self.assertEqual(list(source.iterdir()), [fixture], 'conversion failure leaked acquired probe')
+                with self.subTest(resource='descriptor'), self.assertRaises(OSError):
+                    os.fstat(descriptors[0])
+            finally:
+                # Close only the descriptor acquired in this test's failing
+                # constructor, if the old implementation leaked it.
+                for fd in descriptors:
+                    try:
+                        os.close(fd)
+                    except OSError as error:
+                        if error.errno != errno.EBADF:
+                            raise
+
     def test_exclusive_collision_and_simultaneous_owners(self):
         from probe_files import ProbeFiles
         with tempfile.TemporaryDirectory() as directory:
