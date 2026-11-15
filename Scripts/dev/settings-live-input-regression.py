@@ -16,6 +16,8 @@ def main():
     for name in ('source', 'output', 'work-root', 'guest-profile'):
         parser.add_argument('--' + name, type=Path, required=True)
     args = parser.parse_args()
+    for name in ('source', 'output', 'work_root', 'guest_profile'):
+        setattr(args, name, getattr(args, name).resolve())
     sys.path.insert(0, str(args.source / 'Scripts/dev'))
     from guest_profile import activate_profile, protect_owned_process
     profile = activate_profile(args.guest_profile)
