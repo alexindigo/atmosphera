@@ -57,11 +57,17 @@ ColumnLayout {
       var newText = currentText.substring(0, cursorPos) + token + currentText.substring(cursorPos);
       input.text = newText + " ";
       if (focusedInput === inputHoriz)
-        saveSettings({formatHorizontal: input.text.trim()});
+        saveSettings({
+                       formatHorizontal: input.text.trim()
+                     });
       else if (focusedInput === inputVert)
-        saveSettings({formatVertical: input.text.trim()});
+        saveSettings({
+                       formatVertical: input.text.trim()
+                     });
       else if (focusedInput === inputTooltip)
-        saveSettings({tooltipFormat: input.text.trim()});
+        saveSettings({
+                       tooltipFormat: input.text.trim()
+                     });
 
       // Move cursor after the inserted token
       input.cursorPosition = cursorPos + token.length + 1;
@@ -75,7 +81,9 @@ ColumnLayout {
     currentKey: valueClockColor
     onSelected: key => {
       valueClockColor = key;
-      saveSettings({clockColor: valueClockColor});
+      saveSettings({
+                     clockColor: valueClockColor
+                   });
     }
     defaultValue: widgetMetadata.clockColor
   }
@@ -87,7 +95,9 @@ ColumnLayout {
     checked: valueUseCustomFont
     onToggled: checked => {
       valueUseCustomFont = checked;
-      saveSettings({useCustomFont: valueUseCustomFont});
+      saveSettings({
+                     useCustomFont: valueUseCustomFont
+                   });
     }
     defaultValue: widgetMetadata.useCustomFont
   }
@@ -105,7 +115,9 @@ ColumnLayout {
     minimumWidth: 300
     onSelected: function (key) {
       valueCustomFont = key;
-      saveSettings({customFont: valueCustomFont});
+      saveSettings({
+                     customFont: valueCustomFont
+                   });
     }
     defaultValue: Settings.data.ui.fontDefault
   }
@@ -143,7 +155,9 @@ ColumnLayout {
         onTextChanged: {
           valueFormatHorizontal = text;
         }
-        onTextEdited: saveSettings({formatHorizontal: valueFormatHorizontal.trim()})
+        onTextEdited: saveSettings({
+                                     formatHorizontal: text.trim()
+                                   })
         Component.onCompleted: {
           if (inputItem) {
             inputItem.activeFocusChanged.connect(function () {
@@ -171,7 +185,9 @@ ColumnLayout {
         onTextChanged: {
           valueFormatVertical = text;
         }
-        onTextEdited: saveSettings({formatVertical: valueFormatVertical.trim()})
+        onTextEdited: saveSettings({
+                                     formatVertical: text.trim()
+                                   })
         Component.onCompleted: {
           if (inputItem) {
             inputItem.activeFocusChanged.connect(function () {
@@ -194,7 +210,9 @@ ColumnLayout {
         onTextChanged: {
           valueTooltipFormat = text;
         }
-        onTextEdited: saveSettings({tooltipFormat: valueTooltipFormat.trim()})
+        onTextEdited: saveSettings({
+                                     tooltipFormat: text.trim()
+                                   })
         Component.onCompleted: {
           if (inputItem) {
             inputItem.activeFocusChanged.connect(function () {

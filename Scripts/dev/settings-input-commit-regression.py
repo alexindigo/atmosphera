@@ -15,7 +15,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('source', 'output', 'work-root', 'guest-profile'):
         parser.add_argument('--' + name, type=lambda value: Path(value).resolve(), required=True)
-    parser.add_argument('--case', choices=('deferred', 'slider', 'unsupported'), required=True)
+    parser.add_argument('--case', choices=('deferred', 'slider', 'unsupported', 'close-input'), required=True)
     args = parser.parse_args()
     sys.path.insert(0, str(args.source / 'Scripts/dev'))
     from guest_profile import activate_profile, protect_owned_process
@@ -33,7 +33,8 @@ def main():
     env = dict(os.environ, **runtime, QT_QPA_PLATFORM='wayland', QML_DISABLE_DISK_CACHE='1',
                TMPDIR=str(args.work_root / 'tmp'), YDOTOOL_SOCKET=str(socket), INPUT_COMMIT_CASE=args.case,
                LIVE_INPUT_HAS_BOOTSTRAP='1' if (args.source / 'Commons/SettingsBootstrap.qml').is_file() else '0',
-               ATMOSPHERA_CONFIG_DIR=str(config), ATMOSPHERA_CACHE_DIR=str(args.work_root / 'cache'),
+               ATMOSPHERA_CONFIG_DIR=str(config), ATMOSPHERA_SETTINGS_FILE=str(config / 'settings.json'),
+               ATMOSPHERA_CACHE_DIR=str(args.work_root / 'cache'),
                ATMOSPHERA_STATE_DIR=str(args.work_root / 'state'))
     Path(env['TMPDIR']).mkdir()
     files_owner = None
@@ -91,26 +92,41 @@ def main():
                 ipc('mixed')
                 wait(lambda: snapshot()['focused'])
                 call(['ydotool', 'type', '--key-delay', '10', '480'])
-                ipc('queue')
+                ipc('close' if args.case == 'close-input' else 'queue')
                 wait(lambda: snapshot()['held'] == 1)
                 observations['automatic'] = snapshot()
-                assert observations['automatic']['focused'], 'automatic wrapper commit blurred input'
-                ipc('release')
-                wait(lambda: not snapshot()['busy'])
-                observations['acknowledged'] = snapshot()
-                assert observations['acknowledged']['stored']['height'] == 96
-                if args.case == 'unsupported':
-                    assert observations['acknowledged']['stored']['width'] == 320
-                    assert observations['acknowledged']['guardDirty'], 'receipt acknowledged unsupported focused text'
+                if args.case == 'close-input':
+                    assert observations['automatic']['visible'] and not observations['automatic']['focused']
+                    ipc('resume')
+                    wait(lambda: snapshot()['focused'])
+                    call(['ydotool', 'type', '--key-delay', '10', '9'])
+                    observations['bufferedWhileClosing'] = snapshot()
+                    assert observations['bufferedWhileClosing']['text'] == '4809'
+                    assert observations['bufferedWhileClosing']['guardDirty']
+                    ipc('release')
+                    wait(lambda: snapshot()['held'] == 1 or not snapshot()['visible'])
+                    observations['secondCloseSave'] = snapshot()
+                    assert observations['secondCloseSave']['visible'] and observations['secondCloseSave']['held'] == 1, 'pending close discarded newer buffered native input'
+                    assert observations['secondCloseSave']['stored']['width'] == 4809
+                    ipc('release')
                 else:
-                    assert observations['acknowledged']['stored']['width'] == 480, 'receipt acknowledged unpublished focused wrapper text'
-                    assert not observations['acknowledged']['guardDirty']
-                call(['ydotool', 'type', '--key-delay', '10', '9'])
-                observations['continued'] = snapshot()
-                assert observations['continued']['text'] == '4809' and observations['continued']['dirty']
-                ipc('close')
-                wait(lambda: snapshot()['held'] == 1)
-                ipc('release')
+                    assert observations['automatic']['focused'], 'automatic wrapper commit blurred input'
+                    ipc('release')
+                    wait(lambda: not snapshot()['busy'])
+                    observations['acknowledged'] = snapshot()
+                    assert observations['acknowledged']['stored']['height'] == 96
+                    if args.case == 'unsupported':
+                        assert observations['acknowledged']['stored']['width'] == 320
+                        assert observations['acknowledged']['guardDirty'], 'receipt acknowledged unsupported focused text'
+                    else:
+                        assert observations['acknowledged']['stored']['width'] == 480, 'receipt acknowledged unpublished focused wrapper text'
+                        assert not observations['acknowledged']['guardDirty']
+                    call(['ydotool', 'type', '--key-delay', '10', '9'])
+                    observations['continued'] = snapshot()
+                    assert observations['continued']['text'] == '4809' and observations['continued']['dirty']
+                    ipc('close')
+                    wait(lambda: snapshot()['held'] == 1)
+                    ipc('release')
                 wait(lambda: not snapshot()['visible'])
                 observations['closed'] = snapshot()
                 assert observations['closed']['stored']['width'] == 4809 and observations['closed']['blurs'] > 0
