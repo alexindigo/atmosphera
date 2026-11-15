@@ -16,6 +16,7 @@ PanelWindow {
   required property ShellScreen shellScreen
   property string windowType: "popupmenu"  // Used for namespace and registration
   property int presentationGeneration: 0
+  property int _contentGeneration: 0
   property bool _closing: false
   onVisibleChanged: {
     presentationGeneration++;
@@ -31,6 +32,7 @@ PanelWindow {
   // reference also becomes null when externally owned content is destroyed.
   property QtObject popupContentItem: null
   onPopupContentItemChanged: {
+    _contentGeneration++;
     if (!popupContentItem && visible && !_closing)
       close();
   }
@@ -194,8 +196,9 @@ PanelWindow {
         _closing = false;
         // Hiding the native window also hides its Qt Popup surface. Restore
         // that presentation after the window's visibility transition settles.
+        const contentGeneration = _contentGeneration;
         Qt.callLater(function () {
-          if (root.popupContentItem === content) {
+          if (root.popupContentItem === content && root._contentGeneration === contentGeneration) {
             root.visible = true;
             if (!content.visible && typeof content.open === "function") {
               content.open();
