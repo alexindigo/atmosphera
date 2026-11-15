@@ -1616,6 +1616,9 @@
       "behavior-command-description": "Shell command to run when locking (e.g. hyprlock)",
       "behavior-command-note": "The external binary handles its own authentication and Wayland session lock. The shell will not create its own lock screen when this mode is active.",
       "behavior-command-not-found": "Command not found. Check the spelling or install the binary.",
+      "behavior-command-checking": "Checking command...",
+      "behavior-command-check-failed": "Could not check command availability. Try reopening this page.",
+      "behavior-command-unverified": "This shell expression cannot be checked without running it.",
       "title": "Lock Screen"
     },
     "network": {

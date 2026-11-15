@@ -116,6 +116,7 @@ def main():
     env['QS_VFS'] = str(vfs)
     print(f'Quickshell generated {len(modules)} qs modules for {len(qml_files)} QML inputs', flush=True)
     run_step('native-contracts', ['python3', '-B', 'Scripts/dev/qml-native-metadata-selftest.py'], shell, env, logs)
+    run_step('singleton-call-contracts', ['python3', '-B', 'Scripts/dev/qml-singleton-calls-selftest.py'], shell, env, logs)
     canaries = work / 'canaries'
     shutil.copyfile(shell / '.qmllint.ini', canaries / '.qmllint.ini')
     checker = str(shell / 'Scripts/dev/qmllint.sh')
