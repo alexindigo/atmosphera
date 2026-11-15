@@ -660,9 +660,9 @@ def launcher_open_probe(ctx):
         foot.wait(timeout=5)
 
 
-def native_launcher_app_signature(pixels):
+def native_launcher_app_layout(pixels):
     if len(pixels) != 500 * 120 * 3:
-        return False
+        return None
     def rgb(x, y):
         start = (y * 500 + x) * 3
         return tuple(pixels[start:start + 3])
@@ -708,7 +708,15 @@ def native_launcher_app_signature(pixels):
                and (apps_chrome or clipboard_chrome)
                and 1 <= len(middle) <= 2 and all(45 <= right - left + 1 <= 100 for left, right in middle)
                and aligned and 8 <= separators <= 14)
-    return legacy or current
+    if legacy:
+        return 'legacy'
+    if current:
+        return 'apps' if apps_chrome else 'clipboard'
+    return None
+
+
+def native_launcher_app_signature(pixels):
+    return native_launcher_app_layout(pixels) is not None
 
 
 def _niri_load(ctx, path):

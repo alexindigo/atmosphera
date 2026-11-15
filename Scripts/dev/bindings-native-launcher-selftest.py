@@ -20,8 +20,11 @@ def main():
         pixels = subprocess.check_output(['timeout', '10', 'magick', str(path), '-depth', '8', 'rgb:-'], timeout=15)
         assert len(pixels) == 500 * 120 * 3, path
         assert bindings.native_launcher_app_signature(pixels), path
-        for name, top, bottom in [('search-missing', 8, 49), ('categories-missing', 60, 100),
-                                   ('layout-control-missing', 0, 60)]:
+        layout = bindings.native_launcher_app_layout(pixels)
+        controls = [('search-missing', 8, 49), ('categories-missing', 60, 100)]
+        if layout != 'legacy':
+            controls.append(('layout-control-missing', 0, 60))
+        for name, top, bottom in controls:
             damaged = bytearray(pixels)
             left = 460 if name == 'layout-control-missing' else 0
             for y in range(top, bottom):
@@ -29,7 +32,7 @@ def main():
                     start = (y * 500 + x) * 3
                     damaged[start:start + 3] = b'\x1e\x1e\x1e'
             assert not bindings.native_launcher_app_signature(damaged), (path, name)
-        checks.append(dict(capture=str(path),positive=True,missingGeometryRejected=3))
+        checks.append(dict(capture=str(path),layout=layout,positive=True,missingGeometryRejected=len(controls)))
     assert not bindings.native_launcher_app_signature(b'')
     assert not bindings.native_launcher_app_signature(bytes(500 * 120 * 3))
     footer = None
