@@ -42,6 +42,15 @@ function build(root, Paths, Types, Memory) {
         }
         step(answered, function() { expect(item[0], item[3]); });
     }
+    for (let item of [["numeric", "Meeting 10.30", pdf], ["text", "v1.2 notes", ["All files", [[0, "*"]]]]]) {
+        step(() => true, function() { save(item[1], item[2]); });
+        step(ready, function() { root.request.currentFilter = png; });
+        step(ready, function() {
+            root.same("extensions.unknown-" + item[0] + "-suffix-preserved", root.request.saveName, item[1]);
+            root.request.accept();
+        });
+        step(answered, function() { expect("unknown-" + item[0] + "-suffix-append", item[1] + ".png"); });
+    }
     step(() => true, function() { save("bundle.tar.gz", archive); });
     step(ready, function() { root.request.currentFilter = pdf; });
     step(ready, function() {

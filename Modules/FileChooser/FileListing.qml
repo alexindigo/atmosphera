@@ -43,6 +43,8 @@ FocusScope {
   }
   readonly property int columns: Math.max(1, Math.floor(grid.width / tileWidth))
   property int _preferredLane: -1
+  onColumnsChanged: _preferredLane = -1
+  onCompactRowsChanged: _preferredLane = -1
   property bool _movingCursor: false
   readonly property var activeView: request.viewMode === "list" ? list : grid
   readonly property int pageStep: compact ? compactRows * Math.max(1, Math.floor(grid.width / grid.cellWidth)) : Math.max(1, Math.floor((request.viewMode === "list" ? list.height : grid.height) / (request.viewMode === "list" ? rowHeight : tileSize))) * (request.viewMode === "list" ? 1 : columns)
@@ -50,10 +52,13 @@ FocusScope {
     void request.browser.count;
     return request.browser.entry(request.selection.cursor);
   }
-  readonly property var columnGeometry: ({
-                                           header: listHeaders.geometry,
-                                           row: list.itemAtIndex(0) ? list.itemAtIndex(0).columnGeometry : []
-                                         })
+  readonly property var columnGeometry: {
+    // itemAtIndex() is not notifying: a null lookup can stay cached after the
+    // asynchronous delegate appears. Read the notifying children and row
+    // properties instead, including pool transitions, without a timer/counter.
+    var row = Array.from(list.contentItem.children).find(item => typeof item.index === "number" && !item.inPool);
+    return {header: listHeaders.geometry, row: row ? row.columnGeometry : []};
+  }
   function viewState(target) {
     function rect(item) {
       var r = item.mapToItem(target, 0, 0, item.width, item.height);
@@ -218,7 +223,8 @@ FocusScope {
     path: item.path,
     index: item.index
   };
-  });
+  }).filter(rect => rect.x < bounds.x + bounds.width && rect.x + rect.width > bounds.x
+    && rect.y < bounds.y + bounds.height && rect.y + rect.height > bounds.y);
     return {
     viewport: {
     x: bounds.x,

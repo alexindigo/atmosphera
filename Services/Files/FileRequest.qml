@@ -116,7 +116,7 @@ Scope {
         requestBrowser.navigate(result.paths[0]);
         if (root.method === "open")
           root._openNameEdited = false;
-        else if (root.method === "save")
+        else if (root.method === "save" && result.source === "name")
           root.saveName = root._nameBeforeEdit;
         root.pathNavigation();
       } else if (result.action === "save") {
@@ -331,11 +331,17 @@ Scope {
     function onSelectedPathsChanged() {
       root._invalidate();
     }
-    function onChosen(path) {
+    function onSelectionEdited() {
+      var replacesTypedIntent = typedPaths.busy || root._pendingSavePath !== null || (root.method === "open" && root._openNameEdited);
       typedPaths.invalidate();
       root._pendingSavePath = null;
+      // Path changes already invalidate through selectedPathsChanged. A second
+      // same-path click after double-click activation must not cancel its reply.
+      if (replacesTypedIntent) root._invalidate();
       if (root.method === "open")
         root._openNameEdited = false;
+    }
+    function onChosen(path) {
       if (root.method === "save" && requestSelection.selectedPaths.length === 1 && requestSelection.selectedPaths[0] === path) {
         root._saveNameEdited = false;
         root.saveName = path.slice(path.lastIndexOf("/") + 1);

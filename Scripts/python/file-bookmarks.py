@@ -11,13 +11,16 @@ from urllib.parse import unquote, urlsplit
 
 def local(uri):
     value = urlsplit(uri)
-    return os.path.normpath(unquote(value.path)) if value.scheme == "file" and value.netloc in ("", "localhost") and not value.query and not value.fragment else ""
+    # Ignore directory trailing slashes, not filesystem-significant link/..
+    # components. Matching must preserve the same meaning as navigation.
+    return (unquote(value.path).rstrip("/") or "/") if value.scheme == "file" and value.netloc in ("", "localhost") and value.path.startswith("/") and not value.query and not value.fragment else ""
 
 
 def edit(job):
     path = job["path"]
     if not isinstance(path, str) or not os.path.isabs(path) or "\0" in path:
         raise ValueError("Choose an absolute folder")
+    path = path.rstrip("/") or "/"
     config = Path(os.environ.get("XDG_CONFIG_HOME", str(Path.home() / ".config")))
     target = (config / "gtk-3.0/bookmarks").resolve()
     target.parent.mkdir(parents=True, exist_ok=True)

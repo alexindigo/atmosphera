@@ -87,6 +87,15 @@ def main():
         folder.mkdir(parents=True)
         (folder / "fixture.txt").write_text(name, encoding="utf-8")
     for i in range(6): (aux / ("model%watch" + str(i))).mkdir()
+    links = aux / "path-links"
+    (links / "target/sub").mkdir(parents=True)
+    (links / "link").symlink_to(links / "target/sub", target_is_directory=True)
+    (links / "Report.txt").write_text("wrong lexical target\n")
+    (links / "target/Report.txt").write_text("physical parent target\n")
+    uri_names = aux / "completion-uris"
+    uri_names.mkdir()
+    for name in ("report%20draft.txt", "report draft.txt", "report#draft.txt", "report?draft.txt", "report-résumé.txt"):
+        (uri_names / name).write_text(name)
     (aux / "vanish/selected.txt").write_text("selected")
     (aux / "unreadable/selected.txt").write_text("unreadable")
     (aux / "unreadable/selected.txt").chmod(0)
@@ -115,7 +124,7 @@ def main():
         (profile / directory).mkdir(parents=True)
     (profile / "config/user-dirs.dirs").write_text(f'XDG_DOCUMENTS_DIR="{aux}/documents"\n')
     (profile / "config/gtk-3.0").mkdir()
-    (profile / "config/gtk-3.0/bookmarks").write_text(f'{(aux / "bookmark").as_uri()} Test bookmark\n')
+    (profile / "config/gtk-3.0/bookmarks").write_text(f'{(aux / "bookmark").as_uri()}/ Test bookmark\n')
     (profile / "data/recently-used.xbel").write_text(f'<xbel><bookmark href="{(fixtures / "Alpha.txt").as_uri()}" modified="2026-10-18T00:00:00Z"/></xbel>')
     desktop_fixture(profile / "data")
     schemes = []
@@ -180,6 +189,7 @@ def main():
     required.update("filter." + name for name in ("substring-case", "type-intersection", "folders", "hidden-respected", "hidden-opt-in", "combined-substrings", "navigation-clears", "save-prefill", "save-name-revalidation", "save-toggle"))
     required.update("create." + name for name in ("success-model", "exists-directory", "exists-file", "permission", "readonly", "folder-selection", "save-stays-in-folder"))
     required.update("create.invalid-" + str(i) for i in range(5))
+    required.add("create.error-completes-at-ready")
     required.add("tooltip.owner-lifetime")
     required.update("places.recent-folders-" + name for name in ("merge-order", "dedup", "missing", "limit", "directories"))
     required.update("selection." + name for name in ("ctrl-toggle-removes", "ctrl-toggle-adds", "anchor-stable-range", "range-shrinks-from-anchor", "folder-range-kinds", "single-range-keeps-one"))
@@ -195,6 +205,10 @@ def main():
         "modified-background-keeps", "background-clears", "single-band-ignored"))
     required.update("path-entry." + name for name in ("relative-open", "location-navigates", "history-invalidates-typed-intent", "history-does-not-accept", "literal-local-name", "quoted-multiple", "local-uri", "navigation-keeps-save-name", "typed-folder-keeps-save-leaf", "save-path-extension", "type-change-only-leaf", "missing-save-parent-keeps-input", "missing-keeps-dialog", "folder-watches-bounded"))
     required.update("completion." + name for name in ("case-prefix", "directories", "explicit-hidden", "type-filter", "literal-folder", "quoted-last-name", "inactive-invalidates"))
+    required.update("completion." + name for name in ("file-uri-roundtrip", "file-uri-encoded-stem"))
+    required.update("path-entry." + name for name in ("band-name-intent", "all-name-intent", "restore-name-intent", "same-selection-keeps-acceptance", "location-keeps-edited-save-name",
+        "symlink-parent-open", "symlink-parent-new-save", "missing-parent-not-invented", "file-dot-not-a-file", "symlink-parent-browser"))
+    required.update("extensions.unknown-" + kind + suffix for kind in ("numeric", "text") for suffix in ("-suffix-preserved", "-suffix-append"))
     required.update("operations." + name for name in ("single-owner", "rename-model-selection-name", "rename-no-overwrite", "rename-invalid", "trash-reconciles", "delete-awaits-confirmation", "delete-decline-retains", "delete-reconciles", "create-shares-owner", "navigation-retires-intents"))
     required.add("operations.rename-filtered-out-finishes")
     required.update("views." + name for name in ("owner", "defaults", "per-mode-zoom", "zoom-upper-bound", "zoom-lower-bound", "partial-wheel", "accumulated-wheel", "pixel-wheel", "column-adjacent-resize", "column-minima", "no-write-before-success", "persist-success", "next-request", "cancel-no-write", "sanitize"))
@@ -204,6 +218,7 @@ def main():
     required.update(("places.drop-pretty-QUrl", "places.drop-pretty-consumer"))
     required.add("places.favorite-edit-completes-at-consumer")
     required.update("bookmarks." + name for name in ("add", "dedup", "reorder", "preserve-foreign-labels", "remove", "external-edits", "invalid-no-write", "permission-no-write", "symlink-preserved"))
+    required.update(("bookmarks.trailing-reorder", "bookmarks.trailing-remove"))
     missing = sorted(required - {case["case"] for case in cases})
     required_media = {"playback." + name for name in ("initial", "inactive-intents", "volume-low", "volume-high", "volume-step", "invalid-volume", "times", "autoplay", "seek-low", "seek-high", "close-stops", "close-destroys-engine")}
     required_labels = {"labels." + name for name in ("extension-attached", "dots", "long-word", "cjk", "extension-only", "two-lines-only")}

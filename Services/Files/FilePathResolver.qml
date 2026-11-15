@@ -44,7 +44,20 @@ Scope {
       command: ["timeout", "5", "python3", "-c", `
 import json, os, sys
 try:
-    print(json.dumps({'directories': [os.path.isdir(path) for path in json.loads(sys.argv[1])]}))
+    def resolve(path):
+        parts = path.split('/')
+        if not any(part in ('.', '..') for part in parts):
+            return os.path.normpath(path)
+        if os.path.isdir(path):
+            return os.path.realpath(path, strict=True) if '..' in parts else os.path.normpath(path)
+        parent, leaf = os.path.split(path)
+        # Check the raw parent through the kernel before canonicalizing it:
+        # missing/../file and regular-file/../file are not valid paths.
+        if leaf in ('.', '..') or not os.path.isdir(parent):
+            raise OSError('unavailable parent')
+        return os.path.join(os.path.realpath(parent, strict=True), leaf) if '..' in parts else os.path.normpath(path)
+    paths = [resolve(path) for path in json.loads(sys.argv[1])]
+    print(json.dumps({'paths': paths, 'directories': [os.path.isdir(path) for path in paths]}))
 except (ValueError, OSError):
     print('{}')
 `, JSON.stringify(paths)]
@@ -54,12 +67,12 @@ except (ValueError, OSError):
           root._busy = false;
           var result;
           try { result = JSON.parse(output.text); } catch (error) { result = null; }
-          if (code !== 0 || !result || !Array.isArray(result.directories)) root.failed("selection-check-failed");
+          if (code !== 0 || !result || !Array.isArray(result.directories) || !Array.isArray(result.paths)) root.failed("selection-check-failed");
           else if (requiresFolder && !result.directories.every(value => value)) root.failed("wrong-kind");
           else {
             var folder = paths.length === 1 && result.directories[0];
             var navigate = folder && (source === "drop" || source === "location" || (root.mode === "open" && !root.directoryMode) || (root.mode === "save" && explicitFolder));
-            root.resolved({action: navigate ? "navigate" : root.mode, paths: paths});
+            root.resolved({action: navigate ? "navigate" : root.mode, paths: result.paths, source: source});
           }
         }
         destroy();

@@ -121,11 +121,6 @@ Scope {
       else errorText = _message(result);
       return;
     }
-    if (!result.ok) {
-      if (job.kind === "create") createFolderError = I18n.tr("widgets.file-picker.create-folder-" + ((result.errors || [])[0] || result).reason);
-      else if (job.kind === "rename") renameError = _message(result);
-      else errorText = _message(result);
-    }
     var completedNames = result.completed || [];
     if (completedNames.length) {
       if ((job.kind === "rename" ? job.name : completedNames[0]).startsWith(".")) browser.showHidden = true;
@@ -133,19 +128,32 @@ Scope {
       // match the previous filter. Request owns the Save-name filter projection.
       if (job.kind === "rename") browser.filterText = "";
       if (job.kind === "rename") renameApplied(Paths.join(job.folder, job.names[0]), Paths.join(job.folder, job.name));
-      _reconcile = {job: job, completed: completedNames};
     }
+    // Failure is completion too. Keep the operation busy and publish its error
+    // only after the refreshed projection settles, so the next submission is
+    // never offered while _start() would reject it as unavailable.
+    _reconcile = {job: job, completed: completedNames, result: result};
     // Refresh even after partial failures; never fake an optimistic model row.
     browser.refresh();
   }
   function _reconciled() {
-    if (!_reconcile || browser.status !== "ready") return;
+    if (!_reconcile || browser.status === "loading") return;
     var task = _reconcile, job = task.job;
     var path = Paths.join(job.folder, job.kind === "rename" ? job.name : job.names[0]);
     // Ready is a freshly scanned filesystem snapshot, not a promise that the
     // target is visible: a renamed suffix may no longer match the type filter,
     // or another process may have removed/recreated an entry in the meantime.
     _reconcile = null;
+    if (!task.result.ok) {
+      if (job.kind === "create") {
+        var reason = ((task.result.errors || [])[0] || task.result).reason;
+        if (!["invalid", "exists", "permission", "readonly", "long"].includes(reason)) reason = "unavailable";
+        createFolderError = I18n.tr("widgets.file-picker.create-folder-" + reason);
+      } else if (job.kind === "rename") renameError = _message(task.result);
+      else errorText = _message(task.result);
+    }
+    if (!task.completed.length) return;
+    if (browser.status !== "ready") { errorText = browser.errorText; completed(); return; }
     if (job.kind === "create") { creatingFolder = false; folderCreated(path); }
     else if (job.kind === "rename") { renamePath = ""; renamed(Paths.join(job.folder, job.names[0]), path); }
     completed();

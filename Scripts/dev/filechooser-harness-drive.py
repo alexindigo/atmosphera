@@ -210,7 +210,7 @@ def main():
         check("tilde-path", lambda s: s["pathEditing"])
         key("Escape")
         ipc("list")
-        time.sleep(0.3)
+        wait(lambda s: s["view"] == "list" and len(s["columnGeometry"]["row"]) == 5)
         check("modified-sort", lambda s: s["view"] == "list" and s["sort"] == "modified" and s["descending"])
         check("column-alignment", lambda s: len(s["columnGeometry"]["row"]) == 5 and all(abs(a-b) < 0.5 for a, b in zip(s["columnGeometry"]["header"], s["columnGeometry"]["row"])))
         capture("list-modified")

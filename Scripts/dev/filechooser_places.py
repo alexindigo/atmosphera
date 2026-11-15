@@ -79,9 +79,10 @@ def exercise(runtime, evidence, command, ipc, state, wait, check, open_request, 
         check("history-restores-" + mode + "-selection-and-exact-scroll", lambda s: s["selected"] == selected
               and abs(s["views"]["x"]-s["views"]["originX"]-x) < 1 and abs(s["scroll"]["y"]-s["views"]["originY"]-y) < 1)
         before = {t["path"]: t for t in saved["layoutGeometry"]["entries"]["tiles"]}
-        check("history-restores-" + mode + "-visible-file-geometry", lambda s: all(
+        check("history-restores-" + mode + "-visible-file-geometry", lambda s: bool(before)
+              and {t["path"] for t in s["layoutGeometry"]["entries"]["tiles"]} == set(before) and all(
               abs(t["x"]-before[t["path"]]["x"]) < 1 and abs(t["y"]-before[t["path"]]["y"]) < 1
-              for t in s["layoutGeometry"]["entries"]["tiles"] if t["path"] in before))
+              for t in s["layoutGeometry"]["entries"]["tiles"]))
         key(106, 56)
         wait(lambda s: s["ready"] and s["path"] == str(base / "Child"))
         key(105, 56); wait(lambda s: s["ready"] and s["path"] == str(base))

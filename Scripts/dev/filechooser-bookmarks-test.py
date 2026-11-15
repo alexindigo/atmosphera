@@ -49,4 +49,8 @@ stored = target.with_name("stored-bookmarks")
 target.rename(stored)
 target.symlink_to(stored)
 check("symlink-preserved", edit("add", folders[0])["ok"] and target.is_symlink() and folders[0].as_uri() in stored.read_text())
+trailing = folders[0].as_uri() + "/ Trailing slash label\n"
+stored.write_text(rows[0] + trailing + rows[3])
+check("trailing-reorder", edit("move", str(folders[0]) + "/", direction=1)["ok"] and stored.read_text().endswith(trailing))
+check("trailing-remove", edit("remove", str(folders[0]) + "/")["ok"] and stored.read_text() == rows[0] + rows[3])
 print(json.dumps(cases))

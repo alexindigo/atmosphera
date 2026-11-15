@@ -45,7 +45,7 @@ def add(path, name, kind):
         seen.add(path)
 def local_uri(uri):
     u = urllib.parse.urlsplit(uri)
-    return urllib.parse.unquote(u.path) if u.scheme == 'file' and u.netloc in ('', 'localhost') else ''
+    return (urllib.parse.unquote(u.path).rstrip('/') or '/') if u.scheme == 'file' and u.netloc in ('', 'localhost') and u.path.startswith('/') and not u.query and not u.fragment else ''
 try:
     for line in (config / 'user-dirs.dirs').read_text().splitlines():
         match = re.fullmatch(r'XDG_([A-Z]+)_DIR="(.*)"', line.strip())

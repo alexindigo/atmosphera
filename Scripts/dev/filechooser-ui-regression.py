@@ -59,9 +59,10 @@ def main():
     p.add_argument("--views-only", action="store_true", help="Run the view-control partition; default runs every area")
     p.add_argument("--places-only", action="store_true", help="Run the places partition; default runs every area")
     p.add_argument("--drop-only", action="store_true", help="Run the external drop partition")
+    p.add_argument("--navigation-only", action="store_true", help="Run the navigation and selection-intent partition")
     profile_argument(p)
     a = p.parse_args()
-    runtime_seconds = suite_seconds(a.path_only, a.operations_only, a.views_only, a.places_only, a.drop_only)
+    runtime_seconds = suite_seconds(a.path_only, a.operations_only, a.views_only, a.places_only, a.drop_only, a.navigation_only)
     enter(runtime_seconds=runtime_seconds, resource_subject=True)
     guest()
     source = a.source.resolve()
@@ -155,23 +156,18 @@ def main():
             finish()
             complete = True
             return 0
-        exercise_places(runtime, evidence, command, ipc, state, wait, check, open_request, key, focus)
-        if a.places_only:
+        if a.navigation_only:
+            exercise_navigation(runtime, evidence, command, ipc, state, wait, check, open_request, key, focus)
             finish()
             complete = True
             return 0
-        exercise_views(runtime, evidence, command, ipc, state, wait, check, open_request, key, focus)
-        if a.views_only:
-            finish()
-            complete = True
-            return 0
-        exercise_operations(runtime, evidence, command, ipc, state, wait, check, open_request, key, focus)
-        if a.operations_only:
-            finish()
-            complete = True
-            return 0
-        exercise_paths(runtime, evidence, command, ipc, state, wait, check, open_request, key, focus)
-        if a.path_only:
+        partitions = [(a.places_only, exercise_places), (a.views_only, exercise_views),
+                      (a.operations_only, exercise_operations), (a.path_only, exercise_paths)]
+        selected = any(enabled for enabled, _ in partitions)
+        for enabled, exercise in partitions:
+            if not selected or enabled:
+                exercise(runtime, evidence, command, ipc, state, wait, check, open_request, key, focus)
+        if selected:
             finish()
             complete = True
             return 0
@@ -231,6 +227,13 @@ def main():
         for i in range(80):
             (creation / f"Existing directory {i:02d}").mkdir()
         wait(lambda s: s["count"] == 85)
+        # This case must put the new folder below the viewport regardless of
+        # preferences saved by earlier successful chooser requests.
+        focus("Sort by"); key(57); key(102); key(28)
+        if state()["descending"]:
+            click_header("Reverse sort order")
+        wait(lambda s: s["sort"] == "name" and not s["descending"])
+        ipc("focusListing")
         new_folder(); command(["ydotool", "type", "Final folder"])
         command(["grim", evidence / "new-folder-editor.png"])
         key(28); wait(lambda s: s["ready"] and s["name"] == "Final folder" and not s["creatingFolder"])

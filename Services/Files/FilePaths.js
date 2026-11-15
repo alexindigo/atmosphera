@@ -36,9 +36,11 @@ function local(text, base, home) {
     if (!text.startsWith("/")) text = base + "/" + text;
     var parts = [];
     for (var part of text.split("/")) {
-        if (!part || part === ".") continue;
-        if (part === "..") parts.pop();
-        else parts.push(part);
+        if (!part) continue;
+        // Dot components have filesystem semantics: file/. is invalid, and
+        // link/.. traverses a physical parent. Only the filesystem owner can
+        // validate them before normalization.
+        parts.push(part);
     }
     return {ok: true, path: "/" + parts.join("/")};
 }

@@ -48,14 +48,14 @@ function build(root, Paths, Memory, completion, browser) {
         request("save", {current_name: "keep.txt", filters: [["Text", [[0, "*.txt"]]]]});
     });
     root.step(() => root.requestReady(), function() { submit(folder, "location"); });
-    root.step(() => root.request.browser.currentPath === folder || Date.now() - root.staleStarted > 1500, function() {
+    root.step(() => (root.requestReady() && root.request.browser.currentPath === folder) || Date.now() - root.staleStarted > 1500, function() {
         root.same("path-entry.navigation-keeps-save-name", root.request.saveName, "keep.txt");
         if (typeof root.request.beginNameEdit === "function") root.request.beginNameEdit();
         root.request.editSaveName(root.base + "/folder/");
         root.request.accept();
         root.staleStarted = Date.now();
     });
-    root.step(() => root.request.browser.currentPath === root.base + "/folder" || Date.now() - root.staleStarted > 1500, function() {
+    root.step(() => (root.requestReady() && root.request.browser.currentPath === root.base + "/folder") || Date.now() - root.staleStarted > 1500, function() {
         root.same("path-entry.typed-folder-keeps-save-leaf", [root.request.browser.currentPath, root.request.saveName], [root.base + "/folder", "keep.txt"]);
         submit(root.base + "/folder/new", "name");
     });
@@ -135,4 +135,101 @@ function build(root, Paths, Memory, completion, browser) {
     root.step(() => root.watcherSampleReady(), function() {
         root.report("path-entry.folder-watches-bounded", Number.isFinite(watcherCount) && watcherCount > 0 && root.watcherCount() <= watcherCount, {before: watcherCount, after: root.watcherCount()});
     });
+
+    for (let intent of ["band", "all", "restore"]) {
+        let expected;
+        root.step(() => true, function() { request("open", {multiple: true}); });
+        root.step(() => root.requestReady(), function() {
+            var selection = root.request.selection, listing = root.request.browser;
+            var alpha = listing.indexOfPath(root.base + "/Alpha.txt");
+            var other = listing.indexOfPath(root.base + "/item2.txt");
+            if (intent === "all") selection.selectAll();
+            root.request.editOpenName("Alpha.txt");
+            if (intent === "band") {
+                selection.beginBand(Qt.NoModifier, other);
+                selection.updateBand([other]);
+                selection.endBand(other);
+                expected = [root.base + "/item2.txt"];
+            } else if (intent === "all") {
+                selection.selectAll(); // Also replace Name when the path set is unchanged.
+                expected = selection.selectedPaths.slice();
+            } else {
+                selection.restore({paths: [root.base + "/item2.txt"], cursor: root.base + "/item2.txt"});
+                selection.moveTo(alpha, false, true);
+                expected = [root.base + "/Alpha.txt"];
+            }
+            root.request.accept();
+            root.staleStarted = Date.now();
+        });
+        root.step(() => root.answered() || Date.now() - root.staleStarted > 1500, function() {
+            root.same("path-entry." + intent + "-name-intent", root.responses.length ? root.responses[0].results.uris : [], expected.map(path => Paths.pathToUri(path).uri));
+        });
+    }
+    root.step(() => true, function() { request("open"); });
+    root.step(() => root.requestReady(), function() {
+        var selection = root.request.selection;
+        var alpha = root.request.browser.indexOfPath(root.base + "/Alpha.txt");
+        selection.click(alpha, Qt.NoModifier);
+        root.request.accept();
+        selection.click(alpha, Qt.NoModifier);
+        root.staleStarted = Date.now();
+    });
+    root.step(() => root.answered() || Date.now() - root.staleStarted > 1500, function() {
+        root.same("path-entry.same-selection-keeps-acceptance", root.responses.length ? root.responses[0].results.uris : [], [Paths.pathToUri(root.base + "/Alpha.txt").uri]);
+    });
+    root.step(() => true, function() { request("save", {current_name: "draft.txt"}); });
+    root.step(() => root.requestReady(), function() {
+        root.request.beginNameEdit();
+        root.request.editSaveName("report.txt");
+        submit(folder, "location");
+    });
+    root.step(() => root.request.browser.currentPath === folder || Date.now() - root.staleStarted > 1500, function() {
+        root.same("path-entry.location-keeps-edited-save-name", root.request.saveName, "report.txt");
+        request("open");
+    });
+    var links = root.aux + "/path-links";
+    root.step(() => root.requestReady(), function() { submit(links + "/link/../Report.txt", "name"); });
+    root.step(() => root.answered() || Date.now() - root.staleStarted > 1500, function() {
+        root.same("path-entry.symlink-parent-open", root.responses.length ? root.responses[0].results.uris : [], [Paths.pathToUri(links + "/target/Report.txt").uri]);
+        request("save");
+    });
+    root.step(() => root.requestReady(), function() { submit(links + "/link/../New.txt", "name"); });
+    root.step(() => root.answered() || Date.now() - root.staleStarted > 1500, function() {
+        root.same("path-entry.symlink-parent-new-save", root.responses.length ? root.responses[0].results.uris : [], [Paths.pathToUri(links + "/target/New.txt").uri]);
+        request("open");
+    });
+    root.step(() => root.requestReady(), function() { submit(links + "/missing/../Report.txt", "name"); });
+    root.step(() => !root.request.busy && (root.answered() || root.request.errorText || Date.now() - root.staleStarted > 1500), function() {
+        root.report("path-entry.missing-parent-not-invented", !root.request.settled && root.request.errorText !== "", root.responses);
+        root.request.cancel();
+        request("open");
+    });
+    root.step(() => root.requestReady(), function() { submit(links + "/target/Report.txt/.", "name"); });
+    root.step(() => !root.request.busy && (root.answered() || root.request.errorText || Date.now() - root.staleStarted > 1500), function() {
+        root.report("path-entry.file-dot-not-a-file", !root.request.settled && root.request.errorText !== "", root.responses);
+        root.request.cancel();
+        browser.navigate(links + "/link/..");
+        root.staleStarted = Date.now();
+    });
+    root.step(() => root.ready() || Date.now() - root.staleStarted > 1500, function() {
+        root.same("path-entry.symlink-parent-browser", browser.currentPath, links + "/target");
+        completion.active = true;
+        completion.text = Paths.pathToUri(root.aux + "/completion-uris/report").uri;
+        root.staleStarted = Date.now();
+    });
+    root.step(() => !completion.busy && (completion.suggestions.length > 0 || Date.now() - root.staleStarted > 1500), function() {
+        root.report("completion.file-uri-roundtrip", completion.suggestions.length === 5 && completion.suggestions.every(entry => {
+            var decoded = Paths.uriToPath(entry.text);
+            return decoded.ok && decoded.path === root.aux + "/completion-uris/" + entry.name;
+        }), completion.suggestions);
+        completion.text = Paths.pathToUri(root.aux + "/completion-uris/report%").uri;
+        root.staleStarted = Date.now();
+    });
+    root.step(() => !completion.busy && (completion.suggestions.length > 0 || Date.now() - root.staleStarted > 1500), function() {
+        root.same("completion.file-uri-encoded-stem", completion.suggestions.map(entry => entry.name), ["report%20draft.txt"]);
+        completion.active = false;
+        Memory.remember("", previousFolder, previousPrefs);
+        browser.navigate(root.base);
+    });
+    root.step(() => root.ready(), function() {});
 }

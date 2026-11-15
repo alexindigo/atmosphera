@@ -69,19 +69,26 @@ ShellRoot {
         externalUnmount.running = true; root.phase++;
       } else if (root.phase === 2 && row && !row.mounted && !externalUnmount.running && geometry) {
         root.check("external-unmount-projection", true, row);
+        click(geometry.mount);
+        volumeRequest.browser.navigate(FilePlaces.home);
+        root.phase++;
+      } else if (root.phase === 3 && row && row.mounted && volumeRequest.browser.status === "ready") {
+        root.check("mount-keeps-newer-navigation", volumeRequest.browser.currentPath === FilePlaces.home, volumeRequest.browser.currentPath);
+        FileVolumes.unmount(root.volumeId); root.phase++;
+      } else if (root.phase === 4 && row && !row.mounted && geometry) {
         click(geometry.mount); root.phase++;
-      } else if (root.phase === 3 && row && row.mounted && root.path && content.loaded && volumeRequest.browser.currentPath === root.path && volumeRequest.browser.status === "ready") {
+      } else if (root.phase === 5 && row && row.mounted && root.path && content.loaded && volumeRequest.browser.currentPath === root.path && volumeRequest.browser.status === "ready") {
         root.check("mount-consumer-bytes", content.text() === "real UDisks mount bytes\n" && row.path === root.path && volumeRequest.browser.indexOfPath(root.path + "/Volume.txt") >= 0 && chooser.focusArea === "listing", {volume: row, focus: chooser.focusArea});
         capture.running = true; root.phase++;
-      } else if (root.phase === 4 && !capture.running) {
+      } else if (root.phase === 6 && !capture.running) {
         FileVolumes.unmount(root.volumeId); root.phase++;
-      } else if (root.phase === 5 && row && !row.mounted && geometry) {
+      } else if (root.phase === 7 && row && !row.mounted && geometry) {
         root.check("unmount-consumer", true, row);
         click(geometry.mount); root.phase++;
-      } else if (root.phase === 6 && row && row.mounted && geometry && geometry.action.visible) {
+      } else if (root.phase === 8 && row && row.mounted && geometry && geometry.action.visible) {
         root.check("remount-before-eject", row.ejectable, row);
         click(geometry.action); root.phase++;
-      } else if (root.phase === 7 && !row) {
+      } else if (root.phase === 9 && !row) {
         root.check("eject-unmounts-and-detaches-loop", chooser.focusArea === "listing", {volumes: FileVolumes.volumes, focus: chooser.focusArea});
         Qt.quit();
       }

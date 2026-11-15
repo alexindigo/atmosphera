@@ -82,12 +82,13 @@ Scope {
   // never reaches FolderListModel, so it cannot disconnect folder from listing.
   readonly property string _checkCode: `
 import errno, json, os, sys
-p = os.path.abspath(os.path.expanduser(sys.argv[1]))
+p = os.path.expanduser(sys.argv[1])
 try:
     with os.scandir(p) as entries:
         if not os.access(p, os.R_OK | os.X_OK):
             raise PermissionError(13, os.strerror(13), p)
         hidden = any(e.name.startswith('.') for e in entries)
+    p = os.path.realpath(p, strict=True) if '..' in p.split('/') else os.path.abspath(p)
     print(json.dumps({'ok': True, 'path': p, 'hidden': hidden}))
 except OSError as e:
     parent = p

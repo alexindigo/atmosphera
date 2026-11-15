@@ -127,8 +127,11 @@ def exercise(runtime, evidence, command, ipc, state, wait, check, open_request, 
     drag(state()["views"]["handles"][0], 25)
     check("details-column-pointer-resize-and-shared-geometry", lambda s: s["columnGeometry"]["header"][1] > before[1] + 20
           and all(abs(a-b) < .5 for a, b in zip(s["columnGeometry"]["header"], s["columnGeometry"]["row"])))
-    focus("Size column width"); key(105)
-    check("details-column-keyboard-resize", lambda s: s["views"]["columnShares"] != [.55, .16, .29])
+    focus("Size column width")
+    before_key = state()["views"]["columnShares"]
+    key(105)
+    check("details-column-keyboard-resize", lambda s: s["views"]["columnShares"] != before_key
+          and s["views"]["columnShares"][1] < before_key[1])
     command(["grim", evidence / "views-details.png"])
     before_size = state()["layoutGeometry"]
     ipc("panelWidth", "10000"); ipc("panelHeight", "10000")

@@ -12,7 +12,15 @@ def exercise(runtime, evidence, command, ipc, state, wait, check, open_request, 
 
     def opened(view, folder=large, multiple=True):
         open_request("open", "dev.filechooser.navigation", str(folder), multiple=multiple)
-        ipc(view)
+        # The legacy IPC list() setup also selects modified-descending order.
+        # A view-only user action must not persist that incidental sort when an
+        # accepting selection-intent scenario completes the request.
+        g = state()["layoutGeometry"]
+        button = next(c for c in g["header"] if c.get("name") == ("Grid view" if view == "grid" else "List view"))
+        command(["ydotool", "click", int((1280-g["width"])/2+button["x"]+button["width"]/2),
+                 int((800-g["height"])/2+button["y"]+button["height"]/2), 272, 0])
+        command(["ydotool", "move", 5, 5])
+        ipc("focusListing")
         return wait(lambda s: s["ready"] and s["view"] == view and len(s["layoutGeometry"]["entries"]["tiles"]) >= 3)
     def screen(g, x, y):
         return [int((1280 - g["width"]) / 2 + g["listing"]["x"] + x),
@@ -62,6 +70,23 @@ def exercise(runtime, evidence, command, ipc, state, wait, check, open_request, 
             for _ in range((39 - 1) // columns): key(108)
             key(103)
             check("grid-incomplete-row-remembers-column", lambda s: s["cursor"] == ((39 - 1) // columns - 1) * columns + columns - 1)
+            key(102)
+            for _ in range(columns - 1): key(106)
+            key(108)
+            ipc("panelWidth", "0")
+            wait(lambda s: len({round(t["x"], 2) for t in s["layoutGeometry"]["entries"]["tiles"]}) != columns)
+            resized = state()
+            lanes = len({round(t["x"], 2) for t in resized["layoutGeometry"]["entries"]["tiles"]})
+            expected = min(38, (resized["cursor"] // lanes + 1) * lanes + resized["cursor"] % lanes)
+            key(108)
+            check("grid-resize-resets-preferred-lane", lambda s: s["cursor"] == expected)
+            ipc("panelWidth", "1100")
+
+        opened(view)
+        focus("File name"); key(30, 29); command(["ydotool", "type", "File 38.txt"])
+        hits = band()
+        focus("Open"); key(28); wait(lambda s: s["settled"])
+        check(view + "-band-replaces-typed-name-consumer", lambda s: set(s["replies"][0]["results"]["uris"]) == {(large / p.split("/")[-1]).as_uri() for p in hits})
 
         opened(view)
         hits = band(capture=view + "-rubber-band-active.png")

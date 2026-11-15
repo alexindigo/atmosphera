@@ -101,7 +101,7 @@ def run(args, source):
     rows = [json.loads(line.split("FILECHOOSER_VOLUMES|", 1)[1]) for line in log.splitlines() if "FILECHOOSER_VOLUMES|" in line]
     errors = [line for line in log.splitlines() if re.search(r"TypeError|ReferenceError|Cannot assign|Binding loop|Failed to load configuration|Unable to assign", line)]
     result = {"exit": process.returncode, "cases": rows, "errors": errors,
-              "pass": process.returncode == 0 and len(rows) == 7 and all(r["pass"] for r in rows) and not errors}
+               "pass": process.returncode == 0 and len(rows) == 8 and all(r["pass"] for r in rows) and not errors}
     (output / "result.json").write_text(json.dumps(result, indent=2))
     print(json.dumps(result, indent=2))
     return 0 if result["pass"] else 1

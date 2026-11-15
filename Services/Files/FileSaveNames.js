@@ -43,5 +43,5 @@ function changeType(name, previous, next) {
     var dot = name.lastIndexOf(".");
     if (dot <= 0) return name; // Dotfiles and unspecified suffixes wait for Save.
     var old = matchingSuffix(name, previous);
-    return name.slice(0, old ? -(old.length + 1) : dot) + "." + next[0];
+    return old ? name.slice(0, -(old.length + 1)) + "." + next[0] : name;
 }

@@ -89,6 +89,9 @@ ShellRoot {
   }
   Process {
     id: mutate
+    property bool succeeded: false
+    onRunningChanged: if (running) succeeded = false
+    onExited: (code, status) => succeeded = code === 0 && status === 0
     stdout: StdioCollector {
       id: mutateOutput
     }
@@ -109,10 +112,11 @@ print(count)
     mutate.running = true;
   }
   function watcherSampleReady() {
-    return !mutate.running;
+    return !mutate.running && mutate.succeeded && Number.isSafeInteger(watcherCount());
   }
   function watcherCount() {
-    return Number(mutateOutput.text.trim());
+    var text = mutateOutput.text.trim();
+    return mutate.succeeded && /^\d+$/.test(text) ? Number(text) : NaN;
   }
 
   function report(name, passed, actual) {
@@ -1037,6 +1041,7 @@ print(count)
     });
     step(() => !fileBrowser.createFolderBusy && fileBrowser.createFolderError !== "", function () {
       same("create.exists-directory", fileBrowser.createFolderError, I18n.tr("widgets.file-picker.create-folder-exists"));
+      report("create.error-completes-at-ready", fileBrowser.status === "ready" && !fileBrowser.operations.busy, {status: fileBrowser.status, busy: fileBrowser.operations.busy});
       fileBrowser.createFolder("Existing.txt");
     });
     step(() => !fileBrowser.createFolderBusy && fileBrowser.createFolderError !== "", function () {

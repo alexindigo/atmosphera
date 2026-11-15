@@ -91,6 +91,10 @@ Rectangle {
       if (FileVolumes.errorText) root.pendingVolume = "";
     }
   }
+  Connections {
+    target: root.browser
+    function onNavigationRequested() { root.pendingVolume = ""; }
+  }
   function recentRows() {
     var rows = [];
     for (var i = 0; i < recentRepeater.count; i++) {

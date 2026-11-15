@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import "FilePaths.js" as Paths
+import "../../Helpers/PortalPaths.js" as PortalPaths
 
 Scope {
   id: root
@@ -46,6 +47,12 @@ Scope {
         value = text.slice(start + 1).replace(/\\(["\\])/g, "$1");
       }
     }
+    var uri = /^[a-z][a-z0-9+.-]*:\/\//i.test(value);
+    if (uri) {
+      var decoded = PortalPaths.uriToPath(value);
+      if (!decoded.ok) return;
+      value = decoded.path;
+    }
     var slash = value.lastIndexOf("/");
     var head = slash >= 0 ? value.slice(0, slash + 1) : "";
     var stem = value.slice(slash + 1);
@@ -54,7 +61,7 @@ Scope {
     if (!folder.ok) return;
     _busy = true;
     var job = completionFactory.createObject(root, {generation: _generation, folder: folder.path,
-      head: head, prefix: prefix, stem: stem, quoted: quoted});
+      head: head, prefix: prefix, stem: stem, quoted: quoted, uri: uri});
     job.running = true;
   }
   Timer { id: debounce; interval: 100; onTriggered: root.refresh() }
@@ -67,6 +74,7 @@ Scope {
       property string prefix
       property string stem
       property bool quoted
+      property bool uri
       command: ["timeout", "5", "python3", "-c", `
 import json, os, sys
 folder, stem, hidden, directories = json.loads(sys.argv[1])
@@ -87,7 +95,7 @@ except OSError:
           try { if (code === 0) entries = JSON.parse(output.text); } catch (error) {}
           root._suggestions = entries.filter(entry => entry.directory || FileTypes.matchesFilter(entry.name, root.nameFilter)).map(entry => ({
             name: entry.name, path: entry.path, directory: entry.directory,
-            text: prefix + head + (quoted ? entry.name.replace(/\\/g, "\\\\").replace(/"/g, '\\"') : entry.name) + (entry.directory ? "/" : quoted ? '"' : "")
+            text: prefix + (uri ? PortalPaths.pathToUri(entry.path).uri : head + (quoted ? entry.name.replace(/\\/g, "\\\\").replace(/"/g, '\\"') : entry.name)) + (entry.directory ? "/" : quoted ? '"' : "")
           }));
         }
         destroy();

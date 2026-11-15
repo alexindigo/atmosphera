@@ -17,6 +17,9 @@ Scope {
   property double _typedAt: 0
   property var _band: null
   signal chosen(string path)
+  // User intent is distinct from model reconciliation/history restoration and
+  // can replace a typed Name even when the selected path set is unchanged.
+  signal selectionEdited()
   function _setPaths(paths) {
     if (paths.length === _selectedPaths.length && paths.every((path, index) => path === _selectedPaths[index]))
       return;
@@ -71,6 +74,7 @@ Scope {
       } else
         _setPaths([item.path]);
     }
+    selectionEdited();
     chosen(item.path);
   }
 
@@ -91,8 +95,10 @@ Scope {
       click(cursor, Qt.ControlModifier);
   }
   function background(modifiers) {
-    if (!(modifiers & (Qt.ControlModifier | Qt.ShiftModifier)))
+    if (!(modifiers & (Qt.ControlModifier | Qt.ShiftModifier))) {
       clear();
+      selectionEdited();
+    }
   }
   function beginBand(modifiers, startIndex) {
     _band = multiple ? {base: _selectedPaths.slice(), modifiers: modifiers, anchor: startIndex, indices: []} : null;
@@ -107,6 +113,7 @@ Scope {
     else if (_band.modifiers & Qt.ControlModifier)
       paths = _band.base.filter(path => !paths.includes(path)).concat(paths.filter(path => !_band.base.includes(path)));
     _setPaths(paths);
+    selectionEdited();
   }
   function endBand(index) {
     if (!_band)
@@ -131,6 +138,7 @@ Scope {
         paths.push(item.path);
     }
     _setPaths(paths);
+    selectionEdited();
   }
 
   function typeAhead(text) {

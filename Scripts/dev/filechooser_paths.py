@@ -31,6 +31,17 @@ def exercise(runtime, evidence, command, ipc, state, wait, check, open_request, 
           and Path(unquote(urlsplit(s["replies"][0]["results"]["uris"][0]).path)).read_text() == "typed consumer bytes\n")
 
     open_request("open", "dev.filechooser.paths", str(base))
+    edit("File name", "Pic")
+    wait(lambda s: s["pathEntry"]["name"]["completionOpen"])
+    key(108); key(28)
+    ipc("focusListing"); key(107)
+    check("completion-keeps-owner-binding", lambda s: s["selected"] == [str(base / "Second.txt")]
+          and s["pathEntry"]["name"]["text"] == "Second.txt")
+    focus("Open"); key(28); wait(lambda s: s["settled"])
+    check("completion-followed-by-selection-consumer", lambda s: s["replies"][0]["results"]["uris"] == [(base / "Second.txt").as_uri()]
+          and Path(unquote(urlsplit(s["replies"][0]["results"]["uris"][0]).path)).read_text() == "second consumer bytes\n")
+
+    open_request("open", "dev.filechooser.paths", str(base))
     edit("File name", "Sec")
     wait(lambda s: s["pathEntry"]["name"]["completionOpen"] and s["pathEntry"]["name"]["completionRows"])
     row = state()["pathEntry"]["name"]["completionRows"][0]
@@ -38,6 +49,44 @@ def exercise(runtime, evidence, command, ipc, state, wait, check, open_request, 
     check("completion-mouse-selects-without-accepting", lambda s: s["pathEntry"]["name"]["text"] == "Second.txt" and not s["settled"] and s["focusedControl"] == "File name")
     key(28); wait(lambda s: s["settled"])
     check("completed-mouse-name-returned", lambda s: s["replies"][0]["results"]["uris"] == [(base / "Second.txt").as_uri()])
+
+    escaped = base / "URI names"
+    escaped.mkdir()
+    for name in ("report%20draft.txt", "report draft.txt", "report#draft.txt", "report?draft.txt", "report-résumé.txt"):
+        (escaped / name).write_text("literal " + name + "\n")
+    for stem, name in (("report%", "report%20draft.txt"), ("report#", "report#draft.txt"),
+                       ("report?", "report?draft.txt"), ("report ", "report draft.txt"),
+                       ("report-ré", "report-résumé.txt")):
+        open_request("open", "dev.filechooser.paths", str(base))
+        edit("File name", (escaped / stem).as_uri())
+        wait(lambda s: s["pathEntry"]["name"]["completionOpen"])
+        key(15)
+        check("uri-completion-displays-" + name, lambda s: s["pathEntry"]["name"]["text"] == (escaped / name).as_uri())
+        key(28); wait(lambda s: s["settled"])
+        check("uri-completion-consumer-" + name, lambda s: s["replies"][0]["results"]["uris"] == [(escaped / name).as_uri()]
+              and Path(unquote(urlsplit(s["replies"][0]["results"]["uris"][0]).path)).read_text() == "literal " + name + "\n")
+
+    links = base / "Links"
+    (links / "target/sub").mkdir(parents=True)
+    (links / "link").symlink_to(links / "target/sub", target_is_directory=True)
+    (links / "Report.txt").write_text("wrong lexical file\n")
+    (links / "target/Report.txt").write_text("physical parent file\n")
+    open_request("open", "dev.filechooser.paths", str(base))
+    edit("File name", str(links / "link") + "/../Report.txt"); key(28)
+    wait(lambda s: s["settled"])
+    check("symlink-parent-consumer-bytes", lambda s: s["replies"][0]["results"]["uris"] == [(links / "target/Report.txt").as_uri()]
+          and Path(unquote(urlsplit(s["replies"][0]["results"]["uris"][0]).path)).read_text() == "physical parent file\n")
+    open_request("open", "dev.filechooser.paths", str(base))
+    invalid = str(links / "target/Report.txt") + "/."
+    edit("File name", invalid); key(28)
+    wait(lambda s: bool(s["error"]))
+    check("file-dot-refused-with-input-kept", lambda s: not s["settled"] and s["pathEntry"]["name"]["text"] == invalid)
+
+    open_request("save", "dev.filechooser.paths", str(base), current_name="draft.txt")
+    edit("File name", "report.txt")
+    key(38, 29); command(["ydotool", "type", str(base / "Other")]); key(28)
+    wait(lambda s: s["ready"] and s["path"] == str(base / "Other"))
+    check("location-preserves-edited-save-name", lambda s: s["saveName"] == "report.txt")
 
     open_request("open", "dev.filechooser.paths", str(base))
     click(next(c for c in state()["layoutGeometry"]["header"] if c.get("name") == "Edit location"))
