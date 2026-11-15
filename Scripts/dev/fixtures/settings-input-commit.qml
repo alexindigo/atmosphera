@@ -18,7 +18,7 @@ ShellRoot {
     readonly property bool ready: source.toString() === "" || (!!item && item.ready)
   }
   Loader {
-    active: directories.ready
+    active: directories.ready && Settings.isLoaded
     sourceComponent: Component {
       Item {
         id: root

@@ -87,7 +87,7 @@ def main():
             process = subprocess.Popen(['timeout', '80', 'dbus-run-session', '--', 'qs', '-p', str(probe), '--no-color'],
                                        env=env, cwd=args.source, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
             owned = protect_owned_process(process)
-            wait(lambda: call(['qs', '-p', probe, 'ipc', 'show'], False).returncode == 0)
+            wait(lambda: 'inputCommit' in call(['qs', '-p', probe, 'ipc', 'show'], False).stdout)
             wait(lambda: snapshot()['ready'])
             if args.case != 'slider':
                 ipc('mixed')
