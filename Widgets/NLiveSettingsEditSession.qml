@@ -82,15 +82,12 @@ QtObject {
       if (root.inputGuard)
         root.inputGuard.acknowledge(inputFence);
       root.completed(result);
-      if (root.pending !== null) {
-        if (root.closePending)
-          root.flush();
-        else
-          root._timer.restart();
-      } else if (root.closePending) {
-        root.closePending = false;
-        root.closeRequested();
-      }
+      // A receipt covers its captured input generation only. A focused field
+      // can still buffer newer text without having queued a field patch yet.
+      if (root.closePending)
+        root.flush();
+      else if (root.pending !== null)
+        root._timer.restart();
     }
     try {
       if (!editor || typeof editor.submit !== "function")
