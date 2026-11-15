@@ -1,5 +1,6 @@
 """Own disposable root-level QML probes without adopting caller-owned files."""
 from contextlib import ExitStack
+import errno
 import os
 from pathlib import Path
 import tempfile
@@ -23,8 +24,19 @@ class ProbeFiles:
             content = Path(fixture).read_bytes()
             fd, name = tempfile.mkstemp(dir=source, prefix='.atcq-probe-', suffix='.qml')
             self.probe = Path(name)
-            with os.fdopen(fd, 'wb') as stream:
-                self._own(self.probe, stream)
+            try:
+                self._own(self.probe, fd)
+                stream = os.fdopen(fd, 'wb')
+            except BaseException:
+                # A failing conversion may or may not have adopted/closed fd.
+                # The pathname is already registered independently of it.
+                try:
+                    os.close(fd)
+                except OSError as error:
+                    if error.errno != errno.EBADF:
+                        raise
+                raise
+            with stream:
                 stream.write(content)
             qmlls = Path(source) / '.qmlls.ini'
             try:
@@ -33,13 +45,13 @@ class ProbeFiles:
                 pass
             else:
                 with stream:
-                    self._own(qmlls, stream)
+                    self._own(qmlls, stream.fileno())
         except BaseException:
             self.close()
             raise
 
-    def _own(self, path, stream):
-        stat = os.fstat(stream.fileno())
+    def _own(self, path, fd):
+        stat = os.fstat(fd)
         self._files.callback(_remove_owned, path, (stat.st_dev, stat.st_ino))
 
     def close(self):
