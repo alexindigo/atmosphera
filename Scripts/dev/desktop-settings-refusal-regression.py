@@ -20,6 +20,7 @@ def main():
         setattr(args, name, getattr(args, name).resolve())
     sys.path.insert(0, str(args.source / 'Scripts/dev'))
     from guest_profile import activate_profile
+    from probe_files import ProbeFiles
     profile = activate_profile(args.guest_profile)
     assert profile.uuid == '12f17a02-25e9-474c-9dae-fea092c2d2be' and not profile.console.records
     args.output.mkdir(parents=True)
@@ -34,14 +35,11 @@ def main():
                ATMOSPHERA_CACHE_DIR=str(args.work_root / 'cache'), ATMOSPHERA_STATE_DIR=str(args.work_root / 'state'),
                SHORTCUT_CAPTURED='1' if args.captured else '0')
     Path(env['TMPDIR']).mkdir()
-    probe = args.source / 'desktop-settings-refusal-proof.qml'
-    probe.write_bytes((args.source / 'Scripts/dev/fixtures/desktop-settings-refusal.qml').read_bytes())
-    qmlls = args.source / '.qmlls.ini'
-    created_qmlls = not qmlls.exists()
-    if created_qmlls:
-        qmlls.write_text('')
+    files_owner = None
     errors = []
     try:
+        files_owner = ProbeFiles(args.source, args.source / 'Scripts/dev/fixtures/desktop-settings-refusal.qml')
+        probe = files_owner.probe
         for leg, marker in [('save', 'SAVED_PASS'), ('cold', 'COLD_PASS')]:
             result = subprocess.run(['timeout', '22', 'dbus-run-session', '--', 'qs', '-p', str(probe), '--no-color'],
                                     env=dict(env, SHORTCUT_COLD='1' if leg == 'cold' else '0'), cwd=args.source,
@@ -66,7 +64,7 @@ def main():
     except BaseException as error:
         errors.append(repr(error))
     finally:
-        for operation in (probe.unlink, lambda: qmlls.unlink() if created_qmlls else None,
+        for operation in (lambda: files_owner.close() if files_owner else None,
                           lambda: shutil.rmtree(Path(runtime['XDG_RUNTIME_DIR']))):
             try:
                 operation()
