@@ -3,6 +3,7 @@
 The matrix imports the unchanged deployment runner and attaches this observer;
 the original causal schedule and assertions execute first.
 """
+import os
 from pathlib import Path
 
 
@@ -20,7 +21,8 @@ def attach(module):
         observation = {"unit": values, "pid": pid}
         if pid > 0:
             argv = Path(f"/proc/{pid}/cmdline").read_bytes().split(b"\0")
-            expected = Path.home() / ".config/xremap/atmosphera-xremap.yml"
+            config_root = Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config")
+            expected = config_root / "xremap/atmosphera-xremap.yml"
             runner.check(str(expected).encode() in argv, "Retry remapper consumed a different settings path")
             runner.check(Path(values["FragmentPath"]).read_bytes() == (runner.source / "Scripts/systemd/xremap-atmosphera.service").read_bytes(), "Retry remapper unit differs from the candidate")
             observation.update(argv=[value.decode() for value in argv if value], configuration=str(expected), configuration_sha256=module.sha(expected))

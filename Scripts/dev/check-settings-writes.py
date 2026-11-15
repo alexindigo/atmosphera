@@ -208,7 +208,13 @@ class Checker:
                     return None
                 paths.update({(key,) + path: value for path, value in nested.items()})
             elif type_name == 'ConfigValue':
-                value = self.text(self.binding(declaration, 'valueType')).split('.')[-1] or 'String'
+                reference = self.binding(declaration, 'valueType')
+                value = 'String'
+                if reference is not None:
+                    if (reference.type != 'member_expression' or
+                            self.text(child(reference, 'object')) != declaration.kind):
+                        return None
+                    value = self.text(child(reference, 'property'))
                 if value not in ('Boolean', 'Integer', 'Int64', 'UInt64', 'Real', 'String', 'Url', 'List', 'StringList', 'Map', 'Record', 'SecretRef'):
                     return None
                 paths[(key,)] = 'List' if value == 'StringList' else value
