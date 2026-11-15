@@ -8,6 +8,7 @@ QtObject {
   property bool active: true
   property bool dirty: false
   property int generation: 0
+  property int _committedGeneration: -1
   readonly property var focusedInput: {
     var window = target.Window.window;
     var focused = active && window ? window.activeFocusItem : null;
@@ -25,7 +26,8 @@ QtObject {
   }
 
   function capture() {
-    return generation;
+    // A persistence receipt cannot cover text still buffered in a control.
+    return _committedGeneration;
   }
 
   function acknowledge(fence) {
@@ -36,18 +38,23 @@ QtObject {
   function reset() {
     generation++;
     dirty = false;
+    _committedGeneration = generation;
   }
 
   function commit(moveFocus) {
-    if (!dirty)
-      return;
     var input = focusedInput;
-    if (input && typeof input.commitEdit === "function")
-      input.commitEdit();
+    if (dirty) {
+      // Native controls publish their own buffers. A false result means an
+      // ongoing gesture cannot yet publish; unknown controls stay unacknowledged.
+      if (!input || (typeof input.commitEdit === "function" && input.commitEdit(moveFocus) !== false))
+        _committedGeneration = generation;
+    }
     // Explicit Apply/close also settles the control's focus-lost contract.
     // Automatic live persistence must not end the user's editing session.
-    if (moveFocus !== false)
+    if (moveFocus !== false) {
       _focusSink.forceActiveFocus();
+      _committedGeneration = generation;
+    }
   }
 
   // Focusing a FocusScope preserves its focused child. An owned, unpainted
