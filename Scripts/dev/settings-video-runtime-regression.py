@@ -77,6 +77,11 @@ def main():
                         '"__proto__":{"volume":0.25,"wide":18446744073709551615,"huge":1e400,"decimal":0.123456789012345678901234567890,"__proto__":{"keep":true}},'
                          '"monitorSpecific":true,"enabled":false,"thumbCacheReady":true,"opaqueRoot":18446744073709551615}').encode()
             legacy = plugin/'settings.json'
+            if case in ('startup', 'startup-enabled'):
+                # Startup now exercises the sole producer's selected file as
+                # well as its directory inventory, not a nonexistent label.
+                original = original.replace(b'"currentWallpaper":"legacy-choice"',
+                    b'"currentWallpaper":' + json.dumps(str(root/'media/media.mp4')).encode())
             if case == 'startup-enabled':
                 original = original.replace(b'"enabled":false', b'"enabled":true,"activeBackend":"none"')
             legacy.write_bytes(original)
@@ -88,7 +93,7 @@ def main():
             thumbs.mkdir()
             media = media_dir/'media.mp4'
             valid_media = root/'valid.mp4'
-            if case in ('mpv-volume', 'thumbnails', 'thumbnail-generation', 'thumbnail-retry'):
+            if case in ('startup', 'startup-enabled', 'mpv-volume', 'thumbnails', 'thumbnail-generation', 'thumbnail-retry'):
                 built = subprocess.run(['timeout', '15', 'ffmpeg', '-nostdin', '-y', '-f', 'lavfi', '-i',
                                         'color=c=black:s=32x32:r=2', '-t', '1', '-c:v', 'mpeg4', str(media)],
                                        capture_output=True, text=True, timeout=20)
