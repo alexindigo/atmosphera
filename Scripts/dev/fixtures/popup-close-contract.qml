@@ -19,6 +19,7 @@ ShellRoot {
   property var liveDialog: null
   property int liveIndex: 0
   property int liveTicks: 0
+  property int restorationDiscardFence: 0
   property var liveFiles: ["Bar/BarWidgetSettingsDialog.qml", "ControlCenter/ControlCenterWidgetSettingsDialog.qml", "DesktopWidgets/DesktopWidgetSettingsDialog.qml"]
   property var routes: ["close", "native-hide", "dialog", "dynamic", "context", "tray", "bar", "plugin", "desktop"]
   property var editor: ({
@@ -57,8 +58,11 @@ ShellRoot {
   function replacement(route) {
     if (route === "close")
       host.close();
-    else if (route === "native-hide")
+    else if (route === "native-hide") {
       host.visible = false;
+      // A cancelled pending menu attempt is not a new content presentation.
+      host.requestPresentation();
+    }
     else if (route === "dialog")
       host.showDialog(candidate);
     else if (route === "dynamic")
@@ -195,9 +199,26 @@ ShellRoot {
             root.check(host.showDialog(popup) === false && host.popupContentItem === menu, "close callback presentation wins over outer replacement");
             root.reopenOnClose = false;
             host.close();
-            root.stage = 5;
+            root.stage = 8;
           } else
             root.stage = 0;
+        } else if (root.stage === 8) {
+          host.showDialog(popup);
+          popup._failed = true;
+          popup.open();
+          root.stage = 9;
+        } else if (root.stage === 9 && popup.opened) {
+          root.check(host.close() === false, "dirty close queues restoration");
+          popup.confirmDiscard();
+          root.check(host.showDialog(popup), "same QObject adopted for a later opening");
+          popup._editor = root.editor;
+          root.restorationDiscardFence = root.discards;
+          root.stage = 10;
+        } else if (root.stage === 10) {
+          root.check(host.popupContentItem === popup && popup._editor === root.editor && root.discards === root.restorationDiscardFence,
+            "obsolete restoration cannot cancel a later opening of the same QObject");
+          popup.confirmDiscard();
+          root.stage = 5;
         } else if (root.stage === 5) {
           var component = Qt.createComponent(Quickshell.shellDir + "/Modules/Panels/Settings/" + root.liveFiles[root.liveIndex]);
           root.check(component.status === Component.Ready, "live dialog component ready");
