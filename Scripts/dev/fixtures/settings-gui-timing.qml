@@ -19,6 +19,9 @@ Item {
   property var completions: []
   property int gcCount: 0
   property int notifications: 0
+  // Dynamic test-only import; the runner builds and supplies the real module.
+  property var nativeClock: Qt.createQmlObject('import GuiTiming 1.0; TimingClock {}', probe)
+  property var bursts: []
   readonly property bool nativeOwner: Settings["store"] !== undefined
   readonly property var ccModel: nativeOwner ? Settings["store"].listModel(["controlCenter", "cards"]) : Settings.data.controlCenter.cards
   readonly property var clockModel: nativeOwner ? Settings["store"].listModel(["calendar", "cards"]) : Settings.data.calendar.cards
@@ -122,25 +125,42 @@ Item {
     }
   }
 
-  function save(label) {
+  function save(label, window) {
     const started = Date.now();
+    const startedNs = nativeClock.nowNs();
+    const savedRound = probe.round;
     Settings.saveImmediate(function (result, message) {
       const status = typeof result === "boolean" ? (result ? "saved" : "failed") : result.status;
       const receipt = {
-        round: probe.round,
+        round: savedRound,
         label: label,
         status: status,
         started: started,
         completed: Date.now(),
+        startedNs: startedNs,
+        completedNs: nativeClock.nowNs(),
         message: message || ""
       };
       probe.completions.push(receipt);
+      if (window) {
+        window.pending--;
+        if (window.returned && !window.pending)
+          window.endNs = nativeClock.nowNs();
+      }
       console.log("GUI_TIMING_SAVE " + JSON.stringify(receipt));
     });
   }
 
   function burst(number) {
     round = number;
+    const window = {
+      round: number,
+      startNs: nativeClock.nowNs(),
+      endNs: "",
+      pending: 2,
+      returned: false
+    };
+    bursts.push(window);
     console.log("GUI_TIMING_PHASE " + JSON.stringify({
                                                        phase: "burst",
                                                        round: round,
@@ -173,12 +193,15 @@ Item {
       widgets[0] = first;
       Settings.data.bar.widgets.left = widgets;
     }
-    save("burst");
-    save("joined-or-noop");
+    save("burst", window);
+    save("joined-or-noop", window);
     ToastService.showNotice("I6 settings burst " + number, "Native GUI timing", "", 100);
     notifications++;
     gc();
     gcCount++;
+    window.returned = true;
+    if (!window.pending)
+      window.endNs = nativeClock.nowNs();
     console.log("GUI_TIMING_PHASE " + JSON.stringify({
                                                        phase: "ingress-gc-return",
                                                        round: round,
@@ -242,6 +265,7 @@ Item {
                               counts: [ccView.count, clockView.count, audioView.count, desktopView.count],
                               first: [probe.viewText(ccView), probe.viewText(clockView), probe.viewText(audioView), probe.viewText(desktopView)],
                               completions: probe.completions,
+                              bursts: probe.bursts,
                               notifications: probe.notifications,
                               gcCount: probe.gcCount
                             });

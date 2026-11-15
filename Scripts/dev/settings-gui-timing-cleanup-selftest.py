@@ -22,13 +22,17 @@ HERE = Path(__file__).resolve().parent
 
 
 class CleanupTests(unittest.TestCase):
-    def run_cleanup(self, *, observer_failure=False, capture_failure=False, ipc_failure=False, term_resistant=False, receipt_delay=False, partial_receipt=False):
+    def run_cleanup(self, *, observer_failure=False, capture_failure=False, scheduler_failure=False, ipc_failure=False, term_resistant=False, receipt_delay=False, partial_receipt=False):
         require_disk_backed_paths(os.environ['TMPDIR'])
         tree = ast.parse((HERE / 'settings-gui-timing.py').read_text())
         main = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'main')
         stop = next(n for n in main.body if isinstance(n, ast.FunctionDef) and n.name == 'stop')
         final = next(n.finalbody for n in main.body if isinstance(n, ast.Try) and n.finalbody)
-        function = ast.parse('def invoke(process, log, result):\n    pass\n').body[0]
+        # Bind the extracted closures' actual cells, not a stale handwritten
+        # subset. New owned resources must still have an explicit test double.
+        captures = sorted({name for node in ast.walk(ast.Module(body=[stop, *final], type_ignores=[]))
+                           if isinstance(node, ast.Nonlocal) for name in node.names})
+        function = ast.parse('def invoke(result, '+', '.join(captures)+'):\n    pass\n').body[0]
         function.body = [stop, *final, ast.parse('return result').body[0]]
         functions = [n for n in tree.body if isinstance(n, ast.FunctionDef) and
                      n.name in ('cleanup_steps', 'require_shell_settled')]
@@ -107,6 +111,20 @@ class CleanupTests(unittest.TestCase):
                 def close(self):
                     events.append('observer-log-closed')
 
+            class Scheduler:
+                finished = False
+
+                def __init__(self):
+                    self.process = SimpleNamespace(poll=lambda: 0 if self.finished else None)
+
+                def finish(self):
+                    events.append('scheduler-capture')
+                    if child.poll() is None:
+                        events.append('scheduler-before-settlement')
+                    self.finished = True
+                    if scheduler_failure:
+                        raise OSError('injected scheduler collector failure')
+
             observer = SimpleNamespace(wait=lambda timeout: events.append('observer-wait'),
                                        returncode=1 if observer_failure else 0,
                                        stderr=io.BytesIO(b'injected observer failure'))
@@ -140,10 +158,15 @@ class CleanupTests(unittest.TestCase):
                          write_json=write_json)
             try:
                 exec(compiled, scope)
-                result = scope['invoke'](Child(), Capture(), dict(status='PASS', checks={}, errors=[], windows=[]))
+                bindings = dict(process=Child(), log=Capture(), scheduler_capture=Scheduler())
+                self.assertFalse(set(captures)-bindings.keys(), 'new cleanup capture needs an explicit owned-resource double')
+                result = scope['invoke'](dict(status='PASS', checks={}, errors=[], windows=[]),
+                                         **{name: bindings[name] for name in captures})
                 self.assertIsNotNone(child.poll(), 'owned shell child survived diagnostic failure')
                 self.assertNotIn('capture-before-settlement', events)
                 self.assertNotIn('restore-before-settlement', events)
+                self.assertNotIn('scheduler-before-settlement', events)
+                self.assertEqual(events.count('scheduler-capture'), 1)
                 if term_resistant:
                     self.assertIn('waiting-state-preserves-live-dependencies', events)
                 if partial_receipt:
@@ -173,6 +196,10 @@ class CleanupTests(unittest.TestCase):
 
     def test_capture_failure_cannot_skip_restoration(self):
         self.run_cleanup(capture_failure=True)
+
+    def test_scheduler_capture_failure_cannot_skip_restoration(self):
+        result = self.run_cleanup(scheduler_failure=True)
+        self.assertIn('scheduler collector failure', str(result['errors']))
 
     def test_ipc_failure_still_settles_owned_child(self):
         self.run_cleanup(ipc_failure=True)

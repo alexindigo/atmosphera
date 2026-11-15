@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """Native full-shell save/reload/typing budget. Assigned niri VM only.
 
-Uses the I1 dispatcher + poll/ppoll instrument, not awake/aboutToBlock or a
-heartbeat-only proxy. Only actual waits >=50us split continuous busy batches.
-Every span is retained (including wall and thread CPU); scheduler time is not
-subtracted to turn a violation green. Startup is reported separately.
+Uses native dispatcher/poll records plus an owned tracefs scheduler capture,
+not awake/aboutToBlock or a heartbeat-only proxy. Only proven sleeps >=50us
+inside matching poll syscalls split busy batches. Runnable time stays busy.
+Native wall/thread-CPU samples remain intact; derived sleep boundaries report
+CPU upper bounds, never interpolated CPU timestamps. Startup is separate.
 """
 import argparse
+import bisect
+import fcntl
 import hashlib
 import json
 import os
@@ -24,6 +27,7 @@ import traceback
 
 from guest_profile import activate_profile, profile_argument
 from gui_timing_capture import ConsoleCapture
+from gui_timing_scheduler import SchedulerCapture, proven_sleeps
 from qml_probe import inject_probe, probe_owner_path
 from workspace_guard import require_disk_backed_paths
 
@@ -38,6 +42,9 @@ def watch_keys(stop_file):
     assert nodes, 'no real ydotoold input device'
     event = struct.Struct('llHHi')
     files = [open('/dev/input/' + n, 'rb', buffering=0) for n in nodes]
+    for stream in files:
+        # Linux input.h: EVIOCSCLOCKID = _IOW('E', 0xa0, int).
+        fcntl.ioctl(stream.fileno(), 0x400445a0, struct.pack('i', time.CLOCK_MONOTONIC))
     print(json.dumps(dict(nodes=nodes)), flush=True)
     deadline = time.monotonic() + 1200
     while not stop_file.exists() and time.monotonic() < deadline:
@@ -48,7 +55,7 @@ def watch_keys(stop_file):
             for offset in range(0, len(data), event.size):
                 sec, usec, kind, code, value = event.unpack_from(data, offset)
                 if kind == 1:
-                    print(json.dumps(dict(at=sec*1000+usec/1000, code=code, value=value)), flush=True)
+                    print(json.dumps(dict(atNs=sec*1_000_000_000+usec*1000, code=code, value=value)), flush=True)
     for stream in files:
         stream.close()
 
@@ -125,46 +132,70 @@ def trace_report(path, windows):
     events = [(r[0], int(r[3]), int(r[4]), int(r[5])) for r in rows
               if int(r[1]) == pid and r[1] == r[2]]
     assert all(a[1] <= b[1] and a[2] <= b[2] for a, b in zip(events, events[1:])), 'nonmonotonic native clocks'
-    spans, waits = [], []
-    start = waiting = None
+    polls = []
+    first = None
     depth = 0
     pending_poll = None
     for kind, wall, cpu, arg in events:
         if kind == 'E':
             assert depth == 0, 'nested/duplicate outer dispatcher entry'
             depth = 1
-            if start is None:
-                start = wall, cpu
+            if first is None:
+                first = wall
         elif kind == 'X':
             assert depth == 1 and pending_poll is None, 'unmatched dispatcher exit'
             depth = 0
         elif kind in ('W', 'P'):
             assert depth == 1 and pending_poll is None, 'uncovered/overlapping poll'
-            pending_poll = kind
-            if kind == 'W':
-                waiting = wall, cpu
+            assert arg in (1, 2), 'unknown poll syscall family'
+            pending_poll = kind, wall, arg
         elif kind in ('R', 'Q'):
-            assert pending_poll == ('W' if kind == 'R' else 'P'), 'unmatched poll return'
+            assert pending_poll and pending_poll[0] == ('W' if kind == 'R' else 'P'), 'unmatched poll return'
+            if kind == 'R':
+                polls.append(dict(startNs=pending_poll[1], endNs=wall,
+                                  kind='poll' if pending_poll[2] == 1 else 'ppoll'))
             pending_poll = None
-            if waiting is not None:
-                if wall - waiting[0] >= 50_000:
-                    if start is not None:
-                        spans.append(dict(startNs=start[0], endNs=waiting[0],
-                                          wallMs=(waiting[0]-start[0])/1e6,
-                                          cpuMs=(waiting[1]-start[1])/1e6))
-                    waits.append(dict(startNs=waiting[0], endNs=wall,
-                                      wallMs=(wall-waiting[0])/1e6,
-                                      cpuMs=(cpu-waiting[1])/1e6))
-                    start = wall, cpu
-                waiting = None
         else:
             assert kind == 'I', ('unknown native event', kind)
-    terminal = depth == 1 and pending_poll == 'W' and events[-1][0] == 'W'
+    terminal = depth == 1 and pending_poll and pending_poll[0] == 'W' and events[-1][0] == 'W'
     assert depth == 0 or terminal, 'incomplete native dispatcher outside terminal wait'
-    if start:
-        end = waiting if terminal else events[-1][1:3]
-        spans.append(dict(startNs=start[0], endNs=end[0],
-                          wallMs=(end[0]-start[0])/1e6, cpuMs=(end[1]-start[1])/1e6))
+    last = events[-1][1]
+    calls, sleeping, scheduler = proven_sleeps(path, pid, first, last)
+    waits = []
+    poll_index = sleep_index = 0
+    for call in calls:
+        while poll_index < len(polls) and polls[poll_index]['endNs'] < call['startNs']:
+            poll_index += 1
+        if poll_index == len(polls):
+            break
+        poll = polls[poll_index]
+        if call['kind'] != poll['kind'] or call['endNs'] <= call['startNs']:
+            continue
+        while sleep_index < len(sleeping) and sleeping[sleep_index][1] <= call['startNs']:
+            sleep_index += 1
+        index = sleep_index
+        while index < len(sleeping) and sleeping[index][0] < call['endNs']:
+            begin, end = sleeping[index]
+            begin, end = max(begin, call['startNs'], poll['startNs']), min(end, call['endNs'], poll['endNs'])
+            if end - begin >= 50_000:
+                waits.append(dict(startNs=begin, endNs=end, wallMs=(end-begin)/1e6,
+                                  syscall=call['kind'], pollStartNs=poll['startNs']))
+            index += 1
+    waits.sort(key=lambda w: w['startNs'])
+    spans = []
+    start = first
+    stamps = [e[1] for e in events]
+    for wait in [*waits, dict(startNs=last, endNs=last)]:
+        end = wait['startNs']
+        assert start <= end, 'overlapping credited sleeps'
+        # Kernel sleep boundaries have no thread-CPU sample. Report the exact
+        # busy wall interval and the enclosing native CPU upper bound, not an
+        # invented interpolated CPU timestamp or wall-minus-CPU idle estimate.
+        before = events[bisect.bisect_right(stamps, start) - 1][2]
+        after = events[bisect.bisect_left(stamps, end)][2]
+        spans.append(dict(startNs=start, endNs=end, wallMs=(end-start)/1e6,
+                          cpuUpperBoundMs=(after-before)/1e6))
+        start = wait['endNs']
     assert spans and waits and any(e[0] == 'P' for e in events), 'missing dispatch/blocking/ready-poll coverage'
     for span in spans:
         span['windows'] = [w['id'] for w in windows if span['endNs'] >= w['startNs'] and span['startNs'] <= w['endNs']]
@@ -174,10 +205,29 @@ def trace_report(path, windows):
         assert events[0][1] <= w['startNs'] < w['endNs'] <= events[-1][1], 'workload outside trace'
         assert any(s for s in measured if w['id'] in s['windows']), ('missing workload coverage', w)
     return dict(pid=pid, dispatcherKinds=sorted({e[3] for e in events if e[0] == 'E'}),
-                dispatchEntries=sum(e[0] == 'E' for e in events), blockingPolls=len(waits),
+                dispatchEntries=sum(e[0] == 'E' for e in events),
+                blockingPolls=len({w['pollStartNs'] for w in waits}), creditedSleepIntervals=len(waits),
                 zeroPolls=sum(e[0] == 'P' for e in events), terminalOpenPoll=terminal,
                 maximumBusyMs=max(s['wallMs'] for s in measured),
-                wholeRunMaximumBusyMs=max(s['wallMs'] for s in spans), spans=spans, waits=waits)
+                wholeRunMaximumBusyMs=max(s['wallMs'] for s in spans), spans=spans, waits=waits,
+                scheduler=scheduler)
+
+
+def require_input_overlap(keys, window):
+    overlap = [key for key in keys if key['value'] == 1 and
+               window['startNs'] <= key['atNs'] and key['atNs'] + 1000 <= window['endNs']]
+    assert overlap, ('no physical key press inside outstanding save/burst', window, keys)
+    return overlap
+
+
+def save_burst_violations(spans, windows, threshold):
+    violations = []
+    for span in spans:
+        for window in windows:
+            begin, end = max(span['startNs'], window['startNs']), min(span['endNs'], window['endNs'])
+            if (end-begin)/1e6 > threshold:
+                violations.append(dict(window=window['id'], startNs=begin, endNs=end, wallMs=(end-begin)/1e6))
+    return violations
 
 
 def wait_for(predicate, seconds=45):
@@ -285,10 +335,17 @@ def main():
                               HERE/'fixtures/settings-gui-dispatch.cpp',
                               HERE/'fixtures/settings-gui-log.cpp', '-ldl'], env, 45)
     (out/'compile.log').write_bytes(compile_result.stdout + compile_result.stderr)
+    clock_build = work/'native-clock'
+    for argv in (['cmake', '-S', HERE/'fixtures/native-gui-timing', '-B', clock_build, '-G', 'Ninja'],
+                 ['cmake', '--build', clock_build, '--target', 'timingclock', '--parallel', '4']):
+        compiled = command(argv, env, 60)
+        with (out/'compile.log').open('ab') as build_log:
+            build_log.write(compiled.stdout + compiled.stderr)
+    env['QML_IMPORT_PATH'] = str(clock_build) + (':' + env['QML_IMPORT_PATH'] if env.get('QML_IMPORT_PATH') else '')
     symbols = command(['nm', '-D', '/usr/lib/libQt6Core.so.6'], env).stdout.decode()
     assert all(s in symbols for s in ('_ZN20QEventDispatcherGlib13processEventsE6QFlagsIN10QEventLoop17ProcessEventsFlagEE',
                                       '_ZN20QEventDispatcherUNIX13processEventsE6QFlagsIN10QEventLoop17ProcessEventsFlagEE'))
-    process = log = observer = observer_log = typing_process = profiler = profiler_log = None
+    process = log = observer = observer_log = typing_process = profiler = profiler_log = scheduler_capture = None
     input_unit = 'atcq-i6-input-' + hashlib.sha256(str(work).encode()).hexdigest()[:8]
     input_started = False
 
@@ -303,9 +360,11 @@ def main():
         return json.loads(ipc('guiTiming', 'status'))
 
     def launch(name, traced=True):
-        nonlocal process, log
+        nonlocal process, log, scheduler_capture
         launch_env = dict(env)
         if traced:
+            scheduler_capture = SchedulerCapture(out/(name+'.trace'), private_runtime)
+            launch_env.update(scheduler_capture.environment())
             launch_env.update(LD_PRELOAD=str(native), ATMOSPHERA_GUI_TRACE=str(out/(name+'.trace')))
         # Use the pinned real session bus so full-shell side effects reach the
         # actual user manager, rather than a private bus's failed activation.
@@ -363,7 +422,16 @@ def main():
             log = None
             result.setdefault('consoleCapture', []).append(capture.finish())
 
-        if not cleanup_steps(result, [('shell-exit', settle_process), ('console-capture', finish_capture)]):
+        def finish_scheduler():
+            nonlocal scheduler_capture
+            require_shell_settled(process)
+            if scheduler_capture:
+                capture = scheduler_capture
+                capture.finish()
+                scheduler_capture = None
+
+        if not cleanup_steps(result, [('shell-exit', settle_process), ('console-capture', finish_capture),
+                                      ('scheduler-capture', finish_scheduler)]):
             raise RuntimeError('shell teardown failed; see recorded errors')
 
     def keys(*codes):
@@ -379,7 +447,12 @@ def main():
             sensitivity_env = dict(env, LD_PRELOAD=str(native), ATMOSPHERA_GUI_TRACE=str(trace))
             if dispatcher == 'unix':
                 sensitivity_env['QT_NO_GLIB'] = '1'
-            response = command(['qs', '-p', sensitivity, '--no-color'], sensitivity_env, 20)
+            sensitivity_capture = SchedulerCapture(trace, private_runtime)
+            sensitivity_env.update(sensitivity_capture.environment())
+            try:
+                response = command(['qs', '-p', sensitivity, '--no-color'], sensitivity_env, 20)
+            finally:
+                sensitivity_capture.finish()
             (out/('sensitivity-'+dispatcher+'.log')).write_bytes(response.stdout+response.stderr)
             # Full trace bounds form the control window (startup is harmless
             # here: the wall-timed handler must still appear as >=75ms wall).
@@ -433,27 +506,31 @@ def main():
                 ipc('launcher', 'toggle')
                 wait_for(lambda: json.loads(ipc('launcherKeys', 'state'))['nativeActive'])
                 ipc('launcherKeys', 'observe', 'false')
-                type_start = time.time_ns()/1e6
+                type_start = time.monotonic_ns()
                 typing_process = subprocess.Popen(['timeout', '30', 'ydotool', 'type', '--key-delay', '2', '--', text],
                                                  env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                # Admit the burst only after real input has begun, not merely
+                # after child creation. Actual overlap is still asserted below.
+                wait_for(lambda: any(row.get('value') == 1 and row.get('atNs', 0) >= type_start
+                                     for row in map(json.loads, (out/'physical-keys.jsonl').read_text().splitlines())))
                 burst_start = time.monotonic_ns()
                 ipc('guiTiming', 'burst', number)
                 burst_return = time.monotonic_ns()
                 typing_process.communicate(timeout=35)
                 assert typing_process.returncode == 0
                 typing_process = None
-                type_end = time.time_ns()/1e6
+                type_end = time.monotonic_ns()
                 # Same retained I1 observation interval on both trees. The old
                 # positive control records wrong Qt text rather than requiring
                 # the known-broken owner to satisfy the candidate assertion.
                 time.sleep(1.8)
                 observed = json.loads(ipc('launcherKeys', 'state'))
                 raw_keys = [json.loads(line) for line in (out/'physical-keys.jsonl').read_text().splitlines()]
-                raw_keys = [r for r in raw_keys if 'at' in r and type_start <= r['at'] <= type_end]
+                raw_keys = [r for r in raw_keys if 'atNs' in r and type_start <= r['atNs'] <= type_end]
                 assert physical_text(raw_keys) == text, ('physical text differs', raw_keys)
                 assert len(raw_keys) > 0
                 result['typing'].append(dict(round=number, host=host, expected=text, observed=observed,
-                                            physical=raw_keys, startEpochMs=type_start, endEpochMs=type_end,
+                                            physical=raw_keys, startNs=type_start, endNs=type_end,
                                             burstStartNs=burst_start, burstReturnNs=burst_return))
                 if not args.expect_old_stall:
                     assert observed['query'] == text, ('Qt text differs from exact physical text', observed)
@@ -463,6 +540,12 @@ def main():
                 ipc('guiTiming', 'burst', number)
             current = wait_for(lambda: s if len((s := status())['completions']) >= before+2 and s['audioCount'] == 1000 else None)
             assert all(r['status'] != 'failed' for r in current['completions']), current['completions']
+            burst = next(w for w in current['bursts'] if w['round'] == number)
+            assert burst['endNs'] and burst['pending'] == 0 and burst['returned']
+            window = dict(id='save-burst-'+str(number), startNs=int(burst['startNs']), endNs=int(burst['endNs']))
+            result.setdefault('saveBurstWindows', []).append(window)
+            if number < 20:
+                result['typing'][-1]['overlappingPresses'] = require_input_overlap(result['typing'][-1]['physical'], window)
             expected_first = 'i6-'+str(number)+'-'+('999' if number % 2 else '0')
             wait_for(lambda: status()['audioFirst'] == expected_first)
             raw = json.loads((config/'settings/audio.json').read_text())
@@ -535,7 +618,7 @@ def main():
         result['checks']['noBusyViolation'] = not violations
         result['checks']['heartbeatBudget'] = result['heartbeat']['ticks'] > 0 and result['heartbeat']['worstLate'] <= args.max_heartbeat_lateness_ms
         if args.expect_old_stall:
-            assert violations, 'old-owner positive control did not reproduce native stall'
+            assert save_burst_violations(native_report['spans'], result['saveBurstWindows'], args.max_busy_ms), 'old-owner positive control did not reproduce native stall inside save/burst'
             result['status'] = 'CONTROL_REPRODUCED'
         else:
             assert not args.profile and all(result['checks'].values()), result['checks']
@@ -584,6 +667,7 @@ def main():
 
         def retire_runtime():
             require_shell_settled(process)
+            assert scheduler_capture is None or scheduler_capture.process.poll() is not None, 'scheduler collector still owns runtime'
             # This profile's private runtime contains only owned IPC files and
             # symlinks; keep evidence/work inputs, retire its empty socket root.
             shutil.rmtree(private_runtime)

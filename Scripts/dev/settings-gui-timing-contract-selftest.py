@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Clock and input-credential controls; run only in the assigned project VM."""
 import ast
+import importlib.util
+import json
 import os
 from pathlib import Path
 import shutil
@@ -9,6 +11,7 @@ import tempfile
 from types import SimpleNamespace
 import unittest
 
+from gui_timing_scheduler import EVENTS, proven_sleeps
 from workspace_guard import require_disk_backed_paths
 
 HERE = Path(__file__).resolve().parent
@@ -53,6 +56,45 @@ class TimingContractTests(unittest.TestCase):
                     exec(actual, scope)
             else:
                 exec(actual, scope)
+
+    def timing_module(self):
+        spec = importlib.util.spec_from_file_location('actual_gui_timing', HERE / 'settings-gui-timing.py')
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def test_positive_control_requires_stall_inside_save_burst(self):
+        assertion = next(n for n in ast.walk(self.tree) if isinstance(n, ast.Assert)
+                         and n.msg and 'old-owner positive control did not reproduce' in ast.unparse(n.msg))
+        code = compile(ast.Module(body=[assertion], type_ignores=[]), 'actual-positive-control', 'exec')
+        windows = [dict(id='save-burst-0', startNs=100_000_000, endNs=200_000_000)]
+        module = self.timing_module()
+        for start, end, accepted in ((0, 80_000_000, False), (85_000_000, 105_000_000, False),
+                                     (110_000_000, 190_000_000, True)):
+            spans = [dict(startNs=start, endNs=end, wallMs=(end-start)/1e6, windows=['complete-workload'])]
+            scope = dict(violations=spans, native_report={'spans': spans}, result={'saveBurstWindows': windows},
+                         args=SimpleNamespace(max_busy_ms=16),
+                         save_burst_violations=getattr(module, 'save_burst_violations', None))
+            if accepted:
+                exec(code, scope)
+            else:
+                with self.assertRaises(AssertionError):
+                    exec(code, scope)
+
+    def test_physical_keys_must_overlap_actual_outstanding_burst(self):
+        module = self.timing_module()
+        check = getattr(module, 'require_input_overlap', None)
+        if check is None:
+            # Original actual acceptance checks only that some key was observed.
+            node = next(n for n in ast.walk(self.tree) if isinstance(n, ast.Assert)
+                        and ast.unparse(n.test) == 'len(raw_keys) > 0')
+            actual = compile(ast.Module(body=[node], type_ignores=[]), 'actual-key-acceptance', 'exec')
+            check = lambda keys, window: exec(actual, dict(raw_keys=keys))
+        window = dict(startNs=100_000_000, endNs=200_000_000)
+        check([dict(atNs=150_000_000, value=1)], window)
+        for at in (99_999_999, 250_000_000):
+            with self.assertRaises(AssertionError):
+                check([dict(atNs=at, value=1)], window)
 
     def test_old_source_receives_runner_fixture_dependency_closure(self):
         provision = next((n for n in self.tree.body if isinstance(n, ast.FunctionDef) and
@@ -100,6 +142,74 @@ ShellRoot {
                                     capture_output=True, text=True, timeout=20)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertIn('TIMING_FIXTURE_CLOSURE: PASS', result.stdout + result.stderr)
+
+
+class SchedulerEvidenceTests(unittest.TestCase):
+    def setUp(self):
+        require_disk_backed_paths(os.environ['TMPDIR'])
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        self.trace = Path(self.directory.name)/'native.trace'
+        self.root = Path(str(self.trace)+'.scheduler')
+        self.root.mkdir()
+        self.lines = [
+            ' qs-42 [000] ..... 1.000001: sys_poll(ufds: 0x1, nfds: 1, timeout_msecs: 0x64)',
+            ' qs-42 [000] d..2. 1.000002: sched_switch: prev_comm=qs prev_pid=42 prev_prio=120 prev_state=S ==> next_comm=other next_pid=43 next_prio=120',
+            ' other-43 [000] d..2. 1.030000: sched_waking: comm=qs pid=42 prio=120 target_cpu=000',
+            ' other-43 [000] d..2. 1.030001: sched_wakeup: comm=qs pid=42 prio=120 target_cpu=000',
+            ' other-43 [000] d..2. 1.110000: sched_switch: prev_comm=other prev_pid=43 prev_prio=120 prev_state=R ==> next_comm=qs next_pid=42 next_prio=120',
+            ' qs-42 [000] ..... 1.110001: sys_poll -> 0x1',
+        ]
+        self.receipt = dict(status='PASS', removed=True, pid=42, clock='mono', timestampResolutionNs=1000,
+                            startNs=1_000_000_000, endNs=1_200_000_000,
+                            filters={name: rule.format(pid=42) for name, rule in EVENTS.items()},
+                            cpuStats={'cpu0': 'entries: 6\noverrun: 0\ncommit overrun: 0\ndropped events: 0\n'})
+
+    def analyze(self):
+        (self.root/'trace').write_text('\n'.join(self.lines)+'\n')
+        (self.root/'receipt.json').write_text(json.dumps(self.receipt))
+        return proven_sleeps(self.trace, 42, 1_000_000_000, 1_120_000_000)
+
+    def test_sleep_credit_ends_at_first_waking_not_switch_in(self):
+        calls, sleeps, _ = self.analyze()
+        self.assertEqual(calls, [dict(kind='poll', startNs=1_000_002_000, endNs=1_110_001_000)])
+        self.assertEqual(sleeps, [(1_000_003_000, 1_030_000_000)])
+
+    def test_runnable_preemption_earns_no_sleep(self):
+        self.lines[1] = self.lines[1].replace('prev_state=S', 'prev_state=R+')
+        self.assertEqual(self.analyze()[1], [])
+
+    def test_waking_racing_switch_out_never_earns_idle_credit(self):
+        self.lines.insert(1, ' other-43 [000] d..2. 1.000001: sched_waking: comm=qs pid=42 prio=120 target_cpu=000')
+        self.receipt['cpuStats']['cpu0'] = self.receipt['cpuStats']['cpu0'].replace('entries: 6', 'entries: 7')
+        self.assertEqual(self.analyze()[1], [])
+
+    def test_loss_and_incomplete_coverage_are_rejected(self):
+        original = dict(self.receipt)
+        for key, value in [('status', 'FAIL'), ('removed', False), ('pid', 43), ('clock', 'local'),
+                           ('startNs', 1_000_000_001), ('endNs', 1_100_000_000),
+                           ('cpuStats', {'cpu0': 'entries: 6\noverrun: 1\ncommit overrun: 0\ndropped events: 0\n'}),
+                           ('cpuStats', {'cpu0': 'entries: 7\noverrun: 0\ncommit overrun: 0\ndropped events: 0\n'})]:
+            self.receipt = dict(original, **{key: value})
+            with self.subTest(key=key, value=value), self.assertRaises(AssertionError):
+                self.analyze()
+
+    def test_missing_wake_refuses_instead_of_crediting_until_run(self):
+        self.lines = [line for line in self.lines if 'sched_wak' not in line]
+        self.receipt['cpuStats']['cpu0'] = self.receipt['cpuStats']['cpu0'].replace('entries: 6', 'entries: 4')
+        with self.assertRaisesRegex(AssertionError, 'without a captured wake'):
+            self.analyze()
+
+    def test_unmatched_kernel_return_is_rejected(self):
+        self.lines[0] = self.lines[0].replace('sys_poll(', 'sys_ppoll(')
+        with self.assertRaisesRegex(AssertionError, 'unmatched kernel poll'):
+            self.analyze()
+
+    def test_unmatched_kernel_entry_is_not_accepted_as_terminal(self):
+        self.lines.pop()
+        self.receipt['cpuStats']['cpu0'] = self.receipt['cpuStats']['cpu0'].replace('entries: 6', 'entries: 5')
+        with self.assertRaisesRegex(AssertionError, 'unmatched kernel poll'):
+            self.analyze()
 
 
 if __name__ == '__main__':
