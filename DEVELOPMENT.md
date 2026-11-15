@@ -290,6 +290,13 @@ real shell and belong in a throwaway VM (see below).
 
 ## QML Linting
 
+`qmllint.sh` also checks direct singleton calls against installed Quickshell
+metadata and the imported project singleton's root declarations. It never
+instantiates services or invokes their methods. This catches missing APIs even
+when Qt reports them as informational diagnostics or cannot resolve a composite
+import. Dynamic/computed calls still require runtime coverage. CI runs positive
+and negative canaries, including the nonexistent `Quickshell.exec` API.
+
 ```
 Scripts/dev/qmllint.sh [path ...]
 ```
@@ -398,6 +405,26 @@ git config --unset core.hooksPath
 ```
 
 ## Cold-Load Smoke Test
+
+External lock command validation is availability-only. The launcher still owns
+the existing `sh -c` syntax. Literal executable names (including quoted paths
+and arguments) are checked without running them; expressions requiring shell
+evaluation are explicitly unverified, not reported as missing. A failed checker
+is separate from a missing executable. Reopening the page refreshes the result
+after installation or removal, even if the text is unchanged.
+
+In the assigned `atmosphera-lock-command` VM on ark.home:
+
+```sh
+cd /home/tester/Projects/lock-command/source
+export TMPDIR=/home/tester/Projects/lock-command/tmp
+timeout 90 python3 -B Scripts/dev/external-command-regression.py --workspace /home/tester/Projects/lock-command/artifacts/fresh-run
+timeout 30 python3 -B Scripts/dev/qml-singleton-calls-selftest.py
+```
+
+The regression uses executable tripwires, exercises asynchronous failure/stale
+states, opens the real Settings page in a fresh private shell, and checks its
+rendered status text. It never requests a lock or invokes the configured locker.
 
 After any QML change, verify the shell loads from a cold start:
 

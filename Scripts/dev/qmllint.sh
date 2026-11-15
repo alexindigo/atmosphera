@@ -35,6 +35,9 @@ if [[ ! "$QMLLINT_VERSION" =~ ^qmllint\ [6-9]\. ]]; then
 fi
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+# A direct singleton call can be hidden by informational missing-property
+# diagnostics or unresolved composite imports. Check its declared surface too.
+python3 -B "$REPO_ROOT/Scripts/dev/qml-singleton-calls.py" "$@"
 # One native metadata universe for both direct lint and the container hook.
 # --bare changes import selection only, never severities or diagnostic gates.
 NATIVE_TMP=$(mktemp -d "${TMPDIR:-/tmp}/atmosphera-qmllint.XXXXXXXX")
