@@ -51,7 +51,7 @@ QtObject {
     if (busy)
       return;
     if (inputGuard)
-      inputGuard.commit();
+      inputGuard.commit(closePending);
     if (pending === null) {
       if (closePending) {
         closePending = false;

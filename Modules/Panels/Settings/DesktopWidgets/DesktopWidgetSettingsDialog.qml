@@ -309,7 +309,7 @@ Popup {
   NSettingsInputGuard {
     id: inputEdits
     target: settingsLoader
-    active: root.visible && !root.saveBusy
+    active: root.visible
   }
 
   function requestDiscard() {

@@ -38,15 +38,16 @@ QtObject {
     dirty = false;
   }
 
-  function commit() {
+  function commit(moveFocus) {
     if (!dirty)
       return;
     var input = focusedInput;
     if (input && typeof input.commitEdit === "function")
       input.commitEdit();
-    // Native text editingFinished and the control's public focus-lost contract
-    // settle synchronously before the editor gathers its submitted values.
-    _focusSink.forceActiveFocus();
+    // Explicit Apply/close also settles the control's focus-lost contract.
+    // Automatic live persistence must not end the user's editing session.
+    if (moveFocus !== false)
+      _focusSink.forceActiveFocus();
   }
 
   // Focusing a FocusScope preserves its focused child. An owned, unpainted
