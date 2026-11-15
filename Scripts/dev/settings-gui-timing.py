@@ -98,6 +98,11 @@ def cleanup_steps(result, steps):
     return complete
 
 
+def require_shell_settled(process):
+    if process is not None:
+        raise RuntimeError('owned shell still live; dependent cleanup retained')
+
+
 def trace_report(path, windows):
     """I1's conservative continuous-batch definition, with strict coverage."""
     rows = [line.split() for line in path.read_text().splitlines()]
@@ -316,14 +321,31 @@ def main():
                             process.wait(timeout=20)
                         except subprocess.TimeoutExpired:
                             os.killpg(process.pid, signal.SIGTERM)
-                            process.wait(timeout=10)
+                            try:
+                                process.wait(timeout=10)
+                            except subprocess.TimeoutExpired:
+                                # The deadline remains a failure, not permission
+                                # to retire files/config still used by this child.
+                                # Do not widen TERM to KILL. Keep supervising the
+                                # owned lifetime until it exits or is released.
+                                result['status'] = 'FAIL'
+                                result['settlement'] = dict(pid=process.pid, state='waiting-after-term-deadline')
+                                try:
+                                    write_json(out/'result.json', result)
+                                finally:
+                                    process.wait()
+                                raise RuntimeError('TERM settlement deadline exceeded; owned child reaped before dependent cleanup')
             finally:
                 if process.poll() is not None:
+                    if result.get('settlement', {}).get('pid') == process.pid:
+                        result['settlement'].update(state='reaped-after-term-deadline', exit=process.returncode)
                     result.setdefault('exits', []).append(process.returncode)
                     process = None
+                    result['checks']['shellSettled'] = True
 
         def finish_capture():
             nonlocal log
+            require_shell_settled(process)
             if not log:
                 return
             capture = log
@@ -528,6 +550,7 @@ def main():
                 assert observer.returncode == 0, observer.stderr.read().decode()
 
         def final_trace():
+            require_shell_settled(process)
             if (out/'full-shell.trace').exists() and result['windows'] and 'native' not in result:
                 proof = trace_report(out/'full-shell.trace', result['windows'])
                 write_json(out/'native.json', proof)
@@ -535,6 +558,7 @@ def main():
                 result['busyViolations'] = [s for s in proof['spans'] if s['windows'] and s['wallMs'] > args.max_busy_ms]
 
         def restore_niri():
+            require_shell_settled(process)
             command(['niri', 'msg', 'action', 'load-config-file', '--path', restore_config],
                     dict(os.environ, **profile.session_environment()))
             assert hashlib.sha256(restore_config.read_bytes()).hexdigest() == restore_hash
@@ -547,10 +571,16 @@ def main():
             result['checks']['originalConsolePreserved'] = True
 
         def retire_runtime():
+            require_shell_settled(process)
             # This profile's private runtime contains only owned IPC files and
             # symlinks; keep evidence/work inputs, retire its empty socket root.
             shutil.rmtree(private_runtime)
             result['checks']['cleanup'] = True
+
+        def stop_input():
+            require_shell_settled(process)
+            if input_started:
+                command(['sudo', '-n', 'systemctl', 'stop', input_unit], env)
 
         cleanup_steps(result, [
             ('profiler', finish_profiler),
@@ -561,7 +591,7 @@ def main():
             ('shell', stop),
             ('trace-report', final_trace),
             ('niri-restore', restore_niri),
-            ('input-stop', lambda: command(['sudo', '-n', 'systemctl', 'stop', input_unit], env) if input_started else None),
+            ('input-stop', stop_input),
             ('original-console', verify_original),
             ('runtime', retire_runtime),
         ])
