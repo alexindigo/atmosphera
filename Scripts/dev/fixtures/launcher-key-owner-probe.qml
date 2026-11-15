@@ -523,7 +523,7 @@ Item {
       probe.core().visible = hidden !== "true";
     }
     function migrationCases(): string {
-      const component = Qt.createComponent(Quickshell.shellDir + "/Commons/Migrations/Migration62.qml");
+      const component = Qt.createComponent(Quickshell.shellDir + "/Scripts/dev/fixtures/Migration62.qml");
       const migration = component.createObject(probe);
       const rows = [];
       for (const value of [["Del"], ["Ctrl+D"], [], ["Del", "Ctrl+D"], ["Shift+Del"]]) {

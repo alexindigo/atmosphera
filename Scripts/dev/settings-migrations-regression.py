@@ -99,6 +99,10 @@ def main():
     rows = []
     oracle = args.installed/'i5-migration-oracle'
     shutil.copytree(args.source/'Scripts/dev/fixtures/settings-migration-oracle', oracle)
+    wrapper = args.installed/'i5-migration62.qml'
+    with wrapper.open('xb') as stream:
+        stream.write((args.source/'Scripts/dev/fixtures/Migration62.qml').read_bytes().replace(
+            b'../../../Commons/Migrations/SettingsMigrationSource.js', b'./Commons/Migrations/SettingsMigrationSource.js'))
 
     def run(name, spec, negative=None):
         env = dict(os.environ, I5_MIGRATION_SPEC=json.dumps(spec), QML_DISABLE_DISK_CACHE='1')
@@ -193,6 +197,7 @@ def main():
     finally:
         resource.write_bytes(original_resource)
         probe.unlink()
+        wrapper.unlink()
         shutil.rmtree(oracle)
 
 
