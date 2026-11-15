@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Guest-only release-review regressions for installed CLI and shell handoff."""
 import argparse
+import atexit
 import json
 import os
 from pathlib import Path
@@ -25,8 +26,11 @@ def main():
     stub = args.work.resolve() / 'stub'
     stub.mkdir()
     (stub / 'busctl').write_text('''#!/bin/bash
-if [ "$REVIEW_MODE" = absent ]; then exit 1; fi
-if [[ "$*" == *GetNameOwner* ]]; then
+if [[ "$*" == *NameHasOwner* ]]; then
+  if [ "$REVIEW_MODE" = absent ] || { [ -f "$REVIEW_WORK/stopped" ] && [ "$REVIEW_MODE" != successor ]; }; then
+    echo 'b false'; else echo 'b true'; fi
+elif [ "$REVIEW_MODE" = absent ]; then exit 1
+elif [[ "$*" == *GetNameOwner* ]]; then
   if [ -f "$REVIEW_WORK/stopped" ]; then
     if [ "$REVIEW_MODE" = successor ]; then echo 's ":1.99"'; else exit 1; fi
   else echo 's ":1.42"'; fi
@@ -36,7 +40,8 @@ else echo 'b true'; fi
 ''')
     (stub / 'qs').write_text('''#!/bin/bash
 printf '%s\\n' "$*" >> "$REVIEW_WORK/calls"
-if [ "$1" = kill ]; then touch "$REVIEW_WORK/stopped"; exit 0; fi
+if [ "$1" = list ]; then echo "[{\\"id\\":\\"review-fixture\\",\\"pid\\":$REVIEW_PID}]"; exit 0; fi
+if [ "$1" = kill ]; then kill -TERM "$REVIEW_PID"; touch "$REVIEW_WORK/stopped"; exit 0; fi
 if [ "$1" = -n ]; then echo started; exit 0; fi
 if [[ "$*" == *'dialog cancel'* ]]; then exit 0; fi
 case "$REVIEW_MODE" in
@@ -52,10 +57,16 @@ printf '%s' "$reply" > "$fifo"
 ''')
     for path in stub.iterdir():
         path.chmod(0o755)
-    impossible = int(Path('/proc/sys/kernel/pid_max').read_text()) + 1
+    sleepers = [subprocess.Popen(['sleep', '300']) for _ in range(2)]
+    def reap():
+        for child in sleepers:
+            if child.poll() is None:
+                child.terminate()
+            child.wait(timeout=5)
+    atexit.register(reap)
     env = dict(os.environ, PATH=f'{stub}:{os.environ["PATH"]}',
-               REVIEW_WORK=str(args.work.resolve()), REVIEW_PID=str(impossible),
-               REVIEW_SUCCESSOR=str(impossible + 1), REVIEW_MODE='absent',
+               REVIEW_WORK=str(args.work.resolve()), REVIEW_PID=str(sleepers[0].pid),
+               REVIEW_SUCCESSOR=str(sleepers[1].pid), REVIEW_MODE='absent',
                XDG_RUNTIME_DIR=str(args.work.resolve()), ATMOSPHERA_DIALOG_TIMEOUT='1')
     results = []
 
