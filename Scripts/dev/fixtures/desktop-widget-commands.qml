@@ -30,6 +30,8 @@ PanelWindow {
     id: popupHost
     readonly property var dialogParent: scene
     function hideDynamicMenu() {}
+    function close() { return true; }
+    function requestPresentation() { return 0; }
     function showDialog(dialog) {}
   }
   readonly property var runtimeWidget: runtimeLoader.item

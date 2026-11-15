@@ -4,7 +4,9 @@ import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Modules.MainScreen
 import qs.Services.Plugins
+import qs.Services.UI
 import qs.Widgets
 
 ShellRoot {
@@ -95,7 +97,7 @@ ShellRoot {
     if (phase === "cancel" && popup.opened && page) {
       check(!popup.dirty && ownerSaves === 0 && applies === 0, "initialization publishes nothing");
       page.setLabel("cancelled-local");
-      popup.requestClose();
+      check(popupHost.close() === false && popupHost.popupContentItem === popup && popupHost.visible, "host retains dirty editor");
       check(popup.discardPending && api.pluginSettings.label === "shared", "local buffer detected without Save");
       popup.keepEditing();
       check(popup.visible && page.labelText === "cancelled-local", "keep editor and buffer");
@@ -109,12 +111,15 @@ ShellRoot {
       page.setLabel("shared-first");
       popup.applySettings();
       popup.applySettings();
+      check(popupHost.close() === false && popupHost.popupContentItem === popup, "host refuses held Apply close");
       popup.requestClose();
       popup.confirmDiscard();
       popup.openPluginSettings(manifest, "settings");
       check(applies === 1 && popup.busy && popup.visible && !popup.discardPending && page.saves === 1 && page.completions === 0, "single Apply and busy competition");
+      popupHost.visible = false;
       phase = "held";
     } else if (phase === "held" && release) {
+      check(popupHost.visible && popupHost.popupContentItem === popup && popup.visible, "native hide retains real receipt dependencies");
       check(receipts === 0 && page.completions === 0 && popup.busy && held.status === "saved", "real IO receipt held before feedback");
       deliver();
       check(!popup.busy && !popup.saveFailed && page.completions === 2 && receipts === 1 && ownerSaves === 1 && !popup.dirty, "receipt-driven page callbacks and current refresh");
@@ -227,13 +232,16 @@ ShellRoot {
       if (pluginId === "i4-popup") root.ownerSaves++;
     }
   }
-  FloatingWindow {
-    visible: true
-    implicitWidth: 860
-    implicitHeight: 740
+  PopupMenuWindow {
+    id: popupHost
+    shellScreen: Quickshell.screens[0]
     NPluginSettingsPopup {
       id: popup
-      parent: Overlay.overlay
+      parent: popupHost.dialogParent
+      onAboutToShow: {
+        if (popupHost.popupContentItem !== popup)
+          popupHost.showDialog(popup);
+      }
       onSettingsCompleted: result => { root.receipts++; }
     }
   }

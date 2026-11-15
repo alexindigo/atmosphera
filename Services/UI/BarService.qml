@@ -511,7 +511,8 @@ Singleton {
   // Helper to close any existing dialogs in a popup menu window
   function closeExistingDialogs(popupMenuWindow) {
     if (popupMenuWindow && popupMenuWindow.hasDialog)
-      popupMenuWindow.close();
+      return popupMenuWindow.close();
+    return true;
   }
 
   // Capture the displayed owner before asynchronous component creation. A widget
@@ -633,7 +634,9 @@ Singleton {
     }
 
     // Close any existing dialogs first to prevent stacking
-    closeExistingDialogs(popupMenuWindow);
+    if (!closeExistingDialogs(popupMenuWindow))
+      return false;
+    var generation = popupMenuWindow.requestPresentation();
 
     if (PanelService.openedPanel) {
       PanelService.openedPanel.close();
@@ -658,11 +661,15 @@ Singleton {
                                           });
 
       if (dialog) {
+        if (popupMenuWindow.showDialog(dialog, generation) === false) {
+          editor.detach();
+          dialog.destroy();
+          return;
+        }
         dialog.closed.connect(() => {
           editor.detach();
           dialog.destroy();
         });
-        popupMenuWindow.showDialog(dialog);
         dialog.open();
       } else {
         editor.detach();
@@ -705,7 +712,9 @@ Singleton {
     }
 
     // Close any existing dialogs first to prevent stacking
-    closeExistingDialogs(popupMenuWindow);
+    if (!closeExistingDialogs(popupMenuWindow))
+      return false;
+    var generation = popupMenuWindow.requestPresentation();
 
     var component = Qt.createComponent(Quickshell.shellDir + "/Widgets/NPluginSettingsPopup.qml");
 
@@ -716,9 +725,15 @@ Singleton {
                                           });
 
       if (dialog) {
+        if (popupMenuWindow.showDialog(dialog, generation) === false) {
+          dialog.destroy();
+          return;
+        }
         dialog.closed.connect(() => dialog.destroy());
-        popupMenuWindow.showDialog(dialog);
-        dialog.openPluginSettings(pluginManifest);
+        if (dialog.openPluginSettings(pluginManifest) === false) {
+          popupMenuWindow.close();
+          dialog.destroy();
+        }
       } else {
         Logger.e("BarService", "Failed to create plugin settings dialog");
       }

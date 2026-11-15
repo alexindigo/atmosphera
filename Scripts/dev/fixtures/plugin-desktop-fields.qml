@@ -41,6 +41,8 @@ PanelWindow {
     readonly property var dialogParent: scene
     function hideDynamicMenu() {
     }
+    function close() { return true; }
+    function requestPresentation() { return 0; }
     function showDialog(value) {
       root.dialog = value;
     }
