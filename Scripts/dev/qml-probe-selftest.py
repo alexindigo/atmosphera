@@ -185,6 +185,40 @@ ShellRoot {
                 if split:
                     self.assertEqual((root / "shell.qml").read_text(), bootstrap)
 
+    def test_chooser_followup_probes_keep_the_resolved_owner(self):
+        from filechooser_leaks import add_checkpoint_handler
+        tree = ast.parse((HERE / "filechooser-isolation-regression.py").read_text())
+        instrument = next(node for node in tree.body if isinstance(node, ast.FunctionDef)
+                          and node.name == "instrument")
+        heap = next(node for node in ast.walk(tree) if isinstance(node, ast.If)
+                    and ast.unparse(node.test) == "a.heap_probe"
+                    and any(isinstance(child, ast.Assign) and any(isinstance(t, ast.Name)
+                            and t.id == "path" for t in child.targets) for child in node.body))
+        code = compile(ast.Module(body=heap.body, type_ignores=[]), "heap-followup", "exec")
+        for split in (False, True):
+            for mode in ("retention", "heap"):
+                with self.subTest(split=split, mode=mode), tempfile.TemporaryDirectory() as temporary:
+                    root = Path(temporary)
+                    bootstrap = "ShellRoot { Loader { sourceComponent: ShellSession {} } }"
+                    session = "ShellRoot { Loader { sourceComponent: Item { id: shellRoot; } } }"
+                    entry = root / "shell.qml"
+                    entry.write_text(bootstrap if split else session)
+                    if split:
+                        (root / "ShellSession.qml").write_text(session)
+                    scope = {"inject_probe": inject_probe, "probe_owner_path": probe_owner_path, "shell": root}
+                    exec(compile(ast.Module(body=[instrument], type_ignores=[]), "instrument", "exec"), scope)
+                    scope["instrument"](root, "shell.qml", "    function collectGarbage(): void { gc(); }")
+                    if mode == "retention":
+                        add_checkpoint_handler(root)
+                    else:
+                        exec(code, scope)
+                    owner = probe_owner_path(root).read_text()
+                    expected = ("leakCounts", "leakCheckpoint") if mode == "retention" else ("lifetimes",)
+                    self.assertTrue(all(owner.count("function " + name + "(") == 1 for name in expected))
+                    self.assertEqual(owner.count("function collectGarbage("), 1)
+                    if split:
+                        self.assertEqual(entry.read_text(), bootstrap)
+
     def test_inert_startup_preserves_the_complete_fixture(self):
         prelude = 'import QtQuick\nimport Quickshell\n// ShellRoot { fake }\n'
         body = 'ShellRoot { id: root; Timer { interval: 300; running: true } }\n'

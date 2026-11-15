@@ -239,7 +239,7 @@ def main():
         if observe_retention:
             add_checkpoint_handler(shell)
         if a.heap_probe:
-            path = shell / "shell.qml"
+            path = probe_owner_path(shell)
             text = path.read_text()
             needle = "    function collectGarbage(): void { gc(); }"
             assert text.count(needle) == 1

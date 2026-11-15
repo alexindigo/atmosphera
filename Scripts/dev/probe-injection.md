@@ -10,6 +10,8 @@ Resolve full-shell input with `probe_owner_path(shell)` first. It checks the
 bootstrap `shell.qml` and split `ShellSession.qml` for one declaring owner using
 the same lexer. Bootstrap wrapper depth and file placement do not change scope.
 Component-specific probes still address their own file and explicit ID.
+Chooser GC and heap-lifetime follow-up instrumentation resolves the same owner,
+so both the legacy entry and split session keep their original bootstrap intact.
 
 The helper reuses `qml-identifiers.py`'s lexer for comments, strings, templates
 and regular expressions. Missing/ambiguous IDs or unbalanced braces fail before
