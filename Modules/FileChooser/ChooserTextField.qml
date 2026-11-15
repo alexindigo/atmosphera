@@ -13,23 +13,50 @@ ColumnLayout {
   property real fontSize: Style.fontSizeM
   property alias text: field.text
   property alias inputItem: field
+  property alias placeholderText: field.placeholderText
+  property alias readOnly: field.readOnly
+  property var icon: ""
   signal accepted
   signal textEdited
+  signal keyPressed(var event)
+  signal editingStarted
   spacing: Style.marginS
-  NText { visible: root.label !== ""; text: root.label; pointSize: Style.fontSizeS; color: AtmoColor.mOnSurfaceVariant }
-  NText { id: typography; visible: false; pointSize: root.fontSize }
+  NText {
+    visible: root.label !== ""
+    text: root.label
+    pointSize: Style.fontSizeS
+    color: AtmoColor.mOnSurfaceVariant
+  }
+  NText {
+    id: typography
+    visible: false
+    pointSize: root.fontSize
+  }
   TextField {
     id: field
     Layout.fillWidth: true
     implicitHeight: Style.baseWidgetSize * 1.25 * Style.uiScaleRatio
     color: AtmoColor.mOnSurface
+    placeholderTextColor: AtmoColor.mOnSurfaceVariant
     font: typography.font
-    leftPadding: Style.marginL
+    leftPadding: root.icon !== "" ? height : Style.marginL
     rightPadding: Style.marginL
     selectByMouse: true
     Accessible.name: root.accessibleName
     onAccepted: root.accepted()
     onTextEdited: root.textEdited()
+    onActiveFocusChanged: if (activeFocus) root.editingStarted()
+    Keys.onPressed: event => { event.accepted = false; root.keyPressed(event); }
+    AtmoIcon {
+      visible: root.icon !== ""
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      width: parent.height
+      height: width
+      icon: root.icon
+      pointSize: Style.fontSizeM
+      color: AtmoColor.mOnSurfaceVariant
+    }
     background: Rectangle {
       color: AtmoColor.mSurface
       radius: Style.iRadiusS

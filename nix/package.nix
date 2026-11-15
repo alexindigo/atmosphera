@@ -12,6 +12,7 @@
     wlr-randr
     imagemagick
     wget
+    glib # gio trash implements the freedesktop Trash specification
     (python3.withPackages (pp: lib.optional calendarSupport pp.pygobject3))
   ],
 

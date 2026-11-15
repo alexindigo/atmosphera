@@ -5,24 +5,26 @@ import copy
 import json
 import os
 from pathlib import Path
+from filechooser_profile import current_profile, profile_argument
 import subprocess
 import time
 from unittest.mock import Mock, patch
 
 import filechooser_isolation as isolation
-from filechooser_isolation import ROOT, cgroup, enter, process_stat, sample_process, sample_violation
+from filechooser_isolation import cgroup, enter, process_stat, sample_process, sample_violation
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--label", required=True)
     parser.add_argument("--mode", choices=("stress", "escape", "preexec"), required=True)
+    profile_argument(parser)
     a = parser.parse_args()
     enter(audit_probe=a.mode == "escape")
-    output = ROOT / "evidence" / a.label
+    output = current_profile().evidence / a.label
     output.mkdir()
     base = Path(os.environ["FILECHOOSER_ISOLATION"])
-    outer = ROOT / "evidence" / (a.label + "-isolation")
+    outer = current_profile().evidence / (a.label + "-isolation")
     expected = str(cgroup())
     cases = []
     def check(name, condition, detail=None):

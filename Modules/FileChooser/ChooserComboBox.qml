@@ -55,6 +55,7 @@ ComboBox {
     required property int index
     width: root.width - Style.margin2M
     highlighted: root.highlightedIndex === index
+    Accessible.name: modelData.name
     contentItem: NText {
       text: modelData.name
       pointSize: Style.fontSizeM

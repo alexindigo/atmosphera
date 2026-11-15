@@ -18,7 +18,8 @@ import unittest
 from unittest.mock import patch
 import zlib
 
-from filechooser_regression import ROOT, guest
+from filechooser_regression import guest
+from filechooser_profile import current_profile, exact_source, profile_argument
 from filechooser_isolation import enter, profile_env
 
 enter()
@@ -26,11 +27,12 @@ enter()
 p = argparse.ArgumentParser(description=__doc__)
 p.add_argument("--source", type=Path, required=True)
 p.add_argument("--label", required=True)
+profile_argument(p)
 a = p.parse_args()
 guest()
 source = a.source.resolve()
-assert source.is_relative_to(ROOT / "sources")
-output = ROOT / "evidence" / a.label
+assert exact_source(source)
+output = current_profile().evidence / a.label
 assert not output.exists()
 output.mkdir()
 spec = importlib.util.spec_from_file_location("thumbnails", source / "Scripts/python/src/filechooser/thumbnails.py")
@@ -282,7 +284,7 @@ suite = unittest.defaultTestLoader.loadTestsFromTestCase(CacheTests)
 with (output / "run.log").open("w") as log:
     result = unittest.TextTestRunner(stream=log, verbosity=2).run(suite)
 receipt = {"passed": result.wasSuccessful(), "cases": result.testsRun, "failures": [(str(t), e) for t, e in result.failures + result.errors]}
-runtime = ROOT / "runtime" / a.label
+runtime = current_profile().runtime / a.label
 assert not runtime.exists()
 runtime.mkdir()
 shell = runtime / "shell"

@@ -4,6 +4,7 @@
 import argparse
 import json
 from pathlib import Path
+from filechooser_profile import profile_argument
 import sys
 import time
 
@@ -14,6 +15,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--label", required=True)
+    profile_argument(p)
     a = p.parse_args()
     r = Run(a.source, a.label)
     try:

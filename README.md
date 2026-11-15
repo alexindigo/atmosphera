@@ -112,7 +112,7 @@ For installing the git `main` branch without an AUR helper.
 # from the official repos
 sudo pacman -S --needed quickshell qt6-base qt6-declarative qt6-multimedia qt6-imageformats \
   imagemagick brightnessctl ffmpeg python python-dbus python-gobject \
-  wlr-randr cliphist wlsunset
+  wlr-randr cliphist wlsunset udisks2
 
 # QML helper libs from the AUR (or build from source)
 yay -S --needed qt6-dbusqml 'qt6-configqml>=0.5.0' qt6-xdgiconqml-git qt6-niriqml qt6-mangowcqml
@@ -122,6 +122,10 @@ yay -S --needed qt6-dbusqml 'qt6-configqml>=0.5.0' qt6-xdgiconqml-git qt6-niriqm
 `qt6-webengine` for PDF preview in the file chooser; without it, PDFs show file
 information. Nix includes `qt6.qtimageformats`; enable `pdfPreviewSupport` in
 `nix/package.nix` to include `qt6.qtwebengine` for PDF previews.
+
+The file chooser discovers and mounts local volumes through the system UDisks2
+D-Bus service. On NixOS enable `services.udisks2.enable = true`; Home Manager
+cannot enable system services. Without UDisks2, folders and favorites still work.
 
 **2. Build and install the niri IPC module (niri sessions, from source)**
 
@@ -364,7 +368,7 @@ Some features go beyond what a desktop shell can or should do. These are typical
 - **File management**: use a file manager application
 - **Display/login greeter**: this runs before the shell and is managed separately
 - **Window management and overview**: workspace switching and window tiling are compositor responsibilities
-- **Removable drive mounting**: handled by system services like udisks and desktop applications
+- **Volume mounting**: the file chooser uses UDisks2 for mount, unmount and eject
 - **Screen mirroring/casting**: managed by the compositor or dedicated tools
 
 We appreciate feature suggestions, but if a request falls into this category, it's likely outside what Atmosphera can provide. When in doubt, feel free to ask in our [GitHub Issues](https://github.com/alexindigo/atmosphera/issues).

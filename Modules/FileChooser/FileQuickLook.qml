@@ -7,7 +7,7 @@ import qs.Commons
 import qs.Services.Files
 import qs.Widgets
 
-FocusScope {
+ChooserFocusScope {
   id: root
   required property var preview
   property bool opened: false
@@ -37,6 +37,8 @@ FocusScope {
   signal moveRequested(int delta)
   visible: opened
   clip: true
+  Accessible.role: Accessible.Dialog
+  Accessible.name: root.item ? root.item.name : I18n.tr("widgets.file-picker.title")
 
   FilePlayback {
     id: mediaPlayback

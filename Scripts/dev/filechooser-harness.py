@@ -15,8 +15,12 @@ import sys
 
 from filechooser_regression import desktop_fixture
 from filechooser_isolation import enter, guest, profile_env
+from filechooser_profile import current_profile, workspace, exact_source, profile_argument
 
-ROOT = Path("/home/tester/Projects/atmosphera-filechooser")
+
+def workload_seconds():
+    """Use the checked enclosing session's budget, including extended UI walks."""
+    return int(os.environ["FILECHOOSER_SESSION_SECONDS"])
 
 
 def main():
@@ -24,16 +28,27 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--label", required=True)
+    profile_argument(p)
     a = p.parse_args()
     guest()
     source = a.source.resolve()
-    runtime, evidence = ROOT / "runtime" / a.label, ROOT / "evidence" / a.label
-    if not source.is_relative_to(ROOT / "sources") or runtime.exists() or evidence.exists():
+    runtime, evidence = current_profile().runtime / a.label, current_profile().evidence / a.label
+    if not exact_source(source) or runtime.exists() or evidence.exists():
         p.error("requires exact source and fresh label")
     runtime.mkdir()
     evidence.mkdir()
     shell = runtime / "shell"
     shutil.copytree(source, shell, symlinks=True)
+    if os.environ.get("FILECHOOSER_NATIVE_SCROLL_BASELINE") == "1":
+        listing = shell / "Modules/FileChooser/FileListing.qml"
+        text = listing.read_text()
+        import re
+        text, removed = re.subn(r"\s*ChooserScrollHandler\s*\{\s*viewport:\s*(?:grid|list)\s*;?\s*lineHeight:\s*wheelTypography\.implicitHeight\s*(?:;\s*horizontal:\s*root\.compact\s*)?\}", "", text)
+        assert removed == 2
+        assert text.count("reuseItems: true") == text.count("model: visible ? root.request.browser.model : null") == 2
+        text = text.replace("reuseItems: true", "reuseItems: false").replace("model: visible ? root.request.browser.model : null", "model: root.request.browser.model")
+        listing.write_text(text)
+        (evidence / "native-baseline-FileListing.qml").write_text(text)
     (shell / ".qmlls.ini").touch()
     probe = shell / "filechooser-harness.qml"
     probe.write_text((source / "Scripts/dev/fixtures/filechooser-harness.qml").read_text().replace('"../../../Helpers/', '"Helpers/'))
@@ -86,7 +101,8 @@ def main():
                ATMOSPHERA_CACHE_DIR=str(cache) + "/", ATMOSPHERA_DEBUG="0")
     (evidence / "recipe.json").write_text(json.dumps({"source": str(source), "runtime": str(runtime), "probe": str(probe), "fixtures": str(fixtures), "environment": {k: v for k, v in env.items() if k.startswith(("ATMOSPHERA_", "FILECHOOSER_", "XDG_", "WAYLAND_", "NIRI_", "TMPDIR", "LANG", "LC_"))}}, indent=2))
     with (evidence / "harness.log").open("w") as log:
-        result = subprocess.run(["timeout", "--kill-after=5s", "840", "qs", "-p", str(probe)], cwd=shell, env=env, stdout=log, stderr=subprocess.STDOUT, timeout=850)
+        seconds = workload_seconds()
+        result = subprocess.run(["timeout", "--kill-after=5s", str(seconds), "qs", "-p", str(probe)], cwd=shell, env=env, stdout=log, stderr=subprocess.STDOUT, timeout=seconds + 10)
     return result.returncode
 
 

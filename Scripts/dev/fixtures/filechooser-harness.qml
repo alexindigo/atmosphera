@@ -1,4 +1,5 @@
 import QtQuick
+import QtTest
 import Quickshell
 import Quickshell.Io
 import "../../../Helpers/PortalPaths.js" as PortalPaths
@@ -9,11 +10,27 @@ import qs.Services.UI
 
 ShellRoot {
   id: root
+  property var touchSequence: null
+  TestEvent {
+    id: nativeTouch
+  }
   readonly property string base: Quickshell.env("FILECHOOSER_UI_ROOT")
   property var request: null
   property var replies: []
   property var imageDecodeSamples: []
   property var iconMountFixture: null
+  property bool tracingScroll: false
+  property var scrollFrames: []
+  property var scrollClock: null
+  FrameAnimation {
+    running: root.tracingScroll
+    onTriggered: root.scrollFrames.push({
+                                          time: root.scrollClock.wallMs(),
+                                          cpuMs: root.scrollClock.cpuMs(),
+                                          frameMs: frameTime * 1000,
+                                          view: windowLoader.item.scrollState()
+                                        })
+  }
   Connections {
     target: FileTypes
     function on_MountsChanged() {
@@ -99,15 +116,30 @@ ShellRoot {
                                                         }, (_, i) => request.browser.entry(i).name) : [],
                             recentLocations: FileChooserMemory.recentLocations,
                             places: FilePlaces.places,
+                            placesLoading: FilePlaces.loading,
+                            placesState: window && window.placesState ? window.placesState() : {},
                             recentFiles: FilePlaces.recentFiles,
+                            recentFolders: FilePlaces.recentFolders,
+                            recentRows: window ? window.recentRows() : [],
                             removable: FilePlaces.removable,
                             cursor: selected ? selected.cursor : -1,
                             name: entry ? entry.name : "",
                             selected: selected ? selected.selectedPaths : [],
                             view: request ? request.viewMode : "",
+                            views: window && typeof window.viewState === "function" ? window.viewState() : {},
+                            scroll: window ? window.scrollState() : {},
                             sort: request ? request.browser.sortKey : "",
                             descending: request ? request.browser.sortDescending : false,
                             filter: request && request.currentFilter ? request.currentFilter[0] : "",
+                            filterText: request ? request.browser.filterText || "" : "",
+                            saveFilterText: request ? request.browser.saveFilterText || "" : "",
+                            saveFilterEnabled: request ? request.saveFilterEnabled === true : false,
+                            autoExtension: request ? request.autoExtension === true : false,
+                            preferredSuffix: request ? request.preferredSuffix || "" : "",
+                            creatingFolder: request ? request.browser.creatingFolder === true : false,
+                            createFolderError: request ? request.browser.createFolderError || "" : "",
+                            folderEditor: window && window.folderEditorState ? window.folderEditorState() : {},
+                            operations: window && window.operationState ? window.operationState() : {},
                             choices: request ? request.choiceValues : {},
                             layoutGeometry: window ? window.layoutGeometry() : {},
                             appName: request ? request.appName : "",
@@ -136,6 +168,7 @@ ShellRoot {
                             choiceCenters: window ? window.choiceGeometry() : [],
                             breadcrumbGaps: window ? window.breadcrumbGeometry() : [],
                             breadcrumbText: window ? window.breadcrumbText : [],
+                            pathEntry: window && window.pathEntryState ? window.pathEntryState() : {},
                             selectionCountVisible: window ? window.selectionCountVisible : false,
                             localeName: Qt.locale().name,
                             preview: window ? window.quickLookOpen : false,
@@ -187,6 +220,32 @@ ShellRoot {
     function state(): string {
       return root.snapshot();
     }
+    function touchStart(x: real, y: real): void {
+      root.touchSequence = nativeTouch.touchEvent(windowLoader.item.contentItem);
+      root.touchSequence.press(0, windowLoader.item.contentItem, x, y).commit();
+    }
+    function touchMove(x: real, y: real): void {
+      root.touchSequence.move(0, windowLoader.item.contentItem, x, y).commit();
+    }
+    function touchEnd(x: real, y: real): void {
+      root.touchSequence.release(0, windowLoader.item.contentItem, x, y).commit();
+      root.touchSequence = null;
+    }
+    function startScrollTrace(): void {
+      if (!root.scrollClock)
+        root.scrollClock = Qt.createQmlObject('import FileChooserTest 1.0; FrameClock {}', root, "scroll-frame-clock");
+      Logger.i("ScrollTrace", "BEGIN " + root.request.viewMode);
+      root.scrollFrames = [];
+      root.tracingScroll = true;
+    }
+    function scrollTrace(): string {
+      root.tracingScroll = false;
+      Logger.i("ScrollTrace", "END " + root.request.viewMode);
+      return JSON.stringify(root.scrollFrames);
+    }
+    function scrollState(): string {
+      return JSON.stringify(windowLoader.item.scrollState());
+    }
     function visibleText(): string {
       var texts = [];
       function visit(node) {
@@ -212,6 +271,10 @@ ShellRoot {
     }
     function focusListing(): void {
       windowLoader.item.focusListing();
+    }
+    function thumbnails(value: bool): void {
+      if (root.request.viewSettings)
+        root.request.viewSettings.thumbnails = value;
     }
     function panelWidth(width: real): void {
       windowLoader.item.preferredPanelWidth = width;
