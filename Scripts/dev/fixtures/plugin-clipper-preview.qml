@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
+import "../../../Helpers/SettingsValues.js" as SettingsValues
 import qs.Commons
 import qs.Services.Plugins
 import qs.Widgets
@@ -159,7 +160,7 @@ ShellRoot {
     if (verifyOnly) {
       Service._openSettingsOwner("clipper", function (value) {
         try {
-          check(value!==null,"cold native owner opens");
+          check(value !== null, "cold native owner opens");
           root.register(value);
           root.phase = "restart";
         } catch (error) {
@@ -186,12 +187,35 @@ ShellRoot {
             }
           }
         ];
-    Service._openSettingsOwner("clipper",function(owner){try{check(owner!==null,"native owner opens");register(owner);
-    Settings.saveResult(function(result){try{check(result.status==="saved","placement seed saved");
-        popup.openInstanceSettings(root.manifest, root.instance, "settings");
-        root.phase = "preview";
-    }catch(error){console.error(String(error));Qt.exit(2);}});
-    }catch(error){console.error(String(error));Qt.exit(2);}});
+    var seed = JSON.stringify(Settings.data.bar.widgets.left);
+    Service._openSettingsOwner("clipper", function (owner) {
+      try {
+        check(owner !== null, "native owner opens");
+        register(owner);
+        Settings.saveResult(function (result) {
+          try {
+            check(result.status === "saved" || result.status === "nothing_to_save", "placement seed acknowledged: " + JSON.stringify(result));
+            seedFile.reload();
+            seedFile.waitForJob();
+            check(SettingsValues.equal(JSON.parse(seedFile.text()).widgets.left, JSON.parse(seed)), "exact placement seed on disk");
+            console.log("I4_CLIPPER_SEED:", result.status, seed);
+            popup.openInstanceSettings(root.manifest, root.instance, "settings");
+            root.phase = "preview";
+          } catch (error) {
+            console.error(String(error));
+            Qt.exit(2);
+          }
+        });
+      } catch (error) {
+        console.error(String(error));
+        Qt.exit(2);
+      }
+    });
+  }
+  FileView {
+    id: seedFile
+    path: Settings.configDir + "settings/bar.json"
+    printErrors: false
   }
   function drive() {
     if (phase === "preview" && popup.opened && popup.settingsPage) {
@@ -214,7 +238,8 @@ ShellRoot {
       popup.confirmDiscard();
       phase = "cancel";
     } else if (phase === "cancel" && !popup.visible && !popup.currentPlugin) {
-      if(instance.pluginSettings.panelWidth!==1250)return;
+      if (instance.pluginSettings.panelWidth !== 1250)
+        return;
       check(panel.contentPreferredWidth === 1250 * Style.uiScaleRatio && api.pluginSettings.panelWidth === 1200, "cancel reveals current foreign value, no opening snapshot restore");
       popup.openInstanceSettings(manifest, instance, "settings");
       phase = "apply";
@@ -224,7 +249,8 @@ ShellRoot {
       phase = "wait";
     } else if (phase === "wait" && !popup.busy) {
       check(!popup.saveFailed && !popup.dirty, "current receipt clears accepted local work");
-      if(instance.pluginSettings.panelWidth!==1000)return;
+      if (instance.pluginSettings.panelWidth !== 1000)
+        return;
       consumers();
       check(String(consumers().accentColor) === "#123456", "saved color reaches the actual card");
       check(instance.pluginSettings.panelWidth === 1000 && instance.pluginSettings.autoPasteDelay === 700 && api.pluginSettings.panelWidth === 1200, "only selected placement persisted");
@@ -248,9 +274,11 @@ ShellRoot {
       console.log("I4_CLIPPER_PREVIEW: SAVED_PASS");
       Qt.exit(0);
     } else if (phase === "restart") {
-      if(!instance.settingsReady||!sibling.settingsReady)return;
+      if (!instance.settingsReady || !sibling.settingsReady)
+        return;
       consumers();
-      rawPreference.reload();rawPreference.waitForJob();
+      rawPreference.reload();
+      rawPreference.waitForJob();
       check(instance.pluginSettings.autoPasteDelay === 700 && JSON.parse(rawPreference.text()).opaque.keep, "saved selected consumer and raw unknown after cold restart");
       check(String(consumers().accentColor) === "#123456", "saved card color after cold restart");
       console.log("I4_CLIPPER_PREVIEW: RESTART_PASS");
@@ -258,9 +286,9 @@ ShellRoot {
     }
   }
   FileView {
-    id:rawPreference
-    path:Settings.configDir+"settings/plugins/clipper.json"
-    printErrors:false
+    id: rawPreference
+    path: Settings.configDir + "settings/plugins/clipper.json"
+    printErrors: false
   }
   FileView {
     id: pasteResult

@@ -6,6 +6,7 @@ import qs.Commons
 import qs.Services.Plugins
 import qs.Services.UI
 import qs.Widgets
+import "../../../Helpers/SettingsValues.js" as SettingsValues
 
 ShellRoot {
   id: root
@@ -169,12 +170,22 @@ ShellRoot {
             }
           }
         ];
+    var seed = JSON.stringify(Settings.data.bar.widgets.left);
     Service._openSettingsOwner("keybind-cheatsheet",function(owner){try{check(owner!==null,"native owner opens");register(owner);
-    Settings.saveResult(function(result){try{check(result.status==="saved","placement seed saved");
+    Settings.saveResult(function(result){try{
+        check(result.status === "saved" || result.status === "nothing_to_save", "placement seed acknowledged: " + JSON.stringify(result));
+        seedFile.reload(); seedFile.waitForJob();
+        check(SettingsValues.equal(JSON.parse(seedFile.text()).widgets.left, JSON.parse(seed)), "exact placement seed on disk");
+        console.log("I4_KEYBIND_SEED:", result.status, seed);
         popup.openInstanceSettings(root.manifest, root.instance, "settings");
         root.phase = "preview";
     }catch(error){console.error(String(error));Qt.exit(2);}});
     }catch(error){console.error(String(error));Qt.exit(2);}});
+  }
+  FileView {
+    id: seedFile
+    path: Settings.configDir + "settings/bar.json"
+    printErrors: false
   }
   function drive() {
     if (phase === "preview" && popup.opened && popup.settingsPage) {
