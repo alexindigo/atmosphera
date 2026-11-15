@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import "../../Helpers/PortalPaths.js" as PortalPaths
+import "FilePaths.js" as Paths
 
 Scope {
   id: root
@@ -17,6 +18,9 @@ Scope {
   property bool sortDescending: false
   property bool showHidden: false
   property var nameFilter: null
+  property string filterText: ""
+  property string saveFilterText: ""
+  readonly property bool filtering: filterText !== "" || saveFilterText !== ""
   readonly property int count: {
     void _listingRevision;
     return listing.rowCount();
@@ -25,6 +29,23 @@ Scope {
   readonly property bool canForward: _historyIndex >= 0 && _historyIndex < _history.length - 1
   readonly property bool hasHidden: _hasHidden
   readonly property var pathParts: breadcrumbParts(currentPath, FilePlaces.home)
+  readonly property var breadcrumbs: Paths.breadcrumbs(currentPath, FilePlaces.home)
+  readonly property var operations: fileOperations
+  readonly property bool creatingFolder: fileOperations.creatingFolder
+  readonly property bool createFolderBusy: fileOperations.createFolderBusy
+  readonly property string createFolderError: fileOperations.createFolderError
+  property alias newFolderName: fileOperations.newFolderName
+  signal folderCreated(string path)
+  signal navigationRequested(string path)
+  signal historyLeaving()
+  signal historyRestored(var state)
+  property var _restoreHistory: null
+  function rememberHistory(key, value) {
+    if (_historyIndex < 0) return;
+    var history = _history.slice(), entry = history[_historyIndex];
+    history[_historyIndex] = {path: entry.path, state: Object.assign({}, entry.state, {[key]: value})};
+    _history = history;
+  }
 
   function breadcrumbParts(path, home) {
     var inside = path === home || path.startsWith(home === "/" ? "/" : home + "/");
@@ -39,24 +60,35 @@ Scope {
   property int _serial: 0
   property bool _hasHidden: false
   property int _listingRevision: 0
+  property int _pathIndexRevision: -1
+  property var _pathIndices: ({})
   property bool _validating: false
+  property var _folderSource: null
+  property var _loadingSource: null
 
   signal listingChanged
   onListingChanged: _listingRevision++
+  FileOperations {
+    id: fileOperations
+    browser: root
+    onFolderCreated: path => root.folderCreated(path)
+  }
+  // Compatibility surface for existing callers; state/mutations have one owner.
+  function beginCreateFolder() { fileOperations.beginCreateFolder(); }
+  function cancelCreateFolder() { fileOperations.cancelCreateFolder(); }
+  function createFolder(name) { fileOperations.createFolder(name); }
 
   // All filesystem reads are bounded, argument-vector calls. A failed target
   // never reaches FolderListModel, so it cannot disconnect folder from listing.
   readonly property string _checkCode: `
 import errno, json, os, sys
-p = os.path.abspath(os.path.expanduser(sys.argv[1]))
-if any(c in p for c in '#?%'):
-    print(json.dumps({'ok': False, 'reason': 'unsupported-name', 'path': p}))
-    sys.exit(0)
+p = os.path.expanduser(sys.argv[1])
 try:
     with os.scandir(p) as entries:
         if not os.access(p, os.R_OK | os.X_OK):
             raise PermissionError(13, os.strerror(13), p)
         hidden = any(e.name.startswith('.') for e in entries)
+    p = os.path.realpath(p, strict=True) if '..' in p.split('/') else os.path.abspath(p)
     print(json.dumps({'ok': True, 'path': p, 'hidden': hidden}))
 except OSError as e:
     parent = p
@@ -101,6 +133,7 @@ except OSError as e:
   }
 
   function navigate(path) {
+    navigationRequested(path);
     if (typeof path !== "string" || path.indexOf("\u0000") >= 0 || !(path[0] === "/" || path === "~" || path.startsWith("~/"))) {
       ++_serial;
       _validating = false;
@@ -118,7 +151,7 @@ except OSError as e:
       _validating = false;
       var path = (result.path || target).replace(/\/+$/, "") || "/";
       var folder = path.slice(path.lastIndexOf("/") + 1) || "/";
-      _errorText = result.reason === "unsupported-name" ? I18n.tr("widgets.file-picker.unsupported-folder-name", {path: folder}) : I18n.tr("widgets.file-picker.open-folder-error", {path: folder, reason: I18n.tr("widgets.file-picker.folder-reason-" + result.reason)});
+      _errorText = I18n.tr("widgets.file-picker.open-folder-error", {path: folder, reason: I18n.tr("widgets.file-picker.folder-reason-" + result.reason)});
       _status = "error";
       if (monitor && result.missing && result.parent !== target)
         _check(result.parent, -1, false);
@@ -127,39 +160,54 @@ except OSError as e:
     _hasHidden = result.hidden;
     if (monitor)
       return;
-    if (historyIndex >= 0)
+    if (_folderSource && _folderSource.targetPath === currentPath) historyLeaving();
+    if (historyIndex >= 0) {
       _historyIndex = historyIndex;
+      _restoreHistory = _history[historyIndex].state;
+    }
     else if (result.path !== currentPath) {
-      _history = _history.slice(0, _historyIndex + 1).concat([result.path]);
+      _restoreHistory = null;
+      _history = _history.slice(0, _historyIndex + 1).concat([{path: result.path, state: {}}]);
       _historyIndex = _history.length - 1;
     }
+    if (result.path !== currentPath)
+      filterText = "";
     _currentPath = result.path;
-    var uri = PortalPaths.pathToUri(currentPath).uri;
-    // Clearing forces a refresh even when navigating to the same folder.
-    source.folder = "";
-    source.folder = uri;
+    // The labs model also removes watches through its once-decoded URL. Retire
+    // the complete per-folder model, so encoded names cannot retain old watches.
+    if (_loadingSource) _loadingSource.destroy();
+    _loadingSource = sourceFactory.createObject(root, {targetPath: currentPath});
     _validating = false;
   }
 
   function _publishReady() {
-    var loaded = PortalPaths.qmlUrlToPath(source.folder.toString());
+    var source = _folderSource;
+    if (!source) return;
+    var loaded = PortalPaths.folderModelPath(source.folder.toString());
     if (!_validating && _status !== "error" && currentPath && source.status === FolderListModel.Ready && loaded.ok && loaded.path === currentPath) {
       _status = "ready";
       listingChanged();
+      if (_restoreHistory !== null) {
+        var state = _restoreHistory;
+        _restoreHistory = null;
+        historyRestored(state);
+      }
     }
   }
 
   function back() {
     if (canBack) {
+      navigationRequested(_history[_historyIndex - 1].path);
       _status = "loading";
-      _check(_history[_historyIndex - 1], _historyIndex - 1, false);
+      _check(_history[_historyIndex - 1].path, _historyIndex - 1, false);
     }
   }
 
   function forward() {
     if (canForward) {
+      navigationRequested(_history[_historyIndex + 1].path);
       _status = "loading";
-      _check(_history[_historyIndex + 1], _historyIndex + 1, false);
+      _check(_history[_historyIndex + 1].path, _historyIndex + 1, false);
     }
   }
 
@@ -176,45 +224,78 @@ except OSError as e:
     if (index < 0 || index >= listing.rowCount())
       return null;
     var row = listing.mapToSource(listing.index(index, 0)).row;
+    var source = _folderSource;
     return {name: source.get(row, "fileName"), path: source.get(row, "filePath"), directory: source.isFolder(row), size: source.get(row, "fileSize"), modified: source.get(row, "fileModified")};
   }
 
   function indexOfPath(path) {
-    for (var i = 0; i < listing.rowCount(); i++) {
-      if (entry(i).path === path)
-        return i;
+    // Selection may resolve every selected path during a range/filter update.
+    // One derived index per model revision avoids quadratic model traversals.
+    if (_pathIndexRevision !== _listingRevision) {
+      var indices = Object.create(null);
+      for (var i = 0; i < listing.rowCount(); i++)
+        indices[entry(i).path] = i;
+      _pathIndices = indices;
+      _pathIndexRevision = _listingRevision;
     }
-    return -1;
+    var index = _pathIndices[path];
+    return index === undefined ? -1 : index;
   }
 
   onSortKeyChanged: listing.invalidateSorter()
   onSortDescendingChanged: listing.invalidateSorter()
   onShowHiddenChanged: listing.invalidate()
   onNameFilterChanged: listing.invalidate()
+  onFilterTextChanged: listing.invalidate()
+  onSaveFilterTextChanged: listing.invalidate()
 
   Connections {
     target: FileTypes
     function onFiltersChanged() { listing.invalidate(); }
   }
 
-  FolderListModel {
-    id: source
-    folder: ""
-    showHidden: true
-    showDotAndDotDot: false
-    sortField: FolderListModel.Unsorted
-    onStatusChanged: {
-      if (status === FolderListModel.Ready)
-        Qt.callLater(root._publishReady);
+  Component {
+    id: sourceFactory
+    FolderListModel {
+      id: folderModel
+      required property string targetPath
+      property bool primed: false
+      // componentComplete() has a separate, once-decoded existence check. Prime
+      // on root before assigning the adapted target, and never expose that
+      // priming listing. Its Ready edge also drains the initial worker scan.
+      folder: "file:///"
+      showHidden: true
+      showDotAndDotDot: false
+      sortField: FolderListModel.Unsorted
+      onStatusChanged: {
+        if (status !== FolderListModel.Ready) return;
+        if (!primed) {
+          primed = true;
+          folder = "";
+          folder = PortalPaths.folderModelUri(targetPath).uri;
+        } else if (root._loadingSource === folderModel && targetPath === root.currentPath) {
+          var old = root._folderSource;
+          root._folderSource = folderModel;
+          root._loadingSource = null;
+          if (old) old.destroy();
+          Qt.callLater(root._publishReady);
+        } else if (root._folderSource === folderModel) Qt.callLater(root._publishReady);
+      }
     }
   }
 
+  // Qt's technology-preview proxy requires a non-null source even before the
+  // first folder is ready; item views may query rowCount during construction.
+  ListModel { id: emptySource }
   SortFilterProxyModel {
     id: listing
-    model: source
+    model: root._folderSource || emptySource
     filters: FunctionFilter {
       function filter(fileName: string, fileIsDir: bool): bool {
-        return (root.showHidden || !fileName.startsWith(".")) && (fileIsDir || FileTypes.matchesFilter(fileName, root.nameFilter));
+        var name = fileName.toLowerCase();
+        return (root.showHidden || !fileName.startsWith("."))
+          && (fileIsDir || FileTypes.matchesFilter(fileName, root.nameFilter))
+          && name.includes(root.filterText.toLowerCase()) && name.includes(root.saveFilterText.toLowerCase());
       }
     }
     sorters: [

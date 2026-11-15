@@ -3,6 +3,7 @@ import DBus 1.0
 
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 import qs.Portals
 
@@ -11,17 +12,45 @@ import qs.Portals
 Singleton {
   id: root
 
-  readonly property bool elected: _elected
-  readonly property bool ipcReady: _elected && _ipcReady
-  readonly property bool portalReady: _elected && _portalReady
+  readonly property bool elected: _elected && _ownerChecked
+  readonly property bool ipcReady: elected && _ipcReady
+  readonly property bool portalReady: elected && _portalReady
   readonly property string status: !_elected ? (_lost ? "lost" : "waiting") : (ipcReady && portalReady ? "ready" : "acquired")
   property bool _elected: false
   property bool _lost: false
   property bool _ipcReady: false
   property bool _portalReady: false
   property bool _portalsInitialized: false
+  property bool _ownerChecked: false
 
   onStatusChanged: Logger.i("ShellRegistration", status)
+
+  // The same pidfd supervisor serves explicit handoffs and unsupervised raw
+  // spawns. Keep session initialization behind its departed-resource check:
+  // Notifications claims its name only once, when its server is constructed.
+  Process {
+    id: ownerGuard
+    command: ["python3", "-B", Quickshell.shellDir + "/Scripts/bash/shell-owner.py", "watch", "--pid", String(Quickshell.processId), "--instance", Quickshell.instanceId]
+    running: true
+    stderr: SplitParser {
+      onRead: data => Logger.w("ShellRegistration", data)
+    }
+    onExited: (exitCode, exitStatus) => {
+      if (exitCode === 10) {
+        // Acquisition can race the helper's final responsive-owner reply.
+        // An elected successor must finish its resource check, not quit.
+        if (root._elected)
+          ownerGuard.running = true;
+        else
+          Qt.quit();
+      } else if (exitCode === 0) {
+        root._ownerChecked = true;
+      } else {
+        Logger.e("ShellRegistration", "owner recovery failed; session not initialized");
+        Qt.quit();
+      }
+    }
+  }
 
   DBusAdaptor {
     service: "app.atmosphera.Shell"

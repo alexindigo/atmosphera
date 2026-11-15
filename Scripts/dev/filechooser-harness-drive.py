@@ -9,19 +9,19 @@ import subprocess
 import time
 
 from filechooser_isolation import checked, input_command
-
-ROOT = Path("/home/tester/Projects/atmosphera-filechooser")
+from filechooser_profile import workspace, current_profile, profile_argument
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--runtime", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    profile_argument(parser)
     args = parser.parse_args()
     runtime, output = args.runtime.resolve(), args.output.resolve()
     checked()
-    assert "52:54:00:50:b3:8b" in [f.read_text().strip() for f in Path("/sys/class/net").glob("*/address")]
-    assert runtime.is_relative_to(ROOT / "runtime") and output.is_relative_to(ROOT / "evidence") and not output.exists()
+    current_profile().verify(private=True)
+    assert runtime.is_relative_to(current_profile().runtime) and output.is_relative_to(current_profile().evidence) and not output.exists()
     output.mkdir()
     captures = runtime / "captures"
     captures.mkdir()
@@ -82,9 +82,18 @@ def main():
         return wait(lambda s: s["ready"] and not s["settled"])
 
     def choose(prefix):
+        if state()["filterText"] or state()["saveFilterText"]:
+            key("Escape")
         ipc("focusListing")
-        time.sleep(1.05)  # type-ahead prefix timeout is part of FileSelection.
         text(prefix)
+        filtered = wait(lambda s: s["filterText"].lower() == prefix.lower() and s["count"] > 0)
+        target = next(i for i, name in enumerate(filtered["names"]) if name.lower().startswith(prefix.lower()))
+        ipc("focusListing")
+        key("Home")
+        for _ in range(target):
+            key("Right")
+        key("Escape")
+        wait(lambda s: not s["filterText"])
 
     def focus(name):
         for _ in range(45):
@@ -98,7 +107,8 @@ def main():
         check("initial-open-focus", lambda s: s["focus"] == "listing")
         check("presentation-locale", lambda s: s["localeName"] == "en_US")
         check("empty-selection-count-hidden", lambda s: not s["selectionCountVisible"])
-        check("breadcrumb-gaps", lambda s: len(s["breadcrumbGaps"]) == 3 and all(abs(g["before"]-g["after"]) < 0.5 and 0 < g["before"] < 5 for g in s["breadcrumbGaps"]))
+        check("breadcrumb-gaps", lambda s: len(s["breadcrumbGaps"]) == sum(c.get("kind") == "segment" for c in s["layoutGeometry"]["header"]) - 1
+              and len(s["breadcrumbGaps"]) > 0 and all(abs(g["before"]-g["after"]) < 0.5 and 0 < g["before"] < 5 for g in s["breadcrumbGaps"]))
         check("breadcrumb-labels-fit", lambda s: all(not g["clipped"] for g in s["breadcrumbGaps"]))
         check("choice-centerline", lambda s: len(s["choiceCenters"]) == 2 and abs(s["choiceCenters"][0] - s["choiceCenters"][1]) < 0.5)
         key("Home")
@@ -174,7 +184,11 @@ def main():
         check("path-enter", lambda s: s["focus"] == "listing")
         key("BackSpace")
         wait(lambda s: s["ready"] and s["path"] == base)
-        check("backspace-parent", lambda s: s["path"] == base)
+        check("backspace-history", lambda s: s["path"] == base)
+        key("Right", "alt")
+        wait(lambda s: s["ready"] and s["path"] == base + "/References")
+        key("Up", "alt")
+        wait(lambda s: s["ready"] and s["path"] == base)
         key("Left", "alt")
         wait(lambda s: s["ready"] and s["path"] == base + "/References")
         check("alt-left", lambda s: s["path"].endswith("/References"))
@@ -196,7 +210,7 @@ def main():
         check("tilde-path", lambda s: s["pathEditing"])
         key("Escape")
         ipc("list")
-        time.sleep(0.3)
+        wait(lambda s: s["view"] == "list" and len(s["columnGeometry"]["row"]) == 5)
         check("modified-sort", lambda s: s["view"] == "list" and s["sort"] == "modified" and s["descending"])
         check("column-alignment", lambda s: len(s["columnGeometry"]["row"]) == 5 and all(abs(a-b) < 0.5 for a, b in zip(s["columnGeometry"]["header"], s["columnGeometry"]["row"])))
         capture("list-modified")
@@ -243,6 +257,8 @@ def main():
         text("Field notes.md")
         key("Return")
         wait(lambda s: bool(s["replace"]))
+        check("replace-default-is-safe", lambda s: s["focusedControl"] == "Change name")
+        key("Tab")
         check("replace-focus", lambda s: s["focusedControl"] == "Replace")
         capture("save-replace")
         key("Return")

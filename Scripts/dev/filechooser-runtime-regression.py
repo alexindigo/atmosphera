@@ -6,7 +6,8 @@ import os
 from pathlib import Path
 import time
 
-from filechooser_isolation import ROOT, checked, enter
+from filechooser_isolation import checked, enter
+from filechooser_profile import current_profile, profile_argument
 
 
 def main():
@@ -15,9 +16,10 @@ def main():
     enter(runtime_seconds=60)
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--label", required=True)
+    profile_argument(parser)
     args = parser.parse_args()
     base = checked()
-    output = ROOT / "evidence" / args.label
+    output = current_profile().evidence / args.label
     output.mkdir()
     receipt = {"requested_seconds": 60, "session_seconds": os.environ["FILECHOOSER_SESSION_SECONDS"],
                "private_session": str(base), "samples": []}
@@ -28,7 +30,7 @@ def main():
         time.sleep(max(0, started + target - time.monotonic()))
         receipt["samples"].append(time.monotonic() - started)
         (output / "result.json").write_text(json.dumps(receipt, indent=2))
-    props = json.loads((ROOT / "evidence" / (args.label + "-isolation/systemd-properties.json")).read_text())
+    props = json.loads((current_profile().evidence / (args.label + "-isolation/systemd-properties.json")).read_text())
     receipt["systemd_properties"] = props
     receipt["passed"] = (receipt["session_seconds"] == "60" and receipt["samples"][-1] >= 59
                          and props["RuntimeMaxUSec"] == "1min 40s")

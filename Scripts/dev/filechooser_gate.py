@@ -12,6 +12,7 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+from filechooser_profile import current_profile, workspace, exact_source
 
 
 def request_gate(output):
@@ -19,7 +20,7 @@ def request_gate(output):
     import filechooser_isolation as isolation
     base = isolation.checked()
     output = Path(output).resolve()
-    assert output.is_relative_to(isolation.ROOT / "evidence") and output.is_dir()
+    assert output.is_relative_to(current_profile().evidence) and output.is_dir()
     request = base / "gate-probe.request"
     assert not request.exists(), "one independent gate per reservation"
     pending = base / "gate-probe.pending"
@@ -35,14 +36,14 @@ def request_gate(output):
 
 def run_gate(primary_base, primary_output, label, admin_env, primary_properties):
     import filechooser_isolation as isolation
-    root = isolation.ROOT
+    root = workspace()
     args = sys.argv[1:]
     source = Path(args[args.index("--source") + 1]).resolve()
-    assert source.is_relative_to(root / "sources") and source.is_dir()
+    assert exact_source(source) and source.is_dir()
     gate_label = label + "-gate"
     unit = "filechooser-" + gate_label
-    base = root / "runtime" / ("i" + hashlib.sha256(gate_label.encode()).hexdigest()[:8])
-    output = root / "evidence" / (gate_label + "-isolation")
+    base = current_profile().runtime / ("i" + hashlib.sha256(gate_label.encode()).hexdigest()[:8])
+    output = current_profile().evidence / (gate_label + "-isolation")
     assert not base.exists() and not output.exists()
     # The diagnostic measured579317KiB qmllint PSS. This separate768MiB
     # maximum is LOWER than the old primary maximum; its high watermark and
@@ -58,7 +59,9 @@ def run_gate(primary_base, primary_output, label, admin_env, primary_properties)
     reserved = output / "reservation.json"
     reserved.write_text(json.dumps(reservation, indent=2))
     command = ["systemd-run", "--user", "--wait", "--pipe", "--collect", "--unit=" + unit, "--service-type=exec",
-               "--setenv=TMPDIR=" + str(root / "tmp"), "--setenv=FILECHOOSER_SESSION_SECONDS=320",
+                "--setenv=TMPDIR=" + str(root / "tmp"), "--setenv=FILECHOOSER_SESSION_SECONDS=320",
+                "--setenv=FILECHOOSER_GUEST_PROFILE=" + str(current_profile().path),
+                "--setenv=FILECHOOSER_PROFILE_SHA256=" + current_profile().sha256,
                "--setenv=FILECHOOSER_PARENT_PID_NAMESPACE=" + os.readlink("/proc/self/ns/pid"),
                "--setenv=FILECHOOSER_GATE_RESERVATION=" + str(reserved),
                "-p", f"MemoryMax={maximum}", "-p", f"MemoryHigh={high}", "-p", "MemorySwapMax=0",
@@ -106,9 +109,9 @@ def reserved_session(base, output, argv):
     value = json.loads(path.read_text())
     assert value["base"] == str(base) and value["output"] == str(output)
     assert value["argv"] == list(argv)
-    assert argv[0] == str(isolation.ROOT / "tools/shell-gate.py") and argv[-1] == "--audit"
+    assert argv[0] == str(workspace() / "tools/shell-gate.py") and argv[-1] == "--audit"
     source = Path(argv[2]).resolve()
-    assert argv[1] == "--source" and source.is_relative_to(isolation.ROOT / "sources")
+    assert argv[1] == "--source" and exact_source(source)
     group = isolation.cgroup()
     primary_group = Path("/sys/fs/cgroup" + value["primary_cgroup"])
     assert group.name == value["unit"] + ".service" and group.parent == primary_group.parent and group != primary_group
@@ -120,7 +123,7 @@ def reserved_session(base, output, argv):
     assert Path("/proc/self/oom_score_adj").read_text().strip() == "1000"
     # Primary keeps the ordinary service lock; this additional lock protects
     # admission even if its controller/primary exits before this sibling.
-    with (isolation.ROOT / "runtime/.filechooser-gate.lock").open("a") as guard:
+    with (current_profile().runtime / ".filechooser-gate.lock").open("a") as guard:
         fcntl.flock(guard, fcntl.LOCK_EX | fcntl.LOCK_NB)
         (output / "supervisor-ready").touch()
         deadline = time.monotonic() + 25

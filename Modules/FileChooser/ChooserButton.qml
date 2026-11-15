@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import qs.Commons
 import qs.Widgets
 
@@ -9,6 +10,10 @@ NButton {
     target: root
   }
   property bool primary: false
+  readonly property bool iconOnly: text === ""
+  // An icon-only action has one square slot, centred by NButton's content row.
+  Layout.preferredWidth: text === "" ? implicitHeight : -1
+  width: text === "" ? implicitHeight : implicitWidth
   activeFocusOnTab: true
   backgroundColor: primary ? AtmoColor.mPrimary : "transparent"
   textColor: primary ? AtmoColor.mOnPrimary : AtmoColor.mOnSurface
