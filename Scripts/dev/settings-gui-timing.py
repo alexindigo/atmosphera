@@ -103,6 +103,18 @@ def require_shell_settled(process):
         raise RuntimeError('owned shell still live; dependent cleanup retained')
 
 
+def provision_timing_fixtures(shell):
+    # The runner, not the historical subject tree, owns this observer closure.
+    # Migration62's one relative JS import must also exist on pre-cutover trees.
+    for relative in ('Scripts/dev/fixtures/settings-gui-timing.qml',
+                     'Scripts/dev/fixtures/launcher-key-owner-probe.qml',
+                     'Scripts/dev/fixtures/Migration62.qml',
+                     'Commons/Migrations/SettingsMigrationSource.js'):
+        destination = shell / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(HERE.parents[1] / relative, destination)
+
+
 def trace_report(path, windows):
     """I1's conservative continuous-batch definition, with strict coverage."""
     rows = [line.split() for line in path.read_text().splitlines()]
@@ -236,8 +248,7 @@ def main():
     shell = work / 's'
     shutil.copytree(source, shell, ignore=shutil.ignore_patterns('.git', '__pycache__', '*.bak'))
     # Fixtures are always from this runner's version, including old-owner legs.
-    for name in ('settings-gui-timing.qml', 'launcher-key-owner-probe.qml', 'Migration62.qml'):
-        shutil.copy2(HERE / 'fixtures' / name, shell / 'Scripts/dev/fixtures' / name)
+    provision_timing_fixtures(shell)
     body = probe_owner_path(shell)
     text = body.read_text()
     injected = '\n      property var _guiTiming: Qt.createComponent(Quickshell.shellDir + "/Scripts/dev/fixtures/settings-gui-timing.qml").createObject(shellRoot)\n'
@@ -460,7 +471,8 @@ def main():
                 expected_audio.reverse()
             assert raw['mprisBlacklist'] == expected_audio
             ipc('guiTiming', 'noop')
-            wait_for(lambda: len(status()['completions']) >= before+3)
+            settled = wait_for(lambda: s if len((s := status())['completions']) >= before+3 else None)
+            assert all(r['status'] in ('saved', 'nothing_to_save') for r in settled['completions']), settled['completions']
             # Unchanged watch noise on every source, plus actual atomic external
             # replacement/deletion and re-creation on an otherwise clean path.
             for section in sections:
