@@ -87,3 +87,12 @@ same final value, fails rather than recapturing the current row. Whole-leaf and
 shared-base value fences remain additive under the old owner. Notification-
 suppressed equal/nested ABA is still its documented limitation; I5 replaces this
 factory with the actual normalized worker command/overlay contract.
+
+## Native cutover witness
+
+The current owner uses `Scripts/dev/fixtures/settings-plugin-editors-native.qml`.
+It retains shared Cancel/Apply, all four placement addresses, ABA/reorder/base/
+unload refusals, real IO failure and Retry, sparse unknown fields, Reset, runtime
+consumers and separate cold verification. The old-owner fixture belongs to the
+pre-cutover commits and is not shipped in the current tree. The gate selects the
+native witness at cutover; historical trees retain their own old-owner fixture.
