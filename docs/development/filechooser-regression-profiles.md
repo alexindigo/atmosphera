@@ -22,12 +22,14 @@ guest, from `/home/tester/Projects/filechooser-usability/source`:
 ```sh
 export TMPDIR=/home/tester/Projects/filechooser-usability/tmp
 profile=$PWD/Scripts/dev/fixtures/guest-profiles/atmosphera-mov-filter.json
-timeout 900 python3 -B Scripts/dev/filechooser-units.py --guest-profile "$profile" --source "$PWD" --output "$PWD/../evidence/units-LABEL"
-timeout 900 python3 -B Scripts/dev/filechooser-portal-regression.py --guest-profile "$profile" --source "$PWD" --label portal-LABEL
-timeout 1320 python3 -B Scripts/dev/filechooser-ui-regression.py --guest-profile "$profile" --source "$PWD" --label ui-LABEL
+timeout 900 python3 -B Scripts/dev/filechooser-units.py --guest-profile "$profile" --source "$PWD" --output "$PWD/../evidence/units-run-1"
+timeout 900 python3 -B Scripts/dev/filechooser-portal-regression.py --guest-profile "$profile" --source "$PWD" --label portal-run-1
+timeout 1320 python3 -B Scripts/dev/filechooser-ui-regression.py --guest-profile "$profile" --source "$PWD" --label ui-run-1
 ```
 
-Each label must be fresh. `filechooser_regression.py` is their shared library,
+Each label must be fresh and use only lowercase letters, digits, dots and hyphens;
+change the example's `run-1` suffix for every invocation.
+`filechooser_regression.py` is their shared library,
 not a CLI. These commands preserve complete extracted working trees and evidence;
 they create no workspace capsules. The profile must be explicitly updated when
 the authorized guest changes. Do not spoof a MAC or weaken a failing check.
@@ -93,8 +95,8 @@ the UI uses the same profile to avoid retained software-renderer pages across
 its many dialog/media cycles. Scroll benchmarks keep their original profile.
 
 ```sh
-timeout 900 python3 -B Scripts/dev/filechooser-browser-regression.py --guest-profile "$profile" --source "$PWD" --label browser-LABEL --browser chromium
-timeout 900 python3 -B Scripts/dev/filechooser-browser-regression.py --guest-profile "$profile" --source "$PWD" --label browser-LABEL2 --browser firefox
+timeout 900 python3 -B Scripts/dev/filechooser-browser-regression.py --guest-profile "$profile" --source "$PWD" --label browser-ch-run-1 --browser chromium
+timeout 900 python3 -B Scripts/dev/filechooser-browser-regression.py --guest-profile "$profile" --source "$PWD" --label browser-ff-run-1 --browser firefox
 ```
 
 ## Assistive technology
@@ -103,7 +105,7 @@ Install `python-atspi`, `orca`, `espeak-ng` and `speech-dispatcher` inside the
 assigned guest. Run from the same guest source/workspace with the same profile:
 
 ```sh
-timeout 900 python3 -B Scripts/dev/filechooser-a11y-regression.py --guest-profile "$profile" --source "$PWD" --label a11y-LABEL
+timeout 900 python3 -B Scripts/dev/filechooser-a11y-regression.py --guest-profile "$profile" --source "$PWD" --label a11y-run-1
 ```
 
 This runner preserves native AT-SPI trees, focus and announcement events, a
@@ -164,7 +166,7 @@ The runner checks both the backing path and setup UID before acting. It mounts,
 reads actual bytes, unmounts, remounts and ejects/detaches that exact loop.
 
 ```sh
-timeout 120 python3 -B Scripts/dev/filechooser-volumes-regression.py --guest-profile "$profile" --source "$PWD" --label volumes-LABEL
+timeout 120 python3 -B Scripts/dev/filechooser-volumes-regression.py --guest-profile "$profile" --source "$PWD" --label volumes-run-1
 ```
 
 Every invocation needs a fresh label and a freshly attached, unmounted fixture.

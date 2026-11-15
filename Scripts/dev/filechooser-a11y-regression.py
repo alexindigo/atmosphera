@@ -272,7 +272,7 @@ def main():
         rename_events = len(events)
         command(["ydotool", "type", "../invalid"]); key(28)
         wait(lambda s: s["operations"]["renameError"])
-        time.sleep(.5)
+        wait(lambda s: any("Enter a name" in e.get("data", "") for e in events[rename_events:]))
         check("AT-SPI-rename-error-announced", any("Enter a name" in e.get("data", "") for e in events[rename_events:]))
         key(1)
         check("AT-SPI-inline-rename-focus-return", focused(state()["name"], "list item"))

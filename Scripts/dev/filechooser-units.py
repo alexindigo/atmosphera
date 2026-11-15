@@ -206,7 +206,7 @@ def main():
     required.update("path-entry." + name for name in ("relative-open", "location-navigates", "history-invalidates-typed-intent", "history-does-not-accept", "literal-local-name", "quoted-multiple", "local-uri", "navigation-keeps-save-name", "typed-folder-keeps-save-leaf", "save-path-extension", "type-change-only-leaf", "missing-save-parent-keeps-input", "missing-keeps-dialog", "folder-watches-bounded"))
     required.update("completion." + name for name in ("case-prefix", "directories", "explicit-hidden", "type-filter", "literal-folder", "quoted-last-name", "inactive-invalidates"))
     required.update("completion." + name for name in ("file-uri-roundtrip", "file-uri-encoded-stem"))
-    required.update("path-entry." + name for name in ("band-name-intent", "all-name-intent", "restore-name-intent", "same-selection-keeps-acceptance", "location-keeps-edited-save-name",
+    required.update("path-entry." + name for name in ("band-name-intent", "all-name-intent", "restore-name-intent", "same-selection-keeps-acceptance", "location-navigation-ready", "location-keeps-edited-save-name",
         "symlink-parent-open", "symlink-parent-new-save", "missing-parent-not-invented", "file-dot-not-a-file", "symlink-parent-browser"))
     required.update("extensions.unknown-" + kind + suffix for kind in ("numeric", "text") for suffix in ("-suffix-preserved", "-suffix-append"))
     required.update("operations." + name for name in ("single-owner", "rename-model-selection-name", "rename-no-overwrite", "rename-invalid", "trash-reconciles", "delete-awaits-confirmation", "delete-decline-retains", "delete-reconciles", "create-shares-owner", "navigation-retires-intents"))

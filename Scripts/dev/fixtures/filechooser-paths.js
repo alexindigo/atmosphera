@@ -183,7 +183,9 @@ function build(root, Paths, Memory, completion, browser) {
         root.request.editSaveName("report.txt");
         submit(folder, "location");
     });
-    root.step(() => root.request.browser.currentPath === folder || Date.now() - root.staleStarted > 1500, function() {
+    root.step(() => (root.requestReady() && root.request.browser.currentPath === folder) || Date.now() - root.staleStarted > 1500, function() {
+        root.report("path-entry.location-navigation-ready", root.requestReady() && root.request.browser.currentPath === folder,
+            {path: root.request.browser.currentPath, status: root.request.browser.status});
         root.same("path-entry.location-keeps-edited-save-name", root.request.saveName, "report.txt");
         request("open");
     });
