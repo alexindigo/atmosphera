@@ -155,8 +155,9 @@ Singleton {
   function openRuntime(base, placement, callback) { return _open(base, Lists.copy(placement), "live", callback); }
   function openPreviewView(base, placement, scope, callback) { return _open(base, Lists.copy(placement), "view", callback, scope); }
   function createSettingsEditor(pluginKey, placement, base) {
-    if (!base || !base.settingsOwner || !placement) return null;
+    if (!base || !base.settingsOwner || base.settingsOwner.closed || !placement || Service.getPluginAPI(pluginKey) !== base) return null;
     var editor = editorFactory.createObject(root, {fields: base.settingsOwner.store.settingsKeys});
+    Service.retainPluginEditor(editor, base);
     var lifetime = editor._lifetime;
     editor.cancelOpen = _open(base, Lists.copy(placement), "editor", function (result) {
       if (!lifetime.alive || editor.closed) { if (result.editor) result.editor.detach(); return; }
