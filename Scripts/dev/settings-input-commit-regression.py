@@ -19,6 +19,7 @@ def main():
     args = parser.parse_args()
     sys.path.insert(0, str(args.source / 'Scripts/dev'))
     from guest_profile import activate_profile, protect_owned_process
+    from probe_files import ProbeFiles
     profile = activate_profile(args.guest_profile)
     assert profile.uuid == '12f17a02-25e9-474c-9dae-fea092c2d2be' and not profile.console.records
     args.output.mkdir(parents=True)
@@ -35,12 +36,7 @@ def main():
                ATMOSPHERA_CONFIG_DIR=str(config), ATMOSPHERA_CACHE_DIR=str(args.work_root / 'cache'),
                ATMOSPHERA_STATE_DIR=str(args.work_root / 'state'))
     Path(env['TMPDIR']).mkdir()
-    probe = args.source / 'input-commit-proof.qml'
-    probe.write_bytes((args.source / 'Scripts/dev/fixtures/settings-input-commit.qml').read_bytes())
-    qmlls = args.source / '.qmlls.ini'
-    created_qmlls = not qmlls.exists()
-    if created_qmlls:
-        qmlls.write_text('')
+    files_owner = None
     process = owned = None
     daemon = False
     unit = 'atcq-input-commit-' + args.work_root.name
@@ -77,6 +73,8 @@ def main():
         raise AssertionError('receipt settlement deadline')
 
     try:
+        files_owner = ProbeFiles(args.source, args.source / 'Scripts/dev/fixtures/settings-input-commit.qml')
+        probe = files_owner.probe
         call(['niri', 'msg', 'action', 'close-overview'])
         call(['sudo', '-n', 'systemd-run', '--unit=' + unit, '--property=RuntimeMaxSec=120',
               '--property=TimeoutStopSec=5', '--setenv=TMPDIR=' + env['TMPDIR'], '/usr/bin/ydotoold',
@@ -173,8 +171,7 @@ def main():
                 lambda: owned.terminate() if owned else None,
                 lambda: process.wait(timeout=15) if process else None,
                 lambda: call(['sudo', '-n', 'systemctl', 'stop', unit]) if daemon else None,
-                lambda: probe.unlink(),
-                lambda: qmlls.unlink() if created_qmlls else None,
+                lambda: files_owner.close() if files_owner else None,
                 lambda: shutil.rmtree(Path(runtime['XDG_RUNTIME_DIR']))):
             try:
                 operation()

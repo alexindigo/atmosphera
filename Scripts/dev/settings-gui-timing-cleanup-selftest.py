@@ -11,6 +11,8 @@ import signal
 import subprocess
 import sys
 import tempfile
+import threading
+import time
 from types import SimpleNamespace
 import unittest
 
@@ -20,7 +22,7 @@ HERE = Path(__file__).resolve().parent
 
 
 class CleanupTests(unittest.TestCase):
-    def run_cleanup(self, *, observer_failure=False, capture_failure=False, ipc_failure=False):
+    def run_cleanup(self, *, observer_failure=False, capture_failure=False, ipc_failure=False, term_resistant=False):
         require_disk_backed_paths(os.environ['TMPDIR'])
         tree = ast.parse((HERE / 'settings-gui-timing.py').read_text())
         main = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'main')
@@ -28,7 +30,8 @@ class CleanupTests(unittest.TestCase):
         final = next(n.finalbody for n in main.body if isinstance(n, ast.Try) and n.finalbody)
         function = ast.parse('def invoke(process, log, result):\n    pass\n').body[0]
         function.body = [stop, *final, ast.parse('return result').body[0]]
-        functions = [n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'cleanup_steps']
+        functions = [n for n in tree.body if isinstance(n, ast.FunctionDef) and
+                     n.name in ('cleanup_steps', 'require_shell_settled')]
         compiled = compile(ast.fix_missing_locations(ast.Module(body=[*functions, function], type_ignores=[])),
                            'actual-timing-cleanup', 'exec')
         events = []
@@ -38,8 +41,32 @@ class CleanupTests(unittest.TestCase):
             work = root / 'work'; work.mkdir()
             runtime = root / 'runtime'; runtime.mkdir()
             restore = root / 'config.kdl'; restore.write_text('original config')
-            child = subprocess.Popen([sys.executable, '-B', '-c', 'import time;time.sleep(60)'],
+            ready, release = root / 'ready', root / 'release'
+            script = ('import pathlib,signal,sys,time;'
+                      'signal.signal(signal.SIGTERM,signal.SIG_IGN);'
+                      'pathlib.Path(sys.argv[1]).touch();'
+                      'exec("while not pathlib.Path(sys.argv[2]).exists(): time.sleep(.01)")')
+            child = subprocess.Popen([sys.executable, '-B', '-c', script, str(ready), str(release)] if term_resistant else
+                                     [sys.executable, '-B', '-c', 'import time;time.sleep(60)'],
                                      start_new_session=True)
+            releaser = None
+            if term_resistant:
+                deadline = time.monotonic() + 5
+                while not ready.exists() and time.monotonic() < deadline:
+                    time.sleep(.01)
+                self.assertTrue(ready.exists(), 'TERM-resistant child did not arm')
+                # Longer than both bounded waits, including an outer cleanup
+                # retry. Release cooperatively; never add KILL escalation.
+                def release_after_observation():
+                    try:
+                        pending = json.loads((out / 'result.json').read_text())
+                        if (pending['status'] == 'FAIL' and pending.get('settlement', {}).get('state') ==
+                                'waiting-after-term-deadline' and runtime.exists() and child.poll() is None):
+                            events.append('waiting-state-preserves-live-dependencies')
+                    finally:
+                        release.touch()
+                releaser = threading.Timer(.8, release_after_observation)
+                releaser.start()
 
             class Child:
                 pid = child.pid
@@ -47,8 +74,8 @@ class CleanupTests(unittest.TestCase):
                 def poll(self):
                     return child.poll()
 
-                def wait(self, timeout):
-                    return child.wait(timeout=min(timeout, .1))
+                def wait(self, timeout=None):
+                    return child.wait(timeout=min(timeout, .1) if timeout is not None else 5)
 
                 @property
                 def returncode(self):
@@ -57,6 +84,8 @@ class CleanupTests(unittest.TestCase):
             class Capture:
                 def finish(self):
                     events.append('capture')
+                    if child.poll() is None:
+                        events.append('capture-before-settlement')
                     if capture_failure:
                         raise OSError('injected console collector failure')
                     return {'bytes': 0}
@@ -77,6 +106,8 @@ class CleanupTests(unittest.TestCase):
 
             def command(argv, *args, **kwargs):
                 events.append(' '.join(map(str, argv)))
+                if 'load-config-file' in argv and child.poll() is None:
+                    events.append('restore-before-settlement')
                 return SimpleNamespace(stdout=b'not-found', returncode=0)
 
             profile = SimpleNamespace(session_environment=lambda: {},
@@ -92,6 +123,10 @@ class CleanupTests(unittest.TestCase):
                 exec(compiled, scope)
                 result = scope['invoke'](Child(), Capture(), dict(status='PASS', checks={}, errors=[], windows=[]))
                 self.assertIsNotNone(child.poll(), 'owned shell child survived diagnostic failure')
+                self.assertNotIn('capture-before-settlement', events)
+                self.assertNotIn('restore-before-settlement', events)
+                if term_resistant:
+                    self.assertIn('waiting-state-preserves-live-dependencies', events)
                 self.assertFalse(runtime.exists(), 'private runtime was not retired')
                 self.assertIn('niri msg action load-config-file --path ' + str(restore), events)
                 self.assertIn('sudo -n systemctl stop owned-input-selftest', events)
@@ -103,6 +138,9 @@ class CleanupTests(unittest.TestCase):
                 self.assertTrue(result['checks']['cleanup'])
                 return result
             finally:
+                release.touch()
+                if releaser:
+                    releaser.join(timeout=5)
                 if child.poll() is None:
                     child.terminate()
                 child.wait(timeout=5)
@@ -120,6 +158,11 @@ class CleanupTests(unittest.TestCase):
         result = self.run_cleanup(observer_failure=True, capture_failure=True)
         self.assertIn('observer', str(result['errors']))
         self.assertIn('collector', str(result['errors']))
+
+    def test_term_timeout_retains_dependencies_until_owned_child_releases(self):
+        result = self.run_cleanup(term_resistant=True)
+        self.assertTrue(result['checks']['shellSettled'])
+        self.assertIn('TERM settlement deadline', str(result['errors']))
 
 
 if __name__ == '__main__':
