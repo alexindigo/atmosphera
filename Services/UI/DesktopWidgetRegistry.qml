@@ -349,21 +349,31 @@ Singleton {
   property bool _settingsOpening: false
 
   function openWidgetSettings(screen, widgetIndex, widgetId, widgetData, onCloseCallback, anchorX, anchorY, anchorW, anchorH, capturedEditor) {
-    function refused(editor) {
-      if (typeof onCloseCallback === "function")
-        onCloseCallback(screen, widgetIndex, widgetId, editor);
-      if (editor)
-        editor.detach();
+    // Capture before any presentation refusal: insert-and-open callers also
+    // need their row's cleanup owner when they did not inject an editor.
+    var editor = capturedEditor || (widgetId && screen ? root.createWidgetSettingsEditor(screen.name, widgetIndex) : null);
+    function releaseEditor(value) {
+      if (!value)
+        return;
+      try {
+        if (typeof onCloseCallback === "function")
+          onCloseCallback(screen, widgetIndex, widgetId, value);
+      } finally {
+        value.detach();
+      }
+    }
+    function refused(value) {
+      releaseEditor(value);
       return false;
     }
-    if (!widgetId || !screen) {
-      return refused(capturedEditor);
+    if (!widgetId || !screen || !editor) {
+      return refused(editor);
     }
 
     if (root.currentSettingsDialog || root._settingsOpening) {
       if (root.currentSettingsDialog)
         root.currentSettingsDialog.forceActiveFocus();
-      return refused(capturedEditor);
+      return refused(editor);
     }
 
     var hasSettings = false;
@@ -379,22 +389,19 @@ Singleton {
 
     if (!hasSettings) {
       Logger.w("DesktopWidgetRegistry", "Widget does not have settings:", widgetId);
-      return refused(capturedEditor);
+      return refused(editor);
     }
 
     var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
     if (!popupMenuWindow) {
       Logger.e("DesktopWidgetRegistry", "No popup menu window found for screen");
-      return refused(capturedEditor);
+      return refused(editor);
     }
 
     if (popupMenuWindow.close() === false)
-      return refused(capturedEditor);
+      return refused(editor);
     var generation = popupMenuWindow.requestPresentation();
 
-    var editor = capturedEditor || root.createWidgetSettingsEditor(screen.name, widgetIndex);
-    if (!editor)
-      return;
     root._settingsOpening = true;
     var component = Qt.createComponent(Quickshell.shellDir + "/Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml");
 
@@ -429,11 +436,7 @@ Singleton {
           }
           dialog.destroy();
 
-          // Optional close callback — used for post-dismiss cleanup (e.g. delete empty widget)
-          if (typeof onCloseCallback === "function") {
-            onCloseCallback(screen, widgetIndex, widgetId, editor);
-          }
-          editor.detach();
+          releaseEditor(editor);
         });
         dialog.open();
       } else {
