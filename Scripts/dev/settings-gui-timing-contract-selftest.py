@@ -1,15 +1,20 @@
 #!/usr/bin/env python3
 """Clock and input-credential controls; run only in the assigned project VM."""
 import ast
+import contextlib
 import importlib.util
+import io
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
+import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 
 from gui_timing_scheduler import EVENTS, proven_sleeps
 from workspace_guard import require_disk_backed_paths
@@ -62,6 +67,108 @@ class TimingContractTests(unittest.TestCase):
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         return module
+
+    def test_profiled_control_refuses_before_activation_or_output(self):
+        module = self.timing_module()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for flags in ([], ['--profile'], ['--expect-old-stall'], ['--profile', '--expect-old-stall']):
+                with self.subTest(flags=flags):
+                    argv = ['settings-gui-timing.py', '--source', str(HERE.parents[1]),
+                            '--output', str(root/'out'), '--work-root', str(root/'work'),
+                            '--guest-profile', str(root/'profile.json'),
+                            '--restore-niri-config', str(root/'niri.kdl'), *flags]
+                    stderr = io.StringIO()
+                    with patch.object(sys, 'argv', argv), contextlib.redirect_stderr(stderr), \
+                            patch.object(module, 'activate_profile', side_effect=RuntimeError('activation-boundary')) as activate:
+                        if len(flags) == 2:
+                            with self.assertRaises(SystemExit) as failure:
+                                module.main()
+                            self.assertEqual(failure.exception.code, 2)
+                            self.assertIn('--profile', stderr.getvalue())
+                            self.assertIn('--expect-old-stall', stderr.getvalue())
+                            activate.assert_not_called()
+                        else:
+                            with self.assertRaisesRegex(RuntimeError, 'activation-boundary'):
+                                module.main()
+                            activate.assert_called_once()
+                    self.assertFalse((root/'out').exists())
+                    self.assertFalse((root/'work').exists())
+
+    def test_heartbeat_ignores_wall_adjustments_but_observes_monotonic_delay(self):
+        spec = importlib.util.spec_from_file_location('qml_identifiers', HERE/'qml-identifiers.py')
+        lexer = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(lexer)
+        source = (HERE/'fixtures/settings-gui-timing.qml').read_text()
+        _, spans = lexer.lex(source)
+        masked = list(source)
+        for _, start, end in spans:
+            masked[start:end] = ' ' * (end-start)
+        masked = ''.join(masked)
+
+        def block(opening):
+            depth = 0
+            for offset in range(opening, len(masked)):
+                if masked[offset] == '{':
+                    depth += 1
+                elif masked[offset] == '}':
+                    depth -= 1
+                    if depth == 0:
+                        return offset + 1
+            raise AssertionError('unclosed actual heartbeat block')
+
+        starts = list(re.finditer(r'\bfunction\s+start\s*\(', masked))
+        handlers = list(re.finditer(r'\bonTriggered\s*:\s*\{', masked))
+        self.assertEqual(len(starts), 1)
+        self.assertEqual(len(handlers), 1)
+        opening = masked.index('{', starts[0].end())
+        start = source[starts[0].start():block(opening)]
+        opening = masked.index('{', handlers[0].start())
+        tick = source[opening+1:block(opening)-1]
+        # A lexical Date double avoids QML's optimized builtin Date.now calls.
+        # Only QML's return annotation is erased; execute the actual JS bodies.
+        actual = re.sub(r'\)\s*:\s*void\s*\{', ') {', start)
+        actual += '\nfunction tick() {' + tick + '}\nreturn {start:start,tick:tick};'
+        qml = '''import QtQml
+QtObject {
+  Component.onCompleted: {
+    const clock = {monoNs: 1000000000, wallMs: 1700000000000};
+    const probe = {lastTick: 0, worstLate: 0, ticks: 0, measuring: false,
+      lateTicks: [], latenessDistribution: {}, nativeClock: {
+        nowNs: function() { return String(clock.monoNs); }
+      }};
+    const actual = (new Function("probe", "Date", "interval", ACTUAL))(probe,
+      {now: function() { return clock.wallMs; }}, 5);
+    try {
+      actual.start();
+      const failures = [];
+      if (probe.lastTick !== clock.monoNs/1000000) failures.push("start clock domain");
+      for (const jump of [0, 5000, -7000, 15000]) {
+        clock.monoNs += 5000000;
+        clock.wallMs += 5 + jump;
+        actual.tick();
+      }
+      if (probe.worstLate !== 0) failures.push("wall adjustment: " + probe.worstLate);
+      clock.monoNs += 85000000;
+      clock.wallMs += 5;
+      probe.worstLate = 0;
+      actual.tick();
+      if (probe.worstLate !== 80) failures.push("monotonic delay: " + probe.worstLate);
+      if (failures.length) throw new Error(failures.join("; "));
+      console.log("HEARTBEAT_CLOCK: PASS");
+      Qt.quit();
+    } catch (error) { console.error("HEARTBEAT_CLOCK_ASSERT: " + error); Qt.exit(2); }
+  }
+}
+'''.replace('ACTUAL', json.dumps(actual))
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary)/'actual-heartbeat.qml'
+            path.write_text(qml)
+            result = subprocess.run(['/usr/lib/qt6/bin/qml', '-a', 'core', str(path)],
+                                    env=dict(os.environ, LC_ALL='C.UTF-8', QT_FORCE_STDERR_LOGGING='1'),
+                                    capture_output=True, text=True, timeout=20)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertIn('HEARTBEAT_CLOCK: PASS', result.stdout + result.stderr)
 
     def test_positive_control_requires_stall_inside_save_burst(self):
         assertion = next(n for n in ast.walk(self.tree) if isinstance(n, ast.Assert)

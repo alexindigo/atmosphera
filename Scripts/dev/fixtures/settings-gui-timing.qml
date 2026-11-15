@@ -33,14 +33,14 @@ Item {
     repeat: true
     running: probe.measuring
     onTriggered: {
-      const now = Date.now();
+      const now = Number(probe.nativeClock.nowNs()) / 1000000;
       const late = Math.max(0, now - probe.lastTick - interval);
       probe.worstLate = Math.max(probe.worstLate, late);
       probe.ticks++;
       probe.latenessDistribution[late] = (probe.latenessDistribution[late] || 0) + 1;
       if (late > 16)
         probe.lateTicks.push({
-                               at: now,
+                               at: Date.now(),
                                latenessMs: late
                              });
       probe.lastTick = now;
@@ -221,7 +221,7 @@ Item {
       probe.ticks = 0;
       probe.lateTicks = [];
       probe.latenessDistribution = ({});
-      probe.lastTick = Date.now();
+      probe.lastTick = Number(probe.nativeClock.nowNs()) / 1000000;
       probe.measuring = true;
     }
     function burst(number: int): void {

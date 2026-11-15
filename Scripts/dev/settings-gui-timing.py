@@ -273,6 +273,8 @@ def main():
     parser.add_argument('--expect-old-stall', action='store_true', help='positive control: require a native >16ms save/burst stall')
     parser.add_argument('--profile', action='store_true', help='diagnostic QML profile; overhead is not acceptance evidence')
     args = parser.parse_args()
+    if args.profile and args.expect_old_stall:
+        parser.error('--profile cannot be combined with --expect-old-stall; profiling overhead is not control evidence')
     profile = activate_profile(args.guest_profile)
     assert not profile.console.records, 'preserve the existing console: this full-shell owner requires an idle assigned guest'
     restore_config = args.restore_niri_config.resolve(strict=True)
