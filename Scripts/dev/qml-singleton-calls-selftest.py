@@ -32,6 +32,7 @@ class CallsTest(unittest.TestCase):
                 ('import Quickshell as Q\nQtObject { function f() { Q.Quickshell.exceDetached([]); } }', ['Q.Quickshell.exceDetached']),
                 ('import qs.Services\nQtObject { function f() { Example.valid(); Example.callback(); Example.happened(); } }', []),
                 ('import qs.Services\nQtObject { function f() { Example.missing(); Example.hidden(); } }', ['Example.missing', 'Example.hidden']),
+                ('import qs.Services\nQtObject { function f() { Example.validChanged(); Example.happenedChanged(); } }', ['Example.validChanged', 'Example.happenedChanged']),
                 ('import qs.Services as S\nQtObject { function f() { S.Example.missing(); } }', ['S.Example.missing']),
                 ('import qs.Services\nQtObject { property string s: "Example.missing()" // Example.bad()\n }', []),
                 ('import qs.Services\nQtObject { property string s: `ignore Example.bad() ${Example.missing()}` }', ['Example.missing']),
@@ -42,6 +43,14 @@ class CallsTest(unittest.TestCase):
                     path.write_text(text)
                     failures, _ = calls.check(root, [path], Path('/usr/lib/qt6/qml'))
                     self.assertEqual([failure.split('unknown singleton call ')[1] for failure in failures], expected)
+
+            javascript = root / 'Test.js'
+            javascript.write_text('.import Quickshell 0.1 as Q\nfunction f() { Q.Quickshell.exec("sh"); }\n')
+            failures, _ = calls.check(root, [javascript], Path('/usr/lib/qt6/qml'))
+            self.assertEqual([failure.split('unknown singleton call ')[1] for failure in failures], ['Q.Quickshell.exec'])
+            javascript.write_text('.import qs.Services 1.0 as S\nfunction f() { S.Example.missing(); }\n')
+            failures, _ = calls.check(root, [javascript], Path('/usr/lib/qt6/qml'))
+            self.assertEqual([failure.split('unknown singleton call ')[1] for failure in failures], ['S.Example.missing'])
 
 
 if __name__ == '__main__':

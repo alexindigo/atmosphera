@@ -38,10 +38,11 @@ def source_members(text):
         depth += (char == '{') - (char == '}')
     patterns = (r'\bfunction\s+(\w+)\s*\(', r'\bsignal\s+(\w+)\b',
                 r'\bproperty\s+(?:list\s*<[^>]+>|\w+)\s+(\w+)\b')
-    members = {match[1] for pattern in patterns for match in re.finditer(pattern, clean)
-               if depths[match.start()] == 1}
+    declared = [{match[1] for match in re.finditer(pattern, clean)
+                 if depths[match.start()] == 1} for pattern in patterns]
+    members = set.union(*declared)
     # QML-generated property change signals can themselves be called.
-    members.update(name + 'Changed' for name in list(members))
+    members.update(name + 'Changed' for name in declared[2])
     return members | {'destroy', 'toString'}
 
 
@@ -89,11 +90,11 @@ def check(root, paths, qml_dir):
         text = path.read_text()
         clean = code(text)
         names = {}
-        for match in re.finditer(r'^\s*import\s+(Quickshell(?:\.\w+)*)(?:\s+\d+\.\d+)?(?:\s+as\s+(\w+))?\s*$', clean, re.M):
+        for match in re.finditer(r'^\s*\.?import\s+(Quickshell(?:\.\w+)*)(?:\s+\d+\.\d+)?(?:\s+as\s+(\w+))?\s*$', clean, re.M):
             prefix = match[2] + '.' if match[2] else ''
             names.update({prefix + name: members for name, members in native.get(match[1], {}).items()})
         directories = [(path.parent, '')]
-        for match in re.finditer(r'^\s*import\s+(qs(?:\.\w+)+)(?:\s+as\s+(\w+))?', clean, re.M):
+        for match in re.finditer(r'^\s*\.?import\s+(qs(?:\.\w+)+)(?:\s+\d+\.\d+)?(?:\s+as\s+(\w+))?', clean, re.M):
             directories.append((root.joinpath(*match[1].split('.')[1:]), (match[2] + '.') if match[2] else ''))
         for directory, prefix in directories:
             for source, members in singletons.items():
