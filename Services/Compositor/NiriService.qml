@@ -111,6 +111,26 @@ Item {
       loader.item.focusWindow(window);
   }
 
+  function focusColumnLeft(output) {
+    if (available)
+      loader.item.focusColumnLeft(output);
+  }
+
+  function focusColumnRight(output) {
+    if (available)
+      loader.item.focusColumnRight(output);
+  }
+
+  function focusWorkspaceUp(output) {
+    if (available)
+      loader.item.focusWorkspaceUp(output);
+  }
+
+  function focusWorkspaceDown(output) {
+    if (available)
+      loader.item.focusWorkspaceDown(output);
+  }
+
   function closeWindow(window) {
     if (available)
       loader.item.closeWindow(window);

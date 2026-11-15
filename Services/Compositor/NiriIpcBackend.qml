@@ -473,6 +473,62 @@ Item {
     }
   }
 
+  // FocusMonitor's acknowledgement orders the directional action after output
+  // focus, including when focus-follows-mouse is disabled in niri.
+  function focusEdgeAction(output, action) {
+    function sendStep() {
+      var reply = NiriActions.sendAction(action);
+      reply.finished.connect(function () {
+        if (reply.isError)
+          Logger.w("NiriIpcBackend", "Edge scroll failed:", reply.error.message);
+      });
+    }
+    var focusedOutput = "";
+    for (var i = 0; i < workspaces.count; ++i) {
+      var workspace = workspaces.get(i);
+      if (workspace.isFocused) {
+        focusedOutput = workspace.output;
+        break;
+      }
+    }
+    if (focusedOutput === output) {
+      sendStep();
+    } else {
+      var focusReply = NiriActions.sendAction({
+                                                FocusMonitor: {
+                                                  output: output
+                                                }
+                                              });
+      focusReply.finished.connect(function () {
+        if (focusReply.isError)
+          Logger.w("NiriIpcBackend", "Edge scroll output focus failed:", focusReply.error.message);
+        else
+          sendStep();
+      });
+    }
+  }
+
+  function focusColumnLeft(output) {
+    focusEdgeAction(output, {
+                      FocusColumnLeft: {}
+                    });
+  }
+  function focusColumnRight(output) {
+    focusEdgeAction(output, {
+                      FocusColumnRight: {}
+                    });
+  }
+  function focusWorkspaceUp(output) {
+    focusEdgeAction(output, {
+                      FocusWorkspaceUp: {}
+                    });
+  }
+  function focusWorkspaceDown(output) {
+    focusEdgeAction(output, {
+                      FocusWorkspaceDown: {}
+                    });
+  }
+
   function focusWindow(win) {
     try {
       var reply = NiriActions.focusWindow(win.id);
