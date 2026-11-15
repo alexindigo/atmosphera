@@ -5,7 +5,6 @@ All locker fixtures are tripwires: executing one fails the test. No lock action
 is requested. Use --baseline-page with an unmodified source for the failing leg.
 """
 import argparse
-import importlib.util
 import json
 import os
 from pathlib import Path
@@ -32,6 +31,7 @@ ShellRoot {
   property int ticks: 0
   property int passes: 0
   property bool editing: false
+  property bool oldCompleted: false
   property bool installing: false
   property var cases: CASES
   ExternalCommandCheck { id: check; enabled: false }
@@ -47,8 +47,40 @@ ShellRoot {
     } else check.enabled = true;
     ticks = 0;
     editing = false;
+    oldCompleted = false;
+    if (test.rapid) {
+      checkpoint.command = test.awaitStart;
+      checkpoint.running = true;
+    }
     if (!installing && check.state !== (test.input.trim() === "" ? "empty" : "pending")) fail("immediate state " + test.name);
   }
+  Process {
+    id: checkpoint
+    onExited: function(exitCode) {
+      if (exitCode !== 0) { root.fail("old checker checkpoint failed"); return; }
+      const test = root.cases[root.step];
+      check.commandText = test.aba ? "atmosphera-definitely-missing-locker" : "aerial-lock";
+      check.commandText = test.aba ? "aerial-lock" : "atmosphera-definitely-missing-locker";
+      check.checkerCommand = test.freshChecker;
+      root.editing = true;
+      if (check.state !== "pending") { root.fail("edit did not invalidate old result"); return; }
+      releaseOld.command = test.releaseOld;
+      releaseOld.running = true;
+    }
+  }
+  Process {
+    id: releaseOld
+    onExited: function(exitCode) {
+      // The controller has observed the old PID exit, while the new checker
+      // cannot finish until we release it. No elapsed-time assumption.
+      if (exitCode !== 0) { root.fail("old checker did not complete after edit"); return; }
+      if (check.state !== "pending") { root.fail("stale result was published"); return; }
+      root.oldCompleted = true;
+      releaseNew.command = root.cases[root.step].releaseNew;
+      releaseNew.running = true;
+    }
+  }
+  Process { id: releaseNew }
   Process {
     id: installer
     onExited: function(exitCode) {
@@ -63,20 +95,11 @@ ShellRoot {
     interval: 25; repeat: true; running: true
     onTriggered: {
       root.ticks++;
+      if (root.ticks > 200) { root.fail("timeout " + root.cases[root.step].name); return; }
       if (root.installing) return;
       const test = root.cases[root.step];
-      // Change text after the old slow check started, including ABA. Its
-      // available result must not turn the new missing command green.
-      if (test.rapid && root.ticks === 25) {
-        check.commandText = test.aba ? "atmosphera-definitely-missing-locker" : "aerial-lock";
-        check.commandText = test.aba ? "aerial-lock" : "atmosphera-definitely-missing-locker";
-        check.checkerCommand = ["python3", Quickshell.shellPath("Scripts/python/check-external-command.py")];
-        root.editing = true;
-        if (check.state !== "pending") root.fail("edit did not invalidate old result");
-      }
-      if (test.rapid && root.ticks < 26) return;
+      if (test.rapid && (!root.editing || !root.oldCompleted)) return;
       if (check.state === "pending") {
-        if (root.ticks > 200) root.fail("timeout " + test.name);
         return;
       }
       if (check.state !== test.expected) { root.fail(test.name + ": " + check.state); return; }
@@ -220,6 +243,27 @@ def journal_identifier(work):
     return 'atmosphera-lock-command-' + work.name + '-' + uuid.uuid4().hex
 
 
+def race_case(work, name, expected, stale, *, aba=False):
+    directory = work / 'races' / name
+    directory.mkdir(parents=True)
+    common = 'from pathlib import Path\nimport os,sys,time\nroot=Path(sys.argv[1])\n'
+
+    def command(body, *args):
+        return ['python3', '-c', common + body, str(directory), *args]
+
+    return dict(name=name, input='aerial-lock', expected=expected, rapid=True, aba=aba,
+                checker=command('(root/"started").write_text(str(os.getpid()))\n'
+                                'while not (root/"release-old").exists(): time.sleep(.01)\n'
+                                '(root/"completed").touch()\nprint(sys.argv[2])\n', stale),
+                freshChecker=command('while not (root/"release-new").exists(): time.sleep(.01)\n'
+                                     'print(sys.argv[2])\n', expected),
+                awaitStart=command('while not (root/"started").exists(): time.sleep(.01)\n'),
+                releaseOld=command('(root/"release-old").touch()\npid=(root/"started").read_text()\n'
+                                   'while (Path("/proc")/pid).exists(): time.sleep(.01)\n'
+                                   'assert (root/"completed").exists()\n'),
+                releaseNew=command('(root/"release-new").touch()\n'))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, default=Path(__file__).resolve().parents[2])
@@ -257,6 +301,11 @@ def main():
         dict(name='hash-in-executable', input=str(hashed), expected='available'),
         dict(name='hash-in-missing-name', input='aerial-lock#missing', expected='missing'),
         dict(name='shell-comment', input='# no command', expected='unverified'),
+        dict(name='trailing-comment', input="aerial-lock # don't inspect $(` this", expected='available'),
+        dict(name='missing-with-comment', input="atmosphera-definitely-missing-locker # don't", expected='missing'),
+        dict(name='quoted-hash-argument', input='aerial-lock "# literal argument"', expected='available'),
+        dict(name='hash-name-with-comment', input='aerial-lock#missing # comment', expected='missing'),
+        dict(name='multiline-comment-expression', input='aerial-lock # comment\nother-locker', expected='unverified'),
         dict(name='tab', input='  aerial-lock\t--flag', expected='available'),
         dict(name='not-executable', input=str(not_executable), expected='missing'),
         dict(name='empty', input='', expected='empty'),
@@ -274,10 +323,8 @@ def main():
                                     capture_output=True, text=True, timeout=5, check=True)
             assert result.stdout.strip() == case['expected'], (case, result)
         cases.extend([
-            dict(name='rapid-stale-result', input='aerial-lock', expected='missing', rapid=True,
-                 checker=['python3', '-c', 'import time; time.sleep(1); print("available")']),
-            dict(name='rapid-stale-ABA', input='aerial-lock', expected='available', rapid=True, aba=True,
-                 checker=['python3', '-c', 'import time; time.sleep(1); print("missing")']),
+            race_case(work, 'rapid-stale-result', 'missing', 'available'),
+            race_case(work, 'rapid-stale-ABA', 'available', 'missing', aba=True),
             dict(name='before-install', input=str(bin_dir / 'installed-later'), expected='missing'),
             dict(name='reopen-after-install', input=str(bin_dir / 'installed-later'), expected='available', install=str(bin_dir / 'installed-later')),
             dict(name='checker-start-failure', input='aerial-lock', expected='error', checker=[str(work / 'no-checker')]),

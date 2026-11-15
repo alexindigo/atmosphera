@@ -11,18 +11,51 @@ import shutil
 import sys
 
 
+def without_comments(text):
+    """Remove shell comments, respecting word boundaries, quotes and escapes."""
+    result, quote, boundary, index = [], '', True, 0
+    while index < len(text):
+        char = text[index]
+        if char == '\\' and quote != "'":
+            result.append(text[index:index + 2])
+            boundary = False
+            index += 2
+            continue
+        if quote:
+            result.append(char)
+            if char == quote:
+                quote = ''
+        elif char in "'\"":
+            quote = char
+            boundary = False
+            result.append(char)
+        elif char == '#' and boundary:
+            end = text.find('\n', index)
+            if end < 0:
+                break
+            index = end
+            continue
+        else:
+            result.append(char)
+            boundary = char.isspace() or char in '();<>|&'
+        index += 1
+    return ''.join(result)
+
+
 def check(command):
     if not command.strip():
         return "empty"
+    command = without_comments(command)
+    if not command.strip():
+        return "unverified"
     # shlex removes quoting but does not implement expansion, shell grammar or
     # assignment semantics. Do not misdiagnose those expressions as missing.
-    if command.lstrip().startswith("#") or any(char in command for char in "$`\n\r"):
+    if any(char in command for char in "$`\n\r"):
         return "unverified"
     try:
         lexer = shlex.shlex(command, posix=True, punctuation_chars=True)
         lexer.whitespace_split = True
-        # In sh, '#' starts a comment only at a word boundary, not inside
-        # an executable name. Trailing comment words do not affect lookup.
+        # Shell comments were removed lexically; remaining hashes are literal.
         lexer.commenters = ""
         words = list(lexer)
     except ValueError:
