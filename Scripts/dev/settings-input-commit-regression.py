@@ -33,7 +33,8 @@ def main():
     env = dict(os.environ, **runtime, QT_QPA_PLATFORM='wayland', QML_DISABLE_DISK_CACHE='1',
                TMPDIR=str(args.work_root / 'tmp'), YDOTOOL_SOCKET=str(socket), INPUT_COMMIT_CASE=args.case,
                LIVE_INPUT_HAS_BOOTSTRAP='1' if (args.source / 'Commons/SettingsBootstrap.qml').is_file() else '0',
-               ATMOSPHERA_CONFIG_DIR=str(config), ATMOSPHERA_CACHE_DIR=str(args.work_root / 'cache'),
+               ATMOSPHERA_CONFIG_DIR=str(config), ATMOSPHERA_SETTINGS_FILE=str(config / 'settings.json'),
+               ATMOSPHERA_CACHE_DIR=str(args.work_root / 'cache'),
                ATMOSPHERA_STATE_DIR=str(args.work_root / 'state'))
     Path(env['TMPDIR']).mkdir()
     files_owner = None

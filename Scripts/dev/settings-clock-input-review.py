@@ -32,6 +32,7 @@ def main():
             runtime.mkdir(mode=0o700)
             env = dict(os.environ, QT_QPA_PLATFORM='wayland', XDG_RUNTIME_DIR=str(runtime),
                        WAYLAND_DISPLAY='/run/user/1000/wayland-1', ATMOSPHERA_CONFIG_DIR=str(config),
+                       ATMOSPHERA_SETTINGS_FILE=str(config / 'settings.json'),
                        ATMOSPHERA_CACHE_DIR=str(root / 'cache'), ATMOSPHERA_STATE_DIR=str(root / 'state'),
                        CLOCK_INPUT_MODE=mode)
             for phase in ('save', 'cold'):
