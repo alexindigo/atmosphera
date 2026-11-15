@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Helpers
 import qs.Services.Compositor
 import qs.Services.UI
 import qs.Widgets
@@ -11,21 +12,10 @@ ColumnLayout {
   id: root
   spacing: Style.marginL
 
-  property bool _externalCommandValid: false
-
-  Timer {
-    id: _validateCmdTimer
-    interval: 400
-    onTriggered: {
-      var cmd = Settings.data.general.externalLockCommand;
-      var firstWord = cmd.trim().split(" ")[0];
-      if (firstWord) {
-        var result = Quickshell.exec("sh", ["-c", "command -v " + firstWord + " >/dev/null 2>&1 && echo 0 || echo 1"]);
-        _externalCommandValid = result.trim() === "0";
-      } else {
-        _externalCommandValid = true;
-      }
-    }
+  ExternalCommandCheck {
+    id: externalCommandCheck
+    commandText: Settings.data.general.externalLockCommand
+    enabled: root.visible && Settings.data.general.lockScreenPlugin === "external"
   }
 
   NComboBox {
@@ -69,18 +59,29 @@ ColumnLayout {
       description: I18n.tr("panels.lock-screen.behavior-command-description")
       text: Settings.data.general.externalLockCommand
       placeholderText: "hyprlock"
-      onTextChanged: {
-        Settings.data.general.externalLockCommand = text;
-        _validateCmdTimer.restart();
-      }
+      onTextChanged: Settings.data.general.externalLockCommand = text
     }
 
     Text {
       Layout.fillWidth: true
-      text: I18n.tr("panels.lock-screen.behavior-command-not-found")
-      color: "#e53935"
+      objectName: "externalCommandStatus"
+      text: {
+        switch (externalCommandCheck.state) {
+        case "missing":
+          return I18n.tr("panels.lock-screen.behavior-command-not-found");
+        case "pending":
+          return I18n.tr("panels.lock-screen.behavior-command-checking");
+        case "error":
+          return I18n.tr("panels.lock-screen.behavior-command-check-failed");
+        case "unverified":
+          return I18n.tr("panels.lock-screen.behavior-command-unverified");
+        default:
+          return "";
+        }
+      }
+      color: externalCommandCheck.state === "missing" ? "#e53935" : AtmoColor.mOnSurfaceVariant
       font.pointSize: Style.fontSizeXS
-      visible: Settings.data.general.lockScreenPlugin === "external" && Settings.data.general.externalLockCommand !== "" && !_externalCommandValid
+      visible: text !== ""
       wrapMode: Text.WordWrap
     }
 
