@@ -156,6 +156,12 @@ ColumnLayout {
           TextField {
             id: input
 
+            // The guard sees the focused native field, never the wrapper.
+            function commitEdit(endGesture) {
+              root.commitEdit();
+              return true;
+            }
+
             Layout.fillWidth: true
             Layout.fillHeight: true
 

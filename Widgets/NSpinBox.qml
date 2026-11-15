@@ -87,6 +87,7 @@ RowLayout {
 
   function commitEdit() {
     valueInput.applyValue();
+    return true;
   }
 
   NLabel {
@@ -305,6 +306,7 @@ RowLayout {
 
           function commitEdit() {
             applyValue();
+            return true;
           }
 
           function applyValue() {

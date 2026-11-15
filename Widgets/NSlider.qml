@@ -16,13 +16,17 @@ Slider {
   property string tooltipDirection: "auto"
   property bool hovering: false
 
-  // Complete a user gesture before an editor gathers deferred release values.
-  function commitEdit() {
+  // Automatic persistence may publish live values, but only explicit Apply or
+  // close ends a gesture and gathers deferred release values.
+  function commitEdit(endGesture) {
     if (!pressed)
-      return;
+      return true;
+    if (endGesture === false)
+      return live;
     if (!live)
       value = valueAt(position);
     pressed = false;
+    return true;
   }
 
   readonly property color effectiveFillColor: enabled ? fillColor : AtmoColor.mOutline
