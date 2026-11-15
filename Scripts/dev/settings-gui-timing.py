@@ -85,6 +85,19 @@ def write_json(path, value):
     path.write_text(json.dumps(value, indent=2) + '\n')
 
 
+def cleanup_steps(result, steps):
+    """Attempt every owned obligation and retain each failure independently."""
+    complete = True
+    for name, operation in steps:
+        try:
+            operation()
+        except Exception as error:
+            complete = False
+            result['errors'].append(name + ': ' + repr(error))
+            result['status'] = 'FAIL'
+    return complete
+
+
 def trace_report(path, windows):
     """I1's conservative continuous-batch definition, with strict coverage."""
     rows = [line.split() for line in path.read_text().splitlines()]
@@ -289,19 +302,36 @@ def main():
 
     def stop():
         nonlocal process, log
-        if process and process.poll() is None:
-            ipc('guiTiming', 'quit', check=False)
+
+        def settle_process():
+            nonlocal process
+            if not process:
+                return
             try:
-                process.wait(timeout=20)
-            except subprocess.TimeoutExpired:
-                os.killpg(process.pid, signal.SIGTERM)
-                process.wait(timeout=10)
-        if log:
-            result.setdefault('consoleCapture', []).append(log.finish())
+                if process.poll() is None:
+                    try:
+                        ipc('guiTiming', 'quit', check=False)
+                    finally:
+                        try:
+                            process.wait(timeout=20)
+                        except subprocess.TimeoutExpired:
+                            os.killpg(process.pid, signal.SIGTERM)
+                            process.wait(timeout=10)
+            finally:
+                if process.poll() is not None:
+                    result.setdefault('exits', []).append(process.returncode)
+                    process = None
+
+        def finish_capture():
+            nonlocal log
+            if not log:
+                return
+            capture = log
             log = None
-        if process:
-            result.setdefault('exits', []).append(process.returncode)
-        process = None
+            result.setdefault('consoleCapture', []).append(capture.finish())
+
+        if not cleanup_steps(result, [('shell-exit', settle_process), ('console-capture', finish_capture)]):
+            raise RuntimeError('shell teardown failed; see recorded errors')
 
     def keys(*codes):
         command(['ydotool', 'key', '--key-delay', '0', *codes], env)
@@ -480,42 +510,60 @@ def main():
         (out/'failure.txt').write_text(traceback.format_exc())
         print('GUI_TIMING failure: '+repr(error), flush=True)
     finally:
-        try:
+        def finish_profiler():
             if profiler and profiler.poll() is None:
                 profiler.terminate()
                 profiler.wait(timeout=10)
-                profiler_log.close()
+
+        def finish_typing():
             if typing_process and typing_process.poll() is None:
                 typing_process.terminate()
                 typing_process.wait(timeout=10)
+
+        def finish_observer():
             if observer:
                 (work/'stop-observer').touch()
                 observer.wait(timeout=10)
                 assert observer.returncode == 0, observer.stderr.read().decode()
-                observer_log.close()
-            stop()
+
+        def final_trace():
             if (out/'full-shell.trace').exists() and result['windows'] and 'native' not in result:
                 proof = trace_report(out/'full-shell.trace', result['windows'])
                 write_json(out/'native.json', proof)
                 result['native'] = {k: v for k, v in proof.items() if k not in ('spans', 'waits')}
                 result['busyViolations'] = [s for s in proof['spans'] if s['windows'] and s['wallMs'] > args.max_busy_ms]
+
+        def restore_niri():
             command(['niri', 'msg', 'action', 'load-config-file', '--path', restore_config],
                     dict(os.environ, **profile.session_environment()))
             assert hashlib.sha256(restore_config.read_bytes()).hexdigest() == restore_hash
             result['checks']['niriConfigRestored'] = True
-            if input_started:
-                command(['sudo', '-n', 'systemctl', 'stop', input_unit], env)
+
+        def verify_original():
             profile.console.verify()
             assert not Path('/etc/keyd/atmosphera').exists()
             assert command(['systemctl', '--user', 'show', 'xremap-atmosphera.service', '-p', 'LoadState', '--value'], env).stdout.strip() == b'not-found'
             result['checks']['originalConsolePreserved'] = True
+
+        def retire_runtime():
             # This profile's private runtime contains only owned IPC files and
             # symlinks; keep evidence/work inputs, retire its empty socket root.
             shutil.rmtree(private_runtime)
             result['checks']['cleanup'] = True
-        except Exception as error:
-            result['errors'].append('cleanup: '+repr(error))
-            result['status'] = 'FAIL'
+
+        cleanup_steps(result, [
+            ('profiler', finish_profiler),
+            ('profiler-log', lambda: profiler_log.close() if profiler_log else None),
+            ('typing', finish_typing),
+            ('observer', finish_observer),
+            ('observer-log', lambda: observer_log.close() if observer_log else None),
+            ('shell', stop),
+            ('trace-report', final_trace),
+            ('niri-restore', restore_niri),
+            ('input-stop', lambda: command(['sudo', '-n', 'systemctl', 'stop', input_unit], env) if input_started else None),
+            ('original-console', verify_original),
+            ('runtime', retire_runtime),
+        ])
         write_json(out/'result.json', result)
     print('SETTINGS_GUI_TIMING: '+result['status'], flush=True)
     return 0 if result['status'] in ('PASS', 'CONTROL_REPRODUCED') else 1
