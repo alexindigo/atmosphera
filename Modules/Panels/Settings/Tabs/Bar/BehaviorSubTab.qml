@@ -57,7 +57,7 @@ ColumnLayout {
       stepSize: 10
       value: Settings.data.bar.edgeScrollHoldMs
       defaultValue: Settings.getDefaultValue("bar.edgeScrollHoldMs")
-      text: Math.round(value) + " ms"
+      text: String(Math.round(value))
       onMoved: value => Settings.data.bar.edgeScrollHoldMs = Math.round(value)
     }
   }

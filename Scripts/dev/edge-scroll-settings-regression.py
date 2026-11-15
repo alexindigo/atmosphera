@@ -55,6 +55,7 @@ PROBE = r'''
           shellRoot.edgeSettingsAssert(group.visible && toggle.enabled && slider.enabled && !notice.visible,
                                        "framed controls unavailable");
           shellRoot.edgeSettingsAssert(toggle.checked && slider.value === 400, "wrong defaults");
+          shellRoot.edgeSettingsAssert(slider.text === "400", "displayed hold time differs from value");
           Settings.data.bar.barType = "simple";
         } else if (shellRoot.edgeSettingsStep === 1) {
           shellRoot.edgeSettingsAssert(!toggle.enabled && !slider.enabled && notice.visible,

@@ -915,7 +915,7 @@
       "behavior-workspace-scroll-label": "Bar mouse wheel action",
       "edge-scrolling-label": "Edge scrolling",
       "edge-scrolling-description": "Hold the pointer at a screen edge to switch columns or workspaces.",
-      "edge-scroll-hold-label": "Hold time",
+      "edge-scroll-hold-label": "Hold time (ms)",
       "edge-scroll-hold-description": "Time before each step. Edges between monitors wait an extra 200 ms before the first step.",
       "edge-scrolling-framed-notice": "Edge scrolling needs the framed bar. Choose Framed in the bar appearance settings to use it.",
       "behavior-workspace-scroll-option-content": "Content",

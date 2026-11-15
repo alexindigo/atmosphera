@@ -134,10 +134,12 @@ PanelWindow {
 
     // Only include regions that are actually needed
     // panelRegions is handled by PanelService, bar is local to this screen
-    regions: [barMaskRegion, backgroundMaskRegion, coexistingPanelMaskRegion]
+    // Apply the sensor subtractions directly to this inverted region. Nesting
+    // subtractions in an empty Combine group would subtract from an empty set.
+    regions: [barMaskRegion, backgroundMaskRegion, coexistingPanelMaskRegion].concat(edgeSensors.inputRegions)
 
     // Bar region - subtract bar area from mask (only if bar should be shown on this screen)
-    Region {
+    property Region barRegion: Region {
       id: barMaskRegion
 
       readonly property bool isFramed: Settings.data.bar.barType === "framed"
@@ -198,7 +200,7 @@ PanelWindow {
     // Uses isAnyPanelOpen so clicking on any screen's background closes the panel.
     // Panels can opt out via closeOnClickOutside: false (e.g. overlay maps that
     // need click-through to windows underneath).
-    Region {
+    property Region backgroundRegion: Region {
       id: backgroundMaskRegion
       readonly property bool active: root.isAnyPanelOpen && (PanelService.openedPanel?.closeOnClickOutside !== false)
       x: 0
@@ -211,7 +213,7 @@ PanelWindow {
     // Coexisting (non-exclusive) panel region — unblock input on the panel's
     // rect so its contents are interactive (click, hover), while the rest of
     // the screen stays click-through for closeOnClickOutside: false panels.
-    Region {
+    property Region coexistingRegion: Region {
       id: coexistingPanelMaskRegion
       readonly property var xp: PanelService.coexistingPanel
       readonly property var region: (xp && xp.screen === root.screen) ? xp.panelRegion : null
@@ -320,6 +322,28 @@ PanelWindow {
       bar: barPlaceholder.barItem || null
       windowRoot: root
       z: 0 // Behind all content
+    }
+
+    EdgeScrollGlow {
+      zone: EdgeScrollService.glowZone?.screenName === root.screen?.name ? EdgeScrollService.glowZone : null
+      progress: EdgeScrollService.progress
+      holding: EdgeScrollService.activeZone?.screenName === root.screen?.name
+      pulse: EdgeScrollService.stepPulse
+      reducedMotion: EdgeScrollService.reducedMotion
+      accent: AtmoColor.mPrimary
+      depth: Math.min(16, Settings.data.bar.frameThickness)
+    }
+
+    EdgeScrollSensors {
+      id: edgeSensors
+      anchors.fill: parent
+      observationItem: container
+      zones: EdgeScrollService.zonesForScreen(root.screen?.name || "")
+      active: EdgeScrollService.enabled && root.barShouldShow
+      onZoneEntered: (zone, buttons, source) => EdgeScrollService.enter(zone, buttons, source)
+      onZoneLeft: (key, source) => EdgeScrollService.leave(key, source)
+      onButtonsChanged: buttons => EdgeScrollService.buttonsChanged(buttons)
+      Component.onDestruction: EdgeScrollService.leaveScreen(root.screen?.name || "")
     }
 
     // Background MouseArea for closing panels when clicking outside

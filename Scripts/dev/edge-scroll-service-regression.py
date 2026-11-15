@@ -69,8 +69,17 @@ ShellRoot {
           controller.cancel();
         }
         controller.enter(null,0); at(now+2000); check(!controller.activeZone,"corner/null zone activated");
+        const sourceA={}, sourceB={};
+        controller.holdMs=400;
+        controller.enter(outer,0,sourceA); at(now+200);
+        controller.enter(outer,0,sourceB);
+        controller.leave(outer.key,sourceA);
+        check(controller.activeZone && controller.progress===0.5,"stale surface leave or restarted hold");
+        const before=actions.length;
+        at(now+200); check(actions.length===before+1,"surface handoff lost step");
+        controller.leave(outer.key,sourceB); check(!controller.activeZone,"current surface leave ignored");
         check(actions.length===pulses,"pulse/action agreement");
-        console.log("PASS hold range and corners");
+        console.log("PASS hold range, corners and surface handoff");
         console.log("EDGE_SCROLL_SERVICE: PASS");
       } catch(error) { console.error("EDGE_SCROLL_SERVICE: FAIL " + error); }
       Qt.quit();

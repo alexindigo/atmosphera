@@ -28,6 +28,7 @@ Item {
   property bool _buttonDown: false
   property real _startedAt: 0
   property real _deadline: 0
+  property var _source: null
 
   signal stepped(var zone)
 
@@ -40,6 +41,7 @@ Item {
   function cancel() {
     _zone = null;
     _progress = 0;
+    _source = null;
   }
 
   function buttonsChanged(buttons) {
@@ -48,20 +50,23 @@ Item {
       cancel();
   }
 
-  function enter(zone, buttons) {
+  function enter(zone, buttons, source) {
     buttonsChanged(buttons);
     if (!enabled || _buttonDown || !zone)
       return;
-    if (_zone && _zone.key === zone.key)
+    if (_zone && _zone.key === zone.key) {
+      _source = source || null;
       return;
+    }
     cancel();
     _startedAt = clock();
     _deadline = _startedAt + holdMs + (zone.inner ? 200 : 0);
     _zone = zone;
+    _source = source || null;
   }
 
-  function leave(key) {
-    if (_zone && _zone.key === key)
+  function leave(key, source) {
+    if (_zone && _zone.key === key && (!source || source === _source))
       cancel();
   }
 
