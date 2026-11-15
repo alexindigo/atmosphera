@@ -98,7 +98,15 @@ PROBE = r'''
         } else if (name === "bar-dialog-close") {
           BarService.openWidgetSettings(screen, "center", 0, "Clock", {});
         } else if (name === "desktop-dialog-close") {
-          DesktopWidgetRegistry.openWidgetSettings(screen, -1, "Clock", {}, null);
+          // The real owner requires a captured row, not the historical -1
+          // ad-hoc dialog shortcut. Settle the seed before capturing its editor.
+          Settings.data.desktopWidgets.monitorWidgets = [{name: screen.name, widgets: [{id: "Clock"}]}];
+          Settings.saveResult(function (result) {
+            // This is a settlement boundary, not a durability assertion: a
+            // stopped unrelated bindings group can fail the aggregate receipt.
+            console.log("OWNER_DESKTOP_SEED " + JSON.stringify(result));
+            DesktopWidgetRegistry.openWidgetSettings(screen, 0, "Clock", {}, null);
+          });
         } else {
           PanelService.showContextMenu(ownerContext.item, ownerAnchor, screen);
         }

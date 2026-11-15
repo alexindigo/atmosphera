@@ -28,7 +28,7 @@ PanelWindow {
   readonly property var screenObject: Quickshell.screens[0]
   CC.ControlCenterTab { id: ccOwner; visible: false }
   Item { id: scene; anchors.fill: parent }
-  QtObject { id: popupHost; readonly property var dialogParent: scene; function hideDynamicMenu() {} function showDialog(dialog) {root.liveDialog=dialog;} }
+  QtObject { id: popupHost; readonly property var dialogParent: scene; function hideDynamicMenu() {} function close() {return true;} function requestPresentation() {return 0;} function showDialog(dialog) {root.liveDialog=dialog;} }
   FileView { path: Quickshell.env("I4_ICON_DATA"); onLoaded: { IconRegistry.register("fixture:atmosphera-icons",JSON.parse(text()),Quickshell.env("I4_ICON_DIR"));root.iconsReady=true;root.begin(); } }
 
   // Fields are semantic control contracts, independent of the page serializer.

@@ -357,6 +357,13 @@ Popup {
     liveEdits.saveAndClose();
   }
 
+  function requestClose() {
+    if (!visible && !saveBusy && !settingsDirty && !saveFailed)
+      return true;
+    saveAndClose();
+    return !visible && !saveBusy && !settingsDirty && !saveFailed;
+  }
+
   // Build one editing object per load. Registry metadata refreshes must not
   // replace the plugin page's data and discard its unsaved edits.
   function _desktopSettingsContext() {

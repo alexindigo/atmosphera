@@ -92,14 +92,12 @@ Singleton {
     if (!contextMenu || !anchorItem)
       return;
 
-    // Close any previously opened context menu first
-    closeContextMenu(screen);
-
     var popupMenuWindow = getPopupMenuWindow(screen);
-    if (popupMenuWindow) {
-      popupMenuWindow.showContextMenu(contextMenu);
+    if (popupMenuWindow && popupMenuWindow.showContextMenu(contextMenu)) {
       contextMenu.openAtItem(anchorItem, screen, targetItem);
+      return true;
     }
+    return false;
   }
 
   // Close any open context menu or popup menu window
@@ -116,16 +114,11 @@ Singleton {
     if (!trayItem || !trayMenu || !anchorItem)
       return false;
 
-    // Close any previously opened menu first
-    closeContextMenu(screen);
-
-    trayMenu.trayItem = trayItem;
-    trayMenu.widgetSection = widgetSection;
-    trayMenu.widgetIndex = widgetIndex;
-
     var popupMenuWindow = getPopupMenuWindow(screen);
-    if (popupMenuWindow) {
-      popupMenuWindow.showContextMenu(trayMenu);
+    if (popupMenuWindow && popupMenuWindow.showContextMenu(trayMenu)) {
+      trayMenu.trayItem = trayItem;
+      trayMenu.widgetSection = widgetSection;
+      trayMenu.widgetIndex = widgetIndex;
       trayMenu.showAt(anchorItem, menuX, menuY);
     } else {
       return false;

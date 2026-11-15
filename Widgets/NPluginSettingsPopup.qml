@@ -272,7 +272,7 @@ Popup {
 
   // Plugin level: the page edits and saves the plugin settings.
   function openPluginSettings(pluginManifest, settingsEntryPoint) {
-    _open(pluginManifest, settingsEntryPoint, null);
+    return _open(pluginManifest, settingsEntryPoint, null);
   }
 
   // One placed instance: the page edits the instance api's settings (plugin
@@ -285,9 +285,9 @@ Popup {
       if (showToastOnSave) {
         ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.settings-error-not-loaded"));
       }
-      return;
+      return false;
     }
-    _open(pluginManifest, settingsEntryPoint, instanceApi);
+    return _open(pluginManifest, settingsEntryPoint, instanceApi);
   }
 
   function _open(pluginManifest, settingsEntryPoint, instanceApi) {
@@ -307,7 +307,7 @@ Popup {
       if (showToastOnSave) {
         ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.settings-error-not-loaded"));
       }
-      return;
+      return false;
     }
 
     _editor = currentPluginApi.createSettingsEditor();
@@ -409,12 +409,13 @@ Popup {
 
   function requestClose() {
     if (_busy)
-      return;
+      return false;
     inputEdits.commit();
-    if (dirty)
+    if (dirty) {
       discardDialog.open();
-    else
-      confirmDiscard();
+      return false;
+    }
+    return confirmDiscard();
   }
 
   function keepEditing() {
@@ -423,9 +424,10 @@ Popup {
 
   function confirmDiscard() {
     if (_busy || (_editor && _editor.discard() === false))
-      return;
+      return false;
     _editor = null;
     discardDialog.close();
     close();
+    return true;
   }
 }

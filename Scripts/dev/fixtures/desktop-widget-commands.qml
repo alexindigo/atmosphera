@@ -26,6 +26,8 @@ PanelWindow {
     id: popupHost
     readonly property var dialogParent: scene
     function hideDynamicMenu() {}
+    function close() { return true; }
+    function requestPresentation() { return 0; }
     function showDialog(dialog) {}
   }
   Desktop.DraggableDesktopWidget {
