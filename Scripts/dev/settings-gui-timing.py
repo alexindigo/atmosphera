@@ -349,12 +349,12 @@ def main():
             response = command(['qs', '-p', sensitivity, '--no-color'], sensitivity_env, 20)
             (out/('sensitivity-'+dispatcher+'.log')).write_bytes(response.stdout+response.stderr)
             # Full trace bounds form the control window (startup is harmless
-            # here: the deliberate handler must still appear as >=75ms CPU).
+            # here: the wall-timed handler must still appear as >=75ms wall).
             events = [line.split() for line in trace.read_text().splitlines()]
             bounds = [int(r[3]) for r in events if r[0] in ('E', 'X')]
             proof = trace_report(trace, [dict(id='80ms-control', startNs=min(bounds), endNs=max(bounds))])
             verify_drain(trace, proof['pid'])
-            assert any(s['cpuMs'] >= 75 for s in proof['spans']), ('insensitive native instrument', dispatcher)
+            assert any(s['wallMs'] >= 75 for s in proof['spans']), ('insensitive native instrument', dispatcher)
             write_json(out/('sensitivity-'+dispatcher+'.json'), proof)
         result['checks']['nativeSensitivity'] = True
         launch('full-shell')
@@ -374,7 +374,8 @@ def main():
             time.sleep(4)
         command(['sudo', '-n', 'systemd-run', '--unit='+input_unit, '--collect',
                  '-p', 'RuntimeMaxSec=1800', '--setenv=TMPDIR='+str(work/'tmp'),
-                 '/usr/bin/ydotoold', '--socket-path='+str(work/'input.sock'), '--socket-own=1000:1000'], env)
+                 '/usr/bin/ydotoold', '--socket-path='+str(work/'input.sock'),
+                 f'--socket-own={profile.uid}:{os.getgid()}'], env)
         input_started = True
         env['YDOTOOL_SOCKET'] = str(work/'input.sock')
         wait_for(lambda: (work/'input.sock').exists())
