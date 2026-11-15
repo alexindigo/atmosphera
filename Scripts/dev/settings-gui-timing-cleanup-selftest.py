@@ -22,7 +22,7 @@ HERE = Path(__file__).resolve().parent
 
 
 class CleanupTests(unittest.TestCase):
-    def run_cleanup(self, *, observer_failure=False, capture_failure=False, ipc_failure=False, term_resistant=False):
+    def run_cleanup(self, *, observer_failure=False, capture_failure=False, ipc_failure=False, term_resistant=False, receipt_delay=False, partial_receipt=False):
         require_disk_backed_paths(os.environ['TMPDIR'])
         tree = ast.parse((HERE / 'settings-gui-timing.py').read_text())
         main = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'main')
@@ -35,6 +35,7 @@ class CleanupTests(unittest.TestCase):
         compiled = compile(ast.fix_missing_locations(ast.Module(body=[*functions, function], type_ignores=[])),
                            'actual-timing-cleanup', 'exec')
         events = []
+        partial_seen = threading.Event()
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             out = root / 'out'; out.mkdir()
@@ -55,17 +56,27 @@ class CleanupTests(unittest.TestCase):
                 while not ready.exists() and time.monotonic() < deadline:
                     time.sleep(.01)
                 self.assertTrue(ready.exists(), 'TERM-resistant child did not arm')
-                # Longer than both bounded waits, including an outer cleanup
-                # retry. Release cooperatively; never add KILL escalation.
+                # Observe the actual waiting state before cooperative release;
+                # scheduler delay and a partial receipt cannot release early.
                 def release_after_observation():
                     try:
-                        pending = json.loads((out / 'result.json').read_text())
-                        if (pending['status'] == 'FAIL' and pending.get('settlement', {}).get('state') ==
-                                'waiting-after-term-deadline' and runtime.exists() and child.poll() is None):
-                            events.append('waiting-state-preserves-live-dependencies')
+                        deadline = time.monotonic() + 5
+                        while time.monotonic() < deadline:
+                            try:
+                                pending = json.loads((out / 'result.json').read_text())
+                            except (OSError, ValueError) as error:
+                                if partial_receipt and isinstance(error, ValueError):
+                                    partial_seen.set()
+                                time.sleep(.05)
+                                continue
+                            if (pending['status'] == 'FAIL' and pending.get('settlement', {}).get('state') ==
+                                    'waiting-after-term-deadline' and runtime.exists() and child.poll() is None):
+                                events.append('waiting-state-preserves-live-dependencies')
+                                break
+                            time.sleep(.05)
                     finally:
                         release.touch()
-                releaser = threading.Timer(.8, release_after_observation)
+                releaser = threading.Thread(target=release_after_observation)
                 releaser.start()
 
             class Child:
@@ -75,6 +86,8 @@ class CleanupTests(unittest.TestCase):
                     return child.poll()
 
                 def wait(self, timeout=None):
+                    if receipt_delay and timeout == 20:
+                        time.sleep(1)
                     return child.wait(timeout=min(timeout, .1) if timeout is not None else 5)
 
                 @property
@@ -112,13 +125,19 @@ class CleanupTests(unittest.TestCase):
 
             profile = SimpleNamespace(session_environment=lambda: {},
                                       console=SimpleNamespace(verify=lambda: events.append('console-verified')))
+            def write_json(path, value):
+                if partial_receipt and value.get('settlement', {}).get('state') == 'waiting-after-term-deadline':
+                    path.write_text('{')
+                    self.assertTrue(partial_seen.wait(timeout=2), 'observer did not tolerate partial receipt')
+                path.write_text(json.dumps(value))
+
             scope = dict(Path=Path, hashlib=hashlib, shutil=shutil, os=os, signal=signal,
                          subprocess=subprocess, ipc=ipc, command=command, out=out, work=work,
                          private_runtime=runtime, profile=profile, env={}, restore_config=restore,
                          restore_hash=hashlib.sha256(restore.read_bytes()).hexdigest(),
                          input_started=True, input_unit='owned-input-selftest', observer=observer,
                          observer_log=Log(), profiler=None, profiler_log=None, typing_process=None,
-                         write_json=lambda path, value: path.write_text(json.dumps(value)))
+                         write_json=write_json)
             try:
                 exec(compiled, scope)
                 result = scope['invoke'](Child(), Capture(), dict(status='PASS', checks={}, errors=[], windows=[]))
@@ -127,6 +146,8 @@ class CleanupTests(unittest.TestCase):
                 self.assertNotIn('restore-before-settlement', events)
                 if term_resistant:
                     self.assertIn('waiting-state-preserves-live-dependencies', events)
+                if partial_receipt:
+                    self.assertTrue(partial_seen.is_set())
                 self.assertFalse(runtime.exists(), 'private runtime was not retired')
                 self.assertIn('niri msg action load-config-file --path ' + str(restore), events)
                 self.assertIn('sudo -n systemctl stop owned-input-selftest', events)
@@ -140,10 +161,12 @@ class CleanupTests(unittest.TestCase):
             finally:
                 release.touch()
                 if releaser:
-                    releaser.join(timeout=5)
+                    releaser.join(timeout=6)
                 if child.poll() is None:
                     child.terminate()
                 child.wait(timeout=5)
+                if releaser:
+                    self.assertFalse(releaser.is_alive(), 'owned settlement observer did not finish')
 
     def test_observer_failure_cannot_skip_owned_cleanup(self):
         self.run_cleanup(observer_failure=True)
@@ -163,6 +186,15 @@ class CleanupTests(unittest.TestCase):
         result = self.run_cleanup(term_resistant=True)
         self.assertTrue(result['checks']['shellSettled'])
         self.assertIn('TERM settlement deadline', str(result['errors']))
+
+    def test_delayed_settlement_receipt_is_observed_before_child_release(self):
+        result = self.run_cleanup(term_resistant=True, receipt_delay=True)
+        self.assertTrue(result['checks']['shellSettled'])
+        self.assertIn('TERM settlement deadline', str(result['errors']))
+
+    def test_partial_settlement_receipt_is_retried_before_child_release(self):
+        result = self.run_cleanup(term_resistant=True, partial_receipt=True)
+        self.assertTrue(result['checks']['shellSettled'])
 
 
 if __name__ == '__main__':
