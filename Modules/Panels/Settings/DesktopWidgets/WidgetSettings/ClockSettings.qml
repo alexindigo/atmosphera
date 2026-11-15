@@ -58,7 +58,7 @@ ColumnLayout {
 
       // Ensure the input keeps focus
       input.focus = true;
-      saveSettings({format: valueFormat.trim()});
+      saveSettings({format: input.text.trim()});
     }
   }
 
@@ -170,7 +170,7 @@ ColumnLayout {
         onTextChanged: {
           valueFormat = text;
         }
-        onTextEdited: saveSettings({format: valueFormat.trim()})
+        onTextEdited: saveSettings({format: text.trim()})
         Component.onCompleted: {
           if (inputItem) {
               inputItem.activeFocusChanged.connect(function () {
