@@ -194,7 +194,7 @@ Popup {
   }
 
   function requestDiscard() {
-    if (!saveBusy && settingsDirty)
+    if (!saveBusy && (settingsDirty || saveFailed))
       discardDialog.open();
   }
 
