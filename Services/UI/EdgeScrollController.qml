@@ -20,8 +20,8 @@ Item {
   }
   property var actionSink: function (zone) {}
   property bool autoTick: true
-  readonly property var activeZone: _zone
-  readonly property real progress: _progress
+  readonly property var activeZone: _leaving ? null : _zone
+  readonly property real progress: _leaving ? 0 : _progress
   readonly property bool buttonDown: _buttonDown
   property var _zone: null
   property real _progress: 0
@@ -29,6 +29,7 @@ Item {
   property real _startedAt: 0
   property real _deadline: 0
   property var _source: null
+  property bool _leaving: false
 
   signal stepped(var zone)
 
@@ -42,6 +43,7 @@ Item {
     _zone = null;
     _progress = 0;
     _source = null;
+    _leaving = false;
   }
 
   function buttonsChanged(buttons) {
@@ -54,8 +56,9 @@ Item {
     buttonsChanged(buttons);
     if (!enabled || _buttonDown || !zone)
       return;
-    if (_zone && _zone.key === zone.key) {
+    if (_zone && _zone.key === zone.key && (!_leaving || (source && source !== _source))) {
       _source = source || null;
+      _leaving = false;
       return;
     }
     cancel();
@@ -66,12 +69,21 @@ Item {
   }
 
   function leave(key, source) {
-    if (_zone && _zone.key === key && (!source || source === _source))
+    if (_zone && _zone.key === key && (!source || source === _source)) {
+      // Stop activity immediately, but retain timing for a replacement surface
+      // entering this same zone before the next event-loop turn.
+      _leaving = true;
+      Qt.callLater(finishLeave);
+    }
+  }
+
+  function finishLeave() {
+    if (_leaving)
       cancel();
   }
 
   function tick() {
-    if (!_zone || !enabled || _buttonDown)
+    if (!_zone || _leaving || !enabled || _buttonDown)
       return;
     var now = clock();
     if (now >= _deadline) {

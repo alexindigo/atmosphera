@@ -78,9 +78,53 @@ ShellRoot {
         const before=actions.length;
         at(now+200); check(actions.length===before+1,"surface handoff lost step");
         controller.leave(outer.key,sourceB); check(!controller.activeZone,"current surface leave ignored");
-        check(actions.length===pulses,"pulse/action agreement");
-        console.log("PASS hold range, corners and surface handoff");
-        console.log("EDGE_SCROLL_SERVICE: PASS");
+        // A leave/re-enter on the same surface is not a handoff.
+        controller.enter(outer,0,sourceA); at(now+200);
+        controller.leave(outer.key,sourceA); controller.enter(outer,0,sourceA);
+        check(controller.progress===0,"same-surface re-entry retained old hold");
+        const reentrySteps=actions.length;
+        at(now+399); check(actions.length===reentrySteps,"same-surface re-entry stepped early");
+        at(now+1); check(actions.length===reentrySteps+1,"same-surface re-entry missing step");
+        // Surface ownership can change in either event order within one turn.
+        // Keep the original enter-before-leave assertions above as well.
+        for (const leaveFirst of [false,true]) {
+          controller.cancel();
+          controller.enter(outer,0,sourceA); at(now+200);
+          if (leaveFirst) controller.leave(outer.key,sourceA);
+          controller.enter(outer,0,sourceB);
+          if (!leaveFirst) controller.leave(outer.key,sourceA);
+          check(controller.activeZone && controller.progress===0.5,"handoff order restarted hold: " + leaveFirst);
+          const steps=actions.length;
+          at(now+199); check(actions.length===steps,"handoff stepped early: " + leaveFirst);
+          at(now+1); check(actions.length===steps+1,"handoff lost deadline: " + leaveFirst);
+        }
+        const steps=actions.length;
+        Qt.callLater(function() {
+          try {
+            check(controller.activeZone,"deferred leave cancelled replacement surface");
+            at(now+400); check(actions.length===steps+1,"handoff lost repeat after event turn");
+            controller.leave(outer.key,sourceB);
+            check(!controller.activeZone && controller.progress===0,"real leave did not cancel promptly");
+            at(now+1000); check(actions.length===steps+1,"real leave fired a pending step");
+            Qt.callLater(function() {
+              try {
+                check(!controller.activeZone && controller.progress===0,"real leave survived event turn");
+                controller.enter(outer,0,sourceA);
+                at(now+399); check(actions.length===steps+1,"real leave retained old hold");
+                at(now+1); check(actions.length===steps+2,"fresh hold after real leave missing");
+                check(actions.length===pulses,"pulse/action agreement");
+                console.log("PASS hold range, corners and surface handoff");
+                console.log("PASS both surface handoff orders, deferred ownership and prompt real leave");
+                console.log("EDGE_SCROLL_SERVICE: PASS");
+              } catch(error) { console.error("EDGE_SCROLL_SERVICE: FAIL " + error); }
+              Qt.quit();
+            });
+          } catch(error) {
+            console.error("EDGE_SCROLL_SERVICE: FAIL " + error);
+            Qt.quit();
+          }
+        });
+        return;
       } catch(error) { console.error("EDGE_SCROLL_SERVICE: FAIL " + error); }
       Qt.quit();
     }
