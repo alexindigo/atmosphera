@@ -14,6 +14,7 @@ import shlex
 import shutil
 import subprocess
 import time
+import uuid
 
 from presentation_harness import run_harness, write_receipt
 from qml_probe import inject_probe
@@ -96,6 +97,15 @@ PAGE = r'''
   property int _lockTicks: 0
   property int _lockStep: 0
   property var _lockPanel: null
+  property bool _lockFixtureChanged: false
+  Process {
+    id: _lockRemoveFixture
+    command: ["python3", "-c", "import os,sys; os.unlink(sys.argv[1])", Quickshell.env("LOCK_COMMAND_TRIPWIRE")]
+    onExited: function(exitCode) {
+      if (exitCode !== 0) { console.log("PAGE_FIXTURE_CHANGE_FAILED"); Qt.exit(1); return; }
+      shellRoot._lockFixtureChanged = true;
+    }
+  }
   function _lockFind(item, name) {
     if (!item) return null;
     if (item.objectName === name) return item;
@@ -123,8 +133,14 @@ PAGE = r'''
       }
       const panel = shellRoot._lockPanel;
       if (shellRoot._lockStep === 3) {
-        panel.openToTab(4, 0);
+        _lockRemoveFixture.running = true;
         shellRoot._lockStep = 4;
+        return;
+      }
+      if (shellRoot._lockStep === 4) {
+        if (!shellRoot._lockFixtureChanged) return;
+        panel.openToTab(4, 0);
+        shellRoot._lockStep = 5;
         return;
       }
       const status = shellRoot._lockFind(panel, "externalCommandStatus");
@@ -142,8 +158,8 @@ PAGE = r'''
         Settings.data.general.externalLockCommand = "aerial-lock";
         panel.openToTab(10, 0);
         shellRoot._lockStep = 3;
-      } else if (shellRoot._lockStep === 4 && status.text === "") {
-        console.log("PAGE_REOPEN_AVAILABLE");
+      } else if (shellRoot._lockStep === 5 && Settings.data.general.externalLockCommand === "aerial-lock" && status.text.indexOf("Command not found") >= 0 && status.visible) {
+        console.log("PAGE_REOPEN_MISSING");
         panel.closeImmediately();
         console.log("PAGE_COMPLETE");
         Qt.quit();
@@ -194,6 +210,16 @@ def environment(work):
     return env
 
 
+def finish_stage(work, passed, execution, **details):
+    receipt = dict(passed=passed, **details)
+    write_receipt(work, receipt, execution)
+    return receipt['passed']
+
+
+def journal_identifier(work):
+    return 'atmosphera-lock-command-' + work.name + '-' + uuid.uuid4().hex
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, default=Path(__file__).resolve().parents[2])
@@ -213,6 +239,8 @@ def main():
     fixture.chmod(0o755)
     spaced = bin_dir / 'locker with spaces'
     shutil.copy2(fixture, spaced)
+    hashed = bin_dir / 'locker#hash'
+    shutil.copy2(fixture, hashed)
     not_executable = bin_dir / 'not-executable'
     not_executable.write_text('not executable\n')
     env = environment(work)
@@ -226,6 +254,9 @@ def main():
         dict(name='quoted-arguments', input='aerial-lock --name "hello world"', expected='available'),
         dict(name='quoted-executable', input=shlex.quote(str(spaced)) + ' "arg x"', expected='available'),
         dict(name='escaped-executable', input=str(spaced).replace(' ', '\\ '), expected='available'),
+        dict(name='hash-in-executable', input=str(hashed), expected='available'),
+        dict(name='hash-in-missing-name', input='aerial-lock#missing', expected='missing'),
+        dict(name='shell-comment', input='# no command', expected='unverified'),
         dict(name='tab', input='  aerial-lock\t--flag', expected='available'),
         dict(name='not-executable', input=str(not_executable), expected='missing'),
         dict(name='empty', input='', expected='empty'),
@@ -262,13 +293,13 @@ def main():
         execution = run_harness(['dbus-run-session', '--', 'qs', '-p', str(entry), '--no-color'], async_work, env, 45)
         log = (async_work / 'shell.log').read_text()
         passed = execution['exit_code'] == 0 and log.count('CHECK_PASS ') == len(cases) and not re.search(r'CHECK_FAIL|TypeError:|ReferenceError:', log)
-        write_receipt(async_work, dict(passed=passed, cases=len(cases)), execution)
+        passed = finish_stage(async_work, passed, execution, cases=len(cases))
         assert passed, log
     entry = shell / 'shell.qml'
-    entry.write_text(inject_probe(entry.read_text(), PAGE))
+    entry.write_text('import Quickshell.Io\n' + inject_probe(entry.read_text(), PAGE))
     page_work = work / 'page'
     page_work.mkdir()
-    identifier = 'atmosphera-lock-command-' + work.name
+    identifier = journal_identifier(work)
     execution = run_harness(['dbus-run-session', '--', 'systemd-cat', '--identifier=' + identifier,
                              'qs', '-p', str(shell), '--no-color'], page_work, env, 35)
     # Read the actual child journal, not just a startup marker or launcher log.
@@ -282,11 +313,10 @@ def main():
         time.sleep(0.1)
     (page_work / 'journal.log').write_text(log)
     errors = [line for line in log.splitlines() if re.search(r'TypeError:|ReferenceError:|SyntaxError:|Failed to load configuration', line)]
-    markers = ['PAGE_AVAILABLE', 'PAGE_MISSING', 'PAGE_EMPTY', 'PAGE_REOPEN_AVAILABLE', 'PAGE_COMPLETE']
+    markers = ['PAGE_AVAILABLE', 'PAGE_MISSING', 'PAGE_EMPTY', 'PAGE_REOPEN_MISSING', 'PAGE_COMPLETE']
     passed = execution['exit_code'] == 0 and not errors and all(marker in log for marker in markers) and not sentinel.exists()
-    write_receipt(page_work, dict(passed=passed, markers=[marker for marker in markers if marker in log], qml_errors=errors,
-                                 locker_executed=sentinel.exists()), execution)
-    print(json.dumps(dict(passed=passed, qml_errors=errors, locker_executed=sentinel.exists()), indent=2))
+    passed = finish_stage(page_work, passed, execution, markers=[marker for marker in markers if marker in log], qml_errors=errors,
+                          locker_executed=sentinel.exists(), journal_identifier=identifier)
     if not passed:
         print(log[-16000:])
     if passed and not args.baseline_page:
@@ -297,9 +327,10 @@ def main():
         execution = run_harness(['dbus-run-session', '--', 'qs', '-p', str(entry), '--no-color'], language_work, env, 15)
         text = (language_work / 'shell.log').read_text()
         passed = execution['exit_code'] == 0 and 'LANGUAGE_AUTOMATIC_COMPLETE' in text and not re.search(r'TypeError:|ReferenceError:', text)
-        write_receipt(language_work, dict(passed=passed), execution)
+        passed = finish_stage(language_work, passed, execution)
         if not passed:
             print(text[-12000:])
+    print(json.dumps(dict(passed=passed, qml_errors=errors, locker_executed=sentinel.exists()), indent=2))
     return 0 if passed else 1
 
 

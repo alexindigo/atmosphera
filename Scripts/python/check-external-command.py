@@ -16,11 +16,14 @@ def check(command):
         return "empty"
     # shlex removes quoting but does not implement expansion, shell grammar or
     # assignment semantics. Do not misdiagnose those expressions as missing.
-    if any(char in command for char in "$`\n\r"):
+    if command.lstrip().startswith("#") or any(char in command for char in "$`\n\r"):
         return "unverified"
     try:
         lexer = shlex.shlex(command, posix=True, punctuation_chars=True)
         lexer.whitespace_split = True
+        # In sh, '#' starts a comment only at a word boundary, not inside
+        # an executable name. Trailing comment words do not affect lookup.
+        lexer.commenters = ""
         words = list(lexer)
     except ValueError:
         return "unverified"
