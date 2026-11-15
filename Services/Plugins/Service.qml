@@ -167,7 +167,12 @@ Singleton {
         // Their settled owner and unresolved-group facts fence this workflow.
         if (["saved", "nothing_to_save", "reloaded"].indexOf(result.status) === -1 ||
             (result.unresolvedGroups && result.unresolvedGroups.length)) {
-          callback(result); return;
+          var ownerKey = index === 0 ? "shell" : owners[index - 1].key;
+          var blockers = (result.unresolvedGroups || []).map(function (token) {
+            var info = store.groupInfo(token);
+            return {ownerKey: ownerKey, groupToken: token, requestKey: info.requestKey || "", state: info.state || "unresolved"};
+          });
+          callback(Object.assign({}, result, {preferenceOwnerKey: ownerKey, preferenceBlockers: blockers})); return;
         }
         var inputs = paths.map(function (path) { return store.info(path).latestInput; });
         if (inputs.some(function (input) { return greater(input, result.inputPrefix); })) {
