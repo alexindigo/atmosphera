@@ -45,8 +45,12 @@ def layout_fits(s):
                     for t in g["entries"]["tiles"]))
 
 
+def suite_seconds(*partitions):
+    """Size the complete walk, not its assertions or per-interaction deadlines."""
+    return 840 if any(partitions) else 1200
+
+
 def main():
-    enter(resource_subject=True)
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--label", required=True)
@@ -57,6 +61,8 @@ def main():
     p.add_argument("--drop-only", action="store_true", help="Run the external drop partition")
     profile_argument(p)
     a = p.parse_args()
+    runtime_seconds = suite_seconds(a.path_only, a.operations_only, a.views_only, a.places_only, a.drop_only)
+    enter(runtime_seconds=runtime_seconds, resource_subject=True)
     guest()
     source = a.source.resolve()
     assert exact_source(source) and source.is_dir()
@@ -65,7 +71,7 @@ def main():
     assert not runtime.exists() and not evidence.exists()
     # filechooser-harness owns preparation, media fixtures and the qs child.
     env = dict(os.environ)
-    harness = subprocess.Popen(["timeout", "860", "python3", "-B", str(SCRIPTS / "filechooser-harness.py"), "--source", str(source), "--label", a.label], env=env)
+    harness = subprocess.Popen(["timeout", str(runtime_seconds + 20), "python3", "-B", str(SCRIPTS / "filechooser-harness.py"), "--source", str(source), "--label", a.label], env=env)
     probe = runtime / "shell/filechooser-harness.qml"
     cases = []
     complete = False

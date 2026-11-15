@@ -21,6 +21,20 @@ def main():
     profile.prepare_roots()
     cases = []
     scripts = Path(__file__).resolve().parent
+    seconds = runpy.run_path(str(scripts / "filechooser-ui-regression.py"), run_name="import_probe")["suite_seconds"]
+    cases.append({"case": "ui-complete-suite-budget", "pass": seconds() == seconds(False, False) == 1200})
+    cases.append({"case": "ui-short-partition-budget", "pass": all(seconds(*(i == j for i in range(6))) == 840 for j in range(6))})
+    child_seconds = runpy.run_path(str(scripts / "filechooser-harness.py"), run_name="import_probe")["workload_seconds"]
+    previous_seconds = os.environ.get("FILECHOOSER_SESSION_SECONDS")
+    try:
+        for value in (840, 1200):
+            os.environ["FILECHOOSER_SESSION_SECONDS"] = str(value)
+            cases.append({"case": "harness-inherits-budget-" + str(value), "pass": child_seconds() == value})
+    finally:
+        if previous_seconds is None:
+            os.environ.pop("FILECHOOSER_SESSION_SECONDS", None)
+        else:
+            os.environ["FILECHOOSER_SESSION_SECONDS"] = previous_seconds
     for name in ("theming-load-units.py", "theming-shell-units.py", "owned-process-regression.py"):
         try:
             runpy.run_path(str(scripts / name), run_name="import_probe")

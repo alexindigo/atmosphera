@@ -18,6 +18,11 @@ from filechooser_isolation import enter, guest, profile_env
 from filechooser_profile import current_profile, workspace, exact_source, profile_argument
 
 
+def workload_seconds():
+    """Use the checked enclosing session's budget, including extended UI walks."""
+    return int(os.environ["FILECHOOSER_SESSION_SECONDS"])
+
+
 def main():
     enter()
     p = argparse.ArgumentParser(description=__doc__)
@@ -96,7 +101,8 @@ def main():
                ATMOSPHERA_CACHE_DIR=str(cache) + "/", ATMOSPHERA_DEBUG="0")
     (evidence / "recipe.json").write_text(json.dumps({"source": str(source), "runtime": str(runtime), "probe": str(probe), "fixtures": str(fixtures), "environment": {k: v for k, v in env.items() if k.startswith(("ATMOSPHERA_", "FILECHOOSER_", "XDG_", "WAYLAND_", "NIRI_", "TMPDIR", "LANG", "LC_"))}}, indent=2))
     with (evidence / "harness.log").open("w") as log:
-        result = subprocess.run(["timeout", "--kill-after=5s", "840", "qs", "-p", str(probe)], cwd=shell, env=env, stdout=log, stderr=subprocess.STDOUT, timeout=850)
+        seconds = workload_seconds()
+        result = subprocess.run(["timeout", "--kill-after=5s", str(seconds), "qs", "-p", str(probe)], cwd=shell, env=env, stdout=log, stderr=subprocess.STDOUT, timeout=seconds + 10)
     return result.returncode
 
 

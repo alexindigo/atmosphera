@@ -6,6 +6,7 @@ from pathlib import Path
 import re
 
 from filechooser_profile import profile_argument
+from filechooser_isolation import enter
 from filechooser_regression import Run
 from qml_probe import inject_probe
 
@@ -16,6 +17,9 @@ def main():
     parser.add_argument("--label", required=True)
     profile_argument(parser)
     args = parser.parse_args()
+    # Match the existing full-UI allocator profile under the same MemoryHigh;
+    # retained/huge pages must not turn the quit timer into reclaim thrashing.
+    enter(resource_subject=True)
     run = Run(args.source, args.label)
     entry = run.shell / "shell.qml"
     entry.write_text(inject_probe(entry.read_text(),

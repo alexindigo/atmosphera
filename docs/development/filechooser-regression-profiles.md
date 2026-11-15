@@ -24,13 +24,22 @@ export TMPDIR=/home/tester/Projects/filechooser-usability/tmp
 profile=$PWD/Scripts/dev/fixtures/guest-profiles/atmosphera-mov-filter.json
 timeout 900 python3 -B Scripts/dev/filechooser-units.py --guest-profile "$profile" --source "$PWD" --output "$PWD/../evidence/units-LABEL"
 timeout 900 python3 -B Scripts/dev/filechooser-portal-regression.py --guest-profile "$profile" --source "$PWD" --label portal-LABEL
-timeout 900 python3 -B Scripts/dev/filechooser-ui-regression.py --guest-profile "$profile" --source "$PWD" --label ui-LABEL
+timeout 1320 python3 -B Scripts/dev/filechooser-ui-regression.py --guest-profile "$profile" --source "$PWD" --label ui-LABEL
 ```
 
 Each label must be fresh. `filechooser_regression.py` is their shared library,
 not a CLI. These commands preserve complete extracted working trees and evidence;
 they create no workspace capsules. The profile must be explicitly updated when
 the authorized guest changes. Do not spoof a MAC or weaken a failing check.
+
+The complete UI walk has a 1,200-second workload envelope; short partitions keep
+840 seconds. Harness and isolated-service watchdogs retain their existing +20
+and +40 second margins. The outer command above allows controller teardown.
+The inner `qs` watchdog inherits that session budget rather than a fixed 840 seconds.
+Assertions, per-interaction deadlines and memory/CPU/task/swap limits are unchanged.
+Full-shell smoke uses the existing full-UI allocator/THP subject profile under
+those same limits; its eight-second quit timer and 90-second process deadline
+are unchanged.
 
 The UI runner also accepts `--path-only` for a short path-entry partition during
 iteration. It retains its runtime-error and isolation gates. Omit that flag for
