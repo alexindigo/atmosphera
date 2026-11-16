@@ -117,6 +117,8 @@ QtObject {
     pending = null;
     failed = false;
     closePending = false;
+    if (inputGuard)
+      inputGuard.reset();
     if (editor && typeof editor.detach === "function")
       editor.detach();
     closeRequested();

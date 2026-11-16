@@ -113,6 +113,8 @@ ShellRoot {
     function focus(): void { root.input().inputItem.forceActiveFocus(); root.input().inputItem.selectAll(); }
     function release(): void { var next = root.held.shift(); if (next) next.callback(next.result); }
     function close(): void { root.closeWhenIdle = true; if (!dialog.saveBusy) dialog.saveAndClose(); }
+    function reopenDetached(): void { root.closeWhenIdle = false; root.owner.detach(); dialog.open(); }
+    function discard(): void { dialog.requestDiscard(); if (!dialog.confirmDiscard()) throw new Error("LIVE_INPUT_ASSERT: discard refused"); }
     function clear(): void {
       var control = root.input();
       var button = root.find(control, function (item) { return String(item).indexOf("AtmoIconButton_QMLTYPE") === 0; });

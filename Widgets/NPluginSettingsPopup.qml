@@ -415,7 +415,7 @@ Popup {
     _failed = !accepted;
     if (accepted)
       _pageApi.refresh(_editor.initialValue, _previewFence);
-    if (accepted)
+    if (accepted && !reset)
       inputEdits.acknowledge(_inputFence);
     // Keep competing page actions disabled throughout receipt delivery.
     settingsCompleted(result);
@@ -428,6 +428,8 @@ Popup {
       resetInstanceDialog.close();
       settingsLoader.sourceComponent = null;
       settingsLoader.source = "";
+      // Reset replaced the entire input owner, unlike a captured Apply receipt.
+      inputEdits.reset();
       _loadPage();
     }
     if (showToastOnSave)

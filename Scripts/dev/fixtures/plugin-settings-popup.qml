@@ -201,7 +201,7 @@ ShellRoot {
       showSettings();
       phase = "apply";
     } else if (phase === "apply" && popup.opened && page) {
-      page.setLabel("shared-first");
+      page.editLabel("shared-first");
       popup.applySettings();
       popup.applySettings();
       check(popupHost.close() === false && popupHost.popupContentItem === popup, "host refuses held Apply close");
@@ -324,7 +324,8 @@ ShellRoot {
       if (instance.pluginSettings.label !== "instance-saved")
         return;
       check(!popup.saveFailed && instance.pluginSettings.label === "instance-saved", "instance applied consumer");
-      page.setLabel("discard-on-reset");
+      page.editLabel("discard-on-reset");
+      check(popup.dirty, "native input is dirty before Reset");
       popup.resetButton.clicked();
       check(popup.resetConfirmation.visible, "reset explicit confirmation");
       popup.resetInstanceSettings();
@@ -332,6 +333,7 @@ ShellRoot {
       phase = "reset-wait";
     } else if (phase === "reset-wait" && !popup.busy) {
       check(!popup.saveFailed && !popup.resetConfirmation.visible && page.labelText === "shared-final", "reset reloads only after current receipt");
+      check(!popup.dirty, "accepted Reset retires replaced page input");
       check(PluginInstances.entryFor(placement).instanceSettings === undefined && Settings.data.bar.widgets.left[0].tag === "keep", "reset owning leaf and unknown data");
       popup.requestClose();
       phase = "legacy-open";
