@@ -2,6 +2,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../../../Helpers/SettingsValues.js" as SettingsValues
 import qs.Commons
 import qs.Modules.Panels.Settings.Bar as Bar
 import qs.Services.UI
@@ -26,6 +27,17 @@ PanelWindow {
   property bool started: false
   property int route: 0
   property var editor: null
+  FileView {
+    id: publication
+    path: Settings.configDir + "settings/bar.json"
+    printErrors: false
+  }
+  function checkQueuedPublication() {
+    publication.reload();
+    publication.waitForJob();
+    var stored = JSON.parse(publication.text()).screenOverrides[0].widgets.left;
+    check(SettingsValues.equal(stored, rows()) && stored[0].iconColor === "primary", "original queued publication reaches file");
+  }
   property var continuation: null
   property var afterFault: null
   property bool faultBlocked: false
@@ -36,18 +48,46 @@ PanelWindow {
   }
   function fail(error) {
     console.error(String(error));
-    if(faultBlocked&&!faultProcess.running){exitAfterRepair=true;fault("repair",function(){});return;}
+    if (faultBlocked && !faultProcess.running) {
+      exitAfterRepair = true;
+      fault("repair", function () {});
+      return;
+    }
     Qt.exit(2);
   }
-  function later(next){check(continuation===null,"one fixture continuation");continuation=next;readyWait.start();}
+  function later(next) {
+    check(continuation === null, "one fixture continuation");
+    continuation = next;
+    readyWait.start();
+  }
   Timer {
-    id:readyWait;interval:20;repeat:true
-    onTriggered:{try{
-      var paths=[["bar","widgets","left"],["bar","widgets","center"],["bar","widgets","right"],["bar","screenOverrides"]];
-      var probes=paths.map(function(path){return Settings.createRecordListEditor(path,[]);});
-      var ready=probes.every(function(probe){return !!probe;});probes.forEach(function(probe){if(probe)probe.detach();});
-      if(!ready)return;stop();var next=root.continuation;root.continuation=null;next();
-    }catch(error){stop();root.fail(error);}}
+    id: readyWait
+    interval: 20
+    repeat: true
+    onTriggered: {
+      try {
+        var paths = [["bar", "widgets", "left"], ["bar", "widgets", "center"], ["bar", "widgets", "right"], ["bar", "screenOverrides"]];
+        var probes = paths.map(function (path) {
+          return Settings.createRecordListEditor(path, []);
+        });
+        var ready = probes.every(function (probe) {
+          return !!probe;
+        });
+        probes.forEach(function (probe) {
+          if (probe)
+            probe.detach();
+        });
+        if (!ready)
+          return;
+        stop();
+        var next = root.continuation;
+        root.continuation = null;
+        next();
+      } catch (error) {
+        stop();
+        root.fail(error);
+      }
+    }
   }
   function rows() {
     return Settings.getBarWidgetsForScreen(testScreen.name).left;
@@ -101,202 +141,202 @@ PanelWindow {
   function stale() {
     seed();
     later(function () {
-    capture();
-    var old = JSON.parse(JSON.stringify(rows()));
-    assign([old[1], old[0]]);
-    var before = JSON.stringify(rows());
-    editor.submit({
-                    displayMode: "alwaysShow"
-                  }, function (result) {
-                    try {
-                      rejected(result, "list-edit-conflict");
-                      aba();
-                    } catch (error) {
-                      fail(error);
-                    }
-                  });
-    check(JSON.stringify(rows()) === before, "captured bar refuses repeated-ID replacement " + route);
+      capture();
+      var old = JSON.parse(JSON.stringify(rows()));
+      assign([old[1], old[0]]);
+      var before = JSON.stringify(rows());
+      editor.submit({
+                      displayMode: "alwaysShow"
+                    }, function (result) {
+                      try {
+                        rejected(result, "list-edit-conflict");
+                        aba();
+                      } catch (error) {
+                        fail(error);
+                      }
+                    });
+      check(JSON.stringify(rows()) === before, "captured bar refuses repeated-ID replacement " + route);
     });
   }
   function aba() {
     seed();
     later(function () {
-    capture();
-    var old = JSON.parse(JSON.stringify(rows()));
-    assign([
-             {
-               id: "intervening"
-             }
-           ]);
-    assign(old);
-    check(editor.submit({
-                          displayMode: "alwaysShow"
-                        }, function (result) {
-                          try {
-                            rejected(result, "list-edit-conflict");
-                            if (route === 0)
-                              routing();
-                            else
-                              failedSave();
-                          } catch (error) {
-                            fail(error);
-                          }
-                        }) === false, "notified ABA refused " + route);
-    check(rows()[0].displayMode === undefined, "ABA unchanged consumer " + route);
+      capture();
+      var old = JSON.parse(JSON.stringify(rows()));
+      assign([
+               {
+                 id: "intervening"
+               }
+             ]);
+      assign(old);
+      check(editor.submit({
+                            displayMode: "alwaysShow"
+                          }, function (result) {
+                            try {
+                              rejected(result, "list-edit-conflict");
+                              if (route === 0)
+                                routing();
+                              else
+                                failedSave();
+                            } catch (error) {
+                              fail(error);
+                            }
+                          }) === false, "notified ABA refused " + route);
+      check(rows()[0].displayMode === undefined, "ABA unchanged consumer " + route);
     });
   }
   function routing() {
     seed();
     later(function () {
-    capture();
-    Settings.data.bar.screenOverrides = [
-          {
-            name: testScreen.name,
-            widgets: {
-              left: [
-                {
-                  id: "Volume"
-                }
-              ],
-              center: [],
-              right: []
+      capture();
+      Settings.data.bar.screenOverrides = [
+            {
+              name: testScreen.name,
+              widgets: {
+                left: [
+                  {
+                    id: "Volume"
+                  }
+                ],
+                center: [],
+                right: []
+              }
             }
-          }
-        ];
-    check(editor.submit({
-                          displayMode: "alwaysShow"
-                        }, function (result) {
-                          try {
-                            rejected(result, "list-edit-conflict");
-                            check(rows()[0].displayMode === undefined && Settings.data.bar.widgets.left[0].displayMode === undefined, "both routes unchanged");
-                            Settings.data.bar.screenOverrides = [
-                                  {
-                                    name: testScreen.name,
-                                    enabled: false,
-                                    widgets: {
-                                      left: [
-                                        {
-                                          id: "Volume"
-                                        }
-                                      ],
-                                      center: [],
-                                      right: []
+          ];
+      check(editor.submit({
+                            displayMode: "alwaysShow"
+                          }, function (result) {
+                            try {
+                              rejected(result, "list-edit-conflict");
+                              check(rows()[0].displayMode === undefined && Settings.data.bar.widgets.left[0].displayMode === undefined, "both routes unchanged");
+                              Settings.data.bar.screenOverrides = [
+                                    {
+                                      name: testScreen.name,
+                                      enabled: false,
+                                      widgets: {
+                                        left: [
+                                          {
+                                            id: "Volume"
+                                          }
+                                        ],
+                                        center: [],
+                                        right: []
+                                      }
                                     }
-                                  }
-                                ];
-                             seed();
-                             later(function () {
-                             capture();
-                            editor.submit({
-                                            displayMode: "alwaysHide"
-                                          }, function (disabled) {
-                                            try {
-                                              check(disabled.status !== "failed", "disabled override receipt");
-                                              check(Settings.data.bar.widgets.left[0].displayMode === "alwaysHide", "disabled override displayed global consumer");
-                                              check(Settings.data.bar.screenOverrides[0].widgets.left[0].displayMode === undefined, "disabled override untouched");
-                                              Settings.data.bar.screenOverrides = [];
-                                              failedSave();
-                                            } catch (error) {
-                                              fail(error);
-                                            }
-                                           });
-                             });
-                          } catch (error) {
-                            fail(error);
-                          }
-                        }) === false, "route change refused");
+                                  ];
+                              seed();
+                              later(function () {
+                                capture();
+                                editor.submit({
+                                                displayMode: "alwaysHide"
+                                              }, function (disabled) {
+                                                try {
+                                                  check(disabled.status !== "failed", "disabled override receipt");
+                                                  check(Settings.data.bar.widgets.left[0].displayMode === "alwaysHide", "disabled override displayed global consumer");
+                                                  check(Settings.data.bar.screenOverrides[0].widgets.left[0].displayMode === undefined, "disabled override untouched");
+                                                  Settings.data.bar.screenOverrides = [];
+                                                  failedSave();
+                                                } catch (error) {
+                                                  fail(error);
+                                                }
+                                              });
+                              });
+                            } catch (error) {
+                              fail(error);
+                            }
+                          }) === false, "route change refused");
     });
   }
   function failedSave() {
     seed();
     later(function () {
-    capture();
-    fault("block",function () {
-    check(editor.submit({
-                          displayMode: "alwaysShow"
-                        }, function (result) {
-                          try {
-                            check(result.status === "failed", "failed aggregate receipt " + route);
-                            check(rows()[0].displayMode === "alwaysShow", "failed save retains admitted input " + route);
-                             fault("repair",function () {
-                            check(editor.submit({
-                                                  displayMode: "alwaysShow"
-                                                }, function (retry) {
-                                                  try {
-                                                    check(retry.status !== "failed", "same session retry " + route);
-                                                    saved();
-                                                  } catch (error) {
-                                                    fail(error);
-                                                  }
-                                                 }) === true, "retry admitted " + route);
-                             });
-                          } catch (error) {
-                            fail(error);
-                          }
-                         }) === true, "failure input admitted " + route);
-    });
+      capture();
+      fault("block", function () {
+        check(editor.submit({
+                              displayMode: "alwaysShow"
+                            }, function (result) {
+                              try {
+                                check(result.status === "failed", "failed aggregate receipt " + route);
+                                check(rows()[0].displayMode === "alwaysShow", "failed save retains admitted input " + route);
+                                fault("repair", function () {
+                                  check(editor.submit({
+                                                        displayMode: "alwaysShow"
+                                                      }, function (retry) {
+                                                        try {
+                                                          check(retry.status !== "failed", "same session retry " + route);
+                                                          saved();
+                                                        } catch (error) {
+                                                          fail(error);
+                                                        }
+                                                      }) === true, "retry admitted " + route);
+                                });
+                              } catch (error) {
+                                fail(error);
+                              }
+                            }) === true, "failure input admitted " + route);
+      });
     });
   }
   function saved() {
     seed();
     later(function () {
-    capture();
-    var fields = {
-      id: "legacy page id is not field intent",
-      displayMode: "alwaysHide"
-    };
-    check(editor.submit(fields, function (result) {
-      try {
-        check(result.status === "saved" || result.status === "nothing_to_save", "acknowledged field edit " + route);
-        check(rows()[0].displayMode === "alwaysHide" && rows()[0].id === "Volume", "actual edited consumer " + route);
-        check(rows()[0].opaque === "first" && rows()[1].opaque === "second" && rows()[1].displayMode === undefined, "unrelated fields and repeated sibling preserved " + route);
-        var held = editor;
-        held.detach();
-        check(held.submit({
-                            displayMode: "onhover"
-                          }, function (detached) {
-                            try {
-                              rejected(detached, "list-editor-closed");
-                              if (route === 0) {
-                                route = 1;
-                                stale();
-                              } else {
-                                finalChecks();
-                                dialogCases();
+      capture();
+      var fields = {
+        id: "legacy page id is not field intent",
+        displayMode: "alwaysHide"
+      };
+      check(editor.submit(fields, function (result) {
+        try {
+          check(result.status === "saved" || result.status === "nothing_to_save", "acknowledged field edit " + route);
+          check(rows()[0].displayMode === "alwaysHide" && rows()[0].id === "Volume", "actual edited consumer " + route);
+          check(rows()[0].opaque === "first" && rows()[1].opaque === "second" && rows()[1].displayMode === undefined, "unrelated fields and repeated sibling preserved " + route);
+          var held = editor;
+          held.detach();
+          check(held.submit({
+                              displayMode: "onhover"
+                            }, function (detached) {
+                              try {
+                                rejected(detached, "list-editor-closed");
+                                if (route === 0) {
+                                  route = 1;
+                                  stale();
+                                } else {
+                                  finalChecks();
+                                  dialogCases();
+                                }
+                              } catch (error) {
+                                fail(error);
                               }
+                            }) === false, "detached refuses new input " + route);
+        } catch (error) {
+          fail(error);
+        }
+      }) === true, "edit admitted " + route);
+      fields.displayMode = "mutated after submission";
+      check(editor.submit({
+                            displayMode: "onhover"
+                          }, function (busy) {
+                            try {
+                              rejected(busy, "list-editor-busy");
                             } catch (error) {
                               fail(error);
                             }
-                          }) === false, "detached refuses new input " + route);
-      } catch (error) {
-        fail(error);
-      }
-    }) === true, "edit admitted " + route);
-    fields.displayMode = "mutated after submission";
-    check(editor.submit({
-                          displayMode: "onhover"
-                        }, function (busy) {
-                          try {
-                            rejected(busy, "list-editor-busy");
-                          } catch (error) {
-                            fail(error);
-                          }
-                         }) === false, "busy refusal " + route);
+                          }) === false, "busy refusal " + route);
     });
   }
   function dialogCases() {
     seed();
     later(function () {
-    dialog.settingsEditor = BarService.createWidgetSettingsEditor(testScreen.name, "left", 0);
-    dialog.widgetData = dialog.settingsEditor.initialValue;
-    dialog.open();
-    fault("block",function () {
-    check(dialog.queueSettings({
-                                 displayMode: "alwaysHide"
-                               }), "dialog queues owned fields");
-    dialog.saveAndClose();
-    check(dialog.visible && dialog.saveBusy, "close waits for actual receipt");
-    });
+      dialog.settingsEditor = BarService.createWidgetSettingsEditor(testScreen.name, "left", 0);
+      dialog.widgetData = dialog.settingsEditor.initialValue;
+      dialog.open();
+      fault("block", function () {
+        check(dialog.queueSettings({
+                                     displayMode: "alwaysHide"
+                                   }), "dialog queues owned fields");
+        dialog.saveAndClose();
+        check(dialog.visible && dialog.saveBusy, "close waits for actual receipt");
+      });
     });
   }
   function dialogResult(result) {
@@ -305,7 +345,7 @@ PanelWindow {
         check(result.status === "failed" && dialog.visible && dialog.settingsDirty && dialog.saveFailed, "failed receipt retains real dialog work");
         check(rows()[0].displayMode === "alwaysHide", "failure retains admitted consumer");
         dialogStage = 1;
-        fault("repair",function () {
+        fault("repair", function () {
           dialog.saveAndClose();
         });
       } else if (dialogStage === 1) {
@@ -315,16 +355,16 @@ PanelWindow {
             check(!dialog.visible, "real dialog closes after successful retry");
             seed();
             later(function () {
-            dialog.settingsEditor = BarService.createWidgetSettingsEditor(testScreen.name, "left", 0);
-            dialog.widgetData = dialog.settingsEditor.initialValue;
-            dialog.open();
-            var old = JSON.parse(JSON.stringify(rows()));
-            assign([old[1], old[0]]);
-            dialogStage = 2;
-            dialog.queueSettings({
-                                   displayMode: "alwaysHide"
-                                 });
-            dialog.saveAndClose();
+              dialog.settingsEditor = BarService.createWidgetSettingsEditor(testScreen.name, "left", 0);
+              dialog.widgetData = dialog.settingsEditor.initialValue;
+              dialog.open();
+              var old = JSON.parse(JSON.stringify(rows()));
+              assign([old[1], old[0]]);
+              dialogStage = 2;
+              dialog.queueSettings({
+                                     displayMode: "alwaysHide"
+                                   });
+              dialog.saveAndClose();
             });
           } catch (error) {
             root.fail(error);
@@ -369,30 +409,11 @@ PanelWindow {
         Qt.callLater(function () {
           try {
             check(!dialog.visible, "close follows final queued receipt");
-            // Restore the deliberately reversed rows while retaining the observed
-            // queued field for independent parsed-file and cold-restart checks.
-            assign([
-                     {
-                       id: "Volume",
-                       opaque: "first",
-                       displayMode: "alwaysHide",
-                       iconColor: "primary"
-                     },
-                     {
-                       id: "Volume",
-                       opaque: "second"
-                     }
-                   ]);
-            Settings.saveResult(function (finalResult) {
-              try {
-                check(finalResult.status !== "failed", "final ordering save");
-                finalChecks();
-                console.log("I4_BAR_COMMANDS: SAVED_PASS");
-                Qt.exit(0);
-              } catch (error) {
-                root.fail(error);
-              }
-            });
+            // Observe the queued write itself; never reconstruct or republish it.
+            checkQueuedPublication();
+            finalChecks();
+            console.log("I4_BAR_COMMANDS: SAVED_PASS");
+            Qt.exit(0);
           } catch (error) {
             root.fail(error);
           }
@@ -405,9 +426,10 @@ PanelWindow {
   function finalChecks() {
     var globalRow = Settings.data.bar.widgets.left[0];
     var screenRow = rows()[0];
+    var queued = dialogStage === 4 || Quickshell.env("I4_VERIFY") === "1";
     check(globalRow.displayMode === "alwaysHide" && globalRow.opaque === "first" && globalRow.id === "Volume", "global cold consumer");
-    check(screenRow.displayMode === "alwaysHide" && screenRow.opaque === "first" && screenRow.id === "Volume", "screen cold consumer");
-    if (dialogStage === 4 || Quickshell.env("I4_VERIFY") === "1")
+    check(screenRow.displayMode === "alwaysHide" && screenRow.opaque === (queued ? "second" : "first") && screenRow.id === "Volume", "screen cold consumer");
+    if (queued)
       check(screenRow.iconColor === "primary", "queued field cold consumer");
     check(Settings.data.bar.screenOverrides[0].opaque === "monitor" && Settings.getBarWidgetsForScreen(testScreen.name).right[0].id === "sibling", "monitor ancestry preserved");
   }
@@ -435,13 +457,28 @@ PanelWindow {
     }
   }
   Component.onCompleted: begin()
-  function fault(mode,callback){afterFault=callback;faultProcess.command=["python3","-B",Quickshell.env("I5_DESKTOP_FAULT"),Quickshell.env("ATMOSPHERA_CONFIG_DIR"),mode];faultProcess.running=true;}
+  function fault(mode, callback) {
+    afterFault = callback;
+    faultProcess.command = ["python3", "-B", Quickshell.env("I5_DESKTOP_FAULT"), Quickshell.env("ATMOSPHERA_CONFIG_DIR"), mode];
+    faultProcess.running = true;
+  }
   Process {
-    id:faultProcess
-    onExited:code=>{try{
-      root.check(code===0,"private real-IO fault prerequisite");root.faultBlocked=command[command.length-1]==="block";
-      if(root.exitAfterRepair){Qt.exit(2);return;}var callback=root.afterFault;root.afterFault=null;callback();
-    }catch(error){root.fail(error);}}
+    id: faultProcess
+    onExited: code => {
+      try {
+        root.check(code === 0, "private real-IO fault prerequisite");
+        root.faultBlocked = command[command.length - 1] === "block";
+        if (root.exitAfterRepair) {
+          Qt.exit(2);
+          return;
+        }
+        var callback = root.afterFault;
+        root.afterFault = null;
+        callback();
+      } catch (error) {
+        root.fail(error);
+      }
+    }
   }
   Timer {
     interval: 120000

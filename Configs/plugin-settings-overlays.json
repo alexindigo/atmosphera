@@ -1497,7 +1497,9 @@
             "type": "Boolean"
           },
           "token": {
-            "type": "String"
+            "type": "String",
+            "sensitive": true,
+            "machineLocal": true
           },
           "username": {
             "type": "String"
@@ -1585,7 +1587,9 @@
             "type": "Boolean"
           },
           "token": {
-            "type": "String"
+            "type": "String",
+            "sensitive": true,
+            "machineLocal": true
           },
           "username": {
             "type": "String"
@@ -1616,7 +1620,9 @@
             "type": "Boolean"
           },
           "habiticaApiToken": {
-            "type": "String"
+            "type": "String",
+            "sensitive": true,
+            "machineLocal": true
           },
           "habiticaUserId": {
             "type": "String"
@@ -1942,7 +1948,9 @@
             "type": "Real"
           },
           "kagiSessionToken": {
-            "type": "String"
+            "type": "String",
+            "sensitive": true,
+            "machineLocal": true
           }
         }
       }
@@ -4675,7 +4683,9 @@
             "type": "String"
           },
           "githubToken": {
-            "type": "String"
+            "type": "String",
+            "sensitive": true,
+            "machineLocal": true
           },
           "notes": {
             "type": "String"

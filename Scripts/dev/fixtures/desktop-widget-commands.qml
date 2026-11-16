@@ -134,11 +134,16 @@ PanelWindow {
     });
     });
   }
-  function staleActors() {
-    var actor=DesktopWidgetRegistry.captureWidgetInteraction(monitorName,0,["i4-created"]);
-    var current=Settings.data.desktopWidgets.monitorWidgets;
+  function notifyABA() {
+    var current=JSON.parse(JSON.stringify(Settings.data.desktopWidgets.monitorWidgets));
+    var original=JSON.stringify(current);
     Settings.data.desktopWidgets.monitorWidgets=current.concat([{name:"i4-intervening",widgets:[]}]);
     Settings.data.desktopWidgets.monitorWidgets=current;
+    check(JSON.stringify(Settings.data.desktopWidgets.monitorWidgets)===original,"exact owner restored before stale submission");
+  }
+  function staleActors() {
+    var actor=DesktopWidgetRegistry.captureWidgetInteraction(monitorName,0,["i4-created"]);
+    notifyABA();
     var before=JSON.stringify(Settings.data.desktopWidgets.monitorWidgets);
     check(!actor.submit("move","i4-created",function (result) {
       try {
@@ -150,15 +155,12 @@ PanelWindow {
   }
   function staleRuntimeMenu() {
     var action=runtimeWidget.captureContextMenuAction();
-    var current=Settings.data.desktopWidgets.monitorWidgets;
-    Settings.data.desktopWidgets.monitorWidgets=current.concat([{name:"i4-intervening",widgets:[]}]);
-    Settings.data.desktopWidgets.monitorWidgets=current;
+    notifyABA();
     action("delete");
     receipt(function () {
       check(list(monitorName)[0].tag==="second","retained runtime menu cannot delete newer generation");
       var editor=DesktopWidgetRegistry.createWidgetSettingsEditor(monitorName,0);
-      Settings.data.desktopWidgets.monitorWidgets=current.concat([{name:"i4-intervening",widgets:[]}]);
-      Settings.data.desktopWidgets.monitorWidgets=current;
+      notifyABA();
       check(!editor.submit({mustNotLand:true},function (result) {
         try {
           check(result.status==="failed" && list(monitorName)[0].mustNotLand===undefined,"captured gesture fields refuse stale owner"); editor.detach();
@@ -231,9 +233,7 @@ PanelWindow {
     check(owner._createAndEditAppShortcut(),"shortcut creation before foreign change");
     waitFor(function () { return DesktopWidgetRegistry.currentSettingsDialog?.visible; },function () {
       var dialog=DesktopWidgetRegistry.currentSettingsDialog;
-      var current=Settings.data.desktopWidgets.monitorWidgets;
-      Settings.data.desktopWidgets.monitorWidgets=current.concat([{name:"i4-intervening",widgets:[]}]);
-      Settings.data.desktopWidgets.monitorWidgets=current;
+      notifyABA();
       dialog.queueSettings({customLabel:"must not land"});
       waitFor(function () { return dialog.saveFailed && !dialog.saveBusy; },function () {
         dialog.requestDiscard(); check(dialog.confirmDiscard(),"stale local shortcut input discarded explicitly");
