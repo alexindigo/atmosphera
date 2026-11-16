@@ -502,7 +502,7 @@ class Checker:
         if receiver and (receiver.mode == 'store' or receiver.mode == 'object' and receiver.token in self.store_roots) and method == 'scope' and args:
             path = self.array_path(child(node, 'arguments').named_children[0])
             root = () if receiver.mode == 'store' else self.store_roots[receiver.token]
-            if path is None and root and root[0] in self.unknown_schemas:
+            if path is None:
                 self.report(node, 'store-schema-out-of-scope', 'advisory')
             return Ref(root + path, 'handle') if path is not None else None
         if receiver and receiver.mode in DATA and method in COPIERS:
