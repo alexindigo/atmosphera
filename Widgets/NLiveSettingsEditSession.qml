@@ -52,6 +52,8 @@ QtObject {
     if (inputGuard)
       inputGuard.commit(closePending);
     if (pending === null) {
+      if (inputGuard)
+        inputGuard.acknowledge(inputGuard.capture());
       if (closePending) {
         closePending = false;
         closeRequested();
