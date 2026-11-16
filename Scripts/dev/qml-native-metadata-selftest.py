@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Semantic ownership regressions; run in the assigned development VM."""
+import argparse
 import importlib.util
 import hashlib
 import json
@@ -16,6 +17,8 @@ spec.loader.exec_module(metadata)
 
 
 class OwnershipTests(unittest.TestCase):
+    sdk = Path('/usr/lib/qt6')
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix='native-metadata-selftest-')
         self.addCleanup(self.temp.cleanup)
@@ -174,7 +177,7 @@ Property { name: "state"; type: "QtOwner::State" } }''')
                           {'used_metatypes.json', 'linked_metatypes.json'})
 
     def test_configqml_fallback_exposes_the_required_installed_contract(self):
-        sdk = Path('/usr/lib/qt6')
+        sdk = self.sdk
         private = Path(self.temp.name)/'sdk'
         qml = private/'qml'
         qml.mkdir(parents=True)
@@ -208,6 +211,41 @@ Property { name: "state"; type: "QtOwner::State" } }''')
                 self.assertIn('Could not find property "profileMaxByte"', text)
             self.assertNotIn('[unresolved-type]', text)
 
+    def test_dependency_family_selection_integrity_and_ambiguity(self):
+        dependency = Path(self.temp.name) / 'dependency'
+        sdk = Path(self.temp.name) / 'private-sdk'
+        (sdk / 'qml').mkdir(parents=True)
+        (sdk / 'metatypes').mkdir()
+        digest = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+        for name in ('qt6core_metatypes.json', 'qt6qml_metatypes.json'):
+            (sdk / 'metatypes' / name).write_text('older SDK')
+        for directory, version in ((dependency, 'newer SDK'), (dependency / 'older', 'older SDK')):
+            directory.mkdir(parents=True, exist_ok=True)
+            for name in ('qmldir', 'configqml.qmltypes'):
+                (directory / name).write_text('real producer artifact')
+            manifest = dict(version='0.3.0', sourceCommit='same-source',
+                qtMetatypes={name: hashlib.sha256(version.encode()).hexdigest()
+                             for name in ('qt6core_metatypes.json', 'qt6qml_metatypes.json')},
+                artifacts={name: digest(directory / name) for name in ('qmldir', 'configqml.qmltypes')})
+            (directory / 'manifest.json').write_text(json.dumps(manifest))
+        selected, receipt = metadata.dependency_family(dependency, sdk / 'qml')
+        self.assertEqual(selected, dependency / 'older')
+        (selected / 'qmldir').write_text('altered artifact')
+        with self.assertRaisesRegex(metadata.MetadataError, 'integrity mismatch'):
+            metadata.dependency_family(dependency, sdk / 'qml')
+        (selected / 'qmldir').write_text('real producer artifact')
+        (dependency / 'manifest.json').write_text(json.dumps(receipt))
+        with self.assertRaisesRegex(metadata.MetadataError, 'found 2'):
+            metadata.dependency_family(dependency, sdk / 'qml')
+        for name in receipt['qtMetatypes']:
+            (sdk / 'metatypes' / name).write_text('unknown SDK')
+        with self.assertRaisesRegex(metadata.MetadataError, 'found 0'):
+            metadata.dependency_family(dependency, sdk / 'qml')
+
 
 if __name__ == '__main__':
-    unittest.main()
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument('--sdk', type=Path, default=OwnershipTests.sdk)
+    args, remaining = parser.parse_known_args()
+    OwnershipTests.sdk = args.sdk.resolve()
+    unittest.main(argv=[__file__, *remaining])

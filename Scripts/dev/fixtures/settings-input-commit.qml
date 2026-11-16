@@ -23,9 +23,11 @@ ShellRoot {
       Item {
         id: root
         readonly property bool sliderCase: Quickshell.env("INPUT_COMMIT_CASE") === "slider"
+        readonly property bool cancelledCase: Quickshell.env("INPUT_COMMIT_CASE") === "cancelled"
+        readonly property bool barCase: sliderCase || cancelledCase
         readonly property bool unsupportedCase: Quickshell.env("INPUT_COMMIT_CASE") === "unsupported"
         readonly property string monitor: Quickshell.screens[0].name
-        readonly property var dialog: sliderCase ? barDialog : unsupportedCase ? unsupported : desktopDialog
+        readonly property var dialog: barCase ? barDialog : unsupportedCase ? unsupported : desktopDialog
         property bool started: false
         property bool ready: false
         property var owner: null
@@ -33,6 +35,7 @@ ShellRoot {
         property var commands: []
         property int releases: 0
         property int blurs: 0
+        property int olderFence: -1
         function find(item, predicate, seen) {
           seen = seen || [];
           if (!item || seen.indexOf(item) !== -1)
@@ -57,6 +60,18 @@ ShellRoot {
         function field(label) {
           if (unsupportedCase)
             return rawInput;
+          if (cancelledCase) {
+            var spin = find(dialog.contentItem, function (item) {
+              return String(item).indexOf("NSpinBox_QMLTYPE") === 0;
+            });
+            var input = find(spin, function (item) {
+              return item.validator !== undefined && typeof item.insert === "function";
+            });
+            return input ? {
+                             inputItem: input,
+                             text: input.text
+                           } : null;
+          }
           return find(dialog.contentItem, function (item) {
             return String(item).indexOf("NTextInput_QMLTYPE") === 0 && item.label === label;
           });
@@ -77,7 +92,7 @@ ShellRoot {
           });
         }
         function stored() {
-          return sliderCase ? Settings.data.bar.widgets.left[0] : DesktopWidgetRegistry.getWidgetsForMonitor(monitor)[0];
+          return barCase ? Settings.data.bar.widgets.left[0] : DesktopWidgetRegistry.getWidgetsForMonitor(monitor)[0];
         }
         function submit(fields, callback) {
           commands.push(JSON.parse(JSON.stringify(fields)));
@@ -97,16 +112,17 @@ ShellRoot {
             Qt.exit(0);
             return;
           }
-          if (sliderCase)
-            Settings.data.bar.widgets.left = [
-                  {
-                    id: "Taskbar",
-                    iconScale: 0.6,
-                    opaque: {
-                      keep: true
-                    }
-                  }
-                ];
+          if (barCase)
+            Settings.data.bar.widgets.left = [Object.assign({
+                                                              id: cancelledCase ? "Workspace" : "Taskbar",
+                                                              iconScale: 0.6,
+                                                              opaque: {
+                                                                keep: true
+                                                              }
+                                                            }, cancelledCase ? {
+                                                                                 characterCount: 3,
+                                                                                 labelMode: "name"
+                                                                               } : {})];
           else
             Settings.data.desktopWidgets.monitorWidgets = [
                   {
@@ -130,7 +146,7 @@ ShellRoot {
           interval: 20
           repeat: true
           onTriggered: {
-            root.owner = root.sliderCase ? BarService.createWidgetSettingsEditor("", "left", 0) : DesktopWidgetRegistry.createWidgetSettingsEditor(root.monitor, 0);
+            root.owner = root.barCase ? BarService.createWidgetSettingsEditor("", "left", 0) : DesktopWidgetRegistry.createWidgetSettingsEditor(root.monitor, 0);
             if (!root.owner)
               return;
             stop();
@@ -139,10 +155,17 @@ ShellRoot {
               root.ready = true;
               return;
             }
-            root.dialog.widgetId = root.sliderCase ? "Taskbar" : "AudioVisualizer";
+            root.dialog.widgetId = root.cancelledCase ? "Workspace" : root.sliderCase ? "Taskbar" : "AudioVisualizer";
             root.dialog.widgetData = root.owner.initialValue;
-            root.dialog.open();
-            settle.start();
+            Settings.saveResult(function (result) {
+              if (result.status === "failed") {
+                console.error("INPUT_COMMIT_ASSERT: baseline save");
+                Qt.exit(2);
+                return;
+              }
+              root.dialog.open();
+              settle.start();
+            });
           }
         }
         Timer {
@@ -257,6 +280,11 @@ ShellRoot {
             height.inputItem.textEdited();
             height.commitEdit();
           }
+          function resume(): void {
+            var width = root.field(I18n.tr("common.width"));
+            width.inputItem.forceActiveFocus();
+            width.inputItem.cursorPosition = width.text.length;
+          }
           function release(): void {
             var next = root.held.shift();
             if (next)
@@ -265,13 +293,20 @@ ShellRoot {
           function close(): void {
             root.dialog.saveAndClose();
           }
+          function checkpoint(): void {
+            root.olderFence = root.guard().capture();
+          }
+          function acknowledgeOlder(): void {
+            root.guard().acknowledge(root.olderFence);
+          }
           function snapshot(): string {
             var guard = root.guard();
             var control = root.sliderCase ? root.slider() : root.field(I18n.tr("common.width"));
-            var point = control ? control.mapToGlobal(control.width / 2, control.height / 2) : ({
-                                                                                                  x: 0,
-                                                                                                  y: 0
-                                                                                                });
+            var visual = root.cancelledCase && control ? control.inputItem : control;
+            var point = visual ? visual.mapToGlobal(visual.width / 2, visual.height / 2) : ({
+                                                                                              x: 0,
+                                                                                              y: 0
+                                                                                            });
             return JSON.stringify({
                                     ready: root.ready,
                                     focused: !!control && (root.sliderCase ? control.activeFocus : control.inputItem.activeFocus),

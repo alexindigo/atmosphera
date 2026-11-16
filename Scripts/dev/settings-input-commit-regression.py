@@ -15,7 +15,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('source', 'output', 'work-root', 'guest-profile'):
         parser.add_argument('--' + name, type=lambda value: Path(value).resolve(), required=True)
-    parser.add_argument('--case', choices=('deferred', 'slider', 'unsupported'), required=True)
+    parser.add_argument('--case', choices=('deferred', 'slider', 'unsupported', 'close-input', 'cancelled'), required=True)
     args = parser.parse_args()
     sys.path.insert(0, str(args.source / 'Scripts/dev'))
     from guest_profile import activate_profile, protect_owned_process
@@ -33,7 +33,8 @@ def main():
     env = dict(os.environ, **runtime, QT_QPA_PLATFORM='wayland', QML_DISABLE_DISK_CACHE='1',
                TMPDIR=str(args.work_root / 'tmp'), YDOTOOL_SOCKET=str(socket), INPUT_COMMIT_CASE=args.case,
                LIVE_INPUT_HAS_BOOTSTRAP='1' if (args.source / 'Commons/SettingsBootstrap.qml').is_file() else '0',
-               ATMOSPHERA_CONFIG_DIR=str(config), ATMOSPHERA_CACHE_DIR=str(args.work_root / 'cache'),
+               ATMOSPHERA_CONFIG_DIR=str(config), ATMOSPHERA_SETTINGS_FILE=str(config / 'settings.json'),
+               ATMOSPHERA_CACHE_DIR=str(args.work_root / 'cache'),
                ATMOSPHERA_STATE_DIR=str(args.work_root / 'state'))
     Path(env['TMPDIR']).mkdir()
     files_owner = None
@@ -87,30 +88,65 @@ def main():
             owned = protect_owned_process(process)
             wait(lambda: 'inputCommit' in call(['qs', '-p', probe, 'ipc', 'show'], False).stdout)
             wait(lambda: snapshot()['ready'])
-            if args.case != 'slider':
+            if args.case == 'cancelled':
+                ipc('mixed')
+                wait(lambda: snapshot()['focused'])
+                call(['ydotool', 'type', '--key-delay', '10', '4'])
+                observations['edited'] = snapshot()
+                assert observations['edited']['guardDirty'] and not observations['edited']['commands']
+                ipc('checkpoint')
+                call(['ydotool', 'key', '14:1', '14:0'])
+                call(['ydotool', 'type', '--key-delay', '10', '8'])
+                ipc('acknowledgeOlder')
+                observations['newer'] = snapshot()
+                assert observations['newer']['generation'] > observations['edited']['generation'] and observations['newer']['guardDirty'], 'old fence erased newer buffered input'
+                call(['ydotool', 'key', '1:1', '1:0'])
+                observations['escaped'] = snapshot()
+                assert observations['escaped']['text'] == '3' and not observations['escaped']['commands'], 'native Escape did not cancel the spin edit'
+                ipc('close')
+                wait(lambda: not snapshot()['visible'])
+                observations['closed'] = snapshot()
+                assert not observations['closed']['dirty'] and not observations['closed']['guardDirty'], 'cancelled no-patch input retained stale dirty state'
+                assert not observations['closed']['commands'] and observations['closed']['stored']['characterCount'] == 3
+            elif args.case != 'slider':
                 ipc('mixed')
                 wait(lambda: snapshot()['focused'])
                 call(['ydotool', 'type', '--key-delay', '10', '480'])
-                ipc('queue')
+                ipc('close' if args.case == 'close-input' else 'queue')
                 wait(lambda: snapshot()['held'] == 1)
                 observations['automatic'] = snapshot()
-                assert observations['automatic']['focused'], 'automatic wrapper commit blurred input'
-                ipc('release')
-                wait(lambda: not snapshot()['busy'])
-                observations['acknowledged'] = snapshot()
-                assert observations['acknowledged']['stored']['height'] == 96
-                if args.case == 'unsupported':
-                    assert observations['acknowledged']['stored']['width'] == 320
-                    assert observations['acknowledged']['guardDirty'], 'receipt acknowledged unsupported focused text'
+                if args.case == 'close-input':
+                    assert observations['automatic']['visible'] and not observations['automatic']['focused']
+                    ipc('resume')
+                    wait(lambda: snapshot()['focused'])
+                    call(['ydotool', 'type', '--key-delay', '10', '9'])
+                    observations['bufferedWhileClosing'] = snapshot()
+                    assert observations['bufferedWhileClosing']['text'] == '4809'
+                    assert observations['bufferedWhileClosing']['guardDirty']
+                    ipc('release')
+                    wait(lambda: snapshot()['held'] == 1 or not snapshot()['visible'])
+                    observations['secondCloseSave'] = snapshot()
+                    assert observations['secondCloseSave']['visible'] and observations['secondCloseSave']['held'] == 1, 'pending close discarded newer buffered native input'
+                    assert observations['secondCloseSave']['stored']['width'] == 4809
+                    ipc('release')
                 else:
-                    assert observations['acknowledged']['stored']['width'] == 480, 'receipt acknowledged unpublished focused wrapper text'
-                    assert not observations['acknowledged']['guardDirty']
-                call(['ydotool', 'type', '--key-delay', '10', '9'])
-                observations['continued'] = snapshot()
-                assert observations['continued']['text'] == '4809' and observations['continued']['dirty']
-                ipc('close')
-                wait(lambda: snapshot()['held'] == 1)
-                ipc('release')
+                    assert observations['automatic']['focused'], 'automatic wrapper commit blurred input'
+                    ipc('release')
+                    wait(lambda: not snapshot()['busy'])
+                    observations['acknowledged'] = snapshot()
+                    assert observations['acknowledged']['stored']['height'] == 96
+                    if args.case == 'unsupported':
+                        assert observations['acknowledged']['stored']['width'] == 320
+                        assert observations['acknowledged']['guardDirty'], 'receipt acknowledged unsupported focused text'
+                    else:
+                        assert observations['acknowledged']['stored']['width'] == 480, 'receipt acknowledged unpublished focused wrapper text'
+                        assert not observations['acknowledged']['guardDirty']
+                    call(['ydotool', 'type', '--key-delay', '10', '9'])
+                    observations['continued'] = snapshot()
+                    assert observations['continued']['text'] == '4809' and observations['continued']['dirty']
+                    ipc('close')
+                    wait(lambda: snapshot()['held'] == 1)
+                    ipc('release')
                 wait(lambda: not snapshot()['visible'])
                 observations['closed'] = snapshot()
                 assert observations['closed']['stored']['width'] == 4809 and observations['closed']['blurs'] > 0
@@ -149,13 +185,14 @@ def main():
         assert result.returncode == 0 and marker in text, text
         row = json.loads(next(line.split(marker, 1)[1] for line in text.splitlines() if marker in line))
         assert row == observations['final']['stored'] and row['opaque'] == {'keep': True}
-        shard = json.loads((config / ('settings/bar.json' if args.case == 'slider' else 'settings/desktopWidgets.json')).read_text())
-        disk_row = shard['widgets']['left'][0] if args.case == 'slider' else shard['monitorWidgets'][0]['widgets'][0]
+        bar_case = args.case in ('slider', 'cancelled')
+        shard = json.loads((config / ('settings/bar.json' if bar_case else 'settings/desktopWidgets.json')).read_text())
+        disk_row = shard['widgets']['left'][0] if bar_case else shard['monitorWidgets'][0]['widgets'][0]
         assert disk_row == row
         observations['disk'] = row
         vfs = list((Path(runtime['XDG_RUNTIME_DIR']) / 'quickshell/vfs').iterdir())
         assert len(vfs) == 1
-        files = ['Widgets/NSettingsInputGuard.qml', 'Widgets/NTextInput.qml', 'Widgets/NSlider.qml',
+        files = ['Widgets/NSettingsInputGuard.qml', 'Widgets/NLiveSettingsEditSession.qml', 'Widgets/NTextInput.qml', 'Widgets/NSlider.qml',
                  'Widgets/NSpinBox.qml', 'Scripts/dev/fixtures/settings-input-commit.qml']
         result = subprocess.run(['bash', args.source / 'Scripts/dev/qmllint.sh', *[args.source / name for name in files]],
                                 cwd=args.source, env=dict(env, QS_VFS=str(vfs[0])), capture_output=True, text=True, timeout=60)

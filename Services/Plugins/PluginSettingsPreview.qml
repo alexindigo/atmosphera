@@ -11,15 +11,27 @@ QtObject {
   property var _owner: null
   property var _editor: null
   property var _baseScope: null
-  property var _disconnectRebase: null
   property bool _ownedEditor: false
   property var _revisions: ({})
   property var _inputs: ({})
   property var _lifetime: ({alive: true})
   readonly property var values: _token && _editor && !_editor.closed && currentOwner() === _owner ? _editor.previewValues : sourceValue
   readonly property var baseScope: _token && _editor && !_editor.closed && currentOwner() === _owner ? _baseScope : null
+  property Connections _editorRebase: Connections {
+    target: root._editor
+    function onRebased(result) { root.rebased(result); }
+  }
+  function rebased(result) {
+    var editor = root._editor;
+    if (!_lifetime.alive || !_token || !editor || editor.closed) return;
+    if (_baseScope) _baseScope.detach();
+    // These are explicit UI inputs, not a preference snapshot. Successful
+    // native Apply closes its scopes even when its acknowledgement is stale.
+    if (result && result.refreshState === "stale")
+      for (var key of Object.keys(_revisions)) editor.values[key] = _inputs[key];
+    _baseScope = editor.previewScope();
+  }
   Component.onDestruction: {
-    if (_disconnectRebase) _disconnectRebase();
     if (_baseScope) _baseScope.detach();
     if (_ownedEditor && _editor) _editor.destroy();
     _lifetime.alive = false;
@@ -41,18 +53,6 @@ QtObject {
     _revisions = Object.create(null);
     _inputs = Object.create(null);
     function active() { return lifetime.alive && root._token === token && root._editor && !root._editor.closed; }
-    function rebased(result) {
-      if (!active()) return;
-      if (root._baseScope) root._baseScope.detach();
-      // These are explicit UI patch inputs, not a preference snapshot. A
-      // successful native Apply closes its scopes even when later owner input
-      // makes its acknowledgement stale. Retain that UI work in the draft.
-      if (result && result.refreshState === "stale")
-        for (var key of Object.keys(root._revisions)) editor.values[key] = root._inputs[key];
-      root._baseScope = editor.previewScope();
-    }
-    editor.rebased.connect(rebased);
-    _disconnectRebase = function () { editor.rebased.disconnect(rebased); };
     return {
       update: function (patch) {
         if (!active() || root.currentOwner() !== identity || !patch || typeof patch !== "object" || Array.isArray(patch) || editor.busy) return false;
@@ -93,8 +93,6 @@ QtObject {
       close: function () {
         if (lifetime.alive && root._token === token) {
           if (owned && root._editor && !root._editor.closed && !editor.discard()) return false;
-          if (root._disconnectRebase) root._disconnectRebase();
-          root._disconnectRebase = null;
           if (root._baseScope) root._baseScope.detach();
           root._baseScope = null;
           root._token = null;

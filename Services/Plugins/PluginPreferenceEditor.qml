@@ -7,6 +7,7 @@ QtObject {
   id: root
   property var handle: null
   property var inputScope: null
+  property var ownerCurrent: null
   required property var fields
   property bool writable: true
   property bool closed: false
@@ -71,13 +72,14 @@ QtObject {
         return;
       active = false;
       disconnect();
-      callback(root.ready ? {
-                              status: "opened"
-                            } : {
+      var available = root.ready && (!root.ownerCurrent || root.ownerCurrent());
+      callback(available ? {
+                            status: "opened"
+                          } : {
                  status: "failed",
                  refreshState: "not_refreshed",
                  error: {
-                   code: root.error || "editor-closed"
+                    code: root.error || (root.ready ? "editor-owner" : "editor-closed")
                  }
                });
     }
@@ -107,6 +109,8 @@ QtObject {
     return false;
   }
   function apply(value, callback) {
+    if (ownerCurrent && !ownerCurrent())
+      return refuse(callback, "editor-owner");
     if (!writable)
       return refuse(callback, "editor-read-only");
     if (closed || !ready || busy || value !== values)
@@ -139,6 +143,8 @@ QtObject {
     });
   }
   function resetOverrides(callback) {
+    if (ownerCurrent && !ownerCurrent())
+      return refuse(callback, "editor-owner");
     if (!writable)
       return refuse(callback, "editor-read-only");
     if (!ready || busy)

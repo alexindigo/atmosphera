@@ -23,6 +23,107 @@ Singleton {
   signal pluginSettingsCompleted(string pluginId, var result)
 
   property var _settingsOwners: Object.create(null)
+  property var _pluginEntries: Object.create(null)
+  property var _retiringPlugins: Object.create(null)
+
+  // Entry points outlive registry removal and destroy() returns. Keep their
+  // preference APIs until the actual QObject destruction stacks have unwound.
+  function retainPluginEntry(item) {
+    if (!item || !("pluginApi" in item) || !item.pluginApi) return;
+    root.retainPluginConsumer(item, item.pluginApi);
+  }
+  function retainPluginConsumer(item, api) {
+    while (api && "base" in api) api = api.base;
+    if (!api || !("settingsOwner" in api) || !api.settingsOwner || api.settingsOwner.closed) return;
+    var key = api.pluginId;
+    var entries = _pluginEntries[key] || [];
+    if (entries.some(function (entry) { return entry.item === item; })) return;
+    var entry = {item: item, api: api};
+    entries.push(entry);
+    _pluginEntries[key] = entries;
+    item.Component.destruction.connect(function () {
+      // Component.destruction precedes child destruction and other attached
+      // handlers. The queued release observes the end of that whole stack.
+      Qt.callLater(function () {
+        var current = root._pluginEntries[key] || [];
+        root._pluginEntries[key] = current.filter(function (candidate) { return candidate !== entry; });
+        root._settlePluginUnload(key);
+      });
+    });
+  }
+
+  // One requested-save lifetime for shared and placement APIs. Waiting here
+  // never flushes manual edits that the plugin did not ask to publish.
+  function savePluginSettings(api, handle, callback) {
+    var base = api;
+    while (base && "base" in base) base = base.base;
+    if (!handle || !api.settingsReady || !base || !base.settingsOwner || base.settingsOwner.closed || base.settingsOwner.status !== "Ready") {
+      Qt.callLater(function () {
+        if (typeof callback === "function") callback({status: "failed", error: {code: "plugin-owner"}});
+      });
+      return false;
+    }
+    api._pendingSettingsSaves++;
+    return handle.save(function (result) {
+      api._lastSettingsSave = result;
+      try {
+        if (typeof callback === "function") callback(result);
+      } finally {
+        api._pendingSettingsSaves--;
+        root._completePluginSaves(api);
+      }
+    });
+  }
+  function _completePluginSaves(api) {
+    if (api._pendingSettingsSaves) return;
+    var waiters = api._settingsSaveWaiters;
+    api._settingsSaveWaiters = [];
+    var result = api._lastSettingsSave || {status: "nothing_to_save"};
+    waiters.forEach(function (callback) { callback(result); });
+  }
+  function waitForPluginSaves(api, callback) {
+    api._settingsSaveWaiters.push(callback);
+    Qt.callLater(function () { root._completePluginSaves(api); });
+  }
+  function retainPluginEditor(editor, api) {
+    root.retainPluginConsumer(editor, api);
+    var base = api;
+    while (base && "base" in base) base = base.base;
+    var key = base.pluginId;
+    editor.ownerCurrent = function () { return base !== null && root.getPluginAPI(key) === base; };
+    // Factory-created editors close on discard; declarative test consumers
+    // keep their ordinary parent-owned lifetime.
+    editor.closedChanged.connect(function () { if (editor.closed) editor.destroy(); });
+  }
+
+  function _settlePluginUnload(pluginId) {
+    var retirement = _retiringPlugins[pluginId];
+    if (!retirement || !retirement.notified || retirement.settling || (_pluginEntries[pluginId] || []).length) return;
+    retirement.settling = true;
+    function finish(result) {
+      retirement.settling = false;
+      if (result.status !== "failed") {
+        if (retirement.owner) {
+          if (root._settingsOwners[pluginId] === retirement.owner) delete root._settingsOwners[pluginId];
+          retirement.owner.detach();
+          retirement.owner.destroy();
+        }
+        delete root._retiringPlugins[pluginId];
+        delete root._pluginEntries[pluginId];
+      } else {
+        // Keep failed requested work and its APIs available for explicit Retry.
+        root.recordPluginError(pluginId, "settings", "Final plugin settings save failed; preferences retained");
+      }
+      var callbacks = retirement.callbacks;
+      retirement.callbacks = [];
+      callbacks.forEach(function (callback) { callback(result); });
+    }
+    PluginInstances.settlePlugin(pluginId, function (result) {
+      if (result.status === "failed") { finish(result); return; }
+      if (retirement.api) root.waitForPluginSaves(retirement.api, finish);
+      else finish({status: "nothing_to_save"});
+    });
+  }
 
   Component { id: preferenceOwnerFactory; PluginPreferenceOwner {} }
   Component { id: preferenceEditorFactory; PluginPreferenceEditor {} }
@@ -66,7 +167,12 @@ Singleton {
         // Their settled owner and unresolved-group facts fence this workflow.
         if (["saved", "nothing_to_save", "reloaded"].indexOf(result.status) === -1 ||
             (result.unresolvedGroups && result.unresolvedGroups.length)) {
-          callback(result); return;
+          var ownerKey = index === 0 ? "shell" : owners[index - 1].key;
+          var blockers = (result.unresolvedGroups || []).map(function (token) {
+            var info = store.groupInfo(token);
+            return {ownerKey: ownerKey, groupToken: token, requestKey: info.requestKey || "", state: info.state || "unresolved"};
+          });
+          callback(Object.assign({}, result, {preferenceOwnerKey: ownerKey, preferenceBlockers: blockers})); return;
         }
         var inputs = paths.map(function (path) { return store.info(path).latestInput; });
         if (inputs.some(function (input) { return greater(input, result.inputPrefix); })) {
@@ -83,6 +189,14 @@ Singleton {
   }
 
   function _openSettingsOwner(pluginId, callback) {
+    if (_retiringPlugins[pluginId]) {
+      _retiringPlugins[pluginId].callbacks.push(function (result) {
+        if (result.status === "failed") callback(null);
+        else root._openSettingsOwner(pluginId, callback);
+      });
+      root._settlePluginUnload(pluginId);
+      return;
+    }
     var owner = _settingsOwners[pluginId];
     if (!owner) {
       owner = preferenceOwnerFactory.createObject(root, {
@@ -923,6 +1037,13 @@ Singleton {
   }
 
   function loadPlugin(pluginId, onBarRegistered) {
+    if (_retiringPlugins[pluginId]) {
+      _retiringPlugins[pluginId].callbacks.push(function (result) {
+        if (result.status !== "failed") root.loadPlugin(pluginId, onBarRegistered);
+      });
+      root._settlePluginUnload(pluginId);
+      return;
+    }
     if (root.loadedPlugins[pluginId]) {
       var existing = root.loadedPlugins[pluginId];
       if (existing.barWidget)
@@ -1169,16 +1290,21 @@ Singleton {
 
   // Unload a plugin
   // preserveSettings: if true, don't remove desktop widget settings (used for hot reload)
-  function unloadPlugin(pluginId, preserveSettings) {
-    var preferences = _settingsOwners[pluginId];
-    if (preferences) {
-      delete _settingsOwners[pluginId];
-      preferences.detach();
-      preferences.destroy();
+  function unloadPlugin(pluginId, preserveSettings, callback) {
+    if (_retiringPlugins[pluginId]) {
+      if (typeof callback === "function") _retiringPlugins[pluginId].callbacks.push(callback);
+      root._settlePluginUnload(pluginId);
+      return;
     }
+    var preferences = _settingsOwners[pluginId];
     var plugin = root.loadedPlugins[pluginId];
+    var retirement = {owner: preferences, api: plugin ? plugin.api : null, notified: false,
+      settling: false, callbacks: typeof callback === "function" ? [callback] : []};
+    _retiringPlugins[pluginId] = retirement;
     if (!plugin) {
       Logger.w("PluginService", "Plugin not loaded:", pluginId);
+      retirement.notified = true;
+      root._settlePluginUnload(pluginId);
       return;
     }
 
@@ -1233,6 +1359,8 @@ Singleton {
 
     delete root.loadedPlugins[pluginId];
     root.pluginUnloaded(pluginId);
+    retirement.notified = true;
+    root._settlePluginUnload(pluginId);
     Logger.i("PluginService", "Unloaded plugin:", pluginId);
   }
 
@@ -1253,9 +1381,12 @@ Singleton {
         readonly property string pluginId: "${pluginId}"
         readonly property string pluginDir: "${pluginDir}"
         property var settingsOwner: null
+        property int _pendingSettingsSaves: 0
+        property var _lastSettingsSave: null
+        property var _settingsSaveWaiters: []
         readonly property var settingsHandle: settingsOwner ? settingsOwner.settingsScope : null
         readonly property var pluginSettings: settingsHandle ? settingsHandle.values : null
-        readonly property bool settingsReady: settingsOwner !== null && settingsOwner.status === "Ready"
+        readonly property bool settingsReady: settingsOwner !== null && !settingsOwner.closed && settingsOwner.status === "Ready"
         property var settingsPreviewOwner: null
         readonly property var settingsView: settingsPreviewOwner ? settingsPreviewOwner.values : pluginSettings
         property var manifest: ({})
@@ -1333,7 +1464,7 @@ Singleton {
     // Bind functions
     // ----------------------------------------
     api.saveSettings = function (callback) {
-      return typeof callback === "function" ? api.settingsHandle.save(callback) : api.settingsHandle.save();
+      return root.savePluginSettings(api, api.settingsHandle, callback);
     };
 
     api.createSettingsEditor = function () {
@@ -1642,6 +1773,7 @@ Singleton {
     try { handle = writable ? api.settingsHandle.draft() : api.settingsHandle.scope([], false); } catch (error) { return null; }
     if (!handle) return null;
     var editor = preferenceEditorFactory.createObject(root, {fields: fields, writable: writable, inputScope: api.settingsHandle});
+    root.retainPluginEditor(editor, api);
     editor.attach(handle);
     return editor;
   }
@@ -2360,14 +2492,11 @@ Singleton {
 
     // Unload the plugin (destroys components and instances)
     // Pass true to preserve desktop widget settings during hot reload
-    unloadPlugin(pluginId, true);
-
-    // Increment load version to invalidate Qt's component cache
-    Registry.incrementPluginLoadVersion(pluginId);
-
-    // Use Qt.callLater to ensure destruction is complete before reloading
-    // This prevents IPC handler conflicts and other timing issues
-    Qt.callLater(function () {
+    unloadPlugin(pluginId, true, function (result) {
+      if (result.status === "failed") return;
+      // Only replace the owner after actual entry destruction and all requested
+      // shared/placement saves have delivered their publication receipts.
+      Registry.incrementPluginLoadVersion(pluginId);
       // Reload the plugin
       loadPlugin(pluginId);
 

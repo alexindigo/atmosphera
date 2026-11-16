@@ -162,7 +162,9 @@ ShellRoot {
       var callback = release; release = null; held = null; callback();
       check(!popup.busy && !popup.saveFailed && !popup.dirty && !page.settingsDirty, "accepted range display is clean");
       var accepted = snapshot(page);
-      console.log("I4_RANGE_EXPECTED|" + JSON.stringify({id: item.id, expected: accepted}));
+      for (var key in submitted)
+        check(Math.abs(accepted[key] - submitted[key]) < 0.0000001, "accepted value matches submitted " + key);
+      console.log("I4_RANGE_EXPECTED|" + JSON.stringify({id: item.id, expected: submitted}));
       rawUnknown();
       popup.requestClose();
       check(!popup.discardPending, "acknowledged Close is clean");

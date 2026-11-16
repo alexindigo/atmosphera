@@ -82,6 +82,7 @@ Singleton {
   function applyLateContext(item, entryPoint, context, initial) {
     if (!item || !context)
       return;
+    Service.retainPluginEntry(item);
     var names = PluginContract.contextNames(entryPoint);
     for (var i = 0; i < names.length; i++) {
       var name = names[i];

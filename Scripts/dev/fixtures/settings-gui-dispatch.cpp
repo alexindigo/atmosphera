@@ -6,10 +6,13 @@
 #include <poll.h>
 #include <signal.h>
 #include <sys/syscall.h>
+#include <sys/socket.h>
+#include <sys/un.h>
 #include <time.h>
 #include <unistd.h>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 static int traceFd = -1;
 static thread_local int depth;
@@ -37,10 +40,25 @@ __attribute__((constructor)) static void init() {
     record('I');
 }
 using Dispatcher = bool (*)(void *, int);
+static void admitScheduler() {
+    static bool admitted = false;
+    if (admitted || traceFd < 0 || !mainThread()) return;
+    const char *path = getenv("ATMOSPHERA_GUI_SCHED_SOCKET");
+    sockaddr_un address{};
+    address.sun_family = AF_UNIX;
+    if (!path || strlen(path) >= sizeof(address.sun_path)) _exit(91);
+    strcpy(address.sun_path, path);
+    const int fd = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0);
+    char ack = 0;
+    if (fd < 0 || connect(fd, reinterpret_cast<sockaddr *>(&address), sizeof(address))
+        || read(fd, &ack, 1) != 1 || ack != '1') _exit(91);
+    close(fd);
+    admitted = true;
+}
 static bool dispatch(const char *symbol, void *self, int flags, int kind) {
     auto next = reinterpret_cast<Dispatcher>(dlsym(RTLD_NEXT, symbol));
     if (!next) _exit(92);
-    if (depth++ == 0) record('E', kind);
+    if (depth++ == 0) { admitScheduler(); record('E', kind); }
     const bool result = next(self, flags);
     if (--depth == 0) record('X', kind);
     return result;
@@ -56,7 +74,7 @@ extern "C" bool unixEvents(void *self, int flags) {
 extern "C" int poll(pollfd *fds, nfds_t count, int timeout) {
     static auto next = reinterpret_cast<int (*)(pollfd *, nfds_t, int)>(dlsym(RTLD_NEXT, "poll"));
     const bool active = depth && mainThread();
-    if (active) record(timeout ? 'W' : 'P', timeout);
+    if (active) record(timeout ? 'W' : 'P', 1);
     const int result = next(fds, count, timeout);
     if (active) record(timeout ? 'R' : 'Q', result);
     return result;

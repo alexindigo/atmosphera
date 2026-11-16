@@ -18,7 +18,6 @@ Singleton {
   Connections {
     target: Service
     function onPluginLoaded(pluginId) { root._dropPlugin(pluginId); }
-    function onPluginUnloaded(pluginId) { root._dropPlugin(pluginId); }
   }
   Connections {
     target: Settings
@@ -49,6 +48,19 @@ Singleton {
       }
     }
     revision++;
+  }
+  function settlePlugin(pluginKey, callback) {
+    var apis = Object.keys(_cache).filter(function (key) {
+      return root._cache[key].base.pluginId === pluginKey;
+    }).map(function (key) { return root._cache[key].api; });
+    function next(index) {
+      if (index === apis.length) { root._dropPlugin(pluginKey); callback({status: "nothing_to_save"}); return; }
+      Service.waitForPluginSaves(apis[index], function (result) {
+        if (result.status === "failed") callback(result);
+        else next(index + 1);
+      });
+    }
+    next(0);
   }
   function address(placement) {
     if (!placement || !Number.isSafeInteger(placement.index) || placement.index < 0) return null;
@@ -143,8 +155,9 @@ Singleton {
   function openRuntime(base, placement, callback) { return _open(base, Lists.copy(placement), "live", callback); }
   function openPreviewView(base, placement, scope, callback) { return _open(base, Lists.copy(placement), "view", callback, scope); }
   function createSettingsEditor(pluginKey, placement, base) {
-    if (!base || !base.settingsOwner || !placement) return null;
+    if (!base || !base.settingsOwner || base.settingsOwner.closed || !placement || Service.getPluginAPI(pluginKey) !== base) return null;
     var editor = editorFactory.createObject(root, {fields: base.settingsOwner.store.settingsKeys});
+    Service.retainPluginEditor(editor, base);
     var lifetime = editor._lifetime;
     editor.cancelOpen = _open(base, Lists.copy(placement), "editor", function (result) {
       if (!lifetime.alive || editor.closed) { if (result.editor) result.editor.detach(); return; }

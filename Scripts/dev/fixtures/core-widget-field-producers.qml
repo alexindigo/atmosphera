@@ -143,8 +143,6 @@ PanelWindow {
       Settings.data.bar.widgets.left=bar;
       Settings.data.desktopWidgets.monitorWidgets=[{name:screenObject.name,opaque:"monitor",widgets:desktop}];
       Settings.data.controlCenter.shortcuts.left=cc;
-      if (Quickshell.env("I4_PARENT") === "1")
-        index = cases.findIndex(function (c) { return c.id === "Volume" && !c.group; }) - 1;
       next();
     }catch(error){fail(error);}
   }

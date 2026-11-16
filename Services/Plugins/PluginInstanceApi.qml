@@ -49,6 +49,9 @@ QtObject {
   property var hasTranslation: base ? base.hasTranslation : null
 
   property var runtime: null
+  property int _pendingSettingsSaves: 0
+  property var _lastSettingsSave: null
+  property var _settingsSaveWaiters: []
   property string _openError: ""
   property var _lifetime: ({alive: true})
   property var _cancelOpen: null
@@ -105,14 +108,7 @@ QtObject {
   // Stores only the values that differ from the plugin settings, in this
   // placement's entry. The plugin settings file is never written.
   function saveSettings(callback) {
-    if (!runtime || !runtime.ready) {
-      Qt.callLater(function () {
-        if (typeof callback === "function")
-          callback({status: "failed", error: {code: "plugin-owner"}});
-      });
-      return false;
-    }
-    return typeof callback === "function" ? runtime.save(callback) : runtime.save();
+    return Service.savePluginSettings(root, runtime, callback);
   }
 
   // Drops every instance override of this placement.
