@@ -1,6 +1,7 @@
 // Inert real BarService field-command contract, run only in the assigned VM.
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 import qs.Modules.Panels.Settings.Bar as Bar
 import qs.Services.UI
@@ -25,6 +26,17 @@ PanelWindow {
   property bool started: false
   property int route: 0
   property var editor: null
+  FileView {
+    id: publication
+    path: Settings.configDir + "settings/bar.json"
+    printErrors: false
+  }
+  function checkQueuedPublication() {
+    publication.reload();
+    publication.waitForJob();
+    var stored = JSON.parse(publication.text()).screenOverrides[0].widgets.left;
+    check(JSON.stringify(stored) === JSON.stringify(rows()) && stored[0].iconColor === "primary", "original queued publication reaches file");
+  }
   function check(ok, name) {
     if (!ok)
       throw new Error("I4_BAR_ASSERT: " + name);
@@ -335,30 +347,11 @@ PanelWindow {
         Qt.callLater(function () {
           try {
             check(!dialog.visible, "close follows final queued receipt");
-            // Restore the deliberately reversed rows while retaining the observed
-            // queued field for independent parsed-file and cold-restart checks.
-            assign([
-                     {
-                       id: "Volume",
-                       opaque: "first",
-                       displayMode: "alwaysHide",
-                       iconColor: "primary"
-                     },
-                     {
-                       id: "Volume",
-                       opaque: "second"
-                     }
-                   ]);
-            Settings.saveResult(function (finalResult) {
-              try {
-                check(finalResult.status !== "failed", "final ordering save");
-                finalChecks();
-                console.log("I4_BAR_COMMANDS: SAVED_PASS");
-                Qt.exit(0);
-              } catch (error) {
-                root.fail(error);
-              }
-            });
+            // Observe the queued write itself; never reconstruct or republish it.
+            checkQueuedPublication();
+            finalChecks();
+            console.log("I4_BAR_COMMANDS: SAVED_PASS");
+            Qt.exit(0);
           } catch (error) {
             root.fail(error);
           }
@@ -371,9 +364,10 @@ PanelWindow {
   function finalChecks() {
     var globalRow = Settings.data.bar.widgets.left[0];
     var screenRow = rows()[0];
+    var queued = dialogStage === 4 || Quickshell.env("I4_VERIFY") === "1";
     check(globalRow.displayMode === "alwaysHide" && globalRow.opaque === "first" && globalRow.id === "Volume", "global cold consumer");
-    check(screenRow.displayMode === "alwaysHide" && screenRow.opaque === "first" && screenRow.id === "Volume", "screen cold consumer");
-    if (dialogStage === 4 || Quickshell.env("I4_VERIFY") === "1")
+    check(screenRow.displayMode === "alwaysHide" && screenRow.opaque === (queued ? "second" : "first") && screenRow.id === "Volume", "screen cold consumer");
+    if (queued)
       check(screenRow.iconColor === "primary", "queued field cold consumer");
     check(Settings.data.bar.screenOverrides[0].opaque === "monitor" && Settings.getBarWidgetsForScreen(testScreen.name).right[0].id === "sibling", "monitor ancestry preserved");
   }
