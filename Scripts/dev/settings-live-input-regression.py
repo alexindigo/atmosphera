@@ -119,6 +119,23 @@ def main():
             observations['closed'] = snapshot()
             assert observations['closed']['stored'][0]['leftClickExec'] == 'final'
             assert observations['closed']['blurs'] > 0 and not observations['closed']['focused'], 'explicit save-and-close must still settle blur'
+            # A real detached owner refuses the next edit. Explicit discard must
+            # retire that input lifetime, including the guard's dirty generation.
+            ipc('reopenDetached')
+            ipc('focus')
+            wait(lambda: snapshot()['focused'])
+            call(['ydotool', 'type', '--key-delay', '10', 'discarded'])
+            wait(lambda: snapshot()['held'] == 1)
+            ipc('release')
+            wait(lambda: not snapshot()['busy'])
+            observations['refused'] = snapshot()
+            assert observations['refused']['dirty'] and observations['refused']['guardDirty']
+            assert observations['refused']['receipts'][-1]['status'] == 'failed'
+            ipc('discard')
+            wait(lambda: not snapshot()['visible'])
+            observations['discarded'] = snapshot()
+            assert not observations['discarded']['dirty'] and not observations['discarded']['guardDirty'], 'confirmed discard retained the old input generation'
+            assert observations['discarded']['stored'][0]['leftClickExec'] == 'final'
             ipc('quit')
             assert process.wait(timeout=15) == 0
         assert not any(token in (args.output / 'save.log').read_text() for token in ('TypeError:', 'ReferenceError:', 'SyntaxError:', '_ASSERT:'))
