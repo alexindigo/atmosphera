@@ -269,8 +269,9 @@ ShellRoot {
       pasteResult.waitForJob();
       if (!pasteResult.text().trim())
         return;
-      check(pasteResult.text().trim() === "ctrl-shift-v", "selected auto-paste reaches actual Main process");
-      check(Date.now() - pasteStarted >= 600, "selected delay, not shared 300 ms delay");
+      var endpoint = JSON.parse(pasteResult.text());
+      check(endpoint.key === "ctrl-shift-v", "selected auto-paste reaches actual Main process");
+      check(typeof endpoint.executedMs === "number" && isFinite(endpoint.executedMs) && endpoint.executedMs - pasteStarted >= 600, "selected delay, not shared 300 ms delay");
       console.log("I4_CLIPPER_PREVIEW: SAVED_PASS");
       Qt.exit(0);
     } else if (phase === "restart") {
