@@ -14,12 +14,18 @@ ColumnLayout {
   property string lastStatus: ""
 
   NTextInput {
+    id: labelInput
     Layout.fillWidth: true
     label: "Popup receipt witness"
     text: root.labelText
     onTextChanged: root.labelText = text
   }
   function setLabel(value) { labelText = value; }
+  function editLabel(value) {
+    labelInput.inputItem.forceActiveFocus();
+    labelInput.inputItem.text = value;
+    labelInput.inputItem.textEdited();
+  }
   function saveSettings() {
     saves++;
     if(stageOnSave)pluginApi.pluginSettings.label = labelText;
