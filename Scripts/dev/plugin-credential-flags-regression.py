@@ -24,6 +24,9 @@ Scope {
   function begin() {
     if (started || !store.ready) return;
     started = true;
+    if (store.values.settings[Quickshell.env("CREDENTIAL_FIELD")] !== Quickshell.env("CREDENTIAL_CANARY")) {
+      console.error("CREDENTIAL_ASSERT: canary not loaded"); Qt.exit(2); return;
+    }
     store.exportProfile("Credential witness", Quickshell.env("CREDENTIAL_PROFILE"), [], function (result) {
       if (result.status !== "exported") { console.error("CREDENTIAL_ASSERT: " + JSON.stringify(result)); Qt.exit(2); return; }
       console.log("CREDENTIAL_PROFILE: EXPORTED"); Qt.exit(0);
@@ -48,6 +51,8 @@ def main():
     parser.add_argument('--plugins', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
+    args.plugins = args.plugins.resolve()
+    args.output = args.output.resolve()
     args.output.mkdir(parents=True, exist_ok=False)
     spec = importlib.util.spec_from_file_location('credential_compiler', ROOT / 'Scripts/dev/build-plugin-settings-schema.py')
     compiler = importlib.util.module_from_spec(spec)
@@ -75,7 +80,8 @@ def main():
             runtime.mkdir(mode=0o700)
             profile = work / 'profile.json'
             env = dict(os.environ, QT_QPA_PLATFORM='offscreen', XDG_RUNTIME_DIR=str(runtime),
-                       TMPDIR=str(work), CREDENTIAL_INPUT=str(input_file), CREDENTIAL_PROFILE=str(profile))
+                       TMPDIR=str(work), CREDENTIAL_INPUT=str(input_file), CREDENTIAL_PROFILE=str(profile),
+                       CREDENTIAL_FIELD=field, CREDENTIAL_CANARY=canary)
             run = subprocess.run(['timeout', '15', 'qs', '-p', str(work / 'probe.qml'), '--no-color'], env=env,
                                  cwd=work, capture_output=True, text=True, timeout=20)
             text = run.stdout + run.stderr
