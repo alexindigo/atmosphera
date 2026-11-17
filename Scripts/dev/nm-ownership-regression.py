@@ -21,6 +21,8 @@ def violations(sources):
         if facade and re.search(r"\bimport\s+DBus\b|\bDBus\s*\{|\.(?:asyncCall|getProperty|setProperty|call)\s*\(", text):
             errors.append((str(path), "facade constructs/uses D-Bus transport"))
         if adapter:
+            if re.search(r"\b(?:Item|Loader)\s*\{", text):
+                errors.append((str(path), "graphical object in non-visual NM backend"))
             proxy_count = len(re.findall(r"\bDBus\s*\{", text))
             if proxy_count > (1 if path.name == "NmDevice.qml" else 0):
                 errors.append((str(path), "duplicate transport factory outside retained interface"))
@@ -39,7 +41,7 @@ def violations(sources):
 
 def canaries():
     safe = {NETWORK / "VPNService.qml": "pragma Singleton\nSingleton { function refresh() { NmState.reconcileProfiles(); } }",
-            NETWORK / "NmDevice.qml": 'Item { DBus { service: "org.freedesktop.NetworkManager" } }'}
+            NETWORK / "NmDevice.qml": 'Scope { DBus { service: "org.freedesktop.NetworkManager" } }'}
     assert not violations(safe), "positive ownership canary"
     cases = [
         (Path("Modules/Bad.qml"), 'DBus { service: "org.freedesktop.NetworkManager" }', "NM transport outside"),
@@ -49,6 +51,8 @@ def canaries():
         (NETWORK / "NmProfile.qml", "Item { property var profileReadComponent: null }", "legacy polling"),
         (NETWORK / "NmDevice.qml", "Item { DBus {} DBus {} }", "duplicate transport factory"),
         (Path("Modules/Bad.qml"), "NmDevice {}", "device transport constructed"),
+        (NETWORK / "NmState.qml", "Singleton { Component { Item {} } }", "graphical object"),
+        (NETWORK / "NmDevice.qml", "Scope { Loader {} }", "graphical object"),
     ]
     for path, text, expected in cases:
         result = violations({**safe, path: text})

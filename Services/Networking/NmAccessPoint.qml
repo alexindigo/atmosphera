@@ -1,15 +1,15 @@
 pragma ComponentBehavior: Bound
-import DBus 1.0
-
 import QtQuick
+import Quickshell
+import "NmSsid.js" as Ssid
 
-Item {
+Scope {
   id: root
   required property string owner
   required property string path
   readonly property var facts: ({
                                   path: path,
-                                  ssid: transport.facts.Ssid ? DBusUtils.textFromBytes(transport.facts.Ssid) : "",
+                                  ssid: Ssid.decode(transport.facts.Ssid),
                                   Strength: transport.facts.Strength,
                                   Frequency: transport.facts.Frequency,
                                   Bandwidth: transport.facts.Bandwidth,

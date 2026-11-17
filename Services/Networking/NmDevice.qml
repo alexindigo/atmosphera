@@ -4,9 +4,11 @@ pragma ComponentBehavior: Unbound
 
 import DBus 1.0
 import QtQuick
+import QtQml.Models
+import Quickshell
 
 // Retained device bundle. Linked facts are inputs, never child-object reads.
-Item {
+Scope {
   id: root
   required property string owner
   required property string path
@@ -19,11 +21,11 @@ Item {
                                        active: core.facts.ActiveConnection || "/",
                                        ip4: core.facts.Ip4Config || "/",
                                        ip6: core.facts.Ip6Config || "/",
-                                       accessPoint: wireless.item ? wireless.item.facts.ActiveAccessPoint || "/" : "/",
-                                       accessPoints: wireless.item ? wireless.item.facts.AccessPoints || [] : []
+                                       accessPoint: wireless.object ? wireless.object.facts.ActiveAccessPoint || "/" : "/",
+                                       accessPoints: wireless.object ? wireless.object.facts.AccessPoints || [] : []
                                      })
   readonly property var facts: {
-    var c = core.facts, w = wireless.item ? wireless.item.facts : {}, e = wired.item ? wired.item.facts : {};
+    var c = core.facts, w = wireless.object ? wireless.object.facts : {}, e = wired.object ? wired.object.facts : {};
     var connected = c.State === 100, ap = accessPointFacts;
     var frequency = ap.Frequency || 0;
     return {
@@ -69,30 +71,30 @@ Item {
   }
   function reconcile() {
     core.reconcile();
-    if (wired.item)
-      wired.item.reconcile();
-    if (wireless.item)
-      wireless.item.reconcile();
+    if (wired.object)
+      wired.object.reconcile();
+    if (wireless.object)
+      wireless.object.reconcile();
   }
   function requestScan(done) {
-    if (!wireless.item) {
+    if (!wireless.object) {
       done({
              ok: false,
              error: "Wireless device unavailable"
            });
       return;
     }
-    wireless.item.invoke("RequestScan", [
+    wireless.object.invoke("RequestScan", [
                            {}
                          ], done);
   }
   function retire() {
     live = false;
     core.retire();
-    if (wired.item)
-      wired.item.retire();
-    if (wireless.item)
-      wireless.item.retire();
+    if (wired.object)
+      wired.object.retire();
+    if (wireless.object)
+      wireless.object.retire();
   }
   Interface {
     id: core
@@ -108,10 +110,11 @@ Item {
     }
     onFailed: message => root.failed(message)
   }
-  Loader {
+  Instantiator {
     id: wired
+    model: 1
     active: root.live && core.facts.DeviceType === 1
-    sourceComponent: Interface {
+    delegate: Interface {
       owner: root.owner
       path: root.path
       iface: "org.freedesktop.NetworkManager.Device.Wired"
@@ -119,10 +122,11 @@ Item {
       onFailed: message => root.failed(message)
     }
   }
-  Loader {
+  Instantiator {
     id: wireless
+    model: 1
     active: root.live && core.facts.DeviceType === 2
-    sourceComponent: Interface {
+    delegate: Interface {
       id: wifi
       owner: root.owner
       path: root.path
@@ -142,7 +146,7 @@ Item {
   // Shared retained-interface implementation for the named backend records.
   // Explicit watchers attach before the one seed. Automatic proxy subscriptions
   // and cache reads are disabled: exactly one layer owns invalidations/revisions.
-  component Interface: Item {
+  component Interface: Scope {
     id: record
     required property string owner
     required property string path

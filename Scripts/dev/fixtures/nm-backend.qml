@@ -65,6 +65,10 @@ function scan(path: string): string {
 function reconcile() {
   NmState.reconcileProfiles();
 }
+function ssidShapes(path: string): string {
+  var profile = NmState._profiles[path];
+  return JSON.stringify([undefined, null, [], new ArrayBuffer(0), [65, 195, 169], new Uint8Array([65, 195, 169]).buffer, [255, 128, 65]].map(bytes => profile.decodeSsid(bytes)));
+}
 function reconcileDevice(path: string) {
   NmState.reconcileDevice(path);
 }

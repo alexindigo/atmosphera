@@ -1,9 +1,9 @@
 pragma ComponentBehavior: Bound
-import DBus 1.0
-
 import QtQuick
+import Quickshell
+import "NmSsid.js" as Ssid
 
-Item {
+Scope {
   id: root
   required property string owner
   required property string path
@@ -84,6 +84,6 @@ Item {
     facts = ({});
   }
   function decodeSsid(bytes) {
-    return bytes ? DBusUtils.textFromBytes(bytes) : "";
+    return Ssid.decode(bytes);
   }
 }

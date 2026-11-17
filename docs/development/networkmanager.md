@@ -28,6 +28,18 @@ Record notifications queue publication, avoiding reentrant creation and input
 binding loops. Public snapshots do not expose proxies, replies or mutable
 registry objects. Native boxed object paths are normalized at the boundary.
 
+Sessions, records and retained interfaces use non-visual `Scope` roots. Device
+subinterfaces use `Instantiator`, never graphical `Loader` objects. The ownership
+gate rejects graphical backend objects as well as duplicate transport owners.
+
+`NmSsid.js` is the shared AP/profile byte-decoding boundary. dbusqml 1.1.2 delivers
+NM `ay` values as `ArrayBuffer`, including inside `a{sv}`. Empty native byte
+buffers must be recognized before `textFromBytes` constructs a typed-array view;
+Qt can reject a view of the null backing store of an empty `QByteArray`. Absent
+and empty values yield an empty SSID. Non-empty bytes retain the library's UTF-8
+decoding, with replacement characters for invalid sequences. Profile display
+names are NM strings and never pass through a byte decoder.
+
 ## Commands and recovery
 
 Operations have an identity and compact `accepted`, `completed` or `error` results.
@@ -82,6 +94,7 @@ python3 -B Scripts/dev/nm-widget-e2e.py --guest-profile /home/tester/Projects/nm
 python3 -B Scripts/dev/nm-widget-e2e.py --guest-profile /home/tester/Projects/nm-events/guest-profile.json --work /home/tester/Projects/nm-events/artifacts/actions-1 --case actions
 python3 -B Scripts/dev/nm-widget-e2e.py --guest-profile /home/tester/Projects/nm-events/guest-profile.json --work /home/tester/Projects/nm-events/artifacts/restart-1 --case restart
 python3 -B Scripts/dev/nm-widget-e2e.py --guest-profile /home/tester/Projects/nm-events/guest-profile.json --work /home/tester/Projects/nm-events/artifacts/network-1 --case network
+python3 -B Scripts/dev/nm-widget-e2e.py --guest-profile /home/tester/Projects/nm-events/guest-profile.json --work /home/tester/Projects/nm-events/artifacts/wifi-1 --case wifi
 python3 -B Scripts/dev/nm-idle-wire.py --guest-profile /home/tester/Projects/nm-events/guest-profile.json --work /home/tester/Projects/nm-events/artifacts/idle-1 --seconds 600
 python3 -B Scripts/dev/nm-runner-selftest.py --guest-profile /home/tester/Projects/nm-events/guest-profile.json --work /home/tester/Projects/nm-events/artifacts/runner-selftest-1
 ```
@@ -113,6 +126,8 @@ Controlled-daemon legs run on a separate guest-private bus with real dbusqml and
 real consumer components. These cover accepted-then-failed activation and
 Wi-Fi/AP/IP/security/scan contracts, not a physical Wi-Fi radio or remote VPN peer.
 Every result distinguishes controlled and live cases.
+The `wifi` case runs the controlled network leg alone, including rendered saved
+UTF-8 SSIDs behind an empty hidden AP, invalid UTF-8 SSIDs and profile names.
 
 The wire runner retains both broad raw traffic and the measured interval, resolves
 all shell system-bus names by PID, records dynamic name membership, and proves the

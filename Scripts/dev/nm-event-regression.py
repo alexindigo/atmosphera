@@ -136,6 +136,48 @@ def main():
         owner.check("same-path-ap-ip-updates-reach-device-consumers", True)
         until(lambda s: s["network"]["wifi"].get("ipv4") == "198.18.0.5" and s["network"]["networks"].get("Fixture", {}).get("signal") == 77, "network facade same-path projection")
         owner.check("ap-ip-security-reach-network-facade", state()["network"]["networks"]["Fixture"]["security"] == "wpa2-psk")
+        # NM's ay is a native QByteArray -> QML ArrayBuffer, including an empty
+        # buffer for a hidden AP/profile. Empty native buffers are not the same
+        # as []: Qt can reject constructing a Uint8Array view over them.
+        for label, raw, expected in (("ascii", b"Fixture", "Fixture"),
+                                     ("utf8", "Cafe\u00e9".encode(), "Cafe\u00e9"),
+                                     ("non-utf8", b"\xff\x80A", "\ufffd\ufffdA"),
+                                     ("hidden-empty", b"", "")):
+            settings = profile("Saved " + label, "802-11-wireless")
+            settings["802-11-wireless"] = {"ssid": list(raw)}
+            bus.control("settings", path=PROFILE, settings=settings)
+            bus.control("change", path=ap, iface=NM + ".AccessPoint", props={"Ssid": list(raw)})
+            snapshot = until(lambda s: s["profiles"].get(PROFILE, {}).get("ssid") == expected
+                             and s["aps"].get(ap, {}).get("ssid") == expected, label + " AP/profile SSID")
+            owner.check("native-ssid-ap-and-profile-" + label,
+                        snapshot["profiles"][PROFILE]["id"] == "Saved " + label, state=snapshot)
+        before = len(calls("Get", ap))
+        bus.control("change", path=ap, iface=NM + ".AccessPoint", invalidated=["Ssid"])
+        wait_for(lambda: len(calls("Get", ap)) == before + 1, "empty ay invalidation read")
+        until(lambda s: s["aps"].get(ap, {}).get("ssid") == "", "empty ay after invalidation")
+        owner.check("native-empty-ssid-invalidation", True)
+        # Also seed an empty AP (rather than only sending PropertiesChanged).
+        bus.control("put", path=ROOT + "/AccessPoint/3", iface=NM + ".AccessPoint", introspect=False,
+                    props={"Ssid": ["ay", []], "Strength": ["y", 0]})
+        bus.control("signal", path=device, iface=NM + ".Device.Wireless", member="AccessPointAdded",
+                    signature="(o)", args=[ROOT + "/AccessPoint/3"])
+        until(lambda s: ROOT + "/AccessPoint/3" in s["aps"], "hidden AP initial GetAll")
+        bus.control("signal", path=device, iface=NM + ".Device.Wireless", member="AccessPointRemoved",
+                    signature="(o)", args=[ROOT + "/AccessPoint/3"])
+        until(lambda s: ROOT + "/AccessPoint/3" not in s["aps"], "hidden AP retired")
+        settings = profile("Empty before seed", "802-11-wireless")
+        settings["802-11-wireless"] = {"ssid": []}
+        bus.control("put", path=second_profile, iface=NM + ".Settings.Connection", settings=settings)
+        bus.control("signal", path=ROOT + "/Settings", iface=NM + ".Settings", member="NewConnection", signature="(o)", args=[second_profile])
+        until(lambda s: s["profiles"].get(second_profile, {}).get("ssid") == "", "hidden profile initial GetSettings")
+        owner.check("native-empty-ssid-initial-seeds", True)
+        shapes = json.loads(ipc("ssidShapes", PROFILE).stdout)
+        owner.check("ssid-js-array-buffer-and-absent-shapes", shapes == ["", "", "", "", "A\u00e9", "A\u00e9", "\ufffd\ufffdA"], shapes=shapes)
+        bus.control("remove", path=second_profile)
+        bus.control("settings", path=PROFILE, settings=profile("Burst final"))
+        bus.control("change", path=ap, iface=NM + ".AccessPoint", props={"Ssid": list(b"Fixture")})
+        until(lambda s: s["profiles"].get(PROFILE, {}).get("id") == "Burst final"
+              and s["network"]["networks"].get("Fixture"), "restore after byte cases")
         bus.control("delay", path=device, method="GetAll")
         before = len(calls("GetAll", device))
         ipc("reconcileDevice", device)
@@ -235,6 +277,9 @@ def main():
         log = (owner.work / "backend-shell.log").read_text()
         errors = re.findall(r"[^\n]*(?:TypeError|ReferenceError|Binding loop|Cannot create NetworkManager|Cannot create new component)[^\n]*", log)
         owner.check("no-runtime-exceptions-or-binding-loops", not errors, errors=errors)
+        warnings = [line for line in log.splitlines() if "DBusUtils::textFromBytes" in line
+                    or "Created graphical object was not placed in the graphics scene" in line]
+        owner.check("no-byte-decoder-or-graphical-record-warnings", not warnings, warnings=warnings)
     except BaseException as error:
         owner.receipt["error"] = repr(error)
         if "bus" in locals():

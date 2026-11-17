@@ -127,6 +127,45 @@ def controlled_network(profile, work):
                     and payload["variantTypes"]["802-1x"]["ca-cert"] == "ay", payload=payload)
         frame = wait_for(lambda: (f if (f := shell.panel_frame())["error"] else None), "network request rejection reaches rendered panel")
         owner.check("controlled-network-failure-rendered", any(frame["error"] == t["text"] for t in frame["texts"]), frame=frame)
+        # Saved SSID bytes and an empty hidden AP must meet again at the real
+        # panel, not merely in NmState's maps. Keep the display name distinct.
+        saved, active = ROOT + "/Settings/2", ROOT + "/ActiveConnection/10"
+        ssid, name = "Saved Wi-Fi \u00e9", "Profile name \u00e9"
+        bus.control("put", path=saved, iface=NM + ".Settings.Connection", settings={
+            "connection": {"uuid": "saved-wifi-uuid", "id": name, "type": "802-11-wireless"},
+            "802-11-wireless": {"ssid": list(ssid.encode())}})
+        bus.control("signal", path=ROOT + "/Settings", iface=NM + ".Settings", member="NewConnection", signature="(o)", args=[saved])
+        bus.control("put", path=active, iface=NM + ".Connection.Active", props={
+            "Id": ["s", name], "Uuid": ["s", "saved-wifi-uuid"], "Type": ["s", "802-11-wireless"],
+            "Connection": ["o", saved], "Devices": ["ao", [device]], "State": ["u", 2],
+            "Ip4Config": ["o", ip4], "Ip6Config": ["o", ip6]})
+        bus.control("change", path=ROOT, iface=NM, props={"ActiveConnections": [active]})
+        bus.control("change", path=device, iface=NM + ".Device", props={"State": 100, "ActiveConnection": active})
+        bus.control("change", path=ap, iface=NM + ".AccessPoint", props={"Ssid": []})
+        frame = wait_for(lambda: text_frame(ssid), "hidden AP falls back to saved UTF-8 SSID in real panel")
+        owner.check("hidden-empty-ap-saved-ssid-rendered", frame["visible"], frame=frame)
+        owner.check("wifi-profile-name-preserved", shell.state()["profiles"][saved]["id"] == name)
+        bus.control("change", path=device, iface=NM + ".Device", props={"State": 30})
+        bus.control("change", path=ap, iface=NM + ".AccessPoint", props={"Ssid": [255, 128, 65]})
+        frame = wait_for(lambda: text_frame("\ufffd\ufffdA"), "non-UTF-8 AP rendered with replacement characters")
+        owner.check("non-utf8-ssid-rendered", frame["visible"], frame=frame)
+        # Profile names are strings, not ay. Verify the real VPN menu still
+        # renders them after the SSID fixture has exercised empty byte buffers.
+        bus.control("settings", path=ROOT + "/Settings/1", settings={"connection": {
+            "uuid": "fixture-uuid", "id": name, "type": "wireguard"}})
+        shell.click(json.loads(shell.ipc("nmLive", "networkPoint")))
+        shell.menu()
+        def named_menu():
+            frame = shell.frame()
+            return frame if any(name in text for row in frame["menu"]["rows"] for text in row["texts"]) else None
+        frame = wait_for(named_menu, "UTF-8 profile name rendered in VPN menu")
+        owner.check("profile-name-rendered", frame["menu"]["visible"], frame=frame)
+        shell.close()
+        log = (owner.work / "live-shell.log").read_text()
+        warnings = [line for line in log.splitlines() if "DBusUtils::textFromBytes" in line
+                    or "Created graphical object was not placed in the graphics scene" in line
+                    or "TypeError" in line or "ReferenceError" in line]
+        owner.check("no-byte-or-graphical-record-runtime-warnings", not warnings, warnings=warnings)
         (owner.work / "fixture-calls.json").write_text(json.dumps(bus.control("calls"), indent=2))
     except BaseException as error:
         owner.receipt["error"] = repr(error)
@@ -212,8 +251,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--guest-profile", type=Path, required=True)
     parser.add_argument("--work", type=Path, required=True)
-    parser.add_argument("--case", choices=("lifecycle", "actions", "restart", "network"), required=True)
+    parser.add_argument("--case", choices=("lifecycle", "actions", "restart", "network", "wifi"), required=True)
     args = parser.parse_args()
+    if args.case == "wifi":
+        controlled_network(args.guest_profile, args.work)
+        return
     owner = GuestRun(args.guest_profile, args.work)
     shell = profiles = signals = None
     try:

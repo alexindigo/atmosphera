@@ -146,7 +146,7 @@ Singleton {
   }
   Component {
     id: sessionFactory
-    Item {
+    Scope {
       id: session
       required property string owner
       required property int generation
