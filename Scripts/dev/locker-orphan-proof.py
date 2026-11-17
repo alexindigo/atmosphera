@@ -14,7 +14,7 @@ import secrets
 import subprocess
 import time
 
-from locker_test_support import manage, require_guest, run, wait_for
+from locker_test_support import cgroup_pids, manage, require_guest, run, wait_for
 
 
 def main():
@@ -82,7 +82,7 @@ def main():
             '-p', 'InvocationID', '-p', 'ActiveState']).stdout.splitlines())
         assert current['InvocationID'] in ('', record['InvocationID']), 'test unit replaced by another invocation'
         group = Path('/sys/fs/cgroup' + record['ControlGroup'])
-        members = [int(pid) for file in group.rglob('cgroup.procs') for pid in file.read_text().split()] if group.exists() else []
+        members = [int(pid) for pid in cgroup_pids(group)]
         process = Path('/proc') / record['MainPID']
         same = process.exists() and (process / 'stat').read_text().split(') ', 1)[1].split()[19] == record['start']
         return not members and not same and current['ActiveState'] in ('inactive', 'failed', '')

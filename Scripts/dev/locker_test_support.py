@@ -64,6 +64,17 @@ def manage(source, job, check=True):
     return reply
 
 
+def cgroup_pids(group):
+    """PIDs in a cgroup tree; a cgroup removed while reading has none."""
+    pids = []
+    for file in Path(group).rglob('cgroup.procs'):
+        try:
+            pids += file.read_text().split()
+        except FileNotFoundError:
+            pass
+    return pids
+
+
 def compositor_transitions(events):
     """Native Hyprland notifications, or niri's compositor-owned logind hint."""
     kind = 'compositor-lock' if os.environ.get('HYPRLAND_INSTANCE_SIGNATURE') else 'locked-hint'

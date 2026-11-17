@@ -16,7 +16,7 @@ import shlex
 import subprocess
 import time
 
-from locker_test_support import compositor_locked, compositor_transitions, manage, recover_known_pam_hang, require_guest, run, wait_for
+from locker_test_support import cgroup_pids, compositor_locked, compositor_transitions, manage, recover_known_pam_hang, require_guest, run, wait_for
 
 
 def main():
@@ -349,7 +349,7 @@ def main():
                 run(['systemctl', '--user', 'stop', saved['name']])
             group = Path('/sys/fs/cgroup' + saved['ControlGroup'])
             if group.exists():
-                assert not any(file.read_text().split() for file in group.rglob('cgroup.procs'))
+                assert not cgroup_pids(group)
             process = Path('/proc') / saved['MainPID'] / 'stat'
             assert not process.exists() or process.read_text().split(') ', 1)[1].split()[19] != saved['pidStart']
             if role.startswith('main') and authenticated and args.variant not in ('disappearing', 'shipped'):

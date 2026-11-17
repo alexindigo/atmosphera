@@ -15,7 +15,7 @@ import signal
 import subprocess
 import time
 
-from locker_test_support import compositor_locked, compositor_transitions, manage, require_guest, run, wait_for
+from locker_test_support import cgroup_pids, compositor_locked, compositor_transitions, manage, require_guest, run, wait_for
 
 
 def main():
@@ -69,13 +69,11 @@ def main():
         assert now.get('InvocationID', '') in ('', saved['InvocationID']), 'test unit replaced'
         group = Path('/sys/fs/cgroup' + saved['ControlGroup'])
         members = []
-        if group.exists():
-            for file in group.rglob('cgroup.procs'):
-                for pid in file.read_text().split():
-                    try:
-                        members.append(identity(pid))
-                    except FileNotFoundError:
-                        pass
+        for pid in cgroup_pids(group):
+            try:
+                members.append(identity(pid))
+            except FileNotFoundError:
+                pass
         try:
             same = identity(saved['pid'])['start'] == saved['start']
         except FileNotFoundError:

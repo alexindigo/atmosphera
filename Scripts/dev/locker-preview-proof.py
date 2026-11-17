@@ -9,7 +9,7 @@ import subprocess
 import time
 
 from locker_framebuffer import Framebuffer
-from locker_test_support import manage, require_guest, run, wait_for
+from locker_test_support import cgroup_pids, manage, require_guest, run, wait_for
 
 
 def main():
@@ -119,7 +119,7 @@ def main():
             assert current == record['InvocationID'], 'preview fixture unit replaced'
             run(['systemctl', '--user', 'stop', record['name']])
             group = Path('/sys/fs/cgroup' + record['ControlGroup'])
-            assert not group.exists() or not any(path.read_text().split() for path in group.rglob('cgroup.procs'))
+            assert not cgroup_pids(group)
             process = Path('/proc') / record['MainPID'] / 'stat'
             assert not process.exists() or process.read_text().split(') ', 1)[1].split()[19] != record['start']
     (work / 'result.txt').write_text('PASS preview\n')
