@@ -16,7 +16,7 @@ from locker_test_support import manage, require_guest
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--case', choices=('fast', 'slow', 'external', 'orphan-acceptance'), required=True)
+    parser.add_argument('--case', choices=('fast', 'slow', 'external', 'contract', 'orphan-acceptance'), required=True)
     parser.add_argument('--variants', default='existing,missing,slow5,slow40,nonzero,crash,pipeline,daemonizing,term-resistant')
     parser.add_argument('--ui', choices=('builtin', 'demo'), default='builtin')
     parser.add_argument('--delay', type=float, default=5)
@@ -58,6 +58,12 @@ def main():
         commands.append(('cooperative', cooperative))
         for case in ('opaque-holder', 'opaque-sleep', 'opaque-crash', 'opaque-race', 'opaque-withdraw'):
             commands.append((case, ['locker-owner-proof.py', '--case', case]))
+    elif args.case == 'contract':
+        for variant in ('normal', 'error', 'no-engagement', 'disappearing'):
+            command = ['locker-contract-proof.py', '--variant', variant]
+            if args.recover_known_pam_hang:
+                command.append('--recover-known-pam-hang')
+            commands.append((variant, command))
     elif args.case == 'orphan-acceptance':
         commands.append(('orphan', ['locker-orphan-proof.py', '--source', str(source)]))
     else:

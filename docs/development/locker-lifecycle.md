@@ -99,14 +99,18 @@ use `ark-user-vms` strict pinned tester SSH to `atmosphera-locker-orphan` on
 unit/cgroup, managed-client/PAM and actual delay-inhibitor-fd proofs. The fd proof
 is not a real suspend/resume proof.
 
-`locker-lifecycle-regression.py` currently provides `fast`, `slow`, `external`
-and `orphan-acceptance`. Each case requires its own new `--work` directory.
+`locker-lifecycle-regression.py` currently provides `fast`, `slow`, `external`,
+`contract` and `orphan-acceptance`. Each case requires its own new `--work` directory.
 The external suite includes the command variants, cooperative handover and
 event-driven opaque probes. Preserve each subproof's result; do not infer a
 passing full matrix from a subset. Framebuffer-dependent cases require the
 exact fork's local VNC port forwarded to the guest and the matching VM name.
 
-The broader boundary/resource/contract/ingress/suspend/load/packaging matrix and
+The contract case uses a separately supervised Locker1 service for normal,
+method-error, no-engagement and disappearing-name outcomes. It preserves the
+independent service after owner settlement and observes actual PAM/native unlock.
+
+The broader boundary/resource/ingress/suspend/load/packaging matrix and
 the separate Hyprland restore-option proofs are not implied by these entry
 points. Keep their acceptance status in the task's outside-repository execution
 note until those proofs are implemented and run.

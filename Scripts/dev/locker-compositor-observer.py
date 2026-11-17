@@ -126,7 +126,7 @@ def main():
             if not isinstance(message, str) or 'wl_keyboard' in message:
                 continue
             unit = record.get('_SYSTEMD_USER_UNIT', '')
-            if (record.get('_COMM') == 'niri' or unit.startswith(('atmosphera-lockscreen-', 'atmosphera-emergency-lock-', 'atmosphera-lock-', 'locker-orphan-proof-'))):
+            if (record.get('_COMM') == 'niri' or unit.startswith(('atmosphera-lockscreen-', 'atmosphera-emergency-lock-', 'atmosphera-lock-', 'locker-orphan-proof-', 'locker-contract-'))):
                 emit('journal', sourceMonotonic=int(record['__MONOTONIC_TIMESTAMP']) / 1_000_000,
                      invocation=record.get('_SYSTEMD_INVOCATION_ID', ''), unit=unit, message=message)
 
