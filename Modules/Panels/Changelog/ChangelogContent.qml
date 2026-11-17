@@ -108,13 +108,6 @@ ColumnLayout {
       spacing: Style.marginM
 
       NText {
-        visible: Version.fetchError !== ""
-        text: Version.fetchError
-        color: AtmoColor.mError
-        wrapMode: Text.WordWrap
-      }
-
-      NText {
         Layout.fillWidth: true
         visible: releaseContent.length > 0
         text: contentRoot.colorizeHeaders(releaseContent)
