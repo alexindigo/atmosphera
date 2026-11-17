@@ -101,7 +101,7 @@ is not a real suspend/resume proof.
 
 `locker-lifecycle-regression.py` currently provides `fast`, `slow`, `boundary`,
 `deadline-race`, `rejected`, `resources`, `external`, `contract`, `restart`, `ingress`, `preview`,
-`suspend`, `packaging`, `cold-load` and `orphan-acceptance`.
+`suspend`, `load`, `packaging`, `cold-load` and `orphan-acceptance`.
 Each case requires its own new `--work` directory.
 The external suite includes the command variants, cooperative handover and
 event-driven opaque probes. Preserve each subproof's result; do not infer a
@@ -188,6 +188,14 @@ copies that match the authoritative source byte-for-byte. Per-file hashes and
 exact paths are recorded; settings, caches, state, logs and captures remain.
 This avoids inode exhaustion during sequential main-shell matrices.
 
-The load matrix and separate Hyprland restore-option proofs are not implied
-by these entry points. Keep their acceptance status in the task's
+`load --delay 5` keeps a supervised, RSS/CPU-bounded resident-memory worker
+active through real-main slow handover/secure sleep-signal ordering and a
+separate actual emergency-PAM-before-ready proof. It records requested and
+resident bytes, guest meminfo/PSI, native startup time, Ark uptime and guest
+CPU steal; it does not claim universal sub-3-second latency or hardware sleep.
+The worker's exact invocation/PID identity is retired independently of locker
+authentication, even if a subproof fails.
+
+Separate Hyprland restore-option proofs are not implied by these entry points.
+Keep their acceptance status in the task's
 outside-repository execution note until those proofs are implemented and run.

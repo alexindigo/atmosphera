@@ -43,7 +43,7 @@ def retire_reconstructible(source, work):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--case', choices=('fast', 'slow', 'suspend', 'deadline-race', 'boundary', 'rejected', 'resources', 'external', 'contract', 'restart', 'ingress', 'preview', 'packaging', 'cold-load', 'orphan-acceptance'), required=True)
+    parser.add_argument('--case', choices=('fast', 'slow', 'suspend', 'load', 'deadline-race', 'boundary', 'rejected', 'resources', 'external', 'contract', 'restart', 'ingress', 'preview', 'packaging', 'cold-load', 'orphan-acceptance'), required=True)
     parser.add_argument('--sample-seconds', type=float, default=10)
     parser.add_argument('--post-unlock-seconds', type=float, default=10)
     parser.add_argument('--delays', default='2.9,3.0,3.1,29.9,30.0,30.1')
@@ -70,6 +70,11 @@ def main():
     commands = []
     if args.case == 'preview':
         commands.append(('preview', ['locker-preview-proof.py']))
+    elif args.case == 'load':
+        command = ['locker-load-proof.py', '--delay', str(args.delay)]
+        if args.recover_known_pam_hang:
+            command.append('--recover-known-pam-hang')
+        commands.append(('pressure', command))
     elif args.case == 'suspend':
         assert args.sleep_signals, 'suspend acceptance requires real logind signals and delay-fd ordering'
         for route in ('lock-and-suspend', 'prepare-for-sleep'):
@@ -212,7 +217,7 @@ def main():
             assert final['descriptor']['phase'] == 'settled'
             assert all(unit['gone'] and not unit['members'] for unit in final['units'].values())
         (work / 'post-unlock.json').write_text(json.dumps(final, indent=2))
-    recovery = any((work / name / 'known-pam-hang-recovery.json').exists() for name, _ in commands)
+    recovery = any(work.rglob('known-pam-hang-recovery.json'))
     suffix = ' (known native PAM hang recovered)' if recovery else ''
     if args.case == 'suspend':
         suffix += ' (real logind signals; no hardware sleep)'
