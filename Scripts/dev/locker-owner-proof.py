@@ -84,6 +84,13 @@ def main():
     if args.restart_state and (args.case != 'slow' or args.delay >= 30 or args.emergency_auth_before_ready):
         parser.error('--restart-state needs the cooperative slow handover case')
     source, work = require_guest(args.work, Path(__file__).resolve().parents[2])
+    # Hyprland keeps a dead holder's lock and denies every new lock unless
+    # misc:allow_session_lock_restore is on; the capability case sets it in
+    # this disposable guest and restores it. See locker-hyprland-capability-proof.py.
+    hypr_crash = args.case == 'opaque-crash' and bool(os.environ.get('HYPRLAND_INSTANCE_SIGNATURE'))
+    if hypr_crash:
+        restore = json.loads(run(['hyprctl', '-j', 'getoption', 'misc:allow_session_lock_restore']).stdout)
+        assert restore['int'] == 1, 'Hyprland opaque-crash runs only inside the restore=1 capability case'
     telemetry = []
     load_file = Path(os.environ['LOCKER_TEST_ARK_LOAD_FILE'])
 
@@ -100,7 +107,7 @@ def main():
         (work / 'load-samples.json').write_text(json.dumps(telemetry, indent=2))
 
     sample_load('start')
-    if args.sleep_signals or args.ui == 'demo' or args.ingress == 'keybind' or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
+    if hypr_crash or args.sleep_signals or args.ui == 'demo' or args.ingress == 'keybind' or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
         assert os.environ.get('LOCKER_FRAMEBUFFER_PORT') and os.environ.get('LOCKER_TEST_VM_NAME'), 'render/input proof requires the named VM console forward'
     discovery = manage(source, {'operation': 'discover'})
     sid, takeover = discovery['session'], discovery['takeover']
@@ -443,7 +450,7 @@ def main():
         wait_for(lambda: (work / 'observer/ready.json').exists(), 10)
         assert not compositor_locked(work, sid), 'existing compositor lock'
         start()
-        if args.sleep_signals or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
+        if hypr_crash or args.sleep_signals or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
             from locker_framebuffer import Framebuffer
             sentinel_entry = work / 'desktop-sentinel.qml'
             shutil.copyfile(source / 'Scripts/dev/fixtures/locker-sentinel.qml', sentinel_entry)
@@ -512,6 +519,34 @@ def main():
                 and 'real' in inspect()['descriptor']['units'])
             restart_at('starting')
         expected_role = 'emergency' if args.case in ('opaque', 'slow', 'report-unknown') or (args.case == 'external' and not unconfirmed) else 'real'
+        crashed = None
+        if hypr_crash:
+            # With restore=1 a later lock replaces even a live holder, so the
+            # deadline probe is never refused and the unconfirmed state cannot
+            # arise. Crash the sole secure opaque holder before the 3 s deadline
+            # instead: its exit is the probe event, the dead lock is the target.
+            def holder_secure():
+                descriptor = inspect().get('descriptor') or {}
+                record = (descriptor.get('units') or {}).get('real')
+                if descriptor.get('generation') == old_generation or not record:
+                    return None
+                text = run(['journalctl', '--user', '-b', '--no-pager', '-o', 'cat',
+                    '_SYSTEMD_INVOCATION_ID=' + record['identity']['InvocationID']]).stdout
+                return record if re.search(r'ext_session_lock_v1#\d+\.locked\(\)', text) else None
+            crashed = wait_for(holder_secure, 3)
+            before_crash = inspect()['descriptor']
+            assert 'emergency' not in before_crash['units'] and time.monotonic() < before_crash['emergencyAt'] - .3, 'opaque holder secured too late for a sole-holder crash'
+            crashed_at = time.monotonic()
+            run(['systemctl', '--user', 'kill', '--signal=SIGKILL', '--kill-whom=all', crashed['name']])
+            from locker_framebuffer import Framebuffer
+            console = Framebuffer()
+            try:
+                console.capture(work / 'dead-holder.ppm')
+                assert not console.sentinel_visible(), 'unlocked desktop after the opaque holder crashed'
+            finally:
+                console.close()
+            unconfirmed = False
+            expected_role = 'emergency'
         def owner_status():
             return json.loads(ipc('lockOwner', 'status'))
         def secured():
@@ -540,6 +575,22 @@ def main():
         wait_for(secured, 15)
         first = inspect()
         sample_load('first-secure')
+        if crashed:
+            recovery = first['descriptor']['units']['emergency']
+            assert recovery['startedAt'] - crashed_at < 3, 'crash did not start the emergency lock at once'
+            assert recovery['startedAt'] < first['descriptor']['emergencyAt'], 'probe came from the deadline, not the crash'
+            assert first['descriptor']['probeEvents']['exit:' + crashed['identity']['InvocationID']] == recovery['identity']['InvocationID']
+            assert first['units']['real']['gone'] and not first['units']['real']['members']
+            from locker_framebuffer import Framebuffer
+            console = Framebuffer()
+            try:
+                console.capture(work / 'probe-secure.ppm')
+                assert not console.sentinel_visible(), 'unlocked desktop under the recovery probe'
+            finally:
+                console.close()
+            (work / 'crash-response.json').write_text(json.dumps({'candidateInvocation': crashed['identity']['InvocationID'],
+                'probeInvocation': recovery['identity']['InvocationID'], 'secondsToLaunch': recovery['startedAt'] - crashed_at,
+                'restore': 1, 'note': 'dead-client takeover by the owner probe; product takeover policy unchanged'}, indent=2))
         if args.sleep_signals:
             # The real manager must wait on its real delay fd before entering
             # our no-kernel-sleep service. Observe native secure, fd release,

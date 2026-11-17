@@ -75,6 +75,32 @@ def cgroup_pids(group):
     return pids
 
 
+HYPR_RESTORE = 'misc:allow_session_lock_restore'
+
+
+def hypr_option():
+    value = json.loads(run(['hyprctl', '-j', 'getoption', HYPR_RESTORE]).stdout)
+    assert value['option'] == HYPR_RESTORE
+    return {'int': value['int'], 'set': value['set']}
+
+
+def set_hypr_option(value):
+    """Runtime-only change for the disposable guest; never product configuration."""
+    assert run(['hyprctl', 'keyword', HYPR_RESTORE, str(value)]).stdout.strip() == 'ok'
+    assert hypr_option()['int'] == value
+
+
+def restore_hypr_option(original):
+    if hypr_option() == original:
+        return
+    set_hypr_option(original['int'])
+    if not original['set']:
+        # Only a config reload clears the runtime keyword's `set` flag.
+        assert run(['hyprctl', 'reload']).stdout.strip() == 'ok'
+        wait_for(lambda: hypr_option() == original, 5)
+    assert hypr_option() == original, 'restore option not restored'
+
+
 def compositor_transitions(events):
     """Native Hyprland notifications, or niri's compositor-owned logind hint."""
     kind = 'compositor-lock' if os.environ.get('HYPRLAND_INSTANCE_SIGNATURE') else 'locked-hint'

@@ -14,7 +14,7 @@ import shutil
 import subprocess
 import time
 
-from locker_test_support import manage, require_guest
+from locker_test_support import hypr_option, manage, require_guest, restore_hypr_option, set_hypr_option
 
 
 def retire_reconstructible(source, work):
@@ -44,7 +44,7 @@ def retire_reconstructible(source, work):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--case', choices=('fast', 'slow', 'suspend', 'load', 'deadline-race', 'boundary', 'rejected', 'resources', 'external', 'contract', 'restart', 'ingress', 'preview', 'packaging', 'cold-load', 'orphan-acceptance'), required=True)
+    parser.add_argument('--case', choices=('fast', 'slow', 'suspend', 'load', 'deadline-race', 'boundary', 'rejected', 'resources', 'external', 'contract', 'restart', 'ingress', 'preview', 'packaging', 'cold-load', 'orphan-acceptance', 'hyprland-capability'), required=True)
     parser.add_argument('--sample-seconds', type=float, default=10)
     parser.add_argument('--post-unlock-seconds', type=float, default=10)
     parser.add_argument('--delays', default='2.9,3.0,3.1,29.9,30.0,30.1')
@@ -69,7 +69,28 @@ def main():
         sid = manage(driver, {'operation': 'discover'})['session']
         initial = manage(driver, {'operation': 'inspect', 'session': sid})
     commands = []
-    if args.case == 'preview':
+    option_during = {}
+    original_option = None
+    if args.case == 'hyprland-capability':
+        assert os.environ.get('HYPRLAND_INSTANCE_SIGNATURE'), 'capability case belongs to the Hyprland guest'
+        original_option = hypr_option()
+        (work / 'original-option.json').write_text(json.dumps(original_option))
+        assert original_option['int'] == 0, 'capability case starts from the guest default (restore disabled)'
+        retained = ['locker-owner-proof.py', '--main-shell', '--case', 'slow', '--delay', '5']
+        if args.recover_known_pam_hang:
+            retained.append('--recover-known-pam-hang')
+        # restore=0: the product keeps the live emergency lock, no takeover.
+        commands.append(('restore0-retained', retained))
+        commands.append(('dead-client', ['locker-hyprland-capability-proof.py', '--subcase', 'dead-client']))
+        commands.append(('live-replace', ['locker-hyprland-capability-proof.py', '--subcase', 'live-replace']))
+        # restore=1 only: a crashed sole opaque holder is taken over by the
+        # owner's immediate probe. Product takeover policy stays niri-only.
+        crash = ['locker-owner-proof.py', '--case', 'opaque-crash']
+        if args.recover_known_pam_hang:
+            crash.append('--recover-known-pam-hang')
+        commands.append(('opaque-crash-restore1', crash))
+        option_during['opaque-crash-restore1'] = 1
+    elif args.case == 'preview':
         commands.append(('preview', ['locker-preview-proof.py']))
     elif args.case == 'load':
         command = ['locker-load-proof.py', '--delay', str(args.delay)]
@@ -197,13 +218,24 @@ def main():
             commands.append(('emergency-auth-before-ready', common + ['--emergency-auth-before-ready']))
     for name, command in commands:
         command = ['python3', '-B', str(driver / 'Scripts/dev' / command[0]), *command[1:], '--work', str(work / name)]
+        if name in option_during:
+            set_hypr_option(option_during[name])
         with (work / (name + '-output.txt')).open('x') as log:
             result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=240)
         print((work / (name + '-output.txt')).read_text(), end='', flush=True)
+        # A failed subproof may leave a lock that needs real-PAM recovery with
+        # the option still on; restore only after its own clean exit.
         assert result.returncode == 0, str(command)
+        if name in option_during:
+            restore_hypr_option(original_option)
+            (work / (name + '-restored-option.json')).write_text(json.dumps(hypr_option()))
         # Passing subproofs have finished their cleanup. Retire only reproducible
         # installs and hash-identical asset copies, never logs/settings/evidence.
         retire_reconstructible(source, work / name)
+    if original_option is not None:
+        final_option = hypr_option()
+        (work / 'final-option.json').write_text(json.dumps(final_option))
+        assert final_option == original_option, 'restore option not returned to its original value'
     if args.case in ('packaging', 'cold-load'):
         emergency = (work / 'emergency/fixture-protocol.txt').read_text()
         assert 'Registry' not in emergency and 'PluginService' not in emergency, 'emergency initialized non-lock runtime'
