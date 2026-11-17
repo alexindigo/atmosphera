@@ -16,7 +16,7 @@ import subprocess
 import threading
 import time
 
-from locker_test_support import manage, recover_known_pam_hang, require_guest, run, wait_for
+from locker_test_support import compositor_locked, compositor_transitions, manage, recover_known_pam_hang, require_guest, run, wait_for
 
 
 def deadline_outcome(descriptor, events):
@@ -102,7 +102,8 @@ def main():
     sample_load('start')
     if args.sleep_signals or args.ui == 'demo' or args.ingress == 'keybind' or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
         assert os.environ.get('LOCKER_FRAMEBUFFER_PORT') and os.environ.get('LOCKER_TEST_VM_NAME'), 'render/input proof requires the named VM console forward'
-    sid = manage(source, {'operation': 'discover'})['session']
+    discovery = manage(source, {'operation': 'discover'})
+    sid, takeover = discovery['session'], discovery['takeover']
     assert run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip() == 'no', 'existing holder'
     stage = work / 'stage'
     run(['bash', '-eu', '-c', 'source "$1/packaging/aur/package.sh"; package', 'stage', str(source)],
@@ -192,7 +193,7 @@ def main():
         environment['PATH'] = str(binary.parent) + ':' + os.environ['PATH']
         if args.case == 'slow':
             (work / 'delay-real').write_text(str(args.delay))
-            if args.delay < 30 and not args.emergency_auth_before_ready:
+            if args.delay < 30 and not args.emergency_auth_before_ready and takeover:
                 adapter_binary = binary.with_name('python3')
                 shutil.copyfile(source / 'Scripts/dev/fixtures/locker-adapter-barrier.py', adapter_binary)
                 adapter_binary.chmod(0o700)
@@ -437,6 +438,7 @@ def main():
                                     stdout=(work / 'observer-stdout.txt').open('w'),
                                     stderr=(work / 'observer-stderr.txt').open('w'), env=environment)
         wait_for(lambda: (work / 'observer/ready.json').exists(), 10)
+        assert not compositor_locked(work, sid), 'existing compositor lock'
         start()
         if args.sleep_signals or args.case == 'boundary' or (args.case == 'slow' and args.delay < 30 and not args.emergency_auth_before_ready):
             from locker_framebuffer import Framebuffer
@@ -562,7 +564,7 @@ def main():
             kernel = [json.loads(line) for line in kernel_text.splitlines()]
             (work / 'sleep-kernel.json').write_text(json.dumps(kernel, indent=2))
             assert not any('PM: suspend entry' in record.get('MESSAGE', '') for record in kernel), 'fixture unexpectedly suspended the kernel'
-            assert run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip() == 'yes', 'resumed unlocked'
+            assert compositor_locked(work, sid), 'resumed unlocked'
             wait_for(lambda: sleep_harness.inhibitors(sleep_harness.pid), 10)
             if suspend_command is not None:
                 assert suspend_command.wait(timeout=10) == 0
@@ -666,7 +668,7 @@ def main():
                 time.sleep(10)
                 assert inspect()['descriptor']['phase'] == 'settled'
                 assert all(item['gone'] and not item['members'] for item in inspect()['units'].values())
-                assert run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip() == 'no'
+                assert not compositor_locked(work, sid)
                 assert not (work / 'real-delay-exec.json').exists(), 'revoked real command executed after emergency authentication'
                 final = inspect()
                 (work / 'final.json').write_text(json.dumps(final, indent=2))
@@ -674,13 +676,14 @@ def main():
                 assert observer.wait(timeout=10) == 0
                 events = [json.loads(line) for line in (work / 'observer/events.jsonl').read_text().splitlines()]
                 assert not any(event['kind'] == 'observer-error' for event in events)
-                unlocks = [event for event in events if event['kind'] == 'locked-hint' and not event['locked']]
+                unlocks = [event for event in compositor_transitions(events) if not event['locked']]
                 assert len(unlocks) == 1 and unlocks[0]['observed'] >= authenticated_at
                 native_unlocks = [event for event in events if event['kind'] == 'journal' and 'unlock_and_destroy' in event['message']]
                 assert len(native_unlocks) == 1 and native_unlocks[0]['sourceMonotonic'] >= authenticated_at
                 assert native_unlocks[0]['invocation'] == first['descriptor']['units']['emergency']['identity']['InvocationID']
-                compositor_unlocks = [event for event in events if event['kind'] == 'compositor-log' and 'unlocking session' in event['message']]
-                assert len(compositor_unlocks) == 1 and compositor_unlocks[0]['sourceMonotonic'] >= authenticated_at
+                if os.environ.get('NIRI_SOCKET'):
+                    compositor_unlocks = [event for event in events if event['kind'] == 'compositor-log' and 'unlocking session' in event['message']]
+                    assert len(compositor_unlocks) == 1 and compositor_unlocks[0]['sourceMonotonic'] >= authenticated_at
                 for role, record in final['descriptor']['units'].items():
                     journal = run(['journalctl', '--user', '-b', '--no-pager', '-o', 'cat',
                         '_SYSTEMD_INVOCATION_ID=' + record['identity']['InvocationID']]).stdout
@@ -695,7 +698,30 @@ def main():
                 print('PASS owner-slow-emergency-auth', work)
                 (work / 'result.txt').write_text('PASS owner-slow-emergency-auth\n')
                 return
-            if args.delay < 30:
+            if args.delay < 30 and not takeover:
+                # A compositor without proven dead-client restore must retain
+                # the live emergency, not manufacture a dead-holder handover.
+                wait_for(lambda: inspect()['units']['real']['gone'])
+                retained = inspect()
+                assert not retained['descriptor']['handoverCommitted']
+                assert retained['descriptor']['units']['emergency']['client']['secure']
+                assert not (retained['descriptor']['units']['real'].get('client') or {}).get('requested')
+                if args.restart_state == 'handing-over':
+                    restart_at('fallback')
+                    (work / 'restart-policy.json').write_text(json.dumps({'requested': 'handing-over',
+                        'observed': 'retained-fallback', 'takeover': False,
+                        'reason': 'handover is unreachable without proven dead-client restore'}))
+                from locker_framebuffer import Framebuffer
+                console = Framebuffer()
+                try:
+                    console.capture(work / 'emergency-retained.ppm')
+                    assert not console.sentinel_visible()
+                finally:
+                    console.close()
+                wait_for(lambda: time.monotonic() > first['descriptor']['units']['real']['startedAt'] + args.delay + 1, args.delay + 5)
+                assert not (work / 'real-delay-exec.json').exists(), 'cancelled real candidate executed'
+                (work / 'no-takeover.json').write_text(json.dumps(retained, indent=2))
+            elif args.delay < 30:
                 from locker_framebuffer import Framebuffer
                 console = Framebuffer()
                 sequence_stop = threading.Event()
@@ -841,7 +867,7 @@ def main():
                     assert not inspect()['descriptor']['suspendPending'], 'external lock unexpectedly requested suspend'
                 else:
                     assert json.loads(ipc('lockerProof', 'completions'))['suspend'] == 0, 'opaque refusal discharged suspend'
-            assert run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip() == 'yes'
+            assert compositor_locked(work, sid)
         generation = first['descriptor']['generation']
         identity = first['descriptor']['units'][expected_role]['identity']
         ipc('lockerProof', 'lock')
@@ -879,7 +905,7 @@ def main():
         time.sleep(3)
         if unconfirmed:
             assert inspect()['units']['real']['sameInvocation'] and not owner_status()['secure']
-            assert run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip() == 'yes'
+            assert compositor_locked(work, sid)
         else:
             assert inspect()['descriptor']['units'][expected_role]['client']['secure']
         if args.recover_known_pam_hang and not unconfirmed:
@@ -900,7 +926,7 @@ def main():
         authenticated_inputs = [successful_input_at]
         if args.case in ('opaque-race', 'opaque-withdraw'):
             wait_for(lambda: inspect()['units']['real']['gone'])
-            assert run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip() == 'no'
+            assert not compositor_locked(work, sid)
             if args.case == 'opaque-withdraw':
                 wait_for(lambda: inspect()['descriptor'].get('sessionUnlockObserved'))
             (work / 'release-probe').touch(mode=0o600)
@@ -912,7 +938,7 @@ def main():
                 wait_for(lambda: inspect()['descriptor'].get('probeRaceWon'))
                 assert inspect()['descriptor']['units']['emergency']['identity'] == retained_identity
                 assert not inspect()['units']['emergency']['gone']
-                assert run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip() == 'yes'
+                assert compositor_locked(work, sid)
                 authenticated_inputs.append(time.monotonic())
                 authenticate()
                 expected_role = 'emergency'
@@ -922,7 +948,7 @@ def main():
         assert all(item['gone'] and not item['members'] for item in final['units'].values())
         if args.case == 'hooks' or args.ingress == 'hooks':
             assert marker.read_text() == 'prelockunlock', 'hook duplicated or lost after adoption'
-        assert run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip() == 'no'
+        assert not compositor_locked(work, sid)
         if sentinel_identity:
             from locker_framebuffer import Framebuffer
             console = Framebuffer()
@@ -939,7 +965,7 @@ def main():
             time.sleep(10)
             assert inspect()['descriptor']['phase'] == 'settled'
             assert all(item['gone'] and not item['members'] for item in inspect()['units'].values())
-            assert run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip() == 'no', 'delayed relock'
+            assert not compositor_locked(work, sid), 'delayed relock'
         unlocked = True
         real_journal = run(['journalctl', '--user', '-b', '--no-pager', '-o', 'cat',
                             '_SYSTEMD_INVOCATION_ID=' + identity['InvocationID']]).stdout
@@ -954,8 +980,8 @@ def main():
         assert observer.wait(timeout=10) == 0
         events = [json.loads(line) for line in (work / 'observer/events.jsonl').read_text().splitlines()]
         assert not any(event['kind'] == 'observer-error' for event in events), 'continuous observer failed'
-        transitions = [event for event in events if event['kind'] == 'locked-hint']
-        assert any(event['locked'] for event in transitions), 'missing compositor-originated secure hint'
+        transitions = compositor_transitions(events)
+        assert any(event['locked'] for event in transitions), 'missing compositor-originated lock observation'
         unlocks = [event for event in transitions if not event['locked']]
         assert len(unlocks) == len(authenticated_inputs), 'unlock/relock outside approved race'
         assert all(event['observed'] >= at for event, at in zip(unlocks, authenticated_inputs)), 'unlock before successful PAM input'
@@ -974,7 +1000,12 @@ def main():
                    'realStartedAt': first['descriptor']['units']['real']['startedAt'],
                    'holderSecureAt': native_secure[0]['sourceMonotonic']}
         timings['secondsToSecure'] = timings['holderSecureAt'] - timings['requestedAt']
-        if args.case == 'fast' or (args.case == 'slow' and args.delay < 30):
+        if args.case == 'slow' and args.delay < 30 and not takeover:
+            assert expected_role == 'emergency' and not final['descriptor']['handoverCommitted']
+            assert not re.search(r'ext_session_lock_v1#\d+\.locked\(\)', run(['journalctl', '--user', '-b',
+                '--no-pager', '-o', 'cat', '_SYSTEMD_INVOCATION_ID=' + final['descriptor']['units']['real']['identity']['InvocationID']]).stdout)
+            timings['outcome'] = 'emergency-retained-no-takeover'
+        elif args.case == 'fast' or (args.case == 'slow' and args.delay < 30):
             timings['outcome'] = deadline_outcome(final['descriptor'], events)
             if args.late_real_first:
                 assert timings['outcome'] == 'late-real-first'

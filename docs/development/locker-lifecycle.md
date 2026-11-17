@@ -218,5 +218,13 @@ for actual PAM recovery. Guest grim capture must show the unlocked sentinel
 before locking and after authentication; an uncalibrated black image is never
 accepted. This records compositor-rendered output, not physical scanout or
 hardware sleep, and never upgrades the owner's unconfirmed state to secure.
+
+On Hyprland the continuous compositor observer builds a read-only native
+hyprland-lock-notify-v1 subscriber and records its initial state and lock/unlock
+timestamps. It never requests a session lock or substitutes notifications for
+a client's generation-correlated secure acknowledgement. Logind hints remain
+separate corroboration. The slow proof follows discovered takeover capability:
+without it, the real candidate is cancelled and the independently authenticating
+emergency stays alive; no dead-holder handover is attempted.
 Keep their acceptance status in the task's
 outside-repository execution note until those proofs are implemented and run.

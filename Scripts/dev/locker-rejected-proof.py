@@ -15,7 +15,7 @@ import signal
 import subprocess
 import time
 
-from locker_test_support import manage, require_guest, run, wait_for
+from locker_test_support import compositor_locked, compositor_transitions, manage, require_guest, run, wait_for
 
 
 def main():
@@ -105,7 +105,7 @@ def main():
         (work / 'unit-identities.json').write_text(json.dumps(units, indent=2))
 
     def locked():
-        return run(['loginctl', 'show-session', sid, '-p', 'LockedHint', '--value']).stdout.strip() == 'yes'
+        return compositor_locked(work, sid)
 
     def recover_pam():
         # Same narrowly identified child-only recovery as the managed tests;
@@ -139,6 +139,7 @@ def main():
             '--work', str(work / 'observer')], env=environment, stdin=subprocess.PIPE,
             stdout=(work / 'observer-stdout.txt').open('w'), stderr=(work / 'observer-stderr.txt').open('w'))
         wait_for(lambda: (work / 'observer/ready.json').exists())
+        assert not locked(), 'existing compositor lock'
         launch('holder', configs / 'atmosphera-emergency-lock/shell.qml')
         wait_for(lambda: re.search(r'ext_session_lock_v1#\d+\.locked\(\)', journal('holder')), 15)
         for role, folder in (('bundled-loser', 'atmosphera-lockscreen'), ('emergency-loser', 'atmosphera-emergency-lock')):
@@ -229,7 +230,7 @@ def main():
         assert not any(event['kind'] == 'observer-error' for event in events)
         native = [event for event in events if event['kind'] == 'journal' and 'unlock_and_destroy' in event['message']]
         assert len(native) == 1 and native[0]['invocation'] == units['holder']['InvocationID'] and native[0]['sourceMonotonic'] >= auth_at
-        hints = [event for event in events if event['kind'] == 'locked-hint' and not event['locked']]
+        hints = [event for event in compositor_transitions(events) if not event['locked']]
         assert len(hints) == 1 and hints[0]['observed'] >= auth_at
         if os.environ.get('NIRI_SOCKET'):
             compositor = [event for event in events if event['kind'] == 'compositor-log' and 'unlocking session' in event['message']]

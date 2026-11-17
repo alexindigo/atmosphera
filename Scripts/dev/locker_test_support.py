@@ -64,6 +64,23 @@ def manage(source, job, check=True):
     return reply
 
 
+def compositor_transitions(events):
+    """Native Hyprland notifications, or niri's compositor-owned logind hint."""
+    kind = 'compositor-lock' if os.environ.get('HYPRLAND_INSTANCE_SIGNATURE') else 'locked-hint'
+    return [event for event in events if event['kind'] == kind]
+
+
+def compositor_locked(work, session):
+    if not os.environ.get('HYPRLAND_INSTANCE_SIGNATURE'):
+        return run(['loginctl', 'show-session', session, '-p', 'LockedHint', '--value']).stdout.strip() == 'yes'
+    raw = (work / 'observer/events.jsonl').read_text()
+    # Ignore an in-progress final write, never an already completed event.
+    events = [json.loads(line) for line in raw.rpartition('\n')[0].splitlines()]
+    native = [event for event in events if event['kind'] in ('compositor-initial', 'compositor-lock')]
+    assert native, 'native Hyprland observation not initialized'
+    return native[-1]['locked']
+
+
 def recover_known_pam_hang(source, session, role, work):
     """Optional test-only recovery for the separately tracked native syslog hang.
 

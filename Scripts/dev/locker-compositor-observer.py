@@ -16,9 +16,10 @@ import subprocess
 import sys
 import time
 import re
+import shlex
 from datetime import datetime
 
-from locker_test_support import manage, require_guest
+from locker_test_support import manage, require_guest, run
 
 
 def main():
@@ -47,6 +48,8 @@ def main():
     compositor_stream = None
     compositor_identity = None
     compositor_pending = bytearray()
+    notification = None
+    notification_pending = bytearray()
     clock_offset = time.monotonic() - time.time()
     if os.environ.get('NIRI_SOCKET'):
         # This devbase redirects niri stdout/stderr to a regular file rather
@@ -80,6 +83,34 @@ def main():
                 'offset': compositor_stream.tell(), 'socket': socket_path}
             emit('compositor-source', **compositor_identity)
 
+    if os.environ.get('HYPRLAND_INSTANCE_SIGNATURE'):
+        instances = json.loads(run(['hyprctl', '-j', 'instances']).stdout)
+        instance = [item for item in instances if item['instance'] == os.environ['HYPRLAND_INSTANCE_SIGNATURE']]
+        assert len(instance) == 1
+        process = Path('/proc') / str(instance[0]['pid'])
+        compositor_identity = {'pid': instance[0]['pid'],
+            'start': (process / 'stat').read_text().split(') ', 1)[1].split()[19],
+            'instance': instance[0]['instance']}
+        emit('compositor-source', **compositor_identity)
+        protocol = source / 'Scripts/dev/fixtures/locker-hypr-notify.xml'
+        header, code = work / 'hypr-notify-client.h', work / 'hypr-notify-protocol.c'
+        run(['wayland-scanner', 'client-header', str(protocol), str(header)])
+        run(['wayland-scanner', 'private-code', str(protocol), str(code)])
+        binary = work / 'hypr-notify'
+        flags = shlex.split(run(['pkg-config', '--cflags', '--libs', 'wayland-client']).stdout)
+        build = run(['cc', '-Wall', '-Wextra', '-Werror', '-I' + str(work),
+            str(source / 'Scripts/dev/fixtures/locker-hypr-notify.c'), str(code), '-o', str(binary), *flags])
+        (work / 'hypr-notify-build.txt').write_text(build.stdout + build.stderr)
+        notification = subprocess.Popen([str(binary)], stdout=subprocess.PIPE,
+            stderr=(work / 'hypr-notify-stderr.txt').open('w'))
+        # Initial roundtrip is bounded; ready never precedes native subscription.
+        import select
+        assert select.select([notification.stdout], [], [], 5)[0], 'native notification startup timed out'
+        initial = json.loads(notification.stdout.readline())
+        emit(initial.pop('kind'), **initial)
+        if initial.get('locked'):
+            raise AssertionError('a pre-existing Hyprland lock is not a test target')
+
     def consume_compositor():
         if compositor_stream is None:
             return True
@@ -94,6 +125,19 @@ def main():
             source = datetime.fromisoformat(timestamp[1]).timestamp() + clock_offset if timestamp else None
             emit('compositor-log', message=message, sourceMonotonic=source)
         return True
+
+    def read_notifications(channel, condition):
+        if condition & GLib.IO_IN:
+            notification_pending.extend(os.read(notification.stdout.fileno(), 65536))
+            while b'\n' in notification_pending:
+                line, _, rest = notification_pending.partition(b'\n')
+                notification_pending[:] = rest
+                value = json.loads(line)
+                emit(value.pop('kind'), **value)
+            return True
+        emit('observer-error', message='native Hyprland notification stream closed')
+        loop.quit()
+        return False
 
     def read_compositor():
         try:
@@ -169,6 +213,8 @@ def main():
     GLib.io_add_watch(sys.stdin.fileno(), GLib.IO_IN | GLib.IO_HUP | GLib.IO_ERR, closed)
     GLib.timeout_add(500, sample)
     GLib.timeout_add(50, read_compositor)
+    if notification is not None:
+        GLib.io_add_watch(notification.stdout.fileno(), GLib.IO_IN | GLib.IO_HUP | GLib.IO_ERR, read_notifications)
     signal.signal(signal.SIGTERM, lambda *_: loop.quit())
     try:
         sample()
@@ -185,6 +231,9 @@ def main():
         read_compositor()
         if compositor_stream is not None:
             compositor_stream.close()
+        if notification is not None:
+            notification.terminate()
+            notification.wait(timeout=10)
         journal_errors.close()
         emit('end')
         output.close()
