@@ -127,9 +127,21 @@ Loader {
           id: lockSurface
           required property var modelData
           screen: modelData
-          anchors { top: true; bottom: true; left: true; right: true }
+          anchors {
+            top: true
+            bottom: true
+            left: true
+            right: true
+          }
           WlrLayershell.layer: WlrLayer.Overlay
           WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+
+          NScopedShortcut {
+            scope: lockSurface.contentItem
+            sequence: "Escape"
+            enabled: root.active && root.previewMode
+            onActivated: root.active = false
+          }
 
           Loader {
             anchors.fill: parent
@@ -235,14 +247,6 @@ Loader {
         interval: 30000
         running: root.active && root.previewMode
         onTriggered: {
-          root.active = false;
-        }
-      }
-
-      Shortcut {
-        sequence: "Escape"
-        enabled: root.active && root.previewMode
-        onActivated: {
           root.active = false;
         }
       }
