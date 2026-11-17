@@ -16,7 +16,7 @@ import subprocess
 import threading
 import time
 
-from locker_test_support import compositor_locked, compositor_transitions, manage, recover_known_pam_hang, require_guest, run, wait_for
+from locker_test_support import compositor_locked, compositor_transitions, hypr_option, manage, recover_known_pam_hang, require_guest, run, wait_for
 
 
 def deadline_outcome(descriptor, events):
@@ -259,6 +259,78 @@ def main():
         assert len(pixels) == width * height * 3
         return {'width': width, 'height': height, 'sentinelVisible': b'\xff\x00\xff' * 8 in pixels,
             'allBlack': not any(pixels), 'monotonic': time.monotonic()}
+
+    def hypr_lock_timers():
+        # Hyprland v0.56.2 sources: misc:lockdead_screen_delay is configuration
+        # (Renderer.cpp:1109-1113, SessionLockManager.cpp:244-250); the 5 s
+        # locked fallback is a constant (SessionLockManager.cpp:113-130).
+        version = json.loads(run(['hyprctl', '-j', 'version']).stdout)
+        assert version['tag'] == 'v0.56.2', 'Hyprland lock timers verified only against v0.56.2 sources'
+        option = json.loads(run(['hyprctl', '-j', 'getoption', 'misc:lockdead_screen_delay']).stdout)
+        assert option['option'] == 'misc:lockdead_screen_delay'
+        return {'version': version['tag'], 'commit': version['commit'], 'lockdeadOption': option,
+                'lockdeadScreenDelay': option['int'] / 1000, 'lockedFallback': 5.0, 'restore': hypr_option()}
+
+    def hypr_resumed_locked(resume):
+        """Hyprland form of "still locked after resume" for a holder that never drew.
+
+        Hyprland reports such a lock (lock-notify) only after it sends the
+        client locked, which is at the latest its 5 s fallback timer. Wait
+        through that timer, then require: no unlock at all, no authentication,
+        and every emergency probe refused by the existing lock (restore=0).
+        """
+        timers = hypr_lock_timers()
+        assert timers['restore']['int'] == 0, 'refusal proof needs misc:allow_session_lock_restore=0'
+        descriptor = inspect()['descriptor']
+        holder = descriptor['units']['real']['identity']['InvocationID']
+
+        def observed():
+            raw = (work / 'observer/events.jsonl').read_text()
+            return [json.loads(line) for line in raw.rpartition('\n')[0].splitlines()]
+
+        def protocol(invocation, pattern):
+            return [event['sourceMonotonic'] for event in observed() if event['kind'] == 'journal'
+                and event.get('invocation') == invocation and re.search(pattern, event['message'])]
+
+        holder_requests = protocol(holder, r'-> ext_session_lock_manager_v1#\d+\.lock\(')
+        assert len(holder_requests) == 1, 'holder lock request not observed exactly once'
+        bound = holder_requests[0] + max(timers['lockedFallback'], timers['lockdeadScreenDelay']) + 2
+
+        def native():
+            return [event for event in observed() if event['kind'] in ('compositor-initial', 'compositor-lock')]
+        at_resume = native()[-1]['locked']
+        wait_for(lambda: native()[-1]['locked'], max(bound - time.monotonic(), 0) + .5)
+        transitions = native()
+        assert [event['locked'] for event in transitions] == [False, True], 'native unlock or relock around resume'
+        assert holder_requests[0] <= transitions[-1]['sourceMonotonic'] <= bound, 'native locked outside the Hyprland timer'
+        assert not any(event['kind'] == 'journal' and 'unlock_and_destroy' in event['message'] for event in observed())
+        holder_journal = run(['journalctl', '--user', '-b', '--no-pager', '-o', 'cat',
+            '_SYSTEMD_INVOCATION_ID=' + holder]).stdout
+        assert not any(name in holder_journal for name in ('"pam-success"', '"authenticated-unlock"')), 'holder authenticated before resume check'
+        status = owner_status()
+        assert status['state'] == 'engaged-unconfirmed(external)' and not status['secure']
+        view = inspect()
+        assert view['units']['real']['sameInvocation'] and not view['units']['real']['gone']
+        records = [view['descriptor']['units']['emergency'], *view['descriptor'].get('retiredInvocations', [])]
+        records = {record['identity']['InvocationID']: record for record in records if record['name'].startswith('atmosphera-emergency-lock')}
+        probes = view['descriptor']['probeEvents']
+        assert {'sleep:1', 'deadline'} <= set(probes), 'expected sleep-window and deadline probes'
+        refusals = {}
+        for event, invocation in probes.items():
+            record = records[invocation]
+            assert record['protocolOutcome'] == 'finished' and not record['everSecure'], 'probe was not refused'
+            assert record['protocolReport']['event'] == 'finished' and not record['protocolReport']['everSecure']
+            requests = protocol(invocation, r'-> ext_session_lock_manager_v1#\d+\.lock\(')
+            finished = protocol(invocation, r'ext_session_lock_v1#\d+\.finished\(\)')
+            assert len(requests) == 1 and requests[0] > holder_requests[0], 'probe request did not follow the holder lock'
+            assert finished and not protocol(invocation, r'ext_session_lock_v1#\d+\.locked\(\)'), 'probe secured'
+            refusals[event] = {'invocation': invocation, 'requested': requests[0], 'finished': finished[0]}
+        (work / 'hypr-resume-lock.json').write_text(json.dumps({'timers': timers, 'holderRequestedAt': holder_requests[0],
+            'resumeObserved': resume['observed'], 'nativeLockedAtResume': at_resume,
+            'nativeLockedAt': transitions[-1]['sourceMonotonic'], 'boundAt': bound,
+            'nativeLockedAfterRequest': transitions[-1]['sourceMonotonic'] - holder_requests[0],
+            'transitions': transitions, 'refusedProbes': refusals, 'owner': status['state'],
+            'note': 'restore=0: Hyprland denies a new lock only while the session is protocol-locked'}, indent=2))
 
     def inspect():
         return manage(source, {'operation': 'inspect', 'session': sid})
@@ -505,9 +577,25 @@ def main():
                     '_SYSTEMD_INVOCATION_ID=' + record['identity']['InvocationID']]).stdout
                 return text if 'requested-without-surfaces' in text else False
             before = wait_for(requested_without_surfaces, 15)
+            initial_started = time.monotonic()
             initial_pixels = output_capture('opaque-initial-request')
-            (work / 'opaque-initial-output.json').write_text(json.dumps({'beforeCaptureJournal': before,
-                'pixels': initial_pixels}, indent=2))
+            initial_output = {'beforeCaptureJournal': before, 'pixels': initial_pixels, 'captureStarted': initial_started}
+            if os.environ.get('HYPRLAND_INSTANCE_SIGNATURE'):
+                # Finding, not a pass: Hyprland draws the desktop until the
+                # client is sent locked/finished or lockdead_screen_delay passes.
+                # Bound that window with one capture after the guest's delay.
+                hypr_timers = hypr_lock_timers()
+                requested_at = next(json.loads(line)['monotonic'] for line in before.splitlines()
+                    if '"requested-without-surfaces"' in line)
+                wait_for(lambda: time.monotonic() >= requested_at + hypr_timers['lockdeadScreenDelay'] + .25, 5)
+                dead_started = time.monotonic()
+                dead_pixels = output_capture('opaque-after-lockdead-delay')
+                assert not dead_pixels['sentinelVisible'], 'desktop sentinel after misc:lockdead_screen_delay'
+                initial_output['hyprland'] = {'timers': hypr_timers, 'requestedAt': requested_at,
+                    'initialCaptureAfterRequest': initial_started - requested_at,
+                    'initialSentinelVisible': initial_pixels['sentinelVisible'],
+                    'deadDelayCaptureAfterRequest': dead_started - requested_at, 'deadDelayPixels': dead_pixels}
+            (work / 'opaque-initial-output.json').write_text(json.dumps(initial_output, indent=2))
         if intent:
             ipc('lockerProof', 'lockAndSuspend')
             assert json.loads(ipc('lockerProof', 'completions'))['suspend'] == 0, 'suspend before secure'
@@ -636,7 +724,10 @@ def main():
             kernel = [json.loads(line) for line in kernel_text.splitlines()]
             (work / 'sleep-kernel.json').write_text(json.dumps(kernel, indent=2))
             assert not any('PM: suspend entry' in record.get('MESSAGE', '') for record in kernel), 'fixture unexpectedly suspended the kernel'
-            assert compositor_locked(work, sid), 'resumed unlocked'
+            if args.case == 'opaque-expiry' and os.environ.get('HYPRLAND_INSTANCE_SIGNATURE'):
+                hypr_resumed_locked(sleep[-1])
+            else:
+                assert compositor_locked(work, sid), 'resumed unlocked'
             wait_for(lambda: sleep_harness.inhibitors(sleep_harness.pid), 10)
             if suspend_command is not None:
                 assert suspend_command.wait(timeout=10) == 0
