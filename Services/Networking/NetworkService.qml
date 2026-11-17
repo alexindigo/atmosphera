@@ -352,7 +352,8 @@ Singleton {
     // never the connection's display name as an internal transport key.
     if (wifiEnabled && device && device.connected) {
       var active = NmState.activeConnections[device.activeConnection] || {}, profile = NmState.profiles[active.Connection];
-      if (profile && profile.ssid && (!result[profile.ssid] || !result[profile.ssid].connected)) {
+      var activeAp = NmState.accessPoints[device.activeAccessPoint];
+      if (activeAp && !activeAp.ssid && profile && profile.ssid && (!result[profile.ssid] || !result[profile.ssid].connected)) {
         result[profile.ssid] = {
           ssid: profile.ssid,
           security: profile.security || "open",

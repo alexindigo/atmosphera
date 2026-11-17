@@ -161,6 +161,7 @@ Scope {
     property int revision: 0
     property bool reading: false
     property bool dirtyAgain: false
+    property int _retryDelayMs: 250
     property var _versions: ({})
     property var _memberships: ({})
     property var _pending: ({})
@@ -168,6 +169,17 @@ Scope {
     signal eventReceived(string member, var args)
     signal failed(string message)
     signal seeded
+
+    // Only failed reads arm this one-shot. Healthy retained records stay idle;
+    // the record's owner lifetime also owns every recovery attempt.
+    Timer {
+      id: readRetry
+      onTriggered: record.reconcile()
+    }
+    onLiveChanged: {
+      if (!live)
+        readRetry.stop();
+    }
 
     DBus {
       id: endpoint
@@ -215,6 +227,13 @@ Scope {
     function _error(message) {
       errorText = message;
       failed(message);
+    }
+    function _retryRead() {
+      if (!live || readRetry.running)
+        return;
+      readRetry.interval = _retryDelayMs;
+      _retryDelayMs = Math.min(_retryDelayMs * 2, 30000);
+      readRetry.start();
     }
     function _value(name, value) {
       // dbusqml preserves a native object-path inside a variant as a boxed
@@ -266,6 +285,7 @@ Scope {
         dirtyAgain = true;
         return;
       }
+      readRetry.stop();
       reading = true;
       var started = revision;
       // One GetAll, with explicit signature, independent of introspection. No
@@ -291,6 +311,7 @@ Scope {
           record.facts = retained;
           record.ready = false;
           record._error(reply.error.message);
+          record._retryRead();
         } else {
           var next = Object.assign({}, record.facts), values = reply.value || {};
           for (var name of record.fields) {
@@ -315,6 +336,7 @@ Scope {
           record.facts = next;
           record.ready = true;
           record.errorText = "";
+          record._retryDelayMs = 250;
         }
         // Membership events only protect an in-flight read. Do not accumulate
         // a history of every removed AP/device across a long-running session.
@@ -348,9 +370,10 @@ Scope {
           return;
         delete record._pending[name];
         if (record._versions[name] === started) {
-          if (reply.isError)
+          if (reply.isError) {
             record._error(reply.error.message);
-          else {
+            record._retryRead();
+          } else {
             var next = Object.assign({}, record.facts);
             next[name] = record._value(name, reply.value);
             record.facts = next;
