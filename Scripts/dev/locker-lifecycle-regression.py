@@ -16,7 +16,9 @@ from locker_test_support import manage, require_guest
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--case', choices=('fast', 'slow', 'boundary', 'external', 'contract', 'restart', 'packaging', 'cold-load', 'orphan-acceptance'), required=True)
+    parser.add_argument('--case', choices=('fast', 'slow', 'boundary', 'rejected', 'resources', 'external', 'contract', 'restart', 'packaging', 'cold-load', 'orphan-acceptance'), required=True)
+    parser.add_argument('--sample-seconds', type=float, default=10)
+    parser.add_argument('--post-unlock-seconds', type=float, default=10)
     parser.add_argument('--delays', default='2.9,3.0,3.1,29.9,30.0,30.1')
     parser.add_argument('--states', default='engaged,starting,fallback,handing-over')
     parser.add_argument('--variants', default='existing,missing,slow5,slow40,nonzero,crash,pipeline,daemonizing,term-resistant')
@@ -30,8 +32,20 @@ def main():
     source, work = require_guest(args.work, args.source)
     if args.case != 'orphan-acceptance' and source != driver:
         parser.error('--source is currently supported only by orphan-acceptance')
+    initial = None
+    if args.case in ('rejected', 'resources'):
+        sid = manage(driver, {'operation': 'discover'})['session']
+        initial = manage(driver, {'operation': 'inspect', 'session': sid})
     commands = []
-    if args.case == 'external':
+    if args.case in ('rejected', 'resources'):
+        command = ['locker-rejected-proof.py', '--sample-seconds', str(args.sample_seconds),
+            '--post-unlock-seconds', str(args.post_unlock_seconds)]
+        if args.case == 'resources':
+            command.append('--resources')
+        if args.recover_known_pam_hang:
+            command.append('--recover-known-pam-hang')
+        commands.append(('primary', command))
+    elif args.case == 'external':
         # Validate the unchanged PR #21 checker with real side-effecting inputs.
         # Availability checking must never execute any part of the expression.
         marker = work / 'checker-side-effect'
@@ -117,8 +131,17 @@ def main():
         sid = manage(driver, {'operation': 'discover'})['session']
         time.sleep(10)
         final = manage(driver, {'operation': 'inspect', 'session': sid})
-        assert final['descriptor']['phase'] == 'settled'
-        assert all(unit['gone'] and not unit['members'] for unit in final['units'].values())
+        if args.case in ('rejected', 'resources'):
+            # Independent rejection fixtures create no generation. A fresh
+            # guest can correctly have no owner descriptor at all.
+            assert final['descriptor'] == initial['descriptor'], 'independent clients changed owner generation'
+            if final['descriptor'] is None:
+                assert 'units' not in final, 'unit observations without a generation'
+            else:
+                assert all(unit['gone'] and not unit['members'] for unit in final['units'].values())
+        else:
+            assert final['descriptor']['phase'] == 'settled'
+            assert all(unit['gone'] and not unit['members'] for unit in final['units'].values())
         (work / 'post-unlock.json').write_text(json.dumps(final, indent=2))
     recovery = any((work / name / 'known-pam-hang-recovery.json').exists() for name, _ in commands)
     suffix = ' (known native PAM hang recovered)' if recovery else ''

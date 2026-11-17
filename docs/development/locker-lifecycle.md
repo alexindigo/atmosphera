@@ -100,7 +100,8 @@ unit/cgroup, managed-client/PAM and actual delay-inhibitor-fd proofs. The fd pro
 is not a real suspend/resume proof.
 
 `locker-lifecycle-regression.py` currently provides `fast`, `slow`, `boundary`,
-`external`, `contract`, `restart`, `packaging`, `cold-load` and `orphan-acceptance`.
+`rejected`, `resources`, `external`, `contract`, `restart`, `packaging`, `cold-load`
+and `orphan-acceptance`.
 Each case requires its own new `--work` directory.
 The external suite includes the command variants, cooperative handover and
 event-driven opaque probes. Preserve each subproof's result; do not infer a
@@ -130,7 +131,19 @@ config and the read-only settings matrix. No source-only Portals link is added;
 the emergency closure contains only its own entry points and shared auth/client
 helpers. Startup is followed by real PAM, native teardown and cgroup cleanup.
 
-The broader resource/ingress/suspend/load matrix and
+The rejected case runs both unmodified installed configs against an independent
+authenticating holder. Native refusal must make both losing clients self-exit,
+without releasing that holder. The resources case adds a retained diagnostic:
+the actual bundled LockSession receives a test adapter's delayed terminal reply,
+so its normal exit waits while its resource cleanup can be observed. No
+production self-exit is disabled. LED/spectrum registrations and event counters
+must stay off, no compositor subscription may initialize, and the root must use
+less than 0.1 core over at least 10 seconds. Native stacks and exact cgroup/PID
+identities are retained. Releasing the reply must exit normally; real PAM unlock
+is followed by at least 10 seconds of exact process/cgroup absence. The image
+cache's independent 1x1 render traffic is not LED or spectrum activity.
+
+The broader ingress/suspend/load matrix and
 the separate Hyprland restore-option proofs are not implied by these entry
 points. Keep their acceptance status in the task's outside-repository execution
 note until those proofs are implemented and run.
