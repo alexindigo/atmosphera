@@ -21,6 +21,13 @@ GetAll and owns revisions and invalidation Gets itself. This avoids dbusqml
 layers try to handle the same invalidation. Children that reject introspection
 still have explicit watchers and finite, signature-declared reads/commands.
 
+Failed interface reads arm one owner-scoped, one-shot reconciliation retry with
+exponential backoff from 250 ms to 30 seconds. A successful GetAll resets the
+backoff and leaves no timer running. Retirement cancels recovery, and late
+replies cannot publish into retired records. This shared contract covers the
+manager and retained device, wireless, active, AP and IP interfaces, including
+failed invalidation reads; it is not periodic freshness polling.
+
 Per-field versions protect newer payloads from late reads. Membership events
 and tombstones protect in-flight inventories, then are retired; they are not an
 unbounded event log. Profile settings reads use revision/dirty-again guards.

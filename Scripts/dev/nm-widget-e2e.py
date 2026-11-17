@@ -184,6 +184,16 @@ def controlled_network(profile, work):
         frame = wait_for(lambda: ssid_row(shell.panel_frame(), ssid, True), "one rendered hidden-AP row owns both SSID and Connected state")
         owner.check("hidden-empty-ap-saved-ssid-rendered", frame["visible"], frame=frame)
         owner.check("wifi-profile-name-preserved", shell.state()["profiles"][saved]["id"] == name)
+        bus.control("change", path=ap, iface=NM + ".AccessPoint", props={"Ssid": list(ssid.encode())})
+        wait_for(lambda: ssid_row(shell.panel_frame(), ssid, True), "non-hidden active AP row")
+        edited_ssid = "Saved profile edit, not the applied AP"
+        bus.control("settings", path=saved, settings={
+            "connection": {"uuid": "saved-wifi-uuid", "id": name, "type": "802-11-wireless"},
+            "802-11-wireless": {"ssid": list(edited_ssid.encode())}})
+        wait_for(lambda: shell.state()["profiles"][saved]["ssid"] == edited_ssid, "saved profile SSID edit observed")
+        frame = shell.panel_frame()
+        owner.check("saved-ssid-edit-cannot-create-second-connected-row", bool(ssid_row(frame, ssid, True))
+                    and not any(row["ssid"] == edited_ssid and row["connected"] for row in frame["networkRows"]), frame=frame)
         bus.control("change", path=device, iface=NM + ".Device", props={"State": 30})
         bus.control("change", path=ap, iface=NM + ".AccessPoint", props={"Ssid": [255, 128, 65]})
         frame = wait_for(lambda: text_frame("\ufffd\ufffdA"), "non-UTF-8 AP rendered with replacement characters")

@@ -271,7 +271,7 @@ def main():
     parser.add_argument('--baseline-page', action='store_true')
     args = parser.parse_args()
     work = args.workspace.resolve()
-    check_execution_paths(parser, work)
+    check_execution_paths(parser, work, source=args.source)
     work.mkdir()
     shell = work / 'shell'
     shutil.copytree(args.source, shell, ignore=shutil.ignore_patterns('.git', '.envrc', '__pycache__', '*.bak'))

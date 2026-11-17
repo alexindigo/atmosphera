@@ -4,6 +4,7 @@ import argparse
 import json
 import re
 import shutil
+import time
 from pathlib import Path
 
 from nm_test_support import GuestRun, PrivateBus, SOURCE, run, wait_for
@@ -22,6 +23,12 @@ def main():
     owner = GuestRun(args.guest_profile, args.work)
     try:
         bus = PrivateBus(owner)
+        recovered_device = ROOT + "/Devices/90"
+        bus.control("put", path=recovered_device, iface=NM + ".Device",
+                    props={"Interface": ["s", "recovered-ethernet"], "DeviceType": ["u", 1], "State": ["u", 100]})
+        bus.control("put", path=recovered_device, iface=NM + ".Device.Wired", props={"Speed": ["u", 1000]})
+        bus.control("change", path=ROOT, iface=NM, props={"Devices": [recovered_device]})
+        bus.control("deny", path=ROOT, method="GetAll")
         second_profile = ROOT + "/Settings/2"
         removed_profile = ROOT + "/Settings/3"
         bus.control("put", path=removed_profile, iface=NM + ".Settings.Connection", settings={"connection": {"uuid": "removed-before-seed", "id": "Removed", "type": "vpn"}})
@@ -57,6 +64,21 @@ def main():
         initial = until(lambda s: s.get("profiles", {}).get(PROFILE, {}).get("id") == "Initial", "initial profile seed")
         owner.check("owner-and-one-initial-enumeration", initial["available"] and len(calls("ListConnections")) == 1, state=initial)
         owner.check("initial-profile-reaches-vpn-facade", initial["vpn"]["fixture-uuid"]["name"] == "Initial")
+        until(lambda s: bool(s.get("error")), "manager seed error is forwarded")
+        wait_for(lambda: len(calls("GetAll", ROOT)) >= 3, "failed interface retries use backoff")
+        retry_times = [call["monotonic"] for call in calls("GetAll", ROOT)[:3]]
+        owner.check("failed-interface-read-exponential-backoff", retry_times[1] - retry_times[0] >= .2
+                    and retry_times[2] - retry_times[1] >= .4, times=retry_times)
+        bus.control("allow", path=ROOT, method="GetAll")
+        recovered = until(lambda s: s.get("network", {}).get("ethernet", {}).get("ifname") == "recovered-ethernet",
+                          "manager seed retries without an owner change or property signal")
+        owner.check("manager-seed-failure-recovers-device-consumer", recovered["network"]["ethernet"]["ifname"] == "recovered-ethernet"
+                    and len(calls("GetAll", ROOT)) >= 2, state=recovered)
+        before_idle = len(calls("GetAll", ROOT))
+        time.sleep(.8)
+        owner.check("successful-interface-recovery-stops-retries", len(calls("GetAll", ROOT)) == before_idle)
+        bus.control("change", path=ROOT, iface=NM, props={"Devices": []})
+        until(lambda s: not s["devices"], "remove recovered seed fixture")
         until(lambda s: second_profile in s["profiles"], "add survives seed reply")
         owner.check("subscribe-before-seed-membership-tombstones", removed_profile not in state()["profiles"] and not calls("GetSettings", removed_profile))
         bus.control("signal", path=ROOT + "/Settings", iface=NM + ".Settings", member="NewConnection", signature="(o)", args=[second_profile])
@@ -219,6 +241,15 @@ def main():
         bus.control("release")
         until(lambda s: s["devices"][device]["wifiSignal"] == "88", "newer signal wins invalidated read")
         owner.check("one-invalidation-read-newer-signal-wins", len(calls("Get", ap)) == before + 1)
+        bus.control("deny", path=ap, method="Get")
+        before = len(calls("Get", ap))
+        bus.control("change", path=ap, iface=NM + ".AccessPoint", invalidated=["Strength"])
+        wait_for(lambda: len(calls("Get", ap)) == before + 1, "failed AP invalidation read")
+        until(lambda s: "Strength" not in s["aps"].get(ap, {}), "invalidated AP field is unavailable")
+        bus.control("allow", path=ap, method="Get")
+        until(lambda s: s["network"]["networks"].get("Fixture", {}).get("signal") == 88,
+              "shared interface retry restores AP fact at network consumer")
+        owner.check("invalidation-read-failure-recovers-consumer", True)
         profile_enumerations = len(calls("ListConnections"))
         bus.control("configure", scan="before-reply")
         operation = ipc("scan", device).stdout.strip()
@@ -304,6 +335,14 @@ def main():
         owner.check("remove-during-getsettings", PROFILE not in state()["profiles"])
         terminal = [o["id"] for o in state()["operations"] if o["status"] != "accepted"]
         owner.check("all-terminal-callbacks-exactly-once", len(terminal) == len(set(terminal)))
+        bus.control("deny", path=ROOT, method="GetAll")
+        before = len(calls("GetAll", ROOT))
+        ipc("reconcileManager")
+        wait_for(lambda: len(calls("GetAll", ROOT)) > before, "failed manager reconciliation")
+        ipc("retireManager")
+        retired_calls = len(calls("GetAll", ROOT))
+        time.sleep(1.1)
+        owner.check("retirement-cancels-interface-retry", len(calls("GetAll", ROOT)) == retired_calls)
         ipc("stop")
         owner.check("normal-backend-exit", child.wait(timeout=10) == 0)
         log = (owner.work / "backend-shell.log").read_text()

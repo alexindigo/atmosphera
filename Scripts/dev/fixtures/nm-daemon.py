@@ -4,6 +4,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import time
 
 import gi
 gi.require_version("Gio", "2.0")
@@ -188,7 +189,7 @@ class Fixture:
         return True
 
     def method(self, _bus, sender, path, iface, member, parameters, invocation):
-        self.calls.append(dict(sender=sender, path=path, iface=iface, method=member))
+        self.calls.append(dict(sender=sender, path=path, iface=iface, method=member, monotonic=time.monotonic()))
         if member == "AddAndActivateConnection":
             # This daemon accepts synthetic fixture inputs only, never real
             # credentials. Retain the wire-decoded values and variant types so

@@ -74,6 +74,12 @@ function ssidShapes(path: string): string {
 function reconcileDevice(path: string) {
   NmState.reconcileDevice(path);
 }
+function reconcileManager() {
+  NmState._session.manager.reconcile();
+}
+function retireManager() {
+  NmState._session.manager.retire();
+}
 function vpnConnect(uuid: string) {
   VPNService.connect(uuid);
 }
