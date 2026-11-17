@@ -1,426 +1,142 @@
 pragma Singleton
 
-import DBus 1.0
-import DBus 1.0 as DBusQML
-
 import QtQuick
 import Quickshell
 import qs.Commons
+import qs.Services.Networking
 import qs.Services.UI
 
+// Compatibility/presentation facade. NmState alone owns daemon state.
 Singleton {
   id: root
-
   property var connections: ({})
-  property bool refreshing: false
-  property bool connecting: false
-  property bool disconnecting: false
-  property string connectingUuid: ""
-  property string disconnectingUuid: ""
+  property bool refreshing: NmState.refreshing
+  property bool refreshPending: NmState.refreshPending
   property string lastError: ""
-  property bool refreshPending: false
-
-  readonly property var activeConnections: {
-    const result = [];
-    const map = connections;
-    for (const key in map) {
-      const conn = map[key];
-      if (conn && conn.active) {
-        result.push(conn);
-      }
-    }
-    return result;
-  }
-
-  readonly property var inactiveConnections: {
-    const result = [];
-    const map = connections;
-    for (const key in map) {
-      const conn = map[key];
-      if (conn && !conn.active) {
-        result.push(conn);
-      }
-    }
-    return result;
-  }
-
+  property string _connectUuid: ""
+  property string _disconnectUuid: ""
+  property string _connectOperation: ""
+  property string _disconnectOperation: ""
+  readonly property string connectingUuid: _connectUuid || _observedConnectingUuid()
+  readonly property string disconnectingUuid: _disconnectUuid || _observedDisconnectingUuid()
+  readonly property bool connecting: connectingUuid !== ""
+  readonly property bool disconnecting: disconnectingUuid !== ""
+  readonly property var activeConnections: Object.values(connections).filter(connection => connection.active)
+  readonly property var inactiveConnections: Object.values(connections).filter(connection => !connection.active)
   readonly property bool hasActiveConnection: activeConnections.length > 0
 
-  // Per-profile D-Bus object paths, keyed by UUID
-  property var _connPaths: ({})
-  // Reverse map: active-connection path → UUID
-  property var _acToUuid: ({})
-
-  Timer {
-    id: refreshTimer
-    interval: 5000
-    running: true
-    repeat: true
-    onTriggered: refresh()
-  }
-
-  Timer {
-    id: delayedRefreshTimer
-    interval: 1000
-    repeat: false
-    onTriggered: refresh()
-  }
-
-  Component.onCompleted: {
-    Logger.i("VPN", "Service started (D-Bus)");
-    refresh();
-  }
-
-  // NetworkManager manager (for ActivateConnection + active-connection list)
-  DBus {
-    id: nmManager
-    service: "org.freedesktop.NetworkManager"
-    path: "/org/freedesktop/NetworkManager"
-    iface: "org.freedesktop.NetworkManager"
-    connection: SystemBus
-    watchServiceStatus: true
-  }
-
-  // Settings service (saved profiles)
-  DBus {
-    id: nmSettings
-    service: "org.freedesktop.NetworkManager"
-    path: "/org/freedesktop/NetworkManager/Settings"
-    iface: "org.freedesktop.NetworkManager.Settings"
-    connection: SystemBus
-  }
-
-  // Manager Properties iface (for future property reads if needed)
-  DBus {
-    id: nmManagerProps
-    service: "org.freedesktop.NetworkManager"
-    path: "/org/freedesktop/NetworkManager"
-    iface: "org.freedesktop.DBus.Properties"
-    connection: SystemBus
-  }
-
   Connections {
-    target: nmManager
-
-    function onSignalReceived(name, args) {
-      if (name === "PropertiesChanged" || name === "StateChanged") {
-        vpnEventDebounce.restart();
-      }
+    target: NmState
+    function onProfilesChanged() {
+      root._project();
     }
-
-    function onStatusChanged() {
-      if (nmManager.status === 2) {
-        refresh();
-      }
+    function onActiveConnectionsChanged() {
+      root._project();
     }
-
-    function onServiceAvailableChanged() {
-      if (nmManager.serviceAvailable) {
-        refresh();
-      }
+    function onDevicesChanged() {
+      root._project();
     }
   }
-
-  Timer {
-    id: vpnEventDebounce
-    interval: 200
-    onTriggered: refresh()
+  Component.onCompleted: {
+    Logger.i("VPN", "Service started (NetworkManager events)");
+    _project();
   }
-
-  function refresh() {
-    if (refreshing) {
-      refreshPending = true;
-      return;
-    }
-    refreshing = true;
-    lastError = "";
-    _loadProfiles();
+  function _project() {
+    var result = {}, active = Object.values(NmState.activeConnections);
+    for (var profile of Object.values(NmState.profiles)) {
+      if (!profile.uuid || ["vpn", "wireguard"].indexOf(profile.type) === -1)
+        continue;
+      var instances = active.filter(a => a.Uuid === profile.uuid && a.State === 2);
+      var paths = instances.reduce((paths, a) => paths.concat(a.Devices || []), []);
+      result[profile.uuid] = {
+        uuid: profile.uuid,
+        name: profile.id,
+        device: paths.map(p => (NmState.devices[p] || {}).ifname || "").filter(name => name).join(", "),
+      active: instances.length > 0
+    };
   }
-
-  function _loadProfiles() {
-    var reply = nmSettings.call("ListConnections", []);
-    if (!reply) {
-      _finishRefresh();
-      return;
+  connections = result;
+}
+  function _observedConnectingUuid() {
+    for (var active of Object.values(NmState.activeConnections))
+    if ((active.Type === "vpn" || active.Type === "wireguard") && active.State === 1)
+    return active.Uuid || "";
+    return "";
+  }
+    function _observedDisconnectingUuid() {
+      for (var active of Object.values(NmState.activeConnections))
+      if ((active.Type === "vpn" || active.Type === "wireguard") && active.State === 3)
+      return active.Uuid || "";
+      return "";
     }
-    reply.finished.connect(function () {
-      if (reply.isError) {
-        Logger.w("VPN", "ListConnections failed:", reply.error.message);
-        _finishRefresh();
-        return;
+      function refresh() {
+        NmState.reconcileProfiles();
       }
-      var paths = reply.value || [];
-      var newConns = {};
-      var newPaths = {};
-      var pending = paths.length;
-      if (pending === 0) {
-        connections = newConns;
-        _connPaths = newPaths;
-        _refreshActiveState();
-        return;
-      }
-      var doneOne = function () {
-        pending--;
-        if (pending <= 0) {
-          connections = newConns;
-          _connPaths = newPaths;
-          _refreshActiveState();
+        Timer {
+          id: requestedRefresh
+          repeat: false
+          onTriggered: root.refresh()
         }
-      };
-      for (var i = 0; i < paths.length; i++) {
-        root._readProfile(paths[i], newConns, newPaths, doneOne);
-      }
-    });
-  }
-
-  function _readProfile(connPath, newConns, newPaths, done) {
-    var proxy = profileReadComponent.createObject(root, {
-                                                     "path": connPath
-                                                   });
-    var reply = proxy.call("GetSettings", []);
-    if (!reply) {
-      proxy.destroy();
-      done();
-      return;
-    }
-    reply.finished.connect(function () {
-      if (!reply.isError && reply.value && typeof reply.value === "object") {
-        var s = reply.value;
-        var conn = s["connection"] || {};
-        var ctype = conn["type"] || "";
-        if (ctype === "vpn" || ctype === "wireguard") {
-          var uuid = conn["uuid"] || "";
-          var name = conn["id"] || "";
-          if (uuid) {
-            newConns[uuid] = {
-              "uuid": uuid,
-              "name": name,
-              "device": "",
-              "active": false
-            };
-            newPaths[uuid] = connPath;
+        function scheduleRefresh(interval) {
+          requestedRefresh.interval = Math.max(0, interval || 0);
+          requestedRefresh.restart();
+        }
+        function connect(uuid) {
+          if (connecting || !uuid)
+            return;
+          var profile = NmState.profileByUuid(uuid);
+          if (!profile) {
+            lastError = "Saved profile unavailable";
+            return;
+          }
+          _connectUuid = uuid;
+          lastError = "";
+          _connectOperation = NmState.activate(profile.path, "/", "/", function (result) {
+            if (result.status === "accepted" || result.id !== root._connectOperation)
+              return;
+            root._connectUuid = "";
+            root._connectOperation = "";
+            root._notify(uuid, true, result);
+          });
+        }
+        function disconnect(uuid) {
+          if (disconnecting || !uuid || !connections[uuid])
+            return;
+          _disconnectUuid = uuid;
+          lastError = "";
+          _disconnectOperation = NmState.deactivate(uuid, function (result) {
+            if (result.status === "accepted" || result.id !== root._disconnectOperation)
+              return;
+            root._disconnectUuid = "";
+            root._disconnectOperation = "";
+            root._notify(uuid, false, result);
+          });
+        }
+        function _notify(uuid, connected, result) {
+          var name = connections[uuid] ? connections[uuid].name : uuid;
+          if (result.ok) {
+            Logger.i("VPN", connected ? "Connected to" : "Disconnected from", name);
+            ToastService.showNotice(name, I18n.tr(connected ? "toast.vpn.connected" : "toast.vpn.disconnected", {
+                                                    name: name
+                                                  }), connected ? "shield-lock" : "shield-off");
+          } else {
+            lastError = (result.error || "NetworkManager operation failed").split("\n")[0].trim();
+            Logger.w("VPN", "Operation failed:", lastError);
+            ToastService.showWarning(name, lastError);
           }
         }
-      }
-      proxy.destroy();
-      done();
-    });
-  }
-
-  Component {
-    id: profileReadComponent
-    DBus {
-      service: "org.freedesktop.NetworkManager"
-      iface: "org.freedesktop.NetworkManager.Settings.Connection"
-      connection: SystemBus
-    }
-  }
-
-  function _refreshActiveState() {
-    var acs = nmManager.activeConnections || [];
-    if (acs.length === 0) {
-      _markAllInactive();
-      _finishRefresh();
-      return;
-    }
-    var map = Object.assign({}, connections);
-    var acToUuid = {};
-    var pending = acs.length;
-    var doneOne = function () {
-      pending--;
-      if (pending <= 0) {
-        _acToUuid = acToUuid;
-        connections = map;
-        _finishRefresh();
-      }
-    };
-    for (var i = 0; i < acs.length; i++) {
-      root._readAcUuid(acs[i], map, acToUuid, doneOne);
-    }
-  }
-
-  function _readAcUuid(acPath, map, acToUuid, done) {
-    var proxy = acUuidComponent.createObject(root, {
-                                               "path": acPath
-                                             });
-    var reply = proxy.getProperty("Uuid");
-    if (!reply) {
-      proxy.destroy();
-      done();
-      return;
-    }
-    reply.finished.connect(function () {
-      if (!reply.isError && reply.value !== undefined) {
-        var u = String(reply.value);
-        acToUuid[acPath] = u;
-        if (map[u]) {
-          map[u] = Object.assign({}, map[u], {
-                                   "active": true
-                                 });
+        function toggle(uuid) {
+          var connection = connections[uuid];
+          if (!connection)
+            return;
+          if (connection.active)
+            disconnect(uuid);
+          else
+            connect(uuid);
+        }
+        // Legacy callers may request projection, but cannot fabricate daemon-owned
+        // active/name/device state through this former optimistic update helper.
+        function setConnection(uuid, data) {
+          _project();
         }
       }
-      proxy.destroy();
-      done();
-    });
-  }
-
-  Component {
-    id: acUuidComponent
-    DBus {
-      service: "org.freedesktop.NetworkManager"
-      iface: "org.freedesktop.NetworkManager.Connection.Active"
-      connection: SystemBus
-    }
-  }
-
-  function _markAllInactive() {
-    var map = Object.assign({}, connections);
-    var changed = false;
-    for (var key in map) {
-      if (map[key].active) {
-        map[key] = Object.assign({}, map[key], {
-                                   "active": false
-                                 });
-        changed = true;
-      }
-    }
-    if (changed) {
-      connections = map;
-    }
-  }
-
-  function _finishRefresh() {
-    var pending = refreshPending;
-    refreshing = false;
-    refreshPending = false;
-    if (pending) {
-      scheduleRefresh(200);
-    }
-  }
-
-  function connect(uuid) {
-    if (connecting || !uuid) {
-      return;
-    }
-    const connPath = _connPaths[uuid];
-    if (!connPath) {
-      Logger.w("VPN", "Connect: no profile path for", uuid);
-      return;
-    }
-    connecting = true;
-    connectingUuid = uuid;
-    lastError = "";
-
-    // Device and AP are "/" for VPNs
-    Logger.i("VPN", "Connecting to", connections[uuid] ? connections[uuid].name : uuid, "(D-Bus)");
-    var reply = nmManager.call("ActivateConnection", [connPath, "/", "/"]);
-    if (!reply) {
-      connecting = false;
-      connectingUuid = "";
-      return;
-    }
-    reply.finished.connect(function () {
-      if (!reply.isError) {
-        Logger.i("VPN", "Connected to", connections[uuid] ? connections[uuid].name : uuid);
-        setConnection(uuid, {
-                        "active": true
-                      });
-        ToastService.showNotice(connections[uuid] ? connections[uuid].name : uuid, I18n.tr("toast.vpn.connected", {
-                                                                                               "name": connections[uuid] ? connections[uuid].name : uuid
-                                                                                             }), "shield-lock");
-      } else {
-        var msg = reply.error.message || "";
-        Logger.w("VPN", "Connect error:", msg);
-        lastError = msg.split("\n")[0].trim();
-        ToastService.showWarning(connections[uuid] ? connections[uuid].name : uuid, lastError);
-      }
-      connecting = false;
-      connectingUuid = "";
-      scheduleRefresh(1000);
-    });
-  }
-
-  function disconnect(uuid) {
-    if (disconnecting || !uuid) {
-      return;
-    }
-    const conn = connections[uuid];
-    if (!conn) {
-      return;
-    }
-    disconnecting = true;
-    disconnectingUuid = uuid;
-    lastError = "";
-
-    // Find the active connection whose UUID matches
-    var acPath = "";
-    for (var ap in _acToUuid) {
-      if (_acToUuid[ap] === uuid) {
-        acPath = ap;
-        break;
-      }
-    }
-    if (!acPath) {
-      Logger.w("VPN", "Disconnect: no active connection for", uuid);
-      disconnecting = false;
-      disconnectingUuid = "";
-      scheduleRefresh(1000);
-      return;
-    }
-    Logger.i("VPN", "Disconnecting from", conn.name, "(D-Bus)");
-    var reply = nmManager.call("DeactivateConnection", [acPath]);
-    if (!reply) {
-      disconnecting = false;
-      disconnectingUuid = "";
-      return;
-    }
-    reply.finished.connect(function () {
-      if (!reply.isError) {
-        Logger.i("VPN", "Disconnected from", conn.name);
-        setConnection(uuid, {
-                        "active": false,
-                        "device": ""
-                      });
-        ToastService.showNotice(conn.name, I18n.tr("toast.vpn.disconnected", {
-                                                      "name": conn.name
-                                                    }), "shield-off");
-      } else {
-        var msg = reply.error.message || "";
-        Logger.w("VPN", "Disconnect error:", msg);
-        lastError = msg.split("\n")[0].trim();
-        ToastService.showWarning(conn.name, lastError);
-      }
-      disconnecting = false;
-      disconnectingUuid = "";
-      scheduleRefresh(1000);
-    });
-  }
-
-  function toggle(uuid) {
-    const conn = connections[uuid];
-    if (!conn) {
-      return;
-    }
-    if (conn.active) {
-      disconnect(uuid);
-    } else {
-      connect(uuid);
-    }
-  }
-
-  function setConnection(uuid, data) {
-    if (!uuid) {
-      return;
-    }
-    const map = Object.assign({}, connections);
-    if (map[uuid]) {
-      map[uuid] = Object.assign({}, map[uuid], data);
-      connections = map;
-    }
-  }
-
-  function scheduleRefresh(interval) {
-    delayedRefreshTimer.interval = interval;
-    delayedRefreshTimer.restart();
-  }
-}
