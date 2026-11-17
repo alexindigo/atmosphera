@@ -52,10 +52,12 @@ PROBE = r'''
           stop(); Qt.quit(); return;
         }
         if (shellRoot.edgeSettingsStep === 0) {
+          const expected = Number(Quickshell.env("EDGE_EXPECT_HOLD"));
           shellRoot.edgeSettingsAssert(group.visible && toggle.enabled && slider.enabled && !notice.visible,
                                        "framed controls unavailable");
-          shellRoot.edgeSettingsAssert(toggle.checked && slider.value === 400, "wrong defaults");
-          shellRoot.edgeSettingsAssert(slider.text === "400", "displayed hold time differs from value");
+          shellRoot.edgeSettingsAssert(toggle.checked && slider.value === expected, "stored/default first delay changed");
+          shellRoot.edgeSettingsAssert(slider.text === String(expected), "displayed hold time differs from value");
+          shellRoot.edgeSettingsAssert(slider.description.includes(String(Math.round(expected*1.5))), "derived repeat not displayed");
           Settings.data.bar.barType = "simple";
         } else if (shellRoot.edgeSettingsStep === 1) {
           shellRoot.edgeSettingsAssert(!toggle.enabled && !slider.enabled && notice.visible,
@@ -88,6 +90,7 @@ def main():
     parser.add_argument('--source', type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument('--workspace', type=Path, required=True)
     parser.add_argument('--non-niri', action='store_true', help='check hidden controls in a separate compositor lifecycle')
+    parser.add_argument('--stored-hold', type=int, help='prove an explicit stored value is not rescaled')
     args = parser.parse_args()
     work = args.workspace.resolve()
     check_execution_paths(parser, work)
@@ -98,6 +101,7 @@ def main():
     owner.write_text('import qs.Services.Compositor\n' + inject_probe(owner.read_text(), PROBE))
     env = dict(os.environ, QT_QPA_PLATFORM='wayland', QT_QUICK_BACKEND='software', DISPLAY='')
     env['EDGE_EXPECT_NIRI'] = '0' if args.non_niri else '1'
+    env['EDGE_EXPECT_HOLD'] = str(args.stored_hold if args.stored_hold is not None else 600)
     if args.non_niri:
         env.update(NIRI_SOCKET='', XDG_CURRENT_DESKTOP='', HYPRLAND_INSTANCE_SIGNATURE='', SWAYSOCK='', LABWC_PID='')
     for key, leaf in [('HOME', 'home'), ('XDG_CONFIG_HOME', 'config'), ('XDG_DATA_HOME', 'data'),
@@ -107,6 +111,8 @@ def main():
     settings = work / 'config' / 'atmosphera' / 'settings'
     settings.mkdir(parents=True)
     (settings / 'general.json').write_text(json.dumps({'showChangelogOnStartup': False}))
+    if args.stored_hold is not None:
+        (settings / 'bar.json').write_text(json.dumps({'edgeScrollHoldMs': args.stored_hold}))
     execution = run_harness(['dbus-run-session', '--', 'qs', '-p', str(shell), '--no-color'], work, env, 180)
     text = (work / 'shell.log').read_text()
     errors = [line for line in text.splitlines() if re.search(

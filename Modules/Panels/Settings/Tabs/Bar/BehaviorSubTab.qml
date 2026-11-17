@@ -50,7 +50,9 @@ ColumnLayout {
       objectName: "edgeScrollHoldSlider"
       Layout.fillWidth: true
       label: I18n.tr("panels.bar.edge-scroll-hold-label")
-      description: I18n.tr("panels.bar.edge-scroll-hold-description")
+      description: I18n.tr("panels.bar.edge-scroll-hold-description", {
+                             repeat: Math.round(Settings.data.bar.edgeScrollHoldMs * 1.5)
+                           })
       enabled: Settings.data.bar.barType === "framed"
       from: 200
       to: 1000

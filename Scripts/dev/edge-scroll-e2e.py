@@ -155,6 +155,7 @@ def inside(shell, work, daemon=False):
         wait_for(lambda: state()['active'] is None, 'leave cancels immediately')
     def hold(x, y, seconds, active=True):
         rest()
+        started = time.monotonic()
         move(x, y)
         if active:
             try:
@@ -164,7 +165,9 @@ def inside(shell, work, daemon=False):
                 (work / 'mask-timeout.json').write_text(run(['qs','ipc','--pid',str(instance_pid),'call','edgeScreen-Virtual-1','mask']))
                 run(['grim', '-c', '-o', 'Virtual-1', work / 'sensor-timeout.png'])
                 raise
-        time.sleep(seconds)
+        # Readiness IPC is part of the hold, not extra dwell time. In
+        # particular it must not turn a 650 ms seam check into an 800 ms hold.
+        time.sleep(max(0, seconds - (time.monotonic() - started)))
         move(600, 400)
         time.sleep(.1)
     def passed(name, **details):
@@ -215,10 +218,10 @@ def inside(shell, work, daemon=False):
         time.sleep(.3)
         start = column()
         (work / 'fixture-windows.json').write_text(niri('-j', 'windows'))
-        hold(1279, 400, 1.0)
+        hold(1279, 400, 1.65)
         assert column() == start + 2, (start, column())
-        passed('outer right: 1.0 s advances exactly two columns')
-        hold(0, 400, 1.0)
+        passed('outer right: default 600/900, 1.65 s advances exactly two columns')
+        hold(0, 400, 1.65)
         assert column() == start
         passed('outer left: returns exactly two columns')
         configure(hold=1000)
@@ -229,10 +232,10 @@ def inside(shell, work, daemon=False):
         wait_for(lambda: state()['dock'], 'dock changes other edge geometry')
         unchanged = state()
         assert unchanged['active']['key'] == holding['active']['key'] and unchanged['progress'] >= holding['progress']
-        rest(); configure(dock=False, hold=400)
+        rest(); configure(dock=False, hold=600)
         passed('unchanged active zone survives unrelated geometry publication')
-        before = workspace(); hold(600, 799, .6); assert workspace() == before + 1
-        hold(600, 0, .6); assert workspace() == before
+        before = workspace(); hold(600, 799, .75); assert workspace() == before + 1
+        hold(600, 0, .75); assert workspace() == before
         passed('bottom and top bar outer row switch workspaces')
         before = (column(), workspace())
         hold(1279, 0, 2, active=False)
@@ -261,7 +264,7 @@ def inside(shell, work, daemon=False):
         passed('setting off: no action, input mask equals original regions', mask=mask)
         configure(setting=True)
         action('open-overview'); wait_for(lambda: state()['enabled'], 'overview visible enabled')
-        hold(1279, 400, .6); assert column() == before[0] + 1
+        hold(1279, 400, .75); assert column() == before[0] + 1
         passed('overview with bar visible: column advances')
         configure(hideOnOverview=True)
         assert not state()['enabled']
@@ -272,11 +275,11 @@ def inside(shell, work, daemon=False):
         wait_for(lambda: len(state()['zones']) == 2, 'dual-output geometry')
         action('focus-window', '--id', str(primary[0]))
         wait_for(lambda: focused()['id'] == primary[0], 'first fixture focused for inner edge')
-        before_col = column(); hold(1276, 400, .5); assert column() == before_col
-        hold(1276, 400, .7); assert column() == before_col + 1
-        passed('inner seam: 0.5 s none, fresh 0.7 s exactly one step')
+        before_col = column(); hold(1276, 400, .65); assert column() == before_col
+        hold(1276, 400, .95); assert column() == before_col + 1
+        passed('inner seam: 0.65 s none, fresh 0.95 s exactly one step')
         # Focus must follow the sensor's output, not the keyboard-focused output.
-        rest(); action('focus-monitor', 'Virtual-2'); hold(1276, 400, .7)
+        rest(); action('focus-monitor', 'Virtual-2'); hold(1276, 400, .95)
         assert column() == before_col + 2
         assert next(w for w in json.loads(niri('-j', 'workspaces')) if w['is_focused'])['output'] == 'Virtual-1'
         passed('step focuses pointer output before the directional action')
@@ -308,6 +311,7 @@ def inside(shell, work, daemon=False):
         assert state()['tooltip']
         passed('bar outer-row click, widget hover and tooltip unchanged')
         rest(); configure(hold=1000)
+        action('focus-window', '--id', str(primary[-1]))
         screenshot('edge-rest')
         move(0, 400)
         wait_for(lambda: .42 < state()['progress'] < .62, 'half ramp')
@@ -316,17 +320,19 @@ def inside(shell, work, daemon=False):
         screenshot('edge-blink')
         rest(); time.sleep(.15)
         configure(animationDisabled=True)
+        action('focus-window', '--id', str(primary[-1]))
         before_frames = state()
         move(0, 400); wait_for(lambda: state()['progress'] > .4, 'reduced-motion ramp')
         screenshot('edge-reduced-ramp')
         assert state()['reducedMotion']
         wait_for(lambda: state()['pulseCount'] == before_frames['pulseCount'] + 1, 'reduced-motion step')
+        wait_for(lambda: state()['reducedPulseFrames'] == before_frames['reducedPulseFrames'] + 1, 'one presented reduced-motion pulse frame')
         wait_for(lambda: not state()['pulse'], 'reduced-motion pulse finishes')
         after_frames = state()
         (work / 'reduced-motion-frames.json').write_text(json.dumps(dict(before=before_frames, after=after_frames), indent=2))
         assert after_frames['reducedPulseFrames'] == before_frames['reducedPulseFrames'] + 1, (
             before_frames['reducedPulseFrames'], after_frames['reducedPulseFrames'])
-        rest(); configure(animationDisabled=False, hold=400)
+        rest(); configure(animationDisabled=False, hold=600)
         configure(powerSaver=True)
         move(0,400); wait_for(lambda: state()['progress'] > .3, 'power-saving ramp')
         assert state()['reducedMotion']

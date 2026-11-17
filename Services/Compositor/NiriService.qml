@@ -111,24 +111,14 @@ Item {
       loader.item.focusWindow(window);
   }
 
-  function focusColumnLeft(output) {
+  function navigateEdge(output, edge, requestId, completed) {
     if (available)
-      loader.item.focusColumnLeft(output);
-  }
-
-  function focusColumnRight(output) {
-    if (available)
-      loader.item.focusColumnRight(output);
-  }
-
-  function focusWorkspaceUp(output) {
-    if (available)
-      loader.item.focusWorkspaceUp(output);
-  }
-
-  function focusWorkspaceDown(output) {
-    if (available)
-      loader.item.focusWorkspaceDown(output);
+      loader.item.navigateEdge(output, edge, requestId, completed);
+    else
+      completed({
+                  requestId: requestId,
+                  outcome: "unknown"
+                });
   }
 
   function closeWindow(window) {

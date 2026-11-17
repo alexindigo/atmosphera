@@ -329,6 +329,7 @@ PanelWindow {
       progress: EdgeScrollService.progress
       holding: EdgeScrollService.activeZone?.screenName === root.screen?.name
       pulse: EdgeScrollService.stepPulse
+      wall: EdgeScrollService.wallFeedback
       reducedMotion: EdgeScrollService.reducedMotion
       accent: AtmoColor.mPrimary
       depth: Math.min(16, Settings.data.bar.frameThickness)

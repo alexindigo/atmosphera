@@ -17,6 +17,7 @@ Singleton {
   readonly property bool reducedMotion: (Settings.isLoaded && Settings.data.general.animationDisabled) || PowerProfileService.atmospheraPerformanceMode || PowerProfileService.profile === PowerProfile.PowerSaver
   property var glowZone: null
   property bool stepPulse: false
+  property bool wallFeedback: false
   property int _pulseFrames: 0
 
   readonly property var screenZones: {
@@ -42,6 +43,7 @@ Singleton {
   }
 
   signal stepped(var zone)
+  signal navigationFinished(var zone, string outcome)
 
   onScreenZonesChanged: {
     if (activeZone && !(screenZones[activeZone.screenName] || []).some(function (zone) {
@@ -60,36 +62,52 @@ Singleton {
               overview: CompositorService.overviewActive,
               hideOnOverview: Settings.data.bar.hideOnOverview
             })
-    holdMs: Settings.isLoaded ? Settings.data.bar.edgeScrollHoldMs : 400
-    actionSink: function (zone) {
+    holdMs: Settings.isLoaded ? Settings.data.bar.edgeScrollHoldMs : 600
+    actionSink: function (zone, requestId) {
       var backend = CompositorService.niriBackend;
-      if (!backend)
+      if (!backend) {
+        controller.resolveNavigation(requestId, "unknown");
+        root.navigationFinished(zone, "unknown");
         return;
-      if (zone.edge === "left")
-        backend.focusColumnLeft(zone.screenName);
-      else if (zone.edge === "right")
-        backend.focusColumnRight(zone.screenName);
-      else if (zone.edge === "top")
-        backend.focusWorkspaceUp(zone.screenName);
-      else if (zone.edge === "bottom")
-        backend.focusWorkspaceDown(zone.screenName);
+      }
+      backend.navigateEdge(zone.screenName, zone.edge, requestId, function (result) {
+        controller.resolveNavigation(result.requestId, result.outcome);
+        // Outcomes remain observable even if niri's monitor-focus pointer warp
+        // ended the hold. Only the still-correlated active hold gets feedback.
+        root.navigationFinished(zone, result.outcome);
+      });
     }
     onActiveZoneChanged: {
       if (activeZone)
         root.glowZone = activeZone;
       else {
         root.stepPulse = false;
+        root._pulseFrames = 0;
+        root.wallFeedback = false;
         pulseTimer.stop();
+        wallTimer.stop();
       }
     }
-    onStepped: zone => {
-      root.stepPulse = true;
-      if (root.reducedMotion)
-        root._pulseFrames = 1;
-      else
-        pulseTimer.restart();
-      root.stepped(zone);
+    onNavigationFinished: (zone, outcome) => {
+      if (outcome === "moved") {
+        if (root.reducedMotion)
+          root._pulseFrames = 1;
+        else {
+          root.stepPulse = true;
+          pulseTimer.restart();
+        }
+        root.stepped(zone);
+      } else if (outcome === "boundary") {
+        root.wallFeedback = true;
+        wallTimer.restart();
+      }
     }
+  }
+
+  Timer {
+    id: wallTimer
+    interval: 160
+    onTriggered: root.wallFeedback = false
   }
 
   Timer {
@@ -99,10 +117,12 @@ Singleton {
   }
 
   FrameAnimation {
-    running: root.stepPulse && root.reducedMotion
+    running: root.activeZone !== null && root.reducedMotion
     onTriggered: {
-      if (--root._pulseFrames <= 0)
-        root.stepPulse = false;
+      // Publish on frame boundaries, independent of whether the asynchronous
+      // compositor reply arrived before or after this frame's callbacks.
+      root.stepPulse = root._pulseFrames > 0;
+      root._pulseFrames = Math.max(0, root._pulseFrames - 1);
     }
   }
 

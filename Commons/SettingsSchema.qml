@@ -401,7 +401,7 @@ ConfigSchema {
     ConfigValue {
       key: "edgeScrollHoldMs"
       valueType: ConfigValue.Integer
-      defaultValue: 400
+      defaultValue: 600
       minimum: 200
       maximum: 1000
     }
